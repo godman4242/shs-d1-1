@@ -41,7 +41,10 @@ frames live under `reference/` (gitignored, study-only, never distributed).
 - [x] Downloads (A, B) — reference/videos/, 2026-07-11
 - [x] A-00 boot/login dense pass — segments/A-00-boot-login.md (login page at t=0:00
       + loading screen at t=0:03 both captured; game version v0.717 on login footer)
-- [ ] A map · [ ] B map
-- [ ] A dense segments · [ ] B dense segments
+- [~] A map · B map · dense segments — RUNNING in workflow `wf_8bebd64e-7ff`
+      (script: `~/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/3adeef1f-4b61-459f-8736-56bc9cbb264a/workflows/scripts/video-study-sweep-wf_8bebd64e-7ff.js`;
+      if a fresh session finds this unfinished: re-invoke Workflow with that
+      scriptPath + resumeFromRunId "wf_8bebd64e-7ff" — completed agents replay
+      from cache; or just check segments/ against the Resume rule above)
 - [ ] SYNTHESIS.md + RESUME_HERE update
 (Ground truth of progress = files in `segments/`, per Resume rule — this checklist is a courtesy.)
