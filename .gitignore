@@ -1,0 +1,12 @@
+# OS noise
+.DS_Store
+
+# Dependencies & build output
+node_modules/
+dist/
+
+# Study-only reference material — NEVER distributed (RECREATE, NEVER RIP)
+reference/
+
+# Local env / editor scratch
+*.local

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSHD 1:1</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #000;
+        overscroll-behavior: none;
+      }
+      /* No flex centering here — Phaser's autoCenter positions the canvas;
+         centering both ways double-shifts the letterbox. */
+      #app {
+        height: 100%;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
