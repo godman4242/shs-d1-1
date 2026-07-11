@@ -22,6 +22,7 @@ import {
   SPAWN_INVULN_S,
   WEAPON_WEIGHT,
 } from '../src/config/combat';
+import { DUEL_ATTACKER, DUMMY_SPAWN, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
 import { FOUR, HALF, HALF_TURN_DEG, ONE, TWO, ZERO } from '../src/config/nums';
@@ -111,6 +112,25 @@ describe('nums.ts — pure-math identities (Stage 1; core/ bans ALL literals)', 
     expect(FOUR).toBe(4);
     expect(HALF).toBe(0.5);
     expect(HALF_TURN_DEG).toBe(180);
+  });
+});
+
+describe('duel.ts — Stage-1 dummy setup (all INFERRED)', () => {
+  it('DUMMY_SPAWN — the gate’s 100 HP foe', () => {
+    expect(DUMMY_SPAWN).toEqual({
+      pos: { x: 700, y: 430 },
+      hp: 100,
+      stance: 'balanced',
+      halfW: 26,
+      halfH: 60,
+    });
+  });
+  it('DUEL_ATTACKER mirrors Stage 2 PLAYER_BASE damage input', () => {
+    expect(DUEL_ATTACKER).toEqual({ atkPlusWeapon: 10, stance: 'balanced' });
+  });
+  it('jump arc constants', () => {
+    expect(JUMP_DURATION_FRAMES).toBe(24);
+    expect(JUMP_APEX_PX).toBe(120);
   });
 });
 
