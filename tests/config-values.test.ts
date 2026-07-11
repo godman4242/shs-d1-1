@@ -22,6 +22,7 @@ import {
   SPAWN_INVULN_S,
   WEAPON_WEIGHT,
 } from '../src/config/combat';
+import { FOUR, HALF, ONE, TWO, ZERO } from '../src/config/nums';
 import { LAUNCH_UNLOCK_LEVEL, STANCE_BEATS, STANCE_TABLE } from '../src/config/stances';
 import { FIXED_HZ, SLASH_FRAMES } from '../src/config/timing';
 
@@ -97,6 +98,16 @@ describe('stances.ts — exact table + triangle (Stage 0 item 6)', () => {
   });
   it('LAUNCH_UNLOCK_LEVEL', () => {
     expect(LAUNCH_UNLOCK_LEVEL).toEqual({ light: 3, balanced: 5, heavy: 5 });
+  });
+});
+
+describe('nums.ts — pure-math identities (Stage 1; core/ bans ALL literals)', () => {
+  it('identity constants are exactly their names', () => {
+    expect(ZERO).toBe(0);
+    expect(ONE).toBe(1);
+    expect(TWO).toBe(2);
+    expect(FOUR).toBe(4);
+    expect(HALF).toBe(0.5);
   });
 });
 
