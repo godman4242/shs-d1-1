@@ -8,21 +8,12 @@
  */
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../config/gesture';
 import { HALF_TURN_DEG, ONE, ZERO } from '../config/nums';
-import { dist, sub, type Vec } from './vec';
+import { polylineLength } from './geometry';
+import { sub, type Vec } from './vec';
 
 export type Gesture = 'slash' | 'jump' | 'launch' | 'stab';
 
 const DIAG_RAD = (GESTURE_DIAG_DEG * Math.PI) / HALF_TURN_DEG;
-
-function pathLength(points: readonly Vec[]): number {
-  let total = ZERO;
-  let prev: Vec | null = null;
-  for (const cur of points) {
-    if (prev !== null) total += dist(prev, cur);
-    prev = cur;
-  }
-  return total;
-}
 
 export function classifyGesture(points: readonly Vec[]): Gesture {
   const first = points.at(ZERO);
@@ -32,5 +23,5 @@ export function classifyGesture(points: readonly Vec[]): Gesture {
   const angleFromHorizontal = Math.atan2(Math.abs(net.y), Math.abs(net.x));
   if (angleFromHorizontal <= DIAG_RAD) return 'slash';
   if (net.y > ZERO) return 'stab';
-  return pathLength(points) < LAUNCH_FLICK_MAX_LEN ? 'launch' : 'jump';
+  return polylineLength(points) < LAUNCH_FLICK_MAX_LEN ? 'launch' : 'jump';
 }

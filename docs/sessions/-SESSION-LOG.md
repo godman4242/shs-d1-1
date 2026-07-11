@@ -38,4 +38,11 @@ Crash-resilience log. Updated per milestone, never "at the end."
   (template allowNumber; array-simple). Existing-code fixes: OpponentIntent
   empty-interface gets an explained disable. lint+tsc+42/42 tests green.
   Doc miscount fixed: Stage 0 suite is 42 tests, not 43.
+- **00:55** Core TDD milestones GREEN, each watched RED first: vec (12 tests,
+  + config/nums.ts), geometry (20 tests: concave/windings/collinear/clamp/null
+  contracts), gesture (14 tests; new config/gesture.ts INFERRED thresholds
+  45°/90px, flagged), DrawnStroke (12 tests: resample+cap+Chaikin+derivations).
+  **Chaos red-proof done:** finite-guard disarmed → `NaN/Infinity clamp` +
+  `±1e308` tests RED (NaN leaked into points; length went Inf) → restored →
+  12/12 GREEN. Suite 102/102, lint + both tsconfigs green.
 - (milestones appended below as they land)

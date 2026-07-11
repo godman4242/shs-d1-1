@@ -90,3 +90,14 @@ export function distToPolyline(p: Vec, pts: readonly Vec[]): number | null {
   const q = closestPointOnPolyline(p, pts);
   return q === null ? null : dist(p, q);
 }
+
+/** Total arc length of a polyline (0 for fewer than 2 points). */
+export function polylineLength(pts: readonly Vec[]): number {
+  let total = ZERO;
+  let prev: Vec | null = null;
+  for (const cur of pts) {
+    if (prev !== null) total += dist(prev, cur);
+    prev = cur;
+  }
+  return total;
+}
