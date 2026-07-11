@@ -7,10 +7,13 @@ each ending `## VERIFIED`, every numeric claim cited to a frame timestamp. Chapt
 maps: `A-MAP.md`, `B-MAP.md`. This file is the **organized catalogue + index**;
 the segment files are the evidence record. Cite style here: `(A-02 t=7:05)`.
 
-**Coverage discipline:** the main sweep studied 48 slices (every high-priority
-chapter in both maps); a follow-up tranche studied 12 more dropped slices that held
-new mechanics. 28 map slices were deliberately skipped as repetitive
-grind/travel/outros — list at the bottom. Videos have no commentary; all findings
+**Coverage discipline:** coverage starts at **0:00** — `A-00` densely covers
+video A 0:00–2:57 (login page at t=0:00, loading, intro, first fights); the
+`A-MAP.md` chapter list intentionally starts at 3:00 because of that. The main
+sweep then studied 48 slices (every high-priority chapter in both maps); a
+follow-up tranche studied 12 more dropped slices that held new mechanics. 28
+map slices were deliberately skipped as repetitive grind/travel/outros — list
+at the bottom. Videos have no commentary; all findings
 are frame-visual only (no audio evidence).
 
 **Trust rule (from A-00):** this March-2020 longplay of v0.717 is *newer* than the

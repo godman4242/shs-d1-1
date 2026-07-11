@@ -3,15 +3,11 @@
 ## Current focus
 **Stage 1 — Slash engine.** The reference-video study is COMPLETE (2026-07-11):
 61 verified segments (main sweep 48/48 + follow-up 12/12), synthesis written.
-1. Read `docs/research/video-study/SYNTHESIS.md` first — §1.1 (combat core),
-   §4 (feel), §6 (contradictions: stance-lock-in-combat is the big one for the
-   slash engine), §7 (new config constants by stage).
-2. **Stage 1 TDD**: `src/core/vec.ts` → `geometry.ts` → `DrawnStroke.ts` →
-   `gesture.ts` → `slash.ts` → `stance.ts`, then DuelScene.
-   Invoke the TDD skill; red-proof every guard (esp. the ±1e308 overflow chaos test).
-   New from video for Stage 1–2: drag-to-slash red stroke render, AUTO SLASH
-   toggle, combo counter rules (reset-to-1 on kill, break on damage/gap),
-   "CANNOT CHANGE STANCE" in-combat lock (stance = out-of-combat toggle).
+**Kickoff for the fresh session: `docs/sessions/STAGE1_KICKOFF.md`** — it
+sequences the MASTER_SPEC Stage 1 contract (now committed verbatim at
+`docs/MASTER_SPEC.md` with an errata block), binds the video findings to it,
+and carries the binary gate. Read order, scope, gate, and due decisions all
+live there — start every Stage 1 session from that file.
 
 ## State
 - **Stage 0: GREEN + audited (2026-07-11).** tsc (both configs) exit 0 · 43/43 tests ·

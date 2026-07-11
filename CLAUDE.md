@@ -2,8 +2,9 @@
 
 From-scratch, original-asset recreation of the Flash game *Straw Hat Samurai: Duels*
 (LutGames / Explosive Barrel, died with Flash 2021). Goal: 1:1 feel. Staged build with
-binary verification gates — the full spec lives in the session kickoff; current state
-and next step live in `RESUME_HERE.md`.
+binary verification gates — the full spec is committed at `docs/MASTER_SPEC.md`
+(verbatim original kickoff + errata; the errata block wins on conflicts); current
+state and next step live in `RESUME_HERE.md`.
 
 ## Invariants (don't propose work that violates these)
 - **RECREATE, NEVER RIP.** No decompiled code, no extracted art, no ripped audio.
