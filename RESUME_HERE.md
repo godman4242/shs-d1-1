@@ -1,9 +1,17 @@
 # RESUME HERE
 
 ## Current focus
-**Stage 1 — Slash engine.** Start with TDD on `src/core/vec.ts` → `geometry.ts` →
-`DrawnStroke.ts` → `gesture.ts` → `slash.ts` → `stance.ts`, then the DuelScene render pass.
-Invoke the TDD skill; red-proof every guard (esp. the ±1e308 overflow chaos test).
+**Finish the reference-video study, THEN Stage 1.**
+1. Resume the video sweep — exact command in `docs/research/video-study/STUDY_PROTOCOL.md`
+   ("⚡ RESUME THE SWEEP" section). Blocked until the plan quota resets (4:30am
+   Asia/Kuala_Lumpur); it died mid-run on session limits, nothing was lost.
+2. When segments are in: write `docs/research/video-study/SYNTHESIS.md`, fold new
+   config territory into the plan (XP thresholds, buffs, forge, tolls, AP costs,
+   timed/escort quests, Ninja Services — see `B-MAP.md` "Standout systems"), update
+   `original-game-facts.md` cross-checks, commit.
+3. Then **Stage 1 — Slash engine**: TDD on `src/core/vec.ts` → `geometry.ts` →
+   `DrawnStroke.ts` → `gesture.ts` → `slash.ts` → `stance.ts`, then DuelScene.
+   Invoke the TDD skill; red-proof every guard (esp. the ±1e308 overflow chaos test).
 
 ## State
 - **Stage 0: GREEN + audited (2026-07-11).** tsc (both configs) exit 0 · 43/43 tests ·

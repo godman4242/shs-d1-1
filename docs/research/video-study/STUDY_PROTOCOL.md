@@ -41,10 +41,19 @@ frames live under `reference/` (gitignored, study-only, never distributed).
 - [x] Downloads (A, B) — reference/videos/, 2026-07-11
 - [x] A-00 boot/login dense pass — segments/A-00-boot-login.md (login page at t=0:00
       + loading screen at t=0:03 both captured; game version v0.717 on login footer)
-- [~] A map · B map · dense segments — RUNNING in workflow `wf_8bebd64e-7ff`
-      (script: `~/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/3adeef1f-4b61-459f-8736-56bc9cbb264a/workflows/scripts/video-study-sweep-wf_8bebd64e-7ff.js`;
-      if a fresh session finds this unfinished: re-invoke Workflow with that
-      scriptPath + resumeFromRunId "wf_8bebd64e-7ff" — completed agents replay
-      from cache; or just check segments/ against the Resume rule above)
+- [x] B map — DONE (salvaged from journal → `B-MAP.md`, 32 chapters; map frames on disk)
+- [ ] A map (3:00→69:45) — FAILED on plan session limit (resets 4:30am Asia/Kuala_Lumpur)
+- [ ] Dense segments A + B — all pending (24 B-jobs failed on the same limit)
 - [ ] SYNTHESIS.md + RESUME_HERE update
+
+## ⚡ RESUME THE SWEEP (do this first in the next session, AFTER the 4:30am quota reset)
+Invoke the Workflow tool with:
+  scriptPath: "/Users/kheshav/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/3adeef1f-4b61-459f-8736-56bc9cbb264a/workflows/scripts/video-study-sweep-wf_8bebd64e-7ff.js"
+  resumeFromRunId: "wf_8bebd64e-7ff"
+map:B replays instantly from cache; map:A and all dense segments run live
+(~48 agents, sized for one generous quota window — trim MAX_SEGMENTS_PER_VIDEO
+in the script if quota is tight). Then write SYNTHESIS.md from segments/ + maps,
+cross-check against docs/research/original-game-facts.md, update RESUME_HERE, commit.
+(The script's mapsMustSee labeling bug is already fixed in the persisted file —
+post-processing only, cache prefix intact.)
 (Ground truth of progress = files in `segments/`, per Resume rule — this checklist is a courtesy.)
