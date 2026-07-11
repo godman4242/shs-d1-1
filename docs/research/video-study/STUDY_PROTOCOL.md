@@ -41,19 +41,26 @@ frames live under `reference/` (gitignored, study-only, never distributed).
 - [x] Downloads (A, B) — reference/videos/, 2026-07-11
 - [x] A-00 boot/login dense pass — segments/A-00-boot-login.md (login page at t=0:00
       + loading screen at t=0:03 both captured; game version v0.717 on login footer)
-- [x] B map — DONE (salvaged from journal → `B-MAP.md`, 32 chapters; map frames on disk)
-- [ ] A map (3:00→69:45) — FAILED on plan session limit (resets 4:30am Asia/Kuala_Lumpur)
-- [ ] Dense segments A + B — all pending (24 B-jobs failed on the same limit)
+- [x] B map — DONE (salvaged → `B-MAP.md`, 32 chapters; map frames on disk)
+- [x] A map — DONE on 2nd run (salvaged → `A-MAP.md`, 41 chapters; NO War Room in PART 1)
+- [ ] Dense segments A + B — all 48 pending (two quota outages: resets were 4:30am,
+      then 3:50pm Asia/Kuala_Lumpur — the window keeps dying under Fable-tier agents)
 - [ ] SYNTHESIS.md + RESUME_HERE update
 
-## ⚡ RESUME THE SWEEP (do this first in the next session, AFTER the 4:30am quota reset)
+## ⚡ RESUME THE SWEEP (repeat this after EVERY quota reset until done)
 Invoke the Workflow tool with:
   scriptPath: "/Users/kheshav/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/3adeef1f-4b61-459f-8736-56bc9cbb264a/workflows/scripts/video-study-sweep-wf_8bebd64e-7ff.js"
   resumeFromRunId: "wf_8bebd64e-7ff"
-map:B replays instantly from cache; map:A and all dense segments run live
-(~48 agents, sized for one generous quota window — trim MAX_SEGMENTS_PER_VIDEO
-in the script if quota is tight). Then write SYNTHESIS.md from segments/ + maps,
-cross-check against docs/research/original-game-facts.md, update RESUME_HERE, commit.
-(The script's mapsMustSee labeling bug is already fixed in the persisted file —
-post-processing only, cache prefix intact.)
+Both maps replay instantly from cache; dense segments run live. The script is now
+tuned for quota survival (2026-07-11 15:20 edits, all dense-phase-only = cache-safe):
+  - dense agents run on model 'sonnet' effort 'medium' (≈5-10× cheaper than Fable-tier;
+    observational transcription work — quality fine)
+  - HIGH-priority segments execute first, so a mid-run wall costs the least
+  - ≤60 frames/segment at 1024px (1 per ~2.5s — still catches every screen)
+THE LOOP: run → some dense agents complete (each writes its notes file + is cached) →
+if the window dies, wait for the printed reset time → re-invoke the SAME command →
+completed agents replay free, the rest continue. Repeat until failures = 0.
+Then: write SYNTHESIS.md from segments/ + both maps, cross-check against
+docs/research/original-game-facts.md, update RESUME_HERE, commit.
+DO NOT run other heavy Claude work while a tranche is running (shared quota).
 (Ground truth of progress = files in `segments/`, per Resume rule — this checklist is a courtesy.)
