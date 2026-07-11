@@ -22,6 +22,7 @@ import {
   SPAWN_INVULN_S,
   WEAPON_WEIGHT,
 } from '../src/config/combat';
+import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
 import { FOUR, HALF, HALF_TURN_DEG, ONE, TWO, ZERO } from '../src/config/nums';
 import { LAUNCH_UNLOCK_LEVEL, STANCE_BEATS, STANCE_TABLE } from '../src/config/stances';
@@ -110,6 +111,38 @@ describe('nums.ts — pure-math identities (Stage 1; core/ bans ALL literals)', 
     expect(FOUR).toBe(4);
     expect(HALF).toBe(0.5);
     expect(HALF_TURN_DEG).toBe(180);
+  });
+});
+
+describe('fx.ts — Stage 1 item 7, exact spec names and values', () => {
+  it('SLASH_ARC (red directional stroke FX)', () => {
+    expect(SLASH_ARC).toEqual({
+      bodyHalfWidth: 26,
+      coreHalfWidth: 11,
+      taperPow: 1.6,
+      minTaper: 0.1,
+      hangMs: 200,
+      fadeMs: 180,
+    });
+  });
+  it('BLOOD_FX (burst + persistent pool render path)', () => {
+    expect(BLOOD_FX).toEqual({
+      burstCount: 12,
+      burstCountSevered: 20,
+      speedMin: 90,
+      speedMax: 280,
+      poolSpreadRadius: 46,
+      poolSpreadMs: 2600,
+      poolAlpha: 0.9,
+    });
+  });
+  it('FINISHER_FLASH (kill-beat flash, consumed Stage 2)', () => {
+    expect(FINISHER_FLASH).toEqual({
+      durationMs: 420,
+      snapInMs: 60,
+      slowMoScale: 0.35,
+      slowMoRampMs: 90,
+    });
   });
 });
 
