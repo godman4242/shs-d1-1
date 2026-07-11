@@ -1,20 +1,17 @@
 # RESUME HERE
 
 ## Current focus
-**Finish the reference-video study, THEN Stage 1.**
-1. ✅ Main sweep DONE (2026-07-11): 48/48 dense segments written + VERIFIED in
-   `docs/research/video-study/segments/`. A 12-segment follow-up tranche over the
-   highest-value dropped map slices (AP costs, timed quest, archer, ladder, key
-   pickup…) is running — workflow `wf_c73bc346-e75`; if it dies, resume per the
-   Workflow resume rule with that run ID (script under this session's
-   `workflows/scripts/`).
-2. When follow-ups are in: write `docs/research/video-study/SYNTHESIS.md`, fold new
-   config territory into the plan (XP thresholds, buffs, forge, tolls, AP costs,
-   timed/escort quests, Ninja Services — see `B-MAP.md` "Standout systems"), update
-   `original-game-facts.md` cross-checks, commit.
-3. Then **Stage 1 — Slash engine**: TDD on `src/core/vec.ts` → `geometry.ts` →
-   `DrawnStroke.ts` → `gesture.ts` → `slash.ts` → `stance.ts`, then DuelScene.
+**Stage 1 — Slash engine.** The reference-video study is COMPLETE (2026-07-11):
+61 verified segments (main sweep 48/48 + follow-up 12/12), synthesis written.
+1. Read `docs/research/video-study/SYNTHESIS.md` first — §1.1 (combat core),
+   §4 (feel), §6 (contradictions: stance-lock-in-combat is the big one for the
+   slash engine), §7 (new config constants by stage).
+2. **Stage 1 TDD**: `src/core/vec.ts` → `geometry.ts` → `DrawnStroke.ts` →
+   `gesture.ts` → `slash.ts` → `stance.ts`, then DuelScene.
    Invoke the TDD skill; red-proof every guard (esp. the ±1e308 overflow chaos test).
+   New from video for Stage 1–2: drag-to-slash red stroke render, AUTO SLASH
+   toggle, combo counter rules (reset-to-1 on kill, break on damage/gap),
+   "CANNOT CHANGE STANCE" in-combat lock (stance = out-of-combat toggle).
 
 ## State
 - **Stage 0: GREEN + audited (2026-07-11).** tsc (both configs) exit 0 · 43/43 tests ·
@@ -37,6 +34,14 @@
 Write `tests/vec.test.ts` (add/sub/dot/cross/len/norm/lerp/dist, red first), then
 implement `src/core/vec.ts` importing any needed pure-math constants from a new
 `src/config/nums.ts` (ZERO/ONE/TWO/HALF — core/ allows no literals, not even 1).
+
+## Video-study outputs to consult during Stages 1–5
+- `docs/research/video-study/SYNTHESIS.md` — mechanics catalogue §1, story §2,
+  UI inventory §3, feel §4, research cross-check §5, contradictions §6,
+  **new config constants table §7** (XP curve, skill cooldowns, AP costs, buffs,
+  prices), skipped-slice list §8, targeted re-watch wishlist §9.
+- 61 evidence files in `docs/research/video-study/segments/` (every number
+  timestamp-cited); frames cached under `reference/frames/` (gitignored).
 
 ## Open decisions awaiting Kheshav (each with proposed default)
 1. **CRIT_MULT changed 3 → 1.3** on research evidence (see `combat.ts` docblock +

@@ -9,6 +9,17 @@ are in the workflow transcript (`docs/sessions/-SESSION-LOG.md` links the run).
 
 Scoreboard: **11 confirmed · 4 partial · 3 unverifiable · 2 contradicted.**
 
+> **Video cross-check (2026-07-11, v0.717 longplays):** every claim below was
+> re-tested against the 61-segment reference-video study — full outcome table in
+> `video-study/SYNTHESIS.md` §5. Deltas: Chi Punch 10 dmg, +3/+1 level-up, L80
+> cap, elemental rebirth, heavy DEF-side penalty, War Room L10/4-clans/500c, and
+> the branch-wielding Shugyosha start are now **double-confirmed on-screen**.
+> "10 XP per foe level" is upgraded from unverifiable to **contradicted as a
+> formula** (20+ samples, no fit; named enemies ≈4.6× premium). "Duel length
+> 20–60 s" holds only for bosses/PvP — PvE trash resolves in 3–10 s. The video
+> build (v0.717, Mar 2020) is NEWER than the wiki/patch-note sources — on
+> conflict, the video wins.
+
 ## Contradicted → action taken / queued
 
 | Spec claim | Finding | Action |

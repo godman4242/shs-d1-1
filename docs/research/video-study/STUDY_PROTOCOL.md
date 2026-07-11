@@ -45,27 +45,20 @@ frames live under `reference/` (gitignored, study-only, never distributed).
 - [x] A map — DONE on 2nd run (salvaged → `A-MAP.md`, 41 chapters; NO War Room in PART 1)
 - [x] Dense segments A + B — 48/48 written + VERIFIED (sweep `wf_8bebd64e-7ff` completed
       2026-07-11 ~17:00 after the 3:50pm reset; 0 failures)
-- [ ] Follow-up tranche — 12 dropped-slice segments (A-25…A-30, B-24…B-29) holding new
-      mechanics the 24/video cap cut (AP costs, timed quest, archer, ladder, key pickup,
-      Recent Happenings Board…) — workflow `wf_c73bc346-e75` running. The other 28
-      dropped slices are documented grind/travel/outros — deliberately skipped;
-      skip list goes in SYNTHESIS.md.
-- [ ] SYNTHESIS.md + RESUME_HERE update
+- [x] Follow-up tranche — 12/12 dropped-slice segments (A-25…A-30, B-24…B-29) written +
+      VERIFIED (workflow `wf_c73bc346-e75`, 0 failures). The other 28 dropped slices
+      are deliberately skipped grind — list + rationale in `SYNTHESIS.md` §8.
+- [x] SYNTHESIS.md — written from all 61 segments + both maps, cross-checked against
+      `../original-game-facts.md` (§5 table), adversarially verified by 4 audit agents
+      (workflow `wf_f8211741-fb4`), RESUME_HERE updated. **STUDY COMPLETE.**
 
-## ⚡ RESUME THE SWEEP (repeat this after EVERY quota reset until done)
-Invoke the Workflow tool with:
-  scriptPath: "/Users/kheshav/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/3adeef1f-4b61-459f-8736-56bc9cbb264a/workflows/scripts/video-study-sweep-wf_8bebd64e-7ff.js"
-  resumeFromRunId: "wf_8bebd64e-7ff"
-Both maps replay instantly from cache; dense segments run live. The script is now
-tuned for quota survival (2026-07-11 15:20 edits, all dense-phase-only = cache-safe):
-  - dense agents run on model 'sonnet' effort 'medium' (≈5-10× cheaper than Fable-tier;
-    observational transcription work — quality fine)
-  - HIGH-priority segments execute first, so a mid-run wall costs the least
-  - ≤60 frames/segment at 1024px (1 per ~2.5s — still catches every screen)
-THE LOOP: run → some dense agents complete (each writes its notes file + is cached) →
-if the window dies, wait for the printed reset time → re-invoke the SAME command →
-completed agents replay free, the rest continue. Repeat until failures = 0.
-Then: write SYNTHESIS.md from segments/ + both maps, cross-check against
-docs/research/original-game-facts.md, update RESUME_HERE, commit.
-DO NOT run other heavy Claude work while a tranche is running (shared quota).
-(Ground truth of progress = files in `segments/`, per Resume rule — this checklist is a courtesy.)
+## ⚡ SWEEP COMPLETE (2026-07-11) — nothing to resume
+The loop below ran to 0 failures on 2026-07-11 (main sweep `wf_8bebd64e-7ff`,
+48/48; follow-up `wf_c73bc346-e75`, 12/12) and `SYNTHESIS.md` is written.
+**Do not re-run the sweep.** If a build Stage later needs a denser look at a
+specific moment, run ONE targeted pass instead (frames stay cached on disk):
+  python3 ~/.claude/plugins/cache/claude-video/watch/0.1.3/scripts/watch.py \
+    "reference/videos/<id>.mp4" --start S --end E --max-frames 60 \
+    --resolution 1024 --no-whisper --out-dir reference/frames/<id>/adhoc-<topic>
+then append findings to the relevant `segments/` file (keep `## VERIFIED` last).
+Candidate moments worth such a pass are listed in `SYNTHESIS.md` §9.
