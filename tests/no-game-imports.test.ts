@@ -19,9 +19,17 @@ const TESTS_DIR = path.join(ROOT, 'tests');
 const GAME_DIR = path.join(ROOT, 'src', 'game');
 const FIXTURES_DIR = path.join(TESTS_DIR, 'fixtures');
 
-/** Resolve an extensionless TS import target to an actual source file. */
+/**
+ * Resolve an import target to an actual source file. Vite maps .js-suffixed
+ * relative imports onto .ts sources, so those suffixes are stripped and
+ * re-tried — otherwise `import '../src/game/DuelScene.js'` would evade the
+ * guard (audit finding: the resolver must not fail open).
+ */
 function resolveTsFile(target: string): string | null {
-  const candidates = [target, `${target}.ts`, `${target}.tsx`, `${target}.mts`, `${target}.cts`, path.join(target, 'index.ts')];
+  const bases = [target];
+  const jsSuffix = /\.(m|c)?jsx?$/.exec(target);
+  if (jsSuffix !== null) bases.push(target.slice(0, -jsSuffix[0].length));
+  const candidates = bases.flatMap((b) => [b, `${b}.ts`, `${b}.tsx`, `${b}.mts`, `${b}.cts`, path.join(b, 'index.ts')]);
   for (const cand of candidates) {
     if (existsSync(cand) && statSync(cand).isFile()) return cand;
   }
@@ -38,8 +46,15 @@ describe('runtime boundary: tests never load Phaser', () => {
       if (file === undefined) break;
       for (const imp of scanImports(readSource(file), file)) {
         const at = `${path.relative(ROOT, file)}:${imp.line}`;
-        if (imp.specifier === 'phaser') {
-          offenders.push(`${at} imports 'phaser'`);
+        // Fail CLOSED on dynamic specifiers the scanner can't resolve —
+        // matching config-purity's stance (audit finding).
+        if (!imp.static) {
+          offenders.push(`${at} non-static dynamic import '${imp.specifier}'`);
+          continue;
+        }
+        // Subpath imports (phaser/dist/…) load Phaser just as surely.
+        if (imp.specifier === 'phaser' || imp.specifier.startsWith('phaser/')) {
+          offenders.push(`${at} imports '${imp.specifier}'`);
           continue;
         }
         const target = resolveImportTarget(file, imp.specifier);

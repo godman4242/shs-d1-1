@@ -77,4 +77,25 @@ Crash-resilience log. Updated per milestone, never "at the end."
     directional blood both ways (right-cut spray right, left-cut spray left),
     jump takeoff/apex/landing state reads ({400,430}→{406.6,310.8}→{430,430}).
   - HP-based partial damage on screen: 100→88→76→64 (exact 12s).
+- **02:35** Purity gate re-chaos-proven (planted `42` in core → RED at exact
+  file:line → removed → 32/32 GREEN). Launched adversarial audit workflow
+  `wf_925893f5-430` (4 auditors + refute-verify, 18 agents, 906k tokens).
+- **03:00** Audit returned 7 CONFIRMED findings (11 claims refuted with
+  evidence) — all fixed + proven:
+  1. 13 spec-named combat.ts stroke/blade/blood constants had no value pins →
+     pinned (double-entry ratchet restored).
+  2. Single-point tap = full-damage hit at the core seam → Sim gates
+     degenerate strokes (<2 points); RED test first.
+  3. Game-import guard failed OPEN on .js-suffixed imports, phaser subpaths,
+     non-static dynamic imports → fail-closed + suffix mapping + prefix match;
+     chaos-proven with all 3 evasion canaries (RED ×3 → GREEN).
+  4. 45° gesture boundary unpinned → exact-boundary tests added,
+     mutation-proven (<= flipped to < → RED ×2 → restored GREEN).
+  5. polylineLength had no direct tests → 3 added.
+  6. SLASH_ARC.taperPow/minTaper were dead config (red stroke reused
+     BLADE_MIN_TAPER) → strokePinched parameterized per render path.
+  7. Off-canvas release swallowed strokes ('pointerupoutside' unhandled) →
+     both release events finish the stroke; browser-verified (window-level
+     mouseup beyond letterbox → hp 100→88, dragging cleared).
+  Suite 155/155 · lint green · tsc both configs green.
 - (milestones appended below as they land)

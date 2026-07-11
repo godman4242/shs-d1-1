@@ -9,6 +9,16 @@
 import { describe, expect, it } from 'vitest';
 import { COL } from '../src/config/palette';
 import {
+  BLADE_CORE_WIDTH,
+  BLADE_EDGE_WIDTH,
+  BLADE_FADE_MS,
+  BLADE_MIN_TAPER,
+  BLOOD_COUNT,
+  BLOOD_COUNT_SEVERED,
+  BLOOD_SPEED_MAX,
+  BLOOD_SPEED_MIN,
+  BLOOD_SPREAD_DEG,
+  CHAIKIN_RATIO,
   CHI_PUNCH_DMG_L1,
   COUNTER_BONUS,
   CRIT_MULT,
@@ -19,6 +29,9 @@ import {
   FOCUS_START,
   FOCUS_SWITCH_COST,
   HEAVY_DEF_PENALTY,
+  MAX_STROKE_POINTS,
+  RESAMPLE_SPACING,
+  SMOOTH_ITERATIONS,
   SPAWN_INVULN_S,
   WEAPON_WEIGHT,
 } from '../src/config/combat';
@@ -85,6 +98,28 @@ describe('combat.ts — exact core constants (Stage 0 item 5)', () => {
   });
   it('weapon weights', () => {
     expect(WEAPON_WEIGHT).toEqual({ light: 1.0, balanced: 1.5, heavy: 2.5 });
+  });
+});
+
+describe('combat.ts — Stage 1 stroke/blade/blood constants (spec item 3 + item-7 NOTE)', () => {
+  it('drawn-stroke processing', () => {
+    expect(RESAMPLE_SPACING).toBe(8);
+    expect(SMOOTH_ITERATIONS).toBe(2);
+    expect(CHAIKIN_RATIO).toBe(0.25);
+    expect(MAX_STROKE_POINTS).toBe(256);
+  });
+  it('blade trail', () => {
+    expect(BLADE_CORE_WIDTH).toBe(7);
+    expect(BLADE_EDGE_WIDTH).toBe(13);
+    expect(BLADE_FADE_MS).toBe(200);
+    expect(BLADE_MIN_TAPER).toBe(0.12);
+  });
+  it('blood spray', () => {
+    expect(BLOOD_COUNT).toBe(9);
+    expect(BLOOD_COUNT_SEVERED).toBe(16);
+    expect(BLOOD_SPREAD_DEG).toBe(42);
+    expect(BLOOD_SPEED_MIN).toBe(60);
+    expect(BLOOD_SPEED_MAX).toBe(240);
   });
 });
 

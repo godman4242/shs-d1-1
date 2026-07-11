@@ -58,6 +58,16 @@ describe('classifyGesture — down strokes stab', () => {
   });
 });
 
+describe('classifyGesture — the 45° sector boundary is inclusive (slash)', () => {
+  // atan2(100,100) === 45·π/180 exactly in doubles — pins the load-bearing `<=`.
+  it('an exactly-45° up-diagonal is still a slash', () => {
+    expect(classifyGesture([v(0, 100), v(100, 0)])).toBe('slash');
+  });
+  it('an exactly-45° down-diagonal is still a slash', () => {
+    expect(classifyGesture([v(0, 0), v(100, 100)])).toBe('slash');
+  });
+});
+
 describe('classifyGesture — degenerate input', () => {
   it('empty and single-point strokes default to slash (harmless no-op class)', () => {
     expect(classifyGesture([])).toBe('slash');

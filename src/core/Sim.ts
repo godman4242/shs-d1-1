@@ -1,5 +1,5 @@
 import { JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../config/duel';
-import { ONE, ZERO } from '../config/nums';
+import { ONE, TWO, ZERO } from '../config/nums';
 import type { StanceId } from '../config/stances';
 import type { DrawnStroke } from './DrawnStroke';
 import type { Gesture } from './gesture';
@@ -89,6 +89,9 @@ export class Sim {
   /** Resolve a finished stroke: slash → damage; jump → arc start.x → end.x. */
   applyStroke(stroke: DrawnStroke, attacker: SlashAttacker): StrokeOutcome {
     const gesture = stroke.gesture;
+    // Degenerate strokes (taps) classify as 'slash' by default — gate here at
+    // the core seam so no caller can land a full-damage tap (audit finding).
+    if (stroke.points.length < TWO) return { gesture, slash: null };
     if (gesture === 'slash') {
       const result = resolveSlash(
         stroke,

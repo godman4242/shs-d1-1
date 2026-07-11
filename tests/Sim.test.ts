@@ -96,6 +96,17 @@ describe('Sim — up strokes make the fighter jump (start.x → end.x, arc)', ()
   });
 });
 
+describe('Sim — degenerate strokes are inert at the core seam (audit finding)', () => {
+  it('a single-point tap inside the hitbox neither hits nor damages', () => {
+    const sim = makeSim();
+    const tap = new DrawnStroke([v(100, 200)]); // dead centre of the fighter
+    const outcome = sim.applyStroke(tap, attacker);
+    expect(outcome.slash).toBeNull();
+    expect(sim.fighter.hp).toBe(100);
+    expect(sim.jumping).toBe(false);
+  });
+});
+
 describe('Sim — jump edge cases (found in Stage 1 browser verify)', () => {
   const jumpStroke = (fromX: number, toX: number): DrawnStroke =>
     new DrawnStroke([v(fromX, 300), v(toX, 100)]);

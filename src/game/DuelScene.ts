@@ -77,13 +77,18 @@ export class DuelScene extends Phaser.Scene {
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
       if (this.dragging && this.dragPoints.length < 2048) this.dragPoints.push({ x: p.x, y: p.y });
     });
-    this.input.on('pointerup', (p: Phaser.Input.Pointer) => {
+    // A fast slash routinely releases past the letterbox — Phaser emits
+    // 'pointerupoutside' (never 'pointerup') for off-canvas releases, so both
+    // must finish the stroke or it is silently swallowed (audit finding).
+    const finishDrag = (p: Phaser.Input.Pointer): void => {
       if (this.dragging) {
         this.dragPoints.push({ x: p.x, y: p.y }); // release point is part of the stroke
         this.finishStroke();
       }
       this.dragging = false;
-    });
+    };
+    this.input.on('pointerup', finishDrag);
+    this.input.on('pointerupoutside', finishDrag);
   }
 
   /** Multi-layer forest: sky → far mountains → canopy → tree rows → ground. */
@@ -173,13 +178,20 @@ export class DuelScene extends Phaser.Scene {
     }
   }
 
-  /** Polyline with pinched tips: width peaks mid-stroke, BLADE_MIN_TAPER at ends. */
+  /**
+   * Polyline with pinched tips: width peaks mid-stroke, floors at minTaper.
+   * Each render path passes ITS OWN taper (SLASH_ARC.minTaper/taperPow for
+   * the red stroke, BLADE_MIN_TAPER for the trail) — conflating them left
+   * SLASH_ARC.taperPow/minTaper dead (audit finding).
+   */
   private strokePinched(
     g: Phaser.GameObjects.Graphics,
     points: readonly Vec[],
     color: number,
     baseWidth: number,
     alpha: number,
+    minTaper: number,
+    taperPow: number,
   ): void {
     const n = points.length;
     for (let i = 1; i < n; i++) {
@@ -187,7 +199,7 @@ export class DuelScene extends Phaser.Scene {
       const b = points[i];
       if (a === undefined || b === undefined) continue;
       const t = i / (n - 1);
-      const pinch = Math.max(BLADE_MIN_TAPER, Math.sin(Math.PI * t));
+      const pinch = Math.max(minTaper, Math.sin(Math.PI * t) ** taperPow);
       g.lineStyle(baseWidth * pinch, color, alpha);
       g.beginPath();
       g.moveTo(a.x, a.y);
@@ -215,23 +227,23 @@ export class DuelScene extends Phaser.Scene {
 
     // Live drag: the red directional stroke (SLASH_ARC render path)
     if (this.dragging && this.dragPoints.length > 1) {
-      this.strokePinched(g, this.dragPoints, COL.blood, SLASH_ARC.bodyHalfWidth, 0.35);
-      this.strokePinched(g, this.dragPoints, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.8);
+      this.strokePinched(g, this.dragPoints, COL.blood, SLASH_ARC.bodyHalfWidth, 0.35, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
+      this.strokePinched(g, this.dragPoints, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.8, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
     }
     this.redStrokes = this.redStrokes.filter((s) => now - s.bornAt < SLASH_ARC.hangMs + SLASH_ARC.fadeMs);
     for (const s of this.redStrokes) {
       const age = now - s.bornAt;
       const alpha = age < SLASH_ARC.hangMs ? 1 : 1 - (age - SLASH_ARC.hangMs) / SLASH_ARC.fadeMs;
-      this.strokePinched(g, s.points, COL.blood, SLASH_ARC.bodyHalfWidth, 0.3 * alpha);
-      this.strokePinched(g, s.points, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.7 * alpha);
+      this.strokePinched(g, s.points, COL.blood, SLASH_ARC.bodyHalfWidth, 0.3 * alpha, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
+      this.strokePinched(g, s.points, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.7 * alpha, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
     }
 
     // Two-layer blade trail: chi-colored edge under a white core, fading
     this.trails = this.trails.filter((t) => now - t.bornAt < BLADE_FADE_MS);
     for (const t of this.trails) {
       const alpha = 1 - (now - t.bornAt) / BLADE_FADE_MS;
-      this.strokePinched(g, t.points, COL.bladeChi, BLADE_EDGE_WIDTH, alpha);
-      this.strokePinched(g, t.points, COL.kimono, BLADE_CORE_WIDTH, alpha);
+      this.strokePinched(g, t.points, COL.bladeChi, BLADE_EDGE_WIDTH, alpha, BLADE_MIN_TAPER, 1);
+      this.strokePinched(g, t.points, COL.kimono, BLADE_CORE_WIDTH, alpha, BLADE_MIN_TAPER, 1);
     }
 
     // Blood droplets: integrate, then draw

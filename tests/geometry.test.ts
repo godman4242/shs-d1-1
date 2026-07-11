@@ -7,6 +7,7 @@ import {
   closestPointOnPolyline,
   distToPolyline,
   pointInPolygon,
+  polylineLength,
   segmentsIntersect,
   type Vec,
 } from '../src/core/geometry';
@@ -76,6 +77,19 @@ describe('closestPointOnPolyline', () => {
   });
   it('an empty polyline has no closest point', () => {
     expect(closestPointOnPolyline(v(0, 0), [])).toBeNull();
+  });
+});
+
+describe('polylineLength', () => {
+  it('sums the segment lengths (3-4-5 then straight 10)', () => {
+    expect(polylineLength([v(0, 0), v(3, 4), v(3, 14)])).toBe(15);
+  });
+  it('is 0 for empty and single-point polylines', () => {
+    expect(polylineLength([])).toBe(0);
+    expect(polylineLength([v(5, 5)])).toBe(0);
+  });
+  it('counts repeated points as zero-length segments', () => {
+    expect(polylineLength([v(1, 1), v(1, 1), v(4, 5)])).toBe(5);
   });
 });
 
