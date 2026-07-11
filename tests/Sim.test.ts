@@ -96,6 +96,29 @@ describe('Sim — up strokes make the fighter jump (start.x → end.x, arc)', ()
   });
 });
 
+describe('Sim — jump edge cases (found in Stage 1 browser verify)', () => {
+  const jumpStroke = (fromX: number, toX: number): DrawnStroke =>
+    new DrawnStroke([v(fromX, 300), v(toX, 100)]);
+  it('a jump gesture while airborne is ignored (no mid-air ground capture)', () => {
+    const sim = makeSim();
+    sim.applyStroke(jumpStroke(300, 320), attacker);
+    for (let i = 0; i < JUMP_DURATION_FRAMES / 2; i++) sim.tick();
+    const midAir = { ...sim.fighter.pos };
+    sim.applyStroke(jumpStroke(500, 520), attacker);
+    expect(sim.fighter.pos).toEqual(midAir); // unchanged — stroke ignored
+    for (let i = 0; i < JUMP_DURATION_FRAMES; i++) sim.tick();
+    expect(sim.fighter.pos).toEqual({ x: 320, y: 200 }); // original jump completes
+  });
+  it('sequential jumps always land back on the spawn ground line', () => {
+    const sim = makeSim();
+    sim.applyStroke(jumpStroke(300, 320), attacker);
+    for (let i = 0; i < JUMP_DURATION_FRAMES; i++) sim.tick();
+    sim.applyStroke(jumpStroke(320, 400), attacker);
+    for (let i = 0; i < JUMP_DURATION_FRAMES; i++) sim.tick();
+    expect(sim.fighter.pos).toEqual({ x: 400, y: 200 });
+  });
+});
+
 describe('Sim — launch and stab are Stage-2 no-ops', () => {
   it('classifies but does not act', () => {
     const sim = makeSim();

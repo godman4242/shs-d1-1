@@ -51,6 +51,9 @@ export class Sim {
   private readonly state: { pos: Vec; hp: number; stance: StanceId };
   private readonly halfW: number;
   private readonly halfH: number;
+  /** The spawn ground line — jumps always launch from and land on it
+   * (capturing pos.y mid-air left the fighter floating; browser-verified bug). */
+  private readonly groundY: number;
   private jump: JumpState | null = null;
 
   constructor(
@@ -61,6 +64,7 @@ export class Sim {
     this.state = { pos: { ...spawn.pos }, hp: spawn.hp, stance: spawn.stance };
     this.halfW = spawn.halfW;
     this.halfH = spawn.halfH;
+    this.groundY = spawn.pos.y;
   }
 
   get fighter(): Readonly<{ pos: Readonly<Vec>; hp: number; stance: StanceId }> {
@@ -97,10 +101,14 @@ export class Sim {
     if (gesture === 'jump') {
       const first = stroke.points.at(ZERO);
       const last = stroke.points.at(-ONE);
-      if (first !== undefined && last !== undefined) {
-        const groundY = this.state.pos.y;
-        this.jump = { from: { x: first.x, y: groundY }, to: { x: last.x, y: groundY }, frame: ZERO };
-        this.state.pos = { x: first.x, y: groundY };
+      // One jump at a time: a jump gesture while airborne is ignored.
+      if (this.jump === null && first !== undefined && last !== undefined) {
+        this.jump = {
+          from: { x: first.x, y: this.groundY },
+          to: { x: last.x, y: this.groundY },
+          frame: ZERO,
+        };
+        this.state.pos = { x: first.x, y: this.groundY };
       }
       return { gesture, slash: null };
     }

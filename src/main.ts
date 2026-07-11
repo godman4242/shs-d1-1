@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import { COL } from './config/palette';
 import { GAME_WIDTH, GAME_HEIGHT } from './config/display';
-import { BootScene } from './game/BootScene';
+import { DuelScene } from './game/DuelScene';
 
-new Phaser.Game({
+const game = new Phaser.Game({
   // WEBGL explicitly (not AUTO): the art direction relies on WebGL-only
   // features (e.g. Graphics gradients). Failing loudly beats degrading silently.
   type: Phaser.WEBGL,
@@ -15,5 +15,11 @@ new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene],
+  scene: [DuelScene],
 });
+
+// Dev-only verification seam: lets automated browser checks step the loop
+// manually when Chrome occlusion-throttles rAF. Absent from production builds.
+if (import.meta.env.DEV) {
+  (window as unknown as Record<string, unknown>).__game = game;
+}

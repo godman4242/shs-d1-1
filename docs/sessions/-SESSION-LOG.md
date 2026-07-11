@@ -56,4 +56,25 @@ Crash-resilience log. Updated per milestone, never "at the end."
   docs/loop/GOAL.md (fresh `claude -p` cycles, PAUSE file, backoff,
   stage-gate-aware hard rules, single-writer warning). NOT running it now —
   this session stays the single writer.
+- **01:40** config/fx.ts (pins RED→GREEN; caught a `*/` inside the docblock
+  breaking parse — also caught that piping vitest to `tail` masks its exit
+  code; stopped doing that). Sim milestone: trajectory.ts pulled forward
+  (5 tests), Sim Stage-1 surface (10 tests), config/duel.ts INFERRED pins.
+  Game-import guard chaos-proven (direct + transitive canaries RED → GREEN).
+- **02:20** DuelScene + browser verification (the payoff round):
+  - Boots in Chrome: layered forest, capsule fighter, HP bar, Phaser 3.90
+    WebGL banner, ZERO console errors (pasted).
+  - **Two real bugs found by driving the browser:** (1) sim ticks were tied
+    to render frames — occluded-window rAF throttling froze the jump; fixed
+    with a fixed-step wall-clock accumulator (60Hz, 250ms clamp) in update().
+    (2) a jump gesture while airborne captured mid-air y as the new ground —
+    fighter floated forever; fixed in Sim (spawn groundY anchor + one-jump-
+    at-a-time), RED test first, then GREEN. Plus: stroke release point was
+    dropped (pointerup coords now appended; landing verified exact 430/430).
+  - Occlusion made 200ms FX unphotographable → dev-only `window.__game`
+    handle (DEV-guarded) + manual loop.step()/sleep() protocol captured:
+    two-layer blade trail zoom (white core in chi-blue edge, pinched tips),
+    directional blood both ways (right-cut spray right, left-cut spray left),
+    jump takeoff/apex/landing state reads ({400,430}→{406.6,310.8}→{430,430}).
+  - HP-based partial damage on screen: 100→88→76→64 (exact 12s).
 - (milestones appended below as they land)
