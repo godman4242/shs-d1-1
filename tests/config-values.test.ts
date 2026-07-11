@@ -22,7 +22,8 @@ import {
   SPAWN_INVULN_S,
   WEAPON_WEIGHT,
 } from '../src/config/combat';
-import { FOUR, HALF, ONE, TWO, ZERO } from '../src/config/nums';
+import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
+import { FOUR, HALF, HALF_TURN_DEG, ONE, TWO, ZERO } from '../src/config/nums';
 import { LAUNCH_UNLOCK_LEVEL, STANCE_BEATS, STANCE_TABLE } from '../src/config/stances';
 import { FIXED_HZ, SLASH_FRAMES } from '../src/config/timing';
 
@@ -108,6 +109,14 @@ describe('nums.ts — pure-math identities (Stage 1; core/ bans ALL literals)', 
     expect(TWO).toBe(2);
     expect(FOUR).toBe(4);
     expect(HALF).toBe(0.5);
+    expect(HALF_TURN_DEG).toBe(180);
+  });
+});
+
+describe('gesture.ts — classification thresholds (Stage 1, INFERRED)', () => {
+  it('sector boundary and flick cutoff', () => {
+    expect(GESTURE_DIAG_DEG).toBe(45);
+    expect(LAUNCH_FLICK_MAX_LEN).toBe(90);
   });
 });
 
