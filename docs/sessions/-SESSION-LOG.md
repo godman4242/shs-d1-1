@@ -45,4 +45,15 @@ Crash-resilience log. Updated per milestone, never "at the end."
   **Chaos red-proof done:** finite-guard disarmed → `NaN/Infinity clamp` +
   `±1e308` tests RED (NaN leaked into points; length went Inf) → restored →
   12/12 GREEN. Suite 102/102, lint + both tsconfigs green.
+- **01:05** stance.ts (8 tests: enum→StanceId, triangle, counterMult) +
+  slash.ts (14 tests: hit/miss/inside, formula incl. crit·counter stack,
+  DAMAGE_FLOOR, whiff-crit=false, multi-foe, lethal-only severing) — RED
+  first, then GREEN. Suite 122/122.
+- **01:15** Kheshav asleep — authorized continuous autonomous work overnight
+  (memory: project-overnight-autonomy). Honest scope set: Stage 1 gate green +
+  deep Stage 2 progress by morning, NOT "the whole game" (Stage 6 gate needs
+  his hands). Committed crash insurance: scripts/build-loop.sh +
+  docs/loop/GOAL.md (fresh `claude -p` cycles, PAUSE file, backoff,
+  stage-gate-aware hard rules, single-writer warning). NOT running it now —
+  this session stays the single writer.
 - (milestones appended below as they land)

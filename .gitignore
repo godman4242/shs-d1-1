@@ -10,3 +10,7 @@ reference/
 
 # Local env / editor scratch
 *.local
+
+# Loop-local files (never committed)
+docs/loop/PAUSE
+docs/loop/reports/
