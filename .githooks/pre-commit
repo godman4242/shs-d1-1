@@ -6,7 +6,7 @@
 #   Go:     BUILD_CMD="go build ./..."  TEST_CMD="go test ./..."  LINT_CMD="go vet ./..."
 BUILD_CMD="npm run -s typecheck"
 TEST_CMD="npx vitest run"
-LINT_CMD=""  # no linter in the fixed stack yet — ESLint proposed in RESUME_HERE.md open decisions
+LINT_CMD="npm run -s lint"  # ESLint flat config (strict type-checked) — adopted Stage 1 kickoff
 
 # Skip inside CI (CI runs its own checks).
 [ -n "$CI" ] && exit 0

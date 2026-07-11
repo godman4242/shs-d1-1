@@ -21,3 +21,21 @@ Crash-resilience log. Updated per milestone, never "at the end."
 - **17:00** Follow-up tranche COMPLETED: 12/12 (A-25…A-30, B-24…B-29), 0 failures. Study evidence base final: 61 verified segments. Big finds: stance = instant out-of-combat toggle + hard in-combat lock; AP menu-only w/ cost pattern picks-1/searches-2/stable-5; timed-quest journal FINISH/ABANDON + day expiry; faction-influence tradeoff (+prosperity AND +Aka Ryu influence); ladder = BUILD progress action; keys = abstract quest-flags; XP threshold curve L1–L10 complete.
 - **17:30** SYNTHESIS.md written (9 sections: mechanics catalogue, story, UI inventory, feel, research cross-check, contradictions, config-territory table, skip list, wishlist) + adversarial 4-agent verification workflow `wf_f8211741-fb4` over every citation/number. original-game-facts.md got the video cross-check block; STUDY_PROTOCOL ⚡ neutralized (sweep done, don't re-run); RESUME_HERE refocused to Stage 1. **VIDEO STUDY COMPLETE.**
 - (milestones appended below as they land)
+
+## 2026-07-11 — Session 3: Stage 1 slash engine
+
+- **00:00** Session start from `docs/sessions/STAGE1_KICKOFF.md`. Read order done
+  (kickoff → MASTER_SPEC Stage 1 + errata → SYNTHESIS §1.1/§4/§6/§7 → folder
+  rules). TDD skill invoked BEFORE any code. Plan: ESLint (decision #4 default)
+  → TDD core vec→geometry→gesture→DrawnStroke→stance→slash (+trajectory pulled
+  forward for the jump-arc gate item) → config nums/fx + pins → chaos red-proofs
+  → game-import test guard → DuelScene → browser verify → audit workflow → gate
+  evidence. Deviation flagged: gesture.ts TDD'd before DrawnStroke.ts
+  (DrawnStroke delegates classification); veto = inline classification.
+- **00:20** ESLint milestone GREEN: eslint 9 + typescript-eslint 8 flat config
+  (strictTypeChecked + stylisticTypeChecked, explicit two-project array because
+  projectService only auto-finds tsconfig.json). 2 rule tunings flagged
+  (template allowNumber; array-simple). Existing-code fixes: OpponentIntent
+  empty-interface gets an explained disable. lint+tsc+42/42 tests green.
+  Doc miscount fixed: Stage 0 suite is 42 tests, not 43.
+- (milestones appended below as they land)

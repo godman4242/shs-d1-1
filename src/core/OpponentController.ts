@@ -6,6 +6,7 @@
  * strikes, stance switches, kunai). Until then it is deliberately empty:
  * the seam exists so Sim never grows a hard AI dependency.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- deliberately empty Stage-2 seam (see docblock)
 export interface OpponentIntent {}
 
 export interface OpponentController {

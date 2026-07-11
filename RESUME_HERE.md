@@ -10,7 +10,11 @@ and carries the binary gate. Read order, scope, gate, and due decisions all
 live there — start every Stage 1 session from that file.
 
 ## State
-- **Stage 0: GREEN + audited (2026-07-11).** tsc (both configs) exit 0 · 43/43 tests ·
+- **Stage 1 in flight (2026-07-11):** ESLint adopted (decision #4 default) —
+  flat config `eslint.config.mjs`, strictTypeChecked + stylisticTypeChecked over
+  both tsconfigs, `npm run lint` green, wired as pre-commit LINT_CMD.
+- **Stage 0: GREEN + audited (2026-07-11).** tsc (both configs) exit 0 · 42/42 tests
+  (the "43" previously noted here was a miscount; verbose run lists 42) ·
   purity gate chaos-proven (planted literal → red; planted core Phaser import → red;
   planted `.mts` literal → red; removed → green) · boots in Chrome (Phaser 3.90.0
   WebGL banner, letterboxed sky gradient, zero console errors).
@@ -48,8 +52,9 @@ implement `src/core/vec.ts` importing any needed pure-math constants from a new
 3. **Rebirth bonus** (Stage 3): not flat +10 Attack — +10 chosen elemental skill,
    stacking (gold schedule 25/100/25 confirmed as specced). Default: implement
    elemental version.
-4. **ESLint**: not in the fixed stack; gate's LINT_CMD is empty. Default: add
-   eslint + typescript-eslint (flat config) at Stage 1 kickoff.
+4. ~~ESLint~~ **DONE (Stage 1 kickoff)**: eslint + typescript-eslint flat config,
+   strict type-checked presets, LINT_CMD wired. Veto = delete eslint.config.mjs,
+   empty LINT_CMD, `npm rm eslint @eslint/js typescript-eslint`.
 5. **`~/.claude/new-project.sh` writes invalid JSON** into `.claude/settings.json`
    (unescaped quotes in the hook command) — every future project gets a dead
    ship-bar hook. Fixed here; the installer itself still needs the fix (outside
