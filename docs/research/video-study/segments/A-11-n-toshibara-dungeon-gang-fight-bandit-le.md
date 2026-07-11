@@ -1,0 +1,76 @@
+# A-11 N Toshibara Dungeon: gang FIGHT! + Bandit Leader VS pt1 (22:40–25:10)
+
+## Screens & layout   (positions, colors, typography, exact HUD contents; short UI labels verbatim OK)
+
+**Overworld/field HUD (t=22:40–22:58, "N Toshibara Field" → "N Toshibara Ruins"):**
+- Top-left: coin-pouch icon + count ("163 COINS"), location banner below it in a dark-brown scroll frame ("N TOSHIBARA FIELD" / later "N TOSHIBARA RUINS"), and under that a smaller quest-tracker banner: `SIDE QUEST: GET WARM PANTS OF HEALTH FOR YOKO` (persists across this whole segment, unchanged).
+- Top-center: red "REGISTER" pill button + caption "TO SAVE YOUR PROGRESS AND PLAY ONLINE!" (persistent nag banner, present on every non-combat frame).
+- Top-right: diamond/gem icon + "XP / next-level XP" fraction (e.g. "4274 / 5150 EXPERIENCE POINTS"), and below it a minimap panel in an ornate gold-leaf-corner frame: compass N/W/E/S labels, a mini top-down grid showing rooms, doors, the player arrow icon, and text "TERRITORY (22,51)" / "SECTOR (2,1)" or "INSIDE SECTOR (3,1)" once indoors.
+- Bottom-left: player portrait roundel (samurai in straw conical hat), HP bar (green, "19/20" style), Chi/stamina bar (blue, "15/15"), current stance label ("HEAVY STANCE"), small red "+" quick-item button.
+- Bottom-center: row of 8 square icon buttons — chat bubble "…", a brown leaf/cloak-shaped icon, a yin-yang icon, a crossbow/weapon icon, a scroll/candle icon, a grey hex/stone icon, a black ninja-mask icon, a gear/settings icon.
+- Character name tag "GUEST" floats in yellow text above the player sprite at all times.
+
+**Dungeon interior HUD (from t=23:05 "N Toshibara Dungeon"):** identical HUD chrome, but background swaps to dark purple-grey brick walls with wooden support beams, floor lined with barrels/crates/urns/a wooden bench. Wayfinding signposts read "W", "E", "N", "S" at room edges. Minimap frame goes from the outdoor "compass rose in gold corners" style to a simpler indoor square-room diagram with a key icon (unlock progress) and a skull icon (marks the Bandit Leader room to the north).
+
+**Combat HUD (once a fight starts):** top HUD (coins/XP/quest banners) disappears; new elements appear:
+- Top-left: brown pill button "AUTO SLASH OFF".
+- Top-right: red circular pause icon; a large red hit-combo counter appears above "HIT COMBO" text whenever consecutive hits land (e.g. "2", "4").
+- Bottom-left: same HP/Chi bars, but stance label is replaced with grey "CANNOT CHANGE STANCE" while in combat.
+- Bottom-right: two small square counters showing remaining-enemy tallies (seen as "2" and "3" during the first gang fight — likely "enemies remaining in current wave" / "waves remaining").
+- Enemies get a thin green HP bar over their heads plus a name/level tag in red, e.g. "BANDIT (4)", "BANDIT LEADER (6)" — the number in parentheses reads as an enemy level.
+- Player's own HP bar over their head reads "GUEST" in yellow.
+
+**FIGHT! splash (t≈23:20):** black screen, red-orange gradient-fill "FIGHT!" text (script/brush font with red glow/drip), two green HP-bar rows above silhouetted rosters — left roster = 3 enemies walking in from the left edge (all wearing patrol caps/hats, one in blue kimono top), right roster = the player alone. This is a "3 vs 1 but player is on defense" framing shot before the fight camera cuts to gameplay.
+
+**VS splash (t≈24:35 and again ≈25:02):** black background, large red "VS" cracked-paint lettering center-screen. Left side: "GUEST" name + zoomed player portrait (same conical-hat sprite, sword sheathed) above a smaller full-body sprite; right side mirrors it with "BANDIT LEADER" name + portrait (young man, dark ninja-style cloth wrap under a light-brown straw hat, katana in hand) above a full-body sprite labeled "BANDIT LEADER (6)" with its own green HP bar. HUD chrome (AUTO SLASH OFF pill, HP/Chi bars, hit-combo area) is already present under the splash, meaning the VS card overlays a live scene rather than a separate loading screen.
+
+**Defeat screen (t≈24:58):** black screen fading from red, jagged red-splatter "YOU WERE DEFEATED!" headline (same brush font family as "FIGHT!"/"YOU WIN"), two buttons stacked center: "LEAVE AREA" and "FREE RESPAWN" (dark maroon pill buttons, gold border, white text). Below, a dialogue-box strip: left tab reads "BANDIT LEADER" (black tab, white text), body text (own-words paraphrase, not verbatim boast) with the boss's defeated-player taunt line, and the boss's portrait icon bottom-right of the box.
+
+**Victory screen ("YOU WIN"):** solid red background, black silhouette floor with silhouetted player + fallen-enemy shapes, red-drip brush-font "YOU WIN" headline — visually the same template family as "FIGHT!" and the defeat screen, just green swapped for red/positive framing. Followed by a gold-ornate-corner "YOU RECEIVED" reward card: item icon (grey rectangular tile, looks like a cloth/parchment scrap) + quantity, and "XP" + amount, with a red "OK" confirm button.
+
+## Mechanics observed (rules, numbers, timings, damage/HP/cost values you can read — cite frame t=MM:SS for each claim)
+
+- Player stats at segment start (t=22:40): HP 19/20, Chi/Stamina 15/15, Coins 163, XP 4274/5150, stance = "HEAVY STANCE".
+- Small ambush fight #1 (bandits already engaged mid-frame, t≈23:00–23:10): player took a hit for **-4 HP** shown as red floating "-4" over "GUEST" with enemy speech bubble "DIE!" (t=23:00). Hit-combo counter reached "2 HIT COMBO" (t=23:02). Reward on win (t≈23:08): 1× unidentified cloth/scrap item ×**5**, **XP 112**. Post-fight (t=23:12): Coins 168 (+5 from 163), HP fully restored to 20/20, XP 4386/5150.
+- Gang fight #2, "FIGHT!" vs a **3–4 bandit roster** triggered by walking east and colliding with a "BANDIT (4)" named NPC (t=23:20 FIGHT! splash shows 3 silhouettes vs player). HP drops across the fight: 20→15 (t=23:30, "15/20" shown, hit-combo "2"), →14 (t=23:32). Red vignette/near-death overlay begins appearing around HP≈14–15/20 (not just at the very low HP later — the game applies a red screen tint whenever a hit lands, intensifying as HP drops). Win at t≈23:38–23:40. Rewards not itemized on-screen in captured frames, but post-fight (t=23:45): Coins 188 (+20 from 168), XP 4806/5150 (+420 from 4386). HP settles at 15/20 (t=23:48) — no natural regen shown between this fight and the next.
+- Gang fight #3, another "BANDIT (4)"-triggered FIGHT! vs a 5-enemy roster (t=24:10, roster shows 2 close + "BANDIT(4)" + 2 more with a bow-wielding enemy at the far right). This one resolves fast: HP stays flat at **15/20 the entire fight** (t=24:10 through win ≈24:15), hit-combo reached "4 HIT COMBO" (t=24:12) — implies a clean no-damage-taken combo win. Reward again not itemized in captured frames; post-fight (t=24:25): Coins 193 (+5 from 188), XP 4946/5150 (+140 from 4806), HP ticked up to 16/20 (regen of +1 between encounters).
+- Locked door mechanic: an ornate stone demon/oni-face door decoration appears mounted above a corridor doorway (t=24:00–24:08, purely decorative wall relief, not the door itself) followed shortly by an actual arched wooden door with a padlock icon in the minimap ("🔒" glyph on the compass HUD, t=24:20). Standing next to the door surfaces a contextual prompt **"UNLOCK DOOR"** in the quest-banner slot (t=24:22) — no cost/key-item shown on screen; the door unlocks (padlock icon on minimap disappears, replaced by open-path lines) and the path north to the boss room opens.
+- Bandit Leader is level **"(6)"** per every on-screen tag (vs regular Bandits tagged "(4)"). First sighted standing still, sword drawn, past the unlocked door (t=24:30, corridor still shows player HP 16/20, Chi 15/15).
+- **VS splash #1** (t=24:35): GUEST vs BANDIT LEADER (6), HP 16/20 / Chi 15/15 at splash time.
+- **Boss fight attempt #1** (t=24:38 onward): HP drains fast — 18/20 (t=24:38, already -2 by the time gameplay is visible under the splash) → 10/20 (t=24:40, big red vignette spike, "2 HIT COMBO" shown once at t=24:45 alongside HP 4/20) → 6/20 (t=24:42) → 4/20 (t=24:45, "2 HIT COMBO") → 4/20 (t=24:48) → 2/20 (t=24:50) → a red "**10**" floating damage number appears near the player with a "1 HIT COMBO" tag and the enemy shown knocked down/prone (t=24:52) — reads as the player landing a 10-damage hit on the Bandit Leader, but it isn't enough: **HP hits 0 and "YOU WERE DEFEATED!" fires at t=24:58.**
+- Defeat screen offers two choices: "LEAVE AREA" / "FREE RESPAWN" — respawn is explicitly free (no coin/item cost shown).
+- **Free respawn** returns the player to the dungeon corridor just south of the boss door (t=25:00) — Bandit Leader's HP bar is still shown near-full green in the background health-bar strip, implying the boss does **not** reset/heal fully between player-death attempts within this capture (bar looks ~95% at t=25:00, essentially untouched — consistent with the player having barely scratched it turn one).
+- **VS splash #2** (t=25:02): GUEST vs BANDIT LEADER (6) again, this time HP fully restored to **20/20** (free respawn heals the player to full), Chi 15/15.
+- **Boss fight attempt #2** begins (t=25:05, HP already ticked to 18/20 from an opening exchange) and by segment end (t=25:08) HP is down to **10/20** already — the fight is clearly faster/harder the second time or the player is taking bigger early hits; segment cuts off here mid-fight (labeled "pt1" — continues in the next segment).
+- Enemy-remaining counters "2" / "3" bottom-right during multi-enemy fights (t=23:02, 23:20, 23:45) — best read as a wave/kill tracker rather than a fixed roster size, since the visible enemy count on screen (3–5 sprites) doesn't map 1:1 to those two numbers; likely two separate trackers (e.g. "enemies left" and "total waves").
+
+## Story/dialogue     (OWN-WORDS summary; names/quest titles OK; no verbatim dialogue)
+
+The player (tagged "GUEST," i.e., not logged in — a persistent "REGISTER to save your progress and play online!" banner nags throughout) is still working the "Get Warm Pants of Health for Yoko" side quest first seen in earlier segments. Traveling east through N Toshibara Field into the Ruins, they enter N Toshibara Dungeon, a brick-and-timber cellar/undercroft dressed with barrels, crates, and storage jars. Three back-to-back scuffles with rank-and-file "Bandit" mobs clear the way to a locked door decorated with a carved demon-face relief; unlocking it reveals a lone bandit boss standing guard, introduced via a formal VS card as the "Bandit Leader" (level 6). The boss taunts the player after winning the first clash, essentially declaring himself unbeatable, then lets the player respawn for free right outside his door to try again — the second attempt is already going worse than the first by the time this segment ends.
+
+## Feel               (pacing, camera, animation weight, FX; if combat: rough per-encounter durations in seconds)
+
+- Field/ruins traversal is slow, atmospheric side-scrolling with parallax fog/mountain backgrounds and swaying dead trees; camera holds steady, player auto-faces travel direction.
+- Combat transitions are abrupt: a full-screen black "FIGHT!"/"VS" card (roughly 2–5s based on frame sampling) interrupts exploration instantly, no fade-in warning beat.
+- Trash-mob fights are brisk: encounter #1 spans roughly **t=23:00→23:10 (~10s)**, encounter #2 roughly **t=23:20→23:40 (~20s)**, encounter #3 roughly **t=24:10→24:15 (~5s, notably fast — a clean 4-hit-combo win)**. Enemies visibly ragdoll/fall with red blood-splatter particle bursts on kill; multiple corpses can be stacked on screen at once (seen 2–3 fallen bodies mid-fight).
+- Hit-combo counter animates in large red slam-in text top-right, reinforcing an arcade-beat-'em-up combo-scoring feel even though this reads as a single-lane samurai side-scroller, not a true multi-directional brawler.
+- Damage feedback uses a full-screen red vignette/tint that darkens toward the top of frame as HP drops — intensity appears to scale with how low HP is (subtle at 14-15/20, heavy black-red crush by 4/20, near-total blackout with only a sliver of red at the very bottom by 2/20).
+- The Bandit Leader boss fight (attempt #1) is markedly longer and more punishing than any trash fight: **~24:38→24:58, ~20s**, but with steep, near-continuous HP loss (18→0) versus the shallow, recoverable dips of trash fights — this reads as the game's first real "you can lose" difficulty spike, consistent with the segment's framing as a named mini-boss introduction.
+- Free-respawn flow is near-instant (no loading screen, just cuts back to the corridor at full HP) — death has effectively zero time-cost penalty in this build/version, only a positional reset back outside the boss door.
+
+## Recreation notes   (config values to add/adjust, which build Stage this maps to, anything contradicting the repo's spec/research docs)
+
+- **Stage mapping:** this segment is squarely combat/encounter-flow content — relevant once `game/` scenes for FIGHT!/VS splash cards, HP/Chi HUD, hit-combo counter, and win/defeat screens are being built (post-Sim-core stage, once `Sim` fixed-tick combat exists to drive these overlays).
+- **Config values to add to `src/config/` (all as CONTRACT once corroborated across more segments, INFERRED here from single-segment observation):**
+  - Player max HP observed = 20 (`19/20`, `20/20` seen); max Chi/Stamina = 15 (`15/15` constant throughout, never seen to deplete in this segment — worth checking other segments for what drains it).
+  - Regular "Bandit" enemy level tag = 4; "Bandit Leader" mini-boss level tag = 6.
+  - Observed single-hit player damage taken: **-4 HP** (one instance, t=23:00) — too small a sample to treat as a fixed "light hit" constant, flag as INFERRED only.
+  - Observed single hit dealt by player to Bandit Leader: **10 damage** (t=24:52) shown as a floating red number — also a single sample; worth cross-referencing against other boss-fight segments for a stance/weapon-damage table.
+  - XP rewards observed: 112 (small ambush fight), 420 (3-enemy FIGHT!), 140 (fast 5-enemy FIGHT!) — inconsistent scaling with enemy count, suggests XP may be per-kill-type/level rather than a flat per-encounter value; do not hardcode a single "XP per fight" constant.
+  - Coin rewards observed: +5, +20, +5 across the three trash fights — also non-uniform, same caveat as XP.
+  - Free respawn confirmed to cost nothing (no coin/item deduction shown) and to fully heal the player to max HP — relevant for a `respawn.cost = 0` / `respawn.healToFull = true` config contract.
+- **Contextual "UNLOCK DOOR" interact prompt**: worth modeling as a generic "world interact prompt" system (same UI slot the quest-banner uses) rather than a bespoke door-only feature, since the label swapped cleanly into that HUD region.
+- **Nothing here contradicts existing repo specs** — this segment reinforces the "GUEST" nameplate, straw-hat silhouette, HEAVY STANCE default, and the FIGHT!/VS/YOU WIN/YOU WERE DEFEATED screen family already implied by prior segment notes; no new contradictions to flag.
+- Enemy "remaining" counters (the "2"/"3" bottom-right combat HUD tiles) need a follow-up segment with a fight that ends mid-wave to disambiguate whether they track "enemies left in current wave" vs "waves left" vs something else — flagged as an open question, not resolved by this segment alone.
+
+## VERIFIED

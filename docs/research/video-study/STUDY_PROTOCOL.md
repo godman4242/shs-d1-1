@@ -43,8 +43,13 @@ frames live under `reference/` (gitignored, study-only, never distributed).
       + loading screen at t=0:03 both captured; game version v0.717 on login footer)
 - [x] B map — DONE (salvaged → `B-MAP.md`, 32 chapters; map frames on disk)
 - [x] A map — DONE on 2nd run (salvaged → `A-MAP.md`, 41 chapters; NO War Room in PART 1)
-- [ ] Dense segments A + B — all 48 pending (two quota outages: resets were 4:30am,
-      then 3:50pm Asia/Kuala_Lumpur — the window keeps dying under Fable-tier agents)
+- [x] Dense segments A + B — 48/48 written + VERIFIED (sweep `wf_8bebd64e-7ff` completed
+      2026-07-11 ~17:00 after the 3:50pm reset; 0 failures)
+- [ ] Follow-up tranche — 12 dropped-slice segments (A-25…A-30, B-24…B-29) holding new
+      mechanics the 24/video cap cut (AP costs, timed quest, archer, ladder, key pickup,
+      Recent Happenings Board…) — workflow `wf_c73bc346-e75` running. The other 28
+      dropped slices are documented grind/travel/outros — deliberately skipped;
+      skip list goes in SYNTHESIS.md.
 - [ ] SYNTHESIS.md + RESUME_HERE update
 
 ## ⚡ RESUME THE SWEEP (repeat this after EVERY quota reset until done)

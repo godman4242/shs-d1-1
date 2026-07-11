@@ -2,10 +2,13 @@
 
 ## Current focus
 **Finish the reference-video study, THEN Stage 1.**
-1. Resume the video sweep — exact command in `docs/research/video-study/STUDY_PROTOCOL.md`
-   ("⚡ RESUME THE SWEEP" section). Blocked until the plan quota resets (4:30am
-   Asia/Kuala_Lumpur); it died mid-run on session limits, nothing was lost.
-2. When segments are in: write `docs/research/video-study/SYNTHESIS.md`, fold new
+1. ✅ Main sweep DONE (2026-07-11): 48/48 dense segments written + VERIFIED in
+   `docs/research/video-study/segments/`. A 12-segment follow-up tranche over the
+   highest-value dropped map slices (AP costs, timed quest, archer, ladder, key
+   pickup…) is running — workflow `wf_c73bc346-e75`; if it dies, resume per the
+   Workflow resume rule with that run ID (script under this session's
+   `workflows/scripts/`).
+2. When follow-ups are in: write `docs/research/video-study/SYNTHESIS.md`, fold new
    config territory into the plan (XP thresholds, buffs, forge, tolls, AP costs,
    timed/escort quests, Ninja Services — see `B-MAP.md` "Standout systems"), update
    `original-game-facts.md` cross-checks, commit.

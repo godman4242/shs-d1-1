@@ -1,0 +1,70 @@
+# A-19 Inn story: meeting Satoshi (Episode 1 opener) (37:20–38:50)
+
+## Screens & layout   (positions, colors, typography, exact HUD contents; short UI labels verbatim OK)
+
+**Quests menu overlay** (t=37:20, also reappears t=38:48):
+- Top-left title "QUESTS" in gold script font, red X close button top-right.
+- Left column: vertical list of quest-giver tabs on dark rounded buttons: "EPISODE 1" (highlighted gray/active tab), "GOJO OTONDO'S QUEST", "KAWASHI MASATSUGU'S QUEST", "MASATORA'S QUEST", and later (t=38:48) a 5th tab appears: "AKITOSHI'S QUEST".
+- Right panel: dark reddish-brown gradient background with large silhouetted ronin figure (spear/sword over shoulder) art on the right edge.
+- Quest text block: quest title line, "(RECOMMENDED LEVEL: 6)" sub-line for the main story quest; location line "CHIKADA CITY, INN / TERRITORY (23,52) SECTOR (1,3)".
+- Orange/red "TAKE ME THERE" button with a small gold-coin "5" cost badge next to it (premium/fast-travel currency, distinct from Gold counter top-right showing "3").
+- At t=38:48 the Akitoshi quest panel shows: title "GET STURDY GARMENT OF FOCUS FOR AKITOSHI", sub-line "(THIS QUEST EXPIRES AT THE END OF THE DAY)", location "NE KAKUCHI MINE / TERRITORY (24,52) SECTOR (5,0)", a "REWARD" block listing "500 XP", "30 COINS", "TOWN PROSPERITY: +10", "TAKE ME THERE" (5-gold) button, and a red "ABANDON QUEST" button bottom-right.
+
+**Overworld HUD** (consistent across all navigation frames, e.g. t=37:22–38:12, 38:42):
+- Top-left: coin icon + "259 / COINS" (label under number).
+- Top-center: red "REGISTER" button with sub-caption "TO SAVE YOUR PROGRESS AND PLAY ONLINE!" (freemium nag banner — browser-game era UI).
+- Top-right: diamond icon + XP bar/counter, e.g. "7593 / 8350 EXPERIENCE POINTS" rising to "8093 / 8350" after the Satoshi quest hand-in (confirms +500 XP reward applied).
+- Below top bar, left: black rounded location banner (district name), e.g. "GAMBLING DEN CORRIDOR" → "GAMBLING DEN" → "ENTERTAINMENT DISTRICT" → "MAIN STREET" → "INN".
+- Below that: a persistent quest-tracker line in white text, e.g. "STORY QUEST: MEET SATOSHI AT THE INN" which later updates to "STORY QUEST: GET BOUNTY NOTICE FROM THE BOUNTY BOARD" (t=38:12) and "SIDE QUEST: GET STURDY GARMENT OF FOCUS FOR AKITOSHI" (t=38:20).
+- Top-right minimap: ornate gold picture-frame border, compass rose labeled N/S/E/W, small pixel icons marking points of interest (coin-purse icon, sleeping "Zzz" icon for a resting NPC, a lantern/torch icon marking current position), plus "TERRITORY (23,52)" / "INSIDE SECTOR (1,3)" text beneath the frame.
+- Bottom-left: player portrait roundel (straw-hat ronin), green HP bar "19 / 20", blue second bar "20 / 20" labeled "HEAVY STANCE", small red "+" button beside portrait.
+- Bottom action bar (icon row, left to right): speech-bubble/chat icon, brown teardrop/rice-ball icon, yin-yang icon, saw/blade-sharpening icon, yellow scroll/candle icon, gray stone icon, black ninja-mask icon, gear/settings icon.
+- Direction signposts in-world: wooden arrow signs labeled single letters "E", "W", "N", "S" mark corridor/street exits (Gambling Den Corridor → Main Street → Merchant District (N) → Inn entrance).
+- "GUEST" floating nameplate above the player character (default unregistered/guest account label — consistent with the "REGISTER" nag banner).
+- "ENTER INN" contextual footstep-icon prompt appears above the inn doorway (t=~37:48) before the interior loads.
+
+**Inn interior (dialogue) screens** (t=37:52 onward):
+- Warm yellow/olive lamp-lit tearoom, wood ceiling beams, large shoji/scroll windows showing a painted mountain-and-pine backdrop, sake barrels labeled "酒" (sake) stacked on a shelf right side, background NPCs seated at low tables eating/drinking, one NPC lying down sleeping.
+- Speaker nameplate box bottom-left: black rounded rectangle with character name in white ("SATOSHI", "GUEST", "AKITOSHI"), name text color-coded: Satoshi/Guest in white/yellow, Akitoshi's floating overworld nameplate is blue.
+- Dialogue text box: dark semi-transparent panel spanning bottom of screen, brown/gold decorative border with corner ornaments (small gold "handle" nubs at each corner), white body text, right-aligned "▶" forward-advance arrow bottom-right when more text follows.
+- Player dialogue CHOICE screens: 2–3 stacked horizontal bars — a highlighted/selected option in solid red, unselected options in dark gray/black — each a full-width clickable row of white text.
+- "YOU RECEIVED" reward popup (t=38:05): centered gold-framed modal, same ronin-silhouette art as quest panel, "XP  500" line, red "OK" confirm button.
+- Overworld reappears post-dialogue with "TALK TO SATOSHI" objective prompt (footstep-less; icon is a small chat-bubble) floating above Satoshi's head, and "!" quest-availability icons above both Satoshi and Akitoshi.
+
+## Mechanics observed (rules, numbers, timings, damage/HP/cost values you can read — cite frame t=MM:SS for each claim)
+- Player HP: 19/20 constant throughout (t=37:22–38:45) — no combat in this segment, just walking + dialogue.
+- Player secondary blue bar: 20/20, labeled "HEAVY STANCE" (stance meter, distinct from HP) — full throughout, t=37:22–38:45.
+- Coins: flat 259 the entire segment (t=37:22–38:45) — no coin cost/gain from dialogue itself.
+- XP: 7593/8350 at segment start (t=37:22) → jumps to 8093/8350 immediately after the reward popup (t=38:08, following the t=38:05 "XP 500" popup) → confirms **+500 XP** for completing "Meet Satoshi at the Inn". XP total needed to level: 8350 (implies level-up threshold not yet reached this segment).
+- Premium "Gold" currency shown in Quests menu: flat **3** the whole time (t=37:20, t=38:48) — "TAKE ME THERE" fast-travel action costs **5 gold** (shown both times, t=37:20 and t=38:48) — player doesn't have enough (3 < 5), consistent with why they walk manually instead of fast-traveling.
+- Recommended level for "Meet Satoshi at the Inn" quest: **Level 6** (t=37:20).
+- Akitoshi's side quest ("Get Sturdy Garment of Focus for Akitoshi", t=38:48) rewards: **500 XP, 30 Coins, Town Prosperity +10**; time-limited — "expires at the end of the day" (in-game day/quest-timer system).
+- Akitoshi's quest target location: "Ne Kakuchi Mine", Territory (24,52) Sector (5,0) — different territory/sector coordinates than the Inn's Territory (23,52) Sector (1,3), confirming a territory/sector grid overworld addressing scheme (two-level coordinate system: Territory X,Y then Sector X,Y within it).
+- District chain traversed on foot (west→east through town, all within Territory 23,52): Gambling Den Corridor → Gambling Den → Entertainment District → Main Street → (passes Merchant District signpost, not entered) → Inn. Multiple named sub-zones inside one territory/sector.
+- Story-quest tracker updates live as objectives complete: "MEET SATOSHI AT THE INN" → (after talking) "GET BOUNTY NOTICE FROM THE BOUNTY BOARD" (t=38:12) — quest chain advances automatically mid-conversation, no separate turn-in step shown.
+- Dialogue choices are NOT graded pass/fail here — picking the "polite"/cooperative option each time (rows appear pre-highlighted red as the "recommended"/selected branch) simply continues the same conversation thread toward the quest; no visible reputation/relationship stat shown on-screen.
+- A repeatable/branching side-conversation exists: after the main quest hand-off, the SAME 3-choice dialogue menu ("Was this guy really in the Shira Tancho?" / "Why isn't he helping Hiroshi?" / "I've heard enough.") reappears twice (t=38:22 and t=38:40) allowing the player to cycle through flavor dialogue about Satoshi's backstory before finally choosing "I should go." to end the conversation.
+
+## Story/dialogue     (OWN-WORDS summary; names/quest titles OK; no verbatim dialogue)
+The player (a guest/ronin character, unregistered "Guest" account) is sent by the Episode 1 quest log to find a samurai named Satoshi resting at the Inn. Walking there passes a sleeping NPC named Masatora outside a building on Main Street (marked with a quest "!" but not engaged this segment). Inside the Inn, Satoshi is found drunk and hungover, initially rude and dismissive when woken. The player can respond politely or sarcastically; regardless, once the player mentions they were sent by "Hiroshi," Satoshi's attitude shifts and he becomes cooperative. The player chooses to ask for work rather than pry for backstory first. Satoshi explains he's in debt after a bad gambling/investment loss and owes a creditor named Tanaka by day's end, implying violent consequences (played for dark comedy — a joking chopstick threat) if he doesn't pay. The player receives 500 XP for this hand-off and the quest updates to finding a bounty notice at a bounty board.
+
+Immediately after, a second character, Akitoshi (color-coded blue nameplate, distinct from Satoshi), greets the player and directs them to a location called "Ne Kakuchi Mine" for quest-related material — this spins up a separate side quest to retrieve a "Sturdy Garment of Focus" for Akitoshi. The player then re-engages Satoshi in optional flavor dialogue, asking whether he really served in an elite unit called the "Shira Tancho" (implied vanguard/special forces of a shogun's army) and mockingly doubting he was ever a disciplined soldier. Satoshi responds with a boastful, self-aggrandizing story about his reputation with women during his military days. The player can steer the conversation toward Satoshi's evident dislike of another character (referred to as "Shinmen") — Satoshi rants that a man he calls "Masa" has an obsequious follower who irritates him, giving a flavor of inter-NPC relationships/rivalries in the world without full explanation of who Masa/Shinmen are. The player eventually ends the conversation to move on.
+
+## Feel               (pacing, camera, animation weight, FX; if combat: rough per-encounter durations in seconds)
+- No combat in this segment — pure exploration + dialogue walking sequence, roughly 90 seconds covering: ~28s of overworld walking/navigation (t=37:20–37:48), then a location transition/loading beat (~4s white screen at t=37:50–37:52), then ~58s of static dialogue-tree conversation (t=37:52–38:45), then a brief return to overworld with new quest markers (t=38:45–38:50).
+- Camera is a fixed 2D side-scrolling plane per screen/room; no camera pans or zooms observed — screen "cuts" between distinct static backdrops as the player crosses zone-transition signposts (E/W/N/S).
+- Character movement is a simple side-scroll walk-cycle (player sprite in HUD stays static portrait; overworld sprite runs left-to-right holding a large blue-wrapped weapon/bundle on their back).
+- Dialogue scenes use large 3/4-body character portraits (Satoshi rendered at near-full-screen height on the right, in a maroon/purple kimono with dual katana, long black hair, visible stubble/hangover flush) that pop in per speaker; background NPCs continue idling/walking in a shallow parallax layer behind the dialogue box, giving the tearoom a "lived-in" ambient feel even during static text scenes.
+- No visible combat FX, no screen shake; sole "impact" beat is the gold-framed "YOU RECEIVED / XP 500" modal with a confirm click, functioning as the segment's only game-system feedback moment.
+- Overall pacing is slow/expository — heavy dialogue density (roughly 10+ text screens) relative to the 90s runtime, consistent with an "episode opener" cutscene-plus-quest-pickup structure rather than gameplay.
+
+## Recreation notes   (config values to add/adjust, which build Stage this maps to, anything contradicts the repo's spec/research docs)
+- This segment is pure narrative/quest-UI, not combat — maps to a future **dialogue/quest-system stage**, not the current combat-Sim work. No Sim-relevant numeric combat values (HP/damage/cooldowns) appear; HP/Stance bars are static placeholders (19/20 and 20/20) throughout, confirming they are non-diegetic to this cutscene.
+- Confirms a two-tier currency model worth encoding in `config/`: **Coins** (soft currency, HUD top-left) vs. **Gold** (premium/quest-menu currency used for "Take Me There" fast travel, cost = 5 gold per trip) — these are visually and functionally distinct; do not conflate.
+- Confirms **XP reward value of 500** for a story-quest dialogue hand-off (not combat) — useful CONTRACT/INFERRED number if quest-reward tables are built later. Side-quest reward bundle observed: 500 XP + 30 Coins + "Town Prosperity +10" (a third currency/stat — "Town Prosperity" — not previously documented in repo research; flag for `docs/research` follow-up as it implies a town-management or reputation meta-system tied to side quests).
+- Confirms **Territory(X,Y) / Sector(X,Y)** as the overworld's two-level coordinate/addressing scheme, useful for a future overworld/map config schema.
+- Multiple named sub-districts within a single Territory/Sector (Gambling Den Corridor, Gambling Den, Entertainment District, Main Street, Merchant District, Inn) — the overworld is organized as chained side-scrolling "rooms" connected by directional signposts (E/W/N/S), not a free-roam 2D map. Relevant to `game/` scene architecture if overworld navigation is ever built (currently out of scope per CLAUDE.md's combat-Sim-only focus).
+- Character/NPC names confirmed for story reference (paraphrase only, no asset extraction): Satoshi (drunk swordsman, quest giver), Akitoshi (second quest giver, side-quest for a "Sturdy Garment of Focus"), Masatora (background sleeping NPC, unengaged), Gojo Otondo and Kawashi Masatsugu (named elsewhere in the Quests menu tab list — other quest givers not encountered directly this segment), Hiroshi (referenced but not seen — the guest's introducer/patron), Tanaka (referenced only — Satoshi's creditor), "Shinmen"/"Masa" (referenced only — implied to be a lord/commander Satoshi resents), "Shira Tancho" (referenced only — a named military vanguard unit from Satoshi's backstory).
+- Nothing here contradicts existing repo spec/invariants; this is additive lore/UI reference for a not-yet-built quest/dialogue layer.
+
+## VERIFIED
