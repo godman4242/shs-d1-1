@@ -168,4 +168,26 @@ Crash-resilience log. Updated per milestone, never "at the end."
   (spec item 11), kunai bolt render, invuln blink. Chaos: protection check
   → 3 RED · kunai cap → 1 RED · shunpo hysteresis → 2 RED · deflect gate
   → 1 RED (after dedup). Suite 251/251 · tsc both configs exit 0 · eslint 0.
+- **09:30** Stage 2 M4 — AISeamController + config/ai.ts (20 unit + 4 Sim
+  integration tests watched RED as missing modules). Telegraph-then-commit
+  state machine (idle/telegraph/attack/recover/stancePending): strike lands
+  exactly telegraphMs after its telegraph (pinned 32 frames Normal; also
+  property-scanned over 600 frames — no untelegraphed strike); counter-pick
+  queues AI_PENDING_STANCE_MS=600 INFERRED (spec names the concept, no
+  value — flagged) behind a stance telegraph, and mirrors the Sim's Focus
+  cost before committing; kunai only in the 240–720 band (tier chance;
+  easy=0 proven over 300 frames); recover jitter ±AI_RECOVER_JITTER_FRAC
+  via injected rng; react() = block/dodge roll at most once per reactMs
+  (INFERRED: instant player slashes make latency unmodelable — reactMs is
+  an attention cadence; veto = drop reactions). Sim side: OpponentView
+  snapshot per tick, enemy moveX at ENEMY_SPEED arena-clamped, switchStance
+  through requestStanceSwitch (same Focus gate), enemyTelegraph +
+  strikeBlocked events; blocked/dodged swings keep the crit meter and don't
+  chain the combo. core/time.ts extracted as the ONE msToFrames site.
+  DuelScene: AISeamController(normal) wired, one shared mulberry32 stream
+  (deterministic call order), pulsing windup flash (red strike/blue stance).
+  Chaos: telegraph disarmed → 3 RED · affordability gate → 1 RED · react
+  cooldown → 2 RED — restored GREEN. ESLint caught 6 issues in new code
+  (unused import/param, array-type style, needless assertions) — fixed.
+  Suite 274/274 · tsc both configs exit 0 · eslint exit 0.
 - (milestones appended below as they land)

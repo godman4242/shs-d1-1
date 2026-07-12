@@ -66,13 +66,26 @@ INFERRED) · PlayerIntent moveX/shunpoHeld (NaN-guarded) + queueSkill ·
 DuelScene wired: A/D + SHIFT + 1/2/3, advance(delta × timeScale), kunai
 bolts, invuln blink. Chi COSTS deferred to Stage 3 (no Chi meter yet —
 flagged).
-Next (kickoff §1 item 5): M4 `AISeamController.ts` — telegraph-then-commit
-(windup ≥ telegraphMs before any strike), stance switches queue
-pendingStanceMs, kunai at 240–720px (Normal+), injected rng only; plus
-`config/ai.ts` (spec item 8 EXACT values, pinned same commit) and enemy
-movement (ENEMY_SPEED, approach/strike ranges). Then M5 economy.ts, M6
-scenes w/ fidelity pull-forward, M7 24-seed harness + determinism, M8 game/
-purity ratchet, M9 audit + gate evidence.
+M4 DONE (274/274): AISeamController — telegraph-then-commit (strike exactly
+telegraphMs after its telegraph, property-tested over a 600-frame run),
+counter-stance picks queued AI_PENDING_STANCE_MS=600 (INFERRED, pinned)
+behind a 'stance' telegraph + Focus-affordability mirror, kunai band
+240–720 gated by tier kunaiChance, recover jitter ±35% via rng, react()
+block/dodge with reactMs attention cooldown (INFERRED reading — flagged;
+veto = drop reactions), injected rng only. Sim executes: enemy moveX at
+ENEMY_SPEED (arena-clamped), switchStance through the same Focus-gated
+rule, enemyTelegraph + strikeBlocked events; blocked/dodged swings do NOT
+consume the crit meter or advance the combo. config/ai.ts spec-item-8
+EXACT + pinned. core/time.ts = the one msToFrames site. DuelScene: real
+AISeamController (normal tier), shared rng stream, windup flash (red =
+strike / blue = stance).
+Next: M5 `config/economy.ts` (spec item 10 EXACT, pinned; consumed by
+DuelResult at M6). Then M6 scenes with fidelity pull-forward (DuelScene
+full HUD from study frames, DuelIntro VS→READY→FIGHT!, DuelResult
+Victory/Defeat +10/+8, R restart chaos-tested, kill beat FINISHER_FLASH +
+timescale restore) + browser verify. M7 24-seed harness + cross-process
+determinism + Sim scenario suite (≥200 tests total). M8 game/ purity
+ratchet baseline. M9 adversarial audit + gate evidence table.
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 

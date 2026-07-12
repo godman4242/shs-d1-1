@@ -36,9 +36,11 @@ import { Combo } from './combo';
 import { physicalDamage } from './damage';
 import type { DrawnStroke } from './DrawnStroke';
 import type { Gesture } from './gesture';
-import type { OpponentController, OpponentIntent } from './OpponentController';
+import { ENEMY_SPEED } from '../config/ai';
+import type { OpponentController, OpponentIntent, OpponentView } from './OpponentController';
 import { isOffArena, projectileHits, spawnProjectile, stepProjectile, type Projectile } from './projectile';
 import { resolveSlash, type SlashResult } from './slash';
+import { msToFrames } from './time';
 import { jumpArcPoint } from './trajectory';
 import type { Vec } from './vec';
 
@@ -74,7 +76,9 @@ export type SimEvent =
   | { type: 'kunaiThrown' }
   | { type: 'kunaiDeflected' }
   | { type: 'shunpoStarted' }
-  | { type: 'shunpoEnded' };
+  | { type: 'shunpoEnded' }
+  | { type: 'enemyTelegraph'; kind: 'strike' | 'stance'; durationMs: number }
+  | { type: 'strikeBlocked'; by: FighterSide };
 
 /**
  * Per-tick held-state input from the scene (edge-triggered skill presses go
@@ -142,8 +146,6 @@ const focusToUnits = (focus: number): number => (focus * FIXED_HZ) / FOCUS_FILL_
 const unitsToFocus = (units: number): number => (units * FOCUS_FILL_PER_S) / FIXED_HZ;
 const unitsToCritical = (units: number): number =>
   Math.min(CRITICAL_MAX, (units * CRITICAL_FILL_PER_S) / FIXED_HZ);
-/** Wall-time ms → whole fixed frames (ceil: a window never rounds shorter). */
-const msToFrames = (ms: number): number => Math.ceil((ms * FIXED_HZ) / MS_PER_S);
 /** Shunpo meter units are 1/FIXED_HZ points: integer drain/fill, exact reads. */
 const SHUNPO_MAX_UNITS = SHUNPO_MAX * FIXED_HZ;
 const SHUNPO_MIN_UNITS = SHUNPO_MIN_TO_START * FIXED_HZ;
@@ -378,6 +380,17 @@ export class Sim {
         { atkPlusWeapon: player.atkPlusWeapon, stance: player.stance, crit: critReady },
       );
       if (result.hit) {
+        // Reaction seam: the controller may block or dodge a landing slash.
+        // The crit meter is NOT consumed on a reacted swing (no hit landed).
+        const reaction = this.opponent.react?.(this.frameCount, this.opponentView()) ?? null;
+        if (reaction === 'block') {
+          this.events.push({ type: 'strikeBlocked', by: 'enemy' });
+          return { gesture, slash: { ...result, hit: false, damage: ZERO, severed: [] } };
+        }
+        if (reaction === 'dodge') {
+          this.events.push({ type: 'strikeEvaded', by: 'enemy' });
+          return { gesture, slash: { ...result, hit: false, damage: ZERO, severed: [] } };
+        }
         if (critReady) player.criticalUnits = ZERO; // consumed only on a landed hit
         this.emitCombo(this.comboCounter.hit(this.frameCount));
         this.dealDamage('enemy', result.damage, result.crit, result.severed);
@@ -414,6 +427,20 @@ export class Sim {
    * Sim only executes, honoring the player's evasion states. An airborne
    * player evades ground strikes (jump dodge — the original's core defense
    * verb alongside stances). */
+  /** Snapshot handed to the opponent controller each fighting tick. */
+  private opponentView(): OpponentView {
+    const player = this.fighters.player;
+    const enemy = this.fighters.enemy;
+    return {
+      playerPos: { ...player.pos },
+      enemyPos: { ...enemy.pos },
+      playerStance: player.stance,
+      enemyStance: enemy.stance,
+      enemyFocus: unitsToFocus(enemy.focusUnits),
+      playerJumping: player.jump !== null,
+    };
+  }
+
   /** Invuln (spawn) or i-frames (Smoke Bomb) nullify incoming damage. */
   private isProtected(side: FighterSide): boolean {
     const f = this.fighters[side];
@@ -598,8 +625,28 @@ export class Sim {
         this.queuedSkill = null;
       }
       // AI seam: consulted once per fighting tick; the Sim executes the
-      // returned intent blindly (M4's AISeamController decides timing).
-      const intent: OpponentIntent = this.opponent.next(this.frameCount);
+      // returned intent blindly (the controller decides timing/ranges).
+      const intent: OpponentIntent = this.opponent.next(this.frameCount, this.opponentView());
+      if (intent.telegraph !== undefined) {
+        this.events.push({
+          type: 'enemyTelegraph',
+          kind: intent.telegraph.kind,
+          durationMs: intent.telegraph.durationMs,
+        });
+      }
+      if (intent.moveX !== undefined && Number.isFinite(intent.moveX)) {
+        const enemy = this.fighters.enemy;
+        const stepMs = MS_PER_S / FIXED_HZ;
+        const dir = Math.max(-ONE, Math.min(ONE, intent.moveX));
+        const x = enemy.pos.x + dir * ENEMY_SPEED * stepMs;
+        enemy.pos = {
+          x: Math.max(enemy.halfW, Math.min(GAME_WIDTH - enemy.halfW, x)),
+          y: enemy.pos.y,
+        };
+      }
+      if (intent.switchStance !== undefined) {
+        this.requestStanceSwitch('enemy', intent.switchStance);
+      }
       if (intent.strike === true) this.executeStrike();
       if (intent.throwKunai === true) this.throwKunai();
       this.stepKunai();

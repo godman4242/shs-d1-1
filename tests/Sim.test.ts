@@ -14,7 +14,10 @@ import {
 import { MAX_FRAME_MS } from '../src/config/combat-sim';
 import { JUMP_DURATION_FRAMES } from '../src/config/duel';
 import { FIXED_HZ } from '../src/config/timing';
+import { AI_TIERS } from '../src/config/ai';
+import { AISeamController } from '../src/core/AISeamController';
 import { DrawnStroke } from '../src/core/DrawnStroke';
+import { msToFrames } from '../src/core/time';
 import type { OpponentController } from '../src/core/OpponentController';
 import { Sim, type FighterSpawn, type Rng, type SimEvent } from '../src/core/Sim';
 import type { Vec } from '../src/core/vec';
@@ -756,6 +759,76 @@ describe('Sim — player movement intent (M3: A/D at PLAYER_MOVE_SPEED)', () => 
     tickN(sim, 10);
     expect(sim.player.pos.x).toBe(100);
     expect(Number.isFinite(sim.player.pos.x)).toBe(true);
+  });
+});
+
+describe('Sim + AISeamController — integrated duel loop (M4)', () => {
+  it('enemy approaches, telegraphs (event ≥ telegraphMs before impact), then strikes', () => {
+    const ai = new AISeamController(() => 0.99, AI_TIERS.normal); // no kunai/stance rolls pass...
+    // 0.99 fails aggression too — use a two-phase rng: fail chance rolls until
+    // in range, then pass everything (deterministic scripted stream is fine).
+    let inRange = false;
+    const scripted = new AISeamController(() => (inRange ? 0 : 0.99), AI_TIERS.normal);
+    const sim = new Sim(() => 0.5, scripted, { player: playerSpawn(), enemy: enemySpawn({ pos: v(700, 200) }) });
+    sim.beginCombat();
+    sim.drainEvents();
+    endInvuln(sim);
+    const events: Array<{ frame: number; ev: SimEvent }> = [];
+    let telegraphFrame = -1;
+    let damageFrame = -1;
+    for (let f = 0; f < 2000 && damageFrame < 0; f++) {
+      const dist = Math.abs(sim.enemy.pos.x - sim.player.pos.x);
+      inRange = dist <= 132;
+      sim.tick();
+      for (const ev of sim.drainEvents()) {
+        events.push({ frame: sim.frame, ev });
+        if (ev.type === 'enemyTelegraph' && ev.kind === 'strike' && telegraphFrame < 0) telegraphFrame = sim.frame;
+        if (ev.type === 'damage' && ev.target === 'player' && damageFrame < 0) damageFrame = sim.frame;
+      }
+    }
+    expect(telegraphFrame).toBeGreaterThan(0); // enemy telegraphed
+    expect(damageFrame).toBeGreaterThan(0); // and eventually landed
+    expect(damageFrame - telegraphFrame).toBeGreaterThanOrEqual(32); // ≥ 520 ms at 60 Hz
+    void ai;
+  });
+  it('enemy movement is executed by the Sim at ENEMY_SPEED toward the player', () => {
+    const approach = new AISeamController(() => 0.99, AI_TIERS.easy);
+    const sim = new Sim(() => 0.5, approach, { player: playerSpawn(), enemy: enemySpawn({ pos: v(700, 200) }) });
+    sim.beginCombat();
+    tickN(sim, 60);
+    // 0.17 px/ms × 1000 ms = 170 px in one second of approach
+    expect(sim.enemy.pos.x).toBeCloseTo(530, 6);
+  });
+  it('enemy stance switch arrives telegraphed and Focus-gated through the same Sim rule', () => {
+    const picker = new AISeamController(() => 0, AI_TIERS.normal);
+    // player light + enemy light (cost 34 ≤ 50): pick balanced (beats light)
+    const sim = new Sim(() => 0.5, picker, {
+      player: playerSpawn({ stance: 'light' }),
+      enemy: enemySpawn({ pos: v(200, 200), stance: 'light' }),
+    });
+    sim.beginCombat();
+    sim.drainEvents();
+    tickN(sim, msToFrames(600) + 2);
+    const evs = sim.drainEvents();
+    expect(evs.some((e) => e.type === 'enemyTelegraph' && e.kind === 'stance')).toBe(true);
+    expect(evs.some((e) => e.type === 'stanceSwitched' && e.who === 'enemy' && e.to === 'balanced')).toBe(true);
+    expect(sim.enemy.stance).toBe('balanced');
+  });
+  it('a blocking enemy negates the slash without consuming the crit meter', () => {
+    const blocker: OpponentController = {
+      next: () => ({}),
+      react: () => 'block',
+    };
+    const sim = makeSim({}, {}, blocker);
+    tickN(sim, 750); // fill Critical to max
+    expect(sim.player.critical).toBe(100);
+    const outcome = sim.applyStroke(slashStroke());
+    expect(outcome.slash?.hit).toBe(false);
+    expect(sim.enemy.hp).toBe(150);
+    expect(sim.player.critical).toBe(100); // NOT consumed on a blocked swing
+    expect(sim.combo).toBe(0); // no hit — no chain
+    const blocked = sim.drainEvents().filter((e) => e.type === 'strikeBlocked');
+    expect(blocked).toEqual([{ type: 'strikeBlocked', by: 'enemy' }]);
   });
 });
 

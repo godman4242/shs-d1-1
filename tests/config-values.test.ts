@@ -9,6 +9,16 @@
 import { describe, expect, it } from 'vitest';
 import { COL } from '../src/config/palette';
 import {
+  AI_APPROACH_RANGE,
+  AI_KUNAI_RANGE,
+  AI_PENDING_STANCE_MS,
+  AI_RECOVER_JITTER_FRAC,
+  AI_STRIKE_RANGE,
+  AI_TIERS,
+  DUEL_TARGET_SECONDS,
+  ENEMY_SPEED,
+} from '../src/config/ai';
+import {
   BLADE_CORE_WIDTH,
   BLADE_EDGE_WIDTH,
   BLADE_FADE_MS,
@@ -276,6 +286,37 @@ describe('combat-sim.ts — Stage 2 item 9, exact spec names and values', () => 
   });
   it('skill hotbar verbs', () => {
     expect(SKILL_VERB).toEqual({ 1: 'chiPunch', 2: 'smokeBomb', 3: 'stab' });
+  });
+});
+
+describe('ai.ts — Stage 2 item 8, exact spec names and values', () => {
+  it('AI_TIERS — every tier exactly as the spec writes it', () => {
+    expect(AI_TIERS).toEqual({
+      easy: {
+        telegraphMs: 700, attackMs: 180, recoverMs: 760, reactMs: 420,
+        reactBlockChance: 0.15, reactDodgeChance: 0.05,
+        counterStancePickChance: 0.2, aggression: 0.3, kunaiChance: 0,
+      },
+      normal: {
+        telegraphMs: 520, attackMs: 180, recoverMs: 620, reactMs: 320,
+        reactBlockChance: 0.30, reactDodgeChance: 0.15,
+        counterStancePickChance: 0.5, aggression: 0.55, kunaiChance: 0.25,
+      },
+      hard: {
+        telegraphMs: 380, attackMs: 160, recoverMs: 480, reactMs: 220,
+        reactBlockChance: 0.45, reactDodgeChance: 0.25,
+        counterStancePickChance: 0.8, aggression: 0.8, kunaiChance: 0.40,
+      },
+    });
+  });
+  it('ranges, speed, jitter, duel target', () => {
+    expect(AI_KUNAI_RANGE).toEqual({ min: 240, max: 720 });
+    expect(AI_STRIKE_RANGE).toBe(132);
+    expect(AI_APPROACH_RANGE).toBe(620);
+    expect(ENEMY_SPEED).toBe(0.17);
+    expect(AI_RECOVER_JITTER_FRAC).toBe(0.35);
+    expect(DUEL_TARGET_SECONDS).toEqual({ min: 20, max: 60 });
+    expect(AI_PENDING_STANCE_MS).toBe(600); // Stage-2 decision — see ai.ts docblock
   });
 });
 

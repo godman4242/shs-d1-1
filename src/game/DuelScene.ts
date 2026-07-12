@@ -15,9 +15,10 @@ import { DUEL_SPAWNS } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { SLASH_ARC } from '../config/fx';
 import { COL } from '../config/palette';
+import { AI_TIERS } from '../config/ai';
+import { AISeamController } from '../core/AISeamController';
 import { DrawnStroke } from '../core/DrawnStroke';
 import { closestPointOnPolyline } from '../core/geometry';
-import type { OpponentController } from '../core/OpponentController';
 import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
 import { Sim, type FighterSide, type FighterView } from '../core/Sim';
@@ -60,17 +61,21 @@ export class DuelScene extends Phaser.Scene {
   private redStrokes: Trail[] = [];
   private droplets: Droplet[] = [];
   private keys?: Record<'A' | 'D' | 'SHIFT', Phaser.Input.Keyboard.Key>;
+  private telegraphUntil = 0;
+  private telegraphKind: 'strike' | 'stance' = 'strike';
 
   constructor() {
     super('duel');
   }
 
   create(): void {
-    const opponent: OpponentController = { next: () => ({}) }; // M4: AISeamController
     // Seeded mulberry32 at the boundary (Math.random is banned in core/).
     // Wall-clock seed is fine here in game/; the determinism harness and
-    // replay tests inject their own fixed seeds.
-    this.sim = new Sim(mulberry32(Date.now()), opponent, {
+    // replay tests inject their own fixed seeds. Sim and AI share one
+    // stream — call order is deterministic, so replays stay exact.
+    const rng = mulberry32(Date.now());
+    const opponent = new AISeamController(rng, AI_TIERS.normal);
+    this.sim = new Sim(rng, opponent, {
       player: { ...PLAYER_BASE, ...DUEL_SPAWNS.player, pos: { ...DUEL_SPAWNS.player.pos } },
       enemy: { ...ENEMY_BASE, ...DUEL_SPAWNS.enemy, pos: { ...DUEL_SPAWNS.enemy.pos } },
     });
@@ -242,9 +247,14 @@ export class DuelScene extends Phaser.Scene {
     // forwards delta × sim.timeScale (spec item 11 — Shunpo slow-mo).
     this.sim.advance(delta * this.sim.timeScale);
 
-    // Drain sim events every frame (M3 turns these into kill-beat/SFX; for
-    // now draining keeps the queue bounded — blood is stroke-outcome-driven).
-    this.sim.drainEvents();
+    // Drain sim events every frame (kill-beat/SFX land at M6; blood is
+    // stroke-outcome-driven). Telegraphs drive the enemy windup flash.
+    for (const ev of this.sim.drainEvents()) {
+      if (ev.type === 'enemyTelegraph') {
+        this.telegraphUntil = this.time.now + ev.durationMs;
+        this.telegraphKind = ev.kind;
+      }
+    }
 
     const now = this.time.now;
     const dt = delta / 1000;
@@ -319,6 +329,14 @@ export class DuelScene extends Phaser.Scene {
 
     // Spawn-invuln / i-frame blink: skip the body every other 6-frame beat.
     if (f.invulnerable && Math.floor(this.time.now / 100) % 2 === 0) return;
+
+    // Enemy windup flash: pulsing aura while a telegraph is live (strike =
+    // blood red, pending stance switch = focus blue).
+    if (side === 'enemy' && this.time.now < this.telegraphUntil) {
+      const pulse = 0.35 + 0.35 * Math.abs(Math.sin(this.time.now / 90));
+      g.fillStyle(this.telegraphKind === 'strike' ? COL.blood : COL.focusBlue, pulse);
+      g.fillRoundedRect(left - 8, top - 8, w + 16, h + 16, spawn.halfW + 8);
+    }
 
     g.fillStyle(COL.outline, 1);
     g.fillRoundedRect(left - 3, top - 3, w + 6, h + 6, spawn.halfW + 3);
