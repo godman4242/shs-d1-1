@@ -107,11 +107,14 @@ parent, all three agree; chaos: planted Math.random in the trace → RED
 plant — plant sized above the floor). Spec item 14 scenario coverage
 landed across M2–M4 (crit A/B, invuln, smoke, stab-deflect, chi punch,
 shunpo, kill-beat-once, telegraph ≥ telegraphMs, stance triangle).
-Next: M8 game/ purity ratchet baseline (spec item 15 — per-file value
-multiset for src/game/, fails on new/substituted values, allows removals;
-land AFTER scenes stabilize ✓ they're stable now). Then M9: adversarial
-audit workflow, fix confirmed findings, assemble the gate evidence table
-in RESUME_HERE, close the stage.
+M8 DONE (289/289): game/ purity ratchet live — per-file numeric-literal
+multisets in tests/game-purity-baseline.json; new/substituted values FAIL
+(chaos-proven: planted 31337 → red naming file+value+count; substituted
+4→9 → red '×2 allows ×1'), removals pass, new files fail until baselined;
+refresh = UPDATE_GAME_PURITY_BASELINE=1 (git diff is the review surface).
+Next: M9 — adversarial audit workflow over the whole Stage-2 surface, fix
+confirmed findings, assemble the gate evidence table in RESUME_HERE, close
+the stage 100% ☑.
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 

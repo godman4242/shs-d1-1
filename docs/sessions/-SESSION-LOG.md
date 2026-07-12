@@ -223,4 +223,13 @@ Crash-resilience log. Updated per milestone, never "at the end."
   planted in the trace → RED — after a first 1e-9 plant taught us the
   FNV fold quantizes at 1/256 and hid it (plant re-sized above the floor).
   Suite 287/287 · tsc both configs exit 0 · eslint exit 0.
+- **10:08** Stage 2 M8 — game/ purity ratchet (spec item 15): per-file
+  numeric-literal MULTISETS committed as tests/game-purity-baseline.json
+  (224 lines, generated RED-first via the deliberate
+  UPDATE_GAME_PURITY_BASELINE=1 path). New value or extra copies → FAIL,
+  removals → pass, unbaselined new files → FAIL. Chaos: planted 31337 in
+  samurai.ts → RED naming file+value+count · substituted a 4 for a 9 →
+  RED ('9' ×2 allows ×1) · restored → GREEN. Reuses the Stage-0-hardened
+  scanner (scanNumericLiterals) — no second literal-parser to drift.
+  Suite 289/289 · tsc both configs exit 0 · eslint exit 0.
 - (milestones appended below as they land)
