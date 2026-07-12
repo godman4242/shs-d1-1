@@ -1,15 +1,18 @@
 /**
  * Seam between the deterministic Sim and whatever drives the opponent —
- * AI tiers (Stage 2 AISeamController), scripted replays, or test doubles.
+ * AI tiers (M4 AISeamController), scripted replays, or test doubles.
  *
- * Stage 2 gives OpponentIntent its real shape (movement, telegraphed
- * strikes, stance switches, kunai). Until then it is deliberately empty:
- * the seam exists so Sim never grows a hard AI dependency.
+ * The Sim EXECUTES intents blindly (respecting invuln/i-frames/evasion);
+ * all decision-making (telegraph-then-commit timing, ranges, stance picks)
+ * lives on the controller side. Fields land as the Sim grows the matching
+ * verbs (M3); M4's AISeamController fills them with real behavior.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- deliberately empty Stage-2 seam (see docblock)
-export interface OpponentIntent {}
+export interface OpponentIntent {
+  /** Land a strike on the player this tick. */
+  strike?: boolean;
+}
 
 export interface OpponentController {
-  /** Called once per fixed tick; returns the opponent's intent for that tick. */
+  /** Called once per fixed FIGHTING tick; returns the intent for that tick. */
   next(frame: number): OpponentIntent;
 }

@@ -163,10 +163,11 @@ describe('Sim — damage resolution (defense, floor, heavy penalty, counter)', (
     expect(outcome.slash?.hit).toBe(false);
     expect(sim.enemy.hp).toBe(150);
   });
-  it('emits a damage event per landed hit, and drain clears the queue', () => {
+  it('emits comboChanged + damage per landed hit, and drain clears the queue', () => {
     const sim = makeSim();
     sim.applyStroke(slashStroke());
     expect(sim.drainEvents()).toEqual([
+      { type: 'comboChanged', value: 1 },
       { type: 'damage', target: 'enemy', amount: 8, crit: false, severed: [] },
     ]);
     expect(sim.drainEvents()).toEqual([]);
@@ -404,6 +405,89 @@ describe('Sim.advance — fixed-step accumulator owned by the Sim (M1)', () => {
     byAdvance.applyStroke(jumpStroke(300, 320));
     byAdvance.advance(stepMs * 3);
     expect(byAdvance.player.pos).toEqual(byTicks.player.pos);
+  });
+});
+
+describe('Sim — enemy strikes via the OpponentIntent seam (M3)', () => {
+  /** Opponent that strikes on exactly the given frames. */
+  const strikerOn = (strikeFrames: number[]): OpponentController => ({
+    next: (frame: number) => (strikeFrames.includes(frame) ? { strike: true } : {}),
+  });
+
+  it('a strike damages the player — heavy BEATS balanced: 7×1.4×1.25 − 5 = 7.25', () => {
+    const sim = makeSim({}, {}, strikerOn([1]));
+    sim.tick();
+    expect(sim.player.hp).toBeCloseTo(92.75, 10);
+    const dmg = sim.drainEvents().filter((ev) => ev.type === 'damage');
+    expect(dmg).toEqual([
+      { type: 'damage', target: 'player', amount: expect.closeTo(7.25, 10) as number, crit: false, severed: [] },
+    ]);
+  });
+  it('no counter bonus off the triangle: heavy enemy vs LIGHT player → 7×1.4 − 5 = 4.8', () => {
+    const sim = makeSim({ stance: 'light' }, {}, strikerOn([1]));
+    sim.tick();
+    expect(sim.player.hp).toBeCloseTo(95.2, 10);
+  });
+  it('an airborne player evades strikes (jump dodge)', () => {
+    const sim = makeSim({}, {}, strikerOn([2]));
+    sim.applyStroke(jumpStroke(300, 320));
+    sim.tick();
+    sim.tick(); // strike frame — player mid-jump
+    expect(sim.player.hp).toBe(100);
+    const evaded = sim.drainEvents().filter((ev) => ev.type === 'strikeEvaded');
+    expect(evaded).toEqual([{ type: 'strikeEvaded', by: 'player' }]);
+  });
+  it('a dead player ends the fight: enemy wins, fightEnded exactly once', () => {
+    const frames = Array.from({ length: 60 }, (_, i) => i + 1);
+    const sim = makeSim({ hp: 9 }, {}, strikerOn(frames)); // 2 × 7.25 kills
+    tickN(sim, 10);
+    expect(sim.player.hp).toBe(0);
+    expect(sim.phase).toBe('ended');
+    const ended = sim.drainEvents().filter((ev) => ev.type === 'fightEnded');
+    expect(ended).toEqual([{ type: 'fightEnded', winner: 'enemy' }]);
+  });
+});
+
+describe('Sim — HIT COMBO counter (M3: player hits chain; damage taken breaks)', () => {
+  it('escalates per landed slash and emits comboChanged', () => {
+    const sim = makeSim();
+    sim.applyStroke(slashStroke());
+    sim.applyStroke(slashStroke());
+    expect(sim.combo).toBe(2);
+    const combos = sim.drainEvents().filter((ev) => ev.type === 'comboChanged');
+    expect(combos).toEqual([
+      { type: 'comboChanged', value: 1 },
+      { type: 'comboChanged', value: 2 },
+    ]);
+  });
+  it('a missed slash does not advance the combo', () => {
+    const sim = makeSim();
+    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
+    expect(sim.combo).toBe(0);
+  });
+  it('taking a strike breaks the combo to 0', () => {
+    const striker: OpponentController = {
+      next: (frame: number) => (frame === 1 ? { strike: true } : {}),
+    };
+    const sim = makeSim({}, {}, striker);
+    sim.applyStroke(slashStroke());
+    expect(sim.combo).toBe(1);
+    sim.tick(); // enemy strike lands
+    expect(sim.combo).toBe(0);
+  });
+  it('a chain gap restarts the chain at 1', () => {
+    const sim = makeSim();
+    sim.applyStroke(slashStroke());
+    sim.applyStroke(slashStroke());
+    tickN(sim, 3 * FIXED_HZ + 1); // COMBO_CHAIN_GAP_S = 3
+    sim.applyStroke(slashStroke());
+    expect(sim.combo).toBe(1);
+  });
+  it('the killing blow resets the combo to exactly 1 (CONTRACT: reset-to-1, not 0)', () => {
+    const sim = makeSim();
+    for (let i = 0; i < 19; i++) sim.applyStroke(slashStroke());
+    expect(sim.phase).toBe('ended');
+    expect(sim.combo).toBe(1);
   });
 });
 

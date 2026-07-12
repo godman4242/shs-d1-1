@@ -24,6 +24,7 @@ import {
   CRIT_MULT,
   CRITICAL_FILL_PER_S,
   CRITICAL_MAX,
+  COMBO_CHAIN_GAP_S,
   DAMAGE_FLOOR,
   FOCUS_FILL_PER_S,
   FOCUS_MAX,
@@ -109,6 +110,7 @@ describe('combat.ts — exact core constants (Stage 0 item 5)', () => {
     expect(DAMAGE_FLOOR).toBe(1);
     expect(CHI_PUNCH_DMG_L1).toBe(10);
     expect(SPAWN_INVULN_S).toBe(5);
+    expect(COMBO_CHAIN_GAP_S).toBe(3); // Stage-2 decision — see combat.ts docblock
   });
   it('meters', () => {
     expect(FOCUS_MAX).toBe(100);

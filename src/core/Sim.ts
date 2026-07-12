@@ -12,9 +12,11 @@ import { JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../config/duel';
 import { ONE, TWO, ZERO } from '../config/nums';
 import type { StanceId } from '../config/stances';
 import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S } from '../config/timing';
+import { Combo } from './combo';
+import { physicalDamage } from './damage';
 import type { DrawnStroke } from './DrawnStroke';
 import type { Gesture } from './gesture';
-import type { OpponentController } from './OpponentController';
+import type { OpponentController, OpponentIntent } from './OpponentController';
 import { resolveSlash, type SlashResult } from './slash';
 import { jumpArcPoint } from './trajectory';
 import type { Vec } from './vec';
@@ -43,7 +45,9 @@ export type SimEvent =
   | { type: 'fightEnded'; winner: FighterSide }
   | { type: 'damage'; target: FighterSide; amount: number; crit: boolean; severed: string[] }
   | { type: 'stanceSwitched'; who: FighterSide; from: StanceId; to: StanceId; focusCost: number }
-  | { type: 'stanceSwitchDenied'; who: FighterSide; needed: number; focus: number };
+  | { type: 'stanceSwitchDenied'; who: FighterSide; needed: number; focus: number }
+  | { type: 'strikeEvaded'; by: FighterSide }
+  | { type: 'comboChanged'; value: number };
 
 export interface StrokeOutcome {
   gesture: Gesture;
@@ -131,6 +135,8 @@ export class Sim {
   private readonly fighters: Record<FighterSide, FighterState>;
   private phaseState: SimPhase = 'intro';
   private events: SimEvent[] = [];
+  /** HIT COMBO — player-only HUD counter (the original shows no enemy combo). */
+  private readonly comboCounter = new Combo();
   /** Total clamped wall-clock ms fed to advance() since spawn. */
   private elapsedMs = ZERO;
   private frameCount = ZERO;
@@ -165,6 +171,11 @@ export class Sim {
   /** Fixed frames elapsed since spawn — the Sim's own clock. */
   get frame(): number {
     return this.frameCount;
+  }
+
+  /** Current HIT COMBO value (0 = no chain). */
+  get combo(): number {
+    return this.comboCounter.value;
   }
 
   private view(side: FighterSide): FighterView {
@@ -263,6 +274,7 @@ export class Sim {
       );
       if (result.hit) {
         if (critReady) player.criticalUnits = ZERO; // consumed only on a landed hit
+        this.emitCombo(this.comboCounter.hit(this.frameCount));
         this.dealDamage('enemy', result.damage, result.crit, result.severed);
       }
       return { gesture, slash: result };
@@ -285,13 +297,45 @@ export class Sim {
     return { gesture, slash: null };
   }
 
+  private emitCombo(value: number): void {
+    this.events.push({ type: 'comboChanged', value });
+  }
+
+  /** Enemy strike: telegraph timing/range are the CONTROLLER's job — the
+   * Sim only executes, honoring the player's evasion states. An airborne
+   * player evades ground strikes (jump dodge — the original's core defense
+   * verb alongside stances). */
+  private executeStrike(): void {
+    const player = this.fighters.player;
+    const enemy = this.fighters.enemy;
+    if (player.jump !== null) {
+      this.events.push({ type: 'strikeEvaded', by: 'player' });
+      return;
+    }
+    const critReady = unitsToCritical(enemy.criticalUnits) >= CRITICAL_MAX;
+    if (critReady) enemy.criticalUnits = ZERO;
+    const damage = physicalDamage(
+      { atkPlusWeapon: enemy.atkPlusWeapon, stance: enemy.stance, crit: critReady },
+      { stance: player.stance, defense: player.defense },
+    );
+    this.dealDamage('player', damage, critReady, []);
+  }
+
   private dealDamage(target: FighterSide, amount: number, crit: boolean, severed: string[]): void {
     const f = this.fighters[target];
     f.hp = Math.max(ZERO, f.hp - amount);
     this.events.push({ type: 'damage', target, amount, crit, severed });
+    if (target === 'player') {
+      this.comboCounter.damaged();
+      this.emitCombo(this.comboCounter.value);
+    }
     if (f.hp === ZERO) {
       this.phaseState = 'ended';
       const winner: FighterSide = target === 'enemy' ? 'player' : 'enemy';
+      if (winner === 'player') {
+        this.comboCounter.kill(this.frameCount);
+        this.emitCombo(this.comboCounter.value);
+      }
       this.events.push({ type: 'fightEnded', winner });
     }
   }
@@ -323,9 +367,10 @@ export class Sim {
         f.focusUnits = Math.min(f.focusUnits + ONE, focusToUnits(FOCUS_MAX));
         f.criticalUnits += ONE; // value view clamps at CRITICAL_MAX
       }
-      // AI seam: consulted once per fighting tick. M2 consumes the empty
-      // intent; M4's AISeamController fills it with real behavior.
-      this.opponent.next(this.frameCount);
+      // AI seam: consulted once per fighting tick; the Sim executes the
+      // returned intent blindly (M4's AISeamController decides timing).
+      const intent: OpponentIntent = this.opponent.next(this.frameCount);
+      if (intent.strike === true) this.executeStrike();
     }
     const player = this.fighters.player;
     if (player.jump === null) return;
