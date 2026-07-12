@@ -112,16 +112,21 @@ multisets in tests/game-purity-baseline.json; new/substituted values FAIL
 (chaos-proven: planted 31337 → red naming file+value+count; substituted
 4→9 → red '×2 allows ×1'), removals pass, new files fail until baselined;
 refresh = UPDATE_GAME_PURITY_BASELINE=1 (git diff is the review surface).
-M9 IN FLIGHT: two browser-found scene-lifecycle bugs fixed (stale intro on
+**NEW SESSION ENTRY POINT: `docs/sessions/SESSION4_KICKOFF.md`** — read it
+first; it carries the standing mandates (pushback / Duels-not-SHS /
+single-player-first / near-OG palette policy) + the ordered work list
+(FX clock fix → gate table → mine iaido-duel → upgrade agent-work-ethic →
+Stage 3).
+M9 status: two browser-found scene-lifecycle bugs fixed (stale intro on
 mid-intro duel restart — launch() is a no-op on an active scene; intro
 fast-forward on occluded-tab clock jump — re-anchored, the original paused
-when hidden). Gate evidence captured: VS card (GUEST|VS|RONIN(1)),
-Defeat +0/+0, invuln blink (alpha-faint player), Victory +10/+8, HEAVY
-STANCE + drained Focus bar. Adversarial audit workflow wf_d26dfb02-8f7
-DIED ON SUBAGENT QUOTA (all 6 finders; resets 13:00 KL) — MUST re-run
-before sign-off: Workflow resumeFromRunId wf_d26dfb02-8f7 (script saved in
-session workflows dir). Remaining for 100% ☑: audit re-run + fix confirmed
-findings, final gate evidence table in RESUME_HERE.
+when hidden). Gate evidence captured: VS card, Defeat +0/+0, invuln blink, Victory
++10/+8, stance swap drain. Audit RAN (36 agents): 7 confirmed findings ALL
+FIXED red-first (AI stall/kunai band, mid-tick double-fightEnded, shunpo
+stuck at kill, intro-buffered skills, critical.ts extracted, display pins,
+jump clamp) + ratchet hardened (main.ts scan, payload parity, tick guard,
+RED-receipt refresh). Suite 297/297. Remaining for 100% ☑: FX-clock fix
+(slow-mo FX speed — deferred, flagged) + the gate evidence table.
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 
