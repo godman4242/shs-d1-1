@@ -10,13 +10,17 @@ import type { OpponentController } from '../src/core/OpponentController';
 it('Sim constructs with an injected rng and opponent controller', () => {
   const rng: Rng = () => 0.5;
   const opponent: OpponentController = { next: () => ({}) };
-  const sim = new Sim(rng, opponent, {
+  const fighter = {
     pos: { x: 0, y: 0 },
     hp: 1,
-    stance: 'balanced',
+    atkPlusWeapon: 1,
+    defense: 0,
+    stance: 'balanced' as const,
+    deflectLearned: false,
     halfW: 1,
     halfH: 1,
-  });
+  };
+  const sim = new Sim(rng, opponent, { player: fighter, enemy: { ...fighter } });
   expect(sim).toBeInstanceOf(Sim);
   expect(sim.rng()).toBe(0.5);
 });

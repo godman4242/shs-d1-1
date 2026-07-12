@@ -1,29 +1,24 @@
 /**
- * STAGE-1 DUEL DUMMY CONFIG — pure data, no logic. ALL values INFERRED.
+ * DUEL ARENA CONFIG — pure data, no logic. ALL values INFERRED.
  *
- * Kickoff decision (flagged): the Stage 1 gate needs a 100-HP foe and a
- * jump arc, and core/ bans literals, so their numbers are named here. This
- * file is the Stage-1 test-dummy setup ONLY — Stage 2's combat-sim.ts
- * (PLAYER_BASE / ENEMY_BASE) supersedes it for real duels. Veto = retune.
+ * Stage-2 duel layout: fighter positions/hitboxes on the 1024×576 stage.
+ * Stats come from combat-sim.ts (PLAYER_BASE / ENEMY_BASE) — this file only
+ * places bodies in the arena. Stage-1's DUMMY_SPAWN/DUEL_ATTACKER test-dummy
+ * setup was superseded here in Stage 2 M2 (pins moved in the same commit).
  */
-import type { StanceId } from './stances';
+export interface SpawnPoint {
+  /** Structurally identical to core's Vec — config may not import core. */
+  pos: { x: number; y: number };
+  halfW: number;
+  halfH: number;
+}
 
-/** INFERRED — gate: "100 HP foe takes partial damage". Stands right-of-center
- * on the foreground band of the 1024×576 stage. Hitbox ≈ 52×120 px capsule. */
-export const DUMMY_SPAWN = {
-  pos: { x: 700, y: 430 },
-  hp: 100,
-  stance: 'balanced' as StanceId,
-  halfW: 26,
-  halfH: 60,
-} as const;
-
-/** INFERRED — Stage-1 attacker stats; mirrors Stage 2's PLAYER_BASE
- * (atkPlusWeapon 10) so gate damage math reads 10 × 1.2 = 12 per slash. */
-export const DUEL_ATTACKER = {
-  atkPlusWeapon: 10,
-  stance: 'balanced' as StanceId,
-} as const;
+/** INFERRED — player left-of-center, enemy right, both on the foreground
+ * ground band of the 1024×576 stage. Hitboxes ≈ 52×120 px capsules. */
+export const DUEL_SPAWNS: Record<'player' | 'enemy', SpawnPoint> = {
+  player: { pos: { x: 260, y: 430 }, halfW: 26, halfH: 60 },
+  enemy: { pos: { x: 700, y: 430 }, halfW: 26, halfH: 60 },
+};
 
 /** INFERRED — jump arc: 24 frames = 0.4 s at FIXED_HZ. */
 export const JUMP_DURATION_FRAMES = 24;

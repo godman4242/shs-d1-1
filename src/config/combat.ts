@@ -35,6 +35,14 @@ export const SPAWN_INVULN_S = 5;
 /** INFERRED */ export const FOCUS_MAX = 100;
 /** INFERRED */ export const FOCUS_SWITCH_COST = 34;
 /** INFERRED */ export const FOCUS_START = 50;
+/**
+ * INFERRED — Stage-2 decision (flagged 2026-07-12): the spec says "Focus
+ * drain/fill" but names no fill rate; the original's Focus skill (active
+ * fill) is out of Stage-2 scope, so passive in-combat fill seeds the meter.
+ * 4/s ≈ one balanced-stance switch (cost 51) affordable every ~13 s.
+ * Veto = different rate, or fill-on-hit instead of per-second.
+ */
+export const FOCUS_FILL_PER_S = 4;
 /** INFERRED */ export const CRITICAL_MAX = 100;
 /** INFERRED */ export const CRITICAL_FILL_PER_S = 8;
 

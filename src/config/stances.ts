@@ -31,6 +31,9 @@ export const STANCE_BEATS: Record<StanceId, StanceId> = {
   balanced: 'light',
 };
 
+/** INFERRED — SPACE-cycle order (portrait UI order light/balanced/heavy). */
+export const STANCE_CYCLE: readonly StanceId[] = ['light', 'balanced', 'heavy'];
+
 /** INFERRED — stance level at which the launch gesture (up-flick) unlocks. */
 export const LAUNCH_UNLOCK_LEVEL: Record<StanceId, number> = {
   light: 3,

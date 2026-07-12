@@ -43,15 +43,24 @@ meters, projectiles, playable duel, ≥200 tests). Stage 1 closed 100% green on
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**Stage 2 in flight** (kickoff §1 order): rng DONE (161 tests) · Sim.advance
-skeleton DONE (177/177: owed-frames accumulator with FRAME_QUANT_EPS 1-ulp
-guard, MAX_FRAME_MS clamp + NaN/negative rejection both chaos-proven — clamp
-disarm = infinite-loop hang, killed runner; full combat-sim.ts + MS_PER_S
-pinned; DuelScene now calls sim.advance, inline accumulator + 250 deleted).
-Next (kickoff §1 item 3): damage resolution inside Sim — defense stat,
-DAMAGE_FLOOR, HEAVY_DEF_PENALTY (defense-side ONLY — landmine below), then
-Focus + Critical meters (`critical.ts`, two meters — see landmine), stance
-switching (out-of-combat CONTRACT + Focus-cost in-combat INFERRED). TDD each.
+**Stage 2 in flight** (kickoff §1 order): rng DONE · Sim.advance DONE (M1) ·
+M2 DONE (202/202): two-fighter Sim (player+enemy FighterState, FighterView
+reads, hitbox(side)), damage w/ defense + HEAVY_DEF_PENALTY defense-side only
+(landmine honored — exact-8 pin, chaos: double-application → 17 RED), phase
+model intro→fighting→ended (pre-FIGHT strokes discarded), Focus+Critical
+meters in integer frame-units (multiply-first exact), stance switching (free
+out-of-combat CONTRACT / Focus-gated in-combat, cost = FOCUS_SWITCH_COST ×
+WEAPON_WEIGHT[stance being LEFT] — veto = key on target), SimEvent[] queue
+(fightStarted/fightEnded/damage/stanceSwitched/stanceSwitchDenied),
+nextStance SPACE cycle, DuelScene interim: both fighters + HP/Focus bars,
+SPACE wired, mulberry32(Date.now()) seed.
+Next (kickoff §1 item 4): `combo.ts` (reset-to-1 on kill, break on damage
+taken / chain gap — §7 COMBO_RULES), then `projectile.ts` (kunai), skills
+(Chi Punch / Smoke Bomb / Stab+Deflect via PlayerIntent + SKILL_VERB), spawn
+invuln (5 s or first slash + blink), Shunpo, kill beat (exactly once). Then
+M4 AISeamController + ai.ts config, M5 economy.ts, M6 scenes w/ fidelity
+pull-forward, M7 24-seed harness + determinism, M8 game/ purity ratchet,
+M9 audit + gate evidence.
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 

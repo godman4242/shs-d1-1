@@ -1,4 +1,13 @@
-import { MAX_FRAME_MS } from '../config/combat-sim';
+import {
+  CRITICAL_FILL_PER_S,
+  CRITICAL_MAX,
+  FOCUS_FILL_PER_S,
+  FOCUS_MAX,
+  FOCUS_START,
+  FOCUS_SWITCH_COST,
+  WEAPON_WEIGHT,
+} from '../config/combat';
+import { MAX_FRAME_MS, type FighterBase } from '../config/combat-sim';
 import { JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../config/duel';
 import { ONE, TWO, ZERO } from '../config/nums';
 import type { StanceId } from '../config/stances';
@@ -6,29 +15,50 @@ import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S } from '../config/timing';
 import type { DrawnStroke } from './DrawnStroke';
 import type { Gesture } from './gesture';
 import type { OpponentController } from './OpponentController';
-import { resolveSlash, type SlashAttacker, type SlashResult } from './slash';
+import { resolveSlash, type SlashResult } from './slash';
 import { jumpArcPoint } from './trajectory';
 import type { Vec } from './vec';
 
 /**
  * Deterministic random source in [0, 1). Seeded mulberry32 is injected at
- * the boundary (Stage 2, constants via src/config/rng.ts) — Math.random is
- * banned everywhere in core/.
+ * the boundary (core/rng.ts, constants in src/config/rng.ts) — Math.random
+ * is banned everywhere in core/.
  */
 export type Rng = () => number;
 
-export interface FighterSpawn {
+export type FighterSide = 'player' | 'enemy';
+
+export type SimPhase = 'intro' | 'fighting' | 'ended';
+
+/** Everything a fighter needs to exist in the arena: stats + placement. */
+export interface FighterSpawn extends FighterBase {
   pos: Vec;
-  hp: number;
-  stance: StanceId;
   halfW: number;
   halfH: number;
 }
 
+/** Typed events drained by the scene each frame and turned into FX/SFX. */
+export type SimEvent =
+  | { type: 'fightStarted' }
+  | { type: 'fightEnded'; winner: FighterSide }
+  | { type: 'damage'; target: FighterSide; amount: number; crit: boolean; severed: string[] }
+  | { type: 'stanceSwitched'; who: FighterSide; from: StanceId; to: StanceId; focusCost: number }
+  | { type: 'stanceSwitchDenied'; who: FighterSide; needed: number; focus: number };
+
 export interface StrokeOutcome {
   gesture: Gesture;
-  /** Slash resolution when the gesture was a slash; null otherwise. */
+  /** Slash resolution when the stroke acted as a slash; null otherwise. */
   slash: SlashResult | null;
+}
+
+/** Public read view of a fighter (fresh object per read — never a live ref). */
+export interface FighterView {
+  pos: Readonly<Vec>;
+  hp: number;
+  maxHp: number;
+  stance: StanceId;
+  focus: number;
+  critical: number;
 }
 
 interface JumpState {
@@ -38,25 +68,69 @@ interface JumpState {
 }
 
 /**
+ * Meters are stored in integer FRAME UNITS and converted multiply-first
+ * (units × ratePerS / FIXED_HZ) so meter reads are exact — the same
+ * drift-free pattern as advance()'s owed-frames accumulator. One unit is
+ * one fixed frame of fill.
+ */
+interface FighterState {
+  pos: Vec;
+  hp: number;
+  stance: StanceId;
+  focusUnits: number;
+  criticalUnits: number;
+  jump: JumpState | null;
+  readonly maxHp: number;
+  readonly atkPlusWeapon: number;
+  readonly defense: number;
+  readonly deflectLearned: boolean;
+  readonly halfW: number;
+  readonly halfH: number;
+  /** The spawn ground line — jumps always launch from and land on it
+   * (capturing pos.y mid-air left the fighter floating; Stage-1 bug). */
+  readonly groundY: number;
+}
+
+const focusToUnits = (focus: number): number => (focus * FIXED_HZ) / FOCUS_FILL_PER_S;
+const unitsToFocus = (units: number): number => (units * FOCUS_FILL_PER_S) / FIXED_HZ;
+const unitsToCritical = (units: number): number =>
+  Math.min(CRITICAL_MAX, (units * CRITICAL_FILL_PER_S) / FIXED_HZ);
+
+function spawnFighter(spawn: FighterSpawn): FighterState {
+  return {
+    pos: { ...spawn.pos },
+    hp: spawn.hp,
+    stance: spawn.stance,
+    focusUnits: focusToUnits(FOCUS_START),
+    criticalUnits: ZERO,
+    jump: null,
+    maxHp: spawn.hp,
+    atkPlusWeapon: spawn.atkPlusWeapon,
+    defense: spawn.defense,
+    deflectLearned: spawn.deflectLearned,
+    halfW: spawn.halfW,
+    halfH: spawn.halfH,
+    groundY: spawn.pos.y,
+  };
+}
+
+/**
  * Fixed-timestep combat simulation — the SINGLE owner of gameplay state.
  * Pure and framework-free: no Phaser, no DOM, no wall clock, zero numeric
  * literals (tests/config-purity.test.ts enforces all of it). Scenes render
  * what Sim computes and never own gameplay state.
  *
- * Stage-1 surface: one dummy fighter (HP + position), applyStroke (slash
- * damages via resolveSlash; up-stroke starts a jump start.x → end.x along
- * jumpArcPoint), tick() advancing one fixed frame. launch/stab classify but
- * do not act yet. Stage 2 replaces the internals with the full
- * advance(deltaMs) loop (damage events, meters, AI intents, SimEvent[]).
+ * Stage-2 M2 surface: two fighters (player + enemy), phase model
+ * (intro → fighting → ended; pre-FIGHT strokes discarded per the gate),
+ * damage resolution with defense (heavy penalty applied in slash.ts — ONE
+ * form only), Focus + Critical meters, stance switching (free out of
+ * combat, Focus-gated in combat), SimEvent queue, fixed-step advance().
+ * M3 adds: skills, projectiles, invuln, Shunpo, kill-beat mechanics.
  */
 export class Sim {
-  private readonly state: { pos: Vec; hp: number; stance: StanceId };
-  private readonly halfW: number;
-  private readonly halfH: number;
-  /** The spawn ground line — jumps always launch from and land on it
-   * (capturing pos.y mid-air left the fighter floating; browser-verified bug). */
-  private readonly groundY: number;
-  private jump: JumpState | null = null;
+  private readonly fighters: Record<FighterSide, FighterState>;
+  private phaseState: SimPhase = 'intro';
+  private events: SimEvent[] = [];
   /** Total clamped wall-clock ms fed to advance() since spawn. */
   private elapsedMs = ZERO;
   private frameCount = ZERO;
@@ -64,20 +138,28 @@ export class Sim {
   constructor(
     readonly rng: Rng,
     readonly opponent: OpponentController,
-    spawn: FighterSpawn,
+    spawns: { player: FighterSpawn; enemy: FighterSpawn },
   ) {
-    this.state = { pos: { ...spawn.pos }, hp: spawn.hp, stance: spawn.stance };
-    this.halfW = spawn.halfW;
-    this.halfH = spawn.halfH;
-    this.groundY = spawn.pos.y;
+    this.fighters = {
+      player: spawnFighter(spawns.player),
+      enemy: spawnFighter(spawns.enemy),
+    };
   }
 
-  get fighter(): Readonly<{ pos: Readonly<Vec>; hp: number; stance: StanceId }> {
-    return this.state;
+  get phase(): SimPhase {
+    return this.phaseState;
   }
 
-  get jumping(): boolean {
-    return this.jump !== null;
+  get player(): FighterView {
+    return this.view('player');
+  }
+
+  get enemy(): FighterView {
+    return this.view('enemy');
+  }
+
+  get playerJumping(): boolean {
+    return this.fighters.player.jump !== null;
   }
 
   /** Fixed frames elapsed since spawn — the Sim's own clock. */
@@ -85,48 +167,133 @@ export class Sim {
     return this.frameCount;
   }
 
-  /** Axis-aligned hitbox rectangle around the fighter's current position. */
-  fighterHitbox(): Vec[] {
-    const { pos } = this.state;
+  private view(side: FighterSide): FighterView {
+    const f = this.fighters[side];
+    return {
+      pos: { ...f.pos },
+      hp: f.hp,
+      maxHp: f.maxHp,
+      stance: f.stance,
+      focus: unitsToFocus(f.focusUnits),
+      critical: unitsToCritical(f.criticalUnits),
+    };
+  }
+
+  /** Axis-aligned hitbox rectangle around a fighter's current position. */
+  hitbox(side: FighterSide): Vec[] {
+    const f = this.fighters[side];
     return [
-      { x: pos.x - this.halfW, y: pos.y - this.halfH },
-      { x: pos.x + this.halfW, y: pos.y - this.halfH },
-      { x: pos.x + this.halfW, y: pos.y + this.halfH },
-      { x: pos.x - this.halfW, y: pos.y + this.halfH },
+      { x: f.pos.x - f.halfW, y: f.pos.y - f.halfH },
+      { x: f.pos.x + f.halfW, y: f.pos.y - f.halfH },
+      { x: f.pos.x + f.halfW, y: f.pos.y + f.halfH },
+      { x: f.pos.x - f.halfW, y: f.pos.y + f.halfH },
     ];
   }
 
-  /** Resolve a finished stroke: slash → damage; jump → arc start.x → end.x. */
-  applyStroke(stroke: DrawnStroke, attacker: SlashAttacker): StrokeOutcome {
+  /** Drain queued events (returns and clears — scenes call once per frame). */
+  drainEvents(): SimEvent[] {
+    const drained = this.events;
+    this.events = [];
+    return drained;
+  }
+
+  /** FIGHT! — idempotent; strokes and AI are live only from here. */
+  beginCombat(): void {
+    if (this.phaseState !== 'intro') return;
+    this.phaseState = 'fighting';
+    this.events.push({ type: 'fightStarted' });
+  }
+
+  /**
+   * Stance switching (SYNTHESIS §6.1 decision): out of combat the toggle is
+   * instant and free (CONTRACT — "CANNOT CHANGE STANCE" only during fights);
+   * in combat it costs FOCUS_SWITCH_COST × WEAPON_WEIGHT[current stance]
+   * (INFERRED — the stance being LEFT proxies how heavily the weapon is
+   * committed; veto = key on the target stance instead). Denied switches
+   * emit an event so the HUD can flash the Focus bar.
+   */
+  requestStanceSwitch(side: FighterSide, to: StanceId): boolean {
+    const f = this.fighters[side];
+    if (to === f.stance) return false;
+    if (this.phaseState !== 'fighting') {
+      const from = f.stance;
+      f.stance = to;
+      this.events.push({ type: 'stanceSwitched', who: side, from, to, focusCost: ZERO });
+      return true;
+    }
+    const cost = FOCUS_SWITCH_COST * WEAPON_WEIGHT[f.stance];
+    const costUnits = focusToUnits(cost);
+    if (f.focusUnits < costUnits) {
+      this.events.push({
+        type: 'stanceSwitchDenied',
+        who: side,
+        needed: cost,
+        focus: unitsToFocus(f.focusUnits),
+      });
+      return false;
+    }
+    const from = f.stance;
+    f.focusUnits -= costUnits;
+    f.stance = to;
+    this.events.push({ type: 'stanceSwitched', who: side, from, to, focusCost: cost });
+    return true;
+  }
+
+  /**
+   * Resolve a finished player stroke: slash → damage on the enemy; up-stroke
+   * → player jump (start.x → end.x arc). Outside 'fighting' every stroke is
+   * DISCARDED (gate: pre-FIGHT strokes discarded). The crit decision is
+   * internal: a full Critical meter makes the next LANDED slash crit and
+   * resets the meter.
+   */
+  applyStroke(stroke: DrawnStroke): StrokeOutcome {
     const gesture = stroke.gesture;
+    if (this.phaseState !== 'fighting') return { gesture, slash: null };
     // Degenerate strokes (taps) classify as 'slash' by default — gate here at
     // the core seam so no caller can land a full-damage tap (audit finding).
     if (stroke.points.length < TWO) return { gesture, slash: null };
+    const player = this.fighters.player;
+    const enemy = this.fighters.enemy;
     if (gesture === 'slash') {
+      const critReady = unitsToCritical(player.criticalUnits) >= CRITICAL_MAX;
       const result = resolveSlash(
         stroke,
-        { polygon: this.fighterHitbox(), stance: this.state.stance, hp: this.state.hp },
-        attacker,
+        { polygon: this.hitbox('enemy'), stance: enemy.stance, hp: enemy.hp, defense: enemy.defense },
+        { atkPlusWeapon: player.atkPlusWeapon, stance: player.stance, crit: critReady },
       );
-      if (result.hit) this.state.hp = Math.max(ZERO, this.state.hp - result.damage);
+      if (result.hit) {
+        if (critReady) player.criticalUnits = ZERO; // consumed only on a landed hit
+        this.dealDamage('enemy', result.damage, result.crit, result.severed);
+      }
       return { gesture, slash: result };
     }
     if (gesture === 'jump') {
       const first = stroke.points.at(ZERO);
       const last = stroke.points.at(-ONE);
       // One jump at a time: a jump gesture while airborne is ignored.
-      if (this.jump === null && first !== undefined && last !== undefined) {
-        this.jump = {
-          from: { x: first.x, y: this.groundY },
-          to: { x: last.x, y: this.groundY },
+      if (player.jump === null && first !== undefined && last !== undefined) {
+        player.jump = {
+          from: { x: first.x, y: player.groundY },
+          to: { x: last.x, y: player.groundY },
           frame: ZERO,
         };
-        this.state.pos = { x: first.x, y: this.groundY };
+        player.pos = { x: first.x, y: player.groundY };
       }
       return { gesture, slash: null };
     }
-    // launch / stab: recognized, acted on from Stage 2.
+    // launch / stab: recognized; stab swats kunai from M3.
     return { gesture, slash: null };
+  }
+
+  private dealDamage(target: FighterSide, amount: number, crit: boolean, severed: string[]): void {
+    const f = this.fighters[target];
+    f.hp = Math.max(ZERO, f.hp - amount);
+    this.events.push({ type: 'damage', target, amount, crit, severed });
+    if (f.hp === ZERO) {
+      this.phaseState = 'ended';
+      const winner: FighterSide = target === 'enemy' ? 'player' : 'enemy';
+      this.events.push({ type: 'fightEnded', winner });
+    }
   }
 
   /**
@@ -150,10 +317,21 @@ export class Sim {
   /** Advance one fixed frame (advance() consumes the accumulator into these). */
   tick(): void {
     this.frameCount += ONE;
-    if (this.jump === null) return;
-    this.jump.frame += ONE;
-    const t = this.jump.frame / JUMP_DURATION_FRAMES;
-    this.state.pos = jumpArcPoint(t, this.jump.from, this.jump.to, JUMP_APEX_PX);
-    if (t >= ONE) this.jump = null;
+    if (this.phaseState === 'fighting') {
+      // Meters fill only during live combat (not intro, not post-kill).
+      for (const f of Object.values(this.fighters)) {
+        f.focusUnits = Math.min(f.focusUnits + ONE, focusToUnits(FOCUS_MAX));
+        f.criticalUnits += ONE; // value view clamps at CRITICAL_MAX
+      }
+      // AI seam: consulted once per fighting tick. M2 consumes the empty
+      // intent; M4's AISeamController fills it with real behavior.
+      this.opponent.next(this.frameCount);
+    }
+    const player = this.fighters.player;
+    if (player.jump === null) return;
+    player.jump.frame += ONE;
+    const t = player.jump.frame / JUMP_DURATION_FRAMES;
+    player.pos = jumpArcPoint(t, player.jump.from, player.jump.to, JUMP_APEX_PX);
+    if (t >= ONE) player.jump = null;
   }
 }

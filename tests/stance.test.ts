@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { COUNTER_BONUS } from '../src/config/combat';
-import { beats, counterMult, Stance } from '../src/core/stance';
+import { beats, counterMult, nextStance, Stance } from '../src/core/stance';
 
 describe('Stance enum', () => {
   it('maps to the StanceId string union used across config tables', () => {
@@ -42,5 +42,13 @@ describe('counterMult', () => {
   it('is exactly 1 otherwise (incl. mirror matches)', () => {
     expect(counterMult(Stance.Heavy, Stance.Light)).toBe(1);
     expect(counterMult(Stance.Balanced, Stance.Balanced)).toBe(1);
+  });
+});
+
+describe('nextStance — SPACE cycle (Stage 2 M2)', () => {
+  it('cycles light → balanced → heavy → light', () => {
+    expect(nextStance('light')).toBe('balanced');
+    expect(nextStance('balanced')).toBe('heavy');
+    expect(nextStance('heavy')).toBe('light');
   });
 });

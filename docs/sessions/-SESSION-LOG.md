@@ -122,4 +122,28 @@ Crash-resilience log. Updated per milestone, never "at the end."
   (same commit). DuelScene migrated onto `sim.advance(delta)` — inline
   accumulator + inline `250` + FIXED_HZ import deleted. Suite 177/177 · tsc
   both configs exit 0 · eslint exit 0.
+- **08:55** Stage 2 M2 — two-fighter Sim + damage/meters/stances (41-test
+  suite watched RED first: `advance is not a function` → constructor shape).
+  Landed: player+enemy FighterState (FighterView reads, hitbox(side));
+  defense in resolveSlash — damage = max(FLOOR, atk×dmgMult×crit?×counter? −
+  defense×(heavy ? 1−HEAVY_DEF_PENALTY : 1)), heavy penalty DEFENSE-SIDE at
+  ONE site, damageTakenMult data-only (landmine honored + documented at the
+  application site); phase model intro→fighting→ended, pre-FIGHT strokes
+  discarded (gate item), fightEnded exactly once; Focus+Critical meters in
+  integer frame-units (multiply-first exact — no fp drift; crit consumed
+  only on LANDED hits); stance switching free out-of-combat (CONTRACT) /
+  Focus-gated in-combat (INFERRED), cost = FOCUS_SWITCH_COST ×
+  WEAPON_WEIGHT[stance being LEFT] (decision flagged; veto = key on target);
+  SimEvent[] queue + drainEvents; nextStance SPACE cycle (STANCE_CYCLE
+  INFERRED); FOCUS_FILL_PER_S=4 INFERRED (no spec constant — flagged, veto =
+  fill-on-hit); DUEL_SPAWNS replaces DUMMY_SPAWN/DUEL_ATTACKER (pins moved
+  same commit); DuelScene interim renders both fighters + HP/Focus bars,
+  SPACE wired, mulberry32(Date.now()) at the boundary. Config-invariant
+  near-miss caught in self-review: duel.ts briefly imported core's Vec —
+  config imports nothing outside itself; replaced with structural type.
+  Chaos-proofs: damageTakenMult double-application planted → 17 RED ·
+  phase gate disarmed → intro-fill + AI-seam tests RED · nextStance cycle
+  broken → RED · crit-consume removed → A/B test RED — all restored GREEN.
+  Suite 202/202 · tsc both configs exit 0 · eslint exit 0 (caught one
+  unsafe enum comparison in new code — fixed).
 - (milestones appended below as they land)

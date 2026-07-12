@@ -25,6 +25,7 @@ import {
   CRITICAL_FILL_PER_S,
   CRITICAL_MAX,
   DAMAGE_FLOOR,
+  FOCUS_FILL_PER_S,
   FOCUS_MAX,
   FOCUS_START,
   FOCUS_SWITCH_COST,
@@ -55,11 +56,11 @@ import {
   SMOKE_BOMB_DISTANCE,
   SMOKE_BOMB_IFRAMES_MS,
 } from '../src/config/combat-sim';
-import { DUEL_ATTACKER, DUMMY_SPAWN, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
+import { DUEL_SPAWNS, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
 import { FOUR, HALF, HALF_TURN_DEG, ONE, TWO, ZERO } from '../src/config/nums';
-import { LAUNCH_UNLOCK_LEVEL, STANCE_BEATS, STANCE_TABLE } from '../src/config/stances';
+import { LAUNCH_UNLOCK_LEVEL, STANCE_BEATS, STANCE_CYCLE, STANCE_TABLE } from '../src/config/stances';
 import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S, SLASH_FRAMES } from '../src/config/timing';
 
 describe('palette.ts — exact trade-dress-shifted seeds (Stage 0 item 4)', () => {
@@ -113,6 +114,7 @@ describe('combat.ts — exact core constants (Stage 0 item 5)', () => {
     expect(FOCUS_MAX).toBe(100);
     expect(FOCUS_SWITCH_COST).toBe(34);
     expect(FOCUS_START).toBe(50);
+    expect(FOCUS_FILL_PER_S).toBe(4); // Stage-2 decision — see combat.ts docblock
     expect(CRITICAL_MAX).toBe(100);
     expect(CRITICAL_FILL_PER_S).toBe(8);
   });
@@ -154,6 +156,9 @@ describe('stances.ts — exact table + triangle (Stage 0 item 6)', () => {
   it('STANCE_BEATS triangle: light>heavy>balanced>light', () => {
     expect(STANCE_BEATS).toEqual({ light: 'heavy', heavy: 'balanced', balanced: 'light' });
   });
+  it('STANCE_CYCLE — SPACE order (Stage 2 M2)', () => {
+    expect(STANCE_CYCLE).toEqual(['light', 'balanced', 'heavy']);
+  });
   it('LAUNCH_UNLOCK_LEVEL', () => {
     expect(LAUNCH_UNLOCK_LEVEL).toEqual({ light: 3, balanced: 5, heavy: 5 });
   });
@@ -170,18 +175,12 @@ describe('nums.ts — pure-math identities (Stage 1; core/ bans ALL literals)', 
   });
 });
 
-describe('duel.ts — Stage-1 dummy setup (all INFERRED)', () => {
-  it('DUMMY_SPAWN — the gate’s 100 HP foe', () => {
-    expect(DUMMY_SPAWN).toEqual({
-      pos: { x: 700, y: 430 },
-      hp: 100,
-      stance: 'balanced',
-      halfW: 26,
-      halfH: 60,
+describe('duel.ts — Stage-2 arena layout (all INFERRED)', () => {
+  it('DUEL_SPAWNS — player left, enemy right, on the ground band', () => {
+    expect(DUEL_SPAWNS).toEqual({
+      player: { pos: { x: 260, y: 430 }, halfW: 26, halfH: 60 },
+      enemy: { pos: { x: 700, y: 430 }, halfW: 26, halfH: 60 },
     });
-  });
-  it('DUEL_ATTACKER mirrors Stage 2 PLAYER_BASE damage input', () => {
-    expect(DUEL_ATTACKER).toEqual({ atkPlusWeapon: 10, stance: 'balanced' });
   });
   it('jump arc constants', () => {
     expect(JUMP_DURATION_FRAMES).toBe(24);

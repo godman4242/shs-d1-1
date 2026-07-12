@@ -10,14 +10,17 @@ import {
   BLOOD_SPEED_MIN,
   BLOOD_SPREAD_DEG,
 } from '../config/combat';
-import { DUEL_ATTACKER, DUMMY_SPAWN } from '../config/duel';
+import { ENEMY_BASE, PLAYER_BASE } from '../config/combat-sim';
+import { DUEL_SPAWNS } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { SLASH_ARC } from '../config/fx';
 import { COL } from '../config/palette';
 import { DrawnStroke } from '../core/DrawnStroke';
 import { closestPointOnPolyline } from '../core/geometry';
 import type { OpponentController } from '../core/OpponentController';
-import { Sim } from '../core/Sim';
+import { mulberry32 } from '../core/rng';
+import { nextStance } from '../core/stance';
+import { Sim, type FighterSide, type FighterView } from '../core/Sim';
 import type { Vec } from '../core/vec';
 
 /** Render-FX record: a finished stroke's blade trail, fading out. */
@@ -62,11 +65,25 @@ export class DuelScene extends Phaser.Scene {
   }
 
   create(): void {
-    const opponent: OpponentController = { next: () => ({}) }; // Stage 2: AISeamController
-    this.sim = new Sim(Math.random, opponent, { ...DUMMY_SPAWN, pos: { ...DUMMY_SPAWN.pos } });
+    const opponent: OpponentController = { next: () => ({}) }; // M4: AISeamController
+    // Seeded mulberry32 at the boundary (Math.random is banned in core/).
+    // Wall-clock seed is fine here in game/; the determinism harness and
+    // replay tests inject their own fixed seeds.
+    this.sim = new Sim(mulberry32(Date.now()), opponent, {
+      player: { ...PLAYER_BASE, ...DUEL_SPAWNS.player, pos: { ...DUEL_SPAWNS.player.pos } },
+      enemy: { ...ENEMY_BASE, ...DUEL_SPAWNS.enemy, pos: { ...DUEL_SPAWNS.enemy.pos } },
+    });
+    // Interim (until M6's DuelIntro): combat starts immediately — the VS →
+    // READY → FIGHT! sequence owns this call once the intro scene lands.
+    this.sim.beginCombat();
 
     this.drawForest();
     this.fx = this.add.graphics();
+
+    // SPACE cycles the player's stance (Focus-gated in combat — Sim decides).
+    this.input.keyboard?.on('keydown-SPACE', () => {
+      this.sim.requestStanceSwitch('player', nextStance(this.sim.player.stance));
+    });
 
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       this.dragging = true;
@@ -146,13 +163,13 @@ export class DuelScene extends Phaser.Scene {
     const now = this.time.now;
     this.redStrokes.push({ points: stroke.points, bornAt: now });
 
-    const outcome = this.sim.applyStroke(stroke, { ...DUEL_ATTACKER, crit: false });
+    const outcome = this.sim.applyStroke(stroke);
     if (outcome.gesture !== 'slash') return;
 
     this.trails.push({ points: stroke.points, bornAt: now });
     if (outcome.slash?.hit === true) {
-      const impact =
-        closestPointOnPolyline(this.sim.fighter.pos, stroke.points) ?? this.sim.fighter.pos;
+      const enemyPos = this.sim.enemy.pos;
+      const impact = closestPointOnPolyline(enemyPos, stroke.points) ?? enemyPos;
       const severed = outcome.slash.severed.length > 0;
       this.spawnBlood(impact, stroke.direction, severed, now);
     }
@@ -211,6 +228,10 @@ export class DuelScene extends Phaser.Scene {
     // the scene just forwards the wall-clock delta.
     this.sim.advance(delta);
 
+    // Drain sim events every frame (M3 turns these into kill-beat/SFX; for
+    // now draining keeps the queue bounded — blood is stroke-outcome-driven).
+    this.sim.drainEvents();
+
     const now = this.time.now;
     const dt = delta / 1000;
     const g = this.fx;
@@ -250,21 +271,24 @@ export class DuelScene extends Phaser.Scene {
       g.fillCircle(d.x - d.vx * 0.008, d.y - d.vy * 0.008, 2);
     }
 
-    this.drawFighter(g);
+    this.drawFighter(g, this.sim.player, 'player');
+    this.drawFighter(g, this.sim.enemy, 'enemy');
   }
 
-  /** Fighter capsule + overhead HP bar, straight from sim state. */
-  private drawFighter(g: Phaser.GameObjects.Graphics): void {
-    const { pos, hp } = this.sim.fighter;
-    const w = DUMMY_SPAWN.halfW * 2;
-    const h = DUMMY_SPAWN.halfH * 2;
-    const left = pos.x - DUMMY_SPAWN.halfW;
-    const top = pos.y - DUMMY_SPAWN.halfH;
+  /** Fighter capsule + overhead HP/Focus bars, straight from sim state.
+   * Interim testbed rendering — M6 rebuilds fighters from the study frames. */
+  private drawFighter(g: Phaser.GameObjects.Graphics, f: FighterView, side: FighterSide): void {
+    const { pos, hp, maxHp, focus } = f;
+    const spawn = DUEL_SPAWNS[side];
+    const w = spawn.halfW * 2;
+    const h = spawn.halfH * 2;
+    const left = pos.x - spawn.halfW;
+    const top = pos.y - spawn.halfH;
 
     g.fillStyle(COL.outline, 1);
-    g.fillRoundedRect(left - 3, top - 3, w + 6, h + 6, DUMMY_SPAWN.halfW + 3);
-    g.fillStyle(COL.haoriEnemy, 1);
-    g.fillRoundedRect(left, top, w, h, DUMMY_SPAWN.halfW);
+    g.fillRoundedRect(left - 3, top - 3, w + 6, h + 6, spawn.halfW + 3);
+    g.fillStyle(side === 'player' ? COL.haori : COL.haoriEnemy, 1);
+    g.fillRoundedRect(left, top, w, h, spawn.halfW);
     g.fillStyle(COL.kimono, 1);
     g.fillCircle(pos.x, top + 18, 13); // head
     g.fillStyle(COL.scarf, 1);
@@ -277,6 +301,9 @@ export class DuelScene extends Phaser.Scene {
     g.fillStyle(COL.outline, 0.85);
     g.fillRect(barX - 1, barY - 1, barW + 2, 8);
     g.fillStyle(COL.healthGreen, 1);
-    g.fillRect(barX, barY, (barW * hp) / DUMMY_SPAWN.hp, 6);
+    g.fillRect(barX, barY, (barW * hp) / maxHp, 6);
+    // Focus bar (blue) under the HP bar — SPACE-drain must be visible.
+    g.fillStyle(COL.focusBlue, 1);
+    g.fillRect(barX, barY + 8, (barW * focus) / 100, 4);
   }
 }

@@ -1,7 +1,12 @@
 /**
- * Stage 1 item 4 — src/core/slash.ts: resolveSlash(stroke, target, attacker).
- * Damage = (ATK+Weapon) × STANCE_TABLE[stance].dmgMult × (crit?CRIT_MULT:1)
- *          × (STANCE_BEATS[attacker]===defender ? COUNTER_BONUS : 1)
+ * Stage 1 item 4 (+ Stage 2 defense) — src/core/slash.ts.
+ * Damage = max(DAMAGE_FLOOR,
+ *   (ATK+Weapon) × STANCE_TABLE[stance].dmgMult × (crit?CRIT_MULT:1)
+ *     × (STANCE_BEATS[attacker]===defender ? COUNTER_BONUS : 1)
+ *     − defense × (defender heavy ? 1−HEAVY_DEF_PENALTY : 1))
+ * The heavy penalty is DEFENSE-SIDE ONLY (landmine: damageTakenMult is
+ * data-only). Most tests here pin the multiplier stack with defense 0;
+ * the defense describe pins the subtraction + single-form heavy penalty.
  * severed lists crossed named parts on a LETHAL blow (INFERRED design —
  * dismemberment rides the kill in the original).
  */
@@ -28,6 +33,7 @@ const target = (over: Partial<TargetHitbox> = {}): TargetHitbox => ({
   polygon: squareAt(100, 100),
   stance: 'balanced',
   hp: 100,
+  defense: 0,
   ...over,
 });
 /** Horizontal stroke crossing x=0..200 at y=100 — clean hit on target(). */
@@ -84,6 +90,23 @@ describe('resolveSlash — damage formula', () => {
   it('crit on a whiff reports crit:false (no crit without contact)', () => {
     const s = new DrawnStroke([v(0, 300), v(200, 300)]);
     expect(resolveSlash(s, target(), attacker({ crit: true })).crit).toBe(false);
+  });
+});
+
+describe('resolveSlash — defense subtracts from the attack term (Stage 2)', () => {
+  it('defense reduces damage after the multiplier stack: 12 − 5 = 7', () => {
+    const r = resolveSlash(throughStroke(), target({ defense: 5 }), attacker());
+    expect(r.damage).toBe(7);
+  });
+  it('heavy defender: defense × (1 − HEAVY_DEF_PENALTY) — 12 − 5×0.8 = 8, ONE form only', () => {
+    // Exact 8 pins the defense-side form AND that damageTakenMult (1.25)
+    // is NOT also applied (double-application would read 10 or 11).
+    const r = resolveSlash(throughStroke(), target({ stance: 'heavy', defense: 5 }), attacker());
+    expect(r.damage).toBe(8);
+  });
+  it('overwhelming defense floors at DAMAGE_FLOOR', () => {
+    const r = resolveSlash(throughStroke(), target({ defense: 999 }), attacker());
+    expect(r.damage).toBe(1);
   });
 });
 
