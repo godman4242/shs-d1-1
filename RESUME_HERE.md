@@ -54,13 +54,25 @@ WEAPON_WEIGHT[stance being LEFT] — veto = key on target), SimEvent[] queue
 (fightStarted/fightEnded/damage/stanceSwitched/stanceSwitchDenied),
 nextStance SPACE cycle, DuelScene interim: both fighters + HP/Focus bars,
 SPACE wired, mulberry32(Date.now()) seed.
-Next (kickoff §1 item 4): `combo.ts` (reset-to-1 on kill, break on damage
-taken / chain gap — §7 COMBO_RULES), then `projectile.ts` (kunai), skills
-(Chi Punch / Smoke Bomb / Stab+Deflect via PlayerIntent + SKILL_VERB), spawn
-invuln (5 s or first slash + blink), Shunpo, kill beat (exactly once). Then
-M4 AISeamController + ai.ts config, M5 economy.ts, M6 scenes w/ fidelity
-pull-forward, M7 24-seed harness + determinism, M8 game/ purity ratchet,
-M9 audit + gate evidence.
+M3 DONE (251/251): combo (reset-to-1 on kill CONTRACT, breaks on damage/gap,
+COMBO_CHAIN_GAP_S=3 INFERRED) · core/damage.ts single formula site · enemy
+strikes via OpponentIntent (airborne evade; player invuln honored) · kunai
+projectiles (cap 8, straight-line, flat 8 dmg INFERRED, off-arena despawn) ·
+skills 1/2/3 (chiPunch flat 10 CONTRACT + 4.96s CD; smokeBomb dash-away +
+i-frames; stab deflect window, deflectLearned gated ONCE in stepKunai) ·
+spawn invuln PLAYER-ONLY (5s/first-slash, veto = symmetric) · Shunpo
+(hysteresis restart at 10, integer 1/60 units, SHUNPO_FILL_PER_S=12
+INFERRED) · PlayerIntent moveX/shunpoHeld (NaN-guarded) + queueSkill ·
+DuelScene wired: A/D + SHIFT + 1/2/3, advance(delta × timeScale), kunai
+bolts, invuln blink. Chi COSTS deferred to Stage 3 (no Chi meter yet —
+flagged).
+Next (kickoff §1 item 5): M4 `AISeamController.ts` — telegraph-then-commit
+(windup ≥ telegraphMs before any strike), stance switches queue
+pendingStanceMs, kunai at 240–720px (Normal+), injected rng only; plus
+`config/ai.ts` (spec item 8 EXACT values, pinned same commit) and enemy
+movement (ENEMY_SPEED, approach/strike ranges). Then M5 economy.ts, M6
+scenes w/ fidelity pull-forward, M7 24-seed harness + determinism, M8 game/
+purity ratchet, M9 audit + gate evidence.
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 

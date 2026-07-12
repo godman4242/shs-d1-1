@@ -1,13 +1,33 @@
 import {
+  CHI_PUNCH_DMG_L1,
   CRITICAL_FILL_PER_S,
   CRITICAL_MAX,
   FOCUS_FILL_PER_S,
   FOCUS_MAX,
   FOCUS_START,
   FOCUS_SWITCH_COST,
+  SPAWN_INVULN_S,
   WEAPON_WEIGHT,
 } from '../config/combat';
-import { MAX_FRAME_MS, type FighterBase } from '../config/combat-sim';
+import {
+  DEFLECT_RADIUS,
+  DEFLECT_WINDOW_MS,
+  MAX_FRAME_MS,
+  PLAYER_MOVE_SPEED,
+  PROJECTILE_DMG,
+  PROJECTILE_MAX_ACTIVE,
+  SHUNPO_DRAIN_PER_S,
+  SHUNPO_FILL_PER_S,
+  SHUNPO_MAX,
+  SHUNPO_MIN_TO_START,
+  SHUNPO_TIMESCALE,
+  SMOKE_BOMB_DISTANCE,
+  SMOKE_BOMB_IFRAMES_MS,
+  type FighterBase,
+  type SkillVerb,
+} from '../config/combat-sim';
+import { GAME_WIDTH } from '../config/display';
+import { SKILL_COOLDOWN_MS } from '../config/skills';
 import { JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../config/duel';
 import { ONE, TWO, ZERO } from '../config/nums';
 import type { StanceId } from '../config/stances';
@@ -17,6 +37,7 @@ import { physicalDamage } from './damage';
 import type { DrawnStroke } from './DrawnStroke';
 import type { Gesture } from './gesture';
 import type { OpponentController, OpponentIntent } from './OpponentController';
+import { isOffArena, projectileHits, spawnProjectile, stepProjectile, type Projectile } from './projectile';
 import { resolveSlash, type SlashResult } from './slash';
 import { jumpArcPoint } from './trajectory';
 import type { Vec } from './vec';
@@ -47,7 +68,23 @@ export type SimEvent =
   | { type: 'stanceSwitched'; who: FighterSide; from: StanceId; to: StanceId; focusCost: number }
   | { type: 'stanceSwitchDenied'; who: FighterSide; needed: number; focus: number }
   | { type: 'strikeEvaded'; by: FighterSide }
-  | { type: 'comboChanged'; value: number };
+  | { type: 'comboChanged'; value: number }
+  | { type: 'skillUsed'; verb: SkillVerb }
+  | { type: 'invulnBlocked'; target: FighterSide }
+  | { type: 'kunaiThrown' }
+  | { type: 'kunaiDeflected' }
+  | { type: 'shunpoStarted' }
+  | { type: 'shunpoEnded' };
+
+/**
+ * Per-tick held-state input from the scene (edge-triggered skill presses go
+ * through queueSkill instead). moveX is -1 | 0 | 1; setPlayerIntent clamps
+ * and NaN-guards it (scene input is an untrusted Sim boundary).
+ */
+export interface PlayerIntent {
+  moveX: number;
+  shunpoHeld: boolean;
+}
 
 export interface StrokeOutcome {
   gesture: Gesture;
@@ -63,6 +100,8 @@ export interface FighterView {
   stance: StanceId;
   focus: number;
   critical: number;
+  /** Spawn invuln or Smoke-Bomb i-frames — the scene renders the blink. */
+  invulnerable: boolean;
 }
 
 interface JumpState {
@@ -84,6 +123,10 @@ interface FighterState {
   focusUnits: number;
   criticalUnits: number;
   jump: JumpState | null;
+  /** Frame the spawn invulnerability ends (0 = none). Player-only in M3. */
+  invulnEndFrame: number;
+  /** Frame Smoke-Bomb i-frames end (0 = none). */
+  iframesEndFrame: number;
   readonly maxHp: number;
   readonly atkPlusWeapon: number;
   readonly defense: number;
@@ -99,6 +142,11 @@ const focusToUnits = (focus: number): number => (focus * FIXED_HZ) / FOCUS_FILL_
 const unitsToFocus = (units: number): number => (units * FOCUS_FILL_PER_S) / FIXED_HZ;
 const unitsToCritical = (units: number): number =>
   Math.min(CRITICAL_MAX, (units * CRITICAL_FILL_PER_S) / FIXED_HZ);
+/** Wall-time ms → whole fixed frames (ceil: a window never rounds shorter). */
+const msToFrames = (ms: number): number => Math.ceil((ms * FIXED_HZ) / MS_PER_S);
+/** Shunpo meter units are 1/FIXED_HZ points: integer drain/fill, exact reads. */
+const SHUNPO_MAX_UNITS = SHUNPO_MAX * FIXED_HZ;
+const SHUNPO_MIN_UNITS = SHUNPO_MIN_TO_START * FIXED_HZ;
 
 function spawnFighter(spawn: FighterSpawn): FighterState {
   return {
@@ -108,6 +156,8 @@ function spawnFighter(spawn: FighterSpawn): FighterState {
     focusUnits: focusToUnits(FOCUS_START),
     criticalUnits: ZERO,
     jump: null,
+    invulnEndFrame: ZERO,
+    iframesEndFrame: ZERO,
     maxHp: spawn.hp,
     atkPlusWeapon: spawn.atkPlusWeapon,
     defense: spawn.defense,
@@ -137,6 +187,18 @@ export class Sim {
   private events: SimEvent[] = [];
   /** HIT COMBO — player-only HUD counter (the original shows no enemy combo). */
   private readonly comboCounter = new Combo();
+  private playerIntent: PlayerIntent = { moveX: ZERO, shunpoHeld: false };
+  private queuedSkill: SkillVerb | null = null;
+  private readonly cooldownUntil: Record<SkillVerb, number> = {
+    chiPunch: ZERO,
+    smokeBomb: ZERO,
+    stab: ZERO,
+  };
+  /** Frame the player's stab deflect window closes (0 = closed). */
+  private deflectEndFrame = ZERO;
+  private kunai: Projectile[] = [];
+  private shunpoUnits = SHUNPO_MAX_UNITS;
+  private shunpoActive = false;
   /** Total clamped wall-clock ms fed to advance() since spawn. */
   private elapsedMs = ZERO;
   private frameCount = ZERO;
@@ -178,6 +240,42 @@ export class Sim {
     return this.comboCounter.value;
   }
 
+  /** Sim time scale: SHUNPO_TIMESCALE while Shunpo is held, else 1. The
+   * scene multiplies its render delta by this before calling advance()
+   * (spec item 11) and mirrors it onto Phaser's tween/timer scales. */
+  get timeScale(): number {
+    return this.shunpoActive ? SHUNPO_TIMESCALE : ONE;
+  }
+
+  /** Shunpo meter in points (0..SHUNPO_MAX) — integer-unit exact. */
+  get shunpo(): number {
+    return this.shunpoUnits / FIXED_HZ;
+  }
+
+  /** Live kunai (fresh copies — never live refs). */
+  get projectiles(): readonly Projectile[] {
+    return this.kunai.map((p) => ({ pos: { ...p.pos }, vel: { ...p.vel } }));
+  }
+
+  /** Seconds until the skill is ready (0 = ready) — drives the HUD sweep. */
+  cooldownRemainingS(verb: SkillVerb): number {
+    return Math.max(ZERO, this.cooldownUntil[verb] - this.frameCount) / FIXED_HZ;
+  }
+
+  /** Held-state input for the next ticks. NaN/∞ moveX is rejected and the
+   * value clamped to [-1, 1] — scene input is an untrusted boundary. */
+  setPlayerIntent(intent: PlayerIntent): void {
+    const moveX = Number.isFinite(intent.moveX)
+      ? Math.max(-ONE, Math.min(ONE, intent.moveX))
+      : ZERO;
+    this.playerIntent = { moveX, shunpoHeld: intent.shunpoHeld };
+  }
+
+  /** Edge-triggered skill press (hotbar 1/2/3) — consumed on the next tick. */
+  queueSkill(verb: SkillVerb): void {
+    this.queuedSkill = verb;
+  }
+
   private view(side: FighterSide): FighterView {
     const f = this.fighters[side];
     return {
@@ -187,6 +285,7 @@ export class Sim {
       stance: f.stance,
       focus: unitsToFocus(f.focusUnits),
       critical: unitsToCritical(f.criticalUnits),
+      invulnerable: this.frameCount < f.invulnEndFrame || this.frameCount < f.iframesEndFrame,
     };
   }
 
@@ -208,10 +307,14 @@ export class Sim {
     return drained;
   }
 
-  /** FIGHT! — idempotent; strokes and AI are live only from here. */
+  /** FIGHT! — idempotent; strokes and AI are live only from here.
+   * Spawn invulnerability is PLAYER-ONLY (research frames it as respawn
+   * protection; an invulnerable enemy would block the first slash, which
+   * the Stage-2 gate requires to damage). Veto = symmetric invuln. */
   beginCombat(): void {
     if (this.phaseState !== 'intro') return;
     this.phaseState = 'fighting';
+    this.fighters.player.invulnEndFrame = this.frameCount + SPAWN_INVULN_S * FIXED_HZ;
     this.events.push({ type: 'fightStarted' });
   }
 
@@ -266,6 +369,8 @@ export class Sim {
     const player = this.fighters.player;
     const enemy = this.fighters.enemy;
     if (gesture === 'slash') {
+      // Any slash — hit or miss — is an offensive act: it ends spawn invuln.
+      player.invulnEndFrame = ZERO;
       const critReady = unitsToCritical(player.criticalUnits) >= CRITICAL_MAX;
       const result = resolveSlash(
         stroke,
@@ -293,7 +398,11 @@ export class Sim {
       }
       return { gesture, slash: null };
     }
-    // launch / stab: recognized; stab swats kunai from M3.
+    if (gesture === 'stab') {
+      this.tryCastSkill('stab');
+      return { gesture, slash: null };
+    }
+    // launch: recognized, acted on at Stage 3 (LAUNCH_UNLOCK_LEVEL).
     return { gesture, slash: null };
   }
 
@@ -305,11 +414,21 @@ export class Sim {
    * Sim only executes, honoring the player's evasion states. An airborne
    * player evades ground strikes (jump dodge — the original's core defense
    * verb alongside stances). */
+  /** Invuln (spawn) or i-frames (Smoke Bomb) nullify incoming damage. */
+  private isProtected(side: FighterSide): boolean {
+    const f = this.fighters[side];
+    return this.frameCount < f.invulnEndFrame || this.frameCount < f.iframesEndFrame;
+  }
+
   private executeStrike(): void {
     const player = this.fighters.player;
     const enemy = this.fighters.enemy;
     if (player.jump !== null) {
       this.events.push({ type: 'strikeEvaded', by: 'player' });
+      return;
+    }
+    if (this.isProtected('player')) {
+      this.events.push({ type: 'invulnBlocked', target: 'player' });
       return;
     }
     const critReady = unitsToCritical(enemy.criticalUnits) >= CRITICAL_MAX;
@@ -358,6 +477,101 @@ export class Sim {
     while (this.frameCount < owed) this.tick();
   }
 
+  /**
+   * Shunpo per tick. Order matters and is test-pinned: (1) released while
+   * active → stop; (2) inactive meter refills; (3) held + refilled past
+   * SHUNPO_MIN_TO_START → start (hysteresis band stops flicker at empty);
+   * (4) active → drain, auto-stop at 0. Rates are per SIM second (units are
+   * integer 1/FIXED_HZ points, so every read is exact).
+   */
+  private updateShunpo(): void {
+    const held = this.playerIntent.shunpoHeld;
+    if (this.shunpoActive && !held) {
+      this.shunpoActive = false;
+      this.events.push({ type: 'shunpoEnded' });
+    }
+    if (!this.shunpoActive) {
+      this.shunpoUnits = Math.min(this.shunpoUnits + SHUNPO_FILL_PER_S, SHUNPO_MAX_UNITS);
+    }
+    if (held && !this.shunpoActive && this.shunpoUnits >= SHUNPO_MIN_UNITS) {
+      this.shunpoActive = true;
+      this.events.push({ type: 'shunpoStarted' });
+    }
+    if (this.shunpoActive) {
+      this.shunpoUnits -= SHUNPO_DRAIN_PER_S;
+      if (this.shunpoUnits <= ZERO) {
+        this.shunpoUnits = ZERO;
+        this.shunpoActive = false;
+        this.events.push({ type: 'shunpoEnded' });
+      }
+    }
+  }
+
+  private tryCastSkill(verb: SkillVerb): void {
+    if (this.frameCount < this.cooldownUntil[verb]) return;
+    const player = this.fighters.player;
+    const enemy = this.fighters.enemy;
+    if (verb === 'chiPunch') {
+      // CONTRACT: on-screen 10 dealt — flat, bypasses defense. Offensive:
+      // ends spawn invuln like a slash.
+      player.invulnEndFrame = ZERO;
+      this.dealDamage('enemy', CHI_PUNCH_DMG_L1, false, []);
+    } else if (verb === 'smokeBomb') {
+      // Dash AWAY from the enemy, clamped to the arena; grants i-frames.
+      const away = player.pos.x < enemy.pos.x ? -ONE : ONE;
+      player.pos = {
+        x: Math.max(
+          player.halfW,
+          Math.min(GAME_WIDTH - player.halfW, player.pos.x + away * SMOKE_BOMB_DISTANCE),
+        ),
+        y: player.pos.y,
+      };
+      player.iframesEndFrame = this.frameCount + msToFrames(SMOKE_BOMB_IFRAMES_MS);
+    } else {
+      // stab: opens the deflect window. Whether it can actually swat is
+      // gated ONCE, in stepKunai (deflectLearned) — no redundant gate here,
+      // so the mutation test has exactly one place to bite.
+      this.deflectEndFrame = this.frameCount + msToFrames(DEFLECT_WINDOW_MS);
+    }
+    this.cooldownUntil[verb] = this.frameCount + msToFrames(SKILL_COOLDOWN_MS[verb]);
+    this.events.push({ type: 'skillUsed', verb });
+  }
+
+  private throwKunai(): void {
+    if (this.kunai.length >= PROJECTILE_MAX_ACTIVE) return;
+    this.kunai.push(spawnProjectile(this.fighters.enemy.pos, this.fighters.player.pos));
+    this.events.push({ type: 'kunaiThrown' });
+  }
+
+  /** Step every kunai one frame: deflect (stab window) beats hit; hits on a
+   * protected player are blocked+absorbed; off-arena kunai despawn. */
+  private stepKunai(): void {
+    const player = this.fighters.player;
+    const windowOpen = this.frameCount < this.deflectEndFrame;
+    const survivors: Projectile[] = [];
+    for (const p of this.kunai) {
+      const moved = stepProjectile(p);
+      const distToPlayer = Math.hypot(moved.pos.x - player.pos.x, moved.pos.y - player.pos.y);
+      if (windowOpen && player.deflectLearned && distToPlayer <= DEFLECT_RADIUS) {
+        this.events.push({ type: 'kunaiDeflected' });
+        continue;
+      }
+      if (projectileHits(moved, player.pos)) {
+        if (this.isProtected('player')) {
+          this.events.push({ type: 'invulnBlocked', target: 'player' });
+        } else {
+          // INFERRED: kunai chip damage is flat (archer chip pattern) —
+          // defense does not subtract from PROJECTILE_DMG.
+          this.dealDamage('player', PROJECTILE_DMG, false, []);
+        }
+        continue;
+      }
+      if (isOffArena(moved)) continue;
+      survivors.push(moved);
+    }
+    this.kunai = survivors;
+  }
+
   /** Advance one fixed frame (advance() consumes the accumulator into these). */
   tick(): void {
     this.frameCount += ONE;
@@ -367,10 +581,28 @@ export class Sim {
         f.focusUnits = Math.min(f.focusUnits + ONE, focusToUnits(FOCUS_MAX));
         f.criticalUnits += ONE; // value view clamps at CRITICAL_MAX
       }
+      this.updateShunpo();
+      // Player movement (A/D). The jump arc owns the position while airborne.
+      const player = this.fighters.player;
+      if (player.jump === null && this.playerIntent.moveX !== ZERO) {
+        const stepMs = MS_PER_S / FIXED_HZ;
+        const x = player.pos.x + this.playerIntent.moveX * PLAYER_MOVE_SPEED * stepMs;
+        player.pos = {
+          x: Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, x)),
+          y: player.pos.y,
+        };
+      }
+      // Edge-triggered skill press queued by the scene.
+      if (this.queuedSkill !== null) {
+        this.tryCastSkill(this.queuedSkill);
+        this.queuedSkill = null;
+      }
       // AI seam: consulted once per fighting tick; the Sim executes the
       // returned intent blindly (M4's AISeamController decides timing).
       const intent: OpponentIntent = this.opponent.next(this.frameCount);
       if (intent.strike === true) this.executeStrike();
+      if (intent.throwKunai === true) this.throwKunai();
+      this.stepKunai();
     }
     const player = this.fighters.player;
     if (player.jump === null) return;

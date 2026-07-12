@@ -10,6 +10,8 @@
 export interface OpponentIntent {
   /** Land a strike on the player this tick. */
   strike?: boolean;
+  /** Throw a kunai at the player's current position this tick. */
+  throwKunai?: boolean;
 }
 
 export interface OpponentController {

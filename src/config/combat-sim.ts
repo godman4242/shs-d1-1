@@ -15,6 +15,12 @@ export const MAX_FRAME_MS = 250;
 /** INFERRED */ export const SHUNPO_MAX = 100;
 /** INFERRED */ export const SHUNPO_DRAIN_PER_S = 34;
 /** INFERRED */ export const SHUNPO_MIN_TO_START = 10;
+/**
+ * INFERRED — Stage-2 decision (flagged 2026-07-12): the spec names drain
+ * but no refill; 12/s ≈ a third of the drain rate, so held slow-mo is a
+ * spend, not a stance. Veto = different rate or no in-duel refill.
+ */
+export const SHUNPO_FILL_PER_S = 12;
 
 // ── Smoke Bomb + Stab/Deflect ─────────────────────────────────────────
 /** INFERRED */ export const SMOKE_BOMB_DISTANCE = 180;

@@ -146,4 +146,26 @@ Crash-resilience log. Updated per milestone, never "at the end."
   broken → RED · crit-consume removed → A/B test RED — all restored GREEN.
   Suite 202/202 · tsc both configs exit 0 · eslint exit 0 (caught one
   unsafe enum comparison in new code — fixed).
+- **09:20** Stage 2 M3 (two commits: M3a combo/strikes, M3b verbs) — 24 M3b
+  tests watched RED first. Landed: kunai projectiles (pure core/projectile.ts
+  + Sim-owned list, cap 8, straight-line INFERRED, flat 8 dmg INFERRED
+  archer-chip pattern); skills via queueSkill + SKILL_COOLDOWN_MS (chiPunch
+  4960 CONTRACT / smokeBomb 7960 + stab 920 INFERRED .92/.96 pattern; Chi
+  COSTS deferred to Stage 3 — no Chi meter in the Stage-2 fighter model,
+  flagged); smoke bomb dash-away + i-frames; stab deflect window with the
+  deflectLearned gate deduplicated to ONE site after a chaos pass found an
+  unkillable mutant (redundant double-gate — removed, single gate re-proven
+  RED); spawn invuln PLAYER-ONLY (decision flagged: research frames it as
+  respawn protection and an invulnerable enemy would break the first-slash
+  gate item; veto = symmetric), ends on first offensive act (slash/chiPunch),
+  boundary pinned 299-blocked/301-lands; Shunpo in integer 1/60-point units
+  (drain 34, fill 12 INFERRED, hysteresis restart at exactly 10 — order
+  test-pinned); PlayerIntent (moveX NaN-guarded at the boundary, clamped)
+  + movement 280 px/s, arena-clamped, jump-owned while airborne. Spec
+  collision caught and resolved: M3a strike tests fired inside the new spawn
+  invuln → scenarios now end invuln via the canonical first-slash path.
+  DuelScene: A/D + SHIFT + 1/2/3 wired, advance(delta × sim.timeScale)
+  (spec item 11), kunai bolt render, invuln blink. Chaos: protection check
+  → 3 RED · kunai cap → 1 RED · shunpo hysteresis → 2 RED · deflect gate
+  → 1 RED (after dedup). Suite 251/251 · tsc both configs exit 0 · eslint 0.
 - (milestones appended below as they land)

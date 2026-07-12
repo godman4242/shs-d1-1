@@ -59,6 +59,7 @@ export class DuelScene extends Phaser.Scene {
   private trails: Trail[] = [];
   private redStrokes: Trail[] = [];
   private droplets: Droplet[] = [];
+  private keys?: Record<'A' | 'D' | 'SHIFT', Phaser.Input.Keyboard.Key>;
 
   constructor() {
     super('duel');
@@ -84,6 +85,15 @@ export class DuelScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-SPACE', () => {
       this.sim.requestStanceSwitch('player', nextStance(this.sim.player.stance));
     });
+    // Hotbar 1/2/3 → SKILL_VERB (edge-triggered; Sim enforces cooldowns).
+    this.input.keyboard?.on('keydown-ONE', () => { this.sim.queueSkill('chiPunch'); });
+    this.input.keyboard?.on('keydown-TWO', () => { this.sim.queueSkill('smokeBomb'); });
+    this.input.keyboard?.on('keydown-THREE', () => { this.sim.queueSkill('stab'); });
+    // A/D movement + SHIFT-hold Shunpo are held-state: polled every update.
+    this.keys = this.input.keyboard?.addKeys('A,D,SHIFT') as Record<
+      'A' | 'D' | 'SHIFT',
+      Phaser.Input.Keyboard.Key
+    > | undefined;
 
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       this.dragging = true;
@@ -224,9 +234,13 @@ export class DuelScene extends Phaser.Scene {
   }
 
   override update(_time: number, delta: number): void {
-    // Sim owns the fixed-step accumulator + MAX_FRAME_MS clamp (Stage 2);
-    // the scene just forwards the wall-clock delta.
-    this.sim.advance(delta);
+    // Held-state intent BEFORE advancing: A/D movement + SHIFT Shunpo.
+    const moveX = (this.keys?.D.isDown === true ? 1 : 0) - (this.keys?.A.isDown === true ? 1 : 0);
+    this.sim.setPlayerIntent({ moveX, shunpoHeld: this.keys?.SHIFT.isDown === true });
+
+    // Sim owns the fixed-step accumulator + MAX_FRAME_MS clamp; the scene
+    // forwards delta × sim.timeScale (spec item 11 — Shunpo slow-mo).
+    this.sim.advance(delta * this.sim.timeScale);
 
     // Drain sim events every frame (M3 turns these into kill-beat/SFX; for
     // now draining keeps the queue bounded — blood is stroke-outcome-driven).
@@ -273,6 +287,24 @@ export class DuelScene extends Phaser.Scene {
 
     this.drawFighter(g, this.sim.player, 'player');
     this.drawFighter(g, this.sim.enemy, 'enemy');
+    this.drawKunai(g);
+  }
+
+  /** Interim kunai render: a short dark bolt along the velocity direction. */
+  private drawKunai(g: Phaser.GameObjects.Graphics): void {
+    for (const k of this.sim.projectiles) {
+      const len = 14;
+      const mag = Math.hypot(k.vel.x, k.vel.y) || 1;
+      const dx = (k.vel.x / mag) * len;
+      const dy = (k.vel.y / mag) * len;
+      g.lineStyle(3, COL.outline, 1);
+      g.beginPath();
+      g.moveTo(k.pos.x - dx, k.pos.y - dy);
+      g.lineTo(k.pos.x, k.pos.y);
+      g.strokePath();
+      g.fillStyle(COL.kimono, 1);
+      g.fillCircle(k.pos.x, k.pos.y, 2.5);
+    }
   }
 
   /** Fighter capsule + overhead HP/Focus bars, straight from sim state.
@@ -284,6 +316,9 @@ export class DuelScene extends Phaser.Scene {
     const h = spawn.halfH * 2;
     const left = pos.x - spawn.halfW;
     const top = pos.y - spawn.halfH;
+
+    // Spawn-invuln / i-frame blink: skip the body every other 6-frame beat.
+    if (f.invulnerable && Math.floor(this.time.now / 100) % 2 === 0) return;
 
     g.fillStyle(COL.outline, 1);
     g.fillRoundedRect(left - 3, top - 3, w + 6, h + 6, spawn.halfW + 3);

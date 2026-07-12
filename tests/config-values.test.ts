@@ -50,6 +50,7 @@ import {
   PROJECTILE_MAX_ACTIVE,
   PROJECTILE_SPEED,
   SHUNPO_DRAIN_PER_S,
+  SHUNPO_FILL_PER_S,
   SHUNPO_MAX,
   SHUNPO_MIN_TO_START,
   SHUNPO_TIMESCALE,
@@ -58,6 +59,7 @@ import {
   SMOKE_BOMB_IFRAMES_MS,
 } from '../src/config/combat-sim';
 import { DUEL_SPAWNS, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
+import { SKILL_COOLDOWN_MS } from '../src/config/skills';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
 import { FOUR, HALF, HALF_TURN_DEG, ONE, TWO, ZERO } from '../src/config/nums';
@@ -238,6 +240,7 @@ describe('combat-sim.ts — Stage 2 item 9, exact spec names and values', () => 
     expect(SHUNPO_MAX).toBe(100);
     expect(SHUNPO_DRAIN_PER_S).toBe(34);
     expect(SHUNPO_MIN_TO_START).toBe(10);
+    expect(SHUNPO_FILL_PER_S).toBe(12); // Stage-2 decision — see combat-sim.ts docblock
   });
   it('Smoke Bomb + Stab/Deflect', () => {
     expect(SMOKE_BOMB_DISTANCE).toBe(180);
@@ -273,6 +276,16 @@ describe('combat-sim.ts — Stage 2 item 9, exact spec names and values', () => 
   });
   it('skill hotbar verbs', () => {
     expect(SKILL_VERB).toEqual({ 1: 'chiPunch', 2: 'smokeBomb', 3: 'stab' });
+  });
+});
+
+describe('skills.ts — cooldowns (frame-quantized .92/.96 pattern)', () => {
+  it('SKILL_COOLDOWN_MS', () => {
+    expect(SKILL_COOLDOWN_MS).toEqual({
+      chiPunch: 4960, // CONTRACT (A-02 on-screen)
+      smokeBomb: 7960, // INFERRED
+      stab: 920, // INFERRED
+    });
   });
 });
 

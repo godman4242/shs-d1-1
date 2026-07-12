@@ -71,6 +71,10 @@ const jumpStroke = (fromX = 150, toX = 170): DrawnStroke =>
 const tickN = (sim: Sim, n: number): void => {
   for (let i = 0; i < n; i++) sim.tick();
 };
+/** A missed slash — ends the player's spawn invuln (offensive act), no damage. */
+const endInvuln = (sim: Sim): void => {
+  sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
+};
 
 describe('Sim — construction, state exposure, hitboxes', () => {
   it('exposes both fighters from their spawns', () => {
@@ -416,6 +420,7 @@ describe('Sim — enemy strikes via the OpponentIntent seam (M3)', () => {
 
   it('a strike damages the player — heavy BEATS balanced: 7×1.4×1.25 − 5 = 7.25', () => {
     const sim = makeSim({}, {}, strikerOn([1]));
+    endInvuln(sim);
     sim.tick();
     expect(sim.player.hp).toBeCloseTo(92.75, 10);
     const dmg = sim.drainEvents().filter((ev) => ev.type === 'damage');
@@ -425,6 +430,7 @@ describe('Sim — enemy strikes via the OpponentIntent seam (M3)', () => {
   });
   it('no counter bonus off the triangle: heavy enemy vs LIGHT player → 7×1.4 − 5 = 4.8', () => {
     const sim = makeSim({ stance: 'light' }, {}, strikerOn([1]));
+    endInvuln(sim);
     sim.tick();
     expect(sim.player.hp).toBeCloseTo(95.2, 10);
   });
@@ -440,6 +446,7 @@ describe('Sim — enemy strikes via the OpponentIntent seam (M3)', () => {
   it('a dead player ends the fight: enemy wins, fightEnded exactly once', () => {
     const frames = Array.from({ length: 60 }, (_, i) => i + 1);
     const sim = makeSim({ hp: 9 }, {}, strikerOn(frames)); // 2 × 7.25 kills
+    endInvuln(sim);
     tickN(sim, 10);
     expect(sim.player.hp).toBe(0);
     expect(sim.phase).toBe('ended');
@@ -470,7 +477,7 @@ describe('Sim — HIT COMBO counter (M3: player hits chain; damage taken breaks)
       next: (frame: number) => (frame === 1 ? { strike: true } : {}),
     };
     const sim = makeSim({}, {}, striker);
-    sim.applyStroke(slashStroke());
+    sim.applyStroke(slashStroke()); // landed hit also ends spawn invuln
     expect(sim.combo).toBe(1);
     sim.tick(); // enemy strike lands
     expect(sim.combo).toBe(0);
@@ -488,6 +495,267 @@ describe('Sim — HIT COMBO counter (M3: player hits chain; damage taken breaks)
     for (let i = 0; i < 19; i++) sim.applyStroke(slashStroke());
     expect(sim.phase).toBe('ended');
     expect(sim.combo).toBe(1);
+  });
+});
+
+describe('Sim — kunai projectiles (M3: OpponentIntent.throwKunai)', () => {
+  const throwerOn = (throwFrames: number[]): OpponentController => ({
+    next: (frame: number) => (throwFrames.includes(frame) ? { throwKunai: true } : {}),
+  });
+
+  it('a throw spawns one kunai at the enemy moving toward the player, with an event', () => {
+    const sim = makeSim({}, {}, throwerOn([1]));
+    sim.tick();
+    expect(sim.projectiles).toHaveLength(1);
+    expect(sim.projectiles[0]?.pos.x).toBeLessThan(400); // already stepped once
+    const thrown = sim.drainEvents().filter((ev) => ev.type === 'kunaiThrown');
+    expect(thrown).toHaveLength(1);
+  });
+  it('a kunai crossing the player deals PROJECTILE_DMG and despawns (dist 300 → 30 frames)', () => {
+    const sim = makeSim({}, {}, throwerOn([1]));
+    endInvuln(sim);
+    tickN(sim, 30);
+    expect(sim.player.hp).toBe(92); // 100 − 8
+    expect(sim.projectiles).toHaveLength(0);
+  });
+  it('active kunai are capped at PROJECTILE_MAX_ACTIVE', () => {
+    const sim = makeSim({}, {}, throwerOn([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
+    tickN(sim, 10);
+    expect(sim.projectiles.length).toBeLessThanOrEqual(8);
+    const thrown = sim.drainEvents().filter((ev) => ev.type === 'kunaiThrown');
+    expect(thrown).toHaveLength(8);
+  });
+  it('a jumping player evades kunai (arc lifts out of the hit radius)', () => {
+    const sim = makeSim({}, {}, throwerOn([1]));
+    tickN(sim, 20); // kunai closes in: 300 − 20×9.17 ≈ 117 px away
+    sim.applyStroke(jumpStroke(100, 100)); // jump in place
+    tickN(sim, 12); // apex ≈ 120 px up at t=0.5 — kunai passes underneath
+    expect(sim.player.hp).toBe(100);
+  });
+});
+
+describe('Sim — skills via queueSkill (M3: SKILL_VERB hotbar)', () => {
+  it('chiPunch deals a flat 10 (CONTRACT: on-screen dealt damage — bypasses defense)', () => {
+    const sim = makeSim();
+    sim.queueSkill('chiPunch');
+    sim.tick();
+    expect(sim.enemy.hp).toBe(140); // 150 − 10 flat, despite defense 5
+    const used = sim.drainEvents().filter((ev) => ev.type === 'skillUsed');
+    expect(used).toEqual([{ type: 'skillUsed', verb: 'chiPunch' }]);
+  });
+  it('chiPunch respects its cooldown (4.96 s): second cast ignored until ready', () => {
+    const sim = makeSim();
+    sim.queueSkill('chiPunch');
+    sim.tick();
+    sim.queueSkill('chiPunch');
+    sim.tick();
+    expect(sim.enemy.hp).toBe(140); // still one hit
+    tickN(sim, 298); // cooldown 4960 ms → 298 frames
+    sim.queueSkill('chiPunch');
+    sim.tick();
+    expect(sim.enemy.hp).toBe(130);
+  });
+  it('cooldownRemainingS counts down for the HUD', () => {
+    const sim = makeSim();
+    expect(sim.cooldownRemainingS('chiPunch')).toBe(0);
+    sim.queueSkill('chiPunch');
+    sim.tick();
+    expect(sim.cooldownRemainingS('chiPunch')).toBeGreaterThan(4.8);
+    tickN(sim, 60);
+    expect(sim.cooldownRemainingS('chiPunch')).toBeLessThan(4);
+  });
+  it('smokeBomb dashes AWAY from the enemy by SMOKE_BOMB_DISTANCE (clamped to the arena)', () => {
+    const sim = makeSim({ pos: { x: 350, y: 200 } });
+    sim.queueSkill('smokeBomb');
+    sim.tick();
+    expect(sim.player.pos.x).toBe(170); // 350 − 180, away from enemy at 400
+    const clamped = makeSim(); // player at 100: 100 − 180 → clamp to halfW 20
+    clamped.queueSkill('smokeBomb');
+    clamped.tick();
+    expect(clamped.player.pos.x).toBe(20);
+  });
+  it('smokeBomb grants i-frames: strikes are blocked during SMOKE_BOMB_IFRAMES_MS', () => {
+    const striker: OpponentController = {
+      next: (frame: number) => (frame === 5 || frame === 40 ? { strike: true } : {}),
+    };
+    const sim = makeSim({}, {}, striker);
+    endInvuln(sim); // spawn invuln out of the way — this tests SMOKE i-frames
+    sim.queueSkill('smokeBomb');
+    sim.tick(); // frame 1: smoke bomb; i-frames until frame 1+26=27
+    tickN(sim, 10); // frame 5 strike blocked
+    expect(sim.player.hp).toBe(100);
+    const blocked = sim.drainEvents().filter((ev) => ev.type === 'invulnBlocked');
+    expect(blocked).toEqual([{ type: 'invulnBlocked', target: 'player' }]);
+    tickN(sim, 30); // frame 40 strike lands (i-frames over)
+    expect(sim.player.hp).toBeCloseTo(92.75, 10);
+  });
+  it('smokeBomb i-frames block kunai too', () => {
+    const thrower: OpponentController = {
+      next: (frame: number) => (frame === 1 ? { throwKunai: true } : {}),
+    };
+    const sim = makeSim({}, {}, thrower);
+    endInvuln(sim); // this tests SMOKE i-frames, not spawn invuln
+    tickN(sim, 25); // kunai ~71 px out
+    sim.queueSkill('smokeBomb'); // dash away + i-frames
+    tickN(sim, 15);
+    expect(sim.player.hp).toBe(100);
+  });
+  it('stab (key 3) swats kunai inside DEFLECT_RADIUS during the window', () => {
+    const thrower: OpponentController = {
+      next: (frame: number) => (frame === 1 ? { throwKunai: true } : {}),
+    };
+    const sim = makeSim({}, {}, thrower);
+    tickN(sim, 26); // kunai at 300 − 26×9.17 ≈ 61.7 px — inside DEFLECT_RADIUS 64
+    sim.queueSkill('stab');
+    sim.tick();
+    expect(sim.projectiles).toHaveLength(0);
+    expect(sim.player.hp).toBe(100);
+    const deflected = sim.drainEvents().filter((ev) => ev.type === 'kunaiDeflected');
+    expect(deflected).toHaveLength(1);
+  });
+  it('a stab gesture (down-stroke) opens the same deflect window', () => {
+    const thrower: OpponentController = {
+      next: (frame: number) => (frame === 1 ? { throwKunai: true } : {}),
+    };
+    const sim = makeSim({}, {}, thrower);
+    tickN(sim, 24); // kunai ≈ 80 px out — outside radius, inside window reach
+    sim.applyStroke(new DrawnStroke([v(100, 100), v(100, 300)])); // stab gesture
+    tickN(sim, 4); // kunai flies INTO the open window's radius
+    expect(sim.projectiles).toHaveLength(0);
+    expect(sim.player.hp).toBe(100);
+  });
+  it('without deflectLearned the stab does not swat (kunai lands)', () => {
+    const thrower: OpponentController = {
+      next: (frame: number) => (frame === 1 ? { throwKunai: true } : {}),
+    };
+    const sim = makeSim({ deflectLearned: false }, {}, thrower);
+    endInvuln(sim);
+    tickN(sim, 26);
+    sim.queueSkill('stab');
+    tickN(sim, 10);
+    expect(sim.player.hp).toBe(92);
+  });
+});
+
+describe('Sim — spawn invulnerability (M3: player-only, 5 s or first slash)', () => {
+  const strikerOn = (frames: number[]): OpponentController => ({
+    next: (frame: number) => (frames.includes(frame) ? { strike: true } : {}),
+  });
+  it('the player spawns invulnerable; strikes are blocked and flagged', () => {
+    const sim = makeSim({}, {}, strikerOn([10]));
+    expect(sim.player.invulnerable).toBe(true);
+    expect(sim.enemy.invulnerable).toBe(false); // enemy never gets spawn invuln
+    tickN(sim, 20);
+    expect(sim.player.hp).toBe(100);
+    const blocked = sim.drainEvents().filter((ev) => ev.type === 'invulnBlocked');
+    expect(blocked).toEqual([{ type: 'invulnBlocked', target: 'player' }]);
+  });
+  it('expires after SPAWN_INVULN_S (300 frames): frame 299 blocked, frame 301 lands', () => {
+    const sim = makeSim({}, {}, strikerOn([299, 301]));
+    tickN(sim, 299);
+    expect(sim.player.hp).toBe(100); // strike at 299 still blocked
+    expect(sim.player.invulnerable).toBe(true); // 299 < 300
+    tickN(sim, 2);
+    expect(sim.player.invulnerable).toBe(false);
+    expect(sim.player.hp).toBeCloseTo(92.75, 10); // strike at 301 lands
+  });
+  it('ends on the player’s FIRST SLASH (even a miss)', () => {
+    const sim = makeSim({}, {}, strikerOn([5]));
+    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)])); // missed slash
+    expect(sim.player.invulnerable).toBe(false);
+    tickN(sim, 6);
+    expect(sim.player.hp).toBeCloseTo(92.75, 10);
+  });
+  it('a jump does NOT end spawn invuln (only offensive acts do)', () => {
+    const sim = makeSim();
+    sim.applyStroke(jumpStroke(100, 120));
+    expect(sim.player.invulnerable).toBe(true);
+  });
+  it('the first slash still damages the enemy immediately (enemy has no invuln)', () => {
+    const sim = makeSim();
+    expect(sim.applyStroke(slashStroke()).slash?.damage).toBe(8);
+    expect(sim.enemy.hp).toBe(142);
+  });
+});
+
+describe('Sim — Shunpo slow-mo (M3: SHIFT-hold, meter in exact 1/60 units)', () => {
+  it('holding SHIFT activates: timeScale 0.35, drains 34/s of sim time', () => {
+    const sim = makeSim();
+    expect(sim.timeScale).toBe(1);
+    expect(sim.shunpo).toBe(100);
+    sim.setPlayerIntent({ moveX: 0, shunpoHeld: true });
+    sim.tick();
+    expect(sim.timeScale).toBe(0.35);
+    tickN(sim, 59);
+    expect(sim.shunpo).toBe(66); // 100 − 34, integer units exact
+    const started = sim.drainEvents().filter((ev) => ev.type === 'shunpoStarted');
+    expect(started).toHaveLength(1);
+  });
+  it('release refills at 12/s toward SHUNPO_MAX', () => {
+    const sim = makeSim();
+    sim.setPlayerIntent({ moveX: 0, shunpoHeld: true });
+    tickN(sim, 60); // meter 66
+    sim.setPlayerIntent({ moveX: 0, shunpoHeld: false });
+    sim.tick();
+    expect(sim.timeScale).toBe(1);
+    tickN(sim, 59);
+    expect(sim.shunpo).toBe(78); // 66 + 12
+    const ended = sim.drainEvents().filter((ev) => ev.type === 'shunpoEnded');
+    expect(ended).toHaveLength(1);
+  });
+  it('auto-stops at 0 and restarts at SHUNPO_MIN_TO_START while held (hysteresis)', () => {
+    const sim = makeSim();
+    sim.setPlayerIntent({ moveX: 0, shunpoHeld: true });
+    tickN(sim, 177); // 6000 units / 34 → empty inside 177 ticks
+    expect(sim.shunpo).toBe(0);
+    expect(sim.timeScale).toBe(1); // stopped
+    tickN(sim, 50); // refill 12/s while held-but-stopped → hits 10 → restarts
+    expect(sim.timeScale).toBe(0.35);
+  });
+  it('cannot start below SHUNPO_MIN_TO_START', () => {
+    const sim = makeSim();
+    sim.setPlayerIntent({ moveX: 0, shunpoHeld: true });
+    tickN(sim, 177); // empty + stopped
+    sim.setPlayerIntent({ moveX: 0, shunpoHeld: false });
+    tickN(sim, 10); // refill to 2
+    sim.setPlayerIntent({ moveX: 0, shunpoHeld: true });
+    sim.tick();
+    expect(sim.timeScale).toBe(1); // 2 < 10 — no start
+  });
+});
+
+describe('Sim — player movement intent (M3: A/D at PLAYER_MOVE_SPEED)', () => {
+  it('moveX advances 0.28 px/ms of sim time: 60 frames → 280 px', () => {
+    const sim = makeSim();
+    sim.setPlayerIntent({ moveX: 1, shunpoHeld: false });
+    tickN(sim, 60);
+    expect(sim.player.pos.x).toBeCloseTo(380, 9);
+  });
+  it('clamps to the arena edge', () => {
+    const sim = makeSim();
+    sim.setPlayerIntent({ moveX: -1, shunpoHeld: false });
+    tickN(sim, 60);
+    expect(sim.player.pos.x).toBe(20); // halfW
+  });
+  it('is ignored while jumping (the arc owns the position)', () => {
+    const sim = makeSim();
+    sim.applyStroke(jumpStroke(100, 100)); // jump in place
+    sim.setPlayerIntent({ moveX: 1, shunpoHeld: false });
+    tickN(sim, JUMP_DURATION_FRAMES);
+    expect(sim.player.pos.x).toBe(100); // landed where the stroke said
+  });
+  it('does nothing during the intro phase', () => {
+    const sim = introSim();
+    sim.setPlayerIntent({ moveX: 1, shunpoHeld: false });
+    tickN(sim, 60);
+    expect(sim.player.pos.x).toBe(100);
+  });
+  it('rejects non-finite moveX (chaos: NaN intent must not poison the position)', () => {
+    const sim = makeSim();
+    sim.setPlayerIntent({ moveX: Number.NaN, shunpoHeld: false });
+    tickN(sim, 10);
+    expect(sim.player.pos.x).toBe(100);
+    expect(Number.isFinite(sim.player.pos.x)).toBe(true);
   });
 });
 
