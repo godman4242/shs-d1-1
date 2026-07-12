@@ -269,4 +269,42 @@ Crash-resilience log. Updated per milestone, never "at the end."
   fidelity, no tracing. Ratchet baseline refreshed (deliberate, env-var
   path). Browser-verified with new palette: full-scene + zoom evidence
   saved. Suite 289/289 · tsc exit 0 · eslint exit 0.
+- **18:50** Stage 2 M9 close (BACKFILL, logged 19:25 — commit 6a94aab
+  landed without its log entry; discipline slip noted): audit re-run
+  post-quota (36 agents) → 7 CONFIRMED findings, ALL fixed red-first:
+  AI stall/dead kunai band (hard idle deleted; AI_APPROACH_RANGE stays
+  Stage-4, flagged) · mid-tick double-fightEnded (ended-guard + sub-step
+  re-check: ends exactly once, no posthumous strikes) · shunpo stuck at
+  kill (force-stop + shunpoEnded, timescale 1) · intro-buffered skills
+  discarded (stroke-discard parity) · critical.ts extracted (spec item 3;
+  meter math one site) · GAME_WIDTH/HEIGHT pinned · jump strokes
+  arena-clamped. Ratchet hardened: main.ts scanned, unscannable-payload
+  parity, scene-tick guard, RED-receipt refresh. Suite 297/297 · tsc both
+  configs exit 0 · eslint exit 0.
+- **19:25** (Session 4) Stage 2 M10 — FX clock fix (audit-verified deferred
+  finding): DuelScene FX ignored sim.timeScale (droplets integrated raw
+  delta; trails/redStrokes/telegraph cues aged on raw time.now — Shunpo ran
+  gameplay 0.35× while FX ran 1×). Fix: core/fx.ts (advanceFxClock +
+  integrateDroplet, pure — the no-game-imports guard means scene code is
+  untestable, so the math lives in core and the scene is wiring), 8 tests
+  RED-first (stub → 5 assertion-RED → GREEN; semi-implicit-Euler order
+  pinned — an old-vy reorder would zero the y-advance). DuelScene: fxNow +=
+  delta × active-ts owns trail/stroke/droplet aging + integration +
+  telegraph/guard cues (sim-time cues — flagged, veto = wall clock);
+  kill-beat hold + invuln blink KEPT on wall clock (kickoff contract,
+  ~0.9 s real). Feel constants stay scene literals under the M8 ratchet
+  (config/CLAUDE.md bans invented blood constants — flagged, veto = move to
+  config/fx.ts). Ratchet RED receipt: '0' ×47 vs baseline ×45 (the two
+  fxNow=0 inits) → env-var refresh → diff reviewed (exactly 45→47).
+  Browser evidence (Chrome MCP, dev-seam loop-step under occlusion):
+  fx/wall = 1.0000 at ts=1 → 0.3500 with SHIFT held (sim.timeScale 0.35) →
+  1.0000 on release; droplet aged EXACTLY 350 ms over 1000 ms wall of
+  slow-mo, Δx 32.4 px = vx × fx-time to the decimal; real slash through
+  RONIN 150→142 (exact 8) then trail+arc still on screen at fx-age 153 ms
+  after ~350 ms wall (the wall-aged trail died inside that window pre-fix);
+  timescales restored [1,1]; zero console errors from fresh load. Stale
+  "trade-dress-shifted" palette lines corrected in DuelScene doc +
+  docs/loop/GOAL.md (near-OG per owner veto 2026-07-12 — a loop cycle
+  obeying GOAL.md verbatim would have re-shifted the palette against the
+  veto). Suite 305/305 · tsc both configs exit 0 · eslint exit 0.
 - (milestones appended below as they land)

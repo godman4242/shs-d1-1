@@ -20,9 +20,10 @@ gate, in strict TDD, without ever violating the repo invariants.
 - Gate items needing a real browser or human judgment CANNOT be checked from
   a headless cycle: leave them unchecked, queue them at the top of
   RESUME_HERE.md under "Awaiting human/browser verification".
-- Invariants (root CLAUDE.md): RECREATE-NEVER-RIP · palette stays
-  trade-dress-shifted · core/ zero literals · dependency direction ·
-  render-only scenes · commit = pre-commit gate green.
+- Invariants (root CLAUDE.md): RECREATE-NEVER-RIP (drawings/dialogue always
+  original) · palette sits at near-OG hues — owner veto 2026-07-12, NEVER
+  re-shift it · core/ zero literals · dependency direction · render-only
+  scenes · commit = pre-commit gate green.
 - Update RESUME_HERE.md + docs/sessions/-SESSION-LOG.md in the SAME commit.
 - No gap above the bar → NO commit (a no-op beats a rushed one). Print why.
 

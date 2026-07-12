@@ -20,6 +20,7 @@ import { SKILL_COOLDOWN_MS } from '../config/skills';
 import type { StanceId } from '../config/stances';
 import { AISeamController } from '../core/AISeamController';
 import { DrawnStroke } from '../core/DrawnStroke';
+import { advanceFxClock, integrateDroplet } from '../core/fx';
 import { closestPointOnPolyline } from '../core/geometry';
 import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
@@ -60,8 +61,14 @@ const STANCE_RING: Record<StanceId, number> = {
  * pull-forward): bamboo/pastel parallax arena, letterbox strips, flat-color
  * bold-outline fighters, enemy "NAME (LEVEL)" + overhead green bar,
  * portrait/coins/XP HUD, skill bar, HIT COMBO plate, AUTO SLASH OFF plate.
- * Palette is the repo's trade-dress-shifted set (invariant).
+ * Palette sits at near-OG hues (owner veto of the trade-dress shift, 2026-07-12).
  * Numeric literals here are render layout only — baselined by the M8 ratchet.
+ *
+ * TWO CLOCKS (M10 audit fix): `fxNow` advances by delta × active-timescale and
+ * owns everything that must slow with the fight — trail/stroke/droplet aging,
+ * droplet integration, telegraph + guard cues. The WALL clock (time.now) owns
+ * the kill-beat hold (~0.9 s real) and the invuln blink. Mixing them up
+ * re-opens the bug where Shunpo slowed gameplay to 0.35× but blood ran 1×.
  */
 export class DuelScene extends Phaser.Scene {
   private sim!: Sim;
@@ -88,6 +95,7 @@ export class DuelScene extends Phaser.Scene {
   private enemyGuardUntil = 0;
   private killBeatAt = 0;
   private resultLaunched = false;
+  private fxNow = 0;
 
   constructor() {
     super('duel');
@@ -107,6 +115,7 @@ export class DuelScene extends Phaser.Scene {
     this.resultLaunched = false;
     this.telegraphUntil = 0;
     this.enemyGuardUntil = 0;
+    this.fxNow = 0;
     this.trails = [];
     this.redStrokes = [];
     this.droplets = [];
@@ -300,7 +309,7 @@ export class DuelScene extends Phaser.Scene {
     this.dragPoints = [];
     if (stroke.points.length < 2) return;
 
-    const now = this.time.now;
+    const now = this.fxNow;
     this.redStrokes.push({ points: stroke.points, bornAt: now });
 
     const outcome = this.sim.applyStroke(stroke);
@@ -343,22 +352,28 @@ export class DuelScene extends Phaser.Scene {
     this.sim.advance(delta * this.sim.timeScale);
 
     // Mirror the sim timescale onto Phaser's clocks TOGETHER (tween/timer FX
-    // must slow with the fight); the kill beat overrides below.
+    // must slow with the fight); the kill beat overrides below. The fx clock
+    // advances by the SAME active timescale — time.now is unscaled and must
+    // never age FX again (M10 audit fix).
     const now = this.time.now;
     const inKillBeat = this.killBeatAt > 0 && now - this.killBeatAt < FINISHER_FLASH.durationMs;
     const ts = inKillBeat ? FINISHER_FLASH.slowMoScale : this.sim.timeScale;
     this.time.timeScale = ts;
     this.tweens.timeScale = ts;
+    this.fxNow = advanceFxClock(this.fxNow, delta, ts);
+    const fxNow = this.fxNow;
 
     for (const ev of this.sim.drainEvents()) {
       if (ev.type === 'enemyTelegraph') {
-        this.telegraphUntil = now + ev.durationMs;
+        // Sim-time cue: the strike lands telegraphMs of SIM time later, so
+        // the windup aura must age on the fx clock or it dies early in slow-mo.
+        this.telegraphUntil = fxNow + ev.durationMs;
         this.telegraphKind = ev.kind;
       } else if (ev.type === 'strikeBlocked') {
-        this.enemyGuardUntil = now + 260;
+        this.enemyGuardUntil = fxNow + 260;
       } else if (ev.type === 'damage' && ev.target === 'player') {
         const p = this.sim.player.pos;
-        this.spawnBlood({ x: p.x, y: p.y - 20 }, { x: -1, y: 0 }, false, now);
+        this.spawnBlood({ x: p.x, y: p.y - 20 }, { x: -1, y: 0 }, false, fxNow);
       } else if (ev.type === 'fightEnded') {
         this.killBeatAt = now;
         this.pendingWinner = ev.winner;
@@ -374,7 +389,7 @@ export class DuelScene extends Phaser.Scene {
       this.scene.launch('duel-result', { winner: this.pendingWinner });
     }
 
-    const dt = delta / 1000;
+    const fxDt = (delta * ts) / 1000;
     const g = this.fx;
     g.clear();
 
@@ -383,29 +398,27 @@ export class DuelScene extends Phaser.Scene {
       this.strokePinched(g, this.dragPoints, COL.blood, SLASH_ARC.bodyHalfWidth, 0.35, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
       this.strokePinched(g, this.dragPoints, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.8, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
     }
-    this.redStrokes = this.redStrokes.filter((s) => now - s.bornAt < SLASH_ARC.hangMs + SLASH_ARC.fadeMs);
+    this.redStrokes = this.redStrokes.filter((s) => fxNow - s.bornAt < SLASH_ARC.hangMs + SLASH_ARC.fadeMs);
     for (const s of this.redStrokes) {
-      const age = now - s.bornAt;
+      const age = fxNow - s.bornAt;
       const alpha = age < SLASH_ARC.hangMs ? 1 : 1 - (age - SLASH_ARC.hangMs) / SLASH_ARC.fadeMs;
       this.strokePinched(g, s.points, COL.blood, SLASH_ARC.bodyHalfWidth, 0.3 * alpha, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
       this.strokePinched(g, s.points, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.7 * alpha, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
     }
 
     // Two-layer blade trail: chi-colored edge under a white core, fading
-    this.trails = this.trails.filter((t) => now - t.bornAt < BLADE_FADE_MS);
+    this.trails = this.trails.filter((t) => fxNow - t.bornAt < BLADE_FADE_MS);
     for (const t of this.trails) {
-      const alpha = 1 - (now - t.bornAt) / BLADE_FADE_MS;
+      const alpha = 1 - (fxNow - t.bornAt) / BLADE_FADE_MS;
       this.strokePinched(g, t.points, COL.bladeChi, BLADE_EDGE_WIDTH, alpha, BLADE_MIN_TAPER, 1);
       this.strokePinched(g, t.points, COL.kimono, BLADE_CORE_WIDTH, alpha, BLADE_MIN_TAPER, 1);
     }
 
-    // Blood droplets: integrate, then draw
-    this.droplets = this.droplets.filter((d) => now - d.bornAt < BLOOD_LIFE_MS);
+    // Blood droplets: integrate on the fx clock, then draw
+    this.droplets = this.droplets.filter((d) => fxNow - d.bornAt < BLOOD_LIFE_MS);
     for (const d of this.droplets) {
-      d.vy += BLOOD_GRAVITY * dt;
-      d.x += d.vx * dt;
-      d.y += d.vy * dt;
-      const alpha = 1 - (now - d.bornAt) / BLOOD_LIFE_MS;
+      Object.assign(d, integrateDroplet(d, fxDt, BLOOD_GRAVITY));
+      const alpha = 1 - (fxNow - d.bornAt) / BLOOD_LIFE_MS;
       g.fillStyle(COL.bloodBright, alpha);
       g.fillCircle(d.x, d.y, 3);
       g.fillStyle(COL.blood, alpha * 0.8);
@@ -447,20 +460,23 @@ export class DuelScene extends Phaser.Scene {
   private drawFighters(g: Phaser.GameObjects.Graphics, now: number): void {
     const player = this.sim.player;
     const enemy = this.sim.enemy;
+    const fxNow = this.fxNow;
 
-    // Spawn-invuln / i-frame blink (research CONTRACT: blinking indicator).
+    // Spawn-invuln / i-frame blink — WALL clock on purpose (research CONTRACT:
+    // the blinking indicator keeps real-time cadence even in slow-mo).
     const blinkOff = Math.floor(now / 100) % 2 === 0;
     const playerAlpha = player.invulnerable && blinkOff ? 0.25 : 1;
 
     // Enemy windup flash: pulsing aura (red strike / blue pending stance).
-    if (now < this.telegraphUntil) {
-      const pulse = 0.3 + 0.3 * Math.abs(Math.sin(now / 90));
+    // Sim-time cue → fx clock, so the aura holds until the strike lands.
+    if (fxNow < this.telegraphUntil) {
+      const pulse = 0.3 + 0.3 * Math.abs(Math.sin(fxNow / 90));
       g.fillStyle(this.telegraphKind === 'strike' ? COL.blood : COL.focusBlue, pulse);
       g.fillEllipse(enemy.pos.x, enemy.pos.y + 30, 120, 40);
     }
 
     const enemyPose: SamuraiPose =
-      now < this.enemyGuardUntil ? 'guard' : now < this.telegraphUntil ? 'windup' : 'idle';
+      fxNow < this.enemyGuardUntil ? 'guard' : fxNow < this.telegraphUntil ? 'windup' : 'idle';
     const playerFacing = player.pos.x <= enemy.pos.x ? 1 : -1;
     drawSamurai(g, player.pos.x, player.pos.y + 60, playerFacing, PLAYER_LOOK, 'idle', playerAlpha);
     drawSamurai(g, enemy.pos.x, enemy.pos.y + 60, playerFacing === 1 ? -1 : 1, ENEMY_LOOK, enemyPose);

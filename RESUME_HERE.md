@@ -125,8 +125,18 @@ when hidden). Gate evidence captured: VS card, Defeat +0/+0, invuln blink, Victo
 FIXED red-first (AI stall/kunai band, mid-tick double-fightEnded, shunpo
 stuck at kill, intro-buffered skills, critical.ts extracted, display pins,
 jump clamp) + ratchet hardened (main.ts scan, payload parity, tick guard,
-RED-receipt refresh). Suite 297/297. Remaining for 100% ☑: FX-clock fix
-(slow-mo FX speed — deferred, flagged) + the gate evidence table.
+RED-receipt refresh). Suite 297/297.
+M10 DONE (305/305): FX clock fix (the last audit finding) — core/fx.ts
+(advanceFxClock + integrateDroplet, pure, red-first ×8; Euler order pinned),
+DuelScene fxNow += delta × active-ts drives trail/stroke/droplet aging +
+integration + telegraph/guard cues (flagged; veto = cues back to wall
+clock); kill-beat hold + invuln blink stay wall-clock (kickoff contract).
+Feel constants stay scene literals under the ratchet (config landmine:
+no invented blood constants). Browser-proven via dev-seam loop-step:
+fx/wall 1.0000 → 0.3500 (SHIFT held) → 1.0000; droplet aged exactly 350 ms
+per 1000 ms wall in slow-mo; slash 150→142 with trail alive at fx-age
+153 ms after ~350 ms wall; zero console errors from fresh load.
+Remaining for 100% ☑: the gate evidence table (next commit).
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 
