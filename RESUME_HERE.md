@@ -141,9 +141,10 @@ tells forward — see the kickoff §2 amendment; build FROM the study frames.
    timestamps). Default: keep, revisit at Stage 2 feel pass.
 
 ## What not to break
-- Root `CLAUDE.md` invariants: RECREATE-NEVER-RIP · shifted palette stays
-  shifted · core/ zero-literals · dependency direction · render-only scenes ·
-  binary stage gates. Folder rules: `src/{core,config,game}/CLAUDE.md`.
+- Root `CLAUDE.md` invariants: RECREATE-NEVER-RIP (drawings/dialogue always
+  original; palette now near-OG per owner veto 2026-07-12) · core/
+  zero-literals · dependency direction · render-only scenes · binary stage
+  gates. Folder rules: `src/{core,config,game}/CLAUDE.md`.
 - `tests/fixtures/scan-probe/` is load-bearing (scanner regression fixtures).
 - The game-import guard + purity gate are chaos-proven — keep them fail-closed.
 

@@ -9,8 +9,11 @@ state and next step live in `RESUME_HERE.md`.
 ## Invariants (don't propose work that violates these)
 - **RECREATE, NEVER RIP.** No decompiled code, no extracted art, no ripped audio.
   Reference videos are study-only, live in `reference/` (gitignored), never distributed.
-- **Palette is deliberately trade-dress-shifted** ±5–8% HSL from the original.
-  Never "correct" it back toward the original.
+- **Palette policy (owner veto 2026-07-12):** hues sit at our best reading of
+  the original's look — the earlier ±5–8% trade-dress shift was deliberately
+  reverted by Kheshav. Colour schemes are unprotectable; the line that DOES
+  hold: all drawings/dialogue remain original work (never traced, never
+  transcribed).
 - **Stack is fixed:** Phaser 3 (pinned `phaser@3`, NOT v4) + TypeScript 5 + Vite,
   Vitest, WebAudio-synthesized SFX only, procedural vector art only (no image files).
 - **Dependency direction:** `game/` may import `core/` + `config/`; `core/` may import

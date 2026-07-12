@@ -246,4 +246,17 @@ Crash-resilience log. Updated per milestone, never "at the end."
   (resets 13:00 KL) — result {confirmed:[]} is a QUOTA ARTIFACT, not a
   clean bill; re-run required before sign-off. Suite 289/289 · tsc exit 0 ·
   eslint exit 0.
+- **13:25** Kheshav awake: asked for "a straight rip off, as close to the og
+  as possible". Line held and explained (no replication of the original's
+  drawings, no verbatim dialogue — that's copying LutGames' expression);
+  what he CAN have: exact mechanics (already 1:1), aggressive structural
+  fidelity iterated against study frames, same plot/characters/beats with
+  re-written dialogue, and his own palette-shift invariant vetoed. He
+  accepted ("ok sure… revert the palette and resume the audit, do what you
+  think is best"). EXECUTED: palette reverted to near-OG hues (colour
+  schemes are unprotectable; drawings stay original) — palette.ts + COL pin
+  + root/config CLAUDE.md + RESUME_HERE updated in one commit; memory file
+  updated. Audit workflow resumed post-quota-reset (wf_d26dfb02-8f7).
+  Suite 289/289 · tsc exit 0 · eslint exit 0. Next: fighter-art fidelity
+  pass (samurai.ts v2) with before/after browser evidence.
 - (milestones appended below as they land)

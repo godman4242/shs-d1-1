@@ -1,54 +1,57 @@
 /**
  * PALETTE — every colour in the game lives here. Pure data, no logic.
  *
- * All values are INFERRED seeds, deliberately shifted ±5–8% HSL from the
- * original for trade-dress distance (bladeChi additionally +2 hue).
- * Do NOT "correct" these back toward the original — the shift is the point.
+ * All values are INFERRED seeds tuned toward the study-frame reading.
+ * HISTORY: through Stage 2 these carried a deliberate ±5–8% HSL trade-dress
+ * shift; Kheshav vetoed that margin on 2026-07-12 ("as close to the OG as
+ * possible") and the shift was reverted — hues now sit at our best reading
+ * of the original's look. Colour schemes are unprotectable; the DRAWINGS
+ * remain original work (that line still holds — see root CLAUDE.md).
  * Changing any value requires updating tests/config-values.test.ts in the
  * same commit (intentional double-entry ratchet).
  */
 export const COL = {
   // Sky & atmosphere
-  skyTop: 0xd6dbf0,
-  skyLow: 0xeef0ff,
-  bladeChi: 0x72c4ea,
+  skyTop: 0xdae4f2,
+  skyLow: 0xf2f5fc,
+  bladeChi: 0x6ec2ee,
 
   // Forest / arena
-  forestBright: 0x4aa433,
-  forestMid: 0x30942f,
-  forestMid2: 0x33a130,
-  forestShadow: 0x1f7532,
-  forestDark: 0x163012,
-  sage: 0x64905f,
-  canopy: 0x7fa443,
-  trunk: 0x0a2228,
+  forestBright: 0x52b52f,
+  forestMid: 0x389f2b,
+  forestMid2: 0x3cab2f,
+  forestShadow: 0x257f2c,
+  forestDark: 0x183511,
+  sage: 0x6b9a64,
+  canopy: 0x86ae3e,
+  trunk: 0x0b2426,
 
   // Fighter
-  kimono: 0xf3f3eb,
-  kimono2: 0xe9eddb,
-  haori: 0x2d3d60,
-  haoriShade: 0x1c2945,
+  kimono: 0xf5f5ef,
+  kimono2: 0xecf0de,
+  haori: 0x2a3c66,
+  haoriShade: 0x1a284a,
   hair: 0x241f1b,
-  hatStraw: 0xbc9552,
-  wood: 0x794802,
-  outline: 0x040304,
+  hatStraw: 0xc59d4c,
+  wood: 0x7f4d05,
+  outline: 0x030303,
 
   // Blood
-  blood: 0xa50103,
-  bloodDark: 0x950202,
-  bloodBright: 0xc81a10,
+  blood: 0xad0000,
+  bloodDark: 0x8e0000,
+  bloodBright: 0xd11810,
 
   // HUD
-  healthGreen: 0x5cbf2f,
-  focusBlue: 0x3d80d6,
-  gold: 0xeaa83c,
-  buttonRed: 0x902010,
-  cream: 0xefedc2,
-  goldTrim: 0xc8a44e,
+  healthGreen: 0x55c926,
+  focusBlue: 0x3184e0,
+  gold: 0xf0ac33,
+  buttonRed: 0x96200c,
+  cream: 0xf2efc5,
+  goldTrim: 0xcfa948,
 
   // Enemy
-  haoriEnemy: 0x6d2030,
-  scarf: 0xc94730,
+  haoriEnemy: 0x722031,
+  scarf: 0xd14a2b,
 } as const;
 
 export type ColName = keyof typeof COL;
