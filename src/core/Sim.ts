@@ -1,8 +1,5 @@
 import {
   CHI_PUNCH_DMG_L1,
-  CRITICAL_FILL_PER_S,
-  CRITICAL_MAX,
-  FOCUS_FILL_PER_S,
   FOCUS_MAX,
   FOCUS_START,
   FOCUS_SWITCH_COST,
@@ -33,6 +30,7 @@ import { ONE, TWO, ZERO } from '../config/nums';
 import type { StanceId } from '../config/stances';
 import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S } from '../config/timing';
 import { Combo } from './combo';
+import { criticalReady, focusToUnits, unitsToCritical, unitsToFocus } from './critical';
 import { physicalDamage } from './damage';
 import type { DrawnStroke } from './DrawnStroke';
 import type { Gesture } from './gesture';
@@ -142,10 +140,6 @@ interface FighterState {
   readonly groundY: number;
 }
 
-const focusToUnits = (focus: number): number => (focus * FIXED_HZ) / FOCUS_FILL_PER_S;
-const unitsToFocus = (units: number): number => (units * FOCUS_FILL_PER_S) / FIXED_HZ;
-const unitsToCritical = (units: number): number =>
-  Math.min(CRITICAL_MAX, (units * CRITICAL_FILL_PER_S) / FIXED_HZ);
 /** Shunpo meter units are 1/FIXED_HZ points: integer drain/fill, exact reads. */
 const SHUNPO_MAX_UNITS = SHUNPO_MAX * FIXED_HZ;
 const SHUNPO_MIN_UNITS = SHUNPO_MIN_TO_START * FIXED_HZ;
@@ -273,8 +267,11 @@ export class Sim {
     this.playerIntent = { moveX, shunpoHeld: intent.shunpoHeld };
   }
 
-  /** Edge-triggered skill press (hotbar 1/2/3) — consumed on the next tick. */
+  /** Edge-triggered skill press (hotbar 1/2/3) — consumed on the next tick.
+   * Discarded outside 'fighting', like strokes (audit: a press buffered
+   * during the READY countdown auto-cast on the first fighting tick). */
   queueSkill(verb: SkillVerb): void {
+    if (this.phaseState !== 'fighting') return;
     this.queuedSkill = verb;
   }
 
@@ -373,7 +370,7 @@ export class Sim {
     if (gesture === 'slash') {
       // Any slash — hit or miss — is an offensive act: it ends spawn invuln.
       player.invulnEndFrame = ZERO;
-      const critReady = unitsToCritical(player.criticalUnits) >= CRITICAL_MAX;
+      const critReady = criticalReady(player.criticalUnits);
       const result = resolveSlash(
         stroke,
         { polygon: this.hitbox('enemy'), stance: enemy.stance, hp: enemy.hp, defense: enemy.defense },
@@ -402,12 +399,16 @@ export class Sim {
       const last = stroke.points.at(-ONE);
       // One jump at a time: a jump gesture while airborne is ignored.
       if (player.jump === null && first !== undefined && last !== undefined) {
+        // Arena-clamped like walking — an off-canvas stroke must not land
+        // the fighter outside the stage (audit).
+        const clampX = (v: number): number =>
+          Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, v));
         player.jump = {
-          from: { x: first.x, y: player.groundY },
-          to: { x: last.x, y: player.groundY },
+          from: { x: clampX(first.x), y: player.groundY },
+          to: { x: clampX(last.x), y: player.groundY },
           frame: ZERO,
         };
-        player.pos = { x: first.x, y: player.groundY };
+        player.pos = { x: clampX(first.x), y: player.groundY };
       }
       return { gesture, slash: null };
     }
@@ -458,7 +459,7 @@ export class Sim {
       this.events.push({ type: 'invulnBlocked', target: 'player' });
       return;
     }
-    const critReady = unitsToCritical(enemy.criticalUnits) >= CRITICAL_MAX;
+    const critReady = criticalReady(enemy.criticalUnits);
     if (critReady) enemy.criticalUnits = ZERO;
     const damage = physicalDamage(
       { atkPlusWeapon: enemy.atkPlusWeapon, stance: enemy.stance, crit: critReady },
@@ -468,6 +469,11 @@ export class Sim {
   }
 
   private dealDamage(target: FighterSide, amount: number, crit: boolean, severed: string[]): void {
+    // AUDIT FIX (major): a mid-tick kill flips the phase to 'ended'; any
+    // damage still in flight the same tick (kunai, second source) must not
+    // land — the old path emitted a SECOND fightEnded with the opposite
+    // winner ("kill beat fires exactly once" is a gate item).
+    if (this.phaseState === 'ended') return;
     const f = this.fighters[target];
     f.hp = Math.max(ZERO, f.hp - amount);
     this.events.push({ type: 'damage', target, amount, crit, severed });
@@ -477,6 +483,13 @@ export class Sim {
     }
     if (f.hp === ZERO) {
       this.phaseState = 'ended';
+      // Shunpo cannot outlive the fight: a kill landed while slow-mo was
+      // active left timeScale stuck at SHUNPO_TIMESCALE with no shunpoEnded
+      // ever emitted (audit; spec item 11 "restored on kill beat").
+      if (this.shunpoActive) {
+        this.shunpoActive = false;
+        this.events.push({ type: 'shunpoEnded' });
+      }
       const winner: FighterSide = target === 'enemy' ? 'player' : 'enemy';
       if (winner === 'player') {
         this.comboCounter.kill(this.frameCount);
@@ -626,6 +639,10 @@ export class Sim {
       }
       // AI seam: consulted once per fighting tick; the Sim executes the
       // returned intent blindly (the controller decides timing/ranges).
+      // Re-checked after the queued skill: a mid-tick kill ends the tick's
+      // combat sub-steps (the dead don't strike, throw, or get hit — audit).
+      // Via the getter: TS narrowing can't see tryCastSkill mutating phase.
+      if (this.phase !== 'fighting') return;
       const intent: OpponentIntent = this.opponent.next(this.frameCount, this.opponentView());
       if (intent.telegraph !== undefined) {
         this.events.push({

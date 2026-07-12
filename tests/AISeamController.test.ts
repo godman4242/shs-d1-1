@@ -80,10 +80,17 @@ describe('AISeamController — movement (approach/engage)', () => {
     const intent = ai.next(1, view({ enemyPos: { x: 500, y: 430 } })); // dist 400
     expect(intent.moveX).toBe(-1); // player is to the left
   });
-  it('stays idle beyond AI_APPROACH_RANGE (620)', () => {
-    const ai = new AISeamController(lowRng, AI_TIERS.easy);
+  it('NEVER stalls beyond AI_APPROACH_RANGE — closes distance instead (audit major)', () => {
+    // A duel has no out-of-aggro state: the old hard-idle froze the enemy
+    // forever once a faster player kited past 620 px.
+    const ai = new AISeamController(highRng, AI_TIERS.easy);
     const intent = ai.next(1, view({ enemyPos: { x: 750, y: 430 } })); // dist 650
-    expect(intent).toEqual({});
+    expect(intent.moveX).toBe(-1);
+  });
+  it('kunai fires in the FULL spec band, incl. 620–720 (audit major)', () => {
+    const ai = new AISeamController(lowRng, AI_TIERS.normal);
+    const intent = ai.next(1, view({ enemyPos: { x: 800, y: 430 } })); // dist 700 ∈ [240,720]
+    expect(intent.throwKunai).toBe(true);
   });
   it('stops approaching inside strike range', () => {
     const ai = new AISeamController(highRng, AI_TIERS.easy);

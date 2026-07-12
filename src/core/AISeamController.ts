@@ -81,8 +81,14 @@ export class AISeamController implements OpponentController {
       return to === null ? {} : { switchStance: to };
     }
 
-    // idle — engage only inside AI_APPROACH_RANGE.
-    if (dist > AI_APPROACH_RANGE) return {};
+    // idle. AUDIT FIX (major): the old hard-idle beyond AI_APPROACH_RANGE
+    // froze the enemy forever once a faster player kited past 620 px AND
+    // killed the spec's 620–720 kunai band. A duel has no out-of-aggro
+    // state: beyond strike range the enemy ALWAYS closes, and the kunai
+    // roll honors the full AI_KUNAI_RANGE. AI_APPROACH_RANGE is reserved
+    // for Stage-4 world encounters (aggro radius) — documented, unused in
+    // 1v1 (decision flagged; veto = restore hard idle above it).
+    void AI_APPROACH_RANGE;
     // DECISION CADENCE (browser-verify finding): chance rolls happen once
     // per reactMs beat, never per tick — per-tick rolling turns a 0.25
     // kunaiChance into a near-certainty within a second and stalls the

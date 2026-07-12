@@ -68,6 +68,7 @@ import {
   SMOKE_BOMB_DISTANCE,
   SMOKE_BOMB_IFRAMES_MS,
 } from '../src/config/combat-sim';
+import { GAME_HEIGHT, GAME_WIDTH } from '../src/config/display';
 import { DUEL_ENEMY, DUEL_SPAWNS, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
 import {
   FIRST_RUN_SP_CAP,
@@ -184,6 +185,13 @@ describe('stances.ts — exact table + triangle (Stage 0 item 6)', () => {
   });
   it('LAUNCH_UNLOCK_LEVEL', () => {
     expect(LAUNCH_UNLOCK_LEVEL).toEqual({ light: 3, balanced: 5, heavy: 5 });
+  });
+});
+
+describe('display.ts — stage dimensions (audit: were the only unpinned config numbers)', () => {
+  it('GAME_WIDTH / GAME_HEIGHT', () => {
+    expect(GAME_WIDTH).toBe(1024);
+    expect(GAME_HEIGHT).toBe(576);
   });
 });
 

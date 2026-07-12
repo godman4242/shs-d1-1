@@ -832,6 +832,57 @@ describe('Sim + AISeamController — integrated duel loop (M4)', () => {
   });
 });
 
+describe('Sim — audit fixes (mid-tick kill, shunpo end, intro skills, jump clamp)', () => {
+  it('a kill mid-tick stops the rest of the tick: exactly ONE fightEnded, no posthumous hits', () => {
+    // chiPunch kills the enemy the same tick a kunai reaches the player.
+    const thrower: OpponentController = {
+      next: (frame: number) => (frame === 1 ? { throwKunai: true } : {}),
+    };
+    const sim = makeSim({ hp: 8 }, { hp: 10 }, thrower);
+    endInvuln(sim);
+    tickN(sim, 28); // kunai ~43px out — arrives within the next few ticks
+    sim.queueSkill('chiPunch'); // kills the 10-hp enemy on the next tick
+    tickN(sim, 5);
+    const events = sim.drainEvents();
+    const ended = events.filter((e) => e.type === 'fightEnded');
+    expect(ended).toEqual([{ type: 'fightEnded', winner: 'player' }]);
+    expect(sim.player.hp).toBe(8); // the in-flight kunai never hit a winner
+    expect(sim.phase).toBe('ended');
+  });
+  it('ending the fight while Shunpo is active emits shunpoEnded and restores timeScale', () => {
+    const sim = makeSim({}, { hp: 5 });
+    sim.setPlayerIntent({ moveX: 0, shunpoHeld: true });
+    sim.tick();
+    expect(sim.timeScale).toBe(0.35);
+    sim.applyStroke(slashStroke()); // kills the 5-hp enemy
+    expect(sim.phase).toBe('ended');
+    expect(sim.timeScale).toBe(1);
+    const ended = sim.drainEvents().filter((e) => e.type === 'shunpoEnded');
+    expect(ended).toHaveLength(1);
+  });
+  it('skill presses during the intro are DISCARDED like strokes (gate parity)', () => {
+    const sim = introSim();
+    sim.queueSkill('chiPunch');
+    sim.beginCombat();
+    sim.drainEvents();
+    sim.tick();
+    expect(sim.enemy.hp).toBe(150); // no buffered cast on the first fighting tick
+    expect(sim.drainEvents().filter((e) => e.type === 'skillUsed')).toEqual([]);
+  });
+  it('jump strokes are clamped to the arena (no off-screen landings)', () => {
+    const low = makeSim();
+    low.applyStroke(new DrawnStroke([v(-300, 400), v(-280, 60)])); // steep up, off-arena left
+    expect(low.playerJumping).toBe(true);
+    tickN(low, JUMP_DURATION_FRAMES);
+    expect(low.player.pos.x).toBe(20); // clamped to halfW
+    const high = makeSim();
+    high.applyStroke(new DrawnStroke([v(5000, 400), v(5010, 50)])); // off-arena right
+    expect(high.playerJumping).toBe(true);
+    tickN(high, JUMP_DURATION_FRAMES);
+    expect(high.player.pos.x).toBe(1004); // GAME_WIDTH − halfW
+  });
+});
+
 describe('Sim — event queue types are exhaustive for M2', () => {
   it('drainEvents returns SimEvent[] (compile-time shape check)', () => {
     const sim = makeSim();
