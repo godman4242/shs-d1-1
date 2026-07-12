@@ -112,9 +112,16 @@ multisets in tests/game-purity-baseline.json; new/substituted values FAIL
 (chaos-proven: planted 31337 → red naming file+value+count; substituted
 4→9 → red '×2 allows ×1'), removals pass, new files fail until baselined;
 refresh = UPDATE_GAME_PURITY_BASELINE=1 (git diff is the review surface).
-Next: M9 — adversarial audit workflow over the whole Stage-2 surface, fix
-confirmed findings, assemble the gate evidence table in RESUME_HERE, close
-the stage 100% ☑.
+M9 IN FLIGHT: two browser-found scene-lifecycle bugs fixed (stale intro on
+mid-intro duel restart — launch() is a no-op on an active scene; intro
+fast-forward on occluded-tab clock jump — re-anchored, the original paused
+when hidden). Gate evidence captured: VS card (GUEST|VS|RONIN(1)),
+Defeat +0/+0, invuln blink (alpha-faint player), Victory +10/+8, HEAVY
+STANCE + drained Focus bar. Adversarial audit workflow wf_d26dfb02-8f7
+DIED ON SUBAGENT QUOTA (all 6 finders; resets 13:00 KL) — MUST re-run
+before sign-off: Workflow resumeFromRunId wf_d26dfb02-8f7 (script saved in
+session workflows dir). Remaining for 100% ☑: audit re-run + fix confirmed
+findings, final gate evidence table in RESUME_HERE.
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 

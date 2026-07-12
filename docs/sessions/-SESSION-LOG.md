@@ -232,4 +232,18 @@ Crash-resilience log. Updated per milestone, never "at the end."
   RED ('9' ×2 allows ×1) · restored → GREEN. Reuses the Stage-0-hardened
   scanner (scanNumericLiterals) — no second literal-parser to drift.
   Suite 289/289 · tsc both configs exit 0 · eslint exit 0.
+- **10:25** Stage 2 M9 (partial) — two scene-lifecycle bugs found LIVE in
+  browser verify and fixed: (1) restarting the duel while the intro overlay
+  is still active left a STALE intro driving the new run (scene.launch on an
+  active scene is a no-op) → stop-then-launch in DuelScene.create; (2) on
+  occluded-tab resume, Phaser's clock jump blew through the whole intro in
+  3 frames (the original paused when hidden) → step-timer re-anchor on
+  >500 ms jumps in DuelIntro.update. game-purity ratchet scored its first
+  organic catch on fix (2) ('500' ×1 allows ×0) → baseline refreshed via
+  the sanctioned env-var path. Gate evidence captured: VS card, Defeat
+  +0/+0, invuln blink, Victory +10/+8, stance-swap Focus drain. Adversarial
+  audit wf_d26dfb02-8f7: ALL 6 finders died on subagent session quota
+  (resets 13:00 KL) — result {confirmed:[]} is a QUOTA ARTIFACT, not a
+  clean bill; re-run required before sign-off. Suite 289/289 · tsc exit 0 ·
+  eslint exit 0.
 - (milestones appended below as they land)

@@ -132,6 +132,10 @@ export class DuelScene extends Phaser.Scene {
     this.events.once('intro-done', () => {
       this.sim.beginCombat();
     });
+    // A duel restart can arrive while a previous intro is still on screen —
+    // launch() on an active scene is a no-op, which left a STALE intro
+    // driving the new duel (found live in browser verify). Stop it first.
+    if (this.scene.isActive('duel-intro')) this.scene.stop('duel-intro');
     this.scene.launch('duel-intro');
 
     // SPACE cycles stance; clicking the portrait swaps too (gate item).

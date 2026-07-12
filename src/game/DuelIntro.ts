@@ -25,6 +25,7 @@ const STEP_MS: Record<Exclude<Step, 'done'>, number> = {
 export class DuelIntro extends Phaser.Scene {
   private step: Step = 'vs';
   private stepAt = 0;
+  private lastNow = 0;
   private banner: BannerHandle | null = null;
   private card: Phaser.GameObjects.Container | null = null;
 
@@ -35,6 +36,7 @@ export class DuelIntro extends Phaser.Scene {
   create(): void {
     this.step = 'vs';
     this.stepAt = this.time.now;
+    this.lastNow = this.time.now;
     this.banner = null;
     this.showVsCard();
     this.input.on('pointerdown', () => {
@@ -44,7 +46,14 @@ export class DuelIntro extends Phaser.Scene {
 
   override update(): void {
     if (this.step === 'done') return;
-    if (this.time.now - this.stepAt >= STEP_MS[this.step]) this.advance();
+    // Occluded-tab clock jump: on resume, time.now leaps by the hidden
+    // wall-time and would blow through every step in 3 frames (the original
+    // Flash game simply paused when hidden). Re-anchor the step timer so
+    // the sequence resumes where it left off.
+    const now = this.time.now;
+    if (now - this.lastNow > 500) this.stepAt += now - this.lastNow;
+    this.lastNow = now;
+    if (now - this.stepAt >= STEP_MS[this.step]) this.advance();
   }
 
   /** VS card (B-23 anatomy): player panel left, enemy right, cracked VS. */
