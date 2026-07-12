@@ -15,11 +15,18 @@
 
 ## Current focus
 **Stage 3 — Progression: IN PROGRESS. M1 (`core/progression.ts`) DONE
-(2026-07-12).** 6 of 7 Stage-3 gate items cleared headless + chaos-proven
-(Stage-3 gate table under "State"); the 7th is browser-only (queued above).
-Entry point stays `docs/sessions/STAGE3_KICKOFF.md`.
+(2026-07-12, build-loop cycle; Session-4 review verdict: KEEP).** 6 of 7
+Stage-3 gate items cleared headless + chaos-proven (gate table under
+"State"); the 7th is browser-only (queued above).
+**INTERACTIVE entry point: `docs/sessions/SESSION5_KICKOFF.md`** (loop
+handshake first · M1 hostile review · XP curve from study data · Chi meter ·
+persistence + browser gate · close). Headless loop cycles keep following
+`docs/sessions/STAGE3_KICKOFF.md`.
 **Stage 2 CLOSED 100% ☑ (2026-07-12)** — its gate table is under "State".
 SESSION4 kickoff items 1–4 all done; local commits, push = Kheshav's call.
+**Loop now has a dead-man takeover** (scripts/build-loop.sh + GOAL.md
+re-steering + pre-commit heartbeat): interactive death → loop takes over
+~2 h later and rides the quota reset by itself.
 
 ## State
 - **Stage 3: IN PROGRESS — M1 (`core/progression.ts`) DONE (2026-07-12).**

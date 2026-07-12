@@ -404,3 +404,23 @@ Crash-resilience log. Updated per milestone, never "at the end."
     eslint exit 0. DEVIATION carried: MAX_DAN_RANK=10 (decision #2).
     Deferred (next): M2 XP curve (research first), M3 Chi meter + skill
     costs, M4 accrual/persistence seam (clears the queued browser item).
+- **20:55** (Session 4 returns, interactive) Loop-M1 REVIEWED — verdict
+  KEEP, revert declined (Kheshav offered "clear the loop's work"; senior
+  call: the module is green 333/333 independently re-verified, red-first +
+  chaos claims are logged in detail, ledgers moved in the same commit, and
+  the code reads exactly as it should — pure, zero-literal, guarded,
+  veto-flagged. Deleting correct work to redo it on a bigger model is
+  waste; the bigger model's edge belongs on the HARD remainder: Chi/Sim
+  integration, persistence seam, browser close. Veto = `git revert
+  1c009e5`.) A hostile fresh-eyes review of M1 is queued as SESSION5 §1.1
+  instead. **Dead-man takeover shipped** so work continues unattended
+  across usage-limit cuts: PAUSE = soft pause heartbeated by the
+  pre-commit hook every milestone commit; stale PAUSE (>2 h) + quiet tree
+  (>1 h) → loop removes it and takes over; cycles ride quota outages via
+  backoff; STOP = hard pause, never auto-removed; CYCLE_RUNNING lockfile
+  guards the return handshake. Logic chaos-tested standalone (6/6
+  scenarios: fresh/stale/missing PAUSE, active/quiet/excluded-noise tree);
+  sh -n clean on loop + hook. SESSION5_KICKOFF.md written (bar reached):
+  handshake → M1 hostile review → XP curve FROM STUDY DATA (L1–L10
+  thresholds already extracted) → Chi meter + harness re-pin →
+  persistence + browser gate → STAGE 3 CLOSED → Stage-4 kickoff.

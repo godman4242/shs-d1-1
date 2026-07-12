@@ -11,6 +11,12 @@ LINT_CMD="npm run -s lint"  # ESLint flat config (strict type-checked) — adopt
 # Skip inside CI (CI runs its own checks).
 [ -n "$CI" ] && exit 0
 
+# Loop heartbeat: while an interactive session holds the build loop paused
+# (docs/loop/PAUSE exists), every milestone commit refreshes the pause so the
+# loop's dead-man takeover doesn't fire mid-session. During loop cycles PAUSE
+# does not exist (the loop removed it at takeover), so this is a no-op there.
+[ -f docs/loop/PAUSE ] && touch docs/loop/PAUSE
+
 # Docs-only fast-path: if EVERY staged file is markdown, it can't affect build/test/lint.
 STAGED=$(git diff --cached --name-only)
 NON_DOC=$(printf '%s\n' "$STAGED" | grep -vE '\.md$')

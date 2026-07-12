@@ -29,5 +29,13 @@ gate, in strict TDD, without ever violating the repo invariants.
 
 ## Re-steering
 
-Edit this file; the next cycle obeys it. Pause safely with
-`touch docs/loop/PAUSE`; resume with `rm docs/loop/PAUSE`.
+Edit this file; the next cycle obeys it.
+- `docs/loop/PAUSE` = SOFT pause with a dead-man switch: interactive sessions
+  create it and the pre-commit hook re-touches it every milestone commit. If
+  it goes stale (>2 h) while the tree is quiet (>1 h), the loop presumes the
+  session died (usage-limit cut / crash) and TAKES OVER by itself — cycles
+  ride quota outages via geometric backoff until the reset.
+- `docs/loop/STOP` = HARD pause, never auto-removed. Use for deliberate
+  breaks (hand-editing, holidays).
+- Returning to interactive work: `touch docs/loop/PAUSE`, then wait until
+  `docs/loop/CYCLE_RUNNING` disappears before editing.
