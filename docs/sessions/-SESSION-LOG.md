@@ -98,4 +98,15 @@ Crash-resilience log. Updated per milestone, never "at the end."
      both release events finish the stroke; browser-verified (window-level
      mouseup beyond letterbox → hp 100→88, dragging cleared).
   Suite 155/155 · lint green · tsc both configs green.
+- **03:10** **STAGE 1 GATE: 100% ☑ GREEN** — sign-off commit `ebc1335` with
+  full evidence table in RESUME_HERE; STAGE2_KICKOFF.md written + committed.
+- **08:05 (2026-07-12)** Kheshav awake: (1) confirmed the loop question —
+  scripts/build-loop.sh already committed, single-writer rule restated;
+  (2) GitHub repo requested as "shs:d1-1" — ':' is invalid in repo names,
+  creating private `shs-d1-1` (veto = public/rename); (3) fidelity feedback:
+  Stage-1 testbed doesn't look like the OG — binding kickoff amendment pulls
+  fidelity tells 17–19/21–25 into Stage 2 scene work (memory saved);
+  byte-by-byte recalibrated to 1:1-in-motion (invariants keep palette shift).
+  Stage 2 opened: mulberry32 RED→GREEN (6 tests incl. independent reference
+  pinning, uint32 wrap, uniformity). Suite 161/161.
 - (milestones appended below as they land)

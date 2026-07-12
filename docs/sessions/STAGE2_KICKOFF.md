@@ -74,6 +74,16 @@ codebase was fresh in context.
   INFERRED cooldown values.
 - **NaN guard:** the Stage-1 audit scoped attacker-stat NaN-guarding to
   Sim.advance — it binds HERE (chaos-test it).
+- **Visual fidelity pulled forward (Kheshav feedback, 2026-07-12):** the
+  Stage-1 testbed "does not look like the OG game" — correct, and no longer
+  acceptable for Stage 2's scenes. When building DuelScene/DuelIntro/
+  DuelResult, work FROM the study frames (`reference/frames/`, A-00/A-02/
+  B-23 anatomy) and pull fidelity tells 17–19 and 21–25 forward: flat-color
+  bold-outline fighters with kasa+katana+scarf silhouette, bamboo/pastel
+  parallax arena, combat letterbox strip, enemy nameplate "NAME (LEVEL)" +
+  overhead green HP bar, portrait/coins/XP HUD anatomy, VS/FIGHT! banner
+  family. Palette stays trade-dress-shifted (invariant — never revert);
+  "byte-by-byte" reads as "1:1 in motion", per MASTER_SPEC's own terms.
 
 ## 3. Definition of done — binary gate (ALL boxes, evidence pasted)
 
