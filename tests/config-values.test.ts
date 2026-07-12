@@ -68,7 +68,7 @@ import {
   SMOKE_BOMB_DISTANCE,
   SMOKE_BOMB_IFRAMES_MS,
 } from '../src/config/combat-sim';
-import { DUEL_SPAWNS, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
+import { DUEL_ENEMY, DUEL_SPAWNS, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
 import {
   FIRST_RUN_SP_CAP,
   HAS_CASH_PURCHASE,
@@ -208,6 +208,9 @@ describe('duel.ts — Stage-2 arena layout (all INFERRED)', () => {
   it('jump arc constants', () => {
     expect(JUMP_DURATION_FRAMES).toBe(24);
     expect(JUMP_APEX_PX).toBe(120);
+  });
+  it('DUEL_ENEMY — nameplate identity; level 1 ⇒ +10/+8 gate rewards', () => {
+    expect(DUEL_ENEMY).toEqual({ name: 'RONIN', level: 1 });
   });
 });
 

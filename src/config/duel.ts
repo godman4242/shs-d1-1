@@ -20,6 +20,11 @@ export const DUEL_SPAWNS: Record<'player' | 'enemy', SpawnPoint> = {
   enemy: { pos: { x: 700, y: 430 }, halfW: 26, halfH: 60 },
 };
 
+/** INFERRED — Stage-2 duel opponent identity (nameplate "NAME (LEVEL)" —
+ * fidelity tell 22; level 1 makes the Victory rewards read +10/+8 exactly,
+ * the Stage-2 gate numbers). */
+export const DUEL_ENEMY = { name: 'RONIN', level: 1 };
+
 /** INFERRED — jump arc: 24 frames = 0.4 s at FIXED_HZ. */
 export const JUMP_DURATION_FRAMES = 24;
 /** INFERRED — jump apex height in px (screen y-down: subtracted). */

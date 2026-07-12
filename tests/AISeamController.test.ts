@@ -113,6 +113,28 @@ describe('AISeamController — kunai (240–720 band, tier chance)', () => {
   });
 });
 
+describe('AISeamController — decision cadence (browser-verify finding)', () => {
+  it('rolls decisions once per reactMs beat, not every tick (chances stay tier-semantic)', () => {
+    let rolls = 0;
+    const counting: Rng = () => {
+      rolls++;
+      return 0.99; // every decision fails
+    };
+    const ai = new AISeamController(counting, AI_TIERS.normal);
+    const v = view({ enemyPos: { x: 500, y: 430 } }); // in the kunai band
+    for (let f = 1; f <= 60; f++) ai.next(f, v);
+    // One decision round per 320 ms (reactMs) ≈ 4 rounds max in 60 frames,
+    // ≤ 2 rng calls per round (kunai roll + aggression roll; stance-pick
+    // needs Focus + non-countering first). 60 rolls would mean per-tick.
+    expect(rolls).toBeLessThanOrEqual(8);
+  });
+  it('failed kunai rolls still fall through to approach movement', () => {
+    const ai = new AISeamController(highRng, AI_TIERS.normal);
+    const intent = ai.next(1, view({ enemyPos: { x: 500, y: 430 } }));
+    expect(intent.moveX).toBe(-1);
+  });
+});
+
 describe('AISeamController — counter stance pick (queued + telegraphed)', () => {
   // Player light: the counter is balanced (STANCE_BEATS balanced → light).
   // Enemy balanced→? costs 34×1.5=51 > 50 focus — use a light enemy (cost 34).

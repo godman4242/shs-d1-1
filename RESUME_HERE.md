@@ -79,13 +79,30 @@ consume the crit meter or advance the combo. config/ai.ts spec-item-8
 EXACT + pinned. core/time.ts = the one msToFrames site. DuelScene: real
 AISeamController (normal tier), shared rng stream, windup flash (red =
 strike / blue = stance).
-Next: M5 `config/economy.ts` (spec item 10 EXACT, pinned; consumed by
-DuelResult at M6). Then M6 scenes with fidelity pull-forward (DuelScene
-full HUD from study frames, DuelIntro VS→READY→FIGHT!, DuelResult
-Victory/Defeat +10/+8, R restart chaos-tested, kill beat FINISHER_FLASH +
-timescale restore) + browser verify. M7 24-seed harness + cross-process
-determinism + Sim scenario suite (≥200 tests total). M8 game/ purity
-ratchet baseline. M9 adversarial audit + gate evidence table.
+M5 DONE: economy.ts spec-item-10 exact + pinned (MAX_DAN_RANK 10 per open
+decision #2; KILL_REWARD INFERRED; HAS_CASH_PURCHASE=false deviation).
+M6 DONE (browser-verified, zero console errors): fidelity pull-forward
+scenes built FROM study frames — samurai.ts (kasa+katana+scarf flat-color
+bold-outline fighters), banners.ts (ONE brush/splatter banner family),
+bamboo/pastel parallax arena + letterbox strips, enemy nameplate
+"RONIN (1)" + overhead green bar, portrait (stance ring, click-to-swap) +
+HP/Focus bars + Shunpo/Critical slivers, skill bar w/ cooldown sweeps,
+HIT COMBO plate, AUTO SLASH OFF plate (render-only), low-HP vignette,
+coins/XP anatomy; DuelIntro (VS card → RONIN banner → READY… → FIGHT!,
+click fast-forwards, pre-FIGHT strokes sim-discarded), DuelResult (hard-cut
+red, YOU WIN/DEFEATED, +10 XP/+8 COINS exact, R restart). Browser evidence:
+slash 150→142 (exact 8), SPACE denial at 50 focus then swap heavy at 55.87
+→ 5.07 (real key), shunpo 0.35 mirrored on time+tweens then restored,
+key-3 stab CD via real input, kill → combo reset to 1 → result → R →
+fresh sim + timescales exactly 1 + intro relaunched. AI decision-cadence
+bug FOUND IN BROWSER (per-tick chance rolls stalled approach) → RED test →
+one-roll-per-reactMs fix → 281/281.
+Next: M7 tests — Sim scenario suite per spec item 14 (stance triangle,
+crit ×CRIT_MULT A/B, spawn invuln, smoke i-frames, stab deflect, chi punch,
+shunpo, kill beat once — mostly landed M2/M3; fill gaps), 24-seed harness
+(good-play 100% win / no-play 0% / median ∈ [20,60]s / ≥22 distinct
+durations), cross-process determinism, ≥200 tests. M8 game/ purity ratchet
+baseline. M9 adversarial audit + gate evidence table.
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 

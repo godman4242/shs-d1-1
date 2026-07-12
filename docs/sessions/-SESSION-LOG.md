@@ -190,4 +190,22 @@ Crash-resilience log. Updated per milestone, never "at the end."
   cooldown → 2 RED — restored GREEN. ESLint caught 6 issues in new code
   (unused import/param, array-type style, needless assertions) — fixed.
   Suite 274/274 · tsc both configs exit 0 · eslint exit 0.
+- **09:55** Stage 2 M5+M6 — economy.ts (pins RED-first) + the fidelity
+  scene layer, built FROM reference/frames (A-00 combat anatomy, B-23 HUD,
+  seg-23 VS context; original art, shifted palette): samurai.ts fighters,
+  banners.ts single banner family, bamboo parallax + letterbox, nameplate +
+  overhead bar, portrait/coins/XP/skill-bar/combo-plate/AUTO-SLASH HUD,
+  low-HP vignette, DuelIntro (VS→name→READY→FIGHT!, click-skip), DuelResult
+  (+10/+8 exact, R restart), kill beat FINISHER_FLASH + timescale restore in
+  create/shutdown/beat-end. Browser verify (Chrome MCP, dev seam loop-step
+  protocol for occluded-tab throttling): slash 150→142 exact; SPACE denied
+  at 50 focus / swap at 55.87→5.07 via REAL key; shunpo 0.35 on sim + BOTH
+  Phaser clocks, restored on release; key-3 stab cooldown via real input;
+  kill → combo 1 (CONTRACT) → YOU WIN +10 XP +8 COINS screenshot → R →
+  fresh sim, timescales exactly 1, intro relaunched; zero console errors
+  across a full boot→intro→duel→kill→result cycle. REAL BUG found by the
+  browser: AI rolled tier chances EVERY TICK (kunaiChance 0.25/tick ⇒
+  near-certain kunai each second, approach stalled at range) → RED cadence
+  test (rng-call counting) → one-decision-round-per-reactMs fix → 281/281.
+  Suite 281/281 · tsc both configs exit 0 · eslint exit 0 · build green.
 - (milestones appended below as they land)

@@ -83,9 +83,14 @@ export class AISeamController implements OpponentController {
 
     // idle — engage only inside AI_APPROACH_RANGE.
     if (dist > AI_APPROACH_RANGE) return {};
+    // DECISION CADENCE (browser-verify finding): chance rolls happen once
+    // per reactMs beat, never per tick — per-tick rolling turns a 0.25
+    // kunaiChance into a near-certainty within a second and stalls the
+    // approach. Between beats the AI just closes distance.
     if (frame < this.decisionHoldUntil) {
       return dist > AI_STRIKE_RANGE ? { moveX: this.toward(view) } : {};
     }
+    this.decisionHoldUntil = frame + msToFrames(this.tier.reactMs);
     // Kunai band roll (easy's kunaiChance 0 never passes: rng() < 0 is false).
     if (dist >= AI_KUNAI_RANGE.min && dist <= AI_KUNAI_RANGE.max && this.rng() < this.tier.kunaiChance) {
       this.mode = 'recover';
@@ -111,8 +116,6 @@ export class AISeamController implements OpponentController {
       this.modeUntilFrame = frame + msToFrames(this.tier.telegraphMs);
       return { telegraph: { kind: 'strike', durationMs: this.tier.telegraphMs } };
     }
-    // Passed on attacking — hold decisions for one reaction beat.
-    this.decisionHoldUntil = frame + msToFrames(this.tier.reactMs);
     return {};
   }
 

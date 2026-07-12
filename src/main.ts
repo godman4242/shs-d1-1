@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { COL } from './config/palette';
 import { GAME_WIDTH, GAME_HEIGHT } from './config/display';
+import { DuelIntro } from './game/DuelIntro';
+import { DuelResult } from './game/DuelResult';
 import { DuelScene } from './game/DuelScene';
 
 const game = new Phaser.Game({
@@ -15,7 +17,9 @@ const game = new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [DuelScene],
+  // DuelScene auto-starts and launches the intro/result overlays itself
+  // (?scene=duel is the only route until Stage 6 adds the world scenes).
+  scene: [DuelScene, DuelIntro, DuelResult],
 });
 
 // Dev-only verification seam: lets automated browser checks step the loop
