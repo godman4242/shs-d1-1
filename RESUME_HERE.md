@@ -1,12 +1,35 @@
 # RESUME HERE
 
 ## Current focus
-**Stage 2 — Full combat** (MASTER_SPEC Stage 2: deterministic Sim loop, AI seam,
-meters, projectiles, playable duel, ≥200 tests). Stage 1 closed 100% green on
-2026-07-12 (see gate evidence below). Kickoff sequencing for Stage 2:
-`docs/sessions/STAGE2_KICKOFF.md` (written at Stage-1 close; read it first).
+**Stage 2 CLOSED 100% ☑ (2026-07-12)** — gate table below. Next, in kickoff
+order (`docs/sessions/SESSION4_KICKOFF.md` §1): mine `~/kheshav-code/iaido-duel`
+→ upgrade `~/kheshav-code/agent-work-ethic` → **Stage 3 — Progression**
+(MASTER_SPEC Stage 3 + errata; open decisions #2/#3 defaults pre-approved).
 
 ## State
+- **Stage 2: GREEN — gate 100% ☑ (2026-07-12, Session 4).** Suite 305/305 ·
+  tsc both configs exit 0 · eslint exit 0 · milestones M1–M10 on `master`
+  (session log 2026-07-11→12; evidence timestamps below refer to it).
+  | Gate item (MASTER_SPEC Stage 2) | Evidence |
+  |---|---|
+  | ≥200 unit tests green | 305/305 at M10 close (log 19:25); pre-commit gate paste in every milestone commit |
+  | Sim deterministic, same seed+intents, cross-process | M7 (log 10:03): in-process ×2 byte-identical + two child vitest processes + parent all agree; chaos: planted `Math.random` in trace → RED (plant sized above the 1/256 fingerprint fold) |
+  | `tsc --noEmit` exit 0 | both tsconfigs, enforced by pre-commit gate; pasted per commit |
+  | dev server → `?scene=duel` → playable duel | DuelScene IS the boot scene (`main.ts`: only route until Stage 6, param a no-op); played live M6 + M10 (slash, damage, kunai, shunpo) |
+  | VS → name banner → READY → FIGHT! in order | M6 full-cycle browser run; M9 VS-card capture; M10 FIGHT! banner screenshot |
+  | Draw across enemy → slash → blood → damage | M6: 150→142 (exact 8); M10 repeat: 150→142 + 9 droplets + two-layer trail (screenshots) |
+  | SPACE swaps stance, Focus bar visibly drains | M6: denied at 50 Focus, then heavy swap 55.87→5.07 via real key; M9 drain capture |
+  | Crit ×CRIT_MULT A/B | crit A/B scenario tests (M2, spec item 14 sweep). DEVIATION: CRIT_MULT=1.3 vs spec "3×" — open decision #1, default keep |
+  | SHIFT-hold slow-mo: timescale + meter drain | M6: 0.35 on sim + BOTH Phaser clocks, restored on release; M10: fx/wall 1.0000→0.3500→1.0000 measured, meter 100→94.2, FX age exactly 350 ms per 1000 ms wall |
+  | R restarts cleanly | M6: fresh sim, timescales exactly 1, intro relaunched; M9: stale-intro + occluded-tab clock-jump fixes (browser-found) |
+  | Enemy telegraphs ≥ 520 ms before striking (Normal) | M4 property test: strike lands exactly telegraphMs after its telegraph over a 600-frame run; windup aura live in M6/M10 |
+  | Back off → kunai flies (range band) | M10 live: hold A → kunai thrown at range 468 (band 240–720) after 60 frames, bolt on screen (screenshot); M9 fixed the dead 620–720 band |
+  | Stab (key 3) swats kunai | M3: deflect-window + deflectLearned-once tests (spec item 14 stab-deflect scenario); M6: key-3 cooldown via real input |
+  | Victory screen: XP +10, Coins +8 | M6 + M9 screenshots (+10/+8 exact — economy.ts pins coins=8 NOT 5) |
+  | Defeat screen: 0/0 | M9 capture: Defeat +0/+0 |
+  | Spawn invuln: 5 s blink, ends on first slash | M3 tests (PLAYER-ONLY, flagged; veto = symmetric); M9 blink capture; blink kept on WALL clock in M10 (real-time cadence in slow-mo) |
+  | 24-seed harness: 100% win good-play, 0% no-play, median in band | M7: 24/24 wins vs 0/24, median 26.04 s ∈ [20,60], 24/24 distinct durations. NOTE: spec "~24.7 s" is the reference bot's own number — flagged |
+  | config-purity: core/ zero literals; game/ baseline clean | Stage-1 chaos (planted 42 → RED at file:line) still green; M8 ratchet chaos (31337 plant, 4→9 substitution → RED) + M9 hardening + M10 RED receipt (0: 45→47 reviewed) |
 - **Stage 1: GREEN — gate 100% ☑ (2026-07-12, autonomous overnight session).**
   155/155 tests (every new test watched RED first; TDD skill invoked at session
   start) · ESLint strict-type-checked green · `tsc --noEmit` exit 0 on BOTH
@@ -43,7 +66,14 @@ meters, projectiles, playable duel, ≥200 tests). Stage 1 closed 100% green on
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**Stage 2 in flight** (kickoff §1 order): rng DONE · Sim.advance DONE (M1) ·
+**Session-4 kickoff §1 remaining:** mine `~/kheshav-code/iaido-duel`
+(CALIBRATION/DIVERGENCES/TELLS_CHECKLIST/RESUME + docs; adopt-improve-or-reject
+with log) → upgrade `~/kheshav-code/agent-work-ethic` (distill this session's
+working rules for Opus 4.8) → **Stage 3 kickoff** (progression; MASTER_SPEC +
+errata: MAX_DAN_RANK=10 per decision #2 default, elemental rebirth per #3).
+
+## Stage-2 milestone history (all on `master`, evidence in session log)
+Stage 2 build order was: rng DONE · Sim.advance DONE (M1) ·
 M2 DONE (202/202): two-fighter Sim (player+enemy FighterState, FighterView
 reads, hitbox(side)), damage w/ defense + HEAVY_DEF_PENALTY defense-side only
 (landmine honored — exact-8 pin, chaos: double-application → 17 RED), phase
@@ -136,7 +166,7 @@ no invented blood constants). Browser-proven via dev-seam loop-step:
 fx/wall 1.0000 → 0.3500 (SHIFT held) → 1.0000; droplet aged exactly 350 ms
 per 1000 ms wall in slow-mo; slash 150→142 with trail alive at fx-age
 153 ms after ~350 ms wall; zero console errors from fresh load.
-Remaining for 100% ☑: the gate evidence table (next commit).
+**STAGE 2 CLOSED — the full gate table with evidence lives under "State".**
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 

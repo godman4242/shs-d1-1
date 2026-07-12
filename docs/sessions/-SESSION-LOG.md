@@ -307,4 +307,15 @@ Crash-resilience log. Updated per milestone, never "at the end."
   docs/loop/GOAL.md (near-OG per owner veto 2026-07-12 — a loop cycle
   obeying GOAL.md verbatim would have re-shifted the palette against the
   veto). Suite 305/305 · tsc both configs exit 0 · eslint exit 0.
+- **19:45** STAGE 2 CLOSED — full 18-item VERIFICATION GATE table assembled
+  in RESUME_HERE.md, every box ☑ with an evidence pointer (this log's
+  timestamps + commits + screenshots). Two items freshened LIVE before
+  sign-off rather than trusting old notes: (1) kunai-at-range — held A via
+  loop-step, kunai thrown at range 468 (band 240–720) after 60 frames,
+  bolt on screen; (2) `?scene=duel` — confirmed a no-op by design
+  (DuelScene IS the boot scene until Stage 6; main.ts comment). Two
+  flagged deviations ride with the gate, both owner-defaulted: CRIT_MULT
+  1.3 vs spec 3× (open decision #1) and harness median 26.04 s vs the
+  spec's ~24.7 s reference-bot number. Next per SESSION4_KICKOFF §1: mine
+  iaido-duel → upgrade agent-work-ethic → Stage 3.
 - (milestones appended below as they land)
