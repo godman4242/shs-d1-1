@@ -259,4 +259,14 @@ Crash-resilience log. Updated per milestone, never "at the end."
   updated. Audit workflow resumed post-quota-reset (wf_d26dfb02-8f7).
   Suite 289/289 · tsc exit 0 · eslint exit 0. Next: fighter-art fidelity
   pass (samurai.ts v2) with before/after browser evidence.
+- **13:40** Fighter fidelity pass v2 (samurai.ts rebuilt): ground shadow,
+  hakama with center split + splayed feet, gi with open-vest V panels, obi
+  belt + knot, double scarf tail, bigger head with profile nub, wide
+  shallow kasa with brim ellipse + weave line (player) / topknot + headband
+  tail (ronin), two-hand katana grip with tsuba + wrapped hilt, pose-angled
+  blade (idle/windup/guard). Player look switched to white-gi + dark vest
+  per the study-frame reading. Original drawing throughout — structural
+  fidelity, no tracing. Ratchet baseline refreshed (deliberate, env-var
+  path). Browser-verified with new palette: full-scene + zoom evidence
+  saved. Suite 289/289 · tsc exit 0 · eslint exit 0.
 - (milestones appended below as they land)
