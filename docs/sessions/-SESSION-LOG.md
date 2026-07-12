@@ -318,4 +318,28 @@ Crash-resilience log. Updated per milestone, never "at the end."
   1.3 vs spec 3× (open decision #1) and harness median 26.04 s vs the
   spec's ~24.7 s reference-bot number. Next per SESSION4_KICKOFF §1: mine
   iaido-duel → upgrade agent-work-ethic → Stage 3.
+- **20:05** iaido-duel mining pass (kickoff §1.3) — read CALIBRATION /
+  DIVERGENCES / TELLS_CHECKLIST / RESUME_HERE + ART_DIRECTION pointer.
+  ADOPTED (improved, not copied): (1) docs/TELLS_CHECKLIST.md — living
+  status ledger over MASTER_SPEC's static tells list, each row citing OUR
+  gate evidence; 20/36 tells already ☑/◐ from Stages 1–2; human-only rows
+  marked Ⓗ. (2) docs/CALIBRATION.md — INFERRED-value measurement ledger
+  (item/tolerance/seed/status) + the Ruffle frame-step upgrade method
+  (study-only, RECREATE-NEVER-RIP compliant); 15 rows seeded, none
+  CONFIRMED yet, queued as Stage-6 polish. (3) docs/DIVERGENCES.md — one
+  deviation ledger (owner decisions, INFERRED readings, structural
+  deviations, cross-project fact conflicts) replacing scattered flags.
+  (4) RESUME trust-order header line. SURFACED for the owner: their spec
+  lineage treats crit 3× as CONTRACT (measured 3.000 A/B) — strengthens
+  the 3× case on open decision #1 (default 1.3 stands); their dan-rank
+  contract is 5 vs our errata 10 (errata wins, decision #2); their coins
+  +5 vs our verified 8 (ours verified — keep). REJECTED: two-tier purity
+  with grandfathered core (ours is stricter: zero-literal core from day
+  1); ?foes=N sparring dummies (multi-foe is Stage 4/5 world scope);
+  kill-beat timescale RAMP 0.43 (our SYNTHESIS reads hard cuts — keep
+  0.35 hard); swappable TITLE_WORDMARK / public-IP posture (ours is a
+  private recreation; owner call if that ever changes); MouseEvents-only
+  browser protocol (our PointerEvent + loop-step protocol proven today).
+  Phaser particleAngle no-op landmine recorded in DIVERGENCES (we use
+  Graphics, no emitters).
 - (milestones appended below as they land)

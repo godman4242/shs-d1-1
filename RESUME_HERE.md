@@ -1,5 +1,11 @@
 # RESUME HERE
 
+> **Fresh session and Kheshav said only "continue"?** Read this file top to
+> bottom, then `docs/sessions/SESSION4_KICKOFF.md` (standing mandates), then
+> `git log --oneline -10`. Trust those three over any older doc.
+> Fidelity ledgers: `docs/TELLS_CHECKLIST.md` · `docs/CALIBRATION.md` ·
+> `docs/DIVERGENCES.md` (adopted from iaido-duel mining, 2026-07-12).
+
 ## Current focus
 **Stage 2 CLOSED 100% ☑ (2026-07-12)** — gate table below. Next, in kickoff
 order (`docs/sessions/SESSION4_KICKOFF.md` §1): mine `~/kheshav-code/iaido-duel`
@@ -66,11 +72,11 @@ order (`docs/sessions/SESSION4_KICKOFF.md` §1): mine `~/kheshav-code/iaido-duel
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**Session-4 kickoff §1 remaining:** mine `~/kheshav-code/iaido-duel`
-(CALIBRATION/DIVERGENCES/TELLS_CHECKLIST/RESUME + docs; adopt-improve-or-reject
-with log) → upgrade `~/kheshav-code/agent-work-ethic` (distill this session's
-working rules for Opus 4.8) → **Stage 3 kickoff** (progression; MASTER_SPEC +
-errata: MAX_DAN_RANK=10 per decision #2 default, elemental rebirth per #3).
+**Session-4 kickoff §1 remaining:** iaido-duel mining DONE (20:05 log entry;
+ledgers landed) → upgrade `~/kheshav-code/agent-work-ethic` (distill this
+session's working rules for Opus 4.8) → **Stage 3 kickoff** (progression;
+MASTER_SPEC + errata: MAX_DAN_RANK=10 per decision #2 default, elemental
+rebirth per #3, Chi meter + costs arrive here).
 
 ## Stage-2 milestone history (all on `master`, evidence in session log)
 Stage 2 build order was: rng DONE · Sim.advance DONE (M1) ·
