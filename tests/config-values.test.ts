@@ -69,6 +69,15 @@ import {
   SMOKE_BOMB_IFRAMES_MS,
 } from '../src/config/combat-sim';
 import { DUEL_SPAWNS, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
+import {
+  FIRST_RUN_SP_CAP,
+  HAS_CASH_PURCHASE,
+  KILL_REWARD,
+  LEVEL_UP_REWARD,
+  MAX_DAN_RANK,
+  REBIRTH,
+  WAR_ROOM,
+} from '../src/config/economy';
 import { SKILL_COOLDOWN_MS } from '../src/config/skills';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
@@ -317,6 +326,30 @@ describe('ai.ts — Stage 2 item 8, exact spec names and values', () => {
     expect(AI_RECOVER_JITTER_FRAC).toBe(0.35);
     expect(DUEL_TARGET_SECONDS).toEqual({ min: 20, max: 60 });
     expect(AI_PENDING_STANCE_MS).toBe(600); // Stage-2 decision — see ai.ts docblock
+  });
+});
+
+describe('economy.ts — Stage 2 item 10, exact spec names and values', () => {
+  it('KILL_REWARD — coins is 8, NOT 5 (spec-verified); whole record INFERRED', () => {
+    expect(KILL_REWARD).toEqual({ xpPerFoeLevel: 10, coinsPerFoeLevel: 8 });
+  });
+  it('LEVEL_UP_REWARD (CONTRACT: +1 SP / +3 stat / full refill modals)', () => {
+    expect(LEVEL_UP_REWARD).toEqual({ skillPoints: 1, statPoints: 3, fullRefill: true });
+  });
+  it('caps and rebirth', () => {
+    expect(FIRST_RUN_SP_CAP).toBe(80);
+    expect(MAX_DAN_RANK).toBe(10); // research: 10, not spec text 5 — see docblock
+    expect(REBIRTH).toEqual({ earlyGold: 25, tenthGold: 100, lateGold: 25, attackBonusPerRebirth: 10 });
+  });
+  it('War Room + no cash path', () => {
+    expect(WAR_ROOM).toEqual({
+      unlockLevel: 10,
+      killCap: 350,
+      buildDonationCap: 500,
+      deployMods: { fieldToMountain: 60, mountainToMountain: 100, fieldToForest: 75 },
+      controlPointFlagBonus: 1.2,
+    });
+    expect(HAS_CASH_PURCHASE).toBe(false);
   });
 });
 
