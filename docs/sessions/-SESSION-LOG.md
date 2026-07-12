@@ -208,4 +208,19 @@ Crash-resilience log. Updated per milestone, never "at the end."
   near-certain kunai each second, approach stalled at range) → RED cadence
   test (rng-call counting) → one-decision-round-per-reactMs fix → 281/281.
   Suite 281/281 · tsc both configs exit 0 · eslint exit 0 · build green.
+- **10:03** Stage 2 M7 — 24-seed harness + determinism. Shared duel bot
+  (tests/utils/duel-bot.ts) mirrors DuelScene wiring (one rng stream, Sim +
+  AISeamController normal): good policy = slash cadence 45f + seeded
+  humanized jitter (own mulberry32 stream — without it kills quantized to
+  the swing grid and only 13/24 durations were distinct) + jump-dodge at
+  telegraph+10 so the arc covers the commit frame. Results: 24/24 good-play
+  wins · 0/24 no-play wins (no timeouts) · median 26.04 s in the spec's
+  [20,60] band (reference ~24.7 s is the spec bot's own number — flagged,
+  veto = retune cadence) · 24/24 distinct durations. Determinism: identical
+  fingerprints in-process ×2 AND across two child vitest processes + the
+  parent (three OS processes byte-identical; no extra runner deps — vite 8
+  is rolldown-based, no vite-node/esbuild binaries). Chaos: Math.random
+  planted in the trace → RED — after a first 1e-9 plant taught us the
+  FNV fold quantizes at 1/256 and hid it (plant re-sized above the floor).
+  Suite 287/287 · tsc both configs exit 0 · eslint exit 0.
 - (milestones appended below as they land)

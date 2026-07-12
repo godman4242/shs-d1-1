@@ -97,12 +97,21 @@ key-3 stab CD via real input, kill → combo reset to 1 → result → R →
 fresh sim + timescales exactly 1 + intro relaunched. AI decision-cadence
 bug FOUND IN BROWSER (per-tick chance rolls stalled approach) → RED test →
 one-roll-per-reactMs fix → 281/281.
-Next: M7 tests — Sim scenario suite per spec item 14 (stance triangle,
-crit ×CRIT_MULT A/B, spawn invuln, smoke i-frames, stab deflect, chi punch,
-shunpo, kill beat once — mostly landed M2/M3; fill gaps), 24-seed harness
-(good-play 100% win / no-play 0% / median ∈ [20,60]s / ≥22 distinct
-durations), cross-process determinism, ≥200 tests. M8 game/ purity ratchet
-baseline. M9 adversarial audit + gate evidence table.
+M7 DONE (287/287): 24-seed harness — good-play bot (jump-dodges strike
+telegraphs, seeded humanized swing tempo) wins 24/24, no-play loses 24/24,
+median 26.04 s (range 20.7–33.2, spec band [20,60], reference ~24.7 is
+their bot's number — flagged), 24/24 distinct durations; determinism —
+in-process ×2 byte-identical + CROSS-PROCESS via two child vitest runs +
+parent, all three agree; chaos: planted Math.random in the trace → RED
+(after discovering the fingerprint's 1/256 fold quantization hid a 1e-9
+plant — plant sized above the floor). Spec item 14 scenario coverage
+landed across M2–M4 (crit A/B, invuln, smoke, stab-deflect, chi punch,
+shunpo, kill-beat-once, telegraph ≥ telegraphMs, stance triangle).
+Next: M8 game/ purity ratchet baseline (spec item 15 — per-file value
+multiset for src/game/, fails on new/substituted values, allows removals;
+land AFTER scenes stabilize ✓ they're stable now). Then M9: adversarial
+audit workflow, fix confirmed findings, assemble the gate evidence table
+in RESUME_HERE, close the stage.
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 
