@@ -369,3 +369,38 @@ Crash-resilience log. Updated per milestone, never "at the end."
   storage in core/). Session ends at a clean single-writer boundary —
   Kheshav signaled he may start the build loop.
 - (milestones appended below as they land)
+
+## Stage 3 — Progression (build loop, 2026-07-12)
+- **STAGE 3 M1 (333/333): `core/progression.ts` — the levelUp / rebirth /
+  dan-rank math, red-first.** TDD skill invoked before any code; the whole
+  `progression.test.ts` (28 tests) watched RED (missing module) → GREEN.
+  API (pure, ZERO numeric literals, all numbers from `config/economy`):
+  `initProgression({hp,chi,ap})` (guards non-finite/negative maxes),
+  `levelUp` (+1 SP / +3 stat / full HP-Chi-AP refill; SP clamped to
+  FIRST_RUN_SP_CAP on the first run only), `canRebirth`,
+  `rebirth(p, element)` (+10 chosen-elemental stacking, gold by tier
+  earlyGold 1–9 / tenthGold 10th, reset to fresh L1, refill; refuses past
+  MAX_DAN_RANK or on unknown element), `accrueCoins` (ignores non-finite /
+  negative). ELEMENTS = fire/water/earth/wind (types only — Stage 4/5 build
+  the trees; Stage 3 stores points).
+  - **Config honesty (decision #3):** `economy.REBIRTH.attackBonusPerRebirth`
+    renamed `elementalPointsPerRebirth` (the "+10 Attack" label was research-
+    wrong) — economy.ts docblock + `config-values.test.ts` double-entry
+    updated in the same change.
+  - **Chaos-proofs (guard disarmed → matching test RED → restored → GREEN):**
+    SP cap off → 200 SP RED; rebirth ceiling + element guards off → refuse
+    + unknown-element tests RED; init pool guard off → non-finite/negative
+    RED. Purity scanner proven to COVER the new file (planted `31337` at
+    progression.ts:108 → RED naming file:line → removed → 32/32).
+  - **Gate:** 6/7 items cleared headless (table in RESUME_HERE "State"); the
+    7th (browser: kill → XP/coins accrue + persist across R-restart) is
+    browser-only + needs the item-4 persistence seam — QUEUED at top of
+    RESUME_HERE, left unchecked (GOAL headless-cycle rule).
+  - **Ledgers:** TELLS rows 29–32 → ◐ (rules landed + unit-proven, in-game
+    display pending); DIVERGENCES decisions #2/#3 marked LANDED + three
+    INFERRED progression readings recorded (first-run-only cap, rebirth
+    resets SP/stat, level not hard-capped) + `lateGold` unreachable note.
+  - **Gate paste:** typecheck exit 0 · `vitest run` 333/333 (23 files) ·
+    eslint exit 0. DEVIATION carried: MAX_DAN_RANK=10 (decision #2).
+    Deferred (next): M2 XP curve (research first), M3 Chi meter + skill
+    costs, M4 accrual/persistence seam (clears the queued browser item).

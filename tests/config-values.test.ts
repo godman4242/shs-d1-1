@@ -350,7 +350,7 @@ describe('economy.ts — Stage 2 item 10, exact spec names and values', () => {
   it('caps and rebirth', () => {
     expect(FIRST_RUN_SP_CAP).toBe(80);
     expect(MAX_DAN_RANK).toBe(10); // research: 10, not spec text 5 — see docblock
-    expect(REBIRTH).toEqual({ earlyGold: 25, tenthGold: 100, lateGold: 25, attackBonusPerRebirth: 10 });
+    expect(REBIRTH).toEqual({ earlyGold: 25, tenthGold: 100, lateGold: 25, elementalPointsPerRebirth: 10 });
   });
   it('War Room + no cash path', () => {
     expect(WAR_ROOM).toEqual({

@@ -6,15 +6,34 @@
 > Fidelity ledgers: `docs/TELLS_CHECKLIST.md` · `docs/CALIBRATION.md` ·
 > `docs/DIVERGENCES.md` (adopted from iaido-duel mining, 2026-07-12).
 
+## Awaiting human/browser verification (Stage 3)
+- **Gate item: kill a foe → XP/coins visibly accrue and persist across
+  R-restart.** Needs a real browser + the persistence seam (work-order item 4,
+  not yet built). A headless cycle cannot check it — left unchecked, queued.
+  The economy *math* is done and unit-proven (`progression.ts`, M1); what
+  remains is the game/ localStorage boundary + a browser run.
+
 ## Current focus
-**Stage 2 CLOSED 100% ☑ (2026-07-12)** — gate table below. SESSION4 kickoff
-items 1–4 ALL DONE (FX clock M10 · gate table · iaido-duel mining ·
-agent-work-ethic upgrade, committed there locally, push = Kheshav's call).
-**NEXT: Stage 3 — Progression. Entry point: `docs/sessions/STAGE3_KICKOFF.md`**
-(errata-read scope, work order, gate, landmines; decisions #2/#3 defaults
-pre-approved).
+**Stage 3 — Progression: IN PROGRESS. M1 (`core/progression.ts`) DONE
+(2026-07-12).** 6 of 7 Stage-3 gate items cleared headless + chaos-proven
+(Stage-3 gate table under "State"); the 7th is browser-only (queued above).
+Entry point stays `docs/sessions/STAGE3_KICKOFF.md`.
+**Stage 2 CLOSED 100% ☑ (2026-07-12)** — its gate table is under "State".
+SESSION4 kickoff items 1–4 all done; local commits, push = Kheshav's call.
 
 ## State
+- **Stage 3: IN PROGRESS — M1 (`core/progression.ts`) DONE (2026-07-12).**
+  Suite 333/333 · tsc both configs exit 0 · eslint exit 0. 6/7 gate items
+  cleared headless; item 7 is browser-only (queued at top).
+  | Gate item (STAGE3_KICKOFF §3, errata-read) | Evidence |
+  |---|---|
+  | progression unit tests green | 28/28 in `tests/progression.test.ts`; full suite 305→333 |
+  | Level-up: exactly +1 SP, +3 stat, full HP/Chi/AP refill | `levelUp` exact-pins (SP=+1, stat=+3, drained pools → current==max on all three) |
+  | Rebirth: +10 elemental, stacks N times | property test to N=MAX_DAN_RANK (fire → 10×10=100; water stays 0); distributes across elements when re-picked |
+  | 80 SP first-run cap enforced | 200 level-ups → SP pinned at 80 (chaos: cap disarmed → 200 RED); cap lifts after rebirth (danRank>0) |
+  | Dan rank MAX_DAN_RANK(=10) is max | `canRebirth` false at rank 10; rebirth-past-ceiling throws (chaos: guard disarmed → RED). DEVIATION MAX=10 (decision #2) — DIVERGENCES |
+  | Two currencies (Coins grindable, Gold earnable), HAS_CASH_PURCHASE=false | `Progression` carries coins (via `accrueCoins`) + gold (via `rebirth`), move independently; HAS_CASH_PURCHASE=false pinned |
+  | Browser: kill → XP/coins accrue + persist across R-restart | ☐ QUEUED (browser + persistence seam, item 4) — see top of file |
 - **Stage 2: GREEN — gate 100% ☑ (2026-07-12, Session 4).** Suite 305/305 ·
   tsc both configs exit 0 · eslint exit 0 · milestones M1–M10 on `master`
   (session log 2026-07-11→12; evidence timestamps below refer to it).
@@ -74,10 +93,18 @@ pre-approved).
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**Execute `docs/sessions/STAGE3_KICKOFF.md`** (progression: levelUp math →
-XP-curve research → Chi meter + skill costs → accrual/persistence seam →
-gate table). Works under the build loop too — GOAL.md is current and the
-loop's cycle prompt routes through this file.
+**Stage-3 M1 (levelUp/rebirth math) DONE.** Next milestone toward the gate,
+per STAGE3_KICKOFF §2 work order:
+- **M2 — XP-curve research** BEFORE inventing one: check
+  `docs/research/original-game-facts.md` + wikis for level thresholds (the
+  "0 / 550" B-23 HUD reading is one sample, not a curve). Dry research →
+  INFERRED curve, flagged, ONE named config site. Wire XP→`levelUp` in core.
+- **M3 — Chi meter + skill costs** (the Stage-2 deferral): Chi in Sim, skills
+  1/2/3 gain Chi costs, HUD Chi bar. Chaos: cost > meter → denied, no CD spent.
+- **M4 — accrual + persistence seam** → clears the queued browser gate item
+  (kill → XP/coins accrue + persist across R-restart; profile math in core,
+  localStorage at the game/ boundary, DEV-clearable).
+Works under the build loop — GOAL.md is current and routes through this file.
 
 ## Stage-2 milestone history (all on `master`, evidence in session log)
 Stage 2 build order was: rng DONE · Sim.advance DONE (M1) ·
@@ -180,8 +207,13 @@ tells forward — see the kickoff §2 amendment; build FROM the study frames.
 ## Open decisions awaiting Kheshav (each with proposed default)
 1. **CRIT_MULT 1.3** (was spec 3) — default keep; Stage 2 "crit 3×" gate items
    read "crit ×CRIT_MULT". Veto = revert combat.ts + config-values.test.ts.
-2. **MAX_DAN_RANK 10** (Stage 3) — default 10.
+2. **MAX_DAN_RANK 10** (Stage 3) — default 10. LANDED M1 as the rebirth
+   ceiling (`progression.ts`); still owner-vetoable → revert to 5 = edit
+   economy.ts + config-values.test.ts + the DIVERGENCES entry.
 3. **Rebirth = elemental +10, stacking** (Stage 3) — default elemental.
+   LANDED M1 (field renamed `elementalPointsPerRebirth`; flat +10, NOT the
+   research 10th-rebirth +20 nuance). Veto = restore attack semantics / add
+   `tenthElemental` (see DIVERGENCES).
 4. ~~ESLint~~ DONE (Stage 1). Veto = delete eslint.config.mjs, empty LINT_CMD.
 5. **new-project.sh invalid JSON** — installer fix still outside this repo.
 6. **Phaser 4 exists** — stay pinned 3.90.0 permanently (default).

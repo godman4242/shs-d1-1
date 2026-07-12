@@ -16,9 +16,19 @@ decisions" stays the owner-facing queue; this file is the permanent record.
   config-values.test.ts in one commit; gate rows read "×CRIT_MULT".
 - **MAX_DAN_RANK = 10 (spec tell 31 says 5)** — decision #2, default 10 per
   the errata block (errata wins over spec prose). iaido-duel's contract says 5
-  (kyudan) — the two specs disagree; ours is errata-pinned. Stage-3 landing.
+  (kyudan) — the two specs disagree; ours is errata-pinned. LANDED Stage-3 M1
+  as the `rebirth` ceiling (`progression.ts` `canRebirth`; chaos-proven — a
+  rebirth past the ceiling throws). Consequence: `REBIRTH.lateGold` (the 11+
+  tier in source data) is UNREACHABLE under a 10-rank cap — kept as a pinned
+  record only, referenced by no code path (flagged in `economy.ts`).
 - **Rebirth = elemental +10, stacking** — decision #3, default elemental
-  (errata). Stage-3 landing.
+  (errata). LANDED Stage-3 M1: `economy.REBIRTH.attackBonusPerRebirth` was
+  renamed `elementalPointsPerRebirth` (the "+10 Attack" label was research-
+  wrong); `rebirth(p, element)` adds +10 of the CHOSEN element, stacking over
+  N (property-tested to N=10). DEVIATION: research notes a 10th-rebirth "+20"
+  elemental nuance we deliberately do NOT model — the gate specifies flat +10,
+  and modelling +20 would need an invented config field (config/CLAUDE.md:
+  don't invent spec-unnamed constants). Veto = add `tenthElemental` + wire it.
 - **Palette = near-OG hues** — owner veto 2026-07-12 reverted the earlier
   ±5–8% trade-dress shift. Colour schemes are unprotectable; drawings and
   dialogue remain ALWAYS original (the hard line). Never re-shift.
@@ -48,6 +58,13 @@ decisions" stays the owner-facing queue; this file is the permanent record.
 - **AI_PENDING_STANCE_MS = 600** INFERRED (stance flash telegraph queue).
 - **AI_APPROACH_RANGE is Stage-4 world-aggro only** — deleted from duel AI
   (M9: the hard idle produced a dead 620–720 band; a duel is always engaged).
+- **Progression readings (Stage-3 M1, `progression.ts`)** — three INFERRED
+  calls beyond the confirmed +1SP/+3stat/refill: (a) the 80-SP cap is
+  FIRST-RUN-only — it lifts once `danRank > 0`, matching "80 SP first run"
+  (veto = cap always); (b) `rebirth` resets skillPoints/statPoints to 0 for a
+  fresh L1 (research says only "resets to L1"; veto = keep them); (c) `level`
+  is not hard-capped in core — a level ceiling is Stage-4 UI, the gate's
+  binding rule is the SP cap (veto = clamp level to the cap).
 
 ## Structural deviations (deliberate, no behavior claim on the original)
 

@@ -10,9 +10,11 @@
  * - MAX_DAN_RANK is 10, not the spec text's 5 (research 2026-07-11: dan
  *   ranks kyu→10; spec's own tenthGold corroborates). Kheshav open decision
  *   #2, default 10 — veto = revert here + in config-values.test.ts.
- * - REBIRTH keeps the spec's attackBonusPerRebirth field; research says the
- *   real bonus is +10 CHOSEN-ELEMENTAL skill points, stacking — that
- *   revision is queued for Stage 3 progression (open decision #3).
+ * - REBIRTH.elementalPointsPerRebirth (was the spec's "attackBonusPerRebirth"):
+ *   research (original-game-facts.md "Rebirth bonus") says the real payout is
+ *   +10 CHOSEN-elemental skill points, stacking — NOT +10 Attack. Field
+ *   renamed at Stage 3 progression per open decision #3 (default elemental).
+ *   Veto = revert the name here + in config-values.test.ts + progression.ts.
  * - HAS_CASH_PURCHASE=false is a DELIBERATE deviation (original sold gold
  *   for cash; this recreation has no cash path).
  */
@@ -29,8 +31,13 @@ export const FIRST_RUN_SP_CAP = 80;
 /** CONTRACT (research) — 10 dan ranks; spec text said 5 (see docblock). */
 export const MAX_DAN_RANK = 10;
 
-/** Spec-fixed payout schedule; elemental revision queued Stage 3 (docblock). */
-export const REBIRTH = { earlyGold: 25, tenthGold: 100, lateGold: 25, attackBonusPerRebirth: 10 };
+/**
+ * Payout schedule (research): rebirths 1–9 pay earlyGold, the 10th (final,
+ * Jūdan) pays tenthGold; lateGold (11+) is source data kept for the record
+ * but UNREACHABLE under MAX_DAN_RANK=10 (see docs/DIVERGENCES.md). Every
+ * rebirth grants elementalPointsPerRebirth of the CHOSEN element, stacking.
+ */
+export const REBIRTH = { earlyGold: 25, tenthGold: 100, lateGold: 25, elementalPointsPerRebirth: 10 };
 
 /** CONTRACT (research + B-19/B-20) — War Room parameters, consumed Stage 5. */
 export const WAR_ROOM = {

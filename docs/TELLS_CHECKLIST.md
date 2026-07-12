@@ -49,10 +49,10 @@ Evidence timestamps refer to `docs/sessions/-SESSION-LOG.md`.
 - ☐ 28. Four-way slash SFX on measured frames — Stage 6 audio.
 
 ## Progression / campaign / lore (Stages 3–5)
-- ☐ 29. Level-up = +1 SP, +3 stat, full refill — Stage 3 (economy.ts pins landed M5).
-- ☐ 30. Rebirth payout + attack stacking — Stage 3 (decision #3 default: elemental +10, stacking).
-- ☐ 31. 80 SP cap; max dan rank — Stage 3. DEVIATION: MAX_DAN_RANK=10 per errata + decision #2 (spec tell says 5) — `docs/DIVERGENCES.md`.
-- ☐ 32. Coins grindable, Gold earnable, no cash purchase — Stage 3 (HAS_CASH_PURCHASE=false pinned M5).
+- ◐ 29. Level-up = +1 SP, +3 stat, full refill — CORE MATH landed Stage-3 M1 (`progression.ts` `levelUp`, exact-pin `progression.test`); in-game level-up modal + XP curve pending (item 4 / Stage 4).
+- ◐ 30. Rebirth payout + elemental stacking — CORE MATH landed M1 (`rebirth`: +10 chosen-elemental stacking to N=10, earlyGold 1–9 / tenthGold 10th; `progression.test`). Renamed economy field attack→elemental (decision #3). In-game rebirth scroll UI pending (Stage 4).
+- ◐ 31. 80 SP cap; max dan rank — ENFORCED + chaos-proven M1 (SP cap first-run-only; ceiling at MAX_DAN_RANK, rebirth-past-ceiling throws). DEVIATION: MAX_DAN_RANK=10 per errata + decision #2 (spec tell says 5) — `docs/DIVERGENCES.md`. In-game rank display pending (Stage 4).
+- ◐ 32. Coins grindable, Gold earnable, no cash purchase — economy + `Progression` carry both currencies M1 (gold via `rebirth`, coins via `accrueCoins`); HAS_CASH_PURCHASE=false pinned. In-duel accrual + persistence across R-restart pending (item 4, browser).
 - ☐ 33. Season>Episode nesting, Prologue tutorial, haiku cards — Stage 5.
 - ☐ 34. Ragged Shugyosha start with a branch — Stage 5.
 - ☐ 35. Clan/character roster — Stage 4/5 (four joinable Great Clans + Aoi Hoiru, Ki Sensu; Shira Tancho story-only; all dialogue ORIGINAL — invariant).
