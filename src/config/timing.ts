@@ -7,6 +7,18 @@ import type { StanceId } from './stances';
 /** Spec-fixed — the simulation advances on a fixed 60Hz timestep. */
 export const FIXED_HZ = 60;
 
+/** Spec-fixed — unit conversion for Sim.advance(deltaMs): ms per second. */
+export const MS_PER_S = 1000;
+
+/**
+ * Spec-fixed (pure math, not tuning) — 1-ulp guard for Sim.advance's
+ * owed-frames floor: elapsedMs × FIXED_HZ / MS_PER_S lands a hair above OR
+ * below the true integer (e.g. one exact step computes to 1.0000000000000002,
+ * three to 2.9999999999999996), so the floor is taken after nudging by this
+ * epsilon. Orders of magnitude above ulp noise, orders below a frame.
+ */
+export const FRAME_QUANT_EPS = 1e-9;
+
 export interface SlashPhaseFrames {
   windup: number;
   active: number;

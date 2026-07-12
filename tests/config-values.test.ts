@@ -35,12 +35,32 @@ import {
   SPAWN_INVULN_S,
   WEAPON_WEIGHT,
 } from '../src/config/combat';
+import {
+  DEFLECT_RADIUS,
+  DEFLECT_WINDOW_MS,
+  ENEMY_BASE,
+  MAX_FRAME_MS,
+  PLAYER_BASE,
+  PLAYER_MOVE_SPEED,
+  PLAYER_WINDUP_MS,
+  PROJECTILE_DMG,
+  PROJECTILE_HIT_RADIUS,
+  PROJECTILE_MAX_ACTIVE,
+  PROJECTILE_SPEED,
+  SHUNPO_DRAIN_PER_S,
+  SHUNPO_MAX,
+  SHUNPO_MIN_TO_START,
+  SHUNPO_TIMESCALE,
+  SKILL_VERB,
+  SMOKE_BOMB_DISTANCE,
+  SMOKE_BOMB_IFRAMES_MS,
+} from '../src/config/combat-sim';
 import { DUEL_ATTACKER, DUMMY_SPAWN, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
 import { FOUR, HALF, HALF_TURN_DEG, ONE, TWO, ZERO } from '../src/config/nums';
 import { LAUNCH_UNLOCK_LEVEL, STANCE_BEATS, STANCE_TABLE } from '../src/config/stances';
-import { FIXED_HZ, SLASH_FRAMES } from '../src/config/timing';
+import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S, SLASH_FRAMES } from '../src/config/timing';
 
 describe('palette.ts — exact trade-dress-shifted seeds (Stage 0 item 4)', () => {
   it('COL matches the spec hex-for-hex (no extras, no omissions)', () => {
@@ -208,9 +228,62 @@ describe('gesture.ts — classification thresholds (Stage 1, INFERRED)', () => {
   });
 });
 
+describe('combat-sim.ts — Stage 2 item 9, exact spec names and values', () => {
+  it('frame clamp', () => {
+    expect(MAX_FRAME_MS).toBe(250);
+  });
+  it('Shunpo (SHIFT-hold slow-mo)', () => {
+    expect(SHUNPO_TIMESCALE).toBe(0.35);
+    expect(SHUNPO_MAX).toBe(100);
+    expect(SHUNPO_DRAIN_PER_S).toBe(34);
+    expect(SHUNPO_MIN_TO_START).toBe(10);
+  });
+  it('Smoke Bomb + Stab/Deflect', () => {
+    expect(SMOKE_BOMB_DISTANCE).toBe(180);
+    expect(SMOKE_BOMB_IFRAMES_MS).toBe(420);
+    expect(DEFLECT_WINDOW_MS).toBe(260);
+    expect(DEFLECT_RADIUS).toBe(64);
+  });
+  it('projectiles (kunai)', () => {
+    expect(PROJECTILE_SPEED).toBe(0.55);
+    expect(PROJECTILE_DMG).toBe(8);
+    expect(PROJECTILE_HIT_RADIUS).toBe(26);
+    expect(PROJECTILE_MAX_ACTIVE).toBe(8);
+  });
+  it('player movement + windup', () => {
+    expect(PLAYER_MOVE_SPEED).toBe(0.28);
+    expect(PLAYER_WINDUP_MS).toBe(0);
+  });
+  it('base fighter loadouts', () => {
+    expect(PLAYER_BASE).toEqual({
+      hp: 100,
+      atkPlusWeapon: 10,
+      defense: 5,
+      stance: 'balanced',
+      deflectLearned: true,
+    });
+    expect(ENEMY_BASE).toEqual({
+      hp: 150,
+      atkPlusWeapon: 7,
+      defense: 5,
+      stance: 'heavy',
+      deflectLearned: false,
+    });
+  });
+  it('skill hotbar verbs', () => {
+    expect(SKILL_VERB).toEqual({ 1: 'chiPunch', 2: 'smokeBomb', 3: 'stab' });
+  });
+});
+
 describe('timing.ts — fixed step + slash phases (Stage 0 item 7)', () => {
   it('FIXED_HZ', () => {
     expect(FIXED_HZ).toBe(60);
+  });
+  it('MS_PER_S (Stage 2 — Sim.advance step conversion)', () => {
+    expect(MS_PER_S).toBe(1000);
+  });
+  it('FRAME_QUANT_EPS (Stage 2 — owed-frames 1-ulp guard)', () => {
+    expect(FRAME_QUANT_EPS).toBe(1e-9);
   });
   it('SLASH_FRAMES per-phase structure', () => {
     expect(SLASH_FRAMES).toEqual({

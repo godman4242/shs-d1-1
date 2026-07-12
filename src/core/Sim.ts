@@ -1,6 +1,8 @@
+import { MAX_FRAME_MS } from '../config/combat-sim';
 import { JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../config/duel';
 import { ONE, TWO, ZERO } from '../config/nums';
 import type { StanceId } from '../config/stances';
+import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S } from '../config/timing';
 import type { DrawnStroke } from './DrawnStroke';
 import type { Gesture } from './gesture';
 import type { OpponentController } from './OpponentController';
@@ -55,6 +57,9 @@ export class Sim {
    * (capturing pos.y mid-air left the fighter floating; browser-verified bug). */
   private readonly groundY: number;
   private jump: JumpState | null = null;
+  /** Total clamped wall-clock ms fed to advance() since spawn. */
+  private elapsedMs = ZERO;
+  private frameCount = ZERO;
 
   constructor(
     readonly rng: Rng,
@@ -73,6 +78,11 @@ export class Sim {
 
   get jumping(): boolean {
     return this.jump !== null;
+  }
+
+  /** Fixed frames elapsed since spawn — the Sim's own clock. */
+  get frame(): number {
+    return this.frameCount;
   }
 
   /** Axis-aligned hitbox rectangle around the fighter's current position. */
@@ -119,8 +129,27 @@ export class Sim {
     return { gesture, slash: null };
   }
 
-  /** Advance one fixed frame (FIXED_HZ per second — the scene accumulates). */
+  /**
+   * Advance the sim by a wall-clock delta (Stage 2 spec item 1). Owns the
+   * fixed-step accumulator: clamps any single delta to MAX_FRAME_MS (a
+   * throttled/backgrounded tab must not fast-forward the fight), ignores
+   * NaN (would poison the accumulator forever) and negatives (would rewind
+   * it). Scenes call ONLY this — never tick() — so sim time follows the
+   * wall clock at FIXED_HZ regardless of render fps.
+   */
+  advance(deltaMs: number): void {
+    if (Number.isNaN(deltaMs) || deltaMs < ZERO) return;
+    this.elapsedMs += Math.min(deltaMs, MAX_FRAME_MS);
+    // Owed frames from TOTAL elapsed time (multiplicative — no cumulative
+    // drift, unlike a repeated-subtraction remainder). FRAME_QUANT_EPS
+    // absorbs the 1-ulp float noise either side of exact step boundaries.
+    const owed = Math.floor((this.elapsedMs * FIXED_HZ) / MS_PER_S + FRAME_QUANT_EPS);
+    while (this.frameCount < owed) this.tick();
+  }
+
+  /** Advance one fixed frame (advance() consumes the accumulator into these). */
   tick(): void {
+    this.frameCount += ONE;
     if (this.jump === null) return;
     this.jump.frame += ONE;
     const t = this.jump.frame / JUMP_DURATION_FRAMES;

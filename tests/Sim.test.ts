@@ -6,7 +6,9 @@
  * with the full advance(deltaMs) loop; this seam is what DuelScene calls.
  */
 import { describe, expect, it } from 'vitest';
+import { MAX_FRAME_MS } from '../src/config/combat-sim';
 import { JUMP_DURATION_FRAMES } from '../src/config/duel';
+import { FIXED_HZ } from '../src/config/timing';
 import { DrawnStroke } from '../src/core/DrawnStroke';
 import type { OpponentController } from '../src/core/OpponentController';
 import { Sim, type FighterSpawn, type Rng } from '../src/core/Sim';
@@ -93,6 +95,69 @@ describe('Sim — up strokes make the fighter jump (start.x → end.x, arc)', ()
     const sim = makeSim();
     sim.tick();
     expect(sim.fighter.pos).toEqual({ x: 100, y: 200 });
+  });
+});
+
+describe('Sim.advance — fixed-step accumulator owned by the Sim (Stage 2)', () => {
+  const stepMs = 1000 / FIXED_HZ;
+  const jumpStroke = (): DrawnStroke => new DrawnStroke([v(300, 200), v(320, 60)]);
+
+  it('runs one fixed tick per full step of accumulated time', () => {
+    const sim = makeSim();
+    sim.advance(stepMs);
+    expect(sim.frame).toBe(1);
+  });
+
+  it('carries fractional remainders across calls', () => {
+    const sim = makeSim();
+    sim.advance(stepMs * 0.6);
+    expect(sim.frame).toBe(0);
+    sim.advance(stepMs * 0.6); // 1.2 steps accumulated
+    expect(sim.frame).toBe(1);
+  });
+
+  it('clamps a single oversized delta to MAX_FRAME_MS', () => {
+    const clamped = makeSim();
+    clamped.advance(MAX_FRAME_MS);
+    const huge = makeSim();
+    huge.advance(1e9);
+    expect(huge.frame).toBe(clamped.frame);
+    expect(clamped.frame).toBeGreaterThanOrEqual(14); // ≈15 steps fit in 250 ms
+  });
+
+  it('clamps Infinity like any oversized delta (chaos: ∞)', () => {
+    const clamped = makeSim();
+    clamped.advance(MAX_FRAME_MS);
+    const inf = makeSim();
+    inf.advance(Number.POSITIVE_INFINITY);
+    expect(inf.frame).toBe(clamped.frame);
+  });
+
+  it('ignores NaN without poisoning the accumulator (chaos: NaN)', () => {
+    const sim = makeSim();
+    sim.advance(Number.NaN);
+    expect(sim.frame).toBe(0);
+    sim.advance(stepMs); // a NaN'd accumulator would never tick again
+    expect(sim.frame).toBe(1);
+  });
+
+  it('ignores negative deltas without rewinding accumulated time (chaos: negative)', () => {
+    const sim = makeSim();
+    sim.advance(stepMs * 0.9);
+    sim.advance(-1000);
+    expect(sim.frame).toBe(0);
+    sim.advance(stepMs * 0.2); // 0.9 + 0.2 steps — only if the negative was ignored
+    expect(sim.frame).toBe(1);
+  });
+
+  it('drives gameplay identically to N direct tick() calls (jump arc)', () => {
+    const byTicks = makeSim();
+    byTicks.applyStroke(jumpStroke(), attacker);
+    for (let i = 0; i < 3; i++) byTicks.tick();
+    const byAdvance = makeSim();
+    byAdvance.applyStroke(jumpStroke(), attacker);
+    byAdvance.advance(stepMs * 3);
+    expect(byAdvance.fighter.pos).toEqual(byTicks.fighter.pos);
   });
 });
 

@@ -14,7 +14,6 @@ import { DUEL_ATTACKER, DUMMY_SPAWN } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { SLASH_ARC } from '../config/fx';
 import { COL } from '../config/palette';
-import { FIXED_HZ } from '../config/timing';
 import { DrawnStroke } from '../core/DrawnStroke';
 import { closestPointOnPolyline } from '../core/geometry';
 import type { OpponentController } from '../core/OpponentController';
@@ -57,7 +56,6 @@ export class DuelScene extends Phaser.Scene {
   private trails: Trail[] = [];
   private redStrokes: Trail[] = [];
   private droplets: Droplet[] = [];
-  private simAccMs = 0;
 
   constructor() {
     super('duel');
@@ -209,16 +207,9 @@ export class DuelScene extends Phaser.Scene {
   }
 
   override update(_time: number, delta: number): void {
-    // Fixed-step accumulator: sim time follows the wall clock at FIXED_HZ even
-    // when Chrome throttles rendering (occluded-window fps drop found in the
-    // Stage 1 browser verify). 250 = Stage 2's MAX_FRAME_MS clamp, inlined
-    // until config/combat-sim.ts exists.
-    this.simAccMs += Math.min(delta, 250);
-    const stepMs = 1000 / FIXED_HZ;
-    while (this.simAccMs >= stepMs) {
-      this.sim.tick();
-      this.simAccMs -= stepMs;
-    }
+    // Sim owns the fixed-step accumulator + MAX_FRAME_MS clamp (Stage 2);
+    // the scene just forwards the wall-clock delta.
+    this.sim.advance(delta);
 
     const now = this.time.now;
     const dt = delta / 1000;

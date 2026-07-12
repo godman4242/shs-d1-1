@@ -109,4 +109,17 @@ Crash-resilience log. Updated per milestone, never "at the end."
   byte-by-byte recalibrated to 1:1-in-motion (invariants keep palette shift).
   Stage 2 opened: mulberry32 RED→GREEN (6 tests incl. independent reference
   pinning, uint32 wrap, uniformity). Suite 161/161.
+- **08:35** Stage 2 M1 — `Sim.advance(deltaMs)` skeleton (TDD, 7 tests watched
+  RED first as `advance is not a function`): owed-frames accumulator computed
+  from TOTAL elapsed time (multiplicative, drift-free — repeated subtraction
+  dropped a tick at exact step boundaries: 50 ms → 2 ticks; node repro pasted
+  in session) with `FRAME_QUANT_EPS=1e-9` 1-ulp floor guard (named in
+  timing.ts, pinned). Chaos-proofs: NaN/negative guard disarmed → exactly the
+  2 guard tests RED → restored GREEN; MAX_FRAME_MS clamp disarmed →
+  `advance(∞)` = synchronous infinite loop, runner hung + killed (stronger
+  than red) → restored GREEN. Full spec-item-9 `config/combat-sim.ts` +
+  `MS_PER_S` landed, every value double-entry pinned in config-values.test.ts
+  (same commit). DuelScene migrated onto `sim.advance(delta)` — inline
+  accumulator + inline `250` + FIXED_HZ import deleted. Suite 177/177 · tsc
+  both configs exit 0 · eslint exit 0.
 - (milestones appended below as they land)

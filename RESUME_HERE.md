@@ -43,11 +43,15 @@ meters, projectiles, playable duel, ≥200 tests). Stage 1 closed 100% green on
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**Stage 2 in flight** (kickoff §1 order): rng DONE (mulberry32, 161/161 suite).
-Next: TDD `Sim.advance(deltaMs)` skeleton — fixed 60Hz accumulator inside Sim,
-MAX_FRAME_MS=250 clamp from new `config/combat-sim.ts` (pin it), NaN/negative
-delta rejected; chaos-test the guard (plant → red → fix → green). Then move
-DuelScene onto Sim.advance and delete its inline accumulator + inline `250`.
+**Stage 2 in flight** (kickoff §1 order): rng DONE (161 tests) · Sim.advance
+skeleton DONE (177/177: owed-frames accumulator with FRAME_QUANT_EPS 1-ulp
+guard, MAX_FRAME_MS clamp + NaN/negative rejection both chaos-proven — clamp
+disarm = infinite-loop hang, killed runner; full combat-sim.ts + MS_PER_S
+pinned; DuelScene now calls sim.advance, inline accumulator + 250 deleted).
+Next (kickoff §1 item 3): damage resolution inside Sim — defense stat,
+DAMAGE_FLOOR, HEAVY_DEF_PENALTY (defense-side ONLY — landmine below), then
+Focus + Critical meters (`critical.ts`, two meters — see landmine), stance
+switching (out-of-combat CONTRACT + Focus-cost in-combat INFERRED). TDD each.
 NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
 tells forward — see the kickoff §2 amendment; build FROM the study frames.
 
