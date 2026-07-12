@@ -342,4 +342,20 @@ Crash-resilience log. Updated per milestone, never "at the end."
   browser protocol (our PointerEvent + loop-step protocol proven today).
   Phaser particleAngle no-op landmine recorded in DIVERGENCES (we use
   Graphics, no emitters).
+- **20:20** agent-work-ethic upgraded (kickoff §1.4): new
+  playbooks/proof-discipline.md — the eight Fable-5-session moves
+  generalized for any agent (binary gates + pasted evidence · red-first +
+  chaos-proofs · double-entry pins · RED-receipt ratchets · veto-able
+  decisions ledger · refuter-verified audits, dead verifier = UNVERIFIED ·
+  dev-seam verification · handoff-in-same-commit). Committed LOCALLY
+  (cff53b2) — NOT pushed; push is Kheshav's deliberate call (their SPEC
+  §7). Root README tree also fixed (was missing two playbooks).
+- **20:25** build-loop hardening (Kheshav asked for loop review):
+  (1) PAUSE now re-checks every 60 s (was up to 30 min resume lag);
+  (2) every cycle's output tees to docs/loop/loop.log (gitignored) with a
+  timestamped header — overnight runs leave a postmortem trail;
+  (3) optional LOOP_MAX_TURNS passthrough as hung-cycle insurance.
+  sh -n clean. GOAL.md palette line was already fixed in M10. Stale
+  session-3 vite (PID 46831, port 5173) killed; current dev server is
+  task b7unkiuiy on port 5174.
 - (milestones appended below as they land)

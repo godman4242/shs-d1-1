@@ -15,9 +15,14 @@
 # Productive cycle -> sleep 10s; idle/error -> geometric backoff to 30 min.
 #
 # Env overrides:
-#   LOOP_MODEL  model id for cycles (default: your CLI default model —
-#               deliberate: model routing changes over time, re-check access)
-#   LOOP_UNTIL  epoch seconds cutoff (default: none, runs until stopped)
+#   LOOP_MODEL      model id for cycles (default: your CLI default model —
+#                   deliberate: model routing changes over time, re-check access)
+#   LOOP_UNTIL      epoch seconds cutoff (default: none, runs until stopped)
+#   LOOP_MAX_TURNS  optional --max-turns per cycle (hung-cycle insurance)
+#
+# Every cycle's output is appended to docs/loop/loop.log (gitignored) with a
+# timestamped header — an overnight run leaves a postmortem trail even if the
+# terminal scrollback is gone.
 
 set -u
 cd "$(dirname "$0")/.." || exit 1
@@ -41,16 +46,19 @@ while :; do
     break
   fi
   if [ -f docs/loop/PAUSE ]; then
-    echo "[loop] PAUSE present — sleeping ${SLEEP_MAX}s."
-    sleep "$SLEEP_MAX"
+    # Short sleep so `rm docs/loop/PAUSE` resumes within a minute, not 30.
+    echo "[loop] PAUSE present — re-checking in 60s."
+    sleep 60
     continue
   fi
 
   BEFORE=$(git rev-parse HEAD)
   echo "[loop] cycle start $(date '+%H:%M:%S') at ${BEFORE%????????????????????????????????}"
+  printf '\n===== cycle %s at %s =====\n' "$(date '+%F %H:%M:%S')" "$BEFORE" >> docs/loop/loop.log
   # shellcheck disable=SC2086
   claude -p "$PROMPT" ${LOOP_MODEL:+--model "$LOOP_MODEL"} \
-    --permission-mode bypassPermissions
+    ${LOOP_MAX_TURNS:+--max-turns "$LOOP_MAX_TURNS"} \
+    --permission-mode bypassPermissions 2>&1 | tee -a docs/loop/loop.log
   AFTER=$(git rev-parse HEAD)
 
   if [ "$BEFORE" != "$AFTER" ]; then

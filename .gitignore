@@ -14,3 +14,4 @@ reference/
 # Loop-local files (never committed)
 docs/loop/PAUSE
 docs/loop/reports/
+docs/loop/loop.log
