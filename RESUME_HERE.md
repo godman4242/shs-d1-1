@@ -7,10 +7,12 @@
 > `docs/DIVERGENCES.md` (adopted from iaido-duel mining, 2026-07-12).
 
 ## Current focus
-**Stage 2 CLOSED 100% ☑ (2026-07-12)** — gate table below. Next, in kickoff
-order (`docs/sessions/SESSION4_KICKOFF.md` §1): mine `~/kheshav-code/iaido-duel`
-→ upgrade `~/kheshav-code/agent-work-ethic` → **Stage 3 — Progression**
-(MASTER_SPEC Stage 3 + errata; open decisions #2/#3 defaults pre-approved).
+**Stage 2 CLOSED 100% ☑ (2026-07-12)** — gate table below. SESSION4 kickoff
+items 1–4 ALL DONE (FX clock M10 · gate table · iaido-duel mining ·
+agent-work-ethic upgrade, committed there locally, push = Kheshav's call).
+**NEXT: Stage 3 — Progression. Entry point: `docs/sessions/STAGE3_KICKOFF.md`**
+(errata-read scope, work order, gate, landmines; decisions #2/#3 defaults
+pre-approved).
 
 ## State
 - **Stage 2: GREEN — gate 100% ☑ (2026-07-12, Session 4).** Suite 305/305 ·
@@ -72,11 +74,10 @@ order (`docs/sessions/SESSION4_KICKOFF.md` §1): mine `~/kheshav-code/iaido-duel
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**Session-4 kickoff §1 remaining:** iaido-duel mining DONE (20:05 log entry;
-ledgers landed) → upgrade `~/kheshav-code/agent-work-ethic` (distill this
-session's working rules for Opus 4.8) → **Stage 3 kickoff** (progression;
-MASTER_SPEC + errata: MAX_DAN_RANK=10 per decision #2 default, elemental
-rebirth per #3, Chi meter + costs arrive here).
+**Execute `docs/sessions/STAGE3_KICKOFF.md`** (progression: levelUp math →
+XP-curve research → Chi meter + skill costs → accrual/persistence seam →
+gate table). Works under the build loop too — GOAL.md is current and the
+loop's cycle prompt routes through this file.
 
 ## Stage-2 milestone history (all on `master`, evidence in session log)
 Stage 2 build order was: rng DONE · Sim.advance DONE (M1) ·

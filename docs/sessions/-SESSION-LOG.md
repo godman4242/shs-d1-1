@@ -358,4 +358,14 @@ Crash-resilience log. Updated per milestone, never "at the end."
   sh -n clean. GOAL.md palette line was already fixed in M10. Stale
   session-3 vite (PID 46831, port 5173) killed; current dev server is
   task b7unkiuiy on port 5174.
+- **20:35** STAGE3_KICKOFF.md written + committed (kickoff §1.5, entry
+  point for the next session or loop cycle): errata-read scope (dan 10,
+  elemental rebirth stacking, KILL_REWARD stays INFERRED), five-step work
+  order (levelUp math red-first → XP-curve RESEARCH before inventing →
+  Chi meter + skill costs, the Stage-2 deferral → accrual/persistence
+  seam, core stays pure → gate table), 7-item gate (spec 6 + browser
+  accrue-and-persist), landmines (harness re-pin discipline, coins=8
+  verified, no invented constants, elemental TREES are Stage 4/5, no
+  storage in core/). Session ends at a clean single-writer boundary —
+  Kheshav signaled he may start the build loop.
 - (milestones appended below as they land)
