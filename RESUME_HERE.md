@@ -43,9 +43,13 @@ meters, projectiles, playable duel, ≥200 tests). Stage 1 closed 100% green on
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-Read `docs/sessions/STAGE2_KICKOFF.md`, then TDD `src/config/rng.ts`
-(mulberry32 constants) + `src/core/rng.ts` (seeded generator, red first) —
-the Sim loop's determinism depends on it, so it lands before Sim.advance.
+**Stage 2 in flight** (kickoff §1 order): rng DONE (mulberry32, 161/161 suite).
+Next: TDD `Sim.advance(deltaMs)` skeleton — fixed 60Hz accumulator inside Sim,
+MAX_FRAME_MS=250 clamp from new `config/combat-sim.ts` (pin it), NaN/negative
+delta rejected; chaos-test the guard (plant → red → fix → green). Then move
+DuelScene onto Sim.advance and delete its inline accumulator + inline `250`.
+NOTE (Kheshav feedback 2026-07-12): Stage 2 scene work must pull the fidelity
+tells forward — see the kickoff §2 amendment; build FROM the study frames.
 
 ## Open decisions awaiting Kheshav (each with proposed default)
 1. **CRIT_MULT 1.3** (was spec 3) — default keep; Stage 2 "crit 3×" gate items
