@@ -472,3 +472,29 @@ Crash-resilience log. Updated per milestone, never "at the end."
   REFUTED with evidence (logged in the ledger): pool-state-unreachable and
   fullRefill-dead-code claims. Misleading "on top" test name fixed. NO
   rewrite of surviving code (kickoff rule honored).
+- **11:35** M3 CHI METER + SKILL COSTS landed red-first (the Stage-2
+  deferral; 5 new Sim tests watched RED on the missing config/chi module):
+  `config/chi.ts` — CHI_MAX=100 / CHI_FILL_PER_S=4 / CHI_COST
+  {chiPunch 30, smokeBomb 25, stab 10}, ALL INFERRED (study has zero
+  frame-backed cost reads; values sized for the prototype's 100-point meter
+  family + 20–60 s duels), double-entered in config-values.test.ts. Sim:
+  chi as integer frame-units on FighterState (spawn-seedable via
+  FighterSpawn.chi — denial tests need no test seam; enemy pool fills but
+  never spends, flagged), fill runs BEFORE the queued skill so post-cast
+  reads are exact (max − cost pinned), tryCastSkill chi gate → new
+  skillDenied event {verb, needed, chi}; cooldown-blocked casts stay
+  silent (Stage-2 behavior, unchanged + pinned). CHAOS (kickoff-mandated):
+  plant "denial consumes cooldown" → denial pin RED → restored green; the
+  150-tick regen-to-exactly-cost cast doubles as proof the cooldown
+  survived denial (a consumed CD would still block at tick 150 < 298).
+  HUD (B-23 anatomy): CHI takes the blue under-HP slot (the OG pair);
+  Focus — our INFERRED meter — demoted to a kimono2 strip, SPACE-drain
+  gate visibility kept; Shunpo/Critical slivers shifted; denial flashes
+  the chi bar blood-red 300 ms on the fx clock; ready-but-unaffordable
+  skill slots grey out (B-23's zeroed slot). Ratchet: RED receipt pasted
+  (9 value-count bumps, all HUD-edit-traceable) → deliberate refresh →
+  4/4. 24-SEED HARNESS re-run: 4/4 UNCHANGED (the bot casts no skills; no
+  Sim surface it measures moved) → no re-pin needed. Browser look at the
+  chi bar/denial flash DEFERRED into M4's mandatory browser session (one
+  dev-server pass covers chi HUD + persistence gate). Gate paste: tsc both
+  configs exit 0 · eslint exit 0 · vitest 360/360 (24 files).

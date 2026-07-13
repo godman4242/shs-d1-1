@@ -36,9 +36,13 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
 
 ## State
 - **Stage 3: IN PROGRESS — M1 (`core/progression.ts`) DONE (2026-07-12) ·
-  M2 (XP curve) DONE (2026-07-13).** Suite 346/346 · tsc both configs exit
-  0 · eslint exit 0. 6/7 gate items cleared headless; item 7 is
-  browser-only (queued at top).
+  M1-review DONE · M2 (XP curve) DONE · M3 (Chi meter + skill costs) DONE
+  (2026-07-13).** Suite 360/360 · tsc both configs exit 0 · eslint exit 0.
+  6/7 gate items cleared headless; item 7 is browser-only (queued at top).
+  Chi: config/chi.ts ALL-INFERRED (no frame-backed cost reads exist),
+  skillDenied event + chaos-proven "denied casts keep their cooldown",
+  B-23 HUD pair (HP + blue CHI; Focus demoted to a strip), harness 4/4
+  unchanged (no re-pin).
   | Gate item (STAGE3_KICKOFF §3, errata-read) | Evidence |
   |---|---|
   | progression unit tests green | 28/28 in `tests/progression.test.ts` + 11/11 in `tests/xp.test.ts`; full suite 305→346 |
@@ -107,20 +111,15 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**M1 + M2 DONE.** Remaining, per SESSION5_KICKOFF §1 work order:
-- **M1-review fixes** — triage the 25 UNVERIFIED hostile-review findings
-  inline (session log 2026-07-13): confirmed → red-first fixes (preservation
-  pins on a rich character, input-non-mutation pins, accrueCoins result
-  guards, zero-max pool guard), structural → DIVERGENCES entries, corrupt-
-  save guards → deferred to the M4 seam where they belong.
-- **M3 — Chi meter + skill costs** (the Stage-2 deferral): Chi in Sim, skills
-  1/2/3 gain Chi costs, HUD Chi bar. Chaos: cost > meter → denied, no CD
-  spent. Then RE-RUN the 24-seed harness; re-pin medians w/ RED receipt if
-  any Sim surface moved.
+**M1 + M1-review + M2 + M3 DONE.** Remaining, per SESSION5_KICKOFF §1:
 - **M4 — accrual + persistence seam** → clears the queued browser gate item
   (kill → XP/coins accrue + persist across R-restart; profile math in core,
   localStorage at the game/ boundary, DEV-clearable). XP→level wiring uses
-  `core/xp.ts` levelForXp (M2) + `core/progression.ts` levelUp (M1).
+  `core/xp.ts` levelForXp (M2) + `core/progression.ts` levelUp (M1). The M4
+  seam also owns the corrupt-save validator (M1-review deferral) and the
+  browser pass must also eyeball the M3 chi bar + denial flash (deferred).
+- **Close Stage 3**: gate table 100% ☑ + TELLS rows 29–32 + CALIBRATION +
+  DIVERGENCES in the same commits, then STAGE4_KICKOFF.md to the bar.
 Works under the build loop — GOAL.md is current and routes through this file.
 
 ## Stage-2 milestone history (all on `master`, evidence in session log)

@@ -11,6 +11,7 @@ import {
   CRITICAL_MAX,
   FOCUS_START,
 } from '../src/config/combat';
+import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../src/config/chi';
 import { MAX_FRAME_MS } from '../src/config/combat-sim';
 import { JUMP_DURATION_FRAMES } from '../src/config/duel';
 import { FIXED_HZ } from '../src/config/timing';
@@ -889,5 +890,68 @@ describe('Sim — event queue types are exhaustive for M2', () => {
     sim.applyStroke(slashStroke());
     const events: SimEvent[] = sim.drainEvents();
     expect(events.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Sim — Chi meter + skill costs (Stage 3 M3, the Stage-2 deferral)', () => {
+  it('chi starts full and is exposed on the fighter views', () => {
+    const sim = makeSim();
+    expect(sim.player.chi).toBe(CHI_MAX);
+    expect(sim.player.maxChi).toBe(CHI_MAX);
+    expect(sim.enemy.chi).toBe(CHI_MAX); // enemy pool exists but never spends (flagged)
+  });
+
+  it('every skill charges its pinned CHI_COST on cast (fill clamps at max pre-spend)', () => {
+    for (const verb of ['chiPunch', 'smokeBomb', 'stab'] as const) {
+      const sim = makeSim();
+      sim.queueSkill(verb);
+      sim.tick();
+      expect(sim.player.chi).toBe(CHI_MAX - CHI_COST[verb]);
+    }
+  });
+
+  it('chi refills at CHI_FILL_PER_S during fighting (integer frame-units, exact)', () => {
+    const sim = makeSim();
+    sim.queueSkill('chiPunch');
+    sim.tick(); // exactly CHI_MAX − cost: the cast tick's fill clamped at max
+    tickN(sim, FIXED_HZ); // one full second of refill
+    expect(sim.player.chi).toBe(CHI_MAX - CHI_COST.chiPunch + CHI_FILL_PER_S);
+  });
+
+  it('insufficient chi → skillDenied; no effect, no spend, cooldown NOT consumed (chaos)', () => {
+    const sim = makeSim({ chi: 20 }); // below chiPunch's cost
+    sim.queueSkill('chiPunch');
+    sim.tick();
+    expect(sim.enemy.hp).toBe(150); // no hit landed
+    const evs = sim.drainEvents();
+    expect(evs.filter((ev) => ev.type === 'skillUsed')).toEqual([]);
+    expect(evs.filter((ev) => ev.type === 'skillDenied')).toEqual([
+      { type: 'skillDenied', verb: 'chiPunch', needed: CHI_COST.chiPunch, chi: expect.any(Number) as number },
+    ]);
+    expect(sim.cooldownRemainingS('chiPunch')).toBe(0); // cooldown untouched
+    // 150 fill ticks total put chi at EXACTLY the cost on the cast tick; a
+    // consumed cooldown (298 frames) would still block here, so a landed hit
+    // proves the denial spent neither chi nor cooldown.
+    tickN(sim, 148);
+    sim.queueSkill('chiPunch');
+    sim.tick();
+    expect(sim.enemy.hp).toBe(140);
+    expect(sim.player.chi).toBe(0);
+  });
+
+  it('cooldown still gates independently — a CD-blocked cast is silent and spends nothing', () => {
+    const sim = makeSim();
+    sim.queueSkill('chiPunch');
+    sim.tick();
+    sim.drainEvents();
+    sim.queueSkill('chiPunch');
+    sim.tick(); // on cooldown → silently ignored (Stage-2 behavior, unchanged)
+    expect(sim.enemy.hp).toBe(140); // one hit only
+    const evs = sim.drainEvents();
+    expect(evs.filter((ev) => ev.type === 'skillUsed' || ev.type === 'skillDenied')).toEqual([]);
+    // chi: spent once, then refilled for exactly one post-cast tick
+    expect(sim.player.chi).toBe(
+      ((CHI_MAX - CHI_COST.chiPunch) * FIXED_HZ + CHI_FILL_PER_S) / FIXED_HZ,
+    );
   });
 });

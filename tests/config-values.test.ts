@@ -79,6 +79,7 @@ import {
   REBIRTH,
   WAR_ROOM,
 } from '../src/config/economy';
+import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../src/config/chi';
 import { XP_DELTA_STEP, XP_THRESHOLDS } from '../src/config/xp';
 import { SKILL_COOLDOWN_MS } from '../src/config/skills';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
@@ -362,6 +363,16 @@ describe('economy.ts — Stage 2 item 10, exact spec names and values', () => {
       controlPointFlagBonus: 1.2,
     });
     expect(HAS_CASH_PURCHASE).toBe(false);
+  });
+});
+
+describe('chi.ts — Stage 3 M3, the Chi meter (ALL INFERRED — no frame-backed reads)', () => {
+  it('pool + regen', () => {
+    expect(CHI_MAX).toBe(100);
+    expect(CHI_FILL_PER_S).toBe(4);
+  });
+  it('CHI_COST — nuke > escape > parry, charged on top of cooldowns', () => {
+    expect(CHI_COST).toEqual({ chiPunch: 30, smokeBomb: 25, stab: 10 });
   });
 });
 

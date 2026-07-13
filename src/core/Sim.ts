@@ -6,6 +6,7 @@ import {
   SPAWN_INVULN_S,
   WEAPON_WEIGHT,
 } from '../config/combat';
+import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../config/chi';
 import {
   DEFLECT_RADIUS,
   DEFLECT_WINDOW_MS,
@@ -58,6 +59,8 @@ export interface FighterSpawn extends FighterBase {
   pos: Vec;
   halfW: number;
   halfH: number;
+  /** STARTING Chi in points (defaults full); the ceiling is always CHI_MAX. */
+  chi?: number;
 }
 
 /** Typed events drained by the scene each frame and turned into FX/SFX. */
@@ -70,6 +73,7 @@ export type SimEvent =
   | { type: 'strikeEvaded'; by: FighterSide }
   | { type: 'comboChanged'; value: number }
   | { type: 'skillUsed'; verb: SkillVerb }
+  | { type: 'skillDenied'; verb: SkillVerb; needed: number; chi: number }
   | { type: 'invulnBlocked'; target: FighterSide }
   | { type: 'kunaiThrown' }
   | { type: 'kunaiDeflected' }
@@ -102,6 +106,9 @@ export interface FighterView {
   stance: StanceId;
   focus: number;
   critical: number;
+  /** Chi meter in points (0..maxChi) — skills charge it (M3). */
+  chi: number;
+  maxChi: number;
   /** Spawn invuln or Smoke-Bomb i-frames — the scene renders the blink. */
   invulnerable: boolean;
 }
@@ -124,6 +131,9 @@ interface FighterState {
   stance: StanceId;
   focusUnits: number;
   criticalUnits: number;
+  /** Chi meter in integer frame units (M3). The enemy's pool fills but never
+   * spends — AI skills don't exist yet (flagged; veto = drop the field). */
+  chiUnits: number;
   jump: JumpState | null;
   /** Frame the spawn invulnerability ends (0 = none). Player-only in M3. */
   invulnEndFrame: number;
@@ -143,6 +153,8 @@ interface FighterState {
 /** Shunpo meter units are 1/FIXED_HZ points: integer drain/fill, exact reads. */
 const SHUNPO_MAX_UNITS = SHUNPO_MAX * FIXED_HZ;
 const SHUNPO_MIN_UNITS = SHUNPO_MIN_TO_START * FIXED_HZ;
+/** Chi shares the integer frame-unit scheme (points × FIXED_HZ). */
+const CHI_MAX_UNITS = CHI_MAX * FIXED_HZ;
 
 function spawnFighter(spawn: FighterSpawn): FighterState {
   return {
@@ -151,6 +163,7 @@ function spawnFighter(spawn: FighterSpawn): FighterState {
     stance: spawn.stance,
     focusUnits: focusToUnits(FOCUS_START),
     criticalUnits: ZERO,
+    chiUnits: (spawn.chi ?? CHI_MAX) * FIXED_HZ,
     jump: null,
     invulnEndFrame: ZERO,
     iframesEndFrame: ZERO,
@@ -284,6 +297,8 @@ export class Sim {
       stance: f.stance,
       focus: unitsToFocus(f.focusUnits),
       critical: unitsToCritical(f.criticalUnits),
+      chi: f.chiUnits / FIXED_HZ,
+      maxChi: CHI_MAX,
       invulnerable: this.frameCount < f.invulnEndFrame || this.frameCount < f.iframesEndFrame,
     };
   }
@@ -551,6 +566,20 @@ export class Sim {
     if (this.frameCount < this.cooldownUntil[verb]) return;
     const player = this.fighters.player;
     const enemy = this.fighters.enemy;
+    // Chi gate (M3): too expensive → denied, and the cooldown is NOT
+    // consumed (chaos-pinned). A cooldown-blocked cast stays silent
+    // (Stage-2 behavior); a chi-blocked one is announced for the HUD cue.
+    const costUnits = CHI_COST[verb] * FIXED_HZ;
+    if (player.chiUnits < costUnits) {
+      this.events.push({
+        type: 'skillDenied',
+        verb,
+        needed: CHI_COST[verb],
+        chi: player.chiUnits / FIXED_HZ,
+      });
+      return;
+    }
+    player.chiUnits -= costUnits;
     if (verb === 'chiPunch') {
       // CONTRACT: on-screen 10 dealt — flat, bypasses defense. Offensive:
       // ends spawn invuln like a slash.
@@ -620,6 +649,9 @@ export class Sim {
       for (const f of Object.values(this.fighters)) {
         f.focusUnits = Math.min(f.focusUnits + ONE, focusToUnits(FOCUS_MAX));
         f.criticalUnits += ONE; // value view clamps at CRITICAL_MAX
+        // Chi fills BEFORE the queued skill resolves, so a post-cast read is
+        // exactly max − cost (the cast tick's fill clamps at the ceiling).
+        f.chiUnits = Math.min(f.chiUnits + CHI_FILL_PER_S, CHI_MAX_UNITS);
       }
       this.updateShunpo();
       // Player movement (A/D). The jump arc owns the position while airborne.

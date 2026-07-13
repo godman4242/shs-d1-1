@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { AI_TIERS } from '../config/ai';
+import { CHI_COST } from '../config/chi';
 import {
   BLADE_CORE_WIDTH,
   BLADE_EDGE_WIDTH,
@@ -93,6 +94,8 @@ export class DuelScene extends Phaser.Scene {
   private droplets: Droplet[] = [];
   private keys?: Record<'A' | 'D' | 'SHIFT', Phaser.Input.Keyboard.Key>;
   private telegraphUntil = 0;
+  /** fx-clock deadline of the chi-bar denial flash (skillDenied cue, M3). */
+  private chiDeniedUntil = 0;
   private telegraphKind: 'strike' | 'stance' = 'strike';
   private enemyGuardUntil = 0;
   private killBeatAt = 0;
@@ -116,6 +119,7 @@ export class DuelScene extends Phaser.Scene {
     this.killBeatAt = 0;
     this.resultLaunched = false;
     this.telegraphUntil = 0;
+    this.chiDeniedUntil = 0;
     this.enemyGuardUntil = 0;
     this.fxNow = 0;
     this.trails = [];
@@ -378,6 +382,8 @@ export class DuelScene extends Phaser.Scene {
         this.telegraphKind = ev.kind;
       } else if (ev.type === 'strikeBlocked') {
         this.enemyGuardUntil = fxNow + 260;
+      } else if (ev.type === 'skillDenied') {
+        this.chiDeniedUntil = fxNow + 300; // chi bar flashes "too expensive"
       } else if (ev.type === 'damage' && ev.target === 'player') {
         const p = this.sim.player.pos;
         this.spawnBlood({ x: p.x, y: p.y - 20 }, { x: -1, y: 0 }, false, fxNow);
@@ -542,20 +548,24 @@ export class DuelScene extends Phaser.Scene {
     g.fillStyle(COL.hatStraw, 1);
     g.fillTriangle(px - 43, py - 7, px - 5, py - 7, px - 24, py - 22);
 
-    // HP (green) / Focus (blue) bars — gate: SPACE swap drains the blue bar.
+    // HP (green) / CHI (blue) — the B-23 portrait pair. Focus (our INFERRED
+    // stance-switch meter) keeps its SPACE-drain gate visibility as a strip.
     const bx = px + 18;
     g.fillStyle(COL.outline, 0.9);
     g.fillRect(bx - 1, py - 21, 152, 12);
     g.fillRect(bx - 1, py - 5, 152, 12);
     g.fillStyle(COL.healthGreen, 1);
     g.fillRect(bx, py - 20, (150 * player.hp) / player.maxHp, 10);
-    g.fillStyle(COL.focusBlue, 1);
-    g.fillRect(bx, py - 4, (150 * player.focus) / 100, 10);
-    // Shunpo sliver + Critical sliver (spec meters; thin INFERRED strips).
+    // Chi bar flashes blood-red while a skillDenied cue is live (M3).
+    g.fillStyle(this.fxNow < this.chiDeniedUntil ? COL.blood : COL.focusBlue, 1);
+    g.fillRect(bx, py - 4, (150 * player.chi) / player.maxChi, 10);
+    // Focus strip + Shunpo/Critical slivers (spec meters; INFERRED strips).
+    g.fillStyle(COL.kimono2, 0.95);
+    g.fillRect(bx, py + 10, (150 * player.focus) / 100, 5);
     g.fillStyle(COL.kimono, 0.9);
-    g.fillRect(bx, py + 10, (150 * this.sim.shunpo) / 100, 3);
+    g.fillRect(bx, py + 18, (150 * this.sim.shunpo) / 100, 3);
     g.fillStyle(COL.gold, 0.9);
-    g.fillRect(bx, py + 15, (150 * player.critical) / 100, 3);
+    g.fillRect(bx, py + 23, (150 * player.critical) / 100, 3);
 
     // Bottom-center: skill bar (3 numbered slots + cooldown sweep).
     const verbs = [SKILL_VERB[1], SKILL_VERB[2], SKILL_VERB[3]];
@@ -572,6 +582,10 @@ export class DuelScene extends Phaser.Scene {
       if (remaining > 0) {
         g.fillStyle(COL.outline, 0.65);
         g.fillRoundedRect(sx + 3, sy + 3, 50, 50 * Math.min(1, remaining / total), 8);
+      } else if (player.chi < CHI_COST[verb]) {
+        // Ready but unaffordable — greyed like B-23's zeroed slot.
+        g.fillStyle(COL.outline, 0.45);
+        g.fillRoundedRect(sx + 3, sy + 3, 50, 50, 8);
       }
     });
 
