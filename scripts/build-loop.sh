@@ -103,10 +103,15 @@ while :; do
   echo "[loop] cycle start $(date '+%H:%M:%S') at ${BEFORE%????????????????????????????????}"
   printf '\n===== cycle %s at %s =====\n' "$(date '+%F %H:%M:%S')" "$BEFORE" >> docs/loop/loop.log
   touch docs/loop/CYCLE_RUNNING
+  # The inner echo stamps claude's REAL exit status into the log (POSIX sh
+  # has no PIPESTATUS) — a bare cycle header with zero output was
+  # undiagnosable (quota death? auth prompt? crash?) in the 07-12 log.
   # shellcheck disable=SC2086
-  claude -p "$PROMPT" ${LOOP_MODEL:+--model "$LOOP_MODEL"} \
-    ${LOOP_MAX_TURNS:+--max-turns "$LOOP_MAX_TURNS"} \
-    --permission-mode bypassPermissions 2>&1 | tee -a docs/loop/loop.log
+  { claude -p "$PROMPT" ${LOOP_MODEL:+--model "$LOOP_MODEL"} \
+      ${LOOP_MAX_TURNS:+--max-turns "$LOOP_MAX_TURNS"} \
+      --permission-mode bypassPermissions 2>&1
+    echo "[loop] claude exit=$?"
+  } | tee -a docs/loop/loop.log
   rm -f docs/loop/CYCLE_RUNNING
   AFTER=$(git rev-parse HEAD)
 

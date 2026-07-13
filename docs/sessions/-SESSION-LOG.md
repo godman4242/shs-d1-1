@@ -548,3 +548,17 @@ Crash-resilience log. Updated per milestone, never "at the end."
   error. SESSION 5 CLOSE: Stage 3 opened at 6/7 gate items — closes 100% ☑
   with M1-review, M2, M3, M4 landed red-first (333→377 tests), ledgers
   current, Stage-4 entry point committed.
+- **(follow-up turn)** Post-close follow-ups per Kheshav review: (1)
+  build-loop.sh now stamps claude's REAL exit status into loop.log per
+  cycle (the 07-12 log had bare headers 6 s apart with zero output —
+  undiagnosable; POSIX-safe brace group, sh -n + bash -n clean). (2)
+  STAGE4_KICKOFF gains **M0 — skeletal-fighter port from iaido-duel**
+  (decide-and-flag, veto = drop M0): samurai.ts's 3 static poses can't
+  walk, recoil, collapse, or show per-stance arcs; the town scene (M3)
+  hard-requires a walk cycle, and the ~890-line same-owner skeleton
+  system (15 joints + animator + tests) closes TELLS row 20. Adaptation
+  rules written into the milestone (keyframes→config, anim math→core
+  red-first, drawing→game under the ratchet, harness re-run). (3) Loop
+  status reviewed: NO cycles ran since Session 5 (last log entry 07-12
+  19:51); the loop's only committed work remains Stage-3 M1, already
+  hostile-review-hardened this session.

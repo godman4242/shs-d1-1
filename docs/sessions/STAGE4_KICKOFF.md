@@ -36,6 +36,27 @@ permission. The root invariant (RECREATE, NEVER RIP) therefore binds:
   "FINISH QUEST", "REWARD", stat names) are functional text, fine to match.
 
 ## 2. Work order (errata-read; one commit per milestone)
+0. **M0 — Skeletal fighters (port from iaido-duel — decide-and-flag
+   2026-07-13; veto = drop M0, fighters stay pose-static until Stage 6).**
+   Replace `samurai.ts`'s three static poses (idle/windup/
+   guard, one lean offset) with Kheshav's OWN 15-joint skeleton system from
+   `~/kheshav-code/iaido-duel` (~890 lines incl. its tests:
+   `game/fighter/Skeleton.ts` 167 · `FighterAnimator.ts` 150 ·
+   `drawFighter.ts` 271 · `Fighter.ts` 114 · `core/anim.ts` 65 + skeleton/
+   animator test files). WHY NOW: M3's town walk-around needs a real walk
+   cycle — sliding statues violate the fidelity-early mandate — and the
+   duel gains windup→strike→recover arcs, hit recoil, death collapse, and
+   scarf flutter (closes TELLS row 20; makes tell 6's per-stance arcs
+   visible instead of config-only). Adaptation rules: joint keyframes/pose
+   data land in `config/` (labeled INFERRED — they are OUR read of the
+   original's motion); anim math (lerp/easing/clocks) lands in `core/`
+   under zero-literals with iaido's tests ported red-first; drawing stays
+   in `game/` under the ratchet (new-file RED receipt). Same-owner original
+   code — invariant-clean (mining-pass precedent: the fidelity ledgers came
+   from iaido-duel the same way). Proportions/palette re-read OUR study
+   frames, not iaido's look. Re-run the 24-seed harness after — if hitboxes
+   move to limb capsules, re-pin with a RED receipt (or keep the Stage-2
+   rect hitbox and defer limb-accurate collision — decide-and-flag).
 1. **M1 — Boot flow + title.** Retire the fight-first prototype boot:
    title screen (brush-stroke logo, red-on-parchment, ORIGINAL mark — we
    are not "Straw Hat Samurai"), then menu → town; `?scene=duel` becomes a

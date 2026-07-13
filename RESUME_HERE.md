@@ -110,11 +110,14 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
 
 ## Next concrete step
 **STAGE 3 IS CLOSED.** Start Stage 4 from
-`docs/sessions/STAGE4_KICKOFF.md` (campaign scope: title/login flow, town,
-dialogue system, quests, RPG screens — every name and line of dialogue
-ORIGINAL per the root invariant; guest-start currencies seed at the login
-flow, DIVERGENCES M4-(d)). Headless loop cycles route through GOAL.md →
-this file → that kickoff.
+`docs/sessions/STAGE4_KICKOFF.md` — first milestone is **M0: port the
+15-joint skeletal-fighter system from iaido-duel** (decide-and-flag
+2026-07-13, veto = drop M0; walk cycle is a hard prerequisite for the
+town scene), then
+campaign scope: title/login flow, dialogue, town, quests, RPG screens —
+every name and line of dialogue ORIGINAL per the root invariant;
+guest-start currencies seed at the login flow (DIVERGENCES M4-(d)).
+Headless loop cycles route through GOAL.md → this file → that kickoff.
 
 ## Stage-2 milestone history (all on `master`, evidence in session log)
 Stage 2 build order was: rng DONE · Sim.advance DONE (M1) ·
