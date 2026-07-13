@@ -49,10 +49,10 @@ Evidence timestamps refer to `docs/sessions/-SESSION-LOG.md`.
 - ☐ 28. Four-way slash SFX on measured frames — Stage 6 audio.
 
 ## Progression / campaign / lore (Stages 3–5)
-- ◐ 29. Level-up = +1 SP, +3 stat, full refill — CORE MATH landed Stage-3 M1 (`progression.ts` `levelUp`, exact-pin `progression.test`); in-game level-up modal + XP curve pending (item 4 / Stage 4).
+- ◐ 29. Level-up = +1 SP, +3 stat, full refill — CORE MATH landed Stage-3 M1 (`progression.ts` `levelUp`, exact-pin `progression.test`); XP CURVE landed M2 (frame-backed L1–L10 `config/xp.ts` CONTRACT) and WIRED in-game M4 (kill XP → `accrueXp` → levelUp through the curve, save-proven). In-game level-up MODAL pending (Stage 4).
 - ◐ 30. Rebirth payout + elemental stacking — CORE MATH landed M1 (`rebirth`: +10 chosen-elemental stacking to N=10, earlyGold 1–9 / tenthGold 10th; `progression.test`). Renamed economy field attack→elemental (decision #3). In-game rebirth scroll UI pending (Stage 4).
 - ◐ 31. 80 SP cap; max dan rank — ENFORCED + chaos-proven M1 (SP cap first-run-only; ceiling at MAX_DAN_RANK, rebirth-past-ceiling throws). DEVIATION: MAX_DAN_RANK=10 per errata + decision #2 (spec tell says 5) — `docs/DIVERGENCES.md`. In-game rank display pending (Stage 4).
-- ◐ 32. Coins grindable, Gold earnable, no cash purchase — economy + `Progression` carry both currencies M1 (gold via `rebirth`, coins via `accrueCoins`); HAS_CASH_PURCHASE=false pinned. In-duel accrual + persistence across R-restart pending (item 4, browser).
+- ☑ 32. Coins grindable, Gold earnable, no cash purchase — economy + `Progression` carry both currencies M1 (gold via `rebirth`, coins via `accrueCoins`); HAS_CASH_PURCHASE=false pinned. BROWSER-CLOSED M4 (2026-07-13): kill → +10 XP/+8 coins accrue to the localStorage profile, HUD renders 8 / “10 / 550 XP” after R-restart AND full page reload; defeat pays 0/0 (no save written); corrupt save (danRank −1) rejected by the seam validator → fresh profile. Gold accrual in-game = rebirth UI, Stage 4.
 - ☐ 33. Season>Episode nesting, Prologue tutorial, haiku cards — Stage 5.
 - ☐ 34. Ragged Shugyosha start with a branch — Stage 5.
 - ☐ 35. Clan/character roster — Stage 4/5 (four joinable Great Clans + Aoi Hoiru, Ki Sensu; Shira Tancho story-only; all dialogue ORIGINAL — invariant).

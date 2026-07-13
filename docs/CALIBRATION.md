@@ -34,6 +34,8 @@ Rules:
 | 13 | Arena bounds & spawns | `duel.ts` DUEL_SPAWNS / arena clamp | ±4 px | spawns 400/624 @ ground 430 | INFERRED |
 | 14 | HUD geometry | DuelScene layout literals (M8 ratchet baseline) | pos ±4 px, exact hex | built from B-23 study frame | INFERRED |
 | 15 | Duel pacing | `ai.ts` DUEL_TARGET_SECONDS {20,60} | median in band | measured median 26.04 s (24-seed harness, M7). Spec's "~24.7 s" is the reference bot's own number, not the game's — do not chase it | MEASURED (our build) |
+| 16 | Chi economy | `chi.ts` CHI_MAX / CHI_FILL_PER_S / CHI_COST | cost per skill exact, regen ±1/s | 100 · 4/s · {punch 30, smoke 25, stab 10} — zero frame-backed cost reads exist; sized for the prototype meter family | INFERRED (Stage-3 M3) |
+| 17 | XP curve tail (L11+) | `xp.ts` XP_DELTA_STEP | threshold ±5% vs any future high-level HUD read | +500/level delta growth extrapolating the CONTRACT L1–L10 table (observed tail 4550→5000→5500) | INFERRED (Stage-3 M2; the table itself is CONTRACT) |
 
 History: created at Stage-2 close. No row is CONFIRMED yet — Ruffle
 frame-stepping is queued as a Stage-6 polish pass (feel-critical rows 3–6

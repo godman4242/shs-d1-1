@@ -63,6 +63,9 @@ export interface Progression {
   skillPoints: number;
   /** Unspent stat points. */
   statPoints: number;
+  /** Cumulative XP total — level is DERIVED from it via core/xp.ts (M4).
+   * Accrual + level-crossing live in core/profile.ts accrueXp. */
+  xp: number;
   /** Grindable currency (kills). */
   coins: number;
   /** Earnable currency (rebirth payouts). */
@@ -98,6 +101,7 @@ export const initProgression = (maxes: { hp: number; chi: number; ap: number }):
     danRank: ZERO,
     skillPoints: ZERO,
     statPoints: ZERO,
+    xp: ZERO,
     coins: ZERO,
     gold: ZERO,
     elemental: { fire: ZERO, water: ZERO, earth: ZERO, wind: ZERO },
@@ -144,6 +148,9 @@ export const rebirth = (p: Progression, element: ElementId): Progression => {
     level: ONE,
     skillPoints: ZERO,
     statPoints: ZERO,
+    // Fresh L1: xp resets with the level — level is derived from xp (M4),
+    // so a kept total would contradict the reset. INFERRED; veto = keep xp.
+    xp: ZERO,
     gold: p.gold + goldGain,
     elemental: {
       ...p.elemental,
@@ -157,12 +164,13 @@ export const rebirth = (p: Progression, element: ElementId): Progression => {
 
 /**
  * Accrue grindable coins. Junk is ignored, never thrown: non-integer or
- * negative amounts (coins are integral in the original), and any amount that
- * would overflow the total past Number range (a poisoned Infinity would
- * otherwise persist forever through the M4 save seam).
+ * negative amounts (coins are integral in the original), and any sum outside
+ * the SAFE-integer range — past Number.MAX_SAFE_INTEGER integer arithmetic
+ * silently loses exactness, and a poisoned total would persist forever
+ * through the M4 save seam.
  */
 export const accrueCoins = (p: Progression, amount: number): Progression => {
   if (!Number.isInteger(amount) || amount < ZERO) return p;
   const coins = p.coins + amount;
-  return Number.isFinite(coins) ? { ...p, coins } : p;
+  return Number.isSafeInteger(coins) ? { ...p, coins } : p;
 };

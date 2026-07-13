@@ -6,24 +6,22 @@
 > Fidelity ledgers: `docs/TELLS_CHECKLIST.md` · `docs/CALIBRATION.md` ·
 > `docs/DIVERGENCES.md` (adopted from iaido-duel mining, 2026-07-12).
 
-## Awaiting human/browser verification (Stage 3)
-- **Gate item: kill a foe → XP/coins visibly accrue and persist across
-  R-restart.** Needs a real browser + the persistence seam (work-order item 4,
-  not yet built). A headless cycle cannot check it — left unchecked, queued.
-  The economy *math* is done and unit-proven (`progression.ts`, M1); what
-  remains is the game/ localStorage boundary + a browser run.
+## Awaiting human/browser verification
+- Nothing queued. (The Stage-3 browser gate item was CLOSED 2026-07-13 —
+  evidence in the gate table below.)
 
 ## Current focus
-**Stage 3 — Progression: IN PROGRESS. M1 (`core/progression.ts`) DONE
-(2026-07-12, build-loop cycle; Session-4 review verdict: KEEP). M2
-(XP curve: `config/xp.ts` + `core/xp.ts` + HUD denominator) DONE
-(2026-07-13, Session 5, red-first).** 6 of 7 Stage-3 gate items cleared
-headless + chaos-proven (gate table under "State"); the 7th is
-browser-only (queued above). M1's hostile review (SESSION5 §1.1) is DONE:
-the workflow was quota-killed at the verify stage, so its 25 raw findings
-were triaged inline — 2 guards + coverage pins landed red-first, 6
-readings recorded in DIVERGENCES, 2 claims refuted with evidence (session
-log 2026-07-13 11:10). M1 survived: no rewrite.
+**STAGE 3 CLOSED 100% ☑ (2026-07-13, Session 5).** All 7 gate items green
+— the full table with evidence is under "State". Milestones: M1
+levelUp/rebirth math (loop cycle, review verdict KEEP) · M1 hostile-review
+triage (quota-killed workflow → inline adjudication; 2 guards + coverage
+pins red-first, 6 DIVERGENCES readings, 2 claims refuted) · M2 XP curve
+(frame-backed L1–L10 CONTRACT) · M3 Chi meter + skill costs (B-23 HUD
+pair, chaos-proven denial) · M4 accrual + persistence seam
+(browser-verified: kill → +10/+8 → persists across R AND reload; corrupt
+saves rejected). **NEXT SESSION ENTRY POINT:
+`docs/sessions/STAGE4_KICKOFF.md`** (campaign: title, dialogue, town,
+quests, RPG screens — all dialogue/names ORIGINAL).
 **INTERACTIVE entry point: `docs/sessions/SESSION5_KICKOFF.md`** (loop
 handshake first · M1 hostile review · XP curve from study data · Chi meter ·
 persistence + browser gate · close). Headless loop cycles keep following
@@ -35,10 +33,10 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
 ~2 h later and rides the quota reset by itself.
 
 ## State
-- **Stage 3: IN PROGRESS — M1 (`core/progression.ts`) DONE (2026-07-12) ·
-  M1-review DONE · M2 (XP curve) DONE · M3 (Chi meter + skill costs) DONE
-  (2026-07-13).** Suite 360/360 · tsc both configs exit 0 · eslint exit 0.
-  6/7 gate items cleared headless; item 7 is browser-only (queued at top).
+- **Stage 3: CLOSED — gate 100% ☑ (2026-07-13, Session 5).** Suite 377/377
+  · tsc both configs exit 0 · eslint exit 0. M1 + M1-review + M2 + M3 + M4
+  all landed red-first with chaos plants; ledgers current (TELLS 29/32
+  updated, CALIBRATION rows 16–17, DIVERGENCES M1-review + M4 entries).
   Chi: config/chi.ts ALL-INFERRED (no frame-backed cost reads exist),
   skillDenied event + chaos-proven "denied casts keep their cooldown",
   B-23 HUD pair (HP + blue CHI; Focus demoted to a strip), harness 4/4
@@ -51,7 +49,7 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
   | 80 SP first-run cap enforced | 200 level-ups → SP pinned at 80 (chaos: cap disarmed → 200 RED); cap lifts after rebirth (danRank>0) |
   | Dan rank MAX_DAN_RANK(=10) is max | `canRebirth` false at rank 10; rebirth-past-ceiling throws (chaos: guard disarmed → RED). DEVIATION MAX=10 (decision #2) — DIVERGENCES |
   | Two currencies (Coins grindable, Gold earnable), HAS_CASH_PURCHASE=false | `Progression` carries coins (via `accrueCoins`) + gold (via `rebirth`), move independently; HAS_CASH_PURCHASE=false pinned |
-  | Browser: kill → XP/coins accrue + persist across R-restart | ☐ QUEUED (browser + persistence seam, item 4) — see top of file |
+  | Browser: kill → XP/coins accrue + persist across R-restart | ☑ CLOSED (M4, 2026-07-13 browser run, dev-seam loop-step under occlusion): real-input duel win → YOU WIN +10 XP/+8 COINS (screenshot) → localStorage save {xp:10, coins:8} → R-restart HUD renders "8" + "10 / 550 XP" (screenshot) → FULL PAGE RELOAD persists too. Negative paths live: 3 defeats paid +0/+0 with NO save written; corrupt save (danRank −1) → validator rejects → fresh profile. Chi bar + denial flash + greyed slots eyeballed same run (M3 deferral cleared). Zero console errors from fresh load |
 - **Stage 2: GREEN — gate 100% ☑ (2026-07-12, Session 4).** Suite 305/305 ·
   tsc both configs exit 0 · eslint exit 0 · milestones M1–M10 on `master`
   (session log 2026-07-11→12; evidence timestamps below refer to it).
@@ -111,16 +109,12 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**M1 + M1-review + M2 + M3 DONE.** Remaining, per SESSION5_KICKOFF §1:
-- **M4 — accrual + persistence seam** → clears the queued browser gate item
-  (kill → XP/coins accrue + persist across R-restart; profile math in core,
-  localStorage at the game/ boundary, DEV-clearable). XP→level wiring uses
-  `core/xp.ts` levelForXp (M2) + `core/progression.ts` levelUp (M1). The M4
-  seam also owns the corrupt-save validator (M1-review deferral) and the
-  browser pass must also eyeball the M3 chi bar + denial flash (deferred).
-- **Close Stage 3**: gate table 100% ☑ + TELLS rows 29–32 + CALIBRATION +
-  DIVERGENCES in the same commits, then STAGE4_KICKOFF.md to the bar.
-Works under the build loop — GOAL.md is current and routes through this file.
+**STAGE 3 IS CLOSED.** Start Stage 4 from
+`docs/sessions/STAGE4_KICKOFF.md` (campaign scope: title/login flow, town,
+dialogue system, quests, RPG screens — every name and line of dialogue
+ORIGINAL per the root invariant; guest-start currencies seed at the login
+flow, DIVERGENCES M4-(d)). Headless loop cycles route through GOAL.md →
+this file → that kickoff.
 
 ## Stage-2 milestone history (all on `master`, evidence in session log)
 Stage 2 build order was: rng DONE · Sim.advance DONE (M1) ·

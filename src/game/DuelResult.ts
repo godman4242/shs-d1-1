@@ -3,7 +3,10 @@ import { DUEL_ENEMY } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { KILL_REWARD } from '../config/economy';
 import { COL } from '../config/palette';
+import { accrueXp } from '../core/profile';
+import { accrueCoins } from '../core/progression';
 import { showBanner } from './banners';
+import { loadProfile, saveProfile } from './profileStore';
 
 /**
  * DuelResult (spec item 13) — overlay after the kill beat: hard cut to a
@@ -34,6 +37,14 @@ export class DuelResult extends Phaser.Scene {
 
     const xp = won ? KILL_REWARD.xpPerFoeLevel * DUEL_ENEMY.level : 0;
     const coins = won ? KILL_REWARD.coinsPerFoeLevel * DUEL_ENEMY.level : 0;
+
+    // M4 accrual seam: a win pays the SAME numbers the banner shows into the
+    // persisted profile (accrueXp levels through the M2 curve if a cap is
+    // crossed). create() runs once per fight (resultLaunched guard), so a
+    // kill can't double-pay. Render stays KILL_REWARD math — display parity.
+    if (won) {
+      saveProfile(accrueCoins(accrueXp(loadProfile(), xp), coins));
+    }
     this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 46, `+${xp} XP      +${coins} COINS`, {
         fontFamily: 'Georgia, serif',

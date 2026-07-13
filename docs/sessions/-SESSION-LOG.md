@@ -498,3 +498,36 @@ Crash-resilience log. Updated per milestone, never "at the end."
   chi bar/denial flash DEFERRED into M4's mandatory browser session (one
   dev-server pass covers chi HUD + persistence gate). Gate paste: tsc both
   configs exit 0 · eslint exit 0 · vitest 360/360 (24 files).
+- **12:40** M4 ACCRUAL + PERSISTENCE SEAM landed red-first → **STAGE 3
+  CLOSED 100% ☑**. Core: `Progression.xp` (init 0; rebirth resets it —
+  level is DERIVED from xp, flagged); `core/profile.ts` accrueXp (one
+  levelUp per threshold crossed via the M2 curve; junk ignored) +
+  sanitizeProgression (reject-don't-repair validator, rebuilds
+  field-by-field, strips unknown keys, cross-field invariants:
+  level==levelForXp(xp), first-run SP cap). REAL BUG caught by my own RED
+  test mid-milestone: a Number.MAX_VALUE accrual passed isInteger and hung
+  levelForXp's O(√xp) walk for ~1e152 iterations (suite hang, killed) →
+  policy tightened to SAFE integers across accrueXp/accrueCoins/validator
+  counts, red-first each (a hostile save xp:1e300 would have DoS'd the
+  loader). config/profile.ts A-00 guest pools CONTRACT (10/10/30);
+  guest currencies deferred to Stage-4 login (DIVERGENCES M4-d).
+  game/profileStore.ts = the ONLY localStorage site (versioned key, every
+  load through the validator, never throws). DuelScene renders the
+  profile (coins + xp/threshold); DuelResult accrues on win only (display
+  stays KILL_REWARD math — +10/+8 parity). Ratchet: new-file RED receipt →
+  refresh (empty literal set). BROWSER GATE CLOSED (Chrome MCP, dev-seam
+  loop-step under occlusion — document.hidden froze rAF at frame 5, the
+  known landmine; protocol recipe held). Protocol notes for next time:
+  Phaser 3 listens for MOUSE events — synthetic PointerEvents are ignored
+  (cost 3 defeats to diagnose); the harness bot's exact tactics ported
+  (slash every 45+jitter frames, jump at telegraph+10 covers the +32
+  commit) won at 2023 frames ≈ 33.7 s with 76 HP left. Evidence: YOU WIN
+  +10 XP / +8 COINS screenshot · save {xp:10, coins:8} · R-restart HUD "8"
+  + "10 / 550  XP" (screenshot) · full page reload persists · 3 defeats →
+  +0/+0, save stays null · corrupt save (danRank −1) → fresh profile ·
+  M3 chi bar + red denial flash + greyed slots (zoom screenshot; denial
+  frozen live via the fx clock, cooldown-untouched re-proven in-browser) ·
+  zero console errors from fresh load. Ledgers same commit: TELLS row 32 ☑
+  + row 29 curve-wired; CALIBRATION rows 16 (chi economy) + 17 (XP tail);
+  DIVERGENCES M4 seam policies. Gate paste: tsc both configs exit 0 ·
+  eslint exit 0 · vitest 377/377 (25 files).

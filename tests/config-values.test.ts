@@ -80,6 +80,7 @@ import {
   WAR_ROOM,
 } from '../src/config/economy';
 import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../src/config/chi';
+import { PROFILE_START_POOLS } from '../src/config/profile';
 import { XP_DELTA_STEP, XP_THRESHOLDS } from '../src/config/xp';
 import { SKILL_COOLDOWN_MS } from '../src/config/skills';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
@@ -373,6 +374,12 @@ describe('chi.ts — Stage 3 M3, the Chi meter (ALL INFERRED — no frame-backed
   });
   it('CHI_COST — nuke > escape > parry, charged on top of cooldowns', () => {
     expect(CHI_COST).toEqual({ chiPunch: 30, smokeBomb: 25, stab: 10 });
+  });
+});
+
+describe('profile.ts — Stage 3 M4, the A-00 guest-start pools', () => {
+  it('PROFILE_START_POOLS (CONTRACT: Player sheet reads HP 10 / CHI 10 / AP 30)', () => {
+    expect(PROFILE_START_POOLS).toEqual({ hp: 10, chi: 10, ap: 30 });
   });
 });
 

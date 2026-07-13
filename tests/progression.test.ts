@@ -302,10 +302,12 @@ describe('M1 hostile-review hardening (Session 5)', () => {
     expect(accrueCoins(initProgression(POOLS), 0.5).coins).toBe(0);
   });
 
-  it('accrueCoins refuses to overflow coins to Infinity (chaos)', () => {
-    const once = accrueCoins(initProgression(POOLS), Number.MAX_VALUE);
-    expect(once.coins).toBe(Number.MAX_VALUE);
-    expect(accrueCoins(once, Number.MAX_VALUE).coins).toBe(Number.MAX_VALUE); // second ignored
+  it('accrueCoins refuses sums outside the safe-integer range (chaos)', () => {
+    // MAX_VALUE passes a naive isInteger check but breaks exact arithmetic.
+    expect(accrueCoins(initProgression(POOLS), Number.MAX_VALUE).coins).toBe(0);
+    const nearMax = accrueCoins(initProgression(POOLS), Number.MAX_SAFE_INTEGER);
+    expect(nearMax.coins).toBe(Number.MAX_SAFE_INTEGER);
+    expect(accrueCoins(nearMax, 1).coins).toBe(Number.MAX_SAFE_INTEGER); // sum unsafe → ignored
   });
 
   it('initProgression rejects a zero pool max — a 0/0 pool is NaN bait (chaos)', () => {

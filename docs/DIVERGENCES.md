@@ -89,6 +89,20 @@ decisions" stays the owner-facing queue; this file is the permanent record.
   Stage-4 overworld profile state) and "fullRefill=false is dead code to
   delete" (it renders the CONTRACT config field honestly).
 
+- **M4 profile-seam policies (Stage-3 M4, `core/profile.ts` +
+  `game/profileStore.ts`)** — (a) the save validator REJECTS, never repairs:
+  any failed check → null → fresh profile (veto = clamp/repair fields);
+  includes cross-field invariants — level must equal `levelForXp(xp)` (veto
+  = re-derive level) and a first-run save can't exceed the SP cap; (b)
+  `rebirth` resets xp to 0 — level is DERIVED from xp, so a kept total would
+  contradict the fresh-L1 reset (INFERRED; veto = keep xp); (c) accrued
+  totals are bounded to SAFE integers (`Number.isSafeInteger`) — past 2^53
+  integer math silently loses exactness and an unbounded xp total unbounds
+  the O(√xp) level walk (found live: a MAX_VALUE accrual hung the suite);
+  (d) A-00 guest-start currencies (100 coins / 3 gold) are NOT seeded — they
+  belong to the Stage-4 login/guest flow, not the duel accrual seam (veto =
+  seed them in `freshProfile` now).
+
 ## Structural deviations (deliberate, no behavior claim on the original)
 
 - **HAS_CASH_PURCHASE = false** — deliberate deviation; the original sold

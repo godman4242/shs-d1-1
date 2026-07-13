@@ -180,6 +180,7 @@
     "0.85": 1,
     "1.25": 1
   },
+  "src/game/profileStore.ts": {},
   "src/game/samurai.ts": {
     "0": 3,
     "1": 8,

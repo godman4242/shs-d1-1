@@ -15,7 +15,6 @@ import {
 import { ENEMY_BASE, PLAYER_BASE, SKILL_VERB } from '../config/combat-sim';
 import { DUEL_ENEMY, DUEL_SPAWNS } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
-import { ONE } from '../config/nums';
 import { FINISHER_FLASH, SLASH_ARC } from '../config/fx';
 import { COL } from '../config/palette';
 import { SKILL_COOLDOWN_MS } from '../config/skills';
@@ -27,8 +26,10 @@ import { closestPointOnPolyline } from '../core/geometry';
 import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
 import { Sim, type FighterSide } from '../core/Sim';
+import type { Progression } from '../core/progression';
 import type { Vec } from '../core/vec';
 import { xpThreshold } from '../core/xp';
+import { loadProfile } from './profileStore';
 import { drawSamurai, ENEMY_LOOK, PLAYER_LOOK, type SamuraiPose } from './samurai';
 
 /** Render-FX record: a finished stroke's blade trail, fading out. */
@@ -96,6 +97,8 @@ export class DuelScene extends Phaser.Scene {
   private telegraphUntil = 0;
   /** fx-clock deadline of the chi-bar denial flash (skillDenied cue, M3). */
   private chiDeniedUntil = 0;
+  /** The persisted profile snapshot rendered by the HUD (loaded in create). */
+  private profile!: Progression;
   private telegraphKind: 'strike' | 'stance' = 'strike';
   private enemyGuardUntil = 0;
   private killBeatAt = 0;
@@ -127,6 +130,10 @@ export class DuelScene extends Phaser.Scene {
     this.droplets = [];
     this.dragPoints = [];
     this.dragging = false;
+
+    // Persistent profile (M4): reloaded on every create() — an R-restart or
+    // page reload re-reads the save, which IS the persistence gate flow.
+    this.profile = loadProfile();
 
     // Seeded mulberry32 at the boundary (Math.random is banned in core/).
     // Sim and AI share one stream — call order is deterministic.
@@ -279,11 +286,16 @@ export class DuelScene extends Phaser.Scene {
       strokeThickness: 4,
     });
     this.texts = {
-      coins: this.add.text(56, 34, '0', style(20)).setDepth(21),
-      // Denominator reads the real curve (M2); M4 wires the numerator to the
-      // persisted profile — a fresh L1 renders as "0 / 550" (A-00 anatomy).
+      // Both counters render the persisted profile (M4) — a fresh L1 reads
+      // "0" coins and "0 / 550 XP" (A-00 anatomy); kills accrue and persist.
+      coins: this.add.text(56, 34, String(this.profile.coins), style(20)).setDepth(21),
       xp: this.add
-        .text(GAME_WIDTH - 24, 34, `0 / ${xpThreshold(ONE)}  XP`, style(18))
+        .text(
+          GAME_WIDTH - 24,
+          34,
+          `${this.profile.xp} / ${xpThreshold(this.profile.level)}  XP`,
+          style(18),
+        )
         .setOrigin(1, 0)
         .setDepth(21),
       combo: this.add
