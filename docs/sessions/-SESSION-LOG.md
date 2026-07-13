@@ -531,3 +531,20 @@ Crash-resilience log. Updated per milestone, never "at the end."
   + row 29 curve-wired; CALIBRATION rows 16 (chi economy) + 17 (XP tail);
   DIVERGENCES M4 seam policies. Gate paste: tsc both configs exit 0 ·
   eslint exit 0 · vitest 377/377 (25 files).
+- **13:05** STAGE4_KICKOFF.md written + committed (campaign: boot/title →
+  name-story BIBLE + dialogue → town/NPCs → quests → RPG screens →
+  Season/Episode/haiku structure → gate close). The stage-ruling invariant
+  gets its own section: every clan/character/place name and every line of
+  dialogue INVENTED (the spec's 1:1 name list is permission-gated; we keep
+  structure/mechanics only), M2 bible = single source for all campaign
+  text. Carried decisions #10–#13 with defaults (stat-point effects
+  contradiction, dialogue data home, skills-screen depth, guest-currency
+  seed site); landmines include the M1-review Stage-4 bindings (SP cap →
+  total-earned, rebirth pool-max reset, L80 UI clamp) and the browser
+  protocol lesson (Phaser wants MOUSE events; loop-step under occlusion).
+  KICKOFF BAR: reached — scope is the spec's produce list verbatim, every
+  milestone carries its research anchor + proof method, decisions have
+  defaults + veto paths, and one polish pass fixed a TELLS row-number
+  error. SESSION 5 CLOSE: Stage 3 opened at 6/7 gate items — closes 100% ☑
+  with M1-review, M2, M3, M4 landed red-first (333→377 tests), ledgers
+  current, Stage-4 entry point committed.
