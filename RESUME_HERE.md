@@ -15,9 +15,13 @@
 
 ## Current focus
 **Stage 3 — Progression: IN PROGRESS. M1 (`core/progression.ts`) DONE
-(2026-07-12, build-loop cycle; Session-4 review verdict: KEEP).** 6 of 7
-Stage-3 gate items cleared headless + chaos-proven (gate table under
-"State"); the 7th is browser-only (queued above).
+(2026-07-12, build-loop cycle; Session-4 review verdict: KEEP). M2
+(XP curve: `config/xp.ts` + `core/xp.ts` + HUD denominator) DONE
+(2026-07-13, Session 5, red-first).** 6 of 7 Stage-3 gate items cleared
+headless + chaos-proven (gate table under "State"); the 7th is
+browser-only (queued above). M1's hostile review (SESSION5 §1.1) ran but
+was quota-killed at the verify stage — 25 raw findings are UNVERIFIED,
+triaged inline (see session log 2026-07-13).
 **INTERACTIVE entry point: `docs/sessions/SESSION5_KICKOFF.md`** (loop
 handshake first · M1 hostile review · XP curve from study data · Chi meter ·
 persistence + browser gate · close). Headless loop cycles keep following
@@ -29,12 +33,13 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
 ~2 h later and rides the quota reset by itself.
 
 ## State
-- **Stage 3: IN PROGRESS — M1 (`core/progression.ts`) DONE (2026-07-12).**
-  Suite 333/333 · tsc both configs exit 0 · eslint exit 0. 6/7 gate items
-  cleared headless; item 7 is browser-only (queued at top).
+- **Stage 3: IN PROGRESS — M1 (`core/progression.ts`) DONE (2026-07-12) ·
+  M2 (XP curve) DONE (2026-07-13).** Suite 346/346 · tsc both configs exit
+  0 · eslint exit 0. 6/7 gate items cleared headless; item 7 is
+  browser-only (queued at top).
   | Gate item (STAGE3_KICKOFF §3, errata-read) | Evidence |
   |---|---|
-  | progression unit tests green | 28/28 in `tests/progression.test.ts`; full suite 305→333 |
+  | progression unit tests green | 28/28 in `tests/progression.test.ts` + 11/11 in `tests/xp.test.ts`; full suite 305→346 |
   | Level-up: exactly +1 SP, +3 stat, full HP/Chi/AP refill | `levelUp` exact-pins (SP=+1, stat=+3, drained pools → current==max on all three) |
   | Rebirth: +10 elemental, stacks N times | property test to N=MAX_DAN_RANK (fire → 10×10=100; water stays 0); distributes across elements when re-picked |
   | 80 SP first-run cap enforced | 200 level-ups → SP pinned at 80 (chaos: cap disarmed → 200 RED); cap lifts after rebirth (danRank>0) |
@@ -100,17 +105,20 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**Stage-3 M1 (levelUp/rebirth math) DONE.** Next milestone toward the gate,
-per STAGE3_KICKOFF §2 work order:
-- **M2 — XP-curve research** BEFORE inventing one: check
-  `docs/research/original-game-facts.md` + wikis for level thresholds (the
-  "0 / 550" B-23 HUD reading is one sample, not a curve). Dry research →
-  INFERRED curve, flagged, ONE named config site. Wire XP→`levelUp` in core.
+**M1 + M2 DONE.** Remaining, per SESSION5_KICKOFF §1 work order:
+- **M1-review fixes** — triage the 25 UNVERIFIED hostile-review findings
+  inline (session log 2026-07-13): confirmed → red-first fixes (preservation
+  pins on a rich character, input-non-mutation pins, accrueCoins result
+  guards, zero-max pool guard), structural → DIVERGENCES entries, corrupt-
+  save guards → deferred to the M4 seam where they belong.
 - **M3 — Chi meter + skill costs** (the Stage-2 deferral): Chi in Sim, skills
-  1/2/3 gain Chi costs, HUD Chi bar. Chaos: cost > meter → denied, no CD spent.
+  1/2/3 gain Chi costs, HUD Chi bar. Chaos: cost > meter → denied, no CD
+  spent. Then RE-RUN the 24-seed harness; re-pin medians w/ RED receipt if
+  any Sim surface moved.
 - **M4 — accrual + persistence seam** → clears the queued browser gate item
   (kill → XP/coins accrue + persist across R-restart; profile math in core,
-  localStorage at the game/ boundary, DEV-clearable).
+  localStorage at the game/ boundary, DEV-clearable). XP→level wiring uses
+  `core/xp.ts` levelForXp (M2) + `core/progression.ts` levelUp (M1).
 Works under the build loop — GOAL.md is current and routes through this file.
 
 ## Stage-2 milestone history (all on `master`, evidence in session log)

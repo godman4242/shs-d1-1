@@ -424,3 +424,29 @@ Crash-resilience log. Updated per milestone, never "at the end."
   handshake → M1 hostile review → XP curve FROM STUDY DATA (L1–L10
   thresholds already extracted) → Chi meter + harness re-pin →
   persistence + browser gate → STAGE 3 CLOSED → Stage-4 kickoff.
+
+## 2026-07-13 — Session 5 (interactive): Stage-3 close run
+
+- **~20:30 (07-12)** Session 5 opens on the SESSION5 kickoff. TDD skill
+  invoked first; loop handshake done (PAUSE touched, no CYCLE_RUNNING —
+  loop idle, single-writer safe).
+- **20:40→10:50** M1 hostile-review workflow (`wf_f3950331-e40`, 82 agents)
+  QUOTA-KILLED mid-run: 5/6 attack lenses returned 25 raw findings, then
+  the session limit killed the coverage lens, the dedup agent and ALL 77
+  verifier votes. Audit rule applied: quota-killed = UNVERIFIED, never
+  refuted → findings triaged INLINE this session (fixes = next commit).
+  Decision: no more fan-out workflows this session (quota risk); veto =
+  resume `wf_f3950331-e40` after reset for machine verification.
+- **10:50** M2 XP CURVE landed red-first (`tests/xp.test.ts` watched RED on
+  missing modules, then 11/11): `config/xp.ts` — XP_THRESHOLDS pins the ten
+  frame-backed cumulative caps 550…31,400 (SYNTHESIS §1.2, one segment read
+  each, CONTRACT; B-05's 15,350 anomaly excluded) + XP_DELTA_STEP=500
+  (INFERRED L11+ extrapolation matching the 4550→5000→5500 delta tail,
+  flagged); `core/xp.ts` — xpThreshold (table + extrapolated tail) and
+  levelForXp (cumulative-cap semantics: reaching the cap finishes the
+  level; O(level) walk, MAX_SAFE_INTEGER-safe, junk-input chaos guards).
+  Double-entered in config-values.test.ts; chaos plant 550→555 → 4 RED
+  across BOTH pin files → reverted → green. HUD XP denominator now reads
+  the real curve (`xpThreshold(ONE)` in DuelScene, render-only; numerator
+  stays 0 until the M4 profile seam). Gate paste: tsc both configs exit 0 ·
+  eslint exit 0 · vitest 346/346 (24 files).

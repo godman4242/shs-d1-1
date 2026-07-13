@@ -14,6 +14,7 @@ import {
 import { ENEMY_BASE, PLAYER_BASE, SKILL_VERB } from '../config/combat-sim';
 import { DUEL_ENEMY, DUEL_SPAWNS } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
+import { ONE } from '../config/nums';
 import { FINISHER_FLASH, SLASH_ARC } from '../config/fx';
 import { COL } from '../config/palette';
 import { SKILL_COOLDOWN_MS } from '../config/skills';
@@ -26,6 +27,7 @@ import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
 import { Sim, type FighterSide } from '../core/Sim';
 import type { Vec } from '../core/vec';
+import { xpThreshold } from '../core/xp';
 import { drawSamurai, ENEMY_LOOK, PLAYER_LOOK, type SamuraiPose } from './samurai';
 
 /** Render-FX record: a finished stroke's blade trail, fading out. */
@@ -274,7 +276,12 @@ export class DuelScene extends Phaser.Scene {
     });
     this.texts = {
       coins: this.add.text(56, 34, '0', style(20)).setDepth(21),
-      xp: this.add.text(GAME_WIDTH - 24, 34, '0 / 550  XP', style(18)).setOrigin(1, 0).setDepth(21),
+      // Denominator reads the real curve (M2); M4 wires the numerator to the
+      // persisted profile — a fresh L1 renders as "0 / 550" (A-00 anatomy).
+      xp: this.add
+        .text(GAME_WIDTH - 24, 34, `0 / ${xpThreshold(ONE)}  XP`, style(18))
+        .setOrigin(1, 0)
+        .setDepth(21),
       combo: this.add
         .text(GAME_WIDTH - 60, 74, '', {
           ...style(64, '#c81a10'),

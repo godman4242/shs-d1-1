@@ -79,6 +79,7 @@ import {
   REBIRTH,
   WAR_ROOM,
 } from '../src/config/economy';
+import { XP_DELTA_STEP, XP_THRESHOLDS } from '../src/config/xp';
 import { SKILL_COOLDOWN_MS } from '../src/config/skills';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
@@ -361,6 +362,26 @@ describe('economy.ts — Stage 2 item 10, exact spec names and values', () => {
       controlPointFlagBonus: 1.2,
     });
     expect(HAS_CASH_PURCHASE).toBe(false);
+  });
+});
+
+describe('xp.ts — Stage 3 M2, the frame-backed XP curve', () => {
+  it('XP_THRESHOLDS (CONTRACT: SYNTHESIS §1.2 cumulative caps, one segment read each)', () => {
+    expect(XP_THRESHOLDS).toEqual([
+      550, // A-00
+      1450, // A-01
+      2950, // A-03
+      5150, // A-06
+      8350, // A-14
+      12150, // A-21
+      16350, // B-04 (B-05's 15,350 = single-frame anomaly, flagged)
+      20900, // B-08
+      25900, // B-18
+      31400, // B-22
+    ]);
+  });
+  it('XP_DELTA_STEP (INFERRED: L11+ delta growth, observed tail 4550→5000→5500)', () => {
+    expect(XP_DELTA_STEP).toBe(500);
   });
 });
 
