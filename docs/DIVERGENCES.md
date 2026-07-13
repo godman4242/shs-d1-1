@@ -21,6 +21,10 @@ decisions" stays the owner-facing queue; this file is the permanent record.
   rebirth past the ceiling throws). Consequence: `REBIRTH.lateGold` (the 11+
   tier in source data) is UNREACHABLE under a 10-rank cap — kept as a pinned
   record only, referenced by no code path (flagged in `economy.ts`).
+  VETO COMPOSITION (Session-5 review): the tenthGold tier is keyed to the
+  FINAL rank (`danRank < MAX_DAN_RANK ? earlyGold : tenthGold`), which equals
+  the research ordinal "the 10th" only while MAX_DAN_RANK is 10 — a veto to 5
+  must also revisit the payout tier or the 5th rebirth silently pays 100.
 - **Rebirth = elemental +10, stacking** — decision #3, default elemental
   (errata). LANDED Stage-3 M1: `economy.REBIRTH.attackBonusPerRebirth` was
   renamed `elementalPointsPerRebirth` (the "+10 Attack" label was research-
@@ -65,6 +69,25 @@ decisions" stays the owner-facing queue; this file is the permanent record.
   fresh L1 (research says only "resets to L1"; veto = keep them); (c) `level`
   is not hard-capped in core — a level ceiling is Stage-4 UI, the gate's
   binding rule is the SP cap (veto = clamp level to the cap).
+- **M1 review readings (Session 5 hostile review, quota-degraded → inline
+  triage)** — five recorded readings, two guards landed red-first
+  (`accrueCoins` integer+overflow guard; `initProgression` rejects zero pool
+  maxes — veto on either = relax the guard + its chaos test):
+  (a) the SP cap clamps the UNSPENT pool — once SP spending exists (Stage 4)
+  the cap must track total-earned or it stops binding; (b) L1→L80 = 79
+  level-ups = 79 SP, so research's "80 SP first run" is loose cap×rate math
+  and FIRST_RUN_SP_CAP=80 is a safety net, not a reachable value (veto = seed
+  L1 with 1 SP); (c) `rebirth` keeps grown pool maxes — unreachable today
+  (no stat spending in Stage 3), revisit at Stage 4; (d) the Rebirth Scroll's
+  1,000-coin price + Level-80 gate (A-17) belong to the Stage-4 shop/UI
+  boundary, NOT the core transition; (e) corrupt-save guards (NaN fields,
+  missing elemental keys, negative danRank) land in the M4 seam validator.
+  Coverage hardening landed with them: rich-character preservation pins +
+  a drained-pool input-non-mutation snapshot pin, both chaos-plant-proven.
+  REFUTED with evidence: "pool state core-unreachable steers game/ toward
+  mutation" (in-duel pools live in Sim's FighterState; Progression pools are
+  Stage-4 overworld profile state) and "fullRefill=false is dead code to
+  delete" (it renders the CONTRACT config field honestly).
 
 ## Structural deviations (deliberate, no behavior claim on the original)
 

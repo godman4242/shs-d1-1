@@ -183,10 +183,13 @@ describe('rebirth gold payout schedule', () => {
     expect(p.gold).toBe((MAX_DAN_RANK - 1) * REBIRTH.earlyGold); // 9 × 25 = 225
   });
 
-  it('the 10th (final) rebirth pays tenthGold on top', () => {
+  it('the 10th (final) rebirth pays tenthGold INSTEAD of earlyGold', () => {
+    // NOTE: the tier condition keys on "final rank" (== MAX_DAN_RANK), which
+    // equals the research ordinal "the 10th" ONLY while MAX_DAN_RANK is 10 —
+    // a decision-#2 veto to 5 must also revisit the payout tier (DIVERGENCES).
     let p = initProgression(POOLS);
     for (let n = 1; n <= MAX_DAN_RANK; n++) p = rebirth(p, 'fire');
-    expect(p.gold).toBe((MAX_DAN_RANK - 1) * REBIRTH.earlyGold + REBIRTH.tenthGold); // 325
+    expect(p.gold).toBe((MAX_DAN_RANK - 1) * REBIRTH.earlyGold + REBIRTH.tenthGold); // 225 + 100 = 325
   });
 });
 
@@ -241,5 +244,71 @@ describe('two currencies — coins grindable, gold earnable', () => {
 
   it('accrueCoins ignores a negative amount (chaos)', () => {
     expect(accrueCoins(initProgression(POOLS), -5).coins).toBe(0);
+  });
+});
+
+describe('M1 hostile-review hardening (Session 5)', () => {
+  /** A character with something to lose in EVERY field — a wiping transition
+   *  can't hide behind fresh-character zeros (review: vacuous preservation). */
+  const rich = (): Progression => {
+    let p = initProgression(POOLS);
+    p = rebirth(p, 'fire'); // danRank 1, gold 25, fire 10
+    p = levelUp(levelUp(p)); // L3, SP 2, stat 6
+    return accrueCoins(p, 123);
+  };
+
+  it('levelUp preserves danRank, currencies, and elemental points (rich character)', () => {
+    const up = levelUp(rich());
+    // pinned to KNOWN non-zero values, not to the input's own record — a wipe
+    // inside rich()'s levelUps must not be able to launder the comparison
+    expect(up.danRank).toBe(1);
+    expect(up.coins).toBe(123);
+    expect(up.gold).toBe(REBIRTH.earlyGold);
+    expect(up.elemental.fire).toBe(REBIRTH.elementalPointsPerRebirth);
+  });
+
+  it('rebirth preserves coins and untouched-element points (rich character)', () => {
+    const p = rich();
+    const reborn = rebirth(p, 'water');
+    expect(reborn.coins).toBe(123); // the scroll's 1000-coin PRICE is a Stage-4 shop concern
+    expect(reborn.elemental.fire).toBe(REBIRTH.elementalPointsPerRebirth);
+    expect(reborn.elemental.water).toBe(REBIRTH.elementalPointsPerRebirth);
+  });
+
+  it('accrueCoins touches ONLY coins (rich character)', () => {
+    const p = rich();
+    const paid = accrueCoins(p, 8);
+    expect(paid).toEqual({ ...p, coins: p.coins + 8 });
+  });
+
+  it('no transition mutates its input (pure snapshots, deep-compared)', () => {
+    // pools drained on purpose: a refill that mutated in place would be a
+    // silent no-op on full pools and slip past the snapshot compare
+    const p: Progression = {
+      ...rich(),
+      hp: { current: 1, max: POOLS.hp },
+      chi: { current: 2, max: POOLS.chi },
+      ap: { current: 3, max: POOLS.ap },
+    };
+    const snapshot = structuredClone(p);
+    levelUp(p);
+    rebirth(p, 'water');
+    accrueCoins(p, 8);
+    initProgression(POOLS);
+    expect(p).toEqual(snapshot);
+  });
+
+  it('accrueCoins ignores a fractional amount — coins are integral (chaos)', () => {
+    expect(accrueCoins(initProgression(POOLS), 0.5).coins).toBe(0);
+  });
+
+  it('accrueCoins refuses to overflow coins to Infinity (chaos)', () => {
+    const once = accrueCoins(initProgression(POOLS), Number.MAX_VALUE);
+    expect(once.coins).toBe(Number.MAX_VALUE);
+    expect(accrueCoins(once, Number.MAX_VALUE).coins).toBe(Number.MAX_VALUE); // second ignored
+  });
+
+  it('initProgression rejects a zero pool max — a 0/0 pool is NaN bait (chaos)', () => {
+    expect(() => initProgression({ hp: 0, chi: 50, ap: 30 })).toThrow();
   });
 });

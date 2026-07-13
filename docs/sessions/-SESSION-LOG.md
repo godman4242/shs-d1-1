@@ -450,3 +450,25 @@ Crash-resilience log. Updated per milestone, never "at the end."
   the real curve (`xpThreshold(ONE)` in DuelScene, render-only; numerator
   stays 0 until the M4 profile seam). Gate paste: tsc both configs exit 0 ·
   eslint exit 0 · vitest 346/346 (24 files).
+- **11:10** M1-REVIEW TRIAGE landed (SESSION5 §1.1, the 25 UNVERIFIED
+  findings adjudicated inline with evidence). CONFIRMED + FIXED red-first:
+  `accrueCoins` accepted fractional amounts and could overflow coins to a
+  persistent Infinity (guard: integer + result-finite, junk ignored not
+  thrown, 2 tests watched RED); `initProgression` accepted a zero pool max
+  (0/0 → NaN bait downstream; guard now positive-only, 1 test watched RED).
+  CONFIRMED coverage gaps → pins landed + chaos-plant-proven: rich-character
+  preservation (levelUp keeps danRank/coins/gold/elemental pinned to KNOWN
+  non-zero values; rebirth keeps coins + untouched elements; accrueCoins
+  touches only coins) — plant "levelUp wipes elemental" → 2 RED → restore
+  green; input-non-mutation snapshot pin on DRAINED pools (full pools would
+  launder a mutating refill) — plant "refill mutates in place" → 1 RED →
+  restore green. Plant-1 also exposed + fixed a weak first draft of the
+  levelUp pin (compared against the input's own possibly-corrupted record).
+  DOCUMENTED (DIVERGENCES "M1 review readings" + module docblock): SP cap
+  clamps UNSPENT (revisit when spending lands), 79-SP-at-L80 arithmetic
+  (veto = seed L1 SP=1), rebirth keeps grown maxes (unreachable until stat
+  spending), scroll price/L80 gate = Stage-4 shop boundary, corrupt-save
+  guards = M4 seam validator, tenthGold/MAX_DAN_RANK veto composition.
+  REFUTED with evidence (logged in the ledger): pool-state-unreachable and
+  fullRefill-dead-code claims. Misleading "on top" test name fixed. NO
+  rewrite of surviving code (kickoff rule honored).

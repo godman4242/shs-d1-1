@@ -19,9 +19,11 @@
 (XP curve: `config/xp.ts` + `core/xp.ts` + HUD denominator) DONE
 (2026-07-13, Session 5, red-first).** 6 of 7 Stage-3 gate items cleared
 headless + chaos-proven (gate table under "State"); the 7th is
-browser-only (queued above). M1's hostile review (SESSION5 §1.1) ran but
-was quota-killed at the verify stage — 25 raw findings are UNVERIFIED,
-triaged inline (see session log 2026-07-13).
+browser-only (queued above). M1's hostile review (SESSION5 §1.1) is DONE:
+the workflow was quota-killed at the verify stage, so its 25 raw findings
+were triaged inline — 2 guards + coverage pins landed red-first, 6
+readings recorded in DIVERGENCES, 2 claims refuted with evidence (session
+log 2026-07-13 11:10). M1 survived: no rewrite.
 **INTERACTIVE entry point: `docs/sessions/SESSION5_KICKOFF.md`** (loop
 handshake first · M1 hostile review · XP curve from study data · Chi meter ·
 persistence + browser gate · close). Headless loop cycles keep following

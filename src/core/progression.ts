@@ -21,6 +21,20 @@
  *   point reset beyond "resets to L1" is INFERRED. Veto = keep them.
  * - Level itself is not hard-capped in core; a level ceiling is a Stage-4 UI
  *   concern. The gate's binding contract is the SP cap. Veto = clamp level.
+ *
+ * Hostile-review flags (Session 5 — docs/DIVERGENCES.md "M1 review readings"):
+ * - The SP cap clamps the UNSPENT pool; once SP SPENDING exists (Stage 4
+ *   skill trees) the cap must move to total-earned or it stops binding.
+ * - Arithmetic: L1→L80 is 79 level-ups = 79 SP; research's "80 SP first run"
+ *   is loose cap×rate math. The clamp is a safety net, not a reachable value.
+ *   Veto = seed L1 with 1 SP.
+ * - rebirth keeps grown pool maxes (no stat spending exists in Stage 3, so
+ *   maxes can't grow yet); revisit "fresh L1" vs base stats with Stage 4.
+ * - The Rebirth Scroll's 1,000-coin price and Level-80 gate (A-17) live at
+ *   the Stage-4 shop/UI boundary — this transition neither charges coins nor
+ *   checks level, by design.
+ * - Corrupt-save shapes (NaN fields, missing elemental keys, negative
+ *   danRank) are guarded at the M4 persistence seam validator, not here.
  */
 import {
   FIRST_RUN_SP_CAP,
@@ -74,8 +88,8 @@ const capSkillPoints = (sp: number, danRank: number): number =>
  */
 export const initProgression = (maxes: { hp: number; chi: number; ap: number }): Progression => {
   const pool = (max: number): Pool => {
-    if (!Number.isFinite(max) || max < ZERO) {
-      throw new RangeError('initProgression: pool max must be finite and non-negative');
+    if (!Number.isFinite(max) || max <= ZERO) {
+      throw new RangeError('initProgression: pool max must be finite and positive');
     }
     return { current: max, max };
   };
@@ -141,6 +155,14 @@ export const rebirth = (p: Progression, element: ElementId): Progression => {
   };
 };
 
-/** Accrue grindable coins; a non-finite or negative amount is ignored. */
-export const accrueCoins = (p: Progression, amount: number): Progression =>
-  Number.isFinite(amount) && amount >= ZERO ? { ...p, coins: p.coins + amount } : p;
+/**
+ * Accrue grindable coins. Junk is ignored, never thrown: non-integer or
+ * negative amounts (coins are integral in the original), and any amount that
+ * would overflow the total past Number range (a poisoned Infinity would
+ * otherwise persist forever through the M4 save seam).
+ */
+export const accrueCoins = (p: Progression, amount: number): Progression => {
+  if (!Number.isInteger(amount) || amount < ZERO) return p;
+  const coins = p.coins + amount;
+  return Number.isFinite(coins) ? { ...p, coins } : p;
+};
