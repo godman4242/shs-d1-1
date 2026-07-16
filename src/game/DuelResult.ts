@@ -24,10 +24,13 @@ export class DuelResult extends Phaser.Scene {
     const won = data.winner === 'player';
 
     const g = this.add.graphics();
-    // Hard cut: flat dark-red field with black silhouette band (no fade).
-    g.fillStyle(won ? COL.bloodDark : COL.outline, 0.88);
+    // Hard cut: FLAT red field + dark silhouette band (no fade). Both colors
+    // frame-MEASURED (fidelity gate v1): the OG YOU WIN card samples an exact
+    // flat #a30e00 at independent points (alpha 1 — never a blend over the
+    // arena) with a dark olive-black ground band.
+    g.fillStyle(won ? COL.winRed : COL.outline, won ? 1 : 0.88);
     g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-    g.fillStyle(COL.outline, won ? 0.65 : 0.9);
+    g.fillStyle(won ? COL.silhouetteDark : COL.outline, won ? 1 : 0.9);
     g.fillRect(0, GAME_HEIGHT - 170, GAME_WIDTH, 170);
 
     showBanner(this, won ? 'YOU WIN' : 'YOU WERE DEFEATED', {

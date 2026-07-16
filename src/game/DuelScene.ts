@@ -18,7 +18,6 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { FINISHER_FLASH, SLASH_ARC } from '../config/fx';
 import { COL } from '../config/palette';
 import { SKILL_COOLDOWN_MS } from '../config/skills';
-import type { StanceId } from '../config/stances';
 import { AISeamController } from '../core/AISeamController';
 import { DrawnStroke } from '../core/DrawnStroke';
 import { advanceFxClock, integrateDroplet } from '../core/fx';
@@ -26,10 +25,7 @@ import { closestPointOnPolyline } from '../core/geometry';
 import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
 import { Sim, type FighterSide } from '../core/Sim';
-import type { Progression } from '../core/progression';
 import type { Vec } from '../core/vec';
-import { xpThreshold } from '../core/xp';
-import { loadProfile } from './profileStore';
 import { SCARF } from '../config/anim';
 import { FighterAnimator } from '../core/fighterAnimator';
 import { drawSamurai, ENEMY_LOOK, PLAYER_LOOK } from './samurai';
@@ -52,12 +48,10 @@ interface Droplet {
 const BLOOD_LIFE_MS = 650;
 const BLOOD_GRAVITY = 780; // px/s² — render feel only
 const DEG_TO_RAD = Math.PI / 180;
-const LETTERBOX_H = 26; // combat letterbox strip (fidelity tell 21)
-const STANCE_RING: Record<StanceId, number> = {
-  light: COL.focusBlue,
-  balanced: COL.hatStraw,
-  heavy: COL.blood,
-};
+// HUD geometry below is frame-MEASURED off the original (fidelity gate v1,
+// 2026-07-16): normalized landmarks from the B-23 duel window × our
+// 1024×576 stage, cross-checked against A-28 (deltas ≤6px @1080p).
+// The gate (config/fidelity.ts + `await __fidelity.run()`) pins it.
 
 /**
  * Stage-2 DuelScene — RENDER-ONLY (src/game/CLAUDE.md): builds PlayerIntent
@@ -81,11 +75,10 @@ export class DuelScene extends Phaser.Scene {
   private fx!: Phaser.GameObjects.Graphics;
   private hud!: Phaser.GameObjects.Graphics;
   private texts!: {
-    coins: Phaser.GameObjects.Text;
-    xp: Phaser.GameObjects.Text;
     combo: Phaser.GameObjects.Text;
     comboPlate: Phaser.GameObjects.Text;
     nameplate: Phaser.GameObjects.Text;
+    playerName: Phaser.GameObjects.Text;
     stance: Phaser.GameObjects.Text;
     autoSlash: Phaser.GameObjects.Text;
     slots: Phaser.GameObjects.Text[];
@@ -99,8 +92,6 @@ export class DuelScene extends Phaser.Scene {
   private telegraphUntil = 0;
   /** fx-clock deadline of the chi-bar denial flash (skillDenied cue, M3). */
   private chiDeniedUntil = 0;
-  /** The persisted profile snapshot rendered by the HUD (loaded in create). */
-  private profile!: Progression;
   private telegraphKind: 'strike' | 'stance' = 'strike';
   private enemyGuardUntil = 0;
   private killBeatAt = 0;
@@ -147,9 +138,8 @@ export class DuelScene extends Phaser.Scene {
     this.playerLastX = DUEL_SPAWNS.player.pos.x;
     this.enemyLastX = DUEL_SPAWNS.enemy.pos.x;
 
-    // Persistent profile (M4): reloaded on every create() — an R-restart or
-    // page reload re-reads the save, which IS the persistence gate flow.
-    this.profile = loadProfile();
+    // (The persisted profile is no longer read here: the OG shows no
+    // coins/XP chrome during fights — DuelResult owns accrual/persistence.)
 
     // Seeded mulberry32 at the boundary (Math.random is banned in core/).
     // Sim and AI share one stream — call order is deterministic.
@@ -188,7 +178,7 @@ export class DuelScene extends Phaser.Scene {
       Phaser.Input.Keyboard.Key
     > | undefined;
 
-    const portraitZone = this.add.zone(88, GAME_HEIGHT - 64, 120, 96).setInteractive();
+    const portraitZone = this.add.zone(91, 537, 90, 90).setInteractive();
     portraitZone.on(
       'pointerdown',
       (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: { stopPropagation: () => void }) => {
@@ -272,11 +262,17 @@ export class DuelScene extends Phaser.Scene {
     g.fillRect(0, 436, GAME_WIDTH, 9);
     g.fillStyle(COL.forestDark, 1);
     g.fillRect(0, 516, GAME_WIDTH, GAME_HEIGHT - 516);
+    // (No standing letterbox strips: the original letterboxes only during
+    // the encounter-intro transition, never in live combat — fidelity gate
+    // v1 finding, B-23 t=3774 full-bleed vs t=3771 banded intro.)
 
-    // Combat letterbox strips
+    // AUTO SLASH OFF plate — measured box (74,24)-(367,85)@1920×1080.
     g.fillStyle(COL.outline, 1);
-    g.fillRect(0, 0, GAME_WIDTH, LETTERBOX_H);
-    g.fillRect(0, GAME_HEIGHT - LETTERBOX_H, GAME_WIDTH, LETTERBOX_H);
+    g.fillRect(39, 12, 157, 34);
+    g.fillStyle(COL.goldTrim, 1);
+    g.fillRect(41, 14, 153, 30);
+    g.fillStyle(COL.plateBrown, 1);
+    g.fillRect(43, 16, 149, 26);
   }
 
   /** One bamboo stalk: segmented vertical culm with node lines + leaves. */
@@ -302,18 +298,10 @@ export class DuelScene extends Phaser.Scene {
       strokeThickness: 4,
     });
     this.texts = {
-      // Both counters render the persisted profile (M4) — a fresh L1 reads
-      // "0" coins and "0 / 550 XP" (A-00 anatomy); kills accrue and persist.
-      coins: this.add.text(56, 34, String(this.profile.coins), style(20)).setDepth(21),
-      xp: this.add
-        .text(
-          GAME_WIDTH - 24,
-          34,
-          `${this.profile.xp} / ${xpThreshold(this.profile.level)}  XP`,
-          style(18),
-        )
-        .setOrigin(1, 0)
-        .setDepth(21),
+      // NO coins/XP counters here: the original hides ALL overworld chrome
+      // (coins, XP, minimap) during fights — both wild encounters (A-28) and
+      // VS-duels (B-23). Accrual still pays into the persisted profile via
+      // DuelResult; the reward card is where the numbers show (as in the OG).
       combo: this.add
         .text(GAME_WIDTH - 60, 74, '', {
           ...style(64, '#c81a10'),
@@ -323,21 +311,29 @@ export class DuelScene extends Phaser.Scene {
         .setOrigin(1, 0)
         .setDepth(21),
       comboPlate: this.add
-        .text(GAME_WIDTH - 24, 148, '', { ...style(16), backgroundColor: '#040304' })
+        .text(GAME_WIDTH - 24, 96, '', { ...style(16), backgroundColor: '#040304' })
         .setOrigin(1, 0)
         .setDepth(21),
+      // VS-duel opponents read WHITE (B-23); red labels are wild-mob aggro
+      // tags (A-28) — fidelity gate v1 reading.
       nameplate: this.add
-        .text(0, 0, `${DUEL_ENEMY.name} (${DUEL_ENEMY.level})`, style(16, '#c81a10'))
+        .text(0, 0, `${DUEL_ENEMY.name} (${DUEL_ENEMY.level})`, style(16, '#f5f5ef'))
         .setOrigin(0.5, 1)
         .setDepth(21),
-      stance: this.add.text(150, GAME_HEIGHT - 40, '', style(14)).setDepth(21),
+      // Player overhead name — the original shows it in gold ("GUEST" when
+      // unregistered, A-28); we are pre-login until Stage 4's title flow.
+      playerName: this.add.text(0, 0, 'GUEST', style(16, '#f0ac33')).setOrigin(0.5, 1).setDepth(21),
+      stance: this.add.text(131, GAME_HEIGHT - 17, '', style(13)).setDepth(21),
+      // Text sits ~62% down the plate like the OG's; the fill rows above it
+      // are what the plate probes sample.
       autoSlash: this.add
-        .text(24, 60, 'AUTO SLASH OFF', { ...style(14), backgroundColor: '#794802' })
-        .setPadding(8, 4, 8, 4)
+        .text(117, 34, 'AUTO SLASH OFF', { ...style(12, '#cfc9b8'), strokeThickness: 3 })
+        .setOrigin(0.5)
         .setDepth(21),
       slots: [1, 2, 3].map((n, i) =>
         this.add
-          .text(GAME_WIDTH / 2 - 90 + i * 74, GAME_HEIGHT - 62, String(n), style(16))
+          .text(799 + i * 73.5, 497, String(n), style(15))
+          .setOrigin(0.5)
           .setDepth(22),
       ),
     };
@@ -567,15 +563,19 @@ export class DuelScene extends Phaser.Scene {
       phase: fxNow,
     });
 
-    // Enemy overhead: green HP bar + nameplate (fidelity tell 22).
-    const barW = 76;
+    // Enemy overhead: green HP bar + nameplate (fidelity tell 22). Measured:
+    // bar 139×15 px @1920×1080 → 74×8 here; fill green is the original's
+    // brighter overhead green (#179b32), NOT the player-bar green.
+    const barW = 74;
     const ex = enemy.pos.x;
     const ey = enemy.pos.y - 92;
     g.fillStyle(COL.outline, 0.9);
-    g.fillRect(ex - barW / 2 - 1, ey - 1, barW + 2, 9);
-    g.fillStyle(COL.healthGreen, 1);
-    g.fillRect(ex - barW / 2, ey, (barW * enemy.hp) / enemy.maxHp, 7);
+    g.fillRect(ex - barW / 2 - 1, ey - 1, barW + 2, 8);
+    g.fillStyle(COL.enemyGreen, 1);
+    g.fillRect(ex - barW / 2, ey, (barW * enemy.hp) / enemy.maxHp, 6);
     this.texts.nameplate.setPosition(ex, ey - 4);
+    // Player overhead name (gold "GUEST" — pre-login, matching the OG).
+    this.texts.playerName.setPosition(player.pos.x, player.pos.y - 96);
   }
 
   private drawHud(now: number): void {
@@ -594,71 +594,73 @@ export class DuelScene extends Phaser.Scene {
       g.fillRect(GAME_WIDTH - 46, 0, 46, GAME_HEIGHT);
     }
 
-    // Top-left: coin token (HUD anatomy from the B-23 frame).
+    // Bottom-left: portrait in ring + bars. All geometry frame-MEASURED
+    // (fidelity gate v1): ring center (170,1007) r63 @1920×1080 → (91,537)
+    // r34 here; bars x 246→513 → x 131 len 142. Ring reads constant RED in
+    // the original (both videos, both stances) — the stance-colored ring was
+    // our invention, dropped for fidelity (stance lives in the label text).
+    const pcx = 91;
+    const pcy = 537;
     g.fillStyle(COL.outline, 1);
-    g.fillCircle(38, 44, 13);
-    g.fillStyle(COL.gold, 1);
-    g.fillCircle(38, 44, 11);
-
-    // Top-right: XP bar under the label.
-    g.fillStyle(COL.outline, 0.9);
-    g.fillRect(GAME_WIDTH - 204, 58, 180, 10);
-    g.fillStyle(COL.gold, 1);
-    g.fillRect(GAME_WIDTH - 203, 59, 2, 8); // 0 XP — progression is Stage 3
-
-    // Bottom-left: portrait in stance-colored ring + bars.
-    const px = 88;
-    const py = GAME_HEIGHT - 64;
-    g.fillStyle(COL.outline, 1);
-    g.fillCircle(px - 24, py, 34);
-    g.fillStyle(STANCE_RING[player.stance], 1);
-    g.fillCircle(px - 24, py, 31);
+    g.fillCircle(pcx, pcy, 37);
+    g.fillStyle(COL.ringRed, 1);
+    g.fillCircle(pcx, pcy, 35.5);
     g.fillStyle(COL.kimono2, 1);
-    g.fillCircle(px - 24, py, 25);
-    // mini kasa on the portrait head
+    g.fillCircle(pcx, pcy, 27.5);
+    // mini kasa on the portrait head (original art, never traced)
     g.fillStyle(COL.outline, 1);
-    g.fillTriangle(px - 46, py - 6, px - 2, py - 6, px - 24, py - 24);
+    g.fillTriangle(pcx - 22, pcy - 6, pcx + 22, pcy - 6, pcx, pcy - 24);
     g.fillStyle(COL.hatStraw, 1);
-    g.fillTriangle(px - 43, py - 7, px - 5, py - 7, px - 24, py - 22);
+    g.fillTriangle(pcx - 19, pcy - 7, pcx + 19, pcy - 7, pcx, pcy - 22);
 
-    // HP (green) / CHI (blue) — the B-23 portrait pair. Focus (our INFERRED
-    // stance-switch meter) keeps its SPACE-drain gate visibility as a strip.
-    const bx = px + 18;
-    g.fillStyle(COL.outline, 0.9);
-    g.fillRect(bx - 1, py - 21, 152, 12);
-    g.fillRect(bx - 1, py - 5, 152, 12);
+    // HP (green #02990b) over CHI (blue #2e49e2) over the white Focus pill,
+    // all on the measured brown backing (#321e00) — the B-23 bar stack.
+    const bx = 131;
+    const barLen = 142;
+    g.fillStyle(COL.outline, 1);
+    g.fillRect(bx - 1, 517, barLen + 2, 11);
+    g.fillRect(bx - 1, 534, barLen + 2, 10);
+    g.fillRect(bx - 1, 548, barLen + 2, 11);
+    g.fillStyle(COL.barBrown, 1);
+    g.fillRect(bx, 518, barLen, 9);
+    g.fillRect(bx, 535, barLen, 8);
+    g.fillRect(bx, 549, barLen, 9);
     g.fillStyle(COL.healthGreen, 1);
-    g.fillRect(bx, py - 20, (150 * player.hp) / player.maxHp, 10);
+    g.fillRect(bx, 518, (barLen * player.hp) / player.maxHp, 9);
     // Chi bar flashes blood-red while a skillDenied cue is live (M3).
     g.fillStyle(this.fxNow < this.chiDeniedUntil ? COL.blood : COL.focusBlue, 1);
-    g.fillRect(bx, py - 4, (150 * player.chi) / player.maxChi, 10);
-    // Focus strip + Shunpo/Critical slivers (spec meters; INFERRED strips).
-    g.fillStyle(COL.kimono2, 0.95);
-    g.fillRect(bx, py + 10, (150 * player.focus) / 100, 5);
+    g.fillRect(bx, 535, (barLen * player.chi) / player.maxChi, 8);
+    // Focus pill (white, drains on stance swaps — our INFERRED meter in the
+    // original's strip position).
+    g.fillStyle(COL.kimono, 0.95);
+    g.fillRect(bx, 549, (barLen * player.focus) / 100, 9);
+    // Shunpo/Critical slivers (spec meters, INFERRED placement right of the
+    // strip — the original has no such meters; kept for gate visibility).
     g.fillStyle(COL.kimono, 0.9);
-    g.fillRect(bx, py + 18, (150 * this.sim.shunpo) / 100, 3);
+    g.fillRect(bx + barLen + 6, 549, (40 * this.sim.shunpo) / 100, 3.5);
     g.fillStyle(COL.gold, 0.9);
-    g.fillRect(bx, py + 23, (150 * player.critical) / 100, 3);
+    g.fillRect(bx + barLen + 6, 554.5, (40 * player.critical) / 100, 3.5);
 
-    // Bottom-center: skill bar (3 numbered slots + cooldown sweep).
+    // Bottom-right: skill bar (measured slots: 58×60 at x 770/843.5/917,
+    // y 510; near-black interiors, grey borders, numerals above).
     const verbs = [SKILL_VERB[1], SKILL_VERB[2], SKILL_VERB[3]];
     verbs.forEach((verb, i) => {
       if (verb === undefined) return;
-      const sx = GAME_WIDTH / 2 - 100 + i * 74;
-      const sy = GAME_HEIGHT - 76;
-      g.fillStyle(COL.outline, 0.92);
-      g.fillRoundedRect(sx, sy, 56, 56, 10);
-      g.fillStyle(COL.wood, 1);
-      g.fillRoundedRect(sx + 3, sy + 3, 50, 50, 8);
+      const sx = 770 + i * 73.5;
+      const sy = 510;
+      g.fillStyle(COL.slotGrey, 1);
+      g.fillRoundedRect(sx, sy, 58, 60, 8);
+      g.fillStyle(COL.slotDark, 1);
+      g.fillRoundedRect(sx + 3, sy + 3, 52, 54, 6);
       const remaining = this.sim.cooldownRemainingS(verb);
       const total = SKILL_COOLDOWN_MS[verb] / 1000;
       if (remaining > 0) {
         g.fillStyle(COL.outline, 0.65);
-        g.fillRoundedRect(sx + 3, sy + 3, 50, 50 * Math.min(1, remaining / total), 8);
+        g.fillRoundedRect(sx + 3, sy + 3, 52, 54 * Math.min(1, remaining / total), 6);
       } else if (player.chi < CHI_COST[verb]) {
         // Ready but unaffordable — greyed like B-23's zeroed slot.
         g.fillStyle(COL.outline, 0.45);
-        g.fillRoundedRect(sx + 3, sy + 3, 50, 50, 8);
+        g.fillRoundedRect(sx + 3, sy + 3, 52, 54, 6);
       }
     });
 

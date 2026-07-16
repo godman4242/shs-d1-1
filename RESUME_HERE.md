@@ -5,12 +5,24 @@
 > `git log --oneline -10`. Trust those three over any older doc.
 > Fidelity ledgers: `docs/TELLS_CHECKLIST.md` · `docs/CALIBRATION.md` ·
 > `docs/DIVERGENCES.md` (adopted from iaido-duel mining, 2026-07-12).
+> **Fidelity GATE (2026-07-16): `docs/research/fidelity/FIDELITY_GATE.md`**
+> — measured OG assertions vs live canvas: `npm run dev` → console →
+> `await __fidelity.run()` → must stay 17/17 PASS. HUD changes re-run it.
 
 ## Awaiting human/browser verification
 - Nothing queued. (The Stage-3 browser gate item was CLOSED 2026-07-13 —
   evidence in the gate table below.)
 
 ## Current focus
+**FIDELITY GATE v1 LIVE — 17/17 PASS ☑ (2026-07-16, Session 6).** The duel
+HUD now sits at frame-MEASURED OG geometry/colors (B-23 anchored, A-28
+cross-checked): slots bottom-right, framed AUTO SLASH plate, red-ring
+portrait + brown-backed bar stack, white VS nameplate + gold GUEST overhead,
+flat #a30e00 YOU WIN card, no standing letterbox. Evidence + protocol:
+`docs/research/fidelity/FIDELITY_GATE.md`; decisions in DIVERGENCES
+("Fidelity gate v1 decisions"). Stage-4 M0 (skeletal fighters) WIP was
+committed as a green checkpoint (4a27cd7) and CONTINUES as the next
+milestone work.
 **STAGE 3 CLOSED 100% ☑ (2026-07-13, Session 5).** All 7 gate items green
 — the full table with evidence is under "State". Milestones: M1
 levelUp/rebirth math (loop cycle, review verdict KEEP) · M1 hostile-review

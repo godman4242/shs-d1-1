@@ -37,7 +37,7 @@ Evidence timestamps refer to `docs/sessions/-SESSION-LOG.md`.
 - ☑ 18. Kasa + katana + scarf silhouette — samurai.ts v2 (kasa brim/weave, two-hand grip, scarf tails).
 - ☑ 19. Directional blood along the cut — Stage-1 gate (right-cut sprays right / left-cut left); M10 droplet ballistics on fx clock.
 - ☐ 20. Scarf/hat secondary motion in idle/move — not yet (fighters are pose-static between poses); Stage-6 polish candidate.
-- ☑ 21. Parallax arenas, high-contrast fighters — bamboo/pastel parallax + letterbox (M6, from A-00 frame).
+- ☑ 21. Parallax arenas, high-contrast fighters — bamboo/pastel parallax (M6, from A-00 frame). AMENDED (fidelity gate v1, 2026-07-16): letterbox belongs to encounter-intro transitions only — the OG fights full-bleed (B-23 t=3774); standing strips removed.
 
 ## UI / audio / flow
 - ☐ 22. Camera framing/tracking matches reference — static camera today; camera study is a Stage 4/6 item.

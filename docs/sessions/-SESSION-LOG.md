@@ -588,3 +588,39 @@ Crash-resilience log. Updated per milestone, never "at the end."
   locomotion/animator math → src/core/ (zero-literals) with iaido's tests
   ported red-first; pose-driven drawing → game/samurai.ts under the
   ratchet (RED receipt).
+
+## 2026-07-16 — Fidelity gate v1 (Session 6, interactive)
+- **M0 WIP adopted + committed** (4a27cd7): prior session's skeletal-fighter
+  in-flight work checkpointed green (408/408 at commit; purity baseline
+  refreshed for its draw offsets — diff was the review surface).
+- **Fidelity gate v1 SHIPPED — the "measure, don't eyeball" harness**
+  (green-lit by Kheshav; adapted from the clone-app-pat-pro evaluation):
+  frame-MEASURED assertions (src/config/fidelity.ts, 17 probes with
+  per-probe provenance) + pure comparator (src/core/fidelityCompare.ts,
+  zero literals) + dev-only browser harness (src/game/fidelity.ts,
+  `await __fidelity.run()`, occlusion-proof via manual loop-step fallback,
+  localStorage backed up around the result-win pass). Unit layer red-proofed
+  (2 test files watched failing on missing modules first; 15 tests).
+- **Reference measurement**: native 1080p frames from B-23 (VS-duel window
+  t=3771–3783), landmark medians across 3–4 frames; cross-checked vs A-28
+  wild-mob fight by a verification agent — combat HUD geometry IDENTICAL
+  across videos/locations (Δ≤6px @1080p), coins/XP/minimap hidden in fights,
+  full-bleed 16:9 (no letterbox in live combat).
+- **System-level red→green**: first browser run 14/17 FAIL (honest divergence
+  map) → measured fix pass (bars/portrait/slots/plate geometry + palette:
+  healthGreen #02990b, focusBlue #2e49e2, +8 measured entries, double-entry
+  pins updated; slots moved bottom-center→bottom-right; letterbox strips
+  removed; coins/XP chrome removed; white VS nameplate + gold GUEST
+  overhead; DuelResult flat #a30e00 + silhouette band) → **17/17 PASS**,
+  most probes Δ0. Two plate probes re-pointed mid-pass after re-measurement
+  exposed glyph-AA contamination (assertion follows measurement).
+- Evidence: suite 423/423 · tsc exit 0 both configs · eslint exit 0 · zero
+  console errors from fresh load · eyeball screenshot of the fighting state
+  matches the OG HUD anatomy. Ledgers: DIVERGENCES +6 entries (ring, chrome,
+  letterbox, slivers, GUEST, two greens), TELLS 21 amended.
+- **Extras**: docs/research/fidelity/FIDELITY_GATE.md (protocol + v2
+  backlog: VS-intro probes, defeat card, lossless-PNG color refinement) ·
+  docs/research/reference-sources.md (source sweep: Wayback official-wiki
+  lossless PNGs = best color reference; Flashpoint dead end confirmed).
+- Session interrupted once mid-fix-pass (process exit) — resumed with zero
+  loss (tree state + this log + RESUME_HERE carried it).

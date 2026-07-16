@@ -4,6 +4,7 @@ import { GAME_WIDTH, GAME_HEIGHT } from './config/display';
 import { DuelIntro } from './game/DuelIntro';
 import { DuelResult } from './game/DuelResult';
 import { DuelScene } from './game/DuelScene';
+import { createFidelityHarness } from './game/fidelity';
 
 const game = new Phaser.Game({
   // WEBGL explicitly (not AUTO): the art direction relies on WebGL-only
@@ -22,8 +23,11 @@ const game = new Phaser.Game({
   scene: [DuelScene, DuelIntro, DuelResult],
 });
 
-// Dev-only verification seam: lets automated browser checks step the loop
-// manually when Chrome occlusion-throttles rAF. Absent from production builds.
+// Dev-only verification seams: __game lets automated browser checks step the
+// loop manually when Chrome occlusion-throttles rAF; __fidelity runs the
+// measured fidelity gate (config/fidelity.ts assertions against real canvas
+// pixels). Both absent from production builds.
 if (import.meta.env.DEV) {
   (window as unknown as Record<string, unknown>).__game = game;
+  (window as unknown as Record<string, unknown>).__fidelity = createFidelityHarness(game);
 }

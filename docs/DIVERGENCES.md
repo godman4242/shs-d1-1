@@ -127,3 +127,29 @@ decisions" stays the owner-facing queue; this file is the permanent record.
   find: assigning `{min,max}` mutates `current` only; re-aim requires
   `ops.angle.loadConfig`). Not applicable today (we draw FX with Graphics,
   no particle emitters) — recorded as a landmine if emitters are ever adopted.
+
+## Fidelity gate v1 decisions (2026-07-16 — measured HUD pass, B-23/A-28)
+
+- **Stance-colored portrait ring dropped → constant red (#950d00).** The
+  original's ring reads red in both videos and both stances; the color-coded
+  ring was our invention. Stance is shown via the label text (as in the OG).
+  Veto = restore the STANCE_RING map at DuelScene's portrait draw.
+- **Coins/XP chrome removed from the duel HUD.** Frame-confirmed: the OG
+  hides ALL overworld chrome during fights (wild mobs A-28 AND VS-duels
+  B-23). Accrual/persistence (Stage-3 M4 seam) is untouched — DuelResult
+  still pays and saves; rewards read on the result card like the OG. Veto =
+  re-add the two texts + token/bar draws in DuelScene.
+- **Standing letterbox strips removed from live combat.** The OG letterboxes
+  only during encounter-intro transitions (B-23 t=3771 banded vs t=3774
+  full-bleed) — amends the tell-21 reading that letterbox belongs to the
+  arena. Veto = re-add the two strips in drawArena.
+- **Shunpo/Critical slivers relocated right of the focus strip.** The OG has
+  no such meters (they're spec-mandated INFERRED); their old slots collide
+  with the measured stance-label position. Veto = drop the slivers entirely
+  or restack below the label at reduced size.
+- **Player overhead nameplate "GUEST" added (gold).** OG shows the player
+  name over the fighter (guest mode pre-login, A-28); ours is pre-login until
+  Stage 4's title flow. Veto = delete the playerName text.
+- **Enemy overhead green ≠ player HP green.** Measured: overhead bar fill is
+  a brighter leaf green (#179b32) vs the player bar's deep green (#02990b) —
+  two palette entries on purpose, not a duplicate to consolidate.

@@ -1,0 +1,210 @@
+import Phaser from 'phaser';
+import { FIDELITY_ENEMY_BAR, FIDELITY_PROBES, type FidelityProbe } from '../config/fidelity';
+import { GAME_WIDTH } from '../config/display';
+import {
+  compareProbe,
+  summarize,
+  type FidelityReport,
+  type ProbeResult,
+  type Rgb,
+} from '../core/fidelityCompare';
+import type { Sim } from '../core/Sim';
+
+/**
+ * Fidelity gate harness — DEV-ONLY (wired behind import.meta.env.DEV in
+ * main.ts, absent from production builds). Drives the running game into the
+ * two canonical states, reads real pixels back off the canvas, and compares
+ * them against the frame-measured assertions in config/fidelity.ts
+ * (core/fidelityCompare.ts does the pure math).
+ *
+ * Run from DevTools with the tab VISIBLE (rAF must tick):
+ *   await __fidelity.run()
+ * The report prints as a table; `pass === true` is the gate.
+ *
+ * The result-win pass launches the real DuelResult scene, which accrues the
+ * win into the persisted profile — so localStorage is backed up wholesale
+ * before and restored after (the harness never leaves a polluted save).
+ */
+
+type PixelReader = (x: number, y: number) => Rgb;
+
+/** A DuelScene through the dev keyhole: we only reach for its sim. */
+interface DuelSceneSeam {
+  sim: Sim;
+}
+
+/** One real-frame wait per iteration — with a manual game.loop.step()
+ * fallback, because Chrome occlusion-throttles rAF in background tabs (the
+ * known failure class the __game loop-step seam exists for). A manual step
+ * drives the exact same update/render path, just on our clock. */
+const settleFrames = async (game: Phaser.Game, frames: number): Promise<void> => {
+  for (let i = 0; i < frames; i++) {
+    let onRender: (() => void) | undefined;
+    const rendered = await new Promise<boolean>((resolve) => {
+      onRender = () => {
+        resolve(true);
+      };
+      game.events.once(Phaser.Core.Events.POST_RENDER, onRender);
+      setTimeout(() => {
+        resolve(false);
+      }, 150);
+    });
+    if (!rendered && onRender !== undefined) {
+      game.events.off(Phaser.Core.Events.POST_RENDER, onRender);
+      game.loop.step(performance.now());
+    }
+  }
+};
+
+/** Snapshot the drawing buffer and hand back a clamped pixel reader.
+ * The capture fires during a render, so schedule it FIRST, then force a
+ * frame through settleFrames (real or manually stepped). */
+const snapshot = async (game: Phaser.Game): Promise<PixelReader> => {
+  const captured = scheduleSnapshot(game);
+  await settleFrames(game, 1);
+  return captured;
+};
+
+const scheduleSnapshot = (game: Phaser.Game): Promise<PixelReader> =>
+  new Promise((resolve, reject) => {
+    game.renderer.snapshot((snap) => {
+      if (!(snap instanceof HTMLImageElement)) {
+        reject(new Error('fidelity: snapshot returned no image'));
+        return;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = snap.width;
+      canvas.height = snap.height;
+      const ctx = canvas.getContext('2d');
+      if (ctx === null) {
+        reject(new Error('fidelity: 2d context unavailable'));
+        return;
+      }
+      ctx.drawImage(snap, 0, 0);
+      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      resolve((x, y) => {
+        const cx = Math.min(canvas.width - 1, Math.max(0, Math.round(x)));
+        const cy = Math.min(canvas.height - 1, Math.max(0, Math.round(y)));
+        const at = (cy * canvas.width + cx) * 4;
+        return [data[at] ?? 0, data[at + 1] ?? 0, data[at + 2] ?? 0];
+      });
+    });
+  });
+
+const backupStorage = (): Map<string, string> => {
+  const backup = new Map<string, string>();
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key !== null) backup.set(key, localStorage.getItem(key) ?? '');
+  }
+  return backup;
+};
+
+const restoreStorage = (backup: Map<string, string>): void => {
+  localStorage.clear();
+  for (const [key, value] of backup) localStorage.setItem(key, value);
+};
+
+export interface FidelityRun extends FidelityReport {
+  /** Snapshot dimensions the normalized probes were resolved against. */
+  readonly width: number;
+  readonly height: number;
+}
+
+export interface FidelityHarness {
+  run(): Promise<FidelityRun>;
+}
+
+export const createFidelityHarness = (game: Phaser.Game): FidelityHarness => {
+  const byState = (state: FidelityProbe['state']): readonly FidelityProbe[] =>
+    FIDELITY_PROBES.filter((p) => p.state === state);
+
+  const sampleScreen = (
+    probes: readonly FidelityProbe[],
+    read: PixelReader,
+    w: number,
+    h: number,
+  ): ProbeResult[] => probes.map((p) => compareProbe(p, read(p.x * w, p.y * h)));
+
+  const run = async (): Promise<FidelityRun> => {
+    const duel = game.scene.getScene('duel');
+    const w = game.scale.gameSize.width;
+    const h = game.scale.gameSize.height;
+    const results: ProbeResult[] = [];
+
+    // ── State 1: fighting, t≈0 (full pools, fighters at spawns) ──
+    duel.scene.restart();
+    await settleFrames(game, 2);
+    // Skip the intro: kill its overlay and fire the signal DuelScene waits
+    // on (its once-listener calls sim.beginCombat) — combat live at t≈0.
+    game.scene.stop('duel-intro');
+    duel.events.emit('intro-done');
+    await settleFrames(game, 2);
+    duel.scene.pause();
+    await settleFrames(game, 1);
+
+    let read = await snapshot(game);
+    results.push(...sampleScreen(byState('fighting'), read, w, h));
+
+    // Enemy overhead bar — anchored to the sim's enemy position (stage px),
+    // scaled into snapshot space alongside the normalized screen probes.
+    const sim = (duel as unknown as DuelSceneSeam).sim;
+    const scale = w / GAME_WIDTH;
+    const enemyProbe: FidelityProbe = {
+      id: 'enemy-bar-green',
+      state: 'fighting',
+      x: 0,
+      y: 0,
+      rgb: FIDELITY_ENEMY_BAR.rgb,
+      tol: FIDELITY_ENEMY_BAR.tol,
+      note: FIDELITY_ENEMY_BAR.note,
+    };
+    results.push(
+      compareProbe(
+        enemyProbe,
+        read(
+          (sim.enemy.pos.x + FIDELITY_ENEMY_BAR.dx) * scale,
+          (sim.enemy.pos.y + FIDELITY_ENEMY_BAR.dy) * scale,
+        ),
+      ),
+    );
+
+    // ── State 2: the YOU WIN card (profile-safe via storage backup) ──
+    const backup = backupStorage();
+    try {
+      duel.scene.launch('duel-result', { winner: 'player' });
+      await settleFrames(game, 2);
+      read = await snapshot(game);
+      results.push(...sampleScreen(byState('result-win'), read, w, h));
+      game.scene.stop('duel-result');
+    } finally {
+      restoreStorage(backup);
+    }
+
+    // Leave a clean, live duel behind (fresh sim, intro relaunched).
+    duel.scene.resume();
+    duel.scene.restart();
+
+    const report = summarize(results);
+    const hex = (rgb: Rgb): string =>
+      `#${rgb.map((c) => c.toString(16).padStart(2, '0')).join('')}`;
+    // DevTools-readable verdict table.
+     
+    console.table(
+      report.results.map((r) => ({
+        probe: r.id,
+        expected: hex(r.expected),
+        actual: hex(r.actual),
+        maxDelta: r.maxDelta,
+        pass: r.pass,
+      })),
+    );
+     
+    console.log(
+      `fidelity gate: ${report.pass ? 'PASS' : `FAIL (${String(report.failures.length)} probes)`}`,
+    );
+    return { ...report, width: w, height: h };
+  };
+
+  return { run };
+};
