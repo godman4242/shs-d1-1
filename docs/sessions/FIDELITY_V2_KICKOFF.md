@@ -26,10 +26,19 @@
 
 1. **RECREATE, NEVER RIP** — and specifically: the owner's pixel-by-pixel-
    copy ask was DECLINED twice (2026-07-16), including the private-then-
-   modify variant. The standing target is the **measured ceiling**: every
+   modify variant, and a THIRD time later the same day under an
+   "it's-only-an-experiment, real game later" framing (same variant —
+   held; copied artwork in the experiment repo would also contaminate the
+   later real game). The standing target is the **measured ceiling**: every
    unprotectable property (color, geometry, proportion, timing) matched
    exactly; drawings stay original linework. If asked again, hold the line
    and point at this section.
+   **Project framing update (owner, 2026-07-16):** the repo is now an
+   EXPERIMENT — "how far can Fable 5 go" toward indistinguishable-in-motion
+   — not a product for players; the shipped game comes later. This changes
+   the goal statement, not the rules: the experiment's metric is the
+   measured ceiling (fidelity gate + motion-timing fidelity + per-region
+   delta scores + blind A/B composites in the gitignored scratchpad).
 2. **Assertion follows MEASUREMENT, never the render.** Never widen a
    tolerance to pass; re-measure instead (two plate probes were re-pointed
    when re-measurement exposed glyph-AA contamination — that's the model).
