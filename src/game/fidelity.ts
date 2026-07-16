@@ -1,12 +1,21 @@
 import Phaser from 'phaser';
-import { FIDELITY_ENEMY_BAR, FIDELITY_PROBES, type FidelityProbe } from '../config/fidelity';
+import {
+  FIDELITY_ENEMY_BAR,
+  FIDELITY_PROBES,
+  FIDELITY_SCANS,
+  type FidelityProbe,
+  type FidelityScan,
+  type FidelityState,
+} from '../config/fidelity';
 import { GAME_WIDTH } from '../config/display';
 import {
   compareProbe,
+  compareScan,
   summarize,
   type FidelityReport,
   type ProbeResult,
   type Rgb,
+  type ScanResult,
 } from '../core/fidelityCompare';
 import type { Sim } from '../core/Sim';
 
@@ -31,6 +40,12 @@ type PixelReader = (x: number, y: number) => Rgb;
 /** A DuelScene through the dev keyhole: we only reach for its sim. */
 interface DuelSceneSeam {
   sim: Sim;
+}
+
+/** DuelIntro through its DEV-only sampling seam (freeze at a beat). */
+interface IntroSeam {
+  devHoldAt(step: 'vs' | 'fight'): void;
+  devRelease(): void;
 }
 
 /** One real-frame wait per iteration — with a manual game.loop.step()
@@ -116,8 +131,10 @@ export interface FidelityHarness {
 }
 
 export const createFidelityHarness = (game: Phaser.Game): FidelityHarness => {
-  const byState = (state: FidelityProbe['state']): readonly FidelityProbe[] =>
+  const byState = (state: FidelityState): readonly FidelityProbe[] =>
     FIDELITY_PROBES.filter((p) => p.state === state);
+  const scansByState = (state: FidelityState): readonly FidelityScan[] =>
+    FIDELITY_SCANS.filter((s) => s.state === state);
 
   const sampleScreen = (
     probes: readonly FidelityProbe[],
@@ -126,25 +143,60 @@ export const createFidelityHarness = (game: Phaser.Game): FidelityHarness => {
     h: number,
   ): ProbeResult[] => probes.map((p) => compareProbe(p, read(p.x * w, p.y * h)));
 
+  /** Walk one scan line across the snapshot and locate the target edge. */
+  const runScan = (scan: FidelityScan, read: PixelReader, w: number, h: number): ScanResult => {
+    const size = scan.axis === 'x' ? w : h;
+    const fixed = scan.at * (scan.axis === 'x' ? h : w);
+    const a = Math.round(scan.from * size);
+    const b = Math.round(scan.to * size);
+    const step = b >= a ? 1 : -1;
+    const samples: Rgb[] = [];
+    for (let px = a; step > 0 ? px <= b : px >= b; px += step) {
+      samples.push(scan.axis === 'x' ? read(px, fixed) : read(fixed, px));
+    }
+    return compareScan(scan, samples, a, step, scan.edge * size);
+  };
+
   const run = async (): Promise<FidelityRun> => {
     const duel = game.scene.getScene('duel');
     const w = game.scale.gameSize.width;
     const h = game.scale.gameSize.height;
     const results: ProbeResult[] = [];
+    const scanResults: ScanResult[] = [];
 
-    // ── State 1: fighting, t≈0 (full pools, fighters at spawns) ──
+    const sampleState = (state: FidelityState, read: PixelReader): void => {
+      results.push(...sampleScreen(byState(state), read, w, h));
+      scanResults.push(...scansByState(state).map((s) => runScan(s, read, w, h)));
+    };
+
+    // ── States 1+2: the intro beats — VS band, then the FIGHT! splash.
+    // The intro's DEV seam freezes the sequence at each beat; 8 settled
+    // frames outlast the banner reveal tween (90 ms) before sampling. ──
     duel.scene.restart();
     await settleFrames(game, 2);
-    // Skip the intro: kill its overlay and fire the signal DuelScene waits
-    // on (its once-listener calls sim.beginCombat) — combat live at t≈0.
+    const intro = game.scene.getScene('duel-intro') as unknown as IntroSeam;
+    intro.devHoldAt('vs');
+    await settleFrames(game, 8);
+    let read = await snapshot(game);
+    sampleState('vs-intro', read);
+
+    intro.devHoldAt('fight');
+    await settleFrames(game, 8);
+    read = await snapshot(game);
+    sampleState('fight-splash', read);
+    intro.devRelease();
+
+    // ── State 3: fighting, t≈0 (full pools, fighters at spawns) ──
+    // Kill the intro overlay and fire the signal DuelScene waits on (its
+    // once-listener calls sim.beginCombat) — combat live at t≈0.
     game.scene.stop('duel-intro');
     duel.events.emit('intro-done');
     await settleFrames(game, 2);
     duel.scene.pause();
     await settleFrames(game, 1);
 
-    let read = await snapshot(game);
-    results.push(...sampleScreen(byState('fighting'), read, w, h));
+    read = await snapshot(game);
+    sampleState('fighting', read);
 
     // Enemy overhead bar — anchored to the sim's enemy position (stage px),
     // scaled into snapshot space alongside the normalized screen probes.
@@ -169,13 +221,21 @@ export const createFidelityHarness = (game: Phaser.Game): FidelityHarness => {
       ),
     );
 
-    // ── State 2: the YOU WIN card (profile-safe via storage backup) ──
+    // ── States 4+5: result cards (profile-safe via storage backup; the
+    // defeat branch writes nothing, but both run inside the same guard) ──
     const backup = backupStorage();
     try {
       duel.scene.launch('duel-result', { winner: 'player' });
-      await settleFrames(game, 2);
+      await settleFrames(game, 8);
       read = await snapshot(game);
-      results.push(...sampleScreen(byState('result-win'), read, w, h));
+      sampleState('result-win', read);
+      game.scene.stop('duel-result');
+      await settleFrames(game, 1);
+
+      duel.scene.launch('duel-result', { winner: 'enemy' });
+      await settleFrames(game, 8);
+      read = await snapshot(game);
+      sampleState('result-defeat', read);
       game.scene.stop('duel-result');
     } finally {
       restoreStorage(backup);
@@ -185,7 +245,7 @@ export const createFidelityHarness = (game: Phaser.Game): FidelityHarness => {
     duel.scene.resume();
     duel.scene.restart();
 
-    const report = summarize(results);
+    const report = summarize(results, scanResults);
     const hex = (rgb: Rgb): string =>
       `#${rgb.map((c) => c.toString(16).padStart(2, '0')).join('')}`;
     // DevTools-readable verdict table.
@@ -199,9 +259,20 @@ export const createFidelityHarness = (game: Phaser.Game): FidelityHarness => {
         pass: r.pass,
       })),
     );
-     
+
+    console.table(
+      report.scans.map((s) => ({
+        scan: s.id,
+        expectedPx: Math.round(s.expectedPx * 10) / 10,
+        foundPx: s.foundPx,
+        deltaPx: Number.isFinite(s.deltaPx) ? Math.round(s.deltaPx * 10) / 10 : Infinity,
+        pass: s.pass,
+      })),
+    );
+
+    const failed = report.failures.length + report.scanFailures.length;
     console.log(
-      `fidelity gate: ${report.pass ? 'PASS' : `FAIL (${String(report.failures.length)} probes)`}`,
+      `fidelity gate: ${report.pass ? 'PASS' : `FAIL (${String(failed)} of ${String(report.results.length + report.scans.length)} probes)`} — ${String(report.results.length)} points + ${String(report.scans.length)} scans`,
     );
     return { ...report, width: w, height: h };
   };

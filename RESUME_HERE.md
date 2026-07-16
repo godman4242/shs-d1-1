@@ -14,14 +14,19 @@
   evidence in the gate table below.)
 
 ## Current focus
-**FIDELITY V2 IN PROGRESS — gate 21/21 PASS ☑ (2026-07-16, Session 6).**
+**FIDELITY V2 IN PROGRESS — gate 55/55 PASS ☑ (2026-07-16, Session 7).**
 v1 (17/17, `f36aedb`) + slice 1 (lossless corpus, authored #990000
-recovered, `717aa8b`) + slice 2a (measured gradient bars, `6cc1cf9`) are
-CLOSED. **NEXT SESSION ENTRY POINT:
-`docs/sessions/FIDELITY_V2_KICKOFF.md`** (slice 2b dense gate + VS-intro/
-defeat states → slice 3 measured art proportions, coordinated with M0 →
-slice 4 title-flow reference). Protocol + history:
-`docs/research/fidelity/FIDELITY_GATE.md`; decisions in DIVERGENCES.
+recovered, `717aa8b`) + slice 2a (measured gradient bars, `6cc1cf9`) +
+**slice 2b (dense gate: 41 points + 14 edge scans across 5 states —
+vs-intro / fight-splash / fighting / result-win / result-defeat; DuelIntro
+rebuilt to the measured TWO-beat VS→FIGHT! anatomy, result cards refit to
+the shared inset-field system, defeat card built, bar fraction labels
+live)** are CLOSED. Kickoff gate items 1-4 green; **NEXT: slice 3 measured
+art proportions (coordinate with Stage-4 M0 — same files), then slice 4
+title-flow reference — `docs/sessions/FIDELITY_V2_KICKOFF.md`.**
+Protocol + history: `docs/research/fidelity/FIDELITY_GATE.md`; decisions
+in DIVERGENCES (slice-2b block: intro 2-beat spec correction, defeat-card
+provenance caveat, LEAVE AREA wiring, olive-band re-measure).
 Standing ruling: pixel-copying the OG's art was DECLINED (twice) — the
 measured ceiling is the target; see the kickoff's "Standing rulings".
 Stage-4 M0 (skeletal fighters) WIP checkpoint `4a27cd7` resumes per

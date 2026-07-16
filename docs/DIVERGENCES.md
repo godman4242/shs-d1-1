@@ -153,3 +153,42 @@ decisions" stays the owner-facing queue; this file is the permanent record.
 - **Enemy overhead green ≠ player HP green.** Measured: overhead bar fill is
   a brighter leaf green (#179b32) vs the player bar's deep green (#02990b) —
   two palette entries on purpose, not a duplicate to consolidate.
+
+## Fidelity v2 slice 2b decisions (2026-07-16 — intro beats, defeat card, edge scans)
+
+- **Duel intro corrected to the measured TWO-beat sequence (VS → FIGHT!).**
+  Spec item 12 described "VS card → name banner → READY → FIGHT!", but the
+  B longplay (t=3771.2-3773.85, 60fps dense) shows no separate name banner
+  and no READY beat — the names live INSIDE the VS band, and FIGHT! follows
+  directly. The VS "card" is also not a full-screen card: it is a full-width
+  black band (rows 448-584 @1080) over the LIVE arena + HUD, with portraits/
+  names in-band and a red brush VS glyph overflowing it. DuelIntro was
+  rebuilt to this anatomy (band + glyphs procedural where fonts put ink in
+  the wrong measured places). Timing (VS 2000ms · glyph 450ms · band tail
+  150ms) is INFERRED from the single clean capture. Veto = restore the
+  four-step showBanner sequence (git history at this commit).
+- **Result cards refit to the measured shared card system.** Both cards are
+  an authored-#990000 field INSET between black side pillars (B win card:
+  field x 53-1865 @1080; NO top border) with a pure-black tableau band from
+  row 894. v1's "dark olive (25,34,9)" silhouette-band reading DID NOT
+  REPRODUCE (three fresh frames read (0,1,0)) — probe re-pointed to black
+  per the assertion-follows-measurement rule, render fixed, and the
+  correction chaos-proven (olive plant → 4 probes RED → revert → GREEN).
+- **Defeat card rebuilt from A-22 (the only defeat capture — a WORLD-mob
+  defeat; the VS-duel defeat variant is unverified, flagged in the probe
+  notes).** Anatomy: dark brush splash behind a red "YOU WERE DEFEATED!"
+  headline (same authored #990000), two chrome buttons (LEAVE AREA / FREE
+  RESPAWN, resting fill #5c1200 — the capture caught FREE RESPAWN hovered).
+  The OG defeat card shows NO reward line — our "+0 XP +0 COINS" and
+  "PRESS R TO RESTART" texts were removed from the defeat branch (the
+  economy is untouched: defeat still pays nothing and writes no save;
+  Stage-3 gate evidence stands). Veto = re-add the two texts.
+- **LEAVE AREA is wired to restart-the-duel until Stage 4.** Its real
+  semantics (exit to the world) need the town/world scenes; FREE RESPAWN's
+  restart matches the OG's checkpoint respawn (A-22: back at the pre-fight
+  beat ~3s later). Veto = disable the LEAVE AREA zone instead.
+- **Bar fraction labels added ("150/150"-style).** Confirmed in BOTH builds
+  (B-23 VS-duel: "14/30" / "47/47" centered on the bars; 2016 A8 lossless
+  corroborates). White bold outlined numerals, render-only reads of the live
+  sim pools. Existing bar probes sample points the glyphs never cover
+  (verified: full 55-probe gate green with labels rendering).

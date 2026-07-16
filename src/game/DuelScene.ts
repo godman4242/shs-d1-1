@@ -80,6 +80,8 @@ export class DuelScene extends Phaser.Scene {
     comboPlate: Phaser.GameObjects.Text;
     nameplate: Phaser.GameObjects.Text;
     playerName: Phaser.GameObjects.Text;
+    hpLabel: Phaser.GameObjects.Text;
+    chiLabel: Phaser.GameObjects.Text;
     stance: Phaser.GameObjects.Text;
     autoSlash: Phaser.GameObjects.Text;
     slots: Phaser.GameObjects.Text[];
@@ -324,7 +326,18 @@ export class DuelScene extends Phaser.Scene {
         .setDepth(21),
       // Player overhead name — the original shows it in gold ("GUEST" when
       // unregistered, A-28); we are pre-login until Stage 4's title flow.
-      playerName: this.add.text(0, 0, 'GUEST', style(16, '#f0ac33')).setOrigin(0.5, 1).setDepth(21),
+      // Gold re-measured slice 2b: VS-band name median #f4be09 (B t=3771.55-
+      // 3772.55); the floating name reads (229,182,24) — same authored gold.
+      playerName: this.add.text(0, 0, 'GUEST', style(16, '#f4be09')).setOrigin(0.5, 1).setDepth(21),
+      // Bar fraction labels ("14/30"-style) — confirmed in BOTH builds
+      // (B t=3771.55-3772.55 HP label box (344,966)-(414,988) centered on the
+      // bar; white bold, black outline, cap ≈22px @1080 ≈ 12 stage px).
+      hpLabel: this.add.text(202, 522, '', { ...style(15, '#fafafa'), strokeThickness: 3 })
+        .setOrigin(0.5)
+        .setDepth(21),
+      chiLabel: this.add.text(202, 539, '', { ...style(15, '#fafafa'), strokeThickness: 3 })
+        .setOrigin(0.5)
+        .setDepth(21),
       stance: this.add.text(131, GAME_HEIGHT - 17, '', style(13)).setDepth(21),
       // Text sits ~62% down the plate like the OG's; the fill rows above it
       // are what the plate probes sample.
@@ -652,6 +665,10 @@ export class DuelScene extends Phaser.Scene {
       g.fillStyle(c, 1);
       g.fillRect(bx, 549 + i, focusW, 1);
     });
+    // Bar fraction labels track the live sim pools (render-only reads).
+    this.texts.hpLabel.setText(`${Math.round(player.hp)}/${player.maxHp}`);
+    this.texts.chiLabel.setText(`${Math.round(player.chi)}/${player.maxChi}`);
+
     // Shunpo/Critical slivers (spec meters, INFERRED placement right of the
     // strip — the original has no such meters; kept for gate visibility).
     g.fillStyle(COL.kimono, 0.9);

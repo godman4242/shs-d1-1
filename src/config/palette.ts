@@ -53,13 +53,33 @@ export const COL = {
   slotDark: 0x0d0d0d,
   // Authored value recovered from LOSSLESS archive shots (A5/Wiki14/A8
   // combo numeral all read exact #990000); the video's #a30e00 was the
-  // codec-shifted rendering of this.
+  // codec-shifted rendering of this. The defeat card's field AND headline
+  // read the identical video value (A t=3361-3364) — one shared card red.
   winRed: 0x990000,
-  silhouetteDark: 0x192209,
+  // Result-card tableau band + intro bands + card pillars: re-measured
+  // 2026-07-16 (slice 2b) as pure black — three win-card frames (B t=3783.2/
+  // .5/.8) and the defeat statics all read (0,0,0)-(0,2,0) inside the band;
+  // v1's olive (25,34,9) reading did not reproduce and was corrected.
+  black: 0x000000,
   gold: 0xf0ac33,
   buttonRed: 0x96200c,
   cream: 0xf2efc5,
   goldTrim: 0xcfa948,
+
+  // Intro band glyphs + defeat card — frame-MEASURED (fidelity v2 slice 2b,
+  // B t=3771.55-3772.55 VS / t=3773.48-3773.65 FIGHT!, A t=3361-3364 defeat;
+  // medians across 3 frames each, provenance in config/fidelity.ts).
+  vsRed: 0xff1800,
+  // FIGHT! vertical gradient endpoints: linear fit through the two measured
+  // F-stem anchors (OG rows 512 -> (255,109,0) and 550 -> (255,181,0)),
+  // extrapolated to the glyph box edges (rows 492/572) — INFERRED endpoints,
+  // CONTRACT anchors (the gate probes assert the anchors, not the endpoints).
+  fightGradTop: 0xff4700,
+  fightGradBottom: 0xffdf00,
+  nameGold: 0xf4be09,
+  nameWhite: 0xfafafa,
+  btnMaroon: 0x5c1200,
+  splashDark: 0x220300,
 
   // Enemy
   haoriEnemy: 0x722031,

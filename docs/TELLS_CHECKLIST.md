@@ -43,7 +43,7 @@ Evidence timestamps refer to `docs/sessions/-SESSION-LOG.md`.
 - ☐ 22. Camera framing/tracking matches reference — static camera today; camera study is a Stage 4/6 item.
 - ◐ 23. Portrait LEFT, coins TOP-LEFT, XP TOP-RIGHT, skill bar 1/2/3 — all present (M6, B-23 anatomy); minimap = world-scope (Stage 4).
 - Ⓗ 24. HUD bar colors/shapes/fill match reference — anatomy built from B-23; pixel-match grading queued for Kheshav's eye + CALIBRATION rows.
-- ☑ 25. VS splash + name banner + result — M6/M9/M10 captures (VS card, RONIN banner, READY…FIGHT!, Victory +10/+8, Defeat +0/+0).
+- ☑ 25. VS splash + name banner + result — M6/M9/M10 captures (VS card, RONIN banner, READY…FIGHT!, Victory +10/+8, Defeat +0/+0). AMENDED (fidelity v2 slice 2b, 2026-07-16): the OG duel intro is a measured TWO-beat sequence — black band (rows 448-584 @1080) over the live arena with in-band names/portraits + red VS glyph, then the orange-gradient FIGHT! glyph on the same band; no separate name banner, no READY beat. Defeat card = shared inset-field card + dark splash + red headline + LEAVE AREA / FREE RESPAWN buttons (no reward line). All gate-probed (55/55).
 - ☐ 26. Title typography (brush display + body face) — Stage 6 (no title screen yet; fight-first boot is the prototype shape).
 - ☐ 27. Menu ≠ combat music, victory/defeat stings — Stage 6 audio (WebAudio-synth only).
 - ☐ 28. Four-way slash SFX on measured frames — Stage 6 audio.

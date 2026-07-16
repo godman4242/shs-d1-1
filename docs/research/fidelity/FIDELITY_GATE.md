@@ -97,6 +97,49 @@ dupes/gif). A 6-agent classification pass mapped them; findings:
   only Wayback captures are 2025 404-pages (text/html). Corrected in
   reference-sources.md.
 
+## v2 slice 2b — dense gate: 5 states, edge scans, 55/55 (2026-07-16, DONE)
+
+Gate grew 21 → **55 assertions (41 points + 14 edge scans) across 5 states**,
+all PASS on a fresh load, zero console errors. New sampling states drive the
+real scenes: `vs-intro` / `fight-splash` (DuelIntro frozen via a dev seam,
+`devHoldAt`), `result-defeat` (DuelResult launched with winner:'enemy').
+
+- **Measured discoveries** (B 60fps dense t=3771.2-3773.85; A t=3361-3364.3):
+  the duel intro is a TWO-beat sequence — full-width black band (rows
+  448-584) over the LIVE arena/HUD with in-band names + portraits + red VS
+  glyph (#ff1800 core, bbox (754,392)-(1118,640)), then an orange-gradient
+  FIGHT! glyph ((824,492)-(1090,572), F-stem anchors (255,109,0)@512 /
+  (255,181,0)@550) on the same band. No name banner, no READY beat (spec
+  item 12 corrected — DIVERGENCES). Video A's FIGHT! letterbox is a
+  world-fight treatment only; the duel build (B) has none.
+- **Result cards**: one shared system — authored-#990000 field inset between
+  black pillars (field x 53-1865, no top border), black tableau band from
+  row 894. v1's olive band reading (25,34,9) did not reproduce (×3 frames
+  read (0,1,0)) → probe re-pointed, render fixed, and the correction
+  CHAOS-PROVEN (olive plant → win/defeat silhouette points Δ34 RED + both
+  edge scans "found never" → revert → GREEN). Defeat adds the dark splash
+  (#220300 interior), red headline (same #990000), and the two buttons
+  (resting fill #5c1200; the capture caught FREE RESPAWN mouse-hovered —
+  noted in the probe).
+- **Edge-scan probe kind**: `compareScan` in core (pure, red-proofed ×7 unit
+  tests) + `FIDELITY_SCANS` config + harness line-walker. Pins element EDGES
+  (band rows, card pillars, tableau top, bar/plate/slot left edges).
+- **Red-first evidence**: 29/55 watched RED in-browser against the pre-refit
+  render (band probes hit the old overlay card, defeat probes hit the old
+  dark-tint branch, win pillars hit full-bleed red, band scans "found
+  never"). Born-green (honest list): the 4 `fighting` edge scans (they pin
+  v1-fitted elements) and `win-silhouette-band` (render fixed pre-run —
+  covered by the chaos plant above). Glyph-interior probes forced TWO render
+  fixes: font letterforms put ink in the wrong measured places (Georgia's V
+  gap, then the F serif/slant), so the VS and FIGHT! glyphs are procedural
+  brush polygons/bars whose strokes pass through the measured probe points.
+- **Bar fraction labels** render from live sim pools; the full gate stayed
+  green (glyphs clear every sampled point). Suite 440/440 · tsc exit 0 ·
+  eslint exit 0 · ratchet refreshed ×3 (diffs reviewed).
+- Runtime note: a full gate run takes ~60-120 s when Chrome throttles the
+  tab (settleFrames falls back to manual loop-steps) — launch it async and
+  poll, keep the tab visible for speed.
+
 ## v2 backlog (measured targets, not yet asserted)
 
 - **Bar gradients**: measure row-by-row color stops off the 1080p video

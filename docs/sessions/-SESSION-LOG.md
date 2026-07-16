@@ -662,3 +662,28 @@ Crash-resilience log. Updated per milestone, never "at the end."
   bars, then GREEN after wiring (hp-top Δ9, other three Δ0).
 - Gate now 21 probes, 21/21 PASS. Suite 426/426 · tsc exit 0 · eslint
   exit 0 · ratchet refreshed (row-strip literals, diff reviewed).
+
+## 2026-07-16 — Fidelity v2 slice 2b: dense gate 55/55 across 5 states (Session 7)
+- **Measured** (medians ×3 frames, python/PIL over ffmpeg extracts): VS beat
+  (B 60fps dense t=3771.55-3772.55 — band rows 448-584 pure #000, VS glyph
+  bbox + core #ff1800, name rows/colors, portrait boxes), FIGHT! beat
+  (B t=3773.48-3773.65 — same band, glyph (824,492)-(1090,572), gradient
+  anchors (255,109,0)/(255,181,0)), defeat card (A t=3361-3364.3 — field =
+  the same authored #990000 as the win card, pillars, splash, buttons,
+  silhouette top), win-card pillars (B t=3783.2-3783.8 — v1 missed the
+  inset; the olive band reading also failed to reproduce → corrected).
+  **Discovery: the OG duel intro is VS → FIGHT! only** — names live in the
+  band; no name banner, no READY (spec item 12 corrected, DIVERGENCES).
+- **Built red-first**: compareScan edge-scan kind (7 unit tests watched RED
+  → core impl → GREEN); schema tests for 5 states + scans (RED → config →
+  GREEN); harness states vs-intro/fight-splash/result-defeat via a DuelIntro
+  devHoldAt seam; browser RED run = 29/55 FAIL against the old render
+  (pasted in FIDELITY_GATE.md). Refits: DuelIntro two-beat (procedural VS +
+  FIGHT! glyphs — fonts put ink off the measured strokes twice), DuelResult
+  shared inset card + defeat splash/headline/buttons, DuelScene fraction
+  labels + measured name gold. Chaos: olive band plant → 4 RED → revert.
+- **Close: gate 55/55 PASS (41 points + 14 scans) on a fresh load, zero
+  console errors. Suite 440/440 · tsc exit 0 both configs · eslint exit 0.**
+  Ledgers: DIVERGENCES slice-2b block, TELLS row 25 amended, gate doc
+  slice-2b section. Kickoff-bar self-report: gate items 1-4 of
+  FIDELITY_V2_KICKOFF green (item 5 = slice 3, next).
