@@ -123,7 +123,7 @@ describe('palette.ts — near-OG hues (owner veto of the trade-dress shift, 2026
       ringRed: 0x950d00,
       slotGrey: 0x313131,
       slotDark: 0x0d0d0d,
-      winRed: 0xa30e00,
+      winRed: 0x990000,
       silhouetteDark: 0x192209,
       gold: 0xf0ac33,
       buttonRed: 0x96200c,

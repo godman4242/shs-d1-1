@@ -302,9 +302,10 @@ export class DuelScene extends Phaser.Scene {
       // (coins, XP, minimap) during fights — both wild encounters (A-28) and
       // VS-duels (B-23). Accrual still pays into the persisted profile via
       // DuelResult; the reward card is where the numbers show (as in the OG).
+      // Combo numeral: authored #990000 (byte-exact in the lossless A8 shot).
       combo: this.add
         .text(GAME_WIDTH - 60, 74, '', {
-          ...style(64, '#c81a10'),
+          ...style(64, '#990000'),
           fontStyle: 'bold italic',
           strokeThickness: 6,
         })

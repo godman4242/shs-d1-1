@@ -624,3 +624,29 @@ Crash-resilience log. Updated per milestone, never "at the end."
   lossless PNGs = best color reference; Flashpoint dead end confirmed).
 - Session interrupted once mid-fix-pass (process exit) — resumed with zero
   loss (tree state + this log + RESUME_HERE carried it).
+
+## 2026-07-16 — Fidelity v2 slice 1: lossless corpus (Session 6 cont.)
+- **Owner decisions this block**: approved the Wayback wiki downloads;
+  green-lit fidelity v2. Renewed pixel-by-pixel-copy ask (now framed as
+  private-then-modify) DECLINED again — reproducing the art then altering it
+  is still reproduction; line stands regardless of release plans. The
+  measured-everything ceiling is the standing target.
+- **Lossless corpus secured**: 43/46 archived official-wiki images (2016
+  crawl, real bytes) → gitignored reference/wiki-png/. CDX myth-check: the
+  named headliners (Title2/PrtScrn/stance shots) only exist as 2025 404
+  captures — first sweep's "~60 screenshots" corrected in
+  reference-sources.md. Fandom's 178 images enumerated via api.php;
+  targeted pulls queued for the Stage-4 title milestone.
+- **6-agent classification workflow** (wf_30f6eefd-2d0): 43/43 mapped. One
+  lossless in-combat HUD shot (A8.PNG, 2016 800×480 build), two
+  kill-silhouette cards, two War Room maps, rest story scenes.
+- **Authored #990000 recovered byte-exact** (A5 ×2 pts + Wiki14 + A8 combo
+  numeral): winRed, combo numeral, and both win-bg probes updated — browser
+  gate now reads the win card at Δ0. Video's #a30e00 was the codec shift.
+- **Palette corroborated** by A8 lossless reads (blue/plate/slots all within
+  ≤14/channel of video-derived values — no changes). NEW finding: OG bars
+  are gradient-shaded → slice-2 backlog (row-resolved video measurement).
+- Schema guard caught a provenance-less probe note mid-edit (the /t=\d+/
+  pin) — fixed; the guard earns its keep.
+- Evidence: gate 17/17 (win probes Δ0) · suite 423/423 · tsc exit 0 ·
+  eslint exit 0.

@@ -75,7 +75,33 @@ await __fidelity.run()
 4. Fix the render; re-run to green. Never widen a tolerance to make a probe
    pass — tolerances are codec headroom, not fudge room.
 
+## v2 slice 1 — lossless corpus (2026-07-16, DONE)
+
+43 archived official-wiki images (2016 crawl, real bytes) live in gitignored
+`reference/wiki-png/` (owner-approved download; 3 stragglers are resized
+dupes/gif). A 6-agent classification pass mapped them; findings:
+
+- **Authored red recovered: #990000 byte-exact** in A5.PNG (kill-silhouette
+  card, 2 points), Wiki14.PNG, and A8.PNG's HIT COMBO numeral. The video's
+  #a30e00 was the codec shift of this. `winRed`, the combo numeral, and both
+  win-bg probes now carry the authored value.
+- **Palette corroborated**: A8.PNG (lossless in-combat world-mission HUD,
+  2016 build) reads blue fill (44,59,223), plate fill (71,38,7), slot
+  interiors #000–#040404 — all within ≤14/channel of our video-derived
+  values. No further changes; both readings logged here. Build caveat: A8 is
+  the 2016 800×480 build (8-slot world HUD, AUTO SLASH ON); v0.717 video
+  remains the layout truth.
+- **OG bars are gradient-shaded** (A8 green fill runs (78,222,92) top →
+  (12,181,12) bottom). Our bars are flat — queued below.
+- Named Tier-1 files (Title2/PrtScrn/stance shots) are NOT recoverable: their
+  only Wayback captures are 2025 404-pages (text/html). Corrected in
+  reference-sources.md.
+
 ## v2 backlog (measured targets, not yet asserted)
+
+- **Bar gradients**: measure row-by-row color stops off the 1080p video
+  (multiple rows per bar per frame, median across frames) and render matching
+  gradient fills — visible fidelity gain, unprotectable color data.
 
 - **VS-intro splash**: needs a dense 60fps extraction around B t=3770–3772
   (the black-band + giant red VS glyph frame) — our DuelIntro card family

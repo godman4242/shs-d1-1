@@ -8,21 +8,26 @@ backbone; the sources below add stills quality and coverage gaps.
 
 ## Tier 1 — better than the longplays for specific things
 
-1. **Archived official wiki screenshots (Wayback, lossless PNGs)** — ~60 UI
-   screenshots captured 2016-03-14 under
-   `web.archive.org/web/2016/http://www.strawhatsamuraiduels.com/wiki/images/…`
-   (title screen `Title2.png`, stance shots, death poses `Death01-06`, guide
-   screens, `Shogun.PNG`). Enumerable via the CDX API
-   (`web.archive.org/cdx/search/cdx?url=strawhatsamuraiduels.com/wiki*`).
-   **The best exact-color reference in existence** — no YouTube codec loss.
-   → fidelity-gate v2: re-measure palette against these.
+1. **Archived official wiki screenshots (Wayback, lossless PNGs)** —
+   DOWNLOADED 2026-07-16 (owner-approved) into gitignored
+   `reference/wiki-png/`: **43 images with real bytes** (2016-03-14 crawl).
+   CORRECTION to the first sweep: the named headliners (`Title2.png`,
+   `PrtScrn.png`, `WarYellow.png`, stance shots, `Shogun.PNG`) are NOT
+   recoverable — their only captures are 2025 error pages (mimetype
+   text/html), so the "~60 screenshots" figure overcounted. What the 43
+   actually hold (classified by a 6-agent pass, see FIDELITY_GATE.md): one
+   lossless in-combat HUD shot (`A8.PNG`, 2016 800×480 build), two
+   kill-silhouette cards (authored #990000 recovered byte-exact), story/
+   cutscene scenes, and two War Room map shots (Stage-5 reference).
 2. **Archived official wiki articles** (same host, 2014–2019): Stances,
    Chi Skills, Duel Tips, War Room Tips, Basics, per-clan pages — dev-side
    mechanics numbers for CONTRACT/INFERRED labeling.
 3. **Fandom wiki** — strawhatsamuraiduels.fandom.com: 74 articles, 178 images
-   (character-creation screen, ending stills, gear shots). Note: 403s scripted
-   fetchers; the `api.php` endpoint works, images serve from
-   static.wikia.nocookie.net.
+   (enumerated 2026-07-16 via `api.php?action=query&list=allimages`; the API
+   works with a browser UA even though page fetches 403 scripts). Mostly
+   player gear/clan shots; targeted pulls queued for the Stage-4 title/login
+   milestone: `Character_creation_screen.PNG`, `Bridge1-3.png`, ENDING
+   stills. Images serve from static.wikia.nocookie.net.
 4. **PvP footage** — youtube.com/watch?v=az6kuP2p7Ys (10 min, 704p, 2015):
    real PvP duels, which the campaign longplays barely show.
 5. **Highest-res third-party gameplay** — youtube.com/watch?v=O_rmgZiNOig

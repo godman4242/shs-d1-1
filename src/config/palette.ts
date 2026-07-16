@@ -51,7 +51,10 @@ export const COL = {
   ringRed: 0x950d00,
   slotGrey: 0x313131,
   slotDark: 0x0d0d0d,
-  winRed: 0xa30e00,
+  // Authored value recovered from LOSSLESS archive shots (A5/Wiki14/A8
+  // combo numeral all read exact #990000); the video's #a30e00 was the
+  // codec-shifted rendering of this.
+  winRed: 0x990000,
   silhouetteDark: 0x192209,
   gold: 0xf0ac33,
   buttonRed: 0x96200c,
