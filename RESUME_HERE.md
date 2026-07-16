@@ -14,15 +14,18 @@
   evidence in the gate table below.)
 
 ## Current focus
-**FIDELITY GATE v1 LIVE — 17/17 PASS ☑ (2026-07-16, Session 6).** The duel
-HUD now sits at frame-MEASURED OG geometry/colors (B-23 anchored, A-28
-cross-checked): slots bottom-right, framed AUTO SLASH plate, red-ring
-portrait + brown-backed bar stack, white VS nameplate + gold GUEST overhead,
-flat #a30e00 YOU WIN card, no standing letterbox. Evidence + protocol:
-`docs/research/fidelity/FIDELITY_GATE.md`; decisions in DIVERGENCES
-("Fidelity gate v1 decisions"). Stage-4 M0 (skeletal fighters) WIP was
-committed as a green checkpoint (4a27cd7) and CONTINUES as the next
-milestone work.
+**FIDELITY V2 IN PROGRESS — gate 21/21 PASS ☑ (2026-07-16, Session 6).**
+v1 (17/17, `f36aedb`) + slice 1 (lossless corpus, authored #990000
+recovered, `717aa8b`) + slice 2a (measured gradient bars, `6cc1cf9`) are
+CLOSED. **NEXT SESSION ENTRY POINT:
+`docs/sessions/FIDELITY_V2_KICKOFF.md`** (slice 2b dense gate + VS-intro/
+defeat states → slice 3 measured art proportions, coordinated with M0 →
+slice 4 title-flow reference). Protocol + history:
+`docs/research/fidelity/FIDELITY_GATE.md`; decisions in DIVERGENCES.
+Standing ruling: pixel-copying the OG's art was DECLINED (twice) — the
+measured ceiling is the target; see the kickoff's "Standing rulings".
+Stage-4 M0 (skeletal fighters) WIP checkpoint `4a27cd7` resumes per
+STAGE4_KICKOFF after (or interleaved with) slice 3.
 **STAGE 3 CLOSED 100% ☑ (2026-07-13, Session 5).** All 7 gate items green
 — the full table with evidence is under "State". Milestones: M1
 levelUp/rebirth math (loop cycle, review verdict KEEP) · M1 hostile-review
