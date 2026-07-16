@@ -562,3 +562,29 @@ Crash-resilience log. Updated per milestone, never "at the end."
   status reviewed: NO cycles ran since Session 5 (last log entry 07-12
   19:51); the loop's only committed work remains Stage-3 M1, already
   hostile-review-hardened this session.
+
+## 2026-07-13 — Session 6 (interactive): Stage 4 — campaign
+
+- **Kickoff.** Loop handshake done (PAUSE touched 13:23, no CYCLE_RUNNING).
+  TDD skill invoked before any code. Baseline verified: 377/377, Stage 1–3
+  gates 100% ☑. Prompt-pack review (Kheshav-supplied HTML, all 4 master
+  prompts read): the 1:1 prompts carry the permission-gated original name
+  list → treated as the FORBIDDEN list for the Stage-4 original-names
+  invariant; the homage prompts contribute one adoptable pattern — a
+  grep-zero "legal check" gate, which we will land as a real Vitest guard
+  (chaos-proven) when campaign text starts (M2). The homage prompts' own
+  lore names are reserved for iaido-duel → our bible invents fresh names
+  distinct from BOTH (decide-and-flag; veto = adopt iaido's homage lore).
+  Nothing else in the pack supersedes STAGE4_KICKOFF (kickoff is newer and
+  carries the repo's decided deviations).
+- **M0 start — skeletal fighters (port from iaido-duel).** Decisions
+  (decide-and-flag): (a) hitboxes STAY Stage-2 rects for Stage 4 — limb
+  capsules would re-open combat calibration + harness pins mid-campaign
+  stage; deferred to a fidelity pass (veto = port worldLimbs now).
+  (b) worldLimbs/severed-limb draws not ported until that decision flips
+  (YAGNI — nothing consumes them). Adaptation per kickoff: keyframes +
+  motion amplitudes → src/config/anim.ts + poses.ts (INFERRED, authored at
+  OUR study-frame proportions, not iaido's slim build); easing/phase/
+  locomotion/animator math → src/core/ (zero-literals) with iaido's tests
+  ported red-first; pose-driven drawing → game/samurai.ts under the
+  ratchet (RED receipt).

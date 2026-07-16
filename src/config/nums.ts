@@ -11,3 +11,5 @@ export const FOUR = 4;
 export const HALF = 0.5;
 /** Degrees in a half turn — for degree↔radian conversion with Math.PI. */
 export const HALF_TURN_DEG = 180;
+/** Full turn in radians (2π) — periodic locomotion clocks (Stage 4 M0). */
+export const TAU = TWO * Math.PI;

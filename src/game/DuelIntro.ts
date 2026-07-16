@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { DUEL_ENEMY } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { COL } from '../config/palette';
+import { IDLE_POSE } from '../config/poses';
 import { showBanner, type BannerHandle } from './banners';
 import { drawSamurai, ENEMY_LOOK, PLAYER_LOOK } from './samurai';
 
@@ -72,8 +73,8 @@ export class DuelIntro extends Phaser.Scene {
     g.fillRoundedRect(GAME_WIDTH / 2 + 88, 146, 284, 284, 14);
     c.add(g);
     const fighters = this.add.graphics();
-    drawSamurai(fighters, GAME_WIDTH / 2 - 230, 418, 1, PLAYER_LOOK, 'idle');
-    drawSamurai(fighters, GAME_WIDTH / 2 + 230, 418, -1, ENEMY_LOOK, 'idle');
+    drawSamurai(fighters, GAME_WIDTH / 2 - 230, 418, 1, PLAYER_LOOK, IDLE_POSE);
+    drawSamurai(fighters, GAME_WIDTH / 2 + 230, 418, -1, ENEMY_LOOK, IDLE_POSE);
     c.add(fighters);
     c.add(
       this.add

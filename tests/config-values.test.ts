@@ -85,7 +85,8 @@ import { XP_DELTA_STEP, XP_THRESHOLDS } from '../src/config/xp';
 import { SKILL_COOLDOWN_MS } from '../src/config/skills';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
-import { FOUR, HALF, HALF_TURN_DEG, ONE, TWO, ZERO } from '../src/config/nums';
+import { ANIM_TIMING, EASE, IDLE_BREATH, SCARF, SCARF_FLUTTER_RAD_PER_MS, WALK } from '../src/config/anim';
+import { FOUR, HALF, HALF_TURN_DEG, ONE, TAU, TWO, ZERO } from '../src/config/nums';
 import { LAUNCH_UNLOCK_LEVEL, STANCE_BEATS, STANCE_CYCLE, STANCE_TABLE } from '../src/config/stances';
 import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S, SLASH_FRAMES } from '../src/config/timing';
 
@@ -206,6 +207,46 @@ describe('nums.ts — pure-math identities (Stage 1; core/ bans ALL literals)', 
     expect(FOUR).toBe(4);
     expect(HALF).toBe(0.5);
     expect(HALF_TURN_DEG).toBe(180);
+    expect(TAU).toBe(2 * Math.PI);
+  });
+});
+
+describe('anim.ts — Stage 4 M0 skeletal-fighter feel (all INFERRED, our proportions)', () => {
+  it('WALK amplitudes', () => {
+    expect(WALK).toEqual({ footSwing: 13, footLift: 7, kneeSwing: 7, kneeLift: 2, bob: 2.5, armSwing: 5 });
+  });
+  it('IDLE_BREATH amplitudes', () => {
+    expect(IDLE_BREATH).toEqual({ chest: 1.5, neck: 1.3, head: 1.1, hat: 1.1, hand: 1.0 });
+  });
+  it('EASE shape', () => {
+    expect(EASE).toEqual({ cubicExp: 3 });
+  });
+  it('ANIM_TIMING phases', () => {
+    expect(ANIM_TIMING).toEqual({
+      hitRecoilMs: 90,
+      hitReturnMs: 120,
+      deathMs: 320,
+      walkPeriodMs: 560,
+      idlePeriodMs: 2600,
+      guardBlendMs: 130,
+      guardEps: 0.001,
+    });
+  });
+  it('SCARF ribbon + derived flutter frequency', () => {
+    expect(SCARF).toEqual({
+      segments: 5,
+      segLen: 8,
+      width: 6,
+      sway: 5,
+      flutterHz: 1.6,
+      flowGain: 30,
+      flowMax: 22,
+      flowSmoothing: 0.18,
+      anchorX: -6,
+      anchorY: 3,
+      droop: 2.5,
+    });
+    expect(SCARF_FLUTTER_RAD_PER_MS).toBeCloseTo((1.6 * 2 * Math.PI) / 1000, 12);
   });
 });
 

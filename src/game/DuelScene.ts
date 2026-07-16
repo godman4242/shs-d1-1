@@ -30,7 +30,9 @@ import type { Progression } from '../core/progression';
 import type { Vec } from '../core/vec';
 import { xpThreshold } from '../core/xp';
 import { loadProfile } from './profileStore';
-import { drawSamurai, ENEMY_LOOK, PLAYER_LOOK, type SamuraiPose } from './samurai';
+import { SCARF } from '../config/anim';
+import { FighterAnimator } from '../core/fighterAnimator';
+import { drawSamurai, ENEMY_LOOK, PLAYER_LOOK } from './samurai';
 
 /** Render-FX record: a finished stroke's blade trail, fading out. */
 interface Trail {
@@ -104,6 +106,14 @@ export class DuelScene extends Phaser.Scene {
   private killBeatAt = 0;
   private resultLaunched = false;
   private fxNow = 0;
+  // Skeletal animators (Stage 4 M0) — RENDER-side pose state only (which
+  // frame of a swing to draw); Sim stays the single owner of gameplay truth.
+  private playerAnim = new FighterAnimator();
+  private enemyAnim = new FighterAnimator();
+  private playerFlow = 0; // smoothed local velocity driving the scarf tail
+  private enemyFlow = 0;
+  private playerLastX = 0;
+  private enemyLastX = 0;
 
   constructor() {
     super('duel');
@@ -130,6 +140,12 @@ export class DuelScene extends Phaser.Scene {
     this.droplets = [];
     this.dragPoints = [];
     this.dragging = false;
+    this.playerAnim = new FighterAnimator();
+    this.enemyAnim = new FighterAnimator();
+    this.playerFlow = 0;
+    this.enemyFlow = 0;
+    this.playerLastX = DUEL_SPAWNS.player.pos.x;
+    this.enemyLastX = DUEL_SPAWNS.enemy.pos.x;
 
     // Persistent profile (M4): reloaded on every create() — an R-restart or
     // page reload re-reads the save, which IS the persistence gate flow.
@@ -338,6 +354,9 @@ export class DuelScene extends Phaser.Scene {
     const outcome = this.sim.applyStroke(stroke);
     if (outcome.gesture !== 'slash') return;
 
+    // Cosmetic follow-through: damage resolved on this tick (windup 0 —
+    // signature feel); the swing arc plays out per-stance (Tell 6).
+    this.playerAnim.startSlash(this.sim.player.stance);
     this.trails.push({ points: stroke.points, bornAt: now });
     if (outcome.slash?.hit === true) {
       const enemyPos = this.sim.enemy.pos;
@@ -399,9 +418,19 @@ export class DuelScene extends Phaser.Scene {
       } else if (ev.type === 'damage' && ev.target === 'player') {
         const p = this.sim.player.pos;
         this.spawnBlood({ x: p.x, y: p.y - 20 }, { x: -1, y: 0 }, false, fxNow);
+        this.playerAnim.startHit();
+        this.enemyAnim.startSlash(this.sim.enemy.stance);
+      } else if (ev.type === 'damage' && ev.target === 'enemy') {
+        this.enemyAnim.startHit();
+      } else if (ev.type === 'strikeEvaded' && ev.by === 'player') {
+        this.enemyAnim.startSlash(this.sim.enemy.stance); // whiffed swing still animates
+      } else if (ev.type === 'invulnBlocked' && ev.target === 'player') {
+        this.enemyAnim.startSlash(this.sim.enemy.stance);
       } else if (ev.type === 'fightEnded') {
         this.killBeatAt = now;
         this.pendingWinner = ev.winner;
+        // The loser collapses through the kill-beat slow-mo (fx clock).
+        (ev.winner === 'player' ? this.enemyAnim : this.playerAnim).startDeath();
       }
     }
 
@@ -450,7 +479,7 @@ export class DuelScene extends Phaser.Scene {
       g.fillCircle(d.x - d.vx * 0.008, d.y - d.vy * 0.008, 2);
     }
 
-    this.drawFighters(g, now);
+    this.drawFighters(g, now, delta * ts);
 
     // Kunai: short dark bolts along the velocity direction.
     for (const k of this.sim.projectiles) {
@@ -482,7 +511,7 @@ export class DuelScene extends Phaser.Scene {
 
   private pendingWinner: FighterSide = 'player';
 
-  private drawFighters(g: Phaser.GameObjects.Graphics, now: number): void {
+  private drawFighters(g: Phaser.GameObjects.Graphics, now: number, dtAnim: number): void {
     const player = this.sim.player;
     const enemy = this.sim.enemy;
     const fxNow = this.fxNow;
@@ -500,11 +529,43 @@ export class DuelScene extends Phaser.Scene {
       g.fillEllipse(enemy.pos.x, enemy.pos.y + 30, 120, 40);
     }
 
-    const enemyPose: SamuraiPose =
-      fxNow < this.enemyGuardUntil ? 'guard' : fxNow < this.telegraphUntil ? 'windup' : 'idle';
     const playerFacing = player.pos.x <= enemy.pos.x ? 1 : -1;
-    drawSamurai(g, player.pos.x, player.pos.y + 60, playerFacing, PLAYER_LOOK, 'idle', playerAlpha);
-    drawSamurai(g, enemy.pos.x, enemy.pos.y + 60, playerFacing === 1 ? -1 : 1, ENEMY_LOOK, enemyPose);
+    const enemyFacing = playerFacing === 1 ? -1 : 1;
+
+    // Walk state from sim truth: did x move this frame? (0.1px ≈ dead-zone)
+    const playerDx = player.pos.x - this.playerLastX;
+    const enemyDx = enemy.pos.x - this.enemyLastX;
+    this.playerAnim.setMoving(Math.abs(playerDx) > 0.1);
+    this.enemyAnim.setMoving(Math.abs(enemyDx) > 0.1);
+
+    // Enemy guard hold mirrors the telegraph/block windows (fx clock): a
+    // strike telegraph reads as the raised-blade windup, a block as guard.
+    this.enemyAnim.setGuard(
+      fxNow < this.enemyGuardUntil
+        ? 'block'
+        : fxNow < this.telegraphUntil && this.telegraphKind === 'strike'
+          ? 'telegraph'
+          : 'none',
+    );
+
+    // Scarf flow: low-passed local (facing-relative) velocity, px/ms.
+    if (dtAnim > 0) {
+      this.playerFlow += ((playerDx / dtAnim) * playerFacing - this.playerFlow) * SCARF.flowSmoothing;
+      this.enemyFlow += ((enemyDx / dtAnim) * enemyFacing - this.enemyFlow) * SCARF.flowSmoothing;
+    }
+    this.playerLastX = player.pos.x;
+    this.enemyLastX = enemy.pos.x;
+
+    const playerPose = this.playerAnim.update(dtAnim);
+    const enemyPose = this.enemyAnim.update(dtAnim);
+    drawSamurai(g, player.pos.x, player.pos.y + 60, playerFacing, PLAYER_LOOK, playerPose, playerAlpha, {
+      flow: this.playerFlow,
+      phase: fxNow,
+    });
+    drawSamurai(g, enemy.pos.x, enemy.pos.y + 60, enemyFacing, ENEMY_LOOK, enemyPose, 1, {
+      flow: this.enemyFlow,
+      phase: fxNow,
+    });
 
     // Enemy overhead: green HP bar + nameplate (fidelity tell 22).
     const barW = 76;
