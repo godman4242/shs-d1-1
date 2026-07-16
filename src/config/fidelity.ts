@@ -94,6 +94,44 @@ export const FIDELITY_PROBES: readonly FidelityProbe[] = [
     note: 'B t=3772-3776 blue bar fill just inside right end — pins bar LENGTH',
   },
 
+  // ── Bar gradient pins (the bars are vertically shaded — see BAR_GRADIENTS) ──
+  {
+    id: 'hp-bar-gradient-top',
+    state: 'fighting',
+    x: 0.1406,
+    y: 0.9023,
+    rgb: [58, 181, 95],
+    tol: 24,
+    note: 'B t=3772-3776 HP fill top row (974) — bright end of the vertical gradient',
+  },
+  {
+    id: 'hp-bar-gradient-bottom',
+    state: 'fighting',
+    x: 0.1406,
+    y: 0.9139,
+    rgb: [0, 154, 3],
+    tol: 24,
+    note: 'B t=3772-3776 HP fill bottom row (987) — deep end of the gradient',
+  },
+  {
+    id: 'chi-bar-gradient-top',
+    state: 'fighting',
+    x: 0.1458,
+    y: 0.9296,
+    rgb: [82, 114, 234],
+    tol: 24,
+    note: 'B t=3772-3776 blue fill top row (1004) — light end of the gradient',
+  },
+  {
+    id: 'chi-bar-gradient-bottom',
+    state: 'fighting',
+    x: 0.1458,
+    y: 0.9417,
+    rgb: [27, 36, 207],
+    tol: 24,
+    note: 'B t=3772-3776 blue fill bottom row (1017) — deep end of the gradient',
+  },
+
   // ── Focus strip (white pill, y ≈1030→1045, left-aligned with bars) ──
   {
     id: 'focus-strip-left',
@@ -192,6 +230,21 @@ export const FIDELITY_PROBES: readonly FidelityProbe[] = [
     note: 'B t=3783 bottom silhouette band (dark olive-black ground art)',
   },
 ] as const;
+
+/**
+ * Player-bar vertical gradients — CONTRACT, measured per OUR stage row.
+ * The original's bars are gradient-shaded (confirmed lossless in A8.PNG;
+ * measured row-by-row off B t=3772-3776 at 1080p, spreads ≤9; focus strip
+ * from the single stable frame t=3774 — its fill length moves in-fight).
+ * Each entry is the original's color at that exact stage row's screen
+ * position (rows: hp 518-526, chi 535-542, focus 549-557 @1024×576) — the
+ * best-possible downsample, so row probes match by construction.
+ */
+export const BAR_GRADIENTS = {
+  hp: [0x3ab55f, 0x3ab55f, 0x31ad58, 0x26a641, 0x129827, 0x079913, 0x02990b, 0x05960c, 0x009a03],
+  chi: [0x5272ea, 0x4d6ee6, 0x4362e2, 0x3a56e4, 0x2e49e2, 0x253fe6, 0x1930ef, 0x1b24cf],
+  focus: [0xf2f2f2, 0xf2f2f2, 0xefefef, 0xefefef, 0xeeeeee, 0xeaeaea, 0xe8e8e8, 0xe5e5e5, 0xe3e3e3],
+} as const;
 
 /**
  * Enemy overhead HP bar — anchored to the enemy, not the screen, so it is

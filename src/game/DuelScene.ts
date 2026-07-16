@@ -15,6 +15,7 @@ import {
 import { ENEMY_BASE, PLAYER_BASE, SKILL_VERB } from '../config/combat-sim';
 import { DUEL_ENEMY, DUEL_SPAWNS } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
+import { BAR_GRADIENTS } from '../config/fidelity';
 import { FINISHER_FLASH, SLASH_ARC } from '../config/fx';
 import { COL } from '../config/palette';
 import { SKILL_COOLDOWN_MS } from '../config/skills';
@@ -626,15 +627,31 @@ export class DuelScene extends Phaser.Scene {
     g.fillRect(bx, 518, barLen, 9);
     g.fillRect(bx, 535, barLen, 8);
     g.fillRect(bx, 549, barLen, 9);
-    g.fillStyle(COL.healthGreen, 1);
-    g.fillRect(bx, 518, (barLen * player.hp) / player.maxHp, 9);
-    // Chi bar flashes blood-red while a skillDenied cue is live (M3).
-    g.fillStyle(this.fxNow < this.chiDeniedUntil ? COL.blood : COL.focusBlue, 1);
-    g.fillRect(bx, 535, (barLen * player.chi) / player.maxChi, 8);
-    // Focus pill (white, drains on stance swaps — our INFERRED meter in the
+    // Fills are vertically gradient-shaded like the original's — one
+    // measured color per stage row (config/fidelity BAR_GRADIENTS).
+    const hpW = (barLen * player.hp) / player.maxHp;
+    BAR_GRADIENTS.hp.forEach((c, i) => {
+      g.fillStyle(c, 1);
+      g.fillRect(bx, 518 + i, hpW, 1);
+    });
+    const chiW = (barLen * player.chi) / player.maxChi;
+    if (this.fxNow < this.chiDeniedUntil) {
+      // Chi bar flashes blood-red while a skillDenied cue is live (M3).
+      g.fillStyle(COL.blood, 1);
+      g.fillRect(bx, 535, chiW, 8);
+    } else {
+      BAR_GRADIENTS.chi.forEach((c, i) => {
+        g.fillStyle(c, 1);
+        g.fillRect(bx, 535 + i, chiW, 1);
+      });
+    }
+    // Focus pill (drains on stance swaps — our INFERRED meter in the
     // original's strip position).
-    g.fillStyle(COL.kimono, 0.95);
-    g.fillRect(bx, 549, (barLen * player.focus) / 100, 9);
+    const focusW = (barLen * player.focus) / 100;
+    BAR_GRADIENTS.focus.forEach((c, i) => {
+      g.fillStyle(c, 1);
+      g.fillRect(bx, 549 + i, focusW, 1);
+    });
     // Shunpo/Critical slivers (spec meters, INFERRED placement right of the
     // strip — the original has no such meters; kept for gate visibility).
     g.fillStyle(COL.kimono, 0.9);

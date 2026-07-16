@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FIDELITY_PROBES } from '../src/config/fidelity';
+import { BAR_GRADIENTS, FIDELITY_PROBES } from '../src/config/fidelity';
 
 /**
  * Schema sanity for the measured fidelity assertions (config/fidelity.ts).
@@ -53,5 +53,29 @@ describe('fidelity probes — schema sanity', () => {
     for (const p of FIDELITY_PROBES) {
       expect(['fighting', 'result-win'], p.id).toContain(p.state);
     }
+  });
+});
+
+describe('bar gradients — measured per-stage-row color stops', () => {
+  it('carries one color per stage row of each bar (hp 9, chi 8, focus 9)', () => {
+    expect(BAR_GRADIENTS.hp).toHaveLength(9);
+    expect(BAR_GRADIENTS.chi).toHaveLength(8);
+    expect(BAR_GRADIENTS.focus).toHaveLength(9);
+  });
+
+  it('every stop is a valid 24-bit color', () => {
+    for (const rows of [BAR_GRADIENTS.hp, BAR_GRADIENTS.chi, BAR_GRADIENTS.focus]) {
+      for (const c of rows) {
+        expect(Number.isInteger(c)).toBe(true);
+        expect(c).toBeGreaterThanOrEqual(0);
+        expect(c).toBeLessThanOrEqual(0xffffff);
+      }
+    }
+  });
+
+  it('gradients actually grade (top stop differs from bottom stop)', () => {
+    expect(BAR_GRADIENTS.hp[0]).not.toBe(BAR_GRADIENTS.hp[8]);
+    expect(BAR_GRADIENTS.chi[0]).not.toBe(BAR_GRADIENTS.chi[7]);
+    expect(BAR_GRADIENTS.focus[0]).not.toBe(BAR_GRADIENTS.focus[8]);
   });
 });

@@ -650,3 +650,15 @@ Crash-resilience log. Updated per milestone, never "at the end."
   pin) — fixed; the guard earns its keep.
 - Evidence: gate 17/17 (win probes Δ0) · suite 423/423 · tsc exit 0 ·
   eslint exit 0.
+
+## 2026-07-16 — Fidelity v2 slice 2a: gradient bars (Session 6 cont.)
+- **OG bar gradients measured and shipped**: per-stage-row color stops
+  (BAR_GRADIENTS in config/fidelity.ts) sampled off B t=3772-3776 at 1080p
+  (spreads ≤9; focus strip single-frame — its fill length moves in-fight),
+  mapped row-for-row to our 1024×576 stage (best-possible downsample).
+  DuelScene renders HP/chi/focus as measured row strips; chi denial flash
+  unchanged. Red-first ×2: BAR_GRADIENTS schema tests failed on missing
+  export; 3/4 new gradient probes watched RED in-browser against the flat
+  bars, then GREEN after wiring (hp-top Δ9, other three Δ0).
+- Gate now 21 probes, 21/21 PASS. Suite 426/426 · tsc exit 0 · eslint
+  exit 0 · ratchet refreshed (row-strip literals, diff reviewed).
