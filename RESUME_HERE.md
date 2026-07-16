@@ -27,10 +27,18 @@ title-flow reference — `docs/sessions/FIDELITY_V2_KICKOFF.md`.**
 Protocol + history: `docs/research/fidelity/FIDELITY_GATE.md`; decisions
 in DIVERGENCES (slice-2b block: intro 2-beat spec correction, defeat-card
 provenance caveat, LEAVE AREA wiring, olive-band re-measure).
-Standing ruling: pixel-copying the OG's art was DECLINED (twice) — the
-measured ceiling is the target; see the kickoff's "Standing rulings".
-Stage-4 M0 (skeletal fighters) WIP checkpoint `4a27cd7` resumes per
-STAGE4_KICKOFF after (or interleaved with) slice 3.
+**REFRAMING (owner 2026-07-16): the repo is now an EXPERIMENT — how far
+Fable 5 can push toward indistinguishable-in-motion; real game later.**
+Standing ruling: pixel-copying the OG's art was DECLINED (three times,
+incl. the experiment framing) — the measured ceiling is the target; see
+FIDELITY_V2_KICKOFF "Standing rulings" §1. Never relitigate.
+**NEXT SESSION ENTRY POINT: `docs/sessions/SESSION8_MOTION_KICKOFF.md`**
+— MOTION first (owner feel report: legs don't move, sliding sprite):
+finish M0 wiring (locomotion → walk cycle, strike arcs, death collapse)
+with MEASURED timing/amplitudes off the longplays, plus the slice-3
+proportions pass (same files). The loop routes there via GOAL.md.
+Standing rule: every session ends by writing the NEXT kickoff (copy-paste
+ready + bar self-report) — see GOAL.md hard rules.
 **STAGE 3 CLOSED 100% ☑ (2026-07-13, Session 5).** All 7 gate items green
 — the full table with evidence is under "State". Milestones: M1
 levelUp/rebirth math (loop cycle, review verdict KEEP) · M1 hostile-review

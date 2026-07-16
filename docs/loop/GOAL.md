@@ -3,6 +3,20 @@
 **One sentence:** ship the current MASTER_SPEC stage to a 100%-green binary
 gate, in strict TDD, without ever violating the repo invariants.
 
+**Project framing (owner, 2026-07-16 — never lose this):** the repo is an
+EXPERIMENT — how far Fable 5 can push toward indistinguishable-in-motion
+fidelity with the original — not a game for players (that comes later). The
+metric is the MEASURED CEILING: every unprotectable property (color,
+geometry, proportion, TIMING/MOTION) matched exactly; drawings and dialogue
+stay original — the pixel-by-pixel-copy ask was held three times
+(`docs/sessions/FIDELITY_V2_KICKOFF.md` Standing Rulings §1; never
+relitigate it in a cycle).
+
+**Current front:** `docs/sessions/SESSION8_MOTION_KICKOFF.md` — motion
+(walk cycle, strike arcs, death collapse — the owner's sliding-sprite
+feedback) + measured proportions. Storyline is Stage-4 M1+ (ORIGINAL
+script), after motion.
+
 ## Priority order (higher wins on conflict)
 
 1. **Correctness** — tests green, gates honest, no evidence faked.
@@ -25,6 +39,10 @@ gate, in strict TDD, without ever violating the repo invariants.
   re-shift it · core/ zero literals · dependency direction · render-only
   scenes · commit = pre-commit gate green.
 - Update RESUME_HERE.md + docs/sessions/-SESSION-LOG.md in the SAME commit.
+- END OF EVERY SESSION/CYCLE-RUN (owner standing rule, 2026-07-16): write
+  the NEXT session's kickoff in `docs/sessions/` — copy-paste ready,
+  polished, with an explicit self-report of whether it reaches the
+  "can't-get-better" bar — and point RESUME_HERE at it.
 - No gap above the bar → NO commit (a no-op beats a rushed one). Print why.
 
 ## Re-steering
