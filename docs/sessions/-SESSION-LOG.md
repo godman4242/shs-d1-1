@@ -783,3 +783,34 @@ Crash-resilience log. Updated per milestone, never "at the end."
   after reset — running at close of this entry.
 - Gate paste: suite 444/444 · tsc --noEmit ×2 exit 0 · eslint exit 0 ·
   gate 55/55 in-browser · zero fresh-load console errors.
+
+## 2026-07-17 — Session 8B slice 3b + close: viewer results applied, dash-snap discovered
+- **Viewer workflow `wf_466b63b2-966` (second attempt after the 3:40pm
+  reset): 4 of 9 returned** — duel-approach + strikes A/B/C (5 died on
+  the cap again). Their findings: 15fps action latch independently
+  re-confirmed ×4; 8f holds confirmed; duels open with a dash (no walk);
+  arms WEAPON-LOCKED in all motion; **NEW: attacker translation on a
+  dash-slash completes in ONE video frame (~240px @1080), landing pose
+  held, streak rendered after arrival** (strike-C, 3 dashes measured);
+  knockdown/get-up state (~40f prone); damage-popup kinematics; hit-tint
+  7/12/16f family; 30fps locomotion-latch candidate (medium conf,
+  re-measure queued).
+- **Capped viewers salvaged INLINE the same night**: windowed detrended
+  CSV analysis (walk-nw/jog-a28) → walk hat-bob ≈0.9%h, idle bob ≤0.5%h;
+  frame reads → death f120-300: player fall CONFIRMED same crumple
+  family (backward, weapon detaches, tableau snaps 1 tick at f166,
+  settled ≤20f) — the deathMs-applies-to-both ASSUMPTION is now measured.
+- **Applied red-first (commit 2c01a31)**: WALK.bob 3→1 · armSwing 7→0
+  (weapon-locked; anim.test.ts pin flipped, watched RED on sign) ·
+  IDLE_BREATH halved. config-values pins updated FIRST → 2 RED → config
+  → 444/444.
+- **Close-out verification**: fidelity gate 41/41 + 14/14 = **55/55 PASS
+  after the amplitude changes**, zero fresh-load console errors; live
+  walk zoom shows mid-stride translation with the blade hand locked
+  (invuln blink active — correct).
+- **SESSION9_KICKOFF.md written** (headline: dash-through slash — the
+  measured 1-frame snap is our biggest remaining motion gap; then crouch
+  deepening off the B+ composite verdict; owner feel-run stays queued
+  first). RESUME_HERE routed to it, same-commit.
+- Gate paste: suite 444/444 · tsc --noEmit ×2 exit 0 · eslint exit 0 ·
+  55/55 in-browser · zero console errors.

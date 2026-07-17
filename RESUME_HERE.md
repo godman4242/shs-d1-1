@@ -51,9 +51,10 @@ CONFIRMED same collapse family (was assumed). NEW measured-not-applied
 candidates (ledger): 1-frame dash-snap displacement (headline gap),
 knockdown/get-up state, damage popups, hit-tint family, 30fps locomotion
 latch (re-measure first).
-**NEXT ENTRY POINT: `docs/sessions/SESSION8B_KICKOFF.md`** (continuation
-kickoff with the bar self-report + ordered list + workflow resume line);
-the loop routes there via GOAL.md → this file. Slice-2 evidence: gate
+**SESSION 8B CLOSED (2026-07-17 late). NEXT ENTRY POINT:
+`docs/sessions/SESSION9_KICKOFF.md`** (dash-through slash headline +
+crouch depth + owner feel-run; full bar self-report inside); the loop
+routes there via GOAL.md → this file. Slice-2 evidence: gate
 55/55 in-browser after all motion changes, walk strides verified live,
 deathMs 333 measured (crumple strip), zero fresh-load console errors.
 Standing rule: every session ends by writing the NEXT kickoff (copy-paste
