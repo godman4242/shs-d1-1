@@ -7,6 +7,9 @@
 > `docs/DIVERGENCES.md` (adopted from iaido-duel mining, 2026-07-12).
 > Navigable digest of ALL research: `docs/research/SHSD_MASTER_REFERENCE.md`
 > (adopted 2026-07-17 — its header pins precedence: ledgers/config win).
+> Orientation map for a FRESH session/model: `docs/BUILD_PLAN.md`
+> (adopted 2026-07-17 — snapshot, this file wins on state; its §2
+> model-fallback advice is NOT policy).
 > **Fidelity GATE (2026-07-16): `docs/research/fidelity/FIDELITY_GATE.md`**
 > — measured OG assertions vs live canvas: `npm run dev` → console →
 > `await __fidelity.run()` → must stay 17/17 PASS. HUD changes re-run it.
