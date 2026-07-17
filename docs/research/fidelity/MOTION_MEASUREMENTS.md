@@ -46,11 +46,16 @@ Video B = `Nr4fQstqHDM` (SOUND360TM), video A = `zFtCaTO0_1M` (guest).
 | **Idle breath is tiny** | standing windows (33–60f) show detrended hat-bob **≤0.5% of sprite height** (0–2px @ ~380px); one 19f stand fully motionless → `IDLE_BREATH` halved (head 0.6 stage px). YouTube compression floors 1px reads — treat as upper bound | walk-nw f006–041/f102–122/f134–193, jog-a28 f001–033/f206–240; strike-C idle note |
 | **Player death-fall = enemy crumple family (CONFIRMED, was ASSUMED)** | inline read of death f120–300: fatal tick ~f162, red overlay SNAPS to full silhouette tableau in one tick at f166, body knocked backward rotating to horizontal, weapon/shield detaches (airborne at f180), settled ≤20f — matches the crumple read; `deathMs 333` applies to both fighters | death corpus pixel-diff + frame reads 150/162/166/180 (Session 8B inline) |
 
+## MEASURED — landed in config (Session 9, 2026-07-17)
+
+| Fact | Value | Evidence | Config home |
+|---|---|---|---|
+| **Dash-through slash displacement is a 1-frame snap** | attacker translation completes in EXACTLY ONE video frame (+240 / +~240 / −235 px @1080 across 3 dashes — mean ≈238.3 ÷ 1.875 = 127.1), then landing pose holds 4–12f; the red streak renders AFTER arrival. **APPLIED 2026-07-17 (Session 9): `DASH_SLASH_PX = 127` in `config/combat-sim.ts`; Sim.applyStroke snaps the player along the stroke's net-x on every fighting-phase slash (pass-through, arena-clamped chaos-proven, no dash airborne/zero-net/slip-length). Review-hardened same session: at most ONE dash per SLASH_FRAMES swing cycle — the measured strike-to-strike interval doubles as the OG's own rate limit — plus `DASH_MIN_STROKE_PX = 40` (INFERRED). Bounds + vetoes in DIVERGENCES (Session 9 block). Browser-proven: 260→387 exact via real drag; spam holds at one dash/cycle; landing hold = existing SLASH_FRAMES recovery pose** | strike-C (HONDA SHIZUKA mop-up, f176–248) | `DASH_SLASH_PX`, `DASH_MIN_STROKE_PX` (double-entered in `tests/config-values.test.ts`) |
+
 ## MEASURED — recorded, NOT yet applied (candidates, Session 9+)
 
 | Fact | Value | Evidence |
 |---|---|---|
-| **Dash-slash displacement is a 1-frame snap** | attacker translation completes in EXACTLY ONE video frame (+240 / +~240 / −235 px @1080 across 3 dashes), then landing pose holds 4–12f; the red streak renders 4–12f AFTER arrival. Our build has no dash-through at all — headline motion gap | strike-C (HONDA SHIZUKA mop-up, f176–248) |
 | Knockdown/downed state exists | launcher lifts victim ~200–230px (~1.05× char height), airborne ~40f, then prone; get-up head-lift ~40f after last hit; finisher attacks target the downed body | strike-B f096–150, strike-C f150–248 |
 | Damage popups | spawn at victim, rise ~90–120px @1080 over ~19–30f while fading; grey-out near end | strike-B/C popup tracks |
 | Full-screen hit tint family | ~7f (pass-through hit) / 12f (launcher) / 16f (big counter) — duration scales with hit weight | strike-A/B/C tint counts |

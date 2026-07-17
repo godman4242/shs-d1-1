@@ -37,6 +37,7 @@ Evidence timestamps refer to `docs/sessions/-SESSION-LOG.md`.
 - ☑ 18. Kasa + katana + scarf silhouette — samurai.ts v2 (kasa brim/weave, two-hand grip, scarf tails).
 - ☑ 19. Directional blood along the cut — Stage-1 gate (right-cut sprays right / left-cut left); M10 droplet ballistics on fx clock.
 - ☐ 20. Scarf/hat secondary motion in idle/move — not yet (fighters are pose-static between poses); Stage-6 polish candidate.
+- ☑ 37. Dash-through slash: attacker snaps ~127 stage px along the attack line in ONE frame, streak after arrival (post-spec MEASURED tell — definition lives in `docs/research/fidelity/MOTION_MEASUREMENTS.md`, not MASTER_SPEC) — Session 9: `DASH_SLASH_PX` + `Sim.applyStroke` rule, red-first + chaos-proven clamp; rate-limited to the measured SLASH_FRAMES swing cycle after adversarial review (6 findings fixed); browser 260→387 exact via real drag, spam holds one dash/cycle, gate 55/55.
 - ☑ 21. Parallax arenas, high-contrast fighters — bamboo/pastel parallax (M6, from A-00 frame). AMENDED (fidelity gate v1, 2026-07-16): letterbox belongs to encounter-intro transitions only — the OG fights full-bleed (B-23 t=3774); standing strips removed.
 
 ## UI / audio / flow

@@ -54,10 +54,24 @@ CONFIRMED same collapse family (was assumed). NEW measured-not-applied
 candidates (ledger): 1-frame dash-snap displacement (headline gap),
 knockdown/get-up state, damage popups, hit-tint family, 30fps locomotion
 latch (re-measure first).
-**SESSION 8B CLOSED (2026-07-17 late). NEXT ENTRY POINT:
-`docs/sessions/SESSION9_KICKOFF.md`** (dash-through slash headline +
-crouch depth + owner feel-run; full bar self-report inside); the loop
-routes there via GOAL.md → this file. Slice-2 evidence: gate
+**SESSION 9 IN PROGRESS (2026-07-17 night): slice 1 — DASH-THROUGH
+SLASH LANDED + REVIEW-HARDENED** (the headline motion gap):
+`DASH_SLASH_PX = 127` MEASURED (strike-C ÷1.875) + `Sim.applyStroke`
+snap rule — every fighting-phase slash translates the player along the
+stroke's net-x, pass-through, arena-clamped (chaos-proven), no dash
+airborne/zero-net/slip-length; PLAYER-ONLY (enemy dash deferred).
+13-agent adversarial review: 6 findings CONFIRMED → all fixed red-first
+(headline: one dash per SLASH_FRAMES swing cycle — the measured
+strike-to-strike interval is the OG's own rate limit; plus
+DASH_MIN_STROKE_PX=40, DrawnStroke.direction true-endpoint fix, two
+mutation pins proven by planting the mutants). DIVERGENCES Session-9
+block has all bounds + vetoes. Suite 460/460, browser: 260→387 exact
+via real drag, spam holds one dash/cycle, gate 55/55, zero console
+errors. Remaining Session 9: crouch depth (item 3) + owner feel-run
+(item 1, human eyes) + SESSION10 kickoff at close.
+**SESSION 8B CLOSED (2026-07-17 late).** Kickoff:
+`docs/sessions/SESSION9_KICKOFF.md` (full bar self-report inside); the
+loop routes there via GOAL.md → this file. Slice-2 evidence: gate
 55/55 in-browser after all motion changes, walk strides verified live,
 deathMs 333 measured (crumple strip), zero fresh-load console errors.
 Standing rule: every session ends by writing the NEXT kickoff (copy-paste

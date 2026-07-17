@@ -38,6 +38,23 @@ export const SHUNPO_FILL_PER_S = 12;
 /** INFERRED — px per ms. */ export const PLAYER_MOVE_SPEED = 0.28;
 /** INFERRED — player strokes strike instantly (no windup). */
 export const PLAYER_WINDUP_MS = 0;
+/**
+ * MEASURED — dash-through slash displacement, stage px. Session 9
+ * (2026-07-17): strike-C frame reads (HONDA SHIZUKA mop-up, f176–248) show
+ * the attacker translating in EXACTLY ONE video frame, +240 / +~240 / −235
+ * px @1080 across three dashes (second read approximate) — mean ≈238.3
+ * ÷ 1.875 (stage scale) = 127.1. Constant magnitude across all three ⇒
+ * fixed distance (pass-through), not stop-at-target. Motion ledger:
+ * MOTION_MEASUREMENTS.md.
+ */
+export const DASH_SLASH_PX = 127;
+/**
+ * INFERRED — review-hardened bound (Session 9 adversarial review): the dash
+ * needs a minimum stroke length so a mouse slip (single-digit px, still a
+ * valid 2-point 'slash') can't teleport the player. Real swings measure
+ * well over 100px of path; 40 sits comfortably between.
+ */
+export const DASH_MIN_STROKE_PX = 40;
 
 // ── Base fighter loadouts ─────────────────────────────────────────────
 export interface FighterBase {

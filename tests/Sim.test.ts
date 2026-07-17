@@ -12,9 +12,10 @@ import {
   FOCUS_START,
 } from '../src/config/combat';
 import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../src/config/chi';
-import { MAX_FRAME_MS } from '../src/config/combat-sim';
+import { DASH_SLASH_PX, MAX_FRAME_MS } from '../src/config/combat-sim';
+import { GAME_WIDTH } from '../src/config/display';
 import { JUMP_DURATION_FRAMES } from '../src/config/duel';
-import { FIXED_HZ } from '../src/config/timing';
+import { FIXED_HZ, SLASH_FRAMES } from '../src/config/timing';
 import { AI_TIERS } from '../src/config/ai';
 import { AISeamController } from '../src/core/AISeamController';
 import { DrawnStroke } from '../src/core/DrawnStroke';
@@ -75,9 +76,10 @@ const jumpStroke = (fromX = 150, toX = 170): DrawnStroke =>
 const tickN = (sim: Sim, n: number): void => {
   for (let i = 0; i < n; i++) sim.tick();
 };
-/** A missed slash — ends the player's spawn invuln (offensive act), no damage. */
+/** A missed slash — ends the player's spawn invuln (offensive act), no damage.
+ * Zero-net (there-and-back) so it doesn't dash-through either (Session 9). */
 const endInvuln = (sim: Sim): void => {
-  sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
+  sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500), v(300, 500)]));
 };
 
 describe('Sim — construction, state exposure, hitboxes', () => {
@@ -953,5 +955,116 @@ describe('Sim — Chi meter + skill costs (Stage 3 M3, the Stage-2 deferral)', (
     expect(sim.player.chi).toBe(
       ((CHI_MAX - CHI_COST.chiPunch) * FIXED_HZ + CHI_FILL_PER_S) / FIXED_HZ,
     );
+  });
+});
+
+describe('Sim — dash-through slash (Session 9: MEASURED strike-C 1-frame snap)', () => {
+  // The OG attacker translates in EXACTLY ONE video frame (±235–240 px @1080
+  // ≈ DASH_SLASH_PX stage px) along the attack line, passing THROUGH the
+  // target; the streak renders after arrival. Sim territory: position is
+  // gameplay. Direction = sign of the stroke's net x (the drawn line IS the
+  // attack line); fixed distance (constant across all three measured dashes
+  // ⇒ pass-through, not stop-at-target); arena-clamped like every other
+  // movement verb.
+  it('a rightward slash that hits dashes the player +DASH_SLASH_PX in the same call AND still damages', () => {
+    const sim = makeSim();
+    sim.applyStroke(slashStroke()); // 300→500 through the enemy
+    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
+    expect(sim.enemy.hp).toBe(142); // hit resolution unchanged by the dash
+  });
+  it('a leftward slash dashes −DASH_SLASH_PX', () => {
+    const sim = makeSim({ pos: v(300, 200) });
+    sim.applyStroke(new DrawnStroke([v(500, 200), v(300, 200)])); // through the enemy, leftward
+    expect(sim.player.pos.x).toBe(300 - DASH_SLASH_PX);
+  });
+  it('a missed slash still dashes (the lunge is part of the swing, hit or not)', () => {
+    const sim = makeSim();
+    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)])); // grazes nobody
+    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
+    expect(sim.enemy.hp).toBe(150);
+  });
+  it('a blocked slash still dashes (OG: clash freeze happens AT arrival)', () => {
+    const sim = makeSim({}, {}, { next: () => ({}), react: () => 'block' });
+    sim.applyStroke(slashStroke());
+    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
+    expect(sim.enemy.hp).toBe(150); // blocked — no damage
+  });
+  it('dash clamps at the right arena wall', () => {
+    const sim = makeSim({ pos: v(GAME_WIDTH - 30, 200) }); // halfW 20 → max x is GAME_WIDTH − 20
+    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
+    expect(sim.player.pos.x).toBe(GAME_WIDTH - 20);
+  });
+  it('dash clamps at the left arena wall', () => {
+    const sim = makeSim(); // x=100, −127 would land at −27
+    sim.applyStroke(new DrawnStroke([v(500, 500), v(300, 500)]));
+    expect(sim.player.pos.x).toBe(20);
+  });
+  it('no dash while airborne — the jump arc owns the position', () => {
+    const sim = makeSim();
+    sim.applyStroke(jumpStroke());
+    tickN(sim, 3); // mid-arc
+    const before = sim.player.pos;
+    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
+    expect(sim.player.pos).toEqual(before);
+  });
+  it('a zero-net (there-and-back) slash has no attack line — no dash', () => {
+    const sim = makeSim();
+    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500), v(300, 500)]));
+    expect(sim.player.pos.x).toBe(100);
+  });
+  it('pre-FIGHT strokes are discarded — no dash in intro', () => {
+    const sim = introSim();
+    sim.applyStroke(slashStroke());
+    expect(sim.player.pos.x).toBe(100);
+  });
+  // ── Review-hardened bounds (Session 9 adversarial review, all CONFIRMED) ──
+  it('dash is rate-limited to the measured strike interval (SLASH_FRAMES total per stance)', () => {
+    // Review finding: unlimited dashing made scribble-spam a teleport verb
+    // (8 micro-slashes crossed the arena at frame 0). The OG's measured
+    // strike-to-strike interval (12/16/20f) is the swing cycle — one dash
+    // per cycle.
+    const sim = makeSim();
+    const miss = (): void => {
+      sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
+    };
+    miss(); // dashes
+    miss(); // same tick — still inside the swing cycle, no second dash
+    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
+    const cycle = SLASH_FRAMES.balanced; // player spawns balanced
+    tickN(sim, cycle.windup + cycle.active + cycle.recovery);
+    miss(); // cycle complete — dash available again
+    expect(sim.player.pos.x).toBe(100 + 2 * DASH_SLASH_PX);
+  });
+  it('a slash inside the dash cooldown still resolves damage — only movement is gated', () => {
+    const sim = makeSim();
+    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)])); // consumes the dash
+    const outcome = sim.applyStroke(slashStroke()); // hits the enemy, no dash left
+    expect(outcome.slash?.hit).toBe(true);
+    expect(sim.enemy.hp).toBe(142);
+    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX); // second slash did not move us
+  });
+  it('a micro-slip stroke (under DASH_MIN_STROKE_PX) never dashes', () => {
+    // Review finding: a ~5px mouse slip classified as a slash and teleported
+    // the player 127px (and it already ends spawn invuln — pre-existing).
+    const sim = makeSim();
+    sim.applyStroke(new DrawnStroke([v(100, 500), v(105, 500)]));
+    expect(sim.player.pos.x).toBe(100);
+  });
+  it('an airborne slash still resolves damage — ONLY the dash is skipped', () => {
+    // Mutation pin: an implementation that discards the whole mid-air slash
+    // (not just its dash) must fail here.
+    const sim = makeSim();
+    sim.applyStroke(jumpStroke());
+    tickN(sim, 3); // mid-arc
+    const outcome = sim.applyStroke(slashStroke());
+    expect(outcome.slash?.hit).toBe(true);
+    expect(sim.enemy.hp).toBe(142);
+  });
+  it('a diagonal slash dashes the FULL fixed distance (sign of net-x, not x-component scaling)', () => {
+    // Mutation pin: `direction.x * DASH_SLASH_PX` (no Math.sign) would move
+    // only 0.8 × 127 ≈ 102px here and must fail.
+    const sim = makeSim();
+    sim.applyStroke(new DrawnStroke([v(300, 380), v(460, 500)])); // net (160,120): 36.9° → slash
+    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
   });
 });

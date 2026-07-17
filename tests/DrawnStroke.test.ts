@@ -51,6 +51,15 @@ describe('DrawnStroke — resampling + smoothing', () => {
 });
 
 describe('DrawnStroke — derived length / direction / gesture', () => {
+  it('direction reflects the TRUE drawn endpoints even when resample truncates the path', () => {
+    // Session-9 review finding: resample() truncates at MAX_STROKE_POINTS ×
+    // RESAMPLE_SPACING (= 2048 path px) WITHOUT appending the real endpoint,
+    // so a long there-and-back stroke (drawn net exactly zero) read as
+    // first→truncation-point and gained a phantom direction — which the
+    // dash-through rule then consumed as an attack line.
+    const s = new DrawnStroke([v(100, 200), v(1200, 200), v(100, 200)]); // 2200px path, net zero
+    expect(s.direction).toEqual({ x: 0, y: 0 });
+  });
   it('direction is the unit net direction of the stroke', () => {
     const s = new DrawnStroke([v(0, 0), v(80, 0)]);
     expect(s.direction.x).toBeCloseTo(1, 9);

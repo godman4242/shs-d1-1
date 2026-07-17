@@ -74,7 +74,11 @@ function chaikin(pts: readonly Vec[]): Vec[] {
 export class DrawnStroke {
   readonly points: readonly Vec[];
   readonly length: number;
-  /** Unit net direction (last − first); the zero vector when degenerate. */
+  /** Unit net direction of the DRAWN stroke (sanitized last − first); the
+   * zero vector when degenerate. Computed from the TRUE input endpoints, not
+   * the processed points: resample() truncates runaway strokes without
+   * appending the real endpoint, and that bias gave a zero-net stroke a
+   * phantom direction (Session-9 review — the dash rule consumes this). */
   readonly direction: Vec;
   readonly gesture: Gesture;
 
@@ -92,8 +96,8 @@ export class DrawnStroke {
     }
     this.points = pts;
     this.length = finiteOrZero(polylineLength(pts));
-    const first = pts.at(ZERO);
-    const last = pts.at(-ONE);
+    const first = clean.at(ZERO);
+    const last = clean.at(-ONE);
     const dir = first !== undefined && last !== undefined ? norm(sub(last, first)) : { x: ZERO, y: ZERO };
     this.direction = sanitizeVec(dir);
     this.gesture = classifyGesture(pts);

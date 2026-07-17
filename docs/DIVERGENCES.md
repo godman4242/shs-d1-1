@@ -192,3 +192,62 @@ decisions" stays the owner-facing queue; this file is the permanent record.
   corroborates). White bold outlined numerals, render-only reads of the live
   sim pools. Existing bar probes sample points the glyphs never cover
   (verified: full 55-probe gate green with labels rendering).
+
+## Session 9 dash-through slash decisions (2026-07-17 — measured bounds)
+
+The OG's signature move: the attacker translates in EXACTLY ONE video frame
+(strike-C: +240/+240/−235 px @1080), landing pose holds, red streak renders
+after arrival. `DASH_SLASH_PX = 127` (mean 238.3 ÷ 1.875 = 127.1) landed in
+`config/combat-sim.ts`; the rule lives in `Sim.applyStroke`. Bounds we chose
+(each owner-vetoable):
+
+- **Dash on EVERY fighting-phase slash stroke** — hit, miss, blocked, or
+  dodged. The measured anatomy makes the lunge part of the swing itself
+  (clash freeze happens AT arrival when blocked), not a reward for landing.
+  Veto = gate the dash on `result.hit`.
+- **Direction = sign of the stroke's net x** (the drawn line IS the attack
+  line — the "dash along the drawn stroke" reading). A zero-net
+  (there-and-back) stroke has no attack line → no dash. Veto = default
+  zero-net strokes toward the enemy.
+- **Fixed distance, pass-through, no stop-at-target.** All three measured
+  dashes moved a constant ~127 stage px regardless of target position —
+  fixed displacement, passing through the victim. Arena-clamped like every
+  other movement verb (chaos-proven: clamp disarmed → both wall tests RED
+  at 1121/−27 → restored → GREEN). Veto = stop at the target's far side.
+- **No dash while airborne** — the jump arc owns the player's position
+  (Stage-1 bug family: two owners of pos.y float the fighter). Veto =
+  cancel the jump on slash instead.
+- **PLAYER-ONLY for now.** Enemy strikes stay in place: AISeamController
+  owns enemy range/timing, and an enemy dash changes duel balance (harness
+  band re-tune) — deferred to its own measured slice. Veto = symmetric
+  dash now.
+- **Windup stays 0 ms** (PLAYER_WINDUP_MS — the signature draw-to-strike
+  feel): dash + damage land on the same applyStroke call, and the streak
+  spawns at arrival (the OG holds a 4f windup first; ours trades that for
+  stroke immediacy — flagged as a knowing feel divergence, veto = add the
+  4f windup hold before the snap).
+
+Review-hardened bounds (same session — a 13-agent adversarial workflow
+confirmed 6 findings; all fixed red-first, mutants planted where the gap
+was test-coverage):
+
+- **One dash per measured swing cycle.** Unlimited dashing made
+  scribble-spam a teleport verb (refuter reproduced: 8 micro-slashes
+  crossed the arena at sim frame 0, ~2× walk speed, Shunpo-amplified).
+  Gate: `dashReadyFrame` — SLASH_FRAMES total (12/16/20f) for the stance
+  at slash time, the OG's own measured strike-to-strike interval; counted
+  in SIM frames so slow-mo can't amplify it. Damage stays instant — only
+  movement is gated (the Stage-2 stroke-feel contract holds). Veto =
+  gate damage too / different interval.
+- **`DASH_MIN_STROKE_PX = 40` (INFERRED).** A ~5px mouse slip is a valid
+  2-point 'slash' and teleported the player 127px. Real swings measure
+  >100px of path; slips are single-digit. Veto = different threshold or
+  gate at gesture level.
+- **`DrawnStroke.direction` now reads the TRUE drawn endpoints** (sanitized
+  input first/last), not the resampled points: resample() truncates
+  runaway strokes (>2040 path px) without appending the real endpoint, so
+  a long there-and-back stroke — drawn net exactly zero — carried a
+  phantom direction that the dash consumed. Truncation itself is
+  spec-pinned and untouched; only the derived direction changed (its other
+  consumer is cosmetic blood spray). Veto = append the true endpoint in
+  resample() instead (spec edit).

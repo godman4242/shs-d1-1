@@ -36,6 +36,7 @@ Rules:
 | 15 | Duel pacing | `ai.ts` DUEL_TARGET_SECONDS {20,60} | median in band | measured median 26.04 s (24-seed harness, M7). Spec's "~24.7 s" is the reference bot's own number, not the game's — do not chase it | MEASURED (our build) |
 | 16 | Chi economy | `chi.ts` CHI_MAX / CHI_FILL_PER_S / CHI_COST | cost per skill exact, regen ±1/s | 100 · 4/s · {punch 30, smoke 25, stab 10} — zero frame-backed cost reads exist; sized for the prototype meter family | INFERRED (Stage-3 M3) |
 | 17 | XP curve tail (L11+) | `xp.ts` XP_DELTA_STEP | threshold ±5% vs any future high-level HUD read | +500/level delta growth extrapolating the CONTRACT L1–L10 table (observed tail 4550→5000→5500) | INFERRED (Stage-3 M2; the table itself is CONTRACT) |
+| 18 | Dash-through displacement | `combat-sim.ts` DASH_SLASH_PX | ±4 px vs future re-measures | 127 (three strike-C dashes +240/+240/−235 @1080, mean ÷1.875 = 127.1); 1-frame snap, pass-through, arena-clamped | MEASURED (Session 9) |
 
 History: created at Stage-2 close. No row is CONFIRMED yet — Ruffle
 frame-stepping is queued as a Stage-6 polish pass (feel-critical rows 3–6

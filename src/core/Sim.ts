@@ -8,6 +8,8 @@ import {
 } from '../config/combat';
 import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../config/chi';
 import {
+  DASH_MIN_STROKE_PX,
+  DASH_SLASH_PX,
   DEFLECT_RADIUS,
   DEFLECT_WINDOW_MS,
   MAX_FRAME_MS,
@@ -29,7 +31,7 @@ import { SKILL_COOLDOWN_MS } from '../config/skills';
 import { JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../config/duel';
 import { ONE, TWO, ZERO } from '../config/nums';
 import type { StanceId } from '../config/stances';
-import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S } from '../config/timing';
+import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S, SLASH_FRAMES } from '../config/timing';
 import { Combo } from './combo';
 import { criticalReady, focusToUnits, unitsToCritical, unitsToFocus } from './critical';
 import { physicalDamage } from './damage';
@@ -205,6 +207,10 @@ export class Sim {
   };
   /** Frame the player's stab deflect window closes (0 = closed). */
   private deflectEndFrame = ZERO;
+  /** Frame the next dash-through becomes available (0 = ready). One dash per
+   * measured swing cycle — SLASH_FRAMES total for the stance at slash time
+   * (review-hardened: unlimited dashing made scribble-spam a teleport). */
+  private dashReadyFrame = ZERO;
   private kunai: Projectile[] = [];
   private shunpoUnits = SHUNPO_MAX_UNITS;
   private shunpoActive = false;
@@ -385,6 +391,34 @@ export class Sim {
     if (gesture === 'slash') {
       // Any slash — hit or miss — is an offensive act: it ends spawn invuln.
       player.invulnEndFrame = ZERO;
+      // Dash-through (MEASURED, Session 9): the attacker snaps DASH_SLASH_PX
+      // along the attack line in ONE frame, passing THROUGH the target — the
+      // lunge is part of the swing (hit, miss, or clash), so it lands before
+      // resolution and before the block/dodge early-outs. Airborne slashes
+      // don't dash (the jump arc owns position); a zero-net stroke has no
+      // attack line. Arena-clamped like every other movement verb.
+      // Review-hardened bounds (Session 9, all red-proofed): at most one dash
+      // per measured swing cycle (SLASH_FRAMES total — scribble-spam was a
+      // teleport verb, and sim-frame counting keeps Shunpo from amplifying
+      // it), and never on a slip-length stroke (DASH_MIN_STROKE_PX). Damage
+      // stays instant either way — only the movement is gated.
+      const dashDir = Math.sign(stroke.direction.x);
+      if (
+        player.jump === null &&
+        dashDir !== ZERO &&
+        stroke.length >= DASH_MIN_STROKE_PX &&
+        this.frameCount >= this.dashReadyFrame
+      ) {
+        player.pos = {
+          x: Math.max(
+            player.halfW,
+            Math.min(GAME_WIDTH - player.halfW, player.pos.x + dashDir * DASH_SLASH_PX),
+          ),
+          y: player.pos.y,
+        };
+        const cycle = SLASH_FRAMES[player.stance];
+        this.dashReadyFrame = this.frameCount + cycle.windup + cycle.active + cycle.recovery;
+      }
       const critReady = criticalReady(player.criticalUnits);
       const result = resolveSlash(
         stroke,

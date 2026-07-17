@@ -48,6 +48,8 @@ import {
   WEAPON_WEIGHT,
 } from '../src/config/combat';
 import {
+  DASH_MIN_STROKE_PX,
+  DASH_SLASH_PX,
   DEFLECT_RADIUS,
   DEFLECT_WINDOW_MS,
   ENEMY_BASE,
@@ -354,6 +356,13 @@ describe('combat-sim.ts — Stage 2 item 9, exact spec names and values', () => 
   it('player movement + windup', () => {
     expect(PLAYER_MOVE_SPEED).toBe(0.28);
     expect(PLAYER_WINDUP_MS).toBe(0);
+  });
+  it('dash-through slash displacement (Session 9: MEASURED from strike-C 1-frame snaps)', () => {
+    // +240/+~240/−235 px @1080 (2nd read approximate), mean ≈238.3 ÷ 1.875 = 127.1 → 127 stage px.
+    expect(DASH_SLASH_PX).toBe(127);
+    // INFERRED — review-hardened bound: a mouse slip must not dash (real
+    // swings measure well over 100px of path; slips are single-digit).
+    expect(DASH_MIN_STROKE_PX).toBe(40);
   });
   it('base fighter loadouts', () => {
     expect(PLAYER_BASE).toEqual({

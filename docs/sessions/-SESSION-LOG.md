@@ -814,3 +814,64 @@ Crash-resilience log. Updated per milestone, never "at the end."
   first). RESUME_HERE routed to it, same-commit.
 - Gate paste: suite 444/444 · tsc --noEmit ×2 exit 0 · eslint exit 0 ·
   55/55 in-browser · zero console errors.
+
+## 2026-07-17 — Session 9 slice 1: dash-through slash landed (the headline motion gap)
+- **`DASH_SLASH_PX = 127` MEASURED → config** (strike-C's three dashes
+  +240/+240/−235 px @1080, mean 238.3 ÷ 1.875 = 127.1), double-entered in
+  config-values.test.ts. Rule in `Sim.applyStroke`: every fighting-phase
+  slash snaps the player 127 px along the stroke's net-x — pass-through
+  (constant displacement across all measured dashes ⇒ not stop-at-target),
+  arena-clamped, no dash airborne (jump owns position) or zero-net.
+  Bounds decisions + veto lines: DIVERGENCES "Session 9 dash-through" block.
+- **Red-first receipts**: 6 of 9 new Sim tests watched RED
+  (100 ≠ 227 / 300 ≠ 173 / clamp walls / block+miss dash) before the
+  implementation; the other 3 are guard pins (airborne / zero-net /
+  pre-FIGHT discard) that pin no-dash behavior. **Chaos plant**: clamp
+  disarmed → both wall tests RED (player at 1121 / −27, outside the
+  arena) → restored → GREEN.
+- **Collateral**: `endInvuln` test helper made zero-net (its documented
+  job is "end spawn invuln, no side effects" — the dash was a new side
+  effect that shifted two kunai-geometry tests); both adapted tests keep
+  their original assertions. 24-seed harness green UNCHANGED with
+  dash-through live (bot still 24/24 good-play, median in band).
+- **Browser proof (real input path)**: drag through the RONIN → sim read
+  player x 260 → **387 (exactly +127)**, enemy hp 150 → 142 (exact-8 pin
+  intact), spawn-invuln blink ended by the offensive act, streak + blood
+  render at arrival. Zoom pair: session scratchpad
+  `dash-evidence/dash-before.png` / `dash-after.png`. Landing hold =
+  existing SLASH_FRAMES recovery pose (maps to the OG's 4–12f hold).
+- **Fidelity gate 41/41 + 14/14 = 55/55 PASS on a fresh load with the
+  dash live; zero fresh-load console errors** (occlusion note: back-to-
+  back __fidelity.run() calls froze the tab — reloaded, single clean run).
+- Ledgers same-commit: MOTION_MEASUREMENTS dash row → "landed in config
+  (Session 9)"; TELLS row 37 (post-spec measured tell); CALIBRATION
+  row 18; DIVERGENCES Session-9 block (incl. the knowing windup-0
+  divergence + PLAYER-ONLY deferral of enemy dash).
+- Gate paste: suite 454/454 · tsc --noEmit ×2 exit 0 · eslint exit 0 ·
+  55/55 in-browser · zero fresh-load console errors.
+- **Adversarial review workflow `wf_d357ea3c-cb1` (13 agents, 3 lenses +
+  per-finding refuters): 6 CONFIRMED / 4 refuted.** Confirmed + fixed
+  red-first, all in the same slice-1 commit:
+  (1) MAJOR no rate limit — scribble-spam teleported (refuter repro: 8
+  micro-slashes crossed the arena at frame 0); fix = one dash per
+  SLASH_FRAMES swing cycle (the measured strike-to-strike interval,
+  sim-frame counted so Shunpo can't amplify), damage untouched. Browser
+  re-proof: spam strokes 2-4 held x=387, next slash after one 16f cycle
+  dashed exactly +127 (387→514).
+  (2) minor >2040px there-and-back stroke dashed (resample truncation
+  bias) — DrawnStroke.direction now reads the TRUE drawn endpoints
+  (RED-watched on the 2200px repro).
+  (3) minor ~5px slip dashed 127px — DASH_MIN_STROKE_PX=40 INFERRED gate
+  (RED-watched).
+  (4) minor provenance tilde ("+~240") restored in both comment sites.
+  (5)+(6) MAJOR test-lens mutation gaps — airborne-discard-everything and
+  direction.x-component-scaling mutants both survived the suite; new pins
+  added and PROVEN by planting each mutant (both bit: airborne test RED,
+  diagonal test RED) then restoring.
+  Refuted (evidence in the workflow journal): ledger-not-updated (it was,
+  mid-review), constant-magnitude inference, windup-anatomy divergence
+  (already a logged DIVERGENCE), vertical-slash guard comment (vertical
+  strokes never classify 'slash').
+- Post-hardening gate paste: suite **460/460** · tsc ×2 exit 0 · eslint
+  exit 0 · fidelity 41/41 + 14/14 = 55/55 · zero console errors ·
+  rate-limit + slip-gate proven live via the occlusion loop-step seam.
