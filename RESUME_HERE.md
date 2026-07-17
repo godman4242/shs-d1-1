@@ -54,10 +54,22 @@ CONFIRMED same collapse family (was assumed). NEW measured-not-applied
 candidates (ledger): 1-frame dash-snap displacement (headline gap),
 knockdown/get-up state, damage popups, hit-tint family, 30fps locomotion
 latch (re-measure first).
-**SESSION 9 CLOSED (2026-07-17 night). NEXT ENTRY POINT:
-`docs/sessions/SESSION10_KICKOFF.md`** (knockdown state + hit-tint
-family headline; owner feel-run STILL QUEUED — rolls forward; full bar
-self-report inside). Landed this session, both commits on `master`:
+**OWNER FEEL-RUN VERDICT LANDED (2026-07-18) — gate item 1 CLOSED,
+CONTROL MODEL CORRECTED. NEXT ENTRY POINT:
+`docs/sessions/SESSION10_KICKOFF.md` (REWRITTEN around the verdict —
+the old knockdown/hit-tint version is superseded, git history at
+0445773).** The verdict: OG movement is MOUSE-ONLY (click-to-move, no
+WASD); the drawn line is a TARGETING command (run to it, slash that
+AREA — the line never damages by itself); damage too low; crit fill
+too slow; stances feel inert; AUTO SLASH inert; then rebuild
+step-by-step following the longplay's opening sequence. The kickoff
+orders: study pass → Sim control model red-first (click-to-move +
+queued slash commands, resolve AT arrival) → feel re-seed from
+measured popups/hits-to-kill → honest AUTO SLASH → campaign flow
+(S11+). The measured lunge/gaits/poses all SURVIVE as parts of the
+corrected model.
+**SESSION 9 CLOSED (2026-07-17 night).** Landed, both commits on
+`master`:
 **(1) dash-through slash** (db6b27b): `DASH_SLASH_PX = 127` MEASURED +
 `Sim.applyStroke` snap rule — pass-through, arena-clamped
 (chaos-proven), no dash airborne/zero-net/slip-length, PLAYER-ONLY.

@@ -907,3 +907,32 @@ Crash-resilience log. Updated per milestone, never "at the end."
   crouch deepened+re-verdicted, all pastes in); item 1 (owner feel-run)
   stays OPEN — human eyes queued; discretionary viewers NOT run (quota
   spent on the 13-agent review instead — better trade).
+
+## 2026-07-18 — OWNER FEEL-RUN VERDICT (gate item 1 CLOSED) → control-model correction
+- **Kheshav played the build and returned the deepest correction the
+  project has had — the CONTROL MODEL is wrong.** His verdict (recorded
+  as the highest-precedence measurement — he played the OG):
+  (1) the OG has NO WASD — movement is mouse-only, click the screen to
+  move; (2) the drawn line does NOT itself damage — it is a TARGETING
+  command: the character RUNS to the drawn line, then slashes that AREA,
+  damaging enemies inside it (today we damage from any distance without
+  approaching — wrong); (3) damage far too low; (4) crit bar fills too
+  slowly; (5) stances feel inert; (6) AUTO SLASH does nothing;
+  (7) rebuild step-by-step following the longplay's actual opening
+  sequence (title → loading → walk → first enemies → helper-character
+  tutorial beats).
+- **SESSION10_KICKOFF.md REWRITTEN around the verdict** (knockdown/
+  hit-tint kickoff superseded — git history at 0445773). Ordered: study
+  pass (click-to-move anatomy, command-slash end-to-end incl. trigger
+  range + slash-area extent, damage popups/hits-to-kill, crit-fill time,
+  stance visible deltas, AUTO SLASH behavior, opening-flow shot list) →
+  Sim control model red-first (click-to-move + queued slash COMMANDS:
+  approach → lunge → resolve-at-arrival) → feel re-seed from
+  measurements → AUTO SLASH honest → campaign flow scoped for S11+.
+- **What survives**: the measured lunge (127px 1-frame snap, streak
+  after arrival, swing-cycle rate limit) becomes the corrected command's
+  final approach step; walk/run gaits become its travel step; all
+  pose/timing work unaffected. Naming (OG cast referenced by owner)
+  logged as an OPEN DECISION — default stays original names per the
+  root invariant, owner-vetoable like the palette.
+- No code this turn — the new session executes the kickoff.
