@@ -10,7 +10,7 @@
  * never gameplay state — Sim stays the single owner of truth (hp, phase,
  * cooldowns). Scenes construct animators and drive them from Sim events.
  */
-import { ANIM_TIMING } from '../config/anim';
+import { ANIM_TIMING, WALK } from '../config/anim';
 import { ONE, ZERO } from '../config/nums';
 import { DEAD, GUARD_POSE, HIT_RECOIL, IDLE_POSE, SLASH_FOLLOW, SLASH_WINDUP, type Pose } from '../config/poses';
 import { STANCE_TABLE, type StanceId } from '../config/stances';
@@ -39,21 +39,19 @@ const HIT_SEGS: Segment[] = [
 ];
 
 export class FighterAnimator {
-  private moving = false;
   private guard: GuardLevel = 'none';
   private guardT = ZERO; // smoothed 0..1 toward the guard pose
   private action: AnimAction = 'none';
   private actionElapsed = ZERO;
-  private locoPhase = ZERO;
+  /** Walk-cycle phase [0,1) — advances with DISTANCE TRAVELED (Session 8: no foot-skating). */
+  private stridePhase = ZERO;
+  /** Idle-breath phase [0,1) — wall-time driven, only while at rest. */
+  private breathPhase = ZERO;
   private dead = false;
   // per-stance slash arc + timing (set at startSlash; default = balanced, k=1)
   private slashSegs: Segment[] = slashSegsFor('balanced');
   private slashWindup: Pose = SLASH_WINDUP;
   private slashFollow: Pose = SLASH_FOLLOW;
-
-  setMoving(b: boolean): void {
-    if (!this.dead) this.moving = b;
-  }
 
   setGuard(g: GuardLevel): void {
     if (!this.dead) this.guard = g;
@@ -97,14 +95,25 @@ export class FighterAnimator {
     return this.guard;
   }
 
-  /** Advance one frame and return the pose to draw. `dtMs` is scene-scaled (fx clock). */
-  update(dtMs: number): Pose {
+  /**
+   * Advance one frame and return the pose to draw. `dtMs` is scene-scaled
+   * (fx clock); `dxPx` is the fighter's facing-relative translation since
+   * the last update (+forward / −backing up). The stride cycle advances
+   * with DISTANCE ONLY — feet plant against the ground, never skate; at
+   * rest the idle breath takes over on wall time.
+   */
+  update(dtMs: number, dxPx: number = ZERO): Pose {
     // base locomotion layer
-    const period = this.moving ? ANIM_TIMING.walkPeriodMs : ANIM_TIMING.idlePeriodMs;
-    this.locoPhase = (this.locoPhase + dtMs / period) % ONE;
-    const base = this.moving
-      ? addOffsets(IDLE_POSE, walkOffsets(this.locoPhase))
-      : addOffsets(IDLE_POSE, idleOffsets(this.locoPhase));
+    const translating = dxPx !== ZERO && !this.dead;
+    if (translating) {
+      this.stridePhase = (this.stridePhase + dxPx / WALK.stridePx) % ONE;
+      if (this.stridePhase < ZERO) this.stridePhase += ONE;
+    } else {
+      this.breathPhase = (this.breathPhase + dtMs / ANIM_TIMING.idlePeriodMs) % ONE;
+    }
+    const base = translating
+      ? addOffsets(IDLE_POSE, walkOffsets(this.stridePhase))
+      : addOffsets(IDLE_POSE, idleOffsets(this.breathPhase));
 
     // 1) death wins
     if (this.action === 'dead') {

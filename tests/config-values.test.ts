@@ -226,9 +226,17 @@ describe('nums.ts — pure-math identities (Stage 1; core/ bans ALL literals)', 
   });
 });
 
-describe('anim.ts — Stage 4 M0 skeletal-fighter feel (all INFERRED, our proportions)', () => {
-  it('WALK amplitudes', () => {
-    expect(WALK).toEqual({ footSwing: 13, footLift: 7, kneeSwing: 7, kneeLift: 2, bob: 2.5, armSwing: 5 });
+describe('anim.ts — skeletal-fighter feel (Session 8: walk + hit + pose-step MEASURED off longplay B)', () => {
+  it('WALK cycle — stride MEASURED (b05b t=465.0–466.3: 16f stride @ ~8.4 px/f → 72 stage px)', () => {
+    expect(WALK).toEqual({
+      stridePx: 72,
+      footSwing: 16,
+      footLift: 6,
+      kneeSwing: 8,
+      kneeLift: 3,
+      bob: 3,
+      armSwing: 7,
+    });
   });
   it('IDLE_BREATH amplitudes', () => {
     expect(IDLE_BREATH).toEqual({ chest: 1.5, neck: 1.3, head: 1.1, hat: 1.1, hand: 1.0 });
@@ -236,15 +244,15 @@ describe('anim.ts — Stage 4 M0 skeletal-fighter feel (all INFERRED, our propor
   it('EASE shape', () => {
     expect(EASE).toEqual({ cubicExp: 3 });
   });
-  it('ANIM_TIMING phases', () => {
+  it('ANIM_TIMING phases — stagger 12f + 15fps pose step MEASURED (duel t=3774–3775)', () => {
     expect(ANIM_TIMING).toEqual({
-      hitRecoilMs: 90,
-      hitReturnMs: 120,
+      hitRecoilMs: 67,
+      hitReturnMs: 133,
       deathMs: 320,
-      walkPeriodMs: 560,
       idlePeriodMs: 2600,
       guardBlendMs: 130,
       guardEps: 0.001,
+      poseStepMs: 1000 / 15,
     });
   });
   it('SCARF ribbon + derived flutter frequency', () => {

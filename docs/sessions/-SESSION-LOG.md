@@ -687,3 +687,41 @@ Crash-resilience log. Updated per milestone, never "at the end."
   Ledgers: DIVERGENCES slice-2b block, TELLS row 25 amended, gate doc
   slice-2b section. Kickoff-bar self-report: gate items 1-4 of
   FIDELITY_V2_KICKOFF green (item 5 = slice 3, next).
+
+## 2026-07-17 — Session 8 slice 1: motion measured + distance-driven stride (M0 completion, part 1)
+- **Corpus**: 7 ffmpeg 60fps windows off the longplays, each VISUALLY
+  verified before measuring (kickoff rule) — two kickoff windows were wrong
+  and slid: walk-b05a 397s hit a black sector fade, walk-b05b 425s hit the
+  FIGHT splash; corrected to 464-468 + probes at 401-497. Corpus manifest +
+  every number's provenance: **docs/research/fidelity/MOTION_MEASUREMENTS.md**.
+- **Measured** (pixel-difference cadence + fixed-camera foot plants +
+  workflow viewer duel-strike-A): the OG animates at **15fps** (strict
+  4-video-frame pose cadence, one deliberate 8f clash hold); walk stride
+  **16f ≈ 267ms** at ~8.4 px/f ⇒ **stride ≈ 72 stage px**; hit stagger
+  **12f (4 upright + 8 bent)**; knockback ~55-70px@1080; strike anatomy =
+  windup hold 1 anim step → lunge lands in ONE step (~167-236px) → streak
+  4f; TWO gaits (upright walk vs ~45° bounding run ~14 px/f); standing
+  sprite ~220px@1080 ≈ 117 stage px (matches our build); combat idle is a
+  semi-crouch (poses slice, queued).
+- **Built red-first**: `FighterAnimator.update(dtMs, dxPx)` — stride phase
+  advances with DISTANCE (3 tests watched RED: antiphase-under-dx,
+  retreat-rewind, amplitude pin; then GREEN), idle breath split onto its own
+  wall-time phase; DuelScene feeds facing-relative sim dx and latches drawn
+  poses at the measured 15fps (`ANIM_TIMING.poseStepMs`, 0 = smooth veto);
+  `setMoving` deleted. **Chaos plant**: stride reverted to time-driven → 4
+  RED (incl. both tests that had passed vacuously pre-impl) → restored →
+  13/13. Test-design catch on improvement pass: sampling with `update(0,0)`
+  correctly returns the idle pose — pins now sample the last MOVING update.
+- Config: WALK rebuilt (stridePx 72 MEASURED + coarse amplitudes flagged
+  for the re-verify pass), hitRecoil 67/return 133 MEASURED, walkPeriodMs
+  DELETED (time-driven stride is gone), poseStepMs added — double-entered.
+- **Gate paste: suite 444/444 · tsc exit 0 both configs · eslint exit 0 ·
+  ratchet refreshed (diff: '0' 54→63, '0.1' dead-zone removed).**
+- Limit note: 9 of 10 measurement viewers died on the session cap (resets
+  4:50am +08 07-18) — re-measure queue + workflow resume line in the
+  ledger. Walk numbers were salvaged inline the same hour (fixed-camera
+  strips). Owner asked whether to hand-extract all video frames: NO —
+  windows already on disk; full-video extraction is ~250k frames for a
+  15fps game.
+- OPEN: browser eyeball + fidelity 55/55 re-run, crumple/death + arm
+  amplitudes, proportions slice, SESSION9 kickoff at close.

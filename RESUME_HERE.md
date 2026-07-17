@@ -32,11 +32,20 @@ Fable 5 can push toward indistinguishable-in-motion; real game later.**
 Standing ruling: pixel-copying the OG's art was DECLINED (three times,
 incl. the experiment framing) — the measured ceiling is the target; see
 FIDELITY_V2_KICKOFF "Standing rulings" §1. Never relitigate.
-**NEXT SESSION ENTRY POINT: `docs/sessions/SESSION8_MOTION_KICKOFF.md`**
-— MOTION first (owner feel report: legs don't move, sliding sprite):
-finish M0 wiring (locomotion → walk cycle, strike arcs, death collapse)
-with MEASURED timing/amplitudes off the longplays, plus the slice-3
-proportions pass (same files). The loop routes there via GOAL.md.
+**SESSION 8 IN PROGRESS (2026-07-17): MOTION.** Landed: distance-driven
+stride (no foot-skating — `FighterAnimator.update(dtMs, dxPx)`, chaos-proven
+red-first) + the OG's measured **15fps pose latch** in DuelScene + measured
+walk numbers (stride 72 stage px / 16-frame period @ ~8.4 px/f, hit stagger
+12f = 67+133ms) — all provenance in
+**`docs/research/fidelity/MOTION_MEASUREMENTS.md`** (the durable ledger:
+measured-applied / measured-pending / re-measure queue). Suite 444/444 ·
+tsc ×2 exit 0 · eslint 0 · ratchet refreshed (reviewed: +9 '0', −'0.1').
+STILL OPEN this session: browser eyeball + fidelity gate 55/55 re-run,
+death/crumple + arm-amplitude measurements (9 viewer agents died on the
+session limit, resets 4:50am +08 07-18 — resume line in the ledger),
+proportions slice (semi-crouch combat idle measured, not yet applied),
+SESSION9 kickoff at close. Kickoff: `docs/sessions/SESSION8_MOTION_KICKOFF.md`;
+the loop routes there via GOAL.md.
 Standing rule: every session ends by writing the NEXT kickoff (copy-paste
 ready + bar self-report) — see GOAL.md hard rules.
 **STAGE 3 CLOSED 100% ☑ (2026-07-13, Session 5).** All 7 gate items green

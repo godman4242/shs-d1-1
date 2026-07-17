@@ -27,7 +27,8 @@ import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
 import { Sim, type FighterSide } from '../core/Sim';
 import type { Vec } from '../core/vec';
-import { SCARF } from '../config/anim';
+import { ANIM_TIMING, SCARF } from '../config/anim';
+import type { Pose } from '../config/poses';
 import { FighterAnimator } from '../core/fighterAnimator';
 import { drawSamurai, ENEMY_LOOK, PLAYER_LOOK } from './samurai';
 
@@ -108,6 +109,14 @@ export class DuelScene extends Phaser.Scene {
   private enemyFlow = 0;
   private playerLastX = 0;
   private enemyLastX = 0;
+  // Pose latch (Session 8): the OG steps poses at 15fps (ANIM_TIMING.poseStepMs,
+  // measured) — accumulate fx-time + facing-relative travel between steps so
+  // the stride phase never loses distance. poseStepMs=0 ⇒ smooth per-frame.
+  private poseAccMs = 0;
+  private playerAccDx = 0;
+  private enemyAccDx = 0;
+  private playerPose: Pose | null = null;
+  private enemyPose: Pose | null = null;
 
   constructor() {
     super('duel');
@@ -140,6 +149,11 @@ export class DuelScene extends Phaser.Scene {
     this.enemyFlow = 0;
     this.playerLastX = DUEL_SPAWNS.player.pos.x;
     this.enemyLastX = DUEL_SPAWNS.enemy.pos.x;
+    this.poseAccMs = 0;
+    this.playerAccDx = 0;
+    this.enemyAccDx = 0;
+    this.playerPose = null;
+    this.enemyPose = null;
 
     // (The persisted profile is no longer read here: the OG shows no
     // coins/XP chrome during fights — DuelResult owns accrual/persistence.)
@@ -543,11 +557,10 @@ export class DuelScene extends Phaser.Scene {
     const playerFacing = player.pos.x <= enemy.pos.x ? 1 : -1;
     const enemyFacing = playerFacing === 1 ? -1 : 1;
 
-    // Walk state from sim truth: did x move this frame? (0.1px ≈ dead-zone)
+    // Locomotion from sim truth: facing-relative travel this frame feeds the
+    // animator's DISTANCE-driven stride (Session 8 — no foot-skating).
     const playerDx = player.pos.x - this.playerLastX;
     const enemyDx = enemy.pos.x - this.enemyLastX;
-    this.playerAnim.setMoving(Math.abs(playerDx) > 0.1);
-    this.enemyAnim.setMoving(Math.abs(enemyDx) > 0.1);
 
     // Enemy guard hold mirrors the telegraph/block windows (fx clock): a
     // strike telegraph reads as the raised-blade windup, a block as guard.
@@ -567,8 +580,20 @@ export class DuelScene extends Phaser.Scene {
     this.playerLastX = player.pos.x;
     this.enemyLastX = enemy.pos.x;
 
-    const playerPose = this.playerAnim.update(dtAnim);
-    const enemyPose = this.enemyAnim.update(dtAnim);
+    // Pose latch: step the drawn pose at the OG's measured 15fps cadence,
+    // banking time + travel between steps (poseStepMs=0 ⇒ every frame).
+    this.poseAccMs += dtAnim;
+    this.playerAccDx += playerDx * playerFacing;
+    this.enemyAccDx += enemyDx * enemyFacing;
+    if (this.poseAccMs >= ANIM_TIMING.poseStepMs || this.playerPose === null || this.enemyPose === null) {
+      this.playerPose = this.playerAnim.update(this.poseAccMs, this.playerAccDx);
+      this.enemyPose = this.enemyAnim.update(this.poseAccMs, this.enemyAccDx);
+      this.poseAccMs = 0;
+      this.playerAccDx = 0;
+      this.enemyAccDx = 0;
+    }
+    const playerPose = this.playerPose;
+    const enemyPose = this.enemyPose;
     drawSamurai(g, player.pos.x, player.pos.y + 60, playerFacing, PLAYER_LOOK, playerPose, playerAlpha, {
       flow: this.playerFlow,
       phase: fxNow,

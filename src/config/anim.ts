@@ -9,20 +9,33 @@
  * same commit (double-entry ratchet).
  */
 
-/** INFERRED — procedural walk-cycle amplitudes (px), applied to pose joints per frame. */
+/**
+ * Walk-cycle numbers — MEASURED off the v0.717 longplay B (Nr4fQstqHDM),
+ * upright in-fight/travel walk, fixed-camera window t=465.0–466.3
+ * (walk-b05b frames 089–133, 60fps extract; Session 8 motion corpus).
+ * Conversion: study px @1080 ÷ 1.875 = stage px. Amplitude reads are
+ * hakama-occluded at the ankle — re-verify pass queued (see
+ * docs/research/fidelity/MOTION_MEASUREMENTS.md).
+ */
 export const WALK = {
-  /** Fore/aft foot travel. */
-  footSwing: 13,
-  /** Vertical lift of the leading foot. */
-  footLift: 7,
-  /** Fore/aft knee travel. */
-  kneeSwing: 7,
-  /** Vertical lift of the leading knee. */
-  kneeLift: 2,
-  /** Pelvis/chest vertical bob (runs at 2× stride frequency). */
-  bob: 2.5,
-  /** Sword-hand counter-swing vs the front leg. */
-  armSwing: 5,
+  /**
+   * MEASURED — world distance per full stride (same-foot plant to plant).
+   * Stride period 16 video frames @ ~8.4 px/f = ~135 px @1080 → 72 stage px.
+   * The stride phase advances by distance/stridePx — never by wall time.
+   */
+  stridePx: 72,
+  /** MEASURED (coarse) — fore/aft foot travel; visible split ~60 px @1080 → ±16 stage px. */
+  footSwing: 16,
+  /** MEASURED (coarse) — swing-foot clearance ~10 px @1080 → 6 stage px. */
+  footLift: 6,
+  /** INFERRED — knee tracks the foot at roughly half amplitude. */
+  kneeSwing: 8,
+  /** INFERRED — knee lift stays subtle. */
+  kneeLift: 3,
+  /** INFERRED — pelvis/chest vertical bob (runs at 2× stride frequency). */
+  bob: 3,
+  /** INFERRED — sword-hand counter-swing vs the front leg. */
+  armSwing: 7,
 } as const;
 
 /** INFERRED — idle breathing/sway amplitudes (px); the body looks alive at rest. */
@@ -40,22 +53,31 @@ export const EASE = {
   cubicExp: 3,
 } as const;
 
-/** INFERRED — animator phase timing (ms) for transient overlays + base cycles. */
+/** Animator phase timing (ms) for transient overlays + base cycles. */
 export const ANIM_TIMING = {
-  /** Hit reaction: snap into the recoil pose… */
-  hitRecoilMs: 90,
-  /** …then ease back to the base pose. */
-  hitReturnMs: 120,
-  /** Death collapse duration (idle → DEAD keyframe). */
+  /**
+   * MEASURED — hit stagger: 12 frames total @60fps (4 upright + 8 bent)
+   * off longplay B duel t=3774.5–3774.8 (duel-strike-A, frames 036–047).
+   * Split: snap into recoil…
+   */
+  hitRecoilMs: 67,
+  /** MEASURED — …then ease back home (8 of the 12 stagger frames). */
+  hitReturnMs: 133,
+  /** INFERRED — death collapse duration (idle → DEAD keyframe); crumple re-measure queued. */
   deathMs: 320,
-  /** Walk stride period (ms per full cycle). */
-  walkPeriodMs: 560,
-  /** Idle breath period (ms per full cycle). */
+  /** INFERRED — idle breath period (ms per full cycle). */
   idlePeriodMs: 2600,
-  /** Guard pose blend-in/out time. */
+  /** INFERRED — guard pose blend-in/out time. */
   guardBlendMs: 130,
   /** Below this blend weight the guard overlay is skipped entirely. */
   guardEps: 0.001,
+  /**
+   * MEASURED — the original steps poses every 4th video frame (strict
+   * 4-frame cadence via pixel-difference MAE over duel t=3774–3775):
+   * 15fps animation inside 60fps gameplay. Scenes latch the drawn pose to
+   * this step so motion keeps the OG's chunky stepping. 0 = smooth (veto).
+   */
+  poseStepMs: 1000 / 15,
 } as const;
 
 /**

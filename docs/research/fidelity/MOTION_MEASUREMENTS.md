@@ -1,0 +1,53 @@
+# Motion measurements — Session 8 (2026-07-17)
+
+Measured animation timing/amplitudes from the v0.717 longplays (study-only,
+`reference/videos/`, gitignored). METHOD: ffmpeg 60fps frame extracts of
+verified windows → pixel-difference cadence analysis + fixed-camera
+foot-plant reads (fine-grid strips) + one surviving workflow viewer agent
+(`duel-strike-A`, run `wf_087914b1-a51`, journal in the session transcript
+dir). Numbers are facts (frame counts, px); no art was copied. Standing
+ruling: assertion follows MEASUREMENT — re-measure rather than widen.
+
+Conversion: study px @1080 ÷ 1.875 = stage px (our canvas is 1024×576).
+Video B = `Nr4fQstqHDM` (SOUND360TM), video A = `zFtCaTO0_1M` (guest).
+
+## MEASURED — landed in config (double-entered in tests/config-values.test.ts)
+
+| Fact | Value | Evidence | Config home |
+|---|---|---|---|
+| Animation pose rate | **15fps** (pose steps every 4th video frame, strict) | B duel t=3774–3775: consecutive-frame grayscale MAE ≈0 except every 4th frame (MAE 2.9–19.1); one deliberate 8-frame clash hold | `ANIM_TIMING.poseStepMs = 1000/15` (DuelScene pose latch) |
+| Walk stride period | **16 video frames ≈ 267ms** (4 anim steps/stride) | B t=465.0–466.3 fixed camera (walk-b05b frames 089–133): legs split f097–101, pass f105, split f109–113; agrees with walk-nw autocorr (half-period 8f) | drives `WALK.stridePx` below |
+| Walk speed | ~7–9.5 px/f @1080 (≈ 240–300 stage px/s) | same window: char center x 1230→1650 over 44f | (sim speeds already pinned Stage 2) |
+| **Walk stride length** | **~135 px @1080 → 72 stage px** | period × speed (16f × ~8.4 px/f) | `WALK.stridePx = 72` — stride phase advances by distance/stridePx, never time |
+| Foot swing (coarse) | visible split ~60 px @1080 → ±16 stage px | same strip; hakama occludes ankles — re-verify queued | `WALK.footSwing = 16` |
+| Foot lift (coarse) | ~10 px @1080 → 6 stage px | same strip | `WALK.footLift = 6` |
+| Hit stagger | **12 frames total: 4 upright + 8 bent-forward** | duel-strike-A: frames 036–047 after streak | `ANIM_TIMING.hitRecoilMs = 67`, `hitReturnMs = 133` |
+| Knockback on hit | ~55–70 px @1080 (≈ 30–37 stage px), all in the first anim step | duel-strike-A frame 036 hat displacement | visual only (HIT_RECOIL pose family); sim untouched |
+
+## MEASURED — recorded, not yet applied (next slices)
+
+| Fact | Value | Evidence |
+|---|---|---|
+| Strike anatomy (dash-slash) | approach ~10 px/f → windup hold 4f (1 anim step) → **lunge lands in ONE anim step** (~167–236 px @1080) → clash freeze 8f (when blocked) → slash streak lives 4f → damage popup +4f after streak | duel-strike-A events, B t=3774–3775 |
+| Full-screen hit tint | red tint ON 16 frames on the big counter hit (mean R−G 0.7→61.8→0.8) | duel-strike-A frames 032–047 |
+| Two gaits exist | upright short-step WALK (above) vs leaning ~45° bounding RUN: ~14 px/f, stride ~16f ⇒ ~225 px @1080 (~1.0× sprite height); overworld travel + duel run-ins use RUN | b05b frames 057–085 vs 089–133; jog-a28; duel-strike-A "enemy-enters 7–10 px/f" |
+| Standing sprite height | ~220 px @1080 → ~117 stage px (matches our ~120 px build) | duel-spawn frame t=426.8, kasa top y≈660 → feet y≈880 |
+| Combat idle is a semi-crouch | knees bent, wide base, blade low-forward (not our upright IDLE) | same frame, all three fighters |
+| Duels open with dash-attacks | first exchange is already a lunge at t+0.4s; fighters WALK only between exchanges | duel-move frames 001–060 |
+
+## PENDING — re-measure queue (9 viewer agents died on the session limit; resets 4:50am +08 2026-07-18)
+
+Resume: `Workflow({scriptPath: '<session>/workflows/scripts/motion-measure-wf_087914b1-a51.js', resumeFromRunId: 'wf_087914b1-a51'})` — duel-strike-A replays from cache.
+
+- duel-approach footwork detail (frames 001–060) — partially covered inline
+- duel-strike-B/C/D: more swings → confirm SLASH_FRAMES per-stance numbers
+- jog-nw + jog-a28 amplitude sets (arm counter-swing arc, bob, lean) — the
+  hakama-occluded WALK amplitudes above get their tightening here
+- walk-slow (b05a) — window turned out to be a sector-transition fade; DROP
+- crumple (A t=3313–3318): enemy death-collapse beats → `ANIM_TIMING.deathMs`
+- death-fall (A t=3358–3363): player fall → silhouette hold beats
+
+Frame corpus (scratchpad, session-local): walk-b05a/b, walk-nw, jog-a28,
+duel-move, crumple-a22, death, agent-crops/* — re-extract with the ffmpeg
+lines in SESSION8_MOTION_KICKOFF.md §1 if the scratchpad is gone (fix
+walk-b05a: use 464–468 and 490–497, not 397/425).
