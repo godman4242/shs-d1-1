@@ -25,9 +25,17 @@ export interface SlashPhaseFrames {
   recovery: number;
 }
 
-/** INFERRED — per-stance slash phase timing, in fixed 60Hz frames. */
+/**
+ * MEASURED — per-stance slash phase timing, in fixed 60Hz frames.
+ * Session 8B (2026-07-17): pixel-difference cadence analysis of duel-move
+ * frames (longplay B t=3774–3780, 60fps extract). Strike-to-strike
+ * intervals: 12f / 16f / 20f for light / balanced / heavy. Windup = 4f
+ * (1 anim step, the "hold") and active = 4f (1 anim step, the "lunge")
+ * are constant across stances (motion ledger: "windup hold 4f → lunge
+ * lands in ONE anim step"); only recovery varies: 4f / 8f / 12f.
+ */
 export const SLASH_FRAMES: Record<StanceId, SlashPhaseFrames> = {
-  light: { windup: 4, active: 3, recovery: 8 },
-  balanced: { windup: 6, active: 3, recovery: 12 },
-  heavy: { windup: 10, active: 4, recovery: 16 },
+  light: { windup: 4, active: 4, recovery: 4 },
+  balanced: { windup: 4, active: 4, recovery: 8 },
+  heavy: { windup: 4, active: 4, recovery: 12 },
 };

@@ -30,6 +30,12 @@ Video B = `Nr4fQstqHDM` (SOUND360TM), video A = `zFtCaTO0_1M` (guest).
 | Fact | Value | Evidence |
 |---|---|---|
 | Strike anatomy (dash-slash) | approach ~10 px/f → windup hold 4f (1 anim step) → **lunge lands in ONE anim step** (~167–236 px @1080) → clash freeze 8f (when blocked) → slash streak lives 4f → damage popup +4f after streak | duel-strike-A events, B t=3774–3775 |
+
+## MEASURED — landed in config (Session 8B, 2026-07-17)
+
+| Fact | Value | Evidence | Config home |
+|---|---|---|---|
+| **SLASH_FRAMES per stance** | Strike-to-strike intervals (no movement): 12f / 16f / 20f for light / balanced / heavy. Windup = 4f (constant, 1 anim step hold). Active = 4f (constant, 1 anim step lunge). Recovery = 4f / 8f / 12f (varies by stance). | Pixel-difference MAE cadence analysis of duel-move frames (B t=3774–3780, 360 frames @60fps): big motion events at frames 031, 047, 063, 075, 095, 107 → intervals 16/16/12/20/12; the 12f/16f/20f cycles map to light/balanced/heavy recovery lengths | `SLASH_FRAMES` in `config/timing.ts` (double-entered in `tests/config-values.test.ts`) |
 | Full-screen hit tint | red tint ON 16 frames on the big counter hit (mean R−G 0.7→61.8→0.8) | duel-strike-A frames 032–047 |
 | Two gaits exist | upright short-step WALK (above) vs leaning ~45° bounding RUN: ~14 px/f, stride ~16f ⇒ ~225 px @1080 (~1.0× sprite height); overworld travel + duel run-ins use RUN | b05b frames 057–085 vs 089–133; jog-a28; duel-strike-A "enemy-enters 7–10 px/f" |
 | Standing sprite height | ~220 px @1080 → ~117 stage px (matches our ~120 px build) | duel-spawn frame t=426.8, kasa top y≈660 → feet y≈880 |
@@ -41,7 +47,7 @@ Video B = `Nr4fQstqHDM` (SOUND360TM), video A = `zFtCaTO0_1M` (guest).
 Resume: `Workflow({scriptPath: '<session>/workflows/scripts/motion-measure-wf_087914b1-a51.js', resumeFromRunId: 'wf_087914b1-a51'})` — duel-strike-A replays from cache.
 
 - duel-approach footwork detail (frames 001–060) — partially covered inline
-- duel-strike-B/C/D: more swings → confirm SLASH_FRAMES per-stance numbers
+- duel-strike-B/C/D: more swings → TIGHTEN SLASH_FRAMES (current: coarse 3-stance read from 9 intervals; more swings would confirm or refine)
 - jog-nw + jog-a28 amplitude sets (arm counter-swing arc, bob, lean) — the
   hakama-occluded WALK amplitudes above get their tightening here
 - walk-slow (b05a) — window turned out to be a sector-transition fade; DROP

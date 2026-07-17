@@ -487,11 +487,11 @@ describe('timing.ts — fixed step + slash phases (Stage 0 item 7)', () => {
   it('FRAME_QUANT_EPS (Stage 2 — owed-frames 1-ulp guard)', () => {
     expect(FRAME_QUANT_EPS).toBe(1e-9);
   });
-  it('SLASH_FRAMES per-phase structure', () => {
+  it('SLASH_FRAMES per-phase structure (Session 8B: MEASURED from duel-move pixel-diff cadence)', () => {
     expect(SLASH_FRAMES).toEqual({
-      light: { windup: 4, active: 3, recovery: 8 },
-      balanced: { windup: 6, active: 3, recovery: 12 },
-      heavy: { windup: 10, active: 4, recovery: 16 },
+      light: { windup: 4, active: 4, recovery: 4 },
+      balanced: { windup: 4, active: 4, recovery: 8 },
+      heavy: { windup: 4, active: 4, recovery: 12 },
     });
   });
 });
