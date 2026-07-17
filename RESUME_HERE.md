@@ -54,21 +54,28 @@ CONFIRMED same collapse family (was assumed). NEW measured-not-applied
 candidates (ledger): 1-frame dash-snap displacement (headline gap),
 knockdown/get-up state, damage popups, hit-tint family, 30fps locomotion
 latch (re-measure first).
-**SESSION 9 IN PROGRESS (2026-07-17 night): slice 1 — DASH-THROUGH
-SLASH LANDED + REVIEW-HARDENED** (the headline motion gap):
-`DASH_SLASH_PX = 127` MEASURED (strike-C ÷1.875) + `Sim.applyStroke`
-snap rule — every fighting-phase slash translates the player along the
-stroke's net-x, pass-through, arena-clamped (chaos-proven), no dash
-airborne/zero-net/slip-length; PLAYER-ONLY (enemy dash deferred).
-13-agent adversarial review: 6 findings CONFIRMED → all fixed red-first
-(headline: one dash per SLASH_FRAMES swing cycle — the measured
-strike-to-strike interval is the OG's own rate limit; plus
-DASH_MIN_STROKE_PX=40, DrawnStroke.direction true-endpoint fix, two
-mutation pins proven by planting the mutants). DIVERGENCES Session-9
-block has all bounds + vetoes. Suite 460/460, browser: 260→387 exact
-via real drag, spam holds one dash/cycle, gate 55/55, zero console
-errors. Remaining Session 9: crouch depth (item 3) + owner feel-run
-(item 1, human eyes) + SESSION10 kickoff at close.
+**SESSION 9 CLOSED (2026-07-17 night). NEXT ENTRY POINT:
+`docs/sessions/SESSION10_KICKOFF.md`** (knockdown state + hit-tint
+family headline; owner feel-run STILL QUEUED — rolls forward; full bar
+self-report inside). Landed this session, both commits on `master`:
+**(1) dash-through slash** (db6b27b): `DASH_SLASH_PX = 127` MEASURED +
+`Sim.applyStroke` snap rule — pass-through, arena-clamped
+(chaos-proven), no dash airborne/zero-net/slip-length, PLAYER-ONLY.
+13-agent adversarial review confirmed 6 findings → all fixed red-first:
+ONE dash per SLASH_FRAMES swing cycle (the measured strike-to-strike
+interval is the OG's own rate limit — kills the scribble-teleport
+exploit the review reproduced), DASH_MIN_STROKE_PX=40,
+DrawnStroke.direction true-endpoint fix, two mutation pins proven by
+planting the mutants. Browser: 260→387 exact via real drag, spam holds
+one dash/cycle, +127 again after one 16f cycle.
+**(2) crouch coil deepened** (closing commit): B+ → **A−** — front knee
+past the toe (interior ≈155° vs measured ~157°; the digest's "157.1°
+exact" claim was caught as grade inflation — the 8B leg was ≈176°),
+torso stacked +3, back leg raked; height/width envelopes UNCHANGED;
+coil pin red-proofed; composite `idle-composite-9.png` (dd8b86c7
+scratchpad). Suite 461/461 · tsc ×2 0 · eslint 0 · gate 55/55 after
+BOTH changes · zero console errors. All bounds + vetoes: DIVERGENCES
+Session-9 block; provenance: MOTION_MEASUREMENTS.md.
 **SESSION 8B CLOSED (2026-07-17 late).** Kickoff:
 `docs/sessions/SESSION9_KICKOFF.md` (full bar self-report inside); the
 loop routes there via GOAL.md → this file. Slice-2 evidence: gate

@@ -875,3 +875,35 @@ Crash-resilience log. Updated per milestone, never "at the end."
 - Post-hardening gate paste: suite **460/460** · tsc ×2 exit 0 · eslint
   exit 0 · fidelity 41/41 + 14/14 = 55/55 · zero console errors ·
   rate-limit + slip-gate proven live via the occlusion loop-step seam.
+
+## 2026-07-17 — Session 9 slice 2 + close: crouch coil deepened (B+ → A−)
+- **Grade-inflation catch first**: the master digest's §7.6 claim "knee
+  bend: code = 157.1° ✓ exact" is FALSE — its math assumed a zig-zag leg
+  (thigh forward, shin back) but the 8B pose ran BOTH segments forward:
+  true interior angle ≈176° (nearly straight). The OG's measured read
+  (§7.3: thigh ~9° fwd, shin ~15° back) is a real zig-zag. That mismatch
+  IS the "OG reads deeper" the B+ composite saw. Also verified: the legs
+  are hakama-occluded in the spawn frame — the digest's knee-row reads
+  can't be direct joint observations; the ~157° stays an estimate, so
+  the pin is a 150–160° band, not an exact assert.
+- **Applied red-first**: new "coil depth" pin in skeleton.test.ts
+  (knee-at/past-toe + computed interior angle 150–160° + chest >7 +
+  UNCHANGED height-envelope/stance-width guards) → watched RED (knee 9 <
+  toe 14) → poses.ts deepened: kneeF 9→15 (interior ≈154.7°), kneeB
+  −8→−11 (back leg raked), chest/neck 6→9, head 7→10, hat 8→11,
+  arm chain +2 (shoulder 11, elbow 18, hand 19, sword 60). Heights and
+  feet untouched — depth is x-offsets only, exactly the kickoff contract.
+- **Composite re-delivered**: `<dd8b86c7 scratchpad>/idle-composite-9.png`
+  (OG duel-spawn crop vs live fighter, fresh browser zoom). HONEST
+  VERDICT: **A−** — the coil reads (head/kasa stacked over the front
+  hip, knee past the toe, raked back leg, low mass). Remaining nameable
+  gap: the OG kasa TILTS with the head pitch, ours sits level — that is
+  drawSamurai art polish (queued, discretionary), plus the deliberate
+  hakama-vs-exposed-legs build-style divergence.
+- Gate paste: suite **461/461** · tsc --noEmit ×2 exit 0 · eslint exit 0
+  · fidelity 41/41 + 14/14 = **55/55** on the pose-change load · zero
+  console errors.
+- Session 9 bar self-report: items 2–5 GREEN (dash landed+hardened,
+  crouch deepened+re-verdicted, all pastes in); item 1 (owner feel-run)
+  stays OPEN — human eyes queued; discretionary viewers NOT run (quota
+  spent on the 13-agent review instead — better trade).

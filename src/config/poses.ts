@@ -39,31 +39,35 @@ export type Joint =
 export type Pose = Record<Joint, PosePoint>;
 
 /**
- * MEASURED — semi-crouch combat idle (Session 8B, 2026-07-17). The motion
- * ledger reads the OG's combat idle as: "knees bent, wide base, blade
- * low-forward (not our upright IDLE)" — measured off the duel-spawn
- * frame (B t≈426.8, kasa top y≈660 → feet y≈880, all three fighters in
- * the same semi-crouch). Changes from the prior upright build: pelvis
- * drops 4px (deeper knee bend), knees splay wider (±9 vs ±7/±6), feet
- * widen (±14 vs ±11), chest leans forward (+4 x), blade hand drops and
- * shifts forward (hand y -9 vs -14, sword y -20 vs -28). Tests pin the
- * exact IDLE pose — update skeleton.test.ts in the same commit.
+ * MEASURED — semi-crouch combat idle (Session 8B, 2026-07-17; coil deepened
+ * Session 9). The motion ledger reads the OG's combat idle as: "knees bent,
+ * wide base, blade low-forward (not our upright IDLE)" — measured off the
+ * duel-spawn frame (B t≈426.8, kasa top y≈660 → feet y≈880, all three
+ * fighters in the same semi-crouch). Session-9 deepening (the B+ composite
+ * verdict: OG reads DEEPER): front knee rides past the toe (kneeF x 9→15 —
+ * interior knee bend now ~155° vs the measured ~157°; the prior build ran
+ * both leg segments forward, a nearly-straight ~176°), back leg rakes
+ * straighter (kneeB −8→−11), torso stacks forward over the front leg
+ * (chest/neck +3 x, head/hat +3, arm chain +2). Height envelope (hat −66 →
+ * feet 49 = 115) and stance width (±14) are UNCHANGED — depth comes from
+ * x-offsets only. Tests pin the coil (skeleton.test.ts "coil depth") —
+ * update them in the same commit.
  */
 export const IDLE_POSE: Pose = {
   pelvis: { x: 0, y: 4 },
-  chest: { x: 6, y: -30 },
-  neck: { x: 6, y: -38 },
-  head: { x: 7, y: -46 },
-  hat: { x: 8, y: -66 },
-  shoulderF: { x: 9, y: -32 },
-  elbowF: { x: 16, y: -20 },
-  handF: { x: 17, y: -9 },
-  sword: { x: 58, y: -20 },
+  chest: { x: 9, y: -30 },
+  neck: { x: 9, y: -38 },
+  head: { x: 10, y: -46 },
+  hat: { x: 11, y: -66 },
+  shoulderF: { x: 11, y: -32 },
+  elbowF: { x: 18, y: -20 },
+  handF: { x: 19, y: -9 },
+  sword: { x: 60, y: -20 },
   hipF: { x: 5, y: 4 },
-  kneeF: { x: 9, y: 28 },
+  kneeF: { x: 15, y: 28 },
   footF: { x: 14, y: 49 },
   hipB: { x: -5, y: 4 },
-  kneeB: { x: -8, y: 28 },
+  kneeB: { x: -11, y: 28 },
   footB: { x: -14, y: 49 },
 };
 

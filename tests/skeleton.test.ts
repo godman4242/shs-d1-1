@@ -48,6 +48,27 @@ describe('pose keyframes', () => {
     expect(IDLE_POSE.handF.y).toBeGreaterThan(-12); // blade hand lower (low-forward)
   });
 
+  it('IDLE coil depth (Session 9): front knee rides past the toe at the measured ~157° bend; torso stacks forward', () => {
+    // The B+ composite verdict said the OG crouch reads DEEPER — front knee
+    // further forward, more torso coil. The one trustworthy angular read
+    // (legs are hakama-occluded in every frame) is the ~157° interior knee
+    // bend; the digest's "code = 157.1° ✓ exact" claim was grade inflation —
+    // its math assumed a zig-zag leg, ours ran both segments forward (~176°).
+    expect(IDLE_POSE.kneeF.x).toBeGreaterThanOrEqual(IDLE_POSE.footF.x); // knee at/past the toe — the coil tell
+    const RAD = 180 / Math.PI;
+    const thigh = Math.atan2(IDLE_POSE.kneeF.x - IDLE_POSE.hipF.x, IDLE_POSE.kneeF.y - IDLE_POSE.hipF.y);
+    const shin = Math.atan2(IDLE_POSE.footF.x - IDLE_POSE.kneeF.x, IDLE_POSE.footF.y - IDLE_POSE.kneeF.y);
+    const interior = 180 - Math.abs(thigh - shin) * RAD;
+    expect(interior).toBeGreaterThan(150); // measured ~157°, honest band
+    expect(interior).toBeLessThan(160);
+    expect(IDLE_POSE.chest.x).toBeGreaterThan(7); // deeper torso coil (was +6)
+    // Hard pins that must NOT move while deepening (depth = x-offsets only):
+    expect(IDLE_POSE.footF.y - IDLE_POSE.hat.y).toBe(115); // height envelope unchanged
+    const width = IDLE_POSE.footF.x - IDLE_POSE.footB.x;
+    expect(width).toBeGreaterThanOrEqual(26); // stance width stays at the measured ~29
+    expect(width).toBeLessThanOrEqual(30);
+  });
+
   it('WINDUP pulls the blade up and behind; FOLLOW sweeps it down across the front (Tell 6 arc)', () => {
     expect(SLASH_WINDUP.sword.x).toBeLessThan(0); // behind the body
     expect(SLASH_WINDUP.sword.y).toBeLessThan(IDLE_POSE.sword.y); // raised
