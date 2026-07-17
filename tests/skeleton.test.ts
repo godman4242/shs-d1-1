@@ -33,13 +33,19 @@ describe('pose keyframes', () => {
     }
   });
 
-  it('IDLE reads as a standing fighter at our proportions: head above pelvis, feet on the ground, sword forward', () => {
-    expect(IDLE_POSE.pelvis).toEqual({ x: 0, y: 0 });
+  it('IDLE reads as a semi-crouch combat fighter at our proportions: head above pelvis, feet on the ground, sword forward (Session 8B: measured semi-crouch)', () => {
+    expect(IDLE_POSE.pelvis).toEqual({ x: 0, y: 4 }); // dropped 4px (knee bend)
     expect(IDLE_POSE.head.y).toBeLessThan(-40); // head well above the pelvis (+y is down)
     expect(IDLE_POSE.hat.y).toBeLessThan(IDLE_POSE.head.y); // kasa above the head
     expect(IDLE_POSE.footF.y).toBeGreaterThan(40); // feet at ground depth
     expect(IDLE_POSE.footB.y).toBe(IDLE_POSE.footF.y); // both planted
     expect(IDLE_POSE.sword.x).toBeGreaterThan(IDLE_POSE.handF.x); // blade points forward
+    expect(IDLE_POSE.kneeF.x).toBeGreaterThan(7); // knees splay wider (semi-crouch)
+    expect(IDLE_POSE.kneeB.x).toBeLessThan(-7);
+    expect(IDLE_POSE.footF.x).toBeGreaterThan(12); // feet wider base
+    expect(IDLE_POSE.footB.x).toBeLessThan(-12);
+    expect(IDLE_POSE.chest.x).toBeGreaterThan(4); // torso leans forward
+    expect(IDLE_POSE.handF.y).toBeGreaterThan(-12); // blade hand lower (low-forward)
   });
 
   it('WINDUP pulls the blade up and behind; FOLLOW sweeps it down across the front (Tell 6 arc)', () => {

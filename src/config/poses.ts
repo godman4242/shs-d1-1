@@ -38,23 +38,33 @@ export type Joint =
 
 export type Pose = Record<Joint, PosePoint>;
 
-/** INFERRED — standing base: our chunky build, two-hand grip forward, kasa low. */
+/**
+ * MEASURED — semi-crouch combat idle (Session 8B, 2026-07-17). The motion
+ * ledger reads the OG's combat idle as: "knees bent, wide base, blade
+ * low-forward (not our upright IDLE)" — measured off the duel-spawn
+ * frame (B t≈426.8, kasa top y≈660 → feet y≈880, all three fighters in
+ * the same semi-crouch). Changes from the prior upright build: pelvis
+ * drops 4px (deeper knee bend), knees splay wider (±9 vs ±7/±6), feet
+ * widen (±14 vs ±11), chest leans forward (+4 x), blade hand drops and
+ * shifts forward (hand y -9 vs -14, sword y -20 vs -28). Tests pin the
+ * exact IDLE pose — update skeleton.test.ts in the same commit.
+ */
 export const IDLE_POSE: Pose = {
-  pelvis: { x: 0, y: 0 },
-  chest: { x: 2, y: -34 },
-  neck: { x: 2, y: -42 },
-  head: { x: 3, y: -50 },
-  hat: { x: 4, y: -70 },
-  shoulderF: { x: 7, y: -36 },
-  elbowF: { x: 14, y: -24 },
-  handF: { x: 15, y: -14 },
-  sword: { x: 59, y: -28 },
-  hipF: { x: 5, y: 0 },
-  kneeF: { x: 7, y: 26 },
-  footF: { x: 11, y: 49 },
-  hipB: { x: -5, y: 0 },
-  kneeB: { x: -6, y: 26 },
-  footB: { x: -11, y: 49 },
+  pelvis: { x: 0, y: 4 },
+  chest: { x: 6, y: -30 },
+  neck: { x: 6, y: -38 },
+  head: { x: 7, y: -46 },
+  hat: { x: 8, y: -66 },
+  shoulderF: { x: 9, y: -32 },
+  elbowF: { x: 16, y: -20 },
+  handF: { x: 17, y: -9 },
+  sword: { x: 58, y: -20 },
+  hipF: { x: 5, y: 4 },
+  kneeF: { x: 9, y: 28 },
+  footF: { x: 14, y: 49 },
+  hipB: { x: -5, y: 4 },
+  kneeB: { x: -8, y: 28 },
+  footB: { x: -14, y: 49 },
 };
 
 /** INFERRED — blade drawn up-and-back over the shoulder (windup / the enemy "tell"). */

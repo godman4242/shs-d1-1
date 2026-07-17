@@ -39,12 +39,16 @@ Video B = `Nr4fQstqHDM` (SOUND360TM), video A = `zFtCaTO0_1M` (guest).
 | Full-screen hit tint | red tint ON 16 frames on the big counter hit (mean R−G 0.7→61.8→0.8) | duel-strike-A frames 032–047 |
 | Two gaits exist | upright short-step WALK (above) vs leaning ~45° bounding RUN: ~14 px/f, stride ~16f ⇒ ~225 px @1080 (~1.0× sprite height); overworld travel + duel run-ins use RUN | b05b frames 057–085 vs 089–133; jog-a28; duel-strike-A "enemy-enters 7–10 px/f" |
 | Standing sprite height | ~220 px @1080 → ~117 stage px (matches our ~120 px build) | duel-spawn frame t=426.8, kasa top y≈660 → feet y≈880 |
-| Combat idle is a semi-crouch | knees bent, wide base, blade low-forward (not our upright IDLE) | same frame, all three fighters |
+| Combat idle is a semi-crouch | knees bent, wide base, blade low-forward (not our upright IDLE). **APPLIED 2026-07-17 (Session 8B): `IDLE_POSE` in `config/poses.ts` rebuilt to the semi-crouch (pelvis +4, knees ±9/−8, feet ±14, chest +6 lean, hand low-forward); exact-pin in `tests/skeleton.test.ts`, red-proofed against the old upright pose** | same frame, all three fighters |
 | Duels open with dash-attacks | first exchange is already a lunge at t+0.4s; fighters WALK only between exchanges | duel-move frames 001–060 |
 
 ## PENDING — re-measure queue (9 viewer agents died on the session limit; resets 4:50am +08 2026-07-18)
 
-Resume: `Workflow({scriptPath: '<session>/workflows/scripts/motion-measure-wf_087914b1-a51.js', resumeFromRunId: 'wf_087914b1-a51'})` — duel-strike-A replays from cache.
+RE-RUN LAUNCHED 2026-07-17 (Session 8B continuation): fresh run `wf_466b63b2-966`
+(same assignments minus walk-slow, which is DROPPED — bad window; cross-session
+resume of `wf_087914b1-a51` is not possible, resume is same-session only). The
+frame corpus survives in the 5bdbf618 session scratchpad; the script points at
+it with absolute paths.
 
 - duel-approach footwork detail (frames 001–060) — partially covered inline
 - duel-strike-B/C/D: more swings → TIGHTEN SLASH_FRAMES (current: coarse 3-stance read from 9 intervals; more swings would confirm or refine)

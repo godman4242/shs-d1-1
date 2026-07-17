@@ -41,9 +41,10 @@ walk numbers (stride 72 stage px / 16-frame period @ ~8.4 px/f, hit stagger
 measured-applied / measured-pending / re-measure queue). Suite 444/444 ·
 tsc ×2 exit 0 · eslint 0 · ratchet refreshed (reviewed: +9 '0', −'0.1').
 STILL OPEN this session: browser eyeball + fidelity gate 55/55 re-run,
-death/crumple + arm-amplitude measurements (9 viewer agents died on the
-session limit, resets 4:50am +08 07-18 — resume line in the ledger),
-proportions slice (semi-crouch combat idle measured, not yet applied).
+death/crumple + arm-amplitude measurements (9-viewer RE-RUN launched
+2026-07-17 as `wf_466b63b2-966` — status in the ledger's PENDING block).
+Semi-crouch combat IDLE_POSE APPLIED 2026-07-17 (Session 8B continuation,
+red-proofed exact pin; ledger row marked applied).
 **NEXT ENTRY POINT: `docs/sessions/SESSION8B_KICKOFF.md`** (continuation
 kickoff with the bar self-report + ordered list + workflow resume line);
 the loop routes there via GOAL.md → this file. Slice-2 evidence: gate
