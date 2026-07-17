@@ -248,7 +248,7 @@ describe('anim.ts — skeletal-fighter feel (Session 8: walk + hit + pose-step M
     expect(ANIM_TIMING).toEqual({
       hitRecoilMs: 67,
       hitReturnMs: 133,
-      deathMs: 320,
+      deathMs: 333,
       idlePeriodMs: 2600,
       guardBlendMs: 130,
       guardEps: 0.001,

@@ -725,3 +725,27 @@ Crash-resilience log. Updated per milestone, never "at the end."
   15fps game.
 - OPEN: browser eyeball + fidelity 55/55 re-run, crumple/death + arm
   amplitudes, proportions slice, SESSION9 kickoff at close.
+
+## 2026-07-17 — Session 8 slice 2: deathMs measured + browser verification (M0 completion, part 2)
+- **Crumple measured inline** (A one-hit kill t≈3315.5, every-4th-frame
+  strip): fatal hit f149 → tip-airborne f153 → ground f165 → settled f173
+  ⇒ collapse 20f ≈ 333ms; body knocked BACKWARD rotating horizontal;
+  sword detaches and drops (tell, queued). `deathMs` 320→333 MEASURED,
+  double-entered. Player death-fall ASSUMED same system (re-run confirms).
+- **Browser verification** (Chrome MCP, dev server fresh): VS→FIGHT! intro
+  plays; held-D walk shows legs cycling through stride phases while
+  translating (two zooms: extended split → passing), invuln blink intact;
+  slash → enemy bar drops (defense-shaved 8); kill → hard-cut red beat →
+  +10 XP/+8 COINS result → R restart. **Fidelity gate re-run after all
+  motion changes: 41 points + 14 scans, 0 failures — 55/55 PASS.** Zero
+  console errors from a fresh load (tracking started pre-load).
+  The 333ms live collapse outruns MCP screenshot round-trips (~2s) —
+  visual eyeball QUEUED for the owner's feel-run; behaviour is unit-pinned
+  (death lerp terminal, DEAD render browser-proven at M0).
+- **SESSION8B_KICKOFF.md written** (standing end-of-session rule): honest
+  bar self-report (items 1/2/5 green; 3 partial — SLASH_FRAMES still
+  INFERRED, 9 viewers died on the session limit, reset 4:50am +08 07-18;
+  4 recoil/death applied, eyeball queued; 6 not started), ordered
+  continuation list with the workflow resume line.
+- Gate paste: suite 444/444 (unchanged since slice 1 commit + deathMs pin
+  re-run 61/61 targeted) · gate 55/55 in-browser · eslint 0 (pre-commit).

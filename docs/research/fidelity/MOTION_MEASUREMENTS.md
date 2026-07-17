@@ -23,6 +23,7 @@ Video B = `Nr4fQstqHDM` (SOUND360TM), video A = `zFtCaTO0_1M` (guest).
 | Foot lift (coarse) | ~10 px @1080 → 6 stage px | same strip | `WALK.footLift = 6` |
 | Hit stagger | **12 frames total: 4 upright + 8 bent-forward** | duel-strike-A: frames 036–047 after streak | `ANIM_TIMING.hitRecoilMs = 67`, `hitReturnMs = 133` |
 | Knockback on hit | ~55–70 px @1080 (≈ 30–37 stage px), all in the first anim step | duel-strike-A frame 036 hat displacement | visual only (HIT_RECOIL pose family); sim untouched |
+| Death collapse | tip-airborne → ground **12f**, settled **20f ≈ 333ms**; body knocked BACKWARD rotating to horizontal; sword detaches and drops beside the corpse (tell, queued) | A one-hit kill t≈3315.5 (crumple frames 149 hit → 153 tip → 165 ground → 173 rest) | `ANIM_TIMING.deathMs = 333` |
 
 ## MEASURED — recorded, not yet applied (next slices)
 
@@ -44,8 +45,11 @@ Resume: `Workflow({scriptPath: '<session>/workflows/scripts/motion-measure-wf_08
 - jog-nw + jog-a28 amplitude sets (arm counter-swing arc, bob, lean) — the
   hakama-occluded WALK amplitudes above get their tightening here
 - walk-slow (b05a) — window turned out to be a sector-transition fade; DROP
-- crumple (A t=3313–3318): enemy death-collapse beats → `ANIM_TIMING.deathMs`
-- death-fall (A t=3358–3363): player fall → silhouette hold beats
+- ~~crumple~~ MEASURED INLINE (row above, applied) — the agent re-run may
+  only tighten the ±4f read
+- death-fall (A t=3358–3363): player fall → silhouette hold beats — ASSUMED
+  same collapse animation as the enemy crumple for now (`deathMs` applies to
+  both); the re-run should confirm
 
 Frame corpus (scratchpad, session-local): walk-b05a/b, walk-nw, jog-a28,
 duel-move, crumple-a22, death, agent-crops/* — re-extract with the ffmpeg

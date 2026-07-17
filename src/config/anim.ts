@@ -63,8 +63,11 @@ export const ANIM_TIMING = {
   hitRecoilMs: 67,
   /** MEASURED — …then ease back home (8 of the 12 stagger frames). */
   hitReturnMs: 133,
-  /** INFERRED — death collapse duration (idle → DEAD keyframe); crumple re-measure queued. */
-  deathMs: 320,
+  /**
+   * MEASURED — death collapse: tip-airborne → ground 12f, settled at 20f
+   * ≈ 333ms (longplay A one-hit kill t≈3315.5, crumple frames 153→165→173).
+   */
+  deathMs: 333,
   /** INFERRED — idle breath period (ms per full cycle). */
   idlePeriodMs: 2600,
   /** INFERRED — guard pose blend-in/out time. */
