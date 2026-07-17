@@ -5,6 +5,8 @@
 > `git log --oneline -10`. Trust those three over any older doc.
 > Fidelity ledgers: `docs/TELLS_CHECKLIST.md` · `docs/CALIBRATION.md` ·
 > `docs/DIVERGENCES.md` (adopted from iaido-duel mining, 2026-07-12).
+> Navigable digest of ALL research: `docs/research/SHSD_MASTER_REFERENCE.md`
+> (adopted 2026-07-17 — its header pins precedence: ledgers/config win).
 > **Fidelity GATE (2026-07-16): `docs/research/fidelity/FIDELITY_GATE.md`**
 > — measured OG assertions vs live canvas: `npm run dev` → console →
 > `await __fidelity.run()` → must stay 17/17 PASS. HUD changes re-run it.
