@@ -749,3 +749,37 @@ Crash-resilience log. Updated per milestone, never "at the end."
   continuation list with the workflow resume line.
 - Gate paste: suite 444/444 (unchanged since slice 1 commit + deathMs pin
   re-run 61/61 targeted) · gate 55/55 in-browser · eslint 0 (pre-commit).
+
+## 2026-07-17 — Session 8B slice 3a: semi-crouch idle applied + master reference adopted (continuation session)
+- **Semi-crouch combat IDLE_POSE applied** (commit 22be5de): pelvis +4,
+  knees ±9/−8, feet ±14, chest +6 lean, blade hand low-forward — the
+  ledger's duel-spawn reading (B t≈426.8). Exact pin RED-PROOFED (stash
+  poses.ts → 1 failed | 7 passed → pop → green). Ledger row marked
+  APPLIED + RESUME_HERE same-commit.
+- **Fidelity gate re-run on the live canvas after the pose change:
+  41/41 points + 14/14 scans = 55/55 PASS, overall pass:true. Zero
+  console errors across a tracked fresh load.** (First run of the gate
+  was discarded — a CDP timeout left run #1 driving the game while
+  run #2 probed, so its probes sampled the wrong states; protocol note:
+  start the gate ONCE per fresh load, poll `window.__gateResult`.)
+- **Proportions composite delivered** (kickoff item 3):
+  `<session-784a688d scratchpad>/idle-composite-8b.png` — OG duel-spawn
+  crop vs our live fighter. HONEST VERDICT: measured ratios all land
+  (height/kasa/stance width/blade pin to the ledger §7.6 within 1-2px)
+  and the pose now reads combat-ready — but the OG crouch is visibly
+  DEEPER (front knee further forward, more torso coil). Grade B+:
+  real step, not yet indistinguishable. Deepening queued behind the
+  viewer amplitude data (same joints move).
+- **SHSD_MASTER_REFERENCE.md adopted** (commit 530ec62, owner request):
+  2,117-line digest compiled by a parallel Claude session from our own
+  ledgers + wiki mining; provenance header pins precedence (config pins >
+  ledgers > DIVERGENCES > SYNTHESIS > digest) and flags grade-inflation
+  spots. Owner also asked about iaido-duel inspiration — already mined
+  2026-07-12 (skeleton port = Stage-4 M0, DIVERGENCES adoptions).
+- **Measurement workflow relaunched** in the fresh session
+  (`wf_466b63b2-966`, 9 assignments, walk-slow DROPPED — bad window;
+  cross-session resume impossible, resume is same-session only). First
+  attempt died on the session cap again (reset 3:40pm +08), resumed
+  after reset — running at close of this entry.
+- Gate paste: suite 444/444 · tsc --noEmit ×2 exit 0 · eslint exit 0 ·
+  gate 55/55 in-browser · zero fresh-load console errors.
