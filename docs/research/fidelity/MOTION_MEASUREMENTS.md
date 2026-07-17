@@ -41,14 +41,35 @@ Video B = `Nr4fQstqHDM` (SOUND360TM), video A = `zFtCaTO0_1M` (guest).
 | Standing sprite height | ~220 px @1080 → ~117 stage px (matches our ~120 px build) | duel-spawn frame t=426.8, kasa top y≈660 → feet y≈880 |
 | Combat idle is a semi-crouch | knees bent, wide base, blade low-forward (not our upright IDLE). **APPLIED 2026-07-17 (Session 8B): `IDLE_POSE` in `config/poses.ts` rebuilt to the semi-crouch (pelvis +4, knees ±9/−8, feet ±14, chest +6 lean, hand low-forward); exact-pin in `tests/skeleton.test.ts`, red-proofed against the old upright pose** | same frame, all three fighters |
 | Duels open with dash-attacks | first exchange is already a lunge at t+0.4s; fighters WALK only between exchanges | duel-move frames 001–060 |
+| **WALK bob** | detrended hat_y peak-to-trough ≈ **0.9% of sprite height** while walking (3.5px @377px sprite, walk-nw f226–253) → `WALK.bob = 1` stage px (was INFERRED 3). Fast run reads up to ~3%h (jog-a28 f114–129) | walk-nw/jog-a28 CSVs, windowed detrended analysis (Session 8B inline) |
+| **Arms are weapon-locked in motion** | NO pedestrian counter-swing: all three duel viewers report weapon-locked arm poses during approach/run/step; walk-nw travel frames show the two-hand blade carry → `WALK.armSwing = 0` (was INFERRED 7); behaviour pin updated in `tests/anim.test.ts` | wf_466b63b2-966 duel-approach/strike-B/strike-C + walk-nw f240 eyeball |
+| **Idle breath is tiny** | standing windows (33–60f) show detrended hat-bob **≤0.5% of sprite height** (0–2px @ ~380px); one 19f stand fully motionless → `IDLE_BREATH` halved (head 0.6 stage px). YouTube compression floors 1px reads — treat as upper bound | walk-nw f006–041/f102–122/f134–193, jog-a28 f001–033/f206–240; strike-C idle note |
+| **Player death-fall = enemy crumple family (CONFIRMED, was ASSUMED)** | inline read of death f120–300: fatal tick ~f162, red overlay SNAPS to full silhouette tableau in one tick at f166, body knocked backward rotating to horizontal, weapon/shield detaches (airborne at f180), settled ≤20f — matches the crumple read; `deathMs 333` applies to both fighters | death corpus pixel-diff + frame reads 150/162/166/180 (Session 8B inline) |
+
+## MEASURED — recorded, NOT yet applied (candidates, Session 9+)
+
+| Fact | Value | Evidence |
+|---|---|---|
+| **Dash-slash displacement is a 1-frame snap** | attacker translation completes in EXACTLY ONE video frame (+240 / +~240 / −235 px @1080 across 3 dashes), then landing pose holds 4–12f; the red streak renders 4–12f AFTER arrival. Our build has no dash-through at all — headline motion gap | strike-C (HONDA SHIZUKA mop-up, f176–248) |
+| Knockdown/downed state exists | launcher lifts victim ~200–230px (~1.05× char height), airborne ~40f, then prone; get-up head-lift ~40f after last hit; finisher attacks target the downed body | strike-B f096–150, strike-C f150–248 |
+| Damage popups | spawn at victim, rise ~90–120px @1080 over ~19–30f while fading; grey-out near end | strike-B/C popup tracks |
+| Full-screen hit tint family | ~7f (pass-through hit) / 12f (launcher) / 16f (big counter) — duration scales with hit weight | strike-A/B/C tint counts |
+| Locomotion may latch at 30fps | run/step poses latch in 2-video-frame pairs (30fps) vs 4-frame action poses (15fps) — MEDIUM confidence, conflicts with the b05b 15fps walk read; RE-MEASURE before touching `poseStepMs` | strike-C footwork {169,170}/{172,173} pairs |
+| Windup holds vary on special moves | jump-slash and ground-finisher hold the overhead windup 8f (2 anim steps); basic 3-stance windup stays 4f (SLASH_FRAMES intervals unchanged, corroborated by strike-B's 5-attack log) | strike-B attacks 4–5 |
 
 ## PENDING — re-measure queue (9 viewer agents died on the session limit; resets 4:50am +08 2026-07-18)
 
-RE-RUN LAUNCHED 2026-07-17 (Session 8B continuation): fresh run `wf_466b63b2-966`
-(same assignments minus walk-slow, which is DROPPED — bad window; cross-session
-resume of `wf_087914b1-a51` is not possible, resume is same-session only). The
-frame corpus survives in the 5bdbf618 session scratchpad; the script points at
-it with absolute paths.
+RE-RUN COMPLETED 2026-07-17 evening (`wf_466b63b2-966`): duel-approach +
+strike-A/B/C returned (results folded into the tables above); jog-nw /
+jog-a28 / crumple / death-fall / strike-D died on the session cap twice —
+their items were then SALVAGED INLINE the same night (CSV windowed
+analysis + direct frame reads; rows above). Still-open viewer value, all
+DISCRETIONARY for Session 9: strike-D extra swings (SLASH_FRAMES already
+pinned from 9 intervals + strike-B's 5-attack log), close-up foot-plant
+reads (footSwing/footLift stay coarse), the 30fps-locomotion-latch check
+(row above). Resume line if wanted:
+`Workflow({scriptPath: '<784a688d session>/workflows/scripts/motion-measure-8b-wf_466b63b2-966.js', resumeFromRunId: 'wf_466b63b2-966'})`
+— completed agents replay from cache (same-session only).
 
 - duel-approach footwork detail (frames 001–060) — partially covered inline
 - duel-strike-B/C/D: more swings → TIGHTEN SLASH_FRAMES (current: coarse 3-stance read from 9 intervals; more swings would confirm or refine)

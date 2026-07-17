@@ -32,19 +32,35 @@ export const WALK = {
   kneeSwing: 8,
   /** INFERRED — knee lift stays subtle. */
   kneeLift: 3,
-  /** INFERRED — pelvis/chest vertical bob (runs at 2× stride frequency). */
-  bob: 3,
-  /** INFERRED — sword-hand counter-swing vs the front leg. */
-  armSwing: 7,
+  /**
+   * MEASURED (coarse) — vertical bob (runs at 2× stride frequency).
+   * Session 8B: detrended hat_y peak-to-trough ≈ 0.9% of sprite height
+   * across the walk-nw moving window (f226–253, 3.5px @377px sprite)
+   * → ~1 stage px on our 117px build. Was the INFERRED seed 3.
+   */
+  bob: 1,
+  /**
+   * MEASURED — no sword-hand counter-swing: arms are weapon-locked while
+   * moving (Session 8B: all three duel viewers report weapon-locked arm
+   * poses in approach/run/step; walk-nw travel frames show the two-hand
+   * blade carry). Was the INFERRED pedestrian counter-swing 7.
+   */
+  armSwing: 0,
 } as const;
 
-/** INFERRED — idle breathing/sway amplitudes (px); the body looks alive at rest. */
+/**
+ * MEASURED (coarse) — idle breathing/sway amplitudes (px). Session 8B:
+ * standing windows in walk-nw/jog-a28 (33–60 frames each) show detrended
+ * hat-bob ≤ 0.5% of sprite height (0–2px @ ~380px sprite) → ≤0.6 stage px
+ * at the head. The INFERRED seed was ~2× that; halved to match. YouTube
+ * compression floors 1px oscillations — treat as an upper bound.
+ */
 export const IDLE_BREATH = {
-  chest: 1.5,
-  neck: 1.3,
-  head: 1.1,
-  hat: 1.1,
-  hand: 1.0,
+  chest: 0.8,
+  neck: 0.7,
+  head: 0.6,
+  hat: 0.6,
+  hand: 0.5,
 } as const;
 
 /** INFERRED — easing shape (housed here so core/ stays literal-free). */

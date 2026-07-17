@@ -227,19 +227,19 @@ describe('nums.ts — pure-math identities (Stage 1; core/ bans ALL literals)', 
 });
 
 describe('anim.ts — skeletal-fighter feel (Session 8: walk + hit + pose-step MEASURED off longplay B)', () => {
-  it('WALK cycle — stride MEASURED (b05b t=465.0–466.3: 16f stride @ ~8.4 px/f → 72 stage px)', () => {
+  it('WALK cycle — stride MEASURED (b05b t=465.0–466.3: 16f stride @ ~8.4 px/f → 72 stage px); bob/armSwing MEASURED Session 8B (walk-nw detrended hat-bob ~0.9%h; arms weapon-locked in all duel viewers)', () => {
     expect(WALK).toEqual({
       stridePx: 72,
       footSwing: 16,
       footLift: 6,
       kneeSwing: 8,
       kneeLift: 3,
-      bob: 3,
-      armSwing: 7,
+      bob: 1,
+      armSwing: 0,
     });
   });
-  it('IDLE_BREATH amplitudes', () => {
-    expect(IDLE_BREATH).toEqual({ chest: 1.5, neck: 1.3, head: 1.1, hat: 1.1, hand: 1.0 });
+  it('IDLE_BREATH amplitudes — MEASURED (coarse) Session 8B: idle hat-bob ≤0.5%h across 3 standing windows → halved from the inferred seed', () => {
+    expect(IDLE_BREATH).toEqual({ chest: 0.8, neck: 0.7, head: 0.6, hat: 0.6, hand: 0.5 });
   });
   it('EASE shape', () => {
     expect(EASE).toEqual({ cubicExp: 3 });

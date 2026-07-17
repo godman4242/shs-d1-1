@@ -83,9 +83,11 @@ describe('anim locomotion offsets', () => {
     expect(walkOffsets(0.25, 2).footF.x).toBeCloseTo(2 * walkOffsets(0.25, 1).footF.x, 6);
   });
 
-  it('walk: sword hand counter-swings the front leg', () => {
-    const o = walkOffsets(0.25); // front leg fully forward
-    expect(Math.sign(o.handF.x)).toBe(-Math.sign(o.footF.x));
+  it('walk: sword hand stays weapon-locked — zero counter-swing at every phase (Session 8B MEASURED: arms hold the blade while moving)', () => {
+    for (const phase of [0, 0.25, 0.5, 0.75]) {
+      expect(walkOffsets(phase).handF.x).toBeCloseTo(0, 12);
+      expect(walkOffsets(phase).handF.y).toBeCloseTo(0, 12);
+    }
   });
 
   it('idle: bounded breathing, periodic, near-zero at phase 0', () => {
