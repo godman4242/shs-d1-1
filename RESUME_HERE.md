@@ -43,9 +43,12 @@ tsc ×2 exit 0 · eslint 0 · ratchet refreshed (reviewed: +9 '0', −'0.1').
 STILL OPEN this session: browser eyeball + fidelity gate 55/55 re-run,
 death/crumple + arm-amplitude measurements (9 viewer agents died on the
 session limit, resets 4:50am +08 07-18 — resume line in the ledger),
-proportions slice (semi-crouch combat idle measured, not yet applied),
-SESSION9 kickoff at close. Kickoff: `docs/sessions/SESSION8_MOTION_KICKOFF.md`;
-the loop routes there via GOAL.md.
+proportions slice (semi-crouch combat idle measured, not yet applied).
+**NEXT ENTRY POINT: `docs/sessions/SESSION8B_KICKOFF.md`** (continuation
+kickoff with the bar self-report + ordered list + workflow resume line);
+the loop routes there via GOAL.md → this file. Slice-2 evidence: gate
+55/55 in-browser after all motion changes, walk strides verified live,
+deathMs 333 measured (crumple strip), zero fresh-load console errors.
 Standing rule: every session ends by writing the NEXT kickoff (copy-paste
 ready + bar self-report) — see GOAL.md hard rules.
 **STAGE 3 CLOSED 100% ☑ (2026-07-13, Session 5).** All 7 gate items green
