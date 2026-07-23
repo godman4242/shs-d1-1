@@ -1052,11 +1052,15 @@ describe('Sim — dash-through slash (Session 9: MEASURED strike-C 1-frame snap)
   });
   it('an airborne slash still resolves damage — ONLY the dash is skipped', () => {
     // Mutation pin: an implementation that discards the whole mid-air slash
-    // (not just its dash) must fail here.
-    const sim = makeSim();
+    // (not just its dash) must fail here. Session 11 adjudication: the reach
+    // gate is real now, so the enemy must BE within reach — the default x=400
+    // spawn is ~236px from the mid-arc player (152.5, 147.5), beyond balanced
+    // reach 200, and correctly whiffs (CRUX behavior). Spawn the enemy at
+    // x=280 (~138px away, in reach) and slash through it.
+    const sim = makeSim({}, { pos: v(280, 200) });
     sim.applyStroke(jumpStroke());
-    tickN(sim, 3); // mid-arc
-    const outcome = sim.applyStroke(slashStroke());
+    tickN(sim, 3); // mid-arc — player at (152.5, 147.5)
+    const outcome = sim.applyStroke(new DrawnStroke([v(200, 200), v(350, 200)]));
     expect(outcome.slash?.hit).toBe(true);
     expect(sim.enemy.hp).toBe(142);
   });

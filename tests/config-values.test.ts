@@ -191,11 +191,11 @@ describe('combat.ts — Stage 1 stroke/blade/blood constants (spec item 3 + item
 });
 
 describe('stances.ts — exact table + triangle (Stage 0 item 6)', () => {
-  it('STANCE_TABLE', () => {
+  it('STANCE_TABLE — mastery-9 ceilings (wiki); Heavy reach 100 (carry-error 120 fixed)', () => {
     expect(STANCE_TABLE).toEqual({
       light: { reach: 300, speed: 1.4, dmgMult: 0.9, damageTakenMult: 1.0 },
       balanced: { reach: 200, speed: 1.0, dmgMult: 1.2, damageTakenMult: 1.0 },
-      heavy: { reach: 120, speed: 0.7, dmgMult: 1.4, damageTakenMult: 1.25 },
+      heavy: { reach: 100, speed: 0.7, dmgMult: 1.4, damageTakenMult: 1.25 },
     });
   });
   it('STANCE_BEATS triangle: light>heavy>balanced>light', () => {

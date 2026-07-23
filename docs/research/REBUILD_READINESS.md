@@ -248,11 +248,33 @@ For each system: **ready** = codeable now · **blockers** = must-measure, with c
 > TODAY — shs3preloader.swf, shs3.swf, and the complete **6,880,328-byte
 > shs3_payload.swf** (all 2016-dated ⇒ an EARLY build, likely not final v0.717; a
 > 2016-11-30 payload capture also sits in Wayback) — and playerio.com, the platform that
-> ran the game's entire backend, still operates. **The ONE remaining experiment (human,
-> queued):** run the preloader in a standalone Flash projector (Ruffle cannot do
-> Player.IO's socket rooms) with a hosts/proxy redirect of www.strawhatsamuraiduels.com
-> → the live CDN payload, and observe whether a login screen appears and whether auth
-> still answers. Study-only lane — RECREATE-NEVER-RIP governs.
+> ran the game's entire backend, still operates.
+>
+> **P0 EXPERIMENT RUN 2026-07-23 — DEFINITIVE: NO OFFLINE PLAYABLE BUILD, and the wall
+> is ARCHITECTURAL, not missing files.** Set-up: staged the three live-CDN client SWFs
+> into a Flashpoint 11 Infinity install's PHP-router `htdocs` under their real domain
+> paths (`www.strawhatsamuraiduels.com/shs3_payload.swf`, etc.), started the router +
+> QEMU proxy, and loaded the preloader through the proxy. Flashpoint's own Waterfox
+> won't launch on this macOS (Intel min-OS gate), so the harness was **Ruffle desktop
+> nightly** with `--proxy 127.0.0.1:22500`. Result (screenshot:
+> `reference/preservation/p0_ruffle_titlescreen.png`): **the real v0.717 Duels title
+> screen renders** ("FIGHT PVP DUELS! AMASS LOOT! WAGE WAR!", Explosive Barrel barrel),
+> the router log shows the **6.88 MB `shs3_payload.swf` served 200** (so the binary is
+> complete and reachable — NOT a file problem), then it **hangs forever at "Loading game
+> files…"** — identical to the live official embed. Cause: once the payload initializes
+> it must reach the **Player.IO game server** (`shsd-server1` auth + BigDB save-state +
+> socket rooms) to boot, and that server-side deployment died with the studio; Ruffle
+> also cannot open Player.IO's raw sockets. The tinyloader version file even points the
+> payload at the dead `strawhatsamuraiduels.com` and reports `version=0.706` (older than
+> the preloader's baked "v0.717") — consistent with a 2016-era client. **Strategic
+> conclusion: the ~40 INFERRED feel/number values will NOT be measured from a live build
+> — this game has no offline path (even single-player campaign state was server-side
+> BigDB).** The project pivots to the forum trove + footage + the playable predecessors
+> as the measurement/feel sources. *Remaining low-value refinement (optional, NOT
+> pursued — stuck-stop):* a Windows standalone Flash projector under Wine CAN open real
+> sockets and might reach a login prompt, but login would then hit the same dead game
+> server, so it cannot change this verdict. Study-only lane — RECREATE-NEVER-RIP governs;
+> client SWFs live gitignored in `reference/preservation/`.
 >
 > **Tier-1 additions found by the same audit (each verified to exist):**
 > ① **~127 archived Kongregate forum threads for THIS game** (Wayback CDX, mostly

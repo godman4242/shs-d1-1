@@ -27,6 +27,8 @@ const attacker = (over: Partial<SlashAttacker> = {}): SlashAttacker => ({
   atkPlusWeapon: 10,
   stance: 'balanced',
   crit: false,
+  pos: v(100, 100),  // at target center — within reach
+  reach: 200,        // balanced stance reach — enough to hit
   ...over,
 });
 const target = (over: Partial<TargetHitbox> = {}): TargetHitbox => ({
@@ -141,5 +143,29 @@ describe('resolveSlash — severing (INFERRED: parts sever on lethal crossings)'
   it('a target without parts severs nothing even on a kill', () => {
     const r = resolveSlash(throughStroke(), target({ hp: 1 }), attacker());
     expect(r.severed).toEqual([]);
+  });
+});
+
+describe('resolveSlash — Session 11: blade-path-with-reach gating', () => {
+  it('a stroke beyond reach deals NO damage even if it crosses the hitbox', () => {
+    // Attacker far away with small reach — stroke crosses the hitbox but
+    // no stroke point is within reach of the attacker
+    const s = new DrawnStroke([v(0, 100), v(200, 100)]);
+    const farAttacker = attacker({ pos: v(500, 100), reach: 50 });
+    expect(resolveSlash(s, target(), farAttacker).hit).toBe(false);
+  });
+  it('a stroke within reach hits normally', () => {
+    const s = new DrawnStroke([v(0, 100), v(200, 100)]);
+    const closeAttacker = attacker({ pos: v(100, 100), reach: 200 });
+    expect(resolveSlash(s, target(), closeAttacker).hit).toBe(true);
+  });
+  it('CRUX (frame-verified): a long stroke starting AT the player does NOT hit an enemy beyond reach at its far tip', () => {
+    // duel_dense 428.0→431.5: one long arc bloodies in-reach enemies but the
+    // far enemy keeps full HP — the blade path TERMINATES at the reach cap.
+    // Stroke runs from the attacker's own position across the target's hitbox
+    // 400px away; reach is only 60 — the crossing segments are beyond reach.
+    const s = new DrawnStroke([v(500, 100), v(300, 100), v(50, 100)]);
+    const atkAtOwnPos = attacker({ pos: v(500, 100), reach: 60 });
+    expect(resolveSlash(s, target(), atkAtOwnPos).hit).toBe(false);
   });
 });

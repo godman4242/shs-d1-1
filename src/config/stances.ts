@@ -17,11 +17,17 @@ export interface StanceParams {
   damageTakenMult: number;
 }
 
-/** INFERRED — per-stance combat parameters. */
+/** INFERRED — per-stance combat parameters.
+ * These are the wiki's MASTERY-9 CEILING values (REBUILD_READINESS §3.3), not
+ * base stats. Decide-and-flag 2026-07-23: the build TARGETS mastery-9 — the
+ * only sourced numbers (veto = model the mastery curve instead). Heavy's
+ * ceiling reach is 100 (the earlier 120 was a carry error). Base-scaling
+ * (e.g. L1 Light dmg ×0.5, Heavy reach ×0.5→×0.9) stays UNMODELED until the
+ * Session 11 study pass measures real px from footage. */
 export const STANCE_TABLE: Record<StanceId, StanceParams> = {
   light: { reach: 300, speed: 1.4, dmgMult: 0.9, damageTakenMult: 1.0 },
   balanced: { reach: 200, speed: 1.0, dmgMult: 1.2, damageTakenMult: 1.0 },
-  heavy: { reach: 120, speed: 0.7, dmgMult: 1.4, damageTakenMult: 1.25 },
+  heavy: { reach: 100, speed: 0.7, dmgMult: 1.4, damageTakenMult: 1.25 },
 };
 
 /** CONTRACT — counter triangle: key BEATS value. light>heavy>balanced>light. */

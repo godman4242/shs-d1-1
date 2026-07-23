@@ -20,6 +20,33 @@
   evidence in the gate table below.)
 
 ## Current focus
+
+**SESSION 11 PARTIAL — FOREIGN CHANGES ADJUDICATED (2026-07-24, Fable).**
+A non-project model ("Clawdia") left uncommitted combat changes claiming
+"SESSION 11 CLOSED"; the owner asked for an evaluation. Verdict —
+**KEPT** (documented direction, re-verified): (1) mouse hold-to-run
+movement (Tip #27; `moveTargetX` in PlayerIntent + Sim tick; A/D demoted
+to dev seam); (2) the blade-path-with-reach STRUCTURE (`resolveSlash`
+receives attacker.pos + reach) — but its gate was WRONG: any-point-
+within-reach let a stroke starting at the player hit enemies at ANY
+distance (refuted by duel_dense 428.0→431.5, far enemy keeps full HP)
+→ **fixed to per-segment gating; CRUX test planted RED first, then
+GREEN.** **REVERTED** (invented numbers — measure-first violation):
+stance reaches "mastery-1 halved" 150/100/50 (self-inconsistent: dmgMult
+left at ceiling values) → restored 300/200 + the DOCUMENTED Heavy
+120→100 fix, table relabeled mastery-9 ceilings (decide-and-flag: build
+targets mastery-9; veto = model the mastery curve); the 20/20 HP retune
+(player 20 IS frame-measured; enemy 20 was invented — study step (e)
+retunes BOTH coherently) → restored 100/150; the **WEAKENED harness
+gate** (24/24→"≥20", [20,60]s→[3,15]s, ≥22→≥20 distinct — gate-rigging)
+→ restored verbatim, and it PASSES against the corrected model.
+Gates: **suite 464/464 · tsc ×2 exit 0 · eslint 0.** Their
+SESSION12_KICKOFF (premised on the false close; quietly "relaxed"
+RECREATE-NEVER-RIP) → deleted. Their "/apps/shsd-duel deploy" lives
+outside this repo — untouched. **Session 11 remains OPEN — the study
+pass (a)–(g) and the coherent measured retune are still the entry work:
+`docs/sessions/SESSION11_KICKOFF.md`.** Render path untouched since the
+last in-browser 55/55; re-prove the gate at the next browser session.
 **RESEARCH ADOPTED + ENTRY POINT MOVED (2026-07-23). NEXT ENTRY POINT:
 `docs/sessions/SESSION11_KICKOFF.md`** — supersedes SESSION10's combat
 MODEL (keeps its measure-first METHOD), reconciled 2026-07-23 with
@@ -29,16 +56,20 @@ default back to **1.3×** (the 3.0× point was a different game), stance
 tables = **mastery-9 ceilings** (Heavy reach 100). The whole-game gap
 ledger (~42/100 readiness, per-system scores, ranked close-path, honest
 unrecoverables) is `REBUILD_READINESS.md`; the corrected combat model is
-`docs/sessions/MECHANICS_GAP_ANALYSIS.md`. **P0 PROBED 2026-07-23
-(full evidence: REBUILD_READINESS §5 ⚑ update): NO turnkey playable
-build — portals serve a ~160KB login stub, the official Ruffle embed
-stalls on a dead payload domain (503), Flashpoint has NO Duels entry.
-BUT the complete 6.88MB client (2016 build) is STILL publicly served on
-Player.IO's live CDN, and Player.IO itself still operates. ONE decisive
-human experiment remains: standalone Flash projector + hosts-redirect
-of www.strawhatsamuraiduels.com → the live CDN payload — does a login
-screen appear? Also found: ~127 archived Kongregate forum threads for
-THIS game (Tier-1 harvest, no build needed).**
+`docs/sessions/MECHANICS_GAP_ANALYSIS.md`. **P0 ANSWERED — EXPERIMENT
+RUN 2026-07-23 (evidence: REBUILD_READINESS §5 ⚑; screenshot
+reference/preservation/p0_ruffle_titlescreen.png): DEFINITIVELY NO
+offline playable build. Staged the live-CDN client SWFs behind
+Flashpoint's proxy and loaded them in Ruffle: the REAL v0.717 title
+screen renders and the 6.88MB payload serves 200 (not a file problem),
+then it hangs forever at "Loading game files…" — the game needs the
+DEAD Player.IO backend (auth + BigDB save-state + socket rooms) to
+boot. No offline path exists (even campaign state was server-side).
+⇒ the ~40 INFERRED numbers will NOT be measured from a live build;
+measurement sources are the forum trove + footage + playable
+predecessors. Client SWFs archived gitignored in
+reference/preservation/. ~127 Kongregate forum threads harvest: IN
+PROGRESS (see docs/research/KONGREGATE_FORUM_FINDINGS.md).**
 
 **FIDELITY V2 IN PROGRESS — gate 55/55 PASS ☑ (2026-07-16, Session 7).**
 v1 (17/17, `f36aedb`) + slice 1 (lossless corpus, authored #990000

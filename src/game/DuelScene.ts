@@ -117,6 +117,12 @@ export class DuelScene extends Phaser.Scene {
   private enemyAccDx = 0;
   private playerPose: Pose | null = null;
   private enemyPose: Pose | null = null;
+  // Session 11: mouse hold-to-run — when the mouse is held but NOT dragging
+  // a stroke (pointerdown with minimal movement), the player runs toward the
+  // cursor position. Once a stroke is being drawn (dragPoints growing), it
+  // becomes a slash gesture and movement stops.
+  private mouseHoldActive = false;
+  private mouseTargetX = 0;
 
   constructor() {
     super('duel');
@@ -154,6 +160,8 @@ export class DuelScene extends Phaser.Scene {
     this.enemyAccDx = 0;
     this.playerPose = null;
     this.enemyPose = null;
+    this.mouseHoldActive = false;
+    this.mouseTargetX = 0;
 
     // (The persisted profile is no longer read here: the OG shows no
     // coins/XP chrome during fights — DuelResult owns accrual/persistence.)
@@ -207,9 +215,14 @@ export class DuelScene extends Phaser.Scene {
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       this.dragging = true;
       this.dragPoints = [{ x: p.x, y: p.y }];
+      // Session 11: start tracking as a potential hold-to-run
+      this.mouseHoldActive = true;
+      this.mouseTargetX = p.x;
     });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
       if (this.dragging && this.dragPoints.length < 2048) this.dragPoints.push({ x: p.x, y: p.y });
+      // Update mouse target while holding (even if dragging, the target tracks)
+      if (this.mouseHoldActive) this.mouseTargetX = p.x;
     });
     // Off-canvas releases emit 'pointerupoutside' — both must finish the
     // stroke or it is silently swallowed (Stage-1 audit finding).
@@ -219,6 +232,7 @@ export class DuelScene extends Phaser.Scene {
         this.finishStroke();
       }
       this.dragging = false;
+      this.mouseHoldActive = false;
     };
     this.input.on('pointerup', finishDrag);
     this.input.on('pointerupoutside', finishDrag);
@@ -412,7 +426,15 @@ export class DuelScene extends Phaser.Scene {
   override update(_time: number, delta: number): void {
     // Held-state intent BEFORE advancing: A/D movement + SHIFT Shunpo.
     const moveX = (this.keys?.D.isDown === true ? 1 : 0) - (this.keys?.A.isDown === true ? 1 : 0);
-    this.sim.setPlayerIntent({ moveX, shunpoHeld: this.keys?.SHIFT.isDown === true });
+    // Session 11: mouse hold-to-run takes priority over A/D. If the mouse is
+    // held, we feed the cursor X as a movement target. Once a stroke is being
+    // drawn (dragPoints > 4), it's a slash — movement pauses during the swing.
+    const mouseMoving = this.mouseHoldActive && this.dragPoints.length < 4;
+    this.sim.setPlayerIntent({
+      moveX,
+      shunpoHeld: this.keys?.SHIFT.isDown === true,
+      moveTargetX: mouseMoving ? this.mouseTargetX : null,
+    });
 
     // Sim owns the fixed-step accumulator; the scene forwards
     // delta × sim.timeScale (spec item 11 — Shunpo slow-mo).

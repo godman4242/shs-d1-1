@@ -23,6 +23,10 @@ export interface SlashAttacker {
   stance: StanceId;
   /** Whether this swing crits — the Critical bar decides upstream (Stage 2). */
   crit: boolean;
+  /** Attacker position on the stage (Session 11: reach gating). */
+  pos: Vec;
+  /** Max slash reach in px — from STANCE_TABLE[stance].reach (Session 11). */
+  reach: number;
 }
 
 export interface TargetHitbox {
@@ -62,8 +66,48 @@ function strokeCrossesPolygon(points: readonly Vec[], poly: readonly Vec[]): boo
   return false;
 }
 
+function withinReach(p: Vec, origin: Vec, reachSq: number): boolean {
+  const dx = p.x - origin.x;
+  const dy = p.y - origin.y;
+  return dx * dx + dy * dy <= reachSq;
+}
+
+/** True when the IN-REACH portion of the stroke touches the polygon. The blade
+ * path terminates at the stance reach cap (frame-verified: one long arc bloodies
+ * in-reach enemies while the far enemy keeps full HP), so only segments with at
+ * least one endpoint within reach of the attacker can cut. Boundary-spanning
+ * segments count whole — an INFERRED slack of at most one segment length, until
+ * the study pass measures the real blade-FX clip. */
+function strokeCrossesPolygonWithinReach(
+  points: readonly Vec[],
+  poly: readonly Vec[],
+  origin: Vec,
+  reachSq: number,
+): boolean {
+  const start = points.at(ZERO);
+  if (start !== undefined && withinReach(start, origin, reachSq) && pointInPolygon(start, poly)) return true;
+  let prevPt: Vec | null = null;
+  for (const cur of points) {
+    if (prevPt !== null && (withinReach(prevPt, origin, reachSq) || withinReach(cur, origin, reachSq))) {
+      let prevVtx = poly.at(-ONE);
+      if (prevVtx !== undefined) {
+        for (const vtx of poly) {
+          if (segmentsIntersect(prevPt, cur, prevVtx, vtx)) return true;
+          prevVtx = vtx;
+        }
+      }
+    }
+    prevPt = cur;
+  }
+  return false;
+}
+
 export function resolveSlash(stroke: DrawnStroke, target: TargetHitbox, attacker: SlashAttacker): SlashResult {
-  if (!strokeCrossesPolygon(stroke.points, target.polygon)) {
+  // Session 11: blade-path-with-reach — only the stroke's in-reach portion cuts.
+  // A stroke drawn over a beyond-reach enemy deals NO damage, even when the
+  // stroke itself starts at the attacker (CRUX test, frame-verified).
+  const reachSq = attacker.reach * attacker.reach;
+  if (!strokeCrossesPolygonWithinReach(stroke.points, target.polygon, attacker.pos, reachSq)) {
     return { hit: false, damage: ZERO, crit: false, severed: [] };
   }
   // Formula (incl. the single-form heavy penalty) lives in core/damage.ts —

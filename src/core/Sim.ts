@@ -41,6 +41,7 @@ import { ENEMY_SPEED } from '../config/ai';
 import type { OpponentController, OpponentIntent, OpponentView } from './OpponentController';
 import { isOffArena, projectileHits, spawnProjectile, stepProjectile, type Projectile } from './projectile';
 import { resolveSlash, type SlashResult } from './slash';
+import { STANCE_TABLE } from '../config/stances';
 import { msToFrames } from './time';
 import { jumpArcPoint } from './trajectory';
 import type { Vec } from './vec';
@@ -92,6 +93,8 @@ export type SimEvent =
 export interface PlayerIntent {
   moveX: number;
   shunpoHeld: boolean;
+  /** Session 11: mouse hold-to-run target X (stage px). null/omitted = no mouse movement. */
+  moveTargetX?: number | null;
 }
 
 export interface StrokeOutcome {
@@ -198,7 +201,7 @@ export class Sim {
   private events: SimEvent[] = [];
   /** HIT COMBO — player-only HUD counter (the original shows no enemy combo). */
   private readonly comboCounter = new Combo();
-  private playerIntent: PlayerIntent = { moveX: ZERO, shunpoHeld: false };
+  private playerIntent: PlayerIntent = { moveX: ZERO, shunpoHeld: false, moveTargetX: null };
   private queuedSkill: SkillVerb | null = null;
   private readonly cooldownUntil: Record<SkillVerb, number> = {
     chiPunch: ZERO,
@@ -283,7 +286,8 @@ export class Sim {
     const moveX = Number.isFinite(intent.moveX)
       ? Math.max(-ONE, Math.min(ONE, intent.moveX))
       : ZERO;
-    this.playerIntent = { moveX, shunpoHeld: intent.shunpoHeld };
+    const moveTargetX = Number.isFinite(intent.moveTargetX ?? NaN) ? intent.moveTargetX : null;
+    this.playerIntent = { moveX, shunpoHeld: intent.shunpoHeld, moveTargetX };
   }
 
   /** Edge-triggered skill press (hotbar 1/2/3) — consumed on the next tick.
@@ -423,7 +427,7 @@ export class Sim {
       const result = resolveSlash(
         stroke,
         { polygon: this.hitbox('enemy'), stance: enemy.stance, hp: enemy.hp, defense: enemy.defense },
-        { atkPlusWeapon: player.atkPlusWeapon, stance: player.stance, crit: critReady },
+        { atkPlusWeapon: player.atkPlusWeapon, stance: player.stance, crit: critReady, pos: { ...player.pos }, reach: STANCE_TABLE[player.stance].reach },
       );
       if (result.hit) {
         // Reaction seam: the controller may block or dodge a landing slash.
@@ -688,15 +692,34 @@ export class Sim {
         f.chiUnits = Math.min(f.chiUnits + CHI_FILL_PER_S, CHI_MAX_UNITS);
       }
       this.updateShunpo();
-      // Player movement (A/D). The jump arc owns the position while airborne.
+      // Player movement. Mouse hold-to-run takes priority (Session 11,
+      // Tip #27: HOLD mouse to run toward cursor); A/D is a dev-seam fallback.
+      // The jump arc owns the position while airborne.
       const player = this.fighters.player;
-      if (player.jump === null && this.playerIntent.moveX !== ZERO) {
+      if (player.jump === null) {
         const stepMs = MS_PER_S / FIXED_HZ;
-        const x = player.pos.x + this.playerIntent.moveX * PLAYER_MOVE_SPEED * stepMs;
-        player.pos = {
-          x: Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, x)),
-          y: player.pos.y,
-        };
+        if (this.playerIntent.moveTargetX != null) {
+          const target = this.playerIntent.moveTargetX;
+          const dx = target - player.pos.x;
+          const dist = Math.abs(dx);
+          const step = PLAYER_MOVE_SPEED * stepMs;
+          if (dist <= step) {
+            // Arrived — snap to target
+            player.pos = { x: Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, target)), y: player.pos.y };
+          } else {
+            const dir = Math.sign(dx);
+            player.pos = {
+              x: Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, player.pos.x + dir * step)),
+              y: player.pos.y,
+            };
+          }
+        } else if (this.playerIntent.moveX !== ZERO) {
+          const x = player.pos.x + this.playerIntent.moveX * PLAYER_MOVE_SPEED * stepMs;
+          player.pos = {
+            x: Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, x)),
+            y: player.pos.y,
+          };
+        }
       }
       // Edge-triggered skill press queued by the scene.
       if (this.queuedSkill !== null) {

@@ -65,7 +65,10 @@ export interface FighterBase {
   deflectLearned: boolean;
 }
 
-/** INFERRED — spec item 9 player seed. */
+/** INFERRED — spec item 9 player seed. NOTE: frames show early PvE player HP
+ * is 20/20 (MEASURED, duel_dense 428.0) — the retune to measured values ships
+ * as ONE coherent step with enemy HP/damage in the Session 11 study pass (e),
+ * not piecemeal. */
 export const PLAYER_BASE: FighterBase = {
   hp: 100,
   atkPlusWeapon: 10,
@@ -74,7 +77,7 @@ export const PLAYER_BASE: FighterBase = {
   deflectLearned: true,
 };
 
-/** INFERRED — spec item 9 enemy seed. */
+/** INFERRED — spec item 9 enemy seed (PvP-dummy 150; PvE trash HP unmeasured). */
 export const ENEMY_BASE: FighterBase = {
   hp: 150,
   atkPlusWeapon: 7,

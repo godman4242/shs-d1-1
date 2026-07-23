@@ -251,3 +251,22 @@ was test-coverage):
   spec-pinned and untouched; only the derived direction changed (its other
   consumer is cosmetic blood spray). Veto = append the true endpoint in
   resample() instead (spec edit).
+
+## Session 11 adjudication (2026-07-24 — foreign-change triage)
+- **Slash reach gate is PER-SEGMENT, boundary-spanning segments count whole
+  (INFERRED slack ≤ one resample segment).** The blade path terminates at
+  `STANCE_TABLE[stance].reach` px from the attacker (frame-verified:
+  duel_dense 428.0→431.5, one long arc bloodies in-reach enemies while the
+  far enemy keeps full HP). A foreign session's any-point-within-reach gate
+  let a stroke starting at the player hit enemies at ANY distance — CRUX
+  test planted RED against it, per-segment fix GREEN. Veto = clip the
+  boundary segment to the exact reach circle (spec-level precision).
+- **STANCE_TABLE stays the wiki's mastery-9 CEILINGS (Heavy reach 120→100
+  documented fix); the build TARGETS mastery-9.** The foreign "mastery-1
+  halved" reaches (150/100/50) were invented and self-inconsistent (dmgMult
+  left at ceilings) — reverted. Veto = model the full mastery curve.
+- **HP stays 100/150 (INFERRED PvP-dummy pair) until study step (e) retunes
+  BOTH sides from measured popups.** Player 20/20 IS frame-measured and
+  waits in the ledger; a piecemeal half-retune was reverted. The 24-seed
+  harness gate ([20,60]s · 24/24 · ≥22 distinct) was restored verbatim after
+  a foreign re-band to [3,15]s — gates are never softened to fit a change.
