@@ -12,13 +12,34 @@
 > model-fallback advice is NOT policy).
 > **Fidelity GATE (2026-07-16): `docs/research/fidelity/FIDELITY_GATE.md`**
 > — measured OG assertions vs live canvas: `npm run dev` → console →
-> `await __fidelity.run()` → must stay 17/17 PASS. HUD changes re-run it.
+> `await __fidelity.run()` → must stay **55/55** PASS (v2 gate — 41 points
+> + 14 edge scans; v1 was 17/17). HUD changes re-run it.
 
 ## Awaiting human/browser verification
 - Nothing queued. (The Stage-3 browser gate item was CLOSED 2026-07-13 —
   evidence in the gate table below.)
 
 ## Current focus
+**RESEARCH ADOPTED + ENTRY POINT MOVED (2026-07-23). NEXT ENTRY POINT:
+`docs/sessions/SESSION11_KICKOFF.md`** — supersedes SESSION10's combat
+MODEL (keeps its measure-first METHOD), reconciled 2026-07-23 with
+`docs/research/REBUILD_READINESS.md` §3: movement = **HOLD-mouse-to-run**
+leading (Tip #27; click-move contested — study item (b) decides), crit
+default back to **1.3×** (the 3.0× point was a different game), stance
+tables = **mastery-9 ceilings** (Heavy reach 100). The whole-game gap
+ledger (~42/100 readiness, per-system scores, ranked close-path, honest
+unrecoverables) is `REBUILD_READINESS.md`; the corrected combat model is
+`docs/sessions/MECHANICS_GAP_ANALYSIS.md`. **P0 PROBED 2026-07-23
+(full evidence: REBUILD_READINESS §5 ⚑ update): NO turnkey playable
+build — portals serve a ~160KB login stub, the official Ruffle embed
+stalls on a dead payload domain (503), Flashpoint has NO Duels entry.
+BUT the complete 6.88MB client (2016 build) is STILL publicly served on
+Player.IO's live CDN, and Player.IO itself still operates. ONE decisive
+human experiment remains: standalone Flash projector + hosts-redirect
+of www.strawhatsamuraiduels.com → the live CDN payload — does a login
+screen appear? Also found: ~127 archived Kongregate forum threads for
+THIS game (Tier-1 harvest, no build needed).**
+
 **FIDELITY V2 IN PROGRESS — gate 55/55 PASS ☑ (2026-07-16, Session 7).**
 v1 (17/17, `f36aedb`) + slice 1 (lossless corpus, authored #990000
 recovered, `717aa8b`) + slice 2a (measured gradient bars, `6cc1cf9`) +
@@ -55,7 +76,8 @@ candidates (ledger): 1-frame dash-snap displacement (headline gap),
 knockdown/get-up state, damage popups, hit-tint family, 30fps locomotion
 latch (re-measure first).
 **OWNER FEEL-RUN VERDICT LANDED (2026-07-18) — gate item 1 CLOSED,
-CONTROL MODEL CORRECTED. NEXT ENTRY POINT:
+CONTROL MODEL CORRECTED. ENTRY POINT (superseded 2026-07-23 →
+SESSION11, see top block):
 `docs/sessions/SESSION10_KICKOFF.md` (REWRITTEN around the verdict —
 the old knockdown/hit-tint version is superseded, git history at
 0445773).** The verdict: OG movement is MOUSE-ONLY (click-to-move, no
@@ -193,11 +215,12 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**STAGE 3 IS CLOSED.** Start Stage 4 from
-`docs/sessions/STAGE4_KICKOFF.md` — first milestone is **M0: port the
-15-joint skeletal-fighter system from iaido-duel** (decide-and-flag
-2026-07-13, veto = drop M0; walk cycle is a hard prerequisite for the
-town scene), then
+**STAGE 3 IS CLOSED — but the combat-model repair comes FIRST
+(2026-07-23): enter via `docs/sessions/SESSION11_KICKOFF.md`** (see the
+Current-focus top block; SESSION10/STAGE4 are NOT the entry point).
+Stage-4 campaign work then resumes from `docs/sessions/STAGE4_KICKOFF.md`
+— its **M0 (15-joint skeletal fighter + walk cycle) is already DONE**
+(Session 8; decide-and-flag 2026-07-13, veto = drop M0), then
 campaign scope: title/login flow, dialogue, town, quests, RPG screens —
 every name and line of dialogue ORIGINAL per the root invariant;
 guest-start currencies seed at the login flow (DIVERGENCES M4-(d)).
