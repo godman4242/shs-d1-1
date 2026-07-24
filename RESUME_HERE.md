@@ -75,8 +75,10 @@ boot. No offline path exists (even campaign state was server-side).
 ⇒ the ~40 INFERRED numbers will NOT be measured from a live build;
 measurement sources are the forum trove + footage + playable
 predecessors. Client SWFs archived gitignored in
-reference/preservation/. ~127 Kongregate forum threads harvest: IN
-PROGRESS (see docs/research/KONGREGATE_FORUM_FINDINGS.md).**
+reference/preservation/. Kongregate forum harvest: **COMPLETE** —
+128 topics → 1,447 unique cited facts (49 dev-authored) → 313
+synthesized entries, contradictions both-sides-cited:
+`docs/research/KONGREGATE_FORUM_FINDINGS.md`.**
 
 **FIDELITY V2 IN PROGRESS — gate 55/55 PASS ☑ (2026-07-16, Session 7).**
 v1 (17/17, `f36aedb`) + slice 1 (lossless corpus, authored #990000
