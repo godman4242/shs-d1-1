@@ -1,753 +1,355 @@
 # KONGREGATE FORUM FINDINGS — dev-era player knowledge (Wayback harvest)
 
-> **What this is.** Game-mechanics facts mined from archived Kongregate forum threads
-> for *Straw Hat Samurai: Duels* (Wayback Machine captures of 2015-era threads,
-> mostly crawled July 2020). Produced 2026-07-23/24 by harvest workflow `wf_0c6e9655-269`
-> over the 222-capture CDX index (128 unique topics).
+> **What this is.** Game-mechanics knowledge mined from the ~128 archived Kongregate
+> forum topics for *Straw Hat Samurai: Duels* (222 Wayback captures, 2015-era threads,
+> mostly crawled July 2020). Harvest workflow `wf_0c6e9655-269`, 2026-07-23/24.
 >
-> **STATUS: PARTIAL — 29 of 37 batches processed (1148 facts, 38 dev-authored).**
-> The session usage limit interrupted batches 27–36 and the dedup/synthesis stage
-> twice (second reset: 23:40 MYT 2026-07-23). **Resume:** re-invoke the workflow with
-> `resumeFromRunId: wf_0c6e9655-269` — finished batches replay from cache.
+> **STATUS: extraction COMPLETE — all 37 batches, 1447 unique cited facts (49 dev-authored).**
+> Synthesis (dedup + contradiction-flagging): **2 of 3 sections done** below.
+> The economy/items/progression cluster is included RAW (per-fact, pre-dedup) —
+> its synthesis agent hit the usage window (resets 04:50 MYT); resuming the
+> workflow re-runs ONLY that agent (everything else replays from cache).
 >
-> **Read rules.** Every fact is a PLAYER CLAIM unless prefixed **DEV:** (a Lutgames
-> post or quoted official changelog). Quotes ≤25 words by policy. NOT yet deduped;
-> contradictions NOT yet reconciled (pending synthesis stage). Precedence:
-> `REBUILD_READINESS.md` + config/ledgers still win.
+> **Read rules.** Facts are PLAYER CLAIMS unless marked **DEV:** (Lutgames posts /
+> quoted official changelogs). Quotes ≤25 words by policy. Contradictions are kept,
+> flagged, and cited on both sides. Precedence: `REBUILD_READINESS.md` + config +
+> fidelity ledgers still win on conflicts.
 >
-> **Harvest caveats.** Wayback throttles hard (one capture unrecoverable so far:
-> funny-npc-dialogue topic 490529). Two early batch workers hit scratchpad filename
-> collisions / out-of-order responses; both verified their facts against correct
-> thread titles before returning — still, spot-check a citation before leaning on it.
+> **Harvest caveats.** Wayback throttled hard (unrecoverable capture: funny-npc-dialogue
+> topic 490529). Two early batch workers hit scratchpad filename collisions /
+> out-of-order responses; both content-verified their facts against thread titles —
+> still, spot-check a citation before leaning hard on it.
 
 
-## combat-core (126)
+# PART 1 — Combat, skills & enemies (SYNTHESIZED)
 
-- The Defense stat is considered near-worthless because piercing damage and Chi/Ninja skills ignore it entirely.
-  — "due to its ability to be ignored by piercing damage and Chi/Ninja skills, it's mostly worthless"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- PvE meta: use the lightest stance that still one-hits trash mobs; PvP meta: prestige (rebirth) several times and run a ninja/chi skill build described as ridiculously powerful.
-  — "use the lightest stance you can while still one-hitting trash mobs"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- Wiki-sourced player claim: heavy stance slows you and reduces your defense by up to 20%, with the shortest range and slowest sword draw.
-  — "heavy not only makes you slower, it also decreases your defense by as much as 20%"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- Player claim: heavy stance is good vs strong opponents, medium bosses, and PvP, but near-useless against the strongest enemies like Tengu, Red Oni, and heavy bosses.
-  — "almost completely useless against extremely strong opponents such as the Tengu, Red Oni, and heavy bosses"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- Contradicting claim: light is the worst fighting style and nobody picks it; only balance and heavy have viable techniques.
-  — "the worst fighting style is light so no one chose it"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- Consensus claim: balance stance is best for a first life because light stance cannot one-shot mobs; heavy is situationally swapped in for PvP and bosses.
-  — "balance is best for first birth, no matter what. light is too weak to one-shot kill mobs."
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- AUTO SLASH exists as a character behavior; one player reports his light-stance auto-slash character reacted slowly, and light's upward slash often left him positionally exposed.
-  — "my light auto-slash character had slow reaction"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- Knockdown recovery matters: heavy stance characters can fail to get up fast enough against fast bosses; the balanced stance has a 'flip-up' skill that fixes this with no position penalties.
-  — "Balanced, especially with the flip-up skill, was very practical"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- One-hit kills are common in duels: if your damage output exceeds your own HP pool, a mirror opponent can kill you in one slash; glass-cannon builds routinely get one-shot.
-  — "If you can do more damage than your health. Obviously your opponent can kill you in one hit."
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- At the other extreme, a full HP/Defense build can reduce incoming duel slashes to about 2 damage.
-  — "After you see opponents slash you for 2 damage."
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- Corroborating stance summary: heavy has the highest attack but reduces both defense and range; light has the highest range and fastest draw but weakest attack; balance sits between.
-  — "Heavy has the highest attack but decreases your defense and range."
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- Kunai are usable as a ranged option during duels, alongside advice to stack HP skill points and +atk gear.
-  — "invest skill points in HP, find some gear with +atk, use kunai"
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- A veteran's dueling checklist ends with the cryptic tip 'go red' (meaning not explained in the thread; possibly a red status/aura mechanic).
-  — "e) go red"
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- A '100% dodge roll' move is referenced as an existing mechanic players want given to more enemies (implies a roll with full dodge frames exists in the combat system).
-  — "Have them do the 100% dodge roll."
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- Light stance has an 'upswing' attack that can stun enemies; repeated stuns were described as the deciding factor in the Chikako boss fight.
-  — "if you have the upswing try as often as you can to stun her"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Kunai projectiles can be dodged with the jump or the roll move.
-  — "if she throws a kunai try jump or the roll"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Heavy stance combined with the AUTO SLASH feature was a go-to player strategy for most story fights and bounty targets.
-  — "tip for most fights heavy stance plus autoslash"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Player hypothesis on the damage formula: total attack power (e.g. 100-110, of which the sword contributes a 20-30 range) minus target Defense (e.g. 90) gives damage dealt (10-20), before criticals/pierce — posed as a question, not confirmed.
-  — "If the target has 90 Defense … do 10 to 20 damage to the target? (110 – 90)"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- Player claim: Piercing and Critical stats effectively raise your minimum and maximum slash damage.
-  — "Piercing and critical basically up your min and max dmg’s with slashes"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- Player claim: the Defense stat only works against sword attacks, and there is a per-enemy minimum damage floor (usually above 1) you always take no matter how high your defense.
-  — "each defence increases defence by 1 point, it works only against sword attacks"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- Measured defense breakpoints: at level 60, ~150 Defense makes same-level mobs deal their minimum damage (14 to that player); higher-level mobs have a higher minimum; ~200-250 Defense recommended by level 80 for grinding.
-  — "in lvl 60 – I need around 150 defence for mobs to deal minimum(14 damage for me)"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- Contradiction pair on PvP Defense: one veteran says Defense is needed but 'less valuable than you imagine' in PvP; another counters it is MORE useful in PvP — high Defense drops balanced-stance hits to ~20 and stops heavy-stance one-shots, enabling counters.
-  — "high enough def means that balanced … will do 20, and heavy won’t one shot you"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- Player claim: some attacks deal piercing damage (bypassing Defense), but most incoming threat comes from normal (defense-mitigated) attacks.
-  — "some attacks that deal piercing damage, the majority of the threat is coming from normal attacks"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- Reported Red Oni kill method 1: use light stance with the dash skill, slashing back and forth through the oni repeatedly until it dies.
-  — "light stance >> dash skill slashing back and forth until it's dead"
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Reported Red Oni kill method 2 ('crit evade abuse'): draw a forward slash and HOLD it without releasing; when the oni enters its attacking stance, release — the crit evade on release guarantees you are not hit by the incoming attack. Confirms slashes can be held indefinitely and that releasing grants an evade window.
-  — "The crit evade will ensure that you won't get hit by the attack."
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Reported Red Oni kill method 3: wait for the oni to approach, draw a slash line through it extending as far as possible, release just before the oni attacks, then immediately use the dash skill matching the slash direction (dash left when slashing left, and vice versa).
-  — "Release the mouse right before the red oni attacks and then immediately use the dash skills"
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Enemies deal a minimum "piercing" damage per strike that defense cannot reduce, scaling with enemy level — measured: level 1/10/12 enemies pierce 1; level 35 pierces 8; levels 36-37 pierce 9.
-  — "Piercing damage per enemy per level (minimum damage) … 35) 8"
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- Player formula estimate: enemy minimum piercing damage is approximately enemy level divided by 4.
-  — "piercing is estimated at (mob lvl/4)."
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- Stance-vs-enemy matchups (player claim): Onis and animals are weak against Light stance; bandits are weak against Balanced and Heavy stances; Light works on undead if you aim for the head, but switch to Heavy against jumping zombies.
-  — "Onis and animals are weak against light. Bandits are weak against balanced and heavy"
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- Light stance is a skill-based playstyle that works poorly with auto-grinding (bandits + Auto Slash preferred for AFK-style grinding); at high level Light's air combo is a standout, especially in PvP.
-  — "light’s air combo becomes a sight to behold especially on PVPs"
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- AUTO SLASH usage consensus: ON is fine for beginners and for grinding weak open-world enemies; OFF is strongly advised against Tengu and in PvP.
-  — "Fighting a Tengu? Or PVP? Definitely not."
-  · [auto slash "on" or "off" ?](https://web.archive.org/web/20150920124446/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494226-auto-slash-on-or-off?page=1)
-- AUTO SLASH mode automatically triggers launch attacks and there is no option to disable launching while it is active (implied by suggestion to add such a toggle).
-  — "Eh. Ability to turn off launch while Auto-Slash is on?"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Core boss loop: evade with Critical Evade and Roll while the focus bar charges to full, land the critical hit, repeat; boss fights end with a coup de grace finisher.
-  — "Critcal Evade Roll Wait for the focus bar to be fully charged Repeat until coup de grâce."
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Stance matchup claim: Amaya uses a heavy fighting style, so light stance is the most effective counter (stance rock-paper-scissors).
-  — "Amaya is a boss that uses a heavy fighting style so using light would be most effective."
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Hit location matters: land the critical slash preferably on the head, then dash/roll/run to the far end of the screen and repeat — same hit-and-run pattern as the Red Oni fight.
-  — "hit her with 1 critical slash, preferably on the head then dash/roll/run to the other end"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- The game has a balanced stance in addition to light and heavy; one player beat Amaya using balanced stance (contradicting the light-counters-heavy advice).
-  — "I used balanced stance btw.."
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Contradicting claim: heavy stance is the most powerful and (presumably at high level/gear) can one-hit-kill Amaya.
-  — "Use heavy, the most powerful. ... BTW i can kill her with 1 hit :P"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Left and right dash moves are an alternative evasion tool to Roll and remained reliable against Red Oni attacks after the roll nerf.
-  — "Better use left and right dash. I killed alot of red onis with dashes easy"
-  · [Stats bug](https://web.archive.org/web/20151231071033/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496971-stats-bug?page=1)
-- Some skills completely ignore defense, but not all, and the defense-ignoring ones are gated by cooldowns (player claim).
-  — "some skill do completely ignore defense , but not all skills , and those skills have cooldown"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Worked example of defense math (player): a light-stance hit that would deal ~200 damage with piercing lands for ~50 against defense without piercing.
-  — "it is the difference between 200 dmg a light stance shot without piercing and 50 dmg with piercing"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Stance triangle (player claim): Light beats Heavy, Heavy beats Balanced, Balanced beats Light; each stance is meant to be mastered around its strengths/weaknesses.
-  — "Light beats heavy, Heavy beats balanced, Balanced beats Light."
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Having stance advantage pushes the enemy's attacks higher (i.e., you take more damage when counter-stanced), per Captain_Catface.
-  — "cooldown skills bypassing defense and stance advantage pushing enemy attacks higher"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Stance meta advice: Light Stance trivializes the early game; as you progress the meta shifts toward Balanced, then Heavy (Captain_Catface; disputed in-thread).
-  — "Focusing on Light Stance makes the game early easy on... you will want to focus on balanced, and then heavy"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Contradicting stance claim (Karyuudan): the server's best players run Light Stance for the Shunpo skill and its longer slash-line range — best for skilled players.
-  — "most of the server best players use Light stance for Shunpo and line range"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Third stance take (AbsoluteShadow): any stance can beat any other on pure skill; Heavy is merely the laziest/easiest option; Light is least newbie-friendly.
-  — "heavy is just the laziest and easiest more or less"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- PvP meta was heavily reliant on one-hit-kill builds (Apr 2015 observation).
-  — "From what I’ve seen PVP is heavily reliant on one-hit-kill builds"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- The SPEED stat increases slash-line length and reduces skill cooldowns.
-  — "Speed increases line length and drops skill cooldown."
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- AUTO SLASH: when enabled the character auto-fights with basic movement and slashes, including launches and executes if those are unlocked; used to grind or free the player for skill-casting.
-  — "your character will automatically fight with basic movements and slashes, including launches and executes if unlocked"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Pressing space quickly toggles stances, but only if the focus bar is sufficiently full — stance switching draws on the focus meter.
-  — "you can press space to quickly toggle stances if your focus bar is full enough"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- The element set includes earth, water, wind and fire as single-element powers; combining two elements does not exist (it was suggested).
-  — "double elemnt powers combined earth and water or wind and fire"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Light stance attacks are performed by drawing a slash line, holding it, and releasing when the enemy closes; vs Red Oni you release at max-close range then immediately dash through, ending beyond the reach of his club.
-  — "you simply draw a light stance’s line wait till red oni comes maximum distance close possible and then release line"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- A full focus bar enables a critical slash, and boss fights end with a coup de grace finisher; the anti-Amaya loop is Critical Evade + Roll, wait for full focus, land the crit, repeat until coup de grace.
-  — "Wait for the focus bar to be fully charged Repeat until coup de grâce."
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Stance counter system: Amaya uses a heavy fighting style, so light stance is most effective against her; players also 'zip' from one screen end to the other between crits to avoid being hit at all.
-  — "Amaya is a boss that uses a heavy fighting style so using light would be most effective."
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Hit location matters: the recommended Amaya tactic is one critical light-stance slash aimed at the head, then dash/roll/run to the far end of the screen and repeat — explicitly the same pattern as the Red Oni fight.
-  — "hit her with 1 critical slash, preferably on the head"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Contradiction to the light-counters-heavy advice: one player beat Amaya at level 36 using balanced stance after out-leveling and re-gearing (she had 3-hit-killed him at level 30).
-  — "I used balanced stance btw.."
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Second contradiction: another player recommends heavy stance as the most powerful and claims to kill Amaya in 1 hit (likely a high-level/rebirth character).
-  — "Use heavy, the most powerful."
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Player example magnitudes for defense vs the piercing affix: a Light-stance shot lands around 200 damage with piercing but only about 50 against defense without it.
-  — "it is the difference between 200 dmg a light stance shot without piercing and 50 dmg with piercing"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- Stance triangle as stated by AbsoluteShadow: Light beats Heavy, Heavy beats Balanced, Balanced beats Light; mastering one stance's strengths/weaknesses matters.
-  — "Light beats heavy, Heavy beats balanced, Balanced beats Light"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- Captain_Catface claims Light stance makes the early game easy but players should shift toward Balanced, then Heavy, as they progress.
-  — "The further you progress, the more you will want to focus on balanced, and then heavy"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- Contradicting claim (Karyuudan): Light stance is the top-player choice, valued for the Shunpo skill and its line range, though least friendly to new players.
-  — "most of the server best players use Light stance for Shunpo and line range"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- AbsoluteShadow claims stance matchups aren't deterministic — any stance can beat any other on player skill, with Heavy being the easiest/laziest to use.
-  — "any one stance can beat any other stance regardless of how you fight, heavy is just the laziest and easiest"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- AUTO SLASH is a toggle button in the top-left of the battle screen; when on, the character fights automatically with basic movement and slashes, including launches and executes if unlocked — used to grind faster or free the player for skill-casting.
-  — "your character will automatically fight with basic movements and slashes, including launches and executes if unlocked"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- Being at stance disadvantage pushes enemy attack damage higher, and cooldown skills bypass defense (Catface claim).
-  — "cooldown skills bypassing defense and stance advantage pushing enemy attacks higher"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- PVP meta as of April 2015 was reportedly dominated by one-hit-kill builds (Catface observation).
-  — "From what I’ve seen PVP is heavily reliant on one-hit-kill builds"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- Minimum damage floor claim: you always deal at least (your level / 4) damage to enemies, with red oni as the stated exception.
-  — "you'll always do at LEAST your level/4 damage to enemies. (Cept the red oni."
-  · [[Straw Hat Samurai: Duels] Equipments and how do they work exactly?](https://web.archive.org/web/20200719120130/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486247-straw-hat-samurai-duels-equipments-and-how-do-they-work-exactly)
-- Heavy stance deals more damage but also makes you take more damage if your defense is insufficient.
-  — "You'll do more damage in heavy stance, but you'll also TAKE more if your defense isn't high enough"
-  · [[Straw Hat Samurai: Duels] Equipments and how do they work exactly?](https://web.archive.org/web/20200719120130/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486247-straw-hat-samurai-duels-equipments-and-how-do-they-work-exactly)
-- PvP damage observation from a level-12 player: hits usually land for 1-5 damage with occasional ~20-damage spikes, suggesting a wide min/max spread or crits.
-  — "I occassionally do 20 points of damage, but its always 1-5 points of damage"
-  · [[Straw Hat Samurai: Duels] Equipments and how do they work exactly?](https://web.archive.org/web/20200719120130/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486247-straw-hat-samurai-duels-equipments-and-how-do-they-work-exactly)
-- Player hypothesis of the damage formula: damage = attacker total attack minus defender defense (example: 100-110 attack vs 90 defense yields 10-20 damage), with the sword itself contributing a range like 20-30; posed as a question, partially disputed by the next poster.
-  — "you can (assuming no criticals or pierce) do 10 to 20 damage to the target? (110 - 90)"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- Counter-claim to the subtraction hypothesis: attack/defense interaction is not a clean flat subtraction ('the numbers don't seem that cut and dry').
-  — "Actually I don't think that is quite right for atk and def"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- Piercing and Critical stats raise your minimum and maximum slash damage respectively (player explanation).
-  — "Piercing and critical basically up your min and max dmg's with slashes"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- 1 point of Attack adds approximately +1 to both min and max damage, at least in balance stance.
-  — "1 attack is approximately 1 min and 1 max dmg(in balance stance at least)"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- The Defense stat only mitigates sword attacks (not elemental/pierce), +1 defense per point; its exact internal effect was unclear even to veteran players.
-  — "each defence increases defence by 1 point, it works only against sword attacks"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- There is a minimum incoming damage floor (usually above 1) that scales with attacker level; a level-60 player needed ~150 defense to push same-level mobs down to his floor of 14 damage per hit.
-  — "in lvl 60 - I need around 150 defence for mobs to deal minimum(14 damage for me)"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- PvP build claim A (rulezz): defense is necessary but overvalued in PvP — do not go pure-defense.
-  — "def is realy less valuable than you imagine it"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- PvP build claim B (contradicting A, AbsoluteShadow): defense matters MORE in PvP — enough defense holds balanced-stance hits to ~20 damage and stops heavy-stance one-shots, leaving room to counter.
-  — "high enough def means that balanced from anyone who does not have ungodly attack will do 20"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- Some attacks deal piercing damage (bypassing normal defense), but the majority of PvP threat comes from normal attacks.
-  — "While there are some attacks that deal piercing damage, the majority of the threat is coming from normal attacks."
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- AUTO SLASH is a toggle players leave on while grinding; it persists into boss fights and must be manually switched off first thing against the Statue Guardian or it gets you killed.
-  — "If you have autoslash on from grinding make absolutely sure to turn it off first thing, or you're toast"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200719095529/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487269-straw-hat-samurai-duels-how-do-you-beat-the-statue-guardian)
-- Every player slash stuns the Statue Guardian; the winning loop is slash (stun), pass through him, slash from behind, repeat.
-  — "Every time you slash him it stuns him"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200718231825/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486915-straw-hat-samurai-duels-to-autoslash-or-not-to-autoslash)
-- Run and roll are distinct traversal moves with different outcomes: rolling through the Statue Guardian gets you hit, running through avoids his attack.
-  — "you just have to run NOT ROLL through him to avoid his attack"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200718231825/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486915-straw-hat-samurai-duels-to-autoslash-or-not-to-autoslash)
-- AUTO SLASH is a toggle players leave on for grinding; it is lethal to keep on versus the Statue Guardian and must be manually disabled before the fight.
-  — "If you have autoslash on from grinding make absolutely sure to turn it off"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200718231825/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486915-straw-hat-samurai-duels-to-autoslash-or-not-to-autoslash)
-- Kunai (throwing weapons) exist and are suggested as a ranged option against hard bosses; boss damage was also discussed as possibly stat-modified vs base damage.
-  — "is it its base dmg it deals to you? … did you try Kunais?"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200718231825/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486915-straw-hat-samurai-duels-to-autoslash-or-not-to-autoslash)
-- Guide claim on difficulty curve: Light Stance makes the early game easy, but later progression favors shifting to Balanced and then Heavy stance.
-  — "The further you progress, the more you will want to focus on balanced, and then heavy"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- The SPEED stat increases slash line length and decreases skill cooldowns.
-  — "Speed increases line length and drops skill cooldown"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- AUTO SLASH, when enabled, makes the character fight automatically with basic movement and slashes, including launches and executes once those are unlocked; players used it to grind faster or focus on skill-casting.
-  — "your character will automatically fight with basic movements and slashes, including launches and executes if unlocked"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Pressing space quick-toggles stances, gated on the focus bar being full enough.
-  — "you can press space to quickly toggle stances if your focus bar is full enough"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Claim: the server's best players run Light stance for Shunpo and its line range.
-  — "most of the server best players use Light stance for Shunpo and line range"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Stance counter-triangle: Light beats Heavy, Heavy beats Balanced, Balanced beats Light.
-  — "Light beats heavy, Heavy beats balanced, Balanced beats Light"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Claim: stance matchup advantage pushes the advantaged side's attack damage higher.
-  — "stance advantage pushing enemy attacks higher"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Claim: beta-era PvP meta leaned heavily on one-hit-kill builds.
-  — "PVP is heavily reliant on one-hit-kill builds"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Counter-claim: PvP is skill-driven and any stance can beat any other; Heavy is merely the laziest/easiest option. Defense numeric example cited: a light-stance shot as 200 damage without piercing vs 50 damage with piercing (phrasing ambiguous).
-  — "it is the difference between 200 dmg a light stance shot without piercing and 50 dmg with piercing"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Light stance deals deliberately low damage per hit; one light user rated piercing the most useful stat on his sword because of it.
-  — "the most useful stat I have on my sword is piercing"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Player report: with maxed attack stat and a dragon blade but Light Stance skill only level 3, hits on same-level bandits were just 2-3 damage.
-  — "I maxed attack and have a dragon blade but still hit only 2-3 on bandits my level"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Claim: the attack stat is pointless for Light stance, whose intent is faster attacks rather than stronger ones; damage comes from stance skill investment.
-  — "it’s intent is to make you faster attacker not a stronger one"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Contradicting report: a post-rebirth player one-shot bandits with Light stance all the way to level 50, crediting higher base attack and equipment, and only invested in Light stance skill from about level 35.
-  — "Since I rebirthed, I’ve used lightstance uptill my current level (50) and Ive always been one shotting bandits"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- AUTO SLASH exists as an established feature that makes the character act on its own — used as the reference point for a proposed 'auto travel' ('like auto slash except the character will move on his own').
-  — "auto travel which is like auto slash except the character will move on his own"
-  · [[Straw Hat Samurai: Duels] ITT: Things you want to see in the game](https://web.archive.org/web/20200719131437/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490507-straw-hat-samurai-duels-itt-things-you-want-to-see-in-the-game)
-- AUTO SLASH is a per-player toggle that can be switched off mid-play (turning it off is step 3 of the Red Oni bot-clinch exploit, so the player can flee without engaging).
-  — "3) Auto slash off. 4) Run away from oni."
-  · [[Straw Hat Samurai: Duels] Red oni](https://web.archive.org/web/20200719020954/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492406-straw-hat-samurai-duels-red-oni)
-- A clinch mechanic locks two combatants together; while an enemy is clinched, the player's summoned clones can attack it freely and the clinched enemy cannot kill the clones.
-  — "Let your clones do the job. Clones won’t get killed by clinched oni."
-  · [[Straw Hat Samurai: Duels] Red oni](https://web.archive.org/web/20200719020954/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492406-straw-hat-samurai-duels-red-oni)
-- PvP counter-pick claim: choosing the element strong against an opponent of equal rebirth count roughly negates their rebirth elemental ATK bonus, leaving only their gear advantage.
-  — "you will pretty much negate his rebirth ATK, leaving him only his gear"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Three stances exist - light, balanced, heavy; one player calls light the worst, heavy the max-damage/min-damage-taken style, and balanced the damage-plus-speed-and-skills style.
-  — "the worst fighting style is light so no one chose it"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Wiki-derived claim (disputed in-thread): light and balanced stances have the highest range and fastest sword draw; heavy has the shortest range and slowest draw.
-  — "it has the highest range and fastest drawing"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Wiki-derived claim (disputed in-thread): heavy stance makes you slower AND decreases your defense by as much as 20%, and is nearly useless against the strongest enemies.
-  — "heavy not only makes you slower, it also decreases your defense by as much as 20%"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Recommended stat build for any stance (Captain_Catface): cap Attack, cap Health, exactly 35 Speed, dump 25 into Defense.
-  — "Cap Attack, Cap Health, 35 Speed, 25 Defense"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Defense is considered a near-worthless stat because piercing damage AND Chi/Ninja skills both ignore it.
-  — "ignored by piercing damage and Chi/Ninja skills"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- PvE stance heuristic: use the lightest stance that still one-hit-kills trash mobs.
-  — "use the lightest stance you can while still one-hitting trash mobs"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- PvP meta claim: after prestiging (rebirthing) several times, a ninja/chi skill build is 'ridiculously powerful' and is the way to play PvP.
-  — "a (ridiculously powerful) ninja/chi skill build"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Player belief (posed as a question, echoed by another player re light-stance PvP): raising SPEED beyond the 35 cooldown cap still increases slash range.
-  — "increasing the speed further would still increase your range, right?"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Consensus claim: balanced is the best stance for a first life because light is too weak to one-shot mobs; heavy is a situational swap for PvP and bosses; light PvP only works after several rebirths with top gear and maxed skills.
-  — "balance is best for first birth, no matter what"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- AUTO SLASH exists as a build/playstyle; one player reports his light-stance auto-slash character had noticeably slow reaction.
-  — "my light auto-slash character had slow reaction"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Knockdown/get-up mechanic: a heavy-stance character can fail to get up fast enough against fast bosses, which is a major stance weakness.
-  — "especially when I couldn't get up fast enough"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Balanced stance has a 'flip-up' (recovery) skill and no glaring position penalties; light stance's upward slash is often unnecessary and leaves you in a compromising position.
-  — "Balanced, especially with the flip-up skill, was very practical"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Enemies deal a minimum 'piercing' damage per strike that defense cannot reduce below a floor; measured minimums by enemy level: L1/L10/L12 = 1, L35 = 8, L36-37 = 9. The same post frames defense as a stat that can force enemies down to this minimum.
-  — "Piercing damage per enemy per level (minimum damage)"
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Piercing (minimum) damage is estimated by a second player as enemy level divided by 4 — consistent with the measured L35-37 values of 8-9.
-  — "piercing is estimated at (mob lvl/4)."
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Stance-vs-enemy matchups reported: Onis and animals are weak against Light stance; bandits are weak against Balanced and Heavy stances; Light works well on undead if you aim for the head, but switch to Heavy against jumping zombies.
-  — "Onis and animals are weak against light. Bandits are weak against balanced and heavy"
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Light stance is described as a skill-based playstyle with an air combo that shines at high level, especially in PvP; bandits + (implied) auto slash are the pick for low-effort auto-grinding instead.
-  — "light's air combo becomes a sight to behold especially on PVPs"
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- AUTO SLASH is a toggleable option; consensus advice: ON is fine for beginners and for grinding weak open-world enemies, but turn it OFF against Tengu and in PvP.
-  — "Fighting a Tengu? Or PVP? Definitely not."
-  · [[Straw Hat Samurai: Duels] auto slash "on" or "off" ?](https://web.archive.org/web/20200718231337/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494226-straw-hat-samurai-duels-auto-slash-on-or-off)
-- AUTO SLASH should also be OFF against jumping undead — auto-targeting handles them poorly.
-  — "for Jumping Undead use Autoslash OFF"
-  · [[Straw Hat Samurai: Duels] auto slash "on" or "off" ?](https://web.archive.org/web/20200718231337/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494226-straw-hat-samurai-duels-auto-slash-on-or-off)
-- Duels open with both players picking a stance; players often hesitate, waiting for the opponent to commit first.
-  — "Starting, trying to get stance right (waiting for opponent to move first…)"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Attacks are executed by drawing slash lines with the mouse, a control players describe as tricky and needing practice.
-  — "drawing lines to attack is a tricky mechanic"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Stance is normally pre-set before a duel by clicking your own character portrait; switching stances mid-fight is possible but most players never do it and one calls it practically impossible.
-  — "Most do not switch stances during a fight, so set the one you will use beforehand by clicking on your picture."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Stance stat profile (player summary): Heavy = highest attack but reduced defense and range; Light = highest range and fastest slash-drawing but weakest attack; Balance sits in between.
-  — "Heavy has the highest attack but decreases your defense and range. Light has the highest range and fastest drawing but weakest attack."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- One-hit kills in PvP duels are real and (per a veteran) working as designed: if a build's damage output exceeds the opponent's HP pool, a single slash kills.
-  — "If you can do more damage than your health. Obviously your opponent can kill you in one hit."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Player claim: an all-HP/Defense build reduces incoming duel slashes to about 2 damage, showing defense scaling is very strong.
-  — "After you see opponents slash you for 2 damage."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Contradiction to 'balanced' claims: even after respeccing into HP/armor/attack and stance-skills, a player still reported being one-sidedly beaten by lower- and same-level players, calling duels broken.
-  — "Made duelling a bit easier, but I still get facerolled by lower and same-level players a lot."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Kunai are a usable throwing option in duels but players find them very hard to land.
-  — "I also use kunai every now and then (rather impossible most of the time)."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Players categorize stances into speed stances vs damage stances and blame losses on using one for the wrong role.
-  — "might also be that you are in a speed stance using it for a damage stance"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Fast, few-hit lethal duels are defended by players as intentional design mirroring real samurai duels.
-  — "most of duels in real life between samurais are decided very quickly and with few hits"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
+### combat-core
 
-## skills-meters (58)
+**Exact numbers**
 
-- Full item/character stat roster as listed by a veteran: Attack, Defense, Speed, Critical, Pierce, HP, Chi, HP Regen, Chi Regen, and per-element (Water/Fire/Earth/Wind) Attack and Defense — 17 stats total, matching his '1-17 Stats' filter cap.
-  — "HP Regen ... Chi Regen ... Water Att ... Water Def ... Fire Att ... Fire Def"
-  · [auction system](https://web.archive.org/web/20151231023735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492388-auction-system)
-- A 'Coin Purse' skill under Skills > Survival Skills raises the coin-carry cap; it is separate from the skill that raises carry weight.
-  — "Go to skills >Survival Skills > Find Coin Purse"
-  · [Where do I store extra money?](https://web.archive.org/web/20151231112117/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489121-where-do-i-store-extra-money?page=1)
-- Veteran-recommended stat build for any stance: cap Attack, cap Health, exactly 35 Speed, 25 Defense; with ideal equipment 35 Speed is the minimum to reach the 0.5 cooldown-modifier cap.
-  — "Cap Attack, Cap Health, 35 Speed, 25 Defense... the minimum required to hit the .5 cooldown modifier cap"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- Veteran advice: put zero stat points into AP; any Chi you need is easily obtained from equipment instead.
-  — "You shouldn't put points into AP at all, and any Chi you need will be easily gotten by equipment."
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- Player understanding (posed as question, unanswered in thread): the SPEED stat also increases slash range, so raising Speed past the 35 cooldown cap still helps range.
-  — "increasing the speed further would still increase your range, right?"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- The default coin pouch caps at 1000 coins; a skill in the skills menu raises both the pouch (coin) limit and the carry weight limit.
-  — "there is a skill that allows you to upgrade you pouch limit and weight limit"
-  · [Can my sword break?](https://web.archive.org/web/20151228181850/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486991-can-my-sword-break?page=1)
-- The skills screen is also where stance upgrades live — stances have upgradable damage and range.
-  — "go to skills,where you actually upgrade you stances damage and range"
-  · [Can my sword break?](https://web.archive.org/web/20151228181850/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486991-can-my-sword-break?page=1)
-- Player claim: the SPEED stat does two things — lengthens the attack line (slash draw length) and reduces skill cooldowns.
-  — "Speed is for attack line length and skill cooldowns decrease"
-  · [Speed stat](https://web.archive.org/web/20151228185458/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487053-speed-stat?page=1)
-- Player measurement: 1 point of the Attack stat adds approximately +1 minimum and +1 maximum damage, at least in balance stance.
-  — "1 attack is approximately 1 min and 1 max dmg(in balance stance at least)"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- There is a focus bar that fills over time; the crit-evade technique requires switching to light stance and waiting until the focus bar is completely full before drawing the slash.
-  — "Set to light and wait till focus bar is full"
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- The crit-evade Red Oni method is very time consuming and effectively requires a good SPEED stat to work.
-  — "it is necessary that you have good speed"
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- The Roll skill has upgrade levels; a player claims Roll lvl 3 with perfect timing beats the Red Oni without needing the dash-left/dash-right skills.
-  — "You just need perfect timing when you are using Roll lvl 3"
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Kage bunshin and kunai are ranged skills; reported Red Oni kill method 4 is to use them (and other ranged skills) then roll when the oni closes distance.
-  — "use kage bunshin, kunai, and other range skill, and roll once the oni got close"
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Player claim: the clone ability (spawns clones that fight for you) unlocks only at a very high level.
-  — "it needs a very high level to get that ability"
-  · [Red oni](https://web.archive.org/web/20150910135359/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492406-red-oni?page=1)
-- The Scavenging skill at level 2 lets you sell junk items in the field, removing the need to walk back to a village to offload.
-  — "This will allow you to sell off your Junk without having to resort into fleeing back to villages"
-  · [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
-- Build advice: max out one stance's skill tree before spending skill points on the other stances, unless you plan to use them all.
-  — "Max out one stance before putting skill points in the others"
-  · [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
-- Shunpo is a named skill with a cooldown that players considered too long (cited as the example in a cooldown-reduction request).
-  — "reduce some skills' cooldowns(ex.shunpo,etc)"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The game's elemental powers are earth, water, wind, and fire; a player suggested combining two (implying only single-element powers exist).
-  — "double elemnt powers combined earth and water or wind and fire"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Dash Left and Dash Right are two separate skills, each costing 2 Chi per use.
-  — "there are such skills as dash left and dash right . they need 2 chi for each use"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Roll level 3 is not a guaranteed dodge — players report dying mid-roll in Red Oni fights; the poster suspects it was bugged or stealth-changed because deaths seemed new.
-  — "roll lvl 3 is not exactly 100 %"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Corroborating claim: level-3 roll only grants a higher dodge chance, not immunity, and the player believes the ability was deliberately nerfed for balance.
-  — "A level 3 roll only guarantees a higher chance to not getting hit."
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- The Roll skill has at least 3 levels; level 3 was understood to grant 100% avoidance of hits before an update.
-  — "roll lvl 3 is 100 % avoid"
-  · [Stats bug](https://web.archive.org/web/20151231071033/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496971-stats-bug?page=1)
-- After an (allegedly stealth) update, Roll level 3 no longer reliably avoids damage: players report dying mid-roll to Red Oni hits, which never happened before.
-  — "At half of rolling i died from red oni alot of times"
-  · [Stats bug](https://web.archive.org/web/20151231071033/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496971-stats-bug?page=1)
-- The Survival skill tree contains Scavenge; at Scavenge level 2 you can auto-sell junk items on the spot.
-  — "you should get Scavenge level 2 under the Survival tree. This allows you to auto-sell junk items."
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Survival-tree skills can raise both inventory capacity and the coin (silver) cap.
-  — "You can also increase inventory and coin caps with skills in the Survival tree."
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- DEV: The Survival category includes a 'Carrying Weight+' skill that raises inventory weight capacity, and Scavenging Level 2 lets you sell junk anywhere (Lutgames post).
-  — "there is a skill under the Survival category called “Carrying Weight+”. Also, getting Scavenging Level 2 lets you sell your junk on the spot."
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Chi skills have long cooldowns and limited PvP use; advice was to bank skill points until the elemental skill trees unlock (post-rebirth).
-  — "Chi skills have long cooldowns and are of limited PVP use"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- AP energy system: each battle costs 1-2 AP; at zero AP you can still fight but suffer a severe stat penalty in combat.
-  — "Each battle costs 1-2 AP, and when you are out of AP you will take a (severe) stat penalty in combat."
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Sleeping at an inn instantly restores all AP; inn cost is low enough relative to silver income that rest is always affordable.
-  — "You can instantly restore all of your AP by sleeping in an inn."
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- AUTO SLASH automatically performs launch attacks with no way to disable launching while the feature is on; players requested a toggle (seconded by a second player).
-  — "Eh. Ability to turn off launch while Auto-Slash is on?"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Skills have cooldowns players considered long; Shunpo is named as a skill whose cooldown players wanted reduced. A separate suggestion for a no-cooldown event mode confirms cooldowns apply broadly.
-  — "i think that it would be a good idea to reduce some skills’ cooldowns(ex.shunpo,etc)"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Dash Left and Dash Right are separate skills costing 2 Chi per use; the dash direction chosen must match which side of your character the enemy stands on.
-  — "there are such skills as dash left and dash right . they need 2 chi for each use"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Roll level 3 is not a guaranteed dodge, only a higher evade chance; players reported dying with it against Red Oni and believed the skill was deliberately nerfed for balance.
-  — "A level 3 roll only guarantees a higher chance to not getting hit."
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Scavenge level 2, in the Survival skill tree, unlocks auto-selling of junk items (player guide claim).
-  — "you should get Scavenge level 2 under the Survival tree. This allows you to auto-sell junk items"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- DEV: Lutgames confirms the Survival category contains a 'Carrying Weight+' skill for inventory capacity, and that Scavenging Level 2 lets you sell junk on the spot.
-  — "there is a skill under the Survival category called “Carrying Weight+”. Also, getting Scavenging Level 2 lets you sell your junk on the spot"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- The Survival tree also has skills that raise the inventory cap and the coin cap (player claim).
-  — "You can also increase inventory and coin caps with skills in the Survival tree"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- Chi skills have long cooldowns and limited PVP use; guide advises saving skill points for the post-rebirth elemental trees.
-  — "Chi skills have long cooldowns and are of limited PVP use"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- AP energy system: each battle costs 1-2 AP; at zero AP you can still fight but with a severe combat stat penalty; sleeping at an inn instantly restores all AP.
-  — "Each battle costs 1-2 AP, and when you are out of AP you will take a (severe) stat penalty in combat"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- The Scavenger skill at level 5 unlocks secret ninja paths that serve as fast-travel routes.
-  — "Learn Scavenger Level 5 skill to unlock secret ninja paths for fast travel."
-  · [HOW DO I FAST TRAVEL?](https://web.archive.org/web/20200719190518/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487363-straw-hat-samurai-duels-how-do-i-fast-travel)
-- The Scavenger skill at level 5 unlocks secret ninja paths that serve as fast-travel routes.
-  — "Learn Scavenger Level 5 skill to unlock secret ninja paths for fast travel."
-  · [HOW DO I FAST TRAVEL?](https://web.archive.org/web/20200719130452/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487053-straw-hat-samurai-duels-speed-stat)
-- The Shadow Clone skill has per-level upgrades; at its 2nd level the clone gains the ability to attack (player report, noting the official wiki omitted this).
-  — "the 2nd level of shadow clone for instance , where the clone can actually attack"
-  · [[Straw Hat Samurai: Duels] Anyplace where i can find a guide ? Wikipedia ?](https://web.archive.org/web/20200719085750/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487451-straw-hat-samurai-duels-anyplace-where-i-can-find-a-guide-wikipedia)
-- Scavenge level 2, in the Survival skill tree, enables auto-selling junk items.
-  — "get Scavenge level 2 under the Survival tree. This allows you to auto-sell junk items"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- The Survival tree also contains skills that raise inventory (carry) capacity and the coin cap.
-  — "You can also increase inventory and coin caps with skills in the Survival tree"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- DEV: Lutgames confirmed the Survival category has a 'Carrying Weight+' skill, and that Scavenging Level 2 lets you sell junk on the spot.
-  — "there is a skill under the Survival category called “Carrying Weight+”"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Chi skills have long cooldowns and were considered of limited use in PvP; advice was to save skill points until elemental trees unlock.
-  — "Chi skills have long cooldowns and are of limited PVP use"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- AP energy system: each battle costs 1-2 AP; at 0 AP you can still fight but with a severe stat penalty; sleeping at an inn instantly restores all AP, and silver is abundant enough to always afford it.
-  — "Each battle costs 1-2 AP, and when you are out of AP you will take a (severe) stat penalty in combat"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Ninja skills include 'Shadow Clone' and 'Smoke Bomb' and are defensive/damage-avoidance; Chi skills include 'Slash Wave' and 'Focus' and are high-damage offense that puts you in danger; Shadow Clone at level 3 costs 6 skill points.
-  — "Ninja has “Shadow Clone” and “Smoke Bomb”, and Chi Skills has “Slash Wave” and “Focus”"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- The Inn is a paid service where you can sleep (restore); food restores energy, and riceballs give more energy than meat or fish; no food replenishes AP (the suggestion asks for one), so energy and AP are separate meters.
-  — "It is unfair to see how the riceballs provide more energy than the meat and fish"
-  · [[Straw Hat Samurai: Duels] ITT: Things you want to see in the game](https://web.archive.org/web/20200719131437/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490507-straw-hat-samurai-duels-itt-things-you-want-to-see-in-the-game)
-- Scavenging is a leveled skill; per the wiki (cited secondhand), level-5 scavenging unlocks a 'ninja path' travel shortcut, though it doesn't lead everywhere you want.
-  — "the wiki speaks of a ninja path that can be unlocked through a lvl5 scavenging"
-  · [[Straw Hat Samurai: Duels] ITT: Things you want to see in the game](https://web.archive.org/web/20200719131437/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490507-straw-hat-samurai-duels-itt-things-you-want-to-see-in-the-game)
-- The skill tree has a 'Survival Skills' category containing a levelable 'Coin Purse+' skill that raises the maximum coin capacity.
-  — "You need to level up your “coin purse+” skill under “survival skills”."
-  · [[Straw Hat Samurai: Duels] Coins](https://web.archive.org/web/20200719034104/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492186-straw-hat-samurai-duels-coins)
-- A clone-summoning ability exists and unlocks only at very high level (player claim; no exact level given).
-  — "u need the clone ability to do that? and it needs a very high level to get that ability…"
-  · [[Straw Hat Samurai: Duels] Red oni](https://web.archive.org/web/20200719020954/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492406-straw-hat-samurai-duels-red-oni)
-- Each element's skill tree has 4 active skills of the same archetypes: an elemental kunai, a land mine, a chi-punch-like strike, and an AOE.
-  — "1 elemental kunai, 1 land mine, 1 skill similiar to chi punch and AOE"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- A Coin Purse skill under Skills > Survival Skills increases coin carrying capacity, and it is a separate skill from the one that increases carry weight.
-  — "Go to skills > Survival Skills > Find Coin Purse"
-  · [Where do I store extra money?](https://web.archive.org/web/20200719214729/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489121-straw-hat-samurai-duels-where-do-i-store-extra-money)
-- The SPEED stat reduces cooldowns with a floor: the cooldown modifier caps at 0.5x, and 35 Speed (with ideal equipment) is the minimum stat investment needed to hit that cap.
-  — "the minimum required to hit the .5 cooldown modifier cap"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Chi skills are not normally usable inside the dojo (PvP practice area); players were seen using them there. One player called it hacking, another countered it was a known glitch — capture as contested.
-  — "n i saw people using chi skills in dojo… hacking.. / It's a glitch dude."
-  · [[Straw Hat Samurai: Duels] Report hackers here](https://web.archive.org/web/20200719115839/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492905-straw-hat-samurai-duels-report-hackers-here)
-- Allocatable character points cover HP, armor/defense, attack, speed, and CHI; skill points can also be invested into stance-skills.
-  — "put every (skill-)point into HP, armor and attack, as well as stance-skills"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Dumping all stat points into CHI is treated as a known newbie mistake for dueling builds.
-  — "And also no, I didn’t put all statspoints into CHI"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- The game's energy resource is named 'Chi' (a player complains the name is Chi rather than 'chakara').
-  — "WHY DO WE CHANGE THENAME OF CHAKARA INTO CHI"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
+- Enemies deal a minimum "piercing" damage per hit that Defense cannot reduce below, scaling with enemy level — measured minimums: L1/L10/L12 → 1, L35 → 8, L36–37 → 9; a second poster fits the floor as ≈ enemy level ÷ 4 ("piercing is estimated at (mob lvl/4)"). [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- Measured Defense breakpoints against that floor (floor independently reported by 2 threads): at level 60, ~150 Defense forces same-level mobs down to their minimum (14 damage for that player); ~200–250 Defense recommended by level 80 for grinding. [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
+- The floor mirrors outbound: you always deal at least (your level ÷ 4) damage to enemies — Red Oni is the stated exception. [Equipments and how do they work exactly?](https://web.archive.org/web/20200719120130/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486247-straw-hat-samurai-duels-equipments-and-how-do-they-work-exactly)
+- 1 point of Attack ≈ +1 minimum and +1 maximum damage, "in balance stance at least" (player measurement). [Can someone explain how Attack and Defense…](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
+- **CONTRADICTION (damage formula):** hypothesis — damage = total ATK − target DEF (100–110 ATK, sword contributing 20–30, vs 90 DEF → 10–20 damage), posed as a question [Can someone explain how Attack and Defense…](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1); countered in the same thread — "Actually I don't think that is quite right for atk and def", the numbers are not a clean subtraction [Can someone explain how Attack and Defense…](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
+- Piercing and Critical stats raise your minimum and maximum slash damage respectively. [Can someone explain how Attack and Defense…](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
+- Defense adds +1 per point but only mitigates sword attacks; veterans rate it near-worthless because piercing damage AND Chi/Ninja skills ignore it entirely — with the defense-ignoring skills gated by cooldowns (reported by 3 threads). [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
+- Worked piercing magnitude: a light-stance hit lands ~200 damage with piercing vs ~50 against defense without it (source phrasing ambiguous). [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- Stance stat profile (reported by 3 threads): Heavy = highest attack but reduced defense and range — a wiki-derived claim (disputed in-thread) puts the defense loss at up to 20%, with the shortest range and slowest draw — and you take more damage if DEF is insufficient; Light = highest range, fastest draw, weakest attack; Balance sits between. [I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
+- Duel damage extremes (reported by 3 threads): one-hit kills are real and by design — if a build's damage output exceeds the opponent's HP pool, one slash kills; a full HP/Defense build reduces incoming slashes to ~2 damage; a level-12 player saw PvP hits of 1–5 with occasional ~20 spikes; the 2015 PvP meta leaned on one-hit-kill builds. [I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
+- **CONTRADICTION (Jul 2015 one-shot reports):** ~level-9 players one-shotting level-80s in PvP was reported as a damage bug by one player and attributed to hacking ("… Hack.") by another — both claims in [annoying glitch](https://web.archive.org/web/20200719050218/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518311-straw-hat-samurai-duels-annoying-glitch)
+- PvP stance usage (Apr 2016): ~85% of duel players used Light stance, so Balance was recommended as the counter-pick. [post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- **CONTRADICTION (Defense value in PvP):** claim A — Defense is needed but "realy less valuable than you imagine it"; claim B — Defense matters MORE in PvP: enough DEF holds balanced-stance hits to ~20 and stops heavy-stance one-shots, enabling counters. Both in [Can someone explain how Attack and Defense…](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
 
-## progression (55)
+**Systems and mechanics**
 
-- Player-understood level range is 1-80 (used as the level filter bounds in a veteran's market mock-up; consistent with 'level 80' being discussed as endgame in the daily-prize thread).
-  — "1-80 Level Range"
-  · [auction system](https://web.archive.org/web/20151231023735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492388-auction-system)
-- Grinding advice: forest territories have levels, and the highest territory a player should farm is capped/optimal at their own level +3.
-  — "just level up at the highest territory (your level+3) in the forest"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Item/character levels span a 1-80 range (player's proposed auction filter used '1-80 Level Range').
-  — "1-80 Level Range"
-  · [Suggestion: Auction Market system](https://web.archive.org/web/20150915012549/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488497-suggestion-auction-market-system?page=1)
-- Player claim: enemies inside the final dungeon give no XP (at least on the respawn loop), so grinding inside it is impossible.
-  — "I don't get any exp from the enemies, so grinding here is no help"
-  · [(fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1)
-- Difficulty datapoint: a level-38 player reached the final survival boss but could not clear it, blaming unbalanced stats/gear — final content is beatable around but not guaranteed at level 38.
-  — "I'm level 38, but I guess either my stats are too unbalanced"
-  · [(fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1)
-- Player claim: between level 36 and level 45 he had accumulated over 100 attribute points in attack, defense and speed — a benchmark for attribute totals in the mid-40s.
-  — "when i was lvl 36 now i am lvl 45 i had more than 100 attributes in atk def n spd"
-  · [Show off a picture of your awesome character here](https://web.archive.org/web/20150919133214/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488448-show-off-a-picture-of-your-awesome-character-here?page=1)
-- Each stance has its own mastery level that increases with use; a level 18 character reports only mastery level 2 on light stance, and veterans say focusing one stance is the intended path.
-  — "My highest mastery is level two. On light stance. But then again… I'm just lvl 18."
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- Difficulty-wall claim (2019): a player stuck at level 12 right after the Chikako fight reports being unable to level further while bandits kill them easily.
-  — "i cant lvl up from lvl 12 and so bandits are easily killing me"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190718050721/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help?page=2)
-- Progression pace datapoint (Apr 2015): a dedicated player was approaching level 80 on his 19th day of play.
-  — "approaching lvl 80 and its his 19th day playing"
-  · [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
-- Losing a battle costs nothing — you get a free respawn — so grinders could ignore defense on bosses and just relaunch; grind build advice: one-shot trash mobs in balance stance, stack HP, HP-regen optional.
-  — "you may just lose battle and free respawn"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- Standard grinding method: travel to a territory 3 levels above your own and repeatedly delve its dungeons.
-  — "go to a Level+3 territory, and delve into the dungeons repeatedly."
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- Player-measured EXP required per character level (post-rebirth): L4=5150, L5=8350, L7=16350, L8=20900, L9=25900, L10=31400, L11=37400, L12=43500, L13=49850, L15=63900, L16=71900, L19=98300, L22=129300, L29=216100, L31=273100, L32=294100, L33=316100, L34=339300, L35=363300 (L1~550, L2~1450 uncertain).
-  — "EXP per level / Orange EXP … 10) 31400 / 2000"
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- A separate "Orange EXP" track (the author calls them SI — soul infusion — levels) has its own per-level requirements: L1=300, L2~500, L3=733, L4=1000, L5=1200, L7=1500, L8=1600, L9=1800, L10-11=2000, L15=2600, L16=2800, L22=3900, L28=5600, L31=7000, L36=9100, L42-43=12000.
-  — "Added some more data to the exp levels and SI levels."
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- Maximum EXP per enemy group grows slowly with level — measured: L31~1312, L32=1333, L33=1364, L34~1371, L35=1444, L36~1486, L37=1526, L39~1575, L40~1609, L42~1674, L43~1704 (values with ? are the recorder's own uncertainty).
-  — "Max EXP per enemy group, per level. … 35) 1444"
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- Efficient grind method: find a 3-wave bandit encounter on the open world and re-enter/exit it repeatedly; the encounter persists between entries.
-  — "find a 3 wave bandit on the open world and enter/exit over and over"
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- There is an achievement tied to killing Red Oni; players say it is the only real reason to fight one.
-  — "Aside from the achievement, they are not worth it"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Player request implies a hard level cap below 85: reaching level 85 was only possible via exploit and reportedly got players banned.
-  — "allow us to go to lvl.85 without getting banned"
-  · [About the game](https://web.archive.org/web/20160423144746/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/601703-about-the-game)
-- By May 2015, player levels reached at least 80; map zones have approximate level tiers, with one whole island rated around level 20.
-  — "you are lvl 80 doing missions on the blue island (which is roughly lvl 20)"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- Player build advice (Captain_Catface): skip the defense stat because equipment supplies plenty and some damage types bypass defense entirely.
-  — "I advise not putting stat points into defense. You will gain a large amount from equipment and there are damage forms which bypass it."
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Contradicting claim (Karyuudan): high defense beats high HP at endgame; only some skills ignore defense and those have cooldowns, so raw slashes dominate.
-  — "at end game when you fight skilled people that lack of defense will make you suffer"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- The attack stat is hard-capped at 10 + character level; suggested build fills attack to cap then dumps remaining points into health and speed.
-  — "Put points into attack until you hit its cap (10+level)"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Refinement of the gear-gap claim: post-rebirth PvP dominance comes from gear AND stance mastery (implying stance mastery persists as a separate progression track).
-  — "Gear and stance mastery"
-  · [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
-- Clan joining unlocks at level 10 — a deleted/remade character can join a (different) clan upon reaching level 10.
-  — "Delete your character and remake it then upon reaching level 10 joining a different one"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Clan joining unlocks at level 10 — a fresh character must reach level 10 before joining a clan (player claim via the delete-and-remake method).
-  — "Delete your character and remake it then upon reaching level 10 joining a different one"
-  · [Ways to leave a clan](https://web.archive.org/web/20160405075911/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan)
-- Captain_Catface's build advice: skip the defense stat because equipment grants large defense amounts and some damage forms bypass defense entirely.
-  — "You will gain a large amount from equipment and there are damage forms which bypass it"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- Contradicting claim (Karyuudan): high defense beats high HP at endgame — only some skills ignore defense and those are cooldown-gated, so raw slashing is checked by defense.
-  — "at end game when you fight skilled people that lack of defense will make you suffer"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- The attack stat has a point cap of 10 + character level; Catface's build: cap attack, then dump remaining points into health and speed.
-  — "Put points into attack until you hit its cap (10+level), then dump the rest of your points into health and speed"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- The SPEED stat increases slash line length and reduces skill cooldowns (player claim).
-  — "Speed increases line length and drops skill cooldown"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- After rebirth, any skill can be leveled to its maximum at any samurai level (datata claim).
-  — "You can level up any skill to its maximum at any samurai level after rebirth"
-  · [[Straw Hat Samurai: Duels] Questions](https://web.archive.org/web/20170427091012/http://www.kongregate.com:80/forums/12-kongregate-multiplayer-games/topics/494653-straw-hat-samurai-duels-questions)
-- A dedicated player was approaching level 80 on his 19th day of play — a datum for the leveling/XP pacing curve (lissachanmanga, secondhand claim).
-  — "this friend also is approaching lvl 80 and its his 19th day playing"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- HP, Chi, and AP are directly allocatable stat rows on the character panel (one click = one point), and accidental spends were not refundable in-game.
-  — "I want a rollback of that 1 stat point accidentally spent on Chi stat."
-  · [[Straw Hat Samurai: Duels] This game needs "Confirm" button when adding stat points.](https://web.archive.org/web/20200719024749/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486485-straw-hat-samurai-duels-this-game-needs-confirm-button-when-adding-stat-points)
-- Endgame grind benchmark: by level 80 aim for ~200-250 defense, enough attack to one-shot trash mobs in balance stance, maximum HP, and optionally HP-regen gear.
-  — "~200-250 def by lvl 80, enough attack to 1 shot trash mobs in balance stats"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- Losing a battle grants a free respawn, which grinders exploited as a cost-free reset loop (viable if you don't care about quest outcomes).
-  — "you may just lose battle and free respawn"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- The intended counter to the Statue Guardian wall is overleveling: the stuck-at-~28 player beat him after grinding into the level 30s and upgrading gear.
-  — "Just had to go level up to the 30's, get some better gear, and come back to face him"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200719095529/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487269-straw-hat-samurai-duels-how-do-you-beat-the-statue-guardian)
-- Concrete stat snapshot of the ~lvl-28 difficulty wall: with equipment included, a player had 204 HP / 80 STR / 109 DEF / 32 SPD, yet bounty-hunt targets in level 24-25 areas destroyed him with special moves while normal mobs there were easy.
-  — "204hp, 80str, 109def, 32spd … the bounty person just annihilates me using all kinds of special moves"
-  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719085726/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487402-straw-hat-samurai-duels-difficulty-curve-around-lvl-28-anyone-else-think-so)
-- A player stuck on the Statue Guardian at ~lvl 28 beat him after leveling into the 30s and upgrading gear — the fight is level/gear gated in practice.
-  — "go level up to the 30's, get some better gear, and come back"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200718231825/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486915-straw-hat-samurai-duels-to-autoslash-or-not-to-autoslash)
-- Reference stat snapshot at ~lvl 28 with equipment: 204 HP, 80 STR, 109 DEF, 32 SPD — the game's four visible stats being HP/STR/DEF/SPD — and this build still loses badly to bounty targets.
-  — "My stats (equipment included) are 204hp, 80str, 109def, 32spd"
-  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719145607/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487109-straw-hat-samurai-duels-game-crash-bug)
-- A difficulty spike hits around lvl 28 where sidequests and the main story feel impossible; the intended fix is equipment farming, which resolves it.
-  — "it's feeling like it's getting impossible, now"
-  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719145607/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487109-straw-hat-samurai-duels-game-crash-bug)
-- Player claim: enemies near the final-boss checkpoint awarded zero XP, so grinding while stuck there was impossible.
-  — "I don't get any exp from the enemies, so grinding here is no help"
-  · [[Straw Hat Samurai: Duels] (fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
-- Difficulty datapoint: a level 38 character could reach the final boss but found the survival encounter unbeatable, blaming unbalanced stats/gear — suggests the finale was tuned above a straight story-pace level 38.
-  — "I'm level 38, but I guess either my stats are too unbalanced"
-  · [[Straw Hat Samurai: Duels] (fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
-- Guide claim: skip the defense stat because equipment grants large defense amounts and some damage types bypass defense entirely.
-  — "not putting stat points into defense. You will gain a large amount from equipment and there are damage forms which bypass it"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Contradicting claim: high defense beats high HP because only some skills ignore defense and those are cooldown-limited; lacking defense hurts at endgame.
-  — "A character with high defense is better than high HP"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- The attack stat has a hard cap of 10 + character level; a suggested build maxes attack to that cap then dumps remaining points into health and speed.
-  — "Put points into attack until you hit its cap (10+level), then dump the rest of your points into health and speed"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Level-ups grant stat points the player allocates by choice — chat advice threads existed on 'which stat should you waste your points in'.
-  — "game related facts about which stat should you waste your points in"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us. (page 2)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=2)
-- Switching clans apparently required deleting your character and starting over — players were advised it's worth restarting to change clan; veterans donate old equipment in clan chat, and 'say hi after you turn level 10' implies clan features unlock around level 10.
-  — "Don’t be afraid to delete your char and start over!... say hi after you turn level 10"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us. (page 3)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- A player at level 45 reports having accumulated over 100 total attribute points across attack, defense and speed.
-  — "now i am lvl 45 i had more than 100 attributes in atk def n spd"
-  · [Show off a picture of your awesome character here](https://web.archive.org/web/20200719000124/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488448-straw-hat-samurai-duels-show-off-a-picture-of-your-awesome-character-here)
-- Item/character level range treated as 1-80 in April 2015, implying a level cap around 80 at that time.
-  — "1-80 Level Range"
-  · [Suggestion: Auction Market system](https://web.archive.org/web/20200719000146/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488497-straw-hat-samurai-duels-suggestion-auction-market-system)
-- Leveling pace is reported as very slow (May 2015).
-  — "Leveling takes so long…."
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Build advice: never put attribute points into AP at all; any Chi you need is easily supplied by equipment stats instead.
-  — "You shouldn't put points into AP at all"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Recommended grinding strategy: go to a territory 3 levels above your own and run its dungeons repeatedly — territories have levels and dungeons are freely repeatable.
-  — "go to a Level+3 territory, and delve into the dungeons repeatedly"
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Player-measured EXP required per level (tracked just after rebirth): L4=5150, L5=8350, L7=16350, L8=20900, L9=25900, L10=31400, L11=37400, L12=43500, L13=49850, L15=63900, L16=71900, L19=98300, L22=129300, L29=216100, L31=273100, L32=294100, L33=316100, L34=339300, L35=363300, L36=366697; L1~550 and L2~1450 marked uncertain; the L43=61300 row looks like a recording typo.
-  — "EXP per level / Orange EXP ... 10) 31400 / 2000 ... 35) 363300 / 8600"
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Maximum EXP obtainable per enemy group appears capped by player level, rising roughly 30-40 per level in the 30s-40s: L32=1333, L33=1364, L35=1444, L37=1526 (uncertain entries: L31=1312?, L34=1371?, L36=1486?, L39=1575?, L40=1609?, L42=1674?, L43=1704?).
-  — "Max EXP per enemy group, per level."
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Each stance has its own mastery level built by using it; standard advice is to specialize in one stance. A level-18 player had only mastery level 2 (light stance), which veterans blamed for his duel losses.
-  — "My highest mastery is level two. On light stance. But then again… I’m just lvl 18."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Deleting and remaking your character is the accepted way to re-spec stat allocation; veterans recommend experimental remakes to learn stat balance.
-  — "Remake your character and put all your points in HP/Defense."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Leveling advice: grind at the highest-level territory equal to your level+3, in the forest — implying map territories carry level designations and enemies up to your level+3 are efficient XP.
-  — "just level up at the highest territory (your level+3) in the forest"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
+- Focus/crit system: a full focus bar enables a critical slash; boss fights end with a coup-de-grâce finisher; crits are aimed "preferably on the head" (locational damage); the anti-boss loop is crit → evade/reposition ("zip" across the screen; dashing while attacking in light stance kept Amaya from landing hits) → wait for the bar to refill. [How does one beat Amaya?](https://web.archive.org/web/20200719014049/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/503551-straw-hat-samurai-duels-how-does-one-beat-amaya)
+- Stance counter-triangle: Light beats Heavy, Heavy beats Balanced, Balanced beats Light, with stance advantage "pushing enemy attacks higher" [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle) — supported by the Amaya counterpick advice ("Amaya … uses a heavy fighting style so using light would be most effective") [How does one beat Amaya?](https://web.archive.org/web/20200719014049/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/503551-straw-hat-samurai-duels-how-does-one-beat-amaya); disputed in-thread — any stance can beat any other on skill, "heavy is just the laziest and easiest".
+- **CONTRADICTION (stance meta, multi-way):** (a) shift Light → Balanced → Heavy as you progress [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle); (b) "most of the server best players use Light stance for Shunpo and line range" (same thread); (c) "the worst fighting style is light so no one chose it" vs (d) "balance is best for first birth… light is too weak to one-shot kill mobs", both in [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build); (e) Light's air combo is a high-level PvP standout [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- **CONTRADICTION (Light-stance damage):** maxed Attack + a dragon blade but Light-stance skill only L3 → 2–3 damage on same-level bandits, with the claim the ATK stat is pointless for Light ("its intent is to make you faster attacker"); vs a post-rebirth player one-shotting bandits with Light all the way to level 50. Both in [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- Stance-vs-enemy matchups: Onis and animals weak against Light; bandits weak against Balanced and Heavy; Light works on undead if you aim for the head, with advice to swap to Heavy against jumping zombies — softened in-thread by "Jumping undead actually have less hp than walking undead". [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- PvE heuristic: "use the lightest stance you can while still one-hitting trash mobs"; PvP endgame: rebirth several times and run a "ridiculously powerful" ninja/chi skill build. [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
+- Controls: attacks are drawn as slash lines with the mouse ("a tricky mechanic" needing practice) [I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part); a drawn line can be HELD and released on timing — the core Red Oni technique: release at maximum closeness, then immediately dash through, ending beyond his club's reach [New way to kill red oni](https://web.archive.org/web/20200719184058/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/501146-straw-hat-samurai-duels-new-way-to-kill-red-oni)
+- Stance switching: pressing space quick-toggles stances but only if the focus bar is full enough [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle); in duels stance is normally pre-set by clicking your character portrait, and most players never switch mid-fight [I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
+- AUTO SLASH mechanics (reported across 8 threads): a toggle in the top-left of the battle screen; when on, the character auto-fights with basic movement and slashes, including launches and executes once unlocked, and auto-targets enemies; it can be switched off mid-play; there is NO way to disable the launch while it is on (toggle requested, never added). [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- AUTO SLASH usage consensus: ON for beginners and grinding weak overworld mobs — Heavy stance + auto-slash was a go-to for most story fights and bounties [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help); OFF against Tengu, in PvP, against jumping undead (auto-targeting tracks jumping oni/undead badly), and against the Statue Guardian ("turn it off first thing, or you're toast"); a light auto-slash character was also reported to react slowly. [auto slash "on" or "off" ?](https://web.archive.org/web/20200718231337/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494226-straw-hat-samurai-duels-auto-slash-on-or-off)
+- Kunai projectiles can be dodged with jump or roll [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help); a "100% dodge roll" is referenced as an existing move players wanted given to more enemies [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
+- Run and roll are distinct traversal moves with different outcomes: rolling through the Statue Guardian gets you hit, running through avoids his attack [How do you beat the Statue Guardian?](https://web.archive.org/web/20200719095529/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487269-straw-hat-samurai-duels-how-do-you-beat-the-statue-guardian); left/right dashes stayed reliable against Red Oni after the Roll nerf [Stats bug](https://web.archive.org/web/20200719091952/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496971-straw-hat-samurai-duels-stats-bug), with dash direction matched to slash direction ("If you are slashing left, use dash left") [Red Oni is to powerful!](https://web.archive.org/web/20200719002937/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/514786-straw-hat-samurai-duels-red-oni-is-to-powerful)
+- Ranged options: Kunais, Slashing Waves, and Charged Shot — usable even to hit enemies stuck off-screen [Weird glitch in NPC duels?](https://web.archive.org/web/20200719192254/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/548989-straw-hat-samurai-duels-weird-glitch-in-npc-duels); kunai are usable in duels but very hard to land [I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
+- Clinch mechanic: locks two combatants together; a clinched enemy cannot kill the player's summoned clones while they attack it freely. [Red oni](https://web.archive.org/web/20200719020954/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492406-straw-hat-samurai-duels-red-oni)
+- Stuns: Light's upswing attack can stun (repeated stuns decided the Chikako fight) [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help); every player slash stuns the Statue Guardian [How do you beat the Statue Guardian?](https://web.archive.org/web/20200719095529/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487269-straw-hat-samurai-duels-how-do-you-beat-the-statue-guardian); Chi Kick / Chi Punch serve as stun options against Amaya [How does one beat Amaya?](https://web.archive.org/web/20200719014049/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/503551-straw-hat-samurai-duels-how-does-one-beat-amaya)
+- Elements: earth/water/wind/fire exist as single-element powers only (combining two was just a suggestion) [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20200719000558/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500594-straw-hat-samurai-duels-suggestions-thread-straw-hat-samurai-duels); players have a personal elemental type [Aoi Hoiru clan](https://web.archive.org/web/20200719021017/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/497808-straw-hat-samurai-duels-aoi-hoiru-clan); picking the element strong against an equal-rebirth opponent roughly negates their rebirth elemental ATK bonus [Rebirthing = 25 FREE Gold…](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
+- **CONTRADICTION (anti-Amaya stance):** light most effective because she fights heavy; vs "I used balanced stance btw.." (won at L36 after re-gearing); vs "Use heavy, the most powerful" with a claimed 1-hit kill. All three in [How does one beat Amaya?](https://web.archive.org/web/20200719014049/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/503551-straw-hat-samurai-duels-how-does-one-beat-amaya)
+- Knockdown recovery matters: heavy-stance characters can fail to get up fast enough against fast bosses; Balanced has a "flip-up" recovery skill with no position penalties; Light's upward slash often leaves you positionally exposed. [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
+- Duel texture: duels open with both players picking stances (players hesitate, waiting for the opponent to commit); fast few-hit lethality is defended as intentional samurai-duel design; players categorize stances into speed vs damage roles; one veteran checklist ends with the unexplained tip "go red". [I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
+- A "/allyroom" chat command allies all players in a room — typed manually before Tengu group-boss fights (auto-ally was only a suggestion). [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20200719000558/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500594-straw-hat-samurai-duels-suggestions-thread-straw-hat-samurai-duels)
+- New-player report (Nov 2016): "Everytime I attack, I get hurt" — attacks trade or are countered unless properly executed, and the correct method was not obvious to beginners. [Attack?](https://web.archive.org/web/20200718231938/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/683338-straw-hat-samurai-duels-attack)
 
-## economy (102)
+*Closes/confirms:* the **Focus/crit gating rule** (full bar → crit + coup-de-grâce, blocker ⑤), the **DEF mitigation direction** and the **(level ÷ 4) minimum-damage floor** (confirms the items-equipment EnemyLevel/4 floor), the damage-formula shape (+1-per-ATK-point anchor; flat subtraction disputed), and stance scaling/counter-triangle — while reach-in-px, the crit multiplier, and early TTK stay open.
+
+### skills-meters
+
+**Exact numbers**
+
+- 35 Speed (with ideal equipment) is the minimum to hit the 0.5× cooldown-modifier cap; the veteran any-stance build is: cap Attack, cap Health, exactly 35 Speed, 25 Defense. [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
+- The SPEED stat does two things — lengthens the slash line and reduces skill cooldowns (reported by 2 threads); whether range keeps scaling past the 35 cooldown cap was asked and never answered. [Speed stat](https://web.archive.org/web/20151228185458/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487053-speed-stat?page=1)
+- Dash Left and Dash Right are separate skills costing 2 Chi per use; the chosen direction must match which side of your character the enemy is on. [New way to kill red oni](https://web.archive.org/web/20200719184058/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/501146-straw-hat-samurai-duels-new-way-to-kill-red-oni)
+- Killing a Red Oni purely by dash-through needs at least 80 Chi total (2 Chi × ~40 passes against its ~40 HP). [New way to kill red oni](https://web.archive.org/web/20200719184058/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/501146-straw-hat-samurai-duels-new-way-to-kill-red-oni)
+- AP energy system: each battle costs 1–2 AP; at 0 AP you can still fight but with a severe combat stat penalty; sleeping at an inn instantly restores all AP and is always affordable relative to silver income. [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- Energy and AP are separate meters: food restores energy (riceballs give more than meat or fish), no food restores AP, and the Inn is a paid sleep service. [ITT: Things you want to see in the game](https://web.archive.org/web/20200719131437/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490507-straw-hat-samurai-duels-itt-things-you-want-to-see-in-the-game)
+- A Level 3 Chi Punch one-shots Bandits up to enemy level 23; a Level 3 Chi Kick one-shots Bandits up to about level 59 (the poster self-flagged the 59 as uncertain) — also implying Bandits exist to at least ~L59. [post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- Shadow Clone: at level 2 the clone gains the ability to attack (a detail the official wiki omitted) [Anyplace where i can find a guide ? Wikipedia ?](https://web.archive.org/web/20200719085750/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487451-straw-hat-samurai-duels-anyplace-where-i-can-find-a-guide-wikipedia); level 3 costs 6 skill points [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle); the clone ability unlocks only at a very high level [Red oni](https://web.archive.org/web/20200719020954/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492406-straw-hat-samurai-duels-red-oni)
+- The /seppuku emote is mechanically real: it plays a self-sacrifice animation and sets your HP to exactly 1 (non-lethal). [post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- The default coin pouch caps at 1000 coins; a levelable "Coin Purse(+)" skill under Skills → Survival Skills raises the cap, and it is a separate skill from the one raising carry weight (reported by 4 threads). [Can my sword break?](https://web.archive.org/web/20151228181850/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486991-can-my-sword-break?page=1)
+- Full stat roster = 17 stats: Attack, Defense, Speed, Critical, Pierce, HP, Chi, HP Regen, Chi Regen, plus Water/Fire/Earth/Wind Attack and Defense. [auction system](https://web.archive.org/web/20151231023735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492388-auction-system)
+- Each element's skill tree has 4 actives of fixed archetypes: an elemental kunai, a land mine, a chi-punch-like strike, and an AOE. [Rebirthing = 25 FREE Gold…](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
+
+**Skill tree, cooldowns, and meters**
+
+- **DEV:** Lutgames confirmed the Survival category's "Carrying Weight+" skill (raises inventory weight capacity) and that Scavenging Level 2 lets you sell junk on the spot — the Scavenge-L2 auto-sell corroborated by player posts in a second thread. [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle); [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
+- Scavenger at level 5 unlocks secret ninja paths used as fast-travel routes (reported by 2 threads, one citing the wiki secondhand; the paths don't lead everywhere). [HOW DO I FAST TRAVEL?](https://web.archive.org/web/20200719190518/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487363-straw-hat-samurai-duels-how-do-i-fast-travel)
+- The Roll skill has at least 3 levels. **CONTRADICTION (Roll L3 nerf cause):** L3 was originally understood as 100% avoidance, and after an alleged unannounced update players died mid-roll to Red Oni — one camp calls it a stealth nerf/bug [Stats bug](https://web.archive.org/web/20200719091952/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496971-straw-hat-samurai-duels-stats-bug); another says "A level 3 roll only guarantees a higher chance to not getting hit" and believes it was a deliberate balance nerf [New way to kill red oni](https://web.archive.org/web/20200719184058/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/501146-straw-hat-samurai-duels-new-way-to-kill-red-oni). Roll L3 with perfect timing could still beat Red Oni without dashes [Red Oni is to powerful!](https://web.archive.org/web/20200719002937/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/514786-straw-hat-samurai-duels-red-oni-is-to-powerful)
+- Focus-gated crit-evade: with a full focus bar in Light stance you can draw and HOLD a forward slash, releasing into an enemy wind-up — "The crit evade will ensure that you won't get hit"; the technique's viability is gated by a good SPEED stat. [Red Oni is to powerful!](https://web.archive.org/web/20200719002937/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/514786-straw-hat-samurai-duels-red-oni-is-to-powerful)
+- The critical bar appears to reset with each slash regardless of equipped weapon; the poster's question about "amount depleted" implies partial depletion by design (no dev answer captured). [nerfed again](https://web.archive.org/web/20200719070545/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518759-straw-hat-samurai-duels-nerfed-again)
+- Chi skills have long cooldowns and limited PvP use; guide advice was to bank skill points until the post-rebirth elemental trees unlock. [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- A skill named Shunpo exists; players wanted its (and other skills') cooldowns reduced, and a no-cooldown event mode existed only as a suggestion — cooldowns apply broadly. [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20200719000558/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500594-straw-hat-samurai-duels-suggestions-thread-straw-hat-samurai-duels)
+- Cooldowns recharge outside PvP rooms — campers enter with powerful skills "ready to trigger"; dying in a PvP room does NOT restore HP or chi on respawn (a fairness fix was requested, not present). [Make pvp room fair](https://web.archive.org/web/20200719193940/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493858-straw-hat-samurai-duels-make-pvp-room-fair)
+- Stance upgrades live in the skills screen — stance damage and range are upgradable [Can my sword break?](https://web.archive.org/web/20151228181850/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486991-can-my-sword-break?page=1); veteran advice: max one stance's tree before spending on others [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
+- Named special moves include Deadly Touch, Heavenly Sword, Kunai, Windmill Kunai, Chi Punch, Chi Wave, and Chi Kick. **CONTRADICTION (Heavenly Sword):** rated one of the "most beautiful attacks in game that are completely impractical" [Special Moves Discussion](https://web.archive.org/web/20200719072511/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/502023-straw-hat-samurai-duels-special-moves-discussion) vs a report of killing boss Amaya with it ("I can kill her with heaven sword") [How does one beat Amaya?](https://web.archive.org/web/20200719014049/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/503551-straw-hat-samurai-duels-how-does-one-beat-amaya)
+- Skill families: Ninja skills (Shadow Clone, Smoke Bomb) are defensive/damage-avoidance; Chi skills (Slash Wave, Focus) are high-damage offense that put you in danger. [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- Stat-point sinks are HP, armor/defense, attack, speed, and CHI (the resource is named "Chi"); dumping everything into CHI is a known newbie mistake [I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part); veterans advise zero points into AP — any Chi you need comes easily from equipment [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
+- Chi skills are not normally usable inside the dojo (PvP practice area); observed use there was contested — one player called it hacking, another a known glitch. [Report hackers here](https://web.archive.org/web/20200719115839/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492905-straw-hat-samurai-duels-report-hackers-here)
+- Ranged skill kit vs Red Oni: Kage Bunshin (shadow clone) + kunai + other ranged skills, rolling away whenever it closes distance. [Red Oni is to powerful!](https://web.archive.org/web/20200719002937/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/514786-straw-hat-samurai-duels-red-oni-is-to-powerful)
+
+*Closes/confirms:* per-skill Chi costs (Dash L/R = 2 Chi — blocker ①), the SPD→cooldown formula anchor (0.5× cap floor reached at 35 SPD — blocker ④), Focus numerics direction (crit-evade hold, bar reset per slash — blockers ③/⑤), and Shunpo context (Light-stance signature skill, long cooldown — blocker ②); the crit **proc** rule remains open.
+
+### enemies-ai
+
+**Exact numbers**
+
+- Boss Chikako (Episode 3) throws kunai for 20 damage each — the fight's main threat; player claim (unconfirmed): she stops throwing when you stay at close range, so the counter is staying close and using Chi Fist. [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- Boss Amaya: ~60 damage per hit and 3-hit kills level-30 players (two independent in-thread reports); reportedly level 36 (advice: out-level toward 50); wields a long-reach melee weapon that punishes approach and idles ("sleeping") at fight start, allowing openers. [How does one beat Amaya?](https://web.archive.org/web/20200719014049/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/503551-straw-hat-samurai-duels-how-does-one-beat-amaya)
+- Red Oni stats/economics: roughly 40+ HP; always a single-oni encounter; grants zero XP with poor drops (worth killing only for its achievement); found sleeping on the world map, and a wrong-place spawn (e.g. in front of a city) is rerolled by refreshing the game. [New way to kill red oni](https://web.archive.org/web/20200719184058/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/501146-straw-hat-samurai-duels-new-way-to-kill-red-oni)
+- Statue Guardian (main-story boss around player level 28): kills even a high-DEF player in roughly two hits; an allied archer NPC participates and can chip it to half HP while the player evades. [How do you beat the Statue Guardian?](https://web.archive.org/web/20200719095529/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487269-straw-hat-samurai-duels-how-do-you-beat-the-statue-guardian)
+- In July 2015 the Oni rock throw hit for 57 damage in a single hit, reported as a glitch. **DEV:** Lutgames confirmed the bug and posted "oni rock bug fixed" the same day (Jul 24, 2015) — evidence of rapid server-side hotfixing. [annoying glitch](https://web.archive.org/web/20200719050218/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518311-straw-hat-samurai-duels-annoying-glitch)
+- Tengu (reported by 3 threads): an AI-controlled rare/event monster that occasionally invades the dojo (not findable by normal exploration); landing the last blow awards 10 gold tokens; a group boss — "easy … with people" but repeatedly lethal solo (one author died dozens of times learning its moves); beaten with Red-Oni tactics (hit-and-run plus thrown/ranged attacks). [WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20200718230924/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/491788-straw-hat-samurai-duels-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town); [Tengu cave and possible way to find it](https://web.archive.org/web/20200719214639/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/511194-straw-hat-samurai-duels-tengu-cave-and-possible-way-to-find-it)
+- Mob damage is deterministic per level: all same-level mobs deal identical damage barring skill use (testable by removing equipment); higher-level mobs have a higher minimum-damage floor; bosses require substantially more defense than same-level mobs. [Can someone explain how Attack and Defense…](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
+
+**Roster, behaviors, encounters**
+
+- Red Oni behavior: attacks with a huge long-reach club; a swing starting near its back was very hard to avoid; it has a sleep state you can wait out to pass safely; one player claims its design purpose is anti-bot (killing hackers' leveling bots). [Red Oni is to powerful!](https://web.archive.org/web/20200719002937/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/514786-straw-hat-samurai-duels-red-oni-is-to-powerful)
+- **CONTRADICTION (Red Oni killability):** early "impossible fight" claims vs later reports it IS killable — a kill screenshot (2016) and a claim of 11 kills (2018), "Red onis can be defeated smh". Both sides in [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- Red Oni bot-clinch exploit: absent/idle players are represented by AI bots; a bot clinching the Red Oni can neither be killed by it nor damage it — freezing the boss while the player's clones kill it (clones normally CAN be killed by it). [Red oni](https://web.archive.org/web/20200719020954/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492406-straw-hat-samurai-duels-red-oni)
+- Red Oni is the stated exception to the (your level ÷ 4) minimum-damage-dealt rule — i.e. unusually high defense ("Cept the red oni. Cause they stink."). [Equipments and how do they work exactly?](https://web.archive.org/web/20200719120130/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486247-straw-hat-samurai-duels-equipments-and-how-do-they-work-exactly)
+- Low-confidence claim: killing the Red Oni yields "one sho" (term unexplained; another poster in-thread did not recognize it). [Red oni](https://web.archive.org/web/20200719020954/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492406-straw-hat-samurai-duels-red-oni)
+- **DEV:** more enemy types were planned — Lutgames confirmed twice, on Apr 13, 2015 ("We will be adding even more enemies later!") and Apr 20, 2015 (reported by 2 threads). [are there any mythical enemys i can kill?](https://web.archive.org/web/20200719190457/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487314-straw-hat-samurai-duels-are-there-any-mythical-enemys-i-can-kill); [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
+- The launch-era roster was small and a common complaint (a 15-post thread demanded more types): early overworld enemies are human bandits (which can carry shields) with oni as the first non-humans; the mid-game complaint roster is "BANDITS, ZOMBIE, AND ONI"; the common oni is a bland blue variant with almost no techniques. [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
+- Rarer roster entries: mermaids and kappa exist ("albeit ugly"); a stag (the reference fast charging-animal archetype); deer and bear as huntable overworld animals; ninja enemies are extremely rare (~one occasionally assisting a boss); a yurei (mentioned 2017) with a unique scythe and clothing; the cast is summarized as Samurai, Ninja, oni, and tengu; Benzaiten is a notably tough female opponent [Show off a picture of your awesome character here](https://web.archive.org/web/20150919133214/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488448-show-off-a-picture-of-your-awesome-character-here?page=1); other entries in [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
+- Zone scaling: as zone level rises, enemies get "more…numerous and disgruntled" — more numerous/aggressive rather than new types. [Rebirthing = 25 FREE Gold…](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
+- Undead behaviors: zombies can jump, and jumping undead have LESS HP than walking ones; undead walk very slowly, sometimes not moving at all (a stuck bug making them free kills — relogging was the community fix); some missing spawns self-resolved after about a minute, suggesting a delayed-spawn timer. [Weird glitch in NPC duels?](https://web.archive.org/web/20200719192254/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/548989-straw-hat-samurai-duels-weird-glitch-in-npc-duels)
+- **CONTRADICTION (oni grind difficulty):** onis give the same EXP as bandits, are less dangerous, and never carry shields (bandits do) vs "But Oni's are too fast to dodge." Both in [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- Ninja survival mission: ninjas can duplicate into a clone that dies to a single hit; the fight is winnable without attacking at all — dodging in light stance suffices. [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- Charging deer (reported by 2 threads): counter is to run away and slash backwards in front of your character while fleeing — you turn and hit them mid-charge [auto slash "on" or "off" ?](https://web.archive.org/web/20200718231337/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494226-straw-hat-samurai-duels-auto-slash-on-or-off); alternative light-stance counter: slash up above them, then drop down attacking near their rear [post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- Wolves: a Chi Punch that fails to kill a wolf paralyzes it (unable to move or attack) — recommended against bosses that use wolf packs as meat shields. [post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- Dungeon/boss structure: encounters are wave-based — wolves spawn first and the boss NPC appears only after the waves are cleared; dungeon bosses include a bandit leader and a Ronin samurai (an NPC also seen roaming the world; can be female) [Weird glitch in NPC duels?](https://web.archive.org/web/20200719192254/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/548989-straw-hat-samurai-duels-weird-glitch-in-npc-duels); the final dungeon ends in a two-part finale — a conventional boss fight then a harder survival (wave-outlasting) encounter [(fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
+- Clan-war AI: an unjoinable AI-controlled bandit faction holds map squares and is deliberately weak — "pretty much free squares to whoever bothers attacking them". [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
+- AI opponents: difficulty-tiered "regular difficulty AI opponents" exist and are distinct from "player AI opponents" — AI-controlled copies of player characters (likely offline duel opponents). [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
+- Bounty-hunt targets are dramatically stronger than the L24–25 mobs of their own areas and use many special moves. [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719145607/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487109-straw-hat-samurai-duels-game-crash-bug)
+- Hunting regular mobs drops equipment of varying quality — good drops common enough that veterans gift spares to new players. [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20151219190542/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread?page=1)
+- Tengu, Red Oni, and "heavy bosses" are named as extremely strong enemies that can evade a first slash (wiki-derived claim). [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
+
+*Closes/confirms:* per-enemy HP (Red Oni ≈40 — blocker ②), enemy level→stat anchors (same-level damage determinism + minimum-damage floor ≈ level/4 — blocker ①), boss-roster damage numbers (Chikako 20/kunai, Amaya 60×3-hit, Statue Guardian ~2-hit, Tengu 10-token, oni rock 57 pre-fix), and spawn/aggro texture (sleep states, wave-gated boss spawns, spawn rerolls, delayed-spawn timer — blocker ④); telegraph/stagger frames stay open (blocker ③).
+
+# PART 2 — World, quests, UI, meta-social, rebirth, art (SYNTHESIZED)
+
+### world-exploration
+
+- The world map is a territory grid addressed by numeric coordinates with optional in-territory sub-sector coordinates (e.g. "24,52 (5,0)"); named places sit on the grid — Hiratani castle town at (43,44), a contested castle at (15,61) — reported by 3 threads. [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
+- Crowdsourced mine ledger: ~40 mine coordinates; each mine yields one common ore (Copper or Tin, occasionally None) plus a rare ore that is near-universally Diamond; ledger rows carry a level value ~30–31 ("12,69 | Tin | Diamond | 30", "43,45 | Tin | Titanium | 31"). [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
+- Mine placement quirks: the mine at 50,46 is "UNREACHABLE!"; 53,35 holds 2 mines; 46,40 and 46,41 are confirmed mineless; None/Diamond mines exist at 37,52 and 50,40; a mine sits as far out as sub-sector 5,5. [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines)
+- ⚠️ **CONTRADICTION (ore roster):** "I have not seen coal, silver, iron or titanium" (Apr 21 2015) [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1) vs a Tin/Titanium mine listed at 43,45 by mid-May 2015 [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines) — most plausibly a content addition between posts, not an error.
+- Optimal gear farming at the ~level-28 wall: level 27–29 caves — oni are far easier to farm than bandits, caves have no boss fight and are shorter; one night of drops greatly improved stats. [Difficulty curve around lvl 28](https://web.archive.org/web/20200719085726/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487402-straw-hat-samurai-duels-difficulty-curve-around-lvl-28-anyone-else-think-so)
+- Grinding loop: go to a territory 3 levels above your own and run its dungeons repeatedly; open-world bandit encounters come in waves (3-wave groups) and can be entered/exited repeatedly; refreshing the client re-rolls bandit spawn locations. [How to grind for Levels and EXP](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- World areas are level-rated by convention — players reference "lvl 34/35/37/49 areas" — and the "blue island" (Aoi territory) is roughly a level-20 zone; reported by 2 threads. [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
+- The map mirrors real Japan: Kyushu (southern island), Hokkaido, the Kanto bay, Chugoku, and Tohoku are all named contestable regions; reported by 3 threads. [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
+- Traversal is sign-to-sign along paths; enemy positions persist while you zone out, so exiting through a signpost and immediately re-entering respawns you at the sign ahead of a walking enemy (community exploit). [post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- Location taxonomy referenced as existing: oni dungeons, field paths, towns, Kanji ruins, graveyards, caves, ruins, forests, mines, castles (with a flagroom holding a capturable flag), and dojos. [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
+- Every Dojo contains PvP practice rooms for slash training plus a Trap Challenge that new players found long and frustrating; reported by 3 threads. [I don't get the dueling part](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
+- Trap Challenge design: a multi-room gauntlet where most rooms are trivial but one room combining a rolling stone ball with a saw is a sharp spike — the ball's hitbox far exceeds its sprite, you fall back onto the pressure plate and re-trigger it, and the intended solution is clicking a sign at the right moment (believed to retract the saw); its reward/purpose was never communicated in-game. [Trap challenge: Rolling stone ball](https://web.archive.org/web/20160101034759/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486900-trap-challenge-rolling-stone-ball?page=1)
+- Trap Challenge bugs: players could get stuck immobile suspended over the bamboo spikes after the jump pads, and respawn placement could drop you adjacent to a spike ball for an instant hit. [trap chalenge glitch](https://web.archive.org/web/20200718235342/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486590-straw-hat-samurai-duels-trap-chalenge-glitch)
+- Episode 12 contains an instant-kill pillar gauntlet gated by a lever: pull it, then cross right-to-left before the timer; players found no reliable timing and spam-clicked the exit to pass. [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- Final-dungeon checkpoints: dying at the boss respawns you in the room before it, and walking backwards shows "traveling to checkpoint" and warps you forward — originally trapping players inside (thread later marked "(fixed)"); relogging the next day placed the trapped player outside the dungeon. [(fixed) Stuck at final boss](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1)
+- Fast travel: **DEV:** the Dojo Recall Scroll consumable teleports you to the nearest dojo (Lutgames) [HOW DO I FAST TRAVEL?](https://web.archive.org/web/20200719190518/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487363-straw-hat-samurai-duels-how-do-i-fast-travel); the /recall chat command teleports you to the Dojo in your clan's territory [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1); stables offer paid travel but not every village has one and each serves only specific cities [ITT: Things you want to see in the game](https://web.archive.org/web/20200719131437/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490507-straw-hat-samurai-duels-itt-things-you-want-to-see-in-the-game); "speed boots" are named as a further aid (terse claim). Reported by 4 threads.
+- Statues stand in dungeons and along the main quest; performing a dragon dance activates them for coins, clothing items, and temporary buffs. [Questions](https://web.archive.org/web/20170427091012/http://www.kongregate.com:80/forums/12-kongregate-multiplayer-games/topics/494653-straw-hat-samurai-duels-questions)
+- Towns contain inns that fully restore health and mana; destroyed/closed towns force travel to an intact one, and the Peddler vendor only appears in villages that are not destroyed. [Have the option to burn our own villages?](https://web.archive.org/web/20200719005133/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/510653-straw-hat-samurai-duels-have-the-option-to-burn-our-own-villages)
+- Towns apparently cannot be attacked by players, and the town housing district was purely decorative — no gameplay function. [Q&A](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels?page=2)
+- Villages can exist in a destroyed state and be rebuilt by clan effort (e.g. "destroyed villages like tomoharah"). [AKA RYU ROLE CALL](https://web.archive.org/web/20200719183224/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495568-straw-hat-samurai-duels-aka-ryu-role-call)
+- Boss areas are not lock-ins: you can leave the Amaya cave, level up (e.g. to 36) and gear up, then return. [How does one beat Amaya?](https://web.archive.org/web/20200719014049/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/503551-straw-hat-samurai-duels-how-does-one-beat-amaya)
+- A hidden Tengu cave reportedly exists whose location changes over time and which requires unlock conditions to enter; killing its Tengu yields rare loot (secondhand player claims). [Tengu cave and possible way to find it](https://web.archive.org/web/20200719214639/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/511194-straw-hat-samurai-duels-tengu-cave-and-possible-way-to-find-it)
+- ⚠️ **CONTRADICTION (hidden sectors):** off-map sectors 82,53/82,54 exist as developer "de-bugging territories, testing territories" enterable only via recall stone, with a screenshot posted (and a claim 82,53 was "the old house of ryu") vs the player who surfaced the coordinates insisting "there is no such thing as 82,53/82,54 i was trolling u" — both in [82,53/82,54](https://web.archive.org/web/20200719163919/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/628561-straw-hat-samurai-duels-82-53-82-54); an "80-something" territory find and belief in many private dev areas corroborates hidden sectors [Q&A](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels).
+- ⚠️ Disputed: a "Banana Town" reachable via glitch was claimed by one player, denied by another, and never evidenced. [WTH is a Tengu? Berry man? Banana Town?](https://web.archive.org/web/20151231125651/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491788-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town?page=1)
+- A "hell" area exists and was reachable by accident — an error-recovery respawn placed one player there, and another screenshotted "Somehow got in hell"; reported by 2 threads. [Report hackers here](https://web.archive.org/web/20200719115839/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492905-straw-hat-samurai-duels-report-hackers-here)
+- Water hazards keep damaging the player even while knocked down. [annoying glitch](https://web.archive.org/web/20200719050218/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518311-straw-hat-samurai-duels-annoying-glitch)
+- At least one screenshotable location has a glowing/luminous background scene. [Cool Screenshot](https://web.archive.org/web/20151020164626/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495163-cool-screenshot?page=1)
+
+Closes/confirms: chips at world-exploration blocker ① (world bounds + geography — coordinate extent from 5,5 to 82,53 plus Japan-region naming), blocker ② (mine ore-pairing/level data, though yield-per-swing tables stay open), and blocker ⑤ (sector↔room mapping via sign-to-sign nodes); corroborates the ready-list travel-methods set and prosperity/destroyed-town ladder; adds new unknown-unknowns (hidden debug sectors, hell area, inn full-heal rule).
+
+### quests-story
+
+- Episode 8's boss is a giant volcano-coloured Statue Guardian killed via a scripted mechanic — run through/distract it while ally NPC Mitsuo fires arrows; standing too far away makes it throw boulders — and it is a hard story gate coinciding with the ~level-28 difficulty spike; reported by 2 threads. [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- Episode 10 "Oni Caves" has a Red Oni designed to be avoided, not fought: "wait for the oni to sleep or look like its tired,then run through it". [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- Episode 10 also has a castle assault with a "Build a ladder" objective: find a transparent ghost-outline ladder and stand channeling until its progress bar fills; the gate is strict — even clearing every enemy inside leaves the quest stuck until the bar completes. [Quest: Build a ladder](https://web.archive.org/web/20200719153800/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/524342-straw-hat-samurai-duels-quest-build-a-ladder)
+- Episode 11 includes a timed survival mission: stay alive 2 minutes against enemy waves. [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- Episode 12 sequence: Amaya boss, then a survival segment against Gojo/Takamori in "dead form" (Takamori uses a devastating Chi Slash); you can bring another player as an ally or survive "by 'flying' and rolling". [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- The final story dungeon ends in two boss encounters: a normal boss fight followed by a survival encounter. [(fixed) Stuck at final boss](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1)
+- Amaya is an eyepatch-wearing woman serving the main antagonist Lord Tamakori, fought in a cave around player level 30. [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
+- Season 1 ends at Episode 12; the next episode was still unreleased as of Aug 2016 and the storyline was never concluded; reported by 3 threads. [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- Season 2 timeline: players waited ~1 year by early 2016, ~2 years by Sept 2016, and it was still absent in May 2017. ⚠️ **CONTRADICTION:** "There will not be a season 2,the developer have quit" (Feb 25 2016) vs "season 2 is almost done. but they have other updates and bug fixes coming first" (Feb 28 2016), both in [SEASON 2](https://web.archive.org/web/20160316203819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/583212?page=1); an Apr 2016 poster countered the dev hadn't quit but needed support/funding [SEASON 2 (later capture)](https://web.archive.org/web/20200719172013/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/583212-straw-hat-samurai-duels-season-2).
+- The story questline gives strong XP, introduces the mission/dungeon types, and carries a new player to roughly level 30–40. [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
+- Story quests award farm crops (meant to be sold; inventory weight matters) and a kitten; the kitten is story-linked and droppable/killable, and a "story reset scroll" lets you replay the story — a repeatable kitten source; reported by 2 threads. [I'm Sorry guys but](https://web.archive.org/web/20200719015259/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/601813-straw-hat-samurai-duels-im-sorry-guys-but)
+- Quests can be turned in remotely: the scroll tab lists accepted quests, redirects the map to each quest's location, and offers "finish quest" without returning to the NPC. [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
+- Quests reward money AND influence; exploit: if a quest lends gear you'd surrender at turn-in, abandoning and redoing it keeps the item plus the money and influence. [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
+- The quest log has a max active-quest cap; a full log broke the Prologue/Dojo tutorial (NPCs teach stances and skills, with no way to drop a quest mid-tutorial). **DEV:** Lutgames' workaround was refresh + the abandon-quest button, and he patched the bug within one day (reported Apr 7, fixed Apr 8 2015). [Bug with Prologue quests](https://web.archive.org/web/20200719035108/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485740-straw-hat-samurai-duels-bug-with-prologue-quests-if-you-already-have-max-quests)
+- NPC villagers hand out gathering quests tied to local resources — one near 43,45 demanded titanium (a rare ore). [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
+- Episode 1 includes a battle against Inokichi; a beta bug could load it with no enemies, soft-locking until refresh. **DEV:** Lutgames' triage distinguishes "normal battle" vs "story battle" as separate instance types. [bug plesse fix](https://web.archive.org/web/20200719172239/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485618-straw-hat-samurai-duels-bug-plesse-fix)
+- Clan lore (in-game blurbs, repeated by 3+ threads): Midori Ken (Green) led by Lord Daichi, the late Shogun's right-hand who proclaimed himself Shogun, rules the South-East; Aoi Hoiru (Blue) led by shrewd Lord Yoshio, South-West; Ki Sensu (Yellow) led by Lady Tsubasa, a prosperous non-confrontational merchant clan; Aka Ryu (Red) led by Lord Tsuyoshi, who armed on hearing of the Shogun's illness — the Shogun's death triggered the war. ⚠️ **CONTRADICTION:** the same lore post lists BOTH Ki Sensu and Aka Ryu as ruling "the North-East" (likely a typo — North-West probable for Red) [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2), while another player places Yellow "in the west" [The clan to join is Aka Ryu](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us).
+- Wiki-sourced clan characterizations: Green seeks the shogun's power; Red are bandits/rebels using radical means; Yellow is a merchant clan whose leader is a figurehead ruled by a profit-driven council; Blue is a small clan led by a wise general aiming to unite the factions. [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
+- Each clan's in-game story is only about a 3-line blurb — the clan narrative layer is minimal. [The clan to join is Aka Ryu (page 3)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
+- Season 1 plot: a mysterious faction called "The Kakuremichi" drives events; Shinmen dies on-screen ("Shinmen died. Or did he?" — suspected faked death/traitor twist); Hiroshi and the shogun's son are left unresolved for the planned Season 2. [Season 2 theories — Who are The Kakuremichi?](https://web.archive.org/web/20151231124523/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487973-massive-spoilers-within-season-2-theories-and-ideas-who-are-the-kakuremichi?page=1)
+- Shinmen wears blue garments but belongs to the Shira Tancho clan — a story-only clan distinct from the four player color clans. [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
+- Series continuity claims: in SHS1 you capture Aka's flag and it turns into Aoi's flag, so players tie the straw-hat protagonist to Aoi Hoiru [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1); ⚠️ **CONTRADICTION:** "Aku Ryu (Red Clan) is the bad guy in Straw Hat Samurai 1 and 2" vs another player's counter that Duels has no canonical good/evil clans [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle).
+- Launch-era quest/dialogue text contained typos and Japanese-usage errors; the correction screenshots are unrecoverable from the archive. [Typos and Japanese corrections](https://web.archive.org/web/20151231131323/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487967-typos-and-japanese-corrections-here-spoilers-within-post-more?page=1)
+- Player-authored lore (RP-flavored, treat as claim): Lady Tsubasa is "the youngest daimyo of the Four Daimyos" — supporting four principal NPC clan lords. [KI SENSU — The Golden Fan](https://web.archive.org/web/20200719143214/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/498595-straw-hat-samurai-duels-ki-sensu-the-golden-fan-recruitment-thread)
+
+Closes/confirms: directly chips at quests-story blocker ② (Ep4–12 undocumented — concrete mechanics now sourced for Ep8, Ep10 ×2, Ep11, Ep12, and the final dungeon), corroborates the quest-log cap (QUEST_LOG_CAP) and reward tuples (money + influence + item-lend), extends the archetype taxonomy (timed survival, build-channel, ore-gather), and thickens the Season-1 plot spine + clan-blurb lore; verbatim-dialogue blocker ① remains fully open.
+
+### ui-hud
+
+- The /whoisonline chat command caps output at 20 players even when more are online. [Suggestions Thread](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
+- A 'stats' button (upper-left of the player window/menu) shows your real computed min/max damage and how attack/defense/range change with each stance; reported by 2 threads. [Can someone explain Attack and Defense…](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
+- Stance is set pre-fight by clicking your own character portrait; in battle, Spacebar quick-toggles stances gated on the Focus bar being full enough; reported by 3 threads. [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
+- Skills fire via preset number-key keyboard shortcuts. [I don't get the dueling part](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
+- The AUTO SLASH toggle button sits top-left of the screen during battle, and no hotkey exists to toggle it (hold-SHIFT temporary-off was only proposed); reported by 2 threads. [auto slash "on" or "off"?](https://web.archive.org/web/20150920124446/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494226-auto-slash-on-or-off?page=1)
+- Chat emote commands work from normal or trade chat: /bow, /kneel, /fart, /gangnamstyle (dance + speech line), /sit (randomly one of 3 poses: cross-legged, seiza, plain), /rest, /stand (clicking away also stands you), /seppuku, /shoulderweapon; all emotes are disabled during duels. [post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- Utility chat commands: /recall (typed in chat, the community unstuck/teleport remedy) [(fixed) Stuck at final boss](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1) and /ignore <name> to mute players — with no ignore button on profiles [So, so, so many spammers](https://web.archive.org/web/20151231022234/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489549-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it?page=1).
+- A dedicated TRADE chat channel was added mid-May 2015 alongside ALL; it launched with an inverted-scroll bug fixed within about a day, and PAGE UP/PAGE DOWN keys scroll the chat window. [So, so, so many spammers](https://web.archive.org/web/20151231022234/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489549-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it?page=1)
+- ⚠️ **CONTRADICTION (clan chat):** several threads describe per-clan chat channels — even three channels (global, clan, war-room) plus a war-room message board — [The clan to join is Aka Ryu](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us) — while May–June 2015 threads say no clan chat existed and request it as a feature [Moderator is unbearable](https://web.archive.org/web/20200719045139/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/508075-straw-hat-samurai-duels-moderator-is-unbearable). Likely added later in 2015; the timeline is unresolved.
+- The chat history buffer is very short — messages scroll out of view quickly; reported by 2 threads. [chatroom tabs suggestion](https://web.archive.org/web/20151231070614/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495200-suggestion-chatroom-tabs?page=1)
+- War Room UI strings: a territory-prefixed error line ("Terumura: No available HQ in this territory") and a live countdown to the army tick ("Troops will attempt sector capture in 4:25:10"); entry can be refused with "You are not allowed to enter this war room territory." [Not able to spend move points in War Room](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
+- War-room defeats show a "You have been defeated in the war room" popup, and the message log normally records "<attacker> defeated <player>" entries (its absence during an ejection bug was flagged as anomalous). [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
+- The War Room contains a clan message board (separate from chat) where commanders post standing orders and members leave questions. [KI SENSU — The Golden Fan](https://web.archive.org/web/20160725161015/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread)
+- The War Room demolish button has no confirmation safeguard; accidental presses destroyed clan structures and "caused distrust in the clan." [Suggestions Thread](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
+- In the merchant shop, double-clicking an item buys it instantly with no confirmation — one player drained all their coins by accident. [Suggestions Thread](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
+- Stat-point allocation has no confirmation step: clicking the HP/Chi/AP area instantly spends a point (and could close the item-stats window), with no undo. [This game needs "Confirm" button](https://web.archive.org/web/20200719024749/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486485-straw-hat-samurai-duels-this-game-needs-confirm-button-when-adding-stat-points)
+- Duel UI: clicking an opponent's name shows their online status and whether they declined your challenge. [Duel Bug](https://web.archive.org/web/20200719122510/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485970-straw-hat-samurai-duels-duel-bug)
+- **DEV:** when the server is down, a rotating icon sticks in the top-right corner — the visible sign saves are failing; the title screen shows your saved character with equipped armor, weapons, face, and gender [Is there a save point?](https://web.archive.org/web/20200719000600/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/543984-straw-hat-samurai-duels-is-there-a-save-point); there is no manual save button [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1).
+- The SPEED stat has no in-game explanation anywhere; its per-point cooldown-reduction magnitude went unanswered. [Speed stat](https://web.archive.org/web/20151228185458/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487053-speed-stat?page=1)
+- In the item-transfer UI, the orange item goes in the "design" slot — wrong-slot placement was commonly misread as a bug. [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
+- No player search bar exists in the UI (requested feature). [Suggestions Thread](https://web.archive.org/web/20200719000558/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500594-straw-hat-samurai-duels-suggestions-thread-straw-hat-samurai-duels)
+
+Closes/confirms: fills the keybinding/hotkey map (Spacebar stance, number-key skills, no auto-slash key — feeds ui-hud blocker ④'s skill-slot picture), documents the stats screen (a measurement path for the DEF/SPD curves in progression blocker ①), pins War-Room UI strings + countdown behavior, and catalogs chat channels/commands + no-confirm interaction hazards; dialogue-box/pause metrics (blocker ⑤) stay open.
+
+### meta-social
+
+- World Battle territory snapshot, late Apr 2015: Red held 76 territories vs Blue's 200. [The clan to join is Aka Ryu](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
+- Player clans unlock "player clan gear" by reaching 40 controlled territories. [The clan to join is Aka Ryu](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
+- War-room progression uses military ranks gating per-rank move allowances with a visible progress counter — a 2-day-old player was a "4 move Corporal at 96/180"; the rank chart is game-provided and identical for every clan. [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
+- Army resolution runs on a 24-hour global timer per capture/defend attempt: at the tick, troops in each sector cancel one-for-one and the surviving side wins; the UI shows the live countdown. Personal move points refresh hourly ("I come back after the hour with my new moves") [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1) — ⚠️ tension: one player also describes banking daily "war room turns" [How much time you spent playing](https://web.archive.org/web/20200719152626/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/525884-straw-hat-samurai-duels-how-much-time-you-spent-playing-this-game); hourly-vs-daily allowance not fully reconciled. [Not able to spend move points](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
+- Missions convert towns to clan control via points: a level-80 doing missions in a ~level-20 zone earns ~15 conversion points per run, so 10 players yield ~150; PvE questing inside a territory also "defends" it — reported by 3 threads. [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
+- Inviting a player into a private clan costs the clan 5 gold per invite. [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- Leaving a clan: buy a Writ of Release for 25 gold, trade one from another player (writs are tradeable), accept a player-clan invite (direct transfer), or delete/reset your character (easy below ~level 20); leaving forfeits your rank and clan gear, re-earned from scratch — reported by 2 threads. ⚠️ **CONTRADICTION:** "be kicked by the leader" is listed as an exit route [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1) vs screenshot-backed reports that "the inactives cannot be kicked by any current means" [Full clans?](https://web.archive.org/web/20150907062949/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496364-full-clans?page=1).
+- Login streak: 31 consecutive days awards a "Super Bonus" Present of a random orange (top-rarity) gear set — you can't choose which. ⚠️ **CONTRADICTION:** "you get the bonus on day 31 not 30" [Getting FREE Oranges](https://web.archive.org/web/20151231075434/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491033-getting-free-oranges-glove-mask-do-30-daily-prizes-and-clan-war-actions) vs a player whose day-30 Present held a rare item, not orange gear [Getting FREE Oranges (p1)](https://web.archive.org/web/20150911101822/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491033-getting-free-oranges-glove-mask-do-31-daily-prizes-and-clan-war-actions?page=1).
+- Three recurring freebies: the Daily Prize (24-hour cooldown from pickup) plus the Friendship room and Trap room, which each reset after every World Battle troop movement. [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
+- Clan-war participation pays out: ranking up eventually awards a free clan-themed glove and mask (2 threads), building structures (coin-funded) grants EXP toward clan rank, and there was no shared clan treasury — members personally funded War Room actions. [Where do I store extra money?](https://web.archive.org/web/20151231112117/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489121-where-do-i-store-extra-money?page=1)
+- Taneyama event (Mar 2016): territory 34,55 flagged contested, decided by ownership "after the troops move on 19 March 2016"; prizes went to the top 5 contributors of the winning clan, chosen by its leader with the Kanji (moderators); the defense mixed ~30,000 NPC troops with player battlers; adjacency control locked Midori Ken out of the tile entirely; Aoi won. [War Room EVENT! Four Way Battle for Taneyama!](https://web.archive.org/web/20200718235234/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/606808-straw-hat-samurai-duels-war-room-event-four-way-battle-for-taneyama)
+- Castle battles run on countdowns accepting attacks into the final 20 seconds, and outcomes resolve to surviving troop counts — a "2 troop victory" and a "2 Aoi's soldiers Remaining VS 0" finish are both recorded; reported by 2 threads. [The clan to join is Aka Ryu (page 2)](https://web.archive.org/web/20150907191222/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=2)
+- War Room core loop (coordinates corroborated by 5 threads): the map is an X,Y sector grid; the four player actions are attack, defend, build, and deploy; ongoing battles are flagged with your clan's colors; to join one you select the battle, then the sector holding your clan's command HQ, then 'move'; clans place flags and members deploy troop units toward them; per-clan troop counts are visible. [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
+- HQ mechanics: HQs are optional, buildable (also inside enemy territory), and dismantlable; build rights are a per-member permission leadership can revoke; towns/cities/castle towns serve as HQs (leaders could not disable one); crops are spendable — by a player or their leader — to build extra HQs. [Aka and Aoi status](https://web.archive.org/web/20150915080519/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494355-aka-and-aoi-status?page=1)
+- Your war-room presence persists offline as an AI-controlled copy: if it is killed on a tile you are ejected and must re-enter from an HQ square; veterans therefore defend from an adjacent tile rather than the contested one. Bug: a "ghost" copy could linger in a previously-visited territory and be defeated there hours later. [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
+- **DEV:** an account's second character cannot enter the same war-room territory on the same day (Lutgames). ⚠️ Counter-report: a single-character player hit the same lock after hard-resetting his character — the per-day lock apparently persists across resets. [Not able to spend move points](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
+- Territory diplomacy is real: clans ceded/gifted land by agreement (Kin Tomoe got free land from Aka Ryu; Blood Lotus was given 2 territories), peace deals swapped 15-tile blocks and used HQ dismantling as ceasefire terms, players defected mid-war, and one leader recruited a General from another clan as sub-leader. [Aka and Aoi status](https://web.archive.org/web/20150915080519/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494355-aka-and-aoi-status?page=1)
+- The World Battle map auto-resets to base values when too much of it falls into ruins (it "has happened recently" as of Jul 2015); the cycle runs on a months timescale, and total map destruction is impossible. [Have the option to burn our own villages?](https://web.archive.org/web/20200719005133/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/510653-straw-hat-samurai-duels-have-the-option-to-burn-our-own-villages)
+- Four joinable story clans — Aka Ryu (Red), Aoi Hoiru (Blue), Midori Ken (Green), Ki Sensu (Yellow/gold) — hold the map alongside player clans; reported by 5+ threads. A player claims all clans are mechanically equal ("There is NO ADVANTAGES… They are all equals."), countered only on practical size/territory grounds. [The clan to join is Aka Ryu](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
+- Clan capacity: all clans but Hono displayed full at cap by May 13 2015 and Red was temporarily closed; **DEV:** the cap formula "takes into account inactive players and all the relevant factors" [Full clans?](https://web.archive.org/web/20150907062949/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496364-full-clans?page=1); the limit appeared lifted around May 19; player speculation pegged the cap to the smallest clan's size (unconfirmed) [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1).
+- Story-clan leadership is a player role, transferable (Alucard→Tameshi for Midori; iostiogic for Aka Ryu; Yuuta for Ki Sensu), with a council and even an in-game poll involved; "there is no founder, only an NPC 'Daimyo' for flavor"; hierarchy runs Daimyo (NPC) → Marshal → Second in Command → Generals → …Sergeant Major/Corporal. [Aka Ry and it's founder](https://web.archive.org/web/20160725142620/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/596572-aka-ry-and-its-founder)
+- Player-created clans (reported by 5 threads): Honoshihai (purple, elite, invite-only), Kin Tomoe (gold), Koizumi, Blood Lotus, later Uroborus, Murakami Sohei, Blue Dragon, Kazekugya; invites are leader-curated; a one-man clan can hold a map square; founding your own clan requires "War Hero" status; clans persist even with zero territory. [The Clans.](https://web.archive.org/web/20200719193429/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518994-straw-hat-samurai-duels-the-clans)
+- ⚠️ **CONTRADICTION (extra factions):** pink and orange factions were formed, pink possibly named "Cherry Blossom (I think)" vs "there is no pink? and there will be no mention of orange. (because you cant join them anyways)" — both in [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2); the unjoinable-orange reading matches the AI bandit faction.
+- The map includes an unjoinable AI bandit faction whose scattered squares players treated as free captures, plus unclaimed areas capturable without fighting anyone. [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
+- One shared world across portals: Kongregate, Facebook, Armor Games, and the official site all feed the same server and one clan war (reported by 4 threads); spring 2015 turned it into a portal war — Kong organized into Red while AG massed in Blue; in-game character names are separate from portal usernames. [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
+- Each story clan reportedly has four "diplomatic territories" — a fallback home core distinct from conquerable land (player claim). [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
+- Clans can be driven to near-elimination: Red was "nearly wiped off the map" pre-Apr 2015, Midori Ken was almost forced off by Ki Sensu by Jan 2017, Aka Ryu retook 20+ lands in May 2015, and an Apr 2015 power ranking ran Yellow > Green > Blue ("weakest non-destroyed story clan"). [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
+- Duels are strictly 1v1 (team duels only requested); the reservation system frequently errored "currently unavailable" with no decline option; there is no matchmaking, no leagues, no Dan/rebirth filtering, and no visible strength indicator — rankings just show win/loss records (e.g. 10–20 wins, 0–4 losses); whether losses carry any penalty went unanswered. [Suggestions Thread](https://web.archive.org/web/20150910180244/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=2)
+- **DEV:** a duel is verifiably live PvP only if a ping appears in the duel chat; only ping-verified duels count on your record — the game sometimes presents a simulated opponent as a live duel. [Duel Bug](https://web.archive.org/web/20200719122510/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485970-straw-hat-samurai-duels-duel-bug)
+- PvP rooms (~3 numbered, all free-for-all): no level gates, a single fixed entrance spawn enabling camping (a level 80 farming level 10–30s), no HP/Chi restore on death, and cooldowns tick while waiting alone — campers sit fully charged; population was too low for level brackets; /allyroom auto-allies everyone in a room. [Make pvp room fair](https://web.archive.org/web/20151231143243/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493858-make-pvp-room-fair?page=1)
+- Tournaments existed but ran rarely and unscheduled; they could be free-entry with no prize pool, player profit coming entirely from the betting system (bets close before matches). [Tengu cave and possible way to find it](https://web.archive.org/web/20200719214639/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/511194-straw-hat-samurai-duels-tengu-cave-and-possible-way-to-find-it)
+- Tengu fights are multiplayer encounters where players must manually type /allyroom to ally the room. [Suggestions Thread](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
+- "Kanji" are the in-game moderators (mute/ban powers, roles differ individually, they actively play and PvP); they can gift items in exceptional cases (a free Writ of Release); a rogue-moderator complaint drew **DEV:** "Noted. It will be looked into." within hours, and **DEV:** Lutgames personally worked a ban appeal via character-database lookup ("There is no character by the name of sonwokun."); lag/desync could get players accused of hacking. Reported by 3 threads. [Moderator is unbearable](https://web.archive.org/web/20200719045139/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/508075-straw-hat-samurai-duels-moderator-is-unbearable)
+- An earlier chat build auto-muted anyone posting ~7 rapid lines within a minute; it had been removed by May 2015 and players wanted it back. [So, so, so many spammers](https://web.archive.org/web/20151231022234/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489549-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it?page=1)
+- A web spectate/replay feature existed at strawhatsamuraiduels.com/watch?name=<playername>, shared to show off fights. [Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
+- Redeem codes and timed events were live systems that dried up — "GAME IS SLOWLY BEING DEAD BECAUSE OF DECREASE UPDATES AND NO NEW CODES" (Nov 2016) [NEW REDEEM CODES AND EVENTS](https://web.archive.org/web/20181011190942/http://www.kongregate.com:80/forums/12-kongregate-multiplayer-games/topics/686158-straw-hat-samurai-duels-new-redeem-codes-and-events); a Mar 2016 Global Scavenger Hunt ran through the official forums with Gold Tokens, Raccoons, Outfits, and real gold as prizes [Global Scavenger Hunt!](https://web.archive.org/web/20200719213006/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/612390-straw-hat-samurai-duels-global-scavenger-hunt).
+- The heavy roleplay layer (declared alliances, wars, diplomacy tables) is player fiction, not mechanics — "The rank chart applies to every clan. The rest is RP silliness." (Captain_Catface, a Kongregate developer-badged user, NOT Lutgames) [MIDORI KEN recruitement thread](https://web.archive.org/web/20150907061933/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread?page=1) — while **DEV:** Lutgames states roleplaying is deliberately encouraged "since it adds to the flavor and the theme" [Our wiki (page 2)](https://web.archive.org/web/20200719091940/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496946-straw-hat-samurai-duels-our-wiki?page=2).
+- The War Room is a distinct load/connection stage that could fail independently: it froze video (audio continuing) in Aug 2015, and was server-side down for everyone on Sep 12 2015. [Infi load](https://web.archive.org/web/20160908183934/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/538848-infi-load)
+- Platform gaps: no Kongregate badges (Apr 2015) [badges?](https://web.archive.org/web/20200719213633/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486008-straw-hat-samurai-duels-badges); no cross-portal character transfer [Possible transfers?](https://web.archive.org/web/20200719163852/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/561092-straw-hat-samurai-duels-possible-transfers); achievements exist — one for selling 5,000 worth of trade goods [Tea, Silk, and Other Trade Goods](https://web.archive.org/web/20200719203804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493252-straw-hat-samurai-duels-tea-silk-and-other-trade-goods).
+- Decline arc: ~6 years online by Jul 2016 (launch ~2010) with balance still criticized and no real update in months (players claimed the devs paid Kongregate "rent" and depended on gold sales) [forum activity is dying](https://web.archive.org/web/20161016203657/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/650580-forum-activity-is-dying); still active early Feb 2016; playerbase collapsed by Jan 2018 ("aka ryu is in the point of dying") [AKA RYU WINS](https://web.archive.org/web/20200719051117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500008-straw-hat-samurai-duels-aka-ryu-wins-recruitment-thread); Dec 2019: "Lut has given up and shsd will disapear with flash in 2020" [Season 2](https://web.archive.org/web/20200719023120/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/669389-straw-hat-samurai-duels-season-2).
+- ⚠️ **CONTRADICTION (overworld flags):** capturing a flag outside the War Room "will get a troop boost when deploying" if your clan is at war (Thylakaleo) [Q&A](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels) vs "Ypu can not captur it outside war room so nothing happens" [Q&A (page 2)](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels?page=2).
+- Item transfer between players exists (gear given away in chat when purses hit the carry cap); items can be shown/linked in chat; no clan vault existed. [ITT: Things you want to see in the game](https://web.archive.org/web/20200719131437/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490507-straw-hat-samurai-duels-itt-things-you-want-to-see-in-the-game)
+- Joining a clan to spy or sabotage is against the game's rules; leaders can have suspected spies investigated. [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
+- Context bits: clan relevance starts around level 10 ("say hi after you turn level 10") [The clan to join is Aka Ryu](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us); Apr 2015 pay-to-win perception via premium gold items [Suggestion: Auction Market system](https://web.archive.org/web/20200719000146/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488497-straw-hat-samurai-duels-suggestion-auction-market-system); the game was ~3 years old and still officially "beta" in May 2015, its endgame loop described as level grinding, item finding, repeated quest types, monsters, and War Room [When is the new season coming?](https://web.archive.org/web/20200719192848/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/499058-straw-hat-samurai-duels-when-is-the-new-season-coming).
+
+Closes/confirms: re-confirms the 24h resolution tick and the moves-per-hour rank ladder (meta-social ready list, with the Corporal 4-move/96-180 datapoint), feeds blocker ② (War-Room map topology — adjacency lockouts, HQ-entry rule, coordinate grid), partially fills blocker ③ (daily-reward structure: 31-day streak, 3 daily freebies, rank cosmetics), and the outage/save evidence hardens the blocker-① scoping call that the server-authoritative war sim is unrecoverable at 1:1; the flag-boost contradiction touches the ready-list "flag +120%" entry.
+
+### rebirth-elements
+
+- Rebirth unlocks at level 80 and grants 25 gold, access to the elemental skill trees, and a fresh 1→80 climb worth 80 more skill points; reported by 3 threads. [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
+- Gold payouts: 25 gold free every rebirth, rising to 100 gold on the 9th [Rebirthing = 25 FREE Gold](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1); Judan (10th/max dan) gives 100 gold plus +20 in your chosen element, bringing cumulative dan elemental bonuses to 100 [Q&A](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels).
+- Each rebirth permanently adds +10 weight capacity to your bank. [Rebirthing = 25 FREE Gold](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
+- Each rebirth grants +10 Elemental Attack in a chosen element plus +10 Elemental Defense in an opposing element; the strength cycle is Water > Fire > Earth > Wind > Water (picking Earth yields 10 Earth ATK + 10 Wind DEF). [Rebirthing = 25 FREE Gold](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
+- Total elemental attack is hard-capped at 100, so at most three elements can reach their 30-point supers; an alternative build is 70 main / 30 spread, reachable around the 9th–10th rebirth at +10 each. [Rebirthing = 25 FREE Gold](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
+- Unlock cadence: 3 rebirths into one element (30 elemental ATK) unlocks that element's super power — examples Tornadoes, Fire Blast, Boulders, Typhoon, scaled by Elemental Attack — plus the first elemental dragon dance; 6 rebirths unlocks the second Dragon Dance; reported by 2 threads. ⚠️ Naming inconsistency: the earth super is "Boulders" in one post and "Earthquakes" in another, same thread. [Rebirthing = 25 FREE Gold](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
+- There were 12 dragon dances as of May 2015: 4 from the main quest line and 8 from the elemental sets (2 per element, at 3× and 6× rebirths); a player who unlocked a dance can teach it to others. [Questions](https://web.archive.org/web/20170427091012/http://www.kongregate.com:80/forums/12-kongregate-multiplayer-games/topics/494653-straw-hat-samurai-duels-questions)
+- All four element trees are structurally identical, each with 4 active skills: an elemental kunai, a land mine, a chi-punch-like skill, and an AOE (player report). [Rebirthing = 25 FREE Gold](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
+- Elemental stat semantics: Fire Attack does NOT affect regular slashes — it scales only the elemental techniques unlocked by rebirth specialization; Fire Defense reduces damage from fire-based moves AND fire traps. [Can someone explain Attack and Defense…](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
+- Reset semantics: rebirth returns you to level 1 with level-1 stats in a level-1 area, all equipped gear unequipped into your backpack; all learned skills persist (repeat rebirths can max every skill), but skill level requirements re-apply — substitution jutsu is unusable until samurai level 50 again. [Rebirthing = 25 FREE Gold](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
+- Scroll economy: rebirth scrolls cost 1,000 coins and weigh 0; soul reset scrolls also cost 1,000 coins, weigh 0, and reset orange (soul-infused) items back to level 1 when you rebirth. [Where do I store extra money?](https://web.archive.org/web/20151231112117/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489121-where-do-i-store-extra-money?page=1)
+- ⚠️ **CONTRADICTION/timeline (orange gear on rebirth):** beta-era claim that orange items "currently don't drop back down to level 1" on rebirth (Apr 2015, disputed in-thread) [Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle) vs the later soul-reset-scroll mechanism above — soul-infused gear originally kept its level through rebirth, which paying players protested [Soul Infused Gear should reset when you Rebirth](https://web.archive.org/web/20200719095645/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484956-straw-hat-samurai-duels-soul-infused-gear-should-reset-when-you-rebirth); random stat rerolls on reset also deterred soul infusion [Issues with resetting orange items](https://web.archive.org/web/20200718231904/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486991-straw-hat-samurai-duels-can-my-sword-break).
+- A second progression track ("Orange EXP" / SI levels) runs alongside normal EXP, with measured per-level requirements from L1=300 through L43=12,000 (partial table: L5=1200, L10=2000, L15=2600, L21=3600, L28=5600, L31=7000, L35=8600, L42=12000…). [How to grind for Levels and EXP](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- Dan ranks use Japanese names (Sandan = 3rd rebirth); Judan is the maximum — you can keep rebirthing after it but the title stops changing. ⚠️ **CONTRADICTION:** "The dan will be nidan again" (cycles back after Judan) was immediately denied in-thread ("no xixor."). [Q&A](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels)
+- Stats reset on every rebirth, so Dan rank itself confers no raw stat edge — the PvP power gap is gear (plus real-money head starts); the first rebirth's 25 gold spent on a weapon or mask is enough to start one-hitting higher-level players. [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
+- Rebirth characters keep their special skills at low level — a "level 10" rebirth throws elemental kunais at genuine newbies, and a Sandan can one-shot a higher-level non-rebirth; reported by 2 threads. [Make pvp room fair](https://web.archive.org/web/20151231143243/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493858-make-pvp-room-fair?page=1)
+- Rebirth pacing: a veteran's fastest 1→80 was ~12 hours, average 2–3 days, longest 1.5–2 months; counterpoint — one player had 2 weeks of playtime and no rebirth yet. [Hacker!](https://web.archive.org/web/20200719194201/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/576207-straw-hat-samurai-duels-hacker)
+- Rebirth ties the character to an element identity (a player self-identifies as "water type"; a pet-dragon-matching-your-element request presumes it); reported by 2 threads. [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
+- PvP element strategy (player claim): picking the element strong against an equal-rebirth opponent roughly cancels their rebirth ATK, "leaving him only his gear"; balanced spreads buy a little defense everywhere, single-element focus maximizes one skill's damage. [Rebirthing = 25 FREE Gold](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
+- Light stance becomes PvP-viable only after several rebirths, once top-tier items and maxed skills offset its damage-for-speed/range trade. [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
+- The element set is earth, water, wind, fire; combining two elements into one power is not possible (only a suggestion). [Suggestions Thread](https://web.archive.org/web/20200719000558/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500594-straw-hat-samurai-duels-suggestions-thread-straw-hat-samurai-duels)
+- Gear carries elemental affixes — a level-79 Anbu mask rolled HP, Earth Att, Att, and Max Chi at once — but item elemental-attack values were judged too weak to matter (a +50% buff was requested); reported by 2 threads. [Trade, buy, and sell items](https://web.archive.org/web/20200719092641/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487887-straw-hat-samurai-duels-trade-buy-and-sell-items-and-good-here)
+- Unconfirmed (raised as a question, never answered): equivalent skills of different elements cannot be used simultaneously, or share a cooldown. [Rebirthing = 25 FREE Gold](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
+- Context: rebirth-driven progression was accepted-but-disliked as grind-heavy, with combat XP considered low. [Our wiki](https://web.archive.org/web/20150915004822/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496946-our-wiki?page=1)
+
+Closes/confirms: substantially chips at rebirth-elements blocker ① (per-element tree = 4 fixed active archetypes + a 30-point super + 2 dances — damage/cost numbers still open), largely closes blocker ③ (Dan titles: Sandan…Judan, 10 ranks, gold/element payouts per rank — resolving the "garbled source"), confirms the surface note that Dragon Dances unlock at 3×/6× same-element rebirths, adds elemental ATK/DEF semantics + the counter cycle + the 100 cap toward blocker ②, and documents the rebirth reset package toward blocker ⑤ (the never-filmed rebirth flow).
+
+### art-audio
+
+- The game opens with an animated intro cinematic that introduces the clans. [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
+- **DEV:** long skirts/full-length kimonos are impossible — "our characters need to extend their legs to run" — a hard rig constraint on clothing design (Lutgames). [Women's clothing?](https://web.archive.org/web/20150612020638/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/489269-womens-clothing)
+- **DEV:** Lutgames actively solicited player outfit suggestions with reference images — cosmetics were added from community input. [Women's clothing?](https://web.archive.org/web/20150612020638/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/489269-womens-clothing)
+- Male and female characters share one base body model — no chest difference, identical musculature — with gender expressed only through clothing, so sleeveless garments give female characters muscular male arms; reported by 2 threads. [Women's clothing?](https://web.archive.org/web/20200719124227/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489269-straw-hat-samurai-duels-womens-clothing)
+- Character creation customizes hairstyles and faces only; body type and height are not customizable. [Suggestions Thread](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
+- Performable pose/emote animations include the dragon dance, carrying the weapon on the shoulder, and a running pose; /sit alone has 3 randomized poses (cross-legged, seiza, plain sitting). [Cool Screenshot](https://web.archive.org/web/20151020164626/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495163-cool-screenshot?page=1)
+- Two emotes are pure audio gags: /rimshot plays a rimshot SFX and /sadtrombone a sad-trombone SFX. [post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- Dungeons have their own music track that keeps playing during fight-lock, and the camera/screen scrolls to follow encounters. [Weird glitch in NPC duels?](https://web.archive.org/web/20200719192254/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/548989-straw-hat-samurai-duels-weird-glitch-in-npc-duels)
+- Clan visual identity: Midori Ken's veterans wear a green Oni mask; Ki Sensu's mask reads as an old-man face (mocked as "grandpa Simpson", clan nicknamed golden beast/lion); the Aoi Hoiru crest resembles the historical Takeda bishi mon (four diamonds); reported by 3 threads. [MIDORI KEN recruitement thread](https://web.archive.org/web/20150907061933/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread?page=1)
+- NPC Lady Oiwa wears a long dress players wanted as equipment; "hats" and "masks" are referenced equipment categories. [Women's clothing?](https://web.archive.org/web/20150612020638/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/489269-womens-clothing)
+- Town NPCs have ambient humorous dialogue lines (one reportedly mentions folic acid; screenshot evidence unrecoverable). [Funny NPC dialogue](https://web.archive.org/web/20200719131445/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490529-straw-hat-samurai-duels-funny-npc-dialogue)
+- Late-life criticism: many outfits were player-submitted or anime-derived rather than fresh dev art, and the game's art was called "monochromatic". [forum activity is dying](https://web.archive.org/web/20200719051553/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/650580-straw-hat-samurai-duels-forum-activity-is-dying)
+
+Closes/confirms: gives the all-INFERRED audio blocker its first two named SFX assets (rimshot, sad trombone) plus confirmation of per-area music beds (dedicated dungeon track); the single-body-mesh + leg-extension rig constraints feed the items-equipment sprite-compositing contract; adds the emote/pose animation list and clan mask/crest art references to the art digest.
+
+### other
+
+- Series dates (player-verified from both game pages): Straw Hat Samurai 1 released on Kongregate Oct 1, 2008 and Armor Games Oct 6, 2008. [The clan to join is Aka Ryu (page 3)](https://web.archive.org/web/20150911080640/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
+- Developer identity: the community calls the dev "Lut" (LutGames / studio Explosive Barrel; "tell Lut" was the standard bug escalation); players believed Lut is from Singapore (uncorrected claim), and regulars described LutGames as a very small operation with "little to no funds or support". [SEASON 2](https://web.archive.org/web/20160316203819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/583212?page=1)
+- Official ecosystem: the game also ran standalone at strawhatsamuraiduels.com (**DEV:** Lutgames used "Are you able to play on strawhatsamuraiduels.com?" for connectivity triage; the Explosive Barrel site took Facebook login while the Kong embed auto-logged the Kong account) [Cant Connect To Server](https://web.archive.org/web/20200719172253/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485645-straw-hat-samurai-duels-cant-connect-to-server); official forums lived at forums.explosivebarrel.com — considered the "real forums", holding the compiled suggestions list and the authoritative Season-2 thread — reported by 4 threads [forum activity is dying](https://web.archive.org/web/20161016203657/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/650580-forum-activity-is-dying); the official Facebook page carried patch notes and event announcements [Stats bug](https://web.archive.org/web/20151231071033/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496971-stats-bug?page=1).
+- An official MediaWiki wiki ran at strawhatsamuraiduels.com/wiki with known pages Mines (community-edited, plus a talk-page list of mineless territories), War_Room (the clan ranking system), Skills, Tengu (monster stats), and FAQ_and_guide, plus quest and enemy-type sections and ~120+ player fan pages; it was officially linked from the SHS domain and moderated by players Chronos and Kageyoshi Kanji — reported by 6+ threads; all are prime Wayback-harvest targets. [State of the Clan War (page 2)](https://web.archive.org/web/20150912173631/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=2)
+- Wiki reliability caveat: "assume everything on the wiki is wrong unless you ask for confirmation in Kong chat" (Captain_Catface, Apr 2015). [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
+- **DEV:** around May 16 2015 Lutgames created an official Wikia (strawhatsamuraiduels.wikia.com) "for official information only", converting the legacy wiki into an RP/fan-fiction archive and repointing in-game links once ready. [Our wiki](https://web.archive.org/web/20150915004822/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496946-our-wiki?page=1)
+- **DEV:** saves are entirely server-side and connection-dependent — progress-loss and freeze symptoms mean the client lost the server or the server dipped; the remedy is logging out and returning minutes later. Reports: hours of play (levels 11→15) silently reverted; a level-10 character lost to the save bug three times. [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1)
+- Client load pipeline: intro → "loading game files" → menu; the first-ever load could take 10+ minutes (assets browser-cached afterward), one player found it broken on Firefox but fine on Chrome, and **DEV:** Lutgames' fix for a stuck load was clearing browser cache and refreshing [Infinitely loading game](https://web.archive.org/web/20200719034053/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492162-straw-hat-samurai-duels-infinitely-loading-game); a Sep 12 2015 outage caused infinite loads unresolved by refreshing [Infi load](https://web.archive.org/web/20160908183934/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/538848-infi-load); a Nov 2015 black-screen-after-preload bug was fixed by mid-Dec 2015 [Black Screen](https://web.archive.org/web/20200719172214/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/562729-straw-hat-samurai-duels-black-screen).
+- Character-creation/connection guards: creation could fail with "too many players sharing the same ip address" (an IP-sharing cap, **DEV:** handled case-by-case via PM); the client surfaced NAT/router errors at the post-creation connect step — **DEV:** the error means the network "is somehow preventing the messages from the server from reaching your computer" [Cant Connect To Server](https://web.archive.org/web/20200719172253/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485645-straw-hat-samurai-duels-cant-connect-to-server); recurring red "Unable to contact server" creation failures hit in Apr 2015 [Suggestion: Auction Market system](https://web.archive.org/web/20150915012549/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488497-suggestion-auction-market-system?page=1).
+- The game used its own password-based account system separate from Kongregate login; one player reported logging in to find a different person's account/progress — account mix-up or takeover was possible. [What is happening with my password](https://web.archive.org/web/20200719074654/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/680533-straw-hat-samurai-duels-what-is-happening-with-my-password-help-mee)
+- Update opacity: patch notes shipped on Facebook, not in-game, so players mistook stat changes for bugs; players also alleged undocumented "hidden updates" silently changing mechanics (e.g. roll-dodge reliability). ⚠️ **CONTRADICTION:** one player claims the May 2015 rebalance cost players nothing vs others in the same thread documenting a 67-point attack loss and a lasting old-gear/new-gear power gap — both in [Stats bug](https://web.archive.org/web/20151231071033/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496971-stats-bug?page=1).
+- A housing system was in active development as of Jul 2016 — countered in-thread as having been promised for a very long time already. [forum activity is dying](https://web.archive.org/web/20161016203657/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/650580-forum-activity-is-dying)
+- Bug: after a troop movement, the Trap/Friendship-room treasure chest could misbehave unless the game was FULLY reloaded (title screen insufficient). [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
+- "raccoon use is best" for grinding — an unexplained aid (likely a companion/consumable; Raccoons also appear as Scavenger Hunt prizes, supporting an item reading). [How to grind for Levels and EXP](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
+- "Berry Man" is an intentional AI easter-egg character (a callback to earlier SHS games) that chats in the in-game chat — seen saying it fears the Tengu. [WTH is a Tengu? Berry man? Banana Town?](https://web.archive.org/web/20151231125651/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491788-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town?page=1)
+- Bug (Apr 2015): dying could leave the character stuck in a "ghost trance" instead of respawning, chat still working; another player claimed it just meant the character hadn't fully loaded. [GLITCHED GAME](https://web.archive.org/web/20200719015848/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490353-straw-hat-samurai-duels-glitched-game)
+- Ambiguous one-offs (log, don't build on): a player killed quickly by a "gunner class" character — real class vs hacked loadout unclear [Report hackers here](https://web.archive.org/web/20200719115839/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492905-straw-hat-samurai-duels-report-hackers-here); "ALL KILL TATSUO PLEASE!!!" names a target of unclear type [Fast trade](https://web.archive.org/web/20200719212629/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/506148-straw-hat-samurai-duels-fast-trade); a "chikako lvl4 pic" listed among reward types implies leveled character-picture collectibles [Q&A (page 2)](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels?page=2).
+
+Closes/confirms: no single sim system — these pin the platform/ops picture: server-authoritative persistence and the live-service dependency (hardening the meta-social scoping call that the server sim is unrecoverable at 1:1), the asset-load pipeline, and — most valuably — the Tier-1 close-path harvest targets (official wiki page inventory, Explosive Barrel forums, Facebook page) plus a standing caveat on wiki-number trustworthiness.
+
+# PART 3 — Economy, items-equipment, progression (RAW — synthesis pending)
+
+
+## economy (126 raw facts)
 
 - Premium orange-gear pricing: individual pieces cost 15 gold each; a 60-gold multi-piece package exists but is considered a trap because its pieces roll random, often useless stats.
   — "Don't buy the 60 gold package ... every piece alone cost 15 gold"
@@ -1055,8 +657,80 @@
 - Copper ore exists as a material item that players trade/beg for in chat (visible in a quoted chat log).
   — "guys can someone spare me some copper ore?"
   · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=2)
+- Player claim: gold is a premium currency obtainable with real money, and after reaching 1st Dan, spending 25 gold on a weapon or a mask is enough to one-hit higher-level players.
+  — "youve spent that first 25 gold on a weapon or a mask, you'll be one hitting higher levels just as easily"
+  · [[Straw Hat Samurai: Duels] More features for choosing duels](https://web.archive.org/web/20200719034404/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/532779-straw-hat-samurai-duels-more-features-for-choosing-duels)
+- NPC Trades are item-exchange offers tracked as entries in the quest log, and multiple trades can be active simultaneously; a bug caused the promised goods to not be delivered when more than one trade was in the log.
+  — "it occurs when you have more than 1 trade in your quest log"
+  · [[Straw Hat Samurai: Duels] NPC Trades](https://web.archive.org/web/20200719044204/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/555342-straw-hat-samurai-duels-npc-trades)
+- A 'ninja shop' sold weapons for gold, and its listed weapon damage ranges were changed in the same stealth balance pass as the steel weapons; the game had in-game patch notes but this change was not listed in them.
+  — "still nothing in patch notes about the changes to damage range on steel weapons"
+  · [[Straw Hat Samurai: Duels] nerfed again](https://web.archive.org/web/20200719070545/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518759-straw-hat-samurai-duels-nerfed-again)
+- Balance changes applied retroactively to already-purchased items: a player complained gold spent on a weapon was devalued when the owned weapon was later nerfed.
+  — "SPENDING GOLD TO GET WHAT I WANT AND THEN HAVING IT NERFED"
+  · [[Straw Hat Samurai: Duels] nerfed again](https://web.archive.org/web/20200719070545/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518759-straw-hat-samurai-duels-nerfed-again)
+- A gambling house exists whose mini-game stakes only coins; players found it pointless and wanted other stakes and versus-player play.
+  — "Mini-game in the gambling house you can play against other players for something other than just coins"
+  · [[Straw Hat Samurai: Duels] Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20200719000558/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500594-straw-hat-samurai-duels-suggestions-thread-straw-hat-samurai-duels)
+- The writ of release (the scroll that lets you leave a clan) costs 25 gold.
+  — "besides buying the 25gold scroll"
+  · [[Straw Hat Samurai: Duels] Ways to leave a clan](https://web.archive.org/web/20200719112706/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/502202-straw-hat-samurai-duels-ways-to-leave-a-clan)
+- Gold (the premium-ish currency) can be bought or earned through roughly five different in-game methods, per player report.
+  — "may be obtained by buying it or by about 5 different ways in game"
+  · [[Straw Hat Samurai: Duels] Ways to leave a clan](https://web.archive.org/web/20200719112706/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/502202-straw-hat-samurai-duels-ways-to-leave-a-clan)
+- A player pleads for faster trading, suggesting the player-to-player trade flow was slow or cumbersome (thread is two broken-English posts, low signal).
+  — "please!i no need fast!"
+  · [[Straw Hat Samurai: Duels] Fast trade](https://web.archive.org/web/20200719212629/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/506148-straw-hat-samurai-duels-fast-trade)
+- The coin purse has a capacity that can be 'full', and players can hand coins directly to other players — clan etiquette suggested gifting 1000–2000 coins to clanmates when your purse filled up.
+  — "If your coin purse is full, give some to other, for example 1000-2000c"
+  · [[Straw Hat Samurai: Duels] Aoi Hoiru clan](https://web.archive.org/web/20200719021017/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/497808-straw-hat-samurai-duels-aoi-hoiru-clan)
+- Items could be given to other players for free (advertised via clan chat), and unwanted items could alternatively be dropped/discarded from the inventory.
+  — "show it on the clan’s chat to give it someone for free, before dropping"
+  · [[Straw Hat Samurai: Duels] Aoi Hoiru clan](https://web.archive.org/web/20200719021017/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/497808-straw-hat-samurai-duels-aoi-hoiru-clan)
+- Hunting mobs produced item drops, occasionally good enough that veteran players routinely gifted them to new players.
+  — "I give out items whenever I get a good one from hunting mobs"
+  · [[Straw Hat Samurai: Duels] KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20200719143214/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/498595-straw-hat-samurai-duels-ki-sensu-the-golden-fan-recruitment-thread)
+- Player-to-player item exchange existed and was abusable — the community identified named scammers, and one openly admitted to 'stealing' items from other players, implying trade/gift-based theft scams.
+  — "I am just going to troll people by stealing their items"
+  · [[Straw Hat Samurai: Duels] KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20200719143214/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/498595-straw-hat-samurai-duels-ki-sensu-the-golden-fan-recruitment-thread?page=2)
+- A Tengu appears in the dojo and awards 10 gold tokens when killed (distinct from the rumored roaming/cave Tengu).
+  — "tengu which appears in dojo he only gives 10 gold tokens when killed"
+  · [Tengu cave and possible way to find it](https://web.archive.org/web/20200719214639/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/511194-straw-hat-samurai-duels-tengu-cave-and-possible-way-to-find-it)
+- Tournament betting formula pays big gold to underdogs betting on themselves: e.g. a level 5 beating a level 80 earns 75 gold on a self-bet; low-vs-high upsets are the profit route.
+  — "by game formula lvl 5 gets 75 gold if he placed bet on himself"
+  · [Tengu cave and possible way to find it](https://web.archive.org/web/20200719214639/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/511194-straw-hat-samurai-duels-tengu-cave-and-possible-way-to-find-it)
+- Searching/browsing roaming merchants is worthwhile — implied that merchant stock can contain good finds worth checking regularly.
+  — "Search merchants, it’s worth it."
+  · [[Straw Hat Samurai: Duels] post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- A player asked how to obtain Gold (the premium currency) without buying it; the thread gave no answer — consistent with Gold being primarily a purchased real-money currency.
+  — "do any one of you know how to get gold in the game without buying it ?"
+  · [[Straw Hat Samurai: Duels] post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- Recall stones are transferable between players — they can be gifted and later sold on to others; lore claim that a dev/veteran ("ryu") originally gifted the debug-territory stones, which changed hands years later.
+  — "ryu gifted the stones to tao like 4 years ago, then tao sold em a few months ago"
+  · [[Straw Hat Samurai: Duels] 82,53/82,54](https://web.archive.org/web/20200719163919/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/628561-straw-hat-samurai-duels-82-53-82-54)
+- Gold-shop (premium) items were player-tradeable, and that secondary trading collapsed demand for buying Gold with real money — cited as a core monetization weakness; devs paid Kongregate hosting/rev fees, so low Gold sales threatened the game.
+  — "The way players trade shop items demolishes the demand for gold shop items, reduces the amount of gold people are actually going to buy."
+  · [[Straw Hat Samurai: Duels] forum activity is dying](https://web.archive.org/web/20200719051553/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/650580-straw-hat-samurai-duels-forum-activity-is-dying)
+- Claim from a mostly-joke thread (treat with caution): sought-after cosmetic/armor pieces appear randomly in merchant stalls — i.e. merchant stall inventory is randomized. Corroborates the tips-thread advice to search merchants.
+  — "they are randomly in merchant stalls."
+  · [[Straw Hat Samurai: Duels] Larger breasts](https://web.archive.org/web/20200719143844/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/658205-straw-hat-samurai-duels-larger-breasts)
+- Pickaxes are bought from the Peddler NPC vendor, who can be found in villages, towns, cities, and castles.
+  — "in the peddler, u can find it in villages town citys castles"
+  · [I'm Sorry guys but](https://web.archive.org/web/20200719015259/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/601813-straw-hat-samurai-duels-im-sorry-guys-but)
+- Tournaments support betting, and winning a bet pays out gold even in free (no-entry-fee) tournaments.
+  — "Q: Can you still get gold from winning a bet on a free tournament? — Yes."
+  · [[Q&A] Straw Hat Samurai Duels](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels)
+- Player-listed free gold (premium currency) sources: rebirthing, tournaments, events, betting, and gold tokens. (Question by GraveBuster; 'bets' added by niconicolas, 'Gold tokens' by Xixor1235.)
+  — "we can get gold when we rebrith and from tournaments and events"
+  · [[Q&A] Straw Hat Samurai Duels](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels)
+- Claiming Ninja Rewards does not grant any gold.
+  — "Q: can we get gold when we claim the ninja rewards ? — nope"
+  · [[Q&A] Straw Hat Samurai Duels](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels)
+- Players can gift coins to other players, but transfers are sometimes blocked with an 'unable to give' error (restriction cause unknown; the question went unanswered, Dec 2016).
+  — "trying to give coins to some players but it says “unable to give”"
+  · [[Q&A] Straw Hat Samurai Duels](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels?page=2)
 
-## items-equipment (177)
+## items-equipment (205 raw facts)
 
 - Rings are a distinct equipment type and are hard to obtain, especially good ones.
   — "rings are rings, and are hard to get, let alone good ones!"
@@ -1589,1917 +1263,318 @@
 - DEV (official changelog quoted by player): level-80 soul-infused items can be stat-transferred onto any design of the same item type — confirming a stat-transfer system that moves stats between item designs.
   — "level 80 soul-infused items can be stat transferred to any design of the same type"
   · [[Straw Hat Samurai: Duels] It would be nice to have an official explanation on Soul Rest Scrolls...](https://web.archive.org/web/20200719130226/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490190-straw-hat-samurai-duels-it-would-be-nice-to-have-an-official-explanation-on-soul-rest-scrolls)
+- DEV: Weapons have min–max damage ranges. A July 2015 patch narrowed one steel sword's range: max damage reduced, min damage raised, average damage unchanged.
+  — "max damage was reduced BUT min damage was also increased (thus maintaining the same average damage)"
+  · [[Straw Hat Samurai: Duels] nerfed again](https://web.archive.org/web/20200719070545/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518759-straw-hat-samurai-duels-nerfed-again)
+- DEV: Sword weight and the critical-damage-bar depletion rate penalize weapon users; the steel-sword range narrowing was done so its users would not be penalized too heavily by these two mechanics.
+  — "not be penalized too much by the sword weight and critical damage bar depletion rate"
+  · [[Straw Hat Samurai: Duels] nerfed again](https://web.archive.org/web/20200719070545/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518759-straw-hat-samurai-duels-nerfed-again)
+- A patch (quoted by a player from dev notes) made weapon weight determine both the weapon's damage range and how much the critical bar is depleted with each slash.
+  — "weapon weight is now tied to weapon damage range and the amount depleted from the critical bar with each slash"
+  · [[Straw Hat Samurai: Duels] nerfed again](https://web.archive.org/web/20200719070545/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518759-straw-hat-samurai-duels-nerfed-again)
+- Concrete player-cited examples of the weight↔damage-range rule: a 10-weight sword rolled 31–51 damage (range 20) while a 5-weight sword rolled 82–85 (range 3) — heavier weapons have wider, less consistent damage.
+  — "31-51 dmg = 20 damage range on 10 weight sword, 82-85 dmg = 3 damage range on 5 weight sword"
+  · [[Straw Hat Samurai: Duels] nerfed again](https://web.archive.org/web/20200719070545/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/518759-straw-hat-samurai-duels-nerfed-again)
+- Blue-rarity items exist and can roll up to 5 stat bonuses (a '5-stat blue' was cited as a premium reward), and lootable corpses appear in the world.
+  — "give 1k coin and guaranteed 5-stat blue item"
+  · [[Straw Hat Samurai: Duels] Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20200719000558/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500594-straw-hat-samurai-duels-suggestions-thread-straw-hat-samurai-duels)
+- Dual wielding is not in the game (it was a player request).
+  — "duel wielding"
+  · [[Straw Hat Samurai: Duels] Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20200719000558/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500594-straw-hat-samurai-duels-suggestions-thread-straw-hat-samurai-duels)
+- A ninja shop exists and already stocks some easter-egg (joke/novelty) weapons and armor; a player asked for more of them.
+  — "more easter egg weapons and armor in the ninja shop"
+  · [[Straw Hat Samurai: Duels] Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20200719000558/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/500594-straw-hat-samurai-duels-suggestions-thread-straw-hat-samurai-duels)
+- Good endgame equipment can raise a max-level character's Chi pool to about 500.
+  — "most of good equipment i wear gives me 500 chi at max level"
+  · [[Straw Hat Samurai: Duels] New way to kill red oni](https://web.archive.org/web/20200719184058/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/501146-straw-hat-samurai-duels-new-way-to-kill-red-oni)
+- Red Oni can drop a 'Red Oni Heart' item that other players want to buy when shown, making it the main reason to farm the Oni occasionally.
+  — "spend some time and to get red oni heart . for some reason when i show it people whant to buy it"
+  · [[Straw Hat Samurai: Duels] New way to kill red oni](https://web.archive.org/web/20200719184058/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/501146-straw-hat-samurai-duels-new-way-to-kill-red-oni)
+- Shuriken exist as a ranged attack option and are suggested as a safe counter to Amaya's melee reach (may be a throwable item or a special move).
+  — "just use shuriken"
+  · [[Straw Hat Samurai: Duels] How does one beat Amaya?](https://web.archive.org/web/20200719014049/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/503551-straw-hat-samurai-duels-how-does-one-beat-amaya)
+- Player report (Hida_Kisada, char Killrog): after the mid-May 2015 update his attack stat fell from 212 to 145 while HP simultaneously rose from 1009 to 1076, with equipment unchanged — he wore three gear pieces granting +66, +68 and +78 attack.
+  — "my HP had increased from 1009 to 1076, but my attack stat had downgraded from 212 to 145"
+  · [[Straw Hat Samurai: Duels] Stats bug](https://web.archive.org/web/20200719091952/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496971-straw-hat-samurai-duels-stats-bug)
+- Patch fact (player-relayed, May 2015): hats and garments were deemed item types that should no longer carry attack bonuses, and the attack bonuses on existing hats/garments were cut by half in an update.
+  — "all items which are no longer supposed to have att bonuses (hats and garments) have seen their att bonuses reduced by half"
+  · [[Straw Hat Samurai: Duels] Stats bug](https://web.archive.org/web/20200719091952/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496971-straw-hat-samurai-duels-stats-bug)
+- Player balance claim (FateIsEscaped, contradicting another player's 'game is balanced now' claim): legacy 'old gear' remained overpowered and could no longer be obtained after the nerf patch, while gear obtainable by newer players stayed permanently weaker.
+  — "Old gear is still OP. New gear the newer players can get is still weak"
+  · [[Straw Hat Samurai: Duels] Stats bug](https://web.archive.org/web/20200719091952/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496971-straw-hat-samurai-duels-stats-bug)
+- Midori Ken's more experienced warriors wear a green Oni (demon) mask — the clan's distinguishing cosmetic; a second player independently confirms 'their mask is a green oni mask'.
+  — "its more experienced warriors wear a green mask displaying an Oni"
+  · [[Straw Hat Samurai: Duels] MIDORI KEN recruitement thread](https://web.archive.org/web/20200719021100/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/497892-straw-hat-samurai-duels-midori-ken-recruitement-thread)
+- Clan armor is granted at each clan rank-up: Ki Sensu's documented tiers are Cloth Armor, Light Armor, Medium Armor, and Heavy Armor, plus a clan mask that was added to the heavy tier in an update.
+  — "You will receive these armor each time you rank up in the clan"
+  · [[Straw Hat Samurai: Duels] KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20200719143214/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/498595-straw-hat-samurai-duels-ki-sensu-the-golden-fan-recruitment-thread)
+- Town merchants sell rings with attack stats, and players shop across merchants for rings with 'perfect' attack rolls; ruined towns remove merchant access.
+  — "merchants who will not hawe a perfect atack stat rings"
+  · [Have the option to burn our own villages?](https://web.archive.org/web/20200719005133/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/510653-straw-hat-samurai-duels-have-the-option-to-burn-our-own-villages)
+- A complete orange-tier equipment set exists and is treated as endgame gear a player can fully finish collecting.
+  — "she hawe all the full complete orange set"
+  · [Have the option to burn our own villages?](https://web.archive.org/web/20200719005133/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/510653-straw-hat-samurai-duels-have-the-option-to-burn-our-own-villages)
+- Player claim: using the 'raccoon' (likely a companion/consumable) is best while grinding bandit waves; exact effect unspecified.
+  — "raccoon use is best"
+  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- Red Oni sometimes drops 'Red Oni Hearts', described as rare items comparable to rare present gifts — the incentive for killing it despite the danger.
+  — "they drop red oni hearts sometimes which are just like rare present gifts"
+  · [Red Oni is to powerful!](https://web.archive.org/web/20200719002937/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/514786-straw-hat-samurai-duels-red-oni-is-to-powerful)
+- Item-evaluation tip: rarity color (orange = top tier) is not a reliable quality signal — compare raw stats instead; rings are the stated exception where the orange tier does matter.
+  — "look at the stats not if a item is orange or not (exept rings)"
+  · [[Straw Hat Samurai: Duels] post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- Items themselves gain levels through use ("leveling an item" is a thing); the recommended grind is finding a spawn point that produces 3 waves of bandits and killing them repeatedly.
+  — "If you are trying to level an item, look for a spawn of 3 wave bandits, and kill them over and over."
+  · [[Straw Hat Samurai: Duels] post your tips and tricks here](https://web.archive.org/web/20200719075912/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/617419-straw-hat-samurai-duels-post-your-tips-and-tricks-here)
+- Recall stones are fast-travel items each bound to a specific territory coordinate, and the bound coordinate is visible on the item (a player was shown "the recall stone of 82,53").
+  — "Then why did you show me the recall stone of 82,53"
+  · [[Straw Hat Samurai: Duels] 82,53/82,54](https://web.archive.org/web/20200719163919/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/628561-straw-hat-samurai-duels-82-53-82-54)
+- Free-drop items of blue or green rarity could outperform premium gold-shop items — premium gear was not clearly stronger than what free players could find.
+  — "you can find blue or green free to use items that can be better than the pay to use items"
+  · [[Straw Hat Samurai: Duels] forum activity is dying](https://web.archive.org/web/20200719051553/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/650580-straw-hat-samurai-duels-forum-activity-is-dying)
+- Player claim (niconicolas): the kitten has no gameplay function at all.
+  — "the kitten doesnt have use so i dont know why u deleted it"
+  · [I'm Sorry guys but](https://web.archive.org/web/20200719015259/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/601813-straw-hat-samurai-duels-im-sorry-guys-but)
+- Contradicting player claim (Januchi, secondhand): the kitten speeds up the ninja shop's refresh cycle. Directly denied by niconicolas ('the kitten doesnt do anything').
+  — "the kitten speeds-up the ninja shop refresh… or so i was told"
+  · [I'm Sorry guys but](https://web.archive.org/web/20200719015259/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/601813-straw-hat-samurai-duels-im-sorry-guys-but)
+- Contested: whether monthly Ninja Rewards outfits that include hair grant the hair. niconicolas says you get 'just equipment'.
+  — "A: just equipment.."
+  · [[Q&A] Straw Hat Samurai Duels](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels)
+- Contradicting claim (Azgodeth): if a Ninja Rewards outfit set contains hair, claiming it does grant that hair.
+  — "if the set contains hair, it will come with that hair."
+  · [[Q&A] Straw Hat Samurai Duels](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels)
+- Soul-infused swords do not break — soul infusion exempts a weapon from the normal weapon-breaking/condition system (answered 'no' on page 1, re-confirmed 'No they do not' on page 2).
+  — "Q:Will soul-infused swords break? … A: no"
+  · [[Q&A] Straw Hat Samurai Duels](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels)
 
-## enemies-ai (87)
+## progression (76 raw facts)
 
-- Player claim: the Tengu is an AI-controlled boss enemy that rarely attacks the dojo; beating it — or just landing the last blow — awards 10 gold tokens, and it is beatable with multiple players.
-  — "landing the last blow results you you getting 10 gold tokens"
-  · [WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20151231125651/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491788-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town?page=1)
-- The Tengu encountered at the dojo entrance killed the original poster repeatedly — it is far above normal enemy strength for a solo player.
-  — "I pretty much died repeatedly."
-  · [WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20151231125651/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491788-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town?page=1)
-- Player complaint: the standard overworld enemy roster is essentially limited to bandits, zombies, and oni — repetitive by mid-game.
-  — "BANDITS ,ZOMBIE,AND ONI"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- As zone level rises, enemy encounters get more numerous/aggressive rather than adding new enemy types (player report).
-  — "As you go up in zone level, enemies get more…numerous and disgruntled."
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- An NPC/character named Benzaiten is regarded as a notably tough female opponent; a reply remarks on the large amount of cash shown alongside her (screenshot context lost).
-  — "Benzaiten is a one tough girl."
-  · [Show off a picture of your awesome character here](https://web.archive.org/web/20150919133214/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488448-show-off-a-picture-of-your-awesome-character-here?page=1)
-- DEV: Lutgames confirmed (Apr 20, 2015) that more enemy types would be added to the game later on.
-  — "Yes we will be adding more enemies later on."
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- The game already contains mermaid and kappa enemies (described by a player as ugly).
-  — "They do have mermaids and kappa though, albeit ugly"
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- Zombie enemies exist and can jump; bandits exist and are faster than the player's proposed orc baseline (implied from a comparison in a suggestion post).
-  — "same stat to zombie,but doesnt jump and are a bit slower than bandits"
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- Red Oni encounters are single-enemy battles (one Red Oni per fight), used by players as the template for solo heavy encounters.
-  — "pret battle only consists of one stone golem,just like red oni"
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- Ninja enemies are extremely rare in PvE — essentially only one occasionally appearing as a boss's helper; a player requests ninja ambushes anywhere including towns.
-  — "I don't see any ninja enemies except for 1 sometimes helping a boss"
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- Common oni enemies are blue variants criticized as boring with almost no techniques; players suggest rolls, thrown rocks, invisibility, and splitting variants.
-  — "Blue blue blue oni. Give them some techniques."
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- A stag enemy exists, used by players as the reference point for a fast charging-animal archetype.
-  — "mounted enemies that has the capabilities of a stag but stronger"
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- Players distinguish 'regular difficulty AI opponents' from 'player AI opponents', implying the game runs AI-controlled versions of player characters (likely offline duel opponents) plus difficulty-tiered standard AI.
-  — "same stat as to regular difficulty difficulty ai opponents[not player ai opponents]"
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- Boss Chikako (Episode 3) throws kunai projectiles that deal 20 damage each; players found this the main threat of the fight.
-  — "Can’t seem to win against her 20 dmg kunais.."
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Player claim: Chikako stops using kunai when the player stays at close range; recommended counter is staying close and using Chi Fist whenever possible.
-  — "I think she doesn’t use them if you are close to her."
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Contradicting the 'impossible fight' claim, later players report the Red Oni IS killable — one posted a kill screenshot (2016), another claims 11 kills (2018).
-  — "Red onis can be defeated smh … red oni killed"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Ninja enemies in the survival mission can duplicate into a clone; the clone dies to a single hit. Winning the survival fight does not require attacking at all — dodging in light stance suffices.
-  — "If the ninja get dobled, atack him once, the clon is dead after one atack."
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Player claim: all mobs of the same level deal identical damage (barring skill use) — verifiable by removing your equipment and comparing hits.
-  — "all mobs of same lvl deal same dmg, unless skills are used"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- Red Oni is an overworld enemy players are advised not to fight; it has a sleep state, and the standard advice is to avoid it and wait until it sleeps.
-  — "Avoid any confrontation and just wait till it sleeps"
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Player claim (second-hand): the Red Oni's design purpose is anti-cheat — it kills the bots hackers use to level up quickly.
-  — "it's purpose is to kill any "bots" that hackers would use to level up quickly"
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- The Red Oni has an attack swing that starts near its back which players found especially hard to avoid.
-  — "I haven't been able to avoid the swing that starts near their back"
-  · [Red Oni is to powerful!](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Bug/exploit vs Red Oni: an ally's AI bot can lock the Red Oni in a clinch; while clinched, the bot cannot be killed and deals no HP damage to the oni, letting the player's clones kill it safely. Confirms the Red Oni has a clinch/grapple state and that clones normally CAN be killed by it.
-  — "Red oni will be clinched by your friend’s bot. Bot will not be killed and won’t take a HP of oni."
-  · [Red oni](https://web.archive.org/web/20150910135359/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492406-red-oni?page=1)
-- Player claim: Onis give the same EXP as bandits but are less dangerous and never carry shields (unlike bandits).
-  — "Same exp but less the danger and no shields"
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- Contradicting claim: Onis are too fast to dodge, making them a worse grinding target for some players.
-  — "But Oni’s are too fast to dodge."
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- Jumping undead have less HP than walking undead, so Heavy stance is not strictly needed against them (contradicts the 'use heavy vs jumping zombies' advice in the same thread).
-  — "Jumping undead actually have less hp than walking undead"
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- Auto Slash OFF is advised against Jumping Undead (auto-targeting handles them badly).
-  — "Also, for Jumping Undead use Autoslash OFF"
-  · [auto slash "on" or "off" ?](https://web.archive.org/web/20150920124446/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494226-auto-slash-on-or-off?page=1)
-- Charging deer enemies: counter by turning Auto Slash off, running away, and slashing backwards in front of your character while fleeing — your character turns around and hits them instead of getting plowed.
-  — "Run away from them and slash backwards in front of your char as you’re running"
-  · [auto slash "on" or "off" ?](https://web.archive.org/web/20150920124446/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494226-auto-slash-on-or-off?page=1)
-- Tengu is a multi-player boss encounter; players must manually type the /allyroom chat command to team up when entering the fight (auto-ally was only a suggestion).
-  — "Automatic "/allyroom" when entering a Tengu fight."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Red Oni has roughly 40 'health' (hits) or more; the slash-then-dash-through method therefore needs at least 80 Chi total (2 Chi per dash, one dash per hit).
-  — "Red oni usualy hawe 40 health (ore more) you must hawe at least 80 chi to kill him"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Red Oni wields a long-reach club; the safe pattern is: draw a light-stance slash line, release as he closes, then immediately dash through/past him beyond club range, alternating dash direction based on which side he is on.
-  — "use dash to go long through it . the distance is large so he can't hit you with pimp club"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Red Oni gives zero XP, is time-consuming, and its normal drops are considered worthless; it spawns asleep and can simply be left alone.
-  — "They do not give any exp, too time consuming, and their only drops are always crap"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Amaya deals about 60 damage per hit against a level-30 player.
-  — "with the 60 dmg per hit, it's kind of hard for me to beat her"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Amaya kills a level-30 player in about 3 hits (corroborates the ~60 damage/hit claim, implying roughly 180 HP at level 30).
-  — "she killed me in 3hits..i was lv 30 then too"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Amaya can be stunned; Chi Kick and Chi Punch are the named stun-capable skills, but their damage is too low to carry the fight alone.
-  — "one of those is to stun her ... with something like Chi Kick/Chi Punch"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Amaya's level is claimed to be 36; overleveling (to ~50, or at least 36 with better gear) trivializes her.
-  — "like if she level 36 strive for level 50"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Red Oni is a hard-hitting enemy that players fight repeatedly (farmable); its hits could kill players even during a level-3 roll post-update.
-  — "never use roll in red oni’s battle"
-  · [Stats bug](https://web.archive.org/web/20151231071033/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496971-stats-bug?page=1)
-- Hunting regular mobs drops equipment items of varying quality; good drops are common enough that veterans give spares away to new players.
-  — "I give out items whenever I get a good one from hunting mobs"
-  · [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20151219190542/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread?page=1)
-- Red Oni has roughly 40 HP or more; killing it purely with the dash-through method requires at least 80 Chi total (2 Chi per dash pass).
-  — "Red oni usualy hawe 40 health (ore more) you must hawe at least 80 chi to kill him"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Red Oni wields a club with long reach; the dash-through method keeps you outside its hit range, and was considered safer than using Roll level 3.
-  — "the distance is large so he can’t hit you with pimp club"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Red Oni grants no XP, its normal drops are poor, and the fight is time-consuming; players considered it worthwhile only for its achievement.
-  — "They do not give any exp, too time consuming, and their only drops are always crap"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Red Oni (found sleeping on the world map) can spawn in wrong places such as in front of a city; refreshing the game re-rolls its spawn.
-  — "If they are spawning in the wrong place (eg in front of a city) just refresh your game"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- Boss Amaya deals about 60 damage per hit and can kill a level-30 player in 3 hits; she can be stunned (Chi Kick / Chi Punch are the stun options) but landing them against her is hard.
-  — "with the 60 dmg per hit, it’s kind of hard for me to beat her"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Amaya is reportedly level 36; players advise out-leveling her (grind toward level 36-50 with better gear) before fighting, since level 30 players get 3-hit-killed.
-  — "if she level 36 strive for level 50"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- An AI-controlled bandit faction holds map territory, cannot be joined by players, and is so weak its squares are effectively free captures.
-  — "This represents bandits rising to power… They’re so weak that they’re pretty much free squares"
-  · [State of the Clan War](https://web.archive.org/web/20150413022624/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war)
-- A boss enemy called the Statue Guardian existed — players asked how to beat it (3-post thread).
-  — "How do you beat the Statue Guardian?"
-  · [Straw Hat Samurai: Duels forum (index)](https://web.archive.org/web/20150423012315/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels)
-- Enemy variety was a common complaint — a 15-post thread demanded more enemy types, suggesting a limited enemy roster at launch.
-  — "ADD MORE TYPES OF ENEMIES"
-  · [Straw Hat Samurai: Duels forum (index)](https://web.archive.org/web/20150423012315/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels)
-- An AI-controlled 'bandits' faction holds map squares that players cannot join; it is deliberately weak, effectively free territory for any attacking clan (Captain_Catface).
-  — "This one you can't join… This represents bandits rising to power… they're pretty much free squares to whoever bothers attacking them"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- Red oni are called out as the enemy type against which the level/4 minimum-damage rule does not hold (i.e., unusually high defense).
-  — "Cept the red oni. Cause they stink."
-  · [[Straw Hat Samurai: Duels] Equipments and how do they work exactly?](https://web.archive.org/web/20200719120130/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486247-straw-hat-samurai-duels-equipments-and-how-do-they-work-exactly)
-- Higher-level mobs have a higher minimum damage they inflict regardless of your defense.
-  — "higher lvl mobs have higher lvl minimum dmg"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- All mobs of the same level deal identical damage (deterministic per-level attack values) unless they use skills — testable by removing equipment.
-  — "all mobs of same lvl deal same dmg, unless skills are used"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- Bosses require substantially more defense than the amount that caps regular same-level mobs at minimum damage.
-  — "Bosses of course require higher defence"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- The Statue Guardian boss can kill a level ~28 player with a fairly high DEF stat in roughly two hits.
-  — "Even with my fairly high defense stat, he annihilates me in like two hits"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200719095529/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487269-straw-hat-samurai-duels-how-do-you-beat-the-statue-guardian)
-- An NPC archer ally participates in the Statue Guardian fight and can chip the boss's HP down while the player evades; one player got it to half health this way.
-  — "let the archer guy chip him down and just roll past him which got him down to half health"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200719095529/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487269-straw-hat-samurai-duels-how-do-you-beat-the-statue-guardian)
-- Every player slash stuns the Statue Guardian; the winning loop is to run (explicitly NOT roll) through him to dodge his attack, slash from behind, and repeat.
-  — "Every time you slash him it stuns him, so you just have to run NOT ROLL through him"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200719095529/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487269-straw-hat-samurai-duels-how-do-you-beat-the-statue-guardian)
-- Early-game enemies are overwhelmingly human bandits; oni are the first non-human enemy type players encounter (in April 2015).
-  — "oni i guess otherwise i have yet to see anything else"
-  · [are there any mythical enemys i can kill?](https://web.archive.org/web/20200719190457/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487314-straw-hat-samurai-duels-are-there-any-mythical-enemys-i-can-kill)
-- DEV: Lutgames confirmed (2015-04-13) that more enemy types beyond bandits and oni would be added to the game later.
-  — "We will be adding even more enemies later!"
-  · [are there any mythical enemys i can kill?](https://web.archive.org/web/20200719190457/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487314-straw-hat-samurai-duels-are-there-any-mythical-enemys-i-can-kill)
-- Player report: a rare enemy called a 'tengu' occasionally invades the player dojo as a special encounter (reporter had heard of but never fought it).
-  — "every now and then, a rather nasty creature invades the dojo… it's called a "tengu""
-  · [are there any mythical enemys i can kill?](https://web.archive.org/web/20200719190457/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487314-straw-hat-samurai-duels-are-there-any-mythical-enemys-i-can-kill)
-- The Statue Guardian (main-story boss blocking progress around player lvl 28) kills even a high-DEF player in roughly two hits.
-  — "Even with my fairly high defense stat, he annihilates me in like two hits"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200718231825/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486915-straw-hat-samurai-duels-to-autoslash-or-not-to-autoslash)
-- An allied archer NPC is present in the Statue Guardian encounter; letting the archer chip the boss while the player dodges got it to half HP.
-  — "let the archer guy chip him down and just roll past him"
-  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200718231825/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486915-straw-hat-samurai-duels-to-autoslash-or-not-to-autoslash)
-- At launch (April 2015) standard overworld enemies are human bandits; Oni are the main non-human enemy type players encounter.
-  — "oni i guess otherwise i have yet to see anything else"
-  · [are there any mythical enemys i can kill?](https://web.archive.org/web/20200718231833/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486930-straw-hat-samurai-duels-i-cant-connect-to-the-server)
-- DEV: Lutgames confirmed (Apr 13, 2015) that more enemy types beyond bandits/oni were planned for later updates.
-  — "We will be adding even more enemies later!"
-  · [are there any mythical enemys i can kill?](https://web.archive.org/web/20200718231833/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486930-straw-hat-samurai-duels-i-cant-connect-to-the-server)
-- A rare special enemy called a 'tengu' occasionally invades the player's dojo.
-  — "every now and then, a rather nasty creature invades the dojo"
-  · [are there any mythical enemys i can kill?](https://web.archive.org/web/20200718231833/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486930-straw-hat-samurai-duels-i-cant-connect-to-the-server)
-- Bounty-hunt targets are dramatically stronger than the lvl 24-25 mobs in their own areas and use many special moves.
-  — "the bounty person just annihilates me using all kinds of special moves"
-  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719145607/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487109-straw-hat-samurai-duels-game-crash-bug)
-- The final dungeon ends in a two-part finale: a conventional first boss fight followed by a harder 'survival' encounter (waves you must outlast).
-  — "coasted through the first boss fight, but I can't do the survival one"
-  · [[Straw Hat Samurai: Duels] (fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
-- Auto-slash performs poorly against oni and undead because they jump around and it fails to track them; it is best used against regular bandits.
-  — "Auto slash has a reeaalllyy hard time with oni and undead, they keep jumping about"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- The Tengu is an AI-controlled world enemy that occasionally attacks/targets the dojo (player claim: 'rarely').
-  — "a tengu is an ai enemy that rarely targets the dojo"
-  · [[Straw Hat Samurai: Duels] WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20200718230924/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/491788-straw-hat-samurai-duels-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town)
-- The Tengu is considered easy to kill with a group of players (contrast with the solo experience reported in the same thread).
-  — "its easy to beat the tengu,with people"
-  · [[Straw Hat Samurai: Duels] WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20200718230924/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/491788-straw-hat-samurai-duels-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town)
-- The Tengu repeatedly killed a solo player (FateIsEscaped), i.e. it is lethal to a lone character — contradicts the 'easy' claim above for solo play.
-  — "I pretty much died repeatedly."
-  · [[Straw Hat Samurai: Duels] WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20200718230924/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/491788-straw-hat-samurai-duels-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town)
-- Claim that killing the Red Oni yields 'one sho' (unexplained term — possibly a reward or quest item); another poster in the thread did not recognize the term. Low-confidence.
-  — "Kill Red oni for one sho"
-  · [[Straw Hat Samurai: Duels] Red oni](https://web.archive.org/web/20200719020954/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492406-straw-hat-samurai-duels-red-oni)
-- Absent/idle players in an area are represented by AI 'bots'; exploit: a bot that clinches the Red Oni can neither be killed by it nor damage it, effectively freezing the boss in place indefinitely.
-  — "Red oni will be clinched by your friend’s bot. Bot will not be killed and won’t take a HP of oni."
-  · [[Straw Hat Samurai: Duels] Red oni](https://web.archive.org/web/20200719020954/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492406-straw-hat-samurai-duels-red-oni)
-- Player complaint that the standard enemy roster is limited to bandits, zombies, and oni, with no elemental enemy variety.
-  — "BANDITS ,ZOMBIE,AND ONI"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- As zone level increases, enemies become more numerous and more aggressive rather than changing in type.
-  — "As you go up in zone level, enemies get more…numerous and disgruntled"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Tengu, Red Oni, and 'heavy bosses' are named as extremely strong enemy types that can evade a first slash (wiki-derived claim).
-  — "extremely strong opponents such as the Tengu, Red Oni, and heavy bosses"
-  · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- Onis give the same EXP as bandits but are claimed to be less dangerous and carry no shields (bandits do carry shields).
-  — "Same exp but less the danger and no shields"
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Contradicting claim: Onis attack too fast to dodge, making them harder than the previous poster suggested.
-  — "But Oni's are too fast to dodge."
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Jumping undead have less HP than walking undead — so Heavy stance is not strictly required against them (mild pushback on the earlier stance advice).
-  — "Jumping undead actually have less hp than walking undead"
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Large charging deer enemies exist that plow into the player; recommended tactic (with AUTO SLASH off): run away and slash backwards in front of your character while running — you turn around and hit them as they charge.
-  — "Run away from them and slash backwards in front of your char"
-  · [[Straw Hat Samurai: Duels] auto slash "on" or "off" ?](https://web.archive.org/web/20200718231337/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494226-straw-hat-samurai-duels-auto-slash-on-or-off)
-- DEV: Lutgames confirmed (Apr 20, 2015) that more enemy types would be added to the game later.
-  — "Yes we will be adding more enemies later on."
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- As of April 2015 the enemy roster was considered small by players.
-  — "it only has a few of enemies out there"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- A stag exists as an enemy type (a player proposes mounted enemies 'with the capabilities of a stag but stronger', implying the stag's charge behavior is a known baseline).
-  — "Add some mounted enemies that has the capabilities of a stag but stronger."
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- Zombie enemies jump; bandits are a faster baseline melee enemy (implied by a suggestion comparing new enemies to both).
-  — "same stat to zombie,but doesnt jump and are a bit slower than bandits"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- Red Oni encounters spawn only a single oni per battle (used as a reference point in an enemy suggestion).
-  — "pret battle only consists of one stone golem,just like red oni"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- Ninja enemies were rare: players only saw about one ninja occasionally assisting a boss fight.
-  — "I don’t see any ninja enemies except for 1 sometimes helping a boss."
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- Blue oni were the common oni variant and considered bland, with no special techniques (player complaint requesting more oni variety).
-  — "More Oni types. These guys are so boring! Blue blue blue oni."
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- The game's existing character/enemy cast is described as Samurai, Ninja, oni, and tengu.
-  — "instead of a Samurai, Ninja, oni, and tengu"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- AI duel opponents exist with difficulty tiers ('regular difficulty AI opponents'), distinct from the player-AI opponents (AI copies of real players).
-  — "same stat as to regular difficulty difficulty ai opponents[not player ai opponents]"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- A 'yurei' enemy exists (mentioned 2017) carrying a unique scythe-type weapon and unique clothing that players asked how to obtain (implying not player-obtainable).
-  — "he has a different type of scythe and a differrint type of clothe"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-
-## world-exploration (75)
-
-- Disputed player claim: a town called 'Banana Town' could be reached via a glitch; its existence was denied by another player and no proof was posted.
-  — "Banana Town is a glitch but I was wondering if it was something more"
-  · [WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20151231125651/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491788-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town?page=1)
-- Map locations are addressed by numeric coordinates: Hiratani castle town at (43,44), a contested castle at (15,61).
-  — "my name in the game is kouroko and in hiratani(43,44) castle town gates"
+- Player-understood level range is 1-80 (used as the level filter bounds in a veteran's market mock-up; consistent with 'level 80' being discussed as endgame in the daily-prize thread).
+  — "1-80 Level Range"
+  · [auction system](https://web.archive.org/web/20151231023735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492388-auction-system)
+- Grinding advice: forest territories have levels, and the highest territory a player should farm is capped/optimal at their own level +3.
+  — "just level up at the highest territory (your level+3) in the forest"
   · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Final-dungeon checkpoint behavior: dying at the boss respawns you in the room before it, and walking backwards shows 'traveling to checkpoint' and warps you back to the boss door — originally trapping players inside with no exit (thread marked '(fixed)').
-  — "it says "traveling to checkpoint" and puts me back to the door before the boss"
-  · [(fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1)
-- Logging out and back in the next day placed the trapped player outside the dungeon — relogging repositions you outside dungeon instances.
-  — "When I logged back in the next day, I was outside the dungeon"
-  · [(fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1)
-- Every Dojo contains PvP practice rooms where players can practice line-drawn slash attacks.
-  — "practice your slash attacks in the PVP rooms that are inside every Dojo"
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- Dojos also feature a trap challenge that new players find long and frustrating.
-  — "after spending ages with that stupid trap challenge"
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- World areas are level-rated: players casually reference 'lvl 34 areas', 'lvl 35', 'lvl 37', and 'lvl 49 areas' when proposing where enemies should spawn (implied existing convention).
-  — "[found anywhere beyond lvl 34 areas]"
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- Location types referenced as existing include oni dungeons, field paths between signs, and towns; travel happens sign-to-sign along paths.
-  — "In an oni dungeon. On the field path. Maybe even in town."
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- 'Kanji ruins' are referenced as an existing map location type (players propose new guardians for them).
-  — "Maybe these guys guard Kanji ruins?"
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- The Trap Challenge is a multi-room trap gauntlet; most rooms are trivially easy, but one room combines a rolling stone ball with a saw trap and is a sharp difficulty spike.
-  — "While the other rooms can be beaten with your eyes closed, that one is just frustrating."
-  · [Trap challenge: Rolling stone ball](https://web.archive.org/web/20160101034759/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486900-trap-challenge-rolling-stone-ball?page=1)
-- Player complaint: the rolling stone ball's hitbox is much larger than its visual, and after being hit the player lands back on the trap trigger plate, re-triggering it.
-  — "You get hit although you are miles away"
-  · [Trap challenge: Rolling stone ball](https://web.archive.org/web/20160101034759/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486900-trap-challenge-rolling-stone-ball?page=1)
-- Community workaround for the rolling-ball room: clicking a sign in the room at the right moment lets you pass; the poster suspects the sign triggers the saw to retract.
-  — "you just have to klick the sign at the right moment. That actually worked."
-  · [Trap challenge: Rolling stone ball](https://web.archive.org/web/20160101034759/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486900-trap-challenge-rolling-stone-ball?page=1)
-- The Trap Challenge's reward and total length were unclear to players even after reaching it — no in-game explanation of its purpose.
-  — "No idea about the point or reward of that challenge, but I like the idea."
-  · [Trap challenge: Rolling stone ball](https://web.archive.org/web/20160101034759/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486900-trap-challenge-rolling-stone-ball?page=1)
-- The world map is a territory grid addressed by coordinates (e.g. 24,52), with sub-sector coordinates inside a territory (e.g. (5,0)); each mine yields a common ore plus a rare ore pairing.
-  — "24,52 (5,0) – Copper/Diamond"
-  · [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
-- As of the crowdsourced survey, the only common mine ores found were Copper and Tin, with Diamond as the near-universal rare yield; no coal, silver, iron, or titanium mines had been found (tension with the 5000-coins-plus-2-silver-ores reinforce recipe reported elsewhere).
-  — "I have not seen coal, silver, iron or titanium. Has anyone else?"
-  · [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
-- Contradicting the no-titanium claim, one player lists a Tin/Titanium mine at territory 43,45 with an associated value of 31 (likely a level).
-  — "43,45 | Tin | Titanium | 31"
-  · [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
-- The crowdsourced ledger lists roughly 40 mine coordinates; some mines have no common ore ('None/Diamond' at 37,52 and 50,40), one mine at 50,46 is unreachable, and 54,15 is unconfirmed.
-  — "50,46 – UNREACHABLE !"
-  · [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
-- A territory can contain more than one mine — 53,35 was reported holding 2 mines.
-  — "53,35 has 2 mines."
-  · [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
-- Some territories are confirmed to have no mines at all — players began listing mineless territories (46,40 and 46,41) to save search time.
-  — "No Mines: 46,40 and 46,41"
-  · [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
-- Wiki-style mine rows carry a numeric field around 30-31 (e.g. 12,69 Tin/Diamond '30'), most plausibly a mine or territory level; mines also exist at far-flung low coordinates ('the mine at 5,5').
-  — "12,69 | Tin | Diamond | 30"
-  · [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
-- At least one screenshotable location has a glowing/luminous background scene (player observation).
-  — "Looks cool! the background is all glowy"
-  · [Cool Screenshot](https://web.archive.org/web/20151020164626/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495163-cool-screenshot?page=1)
-- Episode 12 has an instant-kill pillar gauntlet gated by a lever: after pulling the lever you must cross right-to-left before the timer; players found no reliable timing and spam-clicked the exit to get through.
-  — "trouble getting through the insta-kill pillars in episode 12"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Fast travel: the chat command /recall teleports you to the Dojo in your clan's territory from anywhere; players note the ideal dojo location is next to town in the center of the map.
-  — "Recall teleports you to the Dojo in your territory no matter where you are!"
-  · [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
-- Reloading/refreshing the game client re-rolls bandit spawn locations across a territory.
-  — "just Refresh your game, to spawn bandits in new places."
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- The clan-war world map mirrors Japan — players describe territories using real regions: Kyushu (southern island), Chugoku, Kanto, Tohoku.
-  — "Aoi retaking whole southern island (Kyushu)"
-  · [Aka and Aoi status](https://web.archive.org/web/20150915080519/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494355-aka-and-aoi-status?page=1)
-- Red Oni can spawn in wrong world-map locations (e.g., in front of a city); refreshing the game rerolls/clears the spawn.
-  — "If they are spawning in the wrong place (eg in front of a city) just refresh your game"
-  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
-- World-map territories are addressed by numeric grid coordinates (e.g. 82,53 and 82,54); those two sectors are not visible on the normal in-game map.
-  — "i cant even see those sectors in map. how did you find them?"
-  · [82,53/82,54](https://web.archive.org/web/20160725161029/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/628561-82-53-82-54)
-- Player claim (with imgur screenshot offered as proof): hidden sector 82,53 exists as a developer debugging/testing territory that can only be entered using a recall stone.
-  — "de-bugging territories, testing territories, things like that. You can't get in there without a recall stone."
-  · [82,53/82,54](https://web.archive.org/web/20160725161029/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/628561-82-53-82-54)
-- Contradicting claim in the same thread: the player who started the rumor says sectors 82,53/82,54 do not exist and he was trolling, doubting they existed 4-5 years earlier.
-  — "there is no such thing as 82,53/82,54 i was trolling u"
-  · [82,53/82,54](https://web.archive.org/web/20160725161029/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/628561-82-53-82-54)
-- Player claim about the hidden sector's origin: territory 82,53 was formerly "the old house of ryu" (a veteran player), suggesting a hidden sector once served as a personal house area.
-  — "it was the old house of ryu"
-  · [82,53/82,54](https://web.archive.org/web/20160725161029/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/628561-82-53-82-54)
-- The world map is Japan with real geography: Kyushu is the southern island, Hokkaido is a contested northern island, and the Kanto bay region is also named.
-  — "Go on a trip through the Kyushu (southern island) and defend any area there"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- The castle has a flagroom with a capturable flag, and the dojo contains a PVP room; clan members are not auto-allied in the dojo PVP room (auto-ally was suggested).
-  — "Put a flag to capture, like the castle flagroom, at the end of the PVP room."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The world map mirrors Japan with level-banded regions: Kyushu is the southern island, and the "blue island" (Aoi territory) is roughly a level-20 zone.
-  — "Go on a trip through the Kyushu (southern island) and defend any area there."
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- The World Battle map includes Hokkaido island and the Kanto bay as named contestable regions (Midori Ken's capital sits in Kanto bay per clan RP framed around real map regions).
-  — "holds a firm grip on the Kanto bay where its capital lies"
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20161016202029/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread)
-- Statues are found inside dungeons and along the main quest; performing a dragon dance activates them, yielding coins, clothing items, and temporary buffs (datata claim).
-  — "Activating a statue can give you coins, clothing items and temporary buffs"
-  · [[Straw Hat Samurai: Duels] Questions](https://web.archive.org/web/20170427091012/http://www.kongregate.com:80/forums/12-kongregate-multiplayer-games/topics/494653-straw-hat-samurai-duels-questions)
-- A mines feature existed by Apr 2015 — the forum index shows a dedicated 10-post thread titled 'mines' (content not in this batch).
-  — "mines"
-  · [Straw Hat Samurai: Duels forum (index)](https://web.archive.org/web/20150423012315/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels)
-- Fast travel existed and how to use it was a common new-player question (4-post thread on the index).
-  — "HOW DO I FAST TRAVEL?"
-  · [Straw Hat Samurai: Duels forum (index)](https://web.archive.org/web/20150423012315/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels)
-- A dungeon-exit bug (marked fixed by the thread title) could strand a player at the final boss with no way to leave the dungeon.
-  — "(fixed) Stuck at final boss with no ability to leave dungeon!"
-  · [Straw Hat Samurai: Duels forum (index)](https://web.archive.org/web/20150423012315/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels)
-- Trap Challenge mode (Apr 2015) had a room with jump pads ending in bamboo spikes; a bug could leave the player stuck immobile suspended above the spikes.
-  — "i am litraly stuck right ove the bamboo spikes and i cant even move"
-  · [[Straw Hat Samurai: Duels] trap chalenge glitch](https://web.archive.org/web/20200718235342/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486590-straw-hat-samurai-duels-trap-chalenge-glitch)
-- Trap Challenge respawn placement was unsafe: after dying you could respawn adjacent to a spike ball and get hit immediately.
-  — "the respawn actually spawns you next to a spike ball, instantly recking my face"
-  · [[Straw Hat Samurai: Duels] trap chalenge glitch](https://web.archive.org/web/20200718235342/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486590-straw-hat-samurai-duels-trap-chalenge-glitch)
-- Trap Challenge has a room combining a rolling stone ball and a saw; the stone ball's hitbox was far larger than its sprite, hitting players at visible distance.
-  — "You get hit although you are miles away"
-  · [[Straw Hat Samurai: Duels] Trap challenge: Rolling stone ball](https://web.archive.org/web/20200719120737/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486900-straw-hat-samurai-duels-trap-challenge-rolling-stone-ball)
-- In the stone-ball room, after the trap fires the player falls back onto the same pressure plate, re-triggering the trap — a flow players wanted fixed.
-  — "don't let the player fall right on the trap plate again"
-  · [[Straw Hat Samurai: Duels] Trap challenge: Rolling stone ball](https://web.archive.org/web/20200719120737/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486900-straw-hat-samurai-duels-trap-challenge-rolling-stone-ball)
-- The stone-ball room's intended solution is timing-based interaction: clicking a sign at the right moment gets you through (players believed it retracts the saw, which otherwise stays out after the stone trap activates).
-  — "you just have to klick the sign at the right moment. That actually worked."
-  · [[Straw Hat Samurai: Duels] Trap challenge: Rolling stone ball](https://web.archive.org/web/20200719120737/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486900-straw-hat-samurai-duels-trap-challenge-rolling-stone-ball)
-- Trap Challenge is a multi-room gauntlet with a steep difficulty spike: most rooms were considered trivial while the stone-ball/saw room was the frustration wall; total length was unknown to players.
-  — "While the other rooms can be beaten with your eyes closed, that one is just frustrating."
-  · [[Straw Hat Samurai: Duels] Trap challenge: Rolling stone ball](https://web.archive.org/web/20200719120737/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486900-straw-hat-samurai-duels-trap-challenge-rolling-stone-ball)
-- At launch (Apr 2015) the Trap Challenge's reward/purpose was not communicated in-game — players did not know what completing it gave.
-  — "No idea about the point or reward of that challenge"
-  · [[Straw Hat Samurai: Duels] Trap challenge: Rolling stone ball](https://web.archive.org/web/20200719120737/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486900-straw-hat-samurai-duels-trap-challenge-rolling-stone-ball)
-- DEV: Lutgames — the dojo recall scroll is the fast-travel item; using it teleports the player to the nearest dojo.
-  — "Do you have a dojo recall scroll? You can use it to bring you to the nearest dojo."
-  · [HOW DO I FAST TRAVEL?](https://web.archive.org/web/20200719190518/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487363-straw-hat-samurai-duels-how-do-i-fast-travel)
-- Self-answered fix for the lvl-28 wall: farm gear in level 27-29 caves — oni there are much easier to farm than bandits, caves have no boss fight and are shorter than other dungeons; the gear haul greatly improved stats in one night.
-  — "farming for equipment in lvl 27-29 caves (since the oni are way easier to farm than the bandits, there's no boss fight"
-  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719085726/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487402-straw-hat-samurai-duels-difficulty-curve-around-lvl-28-anyone-else-think-so)
-- The world map is addressed by territory coordinates (x,y) plus optional in-territory sector coordinates; players crowdsourced ~40 mine locations, each mine listing a common ore (Copper or Tin) plus a rare ore that is almost always Diamond.
-  — "24,52 (5,0) – Copper/Diamond … 33,51 (4,5) – Copper/Diamond … 41,43 (1,5) – Tin/Diamond"
-  · [mines](https://web.archive.org/web/20200719085738/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487424-straw-hat-samurai-duels-epilogue-quest)
-- Map anomalies players logged: the mine at 50,46 is unreachable, some mines have Diamond only with no common ore (37,52; 50,40), territory 53,35 holds two mines, and 46,40 / 46,41 were confirmed mine-free.
-  — "50,46 – UNREACHABLE! … 37,52 – None/Diamond … 53,35 has 2 mines."
-  · [mines](https://web.archive.org/web/20200719085738/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487424-straw-hat-samurai-duels-epilogue-quest)
-- As of 2015-04-21 no player had found coal, silver, iron, or titanium mines despite those ores apparently existing in the game's data/recipes.
-  — "I have not seen coal, silver, iron or titanium. Has anyone else?"
-  · [mines](https://web.archive.org/web/20200719085738/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487424-straw-hat-samurai-duels-epilogue-quest)
-- Contradicting the no-titanium report, by May 2015 a Tin/Titanium mine was listed at 43,45 with mine level 31, and a Tin/Diamond mine at 12,69 with level 30 — wiki-style rows show mines carry a level value around 30-31.
-  — "| 43,45 | Tin | Titanium | 31 … | 12,69 | Tin | Diamond | 30"
-  · [mines](https://web.archive.org/web/20200719085738/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487424-straw-hat-samurai-duels-epilogue-quest)
-- DEV: Lutgames — the Dojo Recall Scroll consumable teleports the player to the nearest dojo; it is the dev's answer to being stuck / needing fast travel.
-  — "You can use it to bring you to the nearest dojo."
-  · [HOW DO I FAST TRAVEL?](https://web.archive.org/web/20200719130452/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487053-straw-hat-samurai-duels-speed-stat)
-- Speed boots are named by a player as another means of getting around faster (terse, unelaborated claim).
-  — "by speed booots"
-  · [HOW DO I FAST TRAVEL?](https://web.archive.org/web/20200719130452/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487053-straw-hat-samurai-duels-speed-stat)
-- Optimal gear farming at ~lvl 28 is level 27-29 caves: oni there are easier to farm than bandits, caves have no boss fight and are shorter than other runs, and their equipment drops greatly improve stats.
-  — "farming for equipment in lvl 27-29 caves (since the oni are way easier to farm than the bandits"
-  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719145607/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487109-straw-hat-samurai-duels-game-crash-bug)
-- The world map is addressed by territory coordinates (x,y) with optional sub-sector coordinates, e.g. '24,52 (5,0)'; each mine yields one common ore and one rare ore.
-  — "24,52 (5,0) – Copper/Diamond"
-  · [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines)
-- Across 40+ launch-era mapped mines the common ore is always Copper or Tin (occasionally None) and the rare ore is near-universally Diamond.
-  — "50,25 (5,0) – Tin/Diamond … 51,14 – Copper/Diamond"
-  · [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines)
-- As of Apr 21, 2015 players had found no coal, silver, iron or titanium in any mine despite searching — those ores either didn't exist yet or were far rarer.
-  — "I have not seen coal, silver, iron or titanium. Has anyone else?"
-  · [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines)
-- Titanium confirmed by mid-May 2015: the mine at 43,45 lists Tin common / Titanium rare with a level value of 31 — mine list entries carry a level column.
-  — "43,45 | Tin | Titanium | 31"
-  · [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines)
-- Mine placement quirks: the mine at 50,46 is unreachable; territory 53,35 contains two mines; territories 46,40 and 46,41 confirmed to have no mines at all.
-  — "50,46 – UNREACHABLE! … 53,35 has 2 mines."
-  · [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines)
-- Additional confirmed mines: 12,69 Tin/Diamond at level 30; 44,44 Copper/Diamond; 52,41 has diamond; a mine also noted at sub-sector 5,5 of an unnamed territory.
-  — "12,69 | Tin | Diamond | 30"
-  · [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines)
-- In the final dungeon, dying to the boss respawned you in the room immediately before the boss rather than at a graveyard/town.
-  — "When you die, it just takes you back to the room before the boss"
-  · [[Straw Hat Samurai: Duels] (fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
-- Dungeons used a checkpoint system: walking backwards from a checkpoint showed 'traveling to checkpoint' and warped you forward again, making the final dungeon inescapable at launch; the thread title's '(fixed)' tag indicates this trap was later patched.
-  — "it says "traveling to checkpoint" and puts me back to the door before the boss"
-  · [[Straw Hat Samurai: Duels] (fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
-- Logging out and back in the next day relocated a dungeon-stuck player to outside the dungeon — relogging reset dungeon position and served as an escape.
-  — "When I logged back in the next day, I was outside the dungeon"
-  · [[Straw Hat Samurai: Duels] (fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
-- The housing district in town is purely decorative at this point in the game's life — it serves no gameplay function (context for an apartment-rental suggestion priced 100C-1000C; players shorthand currency as 'C').
-  — "the housing district serves no purpose other than visual effects"
-  · [[Straw Hat Samurai: Duels] ITT: Things you want to see in the game](https://web.archive.org/web/20200719131437/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490507-straw-hat-samurai-duels-itt-things-you-want-to-see-in-the-game)
-- Fast travel is via stables: not every village has one, and each stable only serves specific destination cities; most travel is on foot and you cannot sneak past weak enemies on the way.
-  — "Not every village has a stable and not every stable travels to the city you wanted to"
-  · [[Straw Hat Samurai: Duels] ITT: Things you want to see in the game](https://web.archive.org/web/20200719131437/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490507-straw-hat-samurai-duels-itt-things-you-want-to-see-in-the-game)
-- Disputed claim of a glitch location called 'Banana Town' that one player says he reached once; a second player denies it exists. No screenshot was produced.
-  — "Banana Town is a glitch but I was wondering if it was something more"
-  · [[Straw Hat Samurai: Duels] WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20200718230924/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/491788-straw-hat-samurai-duels-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town)
-- After a game error and page reload, a player respawned stranded in the 'hell' area — implies Hell exists as a distinct map location and error-recovery respawn could place players there (reported in Spanish).
-  — "reinicie la pag y apareci en el hell"
-  · [[Straw Hat Samurai: Duels] Report hackers here](https://web.archive.org/web/20200719115839/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492905-straw-hat-samurai-duels-report-hackers-here)
-- Efficient grind method: find a 3-wave bandit encounter on the open world map and repeatedly enter/exit it; refreshing the game (page reload) respawns bandits in new places if a territory has none.
-  — "find a 3 wave bandit on the open world and enter/exit over and over"
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Villages on the map can be in a destroyed state and rebuilt/'built up' by clan effort — a member asks the new leader to restore 'destroyed villages like tomoharah' alongside gaining territories.
-  — "help us get more territories and build up destroyed villages like tomoharah"
-  · [[Straw Hat Samurai: Duels] AKA RYU ROLE CALL](https://web.archive.org/web/20200719183224/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495568-straw-hat-samurai-duels-aka-ryu-role-call)
-- Every Dojo contains PvP practice rooms where players can train slash attacks safely.
-  — "practice your slash attacks in the PVP rooms that are inside every Dojo"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- The Dojo also hosts a trap challenge that at least one player found long and frustrating.
-  — "Never bothered with the dojos after spending ages with that stupid trap challenge."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Map traversal works sign-to-sign: characters (and a proposed AI monk) pass through an area from one signpost to the next, the same way players do.
-  — "this enemy passes through the area from sign to sign, like a player"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- Location types referenced as existing: oni dungeons, field paths, and towns (proposed as ninja ambush sites).
-  — "In an oni dungeon. On the field path. Maybe even in town."
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- Player enemy suggestions consistently reference 'lvl 34/35/37/49 areas' and location types like graveyards, caves, ruins, and forests — implying the world map has level-designated areas reaching at least the high 40s (suggestion context, not confirmed).
-  — "can be found in graveyards and caves beyond lvl 37 areas"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- The war map uses numeric coordinates for locations: a castle at (15,61) and 'hiratani(43,44) castle town gates' — named towns with castle gates as meeting points.
-  — "my name in the game is kouroko and in hiratani(43,44) castle town gates"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-
-## quests-story (60)
-
-- Story-clan leaders and lore: Midori Ken led by Lord Daichi (self-proclaimed Shogun after the old Shogun died, SE domain); Aoi Hoiru by Lord Yoshio (SW); Ki Sensu by Lady Tsubasa; Aka Ryu by Lord Tsuyoshi.
-  — "As the right-hand man to the late Shogun, Lord Daichi has proclaimed himself the rightful Shogun"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Contradiction to resolve: one player lists BOTH Ki Sensu and Aka Ryu as ruling 'the North-East' (likely a typo), while another post places Yellow (Ki Sensu) 'in the west'.
-  — "Clan Ki Sensu rules the domain in the North-East. ... Clan Aka Ryu rules the domain in the North-East."
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- The final story dungeon ends in two boss encounters: a normal first boss fight followed by a 'survival' encounter.
-  — "coasted through the first boss fight, but I can't do the survival one"
-  · [(fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1)
-- Quest text contained typos and Japanese-usage errors that players collected for correction; the actual corrections were posted as imgur screenshots that are no longer recoverable from the archive.
-  — "I've also seen some quest errors."
-  · [Typos and Japanese corrections here. [spoilers within] Post more.](https://web.archive.org/web/20151231131323/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487967-typos-and-japanese-corrections-here-spoilers-within-post-more?page=1)
-- Season 1 story details: a mysterious faction called 'The Kakuremichi' is introduced; the character Shinmen dies on-screen, though a player suspects a faked death and that he is a traitor.
-  — "Shinmen died. Or did he? I feel this guy is probably a traitor of some sort."
-  · [[massive spoilers within] Season 2 theories and ideas. Who are "The Kakuremichi" ??](https://web.archive.org/web/20151231124523/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487973-massive-spoilers-within-season-2-theories-and-ideas-who-are-the-kakuremichi?page=1)
-- Season 1 leaves the characters Hiroshi and the shogun's son as unresolved plot threads going into the planned Season 2.
-  — "What of Hiroshi and the shogun's son?"
-  · [[massive spoilers within] Season 2 theories and ideas. Who are "The Kakuremichi" ??](https://web.archive.org/web/20151231124523/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487973-massive-spoilers-within-season-2-theories-and-ideas-who-are-the-kakuremichi?page=1)
-- NPC villagers hand out gathering quests tied to local resources — one villager near 43,45 gave a quest requiring titanium.
-  — "But a villager gave me a quest for titanium in that area"
-  · [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
-- Episode 10 'Oni Caves' contains a Red Oni encounter designed to be avoided rather than fought: the oni periodically sleeps/looks tired, and the intended route is running past it during that window.
-  — "wait for the oni to sleep or look like its tired,then run through it"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Episode 11 includes a timed survival mission requiring the player to stay alive for 2 minutes against waves of enemies.
-  — "I had trouble staying alive for the two minutes."
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Episode 8 boss is a giant volcano-coloured Statue Guardian killed via a scripted mechanic: the player runs through/distracts it while ally NPC Mitsuo shoots arrows; standing too far away makes it throw boulders at you.
-  — "run through the Statue and distract it while Mitsuo fires arrows to kill it"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Episode 12 sequence: Amaya boss, then a survival segment against Gojo/Takamori in 'dead form'; Takamori uses a devastating Chi Slash; players can bring another player to help, or survive by 'flying' and rolling.
-  — "just survive by ‘flying’ and rolling. Be aware of Takamori’s Chi Slash"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Season 1 story ends at Episode 12; as of August 2016 the next episode was still unreleased.
-  — "Completed the episode 12 next is unreleased"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- The four story clans and lore leaders: Midori Ken (Green, Lord Daichi, self-proclaimed Shogun, rules South-East), Aoi Hoiru (Blue, Lord Yoshio, South-West), Ki Sensu (Yellow, Lady Tsubasa), Aka Ryu (Red, Lord Tsuyoshi); the war began after the Shogun's death.
-  — "Clan Midori Ken rules the domain in the South-East."
-  · [State of the Clan War](https://web.archive.org/web/20150912173631/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=2)
-- Tatsuo exists as a named character players wanted to kill (thread also titled 'Fast trade', suggesting a trade feature players wanted sped up; both posts are near-unintelligible, so treat as weak evidence).
-  — "AND ALL KILL TATSUO PLEASE!!!"
-  · [Fast trade](https://web.archive.org/web/20150910070459/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/506148-fast-trade?page=1)
-- Quests can be turned in remotely: the scroll tab lists all accepted quests, redirects the map to each quest's location, and offers a "finish quest" option without returning to the NPC.
-  — "After finishing a quest, click on that quest and choose “finish quest”"
-  · [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
-- Exploit: if a quest lends you a good weapon/gear you must surrender at turn-in, abandoning the quest instead lets you keep the item plus the money and influence, then redo the quest. Also shows quests reward money AND influence.
-  — "Abandon the quest and redo it. That way, you can keep the weapon and the money and influence"
-  · [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
-- Amaya is a story boss faced around player level 30: an eye-patched woman fighting for the main antagonist Lord Tamakori.
-  — "the eye-patch lady fighting for Lord Tamakori (Evil Boss)"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- The Amaya boss encounter is inside a cave and is not a lock-in: you can leave, level up elsewhere, and return later stronger.
-  — "just leave the cave…and get to lv 36..you'll be stronger and have better gear"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- The story campaign was structured in 'Seasons': Season 1 was the only released content, and players were asking about a Season 2 from Jan 2016 onward; one player said the wait had lasted nearly a year (placing Season 1's campaign completion around early-to-mid 2015).
-  — "I’VE BEEN PATIENT FOR NEARLY A YEAR!!! I CAN’T STAND ALL THIS WAITING!"
-  · [SEASON 2](https://web.archive.org/web/20160316203819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/583212?page=1)
-- Player claim (Feb 25, 2016): Season 2 would never come because the developer had quit the game. (Contradicted by another player in the same thread — see companion fact.)
-  — "There will not be a season 2,the developer have quit"
-  · [SEASON 2](https://web.archive.org/web/20160316203819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/583212?page=1)
-- Contradicting player claim (Feb 28, 2016): Season 2 was 'almost done' but the developer had prioritized other updates and bug fixes to ship first — implying active development was still ongoing in early 2016.
-  — "season 2 is almost done. but they have other updates and bug fixes coming first"
-  · [SEASON 2](https://web.archive.org/web/20160316203819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/583212?page=1)
-- The story campaign was unfinished as of mid-2016 — players note the storyline had never been concluded.
-  — "Not to mention the story that has yet to conclude"
-  · [forum activity is dying](https://web.archive.org/web/20161016203657/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/650580-forum-activity-is-dying)
-- Story-quest character Shinmen wears blue garments but belongs to the Shira Tancho clan, not the blue clan Aoi Hoiru (player observation).
-  — "Shinmen wears blue but he is in Shira Tancho Clan."
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- Series continuity claim: in the first Straw Hat Samurai game you capture Aka's flag and it turns into Aoi's flag, so players infer the original straw-hat protagonist belongs to Aoi Hoiru.
-  — "you are asked to capture Aka’s flag and it turns into Aoi’s flag"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- Player-authored lore (canon status uncertain, thread is heavy RP): Ki Sensu's daimyo is Lady Tsubasa, youngest of 'the Four Daimyos' — suggesting four main clans each have an NPC daimyo.
-  — "The current daimyo of Ki Sensu is Lady Tsubasa"
-  · [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20151219190542/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread?page=1)
-- Player-authored lore (explicitly called 'RP silliness' by another poster, so treat as unverified): Midori Ken is led by Lord Daichi, who claimed the Shogunate after the previous Shogun died and rules the south-east.
-  — "Clan Midori Ken is led by Lord Daichi"
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20150907061933/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread?page=1)
-- The story questline gives strong XP, introduces the mission/dungeon types, and carries a player to roughly level 30-40.
-  — "Follow the story, it offers great XP... It should last you into the 30-40 range."
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Story quests award farm crops and a kitten item; crops are meant to be sold, and inventory weight matters when carrying them.
-  — "following the story, I now have some crops… and a kitten"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Amaya is an eyepatch-wearing boss serving the main antagonist Lord Tamakori, fought in a cave around player level 30; you can leave the cave, level up, and return later.
-  — "the eye-patch lady fighting for Lord Tamakori (Evil Boss)"
-  · [How does one beat Amaya?](https://web.archive.org/web/20160101020844/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/503551-how-does-one-beat-amaya?page=1)
-- Series lore claim: in the first Straw Hat Samurai game the player captures Aka's (red) flag which turns into Aoi's (blue) flag, tying the straw-hat protagonist to the Aoi Hoiru clan.
-  — "you are asked to capture Aka’s flag and it turns into Aoi’s flag"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- Story-quest NPC Shinmen wears blue but belongs to the Shira Tancho clan — a story clan distinct from the four player color clans (player claim).
-  — "Shinmen wears blue but he is in Shira Tancho Clan."
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- The story questline gives strong XP, introduces the mission/dungeon types, and carries a new player to roughly level 30-40 (player claim).
-  — "it offers great XP and introductions to a few mission/dungeon types. It should last you into the 30-40 range"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- Green = Clan Midori Ken, led by Lord Daichi, right-hand man of the late Shogun who proclaimed himself the rightful Shogun; rules the South-East domain.
-  — "Lord Daichi has proclaimed himself the rightful Shogun after the previous Shogun died"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2)
-- Blue = Clan Aoi Hoiru, led by the well-informed, shrewd Lord Yoshio; rules the South-West domain.
-  — "Clan Aoi Hoiru is led by Lord Yoshio … rules the domain in the South-West"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2)
-- Yellow = Clan Ki Sensu, led by Lady Tsubasa; prosperous and non-confrontational but forced to take up arms; rules the North-East domain.
-  — "Clan Ki Sensu is led by Lady Tsubasa"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2)
-- Red = Clan Aka Ryu, led by Lord Tsuyoshi, who prepared for war ever since hearing of the Shogun's illness; the post says 'North-East' for Red as well as Yellow — likely a typo for North-West.
-  — "Lord Tsuyoshi had anticipated the upcoming war … Clan Aka Ryu rules the domain in the North-East"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2)
-- The story featured a mysterious group called 'The Kakuremichi', and players expected/theorized about a Season 2 story continuation.
-  — "Season 2 theories and ideas. Who are "The Kakuremichi" ??"
-  · [Straw Hat Samurai: Duels forum (index)](https://web.archive.org/web/20150423012315/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels)
-- The quest log has a maximum active-quest cap; if the log is full the game cannot add the Prologue/Dojo tutorial quest and the player gets stuck (reported by FateIsEscaped, Apr 2015).
-  — "your quests get stuck because the game can't add 1 more quest to your list"
-  · [Bug with Prologue quests if you already have max quests](https://web.archive.org/web/20200719035108/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485740-straw-hat-samurai-duels-bug-with-prologue-quests-if-you-already-have-max-quests)
-- The Dojo hosts a tutorial sequence in which NPCs teach the player about stances and skills, and there is no way to drop a quest while inside that tutorial (FateIsEscaped).
-  — "stuck (in my case) in the Dojo when having them teach you about stances and skills"
-  · [Bug with Prologue quests if you already have max quests](https://web.archive.org/web/20200719035108/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485740-straw-hat-samurai-duels-bug-with-prologue-quests-if-you-already-have-max-quests)
-- DEV: Lutgames patched the max-quests/Prologue-tutorial bug within one day (reported Apr 7 2015, confirmed fixed Apr 8 2015).
-  — "Fixed."
-  · [Bug with Prologue quests if you already have max quests](https://web.archive.org/web/20200719035108/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485740-straw-hat-samurai-duels-bug-with-prologue-quests-if-you-already-have-max-quests)
-- Wiki-sourced clan characterizations (MalayangPili...): Green seeks the shogun's power, Red are bandits/rebels using radical means, Yellow is a merchant clan whose leader is a figurehead ruled by a profit-driven council, Blue is a small clan led by a wise general aiming to unite the factions.
-  — "Yellow: Merchant clan who only seeks the profit from the war."
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- Story lore (Saskia_Arcanica): Clan Midori Ken is led by Lord Daichi, the late Shogun's right-hand man who proclaimed himself the rightful Shogun; Midori rules the South-East domain.
-  — "Lord Daichi has proclaimed himself the rightful Shogun after the previous Shogun died"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- Story lore (Saskia_Arcanica): Clan Aoi Hoiru is led by the well-informed, shrewd Lord Yoshio and rules the South-West domain.
-  — "Clan Aoi Hoiru is led by Lord Yoshio… rules the domain in the South-West."
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- Story lore (Saskia_Arcanica): Clan Ki Sensu is led by Lady Tsubasa, a prosperous merchant clan that favors non-confrontation but armed itself to defend its riches; it rules the North-East domain.
-  — "Clan Ki Sensu is led by Lady Tsubasa… rules the domain in the North-East."
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- Story lore (Saskia_Arcanica): Clan Aka Ryu is led by the ambitious Lord Tsuyoshi, who prepared for war on hearing of the Shogun's illness; the poster wrote it rules 'North-East' but that duplicates Ki Sensu, so North-West is the likely intended domain.
-  — "Clan Aka Ryu is led by Lord Tsuyoshi… rules the domain in the North-East."
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- The Statue Guardian is a main-story gate: failing to beat it blocks story progression, and it coincides with the perceived lvl-28 difficulty spike.
-  — "I also can't figure out a way to beat the statue guardian and progress in the main story"
-  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719085726/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487402-straw-hat-samurai-duels-difficulty-curve-around-lvl-28-anyone-else-think-so)
-- Villagers hand out ore-fetch quests: one player received a quest specifically requiring titanium near territory 43,45, hinting titanium was quest-relevant before players found its mines.
-  — "But a villager gave me a quest for titanium in that area"
-  · [mines](https://web.archive.org/web/20200719085738/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487424-straw-hat-samurai-duels-epilogue-quest)
-- A villager NPC gives a quest requiring titanium in the area near territory 43,45 — village quests can demand rare mine ores.
-  — "a villager gave me a quest for titanium in that area"
-  · [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines)
-- Launch-era quest and dialogue text contained typos and incorrect Japanese; players collected screenshot evidence in a dedicated corrections thread (images not recoverable).
-  — "I've also seen some quest errors."
-  · [[Straw Hat Samurai: Duels] Typos and Japanese corrections here. [spoilers within] Post more.](https://web.archive.org/web/20200719095352/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487967-straw-hat-samurai-duels-typos-and-japanese-corrections-here-spoilers-within-post-more)
-- Season 1 story: a mysterious faction called 'The Kakuremichi' drives the plot; the character Shinmen dies (players suspected a faked death/traitor twist); Hiroshi and the shogun's son are unresolved threads left for Season 2.
-  — "Shinmen died. Or did he? I feel this guy is probably a traitor of some sort."
-  · [[Straw Hat Samurai: Duels] [massive spoilers within] Season 2 theories and ideas. Who are "The Kakuremichi" ??](https://web.archive.org/web/20200719095355/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487973-straw-hat-samurai-duels-massive-spoilers-within-season-2-theories-and-ideas-who-are-the-kakuremichi)
-- The story campaign gives strong XP, introduces mission/dungeon types, and carries a player to roughly level 30-40.
-  — "Follow the story, it offers great XP and introductions to a few mission/dungeon types. It should last you into the 30-40 range"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Aku Ryu, the Red Clan faction players can join in Duels, is the antagonist faction of Straw Hat Samurai 1 and 2; another player counters that Duels has no canonical good/evil clans.
-  — "Aku Ryu (Red Clan) is the bad guy in Straw Hat Samurai 1 and 2"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Story Episode 1 includes a battle against Inokichi; a beta bug could load that battle with no enemies present, soft-locking the player until a page refresh, after which it worked again.
-  — "story is episode 1 the battle whit Inokichi"
-  · [[Straw Hat Samurai: Duels] bug plesse fix](https://web.archive.org/web/20200719172239/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485618-straw-hat-samurai-duels-bug-plesse-fix)
-- DEV: Lutgames's triage distinguishes 'normal battle' from 'story battle' as two separate battle instance types.
-  — "Is this a normal battle or a story battle?"
-  · [[Straw Hat Samurai: Duels] bug plesse fix](https://web.archive.org/web/20200719172239/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485618-straw-hat-samurai-duels-bug-plesse-fix)
-- Clan lore: Midori Ken is led by Lord Daichi, right-hand man to the late Shogun, who proclaimed himself the rightful Shogun after the Shogun died; Midori Ken rules the South-East domain.
-  — "Lord Daichi has proclaimed himself the rightful Shogun after the previous Shogun died"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Clan lore: Aoi Hoiru is led by Lord Yoshio, described as well-informed and shrewd; the clan rules the South-West domain.
-  — "Clan Aoi Hoiru is led by Lord Yoshio… rules the domain in the South-West."
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Clan lore: Ki Sensu is led by Lady Tsubasa; the prosperous clan favors non-confrontational methods but took up arms to defend its lands; listed as ruling the North-East.
-  — "Clan Ki Sensu is led by Lady Tsubasa"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Clan lore: Aka Ryu is led by Lord Tsuyoshi, who anticipated the war and prepared ever since hearing of the Shogun's illness — establishing the Shogun's death as the war's story trigger.
-  — "Lord Tsuyoshi had anticipated the upcoming war… ever since he heard of the Shogun’s illness"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Contradiction/likely typo: the same lore post lists BOTH Ki Sensu and Aka Ryu as ruling the North-East domain; one of them is presumably North-West. Another player separately places Ki Sensu 'in the west'.
-  — "Clan Aka Ryu rules the domain in the North-East."
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Each clan's in-game story is only about a 3-line blurb — the clan narrative is minimal.
-  — "No one has to play the game via the 3 line story for each clan."
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-
-## ui-hud (51)
-
-- War Room UI messages include a territory-named error line ('Terumura: No available HQ in this territory') and a live countdown to the next army resolution tick.
-  — "Troops will attempt sector capture in 4:25:10"
-  · [Not able to spend move points in War Room](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
-- The war-room map addresses sectors by numeric coordinates (a player cites an HQ at 14,57).
-  — "When I try to move to the HQ at 14,57."
-  · [Not able to spend move points in War Room](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
-- The game has a message log that normally records war-room defeats as '<attacker> defeated <player>' entries; its absence during the ejection bug was flagged as anomalous.
-  — "There is no notification in the message log that says "XXXXX defeated iostiogic"."
-  · [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
-- Each clan has its own in-game chat channel, distinct from the Kongregate room chat — players in other clans could relay intel from those clan chats.
-  — "relaying information from other clans' chats to our Kong chat"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Character creation could fail with a red on-screen feedback message reading 'Unable to contact server' (recurring server-connectivity failure mode in April 2015).
-  — "Unable to contact server"
+- Item/character levels span a 1-80 range (player's proposed auction filter used '1-80 Level Range').
+  — "1-80 Level Range"
   · [Suggestion: Auction Market system](https://web.archive.org/web/20150915012549/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488497-suggestion-auction-market-system?page=1)
-- A '/recall' command typed into the chat room existed as the community remedy for a stuck character.
-  — "Try typing into the chat room the command: /recall"
+- Player claim: enemies inside the final dungeon give no XP (at least on the respawn loop), so grinding inside it is impossible.
+  — "I don't get any exp from the enemies, so grinding here is no help"
   · [(fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1)
-- Stance is selected before a fight by clicking your own character portrait; most players do not switch stances mid-duel.
-  — "set the one you will use beforehand by clicking on your picture"
+- Difficulty datapoint: a level-38 player reached the final survival boss but could not clear it, blaming unbalanced stats/gear — final content is beatable around but not guaranteed at level 38.
+  — "I'm level 38, but I guess either my stats are too unbalanced"
+  · [(fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20151231145611/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488106-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon?page=1)
+- Player claim: between level 36 and level 45 he had accumulated over 100 attribute points in attack, defense and speed — a benchmark for attribute totals in the mid-40s.
+  — "when i was lvl 36 now i am lvl 45 i had more than 100 attributes in atk def n spd"
+  · [Show off a picture of your awesome character here](https://web.archive.org/web/20150919133214/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488448-show-off-a-picture-of-your-awesome-character-here?page=1)
+- Each stance has its own mastery level that increases with use; a level 18 character reports only mastery level 2 on light stance, and veterans say focusing one stance is the intended path.
+  — "My highest mastery is level two. On light stance. But then again… I'm just lvl 18."
   · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- The player window has a 'stats' button in the upper left that shows how attack, defense, and range change with each stance.
-  — "click the 'stats' button (upper left) and notice the changes to attack/defense/range with each stance"
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- Skills can be triggered via preset number-key keyboard shortcuts.
-  — "use preset keyboard shortcuts for your skills, the #keys"
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- In-game chat supports an /ignore <username> command; there was no ignore button on player profiles (requested as a feature).
-  — "It's easier than using the chat command: /ignore Spammer"
-  · [So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20151231022234/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489549-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it?page=1)
-- The new trade channel launched with an inverted-scroll bug (scrolling down scrolled up); PAGE UP/PAGE DOWN worked as a workaround, and the bug was fixed within about a day.
-  — "scrolling down trade chat scrolls up . this must be fixed"
-  · [So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20151231022234/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489549-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it?page=1)
-- The game gives no in-game explanation of the SPEED stat — players could not find any description, and the per-point cooldown-reduction magnitude stayed unanswered in the thread.
-  — "I tried looking for it but didn't found any explanation."
-  · [Speed stat](https://web.archive.org/web/20151228185458/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487053-speed-stat?page=1)
-- Chat has a single 'world chat' channel with no dedicated trade tab (tabs were only a player suggestion as of May 2015).
-  — "It would be nice if there was a dedicated chat tab for trading."
-  · [[suggestion] chatroom tabs](https://web.archive.org/web/20151231070614/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495200-suggestion-chatroom-tabs?page=1)
-- Chat history buffer is very short — messages scroll out of view quickly (player complaint requesting more history space).
-  — "more space for chat history so it doesn’t scroll away forever so quickly"
-  · [[suggestion] chatroom tabs](https://web.archive.org/web/20151231070614/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495200-suggestion-chatroom-tabs?page=1)
-- A separate clan chat channel exists, and the chat supports a /ignore command to mute other players.
-  — "utilize the game features to help you better handle these situations.. like /ignore"
-  · [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1)
-- The player menu has a 'stats' screen showing your real (computed) damage range, usable to verify stat effects.
-  — "You can check your real dmg if you click stats while in player menu."
+- Difficulty-wall claim (2019): a player stuck at level 12 right after the Chikako fight reports being unable to level further while bandits kill them easily.
+  — "i cant lvl up from lvl 12 and so bandits are easily killing me"
+  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190718050721/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help?page=2)
+- Progression pace datapoint (Apr 2015): a dedicated player was approaching level 80 on his 19th day of play.
+  — "approaching lvl 80 and its his 19th day playing"
+  · [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
+- Losing a battle costs nothing — you get a free respawn — so grinders could ignore defense on bosses and just relaunch; grind build advice: one-shot trash mobs in balance stance, stack HP, HP-regen optional.
+  — "you may just lose battle and free respawn"
   · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- The game had no manual save button (players requested one); one player lost and restarted a level-10 character three times to the save bug.
-  — "Can you please add a save button this is a serious problem"
-  · [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1)
-- In the item-transfer UI, the orange item goes in the "design" slot (putting it in the wrong slot is a common mistake players misread as a bug).
-  — "You’re doing it wrong, the orange goes in design"
-  · [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
-- There is NO hotkey to toggle Auto Slash — players must use the on-screen toggle; one veteran proposed hold-SHIFT as a temporary-off modifier.
-  — "I just wish there was a hot key so I could turn it on or off fast."
-  · [auto slash "on" or "off" ?](https://web.archive.org/web/20150920124446/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494226-auto-slash-on-or-off?page=1)
-- Spacebar is the stance-switching hotkey (a player wished for one and was corrected that it already exists).
-  — "i also wish there was a hotkey for changing stance … Spacebar."
-  · [auto slash "on" or "off" ?](https://web.archive.org/web/20150920124446/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494226-auto-slash-on-or-off?page=1)
-- Merchant shop purchases fire instantly on double-click with no confirmation dialog; a player accidentally bought an item and drained all their coins.
-  — "I accidentally double-clicked on an item in the merchant and it used all my coins."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The /whoisonline chat command lists at most 20 online players even when more are connected.
-  — "Showing all players online when you use "/whoisonline" instead of showing only 20 players"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The game has at least three chat channels: global chat, clan chat, and a separate war room chat; there is also a persistent war-room message board for clan orders.
-  — "there’s no need to spam about your needs on global chat"
+- Standard grinding method: travel to a territory 3 levels above your own and repeatedly delve its dungeons.
+  — "go to a Level+3 territory, and delve into the dungeons repeatedly."
+  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
+- Player-measured EXP required per character level (post-rebirth): L4=5150, L5=8350, L7=16350, L8=20900, L9=25900, L10=31400, L11=37400, L12=43500, L13=49850, L15=63900, L16=71900, L19=98300, L22=129300, L29=216100, L31=273100, L32=294100, L33=316100, L34=339300, L35=363300 (L1~550, L2~1450 uncertain).
+  — "EXP per level / Orange EXP … 10) 31400 / 2000"
+  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
+- A separate "Orange EXP" track (the author calls them SI — soul infusion — levels) has its own per-level requirements: L1=300, L2~500, L3=733, L4=1000, L5=1200, L7=1500, L8=1600, L9=1800, L10-11=2000, L15=2600, L16=2800, L22=3900, L28=5600, L31=7000, L36=9100, L42-43=12000.
+  — "Added some more data to the exp levels and SI levels."
+  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
+- Maximum EXP per enemy group grows slowly with level — measured: L31~1312, L32=1333, L33=1364, L34~1371, L35=1444, L36~1486, L37=1526, L39~1575, L40~1609, L42~1674, L43~1704 (values with ? are the recorder's own uncertainty).
+  — "Max EXP per enemy group, per level. … 35) 1444"
+  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
+- Efficient grind method: find a 3-wave bandit encounter on the open world and re-enter/exit it repeatedly; the encounter persists between entries.
+  — "find a 3 wave bandit on the open world and enter/exit over and over"
+  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
+- There is an achievement tied to killing Red Oni; players say it is the only real reason to fight one.
+  — "Aside from the achievement, they are not worth it"
+  · [New way to kill red oni](https://web.archive.org/web/20160104144830/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/501146-new-way-to-kill-red-oni?page=1)
+- Player request implies a hard level cap below 85: reaching level 85 was only possible via exploit and reportedly got players banned.
+  — "allow us to go to lvl.85 without getting banned"
+  · [About the game](https://web.archive.org/web/20160423144746/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/601703-about-the-game)
+- By May 2015, player levels reached at least 80; map zones have approximate level tiers, with one whole island rated around level 20.
+  — "you are lvl 80 doing missions on the blue island (which is roughly lvl 20)"
   · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- The AUTO SLASH toggle button sits in the top-left of the screen during battle.
-  — "This button is in the top left of your screen during battle."
+- Player build advice (Captain_Catface): skip the defense stat because equipment supplies plenty and some damage types bypass defense entirely.
+  — "I advise not putting stat points into defense. You will gain a large amount from equipment and there are damage forms which bypass it."
   · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- In the merchant shop, double-clicking an item buys it instantly with no confirmation dialog; one player accidentally spent all their coins this way.
-  — "I accidentally double-clicked on an item in the merchant and it used all my coins."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The War Room has a demolish button with no confirmation safeguard; accidental presses destroyed clan structures and caused distrust within a clan.
-  — "demolish button in war room is too easily pushed. That caused distrust in the clan."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The /whoisonline chat command caps its output at 20 players even when more are online; players proposed paginated variants showing 30 per page.
-  — "instead of showing only 20 players when they are many"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The War Room contains a clan message board (separate from clan chat) used for posting standing orders and member questions.
-  — "go to the war room clan message and ask other clan members what to do"
-  · [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20160725161015/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread)
-- Pressing space quickly toggles stances during battle, gated on the focus bar being full enough.
-  — "you can press space to quickly toggle stances if your focus bar is full enough"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- The clan-war territory map screen is referred to in-game/by players as the 'War Room'; in practice moves were often negotiated between clan leaders rather than free-for-all.
-  — "I view the war room as a game of numbers"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2)
-- DEV: The quest log UI has an 'abandon quest' button; Lutgames' workaround for the full-log tutorial bug was to refresh the page and abandon one quest.
-  — "refresh the page then use the abandon quest button in the quest log to drop one quest. This will be fixed."
-  · [Bug with Prologue quests if you already have max quests](https://web.archive.org/web/20200719035108/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485740-straw-hat-samurai-duels-bug-with-prologue-quests-if-you-already-have-max-quests)
-- Clicking an opponent's name shows their online status, and the UI shows whether they declined your duel challenge; both must check out for a live duel (FateIsEscaped).
-  — "you opponent needs to show as online when you click his name, and it needs to not show that he declined your duel"
-  · [Duel Bug](https://web.archive.org/web/20200719122510/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485970-straw-hat-samurai-duels-duel-bug)
-- Stat-point allocation had no confirmation step: clicking the HP/Chi/AP area instantly spent a point (and could close the item-stats window), with no undo — hence the request for a Confirm button.
-  — "it adds 1 point to chi and closes item stats view window"
-  · [[Straw Hat Samurai: Duels] This game needs "Confirm" button when adding stat points.](https://web.archive.org/web/20200719024749/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486485-straw-hat-samurai-duels-this-game-needs-confirm-button-when-adding-stat-points)
-- The player menu has a 'stats' view that shows your real computed min/max damage numbers.
-  — "You can check your real dmg if you click stats while in player menu."
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- A '/recall' chat command existed, used as an unstuck/teleport-out tool typed into the chat window.
-  — "Try typing into the chat room the command: /recall"
-  · [[Straw Hat Samurai: Duels] (fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
-- The auto-slash toggle button is located at the top-left of the screen during battle.
-  — "This button is in the top left of your screen during battle"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- The clan war is conducted from a 'war room' screen showing clan territories, which constantly change hands; territory control is central to the war metagame.
-  — "This is what I like on the war room... territories are a thing, but their are in constantly moves!"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us. (page 2)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=2)
-- If your clan has no HQ in a war-room territory, a top-of-screen message appears, prefixed by the territory name (example territory: 'Terumura'), and you cannot enter the battle there.
-  — "a message at the top says “Terumura: No available HQ in this territory”"
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- No hotkey exists to toggle AUTO SLASH — it must be switched through the UI; players wish for one (a hold-SHIFT temporary-disable was proposed as a fix).
-  — "I just wish there was a hot key so I could turn it on or off fast."
-  · [[Straw Hat Samurai: Duels] auto slash "on" or "off" ?](https://web.archive.org/web/20200718231337/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494226-straw-hat-samurai-duels-auto-slash-on-or-off)
-- Spacebar is the hotkey for changing stance (some players did not know it existed and asked for one).
-  — "i also wish there was a hotkey for changing stance / Spacebar."
-  · [[Straw Hat Samurai: Duels] auto slash "on" or "off" ?](https://web.archive.org/web/20200718231337/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494226-straw-hat-samurai-duels-auto-slash-on-or-off)
-- Chat supports a /ignore command for muting other players; clans have their own clan chat channel separate from world chat and the war-room chat.
-  — "utilize the game features to help you better handle these situations.. like /ignore"
-  · [[Straw Hat Samurai: Duels] AKA RYU ROLE CALL](https://web.archive.org/web/20200719183224/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495568-straw-hat-samurai-duels-aka-ryu-role-call)
-- The chat UI has no dedicated trade tab (a requested feature) and keeps only a short scrollback history — messages 'scroll away' quickly.
-  — "more space for chat history so it doesn't scroll away forever so quickly"
-  · [[Straw Hat Samurai: Duels] [suggestion] chatroom tabs](https://web.archive.org/web/20200718235005/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495200-straw-hat-samurai-duels-suggestion-chatroom-tabs)
-- The player window has a 'stats' button in the upper-left that shows how attack/defense/range change with each stance.
-  — "click the “stats” button (upper left) and notice the changes to attack/defense/range with each stance"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- Skills can be triggered via preset number-key keyboard shortcuts.
-  — "use preset keyboard shortcuts for your skills, the #keys"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- A duel rankings screen lists players with win/loss records (e.g., 10-20 wins, 0-4 losses); there are no leagues and no visible strength indicator on opponents before challenging them.
-  — "They all have 10-20 wins and only a few (0-4) losses."
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- A dedicated TRADE chat channel was added in a May 2015 update, separate from ALL chat.
-  — "With the new TRADE chat room. Can we expand on the TRADE room idea?"
-  · [[Straw Hat Samurai: Duels] So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20200719100025/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489549-straw-hat-samurai-duels-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it)
-- On launch the trade channel had an inverted/broken scroll bug (couldn't scroll down; scrolling down moved up); it was fixed within a day or two.
-  — "The new trade channel is bugged, you cannot scroll down there"
-  · [[Straw Hat Samurai: Duels] So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20200719100025/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489549-straw-hat-samurai-duels-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it)
-- PAGE UP / PAGE DOWN keyboard keys scroll the chat window (used as workaround for the scroll bug).
-  — "Use the PAGE UP and PAGE DOWN buttons on your key board."
-  · [[Straw Hat Samurai: Duels] So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20200719100025/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489549-straw-hat-samurai-duels-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it)
-- Chat supports a /ignore <name> command; there was no ignore button on player profiles (requested feature).
-  — "It’s easier than using the chat command: /ignore Spammer"
-  · [[Straw Hat Samurai: Duels] So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20200719100025/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489549-straw-hat-samurai-duels-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it)
-- Chat history is very short and scrolls away quickly; there was no CLAN chat channel or ROOM channel filtering yet (both requested).
-  — "Could we please have a LONGER chat room history? It scrolls away so quickly!"
-  · [[Straw Hat Samurai: Duels] So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20200719100025/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489549-straw-hat-samurai-duels-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it)
-- War room shows a 'You have been defeated in the war room' popup, and the message log normally records who defeated whom — though players reported the log entry sometimes missing.
-  — "a message that says “You have been defeated in the war room”"
-  · [[Straw Hat Samurai: Duels] war room troubles](https://web.archive.org/web/20200719210258/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490211-straw-hat-samurai-duels-war-room-troubles)
-
-## meta-social (237)
-
-- Logging in 31 consecutive days awards a 'Super Bonus' daily prize: a Present box containing a random set of orange (top-rarity) gear.
-  — "If you log in 31 days IN A ROW you will get a Super Bonus daily prize"
-  · [Getting FREE Oranges/Glove/Mask! Do 31 Daily Prizes and Clan War actions.](https://web.archive.org/web/20151231075434/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491033-getting-free-oranges-glove-mask-do-30-daily-prizes-and-clan-war-actions)
-- Player claim: the login-streak Super Bonus arrives on day 31, not day 30 (correcting the common '30-day' label).
-  — "you get the bonus on day 31 not 30."
-  · [Getting FREE Oranges/Glove/Mask! Do 31 Daily Prizes and Clan War actions.](https://web.archive.org/web/20151231075434/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491033-getting-free-oranges-glove-mask-do-30-daily-prizes-and-clan-war-actions)
-- Contradicting claim: another player received the Present on day 30 and it contained a rare item, not orange gear.
-  — "On the 30th I just got a Present (containing rare item) not a orange"
-  · [Getting FREE Oranges/Glove/Mask! Do 31 Daily Prizes and Clan War actions.](https://web.archive.org/web/20150911101822/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491033-getting-free-oranges-glove-mask-do-31-daily-prizes-and-clan-war-actions?page=1)
-- The login-streak Present grants a random cosmetic set; the player cannot choose which set they get.
-  — "you get a random set (you can't choose a specific one) as your 30 day login bonus"
-  · [Getting FREE Oranges/Glove/Mask! Do 31 Daily Prizes and Clan War actions.](https://web.archive.org/web/20151231075434/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491033-getting-free-oranges-glove-mask-do-30-daily-prizes-and-clan-war-actions)
-- Participating in clan wars and ranking up eventually awards a free clan-themed glove and mask.
-  — "do the clan wars and rank up. You will eventually get a free clan themed glove and mask."
-  · [Getting FREE Oranges/Glove/Mask! Do 31 Daily Prizes and Clan War actions.](https://web.archive.org/web/20151231075434/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491033-getting-free-oranges-glove-mask-do-30-daily-prizes-and-clan-war-actions)
-- War Room join flow per in-game help: ongoing battles are marked on the war-room map with your clan's flag; you select the battle, then the sector containing your clan's command HQ, then the 'move' action to enter the battlefield.
-  — "select the sector with your clans command HQ and select the 'move' action to enter the battlefield."
-  · [Not able to spend move points in War Room](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
-- Player claim: clan-war army resolution runs on a global 24-hour timer per capture/defend attempt; at the tick, troops in each sector are tallied, opposing soldiers cancel one-for-one, and the surviving side wins the sector.
-  — "It's 24 hours per attempt to capture/defend a space for every clan."
-  · [Not able to spend move points in War Room](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
-- Player claim: a clan flag on a sector without an HQ means an action is ongoing there but the clan either never built an HQ or removed it after effectively winning; players need an HQ present to 'move' into the battle.
-  — "your clan doesn't care enough to have an HQ built there"
-  · [Not able to spend move points in War Room](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
-- DEV: Lutgames states an account playing multiple characters cannot enter the same war-room territory with a second character on the same day — the likely cause of 'not allowed to enter this war room territory'.
-  — "You cannot enter the same territory with your second character on the same day."
-  · [Not able to spend move points in War Room](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
-- Counter-report to the dev's explanation: a player hit the territory-entry block without multiple characters but after hard-resetting his character several times — suggesting the per-day territory lock persists across character resets.
-  — "I am not using multiple characters. However, I did hard reset my character a couple of times."
-  · [Not able to spend move points in War Room](https://web.archive.org/web/20150907063607/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492295-not-able-to-spend-move-points-in-war-room?page=1)
-- War room movement points refresh on an hourly cycle — a player leaves and returns 'after the hour' with new moves available.
-  — "I come back after the hour with my new moves but I'm no longer in the territory."
-  · [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
-- Bug claim: a player who entered a territory but stayed out of attack range was still ejected from it and shown a defeat popup, with no matching message-log entry.
-  — "You have been defeated in the war room"
-  · [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
-- Your character persists in the war room as an AI-controlled unit; if it is killed while on a tile you are ejected and must re-enter from an HQ square.
-  — "If your AI character is killed in an attack on the tile you're on, you will be ejected"
-  · [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
-- Player strategy: defending a contested war-room tile from an adjacent tile is considered better than standing on the defended tile itself.
-  — "it is usually a better idea to defend from an adjacent tile than standing in the tile directly"
-  · [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
-- Bug claim (separate reporter): after moving between war territories, a leftover 'ghost' copy of the character could remain registered in the earlier territory and be defeated there hours later.
-  — "a "ghost" of your character stays behind and can be picked up as existing at the wrong sector"
-  · [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
-- War room combat is adjacency-based on a grid of squares: standing one square away from enemies keeps you out of attack range while advancing toward the front lines.
-  — "move towards the front lines, but stay 1 square away from being attacked"
-  · [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
-- There are four joinable story clans identified by color: Aka Ryu (Red), Aoi Hoiru (Blue), Midori Ken (Green), Ki Sensu (Yellow).
-  — "Aka Ryu(Red Clan)... Aoi Hoiru(Blue clan)... Midori Ken(Green Clan)... Ki Sensu(Yellow)"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Beyond the four story clans there were player-founded clans: Honoshihai (purple, elite), Blood Lotus (black/red), Koizumi (black/yellow), Kin Tomoe (gold, southern map).
-  — "Honoshihai(Purple Clan(player clan))This is Chronos's Clan"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Leaving a clan requires an item/document called a 'writ of resignation' (also called writ of release); players repeatedly begged others to issue one so they could switch clans.
-  — "can any of you guys give me a writ of resignation so i can join aoi hoiru"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Character deletion and restart was the accepted no-cost way to switch clans, considered easy below roughly level 20.
-  — "if you are low level (below 20) it is very easy to Delete your character and start again"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- World Battle territory-count snapshot, late April 2015: Red clan held 76 territories versus Blue's 200.
-  — "Red has 76 territories while Blue has 200."
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Player clans unlock 'player clan gear' by reaching 40 controlled territories — cited as the growth goal for both Koizumi and Kin Tomoe.
-  — "growing on its own for 40 territories so they can get player clan gear"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Player clans could be invite-only: Honoshihai was joinable only via a clan invite from a member or its leader.
-  — "you can only join by getting a clan invite from a clan member or the leader chronos"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Player claim: clans could cede/grant territories to other clans by agreement — Kin Tomoe received free land from Aka Ryu, and Blood Lotus was given 2 territories in Honoshihai's area.
-  — "have been agreed to be given free land from aka ryu"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Player claim: the four story clans are mechanically identical — no stat or gameplay advantage to any one of them; differences come only from how they are led.
-  — "There is NO ADVANTAGES to be in a clan or another one. They are all equals."
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Player hint: clan-chat participation/new-player relevance starts around level 10 ('say hi after you turn level 10'), suggesting clan features unlock near that level.
-  — "so say say hi after you turn level 10"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Castle battles in the war room run on a countdown and accept attacks up to the final seconds — one player landed an attack in the last 20 seconds of a castle fight.
-  — "I pulled an attack on the castle in the last 20 seconds"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20150907191222/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=2)
-- War-room battle outcomes are measured in surviving troops — a castle defense was won by a margin of just 2 troops.
-  — "Congrats on taking the castle at 15,61! ... responsible for your 2 troop victory"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20150907191222/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=2)
-- Clans have a member capacity: Aka Ryu filled up and was temporarily closed to new users in May 2015.
-  — "the Kongregate clan has gotten so big, Red Clan was temporarily closed to new users"
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20150911080640/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- Story clans have player-held leadership positions: player iostiogic became the leader of Aka Ryu in May 2015; other posts note mixed Kong/AG players in both Red and Blue leadership.
-  — "BTW, congrats to IostIogic. The new leader of Aka Ryu."
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20150911080640/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- Community context, spring 2015: Kongregate players organized to take over Red (Aka Ryu) while Armor Games players massed in Blue (Aoi Hoiru), making the World Battle a de facto portal-vs-portal war.
-  — "Kongregate is taking over the Red Clan (Aka Ryu)."
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20151231074339/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- 'Lut' is confirmed as the community's name for the developer — players' standard escalation for suspected bugs was 'tell Lut'.
-  — "Entirely possible. Should probably tell Lut."
-  · [war room troubles](https://web.archive.org/web/20151219185841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490211-war-room-troubles?page=1)
-- Building structures in clan war both helps the clan and grants the builder EXP toward rising in clan rank.
-  — "Build lots of structures in clan war... give you more EXP to rank up in your clan."
-  · [Where do I store extra money?](https://web.archive.org/web/20151231112117/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489121-where-do-i-store-extra-money?page=1)
-- Research caveat: the community wiki was considered basically wrong about everything as of April 2015; veterans advised confirming facts in Kong chat instead.
-  — "assume everything on the wiki is wrong unless you ask for confirmation in Kong chat"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- Duel rankings are viewable and show per-player win/loss records (players who stomped the OP had 10-20 wins, 0-4 losses).
-  — "They all have 10-20 wins and only a few (0-4) losses."
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- PvP has no leagues, matchmaking, or visible strength indicator; rebirthed characters can appear same-level and crush new players, a repeated complaint.
-  — "needs different leagues or at least some visual indication of the 'strength' of other players"
-  · [I don't get the dueling part...](https://web.archive.org/web/20160101011150/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489310-i-dont-get-the-dueling-part?page=1)
-- A TRADE chat channel was added around mid-May 2015, alongside the existing ALL channel; items can be shown/linked in chat and were commonly spammed into ALL.
-  — "With the new TRADE chat room. Can we expand on the TRADE room idea?"
-  · [So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20151231022234/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489549-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it?page=1)
-- The chat previously had an anti-flood auto-mute (posting ~7 lines within a minute muted you temporarily) that had been removed by May 2015; a player asks for it back.
-  — "if you post like 7 lines of text in a row within a minute it auto mutes you"
-  · [So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20151231022234/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489549-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it?page=1)
-- As of May 2015 there was no clan chat channel and no room-scoped channel; both were requested, along with longer chat history and combinable channel filters.
-  — "Could we add a CLAN chat room? Just pure clan chat."
-  · [So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20151231022234/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489549-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it?page=1)
-- An official community wiki lived at strawhatsamuraiduels.com/wiki with a community-editable Mines page (plus a 'Territories without Mines' list on its discussion tab).
-  — "http://www.strawhatsamuraiduels.com/wiki/index.php?title=Mines"
-  · [mines](https://web.archive.org/web/20150912051345/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/487127-mines?page=1)
-- Clan leadership is transferable between players: iostiogic replaced Tsuyoshi as leader of Aka Ryu in May 2015; a 'council' body was involved and an in-game player poll reportedly decided it (player account).
-  — "Tsuyoshi tried at the last minute but the council peoplez stopped him"
-  · [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1)
-- Clan war involves capturing territories, and destroyed villages (e.g. 'Tomoharah') can be rebuilt by clan effort (player claim).
-  — "help us get more territories and build up destroyed villages like tomoharah"
-  · [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1)
-- A 'war room' feature shows per-clan troop counts; informal clan roles included war room duty, questing, intel collection, and new-member relations.
-  — "Just watch our troop counts in the war room."
-  · [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1)
-- Clans have a membership cap and no player-facing kick mechanism — inactive members could not be removed by any means available to players (May 2015).
-  — "the inactives cannot be kicked by any current means"
-  · [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1)
-- Player claim: inactive members supposedly do not count toward the clan membership cap determination (matches the later dev statement in 'Full clans?').
-  — "they supposedly “don’t count” in determining the membership?"
-  · [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1)
-- Player speculation: the clan cap may be pegged to the smallest clan's size, so filling the smallest clan would raise everyone's cap (unconfirmed theory).
-  — "if the Clan Cap is limited by the smallest clan, filling in Green makes a good deal of sense"
-  · [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1)
-- The clan join limit was lifted (at least temporarily) around May 19, 2015 — players who had been locked out could join clans again.
-  — "The player limit seems to have been lifted for now."
-  · [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1)
-- There are color-coded joinable clans — Aka/red (Aka Ryu), Aoi/blue, Midori/green, and a yellow clan — and they are publicly open (no application gate).
-  — "don’t recommend Blue or Yellow. So the only choice left is Green."
-  · [AKA RYU ROLE CALL](https://web.archive.org/web/20150907191041/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495568-aka-ryu-role-call?page=1)
-- DEV: Lutgames confirmed the clan member cap formula accounts for inactive players and 'all the relevant factors' — full-looking clans are not actually blocked the way players feared.
-  — "Don’t worry. It takes into account inactive players and all the relevant factors."
-  · [Full clans?](https://web.archive.org/web/20150907062949/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496364-full-clans?page=1)
-- By May 13 2015 every clan except 'Hono' (Honoshihai) was displaying as full at the member cap; players asked for the cap's removal or a kick feature (screenshot-backed player report).
-  — "Either remove the cap on members or let us kick people out"
-  · [Full clans?](https://web.archive.org/web/20150907062949/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496364-full-clans?page=1)
-- DEV: Lutgames created an official Wikia (strawhatsamuraiduels.wikia.com) on ~May 16 2015 for official game information only; the pre-existing legacy wiki would become a fan-fiction/RP archive.
-  — "We will leave all the player fan-fiction off this new wiki. It will be for official information only."
-  · [Our wiki](https://web.archive.org/web/20150915004822/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496946-our-wiki?page=1)
-- The game predates its Kongregate surge by years — players state it had existed for more than two years before May 2015, across multiple game sites (source of a 'gamesite war' between player factions).
-  — "it has existed on this game for more than two years"
-  · [Our wiki](https://web.archive.org/web/20150915004822/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496946-our-wiki?page=1)
-- Clan history as of May 2015: Honoshihai led by Chronos (formerly named FireFistAce); Kin Tomoe led by Calsan (player-reported history used as wiki examples).
-  — "Chronos is the current leader of Honoshihai … Calsan is the leader of Kin Tomoe"
-  · [Our wiki](https://web.archive.org/web/20150912064846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496946-our-wiki?page=2)
-- The legacy wiki was officially linked from within the SHS game website/domain (main in-game/site help path for new players) and held 120+ player fan pages.
-  — "it is officially linked in the SHS domain and is easily accessible in the SHS website"
-  · [Our wiki](https://web.archive.org/web/20150912064846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496946-our-wiki?page=2)
-- DEV: Lutgames said in-game page links would be repointed to the new official wikia once ready, and that roleplaying is deliberately encouraged as part of the game's flavor and theme.
-  — "roleplaying is encouraged in the game since it adds to the flavor and the theme"
-  · [Our wiki](https://web.archive.org/web/20150912064846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496946-our-wiki?page=2)
-- The game had a web spectate/replay feature at strawhatsamuraiduels.com/watch?name=<playername>, which players shared to show off fights.
-  — "http://www.strawhatsamuraiduels.com/watch?name=firebreather99"
-  · [[Straw Hat Samurai: Duels] Story Quest Help](https://web.archive.org/web/20190720175126/http://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487823-straw-hat-samurai-duels-story-quest-help)
-- Besides the four joinable story clans, player-created clans exist (Honoshihai, Kin Tomoe, Koizumi, Blood Lotus) which require a member invite to join; even one-man clans can hold a map square.
-  — "some players clans not involved in the story and you need to ask some of their members"
-  · [State of the Clan War](https://web.archive.org/web/20150912173631/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=2)
-- The war map includes an unjoinable AI bandit faction holding scattered territories; players considered its squares free captures.
-  — "This one you can’t join … pretty much free squares to whoever bothers attacking them"
-  · [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
-- War Room progression uses military ranks with per-rank move allowances and a visible progress counter — e.g. a 2-day-old player was a '4 move Corporal at 96/180'.
-  — "Currently a 4 move Corporal at 96/180 and started 2 days ago."
-  · [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
-- Clan-war actions players discuss as options: invading enemy castles internally, stealing clan flags via their towns, and doing quests in enemy towns.
-  — "invading castles internally and stealing their flags via their towns? Or doing quests in enemy towns?"
-  · [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
-- The game is cross-portal: Facebook, ArmorGames, and Kongregate players share one world/server and one clan war; the game had existed over 3 years before the 2015 Kongregate release.
-  — "This game is out for over 3 years allready."
-  · [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
-- In-game character names are separate from portal usernames (Kong user Captain_Catface's IGN was 'Vainglory'), and clan leadership is transferable between players (Alucard made Tameshi the new Midori leader).
-  — "For those who don’t know, my IGN is “Vainglory”."
-  · [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
-- Player claim: each story clan has four special 'diplomatic territories' on the war map (a home region distinct from conquerable land — Aoi could be 'pushed all the way back to their diplomatic territories').
-  — "please locate and mark the four diplomatic territories from each clan"
-  · [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
-- The 'war room' (clan-war area) had a bug for certain users where moving froze the game's video while audio kept playing, blocking multiplayer participation.
-  — "Moving seems to freeze the game's video, whereas the audio continues"
-  · [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1)
-- PvP duels work via direct challenges you accept, and there is a duel list; there was no way to filter or sort opponents by Dan (rebirth) rank — players requested Dan-tier tabs.
-  — "have the entire duel list be listed according to your Dan lvls"
-  · [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
-- Co-op behavior: bringing a friend to the same map area and entering a fight makes the friend's character participate as an AI-controlled "bot" ally in your battle.
-  — "Take your friend to the same area, where red oni is."
-  · [Red oni](https://web.archive.org/web/20150910135359/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492406-red-oni?page=1)
-- Three recurring free rewards: the Daily Prize (24-hour cooldown from last pickup), plus the Friendship room and Trap room, which each reset after every World Battle troop movement.
-  — "There are 3 daily prizes you should take every day."
-  · [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
-- The chat command /allyroom automatically allies you with everyone in a PvP room.
-  — "/allyroom – auto ally all people in a pvp room"
-  · [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
-- PvP rooms have a single fixed entrance spawn point (enabling spawn camping) and no level segregation — a level 80 can freely kill level 10-30 players in the same room.
-  — "a level 80 killing a level 30 and 10 and camping in the entrance of one pvp room"
-  · [Make pvp room fair](https://web.archive.org/web/20151231143243/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493858-make-pvp-room-fair?page=1)
-- Implied current behavior: dying in a PvP room does NOT grant a free full HP/Chi restore (a player explicitly requests this be added).
-  — "please give full heal and chi recovery after being killed in pvp rooms"
-  · [Make pvp room fair](https://web.archive.org/web/20151231143243/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493858-make-pvp-room-fair?page=1)
-- There are multiple numbered PvP rooms (PVP 2, PVP 3 referenced); all are currently unrestricted free-for-all, and skill cooldowns tick while waiting alone in a room, so campers can sit with powerful skills fully charged.
-  — "PVP 3 should be an anything goes room. As it is now. Free for all."
-  · [Make pvp room fair](https://web.archive.org/web/20151231143243/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493858-make-pvp-room-fair?page=1)
-- World Battle territories and castles are addressed by numeric tile coordinates (e.g. territory 14.56, castle at 15.61, a range 'from 14,56 to 22,55'), and clan deals trade blocks of tiles (one deal swapped a 15-tile block).
-  — "We let Aka Ryu take 14.56 without defending it. We get back our castle at 15.61."
-  · [Aka and Aoi status](https://web.archive.org/web/20150915080519/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494355-aka-and-aoi-status?page=1)
-- Clans can build HQs inside enemy territory; HQ-building rights are granted/revoked per member by clan leadership, and HQs can be dismantled voluntarily (used as a ceasefire condition).
-  — "His rights to build HQs have been putted away."
-  · [Aka and Aoi status](https://web.archive.org/web/20150915080519/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494355-aka-and-aoi-status?page=1)
-- Players can defect to a different clan even in the middle of a war (a leader left Aka Ryu for Kin Tomoe mid-war); at least three clans existed: Aoi (Hoiru), Aka Ryu, Kin Tomoe, each with a leader and second-in-command.
-  — "Ashura let Aka Ryu down by joining Kin Tomoe in the MIDDLE OF THE WAR"
-  · [Aka and Aoi status](https://web.archive.org/web/20150915080519/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494355-aka-and-aoi-status?page=1)
-- World Battle fights resolve to surviving troop counts — one famously close battle ended with 2 Aoi soldiers remaining vs 0 Aka Ryu.
-  — "2 Aoi’s soldiers Remaining VS 0 Aka Ryu’s warriors."
-  · [Aka and Aoi status](https://web.archive.org/web/20150915080519/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494355-aka-and-aoi-status?page=1)
-- The war room is where clan members deploy troop units toward enemy flags; troop movement happens in cycles (corroborated by Friendship/Trap rooms resetting 'after every troop movement').
-  — "when we start questing the north in the warroom, deploy units towards their flags"
-  · [Aka and Aoi status](https://web.archive.org/web/20150915080519/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494355-aka-and-aoi-status?page=1)
-- Clan War Room offers purchasable actions funded by individual players (no shared clan treasury existed; one was suggested).
-  — "Clan Treasury. Proceeds all go to War Room actions."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The clan War Room has a demolish button with no confirmation safeguard; accidental presses destroyed structures and caused distrust within a clan.
-  — "demolish button in war room is too easily pushed. That caused distrust in the clan."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The castle map used in clan war ends in a 'flagroom' where a flag is captured; the dojo hosts PVP rooms (a King-of-the-Hill dojo room was only a suggestion).
-  — "Put a flag to capture, like the castle flagroom, at the end of the PVP room."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- PVP tournaments existed but were infrequent and 1v1 only; players requested scheduled tournaments and 2v2/3v3 team duel formats.
-  — "More tournaments. It's the lifeblood of a "duels" game."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Duel matchmaking has no reservation/queue: challenging a player often returns 'currently unavailable' and requires repeated manual retry clicking.
-  — ""currently unavailable" occurs too often and I wasted time for clicking again and again"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20150910180244/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=2)
-- Leaving a clan normally requires buying a Writ of Release scroll costing 25 gold (premium currency).
-  — "besides buying the 25gold scroll"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Ways out of a clan: buy a Writ of Release, trade for one from another player, accept an invite to a player-run clan, delete and remake your character, or be kicked by the clan leader.
-  — "Writ of release, clan invitation, delete your character."
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- A fresh (remade) character can join a clan upon reaching level 10, implying clan joining is level-gated at 10.
-  — "Delete your character and remake it then upon reaching level 10 joining a different one"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Leaving a clan wipes your clan rank; rank and clan gear must be re-earned from scratch in the new clan.
-  — "You will lose your rank if you leave your clan, you must gain all the gear in your new clan"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Game staff called 'Kanji' can exceptionally grant a free Writ of Release scroll (reported case tied to bad clan leadership); players stress this is the exception, not the rule.
-  — "asked a Kanji to give him a scroll for free and got it"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Joining a clan to spy or sabotage is against the game's rules; suspected spies can have their case investigated (player claim).
-  — "it is technically against the rules to be in a clan for the purpose of sabotage or spying"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- The game's two big rival starter clans are color-coded — Aka Ryu (red) vs Aoi Houri/'Aoi Hoiru' (blue) — and new players are lobbied on the forum to pick a side; smaller player-run clans like Honoshihai recruit by invite only.
-  — "To those who are new in this game and plays the game much, please join Red if possible"
-  · [AKA RYU WINS (Recruitment Thread)](https://web.archive.org/web/20150920113135/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500008-aka-ryu-wins-recruitment-thread?page=1)
-- Same outage (Sep 12, 2015): after ~30 minutes of refreshing, the same player got past initial load but froze at the War Room ('wr'), suggesting the War Room was a distinct load/connection stage that could fail separately.
-  — "Now after 30 mins refreshing, im freezed at wr"
-  · [Infi load](https://web.archive.org/web/20160908183934/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/538848-infi-load)
-- A second player independently confirmed the War Room (clan-war feature) was server-side down for everyone that day, not just one client — evidence the War Room depended on a live backend service.
-  — "I don’t think the war room is working at all"
-  · [Infi load](https://web.archive.org/web/20160908183934/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/538848-infi-load)
-- Clan structure detail (Sep 2015): clans had a rank hierarchy including a 'General' rank, and a clan leader could hand day-to-day management to a designated sub-leader; a player even recruited a General from ANOTHER clan for the role, implying cross-clan movement was possible.
-  — "looking for a general from another clan to be sub-leader while i am out"
-  · [Looking for a general to be a sub leader while i am gone](https://web.archive.org/web/20160908184149/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/544154-looking-for-a-general-to-be-a-sub-leader-while-i-am-gone)
-- The developer (Explosive Barrel) ran its own official forum at forums.explosivebarrel.com, which players considered the "real" forums versus the quieter Kongregate forum — a lead for further corpus harvesting.
-  — "http://forums.explosivebarrel.com/index.php <—- real forums"
-  · [forum activity is dying](https://web.archive.org/web/20161016203657/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/650580-forum-activity-is-dying)
-- The game had been online roughly 6 years as of July 2016 (launch circa 2010), with players still criticizing its balancing; no substantial content update in the months before July 2016.
-  — "Game has been online for 6 years now yet they till struggle with the balancing"
-  · [forum activity is dying](https://web.archive.org/web/20161016203657/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/650580-forum-activity-is-dying)
-- Player claim: the developers paid a recurring fee ("rent") to keep the game hosted on Kongregate and depended on premium gold purchases to sustain it.
-  — "they need us to buy their gold stuffs so they can keep the game on kong, they do pay a rent fee"
-  · [forum activity is dying](https://web.archive.org/web/20161016203657/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/650580-forum-activity-is-dying)
-- Official patch/update notes were published on the game's Facebook page rather than in-game; players who missed them mistook stat changes for bugs.
-  — "the update wasn’t hidden, they displayed it on their facebook page"
-  · [Stats bug](https://web.archive.org/web/20151231071033/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496971-stats-bug?page=1)
-- War room (clan war/World Battle) gameplay includes four player actions: attack, defend, build, and deploy, coordinated via orders in the war room chat.
-  — "listen to the orders to know, where to attack/defend/build/deploy"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- War room locations are identified by numeric X,Y grid coordinates (e.g. 22,55 / 17,62 / 15,66), and multiple locations can have active fights simultaneously.
-  — "In war room, focus on: 22,55, 17,62, 15,66. Keep balance between them."
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- Completing quests inside a map area contributes to defending that area for your clan in the territory war, separate from war-room moves.
-  — "Defend by quests any area at southern island"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- Missions convert towns to clan control via points: a level-80 player doing missions in a ~level-20 zone earns roughly 15 conversion points per run, so 10 players yield ~150 points.
-  — "doing missions on the blue island (which is roughly lvl 20) is easy gaining an easy 15 points per person"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- War room moves are not instant: there are waiting periods between moves, during which players can grind missions elsewhere.
-  — "that can be done while waiting for moves in the war room"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- Individual character strength matters in war room combat: stronger clanmates are considered more useful in clan-war fights (player claim).
-  — "the better your clanmate is, the more he will be useful in war room"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- The war room has a clan message board where commanders post standing orders and members can leave messages for leaders to review.
-  — "check the war room message board for new orders from the commanders"
-  · [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20151219190542/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread?page=1)
-- The war-room military rank chart is a game-provided system identical for every clan, not clan-invented.
-  — "The rank chart applies to every clan."
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20150907061933/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread?page=1)
-- Clan hierarchy ranks cited by players include Marshal (held by the clan's player leader), Second in Command, and multiple Generals, with lower ranks like Corporal and Sergeant Major role-played beneath them.
-  — "Marshal : Yuuta (New Leader) Second in Command : Takemaru"
-  · [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20151219190542/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread?page=1)
-- Clans have a player-held 'Clan Leader' position, which players distinguish from the lore Daimyo figure.
-  — "a Clan Leader isn’t a Daimyo."
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20150907061933/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread?page=1)
-- An official wiki existed at strawhatsamuraiduels.com/wiki with a 'War_Room' page documenting the clan ranking system (URL worth checking in Wayback).
-  — "You can check about the ranking system here: http://www.strawhatsamuraiduels.com/wiki/index.php?title=War_Room"
-  · [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20151219190542/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread?page=1)
-- At least eight named clans existed: Aka Ryu (red), Aoi Hoiru (blue), Midori Ken (green), Ki Sensu (yellow/gold), plus Honoshihai, Kin Tomoe, Koizumi, and Blood Lotus; Shira Tancho appears as a story-side clan.
-  — "Ki Sensu: war Aoi Horiu: alliance Honoshihai: alliance Kin Tomoe: neutral Koizumi: neutral Blood lotus: neutral"
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20150907061933/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread?page=1)
-- Clans can lose all their territory in the World Battle, which players describe as the clan 'disappearing' from the map (player claim, July 2015).
-  — "Actually they just lost their territory XD"
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20150907061933/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread?page=1)
-- The World Battle map shows territory ownership colored by clan; players tracked campaign progress with map screenshots showing red (Aka Ryu) expanding over blue (Aoi Hoiru) in June 2015.
-  — "updating Aka’s progress: more red, less blue =D"
-  · [AKA RYU WINS (Recruitment Thread)](https://web.archive.org/web/20160908185400/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500008-aka-ryu-wins-recruitment-thread)
-- The Kongregate version ran on a shared server with players from Facebook and ArmorGames — one cross-portal game world.
-  — "we are on a shared game with players from Facebook, ArmorGames, and who-knows-where-else"
+- Contradicting claim (Karyuudan): high defense beats high HP at endgame; only some skills ignore defense and those have cooldowns, so raw slashes dominate.
+  — "at end game when you fight skilled people that lack of defense will make you suffer"
   · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Inviting a player into a private (closed) clan costs the clan 5 gold per invite, which kept community clans from open recruitment.
-  — "the game charges 5 gold per invite to private clans"
+- The attack stat is hard-capped at 10 + character level; suggested build fills attack to cap then dumps remaining points into health and speed.
+  — "Put points into attack until you hit its cap (10+level)"
   · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- World Battle factions are color-coded; the green faction is named Midori, and open factions coexist with smaller invite-only clans inside the clan battle system.
-  — "we’re asking all Kong players to join up with the green faction (Midori)"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- War room bug (Aug 2015): for some users, moving in the clan-war 'war room' froze the video while audio kept playing, blocking competitive multiplayer.
-  — "Moving seems to freeze the game’s video, whereas the audio continues"
-  · [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1)
-- PvP duels used a challenge/accept flow with no filtering by rebirth (Dan) tier — non-rebirthed players got matched against rebirthed ones; players requested Dan-tier tabs or a Dan-sorted duel list.
-  — "have the entire duel list be listed according to your Dan lvls"
-  · [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
-- The game had redeem codes and timed events as systems; by Nov 2016 a player reports updates/new codes had dried up and asks for content spanning levels 10-90.
-  — "GAME IS SLOWLY BEING DEAD BECAUSE OF DECREASE UPDATES AND NO NEW CODES AND EVENT"
-  · [[Straw Hat Samurai: Duels] NEW REDEEM CODES AND EVENTS](https://web.archive.org/web/20150910070459/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/506148-fast-trade?page=1)
-- War Room actions cost money and there was no shared clan treasury; a player suggested adding a Clan Treasury whose proceeds fund War Room actions.
-  — "Clan Treasury. Proceeds all go to War Room actions."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Duels and tournaments were strictly 1v1; players requested team duels (2v2, 3v3) and 2v2 tournaments as missing features.
-  — "Team Duels: 2v2,3v3, etc"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Tengu fights are multiplayer encounters where players must manually type the /allyroom chat command to ally with others in the room; auto-allying was only a suggestion.
-  — "Automatic “/allyroom” when entering a Tengu fight."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Tournaments existed but were not regularly scheduled; players wanted scheduled recurring tournaments.
-  — "More tournaments. It’s the lifeblood of a “duels” game."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- On the War Room map, towns/cities/castle towns can serve as a clan HQ; leaders had no ability to disable an HQ location (that control was suggested).
-  — "Would be better if town/city/castle town (as a HQ) in war room can be disabled by the leaders"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- The duel reservation system frequently returned a 'currently unavailable' error forcing repeated clicking; the reserved match had no decline option. A random-pairing notify system was suggested instead.
-  — "duel reservation: “currently unavailable” occurs too often and I wasted time for clicking again and again."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20150910180244/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=2)
-- Leaving a clan normally requires buying a Writ of Release scroll costing 25 gold (premium currency).
-  — "besides buying the 25gold scroll"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- A character reset removes you from your clan without needing the Writ of Release scroll.
-  — "it’s possible to leave the clan without the scroll if you reset"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Ways out of a clan: buy a Writ of Release with gold, trade a writ from another player (writs are tradeable), accept an invite to a player-made clan, delete and remake your character, or be kicked by the leader. Gold itself is obtainable roughly 5 different ways in-game besides purchase.
-  — "Buy a write of release with gold(may be obtained by buying it or by about 5 different ways in game.)"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Leaving a clan forfeits your clan rank; rank and clan gear must be re-earned from scratch in the new clan.
-  — "You will lose your rank if you leave your clan"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Kanji (in-game moderators) can gift a free Writ of Release in exceptional cases, e.g., escaping a badly-led clan; devs could also manually remove players, but players stress this is the exception, not the rule.
-  — "asked a Kanji to give him a scroll for free and got it"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Joining a clan to spy or sabotage is against the game's rules; a leader can have a suspected spy's membership investigated.
-  — "it is technically against the rules to be in a clan for the purpose of sabotage or spying"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- The game has two default rival color clans — Aka Ryu (red) and Aoi Hoiru (blue) — locked in an ongoing war, plus player-made clans (e.g., Honoshihai); new players are free to pick any clan.
-  — "I’m from blue clan (to users, who don’t know)"
-  · [AKA RYU WINS (Recruitment Thread)](https://web.archive.org/web/20150920113135/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500008-aka-ryu-wins-recruitment-thread?page=1)
-- War Room locations are identified by numeric map coordinates (examples given: 22,55 / 17,62 / 15,66 / 21,59 / 21,62) — the World Battle map is a coordinate grid.
-  — "In war room, focus on: 22,55, 17,62, 15,66. Keep balance between them."
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- War Room player actions include attack, defend, build, and deploy — building and deploying are distinct verbs alongside combat orders.
-  — "listen to the orders to know, where to attack/defend/build/deploy"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- Playing normal quests inside a territory contributes to defending that area for your clan — PvE questing feeds the clan-war territory system.
-  — "Defend by quests any area at southern island."
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- Town conversion uses mission points: a level 80 player running missions in a ~level 20 zone earns roughly 15 conversion points per person per run; 10 players stacking this yields ~150 points (player numbers).
-  — "doing missions on the blue island (which is roughly lvl 20) is easy gaining an easy 15 points per person"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- Kongregate, Armor Games, and the SHSD official-site players all share one game world and one clan system (cross-portal shared server).
-  — "I’m not a Kong player , or an Armor Games player, I’m from the SHSD official website."
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- The clan rank chart is identical for every clan; recruitment-thread diplomacy/alliances/lore are player role-play, not game mechanics (stated by Captain_Catface, a Kongregate developer-badged user — NOT Lutgames, so treat as informed claim).
-  — "Their mask is a green oni mask. The rank chart applies to every clan. The rest is RP silliness."
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20161016202029/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread)
-- "Converting towns" is the core territorial activity expected of clan members in the World Battle, alongside War Room battles.
-  — "convert towns for the benefit of the green fist"
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20161016202029/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread)
-- By July 2015 some clans had reportedly lost all their territory on the World Battle map and gone quiet — total territorial elimination was possible (player claim).
-  — "Actually they just lost their territory"
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20161016202029/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread)
-- Clan roster circa May 2015 (from Midori Ken diplomacy list): Aka Ryu, Ki Sensu, Aoi Hoiru, Honoshihai, Kin Tomoe, plus clans named Koizumi and Blood Lotus.
-  — "Kin Tomoe : neutral Koizumi : neutral Blood lotus : neutral"
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20161016202029/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread)
-- Every clan shares the same ranking system, documented on the official wiki at strawhatsamuraiduels.com/wiki (War_Room page); leadership structure referenced: NPC Daimyo, Marshal (top player leader), Second in Command, Generals.
-  — "Like other clans, Ki Sensu has the same ranking system."
-  · [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20160725161015/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread)
-- Ki Sensu is the gold/yellow clan; player-run leadership can change hands (new leader Yuuta announced Aug 2015); clan diplomacy states are purely player-declared.
-  — "Ki Sensu Got a New Leader: Yuuta"
-  · [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20160725161015/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread)
-- All known ways to leave a clan: buy a Writ of Release, trade a Writ from another player, accept a player-clan invite (which transfers you directly), delete and remake your character, or be kicked by the clan leader.
-  — "Writ of release, clan invitation, delete your character."
-  · [Ways to leave a clan](https://web.archive.org/web/20160405075911/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan)
-- Contradiction: one player claimed there is NO way to leave a clan besides the scroll; another claimed a "reset" also removes you from your clan.
-  — "it’s possible to leave the clan without the scroll if you reset"
-  · [Ways to leave a clan](https://web.archive.org/web/20160405075911/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan)
-- Leaving a clan wipes your clan rank — rank and all clan-branded gear must be re-earned from scratch in the new clan.
-  — "You will lose your rank if you leave your clan, you must gain all the gear in your new clan"
-  · [Ways to leave a clan](https://web.archive.org/web/20160405075911/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan)
-- In-game moderators called "Kanji" exist and can grant items in exceptional cases — one reportedly gave a player a free Writ of Release over bad clan leadership (player claim).
-  — "asked a Kanji to give him a scroll for free and got it"
-  · [Ways to leave a clan](https://web.archive.org/web/20160405075911/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan)
-- Joining a clan to spy or sabotage is against the game rules; clan leaders can request an investigation of suspected spies (player claim).
-  — "it is technically against the rules to be in a clan for the purpose of sabotage or spying"
-  · [Ways to leave a clan](https://web.archive.org/web/20160405075911/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan)
-- Player-created clans exist alongside the main color clans (e.g. Honoshihai) and are joined via clan invites, with membership hand-picked by the leader.
-  — "Use a clan invite to a player clan such as my own clan of honoshihai"
-  · [Ways to leave a clan](https://web.archive.org/web/20160405075911/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan)
-- The main clans have no player founder — each has only an NPC "Daimyo" for flavor, while actual leadership is held by player leaders (stated by Aka Ryu's then-leader).
-  — "there is no founder, only an NPC “Daimyo” for flavor"
-  · [Aka Ry and it's founder](https://web.archive.org/web/20160725142620/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/596572-aka-ry-and-its-founder)
-- The game ran on one shared server across portals — Kongregate, Facebook, and ArmorGames players all play together (player report, Apr 2015).
-  — "we are on a shared game with players from Facebook, ArmorGames, and who-knows-where-else"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- The game historically distributed redeem codes and ran events; by Nov 2016 a player laments updates, codes, and events had dried up and asks for content aimed at levels 10-90.
-  — "GAME IS SLOWLY BEING DEAD BECAUSE OF DECREASE UPDATES AND NO NEW CODES AND EVENT"
-  · [[Straw Hat Samurai: Duels] NEW REDEEM CODES AND EVENTS](https://web.archive.org/web/20181011190942/http://www.kongregate.com:80/forums/12-kongregate-multiplayer-games/topics/686158-straw-hat-samurai-duels-new-redeem-codes-and-events)
-- Clan war structure: four joinable story clans (green, red, yellow, blue) plus private player clans all hold territory squares on a shared world map.
-  — "the clans that currently hold territory on the world map"
-  · [State of the Clan War](https://web.archive.org/web/20150413022624/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war)
-- The war room has military ranks tied to move allowances: a player two days in describes being a Corporal with 4 moves at 96/180 progress (rank/point tracker figures as reported).
-  — "Currently a 4 move Corporal at 96/180 and started 2 days ago"
-  · [State of the Clan War](https://web.archive.org/web/20150413022624/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war)
-- Story clans have player leadership — the Yellow clan (Ki Sensu) was led by a player named Wrath in Apr 2015.
-  — "Ki Sensu’s(Yellow) leader is a Dude Named Wrath"
-  · [State of the Clan War](https://web.archive.org/web/20150413022624/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war)
-- Story clans can lose nearly all territory in the clan war — Red was described as nearly wiped off the map and unable to defend itself.
-  — "they were nearly wiped off the map a while back"
-  · [State of the Clan War](https://web.archive.org/web/20150413022624/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war)
-- Player question (unanswered in snapshot) implies clan-war mechanics included invading castles, stealing flags via enemy towns, and doing quests in enemy towns as war actions.
-  — "Should we be invading castles internally and stealing their flags via their towns? Or doing quests in enemy towns?"
-  · [State of the Clan War](https://web.archive.org/web/20150413022624/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war)
-- Player clans active in May 2015 included Honoshihai, Kin Tomoe, Koizumi, and Blood Lotus; joining required asking members for an invite.
-  — "Honoshihai clan, Kin Tomoe clan, Koizumi clan, and Blood Lotus clan are some players clans"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2)
-- Contradiction pair (Jul 2016), claim A: pink and orange factions had been formed, the pink one possibly named Cherry Blossom (SonicFanBoyman, uncertain).
-  — "All I know is pink is called Cherry Blossom (I think)"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2)
-- Contradiction pair (Jul 2016), claim B: there is no pink faction, and the orange faction exists but cannot be joined by players (Azgodeth — consistent with orange being the AI bandit faction).
-  — "there is no pink? and there will be no mention of orange. (because you cant join them anyways)"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2)
-- DEV: The authoritative way to verify a duel is a live PvP match (not a fake/AI stand-in) is seeing a ping appear in the duel chat.
-  — "To confirm if they are live duels, look for a ping in the duel chat."
-  · [Duel Bug](https://web.archive.org/web/20200719122510/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485970-straw-hat-samurai-duels-duel-bug)
-- Only live, ping-verified duels count as a win/loss/draw on a player's duel record (FateIsEscaped).
-  — "That's the only way a Duel counts as a win/loss or draw on your record."
-  · [Duel Bug](https://web.archive.org/web/20200719122510/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485970-straw-hat-samurai-duels-duel-bug)
-- The game sometimes presents a duel as live PvP when it is actually not (a simulated opponent), a deceptive edge case players must detect via duel chat (FateIsEscaped claim).
-  — "sometimes that the game pretends its a live duel, when it's really not"
-  · [Duel Bug](https://web.archive.org/web/20200719122510/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485970-straw-hat-samurai-duels-duel-bug)
-- As of April 8 2015 the game had no Kongregate badges; a player (AlphaPhenix) was requesting they be added.
-  — "should ever espect badges for this wonderful game"
-  · [badges?](https://web.archive.org/web/20200719213633/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486008-straw-hat-samurai-duels-badges)
-- The clan-war world map is held by four joinable story clans — Green (Midori), Red (Aka), Yellow (Ki), Blue (Aoi) — plus player-made clans and one unjoinable AI faction (Captain_Catface).
-  — "This thread will give a short description of the clans that currently hold territory on the world map"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- War-room military ranks gate the number of moves a player has (Corporal = 4 moves) with a visible progress counter toward the next rank (96/180); FateIsEscaped reached this after 2 days of play.
-  — "Currently a 4 move Corporal at 96/180 and started 2 days ago."
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- Crops are spendable — by the player or their clan leader — to build extra HQ structures in the clan war (AbsoluteShadow claim).
-  — "you can use crops or your leader can to build extra HQ's"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- Player question implies these clan-war options existed: invading enemy castles from inside, stealing castle flags via their towns, and doing quests in enemy towns (FateIsEscaped, asked as a question — unconfirmed).
-  — "Should we be invading castles internally and stealing their flags via their towns? Or doing quests in enemy towns?"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- Player clans are invitation-only and leader-curated; the Honoshihai leader reportedly admitted only hand-picked 'elite members' (lissachanmanga).
-  — "their leader only chooses 'elite members.'"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- Each story clan has four 'diplomatic territories' on the war map, treated as a fallback core distinct from conquerable land (Captain_Catface, who also planned to push Aoi 'back to their diplomatic territories').
-  — "please locate and mark the four diplomatic territories from each clan"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- Clan leadership is transferable: outgoing Midori leader Alucard appointed Sedarion/Tameshi as the new leader (Sedarion).
-  — "He made me the new leader of midori"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- A player clan can exist with a single member holding a single map square (Blood Lotus was one player with one territory) (Captain_Catface).
-  — "It's one guy, with one square"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- The war map contains unclaimed areas that clans can take over without fighting another clan (Captain_Catface).
-  — "They're currently just trying to take over unclaimed areas"
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- April 2015 balance snapshot per Captain_Catface: Yellow (Ki) was the most powerful story clan, Green (Midori) second, and Blue (Aoi) the weakest surviving story clan; his phrasing 'non-destroyed' implies story clans can be destroyed/eliminated.
-  — "The blues are the weakest non-destroyed story clan, but are very aggressive."
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- Player clans existing in mid-2015 included Honoshihai, Kin Tomoe, Koizumi, and Blood Lotus; joining one requires asking its members for an invite (Saskia_Arcanica).
-  — "are some players clans not involved in the story and you need to ask some of their members to get insine one of them"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- The clan-war feature is referred to in-game as the 'war room', and it is distinct from the story campaign (Captain_Catface usage).
-  — "the story of the game has very little relevance to the state of the war room"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- Story clans can be nearly eliminated from the war map: by January 2017 Midori Ken had been almost completely forced off the map by Ki Sensu (SonicFanBoyman).
-  — "Midori Ken was almost completely forced off of the map by Ki Sensu"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- Claim (June 2016): new pink and orange factions were formed after launch, the pink one possibly named Cherry Blossom (SonicFanBoyman — contradicted by another player, see companion fact).
-  — "All I know is pink is called Cherry Blossom (I think)"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- Contradicting claim (July 2016): there is no pink clan, and the orange faction exists but cannot be joined by players — implying orange is another AI/system faction (Azgodeth).
-  — "there is no pink? and there will be no mention of orange. (because you cant join them anyways)"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- An official community-editable wiki existed at strawhatsamuraiduels.com/wiki with a Mines page (and a talk-page list of mineless territories) that Kongregate players were directed to for crowdsourced map data.
-  — "There's a list of mine in the wiki. The kongregate community can add new mine locations there."
-  · [mines](https://web.archive.org/web/20200719085738/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487424-straw-hat-samurai-duels-epilogue-quest)
-- An official community wiki ran at strawhatsamuraiduels.com/wiki with a co-edited 'Mines' page, plus a talk-page list of territories without mines; the in-game official forums and Kongregate forums cross-pollinated data.
-  — "There's a list of mine in the wiki. The kongregate community can add new mine locations there."
-  · [mines](https://web.archive.org/web/20200719145615/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487127-straw-hat-samurai-duels-mines)
-- An official wiki existed at strawhatsamuraiduels.com/wiki with a Skills page (April 2015), but players found its skill coverage sparse and planned to write their own guides.
-  — "http://www.strawhatsamuraiduels.com/wiki/index.php?title=Skills"
-  · [[Straw Hat Samurai: Duels] Anyplace where i can find a guide ? Wikipedia ?](https://web.archive.org/web/20200719085750/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487451-straw-hat-samurai-duels-anyplace-where-i-can-find-a-guide-wikipedia)
-- The game had its own official forum on the Explosive Barrel site (forumdisplay.php?fid=21), nearly empty as of April 2015.
-  — "the game has its own forum here: http://forums.explosivebarrel.com/forumdisplay.php?fid=21"
-  · [[Straw Hat Samurai: Duels] Anyplace where i can find a guide ? Wikipedia ?](https://web.archive.org/web/20200719085750/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487451-straw-hat-samurai-duels-anyplace-where-i-can-find-a-guide-wikipedia)
-- The Kongregate version ran on a shared server/world with players from Facebook, ArmorGames and other portals.
-  — "we are on a shared game with players from Facebook, ArmorGames, and who-knows-where-else"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Open factions (e.g. the red faction, which Kong players were told to join) coexist with private clans; the game charges 5 gold per invite to a private clan.
-  — "the game charges 5 gold per invite to private clans"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- DEV: a standalone site, strawhatsamuraiduels.com, existed as an alternative place to play; Lutgames used it for connectivity triage. The Explosive Barrel site also allowed Facebook login, while the Kong embed auto-logged the Kong account.
-  — "Are you able to play on strawhatsamuraiduels.com?"
-  · [[Straw Hat Samurai: Duels] Cant Connect To Server](https://web.archive.org/web/20200719172253/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485645-straw-hat-samurai-duels-cant-connect-to-server)
-- Participating in clan war actions and ranking up eventually awards a free clan-themed glove and mask (cosmetic clan-war rank rewards).
-  — "do the clan wars and rank up. You will eventually get a free clan themed glove and mask"
-  · [[Straw Hat Samurai: Duels] Getting FREE Oranges/Glove/Mask! Do 31 Daily Prizes and Clan War actions.](https://web.archive.org/web/20200719111454/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/491033-straw-hat-samurai-duels-getting-free-oranges-glove-mask-do-31-daily-prizes-and-clan-war-actions)
-- Players give away weapons/items to others in chat when their inventory is full — item transfer between players exists, and there is a carry/purse capacity limit; no clan vault exists (it is the suggestion).
-  — "players giving away their weapons and items in the chat because they cannot carry it anymore and their purse is full"
-  · [[Straw Hat Samurai: Duels] ITT: Things you want to see in the game](https://web.archive.org/web/20200719131437/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490507-straw-hat-samurai-duels-itt-things-you-want-to-see-in-the-game)
-- World Battle/clan war: castles sit at map grid coordinates (a castle 'at 15,61' was captured), attacks can be launched in a battle's final 20 seconds, and outcomes can be decided by margins as small as 2 troops.
-  — "Congrats on taking the castle at 15,61!... I pulled an attack on the castle in the last 20 seconds"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us. (page 2)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=2)
-- Player claim: clans confer no gameplay advantages — all clans are mechanically equal; another player counters that clans differ in members and territories held.
-  — "There is NO ADVANTAGES to be in a clan or another one. They are all equals."
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us. (page 2)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=2)
-- There are exactly four clans (Red Aka Ryu, Blue Aoi Hoiru, plus Yellow and Green), all recruiting; official SHSD forums existed separately from Kongregate/Armor Games forums.
-  — "there are four clans and all are recruiting... A similar thread will be created on Armor and the official SHSD forums"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us. (page 3)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- Clans have a membership cap: Red Clan (Aka Ryu) was temporarily closed to new members after filling up with Kongregate players.
-  — "Red Clan was temporarily closed to new users"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us. (page 3)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- The game was still alive with an active playerbase as late as early February 2016 (thread bumped with fresh in-game screenshots then).
-  — "i came here to bump this thread"
-  · [[Straw Hat Samurai: Duels] Funny NPC dialogue](https://web.archive.org/web/20200719131445/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490529-straw-hat-samurai-duels-funny-npc-dialogue)
-- 'Berry Man' is an AI entity that talks in the in-game chat (it was seen saying it feared the Tengu) — an intentional easter egg, reportedly a character from an earlier Straw Hat Samurai game.
-  — "some AI chatting in the game chat talking about how it was scared of the Tengu"
-  · [[Straw Hat Samurai: Duels] WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20200718230924/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/491788-straw-hat-samurai-duels-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town)
-- War Room (clan war) help page: ongoing battles are marked on the war-room map with your clan's flag.
-  — "On-going battles will be marked on the war room map with your clan’s flag."
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- To personally join a war-room battle: select the battle, then select the sector containing your clan's command HQ, and use the 'move' action to enter the battlefield.
-  — "select the sector with your clans command HQ and select the ‘move’ action to enter the battlefield"
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- The war room shows a live countdown until troops attempt a sector capture (observed at 4:25:10 remaining), i.e. army actions resolve on a timer, not instantly.
-  — "“Troops will attempt sector capture in 4:25:10”, which is counting down"
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- Clan-war army resolution runs on a 24-hour global timer per capture/defend attempt, shared by every clan (player explanation).
-  — "It’s 24 hours per attempt to capture/defend a space for every clan."
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- At the 24h tally, troops in each war-room space annihilate 1-for-1 against opposing soldiers, and whichever side has soldiers remaining wins the space (player explanation of resolution math).
-  — "troops in each space are tallied up, each soldier opposing another dies, and the remaining forces win those spaces"
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- A clan flag on a sector without an HQ means an action is underway there but the clan never built (or has removed) its HQ — HQs are optional, buildable, and removable per sector (player claim).
-  — "your clan doesn’t care enough to have an HQ built there, or is already completely winning and has removed the HQ"
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- War-room sectors are addressed by numeric grid coordinates (an HQ at '14,57' is cited), and entry can be refused with the message 'You are not allowed to enter this war room territory.'
-  — "When I try to move to the HQ at 14,57. I get kicked out"
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- DEV: Lutgames — an account's second character cannot enter the same war-room territory on the same day as the first (anti-multi-character rule enforced per territory per day).
-  — "You cannot enter the same territory with your second character on the same day."
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- Player perception in April 2015 that the game already leans pay-to-win via premium (gold) items.
-  — "THIS GAME ALREADY HAS A PAY2WIN CONCEPT FOR ALL I KNOW"
-  · [Suggestion: Auction Market system](https://web.archive.org/web/20200719000146/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488497-straw-hat-samurai-duels-suggestion-auction-market-system)
-- Free soul-infused orange gear (glove and mask) could be earned via 30 daily prizes and clan war actions, per a linked thread title in this post.
-  — "How to get FREE soul infused Orange gear!"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Clan war structures are built with coins; building them helps your clan and grants EXP toward your rank within the clan.
-  — "Build lots of structures in clan war ... give you more EXP to rank up"
-  · [Where do I store extra money?](https://web.archive.org/web/20200719214729/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489121-straw-hat-samurai-duels-where-do-i-store-extra-money)
-- An achievement exists for selling 5,000 (coins) worth of trade goods — cited as the main reason trade goods matter at all.
-  — "there is an achievement for selling 5k worth of trade good"
-  · [[Straw Hat Samurai: Duels] Tea, Silk, and Other Trade Goods](https://web.archive.org/web/20200719203804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493252-straw-hat-samurai-duels-tea-silk-and-other-trade-goods)
-- PvP rooms have no level restrictions and a single fixed entrance where players spawn — high-level players camp it; a level 80 was seen killing level 30 and level 10 players at the entrance.
-  — "a level 80 killing a level 30 and 10 and camping in the entrance"
-  · [[Straw Hat Samurai: Duels] Make pvp room fair](https://web.archive.org/web/20200719193940/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493858-straw-hat-samurai-duels-make-pvp-room-fair)
-- Being killed in a PvP room does not restore full health or chi on respawn — a player asks for full heal and chi recovery after PvP death to be added.
-  — "please give full heal and chi recovery after being killed in pvp rooms"
-  · [[Straw Hat Samurai: Duels] Make pvp room fair](https://web.archive.org/web/20200719193940/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493858-straw-hat-samurai-duels-make-pvp-room-fair)
-- There are roughly three numbered PvP rooms, all currently free-for-all 'anything goes'; skill cooldowns run while a player waits alone in a room, letting campers sit with powerful skills ready to trigger.
-  — "PVP 3 should be an anything goes room. As it is now."
-  · [[Straw Hat Samurai: Duels] Make pvp room fair](https://web.archive.org/web/20200719193940/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493858-straw-hat-samurai-duels-make-pvp-room-fair)
-- PvP population was low enough (circa May 2015) that level-partitioned rooms were considered unworkable — not enough concurrent players to fill split brackets.
-  — "not enough players in each room to justify your level partitions"
-  · [[Straw Hat Samurai: Duels] Make pvp room fair](https://web.archive.org/web/20200719193940/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493858-straw-hat-samurai-duels-make-pvp-room-fair)
-- The clan-war (World Battle) strategic map represents Japan — players name real regions (Kyushu, Chugoku, Kanto, Tohoku) — divided into a numbered coordinate grid of territory tiles, e.g. tile 14.56 or 15.61; peace deals trade blocks of tiles (one swap was '15 tiles').
-  — "Aoi retaking/take in exchange south Chugoku (from 14,56 to 22,55)"
-  · [[Straw Hat Samurai: Duels] Aka and Aoi status](https://web.archive.org/web/20200719184448/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494355-straw-hat-samurai-duels-aka-and-aoi-status)
-- Clans can build HQ structures on (including enemy) territories, and HQs can be dismantled; the right to build HQs is a per-member permission that clan leadership can revoke — one member repeatedly built HQs 'on his own' and had his build rights removed.
-  — "His rights to build HQs have been putted away."
-  · [[Straw Hat Samurai: Duels] Aka and Aoi status](https://web.archive.org/web/20200719184448/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494355-straw-hat-samurai-duels-aka-and-aoi-status)
-- Castles exist as capturable objectives on the war map tied to specific tiles (a clan 'castle at 15.61', defended in a fight named 'Ryui Castle'); territory battles resolve to a surviving-troop count — one battle ended with 2 defenders vs 0 attackers remaining.
-  — "2 Aoi's soldiers Remaining VS 0 Aka Ryu's warriors."
-  · [[Straw Hat Samurai: Duels] Aka and Aoi status](https://web.archive.org/web/20200719184448/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494355-straw-hat-samurai-duels-aka-and-aoi-status)
-- In the war room, clans place flags on target territories and members deploy units toward those flags; clan officers coordinate 'questing' of map regions this way, and troop counts per clan are visible in the war room.
-  — "when we start questing the north in the warroom, deploy units towards their flags"
-  · [[Straw Hat Samurai: Duels] Aka and Aoi status](https://web.archive.org/web/20200719184448/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494355-straw-hat-samurai-duels-aka-and-aoi-status)
-- A player-maintained FAQ and guide lived on the game's own official-site wiki (strawhatsamuraiduels.com/wiki), written by a clan leader and openly advertised for new players.
-  — "you might check the FAQ I wrote if you need some help"
-  · [[Straw Hat Samurai: Duels] Aka and Aoi status](https://web.archive.org/web/20200719184448/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/494355-straw-hat-samurai-duels-aka-and-aoi-status)
-- Clans are color-coded factions with elected/replaceable leaders and a council: named clans include Aka Ryu (red), Aoi (blue), a Green clan (Midori greeted as its face), a Yellow clan, Hono, and Kin Tomoe; players can quit one clan and join another mid-war.
-  — "certainly don't recommend Blue or Yellow. So the only choice left is Green."
-  · [[Straw Hat Samurai: Duels] AKA RYU ROLE CALL](https://web.archive.org/web/20200719183224/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495568-straw-hat-samurai-duels-aka-ryu-role-call)
-- Clans have internal military ranks — a self-described 'very new' player already held 'corporal' — and organized officer roles covering the war room, questing, intel collection, and new-member relations.
-  — "There are roles in the war room, questing, intel collection, and new member relations."
-  · [[Straw Hat Samurai: Duels] AKA RYU ROLE CALL](https://web.archive.org/web/20200719183224/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495568-straw-hat-samurai-duels-aka-ryu-role-call)
-- Player claim: inactive clan members cannot be kicked by any in-game means, but supposedly 'don't count' toward the clan-membership cap determination.
-  — "the inactives cannot be kicked by any current means, but they supposedly "don't count""
-  · [[Straw Hat Samurai: Duels] AKA RYU ROLE CALL](https://web.archive.org/web/20200719183224/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495568-straw-hat-samurai-duels-aka-ryu-role-call)
-- Player speculation: the clan member cap is dynamic and limited by the size of the smallest clan, so filling the smallest (Green) clan would raise every clan's cap.
-  — "if the Clan Cap is limited by the smallest clan, filling in Green makes a good deal of sense"
-  · [[Straw Hat Samurai: Duels] AKA RYU ROLE CALL](https://web.archive.org/web/20200719183224/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495568-straw-hat-samurai-duels-aka-ryu-role-call)
-- Player observation (patch-like change, mid-2015): the clan player limit appeared to have been lifted temporarily, letting previously blocked players join a full clan.
-  — "The player limit seems to have been lifted for now."
-  · [[Straw Hat Samurai: Duels] AKA RYU ROLE CALL](https://web.archive.org/web/20200719183224/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495568-straw-hat-samurai-duels-aka-ryu-role-call)
-- Player report with screenshot: every clan simultaneously showed as full at the member cap, and there is no member-kick function; the poster warned inactivity would kill clans since departed players still occupy slots.
-  — "Either remove the cap on members or let us kick people out"
-  · [[Straw Hat Samurai: Duels] Full clans?](https://web.archive.org/web/20200719051640/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496364-straw-hat-samurai-duels-full-clans)
-- DEV: Lutgames confirmed the clan capacity system automatically accounts for inactive players ('and all the relevant factors'), i.e. the visible full-cap state does not block clans the way players feared.
-  — "Don't worry. It takes into account inactive players and all the relevant factors."
-  · [[Straw Hat Samurai: Duels] Full clans?](https://web.archive.org/web/20200719051640/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496364-straw-hat-samurai-duels-full-clans)
-- DEV: Lutgames created an official Wikia (strawhatsamuraiduels.wikia.com) to hold official game information only, and said the old official-site wiki would be converted into a fan-fiction/legacy wiki for player stories.
-  — "We will leave all the player fan-fiction off this new wiki. It will be for official information only."
-  · [[Straw Hat Samurai: Duels] Our wiki](https://web.archive.org/web/20200719091939/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496946-straw-hat-samurai-duels-our-wiki)
-- The legacy wiki's genuinely informative sections covered quests, enemy types, locations, and clan info — confirming the game had a documented enemy-type taxonomy and quest list; wiki moderators at the time were players Chronos and Kageyoshi Kanji.
-  — "informative sections such as quests, enemy types, etc which should be easy to copy/paste"
-  · [[Straw Hat Samurai: Duels] Our wiki](https://web.archive.org/web/20200719091939/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496946-straw-hat-samurai-duels-our-wiki)
-- Whether losing a duel carries any penalty beyond the win/loss record was unclear to players; the question went unanswered in-thread.
-  — "Does duel losses affect my character in any way other than hurting my pride?"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-- An earlier chat version auto-muted anyone posting about 7 rapid lines within a minute; players asked for it to be brought back (so it had been removed by April 2015).
-  — "if you post like 7 lines of text in a row within a minute it auto mutes you for a bit"
-  · [[Straw Hat Samurai: Duels] So, so, so many spammers in the game chat. A suggestion to fix it.](https://web.archive.org/web/20200719100025/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489549-straw-hat-samurai-duels-so-so-so-many-spammers-in-the-game-chat-a-suggestion-to-fix-it)
-- War room (clan war): players occupy square tiles inside territories and receive a fresh batch of moves each hour.
-  — "I come back after the hour with my new moves but I’m no longer in the territory."
-  · [[Straw Hat Samurai: Duels] war room troubles](https://web.archive.org/web/20200719210258/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490211-straw-hat-samurai-duels-war-room-troubles)
-- War room has front lines within a territory; standing 1 square behind the front line is normally out of attack range (though one player suspected proximity still allowed attacks).
-  — "move towards the front lines, but stay 1 square away from being attacked"
-  · [[Straw Hat Samurai: Duels] war room troubles](https://web.archive.org/web/20200719210258/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490211-straw-hat-samurai-duels-war-room-troubles)
-- While you're offline your war-room presence is an AI-controlled copy of your character; if it is killed on a tile you are ejected from that territory and must re-enter from an HQ square.
-  — "killed in an attack on the tile you’re on, you will be ejected… re-enter from an HQ square"
-  · [[Straw Hat Samurai: Duels] war room troubles](https://web.archive.org/web/20200719210258/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490211-straw-hat-samurai-duels-war-room-troubles)
-- Veteran war-room tactic: defend a tile from an adjacent tile rather than standing on the contested tile itself (avoids ejection if it falls).
-  — "it is usually a better idea to defend from an adjacent tile than standing in the tile directly"
-  · [[Straw Hat Samurai: Duels] war room troubles](https://web.archive.org/web/20200719210258/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490211-straw-hat-samurai-duels-war-room-troubles)
-- Bug (player claim): a 'ghost' of your character can linger in a previously visited territory and be defeated there hours after you left, ejecting you incorrectly; players could also participate in wars across 2 territories simultaneously.
-  — "a “ghost” of your character stays behind and can be picked up as existing at the wrong sector"
-  · [[Straw Hat Samurai: Duels] war room troubles](https://web.archive.org/web/20200719210258/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490211-straw-hat-samurai-duels-war-room-troubles)
-- There are 4 main story clans, color-coded: Aka Ryu (Red), Aoi Hoiru (Blue), Midori Ken (Green), Ki Sensu (Yellow).
-  — "Aka Ryu(Red Clan)… Aoi Hoiru(Blue clan)… Midori Ken(Green Clan)… Ki Sensu(Yellow)"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Beyond the 4 story clans there were player-run clans: Honoshihai (purple), Blood Lotus (black/red), Koizumi (black/yellow), Kin Tomoe (gold); joining a player clan requires an invite from a member or the leader.
-  — "you can only join by getting a clan invite from a clan member or the leader chronos"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Player claim: a player clan must grow to 40 territories to unlock 'player clan gear' (clan-specific equipment).
-  — "growing on its own for 40 territories so they can get player clan gear"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Territory-count snapshot, April 2015 (player claim): Red clan held 76 territories while Blue held 200.
-  — "Red has 76 territories while Blue has 200."
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Castle battles in the war are timed and resolve with troop counts — one castle was taken with a '2 troop victory' after a rival attack launched in the final 20 seconds fell short.
-  — "I pulled an attack on the castle in the last 20 seconds"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Territories can be ceded/gifted between clans by agreement — Kin Tomoe received free land from Aka Ryu, and Blood Lotus was given 2 territories in Honoshihai's area to grow.
-  — "have been agreed to be given free land from aka ryu"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Claim: no clan confers any gameplay advantage — all clans are mechanically equal.
-  — "There is NO ADVANTAGES to be in a clan or another one. They are all equals."
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Counterclaim to 'all clans equal': smaller player clans have far fewer members and territories, so clans differ meaningfully in power.
-  — "think if the smaller clans they dont have as many people or territorys"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
-- Clans have a member capacity and can be closed: Aka Ryu (Red) was temporarily closed to new users in May 2015 after the Kongregate influx filled it.
-  — "Red Clan was temporarily closed to new users."
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- Story-clan leadership positions are held by players (player iostiogic became leader of Aka Ryu in May 2015; Armor Games members sat in Aka Ryu leadership and Kong members in Aoi Hoiru leadership).
-  — "there are armorgames members in Aka Ryu leadership and Kong members in Aoi Horiu leadership"
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-
-## rebirth-elements (64)
-
-- Rebirth awards 25 gold (premium currency) every time, rising to 100 gold on the 9th rebirth (player-compiled list).
-  — "25 Gold for free EVERY rebirth! (100 gold on your 9th rebirth!)"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Rebirth unlocks access to a new elemental spell skill tree.
-  — "Access to new elemental spell skill tree!"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Each rebirth permanently adds +10 weight capacity to your bank.
-  — "+10 weight in your bank."
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Rebirth resets you to level 1 with level-1 stats, placed in a level-1 area, with all equipped gear unequipped into your backpack.
-  — "You return to level 1, in a level 1 area, with all your gear in your backpack."
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- All learned skills persist through rebirth, so repeated rebirths let you eventually max out every skill.
-  — "BUT! You keep all your skills."
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Each rebirth grants +10 Elemental Attack in a chosen element plus +10 Elemental Defense in an opposing element.
-  — "+10 Elemental Attack in a element of your choice. (and 10 elemental defense to go along with it in an opposing element)"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Rebirthing 3 times into one element unlocks that element's super power (examples given: Tornadoes, Fire Blast, Boulders, Typhoon), scaled by the Elemental Attack stat, plus the first elemental dragon dance.
-  — "Once you rebirth into ONE element 3 times, you gain access to special elemental super power."
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Rebirthing 6 times into the same element unlocks a second elemental Dragon Dance.
-  — "rebirth into an element 6 times, you get access to your SECOND elemental Dragon Dance."
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Element strength cycle is Water > Fire > Earth > Wind > Water; choosing Earth gives 10 Earth ATK and 10 Wind DEF (defense in the element weak against you).
-  — "Element power goes like this: Water > Fire > Earth > Wind > Water"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- All four element trees are structurally identical, each with 4 active skills: an elemental kunai, a land mine, a chi-punch-like skill, and an AOE (player report).
-  — "1 elemental kunai, 1 land mine, 1 skill similiar to chi punch and AOE"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Total elemental attack is capped at 100, so at most three elements can be maxed to their 30-point super (e.g. Tornadoes, Typhoons, Earthquakes); an alternative build is 70 into a main element and 30 spread. Note: the earth super is called 'Boulders' in one post and 'Earthquakes' in another — naming inconsistent.
-  — "the maximum elemental power you can get nowadays is 100 total elemental attack"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Unconfirmed player claim (raised as a question): equivalent skills of different elements cannot be used at the same time, or share the same cooldown.
-  — "we can't use two of the same skills (of differing elements) at the same time?"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Player claim: in PvP, picking the element strong against an opponent of equal rebirth count roughly cancels their rebirth attack bonus, leaving only gear advantage; going balanced across elements instead yields a little defense in every element, while single-element focus maximizes one skill's damage.
-  — "you will pretty much negate his rebirth ATK, leaving him only his gear."
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20150911091424/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/488687-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold?page=1)
-- Soul reset scrolls cost 1,000 coins each, weigh 0, and are needed to reset orange (soul-infused) items back to level 1 when you rebirth.
-  — "buy soul reset scrolls (1k each), you will need them to reset your orange items to lvl 1 when you rebirth"
-  · [Where do I store extra money?](https://web.archive.org/web/20151231112117/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489121-where-do-i-store-extra-money?page=1)
-- Rebirth scrolls are purchasable for 1,000 coins and weigh 0.
-  — "Buy rebirth scrolls for 1000. They weigh 0."
-  · [Where do I store extra money?](https://web.archive.org/web/20151231112117/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489121-where-do-i-store-extra-money?page=1)
-- Light stance becomes PvP-viable only after several rebirths, once a player has top-tier items and all skills leveled, trading extra damage for extra speed and range.
-  — "probably after few rebirths so they already have top tier items and leveled all skills"
-  · [Best build?](https://web.archive.org/web/20150915012903/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489218-best-build?page=1)
-- Rebirth exists as a system, and progression is grind-heavy with combat XP considered low — a player cites both as accepted-but-disliked core design.
-  — "I don’t like grinding, yet I don’t ask for rebirth to be removed and for the combats to bring more XP"
-  · [Our wiki](https://web.archive.org/web/20150915004822/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496946-our-wiki?page=1)
-- Player claim: elemental stats (Fire Attack etc.) do not affect regular slashes at all — Fire Attack scales the elemental techniques/skills unlocked by rebirthing and adding specialization to an element; Fire Defense reduces damage from fire-based moves and traps.
-  — "do not effect your regular slashes but the power of your elemental techinques and skills you get after rebirthing"
-  · [Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20151219190032/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486679-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work?page=1)
-- Rebirth ranks are called Dan (Dan 1, Dan 2, Dan 3...; Japanese names like 'Sandan' for 3rd dan are used); a rebirthed character can one-hit-kill a same-or-higher-level non-rebirthed player in duels.
-  — "someone a level below me kills me in one hit, just to figure out they were a Sandan"
-  · [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
-- Player claim: stats are reset on every rebirth, so Dan rank itself confers no direct power — the real PvP difference is gear, which higher-Dan players tend to have more of.
-  — "dan dosent matter, as they reset stats every rebirth, the diffrence is in gear."
-  · [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
-- Counter-claim to 'only gear matters': stance mastery is also a carried advantage of high-Dan players (implying stance mastery persists or accumulates across rebirths alongside gear).
+- Refinement of the gear-gap claim: post-rebirth PvP dominance comes from gear AND stance mastery (implying stance mastery persists as a separate progression track).
   — "Gear and stance mastery"
   · [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
-- Rebirth players retain special skills such as elemental kunais even at low post-rebirth character level, letting a 'level 10' rebirth crush genuine newbies in PvP.
-  — "a level 10 rebirth player trowing elemental kunais or other especial skills to a newbie"
-  · [Make pvp room fair](https://web.archive.org/web/20151231143243/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493858-make-pvp-room-fair?page=1)
-- Player claim: performing a character reset removes you from your clan without needing the Writ of Release scroll.
-  — "it's possible to leave the clan without the scroll if you reset"
+- Clan joining unlocks at level 10 — a deleted/remade character can join a (different) clan upon reaching level 10.
+  — "Delete your character and remake it then upon reaching level 10 joining a different one"
   · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- A single rebirth yields enough gold to cover a 25-gold Writ of Release, implying rebirth grants a gold (premium currency) reward.
-  — "you will find using the gold of a single rebirth and not any more than that well worth it"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- A player suggestion presumes each reborn character has an associated element (asking for pet dragons matching it), implying rebirth ties the character to a specific element.
-  — "pet dragons accordingly to our element after rebirth"
-  · [About the game](https://web.archive.org/web/20160423144746/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/601703-about-the-game)
-- Player characters have an elemental type; water is one of the choosable/assigned elements (player self-identifies as 'water type').
-  — "blue colour of water (I’m water type in SHSD)"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20160908183841/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan?page=1)
-- Rebirth unlocks at level 80 and grants 25 gold, access to the elemental skill trees, and a fresh leveling run worth 80 more skill points.
-  — "At level 80, you can rebirth. This gives you 25 gold, access to elemental skills"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Orange items reportedly did NOT drop back to level 1 on rebirth (as of Apr 2015), forcing players to re-acquire an orange set each rebirth (secondhand claim, disputed in-thread).
-  — "when you rebirth they currently don’t drop back down to level 1"
-  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150910134819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/514786-red-oni-is-to-powerful?page=1)
-- Rebirth tiers use Japanese dan-rank names (e.g. Sandan = 3rd rebirth); a lower-level Sandan could one-shot a higher-level non-rebirthed player in duels.
-  — "someone a level below me kills me in one hit, just to figure out they were a Sandan"
-  · [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
-- Stats reset on every rebirth, so Dan rank itself confers no raw stat edge — the PvP power gap comes from gear (and real-money spending gives a head start), per player claim.
-  — "dan dosent matter, as they reset stats every rebirth, the diffrence is in gear"
-  · [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
-- Corroboration: the first rebirth's 25 gold spent on a weapon or a mask is enough to start one-hitting higher-level players.
-  — "after the 1st dan, and youve spent that first 25 gold on a weapon or a mask, you’ll be one hitting higher levels"
-  · [More features for choosing duels](https://web.archive.org/web/20160908181506/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/532779-more-features-for-choosing-duels)
-- A single rebirth yields gold (premium currency) — a player frames the 25-gold Writ of Release as costing about 'the gold of a single rebirth', implying rebirth grants roughly that much gold.
-  — "you will find using the gold of a single rebirth and not any more than that well worth it"
-  · [Ways to leave a clan](https://web.archive.org/web/20150907200432/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan?page=1)
-- Players have a personal elemental type; Water is one of them (a player self-identifies as "water type").
-  — "I’m water type in SHSD"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- Rebirth grants gold — a single rebirth's gold reward is implied to cover (roughly) the 25-gold Writ of Release cost (player phrasing).
-  — "using the gold of a single rebirth and not any more than that well worth it"
+- Clan joining unlocks at level 10 — a fresh character must reach level 10 before joining a clan (player claim via the delete-and-remake method).
+  — "Delete your character and remake it then upon reaching level 10 joining a different one"
   · [Ways to leave a clan](https://web.archive.org/web/20160405075911/https://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/502202-ways-to-leave-a-clan)
-- Rebirth unlocks at level 80 and grants 25 gold, access to elemental skills, and a fresh leveling run worth 80 more skill points.
-  — "This gives you 25 gold, access to elemental skills, and the ability to level up again in order to gain 80 more skillpoints"
+- Captain_Catface's build advice: skip the defense stat because equipment grants large defense amounts and some damage forms bypass defense entirely.
+  — "You will gain a large amount from equipment and there are damage forms which bypass it"
   · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
-- There were 12 dragon dances as of May 2015: 4 obtainable from the main quest line and 8 from the elemental skill sets unlocked via rebirth (datata claim).
-  — "There are currently 12 dragon dances. 4 can be obtained from the main quest line"
+- Contradicting claim (Karyuudan): high defense beats high HP at endgame — only some skills ignore defense and those are cooldown-gated, so raw slashing is checked by defense.
+  — "at end game when you fight skilled people that lack of defense will make you suffer"
+  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
+- The attack stat has a point cap of 10 + character level; Catface's build: cap attack, then dump remaining points into health and speed.
+  — "Put points into attack until you hit its cap (10+level), then dump the rest of your points into health and speed"
+  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
+- The SPEED stat increases slash line length and reduces skill cooldowns (player claim).
+  — "Speed increases line length and drops skill cooldown"
+  · [Kong Players: Basics and World Battle](https://web.archive.org/web/20150406020440/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/484700-kong-players-basics-and-world-battle)
+- After rebirth, any skill can be leveled to its maximum at any samurai level (datata claim).
+  — "You can level up any skill to its maximum at any samurai level after rebirth"
   · [[Straw Hat Samurai: Duels] Questions](https://web.archive.org/web/20170427091012/http://www.kongregate.com:80/forums/12-kongregate-multiplayer-games/topics/494653-straw-hat-samurai-duels-questions)
-- Elemental dragon dances come 2 per element: one unlocks after 3 rebirths of the same element, the other after 6; a player who unlocked a dance can also teach it to others (datata claim).
-  — "one can be unlocked by rebirthing 3 times of the same element and another by rebirthing 6 times"
-  · [[Straw Hat Samurai: Duels] Questions](https://web.archive.org/web/20170427091012/http://www.kongregate.com:80/forums/12-kongregate-multiplayer-games/topics/494653-straw-hat-samurai-duels-questions)
-- Skill points already spent are kept through rebirth, but skill level requirements re-apply — e.g., substitution jutsu is unusable until reaching samurai level 50 again (datata claim; the asker thought level 70).
-  — "you can’t use substitution jutsu until you are samurai level 50 again"
-  · [[Straw Hat Samurai: Duels] Questions](https://web.archive.org/web/20170427091012/http://www.kongregate.com:80/forums/12-kongregate-multiplayer-games/topics/494653-straw-hat-samurai-duels-questions)
-- Index thread title corroborates that rebirthing awards 25 free gold and that the choice of rebirth element was a debated optimization topic.
-  — "Rebirthing = 25 Free Gold, let's talk about best Rebirth elements"
-  · [Straw Hat Samurai: Duels forum (index)](https://web.archive.org/web/20150423012315/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels)
-- Fire Attack and Fire Defense are elemental stats that do NOT affect regular slashes; Fire Attack only scales the power of elemental techniques/skills.
-  — "elemental stats that do not effect your regular slashes but the power of your elemental techinques and skills"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- Elemental skills are unlocked after rebirthing by adding specialization points to an element — e.g., putting into Fire unlocks fire skills, which Fire Attack then strengthens.
-  — "skills you get after rebirthing and adding specialization to your elements"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- Fire Defense reduces damage taken from fire-based moves AND from fire traps.
-  — "fire defense would help you take less dmg from fire based moves, or traps"
-  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
-- Players planned to own two orange gear sets — one kept for level 80 and one for grinding/rebirth — implying a level-80 cap and that rebirth drops you back to low levels where high-requirement gear is unusable.
-  — "buy another set and keep it just for lvl80 and one for grinding/rebirth"
-  · [Issues with resetting orange items](https://web.archive.org/web/20200719190506/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487337-straw-hat-samurai-duels-issues-with-resetting-orange-items)
-- Soul infusion's selling point was locking in liked stats while an item levels with you; random stat rerolls on reset made players plan to skip soul infusion when doing rebirth.
-  — "if stats reset randomly with soul infused items, i doubt i'll even bother with it at rebirth"
-  · [Issues with resetting orange items](https://web.archive.org/web/20200718231904/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486991-straw-hat-samurai-duels-can-my-sword-break)
-- Headgear could roll elemental attack affixes: a level 79 Anbu mask carried HP, Earth Att, Att, and Max Chi simultaneously (4 affixes on one mask).
-  — "Anbu mask level 79 (HP, Earth Att, Att, Max Chi)"
-  · [[Straw Hat Samurai: Duels] Trade, buy, and sell items and good here!](https://web.archive.org/web/20200719092641/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487887-straw-hat-samurai-duels-trade-buy-and-sell-items-and-good-here)
-- Rebirth unlocks at level 80 and grants 25 gold, access to the elemental skill trees, and the ability to level to 80 again for 80 more skill points.
-  — "At level 80, you can rebirth. This gives you 25 gold, access to elemental skills, and the ability to level up again"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- Beta-era claim: orange items did not drop back to level 1 when you rebirthed, so each rebirth would need a freshly earned/bought orange set (later addressed by the soul-infusion reset scroll).
-  — "when you rebirth they currently don’t drop back down to level 1"
-  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
-- At beta launch, soul-infused gear kept its level through rebirth (did not reset with the character), which paying players considered money wasted.
-  — "so if i rebirth i expect the gear to “rebirth” with me"
-  · [[Straw Hat Samurai: Duels] Soul Infused Gear should reset when you Rebirth...](https://web.archive.org/web/20200719095645/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484956-straw-hat-samurai-duels-soul-infused-gear-should-reset-when-you-rebirth)
-- A 'hard reset' of one's character is possible and repeatable; one player reports the war-room territory lock triggered for him despite having only one character, after hard-resetting a couple of times — contradicting the dev's multi-character explanation.
-  — "I am not using multiple characters. However, I did hard reset my character a couple of times."
-  · [[Straw Hat Samurai: Duels] Not able to spend move points in War Room](https://web.archive.org/web/20200719191804/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492295-straw-hat-samurai-duels-not-able-to-spend-move-points-in-war-room)
-- Rebirthing grants 25 gold (premium currency) free every rebirth, rising to 100 gold on the 9th rebirth.
-  — "25 Gold for free EVERY rebirth! (100 gold on your 9th rebirth!)"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Rebirthing unlocks access to a new elemental spell skill tree.
-  — "Access to new elemental spell skill tree!"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Each rebirth adds +10 weight capacity to your bank.
-  — "+10 weight in your bank."
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- On rebirth you return to level 1 in a level-1 area, your stats reset to level 1, and all equipped gear is moved to your backpack.
-  — "You return to level 1, in a level 1 area, with all your gear in your backpack"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Skills are kept through rebirth, so repeated rebirths eventually let you max out all skills.
-  — "you keep all your skills. So you can max out all your skills"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Each rebirth grants +10 Elemental Attack in a chosen element plus +10 elemental defense in an opposing element.
-  — "+10 Elemental Attack in a element of your choice"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Rebirthing into one element 3 times (i.e., 30 elemental attack) unlocks that element's super power - examples given: Tornadoes, Fire Blast, Boulders, Typhoon - which scales with the Elemental Attack stat, plus your first elemental dragon dance.
-  — "rebirth into ONE element 3 times, you gain access to special elemental super power"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Rebirthing into the same element 6 times unlocks a second elemental Dragon Dance.
-  — "rebirth into an element 6 times, you get access to your SECOND elemental Dragon Dance"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Element strength cycle: Water beats Fire beats Earth beats Wind beats Water; picking Earth on rebirth gives 10 Earth ATK and 10 Wind DEF (defense against the element weak to yours).
-  — "Element power goes like this: Water > Fire > Earth > Wind > Water"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- Total elemental attack from rebirths is hard-capped at 100 (player states this was confirmed).
-  — "the maximum elemental power you can get nowadays is 100 total elemental attack"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- With the 100-point cap and 30-point unlocks, you can unlock three elements' super powers (e.g., Tornadoes, Typhoons, Earthquakes) but never all four; a 70/30 main-element spread takes until roughly the 9th-10th rebirth at +10 per rebirth.
-  — "get Tornadoes, Typhoons, and Earthquakes, but you wouldn't be able to max out Fire"
-  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
-- A second progression track called 'Orange EXP' runs alongside normal EXP — the author (freshly rebirthed) later calls these 'SI levels' (soul infusion). Measured per level: L1=300, L3=733, L4=1000, L5=1200, L7=1500, L8=1600, L9=1800, L10=2000, L11=2000, L12=2100, L13=2200, L14=2400, L15=2600, L16=2800, L19=3200, L21=3600, L22=3900, L28=5600, L31=7000, L32=7300, L33=7700, L34=8000, L35=8600, L36=9100, L42=12000, L43=12000.
-  — "Added some more data to the exp levels and SI levels."
-  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Rebirth players retain special abilities at low character level — e.g., a level 10 rebirth player can throw elemental kunais and use other special skills against newbies in PvP.
-  — "a level 10 rebirth player trowing elemental kunais or other especial skills"
-  · [[Straw Hat Samurai: Duels] Make pvp room fair](https://web.archive.org/web/20200719193940/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493858-straw-hat-samurai-duels-make-pvp-room-fair)
-- Rebirth exists as a system and the game is widely felt as grindy — a player defending tolerance says he dislikes grinding yet doesn't demand rebirth's removal or higher combat XP, implying combat XP gains were low relative to rebirth's demands.
-  — "I don't ask for rebirth to be removed and for the combats to bring more XP"
-  · [[Straw Hat Samurai: Duels] Our wiki](https://web.archive.org/web/20200719091939/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/496946-straw-hat-samurai-duels-our-wiki)
-- Players suspect that low-displayed-level characters who dominate duels are rebirth characters (question raised, not answered in thread).
-  — "I still get facerolled by lower and same-level players a lot. Are those rebirth characters?"
-  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
-
-## art-audio (17)
-
-- Players report multiple character poses/animations usable for screenshots: a 'dragon dance' move, carrying the weapon on the shoulder, and a running pose (player claims).
-  — "make your character do the dragon dance thing it will be cooler"
-  · [Cool Screenshot](https://web.archive.org/web/20151020164626/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/495163-cool-screenshot?page=1)
-- The game has an animated intro cinematic (referenced by players as 'the animated intro of Straw Hat Samurai: Duels').
-  — "Anyone who have watched the animated intro of Straw Hat Samurai: Duels knows this!"
-  · [State of the Clan War](https://web.archive.org/web/20150907063406/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=1)
-- Character creation offers limited hairstyles/faces, and female characters use the male body model, so clothing renders with masculine arms/physique.
-  — "im a female but has the body of a male….."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Midori Ken's visual identity is green; its experienced warriors wear a green Oni (demon) mask.
-  — "Midori Ken is the green clan. Their mask is a green oni mask."
-  · [MIDORI KEN recruitement thread](https://web.archive.org/web/20150907061933/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/497892-midori-ken-recruitement-thread?page=1)
-- Ki Sensu's clan mask reads as an old-man face to players (joked to resemble 'grandpa Simpson'); the clan is nicknamed golden beast/golden lion after its mask.
-  — "why is the mask grandpa simpson?"
-  · [KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20151219190542/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/498595-ki-sensu-the-golden-fan-recruitment-thread?page=1)
-- Character customization covers hairstyles and faces only; body type and height are not customizable (both were requested).
-  — "Body types, height, and everything else that can make characters more customizable."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- Female characters use the same body model as males, so clothing (e.g., sleeveless garments) renders with a muscular male build on female characters; two players confirmed.
-  — "makes her look like she has very manly muscular arms"
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- DEV: Lutgames actively solicited player cosmetic/outfit suggestions with reference images — cosmetics were added from community input.
-  — "Please feel free to suggest (with images if possible) what other outfits you would like to see in the game."
-  · [Women's clothing?](https://web.archive.org/web/20150612020638/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/489269-womens-clothing)
-- DEV: the character rig cannot support long skirts/full-length kimonos because legs must extend for the run animation — a hard art constraint on clothing design.
-  — "one thing that we can’t do are long skirts because our characters need to extend their legs to run"
-  · [Women's clothing?](https://web.archive.org/web/20150612020638/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/489269-womens-clothing)
-- Female characters share the male base body model — same musculature, no chest difference — with gender expressed only through equipped clothing (player observation).
-  — "if you get rid of the clothing, they still do not have the breasts and are as muscular as the males"
-  · [Women's clothing?](https://web.archive.org/web/20150612020638/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/489269-womens-clothing)
-- An NPC named Lady Oiwa exists and wears a long dress — cited as an existing female NPC outfit players wanted as equipment; players also referenced "hats" and "masks" as equipment categories.
-  — "dresses like Lady Oiwa have seem like they would be easy enough to start"
-  · [Women's clothing?](https://web.archive.org/web/20150612020638/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/489269-womens-clothing)
-- The Aoi Hoiru clan crest resembles the historical Takeda bishi mon (four diamonds combined into one large diamond).
-  — "Jin wears Takeda bishi, which is the most similar to the Aoi Hoiru crest in Straw Hat Samurai: Duels (SHSD)"
-  · [Aoi Hoiru clan](https://web.archive.org/web/20150927190714/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/497808-aoi-hoiru-clan)
-- The game has an animated intro cinematic that introduces the clans (LovelyJane reference).
-  — "Anyone who have watched the animated intro of Straw Hat Samurai: Duels knows this!"
+- A dedicated player was approaching level 80 on his 19th day of play — a datum for the leveling/XP pacing curve (lissachanmanga, secondhand claim).
+  — "this friend also is approaching lvl 80 and its his 19th day playing"
   · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- Town NPCs have ambient humorous dialogue lines players screenshotted (one reportedly mentions folic acid); the thread's evidence is image-only so exact lines are unrecoverable from this capture.
-  — "How would it know about folic acid?"
-  · [[Straw Hat Samurai: Duels] Funny NPC dialogue](https://web.archive.org/web/20200719131445/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490529-straw-hat-samurai-duels-funny-npc-dialogue)
-- DEV: long skirts are impossible in the game's art because the character rig must extend its legs to run - a hard animation constraint on clothing design.
-  — "we can't do long skirts because our characters need to extend their legs to run"
-  · [Women's clothing?](https://web.archive.org/web/20200719124227/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489269-straw-hat-samurai-duels-womens-clothing)
-- Male and female player characters share the same base body sprite - unclothed female characters have no breasts and identical musculature to males.
-  — "if you get rid of the clothing, they still do not have the breasts"
-  · [Women's clothing?](https://web.archive.org/web/20200719124227/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489269-straw-hat-samurai-duels-womens-clothing)
-- Characters have visible outfit customization and performable pose/emote animations: a 'dragon dance' emote and a carry-weapon-on-shoulder pose, both demonstrated in player screenshots; players also display custom nicknames and can meet each other in shared world locations.
-  — "you should make your character do the dragon dance thing it will be cooler"
-  · [[Straw Hat Samurai: Duels] Cool Screenshot](https://web.archive.org/web/20200718234949/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/495163-straw-hat-samurai-duels-cool-screenshot)
-
-## other (39)
-
-- 'Berry Man' is an AI easter-egg character (a callback to earlier Straw Hat Samurai games) that chats in the in-game chat, e.g. saying it is scared of the Tengu.
-  — "berry man is a easter egg put on in this game"
-  · [WTH is a Tengu? Is it a giant world boss? Berry man? Banana Town?](https://web.archive.org/web/20151231125651/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/491788-wth-is-a-tengu-is-it-a-giant-world-boss-berry-man-banana-town?page=1)
-- Series history claim: Straw Hat Samurai 1 released on Kongregate October 1, 2008 and on Armor Games October 6, 2008 (cited from checking both game pages).
-  — "Straw Hat Samurai 1 was out on Kong on October 1st, 2008. But on Armor Games on October 6th 2008."
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20150911080640/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- SHSD ran on its own official site (strawhatsamuraiduels.com) with official forums, and its pre-Kongregate veteran playerbase populated the older clans' leadership.
-  — "A similar thread will be created on Armor and the official SHSD forums."
-  · [The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20150911080640/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/490224-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- Players believe the developer Lut is from Singapore (one player asserts he is not from Asia; another counters with Singapore).
-  — "Isn't Lut from Singapore?"
-  · [ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20151231131743/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/489368-add-more-types-of-enemies?page=1)
-- The legacy wiki's informative sections covered quests and enemy types (confirming the game has discrete quest content and multiple enemy categories); its moderators were reportedly players Chronos and Kageyoshi Kanji.
-  — "informative sections such as quests, enemy types, etc"
-  · [Our wiki](https://web.archive.org/web/20150915004822/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496946-our-wiki?page=1)
-- An official wiki existed at strawhatsamuraiduels.com/wiki (MediaWiki) covering story and gameplay help, plus an official Facebook page for announcements.
-  — "http://www.strawhatsamuraiduels.com/wiki/index.php?title=Main_Page"
-  · [State of the Clan War](https://web.archive.org/web/20150912173631/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/486220-state-of-the-clan-war?page=2)
-- Player bug report (Aug 2015): progress could silently fail to save — a session going from level 11 to 15 with completed quests and earned money reverted to level 11 on next login. Implies levels, quests, and money are all server-persisted state.
-  — "I would level up from 11 to 15, finish several quests, and make quite a bit of money"
-  · [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1)
-- DEV: Lutgames confirms saves are server-side — save-loss and freeze symptoms occur when the client loses connection to the server or the server temporarily goes down; the remedy is to log out and return a few minutes later.
-  — "Those symptoms could happen when your client has lost connection with the server or when the server goes down temporarily."
-  · [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1)
-- Bug: after a troop movement, the treasure chest in the Trap/Friendship rooms may not open/close correctly unless the game is fully reloaded (returning to the title screen is not enough).
-  — "always make you FULLY reload (not just title screen) the game before going into those rooms"
-  · [Tips Compilation](https://web.archive.org/web/20151231065941/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/492891-tips-compilation?page=1)
-- Player tip mentions "raccoon use is best" for grinding — an unexplained aid (likely a summon/consumable), needs corroboration from other sources.
-  — "raccoon use is best."
-  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20150911074846/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/493522-how-to-grind-for-levels-and-exp-the-easy-way?page=1)
-- A player-maintained official-domain wiki existed with an FAQ and guide at strawhatsamuraiduels.com/wiki (index.php?title=FAQ_and_guide) — a candidate source for further Wayback harvesting.
-  — "you might check the FAQ I wrote if you need some help"
-  · [Aka and Aoi status](https://web.archive.org/web/20150915080519/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/494355-aka-and-aoi-status?page=1)
-- Bug report (Sep 12, 2015): the game could hang indefinitely at the 'loading game files' step immediately after the intro, and refreshing the page (5+ times) did not clear it.
-  — "after the intro, the game get stucked in loading game files..Plz fix"
-  · [Infi load](https://web.archive.org/web/20160908183934/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/538848-infi-load)
-- Community context (Mar 2016): a regular poster characterized LutGames as a very small operation building the game with almost no budget or support, offered as the explanation for the slow Season 2 timeline.
-  — "you try doing something this complex with little to no funds or support"
-  · [SEASON 2](https://web.archive.org/web/20160316203819/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/583212?page=1)
-- As of July 2016 a player reports the devs were actively working on a housing system; another player counters it had been promised for a very long time already.
-  — "they are working on the housing system rn, give them time"
-  · [forum activity is dying](https://web.archive.org/web/20161016203657/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/650580-forum-activity-is-dying)
-- Players claim the dev also shipped undocumented 'hidden updates' that silently changed mechanics (e.g. roll dodge reliability) with no notes.
-  — "This is so called “ hiden updates ” stuff"
-  · [Stats bug](https://web.archive.org/web/20151231071033/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496971-stats-bug?page=1)
-- Contradiction: one player claims the May 2015 rebalance cost players nothing, while others in the same thread document a 67-point attack loss and a persisting old-gear/new-gear power gap.
-  — "make the game in balance agn without hving any of us losing anything"
-  · [Stats bug](https://web.archive.org/web/20151231071033/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/496971-stats-bug?page=1)
-- DEV: Progress-loss and freeze symptoms happen when the client loses its server connection or the server is temporarily down; the fix is to log out and return minutes later — confirming saves are server-side and connection-dependent (Lutgames, Aug 2015).
-  — "Those symptoms could happen when your client has lost connection with the server or when the server goes down temporarily."
-  · [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1)
-- Player save-loss report (Aug 2015): hours of play — level 11 to 15, quests, money — silently reverted to level 11 on next login despite unlimited Flash storage settings.
-  — "I would level up from 11 to 15... yet when I start up the game again I am back to level 11"
-  · [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1)
-- There was no manual save button; a second player (Sep 2015) lost a level-10 character to the save bug three times and requested one.
-  — "Can you please add a save button... i’ve had to restart my level 10 character 3 times"
-  · [Problem With Saving?](https://web.archive.org/web/20160908184735/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/523146-problem-with-saving?page=1)
-- The developer (Explosive Barrel) ran an official forum with a compiled suggestions list thread at forums.explosivebarrel.com, referenced from the Kongregate suggestions thread OP.
-  — "There are lots but here’s a list already suggested."
-  · [Suggestions Thread - Straw Hat Samurai Duels](https://web.archive.org/web/20151226163912/http://www.kongregate.com/forums/4645-straw-hat-samurai-duels/topics/500594-suggestions-thread-straw-hat-samurai-duels?page=1)
-- An official wiki existed at strawhatsamuraiduels.com/wiki covering story and help, alongside an official Facebook page for the game.
-  — "for anyone who needs help look on this wiki for the story and help"
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20160718180457/http://www.kongregate.com:80/forums/4645-straw-hat-samurai-duels/topics/486220?page=2)
-- By May 2015 the game had already been running for over 3 years on other platforms (Facebook/own site), so the April 2015 Kongregate release was a late port with an established veteran community (Sedarion).
-  — "This game is out for over 3 years allready."
-  · [State of the Clan War](https://web.archive.org/web/20200719120117/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war)
-- An official player-facing wiki existed at strawhatsamuraiduels.com/wiki covering story and gameplay help, and the game had an official Facebook page (facebook.com/strawhatsamuraiduels) used for announcements (Saskia_Arcanica).
-  — "And for anyone who needs help look on this wiki for the story and help."
-  · [State of the Clan War (page 2)](https://web.archive.org/web/20200719120118/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486220-straw-hat-samurai-duels-state-of-the-clan-war?page=2)
-- Character creation enforced an IP-sharing cap — creating a new character could fail with a 'too many players sharing the same ip address' error; DEV Lutgames handled these case-by-case via PM.
-  — "it just say too many players sharing the same ip address"
-  · [[Straw Hat Samurai: Duels] Cant Connect To Server](https://web.archive.org/web/20200719172253/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485645-straw-hat-samurai-duels-cant-connect-to-server)
-- The client detected and surfaced NAT/router errors when connecting to the game server; failures typically hit after character creation at the connect step, and DMZ/port-forwarding did not always fix them.
-  — "it says comething about there being a error with my nat or router"
-  · [[Straw Hat Samurai: Duels] Cant Connect To Server](https://web.archive.org/web/20200719172253/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485645-straw-hat-samurai-duels-cant-connect-to-server)
-- DEV: Lutgames explained the connection error means the player's network is blocking messages pushed from the game server from reaching the client.
-  — "your network connection is somehow preventing the messages from the server from reaching your computer"
-  · [[Straw Hat Samurai: Duels] Cant Connect To Server](https://web.archive.org/web/20200719172253/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/485645-straw-hat-samurai-duels-cant-connect-to-server)
-- Series trivia (player-verified claim): Straw Hat Samurai 1 released on Kongregate 2008-10-01 and on Armor Games 2008-10-06.
-  — "Straw Hat Samurai 1 was out on Kong on October 1st, 2008. But on Armor Games on October 6th 2008."
+- HP, Chi, and AP are directly allocatable stat rows on the character panel (one click = one point), and accidental spends were not refundable in-game.
+  — "I want a rollback of that 1 stat point accidentally spent on Chi stat."
+  · [[Straw Hat Samurai: Duels] This game needs "Confirm" button when adding stat points.](https://web.archive.org/web/20200719024749/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486485-straw-hat-samurai-duels-this-game-needs-confirm-button-when-adding-stat-points)
+- Endgame grind benchmark: by level 80 aim for ~200-250 defense, enough attack to one-shot trash mobs in balance stance, maximum HP, and optionally HP-regen gear.
+  — "~200-250 def by lvl 80, enough attack to 1 shot trash mobs in balance stats"
+  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
+- Losing a battle grants a free respawn, which grinders exploited as a cost-free reset loop (viable if you don't care about quest outcomes).
+  — "you may just lose battle and free respawn"
+  · [[Straw Hat Samurai: Duels] Can someone explain how Attack and Defense, and Fire Attack and Fire Defense work?](https://web.archive.org/web/20200719191051/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486679-straw-hat-samurai-duels-can-someone-explain-how-attack-and-defense-and-fire-attack-and-fire-defense-work)
+- The intended counter to the Statue Guardian wall is overleveling: the stuck-at-~28 player beat him after grinding into the level 30s and upgrading gear.
+  — "Just had to go level up to the 30's, get some better gear, and come back to face him"
+  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200719095529/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487269-straw-hat-samurai-duels-how-do-you-beat-the-statue-guardian)
+- Concrete stat snapshot of the ~lvl-28 difficulty wall: with equipment included, a player had 204 HP / 80 STR / 109 DEF / 32 SPD, yet bounty-hunt targets in level 24-25 areas destroyed him with special moves while normal mobs there were easy.
+  — "204hp, 80str, 109def, 32spd … the bounty person just annihilates me using all kinds of special moves"
+  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719085726/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487402-straw-hat-samurai-duels-difficulty-curve-around-lvl-28-anyone-else-think-so)
+- A player stuck on the Statue Guardian at ~lvl 28 beat him after leveling into the 30s and upgrading gear — the fight is level/gear gated in practice.
+  — "go level up to the 30's, get some better gear, and come back"
+  · [How do you beat the Statue Guardian?](https://web.archive.org/web/20200718231825/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/486915-straw-hat-samurai-duels-to-autoslash-or-not-to-autoslash)
+- Reference stat snapshot at ~lvl 28 with equipment: 204 HP, 80 STR, 109 DEF, 32 SPD — the game's four visible stats being HP/STR/DEF/SPD — and this build still loses badly to bounty targets.
+  — "My stats (equipment included) are 204hp, 80str, 109def, 32spd"
+  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719145607/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487109-straw-hat-samurai-duels-game-crash-bug)
+- A difficulty spike hits around lvl 28 where sidequests and the main story feel impossible; the intended fix is equipment farming, which resolves it.
+  — "it's feeling like it's getting impossible, now"
+  · [Difficulty curve around lvl 28. Anyone else think so?](https://web.archive.org/web/20200719145607/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/487109-straw-hat-samurai-duels-game-crash-bug)
+- Player claim: enemies near the final-boss checkpoint awarded zero XP, so grinding while stuck there was impossible.
+  — "I don't get any exp from the enemies, so grinding here is no help"
+  · [[Straw Hat Samurai: Duels] (fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
+- Difficulty datapoint: a level 38 character could reach the final boss but found the survival encounter unbeatable, blaming unbalanced stats/gear — suggests the finale was tuned above a straight story-pace level 38.
+  — "I'm level 38, but I guess either my stats are too unbalanced"
+  · [[Straw Hat Samurai: Duels] (fixed) Stuck at final boss with no ability to leave dungeon!](https://web.archive.org/web/20200719005252/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488106-straw-hat-samurai-duels-fixed-stuck-at-final-boss-with-no-ability-to-leave-dungeon)
+- Guide claim: skip the defense stat because equipment grants large defense amounts and some damage types bypass defense entirely.
+  — "not putting stat points into defense. You will gain a large amount from equipment and there are damage forms which bypass it"
+  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- Contradicting claim: high defense beats high HP because only some skills ignore defense and those are cooldown-limited; lacking defense hurts at endgame.
+  — "A character with high defense is better than high HP"
+  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- The attack stat has a hard cap of 10 + character level; a suggested build maxes attack to that cap then dumps remaining points into health and speed.
+  — "Put points into attack until you hit its cap (10+level), then dump the rest of your points into health and speed"
+  · [[Straw Hat Samurai: Duels] Kong Players: Basics and World Battle](https://web.archive.org/web/20200718233631/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/484700-straw-hat-samurai-duels-kong-players-basics-and-world-battle)
+- Level-ups grant stat points the player allocates by choice — chat advice threads existed on 'which stat should you waste your points in'.
+  — "game related facts about which stat should you waste your points in"
+  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us. (page 2)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=2)
+- Switching clans apparently required deleting your character and starting over — players were advised it's worth restarting to change clan; veterans donate old equipment in clan chat, and 'say hi after you turn level 10' implies clan features unlock around level 10.
+  — "Don’t be afraid to delete your char and start over!... say hi after you turn level 10"
   · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us. (page 3)](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- Bug report (April 2015): after dying, a player's character got stuck in a 'ghost trance' state instead of respawning; chat kept working during it. Another player claimed it just means the character hadn't fully loaded.
-  — "i died and im stuck in this wierd ghost trance, pls fix it"
-  · [[Straw Hat Samurai: Duels] GLITCHED GAME](https://web.archive.org/web/20200719015848/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490353-straw-hat-samurai-duels-glitched-game)
-- Known failure mode: the game could hang forever on the 'Loading game files…' screen, on both Kongregate and the Explosive Barrel website (reported on Firefox / Windows 7).
-  — "the game remains on the loading screen saying “Loading game files…”"
-  · [[Straw Hat Samurai: Duels] Infinitely loading game](https://web.archive.org/web/20200719034053/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492162-straw-hat-samurai-duels-infinitely-loading-game)
-- The game loads a large number of files: first-ever load reportedly took over 10 minutes for some players, with subsequent loads much faster (browser-cached assets).
-  — "some people have said that the first time they played it took over 10minutes"
-  · [[Straw Hat Samurai: Duels] Infinitely loading game](https://web.archive.org/web/20200719034053/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492162-straw-hat-samurai-duels-infinitely-loading-game)
-- One player found the game unplayable on Firefox but working perfectly on Chrome (Apr–May 2015) — browser-dependent load behavior.
-  — "i was also not able to play it on firefox but on chrome it works perfectly"
-  · [[Straw Hat Samurai: Duels] Infinitely loading game](https://web.archive.org/web/20200719034053/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492162-straw-hat-samurai-duels-infinitely-loading-game)
-- DEV: Lutgames' official fix for a stuck loading screen was to clear the browser cache and refresh the page — implying loads depended on cached files that could corrupt.
-  — "If you get stuck, try clearing your cache and refreshing the page."
-  · [[Straw Hat Samurai: Duels] Infinitely loading game](https://web.archive.org/web/20200719034053/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492162-straw-hat-samurai-duels-infinitely-loading-game)
-- April 2015 server-stability report: character creation could fail repeatedly with a red feedback message reading 'Unable to contact server'.
-  — "always appears red logo Feedback writing down " Unable to contact server""
+- A player at level 45 reports having accumulated over 100 total attribute points across attack, defense and speed.
+  — "now i am lvl 45 i had more than 100 attributes in atk def n spd"
+  · [Show off a picture of your awesome character here](https://web.archive.org/web/20200719000124/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488448-straw-hat-samurai-duels-show-off-a-picture-of-your-awesome-character-here)
+- Item/character level range treated as 1-80 in April 2015, implying a level cap around 80 at that time.
+  — "1-80 Level Range"
   · [Suggestion: Auction Market system](https://web.archive.org/web/20200719000146/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488497-straw-hat-samurai-duels-suggestion-auction-market-system)
-- Provenance warning from Captain_Catface: the fan wiki is 'basically wrong about everything' and its numbers should not be trusted without confirmation in Kong chat.
-  — "assume everything on the wiki is wrong unless you ask for confirmation"
+- Leveling pace is reported as very slow (May 2015).
+  — "Leveling takes so long…."
+  · [Rebirthing = 25 FREE Gold, let's talk about best Rebirth elements and what to do with that gold.](https://web.archive.org/web/20200719120055/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/488687-straw-hat-samurai-duels-rebirthing-25-free-gold-lets-talk-about-best-rebirth-elements-and-what-to-do-with-that-gold)
+- Build advice: never put attribute points into AP at all; any Chi you need is easily supplied by equipment stats instead.
+  — "You shouldn't put points into AP at all"
   · [Best build?](https://web.archive.org/web/20200719124157/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489218-straw-hat-samurai-duels-best-build)
-- A player reports being shot and killed quickly by a 'gunner class' character (posted in the hacker-report thread; ambiguous whether this is a legitimate class/enemy type or a hacked loadout).
-  — "a guy to shot and kill me quick and he was gunner class"
-  · [[Straw Hat Samurai: Duels] Report hackers here](https://web.archive.org/web/20200719115839/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/492905-straw-hat-samurai-duels-report-hackers-here)
-- A 'raccoon' is recommended as best to use while grinding — likely a companion/pet or consumable, but the post does not explain what it is.
-  — "raccoon use is best."
+- Recommended grinding strategy: go to a territory 3 levels above your own and run its dungeons repeatedly — territories have levels and dungeons are freely repeatable.
+  — "go to a Level+3 territory, and delve into the dungeons repeatedly"
   · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
-- Players believed developer Lut is from Singapore (player claim, uncorrected in thread).
-  — "Isn’t Lut from Singapore?"
-  · [[Straw Hat Samurai: Duels] ADD MORE TYPES OF ENEMIES](https://web.archive.org/web/20200718232837/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489368-straw-hat-samurai-duels-add-more-types-of-enemies)
-- Franchise history: Straw Hat Samurai 1 launched on Kongregate Oct 1, 2008 and Armor Games Oct 6, 2008 (player refuting a rival claim that the series debuted on Armor Games).
-  — "Straw Hat Samurai 1 was out on Kong on October 1st, 2008. But on Armor Games on October 6th 2008."
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
-- SHSD ran as a shared-world game across multiple portals — Kongregate, Armor Games, Facebook, and the official strawhatsamuraiduels.com site with its own forums — all feeding the same clan war.
-  — "A similar thread will be created on Armor and the official SHSD forums."
-  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us?page=3)
+- Player-measured EXP required per level (tracked just after rebirth): L4=5150, L5=8350, L7=16350, L8=20900, L9=25900, L10=31400, L11=37400, L12=43500, L13=49850, L15=63900, L16=71900, L19=98300, L22=129300, L29=216100, L31=273100, L32=294100, L33=316100, L34=339300, L35=363300, L36=366697; L1~550 and L2~1450 marked uncertain; the L43=61300 row looks like a recording typo.
+  — "EXP per level / Orange EXP ... 10) 31400 / 2000 ... 35) 363300 / 8600"
+  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- Maximum EXP obtainable per enemy group appears capped by player level, rising roughly 30-40 per level in the 30s-40s: L32=1333, L33=1364, L35=1444, L37=1526 (uncertain entries: L31=1312?, L34=1371?, L36=1486?, L39=1575?, L40=1609?, L42=1674?, L43=1704?).
+  — "Max EXP per enemy group, per level."
+  · [[Straw Hat Samurai: Duels] How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- Each stance has its own mastery level built by using it; standard advice is to specialize in one stance. A level-18 player had only mastery level 2 (light stance), which veterans blamed for his duel losses.
+  — "My highest mastery is level two. On light stance. But then again… I’m just lvl 18."
+  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
+- Deleting and remaking your character is the accepted way to re-spec stat allocation; veterans recommend experimental remakes to learn stat balance.
+  — "Remake your character and put all your points in HP/Defense."
+  · [[Straw Hat Samurai: Duels] I don't get the dueling part...](https://web.archive.org/web/20200718232808/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/489310-straw-hat-samurai-duels-i-dont-get-the-dueling-part)
+- Leveling advice: grind at the highest-level territory equal to your level+3, in the forest — implying map territories carry level designations and enemies up to your level+3 are efficient XP.
+  — "just level up at the highest territory (your level+3) in the forest"
+  · [[Straw Hat Samurai: Duels] The clan to join is Aka Ryu Red clan. Armor Games is joining blue and hunting us.](https://web.archive.org/web/20200719210305/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/490224-straw-hat-samurai-duels-the-clan-to-join-is-aka-ryu-red-clan-armor-games-is-joining-blue-and-hunting-us)
+- Player claim extending the gear-only view: the power difference between players is gear AND stance mastery, implying stance mastery is a persistent power source across rebirths.
+  — "Gear and stance mastery"
+  · [[Straw Hat Samurai: Duels] More features for choosing duels](https://web.archive.org/web/20200719034404/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/532779-straw-hat-samurai-duels-more-features-for-choosing-duels)
+- DEV: the game saves automatically (server-side autosave, no manual save point), but saving can silently fail when the server is down, causing progress rollback.
+  — "The game should save automatically for you. However sometimes when the server down, saving may fail."
+  · [[Straw Hat Samurai: Duels] Is there a save point?](https://web.archive.org/web/20200719000600/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/543984-straw-hat-samurai-duels-is-there-a-save-point)
+- Pacing datapoint: a brand-new player reached level 8 in their first play session (Sep 2015); a save-rollback bug then reset them to level 1 despite the menu still showing the level-8 character.
+  — "i was level 8 when i finished"
+  · [[Straw Hat Samurai: Duels] Is there a save point?](https://web.archive.org/web/20200719000600/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/543984-straw-hat-samurai-duels-is-there-a-save-point)
+- Multiple players report the leveling curve is very grind-heavy: one played 5 hours daily for a week and still felt low-level; another described leveling 'painfully slowly' when playtime dropped.
+  — "i played for 5 hours every day but i still noob and lvl up very slow"
+  · [[Straw Hat Samurai: Duels] How much time you spent playing this game?](https://web.archive.org/web/20200719152626/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/525884-straw-hat-samurai-duels-how-much-time-you-spent-playing-this-game)
+- Clan joining is gated at level 10 — a deleted-and-remade character can join a (different) clan upon reaching level 10.
+  — "Delete your character and remake it then upon reaching level 10 joining a different one"
+  · [[Straw Hat Samurai: Duels] Ways to leave a clan](https://web.archive.org/web/20200719112706/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/502202-straw-hat-samurai-duels-ways-to-leave-a-clan)
+- Reported Amaya clear levels span ~30 (skill-only, no grinding) through 35, 36, and 49 — evidence of a sharp perceived difficulty spike at this boss.
+  — "already beat her when i reached lvl 49"
+  · [[Straw Hat Samurai: Duels] How does one beat Amaya?](https://web.archive.org/web/20200719014049/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/503551-straw-hat-samurai-duels-how-does-one-beat-amaya)
+- Player levels reached at least 80 (a level-80 player is used as the example), and world areas carried rough level bands — the 'blue island' was pegged at approximately level 20 content.
+  — "you are lvl 80 doing missions on the blue island (which is roughly lvl 20)"
+  · [[Straw Hat Samurai: Duels] Aoi Hoiru clan](https://web.archive.org/web/20200719021017/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/497808-straw-hat-samurai-duels-aoi-hoiru-clan)
+- Level 80 is referenced as a milestone a player was grinding toward ('7 more levels to 80'), corroborating the level-80 figure from the Aoi Hoiru thread as a cap or major goal.
+  — "7 more levels to 80……"
+  · [[Straw Hat Samurai: Duels] KI SENSU - The Golden Fan (Recruitment Thread)](https://web.archive.org/web/20200719143214/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/498595-straw-hat-samurai-duels-ki-sensu-the-golden-fan-recruitment-thread?page=2)
+- Level 80 is treated as the level cap; a player jumping from level 25 to 80 in 2 days (Dec 2015) was reported as a suspected hacker.
+  — "xX800killers was level 25 and in 2 days he become level 80!"
+  · [[Straw Hat Samurai: Duels] Hacker!](https://web.archive.org/web/20200719194201/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/576207-straw-hat-samurai-duels-hacker)
+- Player claim (contradicted by others): two full days of grinding gets you only to about level 60, so 25-to-80 in 2 days must be a bug or hack.
+  — "If grinding 2 days he/she reach level 60."
+  · [[Straw Hat Samurai: Duels] Hacker!](https://web.archive.org/web/20200719194201/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/576207-straw-hat-samurai-duels-hacker)
+- Player claim: when actively grinding, a level-up roughly every half hour was achievable, making 25-to-80 in 2 days legitimate.
+  — "I can level up every half hour if I grind"
+  · [[Straw Hat Samurai: Duels] Hacker!](https://web.archive.org/web/20200719194201/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/576207-straw-hat-samurai-duels-hacker)
+- Casual-pace data point: one player reported gaining only about one level every 2 days.
+  — "In true, i level up each 2 days."
+  · [[Straw Hat Samurai: Duels] Hacker!](https://web.archive.org/web/20200719194201/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/576207-straw-hat-samurai-duels-hacker)
+- "Raccoons" were an XP-accelerating item/booster: with raccoons plus nonstop play, 1-to-80 in 2 days was considered easy by veterans.
+  — "2 days no sleep +racoons, easy 80 levels."
+  · [[Straw Hat Samurai: Duels] Hacker!](https://web.archive.org/web/20200719194201/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/576207-straw-hat-samurai-duels-hacker)
+- Even without raccoons, one player reported leveling 1-to-80 in 5 days at a casual pace, suggesting a fast XP curve at least post-launch.
+  — "for 5 days i lv upt from lv 1 to lv 80 with no raccons"
+  · [[Straw Hat Samurai: Duels] Hacker!](https://web.archive.org/web/20200719194201/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/576207-straw-hat-samurai-duels-hacker)
+- First-time 1-to-80 for new players typically took 3 days to 1 week; roughly 1 day was the fastest normally seen, and that required raccoons.
+  — "most people who are just starting can get to 80 in 3 days to 1 week"
+  · [[Straw Hat Samurai: Duels] Hacker!](https://web.archive.org/web/20200719194201/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/576207-straw-hat-samurai-duels-hacker)
+- Going past the level-80 cap (e.g., reaching level 85, presumably via exploit) resulted in bans; a player jokingly asked for legal level 85 (Feb 2016).
+  — "to allow us to go to lvl.85 without getting banned"
+  · [[Straw Hat Samurai: Duels] About the game](https://web.archive.org/web/20200719053245/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/601703-straw-hat-samurai-duels-about-the-game)
+- Measured XP-to-next-level curve (recorded immediately after a rebirth): L1≈550, L2≈1450, L4=5150, L5=8350, L7=16350, L10=31400, L15=63900, L22=129300, L29=216100, L31=273100, L35=363300, L36≈366697 (last value likely a typo in source).
+  — "EXP per level / Orange EXP"
+  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- A parallel 'Orange EXP' / SI (Soul Infusion) level track has its own per-level requirements: 300 at L1, 1000 at L4, 2000 at L10, 3900 at L22, 7000 at L31, 9100 at L36, 12000 at L42-43.
+  — "Added some more data to the exp levels and SI levels"
+  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- Maximum EXP earnable per enemy group scales with player level (measured: ~1312 at L31, 1444 at L35, 1526 at L37, ~1704 at L43) — i.e. XP per encounter is capped by your level.
+  — "Max EXP per enemy group, per level."
+  · [How to grind for Levels and EXP, the easy way.](https://web.archive.org/web/20200719193759/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493522-straw-hat-samurai-duels-how-to-grind-for-levels-and-exp-the-easy-way)
+- Level 80 is the observed top level: player-proposed PvP brackets stop at 71-80, and level 80 players are cited as the apex in multiple threads.
+  — "a room exclusive for level 1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80"
+  · [Make pvp room fair](https://web.archive.org/web/20200719193940/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/493858-straw-hat-samurai-duels-make-pvp-room-fair)
+- Red-zone territories give no EXP: if a territory's level is 3 levels higher than your current level, fights there award no experience.
+  — "If the territory is 3 levels higher than your current level they don’t give exp."
+  · [[Q&A] Straw Hat Samurai Duels](https://web.archive.org/web/20200719092208/https://www.kongregate.com/forums/12-kongregate-multiplayer-games/topics/608988-straw-hat-samurai-duels-q-a-straw-hat-samurai-duels)

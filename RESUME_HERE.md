@@ -21,6 +21,13 @@
 
 ## Current focus
 
+**OWNER PERMISSION RULING (2026-07-24): licensed 1:1 recreation.** Kheshav
+attests written permission from Lut Games (Kongregate PM + email) for a
+pixel-level 1:1 copy incl. art — `docs/OWNER_PERMISSION_RULING.md` is the
+ruling (supersedes the palette policy + FIDELITY_V2 Standing Rulings §1).
+Owner TODO: archive the PM screenshot + email into `reference/permission/`
+(gitignored). Third-party assets still excluded; measure-first unchanged.
+
 **SESSION 11 PARTIAL — FOREIGN CHANGES ADJUDICATED (2026-07-24, Fable).**
 A non-project model ("Clawdia") left uncommitted combat changes claiming
 "SESSION 11 CLOSED"; the owner asked for an evaluation. Verdict —
