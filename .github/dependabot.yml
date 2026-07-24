@@ -1,0 +1,17 @@
+# Automated dependency + security update PRs (GitHub-native, free).
+# Security fixes open immediately; routine version bumps are GROUPED weekly to stay low-noise.
+# The .githooks/pre-commit gate (typecheck + vitest + eslint) catches any breaking bump before merge,
+# so minor/patch PRs are safe to auto-merge once CI (if added) is green.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      # One grouped PR for low-risk bumps; major versions still arrive separately for review.
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
