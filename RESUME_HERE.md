@@ -1,5 +1,13 @@
 # RESUME HERE
 
+> ## ▶ NEXT SESSION STARTS HERE (2026-07-25)
+> **`docs/sessions/SOURCE_DIVE_KICKOFF.md`** — read the game's own constants out
+> of the archived SWFs. Then `docs/sessions/SESSION12_KICKOFF.md` (the combat
+> retune). Rationale + verified file states are in "Next concrete step" below.
+> Everything the study pass measured is in
+> `docs/research/fidelity/COMBAT_MEASUREMENTS.md` — **read its §00b corrections
+> first; a later pass overturned four of its own rows.**
+
 > **Fresh session and Kheshav said only "continue"?** Read this file top to
 > bottom, then `docs/sessions/SESSION4_KICKOFF.md` (standing mandates), then
 > `git log --oneline -10`. Trust those three over any older doc.

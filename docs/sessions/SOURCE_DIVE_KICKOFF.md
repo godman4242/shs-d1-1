@@ -53,10 +53,34 @@ payload is an earlier build. **Establish which build you actually decrypted befo
 trusting a single constant**, and record it — a 0.706 constant is still excellent
 evidence, but it must be labelled as 0.706.
 
-**Tooling:** `java` is present (OpenJDK 25). **JPEXS Free Flash Decompiler (ffdec)**
-is the standard tool and runs as a Java app; it is not installed yet. It also
-handles many Flash protectors natively, so try it on `shs3.swf` directly before
-hand-rolling anything.
+**Tooling — and the good news: NO EXTERNAL TOOL IS REQUIRED.**
+
+`java` is present (OpenJDK 25), but **ffdec is NOT available via brew** (checked:
+no formula, no cask) so it would need a manual download. **You do not need it.**
+
+✅ **PROVEN 2026-07-25, not assumed:** both predecessors are **AS3** (`DoABC`
+present, ABC v46.16), and their constant pools were parsed successfully with
+**pure Python, no external tools and no network**. Real output:
+
+| file | pool | gameplay identifiers recovered |
+|---|---|---|
+| `shs1` | 56 ints · 16 doubles · 1,666 strings | `maxDistance`, `distanceLeft`, `getDistance`, `drawSlash`, `hasSlash`, `playSlash`, `slashCount`, `maxCombo`, `BloodParticleSystem`, `dashcloud` |
+| `shs2` | 38 ints · 17 doubles · 2,373 strings | `getDistanceSQ`, `maxDistance`, `distanceLeft`, `drawNextSlash`, `redrawSlash`, `storeNextSlash`, `hasNextSlash`, `initSlash`, `downSlashVictim`, `updateCombo` |
+
+**`maxDistance` / `distanceLeft` is very probably the REACH mechanic in source
+form**, and `drawSlash` / `storeNextSlash` / `hasNextSlash` is the stroke queue.
+
+⚠️ **Honest caveat that shapes the work:** the constant pools are **small**
+(56 ints / 16 doubles in shs1). AS3 encodes small numbers *inline in method
+bytecode* (`pushbyte` / `pushshort` / `pushint`), **not** in the pool. So the pool
+gives you the **names**; getting the **numbers** means walking method bodies and
+reading the push opcodes next to the trait you care about. Plan for that — it is
+the actual work, and it is very doable, but "dump the constant pool" alone will
+not hand you the values.
+
+ffdec remains *nice to have* (it produces readable pseudo-source and unpacks some
+protectors automatically). Treat it as an optional accelerator, not a dependency —
+and note it needs a network fetch, which may not be available.
 
 ---
 
