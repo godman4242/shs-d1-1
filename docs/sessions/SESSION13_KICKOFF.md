@@ -12,10 +12,11 @@
 > chaos-plant every guard · **binary gates, never softened to fit a change**.
 >
 > **This plan was adversarially reviewed by four independent lenses before you got it.**
-> 34 CRITICAL/MAJOR findings were raised against the first draft and folded in. Where a
-> finding could not be resolved from evidence, it is written below as a **prerequisite
-> step (P-series)**, not as an assumption. **Do the P-steps first. They are cheap, and
-> three of them can invalidate a later decision.**
+> 34 CRITICAL/MAJOR findings were raised against the first draft and folded in; a third pass
+> then closed every remaining open question from source.
+>
+> ⚡ **THERE IS NO RESEARCH STEP AND NOTHING TO DECIDE. Start at §4 A0 and write code.**
+> §P records the five questions that were open and their answers, so they are not re-opened.
 
 ---
 
@@ -29,7 +30,7 @@ guesses were wrong in ways more measuring would never have caught.
 
 **We now have the painter's own recipe.** The source gives **formulas**, not just numbers:
 
-- reach = `f(agility, rebirth rank, stance, mastery)` — not three constants
+- reach = `f(SPD stat, rebirth rank, stance, mastery)` — not three constants
 - damage = `f(attack, weapon, stance, mastery, focus)` — not a fixed value
 - enemy HP = `f(the player's own damage, level gap)` — not authored at all
 
@@ -113,24 +114,6 @@ the stat feeding the enemy-damage formula is **player max HP**:
 ⇒ **The player kills the enemy in K hits; the enemy kills the player in D hits.** Both sides
 of a duel are tuned in *hits*, and neither is tuned in *hit points*. This is the single
 cleanest statement of the original's combat design and it should drive every balance choice.
-
-**P4 — ✅ ALREADY RESOLVED FROM SOURCE — no work needed, recorded here so it is not re-opened.**
-The original's resize routine reads, verbatim, for logical `w=800, h=480, hTall=690`:
-```
-if (windowAspect <= 800/690)  { contentAspect = 800/690; h = 690; }   // very tall windows only
-if (contentAspect >= windowAspect) { scale = stageW/800; xOff = 0; yOff = (stageH − h*scale)/2; }
-else                               { scale = stageH/h;   xOff = (stageW − 800*scale)/2; yOff = 0; }
-scaleX = scaleY = scale;     // ONE uniform scale, both axes
-```
-For our **1024×576** canvas: `windowAspect` 1.778 > `contentAspect` 1.667 → the **else**
-branch → **scale = 576/480 = 1.2**, **xOff = (1024 − 960)/2 = 32**, **yOff = 0**.
-
-⇒ **The transform is `stage = (32 + 1.2·worldX, 1.2·worldY)` — uniform ×1.2, pillarboxed
-with 32 px bars left and right.** It also fits the speed measurements far better than the
-first draft's guessed 1.28: run `288 × 1.2 = 345.6` against a measured **341–349** (dead
-centre), walk `96 × 1.2 = 115.2` against **112–126**. The first draft's 1.28 gave 368.6 and
-had to excuse the gap with "snap-arrival deceleration" — which `COMBAT_MEASUREMENTS.md` b-4
-explicitly refutes ("no deceleration ramp").
 
 ---
 
