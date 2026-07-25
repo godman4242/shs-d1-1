@@ -1,0 +1,113 @@
+### AGENT damage-ttk  (19 rows)
+SUMMARY: Item (e) is now measured end-to-end, and it changes the combat model.
+
+THE BIG ONE — ordinary mobs die in ONE hit. Across 3 encounters and >15 bar-disappearance events, no non-named enemy's HP bar was ever observed at anything other than 100% green on the last frame it existed. So "hits-to-kill on ordinary early mobs" = 1, and "enemy HP fraction dropped per hit" = 100%. Partial bars only ever belong to NAMED characters (JINBEI (3)/(4)). Verified on 4 individually-tracked enemies in the dungeon fight (t1382.067 -> t1384.600) plus every enemy in the level-1 forest fight and the 8-enemy dungeon fight.
+
+POPUP COLOUR IS THE KEY. Dark/black popup = damage taken by the PLAYER; red popup = damage dealt to an ENEMY. Proven, not guessed: the black number equals the player's HP loss on the same frame in 13 of 14 events (7 x "2" in the beach duel, 6 x "1" in the dungeon).
+
+PER-HIT DAMAGE TAKEN (full per-tick ledgers, no interpolation): dungeon mobs deal exactly 1 (HP 20, HEAVY); JINBEI (4) in the beach duel deals exactly 2 (HP 20, HEAVY) — a clean 2x. PLAYER-DEALT: red 36, 30, 27 on JINBEI (4); red 1 and 2 at level 1.
+
+TWO BRIEFING CORRECTIONS. (1) The beach "3-hit combo dropped him 20/20 -> 4/20" is wrong: the duel STARTS at 16/20 and the drop to 4/20 is SEVEN separate 2-damage hits over 1959.60-1963.57 s. (2) "Full-screen red flash = kill-cam" is only half right — a red TINT with the scene still in colour is the player-hurt vignette (~0.20 s, fires on every hit taken); the kill-cam is red with BLACK SILHOUETTES and precedes YOU WIN.
+
+ITEM (f) CRIT: NOT-FOUND as a distinct style. 27/30/36 land on the same target, same stance, same fight, seconds apart, with pixel-identical spawn geometry (h=36-38 px). 36/27 = 1.333 does match the forum-derived "crit 1.3", but there is no visual tell, and 30 sits in between — so it is an inference, not a measurement.
+
+ONE HONEST CONTRADICTION reported as both readings: in the level-1 fight the player loses 4 HP in a single 1/60 s step at t=125.467 while only one black "2" is visible. Most likely two attackers on the same tick with overlapping popups — flagged, not averaged.
+
+TWO TRAPS FOR THE NEXT MEASURER. (a) In the bamboo forest the foreground bamboo is drawn IN FRONT of enemy HP bars and splits them; naive green-run measurement reads a full bar as 25-70% and invents damage that never happened. (b) Much of the footage updates only every 4th frame (~15 fps effective), so 60 fps extraction is 4x wasted work in those scenes.
+
+43 evidence frames in /Users/kheshav/kheshav-code/SSHD 1-1/reference/frames/session11/damage-ttk/. Dense bursts deleted; nothing pre-existing under study11 was removed. One caution: study11/KEY2 is shared with other agents and I wrote bars.py / bar2.py / pop.py / hpbar.py there — if another agent owned a bars.py, mine overwrote it.
+
+[e] (MEASURED/high) Damage-popup values readable in the LEVEL-1 first fight (bamboo forest, player HP 10/10, Chi 10/10, BALANCED stance — gold/brown portrait ring + 'CANNOT CHANGE STANCE')
+    VALUE: red "1" (spawns t=124.933s), red "2" (spawns t=125.467s), dark/black "2" over the GUEST nameplate (spawns t=125.467s). Glyph height at spawn ~37-40 px @1080 = ~20-21 stage px
+    EVID : session11/damage-ttk/t117.000.png (baseline: HP 10/10, Chi 10/10, gold ring), t125.417.png (red "1" mid-rise), t125.467.png (red "2" + dark "2" both present), t125.733.png. Read by 3x-LANCZOS crop montage of the 60fps frames /…/study11/crux/c_0477..c_0537; popup blobs also isolated by an RGB mask R>100,G<70,B<70,R-G>70,R-B>70 + scipy connected components
+    NOTE : Video A. Only single-digit values appear at level 1. Popups scale UP as they rise and fade (29x40 px at frame 509 -> 42x62 px 15 frames later), so glyph size alone cannot be used to identify a crit.
+
+[e] (MEASURED/high) Damage-popup values in the N-Toshibara DUNGEON encounter (player HP 20/20, Chi 15/15, HEAVY stance read off the pre-fight HUD text)
+    VALUE: dark/black "1" over the GUEST nameplate, once per hit taken (6 occurrences). No other popup value appears in this encounter.
+    EVID : session11/damage-ttk/t1407.533.png (black "1" directly above GUEST, read at 4x zoom on a dark brick wall), t1408.067.png. Context frames t1401.867.png (HP 20/20 Chi 15/15), t1406.800.png (7 concurrent full enemy bars). 15fps burst A t=1400..1420
+    NOTE : Video A. Every enemy in this fight dies to one slash, so no red (enemy-damage) popups persist long enough to read here.
+
+[e] (MEASURED/high) Damage-popup values in the SUNSET-BEACH 1v1 duel GUEST vs JINBEI (4) (player HP 20 max, Chi 20 max, HEAVY STANCE confirmed by the pre-fight HUD text at t=1940 and the RED portrait ring)
+    VALUE: dark/black "2" over GUEST, once per hit taken (7 occurrences). Red "36", red "30", red "27" over JINBEI (4) — three player-dealt hits.
+    EVID : session11/damage-ttk/t1960.000.png + t1960.300.png (dark "2" over GUEST), t1961.833.png + t1961.900.png (red "36"), t1965.300.png + t1965.367.png (red "30"), t1965.967.png + t1966.000.png (red "27"). Stance context t1940.000.png ('HEAVY STANCE', HP 16/20, Chi 20/20, XP 6779/8350). 30fps burst A t=1957..1973
+    NOTE : Video A. Player's exact level is NOT displayed anywhere in the HUD (the XP plate shows only 'n / n EXPERIENCE POINTS'); the only level integers on screen are the enemy nameplate suffixes, e.g. JINBEI (3) / (4).
+
+[e] (MEASURED/high) POPUP COLOUR SEMANTICS: dark/black popup = damage taken by the player; red popup = damage dealt to an enemy. Proven by exact HP correlation.
+    VALUE: black popup number == the player's HP loss on the same frame, 13/14 times (7 x "2" in the duel, 6 x "1" in the dungeon)
+    EVID : Duel: session11/damage-ttk/t1959.600.png (14/20) t1960.000.png (black "2") t1960.300.png (12/20) t1961.233.png (10/20) t1962.133.png (8/20) t1963.633.png (4/20) t1970.333.png (2/20). Dungeon: t1402.933.png (19/20) t1407.533.png (black "1") t1411.867.png (14/20). HP read from the 'N/N' text on the green bar at x280-520 y958-1016, verified by per-frame luminance diffing then 4x visual read
+    NOTE : Video A. This is the highest-confidence single result of this pass.
+
+[e] (MEASURED/high) PLAYER HP TAKEN PER ENEMY HIT — beach duel vs JINBEI (4), HEAVY stance, 20 max HP. Full per-tick ledger, no interpolation.
+    VALUE: exactly 2 HP per hit, 8 hits total. 16/20 @1958.97 -> 14 @1959.60 -> 12 @1960.17 -> 10 @1961.23 -> 8 @1962.13 -> 6 @1962.70 -> 4 @1963.57 -> (long gap) -> 2 @1970.33 -> dead @1971.20
+    EVID : session11/damage-ttk/t1958.967.png, t1959.600.png, t1960.300.png, t1961.233.png, t1962.133.png, t1963.633.png, t1970.333.png. 30fps HP-text strip built from A t=1957..1973 and read at 4x
+    NOTE : Video A. This CONTRADICTS the briefing note that 'a 3-hit combo around 1965 dropped him from 20/20 to 4/20'. Measured: the duel starts at 16/20 (not 20/20), and the drop to 4/20 is SEVEN separate 2-damage hits spread over 1959.60-1963.57 s, not a 3-hit combo. Player Chi also drops 20/20 -> 18/20 at t=1963.97 when a blue Chi ability fires (cost 2).
+
+[e] (MEASURED/high) PLAYER HP TAKEN PER ENEMY HIT — N-Toshibara dungeon mob fight, HEAVY stance, 20 max HP, Chi 15/15. Full per-tick ledger.
+    VALUE: exactly 1 HP per hit, 6 hits over the whole encounter. 20/20 @1402.87 -> 19 @1402.93 -> 18 @1407.20 -> 17 @1407.73 -> 16 @1408.67 -> 15 @1409.47 -> 14 @1411.87 (final)
+    EVID : session11/damage-ttk/t1401.867.png (20/20, 15/15), t1402.933.png (19/20), t1407.533.png, t1408.067.png, t1411.867.png (14/20). 15fps burst A t=1400..1420, HP text isolated at x300-500 y958-996 by luminance diff then read at ~4x
+    NOTE : Video A. Ordinary dungeon mobs deal 1; the named duel opponent JINBEI (4) deals 2 — a clean 2x difference at the same player HP pool and stance.
+
+[e] (MEASURED/high) PLAYER HP TAKEN — level-1 first fight: a single 4-HP loss in ONE frame step, while the on-screen black popup reads "2". Reported as BOTH readings, not averaged.
+    VALUE: Reading A (HP text/bar): 10/10 -> 6/10 in one 1/60 s step at t=125.467 (green fill 169 px -> 124 px in the same frame). Reading B (popup): a single dark "2" above GUEST spawning on that same frame.
+    EVID : session11/damage-ttk/t125.450.png (10/10, frame before), t125.467.png (6/10, red "2" + dark "2"), t125.733.png (dark "2" still rising, only ONE dark glyph visible at 3x zoom over x900-1400). Per-frame green-fill width measured over all 540 crux frames at y968-984, x260-560; only one transition found in the whole fight
+    NOTE : Video A. Most likely explanation (INFERRED, unverified): two attackers landed on the same tick and their two identical "2" popups spawned on top of each other at the player's head, so they render as one glyph. I could not find a second dark glyph anywhere in the frame.
+
+[e] (MEASURED/high) HITS-TO-KILL on ordinary early mobs = 1. Every non-named enemy's green bar reads 100% full on the last frame it exists; no intermediate bar state was ever observed for a mook.
+    VALUE: 1 hit per kill (0 intermediate bar states across >15 bar-disappearance events in 3 separate encounters)
+    EVID : 4 separate enemies, dungeon fight 1: session11/damage-ttk/t1382.067.png (4 full bars at FIGHT!), t1382.933.png (bar 100%) -> t1383.000.png (gone, body falling) = enemy 1; t1383.133.png (bar 100%) -> t1383.200.png (gone, corpse + blood) = enemy 2; t1384.533.png (last bar 100%) -> t1384.600.png (red kill-cam, both remaining gone) = enemies 3+4. Bars measured programmatically: green run + dark-red run, total 115-150 px, green fraction = green_px/total_px
+    NOTE : Video A. Same result at LEVEL 1 (first fight, BALANCED stance): every enemy bar in /…/study11/crux reads 1.00 until it vanishes; the only sub-1.0 bar in that whole fight belongs to the NAMED enemy JINBEI (3) at 0.89-0.91. Same result across the whole 8+-enemy dungeon fight 2 (all bars 1.00 from 1401.6 to 1412.1).
+
+[e] (MEASURED/high) ENEMY HP-BAR FRACTION DROPPED PER HIT — ordinary mobs vs a named opponent
+    VALUE: Ordinary mob: 100% (one-shot; no partial state exists). Named JINBEI (4) in the duel: 1.000 -> 0.72 (hit = red "36"), 0.72 -> 0.657 (unread popup), 0.657 -> 0.406 (hit = red "30"), 0.406 -> 0.20 (hit = red "27"). Bar never went below 0.20 before the player died.
+    EVID : session11/damage-ttk/t1960.300.png (bar 1.00), t1961.833.png ("36" spawning, bar dropping), t1965.300.png ("30", bar 0.41), t1965.833.png (bar 0.40), t1965.967.png ("27", bar 0.20), t1966.600.png (bar 0.186). Green fraction measured per row as green_px / (green+darkred) px on the bar's own black-outlined box
+    NOTE : Video A. CAUTION for anyone re-deriving this: in the bamboo-forest fight the foreground bamboo stalks are drawn IN FRONT of the enemy HP bars and split them into two green runs — a naive green-run-width measurement reads a full bar as 25-70% and will produce phantom 'damage'.
+
+[e] (MEASURED/high) ENEMY HP-BAR GEOMETRY (needed to reproduce the fraction readings)
+    VALUE: full bar = 129 px +/-2 @1080 = 68.8 stage px wide; bar box y=624..638 @1080 (14 px tall = 7.5 stage px), sitting ~y628-635 for the green fill; anchored ~90 px @1080 (48 stage px) above the character's head, world-anchored (scrolls with camera)
+    EVID : session11/damage-ttk/t117.000.png, t1382.067.png, t1960.300.png; measured by column scan at x=660 on crux/c_0001 (black border y624/y638, green fill y628-635) and by run-length across ~40 distinct bars in 3 scenes
+    NOTE : Fill is GREEN (RGB ~25,162,47); the depleted remainder is DARK RED (RGB ~110,35,35); both inside one black outline. Nameplate text (e.g. 'JINBEI (4)', yellow 'GUEST') sits directly above the bar.
+
+[e] (MEASURED/high) TIME-TO-KILL per enemy — dungeon fight 1 (4 mobs, HEAVY stance, HP 20/20)
+    VALUE: enemy 1 dies at +0.93 s after FIGHT!, enemy 2 at +1.13 s, enemies 3+4 at +2.53 s (simultaneous, on the kill-cam). Mean 0.63 s/enemy.
+    EVID : session11/damage-ttk/t1382.067.png (bars appear = combat start, t=1382.067), t1383.000.png, t1383.200.png, t1384.600.png (kill-cam). 15fps burst A t=1380..1390, bar count per frame
+    NOTE : Video A. TTK here is dominated by TRAVEL time between mobs, not by hits, because each mob dies to one slash.
+
+[e] (MEASURED/high) TIME-TO-KILL per whole encounter (4 encounters measured)
+    VALUE: (1) Level-1 bamboo forest, ~5 mobs: combat 114.0 -> 126.0 s = 12.0 s; YOU WIN 127-131 s; reward 12 coins + 444 XP. (2) Dungeon fight 1, 4 mobs: 1382.07 -> 1384.60 = 2.53 s combat; YOU WIN by 1385.80. (3) Dungeon fight 2, 7+ concurrent mobs: 1401.60 -> 1412.07 = 10.47 s combat; YOU WIN at 1416.07; reward 20 coins + 420 XP. (4) Beach duel vs JINBEI (4): FIGHT! 1958.0 -> player dies 1971.2 = 13.2 s (player LOSES).
+    EVID : session11/damage-ttk/t114.000.png (fight 1 HUD appears), t126.000.png (all bars gone), t133.000.png ('YOU RECEIVED 12 / XP 444'); t1382.067.png, t1385.800.png (YOU WIN); t1401.867.png, t1411.933.png (kill-cam), t1416.067.png (YOU WIN); t1958.967.png, t1970.333.png (2/20)
+    NOTE : Video A. Encounter boundaries defined as: first frame an enemy HP bar exists -> last frame any enemy HP bar exists.
+
+[e] (MEASURED/high) RED FULL-SCREEN EFFECTS ARE TWO DIFFERENT THINGS (matters for anyone using them as a kill/damage cue)
+    VALUE: (a) Red TINT with the scene still in colour = player took damage; lasts ~0.20 s (crux frames 509-520 = 0.183 s; duel red tints at 1959.6, 1960.2, 1961.3, 1962.2, 1962.8, 1963.6, 1970.4). (b) Red field with BLACK SILHOUETTES = kill-cam / finisher; lasts ~1.2-4 s and is followed by the YOU WIN banner.
+    EVID : session11/damage-ttk/t125.467.png (tint, HP 10->6 on this frame), t1411.933.png and t1384.600.png (silhouette kill-cam), t1416.067.png and t1385.800.png (YOU WIN)
+    NOTE : Video A. The briefing note 'full-screen RED flash = kill-cam' is only half right — the tint variant is the player-hurt vignette and fires on every hit taken.
+
+[e] (MEASURED/high) PLAYER HP / CHI POOL PROGRESSION observed across the three windows (needed as context for every damage number above)
+    VALUE: t=117 s: HP 10/10, Chi 10/10, BALANCED (level 1). t=1400 s: HP 20/20, Chi 15/15, HEAVY, XP 4386/5150. t=1940 s: HP 16/20, Chi 20/20, HEAVY, XP 6779/8350.
+    EVID : session11/damage-ttk/t117.000.png, t1401.867.png, t1940.000.png; XP plate cropped from x1500-1920 y20-110 and read at ~4x
+    NOTE : Video A. The HUD never prints the player's own level — only the XP fraction. Level 1 for the first fight is taken from the briefing, corroborated by the 10/10 HP + 10/10 Chi pools.
+
+[e] (MEASURED/high) POPUP MOTION (rise + scale), measured on three separate popups
+    VALUE: Rise ~64 px @1080 (34 stage px) in 0.20 s = ~320 px/s @1080 = ~171 stage px/s. Glyph height grows from 37-40 px @1080 (20-21 stage px) at spawn to ~62 px @1080 (33 stage px) ~0.25 s later, while fading to a dark outline.
+    EVID : session11/damage-ttk/t1961.833.png -> t1961.900.png ("36": y=640 h=38 -> y=616 h=44; measured further to y=576 h=56 at t=1962.033); t125.467.png -> t125.733.png (first-fight "2": y=628 h=40 -> y=562 h=62). Bounding boxes from the connected-component mask
+    NOTE : Video A. Consistent with the prior session's 'rise ~90-120 px over 19-30 frames' if the popup is tracked to full fade-out.
+
+[f] (MEASURED/medium) CRIT: no visually distinct crit popup style was found. All three player-dealt popups in the beach duel are identical in colour, font and spawn size, yet their VALUES differ by up to 1.33x under identical conditions (same stance, same target, same fight, ~4 s apart).
+    VALUE: 27, 30, 36 (red, on JINBEI (4)). Ratios: 36/27 = 1.333, 30/27 = 1.111, 36/30 = 1.200. Spawn geometry identical: "36" y=640 h=38 w=53; "30" y=641 h=37 w=52; "27" y=652 h=36-37 (two digits w=24+23).
+    EVID : session11/damage-ttk/t1961.833.png ("36" spawn frame), t1965.300.png ("30" spawn frame), t1965.967.png ("27" spawn frame) — all three cropped at the same scale into one montage and compared side by side; bounding boxes from the red-mask connected-component pass on A t=1957..1973 @30fps
+    NOTE : Video A. The 1.333 ratio matches the forum-derived 'crit 1.3' figure in the project's research, so 36 is PLAUSIBLY a crit of a ~27 base — but that is an INFERENCE, not a measurement: the game gives no visual tell (no size, colour, outline, or '!' difference), and 30 sits between the two, so ordinary per-hit variance is an equally good explanation. Item (f) is therefore NOT-FOUND as a *styled* crit.
+
+[f] (INFERRED/low) Boss/named-enemy max HP derived from popup value vs bar fraction (the only route available, since no numeric HP is ever printed for enemies)
+    VALUE: JINBEI (4) max HP ~= 125 (range 120-135). From 36/0.28 = 129, 30/0.25 = 120, 27/0.20 = 135; cumulative check: bar 1.00 -> 0.20 (delta 0.80) for 36+30+27+~7 = ~100 damage -> 100/0.80 = 125.
+    EVID : session11/damage-ttk/t1960.300.png (bar 1.00), t1961.833.png ("36"), t1965.300.png ("30", bar 0.41), t1965.833.png (bar 0.40), t1965.967.png ("27", bar 0.20)
+    NOTE : Video A. Inference = popup value / bar-fraction delta. Uncertainty is +/-2 px on a 129 px bar (+/-1.6 percentage points) plus possible bar tweening, which is why the three estimates disagree by ~12%. Do NOT wire 125 as a CONTRACT number.
+
+[e] (MEASURED/high) Encounter roster / nameplate format (context the damage numbers are meaningless without)
+    VALUE: Nameplate = 'NAME (level)'. Ally/player = yellow 'GUEST' with NO level and NO floating bar. Named NPCs show white 'NAME (n)' + a floating bar. Mooks show a bare floating bar with no name. JINBEI is an ENEMY leader who appears at (3) in the level-1 forest fight and at (4) in the beach duel.
+    EVID : session11/damage-ttk/t125.350.png (x-grid annotated: unnamed full enemy bar at x818-944; 'JINBEI (3)' + bar at x956-1085), t1960.300.png ('JINBEI (4)'), t114.000.png, t133.000.png
+    NOTE : Video A. The ally in the level-1 fight is HIROSHI (cutscene at t=104: 'THE NAME'S HIROSHI — I'LL LEND YOU A HAND!'); JINBEI (3) flees at t=135 ('DAMN IT ALL! EVERYONE, LET'S GET OUT OF HERE!') and is not killable in that encounter.
+
+[other] (MEASURED/high) Source-video sampling caveat found while measuring (affects every timing number anyone derives from these files)
+    VALUE: Both files are 1920x1080 @ 60 fps containers, but large stretches of the game content update only every 4th frame (effective ~15 fps) — e.g. every enemy-bar and HUD value in the bamboo fight repeats in blocks of 4. The beach duel, by contrast, updates on odd AND even 30fps samples, so its content rate is >15 fps.
+    EVID : crux/c_0001..c_0540 bar-width table (identical values in runs of exactly 4); duel HP-change frames at 30fps N = 79, 96, 128, 155, 172, 198, 401 (mixed parity). ffprobe: r_frame_rate=60/1, nb_frames=251111 for zFtCaTO0_1M.mp4
+    NOTE : Practical effect: timing resolution is ~1/15 s (0.067 s) in the forest scenes, better in the duel. Extracting at fps=15 is enough for those scenes and is ~4x cheaper than 60fps.

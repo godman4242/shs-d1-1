@@ -21,6 +21,49 @@
 
 ## Current focus
 
+**SESSION 11 STUDY PASS — CLOSED ✅ (2026-07-25). NEXT ENTRY POINT:
+`docs/sessions/SESSION12_KICKOFF.md`.** The kickoff's mandatory first step
+("STUDY PASS FIRST — no code until the numbers exist") is DONE: 6 viewer
+agents, **101 measured rows across items (a)–(g)**, 202 evidence frames.
+Ledger: **`docs/research/fidelity/COMBAT_MEASUREMENTS.md`**; raw agent
+returns in `docs/research/fidelity/session11-raw/`; decisions in
+DIVERGENCES ("Session 11 study pass" blocks). **Gate items 1 + 2 GREEN.**
+Headlines:
+- **CRUX RESOLVED — blade-path CONFIRMED, move-to-target REFUTED, and the
+  two RECONCILED.** A body that ran straight through an enemy dealt ZERO
+  damage; every damaged enemy's centre lay inside the drawn line, the
+  survivor's ≤22 stage px outside. AND the line is *also* the dash path —
+  it vanishes the exact tick the player lands on its far end (1–4 px, ×2).
+  The owner saw the run and inferred the line was inert; it is both.
+- **ORDINARY MOBS DIE IN ONE HIT** (>15 events, 3 encounters). Our build
+  needs 19 slashes — the largest single gap to the original.
+- **THE OG HAS NO CRITICAL METER.** Three meters only: HP, Chi, Focus.
+  Developer text: a FULL Focus bar buys **EVASION while slashing**, not crit
+  damage. Focus = linear, **6.00 s empty→full**, −20 %/landed slash.
+  `CRIT_MULT` stays 1.3 **INFERRED** — crit is NOT measurable from footage.
+- **Reach: Light 300 ✅ / Heavy 100 ✅ CONFIRMED; Balanced 200 ❌ (measured
+  131, level-1 footage only).** Reach is NOT a radius — but our
+  crosses-hitbox AND within-reach gate already has the right structure.
+- **Movement verdict FLIPPED to click-destination leading**, reversing
+  REBUILD_READINESS §3's hold-run claim (which was never sourced). Measured
+  **WALK 126 / RUN 341 stage px/s**; our single 280 matches neither.
+  Target+gait are **latched at command time** under either model.
+- **Stance switch is a PORTRAIT CLICK and costs NOTHING.**
+- **⚠️ SAMPLING FLOOR:** both longplays carry only **15 fps of unique
+  content**; nothing under 67 ms is resolvable from video. This CONTESTS
+  `DASH_SLASH_PX=127` and `SLASH_FRAMES` 12/16/20 — both left UNCHANGED,
+  both readings preserved.
+- Corrections: the A-16 "3-hit combo 20/20→4/20" is wrong (duel starts
+  16/20; seven 2-damage hits); "150% DAMAGE" is a timed buff, not a Heavy
+  property; the portrait ring IS stance-coloured (our hardcoded red rests on
+  a refuted reading — queued, deliberately not fixed).
+**NO GAMEPLAY CODE CHANGED — deliberately.** One-hit kills, the deleted
+Critical meter, two gaits and the reach values all cascade into the 24-seed
+harness band; landing them piecemeal would force re-fitting the gate around
+each one — the exact failure the Session-11 adjudication reverted. SESSION12
+carries the ordered retune with every number ready. Suite **464/464** ·
+tsc ×2 exit 0.
+
 **OWNER PERMISSION RULING (2026-07-24): licensed 1:1 recreation.** Kheshav
 attests written permission from Lut Games (Kongregate PM + email) for a
 pixel-level 1:1 copy incl. art — `docs/OWNER_PERMISSION_RULING.md` is the
@@ -255,9 +298,16 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**STAGE 3 IS CLOSED — but the combat-model repair comes FIRST
-(2026-07-23): enter via `docs/sessions/SESSION11_KICKOFF.md`** (see the
-Current-focus top block; SESSION10/STAGE4 are NOT the entry point).
+**ENTER VIA `docs/sessions/SESSION12_KICKOFF.md` — the coherent combat
+retune.** Every number it needs is measured and sits in
+`docs/research/fidelity/COMBAT_MEASUREMENTS.md`. Its §0 explains why the
+four changes (one-hit kills · delete the Critical meter + 6.00 s Focus ·
+two gaits 126/341 · reach values) must land as ONE change before the
+24-seed harness band is re-derived once. SESSION11_KICKOFF is now
+HISTORY — its study pass is complete; do not re-run it.
+
+**STAGE 3 IS CLOSED — the combat-model repair still comes first
+(2026-07-23; SESSION10/STAGE4 are NOT the entry point).**
 Stage-4 campaign work then resumes from `docs/sessions/STAGE4_KICKOFF.md`
 — its **M0 (15-joint skeletal fighter + walk cycle) is already DONE**
 (Session 8; decide-and-flag 2026-07-13, veto = drop M0), then

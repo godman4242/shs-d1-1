@@ -1,0 +1,109 @@
+### AGENT crux-first-combat  (19 rows)
+SUMMARY: Measured items (a), (c) and (d) on video A's first fight (t=104..135), working from the pre-extracted study11/crux frames plus my own 60 fps burst over t=110..117 (since deleted; 18 evidence frames copied to /Users/kheshav/kheshav-code/SSHD 1-1/reference/frames/session11/crux-first-combat/).
+
+FIRST, A SAMPLING CAVEAT THAT CHANGES HOW EVERYTHING ELSE IS READ: video A is 15 fps content in a 60 fps container — the picture only changes every 4th frame. The finest resolvable interval is 66.7 ms, so no claim about single 60 Hz frames can be made from this recording.
+
+Four slashes isolated: S0 t=115.267-115.667, S1 t=116.800-117.467, S2 t=118.133-118.600, S3 t=119.267-120.533+. Stroke lengths 207 / 234 / 209 / ~405 px@1080 (111 / 125 / 112 / 216 stage px); bold head 129-209 px, thickness 12-14 px@1080; bold sits at the end drawn last, so it flips side with drag direction. The stroke is confirmed NOT screen-anchored (S3 moved 254 screen px while the ground plane moved 183), but it also drifts -71 px in world over 0.6 s — both readings reported, not averaged.
+
+THE FALSIFICATION TEST CAME BACK DECISIVE, AND IT IS BLADE-PATH: (1) S3's victim starts losing HP on the exact tick the line appears, 0.40 s before the player's body arrives; (2) S2 is a clean negative — the player's body ran straight through an enemy standing at x=585 and dealt him zero damage (his bar is 129-130 px on every tick), because the line started at 626; (3) every damaged enemy's centre lies inside the drawn line, and the one survivor's centre lies 41 px@1080 (22 stage px) outside it. Damage lands under the faint THIN tail as well as the bold head, so the damaging span is the whole drawn line.
+
+Consequently the reach bracket is inverted as a body radius (damaged at 262 px@1080 = 140 stage px; undamaged at 158 px@1080 = 84 stage px), which by itself kills the radius model — reach must be authored line-relative.
+
+Item (d) CONTRADICTS the prior session: body travel is a multi-tick run, not a snap. S2 = +404 px@1080 (215 stage px) over 6 ticks / 0.400 s; S1 = -646 px@1080 (345 stage px) over 11 ticks / 0.733 s. The largest single-tick displacement anywhere is 133 px@1080 = 71 stage px — a genuine 238 px 1-frame dash would have shown as one >=238 px jump and does not exist here. Runs accelerate into their last two ticks; the dash terminates on the tick the player reaches the drawn line's FAR endpoint (S1 error 1 px, S2 error 4 px), which is also when the line clears.
+
+Two honest problems logged rather than smoothed over: S0's victim lost 25% HP three ticks BEFORE any line was drawn, with no player action, no blood and no combo counter (so S0 is unusable for damage timing, only for outcome); and the stroke's world drift does not match the ground plane exactly. Also flagged for whoever automates this next: enemy HP bars shrink in total WIDTH rather than drain a fill, and several apparent "bar shrinks" in this scene are a foreground bamboo trunk at x~1349-1397 splitting one bar in two.
+
+[other] (MEASURED/high) CRITICAL SAMPLING CAVEAT: video A's picture content updates only every 4th container frame — the source is 15 fps in a 60 fps container. Finest resolvable interval = 66.7 ms (1 'tick'). Any claim about 1-frame (16.7 ms) behaviour is unresolvable from this recording.
+    VALUE: content rate 15 fps; tick = 66.667 ms; content changes at container frame N where N mod 4 == 1
+    EVID : mean-abs pixel diff between consecutive container frames in study11/crux: 137->138 = 0.003, 138->139 = 0.0017, 139->140 = 0.0016, 140->141 = 2.0033; same pattern at 144->145 (1.80), 148->149 (1.91). Repeated in moving sections: 212->213 = 4.48, 216->217 = 25.91, 220->221 = 32.48, all other steps <1. Verified independently on my own extraction (p_0420->p_0421 = 1.72, p_0421 == c_0001 exactly, diff 0.0).
+    NOTE : All timestamps below are content ticks. It also means the 'first combat' of video A cannot confirm or refute sub-66 ms events.
+
+[a] (MEASURED/high) SLASH S0 — drawn stroke geometry (screen == world, camera static). First fight, bamboo forest, player level 1 Balanced, HP 10/10.
+    VALUE: full line (828,712.5)->(1035,701.5) @1080 = dx 207, dy -11, LENGTH 207.3 px@1080 = 110.6 stage px. Bold head 830->959 (129 px@1080 = 68.8 stage px, y 714.5->705.5). Thin tail 959->1035 (76 px@1080 = 40.5 stage). Bold is the LEFT portion. On screen t=115.267..115.667 (7 ticks = 0.467 s).
+    EVID : session11/crux-first-combat/t115.267.png and t115.667.png. Red mask (r>85, r-g>60, r-b>60) column-thickness profile restricted to x 760..1160, y 640..830: bold(th>=6) = (830,959) maxth 12; full = (828,1035) at t>=115.400 when the player's hat stops occluding the tail.
+    NOTE : At 115.267/115.333 the thin tail is hidden behind the player's straw-hat brim; it becomes visible from 115.400.
+
+[a] (MEASURED/high) SLASH S1 — drawn stroke geometry (camera static).
+    VALUE: full line (428,748.5)->(659,712.5) @1080 = dx 231, dy -36, LENGTH 233.8 px@1080 = 124.7 stage px. Bold head 468->657 (dx 189, length ~191 px@1080 = 102.0 stage px). Thin tail 428->467 (39 px@1080 = 20.8 stage). Bold is the RIGHT portion. On screen t=116.800..117.467 (11 ticks = 0.733 s).
+    EVID : session11/crux-first-combat/t116.800.png, t117.000.png, t117.467.png, t117.533.png (gone). Thickness profile across x 428->659 = [2,4,4,4,6,4,10,10,10,10,10,10,10] (thin 2-6 px on the left 40 px, bold 10-12 px thereafter).
+    NOTE : Player stood at x~1073 when this line appeared, i.e. to the RIGHT of the whole line.
+
+[a] (MEASURED/high) SLASH S2 — drawn stroke geometry (camera static). This is the cleanest instance in the window: no occlusion, static camera, unambiguous outcome.
+    VALUE: full line (626,716.5)->(835,712.5) @1080 = dx 209, dy -4, LENGTH 209.0 px@1080 = 111.5 stage px. Bold across the ENTIRE span (thickness 8-14 px@1080, max 14 = 7.5 stage px); no resolvable thin tail. On screen t=118.133..118.600 (8 ticks = 0.533 s), vanishes at 118.667.
+    EVID : session11/crux-first-combat/t118.133.png, t118.400.png, t118.600.png, t118.667.png (gone). Red-mask bbox identical (626,835)x(708,725) for all 32 container frames 69..100; thickness profile [6,10,10,10,10,10,10,10,8,8,10,8,10].
+    NOTE : Line is perfectly static on screen for its whole life while the camera is static — consistent with world anchoring.
+
+[a] (MEASURED/high) SLASH S3 — drawn stroke geometry (the instance the lead flagged at ~119.3).
+    VALUE: bold head (1266,712.5)->(1455,738.5) @1080 = dx 189, dy +26, LENGTH 190.8 px@1080 = 101.8 stage px, thickness up to 14 px@1080 = 7.5 stage. Thin tail runs from ~x1050 (at the player) to 1266, so the FULL drawn line ~= 405 px@1080 = 216 stage px. Taper (thin->bold) sits at x=1266 = 53% along the full line. Bold is the FAR (right) portion. On screen t=119.267..>=120.533 (>=20 ticks = >=1.33 s).
+    EVID : session11/crux-first-combat/t119.267.png, t119.333.png (full line incl. faint tail visible), t119.733.png, t120.333.png. Bold(th>=6) measured on 13 consecutive ticks: length constant 187-189 px throughout.
+    NOTE : The thin tail is very low-contrast; the automated mask only catches fragments of it, so its left end (~1050) is read visually, not by mask.
+
+[a] (MEASURED/high) Stroke render anatomy: ONE continuous line = faint THIN tail + saturated BOLD head. Bold sits at the end drawn LAST (head), which flips side with drag direction (S0 bold-left, S1/S2/S3 bold-right).
+    VALUE: bold thickness 12-14 px@1080 = 6.4-7.5 stage px; thin thickness 2-6 px@1080 = 1.1-3.2 stage px. Bold colour ~RGB(160-180, 12-22, 0-10). Bold fraction of full line: S0 62%, S1 82%, S2 100%, S3 47%.
+    EVID : session11/crux-first-combat/t115.400.png, t117.000.png, t118.133.png, t119.333.png; per-column thickness profiles from the red mask (r>85, r-g>60, r-b>60, g<100, b<100) over y 640..830; RGB sampled directly along the S3 head at y=710..742, x=1270..1450.
+    NOTE : Bold length is NOT constant (129/189/209/189 px) so there is no evidence of a hard clamp on slash length in this window.
+
+[a] (MEASURED/medium) Stroke anchoring: the stroke is NOT screen-anchored. Measured against a ground-plane template (grass/rock band y 855..878) it drifts with the world, but with a residual leftward drift relative to the ground plane.
+    VALUE: S3 bold, t=119.733->120.333 (0.60 s): SCREEN x moved 1266->1012 = -254 px; ground-plane camera moved +183 px (independent template match). Screen-anchored would predict 0; perfectly world-anchored would predict -183. Residual world drift = -71 px@1080 = -38 stage px over 0.60 s (~ -118 px/s @1080). Segment length stayed 187-189 px the whole time (rigid).
+    EVID : session11/crux-first-combat/t119.733.png and t120.333.png. Camera from two independent methods that agree within 3 px: (i) NCC of the light-grey rock column profile y 790..878 -> +185; (ii) direct template match of a 300x80 ground patch at y=795 -> +183; (iii) a 400x24 grass strip at y=855 -> +186. A background bamboo layer moves only 0.68x and a background stone lantern only ~0.45x, so those are NOT valid anchors.
+    NOTE : Report both readings, do not average: line moved 254 screen px, ground moved 183 screen px. Either the stroke sits on a slightly faster foreground layer, or it genuinely translates in world space during the slash.
+
+[a] (MEASURED/high) Stroke lifetime is ended by the player's arrival, not by a fixed timer: the line stays drawn while the samurai runs, and disappears on the tick he reaches the line's FAR endpoint.
+    VALUE: S1: line 428..659, player 1073 -> 427; line last seen 117.467, gone 117.533 = the tick the player reached x=427 (line far end 428; error 1 px). S2: line 626..835, player 427 -> 831; line last seen 118.600, gone 118.667 = the tick he reached x=831 (line far end 835; error 4 px). Lifetimes therefore differ: 0.467 / 0.733 / 0.533 / >=1.33 s.
+    EVID : session11/crux-first-combat/t117.467.png + t117.533.png (S1) and t118.600.png + t118.667.png (S2); player x from the yellow GUEST nameplate centroid, camera static (verified 0 drift by ground template).
+    NOTE : INFERRED reading of the mechanic: draw line -> samurai runs along/to it -> line clears on arrival. Two clean confirmations (S1, S2); S3's run was still in progress at the end of the analysed span.
+
+[a] (MEASURED/high) Enemy roster and screen x at the start of this engagement (FIGHT! banner t=114.200), camera static until 119.733.
+    VALUE: Enemy L (shirtless samurai) bar 56-179 clipped at screen left, walking right at ~22 px/tick. Player (straw hat, white hakama) nameplate centre 961. Enemy M (shirtless) bar 1034-1161, centre 1097. Far-right pair R1+R2 with overlapping bars 1526-1711 (single bar is 130 px so 186 px = two enemies), centres ~1551 and ~1641. = 4 on screen + 1 off-screen left = the 5 enemies.
+    EVID : session11/crux-first-combat/t114.200.png (FIGHT! banner) and t115.000.png. Bars detected as green runs (g>110, r<95, b<95) on rows y 628..636.
+    NOTE : Several apparent 'bar shrinks' in this scene are actually a dark foreground bamboo trunk at x~1349-1397 splitting one bar into two fragments; verified because fragment widths always sum to 130 (e.g. t=118.000: 28 + 53 + 49 hidden = 130).
+
+[a] (MEASURED/high) DAMAGE LEDGER S2 — the clean NEGATIVE. The player's body ran straight THROUGH an enemy and dealt zero damage.
+    VALUE: Line span 626..835. Enemy L bar 548-677 -> 521-649 (centre 612 -> 585, body sprite ~502..630); bar width 129-130 CONSTANT for every tick 118.133..118.800 = NO DAMAGE. Enemy M2 (entering right) bar centre 1308 -> 1215, width 129-130 CONSTANT = NO DAMAGE. Player body centre travelled 405 -> 781, i.e. straight over enemy L at 585. Net result of the slash: ZERO enemies hit.
+    EVID : session11/crux-first-combat/t118.133.png, t118.400.png, t118.600.png, t118.667.png. Bar widths per tick from the green-run detector; no blood, no hit-reaction, no HP-bar change on enemy L in any frame (visually confirmed in a 9-tick zoom montage of x 200..1000).
+    NOTE : Enemy L's centre (585) lies 41 px@1080 = 22 stage px OUTSIDE the line's near end (626). His sprite edge overlapped the line by ~4 px and still took nothing, so the hit test is on a narrow hitbox/centre, not the sprite width.
+
+[a] (MEASURED/high) DAMAGE LEDGER S3 — the decisive POSITIVE, and the timing is the falsifier: damage begins on the exact tick the line appears, ~0.40 s BEFORE the player's body arrives.
+    VALUE: Enemy M2 (brown robe) bar full at 130 px through t=119.200 (bar 1042-1171, centre 1106). At t=119.267 — the first tick the stroke is drawn — the bar begins a monotone left-anchored drain with its left edge frozen at 1033: 121, 121, 93, 75, 67, 57, 29, 21 -> gone. Killed. The player's nameplate x at 119.267 = 831; he does not reach x~1079 until 119.667 (6 ticks = 0.40 s later). Enemy L (bar centre 698 -> 823) width constant 129-130 = NO DAMAGE.
+    EVID : session11/crux-first-combat/t119.267.png, t119.333.png, t119.733.png; 9-panel zoom montage of x 860..1360 across t=119.067..119.600 shows the victim standing motionless with no blood while his bar drains, and the player passing beneath him.
+    NOTE : The victim's body centre (~1074-1087) lies inside the stroke's THIN tail (~1050..1266), not inside the bold head (1266..1455). Blood/stagger on this enemy only appears from t~120.067, well after the HP loss.
+
+[a] (MEASURED/medium) DAMAGE LEDGER S0 — kill, plus one honest contradiction in the timing.
+    VALUE: Line span 828..1035 (bold 830..959). Enemy M bar 1034-1161 (full 128 px, centre 1097) -> 1032-1127 (96 px, centre 1080) -> BAR GONE at t=115.733 = killed. Enemy L (bar centre 192) width 130-131 constant = NO DAMAGE. Right pair (bar 1577-1706, centre 1641) width 130 constant through t=117.0 = NO DAMAGE. CONTRADICTION: enemy M's bar had already dropped 128 -> 96 at t=115.067, three ticks BEFORE any line is drawn (115.267) and with no player action, no blood and no HIT COMBO counter on screen.
+    EVID : session11/crux-first-combat/t115.000.png, t115.267.png, t115.667.png, t115.733.png. Bar green-run widths measured at row y=632: 128 (114.000-115.000), 121 (115.067), 122 (115.133-115.333). Combo counter crop x1600-1860 y10-190 is EMPTY for every tick 114.800..115.533.
+    NOTE : Both readings reported, not averaged. The 128->96 pre-line drop is unexplained by anything visible; do not use S0 for damage TIMING. Its kill/no-kill outcome is still usable.
+
+[c] (MEASURED/high) REACH BRACKET, Balanced stance, level 1, HP 10/10 — measured as a body-centred radius, the bracket comes out INVERTED, which by itself refutes the radius model.
+    VALUE: FARTHEST enemy that TOOK damage: S3 enemy M2, bar centre 1093-1106 vs player nameplate 831 = 262-275 px@1080 = 140-147 stage px. NEAREST enemy that took NO damage: S2 enemy L, bar centre 585 vs player nameplate 427 = 158 px@1080 = 84 stage px. Damaged-at-262 > undamaged-at-158, so no single radius separates them.
+    EVID : session11/crux-first-combat/t118.133.png + t118.667.png (S2 pair) and t119.267.png + t119.733.png (S3 pair). Player x from the GUEST nameplate centroid; enemy x from HP-bar centre (bar centre sits ~+19 px right of the sprite centre, cross-checked visually).
+    NOTE : Stance confirmed Balanced: portrait ring RGB (138,88,5) = brown; HUD reads HP 10/10, Chi 10/10, 'CANNOT CHANGE STANCE', 'AUTO SLASH OFF'.
+
+[c] (MEASURED/medium) REACH BRACKET restated line-relative — this version IS consistent across all three resolved instances. Reach = the drawn line's span, measured from the line, not from the body.
+    VALUE: Every enemy whose body centre falls INSIDE the drawn line's span took damage: S3 victim centre ~1080 inside 1050..1455; S0 victim centre ~1061 inside 828..1035. The one enemy whose centre falls OUTSIDE took nothing, by a margin of 41 px@1080 = 22 stage px (S2: centre 585 vs line near end 626). So the miss margin is bracketed at <=41 px@1080 = 22 stage px outside the line end.
+    EVID : session11/crux-first-combat/t115.267.png (S0), t118.133.png + t118.667.png (S2), t119.267.png (S3); line spans from the red-mask geometry, enemy centres from HP-bar centres.
+    NOTE : n=3 instances (2 positive, 1 negative). The exact hitbox half-width is not pinned down; all that is established is that it is narrower than the sprite (S2's sprite edge overlapped the line by ~4 px and still missed).
+
+[a] (MEASURED/high) FALSIFICATION TEST RESULT: BLADE-PATH wins decisively; 'move-to-target' is refuted. Damage follows the DRAWN LINE (thin tail + bold head), not the body's travel path, and it resolves at draw/commit time.
+    VALUE: Three independent strands: (1) TIMING — S3's victim starts losing HP on the very tick the line appears (119.267) and the body does not arrive until 119.667, 0.40 s later. (2) BODY-PATH NEGATIVE — S2's body travelled 405 -> 781 straight through an enemy standing at 585 and dealt him zero damage. (3) LINE COVERAGE — every damaged enemy's centre lies inside the line span; the only survivor's centre lies 41 px@1080 outside it.
+    EVID : session11/crux-first-combat/t118.133.png, t118.400.png, t118.600.png, t118.667.png (body passes through undamaged enemy L); t119.267.png + t119.733.png (damage precedes arrival). HP-bar width series per tick for both enemies in both events.
+    NOTE : Caveat: damage lands on enemies covered by the FAINT THIN tail as well as by the bold head (S0 and S3 victims both sit under the tail, not the head). So the damaging span is the whole drawn line, not just the bold segment.
+
+[d] (MEASURED/high) BODY TRAVEL — the swing displacement is a MULTI-TICK RUN, not a 1-frame snap. The prior-session '1-frame ~238 px@1080 = 127 stage px dash' is CONTRADICTED at this recording's resolution.
+    VALUE: S2: player x 427 -> 831 = +404 px@1080 = +215 stage px, spread over 6 ticks = 0.400 s. Per-tick deltas +28, +26, +55, +57, +26, +104, +108 px@1080. S1: 1073 -> 427 = -646 px@1080 = -345 stage px over 11 ticks = 0.733 s; deltas -58, -28, -53, -56, -25, -54, -54, -31, -96, -133. S0: 961 -> 1073 = +112 px@1080 = +60 stage px over 7 ticks. LARGEST single-tick displacement seen anywhere = 133 px@1080 = 71 stage px, i.e. 56% of the claimed 238 px snap.
+    EVID : session11/crux-first-combat/t117.000.png, t117.467.png, t117.533.png (S1) and t118.133.png, t118.400.png, t118.600.png, t118.667.png (S2). Player x = GUEST nameplate centroid, per content tick, camera verified static (ground-plane template drift 0 px across the whole span).
+    NOTE : Sampling caveat: at 15 fps a genuine 1/60 s snap would still show up as one >=238 px jump between adjacent ticks. No such jump exists here — the largest is 133 px, and the motion shows 6-11 distinct intermediate positions. Sprite-based cross-check on S2 agrees: body centre ~405 -> ~781 = +376 px@1080 = 200 stage px.
+
+[d] (MEASURED/medium) Run speed during the slash dash (Balanced, level 1).
+    VALUE: S2 average 404 px / 0.400 s = 1010 px/s @1080 = 539 stage px/s; peak tick 108 px / 66.7 ms = 1620 px/s @1080 = 864 stage px/s. S1 average 646 px / 0.733 s = 881 px/s @1080 = 470 stage px/s; peak tick 133 px / 66.7 ms = 1995 px/s @1080 = 1064 stage px/s. Both runs ACCELERATE: the last two ticks are ~2-4x the earlier ticks.
+    EVID : same nameplate-centroid series as the row above; session11/crux-first-combat/t117.467.png, t117.533.png, t118.600.png, t118.667.png bracket the two peak ticks.
+    NOTE : The nameplate tracks the head, which leads the body in the prone lunge pose, so the peak-tick figures may be inflated by up to ~40-60 px@1080 relative to true body centre.
+
+[other] (MEASURED/high) Enemy HP bars are drawn as a LEFT-ANCHORED bar whose TOTAL WIDTH shrinks with current HP — not a coloured fill draining inside a fixed-width frame. Useful as an exact per-tick damage detector.
+    VALUE: Full bar = 129-131 px@1080 = 69-70 stage px wide, interior rows y 627..637 (fill), black outline y 624..626 and 638..641. Fill colour ~RGB(4,154,6) to (23,156,39). Bar centre sits ~+19 px right of the enemy sprite centre.
+    EVID : session11/crux-first-combat/t114.200.png, t115.000.png, t115.267.png; 9-panel 4x zoom of x 990..1200, y 612..652 across t=114.000..115.267 shows the outline's right cap physically moving left as HP drops.
+    NOTE : Watch for two false-positive sources when automating this: bright-green bamboo trunks in the same row band (widths 12-28 px), and a dark foreground bamboo trunk at x~1349-1397 that splits one bar into two fragments.
+
+[other] (MEASURED/high) HUD / scene facts confirmed for this fight, and the kill-flash duration.
+    VALUE: 'FIGHT!' banner at t=114.200 marks engagement start. Portrait ring RGB (138,88,5) = brown = Balanced. HP 10/10 green, Chi 10/10 blue, 'CANNOT CHANGE STANCE', 'AUTO SLASH OFF' throughout. HIT COMBO counter is absent 114.800-115.533 and reads '1 HIT COMBO' at t=117.000. Full-screen red kill-flash occupies the whole play area (y 120..879, x 60..1859) for t=125.467..125.650 = 12 container frames = 3 content ticks = 0.200 s.
+    EVID : session11/crux-first-combat/t114.200.png (FIGHT! banner), t117.000.png (1 HIT COMBO), t118.133.png (HUD crop x80-620 y930-1070 at 2.2x), t125.467.png (kill flash). Red-pixel count in the play area jumps from ~651 to ~552,000 at container frame 509 and back to ~3,343 at frame 521.
+    NOTE : 0.200 s at 15 fps sampling means the true flash is 0.20 s +/- 0.067 s.

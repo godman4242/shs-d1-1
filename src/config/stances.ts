@@ -30,7 +30,14 @@ export const STANCE_TABLE: Record<StanceId, StanceParams> = {
   heavy: { reach: 100, speed: 0.7, dmgMult: 1.4, damageTakenMult: 1.25 },
 };
 
-/** CONTRACT — counter triangle: key BEATS value. light>heavy>balanced>light. */
+/**
+ * CONTRACT — counter triangle: key BEATS value. light>heavy>balanced>light.
+ * CONFIRMED BY DEVELOPER TEXT (Session 11): the dojo tutorial states verbatim
+ * "BALANCED IS EFFECTIVE AGAINST LIGHT. HEAVY IS EFFECTIVE AGAINST BALANCED.
+ * LIGHT IS EFFECTIVE AGAINST HEAVY." (video A t≈396.0) — which is exactly this
+ * table. Was "wiki-confirmed"; now the game's own words. Never relitigate.
+ * Provenance: docs/research/fidelity/COMBAT_MEASUREMENTS.md §0 row D-3.
+ */
 export const STANCE_BEATS: Record<StanceId, StanceId> = {
   light: 'heavy',
   heavy: 'balanced',

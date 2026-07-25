@@ -270,3 +270,155 @@ was test-coverage):
   waits in the ledger; a piecemeal half-retune was reverted. The 24-seed
   harness gate ([20,60]s · 24/24 · ≥22 distinct) was restored verbatim after
   a foreign re-band to [3,15]s — gates are never softened to fit a change.
+
+## Session 11 study pass (2026-07-25 — measured, no code change yet)
+
+Provenance for every row: `docs/research/fidelity/COMBAT_MEASUREMENTS.md`
+(evidence frames under `reference/frames/session11/`, gitignored).
+
+- **Counter triangle is now DEVELOPER-CONFIRMED, not wiki-inferred.** The dojo
+  tutorial states verbatim "BALANCED IS EFFECTIVE AGAINST LIGHT. HEAVY IS
+  EFFECTIVE AGAINST BALANCED. LIGHT IS EFFECTIVE AGAINST HEAVY." (video A
+  t≈396.0) — exactly `STANCE_BEATS` as built. Upgraded from CONTRACT-by-wiki to
+  DEV-TEXT. No code change; provenance comment added to `config/stances.ts`.
+  This row exists so the direction is never relitigated again.
+
+- **KNOWN DIVERGENCE (queued, deliberately NOT fixed this session): the portrait
+  ring must be STANCE-COLOURED; we hardcode red.** Developer text (A t≈393.0):
+  "YOUR STANCE IS INDICATED BY THE COLOR OF THE CIRCLE AROUND YOUR PORTRAIT:
+  LIGHT STANCE – BLUE, BALANCED STANCE – BROWN, HEAVY STANCE – RED." Frame-proven
+  in two stances from one video: balanced ring ≈ `#8c642e` (A t=114.0, t=121.98),
+  heavy ring ≈ `#8a110b` (A t=583.65, label "HEAVY STANCE"). `DuelScene.ts`
+  currently fills `COL.ringRed` unconditionally, and its comment asserts the ring
+  "reads constant RED in the original (both videos, both stances) — the
+  stance-colored ring was our invention". **That assertion is REFUTED**: the
+  earlier pass sampled only heavy-stance frames (B t=3772–3776 duel + A-28), so
+  red was the only hue it could have seen.
+  WHY NOT FIXED NOW: our duel spawns `stance: 'balanced'`, while fidelity-gate
+  points `portrait-ring-left` / `portrait-ring-right` assert the OG's *heavy*
+  red — they pass today only because we hardcode red. A correct fix needs (i) the
+  LIGHT (blue) hue, still unmeasured, (ii) a re-measure of ring centre/radius in
+  the DUEL HUD specifically (the overworld portrait sits elsewhere), and (iii)
+  re-pointing those two gate rows to the balanced hue with a provenance note.
+  Doing it half-measured would risk a green 55/55 gate for no gain. Veto = accept
+  the constant-red ring as a permanent simplification and delete this entry.
+
+- **Focus meter LOCATED; our HUD layout is correct; its FILL RATE is ~2.1× too
+  slow.** The OG duel HUD stacks three elements on left edge x=246 @1080: green
+  HP (`14/30`), blue Chi (`47/47`, track ends x=513 ⇒ 268 px), and a white fill
+  on a brown track = **Focus**. That third strip doubles as the stance-message
+  slot ("CANNOT CHANGE STANCE" replaces the bar), which is why the level-1 HUD
+  reads as "only two bars". Focus fills **passively and linearly** at
+  **≈45.5 px/s** (two ramps: 45.0 and 46.1 px/s; flat ≈4.55 px per 0.1 s, no
+  per-hit jumps) ⇒ **≈5.9 s empty→full** vs our Critical meter's **12.5 s**.
+  Rate is MEASURED; the 5.9 s total is INFERRED (the ramps only span 0–49 % of
+  the track; no full-fill or consumption event was captured). This confirms build
+  step 5 (fold `Critical` into `Focus`) and supplies its target rate.
+
+- **"Tip #27 = hold-mouse-to-run" is NOT a measured fact.** `REBUILD_READINESS.md`
+  §3 asserts it with no verbatim quote and no primary source, and a full-text
+  search of the 128-thread forum corpus finds **no** thread describing the
+  movement control at all. The mouse pointer is not rendered in either recording,
+  so cursor tracking is impossible. Hold-run remains the build's working default
+  (already implemented) but is labelled UNVERIFIED until footage settles it.
+
+### Session 11 study pass — agent results (2026-07-25, workflow wf_725ba028-915)
+
+Six viewer agents, 101 measured rows. Full detail:
+`docs/research/fidelity/COMBAT_MEASUREMENTS.md`; raw returns in
+`docs/research/fidelity/session11-raw/`. **No gameplay code changed this
+session** — see the "one coherent retune" ruling at the end of this block.
+
+- **SAMPLING FLOOR (binds every past and future video measurement).** Both
+  longplays carry only **~15 fps of unique content** in a 60 fps container
+  (identical-frame runs are exactly 4 long; verified by three agents on both
+  videos). Nothing finer than **66.7 ms** is resolvable from this footage. Any
+  prior "1-frame" claim sourced from video is unresolvable, and 60 fps extraction
+  is 4× wasted work. Veto = none; this is a property of the source.
+
+- **CRUX RESOLVED — blade-path CONFIRMED, move-to-target REFUTED, and the two are
+  reconciled.** Damage follows the DRAWN LINE, not the body: a body that ran
+  straight through an enemy dealt zero damage, and every damaged enemy's centre
+  lay inside the line span while the survivor's lay ≤22 stage px outside. AND the
+  line is *also* the dash path — it vanishes on the exact tick the player lands at
+  its far endpoint (1–4 px accuracy, 2 instances). The owner saw the run and
+  inferred the line was inert; it is both the cut and the destination.
+
+- **REACH IS NOT A RADIUS — but our implementation is already right.** Enemies on
+  the wrong side survive at 106 stage px while enemies at 232 stage px on the cut
+  line die. Hit-testing must be against the drawn polyline. Our `resolveSlash`
+  already requires *stroke crosses hitbox* AND *within reach*, and the crossing
+  test supplies the direction-sensitivity a radius lacks. The Session-11
+  adjudication's per-segment gate STANDS; only the reach values are in question.
+
+- **Reach values: Light 300 ✅ and Heavy 100 ✅ CONFIRMED by measurement
+  (max 303; plateau 97–103). Balanced 200 ❌ NOT confirmed — measured 131.**
+  Unresolvable: the only Balanced combat in either video is the level-1 tutorial
+  fight, while Light/Heavy were measured at level 8, and the player is in HEAVY for
+  essentially the entire rest of both runs. "Wiki wrong" vs "level-1 mastery"
+  cannot be separated. Decision: **keep 200**, retag INFERRED/unverified. Veto =
+  drop Balanced to 131 and accept a level-1-calibrated table.
+
+- **THE OG HAS NO CRITICAL METER.** Exactly three meters exist: HP, Chi, Focus.
+  Developer text names Focus and states its job — the Balanced passive CRITICAL
+  EVADE reads "ALLOWS YOU TO EVADE ATTACKS WHILE SLASHING IN THIS STANCE WHEN YOUR
+  FOCUS BAR IS FULL" (B t=740.0). **A full Focus bar buys i-frames while slashing,
+  not crit damage** — the forum's "Focus gates crits" was players conflating the
+  skill name "Critical Evade" with critical hits. Our `critical.ts` models a meter
+  the original does not have. Measured economy: linear charge, **6.00 s empty→full**
+  (three regressions agreeing to 0.5 %; independently corroborated at 5.9 s by a
+  separate method), **−20 % per landed slash**, remainder zeroed when the slash run
+  ends, unaffected by taking damage.
+
+- **CRIT MULTIPLIER: NOT MEASURABLE from this footage.** Across ~845 s the Focus
+  bar never reached full, and there is no CRITICAL popup, no gold/oversized popup
+  and no crit-vs-normal pair anywhere. The 36/27 = 1.333 pair is a damage ROLL
+  (30 sits between them, identical spawn geometry), not a crit tier. `CRIT_MULT`
+  stays **1.3 INFERRED** — neither 1.3 nor the folkloric 3× may be called measured.
+
+- **ORDINARY MOBS DIE IN ONE HIT.** >15 bar-disappearance events across 3
+  encounters: no non-named enemy's bar was ever seen at anything but 100 % on its
+  last frame. Partial bars belong only to NAMED characters. Our build needs 19
+  slashes to kill a 150-HP enemy — the largest single gap to the original.
+
+- **STANCE SWITCH IS FREE and is a PORTRAIT CLICK.** Proven by the "CHANGE STANCE"
+  tooltip in the frame pair where LIGHT→BALANCED one tick later; cycle order
+  LIGHT → BALANCED → HEAVY; HP and Chi pixel-identical either side of both
+  observed switches. ⇒ `FOCUS_SWITCH_COST = 34 × WEAPON_WEIGHT` has **no measured
+  basis**; the OG charges nothing out of combat and forbids switching in combat.
+
+- **MOVEMENT: the verdict FLIPPED to click-destination (M2) leading**, reversing
+  `REBUILD_READINESS` §3's hold-run claim — which was itself never sourced. Not a
+  strict falsification: a hold-to-move variant that LATCHES target+gait on
+  mouse-down is behaviourally identical in this footage. **The build consequence
+  holds under both models: target and gait are latched at command time, not
+  re-read live** — our Sim re-reads `moveTargetX` every tick, which is wrong either
+  way. Measured: **WALK 126 stage px/s, RUN 341 stage px/s** (4 legs each, camera
+  verified static); our single 280 matches neither. Gait is picked once per leg by
+  leg length (walk ≤88, run ≥132 stage px; **threshold unresolved in 88–132**).
+  No acceleration ramp (0→full run in one tick). **No click-marker FX exists —
+  the build must not add one.** A **scripted zone-entry walk** (spawn x≈123.5 →
+  auto-walk to ≈212 stage px) precedes player control in every zone.
+
+- **Two earlier project claims CORRECTED.** (1) The A-16 "3-hit combo dropped the
+  player 20/20 → 4/20" is wrong — the duel *starts* at 16/20 and the fall is
+  **seven** separate 2-damage hits (the arithmetic 27/3 = 9 ≠ 5.3 was the tell);
+  `SHSD_MASTER_REFERENCE` should be corrected. (2) "150 % DAMAGE" is a **timed
+  consumable buff** with an mm:ss countdown, present in both Light and Heavy
+  fights — **not** a Heavy-stance property.
+
+- **Two prior measurements now CONTESTED, both left UNCHANGED pending re-measure:**
+  `DASH_SLASH_PX = 127` (Session 9, video B, 1-frame snap) vs a 6–11 tick
+  accelerating run measured on video A (largest single tick 71 stage px);
+  and `SLASH_FRAMES` 12/16/20 (Session 8B) vs a cadence pass that found Heavy
+  *faster* than Light and flagged itself unusable. Both contradictions are
+  recorded in COMBAT_MEASUREMENTS "Contradictions / open" with both readings
+  preserved, never averaged.
+
+- **RULING — the retune must land as ONE coherent change, so it was NOT started.**
+  One-hit kills, the deleted Critical meter, two gaits, and the reach values all
+  cascade into the 24-seed harness gate ([20,60] s median · 24/24 wins · ≥22
+  distinct). Landing any one alone would force a harness re-band to fit it —
+  precisely the piecemeal failure this file records the Session-11 adjudication
+  reverting. SESSION12 carries the ordered plan with every number ready.
+  Veto = instruct that they land incrementally and accept re-banding the harness.
