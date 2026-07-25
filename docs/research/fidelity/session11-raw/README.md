@@ -19,3 +19,17 @@ exhaustion; its frame extracts were salvaged and reused by this run.
 | `crit-focus.txt` | item (f) crit + Focus economy | 14 |
 | `stance-reach.txt` | item (c) reach + speed per stance | 16 |
 | `movement-gesture.txt` | item (b) movement gesture | 17 |
+
+## Gap-fill pass (workflow `wf_40316854-a52`, 5 agents, 93 rows)
+
+Launched after auditing the ledger against the config surface the SESSION12
+retune must actually set. These agents **corrected four rows** from the first
+pass — see "§00b CORRECTIONS" in `../COMBAT_MEASUREMENTS.md`.
+
+| file | gap | rows |
+|---|---|---|
+| `gap-named-duel.txt` | B (named-enemy HP) + C (is damage a roll?) | 20 |
+| `gap-focus-trigger.txt` | F (what charges Focus) | 20 |
+| `gap-move-issue.txt` | G (how a move command is issued) | 21 |
+| `gap-enemy-ai.txt` | H (enemy speed / telegraph / cadence) | 16 |
+| `gap-gait-hitbox.txt` | E (gait threshold) + K (hitbox width) | 16 |

@@ -37,10 +37,26 @@ Headlines:
   The owner saw the run and inferred the line was inert; it is both.
 - **ORDINARY MOBS DIE IN ONE HIT** (>15 events, 3 encounters). Our build
   needs 19 slashes — the largest single gap to the original.
-- **THE OG HAS NO CRITICAL METER.** Three meters only: HP, Chi, Focus.
-  Developer text: a FULL Focus bar buys **EVASION while slashing**, not crit
-  damage. Focus = linear, **6.00 s empty→full**, −20 %/landed slash.
-  `CRIT_MULT` stays 1.3 **INFERRED** — crit is NOT measurable from footage.
+- **FOCUS *IS* THE CRIT METER** (gap-fill pass corrected the first read):
+  three meters only — HP, Chi, Focus — and when Focus fills the HUD prints
+  **"CRITICAL HIT"**. *Critical Evade* is a separate Balanced passive that
+  also keys off a full bar. Charge trigger = **holding the slash input**
+  (proven: charge leads the visible stroke by up to 1.2 s with the player
+  motionless). Fill **5.97 s**. The "−20 %/slash" cost is **NOT** a general
+  rule (19 drops in 111 cycles). `CRIT_MULT` stays 1.3 **INFERRED** —
+  mechanism measured, magnitude not.
+- **IN COMBAT THERE IS NO SEPARATE MOVE COMMAND** — every leg is one
+  stroke: approach-run (349 stage px/s) → 2–3 tick dash along it → dead
+  stop, landings accurate to 1–2 px.
+- **Named-enemy numbers for the duel:** JINBEI (4) **132 HP / 3 hits**;
+  HONDA SHIZUKA (7) **~44 HP / 3 hits** (closest analogue to DuelScene).
+  **Damage is a min/max ROLL** (36/10/30/27/42/48/42 on one target) →
+  faithful modelling needs the injected RNG. Player damage is **not** a
+  function of level (an L10 dealt less than an L5).
+- **Enemy AI measured:** walk 128 / lunge 484 stage px/s · cadence 0.733 s ·
+  telegraph **two cases** (600 ms closing / 267 ms point-blank — a single
+  global ≥520 ms is wrong) · attack is a **dash-through** · enemies **take
+  turns** · **zero blocking** (our `react()` models behaviour the OG lacks).
 - **Reach: Light 300 ✅ / Heavy 100 ✅ CONFIRMED; Balanced 200 ❌ (measured
   131, level-1 footage only).** Reach is NOT a radius — but our
   crosses-hitbox AND within-reach gate already has the right structure.

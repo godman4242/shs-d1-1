@@ -43,6 +43,137 @@ Consequences, and they are not small:
   game (which likely ran 24–30 fps). It bounds what we can ever learn from
   video, not what the original did.
 
+## ⚠️ §00b CORRECTIONS — rows below that a later pass OVERTURNED
+
+A second, gap-filling pass (`wf_40316854-a52`, 5 agents, 93 rows, raw in
+`session11-raw/gap-*.txt`) was run specifically to fill what the SESSION12
+retune needs. It **corrected four rows from the first pass**. The originals are
+left in place for traceability; **these corrections win.**
+
+| row | first pass said | CORRECTED to |
+|---|---|---|
+| **f-8 / f-10** | "Focus buys EVASION, not crit damage" · "crit NOT FOUND" | ❌ **WRONG.** Focus **IS** the crit meter: when the bar fills, the HUD prints **"CRITICAL HIT"** inside it (A t=1747.000, t=2175.933 — the only two full-bar events in 65.8 min). The *Critical Evade* skill text is a **separate Balanced passive** that also keys off a full bar; the first pass read it as the bar's only purpose. The forum's "full Focus bar enables a critical slash" was **right**. |
+| **f-9** | "−20 % per landed slash" | ❌ **NOT a general rule.** Only **19 real drops in 111 cycles / 59,262 frames**; 92 cycles have **no drop at all**. Drop size is constant *within* a fight but differs *between* fights (−19.8 %, −15.4 %, −11/−16 %, −46.5 %, −58.8 %). One cycle rose monotonically 2→100 px through a completed dash and **two registered hits** with zero drop. |
+| **e-7** | "enemy HP bar's TOTAL WIDTH shrinks" | ❌ **False for NAMED enemies.** Their track is **fixed at 130 px**, the green fill shrinks inside it, remainder **dark red**. The original reading survives only for 1-hit mobs, which are only ever seen at 100 %. |
+| **a-6** | "the line vanishes on the tick the player LANDS" | ❌ The stroke **vanishes on the FIRST DASH tick**, before the landing. |
+
+**One first-pass technique is also contested — do not rely on it blindly:** the
+`movement-gesture` agent proved a tooltip sliding 115 px while its object stayed
+fixed and concluded tooltips render *at the cursor*. The `gap-move-issue` agent
+found dojo/overworld interaction tooltips rendering in a **fixed boxed slot at the
+top-left**, carrying no cursor information. Both readings recorded; most likely
+there are **two tooltip families**. Verify which you are looking at first.
+
+---
+
+## §00c GAP-FILL RESULTS — the numbers SESSION12 actually needs
+
+### Named enemies: HP, hits-to-kill, and the percentage bar
+
+| enemy | player | total HP | hits to kill | damage seen |
+|---|---|---|---|---|
+| **JINBEI (4)** | GUEST **L5**, HP 20, Chi 20, Heavy | **132** (range 130–134) | **3** (42+48+42 = 132 exactly) | 36 / 10 / 30 / 27 / 42 / 48 / 42 |
+| **HONDA SHIZUKA (7)** | SOUND360TM **L10**, HP 30, Chi 47, Heavy | **~44** (43–45) | **3** (21, 17, killer unreadable) | 21 / 17 |
+
+- The bar is a **percentage** bar — **px-per-HP is NOT constant** (JINBEI 0.985 px/HP
+  vs HONDA 2.95 px/HP on the same 130 px track). JINBEI's 1 px ≈ 1 HP is a
+  coincidence; never hard-code px-per-HP.
+- **HONDA SHIZUKA is the closest analogue to our `DuelScene`**: challenge → VS card
+  → FIGHT! → YOU WIN → reward card, opponent labelled `NAME (LEVEL)`.
+- ⚠️ **A LEVEL 10 player dealt LESS raw damage (17–21) than a LEVEL 5 player
+  (27–48).** Player damage is **not** a function of level — weapon and target
+  defence dominate. Do not scale damage from level alone.
+
+### (gap C) Is damage fixed or a min/max ROLL? — **A ROLL**
+Seven popups on ONE target, at ONE level, in ONE stance, with ONE weapon:
+**36, 10, 30, 27, 42, 48, 42** — a spread far beyond read error, matching the
+forum's "1 ATK adds ≈ +1 min and +1 max damage". ⇒ modelling it faithfully means
+`physicalDamage` needs the **injected RNG**, which touches determinism and the
+24-seed fingerprint. *(The lone `10` may be a different attack type — flagged.)*
+
+### (gap F) What charges Focus — ANSWERED: **holding the slash input**
+Charge begins **before or on the same tick** as the stroke, never after. Leads of
+**0.933 s** and **1.200 s** were measured with the player's nameplate pinned to
+±0.3 px and **no line on screen** — identical pose, identical position; the only
+change is invisible input. The bold stroke is anchored at the *cursor* ~300 px
+away and grows at 660 px/s (drag speed), so a held-but-motionless mouse charges
+Focus while drawing nothing.
+- Rate **45.05 ± 0.30 px/s** ⇒ empty→full **5.97 s** (confirms 6.00 s).
+- Does **not** pause while the stroke is drawn (rms 0.76–1.01 px over 8 cycles).
+- Does **not** charge while idle — **94.06 %** of sampled frames read zero.
+- ✅ **Free exact readout:** `"CANNOT CHANGE STANCE"` ⇔ focus **== 0**; the fill
+  replaces it the tick focus > 0; **"CRITICAL HIT"** overprints it at 100 %.
+
+### (gap G) In combat there is NO separate move command — ANSWERED
+Every travel leg in A t=114.0–121.9 (camera provably static, 33/33 unanimous) is
+caused by **one drawn stroke**, in exactly two phases:
+1. **APPROACH-RUN** ~655 px/s @1080 (**349 stage px/s**) to one endpoint of the stroke;
+2. **DASH** along the stroke to the other endpoint — fixed **2–3 ticks (133–200 ms)**;
+3. dead stop.
+
+Landings accurate to **1–2 px** against the stroke bbox. **Zero stroke-free
+movement ticks exist in combat.** Stroke→movement windup 133–200 ms; post-landing
+the character is pixel-static for 733–1133 ms.
+- Strokes appear at **full final length within one tick** — a partially-drawn
+  stroke is never visible (clean NOT-FOUND).
+- **Hold-to-run-toward-the-current-cursor is FALSIFIED in combat** by the abrupt
+  2.7× speed change at exactly the stroke's near endpoint. The
+  **latch-on-mousedown** variant survives.
+- **Out of combat** movement is entirely strokeless, two gaits, and — unlike the
+  combat approach — it **decelerates into its target**.
+
+### (gap E) Gait selection is DESTINATION-TYPE first, not distance
+The distance-threshold model is **falsified** by two camera- and pose-verified
+counter-examples: a **202.2 stage px WALK** toward a map-exit hotspot, and an
+**87.4 stage px RUN** toward a "BANDIT (4)" enemy.
+⇒ **exit/transition ⇒ walk at any distance · hostile ⇒ run at any distance**, with
+a distance threshold only for ordinary ground clicks — narrowed to
+**(105.2, 130.8] stage px**.
+
+### Speed readings across three independent agents — report the RANGE
+
+| gait | movement-gesture | gap-move-issue | gap-gait-hitbox |
+|---|---|---|---|
+| WALK | 126 | 116 | 112.5 |
+| RUN | 341 (mean) | 349 (mean) | 440 (**top**) |
+
+Stage px/s. Walk consistent at **112–126**; run means agree at **341–349**, peak **440**.
+Use a range, or state which statistic you picked.
+
+### (gap H) Enemy AI — measured
+
+| fact | value |
+|---|---|
+| approach gait | **walk only** (upright short-step); the deep-lean run is used *only* as the attack lunge |
+| walk speed | median **128 stage px/s** (105–161 across 8 enemies) |
+| ⚠️ correction | the earlier "~22 px/tick" is the **peak** of a stuttering walk (per-tick 17,22,11,23,0,23,…), mean **16–18**. Building at 22 makes every mob ~25 % too fast |
+| attack lunge | **484 stage px/s** (~3.3× walk) |
+| cadence (landed hits) | min **0.467 s**, median **0.733 s**, mean 0.853 s, max 1.933 s (n=10) |
+| telegraph, approach attack | **0.600 s** — ✅ confirms our ≥520 ms assertion |
+| telegraph, point-blank repeat | **0.267 s** — ❌ **fails** it. A single global ≥520 ms telegraph is **wrong**; the OG has two cases |
+| telegraph FX | **none** — pose change only. Do NOT give enemies a drawn stroke line |
+| attack geometry | a **dash-THROUGH**, the same mechanic as the player: commit at **194 stage px**, damage resolves at the END of the dash when the enemy is **96 stage px PAST** the player. A radius check cannot reproduce this |
+| simultaneous attackers | **enemies take TURNS** — 1 at a time (occasionally 2). With 8 on screen the player's hit rate is no higher than 1v1. Implement an attack token |
+| block / parry / dodge | **NONE** in ~70 s across ~30 enemies — clean negative. ⚠️ our `AISeamController.react()` models blocking the OG does not have |
+| other | enemies leap (~80 stage px, landing into a lunge); waves spawn by falling in from above |
+
+### (gap K) Hitbox width — honest NOT-FOUND, with a confound worth knowing
+Not bracketed. One clean far-side MISS at **40.3 stage px beyond** a stroke's far
+end — an upper bound only, no tighter than the first pass's ~4 px.
+⚠️ **The confound is itself a finding:** damage appeared to resolve over the whole
+**dash sweep from the player's start position**, not only the drawn line — two
+enemies *behind* the line's near end died in one slash. **This tensions with a-5
+strand ②** (a body that ran through an enemy dealt zero damage); the likely
+reconciliation is that the harmless pass was the **approach-run**, while only the
+**dash** phase damages (gap G). Unresolved — next session should use a
+single-enemy stationary duel and read hits from the red numerals, not bar loss.
+
+### New measurement trap (#6)
+A **full** Focus bar carrying the "CRITICAL HIT" caption reads as a **79 px (29 %)
+fill** to a left-edge contiguous-run measure — check whether x 498–513 is lit
+before believing any mid-range value. Also: faint thin red tails persist at
+focus 0; only the saturated RGB(167,16,3) head is a live stroke.
+
 ## §0 Developer-authored text — transcribed verbatim (video A)
 
 | # | t (s) | Verbatim on-screen text | Bears on | Tag |
@@ -69,7 +200,8 @@ Previously "wiki-confirmed"; now DEV-TEXT confirmed. Do not relitigate.
 
 | # | Fact | Value | Evidence | Tag |
 |---|---|---|---|---|
-| H-1 | Level-1 player pools | **HP 10/10 · Chi 10/10 · AP 50/50**; ATK 1 · DEF 1(+2) · SPD 1; weight 14/100 | A boot survey PLAYER screen + combat HUD `session11/lead/t114.0_first-combat-hud.png` | MEASURED |
+| H-1 | Early player pools + stats (PLAYER screen, level 2) | **HP green · Chi 10/10 · AP 30/30**; **ATK 1 · DEF 1 (+2) · SPD 1**; weight **14/100**; available stat points 3 | A t≈152 PLAYER screen, re-read at full resolution (a first pass off a downscaled survey thumbnail wrongly recorded AP as 50/50 — **corrected**); combat HUD `session11/lead/t114.0_first-combat-hud.png` | MEASURED |
+| H-1b | AP is a real third stat but **never appears on the battle HUD** — only on the PLAYER screen. Corroborated independently: the crit-focus agent read AP 30/30 off the character sheet at B t=710. | AP 30/30 | A t≈152; B t=710 | MEASURED |
 | H-2 | HP grows to **20/20** by the dojo tutorial; Chi still **10/10** | 20/20 · 10/10 | A t≈420–520 tutorial frames | MEASURED |
 | H-3 | Chi pool is a **~10 pool** (not 100) → skill costs are single-digit | 10/10 at L1 | H-1; corroborates REBUILD_READINESS §3 | MEASURED |
 | H-4 | Battle HUD carries **exactly two player bars**: green HP + blue Chi. No third meter is visible bottom-left | 2 bars | `t114.0_first-combat-hud.png`, `t119.75_drawn-stroke.png` | MEASURED |

@@ -1,0 +1,82 @@
+### gap-focus-trigger (20 rows)
+SUMMARY: GAP F ANSWERED. The Focus bar is driven by an input the video never draws — it is a HOLD-TO-CRIT charge, and the payoff is proven: when the bar fills, the HUD prints \"CRITICAL HIT\" inside it (t=1747.000 and t=2175.933, the only two full-bar events in 65.8 min).\n\nSub-question answers:\n1) Does the charge start before/at/after the stroke? BEFORE or SAME TICK, never after. Measured leads across 6 cycle onsets in all three nominated windows: 0.933 s (t=1430.500 charge vs t=1431.433 first stroke pixel), 1.200 s (t=1080.833 vs t=1082.033), 0.000 s (t=3776.200). In the two long-lead cases the player's nameplate centroid is pinned at cx=862.6 ± 0.3 px for the entire 2.0 s spanning charge-off → charge-on, i.e. identical pose, identical position, no line on screen — the only thing that changes is invisible input. The bold stroke is anchored at the CURSOR ~300 px from the player and grows at 660 px/s (drag speed), so a held-but-motionless mouse charges focus with nothing drawn. VERDICT: the trigger is the slash input being HELD; the line is a separate, later render. Hypothesis PROVEN.\n2) Does it pause while the stroke is drawn/held? NO. 45.05 ± 0.30 px/s @1080 (24.03 stage px/s), straight-line fit rms 0.76–1.01 px across 8 whole cycles that contain stroke-drawing, dashes, impacts, kills and camera scroll. Empty→full = 5.97 s ⇒ the 6.00 s design figure is confirmed.\n3) Does it drop ~20% on hit-land or on release? REFUTED as a general rule, and I report both readings rather than averaging. Only 19 real drops exist in 59,262 frames / 111 cycles. Drop size is constant within a fight but different between fights (−19.8%, −15.4%, −11/−16%, −46.5%, −58.8% of the track). Reading A: every drop lands within ±1 tick of a slash executing and a HIT COMBO increment (t=833.400, t=833.867) — at the 66.7 ms sampling floor \"released\" and \"landed\" are not separable. Reading B: most landed slashes cost nothing — cycle t=1430.567–1432.767 rose strictly monotonically 2→100 px through a completed dash and two registered hits (HIT COMBO 2→4) with zero drop, and 92 of 111 cycles contain no drop at all. CHI stayed full and HP flat across the drops, so it is not a skill cost or damage.\n4) Does it charge while standing still doing nothing? NO. 94.06% of all sampled frames read zero; a 10.27 s in-combat stretch with enemies in melee range holds at zero (t=1076.500).\n\nBonus findings worth wiring in: the third HUD row is a shared MESSAGE row — \"CANNOT CHANGE STANCE\" ⇔ focus == 0 (a free exact binary readout), replaced by the fill the tick focus > 0, and overprinted with \"CRITICAL HIT\" at 100%. NEW MEASUREMENT TRAP: a full bar carrying the \"CRITICAL HIT\" caption reads as a 79 px (29%) fill to a left-edge contiguous-run measure — check whether x 498–513 is lit before believing any mid-range value. Also, faint thin red tails persist on screen at focus 0; only the saturated RGB(167,16,3) head is a live stroke.\n\nEvidence: 22 cited frames + 8 montages + the full 59,262-row fps=15 focus-bar scan in /Users/kheshav/kheshav-code/SSHD 1-1/reference/frames/session11/gap-focus-trigger/ (42 MB). Dense extraction bursts deleted; disk back to 23 GB free.
+
+[gap F] (MEASURED/high) Focus charge STARTS BEFORE any drawn stroke exists (case 1, window B 940-1440)
+   VALUE: lead = 0.933 s (14 content ticks). Charge onset t=1430.500 (caption suppressed, fill 0px) / first fill pixel t=1430.567. First bold-red stroke pixel t=1431.433, stroke length then 23 px @1080 = 12.3 stage px.
+   NOTE : Trigger is the held INPUT, not the line. Stroke colour RGB(167,16,3).
+
+[gap F] (MEASURED/high) Focus charge STARTS BEFORE any drawn stroke exists (case 2, window B 940-1440)
+   VALUE: lead = 1.200 s (18 content ticks). Charge onset t=1080.833; first bold-red stroke pixel t=1082.033. Player stands motionless in the same idle pose for the whole 1.2 s.
+   NOTE : Independent replication of the lead.
+
+[gap F] (MEASURED/high) Charge NEVER starts after the stroke; it can start on the SAME tick (window B 3762-3790)
+   VALUE: Charge onset t=3776.200; a bold red stroke is already on screen on that same tick. Lead = 0.000 s. Across 6 measured cycle onsets (t=694.667, 1004.000, 1080.833, 1420.200, 1430.500, 3776.200) the lead was 0 to 1.200 s, never negative.
+   NOTE : Consistent with: button-down starts the charge; the line renders only once the drag begins/exceeds a threshold. PROVES the hold-input hypothesis, REFUTES 'the line drives the charge'.
+
+[gap F] (MEASURED/high) Player is provably motionless while the pre-stroke charge runs
+   VALUE: Yellow nameplate centroid cx = 862.6 +/- 0.3 px @1080 for every tick t=1429.500 -> t=1431.500 (2.00 s). Focus = 0 for the first 1.00 s, then charges 2->46 px over the next 1.00 s with the pose and position unchanged.
+   NOTE : Identical visible state, opposite focus behaviour => the driver is an input that is never drawn (the mouse button).
+
+[gap F] (MEASURED/high) Charge rate (linear, no ramp)
+   VALUE: 45.05 +/- 0.30 px/s @1080 = 24.03 stage px/s. Linear-fit residual rms 0.76-1.01 px over 8 full cycles (n=29..44 ticks each).
+   NOTE : Confirms last session's 45 px/s.
+
+[gap F] (MEASURED/high) Time empty -> full
+   VALUE: 269 px / 45.05 px/s = 5.97 s. Design value almost certainly 6.00 s (= 44.83 px/s, inside the error bar).
+   NOTE : Confirms last session's 6.00 s.
+
+[gap F] (MEASURED/high) Charge does NOT pause or slow while the stroke is drawn/held, during the dash, on impact, or on landing
+   VALUE: Constant 3.00 px per content tick throughout. Cycle t=1430.6-1432.8 fits a straight line with rms 1.01 px while containing: stroke drawn (t=1431.433-1431.500), dash executed (t=1431.567), two enemies struck and killed, and full camera scroll.
+   NOTE : Sub-question 2 answered: NO pause.
+
+[gap F] (MEASURED/high) NO passive idle regeneration
+   VALUE: 55,740 of 59,262 sampled frames (94.06%) of the whole 65.8-min video B have focus = 0. Longest in-combat zero stretch checked: t=1070.400-1080.667 (10.27 s) with enemies adjacent and combat active.
+   NOTE : Sub-question 4 answered: standing still doing nothing charges NOTHING; being in combat/near enemies does not charge it either.
+
+[gap F] (MEASURED/high) BAR FULL => the HUD prints 'CRITICAL HIT' inside it (what focus is FOR)
+   VALUE: When the white fill reaches the full 269 px track, a dark caption 'CRITICAL HIT' is printed across it. Observed exactly twice in 65.8 min: t=1746.733-1747.733 (held full for 1.00 s) and t=2175.800-2176.000 (0.20 s).
+   NOTE : MAJOR: focus is a hold-to-crit charge. Ties to the forum-harvest 'crit 1.3' note. Charging the full 6.00 s buys a guaranteed critical hit.
+
+[gap F] (MEASURED/high) Bar CAPS at full - it does not overflow and does not auto-release
+   VALUE: Max fill observed 267 px = 99.3% of the 269 px track (t=2175.867). At t=1746.733-1747.733 it sat pinned at full for 1.00 s (15 consecutive ticks) before the run ended and it zeroed at t=1747.800.
+   NOTE : The player chooses when to release; a full bar just waits.
+
+[gap F] (MEASURED/high) Bar zeroes in ONE content tick when the slash run ends
+   VALUE: t=1432.767 fill = 100 px -> t=1432.833 fill = 0 px (<=66.7 ms). On that same tick the frozen slash resolves (blood/deaths render), the CANNOT CHANGE STANCE caption returns, and HIT COMBO steps 2 -> 4.
+   NOTE : Confirms last session's 'remainder is zeroed when the slash run ends'.
+
+[gap F] (MEASURED/high) REFUTED: 'each landed slash costs ~20% of focus'
+   VALUE: Only 19 real mid-cycle drops exist in the entire 59,262-frame video (111 charge cycles). Magnitudes are constant WITHIN a fight but differ BETWEEN fights: -53.3 +/- 1.1 px (-19.8%) x7 at t=833-840; -41.3 +/- 0.6 px (-15.4%) x3 at t=783-785; -30 px (-11%) and -42 px (-16%) at t=694; -125.0 +/- 4.4 px (-46.5%) x3 at t=436-449; -158.2 +/- 7.3 px (-58.8%) x4 at t=1699-1848.
+   NOTE : The '~20%' figure from last session is the t=833-840 fight only. There is no single universal per-slash cost.
+
+[gap F] (MEASURED/high) CONTRADICTION on the drop trigger - reading A: drops land on the slash-execution/hit tick
+   VALUE: t=833.400 fill 99->46 px, HIT COMBO first shows '1' on that same tick; t=833.867 fill 63->8 px one tick after the lunge frame (t=833.833), HIT COMBO steps to '2' one tick later (t=833.967). Both drops within +/-1 tick (66.7 ms) of a landed hit.
+   NOTE : At 15 fps 'stroke released' and 'hit landed' are indistinguishable when the hit lands at the end of the dash - I cannot separate them at this sampling floor.
+
+[gap F] (MEASURED/high) CONTRADICTION on the drop trigger - reading B: most landed slashes cost NOTHING
+   VALUE: Cycle t=1430.567-1432.767 rose strictly monotonically 2 -> 100 px (34 ticks, rms 1.0 px) while containing a completed dash (t=1431.567) and two registered hits (HIT COMBO 2 -> 4). Zero drop. 92 of 111 charge cycles in the video contain no drop at all.
+   NOTE : Reported as BOTH readings, not averaged. Whatever the drop is, it is a rare/conditional deduction, not a per-slash cost.
+
+[gap F] (MEASURED/high) The drop is NOT a chi/skill cost and NOT damage-linked
+   VALUE: Across both t=833 drops: CHI stayed pinned full (blue fill x246-513, 267 px) and HP green width stayed 214 px (18/20); the player's HP only fell at t=834.367, well after both drops.
+   NOTE : Rules out 'the drop is a skill activation' and 'the drop is taking damage'.
+
+[gap F] (MEASURED/high) Third HUD row is a MESSAGE row shared with the focus bar (resolves trap 2, adds a new trap)
+   VALUE: focus == 0 in combat -> the row shows 'CANNOT CHANGE STANCE'; the caption disappears on the exact tick focus becomes > 0; focus == 100% -> a dark 'CRITICAL HIT' caption is printed on the full white bar. Caption-visible is therefore an exact binary readout of focus == 0.
+   NOTE : NEW TRAP for future agents: a FULL bar carrying the 'CRITICAL HIT' caption reads as a 79 px (29%) fill to a left-edge contiguous-run measure. Detect it by checking whether the far right of the track (x 498-513) is lit.
+
+[gap F] (MEASURED/high) Focus bar geometry and colours
+   VALUE: Track x = 245..514 @1080 = 130.7..274.1 stage px, width 269 px = 143.5 stage px. Fill rows y = 1030..1046 @1080 (17 px tall) = y 549.3..557.9 stage, 9.1 stage px tall. Fill left-anchored, colour RGB(238,235,238); empty track RGB(48,28,0). Same track as HP and CHI (chi full fill measured x246-513).
+   NOTE : Matches the established HUD note (x=245..514, y1030-1046).
+
+[gap F] (MEASURED/high) The drawn stroke is anchored at the CURSOR, far from the player, and grows at drag speed (not at focus speed)
+   VALUE: At t=1431.433 the bold stroke occupied x1164-1187 (23 px = 12.3 stage px) while the player stood at x~862 - i.e. ~300 px @1080 to the player's right. One tick later (t=1431.500) it spanned x1164-1231 (67 px), a growth of 44 px in 66.7 ms = 660 px/s @1080 = 352 stage px/s.
+   NOTE : Corroborates the world-anchored-stroke note and explains the charge/line lead: the line is invisible until the drag starts, so a held-but-still mouse charges focus with nothing drawn.
+
+[gap F] (MEASURED/medium) Faint thin red lines can be on screen with focus at ZERO
+   VALUE: At t=1076.500 a thin faint red line crosses the whole screen behind an enemy archer while the focus row shows 'CANNOT CHANGE STANCE' (focus = 0), and stays 0 for the whole 10.27 s stretch t=1070.400-1080.667.
+   NOTE : Only the SATURATED BOLD head RGB(167,16,3) is the live stroke; the faint thin tail persists after the run ends and must not be used as a 'stroke present' signal.
+
+[gap F] (MEASURED/high) Slash-run structure: one focus cycle spans a MULTI-DASH run, not a single slash
+   VALUE: Cycle durations measured 0.2 s to 9.73 s (t=831.133-840.867 contained 7 dashes/drops in one unbroken charge). 111 cycles total in 65.8 min; median peak fill 47 px (1.04 s of hold).
+   NOTE : Typical play holds the input ~1 s per run, which is why the bar reached 100% only twice in the whole video.

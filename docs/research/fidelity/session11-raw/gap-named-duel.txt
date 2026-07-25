@@ -1,0 +1,88 @@
+### gap-named-duel (20 rows)
+SUMMARY: Both gaps are FILLED with measured numbers from three named-enemy fights (two vs JINBEI (4) in video A, one true VS-card duel vs HONDA SHIZUKA (7) in video B). Evidence frames: /Users/kheshav/kheshav-code/SSHD 1-1/reference/frames/session11/gap-named-duel/ (26 PNGs, named t<abs-seconds>.png; the directory is gitignored via `reference/`).
+
+GAP B — NAMED-ENEMY HP. The named-enemy HP bar is a FIXED 130 px track @1080 (69.3 stage px) with a left-anchored green fill and a dark-red remainder — this CORRECTS the prior ledger entry that said the widget's total width shrinks. JINBEI (4) has 132 HP (range 130-134) and dies in 3 basic slashes; the winning fight was exactly 42+48+42 = 132. HONDA SHIZUKA (7) has ~44 HP (range 43-45) and also died in 3 hits. Critical trap avoided: JINBEI's 1 px = 1 HP is a coincidence — the bar is a PERCENTAGE bar and px-per-HP differs per enemy (0.985 vs 2.95). Per-hit implied totals are reported individually so the scatter (122-138 for JINBEI) is visible; cumulative fits are the reliable numbers.
+
+GAP C — DAMAGE IS A ROLL, NOT A FIXED NUMBER. Six basic slashes on ONE target with one stance (HEAVY), one weapon and one level (5) gave 36, 30, 27, 42, 48, 42 — min 27, max 48, mean 37.5, 1.78x spread, with 42 repeating. So core/damage.ts DOES need a randomised min/max fed by the injected RNG. A key disambiguation: the anomalous 10 popup coincides exactly with CHI dropping 20/20 -> 18/20 and a blue VFX, so it is a CHI-skill hit and must be excluded — CHI was untouched on all six basic hits and on both video-B hits. A second independent sample (level 10, different weapon/target) gave 21 and 17, same qualitative result. One honest caveat, tagged INFERRED/low: a stroke-length confound test shows two near-identical strokes (192 vs 190 px) dealing 42 vs 48, which argues weakly against length-scaled damage, but only the residual stroke is drawn so this is not settled.
+
+Two NOT-FOUND items are reported cleanly rather than guessed: HONDA SHIZUKA's third/killing popup (covered by the death wipe) and, by extension, her exact overkill margin.
+
+[gap B] (MEASURED/high) Named-enemy HP bar geometry (CORRECTS prior session note)
+   VALUE: FIXED-width track, 130 px @1080 (= 69.3 stage px), 8 px tall (rows y628-635 @1080). GREEN fill grows from the LEFT edge; the remainder of the track is DARK RED. Total green+red span measured 129-132 px on every frame of three separate fights. The widget does NOT shrink in total width for named enemies.
+   NOTE : Prior ledger said enemy bars are left-anchored widgets whose TOTAL WIDTH shrinks. That is FALSE for named enemies: the track is fixed and the green fill shrinks inside it. (The old reading is still consistent with 1-hit mobs, which are only ever seen at 100%.)
+
+[gap B] (MEASURED/high) Enemy HP bar is a PERCENTAGE bar; px-per-HP is NOT constant across enemies
+   VALUE: JINBEI (4): ~0.985 px per HP (130 px / 132 HP). HONDA SHIZUKA (7): ~2.95 px per HP (130 px / 44 HP). Same 130 px track in both.
+   NOTE : TRAP AVOIDED: JINBEI's 1 px = 1 HP is a numerical coincidence, not the rule. Do not hard-code px-per-HP.
+
+[gap B] (MEASURED/high) JINBEI (4) — TOTAL HP
+   VALUE: 132 HP (best fit). Acceptable range 130-134. Per-hit implied totals: 137.5 / 130.0 / 121.9 / 135.0 (attempt 1) and 133.2 / 132.7 / <=130 (attempt 2). Cumulative fits: attempt 1 = 131.2, attempt 2 = 133.0.
+   NOTE : 132 is preferred over 130 because (a) it minimises residuals across all 7 measured bar states (RMS 1.2 px vs 1.6 px), and (b) the winning kill was exactly 42+48+42 = 132 with the third hit landing as the bar sat at 42 px.
+
+[gap B] (MEASURED/high) JINBEI (4) — HITS TO KILL from full HP
+   VALUE: 3 landed basic slashes (42, 48, 42). Elapsed FIGHT!-to-death = 3.2 s (FIGHT! at t~1983.0, bar gone at t=1986.20, death/win screen at t~1987.9).
+   NOTE : Attempt 1 landed 4 hits (36/10/30/27 = 103 of 132) and the PLAYER died first. So hits-to-kill is 3-5 depending on rolls.
+
+[gap B] (MEASURED/high) JINBEI (4) — per-hit ledger, attempt 2 (the kill)
+   VALUE: h1 t=1984.60: popup 42, bar 130->89 px (-41 px, -31.5%), implied HP 133.2. h2 t=1985.27: popup 48, bar 89->42 (-47 px, -36.2%), implied HP 132.7. h3 t=1986.40: popup 42, bar 42 -> gone (kill), implied HP <=130.
+   NOTE : Consistency is tight: the two non-lethal hits agree to within 0.5 HP of each other.
+
+[gap B] (MEASURED/high) JINBEI (4) — per-hit ledger, attempt 1 (the loss)
+   VALUE: h1 t=1962.07: popup 36, bar 130->96 (-34 px, -26.2%), implied HP 137.5. h2 t=1964.33: popup 10, bar 96->86 (-10 px, -7.7%), implied HP 130.0. h3 t=1965.53: popup 30, bar 86->54 (-32 px, -24.6%), implied HP 121.9. h4 t=1966.27: popup 27, bar 54->28 (-26 px, -20.0%), implied HP 135.0.
+   NOTE : Per-hit scatter 122-138 is edge-threshold noise on the green/red boundary (+/-2 px). CUMULATIVE is the reliable number: 103 damage removed 102 px = 78.5% -> HP 131.2.
+
+[gap B] (MEASURED/high) HONDA SHIZUKA (7) — TOTAL HP (second named enemy, a true VS-card DUEL)
+   VALUE: ~44 HP. Range 43-45. Per-hit implied totals: 44.8 (from 21 dmg) and 42.9 (from 17 dmg). HP=44 predicts bar states of 68.0 px and 17.7 px vs measured 69 px and 17.5 px.
+   NOTE : This is the closest analogue to our DuelScene: TOKIMASU-style duel challenge -> VS card (SOUND360TM vs HONDA SHIZUKA) -> FIGHT! -> YOU WIN -> reward card. Enemy level shown in parentheses after the name, same as overworld enemies.
+
+[gap B] (MEASURED/high) HONDA SHIZUKA (7) — HITS TO KILL from full HP
+   VALUE: 3 landed basic slashes. Damage 21, 17, and a third that killed from ~6 HP (its popup is covered by the death wipe and is NOT readable). FIGHT! at t~3773.5, enemy dead at t=3780.87 -> 7.4 s.
+   NOTE : Third popup unreadable -> tagged NOT-FOUND separately below.
+
+[gap B] (NOT-FOUND/high) HONDA SHIZUKA (7) — third/killing popup value
+   VALUE: NOT READABLE. The death wipe (full-screen red) starts on the very frame the popup would become legible.
+   NOTE : Lower bound only: it was >= ~6 HP (the remaining 17.5 px of bar).
+
+[gap B] (MEASURED/high) Player stats for the JINBEI numbers (video A)
+   VALUE: Character GUEST, LEVEL 5, XP 6179/8350, HP max 20, CHI max 20, HEAVY stance (portrait ring RED). Fight 1 started at 16/20 HP; fight 2 (post-respawn) started at 20/20.
+   NOTE : Stance is locked in combat ('CANNOT CHANGE STANCE' replaces the stance label), so all 7 popups were dealt in HEAVY with one weapon at one level.
+
+[gap B] (MEASURED/high) Player stats for the HONDA SHIZUKA numbers (video B)
+   VALUE: Character SOUND360TM, LEVEL 10, XP 27344/31400, HP max 30, CHI max 47, HEAVY stance. Duel started at 14/30 HP, ended at 2/30.
+   NOTE : A LEVEL 10 player dealt LESS raw damage (17-21) than a LEVEL 5 player (27-48). Different weapon equipped and a higher-level target -- so player damage is clearly not a pure function of level; target defence and/or weapon dominate.
+
+[gap B] (MEASURED/medium) Named-enemy damage TO the player (black popups)
+   VALUE: JINBEI (4) vs LEVEL 5 player: exactly 2 per hit, repeatedly (HP 20->18->16->14, and 14->10 across an occluded pair). HONDA SHIZUKA (7) vs LEVEL 10 player: 4, then 6, then 2 (HP 14->10->4->2).
+   NOTE : Enemy-dealt damage also varies (4/6/2 in the same duel), so the variability is not player-side only. JINBEI's constant 2 may simply be a small range that rounds flat.
+
+[gap B] (MEASURED/high) Duel reward and outcome flow
+   VALUE: JINBEI (4) kill -> 'YOU WIN' card -> 'YOU RECEIVED  XP 304'. HONDA SHIZUKA (7) kill -> 'YOU WIN' -> 'YOU RECEIVED  XP 326' + one weapon item. Loss -> 'YOU WERE DEFEATED!' with LEAVE AREA / FREE RESPAWN buttons and a taunt line from the winner. Full HP+CHI are restored on respawn (20/20 and 20/20 at t1982 after dying at 0/20).
+   NOTE : Directly usable for DuelScene win/lose screens.
+
+[gap C] (MEASURED/high) VERDICT: player basic-slash damage is NOT a fixed number
+   VALUE: Six basic slashes on ONE target (JINBEI (4)), one stance (HEAVY), one weapon, one level (5) produced: 36, 30, 27, 42, 48, 42.  n=6, MIN 27, MAX 48, mean 37.5, spread max/min = 1.78x (0.72x to 1.28x of the mean).
+   NOTE : DECISION FOR core/damage.ts: a randomised range IS required. The injected mulberry32 RNG must feed the damage roll.
+
+[gap C] (MEASURED/high) The 10 popup is a CHI-SKILL hit, not a basic slash — EXCLUDE it from the basic-attack range
+   VALUE: Popup 10 at t=1964.33 coincides exactly with the player's CHI dropping 20/20 -> 18/20 (2 CHI spent) and a blue flame VFX on the target. CHI was 20/20 on every frame of the OTHER six hits.
+   NOTE : Without this exclusion the basic range looks like 10-48 and the roll model is wrong by 3x at the low end.
+
+[gap C] (MEASURED/medium) Damage repeats an exact value -> integer roll, not a continuous function
+   VALUE: 42 occurred TWICE in six draws (t=1984.60 and t=1986.40). All five distinct values are multiples of 3: 27, 30, 36, 42, 48 (and 30/36/42/48 are multiples of 6).
+   NOTE : INFERRED reading: the roll likely lands on a small set of integer steps (base * integer, or a rounded multiplier), not a continuous float. n=6 is small -- a repeat at that n is ~50% likely by chance alone, so treat the 'multiple of 3' pattern as a hypothesis worth one more sample, not a law.
+
+[gap C] (MEASURED/high) Second, independent damage sample (different player, level, weapon and target)
+   VALUE: HONDA SHIZUKA (7) vs SOUND360TM LEVEL 10 HEAVY: readable basic-slash popups 21 and 17. n=2, MIN 17, MAX 21 (ratio 1.24x). CHI unchanged (47/47) for both, so both are basic slashes.
+   NOTE : Same qualitative result -- variable, not fixed -- at a completely different level/weapon/target. Relative spread (1.24x on n=2) is compatible with the JINBEI spread (1.78x on n=6).
+
+[gap C] (INFERRED/low) Slash-line-length confound test (is damage a function of stroke length rather than RNG?)
+   VALUE: Longest on-screen residual stroke measured before each of the three winning hits: 192 px (dealt 42), 190 px (dealt 48), 168 px (dealt 42) @1080 = 102 / 101 / 90 stage px. Two near-identical strokes (192 vs 190 px, 1% apart) produced 42 vs 48 (14% apart).
+   NOTE : WEAK evidence AGAINST pure length-scaling and FOR an RNG roll. Caveat: only the residual (un-traversed) part of the stroke is drawn, and the camera is moving, so this is a lower bound on true stroke length, not the full stroke. Do NOT treat this as settled -- if the recreation ever needs length-scaled damage, re-measure with a stroke-birth-to-death tracker.
+
+[gap C] (MEASURED/high) Ordered per-fight damage sequences (so a re-tune can replay them)
+   VALUE: JINBEI attempt 1 (loss): 36 (basic), 10 (CHI skill), 30 (basic), 27 (basic) -- 4 hits, 103 total, player died at 0/20. JINBEI attempt 2 (win): 42, 48, 42 -- all basic, 132 total, exact kill. HONDA SHIZUKA duel (win): 21, 17, [unreadable] -- all basic.
+   NOTE : Hit spacing in attempt 2: t=1984.60, 1985.27, 1986.40 -> gaps of 0.67 s and 1.13 s. Attempt 1: t=1962.07, 1964.33, 1965.53, 1966.27 -> gaps 2.27 / 1.20 / 0.73 s.
+
+[gap C] (INFERRED/medium) Suggested range to wire into core/damage.ts (pending more samples)
+   VALUE: For the LEVEL 5 / HEAVY / JINBEI case: roll uniformly over the observed integer band MIN 27 .. MAX 48 (mean 37.5). If a uniform generator is assumed, the unbiased endpoint estimate from n=6 widens this to about 23 .. 52.
+   NOTE : Report both: the OBSERVED band (27-48) is the honest measurement; the widened band (23-52) is the statistical extrapolation. Prefer the observed band and mark it INFERRED-min/max in src/config until a larger sample exists.

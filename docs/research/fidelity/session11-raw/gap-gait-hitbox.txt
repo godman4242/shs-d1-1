@@ -1,0 +1,66 @@
+### gap-gait-hitbox (16 rows)
+SUMMARY: GAP E — SOLVED and then partly overturned. I found a WALK leg squarely inside the old 165–248 px @1080 blind spot: 197.2 px @1080 = 105.2 stage px (video A t=590.200–591.133), camera proved static by NCC signpost anchor and by a 0.51-mean whole-frame background diff, gait confirmed visually as upright short-step. On the run side the tightest clean point is 245.3 px = 130.8 stage px (A t=930.200–930.533), which independently reproduces last session's RUN@132. That narrows the plain-ground threshold from (88, 132] to (105.2, 130.8] stage px; a second RUN at 217.3 px = 115.9 stage px (A t=944.467–944.867) would tighten it to (105.2, 115.9], but it is only medium confidence because a "leaving territory" modal fires on the frame the run stops, so the leg may have been truncated. My pipeline also reproduced last session's WALK@63 (measured 63.4) as a sanity check. BUT the length-threshold model is falsified by two camera-verified, pose-verified counter-examples: a 379.1 px = 202.2 stage px WALK toward a lit map-exit hotspot (A t=1207.000–1208.800) and a 163.9 px = 87.4 stage px RUN toward a "BANDIT (4)" enemy (A t=1283.533–1283.733). Gait therefore looks like destination-type first (exit/transition ⇒ walk at any distance; hostile ⇒ run at any distance), with a distance threshold only for ordinary ground clicks. Also measured: WALK speed 211 px/s @1080 = 112.5 stage px/s (two legs agree to 0.4%), RUN top speed ≈825 px/s @1080 = 440 stage px/s with no acceleration ramp. GAP K — NOT BRACKETED, reported honestly as NOT-FOUND. I got one clean far-side MISS: an enemy sprite centre 75.5 px @1080 = 40.3 stage px beyond the far end of a stroke measured at x 877..1068 took no damage (A t=1407.733–1408.467, dungeon), which is only an upper bound and does not tighten last session's ~4 px result. The blocker is a real confound I did measure: damage resolves over the whole DASH SWEEP from the player's start position, not just the drawn line — two enemies BEHIND the line's near end died in that same slash — so only the far side of a line yields a usable hitbox reading. The bamboo window defeats bar segmentation (green foliage) and its stroke has a faint tail no single threshold isolates; the dungeon melee has 7 overlapping, pillar-split bars; the boss moves throughout the draw. Next session should use a single-enemy stationary duel and read hits from the red damage numerals rather than bar disappearance. All cited frames are copied to /Users/kheshav/kheshav-code/SSHD 1-1/reference/frames/session11/gap-gait-hitbox/ (30 files, 31 MB, named t&lt;absolute-seconds&gt;.png plus six gait/outcome montages); the ~1 GB of dense extracts has been deleted, disk back to 24 GB free.
+
+[gap E] (MEASURED/high) WALK leg INSIDE the 165-248 px gap: rest-to-rest movement leg, upright short-step gait
+   VALUE: 197.2 px @1080 = 105.2 stage px — WALK
+   NOTE : THE headline result for gap E: a leg squarely inside the old 165–248 px @1080 blind spot, walked. Raises the walk-side floor from 88 → 105.2 stage px. Destination was bare ground mid-screen (no tooltip lit).
+
+[gap E] (MEASURED/high) RUN leg INSIDE the gap (upper end): rest-to-rest, deep forward-lean bounding gait
+   VALUE: 245.3 px @1080 = 130.8 stage px — RUN
+   NOTE : Independently reproduces last session's 'RUN at 132 stage px' (130.8 measured). Clean rest→rest so it is a true leg length, not a truncated one.
+
+[gap E] (MEASURED/medium) RUN leg INSIDE the gap (lower end) — narrowest run observed on plain ground
+   VALUE: 217.3 px @1080 = 115.9 stage px — RUN
+   NOTE : CAVEAT that lowers confidence: the frame right after the leg (t=944.867) pops the modal 'YOU ARE ABOUT TO LEAVE KASUTA TERRITORY.' The run may have been cut short by that trigger, so 217.3 px is the DISTANCE TRAVELLED, not necessarily the commanded leg length. Do not use it alone to set the threshold.
+
+[gap E] (MEASURED/high) COUNTER-EXAMPLE 1 — long WALK far above the supposed run threshold
+   VALUE: 379.1 px @1080 = 202.2 stage px — WALK
+   NOTE : Destination was the LEFT map-exit: the 'S TOSHIBARA FOREST (W)' hotspot tooltip is lit at the cursor by the left edge. 202.2 stage px > the 130.8 stage px RUN above ⇒ leg length ALONE cannot decide the gait.
+
+[gap E] (MEASURED/high) COUNTER-EXAMPLE 2 — short RUN far below the supposed threshold
+   VALUE: 163.9 px @1080 = 87.4 stage px — RUN
+   NOTE : Destination was a hostile: 'BANDIT (4)' red nameplate is the target. Last session logged a WALK at 88 stage px — this is a RUN at 87.4. Combat approach appears to force RUN regardless of distance.
+
+[gap E] (INFERRED/medium) Gait selection rule — revised model
+   VALUE: NOT a pure function of leg length. Observed: plain-ground clicks WALK ≤105.2 and RUN ≥130.8 stage px; map-exit / post-transition legs WALK at any length (202.2 stage px observed); enemy-approach legs RUN at any length (87.4 stage px observed).
+   NOTE : DECISION FLAG: I recommend implementing gait as destination-type first (exit/transition ⇒ walk; hostile target ⇒ run), then a distance threshold for ordinary ground clicks. Veto note: if you'd rather keep a single distance rule, use the plain-ground bracket in the next row and accept that exits/charges will look wrong.
+
+[gap E] (MEASURED/high) Plain-ground distance threshold — narrowed bracket
+   VALUE: threshold ∈ (105.2, 130.8] stage px = (197.2, 245.3] px @1080. If the dialogue-truncated 115.9 RUN is trusted, it tightens to (105.2, 115.9] stage px = (197.2, 217.3] px @1080.
+   NOTE : Old gap 88–132 (44 stage px wide) is now 105.2–130.8 (25.6 wide), or 105.2–115.9 (10.7 wide) with the medium-confidence point. No observed leg sits between 217.3 and 245.3 px @1080.
+
+[gap E] (MEASURED/high) WALK translation speed (steady, includes accel/decel over the whole leg)
+   VALUE: 211 px/s @1080 = 112.5 stage px/s
+   NOTE : Both measured with the camera proved static, so this is world speed not screen speed.
+
+[gap E] (MEASURED/medium) RUN translation speed (top speed; the run has no visible accel ramp — it starts at full speed)
+   VALUE: ≈825 px/s @1080 = 440 stage px/s
+   NOTE : The alternating 55/26 pattern is a 15-fps sampling artefact of the 60 Hz sim; the 55 px steps are the ceiling. Whole-leg means are lower (652–736 px/s) because of the stop. Run:walk speed ratio ≈ 3.9:1.
+
+[gap E] (MEASURED/high) Camera behaviour relevant to any future gait measurement
+   VALUE: Overworld rooms are camera-STATIC for most legs; the camera only follows (locking the player near screen x≈1072) in some scenes (SW Toshibara Forest, A t≈985.7–987.3).
+   NOTE : Practical rule for next session: a 'leg' whose screen displacement is ~0 while the background moves is a camera-follow run, NOT a rest. Confirm every leg with a discrete world anchor; 1-D band correlation returns a false 0 in smooth-sky scenes and false non-zero in periodic-trunk forest scenes.
+
+[gap K] (MEASURED/medium) Slash MISS distance — enemy sprite centre beyond the far end of the drawn line, took no damage
+   VALUE: 75.5 px @1080 = 40.3 stage px (miss)
+   NOTE : Single data point. It is an UPPER bound on the hit test's forward reach past the line endpoint: reach + hitbox half-width < 75.5 px @1080 (40.3 stage px). It does not tighten last session's '~4 px sprite-edge overlap ⇒ no damage' finding.
+
+[gap K] (NOT-FOUND/high) Hitbox half-width bracket (largest miss vs smallest hit)
+   VALUE: NOT BRACKETED — could not obtain the 5+ clean data points requested
+   NOTE : Clean NOT-FOUND rather than a guess. To close this next session: pick a duel with exactly ONE stationary enemy, extract at fps=15 only across the hold-and-release, and use the damage numeral (red numerals = damage to enemy) rather than bar disappearance as the hit signal.
+
+[gap K] (MEASURED/medium) Confound that must be controlled before any hitbox number is trusted: damage resolves over the DASH SWEEP, not just the drawn line
+   VALUE: Player start x ≈ 625; line drawn x 877..1068; both enemies at sprite centres 768 and 858 (i.e. BEHIND the line's near end) died, while the enemy at 1143.5 (past the far end) lived.
+   NOTE : Consequence: a naive 'distance from enemy centre to the drawn line' measurement will report huge false hits on the near side (107 px and 17 px here). Only the FAR side of the line gives a usable hitbox reading.
+
+[gap K] (MEASURED/high) Drawn-stroke geometry (supporting measurement for the hitbox work)
+   VALUE: length 191 px @1080 = 101.9 stage px; thickness 11 px @1080 = 5.9 stage px; world-anchored and pixel-identical for 11 frames (0.73 s) of hold
+   NOTE : In this dungeon slash the stroke is uniformly bold with NO faint tail — the faint-tail-plus-bold-head form appears on longer/faster strokes (see t119.467.png). Both forms exist; do not assume one.
+
+[gap K] (MEASURED/high) Enemy HP-bar full width (confirms the established constant, needed to derive sprite centres)
+   VALUE: 130–131 px @1080 = 69.3–69.9 stage px
+   NOTE : Matches the 129–131 px figure carried in from last session. Bars narrower than this in a raw scan are occluded (pillar, bamboo, GUEST nameplate), not damaged — trap #1 confirmed live in the dungeon as well as the bamboo scene.
+
+[gap other] (NOT-FOUND/high) Video B window t=750–880 is NOT overworld travel
+   VALUE: duel/dungeon combat only — no usable movement legs
+   NOTE : Drop B t=750–880 from any future gait hunt; A 560–601 / 900–1000 / 1200–1300 are the productive overworld windows.

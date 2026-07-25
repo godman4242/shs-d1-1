@@ -422,3 +422,85 @@ session** — see the "one coherent retune" ruling at the end of this block.
   precisely the piecemeal failure this file records the Session-11 adjudication
   reverting. SESSION12 carries the ordered plan with every number ready.
   Veto = instruct that they land incrementally and accept re-banding the harness.
+
+### Session 11 gap-fill pass (2026-07-25, workflow wf_40316854-a52)
+
+Run after auditing the study ledger against the config surface the SESSION12
+retune must actually set. 5 agents, 93 rows. **It corrected four rows from the
+first pass** — corrections table at COMBAT_MEASUREMENTS §00b.
+
+- **⚠️ CORRECTION — FOCUS *IS* THE CRIT METER.** The first pass concluded "a full
+  Focus bar buys EVASION, not crit damage" from the *Critical Evade* skill text,
+  and reported crit as NOT-FOUND. Both are **wrong**: when the bar fills, the HUD
+  prints **"CRITICAL HIT"** inside it (A t=1747.000 and t=2175.933 — the only two
+  full-bar events in 65.8 minutes of play). *Critical Evade* is a **separate
+  Balanced-stance passive** that also keys off a full bar. The Kongregate forum's
+  "a FULL focus bar enables a critical slash" was right all along. ⇒ SESSION12
+  must **gate crit on Focus**, not delete crit. `CRIT_MULT` still stays 1.3
+  INFERRED: the *mechanism* is now measured, the *magnitude* is not.
+- **⚠️ CORRECTION — the "−20 % Focus per landed slash" is NOT a general rule.**
+  Only 19 real drops in 111 charge cycles across 59,262 sampled frames; 92 cycles
+  contain no drop at all, and one rose monotonically 2→100 px through a completed
+  dash and two registered hits. Drop size is constant within a fight but differs
+  between fights (−19.8 / −15.4 / −11–16 / −46.5 / −58.8 %). Do not hard-code it.
+- **⚠️ CORRECTION — named-enemy HP bars do NOT shrink in total width.** Their
+  track is FIXED at 130 px with the green fill shrinking inside it and a dark-red
+  remainder. The first pass's "total width shrinks" reading holds only for 1-hit
+  mobs, which are only ever seen at 100 %. The bar is a PERCENTAGE bar and
+  px-per-HP is NOT constant (JINBEI 0.985 px/HP vs HONDA 2.95 px/HP on the same
+  130 px track) — never hard-code px-per-HP.
+- **⚠️ CORRECTION — the stroke vanishes on the FIRST DASH tick**, not when the
+  player lands.
+- **FOCUS CHARGE TRIGGER = holding the slash input** (gap F, PROVEN). The charge
+  leads the visible stroke by up to 1.2 s with the player's nameplate pinned to
+  ±0.3 px and nothing drawn on screen — the only thing changing is invisible
+  input. It does not charge while idle (94.06 % of frames read zero) and does not
+  pause while drawing. Fill 5.97 s, confirming the 6.00 s figure.
+- **IN COMBAT THERE IS NO SEPARATE MOVE COMMAND** (gap G). Every travel leg is
+  caused by one drawn stroke: APPROACH-RUN (349 stage px/s) to one endpoint, then
+  a fixed 2–3 tick DASH along the stroke to the other, then a dead stop — landings
+  accurate to 1–2 px. Zero stroke-free movement ticks exist in combat.
+  Hold-to-run-toward-the-CURRENT-cursor is **falsified in combat** by the abrupt
+  2.7× speed change at the stroke's near endpoint; the **latch-on-mousedown**
+  variant survives. Out of combat, movement is strokeless and decelerates into
+  its target.
+- **NAMED-ENEMY NUMBERS for the duel retune:** JINBEI (4) = **132 HP, 3 hits**
+  (42+48+42 = 132 exactly), 3.2 s, vs an L5 player (HP 20). HONDA SHIZUKA (7) =
+  **~44 HP, 3 hits**, 7.4 s, vs an L10 player (HP 30 / Chi 47) — the closest
+  analogue to our `DuelScene` (challenge → VS card → FIGHT! → YOU WIN).
+- **DAMAGE IS A MIN/MAX ROLL** (gap C): 36/10/30/27/42/48/42 on ONE target at ONE
+  level in ONE stance with ONE weapon. Modelling it faithfully requires the
+  injected RNG in `physicalDamage`, touching determinism and the 24-seed
+  fingerprint. Veto = keep damage deterministic and log the divergence.
+- **PLAYER DAMAGE IS NOT A FUNCTION OF LEVEL** — a LEVEL 10 player dealt *less*
+  raw damage (17–21) than a LEVEL 5 player (27–48). Weapon and target defence
+  dominate. Never scale damage from level alone.
+- **GAIT IS CHOSEN BY DESTINATION TYPE FIRST** (gap E), not distance: a 202.2
+  stage px WALK toward a map exit and an 87.4 stage px RUN toward an enemy both
+  falsify the pure length threshold. Exit/transition ⇒ walk at any distance;
+  hostile ⇒ run at any distance; the distance threshold — narrowed to
+  (105.2, 130.8] stage px — applies only to plain ground moves.
+- **ENEMY AI, measured** (gap H): approach is **walk only** (128 stage px/s; the
+  earlier "~22 px/tick" was the PEAK of a stuttering walk, mean 16–18 — building
+  at 22 makes every mob ~25 % too fast); the deep-lean run is used *only* as the
+  attack lunge (484 stage px/s). Cadence median 0.733 s. **Telegraph has TWO
+  cases — 600 ms when closing distance (confirms our ≥520 ms) and 267 ms for an
+  in-place follow-up, so a single global threshold is WRONG.** No telegraph FX —
+  pose only. The attack is a **dash-THROUGH** (commit at 194 stage px, damage
+  resolves 96 stage px PAST the player), so a radius range-check cannot reproduce
+  it. **Enemies take TURNS** (1, occasionally 2, even with 8 on screen) — needs an
+  attack token. **Zero blocks, parries or dodges** in ~70 s across ~30 enemies:
+  our `AISeamController.react()` models behaviour the original does not have.
+- **HITBOX HALF-WIDTH: still NOT-FOUND**, honestly. Upper bound 40.3 stage px. The
+  blocker is a real confound: damage appeared to resolve over the whole **dash
+  sweep** from the player's start position, not just the drawn line (two enemies
+  *behind* a line's near end died in one slash) — which tensions with the crux
+  strand ② negative. Measure it next with a single-enemy stationary duel, reading
+  hits from the red damage numerals rather than bar disappearance.
+- **TOOLTIP-AS-CURSOR IS CONTESTED.** One agent proved a tooltip sliding 115 px
+  while its object and the camera stayed pixel-fixed (⇒ renders at the cursor);
+  another found dojo/overworld tooltips in a FIXED top-left slot carrying no
+  cursor information. Both recorded; likely two tooltip families. Verify before use.
+- **AUDIT CORRECTIONS TO OUR OWN §0b:** AP is **30/30**, not the 50/50 first
+  recorded off a downscaled survey thumbnail (independently corroborated by a
+  second agent's character-sheet read).

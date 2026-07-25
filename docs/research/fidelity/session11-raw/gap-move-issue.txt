@@ -1,0 +1,86 @@
+### gap-move-issue (21 rows)
+SUMMARY: GAP G ANSWERED. In combat there is NO separate move command: every travel leg in video A t=114.0-121.9 (camera provably static, 33/33 unanimous vote) is caused by one drawn stroke and has exactly two phases — an APPROACH-RUN at ~655 px/s @1080 (349 stage px/s) to one endpoint of the stroke, then a fixed-duration DASH (2-3 ticks, 133-200 ms) along the stroke to the other endpoint, then a dead stop. Both landings are accurate to 1-2 px against the measured stroke bbox (slash 2: run ends 658 vs endpoint 657, dash lands 429 vs endpoint 430; slash 3: 619 vs 627, 833 vs 835). Zero stroke-free movement ticks exist in combat. Timing constants: stroke->movement windup 133-200 ms; dash 2-3 ticks; the stroke VANISHES ON THE FIRST DASH TICK (this corrects the previously-established "vanishes when the player lands"); post-landing the character is pixel-static for 733-1133 ms and the shortest landing->next-stroke interval is 533 ms, so a lockout <=533 ms cannot be falsified. Q2 is a clean NOT-FOUND: all four strokes go from absent to FULL FINAL LENGTH inside one 66.7 ms tick, so no partially-drawn stroke is ever visible and movement always starts 2-3 ticks after the stroke is complete. Q4 is a clean NOT-FOUND, and it comes with a correction to trap 5: dojo/overworld interaction tooltips render in a FIXED boxed slot at the top-left and carry no cursor information at all; the best in-world case (video B "KAKUCHI MOUNTAIN PATH (E)" pinned at x1472..1844 for 10 ticks while the player moved 1449->1632) fails because the leg ended at 1758, inside the label's span. Hold-to-run toward the CURRENT cursor is falsified in combat by the abrupt 2.7x speed change at exactly the stroke's near endpoint; the latch-on-mousedown variant survives, exactly as the brief predicted. Out of combat, movement is entirely strokeless and has two gaits — run 655 px/s (identical to the combat approach-run) and walk ~218 px/s (116 stage px/s) — and unlike the combat approach it DOES decelerate into its target. Bonus: the original game's engine ran at ~24 fps (Flash default), inferred from the 27/55 px step alternation against a phase-verified 15 fps unique-frame grid. 34 evidence frames, 4 montages and 3 per-tick data files are in /Users/kheshav/kheshav-code/SSHD 1-1/reference/frames/session11/gap-move-issue/.
+
+[gap G] (MEASURED/high) VERDICT — does in-combat movement exist separately from stroke-dashes?
+   VALUE: NO SEPARATE MOVE COMMAND IN COMBAT. Every travel leg in the reliable window (video A t=114.000-121.900, camera provably static) is bracketed by a drawn stroke that appeared 133-200 ms earlier. Each leg has TWO phases: (1) RUN at ~655 px/s @1080 (349 stage px/s) to one endpoint of the stroke, then (2) DASH at ~1600-1700 px/s @1080 (856-916 stage px/s) along the stroke to its other endpoint, then a dead stop. Zero stroke-free movement ticks were found in combat.
+   NOTE : Simplification for the build: one drawn stroke issues BOTH the move and the attack. Model = approach-run to stroke endpoint A, then damage-dash A->B. Outside combat a separate (strokeless) move command clearly exists — see the out-of-combat rows.
+
+[gap G] (MEASURED/high) Slash 2 full event trace (cleanest case; camera dx=0 unanimous)
+   VALUE: stroke ABSENT t=116.667 -> stroke PRESENT AT FULL LENGTH x430..657 (227 px @1080 = 121 stage px) at t=116.733; player motionless at nameplate cx=1039 through t=116.800; RUN begins t=116.867; run ends cx=658 at t=117.400 (stroke right end = 657, error +1 px); stroke GONE at t=117.467; DASH ticks 117.467 (cx=561) and 117.533 (cx=429) — lands on stroke left end 430, error -1 px; motionless at 429 until t=118.200.
+   NOTE : Run and dash land on the stroke's endpoints to within 1 px. This is why the nameplate can be treated as the character's world x with no offset.
+
+[gap G] (MEASURED/high) Slash 3 full event trace (independent confirmation, opposite direction)
+   VALUE: stroke ABSENT t=118.000 -> PRESENT AT FULL LENGTH x627..835 (208 px @1080 = 111 stage px) at t=118.067; player motionless cx=429 through 118.200; RUN 118.267-118.533 (457,483,538,592,619 — ends 8 px short of stroke left end 627); stroke GONE t=118.600; DASH 118.600 (cx=723) and 118.667 (cx=833) — lands on stroke right end 835, error -2 px; motionless at 833 until 119.333.
+   NOTE : Here the player was LEFT of the stroke and ran RIGHT to its near end, then dashed further right. Mirror image of slash 2 — the rule is endpoint-to-endpoint, not a fixed direction.
+
+[gap G] (MEASURED/high) Q1 — is there travel that is NOT the dash along a stroke?
+   VALUE: YES, but it is still stroke-caused. A distinct RUN (approach) phase precedes every dash, covering 190-437 px @1080 (101-233 stage px) over 0.33-0.60 s at a speed 2.6x slower than the dash. It is NOT a dash and NOT along the stroke — it is travel to the stroke's endpoint. There is NO travel unassociated with a stroke.
+   NOTE : Two distinct locomotion speeds must be implemented: approach-run and slash-dash. Do NOT collapse them into one dash.
+
+[gap G] (NOT-FOUND/high) Q2 — can the character move WHILE a stroke is being drawn?
+   VALUE: UNRESOLVABLE AT THE SAMPLING FLOOR. In all 4 strokes measured, the stroke goes from completely absent on one tick to FULL FINAL LENGTH on the next (66.7 ms). No frame anywhere shows a partially-drawn stroke. Movement always starts 2-3 ticks AFTER the stroke is already complete. So there is no evidence of movement-during-drawing, and equally no evidence of a drawing freeze.
+   NOTE : Either every drag in this footage was faster than 67 ms, or the game only renders the stroke on mouse-up. Cannot distinguish. Safe build choice: render the stroke live while dragging and start movement on release.
+
+[gap G] (MEASURED/medium) Q3 — evidence of a distinct TAP vs DRAG gesture
+   VALUE: IN COMBAT: NO tap evidence — zero movement legs with no stroke in the preceding 3 ticks across the whole reliable window. OUT OF COMBAT: ALL movement is strokeless (no stroke of any kind is ever rendered outside combat), and it comes in two speeds. So the split is by CONTEXT (combat vs world), consistent with tap=move / drag=slash, but a tap in combat was never observed.
+   NOTE : The player in this longplay had AUTO SLASH OFF and never appears to have tapped during combat. A tap-to-move-in-combat may exist but is unexercised in this footage.
+
+[gap G] (NOT-FOUND/high) Q4 — tooltip-as-cursor falsification of hold-to-run-toward-cursor
+   VALUE: NOT FALSIFIED. Best candidate: video B, in-world label "KAKUCHI MOUNTAIN PATH (E)" pinned at EXACTLY x1472..1844, y724..736 for 10 consecutive ticks (t=770.267-770.867) while the player moved 1449 -> 1632 through that band. But the player's leg ENDED at cx=1758, which is INSIDE the label's span — fully consistent with a cursor parked at ~1758. He never crossed the whole span.
+   NOTE : Clean NOT-FOUND, as instructed. Two new windows searched beyond last session's.
+
+[gap G] (MEASURED/high) Q4 corollary — the dojo tooltip is NOT cursor-anchored (trap 5 does not hold everywhere)
+   VALUE: In video A t=564-579 (dojo interior) the interaction tooltips "TALK TO ITO" (t=565.0-566.3) and "LOOK AT SIGN" (t=576.0-578.7) render in a FIXED BOXED SLOT at the top-left of the play area, immediately under the zone plate "DOJO ENTRANCE". They do not move at all while lit, and they carry NO cursor information. Same fixed-slot behaviour for "SE KASUZA FIELD (S)" at t=932 and "SEARCH ROCKS" at t=940 in video A t=916-945.
+   NOTE : IMPORTANT CORRECTION to the established trap-5 note: at least in the dojo and overworld HUD, tooltips are fixed-slot, not cursor-drawn. Only the plain in-world labels (e.g. KAKUCHI MOUNTAIN PATH) sit out in the world, and even those hold a fixed screen x while the character moves — so they may be object-anchored, not cursor-anchored. Treat 'tooltip = cursor readout' as unproven.
+
+[gap G] (MEASURED/high) Q5 — movement during slash recovery / post-dash lockout
+   VALUE: NO MOVEMENT EVER OBSERVED DURING RECOVERY. The character is pixel-static after every dash landing for: 1.133 s (land 115.733 -> next move 116.867), 0.733 s (117.533 -> 118.267), 0.733 s (118.667 -> 119.400). The shortest interval from a landing to the NEXT stroke appearing is 0.533 s (117.533 -> 118.067 and 118.667 -> 119.200).
+   NOTE : A hard lockout of up to 533 ms CANNOT be falsified by this footage — no stroke was ever issued sooner. Recommend implementing a modest recovery (~200-300 ms) and flagging it INFERRED.
+
+[gap G] (MEASURED/high) Latency from stroke appearing to movement onset (the windup)
+   VALUE: 133-200 ms (2-3 ticks of 66.7 ms). Slash 1: stroke 115.200 -> move 115.400 (200 ms). Slash 2: 116.733 -> 116.867 (133 ms). Slash 3: 118.067 -> 118.267 (200 ms). Slash 4: 119.200 -> 119.400 (200 ms).
+   NOTE : Constant regardless of how long the player had been idle beforehand (1.13 s vs 0.53 s), so it is a fixed windup, not a reaction artefact.
+
+[gap G] (MEASURED/high) APPROACH-RUN speed (combat) — the speed of the move phase
+   VALUE: ~620-660 px/s @1080 = ~331-352 stage px/s. Slash 2: 1039->658 = 381 px @1080 (203 stage px) in 0.600 s = 635 px/s. Slash 3: 429->619 = 190 px (101 stage px) in 0.333 s = 570 px/s. Per-tick steps alternate 27/28 and 53/55 px.
+   NOTE : Use 655 px/s @1080 = 349 stage px/s as the single number (see the 24 fps row for why).
+
+[gap G] (MEASURED/high) DASH speed and duration (the slash travel)
+   VALUE: Duration 2-3 ticks (133-200 ms) regardless of stroke length; speed = stroke length / that fixed time. Slash 2: 229 px in 0.133 s = 1718 px/s @1080 = 916 stage px/s. Slash 3: 214 px in 0.133 s = 1605 px/s = 856 stage px/s. Slash 1: 205 px in 0.200 s = 1025 px/s = 547 stage px/s. Dash at t=120.400-120.533: 272 px in 0.200 s = 1360 px/s = 725 stage px/s (uniform -91,-90,-91 per tick).
+   NOTE : Implement the dash as a FIXED-DURATION lerp along the stroke (2-3 ticks), not a fixed-speed move. Dash is 2.5-2.7x the approach-run speed.
+
+[gap G] (MEASURED/high) The stroke vanishes when the DASH BEGINS, not when it ends
+   VALUE: Slash 2: stroke last visible t=117.400 (player still at the endpoint 658), absent t=117.467 (first dash tick, player at 561), landing at 117.533. Slash 3: last visible 118.533 (player 619), absent 118.600 (first dash tick, player 723), landing 118.667.
+   NOTE : CORRECTS the established note 'the line vanishes the tick the player lands on its far end'. It vanishes one-to-two ticks EARLIER, on the first dash tick.
+
+[gap G] (MEASURED/medium) A second, THIN guide line is drawn from the player to the stroke — it is not part of the drawn stroke
+   VALUE: One tick after the bold stroke appears, a faint 1-2 px red line is rendered running from the player's position to the near end of the bold segment, and it persists through the run. Slash 4: bold x1266..1455 present from t=119.200 with NO thin line; at t=119.333 the thin line appears running from the player (~x870) rightwards to the bold segment's left end at 1266; still present 119.400, 119.467 while the player runs right.
+   NOTE : Strong UX signal to reproduce: the game tells you where you are about to run. Caveat: in slash 1 the faint segment sits on the FAR side of the bold segment (x959..~1040) and the dash covered the whole 830..1040 span, so a faint tail belonging to the stroke itself may also exist. Both readings reported, not averaged.
+
+[gap G] (MEASURED/high) OUT-OF-COMBAT movement has TWO speeds and is fully strokeless
+   VALUE: RUN 655 px/s @1080 = 349 stage px/s (video B t=769.733-770.400, cx 1095->1532 = 437 px in 0.667 s, +43.7 px/tick). WALK ~212-224 px/s @1080 = 113-119 stage px/s (t=770.467-771.533, cx 1539->1758 = 219 px in 1.000 s, +14.1 px/tick; and t=775.667-776.400, 228->392 = 164 px in 0.733 s = 224 px/s). No stroke is rendered at any point.
+   NOTE : The out-of-combat RUN speed (655 px/s) is IDENTICAL to the in-combat approach-run speed — same locomotion, so the combat approach reuses the world move.
+
+[gap G] (MEASURED/high) Out-of-combat movement profile: long dead stops separated by bursts, ending in a clean stop
+   VALUE: Static holds at the pixel: cx=1095 for 2.07 s (t=767.667-769.733), cx=392 for 0.467 s (t=776.467-776.933), cx=1758 from t=771.533. Legs observed: 437 px (run), 219 px (walk), 164 px (walk), 27 px in 2 ticks (walk). A run leg can be followed by a walk leg with no stop between (t=770.400 -> 770.467, 55 px/tick -> 7 px/tick).
+   NOTE : Run-then-walk-then-stop is equally explained by (a) click-destination with distance-based gait, or (b) hold-to-run with the cursor near the player. Still not separable — matches last session's finding.
+
+[gap G] (MEASURED/high) IN COMBAT the approach-run does NOT decelerate into its target (unlike out of combat)
+   VALUE: The last run tick before the dash is a full-speed or half-speed step that lands exactly on the stroke endpoint, with no walk-speed ramp: slash 2 last run tick -28 px landing at 658 (endpoint 657); slash 3 last run tick +27 px landing at 619 (endpoint 627). No 8-14 px/tick walk ticks occur anywhere in combat.
+   NOTE : This is the strongest argument against 'the combat approach is just hold-to-run toward the cursor': the world move decelerates to a walk near its target, the combat approach does not. It behaves like a latched move-to-point followed by an attack.
+
+[gap G] (MEASURED/medium) Hold-to-run-toward-CURRENT-cursor is falsified in combat (latch-on-mousedown variant survives)
+   VALUE: In slash 2 the player ran LEFT from 1039 at 635 px/s to 658, then abruptly went 2.7x faster (1718 px/s) for the final 229 px to 429. Under run-toward-current-cursor with the cursor at 429 there is no reason for a 2.7x speed change at exactly x=657, the stroke's other endpoint. Additionally in slash 1 the bold stroke was anchored at x=830 and the player ran AWAY from the growing/far side of the line toward that anchor.
+   NOTE : As the brief predicted, a hold variant that LATCHES its target on mouse-down remains behaviourally identical here and is NOT falsified. But the two-phase speed profile means the mover must be modelled as move-to-latched-point + dash, whichever input model you pick.
+
+[gap G] (INFERRED/medium) Sampling / engine tick: the ORIGINAL GAME ran at ~24 fps, not 30
+   VALUE: With a phase-verified 15 fps unique-frame grid, the run produces per-tick steps that alternate 27/28 and 53/55 px (sequence -27,-55,-28,-53,-54,-28,-55,-53,-28 over slash 2's run) = 14 quantised steps of ~27.3 px across 9 samples = 1.556 game-frames per 66.7 ms sample => 23.3 fps engine rate. Run speed therefore = 27.3 px/game-frame x 24 fps = 655 px/s @1080 = 349 stage px/s.
+   NOTE : 24 fps is the Flash default, which corroborates. Useful for converting all per-frame constants: our 60 Hz Sim needs 2.5x finer per-tick steps than the original's per-frame values.
+
+[gap G] (MEASURED/high) Camera behaviour during the first combat (needed to trust every number above)
+   VALUE: Camera dx = 0 with UNANIMOUS tile votes (33/33) for the whole of video A t=114.000-119.733, so screen x == world x for slashes 1, 2 and 3. The camera then pans right ~256 px over t=119.733-120.333 (measured off the world-anchored stroke, whose screen x0 slid 1266 -> 1010) with a ~0.5x-parallax background — during which the player's screen x is pinned at 1078.
+   NOTE : New anchor technique that beats trap 3: the drawn stroke is world-anchored at parallax 1.0, so its bbox is a perfect camera ruler whenever a stroke is on screen. Mid-ground lanterns parallax at ~0.77x and background at ~0.5x — both invalid anchors.
+
+[gap G] (MEASURED/high) Stroke lengths actually drawn by the player in the first combat
+   VALUE: @1080 -> stage px: slash 1 bold 129 px -> 69; slash 2 227 px -> 121; slash 3 208 px -> 111; slash 4 189 px -> 101. All strokes were near-horizontal in the band y=698..760 @1080 (y=372..405 stage).
+   NOTE : Useful sanity range for a max-stroke-length cap: nothing longer than ~230 px @1080 (~123 stage px) was drawn here, but this is one player's habit, not a proven cap.

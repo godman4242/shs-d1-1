@@ -1,0 +1,74 @@
+### gap-enemy-ai (16 rows)
+SUMMARY: Filled gap H from video A (video B's castle window yielded a clean NOT-FOUND for speed — the camera pans nonstop with no world anchor). 16 rows, every one backed by a PNG in /Users/kheshav/kheshav-code/SSHD 1-1/reference/frames/session11/gap-enemy-ai/ (30 frames, re-extracted at native 1920x1080 from the source and verified to reproduce the JPEG measurements exactly).
+
+Headline results:
+1. APPROACH SPEED — 8 enemies, camera staticity proven before every reading: 13.1-20.1 px/content-tick @1080 (197-302 px/s), median 16.0 px/tick = 240 px/s @1080 = 8.5 stage px/tick = 128 stage px/s. The previous pass's "~22 px/tick" is the PEAK step of a stuttering walk (deltas alternate ~11/~23 with occasional 0/34); the mean is 17-18. All 8 use the upright short-step WALK; the deep-lean bounding run appears ONLY as the attack lunge (60.5 px/tick @1080 = 32.3 stage px/tick, ~3.3x walk).
+2. CADENCE — 10 hit-to-hit intervals from two 1v1 duels (JINBEI (4), BANDIT LEADER (6)): min 0.467 s (7 ticks), median 0.733 s, mean 0.853 s, max 1.933 s.
+3. TELEGRAPH — pose only, no FX. 0.600 s (9 ticks) for an approach attack, measured twice independently — the build's >=520 ms assertion HOLDS for that case. But a point-blank repeat swing on a downed player is only 0.267 s (4 ticks), so a single global >=520 ms gate is wrong. Also: the red stroke line seen near attacking enemies belongs to the PLAYER, not the enemy — enemies get no drawn line.
+4. RANGE — the enemy attack is a dash-THROUGH, not a radius check. Commit distance 364.5 px @1080 (194 stage px); the enemy runs through the player and damage resolves at the END of the dash, 2-3 ticks after the pass, with the enemy already 180 px @1080 (96 stage px) past on the far side. Same slash-dash mechanic as the player.
+5. SIMULTANEITY — enemies take turns. With 8 bars on screen the player's hit rate matches a 1v1 (intervals 0.533/0.933/0.800/2.400 s); 4-6 enemies are pixel-static for >=1.5 s while 1 (max 2) engages. Implement an attack token.
+6. BLOCKING — clean NOT-FOUND. Zero blocks, parries, dodges or flinches in ~70 s of combat; a sweeping stroke removes exactly the bars it crosses. Two positives instead: named enemies LEAP (bar rides 150 px @1080 above the ground row, HP unchanged so not knockback), and waves SPAWN by dropping in from above.
+
+[gap H] (MEASURED/high) Enemy approach speed (walk) — spread across 8 distinct enemies
+   VALUE: 13.1–20.1 px per content tick @1080 (197–302 px/s @1080) = 7.0–10.7 stage px/tick (105–161 stage px/s). Median 16.0 px/tick @1080 = 240 px/s @1080 = 8.5 stage px/tick = 128 stage px/s.
+   NOTE : Tracked via the left-anchored enemy HP-bar left edge (full width 129-131 confirmed each frame, so no bamboo-split artefact). Camera staticity verified before every reading.
+
+[gap H] (MEASURED/high) Correction to the previous pass's '~22 px/tick' enemy walk figure
+   VALUE: 22-23 px is the PEAK step of a stuttering walk, not the mean. Per-tick deltas for one enemy over 17 consecutive ticks: 17,22,11,23,0,23,23,23,10,12,23,0,34,11,22,11,24 — mean 17.0, i.e. the walk alternates ~11 and ~23 px with occasional 0/34.
+   NOTE : Report the MEAN (16-18 px/tick) for the sim, not 22. Building at 22 px/tick would make every mob ~25% too fast.
+
+[gap H] (MEASURED/high) Enemy gait — walk vs run
+   VALUE: All 8 approach measurements are the UPRIGHT SHORT-STEP WALK (vertical torso, sword held low at the side). The deep-lean bounding RUN is used ONLY as the attack lunge, never as a plain approach in any of the four windows.
+   NOTE : Two-gait model confirmed for enemies, same as the player. Practical rule: walk to engage range, then a lean-run lunge that IS the attack.
+
+[gap H] (MEASURED/high) Enemy attack lunge (dash) speed
+   VALUE: 544.5 px of player-relative travel in 0.600 s = 907 px/s @1080 = 60.5 px/tick @1080 = 484 stage px/s = 32.3 stage px/tick. ~3.3x the walk speed.
+   NOTE : Measured as SEPARATION (bar centre minus 19 px, vs yellow GUEST nameplate centre) so camera pan cancels out.
+
+[gap H] (MEASURED/high) Enemy attack cadence (hit-to-hit interval, single enemy, 1v1)
+   VALUE: min 0.467 s (7 ticks), median 0.733 s (11 ticks), mean 0.853 s, max 1.933 s (29 ticks), n=10 intervals.
+   NOTE : These are LANDED hits. Both duels were 1v1 (VS screen), so every hit is that one enemy. Whiffed attempts, if any, are not counted.
+
+[gap H] (MEASURED/high) Telegraph — approach attack (windup -> damage)
+   VALUE: 0.600 s = 9 content ticks, measured twice independently. This CONFIRMS the build's >=520 ms assertion for approach attacks.
+   NOTE : The telegraph is a POSE change only — enemy breaks a held motionless stance and drops into the deep-lean bounding run. There is no flash, glow, colour change or particle FX.
+
+[gap H] (MEASURED/medium) Telegraph — point-blank repeat swing (no approach) is MUCH shorter and FAILS the >=520 ms bar
+   VALUE: 0.267 s = 4 content ticks.
+   NOTE : ACTION FOR THE BUILD: a single global >=520 ms telegraph is wrong. The OG has two cases — ~600 ms when the enemy must close distance, ~270 ms for an in-place follow-up on an adjacent/downed target.
+
+[gap H] (MEASURED/medium) No dedicated enemy telegraph FX — the red line near an attacking enemy is the PLAYER's stroke
+   VALUE: No enemy-owned telegraph graphic found.
+   NOTE : Do NOT give enemies a drawn stroke line. Their attack must be readable from pose + approach alone.
+
+[gap H] (MEASURED/high) Enemy attack GEOMETRY — it is a dash-THROUGH, not a ranged swing at a fixed radius
+   VALUE: Commit/engage distance = 364.5 px @1080 = 194 stage px. The enemy then runs THROUGH the player; damage resolves at the END of the dash, 2-3 ticks (133-200 ms) after the pass, when the enemy is already 180 px @1080 = 96 stage px PAST the player on the far side.
+   NOTE : Enemies use the SAME slash-dash mechanic as the player: damage resolves along the traversed path at the moment the dash lands. A radius-based 'attack range' check will not reproduce this. Point-blank swings on a downed target are the exception, range ~0.
+
+[gap H] (MEASURED/high) Enemy attack range at the damage tick (literal answer to the question)
+   VALUE: 180 px @1080 = 96 stage px (enemy on the FAR side of the player) for a dash-through attack; ~0 px for a point-blank swing on a downed player.
+   NOTE : Reported as measured, but see the geometry row — this number is an artefact of the dash-through, not a hit radius.
+
+[gap H] (MEASURED/high) Simultaneous attackers — enemies take TURNS, they do not swarm
+   VALUE: 1 attacker at a time (occasionally 2 in the melee cluster). With 8 enemies on screen the player's hit rate is no higher than in a 1v1.
+   NOTE : Implement an attack token: only the 1 (max 2) nearest enemies may enter the lunge; the rest hold position with an idle animation, and at least one was completely frozen (0-6 changed px over 4 ticks).
+
+[gap H] (NOT-FOUND/high) Enemy reaction to the player's stroke — block / parry / dodge
+   VALUE: NONE observed. Zero blocks, parries, dodges, flinch-aways or defensive poses across all four windows (~70 s of combat, ~30 enemies).
+   NOTE : Clean negative. Build no blocking behaviour. The only 'reaction' enemies show is being cut down.
+
+[gap H] (MEASURED/medium) Enemies DO leap — fully airborne traversal (self-initiated, not knockback)
+   VALUE: Enemy rises ~150 px @1080 = 80 stage px above the ground line and descends over ~0.8 s, landing straight into an attack lunge.
+   NOTE : Named enemies at least can leap. I did not see an ordinary mob leap. The height is inferred from bar-y offset, not from the sprite feet, hence medium confidence on the exact 150 px.
+
+[gap H] (MEASURED/high) Enemy wave spawn — mobs drop in from above the play area
+   VALUE: A whole wave (7-8 enemies) falls in from off-screen top and lands over ~0.4 s.
+   NOTE : Useful for the spawn seam — not a jump reaction, a spawn animation.
+
+[gap H] (NOT-FOUND/high) Video B castle-guard window (t=1310..1440) — no usable approach-speed numbers
+   VALUE: NOT-FOUND for speed; 2 player-damage events in 18 s (t=1376.133 and t=1378.067).
+   NOTE : Honest null. The two hit events are consistent with the ~0.5-2 s cadence measured in video A but the sample is too small to add.
+
+[gap H] (MEASURED/high) Player hurt-flash duration (measurement by-product, useful for the FX seam)
+   VALUE: 3-5 frames at 15 Hz = 0.20-0.33 s of full-screen red tint; the black damage numeral spawns on the same tick as the flash.
+   NOTE : The death/defeat screen reads much higher (rg ~136) and is easily separated from the hurt flash (rg ~60-71).
