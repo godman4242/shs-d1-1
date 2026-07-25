@@ -504,3 +504,87 @@ first pass** — corrections table at COMBAT_MEASUREMENTS §00b.
 - **AUDIT CORRECTIONS TO OUR OWN §0b:** AP is **30/30**, not the 50/50 first
   recorded off a downscaled survey thumbnail (independently corroborated by a
   second agent's character-sheet read).
+
+## Source dive (2026-07-25 — the original's own constants, NO code change yet)
+
+**The SWF protection is broken and the payload is decompiled.** Full method,
+verification and every extracted number: `docs/research/fidelity/SOURCE_CONSTANTS.md`.
+Nothing in `src/` changed this session — these are readings, queued for SESSION12.
+
+- **BUILD IDENTIFIED: v0.717** — `StatsManager.clientVersion = 0.717`, rendered as
+  `"v" + clientVersion` → the exact string on our captured title screen. **The
+  decompiled payload is the same build our video measurements came from**, so the
+  Tier-3 cross-check is strict rather than approximate. The manifest's `0.706` is
+  dead code (read into a local, never used). The android payload is **0.682** — an
+  *earlier* build despite a newer SWF container; its four data tables are therefore
+  tagged `CONTRACT-SRC (0.682)` and must never be quoted as 0.717.
+
+- **CONFIRMED — our value was already right (no change needed):**
+  `CRIT_MULT = 1.3` (source: `stanceDamage * 1.3 + equipCritBonus`) ·
+  `HEAVY_DEF_PENALTY = 0.2` applied as `defense × 0.8`, **defender-side, heavy only**
+  (the Stage-2 landmine's "apply ONE, never both" ruling is vindicated —
+  `damageTakenMult 1.25` stays data-only) · damage is a **roll**
+  (`minDamage + rand × damageRange`) · **no level scaling** of damage · the stance
+  triangle and its ×1.2/×0.9 · duelists cannot block.
+
+- **CONFIRMED — measurement and source agree to within 0.5 %:** Focus fill. Source
+  meter is 192 raw units filling at +1/frame (8.000 s), but the **bar renders
+  `(current − 48)/144`**, so the *visible* fill is 144 frames = **6.000 s** against
+  our measured **5.97 s**. The hidden first 48 units also explain the refuted
+  "−20 %/slash" rule and why small spends showed no visible drop.
+
+- **CONFIRMED ×2 — mobs die in one hit:** authored `<hp>1</hp>` in the recovered
+  495-row `npcdata` table *and* independently forced by `setLevel`
+  (`if (lvl <= 10) { damage = 1; defense = 1; maxHP = 1; }`).
+
+- **CONTRADICTED — four project beliefs are wrong, recorded not silently fixed:**
+  1. **`COUNTER_BONUS = 1.25` models a mechanic that does not exist.** There is no
+     counter/parry/riposte anywhere in the payload. The forum's "~20 %" is the
+     stance triangle. Veto path: keep it as a deliberate divergence and say so.
+  2. **`STANCE_TABLE.reach = 300/200/100` is wrong in kind.** Duels reach is a
+     stat-driven formula (`base = 120 + floor((90+5·dan)·A/(20+A))`, then per-stance
+     multipliers), and it is the **arc-length budget of the drawn stroke**, not a
+     radius and not a per-stance constant. Worse: `200` is the *placeholder default*
+     of `maxDistance`, overwritten on every stance change — and `300`/`200` are also
+     the SHS1/SHS2 `maxDistance` constants, which **disagree with each other by
+     50 %**. Our table looks like lineage contamination plus a placeholder.
+  3. **Combo "resets to 1 on kill" (Stage-2 CONTRACT) is wrong.** It resets to **0**,
+     only when the player takes damage, and **not** on a kill. It is also purely
+     cosmetic — no damage/XP/coin bonus, no decay.
+  4. **Stance switching is not free in combat** — it costs **48 focus** and is gated
+     on affording it. Our footage reading was out-of-combat; both are true in context.
+
+- **ARCHITECTURAL — named-enemy HP is not authored.** It is recomputed at spawn from
+  the *player's own stats* so a fight lasts K hits: `enemyHP = effPlayerDmg × K`,
+  `K = max(8+Δ, 1)`. This reproduces our measured **JINBEI (4) = 132** exactly
+  (K clamps to 3; 3 × 44 = 132, and 44 is the mean of the measured 42/48/42).
+  **SESSION12 must not tune enemy HP as a constant.** Decide-and-flag: model
+  hits-to-kill and derive HP; veto = keep authored HP and log it as a divergence.
+
+- **RESOLVED — "UNRESOLVABLE" items.** *AUTO SLASH ON* hands the player's fighter to
+  the **enemy AI routine** and locks out manual input entirely (decision every 12
+  frames, nearest target by |Δx| at unlimited range, synthesises a fake stroke through
+  the same pipeline). *`ENEMY_BASE.defense`* now has the real 495-row table — the
+  desktop build fetches it from a dead server (confirmed **never archived**), but the
+  **android build ships all four data tables embedded**.
+
+- **RESOLVED — the hold-to-run dispute.** Hold-to-move **does exist**, but only in the
+  **town/world** input mode; battle uses draw-mode or auto-slash-mode. The
+  REBUILD_READINESS §3 belief was half right, applied to the wrong scene.
+
+- **UNCONVERTED — do not act on these yet.** (a) walk/run measured **126/341 stage
+  px/s** vs source **96/288 world px/s**; a render scale exists and ≈1.2 fits both
+  well, but the factor is **not independently confirmed** — do not convert until it
+  is. (b) `SLASH_FRAMES` stays CONTESTED: the anim XML orders light 29 > balanced 26 >
+  heavy 21 (opposite to our 12/16/20), but `part b` carries a loop flag `l="1"` so the
+  sums are lower bounds, and two naming families exist. (c) `DASH_SLASH_PX` is not a
+  constant — the dash runs to the stroke endpoint uncapped, in **two legs**.
+
+- **Method.** 6 mining agents → 6 adversarial verifiers → 1 lineage agent:
+  **152 CONFIRMED · 37 CORRECTED · 0 REFUTED**. The verify pass caught a dead `×2`
+  damage path, an inverted camera reading, a missed second dash leg, and the entire
+  495-row enemy table the miner had written off as permanently server-side.
+
+- **Placeholder discipline.** Two traps were caught and are recorded so they are not
+  re-adopted: the static UI mockups (`slash distance: 345 (heavy)`,
+  `physical dmg: 1234 - 1235`, `hp: 123 / 123`) and the `maxDistance = 200` default.

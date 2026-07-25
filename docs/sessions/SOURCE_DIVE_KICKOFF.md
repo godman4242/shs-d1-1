@@ -1,5 +1,31 @@
 # SOURCE DIVE KICKOFF — read the game's own constants out of the SWFs
 
+> # ✅ CLOSED 2026-07-25 — IT CRACKED. DO NOT RE-RUN.
+> **Results: `docs/research/fidelity/SOURCE_CONSTANTS.md`.** Decisions: DIVERGENCES
+> ("Source dive" block). Everything below is preserved as the plan of record.
+>
+> | # | gate item | result |
+> |---|---|---|
+> | 1 | Tier-1 lineage constants, tagged `LINEAGE` | ✅ SOURCE_CONSTANTS §4 — polyline hit test confirmed in both ancestors; agent flagged the `maxDistance` 300-vs-200 trap itself |
+> | 2 | tinyloader scheme **documented** | ✅ §1 — all three layers, with the cipher, key location and transform for each |
+> | 3 | payload decompiles + build identified | ✅ **v0.717**, the same build the footage measured (`clientVersion`, rendered title string, byte-level double count) |
+> | 4 | every §2 target has a value or explicit "not found" | ✅ §6 — full disposition table, including three "not a constant" verdicts |
+> | 5 | Tier-3 cross-check against all five anchors | ✅ §5 — all five hold; six contradictions recorded, none silently resolved |
+> | 6 | nothing SWF-derived committed | ✅ `git check-ignore` verified on every derived path; `reference/` excluded at `.gitignore:9` |
+> | 7 | SESSION12 §2 audit updated | ✅ red banner added to that section |
+> | 8 | suite · tsc ×2 · eslint green | ✅ **464/464**, tsc ×2 exit 0, eslint 0 — no gameplay code touched |
+> | 9 | ledgers + DIVERGENCES + RESUME_HERE in the closing commit | ✅ this commit |
+>
+> **Where §6's "honest odds" were wrong, and why it matters.** It called Tier 2 a
+> coin flip whose fatal case was a **server-delivered key**. There was no server key:
+> layer 1's key is *the payload's own last 8 bytes*, layer 2's is a literal in the
+> config header, layer 3's is the constant `104`. The pessimism was reasonable but
+> the artefacts on disk were always sufficient. The one thing that *was*
+> server-delivered — the enemy stat table — was recovered anyway, from the **android**
+> build, which ships embedded what the desktop build fetches.
+>
+> **The time-box was not needed.** Tier 2 cracked in roughly 35 minutes.
+
 > **RUN THIS BEFORE `SESSION12_KICKOFF.md`.** If it succeeds, SESSION12's retune
 > uses **exact source constants** instead of pixel-derived estimates, and roughly
 > a dozen values move from INFERRED to CONTRACT. If it fails, SESSION12 proceeds

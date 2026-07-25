@@ -936,3 +936,70 @@ Crash-resilience log. Updated per milestone, never "at the end."
   logged as an OPEN DECISION — default stays original names per the
   root invariant, owner-vetoable like the palette.
 - No code this turn — the new session executes the kickoff.
+
+## 2026-07-25 — SOURCE DIVE: the protection is broken, the payload is mined
+
+**Outcome: the archived *Straw Hat Samurai: Duels* client is decrypted,
+decompiled and mined. Build confirmed v0.717 — the same build our video
+measurements came from.** No gameplay code changed. Suite 464/464, tsc ×2
+exit 0, eslint 0. Ledger: `docs/research/fidelity/SOURCE_CONSTANTS.md`.
+
+**The crack — three layers, none needing the dead Player.IO server.**
+`SOURCE_DIVE_KICKOFF.md` §6 called Tier 2 a coin flip whose fatal case was a
+server-delivered key. It wasn't:
+1. `shs3.swf`'s 2,390-byte `lb` class RC4s an embedded blob using **the blob's
+   own last 8 bytes** as the key, and encrypts **only the first 64 bytes**.
+2. That yields SWF Defender (magichtml.com) — config header carries the key
+   `ZvupTBlC` in the clear; `Comp.C1` is repeating-key XOR, `Comp.C2` is RC4.
+3. That yields the real tinyloader, whose payload transform is five lines:
+   `for (i=3;i<256;i++) { if (i%11==0) swap(b[i],b[i+256]); b[i] ^= 104; }`.
+   Bytes 0–2 untouched — which is exactly why the archived file kept a readable
+   `CWS` signature with a nonsense version byte and read as corrupt, not encrypted.
+
+Proof, computed not asserted: the decoded SWF's declared length matches its
+inflated body **to the byte** on both the desktop (11,892,061 = 11,892,053 + 8)
+and android (21,688,592 = 21,688,584 + 8) payloads. Reproducible via three
+scripts in `reference/tools/`. ffdec 26.2.1 installed as an accelerator only.
+
+**Mining: 6 agents → 6 adversarial verifiers → 1 lineage agent.
+152 CONFIRMED · 37 CORRECTED · 0 REFUTED.** The verify pass paid for itself —
+it caught a dead `×2` damage path, an inverted camera reading, a missed second
+dash leg, the mastery cap, and **the entire 495-row enemy stat table** that the
+miner had written off as permanently server-side.
+
+**Our values confirmed exactly:** `CRIT_MULT = 1.3` · `HEAVY_DEF_PENALTY` as
+`defense × 0.8`, defender-side, heavy-only (the Stage-2 "apply ONE, never both"
+landmine vindicated) · damage is a roll · damage does not scale with level ·
+the stance triangle and its ×1.2/×0.9.
+
+**Measurement vindicated:** Focus measured 5.97 s; the source meter is 192 units
+at +1/frame (8.000 s) but the **bar renders `(current−48)/144`** → 6.000 s
+visible. The hidden 48 also explains the refuted "−20 %/slash" rule. Mobs die in
+one hit — `<hp>1</hp>` authored *and* forced by `setLevel`. **JINBEI's 132 HP
+falls out of the formula exactly**: named-enemy HP is recomputed from the
+*player's* stats so a fight lasts K hits, K clamps to 3, and 3 × 44 = 132 where
+44 is the mean of the measured 42/48/42.
+
+**Four project beliefs refuted** (DIVERGENCES "Source dive"): `COUNTER_BONUS`
+models a mechanic that does not exist (the forum's ~20 % is the stance triangle)
+· `STANCE_TABLE.reach 300/200/100` is wrong *in kind* — reach is a stat-driven
+**arc-length budget of the drawn stroke**, `200` is a placeholder default, and
+300/200 are also the SHS1/SHS2 constants which disagree with each other by 50 %
+· combo resets to **0 on damage**, never on a kill, and is purely cosmetic ·
+in-combat stance switching costs **48 focus**.
+
+**Both "UNRESOLVABLE" items answered:** AUTO SLASH ON hands the player's fighter
+to the **enemy AI routine** and locks out manual input entirely · the enemy stat
+table was recovered from the **android** build (0.682), which ships embedded what
+the desktop fetches from a host confirmed never archived. Also recovered: 61
+quests, 982 items, 75 skills.
+
+**Two placeholder traps caught and recorded** so they are not re-adopted: the
+static UI mockups (`slash distance: 345 (heavy)`, `physical dmg: 1234 - 1235`)
+and `maxDistance = 200`. Left deliberately unconverted: the walk/run
+stage-px-vs-world-px render scale (≈1.2 fits but is unconfirmed),
+`SLASH_FRAMES` (anim XML has a loop flag and two naming families), and
+`DASH_SLASH_PX` (not a constant — two uncapped dash legs).
+
+Nothing SWF-derived is committed; `git check-ignore` verified on every derived
+path. Next entry point: `SESSION12_KICKOFF.md`, after `SOURCE_CONSTANTS.md` §5–§6.

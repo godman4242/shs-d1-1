@@ -76,6 +76,31 @@ Session-11 adjudication reverted (a foreign session weakened the band from
 
 ## §2 COMPLETENESS AUDIT — measured / inferred / never-knowable
 
+> ## 🔴 SUPERSEDED IN PART (2026-07-25) — READ `SOURCE_CONSTANTS.md` §6 FIRST
+>
+> **The source dive SUCCEEDED.** The payload is decrypted and decompiled, and the
+> build is confirmed **v0.717 — the same build this footage measured.** The
+> "⚠️ Inferred / unresolved / never-knowable" table below is **out of date**:
+> the two rows marked UNRESOLVABLE (**AUTO SLASH ON**, **`ENEMY_BASE.defense`**)
+> are both **answered from source**, `CRIT_MULT` and `HEAVY_DEF_PENALTY` are
+> **confirmed exactly as we had them**, and the gait threshold is **exactly 100**.
+>
+> **Four rows below are now known to be WRONG, not merely inferred** — do not build
+> from them:
+> - **`COUNTER_BONUS`** — the counter mechanic **does not exist**; the forum's
+>   "~20 %" is the stance triangle (×1.2 / ×0.9).
+> - **reach `300 / 200 / 100`** — reach is a **stat-driven formula**, not a
+>   per-stance constant; the `200` traces to a **placeholder default** and
+>   `300`/`200` are also the SHS1/SHS2 constants (likely lineage contamination).
+> - **`DASH_SLASH_PX`** — not a constant at all; the dash runs to the stroke's
+>   endpoint, uncapped, in **two legs**.
+> - **combo "resets to 1 on kill"** (our Stage-2 CONTRACT) — it resets to **0**,
+>   and **only when the player takes damage**; it does not reset on a kill.
+>
+> Everything measured in §00c still stands — the source **confirmed** every
+> primary anchor, including JINBEI's 132 HP falling out of the formula exactly.
+> `SOURCE_CONSTANTS.md` §5 carries the full cross-check and every contradiction.
+
 **This table is the point of the session.** It tells you where you stand on solid
 measurement and where you stand on inference, so nothing gets presented as
 "measured" that isn't.

@@ -1,9 +1,14 @@
 # RESUME HERE
 
 > ## ▶ NEXT SESSION STARTS HERE (2026-07-25)
-> **`docs/sessions/SOURCE_DIVE_KICKOFF.md`** — read the game's own constants out
-> of the archived SWFs. Then `docs/sessions/SESSION12_KICKOFF.md` (the combat
-> retune). Rationale + verified file states are in "Next concrete step" below.
+> **`docs/sessions/SESSION12_KICKOFF.md`** — the combat retune. **But read
+> `docs/research/fidelity/SOURCE_CONSTANTS.md` §5 + §6 FIRST**: the source dive
+> SUCCEEDED, and it supersedes part of SESSION12 §2 and **refutes four project
+> beliefs** (`COUNTER_BONUS` models a mechanic that does not exist · the reach
+> table is wrong *in kind* · combo does not reset on kill · in-combat stance
+> switching costs 48 focus). SESSION12's §2 now carries a red banner pointing there.
+>
+> **`docs/sessions/SOURCE_DIVE_KICKOFF.md` is CLOSED — do not re-run it.**
 > Everything the study pass measured is in
 > `docs/research/fidelity/COMBAT_MEASUREMENTS.md` — **read its §00b corrections
 > first; a later pass overturned four of its own rows.**
@@ -29,8 +34,43 @@
 
 ## Current focus
 
-**SESSION 11 STUDY PASS — CLOSED ✅ (2026-07-25). NEXT ENTRY POINT:
-`docs/sessions/SESSION12_KICKOFF.md`.** The kickoff's mandatory first step
+**SOURCE DIVE — CLOSED ✅, AND IT CRACKED (2026-07-25).** The archived client
+is decrypted, decompiled and mined. Ledger:
+**`docs/research/fidelity/SOURCE_CONSTANTS.md`**; decisions in DIVERGENCES
+("Source dive" block). **NO GAMEPLAY CODE CHANGED — deliberately.**
+Suite **464/464** · tsc ×2 exit 0 · eslint 0.
+- **BUILD = v0.717 — the same build our video measured.** `clientVersion = 0.717`
+  renders as the exact title-screen string. The manifest's `0.706` is dead code.
+  (Android payload = **0.682**, an *earlier* build despite a newer container.)
+- **The protection was three layers and none of it needed the dead server:**
+  RC4 with the key being the payload's **own last 8 bytes** → SWF Defender
+  (key `ZvupTBlC`) → a 5-line XOR/swap. **Only the first 64 bytes were ever
+  encrypted.** Proof: decoded SWF length matches the inflated body to the byte,
+  on both payloads. Reproducible via three scripts in `reference/tools/`.
+- **OUR VALUES CONFIRMED EXACTLY:** `CRIT_MULT = 1.3` · `HEAVY_DEF_PENALTY` as
+  `defense × 0.8` defender-side-only (the Stage-2 landmine vindicated) · damage is
+  a roll · damage does **not** scale with level · the stance triangle.
+- **MEASUREMENT VINDICATED:** Focus fill measured 5.97 s; source bar renders
+  `(current−48)/144` = **6.000 s** visible. Mobs die in one hit — `<hp>1</hp>`
+  authored **and** forced by `setLevel`. **JINBEI's 132 HP falls out of the
+  formula exactly** (3 × 44, the mean of the measured 42/48/42).
+- **⚠️ FOUR PROJECT BELIEFS REFUTED** (details in DIVERGENCES): `COUNTER_BONUS`
+  models a mechanic **that does not exist** · `STANCE_TABLE.reach 300/200/100`
+  is wrong **in kind** (reach is a stat-driven arc-length budget; `200` is a
+  placeholder default, and 300/200 are the SHS1/SHS2 constants — likely lineage
+  contamination) · combo resets to **0 on damage**, never on a kill, and is
+  purely cosmetic · in-combat stance switching costs **48 focus**, not nothing.
+- **⚠️ ARCHITECTURAL:** named-enemy HP is **not authored** — it is recomputed from
+  the *player's* stats at spawn so a fight lasts K hits. SESSION12 must not tune
+  enemy HP as a constant.
+- **BOTH "UNRESOLVABLE" ITEMS ANSWERED:** *AUTO SLASH ON* hands your fighter to the
+  enemy AI routine and locks out manual input · the **495-row enemy stat table**
+  was recovered from the android build (the desktop fetches it from a dead,
+  never-archived server). Also recovered: 61 quests, 982 items, 75 skills.
+- Method: 6 miners → 6 adversarial verifiers → 1 lineage agent —
+  **152 CONFIRMED · 37 CORRECTED · 0 REFUTED**.
+
+**SESSION 11 STUDY PASS — CLOSED ✅ (2026-07-25).** The kickoff's mandatory first step
 ("STUDY PASS FIRST — no code until the numbers exist") is DONE: 6 viewer
 agents, **101 measured rows across items (a)–(g)**, 202 evidence frames.
 Ledger: **`docs/research/fidelity/COMBAT_MEASUREMENTS.md`**; raw agent
@@ -322,19 +362,25 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**ENTER VIA `docs/sessions/SOURCE_DIVE_KICKOFF.md` FIRST — read the game's
-own constants out of the SWFs.** New lead found 2026-07-25: the archived
-client is on disk and, while it cannot BOOT (dead Player.IO server, P0
-ruling), reading its CONSTANTS needs no server. **SHS1 + SHS2 predecessors
-are already PLAIN, UNPROTECTED, parseable SWFs** (verified). The Duels
-payload is wrapped by "tinyloader" (fake CWS header; a 2,390-byte AS3 stub
-holds the decryption; one embedded blob is plain at entropy 1.51, the other
-encrypted at 7.99). Java 25 is installed; ffdec is not yet. If it cracks,
-~12 values move INFERRED → exact CONTRACT-SRC — including three the video
-can NEVER answer (AUTO SLASH ON behaviour, enemy defence, CRIT_MULT).
-Time-boxed with a clean abort; **SESSION12 is not blocked on it, only
-improved by it.** Guard: SHS1/SHS2 are DIFFERENT GAMES — their constants are
-LINEAGE only, never Duels values (the iaido-duel 3.0× crit mistake, again).
+**THE SOURCE DIVE IS DONE — do not re-run it.** `SOURCE_DIVE_KICKOFF.md` is
+history; its gate is green (see the gate table in that file's §5, evidence in
+`SOURCE_CONSTANTS.md`). Java 25 + ffdec 26.2.1 are installed under
+`reference/tools/` (gitignored). The three crack scripts are in
+`reference/tools/` and re-run in seconds.
+
+**ENTER VIA `docs/sessions/SESSION12_KICKOFF.md` — the coherent combat retune —
+but read `SOURCE_CONSTANTS.md` §5 (cross-check) and §6 (what moved) FIRST.**
+SESSION12's §2 audit table now carries a red banner: two of its "UNRESOLVABLE"
+rows are answered, two of its "INFERRED" rows were **already correct**, and four
+rows are **actively wrong**. The retune's four changes still land as ONE change
+before the 24-seed harness band is re-derived — but reach and enemy-HP now need a
+**model** change, not a number change, so re-read §3.3 and §3.8 before planning
+Step 2 and Step 4.
+
+**Open question for SESSION12 to settle before converting any speed:** the
+measured stage-px/s and source world-px/s differ by a render scale that fits
+≈1.2 but is **not independently confirmed**. Confirm the scale factor first, or
+keep the measured values and log the divergence.
 
 **THEN `docs/sessions/SESSION12_KICKOFF.md` — the coherent combat
 retune.** Every number it needs is measured and sits in
