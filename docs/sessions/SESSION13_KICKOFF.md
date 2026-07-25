@@ -63,7 +63,7 @@ directly: the skill-level getter returns **0** for any unpurchased skill
 
 ---
 
-## §P PREREQUISITES — ✅ ALL FOUR RESOLVED FROM SOURCE. No prerequisite work remains.
+## §P PREREQUISITES — ✅ ALL RESOLVED FROM SOURCE. No prerequisite work remains.
 
 These were open in an earlier draft. They have now been read out of the payload directly and
 are recorded here so the next session starts on code, not research.
