@@ -314,7 +314,21 @@ re-steering + pre-commit heartbeat): interactive death → loop takes over
   (single-writer rule: never run while an interactive session works the repo).
 
 ## Next concrete step
-**ENTER VIA `docs/sessions/SESSION12_KICKOFF.md` — the coherent combat
+**ENTER VIA `docs/sessions/SOURCE_DIVE_KICKOFF.md` FIRST — read the game's
+own constants out of the SWFs.** New lead found 2026-07-25: the archived
+client is on disk and, while it cannot BOOT (dead Player.IO server, P0
+ruling), reading its CONSTANTS needs no server. **SHS1 + SHS2 predecessors
+are already PLAIN, UNPROTECTED, parseable SWFs** (verified). The Duels
+payload is wrapped by "tinyloader" (fake CWS header; a 2,390-byte AS3 stub
+holds the decryption; one embedded blob is plain at entropy 1.51, the other
+encrypted at 7.99). Java 25 is installed; ffdec is not yet. If it cracks,
+~12 values move INFERRED → exact CONTRACT-SRC — including three the video
+can NEVER answer (AUTO SLASH ON behaviour, enemy defence, CRIT_MULT).
+Time-boxed with a clean abort; **SESSION12 is not blocked on it, only
+improved by it.** Guard: SHS1/SHS2 are DIFFERENT GAMES — their constants are
+LINEAGE only, never Duels values (the iaido-duel 3.0× crit mistake, again).
+
+**THEN `docs/sessions/SESSION12_KICKOFF.md` — the coherent combat
 retune.** Every number it needs is measured and sits in
 `docs/research/fidelity/COMBAT_MEASUREMENTS.md`. Its §0 explains why the
 four changes (one-hit kills · delete the Critical meter + 6.00 s Focus ·

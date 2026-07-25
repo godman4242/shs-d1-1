@@ -19,6 +19,14 @@
 
 ---
 
+> ⚠️ **RUN `SOURCE_DIVE_KICKOFF.md` BEFORE THIS FILE.** A lead found 2026-07-25:
+> the archived client SWFs are on disk, the SHS1/SHS2 predecessors are already
+> plain and parseable, and the Duels payload is wrapped by a small "tinyloader"
+> stub that may be crackable. If it works, roughly a dozen values in §2's
+> *inferred* table become **exact source constants** — including three this
+> footage can never answer — and you would otherwise tune to estimates and then
+> re-tune. If it fails, **this plan stands exactly as written.**
+
 ## START HERE — the first three things to do
 
 1. **Read §3 (the scope trap).** One paragraph. It is the single easiest way to
