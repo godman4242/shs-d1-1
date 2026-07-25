@@ -1,5 +1,16 @@
 # SESSION 12 KICKOFF — THE COHERENT COMBAT RETUNE
 
+> # 🔴 SUPERSEDED 2026-07-25 — DO NOT PLAN WORK FROM THIS FILE
+> **Use `docs/sessions/SESSION13_KICKOFF.md`.** It is self-contained and carries
+> forward everything here that is still valid (the scope trap, the harness trap).
+>
+> **Why this file was replaced rather than edited:** it was written *before* the
+> source dive, and its whole method — fit constants to footage — was superseded by
+> having the original's own formulas. Four of its rows are now known to be wrong,
+> not merely uncertain. It is kept because its §2 audit is the honest record of what
+> we knew before the source, and that before/after is what makes the dive's value
+> legible. **Read it as history, never as instructions.**
+
 > **Entry route:** `RESUME_HERE.md` → this file.
 > **Read before touching code:** `docs/research/fidelity/COMBAT_MEASUREMENTS.md`
 > — start with **§00 (the sampling floor)** and **§00b (corrections)**, because a

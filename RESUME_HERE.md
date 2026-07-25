@@ -1,14 +1,14 @@
 # RESUME HERE
 
 > ## ▶ NEXT SESSION STARTS HERE (2026-07-25)
-> **`docs/sessions/SESSION12_KICKOFF.md`** — the combat retune. **But read
-> `docs/research/fidelity/SOURCE_CONSTANTS.md` §5 + §6 FIRST**: the source dive
-> SUCCEEDED, and it supersedes part of SESSION12 §2 and **refutes four project
-> beliefs** (`COUNTER_BONUS` models a mechanic that does not exist · the reach
-> table is wrong *in kind* · combo does not reset on kill · in-combat stance
-> switching costs 48 focus). SESSION12's §2 now carries a red banner pointing there.
+> **`docs/sessions/SESSION13_KICKOFF.md` — THE SOURCE-LED REBUILD.** It is
+> self-contained and is the ONLY kickoff to plan from. Start with its **§P
+> prerequisites** (three short source reads that can change later decisions).
+> Background: `docs/research/fidelity/SOURCE_CONSTANTS.md` §3, §5, §6.
 >
-> **`docs/sessions/SOURCE_DIVE_KICKOFF.md` is CLOSED — do not re-run it.**
+> **`SESSION12_KICKOFF.md` is SUPERSEDED** (history only — it predates the source
+> dive and four of its rows are now known wrong). **`SOURCE_DIVE_KICKOFF.md` is
+> CLOSED — do not re-run it.**
 > Everything the study pass measured is in
 > `docs/research/fidelity/COMBAT_MEASUREMENTS.md` — **read its §00b corrections
 > first; a later pass overturned four of its own rows.**

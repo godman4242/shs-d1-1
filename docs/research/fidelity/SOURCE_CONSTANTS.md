@@ -419,7 +419,23 @@ Source values are **not** silently preferred over measurements. Both are recorde
 
 | item | measured | source | note |
 |---|---|---|---|
-| **walk / run speed** | 126 / 341 stage px/s | 96 / 288 **world** px/s | ratio 1.18–1.31. A render scale exists (`scale` + letterbox offsets); at scale ≈ **1.2** the source gives 115 / 346 vs measured 112–126 / 341–349 — **an excellent fit, but the scale factor is not yet independently confirmed.** Do not convert until it is. |
+| **walk / run speed** | 126 / 341 stage px/s | 96 / 288 **world** px/s | ✅ **RESOLVED 2026-07-25 — the scale is not a guess, the game computes it.** See §3.10. At the source's own ×1.2: walk **115.2** (measured 112–126 ✓) and run **345.6** (measured 341–349 ✓, dead centre). |
+| **reach** | Light 233–241 · Balanced 116–131 · Heavy 97–103 stage px | formula at SPD 1 → **173 / 124 / 100** world px | ⚠️ **OPEN.** Converted at ÷1.2 the readings are Light **194–201** · Balanced **97–109** · Heavy **81–86** world px — Light sits *above* the formula, Balanced and Heavy *below*. **No single SPD value reconciles all three**, so the three readings were not measuring the same quantity (Light almost certainly captured **dash travel**, which §3.3 says is uncapped). **Measured reach must not be used to validate or tune the formula.** |
+
+### 3.10 The render transform — read from the original, not inferred
+
+The original's resize routine, for logical `w=800, h=480, hTall=690`:
+```
+if (windowAspect <= 800/690)  { contentAspect = 800/690; h = 690; }
+if (contentAspect >= windowAspect) { scale = stageW/800; xOff = 0; yOff = (stageH − h*scale)/2; }
+else                               { scale = stageH/h;   xOff = (stageW − 800*scale)/2; yOff = 0; }
+scaleX = scaleY = scale;    // ONE uniform scale on both axes
+```
+For a **1024×576** canvas: `windowAspect` 1.778 > `contentAspect` 1.667 → else branch →
+**scale = 1.2**, **xOff = 32**, **yOff = 0**.
+
+⇒ **`stage = (32 + 1.2·worldX, 1.2·worldY)`** — uniform, pillarboxed with 32 px bars.
+Positions carry the +32; **lengths and speeds take ×1.2 only.**
 | **enemies take turns** | observed | **no arbitration exists** | measurement described a real *appearance*; the mechanism is emergent from independent 12/24-frame timers |
 | **stance switch free** | observed free | **48 focus in combat** | footage was out-of-combat; both are true in their own context |
 | **combo resets to 1 on kill** | our Stage-2 CONTRACT | **resets to 0, and only on taking damage** | our contract is wrong |
