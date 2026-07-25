@@ -328,9 +328,20 @@ This is the session's most consequential architectural finding.
 ```
 Δ            = enemyLevel − playerLevel
 effPlayerDmg = (playerMinDmg + playerDmgRange/2) − enemyDefense, floored by player level
-enemyHP      = max(ratio-scaled base HP,  effPlayerDmg × K)      K = max(8+Δ, 1)
-enemyDamage  = max(ratio-scaled base,     playerMaxHP / D)       D = max(16−Δ, 3)
+enemyHP      = max(ratio-scaled base HP,  effPlayerDmg × K)
+enemyMinDmg  = max(ratio-scaled base,     playerMaxHP / D)
+xpReward     = enemyLevel × 5 + 45
+if (enemyLevel <= 8) { enemyMinDmg = 1; enemyDefense = 1; }   // AFTER the HP derivation
 ```
+⚠️ **CORRECTION (2026-07-25) — K/D are per-CLASS and an earlier revision of this file quoted
+the wrong class.** The **named-duellist** class (white `NAME (level)` nameplate — what our
+`DuelScene` renders) uses **`K = max(10 + Δ, 3)`** and **`D = max(18 − Δ, 3)`**, read verbatim
+as `_loc8_ = 10 + _loc7_; _loc9_ = 18 - _loc7_;` each floored at 3. The `8/16` pair belongs to
+a *different* class. Verified in the same pass: the D-numerator is **player max HP**
+(the init parameter map confirms that stat slot), so:
+
+⇒ **The design is exactly symmetric — the player kills the enemy in K hits, the enemy kills
+the player in D hits. Both sides are tuned in HITS, neither in hit points.**
 
 **A named enemy's HP is recomputed at spawn from the player's own stats so the fight
 always lasts K player hits.** The same enemy has different HP for different players.

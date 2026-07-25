@@ -1,10 +1,11 @@
 # RESUME HERE
 
 > ## ▶ NEXT SESSION STARTS HERE (2026-07-25)
-> **`docs/sessions/SESSION13_KICKOFF.md` — THE SOURCE-LED REBUILD.** It is
-> self-contained and is the ONLY kickoff to plan from. Start with its **§P
-> prerequisites** (three short source reads that can change later decisions).
-> Background: `docs/research/fidelity/SOURCE_CONSTANTS.md` §3, §5, §6.
+> **`docs/sessions/SESSION13_KICKOFF.md` — THE SOURCE-LED REBUILD.** Self-contained,
+> the ONLY kickoff to plan from, and **every decision is already made** — all ten
+> decisions (§1) and all five prerequisites (§P) are resolved from source.
+> **There is NO research step: start at §4 A0 and write code.**
+> Background if wanted: `docs/research/fidelity/SOURCE_CONSTANTS.md` §3, §5, §6.
 >
 > **`SESSION12_KICKOFF.md` is SUPERSEDED** (history only — it predates the source
 > dive and four of its rows are now known wrong). **`SOURCE_DIVE_KICKOFF.md` is

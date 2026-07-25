@@ -63,30 +63,56 @@ directly: the skill-level getter returns **0** for any unpurchased skill
 
 ---
 
-## §P PREREQUISITES — do these before any code. They can change the plan.
+## §P PREREQUISITES — ✅ ALL FOUR RESOLVED FROM SOURCE. No prerequisite work remains.
 
-Each is a short read of the decompiled payload at
-`reference/decompiled/shs3_payload/scripts/` (obfuscated *file* names, real *member* names —
-grep by member name). **Record each answer in `SOURCE_CONSTANTS.md` in the same commit.**
+These were open in an earlier draft. They have now been read out of the payload directly and
+are recorded here so the next session starts on code, not research.
 
-**P1 — Identify our RONIN's enemy class, and get its real K/D.** The review found the
-kickoff's first draft cited the **wrong class**. There are at least two K/D sites:
-the generic duellist uses `K = max(8+Δ, 1)` / `D = max(16−Δ, 3)`; the class that draws the
-**white** `charname + " (" + level + ")"` nameplate — which is what `DuelScene` renders —
-uses `K = max(10+Δ, 3)` / `D = max(18−Δ, 3)`. **Our duel is the white-nameplate case.**
-Confirm which class a named level-1 duellist actually spawns as, cite it, and **correct
-`SOURCE_CONSTANTS.md` §3.8** (its stated floor of 1 is the other class's).
+**P1 — ✅ Enemy class and its K/D pair.** The named-duellist class (`§1t4907s0§`, the one that
+draws the **white** `charname + " (" + level + ")"` nameplate `DuelScene` renders) uses
+**`K = max(10 + Δ, 3)`** and **`D = max(18 − Δ, 3)`**. The generic `8/16` pair belongs to a
+*different* class. Read verbatim: `_loc8_ = 10 + _loc7_; _loc9_ = 18 - _loc7_;` each floored
+at 3. ⚠️ **`SOURCE_CONSTANTS.md` §3.8 quoted the wrong class's pair — corrected in the same
+commit as this file.**
 
-**P2 — The `level ≤ 8` override.** The named-enemy scaling block ends with
-`if (level <= 8) { minDamage = 1; defense = 1; }`. Our `DUEL_ENEMY.level = 1` falls inside
-it, so the enemy's damage and defence are **forced to 1 regardless of the D3 formula**.
-Confirm the exact condition and where it sits relative to the HP derivation. **This decides
-D3's shape for our duel** — see D3's "collision" note.
+**P2 — ✅ The `level ≤ 8` override, read verbatim.** The scaling block ends:
+```
+if (level <= 8) { minDamage = 1;  §1t1244s0§ = 1;  defense = 1; }
+```
+It fires **after** the HP derivation, so HP still scales but the enemy's **damage and defence
+are forced to 1**. Our `DUEL_ENEMY.level = 1` sits inside it — **D3 resolves this by
+re-levelling.**
 
-**P3 — Is a slash gated on affording its Focus cost?** D4 gives costs 24/48/72, but not
-whether a slash is *rejected* when Focus is short or *allowed* and clamps to 0. **This one
-rule decides whether the harness can pass at all** (it sets the maximum sustainable swing
-rate). Read the slash-entry guard and record the answer verbatim.
+**P3 — ✅ A slash is NOT gated on Focus.** The slash-entry guard checks death and action-state
+only — there is **no Focus test**. The spend simply clamps the meter at 0. **Only stance
+switching is gated** (`if (focus < 48) return;`).
+⇒ Focus is a **crit-charge resource, never a stamina gate**. You can always swing; you cannot
+always switch stance. **This means the harness's swing rate is set by the bot's cadence alone.**
+
+**P4 — ✅ Render transform, computed by the original itself.** Its resize routine, for logical
+`w=800, h=480, hTall=690`:
+```
+if (windowAspect <= 800/690)  { contentAspect = 800/690; h = 690; }   // very tall windows only
+if (contentAspect >= windowAspect) { scale = stageW/800; xOff = 0; yOff = (stageH − h*scale)/2; }
+else                               { scale = stageH/h;   xOff = (stageW − 800*scale)/2; yOff = 0; }
+scaleX = scaleY = scale;     // ONE uniform scale, both axes
+```
+For our **1024×576** canvas: `windowAspect` 1.778 > `contentAspect` 1.667 → **else** →
+**scale = 576/480 = 1.2**, **xOff = 32**, **yOff = 0**.
+
+⇒ **`stage = (32 + 1.2·worldX, 1.2·worldY)`** — uniform ×1.2, pillarboxed with 32 px bars.
+It fits the speeds far better than the first draft's guessed 1.28: run `288 × 1.2 = 345.6`
+against measured **341–349** (dead centre), walk `96 × 1.2 = 115.2` against **112–126**. The
+1.28 guess gave 368.6 and needed a "snap-arrival deceleration" excuse that
+`COMBAT_MEASUREMENTS.md` b-4 explicitly refutes ("no deceleration ramp").
+
+**P5 (new, found while resolving P1) — ✅ the design is SYMMETRIC.** The parameter map confirms
+the stat feeding the enemy-damage formula is **player max HP**:
+`enemyMinDamage = max(scaledBase, playerMaxHP / D)`, mirroring
+`enemyHP = max(scaledBaseHP, effPlayerDamage × K)`.
+⇒ **The player kills the enemy in K hits; the enemy kills the player in D hits.** Both sides
+of a duel are tuned in *hits*, and neither is tuned in *hit points*. This is the single
+cleanest statement of the original's combat design and it should drive every balance choice.
 
 **P4 — ✅ ALREADY RESOLVED FROM SOURCE — no work needed, recorded here so it is not re-opened.**
 The original's resize routine reads, verbatim, for logical `w=800, h=480, hTall=690`:
@@ -178,25 +204,43 @@ Pick the mastery level deliberately, state it, and make both tables read from it
 ```
 Δ            = enemyLevel − playerLevel
 effPlayerDmg = (playerMinDmg + playerDmgRange/2) − enemyDefense, floored by player level
-enemyHP      = max( scaledBaseHP, effPlayerDmg × K )
-enemyDamage  = max( scaledBase,   playerMaxHP / D )
+enemyHP      = max( scaledBaseHP,  effPlayerDmg × K )      K = max(10 + Δ, 3)
+enemyMinDmg  = max( scaledBase,    playerMaxHP  / D )      D = max(18 − Δ, 3)
+xpReward     = enemyLevel × 5 + 45
+if (enemyLevel <= 8) { enemyMinDmg = 1; enemyDefense = 1; }     // fires AFTER the HP derivation
 ```
-**K and D are per-enemy-CLASS — use the pair P1 returns**, and cite it.
+K/D are the **named-duellist class's** pair (P1), which is what `DuelScene` renders.
 
 **Why:** the original tunes fights in **hits**, not hit points, so a duel lasts the same
 number of swings at level 3 or level 30. Our `hp: 100 / 150` are PvP-dummy seeds modelling
 nothing. **Hits-to-kill becomes the tuning knob and HP becomes an output** — a far better
 gate than any HP number.
 
-⚠️ **The collision you must resolve before Phase B (depends on P2).** `DUEL_ENEMY.level = 1`
-sits inside the `level ≤ 8` override that forces enemy damage and defence to **1**. Either:
-- **(a)** re-level `DUEL_ENEMY` above 8 — **and re-derive the Victory rewards**, because
-  `level = 1` is what makes the Stage-2 gate's exact **+10 XP / +8 coins** read true; or
-- **(b)** keep level 1, accept forced 1 damage / 1 defence, and log it.
+**✅ DECIDED — both fighters go to LEVEL 9.** (This replaces an earlier "you choose" note.)
 
-**Decide-and-flag: I recommend (a), re-levelling to the lowest level > 8 that keeps the
-rewards derivable**, because at level 1 the enemy deals 1 damage per hit and the duel stops
-being a duel. **Veto = (b), and say so in DIVERGENCES.**
+**Why 9 specifically:** it is the **lowest level that escapes the `≤ 8` override**. At our
+current level 1 the enemy is forced to **1 damage and 1 defence**, which makes the duel
+literally unlosable and turns the "0/24 no-play losses" harness assertion into a formality.
+Nine is the smallest change that makes the fight a fight.
+
+**Why BOTH at 9 (Δ = 0), not just the enemy:** Δ = 0 gives the original's own level-matched
+duel — **K = 10, D = 18**: the player kills in 10 hits, the enemy kills the player in 18.
+Levelling only the enemy would give Δ = 8 → K = 18 / D = 10, i.e. an enemy-favoured slog that
+the good-play bot must win 24/24 anyway.
+
+**Why a level-9 player with SPD 1 is coherent, not a fudge:** stat points are *optional* in
+this game, and our own PLAYER-screen measurement caught a real high-level player sitting at
+**ATK 1 · DEF 1 · SPD 1** — they had spent nothing. A level-9 character who never spent a
+point is exactly what the original produces.
+
+⚠️ **Knock-on you must land in the same commit:** the source's named-enemy XP is
+`level × 5 + 45` → **90 XP** at level 9, not our **+10**. Our +10/+8 was an INFERRED seed
+verified only against *our own* build's screenshots — it is not an OG measurement — so adopt
+**90 XP** and **update the Stage-2 gate row** rather than leaving the row silently false.
+**Coins have no source formula found — keep 8, still INFERRED.**
+
+> **Veto:** keep level 1 and accept a 1-damage enemy, or keep +10 XP as a deliberate
+> divergence. Either way, say so in DIVERGENCES — do not leave the gate row stale.
 
 ### D4 — One meter: Focus, in the original's exact units, with its display quirk
 
@@ -316,18 +360,37 @@ The source model is **evidence**. Replacing a spec guess with a source-derived v
 **decided in advance and recorded**, is not gate-softening; silently widening it after a
 red run would be.
 
-**So: in step B0, before writing B-code, do the arithmetic on paper** — K (from P1) ×
-effective landed-swing interval (bot cadence, reach gate, P3's focus gating) — **state the
-predicted median in the test header, derive the new band from the model, and write the
-DIVERGENCES entry UP FRONT.** Then the harness verifies the model instead of a guess.
+**✅ THE ARITHMETIC IS DONE — here it is, so B0 verifies it rather than inventing it.**
 
-**Single band rule, replacing the first draft's two contradictory ones:** once B0 sets the
-band, **it does not move again inside this session.** If the median lands outside it after
-the two named checks (bot stroke geometry §3.3, then B0's own prediction), **STOP and
-escalate** — do not adjust the band, and do not "investigate" your way to a wider one.
+```
+bot swing interval = 45 frames + uniform(0..11) jitter = 50.5 frames @60Hz = 0.842 s
+K = 10 landing hits (level-matched named duel, D3)
+closing swings before the first connect = 1..3   (the instrumented run shows swing 1 missing;
+                                                  the dash closes the gap at ~127 px/swing)
+⇒ 11..13 swings × 0.842 s  =  9.3 .. 10.9 s      ⇒  PREDICTED MEDIAN ≈ 10 s
+```
+Focus does **not** throttle this (P3: slashing is never focus-gated), so the swing rate is the
+bot's cadence alone.
 
-> **Veto:** keep `[20,60]` and tune the model until it fits. *Recommended against* — that
-> is fitting the game to the test.
+**⇒ `[20, 60]` fails by roughly 2×. The band becomes `[8, 25] s`.**
+
+**How that band was derived — and why it is not gate-softening.** The spec band was
+`[20, 60]` around its own reference of ~24.7 s, i.e. **`[0.81×, 2.43×]`** of the reference.
+Applying **the same relative width** to the model-derived median of ~10.4 s gives
+**`[8, 25]`**. The gate keeps *exactly the discriminating power it had* — same proportional
+tolerance — and is merely re-centred on a number that comes from the game instead of from a
+guess. **Computed before any code is written, from K and the bot's cadence, with the derivation
+above pinned into the test header.**
+
+**Single band rule, replacing the first draft's two contradictory ones:** `[8, 25]` **does not
+move inside this session.** If the median lands outside it, the only two permitted diagnoses
+are (a) the bot's stroke geometry (§3.3) and (b) a wrong K or cadence in the arithmetic above.
+**If neither explains it, STOP and escalate** — do not widen the band, and do not "investigate"
+your way to a wider one.
+
+> **Veto:** keep `[20,60]` and tune the model until it fits. *Recommended against* — that is
+> fitting the game to the test, and it would require roughly tripling enemy HP above what the
+> original's own K produces.
 
 ---
 
@@ -385,9 +448,9 @@ Chaos-plant every new guard.
 `tests/game-purity-baseline.json` (refresh deliberately with
 `UPDATE_GAME_PURITY_BASELINE=1` and **review the diff as the audit surface**).
 
-### PHASE 0 — prerequisites and plumbing (each lands green, alone)
+### PHASE 0 — plumbing (each lands green, alone)
 
-**P1–P4** (§P). Cheap reads; record answers in `SOURCE_CONSTANTS.md`.
+**No research step — §P is already resolved.** Start at A0.
 
 **A0 — World/stage split (D1).** Introduce `WORLD_WIDTH/WORLD_HEIGHT = 800/480` alongside the
 existing stage constants; add the render transform **`stage = (32 + 1.2·worldX, 1.2·worldY)`**
@@ -420,9 +483,11 @@ Focus, damage, reach, dash and the enemy model **all** move time-to-kill, and pe
 does movement. Landing them piecemeal leaves the harness RED between steps — and the
 pre-commit hook runs tests, so **red steps cannot be committed**.
 
-**B0 — The paper prediction (D10).** Compute the predicted median from K × effective swing
-interval. Write it into the harness test header, derive the band, and write the DIVERGENCES
-entry **before** any B-code.
+**B0 — Pin the band (D10).** The arithmetic is already done: predicted median **≈10 s**, band
+**`[8, 25]`**. Copy D10's derivation block into the harness test header, replace the `[20,60]`
+asserts, and write the DIVERGENCES entry **before** any other B-code. Re-check the two inputs
+(K = 10, interval = 0.842 s) against the code as it actually stands — if either differs,
+recompute the band from the same `[0.81×, 2.43×]` rule and say so.
 
 **B1 — Movement + Focus.** Walk **96**, run **288** world px/s. Gait by destination type
 first; distance threshold **exactly 100 world px** for plain ground moves only. **Deadzone
@@ -446,8 +511,11 @@ uncapped**, at **50/40/30 world px/frame** by stance. **Delete `DASH_SLASH_PX` a
 `DASH_MIN_STROKE_PX`** — a fixed 127 px pass-through is not what the original does, and per
 §3.2 it is the harness's entire closing mechanism, so it cannot be left stale.
 
-**B4 — Enemy model (D3) + AI (D8).** Derive HP from K (P1), honour the `level ≤ 8` override
-(P2). Think interval **0.5 s** via `AI_THINK_INTERVAL_MS`. Remove `react()` and its fields.
+**B4 — Enemy model (D3) + AI (D8).** Both fighters to **level 9** (Δ=0 → **K=10, D=18**);
+derive enemy HP as `effPlayerDmg × 10` and enemy min-damage as `playerMaxHP / 18`; XP reward
+becomes **90** (`level×5+45`) and the Stage-2 gate row updates with it. The `level ≤ 8`
+override no longer fires — **keep it implemented anyway**, it governs every Stage-4 mob.
+Think interval **0.5 s** via `AI_THINK_INTERVAL_MS`. Remove `react()` and its fields.
 **No attack token.** **Melee gate → `|dx| < 50 && Δy < 50` world px.** Telegraph **600 ms**
 closing / **267 ms** point-blank — the single global `≥520` is wrong.
 
@@ -461,21 +529,21 @@ misses, apply §3.3 then STOP and escalate (D10).**
 
 | # | Item | Verify |
 |---|---|---|
-| 1 | P1–P4 answered and recorded in `SOURCE_CONSTANTS.md` with citations | doc diff |
+| 1 | Both fighters at **level 9**; XP reward **90** (`level×5+45`); Stage-2 gate row updated, not left stale | red-first + gate-row diff |
 | 2 | WORLD 800×480 exists; STAGE stays 1024×576; every px config rescaled or annotated | grep: no unannotated px literal in `src/config` |
 | 3 | **Fidelity gate still 55/55 in-browser** after A0 | `await __fidelity.run()` |
 | 4 | Reach computed from the formula; `STANCE_TABLE.reach` gone | pins at the stated (agility, dan, mastery); a 133 for Balanced means the mastery off-by-one is back |
 | 5 | **Mastery is ONE value driving BOTH reach and dmgMult** | a mastery change must move both, or RED |
 | 6 | Reach spent at stroke-construction; `resolveSlash` has **no** radius/origin params | `withinReach` deleted; planted radius test goes RED |
 | 7 | Dash goes to the stroke's last point, uncapped, per-stance speed; `DASH_SLASH_PX` deleted | red-first |
-| 8 | Enemy HP derived from K (cited class); `level ≤ 8` override honoured | chaos-proven |
+| 8 | Enemy HP = `effPlayerDmg × K` with **K=10**, enemy min-dmg = `playerMaxHP / 18`; `level ≤ 8` override implemented (dormant at level 9) | chaos-proven: force level 8 → damage and defence must drop to 1 |
 | 9 | Focus 192 units, `(x−48)/144` display, **residual accumulator survives a spend** | fill → spend 48 → re-fill, red-first |
 | 10 | `COUNTER_BONUS` deleted; triangle ×1.2/×0.9 pre-defence | per-matchup red-first |
 | 11 | Damage pipeline steps 1–6 order-pinned; body-part crit present as a **positioned no-op** | reordering must go RED |
 | 12 | AUTO SLASH drives movement + slashes through the **same** pipeline | synthesized stroke enters `applyStroke` |
 | 13 | `react()` and every react field deleted; **no attack token**; think timer fires every 0.5 s independent of player state; melee gate 50 world px both axes | a planted block/dodge must change nothing |
 | 14 | Combo cosmetic, resets to 0 on damage only; old "reset to 1 on kill" pin **deleted with a DIVERGENCES entry** | red-first |
-| 15 | Harness: 24/24 · 0/24 · median in **B0's derived band** · ≥22 distinct | B0 prediction in the test header |
+| 15 | Harness: 24/24 · 0/24 · median in **`[8, 25]` s** · ≥22 distinct | D10's derivation pinned in the test header |
 | 16 | Suite · tsc ×2 · eslint green; **every new guard chaos-planted**; both ratchets refreshed with reviewed diffs | pasted output |
 | 17 | Ledgers + DIVERGENCES + RESUME_HERE + next kickoff in the closing commit | `git show --stat` |
 
@@ -541,12 +609,32 @@ explicit **prerequisite steps (P1–P3)**, replaces the incoherent "preserve the
 instruction with a **derive-once-up-front rule plus a hard escalation stop**, and states its
 scope honestly — what is implemented, what is a positioned no-op, what is deferred and why.
 
-**Verdict: it reaches the bar now**, in the specific sense that every remaining known
-uncertainty is *named and scheduled* rather than hidden inside a confident sentence, and the
-two claims that most wanted to be assumed (the render transform, the harness's isolation) are
-now each backed by something I actually ran or read.
+**A third pass then removed every remaining open question.** The four "prerequisites" and the
+two decisions the plan had handed back to the owner were all closed from source:
 
-**What it does not promise:** that no new problem appears at B5. That is precisely why §6
-names the harness as the likeliest failure and gives it a **stop-and-escalate rule instead of
-an escape hatch**. A plan that promised otherwise would be the failure mode this project has
-already reverted once.
+- **P1** — the enemy class named and its real pair read verbatim (**K = max(10+Δ,3),
+  D = max(18−Δ,3)**); `SOURCE_CONSTANTS.md` §3.8 had quoted the **wrong class** and is corrected.
+- **P2** — the `level ≤ 8` override read verbatim, including that it fires *after* the HP
+  derivation.
+- **P3** — slashing is **not** Focus-gated (only stance switching is), so Focus is a
+  crit-charge resource, never a stamina gate.
+- **P5 (new)** — the parameter map proves the D-numerator is **player max HP**, which means
+  the original's duel design is **exactly symmetric: K hits to kill, D hits to be killed.
+  Both sides tuned in hits, neither in hit points.** That is the cleanest one-line statement
+  of the combat model we have, and it was not previously known.
+- **D3** — decided: **both fighters to level 9** (lowest level escaping the override; Δ=0 →
+  K=10/D=18), with the XP knock-on (**90**, from `level×5+45`) landed rather than left stale.
+- **D10** — decided: the arithmetic is **done, not deferred** — predicted median **≈10 s**,
+  so `[20,60]` fails by 2×, and the band becomes **`[8, 25]`**, derived by preserving the spec
+  band's own `[0.81×, 2.43×]` relative width around a model-derived centre.
+
+**Verdict: it reaches the bar.** Every number traces to source or to arithmetic shown in the
+document; every decision is made rather than deferred; the three claims that most wanted to be
+assumed (the render transform, the harness's isolation, the band) are each backed by something
+actually read or run; and the corrections to *this project's own prior documents* are landed in
+the same commit rather than noted.
+
+**What it deliberately does not promise:** that nothing new appears at B5. That is why §6 names
+the harness as the likeliest failure and gives it a **stop-and-escalate rule instead of an
+escape hatch** — a plan that promised otherwise would be the exact failure mode this project
+has already reverted once.
