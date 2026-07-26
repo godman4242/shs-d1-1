@@ -1,6 +1,47 @@
 # RESUME HERE
 
-> ## ▶ SESSION 15 IS RUNNING — **A1 + A2 CLOSED. START AT §4 A3.**
+> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION16_KICKOFF.md`**
+> **HARDEN THE CONVERTER, THEN PUT IT ON SCREEN.** Self-contained, the only
+> kickoff to plan from. Owner decision 2026-07-26: run an **adversarial review of
+> A2 before rendering**, because the author of a parser is the worst reviewer of
+> it — and A2 proved that twice in one session (two defects, neither caught by
+> 639 green tests).
+>
+> **Order: R (review) → R2 (fix red-first) → A3 (render) → A3.5 → A3.6.**
+> A3 is also the review's own verification: if the hardened converter still draws
+> the head at the right size, the fixes did not break it.
+>
+> **There is no research step.** Every prerequisite is a command already run:
+> - ⭐ **A3's target size is pre-computed:** head 2664 is 14.30 × 16.95 world px
+>   → **17.16 × 20.34 STAGE px** (transform `stage = (32 + 1.2·worldX, 1.2·worldY)`,
+>   the OG's own resize routine, in `src/core/viewport.ts`, pinned by
+>   `tests/viewport.test.ts`). A 20× twips error would draw it **343 × 407** on a
+>   1024 × 576 canvas. ⚠️ The QUIETER failure is drawing world px straight into
+>   stage space — 17 % too small, looks merely "a bit off".
+> - ⭐ **Free cross-check:** the composed OG `idle` fighter is 107.4 world px →
+>   **128.9 stage px**, and our procedural samurai — proportions measured from
+>   study frames in earlier sessions — is ≈ **118 stage px**. Two independent
+>   derivations within ~8 %. Evidence that the fighter clip is scale ≈ 1, **not
+>   proof**; the residual is A4's to confirm.
+> - ⭐ **Hole census over all 16 shapes: 86 rings, 15 HOLES** (in 2641, 2646,
+>   2648, 2662). **A4 must render holes; A3 need not — shape 2664 has 0.**
+> - ⚠️ **ONE open prerequisite, deliberately:** whether Phaser 3.90 exposes a
+>   polygon triangulator was **NOT verified** (`node_modules` reads are blocked
+>   here). It blocks nothing in A3, and **A3.5 is a ten-second console check
+>   while the browser is already open.** Fallback needing no Phaser feature:
+>   triangulate at build time in the converter.
+>
+> **Ten seeded suspects are published in its §2** so the review starts calibrated
+> — including two the author found and deliberately did NOT pre-fix
+> (`fill-rule` never checked; a leading `+` tokenising silently). **A review that
+> returns only those ten has failed.**
+>
+> ⛔ **`SESSION15_KICKOFF.md` STAYS LIVE for A4 + A5.**
+> ⛔ **`SESSION14_KICKOFF.md` STAYS LIVE for A5 + A6.** Neither is closed here.
+>
+> ---
+>
+> ## ▶ SESSION 15 — **A1 + A2 CLOSED. A3 is now SESSION16's §4.**
 > Kickoff: **`docs/sessions/SESSION15_KICKOFF.md`** (the art is an IMPORT problem).
 >
 > ### ✅ A2 CLOSED — the converter works, and the first OG art is committed
@@ -49,9 +90,9 @@
 >   reproducible. `npx vite-node scripts/art/generate.ts -- <id>`.
 > - Full record: `docs/DIVERGENCES.md` "SESSION 15 — A2".
 >
-> **A3 next:** render `SHAPE_2664` in the browser beside the existing samurai,
-> behind a flag (D6). Watch for §3.4 — 20× too big is the tell for a twips
-> mistake; the subtler version is a wrong pivot.
+> **A3 has moved into `SESSION16_KICKOFF.md`**, behind an adversarial review of
+> the converter (owner decision 2026-07-26). Its scale gate is pre-computed
+> there: **17.16 × 20.34 stage px ±1**.
 >
 > ### ✅ A1 CLOSED — the fighter is CODE-ASSEMBLED, and all of its art is recoverable
 > **Deliverable: `docs/research/fidelity/FIGHTER_ART_IDS.md`** — every shape ID
