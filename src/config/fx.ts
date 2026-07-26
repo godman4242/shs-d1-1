@@ -9,6 +9,10 @@
  *                      pools land Stage 2/6 — Stage 1 uses combat.ts spray)
  *   - FINISHER_FLASH → kill-beat flash/slow-mo ramp (consumed Stage 2)
  * The spec explicitly bans inventing BLADE_WIDTH / BLOOD_PARTICLES.
+ *
+ * Every px value here is **stage-space native** (SESSION13 A0): these are
+ * render widths/speeds drawn straight onto the 1024×576 canvas and never
+ * fed to the Sim, so the world split leaves them alone.
  */
 
 /** INFERRED — red directional stroke: tapered body around the drawn path. */

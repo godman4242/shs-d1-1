@@ -23,19 +23,21 @@ export const MAX_FRAME_MS = 250;
 export const SHUNPO_FILL_PER_S = 12;
 
 // ── Smoke Bomb + Stab/Deflect ─────────────────────────────────────────
-/** INFERRED */ export const SMOKE_BOMB_DISTANCE = 180;
+// WORLD-SPACE (SESSION13 A0): px values converted once, `/1.2`; the
+// pre-conversion stage value is named in each comment.
+/** INFERRED — world px. Was 180 stage. */ export const SMOKE_BOMB_DISTANCE = 150;
 /** INFERRED */ export const SMOKE_BOMB_IFRAMES_MS = 420;
 /** INFERRED */ export const DEFLECT_WINDOW_MS = 260;
-/** INFERRED */ export const DEFLECT_RADIUS = 64;
+/** INFERRED — world px. Was 64 stage. */ export const DEFLECT_RADIUS = 53.33;
 
 // ── Projectiles (kunai) ───────────────────────────────────────────────
-/** INFERRED — px per ms. */ export const PROJECTILE_SPEED = 0.55;
+/** INFERRED — world px per ms. Was 0.55 stage. */ export const PROJECTILE_SPEED = 0.4583;
 /** INFERRED */ export const PROJECTILE_DMG = 8;
-/** INFERRED */ export const PROJECTILE_HIT_RADIUS = 26;
+/** INFERRED — world px. Was 26 stage. */ export const PROJECTILE_HIT_RADIUS = 21.67;
 /** INFERRED */ export const PROJECTILE_MAX_ACTIVE = 8;
 
 // ── Player movement ───────────────────────────────────────────────────
-/** INFERRED — px per ms. */ export const PLAYER_MOVE_SPEED = 0.28;
+/** INFERRED — world px per ms. Was 0.28 stage. */ export const PLAYER_MOVE_SPEED = 0.2333;
 /** INFERRED — player strokes strike instantly (no windup). */
 export const PLAYER_WINDUP_MS = 0;
 /**
@@ -46,15 +48,21 @@ export const PLAYER_WINDUP_MS = 0;
  * ÷ 1.875 (stage scale) = 127.1. Constant magnitude across all three ⇒
  * fixed distance (pass-through), not stop-at-target. Motion ledger:
  * MOTION_MEASUREMENTS.md.
+ *
+ * WORLD-SPACE (SESSION13 A0): 238.3 study px ÷ 2.25 (the original's own
+ * study-frame scale — 1080/480) = 105.9 world px. The old stage route
+ * (÷1.875 → 127.1, then ÷1.2) lands on the same number, which is an
+ * independent check on the ×1.2 transform.
  */
-export const DASH_SLASH_PX = 127;
+export const DASH_SLASH_PX = 105.9;
 /**
  * INFERRED — review-hardened bound (Session 9 adversarial review): the dash
  * needs a minimum stroke length so a mouse slip (single-digit px, still a
  * valid 2-point 'slash') can't teleport the player. Real swings measure
  * well over 100px of path; 40 sits comfortably between.
+ * WORLD-SPACE (SESSION13 A0): was 40 stage px.
  */
-export const DASH_MIN_STROKE_PX = 40;
+export const DASH_MIN_STROKE_PX = 33.33;
 
 // ── Base fighter loadouts ─────────────────────────────────────────────
 export interface FighterBase {

@@ -26,7 +26,7 @@ import {
   type FighterBase,
   type SkillVerb,
 } from '../config/combat-sim';
-import { GAME_WIDTH } from '../config/display';
+import { WORLD_WIDTH } from '../config/display';
 import { SKILL_COOLDOWN_MS } from '../config/skills';
 import { JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../config/duel';
 import { ONE, TWO, ZERO } from '../config/nums';
@@ -416,7 +416,7 @@ export class Sim {
         player.pos = {
           x: Math.max(
             player.halfW,
-            Math.min(GAME_WIDTH - player.halfW, player.pos.x + dashDir * DASH_SLASH_PX),
+            Math.min(WORLD_WIDTH - player.halfW, player.pos.x + dashDir * DASH_SLASH_PX),
           ),
           y: player.pos.y,
         };
@@ -455,7 +455,7 @@ export class Sim {
         // Arena-clamped like walking — an off-canvas stroke must not land
         // the fighter outside the stage (audit).
         const clampX = (v: number): number =>
-          Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, v));
+          Math.max(player.halfW, Math.min(WORLD_WIDTH - player.halfW, v));
         player.jump = {
           from: { x: clampX(first.x), y: player.groundY },
           to: { x: clampX(last.x), y: player.groundY },
@@ -629,7 +629,7 @@ export class Sim {
       player.pos = {
         x: Math.max(
           player.halfW,
-          Math.min(GAME_WIDTH - player.halfW, player.pos.x + away * SMOKE_BOMB_DISTANCE),
+          Math.min(WORLD_WIDTH - player.halfW, player.pos.x + away * SMOKE_BOMB_DISTANCE),
         ),
         y: player.pos.y,
       };
@@ -705,18 +705,18 @@ export class Sim {
           const step = PLAYER_MOVE_SPEED * stepMs;
           if (dist <= step) {
             // Arrived — snap to target
-            player.pos = { x: Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, target)), y: player.pos.y };
+            player.pos = { x: Math.max(player.halfW, Math.min(WORLD_WIDTH - player.halfW, target)), y: player.pos.y };
           } else {
             const dir = Math.sign(dx);
             player.pos = {
-              x: Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, player.pos.x + dir * step)),
+              x: Math.max(player.halfW, Math.min(WORLD_WIDTH - player.halfW, player.pos.x + dir * step)),
               y: player.pos.y,
             };
           }
         } else if (this.playerIntent.moveX !== ZERO) {
           const x = player.pos.x + this.playerIntent.moveX * PLAYER_MOVE_SPEED * stepMs;
           player.pos = {
-            x: Math.max(player.halfW, Math.min(GAME_WIDTH - player.halfW, x)),
+            x: Math.max(player.halfW, Math.min(WORLD_WIDTH - player.halfW, x)),
             y: player.pos.y,
           };
         }
@@ -746,7 +746,7 @@ export class Sim {
         const dir = Math.max(-ONE, Math.min(ONE, intent.moveX));
         const x = enemy.pos.x + dir * ENEMY_SPEED * stepMs;
         enemy.pos = {
-          x: Math.max(enemy.halfW, Math.min(GAME_WIDTH - enemy.halfW, x)),
+          x: Math.max(enemy.halfW, Math.min(WORLD_WIDTH - enemy.halfW, x)),
           y: enemy.pos.y,
         };
       }

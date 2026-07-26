@@ -7,6 +7,13 @@
  * samurai.ts v2 fidelity pass), NOT iaido-duel's slim 7-head build.
  * Changing any value requires updating tests/config-values.test.ts in the
  * same commit (double-entry ratchet).
+ *
+ * EVERY px VALUE IN THIS FILE IS **stage-space native** (SESSION13 A0): they
+ * describe the drawn fighter's POSE-LOCAL space, which is authored at the
+ * 1024×576 canvas's scale and drawn straight onto it. They are never fed to
+ * the Sim, so the world split leaves them untouched — the scene converts the
+ * fighter's world travel into stage px BEFORE handing it to the animator, so
+ * the distance-driven stride stays in the same units as `WALK.stridePx`.
  */
 
 /**

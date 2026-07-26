@@ -17,6 +17,7 @@ import {
   type Rgb,
   type ScanResult,
 } from '../core/fidelityCompare';
+import { worldToStage } from '../core/viewport';
 import type { Sim } from '../core/Sim';
 
 /**
@@ -211,12 +212,15 @@ export const createFidelityHarness = (game: Phaser.Game): FidelityHarness => {
       tol: FIDELITY_ENEMY_BAR.tol,
       note: FIDELITY_ENEMY_BAR.note,
     };
+    // A0: sim positions are WORLD units — convert to stage the same way the
+    // scene draws them, THEN apply the probe's stage-px offset.
+    const enemyStage = worldToStage(sim.enemy.pos);
     results.push(
       compareProbe(
         enemyProbe,
         read(
-          (sim.enemy.pos.x + FIDELITY_ENEMY_BAR.dx) * scale,
-          (sim.enemy.pos.y + FIDELITY_ENEMY_BAR.dy) * scale,
+          (enemyStage.x + FIDELITY_ENEMY_BAR.dx) * scale,
+          (enemyStage.y + FIDELITY_ENEMY_BAR.dy) * scale,
         ),
       ),
     );

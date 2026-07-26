@@ -58,20 +58,26 @@ export const FOCUS_FILL_PER_S = 4;
 export const WEAPON_WEIGHT = { light: 1.0, balanced: 1.5, heavy: 2.5 } as const;
 
 // ── Drawn-stroke processing (Stage 1 consumer: core/DrawnStroke.ts) ──
-/** INFERRED */ export const RESAMPLE_SPACING = 8;
+// Strokes are SIM data → WORLD space (SESSION13 A0).
+/** INFERRED — world px between resampled points. Was 8 stage. */
+export const RESAMPLE_SPACING = 6.67;
 /** INFERRED */ export const SMOOTH_ITERATIONS = 2;
 /** INFERRED */ export const CHAIKIN_RATIO = 0.25;
-/** INFERRED */ export const MAX_STROKE_POINTS = 256;
+/** INFERRED — a count, not a length. */ export const MAX_STROKE_POINTS = 256;
 
 // ── Blade trail (Stage 1 consumer: game render layer) ─────────────────
-/** INFERRED */ export const BLADE_CORE_WIDTH = 7;
-/** INFERRED */ export const BLADE_EDGE_WIDTH = 13;
+// stage-space native — these are RENDER widths drawn straight onto the
+// 1024×576 canvas, never fed to the Sim, so the A0 world split leaves them
+// alone (rescaling them would visibly change the art).
+/** INFERRED — stage-space native */ export const BLADE_CORE_WIDTH = 7;
+/** INFERRED — stage-space native */ export const BLADE_EDGE_WIDTH = 13;
 /** INFERRED */ export const BLADE_FADE_MS = 200;
-/** INFERRED */ export const BLADE_MIN_TAPER = 0.12;
+/** INFERRED — a ratio */ export const BLADE_MIN_TAPER = 0.12;
 
 // ── Blood spray (Stage 1 consumer: game render layer) ─────────────────
-/** INFERRED */ export const BLOOD_COUNT = 9;
-/** INFERRED */ export const BLOOD_COUNT_SEVERED = 16;
-/** INFERRED */ export const BLOOD_SPREAD_DEG = 42;
-/** INFERRED */ export const BLOOD_SPEED_MIN = 60;
-/** INFERRED */ export const BLOOD_SPEED_MAX = 240;
+/** INFERRED — a count */ export const BLOOD_COUNT = 9;
+/** INFERRED — a count */ export const BLOOD_COUNT_SEVERED = 16;
+/** INFERRED — degrees */ export const BLOOD_SPREAD_DEG = 42;
+/** INFERRED — stage-space native (droplets are pure render FX) */
+export const BLOOD_SPEED_MIN = 60;
+/** INFERRED — stage-space native */ export const BLOOD_SPEED_MAX = 240;

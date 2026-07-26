@@ -12,24 +12,37 @@ import {
   FOCUS_START,
 } from '../src/config/combat';
 import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../src/config/chi';
-import { DASH_SLASH_PX, MAX_FRAME_MS } from '../src/config/combat-sim';
-import { GAME_WIDTH } from '../src/config/display';
+import { DASH_SLASH_PX, MAX_FRAME_MS, PLAYER_MOVE_SPEED, SMOKE_BOMB_DISTANCE } from '../src/config/combat-sim';
+import { WORLD_WIDTH } from '../src/config/display';
 import { JUMP_DURATION_FRAMES } from '../src/config/duel';
-import { FIXED_HZ, SLASH_FRAMES } from '../src/config/timing';
-import { AI_TIERS } from '../src/config/ai';
+import { FIXED_HZ, MS_PER_S, SLASH_FRAMES } from '../src/config/timing';
+import { AI_STRIKE_RANGE, AI_TIERS, ENEMY_SPEED } from '../src/config/ai';
 import { AISeamController } from '../src/core/AISeamController';
 import { DrawnStroke } from '../src/core/DrawnStroke';
 import { msToFrames } from '../src/core/time';
 import type { OpponentController } from '../src/core/OpponentController';
 import { Sim, type FighterSpawn, type Rng, type SimEvent } from '../src/core/Sim';
+import { VIEW } from '../src/core/viewport';
 import type { Vec } from '../src/core/vec';
 
-const v = (x: number, y: number): Vec => ({ x, y });
+/**
+ * A0 (SESSION13): the Sim now runs in WORLD space (800×480), not stage space.
+ * Every fixture coordinate in this file was authored in the OLD stage space,
+ * so `sx()` converts one stage-space fixture number into world. Applying the
+ * SAME 1/1.2 factor the render transform uses means every distance, margin
+ * and flight time below keeps EXACTLY the relationship to reach / dash /
+ * radii that it was originally written to test — a pure similarity
+ * transform, not a retune. None of these are gameplay numbers; the real
+ * constants all live in src/config and are imported symbolically.
+ */
+const sx = (stagePx: number): number => stagePx / VIEW.scale;
+const v = (x: number, y: number): Vec => ({ x: sx(x), y: sx(y) });
 const rng: Rng = () => 0.5;
 const opponent: OpponentController = { next: () => ({}) };
 
-/** Player at x=100, enemy at x=400 — far enough apart that strokes aimed at
- * one never graze the other (hitboxes 80..120 and 380..420). */
+/** Player at stage-x 100, enemy at stage-x 400 (world 83.3 / 333.3 — see
+ * `sx`) — far enough apart that strokes aimed at one never graze the other
+ * (stage-space hitboxes 80..120 and 380..420). */
 const playerSpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
   pos: v(100, 200),
   hp: 100,
@@ -37,8 +50,8 @@ const playerSpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
   defense: 5,
   stance: 'balanced',
   deflectLearned: true,
-  halfW: 20,
-  halfH: 40,
+  halfW: sx(20),
+  halfH: sx(40),
   ...over,
 });
 const enemySpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
@@ -48,8 +61,8 @@ const enemySpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
   defense: 5,
   stance: 'heavy',
   deflectLearned: false,
-  halfW: 20,
-  halfH: 40,
+  halfW: sx(20),
+  halfH: sx(40),
   ...over,
 });
 
@@ -85,11 +98,11 @@ const endInvuln = (sim: Sim): void => {
 describe('Sim — construction, state exposure, hitboxes', () => {
   it('exposes both fighters from their spawns', () => {
     const sim = introSim();
-    expect(sim.player.pos).toEqual({ x: 100, y: 200 });
+    expect(sim.player.pos).toEqual(v(100, 200));
     expect(sim.player.hp).toBe(100);
     expect(sim.player.maxHp).toBe(100);
     expect(sim.player.stance).toBe('balanced');
-    expect(sim.enemy.pos).toEqual({ x: 400, y: 200 });
+    expect(sim.enemy.pos).toEqual(v(400, 200));
     expect(sim.enemy.hp).toBe(150);
     expect(sim.enemy.maxHp).toBe(150);
     expect(sim.enemy.stance).toBe('heavy');
@@ -103,8 +116,16 @@ describe('Sim — construction, state exposure, hitboxes', () => {
   });
   it('hitbox(side) is the axis-aligned rect around that fighter', () => {
     const sim = introSim();
-    expect(sim.hitbox('enemy')).toEqual([v(380, 160), v(420, 160), v(420, 240), v(380, 240)]);
-    expect(sim.hitbox('player')).toEqual([v(80, 160), v(120, 160), v(120, 240), v(80, 240)]);
+    // Built from the same terms the Sim uses (centre ± half-extent), so the
+    // assertion is bit-identical rather than float-noise away from it.
+    const rect = (cx: number, cy: number, hw: number, hh: number): Vec[] => [
+      { x: cx - hw, y: cy - hh },
+      { x: cx + hw, y: cy - hh },
+      { x: cx + hw, y: cy + hh },
+      { x: cx - hw, y: cy + hh },
+    ];
+    expect(sim.hitbox('enemy')).toEqual(rect(sx(400), sx(200), sx(20), sx(40)));
+    expect(sim.hitbox('player')).toEqual(rect(sx(100), sx(200), sx(20), sx(40)));
   });
 });
 
@@ -288,22 +309,22 @@ describe('Sim — up strokes make the PLAYER jump (start.x → end.x, arc)', () 
     const outcome = sim.applyStroke(jumpStroke(300, 320));
     expect(outcome.gesture).toBe('jump');
     expect(sim.playerJumping).toBe(true);
-    expect(sim.player.pos).toEqual({ x: 300, y: 200 });
+    expect(sim.player.pos).toEqual(v(300, 200));
   });
   it('is airborne mid-jump, lands exactly at end x on the ground line', () => {
     const sim = makeSim();
     sim.applyStroke(jumpStroke(300, 320));
     tickN(sim, JUMP_DURATION_FRAMES / 2);
-    expect(sim.player.pos.y).toBeLessThan(200);
+    expect(sim.player.pos.y).toBeLessThan(sx(200));
     tickN(sim, JUMP_DURATION_FRAMES / 2);
-    expect(sim.player.pos).toEqual({ x: 320, y: 200 });
+    expect(sim.player.pos).toEqual(v(320, 200));
     expect(sim.playerJumping).toBe(false);
   });
   it('the enemy never moves on player strokes', () => {
     const sim = makeSim();
     sim.applyStroke(jumpStroke(300, 320));
     tickN(sim, JUMP_DURATION_FRAMES);
-    expect(sim.enemy.pos).toEqual({ x: 400, y: 200 });
+    expect(sim.enemy.pos).toEqual(v(400, 200));
   });
   it('a jump gesture while airborne is ignored (no mid-air ground capture)', () => {
     const sim = makeSim();
@@ -313,7 +334,7 @@ describe('Sim — up strokes make the PLAYER jump (start.x → end.x, arc)', () 
     sim.applyStroke(jumpStroke(500, 520));
     expect(sim.player.pos).toEqual(midAir);
     tickN(sim, JUMP_DURATION_FRAMES);
-    expect(sim.player.pos).toEqual({ x: 320, y: 200 });
+    expect(sim.player.pos).toEqual(v(320, 200));
   });
   it('sequential jumps always land back on the spawn ground line', () => {
     const sim = makeSim();
@@ -321,7 +342,7 @@ describe('Sim — up strokes make the PLAYER jump (start.x → end.x, arc)', () 
     tickN(sim, JUMP_DURATION_FRAMES);
     sim.applyStroke(jumpStroke(320, 260));
     tickN(sim, JUMP_DURATION_FRAMES);
-    expect(sim.player.pos).toEqual({ x: 260, y: 200 });
+    expect(sim.player.pos).toEqual(v(260, 200));
   });
 });
 
@@ -513,7 +534,7 @@ describe('Sim — kunai projectiles (M3: OpponentIntent.throwKunai)', () => {
     const sim = makeSim({}, {}, throwerOn([1]));
     sim.tick();
     expect(sim.projectiles).toHaveLength(1);
-    expect(sim.projectiles[0]?.pos.x).toBeLessThan(400); // already stepped once
+    expect(sim.projectiles[0]?.pos.x).toBeLessThan(sx(400)); // already stepped once
     const thrown = sim.drainEvents().filter((ev) => ev.type === 'kunaiThrown');
     expect(thrown).toHaveLength(1);
   });
@@ -571,14 +592,14 @@ describe('Sim — skills via queueSkill (M3: SKILL_VERB hotbar)', () => {
     expect(sim.cooldownRemainingS('chiPunch')).toBeLessThan(4);
   });
   it('smokeBomb dashes AWAY from the enemy by SMOKE_BOMB_DISTANCE (clamped to the arena)', () => {
-    const sim = makeSim({ pos: { x: 350, y: 200 } });
+    const sim = makeSim({ pos: v(350, 200) });
     sim.queueSkill('smokeBomb');
     sim.tick();
-    expect(sim.player.pos.x).toBe(170); // 350 − 180, away from enemy at 400
+    expect(sim.player.pos.x).toBe(sx(350) - SMOKE_BOMB_DISTANCE); // away from the enemy
     const clamped = makeSim(); // player at 100: 100 − 180 → clamp to halfW 20
     clamped.queueSkill('smokeBomb');
     clamped.tick();
-    expect(clamped.player.pos.x).toBe(20);
+    expect(clamped.player.pos.x).toBe(sx(20));
   });
   it('smokeBomb grants i-frames: strikes are blocked during SMOKE_BOMB_IFRAMES_MS', () => {
     const striker: OpponentController = {
@@ -735,32 +756,32 @@ describe('Sim — player movement intent (M3: A/D at PLAYER_MOVE_SPEED)', () => 
     const sim = makeSim();
     sim.setPlayerIntent({ moveX: 1, shunpoHeld: false });
     tickN(sim, 60);
-    expect(sim.player.pos.x).toBeCloseTo(380, 9);
+    expect(sim.player.pos.x).toBeCloseTo(sx(100) + PLAYER_MOVE_SPEED * MS_PER_S, 9);
   });
   it('clamps to the arena edge', () => {
     const sim = makeSim();
     sim.setPlayerIntent({ moveX: -1, shunpoHeld: false });
     tickN(sim, 60);
-    expect(sim.player.pos.x).toBe(20); // halfW
+    expect(sim.player.pos.x).toBe(sx(20)); // halfW
   });
   it('is ignored while jumping (the arc owns the position)', () => {
     const sim = makeSim();
     sim.applyStroke(jumpStroke(100, 100)); // jump in place
     sim.setPlayerIntent({ moveX: 1, shunpoHeld: false });
     tickN(sim, JUMP_DURATION_FRAMES);
-    expect(sim.player.pos.x).toBe(100); // landed where the stroke said
+    expect(sim.player.pos.x).toBe(sx(100)); // landed where the stroke said
   });
   it('does nothing during the intro phase', () => {
     const sim = introSim();
     sim.setPlayerIntent({ moveX: 1, shunpoHeld: false });
     tickN(sim, 60);
-    expect(sim.player.pos.x).toBe(100);
+    expect(sim.player.pos.x).toBe(sx(100));
   });
   it('rejects non-finite moveX (chaos: NaN intent must not poison the position)', () => {
     const sim = makeSim();
     sim.setPlayerIntent({ moveX: Number.NaN, shunpoHeld: false });
     tickN(sim, 10);
-    expect(sim.player.pos.x).toBe(100);
+    expect(sim.player.pos.x).toBe(sx(100));
     expect(Number.isFinite(sim.player.pos.x)).toBe(true);
   });
 });
@@ -781,7 +802,7 @@ describe('Sim + AISeamController — integrated duel loop (M4)', () => {
     let damageFrame = -1;
     for (let f = 0; f < 2000 && damageFrame < 0; f++) {
       const dist = Math.abs(sim.enemy.pos.x - sim.player.pos.x);
-      inRange = dist <= 132;
+      inRange = dist <= AI_STRIKE_RANGE;
       sim.tick();
       for (const ev of sim.drainEvents()) {
         events.push({ frame: sim.frame, ev });
@@ -800,7 +821,7 @@ describe('Sim + AISeamController — integrated duel loop (M4)', () => {
     sim.beginCombat();
     tickN(sim, 60);
     // 0.17 px/ms × 1000 ms = 170 px in one second of approach
-    expect(sim.enemy.pos.x).toBeCloseTo(530, 6);
+    expect(sim.enemy.pos.x).toBeCloseTo(sx(700) - ENEMY_SPEED * MS_PER_S, 6);
   });
   it('enemy stance switch arrives telegraphed and Focus-gated through the same Sim rule', () => {
     const picker = new AISeamController(() => 0, AI_TIERS.normal);
@@ -877,12 +898,12 @@ describe('Sim — audit fixes (mid-tick kill, shunpo end, intro skills, jump cla
     low.applyStroke(new DrawnStroke([v(-300, 400), v(-280, 60)])); // steep up, off-arena left
     expect(low.playerJumping).toBe(true);
     tickN(low, JUMP_DURATION_FRAMES);
-    expect(low.player.pos.x).toBe(20); // clamped to halfW
+    expect(low.player.pos.x).toBe(sx(20)); // clamped to halfW
     const high = makeSim();
     high.applyStroke(new DrawnStroke([v(5000, 400), v(5010, 50)])); // off-arena right
     expect(high.playerJumping).toBe(true);
     tickN(high, JUMP_DURATION_FRAMES);
-    expect(high.player.pos.x).toBe(1004); // GAME_WIDTH − halfW
+    expect(high.player.pos.x).toBe(WORLD_WIDTH - sx(20)); // WORLD_WIDTH − halfW
   });
 });
 
@@ -969,35 +990,35 @@ describe('Sim — dash-through slash (Session 9: MEASURED strike-C 1-frame snap)
   it('a rightward slash that hits dashes the player +DASH_SLASH_PX in the same call AND still damages', () => {
     const sim = makeSim();
     sim.applyStroke(slashStroke()); // 300→500 through the enemy
-    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
+    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
     expect(sim.enemy.hp).toBe(142); // hit resolution unchanged by the dash
   });
   it('a leftward slash dashes −DASH_SLASH_PX', () => {
     const sim = makeSim({ pos: v(300, 200) });
     sim.applyStroke(new DrawnStroke([v(500, 200), v(300, 200)])); // through the enemy, leftward
-    expect(sim.player.pos.x).toBe(300 - DASH_SLASH_PX);
+    expect(sim.player.pos.x).toBe(sx(300) - DASH_SLASH_PX);
   });
   it('a missed slash still dashes (the lunge is part of the swing, hit or not)', () => {
     const sim = makeSim();
     sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)])); // grazes nobody
-    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
+    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
     expect(sim.enemy.hp).toBe(150);
   });
   it('a blocked slash still dashes (OG: clash freeze happens AT arrival)', () => {
     const sim = makeSim({}, {}, { next: () => ({}), react: () => 'block' });
     sim.applyStroke(slashStroke());
-    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
+    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
     expect(sim.enemy.hp).toBe(150); // blocked — no damage
   });
   it('dash clamps at the right arena wall', () => {
-    const sim = makeSim({ pos: v(GAME_WIDTH - 30, 200) }); // halfW 20 → max x is GAME_WIDTH − 20
+    const sim = makeSim({ pos: { x: WORLD_WIDTH - sx(30), y: sx(200) } }); // max x is WORLD_WIDTH − halfW
     sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
-    expect(sim.player.pos.x).toBe(GAME_WIDTH - 20);
+    expect(sim.player.pos.x).toBe(WORLD_WIDTH - sx(20));
   });
   it('dash clamps at the left arena wall', () => {
     const sim = makeSim(); // x=100, −127 would land at −27
     sim.applyStroke(new DrawnStroke([v(500, 500), v(300, 500)]));
-    expect(sim.player.pos.x).toBe(20);
+    expect(sim.player.pos.x).toBe(sx(20));
   });
   it('no dash while airborne — the jump arc owns the position', () => {
     const sim = makeSim();
@@ -1010,12 +1031,12 @@ describe('Sim — dash-through slash (Session 9: MEASURED strike-C 1-frame snap)
   it('a zero-net (there-and-back) slash has no attack line — no dash', () => {
     const sim = makeSim();
     sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500), v(300, 500)]));
-    expect(sim.player.pos.x).toBe(100);
+    expect(sim.player.pos.x).toBe(sx(100));
   });
   it('pre-FIGHT strokes are discarded — no dash in intro', () => {
     const sim = introSim();
     sim.applyStroke(slashStroke());
-    expect(sim.player.pos.x).toBe(100);
+    expect(sim.player.pos.x).toBe(sx(100));
   });
   // ── Review-hardened bounds (Session 9 adversarial review, all CONFIRMED) ──
   it('dash is rate-limited to the measured strike interval (SLASH_FRAMES total per stance)', () => {
@@ -1029,11 +1050,11 @@ describe('Sim — dash-through slash (Session 9: MEASURED strike-C 1-frame snap)
     };
     miss(); // dashes
     miss(); // same tick — still inside the swing cycle, no second dash
-    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
+    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
     const cycle = SLASH_FRAMES.balanced; // player spawns balanced
     tickN(sim, cycle.windup + cycle.active + cycle.recovery);
     miss(); // cycle complete — dash available again
-    expect(sim.player.pos.x).toBe(100 + 2 * DASH_SLASH_PX);
+    expect(sim.player.pos.x).toBe(sx(100) + 2 * DASH_SLASH_PX);
   });
   it('a slash inside the dash cooldown still resolves damage — only movement is gated', () => {
     const sim = makeSim();
@@ -1041,14 +1062,14 @@ describe('Sim — dash-through slash (Session 9: MEASURED strike-C 1-frame snap)
     const outcome = sim.applyStroke(slashStroke()); // hits the enemy, no dash left
     expect(outcome.slash?.hit).toBe(true);
     expect(sim.enemy.hp).toBe(142);
-    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX); // second slash did not move us
+    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX); // second slash did not move us
   });
   it('a micro-slip stroke (under DASH_MIN_STROKE_PX) never dashes', () => {
     // Review finding: a ~5px mouse slip classified as a slash and teleported
     // the player 127px (and it already ends spawn invuln — pre-existing).
     const sim = makeSim();
     sim.applyStroke(new DrawnStroke([v(100, 500), v(105, 500)]));
-    expect(sim.player.pos.x).toBe(100);
+    expect(sim.player.pos.x).toBe(sx(100));
   });
   it('an airborne slash still resolves damage — ONLY the dash is skipped', () => {
     // Mutation pin: an implementation that discards the whole mid-air slash
@@ -1069,6 +1090,6 @@ describe('Sim — dash-through slash (Session 9: MEASURED strike-C 1-frame snap)
     // only 0.8 × 127 ≈ 102px here and must fail.
     const sim = makeSim();
     sim.applyStroke(new DrawnStroke([v(300, 380), v(460, 500)])); // net (160,120): 36.9° → slash
-    expect(sim.player.pos.x).toBe(100 + DASH_SLASH_PX);
+    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
   });
 });

@@ -32,8 +32,8 @@ describe('classifyGesture — long up strokes jump', () => {
   it('steep diagonal up (~60° above horizontal)', () => {
     expect(classifyGesture([v(0, 300), v(100, 127)])).toBe('jump');
   });
-  it('up stroke just past the flick cutoff jumps (length 91 ≥ 90)', () => {
-    expect(classifyGesture([v(0, 91), v(0, 0)])).toBe('jump');
+  it('up stroke just past the flick cutoff jumps (length 76 ≥ 75)', () => {
+    expect(classifyGesture([v(0, 76), v(0, 0)])).toBe('jump');
   });
 });
 
@@ -41,8 +41,8 @@ describe('classifyGesture — short up flicks launch', () => {
   it('short straight-up flick (length 50)', () => {
     expect(classifyGesture([v(0, 50), v(0, 0)])).toBe('launch');
   });
-  it('up stroke just under the flick cutoff launches (length 89 < 90)', () => {
-    expect(classifyGesture([v(0, 89), v(0, 0)])).toBe('launch');
+  it('up stroke just under the flick cutoff launches (length 74 < 75)', () => {
+    expect(classifyGesture([v(0, 74), v(0, 0)])).toBe('launch');
   });
 });
 

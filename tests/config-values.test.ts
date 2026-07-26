@@ -70,7 +70,13 @@ import {
   SMOKE_BOMB_DISTANCE,
   SMOKE_BOMB_IFRAMES_MS,
 } from '../src/config/combat-sim';
-import { GAME_HEIGHT, GAME_WIDTH } from '../src/config/display';
+import {
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  WORLD_HEIGHT,
+  WORLD_HEIGHT_TALL,
+  WORLD_WIDTH,
+} from '../src/config/display';
 import { DUEL_ENEMY, DUEL_SPAWNS, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
 import {
   FIRST_RUN_SP_CAP,
@@ -170,7 +176,7 @@ describe('combat.ts — exact core constants (Stage 0 item 5)', () => {
 
 describe('combat.ts — Stage 1 stroke/blade/blood constants (spec item 3 + item-7 NOTE)', () => {
   it('drawn-stroke processing', () => {
-    expect(RESAMPLE_SPACING).toBe(8);
+    expect(RESAMPLE_SPACING).toBe(6.67); // A0: world px (was 8 stage)
     expect(SMOOTH_ITERATIONS).toBe(2);
     expect(CHAIKIN_RATIO).toBe(0.25);
     expect(MAX_STROKE_POINTS).toBe(256);
@@ -191,11 +197,11 @@ describe('combat.ts — Stage 1 stroke/blade/blood constants (spec item 3 + item
 });
 
 describe('stances.ts — exact table + triangle (Stage 0 item 6)', () => {
-  it('STANCE_TABLE — mastery-9 ceilings (wiki); Heavy reach 100 (carry-error 120 fixed)', () => {
+  it('STANCE_TABLE — mastery-9 ceilings (wiki), reach converted to WORLD px (A0: 300/200/100 stage ÷ 1.2)', () => {
     expect(STANCE_TABLE).toEqual({
-      light: { reach: 300, speed: 1.4, dmgMult: 0.9, damageTakenMult: 1.0 },
-      balanced: { reach: 200, speed: 1.0, dmgMult: 1.2, damageTakenMult: 1.0 },
-      heavy: { reach: 100, speed: 0.7, dmgMult: 1.4, damageTakenMult: 1.25 },
+      light: { reach: 250, speed: 1.4, dmgMult: 0.9, damageTakenMult: 1.0 },
+      balanced: { reach: 166.67, speed: 1.0, dmgMult: 1.2, damageTakenMult: 1.0 },
+      heavy: { reach: 83.33, speed: 0.7, dmgMult: 1.4, damageTakenMult: 1.25 },
     });
   });
   it('STANCE_BEATS triangle: light>heavy>balanced>light', () => {
@@ -209,10 +215,15 @@ describe('stances.ts — exact table + triangle (Stage 0 item 6)', () => {
   });
 });
 
-describe('display.ts — stage dimensions (audit: were the only unpinned config numbers)', () => {
-  it('GAME_WIDTH / GAME_HEIGHT', () => {
+describe('display.ts — the TWO spaces (SESSION13 A0: world sim vs stage canvas)', () => {
+  it('GAME_WIDTH / GAME_HEIGHT — the canvas, deliberately unchanged by the world split', () => {
     expect(GAME_WIDTH).toBe(1024);
     expect(GAME_HEIGHT).toBe(576);
+  });
+  it('WORLD_* — the original\'s own logical stage (CONTRACT-SRC: w=800, h=480, hTall=690)', () => {
+    expect(WORLD_WIDTH).toBe(800);
+    expect(WORLD_HEIGHT).toBe(480);
+    expect(WORLD_HEIGHT_TALL).toBe(690);
   });
 });
 
@@ -276,15 +287,15 @@ describe('anim.ts — skeletal-fighter feel (Session 8: walk + hit + pose-step M
 });
 
 describe('duel.ts — Stage-2 arena layout (all INFERRED)', () => {
-  it('DUEL_SPAWNS — player left, enemy right, on the ground band', () => {
+  it('DUEL_SPAWNS — WORLD space (A0): 260/700/430 stage → 190/557/358, gap 440 → 367', () => {
     expect(DUEL_SPAWNS).toEqual({
-      player: { pos: { x: 260, y: 430 }, halfW: 26, halfH: 60 },
-      enemy: { pos: { x: 700, y: 430 }, halfW: 26, halfH: 60 },
+      player: { pos: { x: 190, y: 358 }, halfW: 22, halfH: 50 },
+      enemy: { pos: { x: 557, y: 358 }, halfW: 22, halfH: 50 },
     });
   });
-  it('jump arc constants', () => {
+  it('jump arc constants (apex in WORLD px: 120 stage ÷ 1.2)', () => {
     expect(JUMP_DURATION_FRAMES).toBe(24);
-    expect(JUMP_APEX_PX).toBe(120);
+    expect(JUMP_APEX_PX).toBe(100);
   });
   it('DUEL_ENEMY — nameplate identity; level 1 ⇒ +10/+8 gate rewards', () => {
     expect(DUEL_ENEMY).toEqual({ name: 'RONIN', level: 1 });
@@ -325,8 +336,8 @@ describe('fx.ts — Stage 1 item 7, exact spec names and values', () => {
 
 describe('gesture.ts — classification thresholds (Stage 1, INFERRED)', () => {
   it('sector boundary and flick cutoff', () => {
-    expect(GESTURE_DIAG_DEG).toBe(45);
-    expect(LAUNCH_FLICK_MAX_LEN).toBe(90);
+    expect(GESTURE_DIAG_DEG).toBe(45); // an angle — unaffected by the A0 split
+    expect(LAUNCH_FLICK_MAX_LEN).toBe(75); // A0: world px (was 90 stage)
   });
 });
 
@@ -342,27 +353,29 @@ describe('combat-sim.ts — Stage 2 item 9, exact spec names and values', () => 
     expect(SHUNPO_FILL_PER_S).toBe(12); // Stage-2 decision — see combat-sim.ts docblock
   });
   it('Smoke Bomb + Stab/Deflect', () => {
-    expect(SMOKE_BOMB_DISTANCE).toBe(180);
+    expect(SMOKE_BOMB_DISTANCE).toBe(150); // A0: world px (was 180 stage)
     expect(SMOKE_BOMB_IFRAMES_MS).toBe(420);
     expect(DEFLECT_WINDOW_MS).toBe(260);
-    expect(DEFLECT_RADIUS).toBe(64);
+    expect(DEFLECT_RADIUS).toBe(53.33); // A0: world px (was 64 stage)
   });
   it('projectiles (kunai)', () => {
-    expect(PROJECTILE_SPEED).toBe(0.55);
+    expect(PROJECTILE_SPEED).toBe(0.4583); // A0: world px/ms (was 0.55 stage)
     expect(PROJECTILE_DMG).toBe(8);
-    expect(PROJECTILE_HIT_RADIUS).toBe(26);
+    expect(PROJECTILE_HIT_RADIUS).toBe(21.67); // A0: world px (was 26 stage)
     expect(PROJECTILE_MAX_ACTIVE).toBe(8);
   });
   it('player movement + windup', () => {
-    expect(PLAYER_MOVE_SPEED).toBe(0.28);
+    expect(PLAYER_MOVE_SPEED).toBe(0.2333); // A0: world px/ms (was 0.28 stage)
     expect(PLAYER_WINDUP_MS).toBe(0);
   });
   it('dash-through slash displacement (Session 9: MEASURED from strike-C 1-frame snaps)', () => {
-    // +240/+~240/−235 px @1080 (2nd read approximate), mean ≈238.3 ÷ 1.875 = 127.1 → 127 stage px.
-    expect(DASH_SLASH_PX).toBe(127);
+    // +240/+~240/−235 px @1080 (2nd read approximate), mean ≈238.3.
+    // A0: ÷ 2.25 (the original's own 1080/480 study-frame scale) = 105.9 WORLD px.
+    // The old stage route (÷1.875 → 127.1, then ÷1.2) lands on the same number.
+    expect(DASH_SLASH_PX).toBe(105.9);
     // INFERRED — review-hardened bound: a mouse slip must not dash (real
     // swings measure well over 100px of path; slips are single-digit).
-    expect(DASH_MIN_STROKE_PX).toBe(40);
+    expect(DASH_MIN_STROKE_PX).toBe(33.33); // A0: world px (was 40 stage)
   });
   it('base fighter loadouts', () => {
     expect(PLAYER_BASE).toEqual({
@@ -406,10 +419,11 @@ describe('ai.ts — Stage 2 item 8, exact spec names and values', () => {
     });
   });
   it('ranges, speed, jitter, duel target', () => {
-    expect(AI_KUNAI_RANGE).toEqual({ min: 240, max: 720 });
-    expect(AI_STRIKE_RANGE).toBe(132);
-    expect(AI_APPROACH_RANGE).toBe(620);
-    expect(ENEMY_SPEED).toBe(0.17);
+    // A0: all four converted to WORLD units (÷1.2 from 240/720, 132, 620, 0.17).
+    expect(AI_KUNAI_RANGE).toEqual({ min: 200, max: 600 });
+    expect(AI_STRIKE_RANGE).toBe(110);
+    expect(AI_APPROACH_RANGE).toBe(516.67);
+    expect(ENEMY_SPEED).toBe(0.1417);
     expect(AI_RECOVER_JITTER_FRAC).toBe(0.35);
     expect(DUEL_TARGET_SECONDS).toEqual({ min: 20, max: 60 });
     expect(AI_PENDING_STANCE_MS).toBe(600); // Stage-2 decision — see ai.ts docblock

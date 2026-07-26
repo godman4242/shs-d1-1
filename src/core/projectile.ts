@@ -6,7 +6,7 @@
  * arrows arc in the study footage, thrown blades do not).
  */
 import { PROJECTILE_HIT_RADIUS, PROJECTILE_SPEED } from '../config/combat-sim';
-import { GAME_WIDTH } from '../config/display';
+import { WORLD_WIDTH } from '../config/display';
 import { ZERO } from '../config/nums';
 import { FIXED_HZ, MS_PER_S } from '../config/timing';
 import { sub } from './vec';
@@ -43,7 +43,7 @@ export function projectileHits(p: Projectile, target: Vec): boolean {
   return Math.hypot(p.pos.x - target.x, p.pos.y - target.y) <= PROJECTILE_HIT_RADIUS;
 }
 
-/** True once the kunai has left the horizontal arena bounds. */
+/** True once the kunai has left the horizontal WORLD bounds (A0). */
 export function isOffArena(p: Projectile): boolean {
-  return p.pos.x < ZERO || p.pos.x > GAME_WIDTH;
+  return p.pos.x < ZERO || p.pos.x > WORLD_WIDTH;
 }

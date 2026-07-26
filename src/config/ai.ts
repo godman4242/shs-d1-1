@@ -58,12 +58,19 @@ export const AI_TIERS: Record<'easy' | 'normal' | 'hard', AITierParams> = {
   },
 };
 
-/** Kunai only fly inside this horizontal band (px). */
-export const AI_KUNAI_RANGE = { min: 240, max: 720 };
-export const AI_STRIKE_RANGE = 132;
-export const AI_APPROACH_RANGE = 620;
-/** px per ms. */
-export const ENEMY_SPEED = 0.17;
+/**
+ * WORLD-SPACE (SESSION13 A0): every px value below was authored in stage px
+ * and converted once, `/1.2` for lengths (`src/core/viewport.ts`). The
+ * pre-conversion stage value is kept in each comment as provenance.
+ */
+/** Kunai only fly inside this horizontal band (world px). Was 240/720 stage. */
+export const AI_KUNAI_RANGE = { min: 200, max: 600 };
+/** World px. Was 132 stage. */
+export const AI_STRIKE_RANGE = 110;
+/** World px. Was 620 stage. Reserved for Stage-4 aggro; unused in 1v1. */
+export const AI_APPROACH_RANGE = 516.67;
+/** World px per ms. Was 0.17 stage px/ms (= 170 stage px/s → 141.67 world px/s). */
+export const ENEMY_SPEED = 0.1417;
 export const AI_RECOVER_JITTER_FRAC = 0.35;
 /** Boss/PvP-shaped duel tuning target (PvE trash is 3–10 s — SYNTHESIS §1.1). */
 export const DUEL_TARGET_SECONDS = { min: 20, max: 60 };

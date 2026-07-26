@@ -12,6 +12,10 @@
  * anatomical contract every other pose derives from) and pins the action
  * poses BEHAVIOURALLY (windup-behind, follow-through-front, guard-high,
  * recoil-back, dead-on-the-ground) — visual polish stays a one-file edit.
+ *
+ * Every coordinate here is **stage-space native** (SESSION13 A0): pose-local
+ * space is authored at the 1024×576 canvas's scale and drawn straight onto
+ * it, never fed to the Sim. The world split leaves this file untouched.
  */
 
 export interface PosePoint {

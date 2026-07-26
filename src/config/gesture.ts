@@ -20,5 +20,6 @@ export const GESTURE_DIAG_DEG = 45;
  * launch; longer up-strokes are a jump. Length proxies flick speed: raw
  * pointer points carry no per-point timestamps in our pipeline. Revisit at
  * Stage 2 if launch feel is off.
+ * WORLD SPACE (SESSION13 A0) — strokes reach the Sim in world px. Was 90 stage.
  */
-export const LAUNCH_FLICK_MAX_LEN = 90;
+export const LAUNCH_FLICK_MAX_LEN = 75;

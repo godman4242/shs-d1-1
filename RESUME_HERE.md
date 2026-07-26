@@ -1,10 +1,37 @@
 # RESUME HERE
 
-> ## ▶ NEXT SESSION STARTS HERE (2026-07-25)
-> **`docs/sessions/SESSION13_KICKOFF.md` — THE SOURCE-LED REBUILD.** Self-contained,
-> the ONLY kickoff to plan from, and **every decision is already made** — all ten
-> decisions (§1) and all five prerequisites (§P) are resolved from source.
-> **There is NO research step: start at §4 A0 and write code.**
+> ## ▶ NEXT SESSION STARTS HERE (2026-07-26)
+> **`docs/sessions/SESSION13_KICKOFF.md` — THE SOURCE-LED REBUILD, IN PROGRESS.**
+> Self-contained, the ONLY kickoff to plan from, and **every decision is already
+> made** — all ten decisions (§1) and all five prerequisites (§P) are resolved
+> from source. **There is NO research step.**
+>
+> ### SESSION 13 PROGRESS
+> | Step | State |
+> |---|---|
+> | **A0** world/stage split (D1) | ✅ **DONE** — see below |
+> | A0.5 stats the formulas need | ⬜ next |
+> | A2 combo correction (D8) · A3 AUTO SLASH (D7) | ⬜ |
+> | B0–B5 the coupled core | ⬜ |
+>
+> **A0 CLOSED (2026-07-26).** The sim now runs in the original's own logical
+> stage — **WORLD 800×480** — while the canvas stays **STAGE 1024×576**. The
+> transform is *computed by the original's own resize routine*
+> (`src/core/viewport.ts`, transcribed verbatim): **`stage = (32 + 1.2·worldX,
+> 1.2·worldY)`**, uniform ×1.2 with 32 px pillarbox bars. Evidence:
+> - `tests/viewport.test.ts` 8/8, **chaos-proven** (planting the guessed 1.28 →
+>   6 RED naming `scale: 1.28`; restore → green).
+> - **In-browser gate re-proven after the split:
+>   `pass=true | probes 41/41 | scans 14/14 | TOTAL 55/55 | failures=[]`**,
+>   zero console errors.
+> - Suite **473/473** · tsc ×2 exit 0 · eslint exit 0.
+> - **Harness measured, not assumed:** median **28.492 → 28.800 s (+1.1 %)**,
+>   24/24 wins, 24 distinct — inside `[20,60]`, so A0 landed alone (this is the
+>   kickoff §4 A0 decision point, resolved with evidence).
+> - One real bug found: `src/game/fidelity.ts` sampled world coords as stage px
+>   → `enemy-bar-green` RED → **harness corrected, gate NOT re-fitted**.
+> - Full record + the conversion table: `docs/DIVERGENCES.md` "SESSION 13 — A0".
+>
 > Background if wanted: `docs/research/fidelity/SOURCE_CONSTANTS.md` §3, §5, §6.
 >
 > **`SESSION12_KICKOFF.md` is SUPERSEDED** (history only — it predates the source

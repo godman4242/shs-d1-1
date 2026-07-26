@@ -26,6 +26,7 @@ import { closestPointOnPolyline } from '../core/geometry';
 import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
 import { Sim, type FighterSide } from '../core/Sim';
+import { stageToWorld, worldToStage } from '../core/viewport';
 import type { Vec } from '../core/vec';
 import { ANIM_TIMING, SCARF } from '../config/anim';
 import type { Pose } from '../config/poses';
@@ -71,6 +72,16 @@ const DEG_TO_RAD = Math.PI / 180;
  * droplet integration, telegraph + guard cues. The WALL clock (time.now) owns
  * the kill-beat hold (~0.9 s real) and the invuln blink. Mixing them up
  * re-opens the bug where Shunpo slowed gameplay to 0.35× but blood ran 1×.
+ *
+ * TWO SPACES (SESSION13 A0). The Sim lives in WORLD units (800×480); this
+ * canvas is STAGE units (1024×576). The conversion happens at exactly two
+ * boundaries and nowhere else:
+ *   - INPUT: pointer stage px → `stageToWorld` before anything reaches the Sim
+ *     (`dragPoints` and `mouseTargetX` are stored WORLD-side).
+ *   - OUTPUT: every sim-owned position → `worldToStage` at draw time.
+ * Chrome (arena art, HUD, blood droplets, pose-local skeleton coords) is
+ * stage-native and never converted — which is what makes the 55/55 fidelity
+ * gate invariant under the split.
  */
 export class DuelScene extends Phaser.Scene {
   private sim!: Sim;
@@ -153,8 +164,10 @@ export class DuelScene extends Phaser.Scene {
     this.enemyAnim = new FighterAnimator();
     this.playerFlow = 0;
     this.enemyFlow = 0;
-    this.playerLastX = DUEL_SPAWNS.player.pos.x;
-    this.enemyLastX = DUEL_SPAWNS.enemy.pos.x;
+    // Locomotion bookkeeping is STAGE-side: it feeds the animator's
+    // distance-driven stride, whose WALK.stridePx is stage-space native.
+    this.playerLastX = worldToStage(DUEL_SPAWNS.player.pos).x;
+    this.enemyLastX = worldToStage(DUEL_SPAWNS.enemy.pos).x;
     this.poseAccMs = 0;
     this.playerAccDx = 0;
     this.enemyAccDx = 0;
@@ -212,23 +225,28 @@ export class DuelScene extends Phaser.Scene {
       },
     );
 
+    // INPUT BOUNDARY (A0): pointer arrives in stage px and is converted to
+    // WORLD once, here. Everything downstream — dragPoints, the DrawnStroke,
+    // the movement target — is world-side.
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      const w = stageToWorld({ x: p.x, y: p.y });
       this.dragging = true;
-      this.dragPoints = [{ x: p.x, y: p.y }];
+      this.dragPoints = [w];
       // Session 11: start tracking as a potential hold-to-run
       this.mouseHoldActive = true;
-      this.mouseTargetX = p.x;
+      this.mouseTargetX = w.x;
     });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (this.dragging && this.dragPoints.length < 2048) this.dragPoints.push({ x: p.x, y: p.y });
+      const w = stageToWorld({ x: p.x, y: p.y });
+      if (this.dragging && this.dragPoints.length < 2048) this.dragPoints.push(w);
       // Update mouse target while holding (even if dragging, the target tracks)
-      if (this.mouseHoldActive) this.mouseTargetX = p.x;
+      if (this.mouseHoldActive) this.mouseTargetX = w.x;
     });
     // Off-canvas releases emit 'pointerupoutside' — both must finish the
     // stroke or it is silently swallowed (Stage-1 audit finding).
     const finishDrag = (p: Phaser.Input.Pointer): void => {
       if (this.dragging) {
-        this.dragPoints.push({ x: p.x, y: p.y });
+        this.dragPoints.push(stageToWorld({ x: p.x, y: p.y }));
         this.finishStroke();
       }
       this.dragging = false;
@@ -401,11 +419,18 @@ export class DuelScene extends Phaser.Scene {
       const enemyPos = this.sim.enemy.pos;
       const impact = closestPointOnPolyline(enemyPos, stroke.points) ?? enemyPos;
       const severed = outcome.slash.severed.length > 0;
-      this.spawnBlood(impact, stroke.direction, severed, now);
+      // Droplets are stage-space render FX (BLOOD_GRAVITY et al are stage px).
+      this.spawnBlood(worldToStage(impact), stroke.direction, severed, now);
     }
   }
 
-  /** Directional burst along the cut: right cut → 0°, left cut → 180°. */
+  /** World points → stage points for drawing (A0 output boundary). */
+  private toStagePts(points: readonly Vec[]): Vec[] {
+    return points.map((p) => worldToStage(p));
+  }
+
+  /** Directional burst along the cut: right cut → 0°, left cut → 180°.
+   * `at` is STAGE space; `direction` is a unit vector (scale-invariant). */
   private spawnBlood(at: Vec, direction: Vec, severed: boolean, now: number): void {
     const count = severed ? BLOOD_COUNT_SEVERED : BLOOD_COUNT;
     const baseAngle = Math.atan2(direction.y, direction.x);
@@ -463,7 +488,7 @@ export class DuelScene extends Phaser.Scene {
       } else if (ev.type === 'skillDenied') {
         this.chiDeniedUntil = fxNow + 300; // chi bar flashes "too expensive"
       } else if (ev.type === 'damage' && ev.target === 'player') {
-        const p = this.sim.player.pos;
+        const p = worldToStage(this.sim.player.pos);
         this.spawnBlood({ x: p.x, y: p.y - 20 }, { x: -1, y: 0 }, false, fxNow);
         this.playerAnim.startHit();
         this.enemyAnim.startSlash(this.sim.enemy.stance);
@@ -494,25 +519,29 @@ export class DuelScene extends Phaser.Scene {
     const g = this.fx;
     g.clear();
 
-    // Live drag: the red directional stroke (SLASH_ARC render path)
+    // Live drag: the red directional stroke (SLASH_ARC render path).
+    // Stroke points are WORLD-side — converted here, at the draw boundary.
     if (this.dragging && this.dragPoints.length > 1) {
-      this.strokePinched(g, this.dragPoints, COL.blood, SLASH_ARC.bodyHalfWidth, 0.35, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
-      this.strokePinched(g, this.dragPoints, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.8, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
+      const pts = this.toStagePts(this.dragPoints);
+      this.strokePinched(g, pts, COL.blood, SLASH_ARC.bodyHalfWidth, 0.35, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
+      this.strokePinched(g, pts, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.8, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
     }
     this.redStrokes = this.redStrokes.filter((s) => fxNow - s.bornAt < SLASH_ARC.hangMs + SLASH_ARC.fadeMs);
     for (const s of this.redStrokes) {
       const age = fxNow - s.bornAt;
       const alpha = age < SLASH_ARC.hangMs ? 1 : 1 - (age - SLASH_ARC.hangMs) / SLASH_ARC.fadeMs;
-      this.strokePinched(g, s.points, COL.blood, SLASH_ARC.bodyHalfWidth, 0.3 * alpha, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
-      this.strokePinched(g, s.points, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.7 * alpha, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
+      const pts = this.toStagePts(s.points);
+      this.strokePinched(g, pts, COL.blood, SLASH_ARC.bodyHalfWidth, 0.3 * alpha, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
+      this.strokePinched(g, pts, COL.bloodBright, SLASH_ARC.coreHalfWidth, 0.7 * alpha, SLASH_ARC.minTaper, SLASH_ARC.taperPow);
     }
 
     // Two-layer blade trail: chi-colored edge under a white core, fading
     this.trails = this.trails.filter((t) => fxNow - t.bornAt < BLADE_FADE_MS);
     for (const t of this.trails) {
       const alpha = 1 - (fxNow - t.bornAt) / BLADE_FADE_MS;
-      this.strokePinched(g, t.points, COL.bladeChi, BLADE_EDGE_WIDTH, alpha, BLADE_MIN_TAPER, 1);
-      this.strokePinched(g, t.points, COL.kimono, BLADE_CORE_WIDTH, alpha, BLADE_MIN_TAPER, 1);
+      const pts = this.toStagePts(t.points);
+      this.strokePinched(g, pts, COL.bladeChi, BLADE_EDGE_WIDTH, alpha, BLADE_MIN_TAPER, 1);
+      this.strokePinched(g, pts, COL.kimono, BLADE_CORE_WIDTH, alpha, BLADE_MIN_TAPER, 1);
     }
 
     // Blood droplets: integrate on the fx clock, then draw
@@ -528,18 +557,21 @@ export class DuelScene extends Phaser.Scene {
 
     this.drawFighters(g, now, delta * ts);
 
-    // Kunai: short dark bolts along the velocity direction.
+    // Kunai: short dark bolts along the velocity direction. Position is
+    // sim-owned (world); the bolt length is a stage-native render size and
+    // the velocity is normalized first, so only the position converts.
     for (const k of this.sim.projectiles) {
+      const kp = worldToStage(k.pos);
       const mag = Math.hypot(k.vel.x, k.vel.y) || 1;
       const dx = (k.vel.x / mag) * 14;
       const dy = (k.vel.y / mag) * 14;
       g.lineStyle(3, COL.outline, 1);
       g.beginPath();
-      g.moveTo(k.pos.x - dx, k.pos.y - dy);
-      g.lineTo(k.pos.x, k.pos.y);
+      g.moveTo(kp.x - dx, kp.y - dy);
+      g.lineTo(kp.x, kp.y);
       g.strokePath();
       g.fillStyle(COL.kimono, 1);
-      g.fillCircle(k.pos.x, k.pos.y, 2.5);
+      g.fillCircle(kp.x, kp.y, 2.5);
     }
 
     // Kill-beat flash: hard red cut over everything, snapping in fast.
@@ -562,6 +594,10 @@ export class DuelScene extends Phaser.Scene {
     const player = this.sim.player;
     const enemy = this.sim.enemy;
     const fxNow = this.fxNow;
+    // OUTPUT BOUNDARY (A0): sim positions are WORLD — convert once, here, and
+    // draw everything below in stage px (every offset below is stage-native).
+    const ps = worldToStage(player.pos);
+    const es = worldToStage(enemy.pos);
 
     // Spawn-invuln / i-frame blink — WALL clock on purpose (research CONTRACT:
     // the blinking indicator keeps real-time cadence even in slow-mo).
@@ -573,16 +609,17 @@ export class DuelScene extends Phaser.Scene {
     if (fxNow < this.telegraphUntil) {
       const pulse = 0.3 + 0.3 * Math.abs(Math.sin(fxNow / 90));
       g.fillStyle(this.telegraphKind === 'strike' ? COL.blood : COL.focusBlue, pulse);
-      g.fillEllipse(enemy.pos.x, enemy.pos.y + 30, 120, 40);
+      g.fillEllipse(es.x, es.y + 30, 120, 40);
     }
 
     const playerFacing = player.pos.x <= enemy.pos.x ? 1 : -1;
     const enemyFacing = playerFacing === 1 ? -1 : 1;
 
     // Locomotion from sim truth: facing-relative travel this frame feeds the
-    // animator's DISTANCE-driven stride (Session 8 — no foot-skating).
-    const playerDx = player.pos.x - this.playerLastX;
-    const enemyDx = enemy.pos.x - this.enemyLastX;
+    // animator's DISTANCE-driven stride (Session 8 — no foot-skating). Both
+    // sides of this subtraction are STAGE px, because WALK.stridePx is.
+    const playerDx = ps.x - this.playerLastX;
+    const enemyDx = es.x - this.enemyLastX;
 
     // Enemy guard hold mirrors the telegraph/block windows (fx clock): a
     // strike telegraph reads as the raised-blade windup, a block as guard.
@@ -599,8 +636,8 @@ export class DuelScene extends Phaser.Scene {
       this.playerFlow += ((playerDx / dtAnim) * playerFacing - this.playerFlow) * SCARF.flowSmoothing;
       this.enemyFlow += ((enemyDx / dtAnim) * enemyFacing - this.enemyFlow) * SCARF.flowSmoothing;
     }
-    this.playerLastX = player.pos.x;
-    this.enemyLastX = enemy.pos.x;
+    this.playerLastX = ps.x;
+    this.enemyLastX = es.x;
 
     // Pose latch: step the drawn pose at the OG's measured 15fps cadence,
     // banking time + travel between steps (poseStepMs=0 ⇒ every frame).
@@ -616,11 +653,11 @@ export class DuelScene extends Phaser.Scene {
     }
     const playerPose = this.playerPose;
     const enemyPose = this.enemyPose;
-    drawSamurai(g, player.pos.x, player.pos.y + 60, playerFacing, PLAYER_LOOK, playerPose, playerAlpha, {
+    drawSamurai(g, ps.x, ps.y + 60, playerFacing, PLAYER_LOOK, playerPose, playerAlpha, {
       flow: this.playerFlow,
       phase: fxNow,
     });
-    drawSamurai(g, enemy.pos.x, enemy.pos.y + 60, enemyFacing, ENEMY_LOOK, enemyPose, 1, {
+    drawSamurai(g, es.x, es.y + 60, enemyFacing, ENEMY_LOOK, enemyPose, 1, {
       flow: this.enemyFlow,
       phase: fxNow,
     });
@@ -629,15 +666,15 @@ export class DuelScene extends Phaser.Scene {
     // bar 139×15 px @1920×1080 → 74×8 here; fill green is the original's
     // brighter overhead green (#179b32), NOT the player-bar green.
     const barW = 74;
-    const ex = enemy.pos.x;
-    const ey = enemy.pos.y - 92;
+    const ex = es.x;
+    const ey = es.y - 92;
     g.fillStyle(COL.outline, 0.9);
     g.fillRect(ex - barW / 2 - 1, ey - 1, barW + 2, 8);
     g.fillStyle(COL.enemyGreen, 1);
     g.fillRect(ex - barW / 2, ey, (barW * enemy.hp) / enemy.maxHp, 6);
     this.texts.nameplate.setPosition(ex, ey - 4);
     // Player overhead name (gold "GUEST" — pre-login, matching the OG).
-    this.texts.playerName.setPosition(player.pos.x, player.pos.y - 96);
+    this.texts.playerName.setPosition(ps.x, ps.y - 96);
   }
 
   private drawHud(now: number): void {

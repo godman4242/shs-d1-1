@@ -572,10 +572,12 @@ Nothing in `src/` changed this session — these are readings, queued for SESSIO
   **town/world** input mode; battle uses draw-mode or auto-slash-mode. The
   REBUILD_READINESS §3 belief was half right, applied to the wrong scene.
 
-- **UNCONVERTED — do not act on these yet.** (a) walk/run measured **126/341 stage
+- **UNCONVERTED — do not act on these yet.** (a) ~~walk/run measured **126/341 stage
   px/s** vs source **96/288 world px/s**; a render scale exists and ≈1.2 fits both
   well, but the factor is **not independently confirmed** — do not convert until it
-  is. (b) `SLASH_FRAMES` stays CONTESTED: the anim XML orders light 29 > balanced 26 >
+  is.~~ **RESOLVED 2026-07-26 (SESSION13 A0) — the factor is not a fit, it is
+  computed by the original's own resize routine: ×1.2 exactly, with 32 px pillarbox
+  bars. See the SESSION13 block below.** (b) `SLASH_FRAMES` stays CONTESTED: the anim XML orders light 29 > balanced 26 >
   heavy 21 (opposite to our 12/16/20), but `part b` carries a loop flag `l="1"` so the
   sums are lower bounds, and two naming families exist. (c) `DASH_SLASH_PX` is not a
   constant — the dash runs to the stroke endpoint uncapped, in **two legs**.
@@ -588,3 +590,72 @@ Nothing in `src/` changed this session — these are readings, queued for SESSIO
 - **Placeholder discipline.** Two traps were caught and are recorded so they are not
   re-adopted: the static UI mockups (`slash distance: 345 (heavy)`,
   `physical dmg: 1234 - 1235`, `hp: 123 / 123`) and the `maxDistance = 200` default.
+
+
+## SESSION 13 — A0: the WORLD / STAGE split (2026-07-26)
+
+**Decision D1 (kickoff §1).** The simulation moves to the original's own logical
+stage — **WORLD 800 × 480** — while the canvas stays **STAGE 1024 × 576**. Every
+gameplay constant is now expressed in world units, so source values drop in with
+no conversion.
+
+- **The transform is the original's, not ours.** `src/core/viewport.ts` transcribes
+  the payload's resize routine verbatim (`w=800, h=480, hTall=690`) and *computes*
+  `scale`, `xOff`, `yOff` for an arbitrary canvas. For 1024×576 it yields
+  **scale 1.2 · xOff 32 · yOff 0**, i.e. `stage = (32 + 1.2·worldX, 1.2·worldY)` —
+  uniform ×1.2 with 32 px pillarbox bars. Pinned in `tests/viewport.test.ts`
+  (8 assertions incl. both branches and the `hTall` override).
+  **Chaos-proven:** planting the first draft's guessed 1.28 (WORLD_HEIGHT 480 → 450)
+  turned 6 of the 8 assertions RED, naming `scale: 1.28`; restoring → 8/8 green.
+- **Independent corroboration, found while landing this.** The result card's red
+  field is frame-measured starting at study-frame x≈53–56 and ending x≈1861–1865 on
+  a 1920-wide capture. The world region at that capture scale is exactly
+  x ∈ [60, 1860] — so the card's "black pillars" ARE the pillarbox bars, and the
+  gate's own `win-field-left-edge` (0.0279 → 28.6 stage px, tolPx 4) is sampling the
+  world's left edge at 32. The transform was already sitting in our measurements.
+- **The 55/55 fidelity gate is invariant by construction, and was re-proven.**
+  Only sim-owned positions convert; arena art, HUD, blood droplets and pose-local
+  skeleton coordinates are **stage-space native** and are annotated as such in
+  `anim.ts`, `poses.ts`, `fx.ts` and the render half of `combat.ts`. In-browser
+  after A0: `GATE pass=true | probes 41/41 | scans 14/14 | TOTAL 55/55`.
+- **One real bug this found.** `src/game/fidelity.ts` read `sim.enemy.pos` and
+  sampled the canvas as if it were stage px; after the split that pointed 143 px
+  off and `enemy-bar-green` failed. Fixed by converting through `worldToStage`
+  at that call site — i.e. **the harness was corrected, the gate was not re-fitted**
+  (§6 Risk 1).
+- **Conversion rule, applied mechanically.** Every exported numeric in `src/config`
+  dimensioned in px or px/time is either rescaled (`(x−32)/1.2` for x-positions,
+  `/1.2` for lengths and y) or explicitly annotated `stage-space native`. Rescaled:
+  `AI_KUNAI_RANGE` 240/720→200/600 · `AI_STRIKE_RANGE` 132→110 · `AI_APPROACH_RANGE`
+  620→516.67 · `ENEMY_SPEED` 0.17→0.1417 · `SMOKE_BOMB_DISTANCE` 180→150 ·
+  `DEFLECT_RADIUS` 64→53.33 · `PROJECTILE_SPEED` 0.55→0.4583 ·
+  `PROJECTILE_HIT_RADIUS` 26→21.67 · `PLAYER_MOVE_SPEED` 0.28→0.2333 ·
+  `DASH_SLASH_PX` 127→105.9 · `DASH_MIN_STROKE_PX` 40→33.33 · `RESAMPLE_SPACING`
+  8→6.67 · `LAUNCH_FLICK_MAX_LEN` 90→75 · `JUMP_APEX_PX` 120→100 · `DUEL_SPAWNS`
+  260/700/430/26/60 → 190/557/358/22/50 (gap 440→367) · `STANCE_TABLE.reach`
+  300/200/100 → 250/166.67/83.33.
+- **`DASH_SLASH_PX` re-derived rather than re-divided.** The measurement is 238.3
+  study px; ÷2.25 (the original's own 1080/480 study-frame scale) = **105.9 world
+  px**. The old stage route (÷1.875 → 127.1, then ÷1.2) lands on the same number —
+  a second check on the transform.
+- **`STANCE_TABLE.reach` is converted even though it is known WRONG IN KIND** (the
+  source makes reach a stat-driven arc-length budget, and `200` is the source's
+  placeholder default). B3 deletes the field. It is converted anyway so the sim is
+  never running stage-sized reaches inside a world-sized arena.
+- **A0 DOES move the 24-seed harness, and by how much is now measured, not assumed**
+  (the kickoff's §4 A0 decision point). Median **28.492 s → 28.800 s (+1.1 %)**,
+  24/24 wins, 24 distinct durations — well inside the standing `[20, 60]` band, so
+  **A0 lands alone and green** rather than being deferred into Phase B. The split is
+  a similarity transform everywhere *except* the arena clamp: the walkable band was
+  stage `[26, 998]` (world −5 … 805) and is now world `[22, 778]`, which is the only
+  reason anything moved at all.
+- **`tests/Sim.test.ts` fixtures were transformed, not retuned.** Its coordinates
+  were authored in the old stage space; an `sx()` helper divides each by the same
+  `VIEW.scale`, so every distance, margin and kunai flight time keeps *exactly* the
+  relationship to reach/dash/radii it was written to test. Without it, `slashStroke`
+  fell 7 px short of the enemy and 38 tests went red for a reason that had nothing
+  to do with what they assert.
+
+> **Veto:** keep one space at 1024×576 and convert each source constant on use
+> (×1.2, plus the 32 px offset for positions but NOT for lengths). Recommended
+> against — two different conversion rules at every call site is a bug generator.

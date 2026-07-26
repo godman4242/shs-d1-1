@@ -2,7 +2,7 @@
  * Stage 2 M4 — src/core/AISeamController.ts (spec item 2).
  * Telegraph-then-commit: windup ≥ telegraphMs before ANY strike; stance
  * switches queue AI_PENDING_STANCE_MS with a telegraph flash; kunai only in
- * the 240–720 px band (tier kunaiChance); injected rng only. The controller
+ * the AI_KUNAI_RANGE band (tier kunaiChance); injected rng only. The controller
  * DECIDES; the Sim executes — these tests drive next()/react() directly
  * with synthetic views.
  */
@@ -22,7 +22,7 @@ const view = (over: Partial<OpponentView> = {}): OpponentView => ({
   playerJumping: false,
   ...over,
 });
-/** In strike range (dist 100 < 132), enemy already counter-stanced. */
+/** In strike range (dist 100 < AI_STRIKE_RANGE 110), enemy already counter-stanced. */
 const closeView = (over: Partial<OpponentView> = {}): OpponentView =>
   view({ enemyPos: { x: 200, y: 430 }, ...over });
 
@@ -82,14 +82,14 @@ describe('AISeamController — movement (approach/engage)', () => {
   });
   it('NEVER stalls beyond AI_APPROACH_RANGE — closes distance instead (audit major)', () => {
     // A duel has no out-of-aggro state: the old hard-idle froze the enemy
-    // forever once a faster player kited past 620 px.
+    // forever once a faster player kited past AI_APPROACH_RANGE.
     const ai = new AISeamController(highRng, AI_TIERS.easy);
     const intent = ai.next(1, view({ enemyPos: { x: 750, y: 430 } })); // dist 650
     expect(intent.moveX).toBe(-1);
   });
-  it('kunai fires in the FULL spec band, incl. 620–720 (audit major)', () => {
+  it('kunai fires at the TOP of AI_KUNAI_RANGE (audit major: the band\'s upper reach)', () => {
     const ai = new AISeamController(lowRng, AI_TIERS.normal);
-    const intent = ai.next(1, view({ enemyPos: { x: 800, y: 430 } })); // dist 700 ∈ [240,720]
+    const intent = ai.next(1, view({ enemyPos: { x: 700, y: 430 } })); // dist 600 = AI_KUNAI_RANGE.max
     expect(intent.throwKunai).toBe(true);
   });
   it('stops approaching inside strike range', () => {
@@ -99,10 +99,10 @@ describe('AISeamController — movement (approach/engage)', () => {
   });
 });
 
-describe('AISeamController — kunai (240–720 band, tier chance)', () => {
+describe('AISeamController — kunai (AI_KUNAI_RANGE band, tier chance)', () => {
   it('throws in the band when the roll passes, then recovers (no instant repeat)', () => {
     const ai = new AISeamController(lowRng, AI_TIERS.normal); // kunaiChance 0.25
-    const v = view({ enemyPos: { x: 500, y: 430 } }); // dist 400 ∈ [240, 720]
+    const v = view({ enemyPos: { x: 500, y: 430 } }); // dist 400 ∈ [200, 600]
     const intent = ai.next(1, v);
     expect(intent.throwKunai).toBe(true);
     expect(ai.next(2, v).throwKunai).toBeUndefined(); // recovering
@@ -113,9 +113,9 @@ describe('AISeamController — kunai (240–720 band, tier chance)', () => {
       expect(ai.next(f, view({ enemyPos: { x: 500, y: 430 } })).throwKunai).toBeUndefined();
     }
   });
-  it('never throws below the 240 px minimum', () => {
+  it('never throws below AI_KUNAI_RANGE.min', () => {
     const ai = new AISeamController(lowRng, AI_TIERS.normal);
-    const v = view({ enemyPos: { x: 300, y: 430 } }); // dist 200 < 240
+    const v = view({ enemyPos: { x: 280, y: 430 } }); // dist 180 < AI_KUNAI_RANGE.min 200
     expect(ai.next(1, v).throwKunai).toBeUndefined();
   });
 });
