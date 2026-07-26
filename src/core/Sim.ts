@@ -35,12 +35,12 @@ import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S, SLASH_FRAMES } from '../config/tim
 import { Combo } from './combo';
 import { criticalReady, focusToUnits, unitsToCritical, unitsToFocus } from './critical';
 import { physicalDamage } from './damage';
-import type { DrawnStroke } from './DrawnStroke';
 import type { Gesture } from './gesture';
-import { ENEMY_SPEED } from '../config/ai';
+import { AI_THINK_INTERVAL_MS, AUTO_SLASH_POINT_SPACING, ENEMY_SPEED } from '../config/ai';
 import type { OpponentController, OpponentIntent, OpponentView } from './OpponentController';
 import { isOffArena, projectileHits, spawnProjectile, stepProjectile, type Projectile } from './projectile';
 import { resolveSlash, type SlashResult } from './slash';
+import { DrawnStroke } from './DrawnStroke';
 import { STANCE_TABLE } from '../config/stances';
 import { msToFrames } from './time';
 import { jumpArcPoint } from './trajectory';
@@ -83,7 +83,9 @@ export type SimEvent =
   | { type: 'shunpoStarted' }
   | { type: 'shunpoEnded' }
   | { type: 'enemyTelegraph'; kind: 'strike' | 'stance'; durationMs: number }
-  | { type: 'strikeBlocked'; by: FighterSide };
+  | { type: 'strikeBlocked'; by: FighterSide }
+  /** AUTO SLASH synthesised this line — the scene DRAWS it (D7). */
+  | { type: 'autoStroke'; points: readonly Vec[] };
 
 /**
  * Per-tick held-state input from the scene (edge-triggered skill presses go
@@ -96,6 +98,14 @@ export interface PlayerIntent {
   /** Session 11: mouse hold-to-run target X (stage px). null/omitted = no mouse movement. */
   moveTargetX?: number | null;
 }
+
+/**
+ * Where a stroke came from. AUTO SLASH locks out MANUAL strokes but must still
+ * push its own synthesised one through the *same* entry point — that shared
+ * path is the point of D7 (if auto-slash can drive the pipeline, the player and
+ * AI paths are one implementation, as in the original).
+ */
+export type StrokeSource = 'manual' | 'auto';
 
 export interface StrokeOutcome {
   gesture: Gesture;
@@ -214,6 +224,13 @@ export class Sim {
    * measured swing cycle — SLASH_FRAMES total for the stance at slash time
    * (review-hardened: unlimited dashing made scribble-spam a teleport). */
   private dashReadyFrame = ZERO;
+  /** AUTO SLASH (D7): hands the player's fighter to the AI decision routine. */
+  private autoSlashOn = false;
+  /** Frame the auto-slash think timer reopens (AI_THINK_INTERVAL_MS apart). */
+  private autoThinkUntilFrame = ZERO;
+  /** Frame the player's measured swing cycle ends — auto-slash never decides
+   * mid-swing (D7). Stun is NOT modelled in this Sim (flagged). */
+  private playerBusyUntilFrame = ZERO;
   private kunai: Projectile[] = [];
   private shunpoUnits = SHUNPO_MAX_UNITS;
   private shunpoActive = false;
@@ -225,6 +242,12 @@ export class Sim {
     readonly rng: Rng,
     readonly opponent: OpponentController,
     spawns: { player: FighterSpawn; enemy: FighterSpawn },
+    /**
+     * The decision routine AUTO SLASH hands the player to. It must be its OWN
+     * instance, never the enemy's — the controllers carry mode state and
+     * sharing one would interleave two fighters' telegraph machines.
+     */
+    readonly autoController: OpponentController | null = null,
   ) {
     this.fighters = {
       player: spawnFighter(spawns.player),
@@ -234,6 +257,24 @@ export class Sim {
 
   get phase(): SimPhase {
     return this.phaseState;
+  }
+
+  /** True while the player's fighter is driven by the AI routine (D7). */
+  get autoSlash(): boolean {
+    return this.autoSlashOn;
+  }
+
+  /**
+   * Toggle AUTO SLASH. Turning it ON with no injected controller THROWS rather
+   * than quietly doing nothing: a plate that reads "AUTO SLASH ON" over a dead
+   * toggle is the exact failure D7's veto forbids ("the plate must never lie
+   * again"), so this fails closed.
+   */
+  setAutoSlash(on: boolean): void {
+    if (on && this.autoController === null) {
+      throw new Error('Sim.setAutoSlash(true) requires an injected autoController');
+    }
+    this.autoSlashOn = on;
   }
 
   get player(): FighterView {
@@ -384,9 +425,13 @@ export class Sim {
    * internal: a full Critical meter makes the next LANDED slash crit and
    * resets the meter.
    */
-  applyStroke(stroke: DrawnStroke): StrokeOutcome {
+  applyStroke(stroke: DrawnStroke, source: StrokeSource = 'manual'): StrokeOutcome {
     const gesture = stroke.gesture;
     if (this.phaseState !== 'fighting') return { gesture, slash: null };
+    // AUTO SLASH (D7) locks out MANUAL input entirely — no drawing, no move
+    // orders. Its own synthesised stroke arrives as source 'auto' and takes
+    // the identical path from here down.
+    if (this.autoSlashOn && source === 'manual') return { gesture, slash: null };
     // Degenerate strokes (taps) classify as 'slash' by default — gate here at
     // the core seam so no caller can land a full-damage tap (audit finding).
     if (stroke.points.length < TWO) return { gesture, slash: null };
@@ -395,6 +440,11 @@ export class Sim {
     if (gesture === 'slash') {
       // Any slash — hit or miss — is an offensive act: it ends spawn invuln.
       player.invulnEndFrame = ZERO;
+      // The measured swing cycle. AUTO SLASH must not decide inside it (D7);
+      // the dash rule below re-uses the same window.
+      const swing = SLASH_FRAMES[player.stance];
+      this.playerBusyUntilFrame =
+        this.frameCount + swing.windup + swing.active + swing.recovery;
       // Dash-through (MEASURED, Session 9): the attacker snaps DASH_SLASH_PX
       // along the attack line in ONE frame, passing THROUGH the target — the
       // lunge is part of the swing (hit, miss, or clash), so it lands before
@@ -442,7 +492,7 @@ export class Sim {
           return { gesture, slash: { ...result, hit: false, damage: ZERO, severed: [] } };
         }
         if (critReady) player.criticalUnits = ZERO; // consumed only on a landed hit
-        this.emitCombo(this.comboCounter.hit(this.frameCount));
+        this.emitCombo(this.comboCounter.hit());
         this.dealDamage('enemy', result.damage, result.crit, result.severed);
       }
       return { gesture, slash: result };
@@ -544,10 +594,8 @@ export class Sim {
         this.events.push({ type: 'shunpoEnded' });
       }
       const winner: FighterSide = target === 'enemy' ? 'player' : 'enemy';
-      if (winner === 'player') {
-        this.comboCounter.kill(this.frameCount);
-        this.emitCombo(this.comboCounter.value);
-      }
+      // D8 (SESSION13): a kill does NOT touch the combo. The Stage-2
+      // "resets to 1 on kill" CONTRACT was wrong — see docs/DIVERGENCES.md.
       this.events.push({ type: 'fightEnded', winner });
     }
   }
@@ -598,6 +646,86 @@ export class Sim {
         this.events.push({ type: 'shunpoEnded' });
       }
     }
+  }
+
+  /**
+   * AUTO SLASH's tick (D7). The toggle hands the player to the SAME decision
+   * routine that drives the enemy; the Sim executes what it returns.
+   *
+   * Movement flows every tick (so the fighter actually closes), while the
+   * SWING is gated: never mid-swing, never airborne, and at most one decision
+   * per AI_THINK_INTERVAL_MS. Targeting is nearest living enemy by |Δx| with
+   * unlimited range and no line-of-sight — trivially the one enemy, because
+   * this Sim is hard-wired 1v1 (multi-enemy is queued, kickoff §7).
+   */
+  private updateAutoSlash(): void {
+    const ctrl = this.autoController;
+    if (ctrl === null) return;
+    const player = this.fighters.player;
+    const target = this.nearestLivingTarget();
+    if (target === null) return;
+    const intent = ctrl.next(this.frameCount, this.autoView());
+    // Movement: every tick, at the player's own speed, arena-clamped.
+    if (player.jump === null && intent.moveX !== undefined && Number.isFinite(intent.moveX)) {
+      const dir = Math.max(-ONE, Math.min(ONE, intent.moveX));
+      const x = player.pos.x + dir * PLAYER_MOVE_SPEED * (MS_PER_S / FIXED_HZ);
+      player.pos = {
+        x: Math.max(player.halfW, Math.min(WORLD_WIDTH - player.halfW, x)),
+        y: player.pos.y,
+      };
+    }
+    if (intent.strike !== true) return;
+    if (player.jump !== null) return; // never airborne
+    if (this.frameCount < this.playerBusyUntilFrame) return; // never mid-swing
+    if (this.frameCount < this.autoThinkUntilFrame) return; // one per think beat
+    this.autoThinkUntilFrame = this.frameCount + msToFrames(AI_THINK_INTERVAL_MS);
+    const points = this.synthesizeStrokePoints(target.pos);
+    // The scene DRAWS this line (D7) — it is emitted, not hidden.
+    this.events.push({ type: 'autoStroke', points });
+    this.applyStroke(new DrawnStroke(points), 'auto');
+  }
+
+  /** Nearest LIVING enemy by |Δx| — unlimited range, no line-of-sight (D7). */
+  private nearestLivingTarget(): FighterState | null {
+    const enemy = this.fighters.enemy;
+    return enemy.hp > ZERO ? enemy : null;
+  }
+
+  /**
+   * The AI's stroke: `floor(reach / AUTO_SLASH_POINT_SPACING)` points, that far
+   * apart, anchored AT the attacker and aimed at the target. Player-anchored on
+   * purpose — a target-CENTRED line (what our 24-seed harness bot draws) is not
+   * what a real stroke looks like, and §3.3 names that as a thing to fix, not
+   * to copy.
+   */
+  private synthesizeStrokePoints(targetPos: Vec): Vec[] {
+    const player = this.fighters.player;
+    const reach = STANCE_TABLE[player.stance].reach;
+    const count = Math.max(TWO, Math.floor(reach / AUTO_SLASH_POINT_SPACING));
+    const dir = targetPos.x < player.pos.x ? -ONE : ONE;
+    const points: Vec[] = [];
+    for (let i = ZERO; i < count; i += ONE) {
+      points.push({ x: player.pos.x + dir * i * AUTO_SLASH_POINT_SPACING, y: player.pos.y });
+    }
+    return points;
+  }
+
+  /**
+   * The view handed to the auto controller, with the two fighters SWAPPED so
+   * the routine reads the player as "self" and the enemy as its target — the
+   * literal meaning of "hands your fighter to the enemy AI routine".
+   */
+  private autoView(): OpponentView {
+    const player = this.fighters.player;
+    const enemy = this.fighters.enemy;
+    return {
+      playerPos: { ...enemy.pos },
+      enemyPos: { ...player.pos },
+      playerStance: enemy.stance,
+      enemyStance: player.stance,
+      enemyFocus: unitsToFocus(player.focusUnits),
+      playerJumping: enemy.jump !== null,
+    };
   }
 
   private tryCastSkill(verb: SkillVerb): void {
@@ -696,7 +824,9 @@ export class Sim {
       // Tip #27: HOLD mouse to run toward cursor); A/D is a dev-seam fallback.
       // The jump arc owns the position while airborne.
       const player = this.fighters.player;
-      if (player.jump === null) {
+      if (this.autoSlashOn) {
+        this.updateAutoSlash();
+      } else if (player.jump === null) {
         const stepMs = MS_PER_S / FIXED_HZ;
         if (this.playerIntent.moveTargetX != null) {
           const target = this.playerIntent.moveTargetX;

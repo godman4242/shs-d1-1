@@ -81,3 +81,24 @@ export const DUEL_TARGET_SECONDS = { min: 20, max: 60 };
  * visible flash without stalling the fight. Veto = retune.
  */
 export const AI_PENDING_STANCE_MS = 600;
+
+/**
+ * CONTRACT-SRC (SESSION13 D7/D8) — the AI decision cadence: one decision every
+ * half second. Introduced in A3 for AUTO SLASH; **B4 also re-points the enemy
+ * AI at it**, replacing `AITierParams.reactMs`, which was doing double duty as
+ * both the reaction window and `decisionHoldUntil` and is deleted with
+ * `react()`.
+ *
+ * Note it is COARSER than every tier's `reactMs` (420/320/220), so while
+ * auto-slash gates on this the controller's own internal hold never binds —
+ * there is exactly one cadence in play, not two.
+ */
+export const AI_THINK_INTERVAL_MS = 500;
+
+/**
+ * CONTRACT-SRC (SESSION13 D7) — AUTO SLASH synthesises a stroke of
+ * `floor(reach / this)` points spaced this far apart, in WORLD px. This is
+ * also the source's own stroke resample spacing (B3 moves `RESAMPLE_SPACING`
+ * onto the same number).
+ */
+export const AUTO_SLASH_POINT_SPACING = 20;

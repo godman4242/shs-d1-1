@@ -659,3 +659,91 @@ no conversion.
 > **Veto:** keep one space at 1024×576 and convert each source constant on use
 > (×1.2, plus the 32 px offset for positions but NOT for lengths). Recommended
 > against — two different conversion rules at every call site is a bug generator.
+
+
+## SESSION 13 — A0.5 / A2 / A3: the rest of Phase 0 (2026-07-26)
+
+### A0.5 — the stat inputs the formulas need (additive, nothing consumes them)
+
+`src/config/stats.ts` and `src/config/reach.ts` created. Two notes worth keeping:
+
+- **The reach stat is SPD (Speed), not agility.** The kickoff's own §4 A0.5 line
+  says "agility"; that is a leftover from its first draft, which §1 D2 explicitly
+  corrects ("the getter reads the Speed stat index", and the source's stat notes
+  say *"Speed does not touch damage — it sets blade LENGTH"*). Named `spd`.
+  Decide-and-flag; veto = rename, but fix D2 in the same edit.
+- **The mastery curves are a PERMUTATION, and that is why D2a works.** The same
+  three shapes appear in the reach table and the damage table, swapped between
+  light and heavy: light gets flat ×1.4 reach and `0.5 + 0.04m` damage; heavy gets
+  `0.5 + 0.04m` reach (floored at 100) and flat ×1.4 damage; balanced runs
+  `1 + 0.02m` in both. Evaluating them at **mastery 10** gives exactly our legacy
+  `STANCE_TABLE.dmgMult` 0.9 / 1.2 / 1.4 — confirming that table was ceilings, as
+  labelled, and pinning what B2/B3 must replace it with.
+- **Stated character:** level 9 · SPD 1 · ATK 1 · dan 0 · **mastery 0**. Mastery 0
+  is CONTRACT-SRC (the skill-level getter returns 0 for anything unpurchased).
+  The weapon min/max split is chosen to reproduce the existing `atkPlusWeapon`
+  totals (10 and 7) EXACTLY — a decomposition, not a new number — and
+  `damageRange` is 0 until a weapon model exists (D6's RNG scope note).
+- ⚠️ `DUEL_ENEMY.level` is still 1 and is deliberately inconsistent with the 9
+  seeded here until **B4** lands both plus the XP knock-on (`level×5+45` = 90).
+  Nothing reads the stats yet, so nothing is wrong in between.
+
+### A2 — combo corrected (D8). **This reverses a Stage-2 CONTRACT.**
+
+- ❌ **"Combo resets to 1 on a kill" was WRONG.** It resets to **0**, and **only
+  when the player takes damage** — never on a kill.
+- ❌ **`COMBO_CHAIN_GAP_S` modelled a decay that does not exist.** Deleted, along
+  with its pin and `Combo.kill()`.
+- The counter is purely cosmetic: no damage/XP/coin bonus.
+- Consequence: `Combo` no longer touches the Sim clock — `hit()` takes no frame.
+  A frame argument coming back would mean gap decay came back with it.
+- The two Sim-level pins were **replaced, not deleted**, so the refuted behaviour
+  stays actively guarded ("NO gap decay: a long idle stretch does not restart the
+  chain" and "the killing blow does NOT reset the combo").
+- Chaos-proven both ways: restoring `kill()` → RED; making `damaged()` reset to 1
+  → 3 RED across `combo.test.ts` and `Sim.test.ts`.
+
+> **Veto:** keep reset-to-1-on-kill as a deliberate divergence and say so here.
+
+### A3 — AUTO SLASH implemented properly (D7). **The plate no longer lies.**
+
+- The toggle hands the player's fighter to its **own** `AISeamController`
+  instance (never the enemy's — the controllers carry telegraph/mode state, and
+  sharing one would interleave two fighters' decisions) and **locks out manual
+  input entirely**: hand-drawn strokes and move orders are discarded. Skills and
+  HUD keep working, as specified.
+- The synthesised stroke is `floor(reach / AUTO_SLASH_POINT_SPACING)` points, 20
+  world px apart, **anchored at the attacker** and aimed at the target — and it
+  enters **`applyStroke`**, the same entry point a hand-drawn stroke uses, tagged
+  `source: 'auto'`. It dashes, damages and advances the combo identically. That
+  shared path is the point: it is the strongest available check that the slash
+  pipeline is correctly factored.
+- Player-anchored **on purpose**. Our own 24-seed harness bot draws a
+  target-CENTRED line (`enemy.x ± 140`), which §3.3 names as a thing to fix, not
+  to copy.
+- The generated line is emitted as a `SimEvent` (`autoStroke`) and **drawn on
+  screen** through the same two render paths a manual stroke takes.
+- Gating: never mid-swing (the measured `SLASH_FRAMES` cycle), never airborne,
+  and at most one decision per `AI_THINK_INTERVAL_MS` = 500 ms. **Stun is not
+  modelled in this Sim** — flagged, not silently dropped.
+- `AI_THINK_INTERVAL_MS` is introduced here rather than in B4 because D7 needs it.
+  It is COARSER than every tier's `reactMs` (420/320/220), so while auto-slash
+  gates on it the controller's internal hold never binds — one cadence, not two.
+  **B4 re-points the enemy AI at the same constant and deletes `reactMs`.**
+- `setAutoSlash(true)` with no injected controller **throws**. D7's veto reads
+  "the plate must never lie again", so the toggle fails closed rather than
+  silently doing nothing.
+- **A chaos plant found a hole and it was fixed.** Deleting the mid-swing gate
+  left the suite GREEN: the 30-frame think interval always dominates the
+  16–20-frame swing cycle, so the gate was never exercised. The test was rewritten
+  to toggle auto-slash ON *mid-swing* (think timer wide open, so only the swing
+  cycle can block) — it now goes RED when the gate is removed. All four A3 guards
+  are chaos-proven: manual lockout, fail-closed toggle, mid-swing, airborne.
+- **Browser-verified**, zero console errors: clicking the plate flips it to
+  "AUTO SLASH ON"; over 900 driven frames the fighter closed 236.7 → 565.1 world
+  px unaided and landed a hit (enemy 150 → 142) while taking damage
+  (100 → 52.8). It does not yet WIN — enemy HP is still the PvP-dummy 150, damage
+  is unbalanced and the melee gate is 2× too generous; B1–B5 are what fix that.
+- Fidelity gate re-run after A2+A3: **55/55**.
+
+> **Veto:** wire the plate to a genuinely disabled state and log the deferral.

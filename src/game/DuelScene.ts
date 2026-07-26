@@ -48,6 +48,10 @@ interface Droplet {
   bornAt: number;
 }
 
+/** AUTO SLASH plate box — measured (74,24)-(367,85)@1920×1080 → stage px.
+ *  Named once so the drawn plate and its click target can never drift apart
+ *  (D7: the plate is a real toggle now, so it needs a hit area). */
+const AUTO_PLATE = { x: 39, y: 12, w: 157, h: 34 };
 const BLOOD_LIFE_MS = 650;
 const BLOOD_GRAVITY = 780; // px/s² — render feel only
 const DEG_TO_RAD = Math.PI / 180;
@@ -183,10 +187,14 @@ export class DuelScene extends Phaser.Scene {
     // Sim and AI share one stream — call order is deterministic.
     const rng = mulberry32(Date.now());
     const opponent = new AISeamController(rng, AI_TIERS.normal);
+    // AUTO SLASH (D7) hands the PLAYER to the same routine — but its OWN
+    // instance: the controllers carry telegraph/mode state, and one shared
+    // instance would interleave the two fighters' decisions.
+    const autoController = new AISeamController(rng, AI_TIERS.normal);
     this.sim = new Sim(rng, opponent, {
       player: { ...PLAYER_BASE, ...DUEL_SPAWNS.player, pos: { ...DUEL_SPAWNS.player.pos } },
       enemy: { ...ENEMY_BASE, ...DUEL_SPAWNS.enemy, pos: { ...DUEL_SPAWNS.enemy.pos } },
-    });
+    }, autoController);
 
     this.drawArena();
     this.fx = this.add.graphics().setDepth(10);
@@ -228,7 +236,22 @@ export class DuelScene extends Phaser.Scene {
     // INPUT BOUNDARY (A0): pointer arrives in stage px and is converted to
     // WORLD once, here. Everything downstream — dragPoints, the DrawnStroke,
     // the movement target — is world-side.
+    // AUTO SLASH plate — a REAL toggle now (D7). Its veto reads "the plate must
+    // never lie again", so the label is driven from sim state, not a constant.
+    const autoZone = this.add
+      .zone(AUTO_PLATE.x + AUTO_PLATE.w / 2, AUTO_PLATE.y + AUTO_PLATE.h / 2, AUTO_PLATE.w, AUTO_PLATE.h)
+      .setInteractive();
+    autoZone.on(
+      'pointerdown',
+      (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: { stopPropagation: () => void }) => {
+        ev.stopPropagation(); // a plate click is a UI action, not a stroke
+        this.sim.setAutoSlash(!this.sim.autoSlash);
+        this.texts.autoSlash.setText(`AUTO SLASH ${this.sim.autoSlash ? 'ON' : 'OFF'}`);
+      },
+    );
+
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      if (this.sim.autoSlash) return; // manual input is locked out
       const w = stageToWorld({ x: p.x, y: p.y });
       this.dragging = true;
       this.dragPoints = [w];
@@ -317,7 +340,7 @@ export class DuelScene extends Phaser.Scene {
 
     // AUTO SLASH OFF plate — measured box (74,24)-(367,85)@1920×1080.
     g.fillStyle(COL.outline, 1);
-    g.fillRect(39, 12, 157, 34);
+    g.fillRect(AUTO_PLATE.x, AUTO_PLATE.y, AUTO_PLATE.w, AUTO_PLATE.h);
     g.fillStyle(COL.goldTrim, 1);
     g.fillRect(41, 14, 153, 30);
     g.fillStyle(COL.plateBrown, 1);
@@ -403,6 +426,7 @@ export class DuelScene extends Phaser.Scene {
   private finishStroke(): void {
     const stroke = new DrawnStroke(this.dragPoints);
     this.dragPoints = [];
+    if (this.sim.autoSlash) return; // locked out (the Sim rejects it too)
     if (stroke.points.length < 2) return;
 
     const now = this.fxNow;
@@ -483,6 +507,12 @@ export class DuelScene extends Phaser.Scene {
         // the windup aura must age on the fx clock or it dies early in slow-mo.
         this.telegraphUntil = fxNow + ev.durationMs;
         this.telegraphKind = ev.kind;
+      } else if (ev.type === 'autoStroke') {
+        // D7: "the generated line is drawn on screen" — same two render paths
+        // a hand-drawn stroke takes.
+        this.redStrokes.push({ points: ev.points, bornAt: fxNow });
+        this.trails.push({ points: ev.points, bornAt: fxNow });
+        this.playerAnim.startSlash(this.sim.player.stance);
       } else if (ev.type === 'strikeBlocked') {
         this.enemyGuardUntil = fxNow + 260;
       } else if (ev.type === 'skillDenied') {

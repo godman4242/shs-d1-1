@@ -10,9 +10,30 @@
 > | Step | State |
 > |---|---|
 > | **A0** world/stage split (D1) | ✅ **DONE** — see below |
-> | A0.5 stats the formulas need | ⬜ next |
-> | A2 combo correction (D8) · A3 AUTO SLASH (D7) | ⬜ |
-> | B0–B5 the coupled core | ⬜ |
+> | **A0.5** stats the formulas need | ✅ **DONE** |
+> | **A2** combo correction (D8) | ✅ **DONE** |
+> | **A3** AUTO SLASH (D7) | ✅ **DONE** |
+> | B0–B5 the coupled core | ⬜ **next — B0 first** |
+>
+> **PHASE 0 CLOSED (2026-07-26).** Suite **494/494** · tsc ×2 exit 0 · eslint 0 ·
+> in-browser gate **55/55** re-proven after A2+A3 · zero console errors.
+> - **A0.5** — `src/config/stats.ts` + `src/config/reach.ts`. Additive; nothing
+>   consumes them yet. The reach stat is **SPD**, not agility (D2's own
+>   correction of the kickoff's §4 wording). Stated character: level 9 · SPD 1 ·
+>   ATK 1 · dan 0 · **mastery 0**. Found while writing it: the reach and damage
+>   mastery curves are the SAME three shapes permuted between light and heavy,
+>   and at mastery 10 they reproduce `STANCE_TABLE.dmgMult` 0.9/1.2/1.4 exactly.
+> - **A2** — combo is cosmetic, resets to **0 on damage taken only**.
+>   `COMBO_CHAIN_GAP_S` and `Combo.kill()` **deleted**; the two refuted Stage-2
+>   pins were **replaced, not removed**, so the old behaviour stays guarded.
+> - **A3** — AUTO SLASH is real: own AI instance, manual input locked out, skills
+>   still live, synthesised player-anchored stroke through the **same**
+>   `applyStroke`, line drawn on screen, `setAutoSlash(true)` **fails closed**.
+>   Browser-proven: plate flips to ON and the fighter fights unaided (closed
+>   236.7 → 565.1 world px, landed a hit).
+>   ⚠️ **A chaos plant found a hole:** deleting the mid-swing gate left the suite
+>   GREEN (the think interval always dominated the swing cycle). Test rewritten to
+>   isolate the gate; all four A3 guards now chaos-proven.
 >
 > **A0 CLOSED (2026-07-26).** The sim now runs in the original's own logical
 > stage — **WORLD 800×480** — while the canvas stays **STAGE 1024×576**. The

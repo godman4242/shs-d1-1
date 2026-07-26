@@ -34,7 +34,6 @@ import {
   CRIT_MULT,
   CRITICAL_FILL_PER_S,
   CRITICAL_MAX,
-  COMBO_CHAIN_GAP_S,
   DAMAGE_FLOOR,
   FOCUS_FILL_PER_S,
   FOCUS_MAX,
@@ -90,6 +89,13 @@ import {
 import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../src/config/chi';
 import { PROFILE_START_POOLS } from '../src/config/profile';
 import { XP_DELTA_STEP, XP_THRESHOLDS } from '../src/config/xp';
+import {
+  ATTACK_DMG_PER_POINT,
+  ENEMY_STATS,
+  MASTERY_MAX,
+  PLAYER_STATS,
+} from '../src/config/stats';
+import { REACH } from '../src/config/reach';
 import { SKILL_COOLDOWN_MS } from '../src/config/skills';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
@@ -159,7 +165,6 @@ describe('combat.ts — exact core constants (Stage 0 item 5)', () => {
     expect(DAMAGE_FLOOR).toBe(1);
     expect(CHI_PUNCH_DMG_L1).toBe(10);
     expect(SPAWN_INVULN_S).toBe(5);
-    expect(COMBO_CHAIN_GAP_S).toBe(3); // Stage-2 decision — see combat.ts docblock
   });
   it('meters', () => {
     expect(FOCUS_MAX).toBe(100);
@@ -515,6 +520,63 @@ describe('timing.ts — fixed step + slash phases (Stage 0 item 7)', () => {
       light: { windup: 4, active: 4, recovery: 4 },
       balanced: { windup: 4, active: 4, recovery: 8 },
       heavy: { windup: 4, active: 4, recovery: 12 },
+    });
+  });
+});
+
+describe('stats.ts — SESSION13 A0.5: the inputs D2/D3/D6 need (nothing consumes them yet)', () => {
+  it('MASTERY_MAX / ATTACK_DMG_PER_POINT', () => {
+    expect(MASTERY_MAX).toBe(10);
+    expect(ATTACK_DMG_PER_POINT).toBe(3);
+  });
+  it('PLAYER_STATS — level 9, SPD 1, dan 0, mastery 0 (a character who spent nothing)', () => {
+    expect(PLAYER_STATS).toEqual({
+      level: 9,
+      spd: 1,
+      atk: 1,
+      defense: 5,
+      danRank: 0,
+      mastery: { light: 0, balanced: 0, heavy: 0 },
+      weapon: { minDamage: 7, maxDamage: 7 },
+    });
+  });
+  it('ENEMY_STATS — level 9 too (Δ=0 ⇒ K=10 / D=18)', () => {
+    expect(ENEMY_STATS).toEqual({
+      level: 9,
+      spd: 1,
+      atk: 1,
+      defense: 5,
+      danRank: 0,
+      mastery: { light: 0, balanced: 0, heavy: 0 },
+      weapon: { minDamage: 4, maxDamage: 4 },
+    });
+  });
+  it('the weapon decomposition preserves the pre-A0.5 atkPlusWeapon totals exactly', () => {
+    expect(PLAYER_STATS.atk * ATTACK_DMG_PER_POINT + PLAYER_STATS.weapon.minDamage).toBe(
+      PLAYER_BASE.atkPlusWeapon,
+    );
+    expect(ENEMY_STATS.atk * ATTACK_DMG_PER_POINT + ENEMY_STATS.weapon.minDamage).toBe(
+      ENEMY_BASE.atkPlusWeapon,
+    );
+  });
+  it('damageRange is ZERO until a real weapon model lands (D6 RNG scope note)', () => {
+    expect(PLAYER_STATS.weapon.maxDamage - PLAYER_STATS.weapon.minDamage).toBe(0);
+    expect(ENEMY_STATS.weapon.maxDamage - ENEMY_STATS.weapon.minDamage).toBe(0);
+  });
+});
+
+describe('reach.ts — SESSION13 A0.5: every literal in the source reach formula', () => {
+  it('REACH names all nine constants', () => {
+    expect(REACH).toEqual({
+      base: 120,
+      danBase: 90,
+      danPerRank: 5,
+      spdSoftcap: 20,
+      lightMult: 1.4,
+      balancedPerMastery: 0.02,
+      heavyBase: 0.5,
+      heavyPerMastery: 0.04,
+      heavyFloor: 100,
     });
   });
 });

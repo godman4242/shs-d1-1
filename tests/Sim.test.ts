@@ -509,19 +509,30 @@ describe('Sim — HIT COMBO counter (M3: player hits chain; damage taken breaks)
     sim.tick(); // enemy strike lands
     expect(sim.combo).toBe(0);
   });
-  it('a chain gap restarts the chain at 1', () => {
+  // ⚠️ SESSION13 A2 (D8) REVERSES TWO STAGE-2 PINS. The old assertions here
+  // were "a chain gap restarts the chain at 1" (COMBO_CHAIN_GAP_S = 3) and
+  // "the killing blow resets the combo to exactly 1 (CONTRACT)". The payload
+  // has NEITHER mechanic: the combo is cosmetic, resets to 0, and only on
+  // damage taken. Both pins are replaced — not deleted — so the refuted
+  // behaviour stays actively guarded against. See docs/DIVERGENCES.md.
+  it('NO gap decay: a long idle stretch does not restart the chain (was: restarts at 1)', () => {
     const sim = makeSim();
     sim.applyStroke(slashStroke());
     sim.applyStroke(slashStroke());
-    tickN(sim, 3 * FIXED_HZ + 1); // COMBO_CHAIN_GAP_S = 3
+    tickN(sim, 10 * FIXED_HZ); // ten seconds — far past the deleted 3 s window
     sim.applyStroke(slashStroke());
-    expect(sim.combo).toBe(1);
+    expect(sim.combo).toBe(3);
   });
-  it('the killing blow resets the combo to exactly 1 (CONTRACT: reset-to-1, not 0)', () => {
+  it('the killing blow does NOT reset the combo (was: reset-to-1 CONTRACT)', () => {
     const sim = makeSim();
-    for (let i = 0; i < 19; i++) sim.applyStroke(slashStroke());
+    let hits = 0;
+    while (sim.phase === 'fighting' && hits < 40) {
+      sim.applyStroke(slashStroke());
+      hits += 1;
+    }
     expect(sim.phase).toBe('ended');
-    expect(sim.combo).toBe(1);
+    // Every landed slash counted, including the last one; nothing reset it.
+    expect(sim.combo).toBe(hits);
   });
 });
 

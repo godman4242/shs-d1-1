@@ -30,13 +30,11 @@ export const DAMAGE_FLOOR = 1;
 export const CHI_PUNCH_DMG_L1 = 10;
 /** CONTRACT — spawn invulnerability in seconds; ends early on first slash. */
 export const SPAWN_INVULN_S = 5;
-/**
- * INFERRED — Stage-2 decision (flagged 2026-07-12): COMBO_RULES (§7) say the
- * chain breaks "on gaps" but name no duration; 3 s bridges kill-to-kill in
- * observed multi-mook brawls (11-chains, B-26) without keeping stale chains
- * alive. Veto = retune.
+/*
+ * COMBO_CHAIN_GAP_S was DELETED in SESSION13 A2 (D8): the payload has no
+ * combo gap decay at all. The combo resets to 0 on damage taken and on
+ * nothing else. See docs/DIVERGENCES.md.
  */
-export const COMBO_CHAIN_GAP_S = 3;
 
 // ── Meters ────────────────────────────────────────────────────────────
 /** INFERRED */ export const FOCUS_MAX = 100;
