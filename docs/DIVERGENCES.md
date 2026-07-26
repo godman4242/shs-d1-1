@@ -1301,11 +1301,24 @@ line. The kickoff's insistence on rendering at each step (A3 before A4) is doing
 real work — this cost five minutes at A2 and would have been diagnosed as a
 "pivot problem" at A4, one of §2's two permitted diagnoses, and the wrong one.
 
-### Chaos plants — fifteen watched RED, then reverted
+### A fail-open closed while writing the A3 kickoff
+
+`convertShapeSvg`'s matcher only recognises the SELF-CLOSING `<path/>` form.
+FFDec always emits that, so the risk was theoretical for this pipeline — but the
+failure mode is the worst one available: every path skipped, the shape returned
+silently EMPTY, and no symptom until someone notices a limb is missing. That is
+§2 diagnosis (b) with the evidence erased, and it contradicted the file's own
+stated rule that everything unsupported fails closed. Now: if the file declares
+more `<path>` elements than the matcher can parse, it THROWS; and a shape that
+yields no geometry at all THROWS. Confirmed non-false-positive by converting all
+16 fighter shapes (only 2664 is committed — D2 keeps A2 to one target).
+
+### Chaos plants — seventeen watched RED, then reverted
 
 All 13 bit: even-odd→nonzero winding · interior-vs-boundary probe · implicit
 repeated commands dropped · unsupported commands skipped · degenerate rings kept
 · tolerance ignored · FFDec's bumped stroke width · `<g>` translate baked in ·
 truncated coordinates returning 0 · provenance header stripped · approximation
 declaration hidden · characterId falsified · a `fetch()` added to generated art ·
-outline closure dropped (the crown notch) · every stroke force-closed.
+outline closure dropped (the crown notch) · every stroke force-closed ·
+unparseable `<path>` skipped · an empty shape accepted.

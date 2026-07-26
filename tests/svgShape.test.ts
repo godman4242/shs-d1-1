@@ -306,3 +306,30 @@ describe('convertShapeSvg: a REAL part shape (2664, the head)', () => {
     expect(all.every(Number.isFinite)).toBe(true);
   });
 });
+
+describe('convertShapeSvg: fail-closed on anything it cannot see', () => {
+  // The path matcher only recognises SELF-CLOSING <path/>. FFDec always emits
+  // that form, but "the parser silently returned nothing" is the single worst
+  // failure mode this converter has — it is §2 diagnosis (b) with no symptom
+  // until someone notices a limb is missing. So a shape that yields fewer
+  // parsed paths than the file contains must THROW, not shrug.
+  it('THROWS when a <path> element is present but unparsed', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M0 0 L10 0 L10 10 Z" fill="#ff0000" stroke="none"></path>
+      </g></svg>`;
+    expect(() => convertShapeSvg(svg, 1, 0.05)).toThrow(/path/i);
+  });
+
+  it('THROWS on a shape that yields no geometry at all', () => {
+    expect(() => convertShapeSvg('<svg><g/></svg>', 1, 0.05)).toThrow();
+  });
+
+  // The empty "none" placeholders (hat7000, weapon13000, …) are SPRITES with no
+  // shape at all, so they never reach this function — there is no SVG for them.
+  it('still accepts a normal self-closing shape', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M0 0 L10 0 L10 10 Z" fill="#ff0000" stroke="none"/>
+      </g></svg>`;
+    expect(convertShapeSvg(svg, 1, 0.05).fills).toHaveLength(1);
+  });
+});

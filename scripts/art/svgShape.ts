@@ -389,7 +389,19 @@ export function convertShapeSvg(svg: string, id: number, tolerance: number): Sha
 
   const fills: FillArt[] = [];
   const strokes: StrokeArt[] = [];
-  for (const m of svg.matchAll(/<path\b[^>]*\/>/g)) {
+  // FAIL CLOSED on anything the matcher cannot see. It only recognises the
+  // SELF-CLOSING <path/> form that FFDec emits; if a file ever used
+  // <path …></path>, every path would be skipped and the shape would come back
+  // silently EMPTY — §2 diagnosis (b) with no symptom until a limb is missing.
+  const declared = (svg.match(/<path\b/g) ?? []).length;
+  const parsed = [...svg.matchAll(/<path\b[^>]*\/>/g)];
+  if (parsed.length !== declared) {
+    throw new Error(
+      `svgShape: shape ${String(id)} has ${String(declared)} <path> elements but only ` +
+        `${String(parsed.length)} are parseable — refusing to drop geometry`,
+    );
+  }
+  for (const m of parsed) {
     const a = attrs(m[0]);
     const d = a.d;
     if (d === undefined) continue;
@@ -403,6 +415,9 @@ export function convertShapeSvg(svg: string, id: number, tolerance: number): Sha
       const width = Number(original ?? a['stroke-width'] ?? '1');
       strokes.push({ color: parseColor(stroke), width, polylines: convertStrokePath(d, tolerance) });
     }
+  }
+  if (fills.length === 0 && strokes.length === 0) {
+    throw new Error(`svgShape: shape ${String(id)} produced no geometry — nothing to import`);
   }
   return { id, fills, strokes };
 }

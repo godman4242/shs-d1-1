@@ -4,7 +4,7 @@
 > Kickoff: **`docs/sessions/SESSION15_KICKOFF.md`** (the art is an IMPORT problem).
 >
 > ### ✅ A2 CLOSED — the converter works, and the first OG art is committed
-> **Suite 636/636 · tsc ×2 exit 0 · eslint exit 0 · 15 chaos plants all watched RED.**
+> **Suite 639/639 · tsc ×2 exit 0 · eslint exit 0 · 17 chaos plants all watched RED.**
 > New: `scripts/art/svgShape.ts` (pure converter) · `scripts/art/generate.ts`
 > (emitter) · `src/game/art/types.ts` · **`src/game/art/generated/shape2664.ts`
 > — the OG samurai's head, compiled into the build.**
@@ -40,6 +40,11 @@
 >   to its start; force-closing everything instead grows a phantom edge across
 >   the ear crease — both halves pinned). **Numeric tests cannot see a hole in a
 >   line — render at every step.**
+> - **A fail-open closed** while writing the A3 kickoff: the path matcher only
+>   sees self-closing `<path/>`, so a `<path></path>` file would have returned a
+>   silently EMPTY shape. Now throws if declared paths outnumber parseable ones,
+>   or if a shape yields no geometry. Non-false-positive confirmed by converting
+>   **all 16** fighter shapes (only 2664 committed — D2 keeps A2 to one target).
 > - **Regenerating is byte-identical** (same md5 twice), so the committed art is
 >   reproducible. `npx vite-node scripts/art/generate.ts -- <id>`.
 > - Full record: `docs/DIVERGENCES.md` "SESSION 15 — A2".
