@@ -127,7 +127,7 @@ outline, then eight face fills. Drawing fills-then-strokes turned **26.2 %** of
 that shape's ink black, scored against FFDec's own render (44513/44513 pixels
 agreeing in source order vs 32952). `SHAPE_2664` is `F S S`, where both orders
 coincide — **so A3 cannot detect this mistake, and A4 would inherit it.** Hence
-gate A3-E.
+gate **A3-C**, which is a unit test rather than a render check (§6 Risk 1).
 ⚠️ **There is no alpha channel, by design.** The converter throws on any
 `fill-opacity`/`stroke-opacity` ≠ 1. Do not add one here.
 
@@ -196,10 +196,10 @@ nothing here or in A4. Recorded in `docs/DIVERGENCES.md` "SESSION 16 — R1/R2".
 
 Each decision carries a **one-line veto**.
 
-### D1 — Commit SESSION 16 FIRST, as its own commit ⭐
-664 green tests and a changed art data model should not be entangled with a new
-renderer's diff. If A3 goes wrong, `git diff` must show only A3.
-> **Veto:** none. This is hygiene, and the pre-commit hook proves it.
+### D1 — SESSION 16 landed as its OWN commit, so A3's diff is only A3 ⭐
+Already done (`04352a9`, P1): 664 green tests and a changed art data model are not
+entangled with the new renderer. When A3 goes wrong, `git diff` shows only A3.
+> **Veto:** none — this one is history, recorded so the reason survives.
 
 ### D2 — The renderer splits into a PURE PLANNER plus a dumb executor ⭐
 `src/core/artPlan.ts` turns an `ArtShape` + a stage anchor into an ordered array
@@ -209,9 +209,10 @@ crashes the Node worker. A renderer written entirely inside a scene is
 **untestable by construction**, so paint order would be back to being guarded by
 vigilance. There is direct precedent: `src/core/viewport.ts` is already pure
 render math living in `core/`.
-> **Veto:** put it all in the scene and accept that A3-E becomes browser-only.
-> *Recommended against* — paint order is the finding most likely to regress
-> silently, and it is the one A3 cannot see.
+> **Veto:** put it all in the scene and accept that **A3-C** becomes browser-only
+> — which for this shape means unprovable, since 2664 renders identically either
+> way. *Recommended against* — paint order is the finding most likely to regress
+> silently, and it is the one A3's pixels cannot see.
 
 ### D3 — It renders BESIDE the existing samurai, behind `?art=og`, replacing nothing
 `drawSamurai` is graded **A−** and feeds the 55/55 gate. The imported art lands
