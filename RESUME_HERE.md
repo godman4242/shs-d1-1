@@ -1,6 +1,62 @@
 # RESUME HERE
 
-> ## ▶ NEXT SESSION STARTS HERE (2026-07-26)
+> ## ▶ SESSION 15 IS RUNNING — **A1 IS CLOSED. START AT §4 A2.**
+> Kickoff: **`docs/sessions/SESSION15_KICKOFF.md`** (the art is an IMPORT problem).
+>
+> ### ✅ A1 CLOSED — the fighter is CODE-ASSEMBLED, and all of its art is recoverable
+> **Deliverable: `docs/research/fidelity/FIGHTER_ART_IDS.md`** — every shape ID
+> cited to the decompiled line that names it (D5 honoured; nothing eyeballed).
+> - **`§1t75s0§` (characterId 2640) IS THE FIGHTER**: 23 slot containers, parts
+>   instantiated by name via `getDefinitionByName(partType + art)`. P5's
+>   suspicion was right — and it is the *good* case.
+>   (`§1t74s0§` is only the head-and-shoulders **bust** doll. Shape **1813 is
+>   the TITLE-SCREEN illustration**, not the fighter — its sibling instance is
+>   literally named `titlelabel`.)
+> - **16 distinct leaf shapes**, one per body part:
+>   `2641 2644 2646 2648 2650 2653 2655 2658 2662 2664 2667 2670 2672 2674 2676 2678`
+> - ⭐ **36 fill styles, 36 solid, 0 gradient, 0 bitmap = 100 % FLAT SOLID.**
+>   ⇒ kickoff **D3 (gradient approximation) and D4 (bitmap fills) are MOOT for
+>   this target**; §2 bar B (byte-exact colour) needs no approximation at all.
+> - ⭐ **THE POSES ARE DATA.** New export (27 `DefineBinaryData`, exit 0, 3.5 s):
+>   `FFDEC_MEMORY=12g … -export binaryData reference/extracted/bindata …`
+>   → **487 `<anim>` / 482 unique** (5 dupes collapse — the loader keys a dict by
+>   name, which reconciles the old 482 index exactly). Each frame is
+>   `slot index + x + y + rotation`, **plain pixels and degrees**
+>   (`§1t1360s0§.setPosition`). `idle`, `lightstanceidle`, `balancedstanceidle`,
+>   `heavystanceidle`, `walk`, the slash chains and `death` are all present.
+> - ⚠️ **TWO SLOTS ARE ALIASED IN CODE** (`§1t59s0§.setPosition`) — **crotch(8)
+>   follows the pelvic node(14), hat(17) follows the head node(16)**, which is
+>   why no animation ever carries a node for them. Found by composing without
+>   it and seeing the crotch stranded at the origin. **A4 must apply both.**
+>   Same class also gives `setVisible` (unlisted slots hidden) and
+>   `reorderLayers` (z = creation order unless the frame has `r="1"`).
+> - ✅ **VERIFIED BY RENDER, not just by citation:** composing the 16 shapes at
+>   the recorded node transforms produced six correct, correctly-jointed poses
+>   first try — `idle · balanced_stance · light_stance · heavy_stance ·
+>   balancedstanceidle · walk`. Scratchpad only; **no committed source** (the
+>   converter is A2).
+> - ⚠️ **THE HONEST LIMIT — EQUIPMENT ART DIED WITH THE CDN.**
+>   `§1t1523s0§.§1t9494s0§` defaults **true**, and then `§1t6238s0§` returns
+>   `§1t1522s0§` — a `Loader`/`URLRequest` streamer. The 21 embedded classes are
+>   the *offline fallback*. No part-art SWFs in `reference/preservation/`, and
+>   **the 15 MB Android payload carries the same 21 defaults and no more**, so
+>   the trick that recovered the 495-row enemy table does NOT work here.
+>   ⇒ We have the **base body** — bare torso, bare head, **no hat, no armour,
+>   no katana** (`weapon13000` is the empty unarmed placeholder; the only
+>   embedded weapon is `weapon13002`, the wooden branch). The straw hat in the
+>   game's own title is not in the payload.
+>   **Decide-and-flag:** grade §2's ≥90 % IoU against the **base body**, and pick
+>   study frames of an unequipped fighter. *Veto:* produce an archived part-art
+>   SWF and this reopens.
+> - **For A2:** convert 16 shapes, not 1,822 · path command set is exactly
+>   `M L Q Z` (quadratic only, contours closed) · **shape-local origin = the
+>   joint pivot, at `(-Xmin/20, -Ymin/20)` px inside each FFDec SVG** (verified
+>   16/16 against `payload.xml`) · twips→px ÷20 is already applied in the
+>   `.svg` files but NOT in `payload.xml` — do not divide twice.
+>
+> ---
+>
+> ## ▶ PREVIOUS ENTRY (2026-07-26)
 > **`docs/sessions/SESSION14_KICKOFF.md` — MANY ENEMIES, ONE HIT.**
 > Self-contained, the ONLY kickoff to plan from. **Twelve decisions and twelve
 > prerequisites, all already resolved from `SOURCE_CONSTANTS.md` §3.9 and
