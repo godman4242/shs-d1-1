@@ -28,6 +28,33 @@
 >
 > **`SESSION13_KICKOFF.md` is CLOSED** — all 17 gate items green, commit `335e615`.
 >
+> ### SESSION 14 PROGRESS
+> | Step | State |
+> |---|---|
+> | **A0** record the duel baseline BEFORE refactoring | ✅ **DONE** — `tests/duel-baseline.test.ts` |
+> | A1 `Sim` → N-actor, N=1 byte-identical | ⬜ **next** |
+> | A2 mob spawns · one-hit kills · corpses | ⬜ |
+> | A3 one stroke, many enemies | ⬜ |
+> | A4 `EncounterScene` + damage popups | ⬜ |
+> | A5 mob AI (1.0 s cadence, hitbox blocking) | ⬜ |
+> | A6 observe turn-taking · the `[3,10] s` band | ⬜ |
+>
+> **A0 CLOSED.** The duel's exact behaviour at `335e615` is now pinned: all 24
+> good-play frame counts, all 24 no-play frame counts, the seed-7 outcome
+> fingerprint (checksum included), the 10.575 s median, and the derived enemy
+> (hp 50 · K 10 · D 18 · xp 90). Suite **540/540**.
+> - **Why it was needed:** `determinism.test.ts` only proves runs agree with
+>   EACH OTHER, so it pins no absolute value and would stay green through a
+>   silent retune.
+> - **Red-proofed with two plants:** player damage 10→11 → **4 RED**; dash speed
+>   40→41 → **1 RED** — and that one changed **no frame count at all**, so only
+>   the checksum caught it. That is precisely the drift A0 exists to catch.
+> - **Coverage fact found while proofing:** `MOVE_RUN_PX_S` 288→289 changes
+>   NOTHING in the harness — the bot never issues move orders, it closes purely
+>   by dashing. The walk/run gaits are therefore **unexercised by the 24-seed
+>   harness**; they are covered by unit tests only. Worth knowing before anyone
+>   trusts the harness to catch a movement regression.
+>
 > ### SESSION 13 PROGRESS
 > | Step | State |
 > |---|---|
