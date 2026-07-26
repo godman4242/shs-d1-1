@@ -55,27 +55,75 @@ moves from 'measured ceiling with original drawings' to **direct frame-match**."
   Vector paths become `Graphics` draw calls, which is procedural vector art.
 - Third-party assets are still excluded (fonts, music).
 
-## What is proven vs. what is not
+## UPDATE, same day: the animation question is ANSWERED
+
+The gap flagged below ("does character animation come out, or only static
+shapes?") was resolved before `SESSION15_KICKOFF.md` was written.
+
+```
+FFDEC_MEMORY=12g reference/tools/ffdec/ffdec.sh -swf2xml \
+  reference/decrypted/shs3_payload_decoded.swf reference/extracted/payload.xml
+```
+→ **314 MB XML, exit 0.** (`FFDEC_MEMORY=12g` is required — the default heap dies
+with `OutOfMemoryError` on this payload.)
+
+| tag | count | what it is |
+|---|---:|---|
+| `PlaceObject2Tag` | 7,196 | a shape placed at a **transform matrix** |
+| `ShowFrameTag` | 4,347 | frame boundaries |
+| `DefineSpriteTag` | 827 | **animation timelines** |
+| shape tags (all 4 kinds) | **1,822** | reconciles exactly with the SVG export ✓ |
+| `DefineBitsLossless2Tag` | **20** | the *only* bitmaps in the game |
+
+⇒ **Animation = play these vector shapes, at these matrices, one `ShowFrame` at a
+time.** Reconstructible with no raster step.
+
+**Fill-style census** over all 12,142 fill styles: **93.1 % solid colour**, 4.8 %
+linear gradient, 1.6 % radial, 0.4 % bitmap. Phaser's `Graphics.fillPoints` draws
+flat polygons natively, so 93 % of the art needs no new rendering capability.
+
+⚠️ **`-export sprite` works but MUST NOT be used:** it rasterises to **3,013 PNGs**
+(35 MB). That violates the "procedural vector art only, no image files"
+invariant, discards resolution independence, and could not be committed anyway.
+**The XML route above is the one.**
+
+⚠️ **Still open, and flagged honestly:** 1,336 distinct instance names exist but
+skew heavily to UI (`button`, `label`, `form`), with only `playercanvas`,
+`samurai`, `ninja`, `farmer` standing out. **The fighting character may be
+assembled in ActionScript at runtime rather than authored as one timeline
+sprite.** SESSION 15 A1 settles that by reading the 1,079 decompiled `.as` files
+rather than guessing at shape IDs.
+
+⚠️ **A constraint that reshapes the architecture:** `reference/` is gitignored, so
+a shipped build can **never** read these files. Converted path data has to be
+emitted as **committed TypeScript**. A runtime loader is impossible, not merely
+unwise.
+
+**→ The plan is now `docs/sessions/SESSION15_KICKOFF.md`.**
+
+---
+
+## What was proven vs. not, at first extraction (kept for the record)
 
 | | Status |
 |---|---|
 | Shapes export from the decrypted payload | ✅ 1,822 files, verified by eye |
 | Output is gitignored | ✅ `git check-ignore` |
 | Shapes include environment art + at least one character figure | ✅ contact sheet |
-| **Sprite / timeline export** (animation frames, per-limb pieces) | ❌ **not attempted** |
-| Mapping shape IDs → named game entities | ❌ not attempted |
+| **Sprite / timeline export** (animation frames, per-limb pieces) | ✅ **answered above** |
+| Mapping shape IDs → named game entities | ⚠️ partially — see the naming caveat above |
 | SVG path → Phaser `Graphics` conversion pipeline | ❌ does not exist |
 | Any of it used by the build | ❌ nothing wired |
 
-⚠️ **The known gap:** `-export shape` yields STATIC shapes. A Flash character's
-poses live in **sprites/timelines**, not individual shapes, so the walk cycle and
-stance poses probably need `-export sprite` / `-export frame` as well. That is
-the first thing a follow-up session should test — before assuming the character
-art is as available as the scenery clearly is.
+⚠️ **The known gap at the time:** `-export shape` yields STATIC shapes. A Flash
+character's poses live in **sprites/timelines**, not individual shapes, so the
+walk cycle and stance poses probably need `-export sprite` / `-export frame` as
+well. That was the first thing to test — and it was tested; see the update above.
 
 ## Suggested next step (a session of its own, not a bolt-on)
 
-1. `-export sprite,frame,morphshape` and see what character animation comes out.
+1. ~~`-export sprite,frame,morphshape` and see what character animation comes
+   out.~~ ✅ **DONE** — see the update above.
 2. Pick ONE high-value target (the player samurai idle) and build the
    SVG-path → `Graphics` converter for it end to end.
 3. Re-grade against the study frames using the existing fidelity-gate protocol,

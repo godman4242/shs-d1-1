@@ -1152,3 +1152,42 @@ path. Next entry point: `SESSION12_KICKOFF.md`, after `SOURCE_CONSTANTS.md` §5�
 - ⚠️ **Honest placeholder, flagged not hidden:** the popup digits are drawn as
   blocks — the right SIZE and the right COLOUR, but not yet numerals. Real glyphs
   belong with the art-import session, which now has the OG's own vector shapes.
+
+## 2026-07-26 — SESSION 15 KICKOFF written: the art is an IMPORT problem
+
+Owner (2026-07-26): *"i personally go with art"* + *"the pictures you sent are the
+art i want in the game"* + *"i think a kickoff at the bar is needed"*.
+Pushed the 20 outstanding commits first (`4ec831a..f33bf8a`), after verifying no
+`reference/` file has ever been committed and the remote is PRIVATE.
+
+**The open risk from A4 was closed BEFORE the kickoff was written.** A kickoff at
+the bar cannot ship with its central question unanswered, and the question was
+"does character ANIMATION come out, or only static shapes?"
+
+- `-swf2xml` → **314 MB XML, exit 0** (needs `FFDEC_MEMORY=12g`; the default heap
+  dies with `OutOfMemoryError`). Tag census: **827 `DefineSpriteTag` · 7,196
+  `PlaceObject2Tag` · 4,347 `ShowFrameTag`**, shape tags totalling **1,822 —
+  reconciling exactly with the SVG export**, and only **20 bitmaps** in the whole
+  6.88 MB payload. ⇒ animation is vector shapes at per-frame transform matrices.
+- **Fill census over 12,142 fills: 93.1 % SOLID colour**, 4.8 % linear gradient,
+  1.6 % radial, 0.4 % bitmap. `Graphics.fillPoints` draws flat polygons natively,
+  so 93 % of the art needs no new rendering capability. *That is the number that
+  makes the session tractable.*
+- **A negative result recorded as carefully as the positives:** `-export sprite`
+  works and yields 3,013 PNGs — and **must not be used** (rasterises, violates
+  the no-image-files invariant, discards resolution independence).
+- **A constraint that reshapes the architecture, surfaced now rather than in week
+  two:** `reference/` is gitignored, so a shipped build can never read those
+  files. Converted paths must be emitted as **committed TypeScript**; a runtime
+  loader is *impossible*, not merely unwise.
+- ⚠️ **Honest open item, and it cuts against the session's convenience:** 1,336
+  instance names exist but skew heavily to UI. The fighter may be assembled in
+  ActionScript rather than authored as a timeline sprite. A1 settles it by
+  reading the 1,079 already-decompiled `.as` files, and §6 declares "it's built
+  in code, here's the class" a SUCCESSFUL outcome in advance.
+
+`SESSION15_KICKOFF.md` sets a numeric bar before any code exists (≥90 %
+silhouette IoU · byte-exact recorded colours · fidelity gate still 55/55), with
+SESSION 13 D10's stop-and-escalate rule attached. Scope deliberately tiny: ONE
+pose. **SESSION 14 A5/A6 stay OPEN** — this is an interleave on owner priority,
+not a replacement.

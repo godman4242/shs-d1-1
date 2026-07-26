@@ -11,14 +11,30 @@
 > ▶ **See the crowd fight:** `npm run dev` → `http://localhost:5173/?scene=encounter`
 > (drag across the mobs to slash; `R` restarts). The duel is still the default route.
 >
-> ## ⭐ OWNER DECISION (2026-07-26): **ART BEATS AUDIO for SESSION 15.**
-> Kheshav confirmed the extracted OG vector art *is* the art he wants in the
-> game. SESSION 15 is therefore the **art import**, not audio (audio stays
-> queued in the kickoff's §7). Read `docs/research/fidelity/ART_EXTRACTION.md`
-> and start with its "suggested next step": prove the SPRITE/timeline export
-> (character ANIMATION probably lives there, not in static shapes), then take
-> **ONE** target — the player idle — end to end and grade it against the study
-> frames. Do **not** convert 1,822 shapes speculatively.
+> ## ⭐ SESSION 15 IS WRITTEN AND READY: **`docs/sessions/SESSION15_KICKOFF.md`**
+> **THE ART IS AN IMPORT PROBLEM.** Owner decision 2026-07-26: art beats audio,
+> and the extracted OG vector art *is* the art he wants in the game.
+> **There is no research step** — every prerequisite is a command that has
+> already been run, quoted with its output:
+> - **1,822 vector shapes** exported in 8.0 s.
+> - ⭐ **THE ANIMATION COMES OUT TOO** (this was the open risk, now closed):
+>   `-swf2xml` → **827 sprite timelines · 7,196 placement matrices · 4,347
+>   frame markers**, and only **20 bitmaps in the whole game**. Animation is
+>   vector shapes at per-frame transforms — no raster step. *(Needs
+>   `FFDEC_MEMORY=12g`; the default heap OOMs.)*
+> - **93.1 % of all fills are FLAT SOLID COLOUR** — which `Graphics.fillPoints`
+>   draws natively, so 93 % needs no new rendering capability.
+> - ⚠️ `-export sprite` works but **must not be used** — it rasterises to 3,013
+>   PNGs, violating the no-image-files invariant.
+> - ⚠️ **`reference/` is gitignored ⇒ a runtime loader is IMPOSSIBLE.** Converted
+>   paths must be emitted as **committed TypeScript**.
+> - ⚠️ Still open, flagged: the fighter may be assembled in ActionScript rather
+>   than authored as a timeline sprite. A1 settles it by reading the 1,079
+>   decompiled `.as` files, and "it's built in code, here's the class" is
+>   declared a SUCCESSFUL outcome in advance.
+>
+> **Scope is deliberately tiny: ONE pose, converted end to end and graded**
+> (≥90 % silhouette IoU · byte-exact colours · fidelity gate still 55/55).
 >
 > ## ⚠️ BUT READ THIS FIRST — the art question is now answered
 > **`docs/research/fidelity/ART_EXTRACTION.md` (2026-07-26).** The OG's own
