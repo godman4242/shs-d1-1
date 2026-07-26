@@ -1082,3 +1082,37 @@ path. Next entry point: `SESSION12_KICKOFF.md`, after `SOURCE_CONSTANTS.md` §5�
     lives there, not in static shapes), ID→entity mapping, and any SVG→`Graphics`
     conversion. Written up honestly in
     `docs/research/fidelity/ART_EXTRACTION.md` with a proven/unproven table.
+
+## 2026-07-26 — SESSION 14 A3: one stroke, every enemy it crosses
+
+- **14:20** Red-first: `tests/strokeMultiHit.test.ts` → **6 of 9 RED**, on
+  `expected [ 'enemy0' ] to deeply equal [ 'enemy0', 'enemy1', 'enemy2' ]` —
+  precisely the one-victim-per-swing behaviour A1 left in place on purpose.
+- **14:22** Two of my own fixtures were wrong and I fixed them BEFORE writing
+  code: mobs packed 30 px apart (bodies are 44 px — they stood inside each
+  other), and a Focus test confounded by the per-kill bonus.
+- **14:26** Implementation green, but the full suite showed **3 failures
+  elsewhere** — and they were two different kinds of thing:
+  - `tests/simNActor.test.ts` ×2 — A1 fixtures that had both mobs inside the
+    swing's arc, so they were quietly testing "nearest only" rather than the
+    fight-END rule they are named for. Second mob moved out of reach; the tests
+    now mean what their titles say.
+  - `tests/Sim.test.ts` ×1 — **a real regression I introduced.** Folding the
+    Focus spend to the end of the loop made it run AFTER `dealDamage`, wiping
+    the `FOCUS_KILL_BONUS` a kill had just paid. Restructured to resolve every
+    victim first, spend once, then apply damage.
+  - ⚠️ **`tests/duel-baseline.test.ts` stayed GREEN through that regression** —
+    its fingerprint folds HP and position, not Focus. Worth knowing: the
+    baseline is a tripwire for the duel's SHAPE, not a proof of correctness.
+- **14:29** **Six chaos plants. Five bit; plant 4 (Focus charged per victim)
+  came back GREEN — the test was vacuous AGAIN, and for a NEW reason.**
+  `focusSpend` clamps at zero, and the test had banked 24 Focus against a 48
+  cost, so one spend and three spends both landed on 0. Rewritten to bank more
+  than three spends, stay under `FOCUS_MAX` (or the crit reset fires instead),
+  and assert exact values. Re-planted: **RED**.
+- **14:30** Suite **579/579** · tsc ×2 exit 0 · eslint exit 0 · duel-baseline
+  green and **UNEDITED**.
+- **Free confirmation banked:** the combo rule (breaks only on player damage,
+  SESSION13 A2) and the one-hit-kill rule were established separately, and the
+  study corpus's filmed **11-hit combo** falls straight out of the two together.
+  Asserted rather than admired.

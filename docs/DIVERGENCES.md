@@ -1074,3 +1074,75 @@ from a shared one. Rewritten to assert (a) the factory is invoked once per mob
 **with each mob's own index** and (b) the controllers that actually reached the
 `Sim` are N distinct objects. Both the shared-instance and index-0 plants bite it
 now. *A guard that has never been watched failing is not a guard.*
+
+## SESSION 14 — A3: one stroke, every enemy it crosses (2026-07-26)
+
+`applyStroke` now resolves the **same truncated polyline** against every living
+enemy, in fixed spawn order. With one-hit-kill mobs this is what makes a crowd
+fight read like the original's — and it is what makes the filmed **11-hit
+combos** reachable for the first time.
+
+### Decisions (each with its veto)
+
+- ⚠️ **The reach budget is spent ONCE, by the swing** (D5). `truncateTo` runs
+  before the loop and every victim is judged against that same polyline. The
+  guarded failure is silent rather than loud: re-deriving the budget per victim
+  would make a swing's reach **scale with crowd size**, so a stroke that fells
+  two mobs in an empty room would fell four in a busy one. The tests therefore
+  pin the NEGATIVE — *who a stroke reaches must not depend on how many enemies
+  exist* — across crowds of 1, 4 and 7 with the far mob at a fixed distance.
+  > **Veto:** resolve against only the nearest crossed enemy. *Recommended
+  > against* — the filmed 11-hit combos require one stroke to fell several mobs.
+
+- **Resolve every victim FIRST, then apply damage.** Two reasons, and the second
+  is a bug this ordering caught: (1) each victim is judged against the state the
+  swing met, so an earlier death cannot change a later target's severing;
+  (2) **Focus must be spent BEFORE any damage lands**, because a kill pays
+  `FOCUS_KILL_BONUS` — spending afterwards wipes the top-up the kill just earned.
+
+- **Focus is spent ONCE per swing, not per victim** (P3). Charging per victim
+  would penalise the player for the game's core verb at exactly the moment a
+  crowd makes it worth using.
+  > **Veto:** charge per victim — but then say why a crowd should cost more.
+
+- **The combo counts HITS**, so a stroke through three mobs advances it by three.
+  Combo breaks only on PLAYER damage (SESSION13 A2), so an 8-mob encounter chains
+  to 8 and 11-chains follow. This is a **free confirmation**, not a fitted
+  number: the combo rule and the one-hit rule were established separately and the
+  filmed 11-chain falls out of them.
+
+- **`StrokeOutcome.slash` keeps its old meaning** — the NEAREST living enemy's
+  result, exactly what it returned while the Sim was 1v1, so `DuelScene` is
+  untouched. The full picture is in the `damage` events, which carry each
+  victim's actor id. No new API was added for a consumer that does not exist yet.
+
+### Chaos plants — six watched RED, then reverted
+
+| Plant | Test that bit |
+|---|---|
+| reach multiplied by the living-enemy count | who-a-stroke-reaches, ×3 crowd sizes |
+| resolve against the RAW, untruncated stroke | same |
+| back to one victim per swing (the A1 behaviour) | 5 of the 9 |
+| Focus charged per victim | the Focus-once test *(see below)* |
+| Focus spent AFTER damage, wiping the kill bonus | `tests/Sim.test.ts` kill-bonus pin |
+| combo advanced once per swing, not per hit | the 8-chain and 11-chain |
+
+### ⚠️ Two honest process notes
+
+**1. A regression I made and the baseline did NOT catch.** The first version of
+this loop moved the Focus spend to *after* the damage, which zeroed the kill
+bonus. `tests/duel-baseline.test.ts` stayed green — **its fingerprint folds HP
+and position, not Focus.** `tests/Sim.test.ts`'s kill-bonus pin caught it. The
+baseline is a tripwire for the duel's *shape*, not a proof of total correctness;
+the unit suite is not redundant with it.
+
+**2. A guard that came back GREEN twice, for two different reasons.** The
+"Focus once, not per victim" test was vacuous in its first two forms: first
+because real mobs die in one hit and the kill bonus swamped the spend (fixed with
+survivor mobs), then because `focusSpend` clamps at zero and the test had banked
+24 Focus against a 48 cost — so one spend and three spends both landed on 0 and
+it passed happily while Focus *was* being charged per victim. Now it banks more
+than three spends, stays under `FOCUS_MAX` so the crit reset cannot fire instead,
+and asserts **exact** values. *A guard that has never been watched failing is not
+a guard — and a guard watched failing once can still be vacuous in another
+regime.*

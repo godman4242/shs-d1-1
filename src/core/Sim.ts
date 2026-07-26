@@ -301,6 +301,12 @@ interface FlyingKunai {
   owner: FighterState;
 }
 
+/** One enemy a single stroke crossed, and what the swing did to it (A3 / D5). */
+interface LandedHit {
+  target: FighterState;
+  result: SlashResult;
+}
+
 export class Sim {
   private readonly playerState: FighterState;
   /** Enemies in SPAWN ORDER — the fixed iteration order everywhere (§3 risk 2). */
@@ -669,40 +675,70 @@ export class Sim {
       // P3: the swing is NOT focus-gated. A full bar crits and zeroes; the
       // stance cost then subtracts (from zero, a no-op) and clamps at 0.
       const critReady = focusReady(player.focusUnits);
-      // ⚠️ A1 resolves against the NEAREST living enemy only — the structural
-      // 1v1 assumption is gone (nothing reads a hard-wired `fighters.enemy`),
-      // but one swing still fells one foe. A3 turns this into a loop over every
-      // enemy the stroke crosses (D5); the reach budget is ALREADY spent, once,
-      // in `truncateTo` above, which is precisely what makes that loop safe.
-      const target = this.nearestLivingTarget();
-      const result: SlashResult =
-        target === null
-          ? { hit: false, damage: ZERO, crit: false, severed: [] }
-          : resolveSlash(
-              cutPoints,
-              {
-                polygon: this.hitboxOf(target),
-                stance: target.stance,
-                hp: target.hp,
-                defense: target.defense,
-              },
-              {
-                minDamage: player.minDamage,
-                damageRange: player.damageRange,
-                stance: player.stance,
-                crit: critReady,
-                stats: player.stats,
-              },
-            );
-      if (result.hit && target !== null) {
-        // ⚠️ NO REACTION SEAM (D8). The enemy does not block or dodge in the
+      // ⚠️ ONE STROKE, EVERY ENEMY IT CROSSES (A3 / D5).
+      //
+      // The reach budget was ALREADY spent, exactly once, by `truncateTo` above
+      // — and that is what makes this loop safe. Re-deriving it per victim would
+      // hand each foe a fresh full budget, so a swing's reach would silently
+      // scale with the size of the crowd. THE BUDGET BELONGS TO THE SWING.
+      //
+      // Fixed spawn order, snapshotted before any damage lands, so the damage
+      // events a crowd produces are deterministic.
+      const attack = {
+        minDamage: player.minDamage,
+        damageRange: player.damageRange,
+        stance: player.stance,
+        crit: critReady,
+        stats: player.stats,
+      };
+      const targets = this.enemyActors.filter((a) => a.state.hp > ZERO).map((a) => a.state);
+      const nearest = this.nearestLivingTarget();
+      // What the caller sees as `slash`: the NEAREST living enemy's outcome —
+      // exactly what this returned while the Sim was 1v1, so the duel is
+      // untouched. The full picture lives in the `damage` events, which carry
+      // each victim's actor id.
+      let primary: SlashResult = { hit: false, damage: ZERO, crit: false, severed: [] };
+      // ⚠️ RESOLVE EVERY VICTIM FIRST, THEN APPLY. Two reasons, and the second
+      // one is a bug this ordering already caught:
+      //   1. Each victim is judged against the state the SWING met, so an
+      //      earlier death cannot change a later target's severing.
+      //   2. Focus must be spent BEFORE any damage lands, because a kill pays
+      //      FOCUS_KILL_BONUS — spending afterwards wipes the top-up the kill
+      //      just earned. (This is the pre-A3 order; folding the spend to the
+      //      end of the loop zeroed it, and `tests/duel-baseline.test.ts` did
+      //      NOT catch that, because its fingerprint folds HP and position but
+      //      not Focus. `tests/Sim.test.ts` did.)
+      const landed: LandedHit[] = [];
+      for (const target of targets) {
+        const result = resolveSlash(
+          cutPoints,
+          {
+            polygon: this.hitboxOf(target),
+            stance: target.stance,
+            hp: target.hp,
+            defense: target.defense,
+          },
+          attack,
+        );
+        if (target === nearest) primary = result;
+        // ⚠️ NO REACTION SEAM (D8). Enemies do not block or dodge in the
         // original, so a landing slash lands — a controller that still offers a
         // `react` method changes nothing.
-        player.focusUnits = focusSpend(player.focusUnits, FOCUS_SPEND[player.stance]);
-        this.emitCombo(this.comboCounter.hit());
-        this.dealDamage(player, target, result.damage, result.crit, result.severed);
+        if (result.hit) landed.push({ target, result });
       }
-      return { gesture, slash: result, cutPoints };
+      if (landed.length > ZERO) {
+        // Focus is spent by the ACT of swinging, ONCE, however many bodies the
+        // stroke found (P3). Charging per victim would penalise the player for
+        // the game's core verb at exactly the moment a crowd makes it worth using.
+        player.focusUnits = focusSpend(player.focusUnits, FOCUS_SPEND[player.stance]);
+        for (const hit of landed) {
+          // The combo counts HITS, so a stroke through three mobs advances it by
+          // three — which is how the filmed 11-chains become reachable (§3.3).
+          this.emitCombo(this.comboCounter.hit());
+          this.dealDamage(player, hit.target, hit.result.damage, hit.result.crit, hit.result.severed);
+        }
+      }
+      return { gesture, slash: primary, cutPoints };
     }
     if (gesture === 'jump') {
       const first = stroke.points.at(ZERO);

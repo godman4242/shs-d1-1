@@ -141,11 +141,21 @@ describe('N-actor Sim — storage and identity (§3.5 A + B)', () => {
 });
 
 describe('N-actor Sim — the fight ends when ALL enemies are dead (§3.5 F)', () => {
+  /**
+   * ⚠️ THE SECOND MOB STANDS OUT OF REACH ON PURPOSE (x 300 vs the swing's ~224
+   * limit). Since A3, one stroke fells EVERY enemy it crosses — so a fixture
+   * with both mobs inside the arc would kill both at once and this pair of tests
+   * would silently stop being about the fight-END rule at all. Separating them
+   * keeps each file testing its own thing: A3's multi-hit lives in
+   * `tests/strokeMultiHit.test.ts`.
+   */
+  const spread = (): EnemySlot[] => [
+    slot(mobSpawn({ pos: v(200, 200), hp: 1 })),
+    slot(mobSpawn({ pos: v(300, 200), hp: 1 })),
+  ];
+
   it('killing ONE of two enemies does NOT end the fight', () => {
-    const sim = makeSim([
-      slot(mobSpawn({ pos: v(200, 200), hp: 1 })),
-      slot(mobSpawn({ pos: v(230, 200), hp: 1 })),
-    ]);
+    const sim = makeSim(spread());
     sim.applyStroke(rightStroke(sim));
     const evs = sim.drainEvents();
     expect(evs.filter((e) => e.type === 'damage').map((e) => e.target)).toEqual(['enemy0']);
@@ -156,13 +166,14 @@ describe('N-actor Sim — the fight ends when ALL enemies are dead (§3.5 F)', (
   });
 
   it('…and killing the LAST one does, with the player as winner', () => {
-    const sim = makeSim([
-      slot(mobSpawn({ pos: v(200, 200), hp: 1 })),
-      slot(mobSpawn({ pos: v(230, 200), hp: 1 })),
-    ]);
+    const sim = makeSim(spread());
     sim.applyStroke(rightStroke(sim));
     sim.drainEvents();
-    sim.applyStroke(rightStroke(sim)); // nearest LIVING is now enemy1
+    // The swing's dash carries the player forward; let it land, then swing again
+    // so the second mob is finally inside the arc.
+    tickN(sim, 25);
+    sim.drainEvents();
+    sim.applyStroke(rightStroke(sim));
     const evs = sim.drainEvents();
     expect(evs.filter((e) => e.type === 'damage').map((e) => e.target)).toEqual(['enemy1']);
     expect(evs.filter((e) => e.type === 'fightEnded')).toEqual([{ type: 'fightEnded', winner: 'player' }]);

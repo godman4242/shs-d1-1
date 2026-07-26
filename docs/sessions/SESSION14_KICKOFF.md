@@ -12,7 +12,12 @@
 > `SOURCE_CONSTANTS.md` §3.9 or `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. §P lists them with their
 > citations so nobody re-derives them.
 >
-> ## ▶ A0 + A1 + A2 ARE CLOSED. **START AT §4 A3.**
+> ## ▶ A0 + A1 + A2 + A3 ARE CLOSED. **START AT §4 A4.**
+>
+> ⭐ **OWNER DECISION 2026-07-26: SESSION 15 is ART, not audio.** The OG's own
+> vector art was extracted (1,822 SVG shapes) and Kheshav confirmed it is what he
+> wants in the game. Audio stays queued in §7. See
+> `docs/research/fidelity/ART_EXTRACTION.md`.
 >
 > `tests/duel-baseline.test.ts` now pins what the duel actually DID at the close of SESSION 13:
 > all 24 good-play frame counts, all 24 no-play frame counts, the seed-7 outcome fingerprint
@@ -491,7 +496,24 @@ The original brief:
 corpse TTL 96 frames. Chaos-plant: force a mob to level 9 → its damage and defence must stop
 being 1.
 
-### A3 — One stroke, many enemies
+### A3 — ✅ CLOSED. One stroke, many enemies
+
+Landed in `Sim.applyStroke`: the SAME truncated polyline resolved against every living enemy in
+fixed spawn order. Suite **579/579** · tsc ×2 exit 0 · eslint exit 0 · duel-baseline green and
+**unedited**. 9 red-first assertions in `tests/strokeMultiHit.test.ts`; **6 chaos plants**.
+
+⚠️ **Note on this section's own chaos-plant suggestion.** "Truncate *inside* the loop" is a
+**no-op** as written — `truncateTo` is a pure function of (stroke, reach), so calling it per
+victim yields the identical polyline. The real, testable invariant is the one D5 is *about*:
+**who a stroke can reach must not depend on how many enemies exist.** That is what the tests pin
+(crowds of 1, 4 and 7 with the far mob at fixed range), and the plant that bites it is
+`reach × livingEnemyCount`.
+
+⚠️ **Two process facts A4 should carry:** (1) the duel baseline did NOT catch a real Focus
+regression — its fingerprint folds HP and position, not Focus; (2) the "Focus spent once" guard
+was vacuous twice, in two different regimes. Both written up in `DIVERGENCES.md` "SESSION 14 — A3".
+
+The original brief:
 
 Truncate once, resolve against each living enemy. Red-first: a stroke crossing three mobs kills
 three. Chaos-plant: truncate *inside* the loop → the crowd-size reach bug must go RED.

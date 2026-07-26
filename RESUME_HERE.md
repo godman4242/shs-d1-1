@@ -6,7 +6,16 @@
 > prerequisites, all already resolved from `SOURCE_CONSTANTS.md` §3.9 and
 > `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. There is NO research step.**
 >
-> ## ▶ **A0 + A1 + A2 ARE DONE. START AT §4 A3.**
+> ## ▶ **A0 + A1 + A2 + A3 ARE DONE. START AT §4 A4.**
+>
+> ## ⭐ OWNER DECISION (2026-07-26): **ART BEATS AUDIO for SESSION 15.**
+> Kheshav confirmed the extracted OG vector art *is* the art he wants in the
+> game. SESSION 15 is therefore the **art import**, not audio (audio stays
+> queued in the kickoff's §7). Read `docs/research/fidelity/ART_EXTRACTION.md`
+> and start with its "suggested next step": prove the SPRITE/timeline export
+> (character ANIMATION probably lives there, not in static shapes), then take
+> **ONE** target — the player idle — end to end and grade it against the study
+> frames. Do **not** convert 1,822 shapes speculatively.
 >
 > ## ⚠️ BUT READ THIS FIRST — the art question is now answered
 > **`docs/research/fidelity/ART_EXTRACTION.md` (2026-07-26).** The OG's own
@@ -54,8 +63,8 @@
 > | **A0** record the duel baseline BEFORE refactoring | ✅ **DONE** — `tests/duel-baseline.test.ts` |
 > | **A1** `Sim` → N-actor, N=1 byte-identical | ✅ **DONE** — see below |
 > | **A2** mob spawns · one-hit kills · corpses | ✅ **DONE** — see below |
-> | A3 one stroke, many enemies | ⬜ **next** |
-> | A4 `EncounterScene` + damage popups | ⬜ |
+> | **A3** one stroke, many enemies | ✅ **DONE** — see below |
+> | A4 `EncounterScene` + damage popups | ⬜ **next** |
 > | A5 mob AI (1.0 s cadence, hitbox blocking) | ⬜ |
 > | A6 observe turn-taking · the `[3,10] s` band | ⬜ |
 >
@@ -114,6 +123,37 @@
 > - ⚠️ **No mob XP reward exists.** No measured number; deriving one by analogy
 >   would be arithmetic dressed as evidence. Veto = add one with a source line.
 > - Full record: `docs/DIVERGENCES.md` "SESSION 14 — A2".
+>
+> ### ✅ A3 CLOSED — one stroke fells every enemy it crosses
+>
+> **Suite 579/579 · tsc ×2 exit 0 · eslint exit 0 · duel-baseline green and
+> UNEDITED.** `applyStroke` resolves the SAME truncated polyline against every
+> living enemy, in fixed spawn order.
+> - ⚠️ **The reach budget is spent ONCE, by the swing.** The guarded failure is
+>   silent: re-deriving it per victim makes reach **scale with crowd size**. The
+>   tests pin the NEGATIVE — who a stroke reaches must not depend on how many
+>   enemies exist — across crowds of 1, 4 and 7 with the far mob at fixed range.
+> - **Resolve every victim first, spend Focus once, then apply damage** — in that
+>   order, because a kill pays `FOCUS_KILL_BONUS` and spending afterwards wipes it.
+> - **Combo counts HITS** ⇒ an 8-mob encounter chains to 8, and the corpus's
+>   filmed **11-chain** becomes reachable. Free confirmation: the combo rule and
+>   the one-hit rule were established separately and this falls out of both.
+> - **6 chaos plants.** Five bit; the sixth was vacuous **for a second, different
+>   reason** and had to be strengthened — see the two process notes below.
+>
+> ### ⚠️ TWO PROCESS FACTS WORTH CARRYING FORWARD
+> 1. **The duel baseline did NOT catch a real regression.** I briefly moved the
+>    Focus spend after the damage, zeroing the kill bonus; `duel-baseline` stayed
+>    green because **its fingerprint folds HP and position, not Focus**.
+>    `tests/Sim.test.ts` caught it. The baseline is a tripwire for the duel's
+>    SHAPE — it is not a proof of correctness, and the unit suite is not
+>    redundant with it.
+> 2. **A guard can be vacuous in more than one regime.** The "Focus spent once,
+>    not per victim" test passed while the bug was live — twice, for two
+>    different reasons (kill bonus swamping the spend; then `focusSpend` clamping
+>    at 0 with only 24 banked against a 48 cost). It now banks >3 spends, stays
+>    under `FOCUS_MAX`, and asserts exact values.
+> - Full record: `docs/DIVERGENCES.md` "SESSION 14 — A3".
 >
 > **A0 CLOSED.** The duel's exact behaviour at `335e615` is now pinned: all 24
 > good-play frame counts, all 24 no-play frame counts, the seed-7 outcome
