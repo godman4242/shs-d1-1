@@ -1003,3 +1003,43 @@ stage-px-vs-world-px render scale (≈1.2 fits but is unconfirmed),
 
 Nothing SWF-derived is committed; `git check-ignore` verified on every derived
 path. Next entry point: `SESSION12_KICKOFF.md`, after `SOURCE_CONSTANTS.md` §5–§6.
+
+## 2026-07-26 — SESSION 14 A1: `Sim` becomes N-actor, and the duel does not move
+
+- **13:15** Entry via `SESSION14_KICKOFF.md` §3.5 (the 1v1 call-site inventory).
+  A0 already closed at `018f36a`. Baseline before touching anything: suite
+  **540/540**, `tests/duel-baseline.test.ts` green.
+- **13:22** Red-first: `tests/simNActor.test.ts` written against the API that did
+  not exist yet — **15/15 RED** (`Cannot read properties of undefined (reading
+  'player')` at the old two-key constructor). Fifteen assertions, each mapped to
+  a lettered group of §3.5.
+- **13:27** Refactor landed, worked in the inventory's own order A→K. The type
+  change in (A) surfaced the rest through the compiler exactly as the kickoff
+  said it would: 13 errors, every one a call site on the list, **zero
+  surprises**. Suite 554/555 — the single failure was **my test being wrong**
+  (`stepKunai()` advances the projectile inside the same tick), re-pinned against
+  the real `spawnProjectile`/`stepProjectile` maths.
+- **13:29** Green: suite **555/555** · `tsc` ×2 exit 0 · eslint exit 0. Six lint
+  errors fixed properly rather than suppressed — a named `FlyingKunai` type for
+  the two object-array annotations, and a `isFighting()` method for the in-loop
+  phase re-check (the compiler narrows `phase` across the outer guard and calls
+  the re-check dead code, but a strike *inside* that loop genuinely flips it).
+- **13:30** **Eight chaos plants, all watched RED, all reverted.** The one worth
+  naming: planting a single `rng()` draw per enemy per tick — the crowd-size-
+  dependent stream shift §3 risk 2 warns about — turned **`duel-baseline.test.ts`
+  itself RED. That is the alarm working, on the exact failure it was built for.**
+- **13:31** ⛔ **THE BINDING INVARIANT HELD.** `tests/duel-baseline.test.ts` is
+  green and **unedited** (`git status --porcelain` on it: empty): 24 good-play
+  frames, 24 no-play frames, the seed-7 checksum fingerprint and the **10.575 s**
+  median all byte-identical to `335e615`.
+- **13:31** In-browser fidelity gate re-proven on the refactored build:
+  `fidelity gate: PASS — 41 points + 14 scans` = **55/55**, zero console errors
+  (only the Vite and Phaser 3.90.0 banners).
+- **Deliberately NOT done, so A3 stays red-first:** a slash still resolves
+  against the nearest living enemy only. D5's "one stroke, every enemy it
+  crosses" is A3's work, and the reach budget is already spent exactly once
+  (`truncateTo`), which is what will make that loop safe.
+- **Flag raised for A2/A6:** the Focus kill bonus now pays on *every* kill, not
+  just the fight-ending one. Identical at N=1; with one-hit-kill mobs an 8-mob
+  encounter pays it eight times. Measure before tuning — full entry in
+  DIVERGENCES "SESSION 14 — A1".

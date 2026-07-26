@@ -24,7 +24,7 @@ import { AI_MELEE_RANGE, AI_TIERS, ENEMY_SPEED } from '../src/config/ai';
 import { AISeamController } from '../src/core/AISeamController';
 import { DrawnStroke } from '../src/core/DrawnStroke';
 import type { OpponentController } from '../src/core/OpponentController';
-import { Sim, type FighterSpawn, type Rng, type SimEvent } from '../src/core/Sim';
+import { Sim, type ActorId, type FighterSpawn, type Rng, type SimEvent } from '../src/core/Sim';
 import { VIEW } from '../src/core/viewport';
 import type { Vec } from '../src/core/vec';
 
@@ -42,6 +42,8 @@ const sx = (stagePx: number): number => stagePx / VIEW.scale;
 const v = (x: number, y: number): Vec => ({ x: sx(x), y: sx(y) });
 const rng: Rng = () => 0.5;
 const opponent: OpponentController = { next: () => ({}) };
+/** SESSION14 A1: the duel's single opponent is enemy index 0 — `sim.enemyId`. */
+const DUEL_ENEMY_ID: ActorId = 'enemy0';
 
 /** Player at stage-x 100, enemy at stage-x 400 (world 83.3 / 333.3 — see
  * `sx`) — far enough apart that strokes aimed at one never graze the other
@@ -79,14 +81,17 @@ const makeSim = (
   e: Partial<FighterSpawn> = {},
   opp: OpponentController = opponent,
 ): Sim => {
-  const sim = new Sim(rng, opp, { player: playerSpawn(p), enemy: enemySpawn(e) });
+  const sim = new Sim(rng, {
+    player: playerSpawn(p),
+    enemies: [{ spawn: enemySpawn(e), controller: opp }],
+  });
   sim.beginCombat();
   sim.drainEvents(); // discard fightStarted — combat tests assert their own events
   return sim;
 };
 /** Sim still in the 'intro' phase (pre-FIGHT!). */
 const introSim = (): Sim =>
-  new Sim(rng, opponent, { player: playerSpawn(), enemy: enemySpawn() });
+  new Sim(rng, { player: playerSpawn(), enemies: [{ spawn: enemySpawn(), controller: opponent }] });
 
 /** Horizontal stroke straight through the ENEMY only (y=200, x 300→500). */
 const slashStroke = (): DrawnStroke => new DrawnStroke([v(300, 200), v(500, 200)]);
@@ -138,7 +143,7 @@ describe('Sim — construction, state exposure, hitboxes', () => {
       { x: cx + hw, y: cy + hh },
       { x: cx - hw, y: cy + hh },
     ];
-    expect(sim.hitbox('enemy')).toEqual(rect(sx(400), sx(200), sx(20), sx(40)));
+    expect(sim.hitbox(DUEL_ENEMY_ID)).toEqual(rect(sx(400), sx(200), sx(20), sx(40)));
     expect(sim.hitbox('player')).toEqual(rect(sx(100), sx(200), sx(20), sx(40)));
   });
 });
@@ -214,7 +219,7 @@ describe('Sim — damage resolution (defense, floor, heavy penalty, counter)', (
     sim.applyStroke(slashStroke());
     expect(sim.drainEvents()).toEqual([
       { type: 'comboChanged', value: 1 },
-      { type: 'damage', target: 'enemy', amount: 5, crit: false, severed: [] },
+      { type: 'damage', target: DUEL_ENEMY_ID, amount: 5, crit: false, severed: [] },
     ]);
     expect(sim.drainEvents()).toEqual([]);
   });
@@ -339,10 +344,10 @@ describe('Sim — stance switching (SESSION13 D9: a flat 48 Focus, the game\'s O
   });
   it('the enemy pays the same cost (symmetric seam for the AI)', () => {
     const sim = makeSim();
-    expect(sim.requestStanceSwitch('enemy', 'light')).toBe(false); // empty bar
+    expect(sim.requestStanceSwitch(DUEL_ENEMY_ID, 'light')).toBe(false); // empty bar
     expect(sim.enemy.stance).toBe('heavy');
     tickN(sim, 2 * FIXED_HZ);
-    expect(sim.requestStanceSwitch('enemy', 'light')).toBe(true);
+    expect(sim.requestStanceSwitch(DUEL_ENEMY_ID, 'light')).toBe(true);
   });
 });
 
@@ -418,7 +423,10 @@ describe('Sim — opponent seam is consulted once per fighting tick', () => {
         return {};
       },
     };
-    const sim = new Sim(rng, counting, { player: playerSpawn(), enemy: enemySpawn() });
+    const sim = new Sim(rng, {
+      player: playerSpawn(),
+      enemies: [{ spawn: enemySpawn(), controller: counting }],
+    });
     tickN(sim, 5);
     expect(frames).toEqual([]); // intro: AI must not act
     sim.beginCombat();
@@ -521,7 +529,7 @@ describe('Sim — enemy strikes via the OpponentIntent seam (M3)', () => {
     expect(sim.player.hp).toBe(0);
     expect(sim.phase).toBe('ended');
     const ended = sim.drainEvents().filter((ev) => ev.type === 'fightEnded');
-    expect(ended).toEqual([{ type: 'fightEnded', winner: 'enemy' }]);
+    expect(ended).toEqual([{ type: 'fightEnded', winner: DUEL_ENEMY_ID }]);
   });
 });
 
@@ -855,7 +863,10 @@ describe('Sim + AISeamController — integrated duel loop (M4)', () => {
     // in range, then pass everything (deterministic scripted stream is fine).
     let inRange = false;
     const scripted = new AISeamController(() => (inRange ? 0 : 0.99), AI_TIERS.normal);
-    const sim = new Sim(() => 0.5, scripted, { player: playerSpawn(), enemy: enemySpawn({ pos: v(700, 200) }) });
+    const sim = new Sim(() => 0.5, {
+      player: playerSpawn(),
+      enemies: [{ spawn: enemySpawn({ pos: v(700, 200) }), controller: scripted }],
+    });
     sim.beginCombat();
     sim.drainEvents();
     endInvuln(sim);
@@ -879,7 +890,10 @@ describe('Sim + AISeamController — integrated duel loop (M4)', () => {
   });
   it('enemy movement is executed by the Sim at ENEMY_SPEED toward the player', () => {
     const approach = new AISeamController(() => 0.99, AI_TIERS.easy);
-    const sim = new Sim(() => 0.5, approach, { player: playerSpawn(), enemy: enemySpawn({ pos: v(700, 200) }) });
+    const sim = new Sim(() => 0.5, {
+      player: playerSpawn(),
+      enemies: [{ spawn: enemySpawn({ pos: v(700, 200) }), controller: approach }],
+    });
     sim.beginCombat();
     tickN(sim, 60);
     // 0.17 px/ms × 1000 ms = 170 px in one second of approach
@@ -890,9 +904,9 @@ describe('Sim + AISeamController — integrated duel loop (M4)', () => {
     // player light + enemy light: the enemy picks balanced (which beats light).
     // Focus now STARTS EMPTY (D4), so the AI must first accumulate the flat 48
     // before its counter-stance pick can even be attempted — the gate is real.
-    const sim = new Sim(() => 0.5, picker, {
+    const sim = new Sim(() => 0.5, {
       player: playerSpawn({ stance: 'light' }),
-      enemy: enemySpawn({ pos: v(200, 200), stance: 'light' }),
+      enemies: [{ spawn: enemySpawn({ pos: v(200, 200), stance: 'light' }), controller: picker }],
     });
     sim.beginCombat();
     sim.drainEvents();
@@ -906,7 +920,7 @@ describe('Sim + AISeamController — integrated duel loop (M4)', () => {
       sim.tick();
       for (const e of sim.drainEvents()) {
         if (e.type === 'enemyTelegraph' && e.kind === 'stance') sawTelegraph = true;
-        if (e.type === 'stanceSwitched' && e.who === 'enemy' && e.to === 'balanced') sawSwitch = true;
+        if (e.type === 'stanceSwitched' && e.who === DUEL_ENEMY_ID && e.to === 'balanced') sawSwitch = true;
       }
     }
     expect(sawTelegraph).toBe(true);

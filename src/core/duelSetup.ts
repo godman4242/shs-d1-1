@@ -9,7 +9,8 @@
 import { ENEMY_BASE, PLAYER_BASE } from '../config/combat-sim';
 import { DUEL_ENEMY, DUEL_SPAWNS } from '../config/duel';
 import { deriveEnemy } from './enemyModel';
-import type { FighterSpawn } from './Sim';
+import type { OpponentController } from './OpponentController';
+import type { FighterSpawn, SimSetup } from './Sim';
 
 export interface DuelSpawns {
   player: FighterSpawn;
@@ -47,4 +48,18 @@ export function duelSpawns(): DuelSpawns {
       defense: derived.defense,
     },
   };
+}
+
+/**
+ * The duel as the N-actor `Sim` takes it (SESSION14 A1): a player and an array
+ * of exactly ONE enemy. Both the scene and the 24-seed harness build the Sim
+ * through here, so the duel cannot drift from the thing the harness measures.
+ *
+ * Encounters get a sibling of this function in A2 — they do NOT reuse it, and
+ * in particular trash mobs must never run through `deriveEnemy` (P1: a mob's
+ * HP is an authored 1, a different AI class from the named duellist).
+ */
+export function duelSetup(opponent: OpponentController): SimSetup {
+  const spawns = duelSpawns();
+  return { player: spawns.player, enemies: [{ spawn: spawns.enemy, controller: opponent }] };
 }

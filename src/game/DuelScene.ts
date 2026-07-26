@@ -25,8 +25,8 @@ import { advanceFxClock, integrateDroplet } from '../core/fx';
 import { closestPointOnPolyline } from '../core/geometry';
 import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
-import { duelSpawns } from '../core/duelSetup';
-import { Sim, type FighterSide } from '../core/Sim';
+import { duelSetup } from '../core/duelSetup';
+import { Sim, type ActorId } from '../core/Sim';
 import { stageToWorld, worldToStage } from '../core/viewport';
 import type { Vec } from '../core/vec';
 import { ANIM_TIMING, SCARF } from '../config/anim';
@@ -194,7 +194,7 @@ export class DuelScene extends Phaser.Scene {
     const autoController = new AISeamController(rng, AI_TIERS.normal);
     // Enemy HP/damage are DERIVED from the player at spawn (D3) — shared with
     // the 24-seed harness through core/duelSetup so the two cannot drift.
-    this.sim = new Sim(rng, opponent, duelSpawns(), autoController);
+    this.sim = new Sim(rng, duelSetup(opponent), autoController);
 
     this.drawArena();
     this.fx = this.add.graphics().setDepth(10);
@@ -522,7 +522,8 @@ export class DuelScene extends Phaser.Scene {
         this.spawnBlood({ x: p.x, y: p.y - 20 }, { x: -1, y: 0 }, false, fxNow);
         this.playerAnim.startHit();
         this.enemyAnim.startSlash(this.sim.enemy.stance);
-      } else if (ev.type === 'damage' && ev.target === 'enemy') {
+      } else if (ev.type === 'damage' && ev.target === this.sim.enemyId) {
+        // The duel has exactly ONE opponent, so its id is the whole crowd.
         this.enemyAnim.startHit();
       } else if (ev.type === 'strikeEvaded' && ev.by === 'player') {
         this.enemyAnim.startSlash(this.sim.enemy.stance); // whiffed swing still animates
@@ -542,7 +543,11 @@ export class DuelScene extends Phaser.Scene {
       this.resultLaunched = true;
       this.time.timeScale = 1;
       this.tweens.timeScale = 1;
-      this.scene.launch('duel-result', { winner: this.pendingWinner });
+      // DuelResult speaks the duel's two-sided language; the sim now speaks
+      // actor ids, so the single opponent folds back to 'enemy' here.
+      this.scene.launch('duel-result', {
+        winner: this.pendingWinner === 'player' ? 'player' : 'enemy',
+      });
     }
 
     const fxDt = (delta * ts) / 1000;
@@ -618,7 +623,7 @@ export class DuelScene extends Phaser.Scene {
     this.drawHud(now);
   }
 
-  private pendingWinner: FighterSide = 'player';
+  private pendingWinner: ActorId = 'player';
 
   private drawFighters(g: Phaser.GameObjects.Graphics, now: number, dtAnim: number): void {
     const player = this.sim.player;

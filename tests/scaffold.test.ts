@@ -23,7 +23,10 @@ it('Sim constructs with an injected rng and opponent controller', () => {
     halfW: 1,
     halfH: 1,
   };
-  const sim = new Sim(rng, opponent, { player: fighter, enemy: { ...fighter } });
+  const sim = new Sim(rng, {
+    player: fighter,
+    enemies: [{ spawn: { ...fighter }, controller: opponent }],
+  });
   expect(sim).toBeInstanceOf(Sim);
   expect(sim.rng()).toBe(0.5);
 });

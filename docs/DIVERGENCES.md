@@ -916,3 +916,88 @@ spawn invulnerability so the HP-length probes keep pinning a FULL bar) — i.e.
 **the harness's state definition was corrected, the assertion was not re-fitted**
 (§6 Risk 1). An audit guard then caught the first attempt calling `sim.tick()`
 from a scene; it now steps `advance()` in clamp-sized bites instead.
+
+## SESSION 14 — A1: `Sim` becomes N-actor (2026-07-26)
+
+**A pure generalisation, and the claim is checkable rather than assertable.**
+`Sim` was `Record<'player' | 'enemy', FighterState>` — the 1v1 assumption was in
+the *type*, consumed by seven `SimEvent` variants and five method signatures. It
+is now **a player plus an array of enemies**, with the duel as the array-of-one
+case. `tests/duel-baseline.test.ts` was **not edited** and stayed green: all 24
+good-play frame counts, all 24 no-play frame counts, the seed-7 checksum
+fingerprint and the 10.575 s median are byte-identical to `335e615`.
+
+### Decisions (each with its veto)
+
+- **`FighterSide` → `ActorId = 'player' | \`enemy${number}\``.** Enemies are
+  named by SPAWN INDEX (`enemy0`, `enemy1`, …), and spawn order is also the
+  fixed iteration order everywhere — which is what keeps a crowd deterministic.
+  Chosen over numeric ids because ids appear in every event and every test
+  failure message, and because `core/` bans numeric literals.
+  > **Veto:** numeric actor ids. Costs readability, buys nothing.
+
+- **Constructor is now `new Sim(rng, SimSetup, autoController)`.** The standalone
+  `opponent: OpponentController` positional is gone; each enemy arrives as an
+  `EnemySlot { spawn, controller }`. Bundling them prevents the index-aligned
+  parallel-array bug, and enforces at the type level that every enemy gets its
+  **own** controller instance (controllers carry telegraph/mode state — sharing
+  one would interleave several fighters into a single state machine).
+  > **Veto:** a separate `controllers[]` argument. *Recommended against.*
+
+- ⚠️ **The fight now ends when the player dies OR EVERY enemy is dead** — it used
+  to end on the **first** death. Identical at N=1, and at N=8 the old rule would
+  end an encounter on the first kill *with every other test still passing*
+  (kickoff §3.5 F names this as the subtle one). Chaos-proven: reverting it to
+  `over = true` turns the two-enemy test RED.
+  > **Veto:** none — "first death ends it" has no meaning above N=1.
+
+- ⚠️ **The Focus kill bonus is now paid on EVERY kill, not only the
+  fight-ending one** (it is credited to the actual killer, which is why
+  `dealDamage` takes an attacker). Identical at N=1. **Flag for A2/A6:** with
+  one-hit-kill mobs, an 8-mob encounter pays `FOCUS_KILL_BONUS` eight times and
+  could fill the bar far faster than a duel does. That is a *prediction of the
+  model*, not a tuning knob — measure it in A6 before touching it.
+  > **Veto:** pay the bonus only when the fight ends.
+
+- **A slash still resolves against the NEAREST living enemy only.** The
+  structural 1v1 assumption is gone (nothing reads a hard-wired `fighters.enemy`),
+  but one swing still fells one foe. **This is deliberate**: D5 ("one stroke,
+  every enemy it crosses") is **A3**, and it must be written red-first there.
+  The reach budget is already spent exactly once, in `truncateTo`, which is
+  precisely what will make that loop safe.
+
+- **`sim.enemy` / `sim.enemyId` are kept as DUEL-ONLY accessors** (§3.5 B
+  sanctions this as the one documented exception). Renaming every `DuelScene`
+  call site buys nothing and risks D2.
+
+- **Kunai carry their thrower** (`FlyingKunai { proj, owner }`). A kill has to
+  credit the actual killer; "the other fighter" only has a meaning at N=2.
+  `PROJECTILE_MAX_ACTIVE` stays an ARENA-WIDE cap, not per-thrower.
+
+- **Smoke Bomb with no living enemy** grants its i-frames and does not move the
+  player (there is no direction to flee). Unreachable at N=1.
+
+- **An unknown `ActorId` THROWS.** A typo'd id that silently resolved to
+  somebody would be an invisible damage bug.
+
+### Chaos plants — all eight watched RED, then reverted
+
+| Plant | Test that bit |
+|---|---|
+| all-dead rule → "first death" | killing 1 of 2 must not end the fight |
+| loop only `enemyActors[0]` | per-enemy controller order + same-frame strikes |
+| winner hard-wired to the player | winner is the enemy that landed the blow |
+| dead enemies keep acting | a dead enemy is never consulted again |
+| targeting ignores distance | Chi Punch hits the nearest, not the first spawned |
+| unknown id resolves to the player | unknown id must throw |
+| kunai spawn from `firstEnemy()` | thrown from ITS OWN thrower |
+| ⚠️ **one `rng()` draw per enemy per tick** | **`duel-baseline.test.ts` went RED** — the crowd-size-dependent stream shift §3 risk 2 warns about, caught by the seed-7 checksum |
+
+### What did NOT need to change
+
+`Sim.nearestLivingTarget()` and `synthesizeStrokePoints()` (AUTO SLASH) and
+`resolveSlash(points, target, attacker)` were already the right shape, exactly as
+§3.5 J predicted — AUTO SLASH's tests passed unmodified apart from the
+constructor call, which is the canary the kickoff nominated. The `game/`
+numeric-literal ratchet did **not** fire: the `DuelScene` edits introduced no
+new numbers.

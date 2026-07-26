@@ -12,7 +12,7 @@
 > `SOURCE_CONSTANTS.md` §3.9 or `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. §P lists them with their
 > citations so nobody re-derives them.
 >
-> ## ▶ A0 IS CLOSED (commit `018f36a`). **START AT §4 A1.**
+> ## ▶ A0 + A1 ARE CLOSED. **START AT §4 A2.**
 >
 > `tests/duel-baseline.test.ts` now pins what the duel actually DID at the close of SESSION 13:
 > all 24 good-play frame counts, all 24 no-play frame counts, the seed-7 outcome fingerprint
@@ -439,7 +439,27 @@ the two red-proof plants, and the harness coverage caveat it turned up.
 Kept here because the *reason* still governs A1: after A0 you can no longer **prove** the
 refactor was behaviour-preserving — you can only claim it.
 
-### A1 — `Sim` becomes N-actor, with N=1 byte-identical ⬅ **START HERE**
+### A1 — ✅ CLOSED. `Sim` is N-actor, and N=1 is byte-identical
+
+**Gate met, with evidence.** `tests/duel-baseline.test.ts` green and **unedited**
+(24 good frames · 24 no-play frames · seed-7 checksum · median 10.575 s, all
+byte-identical to `335e615`); in-browser fidelity gate `PASS — 41 points + 14
+scans` = **55/55**; suite **555/555** · tsc ×2 exit 0 · eslint exit 0.
+
+`FighterSide` is gone → `ActorId = 'player' | \`enemy${number}\``. Constructor is
+`new Sim(rng, SimSetup, autoController)` with each enemy an
+`EnemySlot { spawn, controller }`. 15 red-first assertions in
+`tests/simNActor.test.ts`; **8 chaos plants all watched RED**, including the one
+this section warned about — a per-enemy `rng()` draw turned the *baseline* red.
+
+⚠️ **Two things the next step must know:**
+1. **A slash still resolves against the NEAREST living enemy only.** That is
+   deliberate, so **A3's** D5 loop can be written red-first. The reach budget is
+   already spent exactly once, in `truncateTo`.
+2. **The Focus kill bonus now pays on EVERY kill** (credited to the real killer).
+   Identical at N=1; an 8-mob encounter pays it 8×. Measure in A6, do not pre-tune.
+
+The original brief, kept because its reasoning still governs A2→A6:
 
 Pure refactor. **No new behaviour, no new constants, no new config values.** `player + enemies[]`.
 Work the inventory in §3.5 in order A→K; the type change in (A) will surface most of the rest for

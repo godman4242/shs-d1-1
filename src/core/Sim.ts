@@ -57,7 +57,24 @@ import type { Vec } from './vec';
  */
 export type Rng = () => number;
 
-export type FighterSide = 'player' | 'enemy';
+/**
+ * Stable identity of one actor in the arena (SESSION14 A1 / §3.5 A).
+ *
+ * Replaces the old `FighterSide = 'player' | 'enemy'` union, which WAS the 1v1
+ * assumption: seven event variants and five method signatures carried it, so
+ * nothing could address a third fighter. The player is always `'player'`;
+ * enemies are `enemy0`, `enemy1`, … **by spawn index**.
+ *
+ * ⚠️ Spawn order is identity AND iteration order — every loop over enemies runs
+ * in it, which is what keeps a crowd deterministic (§3 risk 2).
+ */
+export type ActorId = 'player' | `enemy${number}`;
+
+/** The player's actor id — the one fixed name in the arena. */
+export const PLAYER_ID: ActorId = 'player';
+
+/** The id of the enemy at spawn index `i`. */
+const enemyIdAt = (i: number): ActorId => `enemy${i}`;
 
 export type SimPhase = 'intro' | 'fighting' | 'ended';
 
@@ -70,24 +87,44 @@ export interface FighterSpawn extends FighterBase {
   chi?: number;
 }
 
+/**
+ * One enemy: where it spawns, and the controller that drives it.
+ *
+ * ⚠️ Every enemy MUST get its OWN controller instance. Controllers carry
+ * telegraph/mode state, so sharing one across a crowd would interleave several
+ * fighters' decision machines into a single state machine — the same trap the
+ * AUTO SLASH controller is separated from the enemy's for (D7).
+ */
+export interface EnemySlot {
+  spawn: FighterSpawn;
+  controller: OpponentController;
+}
+
+/** Everything the Sim needs to populate an arena: one player, N enemies. */
+export interface SimSetup {
+  player: FighterSpawn;
+  /** FIXED order — see `ActorId`. The duel is simply the array-of-one case. */
+  enemies: readonly EnemySlot[];
+}
+
 /** Typed events drained by the scene each frame and turned into FX/SFX. */
 export type SimEvent =
   | { type: 'fightStarted' }
-  | { type: 'fightEnded'; winner: FighterSide }
-  | { type: 'damage'; target: FighterSide; amount: number; crit: boolean; severed: string[] }
-  | { type: 'stanceSwitched'; who: FighterSide; from: StanceId; to: StanceId; focusCost: number }
-  | { type: 'stanceSwitchDenied'; who: FighterSide; needed: number; focus: number }
-  | { type: 'strikeEvaded'; by: FighterSide }
+  | { type: 'fightEnded'; winner: ActorId }
+  | { type: 'damage'; target: ActorId; amount: number; crit: boolean; severed: string[] }
+  | { type: 'stanceSwitched'; who: ActorId; from: StanceId; to: StanceId; focusCost: number }
+  | { type: 'stanceSwitchDenied'; who: ActorId; needed: number; focus: number }
+  | { type: 'strikeEvaded'; by: ActorId }
   | { type: 'comboChanged'; value: number }
   | { type: 'skillUsed'; verb: SkillVerb }
   | { type: 'skillDenied'; verb: SkillVerb; needed: number; chi: number }
-  | { type: 'invulnBlocked'; target: FighterSide }
+  | { type: 'invulnBlocked'; target: ActorId }
   | { type: 'kunaiThrown' }
   | { type: 'kunaiDeflected' }
   | { type: 'shunpoStarted' }
   | { type: 'shunpoEnded' }
   | { type: 'enemyTelegraph'; kind: 'strike' | 'stance'; durationMs: number }
-  | { type: 'strikeBlocked'; by: FighterSide }
+  | { type: 'strikeBlocked'; by: ActorId }
   /** AUTO SLASH synthesised this line — the scene DRAWS it (D7). */
   | { type: 'autoStroke'; points: readonly Vec[] };
 
@@ -160,6 +197,7 @@ interface JumpState {
  * one fixed frame of fill.
  */
 interface FighterState {
+  readonly id: ActorId;
   pos: Vec;
   hp: number;
   stance: StanceId;
@@ -193,8 +231,9 @@ const SHUNPO_MIN_UNITS = SHUNPO_MIN_TO_START * FIXED_HZ;
 /** Chi shares the integer frame-unit scheme (points × FIXED_HZ). */
 const CHI_MAX_UNITS = CHI_MAX * FIXED_HZ;
 
-function spawnFighter(spawn: FighterSpawn): FighterState {
+function spawnFighter(id: ActorId, spawn: FighterSpawn): FighterState {
   return {
+    id,
     pos: { ...spawn.pos },
     hp: spawn.hp,
     stance: spawn.stance,
@@ -222,15 +261,36 @@ function spawnFighter(spawn: FighterSpawn): FighterState {
  * literals (tests/config-purity.test.ts enforces all of it). Scenes render
  * what Sim computes and never own gameplay state.
  *
- * Stage-2 M2 surface: two fighters (player + enemy), phase model
- * (intro → fighting → ended; pre-FIGHT strokes discarded per the gate),
- * damage resolution with defense (heavy penalty applied in slash.ts — ONE
- * form only), Focus + Critical meters, stance switching (free out of
- * combat, Focus-gated in combat), SimEvent queue, fixed-step advance().
- * M3 adds: skills, projectiles, invuln, Shunpo, kill-beat mechanics.
+ * Surface: **a player plus N enemies** (SESSION14 A1 — the 1v1 duel is the
+ * array-of-one case, and `tests/duel-baseline.test.ts` pins that generalising
+ * it moved nothing), phase model (intro → fighting → ended; pre-FIGHT strokes
+ * discarded per the gate), damage resolution with defense (heavy penalty
+ * applied in slash.ts — ONE form only), Focus meter, stance switching (free out
+ * of combat, Focus-gated in combat), SimEvent queue, fixed-step advance(),
+ * skills, projectiles, invuln, Shunpo, kill-beat mechanics.
  */
+/** An enemy as the Sim holds it: its state, bound to the controller driving it. */
+interface EnemyActor {
+  readonly state: FighterState;
+  readonly controller: OpponentController;
+}
+
+/**
+ * A live kunai bound to the enemy that threw it (§3.5 H). The owner is carried
+ * because a kill has to credit its Focus bonus to the actual killer — with one
+ * enemy that was "the other fighter", which is the 1v1 assumption A1 removes.
+ */
+interface FlyingKunai {
+  proj: Projectile;
+  owner: FighterState;
+}
+
 export class Sim {
-  private readonly fighters: Record<FighterSide, FighterState>;
+  private readonly playerState: FighterState;
+  /** Enemies in SPAWN ORDER — the fixed iteration order everywhere (§3 risk 2). */
+  private readonly enemyActors: readonly EnemyActor[];
+  /** Player first, then enemies in spawn order — the one iteration order. */
+  private readonly allActors: readonly FighterState[];
   private phaseState: SimPhase = 'intro';
   private events: SimEvent[] = [];
   /** HIT COMBO — player-only HUD counter (the original shows no enemy combo). */
@@ -267,7 +327,7 @@ export class Sim {
   /** Frame the player's measured swing cycle ends — auto-slash never decides
    * mid-swing (D7). Stun is NOT modelled in this Sim (flagged). */
   private playerBusyUntilFrame = ZERO;
-  private kunai: Projectile[] = [];
+  private kunai: FlyingKunai[] = [];
   private shunpoUnits = SHUNPO_MAX_UNITS;
   private shunpoActive = false;
   /** Total clamped wall-clock ms fed to advance() since spawn. */
@@ -276,23 +336,48 @@ export class Sim {
 
   constructor(
     readonly rng: Rng,
-    readonly opponent: OpponentController,
-    spawns: { player: FighterSpawn; enemy: FighterSpawn },
+    setup: SimSetup,
     /**
      * The decision routine AUTO SLASH hands the player to. It must be its OWN
-     * instance, never the enemy's — the controllers carry mode state and
+     * instance, never an enemy's — the controllers carry mode state and
      * sharing one would interleave two fighters' telegraph machines.
      */
     readonly autoController: OpponentController | null = null,
   ) {
-    this.fighters = {
-      player: spawnFighter(spawns.player),
-      enemy: spawnFighter(spawns.enemy),
-    };
+    this.playerState = spawnFighter(PLAYER_ID, setup.player);
+    this.enemyActors = setup.enemies.map((slot, i) => ({
+      state: spawnFighter(enemyIdAt(i), slot.spawn),
+      controller: slot.controller,
+    }));
+    this.allActors = [this.playerState, ...this.enemyActors.map((a) => a.state)];
+  }
+
+  /** Look an actor up by id. Unknown ids THROW — a typo'd id that silently
+   * resolved to somebody would be a damage bug nobody could see. */
+  private actor(id: ActorId): FighterState {
+    const f = this.allActors.find((a) => a.id === id);
+    if (f === undefined) throw new Error(`Sim: unknown actor id '${id}'`);
+    return f;
+  }
+
+  /**
+   * The DUEL'S single opponent. ⚠️ Encounters must use `enemies` / `enemyIds` —
+   * this accessor exists so the 1v1 scene's call sites did not all have to be
+   * rewritten for a refactor that must not move the duel (D2, §3.5 B).
+   */
+  private firstEnemy(): FighterState {
+    const a = this.enemyActors.at(ZERO);
+    if (a === undefined) throw new Error('Sim.enemy: no enemies were spawned');
+    return a.state;
   }
 
   get phase(): SimPhase {
     return this.phaseState;
+  }
+
+  /** Narrowing-proof phase read — see its use inside tick()'s per-enemy loop. */
+  private isFighting(): boolean {
+    return this.phaseState === 'fighting';
   }
 
   /** True while the player's fighter is driven by the AI routine (D7). */
@@ -314,15 +399,31 @@ export class Sim {
   }
 
   get player(): FighterView {
-    return this.view('player');
+    return this.view(this.playerState);
   }
 
+  /** ⚠️ DUEL ONLY — the duel's single opponent. Encounters use `enemies`. */
   get enemy(): FighterView {
-    return this.view('enemy');
+    return this.view(this.firstEnemy());
+  }
+
+  /** ⚠️ DUEL ONLY — the id of that single opponent, for event matching. */
+  get enemyId(): ActorId {
+    return this.firstEnemy().id;
+  }
+
+  /** Every enemy, in spawn order (fresh views — never live refs). */
+  get enemies(): readonly FighterView[] {
+    return this.enemyActors.map((a) => this.view(a.state));
+  }
+
+  /** Every enemy's id, in spawn order. */
+  get enemyIds(): readonly ActorId[] {
+    return this.enemyActors.map((a) => a.state.id);
   }
 
   get playerJumping(): boolean {
-    return this.fighters.player.jump !== null;
+    return this.playerState.jump !== null;
   }
 
   /** Fixed frames elapsed since spawn — the Sim's own clock. */
@@ -349,7 +450,7 @@ export class Sim {
 
   /** Live kunai (fresh copies — never live refs). */
   get projectiles(): readonly Projectile[] {
-    return this.kunai.map((p) => ({ pos: { ...p.pos }, vel: { ...p.vel } }));
+    return this.kunai.map((k) => ({ pos: { ...k.proj.pos }, vel: { ...k.proj.vel } }));
   }
 
   /** Seconds until the skill is ready (0 = ready) — drives the HUD sweep. */
@@ -377,7 +478,7 @@ export class Sim {
    * a plain ground move farther than MOVE_RUN_THRESHOLD_PX runs, else walks.
    */
   private issueMoveOrder(targetX: number): void {
-    const player = this.fighters.player;
+    const player = this.playerState;
     const dist = Math.abs(targetX - player.pos.x);
     if (dist < MOVE_DEADZONE_PX) return;
     this.playerMove = {
@@ -399,8 +500,7 @@ export class Sim {
     this.queuedSkill = verb;
   }
 
-  private view(side: FighterSide): FighterView {
-    const f = this.fighters[side];
+  private view(f: FighterState): FighterView {
     return {
       pos: { ...f.pos },
       hp: f.hp,
@@ -415,8 +515,11 @@ export class Sim {
   }
 
   /** Axis-aligned hitbox rectangle around a fighter's current position. */
-  hitbox(side: FighterSide): Vec[] {
-    const f = this.fighters[side];
+  hitbox(id: ActorId): Vec[] {
+    return this.hitboxOf(this.actor(id));
+  }
+
+  private hitboxOf(f: FighterState): Vec[] {
     return [
       { x: f.pos.x - f.halfW, y: f.pos.y - f.halfH },
       { x: f.pos.x + f.halfW, y: f.pos.y - f.halfH },
@@ -439,7 +542,7 @@ export class Sim {
   beginCombat(): void {
     if (this.phaseState !== 'intro') return;
     this.phaseState = 'fighting';
-    this.fighters.player.invulnEndFrame = this.frameCount + SPAWN_INVULN_S * FIXED_HZ;
+    this.playerState.invulnEndFrame = this.frameCount + SPAWN_INVULN_S * FIXED_HZ;
     this.events.push({ type: 'fightStarted' });
   }
 
@@ -451,13 +554,13 @@ export class Sim {
    * committed; veto = key on the target stance instead). Denied switches
    * emit an event so the HUD can flash the Focus bar.
    */
-  requestStanceSwitch(side: FighterSide, to: StanceId): boolean {
-    const f = this.fighters[side];
+  requestStanceSwitch(id: ActorId, to: StanceId): boolean {
+    const f = this.actor(id);
     if (to === f.stance) return false;
     if (this.phaseState !== 'fighting') {
       const from = f.stance;
       f.stance = to;
-      this.events.push({ type: 'stanceSwitched', who: side, from, to, focusCost: ZERO });
+      this.events.push({ type: 'stanceSwitched', who: f.id, from, to, focusCost: ZERO });
       return true;
     }
     // CONTRACT-SRC (D9/P3): a flat 48 Focus, gated on affording it
@@ -467,7 +570,7 @@ export class Sim {
     if (f.focusUnits < cost) {
       this.events.push({
         type: 'stanceSwitchDenied',
-        who: side,
+        who: f.id,
         needed: cost,
         focus: f.focusUnits,
       });
@@ -476,7 +579,7 @@ export class Sim {
     const from = f.stance;
     f.focusUnits -= cost;
     f.stance = to;
-    this.events.push({ type: 'stanceSwitched', who: side, from, to, focusCost: cost });
+    this.events.push({ type: 'stanceSwitched', who: f.id, from, to, focusCost: cost });
     return true;
   }
 
@@ -497,8 +600,7 @@ export class Sim {
     // Degenerate strokes (taps) classify as 'slash' by default — gate here at
     // the core seam so no caller can land a full-damage tap (audit finding).
     if (stroke.points.length < TWO) return { gesture, slash: null, cutPoints: [] };
-    const player = this.fighters.player;
-    const enemy = this.fighters.enemy;
+    const player = this.playerState;
     if (gesture === 'slash') {
       // Any slash — hit or miss — is an offensive act: it ends spawn invuln.
       player.invulnEndFrame = ZERO;
@@ -537,24 +639,38 @@ export class Sim {
       // P3: the swing is NOT focus-gated. A full bar crits and zeroes; the
       // stance cost then subtracts (from zero, a no-op) and clamps at 0.
       const critReady = focusReady(player.focusUnits);
-      const result = resolveSlash(
-        cutPoints,
-        { polygon: this.hitbox('enemy'), stance: enemy.stance, hp: enemy.hp, defense: enemy.defense },
-        {
-          minDamage: player.minDamage,
-          damageRange: player.damageRange,
-          stance: player.stance,
-          crit: critReady,
-          stats: player.stats,
-        },
-      );
-      if (result.hit) {
+      // ⚠️ A1 resolves against the NEAREST living enemy only — the structural
+      // 1v1 assumption is gone (nothing reads a hard-wired `fighters.enemy`),
+      // but one swing still fells one foe. A3 turns this into a loop over every
+      // enemy the stroke crosses (D5); the reach budget is ALREADY spent, once,
+      // in `truncateTo` above, which is precisely what makes that loop safe.
+      const target = this.nearestLivingTarget();
+      const result: SlashResult =
+        target === null
+          ? { hit: false, damage: ZERO, crit: false, severed: [] }
+          : resolveSlash(
+              cutPoints,
+              {
+                polygon: this.hitboxOf(target),
+                stance: target.stance,
+                hp: target.hp,
+                defense: target.defense,
+              },
+              {
+                minDamage: player.minDamage,
+                damageRange: player.damageRange,
+                stance: player.stance,
+                crit: critReady,
+                stats: player.stats,
+              },
+            );
+      if (result.hit && target !== null) {
         // ⚠️ NO REACTION SEAM (D8). The enemy does not block or dodge in the
         // original, so a landing slash lands — a controller that still offers a
         // `react` method changes nothing.
         player.focusUnits = focusSpend(player.focusUnits, FOCUS_SPEND[player.stance]);
         this.emitCombo(this.comboCounter.hit());
-        this.dealDamage('enemy', result.damage, result.crit, result.severed);
+        this.dealDamage(player, target, result.damage, result.crit, result.severed);
       }
       return { gesture, slash: result, cutPoints };
     }
@@ -592,10 +708,10 @@ export class Sim {
    * Sim only executes, honoring the player's evasion states. An airborne
    * player evades ground strikes (jump dodge — the original's core defense
    * verb alongside stances). */
-  /** Snapshot handed to the opponent controller each fighting tick. */
-  private opponentView(): OpponentView {
-    const player = this.fighters.player;
-    const enemy = this.fighters.enemy;
+  /** Snapshot handed to ONE enemy's controller each fighting tick — each enemy
+   * sees itself as `enemy*` and the player as `player*` (§3.5 D). */
+  private opponentView(enemy: FighterState): OpponentView {
+    const player = this.playerState;
     return {
       playerPos: { ...player.pos },
       enemyPos: { ...enemy.pos },
@@ -607,20 +723,18 @@ export class Sim {
   }
 
   /** Invuln (spawn) or i-frames (Smoke Bomb) nullify incoming damage. */
-  private isProtected(side: FighterSide): boolean {
-    const f = this.fighters[side];
+  private isProtected(f: FighterState): boolean {
     return this.frameCount < f.invulnEndFrame || this.frameCount < f.iframesEndFrame;
   }
 
-  private executeStrike(): void {
-    const player = this.fighters.player;
-    const enemy = this.fighters.enemy;
+  private executeStrike(enemy: FighterState): void {
+    const player = this.playerState;
     if (player.jump !== null) {
-      this.events.push({ type: 'strikeEvaded', by: 'player' });
+      this.events.push({ type: 'strikeEvaded', by: player.id });
       return;
     }
-    if (this.isProtected('player')) {
-      this.events.push({ type: 'invulnBlocked', target: 'player' });
+    if (this.isProtected(player)) {
+      this.events.push({ type: 'invulnBlocked', target: player.id });
       return;
     }
     const critReady = focusReady(enemy.focusUnits);
@@ -635,23 +749,43 @@ export class Sim {
       },
       { stance: player.stance, defense: player.defense },
     );
-    this.dealDamage('player', damage, critReady, []);
+    this.dealDamage(enemy, player, damage, critReady, []);
   }
 
-  private dealDamage(target: FighterSide, amount: number, crit: boolean, severed: string[]): void {
+  /**
+   * Apply damage from `attacker` to `target` (§3.5 F — the subtlest generalisation).
+   *
+   * ⚠️ The killer used to be derived as "the other fighter", which only has a
+   * meaning at N=2. It is now passed in, so a kunai credits its thrower and a
+   * crowd credits whichever mob landed the blow.
+   */
+  private dealDamage(
+    attacker: FighterState,
+    target: FighterState,
+    amount: number,
+    crit: boolean,
+    severed: string[],
+  ): void {
     // AUDIT FIX (major): a mid-tick kill flips the phase to 'ended'; any
     // damage still in flight the same tick (kunai, second source) must not
     // land — the old path emitted a SECOND fightEnded with the opposite
     // winner ("kill beat fires exactly once" is a gate item).
     if (this.phaseState === 'ended') return;
-    const f = this.fighters[target];
-    f.hp = Math.max(ZERO, f.hp - amount);
-    this.events.push({ type: 'damage', target, amount, crit, severed });
-    if (target === 'player') {
+    target.hp = Math.max(ZERO, target.hp - amount);
+    this.events.push({ type: 'damage', target: target.id, amount, crit, severed });
+    if (target === this.playerState) {
       this.comboCounter.damaged();
       this.emitCombo(this.comboCounter.value);
     }
-    if (f.hp === ZERO) {
+    if (target.hp === ZERO) {
+      attacker.focusUnits = focusOnKill(attacker.focusUnits, FOCUS_KILL_BONUS);
+      // ⚠️ THE FIGHT ENDS WHEN THE PLAYER DIES, OR WHEN **EVERY** ENEMY IS DEAD.
+      // The old rule was "on the first death", which is the same thing at N=1
+      // and ends an 8-mob encounter on the first kill at N=8 — with every other
+      // test still passing, which is what makes it the dangerous one (§3.5 F).
+      const over =
+        target === this.playerState || this.enemyActors.every((a) => a.state.hp <= ZERO);
+      if (!over) return;
       this.phaseState = 'ended';
       // Shunpo cannot outlive the fight: a kill landed while slow-mo was
       // active left timeScale stuck at SHUNPO_TIMESCALE with no shunpoEnded
@@ -660,12 +794,9 @@ export class Sim {
         this.shunpoActive = false;
         this.events.push({ type: 'shunpoEnded' });
       }
-      const killer = this.fighters[target === 'enemy' ? 'player' : 'enemy'];
-      killer.focusUnits = focusOnKill(killer.focusUnits, FOCUS_KILL_BONUS);
-      const winner: FighterSide = target === 'enemy' ? 'player' : 'enemy';
       // D8 (SESSION13): a kill does NOT touch the combo. The Stage-2
       // "resets to 1 on kill" CONTRACT was wrong — see docs/DIVERGENCES.md.
-      this.events.push({ type: 'fightEnded', winner });
+      this.events.push({ type: 'fightEnded', winner: attacker.id });
     }
   }
 
@@ -724,16 +855,16 @@ export class Sim {
    * Movement flows every tick (so the fighter actually closes), while the
    * SWING is gated: never mid-swing, never airborne, and at most one decision
    * per AI_THINK_INTERVAL_MS. Targeting is nearest living enemy by |Δx| with
-   * unlimited range and no line-of-sight — trivially the one enemy, because
-   * this Sim is hard-wired 1v1 (multi-enemy is queued, kickoff §7).
+   * unlimited range and no line-of-sight — which now means what it says, since
+   * A1 gave the Sim a real crowd to pick from.
    */
   private updateAutoSlash(): void {
     const ctrl = this.autoController;
     if (ctrl === null) return;
-    const player = this.fighters.player;
+    const player = this.playerState;
     const target = this.nearestLivingTarget();
     if (target === null) return;
-    const intent = ctrl.next(this.frameCount, this.autoView());
+    const intent = ctrl.next(this.frameCount, this.autoView(target));
     // Movement: every tick, at the player's own speed, arena-clamped.
     if (player.jump === null && intent.moveX !== undefined && Number.isFinite(intent.moveX)) {
       // Closing on a FIGHTER, so it runs and stops MOVE_STANDING_RANGE_PX short
@@ -758,10 +889,26 @@ export class Sim {
     this.applyStroke(new DrawnStroke(points), 'auto');
   }
 
-  /** Nearest LIVING enemy by |Δx| — unlimited range, no line-of-sight (D7). */
+  /**
+   * Nearest LIVING enemy by |Δx| — unlimited range, no line-of-sight (D7/P4).
+   *
+   * Memoryless by construction: no aggro table, no last-attacker memory, just
+   * the horizontal gap. Ties go to the earlier spawn index, so the choice is
+   * deterministic. (No `Infinity` sentinel — core/ bans it by intent.)
+   */
   private nearestLivingTarget(): FighterState | null {
-    const enemy = this.fighters.enemy;
-    return enemy.hp > ZERO ? enemy : null;
+    const fromX = this.playerState.pos.x;
+    let best: FighterState | null = null;
+    let bestDx = ZERO;
+    for (const a of this.enemyActors) {
+      if (a.state.hp <= ZERO) continue;
+      const dx = Math.abs(a.state.pos.x - fromX);
+      if (best === null || dx < bestDx) {
+        best = a.state;
+        bestDx = dx;
+      }
+    }
+    return best;
   }
 
   /**
@@ -772,7 +919,7 @@ export class Sim {
    * to copy.
    */
   private synthesizeStrokePoints(targetPos: Vec): Vec[] {
-    const player = this.fighters.player;
+    const player = this.playerState;
     const reach = reachFor(player.stance, player.stats);
     const count = Math.max(TWO, Math.floor(reach / AUTO_SLASH_POINT_SPACING));
     const dir = targetPos.x < player.pos.x ? -ONE : ONE;
@@ -784,27 +931,25 @@ export class Sim {
   }
 
   /**
-   * The view handed to the auto controller, with the two fighters SWAPPED so
-   * the routine reads the player as "self" and the enemy as its target — the
-   * literal meaning of "hands your fighter to the enemy AI routine".
+   * The view handed to the auto controller, with the fighters SWAPPED so the
+   * routine reads the player as "self" and its chosen target as the opponent —
+   * the literal meaning of "hands your fighter to the enemy AI routine".
    */
-  private autoView(): OpponentView {
-    const player = this.fighters.player;
-    const enemy = this.fighters.enemy;
+  private autoView(target: FighterState): OpponentView {
+    const player = this.playerState;
     return {
-      playerPos: { ...enemy.pos },
+      playerPos: { ...target.pos },
       enemyPos: { ...player.pos },
-      playerStance: enemy.stance,
+      playerStance: target.stance,
       enemyStance: player.stance,
       enemyFocus: player.focusUnits,
-      playerJumping: enemy.jump !== null,
+      playerJumping: target.jump !== null,
     };
   }
 
   private tryCastSkill(verb: SkillVerb): void {
     if (this.frameCount < this.cooldownUntil[verb]) return;
-    const player = this.fighters.player;
-    const enemy = this.fighters.enemy;
+    const player = this.playerState;
     // Chi gate (M3): too expensive → denied, and the cooldown is NOT
     // consumed (chaos-pinned). A cooldown-blocked cast stays silent
     // (Stage-2 behavior); a chi-blocked one is announced for the HUD cue.
@@ -821,19 +966,26 @@ export class Sim {
     player.chiUnits -= costUnits;
     if (verb === 'chiPunch') {
       // CONTRACT: on-screen 10 dealt — flat, bypasses defense. Offensive:
-      // ends spawn invuln like a slash.
+      // ends spawn invuln like a slash. Nearest living enemy (P4), same
+      // memoryless rule every other targeted verb uses.
       player.invulnEndFrame = ZERO;
-      this.dealDamage('enemy', CHI_PUNCH_DMG_L1, false, []);
+      const target = this.nearestLivingTarget();
+      if (target !== null) this.dealDamage(player, target, CHI_PUNCH_DMG_L1, false, []);
     } else if (verb === 'smokeBomb') {
-      // Dash AWAY from the enemy, clamped to the arena; grants i-frames.
-      const away = player.pos.x < enemy.pos.x ? -ONE : ONE;
-      player.pos = {
-        x: Math.max(
-          player.halfW,
-          Math.min(WORLD_WIDTH - player.halfW, player.pos.x + away * SMOKE_BOMB_DISTANCE),
-        ),
-        y: player.pos.y,
-      };
+      // Dash AWAY from the nearest living enemy, clamped to the arena; grants
+      // i-frames. With nobody left to flee from there is no direction to pick,
+      // so the i-frames still land and the position does not move.
+      const threat = this.nearestLivingTarget();
+      if (threat !== null) {
+        const away = player.pos.x < threat.pos.x ? -ONE : ONE;
+        player.pos = {
+          x: Math.max(
+            player.halfW,
+            Math.min(WORLD_WIDTH - player.halfW, player.pos.x + away * SMOKE_BOMB_DISTANCE),
+          ),
+          y: player.pos.y,
+        };
+      }
       player.iframesEndFrame = this.frameCount + msToFrames(SMOKE_BOMB_IFRAMES_MS);
     } else {
       // stab: opens the deflect window. Whether it can actually swat is
@@ -845,37 +997,42 @@ export class Sim {
     this.events.push({ type: 'skillUsed', verb });
   }
 
-  private throwKunai(): void {
+  /** PROJECTILE_MAX_ACTIVE is an ARENA-WIDE cap, not per thrower. */
+  private throwKunai(thrower: FighterState): void {
     if (this.kunai.length >= PROJECTILE_MAX_ACTIVE) return;
-    this.kunai.push(spawnProjectile(this.fighters.enemy.pos, this.fighters.player.pos));
+    this.kunai.push({
+      proj: spawnProjectile(thrower.pos, this.playerState.pos),
+      owner: thrower,
+    });
     this.events.push({ type: 'kunaiThrown' });
   }
 
   /** Step every kunai one frame: deflect (stab window) beats hit; hits on a
    * protected player are blocked+absorbed; off-arena kunai despawn. */
   private stepKunai(): void {
-    const player = this.fighters.player;
+    const player = this.playerState;
     const windowOpen = this.frameCount < this.deflectEndFrame;
-    const survivors: Projectile[] = [];
-    for (const p of this.kunai) {
-      const moved = stepProjectile(p);
+    const survivors: FlyingKunai[] = [];
+    for (const k of this.kunai) {
+      const moved = stepProjectile(k.proj);
       const distToPlayer = Math.hypot(moved.pos.x - player.pos.x, moved.pos.y - player.pos.y);
       if (windowOpen && player.deflectLearned && distToPlayer <= DEFLECT_RADIUS) {
         this.events.push({ type: 'kunaiDeflected' });
         continue;
       }
       if (projectileHits(moved, player.pos)) {
-        if (this.isProtected('player')) {
-          this.events.push({ type: 'invulnBlocked', target: 'player' });
+        if (this.isProtected(player)) {
+          this.events.push({ type: 'invulnBlocked', target: player.id });
         } else {
           // INFERRED: kunai chip damage is flat (archer chip pattern) —
-          // defense does not subtract from PROJECTILE_DMG.
-          this.dealDamage('player', PROJECTILE_DMG, false, []);
+          // defense does not subtract from PROJECTILE_DMG. The kill, if it is
+          // one, is credited to the thrower (§3.5 H).
+          this.dealDamage(k.owner, player, PROJECTILE_DMG, false, []);
         }
         continue;
       }
       if (isOffArena(moved)) continue;
-      survivors.push(moved);
+      survivors.push({ proj: moved, owner: k.owner });
     }
     this.kunai = survivors;
   }
@@ -885,7 +1042,9 @@ export class Sim {
     this.frameCount += ONE;
     if (this.phaseState === 'fighting') {
       // Meters fill only during live combat (not intro, not post-kill).
-      for (const f of Object.values(this.fighters)) {
+      // `allActors` is player-first, then enemies in spawn order — the same
+      // order the old two-key record iterated in, generalised.
+      for (const f of this.allActors) {
         // Residual accumulator (D4) — spend-safe by construction.
         const filled = focusTick(f.focusUnits, f.focusAcc);
         f.focusUnits = filled.units;
@@ -898,7 +1057,7 @@ export class Sim {
       // Player movement. Mouse hold-to-run takes priority (Session 11,
       // Tip #27: HOLD mouse to run toward cursor); A/D is a dev-seam fallback.
       // The jump arc owns the position while airborne.
-      const player = this.fighters.player;
+      const player = this.playerState;
       // ⚠️ THE DASH IS CHECKED FIRST, before the auto/manual split. It owns
       // position while it runs, and it is set by BOTH paths — a manual stroke
       // and an AUTO SLASH stroke alike. Putting the auto branch first meant an
@@ -955,32 +1114,50 @@ export class Sim {
       // combat sub-steps (the dead don't strike, throw, or get hit — audit).
       // Via the getter: TS narrowing can't see tryCastSkill mutating phase.
       if (this.phase !== 'fighting') return;
-      const intent: OpponentIntent = this.opponent.next(this.frameCount, this.opponentView());
-      if (intent.telegraph !== undefined) {
-        this.events.push({
-          type: 'enemyTelegraph',
-          kind: intent.telegraph.kind,
-          durationMs: intent.telegraph.durationMs,
-        });
+      // ⚠️ ONE PASS PER ENEMY, IN SPAWN ORDER, EACH THROUGH ITS OWN CONTROLLER
+      // (§3.5 E, P5). There is no attack token and no shared cooldown: the
+      // apparent turn-taking in the footage is emergent from independent
+      // timers plus the melee range gate, so two mobs committing on the same
+      // frame is allowed — and A6 measures that it actually happens.
+      for (const actor of this.enemyActors) {
+        // A mid-loop kill ends the tick's combat sub-steps: the dead neither
+        // strike nor are struck (the same audit rule the pre-loop check
+        // enforces at N=1, now enforced BETWEEN enemies too). Read through a
+        // METHOD on purpose — the compiler narrows `phase` across the guard
+        // above and would call this re-check dead code, but a strike inside
+        // this very loop genuinely flips it.
+        if (!this.isFighting()) break;
+        const enemy = actor.state;
+        if (enemy.hp <= ZERO) continue;
+        const intent: OpponentIntent = actor.controller.next(
+          this.frameCount,
+          this.opponentView(enemy),
+        );
+        if (intent.telegraph !== undefined) {
+          this.events.push({
+            type: 'enemyTelegraph',
+            kind: intent.telegraph.kind,
+            durationMs: intent.telegraph.durationMs,
+          });
+        }
+        if (intent.moveX !== undefined && Number.isFinite(intent.moveX)) {
+          const stepMs = MS_PER_S / FIXED_HZ;
+          const dir = Math.max(-ONE, Math.min(ONE, intent.moveX));
+          const x = enemy.pos.x + dir * ENEMY_SPEED * stepMs;
+          enemy.pos = {
+            x: Math.max(enemy.halfW, Math.min(WORLD_WIDTH - enemy.halfW, x)),
+            y: enemy.pos.y,
+          };
+        }
+        if (intent.switchStance !== undefined) {
+          this.requestStanceSwitch(enemy.id, intent.switchStance);
+        }
+        if (intent.strike === true) this.executeStrike(enemy);
+        if (intent.throwKunai === true) this.throwKunai(enemy);
       }
-      if (intent.moveX !== undefined && Number.isFinite(intent.moveX)) {
-        const enemy = this.fighters.enemy;
-        const stepMs = MS_PER_S / FIXED_HZ;
-        const dir = Math.max(-ONE, Math.min(ONE, intent.moveX));
-        const x = enemy.pos.x + dir * ENEMY_SPEED * stepMs;
-        enemy.pos = {
-          x: Math.max(enemy.halfW, Math.min(WORLD_WIDTH - enemy.halfW, x)),
-          y: enemy.pos.y,
-        };
-      }
-      if (intent.switchStance !== undefined) {
-        this.requestStanceSwitch('enemy', intent.switchStance);
-      }
-      if (intent.strike === true) this.executeStrike();
-      if (intent.throwKunai === true) this.throwKunai();
       this.stepKunai();
     }
-    const player = this.fighters.player;
+    const player = this.playerState;
     if (player.jump === null) return;
     player.jump.frame += ONE;
     const t = player.jump.frame / JUMP_DURATION_FRAMES;

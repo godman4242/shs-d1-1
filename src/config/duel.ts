@@ -21,6 +21,12 @@ export interface SpawnPoint {
  * hitbox 26×60 → 22×50 (≈ 44×100 world px capsules, rendering back to the
  * same 52×120 stage box).
  */
+/**
+ * ⚠️ SESSION14 A1: this `'player' | 'enemy'` is a SANCTIONED survivor of the
+ * N-actor refactor. It is not a gameplay path — it is the DUEL's two spawn
+ * POINTS, and a duel has exactly two. Encounters get their own layout in A2
+ * (INFERRED, per D10) rather than widening this one.
+ */
 export const DUEL_SPAWNS: Record<'player' | 'enemy', SpawnPoint> = {
   player: { pos: { x: 190, y: 358 }, halfW: 22, halfH: 50 },
   enemy: { pos: { x: 557, y: 358 }, halfW: 22, halfH: 50 },

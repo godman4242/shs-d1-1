@@ -71,7 +71,11 @@ const makeSim = (
   p: Partial<FighterSpawn> = {},
   e: Partial<FighterSpawn> = {},
 ): Sim => {
-  const sim = new Sim(() => 0.5, idle, { player: playerSpawn(p), enemy: enemySpawn(e) }, auto);
+  const sim = new Sim(
+    () => 0.5,
+    { player: playerSpawn(p), enemies: [{ spawn: enemySpawn(e), controller: idle }] },
+    auto,
+  );
   sim.beginCombat();
   sim.drainEvents();
   return sim;
@@ -143,7 +147,7 @@ describe('AUTO SLASH — the synthesised stroke goes through the SAME pipeline',
     const beforeX = sim.player.pos.x;
     tickN(sim, 1);
     const evs = sim.drainEvents();
-    expect(evs.filter((e) => e.type === 'damage' && e.target === 'enemy')).toHaveLength(1);
+    expect(evs.filter((e) => e.type === 'damage' && e.target === sim.enemyId)).toHaveLength(1);
     expect(sim.enemy.hp).toBeLessThan(150);
     expect(sim.combo).toBe(1);
     // The dash is ARMED by the swing and travels from the following tick — the

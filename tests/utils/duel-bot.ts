@@ -10,7 +10,7 @@
  */
 import { AI_TIERS } from '../../src/config/ai';
 import { PLAYER_BASE } from '../../src/config/combat-sim';
-import { duelSpawns } from '../../src/core/duelSetup';
+import { duelSetup } from '../../src/core/duelSetup';
 import { reachFor } from '../../src/core/mastery';
 import { FIXED_HZ } from '../../src/config/timing';
 import { AISeamController } from '../../src/core/AISeamController';
@@ -53,7 +53,7 @@ export function runDuel(seed: number, policy: 'good' | 'none'): DuelOutcome {
   const rng = mulberry32(seed);
   // The enemy is spawned through the SAME derivation the scene uses (D3), so
   // the harness measures the real model rather than an authored seed.
-  const sim = new Sim(rng, new AISeamController(rng, AI_TIERS.normal), duelSpawns());
+  const sim = new Sim(rng, duelSetup(new AISeamController(rng, AI_TIERS.normal)));
   sim.beginCombat();
 
   let checksum = 0;

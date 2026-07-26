@@ -6,7 +6,7 @@
 > prerequisites, all already resolved from `SOURCE_CONSTANTS.md` §3.9 and
 > `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. There is NO research step.**
 >
-> ## ▶ **A0 IS DONE. START AT §4 A1.**
+> ## ▶ **A0 + A1 ARE DONE. START AT §4 A2.**
 >
 > Read the kickoff's **§3.5 first** — it is a symbol-level inventory of every
 > place the codebase assumes one enemy, grouped by what the fix is, with
@@ -39,12 +39,43 @@
 > | Step | State |
 > |---|---|
 > | **A0** record the duel baseline BEFORE refactoring | ✅ **DONE** — `tests/duel-baseline.test.ts` |
-> | A1 `Sim` → N-actor, N=1 byte-identical | ⬜ **next** |
-> | A2 mob spawns · one-hit kills · corpses | ⬜ |
+> | **A1** `Sim` → N-actor, N=1 byte-identical | ✅ **DONE** — see below |
+> | A2 mob spawns · one-hit kills · corpses | ⬜ **next** |
 > | A3 one stroke, many enemies | ⬜ |
 > | A4 `EncounterScene` + damage popups | ⬜ |
 > | A5 mob AI (1.0 s cadence, hitbox blocking) | ⬜ |
 > | A6 observe turn-taking · the `[3,10] s` band | ⬜ |
+>
+> ### ✅ A1 CLOSED — and the duel did not move
+>
+> **Suite 555/555 · tsc ×2 exit 0 · eslint exit 0 · in-browser fidelity gate
+> `PASS — 41 points + 14 scans` (55/55) · zero console errors.**
+>
+> `Sim` is now **a player plus an array of enemies**; `FighterSide` is gone,
+> replaced by `ActorId = 'player' | \`enemy${number}\`` (spawn index = identity =
+> iteration order). Constructor is `new Sim(rng, SimSetup, autoController)`,
+> where each enemy arrives as an `EnemySlot { spawn, controller }` — bundled so
+> every enemy provably gets its OWN controller instance.
+> - ⛔ **The binding invariant held.** `tests/duel-baseline.test.ts` is green and
+>   **UNEDITED**: 24 good-play frames, 24 no-play frames, the seed-7 checksum
+>   and the **10.575 s** median byte-identical to `335e615`.
+> - **The compiler walked the whole §3.5 inventory**, exactly as promised: 13
+>   type errors, every one a call site on the list, zero surprises. AUTO SLASH
+>   (the nominated canary) needed no change beyond its constructor call.
+> - **8 chaos plants, all watched RED.** The one that matters: a single `rng()`
+>   draw per enemy per tick turned **`duel-baseline.test.ts` itself RED** — §3
+>   risk 2's crowd-size stream shift, caught by the seed-7 checksum.
+> - **Fight-end rule generalised** (§3.5 F): ends when the player dies **or every
+>   enemy is dead**, not on the first death. Invisible at N=1; at N=8 the old
+>   rule would end an encounter on the first kill with every other test passing.
+> - ⚠️ **Flag for A2/A6:** the Focus kill bonus now pays on EVERY kill, credited
+>   to the actual killer. Identical at N=1; an 8-mob encounter will pay it eight
+>   times. **Measure in A6 before tuning** — that is a model prediction, not a knob.
+> - **Left undone on purpose:** a slash still resolves against the NEAREST living
+>   enemy only. D5 ("one stroke, every enemy it crosses") is **A3** and must be
+>   red-first there; the reach budget is already spent exactly once in
+>   `truncateTo`, which is what makes that loop safe.
+> - Full record: `docs/DIVERGENCES.md` "SESSION 14 — A1".
 >
 > **A0 CLOSED.** The duel's exact behaviour at `335e615` is now pinned: all 24
 > good-play frame counts, all 24 no-play frame counts, the seed-7 outcome

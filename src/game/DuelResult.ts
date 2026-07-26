@@ -28,6 +28,11 @@ export class DuelResult extends Phaser.Scene {
     super('duel-result');
   }
 
+  /**
+   * ⚠️ SESSION14 A1: this `'player' | 'enemy'` is a SANCTIONED survivor of the
+   * N-actor refactor — it is this SCENE'S data contract ("which side won the
+   * duel"), not a Sim type. `DuelScene` folds the sim's `ActorId` down to it.
+   */
   create(data: { winner: 'player' | 'enemy' }): void {
     const won = data.winner === 'player';
 
