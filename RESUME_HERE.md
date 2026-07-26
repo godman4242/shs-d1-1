@@ -4,12 +4,12 @@
 > Kickoff: **`docs/sessions/SESSION15_KICKOFF.md`** (the art is an IMPORT problem).
 >
 > ### ✅ A2 CLOSED — the converter works, and the first OG art is committed
-> **Suite 634/634 · tsc ×2 exit 0 · eslint exit 0 · 13 chaos plants all watched RED.**
+> **Suite 636/636 · tsc ×2 exit 0 · eslint exit 0 · 15 chaos plants all watched RED.**
 > New: `scripts/art/svgShape.ts` (pure converter) · `scripts/art/generate.ts`
 > (emitter) · `src/game/art/types.ts` · **`src/game/art/generated/shape2664.ts`
 > — the OG samurai's head, compiled into the build.**
 > - **Red-first**, on the three fixtures the kickoff names (triangle, curve,
->   hole) before the converter saw any real art. 39 tests in
+>   hole) before the converter saw any real art. 41 tests in
 >   `tests/svgShape.test.ts`.
 > - **The `<g>` translate is IGNORED on purpose** — FFDec's `d` data is already
 >   shape-local with the joint pivot at (0,0). Baking it in breaks every A4
@@ -33,6 +33,13 @@
 >   probed from the BOUNDARY. And plant 5 came back green because the degenerate
 >   fixture was rejected by a vertex-count check before the zero-area filter ever
 >   ran — **third session running that a plant found a dead guard, not a bug.**
+> - ⚠️ **A BUG THE TESTS COULD NOT SEE.** With the suite green, an
+>   original-vs-converted overlay showed a **notch in the crown of the head**:
+>   FFDec writes outlines as OPEN paths whose last point equals the first with
+>   no `Z`, and welding strips that vertex. Fixed (closed if `Z` *or* it returns
+>   to its start; force-closing everything instead grows a phantom edge across
+>   the ear crease — both halves pinned). **Numeric tests cannot see a hole in a
+>   line — render at every step.**
 > - **Regenerating is byte-identical** (same md5 twice), so the committed art is
 >   reproducible. `npx vite-node scripts/art/generate.ts -- <id>`.
 > - Full record: `docs/DIVERGENCES.md` "SESSION 15 — A2".

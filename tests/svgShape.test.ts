@@ -279,6 +279,24 @@ describe('convertShapeSvg: a REAL part shape (2664, the head)', () => {
     expect(Math.min(...xs)).toBeLessThan(0);
   });
 
+  // Found by eye, not by a test: the converted head had a visible NOTCH at the
+  // crown. FFDec writes the outline as an OPEN path whose last point happens to
+  // equal its first, with no `Z`; weld() strips that duplicate, leaving the
+  // stroke one segment short of closing. Fills are unaffected (implicitly
+  // closed) — only strokes show it, as a gap in the OG's heavy black outline.
+  it('closes an outline whose path returns to its start without a Z', () => {
+    const outline = art.strokes[0]?.polylines[0] ?? [];
+    expect(outline.length).toBeGreaterThan(8);
+    expect([outline.at(0), outline.at(1)]).toEqual([outline.at(-2), outline.at(-1)]);
+  });
+
+  it('does NOT close an outline that genuinely ends elsewhere', () => {
+    // the ear crease: starts at (2.75,-4.05), ends at (2.45,-1.75)
+    const crease = art.strokes[1]?.polylines[0] ?? [];
+    expect(crease.length).toBeGreaterThan(4);
+    expect([crease.at(0), crease.at(1)]).not.toEqual([crease.at(-2), crease.at(-1)]);
+  });
+
   it('emits no NaN anywhere', () => {
     const all = [
       ...art.fills.flatMap((f) => f.rings.flatMap((r) => [...r.points])),

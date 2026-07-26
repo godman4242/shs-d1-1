@@ -335,13 +335,23 @@ export function convertFillPath(d: string, tolerance: number): Ring[] {
   return raw.map((points, i) => ({ points, hole: holes.at(i) === true }));
 }
 
-/** One `stroke=` path's data → open polylines (no hole logic applies). */
+/** One `stroke=` path's data → polylines (no hole logic applies). */
 export function convertStrokePath(d: string, tolerance: number): number[][] {
   return parsePath(d)
     .map((s) => {
-      const pts = weld(flattenSubpath(s, tolerance));
-      // A closed stroke must return to its start; weld() removed that vertex.
-      if (s.closed && pts.length >= 4) pts.push(coord(pts, 0), coord(pts, 1));
+      const raw = flattenSubpath(s, tolerance);
+      // ⚠️ FFDec writes the OG's outlines as OPEN paths whose last point simply
+      // equals the first — no `Z`. weld() strips that duplicate, which left a
+      // visible NOTCH in the crown of the head. So a subpath counts as closed
+      // if it says `Z` *or* if it returns to where it started; unclosed strokes
+      // (the ear crease) must stay open, or the crease grows a phantom edge.
+      const n = raw.length;
+      const returnsToStart =
+        n >= 6 &&
+        Math.abs(coord(raw, 0) - coord(raw, n - 2)) < WELD &&
+        Math.abs(coord(raw, 1) - coord(raw, n - 1)) < WELD;
+      const pts = weld(raw);
+      if ((s.closed || returnsToStart) && pts.length >= 4) pts.push(coord(pts, 0), coord(pts, 1));
       return pts;
     })
     .filter((p) => p.length >= 4);

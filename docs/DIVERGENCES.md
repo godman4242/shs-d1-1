@@ -1282,10 +1282,30 @@ only the area filter can reject. This is the third session in a row where a
 plant found a vacuous guard rather than a code bug; the plants keep earning
 their cost.
 
-### Chaos plants — thirteen watched RED, then reverted
+### ⚠️ THE BUG THE TESTS DID NOT CATCH — found by looking at it
+
+With the suite green, an original-vs-converted overlay showed a visible **notch
+in the crown of the head**. FFDec writes the OG's outlines as **OPEN** paths
+whose last point simply *equals* the first, with no `Z`; `weld()` strips that
+duplicate vertex, leaving the stroke one segment short of closing. Fills were
+unaffected — they are implicitly closed — so every bounds, colour, vertex-count
+and NaN test passed while the art was visibly wrong.
+
+The rule is now: a stroke subpath is closed if it says `Z` **or** if it returns
+to where it started. Both halves matter and both are pinned — force-closing
+*every* stroke instead grows a phantom edge across the ear crease, which is
+plant 15.
+
+**Process note:** three numeric tests and a NaN sweep could not see a hole in a
+line. The kickoff's insistence on rendering at each step (A3 before A4) is doing
+real work — this cost five minutes at A2 and would have been diagnosed as a
+"pivot problem" at A4, one of §2's two permitted diagnoses, and the wrong one.
+
+### Chaos plants — fifteen watched RED, then reverted
 
 All 13 bit: even-odd→nonzero winding · interior-vs-boundary probe · implicit
 repeated commands dropped · unsupported commands skipped · degenerate rings kept
 · tolerance ignored · FFDec's bumped stroke width · `<g>` translate baked in ·
 truncated coordinates returning 0 · provenance header stripped · approximation
-declaration hidden · characterId falsified · a `fetch()` added to generated art.
+declaration hidden · characterId falsified · a `fetch()` added to generated art ·
+outline closure dropped (the crown notch) · every stroke force-closed.
