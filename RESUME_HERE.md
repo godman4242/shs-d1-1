@@ -1,8 +1,34 @@
 # RESUME HERE
 
-> ## ▶ SESSION 16 — **R1 + R2 CLOSED. START AT §4 A3 (render it in the browser).**
-> Kickoff: **`docs/sessions/SESSION16_KICKOFF.md`** — its §4 R1/R2 are done; **A3,
-> A3.5 and A3.6 are the remaining work** and are unchanged.
+> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION17_KICKOFF.md`**
+> **PUT THE OG ART ON SCREEN, AT A MEASURED SIZE.** Self-contained, the only
+> kickoff to plan from, **no open prerequisites.**
+>
+> ⛔ **IT SUPERSEDES `SESSION16_KICKOFF.md` §4 A3/A3.5/A3.6 — do NOT work from
+> that file.** Its A3 recipe now *describes a bug* ("fillPoints per ring, THEN
+> lineStyle + strokePoints" is the fills-then-strokes defect R2 removed), and its
+> A3 size gate was derived from the SVG header rather than from the committed art.
+>
+> ⭐ **The size gate is CORRECTED and re-measured from the data the renderer will
+> actually draw:** inked bbox **17.14 × 20.16 stage px ±1** (geometry-only is
+> 15.34 × 18.36 — 1.8 px out, so *measuring the fill instead of the ink would
+> fail a correct render*; both numbers are in the kickoff for that reason).
+> ⭐ **P8 is CLOSED from Phaser's official API docs:**
+> `Phaser.Geom.Polygon.Earcut(data, [holeIndices], [dimensions])`, public since
+> 3.50 — plus `Earcut.deviation(...)`, which returns **0 when a triangulation is
+> fully correct**, handing A4 a numeric hole-rendering gate nobody had looked for.
+> ⇒ **no build-time triangulation fallback is needed.**
+> ⭐ **Baseline is `04352a9`, 664 tests green.** First real work is A3.1: a PURE
+> planner in `src/core/artPlan.ts`, because `tests/no-game-imports.test.ts`
+> forbids tests from importing `src/game/` — so a renderer written inside a scene
+> is **untestable by construction**, and paint order is the one finding A3's own
+> pixels cannot check.
+>
+> ---
+>
+> ## ▶ SESSION 16 — **R1 + R2 CLOSED.**
+> Kickoff: **`docs/sessions/SESSION16_KICKOFF.md`** — its §4 R1/R2 are done; its
+> A3 steps are **superseded by SESSION17**, not carried forward.
 >
 > ### ✅ R1 CLOSED — the adversarial review found things, and the seeds were not the story
 > **28 agents · 6 dimensions · 18 raw confirmations → 7 deduped findings · 3
