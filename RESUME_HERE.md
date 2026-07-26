@@ -1,7 +1,45 @@
 # RESUME HERE
 
-> ## ▶ SESSION 15 IS RUNNING — **A1 IS CLOSED. START AT §4 A2.**
+> ## ▶ SESSION 15 IS RUNNING — **A1 + A2 CLOSED. START AT §4 A3.**
 > Kickoff: **`docs/sessions/SESSION15_KICKOFF.md`** (the art is an IMPORT problem).
+>
+> ### ✅ A2 CLOSED — the converter works, and the first OG art is committed
+> **Suite 634/634 · tsc ×2 exit 0 · eslint exit 0 · 13 chaos plants all watched RED.**
+> New: `scripts/art/svgShape.ts` (pure converter) · `scripts/art/generate.ts`
+> (emitter) · `src/game/art/types.ts` · **`src/game/art/generated/shape2664.ts`
+> — the OG samurai's head, compiled into the build.**
+> - **Red-first**, on the three fixtures the kickoff names (triangle, curve,
+>   hole) before the converter saw any real art. 39 tests in
+>   `tests/svgShape.test.ts`.
+> - **The `<g>` translate is IGNORED on purpose** — FFDec's `d` data is already
+>   shape-local with the joint pivot at (0,0). Baking it in breaks every A4
+>   animation node. The converter THROWS if that `<g>` is ever not a pure
+>   translation. Verified 16/16 against `payload.xml`'s `<shapeBounds>`.
+> - **Strokes convert too**, and `ffdec:original-stroke-width` beats FFDec's
+>   legibility-bumped `stroke-width`. ⭐ Independently confirmed: payload.xml's
+>   LINESTYLE2 widths for 2664 are **30 and 10 twips = 1.5 px and 0.5 px**,
+>   exactly what the converter emits.
+> - **Gate 5 proven:** generated fill RGB diffed against `payload.xml` →
+>   byte-exact. Gate 3: no `fetch`/`import()`/`require` in the art path, pinned
+>   by a test. Gate 4: `src/` holds zero image files, pinned by a test.
+> - **D7 carve-out landed narrow:** only `src/game/art/generated/` is exempt
+>   from the numeric ratchet (the hand-written `types.ts` beside it stays
+>   ratcheted), and it is PAID FOR by four new guards — provenance header,
+>   filename↔characterId agreement, an `APPROXIMATED FILLS` declaration, and a
+>   no-runtime-loading scan. Baseline refresh diff was one line.
+> - ⚠️ **A real bug and a vacuous guard, both worth carrying forward.** The
+>   hole classifier first probed from a point INSIDE each ring, which made the
+>   outer ring of a square-with-a-hole classify itself as a hole; nesting must be
+>   probed from the BOUNDARY. And plant 5 came back green because the degenerate
+>   fixture was rejected by a vertex-count check before the zero-area filter ever
+>   ran — **third session running that a plant found a dead guard, not a bug.**
+> - **Regenerating is byte-identical** (same md5 twice), so the committed art is
+>   reproducible. `npx vite-node scripts/art/generate.ts -- <id>`.
+> - Full record: `docs/DIVERGENCES.md` "SESSION 15 — A2".
+>
+> **A3 next:** render `SHAPE_2664` in the browser beside the existing samurai,
+> behind a flag (D6). Watch for §3.4 — 20× too big is the tell for a twips
+> mistake; the subtler version is a wrong pivot.
 >
 > ### ✅ A1 CLOSED — the fighter is CODE-ASSEMBLED, and all of its art is recoverable
 > **Deliverable: `docs/research/fidelity/FIGHTER_ART_IDS.md`** — every shape ID

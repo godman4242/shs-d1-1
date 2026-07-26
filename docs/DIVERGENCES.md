@@ -1206,3 +1206,86 @@ on `DuelScene` is exactly how the one-hit-kill rule would leak into the duel.
   killed TWO mobs, `2 HIT COMBO`, enemy counter 8 → 6, player HP untouched, and
   two popups reading `9` in `0x990000` sitting above their victims.
 - **Fidelity gate re-proven on the duel: `PASS — 41 points + 14 scans` = 55/55.**
+
+## SESSION 15 — A2: the SVG→polygon converter (2026-07-26)
+
+The first committed OG art. A1 established *which* shapes the fighter is made of;
+A2 turns one of them into TypeScript that compiles into the build. The whole
+design is forced by D1: `reference/` is gitignored, so a runtime loader would
+work on this machine and fail in every clone, CI run and deploy. The art has to
+be **emitted as source**.
+
+### Decisions (each with its veto)
+
+- **The converter lives in `scripts/art/`, not `src/`.** It is build-time
+  tooling and never ships; only its OUTPUT ships. `tsconfig.node.json` now
+  includes `scripts` so it is typechecked and linted like everything else.
+  *Veto:* put it in `src/` — rejected, it would bloat the bundle with a parser
+  the game never runs.
+- **The wrapper `<g>` translate is IGNORED, deliberately.** FFDec's `d` data is
+  already in the shape-local frame whose origin is the part's joint pivot; the
+  `<g>` only shifts it into a positive-sized viewport. Baking it in would break
+  every animation node in A4. The converter now THROWS if that `<g>` is ever
+  anything but a pure translation, because then the assumption would be false.
+  *Veto:* none — verified 16/16 against `payload.xml`'s `<shapeBounds>`.
+- ⭐ **Strokes are converted too, not just fills.** The OG's heavy black outline
+  is a large part of how it reads, and it *widens the silhouette that §2 bar A
+  measures* — dropping it would bias the IoU against us for a reason having
+  nothing to do with the geometry.
+- **`ffdec:original-stroke-width` beats `stroke-width`.** FFDec bumps hairlines
+  to 1.0 for on-screen legibility and records the true width separately.
+  **Independently confirmed:** `payload.xml`'s LINESTYLE2 widths for shape 2664
+  are 30 and 10 twips = **1.5 px and 0.5 px**, which is exactly what the
+  converter emits. Taking FFDec's bumped value would have drawn the OG's fine
+  crease lines at twice their true weight.
+- **Everything unsupported FAILS CLOSED.** Unknown path commands, truncated
+  coordinate lists and paths that do not open with a moveto all throw. A
+  converter that skips what it does not understand loses a body part silently,
+  which surfaces later as §2's permitted diagnosis (b) after hours spent looking
+  in the wrong place.
+- **Flatten tolerance 0.02 px, coordinates at 3 dp.** The parts are 9–37 px
+  tall, so this is ~0.1 % of a limb — far below anything a ≥90 % silhouette IoU
+  can resolve, and it survives zooming. Regenerating twice is byte-identical.
+  *Veto:* supply a measured requirement and it moves.
+- **D3 and D4 turned out to be MOOT for this target.** All 16 fighter shapes are
+  100 % flat solid fill, so no gradient is approximated and no bitmap fill is
+  skipped. The generated header still states `APPROXIMATED FILLS: none` rather
+  than staying silent, and a test fails if that line is ever missing.
+
+### ⚠️ D7's carve-out, and what it is paid for with
+
+`src/game/art/generated/` is exempt from the numeric-literal ratchet. The
+ratchet exists to stop INVENTED numbers, and traced coordinates are the opposite
+of invented — but the exemption is scoped to exactly that one directory (the
+hand-written `types.ts` beside it stays fully ratcheted), and it buys four
+replacement guards: a **provenance header** naming the source characterId and
+both commands, a **filename/characterId agreement** check, an **APPROXIMATED
+FILLS** declaration, and a **no-runtime-loading** scan. A generated file without
+provenance is a gate failure, not an exemption.
+
+### The bug worth recording
+
+`classifyEvenOdd` first probed nesting with a point strictly INSIDE each ring.
+That classified the OUTER ring of a square-with-a-hole as a hole — because the
+centre of such a shape lies inside the hole. Nesting must be probed from a point
+ON the ring's boundary: a ring nested inside R cannot contain R's boundary,
+whereas it very much can contain R's interior. Caught by the hole fixture on the
+first run, and now pinned by its own named regression test.
+
+### ⚠️ A guard that was vacuous, again
+
+Plant 5 ("keep zero-area rings") came back **GREEN**. The degenerate fixture
+`M2 2 L5 5 L2 2 Z` welds down to two vertices and is rejected by the
+`length >= 6` check *before the area filter ever runs* — so the area guard was
+dead while its test passed. Fixed by adding a four-vertex zero-area spur that
+only the area filter can reject. This is the third session in a row where a
+plant found a vacuous guard rather than a code bug; the plants keep earning
+their cost.
+
+### Chaos plants — thirteen watched RED, then reverted
+
+All 13 bit: even-odd→nonzero winding · interior-vs-boundary probe · implicit
+repeated commands dropped · unsupported commands skipped · degenerate rings kept
+· tolerance ignored · FFDec's bumped stroke width · `<g>` translate baked in ·
+truncated coordinates returning 0 · provenance header stripped · approximation
+declaration hidden · characterId falsified · a `fetch()` added to generated art.

@@ -290,6 +290,7 @@
     "0.8": 1,
     "0.85": 1
   },
+  "src/game/art/types.ts": {},
   "src/game/banners.ts": {
     "0": 10,
     "1": 4,
