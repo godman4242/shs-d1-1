@@ -30,6 +30,7 @@ import {
   type SkillVerb,
 } from '../config/combat-sim';
 import { WORLD_WIDTH } from '../config/display';
+import { CORPSE_FADE_FRAMES, CORPSE_LINGER_FRAMES } from '../config/mobs';
 import { SKILL_COOLDOWN_MS } from '../config/skills';
 import { JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../config/duel';
 import { ONE, TWO, ZERO } from '../config/nums';
@@ -182,6 +183,16 @@ export interface FighterView {
   maxChi: number;
   /** Spawn invuln or Smoke-Bomb i-frames — the scene renders the blink. */
   invulnerable: boolean;
+  /**
+   * Render opacity for a body (D11 / P6): 1 while alive, 1 for a fresh corpse,
+   * ramping to 0 across the LAST `CORPSE_FADE_FRAMES` of the corpse's
+   * `CORPSE_LINGER_FRAMES` life, then 0 forever.
+   *
+   * A corpse is STATE, so the Sim owns it and the scene only reads it. With
+   * one-hit kills, despawning instantly makes a crowd fight look like the
+   * enemies were never there.
+   */
+  corpseAlpha: number;
 }
 
 interface JumpState {
@@ -212,6 +223,10 @@ interface FighterState {
   invulnEndFrame: number;
   /** Frame Smoke-Bomb i-frames end (0 = none). */
   iframesEndFrame: number;
+  /** The frame this fighter died on; null while alive. ⚠️ Null rather than a
+   * 0 sentinel: `applyStroke` is legal at frame 0, so a kill on frame 0 is
+   * reachable and would read as "alive" under a 0 sentinel. */
+  deathFrame: number | null;
   readonly maxHp: number;
   readonly minDamage: number;
   readonly damageRange: number;
@@ -243,6 +258,7 @@ function spawnFighter(id: ActorId, spawn: FighterSpawn): FighterState {
     jump: null,
     invulnEndFrame: ZERO,
     iframesEndFrame: ZERO,
+    deathFrame: null,
     maxHp: spawn.hp,
     minDamage: spawn.minDamage,
     damageRange: spawn.damageRange,
@@ -511,7 +527,21 @@ export class Sim {
       chi: f.chiUnits / FIXED_HZ,
       maxChi: CHI_MAX,
       invulnerable: this.frameCount < f.invulnEndFrame || this.frameCount < f.iframesEndFrame,
+      corpseAlpha: this.corpseAlphaOf(f),
     };
+  }
+
+  /**
+   * D11 / P6 — 96 frames (4.0 s) of corpse, alpha-fading over the last 12.
+   * Linear ramp: it reaches exactly 0 on the frame the corpse expires.
+   */
+  private corpseAlphaOf(f: FighterState): number {
+    if (f.deathFrame === null) return ONE;
+    const age = this.frameCount - f.deathFrame;
+    if (age >= CORPSE_LINGER_FRAMES) return ZERO;
+    const fadeStart = CORPSE_LINGER_FRAMES - CORPSE_FADE_FRAMES;
+    if (age < fadeStart) return ONE;
+    return (CORPSE_LINGER_FRAMES - age) / CORPSE_FADE_FRAMES;
   }
 
   /** Axis-aligned hitbox rectangle around a fighter's current position. */
@@ -778,6 +808,9 @@ export class Sim {
       this.emitCombo(this.comboCounter.value);
     }
     if (target.hp === ZERO) {
+      // A corpse is STATE, so the Sim owns its clock (D11); the scene reads
+      // `corpseAlpha` and never counts frames itself.
+      target.deathFrame = this.frameCount;
       attacker.focusUnits = focusOnKill(attacker.focusUnits, FOCUS_KILL_BONUS);
       // ⚠️ THE FIGHT ENDS WHEN THE PLAYER DIES, OR WHEN **EVERY** ENEMY IS DEAD.
       // The old rule was "on the first death", which is the same thing at N=1

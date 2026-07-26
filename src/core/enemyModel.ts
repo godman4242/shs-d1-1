@@ -60,6 +60,27 @@ export interface DerivedEnemy {
   d: number;
 }
 
+/**
+ * THE SOURCE'S LOW-LEVEL OVERRIDE — `if (level <= 8) { minDamage = 1; defense = 1; }`.
+ *
+ * ⚠️ THE ONE SITE. Both the named duellist (`deriveEnemy`, where it is dormant at
+ * level 9) and trash mobs (`core/mobModel.ts`, where it is the whole point) go
+ * through here, so "mob damage is 1" is the override's OUTPUT rather than a
+ * constant somebody typed. SESSION14 D4 turns on what Phase B implemented blind:
+ * we wrote this rule from source while both duellists sat outside it, and the
+ * study pass then independently measured dungeon mobs dealing exactly 1 damage.
+ */
+export function lowLevelOverride(
+  level: number,
+  minDamage: number,
+  defense: number,
+): { minDamage: number; defense: number } {
+  if (level <= LOW_LEVEL_OVERRIDE.maxLevel) {
+    return { minDamage: DAMAGE_FLOOR, defense: DAMAGE_FLOOR };
+  }
+  return { minDamage, defense };
+}
+
 export function deriveEnemy(player: PlayerSide, enemy: EnemyAuthored): DerivedEnemy {
   const delta = enemy.level - player.level;
   const k = Math.max(ENEMY_K_BASE + delta, ENEMY_KD_FLOOR);
@@ -69,12 +90,11 @@ export function deriveEnemy(player: PlayerSide, enemy: EnemyAuthored): DerivedEn
     minDamageForLevel(player.level),
   );
   const hp = Math.max(enemy.baseHp, effPlayerDmg * k);
-  let minDamage = Math.max(enemy.baseMinDamage, player.maxHp / d);
-  let defense = enemy.defense;
   // Fires AFTER the HP derivation: HP still scales, damage/defence do not.
-  if (enemy.level <= LOW_LEVEL_OVERRIDE.maxLevel) {
-    minDamage = DAMAGE_FLOOR;
-    defense = DAMAGE_FLOOR;
-  }
+  const { minDamage, defense } = lowLevelOverride(
+    enemy.level,
+    Math.max(enemy.baseMinDamage, player.maxHp / d),
+    enemy.defense,
+  );
   return { hp, minDamage, defense, xpReward: enemy.level * XP_PER_LEVEL + XP_REWARD_BASE, k, d };
 }

@@ -48,9 +48,17 @@ status line can be flipped to EVIDENCE ON FILE.
   personal / non-commercial recreation. Before ANY distribution or
   monetization, re-read the PM/email wording (and ideally confirm scope with
   Lut in one message: distribution? credit line? commercial?).
-- **Practical note**: the surviving client SWFs are encrypted (preloader-
+- ~~**Practical note**: the surviving client SWFs are encrypted (preloader-
   decrypted at runtime), so asset *extraction* stays impractical regardless —
-  the working method remains tracing from the frame corpus.
+  the working method remains tracing from the frame corpus.~~
+  ⚠️ **SUPERSEDED 2026-07-26.** True when written; the source dive cracked the
+  protection the next day. `reference/decrypted/shs3_payload_decoded.swf` is the
+  real v0.717 client, and FFDec exports **1,822 vector shapes from it in eight
+  seconds** — town art, props and at least one full character figure, all
+  confirmed by eye. Flash art is vector and our renderer is vector, so this is
+  an import problem, not an approximation problem. Extracted art stays
+  gitignored under `reference/` (recreate, don't redistribute).
+  Full write-up + what is still unproven: `docs/research/fidelity/ART_EXTRACTION.md`.
 
 ## Engineering consequences (next sessions)
 

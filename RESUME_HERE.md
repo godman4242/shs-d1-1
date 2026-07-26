@@ -6,7 +6,20 @@
 > prerequisites, all already resolved from `SOURCE_CONSTANTS.md` §3.9 and
 > `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. There is NO research step.**
 >
-> ## ▶ **A0 + A1 ARE DONE. START AT §4 A2.**
+> ## ▶ **A0 + A1 + A2 ARE DONE. START AT §4 A3.**
+>
+> ## ⚠️ BUT READ THIS FIRST — the art question is now answered
+> **`docs/research/fidelity/ART_EXTRACTION.md` (2026-07-26).** The OG's own
+> **vector** art is recoverable: FFDec exported **1,822 SVG shapes in 8 seconds**
+> from the already-decrypted `shs3_payload_decoded.swf` — town art, props, and a
+> full character figure, confirmed by eye. **The source dive exported
+> ActionScript ONLY**, so nobody had looked. Flash art is vector and our renderer
+> is vector ⇒ **1:1 art is an IMPORT problem, not an approximation problem.**
+> Extracted art is gitignored; `src/` still has zero image files.
+> **Not yet proven: sprite/timeline export (character ANIMATION probably lives
+> there), ID→entity mapping, and any SVG→`Graphics` converter.**
+> ⇒ This is a strong candidate to become **SESSION 15 instead of audio** —
+> owner's call.
 >
 > Read the kickoff's **§3.5 first** — it is a symbol-level inventory of every
 > place the codebase assumes one enemy, grouped by what the fix is, with
@@ -40,8 +53,8 @@
 > |---|---|
 > | **A0** record the duel baseline BEFORE refactoring | ✅ **DONE** — `tests/duel-baseline.test.ts` |
 > | **A1** `Sim` → N-actor, N=1 byte-identical | ✅ **DONE** — see below |
-> | A2 mob spawns · one-hit kills · corpses | ⬜ **next** |
-> | A3 one stroke, many enemies | ⬜ |
+> | **A2** mob spawns · one-hit kills · corpses | ✅ **DONE** — see below |
+> | A3 one stroke, many enemies | ⬜ **next** |
 > | A4 `EncounterScene` + damage popups | ⬜ |
 > | A5 mob AI (1.0 s cadence, hitbox blocking) | ⬜ |
 > | A6 observe turn-taking · the `[3,10] s` band | ⬜ |
@@ -76,6 +89,31 @@
 >   red-first there; the reach budget is already spent exactly once in
 >   `truncateTo`, which is what makes that loop safe.
 > - Full record: `docs/DIVERGENCES.md` "SESSION 14 — A1".
+>
+> ### ✅ A2 CLOSED — trash mobs die in ONE hit
+>
+> **Suite 570/570 · tsc ×2 exit 0 · eslint exit 0.** The largest measured gap
+> between the OG and our build (`COMBAT_MEASUREMENTS.md` e-2) is closed.
+> - New: `config/mobs.ts` · `core/mobModel.ts` · `core/encounterSetup.ts`.
+> - **The mob's 1 damage is DERIVED, not authored.** The source's
+>   `if (level <= 8) { minDamage = 1; defense = 1; }` override was extracted to
+>   ONE shared site (`lowLevelOverride`), used by the duellist derivation (where
+>   it stays dormant at level 9) and by mobs (where it is the whole point).
+>   We implemented that rule blind in Phase B; the study pass independently
+>   measured mobs dealing exactly 1. **Two facts, established separately, agree.**
+> - ⚠️ **Mobs never touch `deriveEnemy`** (P1) — a mob's HP is an authored 1, not
+>   the duellist's `effPlayerDmg × K` = 50. Pinned by a test.
+> - **8 mobs is MEASURED** (P8, filmed). ⚠️ **The spawn layout is INFERRED** and
+>   labelled so — A6's `[3,10] s` band is what will judge it (§2 diagnosis (b)).
+> - Corpses are Sim-owned state: 96 frames, linear fade over the last 12.
+> - **HP obfuscation deliberately NOT implemented** (P10) — anti-cheat, not
+>   gameplay, and it would make every HP read non-deterministic. There is a test.
+> - **6 chaos plants. Five bit; the sixth came back GREEN and the TEST was at
+>   fault** — it couldn't tell a per-mob controller factory from a shared one.
+>   Rewritten, both re-plants bite. *A guard never watched failing isn't a guard.*
+> - ⚠️ **No mob XP reward exists.** No measured number; deriving one by analogy
+>   would be arithmetic dressed as evidence. Veto = add one with a source line.
+> - Full record: `docs/DIVERGENCES.md` "SESSION 14 — A2".
 >
 > **A0 CLOSED.** The duel's exact behaviour at `335e615` is now pinned: all 24
 > good-play frame counts, all 24 no-play frame counts, the seed-7 outcome

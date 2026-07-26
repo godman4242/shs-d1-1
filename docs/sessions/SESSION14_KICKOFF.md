@@ -12,7 +12,7 @@
 > `SOURCE_CONSTANTS.md` §3.9 or `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. §P lists them with their
 > citations so nobody re-derives them.
 >
-> ## ▶ A0 + A1 ARE CLOSED. **START AT §4 A2.**
+> ## ▶ A0 + A1 + A2 ARE CLOSED. **START AT §4 A3.**
 >
 > `tests/duel-baseline.test.ts` now pins what the duel actually DID at the close of SESSION 13:
 > all 24 good-play frame counts, all 24 no-play frame counts, the seed-7 outcome fingerprint
@@ -474,7 +474,18 @@ the AI drawing from the shared rng stream in a defined sequence. A crowd-size-de
 `rng()` calls shifts the stream and the seed-7 checksum moves — which the baseline WILL catch, so
 run it early and often rather than once at the end.
 
-### A2 — Mob spawns + one-hit kills + corpses
+### A2 — ✅ CLOSED. Mob spawns + one-hit kills + corpses
+
+Landed: `config/mobs.ts` · `core/mobModel.ts` · `core/encounterSetup.ts` · corpses as Sim state.
+Suite **570/570** · tsc ×2 exit 0 · eslint exit 0. **6 chaos plants** (one exposed a dead TEST,
+which was rewritten and then bitten twice). The `level ≤ 8` override now lives at ONE shared site
+so mob damage is DERIVED, not authored. Mob XP reward deliberately does not exist — no measured
+number. Full record: `DIVERGENCES.md` "SESSION 14 — A2".
+
+⚠️ **A3 inherits one thing:** `applyStroke` still resolves against the nearest living enemy, so
+right now a swing through three mobs kills **one**. That is the red-first starting point for D5.
+
+The original brief:
 
 `config/mobs.ts` (HP 1, level ≤ 8, the INFERRED layout), mob spawn assembly beside `duelSetup`,
 corpse TTL 96 frames. Chaos-plant: force a mob to level 9 → its damage and defence must stop

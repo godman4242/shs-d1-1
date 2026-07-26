@@ -1001,3 +1001,76 @@ fingerprint and the 10.575 s median are byte-identical to `335e615`.
 constructor call, which is the canary the kickoff nominated. The `game/`
 numeric-literal ratchet did **not** fire: the `DuelScene` edits introduced no
 new numbers.
+
+## SESSION 14 — A2: trash mobs, one-hit kills, corpses (2026-07-26)
+
+**The largest measured gap between the OG and our build, closed.**
+`COMBAT_MEASUREMENTS.md` e-2: *"ORDINARY MOBS DIE IN ONE HIT"* — >15
+bar-disappearance events across 3 encounters, and no non-named enemy's HP bar
+was ever observed at anything other than 100 % on the last frame it existed.
+
+### The confirmation worth noticing
+
+We implemented the source's `if (level <= 8) { minDamage = 1; defense = 1; }`
+override in Phase B while it was **dormant** — both duellists sit at level 9, so
+it could not have been fitted to anything. The study pass then **independently
+measured** dungeon mobs dealing **exactly 1** damage to a 20-HP player. Two facts
+established separately, in agreement. A2 does not author that 1; it spawns
+something that lives inside the override.
+
+### Decisions (each with its veto)
+
+- **`lowLevelOverride()` extracted to ONE site** in `core/enemyModel.ts`, shared
+  by `deriveEnemy` (dormant, level 9) and the new `core/mobModel.ts` (live). This
+  is what makes "mob damage is 1" the rule's OUTPUT rather than a typed constant
+  — and it is what the chaos plant bites.
+- ⚠️ **Mobs do NOT go through `deriveEnemy`** (P1). `core/mobModel.ts` is a
+  separate derivation for a separate AI class: HP is an authored 1
+  (`<hp>1</hp>`, and `setLevel` forces it), not `effPlayerDmg × K` = 50. Pinned
+  by a test that asserts a mob's HP is **not** the duellist's number.
+  > **Veto:** none — routing mobs through `deriveEnemy` is the exact
+  > "wrong class" trap `SOURCE_CONSTANTS.md` §3.8 fell into.
+- **`MOB_BASE.baseMinDamage` / `baseDefense` are INFERRED and NEVER OBSERVABLE**
+  in play, because every mob is level ≤ 8. They exist so the override has
+  something to override — which is precisely what makes "raise a mob past level 8
+  and both numbers change" a meaningful check rather than a tautology. Recorded
+  honestly rather than hidden.
+- ⚠️ **NO mob XP reward.** The named duellist's `level × 5 + 45` is CONTRACT-SRC
+  for *its* class. There is no measured mob reward, and deriving one by analogy
+  would be arithmetic dressed as evidence. `DerivedMob` has no `xpReward` field.
+  > **Veto:** add one — but with a source line, not an analogy.
+- **`ENCOUNTER_SIZE = 8`** — MEASURED (P8), an 8-enemy dungeon fight is on film.
+- ⚠️ **The spawn layout is INFERRED and says so** (D10). `REBUILD_READINESS`
+  lists "aggro/spawn geometry" as a known-unknown, so mobs spread evenly across
+  `ENCOUNTER_MOB_BAND` (world x 300→750) at one ground line. **A6's duration band
+  is the thing that will judge it** — §2 diagnosis (b) is "a wrong spawn spread".
+- **Corpses are Sim-owned state**, not a render timer: `FighterState.deathFrame`
+  plus a `FighterView.corpseAlpha` the scene reads. 96 frames (4.0 s), linear
+  fade over the last 12 (P6). `deathFrame` is `number | null`, not a 0 sentinel —
+  `applyStroke` is legal at frame 0, so a frame-0 kill is reachable and would
+  have read as "alive".
+- **HP obfuscation is NOT implemented** (P10, gate item 18). The original
+  multiplies stored HP by a random 2..6 per session to defeat memory scanners.
+  That is anti-cheat, not gameplay: reproducing it would be a fidelity error AND
+  would make every HP read non-deterministic. There is a **test** asserting mob
+  HP is exactly 1 under three different rng streams, so a future session cannot
+  "discover" it and faithfully implement a bug-generator.
+
+### Chaos plants — six watched RED, then reverted
+
+| Plant | Test that bit |
+|---|---|
+| the level-override disarmed | mob damage/defence stop being 1 |
+| `MOB_HP` 1 → 2 | mobs no longer die in one hit |
+| mobs routed through the duellist derivation | 6 tests, incl. the "not 50 HP" pin |
+| corpses despawn instantly | corpse opacity |
+| corpse fade 12 → 24 frames | the fade ramp |
+| the controller factory called once and reused | one-controller-per-mob |
+
+⚠️ **One plant initially came back GREEN, and the test was at fault, not the
+code.** The first "own controller instance" test built a fresh controller on
+every factory call and ignored the index, so it could not tell a per-mob factory
+from a shared one. Rewritten to assert (a) the factory is invoked once per mob
+**with each mob's own index** and (b) the controllers that actually reached the
+`Sim` are N distinct objects. Both the shared-instance and index-0 plants bite it
+now. *A guard that has never been watched failing is not a guard.*

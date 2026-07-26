@@ -1043,3 +1043,42 @@ path. Next entry point: `SESSION12_KICKOFF.md`, after `SOURCE_CONSTANTS.md` §5�
   just the fight-ending one. Identical at N=1; with one-hit-kill mobs an 8-mob
   encounter pays it eight times. Measure before tuning — full entry in
   DIVERGENCES "SESSION 14 — A1".
+
+## 2026-07-26 — SESSION 14 A2: trash mobs die in one hit + THE ART IS RECOVERABLE
+
+- **13:59** A2 red-first: `tests/mobs.test.ts` written against modules that did
+  not exist → RED (`Cannot find module '../src/config/mobs'`). 15 assertions.
+- **14:01** GREEN. `config/mobs.ts` + `core/mobModel.ts` + `core/encounterSetup.ts`
+  landed. The key factoring: the source's `if (level <= 8) { minDamage = 1;
+  defense = 1; }` override was extracted to ONE site (`lowLevelOverride`) shared
+  by the duellist derivation (dormant at level 9) and mobs (live) — so mob damage
+  is the rule's OUTPUT, not a constant we typed.
+- **14:02** Typecheck caught a narrowing slip in my own test (a compound
+  `filter` doesn't produce a type predicate). Fixed with an explicit one. Also
+  caught myself writing `npm run typecheck 2>&1 | tail -3 && echo "exit 0"` —
+  the pipe masks the real exit status, so that "exit 0" was meaningless. Re-ran
+  unpiped: **typecheck exit 0** for real.
+- **14:03** **Six chaos plants. Five bit immediately; the sixth came back GREEN
+  and THE TEST WAS AT FAULT, not the code** — the "own controller instance" test
+  built a fresh controller per call and ignored the index, so it could not
+  distinguish a per-mob factory from a shared one. Rewritten to assert the
+  factory is invoked once per mob with each mob's own index AND that N distinct
+  controllers reach the Sim. Both re-plants (shared instance / index-0) now bite.
+- **14:03** Suite **570/570** · tsc ×2 exit 0 · eslint exit 0.
+- **⚠️ THE FINDING OF THE SESSION — the OG's own art is recoverable, in vector.**
+  Prompted by the owner's note that *"the art doesn't even look the same"*.
+  `reference/tools/ffdec/ffdec.sh -export shape` against the already-decrypted
+  `shs3_payload_decoded.swf` produced **1,822 SVG vector shapes in 8.0 seconds**
+  — town buildings, torii gates, a dragon statue, cherry blossom, bamboo,
+  weapons, UI plates, and a full standing character figure. **The source dive
+  exported ActionScript ONLY (1,079 `.as`, zero shapes)**; the art was in the
+  same payload the whole time. Flash art is vector and our renderer is vector,
+  so 1:1 art is an IMPORT problem, not an approximation problem.
+  - Extracted art is **gitignored** (`git check-ignore` verified); the grant is
+    to recreate, not redistribute. `src/` still contains zero image files.
+  - `OWNER_PERMISSION_RULING.md`'s "extraction stays impractical" note is now
+    struck through — true when written, overtaken by the source dive.
+  - **Not yet proven:** sprite/timeline export (character ANIMATION probably
+    lives there, not in static shapes), ID→entity mapping, and any SVG→`Graphics`
+    conversion. Written up honestly in
+    `docs/research/fidelity/ART_EXTRACTION.md` with a proven/unproven table.
