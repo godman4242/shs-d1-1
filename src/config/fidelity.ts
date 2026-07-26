@@ -15,7 +15,12 @@
  * doubles as a position pin: a mispositioned element fails its color probe.
  *
  * Sampling states (dev-only harness, src/game/fidelity.ts):
- * - 'fighting'     — combat live, t≈0: full HP/Chi/Focus, fighters at spawns.
+ * - 'fighting'     — combat live, a few seconds in: HP/Chi full (spawn
+ *                    invulnerability is still up, so nothing has landed) and
+ *                    Focus PARTIALLY filled. ⚠️ It used to be "t≈0, full
+ *                    Focus"; SESSION13 D4 made the meter start EMPTY with its
+ *                    first 48 units invisible, so t≈0 now shows a blank pill
+ *                    while the probe below was measured mid-fight.
  * - 'result-win'   — the YOU WIN card.
  * - 'result-defeat' — the YOU WERE DEFEATED card (A-22 world defeat is the
  *   only capture; the VS-duel defeat variant is unverified — noted per probe).

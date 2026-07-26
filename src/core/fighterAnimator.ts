@@ -13,7 +13,9 @@
 import { ANIM_TIMING, WALK } from '../config/anim';
 import { ONE, ZERO } from '../config/nums';
 import { DEAD, GUARD_POSE, HIT_RECOIL, IDLE_POSE, SLASH_FOLLOW, SLASH_WINDUP, type Pose } from '../config/poses';
-import { STANCE_TABLE, type StanceId } from '../config/stances';
+import type { StanceId } from '../config/stances';
+import { PLAYER_STATS } from '../config/stats';
+import { reachFor } from './mastery';
 import { FIXED_HZ, MS_PER_S, SLASH_FRAMES } from '../config/timing';
 import { easeInOutSine, easeInQuad, easeOutCubic, idleOffsets, phaseAt, walkOffsets, type Segment } from './anim';
 import { addOffsets, lerpPose, scaleArc } from './skeleton';
@@ -63,7 +65,10 @@ export class FighterAnimator {
     this.actionElapsed = ZERO;
     this.slashSegs = slashSegsFor(stance);
     // arc amplitude scales with stance reach (Light long, Heavy short) — Tell 6
-    const k = STANCE_TABLE[stance].reach / STANCE_TABLE.balanced.reach;
+    // Swing-arc size tracks REACH, which is now mastery-derived (B3) rather
+    // than a per-stance constant. Ratio against balanced keeps this a shape
+    // multiplier rather than a second copy of the reach model.
+    const k = reachFor(stance, PLAYER_STATS) / reachFor('balanced', PLAYER_STATS);
     this.slashWindup = scaleArc(SLASH_WINDUP, k);
     this.slashFollow = scaleArc(SLASH_FOLLOW, k);
   }

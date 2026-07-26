@@ -1,19 +1,22 @@
 import {
   CHI_PUNCH_DMG_L1,
-  FOCUS_MAX,
+  FOCUS_KILL_BONUS,
+  FOCUS_SPEND,
   FOCUS_START,
   FOCUS_SWITCH_COST,
   SPAWN_INVULN_S,
-  WEAPON_WEIGHT,
 } from '../config/combat';
 import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../config/chi';
 import {
-  DASH_MIN_STROKE_PX,
-  DASH_SLASH_PX,
+  DASH_SPEED_PX_PER_FRAME,
   DEFLECT_RADIUS,
   DEFLECT_WINDOW_MS,
   MAX_FRAME_MS,
-  PLAYER_MOVE_SPEED,
+  MOVE_DEADZONE_PX,
+  MOVE_RUN_PX_S,
+  MOVE_RUN_THRESHOLD_PX,
+  MOVE_STANDING_RANGE_PX,
+  MOVE_WALK_PX_S,
   PROJECTILE_DMG,
   PROJECTILE_MAX_ACTIVE,
   SHUNPO_DRAIN_PER_S,
@@ -33,7 +36,7 @@ import { ONE, TWO, ZERO } from '../config/nums';
 import type { StanceId } from '../config/stances';
 import { FIXED_HZ, FRAME_QUANT_EPS, MS_PER_S, SLASH_FRAMES } from '../config/timing';
 import { Combo } from './combo';
-import { criticalReady, focusToUnits, unitsToCritical, unitsToFocus } from './critical';
+import { focusDisplay, focusOnKill, focusReady, focusSpend, focusTick } from './focus';
 import { physicalDamage } from './damage';
 import type { Gesture } from './gesture';
 import { AI_THINK_INTERVAL_MS, AUTO_SLASH_POINT_SPACING, ENEMY_SPEED } from '../config/ai';
@@ -41,7 +44,8 @@ import type { OpponentController, OpponentIntent, OpponentView } from './Opponen
 import { isOffArena, projectileHits, spawnProjectile, stepProjectile, type Projectile } from './projectile';
 import { resolveSlash, type SlashResult } from './slash';
 import { DrawnStroke } from './DrawnStroke';
-import { STANCE_TABLE } from '../config/stances';
+import { reachFor } from './mastery';
+import type { FighterStats } from '../config/stats';
 import { msToFrames } from './time';
 import { jumpArcPoint } from './trajectory';
 import type { Vec } from './vec';
@@ -107,10 +111,23 @@ export interface PlayerIntent {
  */
 export type StrokeSource = 'manual' | 'auto';
 
+/** A latched click-to-move order: destination and gait, both fixed at command time. */
+interface MoveOrder {
+  targetX: number;
+  /** World px per second — MOVE_WALK_PX_S or MOVE_RUN_PX_S, chosen once. */
+  speedPxS: number;
+}
+
 export interface StrokeOutcome {
   gesture: Gesture;
   /** Slash resolution when the stroke acted as a slash; null otherwise. */
   slash: SlashResult | null;
+  /**
+   * The stroke AFTER the reach budget was spent (B3) — the part that actually
+   * cut, and the path the dash follows. The scene draws this, not the raw drag,
+   * so the blade visibly stops where the swing ran out.
+   */
+  cutPoints: readonly Vec[];
 }
 
 /** Public read view of a fighter (fresh object per read — never a live ref). */
@@ -119,8 +136,10 @@ export interface FighterView {
   hp: number;
   maxHp: number;
   stance: StanceId;
+  /** Focus in the source's own INTEGER units, 0..FOCUS_MAX (192). */
   focus: number;
-  critical: number;
+  /** What the BAR shows: `(units − 48) / 144`, clamped 0..1 (D4). */
+  focusDisplay: number;
   /** Chi meter in points (0..maxChi) — skills charge it (M3). */
   chi: number;
   maxChi: number;
@@ -145,7 +164,8 @@ interface FighterState {
   hp: number;
   stance: StanceId;
   focusUnits: number;
-  criticalUnits: number;
+  /** Residual of the 2/5-per-frame fill — integer, so spends survive (D4). */
+  focusAcc: number;
   /** Chi meter in integer frame units (M3). The enemy's pool fills but never
    * spends — AI skills don't exist yet (flagged; veto = drop the field). */
   chiUnits: number;
@@ -155,8 +175,10 @@ interface FighterState {
   /** Frame Smoke-Bomb i-frames end (0 = none). */
   iframesEndFrame: number;
   readonly maxHp: number;
-  readonly atkPlusWeapon: number;
+  readonly minDamage: number;
+  readonly damageRange: number;
   readonly defense: number;
+  readonly stats: FighterStats;
   readonly deflectLearned: boolean;
   readonly halfW: number;
   readonly halfH: number;
@@ -176,15 +198,17 @@ function spawnFighter(spawn: FighterSpawn): FighterState {
     pos: { ...spawn.pos },
     hp: spawn.hp,
     stance: spawn.stance,
-    focusUnits: focusToUnits(FOCUS_START),
-    criticalUnits: ZERO,
+    focusUnits: FOCUS_START,
+    focusAcc: ZERO,
     chiUnits: (spawn.chi ?? CHI_MAX) * FIXED_HZ,
     jump: null,
     invulnEndFrame: ZERO,
     iframesEndFrame: ZERO,
     maxHp: spawn.hp,
-    atkPlusWeapon: spawn.atkPlusWeapon,
+    minDamage: spawn.minDamage,
+    damageRange: spawn.damageRange,
     defense: spawn.defense,
+    stats: spawn.stats,
     deflectLearned: spawn.deflectLearned,
     halfW: spawn.halfW,
     halfH: spawn.halfH,
@@ -213,6 +237,18 @@ export class Sim {
   private readonly comboCounter = new Combo();
   private playerIntent: PlayerIntent = { moveX: ZERO, shunpoHeld: false, moveTargetX: null };
   private queuedSkill: SkillVerb | null = null;
+  /**
+   * The LATCHED move order (B1). The original latches destination AND gait at
+   * COMMAND time — dragging the cursor afterwards does not re-steer the run,
+   * and it does not re-decide walk-vs-run either. Null = standing still.
+   */
+  private playerMove: MoveOrder | null = null;
+  /**
+   * The in-flight dash (B3). The samurai travels to the STROKE'S LAST POINT —
+   * uncapped, but bounded in practice because the stroke was already truncated
+   * to the reach budget — at a per-stance speed. Null = not dashing.
+   */
+  private playerDash: MoveOrder | null = null;
   private readonly cooldownUntil: Record<SkillVerb, number> = {
     chiPunch: ZERO,
     smokeBomb: ZERO,
@@ -328,7 +364,31 @@ export class Sim {
       ? Math.max(-ONE, Math.min(ONE, intent.moveX))
       : ZERO;
     const moveTargetX = Number.isFinite(intent.moveTargetX ?? NaN) ? intent.moveTargetX : null;
+    // A COMMAND is the null → value edge (a click), not every frame the button
+    // is held. That is what makes target+gait latch (B1).
+    const previous = this.playerIntent.moveTargetX;
+    if (moveTargetX != null && previous == null) this.issueMoveOrder(moveTargetX);
     this.playerIntent = { moveX, shunpoHeld: intent.shunpoHeld, moveTargetX };
+  }
+
+  /**
+   * Latch a move order. Commands inside MOVE_DEADZONE_PX are IGNORED (the
+   * original does not shuffle you a few px), and the gait is decided ONCE here:
+   * a plain ground move farther than MOVE_RUN_THRESHOLD_PX runs, else walks.
+   */
+  private issueMoveOrder(targetX: number): void {
+    const player = this.fighters.player;
+    const dist = Math.abs(targetX - player.pos.x);
+    if (dist < MOVE_DEADZONE_PX) return;
+    this.playerMove = {
+      targetX,
+      speedPxS: dist > MOVE_RUN_THRESHOLD_PX ? MOVE_RUN_PX_S : MOVE_WALK_PX_S,
+    };
+  }
+
+  /** Clamp an x to the WORLD arena, honouring the fighter's half-width. */
+  private clampX(x: number, halfW: number): number {
+    return Math.max(halfW, Math.min(WORLD_WIDTH - halfW, x));
   }
 
   /** Edge-triggered skill press (hotbar 1/2/3) — consumed on the next tick.
@@ -346,8 +406,8 @@ export class Sim {
       hp: f.hp,
       maxHp: f.maxHp,
       stance: f.stance,
-      focus: unitsToFocus(f.focusUnits),
-      critical: unitsToCritical(f.criticalUnits),
+      focus: f.focusUnits,
+      focusDisplay: focusDisplay(f.focusUnits),
       chi: f.chiUnits / FIXED_HZ,
       maxChi: CHI_MAX,
       invulnerable: this.frameCount < f.invulnEndFrame || this.frameCount < f.iframesEndFrame,
@@ -400,19 +460,21 @@ export class Sim {
       this.events.push({ type: 'stanceSwitched', who: side, from, to, focusCost: ZERO });
       return true;
     }
-    const cost = FOCUS_SWITCH_COST * WEAPON_WEIGHT[f.stance];
-    const costUnits = focusToUnits(cost);
-    if (f.focusUnits < costUnits) {
+    // CONTRACT-SRC (D9/P3): a flat 48 Focus, gated on affording it
+    // (`if (focus < 48) return;`). THE ONLY focus gate in the game — slashing
+    // is never gated (P3), so Focus is a crit-charge resource, not stamina.
+    const cost = FOCUS_SWITCH_COST;
+    if (f.focusUnits < cost) {
       this.events.push({
         type: 'stanceSwitchDenied',
         who: side,
         needed: cost,
-        focus: unitsToFocus(f.focusUnits),
+        focus: f.focusUnits,
       });
       return false;
     }
     const from = f.stance;
-    f.focusUnits -= costUnits;
+    f.focusUnits -= cost;
     f.stance = to;
     this.events.push({ type: 'stanceSwitched', who: side, from, to, focusCost: cost });
     return true;
@@ -427,14 +489,14 @@ export class Sim {
    */
   applyStroke(stroke: DrawnStroke, source: StrokeSource = 'manual'): StrokeOutcome {
     const gesture = stroke.gesture;
-    if (this.phaseState !== 'fighting') return { gesture, slash: null };
+    if (this.phaseState !== 'fighting') return { gesture, slash: null, cutPoints: [] };
     // AUTO SLASH (D7) locks out MANUAL input entirely — no drawing, no move
     // orders. Its own synthesised stroke arrives as source 'auto' and takes
     // the identical path from here down.
-    if (this.autoSlashOn && source === 'manual') return { gesture, slash: null };
+    if (this.autoSlashOn && source === 'manual') return { gesture, slash: null, cutPoints: [] };
     // Degenerate strokes (taps) classify as 'slash' by default — gate here at
     // the core seam so no caller can land a full-damage tap (audit finding).
-    if (stroke.points.length < TWO) return { gesture, slash: null };
+    if (stroke.points.length < TWO) return { gesture, slash: null, cutPoints: [] };
     const player = this.fighters.player;
     const enemy = this.fighters.enemy;
     if (gesture === 'slash') {
@@ -456,46 +518,45 @@ export class Sim {
       // teleport verb, and sim-frame counting keeps Shunpo from amplifying
       // it), and never on a slip-length stroke (DASH_MIN_STROKE_PX). Damage
       // stays instant either way — only the movement is gated.
-      const dashDir = Math.sign(stroke.direction.x);
-      if (
-        player.jump === null &&
-        dashDir !== ZERO &&
-        stroke.length >= DASH_MIN_STROKE_PX &&
-        this.frameCount >= this.dashReadyFrame
-      ) {
-        player.pos = {
-          x: Math.max(
-            player.halfW,
-            Math.min(WORLD_WIDTH - player.halfW, player.pos.x + dashDir * DASH_SLASH_PX),
-          ),
-          y: player.pos.y,
+      // B3: spend the REACH BUDGET along the drawn arc FIRST. Everything
+      // downstream — the cut test and the dash target — reads the truncated
+      // polyline, so reach is accounted exactly once.
+      const cutPoints = stroke.truncateTo(reachFor(player.stance, player.stats));
+      const tip = cutPoints.at(-ONE);
+      // The samurai travels to the stroke's LAST POINT (not a fixed distance).
+      // Still at most one dash per measured swing cycle — the Session-9 review
+      // reproduced scribble-spam as a teleport verb, and that bound is kept.
+      if (player.jump === null && tip !== undefined && this.frameCount >= this.dashReadyFrame) {
+        this.playerDash = {
+          targetX: this.clampX(tip.x, player.halfW),
+          speedPxS: DASH_SPEED_PX_PER_FRAME[player.stance] * FIXED_HZ,
         };
-        const cycle = SLASH_FRAMES[player.stance];
-        this.dashReadyFrame = this.frameCount + cycle.windup + cycle.active + cycle.recovery;
+        this.playerMove = null; // a swing overrides a walk order
+        this.dashReadyFrame = this.frameCount + swing.windup + swing.active + swing.recovery;
       }
-      const critReady = criticalReady(player.criticalUnits);
+      // P3: the swing is NOT focus-gated. A full bar crits and zeroes; the
+      // stance cost then subtracts (from zero, a no-op) and clamps at 0.
+      const critReady = focusReady(player.focusUnits);
       const result = resolveSlash(
-        stroke,
+        cutPoints,
         { polygon: this.hitbox('enemy'), stance: enemy.stance, hp: enemy.hp, defense: enemy.defense },
-        { atkPlusWeapon: player.atkPlusWeapon, stance: player.stance, crit: critReady, pos: { ...player.pos }, reach: STANCE_TABLE[player.stance].reach },
+        {
+          minDamage: player.minDamage,
+          damageRange: player.damageRange,
+          stance: player.stance,
+          crit: critReady,
+          stats: player.stats,
+        },
       );
       if (result.hit) {
-        // Reaction seam: the controller may block or dodge a landing slash.
-        // The crit meter is NOT consumed on a reacted swing (no hit landed).
-        const reaction = this.opponent.react?.(this.frameCount, this.opponentView()) ?? null;
-        if (reaction === 'block') {
-          this.events.push({ type: 'strikeBlocked', by: 'enemy' });
-          return { gesture, slash: { ...result, hit: false, damage: ZERO, severed: [] } };
-        }
-        if (reaction === 'dodge') {
-          this.events.push({ type: 'strikeEvaded', by: 'enemy' });
-          return { gesture, slash: { ...result, hit: false, damage: ZERO, severed: [] } };
-        }
-        if (critReady) player.criticalUnits = ZERO; // consumed only on a landed hit
+        // ⚠️ NO REACTION SEAM (D8). The enemy does not block or dodge in the
+        // original, so a landing slash lands — a controller that still offers a
+        // `react` method changes nothing.
+        player.focusUnits = focusSpend(player.focusUnits, FOCUS_SPEND[player.stance]);
         this.emitCombo(this.comboCounter.hit());
         this.dealDamage('enemy', result.damage, result.crit, result.severed);
       }
-      return { gesture, slash: result };
+      return { gesture, slash: result, cutPoints };
     }
     if (gesture === 'jump') {
       const first = stroke.points.at(ZERO);
@@ -513,14 +574,14 @@ export class Sim {
         };
         player.pos = { x: clampX(first.x), y: player.groundY };
       }
-      return { gesture, slash: null };
+      return { gesture, slash: null, cutPoints: [] };
     }
     if (gesture === 'stab') {
       this.tryCastSkill('stab');
-      return { gesture, slash: null };
+      return { gesture, slash: null, cutPoints: [] };
     }
     // launch: recognized, acted on at Stage 3 (LAUNCH_UNLOCK_LEVEL).
-    return { gesture, slash: null };
+    return { gesture, slash: null, cutPoints: [] };
   }
 
   private emitCombo(value: number): void {
@@ -540,7 +601,7 @@ export class Sim {
       enemyPos: { ...enemy.pos },
       playerStance: player.stance,
       enemyStance: enemy.stance,
-      enemyFocus: unitsToFocus(enemy.focusUnits),
+      enemyFocus: enemy.focusUnits,
       playerJumping: player.jump !== null,
     };
   }
@@ -562,10 +623,16 @@ export class Sim {
       this.events.push({ type: 'invulnBlocked', target: 'player' });
       return;
     }
-    const critReady = criticalReady(enemy.criticalUnits);
-    if (critReady) enemy.criticalUnits = ZERO;
+    const critReady = focusReady(enemy.focusUnits);
+    enemy.focusUnits = focusSpend(enemy.focusUnits, FOCUS_SPEND[enemy.stance]);
     const damage = physicalDamage(
-      { atkPlusWeapon: enemy.atkPlusWeapon, stance: enemy.stance, crit: critReady },
+      {
+        minDamage: enemy.minDamage,
+        damageRange: enemy.damageRange,
+        stance: enemy.stance,
+        crit: critReady,
+        stats: enemy.stats,
+      },
       { stance: player.stance, defense: player.defense },
     );
     this.dealDamage('player', damage, critReady, []);
@@ -593,6 +660,8 @@ export class Sim {
         this.shunpoActive = false;
         this.events.push({ type: 'shunpoEnded' });
       }
+      const killer = this.fighters[target === 'enemy' ? 'player' : 'enemy'];
+      killer.focusUnits = focusOnKill(killer.focusUnits, FOCUS_KILL_BONUS);
       const winner: FighterSide = target === 'enemy' ? 'player' : 'enemy';
       // D8 (SESSION13): a kill does NOT touch the combo. The Stage-2
       // "resets to 1 on kill" CONTRACT was wrong — see docs/DIVERGENCES.md.
@@ -667,12 +736,16 @@ export class Sim {
     const intent = ctrl.next(this.frameCount, this.autoView());
     // Movement: every tick, at the player's own speed, arena-clamped.
     if (player.jump === null && intent.moveX !== undefined && Number.isFinite(intent.moveX)) {
-      const dir = Math.max(-ONE, Math.min(ONE, intent.moveX));
-      const x = player.pos.x + dir * PLAYER_MOVE_SPEED * (MS_PER_S / FIXED_HZ);
-      player.pos = {
-        x: Math.max(player.halfW, Math.min(WORLD_WIDTH - player.halfW, x)),
-        y: player.pos.y,
-      };
+      // Closing on a FIGHTER, so it runs and stops MOVE_STANDING_RANGE_PX short
+      // rather than walking into the target (B1: gait by destination type).
+      const gap = Math.abs(target.pos.x - player.pos.x);
+      if (gap > MOVE_STANDING_RANGE_PX) {
+        const dir = Math.max(-ONE, Math.min(ONE, intent.moveX));
+        // Snap to the standing range rather than overshooting it by up to one
+        // step — the same arrival rule the latched ground move uses.
+        const step = Math.min(MOVE_RUN_PX_S / FIXED_HZ, gap - MOVE_STANDING_RANGE_PX);
+        player.pos = { x: this.clampX(player.pos.x + dir * step, player.halfW), y: player.pos.y };
+      }
     }
     if (intent.strike !== true) return;
     if (player.jump !== null) return; // never airborne
@@ -700,7 +773,7 @@ export class Sim {
    */
   private synthesizeStrokePoints(targetPos: Vec): Vec[] {
     const player = this.fighters.player;
-    const reach = STANCE_TABLE[player.stance].reach;
+    const reach = reachFor(player.stance, player.stats);
     const count = Math.max(TWO, Math.floor(reach / AUTO_SLASH_POINT_SPACING));
     const dir = targetPos.x < player.pos.x ? -ONE : ONE;
     const points: Vec[] = [];
@@ -723,7 +796,7 @@ export class Sim {
       enemyPos: { ...player.pos },
       playerStance: enemy.stance,
       enemyStance: player.stance,
-      enemyFocus: unitsToFocus(player.focusUnits),
+      enemyFocus: player.focusUnits,
       playerJumping: enemy.jump !== null,
     };
   }
@@ -813,8 +886,10 @@ export class Sim {
     if (this.phaseState === 'fighting') {
       // Meters fill only during live combat (not intro, not post-kill).
       for (const f of Object.values(this.fighters)) {
-        f.focusUnits = Math.min(f.focusUnits + ONE, focusToUnits(FOCUS_MAX));
-        f.criticalUnits += ONE; // value view clamps at CRITICAL_MAX
+        // Residual accumulator (D4) — spend-safe by construction.
+        const filled = focusTick(f.focusUnits, f.focusAcc);
+        f.focusUnits = filled.units;
+        f.focusAcc = filled.acc;
         // Chi fills BEFORE the queued skill resolves, so a post-cast read is
         // exactly max − cost (the cast tick's fill clamps at the ceiling).
         f.chiUnits = Math.min(f.chiUnits + CHI_FILL_PER_S, CHI_MAX_UNITS);
@@ -824,29 +899,47 @@ export class Sim {
       // Tip #27: HOLD mouse to run toward cursor); A/D is a dev-seam fallback.
       // The jump arc owns the position while airborne.
       const player = this.fighters.player;
-      if (this.autoSlashOn) {
+      // ⚠️ THE DASH IS CHECKED FIRST, before the auto/manual split. It owns
+      // position while it runs, and it is set by BOTH paths — a manual stroke
+      // and an AUTO SLASH stroke alike. Putting the auto branch first meant an
+      // auto-slash dash was assigned and then never advanced.
+      if (player.jump === null && this.playerDash !== null) {
+        // The dash owns position while it runs, and snaps on arrival.
+        const dash = this.playerDash;
+        const step = dash.speedPxS / FIXED_HZ;
+        const dx = dash.targetX - player.pos.x;
+        if (Math.abs(dx) <= step) {
+          player.pos = { x: this.clampX(dash.targetX, player.halfW), y: player.pos.y };
+          this.playerDash = null;
+        } else {
+          player.pos = {
+            x: this.clampX(player.pos.x + Math.sign(dx) * step, player.halfW),
+            y: player.pos.y,
+          };
+        }
+      } else if (this.autoSlashOn) {
         this.updateAutoSlash();
       } else if (player.jump === null) {
-        const stepMs = MS_PER_S / FIXED_HZ;
-        if (this.playerIntent.moveTargetX != null) {
-          const target = this.playerIntent.moveTargetX;
-          const dx = target - player.pos.x;
-          const dist = Math.abs(dx);
-          const step = PLAYER_MOVE_SPEED * stepMs;
-          if (dist <= step) {
-            // Arrived — snap to target
-            player.pos = { x: Math.max(player.halfW, Math.min(WORLD_WIDTH - player.halfW, target)), y: player.pos.y };
+        const order = this.playerMove;
+        if (order !== null) {
+          // NO acceleration ramp (measured: b-4 explicitly refutes one), and
+          // arrival SNAPS the moment the remaining gap fits inside one step.
+          const step = order.speedPxS / FIXED_HZ;
+          const dx = order.targetX - player.pos.x;
+          if (Math.abs(dx) <= step) {
+            player.pos = { x: this.clampX(order.targetX, player.halfW), y: player.pos.y };
+            this.playerMove = null;
           } else {
-            const dir = Math.sign(dx);
             player.pos = {
-              x: Math.max(player.halfW, Math.min(WORLD_WIDTH - player.halfW, player.pos.x + dir * step)),
+              x: this.clampX(player.pos.x + Math.sign(dx) * step, player.halfW),
               y: player.pos.y,
             };
           }
         } else if (this.playerIntent.moveX !== ZERO) {
-          const x = player.pos.x + this.playerIntent.moveX * PLAYER_MOVE_SPEED * stepMs;
+          // A/D remains a DEV SEAM only (the original is mouse-only); it walks.
+          const step = MOVE_WALK_PX_S / FIXED_HZ;
           player.pos = {
-            x: Math.max(player.halfW, Math.min(WORLD_WIDTH - player.halfW, x)),
+            x: this.clampX(player.pos.x + this.playerIntent.moveX * step, player.halfW),
             y: player.pos.y,
           };
         }

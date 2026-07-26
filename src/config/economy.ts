@@ -19,8 +19,22 @@
  *   for cash; this recreation has no cash path).
  */
 
-/** INFERRED — Stage-2 duel reward seed (see docblock). */
-export const KILL_REWARD = { xpPerFoeLevel: 10, coinsPerFoeLevel: 8 };
+/**
+ * ⚠️ SESSION13 D3 — XP IS NO LONGER A PER-LEVEL SEED. The source's named-enemy
+ * reward is `level × 5 + 45` (`XP_PER_LEVEL` / `XP_REWARD_BASE` in
+ * `config/duel.ts`, evaluated by `core/enemyModel.ts`), which pays **90** at
+ * our level 9 — not the 10 our `xpPerFoeLevel: 10` produced at level 1.
+ *
+ * Our +10/+8 was an INFERRED seed verified only against OUR OWN build's
+ * screenshots; it was never an OG measurement, so the Stage-2 gate row that
+ * reads "+10 XP / +8 COINS" is updated rather than left silently false.
+ *
+ * COINS have NO source formula found, so they stay INFERRED — and FLAT, not
+ * per-level: scaling them by the foe's level would invent a curve nobody
+ * measured (level 9 × 8 = 72 coins is not evidence, it is arithmetic on a
+ * guess). Veto = restore per-level coins and say so.
+ */
+export const KILL_REWARD = { coinsFlat: 8 };
 
 /** CONTRACT — level-up modal: +1 SP, +3 stat, full HP/Chi/AP refill. */
 export const LEVEL_UP_REWARD = { skillPoints: 1, statPoints: 3, fullRefill: true };

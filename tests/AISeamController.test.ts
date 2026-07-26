@@ -7,7 +7,13 @@
  * with synthetic views.
  */
 import { describe, expect, it } from 'vitest';
-import { AI_PENDING_STANCE_MS, AI_STRIKE_RANGE, AI_TIERS } from '../src/config/ai';
+import {
+  AI_MELEE_RANGE,
+  AI_PENDING_STANCE_MS,
+  AI_POINT_BLANK_X,
+  AI_TELEGRAPH_MS,
+  AI_TIERS,
+} from '../src/config/ai';
 import { AISeamController } from '../src/core/AISeamController';
 import type { OpponentIntent, OpponentView } from '../src/core/OpponentController';
 import type { Rng } from '../src/core/Sim';
@@ -22,9 +28,15 @@ const view = (over: Partial<OpponentView> = {}): OpponentView => ({
   playerJumping: false,
   ...over,
 });
-/** In strike range (dist 100 < AI_STRIKE_RANGE 110), enemy already counter-stanced. */
+/**
+ * Inside the MELEE GATE (SESSION13 D8): `|dx| < 50 && Δy < 50` world px, on
+ * BOTH axes. dist 30 here — and 30 > AI_POINT_BLANK_X, so this is the
+ * "closing" telegraph case. The enemy is already counter-stanced.
+ * ⚠️ The old fixture sat at dist 100, which the deleted `AI_STRIKE_RANGE`
+ * (110) admitted and the real 50 px gate does not.
+ */
 const closeView = (over: Partial<OpponentView> = {}): OpponentView =>
-  view({ enemyPos: { x: 200, y: 430 }, ...over });
+  view({ enemyPos: { x: 130, y: 430 }, ...over });
 
 const lowRng: Rng = () => 0; // every chance-roll passes
 const highRng: Rng = () => 0.99; // every chance-roll fails
@@ -44,13 +56,16 @@ const frameWhere = (
 };
 
 describe('AISeamController — telegraph-then-commit (gate: windup ≥ telegraphMs)', () => {
-  it('telegraphs first, then strikes no earlier than telegraphMs later', () => {
+  it('telegraphs first, then strikes exactly THAT telegraph\'s duration later', () => {
     const ai = new AISeamController(lowRng, AI_TIERS.normal);
     const first = ai.next(1, closeView());
-    expect(first.telegraph).toEqual({ kind: 'strike', durationMs: 520 });
+    // closeView is the CLOSING case (dist 30 > AI_POINT_BLANK_X 25) → 600 ms.
+    expect(first.telegraph).toEqual({ kind: 'strike', durationMs: AI_TELEGRAPH_MS.closing });
     expect(first.strike).toBeUndefined();
     const strikeFrame = frameWhere(ai, closeView(), 2, 200, (i) => i.strike === true);
-    expect(strikeFrame).toBe(1 + msToFrames(520)); // exactly the windup, never earlier
+    // Exactly the windup it announced, never earlier — the contract is the
+    // announced duration, NOT a global "≥520 ms" floor (SESSION13 D8).
+    expect(strikeFrame).toBe(1 + msToFrames(AI_TELEGRAPH_MS.closing));
   });
   it('never strikes without a telegraph across a long deterministic run', () => {
     const ai = new AISeamController(lowRng, AI_TIERS.normal);
@@ -60,7 +75,7 @@ describe('AISeamController — telegraph-then-commit (gate: windup ≥ telegraph
       if (intent.telegraph?.kind === 'strike') telegraphFrame = f;
       if (intent.strike === true) {
         expect(telegraphFrame).toBeGreaterThan(-1);
-        expect(f - telegraphFrame).toBeGreaterThanOrEqual(msToFrames(520));
+        expect(f - telegraphFrame).toBeGreaterThanOrEqual(msToFrames(AI_TELEGRAPH_MS.pointBlank));
       }
     }
   });
@@ -173,31 +188,42 @@ describe('AISeamController — counter stance pick (queued + telegraphed)', () =
   });
 });
 
-describe('AISeamController — react seam (block/dodge with reactMs cooldown)', () => {
-  it('blocks when the roll passes, then cannot react again inside reactMs', () => {
-    const ai = new AISeamController(lowRng, AI_TIERS.normal); // block 0.30
-    expect(ai.react(100)).toBe('block'); // 0 < 0.30
-    expect(ai.react(101)).toBeNull(); // cooling down (320 ms)
-    expect(ai.react(100 + msToFrames(320))).toBe('block');
+describe('AISeamController — SESSION13 D8: no reactions, a two-case telegraph, a 50 px gate', () => {
+  it('HAS NO react() AT ALL (the enemy never blocks or dodges in the original)', () => {
+    const ai = new AISeamController(lowRng, AI_TIERS.normal);
+    expect((ai as unknown as Record<string, unknown>).react).toBeUndefined();
   });
-  it('dodges when block fails but dodge passes', () => {
-    // rolls: block 0.35 (>0.30 fail), dodge 0.10 (<0.15 pass)
-    const rolls = [0.35, 0.1];
-    let i = 0;
-    const seq: Rng = () => rolls[i++ % rolls.length] ?? 0;
-    const ai = new AISeamController(seq, AI_TIERS.normal);
-    expect(ai.react(100)).toBe('dodge');
+  it('the tier table no longer carries ANY reaction field', () => {
+    for (const tier of Object.values(AI_TIERS)) {
+      expect(tier).not.toHaveProperty('reactMs');
+      expect(tier).not.toHaveProperty('reactBlockChance');
+      expect(tier).not.toHaveProperty('reactDodgeChance');
+      // …nor a single global telegraph: the windup is two measured cases.
+      expect(tier).not.toHaveProperty('telegraphMs');
+    }
   });
-  it('a failed roll still consumes the reaction window', () => {
-    const ai = new AISeamController(highRng, AI_TIERS.normal);
-    expect(ai.react(100)).toBeNull();
-    // 0.99 fails both — but the attention window is spent regardless:
-    const spy: Rng = () => 0; // would pass if rolled
-    const ai2 = new AISeamController(spy, AI_TIERS.normal);
-    expect(ai2.react(100)).toBe('block');
-    expect(ai2.react(105)).toBeNull(); // still inside 320 ms
+  it('closeView really is inside the melee gate, on BOTH axes', () => {
+    const v = closeView();
+    expect(Math.abs(v.enemyPos.x - v.playerPos.x)).toBeLessThan(AI_MELEE_RANGE.x);
+    expect(Math.abs(v.enemyPos.y - v.playerPos.y)).toBeLessThan(AI_MELEE_RANGE.y);
   });
-  it('AI_STRIKE_RANGE sanity: closeView really is inside it', () => {
-    expect(Math.abs(closeView().enemyPos.x - closeView().playerPos.x)).toBeLessThan(AI_STRIKE_RANGE);
+  it('will NOT strike from outside the 50 px gate — it closes instead', () => {
+    const ai = new AISeamController(lowRng, AI_TIERS.normal);
+    // dist 60: inside the DELETED AI_STRIKE_RANGE (110), outside the real gate.
+    const intent = ai.next(1, view({ enemyPos: { x: 160, y: 430 } }));
+    expect(intent.telegraph).toBeUndefined();
+    expect(intent.moveX).toBeDefined();
+  });
+  it('will NOT strike when the vertical gap exceeds the gate (the old model had NO y term)', () => {
+    const ai = new AISeamController(lowRng, AI_TIERS.normal);
+    const intent = ai.next(1, view({ enemyPos: { x: 130, y: 330 } })); // Δy 100
+    expect(intent.telegraph).toBeUndefined();
+  });
+  it('telegraphs 600 ms while CLOSING and 267 ms POINT-BLANK', () => {
+    const closing = new AISeamController(lowRng, AI_TIERS.normal);
+    expect(closing.next(1, closeView()).telegraph?.durationMs).toBe(AI_TELEGRAPH_MS.closing);
+    const pointBlank = new AISeamController(lowRng, AI_TIERS.normal);
+    const near = view({ enemyPos: { x: 100 + AI_POINT_BLANK_X, y: 430 } });
+    expect(pointBlank.next(1, near).telegraph?.durationMs).toBe(AI_TELEGRAPH_MS.pointBlank);
   });
 });

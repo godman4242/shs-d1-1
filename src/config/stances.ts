@@ -7,34 +7,34 @@
 export type StanceId = 'light' | 'balanced' | 'heavy';
 
 export interface StanceParams {
-  /** Max effective stroke reach in WORLD px (SESSION13 A0). */
-  reach: number;
   /** Animation/measure speed multiplier. */
   speed: number;
-  /** Outgoing damage multiplier. */
-  dmgMult: number;
   /** Incoming damage multiplier. */
   damageTakenMult: number;
 }
 
-/** INFERRED — per-stance combat parameters.
- * These are the wiki's MASTERY-9 CEILING values (REBUILD_READINESS §3.3), not
- * base stats. Decide-and-flag 2026-07-23: the build TARGETS mastery-9 — the
- * only sourced numbers (veto = model the mastery curve instead). Heavy's
- * ceiling reach is 100 (the earlier 120 was a carry error). Base-scaling
- * (e.g. L1 Light dmg ×0.5, Heavy reach ×0.5→×0.9) stays UNMODELED until the
- * Session 11 study pass measures real px from footage.
+/**
+ * INFERRED — what is LEFT of the per-stance table (SESSION13 D2/D2a).
  *
- * REACH IS WORLD-SPACE (SESSION13 A0): converted once from the old stage
- * values 300/200/100 via `/1.2`. These numbers are known WRONG IN KIND (the
- * source makes reach a stat-driven arc-length budget, and `200` is the
- * source's placeholder default) — SESSION13 B3 replaces the field with the
- * formula and deletes it. The conversion happens anyway so the sim is never
- * running stage-sized reaches inside a world-sized arena. */
+ * ⚠️ `reach` AND `dmgMult` HAVE BEEN REMOVED. Both are functions of the
+ * character's stats and mastery, not per-stance constants:
+ *   - reach comes from the source formula (`src/config/reach.ts`,
+ *     evaluated by `src/core/mastery.ts`)
+ *   - dmgMult is the SAME mastery curve family, permuted between light and
+ *     heavy — the old 0.9 / 1.2 / 1.4 were those curves at mastery 10
+ *
+ * Keeping them here while reading reach from a mastery-0 character is exactly
+ * the self-inconsistency the Session-11 adjudication reverted, so ONE mastery
+ * value now drives both (gate item 5).
+ *
+ * `damageTakenMult` stays DATA-ONLY and must never be applied — the heavy
+ * penalty is the defence-side ×0.8 cut in `core/damage.ts` (Stage-2 landmine:
+ * apply ONE form, never both).
+ */
 export const STANCE_TABLE: Record<StanceId, StanceParams> = {
-  light: { reach: 250, speed: 1.4, dmgMult: 0.9, damageTakenMult: 1.0 },
-  balanced: { reach: 166.67, speed: 1.0, dmgMult: 1.2, damageTakenMult: 1.0 },
-  heavy: { reach: 83.33, speed: 0.7, dmgMult: 1.4, damageTakenMult: 1.25 },
+  light: { speed: 1.4, damageTakenMult: 1.0 },
+  balanced: { speed: 1.0, damageTakenMult: 1.0 },
+  heavy: { speed: 0.7, damageTakenMult: 1.25 },
 };
 
 /**

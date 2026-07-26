@@ -19,8 +19,10 @@
  */
 import { describe, expect, it } from 'vitest';
 import { AI_THINK_INTERVAL_MS, AUTO_SLASH_POINT_SPACING } from '../src/config/ai';
-import { PLAYER_MOVE_SPEED } from '../src/config/combat-sim';
-import { STANCE_TABLE } from '../src/config/stances';
+import { MOVE_RUN_PX_S, MOVE_STANDING_RANGE_PX } from '../src/config/combat-sim';
+import { reachFor } from '../src/core/mastery';
+
+import { ENEMY_STATS, PLAYER_STATS } from '../src/config/stats';
 import { FIXED_HZ, MS_PER_S, SLASH_FRAMES } from '../src/config/timing';
 import { DrawnStroke } from '../src/core/DrawnStroke';
 import type { OpponentController } from '../src/core/OpponentController';
@@ -34,7 +36,9 @@ const v = (x: number, y: number): Vec => ({ x: sx(x), y: sx(y) });
 const playerSpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
   pos: v(100, 200),
   hp: 100,
-  atkPlusWeapon: 10,
+  minDamage: 10,
+  damageRange: 0,
+  stats: PLAYER_STATS,
   defense: 5,
   stance: 'balanced',
   deflectLearned: true,
@@ -45,7 +49,9 @@ const playerSpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
 const enemySpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
   pos: v(400, 200),
   hp: 150,
-  atkPlusWeapon: 7,
+  minDamage: 7,
+  damageRange: 0,
+  stats: ENEMY_STATS,
   defense: 5,
   stance: 'heavy',
   deflectLearned: false,
@@ -139,8 +145,12 @@ describe('AUTO SLASH — the synthesised stroke goes through the SAME pipeline',
     const evs = sim.drainEvents();
     expect(evs.filter((e) => e.type === 'damage' && e.target === 'enemy')).toHaveLength(1);
     expect(sim.enemy.hp).toBeLessThan(150);
-    expect(sim.player.pos.x).toBeGreaterThan(beforeX); // the dash ran
     expect(sim.combo).toBe(1);
+    // The dash is ARMED by the swing and travels from the following tick — the
+    // same ordering a hand-drawn stroke gets, which is the point of D7.
+    expect(sim.player.pos.x).toBe(beforeX);
+    tickN(sim, 2);
+    expect(sim.player.pos.x).toBeGreaterThan(beforeX);
   });
   it('emits the generated line so the scene can DRAW it (D7: "the line is drawn on screen")', () => {
     const sim = makeSim(striker);
@@ -153,7 +163,7 @@ describe('AUTO SLASH — the synthesised stroke goes through the SAME pipeline',
     // floor(reach / spacing) points, exactly AUTO_SLASH_POINT_SPACING apart,
     // anchored AT the player and aimed at the target (§3.3: real strokes are
     // player-anchored, not target-centred).
-    const reach = STANCE_TABLE.balanced.reach;
+    const reach = reachFor('balanced', PLAYER_STATS);
     expect(pts).toHaveLength(Math.floor(reach / AUTO_SLASH_POINT_SPACING));
     expect(pts[0]).toEqual({ x: sx(100), y: sx(200) });
     const a = pts[0];
@@ -221,11 +231,20 @@ describe('AUTO SLASH — decision gating', () => {
 });
 
 describe('AUTO SLASH — it drives MOVEMENT too, not just swings (gate item 12)', () => {
-  it('closes distance on the target at PLAYER_MOVE_SPEED, every tick', () => {
-    const sim = makeSim(closer);
+  it('closes on the target at the RUN gait, every tick (B1: gait by destination type)', () => {
+    // Target parked far away so MOVE_STANDING_RANGE_PX cannot bite inside the
+    // measured second (the next test covers the standing range on its own).
+    const sim = makeSim(closer, {}, { pos: v(900, 200) });
     sim.setAutoSlash(true);
     const before = sim.player.pos.x;
     tickN(sim, FIXED_HZ);
-    expect(sim.player.pos.x).toBeCloseTo(before + PLAYER_MOVE_SPEED * MS_PER_S, 6);
+    expect(sim.player.pos.x).toBeCloseTo(before + MOVE_RUN_PX_S, 6);
+  });
+  it('stops MOVE_STANDING_RANGE_PX short rather than walking into the target', () => {
+    const sim = makeSim(closer);
+    sim.setAutoSlash(true);
+    tickN(sim, 5 * FIXED_HZ); // far more than enough to close
+    const gap = Math.abs(sim.enemy.pos.x - sim.player.pos.x);
+    expect(gap).toBeGreaterThanOrEqual(MOVE_STANDING_RANGE_PX);
   });
 });

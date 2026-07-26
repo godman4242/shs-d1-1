@@ -11,10 +11,14 @@ import { COL } from '../src/config/palette';
 import {
   AI_APPROACH_RANGE,
   AI_KUNAI_RANGE,
+  AI_MELEE_RANGE,
   AI_PENDING_STANCE_MS,
+  AI_POINT_BLANK_X,
   AI_RECOVER_JITTER_FRAC,
-  AI_STRIKE_RANGE,
+  AI_TELEGRAPH_MS,
+  AI_THINK_INTERVAL_MS,
   AI_TIERS,
+  AUTO_SLASH_POINT_SPACING,
   DUEL_TARGET_SECONDS,
   ENEMY_SPEED,
 } from '../src/config/ai';
@@ -30,31 +34,39 @@ import {
   BLOOD_SPREAD_DEG,
   CHAIKIN_RATIO,
   CHI_PUNCH_DMG_L1,
-  COUNTER_BONUS,
+  CRIT_FLAT_BONUS,
   CRIT_MULT,
-  CRITICAL_FILL_PER_S,
-  CRITICAL_MAX,
   DAMAGE_FLOOR,
+  FOCUS_ACC_DEN,
+  FOCUS_ACC_NUM,
+  FOCUS_DISPLAY_OFFSET,
+  FOCUS_DISPLAY_SPAN,
   FOCUS_FILL_PER_S,
+  FOCUS_KILL_BONUS,
   FOCUS_MAX,
+  FOCUS_SPEND,
   FOCUS_START,
   FOCUS_SWITCH_COST,
   HEAVY_DEF_PENALTY,
   MAX_STROKE_POINTS,
+  MIN_DAMAGE_TIERS,
   RESAMPLE_SPACING,
   SMOOTH_ITERATIONS,
   SPAWN_INVULN_S,
-  WEAPON_WEIGHT,
+  STANCE_MATCHUP,
 } from '../src/config/combat';
 import {
-  DASH_MIN_STROKE_PX,
-  DASH_SLASH_PX,
+  DASH_SPEED_PX_PER_FRAME,
   DEFLECT_RADIUS,
+  MOVE_DEADZONE_PX,
+  MOVE_RUN_PX_S,
+  MOVE_RUN_THRESHOLD_PX,
+  MOVE_STANDING_RANGE_PX,
+  MOVE_WALK_PX_S,
   DEFLECT_WINDOW_MS,
   ENEMY_BASE,
   MAX_FRAME_MS,
   PLAYER_BASE,
-  PLAYER_MOVE_SPEED,
   PLAYER_WINDUP_MS,
   PROJECTILE_DMG,
   PROJECTILE_HIT_RADIUS,
@@ -76,7 +88,18 @@ import {
   WORLD_HEIGHT_TALL,
   WORLD_WIDTH,
 } from '../src/config/display';
-import { DUEL_ENEMY, DUEL_SPAWNS, JUMP_APEX_PX, JUMP_DURATION_FRAMES } from '../src/config/duel';
+import {
+  DUEL_ENEMY,
+  DUEL_SPAWNS,
+  ENEMY_D_BASE,
+  ENEMY_K_BASE,
+  ENEMY_KD_FLOOR,
+  JUMP_APEX_PX,
+  JUMP_DURATION_FRAMES,
+  LOW_LEVEL_OVERRIDE,
+  XP_PER_LEVEL,
+  XP_REWARD_BASE,
+} from '../src/config/duel';
 import {
   FIRST_RUN_SP_CAP,
   HAS_CASH_PURCHASE,
@@ -160,28 +183,48 @@ describe('combat.ts — exact core constants (Stage 0 item 5)', () => {
   it('damage constants', () => {
     // 1.3 per research 2026-07-11 (spec said 3; see combat.ts CRIT_MULT docblock)
     expect(CRIT_MULT).toBe(1.3);
-    expect(COUNTER_BONUS).toBe(1.25);
+    // SESSION13 D5: COUNTER_BONUS is DELETED — it modelled a mechanic the
+    // original does not have. The stance triangle replaces it, and unlike the
+    // old one-sided bonus it PENALISES losing the matchup.
+    expect(STANCE_MATCHUP).toEqual({ win: 1.2, lose: 0.9, same: 1.0 });
+    expect(CRIT_FLAT_BONUS).toBe(0); // named at the identity — no source value found
     expect(HEAVY_DEF_PENALTY).toBe(0.2);
     expect(DAMAGE_FLOOR).toBe(1);
     expect(CHI_PUNCH_DMG_L1).toBe(10);
     expect(SPAWN_INVULN_S).toBe(5);
+    // The level-tiered min-damage floor (D6 step 6).
+    expect(MIN_DAMAGE_TIERS).toEqual({
+      tier1MaxLevel: 10,
+      tier2MaxLevel: 20,
+      tier2Divisor: 8,
+      tier3MaxLevel: 30,
+      tier3Divisor: 6,
+      tier4Divisor: 4,
+    });
   });
-  it('meters', () => {
-    expect(FOCUS_MAX).toBe(100);
-    expect(FOCUS_SWITCH_COST).toBe(34);
-    expect(FOCUS_START).toBe(50);
-    expect(FOCUS_FILL_PER_S).toBe(4); // Stage-2 decision — see combat.ts docblock
-    expect(CRITICAL_MAX).toBe(100);
-    expect(CRITICAL_FILL_PER_S).toBe(8);
+  it('Focus — the ONE meter, in the source\'s integer units (SESSION13 D4)', () => {
+    expect(FOCUS_MAX).toBe(192);
+    expect(FOCUS_FILL_PER_S).toBe(24);
+    expect(FOCUS_START).toBe(0);
+    expect(FOCUS_SWITCH_COST).toBe(48); // flat; WEAPON_WEIGHT is deleted (D9)
+    expect(FOCUS_KILL_BONUS).toBe(6);
+    expect(FOCUS_SPEND).toEqual({ light: 24, balanced: 48, heavy: 72 });
   });
-  it('weapon weights', () => {
-    expect(WEAPON_WEIGHT).toEqual({ light: 1.0, balanced: 1.5, heavy: 2.5 });
+  it('Focus display quirk + residual accumulator terms', () => {
+    expect(FOCUS_DISPLAY_OFFSET).toBe(48);
+    expect(FOCUS_DISPLAY_SPAN).toBe(144);
+    // 24/60 in lowest terms — the accumulator MUST be integer (D4).
+    expect(FOCUS_ACC_NUM).toBe(2);
+    expect(FOCUS_ACC_DEN).toBe(5);
+    expect(FOCUS_ACC_NUM / FOCUS_ACC_DEN).toBe(FOCUS_FILL_PER_S / 60);
+    // …and 144 units at 24/s is exactly the 6.000 s VISIBLE fill measured 5.97.
+    expect(FOCUS_DISPLAY_SPAN / FOCUS_FILL_PER_S).toBe(6);
   });
 });
 
 describe('combat.ts — Stage 1 stroke/blade/blood constants (spec item 3 + item-7 NOTE)', () => {
   it('drawn-stroke processing', () => {
-    expect(RESAMPLE_SPACING).toBe(6.67); // A0: world px (was 8 stage)
+    expect(RESAMPLE_SPACING).toBe(20); // CONTRACT-SRC (B3); was an INFERRED 8 stage
     expect(SMOOTH_ITERATIONS).toBe(2);
     expect(CHAIKIN_RATIO).toBe(0.25);
     expect(MAX_STROKE_POINTS).toBe(256);
@@ -202,12 +245,18 @@ describe('combat.ts — Stage 1 stroke/blade/blood constants (spec item 3 + item
 });
 
 describe('stances.ts — exact table + triangle (Stage 0 item 6)', () => {
-  it('STANCE_TABLE — mastery-9 ceilings (wiki), reach converted to WORLD px (A0: 300/200/100 stage ÷ 1.2)', () => {
+  it('STANCE_TABLE — reach and dmgMult are GONE (SESSION13 D2a: both are mastery-derived)', () => {
     expect(STANCE_TABLE).toEqual({
-      light: { reach: 250, speed: 1.4, dmgMult: 0.9, damageTakenMult: 1.0 },
-      balanced: { reach: 166.67, speed: 1.0, dmgMult: 1.2, damageTakenMult: 1.0 },
-      heavy: { reach: 83.33, speed: 0.7, dmgMult: 1.4, damageTakenMult: 1.25 },
+      light: { speed: 1.4, damageTakenMult: 1.0 },
+      balanced: { speed: 1.0, damageTakenMult: 1.0 },
+      heavy: { speed: 0.7, damageTakenMult: 1.25 },
     });
+    // A reach/dmgMult creeping back is exactly the regression this pins: one
+    // mastery value must drive both, via core/mastery.ts.
+    for (const params of Object.values(STANCE_TABLE)) {
+      expect(params).not.toHaveProperty('reach');
+      expect(params).not.toHaveProperty('dmgMult');
+    }
   });
   it('STANCE_BEATS triangle: light>heavy>balanced>light', () => {
     expect(STANCE_BEATS).toEqual({ light: 'heavy', heavy: 'balanced', balanced: 'light' });
@@ -302,8 +351,18 @@ describe('duel.ts — Stage-2 arena layout (all INFERRED)', () => {
     expect(JUMP_DURATION_FRAMES).toBe(24);
     expect(JUMP_APEX_PX).toBe(100);
   });
-  it('DUEL_ENEMY — nameplate identity; level 1 ⇒ +10/+8 gate rewards', () => {
-    expect(DUEL_ENEMY).toEqual({ name: 'RONIN', level: 1 });
+  it('DUEL_ENEMY — LEVEL 9 (D3: the lowest level that escapes the ≤8 override)', () => {
+    expect(DUEL_ENEMY).toEqual({ name: 'RONIN', level: 9 });
+  });
+  it('the named-duellist K/D pair, the ≤8 override, and the XP formula', () => {
+    expect(ENEMY_K_BASE).toBe(10);
+    expect(ENEMY_D_BASE).toBe(18);
+    expect(ENEMY_KD_FLOOR).toBe(3);
+    expect(LOW_LEVEL_OVERRIDE).toEqual({ maxLevel: 8 });
+    expect(XP_PER_LEVEL).toBe(5);
+    expect(XP_REWARD_BASE).toBe(45);
+    // level × 5 + 45 = 90 at our level 9 — NOT the old +10 seed.
+    expect(DUEL_ENEMY.level * XP_PER_LEVEL + XP_REWARD_BASE).toBe(90);
   });
 });
 
@@ -370,32 +429,48 @@ describe('combat-sim.ts — Stage 2 item 9, exact spec names and values', () => 
     expect(PROJECTILE_MAX_ACTIVE).toBe(8);
   });
   it('player movement + windup', () => {
-    expect(PLAYER_MOVE_SPEED).toBe(0.2333); // A0: world px/ms (was 0.28 stage)
+    // CONTRACT-SRC (B1) — the OG's two gaits in WORLD px/s. At the ×1.2 render
+    // scale these are 115.2 and 345.6 stage px/s, against measured 112–126 and
+    // 341–349. Our single INFERRED 280 stage px/s matched NEITHER.
+    expect(MOVE_WALK_PX_S).toBe(96);
+    expect(MOVE_RUN_PX_S).toBe(288);
+    expect(MOVE_RUN_THRESHOLD_PX).toBe(100);
+    expect(MOVE_DEADZONE_PX).toBe(25);
+    expect(MOVE_STANDING_RANGE_PX).toBe(50);
     expect(PLAYER_WINDUP_MS).toBe(0);
   });
-  it('dash-through slash displacement (Session 9: MEASURED from strike-C 1-frame snaps)', () => {
-    // +240/+~240/−235 px @1080 (2nd read approximate), mean ≈238.3.
-    // A0: ÷ 2.25 (the original's own 1080/480 study-frame scale) = 105.9 WORLD px.
-    // The old stage route (÷1.875 → 127.1, then ÷1.2) lands on the same number.
-    expect(DASH_SLASH_PX).toBe(105.9);
+  it('dash speeds by stance (SESSION13 B3 — replaces the fixed-distance dash)', () => {
+    // SESSION13 B3: the dash is NOT a fixed distance. DASH_SLASH_PX and
+    // DASH_MIN_STROKE_PX are deleted; the samurai travels to the stroke's LAST
+    // POINT at a per-stance speed, bounded by the reach budget the stroke was
+    // already truncated to.
+    expect(DASH_SPEED_PX_PER_FRAME).toEqual({ light: 50, balanced: 40, heavy: 30 });
     // INFERRED — review-hardened bound: a mouse slip must not dash (real
     // swings measure well over 100px of path; slips are single-digit).
-    expect(DASH_MIN_STROKE_PX).toBe(33.33); // A0: world px (was 40 stage)
+
   });
   it('base fighter loadouts', () => {
     expect(PLAYER_BASE).toEqual({
       hp: 100,
-      atkPlusWeapon: 10,
+      minDamage: 10, // atk 1 × 3 + weapon 7 — reproduces the old atkPlusWeapon
+      damageRange: 0, // no weapon model yet (D6 RNG scope)
       defense: 5,
       stance: 'balanced',
       deflectLearned: true,
+      stats: PLAYER_STATS,
     });
+    // ⚠️ The enemy's AUTHORED base is 1, not 150 (D3). Named-enemy HP is not
+    // authored at all — it is `effPlayerDmg × K` at spawn. A 150 here would
+    // WIN the source's `max(scaledBase, …)` and quietly keep HP an INPUT,
+    // defeating the derivation entirely.
     expect(ENEMY_BASE).toEqual({
-      hp: 150,
-      atkPlusWeapon: 7,
+      hp: 1,
+      minDamage: 1,
+      damageRange: 0,
       defense: 5,
       stance: 'heavy',
       deflectLearned: false,
+      stats: ENEMY_STATS,
     });
   });
   it('skill hotbar verbs', () => {
@@ -404,40 +479,38 @@ describe('combat-sim.ts — Stage 2 item 9, exact spec names and values', () => 
 });
 
 describe('ai.ts — Stage 2 item 8, exact spec names and values', () => {
-  it('AI_TIERS — every tier exactly as the spec writes it', () => {
+  it('AI_TIERS — four fields DELETED (D8): the three react fields and telegraphMs', () => {
     expect(AI_TIERS).toEqual({
-      easy: {
-        telegraphMs: 700, attackMs: 180, recoverMs: 760, reactMs: 420,
-        reactBlockChance: 0.15, reactDodgeChance: 0.05,
-        counterStancePickChance: 0.2, aggression: 0.3, kunaiChance: 0,
-      },
-      normal: {
-        telegraphMs: 520, attackMs: 180, recoverMs: 620, reactMs: 320,
-        reactBlockChance: 0.30, reactDodgeChance: 0.15,
-        counterStancePickChance: 0.5, aggression: 0.55, kunaiChance: 0.25,
-      },
-      hard: {
-        telegraphMs: 380, attackMs: 160, recoverMs: 480, reactMs: 220,
-        reactBlockChance: 0.45, reactDodgeChance: 0.25,
-        counterStancePickChance: 0.8, aggression: 0.8, kunaiChance: 0.40,
-      },
+      easy: { attackMs: 180, recoverMs: 760, counterStancePickChance: 0.2, aggression: 0.3, kunaiChance: 0 },
+      normal: { attackMs: 180, recoverMs: 620, counterStancePickChance: 0.5, aggression: 0.55, kunaiChance: 0.25 },
+      hard: { attackMs: 160, recoverMs: 480, counterStancePickChance: 0.8, aggression: 0.8, kunaiChance: 0.40 },
     });
   });
   it('ranges, speed, jitter, duel target', () => {
     // A0: all four converted to WORLD units (÷1.2 from 240/720, 132, 620, 0.17).
     expect(AI_KUNAI_RANGE).toEqual({ min: 200, max: 600 });
-    expect(AI_STRIKE_RANGE).toBe(110);
+    // D8: the melee trigger is BOTH axes at 50 world px. AI_STRIKE_RANGE (110)
+    // is deleted — 2× too generous, and it had no vertical term at all.
+    expect(AI_MELEE_RANGE).toEqual({ x: 50, y: 50 });
+    expect(AI_TELEGRAPH_MS).toEqual({ closing: 600, pointBlank: 267 });
+    expect(AI_POINT_BLANK_X).toBe(25); // INFERRED split between the two cases
+    expect(AI_THINK_INTERVAL_MS).toBe(500);
+    expect(AUTO_SLASH_POINT_SPACING).toBe(20);
     expect(AI_APPROACH_RANGE).toBe(516.67);
     expect(ENEMY_SPEED).toBe(0.1417);
     expect(AI_RECOVER_JITTER_FRAC).toBe(0.35);
-    expect(DUEL_TARGET_SECONDS).toEqual({ min: 20, max: 60 });
+    // SESSION13 D10/B0: source-derived, replacing the inherited spec guess.
+    expect(DUEL_TARGET_SECONDS).toEqual({ min: 8, max: 25 });
     expect(AI_PENDING_STANCE_MS).toBe(600); // Stage-2 decision — see ai.ts docblock
   });
 });
 
 describe('economy.ts — Stage 2 item 10, exact spec names and values', () => {
-  it('KILL_REWARD — coins is 8, NOT 5 (spec-verified); whole record INFERRED', () => {
-    expect(KILL_REWARD).toEqual({ xpPerFoeLevel: 10, coinsPerFoeLevel: 8 });
+  it('KILL_REWARD — coins only, FLAT and still INFERRED (XP moved to the source formula)', () => {
+    // D3: XP is `level × 5 + 45` (config/duel.ts). Coins have NO source
+    // formula, so they stay a flat 8 rather than being scaled by foe level —
+    // scaling a guess by 9 is arithmetic, not evidence.
+    expect(KILL_REWARD).toEqual({ coinsFlat: 8 });
   });
   it('LEVEL_UP_REWARD (CONTRACT: +1 SP / +3 stat / full refill modals)', () => {
     expect(LEVEL_UP_REWARD).toEqual({ skillPoints: 1, statPoints: 3, fullRefill: true });
@@ -551,13 +624,17 @@ describe('stats.ts — SESSION13 A0.5: the inputs D2/D3/D6 need (nothing consume
       weapon: { minDamage: 4, maxDamage: 4 },
     });
   });
-  it('the weapon decomposition preserves the pre-A0.5 atkPlusWeapon totals exactly', () => {
+  it('the PLAYER weapon decomposition reproduces the pre-A0.5 atkPlusWeapon exactly', () => {
+    // 1 × 3 + 7 = 10, the old PLAYER_BASE.atkPlusWeapon. A decomposition of an
+    // existing seed, not a new number.
     expect(PLAYER_STATS.atk * ATTACK_DMG_PER_POINT + PLAYER_STATS.weapon.minDamage).toBe(
-      PLAYER_BASE.atkPlusWeapon,
+      PLAYER_BASE.minDamage,
     );
-    expect(ENEMY_STATS.atk * ATTACK_DMG_PER_POINT + ENEMY_STATS.weapon.minDamage).toBe(
-      ENEMY_BASE.atkPlusWeapon,
-    );
+    // ⚠️ The ENEMY deliberately does NOT follow suit: B4 makes its authored
+    // base 1 so the source's `max(scaledBase, …)` cannot override the
+    // derivation. Its stats still describe the character; they just do not set
+    // its combat numbers any more.
+    expect(ENEMY_BASE.minDamage).toBe(1);
   });
   it('damageRange is ZERO until a real weapon model lands (D6 RNG scope note)', () => {
     expect(PLAYER_STATS.weapon.maxDamage - PLAYER_STATS.weapon.minDamage).toBe(0);

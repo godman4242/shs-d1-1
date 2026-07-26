@@ -26,10 +26,34 @@ export const DUEL_SPAWNS: Record<'player' | 'enemy', SpawnPoint> = {
   enemy: { pos: { x: 557, y: 358 }, halfW: 22, halfH: 50 },
 };
 
-/** INFERRED — Stage-2 duel opponent identity (nameplate "NAME (LEVEL)" —
- * fidelity tell 22; level 1 makes the Victory rewards read +10/+8 exactly,
- * the Stage-2 gate numbers). */
-export const DUEL_ENEMY = { name: 'RONIN', level: 1 };
+/**
+ * Duel opponent identity (nameplate "NAME (LEVEL)" — fidelity tell 22).
+ *
+ * ⚠️ LEVEL 9, NOT 1 (SESSION13 D3). Level 1 sat inside the source's
+ * `if (level <= 8) { minDamage = 1; defense = 1; }` override, which forced the
+ * enemy to 1 damage and 1 defence and made the duel literally unlosable. Nine
+ * is the LOWEST level that escapes it — the smallest change that makes the
+ * fight a fight. Both fighters go to 9 so Δ = 0 and the duel is the original's
+ * own level-matched one: K = 10, D = 18.
+ */
+export const DUEL_ENEMY = { name: 'RONIN', level: 9 };
+
+// ── The named-duellist K/D pair and the XP reward (SESSION13 D3, source) ──
+/** CONTRACT-SRC — `K = max(10 + Δ, 3)`: hits the PLAYER needs. */
+export const ENEMY_K_BASE = 10;
+/** CONTRACT-SRC — `D = max(18 − Δ, 3)`: hits the ENEMY needs. */
+export const ENEMY_D_BASE = 18;
+/** CONTRACT-SRC — both K and D are floored at 3. */
+export const ENEMY_KD_FLOOR = 3;
+/** CONTRACT-SRC — `xpReward = level × 5 + 45` → 90 at level 9. */
+export const XP_PER_LEVEL = 5;
+export const XP_REWARD_BASE = 45;
+/**
+ * CONTRACT-SRC — the low-level override: at or below this level the enemy's
+ * damage AND defence are forced to 1, AFTER the HP derivation. Dormant at
+ * level 9, but kept implemented because it governs every Stage-4 mob.
+ */
+export const LOW_LEVEL_OVERRIDE = { maxLevel: 8 } as const;
 
 /** INFERRED — jump arc: 24 frames = 0.4 s at FIXED_HZ. */
 export const JUMP_DURATION_FRAMES = 24;

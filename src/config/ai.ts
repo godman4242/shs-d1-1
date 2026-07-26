@@ -5,17 +5,21 @@
  * executes movement with ENEMY_SPEED.
  */
 
+/**
+ * ⚠️ SESSION13 D8 removed FOUR fields from this interface:
+ * - `reactMs` / `reactBlockChance` / `reactDodgeChance` — the enemy does **not
+ *   block or dodge** in the original (measured: zero blocking across the study
+ *   corpus). `react()` modelled behaviour the game lacks. `reactMs` was also
+ *   doing double duty as the decision cadence, so it is replaced by the
+ *   explicit `AI_THINK_INTERVAL_MS` rather than simply deleted.
+ * - `telegraphMs` — the windup is not one global number per tier. It is TWO
+ *   measured cases (`AI_TELEGRAPH_MS`), chosen by range at commit time.
+ */
 export interface AITierParams {
-  /** Windup shown before ANY strike (the telegraph-then-commit contract). */
-  telegraphMs: number;
   /** Swing duration after the telegraph, before recovery starts. */
   attackMs: number;
   /** Recovery after a swing (jittered ±AI_RECOVER_JITTER_FRAC). */
   recoverMs: number;
-  /** Reaction attention window: at most one block/dodge roll per reactMs. */
-  reactMs: number;
-  reactBlockChance: number;
-  reactDodgeChance: number;
   counterStancePickChance: number;
   /** Chance per decision to commit to a strike when in range. */
   aggression: number;
@@ -24,34 +28,22 @@ export interface AITierParams {
 
 export const AI_TIERS: Record<'easy' | 'normal' | 'hard', AITierParams> = {
   easy: {
-    telegraphMs: 700,
     attackMs: 180,
     recoverMs: 760,
-    reactMs: 420,
-    reactBlockChance: 0.15,
-    reactDodgeChance: 0.05,
     counterStancePickChance: 0.2,
     aggression: 0.3,
     kunaiChance: 0,
   },
   normal: {
-    telegraphMs: 520,
     attackMs: 180,
     recoverMs: 620,
-    reactMs: 320,
-    reactBlockChance: 0.3,
-    reactDodgeChance: 0.15,
     counterStancePickChance: 0.5,
     aggression: 0.55,
     kunaiChance: 0.25,
   },
   hard: {
-    telegraphMs: 380,
     attackMs: 160,
     recoverMs: 480,
-    reactMs: 220,
-    reactBlockChance: 0.45,
-    reactDodgeChance: 0.25,
     counterStancePickChance: 0.8,
     aggression: 0.8,
     kunaiChance: 0.4,
@@ -65,15 +57,52 @@ export const AI_TIERS: Record<'easy' | 'normal' | 'hard', AITierParams> = {
  */
 /** Kunai only fly inside this horizontal band (world px). Was 240/720 stage. */
 export const AI_KUNAI_RANGE = { min: 200, max: 600 };
-/** World px. Was 132 stage. */
-export const AI_STRIKE_RANGE = 110;
+/**
+ * CONTRACT-SRC (SESSION13 D8) — the melee trigger is `|dx| < 50 && Δy < 50`
+ * in WORLD px, on BOTH axes.
+ *
+ * ⚠️ This replaces `AI_STRIKE_RANGE` (132 stage ≈ 110 world), which was **2×
+ * too generous and had no vertical term at all**. The gate is half the
+ * mechanism behind emergent turn-taking: enemies do NOT take turns in the
+ * original, and the appearance of it comes from independent 0.5 s decision
+ * timers PLUS this narrow range gate. Widen it and the behaviour stops
+ * emerging — which is why no attack token is (or should be) implemented.
+ */
+export const AI_MELEE_RANGE = { x: 50, y: 50 } as const;
+
+/**
+ * CONTRACT-SRC — the windup is TWO measured cases, not one global number:
+ * 600 ms when the enemy commits while still closing, 267 ms point-blank.
+ * The old single global `telegraphMs` (≥520 per tier) is wrong.
+ */
+export const AI_TELEGRAPH_MS = { closing: 600, pointBlank: 267 } as const;
+/**
+ * INFERRED — where "closing" becomes "point-blank". The two telegraph
+ * durations are measured; the boundary between them is not, so it is set at
+ * half the melee gate. Veto = measure the real split.
+ */
+export const AI_POINT_BLANK_X = 25;
 /** World px. Was 620 stage. Reserved for Stage-4 aggro; unused in 1v1. */
 export const AI_APPROACH_RANGE = 516.67;
 /** World px per ms. Was 0.17 stage px/ms (= 170 stage px/s → 141.67 world px/s). */
 export const ENEMY_SPEED = 0.1417;
 export const AI_RECOVER_JITTER_FRAC = 0.35;
-/** Boss/PvP-shaped duel tuning target (PvE trash is 3–10 s — SYNTHESIS §1.1). */
-export const DUEL_TARGET_SECONDS = { min: 20, max: 60 };
+/**
+ * SESSION13 D10/B0 — the 24-seed harness band, RE-DERIVED ONCE from the source
+ * model and fixed for the session. Was `{ min: 20, max: 60 }`, which was never
+ * a measurement: it came from the original kickoff SPEC, around that spec's own
+ * ~24.7 s reference (flagged in the harness header for a year as "the reference
+ * bot's own number").
+ *
+ * K = 10 hits-to-kill at the bot's 0.842 s cadence, plus 1–3 closing swings,
+ * predicts a ~10 s median — so `[20, 60]` misses by ~2×. Preserving the spec
+ * band's own relative width `[0.81×, 2.43×]` around the model-derived centre
+ * gives `[8, 25]`: same discriminating power, honest centre.
+ *
+ * The full derivation is pinned in `tests/harness.test.ts`, together with the
+ * stop-and-escalate rule that forbids widening it.
+ */
+export const DUEL_TARGET_SECONDS = { min: 8, max: 25 };
 
 /**
  * INFERRED — Stage-2 decision (flagged 2026-07-12): the spec queues stance

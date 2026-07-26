@@ -15,8 +15,24 @@
  * revert BOTH here and in tests/config-values.test.ts if Kheshav vetoes.
  */
 export const CRIT_MULT = 1.3;
-/** INFERRED — bonus when attacker's stance beats defender's (counter triangle). */
-export const COUNTER_BONUS = 1.25;
+/*
+ * ⚠️ `COUNTER_BONUS = 1.25` IS DELETED (SESSION13 D5). It modelled a
+ * counter/parry/riposte mechanic **that does not exist in the original**. The
+ * forum's "~20 %" is the STANCE MATCHUP, below — a different thing that applies
+ * to every swing, not to a reaction.
+ */
+/**
+ * CONTRACT-SRC — the stance triangle's damage multipliers, applied to physical
+ * damage BEFORE defence subtracts. Our triangle itself
+ * (light▸heavy▸balanced▸light) is confirmed correct and stays.
+ */
+export const STANCE_MATCHUP = { win: 1.2, lose: 0.9, same: 1.0 } as const;
+/**
+ * INFERRED — the source's crit term is `× 1.3 + flatCritBonus`. No value for
+ * the flat part was found in the payload, so it is named at the identity 0
+ * rather than invented. Veto = supply a value once one is measured.
+ */
+export const CRIT_FLAT_BONUS = 0;
 /**
  * CONTRACT — heavy stance defensive penalty (research-confirmed: sources
  * frame it as a DEFENSE-STAT cut, defense ×0.8 — not a damage-taken bonus).
@@ -24,8 +40,22 @@ export const COUNTER_BONUS = 1.25;
  * never both — double-counting would overshoot the original.
  */
 export const HEAVY_DEF_PENALTY = 0.2;
-/** CONTRACT — minimum damage per landed hit. */
+/** CONTRACT — absolute minimum damage per landed hit. */
 export const DAMAGE_FLOOR = 1;
+/**
+ * CONTRACT-SRC — the min-damage floor scales with the ATTACKER's level:
+ *   ≤10 → 1 · ≤20 → lvl/8 · ≤30 → lvl/6 · else lvl/4
+ * At our stated level 9 the first tier applies, so the floor is a flat 1 — but
+ * the whole ladder is implemented because it governs every later level.
+ */
+export const MIN_DAMAGE_TIERS = {
+  tier1MaxLevel: 10,
+  tier2MaxLevel: 20,
+  tier2Divisor: 8,
+  tier3MaxLevel: 30,
+  tier3Divisor: 6,
+  tier4Divisor: 4,
+} as const;
 /** CONTRACT — Chi Punch damage at skill level 1. */
 export const CHI_PUNCH_DMG_L1 = 10;
 /** CONTRACT — spawn invulnerability in seconds; ends early on first slash. */
@@ -36,29 +66,63 @@ export const SPAWN_INVULN_S = 5;
  * nothing else. See docs/DIVERGENCES.md.
  */
 
-// ── Meters ────────────────────────────────────────────────────────────
-/** INFERRED */ export const FOCUS_MAX = 100;
-/** INFERRED */ export const FOCUS_SWITCH_COST = 34;
-/** INFERRED */ export const FOCUS_START = 50;
-/**
- * INFERRED — Stage-2 decision (flagged 2026-07-12): the spec says "Focus
- * drain/fill" but names no fill rate; the original's Focus skill (active
- * fill) is out of Stage-2 scope, so passive in-combat fill seeds the meter.
- * 4/s ≈ one balanced-stance switch (cost 51) affordable every ~13 s.
- * Veto = different rate, or fill-on-hit instead of per-second.
+// ── Focus: ONE meter, in the source's own integer units (SESSION13 D4) ──
+/*
+ * ⚠️ THE STANDALONE `CRITICAL_*` METER IS DELETED. The original has THREE
+ * meters — HP, Chi, Focus — and **Focus IS the crit meter**: when it fills, the
+ * HUD prints "CRITICAL HIT". Modelling a fourth was our invention.
+ *
+ * Why the exact shape below and not a simplified 0–100 equivalent: the hidden
+ * first 48 units explain THREE separate anomalies at once — our measured fill
+ * of 5.97 s against a raw 8.000 s meter, small spends producing no visible drop,
+ * and the forum's "−20 % per slash" looking false in footage. One mechanism,
+ * three anomalies. Simplify it and you re-derive three wrong constants.
  */
-export const FOCUS_FILL_PER_S = 4;
-/** INFERRED */ export const CRITICAL_MAX = 100;
-/** INFERRED */ export const CRITICAL_FILL_PER_S = 8;
-
-// ── Weapons ───────────────────────────────────────────────────────────
-/** INFERRED — weight-class scalar (heavier drains Critical harder per swing). */
-export const WEAPON_WEIGHT = { light: 1.0, balanced: 1.5, heavy: 2.5 } as const;
+/** CONTRACT-SRC — the meter's real ceiling, in integer units. */
+export const FOCUS_MAX = 192;
+/** CONTRACT-SRC — fills at 24 units/s (= 2/5 of a unit per 60 Hz frame). */
+export const FOCUS_FILL_PER_S = 24;
+/**
+ * CONTRACT-SRC — the residual accumulator's numerator/denominator.
+ * `FOCUS_FILL_PER_S / FIXED_HZ` = 24/60 = **2/5** in lowest terms. Named rather
+ * than divided because D4 requires INTEGER accumulation: a closed form over
+ * total ticks silently overwrites every spend on the next tick.
+ */
+export const FOCUS_ACC_NUM = 2;
+export const FOCUS_ACC_DEN = 5;
+/** CONTRACT-SRC — a kill tops the meter up by this much. */
+export const FOCUS_KILL_BONUS = 6;
+/**
+ * CONTRACT-SRC — the bar renders `(current − 48) / 144`, so the first 48 units
+ * are INVISIBLE. 144 units at 24/s = exactly the 6.000 s visible fill our study
+ * pass measured as 5.97 s.
+ */
+export const FOCUS_DISPLAY_OFFSET = 48;
+export const FOCUS_DISPLAY_SPAN = 144;
+/** CONTRACT-SRC — the meter starts empty; the first 48 units fill unseen. */
+export const FOCUS_START = 0;
+/**
+ * CONTRACT-SRC — in-combat stance switching costs 48 Focus and is GATED on
+ * affording it (`if (focus < 48) return;`). Was an INFERRED 34 scaled by a
+ * `WEAPON_WEIGHT` table that has no source basis; both are deleted (D9).
+ */
+export const FOCUS_SWITCH_COST = 48;
+/**
+ * CONTRACT-SRC — Focus spent per slash, by stance (from the source's `usage`,
+ * floored at 48). ⚠️ Slashing is NOT gated on Focus (P3): the slash-entry guard
+ * checks death and action-state only. The spend simply clamps at 0, so you can
+ * always swing — you just cannot always switch stance.
+ */
+export const FOCUS_SPEND = { light: 24, balanced: 48, heavy: 72 } as const;
 
 // ── Drawn-stroke processing (Stage 1 consumer: core/DrawnStroke.ts) ──
 // Strokes are SIM data → WORLD space (SESSION13 A0).
-/** INFERRED — world px between resampled points. Was 8 stage. */
-export const RESAMPLE_SPACING = 6.67;
+/**
+ * CONTRACT-SRC — the original resamples drawn strokes every 20 world px.
+ * Was an INFERRED 8 stage px (6.67 world after A0); this is the source's own
+ * number, and the same spacing AUTO SLASH synthesises its stroke at.
+ */
+export const RESAMPLE_SPACING = 20;
 /** INFERRED */ export const SMOOTH_ITERATIONS = 2;
 /** INFERRED */ export const CHAIKIN_RATIO = 0.25;
 /** INFERRED — a count, not a length. */ export const MAX_STROKE_POINTS = 256;

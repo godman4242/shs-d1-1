@@ -12,7 +12,7 @@ import {
   BLOOD_SPEED_MIN,
   BLOOD_SPREAD_DEG,
 } from '../config/combat';
-import { ENEMY_BASE, PLAYER_BASE, SKILL_VERB } from '../config/combat-sim';
+import { SKILL_VERB } from '../config/combat-sim';
 import { DUEL_ENEMY, DUEL_SPAWNS } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { BAR_GRADIENTS } from '../config/fidelity';
@@ -25,6 +25,7 @@ import { advanceFxClock, integrateDroplet } from '../core/fx';
 import { closestPointOnPolyline } from '../core/geometry';
 import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
+import { duelSpawns } from '../core/duelSetup';
 import { Sim, type FighterSide } from '../core/Sim';
 import { stageToWorld, worldToStage } from '../core/viewport';
 import type { Vec } from '../core/vec';
@@ -191,10 +192,9 @@ export class DuelScene extends Phaser.Scene {
     // instance: the controllers carry telegraph/mode state, and one shared
     // instance would interleave the two fighters' decisions.
     const autoController = new AISeamController(rng, AI_TIERS.normal);
-    this.sim = new Sim(rng, opponent, {
-      player: { ...PLAYER_BASE, ...DUEL_SPAWNS.player, pos: { ...DUEL_SPAWNS.player.pos } },
-      enemy: { ...ENEMY_BASE, ...DUEL_SPAWNS.enemy, pos: { ...DUEL_SPAWNS.enemy.pos } },
-    }, autoController);
+    // Enemy HP/damage are DERIVED from the player at spawn (D3) — shared with
+    // the 24-seed harness through core/duelSetup so the two cannot drift.
+    this.sim = new Sim(rng, opponent, duelSpawns(), autoController);
 
     this.drawArena();
     this.fx = this.add.graphics().setDepth(10);
@@ -774,7 +774,8 @@ export class DuelScene extends Phaser.Scene {
     }
     // Focus pill (drains on stance swaps — our INFERRED meter in the
     // original's strip position).
-    const focusW = (barLen * player.focus) / 100;
+    // D4: the bar shows `(units − 48) / 144` — the first 48 units are INVISIBLE.
+    const focusW = barLen * player.focusDisplay;
     BAR_GRADIENTS.focus.forEach((c, i) => {
       g.fillStyle(c, 1);
       g.fillRect(bx, 549 + i, focusW, 1);
@@ -783,12 +784,11 @@ export class DuelScene extends Phaser.Scene {
     this.texts.hpLabel.setText(`${Math.round(player.hp)}/${player.maxHp}`);
     this.texts.chiLabel.setText(`${Math.round(player.chi)}/${player.maxChi}`);
 
-    // Shunpo/Critical slivers (spec meters, INFERRED placement right of the
-    // strip — the original has no such meters; kept for gate visibility).
+    // Shunpo sliver (INFERRED placement right of the strip).
+    // Shunpo sliver only — the gold "Critical" sliver is DELETED (D4): the
+    // original has three meters and Focus IS the crit meter.
     g.fillStyle(COL.kimono, 0.9);
     g.fillRect(bx + barLen + 6, 549, (40 * this.sim.shunpo) / 100, 3.5);
-    g.fillStyle(COL.gold, 0.9);
-    g.fillRect(bx + barLen + 6, 554.5, (40 * player.critical) / 100, 3.5);
 
     // Bottom-right: skill bar (measured slots: 58×60 at x 770/843.5/917,
     // y 510; near-black interiors, grey borders, numerals above).

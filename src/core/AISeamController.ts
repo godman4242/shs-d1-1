@@ -3,25 +3,42 @@
  * per-tick view of the fight. The Sim executes; this decides.
  *
  * Contracts:
- * - TELEGRAPH-THEN-COMMIT: a strike intent is only ever issued ≥ telegraphMs
- *   after its telegraph intent (gate item: visible windup ≥ 520 ms Normal).
+ * - TELEGRAPH-THEN-COMMIT: a strike intent is only ever issued exactly the
+ *   telegraph's own duration after its telegraph intent. That duration is one
+ *   of TWO measured cases (AI_TELEGRAPH_MS): 600 ms when the enemy commits
+ *   while still closing, 267 ms point-blank. ⚠️ The old "≥520 ms, one global
+ *   number per tier" reading is WRONG and is deleted (SESSION13 D8).
  * - Stance switches queue AI_PENDING_STANCE_MS behind a 'stance' telegraph,
- *   and are only attempted when the enemy's Focus can afford the cost
- *   (mirrors Sim's FOCUS_SWITCH_COST × WEAPON_WEIGHT[current] rule).
+ *   and are only attempted when the enemy's Focus can afford the flat
+ *   FOCUS_SWITCH_COST (mirrors the Sim's rule; WEAPON_WEIGHT is deleted).
  * - Kunai only inside AI_KUNAI_RANGE; the tier's kunaiChance gates the roll
  *   (easy = 0 → never).
- * - react(): at most one block/dodge roll per reactMs — the attention
- *   window is spent whether or not the roll passes (INFERRED reading:
- *   player slashes resolve instantly at PLAYER_WINDUP_MS=0, so reactMs
- *   models attention cadence, not swing-reaction latency; veto = drop
- *   reactions entirely).
+ * - ⚠️ THERE IS NO react(). The original's enemies do **not block or dodge**
+ *   (measured: zero blocking across the whole study corpus), so the reaction
+ *   seam modelled behaviour the game lacks and is deleted along with its three
+ *   tier fields. `reactMs` was ALSO the decision cadence, so that role moves to
+ *   the explicit AI_THINK_INTERVAL_MS rather than disappearing with it.
+ * - NO ATTACK TOKEN. Enemies do not take turns; the appearance of turn-taking
+ *   is EMERGENT from independent AI_THINK_INTERVAL_MS timers plus the narrow
+ *   AI_MELEE_RANGE gate. Adding a token would be inventing a mechanism to
+ *   reproduce an effect that already emerges.
  * - Injected rng ONLY (mulberry32) — deterministic given (rng, view seq).
  *
  * Decision priority when idle+engaged: kunai band roll → counter-stance
  * pick → aggression strike roll → wait one reactMs beat.
  */
-import { AI_APPROACH_RANGE, AI_KUNAI_RANGE, AI_PENDING_STANCE_MS, AI_RECOVER_JITTER_FRAC, AI_STRIKE_RANGE, type AITierParams } from '../config/ai';
-import { FOCUS_SWITCH_COST, WEAPON_WEIGHT } from '../config/combat';
+import {
+  AI_APPROACH_RANGE,
+  AI_KUNAI_RANGE,
+  AI_MELEE_RANGE,
+  AI_PENDING_STANCE_MS,
+  AI_POINT_BLANK_X,
+  AI_RECOVER_JITTER_FRAC,
+  AI_TELEGRAPH_MS,
+  AI_THINK_INTERVAL_MS,
+  type AITierParams,
+} from '../config/ai';
+import { FOCUS_SWITCH_COST } from '../config/combat';
 import { ONE, TWO, ZERO } from '../config/nums';
 import { STANCE_BEATS, type StanceId } from '../config/stances';
 import { beats } from './stance';
@@ -44,7 +61,6 @@ export class AISeamController implements OpponentController {
   private modeUntilFrame = ZERO;
   private decisionHoldUntil = ZERO;
   private pendingStance: StanceId | null = null;
-  private reactHoldUntil = ZERO;
 
   constructor(
     private readonly rng: Rng,
@@ -53,6 +69,10 @@ export class AISeamController implements OpponentController {
 
   next(frame: number, view: OpponentView): OpponentIntent {
     const dist = Math.abs(view.playerPos.x - view.enemyPos.x);
+    // D8: the melee trigger is BOTH axes — `|dx| < 50 && Δy < 50` world px.
+    // Losing the vertical term is how a jumping player used to stay hittable.
+    const dy = Math.abs(view.playerPos.y - view.enemyPos.y);
+    const inMelee = dist < AI_MELEE_RANGE.x && dy < AI_MELEE_RANGE.y;
 
     if (this.mode === 'telegraph') {
       if (frame < this.modeUntilFrame) return {};
@@ -94,9 +114,9 @@ export class AISeamController implements OpponentController {
     // kunaiChance into a near-certainty within a second and stalls the
     // approach. Between beats the AI just closes distance.
     if (frame < this.decisionHoldUntil) {
-      return dist > AI_STRIKE_RANGE ? { moveX: this.toward(view) } : {};
+      return inMelee ? {} : { moveX: this.toward(view) };
     }
-    this.decisionHoldUntil = frame + msToFrames(this.tier.reactMs);
+    this.decisionHoldUntil = frame + msToFrames(AI_THINK_INTERVAL_MS);
     // Kunai band roll (easy's kunaiChance 0 never passes: rng() < 0 is false).
     if (dist >= AI_KUNAI_RANGE.min && dist <= AI_KUNAI_RANGE.max && this.rng() < this.tier.kunaiChance) {
       this.mode = 'recover';
@@ -104,13 +124,13 @@ export class AISeamController implements OpponentController {
       this.modeUntilFrame = frame + Math.round(msToFrames(this.tier.recoverMs) * jitter);
       return { throwKunai: true };
     }
-    if (dist > AI_STRIKE_RANGE) return { moveX: this.toward(view) };
+    if (!inMelee) return { moveX: this.toward(view) };
 
     // In strike range: counter-stance pick (if not already countering and
     // Focus affords it — mirrors the Sim's switch cost), else strike roll.
     if (!beats(view.enemyStance, view.playerStance)) {
-      const cost = FOCUS_SWITCH_COST * WEAPON_WEIGHT[view.enemyStance];
-      if (view.enemyFocus >= cost && this.rng() < this.tier.counterStancePickChance) {
+      // Mirrors the Sim's flat 48-Focus gate (D9); WEAPON_WEIGHT is deleted.
+      if (view.enemyFocus >= FOCUS_SWITCH_COST && this.rng() < this.tier.counterStancePickChance) {
         this.mode = 'stancePending';
         this.modeUntilFrame = frame + msToFrames(AI_PENDING_STANCE_MS);
         this.pendingStance = counterOf(view.playerStance);
@@ -118,23 +138,14 @@ export class AISeamController implements OpponentController {
       }
     }
     if (this.rng() < this.tier.aggression) {
+      // Two measured windups, chosen by range at COMMIT time (D8).
+      const durationMs =
+        dist <= AI_POINT_BLANK_X ? AI_TELEGRAPH_MS.pointBlank : AI_TELEGRAPH_MS.closing;
       this.mode = 'telegraph';
-      this.modeUntilFrame = frame + msToFrames(this.tier.telegraphMs);
-      return { telegraph: { kind: 'strike', durationMs: this.tier.telegraphMs } };
+      this.modeUntilFrame = frame + msToFrames(durationMs);
+      return { telegraph: { kind: 'strike', durationMs } };
     }
     return {};
-  }
-
-  /**
-   * Block/dodge roll against a player slash that would land. At most one
-   * roll per reactMs — the attention window is consumed either way.
-   */
-  react(frame: number): 'block' | 'dodge' | null {
-    if (frame < this.reactHoldUntil) return null;
-    this.reactHoldUntil = frame + msToFrames(this.tier.reactMs);
-    if (this.rng() < this.tier.reactBlockChance) return 'block';
-    if (this.rng() < this.tier.reactDodgeChance) return 'dodge';
-    return null;
   }
 
   private toward(view: OpponentView): number {

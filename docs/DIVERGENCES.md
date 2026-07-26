@@ -747,3 +747,172 @@ no conversion.
 - Fidelity gate re-run after A2+A3: **55/55**.
 
 > **Veto:** wire the plate to a genuinely disabled state and log the deferral.
+
+
+## SESSION 13 — PHASE B: the coupled core (2026-07-26)
+
+Landed as ONE change, because Focus, damage, reach, the dash, movement and the
+enemy model all move time-to-kill; landing them piecemeal leaves the harness red
+between steps and the pre-commit hook forbids committing red.
+
+### B0 — the harness band, re-derived ONCE and then fixed
+
+`DUEL_TARGET_SECONDS` **`[20, 60]` → `[8, 25]` s**.
+
+`[20, 60]` was **never a measurement**: it came from the original kickoff SPEC,
+around that spec's own ~24.7 s reference — which this repo's harness header had
+flagged for a year as *"the reference bot's own number"*. K = 10 hits-to-kill at
+the bot's 0.842 s cadence predicts a ~10 s fight, so the old band missed by ~2×.
+The new band preserves the spec band's own **relative** width `[0.81×, 2.43×]`
+around a model-derived centre: same discriminating power, honest centre.
+
+Both inputs were re-checked against the code as it stands (`SLASH_EVERY_FRAMES`
+45 + `uniform(0..11)` = 50.5 frames ✓; Δ = 0 ⇒ K = 10 ✓). The derivation and the
+**stop-and-escalate rule** are pinned in `tests/harness.test.ts`.
+
+> This is the one thing this session was built to get right. The band was set
+> **before any Phase-B code existed** and never touched afterwards.
+
+**Result: median 10.575 s** — inside the paper prediction's own 9.3–10.9 s
+window. 24/24 good-play wins, 0/24 no-play, 0 timeouts, 24/24 distinct.
+
+### B1 — Focus is the source's ONE meter; movement gets two gaits
+
+- `critical.ts` → **`focus.ts`**. `CRITICAL_MAX` / `CRITICAL_FILL_PER_S` and the
+  HUD's gold sliver are **deleted**: the original has three meters (HP, Chi,
+  Focus) and **Focus IS the crit meter**.
+- 192 integer units · +24/s · spend 24/48/72 by stance · kill bonus +6 ·
+  **starts EMPTY** · bar renders `(units − 48)/144`, so the first 48 units are
+  invisible. That one quirk explains THREE anomalies at once: the measured
+  5.97 s fill against a raw 8 s meter, small spends showing no visible drop, and
+  the forum's "−20 % per slash" looking false on film.
+- **Residual accumulator**, not a closed form. `floor(ticks × 2/5)` is a function
+  of TOTAL ticks and silently recomputes over any spend. Chaos-proven: planting
+  the closed form turns the fill-spend-refill test RED.
+- **P3 honoured:** slashing is NEVER focus-gated — only stance switching is.
+  Focus is a crit-charge resource, not stamina.
+- **D9:** stance switching costs a flat **48**; `FOCUS_SWITCH_COST = 34` and the
+  whole `WEAPON_WEIGHT` table are deleted.
+- Movement: **walk 96 / run 288 world px/s** (×1.2 → 115.2 and 345.6 stage px/s,
+  against measured 112–126 and 341–349 — our single 280 matched neither), gait
+  AND target **latched at command time** (the null→value edge, not every held
+  frame), deadzone 25, standing range 50 (snaps, never overshoots), no
+  acceleration, arrival snaps.
+
+### B2 — one damage pipeline, in the source's exact order
+
+`raw → ×mastery → ×crit(+flat) → ×triangle → −defence → level floor → body-part
+crit (positioned NO-OP)`.
+
+- ❌ **`COUNTER_BONUS` deleted.** It modelled a counter/parry/riposte mechanic
+  **the original does not have**. The forum's "~20 %" is the STANCE MATCHUP:
+  win ×1.2 / **lose ×0.9** / mirror ×1.0, applied pre-defence. Note the second
+  half — the old one-sided bonus had **no penalty at all**.
+- Level-tiered min-damage floor (`≤10 → 1 · ≤20 → lvl/8 · ≤30 → lvl/6 · else
+  lvl/4`).
+- **Not implemented, and why:** elemental resists (no elemental system exists);
+  body-part crit ×1.3 (needs limb hitboxes) — it lands as a no-op in its real
+  position, AFTER the floor, so only the multiplier has to arrive later. The
+  source's `×2` doubling is **dead code** (its flag is never set) and is not ported.
+- **No RNG threaded.** `damageRange = 0` with no weapon model, so paying for
+  determinism to randomise nothing was declined (D6's own scope note).
+
+### B2/D2a — `core/mastery.ts`: ONE mastery drives BOTH tables
+
+`STANCE_TABLE.reach` and `.dmgMult` are **gone**. Both are stat/mastery
+functions now. Reading reach at mastery 0 while leaving damage at the mastery-10
+ceiling is precisely the self-inconsistency the Session-11 adjudication reverted.
+
+**Found while implementing it:** the reach and damage curves are the SAME three
+shapes, permuted between light and heavy — light has flat reach and scaling
+damage, heavy the mirror, balanced scales in both. Evaluated at **mastery 10**
+the damage curves give **0.9 / 1.2 / 1.4** — exactly the legacy `dmgMult`. That
+is what proves the old table held CEILINGS, and that this module generalises it
+rather than replacing it with a guess.
+
+### B3 — reach is an ARC-LENGTH BUDGET; the dash follows the stroke
+
+- `DrawnStroke.truncateTo(reach)` spends the budget along the drawn line, ending
+  **exactly** at the budget (interpolated, not at the nearest sample).
+  `resolveSlash` lost its `attacker.pos` / `reach` params and is now a plain
+  crosses-hitbox test; **`withinReach` is deleted**. Keeping both a budget and a
+  Euclidean radius double-counted reach against two different quantities, and
+  the source has no radius anywhere.
+- The property this buys, which a radius cannot express: **a curvy stroke covers
+  less ground than a straight one** on the same budget. Pinned.
+- `RESAMPLE_SPACING` 6.67 → **20** (the source's own).
+- **`DASH_SLASH_PX` and `DASH_MIN_STROKE_PX` deleted.** The samurai travels to
+  the stroke's **last point**, uncapped, at **50/40/30 world px/frame** by
+  stance — bounded in practice because the stroke was already truncated to
+  reach. The Session-9 measurement (one video frame ≈ 105.9 world px) is
+  reproduced by 40 px/frame across the 15 fps sampling floor, i.e. it was never
+  a distance at all — which that measurement's own caveat had warned.
+- **KEPT:** at most one dash per measured swing cycle. The Session-9 review
+  reproduced scribble-spam as a teleport verb; deleting the bound re-opens it.
+
+### B4 — the enemy is DERIVED from the player, and the AI loses three fictions
+
+- `core/enemyModel.ts`: `enemyHP = effPlayerDmg × K`, `enemyMinDmg =
+  playerMaxHP / D`, `K = max(10+Δ, 3)` / `D = max(18−Δ, 3)` from the
+  **NAMED-DUELLIST** class, `xpReward = level×5+45`, and the `level ≤ 8`
+  override implemented **after** the HP line (chaos-proven both ways).
+- **Both fighters to level 9** — the lowest level escaping that override. At our
+  old level 1 the enemy was forced to 1 damage and 1 defence: the duel was
+  literally unlosable. Δ = 0 ⇒ K = 10, D = 18.
+- ⚠️ **`ENEMY_BASE.hp` 150 → 1.** A 150 would have won the source's own
+  `max(scaledBase, …)` (150 > 50) and quietly kept HP an INPUT, defeating the
+  entire derivation. The source authors trash HP as `<hp>1</hp>` for the same
+  reason. INFERRED — veto = supply a measured level-scaled base.
+- **XP 90, not 10.** Our `+10/+8` was verified only against OUR OWN build's
+  screenshots — never an OG measurement — so the Stage-2 gate row is corrected
+  rather than left silently false. **Coins stay a flat, INFERRED 8**: there is
+  no source formula, and scaling a guess by the foe's level (→72) would be
+  arithmetic dressed as evidence.
+- **`react()` deleted**, with its three tier fields. The original's enemies do
+  not block or dodge (measured: zero blocking across the study corpus). The old
+  "a blocking enemy negates the slash" pin is **replaced** by its opposite: a
+  planted block/dodge must change NOTHING.
+- **`telegraphMs` deleted from the tier table.** The windup is TWO measured
+  cases — 600 ms closing / 267 ms point-blank. The single global "≥520 ms" was
+  wrong; the contract is now "the strike lands exactly the duration the
+  telegraph ANNOUNCED".
+- **`AI_STRIKE_RANGE` (110 world px) → `AI_MELEE_RANGE {x:50, y:50}`.** It was
+  2× too generous and had **no vertical term at all**. This gate is half the
+  mechanism behind emergent turn-taking — which is why **no attack token** is
+  implemented: the appearance of turns emerges from independent 0.5 s timers
+  plus a narrow gate, and a token would be inventing a mechanism to reproduce an
+  effect that already emerges.
+- `AI_THINK_INTERVAL_MS = 500` now drives the enemy's decision cadence too.
+
+### B5 — the harness, and the one diagnosis it forced
+
+First run: median 8.358 s (in band ✓), 24/24 ✓, 0/24 ✓ — but only **15 distinct
+durations** against the gate's ≥22.
+
+Per §3.3 the permitted diagnosis (a) is the bot's stroke geometry, and it was
+exactly that: the bot drew `enemy.x ± 140`, a line **centred on the target**,
+which always crosses the enemy and therefore can never miss. Every fight was
+exactly K swings plus jitter, collapsing 24 seeds into a 34-frame window.
+**Anchoring the stroke at the player** — one reach along the attack line, the
+same shape AUTO SLASH synthesises — restores the miss-then-close dynamic the
+real game has.
+
+**The band was NOT touched.** Median moved 8.358 → **10.575 s**, landing inside
+the paper prediction's own 9.3–10.9 s window, with **24/24 distinct**.
+
+> **Veto (whole phase):** keep `[20,60]` and tune the model until it fits.
+> *Recommended against* — that is fitting the game to the test, and it would
+> require roughly tripling enemy HP above what the original's own K produces.
+
+### Fidelity gate: one honest state correction
+
+`focus-strip-left` went red after D4, reading the brown backing. Cause: the
+harness sampled `'fighting'` at **t≈0**, and that state was documented as "full
+HP/Chi/**Focus**" — only ever true because our meter used to start half-full.
+The source's meter starts EMPTY with 48 invisible units, so at t≈0 the pill is
+genuinely blank, while the probe was measured **mid-fight** ("fill length varies
+in-fight"). Fixed by sampling a matching moment (4 s in, still inside the 5 s
+spawn invulnerability so the HP-length probes keep pinning a FULL bar) — i.e.
+**the harness's state definition was corrected, the assertion was not re-fitted**
+(§6 Risk 1). An audit guard then caught the first attempt calling `sim.tick()`
+from a scene; it now steps `advance()` in clamp-sized bites instead.

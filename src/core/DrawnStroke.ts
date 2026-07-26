@@ -102,4 +102,37 @@ export class DrawnStroke {
     this.direction = sanitizeVec(dir);
     this.gesture = classifyGesture(pts);
   }
+
+  /**
+   * Spend the REACH BUDGET along the drawn arc (SESSION13 B3/D2).
+   *
+   * Reach is the arc-length budget of the stroke, spent as the line is drawn —
+   * so a curvy slash covers less ground than a straight one. This returns the
+   * leading portion of the polyline whose total length fits inside `budget`,
+   * interpolating the final point so the cut ends EXACTLY at the budget rather
+   * than at the nearest sample.
+   *
+   * ⚠️ This REPLACES the old Euclidean `withinReach` radius test. The source has
+   * no radius anywhere; keeping both would double-count reach against two
+   * different quantities.
+   */
+  truncateTo(budget: number): Vec[] {
+    const first = this.points.at(ZERO);
+    if (first === undefined) return [];
+    const out: Vec[] = [first];
+    let spent = ZERO;
+    let prev = first;
+    for (const cur of this.points) {
+      const seg = dist(prev, cur);
+      if (seg === ZERO) continue;
+      if (spent + seg >= budget) {
+        out.push(lerp(prev, cur, (budget - spent) / seg));
+        return out;
+      }
+      spent += seg;
+      out.push(cur);
+      prev = cur;
+    }
+    return out;
+  }
 }

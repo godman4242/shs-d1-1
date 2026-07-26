@@ -1,16 +1,30 @@
 /**
- * Stage 1 item 4 (+ Stage 2 defense) — src/core/slash.ts.
- * Damage = max(DAMAGE_FLOOR,
- *   (ATK+Weapon) × STANCE_TABLE[stance].dmgMult × (crit?CRIT_MULT:1)
- *     × (STANCE_BEATS[attacker]===defender ? COUNTER_BONUS : 1)
- *     − defense × (defender heavy ? 1−HEAVY_DEF_PENALTY : 1))
- * The heavy penalty is DEFENSE-SIDE ONLY (landmine: damageTakenMult is
- * data-only). Most tests here pin the multiplier stack with defense 0;
- * the defense describe pins the subtraction + single-form heavy penalty.
- * severed lists crossed named parts on a LETHAL blow (INFERRED design —
- * dismemberment rides the kill in the original).
+ * src/core/slash.ts — stroke-vs-hitbox resolution, and the damage pipeline
+ * behind it (src/core/damage.ts).
+ *
+ * ⚠️ REWRITTEN FOR SESSION13 B2/B3. Two things changed SHAPE, not just value:
+ *
+ * 1. **`resolveSlash` no longer knows where the attacker is, or what its reach
+ *    is.** Reach is an ARC-LENGTH BUDGET spent when the stroke is truncated
+ *    (`DrawnStroke.truncateTo`), so the polyline that arrives here has already
+ *    been cut to what the swing could cover. The old design combined that
+ *    budget with a Euclidean `withinReach` radius test from the attacker, which
+ *    double-counted reach against two different quantities — and the source has
+ *    no radius anywhere.
+ * 2. **The damage multipliers come from MASTERY, not a per-stance table**, and
+ *    `COUNTER_BONUS` is gone: the stance triangle now pays ×1.2 for winning the
+ *    matchup and PENALISES ×0.9 for losing it. The old one-sided bonus had no
+ *    penalty half at all.
+ *
+ * At the stated character (level 9, mastery 0 — see `config/stats.ts`) the
+ * damage curves are light ×0.5 · balanced ×1.0 · heavy ×1.4. Every expectation
+ * below is written as the arithmetic that produced it.
+ *
+ * The heavy penalty stays DEFENSE-SIDE ONLY (Stage-2 landmine: `damageTakenMult`
+ * is data-only and must never also apply).
  */
 import { describe, expect, it } from 'vitest';
+import { PLAYER_STATS } from '../src/config/stats';
 import { DrawnStroke } from '../src/core/DrawnStroke';
 import { resolveSlash, type SlashAttacker, type TargetHitbox } from '../src/core/slash';
 import type { Vec } from '../src/core/vec';
@@ -24,11 +38,11 @@ const squareAt = (cx: number, cy: number): Vec[] => [
   v(cx - 20, cy + 20),
 ];
 const attacker = (over: Partial<SlashAttacker> = {}): SlashAttacker => ({
-  atkPlusWeapon: 10,
+  minDamage: 10,
+  damageRange: 0, // no weapon model yet — a roll of width zero (D6)
   stance: 'balanced',
   crit: false,
-  pos: v(100, 100),  // at target center — within reach
-  reach: 200,        // balanced stance reach — enough to hit
+  stats: PLAYER_STATS, // level 9, mastery 0
   ...over,
 });
 const target = (over: Partial<TargetHitbox> = {}): TargetHitbox => ({
@@ -40,14 +54,18 @@ const target = (over: Partial<TargetHitbox> = {}): TargetHitbox => ({
 });
 /** Horizontal stroke crossing x=0..200 at y=100 — clean hit on target(). */
 const throughStroke = (): DrawnStroke => new DrawnStroke([v(0, 100), v(200, 100)]);
+/** A budget large enough that truncation is not what is under test. */
+const UNCUT = 10_000;
+/** Spend a reach budget along a stroke, the way the Sim does. */
+const cut = (s: DrawnStroke, budget = UNCUT): Vec[] => s.truncateTo(budget);
 
 describe('resolveSlash — hit detection', () => {
   it('a stroke crossing the hitbox hits', () => {
-    expect(resolveSlash(throughStroke(), target(), attacker()).hit).toBe(true);
+    expect(resolveSlash(cut(throughStroke()), target(), attacker()).hit).toBe(true);
   });
   it('a stroke far away misses with zero effect', () => {
     const s = new DrawnStroke([v(0, 300), v(200, 300)]);
-    expect(resolveSlash(s, target(), attacker())).toEqual({
+    expect(resolveSlash(cut(s), target(), attacker())).toEqual({
       hit: false,
       damage: 0,
       crit: false,
@@ -56,58 +74,68 @@ describe('resolveSlash — hit detection', () => {
   });
   it('a stroke fully inside the hitbox still hits (no edge crossing)', () => {
     const s = new DrawnStroke([v(90, 100), v(110, 100)]);
-    expect(resolveSlash(s, target(), attacker()).hit).toBe(true);
+    expect(resolveSlash(cut(s), target(), attacker()).hit).toBe(true);
   });
 });
 
-describe('resolveSlash — damage formula', () => {
-  it('base: (ATK+Weapon) × dmgMult — balanced 10 → 12', () => {
-    expect(resolveSlash(throughStroke(), target(), attacker()).damage).toBe(12);
+describe('resolveSlash — the damage pipeline (D6 order, at mastery 0)', () => {
+  it('base: minDamage × mastery mult — balanced 10 × 1.0 = 10', () => {
+    expect(resolveSlash(cut(throughStroke()), target(), attacker()).damage).toBe(10);
   });
-  it('crit multiplies by CRIT_MULT (1.3): 12 → 15.6', () => {
-    const r = resolveSlash(throughStroke(), target(), attacker({ crit: true }));
+  it('crit multiplies by CRIT_MULT (1.3): 10 → 13', () => {
+    const r = resolveSlash(cut(throughStroke()), target(), attacker({ crit: true }));
     expect(r.crit).toBe(true);
-    expect(r.damage).toBeCloseTo(15.6, 9);
+    expect(r.damage).toBeCloseTo(13, 9);
   });
-  it('counter matchup pays COUNTER_BONUS: light vs heavy 10 → 11.25', () => {
-    const r = resolveSlash(throughStroke(), target({ stance: 'heavy' }), attacker({ stance: 'light' }));
-    expect(r.damage).toBeCloseTo(11.25, 9);
+  it('WINNING the matchup pays ×1.2: light vs heavy, 10 × 0.5 × 1.2 = 6', () => {
+    const r = resolveSlash(cut(throughStroke()), target({ stance: 'heavy' }), attacker({ stance: 'light' }));
+    expect(r.damage).toBeCloseTo(6, 9);
   });
-  it('crit and counter stack: 10 × 0.9 × 1.3 × 1.25 = 14.625', () => {
+  it('LOSING the matchup is PENALISED ×0.9 — the half COUNTER_BONUS never had', () => {
+    // heavy attacker vs light defender: light BEATS heavy, so 10 × 1.4 × 0.9.
+    const r = resolveSlash(cut(throughStroke()), target({ stance: 'light' }), attacker({ stance: 'heavy' }));
+    expect(r.damage).toBeCloseTo(12.6, 9);
+  });
+  it('a mirror matchup is exactly ×1.0: heavy vs heavy, 10 × 1.4 = 14', () => {
+    const r = resolveSlash(cut(throughStroke()), target({ stance: 'heavy' }), attacker({ stance: 'heavy' }));
+    expect(r.damage).toBeCloseTo(14, 9);
+  });
+  it('crit and matchup stack: 10 × 0.5 × 1.3 × 1.2 = 7.8', () => {
     const r = resolveSlash(
-      throughStroke(),
+      cut(throughStroke()),
       target({ stance: 'heavy' }),
       attacker({ stance: 'light', crit: true }),
     );
-    expect(r.damage).toBeCloseTo(14.625, 9);
+    expect(r.damage).toBeCloseTo(7.8, 9);
   });
-  it('reverse matchup gets NO counter bonus: heavy vs light → 14', () => {
-    const r = resolveSlash(throughStroke(), target({ stance: 'light' }), attacker({ stance: 'heavy' }));
-    expect(r.damage).toBeCloseTo(14, 9);
-  });
-  it('a landed hit never deals less than DAMAGE_FLOOR', () => {
-    const r = resolveSlash(throughStroke(), target(), attacker({ atkPlusWeapon: 0 }));
+  it('a landed hit never deals less than the level floor (level 9 ⇒ 1)', () => {
+    const r = resolveSlash(cut(throughStroke()), target(), attacker({ minDamage: 0 }));
     expect(r.damage).toBe(1);
+  });
+  it("the floor SCALES with the ATTACKER's level (≤20 ⇒ lvl/8)", () => {
+    const lvl16 = { ...PLAYER_STATS, level: 16 };
+    const r = resolveSlash(cut(throughStroke()), target({ defense: 999 }), attacker({ stats: lvl16 }));
+    expect(r.damage).toBe(2); // 16 / 8
   });
   it('crit on a whiff reports crit:false (no crit without contact)', () => {
     const s = new DrawnStroke([v(0, 300), v(200, 300)]);
-    expect(resolveSlash(s, target(), attacker({ crit: true })).crit).toBe(false);
+    expect(resolveSlash(cut(s), target(), attacker({ crit: true })).crit).toBe(false);
   });
 });
 
-describe('resolveSlash — defense subtracts from the attack term (Stage 2)', () => {
-  it('defense reduces damage after the multiplier stack: 12 − 5 = 7', () => {
-    const r = resolveSlash(throughStroke(), target({ defense: 5 }), attacker());
-    expect(r.damage).toBe(7);
+describe('resolveSlash — defense SUBTRACTS, and the heavy penalty has ONE form', () => {
+  it('defense reduces damage after the multiplier stack: 10 − 5 = 5', () => {
+    const r = resolveSlash(cut(throughStroke()), target({ defense: 5 }), attacker());
+    expect(r.damage).toBe(5);
   });
-  it('heavy defender: defense × (1 − HEAVY_DEF_PENALTY) — 12 − 5×0.8 = 8, ONE form only', () => {
-    // Exact 8 pins the defense-side form AND that damageTakenMult (1.25)
-    // is NOT also applied (double-application would read 10 or 11).
-    const r = resolveSlash(throughStroke(), target({ stance: 'heavy', defense: 5 }), attacker());
-    expect(r.damage).toBe(8);
+  it("heavy defender: its OWN defense stat is cut to ×0.8 — 10×0.9 − 5×0.8 = 5", () => {
+    // Exact 5 pins the defense-side form AND that damageTakenMult (1.25) is NOT
+    // also applied: double-application would read 6.25 or 7.25, never 5.
+    const r = resolveSlash(cut(throughStroke()), target({ stance: 'heavy', defense: 5 }), attacker());
+    expect(r.damage).toBe(5);
   });
-  it('overwhelming defense floors at DAMAGE_FLOOR', () => {
-    const r = resolveSlash(throughStroke(), target({ defense: 999 }), attacker());
+  it('overwhelming defense floors at the level minimum', () => {
+    const r = resolveSlash(cut(throughStroke()), target({ defense: 999 }), attacker());
     expect(r.damage).toBe(1);
   });
 });
@@ -117,8 +145,8 @@ describe('resolveSlash — multi-foe: one stroke resolves against each foe', () 
     const s = new DrawnStroke([v(0, 100), v(400, 100)]);
     const foeA = target({ polygon: squareAt(100, 100) });
     const foeB = target({ polygon: squareAt(300, 100) });
-    expect(resolveSlash(s, foeA, attacker()).hit).toBe(true);
-    expect(resolveSlash(s, foeB, attacker()).hit).toBe(true);
+    expect(resolveSlash(cut(s), foeA, attacker()).hit).toBe(true);
+    expect(resolveSlash(cut(s), foeB, attacker()).hit).toBe(true);
   });
 });
 
@@ -132,40 +160,45 @@ describe('resolveSlash — severing (INFERRED: parts sever on lethal crossings)'
       },
     });
   it('a lethal blow severs exactly the crossed parts', () => {
-    const r = resolveSlash(throughStroke(), partedTarget(5), attacker());
+    const r = resolveSlash(cut(throughStroke()), partedTarget(5), attacker());
     expect(r.damage).toBeGreaterThanOrEqual(5);
     expect(r.severed).toEqual(['head']);
   });
   it('a non-lethal blow severs nothing', () => {
-    const r = resolveSlash(throughStroke(), partedTarget(100), attacker());
+    const r = resolveSlash(cut(throughStroke()), partedTarget(100), attacker());
     expect(r.severed).toEqual([]);
   });
   it('a target without parts severs nothing even on a kill', () => {
-    const r = resolveSlash(throughStroke(), target({ hp: 1 }), attacker());
+    const r = resolveSlash(cut(throughStroke()), target({ hp: 1 }), attacker());
     expect(r.severed).toEqual([]);
   });
 });
 
-describe('resolveSlash — Session 11: blade-path-with-reach gating', () => {
-  it('a stroke beyond reach deals NO damage even if it crosses the hitbox', () => {
-    // Attacker far away with small reach — stroke crosses the hitbox but
-    // no stroke point is within reach of the attacker
-    const s = new DrawnStroke([v(0, 100), v(200, 100)]);
-    const farAttacker = attacker({ pos: v(500, 100), reach: 50 });
-    expect(resolveSlash(s, target(), farAttacker).hit).toBe(false);
-  });
-  it('a stroke within reach hits normally', () => {
-    const s = new DrawnStroke([v(0, 100), v(200, 100)]);
-    const closeAttacker = attacker({ pos: v(100, 100), reach: 200 });
-    expect(resolveSlash(s, target(), closeAttacker).hit).toBe(true);
-  });
-  it('CRUX (frame-verified): a long stroke starting AT the player does NOT hit an enemy beyond reach at its far tip', () => {
-    // duel_dense 428.0→431.5: one long arc bloodies in-reach enemies but the
-    // far enemy keeps full HP — the blade path TERMINATES at the reach cap.
-    // Stroke runs from the attacker's own position across the target's hitbox
-    // 400px away; reach is only 60 — the crossing segments are beyond reach.
+describe('REACH is an arc-length budget, NOT a radius (SESSION13 B3)', () => {
+  it('CRUX (frame-verified): a long stroke on a short budget cannot reach a far target', () => {
+    // duel_dense 428.0→431.5: one long arc bloodies in-reach enemies while the
+    // far enemy keeps full HP — the blade path TERMINATES where the budget runs
+    // out. Same stroke, two budgets, opposite outcomes.
     const s = new DrawnStroke([v(500, 100), v(300, 100), v(50, 100)]);
-    const atkAtOwnPos = attacker({ pos: v(500, 100), reach: 60 });
-    expect(resolveSlash(s, target(), atkAtOwnPos).hit).toBe(false);
+    expect(resolveSlash(s.truncateTo(60), target(), attacker()).hit).toBe(false);
+    expect(resolveSlash(s.truncateTo(500), target(), attacker()).hit).toBe(true);
+  });
+  it('a CURVY stroke covers less GROUND than a straight one on the same budget', () => {
+    // The property a radius test cannot express, and the reason the source
+    // spends reach along the drawn line rather than around the fighter.
+    const budget = 150;
+    const straight = new DrawnStroke([v(0, 100), v(400, 100)]).truncateTo(budget);
+    const zigzag = new DrawnStroke([
+      v(0, 100), v(50, 150), v(100, 100), v(150, 150), v(200, 100), v(250, 150), v(300, 100),
+    ]).truncateTo(budget);
+    expect(zigzag.at(-1)?.x ?? 0).toBeLessThan(straight.at(-1)?.x ?? 0);
+  });
+  it('the budget is spent EXACTLY — the cut ends at the budget, not at a sample', () => {
+    const cutPts = new DrawnStroke([v(0, 100), v(400, 100)]).truncateTo(137);
+    expect(cutPts.at(-1)?.x).toBeCloseTo(137, 6);
+  });
+  it('a budget longer than the stroke returns the whole stroke', () => {
+    const s = new DrawnStroke([v(0, 100), v(200, 100)]);
+    expect(s.truncateTo(UNCUT).at(-1)?.x).toBeCloseTo(200, 6);
   });
 });

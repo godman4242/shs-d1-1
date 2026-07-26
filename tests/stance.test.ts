@@ -6,8 +6,8 @@
  * in-combat variant.
  */
 import { describe, expect, it } from 'vitest';
-import { COUNTER_BONUS } from '../src/config/combat';
-import { beats, counterMult, nextStance, Stance } from '../src/core/stance';
+import { STANCE_MATCHUP } from '../src/config/combat';
+import { beats, matchupMult, nextStance, Stance } from '../src/core/stance';
 
 describe('Stance enum', () => {
   it('maps to the StanceId string union used across config tables', () => {
@@ -35,13 +35,24 @@ describe('counter triangle — light > heavy > balanced > light', () => {
   });
 });
 
-describe('counterMult', () => {
-  it('pays COUNTER_BONUS on a counter matchup', () => {
-    expect(counterMult(Stance.Light, Stance.Heavy)).toBe(COUNTER_BONUS);
+describe('matchupMult — the stance triangle (SESSION13 D5)', () => {
+  // ⚠️ This replaces `counterMult`/`COUNTER_BONUS`, which modelled a
+  // counter/parry/riposte mechanic the original does not have. The forum's
+  // "~20 %" was always this matchup. Note the NEW asymmetry: losing the
+  // matchup is a real penalty, which the old one-sided bonus never had.
+  it('winning the matchup pays STANCE_MATCHUP.win', () => {
+    expect(matchupMult(Stance.Light, Stance.Heavy)).toBe(STANCE_MATCHUP.win);
+    expect(matchupMult(Stance.Heavy, Stance.Balanced)).toBe(STANCE_MATCHUP.win);
+    expect(matchupMult(Stance.Balanced, Stance.Light)).toBe(STANCE_MATCHUP.win);
   });
-  it('is exactly 1 otherwise (incl. mirror matches)', () => {
-    expect(counterMult(Stance.Heavy, Stance.Light)).toBe(1);
-    expect(counterMult(Stance.Balanced, Stance.Balanced)).toBe(1);
+  it('LOSING the matchup is penalised — the half the old model was missing', () => {
+    expect(matchupMult(Stance.Heavy, Stance.Light)).toBe(STANCE_MATCHUP.lose);
+    expect(matchupMult(Stance.Balanced, Stance.Heavy)).toBe(STANCE_MATCHUP.lose);
+    expect(matchupMult(Stance.Light, Stance.Balanced)).toBe(STANCE_MATCHUP.lose);
+  });
+  it('a mirror match is exactly 1', () => {
+    expect(matchupMult(Stance.Balanced, Stance.Balanced)).toBe(STANCE_MATCHUP.same);
+    expect(matchupMult(Stance.Light, Stance.Light)).toBe(1);
   });
 });
 

@@ -13,88 +13,57 @@
 > | **A0.5** stats the formulas need | ✅ **DONE** |
 > | **A2** combo correction (D8) | ✅ **DONE** |
 > | **A3** AUTO SLASH (D7) | ✅ **DONE** |
-> | B0–B5 the coupled core | 🟡 **STARTED, PARKED ON A BRANCH — read below** |
+> | **B0–B5** the coupled core | ✅ **DONE** — see below |
 >
-> ### ▶ PHASE B IS PARKED ON `session13-phase-b-wip` (commit `7b30b88`)
-> **`master` is GREEN (494/494). The branch is RED BY DESIGN and must not be
-> merged as-is.** It was committed with `--no-verify` purely so the work is not
-> lost; `src/` typechecks clean, `tests/` does not yet.
+> ### ✅ SESSION 13 IS COMPLETE. All 17 gate items green.
 >
-> **Why it is parked rather than landed:** §4 requires B0–B5 to land as ONE
-> commit (every intermediate state leaves the harness red, and the pre-commit
-> hook forbids committing red). The session ran out of room partway through, and
-> half-landing a coupled change is worse than a clean stop.
+> **Suite 534/534 · tsc ×2 exit 0 · eslint exit 0 · in-browser fidelity gate
+> `pass=true | probes 41/41 | scans 14/14 | TOTAL 55/55` · zero console errors.**
 >
-> **Done on the branch and believed correct** (full detail in `git show 7b30b88`):
-> B0 band `[8,25]` + derivation pinned · **B1 complete and green** (Focus = the
-> source's 192-unit meter with the residual accumulator, `critical.ts` →
-> `focus.ts`, flat-48 stance cost, walk 96 / run 288 with latched gait) ·
-> B2 six-step damage order + triangle (`COUNTER_BONUS` deleted) ·
-> `core/mastery.ts` (ONE mastery drives reach AND dmgMult; `STANCE_TABLE.reach`
-> and `.dmgMult` gone) · B3 reach as an arc-length budget (`truncateTo`,
-> radius-free `resolveSlash`, dash to the stroke's last point) ·
-> B4 `core/enemyModel.ts` (HP/damage derived from the player, K/D, `level ≤ 8`
-> override, level 9 both sides).
+> **PHASE B CLOSED (2026-07-26)** — landed as ONE commit, as §4 requires.
+> - **B0** band `[20,60]` → **`[8,25]` s**, derived once from the source model
+>   BEFORE any Phase-B code existed, with its full arithmetic and the
+>   stop-and-escalate rule pinned in the harness header. **It was never touched
+>   again.**
+> - **B1** Focus is the source's ONE meter (192 units, residual accumulator,
+>   `(x−48)/144` display, starts EMPTY); `critical.ts` → `focus.ts`, the
+>   standalone Critical meter and `WEAPON_WEIGHT` deleted; stance switch a flat
+>   48; walk 96 / run 288 world px/s with gait+target latched at command time.
+> - **B2** damage in the source's exact 6-step order; `COUNTER_BONUS` deleted
+>   (the mechanic does not exist) and replaced by the stance triangle
+>   ×1.2 / **×0.9** / ×1.0; body-part crit is a POSITIONED no-op.
+> - **D2a** `core/mastery.ts` — ONE mastery drives BOTH reach and damage;
+>   `STANCE_TABLE.reach`/`.dmgMult` gone. At mastery 10 the curves reproduce the
+>   legacy 0.9/1.2/1.4 exactly, proving that table held ceilings.
+> - **B3** reach is an ARC-LENGTH BUDGET (`truncateTo`), `resolveSlash` has no
+>   radius/origin params, `withinReach` deleted, `RESAMPLE_SPACING` → 20; the
+>   dash runs to the stroke's last point at 50/40/30 px/frame and
+>   `DASH_SLASH_PX`/`DASH_MIN_STROKE_PX` are deleted.
+> - **B4** enemy HP/damage DERIVED from the player (`effPlayerDmg × K`,
+>   `playerMaxHP / D`), both fighters level 9, XP **90**, `level ≤ 8` override
+>   implemented and dormant; `react()` + its three tier fields deleted, melee
+>   gate `|dx|<50 && Δy<50`, telegraph 600/267, no attack token.
+> - **B5** harness: **24/24 · 0/24 · median 10.575 s ∈ [8,25] · 24/24 distinct.**
 >
-> **Paper check of the assembled model:** player 10 base × 1.0 mastery × 0.9
-> triangle − 4 = **5 damage**; `enemyHP = 5 × K(10) = 50` ⇒ **exactly 10 hits**,
-> which is what the `[8,25]` band was derived from. The model is self-consistent
-> on paper; it has NOT yet been run.
+> **The headline result:** the band was computed from K and the bot's cadence
+> before the model was written, and the finished model landed at **10.575 s** —
+> inside the paper prediction's own 9.3–10.9 s window, with no tuning.
 >
-> **To finish (in this order):**
-> 1. `tests/slash.test.ts` — 26 type errors; every damage expectation moves
->    (mastery 0 ⇒ balanced ×1.0 not ×1.2, plus the new ×0.9/×1.2 triangle).
-> 2. Fixture updates: `scaffold`, `stance`, `config-values`, `Sim`, `autoSlash`
->    (`atkPlusWeapon` → `minDamage`/`damageRange`/`stats`).
-> 3. **B4's AI half is NOT done:** melee gate `|dx| < 50 && Δy < 50` world px,
->    telegraph 600 ms closing / 267 ms point-blank, delete `react()` and every
->    react tier field, point the enemy AI at `AI_THINK_INTERVAL_MS` (already in
->    config from A3), no attack token.
-> 4. Wire `deriveEnemy` into `DuelScene` + `tests/utils/duel-bot.ts`; XP reward
->    **90** and update the Stage-2 gate row rather than leaving it stale.
-> 5. B5: run the harness against `[8,25]`. **If the median misses, only two
->    diagnoses are permitted (§3.3 bot stroke geometry, or a wrong K/cadence).
->    Otherwise STOP AND ESCALATE — the band does not move.**
-> 6. Chaos-plant every new guard · re-run the browser gate · DIVERGENCES +
->    RESUME_HERE + next kickoff in the closing commit.
+> **The one diagnosis B5 forced** (kickoff §3.3 permitted diagnosis (a)): the
+> harness bot drew a TARGET-CENTRED line, so it could never miss and all 24
+> seeds collapsed to 15 distinct durations. Anchoring the stroke at the player
+> fixed it. **The band was not moved.**
 >
-> **PHASE 0 CLOSED (2026-07-26).** Suite **494/494** · tsc ×2 exit 0 · eslint 0 ·
-> in-browser gate **55/55** re-proven after A2+A3 · zero console errors.
-> - **A0.5** — `src/config/stats.ts` + `src/config/reach.ts`. Additive; nothing
->   consumes them yet. The reach stat is **SPD**, not agility (D2's own
->   correction of the kickoff's §4 wording). Stated character: level 9 · SPD 1 ·
->   ATK 1 · dan 0 · **mastery 0**. Found while writing it: the reach and damage
->   mastery curves are the SAME three shapes permuted between light and heavy,
->   and at mastery 10 they reproduce `STANCE_TABLE.dmgMult` 0.9/1.2/1.4 exactly.
-> - **A2** — combo is cosmetic, resets to **0 on damage taken only**.
->   `COMBO_CHAIN_GAP_S` and `Combo.kill()` **deleted**; the two refuted Stage-2
->   pins were **replaced, not removed**, so the old behaviour stays guarded.
-> - **A3** — AUTO SLASH is real: own AI instance, manual input locked out, skills
->   still live, synthesised player-anchored stroke through the **same**
->   `applyStroke`, line drawn on screen, `setAutoSlash(true)` **fails closed**.
->   Browser-proven: plate flips to ON and the fighter fights unaided (closed
->   236.7 → 565.1 world px, landed a hit).
->   ⚠️ **A chaos plant found a hole:** deleting the mid-swing gate left the suite
->   GREEN (the think interval always dominated the swing cycle). Test rewritten to
->   isolate the gate; all four A3 guards now chaos-proven.
+> **Queued, deliberately not done** (kickoff §7): portrait ring stance-colouring,
+> "150 % DAMAGE" as a timed buff, body-part crit's multiplier (hook is in),
+> the dash's wind-up first leg, stagger hyperarmor, elemental resists, mastery
+> as a spendable skill, multi-enemy combat, the 982-item/75-skill/61-quest tables.
 >
-> **A0 CLOSED (2026-07-26).** The sim now runs in the original's own logical
-> stage — **WORLD 800×480** — while the canvas stays **STAGE 1024×576**. The
-> transform is *computed by the original's own resize routine*
-> (`src/core/viewport.ts`, transcribed verbatim): **`stage = (32 + 1.2·worldX,
-> 1.2·worldY)`**, uniform ×1.2 with 32 px pillarbox bars. Evidence:
-> - `tests/viewport.test.ts` 8/8, **chaos-proven** (planting the guessed 1.28 →
->   6 RED naming `scale: 1.28`; restore → green).
-> - **In-browser gate re-proven after the split:
->   `pass=true | probes 41/41 | scans 14/14 | TOTAL 55/55 | failures=[]`**,
->   zero console errors.
-> - Suite **473/473** · tsc ×2 exit 0 · eslint exit 0.
-> - **Harness measured, not assumed:** median **28.492 → 28.800 s (+1.1 %)**,
->   24/24 wins, 24 distinct — inside `[20,60]`, so A0 landed alone (this is the
->   kickoff §4 A0 decision point, resolved with evidence).
-> - One real bug found: `src/game/fidelity.ts` sampled world coords as stage px
->   → `enemy-bar-green` RED → **harness corrected, gate NOT re-fitted**.
-> - Full record + the conversion table: `docs/DIVERGENCES.md` "SESSION 13 — A0".
+> ⚠️ **Decide-and-flag, open to veto:** `ENEMY_BASE.hp` 150 → **1**. At 150 it
+> would win the source's own `max(scaledBase, …)` and quietly keep HP an INPUT,
+> defeating D3's whole derivation. Veto = supply a measured level-scaled base.
+>
+> Full record: `docs/DIVERGENCES.md` "SESSION 13 — PHASE B".
 >
 > Background if wanted: `docs/research/fidelity/SOURCE_CONSTANTS.md` §3, §5, §6.
 >

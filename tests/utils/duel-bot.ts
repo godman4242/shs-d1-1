@@ -9,8 +9,9 @@
  * - 'none': no input at all — must lose every seed.
  */
 import { AI_TIERS } from '../../src/config/ai';
-import { ENEMY_BASE, PLAYER_BASE } from '../../src/config/combat-sim';
-import { DUEL_SPAWNS } from '../../src/config/duel';
+import { PLAYER_BASE } from '../../src/config/combat-sim';
+import { duelSpawns } from '../../src/core/duelSetup';
+import { reachFor } from '../../src/core/mastery';
 import { FIXED_HZ } from '../../src/config/timing';
 import { AISeamController } from '../../src/core/AISeamController';
 import { DrawnStroke } from '../../src/core/DrawnStroke';
@@ -28,15 +29,31 @@ export interface DuelOutcome {
 }
 
 const MAX_DUEL_S = 120;
+/**
+ * ⚠️ THE BOT NOW DRAWS A PLAYER-ANCHORED STROKE (SESSION13 B5, §3.3 diagnosis a).
+ *
+ * It used to draw `enemy.x ± 140` — a line CENTRED ON THE TARGET, which is not
+ * what a real stroke looks like and which the kickoff §3.3 names as the first
+ * thing to fix. Because such a line always crosses the enemy, the bot could
+ * never miss: every fight was exactly K swings plus jitter, and the 24 seeds
+ * collapsed into a 34-frame window (15 distinct durations, against the gate's
+ * ≥22). Anchoring the stroke at the player — from its own position, one reach
+ * along the attack line, exactly what AUTO SLASH synthesises — restores the
+ * miss-then-close dynamic the real game has, and with it the seed variance.
+ *
+ * (The jump numbers were also authored in 1024-space and the A0 split left them
+ * behind; converted with the same `/1.2`: 8/160 → 6.7/133.3.)
+ */
+const JUMP_DX = 6.7;
+const JUMP_DY = 133.3;
 const SLASH_EVERY_FRAMES = 45;
 const DODGE_DELAY_FRAMES = 10;
 
 export function runDuel(seed: number, policy: 'good' | 'none'): DuelOutcome {
   const rng = mulberry32(seed);
-  const sim = new Sim(rng, new AISeamController(rng, AI_TIERS.normal), {
-    player: { ...PLAYER_BASE, ...DUEL_SPAWNS.player, pos: { ...DUEL_SPAWNS.player.pos } },
-    enemy: { ...ENEMY_BASE, ...DUEL_SPAWNS.enemy, pos: { ...DUEL_SPAWNS.enemy.pos } },
-  });
+  // The enemy is spawned through the SAME derivation the scene uses (D3), so
+  // the harness measures the real model rather than an authored seed.
+  const sim = new Sim(rng, new AISeamController(rng, AI_TIERS.normal), duelSpawns());
   sim.beginCombat();
 
   let checksum = 0;
@@ -65,11 +82,18 @@ export function runDuel(seed: number, policy: 'good' | 'none'): DuelOutcome {
     if (policy === 'good') {
       if (sim.frame === jumpAt && !sim.playerJumping) {
         const p = sim.player.pos;
-        sim.applyStroke(new DrawnStroke([{ x: p.x, y: p.y }, { x: p.x + 8, y: p.y - 160 }]));
+        sim.applyStroke(new DrawnStroke([{ x: p.x, y: p.y }, { x: p.x + JUMP_DX, y: p.y - JUMP_DY }]));
       }
       if (sim.frame >= nextSlash) {
         const e = sim.enemy.pos;
-        sim.applyStroke(new DrawnStroke([{ x: e.x - 140, y: e.y }, { x: e.x + 140, y: e.y }]));
+        // Anchored AT the player, one reach long, aimed at the enemy — so it
+        // whiffs when out of range and the dash has to close the gap.
+        const me = sim.player.pos;
+        const dir = Math.sign(e.x - me.x) || 1;
+        const reach = reachFor(sim.player.stance, PLAYER_BASE.stats);
+        sim.applyStroke(
+          new DrawnStroke([{ x: me.x, y: me.y }, { x: me.x + dir * reach, y: me.y }]),
+        );
         nextSlash = sim.frame + SLASH_EVERY_FRAMES + Math.floor(botRng() * 12);
       }
     }

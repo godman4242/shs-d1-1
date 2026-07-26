@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { DUEL_ENEMY } from '../config/duel';
+import { DUEL_ENEMY, XP_PER_LEVEL, XP_REWARD_BASE } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { KILL_REWARD } from '../config/economy';
 import { COL } from '../config/palette';
@@ -17,9 +17,9 @@ import { loadProfile, saveProfile } from './profileStore';
  * The defeat branch (A-22, t=3361-3364.3 — the only defeat capture; its
  * VS-duel variant is unverified) adds the dark brush splash, the red
  * "YOU WERE DEFEATED!" headline (same authored #990000) and the LEAVE AREA /
- * FREE RESPAWN buttons. Victory pays KILL_REWARD × foe level (+10 XP /
- * +8 coins at level 1 — gate items); Defeat pays nothing and shows no reward
- * line (matches the OG card). Render-only.
+ * FREE RESPAWN buttons. Victory pays the SOURCE reward — `level × 5 + 45` XP
+ * (**90** at our level 9, SESSION13 D3) plus a flat INFERRED 8 coins; Defeat
+ * pays nothing and shows no reward line (matches the OG card). Render-only.
  *
  * Stage geometry = OG px ÷ 1.875. Field x 28-995, tableau top y 477.
  */
@@ -76,13 +76,13 @@ export class DuelResult extends Phaser.Scene {
       this.drawButton(432, 320, 'FREE RESPAWN');
     }
 
-    const xp = won ? KILL_REWARD.xpPerFoeLevel * DUEL_ENEMY.level : 0;
-    const coins = won ? KILL_REWARD.coinsPerFoeLevel * DUEL_ENEMY.level : 0;
+    const xp = won ? DUEL_ENEMY.level * XP_PER_LEVEL + XP_REWARD_BASE : 0;
+    const coins = won ? KILL_REWARD.coinsFlat : 0;
 
     // M4 accrual seam: a win pays the SAME numbers the banner shows into the
     // persisted profile (accrueXp levels through the M2 curve if a cap is
     // crossed). create() runs once per fight (resultLaunched guard), so a
-    // kill can't double-pay. Render stays KILL_REWARD math — display parity.
+    // kill can't double-pay. Render stays the same math — display parity.
     if (won) {
       saveProfile(accrueCoins(accrueXp(loadProfile(), xp), coins));
       this.add

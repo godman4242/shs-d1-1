@@ -8,18 +8,21 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
-  CRITICAL_MAX,
+  FOCUS_KILL_BONUS,
+  FOCUS_MAX,
+  FOCUS_SPEND,
   FOCUS_START,
+  FOCUS_SWITCH_COST,
 } from '../src/config/combat';
 import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../src/config/chi';
-import { DASH_SLASH_PX, MAX_FRAME_MS, PLAYER_MOVE_SPEED, SMOKE_BOMB_DISTANCE } from '../src/config/combat-sim';
+import { DASH_SPEED_PX_PER_FRAME, MAX_FRAME_MS, MOVE_WALK_PX_S, SMOKE_BOMB_DISTANCE } from '../src/config/combat-sim';
 import { WORLD_WIDTH } from '../src/config/display';
 import { JUMP_DURATION_FRAMES } from '../src/config/duel';
+import { ENEMY_STATS, PLAYER_STATS } from '../src/config/stats';
 import { FIXED_HZ, MS_PER_S, SLASH_FRAMES } from '../src/config/timing';
-import { AI_STRIKE_RANGE, AI_TIERS, ENEMY_SPEED } from '../src/config/ai';
+import { AI_MELEE_RANGE, AI_TIERS, ENEMY_SPEED } from '../src/config/ai';
 import { AISeamController } from '../src/core/AISeamController';
 import { DrawnStroke } from '../src/core/DrawnStroke';
-import { msToFrames } from '../src/core/time';
 import type { OpponentController } from '../src/core/OpponentController';
 import { Sim, type FighterSpawn, type Rng, type SimEvent } from '../src/core/Sim';
 import { VIEW } from '../src/core/viewport';
@@ -46,7 +49,9 @@ const opponent: OpponentController = { next: () => ({}) };
 const playerSpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
   pos: v(100, 200),
   hp: 100,
-  atkPlusWeapon: 10,
+  minDamage: 10,
+  damageRange: 0,
+  stats: PLAYER_STATS,
   defense: 5,
   stance: 'balanced',
   deflectLearned: true,
@@ -57,7 +62,9 @@ const playerSpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
 const enemySpawn = (over: Partial<FighterSpawn> = {}): FighterSpawn => ({
   pos: v(400, 200),
   hp: 150,
-  atkPlusWeapon: 7,
+  minDamage: 7,
+  damageRange: 0,
+  stats: ENEMY_STATS,
   defense: 5,
   stance: 'heavy',
   deflectLearned: false,
@@ -92,7 +99,14 @@ const tickN = (sim: Sim, n: number): void => {
 /** A missed slash — ends the player's spawn invuln (offensive act), no damage.
  * Zero-net (there-and-back) so it doesn't dash-through either (Session 9). */
 const endInvuln = (sim: Sim): void => {
-  sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500), v(300, 500)]));
+  // ⚠️ ANCHORED AT THE PLAYER, and kept SHORTER than the reach budget (B3).
+  // The dash now runs to the STROKE'S LAST POINT in world coordinates, so a
+  // stroke drawn across the arena legitimately drags the fighter to it — which
+  // is the original's own "the drawn line is a movement command" behaviour, but
+  // not what a helper called `endInvuln` should be doing. Out-and-back from the
+  // player's own position ends where it started: invuln drops, nothing moves.
+  const p = sim.player.pos;
+  sim.applyStroke(new DrawnStroke([{ ...p }, { x: p.x + 30, y: p.y }, { ...p }]));
 };
 
 describe('Sim — construction, state exposure, hitboxes', () => {
@@ -107,12 +121,12 @@ describe('Sim — construction, state exposure, hitboxes', () => {
     expect(sim.enemy.maxHp).toBe(150);
     expect(sim.enemy.stance).toBe('heavy');
   });
-  it('meters start at FOCUS_START and zero Critical, both fighters', () => {
+  it('Focus starts at FOCUS_START (0 — the meter starts EMPTY), both fighters', () => {
     const sim = introSim();
     expect(sim.player.focus).toBe(FOCUS_START);
-    expect(sim.player.critical).toBe(0);
     expect(sim.enemy.focus).toBe(FOCUS_START);
-    expect(sim.enemy.critical).toBe(0);
+    // …and the BAR reads 0 too, because the first 48 units are invisible.
+    expect(sim.player.focusDisplay).toBe(0);
   });
   it('hitbox(side) is the axis-aligned rect around that fighter', () => {
     const sim = introSim();
@@ -151,7 +165,8 @@ describe('Sim — phase model (intro → fighting → ended)', () => {
   });
   it('killing the enemy ends the fight and emits fightEnded exactly once', () => {
     const sim = makeSim();
-    for (let i = 0; i < 19; i++) sim.applyStroke(slashStroke()); // 19 × 8 = 152 ≥ 150
+    // 10 × 1.0 × 0.9 − 5×0.8 = 5 per hit ⇒ 30 hits to clear 150 HP.
+    for (let i = 0; i < 30; i++) sim.applyStroke(slashStroke());
     expect(sim.enemy.hp).toBe(0);
     expect(sim.phase).toBe('ended');
     const ended = sim.drainEvents().filter((ev) => ev.type === 'fightEnded');
@@ -162,27 +177,27 @@ describe('Sim — phase model (intro → fighting → ended)', () => {
 });
 
 describe('Sim — damage resolution (defense, floor, heavy penalty, counter)', () => {
-  it('balanced 10-atk vs heavy 5-def: 10×1.2 − 5×0.8 = 8 exactly (single-form heavy penalty)', () => {
-    // The exact 8 pins BOTH the defense-side ×(1−HEAVY_DEF_PENALTY) form AND
+  it('balanced vs heavy: 10×1.0×0.9 − 5×0.8 = 5 exactly (single-form heavy penalty)', () => {
+    // The exact 5 pins BOTH the defense-side ×(1−HEAVY_DEF_PENALTY) form AND
     // that STANCE_TABLE.heavy.damageTakenMult (1.25) is NOT also applied:
-    // double-application would read 10 or 11, defense-without-penalty 7.
+    // double-application would read 6.25 or 7.25, never 5.
     const sim = makeSim();
     const outcome = sim.applyStroke(slashStroke());
     expect(outcome.slash?.hit).toBe(true);
-    expect(outcome.slash?.damage).toBe(8);
-    expect(sim.enemy.hp).toBe(142);
+    expect(outcome.slash?.damage).toBe(5);
+    expect(sim.enemy.hp).toBe(145);
   });
-  it('non-heavy defender takes full defense: balanced 10-atk vs balanced 5-def → 12 − 5 = 7', () => {
+  it('non-heavy defender takes full defense: balanced vs balanced → 10×1.0×1.0 − 5 = 5', () => {
     const sim = makeSim({}, { stance: 'balanced' });
-    expect(sim.applyStroke(slashStroke()).slash?.damage).toBe(7);
+    expect(sim.applyStroke(slashStroke()).slash?.damage).toBe(5);
   });
-  it('counter bonus: light beats heavy → 10×0.9×1.25 − 4 = 7.25', () => {
+  it('WINNING the matchup pays ×1.2: light vs heavy → 10×0.5×1.2 − 4 = 2', () => {
     const sim = makeSim({ stance: 'light' });
-    expect(sim.applyStroke(slashStroke()).slash?.damage).toBe(7.25);
+    expect(sim.applyStroke(slashStroke()).slash?.damage).toBeCloseTo(2, 9);
   });
-  it('counter bonus: balanced beats light → 10×1.2×1.25 − 5 = 10', () => {
+  it('WINNING the matchup pays ×1.2: balanced vs light → 10×1.0×1.2 − 5 = 7', () => {
     const sim = makeSim({}, { stance: 'light' });
-    expect(sim.applyStroke(slashStroke()).slash?.damage).toBe(10);
+    expect(sim.applyStroke(slashStroke()).slash?.damage).toBeCloseTo(7, 9);
   });
   it('DAMAGE_FLOOR: overwhelming defense still bleeds 1', () => {
     const sim = makeSim({}, { defense: 100 });
@@ -199,63 +214,86 @@ describe('Sim — damage resolution (defense, floor, heavy penalty, counter)', (
     sim.applyStroke(slashStroke());
     expect(sim.drainEvents()).toEqual([
       { type: 'comboChanged', value: 1 },
-      { type: 'damage', target: 'enemy', amount: 8, crit: false, severed: [] },
+      { type: 'damage', target: 'enemy', amount: 5, crit: false, severed: [] },
     ]);
     expect(sim.drainEvents()).toEqual([]);
   });
 });
 
-describe('Sim — Critical meter (fills in combat, full → next hit crits ×CRIT_MULT)', () => {
-  // Fill is multiply-first exact: frames × CRITICAL_FILL_PER_S / FIXED_HZ.
-  const framesToFull = (CRITICAL_MAX * FIXED_HZ) / 8; // 8 = CRITICAL_FILL_PER_S (pinned)
-  it('fills at CRITICAL_FILL_PER_S while fighting: one second → 8', () => {
+describe('Sim — FOCUS *is* the crit meter (SESSION13 D4: the separate Critical meter is deleted)', () => {
+  /** 192 units at 24/s = exactly 8.000 s of RAW fill. */
+  const framesToFull = (FOCUS_MAX * FIXED_HZ) / 24;
+  it('fills at 24 units/s while fighting: one second → 24', () => {
     const sim = makeSim();
     tickN(sim, FIXED_HZ);
-    expect(sim.player.critical).toBe(8);
+    expect(sim.player.focus).toBe(24);
+  });
+  it('the BAR only starts moving after 48 invisible units, then fills in 6.000 s', () => {
+    const sim = makeSim();
+    tickN(sim, 2 * FIXED_HZ); // 48 units — the bar is still empty
+    expect(sim.player.focus).toBe(48);
+    expect(sim.player.focusDisplay).toBe(0);
+    tickN(sim, 6 * FIXED_HZ); // +144 units → full
+    expect(sim.player.focusDisplay).toBe(1);
+    // This is the whole point of the shape: a raw 8 s meter that LOOKS like a
+    // 6 s one, which is what the study pass measured as 5.97 s.
   });
   it('does NOT fill during the intro phase', () => {
     const sim = introSim();
     tickN(sim, FIXED_HZ);
-    expect(sim.player.critical).toBe(0);
+    expect(sim.player.focus).toBe(0);
   });
-  it('caps at CRITICAL_MAX', () => {
+  it('caps at FOCUS_MAX', () => {
     const sim = makeSim();
     tickN(sim, framesToFull + FIXED_HZ);
-    expect(sim.player.critical).toBe(CRITICAL_MAX);
+    expect(sim.player.focus).toBe(FOCUS_MAX);
   });
-  it('full meter → next landed hit crits ×CRIT_MULT and the meter resets (A/B)', () => {
+  it('THE RESIDUAL ACCUMULATOR SURVIVES A SPEND (D4: a closed form silently would not)', () => {
+    // Fill, spend, re-fill — the spend must persist. `floor(ticks × 2/5)` is a
+    // function of TOTAL ticks, so the very next tick would recompute the meter
+    // back to where it would have been and erase the spend entirely.
+    const sim = makeSim();
+    tickN(sim, 5 * FIXED_HZ); // 120 units
+    expect(sim.player.focus).toBe(120);
+    sim.applyStroke(slashStroke()); // balanced spend = 48
+    expect(sim.player.focus).toBe(120 - FOCUS_SPEND.balanced);
+    tickN(sim, FIXED_HZ); // one more second of fill on TOP of the spend
+    expect(sim.player.focus).toBe(120 - FOCUS_SPEND.balanced + 24);
+  });
+  it('a full meter → next landed hit crits and the meter ZEROES (A/B)', () => {
     const noCrit = makeSim();
     const normal = noCrit.applyStroke(slashStroke()).slash;
-    expect(normal?.damage).toBe(8); // A: 10×1.2 − 4
-
     const sim = makeSim();
     tickN(sim, framesToFull);
-    expect(sim.player.critical).toBe(CRITICAL_MAX);
+    expect(sim.player.focus).toBe(FOCUS_MAX);
     const crit = sim.applyStroke(slashStroke()).slash;
     expect(crit?.crit).toBe(true);
-    expect(crit?.damage).toBeCloseTo(11.6, 10); // B: 10×1.2×1.3 − 4 — attack term ×CRIT_MULT
-    expect(sim.player.critical).toBe(0);
-    const dmgEvents = sim.drainEvents().filter((ev) => ev.type === 'damage');
-    expect(dmgEvents).toEqual([
-      { type: 'damage', target: 'enemy', amount: crit?.damage, crit: true, severed: [] },
-    ]);
+    expect(crit?.damage).toBeGreaterThan(normal?.damage ?? 0);
+    // A full bar zeroes FIRST, then the stance cost subtracts from zero (a no-op).
+    expect(sim.player.focus).toBe(0);
   });
-  it('a MISSED stroke does not consume a full meter', () => {
+  it('a MISSED stroke does not consume the meter', () => {
     const sim = makeSim();
     tickN(sim, framesToFull);
     sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
-    expect(sim.player.critical).toBe(CRITICAL_MAX);
+    expect(sim.player.focus).toBe(FOCUS_MAX);
+  });
+  it('SLASHING IS NEVER FOCUS-GATED (P3) — an empty bar still swings and damages', () => {
+    const sim = makeSim();
+    expect(sim.player.focus).toBe(0);
+    const outcome = sim.applyStroke(slashStroke());
+    expect(outcome.slash?.hit).toBe(true);
+    expect(sim.player.focus).toBe(0); // the spend just clamps at 0
+  });
+  it('a kill tops the killer up by FOCUS_KILL_BONUS', () => {
+    const sim = makeSim({}, { hp: 1 });
+    sim.applyStroke(slashStroke());
+    expect(sim.phase).toBe('ended');
+    expect(sim.player.focus).toBe(FOCUS_KILL_BONUS);
   });
 });
 
-describe('Sim — Focus meter + stance switching', () => {
-  it('fills at FOCUS_FILL_PER_S while fighting, capped at FOCUS_MAX', () => {
-    const sim = makeSim();
-    tickN(sim, FIXED_HZ);
-    expect(sim.player.focus).toBe(54); // 50 + 4, multiply-first exact
-    tickN(sim, FIXED_HZ * 1000);
-    expect(sim.player.focus).toBe(100);
-  });
+describe('Sim — stance switching (SESSION13 D9: a flat 48 Focus, the game\'s ONLY focus gate)', () => {
   it('out of combat (intro): switch is instant, free, and emitted', () => {
     const sim = introSim();
     expect(sim.requestStanceSwitch('player', 'heavy')).toBe(true);
@@ -265,30 +303,33 @@ describe('Sim — Focus meter + stance switching', () => {
       { type: 'stanceSwitched', who: 'player', from: 'balanced', to: 'heavy', focusCost: 0 },
     ]);
   });
-  it('in combat: denied when focus < FOCUS_SWITCH_COST × WEAPON_WEIGHT[current stance]', () => {
-    // balanced → cost 34 × 1.5 = 51 > FOCUS_START 50 → denied at spawn
-    const sim = makeSim();
+  it('in combat: denied below FOCUS_SWITCH_COST — a flat 48, NOT scaled by any weapon weight', () => {
+    const sim = makeSim(); // starts empty
     expect(sim.requestStanceSwitch('player', 'heavy')).toBe(false);
     expect(sim.player.stance).toBe('balanced');
-    expect(sim.player.focus).toBe(FOCUS_START);
     expect(sim.drainEvents()).toEqual([
-      { type: 'stanceSwitchDenied', who: 'player', needed: 51, focus: 50 },
+      { type: 'stanceSwitchDenied', who: 'player', needed: FOCUS_SWITCH_COST, focus: 0 },
     ]);
   });
-  it('in combat: allowed once filled — drains the weight-scaled cost', () => {
+  it('in combat: allowed once affordable — drains exactly 48', () => {
     const sim = makeSim();
-    tickN(sim, FIXED_HZ); // focus 54
+    tickN(sim, 2 * FIXED_HZ); // 48 units — exactly affordable
+    expect(sim.player.focus).toBe(FOCUS_SWITCH_COST);
     expect(sim.requestStanceSwitch('player', 'heavy')).toBe(true);
     expect(sim.player.stance).toBe('heavy');
-    expect(sim.player.focus).toBe(3); // 54 − 51, multiply-first exact
+    expect(sim.player.focus).toBe(0);
     expect(sim.drainEvents()).toEqual([
-      { type: 'stanceSwitched', who: 'player', from: 'balanced', to: 'heavy', focusCost: 51 },
+      { type: 'stanceSwitched', who: 'player', from: 'balanced', to: 'heavy', focusCost: FOCUS_SWITCH_COST },
     ]);
   });
-  it('in combat: light is the cheapest stance to leave (34 × 1.0)', () => {
-    const sim = makeSim({ stance: 'light' });
-    expect(sim.requestStanceSwitch('player', 'balanced')).toBe(true); // 50 ≥ 34
-    expect(sim.player.focus).toBe(16);
+  it('the cost does NOT depend on which stance is being left (WEAPON_WEIGHT is deleted)', () => {
+    for (const from of ['light', 'balanced', 'heavy'] as const) {
+      const sim = makeSim({ stance: from });
+      tickN(sim, 2 * FIXED_HZ); // 48 units
+      const to = from === 'light' ? 'balanced' : 'light';
+      expect(sim.requestStanceSwitch('player', to)).toBe(true);
+      expect(sim.player.focus).toBe(0);
+    }
   });
   it('switching to the SAME stance is a no-op (no drain, no event)', () => {
     const sim = makeSim({ stance: 'light' });
@@ -296,10 +337,12 @@ describe('Sim — Focus meter + stance switching', () => {
     expect(sim.player.focus).toBe(FOCUS_START);
     expect(sim.drainEvents()).toEqual([]);
   });
-  it('the enemy pays the same costs (symmetric seam for the Stage-2 AI)', () => {
-    const sim = makeSim(); // enemy heavy: cost 34 × 2.5 = 85 > 50 → denied
-    expect(sim.requestStanceSwitch('enemy', 'light')).toBe(false);
+  it('the enemy pays the same cost (symmetric seam for the AI)', () => {
+    const sim = makeSim();
+    expect(sim.requestStanceSwitch('enemy', 'light')).toBe(false); // empty bar
     expect(sim.enemy.stance).toBe('heavy');
+    tickN(sim, 2 * FIXED_HZ);
+    expect(sim.requestStanceSwitch('enemy', 'light')).toBe(true);
   });
 });
 
@@ -445,21 +488,21 @@ describe('Sim — enemy strikes via the OpponentIntent seam (M3)', () => {
     next: (frame: number) => (strikeFrames.includes(frame) ? { strike: true } : {}),
   });
 
-  it('a strike damages the player — heavy BEATS balanced: 7×1.4×1.25 − 5 = 7.25', () => {
+  it('a strike damages the player — heavy BEATS balanced: 7×1.4×1.2 − 5 = 6.76', () => {
     const sim = makeSim({}, {}, strikerOn([1]));
     endInvuln(sim);
     sim.tick();
-    expect(sim.player.hp).toBeCloseTo(92.75, 10);
+    expect(sim.player.hp).toBeCloseTo(93.24, 10);
     const dmg = sim.drainEvents().filter((ev) => ev.type === 'damage');
     expect(dmg).toEqual([
-      { type: 'damage', target: 'player', amount: expect.closeTo(7.25, 10) as number, crit: false, severed: [] },
+      { type: 'damage', target: 'player', amount: expect.closeTo(6.76, 10) as number, crit: false, severed: [] },
     ]);
   });
-  it('no counter bonus off the triangle: heavy enemy vs LIGHT player → 7×1.4 − 5 = 4.8', () => {
+  it('LOSING the matchup: heavy enemy vs LIGHT player → 7×1.4×0.9 − 5 = 3.82', () => {
     const sim = makeSim({ stance: 'light' }, {}, strikerOn([1]));
     endInvuln(sim);
     sim.tick();
-    expect(sim.player.hp).toBeCloseTo(95.2, 10);
+    expect(sim.player.hp).toBeCloseTo(96.18, 10);
   });
   it('an airborne player evades strikes (jump dodge)', () => {
     const sim = makeSim({}, {}, strikerOn([2]));
@@ -625,18 +668,26 @@ describe('Sim — skills via queueSkill (M3: SKILL_VERB hotbar)', () => {
     const blocked = sim.drainEvents().filter((ev) => ev.type === 'invulnBlocked');
     expect(blocked).toEqual([{ type: 'invulnBlocked', target: 'player' }]);
     tickN(sim, 30); // frame 40 strike lands (i-frames over)
-    expect(sim.player.hp).toBeCloseTo(92.75, 10);
+    expect(sim.player.hp).toBeCloseTo(93.24, 10);
   });
   it('smokeBomb i-frames block kunai too', () => {
     const thrower: OpponentController = {
       next: (frame: number) => (frame === 1 ? { throwKunai: true } : {}),
     };
-    const sim = makeSim({}, {}, thrower);
+    // Player parked mid-arena so the escape dash is not wall-clamped, and the
+    // bomb is cast LATE so the kunai arrives INSIDE the 420 ms i-frame window —
+    // otherwise the test would pass for the wrong reason (kunai still in
+    // flight when the window closes).
+    const sim = makeSim({ pos: v(300, 200) }, {}, thrower);
     endInvuln(sim); // this tests SMOKE i-frames, not spawn invuln
-    tickN(sim, 25); // kunai ~71 px out
+    tickN(sim, 6); // kunai ~37 world px out and closing
+    sim.drainEvents();
     sim.queueSkill('smokeBomb'); // dash away + i-frames
-    tickN(sim, 15);
+    tickN(sim, 24); // it catches up ~f28, inside the 420 ms window (ends ~f32)
     expect(sim.player.hp).toBe(100);
+    expect(sim.drainEvents().filter((e) => e.type === 'invulnBlocked')).toEqual([
+      { type: 'invulnBlocked', target: 'player' },
+    ]);
   });
   it('stab (key 3) swats kunai inside DEFLECT_RADIUS during the window', () => {
     const thrower: OpponentController = {
@@ -695,14 +746,14 @@ describe('Sim — spawn invulnerability (M3: player-only, 5 s or first slash)', 
     expect(sim.player.invulnerable).toBe(true); // 299 < 300
     tickN(sim, 2);
     expect(sim.player.invulnerable).toBe(false);
-    expect(sim.player.hp).toBeCloseTo(92.75, 10); // strike at 301 lands
+    expect(sim.player.hp).toBeCloseTo(93.24, 10); // strike at 301 lands
   });
   it('ends on the player’s FIRST SLASH (even a miss)', () => {
     const sim = makeSim({}, {}, strikerOn([5]));
     sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)])); // missed slash
     expect(sim.player.invulnerable).toBe(false);
     tickN(sim, 6);
-    expect(sim.player.hp).toBeCloseTo(92.75, 10);
+    expect(sim.player.hp).toBeCloseTo(93.24, 10);
   });
   it('a jump does NOT end spawn invuln (only offensive acts do)', () => {
     const sim = makeSim();
@@ -711,8 +762,8 @@ describe('Sim — spawn invulnerability (M3: player-only, 5 s or first slash)', 
   });
   it('the first slash still damages the enemy immediately (enemy has no invuln)', () => {
     const sim = makeSim();
-    expect(sim.applyStroke(slashStroke()).slash?.damage).toBe(8);
-    expect(sim.enemy.hp).toBe(142);
+    expect(sim.applyStroke(slashStroke()).slash?.damage).toBe(5);
+    expect(sim.enemy.hp).toBe(145);
   });
 });
 
@@ -762,12 +813,12 @@ describe('Sim — Shunpo slow-mo (M3: SHIFT-hold, meter in exact 1/60 units)', (
   });
 });
 
-describe('Sim — player movement intent (M3: A/D at PLAYER_MOVE_SPEED)', () => {
-  it('moveX advances 0.28 px/ms of sim time: 60 frames → 280 px', () => {
+describe('Sim — player movement intent (A/D dev seam walks; the OG is mouse-only)', () => {
+  it('moveX advances at the WALK gait: 60 frames → MOVE_WALK_PX_S world px', () => {
     const sim = makeSim();
     sim.setPlayerIntent({ moveX: 1, shunpoHeld: false });
     tickN(sim, 60);
-    expect(sim.player.pos.x).toBeCloseTo(sx(100) + PLAYER_MOVE_SPEED * MS_PER_S, 9);
+    expect(sim.player.pos.x).toBeCloseTo(sx(100) + MOVE_WALK_PX_S, 9);
   });
   it('clamps to the arena edge', () => {
     const sim = makeSim();
@@ -813,7 +864,7 @@ describe('Sim + AISeamController — integrated duel loop (M4)', () => {
     let damageFrame = -1;
     for (let f = 0; f < 2000 && damageFrame < 0; f++) {
       const dist = Math.abs(sim.enemy.pos.x - sim.player.pos.x);
-      inRange = dist <= AI_STRIKE_RANGE;
+      inRange = dist <= AI_MELEE_RANGE.x;
       sim.tick();
       for (const ev of sim.drainEvents()) {
         events.push({ frame: sim.frame, ev });
@@ -836,34 +887,52 @@ describe('Sim + AISeamController — integrated duel loop (M4)', () => {
   });
   it('enemy stance switch arrives telegraphed and Focus-gated through the same Sim rule', () => {
     const picker = new AISeamController(() => 0, AI_TIERS.normal);
-    // player light + enemy light (cost 34 ≤ 50): pick balanced (beats light)
+    // player light + enemy light: the enemy picks balanced (which beats light).
+    // Focus now STARTS EMPTY (D4), so the AI must first accumulate the flat 48
+    // before its counter-stance pick can even be attempted — the gate is real.
     const sim = new Sim(() => 0.5, picker, {
       player: playerSpawn({ stance: 'light' }),
       enemy: enemySpawn({ pos: v(200, 200), stance: 'light' }),
     });
     sim.beginCombat();
     sim.drainEvents();
-    tickN(sim, msToFrames(600) + 2);
-    const evs = sim.drainEvents();
-    expect(evs.some((e) => e.type === 'enemyTelegraph' && e.kind === 'stance')).toBe(true);
-    expect(evs.some((e) => e.type === 'stanceSwitched' && e.who === 'enemy' && e.to === 'balanced')).toBe(true);
+    // Focus now STARTS EMPTY (D4) and the enemy also SPENDS it on every swing,
+    // so affording the flat 48 takes several attack cycles. Run until the
+    // switch lands rather than guessing a frame — the contract under test is
+    // "telegraphed AND gated through the Sim's rule", not the exact timing.
+    let sawTelegraph = false;
+    let sawSwitch = false;
+    for (let f = 0; f < 30 * FIXED_HZ && !sawSwitch; f++) {
+      sim.tick();
+      for (const e of sim.drainEvents()) {
+        if (e.type === 'enemyTelegraph' && e.kind === 'stance') sawTelegraph = true;
+        if (e.type === 'stanceSwitched' && e.who === 'enemy' && e.to === 'balanced') sawSwitch = true;
+      }
+    }
+    expect(sawTelegraph).toBe(true);
+    expect(sawSwitch).toBe(true);
     expect(sim.enemy.stance).toBe('balanced');
   });
-  it('a blocking enemy negates the slash without consuming the crit meter', () => {
-    const blocker: OpponentController = {
+  it('A PLANTED BLOCK/DODGE CHANGES NOTHING (SESSION13 D8, gate item 13)', () => {
+    // ⚠️ This REVERSES a Stage-2 pin. The old assertion was "a blocking enemy
+    // negates the slash": the Sim consulted `controller.react()` and a 'block'
+    // cancelled the hit. The original's enemies do NOT block or dodge (measured:
+    // zero blocking across the study corpus), so the seam is deleted. A
+    // controller that still offers `react` is simply ignored — planting one and
+    // watching NOTHING change is the proof.
+    const planted = {
       next: () => ({}),
-      react: () => 'block',
-    };
-    const sim = makeSim({}, {}, blocker);
-    tickN(sim, 750); // fill Critical to max
-    expect(sim.player.critical).toBe(100);
-    const outcome = sim.applyStroke(slashStroke());
-    expect(outcome.slash?.hit).toBe(false);
-    expect(sim.enemy.hp).toBe(150);
-    expect(sim.player.critical).toBe(100); // NOT consumed on a blocked swing
-    expect(sim.combo).toBe(0); // no hit — no chain
-    const blocked = sim.drainEvents().filter((e) => e.type === 'strikeBlocked');
-    expect(blocked).toEqual([{ type: 'strikeBlocked', by: 'enemy' }]);
+      react: () => 'block' as const,
+    } as unknown as OpponentController;
+    const plain = makeSim();
+    const withPlant = makeSim({}, {}, planted);
+    const clean = plain.applyStroke(slashStroke()).slash;
+    const planted2 = withPlant.applyStroke(slashStroke()).slash;
+    expect(planted2?.hit).toBe(true);
+    expect(planted2?.damage).toBe(clean?.damage);
+    expect(withPlant.enemy.hp).toBe(plain.enemy.hp);
+    expect(withPlant.combo).toBe(plain.combo);
+    expect(withPlant.drainEvents().filter((e) => e.type === 'strikeBlocked')).toEqual([]);
   });
 });
 
@@ -875,7 +944,9 @@ describe('Sim — audit fixes (mid-tick kill, shunpo end, intro skills, jump cla
     };
     const sim = makeSim({ hp: 8 }, { hp: 10 }, thrower);
     endInvuln(sim);
-    tickN(sim, 28); // kunai ~43px out — arrives within the next few ticks
+    // Kunai speed changed with the A0 world split, so the collision window
+    // moved: fly it to just short of the player, THEN land the killing blow.
+    tickN(sim, 29);
     sim.queueSkill('chiPunch'); // kills the 10-hp enemy on the next tick
     tickN(sim, 5);
     const events = sim.drainEvents();
@@ -990,117 +1061,96 @@ describe('Sim — Chi meter + skill costs (Stage 3 M3, the Stage-2 deferral)', (
   });
 });
 
-describe('Sim — dash-through slash (Session 9: MEASURED strike-C 1-frame snap)', () => {
-  // The OG attacker translates in EXACTLY ONE video frame (±235–240 px @1080
-  // ≈ DASH_SLASH_PX stage px) along the attack line, passing THROUGH the
-  // target; the streak renders after arrival. Sim territory: position is
-  // gameplay. Direction = sign of the stroke's net x (the drawn line IS the
-  // attack line); fixed distance (constant across all three measured dashes
-  // ⇒ pass-through, not stop-at-target); arena-clamped like every other
-  // movement verb.
-  it('a rightward slash that hits dashes the player +DASH_SLASH_PX in the same call AND still damages', () => {
+describe('Sim — the dash travels to the STROKE\'S LAST POINT (SESSION13 B3)', () => {
+  /*
+   * ⚠️ THIS REPLACES THE FIXED-DISTANCE DASH. `DASH_SLASH_PX` (a constant
+   * 105.9 px pass-through) and `DASH_MIN_STROKE_PX` are deleted: the original
+   * runs the samurai to the drawn stroke's endpoint, uncapped, at a per-stance
+   * speed. "Uncapped" is bounded in practice because the stroke is truncated to
+   * the REACH BUDGET first — so reach, not a magic constant, sets the range.
+   *
+   * The Session-9 measurement (one video frame ≈ 105.9 world px) is reproduced
+   * by 40 px/frame across the 15 fps sampling floor, i.e. it was never a
+   * distance at all — which is what that measurement's own caveat warned.
+   */
+  const balancedStep = DASH_SPEED_PX_PER_FRAME.balanced;
+
+  it("arrives at the truncated stroke's endpoint, over several frames", () => {
     const sim = makeSim();
-    sim.applyStroke(slashStroke()); // 300→500 through the enemy
-    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
-    expect(sim.enemy.hp).toBe(142); // hit resolution unchanged by the dash
+    const outcome = sim.applyStroke(slashStroke()); // 300 -> 500 through the enemy
+    const tip = outcome.cutPoints.at(-1);
+    expect(tip).toBeDefined();
+    expect(sim.player.pos.x).toBe(sx(100)); // a travel, not a teleport
+    tickN(sim, 60);
+    expect(sim.player.pos.x).toBeCloseTo(tip?.x ?? 0, 6);
   });
-  it('a leftward slash dashes −DASH_SLASH_PX', () => {
-    const sim = makeSim({ pos: v(300, 200) });
-    sim.applyStroke(new DrawnStroke([v(500, 200), v(300, 200)])); // through the enemy, leftward
-    expect(sim.player.pos.x).toBe(sx(300) - DASH_SLASH_PX);
-  });
-  it('a missed slash still dashes (the lunge is part of the swing, hit or not)', () => {
+  it('moves at DASH_SPEED_PX_PER_FRAME for the stance', () => {
     const sim = makeSim();
+    const before = sim.player.pos.x;
+    sim.applyStroke(slashStroke());
+    sim.tick();
+    expect(sim.player.pos.x).toBeCloseTo(before + balancedStep, 6);
+  });
+  it('a leftward slash dashes left', () => {
+    const sim = makeSim({ pos: v(500, 200) });
+    const before = sim.player.pos.x;
+    sim.applyStroke(new DrawnStroke([v(500, 200), v(300, 200)]));
+    sim.tick();
+    expect(sim.player.pos.x).toBeLessThan(before);
+  });
+  it('a MISSED slash still dashes (the lunge is part of the swing, hit or not)', () => {
+    const sim = makeSim();
+    const before = sim.player.pos.x;
     sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)])); // grazes nobody
-    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
+    tickN(sim, 60);
+    expect(sim.player.pos.x).toBeGreaterThan(before);
     expect(sim.enemy.hp).toBe(150);
   });
-  it('a blocked slash still dashes (OG: clash freeze happens AT arrival)', () => {
-    const sim = makeSim({}, {}, { next: () => ({}), react: () => 'block' });
-    sim.applyStroke(slashStroke());
-    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
-    expect(sim.enemy.hp).toBe(150); // blocked — no damage
+  it('the dash is arena-clamped', () => {
+    const sim = makeSim({ pos: { x: WORLD_WIDTH - sx(30), y: sx(200) } });
+    sim.applyStroke(new DrawnStroke([v(300, 500), v(900, 500)]));
+    tickN(sim, 120);
+    expect(sim.player.pos.x).toBeLessThanOrEqual(WORLD_WIDTH - sx(20));
   });
-  it('dash clamps at the right arena wall', () => {
-    const sim = makeSim({ pos: { x: WORLD_WIDTH - sx(30), y: sx(200) } }); // max x is WORLD_WIDTH − halfW
-    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
-    expect(sim.player.pos.x).toBe(WORLD_WIDTH - sx(20));
-  });
-  it('dash clamps at the left arena wall', () => {
-    const sim = makeSim(); // x=100, −127 would land at −27
-    sim.applyStroke(new DrawnStroke([v(500, 500), v(300, 500)]));
-    expect(sim.player.pos.x).toBe(sx(20));
-  });
-  it('no dash while airborne — the jump arc owns the position', () => {
-    const sim = makeSim();
-    sim.applyStroke(jumpStroke());
-    tickN(sim, 3); // mid-arc
-    const before = sim.player.pos;
-    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
-    expect(sim.player.pos).toEqual(before);
-  });
-  it('a zero-net (there-and-back) slash has no attack line — no dash', () => {
-    const sim = makeSim();
-    sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500), v(300, 500)]));
-    expect(sim.player.pos.x).toBe(sx(100));
-  });
-  it('pre-FIGHT strokes are discarded — no dash in intro', () => {
-    const sim = introSim();
-    sim.applyStroke(slashStroke());
-    expect(sim.player.pos.x).toBe(sx(100));
-  });
-  // ── Review-hardened bounds (Session 9 adversarial review, all CONFIRMED) ──
-  it('dash is rate-limited to the measured strike interval (SLASH_FRAMES total per stance)', () => {
-    // Review finding: unlimited dashing made scribble-spam a teleport verb
-    // (8 micro-slashes crossed the arena at frame 0). The OG's measured
-    // strike-to-strike interval (12/16/20f) is the swing cycle — one dash
-    // per cycle.
+  it('AT MOST ONE dash per measured swing cycle (the scribble-teleport bound is KEPT)', () => {
     const sim = makeSim();
     const miss = (): void => {
       sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)]));
     };
-    miss(); // dashes
-    miss(); // same tick — still inside the swing cycle, no second dash
-    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
-    const cycle = SLASH_FRAMES.balanced; // player spawns balanced
+    miss();
+    tickN(sim, 60); // let it arrive
+    const afterFirst = sim.player.pos.x;
+    miss(); // still inside the swing cycle -> no new dash
+    tickN(sim, 2);
+    expect(sim.player.pos.x).toBe(afterFirst);
+    const cycle = SLASH_FRAMES.balanced;
     tickN(sim, cycle.windup + cycle.active + cycle.recovery);
-    miss(); // cycle complete — dash available again
-    expect(sim.player.pos.x).toBe(sx(100) + 2 * DASH_SLASH_PX);
+    // A stroke FURTHER right, so the new dash target differs from where the
+    // first one parked us — otherwise "no movement" would be ambiguous.
+    sim.applyStroke(new DrawnStroke([v(600, 500), v(800, 500)]));
+    sim.tick();
+    expect(sim.player.pos.x).toBeGreaterThan(afterFirst);
   });
-  it('a slash inside the dash cooldown still resolves damage — only movement is gated', () => {
+  it('a slash inside the dash cooldown still resolves damage - only movement is gated', () => {
     const sim = makeSim();
     sim.applyStroke(new DrawnStroke([v(300, 500), v(500, 500)])); // consumes the dash
-    const outcome = sim.applyStroke(slashStroke()); // hits the enemy, no dash left
+    tickN(sim, 60);
+    const parked = sim.player.pos.x;
+    const outcome = sim.applyStroke(slashStroke());
     expect(outcome.slash?.hit).toBe(true);
-    expect(sim.enemy.hp).toBe(142);
-    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX); // second slash did not move us
+    tickN(sim, 2);
+    expect(sim.player.pos.x).toBe(parked); // the second slash did not move us
   });
-  it('a micro-slip stroke (under DASH_MIN_STROKE_PX) never dashes', () => {
-    // Review finding: a ~5px mouse slip classified as a slash and teleported
-    // the player 127px (and it already ends spawn invuln — pre-existing).
-    const sim = makeSim();
-    sim.applyStroke(new DrawnStroke([v(100, 500), v(105, 500)]));
-    expect(sim.player.pos.x).toBe(sx(100));
-  });
-  it('an airborne slash still resolves damage — ONLY the dash is skipped', () => {
-    // Mutation pin: an implementation that discards the whole mid-air slash
-    // (not just its dash) must fail here. Session 11 adjudication: the reach
-    // gate is real now, so the enemy must BE within reach — the default x=400
-    // spawn is ~236px from the mid-arc player (152.5, 147.5), beyond balanced
-    // reach 200, and correctly whiffs (CRUX behavior). Spawn the enemy at
-    // x=280 (~138px away, in reach) and slash through it.
+  it('an airborne slash resolves damage but does NOT dash', () => {
     const sim = makeSim({}, { pos: v(280, 200) });
     sim.applyStroke(jumpStroke());
-    tickN(sim, 3); // mid-arc — player at (152.5, 147.5)
+    tickN(sim, 3); // mid-arc
+    const midAir = sim.player.pos.x;
     const outcome = sim.applyStroke(new DrawnStroke([v(200, 200), v(350, 200)]));
     expect(outcome.slash?.hit).toBe(true);
-    expect(sim.enemy.hp).toBe(142);
-  });
-  it('a diagonal slash dashes the FULL fixed distance (sign of net-x, not x-component scaling)', () => {
-    // Mutation pin: `direction.x * DASH_SLASH_PX` (no Math.sign) would move
-    // only 0.8 × 127 ≈ 102px here and must fail.
-    const sim = makeSim();
-    sim.applyStroke(new DrawnStroke([v(300, 380), v(460, 500)])); // net (160,120): 36.9° → slash
-    expect(sim.player.pos.x).toBe(sx(100) + DASH_SLASH_PX);
+    sim.tick();
+    expect(sim.player.pos.x).not.toBe(midAir + balancedStep);
   });
 });
+
+

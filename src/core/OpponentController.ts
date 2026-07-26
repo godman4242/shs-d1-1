@@ -35,9 +35,11 @@ export interface OpponentIntent {
 export interface OpponentController {
   /** Called once per fixed FIGHTING tick; returns the intent for that tick. */
   next(frame: number, view: OpponentView): OpponentIntent;
-  /**
-   * Optional reaction seam: consulted when a player slash WOULD land.
-   * Return 'block' (clang, no damage) or 'dodge' (evade, no damage).
+  /*
+   * ⚠️ THE `react()` SEAM IS DELETED (SESSION13 D8). It let a controller block
+   * or dodge a landing player slash — behaviour the original does not have
+   * (measured: zero blocking across the study corpus). A controller that still
+   * defines a `react` method is structurally harmless and simply ignored; the
+   * Sim no longer consults one, which is what `tests/` plants to prove.
    */
-  react?(frame: number, view: OpponentView): 'block' | 'dodge' | null;
 }

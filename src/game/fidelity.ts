@@ -7,6 +7,7 @@ import {
   type FidelityScan,
   type FidelityState,
 } from '../config/fidelity';
+import { MAX_FRAME_MS } from '../config/combat-sim';
 import { GAME_WIDTH } from '../config/display';
 import {
   compareProbe,
@@ -37,6 +38,14 @@ import type { Sim } from '../core/Sim';
  */
 
 type PixelReader = (x: number, y: number) => Rgb;
+
+/**
+ * Sim ms to run before sampling the 'fighting' state. 4 s puts Focus at 96 of
+ * 192 units — a third of the VISIBLE bar, comfortably past the probe's sampling
+ * column — while staying inside the 5 s spawn invulnerability, so the player's
+ * HP bar is still pinned at FULL and the length probes keep their meaning.
+ */
+const FIGHTING_SETTLE_MS = 4000;
 
 /** A DuelScene through the dev keyhole: we only reach for its sim. */
 interface DuelSceneSeam {
@@ -187,11 +196,31 @@ export const createFidelityHarness = (game: Phaser.Game): FidelityHarness => {
     sampleState('fight-splash', read);
     intro.devRelease();
 
-    // ── State 3: fighting, t≈0 (full pools, fighters at spawns) ──
+    // ── State 3: fighting, a few seconds in ──
     // Kill the intro overlay and fire the signal DuelScene waits on (its
-    // once-listener calls sim.beginCombat) — combat live at t≈0.
+    // once-listener calls sim.beginCombat) — combat live.
     game.scene.stop('duel-intro');
     duel.events.emit('intro-done');
+    await settleFrames(game, 2);
+
+    // ⚠️ NOT t≈0 ANY MORE (SESSION13 D4). This state used to be sampled at
+    // t≈0 and documented as "full HP/Chi/Focus", which was only true because
+    // our Focus meter started half-full. The source's meter starts EMPTY and
+    // fills at 24 units/s, and its first 48 units are INVISIBLE — so at t≈0 the
+    // pill is genuinely blank and `focus-strip-left` samples the brown backing.
+    //
+    // The probe itself was measured mid-fight (B t=3774, note: "fill length
+    // varies in-fight"), so the fix is to sample a matching moment rather than
+    // to re-fit the assertion. FIGHTING_SETTLE_MS sits inside SPAWN_INVULN_S
+    // (5 s), so the enemy cannot land a hit and the HP-bar length probes still
+    // pin a FULL bar.
+    // NOTE: `advance()` clamps EVERY call to MAX_FRAME_MS so a backgrounded tab
+    // cannot fast-forward a fight — one big advance() would buy 250 ms, not 4 s.
+    // So step it in clamp-sized bites. ⚠️ NOT `tick()`: a scene calling tick()
+    // directly bypasses the fixed-step accumulator, and there is an audit guard
+    // that fails exactly this (it caught the first version of this code).
+    const settleSim = (duel as unknown as DuelSceneSeam).sim;
+    for (let ms = 0; ms < FIGHTING_SETTLE_MS; ms += MAX_FRAME_MS) settleSim.advance(MAX_FRAME_MS);
     await settleFrames(game, 2);
     duel.scene.pause();
     await settleFrames(game, 1);
