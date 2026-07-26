@@ -224,21 +224,31 @@ still the next *combat* work.
 
 ## §2 THE BAR — what "the art looks right" MEANS, decided before any code exists
 
-Vague art goals are how art sessions overrun. This one is binary:
+Vague art goals are how art sessions overrun. This one is binary — three numbers,
+and all three must be met:
 
-**A. Silhouette match.** Render the imported idle at the study frame's scale and
-compare filled-pixel masks against the reference frame. **Gate: ≥ 90 % IoU**
-(intersection-over-union — the overlap of the two silhouettes divided by their
-combined area).
+| | Test | **THE NUMBER** |
+|---|---|---|
+| **A** | **Silhouette match** vs the study frame | **≥ 90 %** |
+| **B** | **Colour match** vs the shapes' own recorded RGB | **100 % — byte-exact** |
+| **C** | **Nothing else regressed** — fidelity gate, suite, duel baseline | **55/55 · all green · unedited** |
 
-**B. Colour match.** The palette drawn must be the shapes' own recorded RGB
-values, byte-exact. **Gate: every solid fill in the generated file equals its
-`<color type="RGB">` in `payload.xml`.** No eyeballed hues.
+**A — silhouette, ≥ 90 %.** Trace the outline of our rendered samurai and the
+outline of the original in the study frame, lay one on top of the other, and
+measure how much they overlap. 100 % is pixel-perfect; **90 % means at most a
+tenth of the outline is in the wrong place.** (The formal name for this
+overlap measure is *IoU*, intersection-over-union: the area the two silhouettes
+share, divided by the area they cover between them.)
 
-**C. Nothing else regressed.** **Gate: fidelity gate still 55/55**, suite green,
-`duel-baseline.test.ts` green and unedited.
+**B — colour, byte-exact.** Every solid fill drawn must equal its
+`<color type="RGB">` value in `payload.xml`. Not "close", not eyeballed — the
+same bytes. This one is free: the colours are recorded in the file, so getting
+them wrong would mean actively substituting a guess for a fact.
 
-⚠️ **The 90 % IoU number does not move inside this session.** If the import lands
+**C — nothing else regressed.** Fidelity gate still **55/55**, suite green, and
+`duel-baseline.test.ts` green **and unedited**.
+
+⚠️ **THE 90 % DOES NOT MOVE INSIDE THIS SESSION.** If the import lands
 below it, exactly two diagnoses are permitted:
   (a) the pivot/anchor used to place the shape, or
   (b) an unconverted fill type silently dropping a piece of the body.
