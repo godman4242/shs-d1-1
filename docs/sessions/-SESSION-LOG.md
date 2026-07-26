@@ -1116,3 +1116,39 @@ path. Next entry point: `SESSION12_KICKOFF.md`, after `SOURCE_CONSTANTS.md` §5�
   SESSION13 A2) and the one-hit-kill rule were established separately, and the
   study corpus's filmed **11-hit combo** falls straight out of the two together.
   Asserted rather than admired.
+
+## 2026-07-26 — SESSION 14 A4: EncounterScene + damage popups (the crowd fight is visible)
+
+- **15:33** Red-first: `tests/damagePopup.test.ts` → RED on the missing module.
+  13 assertions, built around the NEGATIVE the gate actually cares about — a
+  crit must be indistinguishable from a normal hit (f-10 found no crit tell in
+  ~845 s of play). Enforced by SIGNATURE: `popupFrame` takes only an age, and
+  `popupFromDamage` ignores the event's `crit` flag entirely.
+- **15:36** A test caught NEGATIVE ZERO: `-(rise × 0)` is `-0`, which renders
+  identically but compares unequal to `+0`. Fixed the value (`ZERO - x`), not
+  the test.
+- **15:40** `EncounterScene` landed — its own scene, `DuelScene` untouched (D3).
+  Reuses `drawSamurai`/`FighterAnimator`/`Sim`; no VS card, no nameplate, no
+  result card. `?scene=encounter` routes to it; the duel stays the boot scene so
+  every existing measurement lands where it did.
+- **15:42** **The `game/` numeric-literal ratchet fired, exactly as kickoff §3.4
+  predicted — and reviewing the diff AS THE AUDIT SURFACE paid for itself.** It
+  surfaced that I had invented the popup glyph size (7×12) when the corpus
+  MEASURES it (29×40 @1080 → 15.5×21.3 stage). Moved to config; the refreshed
+  baseline's 21 admitted values are now all HUD layout and alpha — no gameplay
+  numbers, no measured values. *That is what the ratchet is for.*
+- **15:45** Suite **592/592** · tsc ×2 exit 0 · eslint exit 0.
+- **15:50** **Browser verification.** Synthetic `PointerEvent`s did NOT reach
+  Phaser's input (two attempts, both no-ops) — switched approach rather than
+  iterating, and used real mouse drags. Results, read back off the live scene:
+  one stroke killed **two** mobs, `2 HIT COMBO`, enemy counter 8 → 6, player HP
+  untouched, and **two popups reading `9` in `0x990000`** above their victims —
+  red, the measured "damage dealt to an ENEMY" colour. To photograph a 200 ms
+  popup I armed a one-shot hook that pauses the scene on the first frame a
+  popup exists; the popup itself came from a genuine damage event.
+- **15:52** **Fidelity gate re-proven on the duel: `PASS — 41 points + 14 scans`
+  = 55/55.** A4's gate item met — encounters did not disturb the duel's
+  measured pixels.
+- ⚠️ **Honest placeholder, flagged not hidden:** the popup digits are drawn as
+  blocks — the right SIZE and the right COLOUR, but not yet numerals. Real glyphs
+  belong with the art-import session, which now has the OG's own vector shapes.

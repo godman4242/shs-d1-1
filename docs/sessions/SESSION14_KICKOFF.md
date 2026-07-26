@@ -12,7 +12,7 @@
 > `SOURCE_CONSTANTS.md` §3.9 or `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. §P lists them with their
 > citations so nobody re-derives them.
 >
-> ## ▶ A0 + A1 + A2 + A3 ARE CLOSED. **START AT §4 A4.**
+> ## ▶ A0 → A4 ARE CLOSED. **START AT §4 A5.**
 >
 > ⭐ **OWNER DECISION 2026-07-26: SESSION 15 is ART, not audio.** The OG's own
 > vector art was extracted (1,822 SVG shapes) and Kheshav confirmed it is what he
@@ -518,7 +518,18 @@ The original brief:
 Truncate once, resolve against each living enemy. Red-first: a stroke crossing three mobs kills
 three. Chaos-plant: truncate *inside* the loop → the crowd-size reach bug must go RED.
 
-### A4 — `EncounterScene` + damage popups
+### A4 — ✅ CLOSED. `EncounterScene` + damage popups
+
+Landed: `game/EncounterScene.ts` · `core/damagePopup.ts` · `config/popups.ts`, routed at
+`?scene=encounter` with the duel still the default boot scene. **`DuelScene` untouched** (D3).
+Suite **592/592** · tsc ×2 exit 0 · eslint exit 0 · **fidelity gate `PASS — 41 points + 14
+scans` = 55/55** — the gate item met. Live browser proof: one stroke felled two mobs, combo 2,
+counter 8 → 6, two red `9` popups above their victims.
+
+⚠️ **Two things A5 inherits:** popup digits are placeholder BLOCKS (right size, right colour,
+not numerals), and `DuelScene` still has no popups — both deliberate, both queued.
+
+The original brief:
 
 The scene, the HUD without duel chrome, popups per D9.
 **Gate: fidelity gate still 55/55** (encounters must not disturb the duel's measured pixels).

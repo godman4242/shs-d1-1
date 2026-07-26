@@ -1146,3 +1146,63 @@ than three spends, stays under `FOCUS_MAX` so the crit reset cannot fire instead
 and asserts **exact** values. *A guard that has never been watched failing is not
 a guard — and a guard watched failing once can still be vacuous in another
 regime.*
+
+## SESSION 14 — A4: EncounterScene + damage popups (2026-07-26)
+
+A separate scene for a crowd fight, and the first time this build shows damage
+numbers. `DuelScene` is **not touched** (D3): a duel is a NAMED 1v1 with a VS
+card, nameplate and result cards, and an opponent whose HP is derived so the
+fight lasts K hits; an encounter is trash mobs that die in one hit. A mode flag
+on `DuelScene` is exactly how the one-hit-kill rule would leak into the duel.
+
+### Decisions (each with its veto)
+
+- **`?scene=encounter` routes to it; the duel stays the default boot scene.**
+  Everything that measures the duel — above all the in-browser fidelity gate —
+  therefore lands exactly where it always did.
+- **Popup math lives in `core/damagePopup.ts`**, not in the scene, following the
+  `core/fx.ts` precedent (which already owns the droplet integration scenes
+  call). The payoff is the zero-numeric-literal purity gate: every measured
+  number is *forced* into `config/popups.ts` where its provenance is written.
+- ⚠️ **`popupFrame` HAS NO CRIT PARAMETER, AND NEITHER DOES ANYTHING ELSE HERE.**
+  `COMBAT_MEASUREMENTS.md` f-10 searched ~845 s of play: *"no 'CRITICAL' popup,
+  no gold or oversized popup, and no crit-vs-normal popup pair"*. Encoding a crit
+  by size is the obvious thing to reach for and would invent a tell the original
+  lacks. The `damage` event's `crit` flag is deliberately ignored. **A guarantee
+  made by the signature beats one made by a comment** — information that is never
+  passed in cannot leak into the render.
+- **Colour encodes direction (e-3, MEASURED):** dark = the PLAYER took it, red =
+  an ENEMY took it, matched in 13 of 14 filmed events. ⚠️ The red *hue* was never
+  sampled, so it reuses the OG's own recovered authored red rather than inventing
+  one. Veto = sample the popup red from a frame.
+- **Anatomy is measured, not styled:** rise 13.3 stage px over 200 ms, fading,
+  scaling up ×1.5 (the midpoint of the measured ×1.448 wide / ×1.552 tall — one
+  uniform scale, because a non-uniform stretch is a claim the corpus does not
+  make). The glyph box is the measured 29×40 @1080 converted once to stage space
+  (15.5×21.3).
+  ⚠️ **The digits themselves are still placeholder blocks** — the right SIZE and
+  the right COLOUR, but not yet numerals. Honest placeholder, flagged here rather
+  than passed off.
+- ⚠️ **`spawnAboveStagePx` is INFERRED.** The corpus records how a popup MOVES
+  but never where it is BORN relative to its body. Veto = measure it.
+- **`dy` is computed as `ZERO - rise*t`, not `-rise*t`** — the latter yields
+  NEGATIVE zero at t=0, which renders identically but compares unequal to +0 and
+  quietly poisons downstream equality checks. Caught by a test, not by review.
+- **DuelScene gets no popups this session.** The OG shows them in duels too, but
+  wiring them would put new pixels in front of the 55/55 gate for no A4 benefit.
+  Queued, deliberately.
+
+### Evidence
+
+- Red-first: `tests/damagePopup.test.ts`, 13 assertions, watched RED.
+- Suite **592/592** · tsc ×2 exit 0 · eslint exit 0.
+- `game/` numeric-literal ratchet fired on the new scene **exactly as the kickoff
+  §3.4 predicted**, and reviewing the diff *as the audit surface* caught a real
+  fidelity miss: the popup glyph size had been invented (7×12) when it is
+  MEASURED (29×40 @1080). Moved to config; the refreshed baseline's 21 admitted
+  values are now all HUD layout coordinates and alphas — no gameplay numbers, no
+  measured values.
+- **Live in the browser** (real mouse drags, not synthetic events): one stroke
+  killed TWO mobs, `2 HIT COMBO`, enemy counter 8 → 6, player HP untouched, and
+  two popups reading `9` in `0x990000` sitting above their victims.
+- **Fidelity gate re-proven on the duel: `PASS — 41 points + 14 scans` = 55/55.**

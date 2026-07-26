@@ -6,7 +6,10 @@
 > prerequisites, all already resolved from `SOURCE_CONSTANTS.md` §3.9 and
 > `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. There is NO research step.**
 >
-> ## ▶ **A0 + A1 + A2 + A3 ARE DONE. START AT §4 A4.**
+> ## ▶ **A0 → A4 ARE DONE. START AT §4 A5.**
+>
+> ▶ **See the crowd fight:** `npm run dev` → `http://localhost:5173/?scene=encounter`
+> (drag across the mobs to slash; `R` restarts). The duel is still the default route.
 >
 > ## ⭐ OWNER DECISION (2026-07-26): **ART BEATS AUDIO for SESSION 15.**
 > Kheshav confirmed the extracted OG vector art *is* the art he wants in the
@@ -64,8 +67,8 @@
 > | **A1** `Sim` → N-actor, N=1 byte-identical | ✅ **DONE** — see below |
 > | **A2** mob spawns · one-hit kills · corpses | ✅ **DONE** — see below |
 > | **A3** one stroke, many enemies | ✅ **DONE** — see below |
-> | A4 `EncounterScene` + damage popups | ⬜ **next** |
-> | A5 mob AI (1.0 s cadence, hitbox blocking) | ⬜ |
+> | **A4** `EncounterScene` + damage popups | ✅ **DONE** — see below |
+> | A5 mob AI (1.0 s cadence, hitbox blocking) | ⬜ **next** |
 > | A6 observe turn-taking · the `[3,10] s` band | ⬜ |
 >
 > ### ✅ A1 CLOSED — and the duel did not move
@@ -154,6 +157,27 @@
 >    at 0 with only 24 banked against a 48 cost). It now banks >3 spends, stays
 >    under `FOCUS_MAX`, and asserts exact values.
 > - Full record: `docs/DIVERGENCES.md` "SESSION 14 — A3".
+>
+> ### ✅ A4 CLOSED — the crowd fight is on screen, with damage numbers
+>
+> **Suite 592/592 · tsc ×2 exit 0 · eslint exit 0 · in-browser fidelity gate
+> `PASS — 41 points + 14 scans` = 55/55.** New: `game/EncounterScene.ts` ·
+> `core/damagePopup.ts` · `config/popups.ts`. **`DuelScene` was NOT touched** (D3).
+> - **Live browser evidence** (real mouse drags): one stroke killed **two** mobs,
+>   `2 HIT COMBO`, enemy counter 8 → 6, player HP untouched, two popups reading
+>   `9` in `0x990000` above their victims — red = "an ENEMY took it" (e-3).
+> - ⚠️ **A crit is indistinguishable from a normal hit, BY SIGNATURE.** f-10 found
+>   no crit tell in ~845 s of play, so `popupFrame` takes only an age and
+>   `popupFromDamage` ignores the event's `crit` flag. Information never passed
+>   in cannot leak into the render.
+> - **The `game/` ratchet fired and reviewing its diff paid for itself:** it
+>   surfaced that I'd invented the popup glyph size when the corpus MEASURES it
+>   (29×40 @1080 → 15.5×21.3 stage). Moved to config.
+> - ⚠️ **Honest placeholder:** popup digits are BLOCKS — right size, right
+>   colour, not yet numerals. Real glyphs belong with the art-import session.
+> - ⚠️ **DuelScene has no popups yet** — deliberately, to keep new pixels away
+>   from the 55/55 gate. Queued.
+> - Full record: `docs/DIVERGENCES.md` "SESSION 14 — A4".
 >
 > **A0 CLOSED.** The duel's exact behaviour at `335e615` is now pinned: all 24
 > good-play frame counts, all 24 no-play frame counts, the seed-7 outcome
