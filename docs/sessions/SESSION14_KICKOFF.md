@@ -8,9 +8,31 @@
 > numeric literals, zero `Math.random` · render-only scenes · **red-first TDD** ·
 > chaos-plant every guard · **binary gates, never softened to fit a change**.
 >
-> ⚡ **THERE IS NO RESEARCH STEP AND NOTHING TO DECIDE. Start at §4 A0 and write code.**
-> Every number below is already in `SOURCE_CONSTANTS.md` §3.9 or
-> `COMBAT_MEASUREMENTS.md` e-2/e-4. §P lists them with their citations so nobody re-derives them.
+> ⚡ **THERE IS NO RESEARCH STEP AND NOTHING TO DECIDE.** Every number below is already in
+> `SOURCE_CONSTANTS.md` §3.9 or `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. §P lists them with their
+> citations so nobody re-derives them.
+>
+> ## ▶ A0 IS CLOSED (commit `018f36a`). **START AT §4 A1.**
+>
+> `tests/duel-baseline.test.ts` now pins what the duel actually DID at the close of SESSION 13:
+> all 24 good-play frame counts, all 24 no-play frame counts, the seed-7 outcome fingerprint
+> (rolling checksum included), the 10.575 s median, and the derived enemy
+> (hp 50 · K 10 · D 18 · xp 90). Suite **540/540** · tsc ×2 exit 0 · eslint exit 0.
+>
+> **That file is the session's tripwire. If it goes red, the refactor is wrong — fix the
+> refactor, never the numbers.** (Re-recording them is legitimate only for a deliberate,
+> documented model change, and then the DIVERGENCES entry comes first.)
+>
+> Red-proofed with two plants: player damage 10→11 → **4 RED**; dash speed 40→41 → **1 RED**,
+> and *that one changed no frame count at all* — only the checksum caught it. Two fights of the
+> same LENGTH that diverged mid-way are invisible to a duration check, which is why the
+> fingerprint sits alongside the frame arrays.
+>
+> ⚠️ **Coverage fact found while red-proofing, and you need it before you trust anything:**
+> `MOVE_RUN_PX_S` 288→289 changes **nothing** in the 24-seed harness. The bot never issues move
+> orders — it closes the spawn gap purely by dashing along its own stroke. **The walk/run gaits
+> are therefore unexercised by the harness** and are covered by unit tests only. Do not use a
+> green harness as evidence that movement still works.
 
 ---
 
@@ -329,26 +351,108 @@ damage (SESSION13 A2), so an 8-mob encounter should produce an 8-chain — and t
 
 ---
 
+## §3.5 THE 1v1 CALL-SITE INVENTORY — the map, so you do not have to draw it
+
+Surveyed at `018f36a`. **Symbols, not line numbers** (the repo rule; lines drift). This is every
+place that assumes exactly one enemy, grouped by what the fix is. Nothing here is a surprise
+waiting to be discovered mid-refactor — it is the whole list.
+
+**A. The type itself — start here, everything else follows from it.**
+`FighterSide = 'player' | 'enemy'` is consumed by **seven** `SimEvent` variants
+(`fightEnded.winner`, `damage.target`, `stanceSwitched.who`, `stanceSwitchDenied.who`,
+`strikeEvaded.by`, `invulnBlocked.target`, `strikeBlocked.by`) and by the signatures of `view`,
+`hitbox`, `requestStanceSwitch`, `isProtected` and `dealDamage`.
+⇒ It becomes an **actor id**. Events must carry an id, not a side. Expect the compiler to walk
+you through the rest — that is the plan, not an accident.
+
+**B. Storage and construction.** `Sim.fighters: Record<FighterSide, FighterState>`, built in the
+constructor from `spawns.player` / `spawns.enemy`. Public reads `Sim.player`, `Sim.enemy`,
+`Sim.playerJumping`, `Sim.hitbox(side)`.
+⇒ `player` plus `enemies[]`. **Keep a `Sim.enemy` accessor for `DuelScene` only** (documented as
+"the duel's single opponent — encounters use `sim.enemies`"): renaming every duel call site buys
+nothing and risks D2.
+
+**C. Slash resolution — the hot path.** `applyStroke` reads `this.fighters.enemy`, calls
+`hitbox('enemy')` and `dealDamage('enemy', …)`.
+⇒ Loop over living enemies. ⚠️ **Truncate the stroke ONCE, outside the loop** (D5) — per-enemy
+truncation silently scales reach with crowd size.
+
+**D. AI views.** `opponentView()` and `autoView()` each build a single-enemy `OpponentView`
+(`playerPos` / `enemyPos` / `playerStance` / `enemyStance` / `enemyFocus` / `playerJumping`).
+⇒ One view per enemy controller. `autoView()` already swaps player↔target correctly.
+
+**E. Enemy action.** `executeStrike()` hardcodes `fighters.enemy` as attacker and
+`fighters.player` as target; `tick()` moves `fighters.enemy` and calls
+`requestStanceSwitch('enemy', …)`.
+⇒ Per-enemy, each with its own controller instance and its own mode state.
+
+**F. Damage and death — the subtlest one.** `dealDamage` derives the winner as
+`target === 'enemy' ? 'player' : 'enemy'`, grants the killer's Focus bonus, and flips
+`phase` to `'ended'` **on the first death**.
+⇒ An encounter ends when **all** enemies are dead, or the player is. Getting this wrong ends an
+8-mob fight on the first kill, and every other test will still pass.
+
+**G. Skills.** `chiPunch` → `dealDamage('enemy', …)`; `smokeBomb` dashes away from
+`fighters.enemy`.
+⇒ Nearest living target (P4), same rule as everything else.
+
+**H. Projectiles.** `throwKunai` spawns from `fighters.enemy.pos`; `stepKunai` only ever tests
+the player as a victim.
+⇒ Per-enemy thrower. Player-fired projectiles do not exist and are not in scope.
+
+**I. Generalises for free.** The meter-fill loop already reads
+`for (const f of Object.values(this.fighters))`.
+
+**J. ALREADY THE RIGHT SHAPE — do not "fix" these.**
+`Sim.nearestLivingTarget()` and `synthesizeStrokePoints()` (AUTO SLASH) already implement
+nearest-by-`|Δx|` targeting and generalise unchanged. `resolveSlash(points, target, attacker)` is
+already one-target-per-call, and `tests/slash.test.ts` already covers the multi-foe case.
+**AUTO SLASH is your canary:** it is the one existing feature that already thinks in "nearest of
+several", so if it still behaves after the refactor, the targeting generalised correctly.
+
+**K. Outside `core/Sim.ts`** — touchpoint counts, so you can size the work:
+
+| File | Touchpoints | Note |
+|---|---:|---|
+| `tests/Sim.test.ts` | 34 | the largest surface; mostly fixture plumbing |
+| `src/game/DuelScene.ts` | 16 | two-fighter draw loop, nameplate, overhead bar |
+| `tests/utils/duel-bot.ts` | 6 | ⛔ **behaviour must not change** (D2) |
+| `tests/autoSlash.test.ts` | 5 | the canary above |
+| `src/core/duelSetup.ts` | 2 | builds the pair; encounters get a sibling |
+| `src/core/OpponentController.ts` | 2 | `OpponentView`'s singular fields |
+| `src/game/fidelity.ts` | 2 | the enemy-bar probe reads `sim.enemy.pos` |
+| `src/game/DuelResult.ts` | 1 | winner only |
+| `tests/scaffold.test.ts` | 0 | — |
+
+---
+
 ## §4 BUILD SEQUENCE
 
 Every step: **write the failing test names FIRST, watch them go red, then code, then green.**
 Chaos-plant every new guard.
 
-### A0 — Capture the baseline BEFORE touching anything ⛔
+### A0 — ✅ CLOSED (`018f36a`). Capture the baseline BEFORE touching anything ⛔
 
-Record the current 24-seed harness output (median, distinct count, per-seed frames) and the
-determinism fingerprints into the test suite as explicit expected values. **This is the only step
-that must happen first**, because after A0 you can no longer prove the refactor was
-behaviour-preserving — you can only claim it.
+Done: `tests/duel-baseline.test.ts`. See the banner at the top of this file for the evidence,
+the two red-proof plants, and the harness coverage caveat it turned up.
 
-**Gate: the recorded numbers match `335e615`'s (median 10.575 s, 24 distinct).**
+Kept here because the *reason* still governs A1: after A0 you can no longer **prove** the
+refactor was behaviour-preserving — you can only claim it.
 
-### A1 — `Sim` becomes N-actor, with N=1 byte-identical
+### A1 — `Sim` becomes N-actor, with N=1 byte-identical ⬅ **START HERE**
 
-Pure refactor. No new behaviour, no new constants. `player + enemies[]`.
+Pure refactor. **No new behaviour, no new constants, no new config values.** `player + enemies[]`.
+Work the inventory in §3.5 in order A→K; the type change in (A) will surface most of the rest for
+you through the compiler.
 
-**Gate: harness numbers and determinism fingerprints IDENTICAL to A0's. Fidelity gate 55/55.**
-If anything moved, the refactor is not a generalisation yet — fix it before continuing.
+**Gate: `tests/duel-baseline.test.ts` green WITHOUT having been edited, plus the fidelity gate at
+55/55.** If any of it moved, the refactor is not a generalisation yet — fix it before A2. Do not
+proceed with a "close enough" duel; the whole session rests on this step being exact.
+
+⚠️ **Determinism is the likeliest silent breakage.** Iterate enemies in a fixed order, and keep
+the AI drawing from the shared rng stream in a defined sequence. A crowd-size-dependent number of
+`rng()` calls shifts the stream and the seed-7 checksum moves — which the baseline WILL catch, so
+run it early and often rather than once at the end.
 
 ### A2 — Mob spawns + one-hit kills + corpses
 
@@ -382,8 +486,8 @@ D8's simultaneous-commit measurement, and the `[3, 10]` s band from §2.
 
 | # | Item | Verify |
 |---|---|---|
-| 1 | **The duel did not move**: harness 24/24 · 0/24 · median **10.575 s** · 24 distinct | diff against A0's recorded baseline |
-| 2 | **Determinism fingerprints unchanged**, in-process and cross-process | diff against A0's recorded baseline |
+| 1 | **The duel did not move**: harness 24/24 · 0/24 · median **10.575 s** · 24 distinct | `tests/duel-baseline.test.ts` green **and unedited** |
+| 2 | Per-seed frames AND the seed-7 checksum fingerprint unchanged | same file — the checksum catches drift that leaves durations identical |
 | 3 | Fidelity gate still **55/55** in-browser | `await __fidelity.run()` |
 | 4 | `Sim` carries N enemies; no `'player' \| 'enemy'` union left in gameplay paths | grep; the duel accessor is the one documented exception |
 | 5 | Trash mobs die in **ONE hit** | red-first; chaos: give a mob 2 HP → RED |
@@ -409,10 +513,14 @@ D8's simultaneous-commit measurement, and the `[3, 10]` s band from §2.
 
 **Risk 1 — the refactor silently changes the duel.** An N-actor `Sim` touches every gameplay
 path, and the failure mode is not a crash: it is the harness median drifting by a few frames and
-nobody noticing because the band is wide enough to absorb it. **A0 exists solely to make that
-impossible** — the duel's numbers are recorded as exact expected values *before* the refactor, so
-"unchanged" is checkable rather than assertable. If A1 cannot reproduce them exactly, the refactor
-is wrong; do not proceed to A2 with a "close enough" duel.
+nobody noticing because the band is wide enough to absorb it. **A0 already closed that hole** —
+`tests/duel-baseline.test.ts` holds the exact expected values, recorded before any refactor could
+perturb them, so "unchanged" is checkable rather than assertable. If A1 cannot reproduce them
+exactly, the refactor is wrong; do not proceed to A2 with a "close enough" duel.
+
+The red-proof showed the sharp edge here: changing the dash speed by ONE unit left **every frame
+count identical** and was caught only by the rolling checksum. A refactor can preserve every
+duration and still have changed the fight.
 
 **Risk 2 — mob blocking gets re-implemented as a dice roll.** SESSION13 deleted `react()` because
 it modelled behaviour the game lacks. The source *does* say mobs block — and the shortest path
@@ -461,9 +569,15 @@ Carried from SESSION13 §7, plus what this session adds:
 - **The band is derived before the code, and comes with a mechanism.** `[3, 10]` s is measured
   *and* explained (travel time, not HP grinding), and it inherits SESSION13 D10's stop-and-escalate
   rule verbatim — a rule that was tested for real last session and held.
-- **The riskiest step is the FIRST step, on purpose.** A0 records the duel's exact numbers before
-  the refactor can perturb them. A session that refactored first and measured afterwards could
-  only ever *claim* it preserved behaviour.
+- **The riskiest step was done FIRST, and is already banked.** A0 (`018f36a`) recorded the duel's
+  exact numbers before any refactor could perturb them. A session that refactored first and
+  measured afterwards could only ever *claim* it preserved behaviour. Its red-proof also produced
+  a fact worth more than the pin itself: a one-unit dash-speed change left every frame count
+  identical and moved only the checksum.
+- **It hands over the map, not just the destination.** §3.5 is a symbol-level inventory of every
+  1v1 assumption in the codebase, grouped by what the fix is, with touchpoint counts per file and
+  an explicit "already the right shape — do not touch" list. It was produced by surveying the code
+  at `018f36a`, so a fresh session does not spend its first hour rediscovering it.
 - **It names the specific way this session is most likely to go wrong** (Risk 2: mob blocking
   re-implemented as the dice roll we just deleted) and puts a chaos plant in the gate against it
   — rather than trusting good intentions.

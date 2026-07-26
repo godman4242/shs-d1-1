@@ -4,8 +4,15 @@
 > **`docs/sessions/SESSION14_KICKOFF.md` — MANY ENEMIES, ONE HIT.**
 > Self-contained, the ONLY kickoff to plan from. **Twelve decisions and twelve
 > prerequisites, all already resolved from `SOURCE_CONSTANTS.md` §3.9 and
-> `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. There is NO research step — start at
-> §4 A0 and write code.**
+> `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. There is NO research step.**
+>
+> ## ▶ **A0 IS DONE. START AT §4 A1.**
+>
+> Read the kickoff's **§3.5 first** — it is a symbol-level inventory of every
+> place the codebase assumes one enemy, grouped by what the fix is, with
+> per-file touchpoint counts and an explicit "already the right shape, do not
+> touch" list. It exists so a fresh session does not spend an hour
+> rediscovering it.
 >
 > **Why this next:** the duel is solved; the game is mostly not a duel. `Sim` is
 > still hard-wired to exactly two fighters, while the original's moment-to-moment
