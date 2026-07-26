@@ -1,10 +1,32 @@
 # RESUME HERE
 
 > ## ▶ NEXT SESSION STARTS HERE (2026-07-26)
-> **`docs/sessions/SESSION13_KICKOFF.md` — THE SOURCE-LED REBUILD, IN PROGRESS.**
-> Self-contained, the ONLY kickoff to plan from, and **every decision is already
-> made** — all ten decisions (§1) and all five prerequisites (§P) are resolved
-> from source. **There is NO research step.**
+> **`docs/sessions/SESSION14_KICKOFF.md` — MANY ENEMIES, ONE HIT.**
+> Self-contained, the ONLY kickoff to plan from. **Twelve decisions and twelve
+> prerequisites, all already resolved from `SOURCE_CONSTANTS.md` §3.9 and
+> `COMBAT_MEASUREMENTS.md` e-2/e-3/e-4. There is NO research step — start at
+> §4 A0 and write code.**
+>
+> **Why this next:** the duel is solved; the game is mostly not a duel. `Sim` is
+> still hard-wired to exactly two fighters, while the original's moment-to-moment
+> play is a crowd of mobs that **die in one hit** — which our own study pass
+> calls *"the single largest gap between the OG and our build"*. Phase B did not
+> touch it, so it is now unambiguously the largest one left.
+>
+> ⛔ **Its binding invariant: THE DUEL MUST NOT MOVE.** The N-actor refactor is a
+> pure generalisation, and at N=1 it must reproduce SESSION13's numbers exactly
+> (median **10.575 s**, 24 distinct, fingerprints unchanged, gate 55/55). A0
+> records those numbers BEFORE the refactor can perturb them — because
+> `determinism.test.ts` only proves runs agree with EACH OTHER and pins no
+> absolute value, so it would stay green through a silent behaviour change.
+>
+> **SESSION 15 is already named in its §7:** the game is **completely silent**
+> (`src/` has no `AudioContext`, no oscillator, nothing), and
+> `REBUILD_READINESS` calls audio *"the deepest gap, and closable without the
+> SWF"*. It needs a study pass first, so it deliberately is NOT bolted onto a
+> code session.
+>
+> **`SESSION13_KICKOFF.md` is CLOSED** — all 17 gate items green, commit `335e615`.
 >
 > ### SESSION 13 PROGRESS
 > | Step | State |
