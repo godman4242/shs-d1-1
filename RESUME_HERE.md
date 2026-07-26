@@ -1,6 +1,80 @@
 # RESUME HERE
 
-> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION16_KICKOFF.md`**
+> ## ▶ SESSION 16 — **R1 + R2 CLOSED. START AT §4 A3 (render it in the browser).**
+> Kickoff: **`docs/sessions/SESSION16_KICKOFF.md`** — its §4 R1/R2 are done; **A3,
+> A3.5 and A3.6 are the remaining work** and are unchanged.
+>
+> ### ✅ R1 CLOSED — the adversarial review found things, and the seeds were not the story
+> **28 agents · 6 dimensions · 18 raw confirmations → 7 deduped findings · 3
+> refuted · 75 candidate claims dropped by the finders before filing · 6 of the
+> 10 seeded suspects REFUTED with executed evidence.** R-A was enforced by the
+> machinery: a finding without a run reproduction could not be filed.
+> **4 of the 7 are NEW**, and the two most severe are both new — so §6 Risk 1's
+> "a review that returns only the ten seeds has failed" did not happen.
+> ⭐ **The two big ones were verified against ground truth OUTSIDE this repo** —
+> the SWF's own `DefineShape4` bitstream and FFDec's own PNG rasteriser.
+>
+> ### ✅ R2 CLOSED — all 8 findings fixed red-first, 24 plants watched
+> **Suite 664/664 (40 files) · tsc ×2 exit 0 · eslint exit 0 · `npm run build`
+> clean · without `reference/`: 656 passed | 8 skipped, exit 0.**
+> - ⭐ **PAINT ORDER WAS BEING DISCARDED — the headline.** A SWF shape is a
+>   sequence of style groups, and a `StateNewStyles` record can put a stroke
+>   UNDERNEATH a fill. **Shape 2662 (one of the 16) is `S F F F F F F F F S`** — a
+>   2.5 px black outline first, then eight face fills. Against FFDec's own 16×
+>   render, source order agreed on **44513/44513** opaque pixels and
+>   fills-then-strokes on **32952**: 26.2 % of the shape's ink turned black,
+>   swallowing the nose, lips and jaw. **`fills[]`+`strokes[]` → ONE ordered
+>   `paints[]`** (`kind: 'fill' | 'stroke'`), chosen over the smaller `z`-index
+>   fix because with a `z` field a renderer that loops fills-then-strokes still
+>   compiles and silently reproduces the bug. **⚠️ A3 MUST WALK `paints` IN
+>   ORDER.** Nothing committed was wrong — 2664 is `F S S`, where both orders
+>   coincide — it would have fired on the other 15.
+> - ⭐ **ALPHA was silently flattened to opaque; now THROWS.** 130 corpus shapes
+>   carry `fill-opacity`, never read, no field to hold it. None of the 16 does.
+> - ⭐ **THE CONVERTER'S TESTS DID NOT EXIST OUTSIDE THIS LAPTOP.** A gitignored
+>   `reference/` read in a describe BODY threw at COLLECTION: **639 → 595**, all
+>   44 converter tests gone, `npm test` exit 1, and the 36 fixture tests died as
+>   collateral. Committed CI runs `npm test` on a bare checkout. Now split —
+>   committed artifact everywhere, re-derivation `skipIf`-gated and lazy.
+> - **The hole classifier** read abutting rings as nested (order-dependently);
+>   24 rings across 19 shapes were wrong, up to 345 px². **The 16 are clean**, so
+>   `shape2664.ts` is byte-identical after the fix.
+> - **The D7 provenance gate never read the DATA** — a recoloured, mirrored or
+>   id-forged artifact passed everything. The header is now a checksum (identity
+>   triple, counts, and a new `palette` line), plus a byte-for-byte re-derivation
+>   test that required extracting the emitter to `scripts/art/emit.ts`.
+> - **`WELD` was pinned by no test** in its whole plausible range; **the bounds
+>   test asserted the opposite of its name** (all four assertions one-sided, so a
+>   0.64 px speck passed — including the "subtler non-20×" error §3.4 claims is
+>   pinned).
+> - ⚠️ **An 8th finding came from re-planting A2's guards, not from the review:
+>   the `<g>` pure-translation throw had NO TEST** — the guard the entire
+>   shape-local pivot claim rests on. Two guards *I added this session* were in
+>   the same state. **Fourth session running that a plant found a dead or missing
+>   guard rather than a bug.**
+> - ⚠️ **KNOWN LIMIT, deliberately not fixed:** ~5 ring pairs in the wider corpus
+>   genuinely OVERLAP, and a per-ring `hole` boolean cannot represent that under
+>   any epsilon. None is in the 16.
+> - ⚠️ **THE REVIEW'S OWN CAVEAT, which bounds every pixel number above:** no
+>   renderer exists yet, so four of the five "wrong pixels" figures came from
+>   rasterisers the agents wrote themselves. Only paint order was scored against
+>   an external render. **A3 is the first observed frame.**
+> - Full record incl. all 24 plants and every refutation:
+>   `docs/DIVERGENCES.md` "SESSION 16 — R1/R2".
+>
+> ### ⬜ A3 IS NEXT, and two things changed under it
+> 1. **`ArtShape` is now `{ id, paints }`** — walk `paints` in array order,
+>    `p.kind === 'fill'` → `fillPoints` per non-hole ring, `'stroke'` →
+>    `lineStyle(worldToStageLength(p.width))` + `strokePoints`. Do NOT draw all
+>    fills then all strokes.
+> 2. Everything else in the kickoff stands: **17.16 × 20.34 stage px ±1**,
+>    byte-exact `0xffcc99`/`0x000000`, behind `?art=og`, fixed labelled position,
+>    stroke widths through `worldToStageLength`, then A3.5 (Phaser triangulator)
+>    and A3.6 (gate 55/55 + `duel-baseline` green AND unedited).
+>
+> ---
+>
+> ## ▶ THE KICKOFF — **`docs/sessions/SESSION16_KICKOFF.md`**
 > **HARDEN THE CONVERTER, THEN PUT IT ON SCREEN.** Self-contained, the only
 > kickoff to plan from. Owner decision 2026-07-26: run an **adversarial review of
 > A2 before rendering**, because the author of a parser is the worst reviewer of

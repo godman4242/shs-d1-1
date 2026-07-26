@@ -11,8 +11,29 @@
  *   - a wrong pivot     → §3.4's failure, in its subtler non-20× form.
  *
  * Every one of those is pinned as a NEGATIVE below.
+ *
+ * ⚠️ SESSION16 R2 (finding 4) — WHY THE REAL-ART TESTS ARE SPLIT IN TWO.
+ * This file used to `readFileSync` a gitignored `reference/` SVG in a describe
+ * CALLBACK BODY, which runs at COLLECTION time. In any checkout but the one
+ * laptop that holds the extraction, that throw took the whole file down before a
+ * single test ran: 44 tests vanished (639 → 595), `npm test` exited 1, and the
+ * 36 fixture tests that need no reference art died as collateral. The push-time
+ * CI workflow runs `npm test` on a bare `actions/checkout`, so this was not
+ * hypothetical. Measured, before the fix:
+ *     ❯ tests/svgShape.test.ts (0 test)
+ *     Error: ENOENT … /freshclone/reference/extracted/shapes/2664.svg
+ *     Test Files  1 failed | 39 passed (40) · Tests  595 passed (595)
+ * So the split is:
+ *   - THE COMMITTED ARTIFACT (`SHAPE_2664`) carries every assertion that is
+ *     really about the ART, and runs everywhere. It is the converter's own
+ *     output, committed, so it is the honest subject of those claims anyway.
+ *   - RE-DERIVATION FROM THE SOURCE SVG is `describe.skipIf`-gated and reads the
+ *     file LAZILY inside each `it`, never at collection time. It answers a
+ *     different question — "does the converter still reproduce this?" — and can
+ *     only be asked where the gitignored corpus exists.
+ * Do not merge them back together, and do not add an ungated `reference/` read.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -24,11 +45,41 @@ import {
   interiorPoint,
   parsePath,
   pointInRing,
+  type ShapeArt,
   type Subpath,
 } from '../scripts/art/svgShape';
+import { emit, TOLERANCE } from '../scripts/art/emit';
+import { SHAPE_2664 } from '../src/game/art/generated/shape2664';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SHAPE_DIR = path.join(ROOT, 'reference', 'extracted', 'shapes');
+/** `reference/` is gitignored — present on the extraction laptop, absent in CI. */
+const HAVE_REFERENCE = existsSync(path.join(SHAPE_DIR, '2664.svg'));
+
+/**
+ * Paint accessors. `paints` is ONE ordered array (SESSION16 R2 finding 1), so
+ * these narrow it by kind. Typed structurally rather than against one of the
+ * declarations, so they serve both the converter's `ShapeArt` and the runtime
+ * `ArtShape` — separate interfaces that describe the same emitted data.
+ */
+interface FillLike {
+  readonly kind: 'fill';
+  readonly color: number;
+  readonly rings: ReadonlyArray<{ readonly points: readonly number[]; readonly hole: boolean }>;
+}
+interface StrokeLike {
+  readonly kind: 'stroke';
+  readonly color: number;
+  readonly width: number;
+  readonly polylines: ReadonlyArray<readonly number[]>;
+}
+interface ShapeLike {
+  readonly paints: ReadonlyArray<FillLike | StrokeLike>;
+}
+
+const fillsOf = (shape: ShapeLike): FillLike[] => shape.paints.filter((p): p is FillLike => p.kind === 'fill');
+const strokesOf = (shape: ShapeLike): StrokeLike[] =>
+  shape.paints.filter((p): p is StrokeLike => p.kind === 'stroke');
 
 /** Fail-closed accessors: the lint config bans both `!` and `x as T`. */
 function first<T>(arr: readonly T[]): T {
@@ -206,6 +257,42 @@ describe('classifyEvenOdd: the HOLE fixture', () => {
     expect(classifyEvenOdd([square(0, 0, 5), square(20, 20, 5)])).toEqual([false, false]);
   });
 
+  /**
+   * SESSION16 R2 finding 3 (kickoff seeded suspect 5). `boundaryProbe` bets the
+   * whole verdict on ONE point — the midpoint of the ring's longest edge — and
+   * its docstring names the wrong hazard: it worries about hitting another
+   * ring's VERTEX, when FFDec's even-odd output routinely tessellates abutting
+   * regions of one path along a byte-identical shared EDGE, which is frequently
+   * the longest. The probe then lands exactly ON a sibling's edge, and
+   * `pointInRing` has no on-boundary tolerance: a coincident horizontal edge
+   * contributes no crossing while the sibling's vertical edge at that y
+   * contributes one, so depth = 1 and a fully SOLID region is emitted as
+   * hole: true — the renderer punches transparency through opaque colour.
+   *
+   * Measured on real art: 24 rings across 19 shapes come back wrong, up to
+   * 345 px² on shape 2865 and 48.8 % of a fill on 689, and the gap survives
+   * painter's-order compositing, so no later fill repaints it. The 16 fighter
+   * shapes are CLEAN (0 mismatches, nearest probe-to-sibling 0.0534 px), which
+   * is why nothing visible is wrong today.
+   */
+  // The other half of the shared-edge fix, and its own guard: when EVERY edge
+  // midpoint of a ring lies on a sibling, the two are coincident and nesting has
+  // no answer. It must fail closed rather than guess, per this converter's
+  // contract — a guess punches transparency through solid colour.
+  it('THROWS on a ring that lies entirely on a sibling rather than guessing', () => {
+    const s = square(0, 0, 10);
+    expect(() => classifyEvenOdd([s, [...s]])).toThrow(/entirely on a sibling/i);
+  });
+
+  it('treats two rings SHARING A BORDER as two solids, either way round', () => {
+    // The shared edge is deliberately each ring's longest, so the first-longest
+    // tie-break lands the probe exactly on it — real shape 1318's mechanism.
+    const below = [0, 0, 10, 0, 10, -10, 0, -10];
+    const above = [0, 0, 10, 0, 10, 10, 0, 10];
+    expect(classifyEvenOdd([below, above])).toEqual([false, false]);
+    expect(classifyEvenOdd([above, below])).toEqual([false, false]);
+  });
+
   // Even-odd, not nonzero: an island inside a hole fills again.
   it('alternates through three levels of nesting', () => {
     expect(classifyEvenOdd([square(0, 0, 30), square(5, 5, 20), square(10, 10, 10)])).toEqual([
@@ -237,46 +324,97 @@ describe('convertFillPath: the hole fixture end to end', () => {
     const rings = convertFillPath('M0 0 L10 0 L10 10 L0 10 Z M2 2 L5 2 L8 2 L5 2 Z', 0.1);
     expect(rings).toHaveLength(1);
   });
+
+  // SESSION16 R2 finding 3, end to end: the shared-border rings above, as a real
+  // fill path. Two abutting rectangles are two solids, never a hole.
+  it('does not turn an abutting rectangle into a hole', () => {
+    const rings = convertFillPath('M0 10 L20 10 L20 0 L0 0 Z M0 10 L20 10 L20 20 L0 20 Z', 0.1);
+    expect(rings.map((r) => r.hole)).toEqual([false, false]);
+  });
 });
 
-describe('convertShapeSvg: a REAL part shape (2664, the head)', () => {
-  const svg = readFileSync(path.join(SHAPE_DIR, '2664.svg'), 'utf8');
-  const art = convertShapeSvg(svg, 2664, 0.05);
+/**
+ * SESSION16 R2 finding 6 — WELD had no test anywhere in its plausible range.
+ * Mutation-tested: WELD = 1 punches a phantom hole through the committed head
+ * and deletes 24 of the 86 fighter rings, and the full 639-test suite stayed
+ * GREEN even after regenerating the committed artifact from the mutant. These
+ * three fixtures are what make the constant load-bearing. Verified against every
+ * mutant: pristine 3 pass · WELD=0 → A and C red · 1e-3 and 1e-2 → all green
+ * (both are provably output-identical to shipped, so the pin does not
+ * over-constrain) · 0.1 and 1 → B red · strip removed → C red.
+ */
+describe('weld: the WELD distance itself', () => {
+  it('welds an EXACTLY coincident duplicate vertex', () => {
+    expect(first(convertFillPath('M0 0 L10 0 L10 0 L10 10 L0 10 Z', 0.02)).points).toEqual([
+      0, 0, 10, 0, 10, 10, 0, 10,
+    ]);
+  });
+
+  // The parts are 9–37 px tall and the emitter flattens at 0.02 px, so a 0.03 px
+  // pair is REAL geometry, not float noise.
+  it('keeps a 0.03 px apart pair — they are TWO real vertices', () => {
+    expect(first(convertFillPath('M0 0 L10 0 L10 10 L9.97 10.03 L0 10 Z', 0.02)).points).toEqual([
+      0, 0, 10, 0, 10, 10, 9.97, 10.03, 0, 10,
+    ]);
+  });
+
+  it('strips a trailing vertex that repeats the start', () => {
+    expect(first(convertFillPath('M0 0 L10 0 L10 10 L0 0 Z', 0.02)).points).toEqual([0, 0, 10, 0, 10, 10]);
+  });
+});
+
+/**
+ * RE-DERIVATION from the gitignored source SVG — the question "does the
+ * converter still reproduce this shape?", which only the extraction laptop can
+ * ask. Gated AND lazy: `skipIf` stops the bodies running, and the read lives
+ * inside `realArt()` rather than in this callback, so collection cannot throw
+ * even if a future vitest walks skipped suites. See the file header (finding 4).
+ *
+ * The assertions about the ART itself live in the committed-artifact describe
+ * below, which runs everywhere.
+ */
+describe.skipIf(!HAVE_REFERENCE)('convertShapeSvg: re-derives a REAL part shape (2664, the head)', () => {
+  let cached: ShapeArt | undefined;
+  /** Lazy + memoised: the read happens inside the first `it`, never at collection. */
+  const art = (): ShapeArt =>
+    (cached ??= convertShapeSvg(readFileSync(path.join(SHAPE_DIR, '2664.svg'), 'utf8'), 2664, 0.05));
 
   it('recovers the fill colour BYTE-EXACT from the SVG (§2 bar B)', () => {
-    expect(art.fills.map((f) => f.color)).toEqual([0xffcc99]);
+    expect(fillsOf(art()).map((f) => f.color)).toEqual([0xffcc99]);
   });
 
   it('recovers both black stroke passes with their widths', () => {
-    expect(art.strokes.map((s) => s.color)).toEqual([0x000000, 0x000000]);
-    expect(art.strokes.every((s) => s.width > 0)).toBe(true);
+    expect(strokesOf(art()).map((s) => s.color)).toEqual([0x000000, 0x000000]);
+    expect(strokesOf(art()).every((s) => s.width > 0)).toBe(true);
+  });
+
+  /**
+   * SESSION16 R2 finding 1, on the real file: 2664's document order is F S S, so
+   * fills-then-strokes happens to be right here — which is exactly why the bug
+   * was invisible. Pinning it means a future reordering of the emitter cannot
+   * silently invert the one shape we can check against the source.
+   */
+  it('keeps the SVG document order — 2664 is fill, outline, crease', () => {
+    expect(art().paints.map((p) => p.kind)).toEqual(['fill', 'stroke', 'stroke']);
   });
 
   // FFDec bumps hairlines to 1.0 for on-screen legibility and records the real
   // width in ffdec:original-stroke-width. Taking the bumped value would draw
   // the OG's fine crease lines at twice their true weight.
   it('prefers ffdec:original-stroke-width over the legibility-bumped one', () => {
-    expect(art.strokes.map((s) => s.width)).toEqual([1.5, 0.5]);
+    expect(strokesOf(art()).map((s) => s.width)).toEqual([1.5, 0.5]);
   });
 
-  it('produces a non-trivial outline whose bounds match the SVG header', () => {
-    const pts = art.fills[0]?.rings[0]?.points ?? [];
-    expect(pts.length).toBeGreaterThan(40);
-    const xs = pts.filter((_, i) => i % 2 === 0);
-    const ys = pts.filter((_, i) => i % 2 === 1);
-    // header: width 14.3 height 16.95, origin offset (3.9, 11.85)
-    expect(Math.min(...xs)).toBeGreaterThanOrEqual(-3.9 - 0.8);
-    expect(Math.max(...xs)).toBeLessThanOrEqual(14.3 - 3.9 + 0.8);
-    expect(Math.min(...ys)).toBeGreaterThanOrEqual(-11.85 - 0.8);
-    expect(Math.max(...ys)).toBeLessThanOrEqual(16.95 - 11.85 + 0.8);
-  });
-
-  it('keeps coordinates in the SHAPE-LOCAL frame — the joint pivot is (0,0)', () => {
-    // The FFDec <g> offset must be REMOVED, not baked in: it is what makes the
-    // animation nodes (x,y,rotation) land the part correctly in A4.
-    const pts = art.fills[0]?.rings[0]?.points ?? [];
-    const xs = pts.filter((_, i) => i % 2 === 0);
-    expect(Math.min(...xs)).toBeLessThan(0);
+  /**
+   * The ONLY assertion in the repo that can catch the converter drifting away
+   * from the art the game actually draws (SESSION16 R2 finding 5). Everything
+   * else checks the artifact against itself. It also finally references
+   * TOLERANCE from a test — the emitter constants were unpinned, so changing
+   * TOLERANCE to 1.0 or DECIMALS to 1 used to leave all 639 tests green.
+   */
+  it('re-deriving from the source SVG reproduces the committed file BYTE FOR BYTE', () => {
+    const rederived = emit(convertShapeSvg(readFileSync(path.join(SHAPE_DIR, '2664.svg'), 'utf8'), 2664, TOLERANCE));
+    expect(rederived).toBe(readFileSync(path.join(ROOT, 'src', 'game', 'art', 'generated', 'shape2664.ts'), 'utf8'));
   });
 
   // Found by eye, not by a test: the converted head had a visible NOTCH at the
@@ -285,25 +423,89 @@ describe('convertShapeSvg: a REAL part shape (2664, the head)', () => {
   // stroke one segment short of closing. Fills are unaffected (implicitly
   // closed) — only strokes show it, as a gap in the OG's heavy black outline.
   it('closes an outline whose path returns to its start without a Z', () => {
-    const outline = art.strokes[0]?.polylines[0] ?? [];
+    const outline = strokesOf(art())[0]?.polylines[0] ?? [];
     expect(outline.length).toBeGreaterThan(8);
     expect([outline.at(0), outline.at(1)]).toEqual([outline.at(-2), outline.at(-1)]);
   });
 
   it('does NOT close an outline that genuinely ends elsewhere', () => {
     // the ear crease: starts at (2.75,-4.05), ends at (2.45,-1.75)
-    const crease = art.strokes[1]?.polylines[0] ?? [];
+    const crease = strokesOf(art())[1]?.polylines[0] ?? [];
     expect(crease.length).toBeGreaterThan(4);
     expect([crease.at(0), crease.at(1)]).not.toEqual([crease.at(-2), crease.at(-1)]);
   });
 
   it('emits no NaN anywhere', () => {
     const all = [
-      ...art.fills.flatMap((f) => f.rings.flatMap((r) => [...r.points])),
-      ...art.strokes.flatMap((s) => s.polylines.flat()),
+      ...fillsOf(art()).flatMap((f) => f.rings.flatMap((r) => [...r.points])),
+      ...strokesOf(art()).flatMap((s) => s.polylines.flat()),
+      // Widths are numbers the emitter writes out too, and a non-numeric
+      // stroke-width used to become `width: NaN` in the committed file with no
+      // throw. The old version of this test only walked coordinates.
+      ...strokesOf(art()).map((s) => s.width),
     ];
     expect(all.length).toBeGreaterThan(0);
     expect(all.every(Number.isFinite)).toBe(true);
+  });
+});
+
+/**
+ * SESSION16 R2 finding 1 — PAINT ORDER IS DATA, and it used to be discarded.
+ *
+ * The converter walked `<path>` elements in document order but pushed into two
+ * separate accumulators, and no type in the chain carried an index, so the
+ * emitted contract could only ever say "all fills, then all strokes".
+ *
+ * That is not what the SWF says. Shape 2662 — one of the 16 fighter shapes — has
+ * document order `S F F F F F F F F S`: a 2.5 px black stroke FIRST, then eight
+ * face fills. The OG paints that outline UNDERNEATH the flesh, so only its outer
+ * ~1.25 px shows. Promoting it above the fills stamps the full band on top:
+ * scored against FFDec's own 16× PNG render of 2662, document order agreed on
+ * 44513/44513 opaque pixels and fills-then-strokes on 32952 — 26.2 % of the
+ * shape's ink turned black, swallowing the nose, lips and jawline. The order is
+ * authored, not an FFDec artifact: the DefineShape4 bitstream carries a
+ * StateNewStyles record between the two groups. 132 of the 1822 exports put a
+ * stroke before a fill and 162 genuinely interleave, so no fills-then-strokes
+ * sort could ever reconstruct it.
+ */
+describe('convertShapeSvg: paint order — a SWF style group is a z-order', () => {
+  it('keeps an UNDER-FILL stroke UNDER the fill — the shape 2662 pattern', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 2.0, 2.0)">
+      <path d="M0 0 L10 0 L10 10 L0 10 Z" fill="none" stroke="#000000" stroke-width="4"/>
+      <path d="M0 0 L10 0 L10 10 L0 10 Z" fill="#ffcc99" stroke="none"/>
+      </g></svg>`;
+    expect(convertShapeSvg(svg, 9999, 0.05).paints.map((p) => p.kind)).toEqual(['stroke', 'fill']);
+  });
+
+  // The harmless direction, so the fix cannot pass by simply inverting everything.
+  it('keeps a fill-then-stroke shape in that order', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M0 0 L10 0 L10 10 L0 10 Z" fill="#ffcc99" stroke="none"/>
+      <path d="M0 0 L10 0 L10 10 L0 10 Z" fill="none" stroke="#000000" stroke-width="1.5"/>
+      </g></svg>`;
+    expect(convertShapeSvg(svg, 9997, 0.05).paints.map((p) => p.kind)).toEqual(['fill', 'stroke']);
+  });
+
+  // One path carrying both: FFDec emits fill and line within a single style
+  // group, and a group's strokes draw over its own fills, so fill comes first.
+  it('emits a fill-and-stroke path as fill first, then its own stroke', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M0 0 L10 0 L10 10 Z" fill="#ff0000" stroke="#000000" stroke-width="1"/>
+      </g></svg>`;
+    expect(convertShapeSvg(svg, 9996, 0.05).paints.map((p) => p.kind)).toEqual(['fill', 'stroke']);
+  });
+
+  // Eleven alternations occur in the real corpus; two is enough to pin the rule.
+  it('preserves a genuine F S F S interleave', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M0 0 L10 0 L10 10 L0 10 Z" fill="#111111" stroke="none"/>
+      <path d="M0 0 L10 0" fill="none" stroke="#222222" stroke-width="1"/>
+      <path d="M0 0 L10 0 L10 10 L0 10 Z" fill="#333333" stroke="none"/>
+      <path d="M0 0 L10 0" fill="none" stroke="#444444" stroke-width="1"/>
+      </g></svg>`;
+    const paints = convertShapeSvg(svg, 9995, 0.05).paints;
+    expect(paints.map((p) => p.kind)).toEqual(['fill', 'stroke', 'fill', 'stroke']);
+    expect(paints.map((p) => p.color)).toEqual([0x111111, 0x222222, 0x333333, 0x444444]);
   });
 });
 
@@ -324,12 +526,183 @@ describe('convertShapeSvg: fail-closed on anything it cannot see', () => {
     expect(() => convertShapeSvg('<svg><g/></svg>', 1, 0.05)).toThrow();
   });
 
+  /**
+   * SESSION16 R2, found by re-planting A2's guards after the refactor: THIS
+   * GUARD HAD NO TEST. Neutering the `<g>` purity check left all 44 tests green
+   * — the third time on this project that a plant found a guard nobody had ever
+   * watched fail.
+   *
+   * It is the guard the whole shape-local pivot claim rests on. The converter
+   * IGNORES the wrapper translate because FFDec's `d` data is already
+   * shape-local with the joint pivot at (0,0); if that `<g>` ever carried a
+   * scale or a rotation, the data would NOT be shape-local, the translate could
+   * not be discarded, and every animation node in A4 would place its part
+   * wrongly — §3.4's failure in its quiet form.
+   */
+  it('THROWS when the wrapper <g> carries a SCALE — the data would not be shape-local', () => {
+    const svg = `<svg><g transform="matrix(2.0, 0.0, 0.0, 2.0, 5, 5)">
+      <path d="M0 0 L10 0 L10 10 Z" fill="#ff0000" stroke="none"/>
+      </g></svg>`;
+    expect(() => convertShapeSvg(svg, 1, 0.05)).toThrow(/pure translation/i);
+  });
+
+  it('THROWS when the wrapper <g> carries a ROTATION', () => {
+    const svg = `<svg><g transform="matrix(0.0, 1.0, -1.0, 0.0, 0, 0)">
+      <path d="M0 0 L10 0 L10 10 Z" fill="#ff0000" stroke="none"/>
+      </g></svg>`;
+    expect(() => convertShapeSvg(svg, 1, 0.05)).toThrow(/pure translation/i);
+  });
+
+  // The other half of the same rule: a pure translation with a real offset is
+  // ACCEPTED and its offset IGNORED. Without this, "throw on everything"
+  // would satisfy the two tests above.
+  it('ACCEPTS a pure translation and discards its offset', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 7.0, 9.0)">
+      <path d="M0 0 L10 0 L10 10 Z" fill="#ff0000" stroke="none"/>
+      </g></svg>`;
+    const ring = fillsOf(convertShapeSvg(svg, 1, 0.05))[0]?.rings[0]?.points ?? [];
+    expect(ring).toEqual([0, 0, 10, 0, 10, 10]);
+  });
+
+  // SESSION16 R2 — a guard added in the same session as its own test, because
+  // `Number('thin')` is NaN and `width: NaN` used to reach the committed file.
+  it('THROWS on a non-numeric stroke width rather than emitting NaN', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M0 0 L10 0" fill="none" stroke="#000000" stroke-width="thin"/>
+      </g></svg>`;
+    expect(() => convertShapeSvg(svg, 1, 0.05)).toThrow(/stroke width/i);
+  });
+
+  it('THROWS on a zero stroke width', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M0 0 L10 0" fill="none" stroke="#000000" stroke-width="0"/>
+      </g></svg>`;
+    expect(() => convertShapeSvg(svg, 1, 0.05)).toThrow(/stroke width/i);
+  });
+
   // The empty "none" placeholders (hat7000, weapon13000, …) are SPRITES with no
   // shape at all, so they never reach this function — there is no SVG for them.
   it('still accepts a normal self-closing shape', () => {
     const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
       <path d="M0 0 L10 0 L10 10 Z" fill="#ff0000" stroke="none"/>
       </g></svg>`;
-    expect(convertShapeSvg(svg, 1, 0.05).fills).toHaveLength(1);
+    expect(fillsOf(convertShapeSvg(svg, 1, 0.05))).toHaveLength(1);
+  });
+
+  /**
+   * SESSION16 R2 finding 2 — ALPHA WAS SILENTLY DISCARDED, in a file whose
+   * stated contract is that everything unsupported fails closed. FFDec writes
+   * the SWF's fill alpha as `fill-opacity`; nothing in the art path ever read
+   * it, and `ArtFill`/`ArtStroke` have no channel to hold it, so 130 corpus
+   * shapes converted without complaint into fully OPAQUE art — including eight
+   * carrying a 100 %-invisible paint that would have become fully visible.
+   *
+   * The fix THROWS rather than adding an alpha field: no shape in the current
+   * import set needs alpha (all 16 fighter shapes are free of it, checked), and
+   * adding the field would change the emitted format and commit the not-yet-
+   * written renderer to honouring it, for zero present benefit. Gradients (D3)
+   * and bitmap fills (D4) already fail closed the same way. When a shape that
+   * needs alpha arrives, implement it deliberately, with the renderer.
+   */
+  it('THROWS on a translucent fill — alpha has no field to live in', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M3 19 L3 3 L19 3 L19 19 Z" fill="#333333" fill-opacity="0.0" stroke="none"/>
+      </g></svg>`;
+    expect(() => convertShapeSvg(svg, 1221, 0.05)).toThrow(/opacity/i);
+  });
+
+  it('THROWS on a translucent stroke', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M0 0 L10 0" fill="none" stroke="#fefe56" stroke-opacity="0.5" stroke-width="8.0"/>
+      </g></svg>`;
+    expect(() => convertShapeSvg(svg, 2529, 0.05)).toThrow(/opacity/i);
+  });
+
+  // Guards the other direction: the throw must not fire on an explicit full
+  // opacity, or the converter would reject art it handles perfectly well.
+  it('still accepts an explicitly FULLY-OPAQUE opacity', () => {
+    const svg = `<svg><g transform="matrix(1.0, 0.0, 0.0, 1.0, 0, 0)">
+      <path d="M0 0 L10 0 L10 10 Z" fill="#ff0000" fill-opacity="1" stroke="none"/>
+      </g></svg>`;
+    expect(fillsOf(convertShapeSvg(svg, 1, 0.05))).toHaveLength(1);
+  });
+});
+
+/**
+ * THE COMMITTED ARTIFACT — the art the game actually draws. Runs in every clone
+ * (finding 4): it imports `SHAPE_2664` and touches no gitignored file, so these
+ * are the assertions CI can actually enforce. The re-derivation describe above
+ * asks the different question of whether the converter still reproduces it.
+ */
+describe('the committed head artifact (SHAPE_2664)', () => {
+  it('is one solid fill and two black strokes, in the OG paint order', () => {
+    expect(SHAPE_2664.paints.map((p) => p.kind)).toEqual(['fill', 'stroke', 'stroke']);
+    expect(fillsOf(SHAPE_2664).map((f) => f.color)).toEqual([0xffcc99]);
+    expect(strokesOf(SHAPE_2664).map((s) => s.color)).toEqual([0x000000, 0x000000]);
+    expect(strokesOf(SHAPE_2664).map((s) => s.width)).toEqual([1.5, 0.5]);
+  });
+
+  // The visual defect named directly: the OG's skin is solid. A hole here is a
+  // see-through face, and this is the assertion a wrong hole rule trips over.
+  it('has NO holes — the head is solid skin', () => {
+    expect(fillsOf(SHAPE_2664).flatMap((f) => f.rings).map((r) => r.hole)).toEqual([false]);
+  });
+
+  /**
+   * SESSION16 R2 finding 7 — the old bounds test was one-sided in the direction
+   * that permits shrinkage. All four of its assertions constrained the bounding
+   * box to sit INSIDE the header window and none required it to FILL it, so the
+   * head could shrink to a 0.64 × 0.76 px speck, or slip its pivot by ±1.5 px,
+   * and stay green — including the "subtler non-20× units error" that §3.4 and
+   * this file's own docblock both claim is pinned. It was not.
+   *
+   * The header box in shape-local coords is x[-3.9, 10.4] y[-11.85, 5.1] (width
+   * 14.3, height 16.95, origin offset 3.9, 11.85). FFDec's box is the INKED
+   * extent, so the FILL sits inset by the widest stroke's half-width; measured
+   * at 0.75–0.90 px across all 16 fighter shapes, hence the 0.95 allowance.
+   */
+  it('FILLS the header box — a shrink or a pivot slip cannot hide', () => {
+    const pts = fillsOf(SHAPE_2664).flatMap((f) => f.rings).flatMap((r) => [...r.points]);
+    const xs = pts.filter((_, i) => i % 2 === 0);
+    const ys = pts.filter((_, i) => i % 2 === 1);
+    const REACH = 1.5 / 2 + 0.2;
+    expect(pts.length).toBeGreaterThan(80);
+    // inside the box (the old assertions) …
+    expect(Math.min(...xs)).toBeGreaterThanOrEqual(-3.9 - 0.8);
+    expect(Math.max(...xs)).toBeLessThanOrEqual(14.3 - 3.9 + 0.8);
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(-11.85 - 0.8);
+    expect(Math.max(...ys)).toBeLessThanOrEqual(16.95 - 11.85 + 0.8);
+    // … AND reaching every edge of it, which is the half that was missing.
+    expect(Math.min(...xs)).toBeLessThanOrEqual(-3.9 + REACH);
+    expect(Math.max(...xs)).toBeGreaterThanOrEqual(14.3 - 3.9 - REACH);
+    expect(Math.min(...ys)).toBeLessThanOrEqual(-11.85 + REACH);
+    expect(Math.max(...ys)).toBeGreaterThanOrEqual(16.95 - 11.85 - REACH);
+  });
+
+  it('keeps the joint pivot at (0,0) — coordinates straddle the origin', () => {
+    const pts = fillsOf(SHAPE_2664).flatMap((f) => f.rings).flatMap((r) => [...r.points]);
+    const xs = pts.filter((_, i) => i % 2 === 0);
+    const ys = pts.filter((_, i) => i % 2 === 1);
+    expect(Math.min(...xs)).toBeLessThan(0);
+    expect(Math.max(...xs)).toBeGreaterThan(0);
+    expect(Math.min(...ys)).toBeLessThan(0);
+    expect(Math.max(...ys)).toBeGreaterThan(0);
+  });
+
+  it('holds no NaN or Infinity, coordinates and widths alike', () => {
+    const all = [
+      ...fillsOf(SHAPE_2664).flatMap((f) => f.rings).flatMap((r) => [...r.points]),
+      ...strokesOf(SHAPE_2664).flatMap((s) => s.polylines.flatMap((p) => [...p])),
+      ...strokesOf(SHAPE_2664).map((s) => s.width),
+    ];
+    expect(all.length).toBeGreaterThan(0);
+    expect(all.every(Number.isFinite)).toBe(true);
+  });
+
+  it('closes the outline and leaves the ear crease open', () => {
+    const outline = strokesOf(SHAPE_2664)[0]?.polylines[0] ?? [];
+    expect([outline.at(0), outline.at(1)]).toEqual([outline.at(-2), outline.at(-1)]);
+    const crease = strokesOf(SHAPE_2664)[1]?.polylines[0] ?? [];
+    expect([crease.at(0), crease.at(1)]).not.toEqual([crease.at(-2), crease.at(-1)]);
   });
 });

@@ -49,18 +49,39 @@ export interface Ring {
   readonly hole: boolean;
 }
 export interface FillArt {
+  readonly kind: 'fill';
   readonly color: number;
   readonly rings: readonly Ring[];
 }
 export interface StrokeArt {
+  readonly kind: 'stroke';
   readonly color: number;
   readonly width: number;
   readonly polylines: ReadonlyArray<readonly number[]>;
 }
+/** One paint operation. See `ShapeArt.paints` for why order is load-bearing. */
+export type PaintArt = FillArt | StrokeArt;
 export interface ShapeArt {
   readonly id: number;
-  readonly fills: readonly FillArt[];
-  readonly strokes: readonly StrokeArt[];
+  /**
+   * Every paint operation, in the SOURCE SWF's OWN ORDER, back to front.
+   *
+   * ⚠️ This was two arrays — `fills` and `strokes` — and that lost real data
+   * (SESSION16 R2 finding 1). A SWF shape is a sequence of style GROUPS, and a
+   * StateNewStyles record starts a new group that paints over the previous one,
+   * so a stroke can be authored UNDERNEATH a fill. Shape 2662's document order
+   * is `S F F F F F F F F S`: a 2.5 px black outline, then eight face fills.
+   * The OG shows only that outline's outer half; hoisting it above the fills
+   * turned 26.2 % of the shape's ink black (scored against FFDec's own 16×
+   * render: source order agreed on 44513/44513 opaque pixels, fills-then-strokes
+   * on 32952). 132 of the 1822 exports put a stroke first and 162 genuinely
+   * interleave, so no global sort can reconstruct it — the order must be carried.
+   *
+   * ONE ordered array rather than an index on each paint, deliberately: with a
+   * `z` field, a renderer that iterates fills and then strokes still compiles,
+   * still runs, and silently reproduces the exact bug. Here it cannot.
+   */
+  readonly paints: readonly PaintArt[];
 }
 
 /** Rings smaller than this (px²) enclose no area — FFDec crease detail. */
@@ -278,35 +299,89 @@ export function interiorPoint(ring: readonly number[]): readonly [number, number
   return [xs.reduce((s, v) => s + v, 0) / xs.length, yMid];
 }
 
+/** Two points closer than this are ON each other, for containment purposes. */
+const ON_RING = 1e-9;
+
 /**
- * A point ON the ring — the midpoint of its longest edge.
+ * Every edge midpoint of the ring, LONGEST EDGE FIRST.
  *
  * ⚠️ Nesting MUST be probed from the boundary, not from `interiorPoint`. A
  * ring nested inside R cannot contain a boundary point of R, but it very much
  * can contain an interior one: the centre of a square-with-a-hole lies inside
  * the hole, which made the outer ring classify itself as a hole. That was a
- * real red here, not a hypothetical. The longest edge is used because its
- * midpoint is the least likely to coincide with another ring's vertices.
+ * real red here, not a hypothetical.
+ *
+ * ⚠️ But ONE probe is not enough, and the longest edge is not the safe choice
+ * this once claimed (SESSION16 R2 finding 3). The old docstring worried about
+ * landing on another ring's VERTEX; the real hazard is another ring's EDGE.
+ * FFDec tessellates abutting regions of a single even-odd path along a
+ * byte-identical shared edge, and that shared edge is frequently the ring's
+ * longest — so the one probe landed exactly ON a sibling, where `pointInRing`
+ * has no on-boundary tolerance and answers essentially arbitrarily. 24 rings
+ * across 19 real shapes were emitted with the wrong verdict, up to 345 px².
+ * Hence: candidates, longest first, so behaviour is unchanged wherever nothing
+ * touches, and there is somewhere to go when something does.
  */
-export function boundaryProbe(ring: readonly number[]): readonly [number, number] {
+export function boundaryProbes(ring: readonly number[]): Array<readonly [number, number]> {
   const n = ring.length;
-  let best = -1;
-  let bx = coord(ring, 0);
-  let by = coord(ring, 1);
+  const out: Array<{ len: number; p: readonly [number, number] }> = [];
   for (let i = 0; i + 1 < n; i += 2) {
     const j = (i + 2) % n;
     const ax = coord(ring, i);
     const ay = coord(ring, i + 1);
     const cx = coord(ring, j);
     const cy = coord(ring, j + 1);
-    const len = Math.hypot(cx - ax, cy - ay);
-    if (len > best) {
-      best = len;
-      bx = (ax + cx) / 2;
-      by = (ay + cy) / 2;
-    }
+    out.push({ len: Math.hypot(cx - ax, cy - ay), p: [(ax + cx) / 2, (ay + cy) / 2] });
   }
-  return [bx, by];
+  out.sort((a, b) => b.len - a.len);
+  return out.map((e) => e.p);
+}
+
+/** The first (longest-edge) probe. Kept for callers that want just one point. */
+export function boundaryProbe(ring: readonly number[]): readonly [number, number] {
+  const p = boundaryProbes(ring).at(0);
+  if (p === undefined) throw new Error('svgShape: cannot probe an empty ring');
+  return p;
+}
+
+/** Distance from a point to the closest point on any of the ring's edges. */
+function distToRing(px: number, py: number, ring: readonly number[]): number {
+  const n = ring.length;
+  let best = Infinity;
+  for (let i = 0; i + 1 < n; i += 2) {
+    const j = (i + 2) % n;
+    const ax = coord(ring, i);
+    const ay = coord(ring, i + 1);
+    const bx = coord(ring, j);
+    const by = coord(ring, j + 1);
+    const dx = bx - ax;
+    const dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+    const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2));
+    best = Math.min(best, Math.hypot(px - (ax + t * dx), py - (ay + t * dy)));
+  }
+  return best;
+}
+
+/**
+ * Is `inner` nested inside `outer`? Decided from the first boundary probe of
+ * `inner` that is not sitting ON `outer`.
+ *
+ * Choosing the probe PER PAIR is sound because rings of one even-odd path do not
+ * properly cross: `inner` is wholly inside or wholly outside `outer`, so any
+ * point of `inner` that is not on the boundary answers for all of it. (Genuinely
+ * overlapping subpaths do occur in ~5 places in the wider corpus and a per-ring
+ * `hole` boolean cannot represent them under any epsilon — that is a separate,
+ * unfixed limitation, recorded in docs/DIVERGENCES.md.)
+ */
+function ringContains(outer: readonly number[], inner: readonly number[]): boolean {
+  for (const [px, py] of boundaryProbes(inner)) {
+    if (distToRing(px, py, outer) > ON_RING) return pointInRing(px, py, outer);
+  }
+  // Fails CLOSED, per this file's contract: every edge midpoint of `inner` lies
+  // on `outer`, so the two are coincident and the nesting question has no
+  // answer. Guessing would silently punch a hole through solid colour.
+  throw new Error('svgShape: ring lies entirely on a sibling ring — cannot classify as hole or solid');
 }
 
 /**
@@ -315,10 +390,9 @@ export function boundaryProbe(ring: readonly number[]): readonly [number, number
  */
 export function classifyEvenOdd(rings: ReadonlyArray<readonly number[]>): boolean[] {
   return rings.map((ring, i) => {
-    const [px, py] = boundaryProbe(ring);
     let depth = 0;
     rings.forEach((other, j) => {
-      if (i !== j && pointInRing(px, py, other)) depth++;
+      if (i !== j && ringContains(other, ring)) depth++;
     });
     return depth % 2 === 1;
   });
@@ -387,8 +461,7 @@ export function convertShapeSvg(svg: string, id: number, tolerance: number): Sha
     }
   }
 
-  const fills: FillArt[] = [];
-  const strokes: StrokeArt[] = [];
+  const paints: PaintArt[] = [];
   // FAIL CLOSED on anything the matcher cannot see. It only recognises the
   // SELF-CLOSING <path/> form that FFDec emits; if a file ever used
   // <path …></path>, every path would be skipped and the shape would come back
@@ -401,23 +474,50 @@ export function convertShapeSvg(svg: string, id: number, tolerance: number): Sha
         `${String(parsed.length)} are parseable — refusing to drop geometry`,
     );
   }
+  /**
+   * ALPHA HAS NOWHERE TO GO, so a translucent paint must not pass as opaque
+   * (SESSION16 R2 finding 2). FFDec writes the SWF's fill alpha as
+   * `fill-opacity`; 130 corpus shapes carry it, and every one of them used to
+   * convert without complaint into fully opaque art — eight of them turning a
+   * 100 %-invisible paint fully visible. Checked BEFORE parseColor so a
+   * gradient-plus-opacity file still gets a deterministic message. Same
+   * fail-closed treatment as gradients (D3) and bitmap fills (D4): when a shape
+   * that needs alpha arrives, implement it deliberately, with the renderer.
+   */
+  const requireOpaque = (v: string | undefined, what: string): void => {
+    if (v !== undefined && Number(v) !== 1) {
+      throw new Error(
+        `svgShape: shape ${String(id)} has ${what}="${v}" — FillArt/StrokeArt have no alpha ` +
+          `channel, so a translucent paint would render OPAQUE. Refusing to drop alpha.`,
+      );
+    }
+  };
+
+  // ⚠️ ONE loop, ONE array: document order IS the paint order (see ShapeArt.paints).
   for (const m of parsed) {
     const a = attrs(m[0]);
     const d = a.d;
     if (d === undefined) continue;
+    requireOpaque(a['fill-opacity'], 'fill-opacity');
+    requireOpaque(a['stroke-opacity'], 'stroke-opacity');
     const fill = a.fill ?? 'none';
-    if (fill !== 'none') fills.push({ color: parseColor(fill), rings: convertFillPath(d, tolerance) });
+    if (fill !== 'none') {
+      paints.push({ kind: 'fill', color: parseColor(fill), rings: convertFillPath(d, tolerance) });
+    }
     const stroke = a.stroke;
     if (stroke !== undefined && stroke !== 'none') {
       // FFDec bumps hairlines up to 1.0 for legibility and records the real
       // width; use the original so the outline weight stays faithful.
       const original = a['ffdec:original-stroke-width'];
       const width = Number(original ?? a['stroke-width'] ?? '1');
-      strokes.push({ color: parseColor(stroke), width, polylines: convertStrokePath(d, tolerance) });
+      if (!Number.isFinite(width) || width <= 0) {
+        throw new Error(`svgShape: shape ${String(id)} has a non-positive or non-numeric stroke width '${String(original ?? a['stroke-width'])}'`);
+      }
+      paints.push({ kind: 'stroke', color: parseColor(stroke), width, polylines: convertStrokePath(d, tolerance) });
     }
   }
-  if (fills.length === 0 && strokes.length === 0) {
+  if (paints.length === 0) {
     throw new Error(`svgShape: shape ${String(id)} produced no geometry — nothing to import`);
   }
-  return { id, fills, strokes };
+  return { id, paints };
 }

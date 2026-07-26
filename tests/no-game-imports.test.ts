@@ -20,6 +20,33 @@ const GAME_DIR = path.join(ROOT, 'src', 'game');
 const FIXTURES_DIR = path.join(TESTS_DIR, 'fixtures');
 
 /**
+ * SESSION16 R2 — THE ONE CARVE-OUT, AND WHAT PAYS FOR IT.
+ *
+ * This guard exists for exactly one reason, stated at the top of the file:
+ * Phaser needs a browser and crashes the Node worker. `src/game/**` is the
+ * proxy for "might load Phaser", and it is a good proxy for scenes.
+ *
+ * The imported OG vector art is not a scene. `art/types.ts` declares interfaces
+ * and imports nothing at all; each `art/generated/shape*.ts` is a coordinate
+ * table whose ONLY import is `import type { ArtShape }`, which the compiler
+ * erases — it cannot load Phaser, or anything else, because at runtime it
+ * imports nothing. And the art has to be reachable from a test: the committed
+ * artifact IS the art the game draws, so "does the shipped data still say what
+ * the provenance header claims" is unanswerable without importing it (SESSION16
+ * R2 findings 4 and 5 — the alternative was reading gitignored `reference/`,
+ * which broke every clone).
+ *
+ * ⚠️ THE EXEMPTION IS NOT FREE. A file claiming it must be pure data: any
+ * runtime `import` or re-export in one of these files is an OFFENDER below, so
+ * the day somebody adds `import Phaser from 'phaser'` to a generated file — or
+ * turns types.ts into anything with runtime behaviour — this guard goes red
+ * instead of quietly letting it through. Chaos-plant both directions.
+ */
+const ART_TYPES = path.join(GAME_DIR, 'art', 'types.ts');
+const ART_GENERATED = path.join(GAME_DIR, 'art', 'generated');
+const isPureDataArt = (f: string): boolean => f === ART_TYPES || f.startsWith(ART_GENERATED + path.sep);
+
+/**
  * Resolve an import target to an actual source file. Vite maps .js-suffixed
  * relative imports onto .ts sources, so those suffixes are stripped and
  * re-tried — otherwise `import '../src/game/DuelScene.js'` would evade the
@@ -61,6 +88,16 @@ describe('runtime boundary: tests never load Phaser', () => {
         if (target === null) continue; // other bare specifiers are fine in tests
         const resolved = resolveTsFile(target);
         if (resolved === null) continue;
+        if (isPureDataArt(resolved)) {
+          // The carve-out above, and the price of it: pure DATA only. A runtime
+          // import or re-export here means the erasure argument does not hold.
+          const rel = path.relative(ROOT, resolved);
+          const src = readSource(resolved);
+          if (/^\s*import\s+(?!type\b)/m.test(src) || /^\s*export\s[^;]*\sfrom\s/m.test(src)) {
+            offenders.push(`${rel} claims the pure-data art exemption but has a RUNTIME import or re-export`);
+          }
+          continue;
+        }
         if (resolved.startsWith(GAME_DIR + path.sep)) {
           offenders.push(`${at} reaches ${path.relative(ROOT, resolved)}`);
           continue;

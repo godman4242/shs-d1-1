@@ -1322,3 +1322,154 @@ truncated coordinates returning 0 · provenance header stripped · approximation
 declaration hidden · characterId falsified · a `fetch()` added to generated art ·
 outline closure dropped (the crown notch) · every stroke force-closed ·
 unparseable `<path>` skipped · an empty shape accepted.
+
+## SESSION 16 — R1/R2: the adversarial review of A2, and its fixes (2026-07-27)
+
+**Method.** 28 agents: 6 finder dimensions (parser · numeric/rounding ·
+geometry/topology · fail-open · test vacuity · provenance/gates), each required
+to EXECUTE a reproduction before a finding could be filed, then one adversarial
+skeptic per finding whose brief was to kill it. **18 raw confirmations → 7
+deduped findings · 3 refuted outright · 75 candidate claims dropped by the
+finders themselves before filing · 6 of the 10 seeded suspects REFUTED with
+evidence.** Two findings were verified against ground truth OUTSIDE this repo
+(the SWF's own `DefineShape4` bitstream and FFDec's `-format shape:png` render),
+which is why they survived. An eighth finding came from re-planting A2's own
+guards after the refactor.
+
+⚠️ **The review's own honest limit, recorded because it bounds every number
+below:** no renderer existed, so four of the five "wrong pixels" figures came
+from rasterisers the reviewing agents wrote themselves. Only the paint-order
+figure was scored against an external reference render. Treat finding 1 as
+measured and findings 2–3 as strongly indicated.
+
+- **1. PAINT ORDER WAS DISCARDED — `fills[]`+`strokes[]` → ONE ordered
+  `paints[]`.** *(NEW, high, found by 3 dimensions independently.)* A SWF shape
+  is a sequence of style GROUPS and a `StateNewStyles` record starts a group that
+  paints OVER the previous one, so a stroke can be authored UNDERNEATH a fill.
+  Shape **2662** — one of the 16 fighter shapes — is document order
+  `S F F F F F F F F S`: a 2.5 px black outline, then eight face fills. Scored
+  against FFDec's own 16× render of 2662, source order agreed on **44513/44513**
+  opaque pixels and fills-then-strokes on **32952** — 26.2 % of the shape's ink
+  turned black, swallowing the nose, lips and jawline. 132 of the 1822 exports
+  put a stroke first; 162 genuinely interleave, so no sort can reconstruct it.
+  Nothing committed was wrong (2664 is `F S S`, where the two orders coincide) —
+  it would have fired the moment the other 15 were generated.
+  **DECIDE-AND-FLAG:** the review's smaller option was a `z` index on each
+  paint; ONE ordered array was chosen instead because with a `z` field a
+  renderer that iterates fills then strokes still compiles, still runs, and
+  silently reproduces the bug. Here the wrong order is unrepresentable. It cost
+  a regeneration of `shape2664.ts` (structure only — the coordinate multiset is
+  unchanged, verified by diffing the extracted numbers). *Veto: swap to `z`.*
+- **2. ALPHA WAS SILENTLY FLATTENED TO OPAQUE — now FAILS CLOSED.** *(NEW,
+  high.)* FFDec writes SWF fill alpha as `fill-opacity`; nothing in the art path
+  ever read it and `ArtFill`/`ArtStroke` have no channel for it, so **130 corpus
+  shapes** converted without complaint into fully opaque art — 8 of them turning
+  a 100 %-invisible paint fully visible. A fail-OPEN in a file whose header
+  promises fail-CLOSED. **DECIDE-AND-FLAG:** the converter now THROWS rather
+  than gaining an alpha field — no shape in the current import set carries
+  opacity (all 16 checked, zero hits), and adding the field would change the
+  emitted format and commit the unwritten renderer to honouring it for zero
+  present benefit. Same treatment as gradients (D3) and bitmap fills (D4).
+  *Veto: implement alpha end to end, with the renderer, against a shape that
+  needs it.*
+- **3. THE HOLE CLASSIFIER MISREAD ABUTTING RINGS AS NESTED.** *(seeded suspect
+  5, medium.)* `boundaryProbe` bet the whole verdict on ONE point — the midpoint
+  of the ring's longest edge — and its docstring named the wrong hazard: it
+  guarded against another ring's VERTEX, when FFDec tessellates abutting regions
+  of one even-odd path along a byte-identical shared EDGE, frequently the
+  longest. `pointInRing` has no on-boundary tolerance, so the verdict was
+  effectively arbitrary and **order-dependent**: two abutting solid 100 px²
+  squares classified as `[true,false]` one way round and `[false,true]` the
+  other, violating the order-independence the suite already asserted for the
+  nested case. 24 rings across 19 real shapes were emitted wrong, up to 345 px²,
+  and the gap survives painter's-order compositing. **The 16 fighter shapes are
+  CLEAN** (0 mismatches; nearest probe-to-sibling 0.0534 px), which is why
+  nothing visible was wrong. Fixed by probing per PAIR from candidate edge
+  midpoints, longest first, skipping any that sits on the sibling — which
+  reduces to the old behaviour whenever nothing touches, so `shape2664.ts` is
+  byte-identical. A fully coincident ring pair now THROWS instead of guessing.
+  ⚠️ **NOT FIXED, and recorded as a known limit:** ~5 ring pairs in the wider
+  corpus genuinely OVERLAP (probe 0.009–0.09 px inside a sibling). A per-ring
+  `hole` boolean cannot represent a partial overlap under any epsilon. None is
+  in the 16.
+- **4. THE CONVERTER'S TESTS DID NOT EXIST OUTSIDE ONE LAPTOP.** *(NEW,
+  medium, found by 4 dimensions.)* `tests/svgShape.test.ts` read a gitignored
+  `reference/` SVG in a describe CALLBACK BODY, which runs at COLLECTION time.
+  Measured in a fresh clone: the file threw before a single test ran, all 44
+  tests vanished (**639 → 595**), `npm test` exited 1, and the 36 fixture tests
+  that need no reference art died as collateral. The push-time CI workflow runs
+  `npm test` on a bare `actions/checkout`, so every fail-closed guard A2 built
+  was providing zero protection in the only place that runs unattended. Fixed by
+  splitting: the COMMITTED artifact carries every assertion about the art and
+  runs everywhere; re-derivation from the SVG is `describe.skipIf`-gated and
+  reads lazily inside each `it`. Now **656 passed | 8 skipped** with no
+  `reference/`, exit 0.
+- **5. THE D7 CARVE-OUT'S STATED PAYMENT WAS NEVER MADE.** *(seeded suspect 10
+  + two new angles, medium.)* The provenance gate grepped HEADER TEXT and never
+  read the DATA, so a mirrored, translated, recoloured, stroke-amputated or
+  id-forged generated file passed 639/639 tests, both typechecks and lint —
+  while the block comment claimed the exemption was "paid for by the provenance
+  gate below". Now the header is a CHECKSUM: identity triple (header id = const
+  name = data `id` = filename, EXACT — the old check used
+  `basename.includes(id)`, which also accepts `shape12664.ts`), counts, and a
+  new `palette` line so "colours are BYTE-EXACT" is checkable at all. An
+  unparseable CONTENT block is itself a failure. Text-level so it runs in CI.
+  Plus a byte-for-byte re-derivation test, which required extracting the pure
+  emitter to `scripts/art/emit.ts` — `generate.ts` calls `main()` at module
+  scope, so importing it from a test ran the CLI and threw, which is why nothing
+  had ever referenced `TOLERANCE` from a test.
+  ⚠️ **HONEST LIMIT, written into the test:** `emit()` derives header and data
+  from the SAME object, so these clauses can never catch a CONVERTER bug — only
+  tampering after the fact. Converter drift needs the re-derivation test, which
+  only runs where the gitignored corpus exists.
+- **6. `WELD` WAS PINNED BY NO TEST ANYWHERE IN ITS PLAUSIBLE RANGE.** *(medium,
+  test-only fix.)* `WELD = 1` punches a phantom hole through the committed head
+  and deletes 24 of the 86 fighter rings, and the full 639-test suite stayed
+  green even after regenerating the artifact from the mutant. Three fixtures now
+  pin it. Includes a deliberate NEGATIVE plant (`WELD = 1e-2`, provably
+  output-identical to shipped) that must stay GREEN, so the pin cannot fire
+  spuriously on a harmless future tweak.
+- **7. THE BOUNDS TEST ASSERTED THE OPPOSITE OF ITS NAME.** *(NEW, medium,
+  test-only fix.)* "produces a non-trivial outline whose bounds match the SVG
+  header" was four ONE-SIDED assertions, all in the direction that permits
+  shrinkage: they required the bounding box to sit INSIDE the header window and
+  never to FILL it. The head could shrink to a 0.64 × 0.76 px speck, or slip its
+  pivot by ±1.5 px, and stay green — including the "subtler non-20× units
+  error" that §3.4 and the test file's own docblock both claimed was pinned. It
+  was not. Now two-sided, and chaos-proven against a 2× shrink (not just 20×).
+- **8. THREE GUARDS HAD NO TEST AT ALL — found by re-planting, not by the
+  review.** The `<g>` pure-translation throw (A2's, and the guard the entire
+  shape-local pivot claim rests on: neutering it left all 44 tests green) plus
+  two I added in this same session (the stroke-width finiteness throw and the
+  coincident-ring throw). **Fourth session running that a plant found a dead or
+  missing guard rather than a bug.** A guard never watched failing is not a
+  guard — and writing one without planting it is the same mistake in a new coat.
+
+**Refuted, with evidence, so they are not re-litigated** (6 of the 10 seeded
+suspects, plus 3 killed by skeptics): a leading `+` appears in **no** `d`
+attribute in any of the 1822 exports; `nonzero` fill-rule appears in
+**0 of 12112** fill-rule attributes; `emitQuad`'s depth-24 bail is ~17 orders of
+magnitude out of reach on real curves; `interiorPoint`'s centroid fallback is
+unreachable by a parity argument; `classifyEvenOdd`'s O(rings²) costs 1.48 ms on
+the worst real shape (a BUILD-TIME script — not a defect); duplicate attributes
+and single-quoted attributes occur 0 times. Skeptics also corrected numbers in
+most survivors (172→132 stroke-before-fill, 201→128 files, 6→8 zero-alpha) and
+killed three "CI is red today" claims — the CI workflow is not committed on any ref.
+
+⚠️ **Fragility of those refutations, recorded deliberately:** at least eight rest
+on this ONE FFDec export run. A different FFDec version or flag set could flip
+several at once and re-arm the fail-open branches they dismissed. Nothing
+records which FFDec build produced the corpus.
+
+**24 chaos plants, all watched.** 23 planted RED (paint order re-sorted to
+fills-then-strokes · both opacity guards deleted · opacity weakened to "skip an
+invisible paint" · single-probe classification restored · `WELD` 0.1 and 0 ·
+every committed coordinate halved · `TOLERANCE` 0.02→0.05 · a runtime import
+added to generated art · a stroke amputated with the header untouched · an
+outline recoloured magenta with every count intact · the identity forged · the
+CONTENT block mangled · `<g>` purity neutered · stroke-width finiteness removed ·
+the coincident-ring throw replaced by a guess · and A2's six original guards
+re-planted after the refactor) and **1 planted GREEN on purpose** (`WELD = 1e-2`,
+the negative control). Gates: suite **664/664 (40 files)** · without `reference/`
+**656 passed | 8 skipped, exit 0** · tsc ×2 exit 0 · eslint exit 0 · `npm run
+build` clean.

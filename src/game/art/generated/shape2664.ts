@@ -11,11 +11,17 @@
  *   licence            : owner-attested Lut Games grant — docs/OWNER_PERMISSION_RULING.md
  *
  * CONTENT
- *   1 solid fill(s), 1 ring(s) (0 hole(s)), 66 vertices,
- *   2 stroke pass(es).
+ *   3 paint op(s) in SWF paint order: 1 solid fill(s), 2 stroke pass(es).
+ *   1 ring(s) (0 hole(s)), 66 vertices.
+ *   palette            : fills 0xffcc99  |  strokes 0x000000@1.5 · 0x000000@0.5
  *   Colours are BYTE-EXACT to the SWF's recorded RGB (SESSION15 §2 bar B).
  *   APPROXIMATED FILLS: none — this shape is 100 % flat solid colour, so
  *   SESSION15 D3 (mean-colour gradients) and D4 (bitmap fills) do not apply.
+ *
+ * ⚠️ PAINT ORDER IS LOAD-BEARING. `paints` is in the source SWF's own style-group
+ * order, back to front, and a renderer MUST draw it in exactly that order. The
+ * OG puts a 2.5 px black stroke UNDERNEATH the eight face fills of shape 2662,
+ * so drawing all fills and then all strokes turns 26 % of that shape's ink black.
  *
  * Coordinates are shape-local px; (0,0) is the part's joint pivot.
  */
@@ -23,16 +29,16 @@ import type { ArtShape } from '../types';
 
 export const SHAPE_2664: ArtShape = {
   id: 2664,
-  fills: [
+  paints: [
     {
+      kind: 'fill',
       color: 0xffcc99,
       rings: [
         { points: [0.7,-10.95,5.05,-10.55,5.798,-10.344,6.469,-10.125,7.061,-9.894,7.575,-9.65,8.011,-9.394,8.369,-9.125,8.648,-8.844,8.85,-8.55,8.97,-8.242,9.081,-7.794,9.183,-7.205,9.275,-6.475,9.358,-5.605,9.431,-4.594,9.495,-3.442,9.55,-2.15,9.594,-0.923,9.625,0.159,9.644,1.096,9.65,1.888,9.644,2.534,9.625,3.034,9.594,3.39,9.55,3.6,9.428,3.769,9.213,3.925,8.903,4.069,8.5,4.2,7.3,4.35,6.516,4.303,5.713,4.162,4.891,3.928,4.05,3.6,3.37,3.238,2.778,2.828,2.276,2.37,1.862,1.862,1.538,1.307,1.303,0.703,1.157,0.051,1.1,-0.65,0.584,-0.753,0.088,-0.913,-0.391,-1.128,-0.85,-1.4,-1.289,-1.735,-1.681,-2.116,-2.027,-2.541,-2.325,-3.013,-2.577,-3.529,-2.781,-4.091,-2.939,-4.698,-3.05,-5.35,-3.121,-6.017,-3.134,-6.644,-3.09,-7.23,-2.987,-7.775,-2.827,-8.28,-2.609,-8.744,-2.334,-9.167,-2,-9.55,-1.531,-9.956,-0.925,-10.325,-0.181,-10.656], hole: false },
       ],
     },
-  ],
-  strokes: [
     {
+      kind: 'stroke',
       color: 0x000000,
       width: 1.5,
       polylines: [
@@ -40,6 +46,7 @@ export const SHAPE_2664: ArtShape = {
       ],
     },
     {
+      kind: 'stroke',
       color: 0x000000,
       width: 0.5,
       polylines: [

@@ -130,6 +130,104 @@ describe('game-purity ratchet: src/game/ numeric-literal baseline', () => {
       expect(bad, `Generated art without provenance is a gate failure (D7):\n  ${bad.join('\n  ')}`).toEqual([]);
     });
 
+    /**
+     * SESSION16 R2 finding 5 — THE CARVE-OUT'S STATED PAYMENT WAS NEVER MADE.
+     *
+     * The gate above greps HEADER TEXT and never reads the DATA, so provenance
+     * was a caption rather than a claim. A shape2664.ts that was mirrored,
+     * translated, recoloured, stroke-amputated, or handed another shape's
+     * geometry entirely passed 639/639 tests, both typechecks and lint — while
+     * the block comment on GENERATED_ART_DIR asserted the exemption was "paid
+     * for by the provenance gate below". It was not. This is the payment.
+     *
+     * Text-level on purpose: it needs no import and no `reference/`, so it runs
+     * in every clone and in CI, which is exactly where the D7 exemption needs
+     * defending. It catches post-emit editing, a bad merge, and a stale artifact.
+     *
+     * ⚠️ HONEST LIMIT, so nobody reads more into this than it gives: `emit()`
+     * derives the header and the data from the SAME object, so these clauses can
+     * never catch a CONVERTER bug — only tampering after the fact. Catching
+     * converter drift needs the byte-for-byte re-derivation test in
+     * tests/svgShape.test.ts, which can only run where the gitignored corpus is.
+     */
+    it('the provenance header is a CHECKSUM over the data, not a caption (D7)', () => {
+      const bad: string[] = [];
+      for (const file of generated) {
+        const src = readSource(file);
+        const rel = path.relative(ROOT, file);
+
+        // ── (1) THE IDENTITY TRIPLE ───────────────────────────────────────────
+        // Header id, exported const name, the object's own `id`, and the
+        // filename must all agree EXACTLY. The older check uses
+        // basename.includes(id), which also accepts shape12664.ts.
+        const headerId = /source characterId\s*:\s*(\d+)/.exec(src)?.[1];
+        const constId = /export const SHAPE_(\d+)\s*:/.exec(src)?.[1];
+        const dataId = /^\s*id:\s*(\d+),/m.exec(src)?.[1];
+        if (headerId === undefined || constId === undefined || dataId === undefined) {
+          bad.push(`${rel}: unreadable identity — header=${String(headerId)} const=${String(constId)} data=${String(dataId)}`);
+        } else if (new Set([headerId, constId, dataId]).size !== 1) {
+          bad.push(`${rel}: identity disagrees — header=${headerId} const=${constId} data=${dataId}`);
+        } else if (path.basename(file) !== `shape${headerId}.ts`) {
+          bad.push(`${rel}: filename is not exactly shape${headerId}.ts`);
+        }
+
+        // ── (2) THE COUNTS ────────────────────────────────────────────────────
+        const counts = /(\d+) paint op\(s\) in SWF paint order: (\d+) solid fill\(s\), (\d+) stroke pass\(es\)/.exec(src);
+        const rings = /(\d+) ring\(s\) \((\d+) hole\(s\)\), (\d+) vertices/.exec(src);
+        // An UNPARSEABLE header is itself a failure. Failing open here is the
+        // exact mistake the <path></path> fix was made to stop.
+        if (counts === null || rings === null) {
+          bad.push(`${rel}: CONTENT block does not parse — cannot verify the header against the data`);
+        } else {
+          const pointArrays = [...src.matchAll(/\{ points: \[([^\]]*)\], hole: (true|false) \}/g)];
+          const actual = {
+            paints: (src.match(/^\s*kind: '(?:fill|stroke)',$/gm) ?? []).length,
+            fills: (src.match(/^\s*kind: 'fill',$/gm) ?? []).length,
+            strokes: (src.match(/^\s*kind: 'stroke',$/gm) ?? []).length,
+            rings: pointArrays.length,
+            holes: pointArrays.filter((m) => m[2] === 'true').length,
+            verts: pointArrays.reduce((n, m) => n + (m[1] ?? '').split(',').length / 2, 0),
+          };
+          const claimed = {
+            paints: Number(counts[1]),
+            fills: Number(counts[2]),
+            strokes: Number(counts[3]),
+            rings: Number(rings[1]),
+            holes: Number(rings[2]),
+            verts: Number(rings[3]),
+          };
+          for (const key of ['paints', 'fills', 'strokes', 'rings', 'holes', 'verts'] as const) {
+            if (claimed[key] !== actual[key]) {
+              bad.push(`${rel}: header claims ${String(claimed[key])} ${key}, data has ${String(actual[key])}`);
+            }
+          }
+        }
+
+        // ── (3) THE PALETTE ───────────────────────────────────────────────────
+        // Without this, "Colours are BYTE-EXACT to the SWF's recorded RGB" — the
+        // header's loudest claim — is unchecked, and a magenta outline passes
+        // every count. Order matters: it is the SWF's paint order.
+        const palette = /palette\s+:\s+fills (.*?)\s+\|\s+strokes (.*)/.exec(src);
+        if (palette === null) {
+          bad.push(`${rel}: no parseable palette line — the byte-exact colour claim is unverifiable`);
+        } else {
+          const fillColours = [...src.matchAll(/kind: 'fill',\n\s*color: (0x[0-9a-f]{6}),/g)].map((m) => m[1]);
+          const strokeSpecs = [...src.matchAll(/kind: 'stroke',\n\s*color: (0x[0-9a-f]{6}),\n\s*width: ([0-9.]+),/g)].map(
+            (m) => `${String(m[1])}@${String(m[2])}`,
+          );
+          const claimedFills = palette[1] === 'none' ? [] : (palette[1] ?? '').split(' · ');
+          const claimedStrokes = palette[2] === 'none' ? [] : (palette[2] ?? '').split(' · ');
+          if (claimedFills.join(',') !== fillColours.join(',')) {
+            bad.push(`${rel}: header fill palette [${claimedFills.join(', ')}] ≠ data [${fillColours.join(', ')}]`);
+          }
+          if (claimedStrokes.join(',') !== strokeSpecs.join(',')) {
+            bad.push(`${rel}: header stroke palette [${claimedStrokes.join(', ')}] ≠ data [${strokeSpecs.join(', ')}]`);
+          }
+        }
+      }
+      expect(bad, `Generated art whose header does not match its data (D7):\n  ${bad.join('\n  ')}`).toEqual([]);
+    });
+
     it('loads NOTHING at runtime — the data is compiled in (D1)', () => {
       // reference/ is gitignored, so a loader would work locally and break in
       // every clone, CI run and deploy. Static `import type` only.
