@@ -1,6 +1,31 @@
 # RESUME HERE
 
-> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION17_KICKOFF.md`**
+> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION18_KICKOFF.md`**
+> **COMPOSE THE WHOLE FIGHTER, AT ITS RECORDED TRANSFORMS.** Self-contained, the
+> only kickoff to plan from, **no open prerequisites.**
+>
+> ⭐ **The idle pose is IN the kickoff, verbatim** — all 19 node transforms
+> extracted from the payload's own bindata, with the slot→shape map for the 14
+> shapes the fighter needs.
+> ⛔ **IT SUPERSEDES `SESSION15_KICKOFF.md` §4 A4's grading bar.** That bar asks
+> for **≥ 90 % silhouette IoU**, and §P8 shows **that target does not exist**:
+> FFDec cannot render a pose the AS3 composes at runtime, and the only OG images
+> are video frames of an *equipped* fighter — so an IoU would grade our
+> deliberately bald, unarmed doll against a kasa and a sword. It is replaced by a
+> proportion gate against values measured off the original's own frames and
+> already converted to stage px (`reference/combat_idle_measurements.md`).
+> ⭐ **Holes are scoped exactly:** only `2646` (torso, 2) and `2648` (thigh, 1,
+> drawn twice) need Earcut — 4 hole instances — and `Earcut.deviation()` gives a
+> numeric 0-means-correct check.
+> ⚠️ **NEW LIMIT FOUND WHILE WRITING IT:** `2662` is the ONLY one of the 16
+> shapes with a stroke before a fill, and **it is not in the fighter** — so
+> **A4's pixels cannot detect the paint-order defect either.** The synthetic
+> fixtures in `tests/artPlan.test.ts` are the only defence in the repo.
+>
+> ---
+>
+> ## ▶ SESSION 17 — **A3 CLOSED. THE OG ART IS ON SCREEN AND MEASURED.**
+> Kickoff: **`docs/sessions/SESSION17_KICKOFF.md`**.
 > **PUT THE OG ART ON SCREEN, AT A MEASURED SIZE.** Self-contained, the only
 > kickoff to plan from, **no open prerequisites.**
 >
