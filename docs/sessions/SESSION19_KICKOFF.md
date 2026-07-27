@@ -80,7 +80,9 @@ combat_frames     16 files  1920x1080     duel_candidates 45 files  1024x576
 zFt_combat        14 files  1920x1080     map_analysis    20 files   512x288
 combat_analysis   5 + 6     1920x1080
                  ───────────────────
-                 117 usable full-res frames
+                 117 in the sets above — but §P10's index found 448 full-res
+                 frames in total, including a session11/ tree this manual
+                 census missed. USE THE INDEX, not this table.
 ```
 
 **P3 — ⚠️ TWO THIRDS OF THE FRAMES ARE UNUSABLE, AND SO IS THE OVERWORLD.**
@@ -142,6 +144,46 @@ The OG art is 100 % flat solid colour, so each garment's true value is the modal
 colour of its flattest interior region. **Sample per garment, take the mode, and
 record the spread** — treat them as INFERRED targets, never as CONTRACT.
 
+**P9 — ✅ HOW FAITHFUL CAN A TRACE BE? MEASURED AGAINST GROUND TRUTH.**
+A traced *garment* cannot be checked — the original is gone. A traced *body part*
+can, because we hold its exact vector data. `scripts/art/traceCalibration.py`
+shrinks a real OG shape to video scale, puts it through the same lossy squeeze,
+traces it back, and scores it against the truth. Run 2026-07-27:
+```
+ shape   world px  video px  jpeg           method     IoU  verts
+  2664  12.8x15.3     32x39    95  potrace polygon   0.964     27
+  2664  12.8x15.3     32x39    95   potrace curves   0.973     59
+  2653  20.4x17.1     52x43    70  potrace polygon   0.947     39
+  2646  19.4x23.7     49x60    70  potrace polygon   0.970     53
+  2670  14.2x15.0     36x38    70  potrace polygon   0.931     47
+```
+⭐ **JPEG QUALITY BARELY MATTERS** — q95 and q70 agree to three decimals.
+Compression is not the limit; **on-screen SIZE is** (`traceSizeSweep.py`):
+```
+  >= 20 px tall  →  0.93 – 0.99   trustworthy
+  ~  12 px tall  →  0.80 – 0.84   marginal — label INFERRED, do not pretend
+```
+⚠️ **96 % IS THE CEILING, NOT THE FORECAST.** The harness degrades a CLEAN
+render; a real frame adds background clutter, overlapping fighters and motion
+blur, and the garment must be colour-separated first.
+⚠️ **Two silent bugs this harness hit, both worth knowing before you write one:**
+potrace traces **BLACK on WHITE** (feeding it white-on-black traces the
+*background*, scoring 0.07–0.37 with no error), and it emits **y UP** from the
+bottom-left while PIL is y-down (without the flip, scores were 0.15–0.75 and
+varied with how y-symmetric the shape happened to be — a plausible wrong answer).
+
+**P10 — ✅ THE FRAMES ARE INDEXED.** `scripts/art/frameIndex.py` →
+`reference/frames/INDEX.json`, **448 full-res frames** (including a `session11/`
+tree an earlier manual census missed entirely). It ranks candidates by figure
+height and by the gap between two figures.
+⚠️ **It is a SHORTLIST GENERATOR, not a locator** — verified by cropping what it
+reports: on the frame checked, one box was a fence post and the other landed on
+the fighters but merged both into one. **Trust the ranking, crop, then LOOK.**
+⭐ **START HERE — the best tracing frame found:**
+`reference/frames/combat_analysis2/Nr4fQstqHDM_t431.5.png`, crop
+**(951,612)-(1278,898)**. The player's whole outfit is unoccluded and readable:
+straw kasa, navy haori with red trim, patterned cream obi, white hakama.
+
 **P8 — ✅ WHAT THE BARE FIGHTER MEASURES TODAY** (`tests/planPose.test.ts` owns
 these; they are derived from the committed art, not transcribed):
 ```
@@ -180,13 +222,17 @@ The dressed fighter gets `OG_DRESSED_SLOT_SHAPES` and `?art=dressed`. Keeping th
 bare route runnable is what preserves SESSION 18's evidence.
 > **Veto:** none. This is SESSION 17 D4 applied again, and it cost nothing then.
 
-### D4 — Trace in a vector editor, export SVG, run the EXISTING converter
-No new import path, no new art format, no runtime loading. The traced SVG is
-reference material (gitignored); **the emitted `.ts` is the artifact**, exactly
-as for the 14 imported shapes.
-> **Veto:** hand-author the coordinate arrays directly. *Recommended against* —
-> it skips the provenance header and the byte-identical re-derivation gate, which
-> are the only things standing between committed art and unverifiable art.
+### D4 — ⭐ TRACE WITH `potrace` IN POLYGON MODE, NOT BY HAND. MEASURED, NOT ASSUMED.
+**This replaces the original plan of hand-tracing in a vector editor**, which was
+written before anyone checked what a machine could do. §P9 measures it: potrace
+recovers a **known** OG shape to **93–97 %** area agreement at video scale, and
+polygon mode (`-a 0`) scores within 1 % of curve mode using **half the vertices**
+— while emitting `M L L Z`, which is exactly what `scripts/art/svgShape.ts`
+accepts. Curve mode emits cubic `C`, which that converter THROWS on.
+A hand trace cannot beat 96 % and cannot be re-run when a setting changes.
+Per garment: isolate by colour → 1-bit mask → potrace → SVG → existing converter.
+> **Veto:** hand-trace anyway. *Recommended against* — slower, not more faithful,
+> and not reproducible. Retracing after a parameter change costs one command.
 
 ### D5 — Grade against a HELD-OUT frame, not the tracing frame
 Trace from one frame; overlay-check against a different frame at a different
@@ -256,10 +302,14 @@ way commands-with-output are recorded elsewhere. **Gate: one crop per garment,
 each showing that garment unoccluded.**
 
 ### A5.2 — Trace ONE garment end to end
-The **kasa**, because it is the largest, the least occluded, and it drops into the
-already-empty slot 17 — so it exercises the whole path (trace → SVG → converter →
-registry → slot map → screen) on the simplest possible subject.
+The **kasa**, because it is the largest (≈140 video px wide — comfortably inside
+§P9's trustworthy band), the least occluded, and it drops into the already-empty
+slot 17 — so it exercises the whole path (colour-isolate → potrace → SVG →
+converter → registry → slot map → screen) on the simplest possible subject.
 **Gate: A5-A for one shape, and it appears on screen at the head node.**
+💡 Expected garment sizes on screen, from §P9's band: kasa ≈140 px and hakama
+≈83 px are safe; the **obi is ≈15 px and is the one at risk** — if it lands under
+0.90, label it INFERRED rather than pretending (§6 Risk 2).
 
 ### A5.3 — Trace the rest
 Haori, shoulder armour, sleeves, obi, hakama. **Gate: A5-A for all.**
@@ -342,6 +392,11 @@ confident one. **Say which is which in the provenance header.**
 - ⭐ **It names the architectural fact that makes the work cheap:** equipment
   replaces a part by id, slot 17 is already empty and already aliased, and the
   slot map is data — so a dressed fighter is a second array, not new code.
+- ⭐ **It replaced its own plan when a measurement contradicted it.** D4 said
+  "trace in a vector editor" until §P9's calibration showed a machine recovers a
+  known OG shape to 93–97 % — better than a hand can, reproducible, and in the
+  one output format the existing converter accepts. The kickoff carries the
+  measurement, the two silent bugs it hit, and the ceiling caveat.
 - ⭐ **Its load-bearing rule is a discipline, not a number.** D1 — trace, then
   measure, never measure then adjust — is the only thing separating this session
   from marking its own homework, and §6 Risk 1 admits it is not self-enforcing
