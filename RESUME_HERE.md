@@ -1,111 +1,68 @@
 # RESUME HERE
 
-> ## ▶ IN PROGRESS — SESSION 20, kickoff `docs/sessions/SESSION20_KICKOFF.md`
-> **NEXT STEP: §4 A6.3 — the gate.** Commit the score; the suite enforces it as a
-> FLOOR. Chaos-plant it: move one garment 5 world px and watch it go red.
+> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION21_KICKOFF.md`**
+> **PUT THE OG FIGHTER IN THE GAME.** Self-contained, the only kickoff to plan
+> from, **no open prerequisites.**
 >
-> ### ✅ A6.2 DONE — **GATE A6-B MET.** `scripts/art/compareToSource.py`
+> ⛔ **TWO SESSIONS HAVE GONE INTO A FIGHTER THE GAME DOES NOT DRAW.**
 > ```
-> npx vite-node scripts/art/renderPose.ts -- dressed --out renders/dressed.png \
->     --mask renders/dressed-mask.png --json renders/dressed.json
-> python3 scripts/art/compareToSource.py renders/dressed.json
+> DuelScene.ts:691  drawSamurai(g, ps.x, ps.y + 60, playerFacing, PLAYER_LOOK, …)
+> grep -rln "fighterShapes|composePose" src/game/  ->  src/game/IdleFighterScene.ts
 > ```
-> ⭐ **THE FRAME SIDE IS VERIFIED IDENTICAL TO A5.5**: frame-vs-frame reproduces
-> the committed ceiling **0.8808 exactly**.
+> Exactly one file composes the OG fighter and it is a **debug route**. The game
+> the owner plays still shows the Stage-1 procedural samurai.
 >
-> ⛔ **AND THAT PINS A DISCREPANCY ON OUR SIDE — A6-D's TARGET IS NOT COMPARABLE.**
+> ### ✅ SESSION 20 CLOSED — A6.1–A6.5. Gates A6-A, A6-B, A6-C MET.
+> **The loop that grades the fighter exists, and it works.** 48 files / **822
+> tests green** (was 44/750), tsc ×2 → 0, eslint → 0, fidelity **55/55**, clean
+> clone green, 0 console errors.
 > ```
->                          A5.5 (committed)   A6.2 (this pipeline)
->   tracing frame 0061          0.8742              0.8659
->   held-out frame 0071         0.8294              0.8100
->   ceiling (frame v frame)     0.8808              0.8808   <- identical
-> ```
-> A5.5 measured a **browser JPEG screenshot**; A6.2 measures an **exact PNG**, and
-> the JPEG's blur flattered the old score. **New baseline, committed BEFORE any
-> tuning: tracing 0.8659, held-out 0.8100.** A6-D is re-expressed against those.
->
-> ⛔ **THE ABSOLUTE X OFFSET IS THE ANCHOR CHOICE, NOT A MEASUREMENT.** Four
-> different x-anchors move every slot's absolute offset over a **20.06 world px**
-> range; every slot-to-slot DIFFERENCE is constant (kasa−hakama = 14.40 in all
-> four). So the comparator reports `relOffsetErr`, whose measured spread across
-> those anchors is **0.0000**, as is `sizeErr`'s.
-> ⇒ **A6.4 may tune `relOffsetErr` and `sizeErr` ONLY.** Chasing the absolute
-> offset fits the anchor and calls it progress.
->
-> ⛔ **OUR ACHIEVABLE CEILING IS BELOW 0.8808** — opening the frame shows the
-> source carries a **SWORD** (hilt left, scabbard tip lower right) that we render
-> no art for (slots 3/4 empty by design, equipment died with the CDN). Both
-> frames have it; our fighter cannot.
-> ⭐ Two more things the frame settled: the source's **feet are hidden in GRASS**
-> (ours protrude — §P7 defect 3 is worse than stated), and the source has a
-> **white collar between kasa and jacket** with the grey gi starting well below
-> the head — **§P7 defect 1 confirmed against the source, not by eye.**
->
-> ### ✅ A6.1 DONE — **GATE A6-A MET.** The fighter renders headless, deterministically.
-> ```
-> npx vite-node scripts/art/renderPose.ts -- dressed --out renders/d.png --mask renders/d-mask.png --slots
-> npx vite-node scripts/art/renderPose.ts -- idle --full
-> ```
-> `rasterise.ts` (pure engine, zero deps) · `renderPoseArgs.ts` (validated flags) ·
-> `poseScene.ts` (the pipeline, shape map INJECTED) · `poseRaster.ts` (hands it
-> `FIGHTER_SHAPES`) · `renderPose.ts` (CLI). Outputs go to the gitignored
-> `renders/`. **Suite 47 files / 810 tests green** (was 44/750), tsc ×2 → 0,
-> eslint → 0, **fidelity 55/55 `pass: true`**, 0 console errors.
->
-> ⭐ **THE PIXEL GATE IS COMMITTED.** `tests/poseRender.test.ts` builds the REAL
-> plan for both variants and pins `rasterDigest`, the op census, the ink box and
-> the crop. **Never "refresh" those digests to make a diff go green.**
-> ```
-> dressed 20 parts, 55 ops {fill 37, stroke 16, holedFill 2}  crop 113x190 @ (450,266)
-> idle    21 parts, 90 ops {fill 45, stroke 41, holedFill 4}  crop 102x177 @ (456,279)
+> scripts/art/renderPose.ts     headless render -> PNG, byte-deterministic
+> scripts/art/compareToSource.py per-slot error vs the source + an OVERLAY
+> scripts/art/scorePose.ts       the sealed score, on demand
+> scripts/art/tuneAnchors.py     the loop: retrace -> render -> score -> rank
+> tests/a6Score.test.ts          the score as a committed FLOOR + a height CEILING
+> tests/poseRender.test.ts       the real render's pixels, pinned
 > ```
 > ```
-> dressed  20 parts, 55 ops   ink 474.9..538.9 x 290.9..431.4  (63.9 x 140.5)
-> idle     21 parts, 90 ops   ink 480.5..533.1 x 303.2..431.4  (52.7 x 128.2)
-> two separate PROCESSES: cmp png OK, cmp mask OK, digest e9ddfe43b6ea139b
+>                     tracing   held-out    gap    height
+>   session start      0.8597    0.8197   0.0400   140.5
+>   after A6.5 + A6.4  0.9006    0.8619   0.0387   140.5   <- committed floors
+>   the BARE fighter   0.6993    0.7479      —     128.2
+>   frame-to-frame ceiling      0.8808
 > ```
-> ⭐ **It reproduces numbers committed BEFORE it existed.** `idle`'s ink is
-> `52.7 x 128.2` against SESSION 18 A4-F's `52.661 x 128.164`; `--slots`
-> regenerates **all 11 rows of the kickoff's §P6 table to 0.1 stage px.**
+> ⭐ **Held-out +0.0422 across the session**, on a frame the outfit was never
+> traced from. **The gi no longer swallows the head; the feet emerge from under
+> the hem instead of floating below it.**
 >
-> ⛔ **THREE THINGS THIS STEP OVERTURNED — do not re-derive them.**
-> 1. **NEVER GATE ON A PNG's BYTES.** `deflateSync` output depends on the zlib
->    Node was built with — v25.8.2 and v24.14.1 give different files for the same
->    pixels, and **CI runs `lts/*`, a different build from this Mac.** Gate on
->    `rasterDigest` (the PIXELS, portable). The first draft claimed the opposite.
-> 2. **§P6's row `16 head+hair` is internally inconsistent.** Its bbox is
->    head+hair, its `17.7 x 19.7` is the HEAD ALONE; together they are
->    **18.4 x 22.1**. §P7 defect 1 is unaffected (it argues from `y 325.3`).
-> 3. **Fill rings are stored OPEN — 0 of 50 repeat their first point** (6 of 28
->    stroke polylines do). So the scanline filler's implicit closing edge is
->    load-bearing, and `drawPlan`'s comment justifying `closeShape: false` covers
->    only 6 of its 28 polylines — the code is right, the stated reason is narrow.
+> ### ⛔ THE THREE FINDINGS THAT COST THE MOST — do not re-derive them
+> 1. **A GREEN GATE IS NOT A GOOD PICTURE, and it bit twice.** Carving the sleeve
+>    out of the gi (which the SESSION 20 kickoff itself prescribed) scored
+>    plausibly and rendered a **nearly-bare torso**. Lowering the hakama 15 world
+>    px scored **best of the entire sweep** — held-out 0.8781, the two frames
+>    within 0.0067 — and rendered **trousers round the knees with the feet
+>    swallowed**. Both caught only by looking. **LOOK at `renders/dressed.png`.**
+> 2. **THE PROFILE SCORE IS SCALE-FREE, so a taller fighter costs it nothing.**
+>    That is the hole the hakama variant walked through. `GATE A6-C companion`
+>    now caps the height. **A scale-free score needs a scale gate beside it.**
+> 3. ⭐ **"THE FIGURE IS 11 % TOO TALL — SUSPECT THE SKELETON" IS WRONG.**
+>    Measured: our **BARE** fighter is 240.3 video px against the source's
+>    **fully equipped** 236.7 — **+1.5 %**. The skeleton is right; **the whole
+>    overshoot is the kasa**, which adds 23.1 video px where the source's adds
+>    none. Pushing the brim deeper fixes height and COSTS held-out agreement
+>    (0.8619 → 0.8375 → 0.8247). **Open, measured, for an owner ruling.**
 >
-> ⛔ **A6.1 FIRST CLAIMED THE PIPELINE COULD NOT BE TESTED. THAT WAS FALSE, AND
-> IT WAS THE LOAD-BEARING CLAIM OF ITS TEST DESIGN.** `tests/planPose.test.ts` has
-> built the real 90-op plan in the suite since SESSION 18, via the
-> `art/generated/**` pure-data carve-out. A review then mutated the untested
-> pipeline and **the whole 46-file suite stayed green** on a mutant that swapped
-> the dressed/bare slot map, deleted the backdrop guard AND moved the crop by a
-> pixel — every later measurement would have been of the wrong fighter.
-> **Fixed by injecting the shape map** (`poseScene.ts`); all five mutations now
-> go red. Only the one-line `FIGHTER_SHAPES` hand-off in `poseRaster.ts` is
-> unreachable from a test, and `planPose.test.ts` pins that registry as text.
+> ### ⚠️ TWO SCORES EXIST AND THEY ARE NOT THE SAME NUMBER
+> **SEALED** (`tests/a6Score.test.ts`, portable, in CI): our exact coverage mask
+> vs committed source numbers. **DIAGNOSTIC** (`compareToSource.py`, needs
+> `reference/`): both sides through an image heuristic; richer — per slot, plus
+> an overlay. **Never quote one as the other.**
 >
-> ⚠️ **Testing a guard is not testing that it is CALLED.** The backdrop mutation
-> stayed green until the test drove the whole pipeline instead of the function.
->
-> ⚠️ **THE RENDERER IS NOT PHASER.** Even-odd scanline fills (so it is BLIND to a
-> mis-packed hole ring — that stays `Earcut.deviation`'s job in the live scene),
-> round stroke caps, box-downsampled AA. Checked by eye against the live canvas on
-> both routes anyway: they agree, **including reproducing both open defects.**
->
-> **Process:** 20 chaos plants, all watched red — **3 stayed green and condemned
-> the TEST**, which was strengthened before re-planting. A 4-lens adversarial
-> review then raised 21 claims, **5 confirmed and all fixed red-first** (the
-> determinism claim; `--backdrop ff00ff` → NaN → a PURE BLACK backdrop that walked
-> past the one guard the module exists for, on both the CLI *and* the API path; a
-> flag swallowing the next flag; `encodePng` accepting a 0-size image).
+> ### ⛔ A6-E WAS OVERTURNED, NOT MET — and the gate was NOT rewritten to fit
+> It wanted slot 15's top BELOW the head's bottom (y 325.3). **The bare torso it
+> replaces has its own top at 321.4** — already above that line. No garment
+> covering the torso can satisfy it. Recorded for a ruling; the honest bar ("at
+> or below the top of the part it replaces") we pass at 322.5.
 >
 > ---
 >
