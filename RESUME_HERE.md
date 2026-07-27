@@ -36,12 +36,23 @@
 >    `2` red on the branch). No "bonus range" reading fits both frames.
 >    ⇒ **A8.2 traces ONE stick onto slot 3.** `reject_occluder`'s docstring calls
 >    it "THE SAYA" — the NAME is wrong, the mechanism is right.
-> 2. ⛔ **§P4.12's kasa number has the SIGN BACKWARDS.** It read the straw as
->    `(167,126,61)` and called ours 25 too DARK. From the kasa's own mask the
->    median is `(122,88,38)` and **ours is +23 too LIGHT**. The kickoff already
->    excluded two of seven hand-picked samples for landing on the wrong garment;
->    **this is a third** — `traceGarment.py` warns the blurred scenery is the
->    same warm family as straw and *brighter than the hat*.
+> 2. ⛔ **§P4.12's kasa number has the SIGN BACKWARDS — and the kasa must NOT be
+>    "fixed" to the median.** It read the straw as `(167,126,61)` and called ours
+>    25 too DARK. The mask median is `(122,88,38)` and **ours is +23 too LIGHT**.
+>    ⚠️ **This step's own first explanation was wrong and was overturned by
+>    checking it.** `(167,126,61)` is NOT off-garment — it is at ~**p85 of the
+>    straw's own distribution** (11.3 % of kasa mask pixels sit within 12/channel
+>    of it; 14.3 % sit within 12 of our own fill):
+>    ```
+>    p25 (116, 84,33)   p50 (122, 88,38)   p75 (154,119,57)   p90 (173,138,74)
+>    ```
+>    ⇒ **The kasa is genuinely two-tone** — which its `iqr` of **38,35,24** was
+>    already saying — and a single fill cannot represent it. Our `(142,111,56)`
+>    sits BETWEEN the two modes, the least-wrong flat value available.
+>    ⛔ **A8.4 MUST NOT DARKEN THE KASA TO PASS A8-D.** That moves it onto the
+>    dark mode, makes the hat visibly darker than the source reads, and scores
+>    better doing it — SESSION 20's "green gate, worse picture" trap exactly.
+>    **Its defect is missing straw texture (§P4.9 → A8.6), not hue.**
 >    ✅ Its hakama number (`220,213,219`, ours ~20 dark) is **exactly right**, and
 >    its "the gi is fine" holds (worst channel 7).
 >

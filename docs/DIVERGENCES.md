@@ -3082,13 +3082,34 @@ shapes regenerate BYTE-IDENTICAL** (`git diff src/game/art/generated/` empty).
 - **hakama — CONFIRMED.** §P4.12's hand-picked `(220,213,219)` is exactly the
   mask median. Ours is **~20 DARK**, as it said.
 - **gi — CONFIRMED "fine."** Worst channel 7, 2 and 1 across the three gi parts.
-- ⛔ **kasa — REFUTED, and it is the third contaminated sample.** §P4.12 read the
-  straw as `(167,126,61)` and called ours 25 too DARK. From the kasa's own mask
-  the median is **`(122,88,38)`** and ours is **+23 too LIGHT**. The kickoff
-  already excluded two of seven hand-picked samples for landing on the wrong
-  garment; **this is a third**, and `traceGarment.py`'s own header warns why —
-  the blurred scenery is the same warm family as straw and **brighter than the
-  hat**. ⇒ **D4 was the right call and it paid immediately.**
+- ⛔ **kasa — REFUTED, but NOT for the reason first written here.**
+  §P4.12 read the straw as `(167,126,61)` and called ours 25 too DARK. From the
+  kasa's own mask the median is **`(122,88,38)`** and ours is **+23 too LIGHT** —
+  so the SIGN IS BACKWARDS either way, and that much stands.
+  ⚠️ **THIS STEP'S OWN FIRST ANSWER WAS WRONG AND WAS OVERTURNED BY CHECKING IT.**
+  It said `(167,126,61)` was "a third hand-picked sample landing on the wrong
+  garment". **It is not off-garment at all.** Measured on the kasa's own mask:
+  ```
+  p25 (116, 84, 33)   p50 (122, 88, 38)   p75 (154,119, 57)   p90 (173,138, 74)
+  §P4.12's (167,126,61): 11.32 % of the kasa's own mask pixels are within 12/channel
+  our committed (142,111,56):  14.32 %
+  ```
+  `(167,126,61)` sits at roughly **p85 of the straw's own distribution** — a real
+  straw pixel, just a BRIGHT one. ⇒ **The kasa is genuinely two-tone** (a ~57
+  level split in R between its dark band and its lit face), which is what an
+  `iqr` of **38,35,24** was already saying.
+  ⇒ **THE REAL LESSON IS SHARPER THAN "the sample missed":** a hand-picked pixel
+  cannot summarise a two-tone garment — **and neither can a median.** Our
+  committed `(142,111,56)` sits BETWEEN the two modes, which for a flat fill is
+  arguably the least-wrong single value available.
+  ⛔ **SO A8.4 MUST NOT DARKEN THE KASA TO MEET A8-D.** That would move it onto
+  the dark mode, make the hat visibly darker than the source reads, and score
+  better doing it — the exact "a green gate is not a good picture" trap SESSION
+  20 paid for twice. **The kasa's defect is missing straw texture (§P4.9, A8.6),
+  not hue.**
+  ⇒ **D4 still paid** — it is what produced the distribution that overturned
+  both readings — but the two samples the kickoff excluded were excluded on its
+  own evidence and are NOT re-litigated here.
 - ⭐ **collar — NEWLY MEASURED.** §P4.12 excluded its own collar sample. The
   juban is **`(204,201,203)` — near-white** — and ours is **22 DARK**. So §P4.10
   ("the collar does not read") is not only a size problem; it is also a colour

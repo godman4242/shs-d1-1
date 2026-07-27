@@ -59,7 +59,14 @@ const WORST_CHANNEL_DELTA: Readonly<Record<number, number>> = {
   9012: 22, // juban collar — ours is DARK; §P4.12's own sample missed this garment
   9014: 2, // obi
   9015: 7, // gi body
-  9017: 23, // kasa straw  — ours is LIGHT, ⛔ NOT dark; §P4.12 had the sign backwards
+  // ⛔ 9017 — DO NOT CLOSE THIS ONE BY DARKENING THE HAT. Ours is LIGHT, not
+  // dark (§P4.12 had the sign backwards), but the kasa is genuinely TWO-TONE:
+  // p25 (116,84,33) against p90 (173,138,74), an `iqr` of 38,35,24 — the widest
+  // here by a factor of six. Its median lands in the dark band, so matching it
+  // would make the hat visibly darker than the source reads while turning this
+  // line green. That is SESSION 20's "a green gate is not a good picture" trap,
+  // pre-loaded. The kasa's real defect is missing straw texture (§P4.9 → A8.6).
+  9017: 23,
   9019: 2, // near sleeve
 };
 
