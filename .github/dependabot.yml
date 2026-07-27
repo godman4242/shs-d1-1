@@ -15,3 +15,19 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    # PINNED STACK — these two majors are project INVARIANTS, not preferences
+    # (CLAUDE.md: "Stack is fixed: Phaser 3 (pinned phaser@3, NOT v4) +
+    # TypeScript 5 + Vite"). Dependabot opened both on 2026-07-24 and they were
+    # closed on 2026-07-27; closing a PR only silences THAT version, so
+    # phaser 4.3 and typescript 7.1 would have arrived a week later. These rules
+    # make the block permanent while still allowing minor/patch security fixes
+    # inside the pinned major.
+    #
+    # ⚠️ A Phaser 4 bump is not merely unwanted — it would invalidate the
+    # SESSION 17 art measurements, which depend on v3's
+    # `Phaser.Geom.Polygon.Earcut` and `renderer.snapshotArea` APIs.
+    ignore:
+      - dependency-name: "phaser"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
