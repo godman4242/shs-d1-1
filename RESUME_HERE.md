@@ -24,22 +24,38 @@
 > python3 scripts/art/compareToSource.py renders/d.json && open renders/side_by_side.png
 > ```
 >
-> ### ⛔ THE FIVE DIFFERENCES, FOUND BY LOOKING — do not re-derive them
-> 1. **NO SWORD.** The source shows the hilt forward at chest height and the
->    scabbard past the knee. Slots 3/4 are empty by design (the OG's own "none"
->    placeholders; equipment art died with the CDN) — **but the sword is plainly
->    visible in the video and traceable exactly as the 7 garments were.**
-> 2. **THE HAKAMA READS AS TWO TROUSER LEGS**, with a gap and scalloped hems; the
->    source is ONE continuous white column. Largest remaining silhouette error.
-> 3. **OUR FILLS ARE MEASURABLY DARK** (7×7 medians on zFt_0061): robe source
->    rgb(220,213,219) vs our `0xc8c3c5`; kasa source rgb(167,126,61) vs our
->    `0x8e6f38` — **20–25 levels dark.** The gi jacket is within 6, so it is not a
->    global gamma issue. ⚠️ Two of seven samples hit the wrong garment and are
->    excluded — re-sample from each garment's own traced mask.
-> 4. **THE JUBAN COLLAR DOES NOT READ** — the source's bold white collar is one of
->    the outfit's most recognisable features; ours is a dark sliver.
-> 5. **THE FACE AND HAIR** — may not be fully fixable (the source's hair measures
->    20.4×24.0 world px against our 2670's 14.2×15.0). Grade it, do not assume.
+> ### ⛔ ELEVEN DIFFERENCES, BAND BY BAND — do not re-derive them
+> ⚠️ **HOW THE LIST GREW IS THE LESSON.** One whole-figure look produced FIVE.
+> **The owner looked and immediately named two more** — *"the shirt is too big,
+> pants not fully loaded"* — and looking band by band found four beyond that.
+> `compareToSource.py` now emits three band crops; **look at all three.**
+> ```
+> renders/band_A.png  hat/head/collar   band_B.png  torso/jacket/sword
+> renders/band_C.png  hakama/hem/feet   side_by_side.png  the whole figure
+> ```
+> **TORSO (the worst band):** 1. **NO SWORD** — hilt forward at chest height,
+> scabbard past the knee; owns a third of the source's band · 2. **the jacket has
+> NO internal structure** (source: lighter front panel, darker back, white collar
+> edge; ours: one flat tone) — the owner's *"shirt is too big"*, recorded as an
+> observation because crude area measurement could not isolate it · 3. **our
+> forearm is BARE where the source's is SLEEVED** (skin 1.20× their share) ·
+> 4. no emblem/mon · 5. the back bulge is lumpy with ragged shoulder artefacts.
+> **LOWER BODY:** 6. **the hem is RAGGED — the owner's *"pants not fully
+> loaded"*, and it is a TRACE defect: the source's hem sits IN GRASS and the
+> flood fill follows the grass, not the garment** · 7. it reads as **two trouser
+> legs with a deep V**; the source is one closed column · 8. at 97 % height we
+> are **5.59× wider** than the source (our sandals vs their grass-hidden feet).
+> **HEAD:** 9. **the kasa has no straw texture and no BRIM FRINGE** · 10. the
+> **juban collar does not read** · 11. face/hair, maybe not fixable (source hair
+> 20.4×24.0 world px vs our 2670's 14.2×15.0).
+> **GLOBAL, measured:** 12. **fills are DARK** — robe (220,213,219) vs our
+> `0xc8c3c5`, kasa (167,126,61) vs our `0x8e6f38`; the gi is within 6, so not a
+> gamma issue · 13. **we are too INKY** — black is **35.9 %** of our figure vs the
+> source's **28.8 %**.
+> ⭐ **And why the score missed it all:** we are **25-28 % too NARROW** through the
+> mid-body (45-60 %, the missing sword and the bare arm) and **5.59× too wide** at
+> the ankles. **The two errors partly cancel in a whole-figure score** — which is
+> how 0.9006 was reached with the picture still visibly wrong.
 >
 > ⚠️ **SESSION 22 IS "PUT THE OG FIGHTER IN THE GAME"** — `DuelScene.ts:691` still
 > calls `drawSamurai`, and only `IdleFighterScene.ts` composes the OG fighter.

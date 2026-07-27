@@ -6,12 +6,14 @@
 > **INTENT, in one sentence:** the silhouette gate has saturated — it now scores
 > ABOVE the source's own frame-to-frame ceiling while the fighter still plainly
 > does not look like the source — so this session replaces the ruler with a
-> colour-aware one and closes the five differences it exposes.
+> colour-aware one and closes the eleven differences it exposes.
 >
 > **⭐ THE OWNER ASKED FOR THIS SESSION, IN THESE WORDS (2026-07-28):**
 > *"it still is not perfect and needs to be improved… where you need to check
-> your work and compare it to the og picture."* He is right, and the
-> side-by-side in §0 is the evidence.
+> your work and compare it to the og picture."* And, on being shown one
+> whole-figure comparison: *"if you did you could find a lot more errors, the
+> shirt is too big, pants not fully loaded."* **Both were right, and both are in
+> §P4 — which grew from five items to eleven once it was looked at BAND BY BAND.**
 >
 > **⛔ THE STANDING INVARIANT:** **THE TWO GAMEPLAY VIDEOS ARE THE PRIMARY 1:1
 > REFERENCE** (`reference/videos/`). Copy what is in them. **Open a frame and
@@ -57,12 +59,13 @@ interior detail, and to anything that is not the outer boundary. Everything in
 sword** — is invisible to it while being the first thing an eye lands on.
 
 ```
-A8.1  the colour-aware comparator — the new ruler          ⬅ START HERE
-A8.2  the sword: trace the saya + tsuka from the video
-A8.3  the hakama reads as ONE robe, not two trouser legs
-A8.4  colour: our fills are measurably dark
-A8.5  the juban collar, and the head
-A8.6  re-grade everything; gates; handoff
+A8.1  the colour-aware comparator — the new ruler            ⬅ START HERE
+A8.2  the sword: trace the saya + tsuka onto slots 3/4       (P4.1)
+A8.3  the hakama: a clean hem, and ONE column not two legs   (P4.6, P4.7)
+A8.4  colour + ink weight: our fills are dark, our black heavy (P4.12, P4.13)
+A8.5  the jacket's front panel, the juban collar, the sleeve (P4.2, P4.3, P4.10)
+A8.6  the kasa's straw texture and brim fringe               (P4.9)
+A8.7  re-grade every band; gates; handoff
 ```
 
 ---
@@ -108,48 +111,103 @@ Its settings were chosen by measurement, not by eye: `UPSCALE=4` +
 Douglas-Peucker `0.10` scored **0.9831** mean IoU recovering four KNOWN OG shapes
 from video-scale degraded copies, against 0.9735 for the naive threshold.
 
-**P4 — ⛔ THE FIVE DIFFERENCES, FOUND BY LOOKING AT `side_by_side.png`.**
-Ordered by how much of the picture they own. **Do not re-derive these.**
+**P4 — ⛔ ELEVEN DIFFERENCES, EACH VISIBLE IN A BAND CROP. Do not re-derive them.**
 
-1. ⛔ **HE IS NOT CARRYING HIS SWORD, AND IT IS THE FIRST THING THE EYE LANDS ON.**
-   The source shows the **tsuka (hilt) jutting forward-left at chest height** and
-   the **saya (scabbard) running down behind past the knee**. We draw neither.
-   ⚠️ Slots 3 (weapon) and 4 (prop) are EMPTY BY DESIGN — they are the OG's own
-   `weapon13000`/`prop13000` "none" placeholders, and the equipment art died with
-   the CDN. **But the sword is fully visible in the video and is traceable
-   exactly as the seven garments were.** It also already interferes with our
-   measurements: `traceGarment.py`'s `reject_occluder` exists solely to carve the
-   saya OUT of the hakama, and A6.2 found the source's silhouette carries a sword
-   ours cannot, which puts our achievable agreement BELOW the 0.8808 ceiling.
-2. ⛔ **THE HAKAMA READS AS TWO BAGGY TROUSER LEGS; THE SOURCE IS ONE COLUMN.**
-   `9011` is drawn twice, at slots 11 AND 7, so our lower body is two separate
-   legs with a gap between them and scalloped hems. The source's white garment is
-   a **single continuous mass** from the obi to the ankle. This is the largest
-   remaining silhouette error.
-   ⚠️ Drawing one leg shape at both slots is what the OG ITSELF does (2678 at 7
-   and 11, 2648 at 6 and 10), so the *mechanism* is right — what is wrong is that
-   our traced leg is a TROUSER and the source's is a SKIRT.
-3. ⛔ **OUR FILLS ARE MEASURABLY DARK.** 7×7 medians on `zFt_0061`:
-   ```
-   garment          source rgb          ours                delta
-   robe / hakama    (220, 213, 219)     0xc8c3c5 (200,195,197)   ~20 levels DARK
-   kasa straw       (167, 126,  61)     0x8e6f38 (142,111, 56)   ~25 levels DARK
-   gi jacket        (104, 101, 104)     0x6e6b6d (110,107,109)   within 6 - fine
-   ```
-   Suspect `trace_one`'s fill sampling: it erodes the interior and takes a median
-   under a 5×5 median filter, which pulls in outline-adjacent pixels and drags
-   light garments down. **The gi is fine, so it is not a global gamma issue.**
-   ⚠️ Two sample points (collar, saya) landed on the wrong garment and are NOT
-   reported above — re-sample properly rather than trusting hand-picked pixels.
-4. ⛔ **THE JUBAN COLLAR DOES NOT READ.** The source has a **bold white collar**
-   wrapping the neck and running down the chest — a major light shape against the
-   grey jacket, and one of the outfit's most recognisable features. Ours (`9012`)
-   is a small dark sliver.
-5. ⚠️ **THE FACE AND HAIR.** The source shows a clear profile with a distinct
-   black hair mass; ours is a small tan patch under a dark blob. Partly the known
-   head-art difference (the source's hair measures **20.4 × 24.0** world px
-   against our shape 2670's **14.2 × 15.0**), so this may not be fully fixable —
-   grade it, do not assume it.
+⚠️ **HOW THIS LIST WAS BUILT MATTERS.** A first pass looked at the whole figure
+ONCE and produced five items. **The owner looked again and immediately named two
+more** ("the shirt is too big", "pants not fully loaded"). Looking band by band
+then found four more. ⇒ **`compareToSource.py` now emits three band crops as well
+as the whole-figure view, and §5 item 13 requires all three to be looked at.**
+```
+renders/band_A.png   hat, head, collar
+renders/band_B.png   torso, jacket, sleeve, sword hilt
+renders/band_C.png   hakama, hem, feet
+```
+
+**BAND B — THE TORSO. The worst band.**
+1. ⛔ **NO SWORD, AND IT OWNS A THIRD OF THE SOURCE'S BAND.** The tsuka (wrapped
+   hilt) juts forward-left at chest height; the saya runs down behind past the
+   knee. We draw neither. Slots 3/4 are EMPTY BY DESIGN — the OG's own
+   `weapon13000`/`prop13000` placeholders, art died with the CDN — **but it is
+   plainly visible in the video and traceable exactly as the 7 garments were.**
+   ⚠️ It already distorts our measurements: `reject_occluder` exists solely to
+   carve the saya OUT of the hakama trace.
+2. ⛔ **THE JACKET HAS NO INTERNAL STRUCTURE.** The source shows a LIGHTER front
+   panel (the lapel), a DARKER back and sleeve, and a white collar edge between
+   them. Ours is **one flat tone** — which is why it reads as a shapeless mass.
+   ⭐ **This is the owner's "the shirt is too big"**: not necessarily wrong in
+   extent, but undifferentiated, so it reads as a blob.
+   ⚠️ Honest limit: crude colour-class area measurement could NOT cleanly isolate
+   the jacket (it catches hair and scabbard too), so "too big" is recorded as an
+   OWNER OBSERVATION with no number behind it yet. **A8.1's per-garment mask
+   comparison is the instrument that will settle it.**
+3. ⛔ **OUR FOREARM IS BARE WHERE THE SOURCE'S IS SLEEVED.** A tan strip runs down
+   our front at chest height; the source's arm is inside the sleeve and only the
+   hand emerges at the waist. Measured: **skin is 1.20× the source's share of the
+   figure.**
+4. ⚠️ **NO EMBLEM/MON.** The source carries a marking on the chest and a circular
+   one lower on the jacket.
+5. ⚠️ **THE BACK BULGE IS LUMPY.** The source's back curve is smooth and
+   controlled; ours is irregular, with ragged black artefacts around the shoulder.
+
+**BAND C — THE LOWER BODY.**
+6. ⛔ **THE HEM IS RAGGED — the owner's "pants not fully loaded", and it is a
+   TRACE DEFECT, not a placement one.** Our hakama's bottom edge is jagged and
+   blotchy with heavy black blobs. **The source's hem sits IN GRASS**, and the
+   ink-bounded flood fill is following the grass boundary instead of the garment.
+   ⇒ **Trace the hem from a frame where it is clear, or cut the trace above the
+   grass line and close the hem straight.** Do not "fix" it by moving anything.
+7. ⛔ **IT READS AS TWO BAGGY TROUSER LEGS WITH A DEEP V; THE SOURCE IS ONE
+   CLOSED COLUMN** with a single soft fold line. Largest remaining shape error.
+   ⚠️ Drawing one shape at both leg slots is what the OG ITSELF does (2678 at 7
+   and 11) — the mechanism is right, the traced SHAPE is a trouser where the
+   source is a skirt.
+8. ⚠️ **THE FEET.** At 97 % of the figure's height we are **5.59× wider** than the
+   source (0.312 vs 0.056) — the source's feet are hidden in grass and ours are
+   two full sandals. Do not "fix" our feet to match an occlusion; the real issue
+   is 6 and 7 above.
+
+**BAND A — THE HEAD.**
+9. ⛔ **THE KASA HAS NO STRAW TEXTURE AND NO BRIM FRINGE.** The source's has
+   radial straw lines fanning from the apex and a **distinct fringe of straw ends
+   ticking down all around the rim** — one of its most recognisable features.
+   Ours is a flat solid cone.
+10. ⛔ **THE JUBAN COLLAR DOES NOT READ.** The source's bold white collar wraps
+    the neck and runs down the chest. Ours (`9012`) is a small dark sliver.
+11. ⚠️ **THE FACE AND HAIR.** The source shows a clear profile and a distinct
+    black hair mass; ours is a tan patch under a dark blob. Partly the known
+    head-art difference (source hair **20.4 × 24.0** world px vs our 2670's
+    **14.2 × 15.0**) — grade it, do not assume it is fixable.
+
+**ACROSS ALL BANDS — two measured, global defects:**
+12. ⛔ **OUR FILLS ARE DARK.** 7×7 medians on `zFt_0061`:
+    ```
+    garment          source rgb          ours                     delta
+    robe / hakama    (220, 213, 219)     0xc8c3c5 (200,195,197)   ~20 DARK
+    kasa straw       (167, 126,  61)     0x8e6f38 (142,111, 56)   ~25 DARK
+    gi jacket        (104, 101, 104)     0x6e6b6d (110,107,109)   within 6 - fine
+    ```
+    The gi is fine, so it is **not** a global gamma issue. Suspect `trace_one`'s
+    fill sampling: it erodes the interior and medians under a 5×5 filter, pulling
+    in outline-adjacent pixels and dragging light garments down.
+    ⚠️ Two of seven hand-picked samples (collar, saya) landed on the WRONG garment
+    and are excluded — re-sample from each garment's own traced mask (D4).
+13. ⛔ **WE ARE TOO INKY.** Black is **35.9 %** of our figure against the source's
+    **28.8 %**. Combined with 12, the whole fighter reads darker and heavier than
+    the source. Suspect stroke width at this scale and the traced black fills.
+
+**⭐ AND THE WIDTH PROFILE, which is what the A6 gate actually measures:**
+```
+  height   ours   theirs  ratio        height   ours   theirs  ratio
+    10%   0.326   0.326   1.00x          60%   0.184   0.245   0.75x
+    20%   0.142   0.167   0.85x          70%   0.348   0.322   1.08x
+    45%   0.291   0.403   0.72x          90%   0.418   0.399   1.05x
+    50%   0.270   0.330   0.82x          97%   0.312   0.056   5.59x
+```
+**We are 25-28 % too NARROW through the whole mid-body (45-60 %)** — that is the
+missing sword and the sleeved arm — **and 5.59× too wide at the ankles.** The two
+errors partly cancel in a whole-figure score, which is exactly how 0.9006 was
+reached with the picture still wrong.
 
 **P5 — ✅ WHAT THE CURRENT GATES PIN, AND WHY THEY WILL FIGHT YOU.**
 ```
@@ -296,11 +354,16 @@ does — the fix is the traced SHAPE, not the slot map.
 ### A8.4 — Colour
 **Gate: A8-D.** Fix the fill sampling in `trace_one`, retrace, re-measure.
 
-### A8.5 — The collar, and an honest verdict on the head
-**Gate: A8-A re-run.** The head may not be fixable (different source art) — grade
-it and say which.
+### A8.5 — The jacket's front panel, the collar, the sleeved forearm
+**Gate: A8-A re-run.** §P4.2 is the owner's "the shirt is too big" — settle it
+with the per-garment mask comparison rather than by eye.
 
-### A8.6 — Re-grade, gates, handoff
+### A8.6 — The kasa's straw texture and brim fringe
+§P4.9. ⚠️ Both are INTERIOR detail; the silhouette score cannot see either, so
+A8-A is the only gate that can. The fringe changes the outline slightly — watch
+A8-E.
+
+### A8.7 — Re-grade every band, gates, handoff
 **Gates: A8-E, A8-F.** `RESUME_HERE.md` and `docs/DIVERGENCES.md` in the SAME
 commit as the change each describes. **Write the SESSION 22 kickoff.**
 
@@ -322,7 +385,7 @@ commit as the change each describes. **Write the SESSION 22 kickoff.**
 | 10 | Nothing in the render path reads `reference/` | grep + clean clone |
 | 11 | Nothing from `reference/` committed | `git status` + history |
 | 12 | Ledgers + `RESUME_HERE` in the same commit as their change | `git show --stat` |
-| 13 | **A human looked at `side_by_side.png` and said which of §P4's five closed** | the verdict, in the commit |
+| 13 | **A human looked at ALL THREE band crops and said which of §P4's eleven closed** | the verdict, in the commit |
 | 14 | SESSION 22 kickoff written, committed, graded | the file + its bar self-report |
 
 ---
@@ -373,9 +436,11 @@ back below that bar, say INFERRED in its header and move on.**
   score now reads ABOVE the source's own frame-to-frame ceiling while the fighter
   visibly does not match. A ruler that cannot fail is not measuring any more, and
   that single fact is the argument for the whole session.
-- ⭐ **§P4 is five differences found by LOOKING at a picture**, ordered by how
-  much of the frame they own, each with the evidence and the suspected cause —
-  and the biggest of them (no sword) is one a silhouette score can never surface.
+- ⭐ **§P4 is ELEVEN differences found by LOOKING**, band by band, each with its
+  evidence and suspected cause — and it records HOW the list grew: a first pass
+  saw five, the owner immediately named two more, and looking band by band found
+  four beyond that. The instrument (three band crops) is now part of the
+  comparator and §5 item 13 requires all three to be looked at.
 - ⭐ **It marks its own weak evidence.** Two of the seven colour samples landed on
   the wrong garment; they are excluded and D4 makes re-sampling from the mask a
   decision rather than an afterthought.
@@ -389,4 +454,4 @@ back below that bar, say INFERRED in its header and move on.**
 **What it deliberately does not promise:** that the fighter will be perfect. The
 source is a compressed 233-px-tall figure in a video; §6 Risk 2 names the floor
 below which tracing is honest guesswork. It promises that the five differences
-anyone can see in `side_by_side.png` are each either closed or explained.
+anyone can see in the three band crops are each either closed or explained.

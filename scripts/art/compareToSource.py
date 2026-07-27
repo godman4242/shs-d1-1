@@ -299,6 +299,9 @@ def main():
             print(f"  overlay            {path}   IoU {inter / union:.4f}   <- LOOK AT IT")
             sp, ow, sw = side_by_side(meta, png, fpath, reg, args.side)
             print(f"  side by side       {sp}   ours {ow}px | theirs {sw}px, matched height")
+            for tag, what, path in bands(png, fpath):
+                print(f"  band {tag}             {path}   {what}")
+            print("  ⇒ LOOK AT ALL THREE BANDS. A whole-figure view hides everything below the hat.")
             verdicts, median = slot_verdicts(meta, ours, theirs, reg, world_per_px)
             print("\n  PER-SLOT SIGNED ERROR, in WORLD px  (+ = our edge is further RIGHT than the source's)")
             print(f"  whole-figure x shift {median:+.2f} — THE ANCHOR CHOICE, NOT A MEASUREMENT. Do not tune against it.")
@@ -357,6 +360,47 @@ def side_by_side(meta, ours_png, frame_path, reg, out_path):
     canvas.paste(scrop, (ocrop.width + gap, 0))
     canvas.save(os.path.join(ROOT, out_path))
     return out_path, ocrop.width, scrop.width
+
+# Three bands, because a whole-figure side-by-side hides everything below the
+# hat. SESSION 20 shipped a five-item defect list from ONE whole-figure look;
+# the owner looked again and found more in minutes. Bands are how you look
+# properly: each is blown up to a fixed height so small parts get real pixels.
+BANDS = (
+    ("A", 0.00, 0.25, "hat, head, collar"),
+    ("B", 0.25, 0.55, "torso, jacket, sleeve, sword hilt"),
+    ("C", 0.55, 1.00, "hakama, hem, feet"),
+)
+
+
+def bands(ours_png, frame_path, prefix="renders/band"):
+    """Ours beside the source, band by band, matched height. LOOK AT ALL THREE."""
+    src = Image.open(os.path.join(ROOT, frame_path)).convert("RGB")
+    th = figure_of_frame(frame_path)
+    ty0, ty1, tx0, tx1 = bbox(th)
+    H = ty1 - ty0 + 1
+
+    ours = Image.open(os.path.join(ROOT, ours_png)).convert("RGB")
+    om = silhouette_from_render(np.asarray(ours))
+    if om is None:
+        raise SystemExit("bands: no fighter found in " + ours_png)
+    oy0, oy1, ox0, ox1 = bbox(om)
+    oh = oy1 - oy0 + 1
+
+    out = []
+    for tag, lo, hi, what in BANDS:
+        sc = src.crop((tx0 - 8, FRAME_BAND[0] + ty0 + int(lo * H), tx1 + 8, FRAME_BAND[0] + ty0 + int(hi * H)))
+        oc = ours.crop((ox0 - 5, oy0 + int(lo * oh), ox1 + 5, oy0 + int(hi * oh)))
+        TH = 300
+        oc = oc.resize((max(1, int(oc.width * TH / oc.height)), TH), Image.NEAREST)
+        sc = sc.resize((max(1, int(sc.width * TH / sc.height)), TH), Image.LANCZOS)
+        c = Image.new("RGB", (oc.width + 14 + sc.width, TH), (20, 20, 20))
+        c.paste(oc, (0, 0))
+        c.paste(sc, (oc.width + 14, 0))
+        path = f"{prefix}_{tag}.png"
+        c.save(os.path.join(ROOT, path))
+        out.append((tag, what, path))
+    return out
+
 
 if __name__ == "__main__":
     main()
