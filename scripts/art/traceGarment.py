@@ -64,9 +64,15 @@ GARMENTS = [
     dict(id=9012, slot=12, name="collar / juban",
          crop=(806, 688, 858, 742), seed=(841, 702),
          part=(-4.000, 6.350, -11.700, 4.350), anchor="centre"),
-    dict(id=9015, slot=15, name="gi body (grey torso panel)",
-         crop=(822, 702, 880, 794), seed=(851, 759),
+    dict(id=9015, slot=15, name="gi body (outer silhouette)",
+         crop=(806, 700, 886, 796), seed=(851, 759), mode="outer", grey=(75, 165),
          part=(-9.600, 9.816, -21.550, 2.150), anchor="centre"),
+    dict(id=9019, slot=19, name="gi sleeve, near arm",
+         crop=(826, 704, 878, 792), seed=(851, 759),
+         part=(-6.391, 5.802, -5.700, 20.450), anchor="sleeve"),
+    dict(id=9001, slot=1, name="gi sleeve, far arm",
+         crop=(856, 724, 886, 770), seed=(874, 752),
+         part=(-6.391, 5.802, -5.700, 20.450), anchor="sleeve"),
     dict(id=9014, slot=14, name="obi (waist sash)",
          crop=(808, 764, 836, 790), seed=(821, 776),
          part=(-12.500, 7.950, -10.700, 6.450), anchor="centre"),
@@ -147,6 +153,28 @@ def reject_occluder(a, sil):
         return sil
     sizes = ndimage.sum(keep, lab, range(1, n + 1))
     return ndimage.binary_fill_holes(lab == (int(np.argmax(sizes)) + 1))
+
+
+def outer_silhouette(a, seed_xy, lo, hi):
+    """
+    The garment's OUTER boundary, for a part the source cannot show whole.
+
+    The near sleeve hangs over the torso, so the gi BODY is never fully visible
+    and "the region enclosed by ink" returns only the strip beside the sleeve.
+    The gi's outer edge IS visible, though, so the torso garment is taken as
+    (garment-grey OR ink) flood-filled from a seed: that yields the whole gi
+    silhouette, which slot 15 wears and the sleeve on slot 19 then draws over —
+    exactly the layering the frame shows.
+    """
+    mx = np.maximum(np.maximum(a[:, :, 0], a[:, :, 1]), a[:, :, 2])
+    mn = np.minimum(np.minimum(a[:, :, 0], a[:, :, 1]), a[:, :, 2])
+    grey = (mn >= lo) & (mx <= hi) & ((mx - mn) < 30)
+    m = ndimage.binary_closing(grey | (mx < INK_MAX), np.ones((3, 3)))
+    lab, n = ndimage.label(m, np.ones((3, 3)))
+    sx, sy = seed_xy
+    if lab[sy, sx] == 0:
+        raise SystemExit(f"outer seed {seed_xy} is outside the garment mask")
+    return ndimage.binary_fill_holes(lab == lab[sy, sx])
 
 
 def isolate(a, seed_xy):
@@ -257,7 +285,19 @@ def potrace_polygon(mask):
 def trace_one(im, g):
     a = np.asarray(im.crop(g["crop"])).astype(np.int16)
     cx, cy = g["seed"][0] - g["crop"][0], g["seed"][1] - g["crop"][1]
-    sil, interior = isolate(a, (cx, cy))
+    colour_from = None
+    if g.get("mode") == "outer":
+        sil = outer_silhouette(a, (cx, cy), *g["grey"])
+        interior = ndimage.binary_erosion(sil, np.ones((5, 5)))
+        # Sample the fill from the GARMENT pixels only. Sampling `interior` here
+        # averages the heavy black outline in with the cloth and emitted a fill
+        # ~20 levels too dark.
+        lo, hi = g["grey"]
+        mxx = np.maximum(np.maximum(a[:, :, 0], a[:, :, 1]), a[:, :, 2])
+        mnn = np.minimum(np.minimum(a[:, :, 0], a[:, :, 1]), a[:, :, 2])
+        colour_from = interior & (mnn >= lo) & (mxx <= hi) & ((mxx - mnn) < 30)
+    else:
+        sil, interior = isolate(a, (cx, cy))
     if g.get("dropSaya"):
         sil = reject_occluder(a, sil)
         interior = interior & sil
@@ -266,9 +306,9 @@ def trace_one(im, g):
     vy0, vy1 = g["crop"][1] + ys.min(), g["crop"][1] + ys.max()
 
     med = np.dstack([ndimage.median_filter(a[:, :, c], size=5) for c in range(3)])
-    core = ndimage.binary_erosion(interior, np.ones((3, 3)))
+    core = ndimage.binary_erosion(colour_from if colour_from is not None else interior, np.ones((3, 3)))
     if core.sum() < 30:
-        core = interior
+        core = colour_from if colour_from is not None else interior
     fillcol = tuple(int(v) for v in med[core].mean(axis=0).round())
 
     px0, px1, py0, py1 = g["part"]
@@ -276,6 +316,12 @@ def trace_one(im, g):
         ax = (px0 + px1) / 2.0
         ay = py0 + BRIM_DOWN_HEAD * (py1 - py0)
         ref_y = vy1                                   # brim (bottom) anchors
+    elif g["anchor"] == "sleeve":
+        # The sleeve hangs FROM the shoulder, so its TOP anchors to the upper
+        # arm's top, not its centre — centring would ride it down the forearm.
+        ax = (px0 + px1) / 2.0
+        ay = py0
+        ref_y = vy0
     elif g["anchor"] == "hakama":
         ax = (px0 + px1) / 2.0
         ay = HAKAMA_TOP

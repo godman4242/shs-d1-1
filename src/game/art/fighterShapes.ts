@@ -27,11 +27,13 @@ import { SHAPE_2674 } from './generated/shape2674';
 import { SHAPE_2676 } from './generated/shape2676';
 import { SHAPE_2678 } from './generated/shape2678';
 /** SESSION19 A5.2/A5.3 — TRACED, not extracted. Ids >= 9000 are traced garments. */
+import { SHAPE_9001 } from './generated/shape9001';
 import { SHAPE_9011 } from './generated/shape9011';
 import { SHAPE_9012 } from './generated/shape9012';
 import { SHAPE_9014 } from './generated/shape9014';
 import { SHAPE_9015 } from './generated/shape9015';
 import { SHAPE_9017 } from './generated/shape9017';
+import { SHAPE_9019 } from './generated/shape9019';
 
 const ALL: readonly ArtShape[] = [
   SHAPE_2644,
@@ -48,11 +50,13 @@ const ALL: readonly ArtShape[] = [
   SHAPE_2674,
   SHAPE_2676,
   SHAPE_2678,
+  SHAPE_9001,
   SHAPE_9011,
   SHAPE_9012,
   SHAPE_9014,
   SHAPE_9015,
   SHAPE_9017,
+  SHAPE_9019,
 ];
 
 /** Keyed by each shape's OWN `id`, never by a hand-typed key — they cannot drift. */

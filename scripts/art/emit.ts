@@ -118,15 +118,43 @@ export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
     frame: 'reference/frames/s19_trace/zFt_0061.png',
     video: 'zFtCaTO0_1M',
     seconds: 590,
-    crop: '(822,702)-(880,794) video px; silhouette 53 x 89 video px',
-    approximated: 'ONE flat fill at the interior mean; the gi is a single grey panel.',
+    crop: '(806,700)-(886,796) video px; silhouette 77 x 94 video px',
+    approximated: 'ONE flat fill at the interior mean of the GARMENT pixels.',
     inferred:
-      'PLACEMENT, and THE PART CUT. The gi body and the near SLEEVE are the ' +
-      'same grey (A5.1 F6) and are not divided by a closed outline everywhere, ' +
-      'so this one region covers both and is assigned to slot 15 (torso). The ' +
-      'arm slots 19/20 are NOT dressed, and they draw IN FRONT of 15, so a ' +
-      'bare near arm still paints over this gi. Fixing that needs the sleeve ' +
-      'cut, which this frame does not give.',
+      'EXTENT. The near sleeve hangs over the torso, so the gi BODY is never ' +
+      'fully visible and the region enclosed by ink returns only the strip ' +
+      'beside the sleeve. This is therefore the gi\'s OUTER silhouette - ' +
+      '(garment-grey OR ink) flood-filled from a seed - which slot 15 wears and ' +
+      'the sleeve on slot 19 draws over, the layering the frame shows. Where ' +
+      'the two overlap the torso is hidden, so its hidden shape is unverifiable.',
+  },
+  9001: {
+    slot: 1,
+    garment: 'gi sleeve, far arm',
+    frame: 'reference/frames/s19_trace/zFt_0061.png',
+    video: 'zFtCaTO0_1M',
+    seconds: 590,
+    crop: '(856,724)-(886,770) video px; silhouette 27 x 44 video px',
+    approximated: 'ONE flat fill at the interior mean; the sleeve is a single grey panel.',
+    inferred:
+      'PLACEMENT, and EXTENT. Only the far sleeve\'s outer lobe clears the body ' +
+      'in this frame, so the traced shape is the visible part, not the whole ' +
+      'sleeve. It draws BEHIND everything on the far side, so the shortfall is ' +
+      'covered by the torso.',
+  },
+  9019: {
+    slot: 19,
+    garment: 'gi sleeve, near arm',
+    frame: 'reference/frames/s19_trace/zFt_0061.png',
+    video: 'zFtCaTO0_1M',
+    seconds: 590,
+    crop: '(826,704)-(878,792) video px; silhouette 50 x 86 video px',
+    approximated: 'ONE flat fill at the interior mean; the sleeve is a single grey panel.',
+    inferred:
+      'PLACEMENT. Anchored by its TOP to the upper arm\'s top rather than by ' +
+      'centre: the sleeve hangs FROM the shoulder, and centring rides it down ' +
+      'the forearm. A5.3 first mistook this region for the gi BODY and put it ' +
+      'on slot 15, which is why the arm rendered bare over a vest-sized gi.',
   },
   9011: {
     slot: 11,

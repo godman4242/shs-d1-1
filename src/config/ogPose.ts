@@ -123,12 +123,14 @@ export const OG_SLOT_SHAPES: ReadonlyArray<readonly number[]> = [
  * at both slots is what the OG itself does — 2678 at 7 and 11, 2648 at 6 and 10.
  */
 const TRACED: Readonly<Record<number, readonly number[]>> = {
-  12: [9012], // collar / juban
-  14: [9014], // obi
-  15: [9015], // gi body
+  1: [9001], //  gi sleeve, far arm
   7: [9011], //  hakama, far leg — the SAME shape as 11, see above
   11: [9011], // hakama, near leg
+  12: [9012], // collar / juban
+  14: [9014], // obi
+  15: [9015], // gi body (outer silhouette; the sleeve draws over it)
   17: [9017], // kasa
+  19: [9019], // gi sleeve, near arm
 };
 
 export const OG_SLOT_ALIASES: ReadonlyArray<readonly [number, number]> = [
@@ -156,11 +158,16 @@ export const OG_SLOT_ALIASES: ReadonlyArray<readonly [number, number]> = [
  * slot 17; its provenance header names the frame and timestamp it came from and
  * what about it is INFERRED (`src/game/art/generated/shape9017.ts`).
  *
- * ⚠️ SLOTS 19/20 AND 1/2 (THE ARMS) ARE NOT DRESSED, AND THEY DRAW IN FRONT OF
- * THE GI. The gi body and the near sleeve are the same grey and are not divided
- * by a closed outline everywhere (A5.1 F6), so no sleeve could be cut out of
- * this frame — a bare near arm still paints over the traced gi. A test pins the
- * exact set of dressed slots, so adding one is a deliberate act, not a drift.
+ * ⚠️ THE FOREARMS (20 and 2) STAY BARE ON PURPOSE — the source's sleeve ends at
+ * mid-forearm and the hand and wrist are skin. Dressing them would be inventing
+ * cloth the frame does not show.
+ *
+ * ⚠️ SLOT 15 CARRIES THE GI'S OUTER SILHOUETTE, NOT ITS BODY PANEL. The near
+ * sleeve hangs over the torso, so the body is never fully visible; the sleeve on
+ * slot 19 draws over the torso and reproduces the layering the frame shows.
+ *
+ * A test pins the exact set of dressed slots, so adding one is a deliberate act
+ * rather than a drift.
  */
 export const OG_DRESSED_SLOT_SHAPES: ReadonlyArray<readonly number[]> = OG_SLOT_SHAPES.map(
   (shapes, slot) => TRACED[slot] ?? shapes,

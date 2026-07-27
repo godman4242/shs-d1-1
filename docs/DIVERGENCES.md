@@ -2331,3 +2331,43 @@ A cluster split would emit speckle rather than panels. **One flat fill at the
 interior mean stands**, and the emitted `#8e6f38` IS the source's measured mean.
 The perceived darkness is a uniform fill next to a graded region whose highlight
 catches the eye. Recorded so nobody re-opens it without new evidence.
+
+---
+
+## SESSION 19 — A5.4: the sleeves, and a mis-assignment corrected
+
+### ⛔ D-A5.4a — A5.3 PUT THE **SLEEVE** ON THE **TORSO** SLOT
+Owner feedback ("I see some empty spots, add the sleeves if the source says so")
+sent me back to the frame at three ink thresholds, and the region A5.3 called
+"gi body" and assigned to slot 15 is **the near SLEEVE** — it carries the round
+crest, and the narrow strip beside it is the gi's visible body panel. That single
+mis-read is why the arm rendered bare over a vest-sized gi.
+**Corrected:** `9019` sleeve → slot 19, `9001` far sleeve → slot 1,
+`9015` → the gi's **outer silhouette** on slot 15.
+
+### ⭐ D-A5.4b — SLOT 15 CARRIES THE GI'S OUTER SILHOUETTE, NOT ITS BODY PANEL
+The near sleeve hangs over the torso, so the gi BODY is never fully visible and
+"the region enclosed by ink" returns only the strip beside the sleeve. The gi's
+outer EDGE is visible though, so slot 15 gets `(garment-grey OR ink)`
+flood-filled from a seed — the whole gi silhouette — and the sleeve on slot 19
+draws over it. That reproduces the layering the frame shows.
+⚠️ Where the two overlap the torso is hidden, so its hidden shape is unverifiable
+and is declared so in the header.
+
+### ⚠️ D-A5.4c — THE SLEEVE ANCHORS BY ITS TOP, NOT ITS CENTRE
+A sleeve hangs FROM the shoulder. Centring it on the upper arm's bbox rides it
+down the forearm. Same class of error as A5.3's hakama, caught before it shipped.
+
+### ⚠️ The forearms and hands stay BARE, on purpose
+The source's sleeve ends at mid-forearm and the wrist and hand are skin.
+Dressing them would be inventing cloth the frame does not show. Pinned by a test.
+
+### ⭐ OWNER DESIGN CONFIRMATION (2026-07-27) — EQUIPMENT IS PER-SLOT AND TOGGLEABLE
+Kheshav: *"those clothes can be equipped or unequipped at any time in the menu,
+they will be naked like in the picture you showed me before."* This confirms the
+architecture rather than changing it: `TRACED` is already a **per-slot override
+table**, so each garment is independently equippable, and **the bare fighter is
+not scaffolding — it is the real unequipped state**, which is why `?art=idle`
+must keep working and why `OG_SLOT_SHAPES` is never edited in place (D3).
+It also means a future equip system is a per-slot merge over the bare map, not a
+second hand-maintained array.

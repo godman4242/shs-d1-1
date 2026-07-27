@@ -289,23 +289,30 @@ describe('OG_DRESSED_SLOT_SHAPES: the traced outfit (SESSION19 A5.2)', () => {
    * The exact dressed set, pinned. Adding a garment must be a deliberate act
    * that edits this list, never a drift that nobody notices.
    */
-  it('dresses EXACTLY slots 7, 11, 12, 14, 15, 17 and leaves the rest bare (D3)', () => {
+  it('dresses EXACTLY slots 1, 7, 11, 12, 14, 15, 17, 19 and leaves the rest bare (D3)', () => {
     const differing = OG_DRESSED_SLOT_SHAPES.flatMap((shapes, slot) =>
       JSON.stringify(shapes) === JSON.stringify(OG_SLOT_SHAPES[slot]) ? [] : [slot],
     );
-    expect(differing).toEqual([7, 11, 12, 14, 15, 17]);
+    expect(differing).toEqual([1, 7, 11, 12, 14, 15, 17, 19]);
   });
 
   /**
-   * ⚠️ THE ARMS ARE NOT DRESSED AND THEY DRAW IN FRONT OF THE GI. Pinned as a
-   * KNOWN state rather than left implicit: gi body and near sleeve are one grey
-   * with no closed outline between them (A5.1 F6), so no sleeve could be cut
-   * from the tracing frame, and a bare near arm still paints over slot 15.
+   * The UPPER arms wear sleeves; the FOREARMS stay bare on purpose, because the
+   * source's sleeve ends at mid-forearm and the wrist and hand are skin.
+   * Dressing them would be inventing cloth the frame does not show.
    */
-  it('leaves the arm slots bare — a KNOWN gap, not an oversight', () => {
-    for (const slot of [1, 2, 19, 20]) {
-      expect(OG_DRESSED_SLOT_SHAPES[slot]).toEqual(OG_SLOT_SHAPES[slot]);
+  it('sleeves the upper arms and leaves the forearms and hands bare', () => {
+    expect(OG_DRESSED_SLOT_SHAPES[19]).toEqual([9019]);
+    expect(OG_DRESSED_SLOT_SHAPES[1]).toEqual([9001]);
+    for (const bare of [2, 20, 0, 18]) {
+      expect(OG_DRESSED_SLOT_SHAPES[bare]).toEqual(OG_SLOT_SHAPES[bare]);
     }
+  });
+
+  /** The sleeve must draw OVER the gi body, or the arm reads as bare. */
+  it('draws the near sleeve AFTER the gi body', () => {
+    const order = dressed().map((p) => p.slot);
+    expect(order.indexOf(19)).toBeGreaterThan(order.indexOf(15));
   });
 
   /** One traced leg is drawn at BOTH calf slots — the OG reuses shapes the same way. */
