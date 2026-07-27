@@ -33,6 +33,13 @@ const wantsOgArt = params.get('art') === 'og';
  */
 const wantsIdleArt = params.get('art') === 'idle';
 
+/**
+ * SESSION19 A5.2: `?art=dressed` is the SAME scene with the dressed slot map —
+ * traced garment art replacing a part's shape. Same transparent canvas, because
+ * it is measured the same way.
+ */
+const wantsDressedArt = params.get('art') === 'dressed';
+
 const game = new Phaser.Game({
   // WEBGL explicitly (not AUTO): the art direction relies on WebGL-only
   // features (e.g. Graphics gradients). Failing loudly beats degrading silently.
@@ -40,7 +47,7 @@ const game = new Phaser.Game({
   width: GAME_WIDTH,
   height: GAME_HEIGHT,
   backgroundColor: COL.skyTop,
-  transparent: wantsOgArt || wantsIdleArt,
+  transparent: wantsOgArt || wantsIdleArt || wantsDressedArt,
   parent: 'app',
   scale: {
     mode: Phaser.Scale.FIT,
@@ -49,7 +56,7 @@ const game = new Phaser.Game({
   // The FIRST scene in this array auto-starts. DuelScene remains the default —
   // it launches the intro/result overlays itself — and `?scene=encounter`
   // boots the A4 crowd fight instead.
-  scene: wantsIdleArt
+  scene: wantsIdleArt || wantsDressedArt
     ? [IdleFighterScene]
     : wantsOgArt
       ? [OgArtScene]

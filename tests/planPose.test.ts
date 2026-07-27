@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { composePose } from '../src/core/composePose';
 import { inkedBounds } from '../src/core/artPlan';
 import { VIEW } from '../src/core/viewport';
-import { OG_IDLE_NODES, OG_SLOT_ALIASES, OG_SLOT_SHAPES } from '../src/config/ogPose';
+import { OG_DRESSED_SLOT_SHAPES, OG_IDLE_NODES, OG_SLOT_ALIASES, OG_SLOT_SHAPES } from '../src/config/ogPose';
 import { SHAPE_2644 } from '../src/game/art/generated/shape2644';
 import { SHAPE_2646 } from '../src/game/art/generated/shape2646';
 import { SHAPE_2648 } from '../src/game/art/generated/shape2648';
@@ -280,14 +280,21 @@ describe('planPose: the committed idle fighter', () => {
    * same technique the provenance gate uses. Without this, the registry the
    * scene actually uses and the slot map that names the parts could drift apart
    * and only a runtime throw would notice.
+   *
+   * ⚠️ SESSION19 A5.2: BOTH slot maps, not just the bare one. `?art=dressed`
+   * draws traced garment art that the bare map never names, and checking only
+   * the bare map would let a dressed-only shape go unregistered until the scene
+   * threw in the browser. EXACT equality both ways still holds — a registered
+   * shape no map names is dead weight, and this caught 9017 the moment it
+   * landed.
    */
-  it('the real FIGHTER_SHAPES registry names exactly the ids the slot map needs', () => {
+  it('the real FIGHTER_SHAPES registry names exactly the ids BOTH slot maps need', () => {
     const src = readFileSync(
       path.join(fileURLToPath(new URL('..', import.meta.url)), 'src', 'game', 'art', 'fighterShapes.ts'),
       'utf8',
     );
     const registered = [...src.matchAll(/SHAPE_(\d+),$/gm)].map((m) => Number(m[1])).sort((a, b) => a - b);
-    const needed = [...new Set(OG_SLOT_SHAPES.flat())].sort((a, b) => a - b);
+    const needed = [...new Set([...OG_SLOT_SHAPES.flat(), ...OG_DRESSED_SLOT_SHAPES.flat()])].sort((a, b) => a - b);
 
     expect(registered).toEqual(needed);
   });

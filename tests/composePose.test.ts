@@ -23,7 +23,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { composePose, type PosedPart } from '../src/core/composePose';
-import { OG_IDLE_NODES, OG_SLOT_ALIASES, OG_SLOT_SHAPES, type OgPoseNode } from '../src/config/ogPose';
+import {
+  OG_DRESSED_SLOT_SHAPES,
+  OG_IDLE_NODES,
+  OG_SLOT_ALIASES,
+  OG_SLOT_SHAPES,
+  type OgPoseNode,
+} from '../src/config/ogPose';
 
 const compose = (): PosedPart[] => composePose(OG_IDLE_NODES, OG_SLOT_SHAPES, OG_SLOT_ALIASES);
 
@@ -256,5 +262,61 @@ describe.skipIf(!HAVE_BINDATA)('composePose: OG_IDLE_NODES is a faithful transcr
     expect(payload.has(8)).toBe(false);
     expect(payload.has(17)).toBe(false);
     expect(OG_SLOT_ALIASES.map(([slot]) => slot).sort((a, b) => a - b)).toEqual([8, 17]);
+  });
+});
+
+/**
+ * SESSION19 A5.2 — THE DRESSED SLOT MAP, AND THE 17←16 ALIAS MADE REAL.
+ *
+ * Kickoff D3: a dressed fighter is a SECOND slot map, never a modified one, so
+ * `?art=idle` keeps drawing the bare doll and SESSION 18's evidence survives.
+ *
+ * ⭐ This retires a stated weakness. The alias test above pins 17←16 against a
+ * SYNTHETIC map holding a made-up id `7000`, because slot 17 was empty in all
+ * shipped data — so the second half of the aliasing rule was carried by a
+ * fixture. With a real traced kasa in slot 17 it is now pinned against the data
+ * the game actually draws.
+ */
+describe('OG_DRESSED_SLOT_SHAPES: the traced outfit (SESSION19 A5.2)', () => {
+  const dressed = (): PosedPart[] => composePose(OG_IDLE_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES);
+
+  it('fills slot 17 with the traced kasa, where the BARE map is empty', () => {
+    expect(OG_SLOT_SHAPES[17], 'the bare fighter must stay bald').toEqual([]);
+    expect(OG_DRESSED_SLOT_SHAPES[17]).toEqual([9017]);
+  });
+
+  it('differs from the bare map in slot 17 and NOWHERE else (D3)', () => {
+    const differing = OG_DRESSED_SLOT_SHAPES.flatMap((shapes, slot) =>
+      JSON.stringify(shapes) === JSON.stringify(OG_SLOT_SHAPES[slot]) ? [] : [slot],
+    );
+    expect(differing, 'A5.2 dresses ONE slot; A5.3 adds the rest deliberately').toEqual([17]);
+  });
+
+  it('draws 22 parts — the bare 21 plus the kasa', () => {
+    expect(compose()).toHaveLength(21);
+    expect(dressed()).toHaveLength(22);
+  });
+
+  /** The alias, against real art rather than a fixture id. */
+  it('puts the kasa at the HEAD node transform, not at a node of its own', () => {
+    expect(OG_IDLE_NODES.some((n) => n.slot === 17), 'slot 17 has no node — that is why it is aliased').toBe(false);
+
+    const hat = dressed().find((p) => p.slot === 17);
+
+    expect(hat?.shapeId).toBe(9017);
+    expect([hat?.x, hat?.y]).toEqual([node(16).x, node(16).y]);
+    expect(hat?.rotationRad).toBeCloseTo(node(16).rotationDeg * DEG_TO_RAD, 12);
+  });
+
+  /**
+   * A hat behind the head is the failure this ordering exists to stop, and it
+   * would still look like a fighter. z-order is CREATION order = slot order,
+   * so 17 > 16 puts the kasa in front of the head it sits on.
+   */
+  it('draws the kasa AFTER the head and hair', () => {
+    const order = dressed();
+    const hat = order.findIndex((p) => p.slot === 17);
+    const lastHead = order.map((p) => p.slot).lastIndexOf(16);
+    expect(hat).toBeGreaterThan(lastHead);
   });
 });

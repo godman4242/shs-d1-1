@@ -7,8 +7,8 @@
  * so it is fully ratcheted: it holds no numbers beyond the ids, which ARE the
  * data.
  *
- * The 14 shapes here are exactly the ones `src/config/ogPose.ts`'s slot map
- * names. `2641` (training branch) and `2662` (alt head) are in the corpus but
+ * The 14 OG shapes here are exactly the ones `src/config/ogPose.ts`'s BARE slot
+ * map names; `SHAPE_9017` is the traced kasa the DRESSED map adds. `2641` (training branch) and `2662` (alt head) are in the corpus but
  * NOT in the fighter, and are deliberately absent.
  */
 import type { ArtShape } from './types';
@@ -26,6 +26,8 @@ import { SHAPE_2672 } from './generated/shape2672';
 import { SHAPE_2674 } from './generated/shape2674';
 import { SHAPE_2676 } from './generated/shape2676';
 import { SHAPE_2678 } from './generated/shape2678';
+/** SESSION19 A5.2 — TRACED, not extracted. Ids >= 9000 are traced garments. */
+import { SHAPE_9017 } from './generated/shape9017';
 
 const ALL: readonly ArtShape[] = [
   SHAPE_2644,
@@ -42,6 +44,7 @@ const ALL: readonly ArtShape[] = [
   SHAPE_2674,
   SHAPE_2676,
   SHAPE_2678,
+  SHAPE_9017,
 ];
 
 /** Keyed by each shape's OWN `id`, never by a hand-typed key — they cannot drift. */

@@ -1,45 +1,54 @@
 # RESUME HERE
 
-> ## ▶ IN PROGRESS — **`docs/sessions/SESSION19_KICKOFF.md`**, resume at **§4 A5.2 (second half)**
+> ## ▶ IN PROGRESS — **`docs/sessions/SESSION19_KICKOFF.md`**, resume at **§4 A5.3**
 >
-> ### 🔶 A5.2 HALF DONE — the kasa is TRACED, CONVERTED AND GATED. It is NOT yet DRAWN.
+> ### ✅ A5.2 CLOSED — **THE TRACED KASA IS ON SCREEN AT THE HEAD NODE.** `?art=dressed` · **747 green**
+> `?art=dressed` draws **22 parts** (the bare 21 + the kasa), `?art=idle` still
+> draws the bare 21, **0 console errors** on a full load. Suite 742 → **747**.
 > ⭐ **The pipeline works end to end with NO change to the converter:** frame →
-> ink-bounded mask → potrace polygon → SVG → `scripts/art/svgShape.ts`
-> (untouched) → `src/game/art/generated/shape9017.ts` — 2 fills, 121 verts,
-> bbox **47.55 × 21.33 world px**. §P6's `M L Q Z` / flat-opaque / shape-local
-> contract is met by construction.
-> **REMAINING for A5.2:** `OG_DRESSED_SLOT_SHAPES` (kickoff D3 — a SECOND slot
-> map, never a modified one), `?art=dressed`, and the on-screen check at the
-> head node. **Nothing is rendered yet; a green suite here says the DATA is
-> sound, not that a hat appeared.**
+> ink-bounded mask → potrace → SVG → `svgShape.ts` (untouched) → committed art.
 >
-> ⛔ **A blocker the kickoff does not mention, now fixed:** the provenance gate
+> ⭐ **KHESHAV'S EYE WAS RIGHT, AND IT WAS SETTLED BY MEASUREMENT.** His read of
+> the first trace — "the hat is a bit pointier", "the red does not really match" —
+> was checked against ground truth (shrink a KNOWN OG shape to video scale,
+> degrade, trace back, score). Mean IoU over 4 shapes: **base 0.9735 · up4 0.9825
+> · up8 0.9822 (plateaus) · up4+Douglas-Peucker0.10 0.9831 ← best, vertex count
+> back near base**. Upscaling before thresholding puts the boundary nearer the
+> true 50 % crossing. **The remaining error is 36 % smaller than what shipped
+> first.** Both constants sit in `traceGarment.py` beside that table.
+>
+> ⛔ **A blocker the kickoff does not mention, fixed:** the provenance gate
 > **hard-coded an FFDec extraction command** and the re-derivation test resolved
 > every source from `reference/extracted/shapes/<id>.svg` — so traced art could
 > only pass by claiming an extraction that never happened. **Ids ≥ 9000 are
 > traced and nothing else is** (kasa = **9017**, the id names its slot); traced
 > SVGs live in `reference/traced/`; `sourceSvgRelPath(id)` is the ONE place that
-> mapping is decided; `emit()` derives the header from `art.id` alone, so
-> byte-identical re-derivation still works at every existing call site. **The
-> gate now checks BOTH directions** — payload art claiming to be traced fails too.
+> mapping is decided; `emit()` derives the header from `art.id` alone so
+> byte-identical re-derivation still works everywhere. **The gate checks BOTH
+> directions** — payload art claiming to be traced fails too.
 >
-> ⚠️ **THE PIVOT IS INFERRED, AND THE SHAPE'S OWN HEADER SAYS SO.** Three attempts
-> to register the kasa against the frame failed, and the third explained the
-> first two: **that fighter wears different head art** — its hair mass is
-> **20.4 × 24.0 world px** against our shape 2670's **14.2 × 15.0**. So the
-> traced OUTLINE is measured and the PLACEMENT is not: the kasa is centred on our
-> own head+hair with its brim 40 % down it (the one ratio the frame gives).
-> ⚠️ **The straw is NOT one flat colour** — after a 5×5 median the mode holds only
-> **1.3 %** — so the fill is the interior mean `#8e6f38` and the flattening is
-> declared in `APPROXIMATED FILLS:`. ⚠️ Two nested fills, not fill+stroke: the
-> dark band is thin on top and thick under the brim, which no constant-width
-> stroke can express.
+> ⭐ **A STATED WEAKNESS RETIRED:** the 17←16 alias was pinned only against a
+> synthetic map holding a made-up id `7000`. It is now pinned against the art the
+> game actually draws. ⛔ **The registry gate caught 9017 the moment it landed**
+> and now checks BOTH slot maps, exact equality both ways.
 >
-> **Red-first, then chaos-planted:** generating `shape9017.ts` turned both gates
-> RED (742 → 740) before either was touched; then 4 plants — traced header
-> claiming FFDec · traced header declaring nothing INFERRED · 2664 claiming to be
-> traced · one coordinate nudged — **all RED, all reverted green.**
-> **Gates:** typecheck ×2 → 0 · eslint → 0 · suite **44 files / 742 tests green**.
+> ⚠️ **THE PIVOT IS INFERRED and the shape's own header says so.** Three attempts
+> to register the kasa against the frame failed; the third explained the first
+> two — **that fighter wears different head art** (hair mass **20.4 × 24.0** world
+> px vs our 2670's **14.2 × 15.0**). Traced OUTLINE measured; PLACEMENT inferred.
+> ⚠️ **KNOWN GAP for A5.3: the straw renders DARKER than the source.** The hat is
+> two-tone and a single interior MEAN matches neither tone. **The honest fix is a
+> two-fill kasa** — deferred deliberately, because every remaining garment raises
+> the same question and it should be answered once for all of them.
+> ⚠️ **"The outline is missing" was BLACK-ON-BLACK.** Scanning the rendered pixels
+> found the outline present at the source's weight; `?art=dressed` uses a
+> TRANSPARENT canvas, so a visual claim about it is not gradeable against a black
+> page. Put a backdrop behind it before judging.
+> ⚠️ **The brim notch is ≤4 video px (~1.8 world px) and is left as traced** — it
+> sits exactly where the head draws BEHIND the hat, so it cannot show.
+>
+> **Gates:** typecheck ×2 → 0 · eslint → 0 · **747 passed (44 files)** · build ok.
+> **Chaos plants: 4 on the provenance/re-derivation gates, all RED then green.**
 >
 > ---
 >

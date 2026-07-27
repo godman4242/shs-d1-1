@@ -108,7 +108,40 @@ export const OG_SLOT_SHAPES: ReadonlyArray<readonly number[]> = [
  * without the first and the crotch is stranded at the origin as a tan blob at
  * the fighter's feet — which is how the rule was found in the first place.
  */
+/** Slot 17. Named so the dressed map below cannot silently address the wrong one. */
+const HAT_SLOT = 17;
+/** The kasa traced from the videos — see `shape9017.ts` for its provenance. */
+const TRACED_KASA: readonly number[] = [9017];
+
 export const OG_SLOT_ALIASES: ReadonlyArray<readonly [number, number]> = [
   [8, 14],
   [17, 16],
 ];
+
+/**
+ * THE DRESSED FIGHTER (SESSION19 A5.2) — the SAME slots, with traced garment art
+ * replacing a part's shape.
+ *
+ * ⚠️ A SECOND ARRAY, NEVER A MODIFIED ONE (kickoff D3). `OG_SLOT_SHAPES` above
+ * stays exactly as it is and `?art=idle` keeps drawing the bare doll, which is
+ * what preserves SESSION 18's evidence — every height measurement it passed was
+ * taken against that fighter, and editing it in place would silently retire the
+ * comparison.
+ *
+ * ⚠️ EQUIPMENT REPLACES A PART, IT DOES NOT LAYER OVER ONE. The OG composes a
+ * fighter by name — `getDefinitionByName(partType + art)` — so a dressed torso
+ * is a torso-shaped shape WITH clothing on it, not a shirt floating over a bare
+ * chest (FIGHTER_ART_IDS.md §5). That is why this is a slot map and not a list
+ * of extra parts.
+ *
+ * ⚠️ TRACED IDS ARE >= 9000 AND OG IDS ARE NOT. `9017` is the kasa traced for
+ * slot 17; its provenance header names the frame and timestamp it came from and
+ * what about it is INFERRED (`src/game/art/generated/shape9017.ts`).
+ *
+ * TODAY THIS DIFFERS FROM THE BARE MAP IN SLOT 17 ONLY — A5.2 traces one
+ * garment end to end to prove the pipeline before A5.3 traces the rest. A test
+ * pins that, so adding a garment is a deliberate act rather than a drift.
+ */
+export const OG_DRESSED_SLOT_SHAPES: ReadonlyArray<readonly number[]> = OG_SLOT_SHAPES.map((shapes, slot) =>
+  slot === HAT_SLOT ? TRACED_KASA : shapes,
+);

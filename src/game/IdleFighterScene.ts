@@ -1,5 +1,6 @@
 /**
  * `?art=idle` — THE WHOLE OG FIGHTER, AT ITS RECORDED TRANSFORMS (SESSION18 A4.4).
+ * `?art=dressed` — THE SAME FIGHTER WEARING TRACED GARMENT ART (SESSION19 A5.2).
  *
  * 14 imported shapes, placed at the 19 node transforms the payload's own
  * animation data records, plus the two code-level aliases — 21 drawn parts,
@@ -27,7 +28,7 @@ import {
   OG_IDLE_STAGE,
 } from '../config/art';
 import { HALF, ONE, ZERO } from '../config/nums';
-import { OG_IDLE_NODES, OG_SLOT_ALIASES, OG_SLOT_SHAPES } from '../config/ogPose';
+import { OG_DRESSED_SLOT_SHAPES, OG_IDLE_NODES, OG_SLOT_ALIASES, OG_SLOT_SHAPES } from '../config/ogPose';
 import { inkedBounds, trianglesOf, type DrawOp } from '../core/artPlan';
 import { composePose } from '../core/composePose';
 import { inkBox, type InkBox } from '../core/inkBox';
@@ -85,12 +86,23 @@ export class IdleFighterScene extends Phaser.Scene {
   }
 
   create(): void {
-    const parts = composePose(OG_IDLE_NODES, OG_SLOT_SHAPES, OG_SLOT_ALIASES);
+    /**
+     * SESSION19 A5.2 — `?art=dressed` swaps the SLOT MAP and nothing else.
+     *
+     * Kickoff D3: the dressed fighter is a second array, not new code, and
+     * `?art=idle` must keep drawing the BARE doll — every height measurement
+     * SESSION 18 passed was taken against it, so the two routes have to remain
+     * separately runnable for that evidence to stay checkable.
+     */
+    const query = new URLSearchParams(window.location.search);
+    const dressed = query.get('art') === 'dressed';
+    const slotShapes = dressed ? OG_DRESSED_SLOT_SHAPES : OG_SLOT_SHAPES;
+    const parts = composePose(OG_IDLE_NODES, slotShapes, OG_SLOT_ALIASES);
     const origin = { x: OG_IDLE_STAGE.anchorX, y: OG_IDLE_STAGE.anchorY };
     const plan = planPose(parts, FIGHTER_SHAPES, origin, VIEW);
 
     const g = this.add.graphics().setDepth(OG_IDLE_STAGE.artDepth);
-    if (new URLSearchParams(window.location.search).get('debug') === '1') {
+    if (query.get('debug') === '1') {
       // One part at a time, each recoloured — §6 Risk 2. Kept out of the normal
       // path entirely so it cannot tint a measured render by accident.
       parts.forEach((part, i) => {
@@ -106,7 +118,7 @@ export class IdleFighterScene extends Phaser.Scene {
       .text(
         OG_IDLE_STAGE.labelX,
         OG_IDLE_STAGE.labelY,
-        `OG idle pose — ${String(parts.length)} parts at their recorded transforms.`,
+        `OG idle pose${dressed ? ' + traced kasa' : ''} — ${String(parts.length)} parts at their recorded transforms.`,
         { fontFamily: 'monospace', fontSize: `${String(OG_IDLE_STAGE.labelSizePx)}px`, color: '#ffffff' },
       )
       .setOrigin(HALF)

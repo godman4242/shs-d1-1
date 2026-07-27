@@ -24,6 +24,7 @@ OUTPUT SHAPE — two nested fills, deliberately, not fill+stroke:
 
 Run:  python3 scripts/art/traceGarment.py
 """
+import math
 import os
 import re
 import subprocess
@@ -47,6 +48,25 @@ INK_MAX = 78                          # a pixel this dark is outline, not scener
 
 # ── scale: video px -> stage px is /1.875, stage -> world is /1.2 ────────────
 VIDEO_TO_WORLD = 1.875 * 1.2          # = 2.25
+
+# ── tracing fidelity: CHOSEN BY MEASUREMENT, not by eye ──────────────────────
+# Kheshav's read of the first traced kasa was "the hat is a bit pointier" and
+# "the red does not really match" — both edge-localisation complaints, and both
+# answerable with SESSION18's ground-truth trick: take four shapes whose exact
+# vector data we hold, shrink them to video scale, degrade them, trace them back
+# and score against the truth. Mean IoU over 2664/2670/2646/2653:
+#
+#     base (threshold at 1x, what shipped first)   0.9735
+#     up4  (bicubic 4x, then threshold)            0.9825
+#     up8                                          0.9822   <- plateaus, 2x verts
+#     up4 + Douglas-Peucker 0.10                   0.9831   <- best, verts ~= base
+#
+# Upscaling before thresholding does not invent detail; it puts the boundary
+# nearer the true 50 % crossing, which is exactly what a sharp corner needs.
+# up4+dp.10 cuts the remaining error by 36 % against base for ~20 % more
+# vertices. Re-run the A/B before changing either number.
+UPSCALE = 4
+RDP_EPS = 0.10                        # in 1x mask (video) px
 
 # ── placement: INFERRED. See D-A5.2a in the ledger ───────────────────────────
 # Slot 17 is aliased to slot 16, so the kasa's (0,0) must be the HEAD's joint
@@ -84,13 +104,48 @@ def isolate(a):
     return ndimage.binary_fill_holes(sil), best
 
 
+def rdp(pts, eps):
+    """
+    Douglas-Peucker on a closed ring: drop any vertex within `eps` of the chord
+    it sits on. UPSCALE buys edge accuracy and pays for it in vertices; this
+    hands most of them back without moving the boundary — measured below, it
+    actually scores HIGHER than the unsimplified upscale, because it also
+    removes the single-pixel staircase the upscale introduces.
+    """
+    if len(pts) < 4 or eps <= 0:
+        return pts
+
+    def simplify(seq):
+        if len(seq) < 3:
+            return list(seq)
+        (ax, ay), (bx, by) = seq[0], seq[-1]
+        dx, dy = bx - ax, by - ay
+        n = math.hypot(dx, dy)
+        worst, wi = -1.0, 0
+        for i in range(1, len(seq) - 1):
+            px, py = seq[i]
+            d = abs(dx * (ay - py) - (ax - px) * dy) / n if n else math.hypot(px - ax, py - ay)
+            if d > worst:
+                worst, wi = d, i
+        if worst <= eps:
+            return [seq[0], seq[-1]]
+        return simplify(seq[: wi + 1])[:-1] + simplify(seq[wi:])
+
+    xs = [q[0] for q in pts]
+    i0, i1 = sorted((xs.index(min(xs)), xs.index(max(xs))))
+    return simplify(pts[i0 : i1 + 1])[:-1] + simplify(pts[i1:] + pts[: i0 + 1])[:-1]
+
+
 def potrace_polygon(mask):
     """1-bit mask -> list of closed rings, in MASK pixel coords (y down)."""
-    h = mask.shape[0]
+    img = Image.fromarray(np.where(mask, 0, 255).astype(np.uint8), "L")
+    if UPSCALE > 1:
+        img = img.resize((img.width * UPSCALE, img.height * UPSCALE), Image.BICUBIC)
+    h = img.height
     with tempfile.TemporaryDirectory() as td:
         pbm, svg = os.path.join(td, "m.pbm"), os.path.join(td, "m.svg")
         # BLACK subject on WHITE ground — silent-bug #1.
-        Image.fromarray(np.where(mask, 0, 255).astype(np.uint8), "L").convert("1").save(pbm)
+        img.point(lambda v: 0 if v < 128 else 255).convert("1").save(pbm)
         subprocess.run(["potrace", "-b", "svg", "-a", "0", "-u", "1", pbm, "-o", svg], check=True)
         text = open(svg).read()
     rings, cur, pos, cmd = [], [], (0.0, 0.0), None
@@ -124,7 +179,9 @@ def potrace_polygon(mask):
     if len(cur) >= 3:
         rings.append(cur)
     # silent-bug #2: potrace is y-UP from the bottom-left, PIL is y-down.
-    return [[(x, h - y) for x, y in r] for r in rings]
+    # Divide by UPSCALE on the way out so callers always see 1x mask pixels.
+    out = [[(x / UPSCALE, (h - y) / UPSCALE) for x, y in r] for r in rings]
+    return [rdp(r, RDP_EPS) for r in out]
 
 
 def main():

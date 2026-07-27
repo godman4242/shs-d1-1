@@ -2202,3 +2202,68 @@ REVERTED                                                        77 passed (77)
 The two gate changes were themselves red-first: generating `shape9017.ts` turned
 the provenance gate and the directory-wide re-derivation test RED (742 → 740)
 before either was touched.
+
+---
+
+## SESSION 19 — A5.2 (part 2 of 2): the kasa is ON SCREEN. A5.2 CLOSED.
+
+`?art=dressed` → **22 parts**, `?art=idle` still draws the bare 21, **0 console
+errors** on a full page load. Suite **747 green** (was 742, +5 new).
+
+### ⭐ D-A5.2e — THE TRACING SETTINGS ARE CHOSEN BY MEASUREMENT, NOT BY EYE
+Kheshav's read of the first traced kasa was "the hat is a bit pointier" and "the
+red does not really match". Both are edge-localisation complaints, so both were
+settled against ground truth rather than argued — SESSION18's trick: take shapes
+whose exact vector data we hold, shrink to video scale, degrade, trace back,
+score. Mean IoU over 2664 / 2670 / 2646 / 2653:
+```
+  base (threshold at 1x — what A5.2 part 1 shipped)   0.9735
+  up4  (bicubic 4x, then threshold)                   0.9825
+  up8                                                 0.9822   plateaus, 2x verts
+  up4 + Douglas-Peucker 0.10                          0.9831   BEST, verts ~= base
+```
+**He was right.** Upscaling before thresholding does not invent detail; it puts
+the boundary nearer the true 50 % crossing, which is exactly what a sharp corner
+needs. `up4+dp.10` **cuts the remaining error by 36 %** against base. Both
+constants are now in `traceGarment.py` with the table beside them.
+⚠️ **This is the ceiling, not a promise.** §P9's caveat stands: the harness
+degrades a CLEAN render, and a real frame adds clutter and blur.
+
+### ⚠️ D-A5.2f — THE BRIM "NOTCH" IS ≤4 px AND IS DELIBERATELY LEFT
+Measured rather than eyeballed: the silhouette's bottom edge has median 52,
+range 46–56 (crop-local), i.e. a **≤4 video px ≈ 1.8 world px** hair inclusion
+under the brim centre — not a missing brim. It is left as traced because it sits
+exactly where the head is drawn BEHIND the hat (slot 17 paints over 16), so it
+cannot show, and any closure is inferred reconstruction that risks eating real
+brim. Veto = clip the bottom edge to a fitted brim line.
+
+### ⚠️ THE BLACK OUTLINE IS THERE — "MISSING" WAS BLACK-ON-BLACK
+First look at `?art=dressed` suggested the hat had lost its heavy outline.
+Scanning the rendered pixels found a dark band (`#0f0d09`–`#18140d`) across the
+full width below the straw: the outline renders correctly and is invisible only
+because the canvas is TRANSPARENT on this route and the page behind it is black.
+Putting any backdrop behind it shows the outline at the source's weight.
+**A visual claim about a transparent canvas is not gradeable against black.**
+
+### ⚠️ KNOWN GAP, NOT FIXED: THE STRAW READS DARKER THAN THE SOURCE
+Side by side at matched scale, the rendered straw is visibly darker/more olive
+than the frame's. That is D-A5.2d's interior-MEAN decision showing: the hat is
+two-tone (lit upper-left slope, shaded right) and a single mean matches neither.
+**The honest fix is a two-fill kasa**, and it is deferred to A5.3 on purpose —
+every other garment raises the same question, and answering it once for all of
+them beats a rushed recolour. Declared in `APPROXIMATED FILLS:` meanwhile.
+
+### The wiring
+- `OG_DRESSED_SLOT_SHAPES` in `src/config/ogPose.ts` — **a second array, never a
+  modified one** (D3), derived from the bare map so it cannot drift structurally.
+  A test pins that it differs in **slot 17 and nowhere else**, so A5.3 adding a
+  garment is a deliberate act.
+- `?art=dressed` swaps the slot map and nothing else; `?art=idle` is untouched,
+  which is what keeps SESSION 18's height evidence checkable.
+- ⭐ **A STATED WEAKNESS RETIRED.** The 17←16 alias was pinned only against a
+  SYNTHETIC map holding a made-up id `7000`, because slot 17 was empty in all
+  shipped data. It is now pinned against the art the game actually draws.
+- ⛔ **The registry gate caught 9017 the moment it landed** — it asserted
+  FIGHTER_SHAPES names exactly the ids the BARE map needs, and a dressed-only
+  shape is not in that set. It now checks BOTH maps, still with exact equality
+  both ways, so a registered shape no map names is still dead weight.
