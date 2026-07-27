@@ -2713,3 +2713,94 @@ from the plan itself, which cannot be wrong that way and grows with the outfit.
 suite   47 files / 810 tests green   (44 / 750 at session start, 46 / 795 at eff0c2f)
 tsc x2 exit 0 · eslint exit 0 · CLI output unchanged: digest e9ddfe43b6ea139b
 ```
+
+## SESSION 20 — A6.2: the comparator. **GATE A6-B MET.** Baseline committed BEFORE any tuning.
+
+`scripts/art/compareToSource.py` — our headless render vs a source frame, scored
+whole AND attributed per slot. Build-time only; reads gitignored `reference/`.
+⭐ **Committed in its own commit, before A6.3/A6.4 change anything**, so the
+baseline cannot be fitted to a result (SESSION 19's `00c6628` discipline).
+
+### ⭐ THE FRAME SIDE IS VERIFIED IDENTICAL TO A5.5 — the ceiling reproduces EXACTLY
+```
+frame zFt_0061 vs frame zFt_0071 : 0.8808   <- kickoff §P8 committed 0.8808
+```
+So the segmentation and the agreement statistic are A5.5's, to four decimals.
+
+### ⛔ AND THAT PINS A REAL DISCREPANCY ON *OUR* SIDE — A6-D's TARGET IS NOT COMPARABLE
+```
+                              A5.5 (committed)   A6.2 (this pipeline)
+  vs the TRACING frame 0061        0.8742              0.8659
+  vs the HELD-OUT frame 0071       0.8294              0.8100
+  frame vs frame (the ceiling)     0.8808              0.8808   <- identical
+```
+The frame side matches exactly and our side does not, so the difference is
+entirely in what "our render" IS: **A5.5 measured a browser JPEG screenshot at an
+unknown scale over a hand-injected backdrop; A6.2 measures an exact PNG.** The
+JPEG's blur dilates our silhouette toward the source, which flattered the score.
+⇒ **The kickoff's A6-D bar of "> 0.8294" was produced by a different pipeline and
+cannot be compared to this one.** The honest baseline, committed here before any
+tuning: **tracing 0.8659, held-out 0.8100.** A6-D is re-expressed against those.
+⚠️ Not a softening — the new numbers are LOWER. The old ones were optimistic.
+
+### ⛔ THE FINDING THAT WOULD HAVE WRECKED A6.4: THE ABSOLUTE X OFFSET IS THE ANCHOR, NOT A MEASUREMENT
+Registration uses the ground line (vertical) and the figure's height (scale) —
+both reliable. The THIRD axis has no landmark, because the source fighter wears
+different head art and stands in a different pose. Re-running with four different
+x-anchors:
+```
+  x-anchor              kasa17    gi15  hakama7        kasa-minus-hakama
+  centroid (shipped)    +7.57   +3.54    -6.83              14.40
+  feet band 90-100%    +11.89   +7.86    -2.51              14.40
+  pelvis band 55-70%    +6.24   +2.21    -8.17              14.41
+  bbox centre           +7.45   +3.42    -6.95              14.40
+  spread of the absolute offsets: 20.06 world px
+```
+**Every absolute offset moves; every DIFFERENCE is constant.** A whole-figure
+translation cancels in a difference, and the x-anchor is exactly that.
+⇒ The comparator now reports `relOffsetErr` (offset against the median slot).
+**Measured spread across all four anchors: 0.0000 world px** for `relOffsetErr`
+AND for `sizeErr`, against 20.06 for the raw offset.
+⇒ **A6.4's loop may tune `relOffsetErr` and `sizeErr` ONLY.** Chasing the
+absolute offset would fit the anchor choice and call it progress.
+
+### GATE A6-B ✅ — every dressed slot, signed, in WORLD px (vs zFt_0061)
+```
+    slot shapes        rows  edge   leftErr  rightErr   sizeErr   relOffset
+       7 9011  hakama    65    20     -7.15     -6.52     +0.63    -10.38
+      15 9015  gi        51    35     +4.30     +2.79     -1.51     +0.00
+      17 9017  kasa      27     7     +8.89     +6.25     -2.65     +4.03
+       9 2674  foot      11     5       -      +17.28       -         -
+       2 2658  lowarm    21    13    +11.35       -         -         -
+   1,13,14,18  interior — a silhouette cannot grade them, and it says so
+```
+⚠️ **`sizeErr` vs `relOffsetErr` answer different questions on purpose.** Both
+edges pushed the same way is the garment in the wrong PLACE (D1 lets the loop fix
+that); edges pushed apart is the wrong SIZE (D1 does not).
+⚠️ Slots whose art never reaches the outer boundary are reported `interior`
+rather than given a number. A silhouette cannot see the obi or the collar.
+
+### ⭐ THE OVERLAY, AND WHAT OPENING THE SOURCE FRAME SETTLED
+Every run writes `renders/overlay.png` — theirs RED, ours CYAN, agreement WHITE.
+IoU 0.7160. Opening the frame at 3× (`renders/source_frame_crop.png`) settled
+three things a number could not:
+1. ⛔ **The big red spike on the left is the SWORD HILT**, with the scabbard tip
+   below right. We render no weapon — slots 3 and 4 are EMPTY BY DESIGN, the
+   game's own "none" placeholders, and that equipment art died with the CDN.
+   ⇒ **Our achievable ceiling is BELOW 0.8808**, because both source frames carry
+   a sword our fighter cannot. A6-D must be read against that, not against a
+   ceiling measured between two armed fighters.
+2. **The source's FEET ARE HIDDEN IN GRASS** — it has no visible feet at all,
+   while ours protrude below the hem (the cyan at the bottom). So §P7 defect 3 is
+   worse than "the feet sit below the hem": the source shows no feet there.
+   ⚠️ It also means the "ground line" registers our feet against the source's
+   grass-occluded hem, which is a stated limit of the vertical axis.
+3. ⭐ **The source has a WHITE COLLAR between the kasa and the grey jacket**, and
+   its grey gi starts well below the head. Ours runs grey straight up under the
+   hat. **§P7 defect 1 is now confirmed against the source**, not by eye alone.
+
+### Regression
+```
+suite 47 files / 810 tests green · tsc x2 -> 0 · eslint -> 0
+nothing in src/ changed; the comparator is build-time only and reads reference/
+```

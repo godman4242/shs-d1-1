@@ -35,13 +35,15 @@ export interface RenderPoseArgs {
   readonly variant: PoseVariant;
   readonly out: string;
   readonly mask: string | null;
+  /** Where to write the render's metadata — what the A6.2 comparator reads. */
+  readonly json: string | null;
   readonly supersample: number;
   readonly backdrop: number;
   readonly full: boolean;
   readonly slots: boolean;
 }
 
-const VALUE_FLAGS = ['--out', '--mask', '--supersample', '--backdrop'] as const;
+const VALUE_FLAGS = ['--out', '--mask', '--json', '--supersample', '--backdrop'] as const;
 const BOOL_FLAGS = ['--full', '--slots'] as const;
 
 /**
@@ -107,6 +109,7 @@ export function parseArgs(argv: readonly string[]): RenderPoseArgs {
     variant,
     out: flags.get('--out') ?? `renders/${variant}.png`,
     mask: flags.get('--mask') ?? null,
+    json: flags.get('--json') ?? null,
     supersample: ss === undefined ? DEFAULT_SUPERSAMPLE : integerFlag('--supersample', ss, 1, 16),
     backdrop: backdrop === undefined ? DEFAULT_BACKDROP : integerFlag('--backdrop', backdrop, 0, MAX_RGB),
     full: flags.has('--full'),

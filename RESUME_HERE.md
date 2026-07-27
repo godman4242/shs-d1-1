@@ -1,9 +1,45 @@
 # RESUME HERE
 
 > ## ▶ IN PROGRESS — SESSION 20, kickoff `docs/sessions/SESSION20_KICKOFF.md`
-> **NEXT STEP: §4 A6.2 — the comparator.** `scripts/art/compareToSource.py`:
-> register by ground line + height, segment both sides with `proportions.py`'s
-> existing rule, attribute error per slot. **Gate A6-B.**
+> **NEXT STEP: §4 A6.3 — the gate.** Commit the score; the suite enforces it as a
+> FLOOR. Chaos-plant it: move one garment 5 world px and watch it go red.
+>
+> ### ✅ A6.2 DONE — **GATE A6-B MET.** `scripts/art/compareToSource.py`
+> ```
+> npx vite-node scripts/art/renderPose.ts -- dressed --out renders/dressed.png \
+>     --mask renders/dressed-mask.png --json renders/dressed.json
+> python3 scripts/art/compareToSource.py renders/dressed.json
+> ```
+> ⭐ **THE FRAME SIDE IS VERIFIED IDENTICAL TO A5.5**: frame-vs-frame reproduces
+> the committed ceiling **0.8808 exactly**.
+>
+> ⛔ **AND THAT PINS A DISCREPANCY ON OUR SIDE — A6-D's TARGET IS NOT COMPARABLE.**
+> ```
+>                          A5.5 (committed)   A6.2 (this pipeline)
+>   tracing frame 0061          0.8742              0.8659
+>   held-out frame 0071         0.8294              0.8100
+>   ceiling (frame v frame)     0.8808              0.8808   <- identical
+> ```
+> A5.5 measured a **browser JPEG screenshot**; A6.2 measures an **exact PNG**, and
+> the JPEG's blur flattered the old score. **New baseline, committed BEFORE any
+> tuning: tracing 0.8659, held-out 0.8100.** A6-D is re-expressed against those.
+>
+> ⛔ **THE ABSOLUTE X OFFSET IS THE ANCHOR CHOICE, NOT A MEASUREMENT.** Four
+> different x-anchors move every slot's absolute offset over a **20.06 world px**
+> range; every slot-to-slot DIFFERENCE is constant (kasa−hakama = 14.40 in all
+> four). So the comparator reports `relOffsetErr`, whose measured spread across
+> those anchors is **0.0000**, as is `sizeErr`'s.
+> ⇒ **A6.4 may tune `relOffsetErr` and `sizeErr` ONLY.** Chasing the absolute
+> offset fits the anchor and calls it progress.
+>
+> ⛔ **OUR ACHIEVABLE CEILING IS BELOW 0.8808** — opening the frame shows the
+> source carries a **SWORD** (hilt left, scabbard tip lower right) that we render
+> no art for (slots 3/4 empty by design, equipment died with the CDN). Both
+> frames have it; our fighter cannot.
+> ⭐ Two more things the frame settled: the source's **feet are hidden in GRASS**
+> (ours protrude — §P7 defect 3 is worse than stated), and the source has a
+> **white collar between kasa and jacket** with the grey gi starting well below
+> the head — **§P7 defect 1 confirmed against the source, not by eye.**
 >
 > ### ✅ A6.1 DONE — **GATE A6-A MET.** The fighter renders headless, deterministically.
 > ```

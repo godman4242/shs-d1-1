@@ -115,5 +115,25 @@ export function main(argv: readonly string[]): void {
     console.log(`  mask     ${path.relative(ROOT, write(args.mask, maskPng))}  ${maskPng.length} bytes`);
   }
 
+  if (args.json !== null) {
+    // Everything the A6.2 comparator needs to put a slot's footprint onto a
+    // pixel: the crop it was rendered into, and each slot's box in STAGE px.
+    // Written as data rather than re-derived in Python — a second opinion about
+    // where a garment sits is exactly what this session exists to prevent.
+    const meta = {
+      variant: render.variant,
+      region: render.region,
+      ink: render.ink,
+      backdrop: raster.backdrop,
+      supersample: raster.supersample,
+      rasterDigest: rasterDigest(raster),
+      parts: render.parts.length,
+      ops: render.plan.length,
+      slots: render.footprints.map((fp) => ({ slot: fp.slot, shapeIds: [...fp.shapeIds], bounds: fp.bounds })),
+    };
+    const jsonPath = write(args.json, new TextEncoder().encode(`${JSON.stringify(meta, null, 2)}\n`));
+    console.log(`  json     ${path.relative(ROOT, jsonPath)}  ${meta.slots.length} slots`);
+  }
+
   if (args.slots) console.log(footprintTable(render.footprints));
 }
