@@ -1,6 +1,6 @@
 # RESUME HERE
 
-> ## ▶ IN PROGRESS — **SESSION 18. A4.1–A4.3 DONE; START AT §4 A4.4.**
+> ## ▶ IN PROGRESS — **SESSION 18. A4.1–A4.4 DONE. ⛔ A4-D NEEDS AN OWNER RULING.**
 > Kickoff: **`docs/sessions/SESSION18_KICKOFF.md`** (read it, not this summary).
 > Baseline is **`c46adbc`**, not the kickoff's `a9592d7`: three owner commits
 > (CI + dependabot) landed on top, and `git diff a9592d7..HEAD -- src tests` is
@@ -121,17 +121,66 @@
 > ⚠️ **NOTHING IS RENDERED YET.** A4.3 is a pure function. A green A4.3 says the
 > WIRING is right, not that it looks right.
 >
-> ### ⬜ NEXT: A4.4 — render behind `?art=idle` and MEASURE
-> Reuse `drawPlan` (the Earcut path is already in it from A4.1). Measure with
-> `src/core/inkBox.ts` — **the same function SESSION 17 used, not a new rule.**
-> Add `?art=idle` beside `?art=og` in `src/main.ts`, `transparent: true` on that
-> route too. **Gate: A4-A (`Earcut.deviation === 0` for the 4 hole instances) +
-> A4-D (5 proportions ±15 %) + A4-E (2 ratios ±0.15) + A4-F (height ±5 % of
-> 131.8 stage px).** Screenshot it and READ THE PIXELS. Then A4.5 (regression:
-> fidelity 55/55 · suite · `duel-baseline` unedited).
-> 💡 §6 Risk 2 prescribes a one-off **debug-colour pass** — render each part in a
-> distinct colour behind a flag, check the layer stack by eye once, turn it off.
-> A silhouette gate cannot see an interior error, by definition.
+> ### ✅ A4.4 DONE — **THE WHOLE FIGHTER IS ON SCREEN.** `?art=idle` · **742 green**
+> 21 parts · 90 draw ops · at the recorded transforms. **First composed frame of
+> imported OG art in this repo.** 6 chaos plants, all RED then reverted.
+>
+> ⚠️ **A STEP THE KICKOFF DOES NOT MENTION: `planShape` CANNOT ROTATE.** "Reuse
+> `drawPlan`" covers the drawing, not the transform. New `src/core/planPose.ts`
+> rotates each part about its own joint pivot — **rotate → offset → scale →
+> anchor** — with all three ways of getting it wrong pinned as negatives.
+>
+> **GATE A4-A ✅** — exactly the 4 predicted hole instances (2646 ×2 · 2648 ×1
+> drawn twice at slots 6 and 10), `Earcut.deviation` = 4.9e-15 · 1.1e-15 ·
+> 1.7e-15 · 8.8e-15. ⚠️ **Read honestly: ~1e-15, not literal 0** — on stage
+> coordinates of magnitude ~500 that is zero to double precision.
+> **GATE A4-C ✅** · **GATE A4-F ✅** — **128.164** vs §P9's kasa-less **131.8**,
+> **2.8 % low**, inside ±5 %. Derived by the suite, then confirmed on canvas:
+> ```
+> plan   52.661 x 128.164      canvas  span 52x127  covered 53x128  clipped=false
+> deltaCovered (+0.34, -0.16)  — both inside ±1, dpr 1
+> ```
+>
+> ## ⛔ GATE A4-D IS ESCALATED — IT INHERITS THE FLAW §P8 REMOVED FROM THE IoU
+> | measure | ours | target | ratio | |
+> |---|---:|---:|---:|---|
+> | torso length (neck→pelvis) | 60.67 | 59.9 | **1.013** | ✅ |
+> | total height (A4-F) | 128.16 | 131.8 | **0.972** | ✅ |
+> | head Ø | 18.37 | 28.4 | 0.647 | ❌ |
+> | shoulder width | 34.43 | 42.7 | 0.806 | ❌ |
+> | mid-torso width | 25.84 | 36.3 | 0.712 | ❌ |
+> | pelvis width | 27.09 | 37.7 | 0.719 | ❌ |
+>
+> **Every HEIGHT passes. Every WIDTH misses (0.65–0.81).** None of §2's four
+> permitted diagnoses explains it and each was CHECKED, not assumed — (a) the
+> alias is applied, (b) 21 parts drawn, (c) rotation/pivot pinned, (d) z-order
+> confirmed by eye. §2 then says STOP AND ESCALATE, so **no tolerance was moved.**
+>
+> **The diagnosis, offered as a FIFTH cause:** §P8 killed the IoU because the only
+> OG images are frames of an **equipped** fighter. **§P9's proportions were
+> measured from those same frames.** Clothing adds WIDTH and barely changes
+> skeletal HEIGHT — exactly the split observed. The misses are not a common factor
+> (0.65/0.71/0.72/0.81), so it is not a scale error, and A4-F proves the overall
+> scale right to 2.8 %.
+> ⇒ **A4-D and A4-E are not gradeable against a bald, unarmed doll. OWNER RULING
+> NEEDED.** Honest replacement if wanted: grade the two equipment-independent
+> measures that already pass (height, neck→pelvis torso), and note that §P9's five
+> proportions become gradeable only if equipment art is ever recovered.
+>
+> ⭐ **§6 Risk 2's debug pass was RUN, not assumed** — `?art=idle&debug=1` paints
+> all 21 parts distinctly. Checked by eye once: every part placed, far limbs
+> behind, near limbs in front, crotch placed (not stranded), nothing missing.
+>
+> **Regression:** in-browser fidelity **41/41 probes + 14/14 scans = 55/55**,
+> `pass: true`, 0 failures · **0 console errors** on `?art=idle` ·
+> `duel-baseline` green AND unedited · ratchet **not widened** (both new `game/`
+> files baselined as `{}` — zero numeric literals each).
+>
+> ### ⬜ NEXT: A4.5 — re-prove the regression surface, then the A5 handoff
+> Most of A4.5 is already done above (fidelity 55/55, suite, duel-baseline,
+> console). What remains: re-run it all on the FINAL commit, then write the
+> SESSION 19 kickoff. **A4-D's ruling should land first** — it changes what
+> SESSION 19 inherits.
 >
 > ---
 >

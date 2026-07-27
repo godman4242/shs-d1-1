@@ -6,6 +6,7 @@ import { DuelResult } from './game/DuelResult';
 import { DuelScene } from './game/DuelScene';
 import { EncounterScene } from './game/EncounterScene';
 import { createFidelityHarness } from './game/fidelity';
+import { IdleFighterScene } from './game/IdleFighterScene';
 import { OgArtScene } from './game/OgArtScene';
 
 /**
@@ -25,6 +26,13 @@ const wantsEncounter = params.get('scene') === 'encounter';
  */
 const wantsOgArt = params.get('art') === 'og';
 
+/**
+ * SESSION18 A4.4: `?art=idle` composes the WHOLE fighter — 14 shapes at the 19
+ * node transforms the payload records. Transparent for the same reason as
+ * `?art=og`: §P2's alpha rule is undefined over an opaque background.
+ */
+const wantsIdleArt = params.get('art') === 'idle';
+
 const game = new Phaser.Game({
   // WEBGL explicitly (not AUTO): the art direction relies on WebGL-only
   // features (e.g. Graphics gradients). Failing loudly beats degrading silently.
@@ -32,7 +40,7 @@ const game = new Phaser.Game({
   width: GAME_WIDTH,
   height: GAME_HEIGHT,
   backgroundColor: COL.skyTop,
-  transparent: wantsOgArt,
+  transparent: wantsOgArt || wantsIdleArt,
   parent: 'app',
   scale: {
     mode: Phaser.Scale.FIT,
@@ -41,11 +49,13 @@ const game = new Phaser.Game({
   // The FIRST scene in this array auto-starts. DuelScene remains the default —
   // it launches the intro/result overlays itself — and `?scene=encounter`
   // boots the A4 crowd fight instead.
-  scene: wantsOgArt
-    ? [OgArtScene]
-    : wantsEncounter
-      ? [EncounterScene, DuelScene, DuelIntro, DuelResult]
-      : [DuelScene, DuelIntro, DuelResult, EncounterScene],
+  scene: wantsIdleArt
+    ? [IdleFighterScene]
+    : wantsOgArt
+      ? [OgArtScene]
+      : wantsEncounter
+        ? [EncounterScene, DuelScene, DuelIntro, DuelResult]
+        : [DuelScene, DuelIntro, DuelResult, EncounterScene],
 });
 
 // Dev-only verification seams: __game lets automated browser checks step the

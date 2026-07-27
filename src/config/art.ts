@@ -74,3 +74,39 @@ export const OG_ART_STAGE = {
   artDepth: 1,
   labelDepth: 2,
 } as const;
+
+/**
+ * A4.4 STAGING — where `?art=idle` puts the composed OG fighter, in STAGE px.
+ *
+ * INFERRED staging, like `OG_ART_STAGE`: the position is arbitrary and
+ * deliberately FIXED so that the composition is the only variable the
+ * measurement reads. The anchor is the fighter's OWN origin — the recorded node
+ * offsets are all negative in y, so the origin sits at its FEET and the figure
+ * builds upward from here.
+ */
+export const OG_IDLE_STAGE = {
+  anchorX: 512,
+  anchorY: 430,
+  labelX: 512,
+  labelY: 520,
+  labelSizePx: 13,
+  /** Clear space kept around the planned ink when snapshotting for measurement. */
+  snapshotPad: 24,
+  artDepth: 1,
+  labelDepth: 2,
+} as const;
+
+/** Coordinates per vertex in the flat array Earcut reads — x and y. */
+export const EARCUT_DIMENSIONS = 2;
+
+/**
+ * §6 Risk 2's debug pass: one distinct colour per drawn part, so the layer stack
+ * can be checked by eye ONCE. A silhouette gate cannot see an interior error, by
+ * definition — a mis-slotted limb hides behind a correct-looking outline. Behind
+ * `?art=idle&debug=1`, off by default.
+ */
+export const OG_DEBUG_PART_COLORS: readonly number[] = [
+  0xff0000, 0xff8800, 0xffff00, 0x88ff00, 0x00ff00, 0x00ff88, 0x00ffff, 0x0088ff, 0x0000ff, 0x8800ff,
+  0xff00ff, 0xff0088, 0xffffff, 0x888888, 0x884400, 0x448800, 0x004488, 0x440088, 0x880044, 0xcccc88,
+  0x88cccc,
+];

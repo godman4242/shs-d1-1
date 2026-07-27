@@ -151,7 +151,7 @@ export function drawPlan(g: Phaser.GameObjects.Graphics, plan: readonly DrawOp[]
 }
 
 /** Snapshot a canvas region and hand back its RGBA bytes, alpha intact. */
-function captureArea(
+export function captureArea(
   game: Phaser.Game,
   x: number,
   y: number,

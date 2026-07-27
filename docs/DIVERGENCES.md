@@ -1817,3 +1817,129 @@ Plus an 8th against the DATA: torso `y −68 → −86` → the transcription su
 · `src/core/` purity green (zero numeric literals; `HALF_TURN_DEG` does the
 degree→radian conversion) · `duel-baseline` green **and unedited** · ratchet
 baseline untouched.
+
+---
+
+## SESSION 18 — A4.4: the whole fighter, on screen and measured (2026-07-27)
+
+**`?art=idle` draws the composed OG fighter — 21 parts, 90 draw ops, at the 19
+node transforms the payload records.** First composed frame of imported OG art in
+this repo. Gates **A4-A ✅**, **A4-C ✅**, **A4-F ✅**; **A4-D ESCALATED** (below);
+A4-E not gradeable for the same reason as A4-D.
+
+### ⚠️ A STEP THE KICKOFF DOES NOT MENTION: `planShape` CANNOT ROTATE
+
+A4.4 says "reuse `drawPlan`", which covers the drawing but not the transform.
+`planShape` only ever translated and scaled, because A3 drew one shape at one
+fixed place. A composed pose needs every part turned about its own joint pivot.
+New `src/core/planPose.ts` does it — rotating the shape's LOCAL coordinates and
+letting the existing planner do the rest, rather than growing `planShape` a
+fourth parameter the A3 route would always pass as zero.
+
+The order is **rotate → offset → scale → anchor**, and all three ways of getting
+it wrong are pinned as negatives: rotating about the stage origin, rotating the
+wrong way (Flash's y-axis points DOWN, so a positive angle is clockwise and the
+standard matrix is already correct), and offsetting before turning.
+
+### GATE A4-A — PASS. Four hole instances, `deviation` at floating-point zero.
+```
+verts=136 holes=1 tris=136  deviation 4.93e-15     (2648 thigh, slot 6)
+verts=136 holes=1 tris=136  deviation 1.06e-15     (2648 thigh, slot 10)
+verts=121 holes=1 tris=121  deviation 1.72e-15     (2646 torso, outer ring 0)
+verts= 85 holes=1 tris= 85  deviation 8.84e-15     (2646 torso, outer ring 1)
+```
+⚠️ **Read honestly: these are ~1e-15, not literal `0`.** `Earcut.deviation`
+returns a signed area residual, and on stage coordinates of magnitude ~500 a
+value of 1e-15 is zero to double precision — roughly 1e-17 of the polygon area.
+The gate's "=== 0" is met in the only sense floating point allows. The count is
+also exactly the four A4.1 predicted: **2646 contributes two** (its two outer
+rings own one hole each) and **2648 one, drawn twice** at slots 6 and 10.
+
+### The silhouette read agrees with the plan, inside the declared noise floor
+```
+plan   52.661 x 128.164 stage px
+canvas span 52 x 127   covered 53 x 128   clipped=false   dpr 1
+deltaSpan    (-0.66, -1.16)      deltaCovered (+0.34, -0.16)
+```
+`covered` is inside ±1 on both axes; `spanY` is not, for the reason SESSION17 §P2
+declares — `span` measures pixel CENTRES and under-reads by up to 1 px by
+construction while `covered` counts rows and over-reads by up to 1.
+
+### GATE A4-F — PASS. **128.164 stage px** against §P9's kasa-less **131.8** —
+**2.8 % low**, inside ±5 %. Derived by the suite (`tests/planPose.test.ts`) from
+the committed art, then confirmed on the canvas; not transcribed.
+
+### ⛔ GATE A4-D — ESCALATED. IT INHERITS THE EXACT FLAW §P8 REMOVED FROM THE IoU.
+
+Measured from the plan, at every candidate definition:
+
+| measure | ours | §P9 target | ratio | |
+|---|---:|---:|---:|---|
+| torso length *(neck-top → pelvis-bottom)* | 60.67 | 59.9 | **1.013** | ✅ |
+| total height *(A4-F)* | 128.16 | 131.8 | **0.972** | ✅ |
+| head Ø *(head+hair)* | 18.37 | 28.4 | 0.647 | ❌ |
+| shoulder width *(uparms + torso)* | 34.43 | 42.7 | 0.806 | ❌ |
+| mid-torso width | 25.84 | 36.3 | 0.712 | ❌ |
+| pelvis width | 27.09 | 37.7 | 0.719 | ❌ |
+
+**Every HEIGHT passes (1.013, 0.972). Every WIDTH misses (0.65–0.81).**
+
+None of §2's four permitted diagnoses explains it, and each was checked, not
+assumed: **(a)** the 8←14 alias IS applied — the crotch is placed, visible in the
+debug pass; **(b)** slots 7/11/16 DO draw two each — 21 parts; **(c)** rotation
+and pivot are right — pinned by tests and the figure is anatomically coherent;
+**(d)** z-order is creation order — pinned, and confirmed by eye (far limbs
+behind, near limbs in front). §2 then says STOP AND ESCALATE, so the tolerances
+have NOT been touched.
+
+**The diagnosis, offered as a FIFTH cause rather than a tolerance change:** §P8
+killed the silhouette IoU because *"the only OG images are video frames of an
+equipped fighter — so an IoU would grade our bald, unarmed doll against a kasa
+and a sword."* **§P9's proportions were measured from those same equipped
+frames.** Clothing and armour add WIDTH and barely change skeletal HEIGHT, which
+is exactly the split observed. Supporting evidence:
+1. both height measures pass; all three width measures fail;
+2. the misses are NOT a common factor (0.65 / 0.71 / 0.72 / 0.81) — a scale error
+   would be uniform, and A4-F proves the overall scale is right to 2.8 %;
+3. our doll is provably bare — slots 3/4/17 are the game's own "none"
+   placeholders and equipment art is unrecoverable (`FIGHTER_ART_IDS.md` §5);
+4. the render is visibly an unclothed body; the video fighter wears a full outfit.
+
+⇒ **A4-D and A4-E are not gradeable against this doll**, for the same reason the
+IoU was not. **Owner ruling required.** The honest replacements, if wanted, are
+the two equipment-independent measures that already pass — skeletal height and
+neck-to-pelvis torso length — plus the note that §P9's five proportions become
+gradeable only if equipment art is ever recovered.
+
+### §6 Risk 2 — the debug-colour pass was RUN, not assumed
+`?art=idle&debug=1` paints each of the 21 parts in its own colour. Checked once
+by eye: every part distinct and anatomically placed, far limbs behind and near
+limbs in front, the crotch placed rather than stranded at the origin, nothing
+missing. A silhouette gate cannot see an interior error by definition, and this
+is the cheap mitigation the kickoff prescribes.
+
+### Divergences and limits carried forward
+- ⚠️ **`Earcut.deviation` is NOT in Phaser's `.d.ts`** though it exists in 3.90.0.
+  Reached through `unknown` with a runtime `typeof` check that THROWS if a future
+  Phaser drops it — a missing `deviation` must fail A4-A loudly, not silently
+  report no holes to check.
+- ⚠️ **`src/game/art/fighterShapes.ts` is not test-importable** —
+  `no-game-imports` exempts only `art/types.ts` and `art/generated/`, and
+  widening that for convenience would trade a live guard away. The test rebuilds
+  the map from the generated art and a TEXT-level check keeps the real registry
+  from drifting from the slot map.
+- ⚠️ **Still not a scale proof** (§6 Risk 1). A4-F ties the fighter to the world
+  through two derivations that agree to 2.8 % but share the assumption that the
+  fighter clip is scale ≈ 1. This session tests consistency with that assumption;
+  it does not establish it.
+
+**Chaos plants — 6 written, 6 watched RED then reverted:** rotation sign flipped
+(4 red) · rotation about the stage origin (4) · stroke widths scaled by the
+rotation (3) · hole verdicts lost in rotation (3) · missing-shape throw removed
+(1) · parts re-sorted inside `planPose` (1).
+
+**Gates:** suite **742/742 (44 files)** — was 726 · tsc ×2 exit 0 · eslint exit 0
+· build clean · **in-browser fidelity 41/41 probes + 14/14 scans = 55/55,
+`pass: true`, 0 failures** · **0 console errors** on `?art=idle` ·
+`duel-baseline` green **and unedited** · ratchet **not widened** — the two new
+`game/` files are baselined as `{}`, i.e. zero numeric literals each.
