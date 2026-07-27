@@ -61,6 +61,55 @@
 > Rings are validated *before* the skip, so a skipped ring is never an
 > unvalidated one.
 >
+> ### ✅ A3.2 – A3.4 DONE — **THE OG ART IS ON SCREEN AND MEASURED.** `?art=og`
+> `src/game/OgArtScene.ts` draws `SHAPE_2664` beside the procedural fighter at a
+> fixed labelled stage position. **This is the first observed frame of imported
+> OG art in this repo.** Full evidence: `docs/DIVERGENCES.md` "SESSION 17 — A3".
+>
+> **GATE A3-A — 17.141 × 20.160 stage px ±1. PASS, tolerance untouched.**
+> ```
+> inked bounds (plan)  x 635.339 .. 652.480   y 285.960 .. 306.120
+> predicted lit pixels cols 635..651          rows 286..305
+> MEASURED lit pixels  cols 635..652          rows 286..305    clipped=false
+>   span 17 x 19 (-0.14, -1.16)   covered 18 x 20 (+0.86, -0.16)   dpr 1
+> reproducible across 3 consecutive reads
+> ```
+> ⚠️ **READ THE PIXEL INDICES, NOT THE DELTAS.** Three of the four deltas are
+> inside ±1 and `spanY` (−1.16) is not — because `span` measures pixel *centres*
+> and under-reads by up to 1 px by construction, while `covered` counts rows and
+> over-reads by up to 1. The real proof is that **the render lights exactly the
+> rows the plan predicts**, with one extra column at the right edge where the
+> rectangle model treats a point on a curve as a vertical wall. This is §P2's
+> declared noise floor behaving as declared. None of §2's three diagnoses were
+> needed.
+>
+> **GATE A3-B — byte-exact. PASS.** Every fully-opaque pixel in the head is
+> `0xffcc99` (×125) or `0x000000` (×49); every other opaque value is an exact
+> blend of those two (`0x80664d` = 50 %, `0xbf9973` = 75 %, `0x403326` = 25 %).
+>
+> **GATE A3-D — PASS.** Fidelity gate **55/55** (41 probes + 14 scans,
+> `pass: true`, 0 failures) · suite **690/690, 42 files** · `duel-baseline`
+> green **and unedited** (empty diff vs `04352a9`) · build clean · tsc + eslint 0.
+> ⏱️ The fidelity run takes **~45 s** and will trip a 45 s CDP timeout if you
+> `await` it directly — kick it off detached onto `window` and poll.
+>
+> **GATE A3-E — 0 console errors** on a fresh load (Vite connect + Phaser banner
+> only). **GATE A3-F — settled in the pinned build, not from docs:**
+> `typeof Phaser.Geom.Polygon.Earcut === 'function'` and
+> `typeof Phaser.Geom.Polygon.Earcut.deviation === 'function'`, **Phaser 3.90.0**.
+> Call form: `Earcut(flatXY, holeIndices?, dimensions?) → number[]` triangle
+> indices; `Earcut.deviation(verts, holes, dims, tris) → 0 when correct`.
+>
+> ⭐ **THE MEASUREMENT RULE IS NOW CODE, NOT A CONSOLE TRANSCRIPT.**
+> `src/core/inkBox.ts` implements §P2 (alpha ≥ 50 %, `clipped` flag, throws on
+> "no ink"). It returns **two** widths — `span` and `covered` — because
+> collapsing them to one silently picks a side of the ±1 noise floor and calls it
+> precision. **A4 re-runs the same function rather than re-deriving the rule.**
+>
+> ⚠️ **THE CANVAS IS TRANSPARENT ON `?art=og` ONLY** (`src/main.ts`), because
+> §P2's alpha rule is meaningless over an opaque background. Every other route
+> keeps its background — that is why 55/55 still holds.
+>
 > ---
 >
 > ## ▶ SESSION 16 — **R1 + R2 CLOSED.**

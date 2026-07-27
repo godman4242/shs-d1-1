@@ -18,7 +18,7 @@
  * assertion attached.
  */
 import { describe, expect, it } from 'vitest';
-import { planShape, type DrawOp, type ShapeInput, type StrokeOp } from '../src/core/artPlan';
+import { inkedBounds, planShape, type DrawOp, type ShapeInput, type StrokeOp } from '../src/core/artPlan';
 import { VIEW, type ViewTransform } from '../src/core/viewport';
 import { SHAPE_2664 } from '../src/game/art/generated/shape2664';
 
@@ -269,6 +269,38 @@ describe('artPlan: the committed SHAPE_2664 (the shape A3.2 renders)', () => {
 
     expect(maxX - minX).toBeCloseTo(17.1408, 3);
     expect(maxY - minY).toBeCloseTo(20.16, 3);
+  });
+
+  /**
+   * `inkedBounds` is what the browser probe derives its snapshot region from,
+   * so it must agree with the hand-derived figure above. The test above computes
+   * the box inline on purpose — two independent paths to the same number, rather
+   * than a helper checked against itself.
+   */
+  it('inkedBounds agrees with the independently-computed A3-A box', () => {
+    const bounds = inkedBounds(planShape(SHAPE_2664, ORIGIN, VIEW));
+
+    expect(bounds.maxX - bounds.minX).toBeCloseTo(17.1408, 3);
+    expect(bounds.maxY - bounds.minY).toBeCloseTo(20.16, 3);
+  });
+
+  it('inkedBounds pads each stroke by HALF its width, not the full width', () => {
+    // A whole-width pad would report 18.94 x 21.96 — a "too big" failure that
+    // looks like a scale bug and is not.
+    const oneStroke: ShapeInput = {
+      id: 9011,
+      paints: [{ kind: 'stroke', color: 0x000000, width: 10, polylines: [[0, 0, 10, 0]] }],
+    };
+
+    const bounds = inkedBounds(planShape(oneStroke, ORIGIN, { scale: 1, offsetX: 0, offsetY: 0 }));
+
+    // A 10-long path stroked 10 wide inks 20 x 10, not 30 x 20.
+    expect(bounds.maxX - bounds.minX).toBeCloseTo(20, 10);
+    expect(bounds.maxY - bounds.minY).toBeCloseTo(10, 10);
+  });
+
+  it('inkedBounds throws on an empty plan rather than returning an infinite box', () => {
+    expect(() => inkedBounds([])).toThrow(/empty/i);
   });
 
   it('has a GEOMETRY-only stage bbox of 15.341 × 18.360 — the number a fill-measurement gives', () => {

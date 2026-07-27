@@ -17,7 +17,7 @@
  * drifting is `plans the COMMITTED art without a cast` in the test file: it
  * assigns the real `SHAPE_2664` to `ShapeInput`, so a divergence fails typecheck.
  */
-import { ONE, TWO, ZERO } from '../config/nums';
+import { HALF, ONE, TWO, ZERO } from '../config/nums';
 import type { Vec } from './vec';
 import { worldToStageLength, type ViewTransform } from './viewport';
 
@@ -120,4 +120,45 @@ export function planShape(shape: ShapeInput, origin: Vec, view: ViewTransform): 
     }
   }
   return ops;
+}
+
+/** An axis-aligned box in stage px. */
+export interface Bounds {
+  readonly minX: number;
+  readonly minY: number;
+  readonly maxX: number;
+  readonly maxY: number;
+}
+
+/**
+ * The INKED extent of a plan — the box a screenshot actually shows.
+ *
+ * A stroke straddles its path, so each stroke op grows by HALF its width on
+ * every side; a fill stops at its polygon. Measuring the fill polygon instead
+ * gives 15.341 × 18.360 for `SHAPE_2664` against an inked 17.141 × 20.160 —
+ * 1.8 px low, which looks exactly like a scale bug and is not (SESSION17 §P2).
+ *
+ * Throws on an empty plan: the alternative is a box built from ±Infinity, which
+ * propagates as NaN into whatever measures against it.
+ */
+export function inkedBounds(ops: readonly DrawOp[]): Bounds {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  for (const op of ops) {
+    const pad = op.kind === 'stroke' ? op.widthStage * HALF : ZERO;
+    for (const p of op.points) {
+      minX = Math.min(minX, p.x - pad);
+      minY = Math.min(minY, p.y - pad);
+      maxX = Math.max(maxX, p.x + pad);
+      maxY = Math.max(maxY, p.y + pad);
+    }
+  }
+
+  if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
+    throw new Error('inkedBounds: empty plan — nothing to measure');
+  }
+  return { minX, minY, maxX, maxY };
 }

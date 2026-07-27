@@ -62,7 +62,7 @@ interface IntroSeam {
  * fallback, because Chrome occlusion-throttles rAF in background tabs (the
  * known failure class the __game loop-step seam exists for). A manual step
  * drives the exact same update/render path, just on our clock. */
-const settleFrames = async (game: Phaser.Game, frames: number): Promise<void> => {
+export const settleFrames = async (game: Phaser.Game, frames: number): Promise<void> => {
   for (let i = 0; i < frames; i++) {
     let onRender: (() => void) | undefined;
     const rendered = await new Promise<boolean>((resolve) => {

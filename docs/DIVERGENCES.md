@@ -1473,3 +1473,81 @@ re-planted after the refactor) and **1 planted GREEN on purpose** (`WELD = 1e-2`
 the negative control). Gates: suite **664/664 (40 files)** · without `reference/`
 **656 passed | 8 skipped, exit 0** · tsc ×2 exit 0 · eslint exit 0 · `npm run
 build` clean.
+
+---
+
+## SESSION 17 — A3: the first observed frame of imported OG art (2026-07-27)
+
+**What landed.** `src/core/artPlan.ts` (an `ArtShape` → ordered `DrawOp[]`
+planner), `src/core/inkBox.ts` (SESSION17 §P2's measurement rule as code), and
+`src/game/OgArtScene.ts` behind `?art=og` — one imported shape, `SHAPE_2664`
+(the samurai's head), drawn beside the procedural fighter at a fixed labelled
+stage position. **Nothing had ever been drawn from the imported art before this.**
+
+### The measurement, and what it actually shows
+Gate A3-A was **17.141 × 20.160 stage px ±1**, derived by the suite from the
+committed artifact rather than transcribed. Measured on canvas under §P2's rule
+(alpha ≥ 50 %, transparent background, CSS px at `devicePixelRatio` 1):
+
+```
+inked bounds (plan)  x 635.339 .. 652.480   y 285.960 .. 306.120
+predicted lit pixels cols 635..651          rows 286..305
+MEASURED lit pixels  cols 635..652          rows 286..305     clipped=false
+  span    17 x 19    (delta -0.14, -1.16)
+  covered 18 x 20    (delta +0.86, -0.16)
+reproducible across 3 consecutive reads; devicePixelRatio 1
+```
+
+⚠️ **THE HONEST READING, because the delta arithmetic alone is ambiguous.** Of
+the four estimates, three are inside ±1 px and one — `spanY`, at −1.16 — is not.
+`span` measures outermost lit pixel *centres* and therefore under-reads by up to
+1 px by construction; `covered` counts lit rows and over-reads by up to 1. The
+true value is bracketed for width (17 < 17.141 < 18) but not for height
+(20 < 20.160), because the ink's overhang past row 305 is only 12 % of a pixel
+and falls below the 50 % threshold. **The decisive evidence is therefore not the
+deltas but the pixel indices: the render lights exactly the rows the plan
+predicts, and one extra column at the right edge** — where the rectangle model
+treats a single point on a *curve* as a vertical wall and so under-predicts.
+That is the ±1 px noise floor §P2 warned about, behaving exactly as described.
+**The tolerance was not moved.** (SESSION17 §2 (a)/(b)/(c) were not needed.)
+
+### Colours, byte-exact (A3-B)
+Histogram of every FULLY-opaque pixel in the head's region: `0xffcc99` ×125 and
+`0x000000` ×49, and nothing else that is not an exact linear blend of the two
+(`0x80664d` is 50 %, `0xbf9973` is 75 %, `0x403326` is 25 %). No third colour
+entered the render.
+
+### What A3 CANNOT prove, stated so A4 does not inherit a false comfort
+**`SHAPE_2664` is `F S S`, so source order and the fills-then-strokes bug render
+identically.** This was not left as theory: the chaos plant that re-sorts the
+planner to fills-then-strokes left the test
+`plans the committed SHAPE_2664 as F,S,S` **PASSING**, and only the synthetic
+`S,F` and `F,S,F,S` fixtures went red. **A3's pixels cannot see the SESSION16 R2
+defect.** Gate A3-C is a unit test for exactly this reason, and A4 must not read
+a green A3 as a paint-order proof.
+
+### Divergences and limits carried forward
+- **Hole rings are SKIPPED by the planner.** A3 only — `SHAPE_2664` has none
+  (SESSION17 P6). Rings are validated *before* the skip, so a skipped ring is
+  never an unvalidated one. **A4 must replace the skip with
+  `Phaser.Geom.Polygon.Earcut`**, confirmed present in the pinned build together
+  with `Earcut.deviation` (both `typeof "function"`, Phaser 3.90.0).
+- **`src/core/` cannot import `src/game/art/types.ts`** — the config-purity gate
+  resolves every import including `import type`. The planner therefore
+  re-declares its input types structurally; drift is caught at **typecheck** by
+  assigning the real `SHAPE_2664` to `ShapeInput` in the test.
+- **The canvas is transparent on the `?art=og` route only.** §P2's rule is
+  undefined over an opaque background. Every other route is unchanged, and the
+  fidelity gate re-ran **55/55** to prove it.
+- **A3 says nothing about the composed fighter's scale** (SESSION17 §6 Risk 2).
+  One shape at one fixed position, deliberately.
+
+**Chaos plants, all watched red then reverted:** planner re-sorted to
+fills-then-strokes · hole ring skipped before validation · origin offset applied
+twice (`x:1305` for an expected `x:306`) · `inkBox.clipped` forced true.
+**Gates:** suite **690/690 (42 files)** · fidelity gate **55/55** (41 probes +
+14 scans, `pass: true`) · `tests/duel-baseline.test.ts` green **and unedited**
+(empty `git diff` against `04352a9`) · tsc ×2 exit 0 · eslint exit 0 ·
+`npm run build` clean · **0 console errors** on a fresh load · ratchet refreshed
+deliberately, its entire diff being `"src/game/OgArtScene.ts": {}` — an empty
+multiset, i.e. the new scene contains no numeric literals at all.
