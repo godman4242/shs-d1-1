@@ -1,6 +1,61 @@
 # RESUME HERE
 
-> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION20_KICKOFF.md`**
+> ## ▶ IN PROGRESS — SESSION 20, kickoff `docs/sessions/SESSION20_KICKOFF.md`
+> **NEXT STEP: §4 A6.2 — the comparator.** `scripts/art/compareToSource.py`:
+> register by ground line + height, segment both sides with `proportions.py`'s
+> existing rule, attribute error per slot. **Gate A6-B.**
+>
+> ### ✅ A6.1 DONE — **GATE A6-A MET.** The fighter renders headless, deterministically.
+> ```
+> npx vite-node scripts/art/renderPose.ts -- dressed --out renders/d.png --mask renders/d-mask.png --slots
+> npx vite-node scripts/art/renderPose.ts -- idle --full
+> ```
+> `rasterise.ts` (pure engine, zero deps) · `renderPoseArgs.ts` (validated flags) ·
+> `poseRaster.ts` (compose→plan→rasterise) · `renderPose.ts` (CLI). Outputs go to
+> the gitignored `renders/`. **Suite 46 files / 795 tests green** (was 44/750),
+> tsc ×2 → 0, eslint → 0, **fidelity 55/55 `pass: true`**, 0 console errors.
+> ```
+> dressed  20 parts, 55 ops   ink 474.9..538.9 x 290.9..431.4  (63.9 x 140.5)
+> idle     21 parts, 90 ops   ink 480.5..533.1 x 303.2..431.4  (52.7 x 128.2)
+> two separate PROCESSES: cmp png OK, cmp mask OK, digest e9ddfe43b6ea139b
+> ```
+> ⭐ **It reproduces numbers committed BEFORE it existed.** `idle`'s ink is
+> `52.7 x 128.2` against SESSION 18 A4-F's `52.661 x 128.164`; `--slots`
+> regenerates **all 11 rows of the kickoff's §P6 table to 0.1 stage px.**
+>
+> ⛔ **THREE THINGS THIS STEP OVERTURNED — do not re-derive them.**
+> 1. **NEVER GATE ON A PNG's BYTES.** `deflateSync` output depends on the zlib
+>    Node was built with — v25.8.2 and v24.14.1 give different files for the same
+>    pixels, and **CI runs `lts/*`, a different build from this Mac.** Gate on
+>    `rasterDigest` (the PIXELS, portable). The first draft claimed the opposite.
+> 2. **§P6's row `16 head+hair` is internally inconsistent.** Its bbox is
+>    head+hair, its `17.7 x 19.7` is the HEAD ALONE; together they are
+>    **18.4 x 22.1**. §P7 defect 1 is unaffected (it argues from `y 325.3`).
+> 3. **Fill rings are stored OPEN — 0 of 50 repeat their first point** (6 of 28
+>    stroke polylines do). So the scanline filler's implicit closing edge is
+>    load-bearing, and `drawPlan`'s comment justifying `closeShape: false` covers
+>    only 6 of its 28 polylines — the code is right, the stated reason is narrow.
+>
+> ⚠️ **`poseRaster.ts` HAS NO SUITE COVERAGE, BY CONSTRUCTION** — it imports
+> `src/game/art/fighterShapes.ts`, which `tests/no-game-imports.test.ts` forbids a
+> test from reaching. Its guards are chaos-proven by CLI runs, not by a green
+> test. **Do not read the green suite as covering it.**
+>
+> ⚠️ **THE RENDERER IS NOT PHASER.** Even-odd scanline fills (so it is BLIND to a
+> mis-packed hole ring — that stays `Earcut.deviation`'s job in the live scene),
+> round stroke caps, box-downsampled AA. Checked by eye against the live canvas on
+> both routes anyway: they agree, **including reproducing both open defects.**
+>
+> **Process:** 20 chaos plants, all watched red — **3 stayed green and condemned
+> the TEST**, which was strengthened before re-planting. A 4-lens adversarial
+> review then raised 21 claims, **5 confirmed and all fixed red-first** (the
+> determinism claim; `--backdrop ff00ff` → NaN → a PURE BLACK backdrop that walked
+> past the one guard the module exists for, on both the CLI *and* the API path; a
+> flag swallowing the next flag; `encodePng` accepting a 0-size image).
+>
+> ---
+>
+> ## ▶ THE KICKOFF — **`docs/sessions/SESSION20_KICKOFF.md`**
 > **BUILD THE LOOP THAT GRADES THE FIGHTER, THEN LET IT FIX HIM.** Self-contained,
 > the only kickoff to plan from, **no open prerequisites.**
 >

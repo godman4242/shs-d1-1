@@ -2489,3 +2489,156 @@ typecheck x2 exit 0 · eslint exit 0 · ?art=dressed 0 console errors
 ⭐ The clean-clone run is real: `git clone --local` into the scratchpad (which
 excludes gitignored `reference/`), `node_modules` symlinked, full suite run —
 **`reference/` confirmed absent** and exit 0.
+
+## SESSION 20 — A6.1: the headless render. **GATE A6-A MET.**
+
+**The thesis of the session, restated:** every defect in SESSION 19's outfit was
+found by a human eye, never by a gate, while the suite sat at 750 green — because
+nothing in the repo compared the rendered fighter to the source. A6.1 is the
+first half of the comparison: the planner's own output becomes a file, in
+milliseconds, without a browser.
+
+### What landed
+```
+scripts/art/rasterise.ts       pure engine: DrawOp[] -> pixels -> PNG, zero deps
+scripts/art/renderPoseArgs.ts  the CLI's flags, parsed and RANGE-CHECKED
+scripts/art/poseRaster.ts      compose -> plan -> rasterise (the pure half)
+scripts/art/renderPose.ts      the CLI
+tests/rasterise.test.ts        34 tests      tests/renderPoseArgs.test.ts  11 tests
+```
+`renders/` is gitignored. **Nothing new reads `reference/`; nothing in `src/`
+changed at all** — the whole step is build-time tooling plus tests.
+
+### GATE A6-A ✅ — planPose's DrawOps → a PNG from Node, byte-deterministic
+```
+dressed: 20 parts, 55 draw ops   ink 474.9..538.9 x 290.9..431.4 (63.9 x 140.5)
+idle:    21 parts, 90 draw ops   ink 480.5..533.1 x 303.2..431.4 (52.7 x 128.2)
+two separate PROCESSES, same output:  cmp png OK · cmp mask OK · digest e9ddfe43b6ea139b
+```
+⭐ **The `idle` ink is 52.7 x 128.2, and SESSION 18's A4-F recorded the plan as
+`52.661 x 128.164`** — the headless render reproduces a number measured before it
+existed, against a live canvas, to 0.1 px.
+
+### ⭐ THE PLUMBING IS CHECKED AGAINST A TABLE COMMITTED BEFORE THIS CODE EXISTED
+`renderPose --slots` regenerates the kickoff's §P6 per-slot footprints. **All 11
+of its rows reproduce to 0.1 stage px** (kasa, collar, gi body, both sleeves,
+both hakama, obi, lowarm, foot).
+⚠️ **ONE §P6 ROW IS INTERNALLY INCONSISTENT AND IS CORRECTED HERE.** Row `16
+head+hair` gives bbox `501.5..519.8 x 303.2..325.3` but size `17.7 x 19.7`. Those
+disagree; measured per shape:
+```
+slot 16 shape 2664 (head) alone: 502.1..519.8 x 305.5..325.3   17.7 x 19.7  <- §P6's SIZE
+slot 16 shape 2670 (hair) alone: 501.5..518.3 x 303.2..321.3   16.8 x 18.1
+slot 16 head+hair together     : 501.5..519.8 x 303.2..325.3   18.4 x 22.1  <- the truth
+```
+So §P6's size column for that row is the HEAD ALONE while its bbox is head+hair.
+✅ **§P7 defect 1 is unaffected**: it argues from head-bottom `y 325.3`, which is
+the same in both readings.
+
+### ⛔ THE DETERMINISM CLAIM I FIRST WROTE WAS FALSE, AND IT MATTERED
+The header said `deflateSync` "makes the PNG bytes a pure function of the pixels".
+It does not — `deflateSync` output is a function of the zlib Node was BUILT
+against. Measured on this machine, same 20 000 bytes at level 9:
+```
+node v25.8.2  (shared zlib 1.2.12)  -> sha 839bcfde99e8e51a
+node v24.14.1 (bundled zlib 1.3.1)  -> sha 6e713876e21a4dc5
+```
+**And `.github/workflows/ci.yml` pins `node-version: 'lts/*'`, a different build
+from the dev Mac** — so a future gate hashing a PNG would have gone red in CI for
+no reason anybody could find. **Fix: `rasterDigest()` hashes the PIXELS**, which
+use only exactly-specified arithmetic, and the CLI prints it labelled as the
+render's identity with the PNG's sha256 labelled build-dependent.
+⚠️ One level up: `planPose` rotates with `Math.cos`/`Math.sin`, which ECMAScript
+leaves implementation-defined — so a PLAN is only guaranteed stable on a fixed
+engine. Stated in the header rather than assumed away.
+
+### ⛔ A COMMENT THIS SESSION WROTE WAS FACTUALLY WRONG ABOUT THE COMMITTED ART
+It claimed "every closed OG outline repeats its first point". Measured over all
+21 committed shapes:
+```
+fill rings:        50, of which repeat their first point:  0
+stroke polylines:  28, of which repeat their first point:  6
+```
+⇒ **The implicit closing edge in the scanline filler is LOAD-BEARING, not
+defensive**: fill rings are stored OPEN, so dropping the wrap loses each ring's
+last edge and leaks the fill across the scanline.
+⚠️ Note for later: `drawPlan`'s own comment in `src/game/OgArtScene.ts` justifies
+`closeShape: false` with the same "already repeats its first point" claim. 22 of
+28 polylines do NOT repeat it — they are open paths, so the CODE is right, but
+the stated reason covers only 6 of them. Not changed here (it would move pixels).
+
+### THE STATED DIVERGENCES FROM PHASER — this is a comparator, not a second game
+1. fills are scanline-filled EVEN-ODD; Phaser triangulates through Earcut. This
+   renderer is therefore **blind to a mis-packed hole ring**, which is exactly
+   what `Earcut.deviation` in the live scene exists to catch.
+2. strokes get ROUND caps/joins; Phaser uses miter joins and butt caps. At the
+   0.6–2.4 stage px widths the art carries this is sub-pixel — and round caps
+   agree with `inkedBounds`, which already grows a stroke by half its width on
+   every side.
+3. antialiasing is a box downsample of `supersample`² hard-edged sub-pixels.
+✅ **Checked by eye against the live canvas anyway**, both routes, on a magenta
+backdrop: the headless render and Phaser agree on pose, layering and every
+garment — including reproducing §P7's two open defects (feet detached below the
+hakama hem; the gi rising into the neck).
+
+### THE BACKDROP IS MAGENTA, AND IT IS ENFORCED
+`0xff00ff` collides with none of the 14 colours the art uses (black, five tans,
+eight greys). `assertBackdropIsNotArt` throws if a chosen backdrop is one the
+plan paints — without it, "everything that is not the backdrop is the fighter"
+silently deletes a garment and the score IMPROVES.
+
+### 20 CHAOS PLANTS, ALL WATCHED RED — AND 3 OF THEM CONDEMNED THE TEST, NOT THE CODE
+Planted, red, reverted: region offset dropped · paint order reversed · hole rings
+mis-packed · fill clamping removed · polyline closed (both a crash form and a
+proper modulo form) · stroke width as radius · floor-instead-of-round · CRC
+zeroed · PNG filter byte wrong · colour type wrong · `Math.random` in the
+downsample and in the encoder · fills-then-strokes reordering · stroke colour
+ignored · stroke clamping removed · sub-pixel sampled at the corner · coverage
+keyed to "not the backdrop" · a fill row dropped (vs the golden digest) · and an
+off-stage `anchorX` (vs the clip guard).
+⭐ **Three plants stayed GREEN and each exposed a weak test, which was then
+strengthened before the plant was re-run:**
+1. the hole-ring mis-pack — corner probes still pass when the mis-pack cuts a
+   WEDGE out of the flanks, so all four flanks are now probed;
+2. closing an L-shaped polyline — the added edge is the DIAGONAL back to the
+   start, not the "missing side", so the closing diagonal itself is now probed;
+3. (from the review, below) the round-cap negative probe sat OUTSIDE the
+   segment's own scan box and passed whatever the cap did — replaced by an
+   assertion on the whole ink extent, which cannot pass by accident.
+
+### THE ADVERSARIAL REVIEW — 4 lenses, 21 claims, 15 refutation verdicts, 5 CONFIRMED
+Every confirmed finding is fixed, red-first:
+| # | finding | fix |
+|---|---|---|
+| 1 | the PNG determinism claim is false across Node builds | `rasterDigest` + a header that states all three guarantees separately |
+| 2 | `--backdrop ff00ff` (no `0x`) → NaN → renders on **pure black** and walks past the backdrop guard | `renderPoseArgs.ts`, range-checked, split out so a test can reach it |
+| 3 | the same hole on the **API** path (`renderPose()`, which the comparator and loop are documented to call) | validated in `rasterise()` itself |
+| 4 | a value-taking flag swallows the next flag (`--out --slots` writes a file named `--slots`) | rejected |
+| 5 | `encodePng` accepts a 0-size image and emits a file no decoder accepts | dimensions validated |
+Plus test-strength gaps the review found and this step closed: stroke COLOUR was
+never asserted · paint order was asserted only between two FILLS, so the
+fills-then-strokes bug the module cites (SESSION16 R2 finding 1) survived the
+suite · stroke width pinned only on a 2-point path · IHDR bytes 10/11/12
+unasserted · the sub-pixel sampling convention unpinned · the AA blend value only
+bracketed (a gamma blend passed) · stroke clipping ungated · the region guard's
+HEIGHT arm untested · and `coverage`'s whole reason for existing — ink registers
+even where the paint equals the backdrop — untested.
+
+### ⚠️ WHAT IS **NOT** COVERED, STATED SO NOBODY READS THE GREEN AS MORE THAN IT IS
+- **`poseRaster.ts` has NO suite coverage, by construction.** It imports
+  `src/game/art/fighterShapes.ts` and `tests/no-game-imports.test.ts` forbids a
+  test from reaching `src/game/**`. Its two guards are chaos-proven by CLI runs
+  against planted defects (recorded above), not by a green test.
+- A `main()` at module scope cannot be guarded here: **`vite-node` strips the
+  script path out of `process.argv`**, so the usual entry-point check never
+  matches. Hence the `emit.ts`/`generate.ts`-style split into a pure module and a
+  CLI — the only honest fix, and the comparator needs the pure half anyway.
+
+### Regression, all green
+```
+suite   46 files / 795 tests   (was 44 / 750 at session start)
+tsc x2 exit 0 · eslint exit 0
+in-browser fidelity  41/41 probes + 14/14 scans = 55/55, pass: true, 0 failures
+?art=idle draws the BARE 21-part fighter · ?art=dressed the 20-part dressed one
+0 console errors on a fresh load · duel-baseline UNEDITED · ratchet NOT widened
+```
