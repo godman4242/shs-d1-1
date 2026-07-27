@@ -24,6 +24,43 @@
 > is **untestable by construction**, and paint order is the one finding A3's own
 > pixels cannot check.
 >
+> ### ✅ A3.1 DONE — `src/core/artPlan.ts`, red-first. **680 tests green** (was 664).
+> `planShape(shape, origin, view)` → ordered `DrawOp[]` in stage px. 16 new tests,
+> all watched red against a stub before the implementation existed.
+> **Three chaos plants, each proven red then reverted:**
+> 1. fills-then-strokes planner → `expected [ 'fill', 'stroke' ] to deeply equal [ 'stroke', 'fill' ]`
+> 2. skip-hole-before-validate → `expected [Function] to throw an error`
+> 3. origin offset applied twice → `expected [ { x: 1305, … } ] to deeply equal [ { x: 306, … } ]`
+>
+> ⚠️ **PLANT 1 IS THE POINT OF THE WHOLE STEP, AND IT PROVED §6 Risk 1 LITERALLY
+> TRUE:** under the fills-then-strokes bug the test
+> `plans the committed SHAPE_2664 as F,S,S` **still passed**. Only the synthetic
+> `S,F` and `F,S,F,S` fixtures went red. A3's pixels genuinely cannot see this
+> defect — do not let A4 assume a green A3 proved paint order.
+>
+> ⭐ **TWO DECISIONS THE KICKOFF DID NOT ANTICIPATE:**
+> - **D-A — the input types are RE-DECLARED in `core/`, not imported.** `ArtShape`
+>   lives in `src/game/art/types.ts` and `tests/config-purity.test.ts` resolves
+>   *every* import including `import type` (its own scanner self-test proves it),
+>   so `core/` importing it is impossible. The two declarations are kept in sync
+>   by the test `plans the COMMITTED art without a cast`, which assigns the real
+>   `SHAPE_2664` to `ShapeInput` — drift fails **typecheck**, not just a test.
+> - **D-B — the signature is `planShape(shape, origin: Vec, view: ViewTransform)`,
+>   not the kickoff's `(shape, originStageX, originStageY, scale)`.** Same
+>   information; the reason is D5 — with a bare `scale` the planner open-codes
+>   `local * scale`, whereas a `ViewTransform` routes both the coordinates *and*
+>   the stroke widths through the real `worldToStageLength`.
+>
+> ⭐ **GATE A3-A IS NOW DERIVED BY THE SUITE, NOT TRANSCRIBED.** Two tests compute
+> the bbox from the planned ops: inked **17.1408 × 20.16** and geometry-only
+> **15.3408 × 18.36** — independently reproducing §P2 from the committed data. The
+> browser measurement in A3.2 is compared against a number the suite owns.
+>
+> ⚠️ **Hole rings are SKIPPED in the planner — A3 only.** `SHAPE_2664` has none
+> (P6). **A4 must replace the skip with `Phaser.Geom.Polygon.Earcut` + `deviation`.**
+> Rings are validated *before* the skip, so a skipped ring is never an
+> unvalidated one.
+>
 > ---
 >
 > ## ▶ SESSION 16 — **R1 + R2 CLOSED.**
