@@ -1,6 +1,6 @@
 # RESUME HERE
 
-> ## ▶ IN PROGRESS — **SESSION 18. A4.1 + A4.2 DONE; START AT §4 A4.3.**
+> ## ▶ IN PROGRESS — **SESSION 18. A4.1–A4.3 DONE; START AT §4 A4.4.**
 > Kickoff: **`docs/sessions/SESSION18_KICKOFF.md`** (read it, not this summary).
 > Baseline is **`c46adbc`**, not the kickoff's `a9592d7`: three owner commits
 > (CI + dependabot) landed on top, and `git diff a9592d7..HEAD -- src tests` is
@@ -89,12 +89,49 @@
 > ⚠️ **Ratchet baseline NOT refreshed** — `tests/game-purity-baseline.json` is
 > unmodified.
 >
-> ### ⬜ NEXT: A4.3 — `src/core/composePose.ts`, red-first
-> `composePose(nodes, slotMap)` → ordered `(shapeId, x, y, rotationRad)[]`.
-> **First tests: the 8←14 and 17←16 aliases are emitted even though no node
-> carries them; slots 7/11/16 emit TWO entries; the order is slot 0 → 20.**
-> The 19 node transforms are printed verbatim in the kickoff's §P2.
-> **Gate: A4-B + A4-C.** Then A4.4 (`?art=idle` + measure) · A4.5 (regression).
+> ### ✅ A4.3 DONE — the composer. **726 green** (was 708). Gates A4-B + A4-C.
+> `src/core/composePose.ts` — 19 nodes + 2 aliases + a slot→shape map → one
+> ordered draw list, back to front. Pure, red-first, 18 tests, **7 chaos plants
+> all watched RED** (aliases dropped → **15 red**).
+>
+> ⛔ **THE KICKOFF'S GATE A4-B SAYS "17 drawn parts". THE CORRECT NUMBER IS 21.**
+> Its own §P3 table gives: 21 slots − 3 empty by design (3 weapon · 4 prop ·
+> 17 hat) = **18 occupied**, +3 second parts (slot 7 foottop · 11 foottop ·
+> 16 hair) = **21 drawn parts**. An arithmetic slip, not a tolerance, so §2's
+> "tolerances do not move" doesn't apply — but the correction is **derived, not
+> transcribed**: the test computes both numbers from `OG_SLOT_SHAPES` itself, so
+> the suite owns them and cannot inherit the slip. **A4.4 must expect 21.**
+>
+> ⭐ **THE TRANSCRIPTION IS CHECKED AGAINST THE PAYLOAD'S OWN BYTES.**
+> `OG_IDLE_NODES` is 19 rows × 4 numbers typed by hand from a kickoff, and every
+> behavioural test would pass just as happily against a typo. A `skipIf`-gated
+> suite re-parses `reference/extracted/bindata/108_1t4635s0.bin` and compares node
+> for node: **19/19 byte-identical.** Planting one digit transposition (torso
+> `y −68 → −86`) turns it red. The same suite **confirms the aliasing rule from
+> DATA**: the source frame omits slots 8 and 17 and only those.
+>
+> ⭐ **The node list is stored in the XML's DOCUMENT order on purpose** — z-order
+> is CREATION order, and the AS3 pushes nodes in *reverse* document order, so
+> "iterate the XML" and "creation order" are different sequences (§2 diagnosis
+> (d)). Storing document order makes a node-list-order composer provably wrong.
+>
+> ⚠️ **INFERRED, and the only inferred thing in `ogPose.ts`:** the order WITHIN a
+> two-part slot (calf before foottop, head before hair). Veto = a frame showing
+> hair behind the head.
+> ⚠️ **NOTHING IS RENDERED YET.** A4.3 is a pure function. A green A4.3 says the
+> WIRING is right, not that it looks right.
+>
+> ### ⬜ NEXT: A4.4 — render behind `?art=idle` and MEASURE
+> Reuse `drawPlan` (the Earcut path is already in it from A4.1). Measure with
+> `src/core/inkBox.ts` — **the same function SESSION 17 used, not a new rule.**
+> Add `?art=idle` beside `?art=og` in `src/main.ts`, `transparent: true` on that
+> route too. **Gate: A4-A (`Earcut.deviation === 0` for the 4 hole instances) +
+> A4-D (5 proportions ±15 %) + A4-E (2 ratios ±0.15) + A4-F (height ±5 % of
+> 131.8 stage px).** Screenshot it and READ THE PIXELS. Then A4.5 (regression:
+> fidelity 55/55 · suite · `duel-baseline` unedited).
+> 💡 §6 Risk 2 prescribes a one-off **debug-colour pass** — render each part in a
+> distinct colour behind a flag, check the layer stack by eye once, turn it off.
+> A silhouette gate cannot see an interior error, by definition.
 >
 > ---
 >

@@ -1731,3 +1731,89 @@ these committed-art ones.
 generated art is exempt and that exemption is what the gates above pay for) ·
 `duel-baseline` green **and unedited** · all 13 regenerate byte-identical ·
 nothing from `reference/` committed.
+
+---
+
+## SESSION 18 — A4.3: the composer (2026-07-27)
+
+`src/core/composePose.ts` — 19 recorded animation nodes + 2 aliases + a
+slot→shape map → **one ordered draw list, back to front**. Pure, red-first, 18
+tests, **7 chaos plants all watched RED**. Gates **A4-B** and **A4-C**.
+
+### ⛔ THE KICKOFF'S GATE A4-B SAYS "17 drawn parts". THE CORRECT NUMBER IS 21.
+
+A4-B reads *"19 nodes + 2 aliases → 17 drawn parts (3/4/17 are empty by design);
+slots 7, 11, 16 each draw TWO"*. Its own §P3 slot table — and
+`FIGHTER_ART_IDS.md` §2, which cites a decompiled naming line per row — give:
+
+```
+21 slots (0–20)
+ −3 empty by design (3 weapon · 4 prop · 17 hat, the game's own "none" placeholders)
+ = 18 occupied slots
+ +3 second parts (slot 7 foottop · slot 11 foottop · slot 16 hair)
+ = 21 drawn parts
+```
+
+It is an arithmetic slip, not a tolerance, so §2's "the tolerances do not move"
+does not apply — but the correction is still **derived, never transcribed**: the
+test computes both figures from `OG_SLOT_SHAPES` itself
+(`occupied.reduce((n, shapes) => n + shapes.length, 0)`), so the suite owns the
+number and cannot inherit the slip. Recorded rather than silently fixed.
+
+### ⭐ THE TRANSCRIPTION IS CHECKED AGAINST THE PAYLOAD'S OWN BYTES
+
+`OG_IDLE_NODES` is 19 rows × 4 numbers typed by hand out of a kickoff, and every
+behavioural test in the file would pass just as happily against a typo — a
+mistyped `y` is invisible until it surfaces as a limb 10 px out of place, which
+is exactly the diagnosis §2 forbids guessing at. So a `describe.skipIf`-gated
+suite re-parses `reference/extracted/bindata/108_1t4635s0.bin` and compares node
+for node. **Result: 19/19 byte-identical, nothing added, nothing dropped.**
+Planting a single digit transposition (torso `y −68 → −86`) turns it red.
+
+The same suite also **confirms the aliasing rule from DATA rather than from a
+code comment**: the source frame omits slots 8 and 17 and *only* those — exactly
+the two the AS3 aliases.
+
+### Decisions
+- **The node list is stored in the XML's own DOCUMENT order, deliberately.**
+  Z-order is CREATION order (slot 0 back → slot 20 front), and the AS3
+  constructor pushes nodes in *reverse* document order, so "iterate the XML" and
+  "creation order" are two different sequences (§2 diagnosis (d)). Storing
+  document order means a composer that iterates the array is WRONG and a test
+  can see it — which is what plants P1 and P2 demonstrate.
+- **`OG_SLOT_SHAPES` is indexed BY SLOT**, so the array's own indices are the
+  creation order; the returned list is already back-to-front and a renderer just
+  walks it. Wrong order is therefore not expressible without extra work — the
+  same reasoning that made `paints` one ordered array in SESSION16 R2.
+- **Three broken-pose cases THROW rather than skip:** a slot with art but no
+  node (the stranded-crotch bug the alias rule was originally found by), an
+  alias pointing at a slot the pose lacks, and an aliased slot that *also*
+  carries its own node.
+
+### Divergences and limits carried forward
+- ⚠️ **INFERRED, and the only inferred thing in `ogPose.ts`: the ORDER WITHIN a
+  two-part slot** (calf before foottop, head before hair). It follows the
+  construction order in `FIGHTER_ART_IDS.md` §2, the best evidence available, but
+  no frame proves it. **Veto = a frame showing hair behind the head.**
+- ⚠️ **The 17←16 alias is UNOBSERVABLE in shipped data** — slot 17 is empty by
+  design, so the real pose draws nothing for it. It is pinned against a synthetic
+  slot map instead; otherwise half the aliasing rule would be carried by a
+  comment and would silently misplace a hat the day hat art exists.
+- ⚠️ **NOTHING IS RENDERED YET.** A4.3 is a pure function and its tests. The
+  first composed frame is A4.4, and A4-D/E/F (proportions, ratios, height) are
+  measured there. A green A4.3 says the WIRING is right, not that it looks right.
+
+**Chaos plants — 7 written, 7 watched RED then reverted:**
+1. parts ordered by the XML's node sequence → 3 red (A4-C);
+2. z-order reversed → 4 red;
+3. aliases dropped → **15 red**, headed by the stranded crotch;
+4. one shape per slot → 4 red (both foottops and the hair vanish);
+5. degrees passed through unconverted → 3 red;
+6. the "art but no node" throw removed → 1 red;
+7. the alias-collision throw removed → 1 red.
+Plus an 8th against the DATA: torso `y −68 → −86` → the transcription suite red.
+
+**Gates:** suite **726/726 (43 files)** — was 708 · tsc ×2 exit 0 · eslint exit 0
+· `src/core/` purity green (zero numeric literals; `HALF_TURN_DEG` does the
+degree→radian conversion) · `duel-baseline` green **and unedited** · ratchet
+baseline untouched.
