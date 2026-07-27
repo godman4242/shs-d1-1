@@ -121,8 +121,11 @@ describe('the REAL composed fighter, rasterised', () => {
 
   it('lands where SESSION 18 and the kickoff §P6 measured it, to 0.1 stage px', () => {
     const dressed = render('dressed').ink;
+    // ⚠️ minX moved 474.9 -> 472.1 in SESSION20 A6.4: the hakama's waistband
+    // dropped 6 world px, so the far leg's skirt now reaches further left. The
+    // three other edges are untouched, and the HEIGHT is deliberately unchanged.
     expect([dressed.minX, dressed.maxX, dressed.minY, dressed.maxY].map((n) => Number(n.toFixed(1)))).toEqual([
-      474.9, 538.9, 290.9, 431.4,
+      472.1, 538.9, 290.9, 431.4,
     ]);
     // SESSION 18 A4-F recorded the bare plan as 52.661 x 128.164 stage px.
     const idle = render('idle').ink;
@@ -131,7 +134,7 @@ describe('the REAL composed fighter, rasterised', () => {
   });
 
   it('crops to the frames the CLI reports', () => {
-    expect(render('dressed').region).toEqual({ x: 450, y: 266, width: 113, height: 190 });
+    expect(render('dressed').region).toEqual({ x: 448, y: 266, width: 115, height: 190 });
     expect(render('idle').region).toEqual({ x: 456, y: 279, width: 102, height: 177 });
   });
 
@@ -204,5 +207,5 @@ describe('the render is anchored where the scene anchors it', () => {
 });
 
 /** Pinned in the same commit as the code they describe — see the GOLDEN test. */
-const GOLDEN_DRESSED = '17f385375bb5c6e853422cd8aa5bd49f414bb3f90e27a02b6f69dcbe4596de7d';
+const GOLDEN_DRESSED = '3908234c8a71d05d1d81270dd1703618bf8961a8ffea65c463ffc22fc9d72e6a';
 const GOLDEN_IDLE = '6dae62d12576cc22e2b62f92dc7481c5634f6e6c88279d3b5d6be4e97638ca97';

@@ -72,11 +72,15 @@ const scoreAgainst = (variant: 'idle' | 'dressed', source: readonly number[]): n
  *
  * ```
  *   A6.3, as first committed   tracing 0.8597   held-out 0.8197
- *   A6.5, the gi's anchor      tracing 0.8834   held-out 0.8472   <- HERE
+ *   A6.5, the gi's anchor      tracing 0.8834   held-out 0.8472
+ *   A6.4, the hakama fit       tracing 0.9006   held-out 0.8619   <- HERE
  * ```
- * Exact at the time of committing: tracing `0.8834687839733077`, held-out
- * `0.8472330202210622`. The floors are those values TRUNCATED (not rounded) to
- * four decimals, so the gate cannot fail on digits it does not state.
+ * The floors are the measured values TRUNCATED (not rounded) to four decimals,
+ * so the gate cannot fail on digits it does not state.
+ *
+ * ⚠️ THE TRACING SCORE NOW SITS ABOVE THE 0.8808 FRAME-TO-FRAME CEILING, and
+ * that is watched, not celebrated — see the ceiling test below. The HELD-OUT
+ * score is the honest grade, and the two stay 0.0387 apart.
  *
  * ⭐ WHY THEY MOVED: the gi body was anchored CENTRED on the torso it replaces.
  * A jacket hangs from the SHOULDERS — the same geometry the sleeve rule in
@@ -90,10 +94,10 @@ const scoreAgainst = (variant: 'idle' | 'dressed', source: readonly number[]): n
  * SESSION 19's whole outfit rests on.
  *
  * ⛔ THESE MAY ONLY EVER MOVE UP, in a commit that says why. Read
- * `docs/DIVERGENCES.md` "SESSION 20 — A6.3"/"A6.5" before touching either.
+ * `docs/DIVERGENCES.md` "SESSION 20 — A6.3"/"A6.4"/"A6.5" before touching either.
  */
-const FLOOR_TRACING = 0.8834;
-const FLOOR_HELDOUT = 0.8472;
+const FLOOR_TRACING = 0.9005;
+const FLOOR_HELDOUT = 0.8618;
 
 describe('GATE A6-C — the dressed fighter agrees with the source, and may not get worse', () => {
   it('holds its FLOOR against the frame the outfit was traced from', () => {
@@ -117,6 +121,53 @@ describe('GATE A6-C — the dressed fighter agrees with the source, and may not 
     // frame means the profile is being fitted to compression noise, and it would
     // be evidence the gate had stopped measuring fidelity.
     expect(scoreAgainst('dressed', TRACING_PROFILE.profile)).toBeLessThan(FRAME_TO_FRAME_CEILING + 0.05);
+  });
+});
+
+/**
+ * ⛔ GATE A6-C's COMPANION — THE HOLE THE LOOP FOUND IN ITS OWN SCORE.
+ *
+ * The profile agreement is width/height at 19 heights: **SCALE-FREE by design**,
+ * so that two figures at different sizes compare directly. That is the right
+ * statistic for proportion and it means **a taller fighter costs it NOTHING.**
+ *
+ * A6.4's sweep walked straight through that hole. Lowering the hakama's
+ * waistband 15 world px scored as the best variant of the whole run — held-out
+ * 0.8472 → 0.8781, and the two frames came within 0.0067 of each other, which
+ * normally reads as "not overfitted". **The render showed trousers slid down the
+ * thighs, bare skin at the hips, and the feet swallowed by the hem**, while the
+ * figure grew from 263.4 to 277.9 video px against a source measuring 236.7 —
+ * from 11.3 % too tall to 17.4 % too tall.
+ *
+ * ⇒ A scale-free score needs a scale gate beside it, or the loop is free to buy
+ * proportion with size. §P7 defect 2 (the 11 % overshoot) is exactly the thing
+ * this protects, and it was invisible to A6-C alone.
+ */
+describe('GATE A6-C companion — the fighter may not get TALLER', () => {
+  /** Stage px, dressed, at the SESSION 20 A6.5 commit. May only ever go DOWN. */
+  const HEIGHT_CEILING_STAGE = 140.5;
+  /** `src/core/viewport.ts` — one world px is 1.2 stage px; a video px is 1/1.875. */
+  const STAGE_TO_VIDEO = 1.875;
+  /** 13 lone standing frames, HUD suppressed (SESSION 19 A5.5). */
+  const SOURCE_HEIGHT_VIDEO = 236.7;
+
+  const dressedHeight = (): number => {
+    const ink = renderPoseWith('dressed', SHAPES).ink;
+    return ink.maxY - ink.minY;
+  };
+
+  it('is no taller than it was when the ceiling was committed', () => {
+    expect(dressedHeight()).toBeLessThanOrEqual(HEIGHT_CEILING_STAGE);
+  });
+
+  it('records honestly HOW FAR over the source it still is — this is §P7 defect 2, still OPEN', () => {
+    const overshoot = (dressedHeight() * STAGE_TO_VIDEO) / SOURCE_HEIGHT_VIDEO - 1;
+    // ⚠️ NOT a pass. 11 % too tall is a real, unfixed miss, pinned here so it
+    // cannot silently grow. §P7 suspects the SKELETON — our BARE fighter is
+    // 240.3 video px with NO hat while the source's measure 236.7 WITH one — and
+    // no garment placement can fix that.
+    expect(overshoot).toBeGreaterThan(0.10);
+    expect(overshoot).toBeLessThan(0.12);
   });
 });
 

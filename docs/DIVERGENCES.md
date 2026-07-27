@@ -2965,3 +2965,86 @@ overshoot, which §P7 already suspects is the SKELETON and no placement can fix.
 suite 48 files / 820 tests green · tsc x2 -> 0 · eslint -> 0
 GOLDEN_DRESSED digest e9ddfe43… -> 17f38537…  (a DELIBERATE render change)
 ```
+
+## SESSION 20 — A6.4: the loop RAN. **One winner of twelve — and it found a hole in its own score.**
+
+`scripts/art/tuneAnchors.py` + `scripts/art/scorePose.ts` — retrace → regenerate
+→ render → score, over placement variants, ranked and guarded. **D1 held: every
+knob is an anchor; not one traced vertex moved.**
+
+### THE DEFINITIVE SWEEP — 12 variants, from the committed baseline
+```
+variant                 tracing  HELDOUT      gap  height   verdict
+baseline (committed)     0.8835   0.8472   0.0362   140.5   —
+kasa brim 0.50           0.8806   0.8556   0.0250   142.6   REJECT grew +2.1 px
+kasa brim 0.55           0.8842   0.8533   0.0309   141.6   REJECT grew +1.1 px
+kasa brim 0.65           0.9029   0.8375   0.0654   139.4   reject OVERFIT traced +0.0194
+kasa brim 0.70           0.8982   0.8247   0.0735   138.3   reject OVERFIT traced +0.0147
+hakama +3                0.8857   0.8477   0.0380   140.5   better +0.0005
+hakama +6                0.9006   0.8619   0.0387   140.5   ✅ TAKEN  +0.0146
+hakama -3                0.8481   0.8098   0.0382   140.5   reject -0.0374
+hakama -6                0.8150   0.7767   0.0382   140.5   reject -0.0705
+collar top-anchored      0.8855   0.8453   0.0402   140.5   reject -0.0019
+obi top-anchored         0.8835   0.8472   0.0362   140.5   reject +0.0000 (interior — invisible)
+gi back to centre        0.8597   0.8197   0.0400   140.5   reject -0.0275 (confirms A6.5)
+```
+⭐ **"gi back to centre" reproduces A6.3's exact pre-fix numbers**, which is a
+clean independent confirmation that the A6.5 anchor fix is worth +0.0275 held-out.
+
+### ⛔ THE LOOP FOUND A HOLE IN ITS OWN SCORING FUNCTION — THE BIGGEST FINDING OF A6.4
+The profile agreement is width/height at 19 heights: **SCALE-FREE by design**, so
+two figures at different sizes compare directly. That also means **a taller
+fighter costs it nothing**, and the sweep walked straight through it:
+```
+  hakama +15   held-out 0.8472 -> 0.8781 (+0.0309, the best of the whole run)
+               gap 0.0362 -> 0.0067      (which normally reads "not overfitted")
+               height 140.5 -> 148.2 stage px = 263.4 -> 277.9 video px
+               i.e. 11.3 % too tall -> 17.4 % too tall
+```
+**The render showed trousers slid down the thighs, bare skin at the hips, and the
+feet swallowed by the hem.** Every number said yes; the picture said no. This is
+kickoff §6 Risk 1 arriving exactly as written, and the only thing that caught it
+was the rule that a human looks before a gate is believed.
+⇒ **Two guards added, both bought with a wrong answer:**
+1. **Rank on the HELD-OUT frame, never the mean.** Ranking on the mean first
+   crowned "hakama +6" for taking the TRACED frame to 0.9164 while making the
+   held-out frame WORSE. A mean will happily buy an overfit.
+2. **Reject any variant that makes the figure taller** — in the loop AND in the
+   suite (`GATE A6-C companion`, chaos-proven: the +15 art turns it red).
+⚠️ A scale-free score needs a scale gate beside it, or the loop is free to buy
+proportion with size. §P7 defect 2 was invisible to A6-C alone.
+
+### ⛔ AND A BUG IN THE LOOP ITSELF, CAUGHT BY TWO IDENTICAL NUMBERS
+The first sweep regenerated only the shape ids each variant touched, so every
+variant inherited the PREVIOUS one's committed art and each row measured
+cumulative state. **It was caught because the collar and obi variants returned
+byte-identical scores — which two different changes cannot.** Every row after the
+first hakama probe was contaminated; the fix (regenerate all seven, ~2 s) changed
+hakama +6's held-out from a fictional 0.8416 to a real 0.8619.
+
+### WHAT WAS TAKEN, AND ITS HONEST LABEL
+`HAKAMA_FIT = 6.0` world px. The node data says where the HIP is; it does not say
+where the WAISTBAND is. **FITTED by the loop, not derived** — and labelled so, in
+a file whose neighbouring term IS derived from the OG's own nodes.
+⭐ **Looked at before accepting**: the hakama now sits properly, no bare skin at
+the hips, and **the feet emerge from under the hem instead of floating detached
+below it** — §P7 defect 3, visibly improved as a side effect.
+
+### Scores after A6.4
+```
+                    tracing   held-out    gap    height
+  A6.3 committed     0.8597    0.8197   0.0400   140.5
+  A6.5 gi anchor     0.8835    0.8472   0.0362   140.5
+  A6.4 hakama fit    0.9006    0.8619   0.0387   140.5   <- floors now here
+  bare fighter       0.6993    0.7479      —     128.2
+  frame-to-frame ceiling      0.8808
+```
+⚠️ **The tracing score now sits ABOVE the 0.8808 ceiling and that is watched, not
+celebrated.** The held-out score is the honest grade: **+0.0422 across the
+session**, on a frame the outfit was never traced from.
+
+### Regression
+```
+suite 48 files / 822 tests green   (44 / 750 at session start)
+tsc x2 -> 0 · eslint -> 0 · D1 intact: no traced vertex moved, only anchors
+```

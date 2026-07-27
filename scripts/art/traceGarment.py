@@ -137,7 +137,10 @@ RDP_EPS = 0.10                        # in 1x mask (video) px
 # NOTE THE ORDERING: this is a frame-derived correction to an INFERRED placement,
 # not a nudge to make a height target pass. The resulting height is reported
 # below whether it passes or not (kickoff D1).
-BRIM_DOWN_HEAD = 0.60
+# ⚙️ SESSION20 A6.4 — SWEEPABLE. `scripts/art/tuneAnchors.py` overrides these
+# through the environment so the loop can retrace/rescore without editing source.
+# The DEFAULTS below are what ships; an override is a experiment, not a commit.
+BRIM_DOWN_HEAD = float(os.environ.get("SSHD_BRIM_DOWN_HEAD", 0.60))
 
 # The hakama covers the WHOLE leg but is drawn from the CALF slot, so centring it
 # on the calf's own bbox hangs it ~18 world px too low — measured on screen, the
@@ -147,7 +150,18 @@ BRIM_DOWN_HEAD = 0.60
 # the calf's origin, and the thigh's art starts a further 4.75 px above that.
 HIP_ABOVE_CALF = -55.0 - -29.0        # = -26.0, calf-local
 THIGH_TOP = -4.750                    # shape 2648's own bbox top
-HAKAMA_TOP = HIP_ABOVE_CALF + THIGH_TOP
+# ⭐ SESSION20 A6.4 — +6 WORLD PX, FITTED BY THE LOOP, AND THE ONLY VARIANT OF
+# TWELVE THAT SURVIVED BOTH GUARDS. The node data says where the HIP is; it does
+# not say where the WAISTBAND is, and the fabric's top edge hangs below the
+# thigh's art top. The loop searched -6..+24:
+#     +3  held-out +0.0005      +6  held-out +0.0146  <- taken, height UNCHANGED
+#     +15 held-out +0.0309 but the figure GREW 140.5 -> 148.2 stage px, the
+#         trousers slid down the thighs and the feet vanished under the hem.
+#         The profile score is scale-free and could not see any of it.
+# ⚠️ FITTED, not derived — the term above it IS derived from the OG's own nodes.
+# Veto: set SSHD_HAKAMA_ADJ=0 and re-run `tuneAnchors.py` to see the trade.
+HAKAMA_FIT = 6.0
+HAKAMA_TOP = HIP_ABOVE_CALF + THIGH_TOP + HAKAMA_FIT + float(os.environ.get("SSHD_HAKAMA_ADJ", 0.0))
 
 
 def reject_occluder(a, sil):
@@ -346,11 +360,12 @@ def trace_one(im, g):
     fillcol = tuple(int(v) for v in med[core].mean(axis=0).round())
 
     px0, px1, py0, py1 = g["part"]
-    if g["anchor"] == "kasa":
+    anchor = os.environ.get("SSHD_ANCHOR_%d" % g["id"], g["anchor"])
+    if anchor == "kasa":
         ax = (px0 + px1) / 2.0
         ay = py0 + BRIM_DOWN_HEAD * (py1 - py0)
         ref_y = vy1                                   # brim (bottom) anchors
-    elif g["anchor"] in ("sleeve", "top"):
+    elif anchor in ("sleeve", "top"):
         # ⛔ CLOTH HANGS FROM THE SHOULDER — IT IS NOT CENTRED ON THE PART.
         # The sleeve's TOP anchors to the upper arm's top; centring would ride it
         # down the forearm. SESSION20 A6.5 found the gi BODY has exactly the same
@@ -362,7 +377,7 @@ def trace_one(im, g):
         ax = (px0 + px1) / 2.0
         ay = py0
         ref_y = vy0
-    elif g["anchor"] == "hakama":
+    elif anchor == "hakama":
         ax = (px0 + px1) / 2.0
         ay = HAKAMA_TOP
         ref_y = vy0                                   # the waistband anchors
