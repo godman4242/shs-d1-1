@@ -7,6 +7,14 @@ binary verification gates — the full spec is committed at `docs/MASTER_SPEC.md
 state and next step live in `RESUME_HERE.md`.
 
 ## Invariants (don't propose work that violates these)
+- **THE TWO GAMEPLAY VIDEOS ARE THE PRIMARY 1:1 REFERENCE** (`reference/videos/`,
+  both 1080p; ~700 stills already extracted under `reference/frames/`). Copy what
+  is in them, directly. The extracted payload is the skeleton — equipment art,
+  clothing, VFX and feel survive ONLY in the videos. **Before grading any visual
+  claim, open a frame and look**; crop and upscale first (the fighter is ~270 px
+  tall in a 1080p frame). When a measurement doc and a frame disagree, **the frame
+  wins** — say so. Working second-hand from a measurement doc is how SESSION 18's
+  A4-D came to grade a bare doll against a clothed fighter.
 - **LICENSED 1:1 RECREATION (owner ruling 2026-07-24 — supersedes the old
   "never traced/transcribed" art line and the 2026-07-12 palette policy).**
   Kheshav attests WRITTEN permission from Lut Games (rights holder): Kongregate

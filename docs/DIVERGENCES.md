@@ -1943,3 +1943,77 @@ rotation (3) · hole verdicts lost in rotation (3) · missing-shape throw remove
 `pass: true`, 0 failures** · **0 console errors** on `?art=idle` ·
 `duel-baseline` green **and unedited** · ratchet **not widened** — the two new
 `game/` files are baselined as `{}`, i.e. zero numeric literals each.
+
+---
+
+## SESSION 18 — A4.5 + the A4-D ruling (2026-07-27)
+
+### ⭐ OWNER RULING — THE WIDTH GATE MOVES TO THE CLOTHED FIGHTER
+
+A4-D was escalated rather than bent (see "SESSION 18 — A4.4"). **Owner ruling
+2026-07-27: the answer is not to delete the width targets but to give the fighter
+clothes and grade them there.**
+
+- **The BARE fighter** (`?art=idle`) is graded on the two measurements clothing
+  does not affect, and both pass: total height **0.972** of target and torso
+  length **1.013**.
+- **The four WIDTH targets** — head Ø 28.4 · shoulder 42.7 · mid-torso 36.3 ·
+  pelvis 37.7 stage px — are **not deleted and not weakened**. They become
+  SESSION 19's gate **A5-C**, applied to a fighter wearing traced clothing, which
+  is what they were measured from.
+
+Equipment art is unrecoverable from the payload (`FIGHTER_ART_IDS.md` §5), so the
+clothes will be **traced from the videos** — permitted by
+`docs/OWNER_PERMISSION_RULING.md`, and the opposite of inventing art to close a
+gap. ⚠️ **The load-bearing rule, recorded here because it is the only thing
+keeping A5-C honest: TRACE, THEN MEASURE — NEVER MEASURE, THEN ADJUST.** The
+clothes come from the same footage the targets do, so a garment nudged to hit a
+number turns the gate into a mirror.
+
+### ⭐ A STANDING INVARIANT WAS ADDED TO `CLAUDE.md`, from owner correction
+
+> *"it seemed like you were not using the videos I sent as reference — they are my
+> most valuable sources, you are supposed to copy those 1:1."*
+
+A4.1–A4.4 were built from extracted SWF data and `combat_idle_measurements.md`,
+and no frame was opened until the owner pushed back. **That is exactly how A4-D
+came to grade a bare doll against a clothed fighter: the target numbers were
+carried forward without anyone re-opening the frame they came from.** The videos
+are now a repo-level invariant — open a frame before grading a visual claim, and
+when a doc and a frame disagree, the frame wins.
+
+### A4.5 — the regression surface, re-proven on the final state
+```
+Test Files  44 passed (44)        tsc ×2 → exit 0
+     Tests  742 passed (742)      eslint → exit 0        build ✓ in 446ms
+bare clone, no reference/:  731 passed | 11 skipped, exit 0   ← run, not assumed
+in-browser fidelity:  41/41 probes + 14/14 scans = 55/55, pass: true, 0 failures
+0 console errors on ?art=idle
+duel-baseline: empty diff against a9592d7 (SESSION17's baseline) — green AND unedited
+game-purity-baseline.json: +2 lines only, both `{}`
+```
+⭐ **The clean-clone run is REAL, not a grep.** `git clone --local` into the
+scratchpad (which excludes gitignored `reference/`), `node_modules` symlinked,
+full suite run: **exit 0 with 11 tests skipped and no collection failure.** This
+repo has broken exactly that way before — SESSION16 finding 4 took the suite from
+639 to 595 in a fresh checkout — so it is checked by running it.
+
+### Frame-material findings, banked for SESSION 19
+Produced while preparing the next kickoff, and worth keeping regardless:
+- **117 of ~700 extracted stills are full 1920×1080** (`duel_dense` 42,
+  `duel_seq` 18, `duel_frames` 16, `combat_frames` 16, `zFt_combat` 14,
+  `combat_analysis` 5+6). The rest are survey sets at 480×270 or smaller — for
+  FINDING a moment, never for tracing.
+- ⛔ **THE OVERWORLD IS UNUSABLE AS A TRACING SOURCE AT ANY RESOLUTION.** Pulled
+  t=350 s from `zFtCaTO0_1M.mp4` at a true 1920×1080 and cropped: the fighter is
+  **~35 px tall** and compression-blurred to a smudge. The overworld camera is
+  simply zoomed out. Combat frames put the same fighter at **~270 px**, crisp,
+  with readable flat-colour panels and black outlines.
+- ✅ **Any moment can be pulled at full resolution** —
+  `ffmpeg -ss <s> -i reference/videos/<id>.mp4 -frames:v 1 -q:v 1 out.png`,
+  executed and verified at 1920×1080. Survey frames are named in whole seconds,
+  so the low-res set indexes the high-res source.
+- **A real palette sample** from `duel_frames/Nr4fQstqHDM_t426.8s.png`, crop
+  (820,620)-(1020,900): navy haori `#373a4e`, straw kasa `#998a5e`, white hakama
+  `#d9d8db`, grey shoulder `#666666`, outlines `#000000`. ⚠️ Video colours —
+  lossy and possibly scene-tinted; INFERRED targets, never CONTRACT.

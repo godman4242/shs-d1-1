@@ -1,6 +1,33 @@
 # RESUME HERE
 
-> ## ▶ IN PROGRESS — **SESSION 18. A4.1–A4.4 DONE. ⛔ A4-D NEEDS AN OWNER RULING.**
+> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION19_KICKOFF.md`**
+> **GIVE THE FIGHTER ITS CLOTHES, TRACED FROM THE VIDEOS.** Self-contained, the
+> only kickoff to plan from, **no open prerequisites.**
+>
+> ⛔ **NEW STANDING INVARIANT (owner, 2026-07-27, now in `CLAUDE.md`): THE TWO
+> GAMEPLAY VIDEOS ARE THE PRIMARY 1:1 REFERENCE.** Copy what is in them,
+> directly. Open a frame and LOOK before grading any visual claim; when a
+> measurement doc and a frame disagree, **the frame wins**. SESSION 18 A4.1–A4.4
+> were built from extracted data and a measurement doc without opening a frame —
+> which is exactly how A4-D came to grade a bare doll against a clothed fighter.
+>
+> ⭐ **A4-D IS RULED ON: the width gate MOVES to the clothed fighter, it is not
+> deleted.** Head Ø 28.4 · shoulder 42.7 · mid-torso 36.3 · pelvis 37.7 stage px
+> become SESSION 19's **A5-C**, applied to a fighter wearing traced clothing —
+> which is what they were measured from. The bare fighter keeps the two
+> clothing-independent measures, and passes both.
+> ⚠️ **The rule that keeps A5-C honest: TRACE, THEN MEASURE — NEVER MEASURE, THEN
+> ADJUST.** The clothes come from the same footage the targets do.
+>
+> ⭐ **The kickoff kills two thirds of its own source material on page one:** only
+> **117 of ~700** stills are full 1920×1080, and **the overworld is unusable at
+> ANY resolution** — pulled at a true 1080p, the fighter is ~35 px tall and
+> compression-blurred. Combat frames give ~270 px, crisp. ffmpeg full-res
+> extraction is proven; a real palette sample is in its §P7.
+>
+> ---
+>
+> ## ▶ SESSION 18 — **A4 CLOSED. THE WHOLE FIGHTER IS ON SCREEN AND MEASURED.**
 > Kickoff: **`docs/sessions/SESSION18_KICKOFF.md`** (read it, not this summary).
 > Baseline is **`c46adbc`**, not the kickoff's `a9592d7`: three owner commits
 > (CI + dependabot) landed on top, and `git diff a9592d7..HEAD -- src tests` is
@@ -176,11 +203,19 @@
 > `duel-baseline` green AND unedited · ratchet **not widened** (both new `game/`
 > files baselined as `{}` — zero numeric literals each).
 >
-> ### ⬜ NEXT: A4.5 — re-prove the regression surface, then the A5 handoff
-> Most of A4.5 is already done above (fidelity 55/55, suite, duel-baseline,
-> console). What remains: re-run it all on the FINAL commit, then write the
-> SESSION 19 kickoff. **A4-D's ruling should land first** — it changes what
-> SESSION 19 inherits.
+> ### ✅ A4.5 DONE — the regression surface, re-proven on the final state
+> ```
+> Test Files  44 passed (44)     tsc x2 -> 0    eslint -> 0    build ok 446ms
+>      Tests  742 passed (742)
+> bare clone, no reference/:  731 passed | 11 skipped, exit 0   <- RUN, not assumed
+> fidelity:  41/41 probes + 14/14 scans = 55/55, pass: true, 0 failures
+> 0 console errors on ?art=idle · duel-baseline empty diff vs a9592d7
+> ```
+> ⭐ **The clean-clone run is real.** `git clone --local` to a scratchpad (which
+> excludes gitignored `reference/`), `node_modules` symlinked, full suite run:
+> exit 0, 11 skipped, **no collection failure**. This repo broke exactly that way
+> once (639 → 595 in a fresh checkout, SESSION16 finding 4), so it is checked by
+> running it, not by grepping for `skipIf`.
 >
 > ---
 >
