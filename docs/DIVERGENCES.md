@@ -2884,3 +2884,84 @@ file says so at the top.
 suite 48 files / 820 tests green   (44 / 750 at session start)
 tsc x2 -> 0 · eslint -> 0 · nothing in src/ changed
 ```
+
+## SESSION 20 — A6.5 (gi): **THE LOOP OVERTURNED ITS OWN BAR.** Scores ratcheted up.
+
+⭐ **THIS IS THE SESSION'S THESIS LANDING ON THE SESSION'S OWN PLAN.** The kickoff
+prescribed a fix. The fix was measured. **The measurement said the prescription
+was wrong**, and named the real defect instead. Nothing but a gate could have
+produced that outcome.
+
+### ⛔ WHAT §P7 / A6-E PRESCRIBED, AND WHY IT IS WRONG
+> "THE GI IS 1.76× OVERSIZED… Fix: slot 15 wears a TORSO-SIZED panel; the sleeve
+> carries the rest." · **A6-E: slot 15 ≤ 1.25× the torso, top BELOW y 325.3**
+
+**Implemented and measured. It makes the fighter WORSE on every axis:**
+```
+                              sealed tracing   sealed held-out   diagnostic IoU
+  baseline (A6.3)                 0.8597           0.8197            0.7160
+  carve the sleeve out of 15      0.8010           0.7963            0.6617   <- WORSE
+```
+Carving the sleeve's own region back out does not leave a body panel — it leaves
+a narrow front **STRIP**, and the rendered torso comes out nearly bare. Looked at,
+not just scored. **The outer silhouette on slot 15 is correct and deliberate**:
+the near sleeve hides the body, so slot 15 wears the whole outline and slot 19
+draws over it. The 1.76× is that design, not a defect.
+
+### ⛔ AND A6-E's SECOND CLAUSE IS UNSATISFIABLE — MEASURED, NOT ARGUED
+"its top is BELOW the head's bottom (y 325.3)". **The BARE torso it replaces
+already violates that**:
+```
+  slot 15, shape 2646 (bare torso)   496.6..522.4 x 321.4..352.1   25.8 x 30.7
+  slot 16, head+hair                 501.5..519.8 x 303.2..325.3
+  -> the torso's OWN top (321.4) sits 3.9 px ABOVE the head's bottom (325.3)
+```
+No garment covering the torso can satisfy it. §P7 compared the gi's top to the
+chin **without checking where the torso's top was**. In a side view the shoulder
+line overlaps the jaw; that is anatomy, not a bug.
+⇒ **The honest bar is "slot 15's top is at or below the top of the part it
+replaces" (321.4). Ours is 322.5 — it passes that.** Recorded for an owner
+ruling; the gate was NOT quietly rewritten to fit.
+
+### ⭐ THE REAL DEFECT WAS THE ANCHOR, AND IT IS A ONE-WORD FIX
+`traceGarment.py` already encodes the right rule for the SLEEVE — *"the sleeve
+hangs FROM the shoulder, so its TOP anchors to the upper arm's top, not its
+centre — centring would ride it down the forearm."* **The gi body has exactly the
+same geometry and was `anchor="centre"` anyway.** The jacket runs shoulder-to-hip,
+so it is TALLER than the torso part it replaces, and centring a taller shape on a
+shorter one pushes half the excess **upward — into the head.**
+```
+  anchor="centre"   slot 15   489.4..530.4 x 311.9..362.3    top 13.4 px inside the head
+  anchor="top"      slot 15   489.6..530.6 x 322.5..372.9    top 2.8 px above the chin,
+                                                             1.1 px BELOW the bare torso's own top
+```
+**Placement only — kickoff D1 permits it, and no traced vertex moved.**
+
+### THE SCORES, RATCHETED UP
+```
+                        sealed tracing   sealed held-out
+  A6.3 as committed         0.8597           0.8197
+  A6.5 gi anchor            0.8834           0.8472     <- floors now here
+  the BARE fighter          0.6993           0.7479
+  frame-to-frame ceiling            0.8808
+```
+⚠️ **The tracing score (0.8834) now sits just ABOVE the 0.8808 frame-to-frame
+ceiling, and that is worth watching, not celebrating.** The held-out score
+(0.8472) is the honest one: it improved by **+0.0275** against a frame the outfit
+was never traced from, and the two stay 0.0362 apart — no sign of overfitting.
+⭐ **Our achievable ceiling is BELOW 0.8808 anyway**: both source frames carry a
+SWORD we render no art for (slots 3/4 empty by design).
+
+### What the loop cost, and what it bought
+Two hypotheses tested against the source in one step, one kept, one rejected —
+and the rejected one is the one the kickoff asked for. **A6.4's loop is running;
+this is its first two iterations, recorded with their numbers.**
+⚠️ Still open and visible in `renders/dressed.png`: the feet hang below the
+hakama hem (the source's feet are hidden in GRASS entirely), and the 11 % height
+overshoot, which §P7 already suspects is the SKELETON and no placement can fix.
+
+### Regression
+```
+suite 48 files / 820 tests green · tsc x2 -> 0 · eslint -> 0
+GOLDEN_DRESSED digest e9ddfe43… -> 17f38537…  (a DELIBERATE render change)
+```

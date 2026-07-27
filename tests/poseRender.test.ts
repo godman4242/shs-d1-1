@@ -204,5 +204,5 @@ describe('the render is anchored where the scene anchors it', () => {
 });
 
 /** Pinned in the same commit as the code they describe — see the GOLDEN test. */
-const GOLDEN_DRESSED = 'e9ddfe43b6ea139b24ebb267441265b5faac212204fda3b78b5b349b88359689';
+const GOLDEN_DRESSED = '17f385375bb5c6e853422cd8aa5bd49f414bb3f90e27a02b6f69dcbe4596de7d';
 const GOLDEN_IDLE = '6dae62d12576cc22e2b62f92dc7481c5634f6e6c88279d3b5d6be4e97638ca97';

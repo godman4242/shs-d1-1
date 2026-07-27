@@ -64,9 +64,19 @@ GARMENTS = [
     dict(id=9012, slot=12, name="collar / juban",
          crop=(806, 688, 858, 742), seed=(841, 702),
          part=(-4.000, 6.350, -11.700, 4.350), anchor="centre"),
+    # ⛔ SESSION20 A6.5 — THE OVERSIZE IS NOT THE DEFECT; THE ANCHOR WAS.
+    # §P7 read slot 15's 41.1 x 50.4 stage px against a torso of 23.3 x 28.4 and
+    # concluded the gi was "1.76x oversized", prescribing a torso-sized panel.
+    # MEASURED, that prescription makes the fighter WORSE: carving the sleeve's
+    # own region back out (via `isolate` at the same seed) leaves a narrow front
+    # STRIP, not a body panel — the torso renders nearly bare — and the sealed
+    # score fell 0.8597 -> 0.8010 (held-out 0.8197 -> 0.7963), IoU 0.7160 ->
+    # 0.6617. The outer silhouette is correct and deliberate: the near sleeve
+    # hides the body, so slot 15 wears the whole outline and slot 19 draws over
+    # it. What was actually wrong was `anchor="centre"` — see PLACEMENT below.
     dict(id=9015, slot=15, name="gi body (outer silhouette)",
          crop=(806, 700, 886, 796), seed=(851, 759), mode="outer", grey=(75, 165),
-         part=(-9.600, 9.816, -21.550, 2.150), anchor="centre"),
+         part=(-9.600, 9.816, -21.550, 2.150), anchor="top"),
     dict(id=9019, slot=19, name="gi sleeve, near arm",
          crop=(826, 704, 878, 792), seed=(851, 759),
          part=(-6.391, 5.802, -5.700, 20.450), anchor="sleeve"),
@@ -307,6 +317,21 @@ def trace_one(im, g):
         colour_from = interior & (mnn >= lo) & (mxx <= hi) & ((mxx - mnn) < 30)
     else:
         sil, interior = isolate(a, (cx, cy))
+    if g.get("subtractSeed"):
+        # Carve another garment's own enclosed region out of this one — the gi
+        # body minus the sleeve that hangs over it (SESSION20 A6.5). Both are
+        # found by the SAME `isolate` rule at the SAME seed the sleeve is traced
+        # from, so the two shapes cannot disagree about where the sleeve is.
+        sx = g["subtractSeed"][0] - g["crop"][0]
+        sy = g["subtractSeed"][1] - g["crop"][1]
+        lobe, _ = isolate(a, (sx, sy))
+        carved = sil & ~ndimage.binary_dilation(lobe, np.ones((3, 3)))
+        lab, n = ndimage.label(carved, np.ones((3, 3)))
+        if n == 0:
+            raise SystemExit(f"{g['id']}: carving the sleeve out left nothing")
+        sizes = ndimage.sum(carved, lab, range(1, n + 1))
+        sil = ndimage.binary_fill_holes(lab == (int(np.argmax(sizes)) + 1))
+        interior = interior & sil
     if g.get("dropSaya"):
         sil = reject_occluder(a, sil)
         interior = interior & sil
@@ -325,9 +350,15 @@ def trace_one(im, g):
         ax = (px0 + px1) / 2.0
         ay = py0 + BRIM_DOWN_HEAD * (py1 - py0)
         ref_y = vy1                                   # brim (bottom) anchors
-    elif g["anchor"] == "sleeve":
-        # The sleeve hangs FROM the shoulder, so its TOP anchors to the upper
-        # arm's top, not its centre — centring would ride it down the forearm.
+    elif g["anchor"] in ("sleeve", "top"):
+        # ⛔ CLOTH HANGS FROM THE SHOULDER — IT IS NOT CENTRED ON THE PART.
+        # The sleeve's TOP anchors to the upper arm's top; centring would ride it
+        # down the forearm. SESSION20 A6.5 found the gi BODY has exactly the same
+        # geometry and was centred anyway: the jacket runs shoulder-to-hip, so it
+        # is TALLER than the torso part it replaces, and centring a taller shape
+        # on a shorter one pushes half the excess UPWARD — which is why the gi's
+        # top sat 13 stage px INSIDE the head. Anchoring the top instead puts the
+        # whole excess where the garment actually goes: downward, over the hips.
         ax = (px0 + px1) / 2.0
         ay = py0
         ref_y = vy0

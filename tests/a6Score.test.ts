@@ -68,21 +68,32 @@ const scoreAgainst = (variant: 'idle' | 'dressed', source: readonly number[]): n
   profileAgreement(ourProfile(variant), source);
 
 /**
- * ⛔ THE FLOORS — SESSION 20 A6.3, measured 2026-07-27 on the dressed fighter.
+ * ⛔ THE FLOORS — RATCHETED UP by SESSION 20 A6.5, 2026-07-27.
  *
- * Exact at the time of committing: tracing `0.8597286207791531`, held-out
- * `0.8197393639422795`. The floors are those values TRUNCATED (not rounded) to
- * four decimals, so the gate cannot fail on the digits it does not state.
+ * ```
+ *   A6.3, as first committed   tracing 0.8597   held-out 0.8197
+ *   A6.5, the gi's anchor      tracing 0.8834   held-out 0.8472   <- HERE
+ * ```
+ * Exact at the time of committing: tracing `0.8834687839733077`, held-out
+ * `0.8472330202210622`. The floors are those values TRUNCATED (not rounded) to
+ * four decimals, so the gate cannot fail on digits it does not state.
+ *
+ * ⭐ WHY THEY MOVED: the gi body was anchored CENTRED on the torso it replaces.
+ * A jacket hangs from the SHOULDERS — the same geometry the sleeve rule in
+ * `traceGarment.py` already encoded — and the garment is taller than the torso
+ * part, so centring pushed half the excess UPWARD, into the head. Anchoring the
+ * top instead is a placement change, which kickoff D1 permits; no traced vertex
+ * moved.
  *
  * ⚠️ For scale: the BARE fighter scores 0.6993 / 0.7479 against the same two
- * frames. Clothing it is worth ~0.16 on the traced frame, which is the evidence
+ * frames. Clothing it is worth ~0.18 on the traced frame, which is the evidence
  * SESSION 19's whole outfit rests on.
  *
  * ⛔ THESE MAY ONLY EVER MOVE UP, in a commit that says why. Read
- * `docs/DIVERGENCES.md` "SESSION 20 — A6.3" before touching either number.
+ * `docs/DIVERGENCES.md` "SESSION 20 — A6.3"/"A6.5" before touching either.
  */
-const FLOOR_TRACING = 0.8597;
-const FLOOR_HELDOUT = 0.8197;
+const FLOOR_TRACING = 0.8834;
+const FLOOR_HELDOUT = 0.8472;
 
 describe('GATE A6-C — the dressed fighter agrees with the source, and may not get worse', () => {
   it('holds its FLOOR against the frame the outfit was traced from', () => {
