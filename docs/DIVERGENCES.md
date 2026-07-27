@@ -2371,3 +2371,48 @@ not scaffolding — it is the real unequipped state**, which is why `?art=idle`
 must keep working and why `OG_SLOT_SHAPES` is never edited in place (D3).
 It also means a future equip system is a per-slot merge over the bare map, not a
 second hand-maintained array.
+
+---
+
+## SESSION 19 — A5.5 step 1: THE TARGET SET, COMMITTED **BEFORE** OUR FIGHTER IS MEASURED
+
+⛔ **This entry is committed on its own, on purpose.** Kickoff D1 says TRACE, THEN
+MEASURE — NEVER MEASURE, THEN ADJUST. A5-C's original targets are unusable
+(A5.1: HUD-contaminated), so they had to be re-derived — and a target set derived
+*after* seeing how the traced fighter scores is a mirror, not a test. So the
+targets go in first, with the tool that produced them, and our fighter is
+measured against them afterwards.
+
+Tool: `scripts/art/proportions.py` — ONE rule applied to BOTH the source frames
+and our own render, so the comparison is like-for-like.
+
+⭐ **A PROFILE, NOT FOUR LANDMARKS.** "Shoulder width" needs a rule for WHICH row
+is the shoulder, and choosing that row by eye on a blurred frame is exactly how
+the old numbers went wrong. The primary comparison is the whole width-vs-height
+profile normalised to the figure's own height. The four landmarks are reported
+too, from one stated automatic rule, so A5-C stays gradeable.
+
+**Source: the GREY outfit, lone and standing, HUD suppressed, 13 frames** from
+`reference/frames/s19_trace/` (t≈586–599 s, `zFtCaTO0_1M`).
+
+```
+                        mean      sd      range
+  head              0.1797   0.0347   0.1529 .. 0.2467
+  shoulder          0.3279   0.0559   0.2261 .. 0.4280
+  midTorso          0.3416   0.0283   0.3120 .. 0.3947
+  pelvis            0.3332   0.0553   0.2562 .. 0.4474
+  height (video px)  236.7            227 .. 250
+```
+All four are **fractions of the figure's own height**, so they are scale-free and
+cannot be gamed by rendering bigger or smaller.
+
+⚠️ **FOUR FRAMES OF SEVENTEEN WERE REJECTED, BY A RULE STATED BEFORE THE NUMBERS
+WERE READ:** height outside 200–280 video px (the mask merged with scenery), or a
+head wider than 0.30 of the figure's height (physically impossible under a hat,
+so the segmentation failed). Leaving them in moved the head mean from 0.18 to
+0.30 and its sd from 0.035 to 0.352. The rejects are printed by name every run.
+
+⚠️ **THE SPREAD IS THE HONEST PART.** shoulder and pelvis carry sd ≈ 0.055 on
+means of ≈ 0.33 — that is **±17 %**, and it is mostly POSE, not noise: the set
+mixes standing and mid-stride frames. Any grading against these must respect that
+band rather than treat the mean as exact. Height alone is tight: 227–250 px, ±5 %.
