@@ -262,6 +262,8 @@ def main():
     ap.add_argument("meta", help="the --json written by renderPose.ts")
     ap.add_argument("--frame", default=None, help="source frame (default: BOTH the tracing and held-out frames)")
     ap.add_argument("--overlay", default="renders/overlay.png")
+    ap.add_argument("--side", default="renders/side_by_side.png",
+                    help="ours beside the source at matched height, IN COLOUR")
     args = ap.parse_args()
 
     meta = json.load(open(os.path.join(ROOT, args.meta) if not os.path.isabs(args.meta) else args.meta))
@@ -295,6 +297,8 @@ def main():
         if fpath == frames[0]:
             path, inter, union = overlay(ours, theirs, reg, args.overlay)
             print(f"  overlay            {path}   IoU {inter / union:.4f}   <- LOOK AT IT")
+            sp, ow, sw = side_by_side(meta, png, fpath, reg, args.side)
+            print(f"  side by side       {sp}   ours {ow}px | theirs {sw}px, matched height")
             verdicts, median = slot_verdicts(meta, ours, theirs, reg, world_per_px)
             print("\n  PER-SLOT SIGNED ERROR, in WORLD px  (+ = our edge is further RIGHT than the source's)")
             print(f"  whole-figure x shift {median:+.2f} — THE ANCHOR CHOICE, NOT A MEASUREMENT. Do not tune against it.")
@@ -314,6 +318,45 @@ def main():
         for name, score in results.items():
             print(f"  {name}: {score:.4f}")
 
+
+
+
+def side_by_side(meta, ours_png, frame_path, reg, out_path):
+    """
+    ⭐ THE PICTURE, NOT THE SILHOUETTE — SESSION 21's primary instrument.
+
+    The A6 gate compares WIDTH PROFILES, which are blind to colour, to interior
+    detail and to anything inside the outline. This puts our render beside the
+    source at MATCHED HEIGHT, in colour, so the two can be judged as pictures.
+    Nearest-neighbour on our side (no invented detail), Lanczos on the source
+    (it is being enlarged from video).
+    """
+    src = Image.open(os.path.join(ROOT, frame_path)).convert("RGB")
+    theirs = figure_of_frame(frame_path)
+    ty0, ty1, tx0, tx1 = bbox(theirs)
+    pad = 10
+    scrop = src.crop((tx0 - pad, FRAME_BAND[0] + ty0 - pad, tx1 + pad, FRAME_BAND[0] + ty1 + pad))
+
+    ours = Image.open(os.path.join(ROOT, ours_png)).convert("RGB")
+    om = silhouette_from_render(np.asarray(ours))
+    if om is None:
+        raise SystemExit("side_by_side: no fighter found in " + ours_png)
+    oy0, oy1, ox0, ox1 = bbox(om)
+    opad = max(1, int(round(pad / reg.scale)))
+    ocrop = ours.crop((ox0 - opad, oy0 - opad, ox1 + opad, oy1 + opad))
+
+    # Match on HEIGHT, the axis registration trusts.
+    target_h = scrop.height * 3
+    ow = max(1, int(round(ocrop.width * target_h / ocrop.height)))
+    ocrop = ocrop.resize((ow, target_h), Image.NEAREST)
+    scrop = scrop.resize((scrop.width * 3, target_h), Image.LANCZOS)
+
+    gap = 16
+    canvas = Image.new("RGB", (ocrop.width + gap + scrop.width, target_h), (24, 24, 24))
+    canvas.paste(ocrop, (0, 0))
+    canvas.paste(scrop, (ocrop.width + gap, 0))
+    canvas.save(os.path.join(ROOT, out_path))
+    return out_path, ocrop.width, scrop.width
 
 if __name__ == "__main__":
     main()

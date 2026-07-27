@@ -1,21 +1,26 @@
-# SESSION 21 KICKOFF — PUT THE OG FIGHTER IN THE GAME
+# SESSION 21 KICKOFF — MAKE THE FIGHTER LOOK LIKE THE PICTURE
 
 > **Entry route:** `RESUME_HERE.md` → this file. **This is the only kickoff you
 > need.** Self-contained; assumes no memory of SESSION 20.
 >
-> **INTENT, in one sentence:** the game still draws a procedural stick samurai
-> while a measured, source-graded OG fighter sits on a debug route — this session
-> puts the real fighter into `DuelScene`, facing both ways, for both combatants.
+> **INTENT, in one sentence:** the silhouette gate has saturated — it now scores
+> ABOVE the source's own frame-to-frame ceiling while the fighter still plainly
+> does not look like the source — so this session replaces the ruler with a
+> colour-aware one and closes the five differences it exposes.
+>
+> **⭐ THE OWNER ASKED FOR THIS SESSION, IN THESE WORDS (2026-07-28):**
+> *"it still is not perfect and needs to be improved… where you need to check
+> your work and compare it to the og picture."* He is right, and the
+> side-by-side in §0 is the evidence.
 >
 > **⛔ THE STANDING INVARIANT:** **THE TWO GAMEPLAY VIDEOS ARE THE PRIMARY 1:1
 > REFERENCE** (`reference/videos/`). Copy what is in them. **Open a frame and
 > look** before grading any visual claim; when a measurement doc and a frame
 > disagree, **the frame wins.**
 >
-> **⭐ AND THE ONE SESSION 20 ADDED, PAID FOR TWICE:** **a green gate is not a
-> good picture.** Two changes last session scored better and rendered worse — one
-> would have shipped a nearly-bare torso, one trousers round the knees. **LOOK at
-> `renders/dressed.png` before believing any number.**
+> **⭐ AND THE ONE SESSION 20 PAID FOR TWICE:** **a green gate is not a good
+> picture.** Two changes last session scored better and rendered worse — one a
+> nearly-bare torso, one trousers round the knees. **LOOK before believing a number.**
 >
 > **Other standing rulings:** RECREATE-NEVER-RIP for dialogue and names ·
 > **Duels-not-SHS** · single-player-first · `core/` zero numeric literals ·
@@ -29,31 +34,35 @@
 
 ## §0 THE ONE IDEA THAT GOVERNS THIS SESSION
 
-**Two sessions have gone into a fighter the game does not draw.**
+**The ruler has run out of road.**
 
 ```
-src/game/DuelScene.ts:35   import { drawSamurai, ENEMY_LOOK, PLAYER_LOOK } from './samurai';
-src/game/DuelScene.ts:691  drawSamurai(g, ps.x, ps.y + 60, playerFacing, PLAYER_LOOK, …)
-src/game/DuelScene.ts:695  drawSamurai(g, es.x, es.y + 60, enemyFacing, ENEMY_LOOK, …)
-
-grep -rln "fighterShapes|composePose" src/game/   ->   src/game/IdleFighterScene.ts
+sealed profile agreement   tracing 0.9006   held-out 0.8619
+diagnostic agreement       tracing 0.9185   IoU 0.7499
+the source's own two frames, against each other        0.8808
 ```
-**Exactly one file composes the OG fighter, and it is a debug route.** The game
-the owner actually plays still shows the Stage-1 procedural samurai.
+**We now score HIGHER against a source frame than the source's own two frames
+score against each other** — and the fighter still does not look like it.
 
-Meanwhile the OG fighter is the best-evidenced asset in the repo: 21 imported
-shapes at their recorded transforms, 7 traced garments, a headless renderer, a
-per-slot comparator against the source video, and a committed score floor.
+▶ **Look at it. One command, and it is the whole argument for this session:**
+```
+npx vite-node scripts/art/renderPose.ts -- dressed --out renders/d.png --json renders/d.json
+python3 scripts/art/compareToSource.py renders/d.json      # writes renders/side_by_side.png
+open renders/side_by_side.png
+```
 
-⇒ **This session connects them.** No new art, no new tracing. Wiring, facing,
-and the gates that stop it regressing.
+⇒ **A width profile cannot see what is left.** It is blind to colour, to
+interior detail, and to anything that is not the outer boundary. Everything in
+§P4 below is invisible to it, and one item — **the fighter is not carrying his
+sword** — is invisible to it while being the first thing an eye lands on.
 
 ```
-A7.1  the fighter becomes drawable at an arbitrary place + facing   ⬅ START HERE
-A7.2  DuelScene draws it behind ?fighter=og, player only
-A7.3  both combatants, with their per-fighter colours
-A7.4  make it the default; retire drawSamurai behind a flag
-A7.5  gates: fidelity 55/55, A6 score floors, performance, no regressions
+A8.1  the colour-aware comparator — the new ruler          ⬅ START HERE
+A8.2  the sword: trace the saya + tsuka from the video
+A8.3  the hakama reads as ONE robe, not two trouser legs
+A8.4  colour: our fills are measurably dark
+A8.5  the juban collar, and the head
+A8.6  re-grade everything; gates; handoff
 ```
 
 ---
@@ -62,6 +71,7 @@ A7.5  gates: fidelity 55/55, A6 score floors, performance, no regressions
 
 **P1 — ✅ SESSION 20 IS COMMITTED AND GREEN.**
 ```
+757438c SESSION20 CLOSED: the height diagnosis corrected, and the kickoff
 57dd541 A6.4: the loop ran - one winner of twelve, and a hole in its own score
 10f1d88 A6.5 (gi): the loop overturned its own bar, and the scores went up
 9aa9cb7 A6.3: the score becomes a committed floor - GATE A6-C MET
@@ -74,117 +84,153 @@ clean clone (no reference/): 47 files, 799 passed | 11 skipped, exit 0
 in-browser fidelity: 41/41 probes + 14/14 scans = 55/55, pass: true
 ```
 
-**P2 — ✅ THE TOOLING SESSION 20 BUILT, AND WHAT EACH IS FOR.**
+**P2 — ✅ THE TOOLING EXISTS. Nothing in A8.1 starts from zero.**
 ```
-scripts/art/rasterise.ts      DrawOp[] -> pixels -> PNG, pure, zero deps
-scripts/art/poseScene.ts      compose -> plan -> crop -> rasterise (shape map INJECTED)
-scripts/art/poseRaster.ts     hands it FIGHTER_SHAPES; the CLI's output
-scripts/art/renderPose.ts     the CLI
-scripts/art/silhouette.ts     widthProfile + profileAgreement (the SEALED score)
-scripts/art/sourceProfile.ts  the source's 19 measurements per frame, COMMITTED
-scripts/art/scorePose.ts      the sealed score as JSON, on demand
-scripts/art/tuneAnchors.py    the loop: retrace -> regenerate -> render -> score
-scripts/art/compareToSource.py the DIAGNOSTIC score: per slot, plus an overlay
+scripts/art/rasterise.ts       DrawOp[] -> pixels -> PNG, pure, zero deps
+scripts/art/poseScene.ts       compose -> plan -> crop -> rasterise (shape map INJECTED)
+scripts/art/renderPose.ts      the CLI  (--out --mask --json --slots --full)
+scripts/art/silhouette.ts      widthProfile + profileAgreement (the SEALED score)
+scripts/art/sourceProfile.ts   the source's 19 measurements per frame, COMMITTED
+scripts/art/scorePose.ts       the sealed score as JSON, on demand
+scripts/art/tuneAnchors.py     the loop: retrace -> regenerate -> render -> score -> rank
+scripts/art/compareToSource.py per-slot error, an OVERLAY, and a colour SIDE-BY-SIDE
+scripts/art/traceGarment.py    frame -> mask -> potrace -> SVG -> committed .ts
 ```
-▶ **Run it:**
-```
-npx vite-node scripts/art/renderPose.ts -- dressed --out renders/d.png --json renders/d.json --slots
-npx vite-node scripts/art/scorePose.ts
-python3 scripts/art/compareToSource.py renders/d.json     # needs reference/
-```
+⭐ **`compareToSource.py` already writes `renders/side_by_side.png`** — ours
+beside the source at matched height, in colour. A8.1 extends that file; it does
+not replace it.
 
-**P3 — ✅ WHERE THE FIGHTER STANDS TODAY, MEASURED.**
-```
-                    tracing   held-out    gap    height (stage px)
-  session start      0.8597    0.8197   0.0400   140.5
-  after A6.5 + A6.4  0.9006    0.8619   0.0387   140.5   <- the committed floors
-  the BARE fighter   0.6993    0.7479      —     128.2
-  frame-to-frame ceiling      0.8808
-```
-⚠️ **TWO SCORES EXIST AND THEY ARE NOT THE SAME NUMBER.** The SEALED score
-(above, in the suite, portable) uses our exact coverage mask and committed source
-numbers. The DIAGNOSTIC score (`compareToSource.py`, needs `reference/`) segments
-a rendered PNG with an image heuristic. **Never quote one as the other.**
+**P3 — ✅ THE TRACING PIPELINE WORKS AND NEEDS NO CONVERTER CHANGES.**
+`traceGarment.py`: frame → ink-bounded mask → potrace polygon → SVG →
+`svgShape.ts` (untouched) → committed TypeScript. **Adding a garment is one dict
+entry** in its `GARMENTS` table (crop, seed, target slot, part bbox, anchor).
+Its settings were chosen by measurement, not by eye: `UPSCALE=4` +
+Douglas-Peucker `0.10` scored **0.9831** mean IoU recovering four KNOWN OG shapes
+from video-scale degraded copies, against 0.9735 for the naive threshold.
 
-**P4 — ⭐ THE HEIGHT DIAGNOSIS FROM SESSION 19 IS WRONG, AND HERE IS THE PROOF.**
-`RESUME_HERE` has carried *"the dressed figure is 11 % too tall — suspect the
-SKELETON"* since SESSION 19. Measured:
+**P4 — ⛔ THE FIVE DIFFERENCES, FOUND BY LOOKING AT `side_by_side.png`.**
+Ordered by how much of the picture they own. **Do not re-derive these.**
+
+1. ⛔ **HE IS NOT CARRYING HIS SWORD, AND IT IS THE FIRST THING THE EYE LANDS ON.**
+   The source shows the **tsuka (hilt) jutting forward-left at chest height** and
+   the **saya (scabbard) running down behind past the knee**. We draw neither.
+   ⚠️ Slots 3 (weapon) and 4 (prop) are EMPTY BY DESIGN — they are the OG's own
+   `weapon13000`/`prop13000` "none" placeholders, and the equipment art died with
+   the CDN. **But the sword is fully visible in the video and is traceable
+   exactly as the seven garments were.** It also already interferes with our
+   measurements: `traceGarment.py`'s `reject_occluder` exists solely to carve the
+   saya OUT of the hakama, and A6.2 found the source's silhouette carries a sword
+   ours cannot, which puts our achievable agreement BELOW the 0.8808 ceiling.
+2. ⛔ **THE HAKAMA READS AS TWO BAGGY TROUSER LEGS; THE SOURCE IS ONE COLUMN.**
+   `9011` is drawn twice, at slots 11 AND 7, so our lower body is two separate
+   legs with a gap between them and scalloped hems. The source's white garment is
+   a **single continuous mass** from the obi to the ankle. This is the largest
+   remaining silhouette error.
+   ⚠️ Drawing one leg shape at both slots is what the OG ITSELF does (2678 at 7
+   and 11, 2648 at 6 and 10), so the *mechanism* is right — what is wrong is that
+   our traced leg is a TROUSER and the source's is a SKIRT.
+3. ⛔ **OUR FILLS ARE MEASURABLY DARK.** 7×7 medians on `zFt_0061`:
+   ```
+   garment          source rgb          ours                delta
+   robe / hakama    (220, 213, 219)     0xc8c3c5 (200,195,197)   ~20 levels DARK
+   kasa straw       (167, 126,  61)     0x8e6f38 (142,111, 56)   ~25 levels DARK
+   gi jacket        (104, 101, 104)     0x6e6b6d (110,107,109)   within 6 - fine
+   ```
+   Suspect `trace_one`'s fill sampling: it erodes the interior and takes a median
+   under a 5×5 median filter, which pulls in outline-adjacent pixels and drags
+   light garments down. **The gi is fine, so it is not a global gamma issue.**
+   ⚠️ Two sample points (collar, saya) landed on the wrong garment and are NOT
+   reported above — re-sample properly rather than trusting hand-picked pixels.
+4. ⛔ **THE JUBAN COLLAR DOES NOT READ.** The source has a **bold white collar**
+   wrapping the neck and running down the chest — a major light shape against the
+   grey jacket, and one of the outfit's most recognisable features. Ours (`9012`)
+   is a small dark sliver.
+5. ⚠️ **THE FACE AND HAIR.** The source shows a clear profile with a distinct
+   black hair mass; ours is a small tan patch under a dark blob. Partly the known
+   head-art difference (the source's hair measures **20.4 × 24.0** world px
+   against our shape 2670's **14.2 × 15.0**), so this may not be fully fixable —
+   grade it, do not assume it.
+
+**P5 — ✅ WHAT THE CURRENT GATES PIN, AND WHY THEY WILL FIGHT YOU.**
+```
+tests/a6Score.test.ts     FLOOR_TRACING 0.9005 · FLOOR_HELDOUT 0.8618
+                          + a HEIGHT CEILING of 140.5 stage px
+tests/poseRender.test.ts  GOLDEN_DRESSED digest, op census, ink box, crop
+```
+⚠️ **Every change in this session moves the golden digest** — that is expected
+and correct; update it in the SAME commit, saying why. **The score floors are
+different: they may only move UP.** If an appearance fix costs silhouette
+agreement, that is a real trade — **report it, do not lower the floor.**
+⚠️ **The height ceiling is load-bearing.** The profile score is scale-free, so a
+taller fighter costs it nothing; A6.4's best-scoring variant of twelve grew the
+figure 5.5 % and rendered trousers round the knees.
+
+**P6 — ⭐ THE HEIGHT DIAGNOSIS SESSION 19 CARRIED IS WRONG, AND THIS IS THE PROOF.**
 ```
                        stage px   video px    vs the source
 our BARE fighter (no hat)  128.2      240.3      +1.5%
 our DRESSED fighter        140.5      263.4     +11.3%
 the SOURCE, hat included   126.2      236.7
-the kasa adds 12.3 stage px = 23.1 video px
 ```
-**Our bare skeleton is within 1.5 % of the source's FULLY EQUIPPED fighter.** The
-skeleton is not the problem — **the entire overshoot is the kasa's height.**
-⚠️ The scale is not in doubt: `src/config/fidelity.ts` states the study frames
-are full-bleed 16:9 mapping 1:1 to our 1024×576 stage (1920/1024 = 1.875), and
-**55/55 fidelity probes pin HUD positions through that mapping.**
-⚠️ The trade is open and measured: pushing the brim deeper (0.65, 0.70) shortens
-the figure **and costs held-out agreement** — 0.8619 → 0.8375 → 0.8247. Left for
-an owner ruling; NOT tuned away.
-
-**P5 — ✅ THE ANIMATION DATA IS ALREADY IN THE REPO, AND ONLY ONE FRAME IS USED.**
-`reference/extracted/bindata/108_1t4635s0.bin` is the DefineBinaryData holding
-**all 158 human animations**. SESSION 18 transcribed **one frame of one of them**
-— `<anim i="idle" d="1">` frame 0, the 19 nodes now in `src/config/ogPose.ts`,
-verified byte-identical against the payload by a `skipIf`-gated test.
-⇒ **Facing and position are this session's job; more animation frames are the
-next one's.** A7 draws the idle pose at arbitrary places, both ways.
-
-**P6 — ✅ WHAT `drawSamurai` CURRENTLY GIVES DUELSCENE, and must keep giving.**
-`src/game/samurai.ts` — `drawSamurai(g, x, y, facing, look, pose, alpha, opts)`.
-Two `look`s (`PLAYER_LOOK`, `ENEMY_LOOK`), a `pose`, an alpha for the spawn
-blink, and a facing. **Any replacement has to satisfy the same call sites**
-(`DuelScene.ts` lines ~691 and ~695) or the scene stops compiling.
+**The skeleton is within 1.5 % of the source's fully-equipped fighter.** The whole
+overshoot is the kasa's 23.1 video px. The scale is not in doubt:
+`src/config/fidelity.ts` states the study frames are full-bleed 16:9 mapping 1:1
+to our 1024×576 stage (1920/1024 = 1.875), and **55/55 fidelity probes pin HUD
+positions through that mapping.** Pushing the brim deeper shortens the figure AND
+costs held-out agreement (0.8619 → 0.8375 → 0.8247) — **open, measured, for an
+owner ruling. Do not tune it away.**
 
 **P7 — ⚠️ THE TRAPS SESSION 20 PAID FOR. Do not re-learn these.**
-1. ⛔ **A GREEN GATE IS NOT A GOOD PICTURE.** Carving the sleeve out of the gi
-   scored plausibly and rendered a nearly-bare torso. Lowering the hakama 15
-   world px scored **best of the whole sweep** and rendered trousers round the
-   knees. Both were caught by looking.
-2. ⛔ **THE PROFILE SCORE IS SCALE-FREE — a taller fighter costs it NOTHING.**
-   `GATE A6-C companion` now caps the height for exactly that reason.
-3. ⛔ **RANK ON THE HELD-OUT FRAME, NEVER A MEAN.** A mean will buy an overfit.
-4. ⛔ **NEVER GATE ON A PNG's BYTES.** `deflateSync` output depends on the zlib
+1. ⛔ **A GREEN GATE IS NOT A GOOD PICTURE.** Carving the sleeve out of the gi —
+   which SESSION 20's own kickoff prescribed — scored plausibly and rendered a
+   nearly-bare torso. Lowering the hakama 15 world px scored **best of the whole
+   sweep** (held-out 0.8781, frames within 0.0067) and rendered trousers round
+   the knees. Both caught only by looking.
+2. ⛔ **RANK ON THE HELD-OUT FRAME, NEVER A MEAN.** A mean will buy an overfit.
+3. ⛔ **NEVER GATE ON A PNG's BYTES.** `deflateSync` output depends on the zlib
    Node was built with, and CI runs a different Node from the dev Mac. Gate on
    `rasterDigest` — the PIXELS.
+4. ⛔ **REGENERATE EVERY SHAPE WHEN SWEEPING.** `tuneAnchors.py` first
+   regenerated only the ids each variant touched, so every row inherited the
+   previous variant's art. Caught only because two different variants returned
+   byte-identical scores.
 5. ⛔ **`poseRaster.ts` is the ONLY file a test cannot reach** (it imports
-   `src/game/**`). Everything else takes the shape map as an argument so the
-   suite can drive it. Keep it that way — a mutant that swapped the dressed/bare
-   slot map, deleted the backdrop guard AND moved the crop by a pixel once passed
-   all 46 test files at once.
-6. ⚠️ **The canvas is TRANSPARENT on `?art=` routes.** Put a backdrop behind it
-   before judging. The headless renderer composites magenta and states so.
+   `src/game/**`). Everything else takes the shape map as an argument. Keep it
+   that way: a mutant that swapped the dressed/bare slot map, deleted the
+   backdrop guard AND moved the crop by a pixel once passed all 46 test files.
+6. ⚠️ **The canvas is TRANSPARENT on `?art=` routes.** The headless renderer
+   composites magenta and records it; a browser screenshot needs a backdrop.
 
 ---
 
 ## §1 WHAT I DECIDED FOR YOU, AND WHY
 
-### D1 — ⛔ NO NEW ART, NO RE-TRACING, NO NEW GARMENTS
-This session is wiring. The fighter's appearance is under a committed score floor
-and a pixel digest; **if either moves, this session did something it should not
-have.** The one legitimate reason for them to move is a deliberate art change,
-and there is none planned.
-> **Veto:** none. Mixing art changes into a wiring session makes both unreviewable.
+### D1 — ⛔ THE LOOP MAY STILL TUNE **PLACEMENT** ONLY. NEVER A TRACED OUTLINE.
+Unchanged from SESSION 20 and still load-bearing. Outlines are measured from the
+source; anchors were always INFERRED. **A NEW TRACE is not a violation** — it is
+new measurement. **Editing a vertex to improve a score is.**
+> **Veto:** none. Fitting an outline to a score turns a test into a mirror.
 
-### D2 — FACING IS A TRANSFORM, NOT A SECOND SET OF SHAPES
-The OG composes one fighter and flips it. Mirroring belongs in the planner
-(negate x after rotation), not in 21 mirrored shape files.
-> **Veto:** if a frame shows the OG's art differing between facings — say so and
-> stop; that would be real evidence and it changes the design.
+### D2 — THE SWORD IS TRACED, NOT INVENTED
+It goes on slot 3 (weapon), the OG's own slot for it, from the same frame and the
+same pipeline as the seven garments.
+> ⚠️ **State the limit:** the OG's `weapon13000` is empty, so this is OUR sword
+> for the LOOK, not a recovery of the original asset. Say so in its header.
+> **Veto:** leave slots 3/4 empty — *recommended against*; it is the single
+> largest visible difference and the source shows it plainly.
 
-### D3 — BEHIND A FLAG FIRST, DEFAULT LAST
-`?fighter=og` before it replaces `drawSamurai`, so the fidelity gate and the
-duel-baseline can be run against BOTH renders and compared.
-> **Veto:** go straight to default — *recommended against*, it makes a
-> regression indistinguishable from a redesign.
+### D3 — APPEARANCE GETS ITS OWN SCORE, BESIDE THE SILHOUETTE ONE, NOT INSTEAD
+The silhouette floors stay and keep ratcheting. The new colour score is a second
+committed number. **Two rulers, both stated** — the same discipline that keeps
+the SEALED and DIAGNOSTIC scores from being quoted as each other.
+> **Veto:** replace the silhouette score — *recommended against*, it is the only
+> gate that survives without `reference/`.
 
-### D4 — THE OG FIGHTER MUST NOT OWN GAMEPLAY STATE
-`src/game/CLAUDE.md`: scenes are render-only. The fighter renders from `Sim`
-state exactly as `drawSamurai` does today.
-> **Veto:** none. This is a repo invariant.
+### D4 — RE-SAMPLE COLOUR PROPERLY, DO NOT HAND-PICK PIXELS
+Two of seven hand-picked samples in §P4.3 landed on the wrong garment. Sample
+each garment from the traced MASK's own interior, which is exactly the region the
+fill belongs to.
+> **Veto:** none. Hand-picked pixels are how §P4.3 nearly shipped two wrong numbers.
 
 ---
 
@@ -192,38 +238,38 @@ state exactly as `drawSamurai` does today.
 
 | | Test | **THE NUMBER** |
 |---|---|---|
-| **A7-A** | Placeable | **the composed OG fighter draws at an arbitrary (x, y), proven by a headless render at two different origins whose ink boxes differ by exactly the offset** |
-| **A7-B** | Facing | **mirrored draw is pixel-identical to the unmirrored render reflected — verified on the raster, not by eye** |
-| **A7-C** | In the game | **`?fighter=og` shows the OG fighter for the player in `DuelScene`, 0 console errors** |
-| **A7-D** | Both combatants | **player AND enemy, each in its own colours, at their sim positions** |
-| **A7-E** | Default | **`drawSamurai` no longer on the default path; the old render still reachable behind a flag** |
-| **A7-F** | Nothing regressed | **fidelity 55/55 · suite ≥822 green · bare clone green · `duel-baseline` green AND unedited · A6 score floors AND `GOLDEN_DRESSED` digest UNCHANGED · ratchet not widened** |
+| **A8-A** | A colour ruler exists | **a committed per-garment colour comparison: for each traced fill, the source's own median vs ours, in RGB, from the mask's interior — not hand-picked pixels** |
+| **A8-B** | The sword is on screen | **slots 3/4 carry traced saya + tsuka; the render shows a hilt forward of the chest and a scabbard past the knee** |
+| **A8-C** | The lower body reads as one garment | **the hakama's silhouette has NO interior gap between the legs above the knee, measured on the coverage mask** |
+| **A8-D** | Colour is within tolerance | **every traced fill within 12 levels per channel of the source's median for that garment** |
+| **A8-E** | The silhouette did not regress | **sealed held-out ≥ 0.8618 AND the height ≤ 140.5 stage px — floors NOT lowered** |
+| **A8-F** | Nothing else regressed | **fidelity 55/55 · suite ≥822 green · bare clone green · `duel-baseline` green AND unedited · ratchet not widened** |
 
-⚠️ **A7-F's "digest unchanged" is the load-bearing one.** This session must not
-alter the fighter's appearance. If the digest moves, find out why before
-refreshing it.
+⚠️ **A8-E IS ALLOWED TO BIND.** Adding a sword makes our silhouette wider and may
+COST silhouette agreement even as the picture improves. **If it does, say so,
+show both numbers, and ask — do not lower the floor.** That trade is exactly the
+kind of thing the owner should rule on.
 
 ---
 
 ## §3 WHAT WILL FIGHT YOU
 
-1. ⛔ **PERFORMANCE.** `drawSamurai` is a handful of primitives; the OG fighter is
-   **90 draw ops (bare) / 55 (dressed) per fighter per frame**, with Earcut on
-   the holed fills. Two fighters at 60 Hz is ~10 800 ops/s. **Measure it before
-   and after; if it costs frames, cache the plan — the pose only changes when the
-   pose changes.**
-2. ⛔ **`planPose` cannot mirror today.** It rotates about the joint pivot,
-   offsets, scales, anchors (`src/core/planPose.ts`). Mirroring has to compose
-   with rotation correctly — **a sign error mirrors the pose joint by joint and
-   still reads as a fighter** (SESSION 18 hit exactly this class of bug with
-   Flash's y-down rotation).
-3. **The OG fighter is one static pose.** The game animates. Expect it to look
-   stiff — that is honest and it is A8's problem, not a defect of this session.
-4. **`tests/no-game-imports.test.ts`** forbids a test from reaching `src/game/**`.
-   Put every piece of arithmetic in `core/` or `scripts/` where a test can drive it.
+1. ⛔ **THE SAYA IS THE REASON `reject_occluder` EXISTS.** The scabbard crosses
+   the far leg and is enclosed by the same ink, so "the region inside the outline"
+   swallows it. Tracing the sword means tracing the very thing the hakama trace
+   is built to exclude — **expect to fight the same hue separation from the other
+   side**, and expect the far leg to need re-checking afterwards.
+2. ⛔ **A WIDER SILHOUETTE CAN LOWER THE SCORE.** See A8-E. The score is not the
+   goal; the picture is. Report both.
+3. **The source's feet are hidden in GRASS.** Ours are drawn. Any comparison at
+   the hem is measuring our feet against grass — do not "fix" the feet to match
+   an occlusion.
+4. **`reference/` is gitignored.** Comparators live in `scripts/`, and the
+   clean-clone run is what proves nothing reads it at runtime.
 5. **The `game/` ratchet fires on new numeric literals.** Numbers go to `src/config/`.
-6. **`reference/` is gitignored** — a runtime read of it is the bug. The clean
-   clone run is what proves it.
+6. **Traced ids are ≥ 9000 and nothing else is.** The provenance gate checks both
+   directions; a new shape needs its header naming frame, timestamp, crop,
+   approximations and inferences, or it fails.
 
 ---
 
@@ -231,29 +277,32 @@ refreshing it.
 
 Every step: **write the failing test names FIRST, watch them red, then code.**
 
-### A7.0 — Confirm the baseline (1 minute)
-`git log --oneline -1` → `57dd541` · `npm test` → 48 files / 822 tests.
+### A8.0 — Confirm the baseline (1 minute)
+`git log --oneline -1` → `757438c` · `npm test` → 48 files / 822 tests.
 
-### A7.1 — Placeable + mirrorable ⬅ THE FIRST REAL WORK
-`src/core/planPose.ts` grows a facing. Prove with the headless renderer at two
-origins and both facings. **Gates: A7-A, A7-B.**
+### A8.1 — The colour ruler ⬅ THE FIRST REAL WORK
+Extend `compareToSource.py`: per garment, the source's median colour taken from
+that garment's own traced mask, against our committed fill. **Gate: A8-A.**
+Commit the table BEFORE changing any colour (the A6.2 discipline: measure first).
 
-### A7.2 — `?fighter=og` in DuelScene, player only
-Reuse `drawPlan`; render from sim state. **Gate: A7-C.**
+### A8.2 — The sword
+A new `GARMENTS` entry for the saya and one for the tsuka, onto slots 3 and 4.
+**Gate: A8-B.** Look at it, then re-run the silhouette score and report the trade.
 
-### A7.3 — Both combatants, per-fighter colour
-**Gate: A7-D.** ⚠️ Colour is a TINT decision — the OG art carries its own fills.
-Decide and flag how player/enemy differ, and say whether a frame supports it.
+### A8.3 — The hakama as one garment
+**Gate: A8-C.** ⚠️ The mechanism (one shape at both leg slots) is what the OG
+does — the fix is the traced SHAPE, not the slot map.
 
-### A7.4 — Default, with the old render behind a flag
-**Gate: A7-E.** Re-run fidelity and duel-baseline against BOTH.
+### A8.4 — Colour
+**Gate: A8-D.** Fix the fill sampling in `trace_one`, retrace, re-measure.
 
-### A7.5 — The regression surface
-**Gate: A7-F**, including the performance number from §3.1, measured.
+### A8.5 — The collar, and an honest verdict on the head
+**Gate: A8-A re-run.** The head may not be fixable (different source art) — grade
+it and say which.
 
-### A7.6 handoff
-`RESUME_HERE.md` and `docs/DIVERGENCES.md` in the SAME commit as the change each
-describes. **Write the SESSION 22 kickoff.**
+### A8.6 — Re-grade, gates, handoff
+**Gates: A8-E, A8-F.** `RESUME_HERE.md` and `docs/DIVERGENCES.md` in the SAME
+commit as the change each describes. **Write the SESSION 22 kickoff.**
 
 ---
 
@@ -261,44 +310,51 @@ describes. **Write the SESSION 22 kickoff.**
 
 | # | Item | Verify |
 |---|---|---|
-| 1 | Baseline `57dd541` / 822 green | `git log -1` + `npm test` |
-| 2 | Draws at an arbitrary origin | two headless renders, ink boxes differ by the offset |
-| 3 | Mirrored == reflected, on the raster | pasted digest comparison |
-| 4 | `?fighter=og` draws the player, 0 console errors | screenshot on a backdrop + console |
-| 5 | Both combatants, own colours, at sim positions | screenshot |
-| 6 | Default path uses the OG fighter | `git grep drawSamurai` in the default path |
-| 7 | Frame cost measured before AND after | pasted numbers |
+| 1 | Baseline `757438c` / 822 green | `git log -1` + `npm test` |
+| 2 | Per-garment colour table, from masks not pixels | pasted table |
+| 3 | Sword on screen, hilt forward, scabbard past the knee | `side_by_side.png` |
+| 4 | No interior gap in the hakama above the knee | measured on the mask |
+| 5 | Every fill within 12 levels per channel | pasted table |
+| 6 | Sealed held-out ≥ 0.8618, height ≤ 140.5 — floors NOT lowered | `git diff tests/a6Score.test.ts` |
+| 7 | `?art=idle` still draws the BARE fighter | screenshot on a backdrop |
 | 8 | Fidelity 55/55 · suite green · bare clone green | pasted |
-| 9 | **A6 floors AND `GOLDEN_DRESSED` digest UNCHANGED** | `git diff tests/` is empty for those lines |
-| 10 | `duel-baseline` green AND unedited; ratchet not widened | `git diff` |
-| 11 | Nothing in the render path reads `reference/` | grep + clean clone |
+| 9 | `duel-baseline` green AND unedited; ratchet not widened | `git diff` |
+| 10 | Nothing in the render path reads `reference/` | grep + clean clone |
+| 11 | Nothing from `reference/` committed | `git status` + history |
 | 12 | Ledgers + `RESUME_HERE` in the same commit as their change | `git show --stat` |
-| 13 | SESSION 22 kickoff written, committed, graded | the file + its bar self-report |
+| 13 | **A human looked at `side_by_side.png` and said which of §P4's five closed** | the verdict, in the commit |
+| 14 | SESSION 22 kickoff written, committed, graded | the file + its bar self-report |
 
 ---
 
 ## §6 THE TWO REAL RISKS
 
-**Risk 1 — the OG fighter looks WORSE in motion than the stick figure.** It is one
-frozen pose; the procedural samurai at least leans and swings. **Mitigation: land
-it behind `?fighter=og` and compare side by side before making it default. If it
-reads worse, say so** — the honest outcome may be "keep both until A8 animates it".
+**Risk 1 — the score goes down while the picture goes up, and the floor gets
+lowered to "fix" it.** Adding a sword widens our silhouette; the source's frames
+carry one, so agreement should IMPROVE — but the saya's exact hang is inferred
+and it may not. **Mitigation: A8-E forbids lowering the floor. If the trade is
+real, both numbers go in the commit and the owner rules.**
 
-**Risk 2 — a mirroring sign error that still reads as a fighter.** SESSION 18 hit
-this exact class with Flash's y-down rotation and only caught it because the
-transform was pinned in a test with all three wrong versions as negatives.
-**Mitigation: A7-B compares the mirrored RASTER against the reflected raster.
-Pixels, not eyes.**
+**Risk 2 — chasing pixels the video cannot resolve.** The fighter is ~233 video px
+tall and JPEG-compressed; SESSION 19's own calibration says a garment under ~12 px
+on screen traces at 0.80–0.84 IoU and should be labelled INFERRED rather than
+pretended. **Mitigation: the tsuka is small. Trace it, measure it, and if it comes
+back below that bar, say INFERRED in its header and move on.**
 
 ---
 
 ## §7 QUEUED — deliberately NOT in this session
 
-- **The other 157 animations.** `108_1t4635s0.bin` holds them; one frame of one
-  is transcribed. That is A8, and it is what makes the fighter move.
-- **The kasa height trade** (§P4) — measured, open, owner ruling.
-- **The far forearm** is bare where the source shows cloth; the far leg reuses
-  the near leg's shape (which is what the OG itself does).
+- ⛔ **PUT THE OG FIGHTER IN THE GAME.** `DuelScene.ts:691` still calls
+  `drawSamurai`, and `grep -rln "composePose" src/game/` returns exactly
+  `IdleFighterScene.ts` — **a debug route.** Three sessions of fighter work that
+  the game does not draw. This was SESSION 21's plan until the owner looked at
+  the render and said it is not good enough yet; **it is SESSION 22, and the
+  gates it needs are already written** (placeable, mirrorable, both combatants,
+  appearance digest UNCHANGED).
+- **The other 157 animations.** `reference/extracted/bindata/108_1t4635s0.bin`
+  holds them all; ONE frame of ONE is transcribed.
+- **The kasa height trade** (§P6) — measured, open, owner ruling.
 - **Other outfits** — the navy duel outfit from `Nr4fQstqHDM`.
 - **SESSION 14 A5 + A6** — mob AI cadence, hitbox blocking, turn-taking.
 - **All audio.** Still completely silent, and still the research session most
@@ -312,23 +368,25 @@ Pixels, not eyes.**
 
 - **There is no research step, and it is checkable.** Every number in §P came
   from a command run during SESSION 20 and is quoted with its output — the score
-  table, the height arithmetic, the two `grep`s that prove the game does not draw
-  the OG fighter.
-- ⭐ **It opens with a two-line grep that indicts two whole sessions.** One file
-  composes the OG fighter and it is a debug route. That is the argument for the
-  session, and it is verifiable in five seconds.
-- ⭐ **It corrects a diagnosis the handoff has carried since SESSION 19.** "The
-  figure is 11 % too tall — suspect the skeleton" is **wrong**: the bare skeleton
-  is within 1.5 % of the source's fully-equipped fighter, and the whole overshoot
-  is the kasa. §P4 shows the arithmetic and names why the scale is not in doubt.
-- ⭐ **Its §P7 is a list of traps that were each paid for once**, with the wrong
-  answer each one produced — including two changes that scored better and
-  rendered worse, which is the finding SESSION 20 exists to hand forward.
-- **The bar can FAIL, and §6 Risk 1 says what to do if it does**: if the OG
-  fighter reads worse in motion, keep both and say so rather than force A7-E.
-- **A7-F pins the fighter's appearance as UNCHANGED**, so a wiring session cannot
-  quietly become an art session.
+  table, the colour medians, the height arithmetic, the commit list.
+- ⭐ **It opens by retiring its own predecessor's instrument.** The silhouette
+  score now reads ABOVE the source's own frame-to-frame ceiling while the fighter
+  visibly does not match. A ruler that cannot fail is not measuring any more, and
+  that single fact is the argument for the whole session.
+- ⭐ **§P4 is five differences found by LOOKING at a picture**, ordered by how
+  much of the frame they own, each with the evidence and the suspected cause —
+  and the biggest of them (no sword) is one a silhouette score can never surface.
+- ⭐ **It marks its own weak evidence.** Two of the seven colour samples landed on
+  the wrong garment; they are excluded and D4 makes re-sampling from the mask a
+  decision rather than an afterthought.
+- ⭐ **A8-E can BIND against the session's own goal**, and the response is written
+  in advance: adding a sword may cost silhouette agreement, and the answer is to
+  report both numbers and ask — never to lower a floor.
+- **It carries SESSION 20's traps forward as a list of things that each cost a
+  wrong answer once**, including the two changes that scored better and rendered
+  worse.
 
-**What it deliberately does not promise:** that the fighter will animate. It will
-stand in the game, in one pose, facing correctly — and every later animation
-frame inherits the wiring and the gates this session lands.
+**What it deliberately does not promise:** that the fighter will be perfect. The
+source is a compressed 233-px-tall figure in a video; §6 Risk 2 names the floor
+below which tracing is honest guesswork. It promises that the five differences
+anyone can see in `side_by_side.png` are each either closed or explained.

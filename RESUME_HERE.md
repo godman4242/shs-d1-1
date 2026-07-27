@@ -1,16 +1,50 @@
 # RESUME HERE
 
 > ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION21_KICKOFF.md`**
-> **PUT THE OG FIGHTER IN THE GAME.** Self-contained, the only kickoff to plan
-> from, **no open prerequisites.**
+> **MAKE THE FIGHTER LOOK LIKE THE PICTURE.** Self-contained, the only kickoff to
+> plan from, **no open prerequisites.**
 >
-> ⛔ **TWO SESSIONS HAVE GONE INTO A FIGHTER THE GAME DOES NOT DRAW.**
+> ⭐ **THE OWNER LOOKED AND RULED (2026-07-28):** *"it still is not perfect and
+> needs to be improved… where you need to check your work and compare it to the
+> og picture."*
+>
+> ⛔ **THE SILHOUETTE RULER HAS RUN OUT OF ROAD.**
 > ```
-> DuelScene.ts:691  drawSamurai(g, ps.x, ps.y + 60, playerFacing, PLAYER_LOOK, …)
-> grep -rln "fighterShapes|composePose" src/game/  ->  src/game/IdleFighterScene.ts
+> sealed  tracing 0.9006  held-out 0.8619        the source's own two
+> diagnostic tracing 0.9185   IoU 0.7499         frames agree at 0.8808
 > ```
-> Exactly one file composes the OG fighter and it is a **debug route**. The game
-> the owner plays still shows the Stage-1 procedural samurai.
+> **We score HIGHER against a source frame than the source's own two frames score
+> against each other — and the fighter still does not look like it.** A width
+> profile is blind to colour, to interior detail, and to the first thing an eye
+> lands on: **he is not carrying his sword.**
+>
+> ▶ **See it yourself — one command:**
+> ```
+> npx vite-node scripts/art/renderPose.ts -- dressed --out renders/d.png --json renders/d.json
+> python3 scripts/art/compareToSource.py renders/d.json && open renders/side_by_side.png
+> ```
+>
+> ### ⛔ THE FIVE DIFFERENCES, FOUND BY LOOKING — do not re-derive them
+> 1. **NO SWORD.** The source shows the hilt forward at chest height and the
+>    scabbard past the knee. Slots 3/4 are empty by design (the OG's own "none"
+>    placeholders; equipment art died with the CDN) — **but the sword is plainly
+>    visible in the video and traceable exactly as the 7 garments were.**
+> 2. **THE HAKAMA READS AS TWO TROUSER LEGS**, with a gap and scalloped hems; the
+>    source is ONE continuous white column. Largest remaining silhouette error.
+> 3. **OUR FILLS ARE MEASURABLY DARK** (7×7 medians on zFt_0061): robe source
+>    rgb(220,213,219) vs our `0xc8c3c5`; kasa source rgb(167,126,61) vs our
+>    `0x8e6f38` — **20–25 levels dark.** The gi jacket is within 6, so it is not a
+>    global gamma issue. ⚠️ Two of seven samples hit the wrong garment and are
+>    excluded — re-sample from each garment's own traced mask.
+> 4. **THE JUBAN COLLAR DOES NOT READ** — the source's bold white collar is one of
+>    the outfit's most recognisable features; ours is a dark sliver.
+> 5. **THE FACE AND HAIR** — may not be fully fixable (the source's hair measures
+>    20.4×24.0 world px against our 2670's 14.2×15.0). Grade it, do not assume.
+>
+> ⚠️ **SESSION 22 IS "PUT THE OG FIGHTER IN THE GAME"** — `DuelScene.ts:691` still
+> calls `drawSamurai`, and only `IdleFighterScene.ts` composes the OG fighter.
+> That was SESSION 21's plan until the owner looked; its gates are already
+> drafted in SESSION21_KICKOFF §7.
 >
 > ### ✅ SESSION 20 CLOSED — A6.1–A6.5. Gates A6-A, A6-B, A6-C MET.
 > **The loop that grades the fighter exists, and it works.** 48 files / **822
