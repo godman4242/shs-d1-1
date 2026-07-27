@@ -2642,3 +2642,74 @@ in-browser fidelity  41/41 probes + 14/14 scans = 55/55, pass: true, 0 failures
 ?art=idle draws the BARE 21-part fighter · ?art=dressed the 20-part dressed one
 0 console errors on a fresh load · duel-baseline UNEDITED · ratchet NOT widened
 ```
+
+## SESSION 20 — A6.1 (part 2): the review's structural finding, and the gate it forced
+
+**A6.1 shipped at `eff0c2f` with a claim in two file headers that turned out to be
+FALSE, and it was the load-bearing claim of the step's test design:** that the
+pose pipeline could not be tested, because `tests/no-game-imports.test.ts` forbids
+importing `src/game/art/fighterShapes.ts`.
+
+⛔ **`tests/planPose.test.ts` has been building the REAL 90-op idle plan inside the
+suite since SESSION 18.** The `art/generated/**` pure-data carve-out allows it —
+the map is rebuilt from the generated shapes, and that file's own registry check
+pins `FIGHTER_SHAPES` against BOTH slot maps, in both directions, as text. The
+technique was already in the repo; A6.1 simply did not look.
+
+### What the untested pipeline was hiding — a review mutated it and the suite did not care
+All of these passed typecheck, lint AND all 46 test files, **together, as one mutant**:
+```
+A  swap slotMapFor's ternary   -> `dressed` renders the BARE fighter
+                                  20 parts/55 ops -> 21 parts/90 ops, digest e9ddfe43 -> 6dae62d1
+B  delete assertBackdropIsNotArt(plan, backdrop)  -> --backdrop 0x000000 renders happily
+C  Math.floor -> Math.round in the crop           -> frame moves 113x190@(450,266) -> 112x189@(451,267)
+```
+And two more against the rasteriser, which only ever saw 4-op scenes:
+```
+D  skip strokes on large plans -> deletes ALL 16 dressed / 41 idle outlines, 3.25% of pixels
+E  sub-pixel sampled at the corner -> the whole silhouette shifts 0.125 px in one axis
+```
+**Every A6.2–A6.5 measurement would have been taken from that fighter, with a
+green suite.** This is the session's own thesis landing on the session's own work.
+
+### The fix: inject the shape map, so the pipeline lives where a test can reach it
+```
+scripts/art/poseScene.ts   NEW — slotMapFor · cropRegion · assertBackdropIsNotArt ·
+                                 slotFootprints · renderPoseWith(variant, SHAPES, opts)
+scripts/art/poseRaster.ts  now THIN: hands FIGHTER_SHAPES to poseScene, formats output
+tests/poseRender.test.ts   NEW, 15 tests — the real plan, both variants
+```
+⭐ **The pixel gate: `rasterDigest` of the real dressed and idle renders is
+committed.** Counts, boxes, crops and op censuses are pinned too:
+```
+dressed  20 parts, 55 ops  {fill 37, stroke 16, holedFill 2}  crop 113x190 @ (450,266)
+idle     21 parts, 90 ops  {fill 45, stroke 41, holedFill 4}  crop 102x177 @ (456,279)
+dressed digest e9ddfe43b6ea139b24ebb267441265b5faac212204fda3b78b5b349b88359689
+idle    digest 6dae62d12576cc22e2b62f92dc7481c5634f6e6c88279d3b5d6be4e97638ca97
+```
+⚠️ **The digests are a REGRESSION gate, not a correctness one**, and they must
+never be "refreshed" to make a diff go green. They are portable — `rasterise`
+uses only exactly-specified arithmetic — unlike a PNG hash.
+
+### All five mutations re-planted against the new gate — ALL RED
+```
+A swap slotMapFor       -> 6 tests red   B delete the backdrop call -> 1 red (after a second pass, below)
+C floor->round crop     -> 2 tests red   D skip strokes on big plans -> 1 red (GOLDEN)
+E corner sub-pixel      -> 3 tests red   F floor() in the scanline spans -> 1 red (GOLDEN)
+```
+⚠️ **B needed a second pass, and the reason generalises.** The first version of
+the test called `assertBackdropIsNotArt` directly, so deleting the CALL from
+`renderPoseWith` stayed green — the function was gated, its call site was not.
+Fixed by driving the whole pipeline: `renderPoseWith('dressed', SHAPES, { backdrop: 0x000000 })`
+must throw. **Testing a guard is not the same as testing that it is invoked.**
+
+⚠️ One test in this file was itself WRONG on first write: it asserted the guard
+refuses `0x676467`, "the gi's grey". That is the gi's grey **in the source
+video**, not in our traced art, so it did not throw. Replaced by a set derived
+from the plan itself, which cannot be wrong that way and grows with the outfit.
+
+### Regression
+```
+suite   47 files / 810 tests green   (44 / 750 at session start, 46 / 795 at eff0c2f)
+tsc x2 exit 0 · eslint exit 0 · CLI output unchanged: digest e9ddfe43b6ea139b
+```

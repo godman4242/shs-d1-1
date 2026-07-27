@@ -11,9 +11,18 @@
 > npx vite-node scripts/art/renderPose.ts -- idle --full
 > ```
 > `rasterise.ts` (pure engine, zero deps) · `renderPoseArgs.ts` (validated flags) ·
-> `poseRaster.ts` (compose→plan→rasterise) · `renderPose.ts` (CLI). Outputs go to
-> the gitignored `renders/`. **Suite 46 files / 795 tests green** (was 44/750),
-> tsc ×2 → 0, eslint → 0, **fidelity 55/55 `pass: true`**, 0 console errors.
+> `poseScene.ts` (the pipeline, shape map INJECTED) · `poseRaster.ts` (hands it
+> `FIGHTER_SHAPES`) · `renderPose.ts` (CLI). Outputs go to the gitignored
+> `renders/`. **Suite 47 files / 810 tests green** (was 44/750), tsc ×2 → 0,
+> eslint → 0, **fidelity 55/55 `pass: true`**, 0 console errors.
+>
+> ⭐ **THE PIXEL GATE IS COMMITTED.** `tests/poseRender.test.ts` builds the REAL
+> plan for both variants and pins `rasterDigest`, the op census, the ink box and
+> the crop. **Never "refresh" those digests to make a diff go green.**
+> ```
+> dressed 20 parts, 55 ops {fill 37, stroke 16, holedFill 2}  crop 113x190 @ (450,266)
+> idle    21 parts, 90 ops {fill 45, stroke 41, holedFill 4}  crop 102x177 @ (456,279)
+> ```
 > ```
 > dressed  20 parts, 55 ops   ink 474.9..538.9 x 290.9..431.4  (63.9 x 140.5)
 > idle     21 parts, 90 ops   ink 480.5..533.1 x 303.2..431.4  (52.7 x 128.2)
@@ -36,10 +45,19 @@
 >    load-bearing, and `drawPlan`'s comment justifying `closeShape: false` covers
 >    only 6 of its 28 polylines — the code is right, the stated reason is narrow.
 >
-> ⚠️ **`poseRaster.ts` HAS NO SUITE COVERAGE, BY CONSTRUCTION** — it imports
-> `src/game/art/fighterShapes.ts`, which `tests/no-game-imports.test.ts` forbids a
-> test from reaching. Its guards are chaos-proven by CLI runs, not by a green
-> test. **Do not read the green suite as covering it.**
+> ⛔ **A6.1 FIRST CLAIMED THE PIPELINE COULD NOT BE TESTED. THAT WAS FALSE, AND
+> IT WAS THE LOAD-BEARING CLAIM OF ITS TEST DESIGN.** `tests/planPose.test.ts` has
+> built the real 90-op plan in the suite since SESSION 18, via the
+> `art/generated/**` pure-data carve-out. A review then mutated the untested
+> pipeline and **the whole 46-file suite stayed green** on a mutant that swapped
+> the dressed/bare slot map, deleted the backdrop guard AND moved the crop by a
+> pixel — every later measurement would have been of the wrong fighter.
+> **Fixed by injecting the shape map** (`poseScene.ts`); all five mutations now
+> go red. Only the one-line `FIGHTER_SHAPES` hand-off in `poseRaster.ts` is
+> unreachable from a test, and `planPose.test.ts` pins that registry as text.
+>
+> ⚠️ **Testing a guard is not testing that it is CALLED.** The backdrop mutation
+> stayed green until the test drove the whole pipeline instead of the function.
 >
 > ⚠️ **THE RENDERER IS NOT PHASER.** Even-odd scanline fills (so it is BLIND to a
 > mis-packed hole ring — that stays `Earcut.deviation`'s job in the live scene),
