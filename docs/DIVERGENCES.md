@@ -2804,3 +2804,83 @@ three things a number could not:
 suite 47 files / 810 tests green · tsc x2 -> 0 · eslint -> 0
 nothing in src/ changed; the comparator is build-time only and reads reference/
 ```
+
+## SESSION 20 — A6.3: the score becomes a gate. **GATE A6-C MET.**
+
+`tests/a6Score.test.ts` — the dressed fighter's agreement with the source is a
+committed number the suite holds as a FLOOR. **From here, a change that makes the
+fighter less like the source turns the suite red.** That is the thing SESSION 19
+did not have, and the reason four defects shipped past a 750-green suite.
+
+### ⛔ A6-C AS LITERALLY WORDED IS NOT ACHIEVABLE, AND HERE IS WHAT REPLACED IT
+The kickoff says "the suite enforces it as a FLOOR". **The suite cannot run the
+comparator**: `reference/` is gitignored, a clean clone has no frames, and a
+runtime read of it is the bug SESSION16 finding 4 cost this repo a broken
+checkout for. So the source side is committed as DERIVED DATA — nineteen
+measurements per frame in `scripts/art/sourceProfile.ts`, the same kind of
+committed target the A5-C set already is — and our side is computed in-suite from
+the renderer's own exact coverage mask (`scripts/art/silhouette.ts`).
+
+⚠️ **THERE ARE NOW TWO SCORES AND THEY ARE NOT THE SAME NUMBER.** Say which.
+```
+  SEALED     (tests/a6Score.test.ts)  ours = exact coverage mask, source = committed numbers
+                                       portable, runs in CI, gates the suite
+  DIAGNOSTIC (compareToSource.py)      both sides through proportions.py's image segmentation
+                                       richer (per slot + an overlay) but needs reference/
+```
+They differ by construction — a heuristic segmentation of a rendered PNG is not
+the same pixel set as the renderer's own coverage. Neither is wrong; quoting one
+as the other would be.
+```
+                    SEALED          DIAGNOSTIC
+  tracing 0061      0.8597            0.8659
+  held-out 0071     0.8197            0.8100
+```
+
+### THE COMMITTED FLOORS, and what they are worth
+```
+  FLOOR_TRACING  0.8597    exact at commit 0.8597286207791531
+  FLOOR_HELDOUT  0.8197    exact at commit 0.8197393639422795
+  ceiling (the source's own two frames, against each other)   0.8808
+```
+Floors are the measured values **TRUNCATED, not rounded**, so the gate cannot
+fail on digits it does not state.
+⭐ **For scale — the BARE fighter scores 0.6993 / 0.7479 against the same frames.**
+Clothing it is worth **+0.16** on the traced frame. That is the evidence SESSION
+19's entire outfit rests on, and until now nothing in the repo stated it.
+⛔ **The floors may only ever move UP, in a commit that says why.** Lowering one
+is the most damaging edit available here: it turns the only source-fidelity
+measurement in the repo into a rubber stamp.
+
+### CHAOS-PLANTED EXACTLY AS §4 A6.3 ASKS — one garment, 5 world px
+```
+plant: every x coordinate of the kasa (shape 9017) shifted +5 world px
+  -> tests/a6Score.test.ts   × holds its FLOOR against the HELD-OUT frame
+  -> tests/poseRender.test.ts × GOLDEN pixels · × ink box · × crop
+  4 failed | 21 passed        shape9017.ts then restored BYTE-IDENTICAL
+```
+⭐ **The HELD-OUT frame is what caught it, not the traced one** — which is
+precisely why a frame was held out. A 5 px nudge can flatter the frame the outfit
+was fitted to while making the fighter worse in general.
+
+### The gate also pins the MEASUREMENT, not just the score
+A floor is only as good as the statistic under it, so the same file asserts:
+the profile is sampled at exactly the 19 heights the source numbers were measured
+at · a profile scores 1.000 against itself · mismatched lengths THROW rather than
+zipping to the shorter · a limb present on one side only scores 0 for that sample
+· the committed source numbers are plausible silhouettes (200–280 px tall, no
+width above 0.6× height) · and **the dressed fighter must out-score the bare one**,
+without which SESSION 19 would be unevidenced.
+
+### ⚠️ WHAT A GREEN A6-C STILL DOES NOT MEAN (kickoff §6 Risk 1)
+A silhouette score is blind to **colour, to paint order, and to a garment on the
+wrong slot** — SESSION 19's sleeve-on-the-torso would score FINE here. The pixel
+gate in `tests/poseRender.test.ts` catches a changed render; a human looking at
+`renders/overlay.png` catches the rest. **Necessary, not sufficient**, and the
+file says so at the top.
+
+### Regression
+```
+suite 48 files / 820 tests green   (44 / 750 at session start)
+tsc x2 -> 0 · eslint -> 0 · nothing in src/ changed
+```
