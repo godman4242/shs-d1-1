@@ -2416,3 +2416,76 @@ so the segmentation failed). Leaving them in moved the head mean from 0.18 to
 means of ≈ 0.33 — that is **±17 %**, and it is mostly POSE, not noise: the set
 mixes standing and mid-stride frames. Any grading against these must respect that
 band rather than treat the mean as exact. Height alone is tight: 227–250 px, ±5 %.
+
+---
+
+## SESSION 19 — A5.5: measured against the pre-committed targets. **A5-C 3/4 · A5-E strong · A5-D dressed MISSES**
+
+Measured with `scripts/art/proportions.py`, the same rule applied to the source
+frames and to our own render, against the target set committed in the PREVIOUS
+commit — so nothing here could have been fitted to the answer.
+
+### A5-C — three of four inside ±15 %, against A4-D's four-of-four miss
+```
+measure    target    ours   ratio          A4-D (bare, old targets)
+head       0.1797  0.1780   0.990  PASS      was 0.647
+shoulder   0.3279  0.2881   0.879  PASS      was 0.806
+midTorso   0.3416  0.2627   0.769  MISS      was 0.712
+pelvis     0.3332  0.3390   1.017  PASS      was 0.719
+```
+⭐ **This is the session's thesis, confirmed.** A bare doll missed all four; a
+clothed one, graded against targets re-measured from the frames, passes three.
+⚠️ **mid-torso still misses at 0.769.** Diagnosis, from the profile: the miss is
+concentrated at **45–50 % of the height** (ratios 0.65 and 0.79) — the band where
+the source's sleeve billows widest. Our sleeve is traced from a frame where the
+arm hangs against the body, so it carries less width there. This is §2 diagnosis
+(a)/(b) territory — a garment traced narrow — **not** a reason to widen a shape.
+
+### A5-E — the held-out check, and it says we are NOT overfitted
+Normalised width-profile agreement over 19 sample heights (1.000 = identical):
+```
+  ours vs the TRACING frame  zFt_0061 (t=590.0 s) : 0.8742
+  ours vs the HELD-OUT frame zFt_0071 (t=595.0 s) : 0.8294   <- A5-E
+  the two FRAMES against each other               : 0.8808   <- the ceiling
+```
+⭐ **0.8294 against a frame never traced from, where the source's own two frames
+only agree with each other at 0.8808** — so we reach **94 % of the achievable
+ceiling**, and we are barely better on the frame we traced from than on the one
+we did not. That is exactly the discrimination §6 Risk 1 asked for: a
+tuned-to-fit garment would have scored far better on its own source.
+
+### A5-D — the BARE fighter is unmoved; the DRESSED one is too tall
+```
+BARE    (?art=idle)     52.661 x 128.164 stage px  = 240.3 video px   UNCHANGED
+DRESSED (?art=dressed)  63.912 x 140.484 stage px  = 263.4 video px
+frames (13, hat included)                            236.7 video px (227..250)
+```
+✅ **The bare fighter's height is byte-identical to SESSION 18** — `OG_SLOT_SHAPES`
+was never edited, and tests pin it. A5-D's literal requirement is met.
+⛔ **The DRESSED figure is 11.3 % taller than the frames' mean and 5.4 % above
+their maximum. That is a real miss and it is reported, not tuned away.**
+
+**Diagnosis, and it is uncomfortable:** our BARE fighter is **240.3 video px with
+no hat**, while the source's fighters measure **236.7 px WITH one**. So the bare
+skeleton is already at the top of the source's range, and *any* hat overshoots.
+During A5.5 the brim depth was re-derived from the frame — the first value (0.40
+of the head's height) was a guess at a head the frame does not show; measured
+from the visible collar upward it is **0.60**, and correcting it took the dressed
+figure from 144.8 to 140.5 stage px. **The remaining 11 % cannot be closed by
+placing the hat lower without burying the head**, so it points at the skeleton or
+at the OG's own head/hat proportions, and it is left open rather than fitted.
+⚠️ Note the ordering: that correction was derived from the frame's geometry, and
+the resulting height is reported whether it passes or not (kickoff D1).
+
+### A5-F — regression, all green
+```
+in-browser fidelity   41/41 probes + 14/14 scans = 55/55, pass: true, 0 failures
+suite                 44 files / 750 tests green   (was 742 at session start)
+bare clone, no reference/   739 passed | 11 skipped, exit 0, no collection failure
+duel-baseline.test.ts       UNEDITED since a9592d7 (empty diff)
+game-purity-baseline.json   NOT touched this session (empty diff vs 8257518)
+typecheck x2 exit 0 · eslint exit 0 · ?art=dressed 0 console errors
+```
+⭐ The clean-clone run is real: `git clone --local` into the scratchpad (which
+excludes gitignored `reference/`), `node_modules` symlinked, full suite run —
+**`reference/` confirmed absent** and exit 0.

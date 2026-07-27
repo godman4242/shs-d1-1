@@ -76,15 +76,35 @@ def silhouette_from_frame(a):
     return ndimage.binary_fill_holes(ndimage.binary_erosion(fig, np.ones((5, 5))))
 
 
-def silhouette_from_render(a, backdrop=(0x7A, 0x8A, 0x6A), tol=26):
-    """Our canvas is TRANSPARENT, so the figure is 'anything not the backdrop'."""
-    d = np.abs(a.astype(int) - np.array(backdrop)).sum(axis=2)
+def silhouette_from_render(a, backdrop=None, tol=48):
+    """
+    Our canvas is TRANSPARENT, so the figure is "anything that is not the
+    backdrop" — but the screenshot is JPEG, so the backdrop is not one exact
+    value and a naive threshold marks the WHOLE IMAGE as figure. Two guards:
+    the backdrop colour is taken from the image's own corners rather than
+    assumed, and any component touching the border is background by definition.
+    """
+    a = a.astype(int)
+    if backdrop is None:
+        corners = np.concatenate([a[:6, :6].reshape(-1, 3), a[:6, -6:].reshape(-1, 3),
+                                  a[-6:, :6].reshape(-1, 3), a[-6:, -6:].reshape(-1, 3)])
+        backdrop = np.median(corners, axis=0)
+    d = np.abs(a - np.array(backdrop)).sum(axis=2)
     m = ndimage.binary_closing(d > tol, np.ones((3, 3)))
     lab, n = ndimage.label(m)
     if n == 0:
         return None
-    sizes = ndimage.sum(m, lab, range(1, n + 1))
-    return ndimage.binary_fill_holes(lab == (int(np.argmax(sizes)) + 1))
+    border = set(lab[0].tolist()) | set(lab[-1].tolist()) | set(lab[:, 0].tolist()) | set(lab[:, -1].tolist())
+    best, best_size = None, 0
+    for i in range(1, n + 1):
+        if i in border:
+            continue
+        sz = int((lab == i).sum())
+        if sz > best_size:
+            best, best_size = i, sz
+    if best is None:
+        return None
+    return ndimage.binary_fill_holes(lab == best)
 
 
 def profile(fig):

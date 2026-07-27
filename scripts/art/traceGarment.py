@@ -117,8 +117,17 @@ RDP_EPS = 0.10                        # in 1x mask (video) px
 # stands in a different pose from our recorded idle. So each garment is placed
 # against OUR OWN part instead — centred on that part's local bbox, at the fixed
 # video->world scale. The kasa keeps its own rule, the one ratio the frame gives.
-BRIM_DOWN_HEAD = 0.40                 # frame: the brim's lowest point sits ~40%
-                                      # down the wearer's head height
+# ⛔ RE-DERIVED IN A5.5, and it moved. The first value (0.40) was a guess at
+# where the brim sits on a head the frame does not show. Measured properly from
+# zFt_0061: the brim's lowest point is y692, and the wearer's head spans roughly
+# y668-718 (its top is occluded by the hat, so it is placed from the visible
+# collar upward by our own head+hair height of 40.2 video px). That puts the brim
+# 0.60 down the head, not 0.40 — the hat sits DEEPER than I first assumed, which
+# is why the dressed figure first measured 14.7 % taller than any source frame.
+# NOTE THE ORDERING: this is a frame-derived correction to an INFERRED placement,
+# not a nudge to make a height target pass. The resulting height is reported
+# below whether it passes or not (kickoff D1).
+BRIM_DOWN_HEAD = 0.60
 
 # The hakama covers the WHOLE leg but is drawn from the CALF slot, so centring it
 # on the calf's own bbox hangs it ~18 world px too low — measured on screen, the

@@ -1,45 +1,70 @@
 # RESUME HERE
 
-> ## ▶ IN PROGRESS — **`docs/sessions/SESSION19_KICKOFF.md`**, resume at **§4 A5.4/A5.5**
+> ## ▶ NEXT — **write the SESSION 20 kickoff** (§4 A6). SESSION 19 A5.1–A5.5 are CLOSED.
 >
-> ### ✅ A5.3 DONE — **GATE A5-A MET.** 5 traced garments on screen · `?art=dressed` · **749 green**
-> **9017** kasa→17 · **9012** collar→12 · **9015** gi body→15 · **9014** obi→14 ·
-> **9011** hakama→**11 AND 7**. 20 parts, **0 console errors**, `?art=idle` still
-> draws the bare 21. Suite 742 → **749**.
+> ### ✅ A5.4 + A5.5 DONE — the outfit is on screen and MEASURED. **750 green · fidelity 55/55**
+> `?art=dressed` draws **20 parts** wearing **7 traced garments**: kasa→17,
+> collar→12, gi outer silhouette→15, **sleeves→19 and 1**, obi→14, hakama→**11
+> and 7**. `?art=idle` still draws the bare 21, unchanged.
 >
-> ⭐ **THE SLOT IS CHOSEN BY Z-ORDER, NOT ANATOMY.** A higher slot draws IN FRONT,
-> so the hakama sits on the **CALF (7/11)** — in front of thigh and foot — not on
-> the thigh, where the bare calf would paint over it.
-> ⭐ **ONE TRACED LEG, DRAWN TWICE**, which is what the OG does (2678 at 7 and 11).
-> The FAR leg cannot be traced here: its region is not bounded by ink on the
-> right because **the outline there IS the scabbard**, so the fill leaks into the
-> background. Two hue-based attempts to subtract the saya failed the same way; a
-> third was not attempted.
-> ⛔ **The hakama first rendered 18 world px TOO LOW** — a 50-px leg garment
-> centred on the calf's 26.6-px bbox. **Fixed from `OG_IDLE_NODES`, not off the
-> screen:** thigh at y −55, calf at −29 → the hip is 26 px above the calf origin,
-> so the waistband anchors at −30.75 calf-local.
+> ⛔ **A5.4 FIXED A MIS-ASSIGNMENT: A5.3 had put the SLEEVE on the TORSO slot.**
+> Owner feedback sent me back to the frame at three ink thresholds — the region
+> A5.3 called "gi body" is the near SLEEVE (it carries the round crest). That one
+> mis-read is why the arm rendered bare over a vest-sized gi.
 >
-> ⛔ **THE ONE DOMINANT DEFECT LEFT — BARE ARMS PAINT OVER THE GI.** Gi body and
-> near sleeve are the same grey with **no closed outline between them** (A5.1 F6),
-> so no sleeve could be cut from this frame; slots 19/20 and 1/2 stay bare and
-> draw IN FRONT of 15. Visible in the render, declared in `shape9015.ts`, and
-> **pinned by a test** so it cannot pass as unnoticed. **Fixing it needs a frame
-> where the sleeve is separately outlined — that is the first job of A5.4.**
+> ### ⭐ A5-C — THREE OF FOUR PASS, against A4-D's four-of-four miss
+> ```
+> measure    target    ours   ratio         A4-D (bare doll)
+> head       0.1797  0.1780   0.990 PASS      was 0.647
+> shoulder   0.3279  0.2881   0.879 PASS      was 0.806
+> midTorso   0.3416  0.2627   0.769 MISS      was 0.712
+> pelvis     0.3332  0.3390   1.017 PASS      was 0.719
+> ```
+> **The session's thesis, confirmed.** ⚠️ mid-torso misses; the profile localises
+> it to 45–50 % of the height — where the source's sleeve billows widest and ours,
+> traced from a frame with the arm against the body, does not.
+> ⛔ **The targets were committed in a SEPARATE, EARLIER commit (`00c6628`)**, so
+> nothing could be fitted to the answer — that ordering is kickoff D1 and it is
+> the only thing keeping A5-C honest.
 >
-> ⭐ **THE COLOUR QUESTION IS ANSWERED, AND MY OWN PROPOSED FIX WAS WRONG.** A5.2
-> left "the straw renders darker than the source" open and proposed a two-fill
-> kasa. Measured: the interior's clusters (33 % / 23 % / 16 %) have y-extents
-> y23-47, y20-46, y20-44 — **fully interleaved**, a graded weave, not two panels.
-> A split would emit speckle. **One flat fill at the interior mean stands**, and
-> `#8e6f38` IS the source's measured mean.
+> ### ⭐ A5-E — the held-out check says we are NOT overfitted
+> ```
+> ours vs TRACING frame  zFt_0061 : 0.8742
+> ours vs HELD-OUT frame zFt_0071 : 0.8294   <- A5-E
+> the two FRAMES vs each other    : 0.8808   <- the achievable ceiling
+> ```
+> **94 % of the ceiling, and barely better on the frame we traced from.** A
+> tuned-to-fit garment would have scored far better on its own source.
 >
-> ⚠️ Stated, not hidden: the **collar** region also holds the hair beside it (same
-> boundary) — covered because slot 12 draws behind everything; the **obi** is
-> 26×24 video px, only just inside §P9's ≥20 px band; the **hem** follows grass,
-> not cloth, for its last few px.
+> ### ⛔ A5-D — the BARE fighter is unmoved (PASS); the DRESSED one is 11 % TOO TALL
+> `BARE 128.164 stage px` — byte-identical to SESSION 18, pinned by tests.
+> `DRESSED 140.484 stage px = 263.4 video px` vs the frames' **236.7 (227–250)**.
+> **Reported, not tuned away.** Diagnosis, and it is uncomfortable: **our bare
+> fighter is 240.3 video px with NO hat while the source's fighters are 236.7 px
+> WITH one** — the bare skeleton is already at the top of the source's range, so
+> any hat overshoots. Re-deriving the brim depth from the frame (0.40 → **0.60**,
+> the first value was a guess at a head the frame does not show) took it from
+> 144.8 to 140.5. **The remaining 11 % cannot be closed without burying the head,
+> so it points at the skeleton or at the OG's head/hat proportions. LEFT OPEN.**
 >
-> **Gates:** typecheck ×2 → 0 · eslint → 0 · **749 passed (44 files)** · build ok.
+> ### ✅ A5-F — regression, all green
+> ```
+> fidelity 41/41 probes + 14/14 scans = 55/55, pass: true, 0 failures
+> suite 44 files / 750 tests · bare clone 739 passed | 11 skipped, exit 0
+> duel-baseline.test.ts UNEDITED · ratchet NOT touched this session
+> typecheck x2 -> 0 · eslint -> 0 · ?art=dressed 0 console errors
+> ```
+>
+> ⭐ **OWNER DESIGN CONFIRMATION (2026-07-27):** clothes are equipped/unequipped
+> **per item, at any time**, and unequipped is the naked fighter. That confirms
+> the architecture — `TRACED` is already a **per-slot override table**, so each
+> garment is independently equippable and **the bare fighter is the real
+> unequipped state**, which is why `?art=idle` must keep working and
+> `OG_SLOT_SHAPES` is never edited in place.
+>
+> **Open for SESSION 20:** the dressed height overshoot · mid-torso width · a
+> frame where the far leg and the sleeve are separately outlined · the other 481
+> poses · all audio.
 >
 > ---
 >
