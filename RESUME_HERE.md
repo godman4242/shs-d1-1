@@ -1,6 +1,71 @@
 # RESUME HERE
 
-> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION21_KICKOFF.md`**
+> ## ▶ SESSION 21 IN PROGRESS — **A8.1 DONE, GATE A8-A MET.** Next step: **A8.2**
+> **49 files / 827 tests green** (was 48 / 822) · tsc ×2 → 0 · eslint → 0 ·
+> **no colour was changed — this step only measured.**
+> ```
+> scripts/art/colourRuler.py    source median inside each garment's OWN traced mask
+> scripts/art/sourceColour.ts   the 7 medians, COMMITTED (portable, no reference/)
+> tests/a8Colour.test.ts        the per-garment ratchet — may only move DOWN
+> traceGarment.garment_masks    extracted, so ruler + tracer share ONE mask rule
+> ```
+> ⭐ **Proof the extraction changed nothing: all 7 traced shapes regenerate
+> BYTE-IDENTICAL.**
+> ```
+>    id garment          SOURCE median   OURS            delta      worst  spread
+>  9017 kasa straw       (122, 88, 38)   (142,111, 56)   +20+23+18   23 ⛔  38,35,24
+>  9012 collar / juban   (204,201,203)   (182,180,182)   -22-21-21   22 ⛔  16,17,14
+>  9011 hakama           (220,213,219)   (200,195,197)   -20-18-22   22 ⛔   3, 2, 5
+>  9015 gi body          (104,100,103)   (110,107,109)    +6 +7 +6    7      2, 1, 1
+>  9019 gi sleeve near   (104,100,103)   (106,102,105)    +2 +2 +2    2      2, 1, 1
+>  9014 obi              (204,201,201)   (205,202,203)    +1 +1 +2    2      6, 6, 8
+>  9001 gi sleeve far    (103,100,103)   (102, 99,103)    -1 -1 +0    1      2, 2, 2
+> ```
+>
+> ### ⛔ TWO THINGS IN THE SESSION 21 KICKOFF ARE NOW WRONG — do not follow them
+> 1. ⛔ **THE STARTING WEAPON IS A BRANCH, NOT A SWORD (owner, confirmed on the
+>    frame).** A8.2 says "trace the saya + tsuka onto slots 3/4". **There is no
+>    saya and no tsuka.** The PLAYER screen of video A reads, verbatim:
+>    ```
+>    t=708.0s  BRANCH   DMG: 1 - 2  (EQ: 1 - 3)   WEIGHT: 1   LEVEL 1
+>    t=656.0s  PICKAXE  DMG: 1 - 3  (EQ: 1 - 2)   CONDITION: WELL-MAINTAINED
+>    ```
+>    ⭐ **That pair also settles a flagged-INFERRED item:** `EQ` is the currently
+>    **EQUIPPED** weapon's range, shown for comparison, and the selected item's
+>    number is **green when better, red when worse** (`3` green on the pickaxe,
+>    `2` red on the branch). No "bonus range" reading fits both frames.
+>    ⇒ **A8.2 traces ONE stick onto slot 3.** `reject_occluder`'s docstring calls
+>    it "THE SAYA" — the NAME is wrong, the mechanism is right.
+> 2. ⛔ **§P4.12's kasa number has the SIGN BACKWARDS.** It read the straw as
+>    `(167,126,61)` and called ours 25 too DARK. From the kasa's own mask the
+>    median is `(122,88,38)` and **ours is +23 too LIGHT**. The kickoff already
+>    excluded two of seven hand-picked samples for landing on the wrong garment;
+>    **this is a third** — `traceGarment.py` warns the blurred scenery is the
+>    same warm family as straw and *brighter than the hat*.
+>    ✅ Its hakama number (`220,213,219`, ours ~20 dark) is **exactly right**, and
+>    its "the gi is fine" holds (worst channel 7).
+>
+> ### ⭐ THE CAUSE OF THE COLOUR ERROR IS PROVEN, NOT SUSPECTED
+> `trace_one`'s recipe (5×5 median filter → mean over a once-eroded core)
+> **reproduces our committed fill exactly for all seven garments**, so the whole
+> error lives there. ⚠️ **It is NOT a global darkening:** the kasa goes +20
+> lighter, the hakama and collar ~20 darker. Every garment is dragged **toward
+> whatever surrounds it** — boundary bleed, not gamma. ⚠️ Two causes are still
+> confounded (the filter+mean, and erosion depth 1 vs 6); **A8.4 must separate
+> them before claiming which.**
+>
+> ### ⚠️ WHAT A8-A CANNOT SEE — read `iqr` before believing a delta
+> It grades ONE flat fill against ONE median. The kasa's spread is **38,35,24**:
+> it is not one colour in the source, so matching its median will not make it
+> look right — its real defect is missing straw texture (§P4.9). The hakama's
+> spread is **3,2,5**, so there the median IS the whole answer.
+> The source's **outline is not black** either (`#180e06` kasa, `#140e0e` collar,
+> `#0d080c` obi) and we paint `0x000000` — measured, reported, deliberately NOT
+> gated (an anti-aliased edge has no single true colour).
+>
+> ---
+>
+> ## ▶ THE KICKOFF — **`docs/sessions/SESSION21_KICKOFF.md`**
 > **MAKE THE FIGHTER LOOK LIKE THE PICTURE.** Self-contained, the only kickoff to
 > plan from, **no open prerequisites.**
 >

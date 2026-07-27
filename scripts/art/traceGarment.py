@@ -315,8 +315,23 @@ def potrace_polygon(mask):
     return [rdp(r, RDP_EPS) for r in out]
 
 
-def trace_one(im, g):
-    a = np.asarray(im.crop(g["crop"])).astype(np.int16)
+def garment_masks(a, g):
+    """
+    ⭐ THE ONE PLACE THAT DECIDES WHICH PIXELS ARE A GARMENT (SESSION21 A8.1).
+
+    `trace_one` traces an OUTLINE out of these masks; `colourRuler.py` measures
+    the source's own COLOUR inside them. A second implementation of "which pixels
+    are the hakama" is exactly how those two would silently end up describing
+    different regions while both looking right — the failure
+    `src/core/ringGeometry.ts` was extracted to prevent (SESSION16 R2 finding 3:
+    one drifting copy produced 24 wrong verdicts across 19 shapes).
+
+    `a` is the RGB crop as int16; `g` is a GARMENTS entry. Returns, all in
+    crop-local coordinates:
+        sil          the silhouette, outline included — traced as the black fill
+        interior     the enclosed region the coloured fill is painted into
+        colour_from  where the fill's COLOUR may be sampled, or None → `interior`
+    """
     cx, cy = g["seed"][0] - g["crop"][0], g["seed"][1] - g["crop"][1]
     colour_from = None
     if g.get("mode") == "outer":
@@ -349,6 +364,17 @@ def trace_one(im, g):
     if g.get("dropSaya"):
         sil = reject_occluder(a, sil)
         interior = interior & sil
+    if colour_from is not None:
+        # Whatever narrowed the silhouette (a carve, the occluder) narrows the
+        # colour region with it — otherwise the fill could be sampled from
+        # pixels the shape no longer covers.
+        colour_from = colour_from & sil
+    return sil, interior, colour_from
+
+
+def trace_one(im, g):
+    a = np.asarray(im.crop(g["crop"])).astype(np.int16)
+    sil, interior, colour_from = garment_masks(a, g)
     ys, xs = np.where(sil)
     vx0, vx1 = g["crop"][0] + xs.min(), g["crop"][0] + xs.max()
     vy0, vy1 = g["crop"][1] + ys.min(), g["crop"][1] + ys.max()

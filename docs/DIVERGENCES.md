@@ -3048,3 +3048,112 @@ session**, on a frame the outfit was never traced from.
 suite 48 files / 822 tests green   (44 / 750 at session start)
 tsc x2 -> 0 · eslint -> 0 · D1 intact: no traced vertex moved, only anchors
 ```
+
+---
+
+## SESSION 21 — A8.1: THE COLOUR RULER, AND THE STARTING WEAPON IS A BRANCH
+
+### GATE A8-A MET — a committed per-garment colour comparison, from masks not pixels
+`scripts/art/colourRuler.py` measures, for each of the seven traced garments, the
+**source frame's own median colour inside that garment's own traced mask**, and
+compares it to **the fill we committed**. `scripts/art/sourceColour.ts` holds the
+seven medians as committed derived data (the `sourceProfile.ts` pattern), so
+`tests/a8Colour.test.ts` grades in a clean clone with no `reference/`.
+
+⭐ **IT SHARES ITS MASKS WITH THE TRACER.** `traceGarment.garment_masks` was
+extracted out of `trace_one` so that the ruler and the thing it measures cannot
+disagree about which pixels are the hakama — the drift `src/core/ringGeometry.ts`
+exists to prevent. **Proof the extraction changed nothing: all seven traced
+shapes regenerate BYTE-IDENTICAL** (`git diff src/game/art/generated/` empty).
+
+### THE MEASUREMENT — committed BEFORE any colour was touched (the A6.2 discipline)
+```
+   id garment              SOURCE median   OURS (committed)   delta r,g,b  worst  spread
+ 9017 kasa straw           (122, 88, 38)   (142,111, 56)      +20 +23 +18    23 ⛔ 38,35,24
+ 9012 collar / juban       (204,201,203)   (182,180,182)      -22 -21 -21    22 ⛔ 16,17,14
+ 9011 hakama               (220,213,219)   (200,195,197)      -20 -18 -22    22 ⛔  3, 2, 5
+ 9015 gi body              (104,100,103)   (110,107,109)       +6  +7  +6     7     2, 1, 1
+ 9019 gi sleeve near       (104,100,103)   (106,102,105)       +2  +2  +2     2     2, 1, 1
+ 9014 obi                  (204,201,201)   (205,202,203)       +1  +1  +2     2     6, 6, 8
+ 9001 gi sleeve far        (103,100,103)   (102, 99,103)       -1  -1  +0     1     2, 2, 2
+```
+
+### ⛔ THE KICKOFF'S §P4.12 IS HALF RIGHT, AND THE HALF THAT IS WRONG HAS THE SIGN BACKWARDS
+- **hakama — CONFIRMED.** §P4.12's hand-picked `(220,213,219)` is exactly the
+  mask median. Ours is **~20 DARK**, as it said.
+- **gi — CONFIRMED "fine."** Worst channel 7, 2 and 1 across the three gi parts.
+- ⛔ **kasa — REFUTED, and it is the third contaminated sample.** §P4.12 read the
+  straw as `(167,126,61)` and called ours 25 too DARK. From the kasa's own mask
+  the median is **`(122,88,38)`** and ours is **+23 too LIGHT**. The kickoff
+  already excluded two of seven hand-picked samples for landing on the wrong
+  garment; **this is a third**, and `traceGarment.py`'s own header warns why —
+  the blurred scenery is the same warm family as straw and **brighter than the
+  hat**. ⇒ **D4 was the right call and it paid immediately.**
+- ⭐ **collar — NEWLY MEASURED.** §P4.12 excluded its own collar sample. The
+  juban is **`(204,201,203)` — near-white** — and ours is **22 DARK**. So §P4.10
+  ("the collar does not read") is not only a size problem; it is also a colour
+  one, and now it has a number.
+
+### ⭐ THE CAUSE IS THE SAMPLING RECIPE, AND IT IS PROVEN, NOT SUSPECTED
+The ruler prints `trace_one`'s own recipe (5x5 median filter → mean over a
+once-eroded core) beside the true median. **The recipe reproduces our committed
+fill EXACTLY for all seven garments** — so the whole error is in the recipe.
+⚠️ **But it is not a global darkening**, and §P4.12's "our fills are dark" framing
+is wrong: the kasa goes **+20 lighter**, the hakama and collar **~20 darker**.
+Every garment is dragged **toward whatever surrounds it** — the kasa toward the
+bright background, the white garments toward their heavy black outline. That is a
+boundary-bleed signature, not a gamma one.
+⚠️ **HONEST LIMIT:** the recipe differs from the ruler in TWO ways at once — the
+filter+mean, and the erosion depth (1 step vs up to 6). A8.4 must separate them
+before claiming which one does it.
+
+### ⚠️ WHAT THIS GATE CANNOT SEE, STATED SO IT IS NOT OVER-READ
+It grades ONE flat fill against ONE median. `iqr` is committed beside each median
+because it is the honest caveat: the kasa's spread is **38,35,24** — it is not
+one colour in the source at all, so matching its median will NOT make it look
+right. Its real defect is missing straw texture (§P4.9). The hakama's spread is
+**3,2,5**, so for that garment the median IS the whole answer.
+
+### ⚠️ AND THE INK, MEASURED BUT DELIBERATELY NOT GATED
+The source's outline is **not black**: medians of `#180e06` (kasa), `#140e0e`
+(collar), `#0e0b0c` (near sleeve), `#0d080c` (obi) — very dark warm greys, and we
+paint `0x000000`. Reported, never gated: an anti-aliased edge has no single true
+colour, and the gi's `#3f3729` and the hakama's `#242e15` are visibly
+contaminated by the grass and scenery behind them.
+
+### ⛔ THE STARTING WEAPON IS A BRANCH, NOT A SWORD — OWNER, AND CONFIRMED ON THE FRAME
+The owner said the starting weapon is a stick. **It is, and the kickoff's A8.2
+("trace the saya + tsuka onto slots 3/4") is built on a wrong premise.** Read
+directly off the PLAYER screen of video A (`zFtCaTO0_1M`):
+```
+t = 708.0 s   BRANCH   DMG: 1 - 2  (EQ: 1 - 3)   WEIGHT: 1   LEVEL 1
+t = 656.0 s   PICKAXE  DMG: 1 - 3  (EQ: 1 - 2)   CONDITION: WELL-MAINTAINED
+```
+⭐ **AND THE PAIR SETTLES A FLAGGED AMBIGUITY.** `A-04-mines-takahasi…md` recorded
+the `EQ:` qualifier as "unclear from visuals alone — flag as INFERRED". The two
+readings are mutually consistent under exactly one rule: **`EQ` is the currently
+EQUIPPED weapon's damage range, shown for comparison**, and the selected item's
+number is coloured **green when better than equipped, red when worse** (the `3`
+is green on the pickaxe, the `2` is red on the branch). Under any "bonus range"
+reading the two frames contradict each other.
+⇒ **Starting weapon: BRANCH, DMG 1–2, WEIGHT 1, LEVEL 1.** The item icon is a
+gnarled brown branch with a small green leaf; the paperdoll wears it exactly as
+the tracing frame shows — **one straight brown rod tucked through the obi**, no
+tsuba, no wrap, no scabbard.
+⇒ **`reject_occluder`'s docstring calls it "THE SAYA / the sheathed sword" and
+that name is wrong** — the mechanism (a warm-brown occluder crossing the far leg)
+is right and unchanged. **A8.2 traces ONE stick onto slot 3, not a saya + tsuka
+onto 3 and 4.**
+
+### Regression
+```
+suite 49 files / 827 tests green   (48 / 822 at A8.0)   tsc x2 -> 0 · eslint -> 0
+3 chaos plants, all watched RED then reverted:
+  fill shifted +20 past its ratchet          -> ratchet test red
+  a second, different interior fill on 9019  -> "ONE colour" + ratchet red
+  a garment dropped from sourceColour.ts     -> coverage-both-directions red
+⚠️ A 4th plant first reported GREEN and it was the HARNESS, not the gate: BSD
+`sed -i '' '0,/pat/s//repl/'` silently did nothing. **Check the plant landed
+(`git diff`) before believing a green** — SESSION18 A4.1 paid for this once too.
+D1 intact: no traced vertex moved. No colour changed — measurement only.
+```
