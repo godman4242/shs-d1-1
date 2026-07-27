@@ -108,10 +108,28 @@ export const OG_SLOT_SHAPES: ReadonlyArray<readonly number[]> = [
  * without the first and the crotch is stranded at the origin as a tan blob at
  * the fighter's feet — which is how the rule was found in the first place.
  */
-/** Slot 17. Named so the dressed map below cannot silently address the wrong one. */
-const HAT_SLOT = 17;
-/** The kasa traced from the videos — see `shape9017.ts` for its provenance. */
-const TRACED_KASA: readonly number[] = [9017];
+/**
+ * The traced outfit, slot by slot. Every id's own header names the frame it came
+ * from and what about it is INFERRED (`src/game/art/generated/shape90NN.ts`).
+ *
+ * ⚠️ THE SLOT IS CHOSEN BY Z-ORDER, NOT ANATOMY. z-order is CREATION order, so a
+ * higher slot draws IN FRONT. The hakama covers the whole leg, so it sits on the
+ * CALF (7 and 11) — which draws in front of the thigh (6, 10) and the foot
+ * (5, 9) — and not on the thigh, where the bare calf would paint over it.
+ *
+ * ⚠️ 9011 IS DRAWN TWICE, at slots 11 and 7, because only the NEAR leg could be
+ * traced: the far leg is not bounded by ink on its right (the outline there is
+ * the scabbard), so its region leaks into the background. Drawing one leg shape
+ * at both slots is what the OG itself does — 2678 at 7 and 11, 2648 at 6 and 10.
+ */
+const TRACED: Readonly<Record<number, readonly number[]>> = {
+  12: [9012], // collar / juban
+  14: [9014], // obi
+  15: [9015], // gi body
+  7: [9011], //  hakama, far leg — the SAME shape as 11, see above
+  11: [9011], // hakama, near leg
+  17: [9017], // kasa
+};
 
 export const OG_SLOT_ALIASES: ReadonlyArray<readonly [number, number]> = [
   [8, 14],
@@ -138,10 +156,12 @@ export const OG_SLOT_ALIASES: ReadonlyArray<readonly [number, number]> = [
  * slot 17; its provenance header names the frame and timestamp it came from and
  * what about it is INFERRED (`src/game/art/generated/shape9017.ts`).
  *
- * TODAY THIS DIFFERS FROM THE BARE MAP IN SLOT 17 ONLY — A5.2 traces one
- * garment end to end to prove the pipeline before A5.3 traces the rest. A test
- * pins that, so adding a garment is a deliberate act rather than a drift.
+ * ⚠️ SLOTS 19/20 AND 1/2 (THE ARMS) ARE NOT DRESSED, AND THEY DRAW IN FRONT OF
+ * THE GI. The gi body and the near sleeve are the same grey and are not divided
+ * by a closed outline everywhere (A5.1 F6), so no sleeve could be cut out of
+ * this frame — a bare near arm still paints over the traced gi. A test pins the
+ * exact set of dressed slots, so adding one is a deliberate act, not a drift.
  */
-export const OG_DRESSED_SLOT_SHAPES: ReadonlyArray<readonly number[]> = OG_SLOT_SHAPES.map((shapes, slot) =>
-  slot === HAT_SLOT ? TRACED_KASA : shapes,
+export const OG_DRESSED_SLOT_SHAPES: ReadonlyArray<readonly number[]> = OG_SLOT_SHAPES.map(
+  (shapes, slot) => TRACED[slot] ?? shapes,
 );

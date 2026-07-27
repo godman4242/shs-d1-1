@@ -17,3 +17,7 @@ docs/loop/reports/
 docs/loop/loop.log
 docs/loop/STOP
 docs/loop/CYCLE_RUNNING
+
+# Python bytecode from the build-time art scripts
+__pycache__/
+*.pyc

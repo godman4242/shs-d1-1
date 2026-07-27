@@ -285,16 +285,48 @@ describe('OG_DRESSED_SLOT_SHAPES: the traced outfit (SESSION19 A5.2)', () => {
     expect(OG_DRESSED_SLOT_SHAPES[17]).toEqual([9017]);
   });
 
-  it('differs from the bare map in slot 17 and NOWHERE else (D3)', () => {
+  /**
+   * The exact dressed set, pinned. Adding a garment must be a deliberate act
+   * that edits this list, never a drift that nobody notices.
+   */
+  it('dresses EXACTLY slots 7, 11, 12, 14, 15, 17 and leaves the rest bare (D3)', () => {
     const differing = OG_DRESSED_SLOT_SHAPES.flatMap((shapes, slot) =>
       JSON.stringify(shapes) === JSON.stringify(OG_SLOT_SHAPES[slot]) ? [] : [slot],
     );
-    expect(differing, 'A5.2 dresses ONE slot; A5.3 adds the rest deliberately').toEqual([17]);
+    expect(differing).toEqual([7, 11, 12, 14, 15, 17]);
   });
 
-  it('draws 22 parts — the bare 21 plus the kasa', () => {
+  /**
+   * ⚠️ THE ARMS ARE NOT DRESSED AND THEY DRAW IN FRONT OF THE GI. Pinned as a
+   * KNOWN state rather than left implicit: gi body and near sleeve are one grey
+   * with no closed outline between them (A5.1 F6), so no sleeve could be cut
+   * from the tracing frame, and a bare near arm still paints over slot 15.
+   */
+  it('leaves the arm slots bare — a KNOWN gap, not an oversight', () => {
+    for (const slot of [1, 2, 19, 20]) {
+      expect(OG_DRESSED_SLOT_SHAPES[slot]).toEqual(OG_SLOT_SHAPES[slot]);
+    }
+  });
+
+  /** One traced leg is drawn at BOTH calf slots — the OG reuses shapes the same way. */
+  it('draws the SAME traced hakama at slots 7 and 11', () => {
+    expect(OG_DRESSED_SLOT_SHAPES[7]).toEqual(OG_DRESSED_SLOT_SHAPES[11]);
+    expect(OG_SLOT_SHAPES[7], 'the bare calf slot carries TWO parts').toHaveLength(2);
+  });
+
+  /**
+   * 20, not 22: the kasa ADDS a part, but slots 7 and 11 each drop from two
+   * parts (calf + foottop) to one hakama, so the count nets DOWN. Derived here
+   * from the maps rather than transcribed, so it cannot inherit a slip.
+   */
+  it('draws one part per entry across both maps — 21 bare, 20 dressed', () => {
+    // Slot 8 (crotch) carries art and is aliased from 14, so it is already in
+    // the map — the sum of entries IS the drawn-part count, with no fudge.
+    const count = (m: ReadonlyArray<readonly number[]>): number => m.reduce((n, s) => n + s.length, 0);
     expect(compose()).toHaveLength(21);
-    expect(dressed()).toHaveLength(22);
+    expect(dressed()).toHaveLength(20);
+    expect(count(OG_SLOT_SHAPES)).toBe(21);
+    expect(count(OG_DRESSED_SLOT_SHAPES)).toBe(20);
   });
 
   /** The alias, against real art rather than a fixture id. */

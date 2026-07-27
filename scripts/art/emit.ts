@@ -82,6 +82,72 @@ interface TracedSource {
 
 /** Keyed by traced id. The header is derived from this, so it cannot drift. */
 export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
+  9012: {
+    slot: 12,
+    garment: 'collar / juban (the gi under-collar)',
+    frame: 'reference/frames/s19_trace/zFt_0061.png',
+    video: 'zFtCaTO0_1M',
+    seconds: 590,
+    crop: '(806,688)-(858,742) video px; silhouette 48 x 52 video px',
+    approximated:
+      'ONE flat fill at the interior mean. The collar reads as a single light ' +
+      'panel at this resolution.',
+    inferred:
+      'PLACEMENT, and the EXTENT. The region enclosed by ink here holds the ' +
+      'white collar AND the dark hair beside it, which share a boundary, so ' +
+      'the traced silhouette is wider than the collar alone. It replaces slot ' +
+      '12 (neck), which every other part draws in front of, so the surplus is ' +
+      'covered. Veto = a frame where collar and hair are separately outlined.',
+  },
+  9014: {
+    slot: 14,
+    garment: 'obi (waist sash)',
+    frame: 'reference/frames/s19_trace/zFt_0061.png',
+    video: 'zFtCaTO0_1M',
+    seconds: 590,
+    crop: '(808,764)-(836,790) video px; silhouette 26 x 24 video px',
+    approximated: 'ONE flat fill at the interior mean; the sash is a single light panel.',
+    inferred:
+      'PLACEMENT. The smallest garment traced, at 26 x 24 video px it is well ' +
+      'inside SESSION19 P9\'s trustworthy band (>= 20 px), but only just, and ' +
+      'its REAR extent is behind the gi skirt in every standing frame found.',
+  },
+  9015: {
+    slot: 15,
+    garment: 'gi body (grey torso panel)',
+    frame: 'reference/frames/s19_trace/zFt_0061.png',
+    video: 'zFtCaTO0_1M',
+    seconds: 590,
+    crop: '(822,702)-(880,794) video px; silhouette 53 x 89 video px',
+    approximated: 'ONE flat fill at the interior mean; the gi is a single grey panel.',
+    inferred:
+      'PLACEMENT, and THE PART CUT. The gi body and the near SLEEVE are the ' +
+      'same grey (A5.1 F6) and are not divided by a closed outline everywhere, ' +
+      'so this one region covers both and is assigned to slot 15 (torso). The ' +
+      'arm slots 19/20 are NOT dressed, and they draw IN FRONT of 15, so a ' +
+      'bare near arm still paints over this gi. Fixing that needs the sleeve ' +
+      'cut, which this frame does not give.',
+  },
+  9011: {
+    slot: 11,
+    garment: 'hakama leg (drawn at slots 11 AND 7)',
+    frame: 'reference/frames/s19_trace/zFt_0061.png',
+    video: 'zFtCaTO0_1M',
+    seconds: 590,
+    crop: '(789,778)-(860,894) video px; silhouette 63 x 113 video px',
+    approximated:
+      'ONE flat fill at the interior mean. The hem dissolves into GRASS in the ' +
+      'source (A5.1 crop 7), so the bottom few px of the outline follow the ' +
+      'grass rather than the cloth.',
+    inferred:
+      'PLACEMENT, and it is DRAWN TWICE. Only the NEAR leg could be traced: ' +
+      'the far leg is not bounded by ink on its right, because the outline ' +
+      'there IS the scabbard, so the region leaks into the background. This ' +
+      'shape is therefore drawn at slot 7 as well - which is what the OG does, ' +
+      'drawing 2678 at slots 7 and 11 and 2648 at 6 and 10. It covers the ' +
+      'whole leg and sits on the CALF, not the thigh, because the calf draws ' +
+      'in front of the thigh and the foot.',
+  },
   9017: {
     slot: 17,
     garment: 'kasa (conical straw hat)',

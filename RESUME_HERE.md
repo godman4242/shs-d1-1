@@ -1,54 +1,45 @@
 # RESUME HERE
 
-> ## ▶ IN PROGRESS — **`docs/sessions/SESSION19_KICKOFF.md`**, resume at **§4 A5.3**
+> ## ▶ IN PROGRESS — **`docs/sessions/SESSION19_KICKOFF.md`**, resume at **§4 A5.4/A5.5**
 >
-> ### ✅ A5.2 CLOSED — **THE TRACED KASA IS ON SCREEN AT THE HEAD NODE.** `?art=dressed` · **747 green**
-> `?art=dressed` draws **22 parts** (the bare 21 + the kasa), `?art=idle` still
-> draws the bare 21, **0 console errors** on a full load. Suite 742 → **747**.
-> ⭐ **The pipeline works end to end with NO change to the converter:** frame →
-> ink-bounded mask → potrace → SVG → `svgShape.ts` (untouched) → committed art.
+> ### ✅ A5.3 DONE — **GATE A5-A MET.** 5 traced garments on screen · `?art=dressed` · **749 green**
+> **9017** kasa→17 · **9012** collar→12 · **9015** gi body→15 · **9014** obi→14 ·
+> **9011** hakama→**11 AND 7**. 20 parts, **0 console errors**, `?art=idle` still
+> draws the bare 21. Suite 742 → **749**.
 >
-> ⭐ **KHESHAV'S EYE WAS RIGHT, AND IT WAS SETTLED BY MEASUREMENT.** His read of
-> the first trace — "the hat is a bit pointier", "the red does not really match" —
-> was checked against ground truth (shrink a KNOWN OG shape to video scale,
-> degrade, trace back, score). Mean IoU over 4 shapes: **base 0.9735 · up4 0.9825
-> · up8 0.9822 (plateaus) · up4+Douglas-Peucker0.10 0.9831 ← best, vertex count
-> back near base**. Upscaling before thresholding puts the boundary nearer the
-> true 50 % crossing. **The remaining error is 36 % smaller than what shipped
-> first.** Both constants sit in `traceGarment.py` beside that table.
+> ⭐ **THE SLOT IS CHOSEN BY Z-ORDER, NOT ANATOMY.** A higher slot draws IN FRONT,
+> so the hakama sits on the **CALF (7/11)** — in front of thigh and foot — not on
+> the thigh, where the bare calf would paint over it.
+> ⭐ **ONE TRACED LEG, DRAWN TWICE**, which is what the OG does (2678 at 7 and 11).
+> The FAR leg cannot be traced here: its region is not bounded by ink on the
+> right because **the outline there IS the scabbard**, so the fill leaks into the
+> background. Two hue-based attempts to subtract the saya failed the same way; a
+> third was not attempted.
+> ⛔ **The hakama first rendered 18 world px TOO LOW** — a 50-px leg garment
+> centred on the calf's 26.6-px bbox. **Fixed from `OG_IDLE_NODES`, not off the
+> screen:** thigh at y −55, calf at −29 → the hip is 26 px above the calf origin,
+> so the waistband anchors at −30.75 calf-local.
 >
-> ⛔ **A blocker the kickoff does not mention, fixed:** the provenance gate
-> **hard-coded an FFDec extraction command** and the re-derivation test resolved
-> every source from `reference/extracted/shapes/<id>.svg` — so traced art could
-> only pass by claiming an extraction that never happened. **Ids ≥ 9000 are
-> traced and nothing else is** (kasa = **9017**, the id names its slot); traced
-> SVGs live in `reference/traced/`; `sourceSvgRelPath(id)` is the ONE place that
-> mapping is decided; `emit()` derives the header from `art.id` alone so
-> byte-identical re-derivation still works everywhere. **The gate checks BOTH
-> directions** — payload art claiming to be traced fails too.
+> ⛔ **THE ONE DOMINANT DEFECT LEFT — BARE ARMS PAINT OVER THE GI.** Gi body and
+> near sleeve are the same grey with **no closed outline between them** (A5.1 F6),
+> so no sleeve could be cut from this frame; slots 19/20 and 1/2 stay bare and
+> draw IN FRONT of 15. Visible in the render, declared in `shape9015.ts`, and
+> **pinned by a test** so it cannot pass as unnoticed. **Fixing it needs a frame
+> where the sleeve is separately outlined — that is the first job of A5.4.**
 >
-> ⭐ **A STATED WEAKNESS RETIRED:** the 17←16 alias was pinned only against a
-> synthetic map holding a made-up id `7000`. It is now pinned against the art the
-> game actually draws. ⛔ **The registry gate caught 9017 the moment it landed**
-> and now checks BOTH slot maps, exact equality both ways.
+> ⭐ **THE COLOUR QUESTION IS ANSWERED, AND MY OWN PROPOSED FIX WAS WRONG.** A5.2
+> left "the straw renders darker than the source" open and proposed a two-fill
+> kasa. Measured: the interior's clusters (33 % / 23 % / 16 %) have y-extents
+> y23-47, y20-46, y20-44 — **fully interleaved**, a graded weave, not two panels.
+> A split would emit speckle. **One flat fill at the interior mean stands**, and
+> `#8e6f38` IS the source's measured mean.
 >
-> ⚠️ **THE PIVOT IS INFERRED and the shape's own header says so.** Three attempts
-> to register the kasa against the frame failed; the third explained the first
-> two — **that fighter wears different head art** (hair mass **20.4 × 24.0** world
-> px vs our 2670's **14.2 × 15.0**). Traced OUTLINE measured; PLACEMENT inferred.
-> ⚠️ **KNOWN GAP for A5.3: the straw renders DARKER than the source.** The hat is
-> two-tone and a single interior MEAN matches neither tone. **The honest fix is a
-> two-fill kasa** — deferred deliberately, because every remaining garment raises
-> the same question and it should be answered once for all of them.
-> ⚠️ **"The outline is missing" was BLACK-ON-BLACK.** Scanning the rendered pixels
-> found the outline present at the source's weight; `?art=dressed` uses a
-> TRANSPARENT canvas, so a visual claim about it is not gradeable against a black
-> page. Put a backdrop behind it before judging.
-> ⚠️ **The brim notch is ≤4 video px (~1.8 world px) and is left as traced** — it
-> sits exactly where the head draws BEHIND the hat, so it cannot show.
+> ⚠️ Stated, not hidden: the **collar** region also holds the hair beside it (same
+> boundary) — covered because slot 12 draws behind everything; the **obi** is
+> 26×24 video px, only just inside §P9's ≥20 px band; the **hem** follows grass,
+> not cloth, for its last few px.
 >
-> **Gates:** typecheck ×2 → 0 · eslint → 0 · **747 passed (44 files)** · build ok.
-> **Chaos plants: 4 on the provenance/re-derivation gates, all RED then green.**
+> **Gates:** typecheck ×2 → 0 · eslint → 0 · **749 passed (44 files)** · build ok.
 >
 > ---
 >

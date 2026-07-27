@@ -2267,3 +2267,67 @@ them beats a rushed recolour. Declared in `APPROXIMATED FILLS:` meanwhile.
   FIGHTER_SHAPES names exactly the ids the BARE map needs, and a dressed-only
   shape is not in that set. It now checks BOTH maps, still with exact equality
   both ways, so a registered shape no map names is still dead weight.
+
+---
+
+## SESSION 19 — A5.3: the rest of the outfit. **GATE A5-A MET (5 traced shapes).**
+
+`?art=dressed` → **20 parts**, 0 console errors, suite **749 green** (was 747).
+Five traced garments: **9017** kasa→17 · **9012** collar→12 · **9015** gi body→15 ·
+**9014** obi→14 · **9011** hakama→**11 AND 7**.
+
+### ⭐ D-A5.3a — THE SLOT IS CHOSEN BY Z-ORDER, NOT BY ANATOMY
+z-order is CREATION order, so a higher slot draws IN FRONT. The hakama covers the
+whole leg, so it goes on the **CALF (7/11)** — which draws in front of the thigh
+(6/10) and the foot (5/9) — and **not** on the thigh, where the bare calf would
+paint straight over it. The same reasoning puts the gi on 15 (over 13).
+
+### ⭐ D-A5.3b — ONE TRACED LEG, DRAWN TWICE — WHICH IS WHAT THE OG DOES
+⛔ **The far leg cannot be traced from this frame.** Its region is not bounded by
+ink on the right, because **the outline there IS the scabbard**, so `fill_holes`
+leaks into the background and the silhouette comes back wider than the hakama.
+Two attempts to subtract the saya by hue both failed the same way (the second
+reached down to r>28 to catch its dark lacquer end and still left the bulge), so
+the third was not attempted. **9011 is drawn at slots 11 and 7 instead** — the OG
+itself draws 2678 at 7 and 11 and 2648 at 6 and 10. A bare far leg beside a
+clothed near leg would look worse and be no more honest.
+> Veto: leave the far leg bare until a frame with the scabbard hanging clear is found.
+
+### ⛔ D-A5.3c — THE HAKAMA WAS 18 WORLD px TOO LOW, AND THE OG's OWN DATA FIXED IT
+First render put the skirts floating below the hips with bare skin above them.
+Cause: a 50.22-world-px leg garment centred on the calf's 26.6-px bbox. **The
+correction came out of `OG_IDLE_NODES`, not off the screen** — near thigh at
+y −55, near calf at y −29, so the hip sits **26 world px above the calf's
+origin**, and shape 2648's own art starts 4.75 px above that. The hakama now
+anchors its WAISTBAND at `−26 + −4.75 = −30.75` calf-local. Derived, not nudged.
+
+### ⛔ THE ONE DOMINANT DEFECT LEFT: BARE ARMS PAINT OVER THE GI
+The gi body and the near SLEEVE are the same grey and are **not divided by a
+closed outline everywhere** (A5.1 F6), so no sleeve could be cut out of this
+frame — the single enclosed region covers both and is assigned to slot 15. Slots
+19/20 and 1/2 stay bare and **draw IN FRONT of 15**, so a skin-coloured arm still
+crosses the chest. Visible in the render, declared in `shape9015.ts`'s header,
+and pinned by a test (`leaves the arm slots bare — a KNOWN gap, not an
+oversight`) so it cannot be mistaken for something nobody noticed.
+**Fixing it needs a frame where the sleeve is separately outlined.**
+
+### Smaller, stated
+- **9012 collar** — the enclosed region holds the white collar AND the dark hair
+  beside it (shared boundary), so the traced shape is wider than the collar. It
+  replaces slot 12 (neck), which everything else draws in front of, so the
+  surplus is covered.
+- **9014 obi** — 26×24 video px, the smallest garment traced. Inside §P9's
+  trustworthy band (≥20 px) but only just.
+- **9011 hem** — the bottom few px follow the GRASS, not the cloth (A5.1 crop 7).
+- Seeds are the **deepest interior point** of each region (distance transform),
+  never "the biggest region" — that picked the background on the first garment.
+
+### The colour question, answered once for all garments — and it was NOT what I proposed
+A5.2 left "the straw renders darker than the source" as a gap, and proposed a
+two-fill kasa. **Measured, that fix is wrong.** Clustering the kasa's interior at
+bucket 32 gives clusters of 33 % / 23 % / 16 % whose y-extents are y23-47,
+y20-46, y20-44 — **fully interleaved**, i.e. a graded weave, not two flat panels.
+A cluster split would emit speckle rather than panels. **One flat fill at the
+interior mean stands**, and the emitted `#8e6f38` IS the source's measured mean.
+The perceived darkness is a uniform fill next to a graded region whose highlight
+catches the eye. Recorded so nobody re-opens it without new evidence.

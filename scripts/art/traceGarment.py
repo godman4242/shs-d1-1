@@ -43,8 +43,44 @@ OUT_DIR = os.path.join(ROOT, "reference", "traced")
 FRAME = "reference/frames/s19_trace/zFt_0061.png"
 FRAME_T = 590.0
 FRAME_VIDEO = "zFtCaTO0_1M"
-CROP = (762, 638, 900, 702)          # video px, generous box round the kasa
 INK_MAX = 78                          # a pixel this dark is outline, not scenery
+
+# ── the garments, and the SLOT each one replaces ─────────────────────────────
+# A garment is located by a SEED POINT inside it, never by "the biggest region":
+# the biggest region in a crop is regularly the blurred background (A5.1 F6), and
+# a seed says exactly which enclosed area is meant.
+#
+# ⚠️ THE SLOT IS CHOSEN BY Z-ORDER, NOT BY ANATOMY. z-order is CREATION order, so
+# a higher slot draws IN FRONT. The hakama covers the whole leg, so it goes on
+# the CALF (7/11) — which draws in front of the thigh (6/10) and the foot (5/9)
+# — and not on the thigh, where the bare calf would draw straight over it.
+#
+# `part` is the target part's own local bbox (x0, x1, y0, y1), read out of the
+# committed shapes. The garment is centred on it — see PLACEMENT below.
+GARMENTS = [
+    dict(id=9017, slot=17, name="kasa (conical straw hat)",
+         crop=(762, 638, 900, 702), seed=(831, 671),
+         part=(-4.463, 9.750, -13.500, 4.350), anchor="kasa"),
+    dict(id=9012, slot=12, name="collar / juban",
+         crop=(806, 688, 858, 742), seed=(841, 702),
+         part=(-4.000, 6.350, -11.700, 4.350), anchor="centre"),
+    dict(id=9015, slot=15, name="gi body (grey torso panel)",
+         crop=(822, 702, 880, 794), seed=(851, 759),
+         part=(-9.600, 9.816, -21.550, 2.150), anchor="centre"),
+    dict(id=9014, slot=14, name="obi (waist sash)",
+         crop=(808, 764, 836, 790), seed=(821, 776),
+         part=(-12.500, 7.950, -10.700, 6.450), anchor="centre"),
+    dict(id=9011, slot=11, name="hakama leg (drawn at slots 11 AND 7)",
+         crop=(789, 778, 860, 894), seed=(825, 848), dropSaya=True,
+         part=(-7.150, 4.080, 0.050, 26.600), anchor="hakama"),
+    # ⛔ NO FAR-LEG TRACE. The far leg's region is NOT bounded by ink on its
+    # right: the outline there IS the scabbard, so `fill_holes` leaks into the
+    # background and the silhouette comes back wider than the hakama. Two
+    # attempts at excluding the saya by hue both failed the same way, so the far
+    # calf REUSES 9011 instead — which is what the OG itself does, drawing shape
+    # 2678 at slots 7 and 11 and 2648 at 6 and 10. A frame where the scabbard
+    # hangs clear would let this be traced properly; see A5.3 in DIVERGENCES.
+]
 
 # ── scale: video px -> stage px is /1.875, stage -> world is /1.2 ────────────
 VIDEO_TO_WORLD = 1.875 * 1.2          # = 2.25
@@ -68,36 +104,70 @@ VIDEO_TO_WORLD = 1.875 * 1.2          # = 2.25
 UPSCALE = 4
 RDP_EPS = 0.10                        # in 1x mask (video) px
 
-# ── placement: INFERRED. See D-A5.2a in the ledger ───────────────────────────
-# Slot 17 is aliased to slot 16, so the kasa's (0,0) must be the HEAD's joint
-# pivot. It cannot be registered from the frame: that fighter wears different
-# head art (its hair mass measures 20.4x24.0 world px against our shape 2670's
-# 14.2x15.0) and stands in a different pose. So the placement is derived from
-# OUR OWN head instead, using the one ratio the frame does give.
-HEAD_LOCAL_X0, HEAD_LOCAL_X1 = -4.463, 9.750     # shapes 2664 + 2670, union
-HEAD_LOCAL_Y0, HEAD_LOCAL_Y1 = -13.500, 4.350
+# ── PLACEMENT IS INFERRED, FOR EVERY GARMENT. See D-A5.2b / D-A5.3a ──────────
+# A garment's OUTLINE is measured; where it sits on the skeleton is not, and it
+# cannot be registered from the frame: that fighter wears different head art (its
+# hair mass measures 20.4x24.0 world px against our shape 2670's 14.2x15.0) and
+# stands in a different pose from our recorded idle. So each garment is placed
+# against OUR OWN part instead — centred on that part's local bbox, at the fixed
+# video->world scale. The kasa keeps its own rule, the one ratio the frame gives.
 BRIM_DOWN_HEAD = 0.40                 # frame: the brim's lowest point sits ~40%
                                       # down the wearer's head height
 
+# The hakama covers the WHOLE leg but is drawn from the CALF slot, so centring it
+# on the calf's own bbox hangs it ~18 world px too low — measured on screen, the
+# skirts float below the hips with bare skin above them. The correction comes out
+# of the OG's OWN node data, not off the screen: OG_IDLE_NODES puts the near
+# thigh at y -55 and the near calf at y -29, so the hip sits 26 world px ABOVE
+# the calf's origin, and the thigh's art starts a further 4.75 px above that.
+HIP_ABOVE_CALF = -55.0 - -29.0        # = -26.0, calf-local
+THIGH_TOP = -4.750                    # shape 2648's own bbox top
+HAKAMA_TOP = HIP_ABOVE_CALF + THIGH_TOP
 
-def isolate(a):
-    """Garment silhouette + its enclosed interior, found by ink, not by hue."""
+
+def reject_occluder(a, sil):
+    """
+    Drop the SAYA from a garment silhouette.
+
+    The sheathed sword crosses the far leg, and it is enclosed by the same ink,
+    so "the region inside the outline" swallows it and the traced hakama grows a
+    stick-shaped bulge. The scabbard is the only strongly WARM thing touching the
+    white hakama, so it separates by hue where nothing else in this frame does.
+    Applied only where a garment declares it, never globally.
+    """
+    r, g, b = a[:, :, 0], a[:, :, 1], a[:, :, 2]
+    # The scabbard runs from a mid brown into a near-black lacquer, so the
+    # threshold has to reach DOWN as well: a first pass at r > 55 left the dark
+    # end of it inside the far leg and the bulge survived.
+    warm = (r > g + 6) & (g >= b) & (r > 28) & (r < 190) & (r < 255)
+    warm = ndimage.binary_closing(warm, np.ones((3, 3)))
+    keep = sil & ~warm
+    lab, n = ndimage.label(keep, np.ones((3, 3)))
+    if n == 0:
+        return sil
+    sizes = ndimage.sum(keep, lab, range(1, n + 1))
+    return ndimage.binary_fill_holes(lab == (int(np.argmax(sizes)) + 1))
+
+
+def isolate(a, seed_xy):
+    """
+    Garment silhouette + its enclosed interior, found by INK and named by a SEED.
+
+    `seed_xy` is crop-local. Picking "the biggest enclosed region" chose the
+    blurred BACKGROUND on the very first garment (A5.1 F6) — the scenery is the
+    same warm family as straw and, in this frame, brighter than the hat.
+    """
     mx = np.maximum(np.maximum(a[:, :, 0], a[:, :, 1]), a[:, :, 2])
     ink = ndimage.binary_closing(mx < INK_MAX, np.ones((3, 3)))
     interiors = ndimage.binary_fill_holes(ink) & ~ink
     lab, n = ndimage.label(interiors, np.ones((3, 3)))
-    best, best_area = None, 0
-    for i in range(1, n + 1):
-        sel = lab == i
-        ys, xs = np.where(sel)
-        if sel.sum() < 200:
-            continue
-        if xs.min() == 0 or ys.min() == 0 or xs.max() == sel.shape[1] - 1 or ys.max() == sel.shape[0] - 1:
-            continue          # an "interior" that reaches the crop edge is scenery
-        if sel.sum() > best_area:
-            best, best_area = sel, sel.sum()
-    if best is None:
-        raise SystemExit("no enclosed region — the outline is not closed in this crop")
+    sx, sy = seed_xy
+    which = lab[sy, sx]
+    if which == 0:
+        raise SystemExit(f"seed {seed_xy} landed on INK, not inside a region — move it")
+    best = lab == which
+    if best.sum() < 120:
+        raise SystemExit(f"seed {seed_xy} found only {int(best.sum())} px — wrong region")
     sil = best.copy()
     for _ in range(8):
         sil = ndimage.binary_dilation(sil, np.ones((3, 3))) & (best | ink)
@@ -184,55 +254,68 @@ def potrace_polygon(mask):
     return [rdp(r, RDP_EPS) for r in out]
 
 
-def main():
-    im = Image.open(os.path.join(ROOT, FRAME)).convert("RGB")
-    a = np.asarray(im.crop(CROP)).astype(np.int16)
-    sil, interior = isolate(a)
+def trace_one(im, g):
+    a = np.asarray(im.crop(g["crop"])).astype(np.int16)
+    cx, cy = g["seed"][0] - g["crop"][0], g["seed"][1] - g["crop"][1]
+    sil, interior = isolate(a, (cx, cy))
+    if g.get("dropSaya"):
+        sil = reject_occluder(a, sil)
+        interior = interior & sil
     ys, xs = np.where(sil)
-    vx0, vx1 = CROP[0] + xs.min(), CROP[0] + xs.max()
-    vy0, vy1 = CROP[1] + ys.min(), CROP[1] + ys.max()
-    print("silhouette  x %d..%d  y %d..%d  = %d x %d video px = %.2f x %.2f world px"
-          % (vx0, vx1, vy0, vy1, vx1 - vx0 + 1, vy1 - vy0 + 1,
-             (vx1 - vx0 + 1) / VIDEO_TO_WORLD, (vy1 - vy0 + 1) / VIDEO_TO_WORLD))
+    vx0, vx1 = g["crop"][0] + xs.min(), g["crop"][0] + xs.max()
+    vy0, vy1 = g["crop"][1] + ys.min(), g["crop"][1] + ys.max()
 
-    # colours, measured — median first, or compression speckle wins the vote
     med = np.dstack([ndimage.median_filter(a[:, :, c], size=5) for c in range(3)])
     core = ndimage.binary_erosion(interior, np.ones((3, 3)))
-    straw = tuple(int(v) for v in med[core].mean(axis=0).round())
-    band = ndimage.binary_erosion(sil & ~interior, np.ones((3, 3)))
-    ink_mode = Counter(map(tuple, med[band])).most_common(1)[0][0] if band.sum() > 20 else (0, 0, 0)
-    print("straw fill  #%02x%02x%02x (interior MEAN — the mode holds only 1.3%%, so the"
-          " interior is not one flat colour; two-tone shading and texture streaks are"
-          " flattened and declared)" % straw)
-    print("ink   band  measured #%02x%02x%02x -> emitted as #000000" % ink_mode)
+    if core.sum() < 30:
+        core = interior
+    fillcol = tuple(int(v) for v in med[core].mean(axis=0).round())
 
-    # placement (INFERRED — see the header)
-    head_cx = (HEAD_LOCAL_X0 + HEAD_LOCAL_X1) / 2.0
-    brim_y = HEAD_LOCAL_Y0 + BRIM_DOWN_HEAD * (HEAD_LOCAL_Y1 - HEAD_LOCAL_Y0)
-    sil_cx_video = (vx0 + vx1) / 2.0
+    px0, px1, py0, py1 = g["part"]
+    if g["anchor"] == "kasa":
+        ax = (px0 + px1) / 2.0
+        ay = py0 + BRIM_DOWN_HEAD * (py1 - py0)
+        ref_y = vy1                                   # brim (bottom) anchors
+    elif g["anchor"] == "hakama":
+        ax = (px0 + px1) / 2.0
+        ay = HAKAMA_TOP
+        ref_y = vy0                                   # the waistband anchors
+    else:
+        ax = (px0 + px1) / 2.0
+        ay = (py0 + py1) / 2.0
+        ref_y = (vy0 + vy1) / 2.0                     # centre anchors
+    ref_x = (vx0 + vx1) / 2.0
 
     def to_local(px, py):
-        vxx, vyy = CROP[0] + px, CROP[1] + py
-        return ((vxx - sil_cx_video) / VIDEO_TO_WORLD + head_cx,
-                (vyy - vy1) / VIDEO_TO_WORLD + brim_y)
+        vxx, vyy = g["crop"][0] + px, g["crop"][1] + py
+        return ((vxx - ref_x) / VIDEO_TO_WORLD + ax, (vyy - ref_y) / VIDEO_TO_WORLD + ay)
 
-    paths = []
-    for mask, colour in ((sil, (0, 0, 0)), (interior, straw)):
-        rings = potrace_polygon(mask)
-        for ring in rings:
+    paths, nv = [], 0
+    for mask, colour in ((sil, (0, 0, 0)), (interior, fillcol)):
+        for ring in potrace_polygon(mask):
             pts = [to_local(x, y) for x, y in ring]
             d = "M" + " L".join("%.3f %.3f" % p for p in pts) + " Z"
             paths.append('<path d="%s" fill="#%02x%02x%02x" />' % (d, *colour))
-        print("  %-9s %d ring(s), %d vertices"
-              % ("ink" if colour == (0, 0, 0) else "straw", len(rings), sum(len(r) for r in rings)))
+            nv += len(pts)
 
     svg = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            '<svg xmlns="http://www.w3.org/2000/svg">\n'
            '<g transform="matrix(1,0,0,1,0,0)">\n' + "\n".join(paths) + "\n</g>\n</svg>\n")
     os.makedirs(OUT_DIR, exist_ok=True)
-    out = os.path.join(OUT_DIR, "9017.svg")
-    open(out, "w").write(svg)
-    print("wrote %s  (%d paths)" % (os.path.relpath(out, ROOT), len(paths)))
+    open(os.path.join(OUT_DIR, "%d.svg" % g["id"]), "w").write(svg)
+    return dict(vx0=vx0, vx1=vx1, vy0=vy0, vy1=vy1, colour=fillcol, paths=len(paths), verts=nv)
+
+
+def main():
+    im = Image.open(os.path.join(ROOT, FRAME)).convert("RGB")
+    print("%5s %-34s %-22s %-9s %6s %6s" % ("id", "garment -> slot", "silhouette (video px)", "fill", "paths", "verts"))
+    for g in GARMENTS:
+        r = trace_one(im, g)
+        print("%5d %-34s x%4d-%4d y%4d-%4d  #%02x%02x%02x %6d %6d"
+              % (g["id"], "%s -> %d" % (g["name"][:26], g["slot"]),
+                 r["vx0"], r["vx1"], r["vy0"], r["vy1"], *r["colour"], r["paths"], r["verts"]))
+        print("      %5.2f x %5.2f world px   -> reference/traced/%d.svg"
+              % ((r["vx1"] - r["vx0"] + 1) / VIDEO_TO_WORLD, (r["vy1"] - r["vy0"] + 1) / VIDEO_TO_WORLD, g["id"]))
 
 
 if __name__ == "__main__":
