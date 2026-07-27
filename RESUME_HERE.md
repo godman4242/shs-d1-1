@@ -1,6 +1,6 @@
 # RESUME HERE
 
-> ## ▶ IN PROGRESS — **SESSION 18. A4.1 IS DONE; START AT §4 A4.2.**
+> ## ▶ IN PROGRESS — **SESSION 18. A4.1 + A4.2 DONE; START AT §4 A4.3.**
 > Kickoff: **`docs/sessions/SESSION18_KICKOFF.md`** (read it, not this summary).
 > Baseline is **`c46adbc`**, not the kickoff's `a9592d7`: three owner commits
 > (CI + dependabot) landed on top, and `git diff a9592d7..HEAD -- src tests` is
@@ -57,12 +57,44 @@
 > **Gates:** suite **701/701 (42 files)** · tsc ×2 exit 0 · eslint exit 0 ·
 > ratchet not widened · full record in `docs/DIVERGENCES.md` "SESSION 18 — A4.1".
 >
-> ### ⬜ NEXT: A4.2 — generate and commit the other 13 shapes
-> ```
-> npx vite-node scripts/art/generate.ts -- 2644 2646 2648 2650 2653 2655 2658 \
->                                          2667 2670 2672 2674 2676 2678
-> ```
-> Then A4.3 (`composePose`, red-first) · A4.4 (`?art=idle` + measure) · A4.5.
+> ### ✅ A4.2 DONE — all 14 fighter shapes are compiled into the build. **708 green.**
+> The 13 remaining shapes generated with §P7's own command; **regenerating them a
+> second time is byte-identical.** `2641` (training branch) and `2662` (alt head)
+> are deliberately NOT committed — neither is in the fighter.
+>
+> ⛔ **THE KICKOFF'S "gates already cover them" WAS TWO-THIRDS TRUE, AND THE
+> MISSING THIRD MATTERED.** The ratchet's provenance gates *do* enumerate the
+> directory, so all 13 were covered the moment they landed (which is why the test
+> count didn't move). But **the byte-for-byte re-derivation test was hard-coded to
+> `2664`** — and by its own docstring it is "the ONLY assertion in the repo that
+> can catch the converter drifting away from the art the game actually draws".
+> Committing 13 more would have left thirteen artifacts **no gate could hold the
+> converter to**. It is now directory-driven; a shape added later is covered the
+> moment it lands.
+>
+> ⭐ **The committed art now meets the packer IN THE SUITE** (reads the committed
+> `.ts`, never `reference/`, so it runs in CI): **3 packed ops / 3 hole rings
+> across the 14** — 2646 → two ops, one hole each · 2648 → one op, one hole · the
+> other twelve hole-free. That is the kickoff's "4 hole instances" once 2648 is
+> drawn twice, at slots 6 and 10.
+>
+> **2 more chaos plants, both RED then reverted:** a coordinate nudged
+> `0.4 → 0.41` in `shape2670.ts` (**a new file**) → caught by name, while the old
+> 2664-only test stayed green · a forged `characterId 9999` in `shape2653.ts` →
+> both provenance gates red.
+>
+> ⚠️ **NOTHING IS DRAWN YET.** The 13 are compiled in and planned in tests; the
+> composer is A4.3 and the first render is A4.4. A green A4.2 says the DATA is
+> sound, not that anything appeared on screen.
+> ⚠️ **Ratchet baseline NOT refreshed** — `tests/game-purity-baseline.json` is
+> unmodified.
+>
+> ### ⬜ NEXT: A4.3 — `src/core/composePose.ts`, red-first
+> `composePose(nodes, slotMap)` → ordered `(shapeId, x, y, rotationRad)[]`.
+> **First tests: the 8←14 and 17←16 aliases are emitted even though no node
+> carries them; slots 7/11/16 emit TWO entries; the order is slot 0 → 20.**
+> The 19 node transforms are printed verbatim in the kickoff's §P2.
+> **Gate: A4-B + A4-C.** Then A4.4 (`?art=idle` + measure) · A4.5 (regression).
 >
 > ---
 >

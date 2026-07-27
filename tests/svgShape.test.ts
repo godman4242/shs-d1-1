@@ -33,7 +33,7 @@
  *     only be asked where the gitignored corpus exists.
  * Do not merge them back together, and do not add an ungated `reference/` read.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -415,6 +415,35 @@ describe.skipIf(!HAVE_REFERENCE)('convertShapeSvg: re-derives a REAL part shape 
   it('re-deriving from the source SVG reproduces the committed file BYTE FOR BYTE', () => {
     const rederived = emit(convertShapeSvg(readFileSync(path.join(SHAPE_DIR, '2664.svg'), 'utf8'), 2664, TOLERANCE));
     expect(rederived).toBe(readFileSync(path.join(ROOT, 'src', 'game', 'art', 'generated', 'shape2664.ts'), 'utf8'));
+  });
+
+  /**
+   * SESSION18 A4.2 — the same check, for EVERY committed shape rather than the
+   * one the test was written around.
+   *
+   * The ratchet's provenance gates read each artifact's header against its own
+   * data, so they catch tampering but — as their own docstring says — "can never
+   * catch a CONVERTER bug". Until A4.2 that left `2664` as the only shape any
+   * gate could hold the converter to, and A4.2 commits THIRTEEN more. A shape
+   * whose `.ts` was emitted by an older converter, or hand-edited after
+   * emission, is otherwise indistinguishable from a correct one.
+   *
+   * Directory-driven on purpose: a shape added later is covered the moment it
+   * lands, with nobody having to remember to extend a list.
+   */
+  it('re-derives EVERY committed generated shape byte for byte, not just 2664', () => {
+    const dir = path.join(ROOT, 'src', 'game', 'art', 'generated');
+    const files = readdirSync(dir).filter((f) => /^shape\d+\.ts$/.test(f)).sort();
+
+    expect(files.length, 'no generated art found — the glob or the directory moved').toBeGreaterThan(0);
+
+    const drifted = files.filter((file) => {
+      const id = Number(/^shape(\d+)\.ts$/.exec(file)?.[1]);
+      const svg = readFileSync(path.join(SHAPE_DIR, `${String(id)}.svg`), 'utf8');
+      return emit(convertShapeSvg(svg, id, TOLERANCE)) !== readFileSync(path.join(dir, file), 'utf8');
+    });
+
+    expect(drifted, 'committed art that the converter no longer reproduces').toEqual([]);
   });
 
   // Found by eye, not by a test: the converted head had a visible NOTCH at the

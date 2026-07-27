@@ -28,7 +28,20 @@ import {
   type StrokeOp,
 } from '../src/core/artPlan';
 import { VIEW, type ViewTransform } from '../src/core/viewport';
+import { SHAPE_2644 } from '../src/game/art/generated/shape2644';
+import { SHAPE_2646 } from '../src/game/art/generated/shape2646';
+import { SHAPE_2648 } from '../src/game/art/generated/shape2648';
+import { SHAPE_2650 } from '../src/game/art/generated/shape2650';
+import { SHAPE_2653 } from '../src/game/art/generated/shape2653';
+import { SHAPE_2655 } from '../src/game/art/generated/shape2655';
+import { SHAPE_2658 } from '../src/game/art/generated/shape2658';
 import { SHAPE_2664 } from '../src/game/art/generated/shape2664';
+import { SHAPE_2667 } from '../src/game/art/generated/shape2667';
+import { SHAPE_2670 } from '../src/game/art/generated/shape2670';
+import { SHAPE_2672 } from '../src/game/art/generated/shape2672';
+import { SHAPE_2674 } from '../src/game/art/generated/shape2674';
+import { SHAPE_2676 } from '../src/game/art/generated/shape2676';
+import { SHAPE_2678 } from '../src/game/art/generated/shape2678';
 
 /** An arbitrary stage anchor — the planner must be origin-agnostic. */
 const ORIGIN = { x: 300, y: 300 };
@@ -403,6 +416,94 @@ describe('artPlan: Earcut index fan-out', () => {
 
   it('throws on an index pointing past the end of the packed array', () => {
     expect(() => trianglesOf(SQUARE, [0, 1, 9])).toThrow(/range/i);
+  });
+});
+
+/**
+ * SESSION18 A4.2 — the packer against the COMMITTED art of all 14 fighter
+ * shapes, rather than against fixtures shaped like it.
+ *
+ * This is the join between A4.1 and A4.2, and it runs in every clone: it reads
+ * the committed `.ts` files, never `reference/`. The fixtures above prove the
+ * packing RULE; these prove the rule survives contact with the real corpus —
+ * which is where SESSION15 and SESSION16 both found defects that green fixtures
+ * had not.
+ *
+ * ⚠️ Slots 3, 4 and 17 are EMPTY BY DESIGN (§P3) — the game's own "none"
+ * placeholders for weapon and hat — so 14 shapes, not 17, is the correct count.
+ */
+describe('artPlan: the committed fighter art (SESSION18 A4.2)', () => {
+  const FIGHTER: ReadonlyArray<readonly [number, ShapeInput]> = [
+    [2644, SHAPE_2644],
+    [2646, SHAPE_2646],
+    [2648, SHAPE_2648],
+    [2650, SHAPE_2650],
+    [2653, SHAPE_2653],
+    [2655, SHAPE_2655],
+    [2658, SHAPE_2658],
+    [2664, SHAPE_2664],
+    [2667, SHAPE_2667],
+    [2670, SHAPE_2670],
+    [2672, SHAPE_2672],
+    [2674, SHAPE_2674],
+    [2676, SHAPE_2676],
+    [2678, SHAPE_2678],
+  ];
+
+  it('holds all 14 shapes the idle fighter needs, each assignable without a cast', () => {
+    expect(FIGHTER).toHaveLength(14);
+    expect(FIGHTER.map(([, shape]) => shape.id)).toEqual(FIGHTER.map(([id]) => id));
+  });
+
+  it('plans every one of them without throwing — no orphan and no ambiguous hole', () => {
+    const failed = FIGHTER.filter(([, shape]) => {
+      try {
+        planShape(shape, ORIGIN, VIEW);
+        return false;
+      } catch {
+        return true;
+      }
+    }).map(([id]) => id);
+
+    expect(failed, 'shapes the packer cannot plan').toEqual([]);
+  });
+
+  /**
+   * The measured scope of the hole work, asserted rather than transcribed.
+   * §P4's census counts HOLE RINGS (2646 ×2, 2648 ×1); the composed idle pose
+   * shows FOUR hole instances because 2648 is drawn twice, at slots 6 and 10.
+   */
+  it('packs exactly 3 holed ops carrying 3 hole rings across the 14 (§P4)', () => {
+    const packed = FIGHTER.flatMap(([, shape]) =>
+      planShape(shape, ORIGIN, VIEW).filter((op) => op.kind === 'holedFill'),
+    );
+
+    expect(packed).toHaveLength(3);
+    expect(packed.reduce((n, op) => n + op.holeIndices.length, 0)).toBe(3);
+  });
+
+  it('splits the TORSO 2646 into two holed ops — one hole each, not two on one', () => {
+    const packed = planShape(SHAPE_2646, ORIGIN, VIEW).filter((op) => op.kind === 'holedFill');
+
+    // The singular §P4 recipe gives ONE op with holeIndices of length 2 here,
+    // and silently drops the second outer ring.
+    expect(packed).toHaveLength(2);
+    expect(packed.map((op) => op.holeIndices.length)).toEqual([1, 1]);
+  });
+
+  it('packs the THIGH 2648 as a single holed op with one hole', () => {
+    const packed = planShape(SHAPE_2648, ORIGIN, VIEW).filter((op) => op.kind === 'holedFill');
+
+    expect(packed).toHaveLength(1);
+    expect(holed(packed, 0).holeIndices).toHaveLength(1);
+  });
+
+  it('leaves the other 12 shapes entirely hole-free', () => {
+    const withHoles = FIGHTER.filter(([, shape]) =>
+      planShape(shape, ORIGIN, VIEW).some((op) => op.kind === 'holedFill'),
+    ).map(([id]) => id);
+
+    expect(withHoles).toEqual([2646, 2648]);
   });
 });
 

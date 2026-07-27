@@ -1663,3 +1663,71 @@ contain its hole. The fixture was fixed; the code was not.
 fan-out tests, −1 the retired A3-skip test · tsc ×2 exit 0 · eslint exit 0 ·
 `shape2664.ts` regenerated **byte-identical** · ratchet **not** widened ·
 all 16 real shapes plan without a throw.
+
+---
+
+## SESSION 18 — A4.2: the other 13 fighter shapes, committed (2026-07-27)
+
+All 14 shapes the idle fighter needs are now compiled into the build. Generated
+with the kickoff's own §P7 command; **regenerating all 13 a second time produced
+byte-identical files** (`diff -r` against a snapshot, clean).
+
+```
+2644 uparm   2646 torso   2648 thigh   2650 stomach  2653 pelvic  2655 neck
+2658 lowarm  2667 hand    2670 hair    2672 foottop  2674 foot    2676 crotch
+2678 calf                                   (2664 head was already committed)
+```
+`2641` (training branch) and `2662` (alt head) are **deliberately NOT committed** —
+neither is in the fighter (§P3).
+
+### ⭐ A REAL COVERAGE GAP FOUND AND CLOSED, not assumed away
+
+The kickoff says A4.2's art is safe because "provenance and data-verification
+gates already cover them". Two thirds true, and the missing third mattered:
+
+- ✅ `tests/game-purity-ratchet.test.ts` **does** enumerate the directory
+  (`listTsFiles(GAME_DIR).filter(isGeneratedArt)`) and loops inside its `it`s, so
+  the provenance header, identity-triple, counts and palette checks picked up all
+  13 immediately — which is why the **test count did not move** even though
+  coverage did.
+- ❌ **The byte-for-byte re-derivation test was hard-coded to `2664`.** By that
+  test's own docstring it is "the ONLY assertion in the repo that can catch the
+  converter drifting away from the art the game actually draws" — so committing
+  13 more shapes would have left thirteen artifacts that **no gate could hold the
+  converter to**. Now directory-driven: a shape added later is covered the moment
+  it lands, with no list to remember to extend.
+
+### The committed art now meets the A4.1 packer, in the suite
+`tests/artPlan.test.ts` gained a describe over all 14 committed shapes — it reads
+the committed `.ts`, never `reference/`, so it runs in every clone and in CI.
+It pins the corrected hole scope as an assertion rather than a transcription:
+**3 packed ops carrying 3 hole rings across the 14** (2646 → two ops with one
+hole each; 2648 → one op with one hole; the other twelve hole-free), which is
+the kickoff's "4 hole instances" once 2648 is drawn twice at slots 6 and 10.
+Planting the kickoff's singular §P4 recipe turns **6** tests red, two of them
+these committed-art ones.
+
+### Divergences and limits carried forward
+- ⚠️ **None of the 13 is DRAWN yet.** They are compiled in and planned in tests;
+  the composer is A4.3 and the render is A4.4. A green A4.2 says the data is
+  sound, not that anything appeared on screen.
+- ⚠️ **Equipment art is still unrecoverable** — the doll is bald and unarmed by
+  design (slots 3/4/17 are the game's own "none" placeholders), which is why §P8
+  rejects a silhouette IoU against the video frames.
+
+**Chaos plants — 2 written, 2 watched RED then reverted:**
+1. one coordinate moved `0.4 → 0.41` in **`shape2670.ts` (a NEW file, not 2664)**
+   → `re-derives EVERY committed generated shape byte for byte` red, naming
+   `['shape2670.ts']`; **the old 2664-only test stayed GREEN**, which is the
+   whole point of the new one;
+2. `source characterId : 2653 → 9999` in **`shape2653.ts`** → both provenance
+   gates red (`filename does not match declared characterId 9999` and
+   `identity disagrees — header=9999 const=2653 data=2653`), proving the
+   directory enumeration really does reach the new files.
+
+**Gates:** suite **708/708 (42 files)** — was 701, +6 committed-art packer tests
++1 re-derivation sweep · tsc ×2 exit 0 · eslint exit 0 · `npm run build` clean ·
+**ratchet baseline NOT refreshed** (`tests/game-purity-baseline.json` unmodified;
+generated art is exempt and that exemption is what the gates above pay for) ·
+`duel-baseline` green **and unedited** · all 13 regenerate byte-identical ·
+nothing from `reference/` committed.
