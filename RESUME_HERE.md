@@ -1,8 +1,59 @@
 # RESUME HERE
 
-> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION19_KICKOFF.md`**
+> ## ▶ IN PROGRESS — **`docs/sessions/SESSION19_KICKOFF.md`**, resume at **§4 A5.2**
 > **GIVE THE FIGHTER ITS CLOTHES, TRACED FROM THE VIDEOS.** Self-contained, the
 > only kickoff to plan from, **no open prerequisites.**
+>
+> ### ✅ A5.1 DONE — the tracing frames are chosen, by looking. Ledger: **`docs/sessions/SESSION19_A5-1_TRACING_FRAMES.md`**
+> **Trace from** `reference/frames/s19_trace/zFt_0061.png` (**t=590.0 s,
+> `zFtCaTO0_1M`**) · **hold out** `zFt_0071.png` (t=595.0 s) for D5. Seven
+> per-garment crops recorded with slot targets; five fully unoccluded, and the
+> obi and the hem carry a **stated** defect rather than a claim of perfection.
+> Baseline for the step: **`8257518`**, suite **44 files / 742 tests green** —
+> note the kickoff's §4 A5.0 / §5 item 1 still say `24c56ef`, which is one commit
+> stale (the kickoff-writing commit landed on top of it).
+>
+> ⛔ **A5.1 OVERTURNED FOUR THINGS, ALL BY OPENING A FRAME.**
+> 1. ⭐ **THE WIDTH TARGETS ARE HUD-CONTAMINATED — A5-C CANNOT GRADE UNTIL THEY
+>    ARE RE-MEASURED.** On `combat_idle_measurements.md`'s own primary frame, the
+>    green health bar is rows **626–634** and the watermark **617–699**, while the
+>    fighter's topmost pixel is **y 641**. The doc's landmark table calls rows
+>    **616–638 "Kasa (hat)"** — so its "head, ~55 px" is the kasa *brim* and its
+>    "shoulders ~80 px at row 683" is still hat. With the HUD suppressed, five
+>    frames agree on **233–243 video px (mean 127.4 stage px)** where the doc says
+>    266–274. **Our bare fighter is 128.164 — within 0.6 % of that mean**, not the
+>    2.8 % low A4-F reported against the inflated 131.8.
+>    ⚠️ This does **not** dissolve A4-D: against the clothed frame the shoulder
+>    gap closes to 0.95 but the pelvis stays 0.68, which is what a flaring hakama
+>    would do. **SESSION 18's clothing diagnosis survives for the lower body; the
+>    upper-body miss was substantially a measuring error.**
+>    ⚠️ The re-measurement is ONE frame, ONE outfit — a first pass, not a
+>    contract. **A5.5 owes A5-C a fresh multi-frame, per-outfit target set,
+>    produced BEFORE any traced garment is graded (D1 must not invert).**
+> 2. **D2's outfit is replaced.** `Nr4fQstqHDM` has a burned-in **"SOUND360TM"**
+>    watermark, a weapon across the body in every frame, and only 3/4-back views.
+>    `zFtCaTO0_1M` has **no watermark**, a lone fighter, and a **clean side
+>    profile — the rig's own view**. §P7's `#666666` "grey shoulder armour" was a
+>    second fighter inside the same crop; **the player has no shoulder armour.**
+> 3. **§P3's "the overworld is unusable at ANY resolution" is over-general** — true
+>    at t=350 s, false at t=590 s, where the lone fighter is **233 px** and is the
+>    only place the whole outfit is unoccluded. The primary tracing frame is an
+>    overworld frame.
+> 4. **The tracing unit is the SLOT, not the garment** (§P5's own rule, undrawn by
+>    §4): one grey gi spans slots 15+13+19/20, one hakama spans 6/10+7/11 — so
+>    A5.2/A5.3 must decide **where to cut a continuous garment into parts**.
+>    And **colour alone will not cut it**: gi body and sleeve are one grey
+>    (`#676467`), separated only by the outline.
+>
+> ⭐ **`ffmpeg` pulls are proven byte-exact:** re-pulling t=598.383 s from
+> `zFtCaTO0_1M.mp4` differs from the committed `session11/…/t598.383.png` by
+> **mean abs 0.00** — which also identifies the whole `session11/` tree (328 of
+> the index's 448 full-res frames) as coming from the watermark-free video.
+> New tool: **`scripts/art/outfitFrames.py`** (`scan` / `measure` / `clusters`) —
+> build-time only, renders an overlay for every answer. **The three wrong answers
+> this step produced — a 500-row "fighter", a 269 px height, and three garment
+> colours that were the background — were each caught by looking at the mask,
+> never by reading the numbers.**
 >
 > ⛔ **NEW STANDING INVARIANT (owner, 2026-07-27, now in `CLAUDE.md`): THE TWO
 > GAMEPLAY VIDEOS ARE THE PRIMARY 1:1 REFERENCE.** Copy what is in them,

@@ -2017,3 +2017,99 @@ Produced while preparing the next kickoff, and worth keeping regardless:
   (820,620)-(1020,900): navy haori `#373a4e`, straw kasa `#998a5e`, white hakama
   `#d9d8db`, grey shoulder `#666666`, outlines `#000000`. ⚠️ Video colours —
   lossy and possibly scene-tinted; INFERRED targets, never CONTRACT.
+
+---
+
+## SESSION 19 — A5.1: the tracing frames, and what opening them overturned
+
+Full ledger: `docs/sessions/SESSION19_A5-1_TRACING_FRAMES.md`. Tool:
+`scripts/art/outfitFrames.py` (build-time only; reads gitignored `reference/`,
+imported by nothing in `src/`).
+
+### D-A5.1a — trace the GREY outfit from `zFtCaTO0_1M`, not the navy one
+**Replaces kickoff D2.** `Nr4fQstqHDM` carries a burned-in "SOUND360TM"
+watermark, puts a large blue **weapon** across the body in every frame, and only
+ever shows a 3/4-back view. `zFtCaTO0_1M` has no watermark, shows the fighter
+**alone**, in a **clean side profile — the rig's own view** — with every garment
+unoccluded in one frame, and offers a second standing frame 5 s later for D5's
+held-out check. Primary `reference/frames/s19_trace/zFt_0061.png` (t=590.0 s);
+held-out `zFt_0071.png` (t=595.0 s).
+> Veto: trace the navy outfit anyway — same work, with a watermark and an
+> occluding weapon. It is the obvious *second* outfit once the pipeline is proven.
+
+### ⛔ D-A5.1b — `reference/combat_idle_measurements.md` IS HUD-CONTAMINATED
+On that document's own primary frame `duel_frames/Nr4fQstqHDM_t426.8s.png`:
+```
+GREEN health-bar rows in x860..1080 :  y 626 .. 634
+YELLOW watermark rows in same band  :  y 617 .. 699
+measured fighter topmost pixel      :  y 641
+```
+Its landmark table calls rows **616–638 "Kasa (hat), 22px tall"**. That is the
+health bar and the watermark. Every landmark below inherits the shift: the
+"head, ~55 px diameter" (650–680) is the **kasa brim**, and "shoulders ~80 px at
+row 683" is still hat. With the HUD suppressed and every mask checked by eye,
+five frames give **233–243 video px (mean 239 → 127.4 stage px)** where the doc
+gives 266/267/274. **Our composed bare fighter is 128.164 stage px — within
+0.6 % of that mean.** A4-F's "2.8 % low against 131.8" was graded against an
+inflated target; corrected, the sign flips and the error shrinks.
+
+The suppression was itself proven not to eat the hat: in `zFt_0061`, column band
+x820–860, rows **636–643** hold the nameplate's drop-shadow, rows **644–648** are
+clean background (0 dark px), and the kasa's outline begins at **y649–650**.
+
+⚠️ **This does NOT dissolve A4-D.** Against the clothed frame the shoulder ratio
+recovers 0.81 → 0.95, but the pelvis stays 0.68 — which is what a hakama flaring
+to 99 video px would do. **SESSION 18's clothing diagnosis survives for the lower
+body; the upper-body miss was substantially a measuring error.**
+⚠️ **The re-measurement is one frame, one outfit — a first pass, not a contract.**
+**A5.5 owes A5-C a fresh multi-frame, per-outfit target set, produced BEFORE any
+traced garment is measured against it, or kickoff D1 (trace, then measure) is
+quietly inverted.**
+
+### Corrections to the SESSION 19 kickoff's own prerequisites
+- **§P7's palette straddled two fighters.** Crop (820,620)-(1020,900) of
+  t426.8s contains a grey-clad enemy *and* the navy player; `#666666`
+  "grey shoulder armour" is the **enemy's whole haori**. **The player has no
+  shoulder armour** — so §4 A5.3's garment list loses an item.
+- **§P3's "the overworld is unusable at ANY resolution" is over-general.** True at
+  t=350 s (~35 px fighter), false at t=590 s (**233 px**, crisp, and the only
+  place the whole outfit is unoccluded). The primary tracing frame *is* an
+  overworld frame. What survives: check the fighter's pixel height in the frame
+  you actually intend to use.
+- **§4 A5.2's "the obi is ≈15 px and is the one at risk" is wrong on size** — it
+  is ~44×55 px. Its risk is occlusion, not resolution.
+- **§4 A5.0 / §5 item 1's baseline `24c56ef` is one commit stale**; HEAD at the
+  start of A5.1 was `8257518` (the kickoff-writing commit), suite 742 green.
+- **The large blue diagonal on the navy fighter is the player's WEAPON**, not a
+  slash VFX — slot 3, which our art leaves empty by design.
+
+### ⭐ D-A5.1c — the tracing unit is the SLOT, not the garment
+§P5 already says equipment replaces a part *by id*; the consequence §4 does not
+draw is that a "haori" is not one shape. `OG_SLOT_SHAPES` splits the grey gi
+across **15 torso + 13 stomach + 19/1 uparm + 20/2 lowarm**, and the hakama
+across **6/10 thigh + 7/11 calf**. A5.2/A5.3 must decide **where to cut a
+continuous garment into parts** — a different problem from tracing an outline.
+
+### ⚠️ D-A5.1d — colour alone will not separate the parts
+Clusters derived from the mask interior (not hand-picked windows — those returned
+the background 3 times in 11): `#dcd5db` 19.9 % hakama · `#676467` 12.6 %
+**gi body AND sleeve, one colour** · `#000000` 8.9 % outlines · `#c7c0c6` 3.7 %
+collar+obi · `#725422` 2.3 % kasa. **Torso and sleeve share one grey; only the
+black outline divides them**, and it reads as a *closed* boundary per part. So
+D4's "isolate by colour → 1-bit mask → potrace" needs an outline-driven cut plus
+morphological cleanup — the clusters are speckled along every edge by video
+compression, and a raw threshold hands potrace the speckle.
+
+### Frames: provenance is now proven, not assumed
+Re-pulling t=598.383 s from `zFtCaTO0_1M.mp4` differs from the committed
+`session11/movement-gesture/t598.383.png` by **mean absolute difference 0.00**
+(the same pull from `Nr4fQstqHDM.mp4` differs by 55.63). That confirms §P4's
+recipe and identifies the whole **`session11/` tree — 328 of the index's 448
+full-res frames — as coming from the watermark-free video.**
+
+### Rejected, with evidence kept
+**The dojo interior.** Tried because its wooden floor would solve the
+grass-over-hem defect. Its shoji screens are a **sharp, cream-coloured lattice**,
+so the sharpness route locks onto the screen grid and the white hakama has almost
+no contrast against cream. Two attempts, one cause, no third. Burst kept at
+`reference/frames/s19_dojo/` (t=560–586 s) so the rejection stays checkable.
