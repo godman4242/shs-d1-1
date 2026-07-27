@@ -1,70 +1,58 @@
 # RESUME HERE
 
-> ## ▶ NEXT — **write the SESSION 20 kickoff** (§4 A6). SESSION 19 A5.1–A5.5 are CLOSED.
+> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION20_KICKOFF.md`**
+> **BUILD THE LOOP THAT GRADES THE FIGHTER, THEN LET IT FIX HIM.** Self-contained,
+> the only kickoff to plan from, **no open prerequisites.**
 >
-> ### ✅ A5.4 + A5.5 DONE — the outfit is on screen and MEASURED. **750 green · fidelity 55/55**
-> `?art=dressed` draws **20 parts** wearing **7 traced garments**: kasa→17,
-> collar→12, gi outer silhouette→15, **sleeves→19 and 1**, obi→14, hakama→**11
-> and 7**. `?art=idle` still draws the bare 21, unchanged.
+> ⭐ **THE OWNER ASKED FOR IT, IN THESE WORDS (2026-07-27):** *"if you follow the
+> source material and automatically compare and iterate yourself in a loop until
+> it looks like the source material you will be fine."* He is right, and
+> SESSION 19's own error log is the evidence.
 >
-> ⛔ **A5.4 FIXED A MIS-ASSIGNMENT: A5.3 had put the SLEEVE on the TORSO slot.**
-> Owner feedback sent me back to the frame at three ink thresholds — the region
-> A5.3 called "gi body" is the near SLEEVE (it carries the round crest). That one
-> mis-read is why the arm rendered bare over a vest-sized gi.
+> ⛔ **EVERY DEFECT IN SESSION 19's OUTFIT WAS FOUND BY A HUMAN EYE, NEVER BY A
+> GATE — while the suite sat at 750 green, fidelity 55/55, typecheck 0, lint 0:**
+> | defect | found by | survived |
+> |---|---|---|
+> | hakama 18 world px too low | assistant, on first render | one step |
+> | **SLEEVE assigned to the TORSO slot** | **the owner** | a step, and it shipped |
+> | kasa too high (brim 0.40 → 0.60) | a height measurement, after the fact | two steps |
+> | **gi 1.76× oversized, rising into the neck** | **the owner** | shipped, still open |
+> **Nothing in the repo compares the rendered fighter to the source.** SESSION 20
+> builds that comparison and puts its score under a committed floor.
 >
-> ### ⭐ A5-C — THREE OF FOUR PASS, against A4-D's four-of-four miss
-> ```
-> measure    target    ours   ratio         A4-D (bare doll)
-> head       0.1797  0.1780   0.990 PASS      was 0.647
-> shoulder   0.3279  0.2881   0.879 PASS      was 0.806
-> midTorso   0.3416  0.2627   0.769 MISS      was 0.712
-> pelvis     0.3332  0.3390   1.017 PASS      was 0.719
-> ```
-> **The session's thesis, confirmed.** ⚠️ mid-torso misses; the profile localises
-> it to 45–50 % of the height — where the source's sleeve billows widest and ours,
-> traced from a frame with the arm against the body, does not.
-> ⛔ **The targets were committed in a SEPARATE, EARLIER commit (`00c6628`)**, so
-> nothing could be fitted to the answer — that ordering is kickoff D1 and it is
-> the only thing keeping A5-C honest.
+> ### ✅ SESSION 19 A5.1–A5.5 CLOSED — 7 traced garments on screen, and measured
+> `?art=dressed` → **20 parts**, `?art=idle` → the bare 21, unchanged. **750 green ·
+> fidelity 55/55 · bare clone green · 0 console errors.**
+> **A5-C 3 of 4 PASS** (head 0.990 · shoulder 0.879 · pelvis 1.017 · mid-torso
+> 0.769 MISS) against A4-D's **four**-of-four miss — the session's thesis
+> confirmed. ⭐ **The targets were committed in a SEPARATE EARLIER commit
+> (`00c6628`)** so nothing could be fitted to the answer.
+> **A5-E: held-out agreement 0.8294**, tracing-frame 0.8742, and the source's own
+> two frames agree at **0.8808** — so we reach **94 % of the ceiling** and are
+> barely better on our own source. **Not overfitted.**
 >
-> ### ⭐ A5-E — the held-out check says we are NOT overfitted
-> ```
-> ours vs TRACING frame  zFt_0061 : 0.8742
-> ours vs HELD-OUT frame zFt_0071 : 0.8294   <- A5-E
-> the two FRAMES vs each other    : 0.8808   <- the achievable ceiling
-> ```
-> **94 % of the ceiling, and barely better on the frame we traced from.** A
-> tuned-to-fit garment would have scored far better on its own source.
+> ### ⛔ THREE DEFECTS CARRIED FORWARD, ALREADY DIAGNOSED — do not re-derive them
+> 1. **The gi is 1.76× oversized and rises 13 px into the head.** `9015` is the
+>    gi's OUTER silhouette (the sleeve hides the body panel), but the sleeve is
+>    then drawn AGAIN on slot 19 — the lobe is counted twice. Measured: gi
+>    **41.1 × 50.4** replacing a torso of **23.3 × 28.4**; gi top **y 311.9** vs
+>    head bottom **y 325.3**. Fix: slot 15 wears a TORSO-SIZED panel.
+> 2. **The dressed figure is 11 % too tall** — 263.4 video px vs the frames'
+>    236.7 (227–250). ⚠️ **Our BARE fighter is 240.3 video px with NO hat while
+>    the source's are 236.7 WITH one**, so the skeleton is already at the top of
+>    the range and any hat overshoots. **Suspect the skeleton, not the garment.**
+> 3. **Blank spots:** the feet (y 420.7–431.4) sit BELOW the near hakama's hem
+>    (418.7); the far forearm is bare where the source shows cloth.
 >
-> ### ⛔ A5-D — the BARE fighter is unmoved (PASS); the DRESSED one is 11 % TOO TALL
-> `BARE 128.164 stage px` — byte-identical to SESSION 18, pinned by tests.
-> `DRESSED 140.484 stage px = 263.4 video px` vs the frames' **236.7 (227–250)**.
-> **Reported, not tuned away.** Diagnosis, and it is uncomfortable: **our bare
-> fighter is 240.3 video px with NO hat while the source's fighters are 236.7 px
-> WITH one** — the bare skeleton is already at the top of the source's range, so
-> any hat overshoots. Re-deriving the brim depth from the frame (0.40 → **0.60**,
-> the first value was a guess at a head the frame does not show) took it from
-> 144.8 to 140.5. **The remaining 11 % cannot be closed without burying the head,
-> so it points at the skeleton or at the OG's head/hat proportions. LEFT OPEN.**
->
-> ### ✅ A5-F — regression, all green
-> ```
-> fidelity 41/41 probes + 14/14 scans = 55/55, pass: true, 0 failures
-> suite 44 files / 750 tests · bare clone 739 passed | 11 skipped, exit 0
-> duel-baseline.test.ts UNEDITED · ratchet NOT touched this session
-> typecheck x2 -> 0 · eslint -> 0 · ?art=dressed 0 console errors
-> ```
+> ⚠️ **THE CANVAS IS TRANSPARENT on `?art=idle` and `?art=dressed`.** A black
+> outline over a black page is invisible — a whole round went to "fixing" an
+> outline that was already correct. **Put a backdrop behind it before judging.**
 >
 > ⭐ **OWNER DESIGN CONFIRMATION (2026-07-27):** clothes are equipped/unequipped
-> **per item, at any time**, and unequipped is the naked fighter. That confirms
-> the architecture — `TRACED` is already a **per-slot override table**, so each
-> garment is independently equippable and **the bare fighter is the real
-> unequipped state**, which is why `?art=idle` must keep working and
-> `OG_SLOT_SHAPES` is never edited in place.
->
-> **Open for SESSION 20:** the dressed height overshoot · mid-torso width · a
-> frame where the far leg and the sleeve are separately outlined · the other 481
-> poses · all audio.
+> **per item, at any time**, and unequipped is the naked fighter. The per-slot
+> override table (`TRACED` in `src/config/ogPose.ts`) already models exactly that,
+> so **the bare fighter is the real unequipped state**, not scaffolding — which is
+> why `?art=idle` must keep working and `OG_SLOT_SHAPES` is never edited in place.
 >
 > ---
 >
