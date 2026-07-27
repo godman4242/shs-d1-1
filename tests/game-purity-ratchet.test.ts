@@ -16,6 +16,7 @@ import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { TRACED_ID_MIN } from '../scripts/art/emit';
 import { listTsFiles, listUnscannableFiles, readSource, scanNumericLiterals } from './utils/configPurity';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -113,12 +114,41 @@ describe('game-purity ratchet: src/game/ numeric-literal baseline', () => {
         const src = readSource(file);
         const idMatch = /source characterId\s*:\s*(\d+)/.exec(src);
         const id = idMatch?.[1];
-        const hasCommand = src.includes('ffdec.sh -export shape') && src.includes('scripts/art/generate.ts');
+        /**
+         * SESSION19 A5.2 — TWO KINDS OF ART, TWO KINDS OF PROVENANCE, AND THE ID
+         * DECIDES WHICH.
+         *
+         * Equipment art died with the CDN, so the outfit is TRACED from the
+         * videos. This clause used to demand an `ffdec.sh -export shape` command
+         * from every file — which a traced shape can only satisfy by claiming an
+         * extraction that never happened, in the one repo where provenance is
+         * the whole point. Ids >= 9000 are traced and nothing else is, so the
+         * check is keyed on the id and cannot be dodged by editing the prose.
+         *
+         * BOTH DIRECTIONS ARE CHECKED. An OG shape that claims to be traced is
+         * just as much a lie as a traced shape that claims to be extracted, and
+         * a one-way check would wave the first one through.
+         */
+        const isTraced = id !== undefined && Number(id) >= TRACED_ID_MIN;
+        const claimsExtracted = src.includes('ffdec.sh -export shape');
+        const claimsTraced = src.includes('TRACED FROM VIDEO');
+        const converted = src.includes('scripts/art/generate.ts');
         const declaresGenerated = src.includes('GENERATED — DO NOT EDIT');
         const declaresApprox = src.includes('APPROXIMATED FILLS:');
         const rel = path.relative(ROOT, file);
         if (id === undefined) bad.push(`${rel}: no 'source characterId'`);
-        if (!hasCommand) bad.push(`${rel}: no extraction/conversion command`);
+        if (!converted) bad.push(`${rel}: no conversion command`);
+        if (isTraced) {
+          if (!claimsTraced) bad.push(`${rel}: id ${id} is traced but the header does not say so`);
+          if (claimsExtracted) bad.push(`${rel}: TRACED art claims an FFDec extraction that never happened`);
+          if (!src.includes('source frame')) bad.push(`${rel}: traced art names no source FRAME`);
+          if (!src.includes('scripts/art/traceGarment.py')) bad.push(`${rel}: traced art names no tracing command`);
+          // A trace whose placement/limits are unstated reads as measured fact.
+          if (!src.includes('⚠️ INFERRED:')) bad.push(`${rel}: traced art declares nothing INFERRED`);
+        } else {
+          if (!claimsExtracted) bad.push(`${rel}: no extraction command`);
+          if (claimsTraced) bad.push(`${rel}: payload-extracted art claims to be traced from video`);
+        }
         if (!declaresGenerated) bad.push(`${rel}: not marked GENERATED — DO NOT EDIT`);
         // SESSION15 gate item 6 — approximations must be listed, never silent.
         if (!declaresApprox) bad.push(`${rel}: header does not state its APPROXIMATED FILLS`);

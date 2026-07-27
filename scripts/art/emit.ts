@@ -40,6 +40,119 @@ function emitPaint(p: ShapeArt['paints'][number]): string {
   return `    {\n      kind: 'stroke',\n      color: ${hex(p.color)},\n      width: ${String(p.width)},\n      polylines: [\n${lines}\n      ],\n    },`;
 }
 
+/**
+ * SESSION 19 A5.2 — TRACED ART IS NOT EXTRACTED ART, AND ITS HEADER MUST NOT SAY
+ * IT IS.
+ *
+ * Equipment art died with the CDN, so the outfit is traced from the videos
+ * instead (docs/OWNER_PERMISSION_RULING.md permits it). The header this file
+ * emits names an FFDec export command and a `DefineShape` characterId — both
+ * false for a traced shape, in a repo whose whole discipline is provenance. So
+ * traced shapes get their own header naming the FRAME they came from.
+ *
+ * ⚠️ IDS >= 9000 ARE TRACED, AND NOTHING ELSE IS. The range is the discriminator
+ * on purpose: it is carried by `art.id`, so `emit(art)` alone still reproduces
+ * the file byte for byte from the id — which is what the re-derivation test
+ * needs, and what a second `provenance` parameter would have broken at every
+ * existing call site.
+ */
+export const TRACED_ID_MIN = 9000;
+
+/**
+ * Where shape `id`'s source SVG lives, repo-relative. The ONE place that mapping
+ * is decided, so `generate.ts` and the re-derivation test cannot disagree about
+ * which file a committed shape is supposed to come from. Returned as a relative
+ * POSIX path rather than joined here, to keep this module free of `node:path`.
+ */
+export function sourceSvgRelPath(id: number): string {
+  return id >= TRACED_ID_MIN ? `reference/traced/${String(id)}.svg` : `reference/extracted/shapes/${String(id)}.svg`;
+}
+
+interface TracedSource {
+  readonly slot: number;
+  readonly garment: string;
+  readonly frame: string;
+  readonly video: string;
+  readonly seconds: number;
+  readonly crop: string;
+  /** Everything the source could not resolve. Never allowed to be empty prose. */
+  readonly approximated: string;
+  readonly inferred: string;
+}
+
+/** Keyed by traced id. The header is derived from this, so it cannot drift. */
+export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
+  9017: {
+    slot: 17,
+    garment: 'kasa (conical straw hat)',
+    frame: 'reference/frames/s19_trace/zFt_0061.png',
+    video: 'zFtCaTO0_1M',
+    seconds: 590,
+    crop: '(762,638)-(900,702) video px; silhouette 107 x 48 video px',
+    approximated:
+      'the straw interior is emitted as ONE flat fill at the interior MEAN. ' +
+      'After a 5x5 median the modal colour still holds only 1.3 % of the ' +
+      'interior, so at this resolution the hat is NOT one flat colour — ' +
+      'two-tone shading and the woven texture streaks are flattened away.',
+    inferred:
+      'PLACEMENT ONLY. The traced OUTLINE is measured; where it sits on the ' +
+      'head is not. Slot 17 is aliased to slot 16, so (0,0) must be the head ' +
+      'joint pivot — and the frame cannot register it, because that fighter ' +
+      'wears different head art (its hair mass measures 20.4x24.0 world px ' +
+      'against our shape 2670 at 14.2x15.0) and stands in a different pose. ' +
+      'So the kasa is centred on OUR head+hair union and its brim set 40 % ' +
+      'down that head, the one ratio the frame does give. Veto = any evidence ' +
+      "of the OG's own hat pivot.",
+  },
+};
+
+function provenanceBlock(id: number): string {
+  const traced = TRACED_SOURCES[id];
+  if (traced === undefined) {
+    if (id >= TRACED_ID_MIN) {
+      throw new Error(`emit: id ${String(id)} is in the traced range but has no TRACED_SOURCES entry`);
+    }
+    return ` * PROVENANCE
+ *   source characterId : ${String(id)}   (DefineShape in the OG payload)
+ *   source file        : reference/extracted/shapes/${String(id)}.svg  (gitignored)
+ *   extracted by       : FFDEC_MEMORY=12g reference/tools/ffdec/ffdec.sh -export shape \\
+ *                          reference/extracted/shapes reference/decrypted/shs3_payload_decoded.swf
+ *   converted by       : npx vite-node scripts/art/generate.ts -- ${String(id)}
+ *   flatten tolerance  : ${String(TOLERANCE)} px   ·   coordinates rounded to ${String(DECIMALS)} dp
+ *   licence            : owner-attested Lut Games grant — docs/OWNER_PERMISSION_RULING.md`;
+  }
+  return ` * PROVENANCE — TRACED FROM VIDEO, **NOT** EXTRACTED FROM THE PAYLOAD
+ *   source characterId : ${String(id)}   (NOT an OG id — traced art is numbered >= ${String(TRACED_ID_MIN)})
+ *   garment / slot     : ${traced.garment} → slot ${String(traced.slot)}
+ *   source frame       : ${traced.frame}  (gitignored)
+ *   source video       : ${traced.video} @ t = ${String(traced.seconds)}.0 s
+ *   crop               : ${traced.crop}
+ *   traced by          : python3 scripts/art/traceGarment.py   (potrace 1.16, polygon mode \`-a 0\`)
+ *   source file        : reference/traced/${String(id)}.svg  (gitignored)
+ *   converted by       : npx vite-node scripts/art/generate.ts -- ${String(id)}
+ *   flatten tolerance  : ${String(TOLERANCE)} px   ·   coordinates rounded to ${String(DECIMALS)} dp
+ *   licence            : owner-attested Lut Games grant — docs/OWNER_PERMISSION_RULING.md
+ *
+ * ⚠️ INFERRED: ${wrapProse(traced.inferred)}`;
+}
+
+/** Wrap prose into the block comment at a readable width, indented to match. */
+function wrapProse(text: string): string {
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let line = '';
+  for (const w of words) {
+    if (line.length + w.length + 1 > 72) {
+      lines.push(line);
+      line = w;
+    } else {
+      line = line === '' ? w : `${line} ${w}`;
+    }
+  }
+  if (line !== '') lines.push(line);
+  return lines.join('\n *   ');
+}
+
 export function emit(art: ShapeArt): string {
   const paints = art.paints.map(emitPaint).join('\n');
 
@@ -60,25 +173,26 @@ export function emit(art: ShapeArt): string {
     // so the line parses unambiguously — the ratchet gate reads it back.
   ].join('  |  ');
 
+  const traced = TRACED_SOURCES[art.id];
+  const colourClaim =
+    traced === undefined
+      ? `Colours are BYTE-EXACT to the SWF's recorded RGB (SESSION15 §2 bar B).
+ *   APPROXIMATED FILLS: none — this shape is 100 % flat solid colour, so
+ *   SESSION15 D3 (mean-colour gradients) and D4 (bitmap fills) do not apply.`
+      : `Colours are SAMPLED FROM LOSSY VIDEO, not read from the SWF — INFERRED
+ *   targets, never CONTRACT (SESSION19 §P7).
+ *   APPROXIMATED FILLS: ${wrapProse(traced.approximated)}`;
+
   return `/**
  * GENERATED — DO NOT EDIT. Regenerate with the command below.
  *
- * PROVENANCE
- *   source characterId : ${String(art.id)}   (DefineShape in the OG payload)
- *   source file        : reference/extracted/shapes/${String(art.id)}.svg  (gitignored)
- *   extracted by       : FFDEC_MEMORY=12g reference/tools/ffdec/ffdec.sh -export shape \\
- *                          reference/extracted/shapes reference/decrypted/shs3_payload_decoded.swf
- *   converted by       : npx vite-node scripts/art/generate.ts -- ${String(art.id)}
- *   flatten tolerance  : ${String(TOLERANCE)} px   ·   coordinates rounded to ${String(DECIMALS)} dp
- *   licence            : owner-attested Lut Games grant — docs/OWNER_PERMISSION_RULING.md
+${provenanceBlock(art.id)}
  *
  * CONTENT
  *   ${String(art.paints.length)} paint op(s) in SWF paint order: ${String(fills.length)} solid fill(s), ${String(strokes.length)} stroke pass(es).
  *   ${String(rings.length)} ring(s) (${String(nHoles)} hole(s)), ${String(nVerts)} vertices.
  *   palette            : ${palette}
- *   Colours are BYTE-EXACT to the SWF's recorded RGB (SESSION15 §2 bar B).
- *   APPROXIMATED FILLS: none — this shape is 100 % flat solid colour, so
- *   SESSION15 D3 (mean-colour gradients) and D4 (bitmap fills) do not apply.
+ *   ${colourClaim}
  *
  * ⚠️ PAINT ORDER IS LOAD-BEARING. \`paints\` is in the source SWF's own style-group
  * order, back to front, and a renderer MUST draw it in exactly that order. The

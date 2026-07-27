@@ -2113,3 +2113,92 @@ grass-over-hem defect. Its shoji screens are a **sharp, cream-coloured lattice**
 so the sharpness route locks onto the screen grid and the white hakama has almost
 no contrast against cream. Two attempts, one cause, no third. Burst kept at
 `reference/frames/s19_dojo/` (t=560–586 s) so the rejection stays checkable.
+
+---
+
+## SESSION 19 — A5.2 (part 1 of 2): the kasa is traced, converted and gated
+
+**⚠️ A5.2 IS HALF DONE.** The ARTIFACT exists, is committed, and is fully gated.
+It is NOT yet drawn: `OG_DRESSED_SLOT_SHAPES`, `?art=dressed` and the on-screen
+check are the remaining half. Nothing claims otherwise.
+
+⭐ **THE PIPELINE WORKS END TO END WITH NO CHANGE TO THE CONVERTER.**
+frame → ink-bounded mask → potrace polygon → SVG → `scripts/art/svgShape.ts`
+(untouched) → `src/game/art/generated/shape9017.ts`. §P6's contract — `M L Q Z`
+only, flat opaque fills, shape-local coordinates — is met by construction:
+```
+shape 9017: 2 paints (2 fills), 121 verts → src/game/art/generated/shape9017.ts
+bbox x -20.912..26.643  y -27.249..-5.916  = 47.55 x 21.33 world px
+```
+
+### ⛔ D-A5.2a — TRACED ART GETS ITS OWN IDS, ITS OWN SOURCE DIR, AND ITS OWN HEADER
+A blocker the kickoff does not mention: **the provenance gate hard-coded an FFDec
+extraction command**, and the re-derivation test resolved every shape's source
+from `reference/extracted/shapes/<id>.svg`. A traced shape could only satisfy
+either by claiming an extraction that never happened — in the one repo where
+provenance is the entire discipline. So:
+- **ids ≥ 9000 are traced and nothing else is** (`TRACED_ID_MIN`), and the kasa
+  is **9017** — the id names its slot;
+- traced SVGs live in `reference/traced/`, and `sourceSvgRelPath(id)` is the ONE
+  place that mapping is decided, so `generate.ts` and the re-derivation test
+  cannot disagree about where a committed shape came from;
+- `emit()` derives the header from `art.id` alone — **not** from a new parameter,
+  which would have broken byte-identical re-derivation at every existing call
+  site — via a committed `TRACED_SOURCES` table naming frame, video, timestamp,
+  crop, approximations and inferences.
+- **The provenance gate now checks BOTH directions.** Traced art claiming an
+  FFDec export fails; payload art claiming to be traced fails too. A one-way
+  check would have waved the second one through.
+> Veto: put traced art in a separate directory with its own duplicated gates —
+> rejected, because the count/palette/identity gates on `art/generated/` are
+> exactly the ones traced art most needs.
+
+### ⚠️ D-A5.2b — THE PIVOT CANNOT BE REGISTERED FROM THE FRAME. IT IS INFERRED, AND SAYS SO.
+Slot 17 is aliased to slot 16, so the kasa's (0,0) must be the head's joint
+pivot. Three attempts to register it against the frame failed, and the third
+explained the first two: **the fighter in the tracing frame wears different head
+art.** Its hair mass measures **20.4 × 24.0 world px** against our shape 2670's
+**14.2 × 15.0** — a different shape, not a different threshold. Colour-based
+head segmentation also failed twice (hair and the gi's outline are both black and
+connected). So no frame registration better than ~±6 world px exists.
+**The traced OUTLINE is measured; the PLACEMENT is INFERRED** — the kasa is
+centred on our own head+hair union with its brim 40 % down that head, the one
+ratio the frame does give — and the emitted header says so in an `⚠️ INFERRED:`
+block that the gate requires. Veto = any evidence of the OG's own hat pivot.
+
+### ⚠️ D-A5.2c — TWO NESTED FILLS, NOT FILL + STROKE
+The kasa's dark band is **thin along the top edges and thick under the brim**, so
+a constant-width stroke cannot express it. The silhouette is emitted as a black
+fill with the enclosed straw painted over it; paint order is load-bearing and
+back-to-front here means black first.
+
+### ⚠️ D-A5.2d — THE STRAW IS NOT ONE FLAT COLOUR, AND THE HEADER SAYS SO
+§P7 prescribes the modal colour of the flattest interior. Measured here, **after
+a 5×5 median the mode still holds only 1.3 %** of the interior — the hat is
+two-tone with woven texture streaks. So the fill is the interior **mean**
+(`#8e6f38`), and the flattening is declared in `APPROXIMATED FILLS:`. Using a
+1.3 %-share mode would have been precision theatre.
+
+### Findings that cost real time, recorded so they are not re-paid
+- **Isolating by colour picked the BACKGROUND.** The blurred scenery is the same
+  warm family as straw and, in this frame, *brighter* than the hat. A5.1's F6
+  arriving on the first garment. The fix is the property that actually holds:
+  every OG part is bounded by a CLOSED heavy black outline, so a garment is
+  "the region enclosed by ink", never "pixels of the right hue".
+- **potrace writes its close command hard against the last number** (`-1z`), so
+  a whitespace tokeniser hands `float()` the string `"-1z"` and the trace dies
+  half way round the outline. Tokenise with a regex.
+- Both of §P9's named silent bugs are handled explicitly in
+  `scripts/art/traceGarment.py`: black-on-white subject, and potrace's y-UP.
+
+### Chaos plants — all four RED, then reverted green
+```
+PLANT 1  traced header also claims an FFDec extraction     2 failed | 75 passed
+PLANT 2  traced header declares nothing INFERRED           2 failed | 75 passed
+PLANT 3  payload-extracted 2664 claims TRACED FROM VIDEO   3 failed | 74 passed
+PLANT 4  one traced coordinate nudged (byte re-derivation) 1 failed | 76 passed
+REVERTED                                                        77 passed (77)
+```
+The two gate changes were themselves red-first: generating `shape9017.ts` turned
+the provenance gate and the directory-wide re-derivation test RED (742 → 740)
+before either was touched.

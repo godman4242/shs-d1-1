@@ -21,10 +21,9 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { convertShapeSvg } from './svgShape';
-import { emit, TOLERANCE } from './emit';
+import { emit, sourceSvgRelPath, TOLERANCE } from './emit';
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url));
-const SHAPE_DIR = path.join(ROOT, 'reference', 'extracted', 'shapes');
 const OUT_DIR = path.join(ROOT, 'src', 'game', 'art', 'generated');
 
 function main(): void {
@@ -34,7 +33,7 @@ function main(): void {
   }
   mkdirSync(OUT_DIR, { recursive: true });
   for (const id of ids) {
-    const svg = readFileSync(path.join(SHAPE_DIR, `${String(id)}.svg`), 'utf8');
+    const svg = readFileSync(path.join(ROOT, sourceSvgRelPath(id)), 'utf8');
     const art = convertShapeSvg(svg, id, TOLERANCE);
     const out = path.join(OUT_DIR, `shape${String(id)}.ts`);
     writeFileSync(out, emit(art));

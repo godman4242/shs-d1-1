@@ -1,6 +1,49 @@
 # RESUME HERE
 
-> ## ▶ IN PROGRESS — **`docs/sessions/SESSION19_KICKOFF.md`**, resume at **§4 A5.2**
+> ## ▶ IN PROGRESS — **`docs/sessions/SESSION19_KICKOFF.md`**, resume at **§4 A5.2 (second half)**
+>
+> ### 🔶 A5.2 HALF DONE — the kasa is TRACED, CONVERTED AND GATED. It is NOT yet DRAWN.
+> ⭐ **The pipeline works end to end with NO change to the converter:** frame →
+> ink-bounded mask → potrace polygon → SVG → `scripts/art/svgShape.ts`
+> (untouched) → `src/game/art/generated/shape9017.ts` — 2 fills, 121 verts,
+> bbox **47.55 × 21.33 world px**. §P6's `M L Q Z` / flat-opaque / shape-local
+> contract is met by construction.
+> **REMAINING for A5.2:** `OG_DRESSED_SLOT_SHAPES` (kickoff D3 — a SECOND slot
+> map, never a modified one), `?art=dressed`, and the on-screen check at the
+> head node. **Nothing is rendered yet; a green suite here says the DATA is
+> sound, not that a hat appeared.**
+>
+> ⛔ **A blocker the kickoff does not mention, now fixed:** the provenance gate
+> **hard-coded an FFDec extraction command** and the re-derivation test resolved
+> every source from `reference/extracted/shapes/<id>.svg` — so traced art could
+> only pass by claiming an extraction that never happened. **Ids ≥ 9000 are
+> traced and nothing else is** (kasa = **9017**, the id names its slot); traced
+> SVGs live in `reference/traced/`; `sourceSvgRelPath(id)` is the ONE place that
+> mapping is decided; `emit()` derives the header from `art.id` alone, so
+> byte-identical re-derivation still works at every existing call site. **The
+> gate now checks BOTH directions** — payload art claiming to be traced fails too.
+>
+> ⚠️ **THE PIVOT IS INFERRED, AND THE SHAPE'S OWN HEADER SAYS SO.** Three attempts
+> to register the kasa against the frame failed, and the third explained the
+> first two: **that fighter wears different head art** — its hair mass is
+> **20.4 × 24.0 world px** against our shape 2670's **14.2 × 15.0**. So the
+> traced OUTLINE is measured and the PLACEMENT is not: the kasa is centred on our
+> own head+hair with its brim 40 % down it (the one ratio the frame gives).
+> ⚠️ **The straw is NOT one flat colour** — after a 5×5 median the mode holds only
+> **1.3 %** — so the fill is the interior mean `#8e6f38` and the flattening is
+> declared in `APPROXIMATED FILLS:`. ⚠️ Two nested fills, not fill+stroke: the
+> dark band is thin on top and thick under the brim, which no constant-width
+> stroke can express.
+>
+> **Red-first, then chaos-planted:** generating `shape9017.ts` turned both gates
+> RED (742 → 740) before either was touched; then 4 plants — traced header
+> claiming FFDec · traced header declaring nothing INFERRED · 2664 claiming to be
+> traced · one coordinate nudged — **all RED, all reverted green.**
+> **Gates:** typecheck ×2 → 0 · eslint → 0 · suite **44 files / 742 tests green**.
+>
+> ---
+>
+> ## ▶ SESSION 19 — the kickoff
 > **GIVE THE FIGHTER ITS CLOTHES, TRACED FROM THE VIDEOS.** Self-contained, the
 > only kickoff to plan from, **no open prerequisites.**
 >

@@ -48,7 +48,7 @@ import {
   type ShapeArt,
   type Subpath,
 } from '../scripts/art/svgShape';
-import { emit, TOLERANCE } from '../scripts/art/emit';
+import { emit, sourceSvgRelPath, TOLERANCE } from '../scripts/art/emit';
 import { SHAPE_2664 } from '../src/game/art/generated/shape2664';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -439,7 +439,12 @@ describe.skipIf(!HAVE_REFERENCE)('convertShapeSvg: re-derives a REAL part shape 
 
     const drifted = files.filter((file) => {
       const id = Number(/^shape(\d+)\.ts$/.exec(file)?.[1]);
-      const svg = readFileSync(path.join(SHAPE_DIR, `${String(id)}.svg`), 'utf8');
+      // SESSION19 A5.2: an id resolves to exactly ONE source — payload exports
+      // live in reference/extracted/shapes/, garments traced from the videos in
+      // reference/traced/. Hard-coding the export dir here made the first traced
+      // shape throw ENOENT and take the whole check down with it, so the mapping
+      // is asked for rather than assumed.
+      const svg = readFileSync(path.join(ROOT, sourceSvgRelPath(id)), 'utf8');
       return emit(convertShapeSvg(svg, id, TOLERANCE)) !== readFileSync(path.join(dir, file), 'utf8');
     });
 
