@@ -1,6 +1,72 @@
 # RESUME HERE
 
-> ## ▶ NEXT SESSION STARTS HERE — **`docs/sessions/SESSION18_KICKOFF.md`**
+> ## ▶ IN PROGRESS — **SESSION 18. A4.1 IS DONE; START AT §4 A4.2.**
+> Kickoff: **`docs/sessions/SESSION18_KICKOFF.md`** (read it, not this summary).
+> Baseline is **`c46adbc`**, not the kickoff's `a9592d7`: three owner commits
+> (CI + dependabot) landed on top, and `git diff a9592d7..HEAD -- src tests` is
+> **EMPTY** — only `package.json`/lock moved. §P1's 690-test figure re-confirmed
+> on `c46adbc` before any work started.
+>
+> ### ✅ A4.1 DONE — hole rings are packed, not skipped. **701 tests green** (was 690).
+> `planShape` emits a third op kind, `holedFill { flatXY, holeIndices }` — Earcut's
+> own argument shape — and `drawPlan` calls `Phaser.Geom.Polygon.Earcut` +
+> `trianglesOf` + `fillTriangle`. **7 chaos plants, all watched RED then reverted.**
+>
+> ⛔ **THE KICKOFF'S §P4 RECIPE IS WRONG FOR THE FIGHTER'S OWN TORSO — this is the
+> finding of the step.** §P4 says "concatenate **the** non-hole ring, then each
+> hole ring" (singular). Shape **2646 (torso, slot 15)** has a fill paint with
+> **TWO outer rings and TWO holes, one hole inside each**:
+> ```
+> ring0 out  area 153.77  bbox [-9.60,-21.55 ..  9.82, -6.55]
+> ring1 out  area  58.02  bbox [-1.50, -9.05 ..  8.85,  2.15]
+> ring2 HOLE area  -4.46  → inside ring0        ring3 HOLE area -3.34 → inside ring1
+> ```
+> The singular recipe packs ring0+ring2+ring3 and **drops ring1 entirely**.
+> Earcut does not error on a hole outside its outer ring — it returns a plausible
+> mesh. **D-A4.1: holes pair with their CONTAINING outer, by geometry.** Planting
+> the kickoff's own recipe turns 4 tests red, headed by `pairs each hole with the
+> outer ring that CONTAINS it — the real shape 2646 topology`.
+>
+> ⭐ **Corrected hole scope, measured over all 16 shapes:** the 14 fighter shapes
+> need **3 packed ops / 3 hole rings** (2646 → 2 ops, 2648 → 1) — the kickoff's
+> "4 hole instances" once 2648 is drawn twice, at slots 6 and 10. All 16 real
+> shapes plan **without a single throw**.
+>
+> ⭐ **ONE containment implementation, not two** — `src/core/ringGeometry.ts`.
+> `pointInRing`/`boundaryProbes`/`distToRing`/`ringContains` moved verbatim out of
+> `scripts/art/svgShape.ts`, which now imports and re-exports them. The converter
+> asks "how many rings contain this one?" (→ `ring.hole`); the planner asks
+> "*which* ring contains this hole?" (→ `holeIndices`). A drifting second copy is
+> how those two answers silently disagree — and that rule already produced **24
+> wrong verdicts across 19 shapes** once (SESSION16 R2 finding 3).
+> **Proof the extract changed nothing: `shape2664.ts` regenerates BYTE-IDENTICAL.**
+>
+> ⚠️ **Both pairing ambiguities THROW rather than guess:** a hole inside no outer,
+> and a hole inside more than one (innermost-wins is deliberately not implemented
+> — nothing in the 16 needs it; veto = implement it when a real shape does).
+> ⚠️ **A4-A is only HALF proven.** This is the packing. `Earcut.deviation(…) === 0`
+> is a browser check and belongs to **A4.4** — nothing about holes has been
+> *rendered* yet.
+> ⚠️ **The `game/` ratchet fired and was NOT refreshed** — `TRIANGLE_VERTS` moved
+> to `src/config/art.ts` and `OgArtScene.ts` is back to an empty multiset.
+> ⚠️ **PROCESS: the first plant run reported all 7 GREEN and it was the HARNESS.**
+> `vitest --reporter=basic` does not exist in vitest 4 — it threw `ERR_LOAD_URL`
+> before running a single test, and "no failures printed" read as a pass. Check
+> the exit code, not the absence of output.
+>
+> **Gates:** suite **701/701 (42 files)** · tsc ×2 exit 0 · eslint exit 0 ·
+> ratchet not widened · full record in `docs/DIVERGENCES.md` "SESSION 18 — A4.1".
+>
+> ### ⬜ NEXT: A4.2 — generate and commit the other 13 shapes
+> ```
+> npx vite-node scripts/art/generate.ts -- 2644 2646 2648 2650 2653 2655 2658 \
+>                                          2667 2670 2672 2674 2676 2678
+> ```
+> Then A4.3 (`composePose`, red-first) · A4.4 (`?art=idle` + measure) · A4.5.
+>
+> ---
+>
+> ## ▶ THE KICKOFF — **`docs/sessions/SESSION18_KICKOFF.md`**
 > **COMPOSE THE WHOLE FIGHTER, AT ITS RECORDED TRANSFORMS.** Self-contained, the
 > only kickoff to plan from, **no open prerequisites.**
 >

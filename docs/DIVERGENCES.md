@@ -1551,3 +1551,115 @@ twice (`x:1305` for an expected `x:306`) · `inkBox.clipped` forced true.
 `npm run build` clean · **0 console errors** on a fresh load · ratchet refreshed
 deliberately, its entire diff being `"src/game/OgArtScene.ts": {}` — an empty
 multiset, i.e. the new scene contains no numeric literals at all.
+
+---
+
+## SESSION 18 — A4.1: hole rings become triangulation input (2026-07-27)
+
+**The A3-only hole SKIP is gone.** `planShape` now emits a third op kind,
+`holedFill`, carrying `{ flatXY, holeIndices }` — `Phaser.Geom.Polygon.Earcut`'s
+own argument shape — and `src/game/OgArtScene.ts`'s `drawPlan` calls Earcut and
+fans the returned index triples through `Graphics.fillTriangle`. The split is
+SESSION18 D1: `core/` may import no packages, so it packs and the scene
+triangulates.
+
+### ⭐ THE KICKOFF'S §P4 RECIPE IS WRONG FOR THE FIGHTER'S OWN TORSO
+
+§P4 prescribes "concatenate **the** non-hole ring, then each `hole: true` ring,
+into one flat array" — singular. Converting shape **2646 (torso, slot 15)** on
+2026-07-27 shows its first fill paint carries **TWO outer rings and TWO holes,
+one hole inside each outer**:
+
+```
+shape 2646 paint #0  color 0xfeca98
+  ring0 out  n= 98  signedArea  153.77  bbox [-9.60,-21.55 ..  9.82, -6.55]
+  ring1 out  n= 73  signedArea   58.02  bbox [-1.50, -9.05 ..  8.85,  2.15]
+  ring2 HOLE n= 23  signedArea   -4.46  bbox [-7.85,-14.73 .. -4.95,-11.95] → inside ring0
+  ring3 HOLE n= 12  signedArea   -3.34  bbox [ 2.05, -5.20 ..  4.85, -3.05] → inside ring1
+```
+
+Applied literally, the singular recipe packs `ring0 + ring2 + ring3` and **drops
+`ring1` entirely** — a hole cut where the torso is solid, and a missing slab
+where it is not. Earcut does not error on a hole that lies outside its outer
+ring; it returns a plausible mesh. **This is exactly the failure D1's veto note
+predicted** ("the one part that can silently mis-pair a hole with the wrong
+outer ring"), and it is live in the fighter, not hypothetical.
+
+⇒ **D-A4.1 — holes are paired with their CONTAINING outer ring, by geometry.**
+Each outer ring that owns holes becomes one `holedFill` op; every other outer
+ring stays a plain `fill`, so a hole-free shape plans exactly as it did in A3.
+A census over all 16 converted shapes puts the corrected scope at **3 packed ops
+and 3 hole rings in the 14 fighter shapes** (2646 ×2 ops, 2648 ×1) — which is
+the kickoff's "4 hole instances" once 2648 is drawn twice, at slots 6 and 10.
+
+### ⭐ ONE containment implementation, not two — `src/core/ringGeometry.ts`
+
+`pointInRing` / `boundaryProbes` / `distToRing` / `ringContains` were **moved
+verbatim out of `scripts/art/svgShape.ts`**, which now imports and re-exports
+them. Two callers now ask the same question of the same rings — the converter
+asks "how many rings contain this one?" to set `ring.hole`, the planner asks
+"*which* ring contains this hole?" to pack it — and a second, drifting copy is
+how they silently disagree. That rule already produced **24 wrong verdicts
+across 19 shapes** once (SESSION16 R2 finding 3); it is not a rule to retype.
+Its epsilon moved to `RING_ON_EPSILON` in `src/config/art.ts` (`core/` allows no
+literals). **Proof the extract changed nothing: regenerating `shape2664.ts`
+produced a byte-identical file (`git diff --quiet` clean), and the converter's
+own 41-test re-derivation suite stayed green.**
+
+### Both ambiguities FAIL LOUD rather than guess
+- a hole inside **no** outer ring throws;
+- a hole inside **more than one** outer ring throws — innermost-wins pairing is
+  deliberately **not** implemented, because no ring in any of the 16 shapes needs
+  it (every hole resolves to exactly one owner). ⚠️ **Veto path:** even-odd
+  nesting at depth ≥ 3 (an island inside a hole, with its own hole) produces
+  this legitimately; implement innermost-wins when a real shape hits it. Until
+  then a throw beats a hole punched through solid colour that **no gate in this
+  session's silhouette-based bar can see**.
+
+### Also moved into `core/`: the Earcut index fan-out
+`trianglesOf(flatXY, indices)` converts Earcut's flat **vertex-index** triples
+into `fillTriangle`'s six coordinates. It lives beside the packer because index
+arithmetic in a scene is untestable (`tests/no-game-imports.test.ts`) **and**
+because the `game/` ratchet fired the moment it was written there — 0/1/2/3
+appearing in `OgArtScene.ts`. The ratchet was **not refreshed**; the numbers
+moved (`TRIANGLE_VERTS` → `src/config/art.ts`) and `OgArtScene.ts` is back to an
+empty multiset.
+
+### Divergences and limits carried forward
+- **The planner still cannot see the paint-order defect** — unchanged from
+  SESSION17, and §3.1 of the kickoff proves A4 cannot either: `2662` is the only
+  one of the 16 shapes with a stroke before a fill and it is **not in the
+  fighter**. `tests/artPlan.test.ts`'s synthetic `S,F` and `F,S,F,S` fixtures
+  remain the only defence in the repo.
+- **Gate A4-A is only half proven here.** This step proves the **packing**;
+  `Earcut.deviation(...) === 0` for the four hole instances is a browser check
+  and belongs to A4.4. Nothing about holes has yet been rendered.
+- **~5 genuinely overlapping ring pairs in the wider corpus** still cannot be
+  represented by a per-ring `hole` boolean (SESSION16 P8). None is in the 16.
+
+**Chaos plants — 7 written, 7 watched RED, all reverted:**
+1. **the kickoff's own singular recipe** (every hole packed against the first
+   outer) → 4 red, headed by `pairs each hole with the outer ring that CONTAINS
+   it — the real shape 2646 topology`;
+2. `holeIndices` in number units instead of vertex units → 2 red;
+3. orphan hole silently dropped instead of throwing → 1 red;
+4. ambiguous ownership silently taking the first container → 1 red;
+5. `inkedBounds` ignoring packed ops → 1 red;
+6. `trianglesOf` reading an index as a flat offset → 2 red;
+7. `trianglesOf` dropping the whole-triangles check → 1 red.
+
+⚠️ **A process note worth carrying: the first plant run reported all seven
+GREEN and it was the harness, not the guards.** `vitest --reporter=basic` does
+not exist in vitest 4 — the runner threw `ERR_LOAD_URL` before executing a
+single test, and a naive "no failures printed" check read that as a pass. A
+plant harness that cannot fail is worth exactly as much as a guard that cannot
+fail. Check the exit code, not the absence of output.
+
+⚠️ **A guard bit a real mistake during this step:** the "no outer ring contains"
+throw fired on one of my own test fixtures, whose triangle did not in fact
+contain its hole. The fixture was fixed; the code was not.
+
+**Gates:** suite **701/701 (42 files)** — was 690, +12 new hole-packing and
+fan-out tests, −1 the retired A3-skip test · tsc ×2 exit 0 · eslint exit 0 ·
+`shape2664.ts` regenerated **byte-identical** · ratchet **not** widened ·
+all 16 real shapes plan without a throw.

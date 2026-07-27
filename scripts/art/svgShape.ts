@@ -20,7 +20,17 @@
  * shape-local frame whose origin is the part's joint pivot; the <g> translate
  * only shifts it into a positive-sized viewport. We therefore IGNORE the <g>
  * offset. Baking it in would break every animation node in A4.
+ *
+ * ⚠️ RING CONTAINMENT NOW LIVES IN `src/core/ringGeometry.ts` (SESSION18 A4.1)
+ * and is imported below, not duplicated. The planner has to ask the SAME
+ * question about the SAME rings — "which outer ring owns this hole?" — to pack
+ * an Earcut `holeIndices` span, and two copies of a rule that once produced 24
+ * wrong verdicts (SESSION16 R2 finding 3) is how they silently disagree. The
+ * names are re-exported here so this module's public surface is unchanged.
  */
+import { boundaryProbe, boundaryProbes, pointInRing, ringContains } from '../../src/core/ringGeometry';
+
+export { boundaryProbe, boundaryProbes, pointInRing };
 
 export interface LineSeg {
   readonly kind: 'L';
@@ -252,24 +262,6 @@ function signedArea(ring: readonly number[]): number {
   return a / 2;
 }
 
-/** Even-odd ray cast toward +x. Winding-agnostic by construction. */
-export function pointInRing(x: number, y: number, ring: readonly number[]): boolean {
-  let inside = false;
-  const n = ring.length;
-  for (let i = 0; i + 1 < n; i += 2) {
-    const j = (i + 2) % n;
-    const ax = coord(ring, i);
-    const ay = coord(ring, i + 1);
-    const bx = coord(ring, j);
-    const by = coord(ring, j + 1);
-    if (ay > y !== by > y) {
-      const t = (y - ay) / (by - ay);
-      if (x < ax + t * (bx - ax)) inside = !inside;
-    }
-  }
-  return inside;
-}
-
 /**
  * A point strictly inside the ring. A centroid is NOT sufficient — for a
  * concave ring it can land in the notch and flip the hole verdict.
@@ -297,91 +289,6 @@ export function interiorPoint(ring: readonly number[]): readonly [number, number
     return [(coord(cross, 0) + coord(cross, 1)) / 2, yMid];
   }
   return [xs.reduce((s, v) => s + v, 0) / xs.length, yMid];
-}
-
-/** Two points closer than this are ON each other, for containment purposes. */
-const ON_RING = 1e-9;
-
-/**
- * Every edge midpoint of the ring, LONGEST EDGE FIRST.
- *
- * ⚠️ Nesting MUST be probed from the boundary, not from `interiorPoint`. A
- * ring nested inside R cannot contain a boundary point of R, but it very much
- * can contain an interior one: the centre of a square-with-a-hole lies inside
- * the hole, which made the outer ring classify itself as a hole. That was a
- * real red here, not a hypothetical.
- *
- * ⚠️ But ONE probe is not enough, and the longest edge is not the safe choice
- * this once claimed (SESSION16 R2 finding 3). The old docstring worried about
- * landing on another ring's VERTEX; the real hazard is another ring's EDGE.
- * FFDec tessellates abutting regions of a single even-odd path along a
- * byte-identical shared edge, and that shared edge is frequently the ring's
- * longest — so the one probe landed exactly ON a sibling, where `pointInRing`
- * has no on-boundary tolerance and answers essentially arbitrarily. 24 rings
- * across 19 real shapes were emitted with the wrong verdict, up to 345 px².
- * Hence: candidates, longest first, so behaviour is unchanged wherever nothing
- * touches, and there is somewhere to go when something does.
- */
-export function boundaryProbes(ring: readonly number[]): Array<readonly [number, number]> {
-  const n = ring.length;
-  const out: Array<{ len: number; p: readonly [number, number] }> = [];
-  for (let i = 0; i + 1 < n; i += 2) {
-    const j = (i + 2) % n;
-    const ax = coord(ring, i);
-    const ay = coord(ring, i + 1);
-    const cx = coord(ring, j);
-    const cy = coord(ring, j + 1);
-    out.push({ len: Math.hypot(cx - ax, cy - ay), p: [(ax + cx) / 2, (ay + cy) / 2] });
-  }
-  out.sort((a, b) => b.len - a.len);
-  return out.map((e) => e.p);
-}
-
-/** The first (longest-edge) probe. Kept for callers that want just one point. */
-export function boundaryProbe(ring: readonly number[]): readonly [number, number] {
-  const p = boundaryProbes(ring).at(0);
-  if (p === undefined) throw new Error('svgShape: cannot probe an empty ring');
-  return p;
-}
-
-/** Distance from a point to the closest point on any of the ring's edges. */
-function distToRing(px: number, py: number, ring: readonly number[]): number {
-  const n = ring.length;
-  let best = Infinity;
-  for (let i = 0; i + 1 < n; i += 2) {
-    const j = (i + 2) % n;
-    const ax = coord(ring, i);
-    const ay = coord(ring, i + 1);
-    const bx = coord(ring, j);
-    const by = coord(ring, j + 1);
-    const dx = bx - ax;
-    const dy = by - ay;
-    const len2 = dx * dx + dy * dy;
-    const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2));
-    best = Math.min(best, Math.hypot(px - (ax + t * dx), py - (ay + t * dy)));
-  }
-  return best;
-}
-
-/**
- * Is `inner` nested inside `outer`? Decided from the first boundary probe of
- * `inner` that is not sitting ON `outer`.
- *
- * Choosing the probe PER PAIR is sound because rings of one even-odd path do not
- * properly cross: `inner` is wholly inside or wholly outside `outer`, so any
- * point of `inner` that is not on the boundary answers for all of it. (Genuinely
- * overlapping subpaths do occur in ~5 places in the wider corpus and a per-ring
- * `hole` boolean cannot represent them under any epsilon — that is a separate,
- * unfixed limitation, recorded in docs/DIVERGENCES.md.)
- */
-function ringContains(outer: readonly number[], inner: readonly number[]): boolean {
-  for (const [px, py] of boundaryProbes(inner)) {
-    if (distToRing(px, py, outer) > ON_RING) return pointInRing(px, py, outer);
-  }
-  // Fails CLOSED, per this file's contract: every edge midpoint of `inner` lies
-  // on `outer`, so the two are coincident and the nesting question has no
-  // answer. Guessing would silently punch a hole through solid colour.
-  throw new Error('svgShape: ring lies entirely on a sibling ring — cannot classify as hole or solid');
 }
 
 /**

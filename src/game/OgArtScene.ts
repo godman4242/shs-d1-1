@@ -25,7 +25,7 @@ import Phaser from 'phaser';
 import { INK_ALPHA_THRESHOLD, OG_ART_STAGE, RGBA_STRIDE } from '../config/art';
 import { HALF, ONE, ZERO } from '../config/nums';
 import { IDLE_POSE } from '../config/poses';
-import { inkedBounds, planShape, type DrawOp } from '../core/artPlan';
+import { inkedBounds, planShape, trianglesOf, type DrawOp } from '../core/artPlan';
 import { inkBox, type InkBox } from '../core/inkBox';
 import { VIEW } from '../core/viewport';
 import { SHAPE_2664 } from './art/generated/shape2664';
@@ -127,6 +127,16 @@ export class OgArtScene extends Phaser.Scene {
  */
 export function drawPlan(g: Phaser.GameObjects.Graphics, plan: readonly DrawOp[]): void {
   for (const op of plan) {
+    // A polygon with holes cannot be drawn by `fillPoints` at all. The planner
+    // has already packed it into Earcut's own argument shape and `trianglesOf`
+    // reads the result back (SESSION18 D1), so the only thing this scene adds is
+    // the call itself — which is exactly the part no vitest can reach.
+    if (op.kind === 'holedFill') {
+      const indices = Phaser.Geom.Polygon.Earcut([...op.flatXY], [...op.holeIndices]);
+      g.fillStyle(op.color);
+      for (const t of trianglesOf(op.flatXY, indices)) g.fillTriangle(...t);
+      continue;
+    }
     const points = op.points.map((p) => new Phaser.Geom.Point(p.x, p.y));
     if (op.kind === 'fill') {
       g.fillStyle(op.color);

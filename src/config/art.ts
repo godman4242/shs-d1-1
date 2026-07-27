@@ -18,6 +18,22 @@ export const RGBA_STRIDE = 4;
 export const RGBA_ALPHA_OFFSET = 3;
 
 /**
+ * Two points closer than this are ON each other for ring-containment purposes
+ * (`src/core/ringGeometry.ts`). Spec-fixed, not tuning: FFDec emits abutting
+ * regions of one even-odd path along a byte-identical shared edge, so the
+ * epsilon exists to recognise "exactly coincident", not to absorb slop. Widening
+ * it would start swallowing genuinely-near-but-distinct edges — the failure
+ * SESSION16 R2 finding 3 fixed by probing more edges instead.
+ */
+export const RING_ON_EPSILON = 1e-9;
+
+/**
+ * Vertices per triangle. `Phaser.Geom.Polygon.Earcut` returns ONE flat array of
+ * vertex indices, three per triangle — this is the stride that reads it back.
+ */
+export const TRIANGLE_VERTS = 3;
+
+/**
  * SESSION17 §P2's measurement rule: a pixel counts as ink at 50 % of full alpha.
  * Fixed here so the threshold cannot drift between one reading and the next.
  */
