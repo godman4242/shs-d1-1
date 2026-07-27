@@ -1,7 +1,7 @@
 # Automated dependency + security update PRs (GitHub-native, free).
 # Security fixes open immediately; routine version bumps are GROUPED weekly to stay low-noise.
-# The .githooks/pre-commit gate (typecheck + vitest + eslint) catches any breaking bump before merge,
-# so minor/patch PRs are safe to auto-merge once CI (if added) is green.
+# CI (.github/workflows/ci.yml) verifies every bump PR, so minor/patch PRs are safe to auto-merge
+# once CI is green (turn on auto-merge in the repo's Settings if you want it hands-off).
 version: 2
 updates:
   - package-ecosystem: "npm"
