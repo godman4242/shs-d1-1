@@ -3113,3 +3113,10 @@ tells forward — see the kickoff §2 amendment; build FROM the study frames.
   session. Owner also asked after missing tools: NONE — the gap to a
   perfect copy is scheduled measurement (P3 audio, P4 numbers, P5
   animations), not tooling.
+- **05:00** SESSION 23 CLOSED. Clean clone green (879 pass / 15 skipIf — the
+  byte suites without the gitignored reference payload). Floors held all
+  session (suite-pinned, green in 894). SESSION24_KICKOFF.md written and
+  graded ✅: the owner's three LOOK verdicts are the session (A12-A..F),
+  gameplay moves only behind measured values + the duel-baseline's own atomic
+  re-record protocol, audio scheduled as SESSION 25. RESUME collapsed to one
+  closed banner; per-step banners live here.
