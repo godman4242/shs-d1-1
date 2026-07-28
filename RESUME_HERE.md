@@ -50,7 +50,28 @@ carried as a closed door. The next change would be churn.
 
 ---
 
-> ## ▶ SESSION 23 IN FLIGHT — A11.1 LANDED: THE DUEL DRAWS THE COMPOSED OG FIGHTER.
+> ## ▶ SESSION 23 IN FLIGHT — A11.1 + A11.2 LANDED: BOTH COMBATANTS COMPOSED, FACING EACH OTHER.
+> **54 files / 868 tests green** · tsc ×2 → 0 · eslint → 0 · fidelity **55/55
+> PASS ×2 consecutive, autonomous** · `Sim.ts` + duel-baseline byte-untouched.
+> - **A11-B (GATE):** mirroring is a COMPOSE-TIME transform (kickoff D3) — a
+>   `mirror` flag on `composePose` (tag) + ONE math site in `planPose`
+>   (reflect rotated shape-locals AND the node x). `tests/a11Mirror.test.ts`
+>   (4 tests, red-first, chaos-planted with the P4 half-flip) pins the WHOLE
+>   mirrored plan as the exact x-reflection of the unmirrored plan — the
+>   branch cannot be wrong in either facing if the reflection is exact.
+>   DuelScene picks per fighter per frame from sim truth (fighters can cross).
+>   LOOK verified: enemy faces the player, branch behind the correct hip.
+> - **Fidelity flake ROOT-CAUSED (not tuned away):** the harness's
+>   `devHoldAt` races the restarted intro's `create()` — the stale scene
+>   object still says `step:'done'`, the hold no-ops, `create()` nulled it,
+>   and the FIGHT!-glyph probes sampled the free-running VS beat's black
+>   stroke gaps. Fix: `DuelIntro.create()` now RE-APPLIES a pre-recorded hold.
+>   The 8 s settle "fix" was coincidence and is reverted (1 s, comment tells
+>   the story). Post-fix: 55/55 ×2 under multi-window GPU load.
+>
+> *(A11.1 record below.)*
+
+> ## ▶ A11.1 LANDED: THE DUEL DRAWS THE COMPOSED OG FIGHTER.
 > **53 files / 864 tests green** (was 52/855) · tsc ×2 → 0 · eslint → 0 ·
 > fidelity **55/55 PASS — now AUTONOMOUS** (`?fidelity=auto` + a self-opened
 > browser window + a localStorage verdict; no human window-holding) ·

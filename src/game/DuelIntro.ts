@@ -53,13 +53,24 @@ export class DuelIntro extends Phaser.Scene {
     this.step = 'vs';
     this.stepAt = this.time.now;
     this.lastNow = this.time.now;
-    this.devHold = null;
+    // ⚠️ devHold is deliberately NOT reset here. The fidelity harness restarts
+    // the duel and calls devHoldAt() as little as TWO settled frames later —
+    // which can land on THIS scene object before this create() has run (the
+    // scene instance persists across restarts, still carrying step='done').
+    // The seam records the hold; create() re-applies it below. Nulling it here
+    // instead let the fresh intro run FREE under the sampler, and the FIGHT!-
+    // glyph probes then read the black gaps between the VS strokes —
+    // intermittently, because create() usually wins the two-frame race unless
+    // the GPU is loaded (SESSION23: several piled-up game windows).
     // The band persists across both beats (measured: identical rows in the
     // VS and FIGHT! frames); only the glyph layer swaps.
     this.band = this.add.graphics().setDepth(998);
     this.band.fillStyle(COL.black, 1);
     this.band.fillRect(0, BAND_Y, GAME_WIDTH, BAND_H);
     this.showVsBeat();
+    // Re-apply a hold the harness recorded before this create() ran (the
+    // race documented above): fast-forward to the requested beat and freeze.
+    if (this.devHold !== null && this.devHold !== 'done') this.devHoldAt(this.devHold);
     this.input.on('pointerdown', () => {
       this.advance();
     });

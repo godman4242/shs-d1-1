@@ -28,8 +28,18 @@ import type { PosedPart } from './composePose';
 import type { Vec } from './vec';
 import { worldToStageLength, type ViewTransform } from './viewport';
 
-/** Turn a flat `[x0,y0,…]` contour about the origin. */
-function rotateFlat(flat: readonly number[], cos: number, sin: number): number[] {
+/**
+ * Turn a flat `[x0,y0,…]` contour about the origin; `mirrored` then reflects
+ * the TURNED point across the pivot's vertical axis (SESSION23 A11.2).
+ *
+ * The order matters and is the whole mirror contract: reflect-after-rotate is
+ * `M·R(θ)·p`, which together with the negated node offset in `planPose` makes
+ * the finished figure the exact x-reflection of the unmirrored one about the
+ * fighter's anchor — what `tests/a11Mirror.test.ts` pins op by op. Negating
+ * the angle instead (`R(−θ)`) without flipping the art is the P4 double-flip
+ * trap: the branch would come out wrong in exactly one facing.
+ */
+function rotateFlat(flat: readonly number[], cos: number, sin: number, mirrored: boolean): number[] {
   const out: number[] = [];
   for (let i = ZERO; i < flat.length; i += TWO) {
     const x = flat[i];
@@ -37,7 +47,8 @@ function rotateFlat(flat: readonly number[], cos: number, sin: number): number[]
     if (x === undefined || y === undefined) {
       throw new Error(`planPose: coordinate array must hold whole x,y pairs — got ${String(flat.length)} numbers`);
     }
-    out.push(x * cos - y * sin, x * sin + y * cos);
+    const rx = x * cos - y * sin;
+    out.push(mirrored ? -rx : rx, x * sin + y * cos);
   }
   return out;
 }
@@ -49,7 +60,7 @@ function rotateFlat(flat: readonly number[], cos: number, sin: number): number[]
  * the `hole` verdicts survive because rotation preserves nesting exactly, so
  * A4.1's packing still pairs each hole with the same outer ring.
  */
-function rotateShape(shape: ShapeInput, rotationRad: number): ShapeInput {
+function rotateShape(shape: ShapeInput, rotationRad: number, mirrored: boolean): ShapeInput {
   const cos = Math.cos(rotationRad);
   const sin = Math.sin(rotationRad);
 
@@ -58,13 +69,13 @@ function rotateShape(shape: ShapeInput, rotationRad: number): ShapeInput {
       ? {
           kind: 'fill',
           color: paint.color,
-          rings: paint.rings.map((ring) => ({ points: rotateFlat(ring.points, cos, sin), hole: ring.hole })),
+          rings: paint.rings.map((ring) => ({ points: rotateFlat(ring.points, cos, sin, mirrored), hole: ring.hole })),
         }
       : {
           kind: 'stroke',
           color: paint.color,
           width: paint.width,
-          polylines: paint.polylines.map((line) => rotateFlat(line, cos, sin)),
+          polylines: paint.polylines.map((line) => rotateFlat(line, cos, sin, mirrored)),
         },
   );
   return { id: shape.id, paints };
@@ -96,11 +107,14 @@ export function planPose(
     if (shape === undefined) {
       throw new Error(`planPose: slot ${String(part.slot)} needs shape ${String(part.shapeId)}, which was not supplied`);
     }
+    // A mirrored part reflects its node offset too — the art flip in
+    // `rotateFlat` plus this sign is the complete mirror (nothing else moves).
+    const mirrored = part.mirrored === true;
     const anchor: Vec = {
-      x: origin.x + worldToStageLength(part.x, view),
+      x: origin.x + worldToStageLength(mirrored ? -part.x : part.x, view),
       y: origin.y + worldToStageLength(part.y, view),
     };
-    ops.push(...planShape(rotateShape(shape, part.rotationRad), anchor, view));
+    ops.push(...planShape(rotateShape(shape, part.rotationRad, mirrored), anchor, view));
   }
   return ops;
 }

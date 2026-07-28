@@ -27,6 +27,13 @@ export interface PosedPart {
   readonly y: number;
   /** Radians. The source records degrees; the conversion happens here, once. */
   readonly rotationRad: number;
+  /**
+   * SESSION23 A11.2 (kickoff D3): the fighter faces the other way. A TAG only —
+   * the recorded geometry above stays untouched, and every piece of mirror math
+   * lives in `planPose` (one site, so a double-flip has nowhere to hide).
+   * Optional so hand-built parts in older tests stay valid; absent ⇒ unmirrored.
+   */
+  readonly mirrored?: boolean;
 }
 
 /**
@@ -45,6 +52,7 @@ export function composePose(
   nodes: readonly OgPoseNode[],
   slotShapes: ReadonlyArray<readonly number[]>,
   aliases: ReadonlyArray<readonly [number, number]>,
+  mirror = false,
 ): PosedPart[] {
   const bySlot = new Map<number, OgPoseNode>();
   for (const node of nodes) bySlot.set(node.slot, node);
@@ -76,6 +84,7 @@ export function composePose(
         x: node.x,
         y: node.y,
         rotationRad: (node.rotationDeg * Math.PI) / HALF_TURN_DEG,
+        mirrored: mirror,
       });
     }
   });

@@ -3049,3 +3049,24 @@ tells forward — see the kickoff §2 amendment; build FROM the study frames.
   same-origin tab. First runs caught a real race: at 1 s settle the two
   FIGHT!-glyph probes intermittently read black (boot warm-up); at the
   documented 8 s settle: **fidelity 55/55 PASS, failed 0** — autonomously.
+- **02:00** A11.2 landed red-first: `tests/a11Mirror.test.ts` (4 tests, watched
+  3 fail) pins mirroring as a compose-time transform — `mirror` flag on
+  `composePose` (tag only), ALL math in `planPose` (reflect rotated
+  shape-locals + node x; unary minus, core stays literal-free). The P4
+  double-flip trap is answered structurally: the whole mirrored plan must be
+  the EXACT x-reflection of the unmirrored plan (103 ops, coords, colors,
+  z-order) — chaos-planted by removing the node-x half (2 red, restored by
+  surgical Edit, not checkout). DuelScene picks facing per frame from sim
+  truth. LOOK: enemy mirrored, facing the player, branch behind the correct
+  hip both ways.
+- **02:20** The fidelity flake ROOT-CAUSED, not tuned: `devHoldAt` races the
+  restarted intro's `create()` (stale scene object, `step:'done'`, hold
+  no-oped then nulled) — FIGHT!-glyph probes were sampling the free-running
+  VS beat's black stroke gaps; intermittent because create() usually wins the
+  2-frame window unless the GPU is loaded (the piled-up auto windows). Fix:
+  `DuelIntro.create()` re-applies a pre-recorded hold. The 8 s settle was
+  coincidence — REVERTED to 1 s with the story in config/fidelity.ts.
+  Post-fix fidelity: **55/55 PASS ×2 consecutive** (12:52, 12:54Z), verdicts
+  read from Brave's Profile-1 leveldb on disk after the hidden MCP tab's
+  renderer froze past CDP reach. Suite 54 files / 868 green · eslint 0 ·
+  Sim.ts + duel-baseline byte-untouched.

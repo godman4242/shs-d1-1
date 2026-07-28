@@ -126,10 +126,13 @@ export class DuelScene extends Phaser.Scene {
   // A11.4 transcribed-frame stepper, and the drawn figure is the composed idle.
   private playerAnim = new FighterAnimator();
   private enemyAnim = new FighterAnimator();
-  // THE COMPOSED OG FIGHTER (SESSION23 A11.1): one parts table, composed once
-  // per create() from the byte-checked pose + dressed slot map, re-planned at
-  // each fighter's ground anchor every frame. Mirroring lands in A11.2.
+  // THE COMPOSED OG FIGHTER (SESSION23 A11.1/A11.2): ONE pose table, composed
+  // once per create() from the byte-checked pose + dressed slot map — twice,
+  // because facing is a compose-time mirror flag (kickoff D3), never a second
+  // art set and never a scene-side scaleX. The base art faces RIGHT (verified
+  // by LOOK, 2026-07-28), so a fighter drawn facing left takes the mirror.
   private fighterParts: readonly PosedPart[] = [];
+  private fighterPartsMirrored: readonly PosedPart[] = [];
   // Session 11: mouse hold-to-run — when the mouse is held but NOT dragging
   // a stroke (pointerdown with minimal movement), the player runs toward the
   // cursor position. Once a stroke is being drawn (dragPoints growing), it
@@ -165,6 +168,7 @@ export class DuelScene extends Phaser.Scene {
     this.playerAnim = new FighterAnimator();
     this.enemyAnim = new FighterAnimator();
     this.fighterParts = composePose(OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES);
+    this.fighterPartsMirrored = composePose(OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES, true);
     this.mouseHoldActive = false;
     this.mouseTargetX = 0;
 
@@ -644,18 +648,31 @@ export class DuelScene extends Phaser.Scene {
           : 'none',
     );
 
-    // THE COMPOSED OG FIGHTER (SESSION23 A11.1): the byte-checked dressed
-    // pose, planned at each fighter's ground anchor (feet-origin, the same
-    // ground line the old doll stood on) at the same point in the paint
-    // order. Facing/mirroring is A11.2; transcribed motion is A11.3/A11.4.
+    // THE COMPOSED OG FIGHTER (SESSION23 A11.1/A11.2): the byte-checked
+    // dressed pose, planned at each fighter's ground anchor (feet-origin, the
+    // same ground line the old doll stood on) at the same point in the paint
+    // order. Facing comes from sim truth — each fighter faces its opponent,
+    // the same rule the old doll's `facing` sign used, and fighters CAN cross
+    // sides mid-fight. Transcribed motion is A11.3/A11.4.
+    const playerFacesRight = player.pos.x <= enemy.pos.x;
     drawPlan(
       g,
-      planPose(this.fighterParts, FIGHTER_SHAPES, { x: ps.x, y: ps.y + OG_DUEL_STAGE.groundOffsetY }, VIEW),
+      planPose(
+        playerFacesRight ? this.fighterParts : this.fighterPartsMirrored,
+        FIGHTER_SHAPES,
+        { x: ps.x, y: ps.y + OG_DUEL_STAGE.groundOffsetY },
+        VIEW,
+      ),
       playerAlpha,
     );
     drawPlan(
       g,
-      planPose(this.fighterParts, FIGHTER_SHAPES, { x: es.x, y: es.y + OG_DUEL_STAGE.groundOffsetY }, VIEW),
+      planPose(
+        playerFacesRight ? this.fighterPartsMirrored : this.fighterParts,
+        FIGHTER_SHAPES,
+        { x: es.x, y: es.y + OG_DUEL_STAGE.groundOffsetY },
+        VIEW,
+      ),
       1,
     );
 
