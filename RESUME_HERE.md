@@ -1,5 +1,58 @@
 # RESUME HERE
 
+## 📋 NEXT-SESSION KICKOFF (paste-ready)
+
+**Activate first** — turn these on BEFORE pasting; a fresh session won't do it for you:
+
+| | setting | why |
+|---|---|---|
+| **Surface** | **Claude Code CLI** *(already)* | terminal + git + build-heavy; the browser gate needs the Chrome extension too |
+| **Model** | **Opus 5** *(already)* | precision + honesty; it pushes back instead of guessing — right for gate-bearing art work |
+| **Effort** | **`xhigh`** — **turn this on** | multi-file, decision-bearing, long-horizon. `high` is fine only for a one-file fix |
+| **`/fast`** | **ON** *(already)* | same model, faster output, no intelligence downgrade |
+| **Context** | **fresh session** — **start a new one** | the kickoff is self-contained; a compacted context re-derives for nothing |
+| **MCP** | **Claude in Chrome** — turn on | gate item 9 runs the in-browser fidelity check (55/55) |
+| **Skills / plugins** | **nothing to add** | honest: no library questions, no new tooling needed |
+| **Ultracode** | optional | helps A9.2–A9.5 (five garments, independent) — but say so explicitly if you want fan-out |
+
+Copy everything **between** the `'''` lines (the markers themselves are not part of the prompt):
+
+```
+'''
+You're the lead engineer on SSHD 1:1. Follow the repo's CLAUDE.md and my ship-bar.
+
+READ FIRST, then tell me what they say before writing anything:
+- RESUME_HERE.md
+- docs/sessions/SESSION22_KICKOFF.md   <- the only kickoff to plan from, self-contained
+
+THE JOB: §4 A9.1 onward — re-author the seven traced garments in the ORIGINAL's own
+art grammar (flat base tone + one hard-edged shadow tone + a stroked contour + thin
+detail lines), because the gap is structural and no colour tuning can close it.
+
+WHAT NOT TO BREAK:
+- The silhouette floors may only move UP. Held-out >= 0.8618, height <= 140.5.
+  If better art costs agreement, show BOTH numbers and ask — never lower a floor.
+- src/core/ stays at zero numeric literals; scenes stay render-only.
+- Anti-pattern to avoid by name: "a green gate is not a good picture." SESSION 20
+  shipped a bare torso and trousers round the knees, both scoring well.
+- Do NOT close the kasa by darkening it to hit the colour gate — §P4 explains why.
+
+PROVE IT: every gate in §2 has a runnable measure. Paste the output, never assert it.
+Red-first on every new test; chaos-plant every guard and watch it fail before it passes.
+
+FIRST, DO THIS: confirm the baseline (git log -1 -> 20310b9, npm test -> 49 files /
+827 tests), run `npx vite-node scripts/art/inkShare.ts` and paste it, then propose
+the exact A9.1 step. Don't start until I ok it.
+'''
+```
+
+**Bar verdict: ✅ this kickoff meets the "cannot be improved further" bar** — every
+goal has a measure that can fail, it carries an explicit NOT-DONE cut line, and it
+forbids in advance the two ways this session could score green and look worse. The
+next change would be churn.
+
+---
+
 > ## ⛔ A8.2 FOUND THE WEAPON IN THE REPO — AND THE ART IS NOT 1:1 FOR A STRUCTURAL REASON
 > **49 files / 827 tests green** · tsc ×2 → 0 · eslint → 0 · **the render is
 > UNCHANGED** (slot 3 deliberately unwired — see the floor trade below).
