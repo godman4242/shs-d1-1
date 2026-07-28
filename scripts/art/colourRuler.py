@@ -111,6 +111,12 @@ def measure(im, g):
     q1 = np.percentile(px, 25, axis=0)
     q3 = np.percentile(px, 75, axis=0)
     iqr = tuple(int(v) for v in (q3 - q1).round())
+    # SESSION22 A9-D: the percentiles themselves are targets now, not just their
+    # spread. A re-authored garment paints base ≈ p75 and shadow ≈ p25 — the
+    # original's own two-tone grammar — so both ends must be COMMITTED, or the
+    # tones would be graded against numbers written after the art existed.
+    p25 = tuple(int(v) for v in q1.round())
+    p75 = tuple(int(v) for v in q3.round())
 
     # ⭐ THE SUSPECT, MEASURED BESIDE THE TRUTH. §P4.12 suspected `trace_one`'s
     # own recipe — a 5x5 median filter, then the MEAN over a once-eroded core —
@@ -130,7 +136,8 @@ def measure(im, g):
 
     return dict(
         shapeId=g["id"], slot=g["slot"], garment=g["name"],
-        median=median, iqr=iqr, samples=int(core.sum()), erosions=steps,
+        median=median, iqr=iqr, p25=p25, p75=p75,
+        samples=int(core.sum()), erosions=steps,
         asTraced=as_traced, ink=ink, ours=our_fill(g["id"]),
     )
 
@@ -147,9 +154,11 @@ def emit(rows):
             "  {\n"
             "    shapeId: %d,\n    slot: %d,\n    garment: %s,\n"
             "    median: [%d, %d, %d],\n    iqr: [%d, %d, %d],\n"
+            "    p25: [%d, %d, %d],\n    p75: [%d, %d, %d],\n"
             "    samples: %d,\n    erosions: %d,\n  }," % (
                 r["shapeId"], r["slot"], "'%s'" % r["garment"].replace("'", "\\'"),
-                *r["median"], *r["iqr"], r["samples"], r["erosions"]))
+                *r["median"], *r["iqr"], *r["p25"], *r["p75"],
+                r["samples"], r["erosions"]))
     src = HEADER + "\n".join(body) + "\n];\n"
     open(EMIT_TO, "w").write(src)
     print("\n  emitted %s  (%d garments)" % (os.path.relpath(EMIT_TO, ROOT), len(rows)))
@@ -196,6 +205,14 @@ export interface SourceFill {
   readonly median: readonly [number, number, number];
   /** Per-channel interquartile spread — how far from flat the garment is. */
   readonly iqr: readonly [number, number, number];
+  /**
+   * Per-channel 25th percentile — GATE A9-D's SHADOW-tone target (SESSION22).
+   * The original paints every garment as base + one hard-edged shadow; the
+   * shadow lives in the distribution's dark quartile.
+   */
+  readonly p25: readonly [number, number, number];
+  /** Per-channel 75th percentile — GATE A9-D's BASE-tone target (SESSION22). */
+  readonly p75: readonly [number, number, number];
   /** How many source pixels the median was taken over. */
   readonly samples: number;
   /** 3x3 erosion steps applied before sampling, to clear the outline. */
@@ -236,6 +253,12 @@ def main():
                  "%d,%d,%d" % r["iqr"]))
 
     print("\n  ⇒ GATE A8-D wants every `worst` <= %d. ⛔ marks the ones that fail." % A8_D_TOLERANCE)
+
+    print("\n  THE TWO-TONE TARGETS (SESSION22 A9-D): shadow <- p25, base <- p75")
+    for r in rows:
+        print("  %5d %-20s shadow p25 %s (%d,%d,%d)   base p75 %s (%d,%d,%d)"
+              % (r["shapeId"], r["garment"][:20],
+                 hexs(r["p25"]), *r["p25"], hexs(r["p75"]), *r["p75"]))
 
     print("\n  IS IT THE SAMPLING RECIPE? (§P4.12's suspicion, measured)")
     print("  %5s %-20s %-11s %-11s %s" % ("id", "garment", "true median", "as traced", "recipe error"))

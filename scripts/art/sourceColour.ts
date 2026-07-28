@@ -39,6 +39,14 @@ export interface SourceFill {
   readonly median: readonly [number, number, number];
   /** Per-channel interquartile spread — how far from flat the garment is. */
   readonly iqr: readonly [number, number, number];
+  /**
+   * Per-channel 25th percentile — GATE A9-D's SHADOW-tone target (SESSION22).
+   * The original paints every garment as base + one hard-edged shadow; the
+   * shadow lives in the distribution's dark quartile.
+   */
+  readonly p25: readonly [number, number, number];
+  /** Per-channel 75th percentile — GATE A9-D's BASE-tone target (SESSION22). */
+  readonly p75: readonly [number, number, number];
   /** How many source pixels the median was taken over. */
   readonly samples: number;
   /** 3x3 erosion steps applied before sampling, to clear the outline. */
@@ -57,6 +65,8 @@ export const SOURCE_FILLS: readonly SourceFill[] = [
     garment: 'kasa (conical straw hat)',
     median: [122, 88, 38],
     iqr: [38, 35, 24],
+    p25: [116, 84, 33],
+    p75: [154, 119, 57],
     samples: 433,
     erosions: 6,
   },
@@ -66,6 +76,8 @@ export const SOURCE_FILLS: readonly SourceFill[] = [
     garment: 'collar / juban',
     median: [204, 201, 203],
     iqr: [16, 17, 14],
+    p25: [196, 193, 196],
+    p75: [212, 210, 210],
     samples: 115,
     erosions: 1,
   },
@@ -75,6 +87,8 @@ export const SOURCE_FILLS: readonly SourceFill[] = [
     garment: 'gi body (outer silhouette)',
     median: [104, 100, 103],
     iqr: [2, 1, 1],
+    p25: [103, 100, 103],
+    p75: [105, 101, 104],
     samples: 360,
     erosions: 6,
   },
@@ -84,6 +98,8 @@ export const SOURCE_FILLS: readonly SourceFill[] = [
     garment: 'gi sleeve, near arm',
     median: [104, 100, 103],
     iqr: [2, 1, 1],
+    p25: [103, 100, 103],
+    p75: [105, 101, 104],
     samples: 326,
     erosions: 6,
   },
@@ -93,6 +109,8 @@ export const SOURCE_FILLS: readonly SourceFill[] = [
     garment: 'gi sleeve, far arm',
     median: [103, 100, 103],
     iqr: [2, 2, 2],
+    p25: [103, 100, 102],
+    p75: [105, 102, 104],
     samples: 41,
     erosions: 2,
   },
@@ -102,6 +120,8 @@ export const SOURCE_FILLS: readonly SourceFill[] = [
     garment: 'obi (waist sash)',
     median: [204, 201, 201],
     iqr: [6, 6, 8],
+    p25: [202, 199, 198],
+    p75: [208, 205, 206],
     samples: 68,
     erosions: 4,
   },
@@ -111,6 +131,8 @@ export const SOURCE_FILLS: readonly SourceFill[] = [
     garment: 'hakama leg (drawn at slots 11 AND 7)',
     median: [220, 213, 219],
     iqr: [3, 2, 5],
+    p25: [217, 211, 214],
+    p75: [220, 213, 219],
     samples: 1744,
     erosions: 6,
   },
