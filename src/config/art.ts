@@ -96,6 +96,19 @@ export const OG_IDLE_STAGE = {
   labelDepth: 2,
 } as const;
 
+/**
+ * The composed OG fighter inside the DUEL itself (SESSION23 A11.1).
+ *
+ * INFERRED staging. `groundOffsetY` is the ground line the duel has always
+ * drawn its fighters on: `drawSamurai(g, ps.x, ps.y + 60, …)` treated its
+ * second coordinate as the feet band, and the composed fighter's origin is
+ * also at its feet (`OG_IDLE_STAGE` doc) — so the swap keeps the exact line
+ * and only names the number. `tests/a11DuelFighter.test.ts` pins it.
+ */
+export const OG_DUEL_STAGE = {
+  groundOffsetY: 60,
+} as const;
+
 /** Coordinates per vertex in the flat array Earcut reads — x and y. */
 export const EARCUT_DIMENSIONS = 2;
 

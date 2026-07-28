@@ -125,7 +125,7 @@ export class OgArtScene extends Phaser.Scene {
  * Exported so a future scene reuses this loop rather than re-deriving it — the
  * order is the load-bearing part.
  */
-export function drawPlan(g: Phaser.GameObjects.Graphics, plan: readonly DrawOp[]): void {
+export function drawPlan(g: Phaser.GameObjects.Graphics, plan: readonly DrawOp[], alpha = ONE): void {
   for (const op of plan) {
     // A polygon with holes cannot be drawn by `fillPoints` at all. The planner
     // has already packed it into Earcut's own argument shape and `trianglesOf`
@@ -133,17 +133,17 @@ export function drawPlan(g: Phaser.GameObjects.Graphics, plan: readonly DrawOp[]
     // the call itself — which is exactly the part no vitest can reach.
     if (op.kind === 'holedFill') {
       const indices = Phaser.Geom.Polygon.Earcut([...op.flatXY], [...op.holeIndices]);
-      g.fillStyle(op.color);
+      g.fillStyle(op.color, alpha);
       for (const t of trianglesOf(op.flatXY, indices)) g.fillTriangle(...t);
       continue;
     }
     const points = op.points.map((p) => new Phaser.Geom.Point(p.x, p.y));
     if (op.kind === 'fill') {
-      g.fillStyle(op.color);
+      g.fillStyle(op.color, alpha);
       g.fillPoints(points, true);
       continue;
     }
-    g.lineStyle(op.widthStage, op.color);
+    g.lineStyle(op.widthStage, op.color, alpha);
     // closeShape stays false: a closed OG outline already repeats its first
     // point, so closing again would lay a second segment over the seam.
     g.strokePoints(points);

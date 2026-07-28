@@ -3010,3 +3010,42 @@ tells forward — see the kickoff §2 amendment; build FROM the study frames.
 
 ---
 
+
+## 2026-07-28 — Session 23: A11 — the duel draws the composed fighter, then moves him
+
+- **00:00** Session start from `docs/sessions/SESSION23_KICKOFF.md` (gap triage
+  §0 pre-decided: P1 DuelScene swap, P2 animations; P3 audio / P4 combat
+  numbers scheduled, NOT started). Baseline confirmed: `df521c3`, 52 files /
+  855 tests green, tree clean. Owner set model routing Fable 5 `high`.
+- **00:20** A11.1 red-first: `tests/a11DuelFighter.test.ts` written and watched
+  fail twice (whole-suite crash on missing `OG_DUEL_STAGE`, then the 3
+  source-gate tests against the unswapped scene). Probe measured the dressed
+  plan at the duel ground line BEFORE the test pinned tolerances: 21 parts /
+  103 ops, height 140.484, feet 1.35 px under the anchor, centre −3.07 px.
+- **00:35** A11.1 landed: `OG_DUEL_STAGE` (config/art.ts, INFERRED, = the old
+  `ps.y + 60` line) · DuelScene swaps `drawSamurai` ×2 for
+  `composePose → planPose → drawPlan` (parts composed once per create();
+  planPose per frame at each fighter's anchor; same paint-order slot) ·
+  `drawPlan` grew `alpha = ONE` for the spawn-invuln blink · scarf/latch
+  plumbing removed, FighterAnimator event wiring kept warm for A11.4.
+  Chaos-plant: planted `drawSamurai` text → gate red → restored.
+  ⚠️ Process confession: the restore used `git checkout` on the dirty file and
+  wiped the uncommitted swap — re-applied, re-verified from scratch. Rule
+  adopted: remove a plant surgically, never checkout a dirty file.
+- **00:50** All gates: tsc ×2 → 0 · **53 files / 864 tests** · eslint → 0 ·
+  duel-baseline + a6Score 18/18 with `git diff src/core/
+  tests/duel-baseline.test.ts` EMPTY (A11-C).
+- **01:20** THE LOOK, and a tooling fight worth recording: the extension's tab
+  reported `visibility: hidden` → Phaser froze (rAF stops in hidden tabs).
+  Dead ends: `open -a "Google Chrome"`, AppleScript ×3 (automation denied),
+  window resize. **Root cause: the extension runs in BRAVE, not Chrome** — every
+  "Chrome" window opened was a different browser with isolated storage.
+  Owner looked meanwhile and confirmed: composed fighters on screen, static as
+  staged, both facing one way (A11.2 visibly needed).
+- **01:35** Tooling built (standing build-the-tooling mandate): `?fidelity=auto`
+  in main.ts — DEV-only, runs the gate on load, parks a compact verdict + the
+  failing probe list in localStorage; driven by
+  `open -na "Brave Browser" --args --new-window <url>` and polled from any
+  same-origin tab. First runs caught a real race: at 1 s settle the two
+  FIGHT!-glyph probes intermittently read black (boot warm-up); at the
+  documented 8 s settle: **fidelity 55/55 PASS, failed 0** — autonomously.

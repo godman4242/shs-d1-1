@@ -50,6 +50,36 @@ carried as a closed door. The next change would be churn.
 
 ---
 
+> ## ▶ SESSION 23 IN FLIGHT — A11.1 LANDED: THE DUEL DRAWS THE COMPOSED OG FIGHTER.
+> **53 files / 864 tests green** (was 52/855) · tsc ×2 → 0 · eslint → 0 ·
+> fidelity **55/55 PASS — now AUTONOMOUS** (`?fidelity=auto` + a self-opened
+> browser window + a localStorage verdict; no human window-holding) ·
+> duel-baseline green AND unedited · `src/core/` untouched · fighter height
+> 140.484 (≤ 140.5) on the duel ground line (`OG_DUEL_STAGE.groundOffsetY`).
+> - **A11-A:** `drawSamurai` count in `DuelScene.ts` → **0**, pinned by
+>   `tests/a11DuelFighter.test.ts` (9 tests, watched red first, chaos-planted).
+>   Both combatants draw the composed DRESSED fighter via
+>   `composePose → planPose → drawPlan` (drawPlan grew an alpha param for the
+>   spawn-invuln blink; `OgArtScene`/`IdleFighterScene` unaffected).
+> - **Owner LOOK (2026-07-28):** fighters confirmed on screen, correct scale +
+>   ground line — and STATIC, as staged (frame-0 idle; motion is A11.3/A11.4).
+>   Both face the same way: the A11.2 mirror is visibly needed.
+> - **Environment finds (permanent):** the Claude browser extension lives in
+>   **BRAVE, not Google Chrome** — surface windows with
+>   `open -na "Brave Browser" --args --new-window <url>`; a hidden tab freezes
+>   rAF (and the game), which is WHY `?fidelity=auto` exists; its 8 s settle is
+>   deliberate (at 1 s the two FIGHT!-glyph probes race boot warm-up and read
+>   black — measured, not guessed).
+> - **Process confession (ledgered):** a chaos-plant restore via `git checkout`
+>   briefly wiped the uncommitted swap; re-applied and re-verified from scratch.
+>   Rule: surgically remove the plant, never checkout a dirty file.
+> - **NEXT: A11.2** (second combatant mirrored, compose-time transform, P4
+>   equipment-override interaction — compose test FIRST), then A11.3
+>   (transcriber: walk + one attack, byte-checked), A11.4 (15 fps stepper),
+>   A11.5 (re-grade + SESSION 24 kickoff, P3 audio scheduled).
+
+---
+
 > ## ▶ SESSION 22 CLOSED IN FULL — ALL SEVEN GARMENTS IN THE OG GRAMMAR, GI LANDED BY OWNER RULING.
 > **52 files / 855 tests green** (was 49/827) · tsc ×2 → 0 · eslint → 0 ·
 > fidelity **55/55** · clean clone green · 0 app console errors ·

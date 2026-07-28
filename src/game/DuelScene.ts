@@ -13,7 +13,7 @@ import {
   BLOOD_SPREAD_DEG,
 } from '../config/combat';
 import { SKILL_VERB } from '../config/combat-sim';
-import { DUEL_ENEMY, DUEL_SPAWNS } from '../config/duel';
+import { DUEL_ENEMY } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { BAR_GRADIENTS } from '../config/fidelity';
 import { FINISHER_FLASH, SLASH_ARC } from '../config/fx';
@@ -27,12 +27,15 @@ import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
 import { duelSetup } from '../core/duelSetup';
 import { Sim, type ActorId } from '../core/Sim';
-import { stageToWorld, worldToStage } from '../core/viewport';
+import { stageToWorld, VIEW, worldToStage } from '../core/viewport';
 import type { Vec } from '../core/vec';
-import { ANIM_TIMING, SCARF } from '../config/anim';
-import type { Pose } from '../config/poses';
+import { OG_DUEL_STAGE } from '../config/art';
+import { OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES } from '../config/ogPose';
+import { composePose, type PosedPart } from '../core/composePose';
 import { FighterAnimator } from '../core/fighterAnimator';
-import { drawSamurai, ENEMY_LOOK, PLAYER_LOOK } from './samurai';
+import { planPose } from '../core/planPose';
+import { FIGHTER_SHAPES } from './art/fighterShapes';
+import { drawPlan } from './OgArtScene';
 
 /** Render-FX record: a finished stroke's blade trail, fading out. */
 interface Trail {
@@ -119,20 +122,14 @@ export class DuelScene extends Phaser.Scene {
   private fxNow = 0;
   // Skeletal animators (Stage 4 M0) — RENDER-side pose state only (which
   // frame of a swing to draw); Sim stays the single owner of gameplay truth.
+  // A11.1: nothing reads their poses yet — the event wiring stays warm for the
+  // A11.4 transcribed-frame stepper, and the drawn figure is the composed idle.
   private playerAnim = new FighterAnimator();
   private enemyAnim = new FighterAnimator();
-  private playerFlow = 0; // smoothed local velocity driving the scarf tail
-  private enemyFlow = 0;
-  private playerLastX = 0;
-  private enemyLastX = 0;
-  // Pose latch (Session 8): the OG steps poses at 15fps (ANIM_TIMING.poseStepMs,
-  // measured) — accumulate fx-time + facing-relative travel between steps so
-  // the stride phase never loses distance. poseStepMs=0 ⇒ smooth per-frame.
-  private poseAccMs = 0;
-  private playerAccDx = 0;
-  private enemyAccDx = 0;
-  private playerPose: Pose | null = null;
-  private enemyPose: Pose | null = null;
+  // THE COMPOSED OG FIGHTER (SESSION23 A11.1): one parts table, composed once
+  // per create() from the byte-checked pose + dressed slot map, re-planned at
+  // each fighter's ground anchor every frame. Mirroring lands in A11.2.
+  private fighterParts: readonly PosedPart[] = [];
   // Session 11: mouse hold-to-run — when the mouse is held but NOT dragging
   // a stroke (pointerdown with minimal movement), the player runs toward the
   // cursor position. Once a stroke is being drawn (dragPoints growing), it
@@ -167,17 +164,7 @@ export class DuelScene extends Phaser.Scene {
     this.dragging = false;
     this.playerAnim = new FighterAnimator();
     this.enemyAnim = new FighterAnimator();
-    this.playerFlow = 0;
-    this.enemyFlow = 0;
-    // Locomotion bookkeeping is STAGE-side: it feeds the animator's
-    // distance-driven stride, whose WALK.stridePx is stage-space native.
-    this.playerLastX = worldToStage(DUEL_SPAWNS.player.pos).x;
-    this.enemyLastX = worldToStage(DUEL_SPAWNS.enemy.pos).x;
-    this.poseAccMs = 0;
-    this.playerAccDx = 0;
-    this.enemyAccDx = 0;
-    this.playerPose = null;
-    this.enemyPose = null;
+    this.fighterParts = composePose(OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES);
     this.mouseHoldActive = false;
     this.mouseTargetX = 0;
 
@@ -590,7 +577,7 @@ export class DuelScene extends Phaser.Scene {
       g.fillCircle(d.x - d.vx * 0.008, d.y - d.vy * 0.008, 2);
     }
 
-    this.drawFighters(g, now, delta * ts);
+    this.drawFighters(g, now);
 
     // Kunai: short dark bolts along the velocity direction. Position is
     // sim-owned (world); the bolt length is a stage-native render size and
@@ -625,7 +612,7 @@ export class DuelScene extends Phaser.Scene {
 
   private pendingWinner: ActorId = 'player';
 
-  private drawFighters(g: Phaser.GameObjects.Graphics, now: number, dtAnim: number): void {
+  private drawFighters(g: Phaser.GameObjects.Graphics, now: number): void {
     const player = this.sim.player;
     const enemy = this.sim.enemy;
     const fxNow = this.fxNow;
@@ -647,17 +634,8 @@ export class DuelScene extends Phaser.Scene {
       g.fillEllipse(es.x, es.y + 30, 120, 40);
     }
 
-    const playerFacing = player.pos.x <= enemy.pos.x ? 1 : -1;
-    const enemyFacing = playerFacing === 1 ? -1 : 1;
-
-    // Locomotion from sim truth: facing-relative travel this frame feeds the
-    // animator's DISTANCE-driven stride (Session 8 — no foot-skating). Both
-    // sides of this subtraction are STAGE px, because WALK.stridePx is.
-    const playerDx = ps.x - this.playerLastX;
-    const enemyDx = es.x - this.enemyLastX;
-
-    // Enemy guard hold mirrors the telegraph/block windows (fx clock): a
-    // strike telegraph reads as the raised-blade windup, a block as guard.
+    // Enemy guard hold mirrors the telegraph/block windows (fx clock) — kept
+    // warm on the animator for A11.4, which maps it to transcribed frames.
     this.enemyAnim.setGuard(
       fxNow < this.enemyGuardUntil
         ? 'block'
@@ -666,36 +644,20 @@ export class DuelScene extends Phaser.Scene {
           : 'none',
     );
 
-    // Scarf flow: low-passed local (facing-relative) velocity, px/ms.
-    if (dtAnim > 0) {
-      this.playerFlow += ((playerDx / dtAnim) * playerFacing - this.playerFlow) * SCARF.flowSmoothing;
-      this.enemyFlow += ((enemyDx / dtAnim) * enemyFacing - this.enemyFlow) * SCARF.flowSmoothing;
-    }
-    this.playerLastX = ps.x;
-    this.enemyLastX = es.x;
-
-    // Pose latch: step the drawn pose at the OG's measured 15fps cadence,
-    // banking time + travel between steps (poseStepMs=0 ⇒ every frame).
-    this.poseAccMs += dtAnim;
-    this.playerAccDx += playerDx * playerFacing;
-    this.enemyAccDx += enemyDx * enemyFacing;
-    if (this.poseAccMs >= ANIM_TIMING.poseStepMs || this.playerPose === null || this.enemyPose === null) {
-      this.playerPose = this.playerAnim.update(this.poseAccMs, this.playerAccDx);
-      this.enemyPose = this.enemyAnim.update(this.poseAccMs, this.enemyAccDx);
-      this.poseAccMs = 0;
-      this.playerAccDx = 0;
-      this.enemyAccDx = 0;
-    }
-    const playerPose = this.playerPose;
-    const enemyPose = this.enemyPose;
-    drawSamurai(g, ps.x, ps.y + 60, playerFacing, PLAYER_LOOK, playerPose, playerAlpha, {
-      flow: this.playerFlow,
-      phase: fxNow,
-    });
-    drawSamurai(g, es.x, es.y + 60, enemyFacing, ENEMY_LOOK, enemyPose, 1, {
-      flow: this.enemyFlow,
-      phase: fxNow,
-    });
+    // THE COMPOSED OG FIGHTER (SESSION23 A11.1): the byte-checked dressed
+    // pose, planned at each fighter's ground anchor (feet-origin, the same
+    // ground line the old doll stood on) at the same point in the paint
+    // order. Facing/mirroring is A11.2; transcribed motion is A11.3/A11.4.
+    drawPlan(
+      g,
+      planPose(this.fighterParts, FIGHTER_SHAPES, { x: ps.x, y: ps.y + OG_DUEL_STAGE.groundOffsetY }, VIEW),
+      playerAlpha,
+    );
+    drawPlan(
+      g,
+      planPose(this.fighterParts, FIGHTER_SHAPES, { x: es.x, y: es.y + OG_DUEL_STAGE.groundOffsetY }, VIEW),
+      1,
+    );
 
     // Enemy overhead: green HP bar + nameplate (fidelity tell 22). Measured:
     // bar 139×15 px @1920×1080 → 74×8 here; fill green is the original's

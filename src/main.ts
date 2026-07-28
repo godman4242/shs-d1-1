@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { COL } from './config/palette';
 import { GAME_WIDTH, GAME_HEIGHT } from './config/display';
+import { AUTO_FIDELITY_SETTLE_MS } from './config/fidelity';
 import { DuelIntro } from './game/DuelIntro';
 import { DuelResult } from './game/DuelResult';
 import { DuelScene } from './game/DuelScene';
@@ -16,6 +17,7 @@ import { OgArtScene } from './game/OgArtScene';
  */
 const params = new URLSearchParams(window.location.search);
 const wantsEncounter = params.get('scene') === 'encounter';
+
 
 /**
  * SESSION17 A3.2: `?art=og` shows one imported OG shape beside the procedural
@@ -70,6 +72,54 @@ const game = new Phaser.Game({
 // measured fidelity gate (config/fidelity.ts assertions against real canvas
 // pixels). Both absent from production builds.
 if (import.meta.env.DEV) {
+  const fidelity = createFidelityHarness(game);
   (window as unknown as Record<string, unknown>).__game = game;
-  (window as unknown as Record<string, unknown>).__fidelity = createFidelityHarness(game);
+  (window as unknown as Record<string, unknown>).__fidelity = fidelity;
+
+  // SESSION23: `?fidelity=auto` — the gate runs itself once the game is up and
+  // parks a compact verdict in localStorage. Why: a HIDDEN tab gets no rAF, so
+  // the game (and therefore the gate) freezes — an automated session can now
+  // open this URL in a fresh, visible window (`open -na "Google Chrome" --args
+  // --new-window <url>`) and poll the verdict from any same-origin tab instead
+  // of needing a human to keep a window frontmost. The key is cleared first so
+  // a poller can never read a stale verdict as a fresh one.
+  if (params.get('fidelity') === 'auto') {
+    // A 'running' marker lands IMMEDIATELY, so a poller can tell "the page
+    // booted in this profile and the gate is in flight" from "nothing ever
+    // loaded here" — the two failure modes need different fixes.
+    localStorage.setItem(
+      '__fidelityAuto',
+      JSON.stringify({ state: 'running', startedAt: new Date().toISOString() }),
+    );
+    game.events.once(Phaser.Core.Events.READY, () => {
+      window.setTimeout(() => {
+        void fidelity
+          .run()
+          .then((report) => {
+            localStorage.setItem(
+              '__fidelityAuto',
+              JSON.stringify({
+                pass: report.pass,
+                points: report.results.length,
+                scans: report.scans.length,
+                failed:
+                  report.results.filter((r) => !r.pass).length +
+                  report.scans.filter((s) => !s.pass).length,
+                failures: [
+                  ...report.results.filter((r) => !r.pass),
+                  ...report.scans.filter((s) => !s.pass),
+                ],
+                finishedAt: new Date().toISOString(),
+              }),
+            );
+          })
+          .catch((err: unknown) => {
+            localStorage.setItem(
+              '__fidelityAuto',
+              JSON.stringify({ pass: false, error: String(err), finishedAt: new Date().toISOString() }),
+            );
+          });
+      }, AUTO_FIDELITY_SETTLE_MS);
+    });
+  }
 }

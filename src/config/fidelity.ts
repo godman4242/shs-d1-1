@@ -701,3 +701,12 @@ export const FIDELITY_ENEMY_BAR = {
   tol: 26,
   note: 'B t=3774 enemy overhead bar green (brighter than player HP green)',
 } as const;
+
+/**
+ * `?fidelity=auto` (SESSION23): ms between the game's READY event and the
+ * auto-runner firing the gate. INFERRED, and 8000 is measured, not a token
+ * pause — at 1000 the two FIGHT!-glyph probes intermittently sampled black
+ * (boot warm-up race; a human console run never fires that early, which is
+ * why the manual gate was always 55/55).
+ */
+export const AUTO_FIDELITY_SETTLE_MS = 8000;
