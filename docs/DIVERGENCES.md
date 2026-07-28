@@ -3439,3 +3439,73 @@ suite 50 files / 848 tests green   tsc x2 -> 0 · eslint -> 0
 scorePose: tracing 0.9050 · held-out 0.8662 · height 140.48 · digest 8dfc2547…
 floors 0.8618 / 140.5 NOT edited (D-A9.2b)
 ```
+
+## SESSION 22 — A9.3 + A9.5: KASA, HAKAMA AND OBI RE-AUTHORED (fan-out). THE GI IS HELD FOR AN OWNER RULING.
+
+**Produced by a 4-agent parallel fan-out** (kasa · gi · hakama+obi · branch
+analysis), integrated serially. Five of seven garments now live in the OG
+grammar; the roster is 9001, 9011, 9012, 9014, 9017 with the gi pair last.
+
+### A9.3 — the kasa (36.3 % ink, tones byte-exact to p75/p25)
+Base = measured p75 (154,119,57) · shadow = measured p25 (116,84,33) on the
+RIGHT cone face where the crop is dark (27.5 % of interior, mask-measured) —
+**the ledger-banned darken-toward-median move was NOT taken.** 6 radial weave
+ribs w1 in measured dark straw (6 streaks counted in the crop), the band-top
+boundary line w1, 13 ink fringe ticks w1 INSIDE the traced brim bumps (~13
+counted). D4 checked: neither kasa target is within 12 of an SWF colour.
+⭐ **Integration fix, measured:** the agent's on-ring w2 contour raised the
+figure top 1.2 stage px → height 141.68 > the 140.5 ceiling. The contour
+centreline is now INSET w/2 by raster erosion (D-A9.2a's veto branch, the
+method A9.5 validated); ink tops out INSIDE the traced silhouette and height
+returned to **140.48**.
+
+### A9.5 — the hakama (21.1 % ink) and obi (26.3 %)
+Hakama = **MEASURED_FLAT** (iqr 3,2,5 cited in the roster): ONE fill, the
+SWF's own `#dcd9d4` — BOTH percentile targets sit within 12 of it, so a
+shadow tone would be invented, not measured. Contour w1.5, centreline inset.
+**The hem is 6 structural vertices instead of 24 grass-notch ones** — and the
+kickoff's own "cut at the cloth line" idea was EXECUTED, MEASURED, and
+REJECTED (held-out 0.775 / 0.846 vs floor 0.8618): the wisp band is occluded
+ankle-length cloth. Obi = two tones; **D4's SWF mapping was declined at its
+exact borderline (deltas 12,12,6)** because SWF-white would erase the
+obi-vs-hakama step the source clearly shows — measured p75/p25 used instead.
+
+### ⛔ THE GI TRADE — the A9-G clause fired, and the numbers go to the owner
+A9.4's balloon repair is measured and REAL (back-edge bump prominence 4.80 →
+0.53 stage px; the committed A9-E bar of 2 would pass) — but it costs the
+held-out floor:
+```
+                                      tracing   held-out   height
+  committed floors                     0.9006    0.8618     140.5
+  this commit (kasa+hakama+obi in)     0.9085    0.8634 ✅   140.48
+  with the gi repair added             0.9020    0.8529 ⛔   140.48
+```
+Per-garment attribution measured by clean bisection: gi −0.0105, hakama
+−0.0012, inset kasa −0.0016 (additive, reconciles exactly).
+⭐ **The cause was found by LOOKING at the held-out frame:** its fighter
+stands in a different idle moment whose back side carries real arm/sleeve
+mass; the balloon defect was accidentally faking that width. Moving OUR far
+sleeve aft to match (measured shift, swept ±2) made BOTH scores worse —
+executed, measured, REVERTED. The trade is genuine: the picture is right and
+the floor's baseline embedded the defect. **Floors NOT touched; the repaired
+gi art is parked in `reference/traced/pending-a9.4/` with its blob SVGs
+re-traced byte-exact so the re-derivation gate stays honest.**
+
+### ⚠️ PROCESS FINDS
+- **A coordinate-space misread almost condemned a valid gate:** the held-out
+  frame's segmentation mask is WINDOW-relative (rows 560..900 re-indexed), and
+  reading it as full-frame put "the fighter" on HUD text. The control check —
+  run the same instrument on a KNOWN frame first — caught it before any edit.
+- **Parallel authoring works, with one lesson:** disjoint files held, but
+  whole-figure scores measured mid-flight by agents were contaminated by
+  siblings' regenerations; per-shape measures were not. Integration re-scored
+  everything serially.
+
+### Regression
+```
+suite 50 files / 848 tests green   tsc x2 -> 0 · eslint -> 0
+scorePose: tracing 0.9085 · held-out 0.8634 · height 140.48   floors NOT edited
+inkShare: all seven <= 61.4 % (worst traced: 9012 at 32.6)
+poseRender pins: 57 -> 81 ops, 18 -> 44 strokes (kasa detail + inset contours),
+GOLDEN_DRESSED re-pinned; idle digest untouched
+```

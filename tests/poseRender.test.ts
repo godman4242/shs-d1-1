@@ -105,15 +105,16 @@ describe('cropRegion — the frame the fighter is rendered into', () => {
 });
 
 describe('the REAL composed fighter, rasterised', () => {
-  it('dressed: 20 parts, 57 draw ops, with all 18 of its strokes', () => {
+  it('dressed: 20 parts, 81 draw ops, with all 44 of its strokes', () => {
     const r = render('dressed');
     expect(r.parts).toHaveLength(20);
-    // 55 → 57 ops and 16 → 18 strokes at SESSION22 A9.2: the re-authored collar
-    // (9012) and far sleeve (9001) each trade their all-ink blob ring for a
-    // base fill + a shadow fill + ONE real contour stroke — +1 paint op and
-    // +1 stroke each, fills unchanged in number (blob ring out, shadow in).
-    expect(r.plan).toHaveLength(57);
-    expect(census(r.plan)).toEqual({ fill: 37, stroke: 18, holedFill: 2 });
+    // 57 → 81 ops at SESSION22 A9.3/A9.5 (on top of A9.2's 55 → 57): the kasa
+    // now plans a contour + 6 rib + 1 band + 13 fringe stroke ops and a shadow
+    // fill; the hakama's two draws each lose their all-ink blob ring (2 fills
+    // out) and gain a 2-ring inset contour stroke; the obi gains its shadow
+    // fill and contour. Fills 37 → 35, strokes 18 → 44, holes unchanged.
+    expect(r.plan).toHaveLength(81);
+    expect(census(r.plan)).toEqual({ fill: 35, stroke: 44, holedFill: 2 });
   });
 
   it('idle: 21 parts, 90 draw ops, with all 41 of its strokes', () => {
@@ -211,8 +212,9 @@ describe('the render is anchored where the scene anchors it', () => {
 });
 
 /** Pinned in the same commit as the code they describe — see the GOLDEN test. */
-// SESSION22 A9.2: dressed digest moved when 9012 + 9001 were re-authored in
-// the OG grammar (blob ring → base + shadow + stroke; ink 75.9→32.6 % and
-// 70.6→30.6 %). Idle is untouched — the bare fighter draws no traced art.
-const GOLDEN_DRESSED = '8dfc254720c4b4a2f7761c61d2e98e1ece2e14c859221ebfe2cd0f2c1ab4a152';
+// SESSION22 A9.2 moved this once (9012 + 9001 re-authored), A9.3/A9.5 again:
+// kasa two-tone + ribs + band + fringe with an INSET w2 contour, hakama
+// measured-flat #dcd9d4 with a clean hem and inset w1.5 contour, obi two-tone.
+// Idle is untouched — the bare fighter draws no traced art.
+const GOLDEN_DRESSED = '80d6f584b6b20ae9bef44478255ed40ef97e1d29ae9333e433cc7389d8b97145';
 const GOLDEN_IDLE = '6dae62d12576cc22e2b62f92dc7481c5634f6e6c88279d3b5d6be4e97638ca97';

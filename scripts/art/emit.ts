@@ -117,7 +117,14 @@ export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
     video: 'zFtCaTO0_1M',
     seconds: 590,
     crop: '(808,764)-(836,790) video px; silhouette 26 x 24 video px',
-    approximated: 'ONE flat fill at the interior mean; the sash is a single light panel.',
+    authored: 'SESSION22 A9.5 — OG grammar over the SESSION19 trace outline',
+    approximated:
+      'base fill = measured p75 (208,205,206) — D4\'s #dcd9d4 mapping is ' +
+      'BORDERLINE at deltas (12,12,6) and was declined: the source shows a ' +
+      'clear obi-vs-hakama step (medians 204 vs 220) and SWF-white would erase ' +
+      'it; shadow fill = measured p25 (202,199,198) over the measured dark ' +
+      'region (44.8 % of interior); ink contour = ONE stroke, width 1, on-ring ' +
+      '(the obi is fully occluded by the gi body in the idle pose).',
     inferred:
       'PLACEMENT. The smallest garment traced, at 26 x 24 video px it is well ' +
       'inside SESSION19 P9\'s trustworthy band (>= 20 px), but only just, and ' +
@@ -179,10 +186,19 @@ export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
     video: 'zFtCaTO0_1M',
     seconds: 590,
     crop: '(789,778)-(860,894) video px; silhouette 63 x 113 video px',
+    authored: 'SESSION22 A9.5 — OG grammar over the SESSION19 trace outline',
     approximated:
-      'ONE flat fill at the interior mean. The hem dissolves into GRASS in the ' +
-      'source (A5.1 crop 7), so the bottom few px of the outline follow the ' +
-      'grass rather than the cloth.',
+      'MEASURED_FLAT (iqr 3,2,5): ONE fill, the SWF\'s own #dcd9d4 — both p25 ' +
+      '(217,211,214) and p75 (220,213,219) sit within 12 of it, so D4 maps ' +
+      'base AND shadow to the same colour and a shadow path would be a lie. ' +
+      'Ink contour = ONE stroke, width 1.5, centreline INSET w/2 by raster ' +
+      'erosion (on-ring ink broke the 140.5 height ceiling AND the held-out ' +
+      'floor — D-A9.2a\'s veto branch, measured). HEM: the trace\'s 24 ' +
+      'grass-notch vertices are replaced by 6 structural ones at the trace\'s ' +
+      'own flats (y 24.139/25.472/22.361); cutting at the visible cloth line ' +
+      'was measured (held-out 0.775 and 0.846) and REJECTED — the wisp band ' +
+      'is occluded ankle-length cloth, which the held-out width profile ' +
+      'demands.',
     inferred:
       'PLACEMENT, and it is DRAWN TWICE. Only the NEAR leg could be traced: ' +
       'the far leg is not bounded by ink on its right, because the outline ' +
@@ -199,11 +215,18 @@ export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
     video: 'zFtCaTO0_1M',
     seconds: 590,
     crop: '(762,638)-(900,702) video px; silhouette 107 x 48 video px',
+    authored: 'SESSION22 A9.3 — OG grammar over the SESSION19 trace outline',
     approximated:
-      'the straw interior is emitted as ONE flat fill at the interior MEAN. ' +
-      'After a 5x5 median the modal colour still holds only 1.3 % of the ' +
-      'interior, so at this resolution the hat is NOT one flat colour — ' +
-      'two-tone shading and the woven texture streaks are flattened away.',
+      'base fill = measured p75 (154,119,57); shadow fill = measured p25 ' +
+      '(116,84,33) on the RIGHT cone face where the crop is dark (measured ' +
+      'region, 27.5 % of interior) — the ledger-banned darken-toward-median ' +
+      'move was NOT taken. Detail strokes, tones measured off the frame: 6 ' +
+      'radial weave ribs w 1 (6 streaks counted in the crop) and the band-top ' +
+      'boundary line w 1. Ink: contour w 2 with the centreline INSET w/2 by ' +
+      'raster erosion (on-ring ink raised the figure top 1.2 stage px over ' +
+      'the 140.5 ceiling — D-A9.2a\'s veto branch); 13 fringe ticks w 1 ' +
+      'INSIDE the traced brim bumps (~13 counted in the crop), so the ragged ' +
+      'hanging-straw edge reads without growing the silhouette.',
     inferred:
       'PLACEMENT ONLY. The traced OUTLINE is measured; where it sits on the ' +
       'head is not. Slot 17 is aliased to slot 16, so (0,0) must be the head ' +

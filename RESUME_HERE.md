@@ -57,7 +57,30 @@ next change would be churn.
 
 ---
 
-> ## ▶ SESSION 22 IN PROGRESS — A9.2 DONE: THE TWO OVER-INKED GARMENTS ARE RE-AUTHORED
+> ## ▶ SESSION 22 IN PROGRESS — A9.3 + A9.5 DONE: FIVE OF SEVEN GARMENTS IN THE OG GRAMMAR
+> **50 files / 848 tests green** · tsc ×2 → 0 · eslint → 0 · floors: tracing
+> **0.9085** · held-out **0.8634** · height **140.48** — all held, none edited.
+>
+> - **Kasa (A9.3):** base p75 + shadow p25 on the measured dark face, 6 weave
+>   ribs + band line + 13 fringe ticks (all counted off the crop), w2 contour
+>   **INSET w/2** — the on-ring version broke the 140.5 ceiling by 1.2 px,
+>   measured and fixed by D-A9.2a's own veto branch.
+> - **Hakama (A9.5):** MEASURED_FLAT (iqr 3,2,5) — ONE fill, the SWF's own
+>   `#dcd9d4`; clean 6-vertex hem; the "cut at the cloth line" idea was
+>   executed, measured (held-out 0.775) and REJECTED. **Obi:** two tones;
+>   D4's SWF mapping declined at its exact borderline to keep the
+>   obi-vs-hakama step the source shows.
+> - ⛔ **THE GI IS AUTHORED BUT HELD FOR AN OWNER RULING (A9-G fired):** the
+>   balloon repair is right (bump 4.80 → 0.53 stage px) and costs held-out
+>   0.8634 → **0.8529** vs floor **0.8618**. Cause found by LOOKING: the
+>   held-out frame's stance has real back-side sleeve mass the balloon faked.
+>   Art parked in `reference/traced/pending-a9.4/`; both numbers in the
+>   ledger; **floors untouched.**
+> - **Branch analysis (A9.6) is measured:** source axis +39.9°±2 over three
+>   stills; slot-3's 142 is its horizontal-mirror twin (180−39.9≈140.1);
+>   proposed rotation **38** → residual 0.6° (bar 10°). Wiring next.
+>
+> ## ▶ SESSION 22 — A9.2 DONE: THE TWO OVER-INKED GARMENTS ARE RE-AUTHORED
 > **50 files / 848 tests green** · tsc ×2 → 0 · eslint → 0 · **GATE A9-B MET on
 > all seven** — the owner's "one or 2 of them": 9012 **75.9→32.6 %**, 9001
 > **70.6→30.6 %**, bar 61.4 % (the OG's own worst).

@@ -64,18 +64,9 @@ const TRACED: readonly ArtShape[] = [
  * three that are not name the defect §P4.12 of the kickoff describes.
  */
 const WORST_CHANNEL_DELTA: Readonly<Record<number, number>> = {
-  // 9001, 9012 — RE-AUTHORED (SESSION22 A9.2); graded by A9-D at 12 levels now.
-  9011: 22, // hakama      — ours is DARK; the kickoff's §P4.12 said so and was right
-  9014: 2, // obi
+  // 9001, 9012 (A9.2) + 9011, 9014, 9017 (A9.3/A9.5) — RE-AUTHORED; graded by
+  // A9-D at 12 levels now. Only the gi pair remains, held for an owner ruling.
   9015: 7, // gi body
-  // ⛔ 9017 — DO NOT CLOSE THIS ONE BY DARKENING THE HAT. Ours is LIGHT, not
-  // dark (§P4.12 had the sign backwards), but the kasa is genuinely TWO-TONE:
-  // p25 (116,84,33) against p90 (173,138,74), an `iqr` of 38,35,24 — the widest
-  // here by a factor of six. Its median lands in the dark band, so matching it
-  // would make the hat visibly darker than the source reads while turning this
-  // line green. That is SESSION 20's "a green gate is not a good picture" trap,
-  // pre-loaded. The kasa's real defect is missing straw texture (§P4.9 → A8.6).
-  9017: 23,
   9019: 2, // near sleeve
 };
 
@@ -171,13 +162,13 @@ describe('A8-A — the colour ruler: every traced garment is measured against th
   });
 
   it('reports which garments GATE A8-D still fails, without softening the gate', () => {
-    // ⚠️ NOT an assertion that they pass — they do not, and re-authoring is the
-    // step that fixes them. This pins WHICH ones fail so the list cannot grow.
-    // 9012 left the list by being RE-AUTHORED (A9.2), not by a raised ratchet.
+    // Started as [9011, 9012, 9017]; every exit happened by RE-AUTHORING
+    // (A9.2/A9.3/A9.5), never by a raised ratchet. The two legacy shapes left
+    // (the gi pair, held for an owner ruling) were always within tolerance.
     const failing = SOURCE_FILLS.filter((f) => LEGACY[f.shapeId] !== undefined)
       .filter((f) => ratchetFor(f.shapeId) > A8_D_TOLERANCE)
       .map((f) => f.shapeId)
       .sort((a, b) => a - b);
-    expect(failing).toEqual([9011, 9017]);
+    expect(failing).toEqual([]);
   });
 });
