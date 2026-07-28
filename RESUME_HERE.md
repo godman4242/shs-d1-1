@@ -57,7 +57,25 @@ next change would be churn.
 
 ---
 
-> ## ▶ SESSION 22 IN PROGRESS — A9.3 + A9.5 DONE: FIVE OF SEVEN GARMENTS IN THE OG GRAMMAR
+> ## ▶ SESSION 22 IN PROGRESS — A9.6 DONE: THE BRANCH IS ON SCREEN. ALL FLOORS ROSE.
+> **51 files / 854 tests green** · tsc ×2 → 0 · eslint → 0 · **tracing 0.9106 ·
+> held-out 0.8671 · height 140.48** — every number ABOVE its committed floor
+> (0.9006 / 0.8618 / 140.5), floors not edited (ratchet-up belongs to A9.7).
+>
+> - **GATE A9-F MET:** rotation **38** (the mirror of the recorded 142 —
+>   `142 = 180 − 38` CONFIRMED by measurement: source axis +39.9°±2 over three
+>   stills, residual 0.6° vs the 10° bar). ⭐ **The mirror flips the POSITION
+>   too:** at the recorded (12,−61) the stick floated aft of the body and
+>   held-out collapsed; measured bbox-fraction mapping put it at (−17,−55) —
+>   x sign flipped — midsection hidden behind the body, fork tip emerging
+>   aft-low, exactly as the frames show.
+> - Mechanism: `OG_EQUIPMENT` + derived `OG_DRESSED_NODES`; the byte-checked
+>   `OG_IDLE_NODES` is untouched and `tests/a9Branch.test.ts` pins the
+>   difference to slot 3's transform only. Red-first, 6 tests.
+> - Still open: **the gi ruling** (§ below) and **A9.7** (regrade, browser
+>   fidelity, clean clone, handoff, SESSION 23 kickoff).
+>
+> ## ▶ SESSION 22 — A9.3 + A9.5 DONE: FIVE OF SEVEN GARMENTS IN THE OG GRAMMAR
 > **50 files / 848 tests green** · tsc ×2 → 0 · eslint → 0 · floors: tracing
 > **0.9085** · held-out **0.8634** · height **140.48** — all held, none edited.
 >

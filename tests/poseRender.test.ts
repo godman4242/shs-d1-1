@@ -33,6 +33,7 @@ import type { ShapeInput } from '../src/core/artPlan';
 import { rasterDigest } from '../scripts/art/rasterise';
 import { assertBackdropIsNotArt, cropRegion, renderPoseWith, slotMapFor } from '../scripts/art/poseScene';
 import { DEFAULT_BACKDROP, DEFAULT_SUPERSAMPLE } from '../scripts/art/renderPoseArgs';
+import { SHAPE_2641 } from '../src/game/art/generated/shape2641';
 import { SHAPE_2644 } from '../src/game/art/generated/shape2644';
 import { SHAPE_2646 } from '../src/game/art/generated/shape2646';
 import { SHAPE_2648 } from '../src/game/art/generated/shape2648';
@@ -58,7 +59,7 @@ import { SHAPE_9019 } from '../src/game/art/generated/shape9019';
 /** Rebuilt from the generated art — see the header, and `tests/planPose.test.ts`. */
 const SHAPES: ReadonlyMap<number, ShapeInput> = new Map(
   [
-    SHAPE_2644, SHAPE_2646, SHAPE_2648, SHAPE_2650, SHAPE_2653, SHAPE_2655, SHAPE_2658,
+    SHAPE_2641, SHAPE_2644, SHAPE_2646, SHAPE_2648, SHAPE_2650, SHAPE_2653, SHAPE_2655, SHAPE_2658,
     SHAPE_2664, SHAPE_2667, SHAPE_2670, SHAPE_2672, SHAPE_2674, SHAPE_2676, SHAPE_2678,
     SHAPE_9001, SHAPE_9011, SHAPE_9012, SHAPE_9014, SHAPE_9015, SHAPE_9017, SHAPE_9019,
   ].map((s) => [s.id, s]),
@@ -105,16 +106,16 @@ describe('cropRegion — the frame the fighter is rendered into', () => {
 });
 
 describe('the REAL composed fighter, rasterised', () => {
-  it('dressed: 20 parts, 81 draw ops, with all 44 of its strokes', () => {
+  it('dressed: 21 parts, 96 draw ops, with all 48 of its strokes', () => {
     const r = render('dressed');
-    expect(r.parts).toHaveLength(20);
-    // 57 → 81 ops at SESSION22 A9.3/A9.5 (on top of A9.2's 55 → 57): the kasa
-    // now plans a contour + 6 rib + 1 band + 13 fringe stroke ops and a shadow
-    // fill; the hakama's two draws each lose their all-ink blob ring (2 fills
-    // out) and gain a 2-ring inset contour stroke; the obi gains its shadow
-    // fill and contour. Fills 37 → 35, strokes 18 → 44, holes unchanged.
-    expect(r.plan).toHaveLength(81);
-    expect(census(r.plan)).toEqual({ fill: 35, stroke: 44, holedFill: 2 });
+    // 21 parts and 81 → 96 ops at SESSION22 A9.6: the training branch (2641)
+    // joins at the weapon slot — +10 fill ops, +4 stroke ops and +1 holedFill
+    // of original payload vector art — on top of A9.3/A9.5's 57 → 81 (kasa
+    // contour + 6 ribs + band + 13 fringe ticks + shadow; hakama blob rings
+    // out, 2-ring inset contours in; obi shadow + contour).
+    expect(r.parts).toHaveLength(21);
+    expect(r.plan).toHaveLength(96);
+    expect(census(r.plan)).toEqual({ fill: 45, stroke: 48, holedFill: 3 });
   });
 
   it('idle: 21 parts, 90 draw ops, with all 41 of its strokes', () => {
@@ -126,11 +127,12 @@ describe('the REAL composed fighter, rasterised', () => {
 
   it('lands where SESSION 18 and the kickoff §P6 measured it, to 0.1 stage px', () => {
     const dressed = render('dressed').ink;
-    // ⚠️ minX moved 474.9 -> 472.1 in SESSION20 A6.4: the hakama's waistband
-    // dropped 6 world px, so the far leg's skirt now reaches further left. The
-    // three other edges are untouched, and the HEIGHT is deliberately unchanged.
+    // ⚠️ minX moved 474.9 -> 472.1 in SESSION20 A6.4 (hakama waistband). maxX
+    // moved 538.9 -> 545.7 at SESSION22 A9.6: the branch's fork tip emerging
+    // aft-low behind the hakama is now the fighter's widest point — exactly
+    // what the source frames show. Height edges deliberately unchanged.
     expect([dressed.minX, dressed.maxX, dressed.minY, dressed.maxY].map((n) => Number(n.toFixed(1)))).toEqual([
-      472.1, 538.9, 290.9, 431.4,
+      472.1, 545.7, 290.9, 431.4,
     ]);
     // SESSION 18 A4-F recorded the bare plan as 52.661 x 128.164 stage px.
     const idle = render('idle').ink;
@@ -139,7 +141,8 @@ describe('the REAL composed fighter, rasterised', () => {
   });
 
   it('crops to the frames the CLI reports', () => {
-    expect(render('dressed').region).toEqual({ x: 448, y: 266, width: 115, height: 190 });
+    // Width 115 → 122 at SESSION22 A9.6: the branch's fork tip widened the ink.
+    expect(render('dressed').region).toEqual({ x: 448, y: 266, width: 122, height: 190 });
     expect(render('idle').region).toEqual({ x: 456, y: 279, width: 102, height: 177 });
   });
 
@@ -216,5 +219,6 @@ describe('the render is anchored where the scene anchors it', () => {
 // kasa two-tone + ribs + band + fringe with an INSET w2 contour, hakama
 // measured-flat #dcd9d4 with a clean hem and inset w1.5 contour, obi two-tone.
 // Idle is untouched — the bare fighter draws no traced art.
-const GOLDEN_DRESSED = '80d6f584b6b20ae9bef44478255ed40ef97e1d29ae9333e433cc7389d8b97145';
+// …and A9.6 once more: the branch is on screen at the measured facing.
+const GOLDEN_DRESSED = '4fdcba7ccd0966e13295c37f12b1fd6e5d38b223c8d1c3728a24be3e049952ed';
 const GOLDEN_IDLE = '6dae62d12576cc22e2b62f92dc7481c5634f6e6c88279d3b5d6be4e97638ca97';

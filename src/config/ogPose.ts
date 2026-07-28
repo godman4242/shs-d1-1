@@ -169,6 +169,46 @@ export const OG_SLOT_ALIASES: ReadonlyArray<readonly [number, number]> = [
  * A test pins the exact set of dressed slots, so adding one is a deliberate act
  * rather than a drift.
  */
+/**
+ * SESSION22 A9.6 — EQUIPMENT the dressed fighter wears, with its FACING.
+ *
+ * The starting weapon is the training BRANCH (`DefineShape 2641` — original
+ * payload vector art, read off the PLAYER screen: `BRANCH · DMG 1-2 · LEVEL
+ * 1`). It goes here and NOT in `TRACED`: traced ids are >= 9000 and nothing
+ * else is.
+ *
+ * ⚠️ `rotationDeg` OVERRIDES the recorded pose node for the slot — MEASURED
+ * (A9-F): three stills put the stick's axis at +39.9° ± 2; the recorded 142
+ * is its horizontal mirror (142 = 180 − 38, and node 4 carries exactly −38) —
+ * the payload's weapon art was authored for the opposite facing. 38 renders
+ * the stick at +39.3°, 0.6° from the measurement, fork end lower-right as
+ * every frame shows. Ledger: docs/DIVERGENCES.md "SESSION 22 — A9.6".
+ * ⛔ `OG_IDLE_NODES` itself is byte-checked against the payload's bindata and
+ * is NEVER edited; the override lives here and only the DERIVED dressed node
+ * list applies it.
+ */
+export const OG_EQUIPMENT: Readonly<
+  Record<number, { readonly shapeId: number; readonly rotationDeg: number; readonly x: number; readonly y: number }>
+> = {
+  // The training branch. rotation 38 = the measured facing (see above). The
+  // POSITION is un-mirrored too — the recorded (12, −61) belongs to the same
+  // opposite-facing authoring as the 142 — and is MEASURED from zFt_0061: the
+  // stick's endpoints sit at bbox-fractions (0.107, 0.426)→(1.000, 0.865) of
+  // the fighter, so most of its length hides BEHIND the torso and hakama with
+  // the fork tip emerging aft-low, exactly as the frame shows.
+  3: { shapeId: 2641, rotationDeg: 38, x: -17, y: -55 },
+};
+
 export const OG_DRESSED_SLOT_SHAPES: ReadonlyArray<readonly number[]> = OG_SLOT_SHAPES.map(
-  (shapes, slot) => TRACED[slot] ?? shapes,
+  (shapes, slot) => TRACED[slot] ?? (OG_EQUIPMENT[slot] === undefined ? shapes : [OG_EQUIPMENT[slot].shapeId]),
 );
+
+/**
+ * The recorded pose with equipment facings applied — what the DRESSED fighter
+ * composes with. Derived, never hand-edited: every node except an equipped
+ * slot's is the byte-checked original, and a test pins exactly that.
+ */
+export const OG_DRESSED_NODES: readonly OgPoseNode[] = OG_IDLE_NODES.map((node) => {
+  const eq = OG_EQUIPMENT[node.slot];
+  return eq === undefined ? node : { ...node, rotationDeg: eq.rotationDeg, x: eq.x, y: eq.y };
+});

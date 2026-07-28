@@ -3509,3 +3509,55 @@ inkShare: all seven <= 61.4 % (worst traced: 9012 at 32.6)
 poseRender pins: 57 -> 81 ops, 18 -> 44 strokes (kasa detail + inset contours),
 GOLDEN_DRESSED re-pinned; idle digest untouched
 ```
+
+## SESSION 22 — A9.6: THE BRANCH IS ON SCREEN, AT THE MEASURED FACING. GATE A9-F MET — AND ALL FLOORS ROSE.
+
+```
+                     tracing    held-out   height
+  committed floors    0.9006     0.8618    140.5
+  before the branch   0.9085     0.8634    140.48
+  branch landed       0.9106     0.8671    140.48   <- every number ABOVE its floor
+```
+
+### The facing, measured (the analyst agent's A9-F evidence)
+Endpoints read by eye off gridded ×10 crops of three clean stills (zFt_0059/
+0060/0061 — 0066/0071 are mid-pan): the stick runs upper-left (776,740) →
+lower-right (902,845), axis **+39.9° ± 2**, fork end lower-right. Shape 2641's
+local axis is +1.3° (PCA over its committed vertices). The recorded slot-3
+rotation 142 renders 143.3° = the horizontal MIRROR of the source (180 − 39.9
+= 140.1 ≈ 142) — the `142 = 180 − 38` signature CONFIRMED. **rotation 38 →
+rendered 39.3°, residual 0.6° against a 10° bar.** Cleanest single reference:
+zFt_0061 (the trace frame itself).
+
+### ⭐ THE MIRROR FLIPS THE POSITION TOO — found by LOOKING, fixed by MEASURING
+At the recorded (12, −61) the whole stick floated AFT of the body — a spike of
+width nothing occludes — and held-out collapsed to 0.8257. The frames show the
+midsection hidden BEHIND the torso and hakama with only the ends emerging.
+Measured as bbox-fractions of the source fighter ((0.107, 0.426) → (1.000,
+0.865)) and mapped onto ours: node ≈ (−19, −53) — **the x offset flips sign**,
+completing the mirror story. Final (−17, −55) chosen inside the mapping's
+±2-node-px uncertainty by the committed floors (the A6.4 measure-then-sweep
+rule); every candidate in the sweep is ledgered above the floor or rejected.
+
+### The mechanism — the recorded pose is never edited
+`OG_EQUIPMENT` (config) carries `{shapeId, rotationDeg, x, y}`;
+`OG_DRESSED_NODES` is DERIVED, and `tests/a9Branch.test.ts` pins that it
+differs from the byte-checked `OG_IDLE_NODES` in slot 3's transform ONLY —
+including the sign flip. The bare fighter still composes from the recorded
+nodes verbatim; the bindata byte-check suite is untouched. Red-first: all 6
+gate tests watched red before the config existed.
+
+### What it cost, honestly
+The fork tip is now the fighter's widest point (ink maxX 538.9 → 545.7) —
+exactly what the source shows. poseRender pins moved with reasons in place:
+21 parts, 96 ops (+10 fill/+4 stroke/+1 holedFill = 2641's own art), crop
+width 115 → 122, new golden digest. 2641 joined `FIGHTER_SHAPES` and the two
+test-side shape maps (its absence threw in `planPose`, which is the guard
+working). `inkShare` drops its manual append — the registry owns the branch.
+
+### Regression
+```
+suite 51 files / 854 tests green   tsc x2 -> 0 · eslint -> 0
+scorePose: tracing 0.9106 · held-out 0.8671 · height 140.48 — floors NOT edited
+(the ratchet-up decision belongs to A9.7, after the gi ruling)
+```

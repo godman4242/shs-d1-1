@@ -28,7 +28,7 @@ import {
   OG_IDLE_STAGE,
 } from '../config/art';
 import { HALF, ONE, ZERO } from '../config/nums';
-import { OG_DRESSED_SLOT_SHAPES, OG_IDLE_NODES, OG_SLOT_ALIASES, OG_SLOT_SHAPES } from '../config/ogPose';
+import { OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_IDLE_NODES, OG_SLOT_ALIASES, OG_SLOT_SHAPES } from '../config/ogPose';
 import { inkedBounds, trianglesOf, type DrawOp } from '../core/artPlan';
 import { composePose } from '../core/composePose';
 import { inkBox, type InkBox } from '../core/inkBox';
@@ -97,7 +97,10 @@ export class IdleFighterScene extends Phaser.Scene {
     const query = new URLSearchParams(window.location.search);
     const dressed = query.get('art') === 'dressed';
     const slotShapes = dressed ? OG_DRESSED_SLOT_SHAPES : OG_SLOT_SHAPES;
-    const parts = composePose(OG_IDLE_NODES, slotShapes, OG_SLOT_ALIASES);
+    // SESSION22 A9.6: the dressed fighter applies equipment facings; the bare
+    // fighter keeps the recorded, byte-checked pose (same rule as poseScene).
+    const nodes = dressed ? OG_DRESSED_NODES : OG_IDLE_NODES;
+    const parts = composePose(nodes, slotShapes, OG_SLOT_ALIASES);
     const origin = { x: OG_IDLE_STAGE.anchorX, y: OG_IDLE_STAGE.anchorY };
     const plan = planPose(parts, FIGHTER_SHAPES, origin, VIEW);
 

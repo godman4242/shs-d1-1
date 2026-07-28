@@ -31,6 +31,7 @@ import type { ShapeInput } from '../src/core/artPlan';
 import { renderPoseWith } from '../scripts/art/poseScene';
 import { profileAgreement, widthProfile, PROFILE_SAMPLES } from '../scripts/art/silhouette';
 import { FRAME_TO_FRAME_CEILING, HELDOUT_PROFILE, TRACING_PROFILE } from '../scripts/art/sourceProfile';
+import { SHAPE_2641 } from '../src/game/art/generated/shape2641';
 import { SHAPE_2644 } from '../src/game/art/generated/shape2644';
 import { SHAPE_2646 } from '../src/game/art/generated/shape2646';
 import { SHAPE_2648 } from '../src/game/art/generated/shape2648';
@@ -55,7 +56,7 @@ import { SHAPE_9019 } from '../src/game/art/generated/shape9019';
 
 const SHAPES: ReadonlyMap<number, ShapeInput> = new Map(
   [
-    SHAPE_2644, SHAPE_2646, SHAPE_2648, SHAPE_2650, SHAPE_2653, SHAPE_2655, SHAPE_2658,
+    SHAPE_2641, SHAPE_2644, SHAPE_2646, SHAPE_2648, SHAPE_2650, SHAPE_2653, SHAPE_2655, SHAPE_2658,
     SHAPE_2664, SHAPE_2667, SHAPE_2670, SHAPE_2672, SHAPE_2674, SHAPE_2676, SHAPE_2678,
     SHAPE_9001, SHAPE_9011, SHAPE_9012, SHAPE_9014, SHAPE_9015, SHAPE_9017, SHAPE_9019,
   ].map((s) => [s.id, s]),

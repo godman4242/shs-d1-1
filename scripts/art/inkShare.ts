@@ -24,12 +24,10 @@
 import { inkShareOf } from './inkShareLib';
 import type { InkShare } from './inkShareLib';
 import { FIGHTER_SHAPES } from '../../src/game/art/fighterShapes';
-import { SHAPE_2641 } from '../../src/game/art/generated/shape2641';
 
-/** Every shape the dressed fighter can draw, OG art and traced garments alike. */
+/** Every shape the dressed fighter can draw — the registry holds the branch too (A9.6). */
 function allShares(): InkShare[] {
-  const shapes = [...FIGHTER_SHAPES.values(), SHAPE_2641];
-  return shapes.map((s) => inkShareOf(s)).sort((a, b) => b.share - a.share);
+  return [...FIGHTER_SHAPES.values()].map((s) => inkShareOf(s)).sort((a, b) => b.share - a.share);
 }
 
 function main(): void {

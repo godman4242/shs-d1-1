@@ -21,7 +21,7 @@
  */
 import { OG_IDLE_STAGE } from '../../src/config/art';
 import { GAME_HEIGHT, GAME_WIDTH } from '../../src/config/display';
-import { OG_DRESSED_SLOT_SHAPES, OG_IDLE_NODES, OG_SLOT_ALIASES, OG_SLOT_SHAPES } from '../../src/config/ogPose';
+import { OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_IDLE_NODES, OG_SLOT_ALIASES, OG_SLOT_SHAPES, type OgPoseNode } from '../../src/config/ogPose';
 import { inkedBounds, type Bounds, type DrawOp, type ShapeInput } from '../../src/core/artPlan';
 import { composePose, type PosedPart } from '../../src/core/composePose';
 import { planPose } from '../../src/core/planPose';
@@ -39,6 +39,16 @@ import { DEFAULT_BACKDROP, DEFAULT_SUPERSAMPLE, type PoseVariant } from './rende
  */
 export function slotMapFor(variant: PoseVariant): ReadonlyArray<readonly number[]> {
   return variant === 'dressed' ? OG_DRESSED_SLOT_SHAPES : OG_SLOT_SHAPES;
+}
+
+/**
+ * SESSION22 A9.6 — the dressed fighter composes with the EQUIPMENT facings
+ * applied (`OG_DRESSED_NODES`, derived); the bare fighter keeps the recorded,
+ * byte-checked pose. Same swap-hazard as `slotMapFor`: mixing them renders a
+ * mirrored weapon or a stickless doll.
+ */
+export function nodesFor(variant: PoseVariant): readonly OgPoseNode[] {
+  return variant === 'dressed' ? OG_DRESSED_NODES : OG_IDLE_NODES;
 }
 
 /**
@@ -142,7 +152,7 @@ export function renderPoseWith(
     full = false,
   } = options;
 
-  const parts = composePose(OG_IDLE_NODES, slotMapFor(variant), OG_SLOT_ALIASES);
+  const parts = composePose(nodesFor(variant), slotMapFor(variant), OG_SLOT_ALIASES);
   const origin = { x: OG_IDLE_STAGE.anchorX, y: OG_IDLE_STAGE.anchorY };
   const plan = planPose(parts, shapes, origin, VIEW);
   assertBackdropIsNotArt(plan, backdrop);

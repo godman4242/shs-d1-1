@@ -8,10 +8,13 @@
  * data.
  *
  * The 14 OG shapes here are exactly the ones `src/config/ogPose.ts`'s BARE slot
- * map names; the `SHAPE_90NN` shapes are the traced garments the DRESSED map adds. `2641` (training branch) and `2662` (alt head) are in the corpus but
- * NOT in the fighter, and are deliberately absent.
+ * map names; the `SHAPE_90NN` shapes are the traced garments the DRESSED map
+ * adds, and `2641` (the training branch) is the DRESSED fighter's starting
+ * weapon (`OG_EQUIPMENT`, SESSION22 A9.6). `2662` (alt head) is in the corpus
+ * but NOT in the fighter, and is deliberately absent.
  */
 import type { ArtShape } from './types';
+import { SHAPE_2641 } from './generated/shape2641';
 import { SHAPE_2644 } from './generated/shape2644';
 import { SHAPE_2646 } from './generated/shape2646';
 import { SHAPE_2648 } from './generated/shape2648';
@@ -36,6 +39,7 @@ import { SHAPE_9017 } from './generated/shape9017';
 import { SHAPE_9019 } from './generated/shape9019';
 
 const ALL: readonly ArtShape[] = [
+  SHAPE_2641,
   SHAPE_2644,
   SHAPE_2646,
   SHAPE_2648,
