@@ -74,6 +74,8 @@ carried as a closed door. The next change would be churn.
 >   equipment-override question resolves by looking, not by argument).
 > - **NEXT: A11.5** — floors re-grade, clean clone, SESSION 24 kickoff
 >   (P3 audio scheduled as its own research session).
+
+> ## ▶ A11.3 LANDED: THE FIRST FOUR ANIMATIONS ARE CONTRACT.
 > **55 files / 880 tests green** · fidelity 55/55 autonomous ·
 > - **A11-D (GATE):** `walk` (20f, loop) + `balancedhorizontalslash` a/b/c
 >   (4/9/7f — the balanced-stance basic attack) transcribed VERBATIM from the
