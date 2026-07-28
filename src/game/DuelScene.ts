@@ -29,12 +29,12 @@ import { duelSetup } from '../core/duelSetup';
 import { Sim, type ActorId } from '../core/Sim';
 import { stageToWorld, VIEW, worldToStage } from '../core/viewport';
 import type { Vec } from '../core/vec';
-import { OG_WALK_MIN_STAGE_PX } from '../config/anim';
+import { OG_WALK_MIN_STAGE_PX, WALK } from '../config/anim';
 import { OG_DUEL_STAGE } from '../config/art';
 import { OG_ANIMS } from '../config/ogAnims';
 import { OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES } from '../config/ogPose';
 import { composePose, type PosedPart } from '../core/composePose';
-import { OgAnimPlayer } from '../core/ogAnimPlayer';
+import { OgAnimPlayer, strideMs } from '../core/ogAnimPlayer';
 import { planPose } from '../core/planPose';
 import { FIGHTER_SHAPES } from './art/fighterShapes';
 import { drawPlan } from './OgArtScene';
@@ -663,7 +663,10 @@ export class DuelScene extends Phaser.Scene {
     }
     if (dx >= OG_WALK_MIN_STAGE_PX) {
       if (og.current !== 'walk') og.play('walk');
-      og.step(dtAnim);
+      // DISTANCE-driven, never wall time (Session 8's anti-foot-skating rule;
+      // owner LOOK 2026-07-28 caught the time-driven regression): travelled
+      // stage px against the MEASURED WALK.stridePx spans the clip's cycle.
+      og.step(strideMs(dx, WALK.stridePx, OG_ANIMS.walk.frames.length));
       return composePose(og.nodes(), OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES, mirrored);
     }
     return mirrored ? this.fighterPartsMirrored : this.fighterParts;

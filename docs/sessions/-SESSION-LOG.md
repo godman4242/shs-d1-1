@@ -3099,3 +3099,17 @@ tells forward — see the kickoff §2 amendment; build FROM the study frames.
   unpiped now) · fidelity 55/55 autonomous · Sim + baseline untouched.
   Leveldb compaction killed the disk-read fallback; the extension tab reads
   the verdict after a wake-up navigation instead.
+- **04:30** OWNER LOOK on the MOVING duel (gate item 9) returned three
+  verdicts. (1) FOOT-SKATING — real regression, fixed same-turn: locomotion
+  stepping was wall-time-driven; now distance-driven through `strideMs()`
+  (core, red-first ×2 tests) using the MEASURED `WALK.stridePx` 72 — zero
+  new numbers, cadence tracks travel exactly (Session 8's own rule carried
+  to the transcribed clip). Fidelity 55/55 re-run green. (2) "running
+  animation when slashing point-blank" — triaged to the INFERRED gesture
+  thresholds (open decision #9): a short close stroke can classify as
+  flick/launch → move instead of slash; changing it moves GAMEPLAY
+  (duel-baseline) → scheduled into the P4 combat-numbers session, elevated.
+  (3) unlimited stroke length — the P4 reach-cap unknown verbatim; same
+  session. Owner also asked after missing tools: NONE — the gap to a
+  perfect copy is scheduled measurement (P3 audio, P4 numbers, P5
+  animations), not tooling.

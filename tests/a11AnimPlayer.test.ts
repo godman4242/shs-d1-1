@@ -26,7 +26,7 @@ import { OG_ANIMS, type OgAnim } from '../src/config/ogAnims';
 import { OG_MATRIX_UNITS } from '../src/config/ogPose';
 import type { ShapeInput } from '../src/core/artPlan';
 import { composePose } from '../src/core/composePose';
-import { OgAnimPlayer } from '../src/core/ogAnimPlayer';
+import { OgAnimPlayer, strideMs } from '../src/core/ogAnimPlayer';
 import { planPose } from '../src/core/planPose';
 import { VIEW, worldToStageLength } from '../src/core/viewport';
 
@@ -82,6 +82,30 @@ describe('A11-E — the 15 fps latch, banked like the scene latch banks time', (
     for (const d of deltas) b.step(d);
     expect(a.frameIndex).toBe(b.frameIndex);
     expect(a.nodes()).toEqual(b.nodes());
+  });
+});
+
+describe('A11-E — distance-driven locomotion: the stride phase advances by travel, never wall time', () => {
+  // Session 8's own anti-foot-skating rule, carried to the transcribed clip:
+  // WALK.stridePx (MEASURED, 72 stage px per full stride) maps travelled px
+  // to animation time, so cadence tracks ground covered. Owner LOOK
+  // 2026-07-28 caught the regression: time-driven stepping skated the feet.
+  it('one full measured stride advances exactly one full walk cycle', () => {
+    const p = new OgAnimPlayer(OG_ANIMS, 'walk');
+    const cycleFrames = OG_ANIMS.walk.frames.length;
+    p.step(strideMs(72, 72, cycleFrames) + 1);
+    // 20 frames on a 20-frame loop = back at frame 0 having wrapped once.
+    expect(p.frameIndex).toBe(0);
+    // …and one frame short of a stride is the last frame, not a wrap:
+    const q = new OgAnimPlayer(OG_ANIMS, 'walk');
+    q.step(strideMs(72 - 72 / cycleFrames, 72, cycleFrames) + 1);
+    expect(q.frameIndex).toBe(cycleFrames - 1);
+  });
+
+  it('a twentieth of a stride is one frame — the latch still quantises', () => {
+    const p = new OgAnimPlayer(OG_ANIMS, 'walk');
+    p.step(strideMs(72 / 20, 72, 20) + 1);
+    expect(p.frameIndex).toBe(1);
   });
 });
 

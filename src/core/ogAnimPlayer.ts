@@ -22,6 +22,20 @@ import { ANIM_TIMING } from '../config/anim';
 import type { OgAnim, OgAnimNode } from '../config/ogAnims';
 import { ONE, ZERO } from '../config/nums';
 
+/**
+ * Distance → animation time for locomotion (SESSION23 A11.4, owner-LOOK fix).
+ *
+ * Session 8's anti-foot-skating rule, carried to the transcribed clip: the
+ * stride phase advances by TRAVEL, never wall time. `dxPx` of ground covered
+ * against a measured `stridePx` (WALK.stridePx, 72 stage px per full stride)
+ * spans `cycleFrames` of the clip; multiplying by the 15 fps step converts
+ * that into latch time, so `OgAnimPlayer.step` keeps its whole-frame
+ * quantisation while cadence tracks speed exactly.
+ */
+export function strideMs(dxPx: number, stridePx: number, cycleFrames: number): number {
+  return (dxPx / stridePx) * cycleFrames * ANIM_TIMING.poseStepMs;
+}
+
 export class OgAnimPlayer {
   private readonly anims: Readonly<Record<string, OgAnim>>;
   private animName: string;
