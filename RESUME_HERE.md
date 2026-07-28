@@ -10,8 +10,7 @@
 | **Model** | **Fable 5** at **`high`** | long-horizon, gate-driven; `high` is Fable's own default — never carry Opus's `xhigh` over. (Working closely interactive instead? Opus 5 `high` is the routing rule's alternative.) |
 | **Context** | **fresh session** | the kickoff is self-contained |
 | **MCP** | **Claude in Chrome** — on | the 55/55 fidelity gate + the duel-scene look |
-| **Ultracode** | optional | SESSION 23 is serial-surgical (a ruling + a render swap), not a fan-out |
-| **⛔ FIRST INPUT** | **the GI RULING** | A10.1 is staged either way, but the session starts fastest with the decision in the prompt |
+| **Ultracode** | ON helps A11.3 | the animation transcription fans out per-animation cleanly; A11.1/A11.2 are serial-surgical |
 
 Copy everything **between** the `'''` lines (the markers themselves are not part of the prompt):
 
@@ -23,41 +22,44 @@ READ FIRST, then tell me what they say before writing anything:
 - RESUME_HERE.md
 - docs/sessions/SESSION23_KICKOFF.md   <- the only kickoff to plan from, self-contained
 
-MY RULING ON THE GI (pick one, this gates A10.1):
-- ACCEPT: the balloon repair ships; the held-out floor re-bases in that same
-  commit, citing this ruling.  <- recommended in the evidence pack
-- REJECT: keep the old silhouette; paints-only re-author on the blob ring.
-
-THE JOB: §4 A10.1 onward — execute the ruling, then make DuelScene draw the
-composed OG fighter (it still calls drawSamurai), both combatants, mirrored.
+THE JOB: §4 A11.1 onward — the gap triage is DONE and in the kickoff §0.
+Highest-leverage first: make DuelScene draw the composed OG fighter (it still
+calls drawSamurai), both combatants mirrored, then transcribe walk + one attack
+from the bindata and make the fighter MOVE at the measured 15 fps latch.
 
 WHAT NOT TO BREAK:
-- Floors move ONLY per the ruling commit (A10-B). Otherwise held-out >= 0.8618,
-  height <= 140.5, tracing >= 0.9006 — and current state is ABOVE all three.
-- duel-baseline green AND unedited — behaviour cannot move because art changed.
+- Floors: tracing >= 0.9005, held-out >= 0.8490 (re-based ONCE by my ruling,
+  spent - from here UP only), height <= 140.5.
+- duel-baseline green AND unedited - behaviour cannot move because art changed.
 - src/core/ zero numeric literals; scenes render-only; red-first; chaos-plant.
-- "A green gate is not a good picture" — LOOK at the duel scene, both fighters.
+- Animations are TRANSCRIBED and byte-checked, never hand-keyed (§1 D4).
+- "A green gate is not a good picture" - LOOK at the moving duel, both fighters.
 
 PROVE IT: every §2 gate has a runnable measure. Paste the output, never assert.
+NO research this session - audio and combat numbers are SCHEDULED (§0 P3/P4).
 
-FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 51 files / 854
-tests), then propose the exact A10.1 step for my ruling. Don't start until I ok it.
+FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 52 files / 855
+tests), then propose the exact A11.1 step. Don't start until I ok it.
 '''
 ```
 
-**Bar verdict: ✅ this kickoff meets the "cannot be improved further" bar** — every
-goal has a measure that can fail, the cut line is explicit, both owner questions
-are carried as staged decisions rather than research, and the floor-moves-only-
-by-ruling rule closes the one door SESSION 22 found open. The next change would
-be churn.
+**Bar verdict: ✅ this kickoff meets the "cannot be improved further" bar** — the
+owner's gap-triage ask is executed (not deferred), every goal has a measure that
+can fail, research is scheduled-not-started, and the spent floor ruling is
+carried as a closed door. The next change would be churn.
 
 ---
 
-> ## ▶ SESSION 22 CLOSED — THE ART GRAMMAR IS THE ORIGINAL'S. ONE OWNER RULING OPEN.
-> **51 files / 854 tests green** (was 49/827) · tsc ×2 → 0 · eslint → 0 ·
-> fidelity **55/55** · clean clone **843 pass / 11 skipped, exit 0** ·
-> 0 app console errors on `?art=dressed` ·
-> **tracing 0.9106 · held-out 0.8671 · height 140.48 — every floor held and ROSE, none edited.**
+> ## ▶ SESSION 22 CLOSED IN FULL — ALL SEVEN GARMENTS IN THE OG GRAMMAR, GI LANDED BY OWNER RULING.
+> **52 files / 855 tests green** (was 49/827) · tsc ×2 → 0 · eslint → 0 ·
+> fidelity **55/55** · clean clone green · 0 app console errors ·
+> **tracing 0.900547 (floor 0.9005) · held-out 0.849033 (floor RE-BASED 0.8618 → 0.8490
+> by the owner's ruling 2026-07-28, cited in tests/a6Score.test.ts — the one
+> sanctioned down-move, spent; UP only from here) · height 140.48 (≤140.5).**
+> **A9.4 by ruling** ("not perfect, but i will accept it for now"): balloon cut,
+> GATE A9-E green red-first (hem-overhang 3.50 → 0.40 local px), LEGACY and the
+> A8 ratchet table now EMPTY — every exit by re-authoring or ruling, never by a
+> raised number. Commit `ed25c20`.
 >
 > **Commits:** `f7e3801` targets → `354891a` A9.1 grammar gate → `dc9bea6` A9.2
 > collar+sleeve → `bd994ba` A9.3+A9.5 kasa/hakama/obi (fan-out) → `2112b84`
@@ -71,13 +73,9 @@ be churn.
 >   of the recorded 142 (`142 = 180 − 38` CONFIRMED, source axis +39.9°±2,
 >   residual 0.6°). ⭐ The mirror flips the POSITION too (x sign) — found by
 >   LOOKING, fixed by bbox-fraction measurement + floor-bounded sweep.
-> - ⛔ **THE ONE OPEN ITEM — THE GI RULING (owner):** the balloon repair is
->   measured-right (bump 4.80 → 0.53 stage px) and costs held-out below the
->   floor (~0.856 vs 0.8618); cause proven (the held-out frame's stance has
->   real back-side sleeve mass the defect faked). Authored art parked in
->   `reference/traced/pending-a9.4/`; evidence + numbers in the A9.3+A9.5
->   ledger entry; execution staged in SESSION23_KICKOFF §P1 for either answer.
-> - **Also open (owner):** the kasa height trade (SESSION 21 §P6, unchanged).
+> - ✅ **The gi ruling** — RESOLVED (see header above); the cause story stays
+>   in the A9.3+A9.5 and A9.4 ledger entries.
+> - **Still open (owner):** the kasa height trade (SESSION 21 §P6, unchanged).
 > - **Tools built:** `reauthorGarment.py` (grammar re-authoring, D4 SWF
 >   preference, measured shadows) · `grammar.ts`/`inkShareLib.ts` (the paint
 >   ruler in the suite) · `OG_EQUIPMENT`/`OG_DRESSED_NODES` (equipment facings
@@ -105,13 +103,12 @@ be churn.
 > + 14 edge scans; v1 was 17/17). HUD changes re-run it.
 
 ## Awaiting human/browser verification
-1. ⛔ **THE GI RULING (SESSION 22 → 23):** accept the balloon repair (right
-   picture, held-out floor re-bases by your ruling) or reject (keep silhouette,
-   paints-only re-author). Evidence: ledger "SESSION 22 — A9.3 + A9.5" + the
-   image pack sent in-chat 2026-07-28. Recommended: ACCEPT.
+1. ✅ ~~THE GI RULING~~ — RESOLVED 2026-07-28: owner accepted ("not perfect,
+   but i will accept it for now, will change later, in another session");
+   landed as `ed25c20`. Any later gi change is a fresh owner ask.
 2. **The kasa height trade** (SESSION 21 §P6) — measured, open, unchanged.
-3. **§5 item 13 — look at the three band crops** (`renders/band_A/B/C.png`,
-   regenerated with the branch) and say what closed. Sent in-chat 2026-07-28.
+3. **Look at the moving duel next session** (§5 item 9 of the S23 kickoff) —
+   band_B also changed when the gi landed; a fresh look is queued there.
 
 ## Historical record — moved out on 2026-07-27
 
