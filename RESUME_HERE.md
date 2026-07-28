@@ -57,6 +57,29 @@ next change would be churn.
 
 ---
 
+> ## ▶ SESSION 22 IN PROGRESS — A9.1 DONE: THE PAINT-GRAMMAR GATE EXISTS
+> **50 files / 847 tests green** (was 49/827) · tsc ×2 → 0 · eslint → 0 · **no
+> shape file changed — the render is untouched; this step built the ruler.**
+>
+> - **A9.1a (`f7e3801`):** `sourceColour.ts` now carries **p25/p75 per garment**
+>   — GATE A9-D's shadow/base targets, committed BEFORE any re-authored art
+>   exists. Pure additions; every median/iqr byte-identical.
+> - **A9.1b:** `tests/a9Grammar.test.ts` (20 tests) + `scripts/art/grammar.ts`.
+>   Every traced garment is either in the **`REAUTHORED` roster** (must have an
+>   ink stroke w ∈ [0.5, 2.5], ZERO all-ink fill rings, ≥2 tones, ink ≤ the
+>   OG's own worst 61.4%, tones within 12 of p25/p75) or in **`LEGACY`, pinned
+>   exactly** — editing a blob in place goes red with instructions to re-author.
+>   Red-proofed on all seven; **3 chaos plants watched RED then reverted.**
+> - ⭐ **The `no-game-imports` guard rejected the first design** (a test reaching
+>   `fighterShapes.ts`) and forced a better one: 22 static pure-data imports +
+>   a directory cross-check, roster in the CLI. The guard worked; keep it.
+> - ⚠️ **Handover decided in advance** (ledger "SESSION 22 — A9.1"): the first
+>   re-authoring commit scopes `a8Colour`'s one-fill/ratchet tests to LEGACY
+>   shapes (A9-D's 12 is tighter than the 22/22/23 ratchets) and teaches
+>   `colourRuler.our_fill` about multi-tone shapes.
+> - **Next: A9.2** — re-author 9012 (collar, 75.9% ink) + 9001 (far sleeve,
+>   70.6%), the owner's "one or 2 of them", to ≤ 61.4% (GATE A9-B).
+>
 > ## ⛔ A8.2 FOUND THE WEAPON IN THE REPO — AND THE ART IS NOT 1:1 FOR A STRUCTURAL REASON
 > **49 files / 827 tests green** · tsc ×2 → 0 · eslint → 0 · **the render is
 > UNCHANGED** (slot 3 deliberately unwired — see the floor trade below).

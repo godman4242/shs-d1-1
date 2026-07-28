@@ -3294,3 +3294,77 @@ suite 49 files / 827 tests green   tsc x2 -> 0 · eslint -> 0
 shape2641.ts committed and byte-for-byte re-derivable; slot 3 unwired, so the
 render and every committed digest are UNCHANGED by this step.
 ```
+
+## SESSION 22 — A9.1: THE PAINT-GRAMMAR GATE. The structural gap becomes measurable.
+
+**Steps A9.1a (`f7e3801`) + A9.1b (this commit).** Baseline `d77176a` — two
+doc-only commits above the kickoff's stated `20310b9`; `git diff 20310b9..HEAD
+-- src tests` was EMPTY at session start (only `scripts/art/inkShare.ts` and
+docs landed between).
+
+### What shipped
+```
+scripts/art/colourRuler.py    --emit now writes p25/p75 per garment (A9.1a)
+scripts/art/sourceColour.ts   +22 lines, pure additions; medians/iqr untouched
+scripts/art/grammar.ts        the paint-grammar ruler: grammarOf + violationsOf
+scripts/art/inkShareLib.ts    inkShareOf extracted VERBATIM from the CLI
+scripts/art/inkShare.ts       now the CLI shell + the shape roster; output byte-identical
+tests/a9Grammar.test.ts       GATES A9-A/B/C/D — 20 tests
+```
+
+### The gate's mechanics — a ratchet with named exemptions
+- **Partition:** every traced id is in `REAUTHORED` (grammar enforced) or in
+  `LEGACY` (pinned exactly: no strokes, 1 ink fill ring, the one tone). A shape
+  moves legacy → roster in the commit that re-authors it, never back.
+- **Positive control, measured not asserted:** 13 of the 15 committed OG shapes
+  (incl. the branch 2641) outline with an ink stroke, widths ⊆ {0.5, 1, 1.5, 2};
+  the two that do not are pinned by name — 2670 hair (solid mass IS the design)
+  and 2672 foottop (the one OG part outlined by filled rings). 2653 pins the SWF
+  cloth pair `#9e9a97`/`#dcd9d4` — kickoff D4's source.
+- **"Ink" has ONE definition:** all channels < 40 (`INK_CHANNEL`, A8.3's own
+  BLACK threshold) — admits the OG's near-black outline colours (#180e06 …),
+  shared by the pixel ruler and the paint ruler so the two cannot drift apart.
+- **A9-D:** darkest tone vs p25 (shadow), lightest vs p75 (base), each within
+  12 levels/channel; middle tones are detail accents, deliberately ungraded
+  (the OG's own 2650 carries three fills; its middle has no measurable target).
+- **A9-B:** the bar is computed LIVE from the committed OG art (worst non-hair
+  share, = 2674 at 61.4%), and the suite pins that derivation to guard the lib
+  extraction.
+
+### RED PROOF — the gate fails today's seven, by name
+Temporarily rostering all seven produced (9001 shown; the profile is uniform):
+```
++ "A9-A: no ink stroke — the contour must be a stroked outline, not a filled ring",
++ "A9-A: 1 all-ink fill ring(s) — the traced blob outline must go",
++ "A9-C: 1 tone(s) — the OG paints a base + one hard-edged shadow",
++ "A9-B: ink share 70.6% over the OG's own worst 61.4%",
+```
+
+### Chaos plants — 3, each watched RED then reverted
+1. `shape2646` stroke width 2 → 2.7 → `every OG ink-stroke width sits inside the bar` RED.
+2. `shape9012` tone `0xb6b4b6` → `0xb0b0b0` → `every legacy shape matches its pin exactly` RED.
+3. 9012's pin deleted → `REAUTHORED and LEGACY together are exactly the traced shapes` RED.
+
+### ⭐ THE REPO'S OWN GUARD SHAPED THE DESIGN — and that is the finding
+The first draft imported `fighterShapes.ts` from the test and from the lib.
+`no-game-imports` went RED: the registry is a runtime module; only the pure-data
+art files carry the exemption. The final shape — 22 static generated imports +
+a directory cross-check so a new shape cannot land uncovered, roster in the CLI
+— is BETTER than the draft, and the guard forced it. (Kickoff §3.3 said keep
+`poseRaster` the only unreachable file; it stayed so.)
+
+### ⚠️ CARRIED FORWARD, DECIDED IN ADVANCE
+- `a8Colour.test.ts` asserts ONE interior fill per garment — correct for legacy
+  blobs, WRONG for re-authored art. The commit that re-authors the first
+  garment scopes A8's one-fill + ratchet tests to LEGACY shapes and lets A9-D
+  (12 levels, tighter than the 22/22/23 legacy ratchets) take over. Tightening,
+  not softening — recorded here so the edit is expected, not silent.
+- `colourRuler.py`'s `our_fill` refuses shapes with ≥2 interior fills ("refusing
+  to guess") — same handover, same commit.
+
+### Regression
+```
+suite 50 files / 847 tests green (was 49/827)   tsc x2 -> 0 · eslint -> 0
+inkShare CLI after the split: mean 41.4%, worst 61.4%, same two over (9012 75.9, 9001 70.6)
+No shape file changed; the render and every committed digest are UNCHANGED.
+```
