@@ -27,6 +27,14 @@ export interface OgPoseNode {
 }
 
 /**
+ * CONTRACT (SESSION23 A11.4) — the fixed-point scale of Flash matrix nodes.
+ * The AS3 divides `a`/`b`/`c`/`d` by 100 before assigning the transform (the
+ * "÷100 branch" in this file's header); it runs only when `r` is absent.
+ * `composePose` applies it exactly once, like degrees→radians for `r` nodes.
+ */
+export const OG_MATRIX_UNITS = 100;
+
+/**
  * `<anim i="idle" d="1">`, frame 0 — all 19 nodes, verbatim, in document order.
  *
  * Nodes exist for slots 0–7, 9–16 and 18–20. **Slots 8 and 17 are the only two

@@ -50,7 +50,30 @@ carried as a closed door. The next change would be churn.
 
 ---
 
-> ## ▶ SESSION 23 IN FLIGHT — A11.1–A11.3 LANDED: COMPOSED, MIRRORED, AND THE FIRST FOUR ANIMATIONS ARE CONTRACT.
+> ## ▶ SESSION 23 IN FLIGHT — A11.1–A11.4 LANDED: THE FIGHTER MOVES AT THE MEASURED 15 FPS LATCH.
+> **56 files / 892 tests green** · tsc ×2 → 0 · eslint → 0 · fidelity **55/55
+> autonomous** (post-A11.4 run 13:24Z) · `Sim.ts` + duel-baseline byte-untouched.
+> - **A11-E (GATE):** `core/ogAnimPlayer.ts` — pure, injectable stepper:
+>   15 fps latch with banked time, loop/hold-with-`done`, and CARRY-FORWARD
+>   (sparse frames overlay a carried node map; measured partc counts
+>   19,0,19,0,19,19,7 — empties are recorded HOLDS, the last frame overlays 7
+>   nodes, so carry is what keeps 12 parts alive). `tests/a11AnimPlayer.test.ts`
+>   (12 tests, red-first). MATRIX nodes land the same pass: `composePose`
+>   scales the recorded ×100 ints once (`OG_MATRIX_UNITS`, CONTRACT — the
+>   AS3's own ÷100 branch), `planPose` unifies rotation as the matrix
+>   [cos,sin,−sin,cos] in the ONE mirror-aware transform site.
+> - **DuelScene policy (INFERRED, flagged in-code):** walk while travelling
+>   (≥ `OG_WALK_MIN_STAGE_PX`/frame), static byte-checked idle when still,
+>   balanced slash chain a→b(ONE cycle; holding b's loop needs a measured
+>   strike-travel duration — queued for the video pass)→c on the old
+>   animator's trigger events. Hit-stagger/death/guard UNANIMATED until
+>   transcribed (P5) — hand-keying is banned. FighterAnimator is out of
+>   DuelScene (EncounterScene still uses it, out of scope).
+> - **AWAITING OWNER (gate item 9):** LOOK at the MOVING duel — walk cadence
+>   vs the videos, the swing, and the branch during walk frames (the
+>   equipment-override question resolves by looking, not by argument).
+> - **NEXT: A11.5** — floors re-grade, clean clone, SESSION 24 kickoff
+>   (P3 audio scheduled as its own research session).
 > **55 files / 880 tests green** · fidelity 55/55 autonomous ·
 > - **A11-D (GATE):** `walk` (20f, loop) + `balancedhorizontalslash` a/b/c
 >   (4/9/7f — the balanced-stance basic attack) transcribed VERBATIM from the

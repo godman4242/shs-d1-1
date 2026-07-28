@@ -3081,3 +3081,21 @@ tells forward — see the kickoff §2 amendment; build FROM the study frames.
   are SPARSE deltas; both stored verbatim, interpretation deferred to the
   A11.4 stepper. Chaos-proof: a one-degree typo in 1 of 710 nodes → byte
   suite red → regenerate → green. Suite 55 files / 880 · tsc ×2 0 · eslint 0.
+- **03:40** A11.4 landed red-first: `tests/a11AnimPlayer.test.ts` (12 tests —
+  4 watched red for real reasons: two FP-boundary-naive test claims fixed
+  honestly, one wrong ring-corner index, and one WRONG PREMISE: partc does
+  NOT open empty; measured frame counts 19,0,19,0,19,19,7 — the empties are
+  mid-sequence HOLDS, headers corrected everywhere). `core/ogAnimPlayer.ts`:
+  pure stepper, 15 fps banked latch, loop/done, carry-forward; `play()` keeps
+  the carried map (the recorded sparseness depends on it). Matrix support in
+  the same pass: `OG_MATRIX_UNITS=100` (CONTRACT, the AS3's ÷100 branch),
+  composePose validates one-form-exactly and scales once, planPose unifies
+  rotation as [cos,sin,−sin,cos] through the single mirror-aware site (the
+  A11.2 reflection suite held unchanged, 86 adjacent tests green throughout).
+  DuelScene: walk/idle/slash-chain policy (INFERRED, in-code), triggers on
+  the old animator's events; FighterAnimator retired from the duel;
+  hit/death/guard stay unanimated until transcribed (P5). Suite 56 files /
+  892 · tsc ×2 0 · eslint 0 (learned: `$?` after a pipe lies — lint runs
+  unpiped now) · fidelity 55/55 autonomous · Sim + baseline untouched.
+  Leveldb compaction killed the disk-read fallback; the extension tab reads
+  the verdict after a wake-up navigation instead.

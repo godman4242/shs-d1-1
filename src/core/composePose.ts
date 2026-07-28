@@ -17,7 +17,8 @@
  * split that made SESSION 17's paint order provable.
  */
 import { HALF_TURN_DEG, ZERO } from '../config/nums';
-import type { OgPoseNode } from '../config/ogPose';
+import type { OgAnimNode } from '../config/ogAnims';
+import { OG_MATRIX_UNITS } from '../config/ogPose';
 
 /** One part, placed. `slot` is retained because it IS the z-order. */
 export interface PosedPart {
@@ -25,8 +26,18 @@ export interface PosedPart {
   readonly shapeId: number;
   readonly x: number;
   readonly y: number;
-  /** Radians. The source records degrees; the conversion happens here, once. */
-  readonly rotationRad: number;
+  /**
+   * Radians. The source records degrees; the conversion happens here, once.
+   * SESSION23 A11.4: OPTIONAL now — a node carries either a rotation or a
+   * Flash matrix (the slash frames' grammar), never both, never neither;
+   * `composePose` throws on a malformed node rather than guessing.
+   */
+  readonly rotationRad?: number;
+  /** Flash matrix, scaled to REAL values here (source is fixed-point ×100). */
+  readonly a?: number;
+  readonly b?: number;
+  readonly c?: number;
+  readonly d?: number;
   /**
    * SESSION23 A11.2 (kickoff D3): the fighter faces the other way. A TAG only —
    * the recorded geometry above stays untouched, and every piece of mirror math
@@ -49,12 +60,12 @@ export interface PosedPart {
  * node. Each of those renders as a misplaced limb that looks like an art bug.
  */
 export function composePose(
-  nodes: readonly OgPoseNode[],
+  nodes: readonly OgAnimNode[],
   slotShapes: ReadonlyArray<readonly number[]>,
   aliases: ReadonlyArray<readonly [number, number]>,
   mirror = false,
 ): PosedPart[] {
-  const bySlot = new Map<number, OgPoseNode>();
+  const bySlot = new Map<number, OgAnimNode>();
   for (const node of nodes) bySlot.set(node.slot, node);
 
   for (const [slot, follows] of aliases) {
@@ -77,15 +88,42 @@ export function composePose(
     if (node === undefined) {
       throw new Error(`composePose: slot ${String(slot)} has art but no node and no alias — it would render at the origin`);
     }
+    // A11.4: a node is EXACTLY one transform form (the AS3's own branch —
+    // matrix ÷100 runs only when `r` is absent). Malformed data throws here,
+    // because a guessed transform renders as a plausible, wrong limb.
+    const hasRotation = node.rotationDeg !== undefined;
+    const hasFullMatrix =
+      node.a !== undefined && node.b !== undefined && node.c !== undefined && node.d !== undefined;
+    const hasAnyMatrix =
+      node.a !== undefined || node.b !== undefined || node.c !== undefined || node.d !== undefined;
+    if (hasRotation === hasAnyMatrix || (hasAnyMatrix && !hasFullMatrix)) {
+      throw new Error(
+        `composePose: slot ${String(slot)} must carry a rotation or a full matrix, exclusively`,
+      );
+    }
     for (const shapeId of shapes) {
-      parts.push({
-        slot,
-        shapeId,
-        x: node.x,
-        y: node.y,
-        rotationRad: (node.rotationDeg * Math.PI) / HALF_TURN_DEG,
-        mirrored: mirror,
-      });
+      parts.push(
+        hasRotation
+          ? {
+              slot,
+              shapeId,
+              x: node.x,
+              y: node.y,
+              rotationRad: ((node.rotationDeg ?? ZERO) * Math.PI) / HALF_TURN_DEG,
+              mirrored: mirror,
+            }
+          : {
+              slot,
+              shapeId,
+              x: node.x,
+              y: node.y,
+              a: (node.a ?? ZERO) / OG_MATRIX_UNITS,
+              b: (node.b ?? ZERO) / OG_MATRIX_UNITS,
+              c: (node.c ?? ZERO) / OG_MATRIX_UNITS,
+              d: (node.d ?? ZERO) / OG_MATRIX_UNITS,
+              mirrored: mirror,
+            },
+      );
     }
   });
   return parts;

@@ -107,6 +107,14 @@ export const ANIM_TIMING = {
 } as const;
 
 /**
+ * INFERRED — SESSION23 A11.4: stage px a fighter must travel in one render
+ * frame to read as WALKING; below it the pose is the standing idle. Guards
+ * against float drift in the world→stage conversion reading as a phantom
+ * walk cycle while both fighters stand still.
+ */
+export const OG_WALK_MIN_STAGE_PX = 0.05;
+
+/**
  * INFERRED — flowing scarf (fidelity tell 20: secondary motion in idle/move).
  * A trailing tapered ribbon hung off the neck; the tail lags body motion and
  * idle-flutters. Sized to OUR fighter build.

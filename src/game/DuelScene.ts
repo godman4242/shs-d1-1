@@ -13,7 +13,7 @@ import {
   BLOOD_SPREAD_DEG,
 } from '../config/combat';
 import { SKILL_VERB } from '../config/combat-sim';
-import { DUEL_ENEMY } from '../config/duel';
+import { DUEL_ENEMY, DUEL_SPAWNS } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
 import { BAR_GRADIENTS } from '../config/fidelity';
 import { FINISHER_FLASH, SLASH_ARC } from '../config/fx';
@@ -29,10 +29,12 @@ import { duelSetup } from '../core/duelSetup';
 import { Sim, type ActorId } from '../core/Sim';
 import { stageToWorld, VIEW, worldToStage } from '../core/viewport';
 import type { Vec } from '../core/vec';
+import { OG_WALK_MIN_STAGE_PX } from '../config/anim';
 import { OG_DUEL_STAGE } from '../config/art';
+import { OG_ANIMS } from '../config/ogAnims';
 import { OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES } from '../config/ogPose';
 import { composePose, type PosedPart } from '../core/composePose';
-import { FighterAnimator } from '../core/fighterAnimator';
+import { OgAnimPlayer } from '../core/ogAnimPlayer';
 import { planPose } from '../core/planPose';
 import { FIGHTER_SHAPES } from './art/fighterShapes';
 import { drawPlan } from './OgArtScene';
@@ -116,16 +118,9 @@ export class DuelScene extends Phaser.Scene {
   /** fx-clock deadline of the chi-bar denial flash (skillDenied cue, M3). */
   private chiDeniedUntil = 0;
   private telegraphKind: 'strike' | 'stance' = 'strike';
-  private enemyGuardUntil = 0;
   private killBeatAt = 0;
   private resultLaunched = false;
   private fxNow = 0;
-  // Skeletal animators (Stage 4 M0) — RENDER-side pose state only (which
-  // frame of a swing to draw); Sim stays the single owner of gameplay truth.
-  // A11.1: nothing reads their poses yet — the event wiring stays warm for the
-  // A11.4 transcribed-frame stepper, and the drawn figure is the composed idle.
-  private playerAnim = new FighterAnimator();
-  private enemyAnim = new FighterAnimator();
   // THE COMPOSED OG FIGHTER (SESSION23 A11.1/A11.2): ONE pose table, composed
   // once per create() from the byte-checked pose + dressed slot map — twice,
   // because facing is a compose-time mirror flag (kickoff D3), never a second
@@ -133,6 +128,20 @@ export class DuelScene extends Phaser.Scene {
   // by LOOK, 2026-07-28), so a fighter drawn facing left takes the mirror.
   private fighterParts: readonly PosedPart[] = [];
   private fighterPartsMirrored: readonly PosedPart[] = [];
+  // THE RECORDED ANIMATIONS (SESSION23 A11.4) — RENDER-side pose state only
+  // (which transcribed frame to draw); Sim stays the single owner of gameplay
+  // truth. Each fighter owns a pure OgAnimPlayer stepping OG_ANIMS at the
+  // measured 15 fps latch. Policy (INFERRED, comment at drawFighters): walk
+  // while travelling, static dressed idle otherwise, and the balanced slash
+  // chain a→b(one cycle)→c on the same events the old animator consumed.
+  // Hit-stagger and death stay UNANIMATED until their frames are transcribed
+  // (P5) — inventing them by hand is banned (kickoff D4).
+  private playerOg = new OgAnimPlayer(OG_ANIMS, 'walk');
+  private enemyOg = new OgAnimPlayer(OG_ANIMS, 'walk');
+  private playerSlashing = false;
+  private enemySlashing = false;
+  private playerLastStageX = 0;
+  private enemyLastStageX = 0;
   // Session 11: mouse hold-to-run — when the mouse is held but NOT dragging
   // a stroke (pointerdown with minimal movement), the player runs toward the
   // cursor position. Once a stroke is being drawn (dragPoints growing), it
@@ -158,17 +167,20 @@ export class DuelScene extends Phaser.Scene {
     this.resultLaunched = false;
     this.telegraphUntil = 0;
     this.chiDeniedUntil = 0;
-    this.enemyGuardUntil = 0;
     this.fxNow = 0;
     this.trails = [];
     this.redStrokes = [];
     this.droplets = [];
     this.dragPoints = [];
     this.dragging = false;
-    this.playerAnim = new FighterAnimator();
-    this.enemyAnim = new FighterAnimator();
     this.fighterParts = composePose(OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES);
     this.fighterPartsMirrored = composePose(OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES, true);
+    this.playerOg = new OgAnimPlayer(OG_ANIMS, 'walk');
+    this.enemyOg = new OgAnimPlayer(OG_ANIMS, 'walk');
+    this.playerSlashing = false;
+    this.enemySlashing = false;
+    this.playerLastStageX = worldToStage(DUEL_SPAWNS.player.pos).x;
+    this.enemyLastStageX = worldToStage(DUEL_SPAWNS.enemy.pos).x;
     this.mouseHoldActive = false;
     this.mouseTargetX = 0;
 
@@ -427,8 +439,8 @@ export class DuelScene extends Phaser.Scene {
     if (outcome.gesture !== 'slash') return;
 
     // Cosmetic follow-through: damage resolved on this tick (windup 0 —
-    // signature feel); the swing arc plays out per-stance (Tell 6).
-    this.playerAnim.startSlash(this.sim.player.stance);
+    // signature feel); the recorded swing plays out (A11.4).
+    this.startOgSlash('player');
     this.trails.push({ points: stroke.points, bornAt: now });
     if (outcome.slash?.hit === true) {
       const enemyPos = this.sim.enemy.pos;
@@ -503,28 +515,29 @@ export class DuelScene extends Phaser.Scene {
         // a hand-drawn stroke takes.
         this.redStrokes.push({ points: ev.points, bornAt: fxNow });
         this.trails.push({ points: ev.points, bornAt: fxNow });
-        this.playerAnim.startSlash(this.sim.player.stance);
+        this.startOgSlash('player');
       } else if (ev.type === 'strikeBlocked') {
-        this.enemyGuardUntil = fxNow + 260;
+        // The guard-pose overlay retired with the hand-drawn animator (A11.4);
+        // a transcribed block pose is P5 work. The Sim cue itself still fires.
       } else if (ev.type === 'skillDenied') {
         this.chiDeniedUntil = fxNow + 300; // chi bar flashes "too expensive"
       } else if (ev.type === 'damage' && ev.target === 'player') {
         const p = worldToStage(this.sim.player.pos);
         this.spawnBlood({ x: p.x, y: p.y - 20 }, { x: -1, y: 0 }, false, fxNow);
-        this.playerAnim.startHit();
-        this.enemyAnim.startSlash(this.sim.enemy.stance);
+        // No transcribed hit-stagger yet (P5) — the blood + recoil carry it.
+        this.startOgSlash('enemy');
       } else if (ev.type === 'damage' && ev.target === this.sim.enemyId) {
         // The duel has exactly ONE opponent, so its id is the whole crowd.
-        this.enemyAnim.startHit();
+        // No transcribed hit-stagger yet (P5).
       } else if (ev.type === 'strikeEvaded' && ev.by === 'player') {
-        this.enemyAnim.startSlash(this.sim.enemy.stance); // whiffed swing still animates
+        this.startOgSlash('enemy'); // whiffed swing still animates
       } else if (ev.type === 'invulnBlocked' && ev.target === 'player') {
-        this.enemyAnim.startSlash(this.sim.enemy.stance);
+        this.startOgSlash('enemy');
       } else if (ev.type === 'fightEnded') {
         this.killBeatAt = now;
         this.pendingWinner = ev.winner;
-        // The loser collapses through the kill-beat slow-mo (fx clock).
-        (ev.winner === 'player' ? this.enemyAnim : this.playerAnim).startDeath();
+        // No transcribed death yet (P5, `death` is 38 recorded frames) — the
+        // kill-beat flash + result screen carry the beat; the loser holds pose.
       }
     }
 
@@ -581,7 +594,7 @@ export class DuelScene extends Phaser.Scene {
       g.fillCircle(d.x - d.vx * 0.008, d.y - d.vy * 0.008, 2);
     }
 
-    this.drawFighters(g, now);
+    this.drawFighters(g, now, delta * ts);
 
     // Kunai: short dark bolts along the velocity direction. Position is
     // sim-owned (world); the bolt length is a stage-native render size and
@@ -616,7 +629,60 @@ export class DuelScene extends Phaser.Scene {
 
   private pendingWinner: ActorId = 'player';
 
-  private drawFighters(g: Phaser.GameObjects.Graphics, now: number): void {
+  /**
+   * One fighter's pose this frame (SESSION23 A11.4). Policy — INFERRED, the
+   * frames themselves stay byte-true:
+   *   - slashing: step the recorded chain a → b (ONE cycle; the source loops
+   *     b, but holding the loop needs a measured strike-travel duration —
+   *     queued for the video pass) → c, then back to locomotion;
+   *   - travelling ≥ OG_WALK_MIN_STAGE_PX this frame: the walk loop;
+   *   - still: the static byte-checked dressed idle (equipment facings).
+   */
+  private fighterPose(
+    og: OgAnimPlayer,
+    slashing: boolean,
+    dx: number,
+    dtAnim: number,
+    mirrored: boolean,
+    setSlashing: (v: boolean) => void,
+  ): readonly PosedPart[] {
+    if (slashing) {
+      og.step(dtAnim);
+      if (og.current === 'balancedhorizontalslash_parta' && og.done) {
+        og.play('balancedhorizontalslash_partb');
+      } else if (
+        og.current === 'balancedhorizontalslash_partb' &&
+        og.frameIndex === OG_ANIMS.balancedhorizontalslash_partb.frames.length - 1
+      ) {
+        og.play('balancedhorizontalslash_partc');
+      } else if (og.current === 'balancedhorizontalslash_partc' && og.done) {
+        setSlashing(false);
+        return mirrored ? this.fighterPartsMirrored : this.fighterParts;
+      }
+      return composePose(og.nodes(), OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES, mirrored);
+    }
+    if (dx >= OG_WALK_MIN_STAGE_PX) {
+      if (og.current !== 'walk') og.play('walk');
+      og.step(dtAnim);
+      return composePose(og.nodes(), OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES, mirrored);
+    }
+    return mirrored ? this.fighterPartsMirrored : this.fighterParts;
+  }
+
+  /** Kick off the recorded balanced slash chain (no-op while one is playing). */
+  private startOgSlash(side: 'player' | 'enemy'): void {
+    if (side === 'player') {
+      if (this.playerSlashing) return;
+      this.playerSlashing = true;
+      this.playerOg.play('balancedhorizontalslash_parta');
+      return;
+    }
+    if (this.enemySlashing) return;
+    this.enemySlashing = true;
+    this.enemyOg.play('balancedhorizontalslash_parta');
+  }
+
+  private drawFighters(g: Phaser.GameObjects.Graphics, now: number, dtAnim: number): void {
     const player = this.sim.player;
     const enemy = this.sim.enemy;
     const fxNow = this.fxNow;
@@ -638,41 +704,33 @@ export class DuelScene extends Phaser.Scene {
       g.fillEllipse(es.x, es.y + 30, 120, 40);
     }
 
-    // Enemy guard hold mirrors the telegraph/block windows (fx clock) — kept
-    // warm on the animator for A11.4, which maps it to transcribed frames.
-    this.enemyAnim.setGuard(
-      fxNow < this.enemyGuardUntil
-        ? 'block'
-        : fxNow < this.telegraphUntil && this.telegraphKind === 'strike'
-          ? 'telegraph'
-          : 'none',
-    );
-
-    // THE COMPOSED OG FIGHTER (SESSION23 A11.1/A11.2): the byte-checked
-    // dressed pose, planned at each fighter's ground anchor (feet-origin, the
-    // same ground line the old doll stood on) at the same point in the paint
-    // order. Facing comes from sim truth — each fighter faces its opponent,
-    // the same rule the old doll's `facing` sign used, and fighters CAN cross
-    // sides mid-fight. Transcribed motion is A11.3/A11.4.
+    // THE COMPOSED OG FIGHTER, NOW MOVING (SESSION23 A11.1–A11.4): each
+    // fighter draws either the static byte-checked idle or the transcribed
+    // frames its OgAnimPlayer is holding at the measured 15 fps latch.
+    // Facing comes from sim truth — each fighter faces its opponent, the
+    // same rule the old doll's `facing` sign used, and fighters CAN cross
+    // sides mid-fight. dtAnim is FX time, so slow-mo slows the pose too
+    // (two-clocks rule in the class header).
     const playerFacesRight = player.pos.x <= enemy.pos.x;
+    const playerDx = Math.abs(ps.x - this.playerLastStageX);
+    const enemyDx = Math.abs(es.x - this.enemyLastStageX);
+    this.playerLastStageX = ps.x;
+    this.enemyLastStageX = es.x;
+
+    const playerParts = this.fighterPose(this.playerOg, this.playerSlashing, playerDx, dtAnim, !playerFacesRight, (v) => {
+      this.playerSlashing = v;
+    });
+    const enemyParts = this.fighterPose(this.enemyOg, this.enemySlashing, enemyDx, dtAnim, playerFacesRight, (v) => {
+      this.enemySlashing = v;
+    });
     drawPlan(
       g,
-      planPose(
-        playerFacesRight ? this.fighterParts : this.fighterPartsMirrored,
-        FIGHTER_SHAPES,
-        { x: ps.x, y: ps.y + OG_DUEL_STAGE.groundOffsetY },
-        VIEW,
-      ),
+      planPose(playerParts, FIGHTER_SHAPES, { x: ps.x, y: ps.y + OG_DUEL_STAGE.groundOffsetY }, VIEW),
       playerAlpha,
     );
     drawPlan(
       g,
-      planPose(
-        playerFacesRight ? this.fighterPartsMirrored : this.fighterParts,
-        FIGHTER_SHAPES,
-        { x: es.x, y: es.y + OG_DUEL_STAGE.groundOffsetY },
-        VIEW,
-      ),
+      planPose(enemyParts, FIGHTER_SHAPES, { x: es.x, y: es.y + OG_DUEL_STAGE.groundOffsetY }, VIEW),
       1,
     );
 

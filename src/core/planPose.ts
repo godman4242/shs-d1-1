@@ -28,18 +28,28 @@ import type { PosedPart } from './composePose';
 import type { Vec } from './vec';
 import { worldToStageLength, type ViewTransform } from './viewport';
 
+/** The 2×2 half of a Flash matrix: x' = a·x + c·y, y' = b·x + d·y. */
+interface Mat2 {
+  readonly a: number;
+  readonly b: number;
+  readonly c: number;
+  readonly d: number;
+}
+
 /**
- * Turn a flat `[x0,y0,…]` contour about the origin; `mirrored` then reflects
- * the TURNED point across the pivot's vertical axis (SESSION23 A11.2).
+ * Transform a flat `[x0,y0,…]` contour about the origin; `mirrored` then
+ * reflects the TRANSFORMED point across the pivot's vertical axis
+ * (SESSION23 A11.2/A11.4 — rotation is just the matrix [cos, sin, −sin, cos],
+ * so both recorded node forms share this ONE site).
  *
- * The order matters and is the whole mirror contract: reflect-after-rotate is
- * `M·R(θ)·p`, which together with the negated node offset in `planPose` makes
+ * The order matters and is the whole mirror contract: reflect-after-transform
+ * is `M·A·p`, which together with the negated node offset in `planPose` makes
  * the finished figure the exact x-reflection of the unmirrored one about the
  * fighter's anchor — what `tests/a11Mirror.test.ts` pins op by op. Negating
  * the angle instead (`R(−θ)`) without flipping the art is the P4 double-flip
  * trap: the branch would come out wrong in exactly one facing.
  */
-function rotateFlat(flat: readonly number[], cos: number, sin: number, mirrored: boolean): number[] {
+function transformFlat(flat: readonly number[], m: Mat2, mirrored: boolean): number[] {
   const out: number[] = [];
   for (let i = ZERO; i < flat.length; i += TWO) {
     const x = flat[i];
@@ -47,35 +57,35 @@ function rotateFlat(flat: readonly number[], cos: number, sin: number, mirrored:
     if (x === undefined || y === undefined) {
       throw new Error(`planPose: coordinate array must hold whole x,y pairs — got ${String(flat.length)} numbers`);
     }
-    const rx = x * cos - y * sin;
-    out.push(mirrored ? -rx : rx, x * sin + y * cos);
+    const tx = x * m.a + y * m.c;
+    out.push(mirrored ? -tx : tx, x * m.b + y * m.d);
   }
   return out;
 }
 
 /**
- * The same shape with every coordinate turned about its pivot.
+ * The same shape with every coordinate transformed about its pivot.
  *
- * Stroke WIDTHS are copied untouched — turning a limb does not thicken it — and
- * the `hole` verdicts survive because rotation preserves nesting exactly, so
- * A4.1's packing still pairs each hole with the same outer ring.
+ * Stroke WIDTHS are copied untouched — turning a limb does not thicken it, and
+ * A11.4 keeps the same rule for matrix nodes (the recorded swings scale the
+ * weapon's GEOMETRY; whether the OG also scaled stroke widths is a LOOK
+ * question, deferred with the videos as judge). The `hole` verdicts survive
+ * because an affine map preserves nesting, so A4.1's packing still pairs each
+ * hole with the same outer ring.
  */
-function rotateShape(shape: ShapeInput, rotationRad: number, mirrored: boolean): ShapeInput {
-  const cos = Math.cos(rotationRad);
-  const sin = Math.sin(rotationRad);
-
+function transformShape(shape: ShapeInput, m: Mat2, mirrored: boolean): ShapeInput {
   const paints: PaintInput[] = shape.paints.map((paint) =>
     paint.kind === 'fill'
       ? {
           kind: 'fill',
           color: paint.color,
-          rings: paint.rings.map((ring) => ({ points: rotateFlat(ring.points, cos, sin, mirrored), hole: ring.hole })),
+          rings: paint.rings.map((ring) => ({ points: transformFlat(ring.points, m, mirrored), hole: ring.hole })),
         }
       : {
           kind: 'stroke',
           color: paint.color,
           width: paint.width,
-          polylines: paint.polylines.map((line) => rotateFlat(line, cos, sin, mirrored)),
+          polylines: paint.polylines.map((line) => transformFlat(line, m, mirrored)),
         },
   );
   return { id: shape.id, paints };
@@ -108,13 +118,27 @@ export function planPose(
       throw new Error(`planPose: slot ${String(part.slot)} needs shape ${String(part.shapeId)}, which was not supplied`);
     }
     // A mirrored part reflects its node offset too — the art flip in
-    // `rotateFlat` plus this sign is the complete mirror (nothing else moves).
+    // `transformFlat` plus this sign is the complete mirror (nothing else moves).
     const mirrored = part.mirrored === true;
     const anchor: Vec = {
       x: origin.x + worldToStageLength(mirrored ? -part.x : part.x, view),
       y: origin.y + worldToStageLength(part.y, view),
     };
-    ops.push(...planShape(rotateShape(shape, part.rotationRad, mirrored), anchor, view));
+    // Both recorded transform forms, one code path: a rotation IS the matrix
+    // [cos, sin, −sin, cos]. composePose guarantees exactly one form per part.
+    let m: Mat2;
+    if (part.rotationRad !== undefined) {
+      const cos = Math.cos(part.rotationRad);
+      const sin = Math.sin(part.rotationRad);
+      m = { a: cos, b: sin, c: -sin, d: cos };
+    } else if (
+      part.a !== undefined && part.b !== undefined && part.c !== undefined && part.d !== undefined
+    ) {
+      m = { a: part.a, b: part.b, c: part.c, d: part.d };
+    } else {
+      throw new Error(`planPose: slot ${String(part.slot)} carries neither a rotation nor a full matrix`);
+    }
+    ops.push(...planShape(transformShape(shape, m, mirrored), anchor, view));
   }
   return ops;
 }
