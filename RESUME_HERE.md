@@ -6,11 +6,11 @@
 
 | | setting | why |
 |---|---|---|
-| **Surface** | **Claude Code CLI** | terminal + git + build-heavy; the browser gate needs the Chrome extension |
-| **Model** | **Fable 5** at **`high`** | long-horizon, gate-driven; `high` is Fable's own default — never carry Opus's `xhigh` over. (Working closely interactive instead? Opus 5 `high` is the routing rule's alternative.) |
+| **Surface** | **Claude Code CLI** | terminal + git + build-heavy; the fidelity gate needs the browser extension |
+| **Model** | **Fable 5** at **`high`** | long-horizon, gate-driven; `high` is Fable's own default — never carry Opus's `xhigh` over |
 | **Context** | **fresh session** | the kickoff is self-contained |
-| **MCP** | **Claude in Chrome** — on | the 55/55 fidelity gate + the duel-scene look |
-| **Ultracode** | ON helps A11.3 | the animation transcription fans out per-animation cleanly; A11.1/A11.2 are serial-surgical |
+| **MCP** | **Claude in Chrome** — on (the extension lives in **BRAVE**) | `?fidelity=auto` + the duel LOOK |
+| **Ultracode** | ON helps A12.1 + A12.3 | frame-counting fans out per-sequence; transcription per-animation |
 
 Copy everything **between** the `'''` lines (the markers themselves are not part of the prompt):
 
@@ -20,125 +20,66 @@ You're the lead engineer on SSHD 1:1. Follow the repo's CLAUDE.md and my ship-ba
 
 READ FIRST, then tell me what they say before writing anything:
 - RESUME_HERE.md
-- docs/sessions/SESSION23_KICKOFF.md   <- the only kickoff to plan from, self-contained
+- docs/sessions/SESSION24_KICKOFF.md   <- the only kickoff to plan from, self-contained
 
-THE JOB: §4 A11.1 onward — the gap triage is DONE and in the kickoff §0.
-Highest-leverage first: make DuelScene draw the composed OG fighter (it still
-calls drawSamurai), both combatants mirrored, then transcribe walk + one attack
-from the bindata and make the fighter MOVE at the measured 15 fps latch.
+THE JOB: §4 A12.1 onward — my three verdicts on the moving duel ARE the session:
+measure the OG's stroke reach cap + slash-vs-move rule from the videos (frame-
+cited, >=3 sequences each), implement both in the Sim behind the duel-baseline's
+own atomic re-record protocol, then transcribe run_sheathed + death + the hit
+answer and make the gait and impacts real.
 
 WHAT NOT TO BREAK:
-- Floors: tracing >= 0.9005, held-out >= 0.8490 (re-based ONCE by my ruling,
-  spent - from here UP only), height <= 140.5.
-- duel-baseline green AND unedited - behaviour cannot move because art changed.
+- Floors: tracing >= 0.9005, held-out >= 0.8490 (spent - UP only), height <= 140.5.
+- duel-baseline moves ONCE, deliberately: DIVERGENCES entry -> sim change ->
+  re-record, ONE atomic commit (its own header's protocol). Twice = re-measure.
 - src/core/ zero numeric literals; scenes render-only; red-first; chaos-plant.
-- Animations are TRANSCRIBED and byte-checked, never hand-keyed (§1 D4).
-- "A green gate is not a good picture" - LOOK at the moving duel, both fighters.
+- Animations TRANSCRIBED and byte-checked, never hand-keyed; the anim-key pins
+  extend in the same commit, deliberately.
+- "A green gate is not a good picture" - I look at the moving duel before close.
 
 PROVE IT: every §2 gate has a runnable measure. Paste the output, never assert.
-NO research this session - audio and combat numbers are SCHEDULED (§0 P3/P4).
+NO audio work - SESSION 25 owns it (scheduled in the kickoff).
 
-FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 52 files / 855
-tests), then propose the exact A11.1 step. Don't start until I ok it.
+FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 57 files / 894),
+then propose the exact A12.1 measurement plan. Don't start until I ok it.
 '''
 ```
 
 **Bar verdict: ✅ this kickoff meets the "cannot be improved further" bar** — the
-owner's gap-triage ask is executed (not deferred), every goal has a measure that
-can fail, research is scheduled-not-started, and the spent floor ruling is
-carried as a closed door. The next change would be churn.
+owner's three LOOK verdicts are the session by name, each with a measurable gate;
+gameplay moves only behind measured values and the baseline's own atomic
+protocol; audio is scheduled (SESSION 25), not dropped. The next change would be churn.
 
 ---
 
-> ## ▶ SESSION 23 IN FLIGHT — A11.1–A11.4 LANDED: THE FIGHTER MOVES AT THE MEASURED 15 FPS LATCH.
-> **56 files / 892 tests green** · tsc ×2 → 0 · eslint → 0 · fidelity **55/55
-> autonomous** (post-A11.4 run 13:24Z) · `Sim.ts` + duel-baseline byte-untouched.
-> - **A11-E (GATE):** `core/ogAnimPlayer.ts` — pure, injectable stepper:
->   15 fps latch with banked time, loop/hold-with-`done`, and CARRY-FORWARD
->   (sparse frames overlay a carried node map; measured partc counts
->   19,0,19,0,19,19,7 — empties are recorded HOLDS, the last frame overlays 7
->   nodes, so carry is what keeps 12 parts alive). `tests/a11AnimPlayer.test.ts`
->   (12 tests, red-first). MATRIX nodes land the same pass: `composePose`
->   scales the recorded ×100 ints once (`OG_MATRIX_UNITS`, CONTRACT — the
->   AS3's own ÷100 branch), `planPose` unifies rotation as the matrix
->   [cos,sin,−sin,cos] in the ONE mirror-aware transform site.
-> - **DuelScene policy (INFERRED, flagged in-code):** walk while travelling
->   (≥ `OG_WALK_MIN_STAGE_PX`/frame), static byte-checked idle when still,
->   balanced slash chain a→b(ONE cycle; holding b's loop needs a measured
->   strike-travel duration — queued for the video pass)→c on the old
->   animator's trigger events. Hit-stagger/death/guard UNANIMATED until
->   transcribed (P5) — hand-keying is banned. FighterAnimator is out of
->   DuelScene (EncounterScene still uses it, out of scope).
-> - **AWAITING OWNER (gate item 9):** LOOK at the MOVING duel — walk cadence
->   vs the videos, the swing, and the branch during walk frames (the
->   equipment-override question resolves by looking, not by argument).
-> - **NEXT: A11.5** — floors re-grade, clean clone, SESSION 24 kickoff
->   (P3 audio scheduled as its own research session).
-
-> ## ▶ A11.3 LANDED: THE FIRST FOUR ANIMATIONS ARE CONTRACT.
-> **55 files / 880 tests green** · fidelity 55/55 autonomous ·
-> - **A11-D (GATE):** `walk` (20f, loop) + `balancedhorizontalslash` a/b/c
->   (4/9/7f — the balanced-stance basic attack) transcribed VERBATIM from the
->   bindata by `scripts/anim/transcribeAnims.py` → `src/config/ogAnims.ts`
->   (710 nodes, all integers, GENERATED header). Byte-checked by
->   `tests/a11AnimData.test.ts` (12 tests: 8 structural run-everywhere + 4
->   skipIf byte-suites); chaos-proven — a ONE-DEGREE typo in one node of 710
->   goes red. Grammar finds for A11.4: slash frames carry Flash MATRIX nodes
->   (`a..d` fixed-point ×100, notably weapon slot 3 mid-swing); part-c frames
->   are SPARSE (changed nodes only — carry-forward is the stepper's job);
->   parts chain a→b(loop)→c.
-> - **NEXT: A11.4** — the pure `core/` stepper (15 fps latch, sparse
->   carry-forward, matrix-node planning) + DuelScene playback; then A11.5
->   re-grade + SESSION 24 kickoff (P3 audio scheduled).
-
-> ## ▶ A11.2 LANDED: BOTH COMBATANTS COMPOSED, FACING EACH OTHER.
-> **54 files / 868 tests green** · tsc ×2 → 0 · eslint → 0 · fidelity **55/55
-> PASS ×2 consecutive, autonomous** · `Sim.ts` + duel-baseline byte-untouched.
-> - **A11-B (GATE):** mirroring is a COMPOSE-TIME transform (kickoff D3) — a
->   `mirror` flag on `composePose` (tag) + ONE math site in `planPose`
->   (reflect rotated shape-locals AND the node x). `tests/a11Mirror.test.ts`
->   (4 tests, red-first, chaos-planted with the P4 half-flip) pins the WHOLE
->   mirrored plan as the exact x-reflection of the unmirrored plan — the
->   branch cannot be wrong in either facing if the reflection is exact.
->   DuelScene picks per fighter per frame from sim truth (fighters can cross).
->   LOOK verified: enemy faces the player, branch behind the correct hip.
-> - **Fidelity flake ROOT-CAUSED (not tuned away):** the harness's
->   `devHoldAt` races the restarted intro's `create()` — the stale scene
->   object still says `step:'done'`, the hold no-ops, `create()` nulled it,
->   and the FIGHT!-glyph probes sampled the free-running VS beat's black
->   stroke gaps. Fix: `DuelIntro.create()` now RE-APPLIES a pre-recorded hold.
->   The 8 s settle "fix" was coincidence and is reverted (1 s, comment tells
->   the story). Post-fix: 55/55 ×2 under multi-window GPU load.
+> ## ▶ SESSION 23 CLOSED IN FULL — THE REAL FIGHTER IS IN THE DUEL, MIRRORED, AND MOVING.
+> **57 files / 894 tests green** · tsc ×2 → 0 · eslint → 0 · fidelity **55/55,
+> now AUTONOMOUS** (`?fidelity=auto` + a self-opened BRAVE window +
+> localStorage verdict) · clean clone green (879 pass / 15 skipIf without
+> `reference/`) · floors tracing ≥ 0.9005 · held-out ≥ 0.8490 (spent, UP only) ·
+> height ≤ 140.5 · `Sim.ts` + duel-baseline **byte-untouched all session**.
 >
-> *(A11.1 record below.)*
-
-> ## ▶ A11.1 LANDED: THE DUEL DRAWS THE COMPOSED OG FIGHTER.
-> **53 files / 864 tests green** (was 52/855) · tsc ×2 → 0 · eslint → 0 ·
-> fidelity **55/55 PASS — now AUTONOMOUS** (`?fidelity=auto` + a self-opened
-> browser window + a localStorage verdict; no human window-holding) ·
-> duel-baseline green AND unedited · `src/core/` untouched · fighter height
-> 140.484 (≤ 140.5) on the duel ground line (`OG_DUEL_STAGE.groundOffsetY`).
-> - **A11-A:** `drawSamurai` count in `DuelScene.ts` → **0**, pinned by
->   `tests/a11DuelFighter.test.ts` (9 tests, watched red first, chaos-planted).
->   Both combatants draw the composed DRESSED fighter via
->   `composePose → planPose → drawPlan` (drawPlan grew an alpha param for the
->   spawn-invuln blink; `OgArtScene`/`IdleFighterScene` unaffected).
-> - **Owner LOOK (2026-07-28):** fighters confirmed on screen, correct scale +
->   ground line — and STATIC, as staged (frame-0 idle; motion is A11.3/A11.4).
->   Both face the same way: the A11.2 mirror is visibly needed.
-> - **Environment finds (permanent):** the Claude browser extension lives in
->   **BRAVE, not Google Chrome** — surface windows with
->   `open -na "Brave Browser" --args --new-window <url>`; a hidden tab freezes
->   rAF (and the game), which is WHY `?fidelity=auto` exists; its 8 s settle is
->   deliberate (at 1 s the two FIGHT!-glyph probes race boot warm-up and read
->   black — measured, not guessed).
-> - **Process confession (ledgered):** a chaos-plant restore via `git checkout`
->   briefly wiped the uncommitted swap; re-applied and re-verified from scratch.
->   Rule: surgically remove the plant, never checkout a dirty file.
-> - **NEXT: A11.2** (second combatant mirrored, compose-time transform, P4
->   equipment-override interaction — compose test FIRST), then A11.3
->   (transcriber: walk + one attack, byte-checked), A11.4 (15 fps stepper),
->   A11.5 (re-grade + SESSION 24 kickoff, P3 audio scheduled).
+> **Commits:** `3bd5814` A11.1 drawSamurai out → `68cef9c` A11.2 compose-time
+> mirror → `741fd31` A11.3 transcription (710 nodes CONTRACT) → `7ee71d1`
+> A11.4 stepper → `0719673` distance-driven stride (owner-LOOK fix) →
+> `4601761` wrap. Full milestone detail: `docs/sessions/-SESSION-LOG.md`
+> "Session 23".
+>
+> - **A11-A..E all green, red-first, chaos-planted.** DuelScene renders both
+>   combatants via `composePose → planPose → drawPlan`; mirroring is a
+>   compose-time flag with ONE math site; walk + the balanced slash chain are
+>   byte-checked transcriptions played by the pure `core/ogAnimPlayer.ts`
+>   (15 fps latch, carry-forward, Flash matrix nodes ÷100 = `OG_MATRIX_UNITS`).
+> - **OWNER LOOK verdicts (logged verbatim, 04:30):** foot-skating — FIXED
+>   same-turn (distance-driven `strideMs`, measured `WALK.stridePx`, zero new
+>   numbers); point-blank stroke runs instead of slashing + uncapped stroke
+>   length — BOTH scheduled by name into SESSION 24 (gameplay: measured
+>   numbers + the baseline's atomic re-record protocol).
+> - **Tooling permanent:** `?fidelity=auto` (DEV-only) — the gate runs itself
+>   in a fresh visible window; the intro devHold race was ROOT-CAUSED and
+>   fixed in `DuelIntro.create()` (re-applies a pre-recorded hold).
+> - **Still open (owner):** kasa height trade · gi revisit · partb loop hold
+>   during the strike (measured duration lands in A12.1).
 
 ---
 
