@@ -7,13 +7,17 @@
 | | setting | why |
 |---|---|---|
 | **Surface** | **Claude Code CLI** *(already)* | terminal + git + build-heavy; the browser gate needs the Chrome extension too |
-| **Model** | **Opus 5** *(already)* | precision + honesty; it pushes back instead of guessing — right for gate-bearing art work |
-| **Effort** | **`xhigh`** — **turn this on** | multi-file, decision-bearing, long-horizon. `high` is fine only for a one-file fix |
-| **`/fast`** | **ON** *(already)* | same model, faster output, no intelligence downgrade |
+| **Model** | **Fable 5** — **switch to it** | hard, long-horizon, five independent garments + a fan-out. It is markedly more dependable at sustaining parallel subagents than Opus |
+| **Effort** | **`high`** — **not `xhigh`** | `high` is Fable's OWN default; `xhigh` is for a capability-bound sub-task. Carrying Opus's `xhigh` over is the common mistake |
+| **`/fast`** | ⛔ **n/a on Fable** | fast mode is Opus-only. (On Opus it also costs 2× — worth ON interactive, OFF autonomous) |
 | **Context** | **fresh session** — **start a new one** | the kickoff is self-contained; a compacted context re-derives for nothing |
 | **MCP** | **Claude in Chrome** — turn on | gate item 9 runs the in-browser fidelity check (55/55) |
 | **Skills / plugins** | **nothing to add** | honest: no library questions, no new tooling needed |
-| **Ultracode** | optional | helps A9.2–A9.5 (five garments, independent) — but say so explicitly if you want fan-out |
+| **Ultracode** | **ON** *(already)* | A9.2–A9.5 are five independent garments — a genuine fan-out, and Fable is the right model for it |
+
+⚠️ **Expect single turns to run many minutes on Fable, and don't add step-by-step
+behavioural scaffolding to the prompt** — it front-loads the whole spec on purpose;
+over-prescription degrades Fable's output rather than steering it.
 
 Copy everything **between** the `'''` lines (the markers themselves are not part of the prompt):
 
