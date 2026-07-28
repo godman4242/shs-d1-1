@@ -3561,3 +3561,34 @@ suite 51 files / 854 tests green   tsc x2 -> 0 · eslint -> 0
 scorePose: tracing 0.9106 · held-out 0.8671 · height 140.48 — floors NOT edited
 (the ratchet-up decision belongs to A9.7, after the gi ruling)
 ```
+
+## SESSION 22 — A9.4 LANDED BY OWNER RULING. GATE A9-A MET IN FULL: ALL SEVEN GARMENTS, AND GATE A9-E GREEN.
+
+⭐ **THE RULING (owner, in-chat, 2026-07-28):** *"not perfect, but i will accept
+it for now, will change later, in another session."* — the gi balloon repair
+ships, and this commit is the ONE allowed to re-base the held-out floor.
+
+```
+                    tracing      held-out     height
+  floors before      0.9005       0.8618      140.5
+  measured, landed   0.900547 ✅   0.849033    140.48 ✅
+  floors after       0.9005       0.8490 ⬅ RE-BASED BY THE RULING, cited in-file
+```
+The tracing floor HOLDS untouched. The held-out re-base is larger than the
+pre-branch attribution predicted (−0.0181 vs −0.0105 — the branch/gi rows
+interact through the profile normalisation); both numbers are honest and the
+cause is unchanged (the balloon faked the held-out frame's stance width).
+
+**GATE A9-E, red-first for real:** `tests/a9GiProbe.test.ts` — the back-edge
+hem-overhang metric (peak past the hem's own width; the balloon's exact
+signature). ⚠️ **Two wrong metrics died first, caught by dumping the profile
+instead of trying a third variation:** "secondary local maximum prominence"
+scores the balloon 0 (it IS the global max), and "peak above later maximum"
+scores a monotone decline by its largest single step. The landed metric reads
+**3.50 local px RED on the balloon** (the agents' 4.80 stage within binning)
+and **0.4 GREEN on the repair**, colour-blind across legacy/authored structure.
+
+LEGACY and the A8 ratchet table are now EMPTY — every exit by re-authoring or
+by this ruling, never by a raised number; the mechanisms stay for any future
+traced shape. Pins: 96 → 103 ops, 48 → 54 strokes, new digest, reasons
+in-file. suite **52 files / 855 green** · tsc ×2 → 0 · eslint → 0.

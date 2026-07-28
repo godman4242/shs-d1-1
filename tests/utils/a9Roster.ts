@@ -19,7 +19,9 @@ export const REAUTHORED: ReadonlySet<number> = new Set<number>([
   9011, // hakama — A9.5 (measured flat; clean hem; inset contour)
   9012, // collar/juban — A9.2 (was 75.9% ink as a blob)
   9014, // obi — A9.5 (base kept measured over D4's borderline SWF mapping)
+  9015, // gi body — A9.4, OWNER RULING 2026-07-28 (balloon cut; A9-E green)
   9017, // kasa — A9.3 (two tones + ribs + band line + fringe; inset contour)
+  9019, // gi sleeve, near — A9.4 (creases + crest, measured)
 ]);
 
 /**
@@ -34,18 +36,11 @@ export const MEASURED_FLAT: ReadonlySet<number> = new Set<number>([
 ]);
 
 /**
- * ⛔ THE PRE-A9 TRACED BLOBS, PINNED EXACTLY AS THEY STAND (probed 2026-07-28,
- * baseline f7e3801). Every one is the same anti-grammar: no strokes, one
- * all-ink fill ring for an outline, one flat tone. The pin freezes them: any
- * in-place edit fails with instructions to re-author instead.
- *
- * ⚠️ 9015 + 9019 are the LAST two, and their re-authored art already EXISTS
- * (SESSION22 A9.4, reference/traced/*.svg) — it is held out of the tree
- * because the gi bulge repair costs the held-out floor (0.8634 → 0.8529 vs
- * floor 0.8618) and the kickoff's A9-G clause sends that trade to the OWNER.
- * On his ruling: regenerate both, move them here → REAUTHORED, land A9-E.
+ * ⛔ EMPTY, AND THAT IS GATE A9-A MET IN FULL: all seven traced garments are
+ * re-authored in the ORIGINAL's grammar. The last two (the gi pair) landed by
+ * the OWNER'S RULING of 2026-07-28 — "not perfect, but I will accept it for
+ * now" — which is also the one commit allowed to re-base the held-out floor
+ * (see tests/a6Score.test.ts). The pin mechanism stays: a future traced shape
+ * starts life HERE, exactly as the first seven did.
  */
-export const LEGACY: Readonly<Record<number, { inkFillRings: number; tones: readonly number[] }>> = {
-  9015: { inkFillRings: 1, tones: [0x6e6b6d] }, // gi body
-  9019: { inkFillRings: 1, tones: [0x6a6669] }, // gi sleeve, near
-};
+export const LEGACY: Readonly<Record<number, { inkFillRings: number; tones: readonly number[] }>> = {};

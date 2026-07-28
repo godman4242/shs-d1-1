@@ -98,7 +98,15 @@ const scoreAgainst = (variant: 'idle' | 'dressed', source: readonly number[]): n
  * `docs/DIVERGENCES.md` "SESSION 20 — A6.3"/"A6.4"/"A6.5" before touching either.
  */
 const FLOOR_TRACING = 0.9005;
-const FLOOR_HELDOUT = 0.8618;
+/**
+ * ⛔ RE-BASED DOWN 0.8618 → 0.8490 BY THE OWNER'S RULING, 2026-07-28 — the ONE
+ * edit of its kind. The gi balloon was a proven trace defect whose accidental
+ * back-width mimicked the held-out frame's different stance; the owner ruled
+ * "not perfect, but I will accept it for now" and the repair (A9-E green,
+ * back-edge overhang 4.8 → 0.5 stage px) shipped in this same commit. Measured
+ * 0.8490330…, truncated. From here the floor may only move UP again.
+ */
+const FLOOR_HELDOUT = 0.8490;
 
 describe('GATE A6-C — the dressed fighter agrees with the source, and may not get worse', () => {
   it('holds its FLOOR against the frame the outfit was traced from', () => {

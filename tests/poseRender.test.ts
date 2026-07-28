@@ -106,16 +106,16 @@ describe('cropRegion — the frame the fighter is rendered into', () => {
 });
 
 describe('the REAL composed fighter, rasterised', () => {
-  it('dressed: 21 parts, 96 draw ops, with all 48 of its strokes', () => {
+  it('dressed: 21 parts, 103 draw ops, with all 54 of its strokes', () => {
     const r = render('dressed');
-    // 21 parts and 81 → 96 ops at SESSION22 A9.6: the training branch (2641)
-    // joins at the weapon slot — +10 fill ops, +4 stroke ops and +1 holedFill
-    // of original payload vector art — on top of A9.3/A9.5's 57 → 81 (kasa
-    // contour + 6 ribs + band + 13 fringe ticks + shadow; hakama blob rings
-    // out, 2-ring inset contours in; obi shadow + contour).
+    // 96 → 103 ops when the gi pair landed by the OWNER'S RULING (SESSION22
+    // A9.4): 9015 trades its blob ring for base + measured panel shadow +
+    // contour + chest crease; 9019 for base + 3-ring shadow + contour + two
+    // creases + the crest ring. On top of A9.6's 81 → 96 (the branch) and
+    // A9.3/A9.5's 57 → 81 (kasa detail, hakama inset contours, obi shadow).
     expect(r.parts).toHaveLength(21);
-    expect(r.plan).toHaveLength(96);
-    expect(census(r.plan)).toEqual({ fill: 45, stroke: 48, holedFill: 3 });
+    expect(r.plan).toHaveLength(103);
+    expect(census(r.plan)).toEqual({ fill: 46, stroke: 54, holedFill: 3 });
   });
 
   it('idle: 21 parts, 90 draw ops, with all 41 of its strokes', () => {
@@ -219,6 +219,6 @@ describe('the render is anchored where the scene anchors it', () => {
 // kasa two-tone + ribs + band + fringe with an INSET w2 contour, hakama
 // measured-flat #dcd9d4 with a clean hem and inset w1.5 contour, obi two-tone.
 // Idle is untouched — the bare fighter draws no traced art.
-// …and A9.6 once more: the branch is on screen at the measured facing.
-const GOLDEN_DRESSED = '4fdcba7ccd0966e13295c37f12b1fd6e5d38b223c8d1c3728a24be3e049952ed';
+// …A9.6 (the branch), then A9.4 by the owner's ruling (the gi pair, balloon cut).
+const GOLDEN_DRESSED = 'ebf871c58429021ab8bdd42b846708e68a1feec9d05f79256a69d8a4131ca186';
 const GOLDEN_IDLE = '6dae62d12576cc22e2b62f92dc7481c5634f6e6c88279d3b5d6be4e97638ca97';

@@ -64,10 +64,9 @@ const TRACED: readonly ArtShape[] = [
  * three that are not name the defect §P4.12 of the kickoff describes.
  */
 const WORST_CHANNEL_DELTA: Readonly<Record<number, number>> = {
-  // 9001, 9012 (A9.2) + 9011, 9014, 9017 (A9.3/A9.5) — RE-AUTHORED; graded by
-  // A9-D at 12 levels now. Only the gi pair remains, held for an owner ruling.
-  9015: 7, // gi body
-  9019: 2, // near sleeve
+  // EMPTY — all seven garments are RE-AUTHORED (the gi pair by the owner's
+  // ruling, 2026-07-28) and graded by A9-D at 12 levels. The ratchet mechanism
+  // stays for any future traced shape, which starts life in LEGACY.
 };
 
 /** Gate A8-D's own bar, kept separate from today's measured state above. */

@@ -137,7 +137,16 @@ export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
     video: 'zFtCaTO0_1M',
     seconds: 590,
     crop: '(806,700)-(886,796) video px; silhouette 77 x 94 video px',
-    approximated: 'ONE flat fill at the interior mean of the GARMENT pixels.',
+    authored: 'SESSION22 A9.4, landed by OWNER RULING 2026-07-28 — OG grammar + the balloon repair',
+    approximated:
+      'base fill = measured p75 (105,101,104); shadow fill = measured p25 ' +
+      '(103,100,103) over the measured panel-line split (the gi is near-flat, ' +
+      'iqr 2,1,1 — the split is honest and near-invisible); ink contour = ONE ' +
+      'stroke w 1.5 + a measured chest-crease detail stroke w 1. THE BALLOON ' +
+      'IS CUT: the traced flood fill leaked across the back into the ' +
+      'far-sleeve region; the repair subtracts 9001\'s own isolate region and ' +
+      'bridges the occluded band (back-edge overhang 4.8 -> 0.5 stage px, ' +
+      'GATE A9-E). Accepted by the owner over a held-out floor re-base.',
     inferred:
       'EXTENT. The near sleeve hangs over the torso, so the gi BODY is never ' +
       'fully visible and the region enclosed by ink returns only the strip ' +
@@ -172,7 +181,14 @@ export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
     video: 'zFtCaTO0_1M',
     seconds: 590,
     crop: '(826,704)-(878,792) video px; silhouette 50 x 86 video px',
-    approximated: 'ONE flat fill at the interior mean; the sleeve is a single grey panel.',
+    authored: 'SESSION22 A9.4, landed by OWNER RULING 2026-07-28 — OG grammar over the trace outline',
+    approximated:
+      'base fill = measured p75 (105,101,104); shadow fill = measured p25 ' +
+      '(103,100,103) (the tool\'s 3-ring measured shadow, incl. the genuine ' +
+      'under-hem crescent); ink contour = ONE stroke w 1.5, plus measured ' +
+      'details: two sleeve-crease strokes w 1 and the crest ring w 1.5 ' +
+      '(occluded by the near forearm in the idle pose — proven drawn, visible ' +
+      'when the arm moves).',
     inferred:
       'PLACEMENT. Anchored by its TOP to the upper arm\'s top rather than by ' +
       'centre: the sleeve hangs FROM the shoulder, and centring rides it down ' +
