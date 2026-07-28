@@ -105,11 +105,15 @@ describe('cropRegion — the frame the fighter is rendered into', () => {
 });
 
 describe('the REAL composed fighter, rasterised', () => {
-  it('dressed: 20 parts, 55 draw ops, with all 16 of its strokes', () => {
+  it('dressed: 20 parts, 57 draw ops, with all 18 of its strokes', () => {
     const r = render('dressed');
     expect(r.parts).toHaveLength(20);
-    expect(r.plan).toHaveLength(55);
-    expect(census(r.plan)).toEqual({ fill: 37, stroke: 16, holedFill: 2 });
+    // 55 → 57 ops and 16 → 18 strokes at SESSION22 A9.2: the re-authored collar
+    // (9012) and far sleeve (9001) each trade their all-ink blob ring for a
+    // base fill + a shadow fill + ONE real contour stroke — +1 paint op and
+    // +1 stroke each, fills unchanged in number (blob ring out, shadow in).
+    expect(r.plan).toHaveLength(57);
+    expect(census(r.plan)).toEqual({ fill: 37, stroke: 18, holedFill: 2 });
   });
 
   it('idle: 21 parts, 90 draw ops, with all 41 of its strokes', () => {
@@ -207,5 +211,8 @@ describe('the render is anchored where the scene anchors it', () => {
 });
 
 /** Pinned in the same commit as the code they describe — see the GOLDEN test. */
-const GOLDEN_DRESSED = '3908234c8a71d05d1d81270dd1703618bf8961a8ffea65c463ffc22fc9d72e6a';
+// SESSION22 A9.2: dressed digest moved when 9012 + 9001 were re-authored in
+// the OG grammar (blob ring → base + shadow + stroke; ink 75.9→32.6 % and
+// 70.6→30.6 %). Idle is untouched — the bare fighter draws no traced art.
+const GOLDEN_DRESSED = '8dfc254720c4b4a2f7761c61d2e98e1ece2e14c859221ebfe2cd0f2c1ab4a152';
 const GOLDEN_IDLE = '6dae62d12576cc22e2b62f92dc7481c5634f6e6c88279d3b5d6be4e97638ca97';

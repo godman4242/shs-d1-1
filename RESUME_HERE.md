@@ -57,7 +57,32 @@ next change would be churn.
 
 ---
 
-> ## ▶ SESSION 22 IN PROGRESS — A9.1 DONE: THE PAINT-GRAMMAR GATE EXISTS
+> ## ▶ SESSION 22 IN PROGRESS — A9.2 DONE: THE TWO OVER-INKED GARMENTS ARE RE-AUTHORED
+> **50 files / 848 tests green** · tsc ×2 → 0 · eslint → 0 · **GATE A9-B MET on
+> all seven** — the owner's "one or 2 of them": 9012 **75.9→32.6 %**, 9001
+> **70.6→30.6 %**, bar 61.4 % (the OG's own worst).
+>
+> - **New tool `scripts/art/reauthorGarment.py <id>`** — base fill on the EXACT
+>   traced silhouette ring, ONE measured hard-edged shadow, an ink stroke of
+>   OG-quantised width; tones from committed p25/p75 with D4's SWF preference
+>   (**the collar's base is the SWF's own `#dcd9d4`, byte-exact**). Then
+>   `generate.ts` commits it; byte re-derivation still covers it.
+> - **Floors moved UP, not down:** held-out **0.8619 → 0.8662**, tracing
+>   0.9050, height 140.48. Committed floors stay 0.8618/140.5 until one A9.7
+>   ratchet commit (D-A9.2b).
+> - **A8 → A9 handover done as pre-decided:** a8Colour grades LEGACY only
+>   (shared roster `tests/utils/a9Roster.ts`); failing pin shrank to
+>   [9011, 9017]. `colourRuler.py` grades base-vs-p75 / shadow-vs-p25.
+> - **New guard, chaos-proven:** `traceGarment.py` REFUSES to clobber an
+>   AUTHORED SVG (full tracer run: both refused, five legacy re-traced
+>   byte-identical, svgShape green).
+> - **Looked at:** collar is a white band with a fine contour now; the sleeve's
+>   black slab is gone. Still open and named: kasa (A9.3) · gi bulge + lapel
+>   (A9.4) · hakama (A9.5) · branch (A9.6).
+> - **Next: A9.3** — the kasa: two tones (base p75 (154,119,57), shadow p25
+>   (116,84,33) — do NOT darken to the median), straw ribs, brim fringe.
+>
+> ## ▶ SESSION 22 — A9.1 DONE: THE PAINT-GRAMMAR GATE EXISTS
 > **50 files / 847 tests green** (was 49/827) · tsc ×2 → 0 · eslint → 0 · **no
 > shape file changed — the render is untouched; this step built the ruler.**
 >

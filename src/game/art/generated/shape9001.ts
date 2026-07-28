@@ -7,7 +7,8 @@
  *   source frame       : reference/frames/s19_trace/zFt_0061.png  (gitignored)
  *   source video       : zFtCaTO0_1M @ t = 590.0 s
  *   crop               : (856,724)-(886,770) video px; silhouette 27 x 44 video px
- *   traced by          : python3 scripts/art/traceGarment.py   (potrace 1.16, polygon mode `-a 0`)
+ *   outline traced by  : python3 scripts/art/traceGarment.py   (potrace 1.16, polygon mode `-a 0`)
+ *   authored by        : python3 scripts/art/reauthorGarment.py   (SESSION22 A9.2 — OG grammar over the SESSION19 trace outline)
  *   source file        : reference/traced/9001.svg  (gitignored)
  *   converted by       : npx vite-node scripts/art/generate.ts -- 9001
  *   flatten tolerance  : 0.02 px   ·   coordinates rounded to 3 dp
@@ -19,12 +20,16 @@
  *   covered by the torso.
  *
  * CONTENT
- *   2 paint op(s) in SWF paint order: 2 solid fill(s), 0 stroke pass(es).
- *   2 ring(s) (0 hole(s)), 98 vertices.
- *   palette            : fills 0x000000 · 0x666367  |  strokes none
- *   Colours are SAMPLED FROM LOSSY VIDEO, not read from the SWF — INFERRED
- *   targets, never CONTRACT (SESSION19 §P7).
- *   APPROXIMATED FILLS: ONE flat fill at the interior mean; the sleeve is a single grey panel.
+ *   3 paint op(s) in SWF paint order: 2 solid fill(s), 1 stroke pass(es).
+ *   2 ring(s) (0 hole(s)), 73 vertices.
+ *   palette            : fills 0x696668 · 0x676466  |  strokes 0x000000@1
+ *   Tones are the COMMITTED MEASURED TARGETS (sourceColour.ts p25 shadow /
+ *   p75 base); kickoff D4 substitutes the SWF's own byte-exact colour where a
+ *   target sits within 12 levels of one. INFERRED, never CONTRACT.
+ *   APPROXIMATED FILLS: (authored) base fill = measured p75 (105,102,104); shadow fill = measured p25
+ *   (103,100,102) - 2 levels apart, which IS the video's own spread (iqr
+ *   2,2,2; the gi is near-flat in the source); ink contour = ONE stroke,
+ *   width 1. Was a traced blob at 70.6 % ink (kickoff P2).
  *
  * ⚠️ PAINT ORDER IS LOAD-BEARING. `paints` is in the source SWF's own style-group
  * order, back to front, and a renderer MUST draw it in exactly that order. The
@@ -40,16 +45,24 @@ export const SHAPE_9001: ArtShape = {
   paints: [
     {
       kind: 'fill',
-      color: 0x000000,
+      color: 0x696668,
       rings: [
         { points: [-6.072,-5.589,-6.072,-0.922,-5.628,-0.7,-5.628,0.411,-5.183,0.633,-5.183,1.3,-4.739,1.522,-4.739,2.633,-4.295,2.856,-4.295,3.522,-3.85,3.744,-3.85,4.856,-3.406,5.078,-3.406,6.189,-2.961,6.411,-2.961,7.522,-2.517,7.744,-2.517,9.744,-2.072,9.967,-2.072,10.633,-1.628,10.856,-1.628,11.967,-1.183,12.189,-1.183,12.967,-1.072,13.744,0.928,13.856,3.039,13.856,4.594,12.3,4.594,11.744,5.039,11.522,5.039,10.856,5.483,10.633,5.483,9.967,5.928,9.744,5.928,5.967,5.483,5.744,5.483,5.078,5.039,4.856,5.039,3.856,3.705,2.522,3.705,1.967,3.261,1.744,3.261,1.189,1.039,-1.033,1.039,-1.589,0.594,-1.811,0.594,-2.478,-0.295,-3.256,-0.295,-3.811,-1.183,-4.589,-1.183,-5.033,-1.85,-5.7,-5.961,-5.7,-5.961,-5.589], hole: false },
       ],
     },
     {
       kind: 'fill',
-      color: 0x666367,
+      color: 0x676466,
       rings: [
-        { points: [-3.406,-2.922,-3.406,-1.367,-2.961,-1.144,-2.961,-0.478,-2.517,-0.256,-2.517,1.3,-2.072,1.522,-2.072,2.189,-1.628,2.411,-1.628,3.078,-1.183,3.3,-1.183,4.411,-0.739,4.633,-0.739,5.3,-0.295,5.522,-0.295,7.078,0.15,7.3,0.15,9.3,0.594,9.522,0.594,10.967,1.261,11.633,2.15,11.633,2.817,10.967,2.817,10.411,3.261,10.189,3.261,9.078,3.705,8.856,3.705,6.411,3.261,6.189,3.261,5.522,2.817,5.3,2.817,4.3,1.483,2.967,1.483,2.411,0.594,1.633,0.594,1.189,-0.739,-0.144,-0.739,-0.7,-1.183,-0.922,-1.183,-1.478,-2.072,-2.367,-2.072,-3.033,-3.295,-3.033,-3.295,-2.922], hole: false },
+        { points: [0.15,4.633,0.15,6.633,0.594,6.856,0.594,8.856,1.039,9.078,1.039,9.856,1.15,10.633,2.372,10.633,2.372,9.967,2.817,9.744,2.817,8.633,3.261,8.411,3.261,6.744,2.817,6.744,2.483,6.633,2.372,5.633,2.372,4.522,0.261,4.522,0.261,4.633], hole: false },
+      ],
+    },
+    {
+      kind: 'stroke',
+      color: 0x000000,
+      width: 1,
+      polylines: [
+        [-6.072,-5.589,-6.072,-0.922,-5.628,-0.7,-5.628,0.411,-5.183,0.633,-5.183,1.3,-4.739,1.522,-4.739,2.633,-4.295,2.856,-4.295,3.522,-3.85,3.744,-3.85,4.856,-3.406,5.078,-3.406,6.189,-2.961,6.411,-2.961,7.522,-2.517,7.744,-2.517,9.744,-2.072,9.967,-2.072,10.633,-1.628,10.856,-1.628,11.967,-1.183,12.189,-1.183,12.967,-1.072,13.744,0.928,13.856,3.039,13.856,4.594,12.3,4.594,11.744,5.039,11.522,5.039,10.856,5.483,10.633,5.483,9.967,5.928,9.744,5.928,5.967,5.483,5.744,5.483,5.078,5.039,4.856,5.039,3.856,3.705,2.522,3.705,1.967,3.261,1.744,3.261,1.189,1.039,-1.033,1.039,-1.589,0.594,-1.811,0.594,-2.478,-0.295,-3.256,-0.295,-3.811,-1.183,-4.589,-1.183,-5.033,-1.85,-5.7,-5.961,-5.7,-5.961,-5.589,-6.072,-5.589],
       ],
     },
   ],

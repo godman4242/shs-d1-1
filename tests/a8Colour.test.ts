@@ -25,9 +25,19 @@
  * STRUCTURE. That is §P4.2 and §P4.9 of the kickoff, and no single-colour gate
  * can reach them. **A green A8-D is necessary and not sufficient: look at the
  * three band crops.**
+ *
+ * ⚠️ SESSION22 A9.2 — THIS GATE NOW GRADES THE **LEGACY** BLOBS ONLY. A
+ * re-authored garment carries ≥2 tones BY DESIGN, so "ONE flat fill vs the
+ * median" stops being a statement about it; its colour gate is A9-D
+ * (tests/a9Grammar.test.ts): base vs p75, shadow vs p25, each within 12 —
+ * TIGHTER than every legacy ratchet this file held for it (22 and 1). The
+ * roster is shared from tests/utils/a9Roster.ts so no garment is graded by
+ * neither gate; the handover was decided in the A9.1 ledger before any art
+ * moved.
  */
 import { describe, expect, it } from 'vitest';
 import { COLOUR_FRAME, SOURCE_FILLS } from '../scripts/art/sourceColour';
+import { LEGACY } from './utils/a9Roster';
 import type { ArtShape } from '../src/game/art/types';
 import { SHAPE_9001 } from '../src/game/art/generated/shape9001';
 import { SHAPE_9011 } from '../src/game/art/generated/shape9011';
@@ -54,9 +64,8 @@ const TRACED: readonly ArtShape[] = [
  * three that are not name the defect §P4.12 of the kickoff describes.
  */
 const WORST_CHANNEL_DELTA: Readonly<Record<number, number>> = {
-  9001: 1, // far sleeve   — ⚠️ n=41, the smallest sample here; the weakest row
+  // 9001, 9012 — RE-AUTHORED (SESSION22 A9.2); graded by A9-D at 12 levels now.
   9011: 22, // hakama      — ours is DARK; the kickoff's §P4.12 said so and was right
-  9012: 22, // juban collar — ours is DARK; §P4.12's own sample missed this garment
   9014: 2, // obi
   9015: 7, // gi body
   // ⛔ 9017 — DO NOT CLOSE THIS ONE BY DARKENING THE HAT. Ours is LIGHT, not
@@ -128,18 +137,19 @@ describe('A8-A — the colour ruler: every traced garment is measured against th
     expect(COLOUR_FRAME).toContain('reference/frames/');
   });
 
-  it('every traced garment paints its interior in ONE colour, so ONE fill is graded', () => {
+  it('every LEGACY garment paints its interior in ONE colour, so ONE fill is graded', () => {
     // `trace_one` emits a single sampled `fillcol` for every interior ring, so
-    // two different non-black fills in one shape would mean the tracer changed
-    // under this gate's feet and the "our fill" it compares is a guess.
-    for (const shape of TRACED) {
+    // two different non-black fills in one LEGACY shape would mean the tracer
+    // changed under this gate's feet and the "our fill" it compares is a guess.
+    // (Re-authored shapes carry ≥2 tones by design — A9-C grades those.)
+    for (const shape of TRACED.filter((s) => LEGACY[s.id] !== undefined)) {
       const fills = new Set(interiorFills(shape));
       expect(fills.size, `shape ${shape.id} interior fills`).toBe(1);
     }
   });
 
-  it('every garment is within its committed per-channel ratchet', () => {
-    for (const src of SOURCE_FILLS) {
+  it('every LEGACY garment is within its committed per-channel ratchet', () => {
+    for (const src of SOURCE_FILLS.filter((f) => LEGACY[f.shapeId] !== undefined)) {
       const shape = TRACED.find((s) => s.id === src.shapeId);
       if (shape === undefined) throw new Error(`shape ${src.shapeId} is measured but not traced`);
       const ours = channels(interiorFills(shape)[0] ?? 0);
@@ -152,12 +162,22 @@ describe('A8-A — the colour ruler: every traced garment is measured against th
     }
   });
 
+  it('the ratchet table covers exactly the LEGACY shapes — the handover leaks nothing', () => {
+    // Both directions: a legacy shape with no ratchet slips ungraded; a ratchet
+    // for a re-authored shape means the handover to A9-D never happened.
+    const ratcheted = Object.keys(WORST_CHANNEL_DELTA).map(Number).sort((a, b) => a - b);
+    const legacy = Object.keys(LEGACY).map(Number).sort((a, b) => a - b);
+    expect(ratcheted).toEqual(legacy);
+  });
+
   it('reports which garments GATE A8-D still fails, without softening the gate', () => {
-    // ⚠️ NOT an assertion that they pass — they do not, and A8.4 is the step that
-    // fixes them. This pins WHICH ones fail so the list cannot quietly grow.
-    const failing = SOURCE_FILLS.filter((f) => ratchetFor(f.shapeId) > A8_D_TOLERANCE)
+    // ⚠️ NOT an assertion that they pass — they do not, and re-authoring is the
+    // step that fixes them. This pins WHICH ones fail so the list cannot grow.
+    // 9012 left the list by being RE-AUTHORED (A9.2), not by a raised ratchet.
+    const failing = SOURCE_FILLS.filter((f) => LEGACY[f.shapeId] !== undefined)
+      .filter((f) => ratchetFor(f.shapeId) > A8_D_TOLERANCE)
       .map((f) => f.shapeId)
       .sort((a, b) => a - b);
-    expect(failing).toEqual([9011, 9012, 9017]);
+    expect(failing).toEqual([9011, 9017]);
   });
 });

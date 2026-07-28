@@ -33,6 +33,9 @@ import { grammarOf, violationsOf } from '../scripts/art/grammar';
 import type { GrammarBar, ToneTargets } from '../scripts/art/grammar';
 import { inkShareOf } from '../scripts/art/inkShareLib';
 import { SOURCE_FILLS } from '../scripts/art/sourceColour';
+// The roster lives in ONE shared module — a8Colour scopes itself by the same
+// lists, so a garment is never graded by neither gate (see a9Roster's header).
+import { LEGACY, MEASURED_FLAT, REAUTHORED } from './utils/a9Roster';
 // ⚠️ The generated shapes are imported DIRECTLY, never via fighterShapes.ts —
 // the runtime-boundary guard exempts only the pure-data art files, and the
 // registry is a runtime module (kickoff §3: everything but poseRaster takes
@@ -89,38 +92,6 @@ const BAR: GrammarBar = {
   strokeWidthMax: 2.5,
   channelTolerance: 12,
   maxInkShare: worstOg.share,
-};
-
-/**
- * ⛔ THE ROSTER — shapes already re-authored in the OG grammar. A9.2–A9.5 move
- * ids IN (in the same commit as the re-authoring), never out, never edited to
- * fit a result. When all seven traced garments are here, LEGACY below is empty
- * and GATE A9-A is met.
- */
-const REAUTHORED: ReadonlySet<number> = new Set<number>([]);
-
-/**
- * Garments measured genuinely FLAT in the source may keep ONE tone (kickoff
- * D3's obi veto). Joining this set requires citing the garment's measured iqr
- * in a comment beside its id — an empty set today because no garment has been
- * re-authored yet, and the decision is made at authoring time, by measurement.
- */
-const MEASURED_FLAT: ReadonlySet<number> = new Set<number>([]);
-
-/**
- * ⛔ THE PRE-A9 TRACED BLOBS, PINNED EXACTLY AS THEY STAND (probed 2026-07-28,
- * baseline f7e3801). Every one is the same anti-grammar: no strokes, one
- * all-ink fill ring for an outline, one flat tone. The pin freezes them: any
- * in-place edit fails here with instructions to re-author instead.
- */
-const LEGACY: Readonly<Record<number, { inkFillRings: number; tones: readonly number[] }>> = {
-  9001: { inkFillRings: 1, tones: [0x666367] }, // gi sleeve, far — 70.6% ink ⛔
-  9011: { inkFillRings: 1, tones: [0xc8c3c5] }, // hakama
-  9012: { inkFillRings: 1, tones: [0xb6b4b6] }, // collar/juban — 75.9% ink ⛔
-  9014: { inkFillRings: 1, tones: [0xcdcacb] }, // obi
-  9015: { inkFillRings: 1, tones: [0x6e6b6d] }, // gi body
-  9017: { inkFillRings: 1, tones: [0x8e6f38] }, // kasa
-  9019: { inkFillRings: 1, tones: [0x6a6669] }, // gi sleeve, near
 };
 
 /** Lookups throw, never cast — a missing shape is a finding, not a type. */
@@ -243,14 +214,15 @@ describe('A9 legacy pins — a traced blob can only change by being re-authored'
     }
   });
 
-  it('names the over-inked garments so the list can only shrink: 9001 and 9012', () => {
-    // ⚠️ NOT an assertion that they pass A9-B — they do not, and A9.2 is the
-    // step that fixes them. It pins WHICH legacy garments are over the OG's
-    // own worst, exactly as the owner counted ("one or 2 of them").
+  it('no traced garment is inkier than the OG\'s own worst part — GATE A9-B, all seven', () => {
+    // Started as the pin [9001, 9012] — the owner's "one or 2 of them", counted
+    // exactly. A9.2 re-authored both (75.9→32.6 %, 70.6→30.6 %) and the list is
+    // EMPTY: from here this is the full A9-B assertion over every traced shape,
+    // legacy included, and it may never grow again.
     const over = TRACED.filter((s) => inkShareOf(s).share > BAR.maxInkShare)
       .map((s) => s.id)
       .sort((a, b) => a - b);
-    expect(over).toEqual([9001, 9012]);
+    expect(over).toEqual([]);
   });
 });
 

@@ -3368,3 +3368,74 @@ suite 50 files / 847 tests green (was 49/827)   tsc x2 -> 0 · eslint -> 0
 inkShare CLI after the split: mean 41.4%, worst 61.4%, same two over (9012 75.9, 9001 70.6)
 No shape file changed; the render and every committed digest are UNCHANGED.
 ```
+
+## SESSION 22 — A9.2: THE TWO OVER-INKED GARMENTS ARE RE-AUTHORED. GATE A9-B MET, ALL SEVEN.
+
+**The owner's "one or 2 of them", closed by re-authoring, not by tuning:**
+```
+                      before      after     bar (OG's own worst)
+  9012 collar/juban    75.9%      32.6%       61.4%   ✅
+  9001 far sleeve      70.6%      30.6%       61.4%   ✅
+  inkShare CLI: "✅ no traced garment is inkier than the OG's own worst part"
+```
+
+### The pipeline (new tool, reusable for A9.3–A9.5)
+`scripts/art/reauthorGarment.py <id>` — base fill on the EXACT traced
+silhouette ring (same `garment_masks` + potrace + rdp + `to_local` pipeline the
+committed blob came from, so the outline is the trace's to the millipixel), ONE
+hard-edged shadow fill (interior darker than the p25/p75 luma midpoint, 5×5
+median first, cleaned, components ≥2% of interior), and an ink stroke of
+OG-quantised width. Tones: committed p25/p75 with kickoff D4's SWF preference —
+**the collar's base resolved to the SWF's own `#dcd9d4` byte-exact** (measured
+p75 (212,210,210), within 12). Then `generate.ts` commits it; the byte
+re-derivation gate covers authored shapes exactly as traced ones.
+
+### Decisions
+- **D-A9.2a — stroke centred on the silhouette ring** (grows the silhouette by
+  w/2 ≈ 0.2 world px) over inset-centreline complexity. The floors ruled:
+  held-out **0.8619 → 0.8662**, tracing **0.9006 → 0.9050**, height 140.48 —
+  the re-authored art scores BETTER, Risk 1 did not materialise.
+- **D-A9.2b — committed floors stay 0.8618/140.5 during the session**; the
+  gains ratchet up in one A9.7 commit with the final numbers (SESSION20's own
+  pattern). Veto = ratchet each step.
+- **D-A9.2c — 9001's two tones are 2 levels apart** because that IS the
+  video's spread (iqr 2,2,2). An invisible shadow honestly measured beats an
+  invented visible one (kickoff Risk 2's line).
+
+### The A8 → A9 handover, exactly as pre-decided in the A9.1 ledger
+`a8Colour.test.ts` now grades LEGACY blobs only (roster shared from
+`tests/utils/a9Roster.ts`, so no garment is graded by neither); its failing
+pin shrank **[9011, 9012, 9017] → [9011, 9017]** — 9012 left by being
+re-authored, not by a raised ratchet. A new both-directions test pins
+ratchet-table == LEGACY. `colourRuler.py` grades multi-tone shapes per tone
+(base vs p75, shadow vs p25): collar base +8/+7/+2 ✓, shadow exact; 9001 exact.
+
+### Red-first + guards
+- Roster flipped BEFORE the art: `every roster shape passes all four gates`
+  RED against the still-committed blobs, then green after `generate.ts`.
+- **New guard, chaos-proven:** `traceGarment.py` REFUSES to clobber an
+  AUTHORED SVG (marker defined once, in `reauthorGarment.py`); ran the full
+  tracer — both authored files refused byte-identical, all five legacy SVGs
+  re-traced, `svgShape` suite green.
+- The over-ink pin did its job and shrank to []: the test is now the full
+  A9-B assertion over all seven, and may never grow again.
+
+### Integration pins moved, each with its reason in place
+`poseRender`: dressed 55 → 57 ops, 16 → 18 strokes (+1 paint op, +1 stroke per
+re-authored garment); GOLDEN_DRESSED re-pinned (idle untouched — the bare
+fighter draws no traced art). Ratchet gate: emitter keeps the literal
+`APPROXIMATED FILLS:` phrase (D7's "approximations listed, never silent")
+with an `(authored)` qualifier — the GATE was not widened.
+
+### Looked at, honestly (band_A + side_by_side, this step's scope)
+The collar is a white band with a fine contour instead of an ink-drowned mass;
+the far sleeve no longer adds a black slab behind the torso. Still visibly
+wrong and NAMED for later steps: kasa texture/fringe (A9.3), the gi's back
+bulge + missing white front lapel (A9.4), hakama tone (A9.5), no branch (A9.6).
+
+### Regression
+```
+suite 50 files / 848 tests green   tsc x2 -> 0 · eslint -> 0
+scorePose: tracing 0.9050 · held-out 0.8662 · height 140.48 · digest 8dfc2547…
+floors 0.8618 / 140.5 NOT edited (D-A9.2b)
+```

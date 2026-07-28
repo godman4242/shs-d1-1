@@ -78,6 +78,13 @@ interface TracedSource {
   /** Everything the source could not resolve. Never allowed to be empty prose. */
   readonly approximated: string;
   readonly inferred: string;
+  /**
+   * SESSION22 A9: set when the shape was RE-AUTHORED in the OG's grammar (base
+   * + hard shadow + stroked contour) over the trace outline. The string names
+   * the step; the header then says "authored by" instead of claiming the paint
+   * list is potrace's, and the colour claim points at the committed targets.
+   */
+  readonly authored?: string;
 }
 
 /** Keyed by traced id. The header is derived from this, so it cannot drift. */
@@ -89,9 +96,13 @@ export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
     video: 'zFtCaTO0_1M',
     seconds: 590,
     crop: '(806,688)-(858,742) video px; silhouette 48 x 52 video px',
+    authored: 'SESSION22 A9.2 — OG grammar over the SESSION19 trace outline',
     approximated:
-      'ONE flat fill at the interior mean. The collar reads as a single light ' +
-      'panel at this resolution.',
+      'base fill = SWF #dcd9d4 (the measured p75 (212,210,210) is within 12 of ' +
+      'it - D4); shadow fill = measured p25 (196,193,196), the shaded band, as ' +
+      'the region darker than the p25/p75 luma midpoint (15.4 % of interior); ' +
+      'ink contour = ONE stroke, width 1 (OG-quantised). Was a traced blob at ' +
+      '75.9 % ink - the outline ate the garment (kickoff P2).',
     inferred:
       'PLACEMENT, and the EXTENT. The region enclosed by ink here holds the ' +
       'white collar AND the dark hair beside it, which share a boundary, so ' +
@@ -135,7 +146,12 @@ export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
     video: 'zFtCaTO0_1M',
     seconds: 590,
     crop: '(856,724)-(886,770) video px; silhouette 27 x 44 video px',
-    approximated: 'ONE flat fill at the interior mean; the sleeve is a single grey panel.',
+    authored: 'SESSION22 A9.2 — OG grammar over the SESSION19 trace outline',
+    approximated:
+      'base fill = measured p75 (105,102,104); shadow fill = measured p25 ' +
+      '(103,100,102) - 2 levels apart, which IS the video\'s own spread (iqr ' +
+      '2,2,2; the gi is near-flat in the source); ink contour = ONE stroke, ' +
+      'width 1. Was a traced blob at 70.6 % ink (kickoff P2).',
     inferred:
       'PLACEMENT, and EXTENT. Only the far sleeve\'s outer lobe clears the body ' +
       'in this frame, so the traced shape is the visible part, not the whole ' +
@@ -215,13 +231,18 @@ function provenanceBlock(id: number): string {
  *   flatten tolerance  : ${String(TOLERANCE)} px   ·   coordinates rounded to ${String(DECIMALS)} dp
  *   licence            : owner-attested Lut Games grant — docs/OWNER_PERMISSION_RULING.md`;
   }
+  const madeBy =
+    traced.authored === undefined
+      ? ` *   traced by          : python3 scripts/art/traceGarment.py   (potrace 1.16, polygon mode \`-a 0\`)`
+      : ` *   outline traced by  : python3 scripts/art/traceGarment.py   (potrace 1.16, polygon mode \`-a 0\`)
+ *   authored by        : python3 scripts/art/reauthorGarment.py   (${traced.authored})`;
   return ` * PROVENANCE — TRACED FROM VIDEO, **NOT** EXTRACTED FROM THE PAYLOAD
  *   source characterId : ${String(id)}   (NOT an OG id — traced art is numbered >= ${String(TRACED_ID_MIN)})
  *   garment / slot     : ${traced.garment} → slot ${String(traced.slot)}
  *   source frame       : ${traced.frame}  (gitignored)
  *   source video       : ${traced.video} @ t = ${String(traced.seconds)}.0 s
  *   crop               : ${traced.crop}
- *   traced by          : python3 scripts/art/traceGarment.py   (potrace 1.16, polygon mode \`-a 0\`)
+${madeBy}
  *   source file        : reference/traced/${String(id)}.svg  (gitignored)
  *   converted by       : npx vite-node scripts/art/generate.ts -- ${String(id)}
  *   flatten tolerance  : ${String(TOLERANCE)} px   ·   coordinates rounded to ${String(DECIMALS)} dp
@@ -273,9 +294,14 @@ export function emit(art: ShapeArt): string {
       ? `Colours are BYTE-EXACT to the SWF's recorded RGB (SESSION15 §2 bar B).
  *   APPROXIMATED FILLS: none — this shape is 100 % flat solid colour, so
  *   SESSION15 D3 (mean-colour gradients) and D4 (bitmap fills) do not apply.`
-      : `Colours are SAMPLED FROM LOSSY VIDEO, not read from the SWF — INFERRED
+      : traced.authored === undefined
+        ? `Colours are SAMPLED FROM LOSSY VIDEO, not read from the SWF — INFERRED
  *   targets, never CONTRACT (SESSION19 §P7).
- *   APPROXIMATED FILLS: ${wrapProse(traced.approximated)}`;
+ *   APPROXIMATED FILLS: ${wrapProse(traced.approximated)}`
+        : `Tones are the COMMITTED MEASURED TARGETS (sourceColour.ts p25 shadow /
+ *   p75 base); kickoff D4 substitutes the SWF's own byte-exact colour where a
+ *   target sits within 12 levels of one. INFERRED, never CONTRACT.
+ *   APPROXIMATED FILLS: (authored) ${wrapProse(traced.approximated)}`;
 
   return `/**
  * GENERATED — DO NOT EDIT. Regenerate with the command below.

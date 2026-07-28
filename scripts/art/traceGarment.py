@@ -429,7 +429,18 @@ def trace_one(im, g):
            '<svg xmlns="http://www.w3.org/2000/svg">\n'
            '<g transform="matrix(1,0,0,1,0,0)">\n' + "\n".join(paths) + "\n</g>\n</svg>\n")
     os.makedirs(OUT_DIR, exist_ok=True)
-    open(os.path.join(OUT_DIR, "%d.svg" % g["id"]), "w").write(svg)
+    out_path = os.path.join(OUT_DIR, "%d.svg" % g["id"])
+    # ⛔ SESSION22 A9.2: a re-authored SVG (base + shadow + stroke, in the OG's
+    # grammar) must not be silently flattened back into a traced blob by a
+    # routine re-run of this tool. The marker is defined ONCE, in the tool that
+    # writes it. Override only with SSHD_CLOBBER_AUTHORED=1, deliberately.
+    from reauthorGarment import AUTHORED_MARK
+    if (os.path.exists(out_path) and AUTHORED_MARK in open(out_path).read()
+            and os.environ.get("SSHD_CLOBBER_AUTHORED") != "1"):
+        print("      %d.svg is %s — REFUSING to clobber (SSHD_CLOBBER_AUTHORED=1 overrides)"
+              % (g["id"], AUTHORED_MARK))
+        return dict(vx0=vx0, vx1=vx1, vy0=vy0, vy1=vy1, colour=fillcol, paths=0, verts=0)
+    open(out_path, "w").write(svg)
     return dict(vx0=vx0, vx1=vx1, vy0=vy0, vy1=vy1, colour=fillcol, paths=len(paths), verts=nv)
 
 

@@ -57,7 +57,10 @@ A8_D_TOLERANCE = 12
 
 def our_fill(shape_id):
     """
-    The fill WE committed, read out of the generated TypeScript.
+    The fills WE committed, read out of the generated TypeScript, darkest to
+    lightest by rec601 luma. ONE entry for a legacy traced blob; TWO or more
+    for a shape re-authored in the OG grammar (SESSION22 A9.2) — shadow first,
+    base last, which is how the table grades them (shadow vs p25, base vs p75).
 
     Deliberately the committed artifact and not `trace_one`'s return value: the
     question this file answers is whether the art the GAME DRAWS matches the
@@ -67,14 +70,11 @@ def our_fill(shape_id):
     if not os.path.exists(path):
         raise SystemExit("colourRuler: %s has no generated shape" % shape_id)
     fills = [int(m, 16) for m in re.findall(r"color:\s*0x([0-9a-fA-F]{6})", open(path).read())]
-    interior = [c for c in fills if c != 0x000000]
+    interior = sorted(set(c for c in fills if c != 0x000000),
+                      key=lambda c: 0.299 * ((c >> 16) & 0xFF) + 0.587 * ((c >> 8) & 0xFF) + 0.114 * (c & 0xFF))
     if not interior:
         raise SystemExit("colourRuler: shape%d has no non-black fill" % shape_id)
-    if len(set(interior)) != 1:
-        raise SystemExit("colourRuler: shape%d has %d different interior fills — which one is "
-                         "'our colour'? Refusing to guess." % (shape_id, len(set(interior))))
-    c = interior[0]
-    return ((c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF)
+    return [((c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF) for c in interior]
 
 
 def core_of(region):
@@ -242,17 +242,36 @@ def main():
     print("%5s %-26s %-17s %-17s %14s %6s %5s  %s"
           % ("id", "garment", "SOURCE median", "OURS (committed)", "delta r,g,b", "worst", "n", "spread"))
     for r in rows:
-        d = [o - s for o, s in zip(r["ours"], r["median"])]
-        worst = max(abs(v) for v in d)
-        flag = "  " if worst <= A8_D_TOLERANCE else " ⛔"
-        print("%5d %-26s %-7s %-9s %-7s %-9s %+5d%+5d%+5d %5d%s %5d  %s"
-              % (r["shapeId"], r["garment"][:26],
-                 hexs(r["median"]), "(%d,%d,%d)" % r["median"],
-                 hexs(r["ours"]), "(%d,%d,%d)" % r["ours"],
-                 d[0], d[1], d[2], worst, flag, r["samples"],
-                 "%d,%d,%d" % r["iqr"]))
+        if len(r["ours"]) == 1:
+            ours = r["ours"][0]
+            d = [o - s for o, s in zip(ours, r["median"])]
+            worst = max(abs(v) for v in d)
+            flag = "  " if worst <= A8_D_TOLERANCE else " ⛔"
+            print("%5d %-26s %-7s %-9s %-7s %-9s %+5d%+5d%+5d %5d%s %5d  %s"
+                  % (r["shapeId"], r["garment"][:26],
+                     hexs(r["median"]), "(%d,%d,%d)" % r["median"],
+                     hexs(ours), "(%d,%d,%d)" % ours,
+                     d[0], d[1], d[2], worst, flag, r["samples"],
+                     "%d,%d,%d" % r["iqr"]))
+        else:
+            # RE-AUTHORED (SESSION22): the shape holds base + shadow, so the
+            # median stops being its target — GATE A9-D grades base vs p75 and
+            # shadow vs p25 instead, and this table says so per tone.
+            for label, ours, target in (("base", r["ours"][-1], r["p75"]),
+                                        ("shadow", r["ours"][0], r["p25"])):
+                d = [o - s for o, s in zip(ours, target)]
+                worst = max(abs(v) for v in d)
+                flag = "  " if worst <= A8_D_TOLERANCE else " ⛔"
+                print("%5d %-26s %-7s %-9s %-7s %-9s %+5d%+5d%+5d %5d%s %5d  %s"
+                      % (r["shapeId"], ("%s [%s vs %s]" % (r["garment"][:12], label,
+                                                           "p75" if label == "base" else "p25")),
+                         hexs(target), "(%d,%d,%d)" % target,
+                         hexs(ours), "(%d,%d,%d)" % ours,
+                         d[0], d[1], d[2], worst, flag, r["samples"],
+                         "%d,%d,%d" % r["iqr"]))
 
-    print("\n  ⇒ GATE A8-D wants every `worst` <= %d. ⛔ marks the ones that fail." % A8_D_TOLERANCE)
+    print("\n  ⇒ GATE A8-D (legacy, vs median) / A9-D (re-authored, vs p25/p75) want every"
+          "\n    `worst` <= %d. ⛔ marks the ones that fail." % A8_D_TOLERANCE)
 
     print("\n  THE TWO-TONE TARGETS (SESSION22 A9-D): shadow <- p25, base <- p75")
     for r in rows:
