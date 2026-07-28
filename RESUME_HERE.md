@@ -1,6 +1,79 @@
 # RESUME HERE
 
-> ## ▶ SESSION 21 IN PROGRESS — **A8.1 DONE, GATE A8-A MET.** Next step: **A8.2**
+> ## ⛔ A8.2 FOUND THE WEAPON IN THE REPO — AND THE ART IS NOT 1:1 FOR A STRUCTURAL REASON
+> **49 files / 827 tests green** · tsc ×2 → 0 · eslint → 0 · **the render is
+> UNCHANGED** (slot 3 deliberately unwired — see the floor trade below).
+>
+> ### ⭐ THE STARTING WEAPON IS `DefineShape 2641` — ORIGINAL VECTOR ART
+> **A8.2 must NOT trace anything.** The kickoff's *"trace the saya + tsuka onto
+> slots 3/4"* is built on a premise nobody checked: **nothing had ever rendered
+> the 1822 shapes in `reference/extracted/shapes/`.** New tool
+> `scripts/art/shapeAtlas.ts` renders them all through the repo's own pipeline:
+> ```
+> npx vite-node scripts/art/shapeAtlas.ts        -> renders/atlas/sheet_00..09.png
+> npx vite-node scripts/art/shapeAtlas.ts -- --ids 2641   -> one, big
+> ```
+> Sheet 06 holds a **knobbly brown tree branch with a green leaf** — the item icon
+> from the PLAYER screen, exactly. `BRANCH · DMG 1-2 · WEIGHT 1 · LEVEL 1`.
+> ⚠️ **SESSION 18 already had it and skipped it on purpose** ("2641 … not in the
+> fighter") — true of the BARE doll, wrong for the dressed one.
+> ⭐ **All ten sheets were read.** The payload holds the body, the branch, a
+> detailed alt head (2662), items, VFX, scenery and the equipment-SLOT ICONS —
+> but **no wearable kasa, gi or hakama anywhere.** Equipment art is fetched by
+> name at runtime (dead CDN); the STARTING weapon ships in the payload because a
+> new character already holds it. ⇒ **Tracing the garments stays correct; tracing
+> the weapon never was.**
+>
+> ### ⛔ WHY THE ART IS NOT 1:1 — IT IS STRUCTURAL, NOT COLOUR
+> ```
+>                  OG's own art (2644-2678)      our traced garments (9001-9019)
+>   fills/part     2 - base + HARD-EDGED shadow  1 flat tone
+>   outline        a real STROKE, w 2 / 1.5 / 1  a black FILLED BLOB, random width
+>   detail         thin strokes, w 0.5-1         none
+>   contour        smooth Bezier                 potraced raster, ragged
+> ```
+> The OG is **cel-shaded Flash vector art**: flat fills, one hard shadow shape, a
+> stroked contour, thin interior detail lines, paint order significant. Ours is a
+> silhouette with a hole punched in it. ⇒ **No colour tuning in A8.4 can close
+> this.** The garments must be RE-AUTHORED in that grammar, using the video as an
+> outline guide the way a Flash artist uses a reference.
+> ⭐ **And the OG's own cloth colours are byte-exact:** shape 2653 carries
+> `#dcd9d4` and `#9e9a97` straight from the SWF, and our video-measured hakama
+> median `(220,213,219)` is **within 7 levels** of `#dcd9d4` — the lossy sample is
+> confirming a value we already hold exactly.
+>
+> ### ⛔ THE BULGE IN THE SHIRT IS `9015`'s TRACED OUTLINE (owner, 2026-07-28)
+> Emptying slot 19 leaves the ink bounds **byte-identical** ⇒ the doubled-sleeve
+> theory carried since SESSION 19 §P7 is **REFUTED**; the sleeve is entirely
+> inside the silhouette. Rendered alone, **9015 has a rounded lobe jutting off its
+> back edge**: `outer_silhouette`'s flood fill leaks across the jacket's back into
+> the far-sleeve region and merges them into a balloon. Same family as the ragged
+> hem — a trace defect, fixed by re-authoring, not by moving an anchor.
+> ```
+> npx vite-node scripts/art/shapeAtlas.ts -- --ids 2646   # the OG's torso, for contrast
+> ```
+>
+> ### ⚠️ WIRING THE BRANCH COSTS THE SEALED FLOOR — AND THE FLOOR STAYED UP
+> ```
+>                    held-out    tracing    height
+>   without branch    0.8619     0.9185     140.5   <- committed floor
+>   with branch       0.8526     (held)     140.5
+> ```
+> ⛔ **Floor NOT lowered** (kickoff §2 A8-E wrote the response in advance).
+> ⚠️ **The drop is probably OUR fault:** the source's stick runs **upper-left →
+> lower-right**, ours runs **upper-right → lower-left** — mirrored. **The lead:**
+> node 3 is `rotationDeg: 142`, the source needs ≈ **+38**, and `142 = 180 − 38`
+> (a horizontal-mirror signature); node 4 carries exactly `−38`. **Fix the facing
+> before ruling on the trade** — a correctly angled branch may score ABOVE the floor.
+>
+> ### ⚠️ WHAT A KASA IS — the art depends on the word
+> A **kasa** (笠) is a conical hat **WOVEN** from straw/sedge/bamboo. Because it is
+> woven, the original shows **radial ribs fanning from the apex** and **a fringe of
+> cut straw ends round the rim**. Ours is a flat solid cone with neither.
+>
+> ---
+>
+> ## ▶ A8.1 DONE, GATE A8-A MET
 > **49 files / 827 tests green** (was 48 / 822) · tsc ×2 → 0 · eslint → 0 ·
 > **no colour was changed — this step only measured.**
 > ```

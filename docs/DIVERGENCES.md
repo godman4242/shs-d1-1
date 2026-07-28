@@ -3178,3 +3178,119 @@ suite 49 files / 827 tests green   (48 / 822 at A8.0)   tsc x2 -> 0 · eslint ->
 (`git diff`) before believing a green** — SESSION18 A4.1 paid for this once too.
 D1 intact: no traced vertex moved. No colour changed — measurement only.
 ```
+
+---
+
+## SESSION 21 — A8.2: THE ATLAS, AND THE BRANCH THAT WAS IN THE REPO ALL ALONG
+
+### ⛔ THE PREMISE THREE SESSIONS BUILT ON WAS NEVER CHECKED
+`ogPose.ts` records slots 3/4/17 as "the game's own 'none' placeholders; **equipment
+art died with the CDN**", and SESSION 21's kickoff planned A8.2 as *"trace the saya
++ tsuka onto slots 3/4"* — i.e. reconstruct a weapon from a 233-px-tall,
+JPEG-compressed video figure. **Nobody had ever rendered the 1822 shapes sitting in
+`reference/extracted/shapes/`.** Only the 16 the fighter uses had ever been looked at.
+
+⭐ **NEW TOOL: `scripts/art/shapeAtlas.ts`** renders every extracted shape through
+the repo's OWN pipeline (`convertShapeSvg` → `planShape` → `rasterise`) into contact
+sheets, so a shape that looks right in the atlas is a shape the game can draw.
+```
+1335 shapes over 10 sheets   483 unconvertible, 4 rendered empty (counted, not hidden)
+```
+
+### ⭐ THE STARTING WEAPON IS `DefineShape 2641`, AND IT IS ORIGINAL VECTOR ART
+Sheet 06 carries a **knobbly brown tree branch with a green leaf** — pixel-for-pixel
+the item icon on the PLAYER screen at t=708.0 s. **It is not a rod, not a sword, not
+a saya: it is the training branch**, the weapon a new character starts with
+(`BRANCH · DMG 1-2 · WEIGHT 1 · LEVEL 1`).
+⚠️ **THE REPO ALREADY HELD IT AND DELIBERATELY SKIPPED IT.** SESSION 18 recorded
+*"`2641` (training branch) and `2662` (alt head) are deliberately NOT committed —
+neither is in the fighter."* True of the BARE idle doll; wrong for the dressed one.
+⇒ **A8.2 does not trace anything. It commits 2641.** Tracing a blurry raster of art
+we already hold exactly is not a 1:1 recreation, it is a worse copy.
+
+### ⭐ WHY THE BRANCH SURVIVED WHEN THE KASA AND GI DID NOT — settled by LOOKING
+All ten sheets were read. The payload contains: the fighter's body parts, **the
+branch**, a fully detailed alt head (2662), items, VFX, scenery, buildings, clan
+crests, UI chrome, and the **equipment-SLOT ICONS** (sheet 03's bottom row is the
+grey placeholder set — kasa, oni mask, body armour, gloves, greaves, katana, boots,
+ring — exactly the empty-slot outlines on the PLAYER screen).
+**No wearable kasa, gi or hakama appears anywhere in 1822 shapes.**
+⇒ The split is not arbitrary: equipment art is fetched **by name at runtime** and
+that CDN is dead, but the STARTING weapon is what a brand-new character already
+holds, so it ships in the payload. **Tracing the garments from video remains correct;
+tracing the weapon never was.**
+
+### ⛔ HOW THE ORIGINAL ART WAS ACTUALLY MADE — AND WHY OURS IS NOT 1:1
+Measured across the 14 OG fighter shapes against our 7 traced garments:
+```
+                    OG's own art (2644-2678)        our traced garments (9001-9019)
+  fills per part    2 - a base tone + a HARD-EDGED   1 flat tone
+                    shadow shape
+  outline           a real STROKE, width 2 / 1.5 / 1 a black FILLED BLOB of whatever
+                                                     thickness the video thresholded
+  detail            thin strokes, width 0.5-1        none
+  palette           2 skin tones reused globally     one video sample per garment
+                    (#feca98, #b78f6c) + #9e9a97 /
+                    #dcd9d4 cloth
+  contour           smooth Bezier                    potraced raster, ragged
+```
+⇒ **The gap is STRUCTURAL, not a colour tweak.** The OG is cel-shaded Flash vector
+art: flat fills, a hard shadow shape, a stroked contour, thin interior detail lines,
+paint order significant. Ours is *a silhouette with a hole punched in it*. **No
+amount of colour tuning in A8.4 can close this** — the garments have to be
+re-authored in the OG's grammar, using the video as the outline guide the way a
+Flash artist would use a reference.
+⭐ **AND THE OG'S OWN CLOTH COLOURS ARE BYTE-EXACT, NOT SAMPLED.** Shape 2653
+(pelvic) carries `#dcd9d4` and `#9e9a97` straight from the SWF. Our video-measured
+hakama median is `(220,213,219)`; `#dcd9d4` is `(220,217,212)` — **within 7 levels
+on every channel.** The lossy sample is confirming the exact value we already hold.
+
+### ⛔ THE BULGE IN THE SHIRT — DIAGNOSED (owner, 2026-07-28)
+The owner: *"there is a bulge in the character's shirt."* There is, and it is
+**shape 9015's own traced outline**, not a placement or a layering error.
+- Rendering the pose with slot 19 (near sleeve) emptied leaves the ink bounds
+  **byte-identical**, so the doubled-sleeve theory carried since SESSION 19 §P7 is
+  **refuted** — the sleeve is entirely inside the silhouette and contributes nothing
+  to the outer boundary.
+- Rendered alone (`renders/garments_alone.png`), 9015 has a large rounded lobe
+  jutting off its back edge with a waist below it. `outer_silhouette` flood-fills
+  *(garment-grey OR ink)* from a seed, and the fill **leaks across the jacket's back
+  edge into the far-sleeve/back region**, merging them into one balloon. The source's
+  back is a single smooth curve from shoulder to hip.
+⇒ **It is a trace defect of the same family as the ragged hem (§P4.6).** Both are
+fixed by re-authoring, not by nudging an anchor.
+
+### ⚠️ WIRING THE BRANCH COSTS THE SEALED FLOOR — A8-E BINDS, AND THE FLOOR STAYS UP
+Wired at slot 3 the branch renders (21 parts, 70 draw ops) and is placed by the OG's
+OWN node — node 3 is real data, `{ x: 12, y: -61, rotationDeg: 142 }`.
+```
+                    held-out agreement      tracing frame     height
+  without branch          0.8619               0.9185          140.5   <- committed floor
+  with branch             0.8526               (floor held)    140.5
+```
+⛔ **The floor was NOT lowered.** The kickoff wrote the response in advance
+(§2 A8-E): *"if it costs agreement, say so, show both numbers, and ask."*
+⚠️ **AND THE DROP IS PROBABLY OUR FAULT, NOT THE BRANCH'S.** The source's stick runs
+**upper-left → lower-right**; ours runs **upper-right → lower-left** — mirrored.
+⭐ **The lead:** node 3's `rotationDeg` is **142**, and the source needs about
+**+38**. `142 = 180 - 38`, which is a horizontal-mirror signature, and node 4 (prop)
+carries exactly `-38`. The weapon slot's art is very likely authored for the
+opposite facing. **Resolve that before ruling on the trade** — a correctly angled
+branch may well score ABOVE the floor rather than below it.
+⇒ **Committed state: `shape2641.ts` lands, slot 3 stays UNWIRED, suite green at 827.**
+
+### ⚠️ WHAT A KASA IS, SINCE THE ART DEPENDS ON IT
+A **kasa** (笠) is a traditional Japanese conical hat **woven** from straw, sedge,
+rush or split bamboo. The wide rōnin/pilgrim form here is a *sugegasa*-type. The
+word matters to the art: because it is WOVEN, the original shows **radial ribs
+fanning from the apex** (the weave's spokes) and **a fringe of cut straw ends
+ticking down all round the rim**. Ours is a flat solid cone with neither, which is
+why it reads as a plastic triangle rather than straw — §P4.9, and A8-A cannot see it
+(its `iqr` of 38,35,24 is the same fact stated as a number).
+
+### Regression
+```
+suite 49 files / 827 tests green   tsc x2 -> 0 · eslint -> 0
+shape2641.ts committed and byte-for-byte re-derivable; slot 3 unwired, so the
+render and every committed digest are UNCHANGED by this step.
+```
