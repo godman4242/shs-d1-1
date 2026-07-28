@@ -50,7 +50,23 @@ carried as a closed door. The next change would be churn.
 
 ---
 
-> ## ▶ SESSION 23 IN FLIGHT — A11.1 + A11.2 LANDED: BOTH COMBATANTS COMPOSED, FACING EACH OTHER.
+> ## ▶ SESSION 23 IN FLIGHT — A11.1–A11.3 LANDED: COMPOSED, MIRRORED, AND THE FIRST FOUR ANIMATIONS ARE CONTRACT.
+> **55 files / 880 tests green** · fidelity 55/55 autonomous ·
+> - **A11-D (GATE):** `walk` (20f, loop) + `balancedhorizontalslash` a/b/c
+>   (4/9/7f — the balanced-stance basic attack) transcribed VERBATIM from the
+>   bindata by `scripts/anim/transcribeAnims.py` → `src/config/ogAnims.ts`
+>   (710 nodes, all integers, GENERATED header). Byte-checked by
+>   `tests/a11AnimData.test.ts` (12 tests: 8 structural run-everywhere + 4
+>   skipIf byte-suites); chaos-proven — a ONE-DEGREE typo in one node of 710
+>   goes red. Grammar finds for A11.4: slash frames carry Flash MATRIX nodes
+>   (`a..d` fixed-point ×100, notably weapon slot 3 mid-swing); part-c frames
+>   are SPARSE (changed nodes only — carry-forward is the stepper's job);
+>   parts chain a→b(loop)→c.
+> - **NEXT: A11.4** — the pure `core/` stepper (15 fps latch, sparse
+>   carry-forward, matrix-node planning) + DuelScene playback; then A11.5
+>   re-grade + SESSION 24 kickoff (P3 audio scheduled).
+
+> ## ▶ A11.2 LANDED: BOTH COMBATANTS COMPOSED, FACING EACH OTHER.
 > **54 files / 868 tests green** · tsc ×2 → 0 · eslint → 0 · fidelity **55/55
 > PASS ×2 consecutive, autonomous** · `Sim.ts` + duel-baseline byte-untouched.
 > - **A11-B (GATE):** mirroring is a COMPOSE-TIME transform (kickoff D3) — a

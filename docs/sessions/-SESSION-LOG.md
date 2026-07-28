@@ -3070,3 +3070,14 @@ tells forward — see the kickoff §2 amendment; build FROM the study frames.
   read from Brave's Profile-1 leveldb on disk after the hidden MCP tab's
   renderer froze past CDP reach. Suite 54 files / 868 green · eslint 0 ·
   Sim.ts + duel-baseline byte-untouched.
+- **02:50** A11.3 landed red-first: `tests/a11AnimData.test.ts` (12 tests,
+  watched red on the missing module) → `scripts/anim/transcribeAnims.py`
+  (fail-loud on any grammar surprise: unknown attrs, partial matrix, aliased
+  slots 8/17 appearing, non-dense frame indices, d= mismatch) →
+  `src/config/ogAnims.ts` GENERATED: walk + balancedhorizontalslash a/b/c,
+  40 frames / 710 nodes, every number the payload's own integer (CONTRACT).
+  Grammar discoveries the kickoff didn't know: slash frames use Flash MATRIX
+  nodes (a..d ×100) — notably the weapon slot mid-swing — and part-c frames
+  are SPARSE deltas; both stored verbatim, interpretation deferred to the
+  A11.4 stepper. Chaos-proof: a one-degree typo in 1 of 710 nodes → byte
+  suite red → regenerate → green. Suite 55 files / 880 · tsc ×2 0 · eslint 0.
