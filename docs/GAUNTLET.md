@@ -92,26 +92,42 @@ Owner ruling: **heavy = Opus 5 · bounded = Fable 5**, and lanes go to whichever
 model is genuinely better at the work. The split below is that judgement, made
 once, here, so no session re-litigates it.
 
-**Opus 5 @ `xhigh`, heavy (40–60 agents)** — surgical, adversarial, visual,
-invariant-touching. Work where being confidently wrong is expensive and the
-check is an act of judgement: grading a render against a frame, refuting a
-claim, moving the Sim, root-causing a defect, anything that moves a floor or the
-DIVERGENCES ledger.
+**Opus 5 @ `xhigh`, UNLIMITED agents (owner ruling 2026-08-13)** — surgical,
+adversarial, visual, invariant-touching. Work where being confidently wrong is
+expensive and the check is an act of judgement: grading a render against a
+frame, refuting a claim, moving the Sim, root-causing a defect, anything that
+moves a floor or the DIVERGENCES ledger.
 
-**Fable 5 @ `high`, bounded (12–16 agents)** — long-horizon, from-scratch,
-structurally uniform fan-out. Building whole subsystems that do not exist yet;
-porting hundreds of rows behind a schema gate. *Lean prompts only.*
+**Fable 5 @ `high`, bounded (12–16 agents)** — long-horizon, from-scratch
+subsystem building. Whole systems that do not exist yet. *Lean prompts only.*
+Its cap costs nothing on its lanes: they are **depth-bound, not width-bound**
+(one runtime built deeply, not 500 rows copied widely).
 
-**Sonnet 5 `medium` / Haiku 4.5 `low`** — bulk row-transform sub-stages *inside*
-a Fable lane (982 item rows, 495 NPC rows), always behind a byte-check.
+### ⚠ THE RULE THAT OUTRANKS BOTH: A SCRIPT BEATS A SWARM
+
+**A deterministic transform gets a generator + a byte-check, NEVER a fan-out.**
+Porting 982 item rows, 495 NPC rows or 75 skill rows from XML to TypeScript is
+a *transform*, not research. Agents copying rows **introduce errors a script
+cannot make**; the repo already proved the right shape with
+`scripts/anim/transcribeAnims.py` + the `tests/a11AnimData.test.ts` byte pins,
+and CLAUDE.md already mandates it: **transcribed and byte-checked, never
+hand-keyed.**
+
+Agents are for the parts a script *cannot* do: deciding the schema, resolving
+what a field means, grading the result on screen. **If a lane's work can be
+expressed as a loop over rows, the lane writes the loop.**
+
+**Sonnet 5 `medium` / Haiku 4.5 `low`** — only for genuinely per-row *judgement*
+(e.g. classifying an ambiguous field), never for copying.
 
 | # | Lane | Model · scale | The lane is done when |
 |---|---|---|---|
 | **L0** | **RE-SURVEY** — re-score all 12 systems against the payload; rewrite `REBUILD_READINESS.md` §4/§6; delete every "unrecoverable" that the payload disproves | **Opus · small (~8)** | every system's score carries an A2 cite or an explicit "still unheld"; §6's unrecoverable list is provably minimal |
 | **L1** | **CAMPAIGN** — port `questdata.xml` → config; build the dialogue box, cutscene director, quest state machine, choice graph | **Fable · bounded** (runtime is from-scratch) · **Opus critic** on every LOOK | Prologue→Ep12→Epilogue playable end-to-end; all 3,307 lines present byte-exact; 471 choices branch; a cutscene beat matches its A1 frame |
-| **L2** | **SKILLS + METERS** — `skilldata.xml` → config; Chi/Focus/AP meters real | **Fable · bounded** + Sonnet bulk | all 75 skills × 182 rows byte-exact from A2; zero INFERRED cooldowns remain; meters on-screen match A1 |
-| **L3** | **ITEMS + PAPERDOLL** — `itemdata.xml` → config; 9-slot compositing contract | **Fable · bounded** + Sonnet bulk · **Opus** owns the compositing/z-order grade | 982 items byte-exact; a dressed fighter composites in the OG's layer order against A1 |
-| **L4** | **ENEMIES + AI** — `npcdata.xml` → config; AI behaviours from `<ai>` | **Fable · bounded** build · **Opus** grades the fight feel | 495 NPCs byte-exact; each `<ai>` value maps to observed behaviour with an A1 cite |
+| **L1b** | **STRING TABLE** — resolve the ID indirection that blocks L2 + L3 (§2.1) | **Opus · small** — reverse-engineering, not bulk | every `<name>`/`<desc>`/`<displayname>` ID resolves to text with an A2 cite, or the lane reports the table as genuinely absent and says so |
+| **L2** | **SKILLS + METERS** — `skilldata.xml` → config; Chi/Focus/AP meters real | **generator script** + Opus schema/grade · *needs L1b for names* | all 75 skills × 182 rows byte-exact from A2; zero INFERRED cooldowns remain; meters on-screen match A1 |
+| **L3** | **ITEMS + PAPERDOLL** — `itemdata.xml` → config; 9-slot compositing contract | **generator script** + **Opus** owns the compositing/z-order grade · *needs L1b for names* | 982 items byte-exact; a dressed fighter composites in the OG's layer order against A1 |
+| **L4** | **ENEMIES + AI** — `npcdata.xml` → config; AI behaviours from `<ai>` | **generator script** for the rows · **Fable** builds the AI · **Opus** grades the fight feel | 495 NPCs byte-exact; each `<ai>` value maps to observed behaviour with an A1 cite |
 | **L5** | **COMBAT CORE** — reach cap, slash-vs-move, crit read, Focus gating, TTK | **Opus · heavy** | SESSION 24 §2 A12-A…F green; duel-baseline re-recorded ONCE, atomically |
 | **L6** | **ART + ANIM** — the live `r="1"` z-order defect, then the remaining ~150 animations | **Opus · heavy** for the defect + every LOOK · **Fable · bounded** for bulk transcription | `r="1"` honoured (A3); each anim transcribed + byte-checked + pins extended deliberately; floors ≥ 0.9005 / ≥ 0.8490 / ≤ 140.5 hold |
 | **L7** | **AUDIO** — WebAudio synthesis, from scratch | **Fable · bounded** · ⚠ **gate is KHESHAV'S EARS** — no model can hear | characterised via a listen-pass, then A/B'd by the owner; his verdict logged verbatim |
@@ -121,9 +137,35 @@ a Fable lane (982 item rows, 495 NPC rows), always behind a byte-check.
 | **L11** | **META + REBIRTH** — clans, War Room, elements; the server sim is gone → authored offline sim | **Fable · bounded** | every authored-not-original piece labelled in DIVERGENCES; nothing presented as OG fidelity that isn't |
 
 **Ordering rule:** L0 first, always. Then **highest (leverage ÷ risk)** — which
-after L0 is L1/L2/L3/L4, because their information is already held and their
-gates are byte-checks rather than judgement calls. L5 and L6 interleave whenever
-the owner's LOOK queue has an open verdict. L7 waits for his ears.
+after L0 is L1 → L1b → L2/L3/L4, because their information is already held and
+their gates are byte-checks rather than judgement calls. L5 and L6 interleave
+whenever the owner's LOOK queue has an open verdict. L7 waits for his ears.
+
+### §2.1 THE STRING-TABLE BLOCKER — found 2026-08-13, gates L2 + L3
+
+The payload's text comes in **two forms**, and only one is readable today:
+
+- ✅ **Character dialogue is PLAIN TEXT, verbatim, in `questdata.xml`.** All
+  3,307 `<text>` lines. Verified by eye — *"I say how about I hand over half the
+  length of this sword -- sharp end first. Will that suffice as payment?"* —
+  Jinbei the Bandit King, Prologue. **Nothing blocks L1.**
+- ⛔ **Item names, item descriptions, skill names and skill descriptions are
+  numeric IDs**, not text: `<name>4058</name>`, `<desc>4172</desc>`,
+  `<displayname>6000</displayname>`. Cutscene `say` beats are also IDs
+  (`<param>9006</param>`). They index a **string table that has not been
+  located.** `ui_strings.txt` is **not** it — it is an alphabetised dump of the
+  SWF's static UI fields (471 lines, no item names; a `Katana` search returns
+  nothing).
+
+**So L2/L3 can port every NUMBER today and no NAME.** L1b hunts the table before
+either lane claims completeness; candidate homes are the remaining `bindata/*.bin`
+(the largest is animation XML, so the others are unsurveyed), `payload.xml`, and
+the decompiled AS3 under `reference/decompiled/shs3_payload/scripts/`.
+
+> **Free win found in the same pass:** `ui_strings.txt` embeds
+> `<font face="Edo SZ">` (and `Calibri` for secondary text) — that **identifies
+> the game's font**, which `REBUILD_READINESS.md` §2 lists as an open art-anim
+> blocker (*"font (unidentified)"*). L0 confirms and closes it.
 
 ---
 
@@ -218,9 +260,15 @@ WHAT NOT TO BREAK: §4's no-touch list. Sim.ts and the duel-baseline move only i
 L5, only by the atomic protocol. Floors go UP or stay. core/ keeps zero numeric
 literals. Scenes stay render-only. Red-first, chaos-plant every guard.
 
-BEFORE YOU FAN OUT, CHECK YOUR ROUTING: heavy lanes are Opus 5 at xhigh, bounded
-lanes are Fable 5 at high. If I've started you on the wrong one for your lane, say
-so and stop rather than running a heavy lane on a bounded budget.
+BEFORE YOU FAN OUT, TWO CHECKS:
+(a) A SCRIPT BEATS A SWARM. If any part of the lane is a deterministic transform
+    — copying rows from payload XML into config — WRITE THE GENERATOR AND A
+    BYTE-CHECK. Do not spend agents copying rows; they introduce errors a script
+    cannot make. Agents are for schema decisions, ambiguous fields, and grading
+    the result on screen.
+(b) ROUTING: Opus 5 at xhigh runs unlimited on its lanes; Fable 5 at high stays
+    bounded at 12-16. If I've started you on the wrong model for your lane, say so
+    and stop rather than running a heavy lane on a bounded budget.
 
 FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 56 files / 894),
 name your lane + model + scale + the exact gate you're driving to, and show me the
@@ -238,15 +286,28 @@ cd "/Users/kheshav/kheshav-code/SSHD 1-1" && git log --oneline -1 && npm test 2>
 
 ## §6 RULINGS MADE FOR YOU — each with a one-line veto
 
-**R1 — Verbatim dialogue is COMMITTED to `src/`, and public ship is gated.**
-The repo is **private**, so porting the 3,307 lines into the source tree is
-development use, not distribution. The 2026-07-24 permission ruling covers Lut's
-*art* and hues explicitly; this extends the same attested grant to their *text*.
-L1 writes the DIVERGENCES entry + a ruling amendment as its first commit, and
-adds a gate that **blocks any public/ship build until the grant's wording is
-re-checked for text and for commercial scope.**
-> **Veto:** paraphrase into `src/` and keep verbatim in gitignored `reference/`.
-> Costs you the 1:1 on the exact thing you asked for, and makes every line a
+**R1 — ✅ OWNER-CONFIRMED 2026-08-13: verbatim character dialogue is COMMITTED
+to `src/`, and public ship is gated.** The repo is **private**, so porting the
+3,307 lines into the source tree is development use, not distribution. The
+2026-07-24 permission ruling covers Lut's *art* and hues explicitly; this
+extends the same attested grant to their *text*. L1 writes the DIVERGENCES entry
++ a ruling amendment as its first commit, and adds a gate that **blocks any
+public/ship build until the grant's wording is re-checked for text and for
+commercial scope.**
+
+**Scope, since "dialogue" has four meanings in this payload** — the owner
+confirmed the first; the rest are decided here on the identical rights logic
+(all Lut's text, private repo, development use), flagged so he can narrow it:
+
+| Category | Where | Verbatim? |
+|---|---|---|
+| **Character dialogue** — 3,307 `<text>` lines + 471 choice options | `questdata.xml` | ✅ **owner-confirmed** |
+| **Quest + step titles** — *"Look for a man named Hiroshi"* | `questdata.xml` | ✅ decided — same file, same authorship, reads as story |
+| **UI copy** — *"action points"*, War Room rules, betting-odds text | `ui_strings.txt` | ✅ decided — interface text; a paraphrased HUD is not 1:1 |
+| **Item + skill names/descriptions** | IDs only — **blocked on L1b** (§2.1) | same policy once the string table is found |
+
+> **Veto (any row):** paraphrase that row into `src/`, keep verbatim in
+> gitignored `reference/`. Costs the 1:1 on that surface and makes every line a
 > judgement call an agent can drift on.
 
 **R2 — L0 runs before any other lane.** The readiness ledger is stale on four of
@@ -264,6 +325,30 @@ without endangering it.
 can hear; a gate no agent can evaluate is theatre.
 > **Veto:** let a lane ship synthesized audio on a written spec alone.
 
+**R5 — ✅ OWNER RULING 2026-08-13: Opus lanes are UNLIMITED, Fable lanes stay
+bounded (12–16).** Recorded in §2. But see the §2 script rule: the lanes that
+looked agent-hungry (L2/L3/L4 — 982 items, 495 NPCs, 75 skills) are
+**deterministic transforms and get a generator script instead**. So the ceiling
+binds on far less than it first appeared. **Unlimited is worth spending on
+exactly two lanes: L6** (~150 remaining animations, each needing an independent
+visual grade) **and L8** (every off-screen UI screen matched to its frame) —
+both Opus lanes by routing anyway.
+
+**R6 — THE MODEL FOR THE NEXT SESSION IS OPUS 5 @ `xhigh`.** Not a change to the
+standing routing rule — an application of it. The next lane is **L0**, whose
+work is *read the evidence and overturn a stale document's conclusions across 12
+systems*: judgement-dense, small (~8 agents), and squarely the
+"interactive/surgical" category the standing rule already assigns to Opus. Scale
+is irrelevant there; being right is everything. After L0 the queue is **L1's
+campaign runtime** and **L1b's string-table hunt** — reverse-engineering and
+subsystem debugging, still Opus-shaped.
+**Switch to Fable 5 @ `high` when the queue reaches L7 / L9 / L11** — genuine
+from-scratch subsystem construction, its named strength — and its 12–16 cap
+costs nothing there, because those lanes are depth-bound, not width-bound.
+> **Veto:** run L0 on Fable — it would work, but you would be paying Fable's
+> long-horizon strength for a short judgement task and taking a bounded agent
+> ceiling you have no use for.
+
 ---
 
 ## §7 BAR SELF-REPORT
@@ -277,7 +362,10 @@ would be churn.**
 - The lane board covers **all 12 systems**, each with a model, a scale, and a
   **binary** gate — no lane is "improve X."
 - Model routing is decided once, by which model is actually better at the work,
-  so no session re-litigates it.
+  so no session re-litigates it — **and the script rule stops the engine burning
+  an unlimited budget on work a `for` loop does better and more accurately.**
+- The blocker that would have made L2/L3 *claim* completeness while shipping 982
+  nameless items is caught **before** those lanes run (§2.1), not after.
 - The engine is **crash-survivable** (journal-first) and **self-re-arming**, which
   is what makes it standing rather than a one-shot prompt.
 - **What it deliberately does not promise:** it does not finish the game in one

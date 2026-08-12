@@ -86,6 +86,17 @@ and crash-survivable. Session kickoffs still own *current state*; the gauntlet o
    `grep` finds ZERO references to any of it in `src/`/`tests/`/`scripts/`, while
    `src/config/skills.ts` ships 3 skills with 2 of 3 cooldowns hand-INFERRED.
    **Lane L0 (re-survey) runs before any other lane.**
+3. **§2.1 — the string-table blocker.** Character dialogue is plain verbatim text
+   (owner-confirmed for `src/`, R1). But item/skill **names and descriptions are
+   numeric IDs** (`<name>4058</name>`) indexing a table nobody has located —
+   `ui_strings.txt` is NOT it. **L1b hunts it; L2/L3 can port every number and no
+   name until it lands.** Free win from the same pass: `ui_strings.txt` embeds
+   `<font face="Edo SZ">` — that closes the "font unidentified" art-anim blocker.
+
+**Model for the next session: Opus 5 @ `xhigh`** (ruling R6 — L0 is judgement-dense
+and small; Fable's turn comes at L7/L9/L11). **Scale: Opus unlimited, Fable bounded
+12–16** (R5) — but read §2's *"a script beats a swarm"* rule first: the row-ports
+(982 items, 495 NPCs, 75 skills) are generator scripts, **not** fan-outs.
 
 ---
 
