@@ -1,0 +1,149 @@
+{
+ "area": "Game loop & timestep",
+ "items": [
+  {
+   "title": "Fiedler accumulator core (clamp, NaN/negative guards, drift-free stepping) \u2014 in place; the RESUME_HERE '250 inline' backlog row is stale",
+   "claim": "Canon fixed-timestep loop = accumulator that consumes wall-clock time in fixed dt steps, with a max-delta clamp (~250ms is the commonly recommended cap) to prevent the spiral of death and tab-switch fast-forward. Modern guides add: guard the accumulator against bad deltas, and derive owed steps without cumulative float drift.",
+   "sources": [
+    {
+     "title": "Fix Your Timestep! \u2014 Glenn Fiedler (Gaffer on Games)",
+     "url": "https://gafferongames.com/post/fix_your_timestep/",
+     "grade": "A"
+    },
+    {
+     "title": "Fixed Timestep Game Loops in the Browser \u2014 Simplified Media",
+     "url": "https://simplified.media/guides/fixed-timestep-loops",
+     "grade": "C"
+    },
+    {
+     "title": "JavaScript Game Foundations: The Game Loop \u2014 Jake Gordon",
+     "url": "https://jakesgordon.com/writing/javascript-game-foundations-the-game-loop/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "Sim.advance (src/core/Sim.ts) owns the accumulator: clamps each delta to MAX_FRAME_MS, rejects NaN/negatives, and computes owed frames multiplicatively from total elapsedMs with FRAME_QUANT_EPS (src/config/timing.ts) \u2014 drift-free, stricter than canon's repeated-subtraction remainder. MAX_FRAME_MS = 250 already lives in src/config/combat-sim.ts (Spec-fixed) and Sim imports it, so the RESUME_HERE 'Spark/backlog' row about replacing an inline 250 is DONE and can be crossed off.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Only action: delete/mark-done the stale backlog line in RESUME_HERE.md ('MAX_FRAME_MS=250 in config replaces the inline 250 at Stage 2').",
+   "stage": "now"
+  },
+  {
+   "title": "Render interpolation of fighter motion: canon says always, the OG measurably says NEVER \u2014 a fidelity DIVERGENCE here",
+   "claim": "Fiedler canon and 2024-era browser guides treat previous/current state lerp by the accumulator remainder as 'nearly always necessary' to hide fixed-step stutter. But the OG is a measured pure 15fps stepper with ZERO interpolation and a terminal contact snap that lands wholly between two adjacent 1/60s frames \u2014 smoothing fighter motion would erase exactly the chunky stepping the project exists to copy.",
+   "sources": [
+    {
+     "title": "Fix Your Timestep! \u2014 Glenn Fiedler (interpolation section)",
+     "url": "https://gafferongames.com/post/fix_your_timestep/",
+     "grade": "A"
+    },
+    {
+     "title": "Fixed Timestep Game Loops in the Browser \u2014 Simplified Media (claims interpolation 'nearly always necessary')",
+     "url": "https://simplified.media/guides/fixed-timestep-loops",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Ledger \u00a7S24-E partb: '60 fps burst proves the snap lands wholly between two ADJACENT 1/60 s frames (pure 15 fps stepper, zero interpolation)'. The repo already encodes the correct behavior: OG_ANIM.poseStepMs = 1000/15 in src/config/anim.ts latches drawn poses, with '0 = smooth' explicitly marked veto. Generic best practice is a DEFECT here per the prime directive.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "Do nothing \u2014 and treat any future 'add lerp for smoothness' suggestion as a fidelity regression to be blocked, citing \u00a7S24-E.",
+   "stage": "now"
+  },
+  {
+   "title": "The real gap is the OPPOSITE of canon: fighter render POSITION is still 60Hz-smooth while the pose latches at 15fps",
+   "claim": "The OG steps fighter positions on the same 15fps content tick as poses: constant-speed line-follow at ~18\u201322 world px per 15fps tick with a genuine alternating ~27/55 px two-tick stride ('recreate it, don't average it') plus the terminal contact snap. Our sim moves positions every 60Hz tick and DuelScene reads them fresh every rAF, so our fighters glide smoother than the original between the latched poses.",
+   "sources": [
+    {
+     "title": "Fix Your Timestep! \u2014 Fiedler (render state sampling is a deliberate choice, decoupled from sim rate)",
+     "url": "https://gafferongames.com/post/fix_your_timestep/",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser TimeStep API documentation (render cadence vs update cadence)",
+     "url": "https://docs.phaser.io/api-documentation/class/core-timestep",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Ledger \u00a7S24-E partb measures per-15fps-tick position steps and the two-tick stride rhythm; drawFighters in src/game/DuelScene.ts converts sim.player.pos via worldToStage every rAF with no latch, while the pose is latched at OG_ANIM.poseStepMs. \u00a7S24-E also flags that DASH_SPEED_PX_PER_FRAME mismatches the measured ~276\u2013330 world px/s line-follow + snap (named A12.2 input).",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Render-side only: sample fighter stage positions on the same poseStepMs latch the OgAnimPlayer uses (Sim stays 60Hz for hit resolution \u2014 hitboxes/damage untouched). Bonus: the A11.4 dx-driven stride then sees the OG's true per-tick dx, reproducing the 27/55 alternation instead of averaging it. Pair with the A12.2 dash retune (line-follow speed + terminal snap) so the latched steps carry the measured distances.",
+   "stage": "SESSION 24/25 (A12.2 movement retune)"
+  },
+  {
+   "title": "visibilitychange / backgrounded-tab handling \u2014 covered by three cooperating layers; no missing canon",
+   "claim": "Canon: rAF pauses in hidden tabs (browser-enforced, MDN), so on resume you must prevent a giant delta from fast-forwarding the sim \u2014 via a delta clamp and/or timestamp re-anchor on visibilitychange. Phaser 3 additionally ships a VisibilityHandler that pauses the loop on hidden and delta smoothing (fps.smoothStep, default true) that settles post-resume spikes.",
+   "sources": [
+    {
+     "title": "MDN: Window.requestAnimationFrame() \u2014 paused in background tabs",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser 3.60 TimeStep changelog (smoothDelta, spike handling)",
+     "url": "https://github.com/phaserjs/phaser/blob/v3.60.0/changelog/3.60/Timestep.md",
+     "grade": "A"
+    },
+    {
+     "title": "JavaScript Game Foundations: The Game Loop \u2014 Jake Gordon (clamp delta after focus loss)",
+     "url": "https://jakesgordon.com/writing/javascript-game-foundations-the-game-loop/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "Layer 1: browser pauses rAF. Layer 2: Phaser's VisibilityHandler + default smoothStep. Layer 3: Sim.advance's MAX_FRAME_MS clamp caps any leak-through at 250ms of sim time \u2014 which also matches the OG platform's behavior ('the Flash game simply paused when hidden', comment in src/game/DuelIntro.ts, which already re-anchors its own step timer for the occluded-tab clock jump). A fight cannot fast-forward while hidden.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "Nothing to build. If ever chaos-testing it: hide the tab mid-fight, resume, assert sim.frame advanced \u2264 15 frames (250ms) across the gap.",
+   "stage": "now"
+  },
+  {
+   "title": "144Hz / high-refresh displays \u2014 correct by construction; the canon 'fix' (interpolation) is moot below the 66.7ms content quantum",
+   "claim": "rAF fires at display refresh (75/120/144Hz are all common per MDN), so per-frame stepping runs 2.4x fast on 144Hz; the fix is time-based accumulation (some rAF frames run 0 sim ticks). Canon then prescribes interpolation to hide the resulting 60Hz-vs-144Hz temporal aliasing (uneven 2-3-2 tick cadence).",
+   "sources": [
+    {
+     "title": "MDN: Window.requestAnimationFrame() \u2014 callback rate matches refresh rate; use elapsed time or animation runs fast on high-refresh screens",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame",
+     "grade": "A"
+    },
+    {
+     "title": "Fixed Timestep Game Loops in the Browser \u2014 Simplified Media (high-refresh section)",
+     "url": "https://simplified.media/guides/fixed-timestep-loops",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "Sim.advance derives owed 60Hz frames from cumulative wall-clock elapsedMs (src/core/Sim.ts), so sim speed is refresh-rate independent by construction; a 144Hz rAF just runs 0-or-1-tick frames. The aliasing canon smooths away is invisible here because the game's own content quantum is the 15fps latch (OG_ANIM.poseStepMs, src/config/anim.ts) \u2014 66.7ms, far coarser than any 60/144Hz beat pattern.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "Optional one-time VERIFY: eyeball the duel on a 120/144Hz display once and confirm the 15fps pose cadence reads as steady chunk-stepping, not shimmer. No code expected.",
+   "stage": "now"
+  },
+  {
+   "title": "Interpolation's only possibly-legitimate scope \u2014 camera parallax and HUD meter fills \u2014 needs a frame-diff measurement before any smooth tween is added",
+   "claim": "If interpolation has any home in this project it is non-fighter motion: camera scroll in scrolling arenas and HUD bar fills. But the \u00a7S24-E 60fps burst analysis found exact 4-duplicate-frame CONTENT blocks \u2014 whole-frame \u2014 suggesting the OG's entire render (HUD and camera included) stepped at 15Hz, in which case even camera/HUD smoothing beyond 15Hz is a divergence. \u00a700 leaves room for doubt ('property of the archival capture\u2026 the Flash game likely ran 24\u201330 fps'), so this is measurable, not decidable from the ledger as-is.",
+   "sources": [
+    {
+     "title": "Fix Your Timestep! \u2014 Fiedler (interpolation as a render-layer choice per-object, not a sim requirement)",
+     "url": "https://gafferongames.com/post/fix_your_timestep/",
+     "grade": "A"
+    },
+    {
+     "title": "Fixed Timestep Game Loops in the Browser \u2014 Simplified Media",
+     "url": "https://simplified.media/guides/fixed-timestep-loops",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "Ledger \u00a700 (sampling floor: 15fps unique content, 'not necessarily of the Flash game') vs \u00a7S24-E ('exact 4-duplicate-frame content blocks' \u2192 pure 15fps stepper) leave one open question: do duplicate-frame runs hold during a camera pan and an HP-bar fill window? \u00a7S24-G note 9 already identifies parallax layers (boulder layer 0.73\u00d7) as measurable anchors. Until measured, keep the existing idiom: fx clock tweens for beats (advanceFxClock in src/game/DuelScene.ts) and no smooth camera.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Reuse the existing pixel-diff tooling on a scrolling window (A28 forest per \u00a7S24-G) and one HP-drop window: if pans/bars also show strict 4-frame duplicate runs, the 15Hz step is global \u2014 latch camera and HUD fills to poseStepMs too, and REJECT smooth tweens for them.",
+   "stage": "Before Stage-3 scrolling/overworld work"
+  }
+ ],
+ "dead_ends": "aleksandrhovhannisyan.com/blog/javascript-game-loop/ returned HTTP 403 (could not be used as the practitioner source; Jake Gordon substituted). No web source was found that endorses skipping render interpolation for low-fps-aesthetic games \u2014 the REJECT rests entirely on the repo's own measurement (\u00a7S24-E), with every fetched guide recommending interpolation unconditionally; simplified.media explicitly found no cases where it should be omitted. Also searched for any claim that Phaser 3.90 requires its own fps.forceSetTimeOut/fixed-step config for external accumulators \u2014 nothing found; bypassing TimeStep's step logic by feeding raw delta into a self-owned accumulator (the repo's pattern) is uncontroversial.",
+ "sources_consulted": 6
+}

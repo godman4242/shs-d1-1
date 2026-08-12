@@ -1,0 +1,143 @@
+{
+ "area": "2D camera: implementing the measured OG behavior (ledger b-6) in the Phaser 3 / render-only-scene architecture",
+ "items": [
+  {
+   "title": "Canon camera smoothing (lerp, deadzone, look-ahead) is a fidelity DEFECT here \u2014 the OG is a pure position-lock with edge-snap",
+   "claim": "The 2D-camera canon (Keren's 'Scroll Back' GDC 2015 taxonomy) treats lerp-smoothing, camera-window/deadzone, and look-ahead as the quality techniques, with plain position-locking called 'basic'. But ledger b-6 measures the OG as exactly the basic pair: character pins at ~56% of stage width, camera scrolls at EXACTLY the character's world speed (587 px/s @1080 = 313 stage px/s, no lag observed at the 15Hz sampling floor), hard clamp at zone edges. In Keren's own vocabulary the OG is 'position-locking' + 'edge-snapping' with a shifted anchor \u2014 so any smoothing, deadzone, or look-ahead added from best practice diverges from the measured original. Note the 15Hz floor means smoothing with settle time under ~67ms would be invisible, so exact lock is both the parsimonious reading and behaviorally indistinguishable at the resolution the ground truth offers.",
+   "sources": [
+    {
+     "title": "Scroll Back: The Theory and Practice of Cameras in Side-Scrollers (Itay Keren, Game Developer)",
+     "url": "https://www.gamedeveloper.com/design/scroll-back-the-theory-and-practice-of-cameras-in-side-scrollers",
+     "grade": "B"
+    },
+    {
+     "title": "GDC Vault \u2014 Scroll Back (primary talk record)",
+     "url": "https://www.gdcvault.com/play/1022243/Scroll-Back-The-Theory-and",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Ledger row b-6 (COMBAT_MEASUREMENTS.md) measures zero smoothing/lag and a hard clamp; per the repo's prime directive, canon smoothing that diverges from the measured OG is a defect. Keren's taxonomy is adopted only as naming, never as parameters.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "When the camera ships, its spec line should read: position-lock at 56% anchor, zero smoothing, hard clamp \u2014 cite b-6. Add a chaos test that plants a lerp<1 and watches the follow lag exceed 0 px/frame (red), then restores exact lock (green).",
+   "stage": "Future zone-traversal stage (not SESSION 24/25 duel work)"
+  },
+  {
+   "title": "Exact Phaser 3 mapping exists \u2014 startFollow(player, false, 1, 1) + followOffset.x = +(0.56\u22120.5)\u00b7width + setBounds \u2014 but ADAPT to a core-owned scroll formula instead",
+   "claim": "Phaser 3's camera reproduces b-6 natively: startFollow defaults lerpX/lerpY to 1, which the official docs define as 'instantly snap to the target coordinates' (= scrolls at exactly the character's speed); followOffset values are 'subtracted from the Camera target's position', so followOffset.x = +(0.56\u22120.5)\u00b7viewWidth pins the character at 56% (for an 800-wide world view: +48 world px, i.e. scrollX = playerX \u2212 448); setBounds(0,0,zoneWidth,worldHeight) clamps scroll at zone edges, and a forum-confirmed behavior is that the followed target then keeps moving and crosses the screen unaided \u2014 precisely b-6's clamped case. HOWEVER, this repo cannot use startFollow as-is: scenes draw at stage pixels via planPose(..., VIEW) (DuelScene.ts, EncounterScene.ts), not at Phaser world coordinates, and camera scroll must feed the screen\u2192world input conversion (stageToWorld), so the scroll is sim state, not render state. The repo-idiomatic implementation is a pure core function: scrollX = clamp(playerX \u2212 CAMERA_ANCHOR_X, 0, zoneWidth \u2212 WORLD_WIDTH), with CAMERA_ANCHOR_X = 448 world px (CONTRACT, b-6: 1077/1920 \u2248 56.1% of 800 = 448.5) in src/config/, applied in viewport.ts's worldToStage as an extra scroll term.",
+   "sources": [
+    {
+     "title": "Phaser 3 Camera API \u2014 official docs (startFollow, followOffset, setBounds, setLerp)",
+     "url": "https://docs.phaser.io/api-documentation/class/cameras-scene2d-camera",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser Discourse \u2014 camera setBounds + follow: camera clamps at bounds while player keeps moving",
+     "url": "https://phaser.discourse.group/t/issue-with-camera-setbounds-follow-player/8251",
+     "grade": "C"
+    },
+    {
+     "title": "phaser3-rex-notes \u2014 Camera (follow, lerp, setScroll manual control)",
+     "url": "https://rexrainbow.github.io/phaser3-rex-notes/docs/site/camera/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "src/game/CLAUDE.md's render-only rule plus src/core/viewport.ts (the original's own transform, where screen\u2192world conversion lives) make Sim/core the correct owner of scrollX; Phaser's startFollow would put gameplay-relevant state (input conversion depends on scroll) inside the scene. The Phaser mapping is kept as the cross-check, not the implementation.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "One pure function in core (cameraScrollX), one CONTRACT constant (448 world px) + zone width per zone in config, viewport gains a scroll-aware position transform (lengths unchanged). Unit-test the three regimes: pinned at 56%, left-edge clamp, right-edge clamp with character crossing screen.",
+   "stage": "Future zone-traversal stage"
+  },
+  {
+   "title": "Duels are fixed-camera and the repo already does exactly that \u2014 no camera work belongs in DuelScene",
+   "claim": "b-6's scrolling camera was measured during zone running, not duels. The duel footage is explicitly fixed-camera: src/config/anim.ts cites a 'fixed-camera window t=465.0\u2013466.3', and \u00a7S24-C's VS-duel catalogue has the player pixel-static up to 20 ticks between exchanges with all movement measured directly in screen px (no camera-subtraction step needed, unlike the b-6 method warning for zone footage). DuelScene.ts contains zero camera calls and renders through the static VIEW transform \u2014 which IS the correct 1:1 behavior for duels. The case split: fixed camera in duels (current, correct); 56%-pin scrolling camera only in zone traversal/exploration scenes (does not exist yet).",
+   "sources": [
+    {
+     "title": "Phaser 3 Camera API \u2014 default camera needs no calls for a static viewport",
+     "url": "https://docs.phaser.io/api-documentation/class/cameras-scene2d-camera",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "src/game/DuelScene.ts has no camera usage (grep confirms) and draws via core/viewport.ts VIEW; ledger \u00a7S24-C + the anim.ts 'fixed-camera window' provenance show the OG duel camera is static, so the absence of camera code is the fidelity-correct state, not a gap.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Nothing to change. Guard against future 'improvement' PRs adding camera follow to DuelScene \u2014 the case split above is the rule.",
+   "stage": "now (standing rule)"
+  },
+  {
+   "title": "Never use Phaser setDeadzone \u2014 the OG has no camera window",
+   "claim": "Phaser's setDeadzone creates a region where the target moves without scrolling the camera (Keren's 'camera-window' technique, the single most common canon recommendation for side-scrollers). b-6 shows the opposite: the character pins at a fixed 56% anchor while moving \u2014 screen x\u22481072\u20131082 @1080, a 10 px band that is measurement noise, not a deadzone (a real window would show the character drifting across a wider band before scroll starts). Any deadzone is a measurable divergence at the anchor pin.",
+   "sources": [
+    {
+     "title": "Phaser 3 Camera API \u2014 setDeadzone semantics",
+     "url": "https://docs.phaser.io/api-documentation/class/cameras-scene2d-camera",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser Discourse \u2014 working with camera.setDeadzone (practitioner usage)",
+     "url": "https://phaser.discourse.group/t/working-with-camera-setdeadzone/10620",
+     "grade": "C"
+    },
+    {
+     "title": "Scroll Back \u2014 camera-window taxonomy",
+     "url": "https://www.gamedeveloper.com/design/scroll-back-the-theory-and-practice-of-cameras-in-side-scrollers",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Ledger row b-6: pin band is 1072\u20131082 @1080 (\u226410 px), i.e. hard position-lock; a deadzone contradicts the measurement. Moot in implementation anyway if item 2's core-owned formula is used, but recorded so the Phaser affordance is never reached for.",
+   "effort": "Low",
+   "impact": "Medium",
+   "stage": "Future zone-traversal stage"
+  },
+  {
+   "title": "Left-travel camera anchor is UNMEASURED \u2014 measure before implementing bidirectional scroll",
+   "claim": "b-6 measured the 56% pin only 'when running right'. Keren's canon documents 'dual-forward focus' (anchor flips to the opposite side when travel direction reverses, giving look-ahead both ways) as a common side-scroller choice distinct from a single fixed anchor \u2014 so the OG running LEFT could pin at ~44% (mirrored), stay at 56%, or transition through a snap/window. These produce visibly different behavior and cannot be inferred. The videos contain leftward zone running (\u00a7S24-C notes retreat legs, e.g. beach \u2212178/\u2212271 px), so the measurement is available.",
+   "sources": [
+    {
+     "title": "Scroll Back \u2014 dual-forward focus / direction-dependent anchors",
+     "url": "https://www.gamedeveloper.com/design/scroll-back-the-theory-and-practice-of-cameras-in-side-scrollers",
+     "grade": "B"
+    },
+    {
+     "title": "GDC Vault \u2014 Scroll Back (primary talk record)",
+     "url": "https://www.gdcvault.com/play/1022243/Scroll-Back-The-Theory-and",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "Ledger b-6 explicitly scopes its anchor to rightward running; the leftward anchor is absent from every ledger row, and per b-6's own method warning the measurement must track a world-fixed feature (signpost), not frame-differencing.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "One measurement pass over an extended leftward-travel window in either video: record character screen-x while a signpost-class feature scrolls. Also worth capturing in the same pass: anchor behavior at direction REVERSAL (instant vs transitional).",
+   "stage": "Before the zone-traversal stage's camera work"
+  },
+  {
+   "title": "Parallax layers ride the camera: boulder layer at 0.73\u00d7, plus a fixed screen overlay \u2014 implement as per-layer scroll factors in config",
+   "claim": "\u00a7S24-G trap 9 is itself a camera measurement: in the A28 forest zone the boulder background layer parallaxes at 0.73\u00d7 the camera scroll, while the bottom-left mushroom cluster is a screen-fixed overlay (dx=0, corr 1.00). Phaser's native equivalent is per-object scrollFactor (0.73 for the boulder plane, 0 for screen-fixed elements), but since this repo draws in stage px through its own transform (item 2), the idiomatic form is per-layer CONTRACT factors in src/config/ applied as layerScreenX = worldToStage(x) \u2212 scrollX\u00b7factor\u00b7scale at render. Trap 9's warning also carries into any future camera-verification tooling: never anchor camera-motion measurement on a layer whose factor isn't 1.0.",
+   "sources": [
+    {
+     "title": "Phaser 3 docs \u2014 Cameras concept (scroll and scrollFactor interaction)",
+     "url": "https://docs.phaser.io/phaser/concepts/cameras",
+     "grade": "A"
+    },
+    {
+     "title": "phaser3-rex-notes \u2014 Camera notes (manual scroll control the layer math hangs off)",
+     "url": "https://rexrainbow.github.io/phaser3-rex-notes/docs/site/camera/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Ledger \u00a7S24-G trap 9 provides the measured factors (0.73\u00d7 boulder plane, 0 for the mushroom overlay); Phaser scrollFactor is the reference semantics but the repo's stage-px render path (src/core/viewport.ts + DuelScene.ts planPose calls) means the factor multiplies the core-owned scrollX at draw time instead.",
+   "effort": "Medium",
+   "impact": "Medium",
+   "implementation_note": "0.73 enters config as CONTRACT (trap 9); expect more per-zone layer factors to need measuring when zone art is built \u2014 one factor per layer, measured the trap-9 way (correlation against camera dx).",
+   "stage": "Future zone-traversal stage (with zone art)"
+  }
+ ],
+ "sources_consulted": 7,
+ "dead_ends": "The official Phaser Camera docs page does not explicitly state that setBounds clamps scroll during an active follow \u2014 that claim had to be grounded via the Phaser Discourse thread (moderator confirmation) instead. Keren's article never discusses a zero-smoothing exact-lock camera beyond naming 'position-locking' as a category, so no canon source endorses the OG's exact behavior \u2014 the ledger is the only authority for it. No source of any kind was found describing the original SHS: Duels Flash camera implementation (searching would have been redundant: the repo's P0 experiment already established the payload needs the dead Player.IO backend, so the videos/ledger remain the sole ground truth). Repo grep for existing camera code found only two comment-level mentions (anim.ts 'fixed-camera window', progression.ts 'Rebirth Scroll') \u2014 zero executable camera code, confirming the duel-is-fixed-camera case empirically."
+}

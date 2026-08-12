@@ -1,0 +1,132 @@
+{
+ "area": "Procedural vector rendering performance (Phaser 3.90 Graphics vs pre-rendered textures)",
+ "items": [
+  {
+   "title": "Pre-rendering the ~40 transcribed animation frames to textures",
+   "claim": "Official Phaser docs confirm the cost model: under WebGL, Graphics geometry is 'decomposed into polygons' every render and this is 'expensive... especially with complex shapes'; the documented remedy for shapes that stop changing is baking to a texture (generateTexture / DynamicTexture), after which the object batches like any sprite. But no evidence exists that THIS scene misses frame budget: 2 fighters x ~20 shapes at 1024x576 on desktop is a small workload, and the one practitioner thread found (iOS WebGL perf collapse) traced to a Safari/WebKit bug, not Graphics tessellation - platform variance dominates, so optimizing unmeasured is churn.",
+   "sources": [
+    {
+     "title": "Phaser.GameObjects.Graphics - official API docs (perf guidance quoted)",
+     "url": "https://docs.phaser.io/api-documentation/class/gameobjects-graphics",
+     "grade": "A"
+    },
+    {
+     "title": "phaser.discourse.group - WebGL optimization steps (as3mbus/Kosmoon, shipped App Store game)",
+     "url": "https://phaser.discourse.group/t/webgl-optimization-steps-and-or-canvas-feature-limitations/11026",
+     "grade": "B"
+    },
+    {
+     "title": "Phaser 3.60 DynamicTextures changelog",
+     "url": "https://github.com/phaserjs/phaser/blob/v3.60.0/changelog/3.60/DynamicTextures.md",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "DuelScene.drawFighters runs the full composePose->planPose->drawPlan pipeline into one cleared Graphics at 60Hz with 894 tests green and zero recorded frame-time complaints; nothing in COMBAT_MEASUREMENTS or RESUME_HERE documents a perf deficit. CLAUDE.md's 'simplest change wins' bans speculative optimization; adopt textures only if the profile protocol (next item) shows the fighter path exceeding ~2ms/frame median or game.loop.actualFps < 60 on the worst target machine.",
+   "effort": "Medium",
+   "impact": "Low",
+   "implementation_note": "If measurement ever justifies it: bake once in create() via DynamicTexture (3.60+; RenderTexture is now a shim over it), one texture per (anim, frameIndex) - facing comes free via sprite flipX, replacing planPose mirror math at draw time only. Runtime baking from procedural vectors does NOT violate src/game/CLAUDE.md's 'no image/audio asset FILES' (nothing on disk), but see the fidelity-hazard item before touching it.",
+   "stage": "Stage 2+ only if profiled red"
+  },
+  {
+   "title": "Exact profiling protocol before any rendering change",
+   "claim": "The decision needs four instruments: (1) performance.mark/measure pairs around composePose, planPose, and drawPlan, read in the Chrome DevTools Performance panel (Main-thread flame chart shows self-time; Timings track shows the marks; GPU track shows whether the bottleneck is even CPU-side) with 4x/6x CPU throttling to simulate weak hardware; (2) Phaser's own game.loop.actualFps + game.loop.delta sampled over a scripted 30s duel; (3) Spector.js browser extension to capture one frame's WebGL command list - draw-call count and buffer-upload volume (Phaser 3 does not expose draw-call counts itself; a practitioner measured ~60 calls on a Phaser 3.24 tilemap this way); (4) if raster cost is suspected, the panel's Advanced-paint-instrumentation checkbox (equivalent tracing category: disabled-by-default-devtools.timeline plus gpu). Adopt-thresholds must be written down before capturing.",
+   "sources": [
+    {
+     "title": "Chrome DevTools Performance features reference",
+     "url": "https://developer.chrome.com/docs/devtools/performance/reference",
+     "grade": "A"
+    },
+    {
+     "title": "phaser.discourse.group - Spector.js recommended for Phaser draw-call investigation",
+     "url": "https://phaser.discourse.group/t/webgl-optimization-steps-and-or-canvas-feature-limitations/11026",
+     "grade": "B"
+    },
+    {
+     "title": "Phaser performance optimization guide (draw-call counting with Spector.js)",
+     "url": "https://generalistprogrammer.com/tutorials/phaser-performance-optimization-guide",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "Repo precedent already exists for exactly this pattern: src/game/fidelity.ts runs an autonomous in-page gate behind ?fidelity=auto with a localStorage verdict (reference-browser-gate-polling memory), and the build-the-tooling memory pre-authorizes building the gate when a check recurs. A ?perf=auto harness that plays a scripted duel and reports median/p95 update() ms + actualFps is a one-file addition to that seam. NOTE from that memory: hidden tabs freeze rAF - the capture tab must stay foreground or the numbers are garbage.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Marks go at the DuelScene call sites (scene layer - core/ stays pure and literal-free). Record: per-frame ms for fighterPose+planPose+drawPlan, droplet/trail stroke count, actualFps min/median. Run once idle, once mid-slash-spam (worst case: both fighters slashing + 2048-point drag stroke + trails). Decision rule: fighter path > ~2ms median or actualFps dips below 60 -> proceed to plan-cache item; GPU-bound or draw-call explosion -> texture item.",
+   "stage": "SESSION 24/25"
+  },
+  {
+   "title": "Plan cache keyed by (anim, frameIndex, mirrored) - remove the 60Hz recompute of a 15fps pose",
+   "claim": "The measured OG latch means the pose can only change 15 times/sec, yet the repo recomputes composePose (map rebuild + per-node validation), planPose (trig + per-point matrix transform of every contour), and Phaser.Geom.Polygon.Earcut (per holedFill op, inside drawPlan) at 60Hz - a >=4x pure-CPU redundancy, worse when idle (pose never changes, recompute still runs whenever position moves). Caching pose-LOCAL DrawOps and Earcut index buffers per (animName, frameIndex, mirrored) - roughly 45 frames x 2 facings - leaves the emitted vertices byte-identical, so the pixel fidelity gate cannot move. This is the docs' 'batch-friendly Graphics' path without the texture hazards.",
+   "sources": [
+    {
+     "title": "Phaser.GameObjects.Graphics - 'decomposed into polygons... expensive' (the cost being cached away)",
+     "url": "https://docs.phaser.io/api-documentation/class/gameobjects-graphics",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser Graphics WebGL batching behavior (official docs, grouping advice)",
+     "url": "https://docs.phaser.io/api-documentation/class/gameobjects-graphics",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Grounded in OgAnimPlayer + ANIM_TIMING.poseStepMs (1000/15): the latch quantizes to whole 15fps frames, so (current, frameIndex, mirrored) fully determines the pose - a perfect memo key. But planPose currently bakes the stage origin into every point, so the cache must store origin-at-(0,0) plans and add the anchor at draw time (or via Graphics x/y). That is a real refactor of planPose's contract with tests behind it (a11Mirror.test.ts pins ops), hence ADAPT not ADOPT - and gated on the profiling item showing CPU-bound scripting, per 'simplest change wins'.",
+   "effort": "Medium",
+   "impact": "Medium",
+   "implementation_note": "Cheapest first slice if profiling is only mildly red: memoize just the Earcut call in drawPlan keyed by the holedFill op's identity per cached frame - Earcut is the only per-frame package call and its inputs are pure geometry. Cache lives scene-side (core/ cannot hold state with literals anyway). Invalidation: none needed - transcribed frame tables are immutable config.",
+   "stage": "Stage 2, only after profiling"
+  },
+  {
+   "title": "Texture baking is a pixel-fidelity hazard on this stack (WebGL1 no-AA framebuffers, DPR blur)",
+   "claim": "Two documented rendering differences make baked textures NOT pixel-equivalent to the current direct-to-canvas geometry: (1) official DynamicTexture docs: 'Under WebGL1, a FrameBuffer, which is what this Dynamic Texture uses internally, cannot be anti-aliased' - Phaser 3's renderer is WebGL1-class, so baked fighter edges come out aliased while the live-drawn ones are smoothed by the main framebuffer's MSAA; (2) long-standing Phaser issue #4408: RenderTexture output is blurry whenever game resolution != 1 (devicePixelRatio handling), a known trap for vector-crisp art on retina displays. Either one shifts edge pixels.",
+   "sources": [
+    {
+     "title": "Phaser.Textures.DynamicTexture - official docs (WebGL1 aliasing limitation quoted)",
+     "url": "https://docs.phaser.io/api-documentation/class/textures-dynamictexture",
+     "grade": "A"
+    },
+    {
+     "title": "phaserjs/phaser issue #4408 - RenderTexture blurry when resolution != 1",
+     "url": "https://github.com/phaserjs/phaser/issues/4408",
+     "grade": "A"
+    },
+    {
+     "title": "phaser.discourse.group - Texts and Graphics looking low-res/blurry/jagged",
+     "url": "https://phaser.discourse.group/t/texts-and-graphics-game-objects-looking-low-res-blurry-or-jagged/15335",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "The repo's verification machinery is pixel-based: OgArtScene.captureArea + inkBox measure inked bounds against planned bounds to sub-pixel deltas, and the 55/55 fidelity gate (src/game/fidelity.ts) pins the render. Aliased or DPR-blurred baked frames would fail exactly those probes - or worse, pass them while looking softer than the OG videos, violating the videos-are-ground-truth invariant. If the texture route is ever taken, bake at devicePixelRatio-scaled resolution, run the full fidelity gate plus an owner LOOK on a cropped/upscaled fighter before merging.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "This item is the mandatory rider on the pre-rendering item: it converts 'bake to textures' from a drop-in docs recipe into a gated experiment. The plan-cache item dodges the hazard entirely because it keeps emitting geometry to the main (antialiased) framebuffer.",
+   "stage": "rider on any future texture work"
+  },
+  {
+   "title": "Draw-call batching by grouping Graphics work",
+   "claim": "Official guidance: under WebGL, Graphics uses its own shader that batches drawing operations; keep Graphics objects grouped and avoid interleaving other object types, since every type switch flushes the batch (Phaser 3.50+ multi-texture batching covers up to ~16 textures per draw call for sprite content).",
+   "sources": [
+    {
+     "title": "Phaser.GameObjects.Graphics - official API docs (batching guidance)",
+     "url": "https://docs.phaser.io/api-documentation/class/gameobjects-graphics",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser CE/3 advanced rendering - multi-texture batching background",
+     "url": "https://phaser.io/tutorials/advanced-rendering-tutorial/part2",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "DuelScene already draws strokes, trails, droplets, BOTH fighters (via drawPlan), kunai, and the kill-beat flash into the single this.fx Graphics (depth 10), and all HUD chrome into the single this.hud Graphics (depth 20); Text objects sit at depths 21-22 above both, so the two Graphics passes are contiguous and batch. The arena is a third Graphics drawn once in create() and never cleared. No regrouping work exists to do.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "Only watch-item: if a future change interleaves a Text or Sprite at a depth between fx ops, the batch splits - keep the depth bands (arena < fx < hud < texts) as they are.",
+   "stage": "now (nothing to do)"
+  }
+ ],
+ "sources_consulted": 14,
+ "dead_ends": "No source found showing Phaser 3.90 changed Graphics tessellation or batching vs 3.60-3.80 (the 3.90 'technical preview' news is about the Phaser 4-lineage renderer, not shipped 3.90 Graphics internals) - so 3.90-specific claims could not be grounded and were omitted. No published benchmark quantifying per-frame Graphics tessellation cost in ms for ~20-shape figures was found; every source speaks qualitatively ('expensive'), which is itself the argument for MEASURE_FIRST. Phaser 3 exposes no built-in draw-call counter (searched; only third-party Spector.js / Phaser DevTools extension). The practitioner perf thread's root cause was an iOS 15 WebKit bug (230749), not Graphics - a caution that field reports of 'Graphics is slow' often misattribute platform regressions."
+}

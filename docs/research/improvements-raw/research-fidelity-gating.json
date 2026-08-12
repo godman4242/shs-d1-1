@@ -1,0 +1,183 @@
+{
+ "area": "Perceptual diff & gate hardening",
+ "items": [
+  {
+   "title": "Masked full-frame pixelmatch diff over the 5 canonical states \u2014 the ONE orthogonal metric",
+   "claim": "pixelmatch (mapbox) is a zero-dependency, few-hundred-line comparator on raw typed arrays: per-pixel perceptual color distance (YIQ historically, OKLab HyAB in current releases) with a 0-1 threshold plus anti-aliasing detection that excludes sub-pixel edge jitter. Playwright's toHaveScreenshot wraps exactly this (threshold = YIQ distance, default 0.2; maxDiffPixelRatio for area budget). A full-frame diff sees everything BETWEEN probes: global color drift on unprobed regions, a stray/missing element, a deformed HUD shape whose probed points still pass.",
+   "sources": [
+    {
+     "title": "mapbox/pixelmatch (fetched: options, OKLab, AA detection, zero deps)",
+     "url": "https://github.com/mapbox/pixelmatch",
+     "grade": "A"
+    },
+    {
+     "title": "Playwright SnapshotAssertions \u2014 threshold/maxDiffPixelRatio semantics",
+     "url": "https://playwright.dev/docs/api/class-snapshotassertions",
+     "grade": "A"
+    },
+    {
+     "title": "Screenshot Diffing: Pixel-Level Comparison Techniques (dev.to)",
+     "url": "https://dev.to/dennis-ddev/screenshot-diffing-pixel-level-comparison-techniques-18k",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "FIDELITY_PROBES + FIDELITY_SCANS (src/config/fidelity.ts) assert 55 places; the gate's own history (FIDELITY_GATE.md v1: 14/17 FAIL found only when probes landed; slice 2b: olive-band misread found only on re-measurement) proves whole regions go unwatched. BUT it cannot be a CI gate: reference frames are study-only/local-only per docs/OWNER_PERMISSION_RULING.md and reference/ is gitignored (the exact constraint that forced silhouette.ts's sealed-score design), so this must live beside scripts/art/compareToSource.py as a LOCAL diagnostic layer, run via the existing __fidelity harness states with masks over dynamic regions (fighters, bar fills, fraction labels).",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Add pixelmatch as a devDependency (test tooling, not a game image asset \u2014 procedural-art rule untouched). Extract one reference PNG per canonical state from the already-measured frames (B t=3772-3776, t=3771.55, t=3773.5, t=3783.5; A t=3361-3364), downscale 1920x1080 \u2192 1024x576, keep them in gitignored reference/. Compare renderer.snapshot readback vs frame with threshold \u22480.25-0.3 (H.264 headroom; the repo's own measured per-channel spreads of 16-26/255 land in this range) + a committed mask per state; report diff-pixel ratio per state and write the diff PNG for eyes. Calibrate the ratio floor the repo's way: run it, record the measured value, ratchet like a6Score.test.ts floors.",
+   "stage": "SESSION 24/25 (next fidelity slice)"
+  },
+  {
+   "title": "pixelmatch/SSIM as the render-vs-render CI regression gate",
+   "claim": "Standard practice (Playwright, Argos, most VRT stacks) is tolerance-based per-pixel or SSIM diffing of screenshots to absorb AA jitter, font hinting, and GPU nondeterminism between runs.",
+   "sources": [
+    {
+     "title": "Playwright SnapshotAssertions",
+     "url": "https://playwright.dev/docs/api/class-snapshotassertions",
+     "grade": "A"
+    },
+    {
+     "title": "Screenshot Comparison Algorithms: A Visual Testing Guide (Wopee.io)",
+     "url": "https://wopee.io/blog/screenshot-comparison-algorithms-visual-testing/",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "tests/poseRender.test.ts's rasterDigest golden is strictly stronger for this repo: the headless rasteriser (scripts/art/rasterise.ts) is pure exactly-specified arithmetic with no GPU/font/AA nondeterminism, so an EXACT digest is achievable and already caught 1/8-pixel sub-sample shifts and a 1px crop change that a tolerance diff is designed to forgive. The flake classes these tools exist to absorb do not occur on that path; adopting one there would be a sensitivity downgrade.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "No action. Keep new render gates on the headless raster path where exact digests are possible; reserve tolerance diffing for browser-canvas-vs-video comparisons only (item 1).",
+   "stage": "now (no-op)"
+  },
+  {
+   "title": "Perceptual hashes (pHash/dHash) for fidelity gating",
+   "claim": "pHash/dHash compress an image to a 64-bit fingerprint that is deliberately ROBUST to small changes \u2014 scaling, compression, brightness shifts \u2014 and are recommended for dedup/similarity candidate retrieval, with the explicit caveat that a hash match is a candidate, not identity, and subtle changes are missed by design.",
+   "sources": [
+    {
+     "title": "pHash vs dHash comparison (ssojet)",
+     "url": "https://ssojet.com/compare-hashing-algorithms/phash-vs-dhash",
+     "grade": "C"
+    },
+    {
+     "title": "Perceptual Hashing (pHash/dHash) \u2014 System Designer",
+     "url": "https://www.systemdesigner.net/technology/perceptual-hashing",
+     "grade": "C"
+    },
+    {
+     "title": "What Is Perceptual Hashing and How Platforms Use It (MetaGhost)",
+     "url": "https://metaghost.io/blog/what-is-perceptual-hashing-and-how-platforms-use-it",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Invariance to small differences is the anti-goal here. The A6-C companion gate in tests/a6Score.test.ts pins the fighter's height overshoot inside a 0.10-0.12 band precisely because a 6% drift is a defect in this repo; a pHash cannot see the 11% overshoot it exists to watch, nor the \u226426/255 color deltas FIDELITY_PROBES assert. Wrong tool class for a 1:1 project.",
+   "effort": "Low",
+   "impact": "Low",
+   "stage": "never"
+  },
+  {
+   "title": "SSIM / MS-SSIM as an additional gate score",
+   "claim": "SSIM compares luminance/contrast/structure in local windows and MS-SSIM adds a multi-scale pyramid; both correlate with human judgment better than MSE and are the standard 'perceptual' VRT upgrade. Practitioner guidance: scores >0.99 read 'virtually identical', <0.95 'visibly different', and it is recommended as a per-page targeted fix after containerizing rendering, not a suite-wide default.",
+   "sources": [
+    {
+     "title": "Structural similarity index measure (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Structural_similarity_index_measure",
+     "grade": "B"
+    },
+    {
+     "title": "MS-SSIM: Multiscale Structural Similarity (EmergentMind)",
+     "url": "https://www.emergentmind.com/topics/multiscale-structural-similarity-score-ms-ssim",
+     "grade": "C"
+    },
+    {
+     "title": "Visual Regression Testing with TestInspector: SSIM comparison",
+     "url": "https://www.astaqc.com/software-testing-blog/visual-regression-testing-testinspector-ssim-screenshot-comparison",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "An aggregate windowed score with folklore thresholds contradicts the repo's probe idiom \u2014 FIDELITY_GATE.md's 'Adding probes' rule requires every assertion to be measured-first with per-point provenance, and each probe doubles as a position pin. SSIM localizes worse than pixelmatch's diff mask (item 1) while costing a real implementation (Gaussian windows, pyramid) against zero-dep pixelmatch; it buys nothing item 1 doesn't, at more maintenance. If a structural score is ever wanted, the silhouette widthProfile in scripts/art/silhouette.ts already IS the domain-specific structural metric, with ratcheted floors.",
+   "effort": "Medium",
+   "impact": "Low",
+   "stage": "never"
+  },
+  {
+   "title": "CIEDE2000-derived tolerances for the lossless-PNG refinement pass, with chroma-aware headroom",
+   "claim": "CIEDE2000 (dE00) is the CIE-recommended perceptual color difference: ~1.0 is just-noticeable, 1.0-2.0 visible to a trained eye, 2.0-3.5 the usual commercial acceptability limit. Separately, H.264 4:2:0 chroma subsampling stores chroma at quarter resolution and quantizes it harder than luma, so video-derived color error is systematically larger in chroma than luma \u2014 a flat per-channel RGB tolerance conflates the two.",
+   "sources": [
+    {
+     "title": "Delta E: Demystifying the CIE dE2000 Formula (Techkon)",
+     "url": "https://techkon.datacolor.com/demystifying-the-cie-delta-e-2000-formula/",
+     "grade": "B"
+    },
+    {
+     "title": "Delta E 101 (zschuessler)",
+     "url": "http://zschuessler.github.io/DeltaE/learn/",
+     "grade": "C"
+    },
+    {
+     "title": "Chroma subsampling (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Chroma_subsampling",
+     "grade": "B"
+    },
+    {
+     "title": "Color Science From the Purview of H.265 (3dverse devlog)",
+     "url": "https://docs.3dverse.com/devlog/2025/08/07/video-compression-concepts-part-1",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "FIDELITY_GATE.md's v2 backlog already queues 'Color refinement from lossless sources: re-measure the palette against the wiki PNGs and tighten tolerances' \u2014 dE00 gives that pass a principled target (tighten each probe's tol to the per-channel delta corresponding to dE00 \u2248 2) instead of ad-hoc shrinking. Do NOT change the assertion math: src/core/fidelityCompare.ts stays per-channel max-delta (zero-literals core purity; simple, diagnosable), dE00 is used offline to DERIVE the committed tol numbers, recorded in each probe's provenance note as the notes already record spreads.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "During the lossless-refinement pass: for each probe with a wiki-PNG counterpart, compute dE00 between authored and video-derived color; where the source is lossless, tol can drop toward ~6-10/channel; where only video exists, keep asymmetric headroom (chroma-heavy colors keep larger tol than near-gray/luma-dominated ones). One scratch Python script, no runtime change.",
+   "stage": "Stage 2-3 (when the queued lossless refinement runs)"
+  },
+  {
+   "title": "Temporal/animation fidelity metric (per-beat pose comparison)",
+   "claim": "All surveyed comparison metrics (pixelmatch, SSIM, hashes, dE) are single-frame; none grade motion. Temporal errors \u2014 wrong beat timing, wrong stride cadence, wrong stroke lifecycle order \u2014 are a failure class no static gate can see, and VRT practice handles animation by FREEZING it, not by grading it.",
+   "sources": [
+    {
+     "title": "How to stabilize flaky screenshots for visual testing (Argos co-founder; fetched)",
+     "url": "https://dev.to/jsfez/how-to-stabilize-flaky-screenshots-for-visual-testing-1529",
+     "grade": "B"
+    },
+    {
+     "title": "Screenshot Comparison Algorithms (Wopee.io)",
+     "url": "https://wopee.io/blog/screenshot-comparison-algorithms-visual-testing/",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "This IS the biggest structural hole \u2014 the gate samples 5 frozen states and A6-C scores one static pose \u2014 but the ledger shows the prerequisite is OG measurement, not a metric: COMBAT_MEASUREMENTS.md \u00a7S24-A (stroke lifecycle) and the SESSION23 A11.4 15fps stepper already established that the OG's animation truth is only recoverable at the video's sampling floor. Before any temporal metric, extract per-beat OG timings (beat durations for intro VS\u2192FIGHT!, gait cycle period, stroke phase lengths) as ledger rows; the metric then reduces to cheap scalar assertions on the sim's timeline (config-pinned, like tests/config-values.test.ts), not image diffing.",
+   "effort": "High",
+   "impact": "High",
+   "stage": "SESSION 25+ (after a \u00a7S25 timing-extraction pass)"
+  },
+  {
+   "title": "Canvas screenshot flake control checklist",
+   "claim": "Practitioner flake control for canvas/screenshot pipelines: wait for full resource load, freeze/remove animations, mask dynamic content, fix datasets, standardize the render environment; for WebGL canvases specifically, read pixels in the same event as the render or set preserveDrawingBuffer, since the drawing buffer is cleared on composite.",
+   "sources": [
+    {
+     "title": "How to stabilize flaky screenshots for visual testing (Argos; fetched)",
+     "url": "https://dev.to/jsfez/how-to-stabilize-flaky-screenshots-for-visual-testing-1529",
+     "grade": "B"
+    },
+    {
+     "title": "WebGL tips \u2014 Taking a screenshot of the canvas (webglfundamentals)",
+     "url": "https://webglfundamentals.org/webgl/lessons/webgl-tips.html",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "The harness already implements the whole checklist in repo idiom: src/game/fidelity.ts settleFrames waits real frames with a manual game.loop.step() fallback for rAF throttling; snapshot() uses Phaser's renderer.snapshot (which reads at render time, sidestepping the preserveDrawingBuffer trap) after a settled frame; dynamic content is frozen by design (devHoldAt intro beats, sim-stepped FIGHTING_SETTLE_MS, localStorage backup/restore per FIDELITY_GATE.md); font flake was eliminated by making the VS/FIGHT! glyphs procedural polygons (FIDELITY_GATE.md slice 2b). Remaining known flake source (hidden-tab rAF freeze) is documented in the browser-gate-polling memory with the visible-tab rule.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "No action. If item 1 ships, reuse the existing snapshot()/settleFrames path unchanged \u2014 do not add a second readback mechanism.",
+   "stage": "now (no-op)"
+  }
+ ],
+ "sources_consulted": 14,
+ "dead_ends": "No practitioner postmortem found for the exact problem shape \"gating a procedural game render against compressed video frames of a dead game\" \u2014 emulator/recreation communities appear to eyeball this; the repo's median-across-frames + per-channel-headroom practice is better documented than anything found. No 2024-2026 source gives a defensible NUMERIC per-channel RGB tolerance for H.264-sourced references (the IEEE chroma-subsampling perceptual study surfaced was paywalled and only tangential), so item 1's threshold must be ratchet-calibrated empirically, repo-style. Searches for MS-SSIM or IoU used specifically for game-silhouette regression gating returned only generic IQA literature \u2014 nothing contradicting the repo's bespoke widthProfile approach."
+}

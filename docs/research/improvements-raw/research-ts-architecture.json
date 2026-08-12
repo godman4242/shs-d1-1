@@ -1,0 +1,141 @@
+{
+ "area": "TS architecture: the ECS claim + type hardening",
+ "items": [
+  {
+   "title": "Adopt ECS (bitECS or custom) for the Sim",
+   "claim": "Steelman: ECS gives struct-of-arrays cache-friendly iteration, composition over inheritance, and clean system/data separation; bitECS is a TS-native, dependency-free implementation of it. But the practitioner consensus is that ECS pays off with large dynamic entity counts (hundreds to tens of thousands) or engine-building; for small fixed rosters it adds friction with no payoff \u2014 'hardly any game needs thousands of interacting entities', and the recommended path is simple composition plus profiling before any data-layout rewrite.",
+   "sources": [
+    {
+     "title": "bitECS 0.4 introduction (official docs)",
+     "url": "https://bitecs.dev/docs/introduction",
+     "grade": "A"
+    },
+    {
+     "title": "HN thread: ECS necessity debate (practitioners, fetched)",
+     "url": "https://news.ycombinator.com/item?id=27754996",
+     "grade": "B"
+    },
+    {
+     "title": "ECS Architecture for Browser Games (scaling guide)",
+     "url": "https://simplified.media/guides/ecs-browser-games",
+     "grade": "C"
+    },
+    {
+     "title": "GameDev.net forum: ECS architecture discussion",
+     "url": "https://www.gamedev.net/forums/topic/709854-ecs-architecture/5438583/",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Two independent kills. (1) Hard invariant violation: bitECS is a bare package import, and tests/config-purity.test.ts checkImports() fails ANY bare specifier in src/core/ ('core/ is framework-free') \u2014 adopting it in the Sim literally cannot go green. (2) A custom ECS is pure churn at this scale: Sim.ts holds 1 player + N enemies (measured encounters top out around 8 mobs per COMBAT_MEASUREMENTS.md 'waves spawn by falling in from above' row) plus kunai capped at PROJECTILE_MAX_ACTIVE; iteration order IS a determinism contract (Sim.allActors doc: 'Spawn order is identity AND iteration order\u2026 what keeps a crowd deterministic'), which generic ECS query iteration would have to re-pin; and 894 green tests pin the current FighterState shape. Zero measured OG behavior needs it \u2014 a data-layout rewrite that moves no fidelity needle is a defect under the prime directive.",
+   "effort": "High",
+   "impact": "Low",
+   "implementation_note": "If a future stage ever spawns hundreds of simultaneous actors (nothing in the ledger suggests it), re-evaluate then with a profile in hand \u2014 the HN practitioner consensus is profile-first, and even then the SoA layout would have to live inside core/ with zero literals.",
+   "stage": "never (re-open only on a measured perf problem)"
+  },
+  {
+   "title": "Branded unit types for the three pixel systems (px@1080 / stage px / world px)",
+   "claim": "TS branded (nominal) types \u2014 `type WorldPx = number & { readonly __brand: 'worldPx' }` \u2014 are the standard 2024-25 pattern for units of measure: zero runtime cost, and structural typing stops silently accepting one unit where another is expected. Known caveat (Goldberg): arithmetic on branded numbers strips the brand and binary ops raise no error, so the pattern only pays at BOUNDARIES (function signatures, config declarations, conversion helpers), not on every intermediate value.",
+   "sources": [
+    {
+     "title": "Branded Types \u2014 Learning TypeScript (Josh Goldberg, fetched)",
+     "url": "https://www.learningtypescript.com/articles/branded-types",
+     "grade": "B"
+    },
+    {
+     "title": "TypeScript official playground: Nominal Typing",
+     "url": "https://www.typescriptlang.org/play/typescript/language-extensions/nominal-typing.ts.html",
+     "grade": "A"
+    },
+    {
+     "title": "ts-brand: reusable type branding",
+     "url": "https://github.com/kourge/ts-brand",
+     "grade": "C"
+    },
+    {
+     "title": "Branded Types in TypeScript (Prosopo)",
+     "url": "https://prosopo.io/articles/typescript-branding/",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "The bug class is live in the repo TODAY: Sim.ts's PlayerIntent.moveTargetX is doc-commented '(stage px)' but DuelScene.mouseTargetX is 'stored WORLD-side' (stageToWorld applied at the pointer handler before assignment) \u2014 the comment lies across the exact scene\u2192Sim seam, and only a comment stands between that and a real 1.28x-scale movement bug (WORLD_WIDTH=800 vs GAME_WIDTH=1024 in config/display.ts; ledger row 'Conversion: px @1080 \u00f7 1.875 = stage px' adds the third system doc-side). ADAPT, not ADOPT: brand only the seams \u2014 config/display.ts exports, core/viewport stageToWorld/worldToStage signatures, PlayerIntent/FighterSpawn position fields \u2014 because brand-stripping arithmetic means whole-Sim branding degenerates into `as` casts everywhere (Goldberg's caveat). No package: hand-roll the one-line intersection type in src/config (type-only, satisfies config/'s no-logic rule); ts-brand would violate nothing in config but adds nothing either.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Declare `WorldPx`/`StagePx` brands in src/config/display.ts next to the WORLD vs STAGE doc block that already defines the two spaces in prose. Constructor = `as WorldPx` at the declaration/conversion sites only. First measurable win: retyping PlayerIntent.moveTargetX as WorldPx forces the stale 'stage px' comment fix and makes every future scene input path prove its conversion. Px@1080 stays doc-only (it never enters code).",
+   "stage": "SESSION 24/25"
+  },
+  {
+   "title": "Branded/template-literal tagging for CONTRACT vs INFERRED config values",
+   "claim": "The same branding machinery could tag config values by evidence grade (`type Contract<T> = T & {__evidence:'contract'}`). But research turned up NO practitioner precedent for provenance-tagging constants via types, and the mechanism is wrong for the job: brands vanish on first arithmetic use, both tag flavors behave identically at compile time (nothing to reject), and the tag would live in the type while the evidence lives in comments \u2014 two sources of truth that can drift.",
+   "sources": [
+    {
+     "title": "Branded Types \u2014 Learning TypeScript (arithmetic-stripping caveat, fetched)",
+     "url": "https://www.learningtypescript.com/articles/branded-types",
+     "grade": "B"
+    },
+    {
+     "title": "ts-brand: reusable type branding",
+     "url": "https://github.com/kourge/ts-brand",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "The repo's enforcement idiom is SCANNER GATES, not types: tests/config-purity.test.ts already parses every src/config file with self-tested fixtures, and src/config/CLAUDE.md states the labeling invariant ('Every value is labeled CONTRACT / INFERRED / Spec-fixed') without any test enforcing it \u2014 that's the actual gap. ADAPT the idea into a scanner extension: fail any `export const` in src/config whose preceding doc comment lacks one of the three labels (same LiteralHit-style reporting, same self-test fixtures). This matches the standing 'build the tooling' rule and the double-entry ratchet already in tests/config-values.test.ts, and unlike a type brand it cannot be stripped or bypassed with `as`.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Add a `scanLabelCoverage()` to tests/utils/configPurity.ts + a describe block in config-purity.test.ts; chaos-test by planting one unlabeled export (red) per the repo's chaos rule. Accept CONTRACT, CONTRACT-SRC, INFERRED, Spec-fixed as the label set (CONTRACT-SRC already appears in config/combat.ts).",
+   "stage": "now"
+  },
+  {
+   "title": "Exhaustiveness checking via `satisfies never` on the SimEvent drain",
+   "claim": "The TS 4.9+ idiom `default: ev satisfies never` in a switch over a discriminated union makes the compiler error the moment a new union variant is added without a handler \u2014 zero runtime code, no dependency. typescript-eslint's switch-exhaustiveness-check rule automates the same guarantee lint-side, and its docs explicitly endorse the `satisfies never` default for codebases that keep defaults.",
+   "sources": [
+    {
+     "title": "switch-exhaustiveness-check \u2014 typescript-eslint (official)",
+     "url": "https://typescript-eslint.io/rules/switch-exhaustiveness-check/",
+     "grade": "A"
+    },
+    {
+     "title": "Exhaustiveness checking \u2014 TypeScript Book (gibbok)",
+     "url": "https://gibbok.github.io/typescript-book/book/exhaustiveness-checking/",
+     "grade": "B"
+    },
+    {
+     "title": "Use satisfies for exhaustive type checks (return2)",
+     "url": "https://return2.net/typescript-use-satisfies-for-exhaustive-type-checks/",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "SimEvent in Sim.ts is an 18-variant discriminated union that has grown every session (autoStroke, strikeBlocked, enemyTelegraph are all recent), and DuelScene drains it with a plain if/else-if chain on ev.type \u2014 a new variant is silently dropped with no FX/SFX and no compile error, which is exactly a fidelity leak (an OG-measured cue that never renders). Converting the drain to a switch with `default: ev satisfies never` closes it at zero runtime cost, is compatible with the zero-literal rule (no numbers involved), and the repo already has eslint.config.mjs if the lint-rule variant is preferred. Guarded cases like `ev.type === 'damage' && ev.target === 'player'` become an inner branch under `case 'damage'`.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Apply at every SimEvent consumer (DuelScene's drain loop is the main one; grep for drainEvents callers). Chaos-proof it: add a dummy variant to SimEvent, watch typecheck go red, remove it.",
+   "stage": "now / SESSION 24"
+  },
+  {
+   "title": "Template-literal types for actor/entity identity",
+   "claim": "Template-literal types (`\\`enemy${number}\\``) give string ids compile-time structure so arbitrary strings can't pose as ids \u2014 the lightweight cousin of full branding, recommended for id-shaped strings.",
+   "sources": [
+    {
+     "title": "TypeScript official playground: Nominal Typing",
+     "url": "https://www.typescriptlang.org/play/typescript/language-extensions/nominal-typing.ts.html",
+     "grade": "A"
+    },
+    {
+     "title": "Branded Types \u2014 Learning TypeScript",
+     "url": "https://www.learningtypescript.com/articles/branded-types",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "Sim.ts already ships it: `export type ActorId = 'player' | \\`enemy${number}\\`` (SESSION14 A1), with PLAYER_ID as the one fixed name, enemyIdAt() as the constructor, and Sim.actor() throwing on unknown ids so a typo'd id fails loud instead of resolving to somebody. Nothing to add \u2014 the id surface is both statically shaped and runtime-guarded.",
+   "effort": "Low",
+   "impact": "Low",
+   "stage": "done (SESSION 14)"
+  }
+ ],
+ "sources_consulted": 11,
+ "dead_ends": "No practitioner postmortem of REMOVING ECS from a shipped small game was found (search hit generic pro-ECS scaling guides instead); the anti-case rests on the HN practitioner thread plus the repo's own invariants. No 2024-26 source exists for provenance-tagging constants (CONTRACT/INFERRED-style) via branded types \u2014 the pattern appears to be a non-practice, which itself supports routing that idea to the scanner instead. The suspected moveTargetX unit bug turned out NOT to be live (DuelScene converts via stageToWorld before assignment) \u2014 only the Sim-side doc comment is wrong; adjudication of item 2 was downgraded from 'fixes a live bug' to 'closes the bug class and a lying comment'."
+}

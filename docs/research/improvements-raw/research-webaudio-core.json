@@ -1,0 +1,159 @@
+{
+ "area": "WebAudio architecture (SESSION 25 prep)",
+ "sources_consulted": 10,
+ "items": [
+  {
+   "title": "Do not build a custom unlock layer \u2014 reuse Phaser's WebAudioSoundManager context, locked flag, and UNLOCKED event",
+   "claim": "2024-2026 autoplay reality: Chrome creates AudioContext 'suspended' until a user gesture and requires resume() (or auto-resumes when a source starts post-gesture); Safari/iOS behaves the same and additionally enters an 'interrupted' state on tab-switch/headphone changes; Firefox gates via user-configurable autoplay blocking but the gesture-resume pattern covers it. Phaser 3.60+ already implements ALL of this: it listens for touchstart/touchend/mousedown/mouseup/keydown to resume, fires Phaser.Sound.Events.UNLOCKED, detects 'suspended' OR 'interrupted' in its update loop and auto-resumes (the iOS 17/18 interruption fix), and exposes the raw AudioContext as this.sound.context. Recommended init/unlock pattern for our 100%-synthesized SFX: (1) at scene create, grab ctx = (this.sound as Phaser.Sound.WebAudioSoundManager).context; (2) gate SFX with `if (this.sound.locked) this.sound.once(Phaser.Sound.Events.UNLOCKED, enable); else enable();` (3) DROP (never queue) SimEvent SFX that fire while locked \u2014 replaying stale hits after unlock sounds wrong; (4) belt-and-braces: on pointerdown, `if (ctx.state !== 'running') ctx.resume()` for iOS 'interrupted' edge cases the manager's update loop hasn't caught yet.",
+   "sources": [
+    {
+     "title": "Phaser WebAudioSoundManager API (context, locked, unlock, destination)",
+     "url": "https://docs.phaser.io/api-documentation/class/sound-webaudiosoundmanager",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser 3.60 Sound changelog (suspended/interrupted auto-resume, iOS14+ unlock fix)",
+     "url": "https://github.com/phaserjs/phaser/blob/v3.60.0/changelog/3.60/Sound.md",
+     "grade": "A"
+    },
+    {
+     "title": "Chrome for Developers: Web Audio, Autoplay Policy and Games",
+     "url": "https://developer.chrome.com/blog/web-audio-autoplay",
+     "grade": "A"
+    },
+    {
+     "title": "Ourcade: Web Audio Best Practices for Games in Phaser 3 (practitioner)",
+     "url": "https://blog.ourcade.co/posts/2020/phaser-3-web-audio-best-practices-games/",
+     "grade": "B"
+    },
+    {
+     "title": "MDN Web Audio API best practices (create/resume inside a user gesture)",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Best_practices",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "Stack invariant in CLAUDE.md pins phaser@3 (3.90 > 3.60, so all listed fixes are in); src/game/CLAUDE.md already routes SFX through scenes ('drain SimEvent[] into FX/SFX'), so the sound manager the scenes already own is the natural host \u2014 a parallel hand-rolled AudioContext would duplicate Phaser's unlock/interrupted machinery and fight it.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "One new src/game/ module (e.g. AudioBus) built lazily at scene create. No game-config change needed \u2014 Phaser accepts a custom context via game config audio.context, but there is no reason to supply one.",
+   "stage": "SESSION 25"
+  },
+  {
+   "title": "Master-bus graph: synth voices \u2192 sfx GainNode \u2192 DynamicsCompressorNode \u2192 this.sound.destination",
+   "claim": "Canonical game-audio graph: each one-shot voice connects to a category/master GainNode, then a DynamicsCompressorNode, then the destination. The compressor matters specifically for STACKED SFX \u2014 a duel frame can emit multiple SimEvents at once (slash + hit + grunt), and summed synth voices easily exceed 1.0; the compressor 'lowers the volume of the loudest parts of the signal' to prevent hard digital clipping without hand-tuning a worst-case master gain (web.dev: picking a static master gain for all game states 'is more of an art than a science' \u2014 compression is the robust fix). For this repo the tail of the chain should be Phaser's this.sound.destination (which feeds its masterVolumeNode \u2192 masterMuteNode) so Phaser's global volume/mute and pauseOnBlur keep working over our synth bus.",
+   "sources": [
+    {
+     "title": "web.dev: Developing game audio with the Web Audio API (master gain + compressor for stacked sounds)",
+     "url": "https://web.dev/articles/webaudio-games",
+     "grade": "A"
+    },
+    {
+     "title": "MDN DynamicsCompressorNode",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser WebAudioSoundManager API (destination, masterVolumeNode, masterMuteNode)",
+     "url": "https://docs.phaser.io/api-documentation/class/sound-webaudiosoundmanager",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "The generic pattern ends at ctx.destination; adapt the tail to Phaser's this.sound.destination (WebAudioSoundManager) so the scene-owned manager keeps authority. Repo idiom also forces re-parameterization: every gain/threshold/ratio number must live in a new src/config/audio.ts tagged INFERRED (src/config/CLAUDE.md CONTRACT/INFERRED rule) \u2014 none may sit inline in src/game/.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "Default DynamicsCompressorNode params are fine to start (threshold -24dB, ratio 12) but write them into src/config/audio.ts explicitly as INFERRED so they are visible and tunable. Per-category sub-buses (sfx / ui) are cheap and give independent volume config.",
+   "stage": "SESSION 25"
+  },
+  {
+   "title": "latencyHint 'interactive' is already the default \u2014 do not add context-construction code for it",
+   "claim": "MDN: AudioContext latencyHint defaults to 'interactive', which optimizes for the lowest possible output latency (the games case); 'balanced' and 'playback' trade latency for power. Because Phaser constructs the context and the default is already the value we want, there is nothing to configure; the browser may not honor the hint anyway \u2014 the actual figure is readable at ctx.baseLatency if SESSION 25 wants to log it once as evidence.",
+   "sources": [
+    {
+     "title": "MDN AudioContext() constructor (latencyHint values and default)",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/AudioContext",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "Satisfied by the platform default on the context Phaser's WebAudioSoundManager creates (this.sound.context, per stack invariant phaser@3 in CLAUDE.md) \u2014 adding a custom audio.context to game config solely to restate the default would be churn.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "Optional: one console.debug of ctx.baseLatency behind the existing fidelity flag as a measurement receipt; nothing else.",
+   "stage": "SESSION 25"
+  },
+  {
+   "title": "Scheduling: anchor every envelope to ctx.currentTime; the 25ms/100ms lookahead scheduler is NOT needed for event-driven one-shots",
+   "claim": "The 'Tale of Two Clocks' lookahead pattern (setInterval ~25ms scheduling everything due in the next ~100ms against the audio clock) exists to keep RHYTHMIC/sequenced audio jitter-free \u2014 it decouples a musical timeline from main-thread jitter. Our SFX are fired the instant a SimEvent is drained; there is no future timeline to look ahead into, so a lookahead scheduler adds latency and machinery for nothing. What DOES carry over: (a) never use setTimeout/Date.now for any audio-rate timing; (b) schedule attack/decay/release with setValueAtTime / linearRampToValueAtTime / exponentialRampToValueAtTime and osc.start()/stop() at explicit ctx.currentTime-relative times, computed once per voice; (c) always schedule stop() so one-shot nodes free themselves.",
+   "sources": [
+    {
+     "title": "web.dev: A tale of two clocks \u2014 scheduling Web Audio with precision",
+     "url": "https://web.dev/articles/audio-scheduling",
+     "grade": "A"
+    },
+    {
+     "title": "IRCAM webaudio-tutorials: Timing and Scheduling (currentTime granularity, lookahead numbers)",
+     "url": "https://ircam-ismm.github.io/webaudio-tutorials/scheduling/timing-and-scheduling.html",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "The SimEvent drain in src/game/CLAUDE.md ('call Sim.advance, drain SimEvent[] into FX/SFX') plus Sim's fixed 60Hz accumulator (Sim.ts, '/** Typed events drained by the scene each frame and turned into FX/SFX. */') means every SFX trigger is same-frame and immediate \u2014 adopt the audio-clock discipline, reject the lookahead loop as scope creep unless a music layer is ever measured into scope.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Voice helper signature: play(now = ctx.currentTime) { osc.start(now); gain.gain.setValueAtTime(peak, now); gain.gain.exponentialRampToValueAtTime(floor, now + decay); osc.stop(now + decay); }. All decay/peak numbers from src/config/audio.ts.",
+   "stage": "SESSION 25"
+  },
+  {
+   "title": "AudioWorklet is NOT needed for one-shot synthesized SFX \u2014 native node graph only",
+   "claim": "AudioWorklet exists to replace ScriptProcessorNode for CUSTOM per-sample DSP (procedural streams, custom effects) by running JS on the audio rendering thread. One-shot game SFX built from OscillatorNode + GainNode envelopes + BiquadFilterNode already execute natively ON the audio thread \u2014 there is no main-thread audio work to move, so a worklet adds a module-loading async step, a second JS context, and test complexity for zero benefit. Noise-based SFX (hits, whooshes) need no worklet either: fill a short AudioBuffer from a Float32Array at runtime and play it via AudioBufferSourceNode \u2014 that is still 100% synthesized, no audio file. The only trigger to revisit: a continuous procedural stream (wind/music synthesis) that native nodes cannot express.",
+   "sources": [
+    {
+     "title": "MDN: Background audio processing using AudioWorklet (what it is for)",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Using_AudioWorklet",
+     "grade": "A"
+    },
+    {
+     "title": "Chrome for Developers: Audio Worklet is now available by default (design intent: replace ScriptProcessorNode)",
+     "url": "https://developer.chrome.com/blog/audio-worklet",
+     "grade": "A"
+    },
+    {
+     "title": "Soledad Penad\u00e9s: Using AudioWorklets to generate audio (2025, practitioner \u2014 worklets are for generated streams, with real ergonomic costs)",
+     "url": "https://soledadpenades.com/posts/2025/using-audioworklets-to-generate-audio/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "Adopting the 'skip AudioWorklet' recommendation: the CLAUDE.md invariant is 'WebAudio-synthesized SFX only' \u2014 a runtime-generated noise AudioBuffer satisfies 'no audio files' (src/game/CLAUDE.md: 'No image/audio asset files, ever'), and a worklet module would also complicate the Vitest suite (894 green) with an audio-thread boundary nothing needs.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Generate each noise buffer once at bus init with the injected-RNG discipline in spirit (audio is render-side, so Math.random is legal in src/game/ \u2014 but keep it out of src/core/ per the config-purity test).",
+   "stage": "SESSION 25"
+  },
+  {
+   "title": "OG SFX parameter values must come from the videos' audio tracks \u2014 the ledger has zero audio rows today",
+   "claim": "Every generic synth recipe (laser zap, coin blip, 'juicy hit') found in game-audio guides is a preset divergent from the OG by construction. The two 1080p longplays carry the complete OG soundscape (slash, hit, parry, UI, death). Before parameterizing src/config/audio.ts, extract the audio (ffmpeg -vn), isolate 3-5 clean instances of each SFX class, and read pitch contour / duration / noise-vs-tonal balance from a spectrogram; only then do the synth numbers earn CONTRACT instead of INFERRED. The architecture items above can land first \u2014 this gates only the VALUES.",
+   "sources": [
+    {
+     "title": "web.dev: Developing game audio with the Web Audio API (sound design must be tuned to the game, not presets)",
+     "url": "https://web.dev/articles/webaudio-games",
+     "grade": "A"
+    },
+    {
+     "title": "Boris Smus, Web Audio API book ch.3 (gain staging and tuning are game-specific)",
+     "url": "https://webaudioapi.com/book/Web_Audio_API_Boris_Smus_html/ch03.html",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "grep of docs/research/fidelity/COMBAT_MEASUREMENTS.md for audio/sound/sfx hits only the player name 'SOUND360TM' (leaderboard row HONDA SHIZUKA (7)) \u2014 no measured audio rows exist; the CLAUDE.md prime directive ('THE TWO GAMEPLAY VIDEOS ARE THE PRIMARY 1:1 REFERENCE') applies to the soundtrack exactly as it does to frames.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "New \u00a7S25 ledger block: one row per SFX class with measured duration (ms), fundamental/center frequency, sweep direction, noise ratio. ffmpeg + a spectrogram (sox/audacity or a scripted STFT) is enough; no new tooling gate needed until values are checked by eye twice.",
+   "stage": "SESSION 25 (before any src/config/audio.ts values are tagged CONTRACT)"
+  }
+ ],
+ "dead_ends": "Firefox-specific 2024-2026 autoplay detail could not be firmly grounded \u2014 searches surfaced Chrome/Safari policy docs, and MDN best practices only states the cross-browser gesture rule generically; Phaser's unlock path makes the distinction moot for this repo. mattmontag.com 'unlock Web Audio in Safari' (practitioner unlock reference cited by Phaser's own docs) returned HTTP 403 on fetch, so its silent-buffer/touchend specifics were not used as claims. COMBAT_MEASUREMENTS.md contains no audio measurements at all (only the 'SOUND360TM' player name matches), confirming the MEASURE_FIRST item. No audio config file exists yet in src/config/ (28 files checked), and the only audio mentions in src/ are the SimEvent\u2192SFX drain comments in Sim.ts and src/game/CLAUDE.md."
+}

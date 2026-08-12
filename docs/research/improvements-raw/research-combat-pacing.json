@@ -1,0 +1,132 @@
+{
+ "area": "Input buffering vs the OG's measured semantics (busy-state gating, deferred strokes, after-attack window)",
+ "items": [
+  {
+   "title": "Generic fixed-window input buffer (5\u201315 frames / 80\u2013250 ms) as the stroke mechanism",
+   "claim": "Canon practice (fighting games and action games alike) stores an input pressed during recovery in a short fixed window \u2014 typically 5\u201315 frames (~80\u2013250 ms); Smash Bros uses 9\u201310 frames, SFV 3, GBVSR extends to 6\u20137 on wake-up \u2014 executes it on the first actionable frame, and silently discards it if the window expires. Applying this to SSHD strokes (e.g. 'a 120ms buffer') would be a fidelity DEFECT twice over: the OG outright REJECTS a stroke drawn during hit-recovery (it vanishes after 1 content tick, no dash, no damage \u2014 never buffered), and it DEFERS a busy-state stroke for up to ~1.4 s (~21 content ticks \u2248 84 sim frames), an order of magnitude past any canon window, keeping it visibly rendered the whole time.",
+   "sources": [
+    {
+     "title": "Buffer \u2014 SmashWiki",
+     "url": "https://www.ssbwiki.com/Buffer",
+     "grade": "B"
+    },
+    {
+     "title": "GBVSR/Universal Strategy \u2014 Dustloop Wiki",
+     "url": "https://www.dustloop.com/w/GBVSR/Universal_Strategy",
+     "grade": "B"
+    },
+    {
+     "title": "Input Buffering for Better Combat Responsiveness",
+     "url": "https://salivity.github.io/game-development/article/input-buffering-for-better-combat-responsiveness",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Contradicts ledger \u00a7S24-A.6 row K1 (hit-recovery stroke vanishes after 1 tick \u2014 a buffer would execute it) and the PENDING row Honda f0116\u2013f0138 (~1.4 s deferral \u2014 a 120\u2013250 ms window would expire it). Sim.applyStroke today has NEITHER behavior: it executes every manual stroke immediately regardless of playerBusyUntilFrame, so the fix is the OG spec in the next item, not a canon buffer.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "Guidance for A12.2: do not add any *_BUFFER_MS constant to src/config/. The OG's semantics are state-conditional (reject vs defer), not time-window.",
+   "stage": "now (constrains SESSION 24/25 A12.2 design)"
+  },
+  {
+   "title": "OG-faithful spec: busy-state gating + single-slot deferred-stroke queue in Sim, blink rendered by the scene",
+   "claim": "The one piece of canon that DOES match the OG is 'buffered input executes on the first actionable frame after recovery' (SmashWiki; salivity). Spec: (1) add a hit-recovery state to FighterState \u2014 hitRecoveryUntilFrame set in dealDamage when the player is the target, seeded from \u00a7S24-E/F measurements (mid-combo hit hold 4\u20135 content ticks = 16\u201320 sim frames; knockdown ~6 ticks; global hit-stop 3 ticks), since Sim currently flags 'Stun is NOT modelled'. (2) In applyStroke (manual source): if frameCount < hitRecoveryUntilFrame \u2192 REJECT: no dash, no damage, emit a strokeRejected event so DuelScene draws the 1-tick vanish (K1). (3) Else if frameCount < playerBusyUntilFrame (already computed from SLASH_FRAMES windup+active+recovery, today gating only AUTO SLASH) \u2192 DEFER: store the DrawnStroke in a single pendingStroke slot, emit strokePending; in tick(), on the first frame past busy, run it through the same applyStroke slash path. (4) No expiry timer \u2014 the OG's ~1.4 s is 'until recovery', not a window; clear on fight end. (5) Render: scene draws the pending polyline blinking 3-on/1\u20132-off content ticks (4 sim frames per content tick), phase derived from Sim.frame via the pending events \u2014 scene stays render-only.",
+   "sources": [
+    {
+     "title": "Buffer \u2014 SmashWiki (first-actionable-frame execution)",
+     "url": "https://www.ssbwiki.com/Buffer",
+     "grade": "B"
+    },
+    {
+     "title": "Input Buffering for Better Combat Responsiveness",
+     "url": "https://salivity.github.io/game-development/article/input-buffering-for-better-combat-responsiveness",
+     "grade": "C"
+    },
+    {
+     "title": "The Art of Input Buffering \u2014 Wayline",
+     "url": "https://www.wayline.io/blog/art-of-input-buffering",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "Directly implements ledger \u00a7S24-C's build consequence ('K1-rejection + PENDING-blink rows give the busy-state gating') on existing seams: Sim.playerBusyUntilFrame and SLASH_FRAMES already exist, applyStroke is the single entry point both manual and auto strokes take (D7), and SimEvent is the established scene channel \u2014 no new architecture needed.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Constants to add in src/config/: HIT_RECOVERY_FRAMES (CONTRACT \u2014 \u00a7S24-E 4\u20135 ticks), STROKE_REJECT_VANISH_TICKS=1 (CONTRACT \u2014 K1), PENDING_BLINK_ON/OFF ticks (CONTRACT \u2014 \u00a7S24-A.6). Chaos-test both gates: plant a stroke inside hit-recovery (must reject), inside own-swing (must defer then execute), and verify the pre-A12.2 behavior (immediate execution) goes red.",
+   "stage": "SESSION 24/25 (A12.2)"
+  },
+  {
+   "title": "Song's 'After Attack Delay' (Game Developer, 2005) \u2014 the canon rationale for DEFER-not-drop during own-swing recovery",
+   "claim": "Jiesang Song (main game programmer, Kingdom Under Fire: The Crusaders) documents the technique the orchestrator asked about: after an attack, the character animation lingers so the player's next attack input is accepted even when the button press missed the precise timing \u2014 Devil May Cry, PoP: Warrior Within, and Ninja Gaiden all do it, purely as an input-responsiveness device. This is exactly the design intent behind the OG's PENDING behavior (a busy-state stroke waits and then chains), and \u00a7S24-E's 'chained strike = 0\u20131 tick' landing hold confirms the chain comes out essentially on the first free tick.",
+   "sources": [
+    {
+     "title": "Improving the Combat 'Impact' Of Action Games \u2014 Jiesang Song, Game Developer 2005",
+     "url": "https://www.gamedeveloper.com/audio/improving-the-combat-impact-of-action-games",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "The principle (accept the late input, execute at recovery end) survives verbatim, but the parameterization must come from the ledger, not Song: acceptance window = the whole playerBusyUntilFrame period (\u00a7S24-A.6 PENDING shows ~1.4 s, not a lingering-animation fudge), execution beat from SLASH_FRAMES (src/config/timing.ts) + \u00a7S24-E landing holds, and \u2014 unlike every canon implementation \u2014 the deferred stroke stays VISIBLE, blinking. Fully subsumed by the item-2 spec; listed separately because it is the requested canon anchor.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Already excerpted in docs/research/2026-08-05-improvements-research.md (rows 129/364/573) \u2014 cross-link the A12.2 commit to it.",
+   "stage": "SESSION 24/25 (with item 2)"
+  },
+  {
+   "title": "Reject/defer boundary, pending-slot replacement policy, and deferral timeout are underdetermined \u2014 measure before pinning CONTRACT",
+   "claim": "The ledger has exactly two data points: K1 (rejected \u2014 drawn 1 tick after a hit flash, mid-slide, left end 29 px behind center) and PENDING (deferred ~1.4 s). Three unknowns a wrong guess would fossilize: (a) is the boundary hit-recovery-vs-own-swing, or early-vs-late recovery (canon precedent for the latter: GBVSR widens the buffer specifically on wake-up; Brawl forbids buffering out of tumble hitstun entirely \u2014 state-dependent rules are normal)? (b) if a second stroke is drawn while one is pending, does it replace the slot (canon: newer input wins \u2014 Yosi Spring; Smash's priority hierarchy) or get ignored? (c) does deferral ever time out, or only resolve at recovery/fight-end? Scan both longplays for double-stroke-while-busy and late-recovery-stroke instances before tagging these CONTRACT.",
+   "sources": [
+    {
+     "title": "Buffer \u2014 SmashWiki (hitstun/tumble buffering rules, priority hierarchy)",
+     "url": "https://www.ssbwiki.com/Buffer",
+     "grade": "B"
+    },
+    {
+     "title": "GBVSR/Universal Strategy \u2014 Dustloop (state-widened wake-up buffer)",
+     "url": "https://www.dustloop.com/w/GBVSR/Universal_Strategy",
+     "grade": "B"
+    },
+    {
+     "title": "Input Buffering, Action Canceling, and also Forbidden Knowledge \u2014 Yosi Spring",
+     "url": "https://medium.com/@yosispring/input-buffering-action-canceling-and-also-forbidden-knowledge-47a3f8a95151",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "Ledger \u00a7S24-A.6 itself flags the thinness (K1 vs K2 differ by 2 ticks AND 69 px of placement \u2014 position vs timing is confounded), and \u00a7S24-H's adversarial verify pass is still [VERDICT PENDING] on adjacent claims. Ship item 2 with these three tagged INFERRED (single slot, latest-wins, no timeout) and a TODO row in COMBAT_MEASUREMENTS.md.",
+   "effort": "Medium",
+   "impact": "Medium",
+   "implementation_note": "Cheapest instrument: the existing 15 fps extraction + red-mask stroke scan over hit-reaction windows in both videos; the Honda window (B t=3770\u20133782) already has per-tick crops in reference/frames/session24/.",
+   "stage": "SESSION 25 measurement pass"
+  },
+  {
+   "title": "Residual use of generic-canon numbers: INFERRED seeds and latency sanity bands only",
+   "claim": "Canon buffer numbers keep three narrow jobs here: (1) the 80\u2013250 ms canon band and Celeste's few-frame jump buffer (Thorson: press-before-landing executes on the landing frame) bracket the OG's own 66.7 ms content-tick quantization \u2014 a sanity bound that scene pointer-up \u2192 applyStroke commit latency must stay within ~1 content tick, or K1-vs-K2-class distinctions (2 ticks apart) become irreproducible; (2) if the SESSION 25 measurement finds late-hit-recovery strokes deferring rather than rejecting, GBVSR's 6\u20137-frame wake-up buffer is the right INFERRED seed for that sliver; (3) Yosi Spring's consumed-input clearing (clear the slot on execution so one stroke can never double-fire) is a correctness pattern for the pendingStroke slot regardless of parameters. Everything else about canon buffers has no purchase on this game.",
+   "sources": [
+    {
+     "title": "Maddy Thorson \u2014 Celeste game-feel thread (jump buffering)",
+     "url": "https://threadreaderapp.com/thread/1238338574220546049.html",
+     "grade": "B"
+    },
+    {
+     "title": "GBVSR/Universal Strategy \u2014 Dustloop",
+     "url": "https://www.dustloop.com/w/GBVSR/Universal_Strategy",
+     "grade": "B"
+    },
+    {
+     "title": "Input Buffering, Action Canceling, and also Forbidden Knowledge \u2014 Yosi Spring",
+     "url": "https://medium.com/@yosispring/input-buffering-action-canceling-and-also-forbidden-knowledge-47a3f8a95151",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Any such value entering src/config/ must carry the INFERRED tag per src/config/CLAUDE.md's labeling rule \u2014 none of these are OG measurements. Note Sim.queueSkill already implements a 1-frame edge-trigger buffer for skills (press consumed next tick, discarded outside 'fighting'), so no canon skill-buffer work is needed there.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "The latency bound (1) is a test, not a constant: assert in a DuelScene input test that pointerup dispatches applyStroke within the same render frame.",
+   "stage": "SESSION 24/25 (alongside item 2), item (2) only after Stage-25 measurement"
+  }
+ ],
+ "sources_consulted": 9,
+ "dead_ends": "\"Song's after-attack delay\" was ungoogleable as a fighting-game or CHI term (searches for Song + after-attack delay + input study returned only music/adaptive-audio papers); it resolved via repo grep to Jiesang Song's 2005 Game Developer article, already excerpted in docs/research/2026-08-05-improvements-research.md, and the live URL was then confirmed by fetch. grokipedia.com/page/Input_buffer_fighting_games returned HTTP 403; glossary.infil.net is JS-rendered and returned no content via fetch (its 'Delay Tech' entry URL from search results was therefore not used as a source). No canon source anywhere discusses VISUAL feedback for a buffered/pending input \u2014 the OG's blinking pending stroke has no canon analogue, so its render spec rests entirely on ledger \u00a7S24-A.6."
+}

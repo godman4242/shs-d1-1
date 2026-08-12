@@ -1,0 +1,163 @@
+{
+ "area": "Pointer capture & gesture classification",
+ "items": [
+  {
+   "title": "Replace the event-count drag/hold discriminator with a distance slop; under \u00a7S24-C the ONLY threshold the slash-vs-move classifier needs is a tiny hold slop",
+   "claim": "Universal practice discriminates drag-from-click by DISTANCE from the down point, not by event count: Windows starts a drag only past SM_CXDRAG/SM_CYDRAG (default 4 px, DragDetect rectangle); inside the slop 'nothing happens'. pointermove dispatch is rAF-aligned (~60 Hz typical) and coalescing varies per device/browser, so a count of pointermove events measures event rate, not motion. The repo's `mouseMoving = this.mouseHoldActive && this.dragPoints.length < 4` (DuelScene.update) is exactly the fragile form: a jittery hold cancels run after 4 events regardless of distance, and the first \u22643 move events of EVERY real stroke feed `moveTargetX` \u2014 the fighter starts moving at stroke onset, which is the owner-reported 'short drags stolen for movement' bug direction. The \u00a7S24-C-consistent classifier: while held and cumulative displacement \u2264 slop \u2192 movement verb (hold-run/click-destination per ledger b-1); once displacement > slop \u2192 the gesture IS a stroke, movement intent nulls for its remainder; on release, any beyond-slop stroke = slash at ANY range (PB-1/Beach S6: point-blank strokes attack). No minimum-slash-length and no range gate exist or may be added.",
+   "sources": [
+    {
+     "title": "DragDetect function (winuser.h) \u2014 Microsoft Learn",
+     "url": "https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-dragdetect",
+     "grade": "A"
+    },
+    {
+     "title": "What happens if I drag the mouse by exactly SM_CXDRAG? \u2014 Raymond Chen, The Old New Thing",
+     "url": "https://devblogs.microsoft.com/oldnewthing/20100304-00/?p=14733",
+     "grade": "B"
+    },
+    {
+     "title": "react-beautiful-dnd mouse sensor docs (sloppy-click threshold)",
+     "url": "https://github.com/dudestein/react-beautiful-dnd-pt/blob/master/docs/sensors/mouse.md",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "DuelScene.update's `dragPoints.length < 4` heuristic contradicts ledger \u00a7S24-C A12.2 ('classification cannot steal short/point-blank drags for movement'); core/gesture.ts classifyGesture already never returns a move verb, so the fix is scene-side only.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "Add one INFERRED constant to src/config/gesture.ts (e.g. STROKE_SLOP_WORLD_PX \u2248 4\u20138 world px, seeded from the OS 4-px convention scaled to world space) and key `mouseMoving` on cumulative displacement from the pointerdown point instead of dragPoints.length; once exceeded, latch 'this gesture is a stroke' until pointerup. finishStroke stays as-is (2-point gate + classifyGesture's degenerate\u2192slash default already satisfy ANY-stroke=slash).",
+   "stage": "now (it fixes an owner-reported misclassification class)"
+  },
+  {
+   "title": "Capture coalesced pointer samples via Phaser's exposed native event \u2014 getCoalescedEvents through Pointer.event",
+   "claim": "Browsers coalesce device input (mice/pens sample 120\u20131000 Hz) into rAF-aligned pointermove (~60 Hz); fast flicks therefore reach the app as sparse polylines unless getCoalescedEvents() is read on each pointermove \u2014 the W3C/MDN-recommended pattern for stroke capture, adopted by shipped ink SDKs (Nutrient). Phaser 3 does not surface coalesced events itself (no mention anywhere in its Pointer API), but `Pointer.event` exposes 'the most recent native DOM Event', so the scene handler can call `p.event.getCoalescedEvents?.()` and push every coalesced position. Support is 'Limited availability' (not Baseline) per MDN, so the optional-chaining fallback to the single point is mandatory. Payoff here: truer red-stroke rendering of fast flicks against the OG trail, and a truer polylineLength for the flick proxy; blade-path HIT detection is less affected because polyline segments already span the gaps.",
+   "sources": [
+    {
+     "title": "PointerEvent.getCoalescedEvents() \u2014 MDN",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/getCoalescedEvents",
+     "grade": "A"
+    },
+    {
+     "title": "Smoother Interactions on the Web: getCoalescedEvents() \u2014 Nutrient (ink SDK vendor)",
+     "url": "https://www.nutrient.io/blog/using-getcoalescedevents/",
+     "grade": "B"
+    },
+    {
+     "title": "Phaser Pointer API (event property; 'DOM pointer events can fire faster than the main browser loop')",
+     "url": "https://docs.phaser.io/api-documentation/class/input-pointer",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "DuelScene's pointermove handler currently pushes one world point per Phaser event into dragPoints (cap 2048) \u2014 coalesced points slot into the same array with no core/ change; core/gesture.ts and DrawnStroke are point-count agnostic.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "In the pointermove handler: `for (const ce of (p.event as PointerEvent).getCoalescedEvents?.() ?? [p.event]) push(stageToWorld(...))` \u2014 note coalesced clientX/Y need the same stage-px conversion Phaser applies, so scale via the canvas bounds or reuse Phaser's transform helper; keep the 2048 cap. Apply identically in EncounterScene.",
+   "stage": "SESSION 24/25 (pairs with the A12.2 input rework)"
+  },
+  {
+   "title": "pointerrawupdate \u2014 skip it",
+   "claim": "pointerrawupdate dispatches un-coalesced events as fast as JS can handle them, trading main-thread cost for sub-frame latency; MDN and the spec editor's own comparison say to use it only when coalesced pointermove is insufficient, and warn listeners 'can affect performance'. This repo consumes strokes only at pointerup into a fixed-60 Hz Sim, and the OG being recreated is itself a pure 15 fps stepper with zero interpolation (\u00a7S24-E 60 fps burst proof) \u2014 sub-frame input latency buys nothing measurable toward 1:1 feel, and Phaser's InputManager doesn't listen to the event anyway.",
+   "sources": [
+    {
+     "title": "Element: pointerrawupdate event \u2014 MDN",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerrawupdate_event",
+     "grade": "A"
+    },
+    {
+     "title": "pointermove vs pointerrawupdate \u2014 Navid Zolghadr (Pointer Events spec editor) demo/explainer",
+     "url": "https://navidz.github.io/pointerrawupdate.html",
+     "grade": "B"
+    },
+    {
+     "title": "Pointer Events Level 3 \u2014 W3C TR",
+     "url": "https://www.w3.org/TR/pointerevents3/",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Ledger \u00a7S24-E ('pure 15fps stepper, zero interpolation') plus Sim's fixed-Hz accumulator (src/core/Sim.ts, Spec-fixed FIXED_HZ) mean sub-rAF input latency is below the game's own perceptual floor; coalesced pointermove (item above) already recovers full path completeness.",
+   "effort": "Low",
+   "impact": "Low"
+  },
+  {
+   "title": "$1/$P gesture recognizers do not apply \u2014 the net-displacement sector classifier is the correct shape",
+   "claim": "The $-family are instance-based template matchers for symbol vocabularies: $1 resamples a stroke to N points and nearest-neighbor-matches against stored templates; $P treats gestures as unordered point clouds and is explicitly DIRECTION-INVARIANT (its own authors note clockwise vs counterclockwise circles can't be discriminated). The OG's gesture map is four direction sectors where direction IS the meaning (horizontal=slash, up=jump/launch, down=stab \u2014 video-confirmed SYNTHESIS \u00a75), so $P is disqualified outright and $1 would add template storage, resampling, and rotation-invariance machinery to answer a question `atan2` already answers. Practitioner consensus matches: $-recognizers are for letter/shape vocabularies, simple angle thresholds for directional swipes.",
+   "sources": [
+    {
+     "title": "$1 Unistroke Recognizer \u2014 Wobbrock et al., UW ACE Lab (primary)",
+     "url": "http://depts.washington.edu/acelab/proj/dollar/",
+     "grade": "A"
+    },
+    {
+     "title": "Gestures as Point Clouds: A $P Recognizer \u2014 ICMI 2012 paper",
+     "url": "https://faculty.washington.edu/wobbrock/pubs/icmi-12.pdf",
+     "grade": "A"
+    },
+    {
+     "title": "$P recognizer page (direction-invariance caveat)",
+     "url": "https://depts.washington.edu/acelab/proj/dollar/pdollar.html",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "src/core/gesture.ts classifyGesture (net-displacement angle vs GESTURE_DIAG_DEG sector) already implements the video-confirmed 4-sector map; a template matcher would be churn violating 'simplest change wins' and would import no OG-measured behavior.",
+   "effort": "Medium",
+   "impact": "Low"
+  },
+  {
+   "title": "LAUNCH_FLICK length-as-speed proxy: real per-point timestamps are now cheap, but measure the OG's launch discrimination first",
+   "claim": "The config comment's premise ('raw pointer points carry no per-point timestamps in our pipeline') is a pipeline choice, not a platform limit: every PointerEvent \u2014 including each coalesced event \u2014 carries its own timeStamp, so carrying {x,y,t} instead of {x,y} enables true velocity-based flick detection, the standard in ink/gesture systems. However the OG's actual launch-vs-jump rule (speed? length? both?) has never been measured from the videos, and RESUME_HERE decision #9's own default is 'keep, revisit at Stage 2 feel pass'. Also flag: decision #9's text still says LAUNCH_FLICK_MAX_LEN=90 but src/config/gesture.ts is 75 (world-space conversion, SESSION13 A0) \u2014 the RESUME_HERE row is stale.",
+   "sources": [
+    {
+     "title": "PointerEvent.getCoalescedEvents() \u2014 MDN (coalesced events carry their own properties)",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/getCoalescedEvents",
+     "grade": "A"
+    },
+    {
+     "title": "Pointer Events Level 3 \u2014 W3C TR (coalesced events list semantics)",
+     "url": "https://www.w3.org/TR/pointerevents3/",
+     "grade": "A"
+    },
+    {
+     "title": "I Made a Stroke Stabilization Library for Web Drawing Apps \u2014 dev.to practitioner writeup",
+     "url": "https://dev.to/usapopopooon/i-built-a-library-to-reduce-hand-tremor-in-drawing-apps-33ng",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "src/config/gesture.ts labels LAUNCH_FLICK_MAX_LEN INFERRED with 'length proxies flick speed'; replacing the proxy before the OG's up-flick behavior is measured from reference/videos/ frames would swap one guess for another \u2014 measure launch strokes in the videos (they may not even be distinguishable at 15 fps), then decide.",
+   "effort": "Medium",
+   "impact": "Medium",
+   "implementation_note": "If measurement supports a speed rule: extend dragPoints to {x,y,t} using event.timeStamp (works with and without coalesced events) and compute px/ms over the stroke; GESTURE_DIAG_DEG=45 itself stays \u2014 no web evidence exists for a 'better' sector half-angle, and the sector MAP (not the boundary) is what's video-confirmed.",
+   "stage": "Stage 2 feel pass (per decision #9's own default)"
+  },
+  {
+   "title": "Touch-vs-mouse unification: Phaser's pointer abstraction already covers it; only the slop constant would branch if touch becomes a target",
+   "claim": "Phaser 3 unifies mouse and touch into one Pointer API ('you don't have to worry about whether the user is on a desktop with a mouse, or a mobile device with touch'), dispatching the same pointerdown/pointermove/pointerup stream the scenes already consume, and the repo already handles the classic unification trap of off-target releases via pointerupoutside. The one practice delta that would matter later: touch drag thresholds in shipped systems are substantially larger than mouse ones (Windows mouse 4 px vs Android's touch slop of 8dp \u2248 24\u201332 physical px) because fingers wobble \u2014 so IF a touch build ever becomes a goal, the hold slop from the first item should branch on pointerType (available on the native event). For the current desktop Flash-recreation target, one mouse-scale constant is correct.",
+   "sources": [
+    {
+     "title": "Phaser Input concepts \u2014 official docs (unified mouse/touch pointer system)",
+     "url": "https://docs.phaser.io/phaser/concepts/input",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser Pointer API \u2014 official docs",
+     "url": "https://docs.phaser.io/api-documentation/class/input-pointer",
+     "grade": "A"
+    },
+    {
+     "title": "DragDetect / SM_CXDRAG \u2014 Microsoft Learn (mouse-scale threshold baseline)",
+     "url": "https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-dragdetect",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "DuelScene.create and EncounterScene both listen on Phaser's unified pointerdown/pointermove/pointerup AND pointerupoutside (the Stage-1 audit's swallowed-stroke fix) \u2014 no touch-specific code is missing for the current desktop target; the pointerType slop branch is a noted future adaptation, not present work.",
+   "effort": "Low",
+   "impact": "Low"
+  }
+ ],
+ "sources_consulted": 14,
+ "dead_ends": "No Phaser GitHub issue or PR adding native getCoalescedEvents support was found (searches surfaced only W3C spec-repo issues and the unrelated phaserjs/phaser#6697 about overlapping HTML elements) \u2014 hence the Pointer.event escape-hatch route. No research grounding exists for an 'optimal' diagonal sector half-angle (45\u00b0 is convention, nobody has published a better number), so GESTURE_DIAG_DEG=45 stays INFERRED on feel alone. The MDN fetch returned 'Limited availability / not Baseline' for getCoalescedEvents but not exact current Safari version numbers, so no per-version support claim is made beyond the Nutrient article's older Chrome 74+/Firefox 67+ figures. The ledger's \u00a7S24-H adversarial verify row for \u00a7S24-C is still [VERDICT PENDING] \u2014 the ANY-stroke=slash rule adjudicated against here is the ledger's current leading reading, not yet skeptic-confirmed."
+}

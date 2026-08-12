@@ -1,0 +1,48 @@
+{
+ "area": "Impact feel: hitstop, screen shake, vibration",
+ "item_verdicts": [
+  {
+   "title": "Victim-hit hitstop: whole-world 3-tick (~200ms) freeze + red edge vignette",
+   "verdict": "WEAKENED",
+   "why": "Ledger \u00a7S24-F 'Global hit-stop' row matches verbatim (ENTIRE world froze 3 content ticks ~200ms under a red edge vignette, strokes/background/bars pixel-identical, chaos-testable). Repo confirmed: DuelScene's damage-to-player branch (drainEvents, ev.target==='player') calls only spawnBlood + startOgSlash('enemy') \u2014 no freeze anywhere in src/. Sources verified live: the Source Gaming Sakurai translation does say both parties freeze while others keep moving and duration scales with damage; SmashWiki does give the Ultimate d*0.65+6 formula with a 30-frame cap and pair-only scope. The one over-claim: 'fixed length, not damage-scaled' is asserted as the measured spec, but the ledger records the 3-tick freeze from the single A28 hit window \u2014 invariance across damage sizes was never established.",
+   "correction": "Treat 3 ticks (12 sim steps @60Hz) as the MEASURED value from the A28 window, but do not assert 'fixed length, not damage-scaled' as measured fact \u2014 the corpus contains too few freeze instances to rule out damage scaling. Tag the tick count MEASURED (\u00a7S24-F, single-window) and note that a future pass with freezes at different damage sizes should confirm invariance."
+  },
+  {
+   "title": "Attacker-hit hitstop (player LANDS a hit): unobserved \u2014 measure before adding",
+   "verdict": "CONFIRMED",
+   "why": "Ledger checks out exactly: \u00a7S24-F records the freeze only 'when the A28 player took a hit'; \u00a7S24-E partb 'Landing holds' rows give E1: 4 ticks and E11: 4\u20135 ticks with +47px recoil drift as attacker pose recovery, with no background/HUD pixel-static assertion. Sakurai source verified ('when you strike the opponent, both parties momentarily freeze'). Minor nuance that does not change the MEASURE_FIRST adjudication: the column never literally says 'EVERY connect', and SmashWiki documents an exception (zero-knockback hits cause no hitlag) \u2014 the canon rule is slightly softer than stated, which only strengthens the case for measuring before adopting.",
+   "correction": ""
+  },
+  {
+   "title": "Screen shake and controller vibration: canon staples the OG does not have",
+   "verdict": "CONFIRMED",
+   "why": "Re-ran the greps myself: zero hits for shake/vibrat/rumble/haptic across COMBAT_MEASUREMENTS.md and all of src/. \u00a7S24-G trap #9 says exactly what is claimed (mushroom cluster fixed overlay dx=0 corr 1.00; boulder layer parallaxes at 0.73\u00d7) \u2014 the corpus demonstrably tracked camera anchoring. \u00a7S24-C build-consequence line reads verbatim 'any drawn stroke = slash'. Both cited fetchable sources verified: the Vlambeer talk summary covers screenshake + the 0.2s sleep; the Game Developer Song article recommends camera shake and controller rumble. The item also honestly flags absence-of-shake as inference from a camera-tracking corpus, not positive measurement. REJECT stands.",
+   "correction": ""
+  },
+  {
+   "title": "Per-hit full-screen red wash / hurt vignette on damage taken (3\u20135 ticks)",
+   "verdict": "CONFIRMED",
+   "why": "Ledger \u00a7S24-F wash row matches word-for-word (3\u20135 ticks/burst, scene visible through it, 7 bursts tracked against HP drops, 2 kills with NO wash, reconfirms e-5.2), and e-5.2 itself says the ~0.20s red tint with scene-in-colour is the player-hurt vignette, distinct from the kill-cam's red+black-silhouette screen. Repo confirmed: no per-hit wash exists \u2014 the player-damage branch spawns blood only; the killBeat fillRect overlay (COL.bloodDark 0.85*a over GAME_WIDTH\u00d7GAME_HEIGHT) exists as the cited render pattern; fx.ts is the right MEASURED-constants home per src/config/CLAUDE.md. Song article verified for the screen-flash/hit-lighting canon framing.",
+   "correction": ""
+  },
+  {
+   "title": "Existing persistent low-HP vignette is INFERRED and possibly a divergence",
+   "verdict": "CONFIRMED",
+   "why": "Repo confirmed exactly: DuelScene.drawHud carries the comment 'Low-HP red vignette: ramps from 50% HP (SYNTHESIS \u00a74)' and draws four edge rects at alpha ((0.5-hpFrac)/0.5)*0.4 \u2014 the claimed 50%-threshold/0.4-alpha ramp, with no MEASURED backing. The ledger records only event-driven red overlays (e-5.2 per-hit vignette, \u00a7S24-F wash, kill-cam); no persistent low-HP tint row exists. The proposed measurement window is real: e-5.1 documents the beach duel falling to 4/20 HP across t=1959.60\u20131963.57. MEASURE_FIRST is the right call and the frame-check protocol matches the corpus's own methods.",
+   "correction": ""
+  },
+  {
+   "title": "Kill beat: replace INFERRED slow-mo FINISHER_FLASH with the measured hard-cut kill-cam timeline",
+   "verdict": "CONFIRMED",
+   "why": "Every repo detail verified: fx.ts FINISHER_FLASH is labeled INFERRED with durationMs 420, slowMoScale 0.35, slowMoRampMs 90; DuelScene applies the slow-mo timescale during the kill beat and launches the result scene at a hardcoded 900ms hold. Ledger \u00a7S24-F kill-cam timeline matches the claim exactly: +2 ticks HARD CUT (no fade) to red+black silhouettes, lean-back then forward waist-collapse settled in 16 ticks, YOU WIN +17 ticks after onset, ~74 ticks (~4.9s) total, hard cut to loot \u2014 no slow-mo anywhere. The stuck-timescale landmine is a real src/game/CLAUDE.md invariant; the 'death is 38 recorded frames' DuelScene comment exists; the config-values.test.ts dual-entry ratchet is a real src/config/CLAUDE.md rule. Song article verified for the slow-motion canon contrast.",
+   "correction": ""
+  },
+  {
+   "title": "Measured hit-reaction displacements: launcher, knockdown, knockback (Sim-owned, not render juice)",
+   "verdict": "WEAKENED",
+   "why": "Ledger verified: \u00a7S24-F hit-reactions row matches every number (small \u22127/\u221212 displace ~0; big \u221217..\u221219 displace 40\u2013270px; launcher ~270px vertical lands 7 ticks; knockdown +136\u2013186px stands ~6 ticks; knockback \u2212188px + skid settle), and \u00a7S24-C P-LEGS carries the 6 hit-physics legs including knockbacks \u2212188/+40px and \u226442px settles. Repo verified: Sim's damage application (applyDamage path ending at the 'type: damage' event push) changes HP/combo/corpse state only \u2014 no victim displacement; both DuelScene damage branches read 'No transcribed hit-stagger yet (P5)'. Song article verified for the damage-reaction principle. The flaw: the implementation note bundles 'KB-RULE direction' into the MEASURED-tagged constants, but the ledger explicitly tags KB-RULE '(medium)' confidence \u2014 flat-tagging it MEASURED would violate the config labeling honesty rule.",
+   "correction": "Tag the per-reaction displacements and tick counts MEASURED (\u00a7S24-F/\u00a7S24-C), but carry KB-RULE's ledger confidence: label the displacement-direction rule MEASURED-medium (or INFERRED with the \u00a7S24-F citation), alongside the already-flagged INFERRED small/big-hit threshold."
+  }
+ ],
+ "overall_note": "The research output survives adversarial review almost intact: 5/7 CONFIRMED, 2 WEAKENED (both on tag/scope precision, not substance), 0 REFUTED. All four fetchable sources spot-checked live and say what is attributed to them (Sakurai pair-freeze + damage scaling; SmashWiki d*0.65+6 cap-30 pair-only formula; Song's shake/rumble/flash/slow-mo/damage-reaction canon; the Weidar summary's 0.2s sleep). Every cited ledger row was re-read at the pixels of the file and matches, and none falls under the \u00a700b or \u00a7S24-H corrections (which overturn f-8/f-9/e-7/a-6 and a-2/a-5/gap-G/gap-H \u2014 untouched by these items). Repo state confirmed independently: no hitstop, no wash, no shake code, no Sim displacement on damage; the INFERRED FINISHER_FLASH slow-mo and 50%/0.4 low-HP vignette exist exactly as described. The two corrections to apply: (1) don't promote the single-window 3-tick freeze to 'fixed length, not damage-scaled' as measured fact; (2) KB-RULE direction is ledger-tagged medium confidence, so it must not be flat-tagged MEASURED in config."
+}

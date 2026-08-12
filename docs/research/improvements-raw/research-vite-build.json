@@ -1,0 +1,115 @@
+{
+ "area": "Vite 8 (Rolldown) build & bundle \u2014 chunk-control API verification and now-vs-Stage-6 adjudication",
+ "items": [
+  {
+   "title": "Correct chunk-control API for vite@8.1 is build.rolldownOptions.output.codeSplitting \u2014 not manualChunks, not advancedChunks",
+   "claim": "Vite 8 renamed build.rollupOptions to build.rolldownOptions (old name kept as a deprecated alias). Under output, object-form manualChunks is REMOVED, function-form manualChunks is deprecated (and ignored if codeSplitting is present), and advancedChunks is a deprecated alias of codeSplitting (rolldown 1.1.5 types: 'type AdvancedChunksOptions = CodeSplittingOptions', '@deprecated Please use codeSplitting instead'; advancedChunks is ignored when both are set). The living option is output.codeSplitting: boolean | { groups?: [{ name: string|fn, test?: string|RegExp|fn, priority?, minSize?, maxSize?, minShareCount?, ... }], minSize?, maxSize?, minShareCount?, includeDependenciesRecursively? }. VERIFIED against the installed package itself (node_modules/rolldown/dist/shared/define-config-BhJ90aEv.d.mts under vite@8.1.5) plus a successful live `npx vite build` using it.",
+   "sources": [
+    {
+     "title": "Vite \u2014 Migration from v7 (rolldownOptions rename; manualChunks removal; codeSplitting replacement)",
+     "url": "https://vite.dev/guide/migration",
+     "grade": "A"
+    },
+    {
+     "title": "Rolldown \u2014 OutputOptions.codeSplitting reference (full option shape + groups example)",
+     "url": "https://rolldown.rs/reference/OutputOptions.codeSplitting",
+     "grade": "A"
+    },
+    {
+     "title": "vitejs/vite issue #21414 \u2014 Document rolldownOptions.output.advancedChunks deprecation (opened 2026-01-15)",
+     "url": "https://github.com/vitejs/vite/issues/21414",
+     "grade": "A"
+    },
+    {
+     "title": "byteiota \u2014 Vite 8 Rolldown migration guide (practitioner: manualChunks object form gone, codeSplitting is the replacement)",
+     "url": "https://byteiota.com/vite-8-rolldown-migration-guide-10-30x-faster-builds/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "PROBLEMS.md active problem 1 already names 'build.rolldownOptions.output.codeSplitting' as Vite's own suggested option, and the repo's installed rolldown 1.1.5 d.mts confirms it is the sole non-deprecated API \u2014 any future chunk config in vite.config.ts must use this form.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "This is the API ruling that item-3's Stage 6 snippet is written against. Nothing to change in vite.config.ts for this item alone; it exists so the Stage 6 work (and any doc) never reaches for manualChunks/advancedChunks.",
+   "stage": "now (as recorded knowledge); applied at Stage 6"
+  },
+  {
+   "title": "Now-fix: add a build section with chunkSizeWarningLimit ~1500 to silence the cosmetic 1360kB warning",
+   "claim": "The 1,360.08 kB warning is emit-only \u2014 the build succeeds and the pre-commit gate stays green \u2014 so the only cost is noise in PROBLEMS.md tracking. build.chunkSizeWarningLimit (number, kB, default 500) is unchanged in Vite 8. VERIFIED live: a build with only `chunkSizeWarningLimit: 1500` produced the byte-identical bundle PROBLEMS.md reports (index-DsRXxsrp.js, 1,360.08 kB / gzip 366.89) with no warning. Snippet valid for vite@8.1.5 (ran it): export default defineConfig({ test: {...}, build: { chunkSizeWarningLimit: 1500 } }). 1500 gives ~140 kB headroom for game-code growth through Stage 6 while still catching a runaway regression.",
+   "sources": [
+    {
+     "title": "Vite \u2014 Build Options (chunkSizeWarningLimit type number, default 500 kB)",
+     "url": "https://vite.dev/config/build-options",
+     "grade": "A"
+    },
+    {
+     "title": "byteiota \u2014 Vite 8 Rolldown migration guide (Vite 8 build behavior in practice)",
+     "url": "https://byteiota.com/vite-8-rolldown-migration-guide-10-30x-faster-builds/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "PROBLEMS.md problem 1 itself offers 'raise build.chunkSizeWarningLimit if the single-chunk bundle is intentional' \u2014 and RESUME_HERE.md's backlog row 'Phaser bundle 1.2 MB \u2192 code-split at Stage 6' says the single chunk IS intentional until Stage 6; this is the smallest diff that closes the only active problem.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "vite.config.ts currently imports defineConfig from 'vitest/config' with only a test block \u2014 add `build: { chunkSizeWarningLimit: 1500 /* Phaser ~1.2MB single-chunk intentional until Stage 6 code-split (RESUME_HERE backlog) */ }` beside it. vitest/config's defineConfig accepts full Vite build options. Clears PROBLEMS.md problem 1.",
+   "stage": "now"
+  },
+  {
+   "title": "Phaser vendor chunk via codeSplitting.groups \u2014 snippet verified working, but KEEP it at Stage 6 per the backlog",
+   "claim": "The verified snippet \u2014 build.rolldownOptions.output.codeSplitting: { groups: [{ name: 'phaser', test: /node_modules[\\\\/]phaser[\\\\/]/, priority: 10 }] } \u2014 builds clean on vite@8.1.5 and yields phaser-[hash].js 1,198.00 kB (gzip 319.08) + index-[hash].js 161.47 kB (gzip 48.04). VERIFIED by actually running the build. But splitting now buys nothing at runtime: Phaser is a static top-level import, so both chunks load at startup; the only benefit is HTTP-cache reuse of the Phaser chunk across app-code deploys, which matters only when the game ships to users (Stage 6). Risk of doing it now: a changed chunk graph is a new failure surface (Rolldown docs warn manual splitting can reorder side-effect execution unless output.strictExecutionOrder is set, and Phaser executes side effects at import) for zero present gain. Also note: the 1,198 kB phaser chunk still exceeds the 500 kB default warn limit, so item 2's limit raise is needed WITH the split anyway, not instead of it.",
+   "sources": [
+    {
+     "title": "Rolldown \u2014 OutputOptions.codeSplitting reference (groups shape; side-effect/strictExecutionOrder warning; [\\\\/] Windows-path advice)",
+     "url": "https://rolldown.rs/reference/OutputOptions.codeSplitting",
+     "grade": "A"
+    },
+    {
+     "title": "Vite \u2014 Migration from v7 (codeSplitting is the sanctioned replacement path)",
+     "url": "https://vite.dev/guide/migration",
+     "grade": "A"
+    },
+    {
+     "title": "byteiota \u2014 Vite 8 Rolldown migration guide (practitioner vendor-split migration pattern)",
+     "url": "https://byteiota.com/vite-8-rolldown-migration-guide-10-30x-faster-builds/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "RESUME_HERE.md backlog row 'Phaser bundle 1.2 MB \u2192 code-split at Stage 6' is a deliberate deferral and nothing in PROBLEMS.md contradicts it (the warning is closable by item 2); adapt = keep the deferral but replace the backlog row's unspecified 'code-split' with this exact verified codeSplitting.groups snippet so Stage 6 doesn't rediscover the API.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "At Stage 6, land the snippet inside build.rolldownOptions.output and re-run the fidelity gate + a real browser LOOK (chunk-graph changes are exactly the class of build change the 55/55 gate exists to catch). Keep chunkSizeWarningLimit at ~1250-1500 since the phaser chunk alone is 1,198 kB. Consider output.strictExecutionOrder if any import-order oddity appears.",
+   "stage": "Stage 6"
+  },
+  {
+   "title": "REJECT any config written against output.advancedChunks (the batch-1 doc's likely guess)",
+   "claim": "advancedChunks was rolldown-vite's original webpack-splitChunks-style option and many 2025-era guides teach it, but as of vite@8.1.5 / rolldown 1.1.5 it is formally deprecated: the installed types alias it to CodeSplittingOptions with '@deprecated Please use codeSplitting instead', it is silently IGNORED whenever codeSplitting is also specified, and vitejs/vite#21414 (2026-01-15) tracks documenting its deprecation pending rolldown/rolldown#7895. Writing new config with advancedChunks means shipping onto a removal track and risking a both-set config where it does nothing.",
+   "sources": [
+    {
+     "title": "vitejs/vite issue #21414 \u2014 Document rolldownOptions.output.advancedChunks deprecation",
+     "url": "https://github.com/vitejs/vite/issues/21414",
+     "grade": "A"
+    },
+    {
+     "title": "Vite \u2014 Migration from v7 (recommends codeSplitting; never mentions advancedChunks as current API)",
+     "url": "https://vite.dev/guide/migration",
+     "grade": "A"
+    },
+    {
+     "title": "v7.vite.dev \u2014 Rolldown Integration guide (historical advancedChunks-era doc, showing why stale guides still teach it)",
+     "url": "https://v7.vite.dev/guide/rolldown",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "The repo's own node_modules/rolldown/dist/shared/define-config-BhJ90aEv.d.mts marks advancedChunks @deprecated and documents that codeSplitting wins when both are present \u2014 adopting it would contradict the installed toolchain's stated direction for zero benefit over item 3's codeSplitting form.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "If the batch-1 improvements doc (docs/research/2026-08-05-improvements-research.md) proposes advancedChunks or manualChunks, correct it to the item-3 codeSplitting snippet.",
+   "stage": "now (doc correction only)"
+  }
+ ],
+ "sources_consulted": 7,
+ "dead_ends": "No Phaser-specific Vite-8 chunking postmortem exists yet (searched; all practitioner migration articles are React/generic \u2014 byteiota was the best and had no chunk-splitting gotchas from production). GitHub issue #21414's comment thread was not readable via fetch (only title/metadata rendered), so the advancedChunks-deprecation claim rests on the issue title + the installed rolldown 1.1.5 type annotations, which are primary evidence anyway. certificates.dev and nexgismo migration articles were returned by search but not fetched (byteiota covered the practitioner angle). Could not use grep/ls directly on node_modules (sandbox permission denials) \u2014 worked around via python3 file reads; conclusions unaffected."
+}

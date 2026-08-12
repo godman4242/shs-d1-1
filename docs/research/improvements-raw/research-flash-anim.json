@@ -1,0 +1,149 @@
+{
+ "area": "Flash/AS3 animation semantics for transcription (SESSION 24 A12.3: run_sheathed, death, hit reaction)",
+ "sources_consulted": 11,
+ "items": [
+  {
+   "title": "Frame-level r=\"1\" flag exists in the payload and the transcriber silently drops it \u2014 including in already-committed balancedhorizontalslash_partc",
+   "claim": "Probed all 158 anims in reference/extracted/bindata/108_1t4635s0.bin: <f> elements carry an undocumented r=\"1\" attribute on 89 frames across 25 anims (heavyjumpslash_parta x6, gangnam x43, stabattack, launchopponent, ...). One of them is balancedhorizontalslash_partc frame i=5 \u2014 an anim ALREADY transcribed into src/config/ogAnims.ts with the flag silently discarded, because transcribeAnims.py's frame regex `<f i=\"(\\d+)\"[^>]*>` validates unknown attrs on <n> but swallows anything extra on <f> and <anim>. Flash-era formats have exactly this trap: the PlaceObject2 ratio field was documented as morph-only yet actually controls whether a nested Sprite's playhead resets \u2014 undocumented flags carry real playback semantics. In partc, frame 5 is a full 19-node frame so overlay-vs-reset is indistinguishable there, but a wrong guess will show in anims where the r-frame is sparse.",
+   "sources": [
+    {
+     "title": "Hacking SWF \u2013 PlaceObject and the Ratio Field (Claus Wahlers, as3swf author)",
+     "url": "http://wahlers.com.br/claus/blog/hacking-swf-2-placeobject-and-ratio/",
+     "grade": "B"
+    },
+    {
+     "title": "SWF File Format Specification v19 (open-flash mirror)",
+     "url": "https://open-flash.github.io/mirrors/swf-spec-19.pdf",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "transcribeAnims.py enforces fail-loud on <n> attrs (`known = set(kv) - {...}` sys.exit) but its <f> regex `<f i=\"(\\d+)\"[^>]*>` ignores frame attrs; ogAnims.ts balancedhorizontalslash_partc therefore already lost frame 5's r=\"1\" \u2014 the D4 'verbatim, byte-true' contract in the ogAnims.ts header is currently violated.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "Extend the fail-loud grammar to <f> and <anim> attribute allowlists ({i,r} and {i,d,l}), record the flag verbatim as e.g. `refresh?: boolean` on the frame, and have OgAnimPlayer treat its semantics as an open question: plausible meanings are 'reset carried map before overlay' or a keyframe marker. Grade its behavior against video only where a sparse r-frame exists. Re-run the transcriber + byte-check suite after.",
+   "stage": "SESSION 24 A12.3, before transcribing new anims"
+  },
+  {
+   "title": "Flash Matrix column semantics (x'=a\u00b7x+c\u00b7y+tx, y'=b\u00b7x+d\u00b7y+ty) \u2014 repo's planPose already applies the exact AS3 formula, and /100 is the right divisor",
+   "claim": "AS3 flash.geom.Matrix is [a c tx / b d ty / 0 0 1]: x'=a\u00b7x+c\u00b7y+tx, y'=b\u00b7x+d\u00b7y+ty; pure rotation is a=cos, b=sin, c=\u2212sin, d=cos, and the SWF-native storage of these terms is 16.16 fixed-point with scale folded in (a=Sx\u00b7cos, b=Sy\u00b7sin(rotateskew0), c=\u2212Sx\u00b7sin(rotateskew1), d=Sy\u00b7cos). The payload's x100 integers are therefore NOT a SWF or AS3 convention \u2014 they are Lut's exporter quantizing float matrices to 2 decimals. Consequence: the 2-decimal precision loss is IN THE SOURCE, so transcribing verbatim and dividing by 100 at compose time reproduces exactly what the OG engine read back; do not 'recover' precision or renormalize the quads.",
+   "sources": [
+    {
+     "title": "flash.geom.Matrix \u2014 ActionScript 3.0 Reference (airsdk.dev)",
+     "url": "https://airsdk.dev/reference/actionscript/3.0/flash/geom/Matrix.html",
+     "grade": "A"
+    },
+    {
+     "title": "Matrix \u2014 Adobe AS3 API Reference",
+     "url": "https://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/geom/Matrix.html",
+     "grade": "A"
+    },
+    {
+     "title": "SWF Appendix A \u2014 Matrix geometry (m2osw)",
+     "url": "https://www.m2osw.com/swf_appendix_a_matrix",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "src/core/planPose.ts Mat2 doc comment states and applies exactly 'x' = a\u00b7x + c\u00b7y, y' = b\u00b7x + d\u00b7y' with rotation as [cos, sin, \u2212sin, cos]; src/core/composePose.ts divides all four terms by OG_MATRIX_UNITS=100 (src/config/ogPose.ts). The web-grounded AS3 formula matches the code term-for-term, including sign placement.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Nothing to change. Death's 6 matrix nodes will flow through the existing path. Keep the 'never renormalize' rule in mind if a matrix quad in death looks non-orthogonal \u2014 the OG's own quantization makes slight non-orthogonality authentic.",
+   "stage": "now (validation)"
+  },
+  {
+   "title": "A12.3 targets probed byte-level: run_sheathed and death parse cleanly under the existing grammar; the whole payload has NO color transforms, motion guides, labels, or scripts",
+   "claim": "Direct probe of 108_1t4635s0.bin: the entire 158-anim / 1638-frame / 24502-node payload contains only 4 element types (animdata, anim, f, n) and <n> carries only i,x,y,r,a,b,c,d \u2014 all integer values, no color-transform attrs, no frame labels, no scripts, no guide paths. Flash motion tweens/guides/easing are authoring-time constructs; this exporter baked everything to per-frame keys, so tween semantics never reach the transcriber. run_sheathed: d=9, l=\"1\", 9 dense 19-node frames, rotation-only, no r-flags. death: d=38, non-looping, 38 dense 19-node frames, 6 matrix nodes, no r-flags, standard slot set (0-7, 9-16, 18-20 \u2014 same as walk/idle). Both are strictly simpler than the already-shipped balancedhorizontalslash chain (no sparse frames at all).",
+   "sources": [
+    {
+     "title": "SWF File Format Specification v19 (tags are placement/shape only; tweens are authoring-time)",
+     "url": "https://open-flash.github.io/mirrors/swf-spec-19.pdf",
+     "grade": "A"
+    },
+    {
+     "title": "Basics of movie clips \u2014 OpenFL Developer's Guide",
+     "url": "https://books.openfl.org/openfl-developers-guide/working-with-movie-clips/basics-of-movie-clips.html",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "scripts/anim/transcribeAnims.py already handles both anims' full grammar \u2014 appending 'run_sheathed' and 'death' to its ANIMS list is sufficient (verified by parsing both with the script's own regexes over the real bindata); OgAnimPlayer's dense-frame path is the trivial case of its carry-forward contract.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "Hit-flash/red-wash coloring seen in video (\u00a7S24-F) is NOT in this skeleton data \u2014 it is engine-side (AS3 ColorTransform at runtime), so recreate it in the scene layer per the ledger's measured red-wash rows, never by extending the anim grammar. Also transcribe sheathesword/sheathetoidle later for the gait chain \u2014 they DO use sparse frames (19,8,8,...) and matrices, still within grammar.",
+   "stage": "SESSION 24 A12.3"
+  },
+  {
+   "title": "No dedicated 'hit reaction' clip exists in the payload \u2014 map \u00a7S24-F's three measured reactions to the gotlaunched/downed/brake clip family from video before transcribing",
+   "claim": "The 158-name inventory has no 'hit', 'hurt', 'flinch', or 'react' clip. The reaction-shaped candidates are: gotlaunchedupwards_parta/b/c, gotlauncheddowned + gotlauncheddownedend, downed/downedup/downedup2/flipupfromdowned, brake, defeatedanimationv1/v2, and (attacker-side) launchopponent. The ledger's \u00a7S24-F measured exactly three distinct player hit reactions \u2014 knock-up LAUNCHER (~270 px vertical, lands 7 ticks), KNOCKDOWN (prone tumble, up by ~6 ticks), knockback slide (\u2212188 px + skid) \u2014 which plausibly map to gotlaunchedupwards_*, gotlauncheddowned(+end/downedup), and brake respectively, but that mapping is unverified. Small hits (\u22127/\u221212 HP, ~0 displacement) may play NO skeleton reaction at all (hit-stop + red wash only, both engine-side per \u00a7S24-F).",
+   "sources": [
+    {
+     "title": "Basics of movie clips \u2014 OpenFL Developer's Guide (clip-per-state architecture)",
+     "url": "https://books.openfl.org/openfl-developers-guide/working-with-movie-clips/basics-of-movie-clips.html",
+     "grade": "B"
+    },
+    {
+     "title": "flash.display.MovieClip \u2014 Adobe AS3 API Reference",
+     "url": "https://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/display/MovieClip.html",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "COMBAT_MEASUREMENTS.md \u00a7S24-F ('Impacts & the kill beat') already distinguishes the three reactions by displacement and recovery ticks but names no clips; transcribing the wrong candidate (e.g. defeatedanimationv1 for a knockdown) would ship a byte-true clip of the wrong animation \u2014 frame-vs-clip matching against reference/frames/session24/ crops is one short video pass.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Cheap protocol: play each candidate through the existing OgAnimPlayer + planPose in a scratch scene, screenshot frame silhouettes, and match against the \u00a7S24-F evidence crops (LAUNCHER window t=3770-3782 video B). Transcribing ALL candidates first is safe and cheap (grammar handles them); only the name\u2192trigger mapping needs measurement.",
+   "stage": "SESSION 24 A12.3 (mapping pass before wiring)"
+  },
+  {
+   "title": "deathbyarrow introduces slot 21 \u2014 the only anim beyond the 0-20 slot map; add a slot-range fail-loud before the death-variant anims",
+   "claim": "Payload-wide probe: 157 of 158 anims stay within slots 0-20 with 8/17 absent everywhere (the transcriber's alias guard is validated against the FULL payload, not just the 4 shipped anims). The single exception is deathbyarrow, which adds slot 21 (the embedded arrow). The A12.3 'death' clip is unaffected (standard 19-slot set), but the transcriber has no upper-bound slot guard and composePose/OG_DRESSED_SLOT_SHAPES has no shape for 21 \u2014 transcribing deathbyarrow today would pass the transcriber and then throw (or silently drop) at compose time depending on the slot-map lookup path.",
+   "sources": [
+    {
+     "title": "SWF File Format Specification v19 (depth/character-id model behind slot indices)",
+     "url": "https://open-flash.github.io/mirrors/swf-spec-19.pdf",
+     "grade": "A"
+    },
+    {
+     "title": "Hacking SWF \u2013 PlaceObject and the Ratio Field (depth semantics practitioner)",
+     "url": "http://wahlers.com.br/claus/blog/hacking-swf-2-placeobject-and-ratio/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "transcribeAnims.py's only slot guard is `if kv[\"i\"] in (8, 17)`; src/config/ogPose.ts documents 'Nodes exist for slots 0-7, 9-16 and 18-20' as an invariant that deathbyarrow's slot 21 breaks \u2014 planPose.ts already fail-louds on a missing shape ('slot N needs shape S, which was not supplied'), so the guard belongs at transcription time where the message can name the anim.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "One-line addition next to the 8/17 guard: fail loudly on slot > 20 with the anim name, so the day deathwitharrow/deathbyarrow is scoped, the error says 'new slot 21 \u2014 extend OG_DRESSED_SLOT_SHAPES first' instead of a downstream compose throw. Not needed for A12.3's plain death.",
+   "stage": "SESSION 24/25 (hardening, before enemy death variants)"
+  },
+  {
+   "title": "The 15 fps latch + carry-forward player is the correct Flash playback model \u2014 validated against Flash timeline semantics, no changes warranted",
+   "claim": "Flash semantics confirm all three pillars of the repo's player: (1) the document frame rate is a single global clock \u2014 every nested MovieClip advances one frame per stage frame (Flash's default was 12 fps historically, 24 in later versions; a 15 fps document setting like SHS Duels' is a deliberate authoring choice, and the \u00a7S24-E 60 fps burst proof of 4-duplicate-frame content blocks confirms zero engine-side interpolation); (2) timeline objects persist at their depth across frames unless explicitly re-placed or removed \u2014 sparse frames listing only changed depths ARE the native Flash storage model, so carry-forward is fidelity, not a workaround; (3) whether a nested clip's playhead resets on re-encounter is controlled by the PARENT (the ratio-field mechanism), matching the repo's 'the a\u2192b\u2192c chain policy is the scene's, not the data's' split exactly.",
+   "sources": [
+    {
+     "title": "Frame Rates in Flash (kirupa)",
+     "url": "https://www.kirupa.com/flash/frame_rates.htm",
+     "grade": "C"
+    },
+    {
+     "title": "Hacking SWF \u2013 PlaceObject and the Ratio Field (nested-clip playhead control)",
+     "url": "http://wahlers.com.br/claus/blog/hacking-swf-2-placeobject-and-ratio/",
+     "grade": "B"
+    },
+    {
+     "title": "SWF File Format Specification v19 (PlaceObject2 move semantics, display list persistence)",
+     "url": "https://open-flash.github.io/mirrors/swf-spec-19.pdf",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "src/core/ogAnimPlayer.ts implements all three: ANIM_TIMING.poseStepMs whole-step latch (matching ledger \u00a7S24-E's 'pure 15 fps stepper, zero interpolation' burst proof), the `carried` Map overlay contract documented in its header with the measured partc example, and `advanceOne`'s hold-last-frame + caller-owned chaining; DuelScene.fighterPose owns the a\u2192b\u2192c policy.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Nothing to change. For death (non-loop, d=38) the existing hold-last-frame behavior is also OG-correct: \u00a7S24-F shows the kill pose holds until the kill-cam cut, so the scene keeps the finished player parked rather than swapping to idle.",
+   "stage": "now (validation)"
+  }
+ ],
+ "dead_ends": "No documentation exists anywhere for Lut Games' custom animdata XML grammar (the DefineBinaryData payload is their own exporter format \u2014 the x100 quantization and the frame-level r flag are ungoogleable; grounded them by probing the bindata directly instead). Searched for Ruffle-specific docs on sparse-keyframe carry-forward \u2014 nothing direct beyond the SWF spec's PlaceObject2 move semantics. No SHS Duels technical postmortem or Explosive Barrel dev blog surfaced in any search. The moldstud/animationclub frame-rate results were content-farm grade and discarded; kirupa retained only for the Flash-default history claim it actually supports."
+}

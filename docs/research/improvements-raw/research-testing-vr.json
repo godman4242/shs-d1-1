@@ -1,0 +1,152 @@
+{
+ "area": "Testing & visual regression \u2014 what is genuinely additive on top of the 55/55 fidelity gate",
+ "sources_consulted": 9,
+ "items": [
+  {
+   "title": "Run the existing ?fidelity=auto gate headlessly in CI via a Playwright script",
+   "claim": "The 55/55 gate is CI-runnable today with zero new assertions: gate data lives in committed src/config/fidelity.ts (the gitignored reference payload is only needed to MEASURE probes, not to RUN them), and ?fidelity=auto already writes a machine-readable verdict to localStorage.__fidelityAuto. A ~50-line Playwright (library, not @playwright/test) script can start the vite dev server, open the URL headless, poll the verdict, and exit nonzero on pass!==true. Headless caveats are all solved upstream: new headless Chromium runs a real compositor (rAF fires; the harness's manual game.loop.step() fallback covers throttling anyway), and software WebGL needs the --enable-unsafe-swiftshader launch flag because Chromium deprecated the automatic SwiftShader fallback starting Chrome 130 \u2014 without it WebGL context creation fails on GPU-less runners like ubuntu-latest.",
+   "sources": [
+    {
+     "title": "Chromium docs \u2014 Using Chromium with SwiftShader (--enable-unsafe-swiftshader)",
+     "url": "https://chromium.googlesource.com/chromium/src/+/refs/heads/main/docs/gpu/swiftshader.md",
+     "grade": "A"
+    },
+    {
+     "title": "Chrome Platform Status \u2014 Remove SwiftShader fallback",
+     "url": "https://chromestatus.com/feature/5166674414927872",
+     "grade": "A"
+    },
+    {
+     "title": "createIT \u2014 Headless Chrome: testing WebGL using Playwright (practitioner)",
+     "url": "https://www.createit.com/blog/headless-chrome-testing-webgl-using-playwright/",
+     "grade": "B"
+    },
+    {
+     "title": "Promaton \u2014 Testing 3D applications with Playwright on GPU (practitioner postmortem)",
+     "url": "https://blog.promaton.com/testing-3d-applications-with-playwright-on-gpu-1e9cfc8b54a9",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "src/main.ts already implements the full automation seam (?fidelity=auto \u2192 localStorage.__fidelityAuto with 'running' marker then verdict, built SESSION23 for exactly this headless-driver use); .github/workflows/ci.yml runs only lint/vitest/build, so the gate currently regresses silently between manual Brave runs. FIDELITY_GATE.md's harness is DEV-only (import.meta.env.DEV) so CI must serve `vite dev`, not the prod build.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Do ONE local headless dry-run first (chromium --headless=new --enable-unsafe-swiftshader against the dev server) and record SwiftShader-vs-GPU per-channel deltas per probe; the gate's \u226432/channel tolerances on flat-fill interior points should absorb rasterizer differences, but verify before making CI red. Chromium launch flags: --headless=new --enable-unsafe-swiftshader --no-sandbox. Budget the job ~3 min (gate is 60-120s when throttled per FIDELITY_GATE.md; headless with real rAF should be faster). Skip GPU runners entirely \u2014 Promaton needed them for heavy 3D at $1.06/hr; a 1024x576 2D vector scene renders fine on SwiftShader.",
+   "stage": "now (SESSION 24 candidate)"
+  },
+  {
+   "title": "Full-canvas pixelmatch baselines per canonical gate state \u2014 the regression net between the 55 points",
+   "claim": "The point-gate samples 41 points + 14 edge scans; everything between them is unprotected (the SESSION-19 class of bug \u2014 a sleeve rendering on the wrong slot \u2014 is invisible to probes that don't land on it). Industry-standard fix: capture one full-frame screenshot per frozen canonical state and diff against a committed baseline with pixelmatch (default comparator in both Playwright and Vitest; threshold ~0.1 YIQ/perceptual metric, AA pixels excluded by default via includeAA=false, budget via a mismatched-pixel ratio). Critical caveat from both Playwright and Vitest docs: rendering is not deterministic ACROSS environments (OS/browser/GPU), so baselines must be generated in the exact environment that compares them \u2014 i.e. CI-generated, platform-suffixed baselines, never local macOS captures compared on ubuntu.",
+   "sources": [
+    {
+     "title": "Playwright \u2014 Visual comparisons (toHaveScreenshot, platform-suffixed baselines)",
+     "url": "https://playwright.dev/docs/test-snapshots",
+     "grade": "A"
+    },
+    {
+     "title": "pixelmatch \u2014 options, AA detection, perceptual color metric",
+     "url": "https://github.com/mapbox/pixelmatch",
+     "grade": "A"
+    },
+    {
+     "title": "Vitest \u2014 Visual Regression Testing guide (environment-pinned references)",
+     "url": "https://main.vitest.dev/guide/browser/visual-regression-testing",
+     "grade": "A"
+    },
+    {
+     "title": "TestDino \u2014 Playwright visual testing: CI diffs & baseline setup (practitioner)",
+     "url": "https://testdino.com/blog/playwright-visual-testing",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Additive per FIDELITY_GATE.md: the gate's own v2 history shows misses between probes forced two render fixes only because glyph probes happened to land on the ink. But it must be re-framed to repo idiom: baselines are SELF-regression (previous accepted render), NOT OG truth \u2014 the OG 1:1 authority stays with frame-measured probes per the CLAUDE.md 'frame wins' invariant; a screenshot baseline must never be updated to silence a diff without a fidelity-gate green first.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Ride item 1's Playwright job: after the gate verdict, for each of the 5 canonical states (fighting, vs-intro via DuelIntro.devHoldAt, fight-splash, result-win, result-defeat) take page.screenshot() of the canvas element and pixelmatch against baselines committed under tests/fixtures/screens/<state>-chromium-linux.png. Determinism prerequisites already exist (item 5). Start with includeAA default (AA excluded) + small pixel budget (~0.1% mismatched ratio); tighten after a week of green. Update flow: intentional render change \u2192 regenerate in CI \u2192 review the diff image in the PR.",
+   "stage": "SESSION 24/25, after item 1 is green"
+  },
+  {
+   "title": "Vitest 4 browser mode + toMatchScreenshot as the screenshot harness",
+   "claim": "Vitest 4 (repo is on ^4.1.10) stabilized browser mode and shipped first-party toMatchScreenshot visual regression with pixelmatch, stable-screenshot detection, and __screenshots__ baseline management \u2014 consolidating unit + visual tests under one runner, using Playwright as the provider underneath.",
+   "sources": [
+    {
+     "title": "Vitest 4.0 release blog \u2014 browser mode stable, toMatchScreenshot",
+     "url": "https://vitest.dev/blog/vitest-4",
+     "grade": "A"
+    },
+    {
+     "title": "Vitest \u2014 Visual Regression Testing guide",
+     "url": "https://main.vitest.dev/guide/browser/visual-regression-testing",
+     "grade": "A"
+    },
+    {
+     "title": "heise online \u2014 Vitest 4.0 brings visual regression testing",
+     "url": "https://www.heise.de/en/news/JavaScript-Testing-Framework-Vitest-4-0-Brings-Visual-Regression-Testing-10814342.html",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Churn here: the repo already owns a page-level browser harness (window.__fidelity + ?fidelity=auto in src/main.ts) that drives whole-game states \u2014 vitest browser mode would be a SECOND browser boot path wrapping the same Phaser instance; and .githooks/pre-commit runs bare `npx vitest run`, so a browser-mode project would drag a 60-120s full-game boot into every commit (FIDELITY_GATE.md runtime note) unless fenced with extra projects-config machinery. Items 1+2 get the same coverage reusing the existing harness with one thin script. Revisit only if component-level (non-whole-game) render tests ever emerge.",
+   "effort": "Medium",
+   "impact": "Low",
+   "implementation_note": "If adopted later despite this: fence it as a separate vitest project excluded from the default `npm test` run so pre-commit stays fast.",
+   "stage": "not scheduled"
+  },
+  {
+   "title": "Failure artifacts: dump per-state canvas PNGs (+ diff images) when the CI gate goes red",
+   "claim": "A red visual check is only actionable if you can SEE what rendered. Playwright's screenshot APIs make per-state canvas dumps trivial, pixelmatch emits a diff image highlighting differing pixels, and GitHub Actions upload-artifact preserves them per run \u2014 standard practice in every VRT setup surveyed.",
+   "sources": [
+    {
+     "title": "pixelmatch \u2014 diff output image",
+     "url": "https://github.com/mapbox/pixelmatch",
+     "grade": "A"
+    },
+    {
+     "title": "Playwright \u2014 Visual comparisons (actual/expected/diff attachments)",
+     "url": "https://playwright.dev/docs/test-snapshots",
+     "grade": "A"
+    },
+    {
+     "title": "Testrig \u2014 visual regression with Playwright and pixelmatch (practitioner walkthrough)",
+     "url": "https://testrig.medium.com/visual-regression-testing-with-playwright-and-pixelmatch-002770005019",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "The __fidelityAuto verdict in src/main.ts is deliberately compact \u2014 failures carry expected/actual hex and deltas but no image, which is fine for a human at a local Brave console but leaves a remote CI red undiagnosable. Low-cost extension of item 1's script: on pass!==true, page.screenshot() each canonical state and upload as workflow artifacts.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Fold into item 1's script (~15 extra lines); once item 2 lands, also attach the pixelmatch diff PNGs. No change to src/ needed \u2014 the harness already drives states from outside via __fidelity.",
+   "stage": "with item 1"
+  },
+  {
+   "title": "Determinism prerequisites for stable screenshots (freeze animations, seed randomness, fixed timestep)",
+   "claim": "Every source's #1 flakiness fix for canvas/game screenshots \u2014 freeze animation loops via test-only hooks, seed all randomness, pin the timestep, drive known states \u2014 is the hard part of game VRT and the usual reason teams give up or drown in tolerances.",
+   "sources": [
+    {
+     "title": "Vitest \u2014 Visual Regression Testing guide (stability/determinism section)",
+     "url": "https://main.vitest.dev/guide/browser/visual-regression-testing",
+     "grade": "A"
+    },
+    {
+     "title": "qatribe \u2014 Playwright visual regression guide 2026 (canvas determinism strategies)",
+     "url": "https://qatribe.in/playwright-visual-regression-testing/",
+     "grade": "C"
+    },
+    {
+     "title": "Playwright \u2014 Visual comparisons",
+     "url": "https://playwright.dev/docs/test-snapshots",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "The repo satisfies every prerequisite already: Sim owns a fixed 60Hz step with injected mulberry32 (no Math.random in core \u2014 enforced by tests/config-purity.test.ts, proven by tests/determinism.test.ts and determinism-probe.test.ts), and the gate drives frozen canonical states via dev seams (DuelIntro.devHoldAt per FIDELITY_GATE.md v2 slice 2b: vs-intro/fight-splash held mid-sequence, result states launched directly). This is why items 1, 2 and 4 are cheap here \u2014 the expensive groundwork all VRT guides warn about is done. No action.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "Only gap if per-frame-exact diffs ever flake: the gate's settle uses real frames with a manual loop.step() fallback \u2014 if a screenshot ever captures mid-tween, add a dev seam to step N sim ticks then capture, mirroring devHoldAt.",
+   "stage": "none \u2014 prerequisite already met"
+  }
+ ],
+ "dead_ends": "No practitioner source found specifically on Phaser-game screenshot regression testing (searches surfaced generic canvas/WebGL guidance only). The fetched Vitest visual-regression guide does not address WebGL/canvas rendering specifically. GitHub-hosted GPU runners (Dave Snider's gputests piece, surfaced but judged out-of-scope) were considered and dropped \u2014 SwiftShader software rendering suffices for a 1024x576 2D vector scene, so no GPU-runner item. Considered forcing Phaser.CANVAS in CI for determinism but rejected without an item: src/main.ts pins type: Phaser.WEBGL and the probe values were measured against the WebGL render path (Earcut-triangulated Graphics), so a CANVAS-renderer CI run would test a render path the game never ships."
+}

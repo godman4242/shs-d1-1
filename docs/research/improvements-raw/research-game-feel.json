@@ -1,0 +1,166 @@
+{
+ "area": "Impact feel: hitstop, screen shake, vibration",
+ "sources_consulted": 9,
+ "items": [
+  {
+   "title": "Victim-hit hitstop: whole-world 3-tick (~200ms) freeze + red edge vignette",
+   "claim": "Canon hitstop (Sakurai/Smash) freezes ONLY the attacker+victim pair, scales duration with damage (Ultimate: d*0.65+6 frames, capped 30), and lets the rest of the world keep running. The OG measurably does something DIFFERENT: when the player takes a hit, the ENTIRE world (strokes, background, HUD bars) freezes pixel-identical for 3 content ticks (~200ms) under a red edge vignette \u2014 fixed length, not damage-scaled, global scope. Coincidentally this equals Vlambeer's recommended 0.2s 'sleep', but the OG's global scope is the spec, not the canon's pair-only scope.",
+   "sources": [
+    {
+     "title": "\"Thinking About Hitstop\" \u2014 Sakurai's Famitsu Column Vol. 490-1 (Source Gaming translation)",
+     "url": "https://sourcegaming.info/2015/11/11/thoughts-on-hitstop-sakurais-famitsu-column-vol-490-1/",
+     "grade": "A"
+    },
+    {
+     "title": "Hitlag \u2014 SmashWiki (per-game formulas, pair-only scope)",
+     "url": "https://www.ssbwiki.com/Hitlag",
+     "grade": "B"
+    },
+    {
+     "title": "Jan Willem Nijman (Vlambeer) \u2014 The Art of Screenshake (INDIGO 2013)",
+     "url": "https://www.youtube.com/watch?v=AJdEqssNZ-U",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Ledger \u00a7S24-F 'Global hit-stop' row: 'the ENTIRE world froze 3 content ticks (~200 ms) under a red edge vignette ... a real engine beat, chaos-testable.' Repo has NO hitstop today \u2014 DuelScene's damage-to-player branch only calls spawnBlood + startOgSlash('enemy'). Use the measured params (global, fixed 3 ticks = 12 sim steps at 60Hz), never Sakurai's damage-scaled pair-only model.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Freeze is gameplay-visible, so it belongs in Sim (src/core) as a hold counter armed by the damage-to-player event, with the tick count in src/config tagged MEASURED (\u00a7S24-F); DuelScene renders the red edge vignette during the hold. Chaos-test per the ledger's own note: plant a moving stroke, assert pixel-static world during the 12 steps.",
+   "stage": "A12-E (impacts work item, \u00a7S24-F header)"
+  },
+  {
+   "title": "Attacker-hit hitstop (player LANDS a hit): unobserved \u2014 measure before adding",
+   "claim": "Sakurai's rule is that hitstop fires on EVERY connect, freezing both parties equally \u2014 canon says player-dealt hits should also stop time. But the ledger only ever measured the freeze when the PLAYER TOOK a hit; whether the world freezes when the player's slash lands on an enemy was never checked. \u00a7S24-E's landing holds (mid-combo hit = 4\u20135 ticks attacker recovery, E1/E11) are pose holds on the attacker animation, NOT a verified world freeze \u2014 background/bars were not asserted pixel-static in those windows.",
+   "sources": [
+    {
+     "title": "\"Thinking About Hitstop\" \u2014 Sakurai's Famitsu Column Vol. 490-1 (Source Gaming translation)",
+     "url": "https://sourcegaming.info/2015/11/11/thoughts-on-hitstop-sakurais-famitsu-column-vol-490-1/",
+     "grade": "A"
+    },
+    {
+     "title": "Hitlag \u2014 SmashWiki",
+     "url": "https://www.ssbwiki.com/Hitlag",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "Ledger \u00a7S24-F records the freeze ONLY for 'when the A28 player took a hit'; \u00a7S24-E partb 'Landing holds' rows (E1: 4 ticks; E11: 4\u20135 with +47 px recoil drift) describe attacker pose recovery, not a background-verified world freeze. Adopting Sakurai's every-connect rule unmeasured would be fidelity divergence.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Cheap measurement: take an existing player-dealt hit tick (e.g. \u00a7S24-E E1 flash window), diff background/HUD pixels across the 4\u20135 hold ticks exactly as \u00a7S24-F did for the victim case. If frozen \u2192 extend item 1's hold to both directions; if moving \u2192 attacker 'hitstop' is animation-hold only, already covered by \u00a7S24-E landing holds.",
+   "stage": "SESSION 24/25 measurement pass"
+  },
+  {
+   "title": "Screen shake and controller vibration: canon staples the OG does not have",
+   "claim": "Vlambeer's talk makes screenshake the signature juice trick, and Jiesang Song recommends camera shake plus controller rumble as first-line impact fixes. The OG shows NEITHER: zero shake observations across the entire measurement corpus despite \u00a7S24-G's traps documenting exact camera/parallax anchoring analysis (fixed screen overlays at dx=0, 0.73\u00d7 parallax layers) that would have caught any camera displacement; and it is a mouse-driven Flash browser game with no haptics channel at all. Adding either is a fidelity DEFECT under the prime directive.",
+   "sources": [
+    {
+     "title": "Jan Willem Nijman (Vlambeer) \u2014 The Art of Screenshake (INDIGO 2013)",
+     "url": "https://www.youtube.com/watch?v=AJdEqssNZ-U",
+     "grade": "B"
+    },
+    {
+     "title": "The Art of Screenshake \u2014 talk summary with the 0.2s sleep + shake tricks",
+     "url": "https://victorweidar.wordpress.com/2016/10/06/the-art-of-screenshake/",
+     "grade": "C"
+    },
+    {
+     "title": "Jiesang Song \u2014 Improving the Combat 'Impact' of Action Games (Game Developer/Gamasutra)",
+     "url": "https://www.gamedeveloper.com/audio/improving-the-combat-impact-of-action-games",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "grep of COMBAT_MEASUREMENTS.md returns zero 'shake' rows while \u00a7S24-G traps #9 prove the corpus tracked camera anchoring precisely (the mushroom-cluster dx=0 fixed overlay, 0.73\u00d7 boulder parallax) \u2014 shake would have registered; src/ also has no shake code to remove (grep clean). No vibration row exists; input model is mouse strokes per \u00a7S24-C ('any drawn stroke = slash').",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Nothing to build \u2014 this item exists to block future 'juice it up' churn. If a later video pass ever finds a shake instance, reopen as MEASURE_FIRST.",
+   "stage": "now (standing ruling)"
+  },
+  {
+   "title": "Per-hit full-screen red wash / hurt vignette on damage taken (3\u20135 ticks)",
+   "claim": "Song's canon endorses screen flash and hit lighting as impact feedback; the OG has its own measured version: a full-screen red WASH (scene visible through it) fires per player-HP drop for 3\u20135 content ticks per burst \u2014 7 bursts tracked against HP drops, and 2 kills produced NO wash (kills get blood/hat/jug VFX instead). e-5.2 pins the same phenomenon as the ~0.20s player-hurt vignette (red tint, scene still in colour), distinct from the kill-cam's red+black-silhouette screen. It co-occurs with the 3-tick freeze of item 1.",
+   "sources": [
+    {
+     "title": "Jiesang Song \u2014 Improving the Combat 'Impact' of Action Games (screen flash, hit lighting)",
+     "url": "https://www.gamedeveloper.com/audio/improving-the-combat-impact-of-action-games",
+     "grade": "B"
+    },
+    {
+     "title": "The Art of Screenshake \u2014 talk summary (impact feedback layering)",
+     "url": "https://victorweidar.wordpress.com/2016/10/06/the-art-of-screenshake/",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Ledger \u00a7S24-F 'Full-screen red WASH = player-took-damage feedback (3\u20135 ticks/burst ... 2 kills with NO wash) \u2014 reconfirms e-5.2'. Repo has NO per-hit wash: DuelScene's damage-to-player branch spawns blood only. Wire it to the existing `ev.type === 'damage' && ev.target === 'player'` drain branch; render like the killBeat fillRect overlay; constants MEASURED-tagged in src/config/fx.ts (per src/config/CLAUDE.md labeling rule).",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "One overlay, two zones per the ledger: full-screen tint at wash alpha + stronger edges (the 'red edge vignette' under the freeze). Duration 3\u20135 content ticks (~200\u2013333ms) on the fx clock. Explicitly suppress it on the kill event \u2014 2 measured kills had no wash; the kill-cam owns that beat.",
+   "stage": "A12-E"
+  },
+  {
+   "title": "Existing persistent low-HP vignette is INFERRED and possibly a divergence",
+   "claim": "DuelScene currently draws a permanent red edge vignette that ramps in below 50% HP (SYNTHESIS \u00a74 seed). The measurement corpus never records a persistent low-HP tint \u2014 every measured red overlay is EVENT-driven (per-hit vignette/wash ~0.20s, kill-cam). If the OG has no standing low-HP vignette, the current one is generic-canon juice masquerading as fidelity; if it does, its threshold and alpha need measuring. Cannot adjudicate the render without a frame check at low player HP with no recent hit.",
+   "sources": [
+    {
+     "title": "Jiesang Song \u2014 Improving the Combat 'Impact' of Action Games (hit lighting is momentary, not persistent)",
+     "url": "https://www.gamedeveloper.com/audio/improving-the-combat-impact-of-action-games",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "DuelScene.drawHud comment 'Low-HP red vignette: ramps from 50% HP (SYNTHESIS \u00a74)' has no MEASURED backing; ledger e-5.2 and \u00a7S24-F describe only transient per-hit vignettes/washes. The e-4/e-5.1 beach-duel window (player at 4/20 HP, t\u22481963) is an already-catalogued frame range to check for a standing tint between hits.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Pull 2\u20133 stills from the beach duel at 4/20 HP several ticks after the last wash burst; diff screen edges against a full-HP frame. Absent \u2192 delete the drawHud vignette block (simplest change wins); present \u2192 replace the INFERRED 50%/0.4-alpha ramp with measured values.",
+   "stage": "SESSION 24/25 measurement pass"
+  },
+  {
+   "title": "Kill beat: replace INFERRED slow-mo FINISHER_FLASH with the measured hard-cut kill-cam timeline",
+   "claim": "Song's canon recommends slow motion before climactic attacks \u2014 and the OG demonstrably does NOT use it. The measured kill-cam (B05 archer kill) is all hard cuts: fatal contact (cyan Chi burst at contact point) \u2192 +2 ticks HARD CUT (no fade) to a red screen with BLACK SILHOUETTES \u2192 loser's death replayed in silhouette settling in 16 ticks \u2192 YOU WIN text +17 ticks after onset \u2192 ~74 ticks (~4.9s) total \u2192 hard cut to loot. The repo's current kill beat (420ms red flash + 0.35\u00d7 slow-mo ramp + 900ms hold, then result scene) is an invented canon-flavored beat that contradicts every measured element.",
+   "sources": [
+    {
+     "title": "Jiesang Song \u2014 Improving the Combat 'Impact' of Action Games (slow-motion as canon; OG diverges)",
+     "url": "https://www.gamedeveloper.com/audio/improving-the-combat-impact-of-action-games",
+     "grade": "B"
+    },
+    {
+     "title": "\"Thinking About Hitstop\" \u2014 Sakurai's Famitsu Column (impact emphasis via freeze, not slow-mo)",
+     "url": "https://sourcegaming.info/2015/11/11/thoughts-on-hitstop-sakurais-famitsu-column-vol-490-1/",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "src/config/fx.ts FINISHER_FLASH is explicitly INFERRED (slowMoScale 0.35, slowMoRampMs 90) and DuelScene's killBeat path applies it plus a 900ms hold \u2014 all contradicted by ledger \u00a7S24-F 'Kill-cam timeline (B05)': hard cut at +2 ticks, red+black silhouettes, YOU WIN +17 ticks, ~74 ticks total, no slow-mo, no fade. e-5.2 already corrected the related kill-flash/hurt-vignette conflation.",
+   "effort": "High",
+   "impact": "High",
+   "implementation_note": "Re-parameterize FINISHER_FLASH to the measured tick timeline (MEASURED tags, dual-entry in tests/config-values.test.ts per the ratchet); drop the slow-mo scale entirely \u2014 remember src/game/CLAUDE.md's stuck-timescale landmine when removing it. Silhouette render = existing fighter pose drawn in solid black over the red field; loser collapse replay is P5-adjacent (death anim is 38 recorded frames per DuelScene comment) so the timeline skeleton can ship first with the held final pose.",
+   "stage": "A12-E / Stage 2 kill beat"
+  },
+  {
+   "title": "Measured hit-reaction displacements: launcher, knockdown, knockback (Sim-owned, not render juice)",
+   "claim": "Song's first principle \u2014 every attack must produce a visible damage reaction \u2014 is the one canon item the OG fully embodies, with exact numbers: small hits (\u22127/\u221212 HP) displace ~0; big hits (\u221217..\u221219) displace 40\u2013270px; knock-up LAUNCHER ~270px vertical (x static, lands in 7 ticks); KNOCKDOWN prone tumble +136\u2013186px (stands by ~6 ticks); knockback slide \u2212188px + skid settle; victims displace toward the attacker's ORIGIN side as the attacker passes through (KB-RULE). These are gameplay-state displacements, not camera tricks \u2014 they belong in the Sim.",
+   "sources": [
+    {
+     "title": "Jiesang Song \u2014 Improving the Combat 'Impact' of Action Games (damage-motion principle)",
+     "url": "https://www.gamedeveloper.com/audio/improving-the-combat-impact-of-action-games",
+     "grade": "B"
+    },
+    {
+     "title": "Hitlag \u2014 SmashWiki (knockback as sim-state, distinct from hitlag)",
+     "url": "https://www.ssbwiki.com/Hitlag",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Ledger \u00a7S24-F 'Hit reactions on the player (Honda window)' + \u00a7S24-C P-LEGS catalogue (knock-up ~270px vertical; knockdown +136\u2013186px; knockbacks \u2212188/+40px; \u226442px settles) \u2014 while DuelScene's both damage branches read 'No transcribed hit-stagger yet (P5)' and the Sim applies no hit displacement. Positions are sim state, so per src/game/CLAUDE.md this cannot live in the scene.",
+   "effort": "High",
+   "impact": "High",
+   "implementation_note": "Constants in src/config tagged MEASURED (per-reaction displacement, tick counts, KB-RULE direction = toward attacker origin side); selection rule (small hit \u2192 0, big hit \u2192 reaction class) is only medium-confidence, so tag the threshold INFERRED. Core logic in Sim with injected RNG only; DuelScene just renders the resulting positions plus the P5 poses later.",
+   "stage": "A12-E"
+  }
+ ],
+ "dead_ends": "No developer postmortem, GDC talk, or technical writeup specific to Straw Hat Samurai: Duels' impact effects exists anywhere findable \u2014 all OG juice parameters come exclusively from the project's own frame measurements (\u00a7S24-F), which is why every ADAPT re-parameterizes canon to ledger values. Sakurai's translated column itself contains no concrete frame numbers (only the pair-freeze/damage-scaling/cap principles); the numeric formulas had to come from SmashWiki, which documents Smash, not SHSD \u2014 cited only to show how far the OG's global fixed-length freeze diverges from genre canon. 'Screen shake' produced zero hits in the measurement ledger, MASTER_SPEC grep, and src/ grep \u2014 its absence is an inference from a corpus that demonstrably tracked camera anchoring (\u00a7S24-G trap #9), not a positive measurement; flagged as such in item 3. The Gamasutra original URL (gamasutra.com/view/feature/130703) redirects; the Game Developer mirror was fetched instead."
+}

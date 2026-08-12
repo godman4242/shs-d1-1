@@ -140,6 +140,11 @@ carry the same note. Also corrected: the true suite count is **56 files /
 > `docs/DIVERGENCES.md` (adopted from iaido-duel mining, 2026-07-12).
 > Navigable digest of ALL research: `docs/research/SHSD_MASTER_REFERENCE.md`
 > (adopted 2026-07-17 — its header pins precedence: ledgers/config win).
+> **Improvements research (full sweep, adversarially verified 2026-08-13):**
+> `docs/research/IMPROVEMENTS_RESEARCH.md` — 92 items, each adjudicated
+> against the ledger + invariants and attacked by an independent verifier
+> (49 confirmed / 40 corrected / 3 killed); supersedes the 2026-08-05 batch
+> (archived at `7b4a743`). Headline: a LIVE r="1" z-order defect for A12.3.
 > Orientation map for a FRESH session/model: `docs/BUILD_PLAN.md`
 > (adopted 2026-07-17 — snapshot, this file wins on state; its §2
 > model-fallback advice is NOT policy).
@@ -210,8 +215,11 @@ stage landmines, backlog — are still current and stay here.
 ## Spark / backlog (noticed, not acted on — why later)
 - game/ config-purity ratchet baseline (per-file value multiset) — Stage 2
   item 15; DuelScene literals are tolerated until then.
-- DuelScene fixed-step accumulator DONE (Stage-1 browser bug); Sim.advance
-  (deltaMs, MAX_FRAME_MS=250 in config) replaces the inline 250 at Stage 2.
-- Phaser bundle 1.2 MB → code-split at Stage 6.
+- ~~DuelScene fixed-step accumulator / inline 250~~ DONE IN FULL — verified
+  2026-08-13: `MAX_FRAME_MS = 250` lives in `src/config/combat-sim.ts` and
+  `Sim.advance` clamps with it; no inline 250 remains anywhere.
+- Phaser bundle 1.2 MB → code-split at Stage 6 (vite@8 Rolldown API verified
+  + working snippet: `IMPROVEMENTS_RESEARCH.md` §vite-build; optional now-fix
+  for the cosmetic warning: `chunkSizeWarningLimit: 1500`).
 - `@types/node` 26 vs Node 25 — harmless; align when LTS catches up.
 - Vite dev server may still be running in background task b1jaqmhl1.

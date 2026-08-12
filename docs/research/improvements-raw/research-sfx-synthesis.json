@@ -1,0 +1,158 @@
+{
+ "area": "Synthesized katana/impact SFX recipes (WebAudio-only, SESSION 25 / Stage 6)",
+ "items": [
+  {
+   "title": "Sword whoosh = two filtered-noise layers with swept bandpass; heavy-vs-light falls out of envelope length + center frequency",
+   "claim": "Canonical recipe: white noise via AudioBuffer (data[i]=Math.random()*2-1) -> BiquadFilterNode type 'bandpass' whose frequency is ramped (e.g. linearRampToValueAtTime) across the swing, inside a gain envelope (fast attack, ~0.15-0.4s decay). Practitioner refinement (Tsugi, GameSynth medieval-weapons postmortem): use TWO noise layers \u2014 one low-emphasized (body of the swing) and one airy high band \u2014 and make the HEAVIER weapon's whoosh simply a LONGER envelope + lower band center. MDN's own noise+bandpass demo uses 400-1200 Hz band range (1000 Hz default) as a sane sweep window. Parameterize per-layer: bandStartHz, bandEndHz, filterQ, attackS, decayS, gainPeak \u2014 six nameable constants per layer, all INFERRED.",
+   "sources": [
+    {
+     "title": "MDN \u2014 Web Audio API Advanced techniques (noise buffer + bandpass + envelopes)",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Advanced_techniques",
+     "grade": "A"
+    },
+    {
+     "title": "Tsugi blog \u2014 Medieval Weapons Sound Design part 1 (sword whoosh = two noise sources, different filters/envelope durations)",
+     "url": "https://tsugi-studio.com/blog/2022/01/27/medieval-weapons-in-gamesynth-part-1/",
+     "grade": "B"
+    },
+    {
+     "title": "Sonoport \u2014 Synthesising Sounds with Web Audio API (noise/filter/envelope node graphs with numbers)",
+     "url": "https://sonoport.github.io/synthesising-sounds-webaudio.html",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "docs/MASTER_SPEC.md Stage 6 items 1+4 require draw (slashStarted) and whiff (missed) SFX with a heavy-vs-light tone difference \u2014 this recipe delivers both from one parameter set. Constants must land in a new src/config/sfx.ts following the src/config/fx.ts `as const` + INFERRED-label idiom (src/config/CLAUDE.md), then be ear-tuned against reference/videos in SESSION 25.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Suggested shape: export const WHOOSH_SFX = { layers: [{bandStartHz, bandEndHz, q, attackS, decayS, gain}], heavy: {decayMul, bandHzMul} } as const. Keep the SFX player in src/game (render-only), triggered by SimEvents drained per MASTER_SPEC's GameScene contract (Sim emits SimEvent[] for FX/SFX). Pre-generate one shared noise AudioBuffer of ~1-2s and reuse it for every play.",
+   "stage": "SESSION 25 / Stage 6"
+  },
+  {
+   "title": "Metal clang (armor/parry) = inharmonic square-bank OR fast-decay inharmonic FM; both are plain-node, fully parameterizable",
+   "claim": "Two proven plain-node routes to 'metal'. (a) Additive/inharmonic bank (classic 808-cymbal topology, full numbers in the Sonoport source): 6 square oscillators at fundamental 40 Hz x ratios [2, 3, 4.16, 5.43, 6.79, 8.21] -> bandpass ~10 kHz -> highpass ~7 kHz -> exponential gain decay ~0.05s (lengthen to ~0.2-0.5s and drop the highpass cutoff for a ringing clang rather than a tick). (b) FM: carrier >1000 Hz, modulator at a NON-INTEGER ratio (e.g. 3.57, 7.12 \u2014 integer ratios go bell-harmonic, non-integer goes clangorous), modulation depth starting high (~1000+), very fast attack + quick decay; WAC-2016 tutorial states FM beats subtractive for metallic hits. Nameable constants: fundamentalHz, partialRatios[], bpHz, hpHz, decayS (route a); carrierHz, modRatio, modDepthPeak, modDepthDecayS, ampDecayS (route b).",
+   "sources": [
+    {
+     "title": "Sonoport \u2014 Synthesising Sounds with Web Audio API (hi-hat: 6 squares at inharmonic ratios + BP/HP + envelope, all values)",
+     "url": "https://sonoport.github.io/synthesising-sounds-webaudio.html",
+     "grade": "B"
+    },
+    {
+     "title": "WAC 2016 percussion-synthesis tutorial (irritant) \u2014 FM hi-hat/cymbal: carrier >1 kHz, non-integer mod ratio, depth ~1000+",
+     "url": "https://github.com/irritant/WAC-2016-Tutorial",
+     "grade": "B"
+    },
+    {
+     "title": "Nail The Mix \u2014 FM synthesis for metallic tones (non-integer ratios 3.570/7.120 = inharmonic clang; fast AD envelope)",
+     "url": "https://www.nailthemix.com/fm-synthesis",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Directly serves docs/MASTER_SPEC.md Stage 6 item 1 'armor (blocked)' SFX and gate checkbox 28 ('Four-way slash SFX fire on measured frame'). Seed values are generic-cymbal, not OG \u2014 every number goes into src/config/sfx.ts as INFERRED per src/config/CLAUDE.md and is re-tuned by ear against the OG parry sound in reference/videos.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Prefer route (a) additive bank as the primary: it is deterministic per parameter set, trivially jitterable (scale all partial frequencies by one pitch factor), and every constant is a plain number. Keep route (b) FM as the fallback if the bank sounds too 'hi-hat' next to the OG clang.",
+   "stage": "SESSION 25 / Stage 6"
+  },
+  {
+   "title": "Flesh/body thud = 3-layer percussion recipe: pitch-dropping low tone + short mid attack tone + lowpassed noise burst",
+   "claim": "The consensus layered recipe (kick/snare topology repurposed): LAYER 1 body \u2014 sine/triangle starting ~100-120 Hz ramping down toward near-zero (Sonoport kick: 120 Hz -> 0.001 Hz and gain 1 -> 0.001 exponential over 0.5s; shorten to ~0.15-0.3s for a hit rather than a drum); LAYER 2 attack \u2014 midrange tone with a much faster, more pronounced decay; LAYER 3 texture \u2014 white-noise burst through a lowpass with LOW Q at moderately-high cutoff, decaying over the whole sound (WAC-2016 snare noise layer). Sound-design guidance for punches confirms the same decomposition: sharp slap attack + meaty thud body + subtle texture. Nameable constants: bodyStartHz, bodyEndHz, bodyDecayS, attackHz, attackDecayS, noiseLpHz, noiseLpQ, noiseDecayS, per-layer gains.",
+   "sources": [
+    {
+     "title": "Sonoport \u2014 Synthesising Sounds with Web Audio API (kick: 120 Hz->0.001 pitch drop + exponential gain ramp, 0.5s; snare noise layer)",
+     "url": "https://sonoport.github.io/synthesising-sounds-webaudio.html",
+     "grade": "B"
+    },
+    {
+     "title": "WAC 2016 percussion-synthesis tutorial \u2014 snare = body tone + attack tone + lowpassed low-Q noise, each with own envelope",
+     "url": "https://github.com/irritant/WAC-2016-Tutorial",
+     "grade": "B"
+    },
+    {
+     "title": "Pixflow \u2014 Punch & impact sound effects for fight scenes (attack/body/texture layer decomposition)",
+     "url": "https://pixflow.net/blog/punch-impact-sound-effects-for-fight-scenes/",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Serves docs/MASTER_SPEC.md Stage 6 item 1 'flesh (hitLanded)'. All seed numbers are drum-generic; per src/config/CLAUDE.md they enter src/config/sfx.ts labeled INFERRED and get ear-tuned in SESSION 25 against the OG hit sound audible in reference/videos.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "exponentialRampToValueAtTime cannot ramp to 0 \u2014 use 0.001 as the floor exactly as the Sonoport recipes do, then stop() the source. One shared function makeThud(cfg) covers flesh hit AND (with longer bodyDecayS) any future heavy-landing sound.",
+   "stage": "SESSION 25 / Stage 6"
+  },
+  {
+   "title": "Anti-repetition: per-play pitch jitter around +-20% plus slight gain jitter, applied at the render-layer SFX player",
+   "claim": "Established practice: randomize per-play pitch within roughly 80-120% (the +-20% figure is the repeatedly cited baseline for frequently-fired sounds like footsteps), add small volume variation, and never retrigger an identical instance back-to-back \u2014 immediate exact repetition is what players notice most. For synthesized SFX this is trivial: multiply every layer's frequency-type constant by one random pitchFactor and the master gain by one gainFactor per play. Nameable constants: pitchJitterPct (seed 0.10-0.20 \u2014 a synthesized clang tolerates less than a footstep sample), gainJitterPct (seed ~0.10).",
+   "sources": [
+    {
+     "title": "Game Audio Learning Portal \u2014 How audio is manipulated in games (randomized pitch/volume bounds per playback)",
+     "url": "https://www.gameaudiolearning.com/knowledgebase/how-audio-is-manipulated-in-games",
+     "grade": "B"
+    },
+    {
+     "title": "A Sound Effect \u2014 How to maintain immersion + reduce repetition in game audio (practitioner roundup)",
+     "url": "https://www.asoundeffect.com/game-audio-immersion/",
+     "grade": "B"
+    },
+    {
+     "title": "Bugnet blog \u2014 How to fix sound effects sounding too repetitive (+-20% pitch, >=6 variations, no immediate repeats)",
+     "url": "https://bugnet.io/blog/how-to-fix-sound-effects-too-repetitive",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "Compatible as-is with the architecture: SFX lives in src/game (render-only per src/game/CLAUDE.md), driven by drained SimEvents from src/core/Sim.ts, so jitter randomness never touches the deterministic Sim \u2014 the no-Math.random invariant (tests/config-purity.test.ts) applies to src/core only. Jitter ranges become two INFERRED constants in src/config/sfx.ts.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "One caveat vs the generic advice: the OG game may have had ZERO variation (Flash-era games often fired one fixed sound per event). If the videos show identical repeated hits, per the prime directive set pitchJitterPct to 0 and keep the mechanism dormant \u2014 the constant existing costs nothing.",
+   "stage": "SESSION 25 / Stage 6"
+  },
+  {
+   "title": "Before seeding any INFERRED SFX constant: extract and spectrogram the OG audio from the two reference videos",
+   "claim": "The professional workflow the Tsugi postmortem describes for its sword impact \u2014 'extract resonant modes from analyzed samples', then synthesize to match \u2014 applies directly here, and this repo is uniquely positioned: the OG SFX are IN the ground-truth videos. ffmpeg-extract the audio track, cut the whoosh/clang/flesh/draw one-shots at the already-measured attack frames, and read center frequency, band width, duration, and pitch-drop shape off a spectrogram. That converts SESSION 25's 'tune by ear' into 'tune by ear from measured seeds', and lets several sfx.ts constants be tagged CONTRACT (measured) instead of INFERRED.",
+   "sources": [
+    {
+     "title": "Tsugi blog \u2014 Medieval Weapons Sound Design part 1 (impact model built from resonant modes extracted from analyzed samples)",
+     "url": "https://tsugi-studio.com/blog/2022/01/27/medieval-weapons-in-gamesynth-part-1/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "MEASURE_FIRST",
+   "adjudication_reason": "CLAUDE.md invariant: 'THE TWO GAMEPLAY VIDEOS ARE THE PRIMARY 1:1 REFERENCE... Copy what is in them, directly' \u2014 and docs/research/fidelity/COMBAT_MEASUREMENTS.md establishes the measured-row pattern (its \u00a7S24 block) that audio rows should join. Generic recipe constants adopted without checking the videos' actual SFX would be exactly the second-hand-grading failure the invariant warns about.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "ffmpeg -i <video> -vn -acodec pcm_s16le og-audio.wav, then cut one-shots at the ledger's known hit frames and view with sox spectrogram or ffmpeg showspectrumpic. Add the measured rows (centerHz, durationMs, pitch-drop) to COMBAT_MEASUREMENTS.md before writing src/config/sfx.ts.",
+   "stage": "SESSION 25, first task before any synthesis code"
+  },
+  {
+   "title": "Karplus-Strong / AudioWorklet string synthesis for the clang: skip it",
+   "claim": "Practitioner Web Audio KS implementations either use the deprecated ScriptProcessorNode or require AudioWorklet processors (with Wasm recommended for performance and SharedArrayBuffer messaging to avoid GC glitches, per the karplus-stress-tester benchmark and the mrahtz implementation). That is an entire extra build surface (worklet bundling under Vite, cross-origin isolation for SAB) to produce a plucked-string timbre the spec never asks for \u2014 the inharmonic-bank/FM clang (item 2) reaches 'metal' with plain OscillatorNode/BiquadFilterNode graphs. UI ticks likewise need nothing beyond a single short oscillator blip with a fast exponential decay (the Sonoport hi-hat topology shortened), and are not in the Stage 6 SFX list at all \u2014 only add one if the OG videos' menu audio demonstrably has one.",
+   "sources": [
+    {
+     "title": "Jack Schaedler \u2014 Karplus-Strong stress tester (AudioWorklet per-node overhead; Wasm+SAB needed for clean performance)",
+     "url": "https://jackschaedler.github.io/karplus-stress-tester/",
+     "grade": "B"
+    },
+    {
+     "title": "mrahtz/javascript-karplus-strong \u2014 JS/Web Audio KS guitar synthesis (asm.js-era implementation burden)",
+     "url": "https://github.com/mrahtz/javascript-karplus-strong",
+     "grade": "C"
+    },
+    {
+     "title": "WAC 2016 percussion-synthesis tutorial \u2014 'FM does a better job of synthesizing metallic sounds than subtractive'",
+     "url": "https://github.com/irritant/WAC-2016-Tutorial",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Churn: docs/MASTER_SPEC.md Stage 6 names exactly four SFX + two music beds + two stings, and src/config/CLAUDE.md's landmine forbids inventing constants/systems that 'feel missing'. Item 2's plain-node recipes cover the only metallic requirement ('armor (blocked)'); an AudioWorklet KS pipeline serves no gate checkbox.",
+   "effort": "High",
+   "impact": "Low",
+   "stage": "n/a (rejected)"
+  }
+ ],
+ "sources_consulted": 12,
+ "dead_ends": "The jackschaedler karplus-stress-tester page did NOT document the commonly-repeated '128-sample render-quantum minimum for DelayNode feedback loops' claim, so that specific pitch-ceiling figure is omitted as ungrounded (the REJECT stands on implementation-burden evidence alone). The FXive procedural-synthesis paper surfaced only as a ResearchGate PDF stub and was not fetched. No practitioner source publishes a verbatim 'sword parry clang in Web Audio' recipe \u2014 the clang item is synthesized from the adjacent cymbal/FM-metal recipes and flagged for by-ear/spectrogram tuning. COMBAT_MEASUREMENTS.md contains zero audio rows (the only grep hit, 'SOUND360TM', is a player name), confirming OG SFX are entirely unmeasured \u2014 hence the MEASURE_FIRST item."
+}

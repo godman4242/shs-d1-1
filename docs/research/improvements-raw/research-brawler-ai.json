@@ -1,0 +1,154 @@
+{
+ "area": "Enemy AI: attack tokens, cadence, telegraphs",
+ "items": [
+  {
+   "title": "Attack token / combat-director pattern (DOOM token pool, slot systems)",
+   "claim": "The shipped-game pattern for 'enemies take turns' is an explicit token pool: each attack type has N tokens, an enemy must acquire one before attacking and returns it after; pool size directly caps simultaneous attackers (DOOM 2016, per Kurt Loudy/Jake Campbell GDC material), with token-stealing so the nearest/most-threatening enemy stays active. Practitioner interviews (Vossen, covering DmC/GoW3/Arkham-class melee) confirm the same 'slot system' regulating who strikes when, plus near/far grouping where only the near group may attack. Nobody ships turn-taking as an emergent side effect of independent timers; it is always an explicit, testable cap.",
+   "sources": [
+    {
+     "title": "Cyber Demons: The AI of DOOM (2016) \u2014 Tommy Thompson, Game Developer",
+     "url": "https://www.gamedeveloper.com/design/cyber-demons-the-ai-of-doom-2016-",
+     "grade": "B"
+    },
+    {
+     "title": "GDC Vault \u2014 Bringing Hell to Life: AI and Full Body Animation in DOOM (Jake Campbell, id Software)",
+     "url": "https://www.gdcvault.com/play/1024186/Bringing-Hell-to-Life-AI",
+     "grade": "A"
+    },
+    {
+     "title": "Enemy design and enemy AI for melee combat systems \u2014 Bart Vossen (designer interviews), Game Developer",
+     "url": "https://www.gamedeveloper.com/design/enemy-design-and-enemy-ai-for-melee-combat-systems",
+     "grade": "B"
+    },
+    {
+     "title": "UnrealAITokenSystem \u2014 DOOM-inspired token system implementation",
+     "url": "https://github.com/Lim-Young/UnrealAITokenSystem",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Ledger gap-H row 'simultaneous attackers' measures TURNS (1, occasionally 2; 8-on-screen hit rate no higher than 1v1) and itself says 'Implement an attack token' \u2014 but src/core/AISeamController.ts's header contract asserts 'NO ATTACK TOKEN... EMERGENT from independent AI_THINK_INTERVAL_MS timers plus the narrow AI_MELEE_RANGE gate'. That emergence claim has never been chaos-tested against the measured invariant, and with ENCOUNTER_SIZE=8 mobs (src/config/mobs.ts) all converging into the same 50-px AI_MELEE_RANGE band, each rolling aggression every 500 ms independently, >2 simultaneous attackers is the expected outcome, not turn-taking.",
+   "effort": "Medium",
+   "impact": "High",
+   "implementation_note": "Gate first, mechanism second (repo chaos-test rule): add a deterministic 8-mob harness metric asserting (a) max simultaneous telegraph/attack-mode enemies <= 2 and (b) player hits-taken rate ~ 1v1 baseline. If the emergent mechanism fails, add a minimal Sim-owned (or EncounterDirector in core/) SINGLE token \u2014 grant to nearest in-range enemy, occasional second grant (rare, per gap-H 'occasionally 2'), release on recover-start. Do NOT copy DOOM's per-attack-type pools or difficulty-scaled pool sizes \u2014 kunai is already range+chance gated in AISeamController, and the OG's measured cap is 1(-2), not a tunable. Token lives in core/, zero literals, values in src/config/ai.ts tagged CONTRACT (gap-H).",
+   "stage": "SESSION 24/25 (before any multi-mob encounter polish)"
+  },
+  {
+   "title": "Two-case telegraph (600 ms approach / 267 ms point-blank), no telegraph VFX",
+   "claim": "Telegraph literature says anticipation must exceed player reaction (~0.25 s) plus ability-trigger time plus a difficulty buffer, and telegraph length should vary per attack context rather than being one global number (GDKeys 'Anatomy of an Attack'; Hornet case study uses 15-40+ frame telegraphs per move). The OG's measured pair \u2014 0.600 s while closing, 0.267 s point-blank repeat \u2014 is exactly a per-context telegraph where the repeat sits at the raw reaction floor.",
+   "sources": [
+    {
+     "title": "Keys to Combat Design: Anatomy of an Attack \u2014 Nicolas Kraj, GDKeys",
+     "url": "https://gdkeys.com/keys-to-combat-design-1-anatomy-of-an-attack/",
+     "grade": "B"
+    },
+    {
+     "title": "Enemy design and enemy AI for melee combat systems \u2014 Bart Vossen, Game Developer",
+     "url": "https://www.gamedeveloper.com/design/enemy-design-and-enemy-ai-for-melee-combat-systems",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "src/config/ai.ts AI_TELEGRAPH_MS = { closing: 600, pointBlank: 267 } (CONTRACT-SRC), selected by range at commit time in AISeamController.next() via AI_POINT_BLANK_X; the old single-global >=520 ms telegraph was deleted SESSION13 D8. Ledger gap-H rows 'telegraph, approach attack' and 'telegraph, point-blank repeat' are the source.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "Two guard rails: (1) gap-H 'telegraph FX: none \u2014 pose change only. Do NOT give enemies a drawn stroke line' \u2014 the generic best practice of adding warning icons/flash VFX (Arkham-style lightning) would be a fidelity DEFECT here; keep OpponentIntent.telegraph as a pose/windup cue only in the scene. (2) AI_POINT_BLANK_X = 25 is honestly labeled INFERRED \u2014 the case boundary is the one unmeasured number; a future video pass could bracket where 600 ms flips to 267 ms.",
+   "stage": "now (nothing to build; protect in review)"
+  },
+  {
+   "title": "Blocking the OG doesn't have \u2014 the flagged AISeamController blocking is already deleted",
+   "claim": "Defensive reactions (block/parry/dodge) are a per-game design choice, not a melee-AI requirement \u2014 Vossen's interviews treat them as optional context reactions. The OG measured ZERO blocks/parries/dodges in ~70 s across ~30 enemies (gap-H clean negative), so modeling any is inventing behavior.",
+   "sources": [
+    {
+     "title": "Enemy design and enemy AI for melee combat systems \u2014 Bart Vossen, Game Developer",
+     "url": "https://www.gamedeveloper.com/design/enemy-design-and-enemy-ai-for-melee-combat-systems",
+     "grade": "B"
+    },
+    {
+     "title": "Batman: Arkham Design Analysis (Part 1) \u2014 Stanislav Costiuc, Game Developer",
+     "url": "https://www.gamedeveloper.com/design/batman-arkham-design-analysis-part-1-",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "The orchestrator's FLAG is STALE: the react() seam and its reactMs/reactBlockChance/reactDodgeChance tier fields were deleted in SESSION13 D8 \u2014 documented in src/core/OpponentController.ts (react() deletion comment), src/config/ai.ts header, and AISeamController.ts contract; tests/Sim.test.ts plants and asserts strikeBlocked never fires. The remaining 'strikeBlocked' SimEvent type in src/core/Sim.ts exists to power that chaos test's negative assertion.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "No code change. Report upstream that the flag pre-dates SESSION13 D8. The vestigial 'strikeBlocked' handler in src/game/DuelScene.ts (line ~519) is dead render code \u2014 optional one-line cleanup, but keep the Sim event type since the chaos test filters on it.",
+   "stage": "now"
+  },
+  {
+   "title": "Gait split + speed retune: trash walks ~128 stage px/s, bosses ONLY run \u2014 single ENEMY_SPEED is wrong on both counts",
+   "claim": "Shipped melee AI differentiates approach behavior per archetype (Vossen: near/far groups, per-enemy approach roles) and full-body animation gait sells the enemy's intent (DOOM GDC animation talk). The OG measured: trash approach gait is WALK ONLY, median 128 stage px/s (105-161 band, gap-H \u2014 the earlier 22 px/tick reading was a peak and builds mobs ~25% too fast); duel bosses NEVER walk \u2014 all approach/retreat legs are deep-lean runs at 573-716 px/s @1080 = 255-318 world px/s (\u00a7S24-D boss correction); both classes dash only as the attack opener.",
+   "sources": [
+    {
+     "title": "Enemy design and enemy AI for melee combat systems \u2014 Bart Vossen, Game Developer",
+     "url": "https://www.gamedeveloper.com/design/enemy-design-and-enemy-ai-for-melee-combat-systems",
+     "grade": "B"
+    },
+    {
+     "title": "GDC Vault \u2014 Bringing Hell to Life: AI and Full Body Animation in DOOM",
+     "url": "https://www.gdcvault.com/play/1024186/Bringing-Hell-to-Life-AI",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "src/config/ai.ts ENEMY_SPEED = 0.1417 world px/ms (= 170 stage px/s, provenance comment says 'was 0.17 stage px/ms') sits ABOVE the top of gap-H's measured trash walk band (105-161, median 128) \u2014 every mob is ~33% faster than the median \u2014 and there is no boss approach speed at all; \u00a7S24-D splits gap-H into trash-walks/bosses-run.",
+   "effort": "Low",
+   "impact": "High",
+   "implementation_note": "Split ENEMY_SPEED into MOB_WALK_SPEED ~= 106.7 world px/s (128 stage /1.2, CONTRACT per gap-H) and BOSS_RUN_SPEED in 255-318 world px/s (CONTRACT per \u00a7S24-D; note the player's MOVE_RUN_PX_S 288 already sits in-band \u2014 reusing it keys the gait picker on speed alone, as \u00a7S24-D recommends). Route the class through the AITierParams table or a mob/boss flag on the controller. Update the double-entry in tests/config-values.test.ts in the same commit (config CLAUDE.md ratchet).",
+   "stage": "SESSION 24/25 (A12 gait work is live \u2014 \u00a7S24-D is its input)"
+  },
+  {
+   "title": "Enemy attack = dash-THROUGH (commit ~194 stage px, resolve ~96 px PAST), not a stationary strike inside a 50-px gate",
+   "claim": "DOOM's GDC material frames enemy attacks as full-body animation commitments the AI cannot take back \u2014 the attack IS a movement, and readability comes from that committed travel. The OG measured exactly this shape: the enemy attack is a dash-THROUGH using the same mechanic as the player \u2014 commit at ~194 stage px, lunge at ~484 stage px/s (~3.3x walk), damage resolving at the END of the dash when the enemy is ~96 stage px PAST the player; the gap-H row states outright 'a radius check cannot reproduce this'.",
+   "sources": [
+    {
+     "title": "GDC Vault \u2014 Bringing Hell to Life: AI and Full Body Animation in DOOM",
+     "url": "https://www.gdcvault.com/play/1024186/Bringing-Hell-to-Life-AI",
+     "grade": "A"
+    },
+    {
+     "title": "Cyber Demons: The AI of DOOM (2016) \u2014 Tommy Thompson, Game Developer",
+     "url": "https://www.gamedeveloper.com/design/cyber-demons-the-ai-of-doom-2016-",
+     "grade": "B"
+    },
+    {
+     "title": "Keys to Combat Design: Anatomy of an Attack \u2014 Nicolas Kraj, GDKeys",
+     "url": "https://gdkeys.com/keys-to-combat-design-1-anatomy-of-an-attack/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Current pipeline is exactly the radius check gap-H forbids: AISeamController only telegraphs inside AI_MELEE_RANGE (|dx|<50 && dy<50 world, CONTRACT-SRC per D8) and the Sim's enemy-strike handler (src/core/Sim.ts, 'Enemy strike: telegraph timing/range are the CONTROLLER's job') resolves in place with no enemy travel \u2014 no commit-at-range, no pass-through, no resolve-past-target. Ledger rows: gap-H 'attack geometry' + \u00a7S24-E (line-follow + terminal snap model, flagged as A12.2 input).",
+   "effort": "High",
+   "impact": "High",
+   "implementation_note": "Reconcile the apparent conflict instead of overwriting the CONTRACT-SRC gate: model TWO attack entries mirroring the two telegraphs \u2014 (1) approach-attack: commit at ~161.7 world px (194 stage /1.2), 600 ms telegraph, then a lunge (484 stage = ~403 world px/s) THROUGH the player, damage on the terminal tick ~80 world px (96 stage) past; (2) point-blank repeat: inside the 50-px source gate, 267 ms telegraph, same pass-through resolution. Reuse the Sim's existing dash/line-follow machinery (\u00a7S24-E stepper) rather than a new mover. This also naturally explains why AI_POINT_BLANK_X exists. Chaos test: a jumping player must evade the terminal tick, not the whole travel (gap-K tension: approach-run deals zero damage, only the dash phase damages).",
+   "stage": "SESSION 24/25 (it is already tagged as A12.2 input in \u00a7S24-E)"
+  },
+  {
+   "title": "Per-enemy attack cadence: validate against the measured 0.467-1.933 s landed-hit band, not the genre's 2-3 s default",
+   "claim": "Practitioner guidance says melee enemies typically attack every 2-3 s to keep crowds readable (Vossen's designer interviews) \u2014 but the OG is measurably FASTER: landed-hit cadence min 0.467 s, median 0.733 s, mean 0.853 s, max 1.933 s (n=10, gap-H). Adopting the genre default would slow the game ~3x; the cadence must be derived from the measurement and pinned by a harness.",
+   "sources": [
+    {
+     "title": "Enemy design and enemy AI for melee combat systems \u2014 Bart Vossen, Game Developer",
+     "url": "https://www.gamedeveloper.com/design/enemy-design-and-enemy-ai-for-melee-combat-systems",
+     "grade": "B"
+    },
+    {
+     "title": "Keys to Combat Design: Anatomy of an Attack \u2014 Nicolas Kraj, GDKeys",
+     "url": "https://gdkeys.com/keys-to-combat-design-1-anatomy-of-an-attack/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "src/config/ai.ts AITierParams attackMs/recoverMs (180/760, 180/620, 160/480) plus AI_THINK_INTERVAL_MS 500 and AI_RECOVER_JITTER_FRAC 0.35 are spec-era values never reconciled against ledger gap-H's 'cadence (landed hits)' row; the composed inter-hit distribution of the current state machine (telegraph 600/267 + attack ~180 + recover 480-760 jittered + 500 ms decision beats + aggression roll) has no test asserting it lands in 0.467-1.933 s with median ~0.733 s.",
+   "effort": "Medium",
+   "impact": "Medium",
+   "implementation_note": "Add a seeded harness (same pattern as DUEL_TARGET_SECONDS' 24-seed band in tests/harness.test.ts) that runs a stationary-player duel and asserts landed-hit inter-arrival min/median/max inside the gap-H band; then retune recoverMs per tier until green and relabel those values CONTRACT-derived. Do this AFTER the dash-through rework (previous item) \u2014 cadence composes with attack travel time, so tuning first would be tuned twice.",
+   "stage": "SESSION 25 / Stage 3 (after dash-through geometry lands)"
+  }
+ ],
+ "dead_ends": "No primary Rocksteady source for Arkham's attacker concurrency was found \u2014 searches surfaced only community guides (Steam/Fandom/GameFAQs) and Costiuc's third-party analysis; the specific claim 'Arkham enemies attack one at a time by design' could not be grounded to a developer statement, so it is not used as a load-bearing claim. God of War 2018/Ragnarok attack-token specifics: the GDC Vault talk 'Preparing AI Systems for God of War Ragnarok' exists but its indexed summary covers behavior-tree migration/awareness/vertical movement, not tokens \u2014 not cited for token claims. DOOM's exact token-grant timing/cadence numbers (from the 2018 'Embracing Push Forward Combat' talk) were not retrievable in text form \u2014 only the mechanism, not its millisecond parameters, is grounded; the repo's cadence numbers come from the ledger instead, which is the correct precedence here anyway.",
+ "sources_consulted": 12
+}

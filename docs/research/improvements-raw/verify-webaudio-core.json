@@ -1,0 +1,36 @@
+{
+ "area": "WebAudio architecture (SESSION 25 prep) \u2014 adversarial verification",
+ "item_verdicts": [
+  {
+   "title": "Do not build a custom unlock layer \u2014 reuse Phaser's WebAudioSoundManager context, locked flag, and UNLOCKED event",
+   "verdict": "CONFIRMED",
+   "why": "Sources check out: the Phaser 3.60 Sound changelog (fetched live) says verbatim \"The WebAudioSoundManager will now detect if the Audio Context enters a 'suspended' or 'interrupted' state as part of its update loop and if so it'll try to resume the context\" plus \"Audio will now unlock properly again on iOS14 and above in Safari. Fix #5696\"; the Phaser API docs page (fetched live) documents all six claimed members \u2014 context, locked, unlock (\"Unlocks Web Audio API on the initial input event\"), destination, masterVolumeNode, masterMuteNode. Repo: package.json pins \"phaser\": \"^3.90.0\" (> 3.60, so the fixes are in), and src/game/CLAUDE.md line 4 has the exact \"drain SimEvent[] into FX/SFX\" wording the adjudication cites. Minor unverifiable detail: the exact gesture-event list (touchstart/touchend/mousedown/mouseup/keydown) could not be read from Phaser source (node_modules is permission-denied in this sandbox) and is not in either fetched source, but the API docs' unlock-on-initial-input-event behavior and the documented Phaser.Sound.Events.UNLOCKED event carry the recommendation regardless."
+  },
+  {
+   "title": "Master-bus graph: synth voices \u2192 sfx GainNode \u2192 DynamicsCompressorNode \u2192 this.sound.destination",
+   "verdict": "CONFIRMED",
+   "why": "web.dev/articles/webaudio-games (fetched live) contains the exact \"more of an art than a science\" phrase about picking master gain, quotes the spec's \"lowers the volume of the loudest parts of the signal\u2026\", and recommends the compressor as the final node before destination specifically for many simultaneous sounds. Phaser's destination \u2192 masterVolumeNode \u2192 masterMuteNode chain is confirmed by the fetched API docs. The re-parameterization claim holds in the repo: src/config/CLAUDE.md carries the CONTRACT/INFERRED labeling rule, and src/game/CLAUDE.md's numeric-literal ratchet (\"tolerated until Stage 2, then ratcheted\u2026 new/substituted values fail\") is what actually blocks inline numbers in src/game \u2014 the claim's conclusion is right even though it attributes enforcement to the config file alone. No src/config/audio.ts exists yet (28 entries listed, none audio), so this is genuinely new work, correctly not marked ALREADY_DONE."
+  },
+  {
+   "title": "latencyHint 'interactive' is already the default \u2014 do not add context-construction code for it",
+   "verdict": "CONFIRMED",
+   "why": "MDN AudioContext() constructor page (fetched live) confirms every element: default is \"interactive\", it targets the lowest glitch-free output latency, the user agent \"may or may not choose to meet this request\", and true latency is readable at AudioContext.baseLatency. Repo: grep of src/**/*.ts finds zero audio references, so nothing overrides Phaser's default context construction \u2014 the ALREADY_DONE (satisfied-by-platform-default, add nothing) adjudication matches the repo's actual state. Caveat noted but non-fatal: Phaser's own context-creation source could not be inspected (node_modules read denied), so 'Phaser passes no latencyHint' rests on Phaser's docs exposing no such option rather than on source."
+  },
+  {
+   "title": "Scheduling: anchor every envelope to ctx.currentTime; the 25ms/100ms lookahead scheduler is NOT needed for event-driven one-shots",
+   "verdict": "CONFIRMED",
+   "why": "web.dev/articles/audio-scheduling (fetched live) matches the claim precisely: the lookahead pattern is presented for rhythmic/metronome sequencing, with a 25ms setTimeout interval scheduling ~100ms ahead against audioContext.currentTime, and it explicitly warns that firing audio from setTimeout alone is \"a bad idea\". Repo citations are exact: src/core/Sim.ts line 111 reads \"/** Typed events drained by the scene each frame and turned into FX/SFX. */\" and src/game/CLAUDE.md line 4 has the drain wording \u2014 SFX triggers really are same-frame immediate, so there is no future timeline to look ahead into. The ADAPT split (keep audio-clock discipline, drop the lookahead loop) survives attack."
+  },
+  {
+   "title": "AudioWorklet is NOT needed for one-shot synthesized SFX \u2014 native node graph only",
+   "verdict": "CONFIRMED",
+   "why": "Chrome audio-worklet blog (fetched live) confirms the design intent: AudioWorklet replaced the deprecated ScriptProcessorNode and keeps user JS on the audio rendering thread \u2014 i.e., it exists for custom per-sample DSP, which oscillator/gain/filter one-shots don't need. Repo facts check out: src/game/CLAUDE.md line 9-10 reads \"all audio is WebAudio-synthesized. No image/audio asset files, ever\" (a runtime-filled AudioBuffer satisfies this); the \"894 green\" figure matches RESUME_HERE (\"57 files / 894 tests green\"); and the Math.random-legal-in-src/game claim matches CLAUDE.md, which bans Math.random in core only."
+  },
+  {
+   "title": "OG SFX parameter values must come from the videos' audio tracks \u2014 the ledger has zero audio rows today",
+   "verdict": "CONFIRMED",
+   "why": "I reproduced the ledger grep independently: the ONLY audio/sound/sfx match in docs/research/fidelity/COMBAT_MEASUREMENTS.md is the player name \"SOUND360TM\" in the HONDA SHIZUKA (7) leaderboard row (line 76) \u2014 zero measured audio rows, so no \u00a700b/\u00a7S24-H overturned-row exposure exists. I also attacked the item's unstated premise and it held: ffprobe shows BOTH reference videos (Nr4fQstqHDM.mp4, zFtCaTO0_1M.mp4) carry stereo 44.1kHz AAC audio streams, so the soundscape is actually extractable. RESUME_HERE line 41 (\"NO audio work - SESSION 25 owns it (scheduled in the kickoff)\") confirms the sequencing. web.dev webaudio-games (fetched) supports tuning-to-the-game over presets."
+  }
+ ],
+ "overall_note": "All six items survive adversarial verification: 6 of the cited URLs were fetched live and each supports the exact claim attributed to it (including the two verbatim web.dev quotes and the Phaser 3.60 interrupted-state changelog line); every repo citation (phaser ^3.90.0, src/game + src/config CLAUDE.md wording, Sim.ts comment, 894-test count, empty audio grep of ledger and src/config) was reproduced with real commands; both reference videos verifiably contain audio tracks. Two flags for SESSION 25 execution, neither invalidating a verdict: (1) src/config/CLAUDE.md's landmine \\\"Don't invent constants that 'feel missing'\u2026 Stage specs name every constant\\\" means the SESSION 25 kickoff must explicitly NAME the audio constants (compressor threshold/ratio, per-class envelope params) before src/config/audio.ts is written, or the new file trips the repo's own rule; (2) node_modules is permission-denied here, so Phaser's exact gesture-event list and lack of a latencyHint argument were verified against Phaser's published docs, not source \u2014 trivially checkable in-session before coding."
+}

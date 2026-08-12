@@ -1,0 +1,187 @@
+{
+ "area": "Phaser 3.90 performance (render flags, pooling, atlases/generated textures, Arcade physics) \u2014 adjudicated for a 2-fighter procedural-vector duel scene",
+ "items": [
+  {
+   "title": "roundPixels silently defaults TRUE since Phaser 3.70 \u2014 set it explicitly to false to match the Flash sub-pixel vector look",
+   "claim": "Phaser 3.70+ flipped the GameConfig default to roundPixels: true (pixel-snap via a uRoundPixels shader uniform in the texture pipelines); the repo's GameConfig in src/main.ts sets no render block, so on phaser@3.90 the game is running with rounding ON without anyone having chosen it. It affects texture-based objects (all the Text nameplates/HUD labels, several positioned at fractional x like 799 + i*73.5 and repositioned per frame to track fighters), NOT Graphics paths. Community reports (GitHub #6509, discourse) document jitter from the rounding when objects track smooth positions. The OG is a Flash vector game rendered sub-pixel; snapping is a divergence from source behavior, not an optimization.",
+   "sources": [
+    {
+     "title": "Phaser v3.70.0 release notes (roundPixels default true, GPU rounding, texture pipelines only)",
+     "url": "https://github.com/phaserjs/phaser/releases/tag/v3.70.0",
+     "grade": "A"
+    },
+    {
+     "title": "Camera jitter when camera rounds pixels \u2014 phaserjs/phaser issue #6509",
+     "url": "https://github.com/photonstorm/phaser/issues/6509",
+     "grade": "B"
+    },
+    {
+     "title": "roundPixels causing jittering with startFollow \u2014 Phaser Discourse",
+     "url": "https://phaser.discourse.group/t/roundpixels-is-causing-jittering-with-cameras-main-startfollow/11880",
+     "grade": "C"
+    },
+    {
+     "title": "Phaser.Core.Config API (render defaults: antialias true, batchSize 4096, powerPreference 'default')",
+     "url": "https://docs.phaser.io/api-documentation/class/core-config",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "src/main.ts GameConfig sets only type/width/height/backgroundColor/transparent/scale \u2014 no render block, so the 3.70+ roundPixels:true default is active by accident; DuelScene.drawFighters repositions texts.nameplate/playerName every frame from worldToStage output, exactly the tracking pattern the jitter reports describe, and the OG source is sub-pixel Flash vector.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "Add render: { roundPixels: false } (and leave antialias at its default true \u2014 correct for the Flash vector look) to the Phaser.Game config in src/main.ts, then re-run the in-browser fidelity gate (?fidelity=auto / __fidelity.run()) since text glyph placement can shift by <1px and the gate samples real canvas pixels.",
+   "stage": "now (one-line config + gate re-run)"
+  },
+  {
+   "title": "Bake the static arena Graphics into a runtime-generated texture (generateTexture) \u2014 the one atlas-adjacent idea that fits the invariant",
+   "claim": "Official Phaser docs: Graphics are decomposed into polygons every render under WebGL \u2014 'expensive processes, especially with complex shapes' \u2014 and the blessed fix for Graphics that never change is generateTexture(), which bakes the command list into a GPU texture drawn as one quad. DuelScene.drawArena() emits ~60+ fills/ellipses/rects (bamboo rows, canopy, mounds, lanterns) into a persistent Graphics that Phaser re-tessellates every frame despite never changing. generateTexture is a canvas/GPU runtime texture \u2014 no image FILE is created, so the no-asset-files invariant is untouched.",
+   "sources": [
+    {
+     "title": "Phaser Graphics concepts page (official performance guidance, generateTexture)",
+     "url": "https://docs.phaser.io/phaser/concepts/gameobjects/graphics",
+     "grade": "A"
+    },
+    {
+     "title": "Graphics API \u2014 Phaser Help",
+     "url": "https://docs.phaser.io/api-documentation/class/gameobjects-graphics",
+     "grade": "A"
+    },
+    {
+     "title": "Phaser Performance Optimization Guide (pooling, atlases)",
+     "url": "https://generalistprogrammer.com/tutorials/phaser-performance-optimization-guide",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "DuelScene.drawArena() is drawn once in create() into a Graphics that is re-tessellated per frame; src/game/CLAUDE.md bans image asset FILES, not runtime textures, so a generateTexture bake is invariant-compatible \u2014 but the 55/55 fidelity gate (src/game/fidelity.ts) samples real canvas pixels, and a texture round-trip can shift antialiased edges, so the bake must be gate-verified.",
+   "effort": "Low",
+   "impact": "Low",
+   "implementation_note": "In drawArena(): draw to the Graphics, g.generateTexture('arena', GAME_WIDTH, GAME_HEIGHT), g.destroy(), this.add.image(0,0,'arena').setOrigin(0). Only do this if a profile (renderer.snapshot timing or DevTools GPU trace) shows draw cost at all \u2014 at 2 fighters the scene almost certainly holds 60fps already, so treat as insurance for the crowd EncounterScene, then re-run __fidelity.run() for 55/55.",
+   "stage": "later \u2014 only on a measured frame-time problem (EncounterScene crowd growth is the likely trigger)"
+  },
+  {
+   "title": "Texture-atlas advice: inapplicable \u2014 DuelScene has zero Sprites, and file atlases are banned anyway",
+   "claim": "Atlas advice (pack sprites into one sheet to cut texture swaps and draw calls; practitioner post cites ~300KB download savings and fewer batch flushes) presumes texture-based Sprites. This scene renders fighters as Earcut-triangulated polygon fills (drawPlan in OgArtScene.ts) plus Graphics strokes \u2014 there are no textures to atlas, so batch-flush-from-texture-swap, the problem atlases solve, cannot occur here. File-based atlases would additionally violate the procedural-art invariant; the permitted runtime-texture variant is already covered by the arena-bake item.",
+   "sources": [
+    {
+     "title": "How I optimized my Phaser 3 action game in 2025 \u2014 franzeus (practitioner postmortem)",
+     "url": "https://franzeus.medium.com/how-i-optimized-my-phaser-3-action-game-in-2025-5a648753f62b",
+     "grade": "B"
+    },
+    {
+     "title": "Phaser Graphics concepts page",
+     "url": "https://docs.phaser.io/phaser/concepts/gameobjects/graphics",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "src/game/CLAUDE.md: 'All art is procedural vector (Graphics)\u2026 No image/audio asset files, ever'; DuelScene contains only Graphics (fx, hud) and one-time Text objects \u2014 grep confirms zero Sprite/Image/atlas usage in src/, so there is nothing for an atlas to batch.",
+   "effort": "Low",
+   "impact": "Low",
+   "stage": "n/a"
+  },
+  {
+   "title": "Object pooling: the expensive pattern it prevents is already absent \u2014 FX records are plain JS objects, not GameObjects",
+   "claim": "Pooling advice (Groups with maxSize, setActive(false) recycling; practitioner measured ~15% fps from pooling bullets/enemies) targets games creating/destroying hundreds of GameObjects per second, where each destroy tears down WebGL/display-list state and churns GC. This repo never creates GameObjects at runtime: droplets/trails/redStrokes are plain {x,y,vx,vy,bornAt} literals in arrays, all Text objects are created once in createHudTexts(), and EncounterScene deliberately draws damage-popup digits as Graphics blocks instead of Text objects. At BLOOD_COUNT-scale allocation (~a dozen small literals per hit) modern-GC pressure is negligible; adding a pool would be pure churn.",
+   "sources": [
+    {
+     "title": "How I optimized my Phaser 3 action game in 2025 \u2014 franzeus (pooling gains)",
+     "url": "https://franzeus.medium.com/how-i-optimized-my-phaser-3-action-game-in-2025-5a648753f62b",
+     "grade": "B"
+    },
+    {
+     "title": "Bullet pools (Phaser 3) \u2014 Phaser Discourse",
+     "url": "https://phaser.discourse.group/t/bullet-pools-phaser-3/7502",
+     "grade": "C"
+    },
+    {
+     "title": "Phaser Performance Optimization Guide",
+     "url": "https://generalistprogrammer.com/tutorials/phaser-performance-optimization-guide",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "DuelScene's Droplet/Trail interfaces are plain data (no Phaser objects), spawnBlood pushes literals and update() filters them; createHudTexts() builds every Text exactly once; EncounterScene's comment at its digit renderer ('Drawn as a scaling block per digit rather than a Text object') shows the GameObject-churn trap was already designed out.",
+   "effort": "Low",
+   "impact": "Low",
+   "stage": "n/a"
+  },
+  {
+   "title": "powerPreference / batchSize tuning: no-op at this scene's load \u2014 leave defaults",
+   "claim": "Defaults on 3.90: powerPreference 'default', batchSize 4096 (vertex quads per flush). batchSize matters only when a single batch exceeds 4096 quads \u2014 this scene submits two tessellated fighters, ~40 droplet circles, and HUD rects, orders of magnitude below the limit, and Graphics style changes flush batches anyway so a bigger buffer buys nothing. powerPreference: 'high-performance' forces the discrete GPU on dual-GPU laptops \u2014 a battery cost with zero benefit for a scene this light; the practitioner postmortem even found WebGL\u2192Canvas FASTER on a weak device, underlining that GPU-side tuning is not where this class of game is bound.",
+   "sources": [
+    {
+     "title": "Phaser.Core.Config API (render defaults)",
+     "url": "https://docs.phaser.io/api-documentation/class/core-config",
+     "grade": "A"
+    },
+    {
+     "title": "How I optimized my Phaser 3 action game in 2025 \u2014 franzeus",
+     "url": "https://franzeus.medium.com/how-i-optimized-my-phaser-3-action-game-in-2025-5a648753f62b",
+     "grade": "B"
+    },
+    {
+     "title": "rex notes: Phaser game config reference",
+     "url": "https://github.com/rexrainbow/phaser3-rex-notes/blob/master/docs/docs/game.md",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "src/main.ts already pins type: Phaser.WEBGL deliberately (comment: art direction relies on WebGL-only Graphics gradients \u2014 so the postmortem's Canvas switch is also off the table), and DuelScene's entire draw list (2 planPose fighters + droplets + HUD) is nowhere near a 4096-quad batch; there is no measured frame deficit anywhere in the ledger to justify either flag.",
+   "effort": "Low",
+   "impact": "Low",
+   "stage": "n/a"
+  },
+  {
+   "title": "Arcade physics settings: nothing to tune \u2014 the repo intentionally has no physics engine",
+   "claim": "Standard Arcade advice (fixedStep/fps tuning, useTree spatial index off for few bodies, Group-based overlap culling, only-check-active-bodies) configures Phaser's physics world. This repo runs zero Phaser physics: collision, movement, and projectiles are owned by the pure fixed-60Hz Sim with injected RNG, and grep shows no physics key in the GameConfig and no arcade import anywhere in src/. Introducing Arcade to get its 'optimizations' would move gameplay state into the scene layer and desync from the deterministic 24-seed harness.",
+   "sources": [
+    {
+     "title": "Shooting bullets in Phaser 3 using Arcade Physics Groups \u2014 CodeCaptain",
+     "url": "https://codecaptain.io/blog/game-development/shooting-bullets-phaser-3-using-arcade-physics-groups/696",
+     "grade": "C"
+    },
+    {
+     "title": "Phaser.Core.Config API (physics config surface)",
+     "url": "https://docs.phaser.io/api-documentation/class/core-config",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "Root CLAUDE.md invariant: 'Phaser scenes are render-only\u2026 Sim (fixed 60Hz, injected mulberry32 RNG) owns everything'; src/main.ts GameConfig has no physics block and DuelScene draws sim.projectiles (kunai) from Sim state \u2014 any Arcade adoption violates the render-only invariant and the duelSetup determinism seam.",
+   "effort": "Low",
+   "impact": "Low",
+   "stage": "n/a"
+  },
+  {
+   "title": "The one real per-frame hotspot in THIS scene is stroke segment count, not entity count \u2014 thin drag points at the input boundary",
+   "claim": "Official docs flag complex Graphics paths as the expensive case under WebGL (per-frame polygon decomposition). DuelScene.strokePinched issues a separate lineStyle+beginPath+moveTo+lineTo+strokePath per segment; a long drag stores up to 2048 world points (pointermove cap), and each live frame draws the stroke TWICE (body+core), plus every fading redStroke twice more and every trail twice \u2014 worst case tens of thousands of path commands in one frame during multi-stroke fades. This is the only load in the scene that scales unboundedly with player input. Pointer events arrive at display rate (up to 120+ Hz), far above any drawing fidelity the OG could show: the ledger's 15Hz content floor and the \u00a7S24-B reach cap both bound how much stroke detail the original ever rendered, so distance-based point decimation (drop points closer than ~2-3 world px) loses nothing measurable while collapsing worst-case segment count ~5-10x.",
+   "sources": [
+    {
+     "title": "Phaser Graphics concepts page ('expensive processes, especially with complex shapes')",
+     "url": "https://docs.phaser.io/phaser/concepts/gameobjects/graphics",
+     "grade": "A"
+    },
+    {
+     "title": "Graphics API \u2014 Phaser Help",
+     "url": "https://docs.phaser.io/api-documentation/class/gameobjects-graphics",
+     "grade": "A"
+    },
+    {
+     "title": "How I optimized my Phaser 3 action game in 2025 \u2014 franzeus (profile-then-fix method)",
+     "url": "https://franzeus.medium.com/how-i-optimized-my-phaser-3-action-game-in-2025-5a648753f62b",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "DuelScene pointermove already caps at dragPoints.length < 2048 but stores EVERY move event; strokePinched then draws per-segment for the live drag, redStrokes, and trails each frame \u2014 and COMBAT_MEASUREMENTS \u00a700's '15 Hz content floor' plus \u00a7S24-B's rendered-stroke reach cap prove the OG never carried sub-pixel-dense stroke detail, so decimation cannot cost fidelity. Must be parameterized as a min-distance threshold in src/config/ (CONTRACT/INFERRED-tagged), not a magic number in the scene.",
+   "effort": "Low",
+   "impact": "Medium",
+   "implementation_note": "In the pointermove handler, skip the push when hypot(w - lastStored) < a new config/combat threshold (~2-3 world px, tag INFERRED, note the \u00a7S24-B reach cap as the bounding measurement). DrawnStroke and Sim.applyStroke consume the same array, so verify the 24-seed duel harness and gesture-classification tests stay green \u2014 decimation changes stroke.points fed to the Sim, which is why the threshold must be small and config-owned.",
+   "stage": "SESSION 24/25 \u2014 pairs naturally with the \u00a7S24 stroke-lifecycle work already in flight"
+  }
+ ],
+ "sources_consulted": 11,
+ "dead_ends": "No Phaser 3.90-specific performance changelog entries found beyond the 3.70 roundPixels default flip (3.90 searches surfaced nothing render-perf-relevant). Found no forum/postmortem thread specifically quantifying Graphics strokePath per-segment cost \u2014 that item rests on the official 'complex shapes are expensive' guidance plus repo code reading. Did not fetch GitHub issue #6874 (roundPixels image scaling) \u2014 title from search results only. Arcade physics research was cut short deliberately: grep proved no physics engine exists in src/, making deeper sourcing pointless. The franzeus postmortem's headline finding (Canvas 30% faster than WebGL on a Pixel 5) could not be adopted: src/main.ts pins Phaser.WEBGL explicitly because the art direction needs WebGL-only Graphics gradients."
+}

@@ -1,0 +1,141 @@
+{
+ "area": "Determinism & replay",
+ "items": [
+  {
+   "title": "IEEE-754 + - * / are bit-portable across engines; Math transcendentals are spec-level 'implementation-approximated' \u2014 so the seed-7 fingerprint is per-engine-build, not cross-browser",
+   "claim": "ECMAScript exactly specifies +, -, *, / as IEEE 754-2019 roundTiesToEven (bit-identical across V8/JSC/SpiderMonkey), but Math.sin/cos/tan/pow/exp/hypot/atan2 (and per the spec text even sqrt/cbrt) are 'implementation-approximated' \u2014 accuracy is unspecified. MDN's official warning: different browsers give different results, and even the same engine on a different OS/arch can differ. Real 2022-2025 divergences: Math.tan(1e16) returns -1.2451734357184066 in Node(V8) vs -1.245173435718406 in Safari(JSC); Firefox bug 1775254 tracks Math.pow inaccuracy for large exponents vs Chrome. V8 and SpiderMonkey both fork fdlibm but maintain separate forks, so convergence is coincidental, not guaranteed, and can change between engine VERSIONS too.",
+   "sources": [
+    {
+     "title": "MDN Math \u2014 'precision is implementation-dependent' note",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math",
+     "grade": "A"
+    },
+    {
+     "title": "uhyo \u2014 How accurate are numerical calculations in JavaScript? (spec analysis: which ops are implementation-approximated)",
+     "url": "https://zenn.dev/uhyo/articles/javascript-math-accuracy?locale=en",
+     "grade": "B"
+    },
+    {
+     "title": "Bugzilla 1775254 \u2014 Improve Math.pow accuracy for large exponents (SpiderMonkey vs V8 fdlibm forks)",
+     "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=1775254",
+     "grade": "A"
+    },
+    {
+     "title": "Conor Deegan \u2014 Falcon and floating point (Math.tan(1e16) Node vs Safari divergence)",
+     "url": "https://www.conor.computer/blog/falcon-and-floating-point",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "tests/determinism.test.ts already scopes its claim correctly: it compares two child `vitest run` Node processes plus the parent \u2014 all the SAME V8 build \u2014 and never asserts cross-engine equality. Nothing in the repo currently promises a browser-portable fingerprint, so there is no defect to fix today.",
+   "implementation_note": "Optional 1-line hardening: add a comment in tests/determinism.test.ts stating the fingerprint is engine-build-scoped. Note the fold in tests/utils/duel-bot.ts quantizes via Math.round(x*256), which absorbs sub-1/256px float noise except exactly at .5 ties \u2014 helpful, but not ULP-proof, so don't advertise it as cross-engine armor.",
+   "effort": "Low",
+   "impact": "Medium",
+   "stage": "now"
+  },
+  {
+   "title": "The ONLY transcendentals on gameplay-state paths are Math.hypot and Math.atan2 \u2014 replaceable with spec-exact compares when cross-engine determinism is actually needed",
+   "claim": "Math.hypot is on the implementation-approximated list (Rune's shipped non-determinism audit names it; V8/JSC/SpiderMonkey use different overflow-safe algorithms), and it sits on real sim paths: Sim.stepKunai (deflect radius), projectile.ts projectileHits (hit radius) and spawnProjectile (aim normalization), vec.len, ringGeometry. gesture.ts uses Math.atan2 for the slash/jump angle threshold \u2014 gesture classification IS gameplay. The portable fix needs no lookup tables: squared-distance comparison (dx*dx+dy*dy <= r*r) uses only exactly-rounded ops and is bit-deterministic everywhere; the atan2 threshold becomes a cross-multiplied slope compare (|dy| vs K*|dx|, K a precomputed config constant). Aim normalization can use Math.sqrt(x*x+y*y): spec text calls sqrt implementation-approximated, but IEEE 754 requires correctly-rounded sqrt and engines use the hardware instruction \u2014 the practical residual risk is far below hypot's documented divergence.",
+   "sources": [
+    {
+     "title": "Rune \u2014 Making JS deterministic for fun and glory (Kevin Glass; shipped deterministic JS rollback netcode; hypot/atan2 on the patch list)",
+     "url": "https://developers.rune.ai/blog/making-js-deterministic-for-fun-and-glory",
+     "grade": "B"
+    },
+    {
+     "title": "uhyo \u2014 JavaScript math accuracy (which ops are exact: + - * / roundTiesToEven; sqrt caveat)",
+     "url": "https://zenn.dev/uhyo/articles/javascript-math-accuracy?locale=en",
+     "grade": "B"
+    },
+    {
+     "title": "MDN Math \u2014 implementation-dependent precision warning",
+     "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math",
+     "grade": "A"
+    }
+   ],
+   "adjudication": "ADAPT",
+   "adjudication_reason": "Worthwhile ONLY at the replay/PvP stage \u2014 today the fingerprint never crosses engines (tests/determinism.test.ts is same-V8 by design), so doing it now is churn. When adapted, the new threshold constant must live in src/config/ per the zero-numeric-literal rule in src/core/CLAUDE.md, and the swap must be behavior-pinned (deflect/hit outcomes unchanged on the 24-seed harness).",
+   "implementation_note": "Concrete diff when the stage arrives: Sim.stepKunai and projectileHits switch to squared-radius compares (add DEFLECT_RADIUS_SQ / PROJECTILE_HIT_RADIUS_SQ to config); gesture.ts replaces Math.atan2(|dy|,|dx|) >= thresh with |dy| >= SLOPE_THRESHOLD * |dx|. This deletes the entire cross-engine risk surface of the sim in ~4 call sites.",
+   "effort": "Low",
+   "impact": "High",
+   "stage": "Stage 5-6 (PvP/replay stage)"
+  },
+  {
+   "title": "Lookup tables / polynomial sin-cos inside core: REJECT \u2014 every Math.sin/cos in the repo is render-side pose math that never feeds gameplay state",
+   "claim": "The standard deterministic-JS remedy (Rune patches Math functions platform-wide) targets sims whose STATE flows through transcendentals. Here Math.sin/cos live only in anim.ts (stride/breathe oscillators), planPose.ts and composePose.ts (part rotation for drawing) \u2014 outputs are drawn by scenes, never written into FighterState, and the duel fingerprint folds only hp and pos.x (tests/utils/duel-bot.ts). Table/polynomial sin in core would add config-constant sprawl, introduce visible pose-fidelity risk (the 1:1 mandate), and buy zero determinism.",
+   "sources": [
+    {
+     "title": "Rune \u2014 Making JS deterministic (why they patch Math: state flows through it \u2014 the precondition this repo does not meet)",
+     "url": "https://developers.rune.ai/blog/making-js-deterministic-for-fun-and-glory",
+     "grade": "B"
+    },
+    {
+     "title": "Gaffer On Games \u2014 Floating Point Determinism (only sim-state-affecting float paths need determinism treatment)",
+     "url": "https://gafferongames.com/post/floating_point_determinism/",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "REJECT",
+   "adjudication_reason": "tests/utils/duel-bot.ts's fingerprint fold covers hp/pos.x only, and grep confirms every core Math.sin/cos call site (anim.ts, planPose.ts) is pose/animation output consumed by render-only scenes \u2014 so tables/polynomials would violate 'simplest change wins' and risk the 1:1 pose fidelity for no determinism gain.",
+   "effort": "High",
+   "impact": "Low",
+   "stage": "never (re-open only if pose output ever feeds hitboxes)"
+  },
+  {
+   "title": "mulberry32 quality: author-flagged bias (can't emit ~1/3 of uint32 values, ~16GB useful output) is irrelevant at duel scale \u2014 keep it, do not swap to sfc32/SplitMix32",
+   "claim": "Tommy Ettinger (mulberry32's author) now discourages it for serious use: the output function isn't reversible, so it is not equidistributed \u2014 about 1/3 of all uint32 values are unreachable and patterns emerge after ~16GB of output; he recommends SplitMix32, and bryc recommends sfc32/jsf32 for JS. BUT it passes gjrand/PractRand within its range, and Rune shipped mulberry32 in production JS rollback netcode. This sim draws a handful of numbers per swing/AI beat \u2014 a 2-minute duel consumes thousands of draws, ~6 orders of magnitude under the 2^32 period, and damage-roll granularity (minDamage + range) makes the missing-values bias unobservable.",
+   "sources": [
+    {
+     "title": "bryc/code discussion #21 \u2014 'Mulberry32 no longer recommended by its author' (Tommy Ettinger, primary source)",
+     "url": "https://github.com/bryc/code/discussions/21",
+     "grade": "A"
+    },
+    {
+     "title": "bryc \u2014 PRNGs.md (JS PRNG quality/benchmark survey; gjrand results)",
+     "url": "https://github.com/bryc/code/blob/master/jshash/PRNGs.md",
+     "grade": "B"
+    },
+    {
+     "title": "Rune \u2014 Making JS deterministic (shipped mulberry32 for rollback in production)",
+     "url": "https://developers.rune.ai/blog/making-js-deterministic-for-fun-and-glory",
+     "grade": "B"
+    }
+   ],
+   "adjudication": "ALREADY_DONE",
+   "adjudication_reason": "src/core/rng.ts implements the architecture-mandated algorithm ('Spec-fixed' header in src/config/rng.ts: 'injected mulberry32 RNG' \u2014 never balance the magic numbers), pinned against an independent reference copy in tests/rng.test.ts; swapping generators would invalidate every committed fingerprint and the 24-seed harness for zero gameplay-visible gain.",
+   "implementation_note": "Only revisit if a future feature consumes randomness at statistical scale (procedural generation, loot tables across thousands of runs). Note mulberry32 is fully integer/bitwise (imul, shifts, one division by 2^32) \u2014 every op is exactly specified, so the RNG stream itself IS bit-portable across engines; the portability risk lives downstream (item on hypot/atan2), not in the RNG.",
+   "effort": "Low",
+   "impact": "Low",
+   "stage": "now (no action)"
+  },
+  {
+   "title": "Replay for PvP = seed + input tape recorded at the Sim boundary in sim-frame indices, with periodic state checksums for desync detection",
+   "claim": "Deterministic lockstep practice (Fiedler; Supreme Commander verified it across millions of installs): transmit/record only inputs plus the seed, re-simulate locally, and emit periodic state checksums so any float/engine drift is caught at the frame it happens instead of as a mystery divergence later. The Sim is already shaped for this: setPlayerIntent / queueSkill / applyStroke are the ONLY mutation entry points, advance() owns the fixed-60Hz accumulator, and duel-bot.ts's FNV-style fold is a ready-made checksum. Two gaps to close when the stage arrives: (1) scenes seed with mulberry32(Date.now()) (DuelScene.ts, EncounterScene.ts) \u2014 the seed must be captured into the tape header along with an engine/build tag, per the per-engine-fingerprint finding; (2) inputs must be keyed by sim.frame (the Sim's own clock), never wall-clock ms, or the MAX_FRAME_MS clamp and accumulator make playback timing-dependent.",
+   "sources": [
+    {
+     "title": "Gaffer On Games \u2014 Floating Point Determinism (input tapes, checksums, lockstep; Supreme Commander shipped it)",
+     "url": "https://gafferongames.com/post/floating_point_determinism/",
+     "grade": "B"
+    },
+    {
+     "title": "Rune \u2014 Making JS deterministic (predict-rollback over seeded mulberry32 in JS, shipped)",
+     "url": "https://developers.rune.ai/blog/making-js-deterministic-for-fun-and-glory",
+     "grade": "B"
+    },
+    {
+     "title": "GameDev.net \u2014 Is JavaScript floating-point math deterministic? (lockstep-in-browser practitioner thread)",
+     "url": "https://www.gamedev.net/forums/topic/609592-is-javascript-floating-point-math-deterministic/",
+     "grade": "C"
+    }
+   ],
+   "adjudication": "ADOPT",
+   "adjudication_reason": "Sim.advance()'s owed-frames accumulator and the single-entry-point input surface (Sim.setPlayerIntent, Sim.queueSkill, Sim.applyStroke) mean an input tape slots in with no core rewrite; tests/utils/duel-bot.ts already demonstrates the record-and-checksum shape the tape needs.",
+   "implementation_note": "Tape format when built: header {seed, engineTag, configHash} + ordered [{frame, intent|stroke points|skill}] + checksum every N frames (reuse the duel-bot fold, but ALSO fold focusUnits \u2014 Sim.ts's own comment records that the hp/pos-only fold missed a real Focus-spend ordering bug). If PvP must be CROSS-BROWSER lockstep rather than replay-on-same-engine, the hypot/atan2 ADAPT item becomes a prerequisite.",
+   "effort": "Medium",
+   "impact": "High",
+   "stage": "Stage 5-6 (PvP/replay stage)"
+  }
+ ],
+ "sources_consulted": 12,
+ "dead_ends": "Fetching tc39.es/ecma262 multipage directly returned only the table of contents (page too large to extract the normative 'implementation-approximated' text verbatim) \u2014 the spec-level claim is grounded via uhyo's section-by-section spec analysis plus MDN's official warning instead. Found NO evidence that V8/JSC/SpiderMonkey have converged on bit-identical Math results (the opposite: Safari-vs-Node Math.tan divergence and the separate fdlibm forks in Bugzilla 1775254 show live divergence in 2022-2025). No COMBAT_MEASUREMENTS.md ledger rows touch RNG/determinism (the OG's Flash AVM2 float behavior was never measured and cannot be, per the P0 no-offline-build finding), so all adjudication anchors are repo symbols. Note: the task's REQUIRED READING named src/core/composePose.ts for cos/sin \u2014 that file exists but the actual gameplay-relevant transcendentals turned out to be Math.hypot in Sim.ts/projectile.ts and Math.atan2 in gesture.ts, found via grep; cos/sin (anim.ts, planPose.ts, composePose.ts) are all render-side."
+}

@@ -148,6 +148,17 @@ Every step: **write the failing test names FIRST, watch them red, then code.**
   baseline protocol).
 - **A12.3** — transcribe `run_sheathed` + death + the hit answer; extend the
   byte pins (A12-D data half, A12-E data half).
+  **⚠ 2026-08-13 research finds (`IMPROVEMENTS_RESEARCH.md` §flash-anim):**
+  (1) FIX FIRST: the transcriber silently drops the payload's `r="1"` frame
+  flag, which flips z-order to node-list order (`FIGHTER_ART_IDS.md` §3) —
+  `balancedhorizontalslash_partc` frame 5 mis-layers in the committed build
+  today; (2) add a slot-range fail-loud before the death variants
+  (`deathbyarrow` carries slot 21; composePose silently drops unknown slots);
+  (3) good news: both A12.3 targets already parse clean under the existing
+  grammar — verified EMPIRICALLY against the bindata (zero FATALs), and the
+  payload has no color transforms/labels/scripts anywhere; (4) there is NO
+  hit-reaction clip — map §S24-F's measured reactions to the
+  `gotlaunched*/downed*/brake` clip family from video before transcribing.
 - **A12.4** — gait picker + impact playback in DuelScene (render-only).
 - **A12.5** — re-grade, gates, owner LOOK, handoff, SESSION 25 kickoff
   (audio research, its own session).
