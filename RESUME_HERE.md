@@ -65,6 +65,30 @@ carry the same note. Also corrected: the true suite count is **56 files /
 
 ---
 
+## 🔁 THE GAUNTLET — the standing engine (adopted 2026-08-13)
+
+**`docs/GAUNTLET.md`** is now the method every session runs: a self-re-arming
+gauntlet-loop over **all 12 systems**, one **lane** per run, each lane binary-gated
+and crash-survivable. Session kickoffs still own *current state*; the gauntlet owns
+*how the work is done*. Its §5 is the paste-ready prompt.
+
+**Two things from it that change what the next session should do:**
+
+1. **§0 — every critic is an ARTIFACT critic.** This game is dead (P0, definitive):
+   no agent has ever seen it run, so "compare it to the real game" MUST mean a frame
+   under `reference/frames/`, a row under `reference/extracted/`, a byte-check, a
+   ledger number carrying its own frame cite, or Kheshav's logged LOOK. A verdict
+   citing memory is VOID. This is the SESSION 18 A4-D failure, made structural.
+2. **§1 — the payload holds what the ledger calls unrecoverable.** `reference/extracted/`
+   has the **complete campaign** — 61 quests, **Prologue→Ep12→Epilogue→Season 2**,
+   **3,307 verbatim dialogue lines**, 471 choices, cutscene direction — plus **75
+   skills × 182 rows with exact chi + cooldown**, **495 NPCs**, **982 items**.
+   `grep` finds ZERO references to any of it in `src/`/`tests/`/`scripts/`, while
+   `src/config/skills.ts` ships 3 skills with 2 of 3 cooldowns hand-INFERRED.
+   **Lane L0 (re-survey) runs before any other lane.**
+
+---
+
 > ## ▶ SESSION 23 CLOSED IN FULL — THE REAL FIGHTER IS IN THE DUEL, MIRRORED, AND MOVING.
 > **57 files / 894 tests green** · tsc ×2 → 0 · eslint → 0 · fidelity **55/55,
 > now AUTONOMOUS** (`?fidelity=auto` + a self-opened BRAVE window +

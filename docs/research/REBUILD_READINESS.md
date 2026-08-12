@@ -17,6 +17,26 @@
 > game, not model capability.** No model can reproduce a damage number, a reach in pixels,
 > or a sound effect it has never observed. Every remaining gap below is *measurable or
 > researchable* — and this pass shows the frontier is closable, not mysterious.
+>
+> ## ⛔ STALENESS BANNER — 2026-08-13: THIS DOC IS WRONG ON ITS BIGGEST CALLS
+>
+> **This pass predates the payload extraction and was never reconciled with it.**
+> Verified first-hand 2026-08-13 against `reference/extracted/` — the following
+> claims below are **DISPROVEN** and must not be planned against:
+>
+> | Claim in this doc | Reality in the payload we already hold |
+> |---|---|
+> | §4 quests-story: *"verbatim dialogue — captured NOWHERE"*; §6: *"structurally unrecoverable"* | `questdata.xml` — **2,771 `<dialogue>` blocks, 3,307 verbatim `<text>` lines, 471 `<choice>`**, full `<cutscene>` direction |
+> | §3.8: *"Ep4–12 were likely never shipped… faithful campaign = Prologue–Ep3"* | **61 quests: Prologue → Episodes 1–12 → Epilogue → a Season 2 hook.** The campaign is complete |
+> | §2 skills-meters **33/100**, blocker ① *"every other skill's Chi cost + cooldown"* | `skilldata.xml` — **75 skills × 182 level rows** with exact `<chi>`, `<cooldown>`, `<value>` |
+> | §2 enemies-ai **34/100**, blocker ① *"enemy level→stat formula… absent"* | `npcdata.xml` — **495 NPCs**, full paperdoll + `<lvl>` + `<ai>` + `<skill>` |
+> | §2 items-equipment **42/100** | `itemdata.xml` — **982 items** with type/price/weight/modifiers/defense |
+>
+> **The scores in §2 are therefore stale, not merely conservative.** `docs/GAUNTLET.md`
+> **lane L0 owns the re-survey** and will rewrite §2/§4/§6 with A2 (payload) cites.
+> Until L0 lands, treat §2's numbers as a floor and §6's "unrecoverable" list as
+> unproven. *Everything else in this doc — the P0 verdict, the four-quadrant frame,
+> the §3 corrections, the close-paths — still stands.*
 
 ---
 
