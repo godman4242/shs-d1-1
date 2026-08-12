@@ -1,4 +1,4 @@
-# Combat measurements — Session 11 study pass (a)–(g)
+# Combat measurements — Session 11 study pass (a)–(g) · SESSION 24 A12.1 pass (§S24, end of file)
 
 Ledger ordered by SESSION11_KICKOFF study items. METHOD: ffmpeg frame
 extracts from the two v0.717 longplays (A = `zFtCaTO0_1M` world/story,
@@ -757,3 +757,320 @@ Plus one positive technique worth reusing:
    cursor*, not on the object they name (b-1). Whenever one is lit you can read
    the mouse position to ±150 px — the only way to see the mouse in a recording
    that never draws it.
+
+---
+
+# §S24 — SESSION 24 A12.1 pass (2026-07-29): stroke reach cap · slash-vs-move · duel gait · strike-travel
+
+METHOD: 9 measurement agents over 6 windows across both longplays, 15 fps
+extraction (60 fps bursts only to test sub-tick claims), per-frame camera
+anchoring on world-fixed props, strict/loose red-mask pixel scans + own-eyes
+crop reads. Workflows `wf_d67ff186-fe4` + `wf_25bf3bec-458` (measure) and
+`wf_91f9b11b-6a7` (adversarial verify — **died on credit exhaustion
+2026-07-29 with zero verdicts**; re-run 2026-08-12 from the preserved
+script as `wf_56ff205f-341`, same evidence frames — verdicts in §S24-H);
+evidence frames + crops in
+`reference/frames/session24/<agent>/` (local-only, gitignored). Windows:
+A first fight t=112–127 (BALANCED L1) · B dojo t=424–436 (HEAVY L8) ·
+B Honda Shizuka VS duel t=3770–3782 (HEAVY L10, ×3 questions) · A forest
+fight t=3883–3890 (HEAVY) · A beach vs JINBEI t=1950–1975 (HEAVY L5) ·
+B mountain-path mob battle + kill-cam t=426–459.
+
+**Units: raw px @1080** unless stated. Conversions: ÷2.25 = **world px**
+(sim canvas 800×480) · ÷1.875 = stage px (legacy 1024×576 rows above).
+All timings carry the ±1 content-tick floor (66.7 ms, §00).
+
+## §S24-A The stroke lifecycle (the model every row below feeds)
+
+1. **The player draws a line ANYWHERE in the world** — near ends measured at
+   the body (S6/S7 beach, E11/K2 duel: 25–46 px) and far from it (E1 247 px,
+   S1-A28 274 px, S2-A28 290 px, S3-A 434 px, S2-dojo 569 px ahead).
+2. **It appears in ≤1–2 ticks and hangs WORLD-anchored** (drifts exactly with
+   camera pans; dojo S2 pixel-static 15 locked ticks). Hang duration is not
+   fixed: 2–22 ticks observed — execution waits for the fighter to arrive.
+3. **A hanging line is HARMLESS.** Dojo S2: two full-HP spearmen walked ~600 px
+   into the span and stood in it ~1.3 s, zero damage until execution. A28 S2:
+   two mobs occupied the span ~1 s, unharmed (that stroke then whiffed empty).
+4. **The fighter travels TO the stroke, then along it** (§S24-D/E speeds), and
+   **damage resolves at execution on actors inside the drawn span** (+30–80 px
+   blade overshoot at the ends). **Nothing beyond the far end is ever hit**:
+   Honda undamaged 259 px past E10's far end; A28 mobs untouched right of S1's
+   span; first-fight survivor margin (session-11 strand ③) unchanged.
+5. **Vanish timing carries two readings, both recorded, never averaged:**
+   dojo/A28/first-fight — the line vanishes on the dash tick / when the player
+   reaches the far end; Honda duel — every executed stroke persisted rendered
+   through the WHOLE dash and vanished at contact/flash (`stroke-persists-
+   through-dash`, high confidence). Possibly build-version or fight-type
+   dependent; sub-tick order unresolvable.
+6. **Strokes can be REJECTED or DEFERRED:** K1 (drawn 1 tick after a hit flash,
+   player still sliding, left end 29 px behind his center) vanished after 1
+   tick — no dash, no damage; K2, near-identical but drawn 2 ticks later and
+   40 px AHEAD of the body, executed as the kill. A pending stroke can also
+   persist BLINKING ~1.4 s (3-on/1–2-off at the sampling floor) until the
+   player recovers, then execute (`PENDING`, Honda f0116–f0138).
+
+## §S24-B A12-A — the reach cap (rendered stroke length)
+
+| window | stance | strokes | rendered lengths @1080 |
+|---|---|---|---|
+| A first fight | BALANCED L1 | 8 | 132–252 (bold widths 139–237) |
+| B dojo | HEAVY L8 | 2 | 189 · 188 |
+| A forest | HEAVY | 2 (+1 suspect) | 164 · 176 (· “438” see below) |
+| B Honda duel | HEAVY L10 | 6 | 146–259 (K1/K2 161/162; E12 = bold 161 + faint tail ~100) |
+| A beach | HEAVY L5 | 8 | 120–165 (mean 147) |
+| B mountain | HEAVY | 4 core reads | ~185–280 (blood-conflated maxima excluded) |
+
+- **Every normal player stroke across 30 measured strokes, 2 stances, 5 levels
+  sits in 120–280 px @1080 (53–124 world px).** Rendered length is fully
+  DECOUPLED from travel (a +420 px dash rode a 165 px stroke; a 0 px-travel
+  stroke landed a hit) and from body-to-far-end distance (up to 756 px).
+- 💥 **The session-11 ~775 px BALANCED line (a-2) is REFUTED** — three
+  independent kills by the tiebreaker agent: (1) an ultra-loose mask that
+  provably catches genuine faint tails finds ZERO red across the claimed
+  546 px gap on every tick; (2) a 60 fps burst over the release shows no
+  sub-tick transient; (3) the only “bridge” in the crops is a brown weapon
+  shaft, RGB(106,74,24) — chromatically not stroke red (R−G≥60 is the
+  discriminator). The 775 span = a blood decal at x≈668–717 + the real 191 px
+  stroke at x1264–1455, conflated. **a-2/a-5's “damage along the whole 775 px
+  line” is superseded**; the crux verdict (blade-path) itself stands — its
+  strands ②③ used actor positions, not that span.
+- ⚠️ The A28 “438 px” line (S3): bold END-TO-END with no faint tail (unlike
+  every confirmed stroke), drawn point-blank 1 tick before the kill-cam, span
+  empty of enemies. Flagged **suspect (cinematic-owned), not a normal stroke**;
+  excluded from the band pending the verify pass / a second overlong instance.
+- Convergence: the observed per-stance maxima (HEAVY ~190–260 incl. tails,
+  BALANCED ~250) bracket the session-11 c-2 plateaus (HEAVY 182–193, BALANCED
+  218–246 @1080) measured body-to-far-end on body-adjacent strokes — same
+  quantity, two methods. LIGHT (c-2 max 568 @1080) has no new sample; the cap
+  clearly scales by stance. **INFERRED (both readings kept):** the bold head =
+  the reach-truncated effective stroke; the faint 10–100 px tail = excess
+  drawn input. Matches a-8's varying bold fraction; not directly proven.
+- **Build consequence (A12.2):** `Sim` already truncates to the CONTRACT reach
+  formula (`stroke.truncateTo(reachFor(...))`) — the measured band brackets
+  those world values at unknown-video-stats. The lie the owner saw is
+  RENDER-side: DuelScene draws the raw drag uncapped. Render the truncated
+  polyline bold (+ optionally the excess as the faint tail, per the hypothesis
+  above).
+
+## §S24-C A12-B — slash-vs-move (movement causation in combat)
+
+- **VS duel (the DuelScene analogue): ZERO stroke-free voluntary player legs.**
+  Complete 11-leg catalogue (`P-LEGS`, Honda window): 5 voluntary legs, all
+  dashes on the player's own stroke (+400/+198/−107/−106/+326 px world); the
+  other 6 are hit physics (knock-up ~270 px vertical; knockdown tumble
+  +136–186 px landing prone; knockbacks −188/+40 px; ≤42 px involuntary
+  settles). Between exchanges the player is pixel-static up to 20 ticks.
+- **But stroke-free player movement DOES exist in non-duel combat — both
+  readings recorded:** A beach: 2 clear legs (retreat hop −178 px ~890 px/s;
+  approach walk −271 px) + 2 borderline; B mountain mob battle: 3 clear legs
+  (416 / 738 / 470 px at ~740–780 px/s, zero stroke pixels, camera-checked).
+  So combat movement WITHOUT slashing is real in the engine; the Honda duel
+  simply never showed the player using it. Session-11 gap-G's "zero stroke-free
+  movement ticks in combat" is hereby NARROWED to "none observed in its window
+  and none in the VS duel" — not a universal law.
+- **Point-blank strokes ATTACK — the owner's verdict is the OG's rule:**
+  PB-1 (Honda window): a stroke drawn at fighters' gap 61–89 px rendered full
+  181 px and landed a full −19 hit + 188 px knockback. Beach S6: bodies
+  OVERLAPPING, stroke through both fighters, zero travel, red “30” popup one
+  tick later. Beach S7: adjacent range, +60 px advance, hit next tick. Beach
+  S4: in-place stroke, enemy dashed into the zone, “36” landed. **At no range
+  does a drawn stroke become a move command.**
+- **The enemy is ASYMMETRIC (`ASYM`, high):** Honda moved freely without
+  strokes (9 legs, ~4400 px), showed a red stroke on only 2–3 of 6 landed
+  attacks (her 1030-px opening dash-hit had none), and two harmless
+  pass-throughs (H4/H7) prove body overlap alone deals no damage. Enemy
+  strokes, when shown, render identically (bold head at the striker). Trash
+  mobs never draw strokes (A28 exhaustive scan).
+- **Build consequence (A12.2):** classification cannot steal short/point-blank
+  drags for movement. The OG-consistent rule: any drawn stroke = slash
+  (reach-truncated); movement stays available as the separate hold/held-input
+  verb (B05/A16 legs). The K1-rejection + PENDING-blink rows give the
+  busy-state gating: strokes drawn during hit-recovery are rejected; strokes
+  drawn while busy may defer, blinking, until recovery.
+
+## §S24-D D3 — gait selection (walk/run threshold for `run_sheathed`)
+
+- **In-combat speeds are BIMODAL with an empty middle** (`SYNTH-1`, high):
+  upright short-step WALK cluster 214–247 px/s @1080 (95–110 world px/s) —
+  identical to the out-of-combat walk band 216–254; deep ~45° lean RUN cluster
+  573–656 core, 716 max-medium (255–318 world) — the out-of-combat run band
+  626–658 minus ~5–8 % (within proxy noise); dash-lunge 1251–1860 px/s ONLY
+  as the terminal 1–2 attack ticks. **No leg in 300–500 px/s exists in either
+  window**; the prior "375 px/s" A28 reading was a standing-start average of a
+  ~600 px/s instantaneous run (re-measured). No acceleration ramp anywhere.
+- **Threshold: place the walk/run animation switch anywhere in 260–560 px/s
+  @1080 (116–249 world px/s); recommended midpoint ~410 @1080 ≈ 182 world
+  px/s — INFERRED placement inside a MEASURED empty gap.** Config cross-check:
+  `MOVE_WALK_PX_S` 96 world = 216 @1080 ✓ in-band · `MOVE_RUN_PX_S` 288 world
+  = 648 @1080 ✓ in-band — the sim's two speeds land inside the OG's two
+  clusters; the gait picker can key on speed alone.
+- **Boss correction:** Honda NEVER walked — all 5 non-dash legs (approach AND
+  retreat) are deep-lean runs at 573–716. The A trash mob walked at 214
+  upright. "Enemies walk between exchanges" (gap-H) holds for trash, is
+  CORRECTED for duel bosses: trash walks · bosses run · both dash only as
+  attack openers.
+
+## §S24-E partb — strike-travel (the animation-hold numbers)
+
+- **The dash along the line is a CONSTANT-SPEED line-follow, not a snap and
+  not an acceleration ramp:** ~41–49 px/tick @1080 (≈620–740 px/s; 18–22
+  world px per 15 fps tick) with a GENUINE alternating ~27/55 px two-tick
+  stride — 60 fps bursts show exact 4-duplicate-frame content blocks, so the
+  alternation is animation rhythm, not sampling (recreate it, don't average
+  it). Distance sets duration: 124 px→3 ticks · 259→5 · 435→11.
+- **Plus a terminal CONTACT SNAP on the damage/kill tick only:** one content
+  tick carrying +139 (E1 flash) / +192 px (K2 kill) — and the 60 fps burst
+  proves the snap lands wholly between two ADJACENT 1/60 s frames (pure 15 fps
+  stepper, zero interpolation).
+- **This RESOLVES session-11 Contradiction #3:** Session 9's "1-frame ~238 px
+  snap" caught the terminal contact snap; session-11 d-2's "6–11 tick
+  accelerating run" caught the line-follow whose last tick is that snap. Both
+  were partial views of one mechanism. `DASH_SLASH_PX = 127` (a snap model)
+  and the current `DASH_SPEED_PX_PER_FRAME` (≈2400 world px/s continuous) both
+  mismatch the measured ~276–330 world px/s line-follow + snap — A12.2 input.
+- **Landing holds (for the partb loop):** mid-combo hit = 4–5 ticks recovery
+  (E1: 4; E11: 4–5 with +47 px recoil drift); chained strike = 0–1 tick
+  (dojo S1); kill/final = pose holds until input/cinematic (dojo S2 ≥37 ticks
+  idle; K2 cut off by the kill-cam within 1 tick).
+
+## §S24-F Impacts & the kill beat (A12-E inputs, measured free)
+
+- **Hit reactions on the player (Honda window):** small hits (−7/−12 px HP)
+  displace ~0; big hits (−17..−19) displace 40–270 px. Distinct reactions
+  observed: knock-up LAUNCHER (~270 px vertical, x static, lands 7 ticks);
+  KNOCKDOWN (prone face-down tumble +136–186 px, stands up by ~6 ticks);
+  knockback slide (−188 px + skid settle). Victims displace toward the
+  attacker's origin side as the attacker passes through (`KB-RULE`, medium).
+- **Global hit-stop:** when the A28 player took a hit, the ENTIRE world froze
+  3 content ticks (~200 ms) under a red edge vignette (strokes, background,
+  bars all pixel-identical) — a real engine beat, chaos-testable.
+- **Full-screen red WASH = player-took-damage feedback** (3–5 ticks/burst,
+  scene visible through it; 7 bursts tracked against HP drops; 2 kills with
+  NO wash) — reconfirms e-5.2; a kill produces blood/hat/jug VFX only.
+- **Kill-cam timeline (B05, archer kill):** fatal contact (cyan Chi burst at
+  the contact point) → **+2 ticks** hard cut to the red-silhouette screen (no
+  fade) → loser replayed in silhouette: lean-BACK ~20–30° then reversal into a
+  FORWARD waist-collapse, settled kneeling-slumped in **16 ticks** → YOU WIN
+  text **+17 ticks** after onset → red screen total ~74 ticks (~4.9 s) → hard
+  cut to loot. The archer's bow never detached (settles behind the body) —
+  CONTRASTS with the session-8 swordsman death row (sword detaches); both
+  readings stand, likely weapon-class dependent.
+
+## §S24-G New measurement traps (extends the session-11 list)
+
+7. **Blood decals + a stroke conflate into a phantom long line** under a
+   permissive mask (the 775 artifact). Demand a connected run at stroke
+   saturation (R−G≥60 catches genuine faint tails; blood stains pass, brown
+   weapon shafts at R−G≈30 do not).
+8. **The mask-xmin "erasing line" artifact:** a red-mask bbox that includes
+   the player's own red art (scabbard/trim) reads as a long line that
+   "erases behind the body" as he runs (the dojo-S2 792 px claim; refuted by
+   column profiles + LOOK — the line is 188 px, x[1224–1411], the whole hang).
+9. **A28 forest: the bottom-left mushroom cluster is a FIXED screen overlay**
+   (dx=0, corr 1.00 — a fake "static camera" anchor); the boulder layer
+   parallaxes at 0.73×. Anchor on hanging strokes or actor-plane props.
+10. **Honda's scabbard art carries a stroke-like red patch** (x-span ~120–140
+    px at blade height) that appears in motion blurs — attribution risk for
+    1–2-tick "strokes" (H-F4STROKE left low-confidence for exactly this).
+11. **A top-right red UI meter** (x≈1686–1793, y≈10–130) appears/grows during
+    damage windows in video A fights — screen-fixed, not gameplay; exclude.
+12. **Honda's boss HP bar renders as DASHED RED at y=628 x[1188–1297]** —
+    a red mask at stroke height reads it as stroke ink (the verify pass
+    caught a fleet agent counting it). Exclude that band before measuring
+    any stroke in the Honda window.
+13. **A hit can resolve with NO full-screen flash** (the point-blank 17-hit
+    lands at f0143–0145 flashless; the red wash belongs to SOME hits, both
+    directions). Never use "no flash" as evidence of "no hit" — read the
+    popup + the HP bar instead.
+
+## §S24-H Verification & corrections
+
+- **Orchestrator LOOK (this session):** dojo-S2 length dispute resolved at the
+  pixels — strict runs x[1224,1411] on every hang tick, zero red in the
+  claimed 619–1223 bridge, visual crop confirms (trap #8 above).
+- **Adversarial verify pass — the original run (`wf_91f9b11b-6a7`,
+  2026-07-29) died on credit exhaustion with ZERO verdicts (all three
+  skeptics' transcripts end at the out-of-credits error). RE-RUN
+  2026-08-12 from the preserved script (`wf_56ff205f-341`, 3 skeptics,
+  every check re-derived from pixels, ~195k tokens):**
+  - `verify-stroke-cap` (§S24-B band + S3-suspect): **WEAKENED — the band
+    survives, one number moves.** No normal-anatomy stroke >280 px anywhere
+    re-checked; the 775 refutation REPRODUCED (and the blood-conflation
+    failure mode demonstrated in miniature at dojo f0058: decals inflate a
+    ~207–253 px stroke to a false 349); S3 upgraded suspect →
+    **anomalous, near-certainly cinematic-owned** (zero faint tail, ~24 px
+    uniform thickness vs the 14–16 tapering norm, pixel count frozen at
+    exactly 4390 across three 60 fps frames, one tick before the kill-cam).
+    BUT Honda E12's genuine dashed tail runs to x≈1150–1155 (not ~1183 —
+    the redder pixels beyond are the enemy's clothing), true total
+    **≈274 px, not 259** → the HEAVY band top rises 260 → **~275**, and the
+    global cap must read "≤~280 with the longest measured at 274", not
+    "tightly bounded well under 280".
+  - `verify-duel-movement` (§S24-C three-part claim): **WEAKENED — the
+    mechanics survive, several numbers/attributions corrected.** P5/P8
+    involuntary CONFIRMED (P5 sits inside the full-screen hit flash; P8 is
+    a static-crouch drift). The point-blank 181 px stroke through
+    overlapping fighters is CONFIRMED and **STRENGTHENED: its damage
+    resolves ON DRAW (f0143–0145), BEFORE the dash** — but the popup reads
+    **17, not −19**, the f0149–0152 flash leaves Honda's HP untouched
+    (most plausibly the PLAYER being hit — the very slide K1 was drawn
+    during), and Honda's displacement is **+309 px by plate, not 188**.
+    A16 S6 (stroke through bodies → "30" popup, zero travel) cleanly
+    CONFIRMED. K1-rejection CONFIRMED (one tick, no flash, no HP change,
+    no dash) with an anchor fix: **K1 starts ~30–60 px AHEAD of the body
+    centre, not 29 px behind**; only the K2-further-ahead contrast
+    (+50 px) survives. 💥 **The F1 spot-check is REFUTED**: that window
+    contains a 143 px stroke (f0059–0067) resolving as a red "21" popup +
+    Honda's bar 130→~69 px — a PLAYER hit ON Honda, not an enemy
+    stroke-free hit; and the f0113 player-taken hit also had a stroke
+    drawn 1–4 ticks prior. ⇒ **the `ASYM` row's "enemy hits without
+    strokes" is UNSUPPORTED in both windows tested — downgrade high →
+    contested.** (Honda's 9 stroke-free LEGS stand; the stroke-free HITS
+    need fresh evidence.)
+  - `verify-gait-strike-numbers` (§S24-D/E numbers): **WEAKENED — the
+    averages survive, the stride story flips.** H-B4 re-derived 654 px/s ✓
+    walk 230 ✓ dojo S2 average 40.8 px/tick ✓ K2 terminal snap +191 px on
+    a single content tick ✓ (±10–20 px trunk-occlusion uncertainty) · E11
+    5-tick landing hold ✓. BUT the "genuine alternating 27/55 two-tick
+    stride" is **NOT established**: the camera-clean sequence is
+    +26,+55,+55,+55,+27,+27 — 27/55-QUANTIZED with phase slips (≈27.4 px
+    quantum, exactly 1.5 quanta/tick), the beat signature of a **constant
+    ~616 px/s mover updating faster than the 15 fps capture**, and the
+    identical pattern shows on plain run legs and on a nameplate (entity
+    translation, not feet). The 60 fps "4-frame content block" defence is
+    VOID — that is a property of the capture (§00), not of the game.
+    "No leg anywhere in 300–500 px/s" holds for **leg-AVERAGES only**
+    (per-tick instantaneous speeds alternate ~382–435 / ~800–860 inside
+    every run leg). Run-core upper bound is endpoint-sensitive: one
+    legitimate choice gives 683 px/s → quote **573–685**. The dojo camera
+    is NOT locked past f0094 (~6 px pan by f0096, ~27 px by f0098) —
+    fleet tick values after f0094 are contaminated.
+
+- **Verify-pass corrections (2026-08-12) — these WIN over the §S24-B/C/E
+  rows above (originals left in place for traceability):**
+  1. §S24-B: HEAVY band 146–260 → **146–~275** (E12 tail-inclusive ≈274;
+     tail endpoint x≈1150–1155). Global band unchanged at 120–280 but with
+     only ~6 px headroom — do not round it down.
+  2. §S24-B: A28 S3 "438 px" is **cinematic-owned**, excluded from the
+     normal-stroke band with high confidence (frozen pixel count, no tail,
+     uniform thickness, kill-cam adjacency).
+  3. §S24-C: point-blank hit = **17 damage resolving ON DRAW**, before any
+     travel; knockback displacement **+309 px**; K1 anchor
+     ahead-of-centre; `ASYM` (stroke-free enemy HITS) → **contested**.
+  4. §S24-E: model the dash as a **constant-speed line-follow ~616 px/s
+     @1080 (~274 world px/s), range ~40–49 px/tick** + the terminal
+     contact snap (+139–192 px, one tick). The recorded 27/55 rhythm is
+     best explained as the OG's internal update quantum (~27.4 px) beating
+     against the 15 fps capture — BOTH readings kept: build the Sim mover
+     constant-speed at 60 Hz; compare fidelity at capture level (15 fps
+     sampling), where the quantization reappears on its own. Do NOT
+     hand-author a 27/55 stepper into core.
+  5. §S24-D: run core quoted **573–685 px/s @1080** (endpoint
+     sensitivity); the bimodal empty-middle claim stands as stated only
+     for whole-leg averages — say so wherever it is cited.
+- **Prior-row corrections this pass makes:** a-2/a-5 775-px span → REFUTED
+  (blade-path crux verdict unaffected); Contradiction #3 → RESOLVED (§S24-E);
+  gap-G "no stroke-free combat movement" → NARROWED (§S24-C); gap-H "enemies
+  walk" → split trash/boss (§S24-D); MOTION_MEASUREMENTS "lunge lands in ONE
+  anim step" → superseded by line-follow + terminal snap (§S24-E); a-6 "line
+  vanishes on the first dash tick" → both-readings (§S24-A.5).

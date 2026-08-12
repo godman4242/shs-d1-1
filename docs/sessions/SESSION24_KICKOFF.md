@@ -40,7 +40,8 @@ belongs to THIS session's frame-counting).
 **P1 — ✅ SESSION 23 CLOSED A11.1–A11.4.** Both combatants composed + mirrored,
 walk + balanced slash transcribed (710 nodes CONTRACT), pure 15 fps stepper,
 distance-driven stride (`strideMs`, `WALK.stridePx` 72 MEASURED). Suite
-57 files / 894 · fidelity 55/55 **autonomous** (`?fidelity=auto` in a Brave
+56 files / 894 (the wrap banner's "57" was a miscount — re-measured
+2026-08-12) · fidelity 55/55 **autonomous** (`?fidelity=auto` in a Brave
 window — the extension lives in BRAVE, not Chrome) · floors tracing ≥ 0.9005 /
 held-out ≥ 0.8490 (spent, UP only) / height ≤ 140.5.
 
@@ -131,10 +132,18 @@ has not done §2.**
 
 Every step: **write the failing test names FIRST, watch them red, then code.**
 
-- **A12.0** — baseline: `git log --oneline -1` + `npm test` → 57 files / 894.
+- **A12.0** — baseline: `git log --oneline -1` + `npm test` → 56 files / 894.
 - **A12.1** — the measurement pass (A12-A + A12-B + D3's speed threshold +
   partb's strike-travel duration): frame-counting over ≥3 sequences each,
   written to `docs/research/fidelity/COMBAT_MEASUREMENTS.md` with cites.
+  **⚠ ALREADY BANKED (2026-07-29 measure + 2026-08-12 adversarial verify,
+  3 skeptics, all WEAKENED-with-corrections — no re-measure needed):**
+  the ledger's **§S24** holds the reach band (120–280 @1080, HEAVY top
+  ~275), the slash-vs-move rule (any stroke = slash at any range,
+  point-blank damage resolves ON DRAW), gait clusters (walk 214–247 /
+  run 573–685, empty middle for leg-averages), and strike-travel
+  (constant ~616 px/s line-follow + terminal snap). **Read §S24-H's
+  "Verify-pass corrections" block — those values win. Start at A12.2.**
 - **A12.2** — Sim: stroke cap + classification from A12.1 (A12-C, atomic
   baseline protocol).
 - **A12.3** — transcribe `run_sheathed` + death + the hit answer; extend the

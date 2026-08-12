@@ -22,11 +22,12 @@ READ FIRST, then tell me what they say before writing anything:
 - RESUME_HERE.md
 - docs/sessions/SESSION24_KICKOFF.md   <- the only kickoff to plan from, self-contained
 
-THE JOB: §4 A12.1 onward — my three verdicts on the moving duel ARE the session:
-measure the OG's stroke reach cap + slash-vs-move rule from the videos (frame-
-cited, >=3 sequences each), implement both in the Sim behind the duel-baseline's
-own atomic re-record protocol, then transcribe run_sheathed + death + the hit
-answer and make the gait and impacts real.
+THE JOB: §4 A12.2 onward — my three verdicts on the moving duel ARE the session.
+The A12.1 measurements are ALREADY BANKED AND VERIFIED (ledger §S24 + the
+§S24-H "Verify-pass corrections" block, 2026-08-12 — do NOT re-measure):
+implement the stroke cap + slash-vs-move rule in the Sim behind the
+duel-baseline's own atomic re-record protocol, then transcribe run_sheathed +
+death + the hit answer and make the gait and impacts real.
 
 WHAT NOT TO BREAK:
 - Floors: tracing >= 0.9005, held-out >= 0.8490 (spent - UP only), height <= 140.5.
@@ -40,8 +41,9 @@ WHAT NOT TO BREAK:
 PROVE IT: every §2 gate has a runnable measure. Paste the output, never assert.
 NO audio work - SESSION 25 owns it (scheduled in the kickoff).
 
-FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 57 files / 894),
-then propose the exact A12.1 measurement plan. Don't start until I ok it.
+FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 56 files / 894),
+read ledger §S24 + its verify-corrections block, then propose the exact A12.2
+implementation plan (stroke cap + classification). Don't start until I ok it.
 '''
 ```
 
@@ -49,6 +51,17 @@ then propose the exact A12.1 measurement plan. Don't start until I ok it.
 owner's three LOOK verdicts are the session by name, each with a measurable gate;
 gameplay moves only behind measured values and the baseline's own atomic
 protocol; audio is scheduled (SESSION 25), not dropped. The next change would be churn.
+
+**⚠ 2026-08-12 update — A12.1 is BANKED, session starts at A12.2:** the
+measurement half ran 2026-07-29 (`COMBAT_MEASUREMENTS.md` §S24) and its
+3-skeptic adversarial verify — killed that day by credit exhaustion — was
+re-run from the preserved script and landed 2026-08-12: all three verdicts
+**WEAKENED-with-corrections** (reach band HEAVY top ~275, point-blank damage
+resolves ON DRAW at 17, the 27/55 "stride" is capture aliasing of a constant
+~616 px/s mover — full list in §S24-H "Verify-pass corrections", which WINS
+over the raw §S24 rows). The kickoff above and `SESSION24_KICKOFF.md` §4
+carry the same note. Also corrected: the true suite count is **56 files /
+894** (the S23 wrap banner's "57" was a miscount, re-measured 2026-08-12).
 
 ---
 
