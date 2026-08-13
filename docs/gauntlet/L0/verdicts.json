@@ -1,0 +1,534 @@
+[
+ {
+  "claim_id": "economy/sell-price-formula",
+  "own_cite": "reference/decompiled/shs3_android/scripts/Item.as:1582-1593 + ShopUI.as:58 (sole grep hit), :396-401, :536-540",
+  "reason": "HOLDS. I counted to reference/decompiled/shs3_android/scripts/Item.as:1582 and getSellAmt() is there; the surveyor's quote matches the bytes exactly through :1593, including the itemID<3000 -> 1 and weight>=10 branches. ShopUI.as:401 really does read slot.setCost(slot.getItem().getSellAmt(),0), and ShopUI.as:540 pays StatsManager.changeGold(this.displayItem.getCost()). I re-ran the dead-code check myself: grep -rn sellPercentage over the whole bundle returns exactly one line, ShopUI.as:58, the declaration -- zero reads, so the 'sell = 50% of buy' warning is correct. Two omissions worth passing to the porter: ShopUI.as:396-398 forces setCost(0,0) for itemID 13002 (sells for nothing), and the proceeds at :540 go through changeGold, which clamps at getMaxCoins() -- a sale into a full purse is silently truncated.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/repair-weapon-cost",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1057-1076 (compare reinforce's weapon.uses = 0 at :1133)",
+  "reason": "HOLDS. InteractUI.as:1057 is case \"repairweapon\": and :1058 is cost = StageManager.getCurrentNodeLevel() * 10; -- exact. I read on to :1076 and the rest of the claim checks out too: the gold guard, the null/13000 weapon guard, changeGold(-cost), then 'if(weapon.uses > 1) { weapon.uses = 1; }'. The claim's reading that repair sets uses to 1 rather than 0 is literally what the code does, and it is a meaningful contrast with reinforce, which sets weapon.uses = 0 (InteractUI.as:1133). Blocker (3) is dead.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/coins-per-kill",
+  "own_cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:1293-1300 + NPC.as:837-844 + LootDialog.as:650-657 (all verbatim); phantom-frame proof at src/config/economy.ts:28-30 and docs/sessions/-SESSION-LOG.md:2095",
+  "reason": "The A2 core HOLDS byte-for-byte: EnemyPlayer.as:1293-1300 is exactly the quoted isDuelist block, NPC.as:837-844 is exactly the lootType 0 -> addLootCoins(1*qty) / lootType 1 -> addLootCoins(5*qty) pair, and LootDialog.as:650-657 is exactly the BUFF_COINS 1.5x. addLootCoins takes an int, so Math.random()*level does floor. Not refuted. BUT the lane_impact's 'FRAME-VS-DOC' paragraph is a PHANTOM FRAME and must be struck. There is no OG frame showing '+8 COINS'. src/config/economy.ts:28-30 -- one paragraph above the docblock the survey does quote -- says 'Our +10/+8 was an INFERRED seed verified only against OUR OWN build's screenshots; it was never an OG measurement'. docs/sessions/-SESSION-LOG.md:2095 confirms it: '2026-07-13 browser run ... real-input duel win -> YOU WIN +10 XP/+8 COINS (screenshot)' -- our build, our browser. Calling that 'the single filmed HUD read' and reconciling the payload against it is a fabricated A1 under section 0. Worse, a REAL frame was sitting in the ledger and was missed: A-00-boot-login.md:101-103 films two OG results modals at 2 coins and 12 coins per encounter -- neither is 8, and they differ 6x, which corroborates the generator finding far more strongly than the invented reconciliation.",
+  "refuted": false,
+  "severity": "material"
+ },
+ {
+  "claim_id": "economy/xp-formula",
+  "own_cite": "reference/decompiled/shs3_android/scripts/NPC.as:94-190 (grep -n confirms getGreyLevel:94, getZeroDifference:112, calcXP:166) + NetworkManager.as:1268 + EnemyPlayer.as:1318/1322",
+  "reason": "HOLDS. calcXP is at NPC.as:166 and the surveyor's 25-line quote matches the file character for character through the return at :189 -- greyLevel cutoff, the >3-level cutoff, +5%/level below, the getZeroDifference() divisor above, the elite x2. I also opened both helpers: getGreyLevel() is a real four-band function and getZeroDifference() is a real 12-step ladder returning 5..17. The corroborations check out too: NetworkManager.as:1268 is addLootXP(NPC.calcXP(...,msg.lvl * 5 + 45,false) * 3), EnemyPlayer.as:1318 is the sub-L10 x3 line and :1322 is the elite-true line -- both exact. Only defect: getGreyLevel's signature is at :94, not :95 as cited, and getZeroDifference closes at :164 not :163. Off-by-one on a range boundary, content resolves.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/trade-goods-arbitrage",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1558-1585 (verbatim), :1588-1600, :1619/:1631/:1643/:1656/:1668",
+  "reason": "HOLDS. getGoodsPrice is at InteractUI.as:1558 and the whole body through the return at :1585 matches, including the two cases the survey elided with '...': case 1 is price 20 / variation 30, case 3 is price 200 / variation 30. Five commodities, seed = getCurrentNode() * getServerDate() * index, return price * (100 - variation/2 + rng.rand(variation)) / 100. Stat writes 20054-20058 confirmed at :1631 and :1643 (buy) and :1656/:1668 (sell). Two corrections. (1) buyGoods is at :1619, not ':1617+'. (2) Substantive: at index == 0 the seed multiplies to ZERO regardless of node or date, so commodity 0 prices identically in every town on every day -- four of five commodities arbitrage, one does not. Also getGoodsPriceString at :1588 re-declares the same price/variation table WITHOUT the RNG, so the displayed range and the charged price come from two separate code paths a porter must keep in sync.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/crop-price-oscillator",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:105, :220, :490-502, :1544-1548",
+  "reason": "HOLDS, and this is the cleanest-cited claim in the unit -- all four line numbers land exactly. InteractUI.as:105 is 'internal var cropPrices:Array = [10,10,10,10];'. :497-502 is the reassignment plus the 'if(maxCrops != leastCrops)' guard setting leastCropsSide to 20 and maxCropsSide to 5. sellCrop is at :1544 and the payout addLootCoins(count * price) is at :1548. QueryManagerPIO.instance.getAllCrops(this.gotAllCrops) is at :220 under case UIMODE_MARKET. The reading is correct: it is a supply-driven three-point oscillator, flat 10 when all four clans are level, and the ledger's 'crop 5-20c' is only the envelope.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/service-prices-are-formulas",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:229, :241, :1002-1008, :1017-1046 (forge reagents), :1082-1131 (reinforce reagents 20064/20065/20066), :1406",
+  "reason": "The price rows HOLD -- I checked all six and every one lands. Forge case at :1002 with the level>80 clamp and cost = level*100 at :1008; inncost = getNodeLevel(...) * 2 at :229; travelcost = getNodeLevel(...) * 2 at :241; town toll cost = getNodeLevel(...) at :1406; reinforce cost = 5000 at :1083; repair at :1058. The 'formulas not constants' reframing is right and Forge maxing at 8000c is right. Not refuted. BUT one sentence in lane_impact is wrong twice over: 'reinforce is a flat 5000 plus reagent stats 20060-20065 consumed in three level bands (InteractUI.as:1102-1047)'. The cite range is malformed (descending, 1102 to 1047). And 20060-20065 is the FORGE reagent set (:1017-1046: 20061x2 for lvl<30; 20062x1+20063x2 for <60; 20061x2+20060x2+20065x1 else). Reinforce's reagents are 20064 (:1104/:1110), 20065 (:1114/:1120), 20066 (:1124/:1130) -- one per weapon-level band. A porter copying that sentence would wire the wrong three reagents into the wrong service.",
+  "refuted": false,
+  "severity": "material"
+ },
+ {
+  "claim_id": "economy/gold-coin-exchange-rate",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:918-926 + ShopUI.as:426-430 + StatsManager.as:2657-2666 (changeGold clamp) + docs/gauntlet/L0/index/itemdata.json",
+  "reason": "PARTIAL is the right verdict and it HOLDS. InteractUI.as:918 is case \"convertgold\", :919 is if(!StatsManager.isCoinPurseFull()), and :921-923 are spendHeavenlyGold(1, function(){ StatsManager.changeGold(1000); -- exact. The second cite resolves too: docs/gauntlet/L0/index/itemdata.json really does report itemdata/item/heavenlyprice count 304, numeric_range [0.0, 100.0]. ShopUI.as:430 is the isCoinPurseFull() gate as cited (guarding itemID 2208). One caveat the '1 gold = 1000 coins' framing hides: the guard only tests whether the purse is FULL, not whether it has 1000 coins of headroom, and changeGold clamps at getMaxCoins() (StatsManager.as:2657-2666). At 999/1000 the player spends a heavenly gold and receives ONE coin. The rate is a ceiling, not a guarantee.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/item-price-table",
+  "own_cite": "reference/extracted/itemdata.xml:24-40 (byte-exact) + XMLItem.as:80-100 + docs/gauntlet/L0/index/itemdata.json (baseprice numeric_count 549 of 550)",
+  "reason": "HOLDS. I opened reference/extracted/itemdata.xml at 24-40 and lines 28-34 are byte-identical to the surveyor's quote: <id>2100</id> / <type>10</type> / <name>4000</name> / <baseprice>0</baseprice> / <heavenlyprice>1</heavenlyprice> / <weight>0</weight> / <desc>4172</desc>. The index counts confirm 982 items, 550 baseprice, 304 heavenlyprice. The string-table caveat is CORRECT and I tested it rather than taking it: name id 4000 and desc id 4172 do not resolve against the located EN table, so prices are portable and names are not -- exactly as claimed. Two nits: XMLItem.as:86 is the 'if(xml.baseprice.toString() != \"\")' guard, the gvalue assignment is at :88 (the hvalue cite at :96 is exact); and the index reports baseprice count 550 with numeric_count 549 and \".\" among sample_values, so one row is not a number and will hand a parser a NaN.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/five-vendor-generators",
+  "own_cite": "reference/decompiled/shs3_android/scripts/ShopUI.as:173-204 (merchant procedural generator) + XMLShopData.as:48/70/84-94/98-134/143 + QuestEngine.as:196-210",
+  "reason": "REFUTED on its central assertion. 'The merchant's list ships EMPTY, meaning merchant stock was server-pushed and is dead' is wrong. XMLShopData.initMerchantItems() at :84-89 is indeed an empty stub, but that is not where merchant stock comes from. ShopUI.showBuyMerchant() (ShopUI.as:173) consumes the empty sellList and then builds the shelf CLIENT-SIDE and DETERMINISTICALLY: :190 'var seed:int = StageManager.getCurrentNode() * QueryManager.instance.getServerDate();' then :193 'for(i = 0; i < 8; i++) ... xsi.initRandomRareMerchantItem(rng)' and :199 another 8 via initRandomLegendaryMerchantPremiumItem(rng). Sixteen items, same node x serverDate seed shape the survey correctly praises for trade goods. The merchant is fully recoverable offline; the lane_impact's 'a genuine hole an offline build must author' would send a porter to invent content that already exists. Two further errors: (a) 'verbatim item-ID lists' is false for 2 of 5 -- merchant has no list at all, and premium's three lists load from 121_Mobile_PremiumData.bin via QuestEngine.loadPremiumData (QuestEngine.as:196-210), the very blob this survey's own economy/iap-price-tiers claim proves was never extracted, so the survey contradicts itself; only peddler, inn and barber are verbatim. (b) the peddler arithmetic is wrong: XMLShopData.as:48 is 'removeCount = extraItems.length - (10 + defaultItems.length)' = 24 - 17 = 7 removed, leaving 17 of 24, not '10 of 24'. Inn (3 of 6, removeCount hardcoded 3 at :70) and barber (49 culled to 16 at :143) are correct.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "economy/war-room-build-costs",
+  "own_cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:1330-1387 (verbatim) + StatsManager.as:162, :192, :2632-2651 + src/config/economy.ts WAR_ROOM block",
+  "reason": "HOLDS. startBuild is at WarHexUI.as:1330, 'var buildcost:int = 500;' at :1332, and the four structure totals are exactly as quoted -- HEX_FORWARDBASE 10000, HEX_LADDER 5000, HEX_DEFENSE 10000, HEX_TOWN 10000 -- with the else branch decrementing selectedHex.cost by buildcost and changeStat(STAT_GOLD,-buildcost) at :1383, inside the function that closes at :1387. WARMOVEINTERVAL = 60 * 60 is at StatsManager.as:162 as cited, and the STAT_WARMOVES > 0 gate plus useWarMove(1) are both in the same function. src/config/economy.ts really does carry buildDonationCap: 500 inside WAR_ROOM. Worth adding for the porter: these costs are in COINS (STAT_GOLD = 11, StatsManager.as:192), and each 500 donation is capped by the coin purse (default max 1000, StatsManager.as:2637), so a 10000-coin structure is 20 donation actions at one war move per real hour -- roughly a 20-hour build. That pacing consequence is the actually interesting part and is not in the claim.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/duel-token-economy",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:155-166, :705-710, :1130-1140, :2371-2377 + ShopUI.as:660-666",
+  "reason": "HOLDS. The quoted constant block is exact: StatsManager.as:158 APINTERVAL = 60, :160 DTINTERVAL = 2 * 60, :162 WARMOVEINTERVAL = 60 * 60, :164 MAXQUESTS = 7, :166 MAXDUELTOKENS = 30. changeDT at :2371-2377 clamps to MAXDUELTOKENS as claimed, and ShopUI.as:664 renders STAT_DUELTOKENS + \"/\" + StatsManager.MAXDUELTOKENS. The creation-vs-clamp discrepancy the survey flags is real (STAT_MAXDUELTOKENS 20 at :710 vs the class constant 30). I can resolve it rather than leave it open: changeDT reads the class constant and never consults STAT_MAXDUELTOKENS, so 30 wins in code and the stored 20 is display-only. Only defect: the buff-doubling cite ':1135' is the opening brace -- the hasBuff test is :1134 and 'diff *= 2' is :1136.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/starting-wallet",
+  "own_cite": "docs/research/video-study/segments/A-00-boot-login.md:111-112 and :150 + A-07-toshibara-castle-town-arrival-yasuka-at-.md:20 + src/config/profile.ts:5-10 (vs reference/decompiled/shs3_android/scripts/StatsManager.as:705-710)",
+  "reason": "The A2 row is real -- StatsManager.as:705-710 is byte-identical to the quote, STAT_GOLD 100, STAT_HGOLD 0, AP 30/30, DUELTOKENS 20/20. I am refuting the CONCLUSION, which inverts section 0's standing invariant. The claim says the payload 'contradicts its 3 gold', treating the repo value as the loser. But the repo's 3 gold is FRAME-BACKED, not a doc guess: docs/research/video-study/segments/A-00-boot-login.md:111-112 reads the PLAYER sheet currency row as '114 COINS', '3 GOLD' with the parenthetical '(guest starts with 3 gold)', :150 repeats 'guest starts 100 coins / 3 gold', A-07-...:20 independently films 'gold coin icon 3 / GOLD label, plus red GET GOLD button', and src/config/profile.ts:5 labels the A-00 guest start 'frame-backed'. THE FRAME WINS -- saying it out loud as section 0 requires. STAT_HGOLD = 0 in the ANDROID 0.682 bundle does not correct the repo; it is evidence that the android guest start diverges from the filmed WEB 0.717 target, which is exactly the risk this survey's own provenance claim warns about. Recorded as a platform/version divergence, this row is useful. Recorded as a contradiction of a frame, it would delete a frame-backed number in favour of an off-version payload row.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "economy/coin-purse-cap-ladder",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:2632-2666, :234 + InteractUI.as:1748-1770 + grep for 1011 across all 559 scripts (single hit at StatsManager.as:2634)",
+  "reason": "HOLDS. getMaxCoins() is at StatsManager.as:2632 and the switch on getStat(1011) returns exactly 1000/2000/4000/6000/8000/10000 with a 1000 default, closing at :2651; isCoinPurseFull() follows at :2653-2656. The consequence chain checks out: changeGold clamps at getMaxCoins() (:2657-2666), InteractUI.as:919 and ShopUI.as:430 both gate on isCoinPurseFull(), bankDeposit/bankWithdraw at InteractUI.as:1748-1770 are plain transfers with no interest term, and STAT_COINSINBANK = 36 is at :234. The 'this is the shape of the whole economy' reading is sound -- a 1000 default cap against a 5000c Reinforce is real pacing. One unsourced word: 'by upgrade tier'. I grepped the full 559-file bundle for 1011 and StatsManager.as:2634 is the ONLY true reference -- no writer, no purchase, no quest reward raises it. The ladder VALUES are held; the mechanism that climbs it is STILL_UNHELD and should be labelled so.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/cho-han-is-ev-neutral",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1790-1844 (verbatim) + StatsManager.as:192, :194, :2657-2666",
+  "reason": "HOLDS, and the EV math is right. doChoHan is at InteractUI.as:1802-1844 (the cited 1790-1844 also swallows doBet at :1790-1800, which is fair since that is where the stake is escrowed via changeStat(STAT_GOLD,-num)). dice1/dice2 are int(Math.random()*6) so each is uniform on {0..5} with 3 even and 3 odd values, parity is a fair coin, and the winning branch pays changeGold(this.bet * 2) against a stake already deducted -- exactly zero EV. The Ready bullet really is wrong in expectation. Two sharpenings that make the correction stronger: (a) changeGold clamps at getMaxCoins() (StatsManager.as:2657-2666), so a winning 2x payout is truncated near the purse cap -- EV is strictly NEGATIVE there, not neutral; (b) changeGold moves stat 11 = STAT_GOLD, i.e. COINS (StatsManager.as:192), while premium currency is STAT_HGOLD = 12 (:194) -- so Cho-Han never paid premium gold at all and could not have been a 'non-cash gold faucet' under any EV.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/quests-pay-no-coins",
+  "own_cite": "reference/extracted/questdata.xml:214-216 and :295 + independent Python scan (386 outcomes / 0 with <id>11</id> / 77 rewards = 69 exp + 19 loot) + XMLQuestOutcome.as:50-77 including the <set> branch at :73-76",
+  "reason": "HOLDS, and it survives a stricter test than the one it was given. I re-ran the scan myself in Python over reference/extracted/questdata.xml: 386 <outcome> blocks, ZERO containing <id>11</id>; 77 <reward> blocks decomposing to 69 <exp> + 19 <loot>/<id>/<qty>/<chance>. Both figures match the claim. questdata.xml:214-216 is verbatim <reward>/<exp>290</exp>/</reward>, and the coin branch really is at XMLQuestOutcome.as:56-59 (inside the cited 53-59 window): 'if(this.id == 11 && this.modify > 0) { addLootCoins(this.modify); }'. I went further than the survey did: outcomes carry 194 <set> nodes as well as 74 <modify>, and applyOutcome's else-if branch at :73-76 calls StatsManager.setStat(this.id, this.setNo) -- a second potential coin path the survey never mentions. It cannot fire either, because no outcome carries <id>11</id> at all. The 'coin faucet set is closed and enumerable' conclusion stands. The questdata.xml:295 dialogue line, typo 'assitance' included, is also verbatim.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/prosperity-daily-sim",
+  "own_cite": "reference/decompiled/shs3_android/scripts/HistoryItem.as:137, :239, :283, :299, :303, :307, :311 and :373 (the missed 7th event) + NetworkManager.as:2042",
+  "reason": "PARTIAL is the right verdict and it HOLDS. HistoryItem.dataToString is at :137 and I confirmed every quoted string on its own line: :239 'merchants robbed by bandits: prosperity -', :283 attacked town, :299 mercenaries upkeep, :303 the hard-coded 'town hired ninja: prosperity -1000', :307 trade with other towns +, :311 the four-variable town status line (prosperity/crops/goods/defense). NetworkManager.updateTownProsperity is at :2042 as cited. The 'client renders, server computes' narrowing is honest and correct. One omission that changes the shape of the remaining gap: the cited range stops at :311 and misses HistoryItem.as:373, 'Players changed prosperity through quests by ' + val1 -- a seventh event and a PLAYER-driven lever. Prosperity is not purely a dead server tick; quest completion feeds it, which an offline build can actually drive.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/iap-price-tiers",
+  "own_cite": "reference/decompiled/shs3_android/scripts/Mobile_PremiumData.as:5 + ls reference/extracted/bindata/ (27 files: 92-98, 100-119; no 121) + QuestEngine.as:196-210",
+  "reason": "HOLDS -- STILL_UNHELD is the correct and honest answer, and unusually well evidenced for a negative. Mobile_PremiumData.as:5 is exactly '[Embed(source=\"/_assets/121_Mobile_PremiumData.bin\", mimeType=\"application/octet-stream\")]'. I listed reference/extracted/bindata/ myself: exactly 27 files, 92-98 and 100-119, no 121. find reference -name \"*121*\" returns only shapes/3121.svg, shapes/121.svg, sprite dirs and unrelated motion PNGs -- no .bin. Refusing to bank the ledger's 'IAP tiers' bullet is right. Note the cross-consequence the survey did not draw: that same missing blob is what QuestEngine.loadPremiumData (QuestEngine.as:196-210) fills premiumDefaultList/SpecialList/RotationList from, so it also invalidates the 'verbatim item-ID lists' half of this unit's five-vendor claim.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/provenance-android-0682",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:30 + my own diff -q shs3_android/{InteractUI,Item}.as vs shs3_android_payload/ (silent, byte-identical) + reference/decompiled/shs3_stage2/scripts/com/swfdefender/MD5.as + ls reference/decompiled/shs3_payload/scripts/ (652 files)",
+  "reason": "HOLDS, and it is the best-disciplined claim in the unit. StatsManager.as:30 is exactly 'public static var clientVersion:Number = 0.682;'. I re-ran the byte-identity check rather than trusting it: diff -q on InteractUI.as and Item.as between shs3_android and shs3_android_payload produced no output for both -- byte-identical, as claimed. reference/decompiled/shs3_stage2/scripts/com/swfdefender/ exists with MD5.as, Comp.as, DomainMsg.as, IntUtil.as, confirming the SWFDefender wrapper. shs3_payload/scripts holds 652 files and the named samples are real (hair6000.as, foot12000.as) alongside obfuscated asset classes; no logic classes. The 0.717 web target is corroborated at docs/research/video-study/SYNTHESIS.md:19. Correctly capping the lane's ceiling on version risk is the right call, and R2 above is a concrete instance of exactly the divergence this claim predicts.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/item-price-table",
+  "own_cite": "A2 \u2014 extracted /_assets/118_Mobile_Lang_EN.bin from reference/decrypted/shs3_android_payload_decoded.swf via reference/tools/ffdec/ffdec-cli.jar; UTF-16LE XLIFF, 5110 <trans-unit>; rows '<trans-unit id=\"940\" resname=\"4000\"><source>Small Soldier Pill</source>' and '<trans-unit id=\"1112\" resname=\"4172\"><source>Replenish your AP without waiting!</source>'. Embed declared at reference/decompiled/shs3_android/scripts/Mobile_Lang_EN.as:5",
+  "reason": "The counts are exact (I re-grepped: 982 <item>, 550 <baseprice>, 304 <heavenlyprice>). But the claim's operative instruction to the porter \u2014 'the table is still unlocated, so PRICES are portable and item NAMES are not. Never claim a priced item's name is held' \u2014 is now FALSE. I extracted the string table and resolved this claim's OWN quoted item: itemdata.xml item 2100 <name>4000</name> -> resname 4000 -> 'Small Soldier Pill', <desc>4172</desc> -> 'Replenish your AP without waiting!'. Names are portable today. This also overturns the survey's score_rationale closing sentence and GAUNTLET \u00a70's standing KNOWN BLOCKER.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "economy/starting-wallet",
+  "own_cite": "A1 \u2014 reference/frames/Nr4fQstqHDM/seg-00/frames/frame_0018.jpg (1024x576), crop=iw*0.45:ih*0.10 at offset iw*0.28:ih*0.09, upscaled 4x lanczos: PLAYER sheet currency row reads '...425 COINS' then gold-coin icon '2' labelled 'GOLD', beside level fan '7' and '14266 / 16350 EXPERIENCE POINTS'. Corroborated by docs/research/video-study/segments/A-00-boot-login.md:110-112 and :150",
+  "reason": "The A2 cite is real and correctly quoted (StatsManager.initNewPlayer at :689, setPlayerStats(STAT_HGOLD,0) at :706), but the claim inverts the \u00a70 STANDING INVARIANT. I opened a frame: the v0.717 web guest longplay shows a live non-zero heavenly-gold balance at level 7, and the v0.682 payload contains NO faucet a level-7 guest could have used \u2014 the only STAT_HGOLD grants in the whole bundle are doRebirth (StatsManager.as:2201/2205, +20 at Dan 8 else +5, requires L80) and the PayVault/gift paths (PayUI.as:672, ProviderSelectDialog.as:177); quests grant none (no <outcome> uses id 12). A guest starting at 0 cannot reach 2. THE FRAME WINS \u2014 the web build seeds guest gold. The survey told the profile lane to overwrite a frame-backed constant with a different-version, different-platform AS3 literal. The coins/AP/token halves of the claim are fine.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "economy/sell-price-formula",
+  "own_cite": "reference/decompiled/shs3_android/scripts/Item.as:1582-1593 (read directly); grep 'sellPercentage' whole bundle -> only ShopUI.as:58",
+  "reason": "Verified verbatim, character for character. The dead-code warning also checks out: grep for 'sellPercentage' across the entire android bundle returns exactly one hit, the declaration itself \u2014 zero reads. Sell payout path confirmed: ShopUI.as:401 setCost(getSellAmt(),0) -> ShopUI.as:540 changeGold(displayItem.getCost()).",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/repair-weapon-cost",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1057-1079 (read directly)",
+  "reason": "Verified verbatim. Both halves hold: cost = getCurrentNodeLevel() * 10 at :1058, and the uses-reset (not restore-to-new) at :1073-1076 'if(weapon.uses > 1) { weapon.uses = 1; }'. Bonus: the failure dialog getString(88) resolves through the newly-found table to 'You do not have enough money to make the purchase.', and getString(637) at :1068 to 'No weapon equipped.' \u2014 independent confirmation that both the cite and the string table are correct.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/coins-per-kill",
+  "own_cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:1293-1300; NPC.as:838-846; LootDialog.as:650-657 (all read directly)",
+  "reason": "Verified verbatim at the cited lines. The frame-vs-doc reconciliation is sound: Math.random()*level is passed to an int parameter, so floor(U[0,1)x9) tops out at exactly 8 for a level-9 duelist. Field-mob path confirmed independently (lootType 0 -> addLootCoins(1*qty), lootType 1 -> addLootCoins(5*qty)) and the 1.5x BUFF_COINS multiplier confirmed inside addLootCoins itself.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/xp-formula",
+  "own_cite": "reference/decompiled/shs3_android/scripts/NPC.as:166-190 and :94-110; NetworkManager.as:1264-1272 (read directly)",
+  "reason": "Verified verbatim including both helper curves. getGreyLevel body confirmed at 95-110 (four bands: <6 -> 0; <40 -> lvl - floor(lvl/10) - 5; <60 -> lvl - floor(lvl/5) - 1; else lvl - 9). The corroborating details also hold: base duelist xp 'msg.lvl * 5 + 45' and the sub-L10 x3 / L10+ elite split are both visible in one block at NetworkManager.as:1267-1272, and again at EnemyPlayer.as:1318/1322.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/trade-goods-arbitrage",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1558-1586 and :545-548 (read directly)",
+  "reason": "Verified verbatim, and the elided cases fill in cleanly (case 1 = 20/30, case 3 = 200/30). One nit, not a refutation: there are 5 slots but only 4 distinct price/variation pairs \u2014 cases 3 and 4 are both 200/30. Consumer stats 20054-20057 confirmed at InteractUI.as:545-548. The claim UNDER-sells itself: those same lines name the commodities via getString(4162..4166), which the newly-found table resolves.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/crop-price-oscillator",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:105 and :490-505 (read directly)",
+  "reason": "Verified verbatim at both cites. The field initialiser 'internal var cropPrices:Array = [10,10,10,10];' is at :105 and the three-point rewrite is at :497-502 exactly as quoted, guarded by 'if(maxCrops != leastCrops)'.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/service-prices-are-formulas",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1000-1010, :225-245, :1400-1412, :1080-1108 (read directly)",
+  "reason": "All six rows verified: forge level*100 capped at 80 (:1002-1008), inn nodeLevel*2 (:229), stables nodeLevel*2 (:241), town toll nodeLevel*1 (:1406), reinforce flat 5000 (:1083), repair nodeLevel*10 (:1058). Two nits that do not refute: inn/stables read the level via NodeGenerator.instance.getNodeLevel(StageManager.getCurrentNode()) rather than StageManager.getCurrentNodeLevel(); and the reagent-band cite is written as a reversed range '1102-1047' \u2014 the bands are actually at :1015-1046.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/gold-coin-exchange-rate",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:915-930 (read directly); grep -c '<heavenlyprice>' reference/extracted/itemdata.xml -> 304",
+  "reason": "Verified verbatim at :918-926, including the isCoinPurseFull() gate. The 304 <heavenlyprice> rows are real \u2014 I re-grepped itemdata.xml and got exactly 304. PARTIAL is the honest verdict: the sink is held, the real-money source is not.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/five-vendor-generators",
+  "own_cite": "reference/decompiled/shs3_android/scripts/XMLShopData.as:41-155 (read directly)",
+  "reason": "All five generators verified verbatim: peddler 7 fixed + 24 extras culled to 10 (:41-51), inn 7 + 6 culled by 3 (:63-72), merchant literally 'var defaultItems:Array = [];' (:84-88), premium three QuestEngine lists on an hourly seed*floor(serverTime/3600) rotation (:98-131), barber 49 cosmetics culled to 16 (:137-149). The claim is correct as written; it is however UNDER-claimed \u2014 the three premium lists are now recoverable too (see new_findings).",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/war-room-build-costs",
+  "own_cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:1330-1392; StatsManager.as:161-162 (read directly)",
+  "reason": "Verified verbatim: buildcost 500, HEX_FORWARDBASE/DEFENSE/TOWN 10000, HEX_LADDER 5000, and 'StatsManager.changeStat(STAT_GOLD,-buildcost)' plus STAT_WARCOINSDONATED at the tail. WARMOVEINTERVAL = 60*60 confirmed in the StatsManager constant block. One arithmetic nit: the initiating call SETS selectedHex.cost to the full total AND charges 500, so the donor pool actually pays 10,500 for a Forward Base, not 10,000.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/duel-token-economy",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:155-167, :1130-1140, :2371-2380, :709-710 (read directly)",
+  "reason": "Every constant verified in one contiguous block: APINTERVAL 60, DTINTERVAL 2*60, WARMOVEINTERVAL 60*60, MAXQUESTS 7, MAXDUELTOKENS 30. The x2 regen buff is real (BUFF_DUELTOKENS -> 'diff *= 2' inside the DT tick) and the clamp-to-30 in changeDT is real. The flagged internal discrepancy is genuine: initNewPlayer seeds MAXDUELTOKENS as a stat of 20 while changeDT clamps to the class constant 30.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/coin-purse-cap-ladder",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:2632-2656; InteractUI.as:1748-1770 (read directly)",
+  "reason": "Verified verbatim \u2014 the six-case switch on getStat(1011) returning 1000/2000/4000/6000/8000/10000 with default 1000, and isCoinPurseFull() immediately below it. The bank-as-overflow reading holds: bankDeposit/bankWithdraw move raw coins with no interest term anywhere, and bankWithdraw reads getMaxCoins() as the pocket ceiling. This genuinely is absent from every ledger economy bullet.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/cho-han-is-ev-neutral",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1788-1844; StatsManager.as:2656+ changeGold clamp (read directly)",
+  "reason": "Verified verbatim and the parity argument holds: int(Math.random()*6) yields 0-5, which is 3 even and 3 odd, so two independent dice give exactly 50/50 parity against a 2x payout on an escrowed stake. Two sharpenings that strengthen rather than refute: (1) changeGold() clamps to getMaxCoins(), so near the purse cap a win is truncated and Cho-Han becomes EV-NEGATIVE, not neutral; (2) gotoAndStop(dice1) with dice1 possibly 0 is a shipped off-by-one on the dice art, which does not affect the payout math.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/quests-pay-no-coins",
+  "own_cite": "reference/extracted/questdata.xml \u2014 scripted regex scan over all 386 <outcome> and 77 <reward> blocks; reference/decompiled/shs3_android/scripts/XMLQuestOutcome.as:50-90 (read directly)",
+  "reason": "I re-ran the scan independently rather than trusting it: 386 <outcome> blocks, 0 containing <id>11</id>; the distinct outcome ids in shipped data are 100-130, 42/43, 2211, 20040, 30017, 40000/40002. And 77 <reward> blocks whose only child tags are exp (69) and loot (19, each with id/qty/chance) \u2014 no coin or gold tag exists in the shipped data at all. I also checked the generic fallback branch 'else { StatsManager.changeStat(this.id, this.modify) }' at XMLQuestOutcome.as:68-70: no outcome uses id 12 (STAT_HGOLD) either, so quests pay no heavenly gold either. The claim is if anything stronger than stated.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/prosperity-daily-sim",
+  "own_cite": "reference/decompiled/shs3_android/scripts/HistoryItem.as:239, :283, :299, :303, :307, :311; NetworkManager.as:2042-2054 (read directly)",
+  "reason": "PARTIAL is the honest verdict and it holds. The event taxonomy strings are all present and the only hard-coded magnitude really is the ninja -1000; every other line interpolates a server-supplied val1/val4. The 'client renders, does not compute' half is confirmed hard: updateTownProsperity is a bare wire send with no local state mutation at all.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/iap-price-tiers",
+  "own_cite": "A2 \u2014 extracted /_assets/121_Mobile_PremiumData.bin from reference/decrypted/shs3_android_payload_decoded.swf via reference/tools/ffdec/ffdec-cli.jar; tag histogram: 176 <item>, 1 <default>, 1 <special>, 1 <rotation>, 23 <set>; zero price strings",
+  "reason": "The STILL_UNHELD verdict on REAL-MONEY tiers survives \u2014 I hunted it and it genuinely is not there. But the reasoning was an assertion about an artifact the surveyor never opened. I extracted 121_Mobile_PremiumData.bin in 3 seconds with the repo's own bundled ffdec: it contains 176 <item> ids across <default>, <special> and 23 <rotation> <set> blocks, and grepping it for price/usd/$/tier/cost/gold returns ZERO hits. So the conclusion is right and now actually evidenced. Not refuting an honest STILL_UNHELD, but the ground under it has been replaced.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/provenance-android-0682",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:30; diff -q shs3_android/{InteractUI,Item}.as vs shs3_android_payload/ -> no output; ffdec binaryData export of reference/decrypted/shs3_payload_decoded.swf -> exactly 27 blobs (92-98, 100-119)",
+  "reason": "Verified and extended. clientVersion = 0.682 is verbatim at StatsManager.as:30. diff -q on InteractUI.as and Item.as between shs3_android and shs3_android_payload produced no output (byte-identical). reference/decompiled/shs3_payload/scripts/ is 652 files with zero logic classes \u2014 grepping the listing for StatsManager|InteractUI|ShopUI|Item.as|NPC.as returns nothing. NEW: I also ran the binaryData export on the web payload itself and it yields ONLY the 27 already-known bindata blobs \u2014 no lang table, no logic. So this caveat correctly caps the lane, and it now covers the newly-found string table too.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/paperdoll-13-slots",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:108, :264-286, :1945, :2002 (opened all four)",
+  "reason": "Cite resolves exactly. StatsManager.as:108 is verbatim `public static var equipment:Vector.<Item> = new Vector.<Item>(13);` and the EQ_* enum 0-12 sits verbatim at :264-286. Ledger text at REBUILD_READINESS.md:209 quotes verbatim. One correction: the lane_impact says three slots (HEAD, NECK, SCABBARD) are excluded from weight/stat rollups. That is true of the WEIGHT rollup (:2002) but the STAT rollup at :1945 excludes FOUR \u2014 it also drops EQ_HAIR, plus EQ_WEAPON when skipWeapon is set.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/type-is-slot-index",
+  "own_cite": "reference/decompiled/shs3_android/scripts/ItemGenerator.as:254-291; StatsManager.as:735; InventoryUI.as:1195-1226; XMLItem.as:72-77; own parse of reference/extracted/itemdata.xml (982 items, 153 with no <type> tag)",
+  "reason": "Cite resolves (Item.as:841 and :845 are verbatim) but the claim out-runs it. <type> is NOT the equipment-array index for 187 of 982 items: EQ_SCABBARD=10 while type 10 is consumables (98 items), EQ_ACCESSORY2=12 while type 12 is quest items (80). The AS3 special-cases exactly those two (Item.as:845, :891) BECAUSE indexing equipment[10] with a potion is meaningless. The scabbard slot is actually filled with item 13100, which is <type>9</type> (StatsManager.as:735). Accessories (type 11) route to slot 11 OR 12 at runtime (InventoryUI.as:1203-1226). There are three disjoint type spaces in this build, not one: itemdata <type> 0-12; ItemGenerator.getItemType() at :254-291 (13xxx->0, 4xxx->1, 5xxx->2, 6-7xxx->5, 8-9xxx->6, 10-11xxx->3, 12xxx->4, 3xxx->7); and the UI/crafting remap where a type-9 weapon becomes 13 (InventoryUI.as:1195-1197, CraftingUI.as:508). The lane_impact 'item->slot routing for the whole catalogue is a lookup' would file potions into the scabbard. Separately imprecise: the 152 4xxx rows do not 'carry type 0' \u2014 they carry NO <type> tag at all and XMLItem.as:72-77 defaults this.type=0; a naive XML port gets undefined. The surveyor also missed a second anomaly, item 2211 in the 2xxx band with <type>12</type>.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "items-equipment/affix-suffix-pool",
+  "own_cite": "reference/decompiled/shs3_android/scripts/ItemGenerator.as:102-148 and :7-59 (stat enum)",
+  "reason": "Opened ItemGenerator.as:102-148. Every quoted array is verbatim, including attack_suf and windatk_pre character-for-character, and `this.preSufArray[FIREDEF][i] = new PreSuf(wateratk_pre[num],wateratk_suf[num]);`. The opposing-element borrow is exactly as claimed for all four elemental DEF pools. 17 preSufArray slots x 8 name tiers, indexed num = Math.floor(i/10) over MAXINDEX=79. Ledger text at REBUILD_READINESS.md:210 verbatim. Nothing to refute.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/affix-count-rule",
+  "own_cite": "reference/decompiled/shs3_android/scripts/ItemGenerator.as:206-252, :371-373",
+  "reason": "Opened ItemGenerator.as:206-252 \u2014 getEnchantmentCount is verbatim as quoted, both the isRareItem rand(11) ladder and the rand(100) ladder. The legendary decrement is at :371-373: `if(isLegendaryItem && numEnchant > 2) { numEnchant--; }` \u2014 matches the claim's ':371-374' and its 'one fewer affix when the roll exceeds 2'.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/stat-vs-level-curve",
+  "own_cite": "reference/decompiled/shs3_android/scripts/ItemGenerator.as:150-182, :321-341, :397-455, :462-576; XMLItem.as:128",
+  "reason": "All four cite ranges resolve. Progressions verbatim at :150-182; getMaxTier at :321-341 with the tight rand(4)+tier-3 band when getHighestTier and the loose rand(10)+tier-9 otherwise; masks at :397-428; forced-first at :432-455 (ARMOR->DEFENSE, WEAPON->ATTACK, SHOES->SPEED); roll at :485. prog->stat routing verified line-by-line: prog1 at :474 (ATTACK/DEFENSE), prog4 at :494 (SPEED), prog2 at :515 (MAXHP/MAXCHI), prog3 at :545 (8 elementals + HPREGEN + CHIREGEN + CRITICALDMG), prog5 at :565 (PIERCINGDMG) \u2014 exactly as claimed. `itemlvl -= levelrestriction` confirmed for WEAPON/ATTACK and ARMOR/DEFENSE, and levelrestriction is <minlvl> per XMLItem.as:128. One detail the claim's ellipsis hides: only prog1/prog2/prog3 get the `[MAXINDEX] += 10` bump; prog4 and prog5 do not.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/pot-mask-frame-confirmed",
+  "own_cite": "reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0031.jpg (1024x576, crop (575,140)-(1015,420), 3x LANCZOS \u2014 opened and read) + reference/decompiled/shs3_android/scripts/Item.as:891-898",
+  "reason": "I cropped and upscaled the frame myself and everything the surveyor says is VISIBLY there (they even under-described it \u2014 there is also a '450' gold price on the icon). But the frame cannot confirm an affix mask, and the claim says it does 'exactly'. Item.as:891-898 builds the tooltip list as `modArrayCheck = equippedItem.getModifierArray().concat(this.getModifierArray())` \u2014 the UNION of the candidate item's and the equipped item's modifiers. A stat missing from the tooltip is missing from BOTH ITEMS; it says nothing about what the slot allows. Proof from the same frame: the PANTS mask [1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0] sets indices 0-6, so it ALLOWS MAX HP, HP REGEN, ATTACK and SPEED on pants \u2014 and none of those four appear in the frame either. The frame is consistent with the mask; it does not confirm it. This is an inference dressed as a citation. No frame-vs-doc conflict arises, so the frame-wins invariant is not triggered.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "items-equipment/condition-no-damage-multiplier",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1863-1902; Item.as:1467-1478, :712-744; string ids 387-392/639 resolved from char-id 118",
+  "reason": "Opened all three cites. getMinDamage at :1863-1888 and getDamageRange at :1890-1902 are verbatim and do confirm damage is binary on isBroken() \u2014 no condition scalar anywhere in the damage path. isBroken at Item.as:1467-1478 verbatim, including the getModifierBonus(83) durability extension. getDesc condition bands at Item.as:712-744 verbatim. Correction: that is SEVEN display branches, not 'SIX' (uses==0, uses==1, condition==0, <25, <50, <75, else) \u2014 the surveyor's own parenthetical lists seven. The labels are now nameable from the string table: 639 'Unbreakable', 392 'Condition: Well-Maintained', 387 'Condition: Broken' (red), 388 'Poor', 389 'Used', 390 'Usable', 391 'Good'.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/sell-price-formula",
+  "own_cite": "reference/decompiled/shs3_android/scripts/XMLShopItem.as:31/:68/:86; ShopUI.as:58/:257/:258/:393/:537-540; Item.as:274-299; XMLItem.as:88-92",
+  "reason": "Every cite resolves to the exact line. XMLShopItem.as:31 `this.value = itemData.gvalue;`, :68 and :86 both `this.value = itemData.gvalue + this.item.getLevel() * 100;`. ShopUI.as:58 is the lone sellPercentage declaration \u2014 I re-ran `grep -rn sellPercentage` across all 970 .as files and it returns that one line only. ShopUI.as:257 and :393 verbatim; the changeGold call is at :540 inside onSell (:537), paying getCost() at full value with no haircut. nodrop exclusion is at :258. getLevel at Item.as:274-299 verbatim. The PARTIAL verdict and the 'web v0.717 unverified' hedge are both correct. Footnote worth carrying: gvalue = <baseprice> (XMLItem.as:88) but DEFAULTS TO 1 when the tag is absent (:92), and only 550 of 982 items carry a <baseprice>.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/art-manifest-rule",
+  "own_cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:581-611, :806; MCSItem.as:404-436; XMLItem.as:110-117; `ls reference/extracted/sprites/` (12/12 dirs present); own zlib+raw-deflate attempt on char-ids 115/120 of reference/decrypted/shs3_android_payload_decoded.swf",
+  "reason": "Naming rule verified verbatim at MCSCharacter.as:581-611 and identically at MCSItem.as:404-436, with the partType+\"0\" fallback. XMLItem.as:110-117 is exact to the line (`this.art = this.id;` at :116). All twelve named sprite directories exist under reference/extracted/sprites/ \u2014 I checked each one; the id bands cross-validate the slot map (weapon13000, torso4000, thigh11000, foot12000, mask9000, hat7000, hair6000/6001). I INDEPENDENTLY REPRODUCED the decode failure: char-id 115 is 654,169 B and char-id 120 is 4,204,635 B, both CWS-headered, both fail zlib.decompress AND raw-deflate. The stuck-stop and the PARTIAL verdict are correct and honest. Two nits: the quote `art = (xmlItem == null) ? id : xmlItem.art;` is a ternary paraphrase of an if/else block, not verbatim AS3 (semantics preserved exactly); and MCSItem.as has 18 partTypes of which `neck` is NOT one \u2014 neck belongs to MCSCharacter (:806). The surveyor's parenthetical lists 19 names while claiming 18; the true union across both classes is 20 (add `prop`).",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/compositing-part-order",
+  "own_cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:6, :10-62, :344-348, :370-390",
+  "reason": "The 27-part PART_ enum (0..26) is verbatim, the mcsString wire format at :348 is verbatim character-for-character, and the hair/hat exclusion `if(hatid > 0 && hatid != 7000 && hatid != 7049)` is verbatim at :374. The tint claim holds \u2014 only armor, hat, mask and pants inject colour into the wire string. The PARTIAL verdict is right: no ActionScript sets the depth stack, so the z-order genuinely lives in the SWF timeline. Cite nit only: the [Embed] is at line 6 and PART_r_knee at line 62, both outside the stated ':5-60'.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/rarity-4-tiers-exact",
+  "own_cite": "reference/decompiled/shs3_android/scripts/Item.as:416-450; own Counter over reference/extracted/itemdata.xml <unique>",
+  "reason": "Opened Item.as:416-450. All eight hex colours are verbatim across the two background branches (#b048f8/#0080ff/#1eff00/#FFFFFF and #6600cc/#003399/#336600/#000000), and rarity is indeed derived from modifierCount plus the unique/questitem/playernamed test \u2014 no stored rarity field. My own parse of itemdata.xml confirms <unique>: 369 rows, exactly two distinct values, {1: 253, 2: 116}.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/name-template-frame-confirmed",
+  "own_cite": "reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0024.jpg (1024x576, crop (0,420)-(640,500), 3x LANCZOS \u2014 opened and read); ItemGenerator.as:397-428, :439-443, :744-746",
+  "reason": "I cropped frame_0024.jpg myself: 'I AM LOOKING FOR' in white, 'DRAFTY SHARP IRON SWORD OF PIERCING' in bright blue, then ' .' \u2014 exactly as described, no embellishment. The decomposition is right: ItemGenerator.as:744-746 is the case-3 branch and reads pre(mod2) + pre(mod0) + basename + suf(mod1), and the forced-first ATTACK-on-WEAPON is at :439-443 exactly. CORRECTION to a sub-clause: 'piercingdmg_suf (index 16, allowed ONLY by the WEAPON mask)' is false \u2014 the ARMOR mask (:401-404) and the ACCESSORY mask (:425-428) also set index 16. Piercing is barred only on gloves, shoes, mask, pants and hat. The headline survives because the item is a sword regardless. BONUS the surveyor missed: the basename is no longer frame-only \u2014 resname 4050 in the extracted table IS 'Iron Sword', and item 13113 carries <name>4050</name>, so payload row, string table and frame all agree.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/weight-cap-is-not-flat-100",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:2298-2300, :1983-2025; own parse of reference/extracted/itemdata.xml <weight>",
+  "reason": "getCarryingWeight at StatsManager.as:2298-2300 is verbatim `return 100 + getStat(1009) * 20;` \u2014 a base with a +20/rank upgrade track, not a flat cap. findWeight at :1983-2025 is verbatim, including the 13-slot loop that skips EQ_HEAD/EQ_NECK/EQ_SCABBARD and the inventory and questItems quantity multipliers. Ledger phrase 'weight cap 100' is real at REBUILD_READINESS.md:209. My own parse confirms 745 <weight> rows spanning 0-500.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/soul-infusion-transfer-rule",
+  "own_cite": "reference/decompiled/shs3_android/scripts/CraftingUI.as:506-527; string id 116 resolved from char-id 118",
+  "reason": "CraftingUI.as:506-527 is verbatim \u2014 combinedItem takes designSlot's itemID, copyModifiers from statsSlot, the designType==13 weapon branch folds (statsMinDamage - designMinDamage) into modifier id 6, uses are carried from statsSlot, and primary/secondary colour come from designSlot. Modifier 6 resolves to 'Attack' (string 116) in the extracted table, so 'reconciles weapon base damage into modifier id 6' is exact.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/string-table-partial",
+  "own_cite": "char-id 118 of reference/decrypted/shs3_android_payload_decoded.swf, decoded by me (inflate at offset 8, SWF tag code 87, 500,024 B UTF-16LE): trans-unit id=990 resname=4050 source='Iron Sword'; cross-checked against reference/extracted/itemdata.xml:8743-8745, ItemGenerator.as:91 + :701, LangManager.as:73-79",
+  "reason": "REFUTED \u2014 item names ARE held. The surveyor extracted the right file and read the wrong attribute. Every <trans-unit> in char-id 118 carries BOTH an `id` (sequential 0..2554) and a `resname`, and `resname` is the key the game looks up. Verbatim from my own decode: `<trans-unit id=\"990\" resname=\"4050\"><source>Iron Sword</source></trans-unit>`. Item 13113 at itemdata.xml:8745 carries <name>4050</name>. The surveyor matched on `id`, concluded 'every item name id (4000+) sits above that slice', and declared names unheld. PROOF that resname is the key: ItemGenerator.as:91 builds colorNameList from getString(432..442) against an 11-entry colorhexlist \u2014 by resname those return Red/Orange/Yellow/Green/Blue/Purple/Pink/Brown/White/Grey/Black; by id they return Town/City/Castle Town/(\u521d\u6bb5)/(\u5f10\u6bb5)... which is nonsense. LangManager.as:73-79 calls Locale.loadStringEx(num.toString(), language), and fl.lang.Locale keys XLIFF by resname. COVERAGE I MEASURED: itemdata <name> 804/804, itemdata <desc> 178/178, npcdata <name> 490/490, skilldata <desc> 201/201, skilldata <displayname> 73/73 \u2014 all 100%. Independent corroboration: char-id 121's `<!-- Assassin outfit -->` set (2130/7034/4065/11036/12018) resolves to Assassin Outfit / Assassin Hood / Assassin Robes / Assassin Pants / Assassin Boots. The claim's specific assertions 'lookups of 4000/4001/4002/4058/4172 all return None' are wrong \u2014 they return Small Soldier Pill / Medium Soldier Pill / Large Soldier Pill / Potion / 'Replenish your AP without waiting!'. This overturns GAUNTLET \u00a72.1 for items, skills AND npcs, and invalidates score-rationale bullet (a).",
+  "refuted": true,
+  "severity": "fatal"
+ },
+ {
+  "claim_id": "items-equipment/modifier-id-semantics",
+  "own_cite": "reference/decompiled/shs3_android/scripts/XMLItem.as:231-298 (esp. :293-297); ItemGenerator.as:583-637; StatsManager.as:226-260; own Counter over 412 <modifier> blocks in reference/extracted/itemdata.xml",
+  "reason": "The cite is exact \u2014 XMLItem.as:231-298 is verbatim including the default branch \u2014 and I verified all 22 of the surveyor's string resolutions against the table (110 HP, 111 Max HP, 112 HP Regen, 113 Chi, 114 Max Chi, 115 Chi Regen, 116 Attack, 117 Defense, 118 Speed, 119 XP, 120 'Level ', 63 Coins, 64 Gold, 102 AP, 121 Max AP, 59 Duel Tokens, 122 Max Duel Tokens, 123 Set, 124 Level Required, 125 Stance Restriction, 108 Dmg, 109 Def). What is REFUTED is 'fully decoded end-to-end' and 'all 412 <modifier> blocks ... now readable'. My own parse of itemdata.xml gives 412 blocks over 34 distinct ids: 0,1,2,3,5,6,7,8,9,12,13,15,25,38,78,79,82,84,90,96,97,98,99,101,102,103,104,105,106,117,122,123,124,40000. TWELVE of those (25,38,78,79,82,84,90,96,97,98,99,40000 \u2014 21 blocks) fall outside BOTH declared ranges and land in XMLItem.as:293-297's trace('ErrorValue') branch; they are not readable under the claimed enum. Worse, the enum is the wrong shape: generated items store modifiers under StatsManager STAT_* ids (ItemGenerator.as:583-637), which run to STAT_FIREATK=28..STAT_EARTHATK=31 and STAT_FIREDEF=200..STAT_PIERCINGDMG=205 (StatsManager.as:226-260), plus getStat(1009) that the surveyor's own claim 13 depends on. The modifier-id space IS the stat-id space. The elemental DEF and CRITICAL DAMAGE lines the surveyor read off their own frame_0031 are precisely the family this enum omits. A porter following this claim silently drops every elemental affix.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "items-equipment/weapon-slash-budget-and-reach",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1915-1930; XMLItem.as:152-159; reference/extracted/itemdata.xml:8742-8752; docs/research/REBUILD_READINESS.md:129; own Counters over itemdata",
+  "reason": "getBaseSlashLengthVal at StatsManager.as:1915-1921 is verbatim: `return int(120 + Math.floor(maxincrement * speed / (20 + speed)));` with `maxincrement = 90 + getPlayerStats(STAT_DAN) * 5`. The 120 floor at SPEED 0 and the 210 asymptote at DAN 0 both check out arithmetically. getSlashUsage at :1923-1930 verbatim; XMLItem.as:158 `this.slashusage = 48;` inside the stated :152-159. itemdata.xml:8742-8752 is exactly item 13113 as quoted. Every count re-derived by me: slashusage {72:70, 96:35, 24:1} = 106 items, 3 values; stancerestriction {6:46, 4:7} = 53 items, 2 values; uses {100:46, 80:34, 60:34, 50:1} = 115 items, 4 values; generated items start partially spent per ItemGenerator.as:645-661. Ledger row at REBUILD_READINESS.md:129 quoted verbatim. ONE NIT: 'in px' is an inference \u2014 the AS3 never names a unit. Flash stage units make it a good inference, but the ledger blocker literally says 'reach cap in px' and the code returns an unlabeled int.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/premium-catalog-held",
+  "own_cite": "char-id 121 (4,504 B) extracted by me from reference/decrypted/shs3_android_payload_decoded.swf; own parse of reference/extracted/itemdata.xml <heavenlyprice>; docs/research/REBUILD_READINESS.md:352",
+  "reason": "I extracted char-id 121 myself from the decoded payload: exactly 4,504 bytes, and the content is byte-for-byte what the surveyor quoted \u2014 <premiumdata> with <default> listing 2208/2209/2212/2215/2213/2100..., a fully commented-out <special> block containing 2171 and 13036-13042, and a <rotation> whose sets are headed `<!-- Assassin outfit -->`, `<!-- Dark Assassin outfit -->`, `<!-- Santa outfit -->`, `<!-- Ichigo outfit -->`. My own parse confirms 304 <heavenlyprice> rows with values {0,1,2,3,5,8,12,25,100}. Ledger bullet at REBUILD_READINESS.md:352 quoted verbatim. The PARTIAL verdict and the 'narrow \u00a76 to the real-money layer' impact are both correct.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "items-equipment/no-items-config-still-true",
+  "own_cite": "`ls src/config/` in /Users/kheshav/kheshav-code/SSHD 1-1 (run by me)",
+  "reason": "Ran `ls src/config/` myself. The output matches the quoted file list exactly \u2014 27 .ts files (ai, anim, art, chi, combat-sim, combat, display, duel, economy, fidelity, fx, gesture, mobs, nums, ogAnims, ogPose, palette, popups, poses, profile, reach, rng, skills, stances, stats, timing, xp) plus a CLAUDE.md the quote omits. No items.ts, no equipment.ts, no affixes.ts. The A3 self-caveat ('a repo byte-check, NOT a vitest suite test \u2014 stating that plainly so the class is not overread') is exactly the right honesty and should be preserved.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/quests-pay-no-coins",
+  "own_cite": "reference/frames/zFtCaTO0_1M/seg-29/frames/frame_0013.jpg crop (490,340)-(760,460) upscaled x5 = 'REWARD / 250 XP / 30 COINS / TOWN PROSPERITY: +5'; coin counter frame_0012=365 -> frame_0020=395; plus reference/extracted/questdata.xml:4162-4175 and QuestLogUI.as:456-461",
+  "reason": "Flatly false. Quests DO pay coins, on film twice and in the payload. FRAME: reference/frames/zFtCaTO0_1M/seg-29/frames/frame_0013.jpg, crop (490,340)-(760,460) upscaled x5, reads verbatim 'REWARD / 250 XP / 30 COINS / TOWN PROSPERITY: +5'; the same segment's coin counter (crop (0,0)-(220,60) x5) goes 365 COINS at frame_0012 -> 395 COINS at frame_0020, delta exactly +30. Second independent frame: Nr4fQstqHDM/seg-28/frames/frame_0031.jpg, crop (480,340)-(800,470) x4, 'REWARD / 473 XP / 35 COINS / TOWN PROSPERITY: +10'. The surveyor searched the wrong XML element: quest coin pay is <reward><loot><id>0|1|11</id>, not <outcome><id>11</id> \u2014 see QuestLogUI.as:456-461 'else if(lootType == 0 || lootType == 11){coinReward += qty;} else if(lootType == 1){coinReward += 5 * qty;}'. And questdata.xml:4162-4175 ships one on disk: '<reward><exp>750</exp><loot><id>0</id><qty>30</qty><chance>1</chance></loot>' \u2014 which matches A-24's recorded HUD deltas (coins 310->340, XP 10431->11181) to the unit. The conclusion 'the coin faucet set is now closed and enumerable' is therefore backwards: quest coins are the faucet it omits, and the largest early-game per-event payout.",
+  "refuted": true,
+  "severity": "fatal"
+ },
+ {
+  "claim_id": "economy/iap-price-tiers",
+  "own_cite": "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0003.jpg crop (200,20)-(560,300) upscaled x4 = '50 GOLD 4.99 USD / 125 GOLD 9.99 USD / 200 GOLD 14.99 USD'",
+  "reason": "STILL_UNHELD is wrong \u2014 the tiers are on film, and the survey never opened a frame (it says so in its own score_rationale). reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0003.jpg, crop (200,20)-(560,300) upscaled x4, is the GET GOLD storefront reading verbatim '50 GOLD 4.99 USD', '125 GOLD 9.99 USD', '200 GOLD 14.99 USD' (with a MOST POPULAR burst), and the uncropped frame continues '275 GOLD 19.99 USD', '400 GOLD 24.99 USD', plus Super Rewards / TrialPay offer-wall buttons and the footer 'Purchasing gold will support Straw Hat Samurai: Duels...'. All the surveyor's payload negatives are correct (Mobile_PremiumData.as:5 embeds 121_Mobile_PremiumData.bin; bindata/ holds only 92-98 and 100-119) \u2014 but \u00a70 ranks A1 first and this is A1 from the proven web v0.717 build. Combined with the survey's own 1 gold = 1000 coins, the WHOLE premium economy (source + denomination + sink) is recoverable, so REBUILD_READINESS \u00a76's 'dead IAP economy \u2026 structurally UNRECOVERABLE' is fully dead, not halved. Side note: SYNTHESIS.md:520 cites B-17 for 'IAP tiers + offer walls on-screen', but B-17's documented BUY grid is GOLD-priced (15/25/60/200/1/5/10) \u2014 the dollar table is a different frame of the same segment.",
+  "refuted": true,
+  "severity": "fatal"
+ },
+ {
+  "claim_id": "economy/duel-token-economy",
+  "own_cite": "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0001.jpg crop (820,50)-(1024,130) x6 = 'DUEL TOKENS 40/40'; reference/frames/Nr4fQstqHDM/seg-28/frames/frame_0007.jpg crop (470,110)-(780,290) x4 = 'AP 30 / 40'",
+  "reason": "Intervals hold (StatsManager.as:158 APINTERVAL=60, :160 DTINTERVAL=2*60, :162, :164, :166 \u2014 I verified every line number). The CAPS do not. DUEL TOKENS: reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0001.jpg, crop (820,50)-(1024,130) upscaled x6, shows a skull icon over '40/40' captioned 'DUEL TOKENS' (also on frames 2,4,5,6,7). Forty, not the claimed cap of 30. AP: reference/frames/Nr4fQstqHDM/seg-28/frames/frame_0007.jpg, crop (470,110)-(780,290) upscaled x4, reads 'HP 20/30 \u00b7 CHI 47/47 \u00b7 AP 30/40' \u2014 so the lane_impact's 'closes world-exploration blocker \u2463 (AP regen rate + cap \u2014 30 max)' is false; AP max is 40. setPlayerStats(STAT_MAXAP,30) at :707 is a level-1 creation initial, the same status as STAT_MAXHP,10 two lines above it, which the same frame shows as 30. THE FRAME WINS. Third problem: blocker \u2463 reads 'token/TOURNAMENT economy numbers' and `grep -rli tournament` over all 559 android classes returns 0 files \u2014 the tournament half is untouched, so this is a half-kill reported as a kill.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "economy/coins-per-kill",
+  "own_cite": "src/config/economy.ts:24-35 ('verified only against OUR OWN build's screenshots; it was never an OG measurement'); docs/research/original-game-facts.md:74; docs/research/video-study/SYNTHESIS.md:520; payload re-read at EnemyPlayer.as:1293-1300 + NPC.as:839/843",
+  "reason": "The A2 cite is verbatim and the claim text stands on the payload alone (EnemyPlayer.as:1293-1300; field-mob path NPC.as:839/843; buff LootDialog.as:650-657 \u2014 all opened and matched). But the lane_impact's FRAME-VS-DOC paragraph cites an artifact that does not exist: there is no OG frame reading '+8 COINS' on a kill. src/config/economy.ts:24-35 says it in terms \u2014 'Our +10/+8 was an INFERRED seed verified only against OUR OWN build's screenshots; it was never an OG measurement'. Every '+10 XP / +8 COINS' in the repo (docs/sessions/-SESSION-LOG.md:204, :525, :739, :2095, :2241) is a screenshot of THIS repo's Stage-2 victory screen. The upstream source is docs/research/original-game-facts.md:74, an unsourced wiki-tier line that SYNTHESIS.md:520 already marks 'upgraded to contradicted-as-formula'. Our own build's render is not one of the five admissible classes; presenting it as 'the filmed HUD read' invents an OG frame. Strike the reconciliation; the claim survives with no frame corroboration either way. (The one duel-adjacent coin read that IS on film, A-28's 350->365 = +15 for a 3-bandit pack, is 3x5 on the lootType==1 mob branch, not the duelist generator.)",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "economy/starting-wallet",
+  "own_cite": "reference/frames/zFtCaTO0_1M/seg-01/frames/frame_0033.jpg crop (150,50)-(420,105) x6 = '114' coins + gold icon '3'; frame_0002.jpg = 'YOU NEED 2 MORE GOLD' modal",
+  "reason": "StatsManager.as:705-710 is verbatim (I read it), but calling the whole wallet 'held verbatim' over-reaches on the heavenly-gold row, and the correction points the wrong way. reference/frames/zFtCaTO0_1M/seg-01/frames/frame_0033.jpg, crop (100,30)-(560,90) x4 (tighter: (150,50)-(420,105) x6), shows the PLAYER currency row as 114 coins beside a gold-koban icon reading 3 \u2014 roughly minute 4 of video A, one tutorial quest in, with no gold faucet reachable (no rebirth, no tournament, no IAP for a guest). frame_0002.jpg of the same segment shows the modal 'YOU NEED 2 MORE GOLD' against a 5-gold fast travel, independently pinning the holding at 3. So Android 0.682 starts a guest at HGOLD 0 while web v0.717 shows 3 in hand before anything could grant it: a version divergence, not a repo error. src/config/profile.ts:10's '3 gold' is the frame-backed value and should stay. Downgrade to PARTIAL \u2014 coins/AP/tokens held, HGOLD contested.",
+  "refuted": true,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/five-vendor-generators",
+  "own_cite": "reference/decompiled/shs3_android/scripts/XMLShopData.as:41-60 \u2014 'var removeCount:int = extraItems.length - (10 + defaultItems.length);' with extraItems 24 entries and defaultItems 7 entries",
+  "reason": "Core claim HELD verbatim \u2014 XMLShopData.as:41 peddler, :63 inn, :84 merchant (initMerchantItems really does ship 'var defaultItems:Array = [];'), :98 premium, :137 barber. Inn ('7 fixed + 3 of 6', removeCount:int = 3) and barber ('49 culled to 16', removeCount = defaultItems.length - 16) are both right. The peddler arithmetic is not. XMLShopData.as:47 reads 'var removeCount:int = extraItems.length - (10 + defaultItems.length);' = 24 - (10+7) = 7, so seven extras are spliced out and SEVENTEEN survive: the peddler stocks 7 fixed + 17 of 24 (24 slots), not '10 of 24'. The lane_impact reads the literal 10 as a keep-count when it is a term inside the remove-count. A porter copying that line ships a shop seven items short.",
+  "refuted": true,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/sell-price-formula",
+  "own_cite": "reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0008.jpg \u2014 grid crop (40,120)-(330,500) x4 (badges 5,5,10,15,5,10) and detail crop (620,120)-(1010,420) x3 ('TORN GARMENT / OWNED: 1 / LEVEL 1 / DEFENSE: +1 (EQ: 1) / WEIGHT: 5'); payload Item.as:1582-1593 + ShopUI.as:395-397",
+  "reason": "HELD, and stronger than claimed. Item.as:1582-1593 matches the quote character for character; ShopUI.as:401 setCost(slot.getItem().getSellAmt(),0) and :540 changeGold(displayItem.getCost()) are the real consumption sites; and 'sellPercentage' has exactly one occurrence in the entire bundle \u2014 its own declaration at ShopUI.as:58 \u2014 so the dead-code warning is right. NEW: the formula is frame-corroborated, which the survey admits it never checked. On the A-17 SELL grid the badges land exactly on the lattice: PICKAXE 10 (weight 10 -> (1+0)*10), TORN GARMENT 5 (weight 5, zero modifiers \u2014 the '+1' is the base <defense> row -> (1+0)*5), straw hat 5, katana 10, green-bordered sword 15 = (1+2)*5, rice ball / potion 1 (consumables are 2xxx ids, itemID < 3000), and the lone apparent violation 'stick 0' is the hard-coded special case at ShopUI.as:395-397, 'else if(slot.getItemID() == 13002){ slot.setCost(0,0); }'. Six points, zero misses. Score this A2 + A1.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/repair-weapon-cost",
+  "own_cite": "reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0039..0042 coin crops (0,0)-(150,42) x4 = 531,531,531,461; frame_0040 dialogue crop (0,380)-(700,576) x2 = 'FORGE AN IRON SWORD (LEVEL 7)? / COST: 700 COINS'; payload InteractUI.as:1057-1078",
+  "reason": "HELD verbatim \u2014 InteractUI.as:1057 'case \"repairweapon\": cost = StageManager.getCurrentNodeLevel() * 10;', with the charge at :1073 changeGold(-cost) and 'if(weapon.uses > 1){ weapon.uses = 1; }' at :1075-1078. NEW: it is now frame-corroborated as well. Across reference/frames/Nr4fQstqHDM/seg-10/frames/ the coin counter (crop (0,0)-(150,42) x4) reads 531 at frame_0039, 531 at frame_0040 (forge confirm on screen), 531 at frame_0041 (back at 'WHAT CAN I DO FOR YOU TODAY?', i.e. the 700c forge was DECLINED), then 461 at frame_0042. The -70 lands on the one remaining paid menu item, REPAIR WEAPON, and node level is pinned at 7 by the forge dialogue itself ('FORGE AN IRON SWORD (LEVEL 7)? COST: 700 COINS'). 7 x 10 = 70, exact.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/service-prices-are-formulas",
+  "own_cite": "reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0040.jpg crop (0,380)-(700,576) x2 = 'FORGE AN IRON SWORD (LEVEL 7)? / COST: 700 COINS / MATERIALS NEEDED: 2 IRON ORE'; frame_0042.jpg same crop = 'REINFORCE \u2026 COST: 5000 COINS'; payload InteractUI.as:1002-1008, :229, :241, :1083, :1406",
+  "reason": "HELD verbatim \u2014 forge InteractUI.as:1002-1008 (min(nodeLevel,80)*100), inn :229 nodeLevel*2, stables :241 nodeLevel*2, toll :1406 nodeLevel*1, reinforce :1083 flat 5000, repair :1058 nodeLevel*10. NEW: frame-corroborated on three of six. B-10 frame_0040 shows 'COST: 700 COINS' for an Iron Sword (LEVEL 7) = nodeLevel 7 x 100, and frame_0042 shows 'REINFORCE \u2026 COST: 5000 COINS / MATERIALS NEEDED: 1 SILVER ORE' = the flat 5000. Inn: A-07's innkeeper line 'COST: 8 COINS' at a node level 4 town = nodeLevel x 2, which also makes SYNTHESIS.md:239's 'Inn rest = 8 coins FLAT' stale. Two defects, both cosmetic: the cite '(InteractUI.as:1102-1047)' is a reversed impossible range (the reinforce reagent bands are 1102-1138 inside a 1082-1139 case block), and the surveyor's forge cite is :1003-1008 where the case opens at :1002.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/xp-formula",
+  "own_cite": "reference/decompiled/shs3_android/scripts/NPC.as:94-190 (getGreyLevel :94, getZeroDifference :112, calcXP :166) and EnemyPlayer.as:1306-1328",
+  "reason": "HELD, verbatim and complete. calcXP is at NPC.as:166 (the surveyor said 166-190 \u2014 correct), getGreyLevel at :94, getZeroDifference at :112, and every line of the quoted body matches including the grey-level cutoff, the >3-level cutoff, the +/-5%-per-level scaling and the elite x2. The duel wrapper is right too: EnemyPlayer.as:1318 pays calcXP(...)*3 below player level 10 and :1322 takes the elite=true path at 10+. I found no frame that contradicts any of it.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/trade-goods-arbitrage",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1558-1586 (and the mirrored getGoodsPriceString at :1588-1617)",
+  "reason": "HELD verbatim. InteractUI.as:1558-1586 getGoodsPrice is exactly as quoted: 'var rng:RNG = new RNG(StageManager.getCurrentNode() * QueryManager.instance.getServerDate() * index);' with five commodity cases (0: 10/20, 1: 20/30, 2: 100/15, 3: 200/30, 4: 200/30) and 'return price * (100 - variation / 2 + rng.rand(variation)) / 100;'. The display twin getGoodsPriceString at :1588-1617 reuses the same seed, which is a second independent confirmation that the seed is deterministic and offline-reproducible. buyGoods opens at :1619. No frame contradicts it; none exists.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/crop-price-oscillator",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:105, :497-502, :1544-1548",
+  "reason": "HELD verbatim. The field declaration 'internal var cropPrices:Array = [10,10,10,10];' is at InteractUI.as:105 and the oscillator is at :497-502 exactly as quoted \u2014 'this.cropPrices = [10,10,10,10]; if(maxCrops != leastCrops){ this.cropPrices[leastCropsSide] = 20; this.cropPrices[maxCropsSide] = 5; }'. The payout at sellCrop (:1544-1548) is 'addLootCoins(count * price)' reading stat 20040, then zeroing it and pushing the tally to global var 50000+house. Least-supplied pays 20 / most-supplied pays 5, as stated.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/gold-coin-exchange-rate",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:918-926, plus StatsManager.as:2653-2656 isCoinPurseFull",
+  "reason": "HELD verbatim. InteractUI.as:918-926 is exactly the quoted block \u2014 'case \"convertgold\": if(!StatsManager.isCoinPurseFull()){ StatsManager.spendHeavenlyGold(1,function():*{ StatsManager.changeGold(1000);'. PARTIAL was the honest verdict at the time. Note it should now be upgraded: with the IAP tier table recovered on film (see my R2), the SOURCE half is no longer gone either, so the '\u00a76 structurally UNRECOVERABLE' entry this claim halves is in fact fully closed.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/item-price-table",
+  "own_cite": "reference/extracted/itemdata.xml:28-34 and reference/decompiled/shs3_android/scripts/XMLItem.as:86-100",
+  "reason": "HELD, and the cite is exact to the line. reference/extracted/itemdata.xml:28-34 reads '<id>2100</id> / <type>10</type> / <name>4000</name> / <baseprice>0</baseprice> / <heavenlyprice>1</heavenlyprice> / <weight>0</weight> / <desc>4172</desc>' \u2014 character for character. Consumers confirmed at XMLItem.as (gvalue from xml.baseprice, hvalue from xml.heavenlyprice, with defaults 1 and 0). The string-table caveat is correctly carried: <name> and <desc> are numeric ids and the table is still unlocated, so prices port and names do not.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/war-room-build-costs",
+  "own_cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:1330-1387 and StatsManager.as:162",
+  "reason": "HELD verbatim with exact line numbers. WarHexUI.as:1330 'public function startBuild(buildtarget:int)', :1332 'var buildcost:int = 500;', hex totals at :1338 (FORWARDBASE 10000), :1347 (LADDER 5000), :1356 (DEFENSE 10000), :1365 (TOWN 10000), the charge at :1383 'StatsManager.changeStat(StatsManager.STAT_GOLD,-buildcost);' and the donation tally at :1384. WARMOVEINTERVAL = 60*60 confirmed at StatsManager.as:162. SYNTHESIS.md:520 independently films the 500-per-player donation at B-20, so this one is A2 + doc-with-frame.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/coin-purse-cap-ladder",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:2632-2656 and :234; gate at InteractUI.as:919",
+  "reason": "HELD verbatim. StatsManager.as:2632-2651 getMaxCoins() switches on getStat(1011) returning 1000/2000/4000/6000/8000/10000 with default 1000, exactly as quoted, and isCoinPurseFull() at :2653-2656 is 'getPlayerStats(STAT_GOLD) >= getMaxCoins()'. STAT_COINSINBANK = 36 at :234. The gate on gold->coin conversion is real (InteractUI.as:919). No filmed coin total in either longplay exceeds 1000 (highest I read is 685 at B-18), so nothing contradicts the default tier.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/cho-han-is-ev-neutral",
+  "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1790-1844 (doBet escrow at :1790-1800, doChoHan at :1803-1844)",
+  "reason": "HELD verbatim, and the EV argument checks out. InteractUI.as:1790-1844: doBet escrows the stake ('StatsManager.changeStat(StatsManager.STAT_GOLD,-num);'), doChoHan rolls 'var dice1:int = Math.random() * 6; var dice2:int = Math.random() * 6;' (two independent uniform ints 0-5, each even with p=1/2, so sum parity is exactly 50/50), and a correct call pays 'StatsManager.changeGold(this.bet * 2);'. EV = 0.5*(2b) - b = 0. The Ready bullet listing betting among 'legit non-cash faucets' is wrong in expectation, as claimed.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/prosperity-daily-sim",
+  "own_cite": "reference/decompiled/shs3_android/scripts/HistoryItem.as:137, :239, :283, :299, :303, :307, :311, :373; NetworkManager.as:2042; frames zFtCaTO0_1M/seg-29/frame_0013.jpg and Nr4fQstqHDM/seg-28/frame_0031.jpg",
+  "reason": "HELD as PARTIAL \u2014 honest and correctly scoped. HistoryItem.dataToString opens at :137 and every quoted string is where the surveyor says: :239 'merchants robbed by bandits: prosperity -', :283 'attacked town: prosperity -', :299 'mercenaries upkeep cost: prosperity -', :303 'town hired ninja: prosperity -1000', :307 'trade with other towns: prosperity +', :311 the four-variable town-status line. Server source confirmed at NetworkManager.as:2042 updateTownProsperity. Two additions the survey missed, neither fatal: HistoryItem.as:373 carries a seventh event ('Players changed prosperity through quests by ' + val1), and the QUEST-side prosperity magnitudes ARE client-visible \u2014 QuestLogUI's lootType == 50007 branch renders them, and the film shows the concrete values ('TOWN PROSPERITY: +5' at A-29 frame_0013, '+10' at B-28 frame_0031). So slightly more than 'the client renders, it does not compute'.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "economy/provenance-android-0682",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:30; corroborating frames Nr4fQstqHDM/seg-10/frames/frame_0039-0042 (services match) vs Nr4fQstqHDM/seg-17/frames/frame_0001.jpg and seg-28/frames/frame_0007.jpg (caps do not)",
+  "reason": "HELD \u2014 StatsManager.as:30 is exactly 'public static var clientVersion:Number = 0.682;' and the caveat is the right instinct. But it should be sharpened from blanket to SELECTIVE, because I tested it both ways. Where it does NOT drift: the 0.682 service formulas reproduce a v0.717 frame to the coin (forge nodeLevel x 100 = 700 and repair nodeLevel x 10 = 70 both land exactly on B-10's 531/531/531/461 coin sequence), and the 0.682 sell formula predicts six A-17 SELL badges with zero misses. Where it DOES drift: every character-progression clamp. MAXDUELTOKENS = 30 vs film 40/40; MAXAP = 30 vs film 30/40; STAT_HGOLD start 0 vs film 3. So the honest rule is 'pricing survived the version gap, caps did not' \u2014 which is far more useful to a porter than a uniform discount, and it is exactly why the survey's self-imposed ceiling was applied to the wrong rows.",
+  "refuted": false,
+  "severity": "minor"
+ }
+]

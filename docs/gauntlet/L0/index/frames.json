@@ -1,0 +1,1592 @@
+{
+ ".": {
+  "count": 16,
+  "examples": [
+   ".DS_Store",
+   "INDEX.json",
+   "Nr4fQstqHDM_map_contact.jpg",
+   "Nr4fQstqHDM_seg_contact.jpg",
+   "Nr4fQstqHDM_survey.jpg",
+   "Nr4fQstqHDM_wide_survey.jpg"
+  ],
+  "extensions": {
+   "": 1,
+   ".jpg": 7,
+   ".json": 1,
+   ".png": 7
+  }
+ },
+ "Nr4fQstqHDM/map/frames": {
+  "count": 100,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 100
+  }
+ },
+ "Nr4fQstqHDM/seg-00/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "Nr4fQstqHDM/seg-01/frames": {
+  "count": 16,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 16
+  }
+ },
+ "Nr4fQstqHDM/seg-02/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "Nr4fQstqHDM/seg-03/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "Nr4fQstqHDM/seg-04/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "Nr4fQstqHDM/seg-05/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "Nr4fQstqHDM/seg-06/frames": {
+  "count": 47,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 47
+  }
+ },
+ "Nr4fQstqHDM/seg-07/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "Nr4fQstqHDM/seg-08/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "Nr4fQstqHDM/seg-09/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "Nr4fQstqHDM/seg-10/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "Nr4fQstqHDM/seg-11/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "Nr4fQstqHDM/seg-12/frames": {
+  "count": 20,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 20
+  }
+ },
+ "Nr4fQstqHDM/seg-13/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "Nr4fQstqHDM/seg-14/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "Nr4fQstqHDM/seg-15/frames": {
+  "count": 16,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 16
+  }
+ },
+ "Nr4fQstqHDM/seg-16/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "Nr4fQstqHDM/seg-17/frames": {
+  "count": 20,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 20
+  }
+ },
+ "Nr4fQstqHDM/seg-18/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "Nr4fQstqHDM/seg-19/frames": {
+  "count": 47,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 47
+  }
+ },
+ "Nr4fQstqHDM/seg-20/frames": {
+  "count": 20,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 20
+  }
+ },
+ "Nr4fQstqHDM/seg-21/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "Nr4fQstqHDM/seg-22/frames": {
+  "count": 16,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 16
+  }
+ },
+ "Nr4fQstqHDM/seg-23/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "Nr4fQstqHDM/seg-24/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "Nr4fQstqHDM/seg-25/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "Nr4fQstqHDM/seg-26/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "Nr4fQstqHDM/seg-27/frames": {
+  "count": 46,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 46
+  }
+ },
+ "Nr4fQstqHDM/seg-28/frames": {
+  "count": 38,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 38
+  }
+ },
+ "Nr4fQstqHDM/seg-29/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "broad_survey": {
+  "count": 240,
+  "examples": [
+   "Nr4fQstqHDM_0000.jpg",
+   "Nr4fQstqHDM_0005.jpg",
+   "Nr4fQstqHDM_0010.jpg",
+   "Nr4fQstqHDM_0015.jpg",
+   "Nr4fQstqHDM_0020.jpg",
+   "Nr4fQstqHDM_0025.jpg"
+  ],
+  "extensions": {
+   ".jpg": 240
+  }
+ },
+ "combat_analysis": {
+  "count": 5,
+  "examples": [
+   "Nr4fQstqHDM_t427.5.png",
+   "Nr4fQstqHDM_t428.0.png",
+   "Nr4fQstqHDM_t428.5.png",
+   "Nr4fQstqHDM_t428.9.png",
+   "Nr4fQstqHDM_t429.0.png"
+  ],
+  "extensions": {
+   ".png": 5
+  }
+ },
+ "combat_analysis2": {
+  "count": 6,
+  "examples": [
+   "Nr4fQstqHDM_t431.0.png",
+   "Nr4fQstqHDM_t431.5.png",
+   "Nr4fQstqHDM_t432.0.png",
+   "Nr4fQstqHDM_t432.3.png",
+   "Nr4fQstqHDM_t432.5.png",
+   "Nr4fQstqHDM_t432.9.png"
+  ],
+  "extensions": {
+   ".png": 6
+  }
+ },
+ "combat_frames": {
+  "count": 16,
+  "examples": [
+   "Nr4fQstqHDM_t0065s.png",
+   "Nr4fQstqHDM_t0070s.png",
+   "Nr4fQstqHDM_t0130s.png",
+   "Nr4fQstqHDM_t0140s.png",
+   "Nr4fQstqHDM_t0160s.png",
+   "Nr4fQstqHDM_t0165s.png"
+  ],
+  "extensions": {
+   ".png": 16
+  }
+ },
+ "duel_candidates": {
+  "count": 45,
+  "examples": [
+   "Nr4fQstqHDM_seg-06_first.jpg",
+   "Nr4fQstqHDM_seg-06_last.jpg",
+   "Nr4fQstqHDM_seg-06_mid.jpg",
+   "Nr4fQstqHDM_seg-07_first.jpg",
+   "Nr4fQstqHDM_seg-07_last.jpg",
+   "Nr4fQstqHDM_seg-07_mid.jpg"
+  ],
+  "extensions": {
+   ".jpg": 45
+  }
+ },
+ "duel_crops": {
+  "count": 4,
+  "examples": [
+   "far_right.png",
+   "full_with_edges.png",
+   "left_fighter.png",
+   "right_fighter.png"
+  ],
+  "extensions": {
+   ".png": 4
+  }
+ },
+ "duel_dense": {
+  "count": 42,
+  "examples": [
+   "Nr4fQstqHDM_427.0.png",
+   "Nr4fQstqHDM_427.1.png",
+   "Nr4fQstqHDM_427.2.png",
+   "Nr4fQstqHDM_427.3.png",
+   "Nr4fQstqHDM_427.4.png",
+   "Nr4fQstqHDM_427.5.png"
+  ],
+  "extensions": {
+   ".png": 42
+  }
+ },
+ "duel_frames": {
+  "count": 16,
+  "examples": [
+   "Nr4fQstqHDM_t425.0s.png",
+   "Nr4fQstqHDM_t426.0s.png",
+   "Nr4fQstqHDM_t426.8s.png",
+   "Nr4fQstqHDM_t427.5s.png",
+   "Nr4fQstqHDM_t428.5s.png",
+   "Nr4fQstqHDM_t430.0s.png"
+  ],
+  "extensions": {
+   ".png": 16
+  }
+ },
+ "duel_seq": {
+  "count": 18,
+  "examples": [
+   "Nr4fQstqHDM_425.0.png",
+   "Nr4fQstqHDM_425.5.png",
+   "Nr4fQstqHDM_426.0.png",
+   "Nr4fQstqHDM_426.5.png",
+   "Nr4fQstqHDM_427.0.png",
+   "Nr4fQstqHDM_427.5.png"
+  ],
+  "extensions": {
+   ".png": 18
+  }
+ },
+ "map_analysis": {
+  "count": 20,
+  "examples": [
+   "Nr4fQstqHDM_map_006_t257s.jpg",
+   "Nr4fQstqHDM_map_007_t296s.jpg",
+   "Nr4fQstqHDM_map_008_t336s.jpg",
+   "Nr4fQstqHDM_map_009_t375s.jpg",
+   "Nr4fQstqHDM_map_010_t415s.jpg",
+   "Nr4fQstqHDM_map_011_t454s.jpg"
+  ],
+  "extensions": {
+   ".jpg": 20
+  }
+ },
+ "s19_dojo": {
+  "count": 52,
+  "examples": [
+   "dojo_001.png",
+   "dojo_002.png",
+   "dojo_003.png",
+   "dojo_004.png",
+   "dojo_005.png",
+   "dojo_006.png"
+  ],
+  "extensions": {
+   ".png": 52
+  }
+ },
+ "s19_trace": {
+  "count": 124,
+  "examples": [
+   "zFt_0001.png",
+   "zFt_0002.png",
+   "zFt_0003.png",
+   "zFt_0004.png",
+   "zFt_0005.png",
+   "zFt_0006.png"
+  ],
+  "extensions": {
+   ".png": 124
+  }
+ },
+ "s21_weapon": {
+  "count": 41,
+  "examples": [
+   "contact_stats.png",
+   "panel_006.png",
+   "panel_007.png",
+   "pick_0.png",
+   "pick_1.png",
+   "pick_2.png"
+  ],
+  "extensions": {
+   ".png": 41
+  }
+ },
+ "session11/crit-focus": {
+  "count": 23,
+  "examples": [
+   "t1003.000.png",
+   "t1004.800.png",
+   "t1005.000.png",
+   "t1081.100.png",
+   "t1082.100.png",
+   "t1082.900.png"
+  ],
+  "extensions": {
+   ".png": 23
+  }
+ },
+ "session11/crux-dungeon": {
+  "count": 25,
+  "examples": [
+   "t1382.767.png",
+   "t1382.833.png",
+   "t1382.967.png",
+   "t1401.500.png",
+   "t1401.833.png",
+   "t1402.100.png"
+  ],
+  "extensions": {
+   ".png": 25
+  }
+ },
+ "session11/crux-dungeon-A": {
+  "count": 10,
+  "examples": [
+   "t1401.883.png",
+   "t1402.017.png",
+   "t1402.233.png",
+   "t1402.550.png",
+   "t1402.950.png",
+   "t1403.567.png"
+  ],
+  "extensions": {
+   ".png": 10
+  }
+ },
+ "session11/crux-first-combat": {
+  "count": 18,
+  "examples": [
+   "t114.200.png",
+   "t115.000.png",
+   "t115.267.png",
+   "t115.667.png",
+   "t115.733.png",
+   "t116.800.png"
+  ],
+  "extensions": {
+   ".png": 18
+  }
+ },
+ "session11/damage-ttk": {
+  "count": 43,
+  "examples": [
+   "t114.000.png",
+   "t117.000.png",
+   "t125.350.png",
+   "t125.417.png",
+   "t125.450.png",
+   "t125.467.png"
+  ],
+  "extensions": {
+   ".png": 43
+  }
+ },
+ "session11/gap-enemy-ai": {
+  "count": 30,
+  "examples": [
+   "t115.033.png",
+   "t115.933.png",
+   "t116.433.png",
+   "t117.167.png",
+   "t125.500.png",
+   "t125.767.png"
+  ],
+  "extensions": {
+   ".png": 30
+  }
+ },
+ "session11/gap-focus-trigger": {
+  "count": 33,
+  "examples": [
+   "focusbar_scan2_videoB_fps15.tsv",
+   "hud_2175933.png",
+   "m_c1_combo.png",
+   "m_c1_end.png",
+   "m_c1_hud.png",
+   "m_c1_stroke.png"
+  ],
+  "extensions": {
+   ".png": 32,
+   ".tsv": 1
+  }
+ },
+ "session11/gap-gait-hitbox": {
+  "count": 30,
+  "examples": [
+   "montage_RUN_164px_bandit_t1283.53-1283.73.png",
+   "montage_RUN_217px_t944.47-944.80.png",
+   "montage_RUN_245px_t930.20-930.53.png",
+   "montage_RUN_leg_t591.73-592.40.png",
+   "montage_WALK_379px_t1207.00-1208.80.png",
+   "montage_WALK_leg_t590.20-591.13.png"
+  ],
+  "extensions": {
+   ".png": 30
+  }
+ },
+ "session11/gap-move-issue": {
+  "count": 41,
+  "examples": [
+   "DATA_A_fight_camera.txt",
+   "DATA_A_fight_plate_and_stroke.tsv",
+   "DATA_B_walk_plate.tsv",
+   "MONTAGE_A115.2-115.73_slash1.png",
+   "MONTAGE_A116.6-119.5_slash2-slash3-run-then-dash.png",
+   "MONTAGE_A119.267-119.467_thin-connector-line.png"
+  ],
+  "extensions": {
+   ".png": 38,
+   ".tsv": 2,
+   ".txt": 1
+  }
+ },
+ "session11/gap-named-duel": {
+  "count": 26,
+  "examples": [
+   "t1945.000.png",
+   "t1958.000.png",
+   "t1962.067.png",
+   "t1963.000.png",
+   "t1964.333.png",
+   "t1965.000.png"
+  ],
+  "extensions": {
+   ".png": 26
+  }
+ },
+ "session11/lead": {
+  "count": 10,
+  "examples": [
+   "t114.0_first-combat-hud.png",
+   "t119.65_stroke-fullres.png",
+   "t119.75_drawn-stroke.png",
+   "t120.25_first-blood.png",
+   "t120.35_enemy-down.png",
+   "t393.0_stance-ring-colours.png"
+  ],
+  "extensions": {
+   ".png": 10
+  }
+ },
+ "session11/movement-gesture": {
+  "count": 54,
+  "examples": [
+   "KEY2_pin_overview.png",
+   "KEY2_tipmove.png",
+   "gait_b3.png",
+   "pauseA.png",
+   "pin_ruler.png",
+   "poses.png"
+  ],
+  "extensions": {
+   ".png": 54
+  }
+ },
+ "session11/stance-reach": {
+  "count": 19,
+  "examples": [
+   "A_t117.400_BALANCED_lvl1_stroke235px.png",
+   "A_t117.500_BALANCED_HUD_tan-ring_HP10-CHI10.png",
+   "A_t121.667_BALANCED_lvl1_stroke239px_max.png",
+   "A_t123.533_BALANCED_lvl1_stroke226px.png",
+   "B_t1327.933_HEAVY_stroke-from-body_farGap192px.png",
+   "B_t1328.133_HEAVY_stroke-from-body_farGap182px.png"
+  ],
+  "extensions": {
+   ".png": 19
+  }
+ },
+ "session24/gait-duel-speeds": {
+  "count": 194,
+  "examples": [
+   "comp_A_fx36_fx41.png",
+   "comp_A_player_fx40_fx43.png",
+   "comp_hondaB_left_f61_f102_f128.png",
+   "comp_hondaB_right_f108_f136.png",
+   "comp_playerB_f63_f79_f83.png",
+   "ev_A_enemy_walk_fx0036.png"
+  ],
+  "extensions": {
+   ".csv": 2,
+   ".png": 192
+  }
+ },
+ "session24/reach-A-first-fight": {
+  "count": 260,
+  "examples": [
+   "_anchor_check_f0000.png",
+   "_anchor_check_f0109.png",
+   "_cam_band.json",
+   "_cam_direct.json",
+   "_cam_track.json",
+   "_guest.json"
+  ],
+  "extensions": {
+   ".json": 4,
+   ".png": 256
+  }
+ },
+ "session24/reach-A28-forest-duel": {
+  "count": 372,
+  "examples": [
+   "bsheet_0.png",
+   "bsheet_1.png",
+   "bsheet_2.png",
+   "bsheet_3.png",
+   "bsheet_4.png",
+   "burst_0000.png"
+  ],
+  "extensions": {
+   ".png": 372
+  }
+ },
+ "session24/reach-B-dojo": {
+  "count": 342,
+  "examples": [
+   "crop_S1_f0041.png",
+   "crop_S1_f0042.png",
+   "crop_S1_f0044.png",
+   "crop_S1_f0046.png",
+   "crop_S1_f0048.png",
+   "crop_S1_f0050.png"
+  ],
+  "extensions": {
+   ".png": 342
+  }
+ },
+ "session24/reach-B-dojo/burst60": {
+  "count": 27,
+  "examples": [
+   "b000.png",
+   "b001.png",
+   "b002.png",
+   "b003.png",
+   "b004.png",
+   "b005.png"
+  ],
+  "extensions": {
+   ".png": 27
+  }
+ },
+ "session24/reach-B-honda-duel": {
+  "count": 248,
+  "examples": [
+   "attr_f0081.png",
+   "attr_f0111.png",
+   "banner_f0004.png",
+   "contact_sheet.png",
+   "crop_e1_f0056.png",
+   "crop_e1_f0057.png"
+  ],
+  "extensions": {
+   ".json": 1,
+   ".png": 247
+  }
+ },
+ "session24/strike-travel-duration": {
+  "count": 6,
+  "examples": [
+   "dojo_S1_montage.png",
+   "dojo_S2_run_montage.png",
+   "honda_E10_E11_montage.png",
+   "honda_E1_montage.png",
+   "k2_snap_h0016_h0017.png",
+   "pan_check_f0138_f0158.png"
+  ],
+  "extensions": {
+   ".png": 6
+  }
+ },
+ "session24/strike-travel-duration/hz_k2": {
+  "count": 36,
+  "examples": [
+   "h0000.png",
+   "h0001.png",
+   "h0002.png",
+   "h0003.png",
+   "h0004.png",
+   "h0005.png"
+  ],
+  "extensions": {
+   ".png": 36
+  }
+ },
+ "session24/svm-A16-beach-duel": {
+  "count": 406,
+  "examples": [
+   "cal_stroke_f0150.png",
+   "chk_death_k320.png",
+   "chk_popup_k213.png",
+   "chk_splash_k82.png",
+   "chk_stroke1_k134.png",
+   "chk_topright_k230.png"
+  ],
+  "extensions": {
+   ".png": 406
+  }
+ },
+ "session24/svm-A16-beach-duel/b60_A": {
+  "count": 72,
+  "examples": [
+   "f0000.png",
+   "f0001.png",
+   "f0002.png",
+   "f0003.png",
+   "f0004.png",
+   "f0005.png"
+  ],
+  "extensions": {
+   ".png": 72
+  }
+ },
+ "session24/svm-A16-beach-duel/b60_B": {
+  "count": 54,
+  "examples": [
+   "f0000.png",
+   "f0001.png",
+   "f0002.png",
+   "f0003.png",
+   "f0004.png",
+   "f0005.png"
+  ],
+  "extensions": {
+   ".png": 54
+  }
+ },
+ "session24/svm-A16-beach-duel/b60_C": {
+  "count": 36,
+  "examples": [
+   "f0000.png",
+   "f0001.png",
+   "f0002.png",
+   "f0003.png",
+   "f0004.png",
+   "f0005.png"
+  ],
+  "extensions": {
+   ".png": 36
+  }
+ },
+ "session24/svm-A16-beach-duel/b60_D": {
+  "count": 66,
+  "examples": [
+   "f0000.png",
+   "f0001.png",
+   "f0002.png",
+   "f0003.png",
+   "f0004.png",
+   "f0005.png"
+  ],
+  "extensions": {
+   ".png": 66
+  }
+ },
+ "session24/svm-A16-beach-duel/b60_E": {
+  "count": 66,
+  "examples": [
+   "f0000.png",
+   "f0001.png",
+   "f0002.png",
+   "f0003.png",
+   "f0004.png",
+   "f0005.png"
+  ],
+  "extensions": {
+   ".png": 66
+  }
+ },
+ "session24/svm-A16-beach-duel/b60_F": {
+  "count": 36,
+  "examples": [
+   "f0000.png",
+   "f0001.png",
+   "f0002.png",
+   "f0003.png",
+   "f0004.png",
+   "f0005.png"
+  ],
+  "extensions": {
+   ".png": 36
+  }
+ },
+ "session24/svm-B-honda-duel": {
+  "count": 217,
+  "examples": [
+   "analysis_pass1.json",
+   "analysis_pass2.json",
+   "crop_stroke1_f0058.png",
+   "crop_stroke1_f0059.png",
+   "crop_stroke1_f0060.png",
+   "crop_stroke1_f0062.png"
+  ],
+  "extensions": {
+   ".json": 3,
+   ".png": 214
+  }
+ },
+ "session24/svm-B-honda-duel/burst60": {
+  "count": 54,
+  "examples": [
+   "b000.png",
+   "b001.png",
+   "b002.png",
+   "b003.png",
+   "b004.png",
+   "b005.png"
+  ],
+  "extensions": {
+   ".png": 54
+  }
+ },
+ "session24/svm-B05-mountain-duel": {
+  "count": 434,
+  "examples": [
+   "c0000.png",
+   "c0001.png",
+   "c0002.png",
+   "c0003.png",
+   "c0004.png",
+   "c0005.png"
+  ],
+  "extensions": {
+   ".png": 433,
+   ".txt": 1
+  }
+ },
+ "session24/svm-B05-mountain-duel/coarse": {
+  "count": 119,
+  "examples": [
+   "c0000.png",
+   "c0001.png",
+   "c0002.png",
+   "c0003.png",
+   "c0004.png",
+   "c0005.png"
+  ],
+  "extensions": {
+   ".png": 119
+  }
+ },
+ "session24/svm-B05-mountain-duel/fight15": {
+  "count": 480,
+  "examples": [
+   "f0000.png",
+   "f0001.png",
+   "f0002.png",
+   "f0003.png",
+   "f0004.png",
+   "f0005.png"
+  ],
+  "extensions": {
+   ".png": 480
+  }
+ },
+ "survey": {
+  "count": 60,
+  "examples": [
+   "Nr4fQstqHDM_0000s.jpg",
+   "Nr4fQstqHDM_0020s.jpg",
+   "Nr4fQstqHDM_0040s.jpg",
+   "Nr4fQstqHDM_0060s.jpg",
+   "Nr4fQstqHDM_0080s.jpg",
+   "Nr4fQstqHDM_0100s.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "wide_survey": {
+  "count": 100,
+  "examples": [
+   "Nr4fQstqHDM_0420.0.jpg",
+   "Nr4fQstqHDM_0420.2.jpg",
+   "Nr4fQstqHDM_0420.4.jpg",
+   "Nr4fQstqHDM_0420.6.jpg",
+   "Nr4fQstqHDM_0420.8.jpg",
+   "Nr4fQstqHDM_0421.0.jpg"
+  ],
+  "extensions": {
+   ".jpg": 100
+  }
+ },
+ "zFtCaTO0_1M/map/frames": {
+  "count": 100,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 100
+  }
+ },
+ "zFtCaTO0_1M/seg-00/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "zFtCaTO0_1M/seg-01/frames": {
+  "count": 40,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 40
+  }
+ },
+ "zFtCaTO0_1M/seg-02/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "zFtCaTO0_1M/seg-03/frames": {
+  "count": 28,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 28
+  }
+ },
+ "zFtCaTO0_1M/seg-04/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "zFtCaTO0_1M/seg-05/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "zFtCaTO0_1M/seg-06/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "zFtCaTO0_1M/seg-07/frames": {
+  "count": 36,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 36
+  }
+ },
+ "zFtCaTO0_1M/seg-08/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "zFtCaTO0_1M/seg-09/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "zFtCaTO0_1M/seg-10/frames": {
+  "count": 44,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 44
+  }
+ },
+ "zFtCaTO0_1M/seg-11/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "zFtCaTO0_1M/seg-12/frames": {
+  "count": 20,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 20
+  }
+ },
+ "zFtCaTO0_1M/seg-13/frames": {
+  "count": 36,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 36
+  }
+ },
+ "zFtCaTO0_1M/seg-14/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "zFtCaTO0_1M/seg-15/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "zFtCaTO0_1M/seg-16/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "zFtCaTO0_1M/seg-17/frames": {
+  "count": 32,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 32
+  }
+ },
+ "zFtCaTO0_1M/seg-18/frames": {
+  "count": 28,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 28
+  }
+ },
+ "zFtCaTO0_1M/seg-19/frames": {
+  "count": 36,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 36
+  }
+ },
+ "zFtCaTO0_1M/seg-20/frames": {
+  "count": 36,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 36
+  }
+ },
+ "zFtCaTO0_1M/seg-21/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "zFtCaTO0_1M/seg-22/frames": {
+  "count": 28,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 28
+  }
+ },
+ "zFtCaTO0_1M/seg-23/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "zFtCaTO0_1M/seg-24/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "zFtCaTO0_1M/seg-25/frames": {
+  "count": 37,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 37
+  }
+ },
+ "zFtCaTO0_1M/seg-26/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "zFtCaTO0_1M/seg-27/frames": {
+  "count": 48,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 48
+  }
+ },
+ "zFtCaTO0_1M/seg-28/frames": {
+  "count": 40,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 40
+  }
+ },
+ "zFtCaTO0_1M/seg-29/frames": {
+  "count": 36,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 36
+  }
+ },
+ "zFtCaTO0_1M/seg-30/frames": {
+  "count": 60,
+  "examples": [
+   "frame_0001.jpg",
+   "frame_0002.jpg",
+   "frame_0003.jpg",
+   "frame_0004.jpg",
+   "frame_0005.jpg",
+   "frame_0006.jpg"
+  ],
+  "extensions": {
+   ".jpg": 60
+  }
+ },
+ "zFt_combat": {
+  "count": 14,
+  "examples": [
+   "zFtCaTO0_1M_t0320s.png",
+   "zFtCaTO0_1M_t0325s.png",
+   "zFtCaTO0_1M_t0330s.png",
+   "zFtCaTO0_1M_t0335s.png",
+   "zFtCaTO0_1M_t0340s.png",
+   "zFtCaTO0_1M_t0350s.png"
+  ],
+  "extensions": {
+   ".png": 14
+  }
+ }
+}

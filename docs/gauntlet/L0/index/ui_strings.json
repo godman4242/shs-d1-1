@@ -1,0 +1,28 @@
+{
+ "file": "reference/extracted/ui_strings.txt",
+ "font_face_lines": [
+  100,
+  127,
+  182,
+  201,
+  206,
+  212
+ ],
+ "font_faces": [
+  "Calibri",
+  "Edo SZ"
+ ],
+ "line_count": 472,
+ "sample_lines": [
+  "!",
+  "\"1\">current leveldamage: 5def: 10chi: 10<p",
+  "\"left\">enemy troops: ???samurai on guard:boba (1)<font face=\"E",
+  "%",
+  "&: 1 - 1 (",
+  "&: 1 - 1)",
+  "&quot;Odds&quot; refers to the estimated profit that you will make for each token that you bet.example: If you bet 2 tokens at 1.5 odds, you will make an estimated profit of 3 gold when your bet wins",
+  "(",
+  "(min - max)",
+  ")"
+ ]
+}
