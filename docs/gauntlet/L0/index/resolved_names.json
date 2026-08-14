@@ -1,0 +1,4381 @@
+{
+ "itemdata.xml": {
+  "miss_sample": [],
+  "misses": 0,
+  "resolved": {
+   "11002": {
+    "name": "Pants"
+   },
+   "11003": {
+    "name": "Pants"
+   },
+   "11004": {
+    "name": "Pants"
+   },
+   "11005": {
+    "name": "Heavy Armor Pants"
+   },
+   "11006": {
+    "name": "Pants"
+   },
+   "11007": {
+    "name": "Pants"
+   },
+   "11008": {
+    "name": "Pants"
+   },
+   "11009": {
+    "name": "Ninja Pants"
+   },
+   "11010": {
+    "name": "Pants"
+   },
+   "11011": {
+    "name": "Pants"
+   },
+   "11012": {
+    "name": "Pants"
+   },
+   "11013": {
+    "name": "Pants"
+   },
+   "11014": {
+    "name": "Pants"
+   },
+   "11015": {
+    "name": "Pants"
+   },
+   "11016": {
+    "name": "Pants"
+   },
+   "11017": {
+    "name": "Torn Pants"
+   },
+   "11018": {
+    "name": "Pants"
+   },
+   "11019": {
+    "name": "Pants"
+   },
+   "11020": {
+    "name": "Shorts"
+   },
+   "11023": {
+    "name": "Pants"
+   },
+   "11024": {
+    "name": "Pants"
+   },
+   "11025": {
+    "name": "Pants"
+   },
+   "11026": {
+    "name": "Pants"
+   },
+   "11027": {
+    "name": "Pants"
+   },
+   "11028": {
+    "name": "Pants"
+   },
+   "11029": {
+    "name": "Pants"
+   },
+   "11033": {
+    "name": "Pants"
+   },
+   "11034": {
+    "desc": "This unique armor was created by a master blacksmith for the warrior Zaku to reward his prowess in battle.",
+    "name": "Pants"
+   },
+   "11035": {
+    "name": "Reaper Pants"
+   },
+   "11036": {
+    "name": "Assassin Pants"
+   },
+   "11037": {
+    "name": "Santa Pants"
+   },
+   "11039": {
+    "name": "Ace Pants"
+   },
+   "11040": {
+    "name": "Pants"
+   },
+   "11041": {
+    "name": "Smudge Pants"
+   },
+   "11042": {
+    "name": "Adventurer Pants"
+   },
+   "11043": {
+    "name": "Kanji Pants"
+   },
+   "11046": {
+    "name": "White Fang Pants"
+   },
+   "11047": {
+    "name": "Yellow Flash Pants"
+   },
+   "11048": {
+    "name": "Nice Guy Pants"
+   },
+   "11049": {
+    "name": "Red Dawn Pants"
+   },
+   "11050": {
+    "name": "Purple Kite Pants"
+   },
+   "11051": {
+    "name": "Warlord Pants"
+   },
+   "11052": {
+    "name": "Founder Pants"
+   },
+   "11053": {
+    "name": "Successor Pants"
+   },
+   "11054": {
+    "name": "Clankiller Pants"
+   },
+   "11055": {
+    "name": "Taka Pants"
+   },
+   "11056": {
+    "name": "Hebi Pants"
+   },
+   "11057": {
+    "name": "Hitman Pants"
+   },
+   "11077": {
+    "name": "Paradise Shorts"
+   },
+   "11500": {
+    "name": "Shorts"
+   },
+   "11501": {
+    "name": "Pants"
+   },
+   "11502": {
+    "name": "Pants"
+   },
+   "11503": {
+    "name": "Stockings"
+   },
+   "11504": {
+    "name": "Gaius Pants"
+   },
+   "11505": {
+    "name": "Kanji Pants"
+   },
+   "11506": {
+    "name": "Pants"
+   },
+   "11507": {
+    "name": "Lightning Pants"
+   },
+   "11509": {
+    "name": "Azure Kite Pants"
+   },
+   "11510": {
+    "name": "Whisper Pants"
+   },
+   "11512": {
+    "name": "Demon Huntress Pants"
+   },
+   "11513": {
+    "name": "Chronos Legs"
+   },
+   "11514": {
+    "name": "Heavenly Greaves"
+   },
+   "12001": {
+    "name": "Sandals"
+   },
+   "12002": {
+    "name": "Sandals"
+   },
+   "12003": {
+    "name": "Sandals"
+   },
+   "12004": {
+    "name": "Sandals"
+   },
+   "12005": {
+    "name": "Sandals"
+   },
+   "12006": {
+    "name": "Shoes"
+   },
+   "12007": {
+    "name": "Boots"
+   },
+   "12008": {
+    "name": "Boots"
+   },
+   "12009": {
+    "name": "Boots"
+   },
+   "12010": {
+    "name": "Sandals"
+   },
+   "12011": {
+    "name": "Shoes"
+   },
+   "12012": {
+    "name": "Boots"
+   },
+   "12013": {
+    "name": "Shoes"
+   },
+   "12014": {
+    "name": "Shoes"
+   },
+   "12017": {
+    "name": "Worn Sandals"
+   },
+   "12018": {
+    "name": "Assassin Boots"
+   },
+   "12019": {
+    "name": "Reaper Sandals"
+   },
+   "12021": {
+    "name": "Ace Shoes"
+   },
+   "12022": {
+    "name": "Smudge Boots"
+   },
+   "12023": {
+    "name": "Adventurer Shoes"
+   },
+   "12024": {
+    "name": "Kanji Boots"
+   },
+   "12027": {
+    "name": "Gaius Boots"
+   },
+   "12028": {
+    "name": "Kanji Boots"
+   },
+   "12029": {
+    "name": "Shoes"
+   },
+   "12030": {
+    "name": "Successor Shoes"
+   },
+   "12031": {
+    "name": "Red Dawn Shoes"
+   },
+   "12032": {
+    "name": "Purple Kite Robes"
+   },
+   "12033": {
+    "name": "Warlord Shoes"
+   },
+   "12034": {
+    "name": "Founder Shoes"
+   },
+   "12035": {
+    "name": "Clankiller Shoes"
+   },
+   "12036": {
+    "name": "Taka Shoes"
+   },
+   "12037": {
+    "name": "Hebi Shoes"
+   },
+   "12038": {
+    "name": "Hitman Shoes"
+   },
+   "12039": {
+    "name": "White Fang Shoes"
+   },
+   "12041": {
+    "name": "Yellow Flash Shoes"
+   },
+   "12042": {
+    "name": "Lightning Shoes"
+   },
+   "12044": {
+    "name": "Azure Kite Shoes"
+   },
+   "12045": {
+    "name": "Whisper Shoes"
+   },
+   "12051": {
+    "name": "Demon Huntress Boots"
+   },
+   "12052": {
+    "name": "Chronos Shoes"
+   },
+   "12053": {
+    "name": "Heavenly Boots"
+   },
+   "12054": {
+    "name": "Paradise Sandals"
+   },
+   "13001": {
+    "name": "Stick"
+   },
+   "13002": {
+    "name": "Branch"
+   },
+   "13003": {
+    "name": "Bamboo"
+   },
+   "13004": {
+    "name": "Flute"
+   },
+   "13005": {
+    "name": "Spoon"
+   },
+   "13006": {
+    "name": "Fork"
+   },
+   "13007": {
+    "name": "Bat"
+   },
+   "13008": {
+    "name": "Stick with nail"
+   },
+   "13009": {
+    "name": "Katar"
+   },
+   "13010": {
+    "name": "Training Sword"
+   },
+   "13011": {
+    "name": "Training Sword"
+   },
+   "13014": {
+    "name": "Zanpakuto"
+   },
+   "13015": {
+    "name": "Big Fish"
+   },
+   "13016": {
+    "name": "Candy Cane"
+   },
+   "13017": {
+    "name": "Zanpakuto"
+   },
+   "13018": {
+    "name": "Zanpakuto"
+   },
+   "13019": {
+    "name": "Zanpakuto"
+   },
+   "13020": {
+    "name": "Zanpakuto"
+   },
+   "13021": {
+    "name": "Zanpakuto"
+   },
+   "13022": {
+    "desc": "Used for mining.",
+    "name": "Pickaxe"
+   },
+   "13023": {
+    "name": "Smudge Sword"
+   },
+   "13024": {
+    "name": "Whisper Sword"
+   },
+   "13025": {
+    "name": "Smudge Sword"
+   },
+   "13026": {
+    "name": "Adventurer Sword"
+   },
+   "13027": {
+    "name": "RyuKen"
+   },
+   "13029": {
+    "name": "Gaius Sword"
+   },
+   "13030": {
+    "desc": "/sendtohell (playername)\n/gotohell",
+    "name": "RyuKen"
+   },
+   "13031": {
+    "name": "Yellow Flash Blade"
+   },
+   "13032": {
+    "name": "Purple Kite War Fan"
+   },
+   "13033": {
+    "name": "Warlord Scythe"
+   },
+   "13034": {
+    "name": "Founder Sword"
+   },
+   "13035": {
+    "name": "Successor Sword"
+   },
+   "13036": {
+    "name": "Shark Skin"
+   },
+   "13037": {
+    "name": "Executioner's Blade"
+   },
+   "13038": {
+    "name": "Sewing Needle"
+   },
+   "13039": {
+    "name": "Helmet Splitter"
+   },
+   "13040": {
+    "name": "Splash"
+   },
+   "13041": {
+    "name": "Fangs"
+   },
+   "13042": {
+    "name": "Twinsword"
+   },
+   "13043": {
+    "name": "Grasscutter"
+   },
+   "13044": {
+    "name": "Hitman Sword"
+   },
+   "13045": {
+    "name": "RyuKage"
+   },
+   "13046": {
+    "name": "Lightning Sword"
+   },
+   "13047": {
+    "desc": "/sendtohell (playername)\n/gotohell",
+    "name": "RyuKen"
+   },
+   "13052": {
+    "name": "Azure Kite Blade"
+   },
+   "13058": {
+    "name": "Bishamon Sword"
+   },
+   "13059": {
+    "name": "Invisible Sword"
+   },
+   "13060": {
+    "name": "Blue Saskia Sword"
+   },
+   "13061": {
+    "name": "Paradise Sword"
+   },
+   "13100": {
+    "name": "Iron Sword"
+   },
+   "13101": {
+    "name": "Iron Sword"
+   },
+   "13102": {
+    "name": "Iron Sword"
+   },
+   "13103": {
+    "name": "Iron Sword"
+   },
+   "13104": {
+    "name": "Iron Sword"
+   },
+   "13105": {
+    "name": "Iron Sword"
+   },
+   "13106": {
+    "name": "Iron Sword"
+   },
+   "13107": {
+    "name": "Iron Sword"
+   },
+   "13108": {
+    "name": "Iron Sword"
+   },
+   "13109": {
+    "name": "Iron Sword"
+   },
+   "13110": {
+    "name": "Iron Sword"
+   },
+   "13111": {
+    "name": "Iron Sword"
+   },
+   "13112": {
+    "name": "Iron Sword"
+   },
+   "13113": {
+    "name": "Iron Sword"
+   },
+   "13114": {
+    "name": "Iron Sword"
+   },
+   "13115": {
+    "name": "Iron Sword"
+   },
+   "13116": {
+    "name": "Iron Sword"
+   },
+   "13117": {
+    "name": "Iron Sword"
+   },
+   "13118": {
+    "name": "Iron Sword"
+   },
+   "13119": {
+    "name": "Iron Sword"
+   },
+   "13120": {
+    "name": "Dragon Blade"
+   },
+   "13121": {
+    "name": "Iron Sword"
+   },
+   "13122": {
+    "name": "Thunder Blade"
+   },
+   "13123": {
+    "name": "Cleaver"
+   },
+   "13124": {
+    "name": "Iron Sword"
+   },
+   "13125": {
+    "name": "Iron Sword"
+   },
+   "13126": {
+    "name": "Iron Sword"
+   },
+   "13127": {
+    "name": "Iron Sword"
+   },
+   "13128": {
+    "name": "Iron Sword"
+   },
+   "13129": {
+    "name": "Bevel Edge"
+   },
+   "13130": {
+    "name": "Bronze Sword"
+   },
+   "13131": {
+    "name": "Bronze Sword"
+   },
+   "13132": {
+    "name": "Bronze Sword"
+   },
+   "13133": {
+    "name": "Bronze Sword"
+   },
+   "13134": {
+    "name": "Bronze Sword"
+   },
+   "13135": {
+    "name": "Bronze Sword"
+   },
+   "13136": {
+    "name": "Bronze Sword"
+   },
+   "13137": {
+    "name": "Bronze Sword"
+   },
+   "13138": {
+    "name": "Bronze Sword"
+   },
+   "13139": {
+    "name": "Bronze Sword"
+   },
+   "13140": {
+    "name": "Bronze Sword"
+   },
+   "13141": {
+    "name": "Bronze Sword"
+   },
+   "13142": {
+    "name": "Bronze Sword"
+   },
+   "13143": {
+    "name": "Bronze Sword"
+   },
+   "13144": {
+    "name": "Bronze Sword"
+   },
+   "13145": {
+    "name": "Bronze Sword"
+   },
+   "13146": {
+    "name": "Bronze Sword"
+   },
+   "13147": {
+    "name": "Bronze Sword"
+   },
+   "13148": {
+    "name": "Bronze Sword"
+   },
+   "13149": {
+    "name": "Bronze Sword"
+   },
+   "13150": {
+    "name": "Bronze Sword"
+   },
+   "13151": {
+    "name": "Bronze Sword"
+   },
+   "13152": {
+    "name": "Bronze Sword"
+   },
+   "13153": {
+    "name": "Bronze Sword"
+   },
+   "13154": {
+    "name": "Bronze Sword"
+   },
+   "13155": {
+    "name": "Bronze Sword"
+   },
+   "13156": {
+    "name": "Steel Sword"
+   },
+   "13157": {
+    "name": "Steel Sword"
+   },
+   "13158": {
+    "name": "Steel Sword"
+   },
+   "13159": {
+    "name": "Steel Sword"
+   },
+   "13160": {
+    "name": "Steel Sword"
+   },
+   "13161": {
+    "name": "Steel Sword"
+   },
+   "13162": {
+    "name": "Steel Sword"
+   },
+   "13163": {
+    "name": "Steel Sword"
+   },
+   "13164": {
+    "name": "Steel Sword"
+   },
+   "13165": {
+    "name": "Steel Sword"
+   },
+   "13166": {
+    "name": "Steel Sword"
+   },
+   "13167": {
+    "name": "Steel Sword"
+   },
+   "13168": {
+    "name": "Steel Sword"
+   },
+   "13169": {
+    "name": "Steel Sword"
+   },
+   "13170": {
+    "name": "Steel Sword"
+   },
+   "13171": {
+    "name": "Steel Sword"
+   },
+   "13172": {
+    "name": "Steel Sword"
+   },
+   "13173": {
+    "name": "Steel Sword"
+   },
+   "13174": {
+    "name": "Steel Sword"
+   },
+   "13175": {
+    "name": "Steel Sword"
+   },
+   "13176": {
+    "name": "Steel Sword"
+   },
+   "13177": {
+    "name": "Steel Sword"
+   },
+   "13178": {
+    "name": "Steel Sword"
+   },
+   "13179": {
+    "name": "Steel Sword"
+   },
+   "13180": {
+    "name": "Steel Sword"
+   },
+   "13181": {
+    "name": "Steel Sword"
+   },
+   "13200": {
+    "name": "Iron Sabre"
+   },
+   "13201": {
+    "name": "Iron Sabre"
+   },
+   "13202": {
+    "name": "Iron Sabre"
+   },
+   "13203": {
+    "name": "Iron Sabre"
+   },
+   "13204": {
+    "name": "Iron Sabre"
+   },
+   "13205": {
+    "name": "Iron Sabre"
+   },
+   "13206": {
+    "name": "Iron Sabre"
+   },
+   "13207": {
+    "name": "Iron Sabre"
+   },
+   "13208": {
+    "name": "Defender"
+   },
+   "13209": {
+    "name": "Bronze Sabre"
+   },
+   "13210": {
+    "name": "Bronze Sabre"
+   },
+   "13211": {
+    "name": "Bronze Sabre"
+   },
+   "13212": {
+    "name": "Bronze Sabre"
+   },
+   "13213": {
+    "name": "Bronze Sabre"
+   },
+   "13214": {
+    "name": "Bronze Sabre"
+   },
+   "13215": {
+    "name": "Bronze Sabre"
+   },
+   "13216": {
+    "name": "Bronze Sabre"
+   },
+   "13217": {
+    "name": "Steel Sabre"
+   },
+   "13218": {
+    "name": "Steel Sabre"
+   },
+   "13219": {
+    "name": "Steel Sabre"
+   },
+   "13223": {
+    "name": "Steel Sabre"
+   },
+   "13224": {
+    "name": "Steel Sabre"
+   },
+   "13225": {
+    "name": "Steel Sabre"
+   },
+   "13226": {
+    "name": "Steel Sabre"
+   },
+   "13227": {
+    "name": "Steel Sabre"
+   },
+   "2000": {
+    "name": "Potion"
+   },
+   "20000": {
+    "name": "Berry"
+   },
+   "20001": {
+    "name": "Broken Sandal"
+   },
+   "20002": {
+    "name": "Small Box"
+   },
+   "20003": {
+    "name": "Big Box"
+   },
+   "20004": {
+    "name": "Sealed Box"
+   },
+   "20005": {
+    "name": "Sealed Scroll"
+   },
+   "20006": {
+    "name": "Candle"
+   },
+   "20007": {
+    "name": "Daruma Doll"
+   },
+   "20008": {
+    "name": "Stalk of Hay"
+   },
+   "20009": {
+    "name": "Wooden Stick"
+   },
+   "2001": {
+    "name": "Potion"
+   },
+   "20010": {
+    "name": "Torch"
+   },
+   "20011": {
+    "name": "Paintbrush"
+   },
+   "20012": {
+    "name": "Tax Warrant"
+   },
+   "20013": {
+    "name": "Medicine"
+   },
+   "20014": {
+    "name": "Pinwheel"
+   },
+   "20015": {
+    "name": "Patch of Cloth"
+   },
+   "20016": {
+    "name": "Flag"
+   },
+   "20017": {
+    "name": "Signet Ring"
+   },
+   "20018": {
+    "name": "Yam"
+   },
+   "20019": {
+    "name": "Coin Purse"
+   },
+   "20020": {
+    "name": "Fishing Rod"
+   },
+   "20021": {
+    "name": "Shovel"
+   },
+   "20022": {
+    "name": "Bomb"
+   },
+   "20023": {
+    "name": "Grappling Hook"
+   },
+   "20024": {
+    "name": "Rope"
+   },
+   "20025": {
+    "name": "Letter"
+   },
+   "20026": {
+    "name": "Four Leaf Clover"
+   },
+   "20027": {
+    "name": "Lantern"
+   },
+   "20028": {
+    "name": "Animal Fang"
+   },
+   "20029": {
+    "name": "Plank"
+   },
+   "20030": {
+    "name": "Kanji Gourd"
+   },
+   "20031": {
+    "name": "Bamboo"
+   },
+   "20032": {
+    "name": "Shuriken"
+   },
+   "20033": {
+    "name": "Stone"
+   },
+   "20034": {
+    "name": "Umbrella"
+   },
+   "20035": {
+    "name": "Wanted Poster"
+   },
+   "20036": {
+    "name": "Lock of Hair"
+   },
+   "20037": {
+    "name": "Kitten"
+   },
+   "20038": {
+    "name": "Kitten"
+   },
+   "20039": {
+    "name": "Puppy"
+   },
+   "20040": {
+    "desc": "Crops can be sold at the Farmers' Market in town.",
+    "name": "Crops"
+   },
+   "20041": {
+    "desc": "During the lunar new year, red packets are given to friends and family as gifts.\n\nUse this item to receive a rare prize.",
+    "name": "Red Packet"
+   },
+   "20042": {
+    "name": "Empty Bottle"
+   },
+   "20043": {
+    "name": "Bottle of Water"
+   },
+   "20044": {
+    "name": "Bottle of Fireflies"
+   },
+   "20045": {
+    "name": "Bento"
+   },
+   "20046": {
+    "name": "Empty Bucket"
+   },
+   "20047": {
+    "name": "Bucket of Water"
+   },
+   "20048": {
+    "name": "Manual"
+   },
+   "20049": {
+    "name": "Manual"
+   },
+   "20050": {
+    "name": "Manual"
+   },
+   "20051": {
+    "name": "Sakura Petal"
+   },
+   "20052": {
+    "name": "Scroll"
+   },
+   "20053": {
+    "name": "Tempura"
+   },
+   "20054": {
+    "name": "Tea Leaves"
+   },
+   "20055": {
+    "name": "Silk"
+   },
+   "20056": {
+    "name": "Spices"
+   },
+   "20057": {
+    "name": "Ceramics"
+   },
+   "20058": {
+    "name": "Opium (Illegal)"
+   },
+   "20059": {
+    "name": "Unusable rocks"
+   },
+   "20060": {
+    "name": "Coal"
+   },
+   "20061": {
+    "name": "Iron Ore"
+   },
+   "20062": {
+    "name": "Tin Ore"
+   },
+   "20063": {
+    "name": "Copper Ore"
+   },
+   "20064": {
+    "name": "Silver Ore"
+   },
+   "20065": {
+    "name": "Titanium Ore"
+   },
+   "20066": {
+    "name": "Uncut Diamond"
+   },
+   "20100": {
+    "name": "Mushroom"
+   },
+   "20101": {
+    "name": "Flower"
+   },
+   "20102": {
+    "name": "Herb"
+   },
+   "20103": {
+    "name": "Message"
+   },
+   "20104": {
+    "name": "Letter"
+   },
+   "20105": {
+    "name": "Military Intel"
+   },
+   "20106": {
+    "name": "Package"
+   },
+   "20107": {
+    "name": "Parcel"
+   },
+   "20108": {
+    "name": "Crane Feather"
+   },
+   "20109": {
+    "name": "Bounty Notice"
+   },
+   "20110": {
+    "name": "Inokichi's Club (Broken)"
+   },
+   "20111": {
+    "name": "Heaven's Mercy Mushroom"
+   },
+   "2100": {
+    "desc": "Replenish your AP without waiting!",
+    "name": "Small Soldier Pill"
+   },
+   "2101": {
+    "desc": "Replenish your AP without waiting!",
+    "name": "Medium Soldier Pill"
+   },
+   "2102": {
+    "desc": "Replenish your AP without waiting!",
+    "name": "Large Soldier Pill"
+   },
+   "2103": {
+    "name": "Small Rice Ball"
+   },
+   "2104": {
+    "name": "Medium Rice Ball"
+   },
+   "2105": {
+    "name": "Large Rice Ball"
+   },
+   "2106": {
+    "name": "Small Sake"
+   },
+   "2107": {
+    "name": "Medium Sake"
+   },
+   "2108": {
+    "name": "Large Sake"
+   },
+   "2109": {
+    "name": "Small Fish"
+   },
+   "2110": {
+    "name": "Medium Fish"
+   },
+   "2111": {
+    "name": "Big Fish"
+   },
+   "2112": {
+    "name": "Small Meat"
+   },
+   "2113": {
+    "name": "Meat"
+   },
+   "2114": {
+    "name": "Large Meat"
+   },
+   "2115": {
+    "desc": "Eat this potato to get the 150% Damage buff.\n\nNote: Only one buff may be active at a time.",
+    "name": "Potato Dog"
+   },
+   "2116": {
+    "desc": "Eat this potato to get the 150% Defense buff.\n\nNote: Only one buff may be active at a time.",
+    "name": "Potato Bear"
+   },
+   "2117": {
+    "desc": "Eat this potato to get the 150% XP buff.\n\nNote: Only one buff may be active at a time.",
+    "name": "Potato Raccoon"
+   },
+   "2118": {
+    "desc": "Eat this potato to get the 150% Speed buff.\n\nNote: Only one buff may be active at a time.",
+    "name": "Potato Cat"
+   },
+   "2119": {
+    "desc": "Use this to improve the condition of your equipped weapon.",
+    "name": "Whet Stone"
+   },
+   "2120": {
+    "desc": "Use this to improve the condition of your equipped weapon significantly.",
+    "name": "Sword Repair Kit"
+   },
+   "2121": {
+    "desc": "During the lunar new year, red packets are given to friends and family as gifts.\n\nUse this item to receive a rare prize.",
+    "name": "Red Packet"
+   },
+   "2122": {
+    "desc": "Quest Item",
+    "name": "Mushroom"
+   },
+   "2123": {
+    "desc": "Quest Item",
+    "name": "Flower"
+   },
+   "2124": {
+    "desc": "Quest Item",
+    "name": "Herb"
+   },
+   "2125": {
+    "desc": "Replenish your Duel Tokens without waiting!",
+    "name": "10 Duel Tokens"
+   },
+   "2126": {
+    "desc": "Replenish your Duel Tokens without waiting!",
+    "name": "25 Duel Tokens"
+   },
+   "2127": {
+    "desc": "Replenish your Duel Tokens without waiting!",
+    "name": "40 Duel Tokens"
+   },
+   "2128": {
+    "desc": "Contains a random rare item.",
+    "name": "Present"
+   },
+   "2129": {
+    "name": "Recall Stone"
+   },
+   "2130": {
+    "desc": "Contains:",
+    "name": "Assassin Outfit"
+   },
+   "2131": {
+    "desc": "Contains:",
+    "name": "Dark Assassin Outfit"
+   },
+   "2132": {
+    "desc": "Contains:",
+    "name": "Ichigo Outfit"
+   },
+   "2133": {
+    "desc": "Contains:",
+    "name": "Santa Outfit"
+   },
+   "2134": {
+    "desc": "Contains:",
+    "name": "Firefistace Outfit"
+   },
+   "2135": {
+    "desc": "Contains:",
+    "name": "Zaraki Outfit"
+   },
+   "2136": {
+    "desc": "Contains:",
+    "name": "Byakuya Outfit"
+   },
+   "2137": {
+    "desc": "Contains:",
+    "name": "Hitsugaya Outfit"
+   },
+   "2138": {
+    "desc": "Contains:",
+    "name": "Mayuri Outfit"
+   },
+   "2139": {
+    "desc": "Contains:",
+    "name": "Komamura Outfit"
+   },
+   "2140": {
+    "desc": "Eat this potato to get the 200% AP Regeneration buff.\n\nNote: Only one buff may be active at a time.",
+    "name": "Potato Pig"
+   },
+   "2141": {
+    "desc": "Eat this potato to get the 200% Duel Token Regeneration buff.\n\nNote: Only one buff may be active at a time.",
+    "name": "Potato Duck"
+   },
+   "2142": {
+    "name": "Wedding Package"
+   },
+   "2143": {
+    "desc": "You have been invited to a wedding. Use this to travel to the wedding location.",
+    "name": "Wedding Invitation"
+   },
+   "2144": {
+    "desc": "Contains:",
+    "name": "Wedding Invitations"
+   },
+   "2145": {
+    "desc": "Contains:",
+    "name": "Smudge Outfit"
+   },
+   "2146": {
+    "desc": "Contains:",
+    "name": "Adventurer Outfit"
+   },
+   "2147": {
+    "desc": "Contains:",
+    "name": "RyuKanji Outfit"
+   },
+   "2148": {
+    "desc": "Quest Item",
+    "name": "Daruma Doll"
+   },
+   "2149": {
+    "desc": "Contains:",
+    "name": "Gaius Outfit"
+   },
+   "2150": {
+    "desc": "Contains:",
+    "name": "RyuKanji Outfit"
+   },
+   "2151": {
+    "desc": "Contains:",
+    "name": "White Fang Outfit"
+   },
+   "2152": {
+    "desc": "Contains:",
+    "name": "Yellow Flash Outfit"
+   },
+   "2153": {
+    "desc": "Contains:",
+    "name": "Nice Guy Outfit"
+   },
+   "2154": {
+    "desc": "Contains:",
+    "name": "Purple Kite Outfit"
+   },
+   "2155": {
+    "desc": "Contains:",
+    "name": "Warlord Outfit"
+   },
+   "2156": {
+    "desc": "Contains:",
+    "name": "Founder Outfit"
+   },
+   "2157": {
+    "desc": "Contains:",
+    "name": "Successor Outfit"
+   },
+   "2158": {
+    "desc": "Contains:",
+    "name": "Red Dawn Outfit"
+   },
+   "2159": {
+    "desc": "Contains:",
+    "name": "Red Shark Outfit"
+   },
+   "2160": {
+    "desc": "Contains:",
+    "name": "Clankiller Outfit"
+   },
+   "2161": {
+    "desc": "Contains:",
+    "name": "Taka Outfit"
+   },
+   "2162": {
+    "desc": "Contains:",
+    "name": "Hebi Outfit"
+   },
+   "2163": {
+    "desc": "Contains:",
+    "name": "Hitman Outfit"
+   },
+   "2164": {
+    "desc": "Contains:",
+    "name": "KageYoshi Outfit"
+   },
+   "2165": {
+    "desc": "Contains:",
+    "name": "Lightning Outfit"
+   },
+   "2166": {
+    "desc": "Contains:",
+    "name": "RyuKanji Outfit"
+   },
+   "2167": {
+    "desc": "Contains:",
+    "name": "Azure Kite Outfit"
+   },
+   "2168": {
+    "desc": "Contains:",
+    "name": "Whisper Outfit"
+   },
+   "2169": {
+    "desc": "Contains:",
+    "name": "Demon Huntress Outfit"
+   },
+   "2170": {
+    "desc": "Contains:",
+    "name": "Kanji Outfit"
+   },
+   "2171": {
+    "desc": "Contains:",
+    "name": "Swords of the Mist"
+   },
+   "2172": {
+    "desc": "Contains:",
+    "name": "Chronos Outfit"
+   },
+   "2173": {
+    "desc": "Contains:",
+    "name": "Heavenly Outfit"
+   },
+   "2174": {
+    "desc": "Contains:",
+    "name": "Paradise Outfit"
+   },
+   "2175": {
+    "desc": "Contains:",
+    "name": "Paradise Gift Pack"
+   },
+   "2200": {
+    "desc": "Use this to unassign your stat and skill points.",
+    "name": "Amnesia Scroll"
+   },
+   "2201": {
+    "desc": "Use this to become level 10",
+    "name": "Level 10 Scroll"
+   },
+   "2202": {
+    "desc": "New Game +\nProgress on to the next Dan Rank and specialize in an element. \nLevel 80 required.",
+    "name": "Scroll of Rebirth"
+   },
+   "2203": {
+    "desc": "Use this item to leave your Clan.",
+    "name": "Writ of Release"
+   },
+   "2204": {
+    "desc": "Takes you to the nearest dojo. (Can only be used outdoors.)",
+    "name": "Dojo Recall Scroll"
+   },
+   "2205": {
+    "desc": "Change your gender.",
+    "name": "Scroll of Sex Change Jutsu"
+   },
+   "2206": {
+    "desc": "Full HP and Chi",
+    "name": "Rejuvenation Scroll"
+   },
+   "2207": {
+    "desc": "Change your character's name.",
+    "name": "Name Change Scroll"
+   },
+   "2208": {
+    "desc": "Buy 1000 coins.",
+    "name": "1000 coins"
+   },
+   "2209": {
+    "desc": "Instantly replenish your HP and Chi!",
+    "name": "Full HP and Chi"
+   },
+   "2210": {
+    "desc": "Use this scroll to return to the start of the story.",
+    "name": "Reset Quests"
+   },
+   "2211": {
+    "desc": "A strange scroll from Kojuro",
+    "name": "Dragon Dance Scroll"
+   },
+   "2212": {
+    "desc": "Form your own clan.\nWar Hero rank required.\n\nIncludes:\n1 Clan General Invitations\n3 Clan Invitations",
+    "name": "Clan Deed"
+   },
+   "2213": {
+    "name": "Clan Invitation"
+   },
+   "2214": {
+    "name": "Clan General Invitation"
+   },
+   "2215": {
+    "desc": "Edit your Clan's name, acronym, color and banner",
+    "name": "Edit Clan"
+   },
+   "2216": {
+    "name": "Ramen"
+   },
+   "2500": {
+    "name": "Arrow"
+   },
+   "2501": {
+    "name": "Kunai"
+   },
+   "2502": {
+    "name": "Bullet"
+   },
+   "2503": {
+    "name": "Bomb"
+   },
+   "3000": {
+    "name": "Ring"
+   },
+   "3001": {
+    "name": "Ring"
+   },
+   "3002": {
+    "name": "Diamond Ring"
+   },
+   "3003": {
+    "name": "War Hero Ring"
+   },
+   "3004": {
+    "name": "War Hero Ring"
+   },
+   "3005": {
+    "name": "War Hero Ring"
+   },
+   "3006": {
+    "name": "War Hero Ring"
+   },
+   "3007": {
+    "name": "Amulet"
+   },
+   "3008": {
+    "name": "War Hero Ring"
+   },
+   "4002": {
+    "name": "Garment"
+   },
+   "4003": {
+    "name": "Medium Armor"
+   },
+   "4004": {
+    "name": "Garment"
+   },
+   "4005": {
+    "name": "Heavy Armor"
+   },
+   "4006": {
+    "name": "Medium Armor"
+   },
+   "4007": {
+    "name": "Garment"
+   },
+   "4008": {
+    "name": "Garment"
+   },
+   "4009": {
+    "name": "Ninja Garment"
+   },
+   "4010": {
+    "name": "Garment"
+   },
+   "4011": {
+    "name": "Light Armor"
+   },
+   "4012": {
+    "name": "Rags"
+   },
+   "4013": {
+    "name": "Rags"
+   },
+   "4014": {
+    "name": "Garment"
+   },
+   "4015": {
+    "name": "Garment"
+   },
+   "4016": {
+    "name": "Garment"
+   },
+   "4017": {
+    "name": "Torn Garment"
+   },
+   "4018": {
+    "name": "Garment"
+   },
+   "4019": {
+    "name": "Garment"
+   },
+   "4020": {
+    "name": "Garment"
+   },
+   "4023": {
+    "name": "Garment"
+   },
+   "4024": {
+    "name": "Medium Armor"
+   },
+   "4025": {
+    "name": "Garment"
+   },
+   "4026": {
+    "name": "Garment"
+   },
+   "4027": {
+    "name": "Garment"
+   },
+   "4028": {
+    "name": "Garment"
+   },
+   "4029": {
+    "name": "Garment"
+   },
+   "4030": {
+    "name": "Monk Garment"
+   },
+   "4037": {
+    "name": "Garment"
+   },
+   "4038": {
+    "name": "Garment"
+   },
+   "4039": {
+    "name": "Light Armor"
+   },
+   "4040": {
+    "name": "Medium Armor"
+   },
+   "4041": {
+    "name": "Garment"
+   },
+   "4042": {
+    "name": "Light Armor"
+   },
+   "4043": {
+    "name": "Medium Armor"
+   },
+   "4044": {
+    "name": "Garment"
+   },
+   "4045": {
+    "name": "Light Armor"
+   },
+   "4046": {
+    "name": "Medium Armor"
+   },
+   "4047": {
+    "name": "Garment"
+   },
+   "4048": {
+    "name": "Light Armor"
+   },
+   "4049": {
+    "name": "Medium Armor"
+   },
+   "4050": {
+    "desc": "This unique armor was created by a master blacksmith for the warrior Zaku to reward his prowess in battle.",
+    "name": "Zaku Samurai Armor"
+   },
+   "4051": {
+    "name": "Light Armor"
+   },
+   "4052": {
+    "name": "Medium Armor"
+   },
+   "4053": {
+    "name": "Garment"
+   },
+   "4054": {
+    "name": "Garment"
+   },
+   "4055": {
+    "name": "Heavy Armor"
+   },
+   "4056": {
+    "name": "Heavy Armor"
+   },
+   "4057": {
+    "name": "Heavy Armor"
+   },
+   "4058": {
+    "name": "Heavy Armor"
+   },
+   "4059": {
+    "name": "Female Kimono"
+   },
+   "4060": {
+    "name": "Female Kimono"
+   },
+   "4061": {
+    "name": "Bigger Boobs"
+   },
+   "4062": {
+    "name": "Female Kimono"
+   },
+   "4063": {
+    "name": "Reaper Garment"
+   },
+   "4064": {
+    "name": "Garment"
+   },
+   "4065": {
+    "name": "Assassin Robes"
+   },
+   "4066": {
+    "name": "Reaper Captain Garment"
+   },
+   "4067": {
+    "name": "Reaper Captain Garment"
+   },
+   "4068": {
+    "name": "Dark Assassin Robes"
+   },
+   "4069": {
+    "name": "Santa Suit"
+   },
+   "4071": {
+    "name": "Ace Tattoo"
+   },
+   "4072": {
+    "name": "Garment"
+   },
+   "4073": {
+    "name": "Reaper Captain Garment"
+   },
+   "4074": {
+    "name": "Reaper Captain Garment"
+   },
+   "4075": {
+    "name": "Reaper Captain Garment"
+   },
+   "4076": {
+    "name": "Reaper Captain Garment"
+   },
+   "4077": {
+    "name": "Garment"
+   },
+   "4078": {
+    "name": "Female Kimono"
+   },
+   "4079": {
+    "name": "Smudge Tshirt"
+   },
+   "4080": {
+    "name": "Adventurer Shirt"
+   },
+   "4081": {
+    "name": "Kanji Robes"
+   },
+   "4084": {
+    "name": "Gaius Armor"
+   },
+   "4085": {
+    "desc": "/tteleport (territory x) (territory y)",
+    "name": "Kanji Robes"
+   },
+   "4086": {
+    "name": "Medium Armor"
+   },
+   "4087": {
+    "name": "Medium Armor"
+   },
+   "4088": {
+    "name": "White Fang Armor"
+   },
+   "4089": {
+    "name": "Yellow Flash Armor"
+   },
+   "4090": {
+    "name": "Nice Guy Armor"
+   },
+   "4091": {
+    "name": "Red Dawn Robes"
+   },
+   "4092": {
+    "name": "Purple Kite Robes"
+   },
+   "4093": {
+    "name": "Medium Armor"
+   },
+   "4094": {
+    "name": "Warlord Armor"
+   },
+   "4095": {
+    "name": "Founder Armor"
+   },
+   "4096": {
+    "name": "Successor Armor"
+   },
+   "4097": {
+    "name": "Clankiller Armor"
+   },
+   "4098": {
+    "name": "Taka Garment"
+   },
+   "4099": {
+    "name": "Hebi Garment"
+   },
+   "4100": {
+    "name": "Hitman Garment"
+   },
+   "4101": {
+    "name": "Kanji Robes"
+   },
+   "4108": {
+    "name": "Lightning Armor"
+   },
+   "4109": {
+    "name": "Kanji Robes"
+   },
+   "4118": {
+    "name": "Azure Kite Garment"
+   },
+   "4119": {
+    "name": "Whisper Garment"
+   },
+   "4122": {
+    "name": "Garment"
+   },
+   "4123": {
+    "name": "Light Armor"
+   },
+   "4124": {
+    "name": "Medium Armor"
+   },
+   "4125": {
+    "name": "Heavy Armor"
+   },
+   "4139": {
+    "name": "Demon Huntress Armor"
+   },
+   "4140": {
+    "name": "Garment"
+   },
+   "4141": {
+    "name": "Light Armor"
+   },
+   "4142": {
+    "name": "Medium Armor"
+   },
+   "4143": {
+    "name": "Heavy Armor"
+   },
+   "4144": {
+    "name": "Kanji Robes"
+   },
+   "4145": {
+    "name": "Garment"
+   },
+   "4146": {
+    "name": "Light Armor"
+   },
+   "4147": {
+    "name": "Medium Armor"
+   },
+   "4148": {
+    "name": "Heavy Armor"
+   },
+   "4149": {
+    "name": "Chronos Body"
+   },
+   "4150": {
+    "name": "Heavenly Armor"
+   },
+   "4151": {
+    "name": "Paradise Shirt"
+   },
+   "5002": {
+    "name": "Heavy Gloves"
+   },
+   "5003": {
+    "name": "Ninja Gloves"
+   },
+   "5007": {
+    "name": "Leather Gloves"
+   },
+   "5008": {
+    "name": "Assassin Gloves"
+   },
+   "5010": {
+    "name": "Gloves"
+   },
+   "5011": {
+    "name": "Heavy Gloves"
+   },
+   "5012": {
+    "name": "Kanji Gloves"
+   },
+   "5015": {
+    "name": "Gaius Gloves"
+   },
+   "5016": {
+    "name": "Kanji Gloves"
+   },
+   "5017": {
+    "name": "White Fang Gloves"
+   },
+   "5018": {
+    "name": "Purple Kite Gloves"
+   },
+   "5019": {
+    "name": "Warlord Gloves"
+   },
+   "5020": {
+    "name": "Hebi Gloves"
+   },
+   "5021": {
+    "name": "Hitman Gloves"
+   },
+   "5022": {
+    "name": "Lightning Gloves"
+   },
+   "5024": {
+    "name": "Azure Kite Gloves"
+   },
+   "5025": {
+    "name": "Whisper Gloves"
+   },
+   "5032": {
+    "name": "Demon Huntress Gloves"
+   },
+   "5033": {
+    "name": "Chronos Gloves"
+   },
+   "5034": {
+    "name": "Heavenly Gloves"
+   },
+   "6000": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6001": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6002": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6003": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6004": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6005": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6006": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6007": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6008": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6009": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6010": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6011": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6012": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6013": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6014": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6015": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6016": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6017": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6018": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6019": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6020": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6021": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6022": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6023": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6024": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6025": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6026": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6027": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6028": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6029": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6030": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6031": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6032": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6033": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6034": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6035": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6036": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6037": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6038": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6039": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6040": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6041": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6042": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6043": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6044": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6050": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6051": {
+    "name": "Hair"
+   },
+   "6500": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6501": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6502": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6503": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6504": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6505": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6506": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6507": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6508": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6509": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6510": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6511": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6512": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6513": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6514": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6515": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6516": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6517": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6518": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6519": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "6520": {
+    "desc": "Change your hairstyle.",
+    "name": "Hair"
+   },
+   "7001": {
+    "name": "Straw Hat"
+   },
+   "7002": {
+    "name": "Helmet"
+   },
+   "7003": {
+    "name": "Bandana"
+   },
+   "7005": {
+    "name": "Hood"
+   },
+   "7007": {
+    "name": "Hat"
+   },
+   "7008": {
+    "name": "Straw Hat"
+   },
+   "7009": {
+    "name": "Straw Hat"
+   },
+   "7010": {
+    "name": "Straw Hat"
+   },
+   "7011": {
+    "name": "Straw Hat"
+   },
+   "7012": {
+    "name": "Straw Hat"
+   },
+   "7013": {
+    "name": "Straw Hat"
+   },
+   "7014": {
+    "name": "Straw Hat"
+   },
+   "7015": {
+    "name": "Straw Hat"
+   },
+   "7016": {
+    "name": "Straw Hat"
+   },
+   "7017": {
+    "name": "Straw Hat"
+   },
+   "7018": {
+    "name": "Straw Hat"
+   },
+   "7019": {
+    "name": "Hood"
+   },
+   "7020": {
+    "name": "Hood"
+   },
+   "7021": {
+    "name": "Helmet"
+   },
+   "7022": {
+    "name": "Helmet"
+   },
+   "7023": {
+    "name": "Helmet"
+   },
+   "7024": {
+    "name": "Hat"
+   },
+   "7025": {
+    "name": "Hat"
+   },
+   "7026": {
+    "name": "Hat"
+   },
+   "7027": {
+    "name": "Hat"
+   },
+   "7028": {
+    "desc": "This unique armor was created by a master blacksmith for the warrior Zaku to reward his prowess in battle.",
+    "name": "Helmet"
+   },
+   "7029": {
+    "name": "Hat"
+   },
+   "7030": {
+    "name": "Helmet"
+   },
+   "7031": {
+    "name": "Helmet"
+   },
+   "7032": {
+    "name": "Helmet"
+   },
+   "7033": {
+    "name": "Helmet"
+   },
+   "7034": {
+    "name": "Assassin Hood"
+   },
+   "7035": {
+    "name": "Dark Assassin Hood"
+   },
+   "7036": {
+    "name": "Ace Hat"
+   },
+   "7037": {
+    "name": "Helmet"
+   },
+   "7038": {
+    "name": "Helmet"
+   },
+   "7039": {
+    "name": "Helmet"
+   },
+   "7040": {
+    "name": "Smudge Bandana"
+   },
+   "7041": {
+    "name": "Adventurer Hood"
+   },
+   "7042": {
+    "name": "Kanji Hood"
+   },
+   "7043": {
+    "name": "Gaius Headgear"
+   },
+   "7044": {
+    "name": "Kanji Hood"
+   },
+   "7045": {
+    "name": "Bandana"
+   },
+   "7046": {
+    "name": "Hat"
+   },
+   "7047": {
+    "name": "Purple Kite Headgear"
+   },
+   "7048": {
+    "name": "Bandana"
+   },
+   "7049": {
+    "desc": "Enjoy hat stats while still showing off your hairstyle.",
+    "name": "Invisible Hat"
+   },
+   "7050": {
+    "name": "Top Hat"
+   },
+   "7051": {
+    "name": "Afro Wig"
+   },
+   "7053": {
+    "name": "Armored Hat"
+   },
+   "7055": {
+    "name": "Bandana"
+   },
+   "7056": {
+    "name": "Hat"
+   },
+   "7057": {
+    "name": "Armored Hat"
+   },
+   "7058": {
+    "name": "Helmet"
+   },
+   "7059": {
+    "name": "Hood"
+   },
+   "7060": {
+    "name": "Hat"
+   },
+   "7061": {
+    "name": "Pot"
+   },
+   "7062": {
+    "name": "Tanuki Leaf"
+   },
+   "7064": {
+    "name": "Bandage"
+   },
+   "7065": {
+    "name": "Bandana"
+   },
+   "7066": {
+    "name": "Hat"
+   },
+   "7067": {
+    "name": "Santa Hat"
+   },
+   "7068": {
+    "name": "Hat"
+   },
+   "7069": {
+    "name": "Hat"
+   },
+   "7070": {
+    "name": "Helmet"
+   },
+   "7071": {
+    "name": "Helmet"
+   },
+   "7072": {
+    "name": "Kanji Hat"
+   },
+   "7073": {
+    "name": "Lightning Helmet"
+   },
+   "7074": {
+    "name": "Kanji Hood"
+   },
+   "7076": {
+    "name": "Azure Kite Hat"
+   },
+   "7077": {
+    "name": "Whisper Hat"
+   },
+   "7078": {
+    "name": "Hat"
+   },
+   "7080": {
+    "name": "Helmet"
+   },
+   "7081": {
+    "name": "Successor Headgear"
+   },
+   "7082": {
+    "name": "Red Shark Headgear"
+   },
+   "7083": {
+    "name": "Hat"
+   },
+   "7084": {
+    "name": "Helmet"
+   },
+   "7086": {
+    "name": "Demon Huntress Hood"
+   },
+   "7087": {
+    "name": "Hat"
+   },
+   "7088": {
+    "name": "Helmet"
+   },
+   "7089": {
+    "name": "Kanji Hood"
+   },
+   "7090": {
+    "name": "Hat"
+   },
+   "7091": {
+    "name": "Helmet"
+   },
+   "7092": {
+    "name": "Heavenly Helmet"
+   },
+   "7097": {
+    "name": "Pumpkin Head"
+   },
+   "8000": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8001": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8002": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8003": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8004": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8005": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8006": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8007": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8008": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8009": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8010": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8011": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8012": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8014": {
+    "name": "Face"
+   },
+   "8017": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8018": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8019": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8020": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8021": {
+    "name": "Face"
+   },
+   "8022": {
+    "name": "Face"
+   },
+   "8023": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8500": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8501": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8502": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8503": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8504": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8505": {
+    "desc": "Change your face",
+    "name": "Face"
+   },
+   "8506": {
+    "name": "Face"
+   },
+   "8507": {
+    "name": "Face"
+   },
+   "8508": {
+    "name": "Face"
+   },
+   "9001": {
+    "name": "Mask"
+   },
+   "9007": {
+    "name": "Mask"
+   },
+   "9008": {
+    "name": "Mask"
+   },
+   "9009": {
+    "name": "Mask"
+   },
+   "9010": {
+    "name": "Mask"
+   },
+   "9011": {
+    "name": "Mask"
+   },
+   "9013": {
+    "name": "Blindfold"
+   },
+   "9014": {
+    "name": "Mask"
+   },
+   "9015": {
+    "name": "Glasses"
+   },
+   "9016": {
+    "name": "Mask"
+   },
+   "9017": {
+    "name": "Mask"
+   },
+   "9018": {
+    "name": "Clown Nose"
+   },
+   "9019": {
+    "name": "Forehead Protector"
+   },
+   "9020": {
+    "name": "Mask"
+   },
+   "9021": {
+    "name": "Mask"
+   },
+   "9022": {
+    "name": "Mask"
+   },
+   "9023": {
+    "name": "Mask"
+   },
+   "9024": {
+    "name": "Mask"
+   },
+   "9025": {
+    "name": "Santa Beard"
+   },
+   "9027": {
+    "name": "Mask"
+   },
+   "9028": {
+    "name": "Mask"
+   },
+   "9029": {
+    "desc": "Wear these and say /gangnamstyle",
+    "name": "Gangnam Glasses"
+   },
+   "9030": {
+    "name": "Hollow Mask"
+   },
+   "9031": {
+    "name": "Hollow Mask"
+   },
+   "9032": {
+    "name": "Eye Patch"
+   },
+   "9033": {
+    "name": "Mask"
+   },
+   "9034": {
+    "name": "Kanji Mask"
+   },
+   "9035": {
+    "name": "Mask"
+   },
+   "9040": {
+    "name": "Mask"
+   },
+   "9041": {
+    "name": "Eye Patch"
+   },
+   "9042": {
+    "name": "Kanji Mask"
+   },
+   "9043": {
+    "name": "White Fang Mask"
+   },
+   "9044": {
+    "name": "Mask"
+   },
+   "9045": {
+    "name": "Forehead Protector"
+   },
+   "9046": {
+    "name": "Successor Headgear"
+   },
+   "9047": {
+    "name": "Red Shark Headgear"
+   },
+   "9048": {
+    "name": "Kanji Mask"
+   },
+   "9049": {
+    "name": "Forehead Protector"
+   },
+   "9050": {
+    "name": "Lightning Mask"
+   },
+   "9052": {
+    "name": "Azure Kite Mask"
+   },
+   "9053": {
+    "name": "Glasses"
+   },
+   "9056": {
+    "name": "Kanji Mask"
+   },
+   "9058": {
+    "name": "Mask"
+   },
+   "9059": {
+    "name": "Mask"
+   }
+  },
+  "rows_resolved": 804
+ },
+ "npcdata.xml": {
+  "miss_sample": [
+   {
+    "field": "name",
+    "id": "5017",
+    "row": "50"
+   },
+   {
+    "field": "name",
+    "id": "5017",
+    "row": "51"
+   },
+   {
+    "field": "name",
+    "id": "5017",
+    "row": "52"
+   },
+   {
+    "field": "name",
+    "id": "5017",
+    "row": "53"
+   },
+   {
+    "field": "name",
+    "id": "5017",
+    "row": "54"
+   },
+   {
+    "field": "name",
+    "id": "5017",
+    "row": "55"
+   }
+  ],
+  "misses": 6,
+  "resolved": {
+   "1": {
+    "name": "Ruffian"
+   },
+   "10": {
+    "name": "Thug"
+   },
+   "100": {
+    "name": "Beggar"
+   },
+   "101": {
+    "name": "Duelist"
+   },
+   "103": {
+    "name": "Sensei"
+   },
+   "104": {
+    "name": "Peddler"
+   },
+   "105": {
+    "name": "Fisherman"
+   },
+   "106": {
+    "name": "Masked Girl"
+   },
+   "107": {
+    "name": "Shopkeeper"
+   },
+   "108": {
+    "name": "Pugilist"
+   },
+   "109": {
+    "name": "Monk"
+   },
+   "11": {
+    "name": "Bandit"
+   },
+   "110": {
+    "name": "Berry Man"
+   },
+   "111": {
+    "name": "Palanquin Bearer"
+   },
+   "112": {
+    "name": "Messenger"
+   },
+   "113": {
+    "name": "Town Elder"
+   },
+   "114": {
+    "name": "Bridge Guard"
+   },
+   "115": {
+    "name": "Ramen Shop Owner"
+   },
+   "116": {
+    "name": "Ramen Shop Worker"
+   },
+   "117": {
+    "name": "Training Dummy"
+   },
+   "118": {
+    "name": "Training Dummy"
+   },
+   "119": {
+    "name": "Old Man"
+   },
+   "12": {
+    "name": "Bandit"
+   },
+   "120": {
+    "name": "Old Man"
+   },
+   "121": {
+    "name": "Grandpa"
+   },
+   "122": {
+    "name": "Bridge Foreman"
+   },
+   "123": {
+    "name": "Sick Father"
+   },
+   "124": {
+    "name": "Herbalist"
+   },
+   "125": {
+    "name": "Villager"
+   },
+   "126": {
+    "name": "Villager"
+   },
+   "127": {
+    "name": "Village Drunk"
+   },
+   "128": {
+    "name": "Cartographer"
+   },
+   "129": {
+    "name": "Bottle Man"
+   },
+   "13": {
+    "name": "Bandit"
+   },
+   "130": {
+    "name": "Farmer"
+   },
+   "131": {
+    "name": "Villager"
+   },
+   "132": {
+    "name": "Armorer"
+   },
+   "133": {
+    "name": "Poet"
+   },
+   "134": {
+    "name": "Villager"
+   },
+   "135": {
+    "name": "Hachi"
+   },
+   "136": {
+    "name": "Hachi"
+   },
+   "137": {
+    "name": "Bandit Leader"
+   },
+   "138": {
+    "name": "Palace Official"
+   },
+   "139": {
+    "name": "Palace Servant"
+   },
+   "14": {
+    "name": "Bandit"
+   },
+   "140": {
+    "name": "Forest Guide"
+   },
+   "141": {
+    "name": "Guard"
+   },
+   "142": {
+    "name": "Mercenery Captain"
+   },
+   "143": {
+    "name": "Santa"
+   },
+   "144": {
+    "name": "Hiroshi"
+   },
+   "145": {
+    "name": "Innkeeper"
+   },
+   "146": {
+    "name": "Santa"
+   },
+   "147": {
+    "name": "Croupier"
+   },
+   "148": {
+    "name": "Innkeeper"
+   },
+   "149": {
+    "name": "Den Boss"
+   },
+   "15": {
+    "name": "Bandit"
+   },
+   "150": {
+    "name": "Den Guard"
+   },
+   "151": {
+    "name": "Jinbei"
+   },
+   "152": {
+    "name": "Ito"
+   },
+   "153": {
+    "name": "Takahasi"
+   },
+   "154": {
+    "name": "Yuudai"
+   },
+   "155": {
+    "name": "Shinmen"
+   },
+   "156": {
+    "name": "Yasuka"
+   },
+   "157": {
+    "name": "Mai"
+   },
+   "158": {
+    "name": "Kinme"
+   },
+   "159": {
+    "name": "Hiroshi"
+   },
+   "16": {
+    "name": "Bandit"
+   },
+   "161": {
+    "name": "Satoshi"
+   },
+   "162": {
+    "name": "Inokichi"
+   },
+   "163": {
+    "name": "Boss Tanaka"
+   },
+   "164": {
+    "name": "Fumio"
+   },
+   "165": {
+    "name": "Tadao"
+   },
+   "166": {
+    "name": "Bounty Hunter 1"
+   },
+   "167": {
+    "name": "Bounty Hunter 2"
+   },
+   "168": {
+    "name": "Yuudai"
+   },
+   "169": {
+    "name": "Innkeeper"
+   },
+   "17": {
+    "name": "Bandit Leader"
+   },
+   "170": {
+    "name": "Kojuro"
+   },
+   "171": {
+    "name": "Chikako"
+   },
+   "172": {
+    "name": "Chikako"
+   },
+   "173": {
+    "name": "Kurai"
+   },
+   "174": {
+    "name": "Jonin"
+   },
+   "175": {
+    "name": "Aboshi"
+   },
+   "176": {
+    "name": "Aboshi"
+   },
+   "177": {
+    "name": "Soldier 1"
+   },
+   "178": {
+    "name": "Soldier 2"
+   },
+   "179": {
+    "name": "Soldier 3"
+   },
+   "18": {
+    "name": "Bandit Leader"
+   },
+   "180": {
+    "name": "Yuudai"
+   },
+   "181": {
+    "name": "Hachimaru"
+   },
+   "182": {
+    "name": "Shou"
+   },
+   "183": {
+    "name": "Cartman"
+   },
+   "184": {
+    "name": "Peasant"
+   },
+   "185": {
+    "name": "Gojo Takamori"
+   },
+   "186": {
+    "name": "Amaya"
+   },
+   "187": {
+    "name": "Yohei"
+   },
+   "188": {
+    "name": "Magoichi"
+   },
+   "189": {
+    "name": "Lady Oiwa"
+   },
+   "19": {
+    "name": "Soldier"
+   },
+   "190": {
+    "name": "Gojo Takamori"
+   },
+   "191": {
+    "name": "Gojo Takamori"
+   },
+   "192": {
+    "name": "Sergeant"
+   },
+   "193": {
+    "name": "Captain"
+   },
+   "194": {
+    "name": "General"
+   },
+   "195": {
+    "name": "Hachiro"
+   },
+   "196": {
+    "name": "Shoji"
+   },
+   "197": {
+    "name": "Mitsuo"
+   },
+   "198": {
+    "name": "Innkeeper"
+   },
+   "199": {
+    "name": "Charcoal Burner"
+   },
+   "2": {
+    "name": "Ruffian"
+   },
+   "20": {
+    "name": "Soldier"
+   },
+   "200": {
+    "name": "Soldier"
+   },
+   "201": {
+    "name": "Soldier"
+   },
+   "202": {
+    "name": "Soldier"
+   },
+   "203": {
+    "name": "Soldier"
+   },
+   "204": {
+    "name": "Soldier"
+   },
+   "205": {
+    "name": "Elite Soldier"
+   },
+   "206": {
+    "name": "Soldier"
+   },
+   "207": {
+    "name": "Soldier"
+   },
+   "208": {
+    "name": "Soldier"
+   },
+   "209": {
+    "name": "Soldier"
+   },
+   "21": {
+    "name": "Soldier"
+   },
+   "210": {
+    "name": "Soldier"
+   },
+   "211": {
+    "name": "Elite Soldier"
+   },
+   "212": {
+    "name": "Soldier"
+   },
+   "213": {
+    "name": "Soldier"
+   },
+   "214": {
+    "name": "Soldier"
+   },
+   "215": {
+    "name": "Soldier"
+   },
+   "216": {
+    "name": "Soldier"
+   },
+   "217": {
+    "name": "Elite Soldier"
+   },
+   "218": {
+    "name": "Soldier"
+   },
+   "219": {
+    "name": "Soldier"
+   },
+   "22": {
+    "name": "Soldier"
+   },
+   "220": {
+    "name": "Soldier"
+   },
+   "221": {
+    "name": "Soldier"
+   },
+   "222": {
+    "name": "Soldier"
+   },
+   "223": {
+    "name": "Elite Soldier"
+   },
+   "224": {
+    "name": "Soldier"
+   },
+   "225": {
+    "name": "Soldier"
+   },
+   "226": {
+    "name": "Soldier"
+   },
+   "227": {
+    "name": "Soldier"
+   },
+   "228": {
+    "name": "Soldier"
+   },
+   "229": {
+    "name": "Elite Soldier"
+   },
+   "23": {
+    "name": "Soldier"
+   },
+   "230": {
+    "name": "Soldier"
+   },
+   "231": {
+    "name": "Soldier"
+   },
+   "232": {
+    "name": "Soldier"
+   },
+   "233": {
+    "name": "Soldier"
+   },
+   "234": {
+    "name": "Soldier"
+   },
+   "235": {
+    "name": "Elite Soldier"
+   },
+   "236": {
+    "name": "Soldier"
+   },
+   "237": {
+    "name": "Soldier"
+   },
+   "238": {
+    "name": "Soldier"
+   },
+   "239": {
+    "name": "Soldier"
+   },
+   "24": {
+    "name": "Soldier"
+   },
+   "240": {
+    "name": "Soldier"
+   },
+   "241": {
+    "name": "Elite Soldier"
+   },
+   "242": {
+    "name": "Soldier"
+   },
+   "243": {
+    "name": "Soldier"
+   },
+   "244": {
+    "name": "Soldier"
+   },
+   "245": {
+    "name": "Soldier"
+   },
+   "246": {
+    "name": "Soldier"
+   },
+   "247": {
+    "name": "Elite Soldier"
+   },
+   "248": {
+    "name": "Heavy Soldier"
+   },
+   "249": {
+    "name": "Heavy Soldier"
+   },
+   "25": {
+    "name": "Soldier"
+   },
+   "250": {
+    "name": "Heavy Soldier"
+   },
+   "251": {
+    "name": "Heavy Soldier"
+   },
+   "252": {
+    "name": "Castle Guard"
+   },
+   "253": {
+    "name": "Heavy Soldier"
+   },
+   "254": {
+    "name": "Heavy Soldier"
+   },
+   "255": {
+    "name": "Heavy Soldier"
+   },
+   "256": {
+    "name": "Heavy Soldier"
+   },
+   "26": {
+    "name": "Ninja"
+   },
+   "27": {
+    "name": "Ninja"
+   },
+   "28": {
+    "name": "Ninja"
+   },
+   "29": {
+    "name": "Ninja"
+   },
+   "3": {
+    "name": "Ruffian"
+   },
+   "30": {
+    "name": "Ninja"
+   },
+   "300": {
+    "name": "Soldier"
+   },
+   "301": {
+    "name": "Soldier"
+   },
+   "302": {
+    "name": "Soldier"
+   },
+   "303": {
+    "name": "Soldier"
+   },
+   "304": {
+    "name": "Soldier"
+   },
+   "305": {
+    "name": "Elite Soldier"
+   },
+   "306": {
+    "name": "Soldier"
+   },
+   "307": {
+    "name": "Soldier"
+   },
+   "308": {
+    "name": "Soldier"
+   },
+   "309": {
+    "name": "Soldier"
+   },
+   "31": {
+    "name": "Ninja"
+   },
+   "310": {
+    "name": "Soldier"
+   },
+   "311": {
+    "name": "Elite Soldier"
+   },
+   "312": {
+    "name": "Soldier"
+   },
+   "313": {
+    "name": "Soldier"
+   },
+   "314": {
+    "name": "Soldier"
+   },
+   "315": {
+    "name": "Soldier"
+   },
+   "316": {
+    "name": "Soldier"
+   },
+   "317": {
+    "name": "Elite Soldier"
+   },
+   "318": {
+    "name": "Soldier"
+   },
+   "319": {
+    "name": "Soldier"
+   },
+   "32": {
+    "name": "Ninja"
+   },
+   "320": {
+    "name": "Soldier"
+   },
+   "321": {
+    "name": "Soldier"
+   },
+   "322": {
+    "name": "Soldier"
+   },
+   "323": {
+    "name": "Elite Soldier"
+   },
+   "324": {
+    "name": "Soldier"
+   },
+   "325": {
+    "name": "Soldier"
+   },
+   "326": {
+    "name": "Soldier"
+   },
+   "327": {
+    "name": "Soldier"
+   },
+   "328": {
+    "name": "Soldier"
+   },
+   "329": {
+    "name": "Elite Soldier"
+   },
+   "33": {
+    "name": "Mercenery"
+   },
+   "330": {
+    "name": "Soldier"
+   },
+   "331": {
+    "name": "Soldier"
+   },
+   "332": {
+    "name": "Soldier"
+   },
+   "333": {
+    "name": "Soldier"
+   },
+   "334": {
+    "name": "Soldier"
+   },
+   "335": {
+    "name": "Elite Soldier"
+   },
+   "336": {
+    "name": "Soldier"
+   },
+   "337": {
+    "name": "Soldier"
+   },
+   "338": {
+    "name": "Soldier"
+   },
+   "339": {
+    "name": "Soldier"
+   },
+   "34": {
+    "name": "Mercenery"
+   },
+   "340": {
+    "name": "Soldier"
+   },
+   "341": {
+    "name": "Elite Soldier"
+   },
+   "342": {
+    "name": "Soldier"
+   },
+   "343": {
+    "name": "Soldier"
+   },
+   "344": {
+    "name": "Soldier"
+   },
+   "345": {
+    "name": "Soldier"
+   },
+   "346": {
+    "name": "Soldier"
+   },
+   "347": {
+    "name": "Elite Soldier"
+   },
+   "348": {
+    "name": "Heavy Soldier"
+   },
+   "349": {
+    "name": "Heavy Soldier"
+   },
+   "35": {
+    "name": "Mercenery"
+   },
+   "350": {
+    "name": "Heavy Soldier"
+   },
+   "351": {
+    "name": "Heavy Soldier"
+   },
+   "352": {
+    "name": "Castle Guard"
+   },
+   "353": {
+    "name": "Heavy Soldier"
+   },
+   "354": {
+    "name": "Heavy Soldier"
+   },
+   "355": {
+    "name": "Heavy Soldier"
+   },
+   "356": {
+    "name": "Heavy Soldier"
+   },
+   "36": {
+    "name": "Mercenery"
+   },
+   "37": {
+    "name": "Mercenery"
+   },
+   "38": {
+    "name": "Mercenery"
+   },
+   "39": {
+    "name": "Mercenery Captain"
+   },
+   "4": {
+    "name": "Ruffian"
+   },
+   "40": {
+    "name": "Cultist"
+   },
+   "400": {
+    "name": "Soldier"
+   },
+   "401": {
+    "name": "Soldier"
+   },
+   "402": {
+    "name": "Soldier"
+   },
+   "403": {
+    "name": "Soldier"
+   },
+   "404": {
+    "name": "Soldier"
+   },
+   "405": {
+    "name": "Elite Soldier"
+   },
+   "406": {
+    "name": "Soldier"
+   },
+   "407": {
+    "name": "Soldier"
+   },
+   "408": {
+    "name": "Soldier"
+   },
+   "409": {
+    "name": "Soldier"
+   },
+   "41": {
+    "name": "Cultist"
+   },
+   "410": {
+    "name": "Soldier"
+   },
+   "411": {
+    "name": "Elite Soldier"
+   },
+   "412": {
+    "name": "Soldier"
+   },
+   "413": {
+    "name": "Soldier"
+   },
+   "414": {
+    "name": "Soldier"
+   },
+   "415": {
+    "name": "Soldier"
+   },
+   "416": {
+    "name": "Soldier"
+   },
+   "417": {
+    "name": "Elite Soldier"
+   },
+   "418": {
+    "name": "Soldier"
+   },
+   "419": {
+    "name": "Soldier"
+   },
+   "42": {
+    "name": "Cultist"
+   },
+   "420": {
+    "name": "Soldier"
+   },
+   "421": {
+    "name": "Soldier"
+   },
+   "422": {
+    "name": "Soldier"
+   },
+   "423": {
+    "name": "Elite Soldier"
+   },
+   "424": {
+    "name": "Soldier"
+   },
+   "425": {
+    "name": "Soldier"
+   },
+   "426": {
+    "name": "Soldier"
+   },
+   "427": {
+    "name": "Soldier"
+   },
+   "428": {
+    "name": "Soldier"
+   },
+   "429": {
+    "name": "Elite Soldier"
+   },
+   "43": {
+    "name": "Cultist"
+   },
+   "430": {
+    "name": "Soldier"
+   },
+   "431": {
+    "name": "Soldier"
+   },
+   "432": {
+    "name": "Soldier"
+   },
+   "433": {
+    "name": "Soldier"
+   },
+   "434": {
+    "name": "Soldier"
+   },
+   "435": {
+    "name": "Elite Soldier"
+   },
+   "436": {
+    "name": "Soldier"
+   },
+   "437": {
+    "name": "Soldier"
+   },
+   "438": {
+    "name": "Soldier"
+   },
+   "439": {
+    "name": "Soldier"
+   },
+   "44": {
+    "name": "Cultist"
+   },
+   "440": {
+    "name": "Soldier"
+   },
+   "441": {
+    "name": "Elite Soldier"
+   },
+   "442": {
+    "name": "Soldier"
+   },
+   "443": {
+    "name": "Soldier"
+   },
+   "444": {
+    "name": "Soldier"
+   },
+   "445": {
+    "name": "Soldier"
+   },
+   "446": {
+    "name": "Soldier"
+   },
+   "447": {
+    "name": "Elite Soldier"
+   },
+   "448": {
+    "name": "Heavy Soldier"
+   },
+   "449": {
+    "name": "Heavy Soldier"
+   },
+   "45": {
+    "name": "Cultist"
+   },
+   "450": {
+    "name": "Heavy Soldier"
+   },
+   "451": {
+    "name": "Heavy Soldier"
+   },
+   "452": {
+    "name": "Castle Guard"
+   },
+   "453": {
+    "name": "Santa"
+   },
+   "454": {
+    "name": "Blacksmith"
+   },
+   "455": {
+    "name": "Nian Monster"
+   },
+   "456": {
+    "name": "Bear"
+   },
+   "46": {
+    "name": "Cultist"
+   },
+   "48": {
+    "name": "Soldier"
+   },
+   "5": {
+    "name": "Ruffian"
+   },
+   "500": {
+    "name": "Soldier"
+   },
+   "501": {
+    "name": "Soldier"
+   },
+   "502": {
+    "name": "Soldier"
+   },
+   "503": {
+    "name": "Soldier"
+   },
+   "504": {
+    "name": "Soldier"
+   },
+   "505": {
+    "name": "Elite Soldier"
+   },
+   "506": {
+    "name": "Soldier"
+   },
+   "507": {
+    "name": "Soldier"
+   },
+   "508": {
+    "name": "Soldier"
+   },
+   "509": {
+    "name": "Soldier"
+   },
+   "510": {
+    "name": "Soldier"
+   },
+   "511": {
+    "name": "Elite Soldier"
+   },
+   "512": {
+    "name": "Soldier"
+   },
+   "513": {
+    "name": "Soldier"
+   },
+   "514": {
+    "name": "Soldier"
+   },
+   "515": {
+    "name": "Soldier"
+   },
+   "516": {
+    "name": "Soldier"
+   },
+   "517": {
+    "name": "Elite Soldier"
+   },
+   "518": {
+    "name": "Soldier"
+   },
+   "519": {
+    "name": "Soldier"
+   },
+   "520": {
+    "name": "Soldier"
+   },
+   "521": {
+    "name": "Soldier"
+   },
+   "522": {
+    "name": "Soldier"
+   },
+   "523": {
+    "name": "Elite Soldier"
+   },
+   "524": {
+    "name": "Soldier"
+   },
+   "525": {
+    "name": "Soldier"
+   },
+   "526": {
+    "name": "Soldier"
+   },
+   "527": {
+    "name": "Soldier"
+   },
+   "528": {
+    "name": "Soldier"
+   },
+   "529": {
+    "name": "Elite Soldier"
+   },
+   "530": {
+    "name": "Soldier"
+   },
+   "531": {
+    "name": "Soldier"
+   },
+   "532": {
+    "name": "Soldier"
+   },
+   "533": {
+    "name": "Soldier"
+   },
+   "534": {
+    "name": "Soldier"
+   },
+   "535": {
+    "name": "Elite Soldier"
+   },
+   "536": {
+    "name": "Soldier"
+   },
+   "537": {
+    "name": "Soldier"
+   },
+   "538": {
+    "name": "Soldier"
+   },
+   "539": {
+    "name": "Soldier"
+   },
+   "540": {
+    "name": "Soldier"
+   },
+   "541": {
+    "name": "Elite Soldier"
+   },
+   "542": {
+    "name": "Soldier"
+   },
+   "543": {
+    "name": "Soldier"
+   },
+   "544": {
+    "name": "Soldier"
+   },
+   "545": {
+    "name": "Soldier"
+   },
+   "546": {
+    "name": "Soldier"
+   },
+   "547": {
+    "name": "Elite Soldier"
+   },
+   "548": {
+    "name": "Heavy Soldier"
+   },
+   "549": {
+    "name": "Heavy Soldier"
+   },
+   "550": {
+    "name": "Heavy Soldier"
+   },
+   "551": {
+    "name": "Heavy Soldier"
+   },
+   "552": {
+    "name": "Castle Guard"
+   },
+   "553": {
+    "name": "Heavy Soldier"
+   },
+   "554": {
+    "name": "Heavy Soldier"
+   },
+   "555": {
+    "name": "Heavy Soldier"
+   },
+   "556": {
+    "name": "Heavy Soldier"
+   },
+   "56": {
+    "name": "Novice Swordsman"
+   },
+   "57": {
+    "name": "Novice Swordsman"
+   },
+   "58": {
+    "name": "Novice Swordsman"
+   },
+   "59": {
+    "name": "Soldier"
+   },
+   "6": {
+    "name": "Thug"
+   },
+   "60": {
+    "name": "Soldier"
+   },
+   "600": {
+    "name": "Soldier"
+   },
+   "601": {
+    "name": "Soldier"
+   },
+   "602": {
+    "name": "Soldier"
+   },
+   "603": {
+    "name": "Soldier"
+   },
+   "604": {
+    "name": "Soldier"
+   },
+   "605": {
+    "name": "Elite Soldier"
+   },
+   "606": {
+    "name": "Soldier"
+   },
+   "607": {
+    "name": "Soldier"
+   },
+   "608": {
+    "name": "Soldier"
+   },
+   "609": {
+    "name": "Soldier"
+   },
+   "61": {
+    "name": "Soldier"
+   },
+   "610": {
+    "name": "Soldier"
+   },
+   "611": {
+    "name": "Elite Soldier"
+   },
+   "612": {
+    "name": "Soldier"
+   },
+   "613": {
+    "name": "Soldier"
+   },
+   "614": {
+    "name": "Soldier"
+   },
+   "615": {
+    "name": "Soldier"
+   },
+   "616": {
+    "name": "Soldier"
+   },
+   "617": {
+    "name": "Elite Soldier"
+   },
+   "618": {
+    "name": "Soldier"
+   },
+   "619": {
+    "name": "Soldier"
+   },
+   "62": {
+    "name": "Soldier"
+   },
+   "620": {
+    "name": "Soldier"
+   },
+   "621": {
+    "name": "Soldier"
+   },
+   "622": {
+    "name": "Soldier"
+   },
+   "623": {
+    "name": "Elite Soldier"
+   },
+   "624": {
+    "name": "Soldier"
+   },
+   "625": {
+    "name": "Soldier"
+   },
+   "626": {
+    "name": "Soldier"
+   },
+   "627": {
+    "name": "Soldier"
+   },
+   "628": {
+    "name": "Soldier"
+   },
+   "629": {
+    "name": "Elite Soldier"
+   },
+   "63": {
+    "name": "Soldier"
+   },
+   "630": {
+    "name": "Soldier"
+   },
+   "631": {
+    "name": "Soldier"
+   },
+   "632": {
+    "name": "Soldier"
+   },
+   "633": {
+    "name": "Soldier"
+   },
+   "634": {
+    "name": "Soldier"
+   },
+   "635": {
+    "name": "Elite Soldier"
+   },
+   "636": {
+    "name": "Soldier"
+   },
+   "637": {
+    "name": "Soldier"
+   },
+   "638": {
+    "name": "Soldier"
+   },
+   "639": {
+    "name": "Soldier"
+   },
+   "64": {
+    "name": "Soldier"
+   },
+   "640": {
+    "name": "Soldier"
+   },
+   "641": {
+    "name": "Elite Soldier"
+   },
+   "642": {
+    "name": "Soldier"
+   },
+   "643": {
+    "name": "Soldier"
+   },
+   "644": {
+    "name": "Soldier"
+   },
+   "645": {
+    "name": "Soldier"
+   },
+   "646": {
+    "name": "Soldier"
+   },
+   "647": {
+    "name": "Elite Soldier"
+   },
+   "648": {
+    "name": "Heavy Soldier"
+   },
+   "649": {
+    "name": "Heavy Soldier"
+   },
+   "65": {
+    "name": "Wolf"
+   },
+   "650": {
+    "name": "Heavy Soldier"
+   },
+   "651": {
+    "name": "Heavy Soldier"
+   },
+   "652": {
+    "name": "Castle Guard"
+   },
+   "653": {
+    "name": "Heavy Soldier"
+   },
+   "654": {
+    "name": "Heavy Soldier"
+   },
+   "655": {
+    "name": "Heavy Soldier"
+   },
+   "656": {
+    "name": "Heavy Soldier"
+   },
+   "66": {
+    "name": "Wolf"
+   },
+   "67": {
+    "name": "Wolf"
+   },
+   "68": {
+    "name": "Horse"
+   },
+   "69": {
+    "name": "Soldier"
+   },
+   "7": {
+    "name": "Thug"
+   },
+   "70": {
+    "name": "Soldier"
+   },
+   "71": {
+    "name": "Soldier"
+   },
+   "72": {
+    "name": "Bear"
+   },
+   "73": {
+    "name": "Boar"
+   },
+   "74": {
+    "name": "Deer"
+   },
+   "75": {
+    "name": "Stag"
+   },
+   "76": {
+    "name": "Oni"
+   },
+   "77": {
+    "name": "Oni"
+   },
+   "78": {
+    "name": "Fox"
+   },
+   "79": {
+    "name": "Oni"
+   },
+   "8": {
+    "name": "Thug"
+   },
+   "80": {
+    "name": "Undead"
+   },
+   "800": {
+    "name": "Mad Cultist"
+   },
+   "802": {
+    "name": "Guardian"
+   },
+   "803": {
+    "name": "Soldier 1"
+   },
+   "804": {
+    "name": "Soldier 2"
+   },
+   "805": {
+    "name": "General Daisuke"
+   },
+   "806": {
+    "name": "Soldier"
+   },
+   "807": {
+    "name": "Soldier"
+   },
+   "808": {
+    "name": "Soldier"
+   },
+   "809": {
+    "name": "Mitsuo"
+   },
+   "81": {
+    "name": "Undead"
+   },
+   "810": {
+    "name": "Magoichi"
+   },
+   "811": {
+    "name": "Chikako"
+   },
+   "812": {
+    "name": "Scout"
+   },
+   "813": {
+    "name": "Aboshi"
+   },
+   "814": {
+    "name": "?"
+   },
+   "815": {
+    "name": "?"
+   },
+   "816": {
+    "name": "?"
+   },
+   "817": {
+    "name": "?"
+   },
+   "818": {
+    "name": "?"
+   },
+   "82": {
+    "name": "Mercenery"
+   },
+   "83": {
+    "name": "Undead"
+   },
+   "84": {
+    "name": "Undead"
+   },
+   "85": {
+    "name": "Undead"
+   },
+   "86": {
+    "name": "Undead"
+   },
+   "87": {
+    "name": "Undead"
+   },
+   "88": {
+    "name": "Undead"
+   },
+   "89": {
+    "name": "Undead"
+   },
+   "9": {
+    "name": "Thug"
+   },
+   "90": {
+    "name": "Old Guard"
+   },
+   "91": {
+    "name": "Soldier"
+   }
+  },
+  "rows_resolved": 484
+ },
+ "skilldata.xml": {
+  "miss_sample": [],
+  "misses": 0,
+  "resolved": {
+   "1000": {
+    "desc": "Swift but light stance. Slash range is longer but damage inflicted is lower.\nEffective against Heavy Stance.",
+    "displayname": "Light Stance Mastery"
+   },
+   "1001": {
+    "desc": "Balanced stance.\nEffective against Light Stance.",
+    "displayname": "Balanced Stance Mastery"
+   },
+   "1002": {
+    "desc": "Slow but powerful stance. Damage inflicted is increased but slash range is shorter.\nEffective against Balanced Stance.\nDefense -20%",
+    "displayname": "Heavy Stance Mastery"
+   },
+   "1003": {
+    "displayname": "Jump"
+   },
+   "1004": {
+    "displayname": "Roll"
+   },
+   "1005": {
+    "desc": "Instantly recharges your focus bar.",
+    "displayname": "Focus"
+   },
+   "1006": {
+    "desc": "Creates a wave that damages enemies as it passes through them.",
+    "displayname": "Slash Wave"
+   },
+   "1007": {
+    "desc": "Throws a kunai.\n\nRequires kunai ammo.",
+    "displayname": "Throw Kunai"
+   },
+   "1008": {
+    "desc": "Allows you to equip more skills.",
+    "displayname": "Skill Slots+"
+   },
+   "1009": {
+    "desc": "Allows you to carry more items in your inventory.",
+    "displayname": "Carrying Weight+"
+   },
+   "1010": {
+    "desc": "Disappear in a puff of smoke",
+    "displayname": "Smoke Bomb"
+   },
+   "1011": {
+    "desc": "Allows you to carry more coins",
+    "displayname": "Coin Purse+"
+   },
+   "1012": {
+    "desc": "When skill is active, a log will take your place when you are hit negating any damage done to you.",
+    "displayname": "Substitution Jutsu"
+   },
+   "1013": {
+    "desc": "Close-ranged fire attack",
+    "displayname": "Fire Breath"
+   },
+   "1014": {
+    "desc": "Draw an upward line starting below the feet of your target to launch him into the air.",
+    "displayname": "Light Stance Launch"
+   },
+   "1015": {
+    "desc": "Allows you to continue slashing while in mid-air.",
+    "displayname": "Air Combo"
+   },
+   "1016": {
+    "desc": "Allows you to recover quickly from being downed.",
+    "displayname": "Flip-up"
+   },
+   "1017": {
+    "desc": "Draw an upward line starting below the feet of your target to launch him into the air.",
+    "displayname": "Balanced Stance Launch"
+   },
+   "1018": {
+    "desc": "When target is downed, draw a downward line to stab him for massive damage.",
+    "displayname": "Stab"
+   },
+   "1019": {
+    "desc": "Draw an upward line starting below the feet of your target to launch him into the air.",
+    "displayname": "Heavy Stance Launch"
+   },
+   "1020": {
+    "desc": "Train to improve your abilities as a farmer.",
+    "displayname": "Farming"
+   },
+   "1021": {
+    "desc": "Train to improve your abilities as a scavenger.",
+    "displayname": "Scavenging"
+   },
+   "1022": {
+    "desc": "Train to improve your abilities as a miner.",
+    "displayname": "Mining"
+   },
+   "1024": {
+    "desc": "Lay a trap that blasts enemies off their feet when triggered.\n\nRequires kunai ammo.",
+    "displayname": "Lay Trap"
+   },
+   "1025": {
+    "desc": "Lay a trap that deals fire damage when triggered.\n\nRequires kunai ammo.",
+    "displayname": "Fire Element Trap"
+   },
+   "1026": {
+    "desc": "Lay a trap that deals water damage when triggered.\n\nRequires kunai ammo.",
+    "displayname": "Water Element Trap"
+   },
+   "1027": {
+    "desc": "Lay a trap that deals wind damage when triggered.\n\nRequires kunai ammo.",
+    "displayname": "Wind Element Trap"
+   },
+   "1028": {
+    "desc": "Lay a trap that deals earth damage when triggered.\n\nRequires kunai ammo.",
+    "displayname": "Earth Element Trap"
+   },
+   "1029": {
+    "desc": "Throws a kunai that deals fire damage.\n\nRequires kunai ammo.",
+    "displayname": "Fire Kunai"
+   },
+   "1030": {
+    "desc": "Throws a kunai that deals water damage.\n\nRequires kunai ammo.",
+    "displayname": "Water Kunai"
+   },
+   "1031": {
+    "desc": "Throws a kunai that deals wind damage.\n\nRequires kunai ammo.",
+    "displayname": "Wind Kunai"
+   },
+   "1032": {
+    "desc": "Throws a kunai that deals earth damage.\n\nRequires kunai ammo.",
+    "displayname": "Earth Kunai"
+   },
+   "1033": {
+    "desc": "Close-ranged earth attack.",
+    "displayname": "Ground Punch"
+   },
+   "1034": {
+    "desc": "Close-ranged wind attack.",
+    "displayname": "Wind Combo"
+   },
+   "1035": {
+    "desc": "Close-ranged water attack.",
+    "displayname": "Water Stomp"
+   },
+   "1036": {
+    "desc": "Allows you to deflect kunai and arrows while slashing in this stance.",
+    "displayname": "Deflect"
+   },
+   "1037": {
+    "desc": "Allows you to deflect kunai and arrows while slashing in this stance.",
+    "displayname": "Deflect"
+   },
+   "1038": {
+    "desc": "Allows you to deflect kunai and arrows while slashing in this stance.",
+    "displayname": "Deflect"
+   },
+   "1039": {
+    "desc": "Ultimate Light Stance technique. \n\nHold down the skill icon to increase the damage it inflicts.\n\nThis skill can only be used when in Light Stance.",
+    "displayname": "Shunpo"
+   },
+   "1040": {
+    "desc": "Ultimate Balanced Stance technique.\n\nHold down the skill icon to increase the damage it inflicts.\n\nThis skill can only be used when in Balanced Stance.",
+    "displayname": "Thousand Stabs"
+   },
+   "1041": {
+    "desc": "Ultimate Heavy Stance technique.\n\nHold down the skill icon to increase the damage it inflicts.\n\nThis skill can only be used when in Heavy Stance.",
+    "displayname": "Deadly Cleave"
+   },
+   "1042": {
+    "desc": "Focuses Chi into your fist for a deadly punch.",
+    "displayname": "Chi Punch"
+   },
+   "1043": {
+    "desc": "Focuses Chi into your foot for a devastating kick that sends enemies flying.",
+    "displayname": "Chi Kick"
+   },
+   "1044": {
+    "desc": "Knee target in the vitals and steal their chi.",
+    "displayname": "Spirit Thief"
+   },
+   "1045": {
+    "desc": "Uses Chi to damage and push all nearby enemies away.",
+    "displayname": "Chi Burst"
+   },
+   "1046": {
+    "desc": "Shoots a charged projectile from your blade.\n\nHold down the skill icon to increase the damage it inflicts.\n\nGetting hit while charging will cancel the skill.",
+    "displayname": "Charged Shot"
+   },
+   "1047": {
+    "desc": "Calls down a mystical sword from the heavens.\n\nDrag and drop skill icon to select target location.",
+    "displayname": "Heavenly Sword"
+   },
+   "1048": {
+    "desc": "Strike vital points on target's body to overload target's chi resulting in massive internal damage.\n\nDepletes target's chi and does 10 damage for each chi point target has.",
+    "displayname": "Deadly Touch"
+   },
+   "1049": {
+    "desc": "Short burst of speed.\n\nInterchangable with Dash Left Skill if you drag and drop skill icon to select direction.",
+    "displayname": "Dash Right"
+   },
+   "1050": {
+    "desc": "Short burst of speed.\n\nInterchangable with Dash Right Skill if you drag and drop skill icon to select direction.",
+    "displayname": "Dash Left"
+   },
+   "1051": {
+    "desc": "Throws a giant boomerang shuriken that is able to hits multiple enemies.\n\nUses 4 kunai.",
+    "displayname": "Windmill Shuriken"
+   },
+   "1052": {
+    "desc": "Stuns and blinds nearby enemies.",
+    "displayname": "Flashbang"
+   },
+   "1053": {
+    "desc": "Creates a clone to distract your enemy.\n\nThis skill cannot be used in PvP rooms.",
+    "displayname": "Shadow Clone"
+   },
+   "1054": {
+    "desc": "Turns you invisible.\n\nGetting hit, starting an attack or using another skill will reveal your location.",
+    "displayname": "Stealth"
+   },
+   "1055": {
+    "desc": "Create multiple clones that can attack your enemy.\n\nThis skill cannot be used in PvP rooms.",
+    "displayname": "Mass Shadow Clone"
+   },
+   "1056": {
+    "desc": "Unlocks the Dragon Dance Step for Fire and gives you the ability to teach it to others.",
+    "displayname": "Dragon Dance Step: Fire"
+   },
+   "1057": {
+    "desc": "Unlocks the Dragon Dance Step for Water and gives you the ability to teach it to others.",
+    "displayname": "Dragon Dance Step: Water"
+   },
+   "1058": {
+    "desc": "Unlocks the Dragon Dance Step for Wind and gives you the ability to teach it to others.",
+    "displayname": "Dragon Dance Step: Wind"
+   },
+   "1059": {
+    "desc": "Unlocks the Dragon Dance Step for Earth and gives you the ability to teach it to others.",
+    "displayname": "Dragon Dance Step: Earth"
+   },
+   "1060": {
+    "desc": "Unlocks the Dragon Dance Step for Fire (Later Heaven) and gives you the ability to teach it to others.",
+    "displayname": "Dragon Dance Step: Fire II"
+   },
+   "1061": {
+    "desc": "Unlocks the Dragon Dance Step for Water (Later Heaven) and gives you the ability to teach it to others.",
+    "displayname": "Dragon Dance Step: Water II"
+   },
+   "1062": {
+    "desc": "Unlocks the Dragon Dance Step for Wind (Later Heaven) and gives you the ability to teach it to others.",
+    "displayname": "Dragon Dance Step: Wind II"
+   },
+   "1063": {
+    "desc": "Unlocks the Dragon Dance Step for Earth (Later Heaven) and gives you the ability to teach it to others.",
+    "displayname": "Dragon Dance Step: Earth II"
+   },
+   "1064": {
+    "displayname": "Back Throw"
+   },
+   "1065": {
+    "displayname": "Air Stab"
+   },
+   "1066": {
+    "displayname": "Bull Charge"
+   },
+   "1067": {
+    "displayname": "Punch Lunge"
+   },
+   "1068": {
+    "displayname": "Undying"
+   },
+   "1069": {
+    "desc": "Charge to regain chi",
+    "displayname": "Chi Charge"
+   },
+   "1070": {
+    "desc": "Area of Effect Fire Attack\n\nFire Damage: 150% Fire ATK",
+    "displayname": "Inferno"
+   },
+   "1071": {
+    "desc": "Area of Effect Water Attack\n\nWater Damage: 150% Water ATK",
+    "displayname": "Tsunami"
+   },
+   "1072": {
+    "desc": "Area of Effect Wind Attack\n\nWind Damage: 150% Wind ATK",
+    "displayname": "Tornado"
+   },
+   "1073": {
+    "desc": "Area of Effect Earth Attack\n\nEarth Damage: 150% Earth ATK",
+    "displayname": "Earthquake"
+   }
+  },
+  "rows_resolved": 73
+ }
+}

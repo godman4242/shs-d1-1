@@ -2,7 +2,7 @@
 
 > **UNVERIFIED.** These are surveyor claims. A claim is only CONFIRMED
 > once blind artifact-citing critics have judged it (GAUNTLET.md §0/§3.3).
-> Banked: 12 surveys · 4 critic reviews · 258 claims · 76 verdicts.
+> Banked: 12 surveys · 8 critic reviews · 287 claims · 151 verdicts.
 
 ## art-anim-audio-feel — re-scored 92
 
@@ -2269,6 +2269,15 @@ The obfuscated web payload can be de-obfuscated by structural alignment with the
 
 ## unassigned — re-scored ?
 
+### `combat-core/string-table-resolved` — PARTIAL [A2] ⚑ OVERTURNS LEDGER
+
+The mobile string table has in fact been extracted this session and resolves the numeric IDs — npcdata <name>5009 is "Ruffian", itemdata <name>4041 is "Branch", and BattleUI's crittext string 175 is "Critical Hit" — closing the §2.1 naming blocker for the mobile build, though the file is not yet under reference/.
+
+- **Cite:** `session scratchpad lang_en.xml (250 KB XLIFF derived from reference/preservation/shs3_android_payload.swf binaryData 118) lines 532-533, 2950-2951, 4138-4139; source path proven by reference/decompiled/shs3_android/scripts/Mobile_Lang_EN.as:5`
+- **Quote:** `<trans-unit id="1377" resname="5009">` / `<source>Ruffian</source>`  ·  `<trans-unit id="981" resname="4041">` / `<source>Branch</source>`  ·  `<trans-unit id="175" resname="175">` / `<source>Critical Hit</source>`  ·  Mobile_Lang_EN.as:5 `[Embed(source="/_assets/118_Mobile_Lang_EN.bin", mimeType="application/octet-stream")]`
+- **Overturns:** "KNOWN BLOCKER (GAUNTLET.md §2.1): item/skill/npc <name>, <desc>, <displayname> and cutscene <param> are NUMERIC IDS indexing a string table NOT YET LOCATED."
+- **Lane impact:** L1b (string table) closes for the mobile build. Two immediate consequences: npcdata id 1 IS a bandit-class mob ('Ruffian'), which retroactively licenses the identification the early-ttk claim asserted without grounds; and item 13002 is a 'Branch', i.e. a stick, consistent with its 1-2 damage. ACTION REQUIRED: the XML lives only in the session scratchpad and is therefore NOT citable under §0 — copy it into reference/extracted/ to make it a durable A2. I independently reproduced the surveyor's failure (zlib.decompress on that SWF errors, header 4357 5372 7899 2269), so their honesty about not having done the extraction is accurate.
+
 ### `economy/ap-and-token-caps-are-40` — HELD [A1] ⚑ OVERTURNS LEDGER
 
 Both 'caps' the survey read out of StatsManager class constants are contradicted on film: AP max is 40 and duel-token max is 40, not 30. The 30s are level-1 character-creation initials.
@@ -2403,6 +2412,96 @@ The five trade-goods commodities are not anonymous indices — they are Tea Leav
 - **Ready:** currencies + guest start; all service prices; Forge/Reinforce/Rebirth/Writ costs; War-Room structure costs; crop 5–20c; IAP tiers; two-vendor tiers; gold has legit non-cash faucets (rebirth/tournament/betting)."
 - **Lane impact:** economy, and the first concrete demonstration that the located string table pays off inside this lane. The arbitrage subsystem the survey found goes from five nameless price curves to a shippable, named commodity ladder. '(Illegal)' on commodity 4 is a live lead: it is priced identically to Ceramics (200/30) yet flagged, so an offline port must decide whether legality was cosmetic flavour or a real risk/reward hook — a design question the ledger cannot even pose today.
 
+### `items-equipment/carry-weight-string-corroboration` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The string table independently corroborates the 100 + rank*20 carry-weight track that the survey derived from code alone.
+
+- **Cite:** `char-id 118 of reference/decrypted/shs3_android_payload_decoded.swf, trans-units 138, 1507, 1653, 1654; formula at StatsManager.as getCarryingWeight()`
+- **Quote:** 1507 'Carrying Weight+'  |  1653 'Carrying weight: 120'  |  1654 'Carrying weight: 140'  |  138 'You are carrying too many things to travel.&#10;&#10;Upgrade the Carrying Weight+ skill to carry more items.'  vs  `return 100 + getStat(1009) * 20;`
+- **Overturns:** "weight cap 100"
+- **Lane impact:** L3 + L10 — 120 and 140 are ranks 1 and 2 of the +20/rank track, from an artifact wholly independent of StatsManager.as. Stat 1009 is the 'Carrying Weight+' skill, and overweight blocks travel (not pickup), which string 138 states in the game's own words.
+
+### `items-equipment/condition-tier-names-exact` — PARTIAL [A2] ⚑ OVERTURNS LEDGER
+
+The ledger's unnumbered 'condition tier names' are now exact: five sequential table entries match Item.getDesc's five branches in order - Broken / Poor / Used / Usable / Good - plus 'Unbreakable'.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/Item.as:713-742 read against DefineBinaryData char-id 118 of reference/decrypted/shs3_android_payload_decoded.swf at offset -20`
+- **Quote:** Item.as branch order: condition==0 -> getString(387+1=388); <25 -> 389; <50 -> 390; <75 -> 391; else -> 392.  Table at -20: 368 'Condition: Broken', 369 'Condition: Poor', 370 'Condition: Used', 371 'Condition: Usable', 372 'Condition: Good'; 620 'Unbreakable'.
+- **Overturns:** "- **Ready:** ... condition tier names; weight cap 100; ..."
+- **Lane impact:** L3 + L8 - the five bands become shippable strings with their exact numeric cutoffs (0 / <25 / <50 / <75 / else on a 0-100 percentage, with two extra states for uses==0 and uses==1). PARTIAL because docs/research/video-study/SYNTHESIS.md:186 observed 'UNBREAKABLE / WELL-MAINTAINED / GOOD / USABLE' on the web build and 'WELL-MAINTAINED' is absent from the Android table - THE FRAME WINS, so the web wording differs and these five are the Android build's words.
+
+### `items-equipment/condition-tier-names-recovered` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The ledger's unnumbered 'condition tier names' are recovered verbatim: six of them, at string-table ids 368-373.
+
+- **Cite:** `char-id 118 of reference/decrypted/shs3_android_payload_decoded.swf, trans-units 368-373`
+- **Quote:** 368 'Condition: Broken' · 369 'Condition: Poor' · 370 'Condition: Used' · 371 'Condition: Usable' · 372 'Condition: Good' · 373 'Condition: Well-Maintained'
+- **Overturns:** "condition tier names"
+- **Lane impact:** L3 — the six band labels are transcribable today. They pair with the seven-branch selector in Item.getDesc() (uses==0, uses==1, condition==0, <25, <50, <75, else); pinning which label goes with which branch still needs a same-build id table per the drift finding.
+
+### `items-equipment/frame-confirms-name-id-4050` — HELD [A1] ⚑ OVERTURNS LEDGER
+
+The video independently validates the -3060 offset: the quest item named on screen as 'IRON SWORD' is itemdata id 13113, whose <name> is 4050, which resolves to table entry 990 = 'Iron Sword'.
+
+- **Cite:** `reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0024.jpg - 1024x576 source, crop (0,420)-(640,500), upscaled 3x LANCZOS`
+- **Quote:** Visibly in the crop: 'I AM LOOKING FOR' in white, then 'DRAFTY SHARP IRON SWORD OF PIERCING' in bright blue, then ' .' - the basename 'IRON SWORD' matches table id 990 reached from <name>4050 at offset -3060.
+- **Overturns:** "item/skill/npc <name>, <desc>, <displayname> and cutscene <param> are NUMERIC IDS indexing a string table NOT YET LOCATED."
+- **Lane impact:** L1b - this is the anchor that makes the offset an evidenced mapping rather than a curve fit. A frame, the payload XML and the extracted string table all agree on one item's name, which is the standard L1b should hold every other id block to.
+
+### `items-equipment/item-names-are-in-the-extracted-table` — PARTIAL [A2] ⚑ OVERTURNS LEDGER
+
+English item base names ARE present verbatim in the already-extracted 2,555-entry string table — ids 980-1011 are a contiguous item-name block — so the correct blocker is the id-to-name MAPPING, not the names themselves.
+
+- **Cite:** `char-id 118 of reference/decrypted/shs3_android_payload_decoded.swf (500,024 B UTF-16LE XLIFF), extracted by me via an SWF tag-87 walk; trans-units 980-1011 and 1063/1083/1085/1100/1215/1307`
+- **Quote:** 980 Stick · 981 Branch · 982 Bamboo · 983 Flute · 984 Spoon · 985 Fork · 986 Bat · 987 'Stick with nail' · 988 Katar · 989 'Training Sword' · 990 'Iron Sword' · 991 'Iron Sabre' · 992 'Dragon Blade' · 993 'Thunder Blade' · 994 'Bevel Edge' · 995 Defender · 996 'Heavy Armor' · 997 Cleaver · 998 Potion · 999 Scroll · 1000 Amulet · 1005 'Broken Sandal'; also 1063 'Worn Sandals', 1083 'Sword Repair Kit', 1085 'Bronze Sword', 1100 'Steel Sword', 1215 'Gaius Sword', 1307 "Inokichi's Club (Broken)"
+- **Overturns:** "KNOWN BLOCKER (GAUNTLET.md §2.1): item/skill/npc <name>, <desc>, <displayname> and cutscene <param> are NUMERIC IDS indexing a string table NOT YET LOCATED. ui_strings.txt is NOT it. bindata/ is now EXHAUSTED as a candidate."
+- **Lane impact:** L1b (STRING TABLE) — restate the blocker. The table is located, extracted and READABLE, and it contains item names; what is missing is the mapping, because the web itemdata.xml <name> ids reach 4427 while this Android table stops at 2554. Next step is to obtain the web build's shs3_en.xml (./data/ or <server>/strings/) or to align the two id spaces, not to keep hunting for 'the table'. 74 of 804 <name> ids already fall inside the extracted slice and resolve today.
+
+### `items-equipment/item-names-partially-held` — PARTIAL [A2] ⚑ OVERTURNS LEDGER
+
+Item names are PARTIALLY HELD, not unheld: 74 of 804 itemdata <name> ids resolve against the extracted table, and trans-units 960-1011 are a contiguous English item-name block containing the exact 'Iron Sword' the survey's own frame shows on screen.
+
+- **Cite:** `char-id 118 (500,024 B UTF-16LE XLIFF) extracted from reference/decrypted/shs3_android_payload_decoded.swf, cross-resolved against reference/extracted/itemdata.xml; XMLItem.as:64`
+- **Quote:** 989 'Training Sword'  990 'Iron Sword'  991 'Iron Sabre'  992 'Dragon Blade'  993 'Thunder Blade'  994 'Bevel Edge'  995 'Defender'  996 'Heavy Armor'  997 'Cleaver'  |  965 'Straw Hat' 966 'Helmet' 967 'Hat' 968 'Hood' 969 'Top Hat' 970 'Afro Wig' 971 'Mask' 972 'Pants' 973 'Heavy Armor Pants' 974 'Torn Pants' 975 'Ninja Pants'  |  resolved bindings: items 6000-6520 -> name 34 -> 'Hair' (73 items); items 2122/2123/2124 and 20100/20101/20102 -> 443/444/445 -> '(八段)' '(九段)' '(十段)'; desc 207 -> 'Quest Item'
+- **Overturns:** "KNOWN BLOCKER (GAUNTLET.md §2.1): item/skill/npc <name>, <desc>, <displayname> and cutscene <param> are NUMERIC IDS indexing a string table NOT YET LOCATED. ui_strings.txt is NOT it. bindata/ is now EXHAUSTED as a candidate."
+- **Lane impact:** L1b (STRING TABLE) — flips from STILL_UNHELD to PARTIAL. The survey's negative test grepped Katana/Wakizashi/Tanto/Nodachi; SHS3 weapons are 'Iron Sword', 'Iron Sabre', 'Dragon Blade', 'Thunder Blade', 'Bevel Edge', 'Defender', 'Cleaver', 'Training Sword', 'Katar'. Also corrects the coverage figure: §1t123s0§.as:900 calls getString(11253), so the full space is >=11,257 and the 2,555-entry slice is <=23%, not a third.
+
+### `items-equipment/sell-formula-exact` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+Sell price is `1` for ids under 3000, `(1 + affixCount) * 10` for items of weight >= 10, and `(1 + affixCount) * 5` otherwise - a step function of weight and affix count that never touches baseprice, item level or the dead sellPercentage.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/Item.as:1582-1593 (reached from ShopUI.as:401 `slot.setCost(slot.getItem().getSellAmt(),0)`)`
+- **Quote:** public function getSellAmt() : int { if(this.itemID < 3000) { return 1; } if(this.getWeight() >= 10) { return (1 + this.getModifierCount()) * 10; } return (1 + this.getModifierCount()) * 5; }
+- **Overturns:** "9. **Sell price is NOT flat per item** - it scales with rarity/level (same sword 5c and 25c). Don't encode flat-per-type."
+- **Lane impact:** L10 (PROGRESSION + ECONOMY) - blocker (3) is CLOSED, not 'mostly closed'. Cross-validated against the video ledger: docs/research/video-study/segments/B-09-castle-town-toll-gate-and-shop.md:77 records 'Iron Sabre ... WEIGHT 5, sell price 5 coins' and (1+0)*5 = 5 exactly, while 5c/25c for the same sword is (1+0)*5 and (1+4)*5. It also corrects §3 #9 itself: the formula has no LEVEL term - the second axis is WEIGHT, not level. L3 must expose affixCount and weight to the shop layer; nothing else is needed to price a sale.
+
+### `items-equipment/string-table-cracked-for-items` — PARTIAL [A2] ⚑ OVERTURNS LEDGER
+
+The string table blocker falls for items: a constant offset of -3060 against the already-extracted 2,555-entry Android table resolves 730 of 804 item <name> ids and 174 of 178 <desc> ids to correct English text, and the remaining 74 resolve at offset 0.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/XMLItem.as:62-64 joined to DefineBinaryData char-id 118 of reference/decrypted/shs3_android_payload_decoded.swf against reference/extracted/itemdata.xml`
+- **Quote:** XMLItem.as:64  this.displayname = LangManager.getString(xml.name);   |   resolved at -3060: 4040->'Stick' 4041->'Branch' 4049->'Training Sword' 4050->'Iron Sword' 4025->'Straw Hat' 4099->'Bandana' 4058->'Potion' 4182->'Leather Gloves' 4193->'Zanpakuto' 4244->'Pickaxe' (desc 4245->'Used for mining.') 4381->'Whisper Sword' 4308->'Warlord Scythe' 4170->'Face' (desc 4171->'Change your face')   |   at offset 0: item 6000 <name>34 -> 'Hair'   |   coverage: name 730/804, desc 174/178
+- **Overturns:** "KNOWN BLOCKER (GAUNTLET.md §2.1): item/skill/npc <name>, <desc>, <displayname> and cutscene <param> are NUMERIC IDS indexing a string table NOT YET LOCATED. ui_strings.txt is NOT it. bindata/ is now EXHAUSTED as a candidate."
+- **Lane impact:** L1b + L3 - L1b's exit condition is now answerable for the item half and its job changes from 'find the table' to 'anchor each id block'. PARTIAL, not HELD, for two honest reasons: (a) the Android table is a different build revision from the Android AS3, so the offset is PIECEWISE (0 for ids <= ~199, -20 for the ~380-880 UI block, -3060 for the 4000+ item-name block) and every block must be anchored before use; (b) docs/research/video-study/SYNTHESIS.md:186 records a condition label 'WELL-MAINTAINED' the Android table does not contain, so the web build's wording differs in places - THE FRAME WINS, and each shipped name still needs a frame check. L3 is no longer name-blocked; it is name-provisional.
+
+### `items-equipment/string-table-offset-drift` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The extracted table is the RIGHT table with a ~-19/-20 revision drift above id ~350 (exact below ~210), which is why the survey's spot-checks looked like misses — this recovers the condition tier names, the 11 procedural colour names and the six elemental/crit/piercing stat labels verbatim.
+
+- **Cite:** `char-id 118 ids 368-373, 413-423, 851-856 vs reference/decompiled/shs3_android/scripts/Item.as:712-745, ItemGenerator.as:93 + :701, Item.as:1238-1268`
+- **Quote:** 368 'Condition: Broken' 369 'Condition: Poor' 370 'Condition: Used' 371 'Condition: Usable' 372 'Condition: Good' 373 'Condition: Well-Maintained'  (AS3 uses 387-392)  |  413 Red 414 Orange 415 Yellow 416 Green 417 Blue 418 Purple 419 Pink 420 Brown 421 White 422 Grey 423 Black  — 11-for-11 against colorhexlist [16711680,16737792,16763904,39168,13311,6684927,16751103,6697728,16777215,10066329,0]  (AS3 uses 432-442)  |  851 'Fire DEF' 852 'Wind DEF' 853 'Water DEF' 854 'Earth DEF' 855 'Critical Damage' 856 'Piercing Damage'  (AS3 uses 871-876)
+- **Overturns:** "- **Ready:** ... condition tier names; ..."
+- **Lane impact:** L1b + L3 + L8 — the ledger's unnumbered 'condition tier names' Ready bullet is now verbatim, and ids 851-856 are the exact strings visible in frame_0031. Anyone resolving further ids must apply the -19/-20 drift above ~350 and take ids below ~210 at face value.
+
+### `items-equipment/z-order-in-actionscript` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The paperdoll compositing z-order is fully held: MCSCharacter's constructor addChilds parts in partList index order, so display depth equals the PART_ constant (0 l_hand back … 22 prop3 front), closing the 'layer order' half of blocker ⑤.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/MCSCharacter.as:119 and :138-146`
+- **Quote:** internal var partListLength:int = 22;  ...  for(var i:int = 0; i <= this.partListLength; i++) { mc = new MovieClip(); addChild(mc); this.partList.push(mc); }
+- **Overturns:** "⑤ **sprite-compositing contract** (layer order, per-slot body render — a from-scratch-art blocker) + item **icon manifest**."
+- **Lane impact:** L3 + L6 — blocker ⑤'s layer-order half is CLOSED, leaving only the per-item vector art. Also corrects the rig size: the human rig is 23 parts (0-22), not 27; PART_l_shoulder(23)/r_shoulder(24)/l_knee(25)/r_knee(26) are wolf legs (MCSWolf.as:13 partListLength=25, used at :184-197). One exception to reproduce: MCSBust.as:104 re-addChilds PART_r_uparm to the front for portraits.
+
 ### `string-table/resname-is-the-key` — HELD [A2] ⚑ OVERTURNS LEDGER
 
 The string table's lookup key is the trans-unit `resname` attribute, not `id` — and on that key the already-extracted 2,555-entry table resolves 100% of item, npc and skill names and descriptions, so the gauntlet's standing string-table blocker has FALLEN, not merely moved.
@@ -2411,6 +2510,62 @@ The string table's lookup key is the trans-unit `resname` attribute, not `id` �
 - **Quote:** <trans-unit id="990" resname="4050">\n<source>Iron Sword</source>\n</trans-unit>   |   itemdata.xml:8743-8745  <id>13113</id> <type>9</type> <name>4050</name>   |   LangManager.as:77  var output:String = Locale.loadStringEx(num.toString(),language);   |   MEASURED COVERAGE via resname: itemdata <name> 804/804, itemdata <desc> 178/178, npcdata <name> 490/490, skilldata <desc> 201/201, skilldata <displayname> 73/73
 - **Overturns:** "KNOWN BLOCKER (GAUNTLET.md §2.1): item/skill/npc <name>, <desc>, <displayname> and cutscene <param> are NUMERIC IDS indexing a string table NOT YET LOCATED. ui_strings.txt is NOT it. bindata/ is now EXHAUSTED as a candidate. So numbers are portable today; NAMES ARE NOT."
 - **Lane impact:** L1b (STRING TABLE) — exit condition MET for items, npcs and skills: every one of those ids resolves with an A2 cite today, from a file already on disk. L3 (ITEMS) loses its last gate: the 982-item catalogue is now fully transcribable, names included. Also unblocks the name half of L2/L4 (npc names 490/490) and L7 (skill descs 201/201, displaynames 73/73). Only cutscene <param> remains unchecked by me.
+
+### `combat-core/behead-order-not-uniform` — HELD [A2]
+
+The x1.5 behead multiplier is not applied at the same point in the chain across enemy classes — EnemyClone applies it inside the part switch before defence subtraction, while EnemyShield, EnemyZombie and MCSPlayer apply it after the min-damage floor.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/EnemyClone.as:421-425 vs EnemyShield.as:344-353 and MCSPlayer.as:3709-3717`
+- **Quote:** EnemyClone.as:421-425 `case mcs.partList[MCSCharacter.PART_hat]:` / `case mcs.partList[MCSCharacter.PART_head]:` / `case mcs.partList[MCSCharacter.PART_neck]:` / `damage *= 1.5;` / `behead = true;`  ·  EnemyShield.as:346-353 `damage -= defense;` / `if(damage < damageObj.getMinDamage())` / `{` / `damage = damageObj.getMinDamage();` / `}` / `if(behead)` / `{` / `damage *= 1.5;`
+- **Lane impact:** combat-core: a single shared hit resolver in the recreation will diverge from the original on low-damage head hits, where the ordering decides whether the 1.5x lands on the pre-defence number or on the floored number. Ordering must be per-enemy-class, not global.
+
+### `combat-core/crit-label-web-divergence` — PARTIAL [A1]
+
+The web build's crit HUD is not the mobile build's: the frame prints a gold percentage label "150% DAMAGE" plus "CANNOT CHANGE STANCE" across the third bar, where the mobile build loads a single static string "Critical Hit" into crittext and keeps the stance label on an unrelated hover clip.
+
+- **Cite:** `reference/frames/duel_dense/Nr4fQstqHDM_429.0.png, my own crop 560x180+0+900 of the 1920x1080 frame upscaled x3 nearest-neighbour; against BattleUI.as:102 and :430-440`
+- **Quote:** Visibly in the crop: green bar `20/20`, blue bar `26/26`, then a tan/olive third bar with `CANNOT CHANGE STANCE` printed across it and gold `150% DAMAGE` beneath. Code: BattleUI.as:102 `this.crittext.text = LangManager.getString(175);` (string 175 = "Critical Hit") · :430-434 `internal function showChangeStanceLabel(event:MouseEvent) : *` / `{` / `this.changestancelabel.visible = true;` — a hover handler, not a state readout.
+- **Lane impact:** THE FRAME WINS: for what the web build actually displayed, this crop overrides the mobile source, and it is the first concrete instance of the mobile-vs-web parity gap the surveyor correctly left STILL_UNHELD. It also gives blocker 2 a decisive, cheap close-path: find any duel frame where the third bar is full in a non-Light stance and read the percentage. If it ever reads 120%, the stance-split crit is confirmed for web; if it always reads 150%, web crit is flat and BOTH the MCSPlayer and InventoryUI tables are mobile-only.
+
+### `combat-core/crit-modifier-contradiction` — PARTIAL [A2]
+
+The build ships two mutually inverted crit tables — combat applies Light x1.5 / other x1.2 while the character sheet displays Light x1.2 / Balanced and Heavy x1.5 — so ledger blocker 2 is PARTIAL, not closed.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/InventoryUI.as:1941-1971 vs MCSPlayer.as:3215-3222`
+- **Quote:** InventoryUI.as:1941 `if(stance == MCSPlayer.LIGHT_STANCE)` / :1946 `critModifier = 1.2;` · :1950 `else if(stance == MCSPlayer.BALANCED_STANCE)` / :1955 `critModifier = 1.5;` · :1959 `else if(stance == MCSPlayer.HEAVY_STANCE)` / :1964 `critModifier = 1.5;`  ·  MCSPlayer.as:3217-3221 `if(this.stance != LIGHT_STANCE)` / `return maxDamage * 1.2 + this.STAT_CRITICALDMG;` / `return maxDamage * 1.5 + this.STAT_CRITICALDMG;`
+- **Lane impact:** combat-core blocker 2 must be re-opened as PARTIAL rather than closed. The same InventoryUI function's dmgModifier, defModifier and slashModifier all agree with combat exactly — only critModifier is flipped, so this reads as a real ship bug, not a decompiler artefact. Config must carry BOTH numbers with a note, and blocker 2's original close-path ('read one crit popup') is now the arbitrating evidence again, not redundant.
+
+### `combat-core/early-ttk-not-universal` — PARTIAL [A2]
+
+'Early mobs die in exactly one hit, unconditionally' is false: level-2 npc rows 7-10 carry hp 5 and defense 3, so a mastery-0 Light swing floored to 1 damage needs five strokes.
+
+- **Cite:** `reference/extracted/npcdata.xml — full 495-row scan; rows with <lvl> <= 5 include ids 6-10; plus Damage.as:160-162`
+- **Quote:** (id, lvl, hp, defense) for the lvl<=5 set: (1,3,1,0) (2,3,1,0) (3,3,1,0) (4,3,1,0) (5,3,1,0) (6,2,1,3) (7,2,5,3) (8,2,5,3) (9,2,5,3) (10,2,5,3) (56,3,1,0) (57,3,1,0) (58,3,1,0) (101,1,2,0) (117,5,10,5). hp==1 occurs in 42 of 495 rows. Damage.as:160-162 `if(this.attackerlvl <= 10)` / `{` / `return 1 + this.piercingDamage;`
+- **Lane impact:** combat-core blocker 3 closes only for the hp-1/defense-0 subset (42 of 495 rows), not for early mobs generally. Also feeds enemies-ai: the roster's early band is not uniform, and defense 3 at level 2 is enough to force the attacker-level damage floor, which is the mechanism that makes low-mastery Light swings feel useless early. The starter-weapon half of blocker 3 remains open — item 13002 is EnemyElite's NPC fallback (EnemyElite.as:94-97), not an established player starter.
+
+### `combat-core/reload-fill-time` — HELD [A2]
+
+The crit bar's visible fill span (96 ticks / 4.0 s) and the crit gate's actual charge time (120 ticks / 5.0 s from reload = 0) are two different numbers, because the UI maps (reload-24)/(maxreload-24) and therefore reads zero for the first 24 ticks.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/MCSPlayer.as:239-241, :1158-1168, :3215; Mobile.as:117`
+- **Quote:** MCSPlayer.as:239-240 `this.maxreload = 5 * 24;` / `this.reload = 0;`  ·  :1163-1168 `this.tempreload = this.reload - 24;` / `if(this.tempreload < 0)` / `{` / `this.tempreload = 0;` / `}` / `StageManager.getBattleUI().updateReload(this.tempreload / (this.maxreload - 24));`  ·  :3215 `if(this.reload == this.maxreload)`  ·  Mobile.as:117 `GameEngine.getStageMC().frameRate = 24;`
+- **Lane impact:** combat-core + ui-hud: config must carry both, labelled distinctly. A recreation that animates the bar over 5.0 s will look wrong (the first 24 ticks show nothing); one that gates crit at 4.0 s will play wrong (crit arrives a full second early). Note also :3272 uses the same (reload-24)/(maxreload-24) mapping while :3112 uses the raw reload/maxreload — the UI is fed by two inconsistent mappings.
+
+### `combat-core/shake-callers-incomplete` — HELD [A2]
+
+The screen-shake caller catalogue is missing four sites, one of which (a level marker) is the only caller that overrides the default amplitude, making shake amplitude authorable per level.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/Marker_RumbleTrigger.as:44, MCSPlayer.as:4180 (inside gotDeathTouch, function header :4161), StatsManager.as:3533-3536, Trap_CrusherColumnAuto.as:90; against StageManager.as:1200`
+- **Quote:** Marker_RumbleTrigger.as:44 `StageManager.startShake(this.shakeDuration,this.shakeAmt);`  ·  MCSPlayer.as:4180 `StageManager.startShake(12);` (inside `internal function gotDeathTouch(flyVelX:int, flyVelY:int)`)  ·  StatsManager.as:3533-3535 `if(id == 126)` / `{` / `StageManager.startShake(val);`  ·  StageManager.as:1200 `public static function startShake(shakeDuration:int, shakeAmt:int = 30) : *`
+- **Lane impact:** art-anim-audio-feel: the shake catalogue is complete only after adding these. None is an ordinary landed slash, so the surveyor's headline conclusion survives, but Marker_RumbleTrigger means amplitude is level-authored data rather than a fixed constant, and StatsManager.as:3535 means cutscenes can call shake with a scripted amount — both need a data hook in the recreation, not a hard-coded 30.
+
+### `combat-core/white-popup-dead-code` — HELD [A2]
+
+The white (0xFFFFFF) triangle-advantage damage popup is unreachable dead code, and the player's own damage numbers always render black (0x000000), never dark red.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/MCSPlayer.as:3584, :3700, :3706, :3803-3809; identical pattern EnemyClone.as:348/433/439/514-516`
+- **Quote:** MCSPlayer.as:3584 `var damagetextcol:int = 0;` · :3700 `damagetextcol = 0;` · :3704-3706 `if(this.controlledBy != 0)` / `{` / `damagetextcol = 16777215;` · :3803-3805 `if(this.controlledBy == 0)` / `{` / `ProjectileManager.createFloatingText(mcs.x,mcs.y - 100,damage.toString(),damagetextcol);`
+- **Lane impact:** combat-core + ui-hud: corrects two errors in the surveyed output. The stance-triangle claim's gloss ('white popup = an NPC landing a triangle hit on you') is inverted — `this` is the victim, so `!= 0` means a NON-player victim — and is moot anyway because the assignment branch and the read branch are exact complements. The damage-popups claim's 'physical 0x990000' is wrong for the player-victim case. A recreation should paint enemy popups 0x990000, player popups 0x000000, and never render a white one.
 
 ### `economy/coin-purse-tier-has-no-writer` — PARTIAL [A2]
 
@@ -2468,6 +2623,14 @@ Trade-goods commodity 0 has a degenerate seed: node x serverDate x 0 = 0, so its
 - **Overturns:** "② sell-price + prosperity-daily-sim formulas."
 - **Lane impact:** Narrows the new trade-goods subsystem from five arbitraged commodities to four. A porter reimplementing it faithfully must reproduce the zero-seed quirk or knowingly deviate. Second gotcha in the same subsystem: getGoodsPriceString (InteractUI.as:1588+) re-declares the price/variation table WITHOUT the RNG, so the displayed range and the charged price come from two code paths that must be kept in sync.
 
+### `items-equipment/buy-value-frame-confirmed` — HELD [A1]
+
+A video frame independently confirms the shop valuation formula: the pants tooltip shows 450 and LEVEL 4, and 29 of the 11xxx pants rows carry baseprice 50 — exactly gvalue + getLevel()*100.
+
+- **Cite:** `reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0031.jpg — 1024x576 source, crop (575,140)-(1015,420), upscaled 3x LANCZOS; formula at XMLShopItem.as:68/:86 and XMLItem.as:88`
+- **Quote:** Visibly in the crop: a green-bordered pants icon carrying the number '450' beside a coin glyph, and 'LEVEL 4' beneath it. XMLShopItem.as:68 `this.value = itemData.gvalue + this.item.getLevel() * 100;` and XMLItem.as:88 `this.gvalue = xml.baseprice;`. itemdata.xml: 29 of the 11xxx PANTS rows carry <baseprice>50</baseprice>. 50 + 4*100 = 450.
+- **Lane impact:** L10 (PROGRESSION + ECONOMY) — upgrades the buy half of blocker ③ from A2-only to A2 + A1. It also proves the frame's PANTS is a procedurally generated shop rare (XMLShopItem also sets item.uses = 1), which is what licenses reading it against ItemGenerator's PANTS mask at all.
+
 ### `items-equipment/condition-band-labels` — HELD [A2]
 
 The condition tier names the ledger lists as 'Ready' but unnumbered are now readable verbatim, and there are seven of them, not six.
@@ -2476,6 +2639,46 @@ The condition tier names the ledger lists as 'Ready' but unnumbered are now read
 - **Quote:** Item.as:715-743  if(this.uses == 0) getString(639); else if(this.uses == 1) getString(392); else if(condition == 0) red getString(387); else if(condition < 25) getString(388); else if(condition < 50) getString(389); else if(condition < 75) getString(390); else getString(391);   ->   639 'Unbreakable', 392 'Condition: Well-Maintained', 387 'Condition: Broken', 388 'Condition: Poor', 389 'Condition: Used', 390 'Condition: Usable', 391 'Condition: Good'
 - **Lane impact:** L3 + L8 — the seven condition strings and their exact thresholds can be transcribed rather than invented. Note 'Unbreakable' fires on uses==0 and 'Well-Maintained' on uses==1, so the top two bands are keyed off raw uses, not the percentage.
 
+### `items-equipment/equip-routing-is-id-band` — HELD [A2]
+
+Equipment slot routing is by ID BAND (`Math.floor(itemID / 1000)`), not by <type>; <type> is consulted only to remap unique==1 items back into band space.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/InventoryUI.as:1167-1199, cross-checked against StatsManager.as:735`
+- **Quote:** var tempValue:int = Math.floor(itemID / 1000); if(QuestEngine.getItemData(item.itemID).unique == 1) { switch(QuestEngine.getItemData(item.itemID).type) { case 11: tempValue = 3; case 0: tempValue = 4; case 1: tempValue = 5; case 3: tempValue = 7; case 5: tempValue = 9; case 7: tempValue = 11; case 8: tempValue = 12; case 9: tempValue = 13; } }   |   StatsManager.as:735  equipment[EQ_SCABBARD] = new Item(13100,1);  // a TYPE 9 item in slot 10
+- **Lane impact:** L3 - the port must key routing on the id band (3 ACCESSORY, 4 ARMOR, 5 GLOVES, 6 HAIR, 7 HAT, 8 HEAD, 9 MASK, 11 PANTS, 12 SHOES, 13 WEAPON) with the type-switch as the unique-item override. Keying on <type> instead would route 98 consumables into EQ_SCABBARD and 79 quest items into EQ_ACCESSORY2, and would never place the scabbard, which is a type-9 weapon-band item hard-wired to slot 10. ItemGenerator.getItemType (:255-292) independently derives type from id ranges, confirming the band is the primary key.
+
+### `items-equipment/itemdata-type-is-implicit-not-literal` — HELD [A2]
+
+itemdata.xml never writes <type>0</type>: the 153 armor-slot items carry no <type> element at all and rely on E4X coercing the missing node to 0, and there is a second band anomaly the survey missed.
+
+- **Cite:** `reference/extracted/itemdata.xml — my own parse of all 982 <item> blocks`
+- **Quote:** Distinct literal <type> values across the whole file: [1,2,3,4,5,6,7,8,9,10,11,12] — no 0. Items with NO <type> element: 153, of which 152 sit in the 4xxx armor band and exactly 1 in 7xxx (id 7075). Missed anomaly: '<id>2211</id> <type>12</type> <name>4386</name> <unique>1</unique> <weight>0</weight> <nogive>1</nogive> <nodrop>1</nodrop>' — a 2xxx-band item typed 12.
+- **Lane impact:** L3 — a port must default a missing <type> to 0 rather than reject the row, or it silently drops 152 armor items and one hat. Reproduce both authoring anomalies verbatim (7075 and 2211). Also note types 10 and 12 are not equipment-array indices despite the enum values, which is why Item.as:845 guards them.
+
+### `items-equipment/lang-table-build-shift` — HELD [A2]
+
+The Android string table and the Android ActionScript are different build revisions: ids up to ~199 need no offset, but the ~380-880 UI block needs -20, so any naive getString(id) resolution above ~380 silently returns the wrong string.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/Item.as:1020-1043 read against DefineBinaryData char-id 118 of reference/decrypted/shs3_android_payload_decoded.swf`
+- **Quote:** AS3 reads getString(871..876) for FIREDEF/WINDDEF/WATERDEF/EARTHDEF/CRITICALDMG/PIERCINGDMG. Table raw 871-876 = 'Construction Site','Riverside Town','Wooden Bridge','Waterfall Lake','Jinmaku','Mountain Path'. Table at -20 = 'Fire DEF','Wind DEF','Water DEF','Earth DEF','Critical Damage','Piercing Damage' - six in a row in the AS3's exact switch order. Control: ids 110='HP', 123='Set', 139='Weight', 199='Eq' are correct at offset 0.
+- **Lane impact:** L1b - this is a methodological landmine for the whole lane, not just items. Any lane resolving <name>/<desc>/<displayname>/<param> ids against this table must anchor its id block against a known string (or a frame) FIRST. frame_0031 settles this one directly: it shows 'FIRE DEF', 'WIND DEF', 'EARTH DEF', 'CRITICAL DAMAGE' on screen, which is what -20 produces and not what the raw ids produce.
+
+### `items-equipment/modifier-103-is-set-member-ref` — HELD [A2]
+
+Modifier id 103 - 223 of the 412 modifier blocks in itemdata.xml, by far the largest cohort - is not a 'Set' id: its <value> is an item id and the tooltip prints that item's display name, i.e. it is a set-MEMBER reference.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/Item.as:1047-1052; own parse of reference/extracted/itemdata.xml`
+- **Quote:** case 103: case 106: itemxml = QuestEngine.getItemData(modArrayCheck[q].value); if(itemxml != null) { attribs += "- " + itemxml.displayname + "\n"; } break;   |   parsed: 412 <modifier> blocks, 34 distinct ids, id 103 appears 223 times, 104 x42, 105 x40, 106 x33
+- **Lane impact:** L3 - set bonuses render as a bulleted list of member item names, which means the SET system is itself name-dependent and therefore now unblocked by the -3060 offset finding. Encoding 103 as 'Set: 103' per the surveyed rule would produce a visibly wrong tooltip on more than half the modifier rows in the catalogue.
+
+### `items-equipment/modifier-enum-real-extent` — PARTIAL [A2]
+
+The end-to-end item modifier enum is Item.as:1148-1272, not XMLItem.as: it adds elemental ATK (28-31), elemental DEF + crit + piercing (200-205), a deliberate silent group (78/79/82) and node/nested-item cases (102/103/106); and itemdata.xml carries 12 further ids that fall through to a trace("ErrorValue") branch.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/Item.as:1148-1272; histogram of all 412 <modifier> blocks in reference/extracted/itemdata.xml`
+- **Quote:** case 28: getString(507) ... case 31: getString(510)  |  case StatsManager.STAT_FIREDEF: getString(871) ... case StatsManager.STAT_PIERCINGDMG: getString(876)  |  case 82: case 78: case 79: break;  |  case 102: getString(640)+NodeGenerator.getNodeNameCode(value)  |  case 103: case 106: '- ' + itemxml.displayname  |  itemdata.xml modifier ids OUTSIDE 0-16 and 101-1999: 25, 38, 78, 79, 82, 84, 90, 96, 97, 98, 99, 40000
+- **Lane impact:** L3 — the 0-16 map the survey published is correct but incomplete; a port using only it cannot represent any generated elemental, crit or piercing affix. Ids 25 and 38 are StatsManager.STAT_DAN and STAT_BUFFTYPE; id 83 is a live max-durability bonus consumed by isBroken() and getCondition(). STILL_UNHELD: the meaning of 84, 90, 96-99 and 40000.
+
 ### `items-equipment/modifier-ids-are-stat-ids` — HELD [A2]
 
 Item modifier ids are StatsManager STAT_* ids, so the enum extends far beyond 0-16 and 101-1999 — the elemental ATK (28-31), elemental DEF (200-203), CRIT DMG (204) and PIERCING (205) families are modifier ids too, and twelve of itemdata's 34 distinct ids fall into the code's own trace("ErrorValue") hole.
@@ -2483,6 +2686,47 @@ Item modifier ids are StatsManager STAT_* ids, so the enum extends far beyond 0-
 - **Cite:** `reference/decompiled/shs3_android/scripts/ItemGenerator.as:583-637; StatsManager.as:226-260; XMLItem.as:293-297; own Counter over the 412 <modifier> blocks in reference/extracted/itemdata.xml`
 - **Quote:** ItemGenerator.as:606  case FIREATK: attrib = StatsManager.STAT_FIREATK; ... case PIERCINGDMG: attrib = StatsManager.STAT_PIERCINGDMG;  then :638  newItem.addModifier(attrib,modvalue);   |   StatsManager.as:226-260  STAT_FIREATK=28 STAT_WINDATK=29 STAT_WATERATK=30 STAT_EARTHATK=31 STAT_FIREDEF=200 STAT_WINDDEF=201 STAT_WATERDEF=202 STAT_EARTHDEF=203 STAT_CRITICALDMG=204 STAT_PIERCINGDMG=205   |   XMLItem.as:296  trace("ErrorValue: " + this.modifierXML[q].id);   |   itemdata.xml distinct modifier ids: 0 1 2 3 5 6 7 8 9 12 13 15 | 25 38 78 79 82 84 90 96 97 98 99 | 101 102 103 104 105 106 117 122
 - **Lane impact:** L3 — the port must model modifier ids as the STAT id space, not as a 0-16 enum with a 'Set' bucket. Elemental DEF / CRIT DMG affixes (visible in reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0031.jpg) would otherwise be silently dropped. Their display names are in the table: resnames 851 Fire DEF, 852 Wind DEF, 853 Water DEF, 854 Earth DEF, 855 Critical Damage, 856 Piercing Damage; 488 Fire ATK, 489 Wind ATK. Ids 25/38/78/79/82/84/90/96-99/40000 (21 blocks) still need a semantic — they render nothing in the tooltip path.
+
+### `items-equipment/modifier-ids-outside-the-switch` — PARTIAL [A2]
+
+21 of the 412 <modifier> blocks carry ids that no branch of XMLItem's tooltip switch handles — they hit trace("ErrorValue") and render nothing — and at least one un-named id (83) is load-bearing in gameplay code.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/XMLItem.as:288-296 (default branch) counted against reference/extracted/itemdata.xml; Item.as:1478 for id 83`
+- **Quote:** default: if(int(this.modifierXML[q].id) < 2000 && int(this.modifierXML[q].id) > 100) { tempString += LangManager.getString(123) + ": " + this.modifierXML[q].id; } else { trace("ErrorValue: " + this.modifierXML[q].id); }  —  my count of undecodable ids in itemdata.xml: 25x1, 38x6, 78x2, 79x2, 82x2, 84x2, 90x1, 96x1, 97x1, 98x1, 99x1, 40000x1 = 21 blocks.  Meanwhile Item.isBroken() reads 'this.uses >= itemXML.durability + this.getModifierBonus(83)'.
+- **Lane impact:** L3 — the modifier enum is 391/412 decoded, not 412/412. The residual 21 (ids 25, 38, the 78-99 cluster, 40000) plus the code-referenced 83 need their own pass; treat them as an open sub-blocker rather than closed.
+
+### `items-equipment/paperdoll-is-9-visible-13-internal` — HELD [A1]
+
+The shipped build's paperdoll renders exactly 9 equipment tiles; the AS3 Vector(13) is an internal array whose four extra entries (HAIR, HEAD, NECK, SCABBARD) have no tile, so the ledger's '9-slot paperdoll' is correct and 13 - 4 = 9 reconciles the two exactly.
+
+- **Cite:** `reference/frames/zFtCaTO0_1M/seg-13/frames/frame_0019.jpg — 1024x576, crop (110,120)-(480,560), 2.6x LANCZOS; re-checked on frame_0031.jpg same crop 2.4x`
+- **Quote:** Visibly in the crop, arranged around the character figure: row 1 HAT (straw hat, filled) and MASK (empty, ghost oni mask); row 2 ARMOR (grey robe, filled) and GLOVES (empty, ghost gauntlets); row 3 PANTS (green border, filled) and WEAPON (katana, filled); row 4 ACCESSORY (ring), SHOES (sandals, filled), ACCESSORY (ring). Nine tiles. On frame_0031.jpg the left ring is filled with a gold ring — same nine-tile grid, different fill state.
+- **Overturns:** "- **Ready:** 9-slot paperdoll; 4 rarity tiers; affix **prefix** pool (verbatim); ..."
+- **Lane impact:** L3 (ITEMS + PAPERDOLL) — do NOT rewrite the ledger bullet or GAUNTLET.md's '9-slot compositing contract' to 13. Port as 9 UI slots backed by a 13-entry internal array; HAIR/HEAD/NECK/SCABBARD are engine-owned appearance/state entries, not player-facing slots. The frame and the measurement disagreed and the frame wins.
+
+### `items-equipment/piercing-not-weapon-only` — HELD [A2]
+
+The PIERCINGDMG affix (mask index 16) is allowed by three of the eight slot masks — WEAPON, ARMOR and ACCESSORY — not by WEAPON alone.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/ItemGenerator.as:397-425`
+- **Quote:** if(itemType == WEAPON) pot = [1,1,1,1,1,1,0,1,1,1,1,0,0,0,0,1,1]; else if(itemType == ARMOR) pot = [1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1]; ... else if(itemType == ACCESSORY) pot = [1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1];
+- **Lane impact:** L3 — corrects the survey's frame-decomposition rationale. Do NOT gate PIERCING to weapons. The slot-identifying affix in frame_0024 is 'Drafty' (windatk_pre[0] = WINDATK, index 8), which is 0 on the ARMOR, PANTS and HAT masks.
+
+### `items-equipment/premium-rotation-is-third-party-ip` — HELD [A2]
+
+The premium rotation catalogue is largely third-party anime cosplay sets (Bleach, Naruto, Adventure Time), which the project's licensing invariant explicitly excludes from the Lut Games grant — so it is a hazard to reproduce, not an asset to mine.
+
+- **Cite:** `char-id 121 Mobile_PremiumData (4,504 B) extracted by me from reference/decrypted/shs3_android_payload_decoded.swf`
+- **Quote:** <rotation> comments in file order: 'Assassin outfit', 'Dark Assassin outfit', 'Santa outfit', 'Ichigo outfit', 'Zaraki outfit', 'Byakuya outfit', 'Hitsugaya outfit', 'Mayuri outfit', 'Komamura outfit', 'Finn outfit', 'Sasuke Taka outfit', 'Obito outfit', 'Madara outfit', 'Itachi Akatsuki outfit', 'Kakashi outfit'
+- **Lane impact:** L11 (META + REBIRTH) + L3 — keep §6's IAP bullet narrowed as the surveyor suggests, but add the opposite caveat to their recommendation: the <default> and <special> blocks and the 304 <heavenlyprice> rows are fair game under the owner permission; the named rotation sets are not, and must be excluded from any port or replaced with original outfits.
+
+### `items-equipment/string-table-build-drift` — PARTIAL [A2]
+
+The shs3_android ActionScript and the char-id-118 string table come from DIFFERENT builds: ids below ~200 align perfectly while ids above ~360 resolve to unrelated strings, so any 'resolved against the table' step above ~200 is unsafe unless the build is named.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/Item.as:712-745 (condition string ids) resolved against char-id 118 of reference/decrypted/shs3_android_payload_decoded.swf; identical ids confirmed in reference/decompiled/shs3_android_payload/scripts/Item.as:720-744`
+- **Quote:** Item.getDesc() picks condition text from string ids 639, 392, 387, 388, 389, 390, 391. In the extracted table those are: 639 'Mine Titanium Deposit' · 392 'You are not supposed to be here!' · 387 'Pick flower' · 388 'Game Paused' · 389 'has joined the chat.' · 390 'has left the chat.' · 391 'Intruder!' — nonsense as condition labels. Yet ids under 200 align exactly: 108 'Dmg', 109 'Def', 110 'HP', 111 'Max HP', 116 'Attack', 117 'Defense', 123 'Set', 124 'Level Required', 125 'Stance Restriction', 199 'Eq'.
+- **Lane impact:** L1b + L3 + L8 — every future string-id resolution must state which build's table it used. The 0-16 modifier mapping survives (all its string ids are under 200 and were independently corroborated by the frame's literal '(EQ:' label = id 199), but nothing above ~200 should be trusted without a same-build table.
 
 ### `items-equipment/three-type-spaces` — HELD [A2]
 

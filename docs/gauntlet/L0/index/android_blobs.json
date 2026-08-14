@@ -1,0 +1,514 @@
+{
+ "100_MCSCharacter_DeerAnimationData.bin": {
+  "bytes": 73902,
+  "file": "reference/extracted/android/100_MCSCharacter_DeerAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 8,
+   "animdata": 1,
+   "f": 156,
+   "n": 1872
+  }
+ },
+ "101_MCSCharacter_DualStanceAnimationData.bin": {
+  "bytes": 95009,
+  "file": "reference/extracted/android/101_MCSCharacter_DualStanceAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 21,
+   "animdata": 1,
+   "f": 120,
+   "n": 2396
+  }
+ },
+ "102_MCSCharacter_GuardianAnimationData.bin": {
+  "bytes": 117596,
+  "file": "reference/extracted/android/102_MCSCharacter_GuardianAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 16,
+   "animdata": 1,
+   "f": 223,
+   "n": 2980
+  }
+ },
+ "103_MCSCharacter_WolfAnimationData.bin": {
+  "bytes": 266131,
+  "file": "reference/extracted/android/103_MCSCharacter_WolfAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 16,
+   "animdata": 1,
+   "f": 277,
+   "n": 6864
+  }
+ },
+ "104_MCSCharacter_HumanSpearAnimationData.bin": {
+  "bytes": 132270,
+  "file": "reference/extracted/android/104_MCSCharacter_HumanSpearAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 23,
+   "animdata": 1,
+   "f": 230,
+   "n": 3373
+  }
+ },
+ "105_MCSCharacter_GoblinAnimationData.bin": {
+  "bytes": 105827,
+  "file": "reference/extracted/android/105_MCSCharacter_GoblinAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 16,
+   "animdata": 1,
+   "f": 206,
+   "n": 2686
+  }
+ },
+ "106_MCSCharacter_HeavyStanceAnimationData.bin": {
+  "bytes": 76342,
+  "file": "reference/extracted/android/106_MCSCharacter_HeavyStanceAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 21,
+   "animdata": 1,
+   "f": 98,
+   "n": 1844
+  }
+ },
+ "107_MCSCharacter_BoarAnimationData.bin": {
+  "bytes": 72310,
+  "file": "reference/extracted/android/107_MCSCharacter_BoarAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 8,
+   "animdata": 1,
+   "f": 129,
+   "n": 1856
+  }
+ },
+ "108_MCSCharacter_LightStanceAnimationData.bin": {
+  "bytes": 76847,
+  "file": "reference/extracted/android/108_MCSCharacter_LightStanceAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 21,
+   "animdata": 1,
+   "f": 104,
+   "n": 1957
+  }
+ },
+ "109_WarHexUI_SurvivalModeData.bin": {
+  "bytes": 11553,
+  "file": "reference/extracted/android/109_WarHexUI_SurvivalModeData.bin",
+  "kind": "xml",
+  "root": "survivalmodedata",
+  "tags": {
+   "enemy": 87,
+   "id": 87,
+   "qty": 87,
+   "survivalmodedata": 1,
+   "wave": 39,
+   "x": 87
+  }
+ },
+ "110_Mobile_MapBitmapData.bin": {
+  "bytes": 272,
+  "file": "reference/extracted/android/110_Mobile_MapBitmapData.bin",
+  "kind": "image/gif"
+ },
+ "111_Mobile_ItemData.bin": {
+  "bytes": 184044,
+  "file": "reference/extracted/android/111_Mobile_ItemData.bin",
+  "kind": "xml",
+  "root": "itemdata",
+  "tags": {
+   "baseprice": 550,
+   "defense": 371,
+   "desc": 178,
+   "heavenlyprice": 304,
+   "id": 1394,
+   "item": 982,
+   "modifier": 412,
+   "name": 804,
+   "type": 829,
+   "unique": 369,
+   "value": 319,
+   "weight": 745
+  }
+ },
+ "112_Mobile_NodeData.bin": {
+  "bytes": 53502,
+  "file": "reference/extracted/android/112_Mobile_NodeData.bin",
+  "kind": "xml",
+  "root": "nodedata",
+  "tags": {
+   "bg": 96,
+   "enemy": 48,
+   "id": 535,
+   "lvl": 46,
+   "name": 149,
+   "node": 44,
+   "obj": 343,
+   "property": 339,
+   "qty": 49,
+   "room": 98,
+   "width": 94,
+   "x": 372
+  }
+ },
+ "113_Mobile_MusicResource.bin": {
+  "bytes": 1340647,
+  "file": "reference/extracted/android/113_Mobile_MusicResource.bin",
+  "kind": "nested-swf (ENCRYPTED \u2014 not opened)",
+  "lead": "same obfuscation the top-level payload needed; decrypt path unproven here"
+ },
+ "114_Mobile_AchievementData.bin": {
+  "bytes": 9080,
+  "file": "reference/extracted/android/114_Mobile_AchievementData.bin",
+  "kind": "xml",
+  "root": "achievementdata",
+  "tags": {
+   "achievement": 61,
+   "achievementdata": 1,
+   "comp": 1,
+   "condition": 1,
+   "desc": 61,
+   "has": 1,
+   "id": 62,
+   "img": 61,
+   "name": 61,
+   "qty": 1,
+   "stat": 60,
+   "val": 61
+  }
+ },
+ "115_Mobile_SHS3Resource.bin": {
+  "bytes": 654169,
+  "file": "reference/extracted/android/115_Mobile_SHS3Resource.bin",
+  "kind": "nested-swf (ENCRYPTED \u2014 not opened)",
+  "lead": "same obfuscation the top-level payload needed; decrypt path unproven here"
+ },
+ "116_Mobile_QuestData.bin": {
+  "bytes": 796384,
+  "file": "reference/extracted/android/116_Mobile_QuestData.bin",
+  "kind": "xml",
+  "root": "questdata",
+  "tags": {
+   "action": 614,
+   "choice": 471,
+   "data": 399,
+   "dialogue": 2771,
+   "goto": 715,
+   "id": 4452,
+   "img": 1918,
+   "obj": 407,
+   "property": 564,
+   "text": 3307,
+   "time": 403,
+   "x": 636
+  }
+ },
+ "117_Mobile_SkillData.bin": {
+  "bytes": 39045,
+  "file": "reference/extracted/android/117_Mobile_SkillData.bin",
+  "kind": "xml",
+  "root": "skilldata",
+  "tags": {
+   "category": 75,
+   "chi": 182,
+   "cooldown": 182,
+   "desc": 248,
+   "displayname": 73,
+   "id": 127,
+   "level": 182,
+   "order": 68,
+   "req": 52,
+   "required": 182,
+   "skill": 75,
+   "value": 182
+  }
+ },
+ "118_Mobile_Lang_EN.bin": {
+  "bytes": 500024,
+  "file": "reference/extracted/android/118_Mobile_Lang_EN.bin",
+  "kind": "xml",
+  "root": "xliff",
+  "tags": {
+   "body": 1,
+   "file": 1,
+   "header": 1,
+   "source": 2555,
+   "trans-unit": 2555,
+   "xliff": 1
+  }
+ },
+ "119_Mobile_MapData.bin": {
+  "bytes": 65,
+  "file": "reference/extracted/android/119_Mobile_MapData.bin",
+  "kind": "xml",
+  "root": "mapdata",
+  "tags": {
+   "mapdata": 1
+  }
+ },
+ "120_Mobile_BGResource.bin": {
+  "bytes": 4204635,
+  "file": "reference/extracted/android/120_Mobile_BGResource.bin",
+  "kind": "nested-swf (ENCRYPTED \u2014 not opened)",
+  "lead": "same obfuscation the top-level payload needed; decrypt path unproven here"
+ },
+ "121_Mobile_PremiumData.bin": {
+  "bytes": 4504,
+  "file": "reference/extracted/android/121_Mobile_PremiumData.bin",
+  "kind": "xml",
+  "root": "premiumdata",
+  "tags": {
+   "default": 1,
+   "item": 176,
+   "premiumdata": 1,
+   "rotation": 1,
+   "set": 23,
+   "special": 1
+  }
+ },
+ "122_Mobile_SoundResource.bin": {
+  "bytes": 23928,
+  "file": "reference/extracted/android/122_Mobile_SoundResource.bin",
+  "kind": "nested-swf (ENCRYPTED \u2014 not opened)",
+  "lead": "same obfuscation the top-level payload needed; decrypt path unproven here"
+ },
+ "123_Mobile_BGData.bin": {
+  "bytes": 12068,
+  "file": "reference/extracted/android/123_Mobile_BGData.bin",
+  "kind": "xml",
+  "root": "bgdata",
+  "tags": {
+   "bg": 49,
+   "contentwidth": 17,
+   "fcount": 49,
+   "ffcount": 49,
+   "ffscroll": 14,
+   "fgcount": 49,
+   "fscroll": 16,
+   "gcount": 49,
+   "id": 49,
+   "name": 49,
+   "ppcount": 49,
+   "wrap": 17
+  }
+ },
+ "124_Mobile_ImageResource.bin": {
+  "bytes": 1734935,
+  "file": "reference/extracted/android/124_Mobile_ImageResource.bin",
+  "kind": "nested-swf (ENCRYPTED \u2014 not opened)",
+  "lead": "same obfuscation the top-level payload needed; decrypt path unproven here"
+ },
+ "125_Mobile_NpcData.bin": {
+  "bytes": 228455,
+  "file": "reference/extracted/android/125_Mobile_NpcData.bin",
+  "kind": "xml",
+  "root": "npcdata",
+  "tags": {
+   "ai": 425,
+   "armor": 479,
+   "hair": 462,
+   "id": 1273,
+   "lvl": 1049,
+   "mcs": 495,
+   "name": 490,
+   "npc": 495,
+   "pants": 489,
+   "shoes": 472,
+   "skill": 647,
+   "weapon": 470
+  }
+ },
+ "84_QuestEngine_TrapRoomData.bin": {
+  "bytes": 39193,
+  "file": "reference/extracted/android/84_QuestEngine_TrapRoomData.bin",
+  "kind": "xml",
+  "root": "obj",
+  "tags": {
+   "default": 1,
+   "easy": 1,
+   "id": 314,
+   "medium": 1,
+   "name": 314,
+   "obj": 314,
+   "property": 314,
+   "room": 70,
+   "traproomdata": 1,
+   "width": 70,
+   "x": 314,
+   "y": 108
+  }
+ },
+ "85_NameGenerator_MaleNames.bin": {
+  "bytes": 3618,
+  "file": "reference/extracted/android/85_NameGenerator_MaleNames.bin",
+  "kind": "text",
+  "lines": 398
+ },
+ "86_NameGenerator_NobleFamilyNames.bin": {
+  "bytes": 279,
+  "file": "reference/extracted/android/86_NameGenerator_NobleFamilyNames.bin",
+  "kind": "text",
+  "lines": 33
+ },
+ "87_NameGenerator_SamuraiFamilyNames.bin": {
+  "bytes": 289,
+  "file": "reference/extracted/android/87_NameGenerator_SamuraiFamilyNames.bin",
+  "kind": "text",
+  "lines": 36
+ },
+ "88_NameGenerator_FemaleNames.bin": {
+  "bytes": 2094,
+  "file": "reference/extracted/android/88_NameGenerator_FemaleNames.bin",
+  "kind": "text",
+  "lines": 291
+ },
+ "89_NameGenerator_PlaceNames.bin": {
+  "bytes": 5698,
+  "file": "reference/extracted/android/89_NameGenerator_PlaceNames.bin",
+  "kind": "text",
+  "lines": 677
+ },
+ "90_InteractUI_UIData.bin": {
+  "bytes": 20947,
+  "file": "reference/extracted/android/90_InteractUI_UIData.bin",
+  "kind": "xml",
+  "root": "uidata",
+  "tags": {
+   "action": 139,
+   "condition": 28,
+   "has": 28,
+   "icon": 139,
+   "id": 167,
+   "label": 139,
+   "menu": 47,
+   "option": 139,
+   "param": 67,
+   "qty": 28,
+   "title": 19,
+   "ui": 19
+  }
+ },
+ "91_MCSCharacter_OgreAnimationData.bin": {
+  "bytes": 184120,
+  "file": "reference/extracted/android/91_MCSCharacter_OgreAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 18,
+   "animdata": 1,
+   "f": 333,
+   "n": 4567
+  }
+ },
+ "92_MCSCharacter_BearAnimationData.bin": {
+  "bytes": 41623,
+  "file": "reference/extracted/android/92_MCSCharacter_BearAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 7,
+   "animdata": 1,
+   "f": 92,
+   "n": 1048
+  }
+ },
+ "93_MCSCharacter_SkillsAnimationData.bin": {
+  "bytes": 338096,
+  "file": "reference/extracted/android/93_MCSCharacter_SkillsAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 51,
+   "animdata": 1,
+   "f": 547,
+   "n": 8351
+  }
+ },
+ "94_MCSCharacter_Human2AnimationData.bin": {
+  "bytes": 135328,
+  "file": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 25,
+   "animdata": 1,
+   "f": 226,
+   "n": 3467
+  }
+ },
+ "95_MCSCharacter_ReversedStanceAnimationData.bin": {
+  "bytes": 35903,
+  "file": "reference/extracted/android/95_MCSCharacter_ReversedStanceAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 13,
+   "animdata": 1,
+   "f": 51,
+   "n": 893
+  }
+ },
+ "96_MCSCharacter_HorseAnimationData.bin": {
+  "bytes": 99963,
+  "file": "reference/extracted/android/96_MCSCharacter_HorseAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 8,
+   "animdata": 1,
+   "f": 163,
+   "n": 2527
+  }
+ },
+ "97_MCSCharacter_BalancedStanceAnimationData.bin": {
+  "bytes": 82360,
+  "file": "reference/extracted/android/97_MCSCharacter_BalancedStanceAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 21,
+   "animdata": 1,
+   "f": 113,
+   "n": 2094
+  }
+ },
+ "98_MCSCharacter_UndeadAnimationData.bin": {
+  "bytes": 241107,
+  "file": "reference/extracted/android/98_MCSCharacter_UndeadAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 20,
+   "animdata": 1,
+   "f": 706,
+   "n": 5987
+  }
+ },
+ "99_MCSCharacter_HumanAnimationData.bin": {
+  "bytes": 977277,
+  "file": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin",
+  "kind": "xml",
+  "root": "animdata",
+  "tags": {
+   "anim": 158,
+   "animdata": 1,
+   "f": 1638,
+   "n": 24502
+  }
+ }
+}

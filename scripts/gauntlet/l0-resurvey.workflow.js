@@ -77,10 +77,39 @@ STAGE-0 FINDING S0-2: the game font is CLOSED. reference/extracted/ui_strings.tx
   contains face="Edo SZ" (and :182 face="Calibri"). REBUILD_READINESS.md §2 lists
   "font (unidentified)" as an open art-anim blocker. It is no longer open.
 
-KNOWN BLOCKER (GAUNTLET.md §2.1): item/skill/npc <name>, <desc>, <displayname> and
-cutscene <param> are NUMERIC IDS indexing a string table NOT YET LOCATED.
-ui_strings.txt is NOT it. bindata/ is now EXHAUSTED as a candidate. So numbers are
-portable today; NAMES ARE NOT. Never claim a name is held unless you found the table.
+STAGE-0b FINDING S0-3 — ⛔ THE §2.1 STRING-TABLE BLOCKER IS DEAD. DO NOT REPEAT IT.
+GAUNTLET.md §2.1 says item/skill/npc names are unresolvable numeric IDs. THAT IS NOW
+FALSE and any claim asserting it is auto-REFUTED. The table was found and verified:
+  reference/decrypted/shs3_android_payload_decoded.swf holds 42 CLASS-NAMED
+  DefineBinaryData blobs (the web payload's 27 are anonymous). Exported to
+  reference/extracted/android/. 118_Mobile_Lang_EN.bin is a UTF-16LE XLIFF string
+  table, 2,533 resolvable entries.
+  MEASURED resolution: itemdata 804 rows / 0 unresolved · skilldata 73 / 0 ·
+  npcdata 484 / 6 (all one missing id, 5017).
+  Already resolved FOR YOU, do not re-derive: ${IDX}/strings.json (resname -> text)
+  and ${IDX}/resolved_names.json (item/skill/npc id -> name + desc).
+  Worked example: itemdata.xml:28 item 2100 <name>4000</name> <desc>4172</desc>
+  -> "Small Soldier Pill" / "Replenish your AP without waiting!".
+  ⚠ CAVEAT to carry: this is the ANDROID build, clientVersion 0.682
+  (shs3_android/scripts/StatsManager.as:30), vs the web build's v0.717. Data-XML row
+  counts match exactly; UI copy and combat tuning parity is NOT established. Label
+  which build any ported string came from.
+
+STAGE-0b FINDING S0-4 — more Android blobs, each hitting a named ledger blocker:
+  112_Mobile_NodeData (535 ids, 372 <x>, 343 <obj>) -> world-exploration's "ZERO
+    world numbers" / "world bounds + geography"
+  114_Mobile_AchievementData (61 achievements) -> meta-social blocker ③
+  90_InteractUI_UIData (167 ids, 139 option/label/icon) -> ui-hud blocker ⑤
+  123_Mobile_BGData (49 backgrounds) · 84_QuestEngine_TrapRoomData (314 room objects)
+  99_MCSCharacter_HumanAnimationData alone = 158 <anim>; summed over the 18
+    MCSCharacter_* blobs ~450 animations, vs the board's assumed "~150". L6 is ~3x.
+  ${IDX}/android_blobs.json has the full inventory.
+
+STAGE-0b FINDING S0-5 — audio is HELD but ENCRYPTED, and is a LEAD not an artifact.
+  113_Mobile_MusicResource (1.34 MB), 122_Mobile_SoundResource, 115_Mobile_SHS3Resource,
+  120_Mobile_BGResource, 124_Mobile_ImageResource all begin "CWS" = nested compressed
+  SWF; ffdec cannot open them (same obfuscation the top-level payload needed).
+  You may NOT claim audio is recovered. You MAY claim it is held-but-encrypted.
 `
 
 const SYSTEMS = [
@@ -107,6 +136,8 @@ const SOURCES = [
   { key: 'actionscript', brief: 'reference/decompiled/**/*.as — 2,768 classes, 8 bundles; shs3_payload has 1,079 files. The string table may be here.' },
   { key: 'frames', brief: 'reference/frames/ — 7,381 stills. A1 territory. Crop+upscale before grading anything.' },
   { key: 'uistrings-payload', brief: 'reference/extracted/ui_strings.txt (471 fields) + payload.xml tag histogram (329 MB, indexed)' },
+  { key: 'android-blobs', brief: 'reference/extracted/android/ — the 42 CLASS-NAMED Android blobs (S0-3/S0-4). NOBODY has surveyed these. Priorities: 112_Mobile_NodeData (world geography), 114_Mobile_AchievementData, 90_InteractUI_UIData, 123_Mobile_BGData, 84_QuestEngine_TrapRoomData, 109_WarHexUI_SurvivalModeData, and the 18 MCSCharacter_* animation blobs (~450 anims). Report what each HOLDS against the 12 systems.' },
+  { key: 'string-table', brief: 'reference/extracted/android/118_Mobile_Lang_EN.bin via ' + IDX + '/strings.json (2,533 entries) + resolved_names.json. The table is ALREADY parsed — do not re-parse. Your job: mine it for what the ledger calls missing. It contains skill descriptions with real numbers, condition tiers, UI copy, HUD labels, achievement text, tutorial tips. Read the actual strings and report what they reveal about mechanics.' },
 ]
 
 const CLAIM_SCHEMA = {
@@ -261,6 +292,8 @@ log(`L0 armed: ${SYSTEMS.length} systems x (1 surveyor + 3-4 blind critics), the
 
 const seen = new Set()
 const confirmed = []
+const unjudged = []
+const refuted = []
 const allClaims = []
 
 function keyOf(c) {
@@ -269,8 +302,9 @@ function keyOf(c) {
 
 function harvest(survey, critiques) {
   if (!survey || !survey.claims) return
+  const live = critiques.filter(Boolean)
   const kills = new Map()
-  for (const cr of critiques.filter(Boolean)) {
+  for (const cr of live) {
     for (const v of cr.verdicts || []) {
       if (!v.own_cite || !v.own_cite.trim()) continue // VOID under §0
       if (!v.refuted) continue
@@ -280,11 +314,22 @@ function harvest(survey, critiques) {
       allClaims.push({ ...nf, unit: survey.unit, origin: 'critic' })
     }
   }
-  const threshold = critiques.filter(Boolean).length >= 3 ? 2 : 1
+
+  // A claim that NO critic judged is UNJUDGED, never confirmed. The first run of
+  // this lane died on a usage limit with ~33 of 41 critics dead, and the old
+  // `threshold = live.length >= 3 ? 2 : 1` silently promoted every claim of every
+  // fully-uncritiqued system into `confirmed` — 225 "confirmed" claims judged by
+  // nobody. Under §0 an unjudged claim is a lead, not a finding. Fail closed.
   for (const c of survey.claims) {
+    const row = { ...c, unit: survey.unit, new_score: survey.new_score, critics: live.length }
     allClaims.push({ ...c, unit: survey.unit, origin: 'surveyor' })
-    if ((kills.get(c.id) || 0) >= threshold) continue
-    confirmed.push({ ...c, unit: survey.unit, new_score: survey.new_score })
+    if (live.length === 0) {
+      unjudged.push(row)
+    } else if ((kills.get(c.id) || 0) >= (live.length >= 3 ? 2 : 1)) {
+      refuted.push(row)
+    } else {
+      confirmed.push(row)
+    }
   }
 }
 
@@ -368,6 +413,7 @@ phase('Dry-loop')
 
 let dry = 0
 let round = 0
+let deadRounds = 0
 const HUNTS = [
   'the §6 "structurally UNRECOVERABLE" list — attack every one of its six entries; each must be DELETED with a cite or KEPT with a pasted negative search across payload + bindata + decompiled + frames',
   'the string table (§2.1) — item/skill/npc names are numeric IDs. bindata is exhausted. Hunt reference/decompiled/**/*.as and payload.xml. Report ABSENT with pasted negative searches if truly absent.',
@@ -398,8 +444,9 @@ Write to ${OUT}/critics/dryloop-r${round}-t${i + 1}.md before returning.`,
     ),
   )
 
+  const live = hunted.filter(Boolean)
   const fresh = []
-  for (const h of hunted.filter(Boolean)) {
+  for (const h of live) {
     for (const c of h.claims || []) {
       if (seen.has(keyOf(c))) continue
       seen.add(keyOf(c))
@@ -407,8 +454,21 @@ Write to ${OUT}/critics/dryloop-r${round}-t${i + 1}.md before returning.`,
     }
   }
   allClaims.push(...fresh)
-  confirmed.push(...fresh)
-  log(`Dry-loop round ${round}: ${fresh.length} new (dry streak ${fresh.length === 0 ? dry + 1 : 0}).`)
+  // Dry-loop findings have had no critic by construction — they are leads, not
+  // findings, and must not enter `confirmed` unjudged (same fail-open bug as
+  // harvest()). The gate forces them through judging before the rewrite.
+  unjudged.push(...fresh)
+
+  // A round where every hunter DIED is not a dry round. The first run reported
+  // "dry_rounds: 2" when all six hunters had been killed by a usage limit —
+  // convergence declared because the agents stopped existing, not because they
+  // stopped finding. Only a round that actually ran can count toward dryness.
+  if (live.length === 0) {
+    log(`Dry-loop round ${round}: ALL HUNTERS DIED — not counted as dry. Aborting loop.`)
+    deadRounds += 1
+    break
+  }
+  log(`Dry-loop round ${round}: ${live.length}/${HUNTS.length} hunters returned, ${fresh.length} new.`)
   dry = fresh.length === 0 ? dry + 1 : 0
 }
 
@@ -434,14 +494,29 @@ ${JSON.stringify(confirmed.map((c) => ({ id: c.id, unit: c.unit, verdict: c.verd
   { label: 'completeness', phase: 'Completeness', schema: CRITIC_SCHEMA },
 )
 
+// Convergence is only real if a round actually ran and found nothing twice.
+const converged = dry >= 2 && deadRounds === 0
+
 return {
   seen_count: seen.size,
   claims_total: allClaims.length,
   confirmed_count: confirmed.length,
-  dry_rounds: round,
-  overturns: confirmed.filter((c) => c.overturns_ledger).length,
+  unjudged_count: unjudged.length,
+  refuted_count: refuted.length,
+  rounds_run: round,
+  dead_rounds: deadRounds,
+  converged,
+  // Loud, unmissable: the gate must never read `confirmed` alone.
+  INTEGRITY: converged && unjudged.length === 0
+    ? 'CLEAN — every claim judged by at least one artifact-citing critic'
+    : `INCOMPLETE — ${unjudged.length} claims UNJUDGED, converged=${converged}. ` +
+      'Unjudged claims are LEADS, not findings (§0). Do NOT write them into ' +
+      'REBUILD_READINESS.md until critics have run.',
+  overturns_confirmed: confirmed.filter((c) => c.overturns_ledger).length,
   systems: sweepA.filter(Boolean).map((r) => ({ unit: r.survey.unit, new_score: r.survey.new_score })),
   sources: sweepB.filter(Boolean).map((r) => r.survey.unit),
   confirmed,
+  unjudged,
+  refuted,
   completeness,
 }
