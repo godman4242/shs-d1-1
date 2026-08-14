@@ -18,8 +18,23 @@
 
 **Run 1 (dead, usage limit 2026-08-13):** `wf_97ec93a2-3b5` — 20/68 agents done.
 Its 12 surveys are preserved in `systems/` and its 8 critic reviews in `critics/`.
-**Run 2 (current, 2026-08-14):** `wf_7e275b35-488` — relaunched fresh after Stage 0b
-found the string table (S0-3), which invalidated run 1's central premise.
+**Run 2 (2026-08-14/15):** `wf_7e275b35-488` — relaunched fresh after Stage 0b found
+the string table (S0-3), which invalidated run 1's central premise. **Also checkpointed
+on a usage limit.** Banked: **all 12 systems re-surveyed** with the string table in
+hand (`systems/*.md`, rewritten in place), **336 claims / 256 verdicts / 0 VOID /
+56 refuted / 175 ledger overturns**, extracted to `run2/`.
+
+**JUDGED vs LEADS — run 2 (this is the line that matters):**
+
+| Status | Systems | Claims |
+|---|---|---|
+| ✅ **JUDGED** — every claim seen by 3-4 blind artifact-citing critics | `items-equipment`, `rebirth-elements`, `combat-core`, `progression` | **79** |
+| ⚠️ **LEADS ONLY** — surveyed, no critic ran | `skills-meters`, `economy`, `enemies-ai`, `quests-story`, `world-exploration`, `art-anim-audio-feel`, `ui-hud`, `meta-social` | 153 |
+| ⚠️ **LEADS ONLY** — critic `new_findings`, uncritiqued by construction | (cross-system) | 104 |
+
+Only the **79 judged** claims may be written into `REBUILD_READINESS.md`. The other
+257 are leads. Sweep-B (10 source surveys incl. the never-surveyed `android-blobs`
+and `string-table`), the dry-loop and the completeness critic **never started**.
 
 Transcripts: `~/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/70279977-fb70-4a26-ba27-9b32a10d27dc/subagents/workflows/<runId>/`
 

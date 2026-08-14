@@ -588,3 +588,334 @@ lookup.
    per-video (52 px / 1816 for video B; 55 px / 1807 for video A).
 3. Run claim 18's Rosetta alignment across all 1,079 obfuscated web-payload classes — this is a
    whole-project unlock, not a ui-hud one.
+
+---
+---
+
+# PASS 2 — independent re-survey (2026-08-14)
+
+Second surveyor, run cold against the same ledger block. **Nothing above was edited.** Pass 1's
+claims 1–18 were independently re-derived and hold (see §R below). This pass records only what is
+**new or corrects Pass 1**, and it overturns two of Pass 1's own verdicts.
+
+Headline: **`docs/gauntlet/L0/index/strings.json` and Pass 1 use two DIFFERENT string-id
+mappings, and a video frame decides which one `LangManager.getString()` actually uses.** Every
+string id Pass 1 quoted above 211 is wrong. Details in claim P1.
+
+---
+
+## P1. `ui-hud/langmanager-uses-resname-not-id` — HELD (A1 adjudicating A2) — CORRECTS PASS 1
+
+`118_Mobile_Lang_EN.bin` gives every unit **two** keys:
+
+```
+reference/extracted/android/118_Mobile_Lang_EN.bin  (UTF-16LE XLIFF, 2,555 trans-units)
+<trans-unit id="0" resname="0">
+<trans-unit id="1" resname="1">
+```
+
+They agree up to id 211 and then diverge permanently — first divergence
+`id="212" resname="222"` (source `CHI`); **2,343 of 2,555 units have id ≠ resname**, because 649
+units carry non-numeric resnames (`IDS_Q0TITLE` … , first at id 1906). `strings.json` is keyed by
+**resname**; Pass 1 built its own map keyed by **id** (hence its "1,906 strings" — that is exactly
+the count of numeric-id units).
+
+The frame settles which key the game uses. `BattleUI.as:124` reads
+`this.autoslashofflabel.text = LangManager.getString(619);`
+
+| key 619 under | text |
+|---|---|
+| resname (`strings.json`) | **"Auto Slash Off"** |
+| id attribute (Pass 1's map) | "Special Event" |
+
+Crop `(40,0)-(560,200)` of `reference/frames/duel_dense/Nr4fQstqHDM_428.0.png`, upscaled 3× —
+the top-left plaque reads **AUTO SLASH OFF** (rendered all-caps; the table stores Title Case, so the
+TextField/typeface uppercases). **The frame wins: `LangManager` ids are resnames.**
+
+Consequences, all inside this document:
+- Pass 1 claim 19's *"Pause state string is id 388 'Game Paused'"* is wrong. Resname **388 =
+  "Condition: Poor"**; **"Game Paused" is resname 407.**
+- Pass 1 claim 10's *"id 1506 `Skill Slots+`, ids 1648/1649/1650"* → correct resnames are
+  **6014** (`Skill Slots+`) and **7009 / 7010 / 7011** (`4 / 5 / 6 skill slots`). The *content* of
+  that claim (base 3, ladder to 6) survives; only the ids were wrong.
+- Pass 1 claim 13's `getString(104)` = "FIGHT!" is below the divergence point and is safe
+  (resname 104 = `FIGHT!` too).
+
+Any lane that quoted a string id above 211 must re-derive it against `strings.json` resnames.
+
+## P2. `ui-hud/transition-durations-exact` — HELD (A2) — OVERTURNS PASS 1 CLAIM 21
+
+Pass 1: *"the durations are driven by `blackMovtSpeed` and per-call `counter` values I did not
+trace to constants this pass … Claiming either would be guessing. Unheld pending a follow-up."*
+They are constants, and they are in the same file.
+
+```
+reference/decompiled/shs3_android/scripts/ScreenTransition.as:143-146   (BLACKCLOSE setup)
+         this.blackup.y = -240;
+         this.blackdown.y = 480;
+         this.blackMovtSpeed = 0;
+         this.counter = 0;
+reference/decompiled/shs3_android/scripts/ScreenTransition.as:80-88     (per-frame)
+            this.blackup.y += this.blackMovtSpeed;
+            this.blackdown.y -= this.blackMovtSpeed;
+            this.blackMovtSpeed += 2;
+            if(this.blackup.y >= 0)
+            {
+               this.blackup.y = 0;
+               this.blackdown.y = 240;
+               if(this.counter >= 17)
+reference/decompiled/shs3_android/scripts/ScreenTransition.as:111       (WHITEIN)
+            this.white.alpha -= 1 / 24;
+```
+
+Arithmetic: speed is applied **before** it increments, so displacement after n frames is
+0+2+4+…+2(n−2) = (n−2)(n−1). Closing needs 240 px; **(17−2)(17−1) = 240 exactly** — hence the
+`counter >= 17` gate is not a magic number, it is the closing time. Same profile for BLACKOPEN
+(`:159-162`, 0 → −240).
+
+| transition | frames | ms @ 24 fps |
+|---|---:|---:|
+| black shutter close (accelerating, +2 px/frame²) | 17 | 708 |
+| black shutter open | 17 | 708 |
+| white fade-in (`alpha -= 1/24`) | 24 | 1000 |
+| WHITEIN action fires at `counter == 2` | 2 | 83 |
+
+Shutter halves park at ±240 and meet at y=0/240 — 240 = half of the 480-px stage: a third
+independent confirmation of the 800×480 base.
+
+## P3. `ui-hud/dialogbox-metrics-in-code` — HELD (A2) — OVERTURNS LEDGER BLOCKER ⑤ (dialogue half)
+
+Ledger blocker ⑤: *"pause/options/dialogue-box exact metrics."* Pass 1 filed this PARTIAL on the
+grounds that "the geometry lives in the symbol". For `DialogBox` it does **not** — the layout is
+re-assigned in ActionScript on every show:
+
+```
+reference/decompiled/shs3_android/scripts/DialogBox.as:46,49,53,59,63
+         this.button.x = 340;               // single-button layout
+            this.msgText.y = 187.5;         // when a button is shown
+            this.msgText.y = 220;           // when no button is shown
+            myFormat.align = "center";      // if msgText.numLines <= 2
+            myFormat.align = "left";        // otherwise
+reference/decompiled/shs3_android/scripts/DialogBox.as:136,147            // Yes/No layout
+            this.button.x = 270;
+            this.button2.x = 425;
+```
+
+So: dialog buttons sit at x=340 (one) or x=270 / x=425 (two) in 800-wide stage space, message
+baseline moves 187.5 ↔ 220 depending on whether a button is present, and the copy auto-centres at
+≤2 lines and left-aligns beyond that. Yes/No text defaults are resnames 1/0 = "Yes"/"No"; the
+"Get AP" second button is resname 227 with `button.x = 270 / button2.x = 425` (`:86,105`).
+
+## P4. `ui-hud/pause-is-click-anywhere` — HELD (A2) — closes the pause half of blocker ⑤
+
+```
+reference/decompiled/shs3_android/scripts/BattleUI.as:179
+         this.pausebutton.visible = !GameEngine.isDuelMode() && !GameEngine.isPvPRoomMode();
+reference/decompiled/shs3_android/scripts/BattleUI.as:324-328
+         if(this.pausebutton.visible && this.pausebutton.hitTestPoint(mousex,mousey))
+         {
+            GameEngine.togglePaused();
+            this.pauseScreen.visible = true;
+            setChildIndex(this.pauseScreen,numChildren - 1);
+reference/decompiled/shs3_android/scripts/BattleUI.as:267-272
+         if(GameEngine.isPaused)
+         {
+            GameEngine.setPaused(false);
+            this.pauseScreen.visible = false;
+            return true;
+```
+
+Behaviour spec: the pause button exists **only outside duel/PvP**; pressing it raises `pauseScreen`
+to the top of the display list; and **any** click anywhere resumes (the paused branch is the first
+test in `gotClicked`). There is no pause *menu* in battle — Options is an overworld screen.
+
+## P5. `ui-hud/options-screen-complete` — HELD (A2)
+
+`OptionsUI.as:34-43` is the whole screen, and the copy resolves verbatim (resnames):
+
+| widget | resname | text |
+|---|---:|---|
+| `musiccheck` | 6 | Music |
+| `soundcheck` | 7 | Sound |
+| `bloodcheck` | 8 | Blood |
+| `chatcheck` | 396 | Chat notification |
+| `recordcheck` | 492 | Record Duels |
+| `fullscreencheck` | 752 | Full Screen |
+| `backtomainmenubutton` (GreyButton) | 74 | Title Screen |
+| `closewindowbutton` (YellowButton) | 75 | Return To Game |
+| `titletext` | 10 | Options |
+
+Conditional hides: `bloodcheck.visible = false` when `StatsManager.hideBloodOption`;
+`fullscreencheck.visible = false` when `StatsManager.isMobile` (`:44-51`).
+
+## P6. `ui-hud/skill-cooldown-12-step-quantised` — HELD (A2) — extends blocker ②
+
+Blocker ② asks for the HUD's dynamic feel. The cooldown sweep is **quantised to 12 steps**, not
+smooth, and disabled is a 13th frame:
+
+```
+reference/decompiled/shs3_android/scripts/SkillSlotButton.as:220
+            newframe = int(this.cooldown / this.cooldownmax * 12) + 1;
+reference/decompiled/shs3_android/scripts/SkillSlotButton.as:146
+         this.shade.gotoAndStop(13);        // disableButton()
+```
+
+Same "no tween anywhere" character as Pass 1's snapping bars. Also on the slot face:
+Roman-numeral skill level (`:48-78`, "" for L0/1 then II…X), and for kunai/trap skills the level
+text is replaced by **live ammo** `StatsManager.getStat(2501)` (`:110`), with Windmill showing
+`floor(ammo/4)` (`:114`). Stance-gated skills (Shunpo/Thousand Stabs/Deadly Cleave) grey out when
+the stance is wrong (`:153-158`).
+
+## P7. `ui-hud/slot-geometry-frame-validated` — HELD (A1 + A2)
+
+Pass 1 established the slot *rule*; this pass measures it against the video and finds the **Android
+v0.682 source predicts the web v0.717 frame to ~1 px**, which is the strongest parity evidence in
+this lane.
+
+Frame `reference/frames/duel_dense/Nr4fQstqHDM_428.0.png`, crop `(1380,920)-(1880,1080)` upscaled
+3×: three slot boxes, the leftmost **empty and unnumbered**, middle labelled **2**, right labelled
+**3** holding a gold up-arrow. The empty box's bright border was measured numerically:
+columns 1449→1558 (centre **1503.5**), rows 952→1073 (centre **1012.5**).
+
+Converting with this video's own pillarbox (content x0=52, width 1816 ⇒ scale 2.270):
+
+| | measured (game px) | code says |
+|---|---:|---:|
+| slot i=2 centre x | 639.4 | **640** (`760 − 2×60`) |
+| slot centre y | 446.0 | **450** |
+| slot pitch | 137 frame px → 60.4 | **60** |
+
+`BattleUI.as:133-134` `skillSlotButton.x = 760 - i * 60; skillSlotButton.y = 450;`
+The unnumbered empty box matches `initEmpty()` clearing `keypressText` (`SkillSlotButton.as:128`).
+Click gating agrees too: `BattleUI.as:339` `if(mousey > 420 * StatsManager.stageScale + …)` — the
+slot strip is the bottom 60 px of the 480-tall stage.
+
+## P8. `ui-hud/result-cards-exact` — HELD (A2)
+
+The ledger banks "result cards" as Ready with no numbers. They are an 11-frame timeline:
+
+```
+reference/decompiled/shs3_android/scripts/WinUI.as:26
+         addFrameScript(0,this.frame1,6,this.frame7,10,this.frame11);
+```
+brush stroke wipes frames 1–6, `winwords` appears **frame 7 (250 ms)**, `stop()` at **frame 11
+(417 ms)**. `winwords.gotoAndStop(1)` = win, **`gotoAndStop(2)` = DRAW** (`:49-55`) — a result
+state the ledger never mentions. Buttons: `continuebutton` (Grey, resname 482 "Continue") +
+`savereplaybutton` (Yellow, 483 "Save Replay"), both hidden unless the duel was being recorded
+(`:32-37`); on save, `urltext` shows
+`"http://www.strawhatsamuraiduels.com/watch?name=" + StatsManager.charname` (`:90`).
+`LoseUI.as:35-36,45,53` mirrors it with `respawnbutton` (resname 480 "Respawn", or 483 when
+recording), a `gold` readout, `getgoldpromptdialog` and `payui` — i.e. the death card is also the
+revive-for-gold paywall.
+
+## P9. `ui-hud/interactui-menu-system` — HELD (A2) — UNDER-CLAIM, whole subsystem missing
+
+Neither the ledger's ui-hud block nor Pass 1 mentions the game's town/interaction UI at all. It is
+fully data-driven and on disk: `reference/extracted/android/90_InteractUI_UIData.bin`
+(20,947 bytes, root `<uidata>`) — **19 `<ui>` screens, 47 `<menu>` pages, 139 `<option>` rows,
+139 `<icon>` refs, 28 `<condition><has>` gates, 67 `<param>`, 19 `<title>`.**
+
+```
+reference/extracted/android/90_InteractUI_UIData.bin:5-9
+		<title>peddler</title>
+		<menu>
+		<option><label>83</label><icon>15</icon><action><id>peddlerbuy</id></action></option> <!-- buy buyicon-->
+		<option><label>84</label><icon>16</icon><action><id>peddlersell</id></action></option> <!-- sell sellicon-->
+		<option><label>85</label><icon>14</icon><action><id>close</id></action></option> <!-- leave leaveicon-->
+reference/extracted/android/90_InteractUI_UIData.bin:17
+		<option><label>269</label><icon>1</icon><condition><has><id>20040</id><qty>1</qty></has></condition><action><id>goto</id><param>1</param>…<errormsg>270</errormsg></action></option> <!-- "sell crops" shopicon "you don't have any crops for sale" -->
+```
+
+The 19 titles, verbatim, at lines 5/14/47/66/73/82/94/109/117/142/161/190/219/227/249/257/281/291/301:
+`peddler, market, vegpatch, stables, merchant, inn, rebirth, barber, bank, gambling den, getcoins,
+getap, leaveclan, blacksmith, recentevents, playerpanel, joincustomclanrecruit,
+joincustomclangeneral, towntoll`. Labels resolve through `strings.json` (83/84/85/232 = Buy / Sell
+/ Leave / Back). The dev's own inline comments name each icon slot. This is the interaction-UI
+contract — menu nesting (`goto param`), inventory gates, error copy — free.
+
+## P10. `ui-hud/typography-edo-sz` — HELD (A2)
+
+HUD/tooltip typography is specified in the **web** payload's own TextField defaults, so it needs no
+android caveat:
+
+```
+reference/extracted/ui_strings.txt:100
+…physical dmg: 1234 - 1235 &nbsp;(heavy)critical dmg: 1234-1235 *(heavy)piercing dmg: 20<font face="Edo SZ" size="14" color="#cccccc" letterSpacing="0.…
+reference/extracted/ui_strings.txt:314
+hp: 123 / 123 &nbsp;(hp regen 12 ) chi: 123 / 434 &nbsp;(chi regen 13)<font face="Edo SZ" size="14" color="#cccccc" letterSpacing="0.00" kerning…
+reference/extracted/ui_strings.txt:206
+aaa<font face="Edo SZ" size="16" color="#ffffff" letterSpacing="0.…
+```
+
+Body copy **Edo SZ 13/14 px #cccccc**, headings **16 px #ffffff**, `letterSpacing="0.00"`,
+`kerning="1"`; `Calibri` appears only on account/network plumbing text (`:182`, `:201`).
+`LangManager.initTextField` turns `embedFonts` **off** only for Chinese/Japanese (`:127-137`) —
+i.e. Edo SZ is embedded and authoritative for EN.
+
+## P11. `ui-hud/tier3-video-repass-obsolete` — HELD (A2) — OVERTURNS §5 TIER 3
+
+Ledger §5 Tier 3 line: *"Archer moveset at full fps; VS/FIGHT exact ms; damage-popup animation;
+dialogue-box metrics; overworld HUD pixel geometry."* Three of those five are ui-hud items and none
+of them needs a video re-pass any more:
+
+- **VS/FIGHT exact ms** → `DuelIntroBar.as:22` frame script (Pass 1 claim 13).
+- **damage-popup animation** → `TextProjectile.as:20-46` (`ttl = 12`, `velY = -5`,
+  `scaleX += 0.1` from ttl<10, `alpha -= 0.25` from ttl<4) + spawn at
+  `MCSPlayer.as:3805 createFloatingText(mcs.x, mcs.y - 100, …)`.
+- **dialogue-box metrics** → P3 above.
+
+Only "overworld HUD pixel geometry" still wants an extraction (assets.swf symbols), and that is a
+JPEXS run, not a video re-pass.
+
+## P12. `ui-hud/690-friend-bar-never-filmed` — PARTIAL (A1)
+
+The tall 800×690 layout Pass 1 found in code (claim 2) is **not exercised anywhere in the reference
+footage.** Content-box measurement over both longplays (threshold >25 on per-column max):
+
+| frame | content x | width | aspect |
+|---|---|---:|---:|
+| `duel_dense/Nr4fQstqHDM_427.0.png` … `_427.2`, `_431.5` | 52→1867 | 1816 | 1.682 |
+| `duel_frames/Nr4fQstqHDM_t425.0s.png` | 52→1867 | 1816 | 1.682 |
+| `zFt_combat/zFtCaTO0_1M_t0320s.png` | 55→1861 | 1807 | 1.673 |
+| `zFt_combat/zFtCaTO0_1M_t0325s.png` | 54→1861 | 1808 | 1.674 |
+
+All ≈5:3 ⇒ every captured session ran the 480 layout. So the 690/friend-bar layout is
+**code-held but frame-unverified**: nobody has ever seen it. Do not author it from the code alone
+without labelling it INFERRED-from-source.
+
+## P13. `ui-hud/hud-symbol-metrics` — STILL_UNHELD
+
+What P3/P5 close is *code-assigned* layout. The panel/bar/plaque geometry that lives inside
+`[Embed(source="/_assets/assets.swf", symbol="symbolNNNN")]` (BattleUI = symbol2952, OptionsUI =
+symbol1133, DialogBox = symbol83, SkillSlotButton = symbol2915, WinUI = symbol2894,
+BattleIntroBar = symbol2855, DuelIntroBar = symbol2861, ScreenTransition = symbol2758) is **not on
+disk** — only `scripts/` was exported. Also still unheld: the **icon manifest** (the 139
+`<icon>` ids in `90_InteractUI_UIData.bin` map to art nobody has extracted), and **the identity of
+the gold up-arrow skill** in slot 3 of `Nr4fQstqHDM_428.0.png` — it is an equipped-skill image
+(`ResourceManager.getSkillImage`), not the stance control, but which skill is unproven. Refusing to
+name it.
+
+## R. Replication of Pass 1 (no new cites, recorded for confidence)
+
+Re-derived independently and identical: 800/480/690 fit constants
+(`GameEngine.as:269-271`; web `§1t1540s0§.as:270-273`), the exact-fit escape
+`stageWidth == 800 && (stageHeight == 480 || stageHeight == 690)` (`§1t1540s0§.as:388`), SWF header
+rects 800×690 (web) / 800×480 (android) **both at 24.0 fps**, pillarbox 52 px / 1816 px in video B
+and ~55 px / 1807 px in video A, `hpbar/chibar/reloadbar .bar.scaleX = a/b` with **no tween**
+(`BattleUI.as:249,256,261`, web `§1t113s0§.as:316,323,333`), `showCombo` setting only
+`visible`+text vs `showHurtRed` doing `gotoAndPlay(1)` (`BattleUI.as:388-390` vs `:426-427`), the
+six floating-text colour channels, `getSkillSlotCount() = 3 + getStat(1008)`
+(`StatsManager.as:2293-2296`), and the stance-coloured portrait ring
+(`BattleUI.as:372-374 battlemodebust.stancecolor1.gotoAndStop(num)`).
+
+## Re-score (Pass 2)
+
+**ui-hud: 85 → 88.** Pass 1's 57→85 stands; +3 for blocker ⑤ going from "half closed" to
+"closed except symbol geometry" (dialogue metrics and pause/options behaviour are in code), for the
+transition durations Pass 1 left unheld, and for the InteractUI menu contract. Held below 90 by
+P13: no exported symbol geometry, no icon manifest, HUD chrome art still inside the encrypted
+`124_Mobile_ImageResource`, and `(EQ:n)` still ungrounded (Pass 1 claim 20).
+
+**Cross-lane action item from P1:** every gauntlet lane that quoted a `Mobile_Lang_EN` string id
+**above 211** must re-derive it against `strings.json` resnames. The frame proved resname is the
+live key.

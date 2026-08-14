@@ -1,302 +1,287 @@
-# CRITIC — items-equipment · LENS 3 (PRECEDENCE / stale-claiming)
+# items-equipment — LENS 3 (PRECEDENCE) critic
 
-Blind review. I did not see the surveyor's reasoning. Every verdict below cites an
-artifact **I** opened. Where a measurement doc and a frame disagreed, I say so.
+Blind review. I did not see the surveyor's reasoning. Every verdict below cites an artifact
+**I** opened this run. Lens: stale-claiming — does a claim import a doc statement a later
+measurement/ruling/frame overturned, or cite a doc where a frame settles it directly?
 
-**Headline:** the survey is unusually well-grounded — its A2 quotes are verbatim and
-its arithmetic against `itemdata.xml` is exact (I re-derived 412 modifier blocks / 34
-distinct ids / 319 value rows, 745 weight rows 0–500, 369 `<unique>` rows split
-253×1 + 116×2, 304 `<heavenlyprice>` over exactly {0,1,2,3,5,8,12,25,100},
-slashusage {24,72,96}×106, stancerestriction {4,6}×53, uses {50,60,80,100}×115 —
-all match). **But three claims are wrong, two of them fatally**, and in each case the
-answer was in a file the surveyor already had open:
-
-1. **Blocker ③ (sell price) is answered wrong.** `Item.as:1582` `getSellAmt()` is the
-   real formula. The survey's `gvalue + level*100` is the *buy* value of generated
-   shop stock and cannot produce the 5c the video ledger measured.
-2. **The string table is cracked, not "partial".** A constant offset of **−3060**
-   resolves **730/804** item `<name>` ids and **174/178** `<desc>` ids against the
-   already-extracted table. `frame_0024`'s visible "IRON SWORD" *is* item 13113's
-   `<name>4050`.
-3. **The "reach cap in px" find is stale-claiming.** `src/config/reach.ts` has carried
-   that exact formula since commit `b1a49b6` (2026-07-26, SESSION13 A0.5).
+Frame work done first-hand: `reference/frames/s21_weapon/t708.0.png` (1920×1080, verified via
+PIL `im.size == (1920,1080)`), four crops regenerated at the surveyor's stated coordinates and
+opened: paperdoll `(170,240)-(870,1040)` ×2, inventory `(900,590)-(1640,960)` ×2, weight
+`(1400,540)-(1780,600)` ×4, tooltip `(1320,240)-(1620,320)` ×4. **All four crop rectangles are
+accurate** — they frame exactly what the surveyor said they frame.
 
 ---
 
-## Verdict table
+## Headline
 
-| # | claim | verdict | severity |
-|---|---|---|---|
-| 1 | paperdoll-13-slots | **stands** | — |
-| 2 | type-is-slot-index | **refuted** | material |
-| 3 | affix-suffix-pool | **stands** | — |
-| 4 | affix-count-rule | **stands** | — |
-| 5 | stat-vs-level-curve | **stands** | — |
-| 6 | pot-mask-frame-confirmed | **refuted** | minor |
-| 7 | condition-no-damage-multiplier | **stands (strengthened)** | — |
-| 8 | sell-price-formula | **refuted** | **fatal** |
-| 9 | art-manifest-rule | **stands** | — |
-| 10 | compositing-part-order | **stands** | — |
-| 11 | rarity-4-tiers-exact | **stands** | — |
-| 12 | name-template-frame-confirmed | **refuted** | minor |
-| 13 | weight-cap-is-not-flat-100 | **stands** | — |
-| 14 | soul-infusion-transfer-rule | **stands** | — |
-| 15 | string-table-partial | **refuted** | **fatal** |
-| 16 | modifier-id-semantics | **refuted** | material |
-| 17 | weapon-slash-budget-and-reach | **refuted** | material |
-| 18 | premium-catalog-held | **stands** | — |
-| 19 | no-items-config-still-true | **stands** | — |
+**18 of 20 claims survive.** The evidence work is unusually good: I spot-checked 11 line-number
+cites down to the exact line (including six obfuscated web-payload lines, `§1t17s0§.as`
+:683/:687/:691/:704/:708/:712 — all six land on the exact hex they were said to) and every
+verbatim quote reproduced. Row counts I re-derived independently all matched
+(`slashusage` 106 / three values 24·72·96; `stancerestriction` 53 / values 4·6; `<unique>1` 253,
+`<unique>2` 116; 982 `<item>`).
+
+**Two claims fail, and both fail the same way — the surveyor stopped reading one file too early.**
+
+1. `purple-border-is-unique-not-rarity` is **FATAL**. Four lines above the tip string it quotes,
+   the same file says *"Tip: A blue border indicates that an item is rare."*
+2. `ui-slot-mapping-unknown` is a **STILL_UNHELD that is not unheld** — `InventoryUI.as` answers it
+   outright, and the surveyor cited `InventoryUI.as` in a neighbouring claim.
+
+Plus one **material internal contradiction**: `paperdoll-is-13-slots-not-9` silently resolves the
+very ambiguity `ui-slot-mapping-unknown` declares unresolvable — and resolves it wrongly.
 
 ---
 
-## FATAL 1 — blocker ③ is fully closed, and the survey's answer is the wrong number
+## FATAL — claim 13 `purple-border-is-unique-not-rarity`
 
-`reference/decompiled/shs3_android/scripts/ShopUI.as:401` (sell mode):
+> Claim: *"The purple item border … is the UNIQUE flag, not a rarity tier."*
+> Lane impact: *"prevents mis-wiring the border colour to the 4-tier rarity ladder."*
+
+**Backwards. The border IS the 4-tier ladder.**
+
+`reference/decompiled/shs3_android/scripts/ShopItem.as:51-52`
 
 ```
-else { slot.setCost(slot.getItem().getSellAmt(), 0); }
+this.borderType = itemRef.getShopItemType();
+gotoAndStop(this.borderType + "_default");
 ```
 
-`reference/decompiled/shs3_android/scripts/Item.as:1582-1593`:
+`getShopItemType()` is the four-valued function the surveyor themselves quoted in claim 12
+(`Item.as:382-405` → `"unique"` / `"rare"` / `"special"` / `"normal"`). So the border art has four
+frames — `normal_default`, `special_default`, `rare_default`, `unique_default` — and purple is
+simply the **top tier's** border, not a separate flag.
+
+And the refutation was one screenful from the cite. The surveyor quoted `GameEngine.as:572`.
+`GameEngine.as:567`:
 
 ```
-public function getSellAmt() : int
-{
-   if(this.itemID < 3000)      { return 1; }
-   if(this.getWeight() >= 10)  { return (1 + this.getModifierCount()) * 10; }
-   return (1 + this.getModifierCount()) * 5;
-}
+str = "Tip: A blue border indicates that an item is rare.";
 ```
 
-Selling never touches `gvalue`, `value`, `getLevel()` or `sellPercentage`. It is a
-two-branch step function of **weight** and **affix count**.
+Two further errors ride along:
+- `getShopItemType()` returns `"unique"` on `itemxml.unique == 1` **OR** `isPickableQuestItem()`
+  **OR** the five trade-quest IDs **OR** `isPlayerNamed()` — so it is not "the `<unique>` flag"
+  even at the top tier.
+- `<unique>` is not boolean: I counted **253 `<unique>1`** and **116 `<unique>2`** rows in
+  `reference/extracted/itemdata.xml`. Every test in the code is `== 1`, so the 116 `2`-rows fall
+  through to the modifier-count path. The surveyor noticed this in claim 12 and then wired the
+  border to it anyway in claim 13.
 
-**Cross-validated against the video ledger** —
-`docs/research/video-study/segments/B-09-castle-town-toll-gate-and-shop.md:77`:
+**Cost if shipped:** a builder deletes the blue "rare" and green "special" borders the game
+actually ships and implements a monochrome frame plus a bolt-on unique flag.
 
-> "Iron Sabre detail (SELL screen … t=19:10) — LEVEL 5, CONDITION: GOOD, DMG 6-16
-> (EQ 8-21), **WEIGHT 5, sell price 5 coins**."
-
-weight 5 < 10, 0 affixes → `(1+0)*5` = **5**. Exact. The survey's
-`gvalue + getLevel()*100` gives ≥ 100 for that sword.
-
-It also explains `REBUILD_READINESS.md:168` §3 #9 — *"same sword 5c and 25c"* —
-`(1+0)*5 = 5`, `(1+4)*5 = 25`. **§3 #9 is itself half wrong:** it says price
-"scales with rarity/**level**". Level is not in the formula; weight is.
-
-The survey's stated open question ("whether the shipped web build applied the
-declared-but-unreferenced 0.5 sell multiplier") is a phantom — `sellPercentage` is
-dead code on *both* builds because the sell path never multiplies anything.
+The frame is consistent with the *correct* reading, not the claim's: my inventory crop shows 2 of
+7 icons with purple borders and 5 with the plain frame — no rare/special items happen to be in
+this bag, which is why the frame alone cannot distinguish the two hypotheses. **This is exactly the
+case §0 warns about: the frame is silent, so the code is the authority — and the code says four
+tiers.**
 
 ---
 
-## FATAL 2 — item names are HELD; the string-table blocker falls for L3
+## MATERIAL — claim 19 `ui-slot-mapping-unknown` is answered
 
-`XMLItem.as:62-64` — `this.displayname = LangManager.getString(xml.name);` — so
-`<name>` is a direct `getString` id.
-
-I re-extracted char-id 118 from `reference/decrypted/shs3_android_payload_decoded.swf`
-myself (2,555 `<trans-unit>`, ids 0–2554 contiguous — that part of the survey is
-correct) and applied a **constant offset of −3060** to the item-name block:
+STILL_UNHELD is a respected answer, but not when the answer is in a file the survey already
+opened. `reference/decompiled/shs3_android/scripts/InventoryUI.as:520-533`:
 
 ```
-item 13001  <name>4040 → 980 'Stick'
-item 13002  <name>4041 → 981 'Branch'
-item 13010  <name>4049 → 989 'Training Sword'
-item 13113  <name>4050 → 990 'Iron Sword'        ← see frame check below
-item  7001  <name>4025 → 965 'Straw Hat'
-item  7003  <name>4099 → 1039 'Bandana'
-item  2000  <name>4058 → 998 'Potion'
-item  5007  <name>4182 → 1122 'Leather Gloves'
-item 13014  <name>4193 → 1133 'Zanpakuto'
-item 13022  <name>4244 → 1184 'Pickaxe'   <desc>4245 → 1185 'Used for mining.'
-item 13024  <name>4381 → 1321 'Whisper Sword'
-item 13033  <name>4308 → 1248 'Warlord Scythe'
-item  8000  <name>4170 → 1110 'Face'      <desc>4171 → 1111 'Change your face'
-
-coverage: name 730/804 resolved · desc 174/178 resolved
+case 7:
+   tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY1];
+   if(tempItem.getItemID() == 0) { this.acc1Icon.visible = true; }
+   tempShopItem = this.equippedSlots[this.SLOT_RING1];
+   break;
+case 8:
+   tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY2];
+   if(tempItem.getItemID() == 0) { this.acc2Icon.visible = true; }
+   tempShopItem = this.equippedSlots[this.SLOT_RING2];
 ```
 
-The 74 that miss at −3060 are the sub-2555 ids, which resolve at **offset 0**
-(`item 6000 <name>34 → 'Hair'`). So the survey's *"every item name id (4000+) sits
-ABOVE that slice"* is false twice over: 74 sit inside it, and the other 730 are in the
-table at a fixed displacement.
+The switch runs `case 0` … `case 8` — **nine** paperdoll cases, matching the nine boxes in the
+frame — and the two ring boxes are `EQ_ACCESSORY1`/`EQ_ACCESSORY2`, named `SLOT_RING1`/`SLOT_RING2`
+in the game's own source. `EQ_NECK` never appears in the switch.
 
-**A1 confirmation (I cropped and looked).**
-`reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0024.jpg`, 1024×576, crop
-(0,420)-(640,500), 3× lanczos → visibly *"I AM LOOKING FOR **DRAFTY SHARP IRON SWORD
-OF PIERCING** ."* — and item 13113's `<name>4050` resolves to **'Iron Sword'**. Frame
-and table agree independently.
+Independent corroboration from the dummy-icon roster (`ls | grep DummyIcon`): the tree ships
+`AccessoryDummyIcon`, `ArmorDummyIcon`, `GlovesDummyIcon`, `HatDummyIcon`, `MaskDummyIcon`,
+`PantsDummyIcon`, `ShoesDummyIcon`, `WeaponDummyIcon` — eight classes for nine boxes, accessory
+used twice — and **no** `NeckDummyIcon`, `HairDummyIcon`, `HeadDummyIcon` or `ScabbardDummyIcon`.
 
-**Honest caveat I am putting in writing:** the Android table is a *different build
-revision* from the Android ActionScript. Provable — `Item.as:1020-1043` reads
-`getString(871…876)` for the elemental labels, and only at **−20** does the table give
-`'Fire DEF' / 'Wind DEF' / 'Water DEF' / 'Earth DEF' / 'Critical Damage' / 'Piercing
-Damage'` in that exact order. Raw ids 871–876 give *place names*
-('Construction Site', 'Riverside Town', …). Ids ≤ ~199 need no offset at all
-(`110='HP'`, `123='Set'`, `139='Weight'`, `199='Eq'`). **So the table is piecewise
-offset (0 / −20 / −3060) and every block must be anchored before use.** And
-`docs/research/video-study/SYNTHESIS.md:186` records a condition label
-**"WELL-MAINTAINED"** that the Android table does not contain — the web build's
-wording differs, and where it does, **the frame wins**. Item names are held *as the
-Android build worded them*; each one still deserves a frame check before shipping.
+Frame agrees: at ×2 both empty bottom boxes render the **identical ring band**, not an amulet.
 
 ---
 
-## FATAL 3 — the "reach cap in px" claim is stale-claiming (this is the LENS-3 hit)
+## MATERIAL — claim 11 `paperdoll-is-13-slots-not-9` loses four slots, not three
 
-Claim 17 says L5's blocker *"reach cap in px"* now "has an exact formula". It already
-did. `src/config/reach.ts`, committed `b1a49b6 2026-07-26 "SESSION13 A0.5+A2+A3"`:
+The 9-box count is right (I counted them in the crop: hat·mask / armor·gloves / pants·pickaxe /
+ring·shoes·ring) and the 13-entry model is right (`StatsManager.as:108`, `:262-286` — verified
+verbatim, `EQ_ARMOR 0` … `EQ_ACCESSORY2 12`), and `:1765` does pass 11 to the renderer.
+
+But the operative sentence — *"a builder coding '9 slots' … loses hair, head and scabbard"* —
+presupposes `EQ_NECK` owns a ring box. Per the section above it does not. The loss is **four**:
+`EQ_HAIR`, `EQ_HEAD`, `EQ_NECK`, `EQ_SCABBARD`. And this presupposition directly contradicts
+claim 19, which declares that same mapping unestablished. Both cannot stand.
+
+---
+
+## MATERIAL — claim 1 `sprite-compositing-contract-held`: two counting errors
+
+The symbol-name contract is **solid** and I confirmed the cross-build half myself: all 18 named
+default part classes exist in the web payload (`torso4000.as`, `stomach4000.as`, `uparm4000.as`,
+`lowarm4000.as`, `pelvic4000.as`, `crotch11000.as`, `thigh11000.as`, `calf11000.as`,
+`foot12000.as`, `hand5000.as`, `hair6000.as`, `hair6001.as`, `hat7000.as`, `head8000.as`,
+`mask9000.as`, `neck10000.as`, `weapon13000.as`, `prop13000.as` — every one present). `pants=5`
+is correct (`setPants` → crotch, l_thigh, r_thigh, l_calf, r_calf).
+
+Two numbers are wrong.
+
+**(a) 27 z-ordered parts → 23 for a human.** `MCSCharacter.as:120`:
 
 ```
- *   base = 120 + floor( (90 + 5 × danRank) × SPD / (20 + SPD) )
- ...
- * values are CONTRACT-SRC (read out of the payload) and are in **WORLD px**
+internal var partListLength:int = 22;
 ```
 
-That is byte-for-byte the same formula as `StatsManager.getBaseSlashLengthVal`.
-`REBUILD_READINESS.md` is dated 2026-07-20; `reach.ts` landed 2026-07-26. **The
-ledger's blocker list is stale on this line and the survey imported it.** Worse,
-`reach.ts` carries the *per-stance* layer (light ×1.4, balanced ×(1+0.02·m), heavy
-×(0.5+0.04·m) floored at 100) that `getBaseSlashLengthVal` does **not** have — so the
-Android function is a strict subset of what the repo already holds.
+and the constructor at `:141` is `for(var i:int = 0; i <= this.partListLength; i++)` → indices
+**0…22 = 23** MovieClips. The four highest declarations — `PART_l_shoulder:* = 23`,
+`PART_r_shoulder:* = 24`, `PART_l_knee:* = 25`, `PART_r_knee:* = 26` (note: typed `:*`, not `:int`,
+unlike 0–22) — are never allocated on a human. `grep` across the tree shows their only consumers
+are quadrupeds: `MCSWolf.as:188` `partList[PART_l_shoulder]`, `MCSWolf.as:197`
+`partList[PART_l_knee]`. The surveyor counted the enum, not the allocation.
 
-Sub-facts in claim 17 that I verified and that *do* stand: `<slashusage>` {24,72,96}
-over 106 items, `<stancerestriction>` {4,6} over 53, `<uses>` {50,60,80,100} over 115,
-and `itemdata.xml:8742-8752` for item 13113. One correction: `getSlashUsage()`
-(`StatsManager.as:1921-1928`) clamps anything `< 48` to 48, so the single item with
-`<slashusage>24</slashusage>` never charges 24 — only **48/72/96** are reachable.
-
----
-
-## MATERIAL — claim 2: `<type>` is not the routing key; the **id band** is
-
-`InventoryUI.as:1167` (`onEquip`):
+**(b) `armor=7` → 8.** `setArmor` (`MCSCharacter.as:915-1088`) declares eight part locals and
+addChilds to all eight — torso, stomach, l_uparm, r_uparm, l_lowarm, r_lowarm, pelvic **and
+neck**. The trap is real and I nearly fell in it: the `removeChildAt(0)` prologue lists only seven
+(neck is excluded). The eighth attach is at the tail:
 
 ```
-var tempValue:int = Math.floor(itemID / 1000);
-if(QuestEngine.getItemData(item.itemID).unique == 1) { switch(...type...) { case 11: tempValue = 3; case 0: tempValue = 4; ... } }
+componentObject = this.getMCSComponent("neck",id);
+...
+   neck.addChild(componentObject);
 ```
 
-`<type>` is consulted **only** to remap `unique == 1` items back into the band space.
-Routing is `id/1000`. `StatsManager.equipment[itemType]` at `Item.as:843` is the
-*compare-tooltip* lookup, not the equip path.
-
-Consequences the claim would encode wrongly:
-- type **10** is consumables (98 items, band 2xxx) but slot 10 is `EQ_SCABBARD`;
-  type **12** is quest items (79 items, band 20xxx) but slot 12 is `EQ_ACCESSORY2`.
-  `Item.as:845` guards `if(itemType != 10 && itemType != 12)` precisely because they
-  are not slots. 177 of 982 items would be mis-routed.
-- the actual scabbard is `equipment[EQ_SCABBARD] = new Item(13100,1)`
-  (`StatsManager.as:735`) — a **type 9** item in the weapon band, hard-wired to slot 10.
-- accessories are one type (11) feeding two slots.
-
-Also: my parse shows the 152 armor items and item 7075 **have no `<type>` tag at
-all** (`grep -c '<type>0</type>'` = 0); type 0 is the parse default. And item 7075 is
-an empty stub — `<item><id>7075</id></item>`, nothing else — so calling it an
-"authoring anomaly … carries type 0 (armor)" over-reads an absent tag. The band→count
-map itself (152/35/73/97/38/60/14/93/55/177/98/9/79) I re-derived and it is exact.
+Related structural detail the model misses: `PART_neck` is written by **both** `setArmor` and
+`setNeck` (`:795-813`, which clears `removeChildAt(1)` then `removeChildAt(0)`), so that one slot
+legitimately holds up to two children — armour collar plus neck item.
 
 ---
 
-## MATERIAL — claim 16: the modifier enum is **not** fully decoded
+## MATERIAL — claim 3 `sell-price-formula`: the formula matches across builds, its *input* does not
 
-The 0–16 mapping is right — I resolved it myself from the extracted table:
-`110 HP · 111 Max HP · 112 HP Regen · 113 Chi · 114 Max Chi · 115 Chi Regen ·
-116 Attack · 117 Defense · 118 Speed · 119 XP · 120 'Level ' · 63 Coins · 64 Gold ·
-102 AP · 121 Max AP · 59 Duel Tokens · 122 Max Duel Tokens · 123 Set ·
-124 Level Required · 125 Stance Restriction · 108 Dmg · 109 Def · 139 Weight · 199 Eq`.
+`getSellAmt` is genuinely byte-identical in shape. I read both:
 
-But *"fully decoded end-to-end … all 412 `<modifier>` blocks are now readable"* is
-wrong. The 34 distinct ids actually present are
-`0,1,2,3,5,6,7,8,9,12,13,15,25,38,78,79,82,84,90,96,97,98,99,101,102,103,104,105,106,117,122,123,124,40000`:
+- Android `Item.as:1582-1593` — verbatim as quoted.
+- Web v0.717 `§1t17s0§.as:1977-1988` — `if(this.§1t467s0§.§1t697s0§() < 3000) return 1;`
+  `if(this.§1t545s0§() >= 10) return (1 + this.§1t497s0§()) * 10;` `return (1 + …) * 5;`
 
-- **id 103 alone is 223 of the 412 blocks** and is *not* a set id.
-  `Item.as:1047-1052` resolves 103/106 to `QuestEngine.getItemData(value).displayname`
-  — a **set-member item reference**. Rendering it as `"Set: 103"` per the claim's rule
-  would be visibly wrong in the tooltip.
-- `102` → `getString(640) + NodeGenerator.getNodeNameCode(value)` (`Item.as:1044`), also
-  not a set id.
-- ids 25, 38, 78, 79, 82, 84, 90, 96–99, 104, 105 fall in neither stated range;
-  `40000` hits `XMLItem.as`'s `trace("ErrorValue: …")` branch.
-- the **elemental / crit / piercing** modifiers (`StatsManager.STAT_FIREDEF` … 
-  `STAT_PIERCINGDMG`, handled at `Item.as:1020-1043`) are missing from the claim's
-  enum entirely — and they are the exact lines the claim's own cited frame displays.
+But `getWeight()` — the branch input — **diverges between the two builds**:
 
-The narrow rider *"modifier 7 is suppressed when the item carries a non-zero
-`<defense>`"* is also incomplete: `Item.as:948-953` shows it prints **only** when
-`(mindamage>0 || maxdamage>0) && defense == 0`, i.e. weapons only.
+| build | body |
+|---|---|
+| Android `Item.as:1564-1580` | `return this.weight * this.getQuantity();` |
+| Web `§1t17s0§.as:1958-1975` | `return (this.weight + this.§1t478s0§) * this.§1t484s0§();` |
+
+The web build adds a per-item weight term the Android build has no counterpart for. So
+*"confirmed in BOTH builds"* holds for `getSellAmt` and fails for the quantity that decides its
+only branch. The S0-3 parity caveat is still live here, not discharged.
+
+Also under-specified in a way that changes numbers: `getWeight()` multiplies by **quantity**, so
+the `>= 10` step is a *stack* threshold, not an item-weight threshold — ten weight-1 items sell at
+×10, not ×5.
 
 ---
 
-## MINOR — claim 6: the frame is real, "confirms the bitmask" is not
+## MATERIAL — claim 12 `rarity-is-derived-not-a-field`: parity is *disproved* by the cited file
 
-I cropped it: `frame_0031.jpg`, crop (575,140)-(1015,420) 3× lanczos, plus a second
-crop (575,400)-(1015,550) to catch the cut-off line. Visibly present, exactly as
-described: green-bordered icon with a **450** price badge, green **PANTS**,
-**OWNED: 0**, **LEVEL 4**, then `DEFENSE +1 (EQ 3)` / `FIRE DEF +1 (EQ 0)` /
-`WIND DEF +2 (EQ 0)` / `EARTH DEF 0 (EQ 1)` / `CRITICAL DAMAGE 0 (EQ 1)` /
-`MAX CHI 0 (EQ 5)` / `CHI REGEN 0 (EQ 2)` / **`WEIGHT: 5`**, and a BUY button.
+The derivation is exactly right and I confirmed every hex at the exact web line numbers given
+(683 `#b048f8`, 687 `#0080ff`, 691 `#1eff00`, 704 `#6600cc`, 708 `#003399`, 712 `#336600` — all
+six land). The `<unique>` 253/116 counts reproduce.
 
-But the tooltip cannot confirm a mask. `Item.as:893-911` builds `modArrayCheck` as the
-**union of the equipped item's modifier array and the candidate's**, then prints one
-line per entry. A missing PIERCING line means *neither of these two pants rolled
-piercing* — nothing about the mask. Note **WATER DEF is allowed by the PANTS mask and
-is also absent** from the frame, which makes the point concretely. One sample is
-consistent with the mask; it does not confirm it. The mask itself
-(`ItemGenerator.as:409-412`, `[1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0]`) I verified
-verbatim and it stands on A2 alone.
+But *"removes the S0-3 Android-parity caveat for them"* is false, and the file cited proves it.
+Web `§1t17s0§.as` carries **two colour branches Android does not**:
 
----
+```
+if(this.xp != null) { _loc1_ += "<font color=\"#ff9900\">"; }     // loot palette, :677
+else if(this.xp != null) { _loc1_ += "<font color=\"#ff6600\">"; } // inventory palette, :700
+```
 
-## MINOR — claim 12: decomposition right, one stated fact wrong
-
-The name decomposition is **exactly** right — `ItemGenerator.as:744` case 3 is
-`pre(mod2) + " " + pre(mod0) + " " + basename + " " + suf(mod1)`, giving
-`Drafty · Sharp · Iron Sword · of Piercing`. Forced-first ATTACK on weapons
-(`ItemGenerator.as:433-437`) holds. And it is now *stronger* than claimed: 'Iron Sword'
-is `<name>4050` → table 990 (see FATAL 2), so the basename is A2-held too.
-
-Wrong: *"'of Piercing' … allowed **ONLY** by the WEAPON mask"*. Index 16 is `1` in the
-ARMOR mask (`ItemGenerator.as:402`) and the ACCESSORY mask (`:425`) as well.
-Piercing is allowed on weapons, armor **and** accessories.
-
-Cite nit: the colour comes from `getNameBlackBG()` (`Item.as:491-513`), not `getName`
-— `getName`'s bright branch at `:417` is additionally gated on
-`!inventoryUI.visible && (lootDialog.visible || gotGiftDialog.visible)`. The
-mechanism is unaffected; the black quest box takes the black-BG palette.
+`grep -rn "ff9900\|ff6600"` across all 559 Android scripts returns **nothing**, and Android
+`getName()` (`Item.as:407-450`) has no `xp` test at all. The web build has five states per
+palette, not four. Parity is *narrower* after this check, not wider.
 
 ---
 
-## What stands, and why it matters
+## MATERIAL — claim 16 `eq-comparison-frame-payload-identity`: exact on three fields, unexplained on the fourth
 
-- **Claim 7 is the survey's best work and I am strengthening it.** `getCondition()` has
-  exactly two occurrences in the whole 970-class bundle — its own definition
-  (`Item.as:1481`) and one display call (`Item.as:714`). It touches no damage path.
-  `getMinDamage`/`getDamageRange` switch only on `isBroken()`. This also **overturns a
-  measurement doc**: `docs/research/video-study/segments/B-00-post-win-inventory-and-loadout-managemen.md:55,88`
-  infers a `item.conditionMultiplier` from "Iron Sabre Lv7 Unbreakable 12–19 vs Lv2
-  Usable 2–13". That delta is the level/modifier-6 gap, not condition — exactly what
-  ledger blocker ② suspected. **Do not encode a condition multiplier.**
-- **Bonus, now exact:** the ledger's unnumbered "condition tier names" resolve at −20
-  to five sequential entries matching `Item.getDesc`'s five branches in order —
-  `Condition: Broken · Poor · Used · Usable · Good` (table 368–372), plus
-  `Unbreakable` (620). The video's **WELL-MAINTAINED** is not among them; the frame
-  wins, so treat the Android wording as a lead, not as ship text.
-- Claims 1, 3, 4, 5, 9, 10, 11, 13, 14, 18, 19 I checked against the source and they
-  are verbatim-accurate. `MAXINDEX = 79` → 80 tiers confirmed; `levelrestriction`
-  **is** `<minlvl>` (`XMLItem.as:128-130`) confirmed; all 27 `PART_` constants,
-  `mcsString`, the hat/hair exclusion, `getMCSComponent`'s fallback, `CraftingUI`'s
-  transfer, `findWeight`'s three-slot exclusion and all three overweight gates
-  (`NodeUI.as:379`, `Obj_HiddenTemple.as:187`, `InteractUI.as:1730`) confirmed. I
-  re-extracted char-id 121 (4,504 B) and it is byte-identical to the quoted premium
-  catalogue.
+I opened the crop. It reads exactly as claimed: **"DMG: 1 - 2 (EQ: 1 - 3)"** with the `2` in red,
+**"WEIGHT: 1"**. And the payload identity is perfect —
+`reference/extracted/itemdata.xml:7906-7915` is `<id>13002</id> <name>4041</name>
+<minlvl>-4</minlvl> <mindamage>1</mindamage> <maxdamage>2</maxdamage> <weight>1</weight>`, and
+`strings.json["4041"] == "Branch"`. `compareValue` explains the red. Excellent work.
+
+The overclaim is *"reproduced **exactly** by an XML row"*, because the claim's own quote includes
+the on-screen label **"LEVEL 1"**, and row 13002 does not produce it:
+
+- `XMLItem.as:128-134`: `this.levelrestriction = xml.minlvl;` → **−4** for the Branch.
+- `Item.getLevel()` (`Item.as:274-298`): no modifiers → `maxlevel = 0`; `if(lvl < baselevel)` is
+  `0 < -4` = false → **returns 0**, not 1.
+- The Android item panel has **no level field at all**. `InventoryUI.as:228-236` and
+  `:1453-1462` wire only `selectItem`, `selectItemName`, `selectItemAttribute` and `chatbutton`
+  (the `chatbutton` is the "…" speech bubble visible beside the icon in the frame).
+
+**The frame wins and I say so out loud:** the web v0.717 item panel renders a LEVEL row that has
+no counterpart anywhere in the Android v0.682 source. The three-field identity stands; the
+"exactly / cleanest cross-check" framing does not, and this is S0-3's parity caveat biting inside
+the one claim offered as proof that cross-build reading is safe.
+
+---
+
+## MINOR
+
+- **Claim 4 `sell-price-corrects-section3-item9`** — the `/level` half of §3 #9 is correctly
+  killed. The `rarity/` half is **not** wrong: `getShopItemType()` derives rarity from
+  `modifierCount`, the same term the price uses, so price scales with rarity *by construction*.
+  Also `getModifierCount()` is `modifiers.length` (`Item.as:307-310`), which counts the reserved
+  non-stat IDs 80/81/82/89/125 — so a recolour or a player-given name raises sell price.
+- **Claim 7 `affix-suffix-pool-and-counts`** — counts and both dice tables verified verbatim
+  (13 pools × 8 = 104 each; `MAXINDEX = 79` at `ItemGenerator.as:58`). But the lane-impact's
+  *"shipped bug where the four elemental-DEF channels reuse the wrong pools"* is an unsupported
+  reading: `FIREDEF→water, WATERDEF→wind, WINDDEF→earth, EARTHDEF→fire` is a consistent 4-cycle,
+  which reads as deliberate counter-element naming ("Icy … of Frost" on a fire-resist item) at
+  least as easily as a mistake. No artifact establishes intent. Call it *cross-wired*, not *a bug*.
+- **Claim 8 `stat-vs-level-curve`** — verified end to end (both itemdata rows verbatim; prog
+  mapping confirmed: prog1 ATK/DEF, prog2 MAXHP/MAXCHI, prog3 elementals+regens+crit, prog4 SPEED,
+  prog5 PIERCINGDMG). The `+10` spike at index 79 applies to **prog1/prog2/prog3 only** — prog4 and
+  prog5 get no spike. The claim generalises it.
+- **`removeParts()` leaks `PART_prop3`.** `MCSCharacter.as:246`:
+  `for(var i:* = int(this.partListLength - 1); i >= 0; i--)` iterates 21…0, so `partList[22]`
+  (`PART_prop3`) is never cleared. A recreation that clears all 23 will diverge from OG behaviour.
+
+---
+
+## Claims that survive intact
+
+`no-separate-icon-manifest` (MCSItem.as:324-349 verbatim; note the icon stack is 5 parts vs the
+doll's 8) · `condition-has-no-damage-multiplier` (**strongest claim in the set** — my own grep
+returns `getCondition` exactly twice in 559 files: the definition at `Item.as:1481` and one call
+at `Item.as:714` inside `getDesc`; `StatsManager.as:1871/:1892` confirm the binary cliff) ·
+`condition-tier-thresholds` (all 7 strings verified in `strings.json`; web ladder at
+`§1t17s0§.as:1011/1015/1019`) · `item-save-format-held` (PARTIAL scoping is correct; ledger line
+351 quoted accurately) · `soul-infusion-is-code` (`CraftingUI.as:494-525` verbatim; string 698 =
+"Both items must be of the same type") · `defense-min-floor-is-wrong` (`EnemyPlayer.as:107-123`
+verbatim — boss auto-scaling, `playerLVL`, divisors 1/8/6/4) · `weight-cap-is-a-base-not-a-cap`
+(and I found the wiring the claim didn't cite: `InventoryUI.as:439`
+`this.WeightAmount.text = getString(139) + ": " + StatsManager.findWeight() + " / " +
+StatsManager.getCarryingWeight()` — the frame's "43 / 100" is exactly this) ·
+`modifier-id-stat-table` (all 21 string IDs verified verbatim) ·
+`slashusage-stancerestriction-omitted` (my independent counts match exactly) ·
+`per-item-art-payload-unknown` (honest and correctly scoped — `MCSCharacter.as:594-596`
+`if(StatsManager.useExternalResource) return ResourceManager.getMCSComponent(partType,art);`
+is a real lead, and no recovery is claimed).
+
+---
 
 ## Score
 
-84 is too high given ③ is answered wrong and names were declared unheld when they are
-held. Netting the two fatals (which *raise* real readiness once corrected) against the
-three overstatements: **the lane is genuinely ~88**, but only on a corrected ledger —
-blocker ③ closed by `getSellAmt`, blocker ①④ closed as stated, ② closed as "no such
-mechanic", ⑤ still half open (per-item vector art), and L1b downgraded from "blocker"
-to "anchor each id block, then frame-check the wording".
+**78 → 72.** The blocker work is real and mostly stands, but blocker ⑤ is the one this unit was
+scored highest on, and its border half is inverted while its z-order and per-slot part counts are
+both off. Deduct for the fatal border inversion (−4) and the four-slot paperdoll error (−2). The
+two "additionally WRONG ledger bullets" (defense min-floor, weight cap) are correct and should be
+actioned as written.

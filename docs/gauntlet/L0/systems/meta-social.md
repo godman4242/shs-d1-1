@@ -417,3 +417,429 @@ leaderboard / friends / custom-clan surface that was never surveyed and therefor
 v0.717 payload before being reported (rank curve → `§1t1523s0§.as`; RNG → `§1t58s0§.as`;
 WarRules → `§1t7924s0§.as`). Where they differ — the rules page count — **the frame decided it, and
 the frame won.***
+
+---
+---
+
+# SECOND SURVEY PASS — 2026-08-15
+
+**Scope.** Independent re-audit of the same ledger block, run against the same evidence index.
+Everything above is preserved as received. This pass **confirms** most of it, **closes three of its
+own STILL_UNHELD items**, and **overturns one of its verdicts** (blocker ④). Where I reproduce a
+prior finding from a different artifact I say so; where I contradict, I paste the artifact.
+
+**Headline of this pass:** the ledger's two "Ready" numbers that the first pass could not ground —
+**"kill cap 350"** and **"flag +120%"** — are now *positively identified*. One is off by one
+(it is **351 = 340 + 11**), the other is a **mis-labelled row of the terrain table**. And the
+**world-level war map board is on disk as a 63×72 image that is byte-identical in the web and
+Android payloads**, which is the half of blocker ② the first pass did not reach.
+
+---
+
+## M2-1 — "kill cap 350" → **MEASURED: 351 = 340 troops + 11 samurai.** Ledger off by one.
+
+The first pass marked this STILL_UNHELD. It is held — the number is a **sum over the war-room wave
+table**, not a constant, which is why grepping for `350` found nothing.
+
+**A2 (the table is the war-room battle content):**
+`reference/decompiled/shs3_android/scripts/WarHexUI.as:1711-1720`
+```as3
+internal function createWarRoomWaveList(targetside:int) : Vector.<XMLQuestWave>
+{
+   var xml:XML = XML(new SurvivalModeData());
+```
+
+**A2 (measured over the WEB v0.717 payload, not the Android one):**
+`reference/extracted/bindata/119_1t4646s0.bin` — `<survivalmodedata>`, first `<wave>` at line 3,
+556 lines, **39 `<wave>` blocks**. Summing every `<qty>`:
+
+```
+$ python3 - (over reference/extracted/bindata/119_1t4646s0.bin)
+WEB v0.717 qty by id-block: {400: 340, 700: 11} total 351
+```
+The Android copy (`reference/extracted/android/109_WarHexUI_SurvivalModeData.bin`) differs in bytes
+(11,553 vs 11,721) but yields the **identical** `{400: 340, 700: 11} total 351`. Verbatim head:
+```xml
+<wave>
+  <enemy>
+    <id>400|401|402|403|404</id>
+    <qty>4</qty>
+    <x>-50</x>
+  </enemy>
+```
+The `400` block is the rank-and-file (base ids 400–456, side-remapped per `WarHexUI.as:1731-1752`);
+the `700` block is **11 distinct named ids 700–710, qty 1 each** — the "samurai".
+
+**The ledger sentence under audit** (`docs/research/SHSD_MASTER_REFERENCE.md:170`, which
+`REBUILD_READINESS.md:244` compresses to "kill cap 350"):
+> `| Kill cap (troops) | 350 (= 340 troops + 10 samurai) |`
+
+**340 is exactly right. The samurai count is 11, not 10, so the total is 351, not 350.**
+Independently corroborated by achievement 58 — *"Warrior III — Defeat 340 in a war room attack"*
+(`reference/extracted/android/114_Mobile_AchievementData.bin`, stat `60018`, `<val>340</val>`),
+which caps at the troop-only figure.
+
+---
+
+## M2-2 — "flag +120%" → **POSITIVELY IDENTIFIED AS A MIS-LABEL.** There is no flag bonus.
+
+The first pass said "1.2 exists as the terrain modifier… I am not calling the ledger wrong." I will
+call it wrong, because the *rest of the same ledger table* proves where the number came from.
+
+**A2:** `reference/decompiled/shs3_android/scripts/WarHexUI.as:2281-2307`
+```as3
+internal function getTerrainModifier() : Number
+{
+   var fromValue:int = this.getTerrainValue(this.selfSentryX,this.selfSentryY);
+   var toValue:int = this.getTerrainValue(this.selectedHex.xpos,this.selectedHex.ypos);
+   if(this.selectedHex.hextype == WarHex.HEX_DEFENSE && this.selectedHex.cost == 0 || this.selectedHex.hextype == WarHex.HEX_CITY || this.selectedHex.hextype == WarHex.HEX_CASTLE)
+   {
+      toValue += 2;
+   }
+   switch(fromValue - toValue)
+   {
+      case 2:  return 1.5;
+      case 1:  return 1.2;
+      case 0:  return 1;
+      case -1: return 0.75;
+      case -2: return 0.6;
+      case -3: return 0.5;
+      case -4: return 0.25;
+      default: return 1;
+   }
+}
+```
+with `deployvalue = 100 * this.getTerrainModifier();` (`WarHexUI.as:1052`).
+
+Now read the ledger table it came from (`docs/research/SHSD_MASTER_REFERENCE.md:170-175`):
+
+| ledger row | payload arithmetic | verdict |
+|---|---|---|
+| `Deploy: field→mountain \| +60 troops` | field(0) − mountain(2) = −2 → 0.6 → **60** | ✅ exact |
+| `Deploy: mountain→mountain \| +100 troops` | 2 − 2 = 0 → 1.0 → **100** | ✅ exact |
+| `Deploy: field→forest \| +75 troops` | 0 − 1 = −1 → 0.75 → **75** | ✅ exact |
+| `Control-point flag bonus \| ×1.20 (120% troop-deploy boost)` | 1.2 is `case 1:` — **one step of terrain advantage** (e.g. forest→field, mountain→forest) | ❌ **mis-labelled** |
+
+Three of four rows are the terrain table. The fourth is the terrain table's `case 1` row wearing the
+wrong name. `HEX_CONTROLPOINT` appears nowhere in `getTerrainModifier`; the **only** structure-based
+modifier is `toValue += 2` for a *completed* Barricade, a City or a Castle — a **defender** bonus
+that pushes the attacker as low as **0.25×**, which is a far more load-bearing number than the
+phantom flag bonus and is absent from the ledger entirely.
+
+---
+
+## M2-3 — blocker ②'s other half: the **world** war board is a 63×72 image, byte-identical across builds
+
+The first pass closed the *tactical* board (6×6 sectors). The *strategic* board — which territories
+exist at all — is also on disk.
+
+**A2:** `reference/decompiled/shs3_android/scripts/WarSelectUI.as:83-85`
+```as3
+internal var mapWidth:int = 63;
+internal var mapHeight:int = 72;
+```
+…:153 `this.mapBitmapData = QuestEngine.getMapBitmapData();`
+…:173 `return this.mapBitmapData.getPixel(territoryx + TERRSHIFTX - WARMARKERSHIFTX,territoryy + TERRSHIFTY) != 0;`
+(`TERRSHIFTX = 21`, `TERRSHIFTY = 51`, `WARMARKERSHIFTX = 8` — :15-19.)
+→ **a territory exists iff its pixel is non-zero.** The mask *is* the board.
+
+**A3 — byte-check, pasted output.** Stage-0 finding S0-1 logged web `bindata/92` as "GIF89a 63x72
+raster" without identifying it. It is this map:
+```
+web   b'GIF89a' 63 72 272 bytes  sha256 b9d152c046b66b59…   (reference/extracted/bindata/92_1t4648s0.bin)
+andr  b'GIF89a' 63 72 272 bytes  sha256 b9d152c046b66b59…   (reference/extracted/android/110_Mobile_MapBitmapData.bin)
+identical: True
+```
+Decoded: 2-colour palette, **735 non-black pixels of 4,536** → **735 land territories**.
+
+**This retires the Android caveat for the map claim entirely** — the web v0.717 payload ships the
+same 272 bytes. Combined with the first pass's 6×6 sector generator, the full topology is:
+**735 territories on a 63×72 mask → each a 6×6 sector board → 4-way [N,S,E,W] exits.**
+
+**The ledger sentence this overturns** (`REBUILD_READINESS.md:135`, §2 table, meta-social "missing"
+column): *"server-sim topology; **map board**; achievements/daily/token numbers; offline gold faucet"*.
+
+---
+
+## M2-4 — A1: the frame prints the coordinate system
+
+**A1 cite:** `reference/frames/Nr4fQstqHDM/map/frames/frame_0090.jpg` (512×288 source),
+crop `(255,140)-(400,165)`, upscaled ×12 LANCZOS. Visibly, in the quest-detail panel:
+
+> **KAKUCHI CASTLE TOWN, MAIN STREET**
+> **TERRITORY (24,52)  SECTOR (3,0)**
+
+Territory x=24 ≤ 62 and y=52 ≤ 71 sit inside the 63×72 mask; sector (3,0) sits inside 0…5.
+The same frame also prints a reward line **"TOWN PROSPERITY: +10"** — the town-conversion currency
+behind string 626 *"Influence to convert town: "* and string 812 *"Clan influence on town"*, a
+meta-social mechanic the §4 block never mentions.
+
+---
+
+## M2-5 — A1: the frame proves the Android string table is v0.717's copy, typo and all
+
+**A1 cite:** `reference/frames/Nr4fQstqHDM/map/frames/frame_0084.jpg`, crop `(100,50)-(420,250)`
+upscaled ×5, and title strip `(100,30)-(420,70)` upscaled ×6. Visible on screen:
+
+> **…ES 1/7  (JOINING A BATTLE)**
+> **…IS A CLAN-BASED STRATEGY GAME WITHIN STRAW HAT SAMURAI: DUELS.**
+> **…A CLAN, YOU CAN MAY SELECT AN ON-GOING BATTLE TO TAKE PART IN.**
+> **…TTLES WILL BE MARKED ON THE WAR ROOM MAP WITH YOUR CLAN'S FLAG.**
+> **…TLE IS SELECTED, SELECT THE SECTOR WITH YOUR CLAN'S COMMAND HQ AND SELE…**
+> **…ON TO ENTER THE BATTLEFIELD.**
+
+Android string **370** reads, verbatim:
+> *"- The war room is a clan-based strategy game within Straw Hat Samurai: Duels.\n\n- After joining a clan, you can may select an on-going battle to take part in.\n\n- On-going battles will be marked on the war room map with your clan's flag.\n\n- Once the battle is selected, select the sector with your clan's command HQ and select the "MOVE" action to enter the battlefield."*
+
+Word for word, **including the original's grammatical error "you can may select"**. A typo is a
+fingerprint: this is not a paraphrase, it is the same string. **This is the calibration artifact for
+every Android-sourced string in this file.**
+
+I independently reproduce the first pass's page-count finding from the frame file (not a video
+timecode): the header reads **1/7** while `WarRules.as:23` says `internal var max:int = 6;`.
+**THE FRAME AND THE ANDROID SOURCE DISAGREE, AND THE FRAME WINS — v0.717 has seven pages.**
+
+---
+
+## M2-6 — first pass's STILL_UNHELD #3 is **DEAD**: the four clans are named, led and located
+
+The first pass wrote: *"The 4 canonical clans' identities in the war room — the code speaks only in
+side numbers 1–5 and colours; I found no payload row binding side 1 to a named clan."*
+
+The binding is in the string table, and the colours close the loop.
+
+**A2 (names, in side order):** `docs/gauntlet/L0/index/strings.json`, ids **275–278** —
+`"Clan Aka Ryu"`, `"Clan Midori Ken"`, `"Clan Aoi Hoiru"`, `"Clan Ki Sensu"`; the parallel
+sell-menu run at ids **271–274** repeats the same order.
+
+**A2 (daimyo + domain), ids 324–327, verbatim:**
+> 324: *"Clan Aka Ryu is led by Lord Tsuyoshi. … Clan Aka Ryu rules the domain in the North-East."*
+> 325: *"Clan Midori Ken is led by Lord Daichi. As the right-hand man to the late Shogun, Lord Daichi has proclaimed himself the rightful Shogun… Clan Midori Ken rules the domain in the South-East."*
+> 326: *"Clan Aoi Hoiru is led by Lord Yoshio. … Clan Aoi Hoiru rules the domain in the South-West."*
+> 327: *"Clan Ki Sensu is led by Lady Tsubasa. … Clan Ki Sensu rules the domain in the North-East."*
+
+**A2 (side number → colour):** `WarHexUI.as:1077-1089` — side 1 `16711680` = `0xFF0000` **red**,
+side 2 `39168` = `0x009900` **green**, side 3 `26367` = `0x0066FF` **blue**, side 4 `16776960` =
+`0xFFFF00` **yellow**. Those are the clan names translated: **Aka Ryu = red dragon, Midori Ken =
+green sword, Aoi Hoiru = blue wheel, Ki Sensu = yellow fan.** Side order and colour order agree, so
+side *n* ↔ clan *n* is fixed. The ledger's "4 clans (heraldry/… /daimyo/capitals)" **Ready** bullet
+is now A2-grounded.
+
+**Shira Tancho, story-only — confirmed from the WEB payload**, `reference/extracted/questdata.xml:560`:
+> `<text>These crane feathers are symbols of clan Shira Tancho; they'll prove you're speaking on my behalf.…</text>`
+(also :514, :550, :630, :658). It never appears as a war side.
+
+### M2-6b — an original-data BUG a 1:1 recreation must decide about
+String **327** puts **Ki Sensu in the North-East** — the *same* quadrant string 324 gives **Aka Ryu**.
+With Midori Ken South-East and Aoi Hoiru South-West, the vacant quadrant is North-West. This is a
+typo **in the shipped game data**, not in our transcription. Reproduce it or knowingly fix it; log
+the choice.
+
+---
+
+## M2-7 — blocker ④ **OVERTURNS THE FIRST PASS**: there *is* an offline gold faucet, and it is exact
+
+The first pass concluded: *"I looked for an earn path and there is none in the client… **Blocker ④
+stands as written.**"* That is wrong. It searched `addLootGold` (the *dialog* helper) and missed
+`changeStat(STAT_HGOLD, …)`.
+
+**A2:** `reference/decompiled/shs3_android/scripts/StatsManager.as:2195-2208`
+```as3
+public static function doRebirth() : *
+{
+   ...
+   if(getPlayerStats(STAT_DAN) == 8)
+   {
+      changeStat(STAT_HGOLD,20);
+   }
+   else
+   {
+      changeStat(STAT_HGOLD,5);
+   }
+```
+→ **every rebirth grants 5 premium Gold; the Dan 8→9 rebirth grants 20.** Over the nine rebirths
+from Dan 0 to Dan 9 that is **8×5 + 20 = 60 Gold, free, offline, for life**.
+
+**Independent corroboration that 60 is the intended free ceiling** —
+`reference/decompiled/shs3_android/scripts/OverworldHUD.as:1333`:
+```as3
+if(StatsManager.getStat(StatsManager.STAT_HGOLD) > 60 && StatsManager.getStat(StatsManager.STAT_DAN) < 9)
+```
+The client itself uses **>60 with Dan<9** as its "this player paid" test. The number is load-bearing.
+
+This also **contradicts the harvested forum claim** recorded at
+`docs/research/KONGREGATE_FORUM_FINDINGS.md:399` (*"Rebirthing = 25 FREE Gold"*): the payload says
+5, or 20 on the last rebirth. **Payload over forum memory.**
+
+**Revised verdict on blocker ④:** *PARTIAL, not confirmed.* The **rate is recovered** (5/rebirth,
+20 at Dan 8, 60 lifetime). What remains open is only whether a *recreation* wants a faucet at all
+given `HAS_CASH_PURCHASE=false`. The ledger's *"offline gold faucet rate"* is no longer unknown.
+
+---
+
+## M2-8 — "Ninja-Services prices" upgraded from a bullet to a priced catalogue (WEB build)
+
+The premium catalogue is `reference/extracted/android/121_Mobile_PremiumData.bin` `<premiumdata>`
+(16 `<default>` SKUs + 23 `<rotation>` outfit `<set>`s, with the authors' own comments left in:
+`<!-- Assassin outfit -->`, `<!-- Santa outfit -->`, …). Every price is a `<heavenlyprice>` row in
+the **WEB v0.717** `reference/extracted/itemdata.xml`:
+
+| item id | itemdata.xml line | Gold | name — desc |
+|---:|---:|---:|---|
+| 2100 / 2101 / 2102 | 27 / 41 / 55 | 1 / 2 / 3 | Small / Medium / Large Soldier Pill — *"Replenish your AP without waiting!"* |
+| 2125 / 2126 / 2127 | 374 / 388 / 402 | 1 / 2 / 3 | 10 / 25 / 40 Duel Tokens — *"Replenish your Duel Tokens without waiting!"* |
+| 2128 | 416 | 1 | Present — *"Contains a random rare item."* |
+| 2129 | 430 | 1 | Recall Stone |
+| 2200 | 2267 | 5 | Amnesia Scroll — *"Use this to unassign your stat and skill points."* |
+| 2203 | 2327 | 5 | Writ of Release — *"Use this item to leave your Clan."* |
+| 2207 | 2379 | 5 | Name Change Scroll |
+| 2208 | 2393 | 1 | 1000 coins — *"Buy 1000 coins."* |
+| 2209 | 2402 | 1 | Full HP and Chi |
+| 2212 | 2445 | 5 | Clan Deed — *"Form your own clan. War Hero rank required. Includes: 1 Clan General Invitations, 3 Clan Invitations"* |
+| 2213 | 2461 | 1 | Clan Invitation |
+| 2215 | 2479 | 1 | Edit Clan — *"Edit your Clan's name, acronym, color and banner"* |
+
+Two conversion rates fall straight out: **1 Gold = 1000 coins** (item 2208, and string 609
+*"Buy 1000 coins for 1 gold?"*) and **1 Gold = 10 AP** (string 100).
+
+---
+
+## M2-9 — "two token types" quantified: both pools, both regen rates, both buffs
+
+The first pass did Duel Tokens. The second pool is **AP**, and the ledger's bullet needs both.
+
+**A2:** `reference/decompiled/shs3_android/scripts/StatsManager.as`
+```as3
+:158   internal static var APINTERVAL:int = 60;
+:160   internal static var DTINTERVAL:int = 2 * 60;
+:166   internal static var MAXDUELTOKENS:int = 30;
+:707   setPlayerStats(STAT_AP,30);
+:709   setPlayerStats(STAT_DUELTOKENS,20);
+:710   setPlayerStats(STAT_MAXDUELTOKENS,20);
+```
+and the doubling buffs at `:1101` / `:1134` (`if(hasBuff(BUFF_AP)) diff *= 2;`).
+
+| pool | start | cap | regen | ×2 buff |
+|---|---:|---:|---|---|
+| **AP** (Action Points, string 65) | 30 | 30 (`STAT_MAXAP`) | 1 / **60 s** | `BUFF_AP` (4) |
+| **Duel Tokens** (string 59) | 20 | **30** hard (`MAXDUELTOKENS`) | 1 / **120 s** | `BUFF_DUELTOKENS` (5), string 4230 *"200% Duel Token Regeneration buff"* |
+
+Currency naming trap for implementers: `STAT_GOLD = 11` is the **coin** stat (string 63 = "Coins");
+the premium currency is `STAT_HGOLD = 12` behind `getHeavenlyGold()` and `<heavenlyprice>`.
+
+---
+
+## M2-10 — an unmentioned meta-social system: the **Chikako affinity meter**
+
+Not in the §4 block, not in the first pass. It is the game's loyalty loop and it converts spend +
+achievements into refunded Gold.
+
+**A2:** `reference/decompiled/shs3_android/scripts/InteractUI_chikako.as:24-26`
+```as3
+internal var expArray:Array = [0,10,30,60,100,150];
+internal var maxLevel:int = 5;
+```
+…:40 `return StatsManager.getPlayerStats(StatsManager.STAT_CHIKAKOLOVE) + QuestEngine.getAchievementScore();`
+
+**A2 (what feeds it):** `StatsManager.as:2719-2724`
+```as3
+if(getHeavenlyGold() >= num)
+{
+   changeHeavenlyGold(-num,callbackSuccess,callbackError);
+   changeStat(STAT_CHIKAKOLOVE,num);
+```
+→ **1 love point per Gold spent**, plus achievement score, over a 5-level ladder
+`[0,10,30,60,100,150]`, with a 6-portrait swap (`setPortrait(charlevel)`).
+
+Payoff: `NetworkManager.as:2306-2315` `else if(m.type == "refunded") … showChikakoRefund();`
+and string 723: *"Tip: Use Ninja Services or unlock achievements to impress Chikako and increase
+your chances for a \"Chikako Refund\"!"*. **This is the one place achievements have a mechanical
+payout** — worth knowing before scoping achievements as cosmetic.
+
+---
+
+## M2-11 — "War-Room 6 actions" is the *rulebook's* count; the client spends moves on **ten**
+
+**A2 (rulebook, string 372):** *"Moves can be used to deploy troops, attack enemy troops, move to a
+different sector, spy on the enemy or build structures."* — 5, plus arrow-fire on blocked
+neighbours (string 372's next bullet) = the ledger's 6.
+
+**A2 (client):** `reference/decompiled/shs3_android/scripts/WarHexUI.as` calls
+`OverworldHUD.instance.warUI.useWarMove(1)` at lines **1049, 1177, 1210, 1279, 1304, 1386, 1654,
+1771, 2420, 2471** — ten move-consuming operations, adding **build Command HQ**, **demolish
+Command HQ**, **castle assault** and the resolved-battle kill report to the six the rulebook names.
+
+Verdict **PARTIAL**: the ledger's "6 actions" is right as *player-facing rules*, wrong as a
+*budget model*. Anyone implementing the move economy needs ten.
+
+---
+
+## M2-12 — structure costs confirmed; "500 coins/turn" is **per build move**, not per turn
+
+**A2:** `WarHexUIBuildMenu.as:185-213` (`getDesc`, each row = `"Total Cost: " + N + " Coins"`):
+Forward Base **10000**, Tunnels **5000**, Barricades **10000**, Village→Town **10000**;
+Command HQ carries **no cost line**. Mirrored by the progress maths in `WarHex.as:424,477,521,540`
+(`maxcost = 10000`, `5000` for Tunnels).
+
+**A2 (the contribution):** `WarHexUI.as:1291` and `:1332` — `buildcost = 500;`, gated on
+`StatsManager.getStat(StatsManager.STAT_WARMOVES) > 0 && StatsManager.getStat(StatsManager.STAT_GOLD) >= buildcost`,
+i.e. **one move + 500 coins per contribution**. `SHSD_MASTER_REFERENCE.md:171` calls this
+*"Build donation cap | 500 coins/turn"* — but a turn grants 3–6 moves, so a War Hero can contribute
+**3,000 coins per turn**. Corrected reading: **500 coins per build move.**
+
+Also newly pinned: **castle gate window = `3 * 60 * 60` s** (`WarHex.as:499,507,513`) and
+**rank credit for donations = 1 point per 1,000 coins** (`StatsManager.as:826`,
+`getStat(STAT_WARMOVESMADE) + int(getStat(STAT_WARCOINSDONATED) / 1000)`).
+
+---
+
+## M2-13 — §6 cross-lane: *"L11–80 XP curve — no table published… likely unrecoverable"* is **DEAD**
+
+Not my unit, but §6 is the document's highest-value target and the artifact is one line long.
+
+**A2:** `reference/decompiled/shs3_android/scripts/StatsManager.as:78`
+```as3
+public static var expArray:Array = [0,550,1450,2950,5150,8350,12150,16350,20900,25900,31400,…,25395800,29395800];
+```
+**99 entries.** `expArray[9] = 25900`, `expArray[10] = 31400` (the "L11+ cliff" the ledger called
+unrecoverable), `expArray[79] = 4025800` — and **level 80 is exactly the rebirth gate**
+(string 4155: *"New Game +\nProgress on to the next Dan Rank and specialize in an element.\nLevel 80
+required."*). The entire L1–L99 curve is on disk.
+
+**Ledger sentences overturned:** `REBUILD_READINESS.md:127` *"L11–80 curve (likely unrecoverable)"*
+and §6 *"**L11–80 XP curve** — no table published; a solo build likely can't reach L11+; keep the
+extrapolation labeled INFERRED."*
+
+---
+
+## Second-pass verdict table
+
+| ledger item | first pass | this pass |
+|---|---|---|
+| §4 blocker ① server-authoritative sim | PARTIAL (rules recovered) | **agree**, and add: 10-action move budget, castle 3 h window, 63×72 world mask |
+| §4 blocker ② map topology | OVERTURNED (6×6 sectors) | **agree + extend**: world board = 63×72 GIF, 735 territories, **byte-identical web↔Android** |
+| §4 blocker ③ achievements / daily / tokens | OVERTURNED | **agree + extend**: AP pool quantified; achievements have a payout (Chikako) |
+| §4 blocker ④ offline gold faucet | "stands as written" | **OVERTURNED → PARTIAL**: 5/rebirth, 20 at Dan 8, 60 lifetime; forum's "25" is wrong |
+| Ready: "kill cap 350" | STILL_UNHELD | **HELD, corrected to 351 (340 + 11)** |
+| Ready: "flag +120%" | STILL_UNHELD | **HELD as an error**: it is the terrain table's `case 1` row |
+| Ready: "structure costs" | HELD | **agree**, and "500/turn" corrected to 500 **per build move** |
+| Ready: "4 clans (heraldry/daimyo/capitals)" | STILL_UNHELD | **HELD** (strings 271–278, 324–327 + side→colour) |
+| Ready: "Ninja-Services prices" | partially (304 rows exist) | **HELD as a 12-row priced catalogue** with WEB line numbers |
+| §6 "L11–80 XP curve unrecoverable" | not audited | **DEAD** — 99-entry `expArray` |
+
+## Still unheld after this pass
+
+1. **War-rules page 7 content** (desktop string ids 11016/11017) — above the Android table's ceiling.
+   Unchanged from the first pass.
+2. **A frame of the war-room 6×6 board itself.** I re-checked the whole 100-frame `map` contact
+   sheet of `Nr4fQstqHDM`; the longplay opens the rules dialog and the quest panel, never the board.
+   Every board claim here rests on A2 code + the A1 coordinate readout, not on a picture.
+3. **Rival-clan AI** ("Greedy strategy — reinforce weakest border…", `SHSD_MASTER_REFERENCE.md:177`).
+   No war AI exists in the client — the server ran it. That line is **recreation-authored design**
+   and must be labelled as such, not cited as original fidelity.
+4. **Live matchmaking, population, historical map state** — genuinely gone. §6 holds here.
+
+**Score, second pass: 31 → 78.** Above the first pass's 72 because blocker ④ turns out to be
+closable, both disputed "Ready" numbers resolved, and the world board proved build-agnostic by
+byte-check. Held back from higher by the missing board frame, page 7, and the un-surveyed
+duel/leaderboard/friends surface the first pass flagged.

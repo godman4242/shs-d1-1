@@ -1,743 +1,427 @@
 # GAUNTLET L0 — system survey: **items-equipment**
 
-Ledger under audit: `docs/research/REBUILD_READINESS.md` (2026-07-20), §2 row
-`items-equipment | 42`, §4 block `### items-equipment — 42`, plus the §6
-"structurally UNRECOVERABLE" list.
+Surveyor pass, 2026-08-14. Document under audit: `docs/research/REBUILD_READINESS.md`
+(2026-07-20), block `### items-equipment — 42` (lines 208–211), row line 130, banner line 33.
 
-Surveyor run: 2026-08-13. Every claim below carries exactly one artifact class
-(A1 frame / A2 payload / A3 byte-check / A4 measured ledger w/ own frame cite /
-A5 owner LOOK verdict) or is marked STILL_UNHELD.
+**Headline: the 42/100 is badly stale. All five listed blockers are held on disk.**
+Four of the five are held as *executable AS3 formulas*, not inferences. Two "Ready"
+bullets are, in fact, WRONG. One §6 "structurally UNRECOVERABLE" line is partially
+overturned for this system.
 
----
-
-## 0. The find that re-frames this whole lane
-
-`reference/decompiled/shs3_android/` is a **970-class, UNOBFUSCATED** decompile of
-the Android build (`reference/preservation/shs3_android_payload.swf`, 15,142,649 bytes;
-decoded copy at `reference/decrypted/shs3_android_payload_decoded.swf`). Class names
-are intact: `Item.as`, `ItemGenerator.as`, `XMLItem.as`, `StatsManager.as`,
-`MCSCharacter.as`, `ShopUI.as`, `CraftingUI.as`.
-
-Every "blocker" in §4's items-equipment block is a *rule* question, and the rules
-are AS3 source we already hold. **Five of the five blockers move.**
-
-Additionally, running a SWF `DefineBinaryData` (tag 87) + `SymbolClass` (tag 76)
-walk over the decoded Android payload yields **42 embedded binaries** that the web
-payload's 27-file `reference/extracted/bindata/` does NOT contain, including:
-
-```
-111 Mobile_ItemData          184044  <?xml version="1  (= itemdata.xml, 184002 B in reference/extracted)
-114 Mobile_AchievementData     9080
-116 Mobile_QuestData         796384
-118 Mobile_Lang_EN           500024  UTF-16LE  <xliff version="1.0" xml:lang="en">
-121 Mobile_PremiumData         4504  <premiumdata>
-```
-
-`118_Mobile_Lang_EN` decodes to a **2,555-entry XLIFF English string table**
-(ids 0–2554). This is a *partial* crack of the gauntlet's standing string-table
-blocker — see claim `string-table-partial` below for exactly what it does and does
-not close.
+Evidence base used:
+- `docs/gauntlet/L0/index/itemdata.json` (authoritative counts)
+- `reference/extracted/itemdata.xml` (982 `<item>`)
+- `reference/decompiled/shs3_android/scripts/` — **named** AS3 (Android v0.682)
+- `reference/decompiled/shs3_payload/scripts/` — **name-obfuscated** AS3 (web v0.717);
+  used to CROSS-CONFIRM every load-bearing formula so the S0-3 build-parity caveat
+  does not apply to the claims below that carry a web cite.
+- `docs/gauntlet/L0/index/strings.json` (2,533 resolved names — S0-3)
+- `reference/frames/s21_weapon/t708.0.png` (1920×1080 PLAYER screen)
 
 ---
 
-## 1. Claims
+## A. OVERTURNS — the ledger says blocked, the payload holds it
 
-### C1 — `paperdoll-13-slots` · A2 · **OVERTURNS LEDGER**
+### IE-1 · Blocker ⑤ sprite-compositing contract — HELD, complete
+**Ledger (line 210):** "⑤ **sprite-compositing contract** (layer order, per-slot body
+render — a from-scratch-art blocker) + item **icon manifest**."
 
-Ledger §4 Ready bullet: *"9-slot paperdoll"*. The payload says **13**.
+`MCSCharacter.as:10–62` declares **27 named part indices**, and the index IS the
+z-order: the constructor (`MCSCharacter.as:141–146`) does
+`for(i=0; i<=partListLength; i++){ mc = new MovieClip(); addChild(mc); partList.push(mc); }`
+with `partListLength = 22` (`:120`). Depth = `PART_*` value.
 
-`reference/decompiled/shs3_android/scripts/StatsManager.as:108`
-```as3
-public static var equipment:Vector.<Item> = new Vector.<Item>(13);
 ```
-`StatsManager.as:262-286`
-```as3
-internal static var EQ_ARMOR:int = 0;
-internal static var EQ_GLOVES:int = 1;
-internal static var EQ_HAIR:int = 2;
-internal static var EQ_HAT:int = 3;
-internal static var EQ_HEAD:int = 4;
-internal static var EQ_MASK:int = 5;
-internal static var EQ_NECK:int = 6;
-internal static var EQ_PANTS:int = 7;
-internal static var EQ_SHOES:int = 8;
-internal static var EQ_WEAPON:int = 9;
-internal static var EQ_SCABBARD:int = 10;
-internal static var EQ_ACCESSORY1:int = 11;
-internal static var EQ_ACCESSORY2:int = 12;
+PART_l_hand 0 · l_uparm 1 · l_lowarm 2 · weapon 3 · prop 4 · l_foot 5 · l_thigh 6
+l_calf 7 · crotch 8 · r_foot 9 · r_thigh 10 · r_calf 11 · neck 12 · stomach 13
+pelvic 14 · torso 15 · head 16 · hat 17 · r_hand 18 · r_uparm 19 · r_lowarm 20
+prop2 21 · prop3 22 · l_shoulder 23 · r_shoulder 24 · l_knee 25 · r_knee 26
 ```
-Three of the 13 (HEAD, NECK, SCABBARD) are excluded from the weight/stat rollups
-(`StatsManager.as:2002`, `:2038`, `:1945` — `if(q != EQ_HEAD && q != EQ_NECK && q != EQ_SCABBARD)`),
-which is probably where "9" came from — but they are still equipment slots that
-render on the character.
 
-**Verdict: HELD (ledger corrected 9 → 13).**
+Per-slot body render is explicit: **one equipment slot drives many parts.**
+`setArmor()` (`MCSCharacter.as:915–924`) claims **7** parts (torso, stomach, l/r uparm,
+l/r lowarm, pelvic); `setPants()` (`:1091–1098`) claims **5** (crotch, l/r thigh,
+l/r calf); `setWeapon()` (`:1206–1219`) claims 1.
 
----
-
-### C2 — `type-is-slot-index` · A2 · UNDER-CLAIM (ledger never had this)
-
-`<type>` in `itemdata.xml` is not a taxonomy label — it is **the equipment array
-index**. `reference/decompiled/shs3_android/scripts/Item.as:841-843`
+Symbol lookup contract, `MCSCharacter.as:581–607`:
 ```as3
-var itemType:int = itemXML.type;
-var itemModifierArray:Array = this.getModifierArray();
-var equippedItem:Item = StatsManager.equipment[itemType];
-```
-Cross-checking every one of the 982 `<item>` blocks in
-`reference/extracted/itemdata.xml` gives a perfectly clean id-range → slot map:
-
-| id range | `<type>` | slot | items |
-|---|---:|---|---:|
-| 4xxx | 0 (absent ⇒ 0) | ARMOR | 152 |
-| 5xxx | 1 | GLOVES | 35 |
-| 6xxx | 2 | HAIR | 73 |
-| 7xxx | 3 | HAT | 97 |
-| 8xxx | 4 | HEAD | 38 |
-| 9xxx | 5 | MASK | 60 |
-| 10xxx | 6 | NECK | 14 |
-| 11xxx | 7 | PANTS | 93 |
-| 12xxx | 8 | SHOES | 55 |
-| 13xxx | 9 | WEAPON | 177 |
-| 2xxx | 10 | consumable (not equippable) | 98 |
-| 3xxx | 11 | ACCESSORY | 9 |
-| 20xxx | 12 | quest item | 79 |
-
-One anomaly: exactly **1** item in the 7xxx (hat) range carries `type 0` (armor) —
-an authoring slip in the original data, worth reproducing verbatim rather than
-"fixing".
-
-`Item.as:845` — `if(itemType != 10 && itemType != 12)` — is the guard that stops
-consumables and quest items from printing damage/defense lines.
-
-**Verdict: HELD.**
-
----
-
-### C3 — `affix-suffix-pool` · A2 · **OVERTURNS LEDGER (blocker ④, first half)**
-
-Ledger §4 Blockers: *"④ affix **suffix** pool + per-rarity affix count."*
-The suffix pool is 8 tiers × 17 stats, verbatim, in
-`reference/decompiled/shs3_android/scripts/ItemGenerator.as:102-127`:
-
-```as3
-var maxhp_pre:Array = ["Vital","Rugged","Tough","Earthy","Dynamic","Wayfarer's","Survivor's","Guardian's"];
-var maxhp_suf:Array = ["of Health","of Fortitude","of Vitality","of Constitution","of Resilience","of Longevity","of Life","of the Ox"];
-var attack_pre:Array = ["Sharp","Fierce","Vicious","Savage","Brutal","Deadly","Fine","Warrior's"];
-var attack_suf:Array = ["of Attack","of Biting","of Striking","of Killing","of Slaughter","of Slaying","of Carnage","of the Butcher"];
-var speed_pre:Array = ["Fast","Quick","Nimble","Hasty","Swift","Whistling","Lizard's","Snake's"];
-var speed_suf:Array = ["of Speed","of Alacrity","of Haste","of Velocity","of Acceleration","of Sleight","of Swiftness","of Quickness"];
-var windatk_pre:Array = ["Drafty","Gusty","Gale","Stormy","Howling","Roaring","Shocking","Glowing"];
-var windatk_suf:Array = ["of Air","of Wind","of the Tempest","of the Typhoon","of the Cyclone","of the Tornado","of Shock","of Storms"];
-var piercingdmg_suf:Array = ["of Piercing","of Piercing","of Piercing","of Piercing","of Piercing","of Piercing","of Piercing","of Piercing"];
-```
-(11 more pools in the same block: hpregen, maxchi, chiregen, defense, fireatk,
-wateratk, earthatk, criticaldmg.)
-
-Tier selection is `num = Math.floor(i / 10)` over `MAXINDEX + 1 = 80` item levels
-(`ItemGenerator.as:128-148`), i.e. **8 name tiers, one per 10 levels**.
-
-Elemental-DEFENSE affixes deliberately borrow the *opposing* element's word pool
-(`ItemGenerator.as:142-145`): `preSufArray[FIREDEF] = wateratk_pre/suf`,
-`[WINDDEF] = earthatk`, `[WATERDEF] = windatk`, `[EARTHDEF] = fireatk`.
-
-The full item-name template is `ItemGenerator.as:733-749`: 0 mods → basename;
-1 → prefix+base; 2 → prefix+base+suffix; 3 → prefix(mod2)+prefix(mod0)+base+suffix(mod1);
-4+ → prefix(mod3)+prefix(mod2)+prefix(mod0)+base+suffix(mod1).
-
-**Verdict: HELD. Blocker ④ first half is closed.**
-
----
-
-### C4 — `affix-count-rule` · A2 · **OVERTURNS LEDGER (blocker ④, second half)**
-
-`ItemGenerator.as:206-252` gives the exact per-rarity affix-count distribution:
-
-```as3
-internal function getEnchantmentCount(isRareItem:Boolean) : int
-{
-   if(isRareItem)
-   {
-      dice = this.rng.rand(11);
-      if(dice <= 3) return 2;
-      if(dice <= 6) return 3;
-      if(dice <= 9) return 4;
-      if(dice == 10) return 5;
-      return 0;
-   }
-   dice = this.rng.rand(100);
-   if(dice <= 84) return 0;
-   if(dice <= 89) return 1;
-   if(dice <= 93) return 2;
-   if(dice <= 96) return 3;
-   if(dice <= 98) return 4;
-   return 5;
-}
-```
-Legendary items take one fewer when the roll exceeds 2 (`ItemGenerator.as:371-374`).
-
-**Verdict: HELD. Blocker ④ is fully closed.**
-
----
-
-### C5 — `stat-vs-level-curve` · A2 · **OVERTURNS LEDGER (blocker ①)**
-
-Ledger §4 Blockers: *"① item stat-magnitude **vs level** curve."* It is five
-closed-form arithmetic progressions over 80 tiers, `ItemGenerator.as:150-183`:
-
-```as3
-var maxtier:int = MAXINDEX + 1;      // 80
-base = 1; inc = 3 / 3;   prog1[i] = Math.floor(base + inc * i);  prog1[79] += 10;   // ATTACK / DEFENSE
-base = 5; inc = 5 / 3;   prog2[i] = Math.floor(base + inc * i);  prog2[79] += 10;   // MAX HP / MAX CHI
-base = 1; inc = 1 / 3;   prog3[i] = Math.floor(base + inc * i);  prog3[79] += 10;   // regen, all 8 elementals, CRIT DMG
-base = 1; inc = 2 / 3;   prog4[i] = Math.floor(base + inc * i);                     // SPEED
-base = 1; inc = 1 / 5;   prog5[i] = Math.floor(base + inc * i);                     // PIERCING DMG
-```
-Roll: `modvalue = prog[maxTier-1] + rng.rand(prog[maxTier] - prog[maxTier-1])`
-(`ItemGenerator.as:474-490`), with tier drawn by
-```as3
-internal function getMaxTier(nodelvl:int, getHighestTier:Boolean) : int
-{
-   var tier:int = nodelvl + 1;   // clamped to [0, 79]
-   if(getHighestTier) { tier = this.rng.rand(4) + tier - 3; ... return tier; }
-   tier = this.rng.rand(10) + tier - 9; ...
-}
-```
-i.e. the **first** rolled affix on an item uses a tight `-3..0` band off the node
-level; every later affix uses a loose `-9..0` band. Weapon ATTACK and armor
-DEFENSE additionally subtract the item's own `<minlvl>` before tiering
-(`ItemGenerator.as:465-472`).
-
-The per-slot allowed-affix masks are literal 17-bit arrays, `ItemGenerator.as:397-428`:
-```as3
-if(itemType == WEAPON)        pot = [1,1,1,1,1,1,0,1,1,1,1,0,0,0,0,1,1];
-else if(itemType == ARMOR)    pot = [1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1];
-else if(itemType == GLOVES)   pot = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,0];
-else if(itemType == PANTS)    pot = [1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0];
-else if(itemType == SHOES)    pot = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,0];
-else if(itemType == HAT)      pot = [1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0];
-else if(itemType == MASK)     pot = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,0];
-else if(itemType == ACCESSORY)pot = [1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1];
-```
-with a forced first affix per slot (`ItemGenerator.as:432-452`): ARMOR→DEFENSE,
-WEAPON→ATTACK, SHOES→SPEED, everything else random.
-
-**Verdict: HELD. Blocker ① is closed.**
-
----
-
-### C6 — `pot-mask-frame-confirmed` · A1 · corroborates C5
-
-**The frame is the check, and the frame agrees with the code.**
-`reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0031.jpg`
-(1024×576; crop `(575,140)-(1015,420)`, upscaled 3× LANCZOS).
-
-Visible: a green-bordered inventory icon, green item name **PANTS**, `OWNED: 0`,
-`LEVEL 4`, and the stat list
-`DEFENSE: +1 (EQ: 3)` · `FIRE DEF: +1 (EQ: 0)` · `WIND DEF: +2 (EQ: 0)` ·
-`EARTH DEF: 0 (EQ: 1)` · `CRITICAL DAMAGE: 0 (EQ: 1)` · `MAX CHI: 0 (EQ: 5)` ·
-`CHI REGEN: 0 (EQ: 2)` · `WEIGHT: 5`.
-
-That set is *exactly* the PANTS mask `[1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0]`:
-elemental **DEF** present, elemental **ATK** absent (indices 7–10 = 0), **PIERCING
-absent** (index 16 = 0), CRIT DMG present (index 15 = 1). Red/green digit tinting
-matches `Item.compareValue` (`Item.as:759-775`, `#00A606` better / `#FF0000` worse).
-
-**Verdict: HELD.**
-
----
-
-### C7 — `condition-has-no-damage-multiplier` · A2 · **OVERTURNS LEDGER (blocker ②)**
-
-Ledger §4 Blockers: *"② condition→DMG **multiplier** (current "evidence" confounds
-condition with a 2-level gap)."* There is no multiplier to find. Weapon condition
-is **binary** at the damage layer.
-
-`StatsManager.as:1863-1888`
-```as3
-if(itemdata == null || equipment[EQ_WEAPON].isBroken())
-{
-   basedamage = getPlayerStats(STAT_ATTACK) + findBonusStat(STAT_ATTACK) + 1;
-}
-else
-{
-   basedamage = getPlayerStats(STAT_ATTACK) + findBonusStat(STAT_ATTACK) + itemdata.mindamage;
-}
-```
-`StatsManager.as:1890-1903` — `getDamageRange()` returns `0` when broken, else
-`itemdata.maxdamage - itemdata.mindamage`. A broken weapon therefore deals a flat
-`ATTACK + bonus + 1`; a 1%-condition weapon deals **identical damage to a
-100%-condition one**.
-
-Condition itself is display-only (`Item.as:712-745`) over a 0–100 percentage:
-```as3
-public function getCondition() : int {
-   maxDurability = itemXML.durability + this.getModifierBonus(83);
-   var val:int = (maxDurability - this.uses) / maxDurability * 100;
-   ...
-}
-```
-with **six** display bands, not the ledger's unnumbered "condition tier names":
-`uses == 0` → string 639; `uses == 1` → 392; `condition == 0` → 387 (rendered red);
-`< 25` → 388; `< 50` → 389; `< 75` → 390; else 391.
-Broken test: `Item.as:1467-1479` — `return this.uses >= itemXML.durability + this.getModifierBonus(83);`
-
-**Verdict: HELD. Blocker ② is dissolved — the question it asks has no answer
-because the mechanic does not exist. Do not encode a condition multiplier.**
-
----
-
-### C8 — `sell-price-formula` · A2 · PARTIAL (blocker ③)
-
-Ledger §4 Blockers: *"③ sell-price formula."* Ledger §3 correction #9 says
-*"Sell price is NOT flat per item — it scales with rarity/level (same sword 5c and 25c)."*
-
-What the Android build actually does:
-- Sell payout is the slot's `value` (`ShopUI.as:540` — `StatsManager.changeGold(this.displayItem.getCost());`,
-  fed from `ShopUI.as:393` — `slot.setCost(this.currentItemList[index].value, this.currentItemList[index].hvalue);`).
-- For an inventory item the vendor does not stock, `value` = the item's `<baseprice>`
-  (`ShopUI.as:257` — `xmlShopItem = XMLShopItem.create(itemData.id,itemData.gvalue,itemData.desc);`
-  and `XMLShopItem.as:31` — `this.value = itemData.gvalue;`).
-- For **procedurally generated rare stock**, `XMLShopItem.as:68` and `:86`:
-  ```as3
-  this.value = itemData.gvalue + this.item.getLevel() * 100;
-  ```
-  where `Item.getLevel()` (`Item.as:274-300`) = `max(over modifiers) getModTier(...)+1`,
-  floored by `<minlvl>` and capped at `StatsManager.levelCap`. **That** is the
-  rarity/level scaling §3 observed.
-- `ShopUI.as:58` declares `internal var sellPercentage:Number = 0.5;` — and a grep
-  across all 970 Android classes finds **the declaration and nothing else**. The
-  50%-of-value sell haircut is dead code in this build.
-
-Caveat kept honest: this is the Android build. The web v0.717 sell path may differ,
-and `nodrop` items are excluded from the sell list entirely (`ShopUI.as:258-265`).
-
-**Verdict: PARTIAL — the buy/stock valuation formula is HELD verbatim; whether the
-shipped web build applied a 0.5 sell multiplier is STILL_UNHELD.**
-
----
-
-### C9 — `art-manifest-rule` · A2 · PARTIAL (blocker ⑤, icon-manifest half)
-
-Ledger §4 Blockers: *"⑤ … + item **icon manifest**."* The manifest is not a list —
-it is a **naming rule**, and we hold it.
-
-`MCSCharacter.as:580-616` (identical body in `MCSItem.as:406-437`, `MCSBust.as`):
-```as3
-internal function getMCSComponent(partType:String, id:int) : MovieClip
-{
+internal function getMCSComponent(partType:String, id:int) : MovieClip {
    var xmlItem:XMLItem = QuestEngine.getItemData(id);
-   art = (xmlItem == null) ? id : xmlItem.art;
+   if(xmlItem == null) { art = id; } else { art = xmlItem.art; }
    if(StatsManager.useExternalResource) return ResourceManager.getMCSComponent(partType,art);
    if(getDefinitionByName(partType + art.toString()))
       ClassDefinition = Class(getDefinitionByName(partType + art.toString()));
-   else
-      ClassDefinition = Class(getDefinitionByName(partType + "0"));
-   ...
+   else ClassDefinition = Class(getDefinitionByName(partType + "0"));
+```
+i.e. **class name = `partType + <art>`**, with `<art>` from `itemdata.xml` (146 explicit
+rows; else `art = id`, `XMLItem.as:110–117`), falling back to `partType + "0"`.
+
+**This is confirmed against the WEB build.** `reference/decompiled/shs3_payload/scripts/`
+exports exactly the naked-default symbol classes the code names:
+`torso4000.as`, `stomach4000.as`, `pelvic4000.as`, `uparm4000.as`, `lowarm4000.as`,
+`hand5000.as`, `hair6000.as`, `hair6001.as`, `hat7000.as`, `head8000.as`, `head8004.as`,
+`mask9000.as`, `neck10000.as`, `crotch11000.as`, `thigh11000.as`, `calf11000.as`,
+`foot12000.as`, `foottop12000.as`, `weapon13000.as`, `weapon13002.as`, `prop13000.as`,
+`item0.as`. Those match the naked-fallback IDs hard-coded in `initMCS`
+(`MCSCharacter.as:349–449`: head 8000 · mask 9000 · hair 6001/6000 · hat 7000 ·
+neck 10000 · armor 4000 · shoes 12000 · pants 11000 · gloves 5000 · weapon 13000 ·
+prop 13000). Verdict: **HELD, not a blocker.**
+
+### IE-2 · Blocker ⑤(b) item icon manifest — HELD, and there is no separate manifest
+`MCSItem.as:324–349` builds the inventory icon out of **the same MCS part symbols**,
+with hard-coded sub-offsets:
+```as3
+public function setArmor(id:int) : * {
+   this.displayItem  = this.getMCSComponent("stomach",id);
+   if(this.displayItem == null) { this.displayItem = new ArmorDummyIcon(); addChild(...); }
+   else { addChild(this.displayItem); this.displayItem.x = -0.65; this.displayItem.y = 5.9;
+          this.displayItem1 = this.getMCSComponent("pelvic",id); ... x=-0.35; y=10;
+          this.displayItem2 = this.getMCSComponent("torso",id);  ... y=-2;
+          this.displayItem3 = this.getMCSComponent("uparm",id);  ... x=-5.2; y=-13.5;
+          this.displayItem4 = this.getMCSComponent("lowarm",id); ...
+```
+So "icon manifest" is a category error: **the icon IS the paperdoll part stack**, at
+published offsets, with `ArmorDummyIcon` as the miss case. Nothing to recover.
+
+### IE-3 · Blocker ③ sell-price formula — HELD, exact, in BOTH builds
+**Ledger (line 210):** "③ sell-price formula."
+Android `Item.as:1582–1593`:
+```as3
+public function getSellAmt() : int {
+   if(this.itemID < 3000) { return 1; }
+   if(this.getWeight() >= 10) { return (1 + this.getModifierCount()) * 10; }
+   return (1 + this.getModifierCount()) * 5;
 }
 ```
-`XMLItem.as:110-117` — when `<art>` is absent, **`art` defaults to the item id**.
-So the symbol name for any of the 982 items is computable today:
-`partType + (art ?? id)`, with fallback `partType + "0"`.
+Web v0.717 `shs3_payload/scripts/§1t17s0§.as:1977–1988` is the same function,
+obfuscated but structurally identical (`if(... >= 10) return (1 + ...()) * 10; return (1 + ...()) * 5;`).
 
-The 18 `partType` prefixes are enumerated at the call sites (`MCSItem.as:67-392`):
-`hat, hair, head, mask, weapon, item, acc, hand, foot, foottop, stomach, pelvic,
-torso, uparm, lowarm, thigh, calf, crotch, neck`.
+**This also corrects §3 correction #9.** §3 #9 says *"Sell price is NOT flat per item —
+it scales with rarity/level (same sword 5c and 25c)."* Half right, half wrong: it does
+NOT scale with level at all. It scales with **modifier count** (which is what "rarity"
+is derived from, see IE-6) and one **weight ≥ 10** step. 5c = 0 modifiers, weight < 10;
+25c = 4 modifiers, weight < 10. Level never enters.
 
-`reference/extracted/itemdata.xml` carries 146 explicit `<art>` values across 40
-distinct ids (range 2122–20052) — the rest resolve by the id default.
+### IE-4 · Blocker ② condition→DMG multiplier — **there is no multiplier**
+**Ledger (line 210):** "② condition→DMG **multiplier** (current 'evidence' confounds
+condition with a 2-level gap)."
 
-The naming rule is directly corroborated by extracted asset names:
-`reference/extracted/sprites/` contains `DefineSprite_2643_weapon13000`,
-`DefineSprite_2642_weapon13002`, `DefineSprite_2647_torso4000`,
-`DefineSprite_2649_thigh11000`, `DefineSprite_2675_foot12000`,
-`DefineSprite_2673_foottop12000`, `DefineSprite_2679_calf11000`,
-`DefineSprite_2657_mask9000`, `DefineSprite_2666_hat7000`,
-`DefineSprite_2669_hair6001`, `DefineSprite_2671_hair6000`,
-`DefineSprite_2661_item0` — the **12 default/fallback part symbols**, already
-extracted, with 1,822 SVGs in `reference/extracted/shapes/`.
+The ledger is hunting a function that does not exist. Condition is **display-only**;
+damage is a **binary broken / not-broken cliff**.
 
-What is still missing: the per-item vector art for the other ~970 items lived in
-external resource SWFs (`useExternalResource` → `ResourceManager`), fetched from
-the dead server on web. The Android build embeds them as
-`115_Mobile_SHS3Resource` (654,169 B) and `120_Mobile_BGResource` (4,204,635 B),
-both **CWS-headered but not zlib-decompressible** (header scrambled the same way
-the outer payload was, and `reference/decrypted/` only ever decoded two web-payload
-binaries). Two decode attempts failed; stopping there per stuck-stop.
-
-**Verdict: PARTIAL — the manifest RULE and the 12 default symbols are HELD; the
-per-item art is one SWF-descrambling task away, not an unknown.**
-
----
-
-### C10 — `compositing-part-order` · A2 · PARTIAL (blocker ⑤, layer-order half)
-
-`MCSCharacter.as:8-60` enumerates the 27-part rig:
+`Item.as:1481–1496` — condition is a pure percentage:
 ```as3
-public static var PART_l_hand:int = 0;      PART_l_uparm 1;   PART_l_lowarm 2;
-public static var PART_weapon:int = 3;      PART_prop 4;      PART_l_foot 5;
-PART_l_thigh 6; PART_l_calf 7; PART_crotch 8; PART_r_foot 9; PART_r_thigh 10;
-PART_r_calf 11; PART_neck 12; PART_stomach 13; PART_pelvic 14; PART_torso 15;
-PART_head 16; PART_hat 17; PART_r_hand 18; PART_r_uparm 19; PART_r_lowarm 20;
-PART_prop2 21; PART_prop3 22; PART_l_shoulder 23; PART_r_shoulder 24;
-PART_l_knee 25; PART_r_knee 26;
+maxDurability = itemXML.durability + this.getModifierBonus(83);
+var val:int = (maxDurability - this.uses) / maxDurability * 100;
 ```
-The paperdoll wire format is `MCSCharacter.as:348` — a 12-field pipe-delimited string:
+`getCondition()` has exactly **two** call sites in the whole bundle: its own definition
+and `getDesc()` (`Item.as:714`). It never reaches combat.
+
+Damage, `StatsManager.as:1863–1903`:
 ```as3
-this.mcsString = armorid + armorColor + "|" + glovesid + "|" + hairid + "|" + hatid + hatColor + "|" + headid + "|" + maskid + maskColor + "|" + neckid + "|" + pantsid + pantsColor + "|" + shoesid + "|" + weaponid + "|" + propid + "|" + prop2id;
+if(itemdata == null || equipment[EQ_WEAPON].isBroken())
+   { basedamage = getPlayerStats(STAT_ATTACK) + findBonusStat(STAT_ATTACK) + 1; }
+else
+   { basedamage = getPlayerStats(STAT_ATTACK) + findBonusStat(STAT_ATTACK) + itemdata.mindamage; }
+...
+getDamageRange(): if(equipment[EQ_WEAPON].itemID == 0 || equipment[EQ_WEAPON].isBroken()) return 0;
+                  return itemdata.maxdamage - itemdata.mindamage;
 ```
-with per-slot tint injected as `,<PCOLORMODID>@<rgb>#<SCOLORMODID>@<rgb>#` — only
-armor, pants, hat and mask are tintable (`MCSCharacter.as:312-347`). Hair/hat
-mutual exclusion is explicit: `hatid > 0 && hatid != 7000 && hatid != 7049` →
-`hatHair.visible = true; hair.visible = false` (`MCSCharacter.as:374-385`).
+A 99%-worn sword hits exactly as hard as a pristine one. At 100% worn it drops to
+`ATK + 1` with **zero** spread. `isBroken()` (`Item.as:1467–1478`) = `uses >= durability + getModifierBonus(83)`.
 
-`MCSCharacter` itself is `[Embed(source="/_assets/assets.swf", symbol="symbol1970")]`
-— so the **z-order of those 27 parts lives in the SWF timeline (PlaceObject depths),
-not in ActionScript.** The part list, the slot→part routing and the serialization
-are held; the numeric depth stack is not yet read out of the SWF.
+The condition **ladder** is 7 states with exact thresholds (`Item.as:712–746`), names
+resolved via `strings.json`:
+| test | LangManager id | text |
+|---|---|---|
+| `uses == 0` | 639 | `Unbreakable` |
+| `uses == 1` | 392 | `Condition: Well-Maintained` |
+| `condition == 0` | 387 | `Condition: Broken` (wrapped `<font color="#FF0000">`) |
+| `condition < 25` | 388 | `Condition: Poor` |
+| `condition < 50` | 389 | `Condition: Used` |
+| `condition < 75` | 390 | `Condition: Usable` |
+| else | 391 | `Condition: Good` |
+Web v0.717 carries the same 25/50/75 ladder (`§1t17s0§.as:1011,1015,1019`).
+⚠ The `uses == 0 → "Unbreakable"` branch is reported verbatim; it reads like a shipped
+quirk (a pristine breakable item labels itself Unbreakable). Do not "fix" it silently.
 
-**Verdict: PARTIAL.**
+Roll-on-drop, `ItemGenerator.as:648–661`: legendary → `uses = 0`; `nodelvl < 20` →
+`uses = rng.rand(durability - 50)`; else `uses = rng.rand(durability)`. `<uses>` in
+`itemdata.xml` (115 rows, values 50/60/80/100) is durability (`XMLItem.as:184–186`:
+`this.durability = xml.uses;`) — so under L20 the game *cannot* hand you a badly-worn drop.
 
----
+### IE-5 · Blocker ④ affix suffix pool + per-rarity affix count — HELD, verbatim
+**Ledger (line 210):** "④ affix **suffix** pool + per-rarity affix count."
+**Ledger (line 209) claims only the prefix pool is Ready.** Both pools are on disk.
 
-### C11 — `rarity-4-tiers-exact` · A2 + A1 · upgrades a Ready bullet
-
-Ledger §4 Ready: *"4 rarity tiers"* — true, and now exact. `Item.as:417-451`:
-
-| tier | rule | colour on dark loot dialog | colour on light inventory bg |
-|---|---|---|---|
-| unique/quest/player-named | `itemxml.unique == 1 \|\| isPickableQuestItem() \|\| isTradeQuestItem \|\| isPlayerNamed()` | `#b048f8` | `#6600cc` |
-| rare | `modifierCount >= 3` | `#0080ff` | `#003399` |
-| magic | `modifierCount > 0` | `#1eff00` | `#336600` |
-| common | else | `#FFFFFF` | `#000000` |
-
-Rarity is therefore **derived from affix count**, not stored. `<unique>` in
-`itemdata.xml` has exactly 2 distinct values (1 and 2) over 369 rows — only `== 1`
-triggers the purple tier.
-
-Frame corroboration (A1): `reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0031.jpg`
-crop `(575,140)-(1015,420)` @3× — "PANTS" renders **green** with a green icon
-border, i.e. `1 <= modifierCount <= 2` on a dark shop overlay; and
-`frame_0024.jpg` renders a 3-affix generated name in **blue**. Frame and code agree.
-
-**Verdict: HELD.**
-
----
-
-### C12 — `name-template-frame-confirmed` · A1 · corroborates C3
-
-`reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0024.jpg` (1024×576; crop
-`(0,420)-(640,500)`, upscaled 3× LANCZOS). Visibly, verbatim:
-
-> `I AM LOOKING FOR ` **`DRAFTY SHARP IRON SWORD OF PIERCING`** ` .`
-
-with the item name in bright blue and the surrounding sentence in white.
-
-Decompose against `ItemGenerator.as:744-746` (the 3-modifier branch,
-`pre(mod2) + " " + pre(mod0) + " " + basename + " " + suf(mod1)`):
-- `pre(mod2)` = **"Drafty"** = `windatk_pre[0]` → mod2 is WINDATK, tier 0
-- `pre(mod0)` = **"Sharp"** = `attack_pre[0]` → mod0 is ATTACK, tier 0 — and ATTACK
-  is exactly what `ItemGenerator.as:439-443` **forces** as the first affix on a WEAPON
-- `basename` = **"Iron Sword"** (a string-table `<name>` id we do not hold — see C15)
-- `suf(mod1)` = **"of Piercing"** = `piercingdmg_suf[*]` → mod1 is PIERCINGDMG, which
-  the WEAPON `pot` mask allows (index 16 = 1) and every other slot's mask forbids.
-
-Three affixes ⇒ blue name ⇒ the `modifierCount >= 3` branch of C11. Every layer
-agrees with every other.
-
-**Verdict: HELD. This is the single strongest corroboration in the lane: a
-video frame independently validates the affix pools, the forced-first-affix rule,
-the slot mask and the rarity colour rule simultaneously.**
-
----
-
-### C13 — `weight-cap-is-not-flat-100` · A2 · corrects a Ready bullet
-
-Ledger §4 Ready: *"weight cap 100"*. `StatsManager.as:2298-2301`:
+`ItemGenerator.as:102–127` declares **13 distinct prefix arrays × 8** and **13 distinct
+suffix arrays × 8** = 104 prefixes + 104 suffixes, verbatim. Sample rows:
 ```as3
-public static function getCarryingWeight() : int
-{
-   return 100 + getStat(1009) * 20;
-}
+var attack_pre:Array  = ["Sharp","Fierce","Vicious","Savage","Brutal","Deadly","Fine","Warrior's"];
+var attack_suf:Array  = ["of Attack","of Biting","of Striking","of Killing","of Slaughter","of Slaying","of Carnage","of the Butcher"];
+var defense_suf:Array = ["of Defense","of Blocking","of Guarding","of Protection","of Absorption","of Warding","of the Shield","of the Titan"];
+var speed_suf:Array   = ["of Speed","of Alacrity","of Haste","of Velocity","of Acceleration","of Sleight","of Swiftness","of Quickness"];
 ```
-100 is the **base**; the cap is upgradable in +20 steps via stat id 1009.
-The load itself is `StatsManager.findWeight()` (`:1983-2026`) = Σ inventory
-`weight × qty` + Σ equipment weight over `for(q = 0; q < 13; q++)` skipping
-EQ_HEAD/EQ_NECK/EQ_SCABBARD + Σ quest-item `weight × qty`. Overweight blocks
-travel/entry rather than pickup (`NodeUI.as:379`, `Obj_HiddenTemple.as:187`,
-`InteractUI.as:1730`).
+Tier selection: `num = Math.floor(i / 10)` over `i` in 0..79 (`:128–148`) — **8 name tiers
+across 80 value tiers**. The four elemental-DEF channels reuse the wrong pools
+(`FIREDEF ← wateratk`, `WINDDEF ← earthatk`, `WATERDEF ← windatk`, `EARTHDEF ← fireatk`,
+`:142–145`) — a shipped bug; copy it or flag the deviation.
 
-`itemdata.xml` carries 745 `<weight>` rows, values 0–500 (index
-`docs/gauntlet/L0/index/itemdata.json`, `itemdata/item/weight`).
+Affix **count** distribution, `ItemGenerator.as:206–252`:
+- **normal** `rng.rand(100)`: ≤84 → 0 · ≤89 → 1 · ≤93 → 2 · ≤96 → 3 · ≤98 → 4 · else → 5
+- **rare** `rng.rand(11)`: ≤3 → 2 · ≤6 → 3 · ≤9 → 4 · ==10 → 5
+- **legendary** subtracts 1 when count > 2 (`:371–374`)
 
-**Verdict: PARTIAL — "100" is right as a base and wrong as a cap.**
+Name assembly template, `ItemGenerator.as:733–749` (ordering is by modifier INDEX,
+not by value): 0 mods → `base`; 1 → `pre(m0) base`; 2 → `pre(m0) base suf(m1)`;
+3 → `pre(m2) pre(m0) base suf(m1)`; 4+ → `pre(m3) pre(m2) pre(m0) base suf(m1)`.
 
----
+### IE-6 · Blocker ① stat-magnitude vs level curve — HELD as both a table AND a formula
+**Ledger (line 210):** "① item stat-magnitude **vs level** curve."
 
-### C14 — `soul-infusion-transfer-rule` · A2 · upgrades a Ready bullet
-
-Ledger §4 Ready: *"soul-infusion + stat-transfer rules (patch-note-sourced)"*.
-The mechanic is `CraftingUI` — a two-slot combine (`designSlot` supplies the item,
-`statsSlot` supplies the affixes), `CraftingUI.as:506-523`:
-```as3
-var combinedItem:Item = new Item(this.designSlot.itemID);
-combinedItem.copyModifiers(this.statsSlot.getItem().modifiers);
-if(designType == 13)
-{
-   designMinDamage = designItemXML.mindamage;
-   statsMinDamage = QuestEngine.getItemData(this.statsSlot.itemID).mindamage;
-   if(combinedItem.getModifierBonus(6) == 0) combinedItem.addModifier(6,statsMinDamage - designMinDamage);
-   else { modifier = combinedItem.getModifierObject(6); modifier.value += statsMinDamage - designMinDamage; }
-   combinedItem.uses = this.statsSlot.getItem().uses;
-}
-combinedItem.setPrimaryColor(this.designSlot.getPrimaryColor());
-combinedItem.setSecondaryColor(this.designSlot.getSecondaryColor());
-```
-i.e. **all affixes transfer wholesale**; for weapons (`designType == 13`) the base
-damage difference is reconciled into modifier id 6 (ATTACK) so the donor's damage
-is preserved on the recipient's silhouette, and durability follows the donor.
-Colour comes from the design item. Cost is paid in Gold (`goldicon1/goldicon2`).
-
-**Verdict: HELD — no longer patch-note-sourced; it is source-sourced.**
-
----
-
-### C15 — `string-table-partial` · A2 · **PARTIALLY OVERTURNS THE STANDING GAUNTLET BLOCKER**
-
-The gauntlet's standing blocker says item `<name>`/`<desc>` are numeric ids into a
-string table "NOT YET LOCATED … bindata/ is now EXHAUSTED as a candidate." Two
-corrections:
-
-**(a) The table is now NAMED and PATHED.**
-`reference/decompiled/shs3_android/scripts/LangManager.as:38-58`
-```as3
-var server:String = "./data/";
-if(StatsManager.useExternalLang) { ... server = QueryManager.instance.server + "strings/"; }
-Locale.addXMLPath(ENGLISH,server + "shs3_en.xml");
-Locale.addXMLPath(CHINESE,server + "shs3_zh-CN.xml");
-Locale.loadLanguageXML(id,onLanguageLoad);
-```
-It was never in `bindata/` because on the web build it is an **external server
-file**, `shs3_en.xml`. Three locales exist (`ENGLISH "en"`, `CHINESE "zh-CN"`,
-`JAPANESE "ja"`, `LangManager.as:9-13`).
-
-**(b) A 2,555-entry English slice is now EXTRACTED and on disk-derivable.**
-The Android build embeds a copy: `Mobile_Lang_EN.as:5`
-```as3
-[Embed(source="/_assets/118_Mobile_Lang_EN.bin", mimeType="application/octet-stream")]
-```
-Pulling char-id 118 out of `reference/decrypted/shs3_android_payload_decoded.swf`
-via a `DefineBinaryData` walk yields 500,024 bytes of UTF-16LE XLIFF, 250,011
-characters decoded, `<trans-unit id="0" resname="0"><source>No</source>` … ids
-**0–2554 contiguous**.
-
-**(c) It does NOT close item names.** `itemdata.xml`'s `<name>` ids run 34–4427
-(804 rows) and `<desc>` ids 207–4405 (178 rows); the quest engine calls
-`getString(11253)`, `getString(11254)` (`shs3_payload/scripts/§1t123s0§.as:900-901`).
-The embedded slice tops out at 2554. Lookups of 4000/4001/4002/4058/4172 all return
-`None`; `grep -c "Katana\|Wakizashi\|Tanto\|Nodachi"` on the decoded table = **0**.
-
-**Verdict: PARTIAL. The table is located and a third of it is in hand; item names
-remain STILL_UNHELD. Numbers stay portable, names still do not.**
-
----
-
-### C16 — `modifier-id-semantics` · A2 (payload) + the C15 table · UNDER-CLAIM
-
-Because C15 recovered ids 0–2554, the item modifier enum is now fully decoded.
-`XMLItem.as:231-298` maps each `<modifier><id>` to a label string id; resolving
-those against the extracted table gives:
-
-| `<modifier><id>` | string id | label |
-|---:|---:|---|
-| 0 | 110 | `HP` |
-| 1 | 111 | `Max HP` |
-| 2 | 112 | `HP Regen` |
-| 3 | 113 | `Chi` |
-| 4 | 114 | `Max Chi` |
-| 5 | 115 | `Chi Regen` |
-| 6 | 116 | `Attack` |
-| 7 | 117 | `Defense` *(suppressed when `<defense>` is non-zero)* |
-| 8 | 118 | `Speed` |
-| 9 | 119 | `XP` |
-| 10 | 120 | `Level ` |
-| 11 | 63 | `Coins` |
-| 12 | 64 | `Gold` |
-| 13 | 102 | `AP` |
-| 14 | 121 | `Max AP` |
-| 15 | 59 | `Duel Tokens` |
-| 16 | 122 | `Max Duel Tokens` |
-| 101–1999 | 123 | `Set` + `": " + id` (equipment set bonus) |
-
-plus `124` = `Level Required` (printed when `<minlvl> > 1`) and `125` =
-`Stance Restriction` (printed when `<stancerestriction> > 0`), `108` = `Dmg`,
-`109` = `Def`, `139` = the weight label.
-
-`itemdata.xml` holds 412 `<modifier>` blocks over 34 distinct ids and 319
-`<value>` rows. Every one of them is now readable.
-
-**Verdict: HELD.**
-
----
-
-### C17 — `weapon-slash-budget-and-reach` · A2 · cross-lane, feeds combat-core
-
-`itemdata.xml` gives 106 `<slashusage>` rows with exactly 3 values — 24, 72, 96 —
-and `XMLItem.as:152-159` supplies the default:
-```as3
-if(xml.slashusage.toString() != "") this.slashusage = xml.slashusage;
-else this.slashusage = 48;
-```
-`StatsManager.as:1922-1930` reads it back with a floor of 48. Verbatim example,
-`reference/extracted/itemdata.xml:8742-8752`:
+**(a) Static table.** `itemdata.xml` carries 155 `<minlvl>` (range −4…79), 158
+`<mindamage>` (1…81), 158 `<maxdamage>` (2…108), 371 `<defense>` (0…35). Endpoints,
+quoted verbatim:
 ```xml
+reference/extracted/itemdata.xml:7906-7915
 	<item>
-		<id>13113</id>
+		<id>13002</id>
 		<type>9</type>
-		<name>4050</name>
-		<minlvl>1</minlvl>
-		<mindamage>2</mindamage>
-		<maxdamage>16</maxdamage>
-		<slashusage>96</slashusage>
+		<name>4041</name>          <!-- strings.json 4041 = "Branch" -->
+		<baseprice>0</baseprice>
+		<minlvl>-4</minlvl>
+		<mindamage>1</mindamage>
+		<maxdamage>2</maxdamage>
+		<weight>1</weight>
+	</item>
+
+reference/extracted/itemdata.xml:9925-9937
+	<item>
+		<id>13225</id>
+		<type>9</type>
+		<name>4161</name>          <!-- "Steel Sabre" -->
+		<minlvl>79</minlvl>
+		<mindamage>81</mindamage>
+		<maxdamage>90</maxdamage>
+		<slashusage>72</slashusage>
 		<stancerestriction>6</stancerestriction>
-		<weight>15</weight>
-		<uses>100</uses>
+		<weight>10</weight>
+		<art>13205</art>
+		<uses>60</uses>
+	</item>
 ```
-Immediately above it, `StatsManager.as:1915-1920`:
+That is the whole L−4→L79 weapon ladder, 158 rows, no extrapolation needed.
+
+**(b) The roll formula for generated affixes.** `ItemGenerator.as:321–347`:
 ```as3
-internal static function getBaseSlashLengthVal(speed:int) : int
-{
-   var maxincrement:int = 90 + getPlayerStats(STAT_DAN) * 5;
-   return int(120 + Math.floor(maxincrement * speed / (20 + speed)));
+internal function getMaxTier(nodelvl:int, getHighestTier:Boolean) : int {
+   var tier:int = nodelvl + 1;                      // tier ≈ node/item level
+   if(tier < 0) tier = 0; else if(tier > MAXINDEX) tier = MAXINDEX;   // MAXINDEX = 79
+   if(getHighestTier) { tier = this.rng.rand(4) + tier - 3; ... }     // first affix: level−3..level
+   tier = this.rng.rand(10) + tier - 9;                               // later affixes: level−9..level
+```
+then value = `modMin + rng.rand(modMax - modMin)` where min/max come from progression
+arrays built in `:150–183`:
+`prog1[i]=floor(1+i)` (ATTACK, DEFENSE) · `prog2[i]=floor(5+5i/3)` (MAXHP, MAXCHI) ·
+`prog3[i]=floor(1+i/3)` (all elemental, regen, CRITICALDMG) · `prog4[i]=floor(1+2i/3)`
+(SPEED) · `prog5[i]=floor(1+i/5)`; prog1–3 get **+10** at index 79 (`:157,164,171`).
+Weapons/armor subtract the item's own `levelrestriction` before rolling their signature
+stat (`:465–472`), so a high-minlvl base rolls a *smaller* bonus. This is the
+"stat-magnitude vs level curve", in full.
+
+### IE-7 · Item + equipment SAVE/WIRE format is held — partially overturns §6
+**Ledger §6:** "**Server-sim topology & save format** — nothing to copy; design a
+single-player persistence schema from the observed field set."
+
+For this system there IS something to copy — the exact serialization. `Item.parse`
+(`Item.as:47–104`) reads `"<id>,<qty>,<modid>@<val>#<modid>@<val>#"`, with reserved
+modifier IDs `PCOLORMODID 80`, `SCOLORMODID 81`, `USESMODID 82`, `NAMEMODID 89`,
+`CREATORMODID 125` (`Item.as:6–16`), and clamps every other value to
+`ItemGenerator.getModMax(modid)`.
+
+Equipment is a 12-field pipe string, `MCSCharacter.as:348`:
+```as3
+this.mcsString = armorid + armorColor + "|" + glovesid + "|" + hairid + "|" + hatid + hatColor
+   + "|" + headid + "|" + maskid + maskColor + "|" + neckid + "|" + pantsid + pantsColor
+   + "|" + shoesid + "|" + weaponid + "|" + propid + "|" + prop2id;
+```
+The §6 line stands for *server topology*; it is wrong that there is nothing to copy for
+the item/equipment save schema.
+
+### IE-8 · Soul-infusion / stat-transfer is code, not patch-note inference
+**Ledger (line 209)** lists it under Ready as "(patch-note-sourced)". It is exact.
+`CraftingUI.as:494–523`:
+```as3
+var designType:int = Math.floor(this.designSlot.itemID / 1000);
+var statsType:int  = Math.floor(this.statsSlot.itemID / 1000);
+if(designType != statsType) { this.noCombine(LangManager.getString(698)); return; }   // "must be same kind"
+combinedItem.copyModifiers(this.statsSlot.getItem().modifiers);
+if(designType == 13) {                                    // weapons only
+   ... combinedItem.addModifier(6, statsMinDamage - designMinDamage);   // 6 = Attack
+   combinedItem.uses = this.statsSlot.getItem().uses;      // durability follows the STATS item
 }
+combinedItem.setPrimaryColor(this.designSlot.getPrimaryColor());   // colour follows the DESIGN item
 ```
-So the drawable slash length is `120 + floor((90 + DAN*5) * SPEED / (20 + SPEED))`
-px-equivalent, and `slashusage` is the per-weapon cost charged against it. At
-SPEED 0 that is a hard **120** floor; the asymptote at DAN 0 is 210.
+Gate is `floor(id/1000)` equality (finer than "same slot" — a katana can't take a
+sabre's stats across the 13xxx band boundary only if the thousands digit differs).
 
-This is not the items lane's own blocker — it is §2's `combat-core` blocker
-*"reach cap in **px**"*, and it was sitting inside the equipment code the whole time.
+### IE-9 · The ID→slot band map is complete and exact
+`ShopItem.as:134–180` + `ItemGenerator.getItemType` (`:254–293`) give a total function
+from item ID to slot, and `itemdata.xml`'s 982 rows land in exactly those bands
+(counted this run):
 
-Also from the same rows: `<stancerestriction>` has exactly 2 values (4 and 6) over
-53 items, `<uses>` has 4 values (50/60/80/100) over 115 items, `<nodrop>` 7 items,
-`<nogive>` 12 items — and generated durability starts partially spent:
-`ItemGenerator.as:654-661` — `newItem.uses = rng.rand(xmlItem.durability - 50)`
-below node level 20, `rng.rand(xmlItem.durability)` at or above it, `0` for legendaries.
-
-**Verdict: HELD.**
+| band | slot | rows in itemdata.xml |
+|---|---|---|
+| 2000–2999 | consumable | 99 |
+| 3000–3999 | accessory | 9 |
+| 4000–4999 | armor | 152 |
+| 5000–5999 | gloves | 35 |
+| 6000–6999 | hair | 73 |
+| 7000–7999 | hat | 98 |
+| 8000–8999 | head | 38 |
+| 9000–9999 | mask | 60 |
+| 10000–10999 | neck | 14 |
+| 11000–11999 | pants | 93 |
+| 12000–12999 | shoes | 55 |
+| 13000–13999 | weapon | **177** |
+| 20000+ | quest/trade | 79 |
 
 ---
 
-### C18 — `premium-catalog-held` · A2 · **PARTIALLY OVERTURNS §6**
+## B. THE LEDGER IS WRONG — "Ready" bullets that do not survive contact
 
-Ledger §6 "structurally UNRECOVERABLE" lists *"**The dead IAP economy** — design an
-offline gold faucet; `HAS_CASH_PURCHASE=false` already commits to this."*
+### IE-10 · "9-slot paperdoll" is right for the UI and wrong for the model
+**Ledger (line 209):** "**Ready:** 9-slot paperdoll".
 
-The premium **catalog** is not lost. Char-id 121 of the decoded Android payload,
-`Mobile_PremiumData`, 4,504 bytes:
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<premiumdata>
-<default>
-<item>2208</item>
-<item>2209</item>
-<item>2212</item>
-...
- </default>
- <special>
- <!--
-<item>2171</item>
-<item>13036</item>
-...
--->
-</special>
-<rotation>
-<!-- Assassin outfit -->
-<set>
-<item>2130</item>
-<item>7034</item>
-<item>4065</item>
-<item>5008</item>
-<item>11036</item>
-<item>12018</item>
-</set>
-<!-- Dark Assassin outfit -->
+**A1 — the frame.** `reference/frames/s21_weapon/t708.0.png`, 1920×1080, PLAYER screen.
+Crop `(170,240)-(870,1040)` upscaled ×2 (LANCZOS) shows the paperdoll around a "GUEST"
+fighter: **exactly 9 boxes** — hat (straw hat, filled) · mask (oni, empty) · armor (grey
+haori, filled) · gloves (gauntlets, empty) · pants (white hakama, filled) · weapon
+(pickaxe, filled) · ring-left (empty) · shoes (sandals, filled) · ring-right (empty).
+So "9-slot paperdoll" **is what the frame shows** and the ledger is right about the UI.
+
+**A2 — the model is 13.** `StatsManager.as:108` `public static var equipment:Vector.<Item> = new Vector.<Item>(13);`
+with `:262–286`:
+`EQ_ARMOR 0 · EQ_GLOVES 1 · EQ_HAIR 2 · EQ_HAT 3 · EQ_HEAD 4 · EQ_MASK 5 · EQ_NECK 6 ·
+EQ_PANTS 7 · EQ_SHOES 8 · EQ_WEAPON 9 · EQ_SCABBARD 10 · EQ_ACCESSORY1 11 · EQ_ACCESSORY2 12`,
+all thirteen assigned at `:724–738` (`EQ_SCABBARD = new Item(13100,1)` is a real default),
+and **eleven** passed to the renderer at `:1765`:
+`player.initMCS(EQ_ARMOR, EQ_GLOVES, EQ_HAIR, EQ_HAT, EQ_HEAD, EQ_MASK, EQ_NECK, EQ_PANTS, EQ_SHOES, EQ_WEAPON, EQ_SCABBARD.itemID)`.
+A builder who codes "9 slots" from the ledger will have no hair, no head, no scabbard.
+**Residual, honestly unheld:** which of `EQ_NECK / EQ_ACCESSORY1 / EQ_ACCESSORY2` the two
+identical ring boxes in the frame map to — the frame cannot distinguish them. See IE-14.
+
+### IE-11 · "4 rarity tiers" — real, but they are derived, not a data field
+**Ledger (line 130):** items-equipment Ready includes "rarity".
+There is **no rarity field** in `itemdata.xml`. The four tiers are computed at read time,
+`Item.as:382–405`:
+```as3
+if(itemxml.unique == 1 || isPickableQuestItem() || isTradeQuestItem || isPlayerNamed()) return "unique";
+if(modifierCount >= 3) return "rare";
+if(modifierCount > 0)  return "special";
+return "normal";
 ```
-— a default premium stock list, a commented-out "special" list (the dev's own
-disabled SKUs), and a **rotation of named outfit sets** carrying the designers'
-verbatim comments. Cross-referenced against `itemdata.xml`'s 304 `<heavenlyprice>`
-rows (values 0,1,2,3,5,8,12,25,100), the entire Gold-priced item economy is
-reconstructible.
+Byte-exact colours (`Item.as:417–451`) — loot-toast palette vs inventory palette:
+| tier | loot toast | inventory |
+|---|---|---|
+| unique | `#b048f8` | `#6600cc` |
+| rare (≥3 mods) | `#0080ff` | `#003399` |
+| special (1–2 mods) | `#1eff00` | `#336600` |
+| normal | `#FFFFFF` | `#000000` |
+**All six hexes cross-confirmed in the WEB v0.717 build**,
+`shs3_payload/scripts/§1t17s0§.as:683,687,691,704,708,712` — no Android caveat.
+`<unique>` in `itemdata.xml` is not boolean: 253 rows `<unique>1</unique>`, 116 rows
+`<unique>2</unique>` (counted this run). Every `== 1` test treats `2` as *not* unique
+while every `== 0` test treats it as *not* stackable/sellable — a third state the ledger
+does not know about.
 
-What genuinely remains unrecoverable is the **real-money** layer (price points,
-store SKUs, conversion rates) — which is a different and much smaller claim than
-"the IAP economy".
+### IE-12 · "defense min-floor (EnemyLevel/4)" — WRONG variable, WRONG shape
+**Ledger (line 209):** "defense min-floor (EnemyLevel/4)".
+The real code is `EnemyPlayer.as:107–123` (boss auto-scaling), and it is a floor on the
+PLAYER's post-defense hit, banded by **player** level, with three different divisors:
+```as3
+playerhit = playerATK - defense;
+if(playerLVL <= 10 && playerhit < 1)            { playerhit = 1; }
+else if(playerLVL <= 20 && playerhit < playerLVL / 8) { playerhit = playerLVL / 8; }
+else if(playerLVL <= 30 && playerhit < playerLVL / 6) { playerhit = playerLVL / 6; }
+else if(playerhit < playerLVL / 4)              { playerhit = playerLVL / 4; }
+```
+It is `playerLVL`, not EnemyLevel; `/8` and `/6` bands exist below L30; and it lives in
+boss scaling, not in the generic defense pipeline. Anyone coding "EnemyLevel/4" from the
+ledger implements a different game.
 
-**Verdict: PARTIAL — §6's bullet is too broad. The in-game premium catalogue is HELD.**
+### IE-13 · "weight cap 100" is a base, not a cap
+**Ledger (line 209):** "weight cap 100".
+**A1:** the frame `reference/frames/s21_weapon/t708.0.png` reads `WEIGHT: 43 / 100`
+(crop `(1400,540)-(1780,600)`, upscaled ×4), which is the *guest* value.
+**A2:** `StatsManager.as:2298–2301` `getCarryingWeight(){ return 100 + getStat(1009) * 20; }`
+— +20 per rank of stat 1009. Separately, bank storage is a different cap:
+`BankUI.as:264` `100 + STAT_DAN * 10 + STAT_PAIDSTORAGE * 10`. Two caps, both upgradeable;
+the ledger records one constant.
 
 ---
 
-### C19 — `no-items-config-still-true` · A3 · ledger CONFIRMED
+## C. CONFIRMATIONS the ledger already had, now byte-exact
 
-Ledger §4 Surface: *"measured weight table + named-item blocks exist in segment
-notes but **no items config file exists yet** — entirely un-ported."*
+### IE-14 · "(EQ:n) comparison UX" — frame and code agree to the hex
+**A1:** `reference/frames/s21_weapon/t708.0.png`, crop `(1320,240)-(1620,320)` upscaled ×4,
+reads verbatim: `DMG: 1 - 2 (EQ: 1 - 3)` with the **2 rendered red**, and `WEIGHT: 1`,
+under the item name `BRANCH` and the label `LEVEL 1`.
+**A2:** `Item.as:759–770` `compareValue(a,b)`: `a > b` → `<font color="#00A606">`,
+`a < b` → `<font color="#FF0000">`. `2 < 3` ⇒ red. `#00A606` is present in the web build
+too (`shs3_payload/scripts/§1t17s0§.as`).
+**Frame↔payload identity:** the frame's `BRANCH / DMG 1-2 / WEIGHT 1` is
+`itemdata.xml:7906-7915` id 13002 name 4041 → `strings.json["4041"] = "Branch"`,
+`mindamage 1 / maxdamage 2 / weight 1`. Exact match, no rounding.
 
-Repo check (`ls src/config/`, not a suite test):
-```
-ai.ts anim.ts art.ts chi.ts combat-sim.ts combat.ts display.ts duel.ts economy.ts
-fidelity.ts fx.ts gesture.ts mobs.ts nums.ts ogAnims.ts ogPose.ts palette.ts
-popups.ts poses.ts profile.ts reach.ts rng.ts skills.ts stances.ts stats.ts
-timing.ts xp.ts
-```
-No `items.ts`, no `equipment.ts`, no `affixes.ts`. The ledger is right — and after
-C3/C4/C5/C16 the porting job is now a transcription task, not a research task.
+### IE-15 · Modifier ID → stat name table, fully resolved
+`XMLItem.as:231–298` switches modifier id → `LangManager.getString(n)`; resolved via
+`strings.json` (S0-3):
+`0 HP · 1 Max HP · 2 HP Regen · 3 Chi · 4 Max Chi · 5 Chi Regen · 6 Attack · 7 Defense ·
+8 Speed · 9 XP · 10 Level · 11 Coins · 12 Gold · 13 AP · 14 Max AP · 15 Duel Tokens ·
+16 Max Duel Tokens`; ids 101–1999 render as `Set: <id>` (`:290–292`). Reserved ids
+`80/81/82/83/89/125` are colour/uses/durability-bonus/name/creator, not stats.
+Tooltip header strings: `108 "Dmg"`, `109 "Def"`, `124 "Level Required"`,
+`125 "Stance Restriction"`. `itemdata.xml` uses 34 distinct modifier ids across 412 rows.
 
-**Verdict: HELD (ledger confirmed, not overturned).**
+### IE-16 · `<slashusage>` and `<stancerestriction>` are combat contracts the block omits
+`itemdata.xml` carries 106 `<slashusage>` rows with exactly three values **24 / 72 / 96**
+and a **default of 48** (`XMLItem.as:152–159`, re-asserted as a floor in
+`StatsManager.getSlashUsage()` `:1921–1930`), plus 53 `<stancerestriction>` rows with
+values **4** and **6**. Neither appears anywhere in the items-equipment block, and both
+feed the blade-reach/stroke budget:
+`StatsManager.as:1915–1919` `getBaseSlashLengthVal(speed) = 120 + floor((90 + DAN*5) * speed / (20 + speed))`.
+Flagging for the combat lane — this is an items-owned input to reach.
 
 ---
 
-## 2. Score
+## D. STILL UNHELD (honest)
 
-REBUILD_READINESS §2 gives items-equipment **42/100**. On the evidence above:
+### IE-17 · Which UI box is NECK vs ACCESSORY1 vs ACCESSORY2
+The frame shows two visually identical empty ring boxes; the code has three candidate
+indices (`EQ_NECK 6`, `EQ_ACCESSORY1 11`, `EQ_ACCESSORY2 12`). No frame in
+`reference/frames/` that I opened shows a filled neck/accessory slot, and no AS3 line I
+read binds a UI box index to an `EQ_` constant. **STILL_UNHELD.**
 
-- Blocker ① (stat-vs-level curve) — **closed**, exact formulas.
-- Blocker ② (condition→DMG multiplier) — **dissolved**, the mechanic does not exist.
-- Blocker ③ (sell-price formula) — **mostly closed** (valuation formula exact; a 0.5
-  multiplier is declared-but-unused and unconfirmed for the web build).
-- Blocker ④ (suffix pool + affix count) — **closed**, verbatim pools + dice tables.
-- Blocker ⑤ (compositing contract + icon manifest) — **half closed**: part list,
-  slot routing, symbol-naming rule and 12 default symbols held; per-item art and
-  numeric z-order still out.
-- Ready bullets: "9-slot paperdoll" was **wrong** (13); "weight cap 100" was a
-  **base, not a cap**; "4 rarity tiers" and "soul-infusion rules" are now exact.
-- Only genuinely open item: **item NAMES** (string ids ≥ 2555 not in the recovered slice).
+### IE-18 · Per-item icon art for the 982 rows in the WEB build
+`getMCSComponent` has two paths; the web payload's `scripts/` exports only ~22 named
+default part classes, the rest going through `ResourceManager.getMCSComponent(partType,art)`
+when `StatsManager.useExternalResource` is true. Whether the remaining ~960 items' vector
+symbols are inside the web SWF under obfuscated names, or in one of the encrypted
+`CWS`-prefixed Android resource blobs (S0-5: `115_Mobile_SHS3Resource`,
+`124_Mobile_ImageResource`), **I did not establish**. The naming *contract* is held
+(IE-1); the *art payload* for the full roster is **STILL_UNHELD**.
 
-**Re-score: 84/100.** The 16 points held back are: item/desc names (the largest),
-per-item vector art behind a scrambled resource SWF, the SWF-timeline z-order
-stack, and the unverified web-build sell multiplier.
+---
 
-## 2b. Lane impact (GAUNTLET.md §  lane table)
+## E. Suggested re-score
 
-- **L3 (ITEMS + PAPERDOLL)** — its done-criterion currently reads *"982 items
-  byte-exact; a dressed fighter composites in the OG's layer order against A1"*
-  with the lane described as the **"9-slot compositing contract"**. That must
-  become **13-slot** (C1), and the lane gains the affix generator (C3/C4/C5),
-  the modifier enum (C16) and the symbol-naming rule (C9) as *inputs*, not as
-  research. Only the z-order stack (C10) and the per-item art (C9) remain
-  genuinely open.
-- **L1b (STRING TABLE)** — its exit condition is *"every `<name>`/`<desc>`/
-  `<displayname>` ID resolves to text with an A2 cite, or the lane reports the
-  table as genuinely absent."* C15 hands it: the table's real name and path
-  (`shs3_en.xml`, `./data/` or `<server>/strings/`), the reason it was never in
-  `bindata/`, and 2,555 already-decoded English entries — while proving the
-  remaining ids (≥ 2555, incl. all item names) are not in the Android slice.
-- **L5 (COMBAT CORE)** — C17 hands it `getBaseSlashLengthVal()`, an exact
-  closed-form slash-length formula, against §2's *"reach cap in **px**"* blocker.
-- **L10 (PROGRESSION + ECONOMY)** — C8 supplies the item valuation formula and
-  flags `sellPercentage = 0.5` as declared-but-never-referenced.
-- **L11 (META + REBIRTH)** — C18 narrows §6's "dead IAP economy" to the
-  real-money layer only; the premium catalogue is A2-held.
-
-## 3. Files written by this lane
-- this file only. No source touched. Binary extraction ran into the session
-  scratchpad, not the repo.
+**items-equipment: 42 → 78.**
+All five listed blockers resolve: ① held as a 158-row table *and* the roll formula;
+② dissolved (no multiplier exists — binary broken/not-broken); ③ held as an exact
+two-build-confirmed formula; ④ held verbatim (104+104 affixes + both count
+distributions); ⑤ held (27-index z-order + `partType + art` symbol contract + icon
+offsets). Held back from higher only by IE-18 (per-item art payload for the full roster)
+and IE-17 (one UI-slot mapping). Two "Ready" bullets (IE-12 defense floor, IE-13 weight
+cap) must be **corrected**, not merely re-scored, and "9-slot paperdoll" (IE-10) needs
+"…of a 13-slot equipment model, 11 of which render".

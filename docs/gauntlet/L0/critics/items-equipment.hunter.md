@@ -1,299 +1,292 @@
-# L0 CRITIC — items-equipment — HUNTER LENS
+# GAUNTLET L0 — HUNTER critic: **items-equipment**
 
-Blind review. I did not see the surveyor's reasoning, only its output. Every verdict
-below carries an artifact **I** opened. Frames were cropped and upscaled by me before
-grading (crops stated inline).
+Blind critic pass, 2026-08-15. I did not see the surveyor's reasoning — only its claim
+list. Every verdict below cites an artifact **I opened myself**. Lens 2 (hunter): I went
+looking for the things the survey marked STILL_UNHELD / PARTIAL, and for the places where
+it under-claimed what is actually on disk.
 
-**Headline:** the survey is unusually solid on A2 transcription — I re-derived 14 of its
-17 claims byte-for-byte and found the quotes verbatim. It fails in exactly the direction
-this lane exists to catch: **it under-claims the string table.** Item names are *not*
-unheld. I resolved 22/22 modifier labels, all 11 procedural colour names, all 6 condition
-tier names, all 6 elemental/crit/piercing stat labels and a contiguous ~52-entry English
-item-name block that includes the literal `Iron Sword` its own frame cite shows on screen.
+**Headline:** the survey is mostly sound and the 42 -> 78 direction is right, but it
+contains **one wrong overturn of a CORRECT ledger line** (the defense min-floor — the
+generic damage floor exists and the surveyor cited a downstream copy of it), **two
+build-scoped errors** (soul-infusion, sell weight term), **two phantom/overreach claims**
+(stance "gate", "no icon art to recover"), and **one inverted UI conclusion** (the item
+border IS the rarity ladder). Against that, it also **under-claimed five recoverable
+systems**, including the one it marked STILL_UNHELD — the paperdoll slot map is fully
+resolved in AS3 and matches the frame box-for-box.
 
-Second failure: it declares the compositing **z-order** unheld ("lives in the SWF
-timeline"). It is in ActionScript, ten lines below the enum it already quoted.
+Artifacts I opened first-hand: `reference/frames/s21_weapon/t708.0.png` (1920x1080,
+crops listed inline), `reference/extracted/itemdata.xml` (parsed with ElementTree, counts
+below), `reference/decompiled/shs3_android/scripts/` (Item, ItemGenerator, XMLItem,
+StatsManager, MCSCharacter, MCSItem, InventoryUI, ShopUI, ShopItem, CraftingUI,
+EnemyPlayer, **Damage**, **ResourceManager**, GameEngine),
+`reference/decompiled/shs3_payload/scripts/§1t17s0§.as` + `§1t5374s0§.as` + `§1t104s0§.as`
+(web v0.717), `docs/gauntlet/L0/index/strings.json`, `reference/extracted/sprites/`,
+`reference/extracted/android/115_Mobile_SHS3Resource.bin`.
 
 ---
 
-## Score
+## A. REFUTED — claims that do not survive
 
-Surveyor: **84**. My read: **88**, on the strength of the two refutations below
-(z-order closed, string table half-open) minus a small deduction for
-`modifier-id-semantics` being presented as complete when a third of the ids in
-`itemdata.xml` are outside its map.
+### R-1 · `defense-min-floor-is-wrong` — **REFUTED, fatal.** The ledger was right; the surveyor cited a copy, not the original.
 
----
+The claim says the ledger bullet "defense min-floor (EnemyLevel/4)" is *"wrong in both
+variable and shape … it lives in boss auto-scaling, not the generic defense pipeline."*
 
-## R1 — REFUTED (material): the paperdoll z-order IS in ActionScript
-
-**Claim:** `items-equipment/compositing-part-order` — *"only the numeric z-order stack is
-not [held], because it lives in the SWF timeline rather than in ActionScript."*
-
-**My artifact:** `reference/decompiled/shs3_android/scripts/MCSCharacter.as:119-146`
+It lives in the generic pipeline. `reference/decompiled/shs3_android/scripts/Damage.as:149-172`:
 
 ```as3
-internal var partListLength:int = 22;
-...
-public function MCSCharacter()
-{
-   var mc:MovieClip = null;
-   this.partList = new Vector.<MovieClip>();
-   super();
-   for(var i:int = 0; i <= this.partListLength; i++)
-   {
-      mc = new MovieClip();
-      addChild(mc);              // line 144
-      this.partList.push(mc);    // line 145
-   }
+public function getMinDamage() : int {
+   if(this.damage == 0)        { return 0; }
+   if(this.attackerlvl == 0)   { return this.damage; }
+   if(this.attackerlvl <= 10)  { return 1 + this.piercingDamage; }
+   if(this.attackerlvl <= 20)  { return this.attackerlvl / 8 + this.piercingDamage; }
+   if(this.attackerlvl <= 30)  { return this.attackerlvl / 6 + this.piercingDamage; }
+   return this.attackerlvl / 4 + this.piercingDamage;
+}
 ```
 
-`addChild` appends to the **top** of the display list. The loop creates parts in index
-order 0…22 and adds each one immediately, so **display depth == partList index == the
-`PART_*` constant the surveyor already transcribed.** The stack is, back to front:
+and it is applied immediately after defense subtraction on every hit —
+`MCSPlayer.as:3415-3418`:
 
-```
-0 l_hand · 1 l_uparm · 2 l_lowarm · 3 weapon · 4 prop · 5 l_foot · 6 l_thigh · 7 l_calf
-8 crotch · 9 r_foot · 10 r_thigh · 11 r_calf · 12 neck · 13 stomach · 14 pelvic
-15 torso · 16 head · 17 hat · 18 r_hand · 19 r_uparm · 20 r_lowarm · 21 prop2 · 22 prop3
+```as3
+damage -= this.getDefense();
+if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); }
 ```
 
-Blocker ⑤'s "layer order" half is **CLOSED**, not open. Two corrections that ride along:
+The same two lines repeat in `EnemyWolf.as:384`, `EnemyShield.as:347`,
+`EnemyNianMonster.as:383`, `EnemyClone.as:222/443`, `EnemyJiangSi.as:304`,
+`MCSPlayer.as:3710`. The variable is **attacker level** — which, for an enemy hitting the
+player, **is the enemy's level**. So "EnemyLevel/4" is the correct top band of a
+1 / /8 / /6 / /4 ladder, and it is exactly a *post-defense min-floor*.
 
-- **The human rig is 23 parts, not 27.** `partListLength = 22` ⇒ indices 0–22 only.
-  `PART_l_shoulder(23) r_shoulder(24) l_knee(25) r_knee(26)` are never allocated by
-  `MCSCharacter`; they belong to the **wolf** rig — `MCSWolf.as:13 partListLength = 25`,
-  used at `MCSWolf.as:184-197` as `r_frontleg1 / l_frontleg1 / r_backleg2 / l_backleg2`.
-  No rig is 27 parts.
-- **One documented depth exception:** `MCSBust.as:104`
-  `addChild(this.partList[MCSCharacter.PART_r_uparm]);` — the bust portrait re-adds the
-  right upper arm to lift it to the front. Reproduce that or portraits will be wrong.
+`EnemyPlayer.as:107-123` — the code the surveyor quoted — is the **boss HP-sizing mirror**
+of that same ladder (`bossHP = playerhit * hitsToKillBoss`), reached only inside
+`if(this.isBoss)`. The surveyor found the echo and declared the original nonexistent.
 
-Sub-verdict on within-part depth (also in AS3, also not in the timeline):
-`MCSCharacter.as:682-683` `head.setChildIndex(componentObject,0)`;
-`:705-706` hatHair → index 2; `:723-724` hair → index 3; `:754-755` headMask → index 1;
-`:872-873` / `:884-885` calf art → index 0.
+Consequence if shipped: the builder deletes the real damage floor from combat and
+re-implements it as a boss-only rule. Ledger line stays; it needs *extending* (four bands,
+attacker-side, `+ piercingDamage`), not overturning.
+
+### R-2 · `purple-border-is-unique-not-rarity` — **REFUTED, material.** The border *is* the 4-tier ladder.
+
+Claim: *"border tracks `<unique>`, text colour tracks the 4 tiers"* and it "prevents
+mis-wiring the border colour to the 4-tier rarity ladder."
+
+`ShopItem.as:51-52` and `:219-220`:
+
+```as3
+this.borderType = itemRef.getShopItemType();   // "unique" | "rare" | "special" | "normal"
+gotoAndStop(this.borderType + "_default");
+```
+with `_selected`, `_mouseover`, `_selectedmouseover` at `:116,:283,:287,:295` — i.e.
+**4 border types x 4 states = 16 named frames on the slot symbol.**
+
+And the game's own tip list carries *both*: `GameEngine.as:568` —
+`"Tip: A blue border indicates that an item is rare."` — sitting one branch above the
+purple/unique tip the surveyor quoted at `:572`.
+
+So purple is the `unique` **tier** returned by `getShopItemType()` (which is derived from
+`unique==1` OR quest-item OR player-named), not a separate flag channel. Wiring the border
+to `getShopItemType()` is correct; wiring it to `<unique>` alone loses the blue rare
+border that the game explicitly documents.
+
+### R-3 · `modifier-id-stat-table` — **REFUTED, material.** Not "fully resolved", and cited from the wrong table.
+
+The cite is `XMLItem.as:231-298`, which is the *XML-authored* modifier display switch:
+cases 0-16 then `default: if(id<2000 && id>100) "Set: "+id`.
+
+The **runtime** table — the one that names what `ItemGenerator` actually rolls — is
+`Item.as:1004-1042`, and it adds **ten more channels** the claim does not have:
+
+```as3
+case 28: getString(507)  // Fire ATK      case StatsManager.STAT_FIREDEF(200):  getString(871) // Fire DEF
+case 29: getString(508)  // Wind ATK      case STAT_WINDDEF(201):  getString(872)  // Wind DEF
+case 30: getString(509)  // Water ATK     case STAT_WATERDEF(202): getString(873)  // Water DEF
+case 31: getString(510)  // Earth ATK     case STAT_EARTHDEF(203): getString(874)  // Earth DEF
+                                          case STAT_CRITICALDMG(204): getString(875) // Critical Damage
+                                          case STAT_PIERCINGDMG(205): getString(876) // Piercing Damage
+```
+(ids from `StatsManager.as:226-260`; strings resolved in `strings.json`.)
+
+Those ten are not decoration — `ItemGenerator.as:583-640` writes generated affixes with
+exactly these `STAT_*` ids, and 11 of the 17 affix pools map into them.
+
+Worse for the claim's lane_impact (*"the 412 `<modifier>` rows … become readable stat
+grants"*): I parsed `itemdata.xml` myself —
+
+```
+modifier rows 412  distinct ids 34
+[(0,13),(1,3),(2,3),(3,13),(5,2),(6,1),(7,1),(8,2),(9,2),(12,1),(13,3),(15,3),(25,1),
+ (38,6),(78,2),(79,2),(82,2),(84,2),(90,1),(96,1),(97,1),(98,1),(99,1),(101,1),(102,1),
+ (103,223),(104,42),(105,40),(106,33),(117,1),(122,1),(123,1),(124,1),(40000,1)]
+```
+
+**338 of 412 rows (82%) are ids 103-106**, which are *not* stat grants: `Item.as:1044-1053`
+shows `case 103: case 106:` printing the **contained item's display name** (`"- " + itemxml.displayname`),
+and `case 102` printing a travel-node code. Under the claim's "Set band 101-1999" reading
+those 223 rows render as `"Set: 103"`. The id space is resolvable — but from `Item.as`,
+and it is not what the claim says it is.
+
+### R-4 · `soul-infusion-is-code` — **REFUTED, material.** Android-only; the v0.717 target build transfers two more channels.
+
+The Android quote is accurate. But the shipped **web v0.717** combine —
+`reference/decompiled/shs3_payload/scripts/§1t5374s0§.as:686-724` — is a superset:
+
+```as3
+_loc6_ = designXML.defense;  _loc7_ = statsXML.defense;
+if(_loc3_.§1t523s0§(7) == 0) { _loc3_.§1t493s0§(7, _loc7_ - _loc6_); }   // DEFENSE delta -> mod id 7, ALL types
+else { _loc4_ = _loc3_.§1t524s0§(7); _loc4_.value += _loc7_ - _loc6_; }
+if(_loc1_ == 4 || _loc1_ == 11) {                                        // armor + pants
+   _loc8_ = statsItem.getWeight(); _loc9_ = designXML.weight;
+   _loc3_.§1t478s0§ = _loc8_ - _loc9_;                                   // WEIGHT delta
+}
+if(_loc1_ == 13) { … mindamage delta -> mod id 6 …
+   if(_loc5_.durability != 0) { _loc3_.uses = statsItem.uses; } }        // durability gated
+```
+plus a clone branch for item 2218 (`§1t5374s0§.as:682-686`).
+
+Implement the claim as written and **armour soul-infusion transfers nothing** — which is
+the entire point of the feature for non-weapons. The Android build (v0.682) simply predates
+it. This is exactly the S0-3 build-parity caveat biting; the claim is labelled Android but
+is presented as "the executable rules", and the 1:1 target is v0.717.
+
+### R-5 · `slashusage-stancerestriction-omitted` — **REFUTED, material.** `stancerestriction` is dead data — the same phantom the survey correctly killed for `condition`.
+
+`slashusage` half is fine (counts verified below). But `stancerestriction` is **never
+enforced anywhere in either build**. Full occurrence set:
+
+- Android: `XMLItem.as:38` (decl), `:160-166` (parse, default 0), `:321-327` (append
+  `getString(125)="Stance Restriction"` to the description string). That is all — grep over
+  the whole 2,768-class corpus returns nothing else.
+- Web v0.717 `§1t104s0§.as:30,172,174,178` — declared, parsed, **never read at all.**
+
+So calling it one of "two items-owned **combat inputs**" / "the stance gate" is the same
+class of error the survey earned credit for dissolving two claims earlier ("condition is
+display-only"). It is display-only too. The 53 rows and their values (4, 6) are real; the
+mechanic is not.
+
+Bonus correction on the other half: `StatsManager.getSlashUsage()` returns 48 whenever
+`itemdata.slashusage < 48`, so the single `<slashusage>24</slashusage>` row is **inert in
+the player's hands** — the live value set is {48, 72, 96}, not {24, 72, 96}.
+
+### R-6 · `ui-slot-mapping-unknown` (STILL_UNHELD) — **REFUTED.** The map is in the code, and it matches the frame box-for-box.
+
+`InventoryUI.as:163-179` declares the nine UI slots **in screen reading order**:
+
+```as3
+SLOT_HAT 0 · SLOT_MASK 1 · SLOT_ARMOR 2 · SLOT_GLOVES 3 · SLOT_PANTS 4
+SLOT_WEAPON 5 · SLOT_RING1 6 · SLOT_SHOES 7 · SLOT_RING2 8
+```
+
+and `InventoryUI.refreshEquipment()` (`:459-540`) binds each to its model index:
+
+```as3
+case 7: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY1];
+        this.acc1Icon.visible = true;  tempShopItem = this.equippedSlots[this.SLOT_RING1];
+case 8: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY2];
+        this.acc2Icon.visible = true;  tempShopItem = this.equippedSlots[this.SLOT_RING2];
+```
+
+My frame check (`reference/frames/s21_weapon/t708.0.png`, full-frame read at 1:1 plus crop
+(170,240)-(870,1040) x2 LANCZOS) shows the nine boxes in exactly that order: row 1 straw
+hat / oni-mask outline; row 2 grey haori / gauntlet outlines; row 3 white hakama / pickaxe;
+row 4 ring outline / sandals / ring outline. Declaration order == layout order, so
+**RING1 is the left ring box, RING2 the right**, and **`EQ_NECK` is not in the paperdoll at
+all** (it is worn via quest scripts — `StatsManager.as:2265,2278,3236` equip items 10000/10001
+directly). Answer, not a gap.
+
+### R-7 · `no-separate-icon-manifest` — **REFUTED, minor.** The compositing insight holds; "nothing to recover" does not.
+
+`MCSItem.setArmor` is quoted correctly. But there are **17 named placeholder icon symbols**
+that must be authored and are *visible in the frame*:
+
+- 8 inventory dummies in `MCSItem.as`: `HatDummyIcon` (:70,:95,:126), `MaskDummyIcon` (:158),
+  `WeaponDummyIcon` (:183), `AccessoryDummyIcon` (:232), `GlovesDummyIcon` (:255),
+  `ShoesDummyIcon` (:285), `ArmorDummyIcon` (:330), `PantsDummyIcon` (:368);
+- 9 empty-slot icons in `InventoryUI.refreshEquipment()`: `hatIcon, armorIcon, glovesIcon,
+  pantsIcon, maskIcon, weaponIcon, shoesIcon, acc1Icon, acc2Icon`, each `.visible = true`
+  when its slot is empty.
+
+Those nine are precisely the ghosted oni-mask, gauntlet and ring outlines I can see in the
+paperdoll crop. So "no icon-authoring pass is needed" is wrong by a small but on-screen
+art set. The main finding — equipped-item icons are the MCS part stack at published
+offsets — survives intact.
+
+### R-8 · `per-item-art-payload-unknown` (STILL_UNHELD) — **REFUTED in part, minor.** The disjunction is resolved; the payload is still unreadable.
+
+The claim leaves open *"either obfuscated in the web SWF or inside the encrypted CWS blobs."*
+It is not in the web SWF, and that is provable:
+
+- `StatsManager.as:360` — `public static var useExternalResource:Boolean = true;` (re-set at
+  `:508`). Every `getMCSComponent()` therefore takes the **ResourceManager branch**, never
+  `getDefinitionByName`.
+- `ResourceManager.as:41` —
+  `resourceFileNameArray = ["shs3resource.swf","musicresource.swf","soundresource.swf","imageresource.swf","bgresource.swf"]`,
+  loaded over HTTP POST (`getresource.php`, `pass=12345&num=<n>`) with the loading-screen
+  string `"Loading art assets... "` (`:139`). `init()` loads BASE + BG + IMAGE on the
+  **non-mobile (web) path**.
+- Corroboration by count: `reference/extracted/sprites/` (827 sprites from the web payload)
+  contains exactly **22** MCS part symbols — `DefineSprite_2647_torso4000`,
+  `…_2642_weapon13002`, `…_2665_head8000`, etc. — i.e. only the naked defaults. Same 21-22
+  count in all three decompiled bundles.
+
+So: the roster art was **streamed from the dead server**, and the only local copy is
+`reference/extracted/android/115_Mobile_SHS3Resource.bin` (654 KB). I tried to open it —
+header `b'CWSy\xb1\x89gh…'`, `zlib.decompress(d[8:])` fails with *"unknown compression
+method"* — consistent with S0-5. **No recovery claim.** But the residual blocker should be
+restated: *"art lives in the held-but-encrypted resource blob; the getDefinitionByName
+symbol-name path is dead code in shipped builds"*, not *"we don't know where it is."*
 
 ---
 
-## R2 — REFUTED (fatal to the claim's negative half): item names are PARTLY HELD
+## B. HELD — verified first-hand, with corrections where the wording overshoots
 
-**Claim:** `items-equipment/string-table-partial` — *"every item name id (4000+) sits
-above that slice, so item names remain unheld"* / lane_impact *"Item names stay
-STILL_UNHELD."*
-
-The claim contradicts itself inside its own quote block: it writes *"itemdata `<name>`
-ids run 34-4427"* and then asserts *"every item name id (4000+)"*. 34 is not 4000+.
-
-**My artifact:** char-id 118 of `reference/decrypted/shs3_android_payload_decoded.swf`,
-extracted myself (`DefineBinaryData` tag 87, 500,024 B, UTF-16LE XLIFF, 2,555 units,
-ids 0–2554 contiguous — the surveyor's count is exact).
-
-### 2a. The negative test was a false negative
-
-The survey grepped `Katana|Wakizashi|Tanto|Nodachi` → 0 and concluded names were absent.
-This game does not use Japanese weapon names. Trans-unit ids **960–1011 are a contiguous
-block of item names**:
-
-```
-960 Torn Garment   961 Rags            962 Monk Garment  963 Heavy Gloves
-964 Ninja Gloves   965 Straw Hat       966 Helmet        967 Hat
-968 Hood           969 Top Hat         970 Afro Wig      971 Mask
-972 Pants          973 Heavy Armor Pants  974 Torn Pants 975 Ninja Pants
-976 Shorts         977 Sandals         978 Shoes         979 Boots
-980 Stick          981 Branch          982 Bamboo        983 Flute
-984 Spoon          985 Fork            986 Bat           987 Stick with nail
-988 Katar          989 Training Sword  990 Iron Sword    991 Iron Sabre
-992 Dragon Blade   993 Thunder Blade   994 Bevel Edge    995 Defender
-996 Heavy Armor    997 Cleaver         998 Potion        999 Scroll
-1000 Amulet ... 1005 Broken Sandal ... 1011 Daruma Doll
-```
-
-`990 = "Iron Sword"` is the **exact base name in the survey's own A1 cite**
-(`frame_0024.jpg`, "DRAFTY SHARP **IRON SWORD** OF PIERCING"). The surveyor held a frame
-proving the name is real and a table containing it, and reported the names as unheld.
-
-### 2b. 74 of 804 `<name>` rows resolve *today*, with correct semantics
-
-Resolved `reference/extracted/itemdata.xml` `<name>` ids against the table:
-
-| item ids | name id | resolves to |
+| claim | verdict | what I checked |
 |---|---|---|
-| 6000–6520 (all 73 HAIR items, type 2) | 34 | `Hair` |
-| 2122/2123/2124 and 20100/20101/20102 | 443/444/445 | `(八段)` `(九段)` `(十段)` — Dan 8/9/10 |
-| 2122–2124, 2148 (`<desc>`) | 207 | `Quest Item` |
+| `sprite-compositing-contract-held` | HELD (2 corrections) | `MCSCharacter.as:10-62` 27 constants read; `:120` `partListLength=22`; `:141-146` loop `i<=partListLength`. **Only 23 layers are created (0-22).** `PART_l_shoulder 23 / r_shoulder 24 / l_knee 25 / r_knee 26` are declared and *never used* — grep returns only their declarations; indexing `partList[23..26]` would be out of range. Also `setArmor` claims **8** parts, not 7: it sets `neck` conditionally at `:1073-1088`. |
+| `sell-price-formula` | HELD (1 build caveat) | `Item.as:1582-1593` and web `§1t17s0§.as:1977-1988` are byte-identical in body. **But the `getWeight()` they call is not:** Android `:1564-1579` returns `weight * quantity`; web `:1958-1974` returns `(weight + §1t478s0§) * quantity`, where `§1t478s0§` is a per-item weight modifier written by web soul-infusion (R-4). Also `ShopUI.as:394-397`: **itemID 13002 (Branch) sells for 0**, and `ShopUI.sellPercentage = 0.5` (`:58`) is declared but never referenced — `onSell` (`:536-540`) pays exactly `getCost()`. |
+| `sell-price-corrects-section3-item9` | HELD | Ledger line 168 quoted correctly. Arithmetic: 5 = (1+0)*5, 25 = (1+4)*5, both weight<10; a weight>=10 item cannot produce 5. No level term exists. |
+| `condition-has-no-damage-multiplier` | HELD | `Item.as:1481-1496` read; `grep -rn getCondition` over the whole bundle returns **exactly two** hits — the definition and `Item.as:714` inside `getDesc()`. `StatsManager.as:1863-1903` confirms the binary cliff. |
+| `condition-tier-thresholds` | HELD (+1) | `Item.as:712-746` and web `§1t17s0§.as:1004-1026` are line-for-line the same ladder; strings 387-392/639 resolved in `strings.json` and match. The web build adds one branch the Android build lacks (`§1t17s0§.as:1027-1035`, `getString(11496)`, an id absent from the Android table). |
+| `affix-suffix-pool-and-counts` | HELD (1 correction) | I counted the arrays programmatically: **13 prefix pools / 13 suffix pools, 104 + 104 strings.** Distributions and `if(isLegendaryItem && numEnchant > 2) numEnchant--;` (`:371-374`) verified verbatim. **Correction:** the elemental-DEF pool reuse at `:142-145` is *not* an obvious "shipped bug" — it is a consistent counter-element cycle (FIREDEF←water, WATERDEF←wind, WINDDEF←earth, EARTHDEF←fire), i.e. armour that resists fire is named "Icy … of Ice". Copy it; don't "fix" it. |
+| `stat-vs-level-curve` | HELD (2 corrections) | `itemdata.xml:7906-7915` and `:9925-9937` read verbatim. Parsed totals: **982 items; 158 rows carry `mindamage`; mindamage 1..81; maxdamage 2..108; minlvl range -4..79 — but only 122 of the 158 damage rows carry a `minlvl`** (155 rows repo-wide). `MAXINDEX=79` (`:58`); prog arrays at `:150-183` verified. **The `+10` spike is on prog1/prog2/prog3 only** — prog4 and prog5 get no `[MAXINDEX] += 10`. Also missing from the claim: `generateItem` jitters the input level first (`nodelvl += rng.rand(5) - 2`, or `nodelvl--` for legendary, `:385-392`). |
+| `item-save-format-held` (PARTIAL) | HELD | `Item.as:6-16` and `:47-104` read; `MCSCharacter.as:348` mcsString counted — **12 pipe-separated fields**, colour sub-fields appended as `,80@<rgb>#81@<rgb>#`. PARTIAL scoping is correct: §6 line 351 still stands for server topology. |
+| `paperdoll-is-13-slots-not-9` (PARTIAL) | HELD (1 correction) | `StatsManager.as:108` `Vector.<Item>(13)`, `:262-286` the 13 EQ_ ids, `:1765` the 11-arg `initMCS`. Frame: 9 boxes, confirmed by my own read. **Correction: 12 of 13 slots have a render path, not 11** — `StatsManager.as:3330-3332` routes `EQ_ACCESSORY1` to `setProp2()` (layer `PART_prop2 = 21`). Only `EQ_ACCESSORY2` never renders. Note also that `initMCS` does *not* re-apply prop2, so a full re-init drops the accessory art. |
+| `rarity-is-derived-not-a-field` | HELD (under-claimed) | `Item.as:382-405`, `:417-451` and web `§1t17s0§.as:675-716` verified; my own parse of `itemdata.xml` reproduces **253 rows `<unique>1</unique>`, 116 rows `<unique>2</unique>`, 613 absent**, and `NetworkManager.as:1981` (`unique != 0`) + `ShopUI.as:332,541` (`unique == 0`) confirm the third state. **Under-claim:** the web build has a **fifth, higher-priority name class the Android build lacks** — `if(this.xp != null)` -> `#ff9900` (loot toast) / `#ff6600` (inventory), above `unique`. Eight colours, not six. |
+| `weight-cap-is-a-base-not-a-cap` | HELD | `StatsManager.as:2298-2301` and `BankUI.as:264` read verbatim; 11 call sites of `getCarryingWeight()` confirm it is the live gate (`Obj_PathBush`, `Obj_DirectionSign`, `InteractUI:1730`, …). Frame "WEIGHT: 43 / 100" confirmed in my own read of the full frame. |
+| `eq-comparison-frame-payload-identity` | HELD — best claim in the set | I read the tooltip directly: `DMG: 1 - 2 (EQ: 1 - 3)` with the `2` red, `WEIGHT: 1`, `BRANCH`, `LEVEL 1`. `itemdata.xml:7906-7915` = id 13002 / name 4041 / mindamage 1 / maxdamage 2 / weight 1; `strings.json["4041"] = "Branch"`. `compareValue` (`Item.as:759-773`) gives `#00A606` / `#FF0000`. Bonus: the `(EQ: …)` label is `getString(199) = "Eq"`. The equipped 1-3 weapon is id 13001 (mindamage 1, maxdamage 3) — the pickaxe in slot 5. |
 
-Not noise — every hit is semantically correct for its item band.
-
-### 2c. The table is the RIGHT table with a ~−19/−20 revision drift above id ≈350
-
-This is why the survey's spot-checks looked like misses. Below ~id 210 the AS3 ids and the
-table agree **exactly**; above ~350 the embedded table is an earlier revision, short by
-19–20 entries. Proof, three independent bands:
-
-- **Colour names.** `ItemGenerator.as:93` builds `colorNameList` from
-  `getString(432…442)` (11 entries) and `:701` pairs it with
-  `colorhexlist = [16711680, 16737792, 16763904, 39168, 13311, 6684927, 16751103, 6697728, 16777215, 10066329, 0]`.
-  Table ids **413–423** are `Red Orange Yellow Green Blue Purple Pink Brown White Grey Black`
-  — 11 for 11, and each matches its hex (16711680 = 0xFF0000 Red … 0 = Black). Offset −19.
-- **Condition tiers.** `Item.getDesc` (`Item.as:712-745`) uses 387/388/389/390/391/392.
-  Table **368–373**: `Condition: Broken`, `Condition: Poor`, `Condition: Used`,
-  `Condition: Usable`, `Condition: Good`, `Condition: Well-Maintained`. Offset −19.
-  The ledger's unnumbered *"condition tier names"* Ready bullet is now **verbatim**.
-- **Elemental/crit/piercing labels.** `Item.as:1238-1268` uses 871–876. Table **851–856**:
-  `Fire DEF`, `Wind DEF`, `Water DEF`, `Earth DEF`, `Critical Damage`, `Piercing Damage`.
-  Offset −20. These are the exact strings my `frame_0031` crop shows on screen.
-
-### 2d. "a third of it is decoded" is wrong
-
-`reference/decompiled/shs3_payload/scripts/§1t123s0§.as:900` (the survey's own cite)
-calls `§1t1521s0§.getString(11253)`. The full space is ≥11,257 entries, so 2,555 is
-**≤23%**, not a third.
-
-**Correct verdict for L1b:** item names are **PARTIAL**, not STILL_UNHELD. Held: the
-English item-name vocabulary, the modifier labels, the condition tiers, the colour names,
-74 exact id→name bindings. Unheld: the id→name binding for the ~730 `<name>` rows whose
-ids land in the drifted/absent upper band.
+Frame-vs-doc conflicts encountered: **none.** Where I could compare (9 boxes, tooltip
+numbers, weight readout, 2-of-7 purple borders — border pixel sampled at RGB(144,102,203),
+a real and common pixel in that crop) the frame and the payload agree. Said out loud as
+required by the standing invariant.
 
 ---
 
-## R3 — REFUTED (material): the modifier enum is NOT decoded end-to-end
+## C. NEW — held evidence the survey did not bank
 
-**Claim:** `items-equipment/modifier-id-semantics` — *"The item modifier enum is now
-**fully decoded end-to-end**: ids 0-16 map to named player stats, and ids 101-1999 are
-equipment SET bonuses."*
+1. **Per-item-type affix eligibility matrix + forced first affix** (`ItemGenerator.as:397-455`).
+   Eight 17-wide 0/1 gates, one per item type, e.g. `WEAPON = [1,1,1,1,1,1,0,1,1,1,1,0,0,0,0,1,1]`,
+   `ARMOR = [1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1]`, `ACCESSORY = [1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1]`;
+   and the first roll is forced — armour -> DEFENSE, weapon -> ATTACK, shoes -> SPEED, with
+   that channel then zeroed out of the pool. This is the missing half of the affix system.
+2. **Generic post-defense damage floor** (R-1) — hand it to the combat lane, not the item lane.
+3. **Complete modifier-ID -> name table incl. elementals** (R-3).
+4. **Border contract: 4 rarity types x 4 states = 16 named frames** (R-2).
+5. **Web-only soul-infusion channels: defense delta + weight delta** (R-4).
+6. **Art delivery model: external `shs3resource.swf` over HTTP; symbol-name fallback is dead code** (R-8).
+7. **`stancerestriction` is dead data in both builds** (R-5) — delete it from the combat plan.
+8. **Fifth name colour (`xp != null`, `#ff9900` / `#ff6600`) in web v0.717** (table above).
+9. **17 placeholder icon symbols** (R-7) — the only genuine item-icon art debt.
+10. **`partList` is 23 layers; shoulders/knees are dead constants** (table above).
 
-The 0–16 half is **exactly right** — I resolved all 22 label ids against char-id 118 and
-got 22/22 (`110 HP · 111 Max HP · 112 HP Regen · 113 Chi · 114 Max Chi · 115 Chi Regen ·
-116 Attack · 117 Defense · 118 Speed · 119 XP · 120 "Level " · 63 Coins · 64 Gold ·
-102 AP · 121 Max AP · 59 Duel Tokens · 122 Max Duel Tokens · 123 Set · 124 Level Required ·
-125 Stance Restriction · 108 Dmg · 109 Def`, plus `139 Weight`, `199 Eq`). But "fully" and
-"end-to-end" are false on two counts.
+## D. Score
 
-**(a) `XMLItem.as:231-298` is not the end-to-end enum — `Item.as:1148-1272` is.** It adds:
-
-```as3
-case 28: LangManager.getString(507)   case 29: (508)   case 30: (509)   case 31: (510)
-case StatsManager.STAT_FIREDEF:  (871)   // = 200
-case StatsManager.STAT_WINDDEF:  (872)   // = 201
-case StatsManager.STAT_WATERDEF: (873)   // = 202
-case StatsManager.STAT_EARTHDEF: (874)   // = 203
-case StatsManager.STAT_CRITICALDMG: (875) // = 204
-case StatsManager.STAT_PIERCINGDMG: (876) // = 205
-case 82: case 78: case 79:  break;        // present, deliberately rendered as nothing
-```
-plus `case 102` (node-name code), `case 103 / 106` (nested item displayname), `case 25`.
-Ids 28–31 and 200–205 are exactly the affixes `ItemGenerator` rolls — so the enum the
-survey published cannot express any generated elemental/crit/piercing item.
-
-**(b) `itemdata.xml` itself carries 12 distinct ids outside the published map.** Parsing
-all 412 `<modifier>` blocks (34 distinct ids, 319 `<value>` rows — both counts correct):
-
-```
-in-map : 0,1,2,3,5,6,7,8,9,12,13,15, 101,102,103,104,105,106,117,122,123,124
-OUT    : 25, 38, 78, 79, 82, 84, 90, 96, 97, 98, 99, 40000
-```
-Those 12 fall into `XMLItem`'s `trace("ErrorValue: ...")` branch. `25` is
-`StatsManager.STAT_DAN`, `38` is `STAT_BUFFTYPE`; `83` (which the survey *quoted* in
-`isBroken()`) is a live max-durability bonus and is likewise absent from its map.
-
----
-
-## R4 — REFUTED (material): "of Piercing" is not weapon-only
-
-**Claim:** `items-equipment/name-template-frame-confirmed` — *"suf(mod1)='of Piercing'=
-piercingdmg_suf (index 16, **allowed ONLY by the WEAPON mask**)"*, and therefore the frame
-*"validates … the weapon slot mask"*.
-
-**My artifact:** `reference/decompiled/shs3_android/scripts/ItemGenerator.as:397-425`.
-Index 16 (`PIERCINGDMG`) is `1` in **three** of the eight masks:
-
-```
-WEAPON    [1,1,1,1,1,1,0,1,1,1,1,0,0,0,0,1,1]   <- idx16 = 1
-ARMOR     [1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1]   <- idx16 = 1
-ACCESSORY [1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1]   <- idx16 = 1
-GLOVES/PANTS/SHOES/HAT/MASK  ................0   <- idx16 = 0
-```
-
-So a "of Piercing" suffix does **not** identify the slot, and a porter reading this claim
-would wrongly gate PIERCING to weapons only.
-
-**What survives, and it is strong.** I re-derived the decomposition myself and it is
-exact. `ItemGenerator.as:742-745`, case 3:
-
-```as3
-itemName = drawPreSufValue(getModifierByIndex(2),true) + " "
-         + drawPreSufValue(getModifierByIndex(0),true) + " " + basename + " "
-         + drawPreSufValue(getModifierByIndex(1),false);
-```
-and my own crop of `reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0024.jpg`
-(1024×576, crop (0,420)-(640,500), 3× LANCZOS) reads
-`I AM LOOKING FOR` (white) + `DRAFTY SHARP IRON SWORD OF PIERCING` (blue) + ` .` —
-pre(mod2)=`Drafty`, pre(mod0)=`Sharp`, base=`Iron Sword`, suf(mod1)=`of Piercing`,
-3 modifiers ⇒ the `modifierCount>=3` blue branch. Confirmed.
-
-The mask evidence the frame *does* carry is the **other** prefix: `Drafty` =
-`windatk_pre[0]` = `WINDATK` (index 8), which is `1` only on WEAPON / GLOVES / SHOES /
-MASK / ACCESSORY and `0` on ARMOR / PANTS / HAT. Use that, not piercing.
-
----
-
-## Upheld, re-derived first-hand
-
-| claim | my artifact | note |
-|---|---|---|
-| `paperdoll-13-slots` | `StatsManager.as:108` (`Vector.<Item>(13)`), `:262`–`:286` (EQ_ARMOR 0 … EQ_ACCESSORY2 12) | exact. Ledger `REBUILD_READINESS.md:209` "9-slot paperdoll" is overturned. `findWeight` excludes EQ_HEAD/EQ_NECK/EQ_SCABBARD — the likely source of "9". |
-| `type-is-slot-index` | parsed all 982 `<item>` blocks; `Item.as:841-845` | routing map correct. **Correction:** the 152 armor rows and item 7075 carry **no `<type>` tag at all**; type 0 is `XMLItem.as:76`'s default. And there are **two** authoring anomalies, not one: 7075 is an empty stub `<item><id>7075</id></item>`, and **2211** sits in the 2xxx consumable band with `<type>12</type>`. |
-| `affix-suffix-pool` | `ItemGenerator.as:102-148` | 17 stats × 8 tiers, prefixes **and** suffixes, verbatim. Opposing-element borrowing confirmed exactly: FIREDEF←wateratk, WINDDEF←earthatk, WATERDEF←windatk, EARTHDEF←fireatk. |
-| `affix-count-rule` | `ItemGenerator.as:205-248`, `:369-372` | dice tables exact; `if(isLegendaryItem && numEnchant > 2) numEnchant--;` exact. |
-| `stat-vs-level-curve` | `ItemGenerator.as:150-183`, `:321-345`, `:392-452`, `:474-576` | all five progressions and the full routing verified (prog1 ATK/DEF, prog2 MAXHP/MAXCHI, prog3 = 8 elementals + both regens + CRITDMG, prog4 SPEED, prog5 PIERCING). `MAXINDEX = 79` ⇒ 80 tiers. **Omission:** only prog1/prog2/prog3 get `[MAXINDEX] += 10`; prog4 and prog5 do **not**. |
-| `pot-mask-frame-confirmed` | my crop of `frame_0031.jpg`, 1024×576, crop (575,140)-(1015,420), 3× LANCZOS | I see it: green-bordered icon, green `PANTS`, `450` + coin, `OWNED: 0`, `LEVEL 4`, DEFENSE +1 (EQ 3), FIRE DEF +1 (EQ 0), WIND DEF +2 (EQ 0), EARTH DEF 0 (EQ 1), CRITICAL DAMAGE 0 (EQ 1), MAX CHI 0 (EQ 5), CHI REGEN 0 (EQ 2), WEIGHT 5. Consistent with the PANTS mask; **no forbidden stat appears**. **Caveat the survey missed:** `Item.as:898-899` builds the line set as `equippedItem.getModifierArray().concat(this.getModifierArray())` de-duplicated — it is a **union**, so the `0 (EQ: n)` lines describe the *equipped* pants. The frame cannot attribute a line to one item. |
-| `condition-no-damage-multiplier` | `StatsManager.as:1863-1902`, `Item.as:1467-1479`, `:712-745` | exact. Damage is binary on `isBroken()`. **Two corrections:** `getDesc` has **seven** branches (the survey listed seven and wrote "SIX"), and `isBroken()` returns false outright when `durability == 0` — and `<durability>` is not an XML tag: `XMLItem.as:186` maps `<uses>` → durability, so the 867 items without a `<uses>` row **never break**. |
-| `sell-price-formula` | `XMLItem.as:88` (`gvalue = xml.baseprice`), `XMLShopItem.as:31,68,86`, `ShopUI.as:58,257,393,536-540` | `grep -rn sellPercentage` over all 970 classes returns **only** the `ShopUI.as:58` declaration — confirmed by me. `onSell` → `StatsManager.changeGold(displayItem.getCost())`, no haircut. `if(!itemData.nodrop)` excludes nodrop from the sell list. **See N1 — I found frame corroboration.** |
-| `art-manifest-rule` | `MCSCharacter.as:581-615`, `XMLItem.as:110-117`, `ls reference/extracted/sprites/` | naming rule exact; all 12 named sprite dirs exist. I re-tried the decode myself: char-ids 113/115/120/122/124 carry a `CWS` magic but garbage version bytes and declared uncompressed lengths of 1.7–1.9 **GB**; zlib fails at every offset. Not SWFs — the blocker is real. **Mis-cite:** the survey lists 19 partType prefixes and calls them 18; `grep -c '"neck"' MCSItem.as` = **0** — `"neck"` comes from `MCSCharacter.as:806,1071`. MCSItem enumerates 18. |
-| `rarity-4-tiers-exact` | `Item.as:407-451` | all eight hex values verbatim; `<unique>` = 369 rows, exactly {1: 253, 2: 116}. **Correction:** the two palettes are not light-bg/dark-bg — the branch is `!inventoryUI.visible && (lootDialog.visible ‖ gotGiftDialog.visible)` ⇒ bright set, else the dark set. Loot popup vs everywhere else. |
-| `weight-cap-is-not-flat-100` | `StatsManager.as:2298-2301`, `:1983-2026`; 745 `<weight>` rows, values {0,1,2,3,4,5,10,15,20,25,500} | exact. **See N2 — independent string-table corroboration.** |
-| `soul-infusion-transfer-rule` | `CraftingUI.as:494-527` | verbatim. **Omission:** `:494` `designType = Math.floor(designSlot.itemID / 1000)` and `:496` `if(designType != statsType)` — both slots must be the same 1000-band, and 13 is the weapon band. |
-| `weapon-slash-budget-and-reach` | `StatsManager.as:1915-1930`, `XMLItem.as:152-159`, `itemdata.xml:8742-8752` | reach formula exact; 210 asymptote at DAN 0 correct. Row 13113 quoted verbatim and correct. Distributions all confirmed by my own parse: `slashusage` 3 values (24×1, 72×70, 96×35) over 106; `stancerestriction` {6: 46, 4: 7} over 53; `uses` {100: 46, 80: 34, 60: 34, 50: 1} over 115. **Omission:** `getBaseSlashLength` multiplies SPEED by 1.5 under `BUFF_SPEED` before calling. |
-| `premium-catalog-held` | char-id 121 extracted by me, 4,504 B | XML matches the quote exactly, including the commented-out `<special>` SKUs and the `<!-- Assassin outfit -->` / `<!-- Dark Assassin outfit -->` rotation sets. 304 `<heavenlyprice>` rows, values {0,1,2,3,5,8,12,25,100} — exact. |
-| `no-items-config-still-true` | `ls src/config/` | 27 `.ts` files + `CLAUDE.md`; no `items.ts`, `equipment.ts` or `affixes.ts`. The A3 self-caveat ("a repo byte-check, NOT a vitest test") is honest and correct. |
-
----
-
-## New findings (hunter lens)
-
-**N1 — an A1 frame independently confirms the buy-value formula.** My `frame_0031` crop
-shows `450` on the icon and `LEVEL 4` beneath it. `XMLShopItem.as:68/86`:
-`this.value = itemData.gvalue + this.item.getLevel() * 100`; `XMLItem.as:88`
-`this.gvalue = xml.baseprice`. **29 of the 11xxx PANTS rows in `itemdata.xml` carry
-`<baseprice>50</baseprice>`.** 50 + 4×100 = **450**. Exact. This upgrades the buy half of
-blocker ③ from A2-only to A2 + A1, and proves the frame's PANTS is a *generated* shop
-rare (`XMLShopItem` also sets `item.uses = 1`, which is why it shows a condition band).
-
-**N2 — the string table independently confirms `100 + rank×20` carry weight.**
-Trans-units `1507 "Carrying Weight+"`, `1653 "Carrying weight: 120"`,
-`1654 "Carrying weight: 140"`, and `138 "You are carrying too many things to travel.
-Upgrade the Carrying Weight+ skill to carry more items."` — 120 and 140 are exactly
-ranks 1 and 2 of `getCarryingWeight() = 100 + getStat(1009) * 20`. Two artifacts, one
-number.
-
-**N3 — the six condition tier names are now verbatim** (see R2c): `Condition: Broken`,
-`Condition: Poor`, `Condition: Used`, `Condition: Usable`, `Condition: Good`,
-`Condition: Well-Maintained`, plus `374` "Your weapon is broken! … Buy whet stones and
-sword repair kits from peddlers to repair your weapon, or use ninja services to make your
-weapon unbreakable and give it a name." — which independently sources the repair economy
-and the ninja "unbreakable + named" service.
-
-**N4 — the 11 procedural colour names are held and hex-matched** (see R2c).
-
----
-
-## Frame-vs-doc conflicts
-
-**None arose in this unit.** Both frames I opened agree with the AS3. Stating that
-explicitly because the standing invariant requires it: had they disagreed, the frame
-would have won.
-
----
-
-## No files outside this path were modified.
+The claim set is right about the big thing — all five listed blockers do resolve against
+the payload, and four of them resolve as executable code. But R-1 alone would corrupt the
+combat lane, R-4 would ship a broken crafting feature, and R-2/R-3/R-5 would each mis-wire
+a subsystem. Net of the refutations *and* of the STILL_UNHELD I was able to close (R-6),
+I would land this system at **72-75**, not 78 — the recoverable surface is if anything
+larger than claimed, but the survey's own error rate on load-bearing formulas (4 of 20
+claims materially wrong, 1 fatally) is the reason to hold the number down until the
+corrections are folded in.

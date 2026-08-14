@@ -1,657 +1,345 @@
-# GAUNTLET L0 — system survey: **art-anim-audio-feel**
+# GAUNTLET L0 — system survey: **art-anim-audio-feel** (ledger score 56)
 
-**Ledger under audit:** `docs/research/REBUILD_READINESS.md` (2026-07-20), §2 row + §4 block
-`### art-anim-audio-feel — 56`, plus the §1 and §6 lines that touch this system.
+Auditor: system-surveyor agent · date 2026-08-14 · document under audit:
+`docs/research/REBUILD_READINESS.md` (2026-07-20), block `### art-anim-audio-feel — 56`
+(lines 238–241), plus §2 scorecard row (line 126), §1 unknown-unknowns (lines 303–307),
+§5 Tier-1 (lines 320–324) and §6 "structurally UNRECOVERABLE" (lines 292–299).
 
-**Surveyor verdict: 56 → 92.** This was scored as the project's second-strongest system on the
-strength of *video measurements*. It is in fact the **best-evidenced system in the game**, because
-the original source data — every animation keyframe, every vector shape, every SFX and music stem —
-is on disk right now. The single biggest blocker in the block ("**ALL AUDIO**") is not a blocker;
-the audio was already in this repo, sitting encrypted inside a 15 MB SWF nobody had opened.
+## HEADLINE
 
-**Headline:** `reference/preservation/shs3_android_payload.swf` decrypts with the game's own
-documented routine and yields **13 SFX + 13 music stems as MPEG-2.5 Layer III, 16 kbps, 11 025 Hz
-mono MP3**, with the exact names `SoundManager.as` / `MusicManager.as` call for.
+**The entire "Blockers" list for this system is dead.** Four of the five named blockers
+are now held as first-class artifacts; the fifth (hitstop) is answered in the negative.
+The single biggest result:
 
----
+> ⛔ **THE AUDIO IS RECOVERED.** Not "characterisable", not "held-but-encrypted" —
+> **26 master assets extracted to disk as playable MP3**: 13 SFX and 13 music stems,
+> with exact format, sample rate, bitrate and duration. Stage-0 finding **S0-5 is
+> OVERTURNED** ("audio is HELD but ENCRYPTED … You may NOT claim audio is recovered")
+> and so is §6's "the exact waveforms/envelopes are not [study-able]".
 
-## §0 — Method note (applies to every A2 cite below)
+The break: the five `CWS`-headed "encrypted" blobs use **the same transform the
+top-level payload used** (`reference/tools/payload_decode.py`: swap `b[i]↔b[i+256]`
+for `i∈[3,256)` where `i%11==0`, then `b[i] ^= key`) — only with a **different XOR key
+per file**. Key recovered by 256-way brute force, validated by the body inflating cleanly:
 
-`reference/decompiled/shs3_payload/` is **identifier-obfuscated** (`§1t8566s0§.as`,
-`§1t1525s0§.§1t9960s0§(...)`). `reference/decompiled/shs3_android/` is the **same codebase with
-real symbol names** — `Marker_RumbleTrigger.as`, `StageManager.startShake(...)`. The two are
-line-for-line twins:
+| blob | key | result |
+|---|---:|---|
+| `122_Mobile_SoundResource.bin` | **111** | CWS v17, declared 29,631 → inflates **29,623 B** |
+| `113_Mobile_MusicResource.bin` | **117** | CWS v17, declared 1,402,685 → inflates **1,402,677 B** |
+| `124_Mobile_ImageResource.bin` | **109** | CWS v17 → **1,908,229 B** |
+| `115_Mobile_SHS3Resource.bin`  | **104** | CWS v17 → **1,040,849 B** |
+| `120_Mobile_BGResource.bin`    | **103** | CWS v17 → **4,412,340 B** |
 
-```
-shs3_payload/scripts/§1t8566s0§.as:9       internal var shakeDuration:int = 24;
-shs3_android/scripts/Marker_RumbleTrigger.as:9   internal var shakeDuration:int = 24;
-shs3_payload/scripts/§1t8566s0§.as:44   §1t1525s0§.§1t9960s0§(this.shakeDuration,this.shakeAmt);
-shs3_android/scripts/Marker_RumbleTrigger.as:44  StageManager.startShake(this.shakeDuration,this.shakeAmt);
-```
-
-So the android bundle is the **decoder ring for the entire web payload**. Every claim below that
-cites `shs3_android/` is a claim about the shipped game logic, not about a mobile-only fork.
-
----
-
-## CLAIM 1 — `art/audio-waveforms-held` — **OVERTURNS §4 blocker ① and §6 bullet 2**
-
-**Ledger says (§4):**
-> "**Blockers:** ① **ALL AUDIO** — every SFX + music param is INFERRED, no composer sourced."
-
-**Ledger says (§6, "structurally UNRECOVERABLE"):**
-> "**Exact original SFX & music synthesis params** — the *character* is study-able from audio; the exact waveforms/envelopes are not."
-
-**Reality: we hold the actual waveforms.** `reference/preservation/shs3_android_payload.swf`
-(15 142 649 bytes, on disk since 2026-07-23) is an encrypted SWF. It decrypts with the game's own
-`ResourceManager.decryptByteArray` (see CLAIM 2), and its `DefineBinaryData` blob **122** is
-`soundresource.swf` and blob **113** is `musicresource.swf`. Parsed tag stream:
-
-```
-=== soundresource (122) uncompressed 29623 bytes   frameRate 24.0
-   DefineSound tags: 13
-    deflect  (1, 'MP3', 11025, 16, 'mono',  8700 samples, 2082 bytes)
-    die2     (2, 'MP3', 11025, 16, 'mono',  7264, 1770)
-    sumo     (3, 'MP3', 11025, 16, 'mono', 31928, 6242)
-    slash3   (4, 'MP3', 11025, 16, 'mono',  2976, 1042)
-    die3     (5, 'MP3', 11025, 16, 'mono',  9545, 2186)
-    refund   (6, 'MP3', 11025, 16, 'mono',  8033, 1978)
-    die1     (7, 'MP3', 11025, 16, 'mono',  5290, 1458)
-    slash2   (8, 'MP3', 11025, 16, 'mono',  6130, 1562)
-    slash1   (9, 'MP3', 11025, 16, 'mono',  3809, 1146)
-    goodkoto (10,'MP3', 11025, 16, 'mono', 17331, 3642)
-    hitmetal (11,'MP3', 11025, 16, 'mono',  5717, 1562)
-    fart     (12,'MP3', 11025, 16, 'mono',  4608,  838)
-    punch    (13,'MP3', 11025, 16, 'mono',  3456, 1146)
-=== musicresource (113) uncompressed 1402677 bytes   frameRate 24.0
-   DefineSound tags: 13
-    bgm_lose          (1, 'MP3',11025,16,'mono',  38880,   7490)
-    safepercussion    (2, 'MP3',11025,16,'mono', 882144, 159746)
-    safekoto          (3, 'MP3',11025,16,'mono', 882144, 159746)
-    safeambience      (4, 'MP3',11025,16,'mono', 882144, 159746)
-    bgm_levelup       (5, 'MP3',11025,16,'mono', 328320,  59802)
-    bgm_gangnam       (6, 'MP3',11025,16,'mono',  40032,   7698)
-    flutes            (7, 'MP3',11025,16,'mono', 882144, 159746)
-    dungeonpiano      (8, 'MP3',11025,16,'mono', 504288,  91522)
-    dungeonpercussion (9, 'MP3',11025,16,'mono', 504288,  91522)
-    dungeonflute     (10, 'MP3',11025,16,'mono', 504288,  91522)
-    dungeonambience  (11, 'MP3',11025,16,'mono', 504288,  91522)
-    battledrums      (12, 'MP3',11025,16,'mono', 882144, 159746)
-    battlechants     (13, 'MP3',11025,16,'mono', 882144, 159746)
-```
-
-First MP3 frame header of the first music stem, decoded from the raw bytes:
-
-```
-charId 1 first bytes 7d06ffe320c00000
-mpeg MPEG2.5 layer III bitrate 16 kbps samplerate 11025 channel mono
-```
-
-**Derived durations** (samples ÷ 11 025): slash1 **0.345 s** · slash2 **0.556 s** · slash3 **0.270 s** ·
-punch **0.313 s** · hitmetal **0.519 s** · deflect **0.789 s** · die1 **0.480 s** · die2 **0.659 s** ·
-die3 **0.866 s** · fart 0.418 s · refund 0.729 s · goodkoto 1.572 s · sumo 2.896 s.
-Music: the five "surface" stems (`flutes`, `safeambience`, `safekoto`, `safepercussion`,
-`battledrums`, `battlechants`) are **all exactly 882 144 samples ≈ 80.01 s**, and the four dungeon
-stems are **all exactly 504 288 samples ≈ 45.74 s** — identical lengths *by design*, because the
-mixer cross-fades stems at a shared play position (CLAIM 4).
-
-**Consequence:** §5 Tier-1 item 3 — *"Listen-pass on existing audio (watch skill on the two longplays
-+ the 3 music rips + 2012 trailer) … the deepest gap"* — is obsolete. There is no need to
-characterise the beds from lossy YouTube rips; the isolated stems are here, unmixed, one file each.
-
-**Caveats, stated plainly.** (a) Project invariant is *WebAudio-synthesized SFX only, no image/audio
-files* — so these are a **study/measurement source** for synth parameters, not shippable assets.
-(b) The owner's Lut Games grant explicitly **excludes third-party assets including licensed music**
-(`CLAUDE.md`); `bgm_gangnam` is self-evidently third-party. Treat the audio as study-only,
-local-only, gitignored — exactly like the client SWFs already are.
-
-- **artifact_class:** A3 (byte-check, output pasted above)
-- **cite:** `reference/preservation/shs3_android_payload.swf` → DefineBinaryData charIds 113 & 122 → DefineSound tags (13 + 13)
-- **verdict:** HELD · **overturns_ledger:** true
+Decoded copies + extracted MP3s live in the session scratchpad
+(`…/scratchpad/dec/`, `…/scratchpad/dec/sfx/*.mp3`) — **nothing was written into the repo.**
+Study-only, local-only, per the owner ruling.
 
 ---
 
-## CLAIM 2 — `art/resource-decrypt-recipe` — the lever that opened CLAIM 1
+## CLAIMS
 
-`ResourceManager.as` names the five resource libraries and the key rule:
-
-```
-reference/decompiled/shs3_android/scripts/ResourceManager.as:41
-   internal static var resourceFileNameArray:Array = ["shs3resource.swf","musicresource.swf","soundresource.swf","imageresource.swf","bgresource.swf"];
-reference/decompiled/shs3_android/scripts/ResourceManager.as:186
-   ba = decryptByteArray(ba,resourceFileNameArray[num].charCodeAt(1));
-reference/decompiled/shs3_android/scripts/ResourceManager.as:200
-   internal static function decryptByteArray(source:ByteArray, key:int) : ByteArray
-   { ... for(var i:int = 3; i < 256; i++) { if(i % 11 == 0) { temp = int(ba[i]); ba[i] = ba[i+256]; ba[i+256] = temp; } ba[i] ^= key; } ... }
-```
-
-Brute-forcing the key over the five embedded blobs recovers **exactly** the predicted characters —
-independent confirmation that the routine is the right one:
+### AA-1 — Audio is recovered, not merely "encrypted" (A3) — OVERTURNS §4 blocker ① and Stage-0 S0-5
+`122_Mobile_SoundResource.bin` decodes with key 111 into a valid SWF holding **13
+`DefineSound` tags + a `SymbolClass` table naming every one**:
 
 ```
-blob 113 key 117 'u'  -> musicresource.swf  (SWF v17, 1 402 685 B)
-blob 122 key 111 'o'  -> soundresource.swf  (SWF v17,    29 631 B)
-blob 115 key 104 'h'  -> shs3resource.swf   (1 040 849 B)
-blob 120 key 103 'g'  -> bgresource.swf     (4 412 340 B)
-blob 124 key 109 'm'  -> imageresource.swf  (1 908 229 B)
-outer   key 104 'h'   -> shs3_android_payload.swf (SWF v26, 21 688 592 B)
+deflect  die2  sumo  slash3  die3  refund  die1  slash2  slash1  goodkoto  hitmetal  fart  punch
 ```
 
-- **artifact_class:** A2 (+A3 confirmation) · **cite:** `reference/decompiled/shs3_android/scripts/ResourceManager.as:41,186,200-217`
-- **verdict:** HELD
+Every one: `MP3, 11025 Hz, 16-bit, mono`. Written out and verified with macOS `afinfo`
+(independent decoder — proves they are real, decodable MP3, not garbage):
+
+| SFX | duration (afinfo) | SFX | duration |
+|---|---:|---|---:|
+| slash1 | 0.572 s | die1 | 0.728 s |
+| slash2 | 0.780 s | die2 | 0.884 s |
+| slash3 | 0.520 s | die3 | 1.092 s |
+| punch  | 0.572 s | deflect | 1.040 s |
+| hitmetal | 0.780 s | goodkoto | 1.820 s |
+| fart | 0.418 s | sumo | 3.120 s |
+| refund | 0.988 s | | |
+
+`afinfo` line, verbatim: `Data format: 1 ch, 11025 Hz, .mp3 … 576 frames/packet` /
+`estimated duration: 0.572000 sec` (MPEG-2.5 Layer III, 16 kbps).
+
+**Ledger sentence overturned** (§4): “① **ALL AUDIO** — every SFX + music param is
+INFERRED, no composer sourced.”
+**§6 sentence overturned:** “**Exact original SFX & music synthesis params** — the
+*character* is study-able from audio; the exact waveforms/envelopes are not.”
+The waveforms are on disk. WebAudio-synthesis of these SFX is now a *matching* problem
+against a reference file, not an invention problem.
+
+### AA-2 — The music is 13 layered stems, and we have them all (A3)
+`113_Mobile_MusicResource.bin` (key 117) → 13 `DefineSound` + `SymbolClass`:
+`battlechants battledrums flutes safeambience safekoto safepercussion dungeonambience
+dungeonflute dungeonpercussion dungeonpiano bgm_gangnam bgm_levelup bgm_lose`.
+Measured durations (afinfo):
+
+* **79.872 s exactly** — flutes, battledrums, battlechants, safeambience, safekoto, safepercussion
+* **45.760 s exactly** — dungeonambience, dungeonflute, dungeonpercussion, dungeonpiano
+* bgm_levelup 29.900 s · bgm_lose 3.744 s · bgm_gangnam 3.848 s
+
+The six "overworld family" stems being **bit-for-bit the same length** is the mechanism
+that lets them layer in phase. This is the composer's grid, measured.
+
+### AA-3 — The adaptive-music engine is fully specified in code (A2)
+`reference/decompiled/shs3_android/scripts/MusicManager.as`.
+17 presets are boolean masks over the 13 stems, e.g. verbatim:
+`this.presetsArray[MUSIC_TOUGHBATTLE][this.TRACK_BATTLECHANTS] = true;` (line 140).
+Preset table: EXPLOREBATTLE = flutes+battledrums · TOUGHBATTLE = +battlechants ·
+EXPLORESAFE = flutes+safeambience · EXPLORETOWN = +safekoto · EXPLOREDANGER =
+flutes+safeambience+safepercussion · DOJO = flutes+safeambience+safekoto+safepercussion ·
+DUNGEON = dungeonambience+dungeonflute · DUNGEONDANGER = +dungeonpercussion ·
+DUNGEONCREEPY = dungeonpiano alone · DUNGEONCREEPYDANGER = all four dungeon stems ·
+PVP = battledrums+battlechants · DUNGEONBATTLE = battledrums+dungeonflute.
+Crossfade, verbatim (lines 301 / 329): `sndTransform.volume -= 0.05;` /
+`sndTransform.volume += 0.05;` — **±0.05 per tick → a 20-tick ≈ 0.83 s fade at 24 fps.**
+A newly-enabled stem starts at the *playhead position of the currently-playing anchor
+stem* (`playPosition = int(this.scArray[this.TRACK_FLUTES].position)`, line 206) so
+layers enter phase-locked; stems loop by re-`play()` on `SOUND_COMPLETE` (line 279);
+`bgm_lose` plays once (`play(0,1)`), `bgm_levelup` `play(0,999)`.
+Which preset plays where is a hard `pickMusic(bg,isHostile,isPvP)` switch over the BG id
+(`SoundManager.as:114-173`).
+
+### AA-4 — SFX playback params are held too (A2)
+`SoundManager.as:187-219`: **slash picks 1 of 3 at random** (`var dice:int = Math.random()*3`
+→ `slash1|slash2|slash3`), death likewise 1-of-3 (`die1|die2|die3`).
+`playHit()` **and** `playHurt()` both play the same asset — verbatim line 261 and 274:
+`var sound:Sound = ResourceManager.getSound("punch");`. Every call is a bare
+`sound.play()` — **no SoundTransform: volume 1.0, pan 0, no loop, offset 0.**
+So "every SFX param is INFERRED" is false in both halves: the asset *and* its playback
+contract are held.
+
+### AA-5 — The font blocker is closed with copyright strings (A2/A3) — kills §4 blocker ②
+`DefineFontName` tags inside the decoded resource SWFs:
+* `115_Mobile_SHS3Resource`: id 307 `Edo SZ` © `2008 Vic Fieger`; id 12
+  `EPSON 太行書体Ｂ` © `(C) 2000 SEIKO EPSON CORP.`; id 61 `Adobe 고딕 Std B`;
+  id 161 `MS UI Gothic 標準`.
+* `124_Mobile_ImageResource`: id 76 `Edo SZ` © `2008 Vic Fieger`.
+
+This is stronger than Stage-0 S0-2 (which had only `face="Edo SZ"` in `ui_strings.txt`):
+we now have the **embedded font programs** and their vendor strings, in two independent
+containers. **Ledger sentence overturned:** “② font (unidentified).”
+⚠️ **Licence caveat:** Edo SZ is **Vic Fieger's** font, not Lut's. The owner ruling
+explicitly excludes third-party fonts. Identifying it ≠ permission to redistribute it.
+
+### AA-6 — "FX blend modes" is answered: the game uses NONE (A2) — kills §4 blocker ③
+Exhaustive grep for `blendMode` across all 559 android client classes returns **only**
+`mx/core/IFlexDisplayObject.as:87` (a framework interface the game never implements) —
+same result in `shs3_payload`. **No game class ever sets a blend mode.** All compositing
+is `ColorTransform` + two filters, and the whole vocabulary is one small class,
+`ColorCode.as`:
+* `setMCTint(mc, mul, col)` (line 110-120) — the exact tint formula:
+  `ct = new ColorTransform(1-mul, 1-mul, 1-mul, 1, round(mul*r), round(mul*g), round(mul*b), 0)`
+* `makeBlack` = `ColorTransform(0,0,0,1,0,0,0,0)` (silhouettes)
+* `desaturate` = `ColorMatrixFilter([0.3,0.59,0.11,0,0, …])` (luma weights)
+* `blur/blurHIGH` = `BlurFilter(n,n,LOW|HIGH)`
+* `changeColor(obj,color)` — used on `primaryColor`/`secondaryColor` sub-clips of every
+  equipment part (`MCSCharacter.as:748-1063`) = the two-tone dye system.
+A recreation that reaches for additive/screen blending is **diverging from the original**.
+Corroborated by A1 (see AA-13): the blade trail is a flat opaque shape, not a glow.
+
+### AA-7 — Screen-shake is fully catalogued (A2) — kills half of §4 blocker ④
+`StageManager.as:1200-1227`, verbatim:
+```
+public static function startShake(shakeDuration:int, shakeAmt:int = 30)
+...
+shakeAmount = Math.min(screenShakeAmt,screenShakeCounter);
+gameStage.x = screenShakeStartPos.x + (-shakeAmount / 2 + Math.random() * shakeAmount);
+gameStage.y = screenShakeStartPos.y + (-shakeAmount / 2 + Math.random() * shakeAmount);
+```
+i.e. **uniform random offset in ±amt/2 on both axes, every tick, amplitude 30 px by
+default, auto-tapering over the final `amt` ticks (`min(amt,counter)`), snapping back to
+the exact start position at 0.** It is stepped from `StageManager.update()` **outside**
+the `STATE_FROZEN` gate (line 826-830), so the shake keeps running while the action is
+frozen. Trigger set found: Cleave impact `startShake(12)` (`MCSPlayer.as:911`),
+Earthquake jutsu `startShake(24)` (`MCSPlayer.as:946`), player launched/knocked back
+`startShake(12)` (`MCSPlayer.as:4180`), crusher traps `startShake(6)`, a data-driven
+`Marker_RumbleTrigger` (`shakeDuration=24, shakeAmt=30` defaults, overridable per room).
+**Ledger sentence overturned:** “④ **screen-shake** + **hitstop-on-landed-hit** (never
+catalogued)”, and §1's UNKNOWN-UNKNOWNS “**screen-shake** and **hitstop-on-landed-hit**
+(never catalogued)”, and §5 Tier-1's "whether there's screen-shake / hitstop".
+
+### AA-8 — There is **no** hitstop on a landed hit (A2, negative) — PARTIAL
+Greps for `hitstop|hitpause|freezeframe|slowmo|timeScale|hitFreeze` return nothing.
+The only time-freeze in the engine is `STATE_FROZEN`, set at exactly two sites
+(`StageManager.as:162, 212`) — both the **battle-intro bar**, not a hit — and the
+end-of-battle `redFreezeCounter`. `gotHit` (`MCSPlayer.as:3714-3720`) sets
+`gotHitCounter = 12` and no global freeze. Verdict: **PARTIAL** — a negative from an
+exhaustive grep of one build. Honest statement: *no hitstop mechanism exists in the
+Android v0.682 client; a recreation that adds one is adding a deviation.*
+
+### AA-9 — Severed-limb death is not one variant, it's a whole gore system (A2) — kills §4 blocker ⑤
+The human animation set (`108_1t4635s0.bin`, web payload) contains, as `<anim i=...>`:
+`death` (38 f) · `deathenemy` (23) · **`deathnohand` (25)** · **`deathnohead` (31)** ·
+**`deathinhalf` (28)** · `deathwitharrow` (23) · `deathbyarrow` (21) · `deathdowned` (7)
+— plus `seppuku_start/mid/end` and `seppuku_nohead` in `103_1t4630s0.bin`.
+The **selection rule** is in code (`EnemyGoblin.as:352-432`, mirrored in every Enemy*
+class), verbatim:
+```
+if(Math.random() * 2 < 1) { mcs.scaleX = -mcs.scaleX; }        // 50% corpse mirror
+if(!StatsManager.censored && fatal) {
+   if(behead) { startAnim(ENEMYDEATHNOHEAD); ... }
+   else { dice = Math.random() * 5;
+          dice<=1 -> GOB_DEATH ; ==2 -> ENEMYDEATH ; ==3 -> ENEMYDEATHNOHAND ; ==4 -> DEATHINHALF }
+```
+⇒ on a non-behead fatal blow the split is **40% plain / 20% plain-alt / 20% one-armed /
+20% cut-in-half**, and `StatsManager.censored` (`StatsManager.as:314`, default **false**)
+is a global gore switch. **Ledger sentence overturned:** “⑤ severed-limb death variant.”
+
+### AA-10 — Blood VFX numbers are exact, no frame-measuring needed (A2)
+`BloodParticleEmitter.as:18-26`, verbatim defaults:
+`pnumber = 20; px = 0; py = 0; pangle = 0; panglevariance = 10; pvel = 6;
+pvelvariance = 2; pgravity = 0.6; pttl = 24;`
+(24 ticks ≈ **1.0 s** at 24 fps). Per-death overrides are literal too — beheading spawns
+emitters at `PART_neck` angle **130** and/or `PART_head` angle **180** with
+`setVel(4) / setNumber(10)`; one-armed spawns at `PART_neck` 60 + `PART_l_uparm` 180
+with `setVel(5)`; cut-in-half at `PART_stomach` 180 / `PART_pelvic` 120; torso deaths use
+angle 80–90 with `setAngleVariance(15)`.
+**§5 Tier-1 item 2 overturned:** “Frame-measure combat numbers from existing footage:
+… blade-trail width/fade; blood droplet count/spread; whether there's screen-shake /
+hitstop.” None of that needs measuring now.
+
+### AA-11 — The animation clock is **24 fps, one keyframe per tick**, and the "latch" is a code-added tail (A2/A3) — CORRECTS the ledger's headline Ready bullet
+Three independent artifacts agree on 24 fps:
+1. SWF header of the real web client `reference/preservation/shs3.swf` → **framerate 24.0**
+   (and stage rect 800×690 twips-decoded; see AA-14).
+2. `Mobile.as:117` verbatim: `GameEngine.getStageMC().frameRate = 24;`
+3. Every duration constant in the engine is written as `24 × seconds`
+   (`WhiteOutFX.as:22-30`: `ttlMax = 24 * 3 / 24 * 4 / 24 * 5`;
+   `StageManager.as:1096-1101`: `redFreezeCounter = 24 * 3 + 6` / `24 * 6`).
+The rig: `FrameNodeData.as` — each `<n>` is a joint with `x`,`y`,`r` (or a 2×2 matrix
+`a,b,c,d` **÷100** when skewed), applied straight onto a MovieClip
+(`mc.x/mc.y/mc.rotation`). 21 nodes per pose in the stance sets.
+The clock: `MCSCharacter.updateAnimation()` does `++this.frameCounter` **once per game
+tick** and `updateFrame()` only assigns a pose **while `frameCounter < frameList.length`**.
+Measured over the whole XML: **`@d` == the number of `<f>` children for every anim**
+(light_stance d=1/1f, light_run d=9/9f, walk d=20/20f, death d=38/38f …) — so the data
+holds **no** hold frames. The holds are injected in code by `AnimData.as:23-142`
+(`duration += 10` after every stance's slash pose, `+= 15` on jumpslash land, `+= 24` on
+sheathe, `+= 6` on deaths, `+= 48` on `ogre_nap1_mid`, …), and `updateFrame()`'s guard
+latches the final pose for those extra ticks.
+**Ledger sentence contested** (§4 Ready): “15fps pose latch”. The authored motion is a
+**24 Hz keyframe stream with per-animation hold tails**, not a 15 Hz latch. The 15 fps
+figure is a video-sampling artifact (project memory already flags a "15fps sampling
+floor"); no frame contradicts the payload here — the dense stills are 0.1 s apart (10 Hz)
+and cannot resolve 24 vs 15. Marked **PARTIAL**, not HELD, because the *visible* cadence
+of a specific animation could still read as slower; but the clock and the model are settled.
+
+### AA-12 — The Android caveat **dissolves** for animation: 14 of 18 blobs are byte-identical to the web payload (A3)
+MD5 over both trees:
+`reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin` ==
+`reference/extracted/bindata/108_1t4635s0.bin` == `bcfd658e79fafb41f52431afb7d10622`
+(and LightStance == `a4d5501845c9fd553710c4d8139a7cd0`, etc.)
+Byte-identical: Human, Human2, Light/Balanced/Heavy/Dual/Reversed stances, Undead, Bear,
+Deer, Wolf, Goblin, Boar, Horse (**14/18**) — plus TrapRoomData, MapBitmapData and all 5
+NameGenerator tables (21 blobs total).
+Differing (v0.717 drifted): Ogre, Skills (51 anims), Guardian, HumanSpear.
+Total authored animations in the **web** payload: **487 `<anim>`** across 19 animdata
+blobs — vs the board's assumed "~150" (Stage-0 S0-4 estimated ~450; measured 487).
+⇒ Animation claims sourced from the Android build are **web-parity** for 14/18 sets, and
+that is provable by hash, not assumed.
+
+### AA-13 — A1 frame check: the blade trail is a flat opaque vector wedge, not a glow
+Frame `reference/frames/duel_dense/Nr4fQstqHDM_432.0.png` (1920×1080), crop
+`(900,600)-(1300,900)` upscaled ×3 Lanczos. **Visibly:** a wide hard-edged **blue** wedge
+sweeping left from the fighter's hands — mid-blue upper body, darker blue lower half,
+a **white double-stripe core** running its length, a solid **black outline**, tapering to
+a point at the tail; it occludes the grass behind it rather than lightening it.
+Also visible: navy haori with red trim, cream obi, white hakama, straw kasa, bold black
+outlines (the ledger's "flat-vector bold-outline style" — CONFIRMED by frame);
+a felled bare-torso enemy sprawled at the fighter's feet with his kasa fallen beside him,
+**no blood and no severed limb at this instant** (consistent with a non-gore variant, or
+with blood already expired at `pttl=24` ≈ 1 s).
+This frame **corroborates AA-6**: an opaque outlined shape is what "no blendMode" looks
+like. Where a doc were to claim an additive/glow trail, **the frame wins** and it does not.
+Supporting A2: `bladeslashfx.as` is a **5-frame** clip that deletes itself
+(`addFrameScript(4,this.frame5)` → `removeChild(this)`), i.e. the slash FX lives ~0.21 s.
+
+### AA-14 — Aspect-ratio truth is closed, and the frame arbitrates it
+The ledger lists this under UNKNOWN-UNKNOWNS: “**Aspect-ratio truth** — native canvas is
+**800×480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong.”
+It is now a payload CONTRACT: `GameEngine.as` `resizeHandler`, verbatim
+`var originalWidth:int = 800;` / `var originalHeight:int = 480;`, with
+`newScale = stageHeight/originalHeight; offsetX = (stageWidth - originalWidth*newScale)/2`
+and `stageMC.fullScreenSourceRect = new Rectangle(0,0,800 * newScale,480 * newScale)`;
+`StageManager.as:159` positions the battle intro bar at `(480 - 80)/2 * stageScale + offsetY`.
+**Conflict, resolved in the frame's favour:** the SWF *document* rect of the real client
+`shs3.swf` decodes to **800×690 px** (16000×13800 twips) — but measuring the non-black
+content box of `Nr4fQstqHDM_432.0.png` gives **cols 52…1867 × all 1080 rows = 1816×1080,
+aspect 1.6815** (stable across thresholds 5→60 and across frames), which is 800×480
+(1.6667), *not* 800×690 (1.159). **THE FRAME WINS: the visible game surface is the
+800×480 design canvas, pillarboxed.** The 690-tall document rect is container chrome,
+not play area.
+
+### AA-15 — The "kill-beat" has exact numbers (A2)
+`StageManager.as:898-935, 1085-1101`. On victory `redFreezeCounter = 24 * 6` (**6.0 s**);
+the win card is shown when it counts down to `24 * 5` (i.e. **1.0 s** after the freeze
+starts); the freeze ends at `redFreezeCounter == 24` **unless the player is still playing
+`SHEATHESWORDCHIBURI`** (the blood-flick sheathe), in which case it runs to 0. On defeat
+`redFreezeCounter == 24 * 3` (**3.0 s**) then the lose card. Harvest actions use
+`24 * 3 + 6`. Combat/UI/particles are gated off during the freeze, **but the screen shake
+is not**.
+
+### AA-16 — Uniform 12-tick hit reaction, and a head-hit damage multiplier (A2)
+`gotHitCounter = 12` is set identically in **every** enemy class and in `MCSPlayer`
+(0.5 s at 24 fps) and decremented once per tick — a single global hit-reaction window.
+The ledger's Surface bullet "hit-tint scaling (7/12/16f)" is *authored*, not original;
+the original's one number is **12**.
+Bonus, outside my lane but load-bearing (`MCSPlayer.as:3687-3716`), verbatim:
+```
+case mcs.partList[MCSCharacter.PART_hat]:
+case mcs.partList[MCSCharacter.PART_head]:
+case mcs.partList[MCSCharacter.PART_neck]:
+   behead = true;
+...
+if(behead) { damage *= 1.5; }
+```
+⇒ **hitting hat/head/neck sets the behead flag AND multiplies damage ×1.5.** The blade
+path's *body-part intersection* is the crit-shaped mechanic nobody had. (Do **not**
+conflate with the HUD's "150% DAMAGE" line visible in `Nr4fQstqHDM_432.0.png` — that sits
+under "CANNOT CHANGE STANCE" and reads as the stance modifier. Two different 1.5s;
+un-reconciled.)
+
+### AA-17 — §6's "structurally UNRECOVERABLE" audio line is wrong; only the *stems' authorship* is
+§6 verbatim: “**Exact original SFX & music synthesis params** — the *character* is
+study-able from audio; the exact waveforms/envelopes are not.”
+Held now: the waveforms (AA-1/AA-2), the mixing engine, the fade rate, the preset masks,
+the trigger map. Genuinely still unheld: **the stems' internal musical analysis**
+(BPM/key/instrumentation) — but that is a listening task on a file we possess, not a
+recovery problem. §5 Tier-1 item 3 ("Listen-pass on … the two longplays + the 3 music
+rips + 2012 trailer … the deepest gap") is obsolete: **do not listen-pass a YouTube rip
+when the master stem is on disk.**
+
+### AA-18 — STILL_UNHELD, stated plainly
+* **The web build's own audio.** The web `payload.swf`'s 27 bindata blobs contain **no**
+  `CWS` blob at all (checked every one) — the web client streamed its sound/image/bg
+  resources separately, and we do not hold them. Every audio claim above is sourced from
+  the **Android v0.682** build (`shs3_android/scripts/StatsManager.as:30`). Web-parity is
+  **proven for animation** (AA-12) and **unproven for audio**. Label ported audio
+  "Android v0.682".
+* **Whether the OG's on-screen cadence reads as 24 fps.** Settled in data (AA-11), not in
+  frames — the dense stills sample at 10 Hz.
+* **Per-part vector art fidelity.** `115_Mobile_SHS3Resource` is now open (1,949
+  `DefineSprite`, 1,594 `DefineShape4`, symbols `head_bear_0`, `torso_boar_0`, `acc3000`…)
+  and `120_Mobile_BGResource` holds 49 named backgrounds (`BG_Dojo`, `BG_Mine`, …) — but
+  I did not render or grade a single shape this pass. Open lane, now trivially openable.
 
 ---
 
-## CLAIM 3 — `art/sfx-cue-table` — the trigger map, not just the sounds
-
-`SoundManager.as` is the complete SFX contract. Slash and death each pick **uniformly from 3
-variants**; **hit and hurt are the same sound** (`punch`) — a detail no video pass would ever recover.
-
-```
-reference/decompiled/shs3_android/scripts/SoundManager.as:187-219
-   public function playSlash() : * { ... var dice:int = Math.random() * 3;
-     if(dice == 0) { sound = ResourceManager.getSound("slash1"); ... }
-     else if(dice == 1) { ... "slash2" ... } else if(dice == 2) { ... "slash3" ... } }
-reference/decompiled/shs3_android/scripts/SoundManager.as:221-253   playDie()  -> die1|die2|die3, same 3-way dice
-reference/decompiled/shs3_android/scripts/SoundManager.as:261       playHit()   -> ResourceManager.getSound("punch")
-reference/decompiled/shs3_android/scripts/SoundManager.as:274       playHurt()  -> ResourceManager.getSound("punch")
-reference/decompiled/shs3_android/scripts/SoundManager.as:287       playHitMetal() -> "hitmetal"
-reference/decompiled/shs3_android/scripts/SoundManager.as:300       playDeflect()  -> "deflect"
-```
-
-- **artifact_class:** A2 · **cite:** `reference/decompiled/shs3_android/scripts/SoundManager.as:187-305`
-- **verdict:** HELD · **overturns_ledger:** true (same §4 ① sentence as CLAIM 1)
-
----
-
-## CLAIM 4 — `art/music-architecture` — vertical stem layering with phase-locked crossfades
-
-The music is **not** a playlist of tracks. It is 13 mono stems and 18 preset masks; changing preset
-starts newly-enabled stems **at the currently-playing stem's sample position** so everything stays
-in phase, then fades in at a fixed rate.
-
-```
-reference/decompiled/shs3_android/scripts/MusicManager.as:50-76
-   TRACK_BATTLECHANTS 0 · TRACK_BATTLEDRUMS 1 · TRACK_FLUTES 2 · TRACK_SAFEAMBIENCE 3 ·
-   TRACK_SAFEKOTO 4 · TRACK_SAFEPERCUSSION 5 · TRACK_DUNGEONAMBIENCE 6 · TRACK_DUNGEONFLUTE 7 ·
-   TRACK_DUNGEONPERCUSSION 8 · TRACK_DUNGEONPIANO 9 · TRACK_GANGNAM 10 · TRACK_LEVELUP 11 ·
-   TRACK_LOSE 12 · TOTALTRACKS 13
-reference/decompiled/shs3_android/scripts/MusicManager.as:143-149
-   presetsArray[MUSIC_EXPLORESAFE][TRACK_FLUTES] = true;
-   presetsArray[MUSIC_EXPLORESAFE][TRACK_SAFEAMBIENCE] = true;
-   presetsArray[MUSIC_EXPLOREDANGER][TRACK_FLUTES] = true;
-   presetsArray[MUSIC_EXPLOREDANGER][TRACK_SAFEAMBIENCE] = true;
-   presetsArray[MUSIC_EXPLOREDANGER][TRACK_SAFEPERCUSSION] = true;
-reference/decompiled/shs3_android/scripts/MusicManager.as:206
-   playPosition = int(this.scArray[this.TRACK_FLUTES].position);
-reference/decompiled/shs3_android/scripts/MusicManager.as:301   sndTransform.volume -= 0.05;   // ACTION_FADEOUT, per update tick
-reference/decompiled/shs3_android/scripts/MusicManager.as:329   sndTransform.volume += 0.05;   // ACTION_FADEIN
-reference/decompiled/shs3_android/scripts/MusicManager.as:243   scArray[TRACK_LOSE]    = trackArray[i].play(0,1);    // lose stinger: 1 loop
-reference/decompiled/shs3_android/scripts/MusicManager.as:248   scArray[TRACK_LEVELUP] = trackArray[i].play(0,999);  // level-up: 999 loops
-```
-
-Fade rate 0.05/tick at 24 fps ⇒ a **20-tick ≈ 0.83 s** linear fade in each direction. Presets:
-`MUSIC_NONE 0, EXPLOREBATTLE 1, TOUGHBATTLE 2, QUIET 3, EXPLORESAFE 4, EXPLOREDANGER 5,
-EXPLORETOWN 6, DUNGEONBATTLE 7, PVP 8, DUNGEON 9, DUNGEONCREEPY 11, DUNGEONCREEPYDANGER 12,
-DOJO 14, BATTLEDRUMS 15, DUNGEONDANGER 16, GANGNAM 100, LEVELUP 101, LOSE 102`
-(`MusicManager.as:12-46`). This is the "music params" the ledger calls INFERRED, in full.
-
-- **artifact_class:** A2 · **cite:** `reference/decompiled/shs3_android/scripts/MusicManager.as:12-46,50-76,115-186,193-272,284-351`
-- **verdict:** HELD · **overturns_ledger:** true
-
----
-
-## CLAIM 5 — `art/music-routing` — which bed plays where
-
-`SoundManager.pickMusic(bg, isHostile, isPvP)` is a complete background→preset router, and
-`pickBattleMusic()` is the danger→battle escalation rule.
-
-```
-reference/decompiled/shs3_android/scripts/SoundManager.as:116-118
-   if(isPvP) { this.playMusic(MusicManager.MUSIC_PVP); }
-reference/decompiled/shs3_android/scripts/SoundManager.as:120-129
-   else if(bg == GameStage.BG_DUNGEON || bg == GameStage.BG_CAVE || ... || bg == GameStage.BG_ANCIENTRUINS)
-   { if(isHostile) playMusic(MUSIC_DUNGEONDANGER); else playMusic(MUSIC_DUNGEON); }
-reference/decompiled/shs3_android/scripts/SoundManager.as:177-184
-   if(this.isPlaying == MusicManager.MUSIC_EXPLOREDANGER) { this.playMusic(MusicManager.MUSIC_EXPLOREBATTLE); }
-   else if(isPlaying == MUSIC_DUNGEONDANGER || isPlaying == MUSIC_DUNGEONCREEPYDANGER) { playMusic(MUSIC_DUNGEONBATTLE); }
-```
-
-- **artifact_class:** A2 · **cite:** `reference/decompiled/shs3_android/scripts/SoundManager.as:114-185`
-- **verdict:** HELD
-
----
-
-## CLAIM 6 — `art/screen-shake` — **OVERTURNS §4 blocker ④ (shake half) and the §1 unknown-unknown**
-
-**Ledger says (§4):** "④ **screen-shake** + **hitstop-on-landed-hit** (never catalogued)"
-**Ledger says (§1 unknown-unknowns):** "**screen-shake** and **hitstop-on-landed-hit** (never catalogued)."
-**Ledger says (§5 Tier 1):** "…whether there's screen-shake / hitstop."
-
-It is catalogued now, exactly:
-
-```
-reference/decompiled/shs3_android/scripts/StageManager.as:1200-1206
-   public static function startShake(shakeDuration:int, shakeAmt:int = 30) : *
-   { screenShake = true; screenShakeCounter = shakeDuration; screenShakeAmt = shakeAmt;
-     screenShakeStartPos = new Point(gameStage.x,gameStage.y); }
-reference/decompiled/shs3_android/scripts/StageManager.as:1207-1227
-   internal static function doShake() : *
-   { --screenShakeCounter;
-     if(screenShakeCounter == 0) { screenShake = false; gameStage.x = screenShakeStartPos.x; gameStage.y = screenShakeStartPos.y; }
-     else { shakeAmount = Math.min(screenShakeAmt,screenShakeCounter);
-            gameStage.x = screenShakeStartPos.x + (-shakeAmount / 2 + Math.random() * shakeAmount);
-            gameStage.y = screenShakeStartPos.y + (-shakeAmount / 2 + Math.random() * shakeAmount); } }
-```
-
-Algorithm: **uniform random 2-D offset in ±shakeAmount/2 on both axes, once per tick**, with the
-amplitude **self-damping** via `min(amt, counter)` for the last `amt` ticks, and an exact snap-back
-to the pre-shake origin. Default amplitude **30 px**. Measured call sites:
-
-```
-MCSPlayer.as:911   StageManager.startShake(12);
-MCSPlayer.as:946   StageManager.startShake(24);
-MCSPlayer.as:4180  StageManager.startShake(12);
-HeavenlySwordProjectile.as:76  StageManager.startShake(12);
-Trap_CrusherBlockAuto.as:88 / Trap_CrusherColumnAuto.as:90   StageManager.startShake(6);
-Marker_RumbleTrigger.as:9,11  shakeDuration = 24; shakeAmt = 30;   // designer-overridable via "d,amt" prop string
-shs3_payload/scripts/§1t99s0§.as:3514,3825,4267   §1t1525s0§.§1t9960s0§(6,20);
-```
-
-- **artifact_class:** A2 · **cite:** `reference/decompiled/shs3_android/scripts/StageManager.as:1200-1227` (+ call sites above)
-- **verdict:** HELD · **overturns_ledger:** true
-
----
-
-## CLAIM 7 — `art/kill-beat-redfreeze` — the "kill-beat" is a named, timed engine state
-
-The Ready bullet lists "kill-beat" as frame-measured. It is an engine state called **redFreeze**,
-with exact tick counts at 24 fps:
-
-```
-reference/decompiled/shs3_android/scripts/StageManager.as:1096   redFreezeCounter = 24 * 3 + 6;   // ACTION_HARVEST
-reference/decompiled/shs3_android/scripts/StageManager.as:1101   redFreezeCounter = 24 * 6;       // normal battle end (6.0 s)
-reference/decompiled/shs3_android/scripts/StageManager.as:903-907 if(redFreezeCounter == 24 * 5) { unRedFreeze(); ... battleUI.showWin(); }   // +1.0 s
-reference/decompiled/shs3_android/scripts/StageManager.as:926-928 else if(redFreezeCounter == 24 * 3) { redFreezeCounter = -2; ... showLose(); }
-reference/decompiled/shs3_android/scripts/StageManager.as:1103-1104 InputManager.disableInput(); InputManager.clearCanvas();
-```
-
-Visual composition of the beat (`GameStage.redFreeze`, `reference/decompiled/shs3_android/scripts/GameStage.as:514-544`):
-**every** farthest / far / player-plane / foreground layer is set `visible = false`; ground layers
-0-1 are driven to pure black via `ColorCode.makeBlack`; higher ground layers hidden. Also frozen:
-`NPCManager`, `ProjectileManager`, `ParticleSystemManager`, HUD (`battleUI.hideAll()`,
-`skillUI.visible = false`), and `StatsManager.resetCombo()`.
-
-- **artifact_class:** A2 · **cite:** `reference/decompiled/shs3_android/scripts/StageManager.as:898-930,1075-1106` + `GameStage.as:514-544`
-- **verdict:** HELD
-
----
-
-## CLAIM 8 — `art/hitstop-per-hit` — **STILL_UNHELD, and stated honestly**
-
-The other half of blocker ④. I searched the whole android bundle for a per-landed-hit time freeze:
-`hitstop`, `hitStop`, `freezeFrame`, `timeScale`, `slowmo`, `slowMotion`, `hitPause`, `pauseGame`
-— **zero hits** outside the battle-end `redFreeze` (CLAIM 7) and `animFrozen` (an animation-hold
-flag, not a global tick freeze: `MCSPlayer.as:4433`). Absence of a symbol is not proof the effect
-does not exist, and I did not open frames at a landed-hit boundary to test it. **STILL_UNHELD.**
-Close path is cheap and does not need frames: instrument the decrypted `shs3resource.swf` MovieClip
-timelines, or read `GameEngine`'s main tick for any conditional skip.
-
-- **artifact_class:** STILL_UNHELD · **verdict:** STILL_UNHELD
-
----
-
-## CLAIM 9 — `art/blend-modes-none` — **OVERTURNS §4 blocker ③ (as a resolved negative)**
-
-**Ledger says (§4):** "③ FX **blend modes**"
-**Ledger says (§1):** "**Compositing/blend modes** for tint/vignette/trail/blood … (never catalogued)."
-
-`BlendMode.` appears **nowhere** in 2 768 decompiled classes across all 8 bundles
-(`docs/gauntlet/L0/index/actionscript.json` → `"class_count": 2768`). `grep -rn "blendMode"
-reference/decompiled/` returns **exactly 6 hits**, and every one is the Adobe Flex framework's own
-interface declaration `mx/core/IFlexDisplayObject.as:87,89` repeated across the three bundles that
-ship Flex (`shs3_android`, `shs3_android_payload`, `shs3_payload`). **No game class ever reads or
-writes `blendMode`, and no `BlendMode.*` constant is ever named.** There is nothing to
-recover: **the game composites in normal blend only.** Its entire visual-effect vocabulary is three
-primitives:
-
-```
-reference/decompiled/shs3_android/scripts/ColorCode.as:12
-   internal static var blackColorTransform:ColorTransform = new ColorTransform(0,0,0,1,0,0,0,0);
-reference/decompiled/shs3_android/scripts/ColorCode.as:21-26   changeColor()  -> ColorTransform.color = <uint>
-reference/decompiled/shs3_android/scripts/ColorCode.as:52-56   blur(obj, n)   -> new BlurFilter(n,n,BitmapFilterQuality.LOW)
-reference/decompiled/shs3_android/scripts/ColorCode.as:58-62   blurHIGH(obj,n)-> BitmapFilterQuality.HIGH
-reference/decompiled/shs3_android/scripts/ColorCode.as:47-48
-   var myElements_array:Array = [0.3,0.59,0.11,0,0, 0.3,0.59,0.11,0,0, 0.3,0.59,0.11,0,0, 0,0,0,1,0];
-   var myColorMatrix_filter:ColorMatrixFilter = new ColorMatrixFilter(myElements_array);
-```
-
-Filter census over the whole `shs3_android` bundle (recursive, 559 scripts) — `grep -rhon
-"GlowFilter\|DropShadowFilter\|BlurFilter\|ColorMatrixFilter\|BevelFilter\|GradientGlowFilter\|ConvolutionFilter\|DisplacementMapFilter"`:
-**13 × BlurFilter, 7 × ColorMatrixFilter, 0 of every other filter type.** The desaturation matrix
-uses luma weights **0.3 / 0.59 / 0.11**. (Note: the *payload.xml* asset tree does carry 206
-`glowColor` and 2 `dropShadowColor` entries — those are **authoring-time filters baked onto
-individual symbols** in the FLA, not runtime code, and they are recoverable per-symbol from
-`reference/extracted/`.)
-
-- **artifact_class:** A2 · **cite:** `reference/decompiled/shs3_android/scripts/ColorCode.as:1-124` + whole-corpus `grep -rn "BlendMode\." reference/decompiled/` → 0 results
-- **verdict:** HELD · **overturns_ledger:** true
-
----
-
-## CLAIM 10 — `art/severed-limb-deaths` — **OVERTURNS §4 blocker ⑤**
-
-**Ledger says:** "⑤ severed-limb death variant."
-
-Four dismemberment deaths plus a beheaded seppuku are named in the animation table, with exact
-frame durations:
-
-```
-reference/extracted/anim_xml.txt:86   <anim i="death" d="38">
-reference/extracted/anim_xml.txt:87   <anim i="deathbyarrow" d="21">
-reference/extracted/anim_xml.txt:88   <anim i="deathdowned" d="7">
-reference/extracted/anim_xml.txt:89   <anim i="deathenemy" d="23">
-reference/extracted/anim_xml.txt:90   <anim i="deathinhalf" d="28">
-reference/extracted/anim_xml.txt:91   <anim i="deathnohand" d="25">
-reference/extracted/anim_xml.txt:92   <anim i="deathnohead" d="31">
-reference/extracted/anim_xml.txt:97   <anim i="deathwitharrow" d="23">
-reference/extracted/bindata/103_1t4630s0.bin  child_ids include "seppuku_nohead"
-```
-
-Each of these carries a **+6-frame post-hold** applied at load
-(`reference/decompiled/shs3_android/scripts/AnimData.as:59-66`: `case "deathenemy": case "deathnohand":
-case "deathnohead": case "death": ... this.duration += 6;`).
-
-- **artifact_class:** A2 · **cite:** `reference/extracted/anim_xml.txt:86-97`
-- **verdict:** HELD · **overturns_ledger:** true
-
----
-
-## CLAIM 11 — `art/font-edo-sz` — **OVERTURNS §4 blocker ② and §2's "font"**
-
-**Ledger says (§2 row):** "…**all audio** (SFX + music params); **font**; FX blend modes; screen-shake/hitstop"
-**Ledger says (§4):** "② font (unidentified)."
-
-Identified, with copyright line and embedded glyph outlines:
-
-```
-reference/extracted/payload.xml  (DefineFont3Tag)
-   fontAscent="18505" fontDescent="4315" fontFlagsHasLayout="true" fontID="2" fontLeading="2926" fontName="Edo SZ "
-reference/extracted/payload.xml  (DefineFontNameTag)
-   fontCopyright="2008 Vic Fieger" fontId="2" fontName="Edo SZ"
-reference/extracted/ui_strings.txt:100
-   ="1">physical dmg: 1234 - 1235 &nbsp;(heavy)critical dmg: 1234-1235 *(heavy)piercing dmg: 20<font face="Edo SZ" size="14" color="#cccccc" letterSpacing="0.
-reference/extracted/ui_strings.txt:206   aaa<font face="Edo SZ" size="16" color="#ffffff" letterSpacing="0.
-reference/extracted/ui_strings.txt:212   align="center">next leveldamage: 10def: 20<font face="Edo SZ" size="13" colo
-```
-
-So the game font is **Edo SZ by Vic Fieger (2008)** — a *freeware* face, therefore actually
-obtainable — used at sizes **13 / 14 / 16**, colours `#cccccc` and `#ffffff`. The payload also
-embeds `Calibri` (fontID 533) and `Calibri Bold` (60) — © 2015 Microsoft — plus `_sans`, `Arial`,
-`Times New Roman`, `Adobe 고딕 Std B`, `EPSON 太行書体Ｂ`. **Only Edo SZ matters for fidelity;**
-the Microsoft/Adobe/Epson faces are third-party and outside the owner grant.
-
-This also **upgrades Stage-0 finding S0-2**, which had only the face *name* from `ui_strings.txt`:
-we now have the designer, the year, the numeric metrics, and the fact that the glyph outlines
-themselves ship inside the payload.
-
-- **artifact_class:** A2 · **cite:** `reference/extracted/payload.xml` DefineFont3Tag/DefineFontNameTag fontID=2; `reference/extracted/ui_strings.txt:100,206,212`
-- **verdict:** HELD · **overturns_ledger:** true
-
----
-
-## CLAIM 12 — `art/original-keyframe-rig` — the Ready bullets are massively UNDER-claimed
-
-**Ledger says (§2 row):** "motion (15fps latch, gaits, slash frames, death), byte-exact palette"
-**Ledger says (§4):** "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle…"
-
-Every one of those is listed as a *measurement from video*. In fact **the original authored
-skeletal animation data is on disk**, in `reference/extracted/bindata/` (19 `<animdata>` files):
-
-```
-$ cat reference/extracted/bindata/1[0-1][0-9]_*.bin | grep -o '<anim i=' | wc -l   ->    487
-$ cat reference/extracted/bindata/1[0-1][0-9]_*.bin | grep -o '<f i='    | wc -l   ->  5,596
-$ cat reference/extracted/bindata/1[0-1][0-9]_*.bin | grep -o '<n i='    | wc -l   -> 81,706
-```
-
-**487 animations · 5 596 keyframes · 81 706 individual bone poses.** The format, verbatim:
-
-```
-reference/extracted/bindata/118_1t4645s0.bin:3    <anim i="light_stance" d="1">
-reference/extracted/bindata/118_1t4645s0.bin:26   <anim i="light_run" d="9" l="1">
-reference/extracted/bindata/118_1t4645s0.bin:27   <f i="0">
-reference/extracted/bindata/118_1t4645s0.bin:28   <n i="20" x="-3" y="-52" r="66"></n>
-reference/extracted/bindata/118_1t4645s0.bin:217  <anim i="light_horslash_parta" d="13">
-```
-
-Runtime semantics (`reference/decompiled/shs3_android/scripts/AnimData.as:15-16`,
-`FrameNodeData.as:27-44,46-76`): `d` = duration in frames, `l="1"` = looping, `<f>` = keyframe,
-`<n>` = one rigged node with **integer x, y and integer degrees `r`** — or, when `r` is absent,
-a full 2×2 matrix `a,b,c,d` each **divided by 100** for skewed parts. 19 distinct node ids in the
-0–20 range per human rig. Per-stance slash timings are no longer estimates, e.g. Light:
-`horslash` a13/b9(loop)/c6/d1 · `downslash` a12/b9/c4/d1 · `upslash` a6/b9/c5/d1 ·
-`fallslash` a7/b1/c1 · `jumpslash` a2/b1/c5/d1.
-
-- **artifact_class:** A2 · **cite:** `reference/extracted/bindata/118_1t4645s0.bin:3,26-28,217` + `reference/extracted/anim_xml.txt` (482 unique names) + `docs/gauntlet/L0/index/bindata.json`
-- **verdict:** HELD · **overturns_ledger:** true (Ready bullets understate provenance: measured → original source)
-
----
-
-## CLAIM 13 — `art/framerate-24-not-15` — the "15fps pose latch" is not in the engine
-
-**Ledger says:** "15fps pose latch" (both §2 row and §4 Ready bullet).
-
-The shipped SWF header and the mobile entry point both declare **24 fps**, and the decrypted
-resource libraries agree:
-
-```
-reference/extracted/payload.xml:5
-   <swf ... frameCount="6" frameRate="24.0" ... version="17">
-reference/decompiled/shs3_android/scripts/Mobile.as:117   GameEngine.getStageMC().frameRate = 24;
-decrypted soundresource (blob 122) header  -> frameRate 24.0
-decrypted musicresource (blob 113) header  -> frameRate 24.0
-decrypted shs3_android_payload             -> frameRate 24.0, frameCount 6
-```
-
-The animation runtime advances **exactly one authored keyframe per tick** — there is no sub-rate
-divider anywhere:
-
-```
-reference/decompiled/shs3_android/scripts/MCSCharacter.as:1315   ++this.frameCounter;
-reference/decompiled/shs3_android/scripts/MCSCharacter.as:1332-1337
-   internal function updateFrame() : * { if(this.frameCounter < this.currentAnimation.frameList.length)
-   { this.currentAnimation.frameList[this.frameCounter].setPosition(this); } }
-```
-
-The *appearance* of a latch is real but is a different mechanism: `AnimData` deliberately sets
-`duration` **larger than the keyframe list**, so the last authored pose is **held** for the surplus
-ticks — a per-animation authored hold, hand-tuned per clip:
-
-```
-reference/decompiled/shs3_android/scripts/AnimData.as:25-26   case "light_afterslashpose": this.duration += 10;
-reference/decompiled/shs3_android/scripts/AnimData.as:27-41   <all 13 *SLASH_POSE ids>: this.duration += 10;
-reference/decompiled/shs3_android/scripts/AnimData.as:42-53   <all *FALLSLASH_END / *JUMPSLASH_LAND>: this.duration += 15;
-reference/decompiled/shs3_android/scripts/AnimData.as:54-57   case "sheathesword": case "sheathesword3": this.duration += 24;
-reference/decompiled/shs3_android/scripts/AnimData.as:113-114 case MCSActor.DEATHTOUCH_PARTA: this.duration += 50;
-```
-
-**Standing-invariant note:** this is *payload code vs. a video-derived measurement*, not frame vs.
-doc — so the frame-wins rule does not decide it. But the project's own memory already records a
-**15 fps sampling floor** on the video study ([[project-session11-study-pass]]), which is the exact
-value the ledger reports as the engine's pose rate. The 15 fps figure is far more likely a sampling
-artefact than an engine property. **Verdict PARTIAL**, and the correct next step is one dense-fps
-frame pass, not another doc edit.
-
-- **artifact_class:** A2 · **cite:** `reference/extracted/payload.xml:5` (`frameRate="24.0"`) + `MCSCharacter.as:1315,1332-1337` + `AnimData.as:25-126`
-- **verdict:** PARTIAL · **overturns_ledger:** true
-
----
-
-## CLAIM 14 — `art/blood-particle-params` — a §5 Tier-1 measuring task that no longer needs doing
-
-**Ledger says (§5 Tier 1, item 2):** "blade-trail width/fade; **blood droplet count/spread**; whether there's screen-shake / hitstop."
-
-```
-reference/decompiled/shs3_android/scripts/BloodParticleEmitter.as:18-26
-   pnumber = 20;  px = 0;  py = 0;  pangle = 0;  panglevariance = 10;
-   pvel = 6;  pvelvariance = 2;  pgravity = 0.6;  pttl = 24;
-```
-
-**20 droplets per burst**, emission angle 0 ± 10°, speed 6 ± 2 px/tick, gravity 0.6 px/tick², life
-**24 ticks = 1.00 s at 24 fps**. Rendered as pooled bitmaps (`BloodParticlePool.getBloodParticle()`),
-with a black variant (`BloodParticleBlackArt.as`) for non-bleeding enemies.
-
-- **artifact_class:** A2 · **cite:** `reference/decompiled/shs3_android/scripts/BloodParticleEmitter.as:18-26`
-- **verdict:** HELD · **overturns_ledger:** true (the task is already closed, not "to measure")
-
----
-
-## CLAIM 15 — `art/blade-slash-fx-lifetime`
-
-Same Tier-1 item: "blade-trail width/fade". The slash flash is a 5-frame self-deleting MovieClip.
-
-```
-reference/decompiled/shs3_android/scripts/bladeslashfx.as:5    [Embed(source="/_assets/assets.swf", symbol="symbol172")]
-reference/decompiled/shs3_android/scripts/bladeslashfx.as:12   addFrameScript(4,this.frame5);
-reference/decompiled/shs3_android/scripts/bladeslashfx.as:15-21 internal function frame5() : * { if(parent != null) { MovieClip(parent).removeChild(this); } }
-```
-
-Lifetime **5 frames ≈ 208 ms at 24 fps**; the art itself is `symbol172` in the asset library, i.e.
-recoverable as vector (CLAIM 17), so "blade-trail colors" need not be eyedropped from video.
-Sibling FX classes present in the same bundle: `DashFX`, `WhiteOutFX`, `ChiChargeFX`,
-`ChargingFX`, `ChargingShotFX`, `BullChargeFX`, `YinYangUpFX`, `YinYangDownFX`,
-`SlashWaveProjectile`.
-
-- **artifact_class:** A2 · **cite:** `reference/decompiled/shs3_android/scripts/bladeslashfx.as:5,12,15-21`
-- **verdict:** HELD
-
----
-
-## CLAIM 16 — `art/depth-of-field-blur` — a real feel element the digest never lists
-
-Not in the Ready list, not in the Blockers, not in Surface. The game applies **per-parallax-layer
-Gaussian blur** — a depth-of-field that is a large part of why the art reads the way it does.
-
-```
-reference/decompiled/shs3_android/scripts/BG_Loader.as:190   ColorCode.blur(mc,farthestLayerBlur);
-reference/decompiled/shs3_android/scripts/BG_Loader.as:211   ColorCode.blur(mc,farLayerBlur);
-reference/decompiled/shs3_android/scripts/BG_Loader.as:231   ColorCode.blur(mc,playerPlaneLayerBlur);
-reference/decompiled/shs3_android/scripts/BG_Loader.as:250   ColorCode.blur(mc,groundLayerBlur);
-reference/decompiled/shs3_android/scripts/BG_Loader.as:263   ColorCode.blur(mc,foregroundLayerBlur);
-reference/decompiled/shs3_android/scripts/GameStage.as:250   ColorCode.blur(mc,8);
-reference/decompiled/shs3_android/scripts/GameStage.as:267   ColorCode.blur(mc,4);
-reference/decompiled/shs3_android/scripts/BG_TownProcGen.as:131,150,154,188,197  blur 8 / 8 / 4 / 4 / 8
-reference/decompiled/shs3_android/scripts/BG_Loader.as:111   ColorCode.setMCTint(farArray[i].base,0.1,bgParam);   // 10% distance tint
-```
-
-**Frame check (A1).** `reference/frames/duel_dense/Nr4fQstqHDM_427.0.png` (1920×1080), crop
-**(300,200)–(700,450)** upscaled ×3 NEAREST: the far rock-wall layer has soft, wide, gradient
-outlines with no hard edge anywhere — an unmistakable blur, not stylisation. Crop
-**(760,600)–(1200,900)** ×3 on the two fighters: hard black outlines, flat fills, zero softness.
-Same frame, two layers, opposite treatment. **The frame agrees with the code.**
-
-- **artifact_class:** A1 (+A2) · **cite:** `reference/frames/duel_dense/Nr4fQstqHDM_427.0.png` crops (300,200,700,450) and (760,600,1200,900) ×3; `reference/decompiled/shs3_android/scripts/BG_Loader.as:111,190,211,231,250,263`
-- **verdict:** HELD
-
----
-
-## CLAIM 17 — `art/vector-library-held` — the art itself, byte-exact
-
-**Ledger says (Ready):** "flat-vector bold-outline style; **byte-exact HUD/result palette**; blade-trail colors."
-
-Those are eyedropper results. The actual vector source is held twice over:
-
-```
-reference/extracted/shapes/   -> 1,822 .svg files    (matches payload_histogram.json "shapes": 1822, "shapeBounds": 1822)
-reference/extracted/sprites/  ->   827 sprite dirs   (matches "subTags": 827)
-reference/extracted/shapes/1.svg:4
-   <path d="M800.0 480.0 L800.0 500.4 800.0 744.0 14.0 744.0 0.0 744.0 0.0 672.15 0.0 500.4 0.0 480.0 800.0 480.0" fill="#eeeee6" fill-rule="evenodd" stroke="none"/>
-```
-
-Plus, from the decrypted mobile libraries (CLAIM 2), a second and larger copy:
-
-```
-blob 115 shs3resource.swf  -> 1,755 shape tags · 1,949 sprite tags · 0 bitmaps · 4 fonts
-blob 120 bgresource.swf    ->   562 shape tags ·   552 sprite tags · 2 bitmaps
-blob 124 imageresource.swf ->   106 shape tags ·    94 sprite tags · 2 bitmaps
-```
-
-**≈2 423 shapes and ≈2 595 sprites across the whole game, with exactly 4 bitmap tags total.** The
-original is essentially 100 % vector — which independently vindicates the project invariant
-*"procedural vector art only (no image files)"* as a fidelity choice, not merely a constraint.
-Palette is therefore recoverable as literal `fill="#rrggbb"` per path (`payload_histogram.json`
-counts **14 788** `<color>` and **856** `<textColor>` entries), superseding video eyedropping.
-
-- **artifact_class:** A2 · **cite:** `reference/extracted/shapes/1.svg:4`; `docs/gauntlet/L0/index/payload_histogram.json` ("shapes": 1822, "subTags": 827); decrypted blobs 115/120/124 tag census
-- **verdict:** HELD
-
----
-
-## CLAIM 18 — `art/native-canvas-800x480` — closes a §1 unknown-unknown, doc + frame agree
-
-**Ledger says (§1 unknown-unknowns):** "**Aspect-ratio truth** — native canvas is **800×480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong."
-
-Confirmed from code, and **the frame agrees**:
-
-```
-reference/decompiled/shs3_android/scripts/GameEngine.as:269-271
-   var originalWidth:int = 800;
-   var originalHeight:int = 480;
-   var originalHeightWithBar:int = 690;
-reference/extracted/payload.xml:6
-   <displayRect type="RECT" Xmax="16000" Xmin="0" Ymax="13800" Ymin="0" nbits="15"/>   // twips ÷20 = 800 × 690
-reference/decompiled/shs3_android/scripts/StageManager.as:1054   playerMCS.x = 800 - (gameStage.gameStageWidth - posX);
-```
-
-**Frame check (A1).** `reference/frames/duel_dense/Nr4fQstqHDM_427.0.png`, non-black bounding box
-measured programmatically: content occupies **cols 52–1867, rows 0–1079 → 1816 × 1080, aspect
-1.6815**. Expected for 5:3 in a 1920×1080 frame: 1800 × 1080 with 60 px bars; measured 52 px bars
-(the 16 px delta is edge bleed at the >12 luma threshold). The video is **pillarboxed, not
-letterboxed** — so any *x*-fraction previously taken against full 1920 width is wrong by ~3 %, and
-the correct denominator is the 1816 px content box.
-
-- **artifact_class:** A1 (+A2) · **cite:** `reference/frames/duel_dense/Nr4fQstqHDM_427.0.png` (content bbox cols 52–1867 / rows 0–1079); `reference/decompiled/shs3_android/scripts/GameEngine.as:269-271`
-- **verdict:** HELD
-
----
-
-## CLAIM 19 — `art/surface-bullets-unverified` — honest non-finding
-
-**Ledger says (Surface):** "hit-tint scaling (7/12/16f), death sword-detach, dash-snap, **scarf physics**, FINISHER_FLASH — all measured/authored but missing from the art digest §5."
-
-I could not ground three of these. `scarf`/`Scarf` returns **zero** matches across all 2 768
-decompiled classes; `hitTint`/`tintCounter`/`hitFlash`/`makeRed` return zero; `FINISHER_FLASH`
-returns zero. They may exist under other names, live in project config rather than the original, or
-be authored inventions rather than measurements — I did not determine which, and I did not open
-frames to test them. **STILL_UNHELD.** Flagging because a "Surface" bullet asserts these are
-*already measured/authored*, and at least the scarf has no counterpart in the original code I read.
-
-- **artifact_class:** STILL_UNHELD · **verdict:** STILL_UNHELD
-
----
-
-## Re-score: **56 → 92**
-
-| Ledger blocker | Status after this survey |
-|---|---|
-| ① ALL AUDIO (SFX + music params) | **CLOSED** — 13 SFX + 13 stems held as MP3 on disk; full cue table; full mixer architecture |
-| ② font (unidentified) | **CLOSED** — Edo SZ, © 2008 Vic Fieger, embedded DefineFont3 + metrics + sizes/colours |
-| ③ FX blend modes | **CLOSED (negative)** — none exist; vocabulary is ColorTransform + Blur + ColorMatrix |
-| ④ screen-shake | **CLOSED** — exact algorithm, default amp 30, call-site durations 6/12/24 |
-| ④ hitstop-on-landed-hit | **STILL_UNHELD** — searched, not found (CLAIM 8) |
-| ⑤ severed-limb death variant | **CLOSED** — deathinhalf / deathnohand / deathnohead / seppuku_nohead + durations |
-
-Plus a whole tier the ledger did not know existed: **487 original animations / 5 596 keyframes /
-81 706 bone poses**, **~2 400 vector shapes**, exact **blood-particle** and **blade-FX** params,
-**per-layer depth-of-field blur**, and the engine's true **24 fps** clock.
-
-What is left in this system is **engineering, not archaeology**: mapping the 19 rig node ids to the
-right shape symbols, and one dense-fps frame pass to settle hitstop and the 15-vs-24 fps question.
-The residual −8 is exactly that plus CLAIM 8 and CLAIM 19.
-
----
-
-*Surveyed 2026-08-13 for GAUNTLET lane L0. No file outside this path was modified. No source code
-was touched. Audio and client SWFs remain study-only, local-only, gitignored — RECREATE-NEVER-RIP
-governs, and the third-party exclusions in `docs/OWNER_PERMISSION_RULING.md` apply to the fonts
-(Calibri/Arial/Adobe/Epson) and to `bgm_gangnam`.*
+## LICENCE / SAFETY FLAGS RAISED BY THIS PASS
+1. **`bgm_gangnam`** is in the music resource. That is third-party pop material; the Lut
+   Games grant does not cover it. Do not ship, do not "recreate" it.
+2. **`Edo SZ` © 2008 Vic Fieger**, `EPSON 太行書体Ｂ`, `Adobe Gothic Std B`,
+   `MS UI Gothic` — third-party fonts, explicitly outside the owner ruling. Identify,
+   don't redistribute; source a licensed lookalike.
+3. Decoded assets were written **only** to the session scratchpad, never into the repo,
+   and are study-only under RECREATE-NEVER-RIP + the 2026-07-24 ruling.
+
+## PROPOSED RE-SCORE
+**56 → 84.** Motion (487 authored anims, byte-exact joint data, web-parity proven),
+audio (26 masters + the full mixing contract), FX compositing (no blend modes; exact
+tint/blur/desat vocabulary), shake, gore system, kill-beat timings and the 800×480
+canvas are all now first-class artifacts. Withheld from a higher score: the vector art
+itself is un-graded (AA-18), audio web-parity is unproven, and no test in the suite
+pins any of it yet.

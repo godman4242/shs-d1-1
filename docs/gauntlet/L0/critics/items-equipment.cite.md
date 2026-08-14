@@ -1,205 +1,273 @@
-# CITE-LENS REVIEW — unit `items-equipment`
+# CITE-LENS CRITIC — unit `items-equipment`
 
-Critic: blind (surveyor reasoning not seen). Every verdict below was reached by opening the
-artifact myself. §0 law applied: cite must resolve, quote must appear, claim must not
-out-run what the artifact says.
-
-**Headline: 15 of 19 claims survive. 4 are refuted — one FATALLY.**
-The fatal one is `string-table-partial`: **the item-name string table is HELD, not unheld.**
-The surveyor keyed the XLIFF on the wrong attribute.
+**Reviewer:** blind critic (LENS 1 — over-claiming / cite resolution). Saw only the surveyor's
+output block; opened every artifact independently.
+**Date:** 2026-08-15
+**Files touched:** this file only. No source code, no journal, no ledger.
 
 ---
 
-## FATAL — claim `items-equipment/string-table-partial` is REFUTED
+## Headline
 
-The surveyor extracted the right file and then read the wrong column.
+This is a **strong survey** — unusually strong on cite discipline. I resolved 19 of 21 distinct
+file+line cites to the exact byte, including four-digit line numbers in a 2,000-line obfuscated
+web-payload class. The two STILL_UNHELD answers are **honest and correct**, and I independently
+confirmed one of them (the art payload really is absent from the web scripts).
 
-Each `<trans-unit>` in char-id 118 carries **two** attributes — a sequential `id` (0…2554)
-and a **`resname`**, which is the key the game actually looks up. The surveyor matched on
-`id`, found item name ids 4000+ "above the slice", and declared names unheld.
+**But four claims break**, and two of them are the ones the surveyor put in the score rationale as
+"two ledger Ready bullets are additionally WRONG":
 
-Verbatim, from my own decode of char-id 118 of
-`reference/decrypted/shs3_android_payload_decoded.swf` (inflate at offset 8 → parse tag
-code 87 → 500,024 B UTF-16LE):
+| # | claim | verdict | why |
+|---|---|---|---|
+| 1 | `defense-min-floor-is-wrong` | **REFUTED (material)** | Cited enemy-HP auto-scaling; the *generic* defense floor the ledger describes exists and matches the ledger |
+| 2 | `no-separate-icon-manifest` | **REFUTED (material)** | `setConsumable`/`setAccessory` use dedicated `item*` / `acc*` icon families, not paperdoll parts |
+| 3 | `purple-border-is-unique-not-rarity` | **REFUTED (material)** | Two lines above the surveyor's own cite: green border = special, blue border = rare |
+| 4 | `eq-comparison-frame-payload-identity` | **REFUTED (minor, mis-cite)** | The stated crop does not contain "BRANCH" or "LEVEL 1"; substance independently confirmed elsewhere |
+
+Net effect on the score: **78 is too high by roughly 5–8 points**, mostly because the icon-manifest
+half of blocker ⑤ is *not* dissolved (it is a real, unrecovered art set covering ~800 of 982 rows),
+and because one of the two "ledger is wrong" corrections is itself wrong.
+
+---
+
+## 1. REFUTED — `items-equipment/defense-min-floor-is-wrong` (material)
+
+**Claim:** the ledger's `defense min-floor (EnemyLevel/4)` is "wrong in both variable and shape";
+the real thing is a `playerLVL` four-band floor that "lives in boss auto-scaling, not the generic
+defense pipeline."
+
+**What I opened:** `reference/decompiled/shs3_android/scripts/Damage.as:149-170`
+
+```as3
+public function getMinDamage() : int
+{
+   if(this.damage == 0)            { return 0; }
+   if(this.attackerlvl == 0)       { return this.damage; }
+   if(this.attackerlvl <= 10)      { return 1 + this.piercingDamage; }
+   if(this.attackerlvl <= 20)      { return this.attackerlvl / 8 + this.piercingDamage; }
+   if(this.attackerlvl <= 30)      { return this.attackerlvl / 6 + this.piercingDamage; }
+   return this.attackerlvl / 4 + this.piercingDamage;
+}
+```
+
+and its call site on the player, `reference/decompiled/shs3_android/scripts/MCSPlayer.as:3415-3418`:
+
+```as3
+damage -= this.getDefense();
+if(damage < damageObj.getMinDamage())
+{
+   damage = damageObj.getMinDamage();
+}
+```
+
+That **is** the generic defense pipeline: defense is subtracted, then a floor is applied. The floor
+key is `attackerlvl`, which for incoming damage **is the enemy's level**. At attacker level > 30 the
+floor is exactly `EnemyLevel / 4`. The ledger bullet is right.
+
+The same floor is applied at 10+ further damage-receipt sites (`EnemyWolf.as:384`,
+`EnemyShield.as:347`, `EnemyClone.as:222`/`:443`, `EnemyNianMonster.as:383`, `MCSPlayer.as:3710`, …).
+
+The surveyor's `EnemyPlayer.as:107-123` block is real, and I confirmed it verbatim — but it computes
+`bossHP = playerhit * hitsToKillBoss`, i.e. **enemy HP auto-scaling**, and the identical block is
+copy-pasted into `EnemySpearElite.as:107`, `EnemyWolfAlpha.as:109`, `EnemyKanjiGuardian.as:88`,
+`EnemyElite.as:63`. It is a *second, different* use of the same 1 / ÷8 / ÷6 / ÷4 ladder.
+
+**Consequence:** the surveyor's "shape is wrong" is false — the shape is identical, and the ledger
+simply recorded the top band. The lane_impact ("implementing 'EnemyLevel/4' as written produces
+different numbers at every level band below 30") would send L1/L2 to *remove* a correct rule.
+
+---
+
+## 2. REFUTED — `items-equipment/no-separate-icon-manifest` (material)
+
+**Claim:** "there is no separate icon art set to recover"; the icon IS the paperdoll part stack.
+
+**What I opened:** `reference/decompiled/shs3_android/scripts/MCSItem.as:203-224` and `:226-247`
+
+```as3
+public function setConsumable(id:int) : *
+{
+   this.clearItem();
+   this.displayItem = this.getMCSComponent("item",id);
+   if(this.displayItem == null) { this.displayItem = new item0(); addChild(this.displayItem); }
+   ...
+}
+public function setAccessory(id:int) : *
+{
+   this.displayItem = this.getMCSComponent("acc",id);
+   if(this.displayItem == null) { this.displayItem = new AccessoryDummyIcon(); ... }
+```
+
+`"item"` and `"acc"` are **not** body-part partTypes. They are two separate symbol namespaces —
+`item<art>` and `acc<art>` — with their own fallbacks (`item0`, `AccessoryDummyIcon`). The surveyor
+read `setArmor` (which really is a five-part paperdoll stack, and I confirmed it verbatim at
+`MCSItem.as:324-352`) and generalised to every item type without opening the sibling function 120
+lines above it.
+
+**Scale of the error:** `itemdata.xml` has 982 items, of which only **158** are weapons (type 9,
+counted this run). Equipment slots account for a minority; the bulk of the roster is consumables
+and quest items rendered through `item<art>`.
+
+**A1 corroboration (my own crop):** `reference/frames/s21_weapon/t708.0.png`,
+crop `(900,590)-(1640,960)` upscaled ×2 LANCZOS. The inventory grid shows a red-capped **scroll**,
+an **onigiri** with a nori band and an "x3" stack tag, a **black stone**, a **white feather**, and a
+blue feather-shaped blade. None of these is a torso/pelvic/uparm/lowarm stack. The frame is decisive
+here and it agrees with `MCSItem.as`.
+
+**Also confirmed against the web payload:** `reference/decompiled/shs3_payload/scripts/` contains
+exactly **one** `item[0-9]*` class (`item0.as`, the fallback) and **zero** `acc[0-9]*` classes. So the
+`item*` family is not merely separate, it is *unrecovered* — which is the surveyor's own
+`per-item-art-payload-unknown` STILL_UNHELD, and it applies to icons too.
+
+**Consequence:** lane_impact "one art pipeline, not two … no icon-authoring pass is needed" is exactly
+backwards. Blocker ⑤'s "item icon manifest" half is **still open**.
+
+---
+
+## 3. REFUTED — `items-equipment/purple-border-is-unique-not-rarity` (material)
+
+**Claim:** the purple border is the `<unique>` flag, "not a rarity tier";
+lane_impact: "border tracks `<unique>`, text colour tracks the 4 tiers."
+
+**What I opened:** `reference/decompiled/shs3_android/scripts/GameEngine.as:564, :568, :572`
 
 ```
-<trans-unit id="988" resname="4048"><source>Katar</source></trans-unit>
-<trans-unit id="989" resname="4049"><source>Training Sword</source></trans-unit>
-<trans-unit id="990" resname="4050"><source>Iron Sword</source></trans-unit>
+564:   str = "Tip: A green border indicates that an item is special.";
+568:   str = "Tip: A blue border indicates that an item is rare.";
+572:   str = "Tip: A purple border indicates that an item is unique.";
 ```
 
-`reference/extracted/itemdata.xml:8743-8745` — item 13113 — carries `<name>4050</name>`.
-**4050 → "Iron Sword".** And `reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0024.jpg`
-(the surveyor's own A1) reads **"DRAFTY SHARP IRON SWORD OF PIERCING"**. Payload row →
-string table → live frame, all three agree.
+The surveyor quoted line 572 correctly — and stopped four lines short of the two lines that refute
+the conclusion. The border encodes the **whole derived ladder** (special / rare / unique), the same
+ladder `getShopItemType()` returns. It is not a `<unique>`-only channel, and border and text colour
+are not two different taxonomies.
 
-### Proof that `resname` is the key, not `id`
+The claim is also internally inconsistent with the surveyor's own
+`items-equipment/rarity-is-derived-not-a-field`, which correctly lists `unique` as one of the four
+tiers returned by `Item.getShopItemType()` (`Item.as:382-404`, confirmed).
 
-`ItemGenerator.as:91` builds `colorNameList` from `LangManager.getString(432…442)` and
-`ItemGenerator.as:701` matches it against an 11-entry `colorhexlist`
-`[16711680, 16737792, 16763904, 39168, 13311, 6684927, 16751103, 6697728, 16777215, 10066329, 0]`
-— i.e. eleven **colours**.
+**A1 note:** my crop `(900,590)-(1640,960)` ×2 shows 2 of 7 icons with a bright purple border and no
+green/blue item in view — so the frame neither confirms nor rescues the claim; the code settles it.
 
-| key 432…442 | by `resname` | by `id` |
+---
+
+## 4. REFUTED — `items-equipment/eq-comparison-frame-payload-identity` (minor, mis-cite)
+
+**Claim's quote:** *"Visibly in the crop: 'DMG: 1 - 2 (EQ: 1 - 3)' with the 2 rendered red, and
+'WEIGHT: 1', **under the item name "BRANCH" and the label "LEVEL 1"**."*
+**Claim's crop:** `(1320,240)-(1620,320)` ×4.
+
+**What I did:** reproduced that crop exactly —
+`ffmpeg -i t708.0.png -vf "crop=300:80:1320:240,scale=iw*4:ih*4:flags=lanczos"`.
+It contains **two text lines only**: `DMG: 1 - 2 (EQ: 1 - 3)` (the 2 red, the leading 1 white) and
+`WEIGHT: 1`. No "BRANCH", no "LEVEL 1".
+
+Widening upward (`crop=560:220:1300:140` ×3) shows the line above is **"AVAILABLE STAT POINTS: 0"** in
+a different panel, separated by the panel's grey rule.
+
+On the full frame (downscaled 1440×810 for orientation), **BRANCH** sits at ≈(1087, 260) in
+1920-space and **LEVEL 1** at ≈(1088, 523) — in the adjacent item-detail panel, *left of* the cited
+crop on x and *below* it on y. The cited crop cannot contain them on either axis.
+
+**The substance is nevertheless true**, and I verified it independently:
+
+- `reference/extracted/itemdata.xml:7906-7915` — `<id>13002</id> <name>4041</name> <minlvl>-4</minlvl>
+  <mindamage>1</mindamage> <maxdamage>2</maxdamage> <weight>1</weight>` ✓
+- `docs/gauntlet/L0/index/strings.json["4041"]` = `"Branch"` ✓
+- `Item.as:759-770` `compareValue` — `a > b → #00A606`, `a < b → #FF0000`, `a == b → plain` ✓,
+  which explains white `1`, red `2`.
+
+So this is a **mis-cite, not a false claim**. Under §0 ("state the crop you used") and LENS 1 ("does
+the quoted text actually appear there?") it has to be marked refuted, but the finding survives with a
+corrected cite: **the whole item-detail panel is `crop=560:420:1000:230`**, not `(1320,240)-(1620,320)`.
+
+---
+
+## Claims that HELD — and what I opened to confirm each
+
+| claim | own_cite I opened | result |
 |---|---|---|
-| 432 | Red | Town |
-| 433 | Orange | City |
-| 434 | Yellow | Castle Town |
-| 435 | Green | Town Prosperity |
-| 436 | Blue | (初段) |
-| … | … | … |
-| 442 | Black | (七段) |
-
-`resname` yields exactly the eleven colours the hex list needs. `id` yields nonsense.
-`LangManager.getString` → `Locale.loadStringEx(num.toString(), language)`
-(`LangManager.as:73-79`); Flash's `fl.lang.Locale` keys XLIFF by `resname`.
-
-### Coverage measured, not estimated
-
-| file | tag | resolved |
-|---|---|---|
-| itemdata.xml | `<name>` | **804 / 804** |
-| itemdata.xml | `<desc>` | **178 / 178** |
-| npcdata.xml | `<name>` | **490 / 490** |
-| skilldata.xml | `<desc>` | **201 / 201** |
-| skilldata.xml | `<displayname>` | **73 / 73** |
-
-Cross-check: char-id 121 `premiumdata` comments `<!-- Assassin outfit -->` over items
-2130/7034/4065/11036/12018 → resnames resolve to **Assassin Outfit / Assassin Hood /
-Assassin Robes / Assassin Pants / Assassin Boots**. Independent corroboration.
-
-**This overturns the standing GAUNTLET §2.1 blocker for items, skills AND npcs**, not just
-this unit. It also invalidates score-rationale bullet (a) — item names are portable today.
+| `sprite-compositing-contract-held` | `MCSCharacter.as:10-62` (27 `PART_*` consts, exact lines) + `:141-145` + `:581-607` + all 17 named web-payload part classes (`torso4000.as` … `prop13000.as`) — **all 17 exist** | HELD, one correction below |
+| `sell-price-formula` | `Item.as:1582-1593` + web `§1t17s0§.as:1977-1988` — both bodies byte-identical | HELD |
+| `sell-price-corrects-section3-item9` | same + ledger `REBUILD_READINESS.md:168` verbatim | HELD |
+| `condition-has-no-damage-multiplier` | `grep -rn "getCondition()"` over 559 android scripts → **exactly two hits**: the definition `Item.as:1481` and one call `Item.as:714` (inside `getDesc`) | HELD |
+| `condition-tier-thresholds` | `Item.as:712-746`; `strings.json` 387-392,639 all resolve to the quoted English; web ladder confirmed at `§1t17s0§.as:1011,1015,1019` | HELD |
+| `affix-suffix-pool-and-counts` | `ItemGenerator.as:102-127` (13 pools × 8 = 104 + 104), `:128-148`, `:206-248`, `:371-374`, `MAXINDEX=79` at `:58` | HELD, one correction below |
+| `stat-vs-level-curve` | `itemdata.xml:7906-7915` + `:9925-9937`; my own parse: **982 items, 158 with `<mindamage>`, all `<type>9</type>`, mindamage 1..81, maxdamage 2..108, minlvl −4..79** — every number matches | HELD |
+| `item-save-format-held` | `Item.as:7,9,11,13,15` (5 consts), `:47-101` (`parse`), `MCSCharacter.as:348` (12 pipe fields, counted) ; ledger `REBUILD_READINESS.md:351` verbatim | HELD (PARTIAL as stated) |
+| `soul-infusion-is-code` | `CraftingUI.as:494-525` verbatim; `strings.json["698"]` = "Both items must be of the same type" | HELD |
+| `paperdoll-is-13-slots-not-9` | **my own crop** `(170,240)-(870,1040)` ×2 — I counted **exactly 9 boxes**, contents as described (straw hat filled, oni mask empty, grey haori filled, gauntlets empty, white hakama filled, pickaxe filled, ring empty, sandals filled, ring empty), "GUEST" above; code side `StatsManager.as:108`, `:262-286`, `:1765` (11 args) | HELD |
+| `rarity-is-derived-not-a-field` | `Item.as:382-404`, `:417-451`; web `§1t17s0§.as:683,687,691,704,708,712`; my count: **253 `<unique>1</unique>`, 116 `<unique>2</unique>`, 0 `<rarity>`** | HELD, one gap below |
+| `weight-cap-is-a-base-not-a-cap` | `StatsManager.as:2298-2301`, `BankUI.as:264`; **my own crop** `(1380,500)+520×120` ×4 reads **"WEIGHT: 43 / 100"** | HELD |
+| `modifier-id-stat-table` | `XMLItem.as:231-298` (all 17 cases + Set default); all 21 `strings.json` ids resolve to the quoted names | HELD, one correction below |
+| `slashusage-stancerestriction-omitted` | my own counts: slashusage **24×1, 72×70, 96×35 (106 rows, exactly 3 values)**; stancerestriction **4×7, 6×46 (53 rows)**; `XMLItem.as:152-160` default 48; `StatsManager.as:1915-1919`, `:1921-1930` | HELD — best-evidenced claim in the set |
+| `per-item-art-payload-unknown` | `reference/decompiled/shs3_payload/scripts/` — 1 `item[0-9]*`, 0 `acc[0-9]*`, 1 `torso[0-9]*`, 2 `weapon[0-9]*` | STILL_UNHELD **correct**; honest |
 
 ---
 
-## REFUTED — `items-equipment/type-is-slot-index` (material)
+## NEW FINDINGS (things the surveyor missed)
 
-Cite resolves (`Item.as:841`, `:845` verbatim), but the claim out-runs it. There are
-**three disjoint type-code spaces** in this build:
+### N1 — the humanoid render stack is **23** layers, not 27 (material for L6)
+`MCSCharacter.as:120` — `internal var partListLength:int = 22;` — and the constructor loops
+`i = 0; i <= partListLength` (`:141`), so `partList` holds **23** MovieClips, indices 0-22.
+`PART_l_shoulder(23) / PART_r_shoulder(24) / PART_l_knee(25) / PART_r_knee(26)` are declared but
+never allocated on a human. They are **quadruped** parts: the only reader is `MCSWolf.as:184,188,193,197`,
+and `MCSWolf.as:13` raises `partListLength = 25`. The surveyor quoted the loop but not the `22`
+sitting 21 lines above it. A builder coding "27 z-ordered layers" gets 4 dead slots on every fighter.
 
-1. `itemdata.xml <type>` 0-12 (what the claim reads),
-2. `ItemGenerator.getItemType()` (`ItemGenerator.as:254-291`) — `13xxx→0`, `4xxx→1`,
-   `5xxx→2`, `6-7xxx→5`, `8-9xxx→6`, `10-11xxx→3`, `12xxx→4`, `3xxx→7`,
-3. the `InventoryUI` slot remap where a `<type>9</type>` weapon becomes `tempValue 13`
-   (`InventoryUI.as:1195-1197`; `CraftingUI.as:508` keys weapons on `designType == 13`).
+### N2 — the elemental-DEF pool reuse is a **deliberate counter-element wheel**, not "the shipped bug"
+`ItemGenerator.as:142-145`: `FIREDEF ← wateratk`, `WINDDEF ← earthatk`, `WATERDEF ← windatk`,
+`EARTHDEF ← fireatk`. Every DEF channel borrows the pool of the element that **counters** it — fire
+defense is named "of Water / of Ice / of Frost", wind defense "of Stone / of the Mountain". That is a
+closed 4-cycle, not a copy-paste slip. The claim's substance is unaffected; only the lane_impact's
+"shipped bug" framing is wrong, and porting it as a bug-to-fix would change 32 of 104 affix names.
 
-And `<type>` is **not** the equipment index for 187 of 982 items:
-`EQ_SCABBARD = 10` but type 10 is consumables (98 items); `EQ_ACCESSORY2 = 12` but type 12
-is quest items (80). The AS3 special-cases exactly those two (`Item.as:845`,
-`Item.as:891`) because indexing `equipment[10]` with a consumable is meaningless. The
-scabbard slot is actually filled with **item 13100, `<type>9</type>`**
-(`StatsManager.as:735`). Accessories (type 11) route to slot 11 **or** 12 at runtime
-(`InventoryUI.as:1203-1226`).
-
-The lane_impact — "item→slot routing for the whole catalogue is a lookup" — would ship a
-port that files potions into the scabbard.
-
-Also imprecise: the 152 4xxx rows do not "carry type 0". They carry **no `<type>` tag at
-all**; `XMLItem.as:72-77` defaults `this.type = 0`. Same for the single 7xxx anomaly. A
-naive XML port gets `undefined`, not `0`. (Surveyor also missed a second anomaly: item
-2211 sits in the 2xxx band with `<type>12</type>`.)
-
----
-
-## REFUTED — `items-equipment/pot-mask-frame-confirmed` (material)
-
-I opened the frame. `reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0031.jpg`
-(1024×576), crop (575,140)-(1015,420), 3× LANCZOS: everything the surveyor describes is
-visibly there — green border, green "PANTS", "OWNED: 0", "LEVEL 4", DEFENSE +1 (EQ: 3) in
-red, FIRE DEF +1 (EQ: 0) and WIND DEF +2 (EQ: 0) in green, EARTH DEF / CRITICAL DAMAGE /
-MAX CHI / CHI REGEN all 0 with EQ values, WEIGHT: 5 clipped at the crop edge. (They also
-missed a "450" gold price on the icon.)
-
-**But the frame cannot confirm a mask.** `Item.as:891-898`:
-
+### N3 — the web build has a **fifth** name colour the Android build does not (material for L5)
+`reference/decompiled/shs3_payload/scripts/§1t17s0§.as:698-701`:
+```as3
+else if(this.xp != null)
+{
+   _loc1_ += "<font color=\"#ff6600\">";
+}
 ```
-modArrayCheck = equippedItem.getModifierArray().concat(this.getModifierArray());
-modArrayCheck.sortOn("modifierID");
-```
+This branch sits **between** the two colour blocks the surveyor cited (`:691` and `:704`) and has **no
+counterpart** in `Item.as:417-451`. So the claim's "removes the S0-3 Android-parity caveat" is not
+established for this system: the v0.717 web build paints XP-bearing items **orange #ff6600**, ahead of
+the unique/rare/special/normal ladder. Six colours are byte-exact in both; the seventh is web-only.
 
-The tooltip iterates the **union of the candidate item's and the equipped item's
-modifiers**. A stat absent from the list is absent from *both items* — it says nothing
-about what the slot *allows*. Proof from the same frame: the PANTS mask
-`[1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0]` sets indices 0-6, so it **allows** MAX HP, HP REGEN,
-ATTACK and SPEED on pants — and none of those four appear in the frame either.
+### N4 — only **11 %** of `<modifier>` rows are stat grants (material for L4/L7)
+My parse of `reference/extracted/itemdata.xml`: 412 `<modifier>` rows, 34 distinct ids.
+Against the `XMLItem.as:231-298` table: **47 rows** (11 %) hit the 0-16 stat switch; **344 rows** (83 %)
+fall in the 101-1999 Set band and render only as `"Set: <id>"` — still an opaque number; **19 rows**
+across **11 distinct ids** (25, 38, 78, 79, 84, 90, 96, 97, 98, 99, 40000) match neither and fall to
+`trace("ErrorValue: …")`. lane_impact's "the 412 modifier rows become readable stat grants instead of
+opaque numbers" over-states by ~9×.
 
-Frame and code do not conflict here, so the frame-wins invariant is not triggered. The
-frame is *consistent with* the mask; it does not *confirm* it. This is an inference dressed
-as a citation.
+### N5 — `ui-slot-mapping-unknown` is **resolvable**, and it is ACCESSORY1/ACCESSORY2 (A2)
+The surveyor answered STILL_UNHELD on which of `EQ_NECK / EQ_ACCESSORY1 / EQ_ACCESSORY2` the two
+identical empty ring boxes are. `MCSItem` — the inventory/slot icon renderer — declares exactly 11
+item setters (`MCSItem.as:64,89,120,152,177,203,226,249,279,324,362`): Hat, Hair, Head, Mask, Weapon,
+Consumable, Accessory, Gloves, Shoes, Armor, Pants. **There is no `setNeck` in `MCSItem`** — `setNeck`
+exists only on the body renderers `MCSCharacter.as:795` and `MCSBust.as`. `EQ_NECK` therefore has no
+UI-box renderer at all, and `setAccessory` (partType `"acc"`, `AccessoryDummyIcon` fallback) is the
+only setter that would draw two identical empty boxes. The two rings are **EQ_ACCESSORY1 / EQ_ACCESSORY2**.
 
----
+### N6 — `getSellAmt`'s `weight >= 10` test reads **stack** weight, not item weight (minor, L4)
+`Item.as:1564-1580` — `getWeight()` returns `this.weight * this.getQuantity()`. So ten weight-1
+branches in one stack trip the `>= 10` branch and each sells at ×10 instead of ×5. Any port that
+evaluates the threshold on the row's `<weight>` will mis-price stacks.
 
-## REFUTED — `items-equipment/modifier-id-semantics` (material)
-
-The cite is exact — `XMLItem.as:231-298` is verbatim — and every string resolution the
-surveyor gives is correct (I checked all 22 against the table: 110 HP · 111 Max HP ·
-112 HP Regen · 113 Chi · 114 Max Chi · 115 Chi Regen · 116 Attack · 117 Defense ·
-118 Speed · 119 XP · 120 "Level " · 63 Coins · 64 Gold · 102 AP · 121 Max AP ·
-59 Duel Tokens · 122 Max Duel Tokens · 123 Set · 124 Level Required ·
-125 Stance Restriction · 108 Dmg · 109 Def). Credit where due.
-
-What is refuted is **"fully decoded end-to-end"** and **"all 412 `<modifier>` blocks … now
-readable"**. My own parse of `reference/extracted/itemdata.xml`: 412 blocks, 34 distinct
-ids —
-
-```
-0 1 2 3 5 6 7 8 9 12 13 15 | 25 38 78 79 82 84 90 96 97 98 99 | 101 102 103 104 105 106 117 122 123 124 | 40000
-```
-
-**Twelve** of those 34 (25, 38, 78, 79, 82, 84, 90, 96, 97, 98, 99, 40000 — 21 blocks) fall
-outside *both* declared ranges and land in `XMLItem.as:293-297`'s
-`trace("ErrorValue: " + …)` branch. They are not readable under the claimed enum.
-
-Worse, the enum is the wrong shape. Generated items store modifiers under **StatsManager
-`STAT_*` ids** (`ItemGenerator.as:583-637`), and those run to `STAT_FIREATK = 28` …
-`STAT_EARTHATK = 31` and `STAT_FIREDEF = 200` … `STAT_PIERCINGDMG = 205`
-(`StatsManager.as:226-261`) — plus `getStat(1009)` for carry weight, which the surveyor's
-own claim 13 relies on. The modifier-id space **is** the stat-id space. The elemental
-DEF / CRITICAL DAMAGE lines the surveyor read off frame_0031 are exactly the family their
-enum omits (resnames 851 Fire DEF · 852 Wind DEF · 853 Water DEF · 854 Earth DEF ·
-855 Critical Damage · 856 Piercing Damage). A porter following this claim silently drops
-every elemental affix.
+### N7 — the sell formula's *input* is **not** byte-identical across builds (minor)
+`Item.as:1568` (android) `return this.weight * this.getQuantity();` vs
+`§1t17s0§.as:1974` (web v0.717) `return (this.weight + this.§1t478s0§) * this.§1t484s0§();`.
+`getSellAmt` itself is identical in both, but the web build adds a weight-modifier term before the
+`>= 10` test. "Confirmed in BOTH builds" holds for the function body, not for its dependency.
 
 ---
 
-## HELD — with corrections worth carrying
+## Verdict on the score
 
-| claim | verdict | correction |
-|---|---|---|
-| `paperdoll-13-slots` | **HELD** | `Vector.<Item>(13)` at `StatsManager.as:108` and EQ_* 0-12 at `:262-286` are verbatim. But the *stat* rollup excludes **four** slots, not three — `StatsManager.as:1945` also drops `EQ_HAIR` (and `EQ_WEAPON` when `skipWeapon`). Only the *weight* rollup (`:2002`) excludes exactly HEAD/NECK/SCABBARD. |
-| `affix-suffix-pool` | **HELD** | Verbatim at `ItemGenerator.as:102-148`. The opposing-element borrow (FIREDEF←wateratk, WINDDEF←earthatk, WATERDEF←windatk, EARTHDEF←fireatk) is exactly as stated. 17 pools × 8 tiers, `num = floor(i/10)` over `MAXINDEX = 79`. |
-| `affix-count-rule` | **HELD** | Dice tables verbatim at `:206-252`; legendary decrement at `:371-373`. |
-| `stat-vs-level-curve` | **HELD** | Progressions `:150-182` verbatim. Note `prog4` and `prog5` do **not** get the `[MAXINDEX] += 10` bump — only prog1/2/3 do. prog→stat routing confirmed line-by-line: prog1 `:462-474`, prog4 `:492-494`, prog2 `:512-515`, prog3 `:533-545`, prog5 `:563-565`. |
-| `condition-no-damage-multiplier` | **HELD** | `getMinDamage` `:1863-1888` and `getDamageRange` `:1890-1902` confirm damage is binary on `isBroken()` (`Item.as:1467-1478`). Correction: **seven** display bands, not six — and they are now nameable: 639 "Unbreakable", 392 "Condition: Well-Maintained", 387 "Condition: Broken" (red), 388 "Poor", 389 "Used", 390 "Usable", 391 "Good". |
-| `sell-price-formula` | **HELD (PARTIAL is right)** | All cites resolve; `grep -rn sellPercentage` over all 970 `.as` files returns the single declaration at `ShopUI.as:58` — I reproduced it. `onSell` (`ShopUI.as:539-540`) pays `getCost()` at full value. Footnote: `gvalue` = `<baseprice>` (`XMLItem.as:88`) but **defaults to 1** when absent (`:92`) — only 550 of 982 items carry a `<baseprice>`. |
-| `art-manifest-rule` | **HELD (PARTIAL is right)** | All 12 sprite dirs exist. `XMLItem.as:110-117` (`this.art = this.id`) is exact to the line. I **independently reproduced the decode failure** on char-ids 115 (654,169 B) and 120 (4,204,635 B) — both `CWS`-headered, both fail zlib and raw-deflate. The stuck-stop was correct. Correction: `MCSItem.as` has **18** partTypes and `neck` is **not** among them (it is `MCSCharacter`'s, `:806`); the surveyor's parenthetical lists 19 names. The true union across both classes is **20** — add `prop`. |
-| `compositing-part-order` | **HELD (PARTIAL is right)** | 27-part enum verbatim; `mcsString` at `:348` verbatim; hair/hat exclusion at `:374` verbatim. Cite nit: the `[Embed]` is at line **6**, not 5, and `PART_r_knee` is at **62**, outside the stated `:5-60`. |
-| `rarity-4-tiers-exact` | **HELD** | Eight hex colours verbatim at `Item.as:416-450`. `<unique>`: 369 rows, `{1: 253, 2: 116}` — confirmed by my own parse. |
-| `name-template-frame-confirmed` | **HELD** | I opened frame_0024.jpg, crop (0,420)-(640,500) 3×: "I AM LOOKING FOR" white, "DRAFTY SHARP IRON SWORD OF PIERCING" bright blue, " ." — exactly as described. Decomposition confirmed against `ItemGenerator.as:744-746` (case 3 = `pre(mod2) + pre(mod0) + basename + suf(mod1)`) and the forced-first ATTACK at `:439-443`. **Correction:** "index 16, allowed ONLY by the WEAPON mask" is false — the ARMOR mask `:401-404` and the ACCESSORY mask `:425-428` both set index 16. It is barred on gloves/shoes/mask/pants/hat only. **Bonus:** the basename is no longer frame-only — resname 4050 = "Iron Sword" (see FATAL above). |
-| `weight-cap-is-not-flat-100` | **HELD** | `:2298-2300` and `:1983-2025` verbatim. `<weight>`: 745 rows, range 0-500 — confirmed. |
-| `soul-infusion-transfer-rule` | **HELD** | `CraftingUI.as:506-527` verbatim; modifier 6 = "Attack" per the table. |
-| `weapon-slash-budget-and-reach` | **HELD** | Formula verbatim at `:1915-1921`; `slashusage` default 48 at `XMLItem.as:158`; `itemdata.xml:8742-8752` is exactly item 13113. My own parse confirms every count: slashusage `{72:70, 96:35, 24:1}` = 106; stancerestriction `{6:46, 4:7}` = 53; uses `{100:46, 80:34, 60:34, 50:1}` = 115. Nit: **"in px" is an inference** — the AS3 never names a unit. Flash stage units make it a good inference, but the ledger blocker says "px" and the code does not. |
-| `premium-catalog-held` | **HELD** | I dumped char-id 121 myself: 4,504 B, `<premiumdata>` with `<default>`, a commented-out `<special>`, and `<rotation>` sets headed `<!-- Assassin outfit -->` / `<!-- Dark Assassin outfit -->` / `<!-- Santa outfit -->` / `<!-- Ichigo outfit -->`. Quote is verbatim. `<heavenlyprice>`: 304 rows, values {0,1,2,3,5,8,12,25,100} — confirmed. |
-| `no-items-config-still-true` | **HELD** | `ls src/config/` matches the quote exactly (27 `.ts` + `CLAUDE.md`); no `items.ts` / `equipment.ts` / `affixes.ts`. The A3 self-caveat ("a repo byte-check, NOT a vitest test") is exactly the right kind of honesty. |
-
-Every `ledger_text` quote checked against `docs/research/REBUILD_READINESS.md` — lines 209,
-210, 129, 352 — all verbatim. No fabricated ledger text.
-
----
-
-## SCORE
-
-The surveyor's 84 was **held down by a mistake**, not inflated by one. Their single largest
-open item — item names — is closed, and closed by the very file they extracted. Against
-that, three claims over-read their artifacts (type→slot, the frame-as-mask-proof, and the
-modifier enum's completeness). Those are porting hazards, not research gaps.
-
-Net: the evidence supports a **higher** score than 84 on names, and a **narrower** one on
-the modifier enum. I would not move the number far — call it a wash — but §4 blocker ⑤ and
-the L1b string-table lane both need rewriting on the strength of the `resname` finding.
-
-## NO FILES TOUCHED
-
-Read-only pass. Only this file was written. `src/core/Sim.ts` and
-`tests/duel-baseline.test.ts` untouched (§4).
+`78` is **not supported**. Blocker ⑤ is half-open (icon manifest, N/§2 above), and one of the two
+"the ledger is wrong" corrections used to justify the jump is itself refuted. Blockers ①②③④ are
+genuinely and impressively closed. **Suggested band: 70-72**, with ⑤ re-listed as
+"paperdoll compositing HELD · item/accessory icon art STILL_UNHELD".
