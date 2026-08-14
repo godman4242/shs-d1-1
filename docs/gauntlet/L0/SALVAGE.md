@@ -50,45 +50,50 @@ nothing. Run 1's headline numbers (`confirmed: 225`, `dry_rounds: 2`) were produ
 both bugs and must not be quoted. Run 2 returns an `INTEGRITY` string and a separate
 `unjudged` bucket so this cannot recur silently.
 
-## ⚠️ What is NOT done — do not mistake raw output for a result
+## ⚠️ Still outstanding after run 2
 
-The 12 surveys re-score the board dramatically (avg ~42 → ~83, 156 claimed ledger
-overturns). **Those numbers are UNVERIFIED surveyor self-reports.** Under §0 a claim
-is only confirmed once blind artifact-citing critics have judged it, and only
-**4 of ~41 system critics** had returned when the run was checkpointed.
+- **~29 of 41 Sweep-A critics** — the 8 systems in the LEADS-ONLY row above.
+- **All 10 Sweep-B source surveys + their 20 critics** — never started in either run.
+  Two of those sources have never been surveyed by anything: `android-blobs` (the 42
+  named blobs) and `string-table` (2,533 strings nobody has read for mechanics).
+- **Dry-loop** rounds · **completeness** critic.
+- **Gates L0-A…F**, the `REBUILD_READINESS.md` rewrite, and the §3.7 re-arm commit.
+- **`GAUNTLET.md` itself needs correcting** — §2.1's string-table blocker is dead
+  (S0-3), the L1b lane row is obsolete, and §2's L6 "~150 animations" is ~450 (S0-4).
 
-**Nothing from this run may be written into `REBUILD_READINESS.md` until the critics
-have run.** Treat `CLAIMS.md` as a lead list, not as findings.
+## How to resume
 
-Still outstanding:
-- ~37 of 41 Sweep-A critics (cite / hunter / precedence, + frame lens on the 5 visual systems)
-- **All 8 Sweep-B source surveys + their 16 critics** (the orthogonal sweep — never started)
-- Dry-loop rounds · completeness critic
-- Gates L0-A…F, the `REBUILD_READINESS.md` rewrite, and the §3.7 re-arm commit
-
-## How to resume (cheapest path first)
-
-The workflow caches completed agents by call signature. **Do not edit the script
-before resuming** — an edit invalidates the cache from that call onward.
+**Resume run 2 — do NOT edit the script first** (an edit invalidates the cache from
+the first changed `agent()` call onward, and the 12 surveys are the expensive part):
 
 ```
 Workflow({
   scriptPath: "/Users/kheshav/kheshav-code/SSHD 1-1/scripts/gauntlet/l0-resurvey.workflow.js",
-  resumeFromRunId: "wf_97ec93a2-3b5"
+  resumeFromRunId: "wf_7e275b35-488"
 })
 ```
 
-The 12 surveys return instantly from cache; only the unfinished critics and the
-whole Sweep-B fan out live.
+The 12 surveys and 13 critics replay instantly from cache; only the ~29 missing
+critics, all of Sweep-B, the dry-loop and the completeness critic fan out live.
 
-**If the cache misses** (script edited, or a new session), the surveys are still on
-disk — re-run only the missing stages by pointing new agents at
-`docs/gauntlet/L0/systems/*.md` as their input instead of re-surveying. Per the
-validated salvage pattern, re-run dead agents in batches on a cheaper model; the
-critics are judgement work and should stay on Opus.
+**If the cache misses** (script edited, or the run is too old), the surveys are still
+on disk — re-run only the missing stages by pointing new agents at
+`docs/gauntlet/L0/systems/*.md` as input instead of re-surveying. Per the validated
+salvage pattern, re-run dead agents in batches on a cheaper model; the critics are
+judgement work and stay on Opus.
 
-## Re-extract the journal at any time
+## Re-extract either journal at any time
 
 ```
-python3 scripts/gauntlet/salvageJournal.py docs/gauntlet/L0/wf-journal.jsonl --out docs/gauntlet/L0
+python3 scripts/gauntlet/salvageJournal.py docs/gauntlet/L0/wf-journal-run2.jsonl --out docs/gauntlet/L0/run2
+python3 scripts/gauntlet/salvageJournal.py docs/gauntlet/L0/wf-journal.jsonl      --out docs/gauntlet/L0
+```
+
+## Rebuild the Stage-0 evidence index from scratch
+
+Both scripts are idempotent and need only `reference/` (gitignored study material):
+
+```
+python3 scripts/gauntlet/payloadIndex.py            # web payload, 9 index files
+python3 scripts/gauntlet/androidIndex.py --export   # Android blobs + THE STRING TABLE
 ```

@@ -1,34 +1,46 @@
 # RESUME HERE
 
-## ⏸ L0 IS MID-FLIGHT — RESUME IT, DO NOT RESTART IT (2026-08-13, `c3ea839`)
+## ⏸ L0 IS MID-FLIGHT — RESUME IT, DO NOT RESTART IT (2026-08-15, `7110ece`)
 
-**The gauntlet's L0 (RE-SURVEY) lane ran and was checkpointed mid-flight when usage
-ran short. All completed research is committed. Nothing needs redoing.**
+**Two runs, both checkpointed on usage limits. All completed research is committed.
+Nothing needs redoing.** 👉 **Read `docs/gauntlet/L0/SALVAGE.md` first.**
 
-👉 **Read `docs/gauntlet/L0/SALVAGE.md` first** — it is the resume card.
+### ⚑ THE HEADLINE: the string table is FOUND. `GAUNTLET.md` §2.1's blocker is DEAD.
 
-- ✅ **Banked:** Stage-0 evidence index (9 JSON files, incl. a clean streamed parse
-  of the 329 MB `payload.xml`) · **all 12 system surveys** (~363 KB prose,
-  258 structured claims) · 4 critic reviews · the raw workflow journal, copied
-  into the repo at `docs/gauntlet/L0/wf-journal.jsonl`.
-- ⚠️ **NOT results yet.** The surveys self-report avg **~42 → ~83** with 156 claimed
-  ledger overturns, but only **4 of ~41 blind critics** returned. Under `GAUNTLET.md`
-  §0 an unjudged claim is a *lead*, not a finding. **`REBUILD_READINESS.md` is
-  deliberately untouched and must stay untouched until the critics run.**
-- ⏳ **Outstanding:** ~37 Sweep-A critics · **all 8 Sweep-B source surveys + 16
-  critics (never started)** · dry-loop · completeness critic · gates L0-A…F · the
-  §3.7 re-arm commit.
-- **Resume:** `Workflow({scriptPath: "scripts/gauntlet/l0-resurvey.workflow.js",
-  resumeFromRunId: "wf_97ec93a2-3b5"})` — completed agents return from cache.
-  Do **not** edit the script before resuming; an edit invalidates the cache onward.
+`reference/decrypted/shs3_android_payload_decoded.swf` holds **42 class-named blobs**
+(the web payload's 27 are anonymous). `118_Mobile_Lang_EN.bin` is a UTF-16LE XLIFF
+string table, 2,533 entries. **Measured resolution: 804 item names+descs / 0
+unresolved · 73 skill names+descs / 0 · 484 NPC names / 6.** Verified first-hand, not
+taken on an agent's word. `4050`→*Iron Sword*, `6000`→*Light Stance Mastery*,
+`5009`→*Ruffian*, `175`→*Critical Hit*.
+**→ L2 and L3 are UNBLOCKED. L1b is CLOSED before it ran.**
+⚠️ Caveat: Android build `0.682` vs web `0.717`; data-XML rows match exactly, UI copy
+and combat tuning parity NOT established. Label ported strings with their build.
 
-**Two findings already landed and are safe to rely on** (both A2-cited, in
-`docs/gauntlet/L0/journal.md`): **S0-1** — `GAUNTLET.md` §2.1 was wrong that
-`bindata/` was unsurveyed; all 27 files are now identified (19 `<animdata>` sets, a
-`<survivalmodedata>` game mode absent from every ledger system, room-object defs,
-5 name tables, 1 GIF), which re-scores four lanes and **exhausts `bindata/` as a
-string-table candidate** (new lead: `payload.xml`'s `constant_string` pool).
-**S0-2** — the font blocker is **closed**: `ui_strings.txt:100` → `face="Edo SZ"`.
+Also found: `112_Mobile_NodeData` kills world-exploration's *"ZERO world numbers"* ·
+`114_Mobile_AchievementData` (61) kills meta-social ③ *"one Ruffle session closes
+all"* · **~450 animations across 18 named blobs, not §2's "~150" — L6 is ~3× its
+assumed size** · audio is **held but encrypted** (nested `CWS` SWFs) — a LEAD for L7,
+not a solve; R4 still stands, the gate is your ears.
+
+### What is banked vs what is only a lead
+
+- ✅ **JUDGED** (3–4 blind artifact-citing critics each): `items-equipment`,
+  `rebirth-elements`, `combat-core`, `progression` — **79 claims**. These may be
+  written into the ledger.
+- ⚠️ **LEADS ONLY** — the other 8 systems (153 claims) + 104 critic `new_findings`.
+  Surveyed but unjudged. Under `GAUNTLET.md` §0 an unjudged claim is a lead, not a
+  finding. **`REBUILD_READINESS.md` is deliberately UNTOUCHED and must stay so.**
+- ⏳ Never started: all 10 Sweep-B source surveys (incl. the never-surveyed
+  `android-blobs` and `string-table`), the dry-loop, the completeness critic, gates
+  L0-A…F.
+
+**Resume:** `Workflow({scriptPath: "scripts/gauntlet/l0-resurvey.workflow.js",
+resumeFromRunId: "wf_7e275b35-488"})` — do **not** edit the script first; an edit
+invalidates the cache and the 12 surveys are the expensive part.
+
+**`docs/GAUNTLET.md` needs correcting in the L0 re-arm commit:** §2.1's blocker is
+dead, the L1b lane row is obsolete, §2's L6 animation count is ~3× low.
 
 ---
 
