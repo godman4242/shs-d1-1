@@ -16,8 +16,24 @@
 | The workflow script | `scripts/gauntlet/l0-resurvey.workflow.js` | ✅ re-runnable / resumable |
 | Stage-0 findings S0-1, S0-2 | `docs/gauntlet/L0/journal.md` | ✅ |
 
-**Run ID:** `wf_97ec93a2-3b5`
-**Transcript dir:** `~/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/70279977-fb70-4a26-ba27-9b32a10d27dc/subagents/workflows/wf_97ec93a2-3b5/`
+**Run 1 (dead, usage limit 2026-08-13):** `wf_97ec93a2-3b5` — 20/68 agents done.
+Its 12 surveys are preserved in `systems/` and its 8 critic reviews in `critics/`.
+**Run 2 (current, 2026-08-14):** `wf_7e275b35-488` — relaunched fresh after Stage 0b
+found the string table (S0-3), which invalidated run 1's central premise.
+
+Transcripts: `~/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/70279977-fb70-4a26-ba27-9b32a10d27dc/subagents/workflows/<runId>/`
+
+**Why run 2 is a fresh run and not a resume:** run 1's surveys were written believing
+item/skill/NPC names were unresolvable (`GAUNTLET.md` §2.1). S0-3 disproved that —
+804/73/484 names now resolve. Their `STILL_UNHELD` verdicts are systematically wrong
+in one direction, so they are round-1 input, not results. Nothing was discarded.
+
+**Two fail-open bugs were fixed in the orchestration before run 2** (commit `6ff47f1`):
+`harvest()` used to promote claims that NO critic had judged into `confirmed`, and the
+loop-until-dry used to count a round where every hunter *died* as a round that found
+nothing. Run 1's headline numbers (`confirmed: 225`, `dry_rounds: 2`) were products of
+both bugs and must not be quoted. Run 2 returns an `INTEGRITY` string and a separate
+`unjudged` bucket so this cannot recur silently.
 
 ## ⚠️ What is NOT done — do not mistake raw output for a result
 
