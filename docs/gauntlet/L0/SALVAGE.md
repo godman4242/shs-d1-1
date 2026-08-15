@@ -24,17 +24,34 @@ on a usage limit.** Banked: **all 12 systems re-surveyed** with the string table
 hand (`systems/*.md`, rewritten in place), **336 claims / 256 verdicts / 0 VOID /
 56 refuted / 175 ledger overturns**, extracted to `run2/`.
 
-**JUDGED vs LEADS — run 2 (this is the line that matters):**
+**JUDGED vs LEADS — run 2 FINAL (this is the line that matters):**
 
-| Status | Systems | Claims |
-|---|---|---|
-| ✅ **JUDGED** — every claim seen by 3-4 blind artifact-citing critics | `items-equipment`, `rebirth-elements`, `combat-core`, `progression` | **79** |
-| ⚠️ **LEADS ONLY** — surveyed, no critic ran | `skills-meters`, `economy`, `enemies-ai`, `quests-story`, `world-exploration`, `art-anim-audio-feel`, `ui-hud`, `meta-social` | 153 |
-| ⚠️ **LEADS ONLY** — critic `new_findings`, uncritiqued by construction | (cross-system) | 104 |
+Run 2 finished 2026-08-15 at **28/67 agents**, the rest killed by the session limit.
+Its own `INTEGRITY` field says it plainly — the bug fixes in `6ff47f1` worked:
 
-Only the **79 judged** claims may be written into `REBUILD_READINESS.md`. The other
-257 are leads. Sweep-B (10 source surveys incl. the never-surveyed `android-blobs`
-and `string-table`), the dry-loop and the completeness critic **never started**.
+> `INCOMPLETE — 131 claims UNJUDGED, converged=false. Unjudged claims are LEADS,
+> not findings (§0). Do NOT write them into REBUILD_READINESS.md until critics
+> have run.`
+
+**360 claims · 320 verdicts · 0 VOID · 65 refuted · `converged: false` · `dead_rounds: 1`.**
+
+| System | Claims | Judged | Overturns | Lens coverage |
+|---|---:|---:|---:|---|
+| `combat-core` | 20 | **20** | 11 | ✅ full 4 (cite/hunter/precedence/frame) |
+| `items-equipment` | 20 | **20** | 12 | ✅ full 4 |
+| `progression` | 20 | **20** | 12 | ✅ full 3 |
+| `rebirth-elements` | 19 | **19** | 17 | ✅ full 3 |
+| `skills-meters` | 22 | **22** | 14 | ⚠️ 2 of 3 — `hunter` died |
+| `economy` | 20 | 0 | 9 | ❌ none |
+| `enemies-ai` | 20 | 0 | 13 | ❌ none |
+| `world-exploration` | 23 | 0 | 11 | ❌ none |
+| `meta-social` | 22 | 0 | 11 | ❌ none |
+| `art-anim-audio-feel` | 18 | 0 | 14 | ❌ none |
+| `quests-story` | 15 | 0 | 10 | ❌ none |
+| `ui-hud` | 13 | 0 | 6 | ❌ none |
+| *(critic `new_findings`)* | 128 | 0 | 43 | ❌ uncritiqued by construction |
+
+**101 claims are judged and may be written into the ledger.** The other 259 are leads.
 
 Transcripts: `~/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/70279977-fb70-4a26-ba27-9b32a10d27dc/subagents/workflows/<runId>/`
 

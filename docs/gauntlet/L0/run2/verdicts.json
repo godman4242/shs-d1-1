@@ -1780,5 +1780,436 @@
   "reason": "REFUTED as PARTIAL \u2014 it upgrades to HELD (negative). This is not 'a value we do not have'; the absence itself is provable. I enumerated EVERY XP-granting call site in both builds. Android: ConnectionPIO.as:643,647 \u00b7 InventoryUI.as:906 \u00b7 LootDialog.as:251 \u00b7 NetworkManager.as:1268,1272,2818,2822 \u00b7 Overworld.as:318 \u00b7 OverworldHUD.as:2137 \u00b7 XMLQuestOutcome.as:66. Web: only two callers of changeXP (\u00a71t9576s0\u00a7) exist at all \u2014 \u00a71t5957s0\u00a7.as:1257 (item-modifier XP) and \u00a71t6172s0\u00a7.as:322 (loot commit). There is NO gather/mine/farm XP call site anywhere in either build. So gathering grants no XP of its own and XP from a gather loop can only arrive as a quest reward \u2014 which is precisely what the frame shows (A-04 line 32, 'XP bar unmoved at 2098/2950 ... no XP awarded from mining', which I opened and confirmed verbatim). Code and frame agree. Dungeon XP is just the kill model, since dungeon mobs are NPCs routed through calcXP. Blocker \u2463's gather sub-clause is answered, not open.",
   "refuted": true,
   "severity": "minor"
+ },
+ {
+  "claim_id": "progression/xp-curve-l11-80",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:364 \u2014 'public static const \u00a71t5923s0\u00a7:Array = [0,550,1450,2950,\u2026,25395800,29395800];' (99 entries, re-parsed by me); cross-checked reference/decompiled/shs3_android/scripts/StatsManager.as:78",
+  "reason": "Verified first-hand. My own python parse of BOTH files: reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as line 364 and reference/decompiled/shs3_android/scripts/StatsManager.as line 78 each yield len 99 and 'values identical: True'. Indices confirmed exactly as quoted: [11]=37400 [20]=108000 [40]=507300 [60]=1508800 [80]=4285800 [98]=29395800. The web declaration is 'public static const' vs android 'public static var' \u2014 the array literal itself is byte-identical. REBUILD_READINESS.md:350 ('L11\u201380 XP curve \u2014 no table published \u2026 keep the extrapolation labeled INFERRED', under \u00a76 'structurally UNRECOVERABLE') is overturned outright.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/inferred-extrapolation-error",
+  "own_cite": "src/config/xp.ts:28 + src/core/xp.ts:24-37, re-computed against reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:364",
+  "reason": "Verified by re-implementing the shipped extrapolation myself. src/config/xp.ts:28 is 'export const XP_DELTA_STEP = 500;' and src/core/xp.ts:30-35 grows the delta from the L9\u2192L10 seed (5500). Running that against the real expArray reproduces the surveyor's five divergence figures EXACTLY: L11 0.0%, L12 +0.9% (43900 vs 43500), L20 +5.5% (113900 vs 108000), L40 \u221215.5% (428900 vs 507300), L60 \u221237.4% (943900 vs 1508800), L80 \u221261.3% (1658900 vs 4285800). The extrapolation is coincidentally exact at L11 only.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/l1-l10-caps-confirmed",
+  "own_cite": "npx vitest run tests/xp.test.ts --reporter=verbose (my run) + src/config/xp.ts:23-25 vs \u00a71t1523s0\u00a7.as:364",
+  "reason": "I ran the suite myself: 'npx vitest run tests/xp.test.ts --reporter=verbose' \u2192 'Test Files 1 passed (1) / Tests 11 passed (11)', and the verbose output contains the pasted test name character-for-character: '\u2713 tests/xp.test.ts > XP_THRESHOLDS \u2014 the frame-backed L1\u2013L10 table > pins all ten observed cumulative caps exactly'. src/config/xp.ts:23-25 holds [550,1450,2950,5150,8350,12150,16350,20900,25900,31400] = expArray[1..10] exactly. The frame-derived table was right on all ten.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/frame-confirms-xp-caps",
+  "own_cite": "reference/videos/zFtCaTO0_1M.mp4 @ t=1600s and t=655s, my own crop crop=iw*0.62:ih*0.42:iw*0.36:ih*0.12,scale=1.5\u00d7lanczos (scratchpad/crit3_t1600_panel.png, crit3_t655_panel.png)",
+  "reason": "I opened the frame myself rather than trusting the report. ffmpeg -ss 1600 on reference/videos/zFtCaTO0_1M.mp4, crop=iw*0.62:ih*0.42:iw*0.36:ih*0.12 upscaled 1.5\u00d7 lanczos: VISIBLY present are level badge '4', '5110 / 5150' over 'EXPERIENCE POINTS', 'AVAILABLE STAT POINTS: 0', HP 20/20 green, CHI 9/15 blue, AP 15/30, ATK 10, DEF 10 + 13 (the +13 in orange), SPD 4, 'WEIGHT: 73 / 100', GOLD 3. Same recipe at -ss 655 shows level '3', '2098 / 2950', stat points 0, WEIGHT 38/100. Payload expArray[4]=5150 and expArray[3]=2950 \u2014 frame and payload AGREE. Cite-form note only (not a refutation): \u00a70's A1 asks for a path under reference/frames/; the surveyor cites the source video plus a recipe. I re-ran it, so the artifact is real, but the crop should be written out under reference/frames/.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/per-point-magnitudes",
+  "own_cite": "reference/videos/zFtCaTO0_1M.mp4 @ t=1600s AND @ t=464s, my crops crop=iw*0.62:ih*0.42:iw*0.36:ih*0.12,scale=1.5\u00d7; adjudicating \u00a71t5957s0\u00a7.as:3392-3444 vs shs3_android/scripts/InventoryUI.as:2415-2456",
+  "reason": "Not refuted \u2014 OVER-DETERMINED. I verified the web handlers at \u00a71t5957s0\u00a7.as:3392/3402/3410/3418/3428/3438 (+10 MAXHP, +5 MAXCHI, addMaxAP(5), +3 ATK/DEF/SPD) against android InventoryUI.as:2415-2456 (5/5/1/1/1/1), and I independently validated the android\u2192web symbol map by matching the stat-id INTEGERS (1/4/6/7/8/10/14/17/18/25 identical in both files), so \u00a71t9403s0\u00a7=MAXHP etc. is proven, not assumed. \u00a71t9609s0\u00a7 (web line 2807) is addMaxAP \u2014 it calls setPlayerStats(MAXAP,param) then the same nextAPUpdate branch as android's addMaxAP. The frame arithmetic at L4 checks exactly (web 1+1+0+3+3+1 = 9 = the (4-1)*3 budget; android would need 24). I then extracted a SECOND frame at t=464s (level 3: ATK 7, DEF 7+2, SPD 4, HP 20/20, CHI 10/10, AP 30/30, points 0) where web magnitudes account for exactly 6 = (3-1)*3 and android needs 17 \u2014 and the L3\u2192L4 delta between my two frames is exactly one level's 3 points. THE FRAME WINS and it matches WEB, twice.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/per-stat-hard-caps",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3341-3352 (read first-hand, including the four .visible assignments the surveyor's quote stops short of)",
+  "reason": "Formulas verified verbatim at \u00a71t5957s0\u00a7.as:3341-3346 (HP < 10+(L+10)*10, Chi < 10+(L+10)*5, AP < 30+(L+10)*5, ATK/DEF/SPD < 1+(L+10)*3, with _loc2_ = getStat(\u00a71t9411s0\u00a7) and \u00a71t9411s0\u00a7=10=STAT_LEVEL confirmed by the integer map). Precision note that does not rise to refutation: lines 3347-3352 assign these booleans to statsPanel.HPadd.visible etc., so this is a SPEND gate (the '+' button hides), not a clamp on gear/buff totals \u2014 my t=1600 frame shows 'DEF 10 + 13' where the +13 gear bonus sits outside the cap. The surveyor's companion claim already calls it a 'UI cap', so it is internally consistent; a porter just must not clamp the displayed total. Android's cap formulas differ (HP*5, AP 20+(L+10), ATK L+10) in lockstep with its differing per-point magnitudes, which independently corroborates the build-divergence finding.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/271-cap-explained",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3344 + \u00a71t1523s0\u00a7.as:362 + \u00a71t1523s0\u00a7.as:2577 (all three read first-hand)",
+  "reason": "Arithmetic verified end-to-end. \u00a71t5957s0\u00a7.as:3344 '< 1 + (_loc2_ + 10) * 3'; \u00a71t1523s0\u00a7.as:362 'public static const \u00a71t9470s0\u00a7:int = 80;'; \u00a71t1523s0\u00a7.as:2577 '\u00a71t7357s0\u00a7(\u00a71t9419s0\u00a7,(getLevel() - 1) * 3);' \u2192 237. 1+(80+10)*3 = 271. From base ATK 1 in steps of +3, 271 = 1+3\u00d790, so exactly 90 of the 237 points reach it \u2014 the ledger's 'impossible in one stat' assumed +1/point and is refuted. The strict '<' also means the last click lands you on 271 exactly. One caveat I could not close: grep -rn 271 across docs/research/ returns only unrelated pixel measurements, so the ledger's own provenance for '271' is untraceable and the identification is inferential \u2014 but the coincidence is exact.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/start-pools-and-respec",
+  "own_cite": "reference/extracted/itemdata.xml:2267-2281 (item 2200, baseprice 0 / heavenlyprice 5, modifiers 78 and 79) + reference/decompiled/shs3_android/scripts/InventoryUI.as:983-991 + docs/gauntlet/L0/index/strings.json 4130/4136",
+  "reason": "REFUTED on 'free'. The rest holds \u2014 \u00a71t1523s0\u00a7.as:2559-2578 is unAssignStatPoints (MAXHP 10, MAXCHI 10, ATTACK 1, DEFENSE 1, SPEED 1, MAXAP 30, STATPOINTS (level-1)*3), clear-named at android StatsManager.as:2117-2137. But it is not free and not player-invokable at will: outside doRebirth() its ONLY caller is InventoryUI.as:986 under 'if(modid == 78)', i.e. an item modifier. The only item carrying modifiers 78+79 is itemdata.xml:2267-2281 item 2200 with <baseprice>0</baseprice> and <heavenlyprice>5</heavenlyprice>; resolved via the Stage-0b table, name 4130 = 'Amnesia Scroll', desc 4136 = 'Use this to unassign your stat and skill points.' Heavenly gold is the PREMIUM currency (STAT_HGOLD \u2014 the same one doRebirth pays out at +5, or +20 at Dan 8). So a respec costs 5 premium gold and cannot be bought with coins at all. That is a different design decision from 'free' and it lands on L7 economy, not only L4.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "progression/post-rebirth-sp",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:2140-2161 and :2195-2231 (read first-hand) + reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2581-2598",
+  "reason": "Verified verbatim in both builds: \u00a71t1523s0\u00a7.as:2598 and StatsManager.as:2156, SP = getLevel()-1 + STAT_DAN*(levelCap-1). Dan caps at 9 (StatsManager.as:2209 'if(getPlayerStats(STAT_DAN) < 9) { changeStat(STAT_DAN,1); }'), so 10 ranks and 79 + 9\u00d779 = 790 lifetime is right. The surveyor's sub-notes also check out: doRebirth() (StatsManager.as:2195-2231) calls unAssignStatPoints() at :2229 but NOT unAssignSkillPoints(), and skillSlots resets to [IntStat(1003,1)]; rebirth pays HGOLD +5, or +20 at Dan 8 (:2200-2207). Precision note only: the formula lives inside the RESPEC function, so it is the budget invariant rather than a grant site \u2014 the surveyor already flags the non-call, so the claim is self-consistent.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/sp-first-run-off-by-one",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2073-2081 (levelUp) and :2581-2598 (unAssignSkillPoints), read first-hand",
+  "reason": "Verified. \u00a71t1523s0\u00a7.as:2074-2075 is levelUp's grant pair: '\u00a71t9713s0\u00a7(\u00a71t9418s0\u00a7,1);' (SKILLPOINTS +1, id 17) then '\u00a71t9713s0\u00a7(\u00a71t9419s0\u00a7,3);' (STATPOINTS +3, id 18) \u2014 ids confirmed against the android integer map. With levelCap 80 that is 79 level-ups L1\u2192L80 \u21d2 79 SP and 237 stat points, and \u00a71t1523s0\u00a7.as:2598 with Dan=0 recomputes exactly getLevel()-1 = 79. The ledger's '80 SP first run' is off by one. Note the player also starts with 7 skills already known for free (skillStats seeded 1000,1001,1002,1003,1042,1049,1050), which is probably where the ledger's 80 came from.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/levelup-refill-and-cap",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1612-1692 read in full, plus web parity at reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2073-2081",
+  "reason": "Verified, and I closed the web-parity gap the surveyor left (it cited android only, which its own per-point claim says not to do). WEB \u00a71t1523s0\u00a7.as:2073-2081 is byte-parallel to android levelUp: +1 SP, +3 stat pts, setStat(LEVEL,getLevel()), fullHealth(), setStat(AP,MAXAP), setStat(DUELTOKENS,MAX). Android StatsManager.as:76 levelCap 80, :1619-1622 reportHack('changeXP levelcap'), :1688-1690 the three refills, :1655-1687 the autoAssignStats round-robin over [MAXHP,MAXCHI,ATTACK,DEFENSE,SPEED,MAXAP] from getLevel()%6, LootDialog.as:644-646 the XP-credit gate. One omission worth logging (not a refutation): there is a SECOND anti-cheat immediately below, StatsManager.as:1625-1629 'if(!consoleEnabled && leveldiff >= 5) reportHack(\"changeXP many levels\")' \u2014 a single XP grant may never cross 5 levels.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/def-mitigation-is-flat",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3284-3290 and :3484-3487 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3230-3237 and :3415-3418 + docs/gauntlet/L0/index/resolved_names.json skill 1002",
+  "reason": "Verified verbatim in BOTH builds, which is what makes it safe. Android MCSPlayer.as:3230-3237 getDefense() returns defense*0.8 in HEAVY_STANCE else defense; :3415-3418 'damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) damage = damageObj.getMinDamage();'. Web \u00a71t99s0\u00a7.as:3284-3290 and :3484-3487 are structurally identical (\u00a71t4477s0\u00a7 = getDefense, \u00a71t12222s0\u00a7 = HEAVY_STANCE, \u00a71t1088s0\u00a7 = getMinDamage). There is no curve \u2014 flat subtraction floored at the attack's own minDamage. The string-table corroboration also holds: skill 1002 resolves to 'Heavy Stance Mastery' with desc ending 'Defense -20%'.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/spd-scaling",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2274-2296 and :2338-2348 + reference/decompiled/shs3_android/scripts/StatsManager.as:1839-1861 and :1910-1919, all read first-hand",
+  "reason": "All three transfer functions verified verbatim in both builds, including the divergence: web \u00a71t1523s0\u00a7.as:2286-2295 clamps at 600 and returns 1 - speed/600*0.5, android StatsManager.as:1854-1861 clamps at 300 and returns 1 - speed/300*0.5; reload 48 + spd*6 at web :2276 / android :1841; slash length int(120 + floor((90 + Dan*5)*speed/(20+speed))) at web :2346-2347 / android :1917-1918; the buff pre-multiplies speed by 1.5 in both. Not refuted \u2014 but its own headline cross-lane gift stops one function short: 'with per-stance modifiers applied on top' leaves them unlocated when they are in \u00a71t99s0\u00a7.as, the file the surveyor already opened for the DEF claim, AND they are build-divergent. Logged as new finding combat-core/stance-reach-modifiers rather than counted against this claim, since incomplete is not wrong.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/xp-income-model",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:113-121, :131-179, :185-208 (web parity, found and read by me) + reference/decompiled/shs3_android/scripts/NPC.as:94-190",
+  "reason": "Not refuted, and I closed the build-parity risk myself: the surveyor cited ANDROID only for the whole model, which its own per-point claim forbids. I found and read the web equivalent \u2014 \u00a71t68s0\u00a7.as:113-121 (grey level, identical bands), :131-179 (zero difference, identical 13-band table), :185-208 (calcXP, identical grey cutoff / +3-level cutoff / 1+0.05\u0394 / 1-\u0394/ZD / elite\u00d72). Web parity for the bases too: \u00a71t4574s0\u00a7.as:39 'xp = level * 2 + 20;' and \u00a71t4902s0\u00a7.as:26 'xp = level * 5 + 45;'. src/config/duel.ts:55-56 XP_PER_LEVEL=5 / XP_REWARD_BASE=45 is confirmed against the duellist base. Two precision notes: (1) the claim cites getZeroDifference's line range with perfect accuracy but never states its contents and calls the scaling 'symmetric' \u2014 it is not, the over-level divisor is a 13-band step function of PLAYER level returning 5\u219217 while the under-level side is a flat 1+0.05\u0394; a porter reading only the claim text builds the wrong curve. (2) the model has never been reconciled against the one on-screen kill-XP delta available (+52, video B ~t=1:01:04) \u2014 logged separately as STILL_UNHELD.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/quest-xp-tabled",
+  "own_cite": "reference/decompiled/shs3_android/scripts/QuestGenerator.as:839 and :916 + reference/decompiled/shs3_payload/scripts/\u00a71t123s0\u00a7.as:878 (web parity) + reference/decompiled/shs3_android/scripts/StatsManager.as:1604-1606, arithmetic re-run by me against \u00a71t1523s0\u00a7.as:364",
+  "reason": "REFUTED on its exclusive assertion 'Quest XP is a table, NOT a formula'. The 69 rows are real (I counted 69 <exp>, distinct set 100/200/250/290/500/600/750/1000/2000/3000, and questdata.xml:214-216 = 290 and :411-413 = 200 are line-exact). But there is a second quest system the claim misses: proc-gen daily quests build their reward XML at RUNTIME. QuestGenerator.as emits 'rewardStr += \"<exp>\" + questReward + \"</exp>\";' at ~28 sites with questReward = (getXPLevelThreshhold(nodelvl+1) - getXPLevelThreshhold(nodelvl)) / ((nodelvl+1)*1.2) (QuestGenerator.as:839, 1001, 1228, 1465, 1644, 1839, 2105, 2266, 2417 \u2026), and getXPLevelThreshhold is literally 'return expArray[level]' (StatsManager.as:1604-1606). WEB parity is present: \u00a71t123s0\u00a7.as:878/1039/1283/1522 and \u00a71t27s0\u00a7.as:317. And THE FRAME SETTLES IT \u2014 the only quest-XP number visible in either longplay is 473 (video B ~t=1:01:51 waypoint reward), which is NOT one of the 69 tabled values but IS exactly the formula at node level 7: (20900-16350)/(8*1.2) = 473.958 \u2192 int 473. I computed neighbours to rule out coincidence: nodelvl 5\u2192527, 6\u2192500, 7\u2192473, 8\u2192462, 9\u2192458, 10\u2192454, 11\u2192423. THE FRAME WINS over the table-only reading. A port following this claim literally would ship the 61 authored quests' XP and silently drop the entire daily-quest faucet.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "progression/unlock-cadence-to-l80",
+  "own_cite": "reference/extracted/skilldata.xml:255-259 and :1638-1642 read directly, plus my own grep/uniq -c over every <lvlreq> and <has> row, plus docs/gauntlet/L0/index/resolved_names.json",
+  "reason": "Reproduced exactly. grep -c '<lvlreq>' = 33; the distribution I counted is L3\u00d71, L5\u00d77, L10\u00d71, L15\u00d72, L20\u00d75, L25\u00d71, L30\u00d71, L35\u00d71, L40\u00d71, L45\u00d71, L50\u00d76, L55\u00d71, L60\u00d71, L65\u00d71, L70\u00d71, L75\u00d71, L80\u00d71 = 33, matching the surveyor's ladder item-for-item. grep -c '<has>' = 52. skilldata.xml:257 is '<lvlreq>3</lvlreq>' under id 1004 and :1640 is '<lvlreq>80</lvlreq>' under id 1055 \u2014 both line-exact. Names resolve via the Stage-0b table: 1004='Roll', 1055='Mass Shadow Clone', 1008='Skill Slots+' ('Allows you to equip more skills.'), 1009='Carrying Weight+'. The two derived progression sub-systems check out too.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/campaign-level-band",
+  "own_cite": "reference/extracted/questdata.xml, walked by my own xml.etree script (output: /questdata/quest/step/wave/enemy/lvl 142 2 35)",
+  "reason": "Reproduced first-hand with my own ElementTree walk of reference/extracted/questdata.xml rather than trusting the index: /questdata/quest/step/wave/enemy/lvl = 142 rows, range 2\u201335; /wave/friend/lvl = 9 rows, 25\u201380; /step/roomobj/property/obj/property/xml/wave/enemy/lvl = 18 rows all 25; /wave/neutral/lvl = 2 rows, 1\u20134. Exactly the surveyor's numbers. The inference is sound and reinforced by calcXP's +3-level cutoff (a player must be within 3 levels of a L35 mob to earn anything from it), so the authored content genuinely assumes play well past L10 \u2014 'both longplays cap at L10' is a capture limit, not a content limit.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/ap-regen",
+  "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1090-1115 and :2361-2369 + reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:192 and :2807-2816",
+  "reason": "Verified. Android StatsManager.as:158 'internal static var APINTERVAL:int = 60;' and :1091-1115 regenAP (diff = floor(timeDiff/APINTERVAL)+1; doubled under BUFF_AP; clamped to MAXAP with nextAPUpdate = -1). Web parity at \u00a71t1523s0\u00a7.as:192 'internal static const \u00a71t9396s0\u00a7:int = 60;' \u2014 and I proved \u00a71t9396s0\u00a7 IS the AP interval structurally rather than by name: web \u00a71t9609s0\u00a7 (line 2807, = addMaxAP) calls \u00a71t9604s0\u00a7(\u00a71t9551s0\u00a7,\u00a71t9396s0\u00a7), exactly mirroring android addMaxAP's setNextAPUpdate(serverTimeVariable,APINTERVAL). Precision note: '+1 per 60 s' is the steady state; the code pays a catch-up batch of floor(elapsed/60)+1.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/levels-81-99",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:362 (const) vs reference/decompiled/shs3_android/scripts/StatsManager.as:76 (var), plus \u00a71t68s0\u00a7.as:176-179",
+  "reason": "Honest STILL_UNHELD, correctly graded, and I will not over-refute it. It is however partly closable and I log that separately: in WEB v0.717 the cap is a compile-time constant (\u00a71t1523s0\u00a7.as:362 'public static const \u00a71t9470s0\u00a7:int = 80;'), so 81+ was structurally unreachable in the shipped web build, whereas android has 'public static var levelCap:int = 80;' (mutable/server-settable). Corroborating dead headroom: \u00a71t68s0\u00a7.as:176-179 ends 'if(_loc1_ < 80) { return 17; } return 17;' \u2014 a band authored and never differentiated. The advice to treat expArray[81..98] as dead headroom is correct.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "progression/xp-from-gather-and-dungeon",
+  "own_cite": "grep -rn addLootXP over reference/decompiled/shs3_android/scripts/ (13 sites, enumerated by me) + reference/decompiled/shs3_android/scripts/XMLQuestOutcome.as:60-66 + docs/research/video-study/segments/A-04-mines-takahasi-coal-mining-quest.md:32",
+  "reason": "Not refuted \u2014 if anything under-claimed. Both cites are line-exact (XMLQuestOutcome.as:66 'addLootXP(this.modify);' under 'else if(this.id == StatsManager.STAT_XP)'; InventoryUI.as:906 'StatsManager.changeXP(item.modifierXML[i].value);' under 'if(modid == 9)'), and A-04's line 32 is verbatim. I went further and enumerated EVERY addLootXP call site in the build: NPC.as:863 (mob kill), EnemyPlayer.as:1318/1322/1327 (duellist/boss), NetworkManager.as:1268/1272/2818/2822 and ConnectionPIO.as:643/647 (PvP), Overworld.as:318 (quest step reward.exp), XMLQuestOutcome.as:66 (quest outcome), plus the definition at LootDialog.as:638. There is NO gathering call site at all \u2014 so the honest finding is stronger than PARTIAL: a dedicated gather-XP number does not exist, and gathering XP can only arrive as a quest outcome. Code and frame agree.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/blocker1-costs-cooldowns",
+  "own_cite": "reference/extracted/skilldata.xml:607-621 (Fire Breath 1013 \u2014 the cited range :607-614 stops at <category>7</category>; the <level> block with <chi>5</chi>/<cooldown>15</cooldown> starts at :615/:618/:619); plus grep -c counts on the same file",
+  "reason": "Two defects. (a) MIS-SCOPED CITE: the range :607-614 given for Fire Breath contains no <chi> and no <cooldown> line at all \u2014 it is the skill header only; the data starts at :615. (b) FALSE QUANTIFIER: 'every one of the 75 skills' chi costs and cooldowns sits in skilldata.xml across 182 <level> rows' is wrong \u2014 101 of 182 <chi> and 84 of 182 <cooldown> elements are literally empty (<chi></chi>), including two of the four skills the blocker names by hand (Throw Kunai :355, Lay Trap :900), which the surveyor's own next claim concedes. Substance survives: blank is code-defined as 0 (shs3_android_payload/scripts/XMLSkill.as:272-276 getChiCost returns 0 on blank, :302 same for cooldown) and the blanks sit almost entirely on the 27 <passive>1</passive> nodes. Correct wording: 'every ACTIVE skill's chi and cooldown is DETERMINED BY skilldata.xml, blank = 0'. The primary cite :500-513 (Smoke Bomb 1010, chi 5, cd 6) resolves verbatim.",
+  "refuted": true,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/kunai-chi-is-a-phantom",
+  "own_cite": "reference/extracted/skilldata.xml:355 and :900 (<chi></chi>); reference/decompiled/shs3_android_payload/scripts/SkillManager.as:252-259; docs/gauntlet/L0/index/strings.json['6013'] = 'Throws a kunai.\\n\\nRequires kunai ammo.'",
+  "reason": "Every element resolves verbatim: line 355 and line 900 are both <chi></chi>; SkillManager.as:254 'if(StatsManager.getStat(2501) == 0)' and :259 'StatsManager.changeStat(2501,-1)' are exact; string 6013 is exact. Stronger than the surveyor knew \u2014 the mechanic is also present in the WEB bundle (see new finding kunai-ammo-is-web-and-tiered), so the Android-only caveat they omitted turns out not to be needed, and the ammo costs are 1/4/8 rather than a flat 1.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/crit-is-deterministic",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3276 and :3293-3298",
+  "reason": "Read the file myself. :3272 'if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)' / :3274 'return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;' / :3276 'return _loc2_;' are byte-exact as quoted. :3295-3297 zeroes a full meter before the stance slash cost is applied. \u00a71t4414s0\u00a7/\u00a71t4415s0\u00a7 are independently confirmed as reload/maxreload by their use as the bar-mapping numerator/denominator (\u00a71t113s0\u00a7.as:328) and the refill ceiling (:3321-3323). No RNG anywhere in the crit path.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/spd-cooldown-cap-600",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2289-2296 (web, cap 600) vs reference/decompiled/shs3_android_payload/scripts/StatsManager.as:1854-1860 (android, cap 300)",
+  "reason": "Verified verbatim: web :2291 'if(param1 > 600)' :2293 'param1 = 600;' :2295 'return 1 - param1 / 600 * 0.5;'. Android's getSkillCooldownModifierVal is the same function with 300. The call chain also holds \u2014 \u00a71t1523s0\u00a7.as:2279-2286 is getSkillCooldownModifier (\u00a71t9589s0\u00a7) and \u00a71t105s0\u00a7.as:316-318 does 'cooldown * 24' then '* \u00a71t1523s0\u00a7.\u00a71t9589s0\u00a7()'. The 'divide by 24 and format to 2dp for display' tail is an inference, but it is corroborated by the reproduction in ledger-decimals.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/ledger-decimals-are-display-artefacts",
+  "own_cite": "reference/extracted/skilldata.xml:295/302/309 (Focus cd 10/9/8) and :1292/1299/1306 (Chi Punch cd 5); docs/research/REBUILD_READINESS.md:194 (the ledger sentence); my own re-run of the formula",
+  "reason": "All four cites resolve verbatim, including the ledger line. I re-ran the arithmetic independently with AS3 int() truncation: web SPD 6,7,8,9,10 all produce exactly 4.96 / 9.92 / 8.92, and under the ANDROID cap-300 formula the same triple needs SPD 3-5 \u2014 so the web reading is the self-consistent one. The 'Focus has three levels, ledger truncated to two' correction is right: :309 is <cooldown>8</cooldown>. One nit in the lane_impact only: 'config must encode the integers' \u2014 Roll (1004) has <cooldown>3.5</cooldown> at :271, so the field must be a float.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/crit-mult-is-1.3-ledger-vindicated",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3277 and :271-279; reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3215-3223; StatsManager.as:258",
+  "reason": "Web crit is a flat 1.3 with no stance branch (:3272-3276) \u2014 verified. Android :3217-3221 really does split 1.5 Light / 1.2 other, so the previous survey's overturn was reading the wrong build. The additive gear term also checks out: \u00a71t1243s0\u00a7 is param6 of \u00a71t4445s0\u00a7 (:271-279), whose android twin initAttackStats receives findBonusStat(STAT_CRITICALDMG), and StatsManager.as:258 'STAT_CRITICALDMG:int = 204'.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/stance-damage-ceiling-is-mastery-10",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3259-3271 and :196-198; reference/decompiled/shs3_android_payload/scripts/StatsManager.as:1834; reference/extracted/skilldata.xml skills 1000/1001/1002",
+  "reason": "Verified verbatim. The mastery identification holds through the param chain: android initPlayer passes getStat(1000)/(1001)/(1002) as params 12/13/14 (StatsManager.as:1834), and the web 15-param init assigns param12/13/14 to \u00a71t4421s0\u00a7/\u00a71t4422s0\u00a7/\u00a71t4423s0\u00a7 (:196-198), which are the very variables in the damage switch. I confirmed skills 1000/1001/1002 are Light/Balanced/Heavy Stance Mastery with exactly 10 <level> rows each and <passive>1</passive>, so M ranges 0..10 and the ceiling really is M=10, giving 0.9/1.2/1.4. A mastery-9 ceiling would ship 0.86/1.18 \u2014 the correction is real.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/per-stance-reach-formula",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1544s0\u00a7.as:824 '\u00a71t11073s0\u00a7:String = \"dual_stance\"' and :866 '\u00a71t11115s0\u00a7:String = \"reversed_stance\"', joined to \u00a71t99s0\u00a7.as:3130-3134 and :3141-3149",
+  "reason": "DUAL AND REVERSED ARE SWAPPED. The web bundle names its own animation constants, so no Android inference is needed: setStance case \u00a71t12224s0\u00a7 sets reach = base * 1.4 and plays \u00a71t11115s0\u00a7 = \"reversed_stance\" (:3131, :3134); case \u00a71t12223s0\u00a7 sets reach = base * 1.0 floored at 100 and plays \u00a71t11073s0\u00a7 = \"dual_stance\" (:3142, :3145, :3149). Two independent confirmations: (i) the stance ints \u2014 \u00a71t12223s0\u00a7 = 3 and \u00a71t12224s0\u00a7 = 4 (\u00a71t99s0\u00a7.as:33,35) match android DUAL_STANCE = 3 / REVERSED_STANCE = 4 (MCSPlayer.as:33,35); (ii) android's own setStance gives REVERSED base*1.5 (MCSPlayer.as:3067) and DUAL base*1.0 (:3078). CORRECT: Reversed x1.4, Dual x1.0 floored at 100. Knock-on for L2 config: in deductReloadBar (\u00a71t99s0\u00a7.as:3299-3311) Reversed groups with Balanced at x1.0 and Dual groups with Heavy at x1.5. Everything else in the claim \u2014 base = 120 + floor((90 + DAN*5) * SPD/(20+SPD)) at \u00a71t1523s0\u00a7.as:2344-2348, Light x1.4, Balanced x1.0->1.2, Heavy x0.5->0.9 floored 100 \u2014 I verified line-for-line and it holds.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "skills-meters/focus-meter-numerics-web",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 'this.\u00a71t4415s0\u00a7 = 8 * 24;' \u2014 the sole assignment to maxreload in the web bundle (grep -rn '\u00a71t4415s0\u00a7' finds one other, \u00a71t4904s0\u00a7.as:77, also 8 * 24)",
+  "reason": "THE MAX IS 192 FRAMES, NOT 120, AND THE CITE FOR IT POINTS AT A DIFFERENT VARIABLE. \u00a71t99s0\u00a7.as:55 declares 'internal static var \u00a71t12234s0\u00a7:int = 5 * 24;' \u2014 that constant has exactly three references bundle-wide (:55 declaration, :266 and \u00a71t122s0\u00a7.as:950), all assigning \u00a71t4440s0\u00a7, a per-frame countdown decremented at :1244-1247. It never touches the reload bar. The actual maxreload \u00a71t4415s0\u00a7 \u2014 the bar-mapping denominator, the crit equality target and the refill ceiling \u2014 is assigned once, at :249, to 8 * 24 = 192. 120 is precisely the ANDROID value (shs3_android_payload/scripts/MCSPlayer.as:239 'this.maxreload = 5 * 24;'), at the structurally parallel line of the same init function; this claim was framed as correcting the previous survey for banking Android constants and then banked one itself. Consequences: usable range is 192-48 = 144 frames not 72, and a 48-frame stance switch costs ONE-THIRD of the bar not two-thirds; the meter fills ++1 per tick (:1203-1205) so a cold-to-crit cycle is 8 s at 24 fps not 5 s. Everything else HOLDS verbatim: dead zone 48 (\u00a71t113s0\u00a7.as:328), switch cost 48 (:3162), slash cost x0.5/x1.0/x1.5 (:3302/3306/3310), refill +6 (:3320).",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "skills-meters/in-combat-stance-switch-is-real",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3058-3063 'public function \u00a71t4472s0\u00a7() ... if(this.\u00a71t4414s0\u00a7 < 48){ return; }' and :3048-3051 'return this.\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48;'",
+  "reason": "Correct, and I found a decisive direct cite the survey missed. The web nextStance refuses only when reload < 48 and otherwise cycles Light->Balanced->Heavy->Light (:3064-3079); canChangeStance is \u00a71t4469s0\u00a7() && reload >= 48. So in-combat switching is unambiguously real in v0.717 and Focus-gated, exactly as the recreation models it. The caption evidence the survey used (\u00a71t113s0\u00a7.as:336-347) also resolves verbatim. The ledger's \u00a73.4 'HARD-LOCKED' claim is dead; this removes an entry from the labelled-deviation list.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/per-level-effect-numbers",
+  "own_cite": "reference/extracted/skilldata.xml level <desc> ids joined to docs/gauntlet/L0/index/strings.json, re-parsed by me: 'level rows 182 \u00b7 blank desc 47 \u00b7 resolved desc 135 \u00b7 of which contain a digit 83'",
+  "reason": "THE NUMBER IS 83, NOT 135. 135 rows carry a RESOLVED desc, but 52 of those contain no digit whatsoever, so they are not 'numeric effect strings': 7000 'Increased damage' (all 10 Light Mastery rows), 7001 'Increased damage and slash range' (all 10 Balanced), 7002 'Increased slash range' (all 10 Heavy), 7067 'Reduced cooldown', 7039/7040 Farming/Scavenging, 7090, 7095. The 30 mastery rows in particular carry zero numbers \u2014 the 0.9/1.2/1.4 ceiling is held only by AS3, never by card text \u2014 which matters because this claim is what upgrades the lane from 'read projectile classes' to 'transcribe the table'. Every individual string quoted (7064/7065/7066, 7072, 7074, 7075, 7078, 7004, 7013) resolves exactly as printed, and the Roll 60/80/100% and 3->8 hotbar sub-findings both hold (base 3 has a better, WEB cite the survey missed: \u00a71t1523s0\u00a7.as:2742 'return 3 + \u00a71t9714s0\u00a7(1008);').",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "skills-meters/string-table-resolves-all-73",
+  "own_cite": "docs/gauntlet/L0/index/strings.json joined to reference/extracted/skilldata.xml by my own parse: 'skills with displayname: 73 \u00b7 without: [1500, 1501] \u00b7 misses: []'",
+  "reason": "Re-derived independently, not read off resolved_names.json: exactly 73 of the 75 skills carry a <displayname>, all 73 resolve, zero misses; 1500 and 1501 carry no displayname element at all, so the '73' is exact rather than approximate. Spot-checked 6000 'Light Stance Mastery', 6018 'Smoke Bomb', 6042 'Stab', 6047 the Stab description \u2014 all verbatim. The retained caveat is honest and I confirmed it: strings.json has no key '960', so the table is provably not the web build's.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/skilldata-byte-identical-across-builds",
+  "own_cite": "my own python byte diff of reference/extracted/android/117_Mobile_SkillData.bin vs reference/extracted/skilldata.xml: 'android len 39045 web len 39003 delta 42'; after stripping the 40-byte decl the common prefix is 39003 of 39003; sha256 of both bodies = 5aba91ed48fcb020",
+  "reason": "Reproduced from scratch and it matches the pasted output exactly, including the 40-byte '<?xml version=\"1.0\" encoding=\"utf-8\"?>\\r\\n' prefix and the single trailing \\r\\n. The derived rule \u2014 Android XML is web-true, Android AS3 is not \u2014 is the single most valuable thing in this survey, and this pass produced two fresh proofs of the second half of it (the maxreload 120-vs-192 and the crit 1.3-vs-1.5/1.2 divergences).",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/frame-crit-appears-at-exactly-full",
+  "own_cite": "reference/frames/session11/gap-focus-trigger/m_nearfull.png (1800x780) \u2014 I cropped (640,0)-(1800,390) and (640,390)-(1800,780), upscaled 2x Lanczos, and LOOKED at both",
+  "reason": "Confirmed by eye, not from the summary. Top crop: green 11/20, blue 47/47, a white third bar with NO text, yellow '150% DAMAGE'. Bottom crop: identical 11/20 and 47/47, the same white bar now carrying black 'CRITICAL HIT'. My own pixel scan puts the white bar's right edge at x=1525-1526 (top) versus x=1534-1536 (bottom) against a full-blue track ending at 1533, i.e. ~98.8% vs 100% \u2014 a ~1pp difference from the survey's 98.0% that is pure threshold choice and does not touch the conclusion. Frame and payload agree; the note that the frame would win if they disagreed is correctly stated.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/frame-cracks-web-string-960",
+  "own_cite": "reference/frames/combat_analysis/Nr4fQstqHDM_t428.0.png \u2014 I cropped (60,880)-(1020,1080), upscaled 3x Lanczos, and LOOKED; paired with reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:110-111 and :352",
+  "reason": "Everything described is visibly there: red portrait ring, green 20/20 full, blue 26/26 full, an EMPTY brown third bar carrying off-white 'CANNOT CHANGE STANCE', yellow '150% DAMAGE' beneath. \u00a71t113s0\u00a7.as:110-111 are verbatim, and strings.json genuinely has no key '960' while '175' is 'Critical Hit'. The frame renders CRITICAL HIT in caps, so the 'field uppercases, THE FRAME WINS, ship the caps' ruling is correct and correctly announced. 'Snd_criticalDamage' at :352 verified.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/150pct-damage-is-a-food-buff",
+  "own_cite": "reference/decompiled/shs3_android_payload/scripts/OverworldHUD.as:1398-1410 and MCSPlayer.as:208-223; docs/gauntlet/L0/index/strings.json['4132']",
+  "reason": "All three cites verbatim, and the claim is actually UNDER-stated: the identical mutually-exclusive else-if chain (BUFF_ATTACK minDamage*1.5 / BUFF_DEFENSE defense*1.5 / BUFF_INJURED halving) exists in the WEB player too at \u00a71t99s0\u00a7.as:211-224, so 'buffs multiply minDamage only and are mutually exclusive' is web fact, not an Android-caveated port. The correction of the previous survey stands: under web rules Heavy is x1.4, so the 1.5 coincidence it rested on does not exist.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/ten-categories-all-named",
+  "own_cite": "reference/extracted/skilldata.xml categories 7-10, parsed by me: only Fire Breath / Water Stomp / Wind Combo / Ground Punch carry 5 numbered level rows; the other 20 skills have exactly one <level> whose <desc> is BLANK",
+  "reason": "The claim TEXT holds completely \u2014 SkillScreenUI.as:84 'categoryCount:int = 10', :103-104 verbatim, strings 6024-6033 resolving to the ten named tabs, and category 11 = {Back Throw, Air Stab, Bull Charge, Punch Lunge, Undying, 1500, 1501} with no <order> and no <lvlreq>, all confirmed first-hand. But the LANE_IMPACT is wrong where it says cats 7-10 are 'all 24 now named, costed, cooldowned and PER-LEVEL-NUMBERED': only 4 of 24 are. The 20 traps, kunai, Dragon Dance Steps I/II and the four AoEs each have a single blank level desc \u2014 which directly contradicts this survey's own ultimates-and-elemental-projectile-constants claim. L11/rebirth-elements must not read its blocker \u2460 as closed on this basis. The gating multiset {10,10,10,30,30,60} does hold, with item ids 28 Fire / 30 Water / 29 Wind / 31 Earth.",
+  "refuted": true,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/chi-costs-are-not-single-digit",
+  "own_cite": "reference/extracted/skilldata.xml:1638-1649 (Mass Shadow Clone 1055, chi 100, cd 30) plus my own distinct-value parse: {0,2,3,5,6,7,8,10,20,50,100}",
+  "reason": "Re-derived the domain myself and it matches the claim exactly, including the top of the ladder at 100. docs/gauntlet/L0/index/skilldata.json agrees (distinct_values 11, numeric_range [0,100]). The supporting mechanics also check out: BattleUI.as:252-256 prints chi + '/' + maxchi, and chi regen is maxchi/10 + STAT_CHIREGEN (StatsManager.as:1734). The ledger's 'single-digit' framing is genuinely refuted.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/stab-is-a-passive-tree-node",
+  "own_cite": "reference/extracted/skilldata.xml:720-735 (id 1018, displayname 6042, req 1002 qty 3, <passive>1</passive>, category 3) with reference/decompiled/shs3_android_payload/scripts/XMLSkill.as:345-348 and MCSPlayer.as:3147-3151",
+  "reason": "Every element verbatim. I additionally confirmed skill 1002 IS Heavy Stance Mastery (10 levels, passive), so 'prerequisite Heavy Stance Mastery 3' is exact, and MCSPlayer.as:3149 'this.canStab = this.getSkillLevel(1018) > 0;' sits inside the HEAVY_STANCE branch as claimed. canEquip's !passive guard is verbatim at XMLSkill.as:347. The Thousand Stabs (1040) / canStab disambiguation is a genuine catch.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/shunpo-effect",
+  "own_cite": "reference/extracted/skilldata.xml:1234-1247 (id 1039, displayname 6082, req 1000 qty 10, chi 50, cooldown 60) and reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:1705-1706, :1747-1752",
+  "reason": "All cites verbatim, including strings 6082 'Shunpo' and 6085 with the hold-to-charge sentence. The PARTIAL verdict is the correct and honest one: MCSPlayer.as:1706 'this.chargingTime = 3 * 24;' and :1751 'this.movePlayer(250);' are Android-only, and given that this same pass proved maxreload, crit multiplier and the SPD cap all diverge between builds, refusing to promote 250px/3s to web fact is exactly right. Note the row carries no <lvlreq> at all \u2014 the gate is purely the mastery-10 prerequisite, as claimed.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/ultimates-and-elemental-projectile-constants",
+  "own_cite": "reference/extracted/skilldata.xml \u2014 my parse of the 47 blank level <desc> rows: 'blank descs occur at level values: [1]', one blank per skill across 47 distinct skills",
+  "reason": "The STILL_UNHELD verdict is correct and the empty cite is legitimate under \u00a70. The DESCRIPTION is off, though: the blanks are not 'clustered' on ultimates and projectiles \u2014 every one of the 47 sits at <value>1</value>, exactly one per skill, spread over 47 different skills. The named set covers about 18; the remaining ~29 include Jump, Focus, Smoke Bomb, all three Deflects, Air Combo, Flip-up, Stab and Chi Charge, whose level-1 effect is carried by the skill's own top-level <desc> rather than by any projectile class. So the projectile-reading scope is smaller than stated. The build-provenance warning attached to the ~40 *Projectile.as classes is sound and this review independently reinforces it.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/skill-vfx-anim-audio",
+  "own_cite": "reference/extracted/android/93_MCSCharacter_SkillsAnimationData.bin (present in the directory listing, unopened) and reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:352 '\u00a71t88s0\u00a7.instance.\u00a71t1516s0\u00a7(\"Snd_criticalDamage\");'",
+  "reason": "Honest STILL_UNHELD, correctly scoped. The blob exists exactly where stated and is unopened. The one recovered SFX event name is verbatim in the WEB bundle at :352, and the distinction drawn \u2014 the event and its trigger are held, the waveform is not \u2014 is exactly the right line given Stage-0b S0-5's CWS encryption.",
+  "refuted": false
+ },
+ {
+  "claim_id": "skills-meters/focus-meter-numerics-web",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 (this.\u00a71t4415s0\u00a7 = 8 * 24;) and :55/:266 (\u00a71t12234s0\u00a7 -> \u00a71t4440s0\u00a7); exhaustive grep of \u00a71t4415s0\u00a7 across reference/decompiled/shs3_payload/scripts/ returns only :249 and \u00a71t4904s0\u00a7.as:77; contrast reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:239",
+  "reason": "The headline constant is wrong and mis-cited. The claim says maxreload = 120 frames (5s) citing \u00a71t99s0\u00a7.as:55. Line 55 defines \u00a71t12234s0\u00a7:int = 5*24, which is NEVER assigned to maxreload \u2014 its only two uses in the whole web bundle are \u00a71t99s0\u00a7.as:266 and \u00a71t122s0\u00a7.as:950, both assigning \u00a71t4440s0\u00a7, a per-tick countdown decremented at :1244-1247. Maxreload is \u00a71t4415s0\u00a7, and an exhaustive grep of the entire web bundle finds exactly two assignments to it, both 8*24 = 192 frames = 8.00 s (\u00a71t99s0\u00a7.as:249, \u00a71t4904s0\u00a7.as:77). 120 is the ANDROID value (MCSPlayer.as:239 this.maxreload = 5*24) \u2014 the exact import the claim boasts of correcting; it was re-imported via a coincidentally-equal web static. Downstream: usable range is 144 frames / 6.00 s not 72, and the 48-frame stance switch costs ONE THIRD of the usable meter, not 'two-thirds'. Natural refill is +1/tick (:1203-1205), so 0-to-full is 8.00 s. The rest of the claim (48 dead zone, 48 switch cost, slashUsage x0.5/1.0/1.5, +6 bonus refill) verified verbatim and stands. Ledger blocker (3) 'Focus numerics (max/fill/switch-cost)' is therefore NOT closed as stated.",
+  "refuted": true,
+  "severity": "fatal"
+ },
+ {
+  "claim_id": "skills-meters/per-level-effect-numbers",
+  "own_cite": "reference/extracted/skilldata.xml <level><desc> joined to docs/gauntlet/L0/index/strings.json (my count: 182/135 non-empty/83 digit-bearing/52 no-digit); reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3363-3376 vs strings.json 7004-7006",
+  "reason": "Two independent defects. (a) The count is inflated 63%: joining every <level><desc> id in skilldata.xml to strings.json gives 182 total / 135 non-empty / but only 83 containing any digit. 52 resolve to purely qualitative copy \u2014 'Increased damage' x10, 'Increased damage and slash range' x10, 'Increased slash range' x10, 'Reduced cooldown' x3, harvest/search text etc. The 30 mastery rows are exactly the ones whose real coefficients the surveyor had to read from AS3 (\u00a71t99s0\u00a7.as:3262-3270), so the claim's own sibling disproves its headline number. (b) The one numeric string cross-checkable against web AS3 is contradicted by it: the cards say Roll = 60/80/100% dodge (strings 7004/7005/7006) but the web build computes 75/85/95 (\u00a71t99s0\u00a7.as:3363-3376, with \u00a71t120s0\u00a7.as:16 proving \u00a71t10127s0\u00a7 = 1004 = Roll). The Android string table is a third build-parity category that the survey's own rule ('Android XML is web-true, Android AS3 is not') does not cover, and this claim treats it as v0.717 fact. (c) The lane_impact's 'Roll is what buys evasion, not Focus' is also wrong: \u00a71t99s0\u00a7.as:3383-3388 fully negates an incoming hit (12 i-frames, Snd_jump) when reload == maxreload and the stance ultimate is owned \u2014 a full Focus meter does buy evasion.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "skills-meters/blocker1-costs-cooldowns",
+  "own_cite": "reference/extracted/skilldata.xml:500-513 read directly, plus full ElementTree parse of the file: 75 skills / 182 levels / emptychi 101 / emptycd 84 / emptydesc 47",
+  "reason": "All four cited line ranges verified verbatim (skilldata.xml:500-513 Smoke Bomb id 1010 chi 5 cd 6; :345-358 Throw Kunai 1007; :889-902 Lay Trap 1024; :607-614 Fire Breath 1013 header). Core holds: no preserved build is needed. But the wording 'every one of the 75 skills' chi costs and cooldowns sits in skilldata.xml across 182 <level> rows' is literally false \u2014 my parse finds 101 of 182 <chi> and 84 of 182 <cooldown> elements EMPTY. The cooldown half is genuinely complete for every playable skill (only 1500/1501, category 11 / NPC-only, lack one), and blank cooldown is handled in code at \u00a71t105s0\u00a7.as:310-313 (cooldown.toString == '' -> 0). Blank <chi> needs an explicit blank-means-zero rule before the 'transcription script today' in the lane_impact can run.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/kunai-chi-is-a-phantom",
+  "own_cite": "reference/extracted/skilldata.xml:355, :900; reference/decompiled/shs3_android_payload/scripts/SkillManager.as:247-260",
+  "reason": "Verified verbatim. skilldata.xml:355 and :900 are <chi></chi> for Throw Kunai (1007) and Lay Trap (1024); SkillManager.as:252-259 gates SKILL_KUNAITHROW/FIRE/WATER/WIND/EARTH on StatsManager.getStat(2501) == 0 and decrements it. Both skills carry cooldowns (2 and 5) so only the chi cost is the phantom. Cite is Android AS3, but the shipped web skilldata is byte-identical and the ammo-stat mechanic is corroborated by the card copy.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/crit-is-deterministic",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3277 and :3293-3298, cross-checked against :249-250",
+  "reason": "Verified verbatim in the web bundle. \u00a71t99s0\u00a7.as:3272-3276 returns _loc2_ * 1.3 + STAT_CRITICALDMG on the exact equality \u00a71t4414s0\u00a7 == \u00a71t4415s0\u00a7, and \u00a71t99s0\u00a7.as:3295-3298 zeroes the meter on the same equality when a slash is spent. No Math.random anywhere in that path (the only Math.random in the neighbourhood is the damageRange roll at :3258 and the Roll-dodge roll at :3376). Blocker (5) is genuinely dead. I independently confirmed both symbols are reload/maxreload via the assignments at :249-250 and the refill at :1203-1205.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/spd-cooldown-cap-600",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2279-2296; reference/decompiled/shs3_payload/scripts/\u00a71t105s0\u00a7.as:297-318; reference/decompiled/shs3_android_payload/scripts/StatsManager.as:1856-1860",
+  "reason": "Verified verbatim: \u00a71t1523s0\u00a7.as:2289-2296 caps at 600 and returns 1 - param1/600*0.5; \u00a71t105s0\u00a7.as:297-318 is the getCooldown that multiplies cooldown*24 by it. Android's 300 cap confirmed at StatsManager.as:1856-1860, so the 'previous survey banked 300' correction is right. One omission worth carrying: the SPD passed in is pre-multiplied x1.5 under the SPEED buff (\u00a71t1523s0\u00a7.as:2281-2285), so the cap bites at SPD 400 while buffed.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/ledger-decimals-are-display-artefacts",
+  "own_cite": "reference/extracted/skilldata.xml:294-311 and :1288-1308; reference/decompiled/shs3_payload/scripts/\u00a71t105s0\u00a7.as:297-318 (int arithmetic), \u00a71t1523s0\u00a7.as:2289-2296",
+  "reason": "Reproduced independently. skilldata.xml:295/302/309 are cooldown 10/9/8 for Focus (skill 1005) and :1292/1299/1306 are cooldown 5 for Chi Punch \u2014 verified verbatim. The decimals only fall out with int truncation at each step, which \u00a71t105s0\u00a7.as supplies (_loc2_:int, :int return): 5s -> 120f -> x0.995 = 119.4 -> 119 -> /24 = 4.958 -> 4.96; 240 -> 238 -> 9.9167 -> 9.92; 216 -> 214 -> 8.9167 -> 8.92. Same result at SPD 10. The observation that the ledger truncated Focus to two levels when it has three is correct.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/crit-mult-is-1.3-ledger-vindicated",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3277; reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3205-3223",
+  "reason": "Verified verbatim on both sides. Web \u00a71t99s0\u00a7.as:3274 returns _loc2_ * 1.3 + \u00a71t1243s0\u00a7 flat across stances; Android MCSPlayer.as:3215-3221 returns maxDamage * 1.2 (non-Light) or * 1.5 (Light). The builds genuinely diverge, the ledger's CRIT_MULT=1.3 is right for v0.717, and the previous survey's 1.5/1.2 would have mistuned every crit. The additive gear term is real (STAT_CRITICALDMG in the same expression).",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/stance-damage-ceiling-is-mastery-10",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3271 and :183-199; reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2268; ElementTree parse of reference/extracted/skilldata.xml showing skills 1000/1001/1002 = 10 levels, passive '1'",
+  "reason": "Verified. \u00a71t99s0\u00a7.as:3262-3270 gives Light = base*(0.5 + 0.4*M*0.1), Balanced = base*(1 + 0.2*M*0.1), Heavy/12223/12224 = base*1.4. I independently confirmed the ceiling index: skills 1000/1001/1002 each carry exactly TEN <level> rows with <passive>1</passive>, so M runs 0..10 and 0.9/1.2/1.4 is the mastery-10 ceiling, not mastery-9 as the ledger says. Precedence nit only: the mastery source is cited from Android StatsManager.as:1834 when the web cite exists \u2014 \u00a71t1523s0\u00a7.as:2268 passes \u00a71t9714s0\u00a7(1000)/(1001)/(1002) as params 12-14 into \u00a71t4443s0\u00a7 (\u00a71t99s0\u00a7.as:196-198).",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/per-stance-reach-formula",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3085-3155 and :183-199 and :219-223; \u00a71t1523s0\u00a7.as:2268 and :2334-2348; \u00a71t4906s0\u00a7.as:54-61",
+  "reason": "Verified, including the parameter binding the claim depends on: \u00a71t99s0\u00a7.as:183-194 assigns param10 to \u00a71t4420s0\u00a7, and the call site \u00a71t1523s0\u00a7.as:2268 passes \u00a71t9592s0\u00a7() in position 10, which is \u00a71t9593s0\u00a7(SPD) = int(120 + floor((90 + DAN*5)*SPD/(20+SPD))) at :2344-2348. setStance multipliers at :3091-3146 are verbatim, including both 100-px floors. Three nits: (a) the injured buff halves baseSlashLength (\u00a71t99s0\u00a7.as:219-223); (b) the enemy path hard-codes the DAN term to 90 (\u00a71t4906s0\u00a7.as:56-57); (c) the 'wiki 300/200/100 reconciles at the SPD asymptote' footnote uses Balanced x1.0 and Heavy x0.5 \u2014 i.e. mastery ZERO \u2014 inside a survey whose headline is a mastery-TEN ceiling; it is honestly flagged as inference so it stands, but it is internally inconsistent and must not be promoted. The names Dual/Reversed for \u00a71t12224s0\u00a7/\u00a71t12223s0\u00a7 are unevidenced in the web bundle.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/in-combat-stance-switch-is-real",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3048-3051 and :3058-3063; my own crops of reference/frames/session11/gap-focus-trigger/m_nearfull.png (640,0)-(1800,390) and reference/frames/combat_analysis/Nr4fQstqHDM_t428.0.png (60,880)-(1020,1080)",
+  "reason": "HELD and materially strengthened. The cited caption three-state logic (\u00a71t113s0\u00a7.as:336-347) and the 48-frame charge (\u00a71t99s0\u00a7.as:3160-3166) are verbatim, but the decisive artifact was missed: \u00a71t99s0\u00a7.as:3048-3051 is a public canChangeStance() returning validActionState && \u00a71t4414s0\u00a7 >= 48, and the cycle handler \u00a71t99s0\u00a7.as:3058-3063 returns early when reload < 48. A hard lock has no reload>=48 gate. I also corroborated from frames myself: reference/frames/session11/gap-focus-trigger/m_nearfull.png top panel shows a 98%-full focus bar mid-combat with NO caption at all, while reference/frames/combat_analysis/Nr4fQstqHDM_t428.0.png shows the caption only with the bar empty. REBUILD_READINESS.md:158 and SHSD_MASTER_REFERENCE.md:388 (graded [CONTRACT]) are both dead and should be struck.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/string-table-resolves-all-73",
+  "own_cite": "docs/gauntlet/L0/index/resolved_names.json ['skilldata.xml'] = {misses 0, rows_resolved 73}; docs/gauntlet/L0/index/strings.json lookups for 6000/6018/6042/6047/6082/6085/175/960",
+  "reason": "Verified. docs/gauntlet/L0/index/resolved_names.json -> skilldata.xml reports {misses: 0, rows_resolved: 73, miss_sample: []}, and my own parse confirms exactly 73 of the 75 skills carry a <displayname> (1500 and 1501 do not). Spot-checked strings 6000/6018/6042/6047/6082/6085 \u2014 all match the quoted text verbatim. The caveat the claim attaches is correct and I independently confirmed its sharpest form: key '960' is absent from strings.json while '175' resolves to 'Critical Hit'.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/skilldata-byte-identical-across-builds",
+  "own_cite": "python3 byte comparison of reference/extracted/android/117_Mobile_SkillData.bin against reference/extracted/skilldata.xml, run this session: 'android len 39045 web len 39003 delta 42 / common prefix after 40-byte decl: 39003'",
+  "reason": "Reproduced independently with my own byte diff: android 117_Mobile_SkillData.bin = 39045 bytes, web skilldata.xml = 39003, delta 42; the android file's first 40 bytes are the XML declaration b'<?xml version=\"1.0\" encoding=\"utf-8\"?>\\r\\n' and after skipping them the common prefix runs the full 39003 bytes; the remaining 2 bytes are the trailing CRLF. The derived rule ('Android XML is web-true, Android AS3 is not') is sound for the DATA. Note it has a hole the survey does not state: it does NOT extend to the Android string TABLE, which is UI copy \u2014 see my refutation of per-level-effect-numbers.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/frame-crit-appears-at-exactly-full",
+  "own_cite": "reference/frames/session11/gap-focus-trigger/m_nearfull.png \u2014 my crops (640,0)-(1800,390) and (640,390)-(1800,780), 2x Lanczos, plus my own white/blue run-length scan of the original (TOP 736-1526, BOT 736-1540)",
+  "reason": "Verified by my own crop and my own pixel measurement, not by trusting theirs. Crops (640,0)-(1800,390) and (640,390)-(1800,780) at 2x Lanczos show: top = green 11/20, blue 47/47, white third bar with NO text, yellow '150% DAMAGE'; bottom = identical bars with black 'CRITICAL HIT' on the white bar. My measurement in the original: TOP white x736->1526 = 791 px, BOT white x736->1540 = 805 px, i.e. 98.3% vs 100% (they said 98.0% \u2014 same conclusion). One wording caution: a 98%-vs-100% pair is consistent with an exact-equality rule but does not prove it alone (any threshold in (98%,100%] fits); the A2 equality at \u00a71t99s0\u00a7.as:3272 is what proves it, and the claim slightly overstates the frame as 'the on-screen proof'.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/frame-cracks-web-string-960",
+  "own_cite": "reference/frames/combat_analysis/Nr4fQstqHDM_t428.0.png \u2014 my crop (60,880)-(1020,1080) 3x Lanczos; reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:110-111 and :348-358; docs/gauntlet/L0/index/strings.json (175 present, 960 absent)",
+  "reason": "Verified. My own crop (60,880)-(1020,1080) at 3x Lanczos shows exactly what is claimed: red portrait ring, green 20/20, blue 26/26, an empty brown third bar carrying light-grey 'CANNOT CHANGE STANCE', yellow '150% DAMAGE' beneath. \u00a71t113s0\u00a7.as:110-111 is verbatim, including the #BBBBBB colour on getString(960) and #000000 on getString(175). strings.json confirms 175 = 'Critical Hit' (title case) and has NO key 960 \u2014 so 960 really is a web-only string the Android table lacks. Snd_criticalDamage at :352 also verbatim. The 'ship the caps because the frame wins' call is correct on \u00a70 grounds.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/150pct-damage-is-a-food-buff",
+  "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:209-224 (web equivalent); reference/decompiled/shs3_android_payload/scripts/OverworldHUD.as:1396-1410 and MCSPlayer.as:208-223",
+  "reason": "Conclusion verified: OverworldHUD.as:1396-1410 builds 'BUFF' -> '150% DAMAGE' in an else-if chain alongside 150% XP / DEFENSE / SPEED, and MCSPlayer.as:208-223 multiplies minDamage only. Item copy 4132 resolves as quoted. Precedence nit: the claim is about v0.717 behaviour but cites Android AS3 when the web cite exists and says the same thing \u2014 \u00a71t99s0\u00a7.as:209-223 is the identical else-if chain (hasBuff(9453) -> minDamage *= 1.5; else defense *= 1.5; else injured halves minDamage, defense and baseSlashLength). Use the web cite so the claim is not exposed to the very build-divergence this survey established.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/ten-categories-all-named",
+  "own_cite": "reference/decompiled/shs3_android_payload/scripts/SkillScreenUI.as:82-104; docs/gauntlet/L0/index/skilldata.json /paths/skilldata/skill/category {distinct_values 11, numeric_range [1,11]}; my ElementTree scan of category-11 membership in reference/extracted/skilldata.xml",
+  "reason": "Verified verbatim: SkillScreenUI.as:84 categoryCount = 10, :103 categoryIcons [1..10], :104 categoryDesc [6024..6033]; strings resolve as quoted. skilldata.json gives category distinct_values 11, range [1,11]. My own membership check of category 11 returns exactly 1064 Back Throw / 1065 Air Stab / 1066 Bull Charge / 1067 Punch Lunge / 1068 Undying / 1500 / 1501, none carrying <order> or <lvlreq> \u2014 precisely as claimed, so the NPC-only read is sound. Caveat the survey should have applied to itself: the tab COUNT rests entirely on Android UI code and the web skill screen was never opened; the byte-identical XML only proves 11 categories exist, not that the web build renders ten tabs.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/chi-costs-are-not-single-digit",
+  "own_cite": "docs/gauntlet/L0/index/skilldata.json /paths/skilldata/skill/level/chi; reference/extracted/skilldata.xml:1636-1652; ledger line REBUILD_READINESS.md:196",
+  "reason": "Verified. skilldata.json /paths/skilldata/skill/level/chi = {count 182, distinct_values 11, numeric_range [0,100], sample_values ['0','10','100','2','20','3','5','50','6','7','8']} \u2014 sorts to exactly the claimed ladder 0,2,3,5,6,7,8,10,20,50,100 with a hard top of 100. skilldata.xml:1638-1649 (Mass Shadow Clone 1055, lvlreq 80, chi 100, cd 30) verbatim. The ledger's 'single-digit' surface bullet (REBUILD_READINESS.md:196) is genuinely overturned. One number to carry: numeric_count is 81, so the ladder describes 81 populated cells out of 182, not all 182.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/stab-is-a-passive-tree-node",
+  "own_cite": "reference/extracted/skilldata.xml:719-730; reference/decompiled/shs3_android_payload/scripts/XMLSkill.as:340-348",
+  "reason": "Verified verbatim: skilldata.xml:720-727 gives id 1018, displayname 6042 ('Stab'), req <has><id>1002</id><qty>3</qty></has>, <passive>1</passive>, order 3, category 3 \u2014 Heavy tree, mastery-3 gate, passive. XMLSkill.as:345-348 canEquip() returns !passive && ..., so it can never take a hotbar slot. The ledger's surface bullet survives. Nit: canEquip is cited from Android; the web XMLSkill is \u00a71t105s0\u00a7.as and should be the cite of record.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/shunpo-effect",
+  "own_cite": "reference/extracted/skilldata.xml:1232-1248; docs/gauntlet/L0/index/strings.json 6082/6085; reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:1700-1712 and :1745-1756",
+  "reason": "The PARTIAL verdict is correct and honestly drawn. skilldata.xml:1234-1248 verified verbatim: id 1039, displayname 6082 'Shunpo', req <has><id>1000</id><qty>10</qty></has>, ONE level, chi 50, cooldown 60 \u2014 and I note it carries NO <lvlreq> at all, so the gate is purely mastery-10, which is stronger than the claim states. String 6085 resolves as quoted. Android MCSPlayer.as:1706 (chargingTime = 3*24) and :1751 (movePlayer(250), damage = getDamage()*getChargingTime()/2) verified verbatim. The refusal to promote the 250px/3s geometry to web fact is vindicated by the crit/stance/SPD divergences I confirmed independently.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/ultimates-and-elemental-projectile-constants",
+  "own_cite": "ElementTree parse of reference/extracted/skilldata.xml: 182 level rows, 47 with empty <desc>, 0 unresolved against docs/gauntlet/L0/index/strings.json",
+  "reason": "Honest STILL_UNHELD, and the arithmetic checks out: my own parse of skilldata.xml finds exactly 47 of 182 <level> rows with an empty <desc>, and 0 of the non-empty ones fail to resolve against strings.json. The two-step framing is right and my own work reinforces it \u2014 I proved a further Android/web numeric divergence (Roll dodge 60/80/100 in the string table vs 75/85/95 in web AS3), so even the string-derived effect numbers now need the same web-bundle cross-check the projectile constants do.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "skills-meters/skill-vfx-anim-audio",
+  "own_cite": "ls reference/extracted/android/ -> 93_MCSCharacter_SkillsAnimationData.bin; reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:348-358",
+  "reason": "Honest STILL_UNHELD. I confirmed the two supporting facts: reference/extracted/android/93_MCSCharacter_SkillsAnimationData.bin exists on disk and is unopened, and the SFX event name is real \u2014 \u00a71t113s0\u00a7.as:352 fires \u00a71t88s0\u00a7.instance.\u00a71t1516s0\u00a7('Snd_criticalDamage') on the empty-to-full focus transition, verbatim. Correctly distinguishes a held event name from an unrecovered waveform.",
+  "refuted": false,
+  "severity": "minor"
  }
 ]
