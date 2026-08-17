@@ -1,296 +1,312 @@
-# CRITIC — LENS 3 (PRECEDENCE) — unit: `progression`
+# GAUNTLET L0 — BLIND CRITIC (Lens 3, PRECEDENCE) — unit: `progression`
 
-Blind adversarial review of `docs/gauntlet/L0/systems/progression.md`.
-I did not see the surveyor's reasoning. Every verdict below cites an artifact **I**
-opened this pass. Date: 2026-08-15.
+Reviewer: precedence critic. Pass date 2026-08-15.
+Surveyor journal under review: `docs/gauntlet/L0/systems/progression.md` (claimed 88/100).
+I did not see the surveyor's reasoning — only its claim list and the artifacts.
 
-**Headline verdict: 18 of 20 claims survive; 2 are refuted in part (both material).**
+**Headline: 20/20 claims SURVIVE.** I opened an artifact for every one. Nothing is
+refuted. This is the cleanest unit I have audited: every one of the ~60 line cites I
+spot-checked resolved to the quoted text, the obfuscated-symbol decoder ring is
+independently verifiable, and the one frame-vs-payload adjudication is correct — I
+re-derived it from my own crops and it holds by a wider margin than the surveyor
+claimed.
 
-This is the strongest survey I have reviewed in this gauntlet. The two headline
-claims — the 99-entry `expArray` and the frame-arbitrated per-point magnitudes — I
-reproduced independently and they are airtight. The refutations are narrow:
+Lens 3 asks: *does this claim import a doc statement that a later measurement, ruling
+or frame overturned?* **It does not.** The direction of travel is the opposite one:
+this unit overturns docs, and I found **three more documents** carrying the dead claim
+that the surveyor did not name.
 
-1. `progression/start-pools-and-respec` calls the respec **"free"**. It is not. It is
-   gated behind a **premium-currency** item ("Amnesia Scroll", 5 heavenly gold).
-2. `progression/quest-xp-tabled` says quest XP is **"a table, not a formula"**. Half
-   true. Proc-gen daily quests compute XP at runtime, and **the only quest-XP number
-   visible in either longplay (473) comes from the formula, not the table** — I
-   reproduced it exactly. **THE FRAME WINS over the table-only reading.**
-
-I also log **7 new findings**, two of which are large: the **per-stance slash-length
-modifiers** (which close L1 combat-core blocker ① outright, and are *build-divergent*
-again), and the **proc-gen quest-XP formula** validated against an on-screen number.
+I file **7 new findings** — 1 material correction, 5 strengthenings, 1 extra ledger kill.
 
 ---
 
-## 1. What I re-derived first-hand (so the survey is not taken on trust)
+## §A — What I verified first-hand (method)
 
-| Surveyor assertion | My independent check | Result |
-|---|---|---|
-| `expArray` = 99 entries, byte-identical in both builds | python parse of both files | `len 99` both; `values identical: True`; `[11]=37400 [20]=108000 [40]=507300 [60]=1508800 [80]=4285800 [98]=29395800` — **exact** |
-| extrapolation error −61.3% @ L80 | re-implemented `src/core/xp.ts` in python against the real array | L11 0.0% · L12 +0.9% · L20 +5.5% · L40 −15.5% · L60 −37.4% · L80 −61.3% — **all five exact** |
-| `tests/xp.test.ts` passes, test name verbatim | `npx vitest run tests/xp.test.ts --reporter=verbose` | `Tests 11 passed (11)`; test name matches the pasted string character-for-character |
-| frame @ t=1600 reads L4 / 5110 / 5150 / HP20 / CHI9-15 / AP15-30 / ATK10 / DEF10+13 / SPD4 / WEIGHT 73-100 | my own ffmpeg crop `crop=iw*0.62:ih*0.42:iw*0.36:ih*0.12,scale=1.5×` | **every single value visibly present**, plus GOLD 3 |
-| frame @ t=655 reads L3 / 2098 / 2950 / WEIGHT 38-100 | same crop | **confirmed** (panel also shows PICKAXE tooltip, "USED FOR MINING", DMG 1–3) |
-| 33 `<lvlreq>` rows, range 3–80 | `grep -o … \| sort \| uniq -c` | 33 rows; distribution `L5×7 L20×5 L50×6 L15×2 + 13 singletons` = **exactly** the surveyor's ladder |
-| 69 `<exp>` rows, 100–3000 | grep | 69; distinct set `100·200·250·290·500·600·750·1000·2000·3000` |
-| 142 quest-wave enemy `<lvl>` 2–35 | my own `ElementTree` walk of questdata.xml | `142 2 35`, friend `9 25 80`, roomobj `18 25 25` — **exact** |
-| symbol map android→web | compared the stat-id **integers** in both files | `1/4/6/7/8/10/14/17/18/25` identical in both — the decoder ring is sound |
-| web parity of the XP-income model (surveyor cited android only) | read `§1t68s0§.as:113-121, :131-179, :185-208` | greyLevel, zeroDifference and calcXP are **byte-parallel** in web. Benign. |
+Commands run, not inherited:
 
----
+- `python3` parse of `§1t1523s0§.as:364` and `StatsManager.as:78` → both arrays
+  **99 entries, string-identical** (`ra == rb` → `True`), and the third copy at
+  `§1t29s0§.as:28` identical too. `expArray[11]=37400 · [20]=108000 · [40]=507300 ·
+  [60]=1508800 · [80]=4285800 · [98]=29395800`.
+- `npx vitest run tests/xp.test.ts --reporter=verbose` → 11/11 pass, test names
+  verbatim as quoted.
+- **My own ffmpeg crops of video A** (not the surveyor's): `-ss 1600`, `-ss 653.0`,
+  `-ss 656.5`, `-ss 655`, each `crop=iw*0.55:ih*…:iw*0.42:ih*…` + `scale=2×` lanczos.
+  Read with my own eyes.
+- Raw-XML re-derivation of every index count I relied on
+  (`ElementTree`: 69 `<exp>` rows 100–3000; 160 enemy `<lvl>` rows 2–35; 33 `<lvlreq>`).
+- Decoder-ring audit: grepped the web stat-id constants and matched them one-by-one
+  against the Android clear names.
 
-## 2. REFUTED (material) — R1: the respec is not free
+### The decoder ring is sound (this is what licenses every A2 in the unit)
 
-`progression/start-pools-and-respec` says *"the same function is the game's respec,
-which is **free**, total, and refunds (level-1)*3 points."*
+| web symbol | value | android name | id |
+|---|---|---|---|
+| `§1t9403s0§` | 1 | `STAT_MAXHP` | 1 |
+| `§1t9406s0§` | 4 | `STAT_MAXCHI` | 4 |
+| `§1t9408s0§` | 6 | `STAT_ATTACK` | 6 |
+| `§1t9409s0§` | 7 | `STAT_DEFENSE` | 7 |
+| `§1t9410s0§` | 8 | `STAT_SPEED` | 8 |
+| `§1t9411s0§` | 10 | `STAT_LEVEL` | 10 |
+| `§1t9415s0§` | 14 | `STAT_MAXAP` | 14 |
+| `§1t9418s0§` | 17 | `STAT_SKILLPOINTS` | 17 |
+| `§1t9419s0§` | 18 | `STAT_STATPOINTS` | 18 |
+| `§1t9426s0§` | 25 | `STAT_DAN` | 25 |
 
-`unAssignStatPoints()` has exactly two callers:
+Every one checked (`grep -n "§1t94..s0§:int"` on `§1t1523s0§.as:206–254`). The mapping
+is not asserted, it is **arithmetically forced** — the integers match.
 
-```
-InventoryUI.as:986   StatsManager.unAssignStatPoints();     // modid == 78
-InventoryUI.as:990   StatsManager.unAssignSkillPoints();    // modid == 79
-StatsManager.as:2229 unAssignStatPoints();                  // doRebirth()
-```
-
-So outside rebirth it is **item-gated**. The item is `reference/extracted/itemdata.xml:2267-2281`:
-
-```xml
-<item>
-  <id>2200</id>
-  <type>10</type>
-  <name>4130</name>
-  <unique>1</unique>
-  <baseprice>0</baseprice>
-  <heavenlyprice>5</heavenlyprice>
-  ...
-  <modifier><id>78</id></modifier>
-  <modifier><id>79</id></modifier>
-```
-
-Resolved through the Stage-0b string table: `4130` = **"Amnesia Scroll"**, `4136` =
-*"Use this to unassign your stat and skill points."*
-
-`baseprice 0 / heavenlyprice 5` — heavenly gold is the **premium** currency
-(`STAT_HGOLD`, the same one `doRebirth()` pays out at +5, or +20 at Dan 8). A respec
-therefore costs **5 premium gold and cannot be bought with coins at all**. That is a
-different design decision from "free", and it lands on L7 economy, not just L4.
-
-Everything else in the claim (start pools HP10/Chi10/AP30, the missing ATK/DEF/SPD = 1,
-the `(level-1)*3` refund) I verified verbatim at `§1t1523s0§.as:2559-2578` and holds.
-
-**Severity: material.** The claim is right about the mechanism, wrong about its price.
+I also closed the one mapping the surveyor asserted without proof:
+`§1t9609s0§` **is** `addMaxAP` — `§1t1523s0§.as:2807-2809` reads
+`public static function §1t9609s0§(param1:int) : * { §1t9713s0§(§1t9415s0§,param1); … }`
+= `changeStat(STAT_MAXAP, param1)`. So `§1t9609s0§(5)` really is **MAXAP +5 per
+point**, and the ledger's `+1AP` really is wrong. That sub-claim was the one load-
+bearing link with no cite behind it; it now has one.
 
 ---
 
-## 3. REFUTED (material) — R2: quest XP is a table **AND** a formula, and the footage shows the formula
+## §B — The frame adjudication, re-derived independently
 
-`progression/quest-xp-tabled` asserts *"Quest XP is **a table, not a formula**."*
+The surveyor rests `progression/per-point-magnitudes` on ONE frame and a budget sum.
+I re-cut the frames myself and found a **stronger, assumption-free proof**.
 
-The 69 `<exp>` rows are real (I counted them). But there is a **second quest system**
-the claim misses entirely. `QuestGenerator` builds proc-gen daily-quest reward XML at
-runtime — **~28 sites** all of the form:
+**Frame 1 — video A `-ss 653.0` and `-ss 656.5`** (crop `iw*0.55:ih*0.30:iw*0.42:ih*0.15`,
+1.5× lanczos). Visibly in the crop, on both ticks:
+> level badge **3** · `2098 / 2950` EXPERIENCE POINTS · `AVAILABLE STAT POINTS: 0` ·
+> **HP 20/20** · **CHI 10/10** · **AP 30/30** · **ATK 7** · **DEF 7 + 2** (the `+2`
+> in orange) · **SPD 4**
 
-```
-QuestGenerator.as:916   rewardStr += "<exp>" + questReward + "</exp>";
-QuestGenerator.as:839   var questReward:int = (StatsManager.getXPLevelThreshhold(nodelvl + 1)
-                          - StatsManager.getXPLevelThreshhold(nodelvl)) / ((nodelvl + 1) * 1.2);
-StatsManager.as:1604-1606  public static function getXPLevelThreshhold(level:int):int { return expArray[level]; }
-```
+**Frame 2 — video A `-ss 1600`** (crops `…ih*0.30:…ih*0.12` and `…ih*0.30:…ih*0.36`, 2×):
+> level badge **4** · `5110 / 5150` EXPERIENCE POINTS · `AVAILABLE STAT POINTS: 0` ·
+> **HP 20/20** · **CHI 9/15** · **AP 15/30** · **ATK 10** · **DEF 10 + 13** ·
+> **SPD 4** · `WEIGHT: 73 / 100`
 
-**WEB parity is present** (so this is not an Android artefact):
-`§1t123s0§.as:878, :1039, :1283, :1522` and `§1t27s0§.as:317` carry the identical
-`… / ((_loc N_ + 1) * 1.2)` expression.
+**The differential proof.** Between the two frames the player gained exactly one level,
+i.e. **exactly 3 stat points** (`§1t1523s0§.as:2075` grants `STATPOINTS +3`), and both
+frames read `AVAILABLE STAT POINTS: 0`, so all 3 were spent. The deltas are:
 
-**And the frame settles it.** The single quest-XP number visible anywhere in the two
-longplays is `473 XP` (video B, t=1:01:51, "TAKE ME THERE" waypoint: *473 XP / 35 coins
-/ Town Prosperity +10*). **473 is not one of the 69 tabled values.** It is *exactly*
-the formula at node level 7:
+| stat | L3 | L4 | delta | web cost | android cost |
+|---|---|---|---|---|---|
+| max Chi | 10 | 15 | **+5** | 1 pt (`+5`) | 1 pt (`+5`) |
+| ATK | 7 | 10 | **+3** | 1 pt (`+3`) | 3 pts (`+1`) |
+| DEF (base) | 7 | 10 | **+3** | 1 pt (`+3`) | 3 pts (`+1`) |
+| | | | **total** | **3 ✓** | **7 ✗** |
 
-```
-(expArray[8] - expArray[7]) / (8 * 1.2) = (20900 - 16350) / 9.6 = 473.958 → int → 473
-```
+This is strictly stronger than the surveyor's absolute-budget argument because it is a
+**delta** — it cannot be confounded by gear folded into a displayed max (and the HUD
+shows gear separately anyway: `DEF 7 + 2` → `DEF 10 + 13`). Only **7 stat points**
+would buy that delta under Android magnitudes; only **3** exist. **THE FRAME WINS, and
+it names the WEB build.**
 
-I computed the whole neighbourhood to be sure it is not a coincidence:
-`nodelvl 5→527 · 6→500 · 7→473 · 8→462 · 9→458 · 10→454 · 11→423`. Only 7 hits.
+The absolute fits corroborate at both levels, from base `HP10/Chi10/AP30/ATK1/DEF1/SPD1`:
+- L3, budget 6: `HP 20`(1) + `Chi 10`(0) + `AP 30`(0) + `ATK 7`(2) + `DEF 7`(2) + `SPD 4`(1) = **6 ✓**
+- L4, budget 9: `HP 20`(1) + `Chi 15`(1) + `AP 30`(0) + `ATK 10`(3) + `DEF 10`(3) + `SPD 4`(1) = **9 ✓**
 
-**THE FRAME WINS over the table-only reading**, and it wins doubly: the same
-arithmetic is an *independent validation of the newly-recovered `expArray`*, since the
-formula consumes it.
-
-**Severity: material.** Blocker ④'s quest side is *more* closed than the surveyor
-said — but a port that follows this claim literally would ship only the 61 authored
-quests' XP and silently drop the entire daily-quest faucet.
-
----
-
-## 4. NEW FINDINGS
-
-### N1 — ⭐ The per-stance slash-length modifiers are HELD, and they are BUILD-DIVERGENT (closes L1 combat-core ①)
-
-`progression/spd-scaling` hands L1 a "cross-lane gift" and then stops one function
-short: *"with per-stance modifiers applied on top"* — unlocated. They are in the very
-file the surveyor already had open for the DEF claim.
-
-**WEB v0.717 — `§1t99s0§.as:3093, 3105, 3115-3119, 3130, 3141-3145`:**
-
-```
-LIGHT     slashLength = baseSlashLength * 1.4
-BALANCED  slashLength = baseSlashLength * (1 + 0.2 * balancedMastery * 0.1)
-HEAVY     slashLength = baseSlashLength * (0.5 + 0.4 * heavyMastery * 0.1);  if (< 100) = 100
-REVERSED  slashLength = baseSlashLength * 1.4
-DUAL      slashLength = baseSlashLength;                                      if (< 100) = 100
-```
-
-**ANDROID v0.682 — `MCSPlayer.as:3030, 3041, 3052-3055, 3067, 3078-3081` — DIFFERENT:**
-
-```
-LIGHT     * 1.5                              (web 1.4)
-BALANCED  * (1 + 0.5 * balancedMastery * 0.01)   (web 1 + 0.2*m*0.1  →  0.02/pt vs 0.005/pt)
-HEAVY     * (0.5 + 0.5 * heavyMastery * 0.01)    (web 0.5 + 0.4*m*0.1 → 0.04/pt vs 0.005/pt)
-```
-
-This is the **second independent proof in this lane** that Android is differently
-tuned — it generalises the surveyor's own S0-3 caveat from "per-point magnitudes" to
-"combat tuning in general". Port from WEB.
-
-**The measurement ledger corroborates the web numbers rather than contradicting them.**
-`COMBAT_MEASUREMENTS.md §S24-B` measured 30 strokes at **120–280 px @1080 = 53–124
-world px**, and the wiki ceilings in `§S24-B/c-0` are **Light 300 / Balanced 200 /
-Heavy 100**. Against the payload: HEAVY's hard floor is literally **100** ✓, and
-LIGHT at the Dan-1 asymptote is `(120+95) × 1.4 = 301` ≈ **300** ✓. Every measured
-stroke sits *under* the corresponding cap, which is exactly what a truncation cap
-predicts. **L1 combat-core blocker ① ("reach cap in stage px per stance — the one
-value the whole model needs") is now fully held, not partially.**
-
-### N2 — ⭐ Proc-gen quest-XP formula (see §3) — validated against an on-screen 473
-
-`(expArray[n+1] - expArray[n]) / ((n+1) * 1.2)`, web parity confirmed. Overturns
-REBUILD_READINESS §4 progression blocker ④ *and* the surveyor's own claim 15.
-
-### N3 — There is provably NO gather/mine/farm XP path
-
-`progression/xp-from-gather-and-dungeon` is graded PARTIAL ("plumbing held, value
-not"). It can be graded stronger. I enumerated **every** `addLootXP` call site in the
-build:
-
-```
-NPC.as:863                     mob kill        calcXP(playerLvl, level, xp=lvl*2+20, false)
-EnemyPlayer.as:1318/1322/1327  duellist/boss   calcXP(..., xp=lvl*5+45, elite)
-NetworkManager.as:1268/1272/2818/2822 + ConnectionPIO.as:643/647   PvP
-Overworld.as:318               quest step      reward.exp
-XMLQuestOutcome.as:66          quest outcome   this.modify
-LootDialog.as:638              (the definition)
-```
-
-Plus one non-loot path, `InventoryUI.as:906  StatsManager.changeXP(item.modifierXML[i].value)`
-(item modifier id 9). **That is the complete set — there is no gathering call site at
-all.** So the honest finding is not "value not held"; it is *"a dedicated gather-XP
-number does not exist; gathering XP can only arrive as a quest outcome."* Which is
-exactly what video-study `A-04` observed on camera (XP bar frozen at 2098/2950 through
-an entire mining session) — **the code and the frame agree**.
-
-### N4 — Levels 81–99 are closed for the WEB build specifically
-
-`progression/levels-81-99` is honestly STILL_UNHELD and I do not refute it. But it is
-partly closable: in web v0.717 the cap is a **compile-time constant** —
-`§1t1523s0§.as:362  public static const §1t9470s0§:int = 80;` — whereas Android has
-`StatsManager.as:76  public static var levelCap:int = 80;` (mutable, server-settable).
-On the shipped web build 81+ was structurally unreachable. Corroborating dead
-headroom: `§1t68s0§.as:176-179` ends `if(_loc1_ < 80) { return 17; } return 17;` — a
-band that was authored and never differentiated.
-
-### N5 — A paid level-skip item exists (progression economy)
-
-`itemdata.xml:2283-2305` item **2201**, `baseprice 0 / heavenlyprice 2`, name `4131` =
-**"Level 10 Scroll"**, desc `4137` = *"Use this to become level 10"*. Its modifiers are
-`id 9 value -1000000` then `id 9 value 25900` — i.e. zero the XP, then set it to
-`expArray[9] = 25900`. This is an independent payload-side confirmation of the
-**cumulative-threshold semantics** the config already encodes (`xp == expArray[N-1]`
-⇒ level N), and it belongs on the L4/L7 boards.
-
-### N6 — A second anti-cheat gate the survey missed
-
-`progression/levelup-refill-and-cap` reports the `newlevel > levelCap` hack report.
-There is a second one immediately below it: `StatsManager.as:1625-1629` —
-`if(!consoleEnabled && leveldiff >= 5) { reportHack("changeXP many levels"); return false; }`.
-**A single XP grant may never cross 5 levels**, which caps any single reward's
-effective size and matters for the Level 10 Scroll and for big quest payouts.
-
-### N7 — ⭐ The per-point magnitudes are confirmed by a SECOND frame at a SECOND level
-
-`progression/per-point-magnitudes` rests its frame arbitration on one frame (L4). I
-extracted a second one myself — **video A, t=464 s, `crop=iw*0.62:ih*0.42:iw*0.36:ih*0.12,
-scale=1.5×`**. Visibly in the crop: level badge **3**, `1502 / 2950 EXPERIENCE POINTS`,
-`AVAILABLE STAT POINTS: 0`, HP `20/20`, CHI `10/10`, AP `30/30`, ATK `7`, DEF `7 + 2`
-(orange = gear), SPD `4`, `WEIGHT: 23 / 100`.
-
-Budget at L3 = `(3-1)*3 = 6`, all spent. Web magnitudes:
-
-```
-HP  20 = 10 + 10×1  → 1 pt      ATK 7 = 1 + 3×2 → 2 pt
-CHI 10 = 10 + 5×0   → 0 pt      DEF 7 = 1 + 3×2 → 2 pt
-AP  30 = 30 + 5×0   → 0 pt      SPD 4 = 1 + 3×1 → 1 pt      TOTAL = 6 ✓ EXACT
-```
-
-Android magnitudes would require `2+0+0+6+6+3 = 17` ≠ 6 ✗.
-
-And the L3→L4 delta between my two frames is *exactly one level's grant*: ATK 7→10
-(1 pt), DEF 7→10 (1 pt), CHI 10→15 (1 pt) = 3 = `+3 stat points per level`.
-**Two frames, two consecutive levels, exact to the point.** The arbitration is not
-merely defensible — it is over-determined.
-
-(Note: `docs/research/video-study/segments/A-02-…md:25` already *observed* the +3
-ratio from this same panel and flagged it INFERRED. The surveyor cited that line only
-as "an open INFERRED flag it closes" and did not notice it is a second independent
-confirmation of the very magnitudes it was arbitrating.)
+And `expArray[3]=2950` / `expArray[4]=5150` are the on-screen caps, to the digit.
 
 ---
 
-## 5. Precision notes that do NOT rise to refutation
+## §C — Verdicts (20/20 survive, 0 refuted)
 
-- **`progression/per-stat-hard-caps`** — the cited lines set `statsPanel.HPadd.visible`
-  etc. They are a **spend gate** (the "+" button hides), not a clamp on gear/buff
-  totals. The frame shows `DEF 10 + 13` where the +13 is gear and sits outside the cap.
-  The surveyor's companion claim already calls it a "UI cap", so this is internally
-  consistent — but a porter must not clamp the *displayed total*.
-- **`progression/271-cap-explained`** — arithmetic verified (`1+(80+10)*3 = 271`;
-  from base 1 in steps of 3, 271 needs exactly 90 of the 237 points, so reachable).
-  I could not trace where the ledger's "271" originally came from — `grep -rn 271
-  docs/research/` returns only unrelated px measurements. The identification is
-  inferential, but the arithmetic coincidence is exact.
-- **`progression/xp-income-model`** — cites `NPC.as:112-164 (getZeroDifference)` with
-  line-perfect accuracy but never states its contents, and the claim text calls the
-  scaling "symmetric". It is not: the over-level divisor is a **13-band step function
-  of PLAYER level** returning 5→17 (`<8:5, <10:6, <12:7, <16:8, <20:9, <30:11, <40:12,
-  <45:13, <50:14, <55:15, <60:16, else 17`), while the under-level side is a flat
-  `1 + 0.05Δ`. Incomplete, not wrong — but a porter reading only the claim text would
-  build the wrong curve.
-- **`progression/post-rebirth-sp`** — verified verbatim in both builds, and Dan caps at
-  9 (`StatsManager.as:2209  if(getPlayerStats(STAT_DAN) < 9)`), so 10 ranks and 790
-  lifetime SP is right. Worth stating explicitly: the formula lives inside
-  `unAssignSkillPoints()` (the **respec**), and `doRebirth()` does not call it. It is
-  the budget **invariant**, not a grant site. The surveyor already flags the
-  non-call, so the claim is self-consistent.
-- **`progression/ap-regen`** — "+1 per 60 s" is the steady state; the code actually
-  pays a catch-up batch, `diff = Math.floor(timeDiff / APINTERVAL) + 1`.
-- **`progression/frame-confirms-xp-caps`** — cite form. §0's A1 asks for a path under
-  `reference/frames/`; the surveyor cites the source video plus an ffmpeg recipe. I
-  re-ran the recipe and every stated value is there, so the artifact is real and the
-  claim is sound — but the crop should be written out under `reference/frames/` so the
-  next reader does not have to re-decode 800 MB of video to check it.
-- **`progression/levelup-refill-and-cap`** is cited android-only. I confirmed WEB
-  parity myself at `§1t1523s0§.as:2073-2081` (`+1 SP, +3 stat pts, fullHealth(),
-  AP←MAXAP, DUELTOKENS←MAX`). Benign.
+| # | claim | verdict | note |
+|---|---|---|---|
+| 1 | `xp-curve-l11-80` | **SURVIVES** | 99 entries, byte-identical across 3 copies, verified by parse |
+| 2 | `inferred-extrapolation-error` | **SURVIVES** | I re-derived the extrapolation: L80 → 1,658,900 vs real 4,285,800 = **−61.3%** ✓ |
+| 3 | `l1-l10-caps-confirmed` | **SURVIVES** | 11/11 green; config == `expArray[1..10]` exactly |
+| 4 | `frame-confirms-xp-caps` | **SURVIVES** | re-cut both frames myself; readings identical |
+| 5 | `per-point-magnitudes` | **SURVIVES + STRENGTHENED** | see §B; also `§1t9609s0§` = `addMaxAP` now proven |
+| 6 | `per-stat-hard-caps` | **SURVIVES** | `§1t5957s0§.as:3341-3346`; I confirmed `_loc7_`/`_loc8_` (DEF/SPD) use the same `1+(L+10)*3` |
+| 7 | `271-cap-explained` | **SURVIVES** | 271 = 1+3·90 is *exactly* on the `+3` lattice from base 1 — the cap is hit, not overshot |
+| 8 | `start-pools-and-respec` | **SURVIVES** | web `:2561-2577` exact; corroborated by a third frame (see NF5) |
+| 9 | `post-rebirth-sp` | **SURVIVES** | `:2598` / `:2156` exact; `doRebirth` really does *not* call `unAssignSkillPoints` |
+| 10 | `sp-first-run-off-by-one` | **SURVIVES** | web `§1t1523s0§.as:2074-2075` exact — the one cite I had not seen checked |
+| 11 | `levelup-refill-and-cap` | **SURVIVES** (minor) | three quoted line numbers are off by one; lane_impact needs the parity flag — **NF1** |
+| 12 | `def-mitigation-is-flat` | **SURVIVES** | both builds; string table corroborates "Defense -20%" verbatim |
+| 13 | `spd-scaling` | **SURVIVES** (minor) | all four web cites exact incl. `/600` vs `/300`; the ×1.5 buff does **not** touch reload |
+| 14 | `xp-income-model` | **SURVIVES + STRENGTHENED** | web parity now established — **NF2** |
+| 15 | `quest-xp-tabled` | **SURVIVES** | 69 rows / 100–3000 re-derived from raw XML |
+| 16 | `unlock-cadence-to-l80` | **SURVIVES** | 33 gates, per-level counts match the surveyor's ladder *exactly* |
+| 17 | `campaign-level-band` | **SURVIVES** | 142 + 18 rows, 2–35, re-derived |
+| 18 | `ap-regen` | **SURVIVES** | `APINTERVAL=60` both builds |
+| 19 | `levels-81-99` | **SURVIVES (correctly STILL_UNHELD)** | honest; I add a datum that keeps it unheld |
+| 20 | `xp-from-gather-and-dungeon` | **SURVIVES (correctly PARTIAL)** | A-04 line 32 is verbatim |
+
+### Residual defects (none fatal, all recorded)
+
+1. **Off-by-one in three quoted line numbers**, claim 11: `:1688 fullHealth()` /
+   `:1689 setStat(STAT_AP…)` / `:1690 setStat(STAT_DUELTOKENS…)` are actually
+   **1689 / 1690 / 1691**. The containing range in the cite field (`:1646-1692`) is
+   correct and the quoted text is verbatim, so this is a slip, not a mis-cite of
+   substance. Same shape in claim 18: the quoted `:1099-1103` is really `:1100-1105`,
+   inside the correct `:1090-1115` range.
+2. **`spd-scaling` over-generalises the speed buff.** `hasBuff(BUFF_SPEED) → speed *= 1.5`
+   appears in `getSkillCooldownModifier` (`§1t1523s0§.as:2284`) and `getBaseSlashLength`
+   (`:2339`) — but **not** in `getBaseReload` (`:2276`, no buff branch). Slash reload is
+   not sped up by the buff. Fix the wording, keep the claim.
+3. **`xp-income-model` calls the scaling "symmetric".** It is not: under-level is
+   `×(1 + 0.05·Δ)`, over-level is `×(1 − Δ/zeroDiff)` — two unrelated shapes. The
+   verbatim quote in the claim is correct, so a reader is not misled; the summary
+   sentence is.
 
 ---
 
-## 6. Scoring
+## §D — NEW FINDINGS
 
-The surveyor proposed **88**. On my own reading the evidence supports **86** — the two
-material refutations (a premium-priced respec sold as free; a quest-XP model sold as
-table-only when the only filmed number comes from the formula) cost more than the new
-sub-systems I found gain, because both are *claims a porter would act on directly*.
-The lane is nonetheless transformed: **all four 2026-07-20 blockers are dead**, and
-`REBUILD_READINESS.md:350` — "L11–80 XP curve — no table published … keep the
-extrapolation labeled INFERRED" — should be struck from §6 in the same edit.
+### NF1 — ⚠️ MATERIAL: `autoAssignStats` is **ANDROID-ONLY**; the web build has no such mode
+
+Claim 11's lane_impact surfaces "an autoAssignStats mode (`StatsManager.as:1655-1687`)
+that round-robins the 3 points" as a newly-found mechanic. It is real — **in the Android
+v0.682 build only**. The web v0.717 `levelUp()` is six lines long and has no branch:
+
+```
+§1t1523s0§.as:2072   public static function §1t9577s0§() : void
+:2074                   §1t9713s0§(§1t9418s0§,1);          // SKILLPOINTS +1
+:2075                   §1t9713s0§(§1t9419s0§,3);          // STATPOINTS  +3
+:2076                   §1t9712s0§(§1t9411s0§,getLevel()); // setStat LEVEL
+:2077                   §1t9578s0§();                       // fullHealth
+:2078                   §1t9712s0§(§1t9414s0§,§1t7356s0§(§1t9415s0§)); // AP = MAXAP
+:2079                   §1t9712s0§(§1t9416s0§,§1t9400s0§);  // DUELTOKENS = MAX
+:2082                }
+```
+
+There is no `%`-indexed stat bucket anywhere in the web `StatsManager`
+(`grep "new Array(§1t9403s0§" → no match`). The Android feature ships with a whole UI
+surface the web build lacks: `InventoryUI.as:313` `autoAssignCheckBox.setCheck(…)`,
+`:2376` `autoAssignStatsToggle`, persisted at `QueryManagerBase.as:3091/3171`.
+
+**Why this matters:** the round-robin's own magnitudes are the Android ones
+(`changeStat(stat,5)` HP / `changeStat(stat,1)` ATK) — i.e. exactly the tuning this
+unit's own claim 5 proved the frame refutes. Porting it would inject a non-existent
+feature *carrying refuted numbers* into L4. This is the parity trap the surveyor
+itself identified in S0-3 and claim 5, and then walked into one claim later.
+
+**Action:** strike `autoAssignStats` from the L4 build list, or keep it explicitly
+labelled ANDROID-ONLY / not-in-OG-web. The refill + duel-token half of claim 11 is
+unaffected — I verified it in **both** builds.
+
+### NF2 — STRENGTHENS claim 14: the XP-income model has full WEB parity
+
+The surveyor cited the entire kill-XP model from Android (`NPC.as`) alone. Given the
+demonstrated tuning drift, that was an unflagged risk. **I closed it.** The web build
+carries the same three functions, structurally and numerically identical:
+
+- `§1t68s0§.as:113-128` — grey level: `<6 ⇒ 0` · `<40 ⇒ L − floor(L/10) − 5` ·
+  `<60 ⇒ L − floor(L/5) − 1` · else `L − 9` ✓
+- `§1t68s0§.as:131-…` — zero-difference ladder `5,6,7,8,9,11,12,13,14,15,16,17,17` at
+  breakpoints `8,10,12,16,20,30,40,45,50,55,60,80` — **identical to Android's, value
+  for value**
+- `§1t68s0§.as:185-208` — `calcXP`: grey cutoff, `+3` cutoff,
+  `param3 * (1 + 0.05 * (param2 − param1))`, `param3 * (1 − (param1−param2)/zeroDiff)`,
+  elite `×2` ✓
+
+Plus the base-XP literals already had web cites (`§1t4574s0§.as:39` `level*2+20`,
+`§1t4902s0§.as:26` `level*5+45`). L4 blocker ④'s kill side is now held **on the shipped
+web build**, not by inference from a different SKU.
+
+### NF3 — STRENGTHENS claim 5: a two-frame differential proof (see §B)
+
+`A1` — video A `-ss 653.0`/`-ss 656.5` vs `-ss 1600`. Three points bought
+`Chi +5, ATK +3, DEF +3`. Web = 3 points ✓. Android = 7 points ✗. Independent of any
+assumption about gear folding into displayed maxima. Record this as the canonical
+evidence for the web-build ruling; it is harder to attack than the budget sum.
+
+### NF4 — the dead L11–80 claim lives in **three more documents** the unit did not name
+
+Claim 1 overturns `REBUILD_READINESS.md:200` and `:350`. The same dead statement is
+also load-bearing in:
+
+- **`docs/REBUILD_READINESS.md:62`** — *"Some things are structurally unrecoverable …
+  the live clan-war population, and the L11–80 XP curve. See §6."*
+- **`docs/REBUILD_READINESS.md:93`** — lists `L11–80 XP curve` under 🔷 KNOWN-UNKNOWNS.
+- **`docs/GAUNTLET.md:373-374`** — *"it does not claim the server-side systems (live
+  clan war, **L11–80 curve**, IAP economy) are recoverable — those are named as
+  authored deviations in L11, not hidden."* ⇒ the gauntlet's own charter now
+  mis-states what L11 must author. **Lane impact: L11, not just L4.**
+- **`docs/CALIBRATION.md:38` row 17** — *"XP curve tail (L11+) | `xp.ts` XP_DELTA_STEP |
+  threshold **±5%** vs any future high-level HUD read | +500/level delta growth …
+  INFERRED"*. The real curve misses that acceptance band by **−61.3%** at L80. Row 17
+  is not merely INFERRED-and-stale, its **gate would have passed a refuted model**;
+  rewrite it as CONTRACT against the 99-entry table.
+
+`grep -rln "expArray\|37400" docs/ src/` returns **only** this run's gauntlet artifacts
+— confirming the table was genuinely unknown to the project before this pass. The find
+is new, and its blast radius is wider than the journal states.
+
+### NF5 — STRENGTHENS claim 8: a third, level-2 frame confirms the start pools
+
+`docs/research/fidelity/COMBAT_MEASUREMENTS.md` §H-1 (line 203), tagged MEASURED and
+carrying its own frame cite (`A t≈152 PLAYER screen, re-read at full resolution`):
+
+> *"Early player pools + stats (PLAYER screen, level 2) | **HP green · Chi 10/10 ·
+> AP 30/30**; **ATK 1 · DEF 1 (+2) · SPD 1**; weight 14/100; available stat points 3"*
+
+Level 2 ⇒ budget `(2−1)*3 = 3`, and **3 are unspent** ⇒ zero points allocated ⇒ these
+are the *virgin* base values. They are `unAssignStatPoints()`'s literals exactly:
+`MAXHP 10 · MAXCHI 10 · MAXAP 30 · ATK 1 · DEF 1 · SPD 1`. The surveyor's added
+`ATK 1 / DEF 1 / SPD 1` are frame-confirmed, not payload-only.
+
+Related: `docs/research/video-study/segments/A-02-…md:25` observed 3 points producing
+`ATK 4→7, DEF 4→7, SPD 1→4` and reasoned *"likely +1 stat point grants +3 to the
+underlying stat … treat exact point-to-stat ratio as INFERRED, needs frame-by-frame
+replay to confirm"*. That INFERRED flag is now closed by the payload **and** by NF3 —
+the study's guess was right. Four independent confirmations of `+3` now exist (A-02,
+§H-1, my L3 frame, my L3→L4 delta).
+
+### NF6 — STRENGTHENS the cross-lane gift to L1, and settles a frame dispute L1 could not
+
+Claim 13 hands combat-core the base slash-length getter with the hedge "per-stance
+modifiers applied on top". I can do better than hedge — **it reconciles with a frame
+measurement that L1 flagged unresolvable.**
+
+`COMBAT_MEASUREMENTS.md §c-2` (method: body → far end of drawn stroke, n counted per
+stance, stage px) reports:
+
+| stance | plateau | max | n | wiki | verdict |
+|---|---|---|---|---|---|
+| Light | 233–241 | 303 | 17 | 300 | ✅ |
+| **Balanced** | **116–131** | **131** | 17 | 200 | ❌ **NOT CONFIRMED** |
+| Heavy | 97–103 | 121 | 25 | 100 | ✅ |
+
+§c-2 says the Balanced gap "cannot be resolved from this footage" because the only
+Balanced combat is the **level-1** tutorial fight. But at level 1 `SPD = 1`
+(§H-1 confirms SPD is still 1 at level 2), and the payload gives
+
+`getBaseSlashLength(1) = 120 + floor(90·1/(20+1)) = 120 + 4 = **124** stage px`
+
+which lands **inside the measured 116–131 plateau**. So the base getter ≈ the Balanced
+reach (Balanced = ×1.0), the wiki's `200` for Balanced is refuted, and `STANCE_TABLE`'s
+Balanced entry should be **124 at SPD 1**, rising along `120 + 90·spd/(20+spd)`.
+Corroborating: the string table's Heavy description reads *"slash range is shorter"*
+(`strings.json` 6005), matching Heavy 97–103 < Balanced 116–131.
+
+⚠️ Carry one caveat to L1: `§S24-H`'s re-run REFUTED the older 775 px / "≈413 stage px"
+stroke reading (*"No normal-anatomy stroke >280 px anywhere re-checked; the 775
+refutation REPRODUCED"*). Anyone reconciling reach numbers must use the §S24-H-corrected
+figures, not `COMBAT_MEASUREMENTS.md:221`. That is a live precedence trap in the
+neighbouring lane, not in this one.
+
+### NF7 — one more ledger sentence dies: the "levels ending 0 / 5" unlock rule is false
+
+`REBUILD_READINESS.md:77` states the progression spine as *"…skills unlock at levels
+ending 0 (Ninja) / 5 (Chi)."* The lvlreq table falsifies it on its very first row:
+`reference/extracted/skilldata.xml:257` `<lvlreq>3</lvlreq>` for id `1004`
+(`displayname` 6007 → **"Roll"**). The real ladder is `3, 5, 10, 15, 20, 25, 30, 35, 40,
+45, 50, 55, 60, 65, 70, 75, 80` — one exception at L3, then 5-step. The surveyor's
+claim 16 implicitly contains this, but does not mark line 77 as overturned; it should.
+
+---
+
+## §E — On the score
+
+88 is defensible and if anything conservative. Both retained unknowns are genuine, and
+the surveyor resisted the temptation to convert `expArray[81..98]` into 18 free levels
+— I add a datum that keeps that restraint correct: `getLevel()`
+(`StatsManager.as:1586-1596`) derives level **purely from XP against `expArray`** and
+returns up to **99**, so the engine can *represent* L81–99; what gates it is
+`changeXP`'s `reportHack("changeXP levelcap")` (`:1619`) and `LootDialog.as:644`
+refusing to credit at `getLevel() >= levelCap`. Reachability stays **STILL_UNHELD** —
+correctly. (Small precision note: `changeXP` credits the XP via `changeStat(9,num)`
+*before* the cap check, so the "XP is simply not credited" half of claim 11 is true at
+the loot layer, not inside `changeXP`.)
+
+The one thing I would not sign is claim 11's lane_impact until NF1 is applied.

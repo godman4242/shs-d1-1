@@ -1,199 +1,292 @@
-# rebirth-elements — HUNTER critic (blind)
+# rebirth-elements — HUNTER CRITIC (blind)
 
-Reviewed: the PASS-2 surveyor output for `rebirth-elements` (new_score 88, 19 claims).
-Every verdict below was reached by opening the artifact myself. Nothing here is carried
-from the surveyor's reasoning — I never saw it.
-
-**Headline: 16 of 19 claims HOLD, verbatim, at the exact cited lines. All three
-non-HELD verdicts are wrong — two STILL_UNHELDs and one PARTIAL are all findable on
-disk, and I found them.** That is the exact failure mode this lane exists to catch.
+Reviewer opened every artifact itself. No verdict below rests on the surveyor's text.
+Standing invariant honoured: no frame/doc conflict arose in this lane, because the
+material that closes it is payload art and payload code, not video.
 
 ---
 
-## 1. Refutations (the under-claiming)
+## Headline
 
-### R1 — `rebirth/stance-slash-multipliers-parity` — REFUTED (material)
+**Two "STILL_UNHELD" verdicts are wrong, and one of them is the single biggest
+under-claim in the unit.** The rebirth element circle is not missing. It is on disk,
+rendered, in the **web v0.717** payload, class-linked to InteractUI, and I looked at it.
+So is the **entire Dragon Dance bagua UI**. The surveyor wrote its own close-path
+("locate the exported symbol for InteractUI's elementCircle MovieClip in the asset SWF")
+and then did not run the one-line grep that answers it.
 
-The claim: *"only in the android v0.682 bundle — I grepped the whole v0.717 desktop tree
-for the identical expressions and got zero hits, so parity is NOT established."*
-
-The v0.717 numbers are on disk. `reference/decompiled/shs3_payload/scripts/§1t99s0§.as`
-is the desktop `MCSPlayer` (it defines `§1t4446s0§`, the `initElementDefenseStats`
-callee at `§1t1523s0§.as:2270`). Its `setStance` switch, **:3091–3155**, is structurally
-identical to android `MCSPlayer.as:3027–3095` — same five cases in the same order, same
-`setStanceColor` args 1/2/3/2/3, same `< 100` floor on HEAVY and DUAL — and the numbers
-are **different**:
-
-```
-:3094  LIGHT     slashLength = baseSlashLength * 1.4                          (android 1.5)
-:3105  BALANCED  slashLength = baseSlashLength * (1 + 0.2 * balMastery * 0.1)  (android 1 + 0.5*m*0.01)
-:3116  HEAVY     slashLength = baseSlashLength * (0.5 + 0.4 * hvyMastery*0.1)  (android 0.5 + 0.5*m*0.01)
-:3117-19          if(slashLength < 100) slashLength = 100;
-:3131  REVERSED  slashLength = baseSlashLength * 1.4                          (android 1.5)
-:3142  DUAL      slashLength = baseSlashLength;  floor 100
-```
-
-The grep could never have hit: `0.005` appears in **neither** build, and `0.5 + 0.5 *`
-is android-only phrasing. v0.717 scales mastery by `* 0.1`, not `* 0.01`. A negative
-grep on terms lifted from the *other* build is not evidence of absence.
-
-Parity is not "unestablished" — it is **established as different**, and the desktop
-v0.717 values win.
-
-### R2 — `rebirth/element-circle-art` — REFUTED (material)
-
-The claim: *"The element-picker circle's art, layout and colours remain unrecovered."*
-Its own close-path was *"locate the exported symbol for InteractUI's elementCircle
-MovieClip in the asset SWF."* That export already exists on disk.
-
-**`reference/extracted/sprites/DefineSprite_1650/1.png`, 808×480 px** (viewed whole, then
-crop `(230,80)-(620,420)` upscaled ×3). Visibly: four element badges on a ring —
-**FIRE** top (red ring, 火 in red on a near-black disc), **EARTH** right (dark-gold ring,
-土), **WIND** bottom (light-grey/white ring, 風), **WATER** left (blue ring, 水) — joined
-by grey curved arrows each labelled **"STRONG AGAINST"**, running FIRE→EARTH→WIND→WATER→FIRE.
-
-Two independent confirmations that this is the right sprite:
-
-1. It is a child of the InteractUI symbol. Desktop `InteractUI` = `§1t401s0§` =
-   `symbol1691` (`§1t401s0§.as:9`), and `reference/extracted/sprites/DefineSprite_1691_1t401s0/1.png`
-   is the composite render of that symbol — crop `(520,250)-(860,470)` ×4 shows the
-   `STRONG AGAINST` / `…AGAINST` / `WIND` label text bleeding through, partly occluded by
-   the chohan bowl (`DefineSprite_1687` / `1688_shs3_fla.InteractUI_chohan_621`, both
-   262×262 — I checked, the brown disc is the dice bowl, not the element circle).
-2. **The art's arrow direction matches the code wheel exactly.** `StatsManager.as:1836`
-   (desktop confirm `§1t1523s0§.as:2270`) sets `FIREDEF=WATERATK, WINDDEF=EARTHATK,
-   WATERDEF=WINDATK, EARTHDEF=FIREATK` → fire beats earth, earth beats wind, wind beats
-   water, water beats fire. That is the ring in the picture. Art and AS3 corroborate
-   each other with no doc in between.
-
-Bonus from the same pass: `elementCircle.visible = true` at `InteractUI.as:559` fires in
-`UIMODE_REBIRTH` `menuState == 1` alongside `detailstext.text = LangManager.getString(611)`
-— **string 611 = "Choose an element to specialize in."**, the picker's own prompt copy,
-which the surveyor's UIData claim did not carry. And the sprite being **808×480** is
-independent corroboration of ledger §3 #12's 800×480 native stage.
-
-### R3 — `rebirth/element-status-effects` — REFUTED (material)
-
-The claim: *"unverified in either direction … I did not read Damage.as buff fields plus
-the BUFF_* constants in StatsManager.as."* I read both. It takes one command.
-
-`reference/decompiled/shs3_android_payload/scripts/Damage.as` — the **complete** field
-list is `damage, stance, launchType, attackerlvl, piercingDamage, fireDamage,
-waterDamage, windDamage, earthDamage, flyVelX, flyVelY, victimPosX` (`:26–48`). There is
-**no** burn / slow / root / DoT / duration field anywhere on the damage packet. The only
-status-shaped thing is the `launchType` enum at `:6–24` (`LAUNCH_NONE/AIR/KNOCKDOWN/FLY/
-FLYAWAY/KNEEGROIN/STUN/DEATHTOUCH/SUBSTITUTIONLOG/BACKTHROW`).
-
-`StatsManager.as:288–312` — every `BUFF_*` constant is meta/economy, none is combat and
-none is elemental: `BUFF_XP 0, ATTACK 1, DEFENSE 2, SPEED 3, AP 4, DUELTOKENS 5, COINS 6,
-RARELOOT 7, MUTE 8, FULLMUTE 9, HELL 10, INJURED 11, MODERATOR 12`.
-
-The honest answer is not STILL_UNHELD, it is **HELD-negative**: elemental skills apply no
-status beyond their launch type, because the packet has no field to carry one. A
-recreation should ship them statusless and say so.
+**One HELD claim is wrong in the direction that matters.** The stance slash-length
+parity claim rests on a negative grep that is false: v0.717 *does* carry the stance
+switch, with *different constants*, and the mastery cap is **10**, not 100 — which means
+the ledger's "0.9/1.2/1.4 are mastery-ceiling values" line the surveyor proposed to
+re-check is **exactly right**, and the surveyor's correction would have broken it.
 
 ---
 
-## 2. Corrections that do not refute the claim
+## Verdict table
 
-| # | Claim | Correction |
+| claim | refuted | severity |
 |---|---|---|
-| C1 | `rebirth/aoe-radii-per-element` | All four numbers verbatim at the exact cited lines. But they are **not radii**. `NPCManager.as:1422` is `checkHitObject(thing, damage, dist=100, …)` and `:1442–1444` compares **x only** (`enemydist = enemy.getMCS().x - thing.x; if(enemydist*enemydist < distsq …)`). It is a horizontal half-width band ±dist, not a circle. Build it as a band. |
-| C2 | `rebirth/unlock-gate-is-stat-threshold` | Core claim exact (reqs 10/30/60 on stat 28; `STAT_FIREATK=28`; `+10` per rebirth, `+20` at `STAT_DAN==8`, both builds). But the lane_impact line **"Gear affixes on stats 28-31 count toward the same threshold" is wrong.** `StatsManager.checkCondition` (`:4216`) special-cases `id >= 28 && id <= 31` to `output = getStat(id)` (`:4230–4233`) with **no `findBonusStat`** — unlike `initAttackStats` (`:1835`) which adds it explicitly. Gear does **not** open skills. |
-| C3 | `rebirth/dan-ladder-titles` | Shogo bands exact (465 at cases 3/4/5, 466 at 6/7, 467 at 8/9, `InventoryUI.as:2285–2312`). But `case 0: this.danfield.text = "";` (`:2277`) — **STAT_DAN 0 renders a blank title**. String 455 (初段) exists in the table and is never displayed. The mapping is 456…464 → STAT_DAN 1…9, not 455…464 → 0…9. |
-| C4 | `rebirth/tenth-gold-is-100` | Numbers exact. Label needs an id: `§1t9413s0§ = 12 = STAT_HGOLD`, and `getHeavenlyGold()` (`StatsManager.as:2669–2675`) adds `QueryManagerPIO.getPayVaultCoins()` while `OverworldHUD.updateHGoldText` (`:1567–1569`) writes `info.goldtext`. So the rebirth pays the **premium, IAP-linked "GOLD"** purse, not `STAT_GOLD=11` (the coin/"MONEDAS" purse — see `DefineSprite_1671` "MONEDAS" vs `DefineSprite_1674` "GOLD"). The claim's word "gold" matches the game's own HUD label, so it is not mis-cited — but `REBIRTH.earlyGold/tenthGold` must be wired to the premium currency or the economy lane inherits a silent bug. |
-| C5 | `rebirth/elemental-damage-ladder` | Ladder + `new Damage(0,0,2,-1,damage)` verbatim, but the latter is at **`FireBreathProjectile.as:53`**, not `:51`. The claim's unstated premise — that `damage` is the caster's element ATK — I confirmed independently: `MCSPlayer.as:781` `createProjectile(PROJ_FIREBREATH, …, STAT_FIREATK, getSkillLevel(SKILL_FIREBREATH), this)`. |
-| C6 | `rebirth/kanji-statue-bonus` | Verbatim, but scope it: the RNG permutation branch only runs when `props >= 8` (`Obj_DragonDanceStatue.as:38`); for `props < 8` the statue takes a fixed `sequence = props` straight from room data. |
-| C7 | `rebirth/string-table-resolved` | True, but it is Stage-0b finding S0-3 restated, and the `ledger_text` it claims to overturn (blocker ⑤, the picker UI) is not what string resolution overturns. Low marginal value, not wrong. |
+| rebirth/string-table-resolved | no | minor (mis-tagged ledger sentence) |
+| rebirth/dan-ladder-titles | no | minor (初段 never displayed) |
+| rebirth/dan-achievements-prove-ten | no | — |
+| rebirth/element-picker-uidata | no | minor (no v0.717 counterpart; caveat missing) |
+| rebirth/elemental-skill-tooltips | no | — |
+| rebirth/dragon-dance-teachable | no | — |
+| rebirth/tenth-gold-is-100 | no | minor (currency is HGOLD, not GOLD) |
+| combat-core/dan-scaled-slash-length | no | — |
+| progression/post-rebirth-sp-economy | no | — |
+| rebirth/unlock-gate-is-stat-threshold | no | — |
+| rebirth/elemental-damage-ladder | no | — |
+| rebirth/aoe-radii-per-element | no | — |
+| rebirth/dragon-dance-bagua-input | no | minor ("tier-3" mislabel) |
+| rebirth/kanji-statue-bonus | **YES** | **material** |
+| rebirth/element-counter-wheel | no | — (now corroborated by ART) |
+| rebirth/mitigation-flat-min1 | no | — |
+| rebirth/stance-slash-multipliers-parity | **YES** | **fatal** |
+| rebirth/element-circle-art | **YES** | **fatal** |
+| rebirth/element-status-effects | **YES** | minor |
 
 ---
 
-## 3. New findings the surveyor missed
-
-**N1 — the v0.717 stance DAMAGE multipliers, and mastery caps at 10 not 9.**
-Same desktop file, `§1t99s0§.as:3255–3271`:
+## R1 — `rebirth/element-circle-art` STILL_UNHELD is REFUTED (fatal)
 
 ```
-_loc1_ = minDamage + Math.random() * damageRange
-LIGHT     dmg = _loc1_ * (0.5 + 0.4 * lightMastery * 0.1)
-BALANCED  dmg = _loc1_ * (1   + 0.2 * balMastery   * 0.1)
-HEAVY / DUAL / REVERSED   dmg = _loc1_ * 1.4
+$ grep -n "elementCircle" reference/extracted/payload.xml
+111134:            <item>elementCircle</item>
+626581:        <item type="PlaceObject2Tag" characterId="1650" depth="37" ... name="elementCircle" .../>
 ```
 
-`initPlayer` param order (`:183–199`) pins `§1t4421s0§/4422/4423` = light/balanced/heavy
-mastery = `getStat(1000/1001/1002)`; `reference/extracted/skilldata.xml` skills **1000,
-1001, 1002 each carry exactly ten `<level><value>` rows, 1…10**. So mastery ranges 0–10,
-and at mastery 10 the multipliers are **0.9 / 1.2 / 1.4** — the wiki's stance-damage table
-exactly. Ledger §3 #3 calls these "MASTERY-9 CEILING values"; **it is the mastery-10
-ceiling.** Its "level-1 Shugyosha does Light ×0.5 / Balanced ×1.0 / Heavy ×1.4 (Heavy is
-fixed)" is confirmed as the mastery-0 row.
+Enclosing sprite is **spriteId 1691**. Class linkage, from the *web v0.717* decompile:
 
-**N2 — the wiki reach table 300/200/100 is the mastery-0 BASE, not a ceiling.**
-`getBaseSlashLengthVal` (`§1t1523s0§.as:2344–2348`, android `StatsManager.as:1915–1919`)
-asymptotes to `120 + 90 = 210` at Dan 0. Apply the v0.717 *reach* multipliers at mastery
-0 — Light ×1.4, Balanced ×1.0, Heavy ×0.5 — and you get **294 / 210 / 105 ≈ 300/200/100**.
-At mastery 10 the same stances give 294 / 252 / 189. Ledger §3 #3 sweeps both tables into
-"mastery-9 ceiling"; the damage table is a mastery-10 ceiling and the reach table is a
-mastery-0 base. They are not the same row. Note the crossover: the mastery-scaled term is
-each stance's *weak* axis (Light's damage, Heavy's reach) while its strong axis is fixed.
+```
+reference/decompiled/shs3_payload/scripts/§1t401s0§.as:9
+   [Embed(source="/_assets/assets.swf", symbol="symbol1691")]
+   public class §1t401s0§ extends MovieClip      // = InteractUI
+```
 
-**N3 — combat-core blocker ② ("crit 1.3 vs 3 final") is closed by v0.717.**
-`§1t99s0§.as:3272–3276`: `if(reload == maxreload) return dmg * 1.3 + STAT_CRITICALDMG;`
-— a flat **×1.3 for every stance** at full reload, plus the gear crit-damage affix. Not
-×3. (Android v0.682 differs again: `MCSPlayer.as:3215–3221`, ×1.2 non-Light / ×1.5 Light.)
-Ledger §3's forum-sourced "crit 1.3" is now first-party-confirmed for the shipped build.
+`§1t401s0§.as:873-881` carries the `firerebirth` grant, so 1691 *is* InteractUI, and
+`characterId 1650` at depth 37 inside it *is* the rebirth element circle.
 
-**N4 — the Dragon Dance UI art is fully held.**
-`reference/extracted/sprites/DefineSprite_1810_1t5495s0/1.png`, 819×500 (viewed whole):
-a dark-red double outer ring; eight clickable nodes as green-outlined white discs each
-bearing a kanji; an inner dark-red bagua trigram ring; a black/white taiji centre with the
-element name (**"FIRE"**) written across it; an X close button top-right.
-`§1t5495s0§.as:70–71` is the desktop `DragonDanceUI` (it holds `["sky","wind","water",
-"mountain","earth","thunder","fire","lake"]` / `["fire","earth","lake","sky","water",
-"mountain","thunder","wind"]`), so `DefineSprite_1810_1t5495s0` is its symbol by
-class-link. Children: `DefineSprite_1800` (green bagua ring, 437×437),
-`DefineSprite_1802` (dark-red bagua ring, 437×437), `DefineSprite_1808` (taiji, 242×242),
-`DefineSprite_1797_shs3_fla.dragondancewords_235` (39×40, **58 frames** — the kanji glyph
-strip that `DragonDanceUI.as:359/:364` indexes as `word.gotoAndStop(num + 11)` for Earlier
-Heaven and `(num + 31)` for Later Heaven), `DefineSprite_1798_1t5501s0` (64×64 node).
-Green ring vs red ring = the two arrangements. Blocker ④'s art half is held too.
+**Rendered art is already exported:**
+`reference/extracted/sprites/DefineSprite_1650/1.png` (808×480).
+Crop `(510,50)-(808,370)` upscaled 3× (894×960, Lanczos) — I opened it. Visibly:
 
-**N5 — build divergence is wider than the one number the surveyor flagged.**
-Between android v0.682 and desktop v0.717 I found divergence in: rebirth payout
-(5/20 vs 25/100), Light/Reversed reach (×1.5 vs ×1.4), Balanced/Heavy mastery scaling
-(`*0.01` vs `*0.1`, coefficient 0.5 vs 0.4/0.2), stance damage (Heavy ×1.5 vs ×1.4),
-full-reload crit (×1.2/×1.5 split vs flat ×1.3), and the stance-change reload penalty
-(`maxreload/3`, `-maxreload/6` vs a flat `-48`). **Every combat-tuning number checked so
-far moved between builds.** Treat any android-only combat number as INFERRED until the
-desktop line is found; the desktop file to check first is `§1t99s0§.as`.
+- Four circular nodes on a ring: **FIRE top (火), EARTH right (土), WIND bottom (風),
+  WATER left (水)** — English label under each, kanji inside each.
+- Four thick grey arcs with arrowheads running **clockwise**, each captioned
+  **"STRONG AGAINST"** on two lines.
+- Ring stroke and kanji share one colour per element; node fill is uniform dark grey.
+- Display face is the hand-drawn brush font (consistent with Stage-0 finding S0-2, `Edo SZ`).
+
+Sampled pixels (`PIL`, from the same PNG):
+
+| element | ring + kanji | node fill |
+|---|---|---|
+| FIRE | `#FF3300` | `#333333` |
+| EARTH | `#7D5500` | `#333333` |
+| WIND | `#BBBBBB` | `#333333` |
+| WATER | `#0099FF` | `#333333` |
+
+`#7D5500` is the *same* hex the shogo title is drawn in
+(`InventoryUI.as:2286  nametext += " <font color='#7D5500'>"`). Earth gold and Dan-title
+gold are one colour.
+
+The claim's stated evidence — "no frame in any of the 113 frame directories shows the
+rebirth flow" — is true and irrelevant. This never needed a frame.
+
+**Bonus, same grep family:** sprite 1691's own layout is in the payload in twips
+(`payload.xml:626575-626600`), so the panel geometry is held too —
+`elementCircle` at (0,0); `titleText` at (206,1400) twips = **(10.3, 70) px**;
+`button1..button5` all at x=200 twips = **10 px**, y = 2180/2960/3740/4520/5300 twips =
+**109 / 148 / 187 / 226 / 265 px** → uniform **39 px** row pitch.
+
+## R2 — the Dragon Dance UI art is ALSO on disk (new, nobody claimed it)
+
+```
+reference/decompiled/shs3_payload/scripts/§1t5495s0§.as:7
+   [Embed(source="/_assets/assets.swf", symbol="symbol1810")]
+§1t5495s0§.as:70-71
+   this.§1t5516s0§ = ["sky","wind","water","mountain","earth","thunder","fire","lake"];
+   this.§1t5517s0§ = ["fire","earth","lake","sky","water","mountain","thunder","wind"];
+```
+
+→ `§1t5495s0§` is the v0.717 DragonDanceUI, and its symbol renders to
+**`reference/extracted/sprites/DefineSprite_1810_1t5495s0/1.png`** (813×480). Opened it.
+Visibly: three concentric **dark-red** rings; **8 white click nodes with bright-green
+outlines** at the 8 compass points, each carrying a green kanji (frame-1 default 天 =
+"sky", matching `earlierHeavenLabel[0]`); **8 dark-red bagua trigram glyphs** on an inner
+ring; a **taijitu (yin-yang) centre** with the element name ("FIRE") in the brush font;
+a red **✕** close button top-right.
+
+A second, related sprite — `reference/extracted/sprites/DefineSprite_3555_1t6980s0/1.png`
+(class `§1t6980s0§`, members `node0..node7`, `clearButton`, `doSkillButton`,
+`greenCircle`, `redCircle`) — is the dance-performance/teach variant. Also rendered.
+
+So ledger blocker ④ has no art half left either.
+
+## R3 — `rebirth/stance-slash-multipliers-parity` is REFUTED (fatal)
+
+Claim: *"only in the android v0.682 bundle — I grepped the whole v0.717 desktop tree for
+the identical expressions and got zero hits, so parity is NOT established."*
+
+The v0.717 stance switch is at `reference/decompiled/shs3_payload/scripts/§1t99s0§.as`
+(= desktop MCSPlayer; it defines `§1t4443s0§`/`§1t4446s0§`, the same two methods
+`§1t1523s0§.as:2264-2270` calls):
+
+```
+3094  LIGHT     this.§1t4417s0§ = this.§1t4420s0§ * 1.4;
+3105  BALANCED  this.§1t4417s0§ = this.§1t4420s0§ * (1 + 0.2 * this.§1t4422s0§ * 0.1);
+3116  HEAVY     this.§1t4417s0§ = this.§1t4420s0§ * (0.5 + 0.4 * this.§1t4423s0§ * 0.1);
+3117            if(this.§1t4417s0§ < 100) { ... = 100; }
+3130  REVERSED  this.§1t4417s0§ = this.§1t4420s0§ * 1.4;
+3141  DUAL      this.§1t4417s0§ = this.§1t4420s0§;   floor 100
+```
+
+Searching for *identical literal expressions* was the methodological error: **every
+constant moved**. Side by side:
+
+| stance | android v0.682 | **web v0.717** |
+|---|---|---|
+| Light | ×1.5 | **×1.4** |
+| Balanced | ×(1 + 0.5·m·0.01) | **×(1 + 0.2·m·0.1)** |
+| Heavy | ×(0.5 + 0.5·m·0.01), floor 100 | **×(0.5 + 0.4·m·0.1)**, floor 100 |
+| Reversed | ×1.5 | **×1.4** |
+| Dual | ×1.0, floor 100 | ×1.0, floor 100 |
+
+And the mastery scale is **not** 0-100. `mastery` is `getStat(1000/1001/1002)`
+(`StatsManager.as:1834`), and those three skills have exactly **10** `<level>` rows each
+in the *web* `reference/extracted/skilldata.xml` (skill 1000 = "Light Stance Mastery",
+levels 1..10; same for 1001/1002).
+
+At the mastery ceiling m=10, v0.717 gives **Light 1.4 / Balanced 1.2 / Heavy 0.9** —
+which is the ledger's `0.9/1.2/1.4` triple, exactly. So the ledger line the claim wanted
+re-checked is correct, and it is about **reach**, not damage. The claim's lane_impact
+("mastery is a 0-100 percentage here, not 0-9, so the ledger's 'mastery-9 ceiling'
+framing needs re-checking") would have corrupted combat-core.
+
+Also: the claim lists only three stances. There are **five**.
+
+## R4 — `rebirth/kanji-statue-bonus` is REFUTED (material)
+
+The android form is real, but it is **one of three** regimes, and it is not the v0.717
+form. Desktop statue class (`getAPUse()→2` at :324, `abs(x-param1.x) < 100` at :344 —
+those two *do* match android), `reference/decompiled/shs3_payload/scripts/§1t8702s0§.as`:
+
+```
+150  internal function generateSequence() : String
+154     var _loc1_ = RNG.create(StageManager.getCurrentNode() * <fn>() + 21);
+155     var _loc2_ = <perNodeLookup>(StageManager.getCurrentNode());
+157     var _loc4_ = [0,1,2,3,4,5,6,7];
+158     if(_loc2_ < 20)   → 3 random DISTINCT nodes drawn without replacement  (3 clicks)
+170     else if(_loc2_ < 60) → permutation of "1246" + _loc1_.rand(8)          (5 clicks)
+194     else              → permutation of "1246" + 2 more distinct draws      (6 clicks)
+```
+
+vs android `Obj_DragonDanceStatue.as:41-62`, single regime, `new RNG(getCurrentNode())`,
+`sequence = "1246"+this.num`.
+
+Three concrete divergences the claim asserts away:
+1. **Seed** is `node * X + 21`, not the bare node id.
+2. **Length** is 3, 5 or 6 clicks depending on a per-node value, not always 5.
+3. The **trailing node is RNG-drawn**, not the statue's own `num`.
+
+The permutation table itself (`"1246"/"4216"/"1642"/"1426"/"6241"`, `rand(5)`) *is*
+identical across builds — that part survives. The target build is v0.717 (the longplays
+are of the web game), so the claim's stated spec is wrong for the build being recreated.
+
+## R5 — `rebirth/element-status-effects` STILL_UNHELD is REFUTED (minor)
+
+The surveyor named the close-path ("read Damage.as buff fields plus the BUFF_* constants
+in StatsManager.as") and didn't run it. It is three commands, and the answer is a clean
+negative:
+
+- `Damage.as` (read end to end, 0 lines skipped): the class holds **only**
+  `damage, stance, launchType, attackerlvl, piercingDamage, fireDamage, waterDamage,
+  windDamage, earthDamage, flyVelX, flyVelY, victimPosX`. There is **no** status,
+  duration, tick, or DoT field of any kind, and no setter for one. `launchType`'s ten
+  values (`LAUNCH_NONE/AIR/KNOCKDOWN/FLY/FLYAWAY/KNEEGROIN/STUN/DEATHTOUCH/
+  SUBSTITUTIONLOG/BACKTHROW`) are all knockback/throw poses.
+- `StatsManager.as:288-312` — `BUFF_0..12` are `XP, ATTACK, DEFENSE, SPEED, AP,
+  DUELTOKENS, COINS, RARELOOT, MUTE, FULLMUTE, HELL, INJURED, MODERATOR`: an
+  account/meta buff system (chat mutes, injury timer, XP boosts), not combat statuses.
+  No burn / slow / root / poison exists in the enum.
+- `MCSPlayer.as:3347-3420` — the elemental path is subtract-DEF → min-1 floor → sum into
+  one `setHP()`. Nothing is written to the victim.
+- `NPCManager.checkHitObject:1422-1470` — pure distance loop, delegates to
+  `enemy.checkHitObject`. No effect application.
+
+**Verdict: HELD, negatively. Elemental skills apply no status beyond `launchType`.**
+Build the recreation that way and label it CONTRACT.
 
 ---
 
-## 4. Verified-and-held (no action)
+## Corrections to claims that otherwise survive
 
-`string-table-resolved` (610 verbatim) · `dan-ladder-titles` (see C3) ·
-`dan-achievements-prove-ten` (`114_Mobile_AchievementData.bin:463–470`, `<stat>25</stat>
-<val>9</val>`, 8044="Ultimate Warrior" / 8124="Reach Dan 10.") ·
-`element-picker-uidata` (`90_InteractUI_UIData.bin:94–105` — order Fire 507/24, Earth
-510/27, Wind 508/25, Water 509/26, and the `comp gte` Dan-10 short-circuit, all verbatim) ·
-`elemental-skill-tooltips` (6143 verbatim; `skilldata.xml:1880–1893` chi 50 / cd 60 /
-lvlreq 50; kunai-ammo cost confirmed at string 6070) · `dragon-dance-teachable` (6125
-verbatim) · `tenth-gold-is-100` (`§1t1523s0§.as:2644–2652` verbatim; see C4) ·
-`dan-scaled-slash-length` (both builds verbatim; `BankUI.as:264` verbatim) ·
-`post-rebirth-sp-economy` (both builds verbatim; `levelCap:int = 80` at
-`StatsManager.as:76`) · `unlock-gate-is-stat-threshold` (see C2) ·
-`elemental-damage-ladder` (see C5) · `aoe-radii-per-element` (see C1) ·
-`dragon-dance-bagua-input` (`DragonDanceUI.as:70–71`, `:354–355`, `:367` verbatim) ·
-`kanji-statue-bonus` (see C6) · `element-counter-wheel` (both builds verbatim, and now
-picture-confirmed — see R2) · `mitigation-flat-min1` (`MCSPlayer.as:3347–3357`, `:3420`
-verbatim).
+- **`rebirth/dan-ladder-titles`** — `InventoryUI.as:2276-2316` maps `case 0 → danfield.text = ""`.
+  String **455 (初段) is never displayed.** The live mapping is STAT_DAN *n* → string
+  **455+n for n ≥ 1** (456 弐段 … 464 十段), and STAT_DAN 0 shows a **blank** dan field.
+  A recreation that prints 初段 at Dan 1 renders something the OG never renders.
+- **`rebirth/tenth-gold-is-100`** — the stat is `STAT_HGOLD = 12`, which is **not**
+  `STAT_GOLD = 11` (`StatsManager.as:192,194`; guest start is `STAT_GOLD=100`,
+  `STAT_HGOLD=0` at :705-706). HGOLD is the premium currency the UI calls "Gold"
+  (string 100: *"…get 10 more AP for 1 Gold?"*). `tenthGold`/`+25` must bind to the
+  premium currency, not coins. Everything else in the claim verifies verbatim, including
+  `§1t1523s0§.as:36  §1t9323s0§:Number = 0.717` — the desktop bundle really is v0.717.
+- **`rebirth/dragon-dance-bagua-input`** — 1056-1059 are **req-30** (the 3× tier), not
+  "tier-3"; the 6× tier is 1060-1063, and per `DragonDanceUI.as:322-336` those teach
+  nodes **0/4/7/1** in *Later*-Heaven mode. The mechanism the claim describes is correct;
+  only the tier label is wrong. **Newly established: full v0.717 parity** —
+  `§1t5495s0§.as:70-71` (identical label arrays, same line numbers) and `:382`
+  (identical `{1,2,4,6}` Later-Heaven trigger).
+- **`rebirth/element-picker-uidata`** — verified verbatim at
+  `90_InteractUI_UIData.bin:94-105`. Caveat the claim omits: **there is no v0.717
+  counterpart on disk.** `grep -rl firerebirth reference/extracted/` returns only the
+  android blob, and `grep -c rebirth reference/extracted/payload.xml` returns **0**.
+  On-screen order (Fire/Earth/Wind/Water) and icon ids are v0.682-only. The *grant* does
+  have parity (`§1t401s0§.as:873-881`, +20 at Dan 8 else +10).
+- **`rebirth/string-table-resolved`** — substance holds (string 610 dumped verbatim from
+  `strings.json`). But `overturns_ledger: true` with `ledger_text` = blocker ⑤ is
+  bookkeeping inflation: the ledger never claimed the string table was missing; the claim
+  retracts the *PASS-1 journal*, by its own wording.
 
-## 5. Score
+## Confirmations I ran that strengthen surviving claims
 
-The surveyor withheld 12 points for two things it called unclosable — the element-circle
-art and the v0.717 stance parity. Both are closed by files already on disk, and the third
-withheld item (status effects) resolves to a clean negative. Against that, one lane_impact
-assertion (gear counting toward the unlock gate) is wrong in a way that would ship a bug.
-Net: the evidence supports a higher score than 88 on coverage, but the 88 was reached
-partly by not looking. The lane's remaining genuine gap is narrower than stated: nothing
-in rebirth-elements is now art-blocked.
+- `rebirth/element-counter-wheel` — `MCSPlayer.as:260` signature is
+  `initElementDefenseStats(FIREDEF, WINDDEF, WATERDEF, EARTHDEF)`; the call at
+  `StatsManager.as:1836` therefore pairs fireDef←**water**ATK, windDef←**earth**ATK,
+  waterDef←**wind**ATK, earthDef←**fire**ATK. That is precisely the wheel drawn in
+  `DefineSprite_1650/1.png` (Water→Fire, Earth→Wind, Wind→Water, Fire→Earth). Code and
+  shipped art agree independently. Desktop confirm `§1t1523s0§.as:2270` identical.
+- `rebirth/elemental-skill-tooltips` — "24 elemental skills" is **exactly** right:
+  categories 7/8/9/10 in `reference/extracted/skilldata.xml` contain 24 skills
+  (1013, 1025-1035, 1056-1063, 1070-1073). Skill 1070 verified: `lvlreq 50`, `chi 50`,
+  `cooldown 60`, `req id 28 qty 30`, `desc 6143`. The kunai-ammo aside is real:
+  `SkillSlotButton.as:161` reads `StatsManager.getStat(2501)` for kunai skills and
+  `:172` `Math.floor(getStat(2501)/4)` for traps — **traps cost 4 kunai each.**
+- `combat-core/dan-scaled-slash-length` — verified in both builds
+  (`StatsManager.as:1915-1919` ≡ `§1t1523s0§.as:2344-2348`, byte-for-byte in structure
+  and constants). "Stage pixels" is grounded, not assumed: `slashLength` feeds
+  `InputManager.setMaxDistance` (`MCSPlayer.as:3094`) and is added to
+  `getTargetPosition()` to form `startX/startY` (`:4663-4707`) — display coordinates.
+  `BankUI.as:264` verbatim.
+- `progression/post-rebirth-sp-economy` — `StatsManager.as:2156` ≡ `§1t1523s0§.as:2598`.
+  The "79 not 80" correction is independently right: SP starts at 0 (`:711`) and gains
+  `+1` per level (`:1652`), so L80/Dan 0 = 79.
+- `rebirth/dan-achievements-prove-ten` — `114_Mobile_AchievementData.bin` has **four**
+  `stat 25` rows: ids 48/49/50/51 at `val` 1/2/5/9 (lines 436-470). Android-only blob,
+  but the ceiling is independently proven in v0.717 by
+  `§1t1523s0§.as:2653-2655  if(STAT_DAN < 9) changeStat(STAT_DAN,1);`.
+- `rebirth/aoe-radii-per-element` / `rebirth/elemental-damage-ladder` /
+  `rebirth/mitigation-flat-min1` — all quoted lines reproduce verbatim.
+
+## What is actually still unheld in this lane, after the hunt
+
+1. **Audio for the rebirth/dance UI** — encrypted (Stage-0 S0-5), unchanged.
+2. **v0.717 parity for the element-picker menu order** — no web-side UIData exists.
+3. **The per-node gating value** in `§1t8702s0§.generateSequence` (`_loc2_ < 20 / < 60`)
+   is an obfuscated lookup I did not resolve; the three regimes are certain, the
+   thresholds' *meaning* is not.
+
+That is the whole remaining list. `⑤ rebirth/element-picker UI` is fully closed —
+data, flow, copy, geometry **and art**.

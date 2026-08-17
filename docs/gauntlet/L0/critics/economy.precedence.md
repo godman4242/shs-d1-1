@@ -1,36 +1,115 @@
 # CRITIC — unit `economy` — LENS 3 (PRECEDENCE / stale-claiming)
 
-Blind review. I did not see the surveyor's reasoning. Every verdict below carries an
-artifact **I** opened. Crops are stated. Frames are 1024×576 (not 1080p) in the
-`seg-NN/frames/` trees; I upscaled 4–6× with LANCZOS before reading any text.
+**Run:** 2026-08-15 · blind review of the 19-claim `economy` survey scored **82**.
+**Supersedes** the 2026-08-13 precedence review at this path (committed `c3ea839`;
+recover with `git show c3ea839:docs/gauntlet/L0/critics/economy.precedence.md`).
+Its R1/R3/R4 findings are re-verified first-hand below and are load-bearing here.
 
-**Headline:** 13 of 19 claims survive, several of them stronger than the surveyor
-knew. But this survey **never opened a single frame** (it says so itself in
-`score_rationale`), and that is exactly where a precedence lens bites. Six claims
-break, two of them fatally, and in every case the break is the same shape: an AS3
-class constant from the **Android 0.682** bundle was promoted to a law of the game
-without checking the **web v0.717** longplay that would have settled it in ninety
-seconds.
-
-**Score impact:** 78 is too high. The two fatal breaks remove a "closed and
-enumerable" conclusion and an honest-but-wrong STILL_UNHELD. The three frame
-corroborations I found (below) push in the other direction. Net: **72**.
+Every verdict carries an artifact **I** opened. Frames are stated with the exact
+crop and upscale. I extracted my own stills from `reference/videos/` with `ffmpeg`
+(1920×1080) and separately used the 1024×576 stills already in
+`reference/frames/*/seg-NN/frames/`.
 
 ---
 
-## A. REFUTED
+## HEADLINE
 
-### R1 — `economy/quests-pay-no-coins` · **FATAL** · overturned by frame AND payload
+This is the **most accurate payload survey I have reviewed on this board.** I
+re-derived 14 of its A2 cites and they land on the exact line, including four
+mangled-class line numbers in the web bundle. Its frame work is real: I re-cut its
+three stated crops from `Nr4fQstqHDM.mp4` at t=48:04 and every glyph it reported is
+there. Nothing here is invented except where noted in R5.
 
-The claim: *"Quest rewards pay XP and loot but never coins — the schema supports a
-coin branch and zero quests use it — which closes the coin faucet set as
-enumerable."*
+It nevertheless fails the precedence lens twice, fatally, in the same way both
+times: **it re-asserts, as new, two claims that a prior critic killed at this exact
+path on 2026-08-13** — and it retires a §0 standing caveat it has no authority to
+retire, on a premise I can positively disprove.
 
-This is false three times over.
+Net: the economy is in far better shape than 48. It is not in 82 shape, because
+82 is priced on a coin-faucet set that is not closed and an Android caveat that
+cannot be dropped. **Recommended score: 74.**
 
-**A1 — the frame.** `reference/frames/zFtCaTO0_1M/seg-29/frames/frame_0013.jpg`,
-crop `(490,340)-(760,460)` upscaled ×5. The QUESTS panel reward block reads,
-verbatim:
+---
+
+## THE CENTRAL FINDING — R1 (fatal): the web build ships NO game data at all
+
+`economy/web-payload-is-decompilable` concludes: *"so no lane needs to caveat 'this
+is the Android build' any more."* Its own `lane_impact` narrows this to AS3. **The
+text is what ships, and the text is false and dangerous.**
+
+The AS3 half is true and I verified it: `find reference/decompiled/shs3_payload
+-name '*.as' | wc -l` → **1079**; `ls reference/decompiled/shs3_payload/scripts |
+grep -c '^§'` → **612**; and `§1t17s0§.as:1977` really is the web `getSellAmt`.
+
+But the four data XMLs are a different question, and the answer is the opposite.
+
+**Proof 1 — the web payload's own binary blobs.** I printed the first 60 bytes of
+all 27 files in `reference/extracted/bindata/`. Nineteen are `<animdata>`, one is
+`<survivalmodedata>`, one is room-object defs, five are name-generator word lists,
+one is a GIF89a. **There is no item, skill, npc or quest data among them.**
+
+**Proof 2 — the payload dump.** `reference/extracted/payload.xml` (329 MB) contains
+the literal `heavenlyprice` exactly **once**, at byte offset **19403382**, and
+`itemdata` exactly **once**, at **19503662** — both inside an AS3 *string constant
+pool*, listed between `baseprice` and `minlvl`, i.e. tag names the client uses to
+**parse XML it receives**. No rows. The web build fetched its data from the dead
+Player.IO backend.
+
+**Proof 3 — the files are Android byte-for-byte.** All four:
+
+```
+diff reference/extracted/itemdata.xml   reference/extracted/android/111_Mobile_ItemData.bin  → only the <?xml?> line + trailing NL
+diff reference/extracted/skilldata.xml  reference/extracted/android/117_Mobile_SkillData.bin → same
+diff reference/extracted/npcdata.xml    reference/extracted/android/125_Mobile_NpcData.bin   → same
+diff reference/extracted/questdata.xml  reference/extracted/android/116_Mobile_QuestData.bin → trailing NL only
+```
+
+**Proof 4 — the shipped web content demonstrably differs from those rows.** Item
+`2208` is named **"1000 coins"** in the on-disk table and Android
+`InteractUI.as:923` pays `changeGold(1000)`; the web frame at t=48:04 shows that
+same SKU as a banknote printed **"200"** and web `§1t401s0§.as:952` pays `(200)`.
+
+**Proof 5 — strings on film that the Android table does not contain.** The t=48:04
+detail panel reads `TRAINING GARMENT` / `SOUL-INFUSED`. Decoding
+`reference/extracted/android/118_Mobile_Lang_EN.bin` as UTF-16LE gives **0 hits**
+for `Soul-Infused` and **0** for `Training Garment` (11 hits for `Garment`, none
+of them that item).
+
+**Proof 6 — a reward channel the on-disk quests do not have.**
+`QuestLogUI.as:463-465` renders `lootType == 50007` as `townProsperityReward`, and
+a web frame shows `TOWN PROSPERITY: +5` on a quest reward panel (see R2). The
+string `50007` appears **0 times** in `reference/extracted/questdata.xml`.
+
+**Consequence.** §0's standing S0-3 caveat — *"this is the ANDROID build,
+clientVersion 0.682 … combat tuning parity is NOT established. Label which build
+any ported string came from"* — is not merely still alive, it is now **proven
+necessary**: we hold no web-side copy of any data table, so parity can never be
+established by diff, only by frame. Retiring it repo-wide on the strength of an
+AS3 decompile would license L1/L3/L4/L5/L10/L11 to port 982 items, 75 skills, 495
+NPCs and 61 quests as if they were v0.717. They are not.
+
+Note the internal contradiction this creates: the survey's **own** claim 2 needs
+the on-disk heavenlyprice rows to be *wrong for the web build by 5×*. Claim 1 says
+the Android caveat is retired. They cannot both stand. Claim 2 is the one that is
+right.
+
+**Also strike** claim 2's supporting sentence *"the web and Android itemdata are
+byte-identical apart from the XML declaration"* and the instruction it carries,
+*"`<baseprice>`/`<weight>`/`<modifier>` port as-is."* There is no web itemdata to
+be identical to. Given that this very item table's premium prices, one SKU's
+payout, and the IAP ladder all diverge 5× between builds, "port as-is" is an
+unsafe default dressed as a verified one. Port them **labelled 0.682-sourced**.
+
+---
+
+## R2 (fatal) — `economy/quests-never-pay-coins` is a verbatim re-import of a claim killed on 2026-08-13
+
+The claim: *"No shipped quest pays coins … so the coin faucet set is closed and
+enumerable."* The 2026-08-13 review at this path killed this as **R1 · FATAL**.
+It is back, same reasoning, same wrong element scanned.
+
+**My own A1.** `reference/frames/zFtCaTO0_1M/seg-29/frames/frame_0013.jpg`, crop
+`(490,340)-(760,460)` upscaled **×5 LANCZOS**. I opened it. It reads, verbatim:
 
 ```
 REWARD
@@ -39,117 +118,51 @@ REWARD
 TOWN PROSPERITY: +5
 ```
 
-And the money actually moves. Same segment, coin counter crop `(0,0)-(220,60)` ×5:
-`frame_0012.jpg` = **365 COINS** (before turn-in) → `frame_0020.jpg` = **395 COINS**
-(after). Delta **+30**, matching the panel exactly.
+**My own A2, three ways.**
 
-**A1 — second, independent.** `reference/frames/Nr4fQstqHDM/seg-28/frames/frame_0031.jpg`,
-crop `(480,340)-(800,470)` ×4: `REWARD / 473 XP / 35 COINS / TOWN PROSPERITY: +10`.
+1. `reference/extracted/questdata.xml:4162-4168` — the shipped quest *"Turn in
+   Inokichi's Club at the Bounty Board"*:
+   ```xml
+   <reward>
+     <exp>750</exp>
+     <loot><id>0</id><qty>30</qty><chance>1</chance></loot>
+   ```
+2. `QuestLogUI.as:457` `coinReward += qty;` · `:461` `coinReward += 5 * qty;` ·
+   `:494` `rewardStr += coinReward + " coins\n";` — the client literally prints
+   "N coins" into the quest reward panel.
+3. **The survey refutes itself.** Its own claim `economy/coins-per-kill-and-xp`
+   establishes that `<reward><loot><id>0</id>` = 1 coin × qty. Claim 16 then scans
+   only `<outcome><id>11</id>` — a different element — and concludes the channel
+   does not exist. The 386-outcome scan is *correct* (I re-ran it: 386 blocks, 0
+   with `<id>11</id>`, and 69 `<exp>` rows over exactly the 10 values it lists).
+   It is correct about the wrong element.
 
-**A2 — the payload the surveyor searched.** The coin branch for quest *rewards* is
-not `<outcome><id>11</id>`; it is `<reward><loot><id>0|1|11</id>`. The surveyor
-searched the wrong element. `QuestLogUI.as:456-461`:
-
-```as3
-else if(lootType == 0 || lootType == 11)
-{
-   coinReward += qty;
-}
-else if(lootType == 1)
-{
-   coinReward += 5 * qty;
-}
-```
-
-and `reference/extracted/questdata.xml:4162-4175` — a shipped story quest that pays
-30 coins on disk:
-
-```xml
-<reward>
-  <exp>750</exp>
-  <loot>
-    <id>0</id>
-    <qty>30</qty>
-    <chance>1</chance>
-  </loot>
-  ...
-```
-
-Note the corroboration chain: that row is `750 XP + 30 coins`, and
-`docs/research/video-study/segments/A-24-...md:27` records the matching HUD deltas
-(`coins 310→340, XP 10431→11181`, i.e. +30 and +750). Payload row and film agree.
-
-**Consequence.** The lane_impact sentence *"the coin faucet set is now closed and
-enumerable — a rebuild can balance the economy without guessing at a hidden
-quest-coin income stream"* is precisely backwards: quest coins ARE a faucet, they
-are the one the survey omits, and they are the largest per-event payout in the
-early game (+30/+35 vs a duelist kill's `floor(U[0,1)×level)`). Strike the claim and
-re-open the enumeration.
+**Consequence.** Quest coins are a faucet, they are the one the survey omits, and
+at +30/+35 they are the **largest single early-game payout** — bigger than a
+duelist kill's `floor(U[0,1)×level)` and 60× the commonest mob's 0.5-coin
+expectation, which this same survey computes. `lane_impact`'s *"the faucet set
+closes"* is backwards. Re-open the enumeration.
 
 ---
 
-### R2 — `economy/iap-price-tiers` · **FATAL** · STILL_UNHELD is wrong; the frames hold it
+## R3 (material) — `economy/duel-token-cap-40` re-closes an AP cap that a frame already refuted
 
-The claim: *"Real-money IAP price tiers cannot be grounded in any admissible
-artifact."* The surveyor searched `Mobile_PremiumData.as`, `GetGoldPromptDialog.as`,
-`PayVaultBuy*.as` and `bindata/`, found nothing, and — reasonably, on that evidence —
-answered STILL_UNHELD. Its payload negatives are all correct: I re-ran them.
-`Mobile_PremiumData.as:5` is `[Embed(source="/_assets/121_Mobile_PremiumData.bin", …)]`
-and `ls reference/extracted/bindata/` returns 27 files (92–98, 100–119) with no 121.
+The cap-40 core is **right and I confirm it twice over**:
 
-But **§0 lists A1 first, and the survey never opened a frame.** The GET GOLD
-storefront is on film.
+- **A1, mine.** `ffmpeg -ss 2884 -i reference/videos/Nr4fQstqHDM.mp4`, crop
+  `(1500,130)-(1780,235)` ×5 LANCZOS: a white skull in a green diamond beside a
+  bordered field reading **`40/40`**, captioned **`DUEL TOKENS`**. Exactly the
+  survey's stated crop; exactly what it reported.
+- **A2, mine.** `§1t1523s0§.as:200` = `40` where `StatsManager.as:166` =
+  `MAXDUELTOKENS:int = 30`, with the four preceding constants aligned slot-for-slot
+  (`60`, `2*60`, `60*60`, `7`). THE FRAME WINS and the payload agrees with it.
 
-`reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0003.jpg`, crop `(200,20)-(560,300)`
-upscaled ×4, reads verbatim:
+The failure is in `lane_impact`: *"L9 (WORLD) gets AP regen = 1 per 60 s free,
+closing world-exploration blocker ④ 'AP regen rate + cap'."* It supplies a regen
+rate and declares a **cap** closed without measuring one.
 
-```
-50 GOLD    4.99 USD   [BUY]
-125 GOLD   9.99 USD   [BUY]
-200 GOLD  14.99 USD   [BUY]   ("MOST POPULAR!" burst)
-```
-
-and the un-cropped frame continues `275 GOLD 19.99 USD`, `400 GOLD 24.99 USD`, with
-the Super Rewards / TrialPay offer-wall buttons, a `FEATURE WISHLIST` button, and the
-footer line *"Purchasing gold will support Straw Hat Samurai: Duels and help fund the
-development of new features!"*
-
-That is a five-row real-money tier table at A1, from the primary 1:1 reference, in
-the proven web v0.717 build. Combined with the surveyor's own
-`economy/gold-coin-exchange-rate` (1 gold = 1000 coins), the **entire** premium
-economy — source, denomination and sink — is now recoverable, and
-`REBUILD_READINESS.md §6`'s "The dead IAP economy … structurally UNRECOVERABLE" is
-fully dead, not halved.
-
-Sub-finding for the ledger: the Ready bullet "IAP tiers" traces to
-`docs/research/video-study/SYNTHESIS.md:520`, which cites **B-17** as *"IAP tiers +
-offer walls on-screen (B-17)"*. B-17's documented screen
-(`segments/B-17-...md:4-11`) is the Ninja Shop BUY grid with **gold**-denominated
-price badges (15/25/60/200/1/5/10) — not dollars. The tier table is in the same
-segment but a different frame (`frame_0003`). The bullet was right by luck and
-mis-cited; it is now correctly citable.
-
----
-
-### R3 — `economy/duel-token-economy` · **MATERIAL** · the caps are creation values, not caps
-
-The A2 rows are all verbatim — I checked every line number:
-`StatsManager.as:158` `APINTERVAL:int = 60`, `:160` `DTINTERVAL:int = 2 * 60`,
-`:162` `WARMOVEINTERVAL:int = 60 * 60`, `:164` `MAXQUESTS:int = 7`,
-`:166` `MAXDUELTOKENS:int = 30`. The regen intervals stand.
-
-The **caps** do not.
-
-**Duel tokens.** `reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0001.jpg`, crop
-`(820,50)-(1024,130)` upscaled ×6: a skull icon over **`40/40`** with the caption
-**`DUEL TOKENS`**. Present on frames 1, 2, 4, 5, 6, 7 of that segment. Forty, not
-thirty. `MAXDUELTOKENS:int = 30` is the value `changeDT()` clamps to *in the Android
-0.682 build*; the web build the repo is recreating runs a max of 40.
-**THE FRAME WINS — say so in the ledger.**
-
-**AP.** The lane_impact claims this "closes world-exploration blocker ④ ('AP regen
-rate + cap' — 30 max, one per 60 s)". `reference/frames/Nr4fQstqHDM/seg-28/frames/frame_0007.jpg`,
-crop `(470,110)-(780,290)` upscaled ×4, character-summary tab:
+**My own A1.** `reference/frames/Nr4fQstqHDM/seg-28/frames/frame_0007.jpg`, crop
+`(470,110)-(780,290)` ×4 LANCZOS — the character-summary tab:
 
 ```
 HP   20 / 30
@@ -157,34 +170,82 @@ CHI  47 / 47
 AP   30 / 40
 ```
 
-**AP max is 40.** `setPlayerStats(STAT_MAXAP,30)` at `StatsManager.as:707` is a
-level-1 character-creation initial — the same status as `STAT_MAXHP,10` two lines
-above it, which the same frame shows as 30. Reading a creation initial as a cap is
-the exact failure mode §0 exists to prevent. World-exploration blocker ④ is **not**
-closed; the regen interval half is, the cap half is worse than open (there is now a
-wrong number in circulation).
+**AP max is 40.** `setPlayerStats(STAT_MAXAP,30)` is a level-1 creation initial —
+the same status as `STAT_MAXHP,10` two lines above it, which this same frame shows
+at **30**. Blocker ④'s cap half is not closed; it is worse than open, because a
+wrong number now has a citation attached. This is the identical error the
+2026-08-13 review killed as R3, with the identical frame available.
 
-**Tournament.** Economy blocker ④ reads "token/**tournament** economy numbers."
-`grep -rli tournament reference/decompiled/shs3_android/scripts/` returns **0 files**
-across all 559 classes. The tournament half is untouched. This is a half-kill
-reported as a kill.
+**Second half-kill in the same claim.** Blocker ④ reads "token/**tournament**
+economy numbers." The 2026-08-13 review reported `grep -rli tournament
+reference/decompiled/shs3_android/scripts/` → **0 files** and called the tournament
+half untouched. That is still true of Android — but **not of the web bundle the
+survey itself just proved is decompiled**:
+
+```
+grep -rli tournament reference/decompiled/shs3_payload/scripts/  →  5 files
+```
+
+`§1t7144s0§.as` is a full tournament UI with its member names unmangled —
+`notournamenttext`, `tournamentCreate`, `tournamentdetailstext`,
+`tournamenttitletext`. **Tournament is a web-only system** (further corroborating
+R1), and blocker ④'s tournament half is now *openable* rather than dead. The
+survey held the key — claim 1 — and did not turn it.
 
 ---
 
-### R4 — `economy/coins-per-kill` · **MATERIAL** · the reconciliation cites a frame that does not exist
+## R4 (minor) — `economy/service-prices-are-formulas` cites a measurement doc where a frame exists
 
-The A2 cite is verbatim and correct — `EnemyPlayer.as:1293-1300`, field-mob path
-`NPC.as:839/843` (`addLootCoins(1 * qty)` / `addLootCoins(5 * qty)`), buff at
-`LootDialog.as:650-657`. The claim text stands on the payload alone.
+The six formulas are **exactly right** and I re-read every one:
+`InteractUI.as:1003-1008` forge `min(level,80)*100` · `:1057` repair
+`nodeLevel*10` · `:229` inn and `:241` stables `getNodeLevel(...)*2` · `:1406` toll
+`getNodeLevel(...)` · `:1083` reinforce flat `5000`. Web line-parity holds:
+`§1t401s0§.as:1058` = `§1t1525s0§.§1t9936s0§() * 10`.
 
-The lane_impact does not:
+The corroboration cite does not hold. It reads: *"Video B's town is a level-7 node
+(B-10 t=21:02 dialogue: 'FORGE AN IRON SWORD (LEVEL 7)? / COST: 700 COINS')."*
 
-> FRAME-VS-DOC: the filmed '+8 COINS' HUD read is NOT contradicted — at a level-9
-> duelist floor(U[0,1)×9) tops out at exactly 8, so the frame and the payload agree
-> … The frame sampled the generator once; the payload holds the generator.
+- That sentence is not a frame. It is
+  `docs/research/video-study/segments/B-10-town-investigation-inn-rest-blacksmith.md:22`,
+  a measurement doc, quoted second-hand.
+- **A frame exists** and settles it directly — it was already opened and logged in
+  `docs/gauntlet/L0/verdicts.json:459`. §0: *"Citing a measurement doc second-hand
+  when a frame exists is REFUTED."*
+- The timestamp does not resolve. I extracted `zFtCaTO0_1M.mp4` at t=21:02
+  (`-ss 1262`): a town street, quest banner `HEALTH FOR YOKO`, `TERRITORY (22,5)`,
+  `SECTOR (2,4)`. No blacksmith dialogue. "B-10" is a segment of *Nr4fQstqHDM* —
+  the same video the survey calls its t=48:04 source — so "Video B" is being used
+  for both films.
 
-**There is no such frame.** I traced the `8` to its source. `src/config/economy.ts:24-35`
-states it outright:
+**The fact is true; take the right cite.** Mine:
+`reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0040.jpg`, crop `(0,380)-(700,576)`
+×2 LANCZOS — `BLACKSMITH / FORGE AN IRON SWORD (LEVEL 7)? / COST: 700 COINS /
+MATERIALS NEEDED: 2 IRON ORE`. Node level 7 → toll 7, inn/stable 14, forge 700. ✓
+
+While here: the ledger sentence being overturned is
+`REBUILD_READINESS.md:216` — *"Forge 700c (the −70 HUD read is a capture
+artifact)"*. The survey kills the "700c constant" half and leaves the "capture
+artifact" half standing, though `verdicts.json:452-453` already resolved it: the
+−70 is the **repair** charge on the same level-7 node, `7 × 10 = 70`, exact. Both
+halves of that ledger line are dead; say so.
+
+---
+
+## R5 (material) — `economy/coins-per-kill-and-xp` asserts a filmed OG artifact that does not exist
+
+The A2 body is excellent and I verified all of it: web `§1t68s0§.as:863-867`
+(`1 * _loc8_` / `5 * _loc8_`), calcXP at `:188-206` with both helper curves, the
+duelist path at `EnemyPlayer.as:1296-1298` (`addLootCoins(Math.random() * level)`
+gated by `level <= 10 || int(Math.random()*3) == 0`), and the loot tally — I
+re-derived it independently and got the survey's numbers **exactly**: 131 `<loot>`
+blocks over 66 of 495 NPCs, `(0,5,0.1)×42`, `(3,1,0.1)×27`, `(0,5,0.05)×19`,
+`(2,1,1)×10`, `(1,2,0.5)×7`, `(0,5,0.5)×6`, `(0,2,0.5)×5`, `(0,3,0.5)×5`.
+
+Then `lane_impact` says: *"the filmed +8 is the top of the duelist range
+floor(U[0,1)×9), so the frame stands and only the flat-constant MODEL falls."*
+
+**There is no such frame.** The repo says so in its own words —
+`src/config/economy.ts:27-31`:
 
 ```
  * Our +10/+8 was an INFERRED seed verified only against OUR OWN build's
@@ -192,182 +253,117 @@ states it outright:
  * reads "+10 XP / +8 COINS" is updated rather than left silently false.
 ```
 
-Every "+10 XP / +8 COINS" in the repo (`docs/sessions/-SESSION-LOG.md:204, :525,
-:739, :2095, :2241`) is a screenshot of **this repo's own Stage-2 victory screen**.
-The upstream number is `docs/research/original-game-facts.md:74` — *"10 XP / 8 coins
-per foe level (kills rewarding XP+coins is confirmed; formula isn't)"* — an unsourced
-wiki-tier line that `SYNTHESIS.md:520` already marks *"⬆ upgraded to
-**contradicted-as-formula**"*. Our own build's render is not one of the five
-admissible classes, and dressing it as "the filmed HUD read" invents an OG artifact.
-Strike the whole FRAME-VS-DOC paragraph; the claim survives on A2 with no frame
-corroboration either way.
+The "+8" is **this repo's own Stage-2 victory screen**, not one of §0's five
+admissible classes. Calling it "the filmed +8" manufactures an OG artifact, and
+§0 is explicit that a fabricated cite is the worst outcome available. This is the
+third verbatim re-import of a 2026-08-13 kill (that review's R4).
 
-(For the record, the one duel-adjacent coin read that *is* on film — A-28's 3-bandit
-pack, `350→365 = +15` — is a field-mob event, `3 × 5` on the `lootType == 1` path.
-Consistent, but it tests the mob branch, not the duelist generator.)
+Strike the clause. The claim survives on A2 with **no** frame corroboration in
+either direction, which is the honest position.
 
 ---
 
-### R5 — `economy/starting-wallet` · **MINOR** · "held verbatim" over-reaches on the gold row
+## R6 (minor) — `economy/prosperity-magnitudes-server-side` under-counts what is recoverable
 
-`StatsManager.as:705-710` is verbatim; I read it. But the claim calls the whole
-wallet "held verbatim" and then uses the `STAT_HGOLD,0` row to *correct* the repo:
-*"src/config/profile.ts:10 records '(100 coins / 3 gold)' but this build starts at
-STAT_HGOLD = 0."*
+The taxonomy is verbatim-correct; I read every quoted line in `HistoryItem.as`
+(`:239`, `:283`, `:299`, `:303`, `:307`, `:311`) and `NetworkManager.as:2042`. The
+PARTIAL verdict is the right shape and the honest one.
 
-The frame disagrees, and the frame is the primary reference.
-`reference/frames/zFtCaTO0_1M/seg-01/frames/frame_0033.jpg`, crop `(150,50)-(420,105)`
-×6 → PLAYER panel currency row `114` coins beside the gold-koban icon reading `3`
-(crop `(100,30)-(560,90)` ×4 catches both). That is roughly minute 4 of video A, one
-tutorial quest in, with no gold faucet yet reachable — no rebirth, no tournament, no
-IAP for a guest. `frame_0002.jpg` of the same segment shows the modal *"YOU NEED 2
-MORE GOLD"* against a 5-gold fast-travel, which independently pins the holding at 3.
+But the enumeration *"Only the −1000 ninja hire is a recoverable constant"* is a
+universal statement and it is false. Two lines the survey did not quote:
 
-So: Android 0.682 starts a guest at 0 heavenly gold; web v0.717 shows 3 in hand
-before anything could have granted it. That is a **version divergence**, not a repo
-error, and the correction points the wrong way. `profile.ts`'s `3 gold` is the
-frame-backed value and should stay. Downgrade the claim to PARTIAL: coins/AP/tokens
-held, HGOLD contested.
+- `HistoryItem.as:373` — `"Players changed prosperity through quests by " + val1`
+- `QuestLogUI.as:463-465` — `else if(lootType == 50007) { townProsperityReward += qty; }`
+
+and my own frame (R2 above) shows a quest paying **`TOWN PROSPERITY: +5`**. So the
+quest→prosperity channel is a second recoverable magnitude class, client-side,
+per-quest, and on film. Its per-quest values are *not* in our artifacts (0 hits for
+`50007` in the 0.682 questdata — see R1 Proof 6), so the correct statement is:
+**two** channels recoverable in kind, the ninja constant recoverable in value, the
+daily-sim deltas genuinely server-side.
 
 ---
 
-### R6 — `economy/five-vendor-generators` · **MINOR** · peddler arithmetic is wrong
+## A. WHAT I COULD NOT BREAK — and one place the survey undersold itself
 
-Core claim HELD verbatim — five generators at `XMLShopData.as:41` (peddler), `:63`
-(inn), `:84` (merchant), `:98` (premium), `:137` (barber), and
-`initMerchantItems()` really does ship `var defaultItems:Array = [];`. Inn
-("7 fixed + 3 of 6", `removeCount:int = 3`) and barber ("49 culled to 16",
-`removeCount = defaultItems.length - 16`) are both right.
+Verified first-hand, on the line, no correction:
 
-The peddler is not. `XMLShopData.as:47`:
+| claim | what I re-derived |
+|---|---|
+| `heavenlyprice-is-5x-deflated` | heavenlyprice tally **exact**: `0:1 1:59 2:6 3:191 5:5 8:1 12:39 25:1 100:1`, 304 rows. My crops `(380,840)-(580,1030)` ×4 → blue gift **60**; `(390,650)-(940,840)` ×3 → three purple scrolls **25/25/25**. 10, 15, 60 absent from the file. |
+| `writ-25g-upheld-by-frame` | `itemdata.xml:2327-2339` item 2203 `<heavenlyprice>5</heavenlyprice>`. Rationale is *more* right than stated — per R1 the file simply **is** Android data. |
+| `premium-exchange-rate-200` | web `§1t401s0§.as:952` `(200)` under the `"convertgold"` literal at `:959`; Android `InteractUI.as:923` `changeGold(1000)`. |
+| `iap-tiers-held-both-builds` | web `:136-140` 50/125/200/275/400 · `:274-278` 60/150/240/330/480 · `:296-300` 75/188/300/413/600 · `:325-329` "50…250 KREDS"; Android `:127-131` 10/25/40/55/75, `:138-142` 4.99…24.99. |
+| `premiumdata-blob-is-extracted` | catted all 4,504 bytes. 16 defaults, commented `<special>`, 23 named rotation sets; Assassin = 2130/7034/4065/5008/11036/12018. |
+| `rebirth-payout-config-is-right` | web `:2644-2652` 100/25 vs Android `:2200-2208` 20/5. |
+| `guest-start-3-gold-confirmed` | web `:1007` initNewPlayer, `:1023-1028` = 100/3/30/30/20/20 vs Android `:705-710` HGOLD **0**. |
+| `sell-price-formula` | web `§1t17s0§.as:1977-1988`, Android `Item.as:1582-1592`, character-for-character identical. |
+| `repair-weapon-cost` | Android `:1057`, web `§1t401s0§.as:1058` — the same line number, as claimed. |
+| `coin-purse-cap-ladder` | Android `:2632-2667`, web `§1t1523s0§.as:2921-2940` — ladder and `changeGold` clamp identical. |
+| `trade-goods-arbitrage-loop` | both price tables and the return expression verbatim. Honest PARTIAL — see the resolution I owe it, below. |
+| `crop-price-is-supply-oscillator` | `InteractUI.as:103` and `:497-501` verbatim. |
+| `war-room-structure-costs` | `WarHexUIBuildMenu.as:192/197/202/207` = 10000/5000/10000/10000; `WarHexUI.as:1332` `buildcost:int = 500`. |
+| `cho-han-is-ev-neutral` | `:1811-1812`, `:1823`, `:1832-1834`, and the escrow at `doBet` `:1790-1797` (`changeStat(STAT_GOLD,-num)`). EV = 0. |
+| `quests-never-pay-coins` (scan half) | 386 outcomes, 0 with `<id>11</id>`, 69 `<exp>` rows over exactly the 10 stated values. Correct scan, wrong element. |
 
-```as3
-var removeCount:int = extraItems.length - (10 + defaultItems.length);
+**Where it undersold itself.** Claim 2 argues the 5× redenomination from
+icon-matching a frame against a payload table — good work, but it is an inference.
+The survey **already held an A2 proof and did not notice**. Its own claim 5 quotes
+both IAP ladders:
+
+```
+Android PayUI.as:127-131   10   25   40   55   75  gold
+web  §1t410s0§.as:136-140  50  125  200  275  400  gold
 ```
 
-`extraItems.length` = 24, `defaultItems.length` = 7 → `removeCount` = 24 − 17 = **7**.
-Seven are spliced out, so **17** extras survive and the peddler stocks 7 fixed + 17
-of 24 (24 slots total). The lane_impact's "7 fixed + **10** of 24 rolled" reads the
-`10` literal as the keep-count when it is a term inside the remove-count. A porter
-copying that line ships a shop 7 items short.
+**Exactly ×5, five for five, code-to-code, no frame needed.** And rebirth is a
+third independent instance: 25/100 web vs 5/20 Android — ×5 twice more. The chain
+closes on itself: 50 KREDS → 50 web gold → 10,000 coins at 200/gold; 10 Android
+gold → 10,000 coins at 1000/gold. **Same real value, five-for-one unit split.** The
+5× rule should be banked at A2 with three independent code witnesses, not at A1 by
+icon inference. That is a genuine strengthening of the survey's best claim.
 
 ---
 
-## B. NEW — things the survey missed that make it STRONGER
+## B. ONE OPEN ITEM THE SURVEY FLAGGED HONESTLY — now resolved by one factor
 
-### N1 — the "−70 capture artifact" is not an artifact. It is a Repair at node level 7.
+`trade-goods-arbitrage-loop` says: *"the web expression at :1676 is
+`§1t3317s0§.instance.§1t1848s0§() * param1` (two factors, not three) — I did NOT
+resolve which is authoritative."* Flagging that was the right call. Here is the
+factor:
 
-`REBUILD_READINESS.md §economy` Surface bullet says: *"Forge 700c (the −70 HUD read
-is a capture artifact)"*. `segments/B-10-...md:36` flags it harder — *"Flag as a
-discrepancy to verify against a second viewing rather than hard-coding 700."* Both
-are wrong, and the payload + the frames settle it together.
+```
+Android InteractUI.as:1562  new RNG(StageManager.getCurrentNode() * QueryManager.instance.getServerDate() * index)
+web     §1t401s0§.as:1676   _loc4_ = §1t3317s0§.instance.§1t1848s0§() * param1;
+```
 
-`reference/frames/Nr4fQstqHDM/seg-10/frames/`, coin counter crop `(0,0)-(150,42)` ×4
-across consecutive frames:
+`§1t3317s0§` is QueryManager (it carries `saveModifiedCharData` and
+`reportPremiumBuy(4,"convertgold",1)` in the block I verified for claim 4), so
+`§1t1848s0§()` is `getServerDate()`. **The web seed drops `getCurrentNode()`.**
 
-| frame | coins | what is on screen |
-|---|---|---|
-| 0039 | 531 | blacksmith approach |
-| 0040 | 531 | `FORGE AN IRON SWORD (LEVEL 7)? / COST: 700 COINS / MATERIALS NEEDED: 2 IRON ORE` (crop `(0,380)-(700,576)` ×2) |
-| 0041 | 531 | `WHAT CAN I DO FOR YOU TODAY?` — back at the menu, **coins unchanged ⇒ forge was declined** |
-| 0042 | **461** | `REINFORCE YOUR CURRENTLY EQUIPPED WEAPON TO MAKE IT UNBREAKABLE? / COST: 5000 COINS / MATERIALS NEEDED: 1 SILVER ORE` |
-
-The −70 lands **between the menu and the reinforce prompt**, i.e. on the one
-remaining paid menu item: **REPAIR WEAPON**. And `InteractUI.as:1058` prices it
-`StageManager.getCurrentNodeLevel() * 10`. Node level is pinned at **7** by the forge
-dialogue itself — `forgeweapon` builds `addRandomSword(level)` at the node level and
-prices it `level * 100`, and the dialogue says *Iron Sword (LEVEL 7)* / *700 COINS*.
-7 × 10 = **70**. Exact.
-
-This single frame run does four things at once:
-1. **Frame-corroborates the forge law** (`nodeLevel × 100` → 700 at nodeLevel 7).
-2. **Frame-corroborates `economy/repair-weapon-cost`** (`nodeLevel × 10` → 70) — the
-   survey's blocker-③ kill now has A1 backing, not just A2.
-3. **Frame-corroborates reinforce = 5000 flat** (`InteractUI.as:1083`).
-4. **Overturns the ledger's Surface line.** Delete "the −70 HUD read is a capture
-   artifact" and close B-10's open flag.
-
-It also quietly rebuts the survey's own `economy/provenance-android-0682` pessimism
-for this subsystem: an 0.682 formula reproduced a v0.717 frame to the coin. Service
-prices did not drift between builds. (Duel-token and AP caps did — see R3. So the
-provenance caveat is real but **selective**, not blanket.)
-
-### N2 — the sell-price formula is frame-corroborated. It was never checked.
-
-`reference/frames/zFtCaTO0_1M/seg-17/frames/frame_0008.jpg`, SELL grid crop
-`(40,120)-(330,500)` ×4 and detail crop `(620,120)-(1010,420)` ×3:
-
-- **PICKAXE** badge **10**. Pickaxe `WEIGHT: 10` (read on the A-04 player sheet).
-  `getWeight() >= 10` → `(1 + 0) * 10` = **10**. ✔
-- **TORN GARMENT** detail: `LEVEL 1 · DEFENSE: +1 (EQ: 1) · WEIGHT: 5`, badge **5**.
-  Weight < 10, zero *modifiers* (the `+1` is the base `<defense>` row, not a
-  `<modifier>`) → `(1 + 0) * 5` = **5**. ✔
-- straw hat **5**, white garment **5**, plain katana **10**, green-bordered sword
-  **15** = `(1 + 2) * 5`. ✔
-- rice ball / red potion **1** — consumables are `2xxx` ids (`itemdata.xml:28`
-  `<id>2100</id>`), so `itemID < 3000` → **1**. ✔
-- "stick **0**" — the one apparent violation, and it is a hard-coded special case
-  the survey walked past: `ShopUI.as:395-397`
-  `else if(slot.getItemID() == 13002) { slot.setCost(0,0); }`. ✔
-
-Six independent price points on the observed lattice `{0} ∪ {1} ∪ 5·(1+m) ∪ 10·(1+m)`,
-zero misses. `economy/sell-price-formula` is the strongest claim in this unit and it
-should be scored as A2 **+ A1**, not A2 alone. (Also confirmed: `sellPercentage` has
-exactly one occurrence in the whole bundle — its own declaration at `ShopUI.as:58`.
-Dead. The warning is correct.)
-
-### N3 — inn rest = 8 coins is the same law, not a constant
-
-`segments/A-07-...md:20` records the innkeeper line verbatim: *"COST: 8 COINS."*
-`SYNTHESIS.md:239` banks it as *"Inn rest = 8 coins **flat**"*. `InteractUI.as:229`
-prices it `getNodeLevel(getCurrentNode()) * 2` → 8 at node level 4. Another sampled
-constant that is a formula. Supports `economy/service-prices-are-formulas`; the
-SYNTHESIS "flat" wording is stale and should be corrected in the same edit.
-
-### N4 — cite hygiene
-
-`economy/service-prices-are-formulas` lane_impact contains `(InteractUI.as:1102-1047)` —
-a reversed, impossible line range. The reinforce reagent bands are at
-`InteractUI.as:1102-1138` (stats 20064 / 20065 / 20066 consumed in three level
-bands; the `case "reinforceweapon"` block runs 1082→1139). Typo, not a fabrication,
-but fix it before a porter chases it.
+Taken literally that makes every town quote the same price for a given commodity
+on a given day — which would flatly contradict `GameEngine.as:636`'s own tip
+(*"buy goods from a market and sell in another town"*) and kill the arbitrage
+premise. Either the web build applies the node offset at a call site I have not
+found, or the loop works differently in v0.717. **I am not resolving it either** —
+but the open question is now one named factor wide, not "the expressions differ",
+and `lane_impact`'s *"fully reproducible offline, no server needed"* is premature
+for a web target until someone reads the call site.
 
 ---
 
-## C. VERDICT TABLE
+## C. SCORE
 
-| claim | verdict | severity |
-|---|---|---|
-| economy/sell-price-formula | HELD (+ frame-corroborated, N2) | — |
-| economy/repair-weapon-cost | HELD (+ frame-corroborated, N1) | — |
-| economy/coins-per-kill | **REFUTED** — fabricated frame in reconciliation | material |
-| economy/xp-formula | HELD | — |
-| economy/trade-goods-arbitrage | HELD | — |
-| economy/crop-price-oscillator | HELD | — |
-| economy/service-prices-are-formulas | HELD (+ frame-corroborated, N1/N3) | — |
-| economy/gold-coin-exchange-rate | HELD | — |
-| economy/item-price-table | HELD | — |
-| economy/five-vendor-generators | **REFUTED** — peddler stock count wrong | minor |
-| economy/war-room-build-costs | HELD | — |
-| economy/duel-token-economy | **REFUTED** — DT cap 40 & AP cap 40 on film; tournament untouched | material |
-| economy/starting-wallet | **REFUTED** — HGOLD row contested by frame | minor |
-| economy/coin-purse-cap-ladder | HELD | — |
-| economy/cho-han-is-ev-neutral | HELD | — |
-| economy/quests-pay-no-coins | **REFUTED** — quests pay coins (frame ×2 + payload) | fatal |
-| economy/prosperity-daily-sim | HELD (PARTIAL is honest) | — |
-| economy/iap-price-tiers | **REFUTED** — tiers are held at A1 | fatal |
-| economy/provenance-android-0682 | HELD, but selective — services match v0.717, caps do not | — |
+| | |
+|---|---|
+| Survey's score | **82** |
+| Fatal | R1 (Android caveat retired on a false premise) · R2 (quest coins, re-import) |
+| Material | R3 (AP cap re-closed; tournament half) · R5 (fabricated "filmed +8") |
+| Minor | R4 (mis-cited frame) · R6 (prosperity enumeration) |
+| Credit | 14 claims verified on the line; 5× redenomination upgradeable to A2 |
+| **My score** | **74** |
 
-## D. THE PATTERN, FOR THE NEXT SURVEYOR
-
-Three of the six breaks are one mistake wearing three hats: **an Android-0.682 class
-constant read as a law of the game**, when a v0.717 longplay frame was sitting in
-`reference/frames/` the whole time. `MAXDUELTOKENS = 30` → film says 40.
-`MAXAP = 30` → film says 40. `STAT_HGOLD = 0` → film says 3. All three are
-*character-creation initials or build-specific clamps*, and all three were promoted
-to invariants without a look.
-
-Rule for this repo, restated: **decompiled AS3 is A2 and admissible, but it is not
-above A1.** When a payload constant and a frame disagree, THE FRAME WINS — and the
-finding must say so out loud. A payload row that has been checked against a frame
-(N1, N2) is worth far more than four that have not.
+Three of the six breaks are re-imports of kills already logged **at this exact
+path** on 2026-08-13. That is the precedence lens's whole thesis, and it is the
+one thing the next pass must fix before anything else: **read the critic file for
+your own unit before you write the survey.**

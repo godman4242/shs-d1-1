@@ -1,148 +1,194 @@
-# L0 critic — economy — HUNTER LENS
+# economy — HUNTER CRITIC (blind)
 
-**Reviewer:** blind critic (did not see the surveyor's reasoning).
-**Method:** opened every cited artifact first-hand; then hunted the STILL_UNHELD / PARTIAL rows.
-**Date:** 2026-08-13.
+Reviewer opened artifacts first-hand. Every verdict below carries the artifact **I**
+opened. Frame work: `ffmpeg -ss <t> -i reference/videos/<id>.mp4 -frames:v 1`, then
+PIL crop + LANCZOS upscale; crops stated per finding.
 
----
-
-## Headline
-
-The survey is **honest and almost entirely correct on its own cites** — 15 of 19 rows verified
-verbatim against the file I opened myself. But it **under-claimed in the one place that matters
-most to the whole gauntlet**, and it **inverted a §0 invariant** in one place.
-
-Two things I found that the surveyor said were unavailable:
-
-1. **THE STRING TABLE IS FOUND.** GAUNTLET §0's standing KNOWN BLOCKER — *"`<name>`, `<desc>`,
-   `<displayname>` are NUMERIC IDS indexing a string table NOT YET LOCATED"* — is **dead**. The
-   table is `Mobile_Lang_EN` (`[Embed(source="/_assets/118_Mobile_Lang_EN.bin")]`,
-   `reference/decompiled/shs3_android/scripts/Mobile_Lang_EN.as:5`). It extracts in **1.6 seconds**
-   from `reference/decrypted/shs3_android_payload_decoded.swf` with the repo's own bundled ffdec.
-   It is a UTF-16LE XLIFF with **5,110 `<trans-unit>` rows**, keyed by `resname` 0–9010 plus
-   `IDS_*` quest keys. `itemdata.xml` item 2100 `<name>4000</name>` → **"Small Soldier Pill"**;
-   `<desc>4172</desc>` → **"Replenish your AP without waiting!"**.
-2. **`121_Mobile_PremiumData.bin` is extractable and I read it.** The surveyor asserted a negative
-   about a blob it never opened. Its actual content: 176 `<item>` ids across `<default>`,
-   `<special>` and **23 `<rotation>` `<set>` blocks** — the premium vendor's whole stock table,
-   verbatim. (Its *conclusion* — no real-money price tiers in there — survives: zero price strings.)
-
-Neither of these is in the journal. Both change the lane's ceiling.
+**Headline: 16 of 18 claims survive, most of them exactly.** This is a strong survey —
+the AS3 sourcing is real, the quotes are verbatim, and the arithmetic checks out. Two
+claims are refuted, one of them (`heavenlyprice-is-5x-deflated`) carries a **porting
+instruction that would ship a 5× overcharge**. One under-claim is overturned with a new
+cite.
 
 ---
 
-## Reproduction command (anyone can re-run this)
+## A. THE TWO REFUTATIONS
+
+### A1. `economy/heavenlyprice-is-5x-deflated` — REFUTED as stated (material)
+
+The surveyor's frame is real and its tally is exact. I re-extracted t=48:04
+(`reference/videos/Nr4fQstqHDM.mp4`, 3950.9 s long so the timestamp exists; my PNG is
+byte-identical in size to the scratchpad `t4804.png`, 1 016 704 B) and re-ran the
+heavenlyprice tally:
 
 ```
-java -jar reference/tools/ffdec/ffdec-cli.jar -export binaryData <outdir> \
-     reference/decrypted/shs3_android_payload_decoded.swf
-iconv -f UTF-16LE -t UTF-8 <outdir>/118_Mobile_Lang_EN.bin > lang_en.xml
+heavenlyprice tally [(0,1),(1,59),(2,6),(3,191),(5,5),(8,1),(12,39),(25,1),(100,1)]  304 rows
 ```
-→ 42 blobs. `reference/preservation/shs3_android_payload.swf` (the un-decoded copy) FAILS with
-`EndOfStreamException` — you must use the `decrypted/` one. That is probably why nobody had done it.
 
-**Key proof that `resname` is the lookup key, not `id`:**
-`reference/decompiled/shs3_android/scripts/fl/lang/Locale.as:301-307` —
-`var _loc2_:String = param1.attributes.resname; ... stringMap[_loc2_] = _loc3_;`
-and `:168-173` `loadStringEx` returns `stringMapList[lang][key]`. So
-`LangManager.getString(4000)` → `resname="4000"`. Confirmed empirically: `getString(88)` at
-`InteractUI.as:1061` (the not-enough-money path) → resname 88 → *"You do not have enough money to
-make the purchase."*; `getString(637)` at `InteractUI.as:1068` → resname 637 → *"No weapon
-equipped."* Both match their call sites exactly. (`id` and `resname` have drifted — id 618 carries
-resname 637 — so anyone keying on `id` gets garbage. Key on `resname`.)
+Identical to the surveyor's. Credit where due.
 
-**Provenance caveat that must ride along:** this table is the **v0.682 ANDROID** embed. I also ran
-the same extraction on `reference/decrypted/shs3_payload_decoded.swf` (the web v0.717 payload): it
-yields **exactly the 27 already-known bindata blobs, no lang table**. `LangManager.setLanguage`
-(`LangManager.as:52-56`) shows why — the web build fetched `shs3_en.xml` from the dead server. So
-the surveyor's `economy/provenance-android-0682` caveat now covers the names too.
+**But the "exactly 5×" law is refuted by the surveyor's own cited evidence.** Its quote
+states `Frame price set = {1,5,10,15,25,60}`. Under ×5 the badge `1` requires
+`heavenlyprice = 0.2`, which does not exist. The surveyor never reconciled this.
 
----
+I read all 16 shop tiles myself (crop `(185,260)-(950,1035)`, ×2 LANCZOS) and resolved
+each against the premium catalogue:
 
-## Names this unlocks in *this lane alone* (spot-checked, all verbatim from the table)
+| tile | item | name | heavenlyprice | frame badge | ratio |
+|---|---|---|---|---|---|
+| banknote "200" | 2208 | **"1000 coins"** | 1 | **1** | ×1 |
+| green/blue "++" | 2209 | Full HP and Chi | 1 | **1** | ×1 |
+| 1 grey skull | 2100 | Small Soldier Pill | 1 | 5 | ×5 |
+| 2 grey skulls | 2101 | Medium Soldier Pill | 2 | 10 | ×5 |
+| 5 grey skulls | 2102 | Large Soldier Pill | 3 | 15 | ×5 |
+| 1 gold skull | 2125 | 10 Duel Tokens | 1 | **1** | ×1 |
+| gold skulls | 2126 | 25 Duel Tokens | 2 | 10 | ×5 |
+| 3 scrolls | 2200/2203/2207 | Amnesia / **Writ** / Name Change | 5 | 25 | ×5 |
+| blue gift | 213x | Assassin/Santa/… Outfit | 12 | 60 | ×5 |
+| hood, garment | 7034, 4065 | Assassin Hood/Robes | 3 | 15 | ×5 |
 
-| ID | resolves to |
-|---|---|
-| trade good 0–4 (`getString(4162..4166)`, `InteractUI.as:545-548`) | **Tea Leaves** 10c · **Silk** 20c · **Spices** 100c · **Ceramics** 200c · **Opium (Illegal)** 200c |
-| `XMLShopData.as:45` peddler `name = 2002` | **Peddler Shop** |
-| `XMLShopData.as:84` merchant `name = 2012` | **Merchant Shop** |
-| `InteractUI.as:234` innkeeper `getString(5060)` | **Innkeeper** |
-| war hexes `getString(578..581)` | **Building Forward Base** · **Digging Tunnels** · **Building Barricades** · **Upgrading Village to Town** |
-| Cho-Han `getString(555/556)` | **Cho (even)** / **Han (odd)** |
-| skill 1000 `<displayname>6000</displayname>` | **Light Stance Mastery** (+ `<desc>6001</desc>` = the full stance blurb) |
+**13 of 16 tiles are ×5; three are ×1.** The claim's `lane_impact` instructs L3/L10/L11
+that "`<heavenlyprice>` must be MULTIPLIED BY 5". Applied blindly that prices the coin
+pack, the full-heal and the 10-token pack at **5 gold instead of 1** — a 5× overcharge on
+precisely the impulse items a new player buys first.
 
-The last row is not my unit — I include it because it proves the table is **global**, not
-economy-local. It resolves item, skill, vendor, UI, war and quest (`IDS_*`) namespaces.
+There is also **no code path that multiplies**. I checked every candidate:
+- `reference/decompiled/shs3_payload/scripts/§1t104s0§.as:92-94` (web XMLItem) —
+  `hvalue = param1.heavenlyprice`, verbatim, no scaling.
+- `reference/decompiled/shs3_payload/scripts/§1t61s0§.as:33` (web XMLShopItem) —
+  copies `itemData.hvalue` straight through.
+- `reference/decompiled/shs3_android/scripts/ShopUI.as:421` — `if(getHCost() < itemData.hvalue) reportHack(...)`.
+  **`hvalue` is an anti-cheat FLOOR, not the price.** The shipped price may legitimately
+  exceed it, which is exactly what the frame shows.
 
----
+**Correct restatement (keep this, drop the law):** the shipped v0.717 premium prices are
+*not derivable from `itemdata.xml` by any single multiplier*. 10, 15 and 60 appear on
+film and exist nowhere in the file. Prices must be read **per item from frames**, with ×5
+as a working prior for gear/consumables and ×1 for the three currency/utility SKUs.
 
-## Verdicts, one line each (own cite in the structured output)
+Minor: "the web and Android itemdata are byte-identical apart from the XML declaration"
+is not quite true — after stripping the 40-byte declaration the Android blob is still
+2 bytes longer (a trailing newline). Immaterial, but it is not "byte-identical".
 
-| claim | verdict |
-|---|---|
-| sell-price-formula | **stands.** Verbatim at `Item.as:1582-1593`. `sellPercentage` really is dead — one hit in the whole bundle, the declaration at `ShopUI.as:58`. |
-| repair-weapon-cost | **stands.** `InteractUI.as:1058` `cost = getCurrentNodeLevel() * 10`; `:1073-1076` `if(weapon.uses > 1) weapon.uses = 1`. |
-| coins-per-kill | **stands.** Verbatim at `EnemyPlayer.as:1293-1300`. The frame-vs-doc reconciliation is sound. Field-mob path confirmed at `NPC.as:838-846` (lootType 0 → `1*qty`, 1 → `5*qty`). |
-| xp-formula | **stands.** Verbatim `NPC.as:166-190`; `getGreyLevel` body 95-110; `msg.lvl * 5 + 45` at `NetworkManager.as:1268`; ×3 / elite split at `EnemyPlayer.as:1318/1322`. |
-| trade-goods-arbitrage | **stands.** `InteractUI.as:1558-1585`. Nit: 5 slots, only **4 distinct** price/variation pairs (cases 3 and 4 are both 200/30). Stat ids 20054-20057 confirmed at `:545-548`. |
-| crop-price-oscillator | **stands.** `:105` and `:497-502`. |
-| service-prices-are-formulas | **stands.** forge `:1002-1008`; inn `:229`; stables `:241`; toll `:1406`; reinforce `:1083`. Cite typo: the reagent range is written `1102-1047` (reversed); the bands are actually `:1015-1046`. |
-| gold-coin-exchange-rate | **stands (PARTIAL, honest).** `:918-926` verbatim. |
-| item-price-table | **REFUTED — material.** Counts are exact (982/550/304, I re-grepped). Its lane_impact *"the table is still unlocated… Never claim a priced item's name is held"* is now **false**. |
-| five-vendor-generators | **stands.** All five verified; barber really is 49 → 16 (`:141-143`); merchant really ships `[]`. **Under-claimed:** the premium lists are now held too (see below). |
-| war-room-build-costs | **stands.** `WarHexUI.as:1332-1387`. Arithmetic nit: initiation charges 500 *and* sets `cost` to the full total, so a Forward Base costs the donor pool **10,500**, not 10,000. |
-| duel-token-economy | **stands.** `StatsManager.as:158-166`; ×2 buff at `:1134-1136`; clamp at `:2374-2378`. |
-| starting-wallet | **REFUTED — material.** §0 invariant inverted. See below. |
-| coin-purse-cap-ladder | **stands.** `StatsManager.as:2632-2650`. Good catch; genuinely absent from the ledger. |
-| cho-han-is-ev-neutral | **stands, with a sharpening.** `:1810-1836` verbatim. But `changeGold()` clamps to `getMaxCoins()`, so near the purse cap a win is **truncated** → Cho-Han is EV-**negative** there, not neutral. Conclusion (not a faucet) is if anything stronger. Also `int(Math.random()*6)` yields 0–5 and `gotoAndStop(dice1)` on frame 0 is a shipped off-by-one; parity is unaffected (0–5 is 3 even / 3 odd). |
-| quests-pay-no-coins | **stands.** I re-ran the scan independently: **386** `<outcome>` blocks, **0** with `<id>11</id>`; **77** `<reward>` blocks whose only children are `exp`(69) / `loot`(19: id,qty,chance). I also checked the generic fallback `else { changeStat(this.id, this.modify) }` at `XMLQuestOutcome.as:68-70` — no outcome uses id 12 (`STAT_HGOLD`) either, so quests pay no *gold* as well. |
-| prosperity-daily-sim | **stands (PARTIAL, honest).** `HistoryItem.as:239/283/299/303/307/311`; `NetworkManager.as:2042-2053` is a bare `send("townpros",…)` — the client genuinely does not compute. |
-| iap-price-tiers | **STILL_UNHELD verdict stands — reasoning corrected.** I extracted the blob it said was unavailable. 176 `<item>` ids, **zero** price/currency/tier strings. The conclusion is right; the ground given for it was an assertion about an unopened artifact. |
-| provenance-android-0682 | **stands, and I extended it.** `clientVersion = 0.682` at `StatsManager.as:30`; the two android bundles are byte-identical for `InteractUI.as`/`Item.as`; the web payload is 652 asset-only classes. New: the web SWF's binaryData is *only* the 27 known blobs — no logic, no lang. |
+### A2. `economy/web-payload-is-decompilable` — HELD in substance, REFUTED in scope (material)
 
----
+The decompile is real and the counts are right: `find … -name '*.as' | wc -l` = **1079**
+(and `payload_export.log` ends "Exported script 1079/1079"); 612 `§`-mangled classes at
+the top level of `scripts/`; `getSellAmt` sits at exactly **1977-1988** in
+`§1t17s0§.as`. All confirmed.
 
-## The one place the survey inverted §0 — `economy/starting-wallet`
+**The overreach is the headline: "no lane needs to caveat 'this is the Android build' any
+more."** That is true for **AS3 only** — which the `lane_impact` says, but the claim text
+does not. For **data** it is false, and dangerously so:
 
-The claim reads the wallet off `StatsManager.initNewPlayer` (`:689`, values at `:705-710`) and
-concludes the repo's `src/config/profile.ts:10` *"(100 coins / 3 gold)"* is contradicted, because
-`setPlayerStats(STAT_HGOLD, 0)`.
+- `grep -o 'heavenlyprice' reference/extracted/payload.xml | wc -l` → **1** occurrence in
+  329 MB. I dumped its context at offset 19 403 382: it sits in a run of
+  `<item>baseprice</item> <item>heavenlyprice</item> <item>minlvl</item>` — the **SWF ABC
+  string constant pool**, i.e. the parser's field names. **There is no itemdata table in
+  the web payload.** The web build fetched it from the dead Player.IO server.
+- `reference/extracted/itemdata.xml` is content-identical to the Android blob
+  `reference/extracted/android/111_Mobile_ItemData.bin`.
 
-**I opened a frame.**
-`reference/frames/Nr4fQstqHDM/seg-00/frames/frame_0018.jpg` (1024×576), cropped
-`crop=iw*0.45:ih*0.10:iw*0.28:ih*0.09` and upscaled ×4 lanczos. Visible: the PLAYER sheet currency
-row reading **"…425 COINS"**, a gold-coin icon, **"2"**, label **"GOLD"**; beside it the level fan
-**7** and **"14266 / 16350 EXPERIENCE POINTS"**.
-
-So in the v0.717 web guest longplay, heavenly gold is a **live non-zero balance at level 7**. And
-the v0.682 payload has **no in-game gold faucet that a level-7 guest could have used** — the only
-`STAT_HGOLD` grants in the entire bundle are `doRebirth` at `StatsManager.as:2201/2205` (+20 at
-Dan 8, else +5), which requires L80, plus the PayVault/gift paths (`PayUI.as:672`,
-`ProviderSelectDialog.as:177`). Quests grant none (id 12 unused, above). A guest starting at 0
-cannot reach 2.
-
-**THE FRAME WINS.** The web build seeds guest gold; `initNewPlayer` in the android v0.682 bundle
-does not. This is exactly the disagreement §0 legislates for, and the survey resolved it the wrong
-way round — it told the profile lane to change a frame-backed constant to match a
-different-version, different-platform AS3 literal. The A2 cite is real and correctly quoted; the
-*direction of truth* is wrong. Refuted as material, not fatal: the coins/AP/token halves are fine
-and the AS3 row is worth keeping as a labeled v0.682 datum.
-
-Corroborating measurement doc (carries the same read, no frame path of its own):
-`docs/research/video-study/segments/A-00-boot-login.md:110-112` — *"currency row '114 COINS',
-'3 GOLD' (guest starts with 3 gold)"* — and `:150` *"guest starts 100 coins / 3 gold."*
+So all four data XMLs are **Android v0.682 provenance**, and §A1 above is direct proof
+that the shipped web economy numbers diverge from them. The S0-3 caveat must stay on
+data. Keep the claim, narrow the sentence to "for AS3".
 
 ---
 
-## Effect on the score
+## B. UNDER-CLAIM OVERTURNED (hunter lens)
 
-78 is defensible for the rows as written, but the rationale's own two ceiling arguments have moved:
+### `economy/prosperity-magnitudes-server-side` — the PARTIAL is right, one clause is wrong
 
-- *"the string table that would NAME any priced item is still unlocated — prices are portable,
-  names are not"* → **false**, and this was the load-bearing half of the sentence.
-- *"IAP tiers, STILL_UNHELD"* → verdict survives, but the premium vendor's stock table (176 items,
-  23 rotation sets) is now held, which is most of what that bullet was practically for.
+The taxonomy is verbatim-correct (I read `HistoryItem.as` lines 239, 283, 299, 303, 307,
+311) and the deltas genuinely are server-side — `QueryManagerBase.as:2259` posts to
+`this.server + "/town/updatetownprosperity.php"`. Honest PARTIAL, correctly scored.
 
-The remaining cap — **every economy number is v0.682 Android, and no v0.717 web cross-check exists
-because the web SWF decompiles to assets only** — is real and I re-verified it independently. That
-one should keep holding the lane under 90.
+But the clause **"Only the −1000 ninja hire is a recoverable constant" is false.** The
+whole prosperity **scale** is on disk:
+
+```
+reference/decompiled/shs3_android/scripts/TerritoryData.as:782-805
+public function getTownLevel() : int
+{
+   if(this.townProsperity == 0)    { return 0; }
+   if(this.townProsperity < 500)   { return 1; }
+   if(this.townProsperity < 1000)  { return 2; }
+   if(this.townProsperity < 2000)  { return 3; }
+   if(this.townProsperity < 4000)  { return 4; }
+   return 5;
+}
+```
+
+Four recovered thresholds — **500 / 1000 / 2000 / 4000** — which anchor the five-tier
+ladder the surveyor already found consumed at `DungeonGenerator.as:1363-1555`. This is
+the missing units-of-measure: it tells the offline sim that a town spans 0–4000+, and
+therefore that the hard-coded `−1000` ninja hire is a **full-tier** shock, not noise.
+L11 can now author deltas on a correct absolute scale instead of inventing one.
+
+---
+
+## C. NEW CORROBORATION FOUND FOR A SURVIVING CLAIM
+
+`economy/premium-exchange-rate-200` was already well-sourced; I found a third,
+independent leg. Item **2208's own name string is literally "1000 coins"** with desc
+"Buy 1000 coins." (`docs/gauntlet/L0/index/resolved_names.json`, Android string table) —
+while the **web frame's banknote art reads "200"** and web
+`§1t401s0§.as:952` pays `200` where Android `InteractUI.as:923` pays `1000`.
+
+The Android-era *name* survived into the shipped web build unchanged while the *payout*
+and the *art* were both rescaled. That is a clean, self-consistent redenomination
+signature, and it independently explains §A1: the web build made gold worth 1/5 as many
+coins, then raised gear prices ×5 to compensate — and left the three currency/utility
+SKUs at their 1-gold price point, cutting 2208's payout instead. The same ×5 shows up in
+rebirth (5/20 → 25/100) and in the IAP ladder (10 gold → 50 gold).
+
+---
+
+## D. VERIFIED-EXACT (opened, matched, nothing to add)
+
+| claim | what I checked | result |
+|---|---|---|
+| `writ-25g-upheld-by-frame` | mapped the 3 purple scrolls to 2200/2203/2207 myself — the only 3 consecutive hp=5 scrolls in the premium `<default>` list | **exact**, survives independently of the ×5 law |
+| `duel-token-cap-40` | crop `(1500,130)-(1780,235)` ×5: **"40/40 · DUEL TOKENS"** legible; web `§1t1523s0§.as:200` = 40 vs Android `StatsManager.as:166` = 30, constant blocks align slot-for-slot | **exact**, I saw it |
+| `iap-tiers-held-both-builds` | web 50/125/200/275/400; KREDS 50/100/150/200/250; −20% 60/150/240/330/480; −50% 75/188/300/413/600; Android 10/25/40/55/75 @ 4.99–24.99 | **all four ladders verbatim** |
+| `premiumdata-blob-is-extracted` | read the 4 504-byte blob; 16 `<default>` SKUs, commented-out `<special>`, 5 named rotation sets, Assassin = 2130/7034/4065/5008/11036/12018 | **exact**; seed rule matches `XMLShopData.as:101-103` |
+| `rebirth-payout-config-is-right` | web `§1t1523s0§.as:2644-2652` 100 on DAN==8 else 25; Android 20/5; `src/config/economy.ts` REBIRTH `{earlyGold:25, tenthGold:100}` | **exact** |
+| `guest-start-3-gold-confirmed` | web wallet HGOLD **3**, GOLD 100, AP 30/30, DT 20/20; Android `StatsManager.as:706` HGOLD **0** | **exact** |
+| `sell-price-formula` | web `§1t17s0§.as:1977-1988` ≡ Android `Item.as:1582-1592`; `sellPercentage` = 1 declaration, **0 reads** | **exact** (nit: paid at `:539`, not `:540`) |
+| `repair-weapon-cost` | `InteractUI.as:1058` `getCurrentNodeLevel()*10`; uses→1 at `:1073`; refused for 0/13000 at `:1066` | **exact** |
+| `coins-per-kill-and-xp` | loot id 0→`1*qty`, id 1→`5*qty` (`NPC.as:839/843`); `calcXP` complete at `:166-190`; duelists `Math.random()*level` (`EnemyPlayer.as:1298`) | **exact**; `KILL_REWARD={coinsFlat:8}` + its "no source formula found" docblock are both correctly refuted |
+| `service-prices-are-formulas` | inn `:229` ×2, stables `:241` ×2, toll `:1406` ×1, forge `:1003-1008` `min(lvl,80)*100`, repair ×10, reinforce flat 5000 | **all six exact** — see caveat below |
+| `coin-purse-cap-ladder` | `StatsManager.as:2632-2667` 1000/2000/4000/6000/8000/10000 + `changeGold` clamp; `BankUI.as:264` `100 + DAN*10 + PAIDSTORAGE*10` | **exact** |
+| `trade-goods-arbitrage-loop` | table 0→(10,20) 1→(20,30) 2→(100,15) 3→(200,30) 4→(200,30) in both; Android seed has 3 factors, web `:1676` has 2 | **exact**, and the flagged divergence is **real** — honest PARTIAL |
+| `crop-price-is-supply-oscillator` | `InteractUI.as:497-501` `[10,10,10,10]`, least→20, max→5; payout `count*price` `:1548` | **exact** |
+| `quests-never-pay-coins` | my own scan: **386** `<outcome>` blocks, **0** with `<id>11</id>`; **69** exp rows, distinct = {100,200,250,290,500,600,750,1000,2000,3000} | **exact, all three numbers** |
+| `war-room-structure-costs` | `WarHexUIBuildMenu.as:192/197/202/207` = 10000/5000/10000/10000; `WarHexUI.as:1332` buildcost 500; `WARMOVEINTERVAL 60*60` | **exact** |
+| `cho-han-is-ev-neutral` | two `Math.random()*6`, `(d1+d2)%2`, win pays `bet*2` on an escrowed stake → parity exactly 50/50, EV 0 | **exact, math sound** |
+
+### Caveat on `service-prices-are-formulas` (not a refutation)
+
+The AS3 half is fully verified — that is the load-bearing part, and it stands. The
+**frame sub-cite did not resolve**: "B-10 t=21:02" in `zFtCaTO0_1M.mp4`. I pulled global
+t=1262 s (a town, quest banner "HEALTH FOR YOKO", no dialogue box) and built a 44-frame
+contact sheet of `reference/frames/zFtCaTO0_1M/seg-10/frames/` (field combat throughout).
+Neither shows a forge dialogue.
+
+The wording is nonetheless genuine — the string table carries the template verbatim:
+
+```
+Forge an iron sword (level [0])?&#10;Cost: [1] coins&#10;Materials …
+```
+
+Both level and cost are **parameters**, which is itself independent proof that forge cost
+is a formula rather than the ledger's 700c constant. **Action: re-cite the frame or drop
+the sub-cite; do not drop the claim.**
+
+---
+
+## E. SCORE
+
+**82 is roughly right; I would hold it at 78–80.** The survey is well-sourced and the
+bulk of it is exact. The deduction is for the ×5 law being stated as fact and converted
+into a blanket porting instruction, plus the "no Android caveat" headline — both are the
+kind of confident over-generalisation that ships bugs downstream, and both were
+falsifiable from evidence the surveyor had already quoted.

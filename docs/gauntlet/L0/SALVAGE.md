@@ -24,34 +24,21 @@ on a usage limit.** Banked: **all 12 systems re-surveyed** with the string table
 hand (`systems/*.md`, rewritten in place), **336 claims / 256 verdicts / 0 VOID /
 56 refuted / 175 ledger overturns**, extracted to `run2/`.
 
-**JUDGED vs LEADS — run 2 FINAL (this is the line that matters):**
+**RUN 3 (2026-08-15, resumed from cache — 57/77 agents): ALL 12 SYSTEMS NOW JUDGED.**
 
-Run 2 finished 2026-08-15 at **28/67 agents**, the rest killed by the session limit.
-Its own `INTEGRITY` field says it plainly — the bug fixes in `6ff47f1` worked:
+**722 claims · 1,085 verdicts · 0 VOID · 215 refuted · 323 claimed ledger overturns.**
+`INTEGRITY: INCOMPLETE — 103 claims UNJUDGED, converged=false` (correct, and loud).
 
-> `INCOMPLETE — 131 claims UNJUDGED, converged=false. Unjudged claims are LEADS,
-> not findings (§0). Do NOT write them into REBUILD_READINESS.md until critics
-> have run.`
-
-**360 claims · 320 verdicts · 0 VOID · 65 refuted · `converged: false` · `dead_rounds: 1`.**
-
-| System | Claims | Judged | Overturns | Lens coverage |
+| Unit | Claims | Judged | Overturns | |
 |---|---:|---:|---:|---|
-| `combat-core` | 20 | **20** | 11 | ✅ full 4 (cite/hunter/precedence/frame) |
-| `items-equipment` | 20 | **20** | 12 | ✅ full 4 |
-| `progression` | 20 | **20** | 12 | ✅ full 3 |
-| `rebirth-elements` | 19 | **19** | 17 | ✅ full 3 |
-| `skills-meters` | 22 | **22** | 14 | ⚠️ 2 of 3 — `hunter` died |
-| `economy` | 20 | 0 | 9 | ❌ none |
-| `enemies-ai` | 20 | 0 | 13 | ❌ none |
-| `world-exploration` | 23 | 0 | 11 | ❌ none |
-| `meta-social` | 22 | 0 | 11 | ❌ none |
-| `art-anim-audio-feel` | 18 | 0 | 14 | ❌ none |
-| `quests-story` | 15 | 0 | 10 | ❌ none |
-| `ui-hud` | 13 | 0 | 6 | ❌ none |
-| *(critic `new_findings`)* | 128 | 0 | 43 | ❌ uncritiqued by construction |
+| **all 12 systems** — combat-core, skills-meters, progression, rebirth-elements, items-equipment, economy, enemies-ai, world-exploration, quests-story, ui-hud, art-anim-audio-feel, meta-social | **232** | **232** | 140 | ✅ **fully judged — these may enter the ledger** |
+| `skilldata` source sweep | 22 | 1 | 17 | ⚠️ partial |
+| `actionscript` · `bindata` · `itemdata` · `npcdata` source sweeps | 81 | 0 | 53 | ❌ leads |
+| critic `new_findings` | 387 | 0 | 113 | ❌ uncritiqued by construction |
 
-**101 claims are judged and may be written into the ledger.** The other 259 are leads.
+**Still to run:** 5 source surveys (`android-blobs`, `string-table`, `frames`,
+`uistrings-payload`, `questdata` — none ever opened) + 10 source critics + dry-loop
++ completeness. Then gates L0-A…F.
 
 Transcripts: `~/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/70279977-fb70-4a26-ba27-9b32a10d27dc/subagents/workflows/<runId>/`
 

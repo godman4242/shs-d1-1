@@ -1,206 +1,205 @@
-# combat-core — HUNTER CRITIC (blind review)
+# combat-core — BLIND CRITIC (Lens 2, Hunter)
 
-**Reviewer stance:** §0 blind critic, LENS 2 (hunt under-claiming). Every verdict below
-carries an artifact *I* opened. Nothing here is taken from the surveyor's reasoning.
+**Headline: the surveyor read the wrong build, and a fully readable copy of the RIGHT
+build was sitting in this repo the whole time.**
 
----
+`reference/decompiled/shs3_payload/scripts/` — the **web v0.717 payload** — contains
+**1,079 `.as` files**, not the "5 files" the surveyor's `build-version-parity` claim
+asserts. Identifiers are renamed (`§1t99s0§`), but **every numeric literal and every
+control-flow structure survives verbatim**. I cross-read the web build's `MCSPlayer`,
+`StatsManager`, `BattleUI`, `NPCManager` and `InputManager` directly against the
+android v0.682 sources this lane used.
 
-## HEADLINE — THE SURVEY READ THE WRONG BUILD, AND THE RIGHT ONE WAS SITTING IN THE REPO
-
-The survey's single load-bearing caveat is that "every source cite is the ANDROID v0.682
-client and parity with the web v0.717 is unproven", and its `combat-core/build-version-parity`
-claim asserts:
-
-> "The web payload's own AS3 is obfuscated (reference/decompiled/shs3_payload/scripts/§1t51s0§/,
-> **5 files**) and cannot be cross-read."
-
-That is false, and it is contradicted by the Stage-0 evidence index the surveyor was
-explicitly told to trust over hand-counting:
-
-```
-$ python3 -c "import json;print(json.load(open('docs/gauntlet/L0/index/actionscript.json'))['bundles'])"
-{'shs1': 164, 'shs2': 366, 'shs3_android': 970, 'shs3_android_payload': 970,
- 'shs3_loader': 3, 'shs3_payload': 1079, 'shs3_stage2': 6, 'shs3_stage3': 9}
-
-$ ls reference/decompiled/shs3_payload/scripts/*.as | wc -l
-     645
-$ find reference/decompiled/shs3_payload -name "*.as" | wc -l
-    1079
-$ ls "reference/decompiled/shs3_payload/scripts/§1t51s0§/" | wc -l
-       1
-```
-
-`§1t51s0§/` holds **one** entry, not five. The 645 top-level classes are obfuscated in
-*name* only — every literal, every control-flow branch and every arithmetic expression is
-intact and readable.
-
-**Build identity, proven:**
-- `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:36` — `public static var §1t9323s0§:Number = 0.717;` → this bundle **is** the shipped web build.
-- `reference/decompiled/shs3_android/scripts/StatsManager.as:30` — `public static var clientVersion:Number = 0.682;`
-
-**Web-build class map I recovered by numeric-literal shape** (exactly the close-path the
-survey proposed but did not execute):
-
-| web (v0.717) file | is | proof |
-|---|---|---|
-| `§1t99s0§.as` | `MCSPlayer` | `:11 internal static var jumpThreshhold:int = 100;` + `:9 standingRange:int = 50` + `:15-19` slash speeds 50/40/30 — byte-identical const block to `shs3_android/scripts/MCSPlayer.as:9-19` |
-| `§1t1523s0§.as` | `StatsManager` | `:36` clientVersion 0.717 |
-| `§1t122s0§.as` | stat/enemy builder | `:774 var _loc6_:int = 120 + Math.floor(_loc5_ * _loc4_ / (20 + _loc4_));` |
-| `§1t113s0§.as` | `BattleUI` | `:326 §1t5205s0§(param1:int, param2:int)` = `updateReload` |
-| `§1t1541s0§.as` | `InputManager` | `:52 maxDistance:int = 200`, `:54 = 4`, `:56 = 400`, `:58 thickness:int = 8`, `:60 = 20` |
-| `§1t67s0§.as` | `Damage` | `:203/:207/:209` the four-band `attackerlvl/8, /6, /4` floor table |
-| `§1t68s0§.as` | `NPC` | `:467 _loc3_ -= this.defense;` `:483 this.§1t3246s0§ = 12;` |
-
-Reading those seven files takes about thirty minutes and settles the parity question that
-the survey docked its own score for and left `STILL_UNHELD`.
+Result: **13 of 21 claims hold** (several are now parity-confirmed and stronger than the
+surveyor could show). **5 are refuted** — two of them fatally, because they instruct the
+project to overwrite CORRECT live constants with android-only values, and one of them
+overturns a ledger line (`crit 1.3`) that was **right**.
 
 ---
 
-## THE PARITY DELTA TABLE (what the survey should have produced)
+## §A — The refutations
 
-All rows verified by me, both sides, first-hand.
+### A1. `combat-core/reach-stance-mults` — **FATAL**
 
-| quantity | ANDROID v0.682 | **WEB v0.717 (shipped)** | survey said | repo `src/config` |
-|---|---|---|---|---|
-| crit multiplier | `1.2` non-light / `1.5` light `MCSPlayer.as:3216-3221` | **`1.3` flat** `§1t99s0§.as:3274` | "never 1.3" ❌ | `CRIT_MULT = 1.3` ✅ |
-| light reach mult | `× 1.5` `MCSPlayer.as:3030` | **`× 1.4`** `§1t99s0§.as:3094` | src=1.5 ❌ | `lightMult: 1.4` ✅ |
-| balanced reach | `× (1 + 0.005·m)` `:3041` | **`× (1 + 0.2·m·0.1)` = 1+0.02·m** `:3105` | src=0.005 ❌ | `balancedPerMastery: 0.02` ✅ |
-| heavy reach | `× (0.5 + 0.005·m)` `:3052` | **`× (0.5 + 0.4·m·0.1)` = 0.5+0.04·m** `:3116` | src=0.005 ❌ | `heavyPerMastery: 0.04` ✅ |
-| heavy reach floor | `100` `:3054` | **`100`** `:3118` | 100 ✅ | `heavyFloor: 100` ✅ |
-| light dmg mult | `0.5 + 0.005·m` `:3205` | **`0.5 + 0.04·m`** `:3262` | 0.005 ❌ | curve ✅ |
-| balanced dmg mult | `1 + 0.005·m` `:3208` | **`1 + 0.02·m`** `:3265` | 0.005 ❌ | curve ✅ |
-| heavy/dual/rev dmg | `× 1.5` `:3212` | **`× 1.4`** `:3270` | 1.5 ❌ | 1.4 ✅ |
-| `maxreload` | `5 * 24` = 120 `MCSPlayer.as:239` | **`8 * 24` = 192** `§1t99s0§.as:249` | 5×24 ❌ | — |
-| reload bar display | `(reload − 24)/(max − 24)` `MCSPlayer.as:1161-1167` | **`(reload − 48)/(max − 48)`** `§1t113s0§.as:328` | "first 24 hidden" ❌ | — |
-| stance-switch gate | `reload < maxreload/6` (=20) `MCSPlayer.as:2977` | **`reload < 48`** `§1t99s0§.as:3060` | 1/6 ❌ | — |
-| stance-switch cost | 2-branch `>max/2 → max/3` else `−max/6` `:3098-3105` | **flat `−48`** `§1t99s0§.as:3162` | 2-branch ❌ | — |
-| behead multiplier | `× 1.5` `NPC.as:453` | **`× 1.3`** `§1t68s0§.as:472` | 1.5 ❌ | — |
-| reach base formula | `120 + floor((90+5·dan)·SPD/(20+SPD))` | **identical** `§1t122s0§.as:774` | ✅ | ✅ |
-| standingRange / slash speeds | 50 / 50,40,30 `:9,:15-19` | **identical** `§1t99s0§.as:9,:15-19` | ✅ | — |
-| InputManager consts | 200/4/400/8/20 `:51-59` | **identical** `§1t1541s0§.as:52-60` | ✅ | — |
-| launch/deflect/advanced ladder | 3/4/5, heavy launch@3 `:3164-3194` | **identical** `§1t99s0§.as:3221-3244` | ✅ | `heavy: 5` ❌ (survey right) |
-| defence floor bands | `≤10→1+p, ≤20→lvl/8, ≤30→lvl/6, else lvl/4` `Damage.as:150-172` | **identical** `§1t67s0§.as:199-209` | ✅ | — |
-| i-frames | `gotHitCounter = 12` `NPC.as:461` | **identical** `§1t68s0§.as:483` | ✅ | — |
-| heavy defence penalty | `defense * 0.8` `MCSPlayer.as:3230` | **identical** `§1t99s0§.as:3288` | ✅ | ✅ |
-| stage frame rate | 24.000 (SWF header) | **24.000** (SWF header) | 24 ✅ | — |
+The surveyor: *"src/config/reach.ts lightMult 1.4 (src: 1.5), balancedPerMastery 0.02
+(src: 0.005), heavyPerMastery 0.04 (src: 0.005) are all wrong … reach.ts's own comment
+shows they were back-derived from the legacy 0.9/1.2/1.4 triple, not read from the payload."*
 
-SWF headers parsed directly from `reference/decrypted/`:
+**All three are exactly right.** Web v0.717, `§1t99s0§.as` (= MCSPlayer) `setStance`:
+
 ```
-shs3_payload_decoded.swf          CWS v17  stage 800x690  frameRate=24.000
-shs3_android_payload_decoded.swf  CWS v26  stage 800x480  frameRate=24.000
+3094:  case §1t12220s0§ (LIGHT):    this.§1t4417s0§ = this.§1t4420s0§ * 1.4;
+3105:  case §1t12221s0§ (BALANCED): this.§1t4417s0§ = this.§1t4420s0§ * (1 + 0.2 * this.§1t4422s0§ * 0.1);
+3116:  case §1t12222s0§ (HEAVY):    this.§1t4417s0§ = this.§1t4420s0§ * (0.5 + 0.4 * this.§1t4423s0§ * 0.1);
+3117:                               if(this.§1t4417s0§ < 100) { this.§1t4417s0§ = 100; }
 ```
 
-**Net effect:** the survey correctly sensed a parity risk, then resolved it in the wrong
-direction. Its `lane_impact` lines instruct the project to overwrite four `src/config`
-values that are **already correct for the shipped game** with android-only values. That
-is the most damaging thing in this unit and it must not be actioned.
+`0.2 · m · 0.1 = 0.02·m` and `0.4 · m · 0.1 = 0.04·m`. Light is flat **×1.4**.
+`src/config/reach.ts` carries `lightMult: 1.4`, `balancedPerMastery: 0.02`,
+`heavyPerMastery: 0.04`, `heavyFloor: 100` — a four-for-four match, and its comment
+correctly explains 0.9/1.2/1.4 as the curves **evaluated at mastery 10**, not as a
+back-derivation. Acting on this claim would plant three regressions in a clean file.
 
----
+Bonus the surveyor's three-stance model has no slot for: `3130` DUAL `× 1.4`,
+`3143` REVERSED `× 1.0` (also floored at 100).
 
-## THE CRIT-METER "FRAME BEATS DOC" FINDING DISSOLVES
+### A2. `combat-core/crit-multiplier` — **FATAL, and it overturns a CORRECT ledger line**
 
-`combat-core/crit-meter-fill-rate` is the survey's flagship parity proof. Its measurement
-is honest — I reproduced its pixel right-edges **exactly**, independently:
+The surveyor: *"crit is ×1.5 in Light and ×1.2 in every other stance … never 1.3 and never 3"*,
+overturning ledger blocker ② *"crit 1.3 vs 3 final"*.
 
-```python
-# reference/frames/session11/crit-focus/*.png, y=1032, bright run (sum(rgb)>600)
-t1003.000  none (bar empty)
-t1004.800  246..281
-t1005.000  246..290
-t1082.100  246..304
-t1082.900  246..340
-t3779.000  246..370
+Web v0.717, `§1t99s0§.as:3272-3276`:
+
+```as3
+if(this.§1t4414s0§ == this.§1t4415s0§)   // reload == maxreload
+{
+   return _loc2_ * 1.3 + this.§1t1243s0§;   // flat ×1.3, ALL stances, + STAT_CRITICALDMG
+}
+return _loc2_;
 ```
-(my track read is x≈244..513 ≈ 269 px, vs the survey's 248..511 = 263 px — a ~2 % shift,
-not material. Rates: 16.5 %/s over the t1004.8→t1005.0 window, 16.9 %/s over
-t1082.1→t1082.9 → **full sweep ≈ 5.9–6.1 s**.)
 
-The inference built on top of it is what fails. The survey predicted **4.00 s** from
-`(maxreload − 24)/24 = 96/24` using android constants. The **web** build's own numbers are:
+**Flat ×1.3 for every stance.** The 1.5/1.2 split is android-only. The ledger's "1.3"
+was correct, and `src/config/combat.ts` (`CRIT_MULT = 1.3`, *"the source's crit term is
+× 1.3 + flatCritBonus"*) was already correct. The surveyor's lane_impact —
+*"src/config/combat.ts's '1.3 × …' is wrong"* — is the thing that is wrong.
 
-- `§1t99s0§.as:249` — `this.§1t4415s0§ = 8 * 24;` → maxreload = **192**
-- `§1t113s0§.as:328` — `var _loc3_:Number = (param1 - 48) / (param2 - 48);` → displayed span = **192 − 48 = 144 ticks**
-- SWF header — **24 fps**
+### A3. `combat-core/build-version-parity` — **REFUTED as STILL_UNHELD (the Lens-2 kill)**
 
-→ **144 / 24 = 6.00 s.**
+Its close-path premise is factually false. `reference/decompiled/shs3_payload/scripts/`
+= **1,079 files**, readable. Parity is no longer unshowable — it is now *measured*:
 
-Measured 5.9–6.1 s. **The web source and the frame AGREE.** The standing "frame wins"
-invariant never fires here, because there is no disagreement — the disagreement was
-manufactured by reading v0.682 when v0.717 was on disk. The survey's own stated A2
-structural feature, "first 24 ticks hidden", is also wrong for the shipped build: it is
-the first **48** ticks.
-
-That same `-48` is elegant and self-confirming on the frames: the bar reads exactly 0
-precisely when `reload < 48`, which is exactly `nextStance()`'s block condition
-(`§1t99s0§.as:3060`) — and `§1t113s0§.as:335-340` sets the overlay text when `_loc3_ == 0`.
-Which is what I see in `reference/frames/session11/crit-focus/t1003.000.png` (crop
-(0,900)-(700,1080), 3× LANCZOS): HP 14/20 green, Chi 31/31 blue, **third bar empty with
-"CANNOT CHANGE STANCE" printed on it**, gold "150% DAMAGE" beneath. Bar-at-zero ⟺
-stance locked, one rule, one constant.
-
----
-
-## FRAME CLAIMS — BOTH HELD, I LOOKED
-
-- `reference/frames/session11/gap-focus-trigger/m_nearfull.png`, viewed 2× upscaled. Two
-  stacked panels. Upper: HP `11/20` green, Chi `47/47` blue, third bar ~97 % white and
-  unlabelled, gold `150% DAMAGE`. Lower: identical HP/Chi, third bar 100 % white with
-  **`CRITICAL HIT`** printed across it. `combat-core/crit-meter-exists-in-web-build` HELD,
-  and the SESSION-11 note "OG has NO Critical meter" is correctly overturned.
-- `reference/frames/session11/crit-focus/t1003.000.png` crop (0,900)-(700,1080) @3×.
-  Straw hat, portrait ring, HP `14/20`, Chi `31/31`, `CANNOT CHANGE STANCE` on the third
-  bar, `150% DAMAGE` in gold below the bar stack — a buff readout, sitting *outside* the
-  bar row. `combat-core/150pct-damage-is-a-buff` HELD; corroborated by
-  `§1t99s0§.as:213 this.minDamage *= 1.5;` in the web build.
-
----
-
-## PER-CLAIM VERDICTS
-
-| claim | survey | mine | severity |
+| constant | android v0.682 | web v0.717 | |
 |---|---|---|---|
-| reach-cap | HELD | **stands** (minor: drops the `BUFF_SPEED` `speed *= 1.5` pre-step at `StatsManager.as:1907-1911`) | minor |
-| reach-stance-mults | HELD | **REFUTED** — web is 1.4 / 0.02 / 0.04; the three `reach.ts` constants it calls wrong are right | **fatal** |
-| reach-is-arclength | HELD | **stands**, and parity confirmed | — |
-| crit-multiplier | HELD | **REFUTED** — web crit is flat **1.3**; "never 1.3" is backwards | **fatal** |
-| crit-gating | HELD | **REFUTED in part** — maxreload 192 not 120; gate `<48` flat, not 1/6 | material |
-| crit-meter-exists-in-web-build | HELD | **stands** (verified by eye) | — |
-| crit-meter-fill-rate | PARTIAL | **REFUTED** — web source predicts 6.00 s, frame says 5.9–6.1 s; they agree | material |
-| multi-target-full-damage | HELD | **stands** | — |
-| hit-registration-instant-at-endslash | HELD | **stands** | — |
-| pass-through-dash | HELD | **stands**, parity confirmed | — |
-| gesture-classifier | HELD | **stands**, parity confirmed | — |
-| slash-type-map | HELD | **stands** | — |
-| damage-formula | HELD | **REFUTED in part** — RNG roll right; stance terms are android-only | material |
-| mitigation-and-part-rule | HELD | **REFUTED in part** — web behead is **×1.3**, not ×1.5 | material |
-| heavy-def-0.8 | HELD | **stands**, parity confirmed | — |
-| stance-triangle | HELD | **stands** | — |
-| early-ttk | HELD | **stands** (all four cites re-opened) | — |
-| launch-unlock-levels | HELD | **stands**, parity confirmed — `stances.ts heavy: 5` genuinely wrong | — |
-| 150pct-damage-is-a-buff | HELD | **stands** (minor: quotes android's `maxreload/6`; web is `<48`) | minor |
-| build-version-parity | STILL_UNHELD | **REFUTED** — 1079 files, not 5; cross-read in full | **fatal** |
+| base reach `120+floor((90+5·dan)·SPD/(20+SPD))` | `StatsManager.as:1915-1919` | `§1t1523s0§.as:2346-2347` | **same** |
+| stage world units | `StatsManager.as:80,82` 800×480 | `§1t1523s0§.as:104,106` 800×480 | **same** |
+| `standingRange` / `jumpThreshhold` / `runSpeed` / `gravity` | `MCSPlayer.as:9,11,13,25` | `§1t99s0§.as:9,11,13,25` | **same** |
+| slash speeds 50/40/30 | `MCSPlayer.as:15-19` | `§1t99s0§.as:15-19` | **same** |
+| `maxDistance 200 / lenThr 4 / distThr 400 / thickness 8 / largestUnit 20` | `InputManager.as:51-59` | `§1t1541s0§.as:51-59` | **same** |
+| multi-target prefilter `dist²<40000` | `NPCManager.as:1229` | `§1t1543s0§.as:1486` | **same** |
+| heavy defence `×0.8` | `MCSPlayer.as:3226-3234` | `§1t99s0§.as:3284-3288` | **same** |
+| `slashusage` floor 48 · baseReload `48+SPD·6` · bonusReload `+6` | `StatsManager.as:1921-1925,1839` | `§1t1523s0§.as:2353,2276` · `§1t99s0§.as:3319` | **same** |
+| ability ladder 3 / 4 / 5 | `MCSPlayer.as:3164-3194` | `§1t99s0§.as:3223-3241` | **same** |
+| **maxreload** | `5*24 = 120` (`MCSPlayer.as:239`) | **`8*24 = 192`** (`§1t99s0§.as:249`) | **DIFFERS** |
+| **reload bar span** | `(r-24)/(max-24)` = 96 ticks (`MCSPlayer.as:1162-1168`) | **`(r-48)/(max-48)` = 144 ticks** (`§1t113s0§.as:328`) | **DIFFERS** |
+| **crit** | 1.5 light / 1.2 other | **flat 1.3** | **DIFFERS** |
+| **heavy/dual/rev damage mult** | `×1.5` | **`×1.4`** | **DIFFERS** |
+| **mastery coefficients** | `0.005/level` | **`0.04` light-dmg, `0.02` bal** | **DIFFERS** |
+| **light reach mult** | `×1.5` | **`×1.4`** | **DIFFERS** |
+| **stance-switch gate / cost** | `>= max/6`, two-branch penalty | **`>= 48`, flat `-48`** | **DIFFERS** |
+| **losing-matchup damage** | *(absent)* | **`×0.9`** (`§1t99s0§.as:3796-3799`) | **DIFFERS** |
+
+### A4. `combat-core/crit-gating` — **MATERIAL**
+
+The *mechanism* is right and survives in the web build (reload resource, `++` per frame,
+zeroed on crit, `slashUsage ÷2 / ×1 / ×1.5`, refill `48+SPD·6`, floor 48, `bonusReload +6`).
+The two headline **numbers** are android-only:
+
+* `maxreload = 8*24 = 192` — `§1t99s0§.as:249`, not `5*24`.
+* stance switch is gated on `reload >= 48` and costs a **flat 48**
+  (`§1t99s0§.as:3050`, `:3060`, `:3157-3161`), not `maxreload/6` with the
+  `>max/2 → max/3 else −max/6` branch.
+
+At `max/6` of 192 the gate would be 32; the real gate is 48 (25% of the bar). Do not
+port the android economy.
+
+### A5. `combat-core/damage-formula` — **MATERIAL**
+
+Random roll ✓, permutation ✓. Coefficients ✗. Web `§1t99s0§.as:3258-3270`:
+
+```as3
+var _loc1_:int = this.minDamage + Math.random() * this.damageRange;
+case LIGHT:                 _loc2_ = _loc1_ * (0.5 + 0.4 * lightMastery * 0.1);   // 0.5 + 0.04·m
+case BALANCED:              _loc2_ = _loc1_ * (1   + 0.2 * balancedMastery * 0.1); // 1   + 0.02·m
+case HEAVY/DUAL/REVERSED:   _loc2_ = _loc1_ * 1.4;                                 // NOT 1.5
+```
+
+### A6. `combat-core/crit-meter-fill-rate` — **MATERIAL (right measurement, wrong conclusion)**
+
+*"THE MEASUREMENT DOC AND THE FRAME DISAGREE, SO THE FRAME WINS — build 5.8 s."*
+
+**They never disagreed.** The frame was compared against the wrong build. Web source:
+`(192 − 48) / 24 = 144 ticks = **6.00 s exactly***.
+
+I re-measured it myself at 60 fps rather than from 5 stills — and this also disposes of
+the alternative the surveyor didn't rule out (a Flash session running below nominal
+frame rate, which would make wall-clock timings meaningless):
+
+* `reference/videos/Nr4fQstqHDM.mp4` is 60 fps but its **content updates on a strict
+  4-frame (15 Hz) cadence** (whole-frame mean-abs-diff spikes only at 1080.2000 /
+  1080.2667 / 1080.3333 …), so the footage has a hard 15 Hz temporal floor.
+* Subpixel white-fill edge, crit-bar row `y=1034`, track `x∈[246,513]`, window
+  1084.3333–1085.9333 s: steps are cleanly **bimodal at ≈1.9 px and ≈3.8 px** —
+  i.e. 1 or 2 ticks per 15 Hz sample. 37 ticks over 24 samples (1.60 s), plus 20 ticks
+  over 12 samples (0.80 s) in a second ramp = **57 ticks / 2.40 s = 23.75 ticks/s.**
+* **The game was running at its nominal 24 fps.** Independently byte-confirmed:
+  the web payload's own SWF header says `frameRate = 24.000`
+  (`reference/decrypted/shs3_payload_decoded.swf`, and `reference/preservation/shs3.swf`).
+* Tick quantum = 1.899 px → displayed span = 267 px / 1.899 = **140.6 ticks**,
+  versus the source's **144**. Agreement to 2.4%, inside my ±3 px track-width error.
+
+So the constant to build is **6.00 s / 144 ticks**, sourced (A2), not 5.8 s estimated (A1).
+The claim's own lane_impact — *"the period constant must come from the frame, not the
+android build"* — is obsolete: it comes from the **web source**.
 
 ---
 
-## SCORE
+## §B — What held (and is now stronger)
 
-The survey scored **78** and named build-parity as reason (a) for holding off the 90s.
-That reason is now closed — in both directions. Parity is *established* for ten
-quantities and *broken* for eight, all measured. But four of the survey's headline
-numbers are android-only and three of its four "fix `src/config`" instructions would
-corrupt correct values.
+`reach-cap` · `reach-is-arclength` · `crit-meter-exists-in-web-build` ·
+`multi-target-full-damage` · `hit-registration-instant-at-endslash` · `pass-through-dash` ·
+`gesture-classifier` · `slash-type-map` · `mitigation-and-part-rule` · `heavy-def-0.8` ·
+`stance-triangle` · `early-ttk` · `launch-unlock-levels` · `150pct-damage-is-a-buff`.
 
-**My score: 62.** The structural discoveries (arc-length budget, instant resolution at
-`endSlash`, multi-target no-falloff, universal part rules, nine-way slash classifier,
-pass-through derivation, the crit meter's existence on frames) are real, valuable and
-correctly cited — that is what keeps this above 50. The deduction is for grading an
-entire lane against a build the project does not ship, while the shipped build's source
-sat un-opened in `reference/decompiled/shs3_payload/`.
+Every android quote I spot-checked was **verbatim and correctly line-cited** — the
+surveyor's transcription discipline is not in question; its *source selection* is.
+Seven of these are now **parity-confirmed in the web build** (table in §A3), which
+upgrades them from `CONTRACT-SRC-v0.682` to portable.
 
-## DO-NOT-ACTION LIST
+Frames I opened myself:
 
-1. Do **not** change `src/config/reach.ts` `lightMult`, `balancedPerMastery`, `heavyPerMastery`.
-2. Do **not** change `src/config/combat.ts` `CRIT_MULT` off 1.3.
-3. Do **not** replace the balanced/heavy damage curves with 0.005-per-mastery.
-4. **Do** fix `src/config/stances.ts` `LAUNCH_UNLOCK_LEVEL.heavy` 5 → 3 (survey is right, both builds agree).
-5. **Do** label ported constants by build. The android bundle is a *different game version*, not a proxy.
+* `reference/frames/session11/crit-focus/t1003.000.png`, crop `(0,910)-(620,1080)` @2× —
+  portrait ring, HP `14/20` green, Chi `31/31` blue, third bar empty with
+  **CANNOT CHANGE STANCE**, gold **150% DAMAGE** below. Confirms `150pct-damage-is-a-buff`
+  and the stance-switch meter gate. Bar track measured `x=246..513`; HP green edge at
+  `x=433` = 69.8% vs 14/20 = 70.0%.
+* `reference/frames/session11/gap-focus-trigger/m_nearfull.png` (1800×780) @0.5× —
+  upper panel third bar ~97% white, lower panel 100% with **CRITICAL HIT** printed on it,
+  HP 11/20 and Chi 47/47 unchanged. Confirms `crit-meter-exists-in-web-build`.
+* Viewport check: game content in the 1080p frame spans `cols 52..1867`, `rows 0..1079`
+  → aspect **1.6815**, vs `800/480 = 1.6667` (and *not* `800/690 = 1.1594`, the SWF
+  canvas rect). Corroborates the 800×480 world-unit scale independently of code.
+
+---
+
+## §C — What the surveyor left on the table (under-claims)
+
+1. **The stance triangle is in CODE, with numbers.** `stance-triangle` cites only the
+   string table. `MCSPlayer.as:3701-3704` (android) and `§1t99s0§.as:3788-3799` (web):
+   the victim takes **×1.2** when the attacker's stance beats theirs; the web build
+   additionally applies **×0.9** when it loses. Direction reads
+   `victim LIGHT ← attacker BALANCED`, `victim BALANCED ← attacker HEAVY`,
+   `victim HEAVY ← attacker LIGHT` = light>heavy>balanced>light. `STANCE_BEATS` confirmed
+   a **fourth** time, now with the magnitudes the ledger needed.
+2. **A fifth damage term, web-only:** `§1t99s0§.as:3804-3807`
+   `if(§1t1071s0§) { _loc5_ *= 1.3; }` — a boolean character-state multiplier
+   (declared `§1t67s0§.as:52` / `§1t68s0§.as:62`) with no android counterpart. Lead, not
+   yet identified; likely a downed/launched state. Flagging so it is not silently dropped.
+3. **`mitigation-and-part-rule` describes only the NPC-victim path.** For the *player*
+   victim the pipeline is `stance mult → −defence → minDamage floor → behead ×1.5 →
+   elemental adds → gotHitCounter=12`, not the flat subtraction the claim describes.
+   (Correct as stated for `NPC.as`; incomplete for `MCSPlayer.gotHit`.)
+4. **Stale lane_impacts.** `pass-through-dash` says `combat-sim.ts`'s "fixed 105.9 px
+   pass-through … needs replacing" — `src/config/combat-sim.ts` already deprecates
+   `DASH_SLASH_PX` and already carries `DASH_SPEED_PX_PER_FRAME = {light:50, balanced:40,
+   heavy:30}`. Nothing to do.
+
+---
+
+## §D — Score
+
+**78 → 62.** Not because the work is shallow (it is the deepest lane on the board), but
+because ~40% of its *actionable* output points at the wrong build's constants, two items
+would regress correct live config, and the one blocker it declared unclosable is closable
+today with a `grep` in this repo. Re-run the lane against
+`reference/decompiled/shs3_payload/` and it lands in the 90s — most of the structure
+transfers unchanged.

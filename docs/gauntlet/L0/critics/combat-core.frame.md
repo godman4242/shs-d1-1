@@ -1,245 +1,260 @@
-# CRITIC — combat-core — LENS 4 (THE FRAME LENS)
+# L0 CRITIC — combat-core — LENS 4 (THE FRAME LENS)
 
-Blind review. I did not see the surveyor's reasoning, only its claim list. Every verdict
-below carries an artifact **I** opened. Crops are stated. All image work done with PIL
-(no ImageMagick on this box); crop tuples are `(left, top, right, bottom)` in the raw
-1920×1080 frame's own pixel coordinates, upscale factor given per crop.
-
-## Headline
-
-**17 of 20 claims survive. 3 fall (1 material, 2 minor).** The unit is unusually strong:
-every A2 quote I pulled came back verbatim, and the two visual claims the surveyor
-actually graded from frames (`150pct-damage-is-a-buff`, `crit-meter-exists-in-web-build`)
-are correct — I reproduced both by eye.
-
-What falls is exactly where a **document was trusted over a frame**:
-
-1. **`mitigation-and-part-rule` — the damage-popup colour is WRONG and MIS-CITED.** The
-   claim says popups spawn "in 0x990000" and that this *closes ui-hud blocker ③*. The
-   frames say otherwise, and so does the source the surveyor didn't quote. **THE FRAME
-   WINS.** (material)
-2. **`crit-meter-fill-rate` — 5.8 s is 3 % low; the answer is 6.0 s.** The surveyor's
-   track width (263 px) is wrong. I measured the track directly off a **full** bar:
-   `x 245..512 = 268 px`. Rate 45.0 px/s ⇒ **5.96 s**, which is what three independent
-   routes already say. (minor)
-3. **`crit-gating` — "refill 48 + SPD·6" is dead code in v0.682.** `baseReload` is
-   assigned and never read. The meter fills at a flat `++reload`; SPD does not touch it.
-   (minor)
-
-Nothing here is a SESSION-18 A4-D repeat — the surveyor did open frames. But it graded
-one HUD element from AS3 while a frame that contradicts it sits in `damage-ttk/`.
+Blind review. I did not see the surveyor's reasoning, only its output. Every verdict below
+carries an artifact **I** opened.
 
 ---
 
-## FRAME WORK I DID (own cites)
+## HEADLINE: the survey read the WRONG BUILD, and said the right one was unreadable
 
-### F1 — the HUD, at 3× (settles `150pct-damage-is-a-buff`, and the third bar)
+The survey's claim 20 (`combat-core/build-version-parity`) states:
 
-`reference/frames/session11/crit-focus/t1003.000.png`, crop `(0,900)-(640,1080)`, NEAREST ×3.
+> "The web payload's own AS3 is obfuscated (`reference/decompiled/shs3_payload/scripts/§1t51s0§/`,
+> 5 files) and cannot be cross-read."
 
-Visible: portrait ring (red), **green 14/20**, **blue 31/31**, a **third brown/empty bar
-reading "CANNOT CHANGE STANCE"**, and below the bars **"150% DAMAGE" in gold**.
-Exactly as claimed. HELD.
-
-### F2 — the crit meter at 100 %, on a RAW frame (strengthens `crit-meter-exists-in-web-build`)
-
-`reference/frames/session11/gap-focus-trigger/t2175.933.png` (1920×1080 raw frame),
-crop `(100,940)-(620,1080)`, LANCZOS ×3.
-
-Visible: **green 4/20**, **blue 47/47**, **third bar 100 % solid white with "CRITICAL HIT"
-printed across it in the game's own brush face.**
-
-> ⚠ The surveyor cited `gap-focus-trigger/m_nearfull.png` — an **1800×780 two-panel
-> composite an earlier agent assembled**, not a raw frame. Its substance is right (I
-> opened it too: upper panel bar ~97 % unlabelled, lower panel 100 % + "CRITICAL HIT",
-> HP 11/20 · Chi 47/47 in both). But a raw 1920×1080 frame showing the same thing exists
-> and should be the cite. **Swap the cite to `t2175.933.png`.**
-
-### F3 — the track width, measured on the full bar (refutes the 5.8 s constant)
-
-Same frame `t2175.933.png`. White-pixel extent over rows 1026–1049, x∈[200,600]:
+**That is false, and it is the load-bearing error of the whole lane.**
 
 ```
-bar white extent x 245 -> 512   width 268
+$ find "reference/decompiled/shs3_payload/scripts" -name "*.as" | wc -l
+    1079
 ```
 
-The surveyor's `248..511 = 263 px` is 5 px short. Their stated validation ("HP 14/20 puts
-the green edge at x=433 = 70.3 %") does not discriminate: `248+0.70·263 = 432.1` and
-`245+0.70·268 = 432.6` both round into x=433. Measuring the **full** bar does.
+`§1t51s0§` is one sub-package, not the directory. The web build's ActionScript is only
+*partially* obfuscated: class and local names are mangled, but **every numeric literal is
+intact and many identifiers survive verbatim** — `standingRange`, `jumpThreshhold`, `runSpeed`,
+`lightSlashSpeed`, `balancedSlashSpeed`, `heavySlashSpeed`, `minDamage`, `damageRange`,
+`slashUsage`, `defense`, `stance`, `controlledBy`, `thickness`, `maxDistance`, `Math.random`.
 
-### F4 — the fill rate, re-derived from the frames the surveyor used
+`§1t99s0§.as` **is the web build's `MCSPlayer`.** Its first 20 lines are android's
+`MCSPlayer.as:5-22` with the names still on them:
 
-Row y=1032, run-length scan of `crit-focus/*.png`, x∈[230,540]. I reproduce their fill
-edges to ±1 px:
-
-| frame | white run | edge | % of 268-px track |
-|---|---|---|---|
-| t1004.800 | 247→281 | 281 | 13.4 |
-| t1005.000 | 247→290 | 290 | 16.8 |
-| t1082.100 | 247→303 | 303 | 21.6 |
-| t1082.900 | 247→339 | 339 | 35.1 |
-| t3779.000 | 247→369 | 369 | 45.5 |
-
-Rate from the long baseline: `(339−303)/0.8 s = 45.0 px/s` ⇒ **268/45.0 = 5.96 s**.
-
-Third route: `gap-focus-trigger/focusbar_scan2_videoB_fps15.tsv` contains one complete
-empty→full sweep — edge `247 @ t2170.000 → 512 @ t2176.000` = **6.000 s**.
-
-Fourth route (already in the repo, which the surveyor did not reconcile with):
-`docs/research/fidelity/session11-raw/crit-focus.txt` — *"EMPTY TO FULL = 6.00 s (three
-independent 60fps regressions agreeing to 0.5%: 6.01 / 6.00 / 5.98 s)"*, and
-`docs/research/fidelity/COMBAT_MEASUREMENTS.md` f-6 — *"Focus empty→full ≈ 5.9 s"*.
-
-**Build 6.0 s, not 5.8 s.** The structural finding stands and is important: the android
-v0.682 constants predict **4.00 s** (`maxreload = 5*24` MCSPlayer.as:239; displayed span
-`tempreload/(maxreload-24)` = 96 ticks, MCSPlayer.as:1158-1168; `frameRate = 24`), and I
-confirmed that `-24` is real, not an invention. 4.00 s vs 6.0 s ⇒ the web build's effective
-tick is ~16 Hz on this axis. **THE FRAME WINS; the android number must not be promoted.**
-
-### F5 — damage popups: TWO colours, not one (REFUTES a sub-claim)
-
-`reference/frames/session11/damage-ttk/t1960.000.png`, crop `(760,500)-(900,620)`,
-LANCZOS ×6. Over the player (name tag "GUEST", HP 14/20), a fading **"2"** whose modal
-colour over the pale-blue sky is `(140,160,180)` / `(140,140,180)` — a **black glyph
-fading by alpha**, no red channel dominance anywhere in the crop.
-
-`reference/frames/session11/damage-ttk/t1961.900.png`, crop `(470,580)-(680,700)`,
-LANCZOS ×5. Over **JINBEI (4)** (enemy, HP bar ~55 %), a **red "36"**, core pixels
-`(163,14,0)` — consistent with 0x990000 after video compression.
-
-The source agrees with the frames and disagrees with the claim:
-
-```
-MCSPlayer.as:3540-3547
-   if(this.controlledBy == 0)  ProjectileManager.createFloatingText(mcs.x,mcs.y-100,damage.toString(),0);          // BLACK
-   else                        ProjectileManager.createFloatingText(mcs.x,mcs.y-100,damage.toString(),10027008);   // 0x990000
+```as3
+// reference/decompiled/shs3_payload/scripts/§1t99s0§.as:9-19   (WEB v0.717)
+internal static var standingRange:int = 50;
+internal static var jumpThreshhold:int = 100;
+internal static var runSpeed:int = 12;
+internal static var lightSlashSpeed:int = 50;
+internal static var balancedSlashSpeed:int = 40;
+internal static var heavySlashSpeed:int = 30;
 ```
 
-and there are **four more** popup colours, none of them mentioned:
-fire `16737792` = 0xFF6600, wind `13421772` = 0xCCCCCC, water `26367` = 0x0066FF,
-earth `6697728` = 0x663300 (MCSPlayer.as:3551-3563, NPC.as:501-513), plus chi
-`3394815` = 0x33CCFF (MCSPlayer.as:1633).
+The parity check the survey declared blocked took **four greps**. It overturns five of this
+lane's own claims — and in three of them the survey called a **correct** repo constant wrong.
 
-The single colour the surveyor quoted lives at **NPC.as:497**, which is *outside* the
-cited range `NPC.as:386-462`. A HUD built to this claim would paint every hit the player
-takes dark red. **ui-hud blocker ③ is not closed by one colour; it is closed by the
-semantic** (black = taken by you, 0x990000 = dealt, element colours per element).
-`docs/research/fidelity/session11-raw/damage-ttk.txt` already proved the semantic from
-frames: *"the black number equals the player's HP loss on the same frame in 13 of 14 events"*.
+---
 
-### F6 — the drawn stroke: taper, thickness and colour CONFIRMED ON FRAME
+## THE PARITY TABLE (what I actually read, both builds)
 
-The claim `reach-is-arclength` asserts the stroke "visibly tapers to zero thickness" but
-cites only AS3. A frame settles it, so I opened one.
+| quantity | android v0.682 | **web v0.717** | `src/config` | survey said |
+|---|---|---|---|---|
+| reach base | `120+floor((90+5d)·s/(20+s))` | **identical** (`§1t1523s0§.as:2347`) | ✓ | ✓ correct |
+| light reach | `×1.5` | **`×1.4`** (`§1t99s0§.as:3094`) | `1.4` ✓ | "reach.ts wrong" ✗ |
+| balanced reach | `×(1+0.5·m·0.01)` | **`×(1+0.2·m·0.1)` = 1+0.02m** (`:3105`) | `0.02` ✓ | "4× too big" ✗ |
+| heavy reach | `×(0.5+0.5·m·0.01)` | **`×(0.5+0.4·m·0.1)` = 0.5+0.04m** (`:3116`) | `0.04` ✓ | "8× too big" ✗ |
+| heavy floor | `100` | `100` (`:3117-3120`) | `100` ✓ | ✓ |
+| light damage | `×(0.5+0.005m)` | **`×(0.5+0.04m)`** (`:3262`) | — | android only |
+| heavy/dual/rev damage | `×1.5` | **`×1.4`** (`:3270`) | — | android only |
+| **crit** | `×1.5` light / `×1.2` other | **`×1.3` FLAT** (`:3272-3274`) | `CRIT_MULT = 1.3` ✓ | "never 1.3" ✗ |
+| `maxreload` | `5*24 = 120` | **`8*24 = 192`** (`:249`) | — | "5×24" ✗ |
+| meter display | `(r−24)/(max−24)` = 96 t | **`(r−48)/(max−48)`** = 144 t (`§1t113s0§.as:328`) | — | not read |
+| stance gate | `reload < maxreload/6` | **`reload < 48`** (`:3060`) | — | "1/6 meter" ✗ |
+| heavy defence | `×0.8` | `×0.8` (`:3286-3288`) | `1.25` ✓ | ✓ |
+| slash speeds | 50/40/30 | 50/40/30 (`:15-19`) | ✓ | ✓ |
+| stroke thickness/colour | 8 / `0x990000`, taper | identical (`§1t1541s0§.as:57,179,361`) | — | ✓ |
+| i-frames | `gotHitCounter = 12` | `= 12` (`§1t68s0§.as:483`) | — | ✓ |
+| damage floor bands | ≤10/≤20/≤30/else | identical (`§1t67s0§.as:199-209`) | — | ✓ |
+| combo cap | 999 | 999 (`§1t1523s0§.as:4998`) | — | ✓ |
 
+**`src/config/reach.ts` was right all along, and it was right because it was read out of the
+WEB payload.** Its comment ("the curves at mastery 10 → 0.9/1.2/1.4") is not back-derivation
+from a legacy triple; it is the v0.717 source evaluated at m=10. The survey accused it of
+being fabricated and prescribed replacing three correct CONTRACT-SRC values with android ones.
+
+---
+
+## FRAME WORK (LENS 4 — I opened the images)
+
+### F1 · `m_nearfull.png` — crit meter and label CONFIRMED
+`reference/frames/session11/gap-focus-trigger/m_nearfull.png`, full 1800×780, viewed 1:1.
+Upper panel: HP `11/20` green, Chi `47/47` blue, third bar white to ~97 % with a brown sliver,
+no label. Lower panel: same HP/Chi, third bar 100 % white with **`CRITICAL HIT`** printed
+across it. The survey's claim 6 is exactly what is in the image. **HELD.**
+
+### F2 · `t1003.000.png` — the `150% DAMAGE` line CONFIRMED
+Crop `(0,910)-(620,1080)` upscaled 3×. Visible: portrait ring, `14/20` green, `31/31` blue,
+third bar reading **`CANNOT CHANGE STANCE`**, and `150% DAMAGE` in gold beneath.
+`OverworldHUD.as:1404`, string 4132 and `MCSPlayer.as:209-211` all verified verbatim.
+**HELD** — and the warning is a good one; heavy's own multiplier is 1.4-1.5.
+
+### F3 · fill-rate — I reproduced the survey's five edges to the pixel, and found a sixth frame
+Row scan at y = 1030/1032/1034/1036, x ∈ [240,534], threshold RGB > 170:
+
+| frame | my last-white x | survey | fill % |
+|---|---:|---:|---:|
+| `t1081.100` | **259** | *(not used)* | 4.2 % |
+| `t1004.800` | 281 | 281 | 12.5 % |
+| `t1005.000` | 290–291 | 290 | 16.0 % |
+| `t1082.100` | 304 | 304 | 21.3 % |
+| `t1082.900` | 340 | 340 | 35.0 % |
+| `t3779.000` | 370 | 370 | 46.4 % |
+
+Track x = 248…511 (263 px) independently confirmed; at `t1003.000` HP `14/20` puts the green
+edge at x = 433 → 70.3 %. The measurement is sound. `t1081.100 → t1082.100` gives a clean
+**1.000 s** window: +45 px.
+
+**But the answer is in the web source, not stuck at a frame estimate.** Both SWF headers read
+**24.000 fps** (I parsed them: `shs3_payload_decoded.swf` CWS v17, 24.0 fps, stage 800×690;
+`shs3_android_payload_decoded.swf` CWS v26, 24.0 fps, stage 800×480). The web bar is
+`(reload − 48)/(192 − 48)` = **144 ticks = 6.000 s**. Predicted vs measured:
+
+| window | Δt | measured | 6.000 s predicts | 5.845 s (survey) | 4.00 s (survey's "android") |
+|---|---|---:|---:|---:|---:|
+| t1004.800→t1005.000 | 0.200 s | 9 px | 8.8 | 9.0 | 13.1 |
+| t1082.100→t1082.900 | 0.800 s | 36 px | 35.1 | 36.0 | 52.6 |
+| t1081.100→t1082.100 | 1.000 s | 45 px | 43.8 | 45.0 | 65.8 |
+
+6.000 s fits every window to ≤ 1.2 px **and** is an integer tick count, which 5.845 s cannot be.
+**The frame and the web source agree at 6.000 s.** The survey's "the frame wins, build 5.8 s"
+gets the direction right and the constant wrong, and its escalation to *"the concrete proof
+that v0.682 combat tuning ≠ v0.717"* is a conclusion drawn from a source it wrongly believed
+unreadable.
+
+### F4 · the stance-switch label is a per-frame clock — and it matches the WEB formula
+`reference/frames/session11/crit-focus/`, crop `(230,1015)-(530,1050)` at 4× NEAREST:
+
+- `t1081.100` 4.2 % — no label · `t1082.100` 21.3 % — no label · `t1082.900` 35.0 % — no label
+- **`t1083.100` — bar EMPTY, `CANNOT CHANGE STANCE` back on**, 0.200 s after the 35 % frame
+
+That is `deductReloadBar()` firing on a landed slash, then the gate. The label appears **only
+at displayed 0 %**, which is precisely `§1t113s0§.as:328-338`: `_loc3_ = (reload − 48)/(max − 48)`
+clamped at 0, label shown `if(_loc3_ == 0)` — i.e. `reload ≤ 48`, the same 48 as the stance
+gate `if(reload < 48) return;` (`§1t99s0§.as:3060`). Android's `maxreload/6 = 20` would put the
+label boundary somewhere else. **The frames pick the web rule over the android one.**
+
+### F5 · the stroke taper and colour — the survey's visual claim, graded from a frame
 `reference/frames/session11/stance-reach/B_t862.667_HEAVY_thin-dark-tail-plus-bold-head.png`,
-crop `(400,690)-(1020,820)`, LANCZOS ×3, plus the frame 67 ms earlier
-`B_t862.600_HEAVY_bold-bright-red-head-only.png` at the identical crop.
+crop `(60,680)-(1060,1080)` upscaled 2×. The stroke is unmistakably **thin and dull at one end,
+thick and vivid at the other** — the taper is real and visible. Sampled stroke pixels run
+mean RGB ≈ (110-145, 15-40, 10-35), consistent with `0x990000` = (153,0,0) after antialiasing
+and video compression, and inconsistent with a bright `0xFF0000`. `thickness = 8` and the taper
+term `thickness − thickness·((maxDistance − distanceLeft)/maxDistance)` are byte-identical in
+both builds. **HELD, and now frame-cited** — the survey graded this from code alone with
+19 stroke frames sitting unopened in `session11/stance-reach/`.
 
-- At **t862.600**: a single **bold** red bar over the enemy (≈x 840-940). No tail.
-- At **t862.667**: the same bold segment, **plus a thin red line now extending left**
-  across the whole crop.
+### F6 · the light stroke measures 555 px — and it favours ×1.4, not ×1.5
+`B_t785.200_LIGHT_stroke553px_endtoend.png`. My own measurement (red-dominant mask, band
+y ∈ [770,820], contiguous run): **x = 416 → 971 = 555 px**, matching the filename's 553 px.
+Viewport (pillarbox scan): x = 52 → 1867 = 1816 px for an 800-unit stage → **2.27 px/unit**, so
+the stroke spans ≈ 245 world units end-to-end. The same video's player screen
+(`B_t850.600_..._SPD13.png`) gives SPD 13 → base = 120 + floor(90·13/33) = **155**.
+- `×1.5` (survey / android) → cap 232.5 units = **528 px**
+- `×1.4` (`reach.ts` / **web**) → cap 217 units = 492 px
 
-So the stroke was drawn right→left, **thick where it started, thinning as it ran** —
-exactly `lineStyle(thickness - thickness*((maxDistance-distanceLeft)/maxDistance), ...)`
-at InputManager.as:352.
+Neither bare figure covers 555 px, so the character carries a dan rank (`90 + 5d`) — but the
+*ratio* is what matters and the frame does not favour the android 1.5 over the web 1.4 by any
+margin the dan term does not swamp. The reach magnitudes are settled by the web source, and
+the frame is consistent with it. **No refutation from the frame; the refutation is from `§1t99s0§.as`.**
 
-Measured thickness profile (red-pixel column heights, y∈[700,800]):
+### F7 · damage popups CONFIRMED on frames, plus a colour the survey missed
+`reference/frames/session11/damage-ttk/`, crop `(780,480)-(1180,680)` at 2×, sequence
+`t125.350 → t125.417 → t125.450 → t125.467 → t125.733`: a dark-red **`1`** rises and grows,
+then a dark-red **`2`** spawns lower and rises/scales — exactly
+`createFloatingText(mcs.x, mcs.y − 100, damage, 10027008)`. Player HP is `8/10` in these frames,
+i.e. the L1 fight, and the numbers 1 and 2 are *precisely* the light/balanced rolls the survey
+derives. Independent frame corroboration of claim 17's arithmetic.
 
-```
-x=460: 2px   x=540: 5px   x=780: 4px   x=900: 13px   x=940: 18px
-```
+⚠ But the same crop also shows a **black `2`** alongside the red one. `0x990000` is not the
+whole popup colour story. And the survey never opened `TextProjectile.as`, which carries the
+popup's entire animation contract: `ttl = 12`, `velY = -5`, `scale += 0.1` from `ttl < 10`,
+`alpha -= 0.25` from `ttl < 4` (`TextProjectile.as:17-25`) — a 0.5 s, 60-world-unit rise.
 
-Modal stroke colour `(150,0,0)`; `10027008` = **0x990000** = `(153,0,0)`. ✔
-
-**Bonus — this independently fixes the world→screen scale.** `thickness:int = 8`
-(InputManager.as:57) rendering at a measured **18 screen px** gives **2.25 px per world
-unit** = 1080/480. That is a frame-side confirmation of `StatsManager.stageWidth = 800`
-/ `stageHeight = 480` (StatsManager.as:80,82), which is what `reach-cap`'s "800×480 world
-units" rests on. Letterboxing measured on `crit-focus/t1003.000.png`: content spans
-x 52..1867, full height 0..1079.
-
-### F7 — NEW: a frame proves the damage roll is RANDOM and kills the legacy "crit 1.3"
-
-`docs/research/fidelity/session11-raw/damage-ttk.txt` records red **27 / 30 / 36** landing
-on JINBEI (4), *"same target, same stance, same fight, seconds apart"*, and infers
-`36/27 = 1.333` might be the folkloric crit 1.3.
-
-I checked the crit meter on those frames. Scanning row 1032 for a white fill run from
-x=247 across every `damage-ttk/t19*.png`: **bar = 0 px (0 %) on all 18 frames**, and the
-HUD crop of `t1961.900.png` `(100,940)-(620,1080)` ×3 reads **"CANNOT CHANGE STANCE"** —
-i.e. `reload < maxreload/6` (MCSPlayer.as:2977). **The 36 was not a crit.**
-
-⇒ 27/30/36 is a ±15 % *roll* spread on one target in one stance, which is precisely
-`var baseDamage:int = this.minDamage + Math.random() * this.damageRange`
-(MCSPlayer.as:3200). **Frame-side corroboration of `combat-core/damage-formula`, and the
-"crit = 1.3" inference is dead by frame, not just by source.**
-
-### F8 — NEW: a third android↔web divergence, frame-grounded
-
-The web build prints **"CANNOT CHANGE STANCE"** on the reload bar (I read it on
-`crit-focus/t1003.000.png` and `damage-ttk/t1961.900.png`). That string **does not exist**
-in the android build's 2,533-entry table: `docs/gauntlet/L0/index/strings.json` has
-`208: "Change Stance"` and `125: "Stance Restriction"`, and no entry matching
-`cannot.*stance` at all (searched case-insensitively over every value).
-
-This strengthens `build-version-parity`. Divergences now: (1) crit-meter period 4.00 s vs
-6.0 s, (2) this UI string, and (3) — see below — the reach coefficients read against the
-one lvl-1 frame we have.
-
-### F9 — frames vs the reach formula: consistent, not contradicted
-
-`stance-reach/` carries measured stroke spans in its filenames. Converting at 2.25 px/unit
-(F6): BALANCED lvl-1 max **239 px ⇒ 106 world**; LIGHT late-game **553 px ⇒ 246 world**;
-HEAVY **154-194 px ⇒ 68-86 world**. All three are *at or under* the formula's cap
-(lvl-1 balanced = 124), which is what a cap predicts — a player need not draw to it. **No
-frame contradicts `reach-cap` or `reach-stance-mults`.** The heavy readings sitting under
-the 100-unit floor are also not a contradiction, for the same reason.
+### F8 · behead is visible in the web build
+`reference/frames/session11/damage-ttk/t1383.133.png`: hat detached and airborne, head separated,
+blood. `NPC.as:386-392`'s `PART_hat / PART_head / PART_neck → behead = true; damage *= 1.5`
+is not just source — it is on screen. Claim 14's part rule gets a frame.
 
 ---
 
-## RISK I AM FLAGGING BUT NOT REFUTING — the mastery domain
+## SOURCE ERRORS FOUND (beyond the build mix-up)
 
-`reach-stance-mults` and `damage-formula` both hinge on `0.5 * mastery * 0.01` = **0.005
-per point**. The surveyor reads the domain as 0-10 (skilldata.xml skill 1000 levels run
-`<value>1</value>` … `<value>10</value>`, verified). But `0.5 %-per-point` is the idiom of
-a **0-100** scale, and on a 0-10 scale the terms are nearly inert: at max mastery balanced
-reach is only ×1.05 and heavy ×0.55 — permanently under its own 100 floor, i.e. the heavy
-mastery term would never do anything at all. That is a strange thing to ship. Domain 0-10
-is the better-evidenced reading and I am not overturning it, but **this is the single
-assumption most likely to be wrong**, and it silently scales two whole tables. Worth one
-frame measurement: a lvl-1 vs high-mastery balanced stroke at the same SPD.
+**E1 — `baseReload` is dead code.** The survey cites `StatsManager.as:1839
+getBaseReload() { return 48 + (SPD + bonus) * 6; }` as "refill rate ... stat-driven" and puts
+"refill 48 + SPD·6" into `lane_impact`. Grep over **all 553** android scripts:
+
+```
+MCSPlayer.as:105   internal var baseReload:int = 48;      // declaration
+MCSPlayer.as:182   ... baseReload:int, ...                // parameter
+MCSPlayer.as:190   this.baseReload = baseReload;          // assignment
+EnemyClone.as:49   this.baseReload = owner.baseReload;    // copy
+```
+
+Those are the only four. It is **never read in any expression, in either build.** The meter is a
+flat `++this.reload` per frame (`MCSPlayer.as:1160` / `§1t99s0§.as:1205`) toward a hard
+`maxreload` set two lines *after* `baseReload` is stored. SPD does not touch the crit meter.
+
+**E2 — the mastery unlock ladder is the ENEMY branch.** Claim 18 quotes
+`MCSPlayer.as:3164-3194` and concludes `src/config/stances.ts LAUNCH_UNLOCK_LEVEL.heavy`
+should be 3, not 5. But `initSpecialSkills()` opens (`MCSPlayer.as:3126-3161`, and identically
+`§1t99s0§.as:3186-3212`):
+
+```as3
+if(this.controlledBy == 0 || this.controlledBy == 2)      // <-- THE PLAYER
+{
+   if(this.stance == LIGHT_STANCE) {
+      this.canLaunch  = this.getSkillLevel(1014) > 0;
+      this.canDeflect = this.getSkillLevel(1036) > 0;
+      this.canAirCombo= this.getSkillLevel(1015) > 0;
+   } else if(BALANCED) { canFlipUp 1016 · canDeflect 1037 · canLaunch 1017 }
+     else if(HEAVY)    { canStab  1018 · canDeflect 1038 · canLaunch 1019 }
+}
+else if(this.stance == LIGHT_STANCE) { this.canLaunch = this.lightMastery >= 3; ... }
+```
+
+The quoted `>= 3 / >= 4 / >= 5` ladder is the **`else`** — the AI/enemy path. For the player,
+in **both** builds, mastery level is not consulted at all: launch is gated on *owning skill
+1014 / 1017 / 1019*. `LAUNCH_UNLOCK_LEVEL` describes the player, so "heavy 3, not 5" is a wrong
+fix to a live config; the right fix is that the whole table is the wrong shape.
+
+**E3 — "early mobs die in ONE hit" is false for 18 % of them.** Every cited row is verbatim
+correct (I re-read `itemdata.xml:7906-7915`, `npcdata.xml:145-152` and `:2473-2480`,
+`StatsManager.as:693-708` and `:1830-1832`). But a full enumeration of `npcdata.xml` —
+495 `<npc>`, of which **22** have `lvl ≤ 2` — gives hp = **1 (×17), 2 (×1), 5 (×4)**, and the
+four hp-5 NPCs (ids 7, 8, 9, 10) all carry `defense 3`. Against them the Branch's damage floors
+to `1 + piercing`, so they take **five hits, not one.**
+
+**E4 — small mis-cites.** `if(mouseY > 480)` is `InputManager.as:231`, not `:229`. The web
+payload's SWF header declares an **800×690** stage, not 800×480 — the 800×480 world space is
+established by `StatsManager.as:80-82` (`stageWidth = 800; stageHeight = 480;`), which the
+survey never cited, and corroborated on-frame by the 5:3 game viewport (1816×1080 inside a
+1920×1080 capture). `destY` is also snapped to `getGroundY()` when the stroke's last point is
+within `jumpThreshhold` of the ground (`MCSPlayer.as:2685-2692`) — the pass-through is not a
+pure "to the last point". And `src/config/combat-sim.ts:78` **already** carries
+`DASH_SPEED_PX_PER_FRAME = {light:50, balanced:40, heavy:30}`, matching source; only the stale
+`DASH_SLASH_PX = 105.9` comment needs retiring.
 
 ---
 
-## VERDICT TABLE
+## WHAT SURVIVES, AND IT IS A LOT
 
-| claim | verdict | severity |
-|---|---|---|
-| reach-cap | stands | — |
-| reach-stance-mults | stands | — |
-| reach-is-arclength | stands — **upgraded to A1** (F6) | — |
-| crit-multiplier | stands — frame-corroborated (F7) | — |
-| crit-gating | **falls (part)** — "refill 48 + SPD·6" is dead code | minor |
-| crit-meter-exists-in-web-build | stands — **re-cite to the raw frame** (F2) | — |
-| crit-meter-fill-rate | **falls** — 5.8 s → **6.0 s** (F3/F4) | minor |
-| multi-target-full-damage | stands | — |
-| hit-registration-instant-at-endslash | stands | — |
-| pass-through-dash | stands | — |
-| gesture-classifier | stands | — |
-| slash-type-map | stands | — |
-| damage-formula | stands — frame-corroborated (F7) | — |
-| mitigation-and-part-rule | **falls (part)** — popup colour / ui-hud ③ (F5) | material |
-| heavy-def-0.8 | stands | — |
-| stance-triangle | stands | — |
-| early-ttk | stands | — |
-| launch-unlock-levels | stands | — |
-| 150pct-damage-is-a-buff | stands — I re-verified by eye (F1) | — |
-| build-version-parity | stands — honest STILL_UNHELD, **strengthened** (F8) | — |
+Nine of the nineteen claims held under my own reading with no correction:
+`reach-is-arclength`, `crit-meter-exists-in-web-build`, `multi-target-full-damage`,
+`hit-registration-instant-at-endslash`, `pass-through-dash`, `gesture-classifier`,
+`slash-type-map`, `mitigation-and-part-rule`, `heavy-def-0.8`, `stance-triangle`,
+`150pct-damage-is-a-buff` — and I verified each in the **web** build too where the code exists.
+`NPCManager.checkHit`'s per-enemy `gotHitFlag` really is an instance var (`MCSActor.as:998`),
+so "one hit per enemy per slash" is not a shared-flag illusion; and
+`grep -rn "NPCManager.checkHit\|NPCManager.checkPlayerHit"` over all 553 files really does put
+the slash-array overloads only inside `endSlash()`.
 
-## Score
+## SCORE
 
-The surveyor said **78**. I'd hold it at **76** — the three corrections are small, but one
-of them (popup colour) was a wrong HUD claim made from source with a contradicting frame
-sitting in the repo, and a second (5.8 s) restated a number the repo already had, worse.
-Everything else in this unit is unusually well-evidenced and the A2 quoting is honest.
+The survey scored **78** and held itself off the 90s partly because "every source cite is the
+ANDROID v0.682 client and parity with the web v0.717 is unproven". That instinct was right;
+the response to it was wrong. The web client was on disk, readable, and it disagrees on
+**crit, all three stance reach multipliers, both non-flat damage multipliers, `maxreload`, the
+meter display divisor and the stance gate**. Three of those disagreements had the survey
+telling the repo to overwrite correct constants with wrong ones.
+
+**Recommend 78 → 55**, with the lane re-run against `reference/decompiled/shs3_payload/scripts/`
+as primary and `shs3_android/` as the *named-symbol Rosetta stone* it actually is — read the
+android file to learn what `§1t4414s0§` means, then read the value out of the web file.

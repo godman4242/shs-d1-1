@@ -1,267 +1,267 @@
-# CRITIC — skills-meters — LENS 3 (PRECEDENCE / stale-claiming)
+# CRITIC — LENS 3 (PRECEDENCE) — unit: **skills-meters**
 
-Blind review. I did not see the surveyor's reasoning. Every verdict below cites an artifact
-**I** opened this session. Commands were re-run; nothing is taken on the surveyor's word.
+Blind review. I did not see the surveyor's reasoning. Every verdict below cites an
+artifact **I** opened this pass. Lens: hunt STALE-claiming — a claim that imports a
+doc statement a later measurement/ruling/frame overturned, or that cites a doc
+second-hand where a frame or a newer bundle settles it directly.
 
-**Headline: 19 of 21 claims survive contact with the artifacts. Two are wrong.**
-One of the two is **fatal** and it is the exact failure mode this lens hunts:
-the claim that says *"corrects the previous survey, which banked the Android numbers"*
-**banks an Android number itself**, by mis-binding a coincidentally-equal web constant.
+**Bottom line: 18 of 22 claims HELD, 2 REFUTED (1 fatal, 1 material), 2 honest
+STILL_UNHELD survive.** The survey's central thesis — *"Android XML is web-true,
+Android AS3 is not"* — is **correct and I re-verified it byte-for-byte**. The irony
+is that the survey then committed that exact error twice, in the two places it
+mattered most.
 
-Re-score: the surveyor's **86 is too high. Honest figure ≈ 78.**
-Blocker ③ (Focus numerics) is not closed — its headline constant is wrong by 60%.
-The "135 numeric effect rows" is really 83, and the one string cross-checkable against
-web AS3 is contradicted by it.
+Suggested re-score: **86 → 78.** The blocker-① / ④ / ⑤ closures are real and
+strongly cited; blocker ③ (Focus numerics) is **not** closed — its headline constant
+is the Android one.
 
 ---
 
-## R-09 `focus-meter-numerics-web` — **REFUTED, FATAL**
+## ⛔ FATAL — F-1. `focus-meter-numerics-web`: maxreload is **192**, not 120
 
-**Claim:** *"max 120 frames (5s)"*, cite `§1t99s0§.as:55 (max)`.
-Journal restates it as a table row: `| max | 5 * 24 = **120 frames** = 5.00 s | §1t99s0§.as:55 |`
-(`docs/gauntlet/L0/systems/skills-meters.md:325`).
+The claim: *"max 120 frames (5s)"*, cited to `§1t99s0§.as:55`.
 
-**What line 55 actually is** — I opened it:
+**Line 55 is not maxreload.** Verbatim, `reference/decompiled/shs3_payload/scripts/§1t99s0§.as`:
 
 ```
-reference/decompiled/shs3_payload/scripts/§1t99s0§.as
  55:      internal static var §1t12234s0§:int = 5 * 24;
 ```
 
-`§1t12234s0§` is **never assigned to maxreload**. Its only two uses in the whole bundle:
+`§1t12234s0§` has exactly two uses in the whole web bundle, and neither is the meter:
 
 ```
-§1t99s0§.as:266:            this.§1t4440s0§ = §1t12234s0§;
-§1t122s0§.as:950:               §1t4440s0§ = §1t12234s0§;
+266:            this.§1t4440s0§ = §1t12234s0§;          // §1t99s0§.as, inside §1t4444s0§
+950:               §1t4440s0§ = §1t12234s0§;            // §1t122s0§.as
+1244:         if(this.§1t4440s0§ > 0)
+1246:            --this.§1t4440s0§;                     // a per-frame countdown, not a meter
 ```
 
-and `§1t4440s0§` is a per-tick countdown decremented at `§1t99s0§.as:1244-1247` — a timer,
-not a meter.
-
-**maxreload is `§1t4415s0§`, and it is 8 × 24 = 192 frames = 8.00 s.** Exhaustive grep,
-whole web bundle, every occurrence of the symbol:
-
-```
-$ grep -rn "§1t4415s0§" reference/decompiled/shs3_payload/scripts/
-§1t99s0§.as:95:       internal var §1t4415s0§:int;
-§1t99s0§.as:249:      this.§1t4415s0§ = 8 * 24;      <== ONLY assignment (player)
-§1t4904s0§.as:77:     §1t4415s0§ = 8 * 24;           <== ONLY assignment (clone)
-   …all remaining hits are reads (:1203 refill, :3272 crit, :3295 spend, :3321 clamp)
-```
-
-**Where 120 came from.** It is the **Android** value, from the very build the claim says it
-is correcting:
+The real maxreload — the var compared in `getDamage` (`:3272`), zeroed in
+`deductReloadBar` (`:3295`), clamped in the refill (`:3321`), and handed to the UI as
+`param2` (`:256`, `:1208`, `:3169`, `:3325`) — is `§1t4415s0§`, and it is assigned
+**once**:
 
 ```
-reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as
- 239:         this.maxreload = 5 * 24;
-3272:         StageManager.getBattleUI().updateReload((this.reload - 24) / (this.maxreload - 24));
+249:         this.§1t4415s0§ = 8 * 24;
 ```
 
-Android = 120 max / 24 dead zone. Web = **192 max / 48 dead zone**. The claim correctly
-caught the dead zone (48, `§1t113s0§.as:328` — verified verbatim) and then imported the
-Android max anyway, because a *different* web static happened to also equal `5 * 24`.
+`this.§1t4415s0§ = 8 * 24` = **192 frames = 8.00 s**.
 
-**Corrections the lane must carry:**
+That line sits inside `§1t4443s0§` (declared `:183`), which is the 15-parameter twin
+of Android `MCSPlayer.as:182 initPlayer(controlledBy, hp, maxhp, chi, maxchi,
+defense, baseReload, minDamage, damageRange, baseSlashLength, slashUsage,
+lightMastery, balancedMastery, heavyMastery, level)` — same arity, same order,
+param-for-param (`§1t99s0§.as:185-199` vs `MCSPlayer.as:184-198`). The Android twin
+of line 249 is:
 
-| | claim | measured (web v0.717) |
+```
+MCSPlayer.as:239:         this.maxreload = 5 * 24;
+```
+
+**So the survey reported the ANDROID constant as the web value, under a web line
+number that does not contain it.** This is precisely the failure the survey's own
+headline warns about, committed in the claim it scored highest.
+
+### THE FRAME WINS — and the frame agrees with the code, not with the survey
+
+`docs/research/fidelity/COMBAT_MEASUREMENTS.md` carries a frame-derived measurement
+of this exact quantity:
+
+```
+:101  - Rate **45.05 ± 0.30 px/s** ⇒ empty→full **5.97 s** (confirms 6.00 s).
+:589  | **f-5** | Focus fills PASSIVELY and LINEARLY … 45.0 px/s … 46.1 px/s | ≈45.5 px/s | MEASURED |
+:590  | **f-6** | **Focus empty→full ≈ 5.9 s** … | **rate MEASURED; total INFERRED** |
+```
+
+The visible bar spans `(maxreload − 48)` frames — from `§1t113s0§.as:328
+(param1 - 48) / (param2 - 48)`. At 24 fps:
+
+| model | visible-bar travel | vs measured 5.97 s |
 |---|---|---|
-| maxreload | 120 frames / 5.00 s | **192 frames / 8.00 s** — `§1t99s0§.as:249` |
-| usable range above dead zone | 72 frames | **144 frames / 6.00 s** |
-| stance switch (48) as share of usable | "two-thirds of it" | **one third of it** |
-| natural refill | (unstated) | **+1 per tick**, `§1t99s0§.as:1203-1205` → 0→full = 8.00 s |
+| **web `8*24`=192** | (192−48)/24 = **6.000 s** | ✅ exact |
+| survey's `5*24`=120 | (120−48)/24 = **3.000 s** | ❌ off by 2× |
 
-Everything else in R-09 verified verbatim and stands: dead zone 48, switch cost 48
-(`:3160-3166`), slash cost `slashUsage × 0.5 / 1.0 / 1.5` by stance (`:3299-3311`),
-bonus refill +6 (`:3318-3324`).
+Two independent frame-scanned ramps and a code constant land on the same number to
+three decimals. **Standing invariant applied out loud: when the measurement doc and
+the frame disagree the frame wins — here they agree, and both refute the survey.**
 
----
+Bonus: this **upgrades COMBAT_MEASUREMENTS f-6 from "total INFERRED" to CONTRACT.**
+Empty→full is 192 frames = **8.000 s** of charge, of which the first 48 frames
+(2.000 s) render as a zero-width bar carrying the refusal caption, leaving exactly
+**6.000 s** of visible travel. f-6's extrapolation was right; it no longer needs to
+be an extrapolation.
 
-## R-11 `per-level-effect-numbers` — **REFUTED, MATERIAL** (two independent defects)
-
-**Claim:** *"135 of the 182 level rows carry a verbatim numeric effect string … so no
-projectile-class reading is needed for them."*
-
-### (a) The count is 83, not 135.
-
-I joined every `<level><desc>` id in `reference/extracted/skilldata.xml` to
-`docs/gauntlet/L0/index/strings.json` and counted:
-
-```
-total 182 · nonempty desc 135 · resolved-with-a-digit 83 · missing from table 0 · no-digit 52
-no-digit breakdown:
-  'Increased damage' ×10 · 'Increased damage and slash range' ×10 · 'Increased slash range' ×10
-  'Increases your chances of harvesting rare crops' ×5 · '…finding hidden items…' ×4
-  'Reduced cooldown' ×3 · 'Increases the chi charging rate' ×2 · …
-```
-
-135 is the count of **non-empty** desc rows. Only **83** carry a number. The 52 that don't
-include **all 30 mastery rows** — and those are precisely the rows whose real coefficients
-the surveyor had to get from AS3 (`§1t99s0§.as:3262-3270`), not from the string table. The
-claim's own sibling claim proves its headline number wrong.
-
-### (b) The one numeric string I could cross-check against web AS3 is contradicted by it.
-
-Roll (skill 1004). Card copy in the recovered table:
-
-```
-7004 -> '60% chance to dodge enemy attacks when rolling'
-7005 -> '80% …'      7006 -> '100% …'
-```
-
-Web build, same skill (`§1t120s0§.as:16` proves `§1t10127s0§ = 1004 = Roll`):
-
-```
-reference/decompiled/shs3_payload/scripts/§1t99s0§.as
-3363:            _loc15_ = this.§1t4491s0§(§1t120s0§.§1t10127s0§);
-3364:            if(_loc15_ == 1)      { _loc16_ = 75; }
-3368:            else if(_loc15_ == 2) { _loc16_ = 85; }
-3372:            else if(_loc15_ >= 3) { _loc16_ = 95; }
-3376:            if(int(Math.random() * 100) < _loc16_)
-```
-
-**75 / 85 / 95, not 60 / 80 / 100.** The survey's own governing rule — *"Android XML is
-web-true, Android AS3 is not"* — has a hole in it: the **Android string table is neither.**
-It is Android UI copy, and where v0.717 code disagrees with it, the code wins. Numeric
-effect strings must be labelled Android-sourced and re-checked against the web bundle
-before any of them is coded.
-
-### (c) The lane_impact's project-memory correction is also wrong.
-
-*"Roll (60/80/100%) is what buys evasion, not Focus (correcting project memory 'Focus buys
-evasion')."* A **full Focus meter does buy evasion** in v0.717:
-
-```
-§1t99s0§.as:3383  if(this.§1t4465s0§() && this.§1t4414s0§ == this.§1t4415s0§ && (…stance-ultimate owned…))
-3385:            §1t3246s0§ = 12;                       // 12 frames of immunity
-3386:            §1t88s0§.instance.§1t1516s0§("Snd_jump");
-3387:            return true;                           // incoming hit fully negated
-```
-(same block duplicated at `§1t4909s0§.as:74` and `:311`).
-Caveat I attach myself: the gate reads skills **1074 / 1075 / 1076**
-(`§1t120s0§.as:108-112`), and **none of those ids exists in `skilldata.xml`** (max real id
-1068, then 1500/1501), so the branch may be unreachable in shipped data. Report it as
-PARTIAL — but *not* as "Focus does not buy evasion".
+### What survives in that claim
+Dead zone 48 ✅ · switch cost flat 48 ✅ (`:3162`) · slash cost ×0.5 / ×1.0 / ×1.5 ✅
+(`:3302/3306/3310`) · bonus refill +6 ✅ (`:3320`). Only the max is wrong — but it is
+the denominator of everything else, so the derived lane_impact is wrong too:
+usable range is **144 frames, and a stance switch costs one THIRD of it**, not
+"72 frames … two-thirds".
 
 ---
 
-## Claims that HELD (I re-opened each)
+## ⚠️ MATERIAL — F-2. `per-stance-reach-formula`: **Dual and Reversed are swapped**
 
-- **`blocker1-costs-cooldowns`** — all four line ranges verified verbatim. One correction to
-  carry: of the 182 rows, **101 `<chi>` and 84 `<cooldown>` elements are EMPTY**. Only two
-  skills lack a cooldown entirely (1500/1501, category 11, NPC-only), so the *cooldown* half
-  is genuinely complete for every playable skill; blank `<chi>` needs an explicit blank→0
-  rule before a transcription script runs, and blank `<cooldown>` is handled in code at
-  `§1t105s0§.as:310-313` (`cooldown.toString == "" → 0`).
-- **`kunai-is-a-phantom`** — `skilldata.xml:355` / `:900` are `<chi></chi>`; `SkillManager.as:252-259`
-  verbatim. Ammo stat 2501.
-- **`crit-is-deterministic`** — `§1t99s0§.as:3272-3276` verbatim.
-- **`spd-cooldown-cap-600`** — `§1t1523s0§.as:2289-2296` verbatim; Android's 300 confirmed at
-  `StatsManager.as:1856-1860`. Missing detail: the SPD fed in is **pre-multiplied ×1.5 under
-  the SPEED buff** (`§1t1523s0§.as:2281-2285`), so the cap bites at SPD 400 while buffed.
-- **`ledger-decimals-are-display-artefacts`** — reproduced. Requires **int truncation at each
-  step**, which `§1t105s0§.as:297-318` supplies (`_loc2_:int`, `:int` return):
-  5 s → 120 f → ×0.995 = 119.4 → **119** → /24 = 4.958 → **4.96**. Same for 9.92 / 8.92. Held.
-- **`crit-mult-is-1.3-ledger-vindicated`** — web `:3274` = ×1.3 flat; Android `MCSPlayer.as:3215-3221`
-  = ×1.5 Light / ×1.2 other. Both verbatim. The ledger is vindicated; the earlier survey was wrong.
-- **`stance-damage-ceiling-is-mastery-10`** — `§1t99s0§.as:3262-3270` verbatim, and skills
-  1000/1001/1002 each have exactly **10 `<level>` rows with `<passive>1</passive>`**. 0.9/1.2/1.4
-  is the mastery-**10** ceiling. Precedence nit: they cite the **Android** `StatsManager.as:1834`
-  for the mastery source when the **web** cite exists — `§1t1523s0§.as:2268` passes
-  `§1t9714s0§(1000), (1001), (1002)` as params 12-14.
-- **`per-stance-reach-formula`** — verified, and I confirmed the parameter binding they asserted:
-  `§1t99s0§.as:183-194` (`param10 → §1t4420s0§`) against the call at `§1t1523s0§.as:2268`
-  (`param10 = §1t9592s0§()` = `§1t9593s0§(SPD)`). Enemy path hard-codes the DAN term to 90
-  (`§1t4906s0§.as:56-57`). Two nits: the injured buff **halves** baseSlashLength
-  (`§1t99s0§.as:219-223`); and the "wiki 300/200/100 reconciles at the SPD asymptote" footnote
-  computes Balanced ×1.0 and Heavy ×0.5 — i.e. **mastery 0** — inside a survey whose headline
-  finding is a **mastery-10** ceiling. It is flagged as inference, so it stands, but it is
-  internally inconsistent and must not be promoted. The names "Dual"/"Reversed" for stance
-  constants `§1t12224s0§`/`§1t12223s0§` are unevidenced in the web bundle.
-- **`in-combat-stance-switch-is-real`** — **HELD and strengthened.** The surveyor argued from the
-  caption plus the 48-frame charge. The decisive artifact is stronger and they missed it:
-  ```
-  §1t99s0§.as:3048   public function §1t4470s0§() : Boolean       // canChangeStance
-  3050:      return this.§1t4469s0§() && this.§1t4414s0§ >= 48;
-  §1t99s0§.as:3058   public function §1t4472s0§() : *              // cycleStance
-  3060:      if(this.§1t4414s0§ < 48) { return; }
-  ```
-  A hard lock has no `reload >= 48` gate. Frame corroboration, mine: `m_nearfull.png` top panel
-  shows a **98%-full** focus bar mid-combat with **no caption at all**. The ledger line
-  (`REBUILD_READINESS.md:158`, and `SHSD_MASTER_REFERENCE.md:388` which grades it **[CONTRACT]**)
-  is dead. Both docs should be struck.
-- **`string-table-resolves-all-73`** — `resolved_names.json` → `{misses: 0, rows_resolved: 73}`;
-  my own parse: 73 of 75 skills carry a `<displayname>` (1500/1501 do not). String `960`
-  confirmed **absent** from `strings.json`.
-- **`skilldata-byte-identical-across-builds`** — reproduced independently:
-  `android 39045 · web 39003 · delta 42 · common prefix after the 40-byte decl = 39003`.
-- **`frame-crit-appears-at-exactly-full`** — I re-cropped `(640,0)-(1800,390)` / `(640,390)-(1800,780)`,
-  2× Lanczos, and re-measured in the original: TOP white bar x736→1526 = **791 px**, BOT white
-  x736→1540 = **805 px** → **98.3% vs 100%**; captions exactly as described (none / black
-  "CRITICAL HIT"). Wording caution: a 98%-vs-100% pair is *consistent with* exact equality but
-  does not prove it alone — any threshold in (98%, 100%] fits. The A2 equality is what proves it.
-- **`frame-cracks-web-string-960`** — my crop `(60,880)-(1020,1080)` 3×: red portrait ring,
-  green 20/20, blue 26/26, empty brown third bar carrying light-grey **"CANNOT CHANGE STANCE"**,
-  yellow "150% DAMAGE". `§1t113s0§.as:110-111` verbatim; `strings.json` has `175 = "Critical Hit"`
-  and **no 960**. Held.
-- **`150pct-damage-is-a-food-buff`** — held, but cited from Android when the **web** cite exists
-  and says the same thing: `§1t99s0§.as:209-223` is the same else-if chain
-  (`hasBuff(9453) → minDamage *= 1.5`). Use the web cite.
-- **`ten-categories-all-named`** — `SkillScreenUI.as:84,103-104` verbatim; category domain 1–11
-  confirmed in `skilldata.json`; my own membership check of category 11 returns exactly
-  1064 Back Throw / 1065 Air Stab / 1066 Bull Charge / 1067 Punch Lunge / 1068 Undying / 1500 / 1501,
-  **none with `<order>` or `<lvlreq>`** — as claimed. Caveat the survey should have applied to
-  itself: "ten tabs" rests **entirely on Android UI code**; the web skill screen was never opened.
-- **`chi-costs-are-not-single-digit`** — `skilldata.json` chi domain
-  `{distinct 11, range [0,100], samples 0,2,3,5,6,7,8,10,20,50,100}` — matches exactly;
-  `skilldata.xml:1638-1649` verbatim. Note `numeric_count` is **81**, so the ladder describes
-  81 populated cells, not 182.
-- **`stab-is-a-passive-tree-node`** — `skilldata.xml:720-727` verbatim (`<passive>1</passive>`,
-  req 1002 ×3, category 3); `XMLSkill.as:345-348` verbatim.
-- **`shunpo-effect`** — `skilldata.xml:1234-1248` verbatim (req 1000 ×10, chi 50, cd 60, one level,
-  **no `<lvlreq>`** so the gate is purely mastery-10); Android `MCSPlayer.as:1706` (`3 * 24`) and
-  `:1751` (`movePlayer(250)`) verbatim. The **PARTIAL** verdict and the refusal to promote the
-  Android geometry are correct and are vindicated by R-09 and R-06.
-- **`ultimates-and-elemental-projectile-constants`** (STILL_UNHELD) — 47 empty `<desc>` rows
-  confirmed by my own parse. Honest.
-- **`skill-vfx-anim-audio`** (STILL_UNHELD) — `reference/extracted/android/93_MCSCharacter_SkillsAnimationData.bin`
-  exists; `Snd_criticalDamage` verified at `§1t113s0§.as:352`. Honest.
+The formula is right. The two off-stance labels are inverted.
+
+Web stance constants, `§1t99s0§.as:27-35` — `12220=0, 12221=1, 12222=2, 12223=3,
+12224=4`. The Android bundle declares the same five in the same order **with names**:
+
+```
+MCSPlayer.as:27:      internal static var LIGHT_STANCE:int = 0;
+MCSPlayer.as:29:      internal static var BALANCED_STANCE:int = 1;
+MCSPlayer.as:31:      internal static var HEAVY_STANCE:int = 2;
+MCSPlayer.as:33:      internal static var DUAL_STANCE:int = 3;
+MCSPlayer.as:35:      internal static var REVERSED_STANCE:int = 4;
+```
+
+⇒ `§1t12223s0§` = **DUAL**, `§1t12224s0§` = **REVERSED**.
+
+Android `setStance` is structurally isomorphic to the web one — same five cases in
+the same source order (LIGHT, BALANCED, HEAVY, REVERSED, DUAL):
+
+```
+android 3066:            case REVERSED_STANCE:
+android 3067:               this.slashLength = this.baseSlashLength * 1.5;
+android 3077:            case DUAL_STANCE:
+android 3078:               this.slashLength = this.baseSlashLength;
+android 3079:               if(this.slashLength < 100)  → 100
+```
+```
+web 3130:            case §1t12224s0§:                       // REVERSED
+web 3131:               this.§1t4417s0§ = this.§1t4420s0§ * 1.4;
+web 3141:            case §1t12223s0§:                       // DUAL
+web 3142:               this.§1t4417s0§ = this.§1t4420s0§;
+web 3143:               if(this.§1t4417s0§ < 100) → 100
+```
+
+**Corrected:** Reversed ×1.4 · **Dual ×1.0 floored at 100** — the survey has it
+backwards. Same inversion propagates to the slash-cost buckets (`:3305` groups
+Balanced with **Reversed** at ×1.0; `:3309` groups Heavy with **Dual** at ×1.5).
+
+Also flagged, not refuted: the wiki reconciliation "1.4×210=294 / 210 / 105" mixes
+**mastery-10** for the damage table with **mastery-0** for the reach table. The
+survey labels the step as inference, so it stands as flagged — but it is internally
+inconsistent and should not be promoted.
+
+---
+
+## Precedence nits (NOT refutations — substance holds, the cite is second-hand)
+
+Four claims reach for an **Android** cite where the **web** bundle settles it. Under
+§0 that is weaker evidence than was available, and under the survey's own rule
+("Android AS3 is not web-true") it is self-undermining. Supplying the web cites:
+
+| claim | survey cited | web cite that settles it |
+|---|---|---|
+| `stance-damage-ceiling-is-mastery-10` (mastery source) | `StatsManager.as:1834` | **`§1t4906s0§.as:58-61`** — `_loc7_=getStat(1000)`, `_loc8_=(1001)`, `_loc9_=(1002)` passed as params 12/13/14 → `§1t99s0§.as:196-198` → `§1t4421s0§/4422/4423`. Mapping proven in the web build. |
+| `150pct-damage-is-a-food-buff` | `OverworldHUD.as:1402-1404`, `MCSPlayer.as:210-223` | **`§1t99s0§.as:209-223`** — same else-if chain, `this.minDamage *= 1.5` / `defense *= 1.5` / injured `*0.5` incl. `this.§1t4420s0§ *= 0.5`. (That last line is also the independent proof that `§1t4420s0§` = baseSlashLength.) |
+| `stab-is-a-passive-tree-node` (canEquip) | `XMLSkill.as:345-348` | no web cite offered; the XML half is web-true by the byte-check, so this is minor |
+| `ten-categories-all-named` (categoryCount=10) | `SkillScreenUI.as:84` | no web cite offered; category domain [1,11] is web-true by the byte-check, so this is minor |
+
+Also: `ledger-decimals-are-display-artefacts` concludes *"config must encode the
+integers"*. The cooldown domain is **not** all-integer — `docs/gauntlet/L0/index/
+skilldata.json → skilldata/skill/level/cooldown` has `distinct_values 14`,
+`numeric_range [2.0, 70.0]`, `sample_values` including **`'3.5'`**. Config field must
+be `Number`, not `int`. Minor, but it is a real trap.
+
+And: `m_nearfull.png` is a **1800×780 derived montage** of two HUD strips, not a raw
+1920×1080 video frame. The A1 reading is sound (I reproduced it, below) but the
+provenance should be stated.
+
+---
+
+## What I re-verified and confirmed first-hand
+
+- **A3 byte-check re-run:** android `117_Mobile_SkillData.bin` 39,045 B vs web
+  `skilldata.xml` 39,003 B, delta 42; after stripping the 40-byte XML declaration the
+  common prefix is **39,003 of 39,003 bytes**. ✅ The survey's central lever is real.
+- **`getDamage` verbatim** (`§1t99s0§.as:3255-3277`): stance table `0.5+0.04M` /
+  `1.0+0.02M` / flat `1.4`, then `if(reload == maxreload) return dmg*1.3 + STAT_CRITICALDMG`.
+  Deterministic crit ✅, `1.3` ✅, mastery-10 ceiling ✅ (skills 1000/1001/1002 each
+  carry exactly 10 `<level>` rows, values 1-10, all `<passive>` — my own scan).
+- **SPD cap 600** (`§1t1523s0§.as:2291-2295`) vs **Android 300**
+  (`StatsManager.as:1856-1860`). ✅ Divergence real; web value correct.
+- **Cooldown decimals reproduced:** `§1t105s0§.as:297` returns `int`, so
+  `int(120×mod)/24` etc. SPD ∈ **[6,10]** is the exact band that yields
+  4.96 / 9.92 / 8.92 — SPD 5 and SPD 11 both break it. ✅
+- **135 filled / 47 blank / 0 unresolved** across 182 `<level><desc>` rows — my own
+  join against `strings.json`. Exactly as claimed. ✅
+- **Category census:** 5/5/5/10/10/9/6/6/6/6 + cat-11 = 7 = 75. Cat 11 = Back Throw,
+  Air Stab, Bull Charge, Punch Lunge, Undying, 1500, 1501 — **none** has `<lvlreq>` or
+  `<order>`. ✅ NPC-only conclusion is sound.
+- **Chi domain** exactly `0,2,3,5,6,7,8,10,20,50,100`. ✅
+- **`resolved_names.json['skilldata.xml']`** → `misses: 0, rows_resolved: 73,
+  miss_sample: []`; **`strings.json['960']` is MISSING**, `['175'] = 'Critical Hit'`. ✅
+- **A1 re-measured myself.** `m_nearfull.png`, crops (640,0)-(1800,390) and
+  (640,390)-(1800,780), 2× Lanczos. Top: green 11/20, blue 47/47, white third bar
+  with **no** text. Bottom: identical, white bar now carrying **black "CRITICAL HIT"**.
+  My own widest-row pixel sweep: chi-blue track `x735→1541` = **807 px**; TOP white
+  `x736→1526` = **791 px = 98.0 %**; BOT white `x736→1540` = **805 px = 99.8 %**.
+  Survey said 98.0 % / 100 % — matches within 1-2 px. ✅
+- **A1 re-measured myself.** `Nr4fQstqHDM_t428.0.png`, crop (60,880)-(1020,1080),
+  3× Lanczos: red portrait ring, green **20/20**, blue **26/26**, third bar
+  empty/brown carrying light-grey **"CANNOT CHANGE STANCE"**, yellow **"150% DAMAGE"**.
+  `§1t113s0§.as:110-111` verbatim confirmed, incl. `#BBBBBB` / `#000000`. ✅
+- **`Snd_criticalDamage`** at `§1t113s0§.as:352` — verbatim confirmed. ✅
 
 ---
 
 ## NEW — things the survey missed
 
-1. **maxreload = 192 frames (8.00 s)** — closes ledger blocker ③'s "max" for real. `§1t99s0§.as:249`.
-2. **`canChangeStance()` is a named public method whose only gate is `reload >= 48`** —
-   `§1t99s0§.as:3048-3051`. Kills the "hard lock" [CONTRACT] outright.
-3. **Web Roll dodge = 75 / 85 / 95** — `§1t99s0§.as:3363-3376`. Establishes that Android
-   *string-table numbers* are not web-true, a hole in the survey's own build-parity rule.
-4. **A full Focus meter negates an incoming hit** (12 i-frames, `Snd_jump`) when the stance's
-   ultimate skill is owned — `§1t99s0§.as:3383-3388`. PARTIAL: ids 1074-1076 are absent from
-   `skilldata.xml`, so the branch may be unreachable in shipped data.
-5. **`slashUsage` is weapon-derived with a floor of 48** — `§1t1523s0§.as:2350-2358` reads the
-   weapon's `<slashusage>`; `itemdata.xml` carries 106 of them (e.g. `:8044 <slashusage>72</slashusage>`).
-   With max 192 / usable 144, a 72-usage weapon costs 36 focus per Light slash, 72 Balanced,
-   108 Heavy. R-09 left this an opaque symbol; it is the number that makes the meter simulable.
-6. **`baseReload = 48 + SPD × 6`** — `§1t1523s0§.as:2274-2276`, param 7, distinct from maxreload
-   (this is the field the Android name `getBaseReload()` maps to, `StatsManager.as:1839-1841`).
-7. **"Focus" (skill 1005) sets `reload = maxreload − 1`** in the **web** build —
-   `§1t120s0§.as:230-231` (`§1t10128s0§ = 1005`, `:18`). The journal had only an Android cite.
-8. **SPD is pre-multiplied ×1.5 under the SPEED buff** before *both* the cooldown modifier and
-   baseSlashLength — `§1t1523s0§.as:2281-2285` and `:2336-2340`.
+### N-1. The stance switch is **hard-gated at reload ≥ 48**, with a direct cite
+The survey argued in-combat switching is real *by inference* ("a hard lock would
+have nothing to charge"). The gate is explicit:
 
----
+```
+§1t99s0§.as:3048:      public function §1t4470s0§() : Boolean
+             3050:         return this.§1t4469s0§() && this.§1t4414s0§ >= 48;
+             3058:      public function §1t4472s0§() : *
+             3060:         if(this.§1t4414s0§ < 48)
+             3062:            return;
+```
 
-## Precedence-lens summary
+`§1t4472s0§` is the stance cycle (`-1→Light→Balanced→Heavy→Light`, `:3064-3079`) and
+it **early-returns below 48**. So "CANNOT CHANGE STANCE" is a *literally true refusal*
+shown exactly when the switch is impossible — the bar reads 0 iff `reload ≤ 48` iff
+the cycle refuses. The survey's conclusion is right and now needs no inference.
+Ledger §3.4's "HARD-LOCKED in v0.717" is dead; the recreation's Focus-gated switch is
+**faithful**, cost = flat 48, gate = ≥ 48.
 
-No claim here leans on a superseded *document* — the survey correctly went to payload and
-frames throughout, and it correctly refused to promote Android-only mechanics for Shunpo.
-The stale-import happened one level down, inside the code layer:
+### N-2. `baseReload` (48 + SPD×6) is computed, passed in, and **never read**
+`StatsManager.as:1841 getBaseReload() = 48 + (SPD + bonus) * 6` → passed as param 7 →
+stored to `§1t99s0§.as:191 this.§1t4419s0§ = param7` (declared `:103`, default 48).
+`grep` over the entire web bundle: **those are its only two occurrences**. Identical
+dead-end in Android (`baseReload` at `:105`, `:182`, `:190`, nowhere else).
+Meanwhile the actual fill is a flat `++reload` per tick (`§1t99s0§.as:1203-1205`).
 
-- **the Android *string table* is a third build-parity category** the survey's rule does not
-  cover, and R-11 treats it as fact (refuted by Roll 75/85/95);
-- **R-09 imported an Android constant while claiming to correct exactly that mistake**, via a
-  same-valued web static that binds to a different field.
+⇒ **SPD does NOT accelerate the Focus meter.** SPD buys cooldown reduction and reach
+only. Do not wire SPD to meter fill in config. This also independently corroborates
+COMBAT_MEASUREMENTS **f-5** ("fills PASSIVELY and LINEARLY with time… no
+event-driven jumps") against gap-F's "charge begins on holding the slash input" —
+the code has no input term at all.
 
-Both are the same disease the lens exists for: *a number that reads right, from a source that
-is one build off.* The fix is mechanical — bind the symbol, don't match the value.
+### N-3. `slashUsage` is a **per-weapon itemdata field**, floored at 48
+```
+§1t1523s0§.as:2352:  var _loc1_ = …getItemData(equipped weapon);
+             2353:  if(_loc1_ == null || _loc1_.slashusage < 48)
+             2355:      return 48;
+             2357:  return _loc1_.slashusage;
+```
+`itemdata.xml` carries `<slashusage>` on **106 items**, domain **{24, 72, 96}**
+(`docs/gauntlet/L0/index/itemdata.json → itemdata/item/slashusage`, first at
+`itemdata.xml:8044`). After the floor the effective domain is **{48, 72, 96}** — the
+24-value weapons are clamped up. So the meter economy is weapon-dependent, and Light
+slashes cost {24, 36, 48} frames against a 144-frame visible bar. The survey treats
+`slashUsage` as an opaque symbol; this is codeable today and is a cross-lane hand-off
+to items-equipment.
+
+### N-4. Heavy's defence penalty is web-true A2
+```
+§1t99s0§.as:3286:         if(this.stance == §1t12222s0§)
+             3288:            return defense * 0.8;
+```
+REBUILD_READINESS `:189` lists "Heavy def ×0.8" under combat-core **Ready** with no
+cite. It now has one, in the shipped web build.
+
+### N-5. Cooldowns are not all integers — `3.5` exists (see nits above).
