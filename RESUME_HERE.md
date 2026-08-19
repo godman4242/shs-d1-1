@@ -46,70 +46,101 @@ smaller **finish-L0 workflow** (~40 agents) — `SALVAGE.md` has the exact stage
 
 ---
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready)
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — FINISH LANE L0
 
-**Activate first** — turn these on BEFORE pasting; a fresh session won't do it for you:
+**Activate first** — a fresh session will not do this for you:
 
 | | setting | why |
 |---|---|---|
-| **Surface** | **Claude Code CLI** | terminal + git + build-heavy; the fidelity gate needs the browser extension |
-| **Model** | **Fable 5** at **`high`** | long-horizon, gate-driven; `high` is Fable's own default — never carry Opus's `xhigh` over |
-| **Context** | **fresh session** | the kickoff is self-contained |
-| **MCP** | **Claude in Chrome** — on (the extension lives in **BRAVE**) | `?fidelity=auto` + the duel LOOK |
-| **Ultracode** | ON helps A12.1 + A12.3 | frame-counting fans out per-sequence; transcription per-animation |
+| **Surface** | **Claude Code CLI** | terminal + git + build-heavy |
+| **Model** | **Opus 5** at **`xhigh`** | §2 routes L0 to Opus (R6); judgement-dense. **NOT Fable** — that is L7/L9/L11 |
+| **Context** | **fresh session** | the previous one closed at 4 usage walls |
+| **Ultracode** | **ON** | the finish-sweep is a ~40-agent fan-out |
 
-Copy everything **between** the `'''` lines (the markers themselves are not part of the prompt):
+> ⚠️ The old A12.2 / SESSION 24 kickoff that used to sit here has been **retired for
+> now**. That is lane **L5** and it stays queued: §2's ordering rule is L0 first, and
+> L0's re-score is what routes L5 anyway. `docs/sessions/SESSION24_KICKOFF.md` is
+> still on disk, unchanged, for when L5 comes up.
+
+Copy everything **between** the `'''` lines (the markers are not part of the prompt):
 
 ```
 '''
 You're the lead engineer on SSHD 1:1. Follow the repo's CLAUDE.md and my ship-bar.
 
-READ FIRST, then tell me what they say before writing anything:
+READ FIRST, then tell me the state and your plan before you spawn anything:
 - RESUME_HERE.md
-- docs/sessions/SESSION24_KICKOFF.md   <- the only kickoff to plan from, self-contained
+- docs/gauntlet/L0/SALVAGE.md   <- the resume card; it has the exact stage table
+- docs/GAUNTLET.md              <- the standing engine; §2 is the lane board, §0 is the law
 
-THE JOB: §4 A12.2 onward — my three verdicts on the moving duel ARE the session.
-The A12.1 measurements are ALREADY BANKED AND VERIFIED (ledger §S24 + the
-§S24-H "Verify-pass corrections" block, 2026-08-12 — do NOT re-measure):
-implement the stroke cap + slash-vs-move rule in the Sim behind the
-duel-baseline's own atomic re-record protocol, then transcribe run_sheathed +
-death + the hit answer and make the gait and impacts real.
+THE TASK: FINISH lane L0 to its binary gate. It is 4 runs deep and mid-flight.
+DO NOT restart it and DO NOT try to resume the old workflow - resumeFromRunId is
+SAME-SESSION ONLY, so wf_7e275b35-488 is dead to you. The cache is not load-bearing:
+every completed agent result is already extracted to docs/gauntlet/L0/run2/ and
+committed. Write a FRESH, SMALLER finish-L0 workflow (~40 agents) against the
+on-disk state. SALVAGE.md gives you the stages.
 
-WHAT NOT TO BREAK:
-- Floors: tracing >= 0.9005, held-out >= 0.8490 (spent - UP only), height <= 140.5.
-- duel-baseline moves ONCE, deliberately: DIVERGENCES entry -> sim change ->
-  re-record, ONE atomic commit (its own header's protocol). Twice = re-measure.
-- src/core/ zero numeric literals; scenes render-only; red-first; chaos-plant.
-- Animations TRANSCRIBED and byte-checked, never hand-keyed; the anim-key pins
-  extend in the same commit, deliberately.
-- "A green gate is not a good picture" - I look at the moving duel before close.
+ALREADY BANKED - do NOT re-derive any of this:
+- The string table is FOUND (S0-3). 804 item / 73 skill / 484 NPC names resolve.
+  docs/gauntlet/L0/index/strings.json + resolved_names.json. §2.1 is DEAD, L1b is
+  CLOSED. Caveat: Android build 0.682 vs web 0.717 - label which build a string
+  came from; data-XML rows match, UI copy and combat tuning parity do NOT.
+- ALL 12 SYSTEMS ARE JUDGED: 232/232 claims through 3-4 blind critics each.
+- 1,087 claims / 1,767 verdicts / 0 VOID are in docs/gauntlet/L0/run2/.
 
-PROVE IT: every §2 gate has a runnable measure. Paste the output, never assert.
-NO audio work - SESSION 25 owns it (scheduled in the kickoff).
+WHAT IS LEFT, in order:
+1. The 4 source surveys that never ran: android-blobs, string-table, frames,
+   uistrings-payload. The first two have NEVER been opened by any agent in four
+   runs - that is where the remaining value is concentrated.
+2. ~12 source critics (cite + hunter) over the 6 completed sweeps in sources/*.md -
+   feed those files in as input, do NOT re-survey.
+3. JUDGE the 645 critic new_findings (210 claimed ledger overturns, currently
+   unusable because nothing judged them). Batch them; never one agent per finding.
+4. Dry-loop until TWO rounds THAT ACTUALLY RAN find nothing new, then completeness.
+5. Rewrite docs/research/REBUILD_READINESS.md from the JUDGED claims only.
+6. Drive gates L0-A..F green with PASTED output. Build scripts/gauntlet/citeLint.py
+   red-first and chaos-plant it.
+7. Correct docs/GAUNTLET.md itself - §2.1 blocker dead, the L1b lane row obsolete,
+   §2's L6 "~150 animations" is really ~450 - and re-arm per §3.7 in the SAME commit.
+
+THE BAR - §0 is absolute: EVERY CRITIC IS AN ARTIFACT CRITIC. This game is DEAD; no
+agent has ever seen it run, so a verdict must cite a frame under reference/frames/, a
+row under reference/extracted/ or reference/decompiled/, a byte-check in the suite, a
+ledger number carrying its own frame cite, or my own logged LOOK. A verdict citing
+memory, another agent's summary, or "it looks right" is VOID. Crop and upscale before
+grading any frame. When a measurement doc and a frame disagree, THE FRAME WINS - say
+so out loud. An UNJUDGED claim is a LEAD, not a finding: it may NOT enter the ledger.
+
+FAIL CLOSED (two bugs I already fixed - do not reintroduce them): zero live critics
+means UNJUDGED, never confirmed; and a round where agents DIED is not a round that
+found nothing, so it may not count toward convergence. Return a loud INTEGRITY string.
+
+SURVIVE THE WALL: this lane has hit the usage limit four times. Agents write their
+output to disk BEFORE returning; copy the journal into the repo and extract it the
+moment a stage lands (scripts/gauntlet/salvageJournal.py); COMMIT at every
+checkpoint; keep SALVAGE.md current. Never edit a live workflow script mid-run.
+
+WHAT NOT TO BREAK: §4's no-touch list. Sim.ts and the duel-baseline move only in L5.
+Floors go UP or stay. core/ keeps zero numeric literals. Scenes stay render-only.
 
 FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 56 files / 894),
-read ledger §S24 + its verify-corrections block, then propose the exact A12.2
-implementation plan (stroke cap + classification). Don't start until I ok it.
+report the judged-vs-leads split from run2/claims.json, and show me the finish-L0
+fan-out shape. Don't spawn until I ok it.
 '''
 ```
 
-**Bar verdict: ✅ this kickoff meets the "cannot be improved further" bar** — the
-owner's three LOOK verdicts are the session by name, each with a measurable gate;
-gameplay moves only behind measured values and the baseline's own atomic
-protocol; audio is scheduled (SESSION 25), not dropped. The next change would be churn.
+**Start command** (from the repo root):
 
-**⚠ 2026-08-12 update — A12.1 is BANKED, session starts at A12.2:** the
-measurement half ran 2026-07-29 (`COMBAT_MEASUREMENTS.md` §S24) and its
-3-skeptic adversarial verify — killed that day by credit exhaustion — was
-re-run from the preserved script and landed 2026-08-12: all three verdicts
-**WEAKENED-with-corrections** (reach band HEAVY top ~275, point-blank damage
-resolves ON DRAW at 17, the 27/55 "stride" is capture aliasing of a constant
-~616 px/s mover — full list in §S24-H "Verify-pass corrections", which WINS
-over the raw §S24 rows). The kickoff above and `SESSION24_KICKOFF.md` §4
-carry the same note. Also corrected: the true suite count is **56 files /
-894** (the S23 wrap banner's "57" was a miscount, re-measured 2026-08-12).
+```bash
+cd "/Users/kheshav/kheshav-code/SSHD 1-1" && git log --oneline -1 && npm test 2>&1 | tail -5
+```
 
----
+**Bar verdict: ✅ meets the "cannot be improved further" bar** — it names the lane, the
+model, and the exact remaining stages; it front-loads everything already banked so no
+agent re-derives the string table; it carries §0's law, the two fail-closed rules that
+make this lane's numbers trustworthy, and the wall-survival discipline that has now
+saved the run four times; and it blocks the one mistake that would cost real money
+(trying to resume a dead run ID). The next change would be churn.
 
 ## 🔁 THE GAUNTLET — the standing engine (adopted 2026-08-13)
 
