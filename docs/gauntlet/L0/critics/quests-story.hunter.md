@@ -1,229 +1,261 @@
-# quests-story — HUNTER CRITIC (Lens 2: hunt under-claiming)
+# quests-story — HUNTER LENS review
 
-Blind review. I did not see the surveyor's reasoning. Every verdict below carries an
-artifact **I** opened. Method notes and refutations follow.
-
----
+Critic: blind (never saw the surveyor's reasoning). Every verdict below rests on an
+artifact **I** opened. Method: re-parsed `reference/extracted/questdata.xml` with
+ElementTree from scratch, read the AS3 in
+`reference/decompiled/shs3_android_payload/scripts/`, re-extracted the Prologue frames
+from `reference/videos/zFtCaTO0_1M.mp4` at full 1920x1080 myself, and re-ran the byte
+check. No verdict here is inherited.
 
 ## Headline
 
-The surveyor is **unusually precise on counts and line cites** — I re-derived the tag
-histogram, the exp domain, the cutscene verb histogram, the portrait manifest and the
-sha256 byte-check independently and they reproduce exactly. Line cites :128, :149, :153,
-:158, :169, :183 land on the exact strings quoted.
+**13 of 15 claims survive.** Two `STILL_UNHELD` answers are wrong — both are findable
+in one grep each — and one `HELD` claim is **fatally wrong in the direction that would
+ship a fidelity bug**. One more `HELD` claim carries an inference that the surveyor's
+own frame evidence contradicts, and I found the mechanism that explains it.
 
-But three verdicts are wrong, and two of them are the *most consequential* ones:
-
-| # | claim | my verdict | severity |
-|---|---|---|---|
-| Q-04 | `choices-not-consequential` | **REFUTED** | **fatal** |
-| Q-14 | `step-action-enum-semantics` STILL_UNHELD | **REFUTED — found it** | material |
-| Q-15 | `outcome-id-namespace` STILL_UNHELD | **REFUTED — found it** | material |
-| Q-07 | `questtype-taxonomy-wrong` | partially refuted | material |
-| Q-03 / Q-10 | `18 <loot>` | wrong, it is **19** | minor |
+Score 78 is roughly right but built partly on sand: two of the three "gaps" holding it
+under 85 do not exist, while a new and larger caveat (live-updated data files) applies
+to the whole corpus.
 
 ---
 
-## Q-04 — FATAL. Choices ARE consequential. The engine wires it positionally.
+## FATAL — `quests-story/quest-log-cap-is-a-row-count` is REFUTED
 
-The surveyor's structural observation is true: `<outcome>` is **never a child of
-`<choice>`**. I confirmed that by parentage — every one of the 386 `<outcome>` elements
-sits at `quest/step/intro/outcome` (381) or `quest/step/ending/outcome` (5), never under
-a choice.
+The claim: *"'QUEST_LOG_CAP = 7' is a misread of a UI row count … over an **unbounded**
+activeQuests list … a grep for an accept-time cap finds **only a selection-index
+clamp**."* Lane impact: *"do **NOT** ship a 7-quest limit."*
 
-**But the inference drawn from it is wrong.** The surveyor cites
-`XMLQuestChoice.applyOutcome` and concludes from its emptiness that "the choice graph is
-a flat jump table, not a consequence system". That is the wrong code path. The **live**
-path is positional:
-
-- `XMLQuestStep.getXMLIntroList` (XMLQuestStep.as:158-212) flattens `<intro>`'s children
-  into one `displayList`; `case "option"` pushes the option **then one `null` pad per
-  `<choice>`**.
-- `CutsceneManager.gotoStep` (CutsceneManager.as:80-93) sets
-  `this.currentDisplayNo = goto;` — `<goto>N</goto>` is a raw index into that list.
-- `CutsceneManager.display()` (CutsceneManager.as:203-206) — `case "outcome":
-  outcome.applyOutcome();` — **applies whatever outcome the walker reaches.**
-
-So a choice selects a *branch*, and the branch carries its own `<outcome>` nodes.
-Consequence is positional, not nested.
-
-**I validated my index model against the surveyor's own hand-traced Prologue** before
-trusting it: rebuilding the displayList puts index 9 exactly on *"Sorry, but I don't
-submit to bandits…"* and index 15 exactly on *"I say how about I hand over half the
-length of this sword…"*, both reconverging at `label2` (index 10). That reproduces the
-surveyor's trace, so the model is sound.
-
-Running that walker over all 195 multi-choice `<option>` blocks:
+The cap is real. Three artifacts:
 
 ```
-options with >=2 choices: 195
-DIVERGENT outcome branches: 54
+StatsManager.as:164    internal static var MAXQUESTS:int = 7;
+
+StatsManager.as:1262   if(activeQuestList.length < MAXQUESTS || forceAdd)
+                       {  ... activeQuestList.push(new ActiveQuest(questID)); ... return true; }
+                       return false;
+
+StatsManager.as:1313   if(activeQuestList.length < MAXQUESTS)   // addProcGenDailyQuest
 ```
 
-Concrete divergences (verbatim from the walk):
+and the player-visible consequence:
 
 ```
--- questdata.xml:971
-   Let's start mining.  -> set 113=8402942, set 114=2, set 115=350, set 102=0, END 1
-   Not right now.       -> END 1
--- questdata.xml:814
-   (Fighting Tutorial)  -> set 113=8402944, set 114=4, set 102=0, END 1
-   I should go.         -> END 1
--- questdata.xml:1851
-   I should learn more about Satoshi. -> (further option)
-   Bah! I know where I'm not wanted.  -> set 110=12, END 1
--- questdata.xml:2410
-   (branch A) -> END 1
-   (branch B) -> set 30017=3, END -1
+Overworld.as:251  if(currentQuest != QuestGenerator.PROCGENQUEST
+                  && QuestEngine.getQuestData(currentQuest).type != QuestType.Dialogue
+                  && StatsManager.addActiveQuests(currentQuest) == false)
+                  { OverworldHUD.instance.showDialog(LangManager.getString(195), LangManager.getString(5)); }
 ```
 
-`end` itself diverges too: `1` = `leaveOK()`, `-1` = `leaveCancel()` (XMLQuestOutcome.as:78-89).
-Different choices therefore *start or cancel the fight*.
+`strings.json` → **195 = "You have exceeded the maximum number of concurrent quests."**
+The shipped build has a dedicated error string for hitting the cap. The surveyor's grep
+missed it because they searched `QuestLogUI.as`, where the 7 genuinely *is* a row count.
 
-**The Prologue — the one case the surveyor traced — happens to be a reconverging one.
-It was generalised to all 471.** 54/195 is not "a flat jump table".
+Both readings are true at once and the surveyor threw away the load-bearing half. The
+correct spec:
 
-⚠ The lane impact is the dangerous part: *"drops a large chunk of L1's assumed runtime
-risk"* would tell L1 **not** to build the consequence system, breaking 54 options.
+- 7 concurrent **active** quests, enforced at accept time in `StatsManager`.
+- `QuestType.Dialogue` quests (22 of the 61) are **exempt** — they never enter the list.
+- `forceAdd=true` bypasses the cap, reached via outcome opcode `id 110`
+  (`StatsManager.as:3418 addActiveQuests(val,true)`), which is how story quests are
+  granted. **That is the ledger's "1 story + 6 side" gloss, and it is substantially
+  correct.**
+- *Separately*, the log renders 7 rows at `x=60, y=73+55i` with scroll buttons — which
+  is what makes the cap invisible in the UI.
+
+Shipping "no 7-quest limit" on this advice would be a straight fidelity regression.
 
 ---
 
-## Q-14 — FOUND IT. `<step><action>` is `GameEngine.ACTION_*`, a 15-value enum.
+## MATERIAL — `quests-story/verbatim-script-held`: the corpus is held, the inference is not
 
-The surveyor left this STILL_UNHELD with a close-path. The close-path works.
-`QuestEngine.as:1218` passes it straight through:
+The corpus half is solid; I reproduced it (2,771 `<dialogue>`, 3,307 `<text>`) and read
+`LangManager.as:95` — `getQuestString` does return non-`"ID"` strings unchanged. But the
+claim then asserts *"so those lines are what the game renders"*, and that does not follow.
 
-```
-GameEngine.initBattleMode(quest,questStepData.action,questStepData.bg,questStepData.stagewidth,questStepData.time,questStepData.wave,startingPosX);
-```
-
-`GameEngine.as:81-109`:
+**`questdata.xml` is a server-live-updated file and the extracted copy is version 1.**
 
 ```
-ACTION_NOTHING 0 · ACTION_FIGHT 1 · ACTION_ASSASSINATE 2 · ACTION_ESCORT 3
-ACTION_SURVIVE 4 · ACTION_REACHMARKER 5 · ACTION_DUEL 6 · ACTION_ADVENTURE 7
-ACTION_HARVEST 8 · ACTION_SURVIVALMODE 9 · ACTION_WARROOMBATTLE 10
-ACTION_PLAYBACK 11 · ACTION_PVPROOM 12 · ACTION_CUTSCENE 13 · ACTION_SURVIVECLEANUP 14
+StatsManager.as:479   embeddedVersionArray[FILE_QUESTDATA] = 1;
+
+Mobile.as:216         var versionUrl:String =
+   "http://r.playerio.com/r/straw-hat-samurai-duels-5nsekxalfuoiuqdxrmtxw/liveupdate/shs3_data_version.swf";
+Mobile.as:244         this.versionArray[StatsManager.FILE_QUESTDATA] = versionInfo.questdata;
+
+QuestEngine.as:281    public static function loadExternalQuestDataXML() : void
+                      { ... myLoader.load(new URLRequest(
+                          QueryManagerPIO.instance.getDataXML("questdata.xml"))); }
+QueryManagerPIO.as:124  return PlayerIO.gameFS(this.gameid).getUrl("/data/" + str);
 ```
 
-The surveyor's own measured domain now reads directly:
-**0 NOTHING ×169 · 1 FIGHT ×37 · 6 DUEL ×5 · 14 SURVIVECLEANUP ×3 · 4 SURVIVE ×1.**
+The client polls a liveupdate manifest, compares against `embeddedVersionArray` (= 1 for
+questdata), and pulls a newer `questdata.xml` from PlayerIO gameFS when one exists. The
+blob in `reference/extracted/` is the **baked-in v1 fallback**, not necessarily what any
+played session loaded.
+
+This is the missing mechanism behind the surveyor's own Q-06 finding, which they left
+unexplained. It is also **wider than quests-story**: `xmlFileIdArray = [0..9]` means
+mapdata, nodedata, itemdata, npcdata, skilldata, bgdata, premiumdata and achievementdata
+are all on the same v1-embedded / live-updated footing. Every lane reading those files
+inherits this caveat.
 
 ---
 
-## Q-15 — FOUND IT. The `<outcome><id>` namespace is the StatsManager stat-id table.
+## Both `STILL_UNHELD` answers are REFUTED
 
-`XMLQuestOutcome.applyOutcome` (XMLQuestOutcome.as:50-90) gives exact range semantics:
+### `<step><action>` — it is `GameEngine.ACTION_*`, a closed 15-value enum
 
 ```
-id == 11                      + modify>0 -> lootDialog.addLootCoins(modify)     (STAT_GOLD)
-id >= 2000 && id < 30000      + modify>0 -> lootDialog.addLootItemBasic(id,modify)  -> ITEM GRANT
-id == StatsManager.STAT_XP (9)           -> lootDialog.addLootXP(modify)
-else                          + modify   -> StatsManager.changeStat(id,modify)
-hasSet (no modify)                       -> StatsManager.setStat(id,setNo)
-end == -1 leaveCancel() · end == 1 leaveOK() · else nextStep()
+QuestEngine.as:1218  GameEngine.initBattleMode(quest, questStepData.action, questStepData.bg,
+                        questStepData.stagewidth, questStepData.time, questStepData.wave, startingPosX);
+GameEngine.as:990    public static function initBattleMode(quest:int, actionType:int, ...)
+GameEngine.as:1014        action = actionType;
+GameEngine.as:81-109 ACTION_NOTHING 0 · FIGHT 1 · ASSASSINATE 2 · ESCORT 3 · SURVIVE 4
+                     · REACHMARKER 5 · DUEL 6 · ADVENTURE 7 · HARVEST 8 · SURVIVALMODE 9
+                     · WARROOMBATTLE 10 · PLAYBACK 11 · PVPROOM 12 · CUTSCENE 13 · SURVIVECLEANUP 14
 ```
 
-`StatsManager.as:170-260` names the whole namespace (STAT_HP 0 … STAT_LOCATION_ROOM 43,
-STAT_FIREDEF 200 … STAT_PIERCINGDMG 205). Measured usage in questdata:
+The step's `<action>` **is** the battle-mode selector, verbatim. My own parse of the 215
+step rows gives `{0:169, 1:37, 6:5, 14:3, 4:1}` — every value names:
 
-- **SET ids:** 43, 100, 102, 108-116, 118-121, 126-130, 2211, 30017, 40000, 40002
-- **MODIFY ids:** **42**, 20030, 20040
+| val | count | meaning |
+|-----|-------|---------|
+| 0 | 169 | `ACTION_NOTHING` — talk/trigger step, no battle |
+| 1 | 37 | `ACTION_FIGHT` |
+| 4 | 1 | `ACTION_SURVIVE` |
+| 6 | 5 | `ACTION_DUEL` (also forces `startingPosX = 150`, `QuestEngine.as:1214`) |
+| 14 | 3 | `ACTION_SURVIVECLEANUP` |
 
-**id 42 is `STAT_CHIKAKOLOVE`** (StatsManager.as:246) — a named romance/affection meter,
-`+1` three times at questdata.xml:8776/8785/8794. **id 43 is `STAT_LOCATION_ROOM`.**
-20030 / 20040 fall in the 2000-30000 window, so they are **item grants** made inline from
-dialogue. Ids ≥100 outside the named table are generic story flags via `setStat`.
+Dispatch gate: `Overworld.as:258 if(questStepInfo.action > 0 && questStepInfo.wave.length > 0)`
+→ battle mode, else `endQuestStepIntro()`. L1's trigger dispatch is fully specified.
 
-This is exactly the "flag namespace = the save-game's story section" the surveyor wanted.
+### `<outcome><id>` — a partitioned namespace **plus** a 22-opcode cutscene director
+
+`getStatType` partitions the whole id space:
+
+```
+StatsManager.as:2926-2964
+  id < 50      PLAYERSTAT        50-69   EQUIPMENT      70-999   PLAYERSTAT
+  1000-1999    SKILL             2000-19999  ITEM       20000-29999  QUESTITEM
+  30000-39999  INTSTAT           40000-49999 BOOLEANSTAT  50000-59999 GLOBALVAR
+  >= 60000     ACHIEVEMENTSTAT
+```
+
+And inside `PLAYERSTAT`, `setStat` is a director opcode table
+(`StatsManager.as:3352-3560`). My parse found **28 distinct outcome ids; all 28 resolve**:
+
+| id | uses | meaning |
+|----|------|---------|
+| 42 | 3 (modify) | `STAT_CHIKAKOLOVE` — the romance stat |
+| 43 | 5 | `STAT_LOCATION_ROOM` |
+| 100 | 1 | autoSlash on/off |
+| 102 | 12 | screen transition, `ACTION_TELEPORT` |
+| 108 | 11 | `player.setPosition(val, groundY)` |
+| 109 | 2 | pose — 0 `SIT`, 1 `IDLE_BALANCED` |
+| 110 | 17 | `addActiveQuests(val, force=true)` — grants a quest past the cap |
+| **111** | **47** | **`SoundManager.playMusic(val)`** |
+| 112 | 4 | SFX — 0 goodKoto · 1 die · 2 hit · 3 deflect |
+| 113 / 114 / 115 | 13 / 11 / 8 | teleport target / room / xPos |
+| 116 | 5 | `StageManager.keepPlayerInView()` |
+| 118 | 6 | spawn duelist NPC `val` + random taunt (strings 472-479) |
+| 119 | 1 | `lootDialog.notifyDontRefreshAfter()` |
+| 120 | 14 | `Overworld.doWhiteIn = true` |
+| 121 | 10 | face — 0 left, else right |
+| 126 | 4 | `StageManager.startShake(val)` |
+| 127 | 2 | player MCS visibility |
+| 128 | 1 | `gotoRoom(...)` + `initForCutscene(true)` |
+| 129 | 1 | `payUI.show()` |
+| 130 | 2 | `questDialogueUI.darkBlurBust(val)` |
+| 2211 | 1 | ITEM range → grant "Dragon Dance Scroll" |
+| 20030 / 20040 | 1 / 1 | QUESTITEM range → "Kanji Gourd" / "Crops" |
+| 30017 | 13 | INTSTAT → `TutorialUI.instance.setState(val)` |
+| 40000 / 40002 | 1 / 2 | BOOLEANSTAT → persistent story flags |
+
+`<end>` is a separate 3-way: `-1 leaveCancel · 1 leaveOK · else nextStep`
+(`XMLQuestOutcome.as:applyOutcome`).
+
+**Note for L7 AUDIO:** id 111 fires 47 times — a 47-cue music sheet keyed to story beats,
+on top of the 23 `sound` verbs already claimed inside `<cutscene>`. That was not counted.
 
 ---
 
-## Q-07 — partially refuted. escort / gather / timed / bounty are REAL engine constants.
+## Second-order find the surveyor missed: portrait art is HELD-BUT-ENCRYPTED
 
-`QuestType.as:6-24` is confirmed 9-valued, and the `<type>` histogram reproduces exactly
-(`{2:37, 4:22, 0:2}`). That half holds.
+The score rationale caps the unit below 90 because *"`<img>` portraits and `<bg>`
+backdrops are referenced by token only — the art itself is a separate recovery problem."*
+It is not separate; it is the **same** problem as audio (Stage-0 finding S0-5).
 
-But the sub-claim *"a 9-value enum containing none of trade/bounty/escort/gather/timed"*
-is **wrong at the engine level**. Those terms map onto real constants — in the
-*orthogonal* per-step enum found above:
+`QuestDialogueUI.show()` is a documented two-mode system:
 
-- bounty → `ACTION_ASSASSINATE` (2) · escort → `ACTION_ESCORT` (3)
-- timed → `ACTION_SURVIVE` (4) · gather → `ACTION_HARVEST` (8)
+```
+QuestDialogueUI.as:46   if(ID == -2) { this.npcName.text = StatsManager.charname;
+                             if(portrait == "") this.bust.initMCSFromPlayer(); }
+QuestDialogueUI.as:67   if(portrait != "") { this.bust.visible = false;
+                             this.npcPortrait = ResourceManager.getPortrait(portrait);
+                             this.portraitCanvas.addChild(this.npcPortrait);
+                             this.npcPortrait.x = 800; this.npcPortrait.y = 0; }
+                        else { this.bust.visible = true; }   // paperdoll fallback
+ResourceManager.as:286  mcname = "portrait_" + id;   // domain RESOURCE_IMAGE (=3)
+ResourceManager.as:270  mcname = "image"    + id;   // same domain
+```
 
-The ledger's taxonomy was **conflating two orthogonal enums (QuestType × StepAction)**,
-not inventing categories. Telling L1 to "build the 9-value enum, not the invented 7" would
-throw away four real engine modes.
+`RESOURCE_IMAGE` is `124_Mobile_ImageResource` — a nested-CWS blob, i.e. **held but
+encrypted**, exactly like the music. And `portrait_kojuro.as` is already decompiled in
+three bundles (`shs3_payload`, `shs3_android`, `shs3_android_payload`), proving the
+class shape.
+
+The 68 tokens are also **not one manifest** — they are two, by prefix:
+- **52 NPC portraits** → `portrait_<token>` (`jinbei`, `satoshi_serious`, `yasuka_hurt`, …)
+- **16 full-screen cutscene splashes** → `image<token>`: `_episode0` … `_episode12`,
+  `_epilogue`, `_exposition`, `_exposition_epilogue`
+
+L6 needs two asset classes with different resolution paths and a known placement
+(`x=800, y=0`), not "68 portraits".
 
 ---
 
-## New findings the surveyor missed (hunter lens)
+## Frame work I redid myself (§0 requires it)
 
-**H-1 — 12 nested waves / 18 extra enemy rows hidden inside room-object properties.**
-Enemy parentage is *not* uniform:
+I did **not** trust the surveyor's sheet. Extracted at native 1920x1080 with
+`ffmpeg -ss <t> -i reference/videos/zFtCaTO0_1M.mp4 -frames:v 1`, cropped
+`(0,690)-(1500,1070)` and upscaled 1.5x (LANCZOS) to
+`…/scratchpad/hq/crop_62.png`, `crop_68.png`.
 
-```
-151  quest/step/wave/enemy
- 18  quest/step/roomobj/property/obj/property/xml/wave/enemy
-```
+- **t=62 s**, nameplate `JINBEI`: *"IT'S NOT OFTEN WE MEET A NEW FACE ON THESE ROADS.
+  IT'S THE BANDITS, YOU SEE. THEY'VE DRIVEN ALL THE HONEST FOLK AWAY."*
+  vs `questdata.xml:128` *"Ah! A new face in this territory! My, it isn't often we see
+  people walk this road alone, what with all the bandits infesting it..."* — **different**.
+- **t=68 s**, nameplate `GUEST`, two stacked choice rows:
+  *"I'LL STAND MY GROUND AND ASK THEM TO LEAVE ME ALONE."* (= `:149` **exact**) and
+  *"THESE BANDITS DON'T SCARE ME!"* vs `:153` *"They'll get nothing from me!"* — **different**.
 
-Six `<property>` elements contain a **nested `<xml>` document** holding its own `<wave>`
-list (first at questdata.xml:20569). True totals: **169 `<enemy>`, 118 `<wave>`** (106
-step-level + 12 nested). L4's encounter table is short by 18 rows and 12 waves.
+**The frame wins, and I say so out loud.** The surveyor's Q-06 is confirmed on my own
+eyes, not theirs — and the live-update path above is why.
 
-**H-2 — 114 of 169 enemy rows use a PIPE-DELIMITED random spawn pool.**
-`<id>19|20|21|22|23|24</id>`, `<id>11|12|13|14|15</id>` — the id field is a *pool*, not a
-scalar. The claim's framing ("151 rows with level and spawn x", ids resolved via
-resolved_names) silently assumes scalar ids; two thirds of the rows are randomised picks.
-This changes the spawner contract, not just the table.
+I also re-opened `reference/frames/broad_survey/Nr4fQstqHDM_0090.jpg` (480x270, upscaled
+4x to 1920x1080). The PLAYER sheet name field reads **SOUND360TM**, over a paperdoll in
+kasa + blue-sheathed sword; COINS 425, GOLD 2, EXPERIENCE POINTS …/16350. Q-09 confirmed,
+and now corroborated in code by `QuestDialogueUI.as:46` — speaker `-2` renders
+`StatsManager.charname`.
 
-**H-3 — the `<condition>` grammar is fully recoverable** (surveyor left it vague).
-`StatsManager.checkConditions` (StatsManager.as:4152-4260) closes it:
-`<has><id><qty><comp>` with `comp` defaulting to `"gte"`; `<completedquest>` supports a
-**`!` negation prefix**; `<activequest>` is an **OR** set (any match passes) while `has`
-and `completedquest` are ANDs. `checkCondition` also implements a **`"rand"` comparison**
-(`Math.random() * id <= val`) — probabilistic gating. With 62 `<condition>` + 17
-`<startcondition>` + 97 `<activequest>` + 32 `<completedquest>`, the **quest prerequisite
-DAG** is on disk and unclaimed.
+## Count corrections (minor, claims still stand)
 
-**H-4 — `<ending>` is a second, unmentioned dialogue track.**
-`XMLQuestStep` carries **both** `intro` and `ending` vectors (XMLQuestStep.as:130-131),
-built by the same `getXMLIntroList`. 5 `<ending>` blocks exist, with their own
-`option/choice` (2) and `outcome` (5). Every claim in this unit is scoped to `<intro>`;
-post-battle scenes are a separate track.
+Re-measured with ElementTree, not grep:
 
-**H-5 — `<loot>` is 19, not 18** (Q-03 and Q-10 both say 18). Measured
-`19 quest/step/reward/loot`.
+| stated | actual | where |
+|--------|--------|-------|
+| 18 `<loot>` | **19** | Q-03, Q-10 |
+| 151 `<wave><enemy>` | **169** rows, **773** total spawns by `<qty>` | Q-11 |
+| "348+52+14+97 coordinate fields" | 348 `obj/x` · 52 `roomobj/x` · 14 `step/teleportposx` verified; the **97 does not reconcile** — my buckets are `enemy/x` 109, `friend/x` 49, `data/x` 76 | Q-03 |
 
----
+Everything else reproduced exactly: 61 quests, 2,771 `<dialogue>`, 3,307 `<text>`,
+471 `<choice>` (`goto` 471/471, `outcome` **0**/471, `condition` 7, `gotolabel` 0),
+55 `<cutscene>`, 399 `<data>` over the same 15 verbs, 77 `<reward>`, 69 `<exp>` over
+`{100,200,250,290,500,600,750,1000,2000,3000}`, 68 `<img>`, 70 `<friend>` (59 with
+`<fatal>0</fatal>`), 2 `<neutral>` (both id 118 Training Dummy), 4 `<endless>`,
+225 `<step>`, quest types `{2:37, 4:22, 0:2}`. Byte check reproduced:
+`sha256(android[:-1]) == sha256(web) == e8ecb01f05cc47c3a331328a3278c70a986d93038838af5a27c8075a035aad2e`.
 
-## Confirmed by my own hands (no dispute)
-
-- **Q-05** — I re-ran the byte check: web 796383 B / android 796384 B, `android[:-1]==web`
-  True, both sha256 `e8ecb01f…d2e`. And the premise holds: `reference/decompiled/shs3_payload`
-  has 1079 `.as` files all named `§1t5574s0§.as`-style — fully obfuscated, no named quest
-  classes. Cleanly HELD.
-- **Q-06** — I extracted t=62 and t=68 from `zFtCaTO0_1M.mp4` myself, cropped
-  `crop=1400:360:0:700` and upscaled ×1.5, and **looked**. Nameplate JINBEI reads
-  *"IT'S NOT OFTEN WE MEET A NEW FACE ON THESE ROADS. IT'S THE BANDITS, YOU SEE. THEY'VE
-  DRIVEN ALL THE HONEST FOLK AWAY."* — genuinely different from questdata.xml:128.
-  Nameplate GUEST shows two rows: *"I'LL STAND MY GROUND…"* (= :149 exact) and
-  *"THESE BANDITS DON'T SCARE ME!"* (≠ :153 *"They'll get nothing from me!"*).
-  **The frame wins, and the surveyor said so out loud. Correctly graded PARTIAL — this is
-  the most honest claim in the set.**
-- **Q-09** — same crop: the player nameplate reads **GUEST**. `resolved_names.json`
-  npcdata `161 -> Satoshi`. HELD.
-- **Q-12** — verb histogram reproduces *exactly* (399 commands, 15 verbs, anim 107 / walk
-  76 / create 75 / …), time range 0.0-8.0, x range -200..1600.
-- **Q-13** — npcdata resolves exactly one `Yasuka` (id 156). HELD. (Sidenote: Chikako
-  resolves to *three* ids — 171, 172, 811 — and Yuudai to three — 154, 168, 180. The
-  "one name = one person" check is not general.)
-- **Q-01, Q-02, Q-08, Q-10** — all cites land verbatim; QuestLogUI 7-row scroller geometry
-  (x=60, y=73+55i) and the unbounded `activeQuests` + `maxRow = maxLength - 7` confirmed.
-
-## Score
-
-78 is **too high given Q-04 is backwards**. Q-14/Q-15 being closed pushes up; Q-04 being
-wrong (and pointed the wrong way for L1) pushes down harder, because it would remove a
-system the data demands. Net: **~72**, and Q-04's lane impact must be reversed before L1
-consumes this.
+One nuance on Q-04: "not a consequence system" overstates. Choices carry no `<outcome>`
+— true, 0/471 — but the quest **step** does: 386 `<outcome>` under `<intro>`/`<ending>`,
+194 of them `<set>`. Persistent state exists; it is just not choice-scoped.

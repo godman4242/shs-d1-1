@@ -1,284 +1,325 @@
-# HUNTER CRITIC — items-equipment
+# items-equipment — HUNTER LENS review (blind critic)
 
-Blind review. I did not see the surveyor's reasoning, only its claim list. Every verdict below
-cites an artifact **I opened myself**. Frames were cropped and upscaled before grading.
-
-Bottom line: **17 of 20 claims survive**, most of them cleanly and with unusually good cites
-(the frame→payload identity check on the Branch is the best single piece of evidence in this
-lane). **3 are refuted**, all three by a line the surveyor did not read that sits within a few
-lines of a line it did read. One STILL_UNHELD is **fully closed** by the hunter pass, and one
-STILL_UNHELD is **honest and correct** — I tried hard to break it and could not.
+Reviewer opened every artifact listed below first-hand. No verdict here rests on the
+surveyor's text. §0 law applied: A1 = frame I cropped myself, A2 = payload/AS3 line I
+read myself, A5 = none used.
 
 ---
 
-## A. REFUTATIONS
+## HEADLINE
 
-### R1 — `sprite-compositing-contract-held` — the human part stack is **23 layers, not 27**  (MATERIAL)
+Two of the surveyor's claims are **REFUTED as WRONG** (not merely thin), and **both
+STILL_UNHELDs fall** — one of them completely.
 
-The surveyor read `MCSCharacter.as:10-62` (the enum) and `:141-146` (the addChild loop), but not
-`:120`, which is **21 lines above the loop it quoted**:
+| # | What | Verdict |
+|---|------|---------|
+| 1 | `ui-slot-mapping-unknown` — "cannot be established" | **REFUTED.** It is established, in **both** builds, at named line numbers. |
+| 2 | `no-separate-icon-manifest` — "there is no separate icon art set" | **REFUTED.** There are two icon-only symbol namespaces (`item*`, `acc*`) with no paperdoll counterpart, covering **187 of 982** rows. |
+| 3 | `purple-border-is-unique-not-rarity` | **REFUTED.** The border **is** the 4-tier rarity ladder — `ShopItem.borderType = getShopItemType()`. |
+| 4 | `modifier-id-stat-table` — "fully resolved" | **REFUTED.** 9 of the 34 distinct modifier IDs in `itemdata.xml` resolve to nothing. |
+| 5 | `per-item-art-payload-unknown` | **Downgraded to PARTIAL.** The disjunction is now settled and the missing file is *named*. |
 
-```
-reference/decompiled/shs3_android/scripts/MCSCharacter.as:120
-      internal var partListLength:int = 22;
-reference/decompiled/shs3_android/scripts/MCSCharacter.as:141
-         for(var i:int = 0; i <= this.partListLength; i++)
-```
+Everything else held under first-hand inspection. The surveyor's two best finds —
+`defense-min-floor-is-wrong` and `weight-cap-is-a-base-not-a-cap` — are exactly right
+and I confirmed both byte-for-byte.
 
-`i <= 22` allocates **23** MovieClips (indices 0–22). `PART_l_shoulder=23`, `PART_r_shoulder=24`,
-`PART_l_knee=25`, `PART_r_knee=26` are **never allocated on a human** — reading `partList[23]`
-would be out of range.
+---
 
-Those four indices exist for one reason, and it is not equipment:
+## 1. HUNTER KILL — `ui-slot-mapping-unknown` is HELD, in both builds
 
-```
-reference/decompiled/shs3_android/scripts/MCSWolf.as:13
-         partListLength = 25;                        // after super() already pushed 23
-reference/decompiled/shs3_android/scripts/MCSWolf.as:184,188,193,197
-         var r_frontleg1:MovieClip = partList[PART_r_shoulder];
-         var l_frontleg1:MovieClip = partList[PART_l_shoulder];
-         var r_backleg2:MovieClip  = partList[PART_r_knee];
-         var l_backleg2:MovieClip  = partList[PART_l_knee];
-```
+The surveyor wrote: *"Which of EQ_NECK / EQ_ACCESSORY1 / EQ_ACCESSORY2 the two visually
+identical empty ring boxes map to cannot be established."*
 
-23–26 are **wolf legs**, re-purposed in a subclass that extends the list. The claim's own
-lane_impact — "the z-order table … directly codeable" — hands a builder four phantom layers on
-the human paperdoll.
-
-What survives intact and should be kept: index == addChild z-order for 0–22 (nothing calls
-`setChildIndex`/`swapChildren` on the top-level partList — the six `setChildIndex` calls at
-:683/:706/:724/:755/:873/:885 all reorder *inside* a part container); `armor` drives 7 parts and
-`pants` drives 5 (I counted the `addChild(componentObject)` sites in `setArmor` and `setPants`
-myself: 7 and 5); and the `partType + art` / `partType + "0"` symbol contract at :581-607.
-
-### R2 — `no-separate-icon-manifest` — there are **two icon-only art namespaces**, plus 11 placeholder symbols  (MATERIAL)
-
-The claim is "the icon IS the paperdoll part stack … there is no separate icon art set to
-recover." The surveyor read `MCSItem.setArmor` (:324-349) and generalised from it. Twelve lines
-earlier and eighteen lines later, in the same class, are two setters that do **not** use paperdoll
-parts at all:
+It can. `InventoryUI` names all nine boxes and fixes their order:
 
 ```
-reference/decompiled/shs3_android/scripts/MCSItem.as:206,209
-         this.displayItem = this.getMCSComponent("item",id);
-            this.displayItem = new item0();
-reference/decompiled/shs3_android/scripts/MCSItem.as:229
-         this.displayItem = this.getMCSComponent("acc",id);
+reference/decompiled/shs3_android/scripts/InventoryUI.as:163-179
+      internal var SLOT_HAT:int = 0;
+      internal var SLOT_MASK:int = 1;
+      internal var SLOT_ARMOR:int = 2;
+      internal var SLOT_GLOVES:int = 3;
+      internal var SLOT_PANTS:int = 4;
+      internal var SLOT_WEAPON:int = 5;
+      internal var SLOT_RING1:int = 6;
+      internal var SLOT_SHOES:int = 7;
+      internal var SLOT_RING2:int = 8;
+
+InventoryUI.as:527    tempShopItem = this.equippedSlots[this.SLOT_RING1];   // case 7: EQ_ACCESSORY1
+InventoryUI.as:535    tempShopItem = this.equippedSlots[this.SLOT_RING2];   // case 8: EQ_ACCESSORY2
+InventoryUI.as:824-829  case SLOT_RING1: removeEquipment(EQ_ACCESSORY1)
+                        case SLOT_RING2: removeEquipment(EQ_ACCESSORY2)
+InventoryUI.as:268-269  equippedSlots[SLOT_RING1] = this.equipAccessory1;
+                        equippedSlots[SLOT_RING2] = this.equipAccessory2;
 ```
 
-`"item"` and `"acc"` are not `PART_*` types — there is no `PART_item`, no `MCSCharacter.setItem`,
-and accessories are not even passed to `initMCS` (StatsManager.as:1765 passes 11 slots; ACCESSORY1/2
-are not among them). They are dedicated icon symbol namespaces (`item<art>`, `acc<art>`).
-
-On top of that there are 11 named placeholder icon classes in the Android bundle —
-`ArmorDummyIcon, PantsDummyIcon, HatDummyIcon, MaskDummyIcon, GlovesDummyIcon, ShoesDummyIcon,
-WeaponDummyIcon, AccessoryDummyIcon, ConsumableDummyIcon, InvalidDummyIcon, AchievementDummyIcon`
-(`ls reference/decompiled/shs3_android/scripts/ | grep DummyIcon`).
-
-**The frame proves the consequence.** `reference/frames/s21_weapon/t708.0.png`, crop
-(900,590)-(1640,960) upscaled ×2 LANCZOS: of the 7 inventory icons, **five** are a scroll, an
-onigiri (×3), a black stone and two feathers. None of those is a torso/pelvic/uparm stack. The
-lane_impact "one art pipeline, not two; … no icon-authoring pass is needed" is wrong — it is at
-least three pipelines (paperdoll parts, `item*`, `acc*`) plus a placeholder set.
-
-### R3 — `purple-border-is-unique-not-rarity` — the border **is** the 4-tier ladder  (MATERIAL)
-
-The claim's headline (purple ⇒ `<unique>`) is true. Its actionable conclusion — "border tracks
-`<unique>`, text colour tracks the 4 tiers" — is the exact mis-wiring it claims to prevent.
-
-The surveyor quoted `GameEngine.as:572`. Four lines up, in the same else-if chain:
+**Not an Android-only fact.** The web v0.717 build carries the identical structure with
+the timeline instance names un-obfuscated:
 
 ```
-reference/decompiled/shs3_android/scripts/GameEngine.as:568
-            str = "Tip: A blue border indicates that an item is rare.";
-reference/decompiled/shs3_android/scripts/GameEngine.as:572
-            str = "Tip: A purple border indicates that an item is unique.";
+reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:175-193
+      internal var §1t6002s0§:int = 0;   … §1t6010s0§:int = 8;   §1t6011s0§:int = 9;
+reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:281-289
+      §1t6012s0§[§1t6002s0§] = this.equipHat;
+      §1t6012s0§[§1t6008s0§] = this.equipAccessory1;   // index 6
+      §1t6012s0§[§1t6009s0§] = this.equipShoes;        // index 7
+      §1t6012s0§[§1t6010s0§] = this.equipAccessory2;   // index 8
+reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:37,39  public var acc1Icon / acc2Icon:MovieClip;
 ```
 
-And the authoritative artifact is not the tip string at all:
+**The frame agrees, and I opened it.**
+`reference/frames/s21_weapon/t708.0.png`, crop `(200,850)-(800,990)` upscaled ×2 LANCZOS:
+a ring-outline placeholder, then the sandals (filled), then a second identical ring
+outline. Reading the whole paperdoll left→right, top→bottom in crop `(170,240)-(870,1040)`
+×2 gives hat · mask · armor · gloves · pants · pickaxe · **ring** · sandals · **ring** —
+which is `SLOT_` index order 0…8 *exactly*.
+
+**Answer:** left ring box = `EQ_ACCESSORY1`, right ring box = `EQ_ACCESSORY2`.
+**`EQ_NECK` has no UI box at all** — and the icon dispatcher confirms it independently
+(see §2: ids 10000–10999 fall through `ShopItem.setItemID` with no setter).
+No frame/doc disagreement here; the doc was simply silent.
+
+---
+
+## 2. REFUTED — the "item icon manifest" is a real, separate art set
+
+The surveyor's claim: *"the icon IS the paperdoll part stack … there is no separate icon
+art set to recover."* That is true only for the eight wearable bands. Two bands use
+symbol namespaces that **do not exist on the paperdoll**:
 
 ```
-reference/decompiled/shs3_android/scripts/ShopItem.as:27,51-52
-      internal var borderType:String = "normal";
+reference/decompiled/shs3_android/scripts/MCSItem.as:203-210
+      public function setConsumable(id:int) : *
+      {
+         this.clearItem();
+         this.displayItem = this.getMCSComponent("item",id);      <-- "item<art>" namespace
+         if(this.displayItem == null) { this.displayItem = new item0(); ... }
+
+reference/decompiled/shs3_android/scripts/MCSItem.as:226-233
+      public function setAccessory(id:int) : *
+      {
+         this.displayItem = this.getMCSComponent("acc",id);       <-- "acc<art>" namespace
+         if(this.displayItem == null) { this.displayItem = new AccessoryDummyIcon(); ... }
+```
+
+`item*` and `acc*` are **not** among the 27 `PART_*` names and are never used by
+`MCSCharacter`. They are icon-only art.
+
+The full dispatcher (`ShopItem.as:134-199`) is itself a finding the surveyor never
+reported — the item-ID band table:
+
+| id band | setter | art namespace | rows in itemdata.xml |
+|---|---|---|---|
+| 2000–2999 | `setConsumable` | **`item*`** | 99 |
+| 3000–3999 | `setAccessory` | **`acc*`** | 9 |
+| 4000–4999 | `setArmor` | stomach/pelvic/torso/uparm/lowarm | 152 |
+| 5000–5999 | `setGloves` | hand | 35 |
+| 6000–6999 | `setHair` | hair | 73 |
+| 7000–7999 | `setHat` | hat | 98 |
+| 8000–8999 | `setHead` | head | 38 |
+| 9000–9999 | `setMask` | mask | 60 |
+| **10000–10999** | **none — falls through, no icon** | — | 14 |
+| 11000–11999 | `setPants` | crotch/thigh/calf | 93 |
+| 12000–12999 | `setShoes` | foot | 55 |
+| 13000–13499 | `setWeapon` | weapon | 177 |
+| 20000–29999 | `setConsumable` | **`item*`** | 79 |
+
+Counts measured this run over `reference/extracted/itemdata.xml` (982 rows, 0 unaccounted).
+**187 rows (99 + 9 + 79) need `item*`/`acc*` icon symbols with no paperdoll equivalent.**
+The icon manifest half of ledger blocker ⑤ is **still open**.
+
+Secondary correction: the miss case is not one class but eight —
+`HatDummyIcon`, `MaskDummyIcon`, `WeaponDummyIcon`, `AccessoryDummyIcon`,
+`GlovesDummyIcon`, `ShoesDummyIcon`, `ArmorDummyIcon`, `PantsDummyIcon`
+(`MCSItem.as:70, 158, 183, 232, 255, 285, 330, 368`).
+
+---
+
+## 3. REFUTED — the border **is** the rarity ladder
+
+Claim: *"The purple item border … is the UNIQUE flag, not a rarity tier … border tracks
+`<unique>`, text colour tracks the 4 tiers."* Backwards.
+
+```
+reference/decompiled/shs3_android/scripts/ShopItem.as:51-52
          this.borderType = itemRef.getShopItemType();
          gotoAndStop(this.borderType + "_default");
-reference/decompiled/shs3_android/scripts/ShopItem.as:283,287,295,299
-         gotoAndStop(this.borderType + "_selectedmouseover");
-         gotoAndStop(this.borderType + "_mouseover");
-         gotoAndStop(this.borderType + "_selected");
-         gotoAndStop(this.borderType + "_default");
 ```
 
-`getShopItemType()` returns exactly `"unique" | "rare" | "special" | "normal"` (Item.as:382-405) —
-the same 4-value enum the ledger calls "4 rarity tiers". So the border art contract is
-**4 tiers × 4 states = 16 frame labels**, and `unique` is the top tier *of* that ladder, not a
-separate flag beside it. `InventoryUI.as:1453` passes `clickedItem.getBorderType()` as the type —
-the method is literally named for the border.
+`getShopItemType()` (`Item.as:382-405`) is the *same* function that returns the four
+tiers `"unique" / "rare" / "special" / "normal"`. The border frame label **is** the tier
+string. "unique" is one of the four tiers, not a parallel flag. The game's own tip strings
+say so for three of the four:
 
-Frame corroboration, same crop as R2: the two feathers carry purple borders; the selected Branch
-tile is `normal_selected` (same tan border, darkened fill); the other four are `normal_default`.
-That is the tier×state matrix rendering, visible.
+```
+reference/decompiled/shs3_android/scripts/GameEngine.as:558  "Tip: A green border indicates that an item is special."
+reference/decompiled/shs3_android/scripts/GameEngine.as:566  "Tip: A blue border indicates that an item is rare."
+reference/decompiled/shs3_android/scripts/GameEngine.as:572  "Tip: A purple border indicates that an item is unique."
+```
+
+The surveyor quoted only line 572 and read the other two out of the picture. A builder
+following the stated `lane_impact` would ship a purple border and flat borders for
+special/rare — visibly wrong. The narrow observation (purple ⇒ unique) survives; the
+*conclusion drawn from it* does not.
 
 ---
 
-## B. THE STILL_UNHELD THAT IS NOW HELD
+## 4. REFUTED — "fully resolved" modifier table is not fully resolved
 
-### N1 — `ui-slot-mapping-unknown` is **closed**. Left ring = EQ_ACCESSORY1, right ring = EQ_ACCESSORY2, and EQ_NECK has no UI box.
+Measured over `reference/extracted/itemdata.xml` this run: 412 `<modifier>` rows, 34
+distinct ids —
+`[0,1,2,3,5,6,7,8,9,12,13,15,25,38,78,79,82,84,90,96,97,98,99,101,102,103,104,105,106,117,122,123,124,40000]`.
 
-`InventoryUI.as` answers it outright, and the slot **indices reproduce the frame's reading order
-exactly**:
+The cited table (`XMLItem.as:231-298`) covers ids 0–16 plus the `>100 && <2000` Set band.
+Cross-checking the remainder against `StatsManager` STAT_ constants (`StatsManager.as:170-260`):
 
-```
-reference/decompiled/shs3_android/scripts/InventoryUI.as:181
-      internal var totalEquippedSlots:int = 9;
-reference/decompiled/shs3_android/scripts/InventoryUI.as:163-179
-      SLOT_HAT=0  SLOT_MASK=1  SLOT_ARMOR=2  SLOT_GLOVES=3  SLOT_PANTS=4
-      SLOT_WEAPON=5  SLOT_RING1=6  SLOT_SHOES=7  SLOT_RING2=8
-reference/decompiled/shs3_android/scripts/InventoryUI.as:268-269
-         this.equippedSlots[this.SLOT_RING1] = this.equipAccessory1;
-         this.equippedSlots[this.SLOT_RING2] = this.equipAccessory2;
-reference/decompiled/shs3_android/scripts/InventoryUI.as:522,527,530,535
-                  tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY1];
-                  tempShopItem = this.equippedSlots[this.SLOT_RING1];
-                  tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY2];
-                  tempShopItem = this.equippedSlots[this.SLOT_RING2];
-```
+- `25` → `STAT_DAN`, `38` → `STAT_BUFFTYPE` — real stats, but **absent from the display switch**, so they are not "readable stat grants" via the cited table.
+- `78, 79, 84, 90, 96, 97, 98, 99, 40000` → **no STAT_ constant, not in 0–16, not in 101–1999, not among the six reserved ids (80/81/82/83/89/125)**. They hit `XMLItem.as:296  trace("ErrorValue: " + …)`.
 
-Frame check, `reference/frames/s21_weapon/t708.0.png` crop (170,240)-(870,1040) upscaled ×2:
-row 1 = straw hat, oni-mask outline; row 2 = grey haori, gauntlet outline; row 3 = white hakama,
-pickaxe; row 4 = ring outline, sandals, ring outline. Left-to-right, top-to-bottom that is
-0,1,2,3,4,5,6,7,8 — an exact match to the SLOT_ constants. `totalEquippedSlots = 9` also confirms
-the ledger's "9-slot paperdoll" **from code**, and `EQ_NECK`/`EQ_HAIR`/`EQ_HEAD`/`EQ_SCABBARD`
-provably have no box.
-
-Bonus from the same block: `InventoryUI.as:475,493` treat item IDs **4000, 4001** (armor) and
-**11001** (pants) as "empty" and show the placeholder icon — so the naked-default *item* IDs are
-4000/4001/11001, which is not the same list as the naked-default *art* IDs (4000/11000) the
-surveyor's lane_impact gives. `<art>` defaults to the item id only when the tag is absent
-(`XMLItem.as:110-116`).
+That is **9 unresolved ids across 12 of the 412 rows**. Small in volume, but the claim's
+load-bearing word is *fully*, and the `lane_impact` sentence ("the 412 `<modifier>` rows …
+become readable stat grants instead of opaque numbers") is false for those rows. The
+344 rows in the Set band are fine.
 
 ---
 
-## C. THE STILL_UNHELD THAT SURVIVED (I tried to break it and failed)
+## 5. Downgraded — `per-item-art-payload-unknown` is PARTIAL, not STILL_UNHELD
 
-`per-item-art-payload-unknown` is **correct and honest**. I counted part-symbol classes across
-every decompiled bundle:
+The surveyor left a disjunction open: obfuscated in the web SWF, *or* inside the encrypted
+CWS blobs. I settled it.
+
+**Exhaustive symbol scan of both decoded payloads** (zlib-inflated `CWS` body, regex over
+the whole ABC string pool):
 
 ```
-$ for d in reference/decompiled/*/; do find "$d" -name '*.as' | grep -cE '/(torso|stomach|uparm|lowarm|pelvic|crotch|thigh|calf|foot|hand|hair|hat|head|mask|neck|weapon|prop)[0-9]+\.as$'; done
-shs1 0 · shs2 0 · shs3_android 20 · shs3_android_payload 20 · shs3_payload 20
+shs3_payload_decoded.swf          (web  v0.717, 6,880,328 B inflated) -> 20 part symbols
+shs3_android_payload_decoded.swf  (mobile v0.682, 15,142,649 B inflated) -> 20 part symbols
+both identical: calf11000 crotch11000 foot12000 hair6000 hair6001 hand5000 hat7000
+                head8000 head8004 lowarm4000 mask9000 neck10000 pelvic4000 prop13000
+                stomach4000 thigh11000 torso4000 uparm4000 weapon13000 weapon13002
 ```
 
-Exactly the 19 naked defaults plus `head8004` and `weapon13002` — nothing else, in any bundle.
-Against 982 roster rows, that is a real, unclosed art gap. Do not let anyone score it away.
+The lookup contract is a *literal* name resolve (`partType + art.toString()`), so any
+shipped art symbol must appear verbatim in the constant pool. Exactly 20 do, in both
+builds. **The per-item art is not in either SWF, obfuscated or otherwise.**
 
-Two upgrades to the *lead* (still not artifacts, do not promote them):
-1. The container is **named**: all 411 symbol-bearing classes in `shs3_payload` carry
-   `[Embed(source="/_assets/assets.swf", symbol="symbolNNNN")]` (e.g. `torso4000.as` →
-   `symbol2647`, `weapon13002.as` → `symbol2642`). `assets.swf` is not present anywhere under
-   `reference/` (`find reference -iname '*assets*'` returns only an unrelated shs2 file). "Obfuscated
-   in the web SWF" is more precisely "inside an embedded `assets.swf` whose symbols are numbered".
-2. The gap is **larger** than the claim states: R2 adds the `item<art>` and `acc<art>` icon
-   namespaces to it, of which only the `item0` fallback is present as a named class.
-3. One item's art *is* recovered: item 13002 has no `<art>` tag, so `art = id` (XMLItem.as:110-116),
-   giving class `weapon13002` — the Branch visible in the frame.
+Where it *is* — and it has a name:
+
+```
+reference/decompiled/shs3_android/scripts/StatsManager.as:360
+      public static var useExternalResource:Boolean = true;
+reference/decompiled/shs3_android/scripts/ResourceManager.as:41
+      internal static var resourceFileNameArray:Array =
+        ["shs3resource.swf","musicresource.swf","soundresource.swf","imageresource.swf","bgresource.swf"];
+reference/decompiled/shs3_android/scripts/ResourceManager.as:238-252
+      public static function getMCSComponent(partType:String, id:int) : MovieClip
+      { … var mcname:String = partType + id.toString();
+        if(!applicationDomain.hasDefinition(mcname)) return null; … }
+```
+
+Those five filenames map 1:1 onto the five S0-5 encrypted blobs
+(`115_Mobile_SHS3Resource`, `113_Mobile_MusicResource`, `122_Mobile_SoundResource`,
+`124_Mobile_ImageResource`, `120_Mobile_BGResource`). I re-tested the encryption myself —
+all five carry a `CWS` magic followed by non-zlib bytes and fail `zlib.decompress`
+(`Error -3: incorrect header check` / `unknown compression method`). **S0-5 holds: held,
+not recovered.**
+
+Also measured: only **146 rows carry an explicit `<art>` override (68 distinct values,
+max 20052)**; every other item resolves art = its own id. So the missing set is
+"one symbol per wearable/consumable id", not 982 hand-authored pieces.
 
 ---
 
-## D. NEW FINDINGS THE SURVEY MISSED
+## Corrections to claims that otherwise HELD
 
-### N2 — Repair-Weapon cost is held. This kills an **economy** ledger blocker.
-
-`REBUILD_READINESS.md:213` lists economy blocker ③ as "Repair-Weapon cost (never captured)".
-
-```
-reference/decompiled/shs3_android/scripts/InteractUI.as:1057-1058
-            case "repairweapon":
-               cost = StageManager.getCurrentNodeLevel() * 10;
-reference/decompiled/shs3_android/scripts/InteractUI.as:1073-1076
-               if(weapon.uses > 1)
-               {
-                  weapon.uses = 1;
-               }
-```
-
-Cost = **current node level × 10 gold**. Repair is refused when the weapon slot is empty or holds
-id 13000 (the bare-hands default). Repair sets the wear counter to **1, not 0** — so a repaired
-weapon reads "Condition: Well-Maintained" (string 392) and can **never** return to the `uses == 0`
-"Unbreakable" state. That is a deliberate one-way door and it explains the otherwise-odd
-`uses == 0 ⇒ Unbreakable` branch the surveyor transcribed without interpreting.
-`reinforceweapon` is a flat 5000 gold at :1083.
-
-### N3 — Durability exists for only **115 of 982** items, and the XML tag is `<uses>`, not `<durability>`.
+**`sprite-compositing-contract-held`** — the 27 `PART_*` constants are real, but
+`MCSCharacter` only *allocates* 23 of them:
 
 ```
-reference/decompiled/shs3_android/scripts/XMLItem.as:186,190
-            this.durability = xml.uses;
-            this.durability = 0;
+MCSCharacter.as:120   internal var partListLength:int = 22;
+MCSCharacter.as:141   for(var i:int = 0; i <= this.partListLength; i++) { mc = new MovieClip(); addChild(mc); this.partList.push(mc); }
 ```
 
-`docs/gauntlet/L0/index/itemdata.json` → `itemdata/item/uses` count **115**, values {50,60,80,100};
-there is no `itemdata/item/durability` path at all. `getCondition()` returns **-1** when
-`durability == 0`, and `getDesc()` gates the whole condition ladder on `condition >= 0`
-(Item.as:1485-1487, :714-715). So the surveyor's (correct) 7-state ladder applies to 115 items;
-the other 867 render no condition line whatsoever. That belongs in the ledger next to the ladder.
+Indices 23–26 (`PART_l_shoulder`, `PART_r_shoulder`, `PART_l_knee`, `PART_r_knee`) and
+`PART_prop3` (22) are creature-rig extras — the only consumers are `MCSWolf.as:148,184,188,193,197`,
+which raises `partListLength = 25` in its own constructor (`MCSWolf.as:13`). **The human
+z-order stack is 23 deep, not 27.**
+Also, `setArmor` drives **8** parts, not 7 — `neck` is added conditionally at
+`MCSCharacter.as:1071-1083` (`if(componentObject != null) neck.addChild(...)`).
 
-### N4 — The sell formula's `getWeight()` is **stack** weight, and the two builds differ.
+**`sell-price-formula` / `sell-price-corrects-section3-item9`** — the formula is verbatim
+correct in both builds, but `getWeight()` is **stack weight**:
 
-Android (`Item.as:1564-1568`): `return this.weight * this.getQuantity();`
-Web v0.717 (`§1t17s0§.as:1958-1963,1974`): `return (this.weight + this.§1t478s0§) * this.§1t484s0§();`
+```
+reference/decompiled/shs3_android/scripts/Item.as:1564-1568
+      public function getWeight() : int
+      { if(this.weight != -1) { return this.weight * this.getQuantity(); } … }
+```
 
-`getSellAmt()` is byte-identical across builds — the surveyor is right about that — but its
-`getWeight() >= 10` test reads **base weight × quantity**, and the web build adds a per-item
-weight-modifier term the Android build lacks. A builder implementing "weight ≥ 10" as *per-item*
-weight gets the wrong branch on any stack of ten light items. Note also the only call site is
-`ShopUI.as:401` (`slot.setCost(slot.getItem().getSellAmt(),0)`) — no shop-side multiplier exists,
-which is what actually proves the "no level term" half of the claim.
+So the `>= 10` step in `getSellAmt()` trips on `unit weight × quantity` on every call
+after the first (the first call, with `weight == -1`, returns the raw XML weight — a
+shipped inconsistency). A builder implementing the threshold on unit weight will misprice
+stacks.
 
-### N5 — The frame shows an item-panel "LEVEL 1" caption that no formula I found produces. STILL_UNHELD.
+**`stat-vs-level-curve`** — the `+10` spike at `MAXINDEX` applies to `prog1`, `prog2`,
+`prog3` **only**; `prog4` and `prog5` have no spike (`ItemGenerator.as:157, 164, 171` vs
+`:172-183`). `MAXINDEX = 79` confirmed at `ItemGenerator.as:58`. Also: 158 rows carry
+`mindamage`/`maxdamage`, but only **122** carry `<minlvl>` (177 rows are `<type>9</type>`).
 
-`reference/frames/s21_weapon/t708.0.png`, crop (980,480)-(1200,540) upscaled ×5 LANCZOS:
-"LEVEL 1" is rendered in the UI font beneath the Branch icon. `Item.getLevel()` (Item.as:274-299) =
-`max(levelrestriction, max over modifiers of getModTier(id,val)+1)` clamped to `levelCap`. For
-item 13002 that is `max(-4, 0) = 0`, not 1. `levelrestriction` is -4. The two `Level Required`
-render sites (Item.as:1101-1104, :1299-1304) are both gated on `itemlevel > 0` and would not fire.
-I could not source this label; it is a real, small, open items-owned UI number. **The frame wins** —
-the caption is on screen whether or not the Android v0.682 code explains it, and this may be a
-web-v0.717 divergence.
+**`affix-suffix-pool-and-counts`** — 13 pools × 8 tiers = 104 + 104 confirmed verbatim.
+But the "shipped bug" in `lane_impact` is an unsupported inference. The elemental-DEF
+remap at `ItemGenerator.as:142-145` is a *consistent 4-cycle* —
+FIREDEF←water, WATERDEF←wind, WINDDEF←earth, EARTHDEF←fire — i.e. each defence channel is
+named after the element that counters it. That reads as deliberate naming, not copy-paste.
+Nothing in the artifact establishes it as a bug.
+
+**`rarity-is-derived-not-a-field`** — the six colours are byte-exact in both builds
+(verified `§1t17s0§.as:683,687,691,704,708,712`). But the web v0.717 build has a
+**seventh and eighth colour the Android build lacks**, gated on an `xp` field:
+
+```
+reference/decompiled/shs3_payload/scripts/§1t17s0§.as:677-680   if(this.xp != null) _loc1_ += "<font color=\"#ff9900\">";   // loot toast
+reference/decompiled/shs3_payload/scripts/§1t17s0§.as:698-701   else if(this.xp != null) _loc1_ += "<font color=\"#ff6600\">";  // inventory
+```
+
+`grep -n "ff9900\|ff6600" shs3_android/scripts/Item.as` returns nothing. So the S0-3
+parity caveat is **not** removed for this surface — it is inverted: the web build carries
+a state the Android build does not.
 
 ---
 
-## E. PRECISION NOTES (claims survive, wording should be tightened)
+## New identity the surveyor missed (frame ↔ payload)
 
-- `affix-suffix-pool-and-counts`: verified verbatim (13 pools × 8 tiers = 104 + 104, `num =
-  Math.floor(i/10)`, `MAXINDEX = 79` at ItemGenerator.as:58). But calling the DEF-channel pool
-  reuse "the shipped bug" is an **unevidenced inference**. ItemGenerator.as:142-145 is a clean
-  4-cycle — FIREDEF←water, WATERDEF←wind, WINDDEF←earth, EARTHDEF←fire — which reads at least as
-  plausibly as deliberate counter-element naming. State the mapping; don't label it a bug.
-- `stat-vs-level-curve`: `mindamage`/`maxdamage` are 158 rows but `minlvl` is **155**
-  (`docs/gauntlet/L0/index/itemdata.json`) — three weapon rows carry no level. And the `+10` spike
-  at index 79 applies to **prog1/prog2/prog3 only**; prog4 (speed) and prog5 have no spike
-  (ItemGenerator.as:178-183). The lane_impact reads as if all five get it.
-- `sell-price-corrects-section3-item9`: rarity **is** modifier count (`modifierCount >= 3 ⇒ rare`,
-  Item.as:396-403), so the ledger's "scales with rarity" half of §3 #9 was already right by
-  construction. Only the "/level" half is corrected. Say that, or the correction over-claims.
-- `item-save-format-held`: `mcsString` (MCSCharacter.as:348) is the 12-field **appearance/render**
-  string — it carries no scabbard and no accessories, so it is not the equipment save format. The
-  PARTIAL verdict is right; the wording "equipment is a 12-field pipe string" is not.
-- `modifier-id-stat-table`: five reserved IDs are named constants (80/81/82/89/125,
-  Item.as:6-16); **83** is inferred from `getModifierBonus(83)` at Item.as:1464 and :1487 (a
-  durability bonus). "Six reserved IDs" is fine but 83 has a different provenance — flag it.
-- `condition-tier-thresholds` / `rarity-is-derived-not-a-field` / `defense-min-floor-is-wrong` /
-  `weight-cap-is-a-base-not-a-cap` / `eq-comparison-frame-payload-identity` /
-  `slashusage-stancerestriction-omitted` / `soul-infusion-is-code` / `condition-has-no-damage-multiplier`:
-  all opened and all confirmed verbatim. `getCondition` really does have exactly two occurrences in
-  the whole Android bundle (its definition and its one call in `getDesc`) — I ran the grep.
-  `InventoryUI.as:439` is a further A2 confirmation of the weight-cap claim:
-  `WeightAmount.text = getString(139) + ": " + findWeight() + " / " + getCarryingWeight()`, which
-  is the frame's "WEIGHT: 43 / 100" exactly.
+The surveyor matched the *tooltip* item. The **equipped** item matches too, and it is the
+stronger check because it is visible as art, not text.
 
-## F. SCORE
+Crop `(1300,230)-(1800,330)` ×3 LANCZOS of `reference/frames/s21_weapon/t708.0.png` reads
+`DMG: 1 - 2 (EQ: 1 - 3)` with the `2` in red, and `WEIGHT: 1`. The paperdoll weapon box in
+crop `(170,240)-(870,1040)` ×2 visibly holds a **pickaxe**. Searching
+`reference/extracted/itemdata.xml` for `mindamage 1 / maxdamage 3` returns exactly three
+rows — 13001 "Stick" (w 1), 13003 "Bamboo" (w 1), **13022 "Pickaxe" (weight 10)**. The art
+picks the winner. Names via `docs/gauntlet/L0/index/strings.json`.
 
-78 is too high given R1–R3, but not by much — N1 and N2 are worth more than the three refutations
-cost. Net: **73–75**. The residual art gap (Section C, now three namespaces wide) is the thing
-holding this system down, and it is a genuine wall, not an unopened door.
+So the frame carries **two** independent payload identities: tooltip = id 13002 "Branch"
+(name 4041, mindamage 1, maxdamage 2, weight 1 — the *only* row named 4041), equipped =
+id 13022 "Pickaxe". The pickaxe's `weight 10` also lands exactly on the `getWeight() >= 10`
+branch of `getSellAmt()`, so the frame incidentally exercises the sell-price step.
+
+One frame detail remains unexplained and I am not going to guess at it: the item panel
+shows `LEVEL 1` under the Branch icon, but 13002 has `<minlvl>-4</minlvl>` and no
+`<levelrestriction>`, and the only `LangManager.getString(124)` ("Level Required")
+render sites (`Item.as:1104, 1304`) wrap it in `#FF0000` — the on-screen text is cream.
+STILL_UNHELD.
+
+---
+
+## Verdict summary
+
+- Refuted (material): `no-separate-icon-manifest`, `purple-border-is-unique-not-rarity`, `modifier-id-stat-table`, `ui-slot-mapping-unknown`
+- Refuted (minor): `per-item-art-payload-unknown` (disjunction settled; blocker survives)
+- Held with correction (minor): `sprite-compositing-contract-held`, `sell-price-formula`, `sell-price-corrects-section3-item9`, `stat-vs-level-curve`, `affix-suffix-pool-and-counts`, `rarity-is-derived-not-a-field`
+- Held clean: `condition-has-no-damage-multiplier`, `condition-tier-thresholds`, `item-save-format-held`, `paperdoll-is-13-slots-not-9`, `defense-min-floor-is-wrong`, `weight-cap-is-a-base-not-a-cap`, `eq-comparison-frame-payload-identity`, `slashusage-stancerestriction-omitted`
+
+Score impact: the ledger blocker ⑤ is **half alive** (compositing dead, icon manifest
+open), which the 78 does not reflect; against that, the slot-mapping STILL_UNHELD is dead
+and the art-payload location is now named. Net: 78 is defensible but for different
+reasons than the rationale gives.

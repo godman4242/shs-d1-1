@@ -1,154 +1,246 @@
-# meta-social — LENS 3 (PRECEDENCE) critic
+# LENS 3 — PRECEDENCE CRITIC · unit `meta-social`
 
-Blind review. I did not see the surveyor's reasoning. Every verdict below carries an
-artifact **I** opened. Commands and crops are reproducible from this file.
-
-**Headline:** the lane is substantively strong — I re-derived 18 of 22 claims first-hand
-and they held. But it was sourced almost entirely from the **wrong build**. The repo holds
-a **desktop v0.717 decompile at `reference/decompiled/shs3_payload/` (1,079 classes indexed,
-652 script files — LARGER than `shs3_android`'s 970/559)**, and it is listed in the lane's own
-evidence index (`docs/gauntlet/L0/index/actionscript.json`). The surveyor cited the Android
-0.682 decompile throughout and attached a version caveat instead of opening the target build.
-Four concrete consequences below, one of which changes a quoted line.
-
-Second failure: the frame search covered **one of the two longplays** and skipped
-`reference/frames/map_analysis/` entirely. The 6×6 board the lane says is unpictured is
-**visible on screen** in the second longplay.
+Blind review. I never saw the surveyor's reasoning — only its 22 claims and the artifacts.
+Every verdict below cites an artifact **I** opened.
 
 ---
 
-## A. The precedence failure: shs3_payload (v0.717) was on disk and unopened
+## THE HEADLINE FAILURE MODE
 
-| # | Android 0.682 (what was cited) | Desktop v0.717 (what the target build says) | Effect |
+The surveyor found a superb source — `reference/decompiled/shs3_android/` — and then
+**treated it as the game.** It is not. It is **clientVersion 0.682**
+(`shs3_android/scripts/StatsManager.as:30`).
+
+The target build is **v0.717**, and it is *also fully decompiled in this repo*:
+
+```
+reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:36
+      public static var §1t9323s0§:Number = 0.717;
+```
+652 files. Obfuscated symbol names, identical structure. **The surveyor never opened it in
+this pass** — its own first pass did (`§1t7924s0§.as:23`), then the second pass dropped it.
+
+Stage-0b finding S0-3 warned in writing: *"UI copy and combat tuning parity is NOT
+established. Label which build any ported string came from."* Eight claims ignore that
+warning. I diffed the two builds on every number the lane asserts. **Five diverge.**
+
+| datum | Android v0.682 (surveyor) | **web v0.717 (target)** | where I read v0.717 |
 |---|---|---|---|
-| A1 | `WarRules.as:23 max:int = 6` | `§1t7924s0§.as:23 internal var max:int = 7;` + `:121-123 case 7: getString(11016)/(11017)` | **No doc-vs-frame conflict ever existed.** The frame's `1/7` is confirmed by the desktop payload itself. |
-| A2 | `WarHexUI.as:2285` barricade guard = `hextype==HEX_DEFENSE && cost==0 \|\| CITY \|\| CASTLE` | `§1t7785s0§.as:2123` adds **`&& this.§1t7807s0§.owner != this.§1t7812s0§`** | The Barricade `+2` applies **only to a hex you do not own** in v0.717. The lane's verbatim quote is the wrong build's. |
-| A3 | `StatsManager.as:78 expArray` (99 entries) | `§1t1523s0§.as:364` — **byte-identical head, 99 entries, a[79]=4025800, tail 25395800/29395800** | The XP-curve claim is *stronger* than filed: no Android caveat needed at all. |
-| A4 | `StatsManager.as:158/160/162/166` | `§1t1523s0§.as:192=60, :194=2*60, :196=60*60, :264=30` | Token/war-move intervals identical → caveat dischargeable. |
+| rebirth Gold | 5, and 20 at Dan 8 → **60** lifetime | **25, and 100 at Dan 8 → 300** lifetime | `§1t1523s0§.as:2638,2646,2651` + anti-cheat ceiling `§1t406s0§.as:1544` (`> 300`) |
+| Duel-Token hard cap | 30 | **40** | `§1t1523s0§.as:200` (`§1t9400s0§ = 40`), stat 15/16 mapping identical |
+| daily base roll | `Math.random() * 36` | **`Math.random() * (37 + getLevel())`** | `§1t401s0§.as:1218` |
+| daily 10-day bonus | 6 outcomes | **8 outcomes** | `§1t401s0§.as:1588` |
+| barricade terrain penalty | `HEX_DEFENSE && cost==0` | **`… && owner != playerside`** | `§1t7785s0§.as:2123` |
+| war wave roster | 87 rows | **14 of 87 rows differ** (web late waves carry id `443`) | byte-diff of `bindata/119_1t4646s0.bin` vs `android/109_…bin` |
+| starting premium Gold | 0 | **3** | `§1t1523s0§.as:1024` vs `StatsManager.as:706` |
 
-Also verified identical in the desktop build: `§1t7785s0§.as:1321,1388,1407 = 500` (build donation)
-and `:1413/1423/1433/1443 = 10000/5000/10000/10000` (structure costs); the terrain switch
-`1.5/1.2/1/0.75/0.6/0.5/0.25` and the `>5` sector bound are byte-for-byte the same.
-
-**Not** found in the desktop decompile, after two independent pattern searches over all 652 files:
-the rebirth Gold grant (`,20)`/`,5)` on `DAN == 8`) and the `> 60 && DAN < 9` hack check.
-That makes claim `offline-gold-faucet-exists` the one place where the Android sourcing is a
-live risk, not a formality — mobile IAP tuning is exactly where two builds diverge.
+Everything the surveyor read out of the **web** payload (itemdata prices, the 63×72 GIF,
+the 351-kill total, the two frames) held up perfectly. Everything read only out of Android
+had to be re-checked, and five things broke.
 
 ---
 
-## B. New finding: the 6×6 board IS pictured — in the longplay the lane never opened
+## ⛔ FATAL — `meta-social/offline-gold-faucet-exists`
 
-`warroom-board-frame` is filed STILL_UNHELD and its lane_impact says *"every board claim in
-this lane rests on decompiled code plus the on-screen coordinate readout, not on a picture of
-the board."* That is false.
+The claim: *"exactly 5 Gold per rebirth and 20 at the Dan 8→9 rebirth — 60 Gold lifetime …
+This also contradicts KONGREGATE_FORUM_FINDINGS.md:399 'Rebirthing = 25 FREE Gold' —
+**payload over forum memory**."*
 
-- **A1:** `reference/frames/map_analysis/zFtCaTO0_1M_map_013_t565s.jpg` and
-  `zFtCaTO0_1M_map_010_t439s.jpg`, crop `(395,20)-(512,125)` upscaled ×10 LANCZOS.
-  Visibly on screen: a bordered panel with **column headers `0 1 2 3 4 5`** across the top and
-  **row headers `0 1 2 3 4 5`** down the left; cells carrying gate/arch icons, an `X` marker and
-  a white player arrow; **white connector lines drawn between adjacent cells** — the exits.
-  Below the panel, `TERRITORY (21,51)`.
-- **A2 corroboration:** `reference/decompiled/shs3_android/scripts/Territorymap.as:65-75` builds
-  exactly `for(i<6){ for(j<6){ new BigmapRoom() … x = i*20-77+28 } }` with N/S/E/W labels, and
-  `:501-504` runs A* over the same 6×6.
-- **Same board as the war room:** `WarHexUI.as:175-176 this.ht = 6; this.wt = 6;` and `:208-209`
-  builds it from `getShiftedNodeId(zeronodeid,i,j)` / `getNodeExitsNum(i,j)` — the *same* node
-  grid the Territorymap draws. `WarTerrain.getExitArray()` returns the 4-bit exit mask.
+**It is backwards.** v0.717's own `doRebirth`:
 
-Only the war-room's *hex skin* is unpictured. The 6×6 board, its axis labelling and its exit
-topology are on screen. The score deduction that rests on this is not earned.
+```as3
+// reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2638
+public static function §1t9600s0§() : *          // doRebirth
+   …
+   if(§1t7356s0§(§1t9426s0§) == 8)               // getPlayerStats(STAT_DAN) == 8
+   {
+      §1t9713s0§(§1t9413s0§,100);                // changeStat(STAT_HGOLD, 100)
+      …
+   }
+   else
+   {
+      §1t9713s0§(§1t9413s0§,25);                 // changeStat(STAT_HGOLD, 25)
+   }
+```
+(`§1t9413s0§ = 12` at :228 — the same STAT_HGOLD id Android uses at `StatsManager.as:194`.)
 
-`reference/frames/map_analysis/` holds 20 frames — 10 from each longplay. The lane's search
-(`Nr4fQstqHDM_map_contact.jpg`, 100 cells — I regenerated and read both halves) covered neither.
+And the surveyor's own proof-technique — the anti-cheat ceiling — confirms it in v0.717:
 
----
+```as3
+// reference/decompiled/shs3_payload/scripts/§1t406s0§.as:1544   (OverworldHUD)
+if(§1t1523s0§.§1t9714s0§(§1t1523s0§.§1t9413s0§) > 300 && … §1t9426s0§) < 9)
+```
+**8 × 25 + 100 = 300.** Android's ceiling is 60 because Android's grant is 5/20.
 
-## C. Corrections to individual claims (all re-derived first-hand)
+So the forum was right, and `REBUILD_READINESS.md` §3 item 7 — *"film shows a flat +25 gold
+every rebirth"* — was right, and the surveyor retired two correct statements using a build
+the recreation is not targeting. This is the exact pattern this lens exists to catch:
+**a superseded document being overturned by an even more superseded source.**
 
-**`war-kill-cap-351` — number right, "identical" wrong.**
-I summed the web file myself: 39 `<wave>`, 87 `<enemy>`, **total qty 351**, `{400-block: 340,
-700-block: 11 (ids 700–710)}`. The 351 stands and overturns the ledger's 350 and the master
-reference's "340 + 10 samurai" (`SHSD_MASTER_REFERENCE.md:170`).
-But the two builds are **not** identical:
-`sha256 709d94cb28c08ba1 (web, 11,721 B)` vs `b56f8c6a028357c4 (android, 11,553 B)`; normalising
-CRLF still leaves **14 differing lines**. The web v0.717 late waves draw from
-`<id>449|454|449|454|443</id>` where Android has `<id>449|454</id>` (same for 450|455 and
-451|456). Counts match; **enemy mix does not** — NPC 443 is in the web pool and absent from
-Android's. A 1:1 build must take the mix from the web file.
+Two knock-ons the surveyor also inverted:
+- `KONGREGATE_FORUM_FINDINGS.md:308` — *"25 gold every rebirth, rising to 100 on the 9th"* —
+  is now **A2-CONFIRMED**, not folklore.
+- `REBUILD_READINESS.md` §3 item 7 asks that `tenthGold=100` be downgraded to INFERRED.
+  `§1t1523s0§.as:2646` makes it **CONTRACT**. That is a free upgrade the lane missed.
 
-**`ninja-services-priced-catalogue` — "12-row" is off by an order of magnitude.**
-Every cited row checks out. But `121_Mobile_PremiumData.bin` holds **176 `<item>` rows / 143
-unique SKUs**, and all 143 resolve in the **web** `itemdata.xml` with a clean Gold ladder:
-1 (consumables, coin packs, clan invite), 3 (all cosmetic equipment), 5 (Amnesia Scroll, Writ of
-Release, Name Change, Clan Deed), 12 (30 named outfit bundles — "Assassin Outfit" … "Swords of
-the Mist"). The premium economy is 143 SKUs, not 12.
-
-**`frame-proves-string-table-parity` — right reading, wrong framing, over-broad conclusion.**
-I reproduced both crops on `frame_0084.jpg` (512×288): `…ES 1/7 (JOINING A BATTLE)` and
-`…A CLAN, YOU CAN MAY SELECT AN ON-GOING BATTLE…` are plainly legible. String 370 matches
-word-for-word including the typo — good. But **string 369 does *not* match**: it reads
-`War room rules 1/6  (joining a battle)`. One string in the same dialog matches and the next
-does not, so "the Android string table is v0.717's own copy" is disproved by the claim's own
-frame. And invoking the STANDING INVARIANT is theatrical: there is no measurement-vs-frame
-conflict here, only a build mismatch, and the **desktop payload agrees with the frame** (A1 above).
-Correct calibration: *body copy carries over between builds; page-numbered headers do not.*
-
-**`six-actions-understated` — 10 call sites, not 10 operations.**
-The ten `useWarMove(1)` lines are exactly where cited. But they sit in **7 enclosing functions**:
-`deployClick` · `spyClick` · `buildClick` ×3 · `startBuild` · `showWarRoomKills` · `moveClick` ·
-`createSpawnPointCallBack` ×2. `buildClick`'s three are branches of one operation and
-`showWarRoomKills` is a battle-result callback, not a player action. "Anyone implementing the
-move economy needs ten operations, not six" is not supported by the artifact.
-
-**`world-board-63x72-byte-identical` — confirmed, one nuance.**
-Reproduced: both files 272 B, `sha256 b9d152c046b66b59…`, `identical: True`, 63×72,
-**735 non-black of 4536**. The GIF's global colour table declares **4** entries
-(`000000 ffffff 666666 999999`); only 2 are *used*. "2 colours" is true of the decoded image,
-not of the palette.
-
-**`structure-costs-and-donation-rate` — survives a challenge I expected it to fail.**
-`getMaxWarMoves()` looked like a *bank cap*, which would make "500 coins/turn" correct at a
-sustained 1 move/hour. It is not: `WarUI.as:535-537` — `if(warmoves != maxmoves)
-StatsManager.setStat(STAT_WARMOVES, maxmoves);` — **refills to full each turn**. String 329 is
-`" moves a turn"` and string 372 opens *"Each turn, every player gets a number of moves based on
-their rank."* So 6 × 500 = 3,000/turn for a War Hero. The correction holds even against
-`REBUILD_READINESS.md:246`'s own "moves per turn reconciles as per hour" reconciliation.
-Bonus from the same string, missed by lane and ledger alike: **"the clan will pay the player
-5 coins per move made."**
-
-**`flag-120-is-mislabelled-terrain-row` — headline correct, quote from the wrong build.**
-Verified in **both** builds: the switch is `1.5/1.2/1/0.75/0.6/0.5/0.25`;
-`WarTerrain.as:9-13` gives FIELD=0, FOREST=1, MOUNTAIN=2, so the master reference's
-+60/+100/+75 are exactly 0.6/1.0/0.75 and the orphan ×1.20 is the `case 1` row.
-`HEX_CONTROLPOINT` appears only at `WarHex.as:463` (a description string) and
-`WarTerrain.as:71` — never in a modifier. Independent corroboration in string 372:
-*"the effect of moves is dependent on the terrain. mountains have the highest tactical advantage,
-followed by forests and fields."* The quoted guard, however, is Android's — see A2.
+Blocker ④ *is* closed — the surveyor's direction was right. The rate is 25/100/300.
 
 ---
 
-## D. Held clean, re-derived first-hand (no correction)
+## ⚠ MATERIAL — `meta-social/frame-proves-string-table-parity`
 
-`frame-prints-coordinate-system` (crop `(255,140)-(400,165)` ×12 — `TERRITORY (24,52) SECTOR (3,0)`
-and `TOWN PROSPERITY: +10` both legible) · `four-clans-named-led-located` (strings + colours
-16711680/39168/26367/16776960) · `kisensu-domain-typo-in-shipped-data` (324 and 327 both
-"North-East"; 325 SE, 326 SW; NW vacant) · `two-token-pools-quantified` ·
-`chikako-affinity-meter` · `rank-ladder-thresholds-and-moves` (all ten thresholds and all
-eleven max-move values read out of `getWarRank`/`getWarMovesToNextRank`/`getMaxWarMoves`) ·
-`achievements-61-resolved` (61 rows; ids 0/45/46/53/54/55/58/60 all match) ·
-`daily-reward-table` (`var dice:int` at `InteractUI.as:767` makes the 36/10/6 rolls genuine
-integer outcome counts; tail confirmed at `dice == 35` → item 2216) ·
-`survivalmode-is-the-warroom-wave-table` · `section6-live-clan-war-overbroad` ·
-`xp-curve-l11-80-recovered` · `war-rules-page-7-content` (11016/11017 genuinely absent from the
-Android table — max id 9010; the ids are **not** invented, they are in the desktop payload) ·
-`rival-clan-ai` (`SHSD_MASTER_REFERENCE.md:177` states it; no AI in any `War*.as`/`Territory*.as`).
+The typo is real; I opened the frame and read it myself
+(`reference/frames/Nr4fQstqHDM/map/frames/frame_0084.jpg`, 512×288, whole frame ×3 LANCZOS):
 
-## E. Score
+> **WAR ROOM RULES 1/7  (JOINING A BATTLE)**
+> - THE WAR ROOM IS A CLAN-BASED STRATEGY GAME WITHIN STRAW HAT SAMURAI: DUELS.
+> - AFTER JOINING A CLAN, **YOU CAN MAY SELECT** AN ON-GOING BATTLE TO TAKE PART IN.
 
-78 is defensible on substance but two of its three stated deductions do not survive:
-the 6×6 board **is** pictured (§B), and the page-7 gap is smaller than filed since the
-desktop payload supplies the call site if not the copy. Against that, the lane is one
-build off-target throughout (§A) and the premium catalogue is 143 SKUs, not 12 (§C).
-Net: roughly a wash. Do not raise the score on this review; re-run the lane against
-`reference/decompiled/shs3_payload/` first.
+Matches Android string 370 word for word. But the claim's *conclusion* —
+*"proving the Android string table is v0.717's own copy … the calibration artifact for
+every Android-sourced string in the lane"* — is **disproved by the same frame**:
+
+```
+strings.json 369 = 'War room rules 1/6  (joining a battle)'
+strings.json 371 = 'War room rules 2/6  (Turns AND MOVES)'
+frame_0084     →  'WAR ROOM RULES 1/7'
+```
+Both builds render page 1 as `getString(369)` (`§1t7924s0§.as` page block; Android
+`WarRules.as`). The **id space** is shared. The **content** is not. **THE FRAME WINS, and I
+am saying so out loud:** the Android table is a *sibling* of v0.717's, not a copy, and at
+least strings 369 and 371 differ. Treating it as a blanket licence is unsafe — and the five
+numeric divergences in the table above are what that licence costs.
+
+---
+
+## ⚠ MATERIAL — `meta-social/two-token-pools-quantified`
+
+`AP 30/30, 1 per 60 s` and `Duel Token 1 per 120 s` and the ×2 buffs all hold in **both**
+builds (`§1t1523s0§.as:194-198` = the same 60 / 2·60 / 60·60 block). The **hard cap is wrong**:
+
+```as3
+// v0.717 — reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:200
+internal static const §1t9400s0§:int = 40;      // MAXDUELTOKENS
+```
+used exactly as Android uses `MAXDUELTOKENS = 30` (clamp at `:1401/:1405`, `x + "/" + max`
+in the shop UI `§1t6519s0§.as:827`). Stat ids are identical in both builds (13 AP, 14 MAXAP,
+15 DUELTOKENS, 16 MAXDUELTOKENS).
+
+**The surveyor's own other cite refutes it.** `reference/extracted/itemdata.xml` (WEB v0.717)
+item **2127** resolves to **"40 Duel Tokens"** — a refill SKU that would overflow a 30 cap.
+
+---
+
+## ⚠ MATERIAL — `meta-social/daily-reward-table`
+
+*"a 36-outcome base roll … a 6-outcome bonus every 10th consecutive day"* — Android's table.
+v0.717's:
+
+```as3
+// reference/decompiled/shs3_payload/scripts/§1t401s0§.as:1218   (base roll)
+var _loc1_:int = 37 + this.§1t5864s0§.getLevel();
+var _loc2_:int = Math.random() * _loc1_;
+// :1588   (10-day bonus)
+_loc4_ = Math.random() * 8;
+```
+The base denominator is **level-scaled, 38 → 117**, so the coin/item probabilities the claim
+publishes are wrong at every level (5/38 at L1, 5/117 at L80 — not 5/36). The 10-day bonus is
+**8** outcomes. The 30-day super bonus (`Math.random() * 10`, `§1t401s0§.as:1535`), the 24 h
+cooldown, the streak stats 30018/30019 and the −172800 s grace all match — those parts hold.
+The claim also misses a v0.717 gate: the daily prize is only offered at
+**level ≥ 3** (`§1t1540s0§.as:854`).
+
+---
+
+## ⚠ MATERIAL — `meta-social/flag-120-is-mislabelled-terrain-row`
+
+Headline **correct and now double-sourced**: `getTerrainModifier` is byte-for-byte the same
+switch in v0.717 (`§1t7785s0§.as:2119-2145`), `HEX_CONTROLPOINT` (=3, `§1t416s0§.as:17`)
+never appears, deploy is `100 * modifier` (`:1108`) and arrows `80 + Math.random()*40*mod`
+(`:1123`). With `TERRAIN_FIELD 0 / FOREST 1 / MOUNTAIN 2` the master-reference rows fall out
+exactly: field→mountain −2 → 0.6 → **+60**; mountain→mountain 0 → 1.0 → **+100**;
+field→forest −1 → 0.75 → **+75**. "flag +120%" is case 1. Good kill.
+
+The **structure clause is v0.682's**:
+
+```as3
+// Android v0.682                    WarHexUI.as:2285
+if(selectedHex.hextype == HEX_DEFENSE && selectedHex.cost == 0 || … CITY || … CASTLE)
+// web v0.717                        §1t7785s0§.as:2123
+if(… == §1t12527s0§ && … .cost == 0 && this.§1t7807s0§.owner != this.§1t7812s0§ || … )
+```
+v0.717 applies the Barricade `+2` **only to an enemy-owned barricade**. Build the Android
+rule and your own completed barricades will penalise your own deploys.
+
+---
+
+## ⚠ MINOR — `meta-social/war-kill-cap-351`
+
+**351 is right and I verified it independently in the WEB file**: `bindata/119_1t4646s0.bin`,
+39 `<wave>`, 87 `<enemy>`, Σ`<qty>` = **351** = 340 (4xx block) + 11 (ids 700–710, qty 1 each).
+The master reference's "350 (= 340 + 10)" is off by one samurai. The verbatim wave head the
+surveyor quoted is exact.
+
+*"identical in the web v0.717 and Android payloads"* is **false**. The files are 11,721 vs
+11,553 bytes, different SHA-256, and **14 of 87 enemy rows differ**:
+
+```
+row 73  WEB '449|454|449|454|443' qty 3   ANDROID '449|454' qty 3
+row 77  WEB '450|455|450|455|443' qty 3   ANDROID '450|455' qty 3
+row 81  WEB '451|456|451|456|443' qty 4   ANDROID '451|456' qty 4     (…14 rows)
+```
+Quantities are identical — which is why 351 survives — but the **roster is not**. The web
+late waves add enemy id `443` to the pool. Build the composition from
+`bindata/119_1t4646s0.bin`, never from `android/109_…`.
+
+*(Bonus: the desktop binds this directly — `§1t7785s0§.as:13` `§1t12534s0§:Class = §1t4646s0§`,
+consumed at `:1860`, with the same 200/400/300/500/600 side remap at `:1882-1898`. That is a
+**web** A2 for `survivalmode-is-the-warroom-wave-table`, which the surveyor cited Android-only.
+The bindata filename `119_1t4646s0.bin` *is* the class name.)*
+
+---
+
+## HELD — checked and strengthened
+
+| claim | what I opened | note |
+|---|---|---|
+| `world-board-63x72-byte-identical` | both bins in Python | `GIF89a`, 63×72, 272 B, sha256 `b9d152c046b66b59…`, **identical: True**; palette 2 colours; **735** non-black of 4536. `WarSelectUI.as:83/85/173` reads as quoted. |
+| `frame-prints-coordinate-system` | `map/frames/frame_0090.jpg` ×3 | On screen: *KAKUCHI CASTLE TOWN, MAIN STREET / TERRITORY (24,52) SECTOR (3,0)* and *TOWN PROSPERITY: +10*. Exactly as claimed. |
+| `four-clans-named-led-located` | strings 271-278, 324-327 | All verbatim. **Stronger cite available:** `PlayerPanel.as:424-439` binds side 1→275 Aka Ryu, 2→276 Midori Ken, 3→277 Aoi Hoiru, 4→278 Ki Sensu *directly* — no colour-order inference needed. |
+| `kisensu-domain-typo-in-shipped-data` | strings 324 / 327 | Both say North-East; 325 SE, 326 SW; NW vacant. Real. (Android table — v0.717's copy of 327 unverified, see above.) |
+| `rank-ladder-thresholds-and-moves` | `§1t1523s0§.as:198, 1186-1228` | `getWarRank` is **identical** in v0.717 — 36/84/180/324/516/816/1176/1596/2076/5000; `WARMOVEINTERVAL = 60*60`. Android-only cite, but it survives the diff. |
+| `structure-costs-and-donation-rate` | `§1t7790s0§.as:195,200,205,210` + `§1t7785s0§.as:1321,1388,1407` | 10000/5000/10000/10000, HQ free, 500 per move — **identical in v0.717**. And the "per turn ≠ per move" point is *confirmed*: `updateWarMoveCounter` refills to `getMaxWarMoves()` (`WarUI.as:530-538`), and string 372 says *"Each turn, every player gets a number of moves based on their rank."* So 500 × 3…6 per turn. Ledger row is understated. |
+| `six-actions-understated` | `§1t7785s0§.as` | **10** `useWarMove` sites in v0.717 too (1105, 1197, 1233, 1304, **1334**, 1370, **1493**, 1917, 2391, 2444 — two are the 2-arg form). Count survives. |
+| `achievements-61-resolved` | the bin, parsed | 61 `<achievement>`; spot checks exact (0/60000/1 Duelist I; 45/60022/10 Chi Master; 46/60023/9 Ninja Master; 58/60018/340 Warrior III; 60/60025/1 Be Awesome). Frame 0084 even shows *ACHIEVEMENT UNLOCKED — JOIN A CLAN* (id 52). |
+| `ninja-services-priced-catalogue` | `itemdata.xml` resolved | All ten spot rows correct off the **WEB** file. Nit: the cited line numbers are the `<item>` open tags, not the `<heavenlyprice>` lines. |
+| `chikako-affinity-meter` | `InteractUI_chikako.as:24,26,40`, `StatsManager.as:2722-2723`, `NetworkManager.as:2306` | All quoted lines exact. **v0.717 caveat:** the system exists there (`shs3_fla/InteractUI_chikako_portrait_610.as`, string 723 used at `§1t1540s0§.as:702` and `§1t401s0§.as:628`) but `[0,10,30,60,100,150]` and `maxLevel = 5` do **not** appear in the desktop dump — the ladder numbers are Android-only. |
+| `xp-curve-l11-80-recovered` | `§1t1523s0§.as:364` **and** `§1t29s0§.as:28` | The **web v0.717 payload carries the identical 99-entry array.** `[9]=25900, [10]=31400, [79]=4025800`. This retires a §6 "structurally unrecoverable" line with a *web* cite — much stronger than the Android one the surveyor gave. Best claim in the set. |
+| `section6-live-clan-war-overbroad` | `§1t7785s0§.as:1108, :1123` | Deploy and arrow formulas confirmed in v0.717. PARTIAL is the right verdict. |
+
+## STILL_UNHELD — all three correct
+
+- **`warroom-board-frame`** — I built the 100-cell contact sheet and looked: quest panel,
+  rules dialog, inventory, duels. No hex board. **And I widened it**: the surveyor swept only
+  ONE of the two longplays. I built a contact sheet of the second video's map frames
+  (`reference/frames/map_analysis/zFtCaTO0_1M_map_006…015`, 10 frames) — skills panel, mining,
+  crop harvest, dialogue. Still no board. STILL_UNHELD stands, now over both videos.
+  The 240-frame `broad_survey/` set remains unswept — that is the real close-path.
+- **`war-rules-page-7-content`** — `strings.json` max numeric id = **9010**; 11016/11017 absent.
+  `§1t7924s0§.as:23 max = 7`, page 7 = `getString(11016)/(11017)`. Correct. (v0.717 also calls
+  `getString(11142)` at `§1t7785s0§.as:1419` — another >9010 string this lane cannot resolve.)
+- **`rival-clan-ai`** — `SHSD_MASTER_REFERENCE.md:177` says it; nothing in either build's
+  `War*` classes implements it. Correctly refused.
+
+---
+
+## SCORE
+
+**78 is too high — call it 66–70.** Four load-bearing numbers in the rationale are the wrong
+build's, and one of them (the gold faucet) is off by 5× and was used to retire two *correct*
+project documents. The topology, achievements, ranks, structure costs, XP curve, the two
+frames and the 351 total are all genuinely closed and were closed well.
+
+**Standing rule this lane should adopt:** `shs3_android/` is a **lead**, not the target.
+Every number ported from it must be re-read in `reference/decompiled/shs3_payload/` before it
+enters a config file. That decompile is 652 files and it has been sitting in the repo the
+whole time.

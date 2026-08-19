@@ -915,3 +915,885 @@ progression ② · plus the §1 unknown-unknowns *multi-target rule*, *hit-regis
 **The new blocker this lane creates:** every combat number sourced from the readable Android
 export must be re-verified against the obfuscated web payload before use. See
 `as/build-divergence`.
+
+---
+---
+
+# RUN 3 — SECOND ORTHOGONAL PASS (2026-08-17)
+
+Everything above is the RUN-2 survey and is **preserved verbatim**. This section is a
+second, deeper sweep of the same unit. It does three things:
+
+1. **Resolves RUN-2's two open items** — `as/repair-cost` (was STILL_UNHELD) and
+   `as/stance-counter-triangle` (was PARTIAL). Both are now HELD, and the counter
+   triangle turned out to be a *real mechanic with a v0.717-only second branch*.
+2. **Opens files RUN-2 never opened** — `ItemGenerator.as`, `LootDialog.as`, `NPC.as`,
+   `MusicManager.as`, `SoundManager.as`, `InputManager.as`, `InteractUI_crops.as`,
+   `TerritoryData.as`, `HistoryItem.as`, `Damage.as`, `MCSActor.as`. Each closes at
+   least one named ledger blocker.
+3. **Runs one A1 frame test** to check a code-derived model against the video, per §0's
+   standing invariant. The frame **agrees** with the code — said out loud below.
+
+RUN-2's governing rule still holds and is reinforced twice more here: **read the Android
+build for SHAPE, re-verify CONSTANTS in the obfuscated web payload.** Two new divergences
+found (`stance counter 0.9 branch`, `behead 1.5 → 1.3`). Every claim below states whether
+web parity was checked.
+
+Engine frame rate is **24 fps**, cited: `shs3_android/scripts/Mobile.as:117`
+`            GameEngine.getStageMC().frameRate = 24;`
+
+---
+
+## CLAIMS — RUN 3
+
+### as/affix-generator-complete — HELD (A2) — **CLOSES items-equipment ① AND ④**
+**Claim.** The whole random-item system is on disk: the **stat-vs-level curve** is five
+generated progression arrays, the **per-rarity affix count** is an explicit dice table, and
+the **suffix pool** (which the ledger calls a blocker) is a 16 × 8 verbatim string table
+sitting next to the prefix pool the ledger already has.
+
+**Cite (curves).** `reference/decompiled/shs3_android/scripts/ItemGenerator.as:150-183`
+```
+150:         var maxtier:int = MAXINDEX + 1;          // MAXINDEX = 79  → 80 tiers
+151:         var base:int = 1;
+152:         var inc:Number = 3 / 3;
+155:            this.prog1[i] = Math.floor(base + inc * i);      // ATTACK / DEFENSE
+157:         this.prog1[MAXINDEX] += 10;
+158:         base = 5;   inc = 5 / 3;                             // prog2  MAXHP / MAXCHI
+165:         base = 1;   inc = 1 / 3;                             // prog3  elemental atk/def,
+                                                                 //        HP/Chi regen, CRITICALDMG
+172:         base = 1;   inc = 2 / 3;                             // prog4  SPEED
+178:         base = 1;   inc = 1 / 5;                             // prog5  PIERCINGDMG
+```
+**Cite (affix count).** `ItemGenerator.as:206-252`
+```
+206:      internal function getEnchantmentCount(isRareItem:Boolean) : int
+209:         if(isRareItem)
+211:            dice = this.rng.rand(11);
+212:            if(dice <= 3) return 2;      //  4/11 → 2 affixes
+215:            if(dice <= 6) return 3;      //  3/11 → 3
+218:            if(dice <= 9) return 4;      //  3/11 → 4
+224:            if(dice == 10) return 5;     //  1/11 → 5
+230:         dice = this.rng.rand(100);
+231:         if(dice <= 84) return 0;        // 85 % → plain
+233:         if(dice <= 89) return 1;
+236:         if(dice <= 93) return 2;
+239:         if(dice <= 96) return 3;
+242:         if(dice <= 98) return 4;
+251:         return 5;
+```
+**Cite (tier from level).** `ItemGenerator.as:321-347` — `tier = nodelvl + 1` clamped
+0…79, then the **first** (highest) affix rolls `rng.rand(4) + tier - 3` and every later
+affix rolls `rng.rand(10) + tier - 9`; value = `prog[tier-1] + rand(prog[tier] - prog[tier-1])`.
+Weapon ATK and armour DEF subtract the item's own `levelrestriction` first (`:464-472`).
+
+**Cite (the suffix pool the ledger says is missing).** `ItemGenerator.as:102-127`, e.g.
+```
+110:         var attack_pre:Array  = ["Sharp","Fierce","Vicious","Savage","Brutal","Deadly","Fine","Warrior's"];
+111:         var attack_suf:Array  = ["of Attack","of Biting","of Striking","of Killing","of Slaughter","of Slaying","of Carnage","of the Butcher"];
+113:         var defense_suf:Array = ["of Defense","of Blocking","of Guarding","of Protection","of Absorption","of Warding","of the Shield","of the Titan"];
+115:         var speed_suf:Array   = ["of Speed","of Alacrity","of Haste","of Velocity","of Acceleration","of Sleight","of Swiftness","of Quickness"];
+```
+16 attributes × 8 tiers, selected by `num = Math.floor(i / 10)` (`:130`) — so the affix
+word advances one step every **10** modifier-value tiers.
+Name template (`:720-749`): 0 affixes = bare name · 1 = prefix · 2 = prefix + suffix ·
+3 = two prefixes + suffix · 4+ = **three prefixes + one suffix**.
+
+**Web v0.717 parity — CHECKED and IDENTICAL for the numerics.**
+`shs3_payload/scripts/§1t1644s0§.as:169,178,187,196,204` carry the same
+`3 / 3`, `5 / 3`, `1 / 3`, `2 / 3`, `1 / 5` and the same `+= 10` on the last tier;
+`:255-282` is the same dice table verbatim. **One real difference:** the web build does
+not hardcode the words — it pulls them from the string table
+(`§1t1644s0§.as:108-130`, `§1t1657s0§(10029,7)` … `(10197,7)`, i.e. ids **10029–10212**,
+8 per array via the inclusive helper at `:227-238`). Those ids are **not present** in the
+Android `118_Mobile_Lang_EN.bin` table (`strings.json` tops out at numeric id 9010), so the
+Android hardcoded English pool is the *only* verbatim source and its wording is
+v0.682's. Label ported affix words as Android-sourced.
+
+**Ledger text overturned.** §4 items-equipment blockers ① *"item stat-magnitude **vs level**
+curve"* and ④ *"affix **suffix** pool + per-rarity affix count"*. Both closed.
+Also §1 known-unknowns *"item stat-vs-level curve"*.
+
+**New fact absent from all 12 ledgers.** `PIERCINGDMG` (`ItemGenerator.as:56`) is a
+17th gear stat nothing in the ledger mentions; `Damage.getMinDamage()` shows what it does
+(see `as/defense-is-flat-subtraction`).
+
+**Lane impact.** L-items-equipment (①④ closed), L-economy, L-rebirth-elements (the four
+elemental ATK/DEF gear stats are generated here).
+
+---
+
+### as/repair-cost-is-two-consumables — HELD (A2) — **CLOSES economy ③, WAS STILL_UNHELD IN RUN 2**
+**Claim.** Weapon repair is **not a service with a fee**. It is two shop consumables
+carrying modifier id 82, and their prices and repair amounts are literal payload rows.
+
+**Cite (the mechanic).** `reference/decompiled/shs3_android/scripts/InventoryUI.as:992-994`
+```
+992:                     else if(modid == 82)
+993:                     {
+994:                        StatsManager.repairEquippedWeapon(item.modifierXML[i].value);
+```
+→ `StatsManager.as:2615-2617` `public static function repairEquippedWeapon(num:int) : *
+{ equipment[EQ_WEAPON].repair(num); }` → `Item.as:1440` `public function repair(num:int)`.
+
+**Cite (the two items).** `reference/extracted/itemdata.xml:293` and `:306`
+```
+id=2119  name→"Whet Stone"        baseprice=20  weight=1  modifier id=82 value=10
+id=2120  name→"Sword Repair Kit"  baseprice=40  weight=1  modifier id=82 value=25
+```
+Names resolved through Stage-0 finding S0-3's table. Corroborated verbatim by the shipped
+UI copy, `strings.json` id **393**: *"Your weapon is broken!\n\nBuy **whet stones and sword
+repair kits from peddlers** to repair your weapon, or use ninja services to make your weapon
+unbreakable and give it a name."*
+
+**Ledger text overturned.** §4 economy blocker ③: *"Repair-Weapon cost (**never captured**)."*
+It is captured: **20 c for 10 uses, 40 c for 25 uses** — and the same string proves the
+Ninja-Services "unbreakable + name" upgrade is the alternative, which the ledger lists under
+meta-social without connecting it to repair.
+
+**Lane impact.** L-economy (③ closed), L-items-equipment, L-meta-social.
+
+---
+
+### as/durability-and-slashusage-tables — HELD (A2) — **RESOLVES items ② IN THE NEGATIVE**
+**Claim.** There is **no condition→damage multiplier at all**. Condition is (a) a display
+string on a 5-band ladder and (b) a binary `isBroken()` that replaces the weapon's whole
+damage contribution with `+1`. The durability budget and the per-slash Focus cost are both
+weapon-only data tables with three or four discrete tiers.
+
+**Cite (the ladder).** `shs3_android/scripts/Item.as:714-744` — bands at `uses == 0`,
+`uses == 1`, `condition == 0`, `< 25`, `< 50`, `< 75`, else; strings resolved:
+`639 "Unbreakable" · 392 "Condition: Well-Maintained" · 387 "Condition: Broken" ·
+388 "Condition: Poor" · 389 "Condition: Used" · 390 "Condition: Usable" · 391 "Condition: Good"`.
+`Item.as:1481-1490` `getCondition()` = `(maxDurability - uses) / maxDurability * 100`.
+The **only** reader of `getCondition()` in the entire Android tree is `Item.as:714` — the
+tooltip. Grep: `grep -rn "getCondition()" .` → 2 hits, both in `Item.as`.
+
+**Cite (the data).** `reference/extracted/itemdata.xml`, measured programmatically:
+```
+items carrying <uses> (→ XMLItem.durability, XMLItem.as:186 this.durability = xml.uses):
+  115 items, ALL in id range 13014–13227 (weapons only)
+  values: 100 ×46 · 80 ×34 · 60 ×34 · 50 ×1
+items carrying <slashusage>: 106, same id range
+  values: 72 ×70 · 96 ×35 · 24 ×1        (code floors at 48 — StatsManager.as:1921-1927)
+```
+Verified identical in the Android item table (`reference/extracted/android/111_Mobile_ItemData.bin`,
+982 `<item>` rows, same schema).
+
+**Consequence for the Focus economy.** On the 192-unit bar, a 72-cost weapon gives 2.67
+Balanced slashes, a 96-cost weapon exactly 2; Light halves it (36 / 48) and Heavy/Dual
+multiply by 1.5 (108 / 144). That is the whole slash-rate budget, in integers.
+
+**Ledger text corrected.** §4 items-equipment blocker ②: *"condition→DMG **multiplier**
+(current 'evidence' confounds condition with a 2-level gap)."* The ledger is right that the
+evidence was confounded and wrong that a multiplier exists. Do not encode one.
+
+**Lane impact.** L-items-equipment (② resolved), L-skills-meters, L-combat-core.
+
+---
+
+### as/enemy-level-scaling-and-1hp-trash — HELD (A2) — **CLOSES enemies-ai ① AND ②**
+**Claim.** The enemy level→stat formula is a **linear rescale of the NPC's own XML row**,
+with a sub-20 penalty and a **hard floor that makes every level-≤10 enemy 1 HP / 1 damage /
+1 defense**. That floor is the code cause of the "field trash dies in one hit" observation.
+
+**Cite (web v0.717, so no parity caveat).** `reference/decompiled/shs3_payload/scripts/§1t68s0§.as:258-278`
+```
+258:      public function setLevel(param1:int) : *
+260:         var _loc2_:Number = param1 / this.level;
+261:         if(param1 <= 20)
+263:            _loc2_ *= 0.9;
+265:         this.level = param1;
+266:         this.damage *= _loc2_;
+267:         this.defense *= _loc2_;
+268:         this.§1t3257s0§ *= _loc2_;            // maxhp
+271:         this.xp = param1 * 2 + 20;
+272:         if(param1 <= 10)
+274:            this.damage = 1;
+275:            this.defense = 1;
+276:            this.§1t3257s0§ = 1;               // maxhp = 1
+```
+Plain-named twin: `shs3_android/scripts/NPC.as:241-259` — **identical**, so this is a
+per-value port-clean case.
+Base stats come from data, not code: `NPC.as:214-218`
+`this.damage = xml.attack; this.defense = xml.defense; maxhp = xml.hp; this.level = xml.lvl;`
+
+**Cite (per-enemy HP is DATA, blocker ② closed).** `reference/extracted/npcdata.xml`,
+counted programmatically over its 495 `<npc>` blocks:
+```
+403 npcs carry <hp>; range 1…1000; levels 1…80 on 414 npcs
+HP histogram head: 1 ×42 · 15 ×32 · 30 ×26 · 10 ×23 · 40 ×19 · 20 ×13 · 150 ×11
+```
+Worked row, `npcdata.xml` npc id 1: `<lvl>3</lvl> <hp>1</hp> <ai>1</ai> <attack>3</attack>
+<defense>0</defense>` — the first bandit is literally a 1-HP mob in the shipped table.
+
+**Ledger text overturned.** §4 enemies-ai blocker ①: *"enemy **level→stat formula** (governs
+the whole roster's balance — **absent, not just inferred**)"* — it is on disk in both builds.
+Blocker ②: *"per-enemy HP"* — 403 rows of it.
+§4 enemies-ai **surface** note *"the shipped `AI_TIERS`/`ENEMY_BASE` are a **PvP-duel dummy**
+(hp 150), not the ~1-HP-chip field trash the video shows"* is **CONFIRMED IN CODE** — and
+note `hp 150` appears 11 times in `npcdata.xml`, so the recreation copied a real row, just
+the wrong one.
+
+**Lane impact.** L-enemies-ai (①② closed), L-combat-core (TTK), L-progression.
+
+---
+
+### as/xp-income-model — HELD (A2) — **CLOSES progression ④**
+**Claim.** The full XP-per-kill model — base, grey-level cutoff, over-level decay,
+under-level bonus and the elite multiplier — is a pair of literal step tables plus a
+six-line function.
+
+**Cite (web v0.717).** `reference/decompiled/shs3_payload/scripts/§1t68s0§.as:185-208`
+```
+185:      public static function §1t12070s0§(param1:int, param2:int, param3:int, param4:Boolean) : *
+187:         if(param2 <= §1t12068s0§())   return 0;        // mob at/below grey level → 0
+191:         if(param2 - param1 > 3)       return 0;        // mob >3 levels above you → 0
+196:         if(param1 < param2)  _loc5_ = param3 * (1 + 0.05 * (param2 - param1));
+200:         else if(param1 > param2) _loc5_ = param3 * (1 - (param1 - param2) / §1t12069s0§());
+204:         if(param4)  _loc5_ *= 2;                       // elite
+```
+Base XP: `§1t68s0§.as:237` `this.xp = this.level * 2 + 20;`
+Plain-named tables, `shs3_android/scripts/NPC.as:94-110` (`getGreyLevel`):
+`lvl<6 → 0 · lvl<40 → lvl − floor(lvl/10) − 5 · lvl<60 → lvl − floor(lvl/5) − 1 · else lvl − 9`
+and `NPC.as:112-161` (`getZeroDifference`), the full ladder:
+`<8→5 · <10→6 · <12→7 · <16→8 · <20→9 · <30→11 · <40→12 · <45→13 · <50→14 · <55→15 · <60→16 · else 17`.
+
+**Ledger text closed.** §4 progression blocker ④: *"full XP-income model (quest/gather/
+dungeon, not just kills)"* — the kill half is now exact, including the anti-farming cutoffs.
+This also explains, without any measurement, why the ledger's video samples *"20+ samples show
+no XP formula"*: XP per kill depends on the **player's** level as well as the mob's, so a
+fixed-mob sample set legitimately produces no constant.
+
+**Lane impact.** L-progression (④), L-enemies-ai, L-economy.
+
+---
+
+### as/coins-per-kill-is-data-not-a-constant — HELD (A2) — **OVERTURNS economy ①**
+**Claim.** There is no coins-per-kill constant. Coin drops are **rows in each NPC's
+`<reward><loot>` block**, rolled independently: loot id **0 pays 1 coin per qty**, loot id
+**1 pays 5 coins per qty**, and `<chance>` is a 0–1 probability.
+
+**Cite (the payout).** `shs3_android/scripts/NPC.as:837-843`
+```
+837:               if(lootType == 0)
+839:                  OverworldHUD.instance.lootDialog.addLootCoins(1 * qty);
+841:               else if(lootType == 1)
+843:                  OverworldHUD.instance.lootDialog.addLootCoins(5 * qty);
+```
+**Cite (the roll).** `NPC.as:803-806`
+```
+803:            lootType = int(loot.id);
+804:            qty = loot.qty;
+805:            chance = loot.chance * 100;
+806:            if(chance == 100 || Math.random() * 100 < chance)
+```
+**Cite (the data).** `reference/extracted/npcdata.xml` — 131 `<loot>` rows across the roster;
+id histogram `0 ×77 · 3 ×28 · 2 ×10 · 1 ×10 · 2113 ×2 · 2112 ×2 · 20028 ×1 · 2114 ×1`.
+npc id 1 (the first bandit): `<loot><id>0</id><qty>2</qty><chance>0.5</chance></loot>`
+→ **0 or 2 coins, expected 1**.
+
+**Ledger text overturned.** §4 economy blocker ①: *"coins-per-kill reality (`=8` is an
+**unconfirmed INFERRED seed**)."* `COINS_PER_KILL = 8` is not merely unconfirmed, it is the
+wrong *shape* — there is no such scalar. The early game pays ~1 coin per kill on average.
+Loot id 3 (28 rows) is not currency at all — it routes to `addRandomLootItem` (`NPC.as:851`).
+
+**Lane impact.** L-economy (① overturned), L-enemies-ai, L-items-equipment.
+
+---
+
+### as/loot-tables-held — HELD (A2) — **CLOSES a §1 known-unknown**
+**Claim.** The drop tables are literal item-ID arrays banded by player level, with an
+explicit 50 % no-drop gate, a 4-attempt level-restriction retry and a consolation list.
+
+**Cite (the algorithm).** `shs3_android/scripts/LootDialog.as:448-495`
+```
+448:      public function addRandomLootItem(playerlevel:int, isRareItem:Boolean = false, alwaysGive:Boolean = false, isLegendaryItem:Boolean = false) : *
+456:         if(!alwaysGive && int(Math.random() * 2) == 0)  return;       // 50 % nothing
+461:         while(counter < 5)
+467:               if(playerlevel < 30)       reward = randomItemList1[…]
+471:               else if(playerlevel < 60)  reward = randomItemList2[…]
+475:               else                       reward = randomItemList3[…]
+478:               if(QuestEngine.getItemData(reward).levelrestriction <= playerlevel + 3)
+493:               this.lootList.push(new Item(this.consolationPrizeList[…],1));   // 5th try
+```
+**Cite (the tables).** `LootDialog.as:67-85` — `ironWeaponList` (38 ids, 13100–13208),
+`bronzeItemList` (33 ids, 13130–13216), `steelItemList` (33 ids, 13156–13227),
+`randomItemList1/2/3` (~118 ids each), `consolationPrizeList = [2103,2104,2106,2107,20054,20055]`.
+**Web v0.717 parity — CHECKED and byte-identical**: `shs3_payload/scripts/§1t6172s0§.as:82`
+holds `randomItemList1` with the same 118 ids ending `…,4062,4077,11040,20054,20055];`, and
+`:605` holds the same `if(!param3 && int(Math.random() * 2) == 0)` gate.
+Rare/legendary loot re-enters `ItemGenerator.generateItem(reward, playerlevel, isRare, isLegendary)`,
+tying the drop table to `as/affix-generator-complete`.
+
+**Ledger text closed.** §1 known-unknowns: *"Systems formulas: … **loot/drop tables**."*
+The iron / bronze / steel weapon ladder the ledger knows by name is literally these three
+arrays with a **level 30 / 60** band boundary.
+
+**Lane impact.** L-items-equipment, L-economy, L-enemies-ai, L-world-exploration.
+
+---
+
+### as/defense-is-flat-subtraction — HELD (A2) — **RESHAPES progression ① AND CLOSES rebirth ②**
+**Claim.** DEF is **not a curve**. Mitigation is flat integer subtraction, floored by an
+attacker-level ladder that `PIERCINGDMG` adds to. Elemental damage is a set of **four
+independent additive channels**, each `attackerElemATK − defenderElemDEF` with a floor of 1,
+added *after* physical mitigation — not a multiplier and not a resistance percentage.
+
+**Cite (the whole defender chain, web v0.717).** `shs3_payload/scripts/§1t99s0§.as:3736-3808`
+```
+3736:            switch(param1)                       // which paperdoll part was struck
+3738-3740:          hat / head / neck  →  behead flag
+3750:            _loc5_ = param2.damage;              // physical
+3751-…:           _loc7_ = param2.fireDamage - STAT_FIREDEF;   (+ wind / water / earth)
+3763-3777:        each elemental channel: if attack had it and result < 1 → 1, else if < 0 → 0
+3787:            if(counter-favourable matchup)  _loc5_ *= 1.2;
+3796:            else if(counter-unfavourable)   _loc5_ *= 0.9;
+3800:            _loc5_ -= this.§1t4477s0§();         // ← FLAT defense subtraction
+3801:            if(_loc5_ < param2.§1t1088s0§())     // ← getMinDamage() floor
+3803:               _loc5_ = param2.§1t1088s0§();
+3805:            if(behead)  _loc5_ *= 1.3;
+3808:            totalDamage = physical + fire + wind + water + earth
+```
+**Cite (the floor).** `shs3_android/scripts/Damage.as:150-172`
+```
+150:      public function getMinDamage() : int
+152:         if(this.damage == 0)        return 0;
+156:         if(this.attackerlvl == 0)   return this.damage;
+160:         if(this.attackerlvl <= 10)  return 1 + this.piercingDamage;
+164:         if(this.attackerlvl <= 20)  return this.attackerlvl / 8 + this.piercingDamage;
+167:         if(this.attackerlvl <= 30)  return this.attackerlvl / 6 + this.piercingDamage;
+171:         return this.attackerlvl / 4 + this.piercingDamage;
+```
+Plain-named defender twin for the elemental block: `shs3_android/scripts/NPC.as:393-428`.
+
+**Ledger text corrected.** §4 progression blocker ①: *"DEF mitigation **curve** + SPD scaling
+(wiki gives only direction)"* — there is no curve; it is `damage − defense`, floored.
+§4 rebirth-elements blocker ②: *"elemental ATK-vs-DEF **formula**"* — closed: subtractive,
+per-element, floor 1, additive to physical.
+§4 items-equipment "Ready" line *"defense min-floor (**EnemyLevel/4**)"* is the **top band
+only** and names the wrong actor — it is the **attacker's** level, on a four-band ladder,
+plus `piercingDamage`. That also finally gives `PIERCINGDMG` its meaning: **damage that is
+immune to defense subtraction.**
+
+**Lane impact.** L-progression (①), L-rebirth-elements (②), L-items-equipment, L-combat-core.
+
+---
+
+### as/stance-counter-triangle-CONFIRMED — HELD (A2) — **UPGRADES RUN-2's ONLY `PARTIAL`; NEW BUILD DIVERGENCE**
+**Claim.** RUN 2 could not find a code path for the stance rock-paper-scissors and correctly
+reported PARTIAL. **The path exists.** It lives on the *defender* side, and v0.717 carries a
+**second branch the Android build does not have**: the favourable matchup also *reduces*
+incoming damage by 10 %.
+
+**Cite (web v0.717, MCSPlayer as defender).** `shs3_payload/scripts/§1t99s0§.as:3786-3799`
+```
+3786:            if(this.stance == §1t12220s0§ && _loc11_ == §1t12221s0§
+                 || this.stance == §1t12221s0§ && _loc11_ == §1t12222s0§
+                 || this.stance == §1t12222s0§ && _loc11_ == §1t12220s0§)
+3788:               _loc5_ *= 1.2;
+3789:               if(controlledBy != 0)
+3791:                  _loc12_ = 16777215;          // WHITE damage popup
+3795:            else if(this.stance == §1t12220s0§ && _loc11_ == §1t12222s0§
+                 || this.stance == §1t12221s0§ && _loc11_ == §1t12220s0§
+                 || this.stance == §1t12222s0§ && _loc11_ == §1t12221s0§)
+3797:               _loc5_ *= 0.9;
+```
+Same block, same constants, in the web `EnemyPlayer` class at `§1t4904s0§.as:419-430`.
+`§1t12220s0§ / §1t12221s0§ / §1t12222s0§` are LIGHT / BALANCED / HEAVY, fixed by RUN-2's
+Heavy-defense mapping (`§1t99s0§.as:3286-3289`).
+
+**Cite (Android v0.682 — the 0.9 branch is ABSENT).**
+`shs3_android/scripts/MCSPlayer.as:3701-3707`
+```
+3701:            if(this.stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE
+                 || this.stance == BALANCED_STANCE && enemyStance == HEAVY_STANCE
+                 || this.stance == HEAVY_STANCE && enemyStance == LIGHT_STANCE)
+3703:               damage *= 1.2;
+3705:               if(this.controlledBy != 0)
+3707:                  damagetextcol = 16777215;
+```
+…and nothing else. `shs3_android/scripts/NPC.as:444-460` has **no** counter branch at all,
+whereas the web `NPC`-family twin does — so v0.717 both **added** the mitigation half and
+**widened the scope** to ordinary NPC defenders.
+
+**The v0.717 matrix, complete** (defender stance × attacker stance, applied *before* the
+flat defense subtraction):
+
+| defender ↓ / attacker → | Light | Balanced | Heavy |
+|---|---|---|---|
+| **Light**    | ×1.0 | **×1.2** | ×0.9 |
+| **Balanced** | ×0.9 | ×1.0 | **×1.2** |
+| **Heavy**    | **×1.2** | ×0.9 | ×1.0 |
+
+This matches the shipped tooltips exactly — `strings.json` 6001 *"…Effective against **Heavy**
+Stance."* · 6003 *"…Effective against **Light** Stance."* · 6005 *"…Effective against
+**Balanced** Stance.\nDefense -20%"*.
+
+**Ledger impact.** A **whole combat relationship that appears in none of the 12 ledgers**,
+now specified to the constant. RUN 2's advice "do not encode a counter bonus" is **withdrawn**:
+encode ×1.2 / ×0.9, defender-side, pre-defense.
+
+**Lane impact.** L-combat-core, L-skills-meters, L-ui-hud (the white popup), L-enemies-ai.
+
+---
+
+### as/behead-and-weapon-parry — HELD (A2)
+**Claim.** Two part-based rules the ledger only gestures at: striking **hat, head or neck**
+sets a decapitation flag and multiplies damage; striking the **weapon part** does **zero
+damage and does not even consume the hit** — a free parry surface.
+
+**Cite (weapon parry).** `shs3_android/scripts/NPC.as:437-440`
+```
+437:            case mcs.partList[MCSCharacter.PART_weapon]:
+438:               gotHitFlag = false;
+439:               damage = 0;
+440:               return false;
+```
+**Cite (behead multiplier — AND a build divergence).**
+Android `NPC.as:451-453` and `MCSPlayer.as:3714-3716`: `if(behead) { damage *= 1.5; }`,
+applied **after** the defense subtraction.
+Web v0.717 `§1t99s0§.as:3805-3806`: `if(§1t1071s0§) { _loc5_ *= 1.3; }` — **×1.3, not ×1.5**,
+also after the floor. Per `as/build-divergence`, **use 1.3**.
+
+**Consequence.** The ledger's *"part-based weak points (shielder legs, undead heads)"* is a
+description of emergent behaviour; the actual rule is universal — z-order-topmost part wins
+(RUN 2's `as/hit-registration-window`), head-group parts multiply, weapon part is immune.
+A recreation that draws the sword in front of the torso will make enemies *harder* to hit,
+exactly as the original does.
+
+**Lane impact.** L-combat-core, L-enemies-ai, L-items-equipment.
+
+---
+
+### as/damage-popup-colors — HELD (A2) — **CLOSES ui-hud ③**
+**Claim.** Floating damage popups are real, are one text object per damage channel, spawn at
+**(actor.x, actor.y − 100)**, and carry five fixed colours plus a sixth for a countered hit.
+
+**Cite (web v0.717).** `shs3_payload/scripts/§1t68s0§.as:518-534`
+```
+518:  createFloatingText(mcs.x, mcs.y - 100, physical, 10027008);   // 0xA30000 dark red
+522:  createFloatingText(mcs.x, mcs.y - 100, fire,     16737792);   // 0xFF6600 orange
+526:  createFloatingText(mcs.x, mcs.y - 100, wind,     13421772);   // 0xCCCCCC light grey
+530:  createFloatingText(mcs.x, mcs.y - 100, water,       26367);   // 0x0066FF blue
+534:  createFloatingText(mcs.x, mcs.y - 100, earth,    6697728);    // 0x663300 brown
+```
+Plain-named twin `shs3_android/scripts/NPC.as:497-513`. Counter-hit colour
+**16777215 = 0xFFFFFF** (`§1t99s0§.as:3791`).
+
+**Ledger text closed.** §4 ui-hud blocker ③: *"floating damage/crit **popups** (absent from
+the ledger, confirmed to exist)."* Now byte-exact, and it reveals that a multi-element hit
+stacks **five** popups at the same anchor point.
+
+**Lane impact.** L-ui-hud (③ closed), L-art-anim-audio-feel, L-combat-core.
+
+---
+
+### as/adaptive-music-system — HELD (A2) — **MATERIALLY OVERTURNS art-anim blocker ①**
+**Claim.** Music is **not a set of linear tracks**. It is a **13-stem adaptive layer system**
+driven by **18 named states**, with a preset matrix, **phase-locked stem entry** and a fixed
+fade rate. The stem and SFX **names** are held verbatim in both builds. (The audio *bytes*
+remain encrypted — Stage-0 S0-5 stands.)
+
+**Cite (the 13 stems, web v0.717).** `shs3_payload/scripts/§1t133s0§.as:115-127`
+```
+115:  getMusic("battlechants")      121:  getMusic("dungeonambience")
+116:  getMusic("battledrums")       122:  getMusic("dungeonflute")
+117:  getMusic("flutes")            123:  getMusic("dungeonpercussion")
+118:  getMusic("safeambience")      124:  getMusic("dungeonpiano")
+119:  getMusic("safekoto")          125:  getMusic("bgm_gangnam")
+120:  getMusic("safepercussion")    126:  getMusic("bgm_levelup")
+                                    127:  getMusic("bgm_lose")
+```
+**Cite (the state→stem matrix).** `shs3_android/scripts/MusicManager.as:12-46` (18 states) and
+`:133-187` (the presets), e.g.
+```
+MUSIC_EXPLORESAFE          = flutes + safeambience
+MUSIC_EXPLOREDANGER        = flutes + safeambience + safepercussion
+MUSIC_EXPLORETOWN          = flutes + safeambience + safekoto
+MUSIC_DOJO                 = flutes + safeambience + safekoto + safepercussion
+MUSIC_EXPLOREBATTLE        = flutes + battledrums
+MUSIC_TOUGHBATTLE          = flutes + battledrums + battlechants
+MUSIC_PVP                  = battledrums + battlechants
+MUSIC_DUNGEON              = dungeonambience + dungeonflute
+MUSIC_DUNGEONCREEPY        = dungeonpiano
+MUSIC_DUNGEONCREEPYDANGER  = dungeonambience + dungeonflute + dungeonpercussion + dungeonpiano
+MUSIC_QUIET                = flutes
+```
+**Cite (phase lock).** `MusicManager.as:204-224` — an entering stem starts at the *current
+playhead position* of whichever of flutes / battledrums / safepercussion / dungeonpiano /
+dungeonambience / dungeonflute is already running (`playPosition %= trackArray[i].length`),
+so layers stay in sync; the flutes↔dungeonflute swap explicitly resets to 0 (`:230-233`).
+**Cite (fade rate).** `MusicManager.as:301` `sndTransform.volume -= 0.05;` and `:329`
+`+= 0.05;` — **±0.05 per frame at 24 fps = a 20-frame (0.833 s) crossfade**.
+Web parity **CHECKED**: `§1t133s0§.as:306` `-= 0.05;` and `:334` `+= 0.05;`.
+
+**Cite (the SFX manifest).** `shs3_android/scripts/SoundManager.as` —
+`slash1/2/3` (`:197,205,213`), `die1/2/3` (`:231,239,247`), `punch` (`:261,274`),
+`hitmetal` (`:287`), `deflect` (`:300`), `fart` (`:313`), `goodkoto` (`:326`),
+`sumo` (`:339`), `refund` (`:352`). Thirteen cues; slash and death are 3-way randomised.
+
+**Ledger text overturned.** §2/§4 art-anim blocker ①: *"**ALL AUDIO** — every SFX + music
+param is INFERRED, no composer sourced."* The *waveforms* are still unrecovered, but the
+**architecture, the stem inventory, the state machine, the mixing rule and the fade constant
+are all held** — and that is most of what "music params" means for a recreation. The ledger's
+proposed close-path (a listen-pass on three YouTube rips) is now a *validation* step against a
+known 13-stem structure rather than a blind characterisation.
+
+**Lane impact.** L-art-anim-audio-feel (① materially reduced), L-world-exploration (the
+state list is a room-type taxonomy), L-enemies-ai (TOUGHBATTLE vs EXPLOREBATTLE).
+
+---
+
+### as/animation-manifest-with-durations — HELD (A2)
+**Claim.** The complete animation manifest survives as **442 verbatim name constants in the
+WEB v0.717 payload** (un-obfuscated strings inside an obfuscated class), and **482 of those
+animations carry an exact frame duration** in the already-extracted animation XML. Every
+slash is a **four-part** clip whose second part **loops**.
+
+**Cite (names, web).** `shs3_payload/scripts/§1t1544s0§.as` — 442 lines matching
+`internal static var §1t…s0§:String = "…";`, e.g.
+```
+698:      internal static var §1t10947s0§:String = "light_stance";
+702:      internal static var §1t10951s0§:String = "light_horslash_parta";
+704:      internal static var §1t10953s0§:String = "light_horslash_partb";
+1144 lines total; families: light_ · balanced_ · heavy_ · dual_ · reversed_ ·
+spear_ · ogre_ · guardian_ · zom_ · wolf_ · gob_ · spider_ · deer_ · boar_ ·
+horse_ · bear_ · jutsu_ · nodepose_1…10
+```
+**Cite (durations).** `reference/extracted/anim_xml.txt` — 482 `<anim …>` rows, e.g.
+```
+<anim i="balanced_horslash_parta" d="12">
+<anim i="balanced_horslash_partb" d="9" l="1">
+<anim i="balanced_horslash_partc" d="4">
+<anim i="balanced_horslash_partd" d="1">
+```
+Schema is RUN-2's `as/anim-format` (`AnimData.as:13-14` `duration = xml.@d; looping = xml.@l == 1;`).
+`l="1"` on **partb only** — the windup runs once, the hold loops, the finish runs once.
+
+**Consequence.** Stage-0 S0-4 estimated "~450 animations, L6 is ~3× the board's assumption".
+That is now exact on both sides: **442 named states, 482 timed clips**, and they are
+*parseable today* — name manifest + duration table + `FrameNodeData` matrix schema.
+
+**Lane impact.** L-art-anim-audio-feel, L-enemies-ai (creature move sets), L-combat-core.
+
+---
+
+### as/slash-frames-conflict — HELD (A2) — **OVERTURNS §2's "per-stance slash frames" READY CLAIM**
+**Claim.** The shipped per-stance slash timings **contradict the project's `SLASH_FRAMES`
+config in both magnitude and ordering**. The config makes Heavy the slowest stance; the
+original's Heavy horizontal slash is the **shortest** clip and has the **shortest windup**.
+
+**Cite (the shipped table).** `reference/extracted/anim_xml.txt`, horizontal slash, all parts:
+
+| stance | parta (windup) | partb (looping hold) | partc | partd | total |
+|---|---:|---:|---:|---:|---:|
+| light    | **13** | 9 | 6 | 1 | **29 f** |
+| balanced | 12 | 9 | 4 | 1 | 26 f |
+| dual     | 12 | 9 | 6 | 1 | 28 f |
+| heavy    | **5**  | 8 | 7 | 1 | **21 f** |
+
+At the engine's 24 fps (`Mobile.as:117`) that is light 1.21 s · balanced 1.08 s · heavy 0.88 s.
+
+**Cite (the config it contradicts).** `src/config/timing.ts:37-41`
+```
+export const SLASH_FRAMES: Record<StanceId, SlashPhaseFrames> = {
+  light:    { windup: 4, active: 4, recovery: 4 },   // 12 f @60Hz = 0.200 s
+  balanced: { windup: 4, active: 4, recovery: 8 },   // 16 f       = 0.267 s
+  heavy:    { windup: 4, active: 4, recovery: 12 },  // 20 f       = 0.333 s
+};
+```
+whose header says *"MEASURED … Strike-to-strike intervals: 12f / 16f / 20f … only recovery
+varies."*
+
+**Honest reading of the conflict.** These measure different things: the config measured
+**strike-to-strike cadence** off 60 fps video; the payload gives **clip durations** with a
+looping hold whose length depends on how long the player draws the line. So the *magnitudes*
+can legitimately differ. What cannot be reconciled is the **ordering**: the config's stated
+rationale ("only recovery varies", Heavy slowest) is contradicted by a shipped table in which
+Heavy has the shortest windup (5 f vs light's 13 f) and light has the *longest* clip. §2 lists
+per-stance slash frames under art-anim's *"Ready (strongest slice)"* — that status is not
+supportable as stated.
+**Per §0's invariant I say it out loud: this is payload-vs-video, not frame-vs-doc, so the
+frame does not automatically win here — but the ordering claim needs a fresh frame test
+before either number is trusted.** The cheap test: measure light vs heavy *windup* (mouse-down
+to first blade motion) on the two longplays; the payload predicts heavy is ~2.6× faster to
+commit than light.
+
+**Lane impact.** L-art-anim-audio-feel (a READY claim demoted), L-combat-core.
+
+---
+
+### as/drawn-line-render-contract — HELD (A2)
+**Claim.** The drawn slash line — the game's signature visual — has a fully specified render
+contract, identical in both builds: **one** stroke, base thickness **8 px**, colour
+**0xA30000**, round caps and joins, tapering **linearly to zero** as the reach budget is
+spent, resampled to a **20 px** unit, with a **2 px** minimum sample step; the AI's line is
+drawn in **black**.
+
+**Cite (constants).** `shs3_android/scripts/InputManager.as:51-59`
+```
+51:      internal static var maxDistance:int = 200;      // overwritten per stance by setMaxDistance()
+53:      internal static var lengthThreshhold:int = 4;
+55:      internal static var distThreshhold:int = 400;
+57:      internal static var thickness:int = 8;
+59:      internal static var largestUnit:int = 20;
+```
+**Cite (the taper).** `InputManager.as:360` and web `§1t1541s0§.as:361` (identical expression)
+```
+canvas.graphics.lineStyle(thickness - thickness * ((maxDistance - distanceLeft) / maxDistance),
+                          10027008, 1, false, LineScaleMode.NONE,
+                          CapsStyle.ROUND, JointStyle.ROUND, 3);
+```
+**Cite (two line colours).** web `§1t1541s0§.as:174` `…lineStyle(thickness, 39168, …)`
+(0x009900 green) vs `:179` `…lineStyle(thickness, 10027008, …)` (0xA30000).
+Enemy line: `InputManager.as:492` `…lineStyle(scaledThickness - …, 0, …)` — **black**.
+**Cite (resampling).** `InputManager.as:356-359` `if(distanceTravelledSQ < 4) return;`
+(2 px minimum) and `:370-380` — any move longer than `largestUnit` is subdivided into
+**20 px** steps pushed into `drawArray`, which becomes the `slashArray` the hit test walks.
+
+**Ledger/config impact.** `src/config/combat.ts:125` `RESAMPLE_SPACING = 20` is **exactly
+right and can be promoted to CONTRACT**. `BLADE_CORE_WIDTH = 7` / `BLADE_EDGE_WIDTH = 13`
+(both INFERRED) model a **two-layer** ribbon the original does not have — the original is one
+8 px stroke — and `BLADE_MIN_TAPER = 0.12` is wrong in kind: the original tapers to **0**.
+Also note the widths are declared "stage-space native" on a 1024×576 canvas while the original
+stage is 800×480 (RUN-2 `as/native-resolution`), so they are not directly comparable without
+the ×1.28 scale.
+
+**Lane impact.** L-art-anim-audio-feel, L-combat-core, L-ui-hud.
+
+---
+
+### as/shunpo-is-teleport-plus-double-damage — HELD (A2) — **CLOSES skills-meters ②**
+**Claim.** Shunpo is a **charged teleport**: it moves the player **250 px** in the facing
+direction, spawns a hit projectile scaled by charge time, and — on the slash path — **teleports
+the fighter to the end of the drawn blade path and doubles the slash damage**. It is not
+slow-motion.
+
+**Cite (the dash + projectile).** `shs3_android/scripts/MCSPlayer.as:1747-1758`
+```
+1747:               if(prevActionState == SKILL_SHUNPO_STATE)
+1749:                  if(getMCS().isFacingRight())
+1751:                     this.movePlayer(250);
+1752:                     ProjectileManager.createProjectile(ProjectileManager.PROJ_SHUNPOHIT,
+                              getMapPosition(), getMCS().y - 44, 0, 0,
+                              this.getDamage() * this.getChargingTime() / 2, level, this);
+1755:                  else
+1756:                     this.movePlayer(-250);
+```
+**Cite (the slash form).** `MCSPlayer.as:2700-2705`
+```
+2700:         if(this.doShunpo)
+2702:            setPosition(this.destX,this.destY);      // teleport to the end of the line
+2703:            this.slashDamage *= 2;
+2704:            this.endSlash();
+```
+**Cite (charge budget).** `MCSPlayer.as:1706` `this.chargingTime = 3 * 24;` (Shunpo),
+`:1718` `3 * 24` (Thousand Stabs), `:1730` `4 * 24` (Deadly Cleave);
+`:4344-4351` `getChargingTime()` = `chargingTime / 24`, **capped at 10**.
+Post-skill invulnerability: `:1764` `gotHitCounter = 26;` (Thousand Stabs),
+`:1768` `gotHitCounter = 16;` (Deadly Cleave).
+Stance lock on the three ultimates: `SkillSlotButton.as:153` — Shunpo requires LIGHT,
+Thousand Stabs BALANCED, Deadly Cleave HEAVY.
+
+**Web v0.717 parity — CHECKED.** `shs3_payload/scripts/§1t99s0§.as:1810`
+`this.§1t4468s0§(250);` and `:2775` `this.§1t4410s0§ *= 2;` — both constants present.
+
+**Ledger text closed.** §4 skills-meters blocker ②: *"Shunpo's real effect (Light L10
+ultimate; spacebar-slowmo belongs to the **predecessor SHS2**, not Duels)."* The ledger's
+negative claim is confirmed and the positive answer supplied.
+
+**Lane impact.** L-skills-meters (② closed), L-combat-core, L-art-anim-audio-feel.
+
+---
+
+### as/dan-cap-and-post-rebirth-sp — HELD (A2) — **CLOSES rebirth ③ AND progression ③**
+**Claim.** The Dan stat **caps at 9** and is displayed **+1**, i.e. **ten ranks** — so the
+project's `MAX_DAN_RANK=10` is correct and belongs as CONTRACT, not INFERRED. And the
+post-rebirth skill-point economy is one line: **SP = (level − 1) + Dan × (levelCap − 1)**.
+
+**Cite (the cap).** `shs3_android/scripts/StatsManager.as:2201-2214`
+```
+2201:         if(getPlayerStats(STAT_DAN) == 8)      …
+2209:         if(getPlayerStats(STAT_DAN) < 9)
+2211:            changeStat(STAT_DAN,1);
+2214:         NetworkManager.instance.globalAnnouncement("",
+                 LangManager.getString(864,[getChatDisplayCharname(),
+                 (getPlayerStats(STAT_DAN) + 1).toString()]));
+```
+**Cite (the SP formula).** `StatsManager.as:2156`
+```
+setPlayerStats(STAT_SKILLPOINTS, getLevel() - 1 + getPlayerStats(STAT_DAN) * (levelCap - 1));
+```
+with `levelCap = 80` (`StatsManager.as:76`) ⇒ **+79 SP per rebirth**, exactly.
+Dan also feeds reach: `StatsManager.as:1917` `var maxincrement:int = 90 + getPlayerStats(STAT_DAN) * 5;`
+so a Dan-9 character's base slash length asymptote rises from 210 px to **255 px**.
+
+**Ledger text corrected.** §3 item 7: *"`MAX_DAN_RANK=10` and `tenthGold=100` should be
+**INFERRED**, not CONTRACT. The only wiki datum is garbled."* The **10** half is now A2-cited
+and should be CONTRACT. (`tenthGold` is untouched by this lane — the flat +25 g reading stands.)
+§4 rebirth blocker ③ *"Dan-rank count/titles (garbled source)"* — the **count** is closed;
+the **titles** remain unheld from this lane.
+§4 progression blocker ③ *"post-rebirth SP economy"* — closed.
+
+**Lane impact.** L-rebirth-elements (③ half), L-progression (③), L-combat-core (reach).
+
+---
+
+### as/farming-and-prosperity-numbers — HELD (A2) — **CLOSES world-exploration ② (farm half) AND economy ② (prosperity half)**
+**Claim.** Farming is a four-tier real-time crop system with a rot window and a levelling
+plot; town prosperity is a five-band step function on a raw point score.
+
+**Cite (crops).** `shs3_android/scripts/InteractUI_crops.as`
+```
+55:      internal var gracePeriod:int = 900;          // 15 min before ROTTED
+61-69:   cols = 3 · rows = 2 · totalSlots = 6 · maxItem = 6
+41-47:   NOTPLANTED 0 · PLANTED 1 · READYFORHARVEST 2 · ROTTED 3
+548-558: plantType 1 → timePeriod = 15 * 60          //  15 minutes
+         plantType 2 → timePeriod = 60 * 60          //   1 hour
+         plantType 3 → timePeriod = 6 * 60 * 60      //   6 hours
+         plantType 4 → timePeriod = 12 * 60 * 60     //  12 hours
+105-107: if(this.harvestedTimes > 50) this.harvestedTimes = 50;
+457-479: getPatchLevel(): <10 → 1 · <20 → 2 · <30 → 3 · <40 → 4 · <50 → 5
+```
+Times are **server seconds** — same clock RUN-2 pinned via `QueryManagerBase.as:39/111`.
+**Cite (prosperity).** `shs3_android/scripts/TerritoryData.as:782-805`
+```
+782:      public function getTownLevel() : int
+784:         if(this.townProsperity == 0)    return 0;
+788:         if(this.townProsperity < 500)   return 1;
+792:         if(this.townProsperity < 1000)  return 2;
+796:         if(this.townProsperity < 2000)  return 3;
+800:         if(this.townProsperity < 4000)  return 4;
+804:         return 5;
+```
+Prosperity level then drives town generation directly — `DungeonGenerator.as:1363-1555`
+branches on it for building count, shop tier and layout.
+
+**Ledger text closed.** §4 world-exploration blocker ② *"gather/mine/farm **yield + whiff +
+respawn** tables"* — the farm branch is closed (grow times, rot window, plot size, patch
+levelling); gather/mine remain open from this lane.
+§4 economy blocker ② *"…**prosperity** formulas"* — the thresholds are closed.
+§4 world-exploration blocker ③ *"real-world 'day' length"* — 12 h is the longest single
+timer in the game; there is no abstract "day".
+
+**Lane impact.** L-world-exploration (②③), L-economy (②), L-meta-social.
+
+---
+
+### as/territory-daily-sim-vocabulary — PARTIAL (A2) — **MOVES meta-social ① OFF "UNRECOVERABLE"**
+**Claim.** The daily territory simulation's **entity set and complete event vocabulary** are
+held client-side, because the client has to render the log. The *coefficients* are not.
+
+**Cite.** `shs3_android/scripts/HistoryItem.as:137-300` — the decoder, verbatim samples:
+```
+151: "ronin attacked " + getAttackerName(val2) + ": " + val1 + " … killed"
+158: val1 + " wildlife immigrated here from the " + getDirStr(val2)
+176: "wildlife: underpopulation (too many oni killing wildlife)"
+188: "wildlife: overpopulation"
+200: val1 + " mercenaries arrived from the " + getDirStr(val2)
+219: "bandit group \"" + getBanditGroupName(val3) + "\" arrived from the " + getDirStr(val2)
+223: "bandit group \"" + … + "\" took over bandit group \"" + val4 + "\""
+239: "merchants robbed by bandits: prosperity -" + val1
+249: "bandits are preparing to attack the town"
+271: "Oni population: Too high"
+283: getAttackerName(val2) + " attacked town: prosperity -" + val1
+287: val1 + " villager(s) killed"
+295: val1 + " crops eaten by " + getAttackerName(val2)
+299: "mercenaries upkeep cost: prosperity -" + val1
+```
+plus `HistoryItem.as:42` `internal static var TYPE_PROSPERITY:int = 14;` — a numbered event
+type table.
+
+**Why PARTIAL.** This gives the sim's **agents** (villagers, wildlife, mercenaries, bandit
+groups with names and takeovers, oni, ronin, players), its **state variables** (populations,
+prosperity), its **transitions** (immigration, migration, starvation, over/under-population,
+upkeep, raids, takeovers) and its **directional topology** (`getDirStr` — territories have
+compass neighbours). It does **not** give the rates. Anyone rebuilding it is authoring the
+numbers, not the design.
+
+**Ledger text moved.** §4 meta-social blocker ①: *"**server-authoritative simulation** (24h
+tick, matchmaking, live population) — **unrecoverable at 1:1**; must be scoped out or rebuilt
+as a *new* offline AI sim."* The *tick* is held (RUN-2: `WARMOVEINTERVAL = 60*60`), the
+*board* is held (RUN-2: `as/war-board-is-a-hex-grid`), and now the *ecology* is held. What
+remains genuinely unrecoverable is the live player population and the tuning constants — a
+much smaller claim than §4/§6 make.
+
+**Lane impact.** L-meta-social (① narrowed), L-world-exploration, L-economy.
+
+---
+
+### as/focus-bar-is-the-third-hud-bar — HELD (A1) — **FRAME TEST OF A CODE MODEL; THEY AGREE**
+**Claim.** The third bottom-left HUD bar **is** the Focus/"reload" meter, "CANNOT CHANGE
+STANCE" is drawn **in that same slot** (occluding it), and when the message clears the meter
+is visible refilling **linearly from zero** at the rate the code predicts.
+
+**Cite.** `reference/frames/duel_dense/Nr4fQstqHDM_432.5.png` → `_433.0.png`.
+**Crop used:** `(x 230–560, y 960–1070)` of the 1920×1080 frame, upscaled 4× (LANCZOS);
+the bar trough spans x ≈ 246–514 (268 px). Fill measured by counting the leading run of
+pixels with R,G,B all > 170 along three rows (y = 1032 / 1036 / 1040).
+
+**What is visibly in the frames.**
+- `428.0`: portrait, green bar **20/20**, blue bar **26/26**, and in the third slot a brown
+  plate reading **"CANNOT CHANGE STANCE"**, with **"150% DAMAGE"** in gold beneath. There is
+  **no fourth bar** — the message and the meter share one slot.
+- `432.5 → 433.0`: the message is **gone** and a clean white fill appears at the left of the
+  brown trough. Measured leading-run, all three rows in agreement:
+
+| frame | fill px | % of bar |
+|---|---:|---:|
+| 432.5 | 2 | 1 % |
+| 432.6 | 6 | 2 % |
+| 432.7 | 10 | 4 % |
+| 432.8 | 15 | 6 % |
+| 432.9 | 19 | 7 % |
+| 433.0 | 19 | 7 % |
+
+**The test.** RUN-2 derived, from code alone, `max = 8 * 24 = 192`, `+1 per frame`, displayed
+as `(reload − 24)/(maxreload − 24)` (`MCSPlayer.as:1163-1168`). That predicts a refill rate of
+`24 units/s ÷ 168 units × 268 px = 38.3 px/s`. Measured over 432.5→432.9:
+`(19 − 2) px ÷ 0.4 s = 42.5 px/s`. **Agreement within ~10 %**, and the rise is monotonic and
+linear from ≈0 — i.e. the meter had just been **zeroed**, exactly as the crit-consumption path
+(`§1t99s0§.as:3295-3297`) requires.
+
+**Frame-vs-doc, stated out loud per §0.** In this instance the frame and the code **agree**,
+so no override is needed — but the frame does settle RUN-2's open prediction. RUN-2 wrote:
+*"the honest next step is to re-crop that frame and check the Focus bar level; the prediction
+is that it reads below 48/192 (i.e. under 25 %)."* Across every frame where the message is
+displayed (427.0–432.4) the visible fill sits at **7–22 %**, always under 25 %. The message is
+the **insufficient-Focus gate**, not a version hard-lock. RUN-2's `as/in-combat-stance-not-hard-locked`
+is therefore corroborated by the video, and §3 item 4 stays overturned.
+
+**Second observation from the same crop.** The blue bar reads **26/26**. The 100-max Chi meter
+in the recreation's config is wrong in scale (already known), but so is a naive "Chi is 10-based"
+read: 26 is only reachable with gear `MAXCHI` modifiers (`ItemGenerator.as` prog2), which is
+itself evidence the filmed character is wearing generated affix gear.
+
+**Lane impact.** L-ui-hud, L-skills-meters, L-combat-core.
+
+---
+
+## RUN-3 SUMMARY OF LEDGER DAMAGE
+
+**Blockers closed outright by RUN 3:**
+items-equipment ①②④ · enemies-ai ①② · economy ①②(prosperity)③ · progression ①(reshaped)③④ ·
+skills-meters ② · rebirth-elements ②③(count) · ui-hud ③ · world-exploration ②(farm)③ ·
+art-anim ①(architecture) · plus the §1 known-unknown *loot/drop tables*.
+
+**RUN-2 items resolved:**
+- `as/repair-cost` STILL_UNHELD → **HELD** (two consumables, 20 c / 40 c).
+- `as/stance-counter-triangle` PARTIAL → **HELD**, and richer than the tooltips said
+  (×1.2 **and** ×0.9, v0.717 only).
+
+**New build divergences (add to `as/build-divergence`'s table):**
+
+| quantity | web **v0.717** | Android **v0.682** |
+|---|---|---|
+| stance counter, favourable matchup | `× 0.9` | *branch absent* |
+| stance counter scope | MCSPlayer **and** NPC defenders | MCSPlayer only |
+| behead (head/neck/hat) multiplier | `× 1.3`, after the min-damage floor | `× 1.5`, after defense |
+| affix word source | string table ids 10029–10212 (**not held**) | hardcoded English arrays (**held**) |
+
+**Things RUN 3 could not ground (honest):** Dan-rank *titles*; gather/mine yield tables;
+the daily-sim *coefficients*; the web build's affix wording; whether the 24 fps clip table or
+the 60 Hz video cadence is the right basis for `SLASH_FRAMES`.

@@ -1,377 +1,496 @@
 # L0 SOURCE SURVEY — `npcdata` (orthogonal sweep)
 
-**Unit:** `reference/extracted/npcdata.xml` (228,413 bytes, 9,625 lines, 495 `<npc>`)
+**Unit:** `reference/extracted/npcdata.xml` (228,413 bytes · 9,625 lines · 495 `<npc>`)
 **Document under audit:** `docs/research/REBUILD_READINESS.md` (2026-07-20, avg ~42)
-**Surveyor:** L0 source lane. Method: index JSON first (`docs/gauntlet/L0/index/npcdata.json`),
-then exhaustive first-hand parse of the XML with line numbers, then cross-resolve ids via
-`docs/gauntlet/L0/index/resolved_names.json` + `strings.json` (⚠ ANDROID build v0.682, S0-3 caveat).
+**Surveyor:** source-lane agent. Counts taken from `docs/gauntlet/L0/index/npcdata.json`
+(authoritative) and re-derived by parse where a new axis was needed.
 
-Counts re-derived first-hand and matching the index exactly: 495 `<npc>`, 425 `<ai>`,
-**647 `<skill>`** (all inside 96 `<skills>` blocks, all of the strict form
-`<skill><id>N</id><lvl>M</lvl></skill>`), 403 `<hp>`, 406 `<attack>`, 394 `<defense>`,
-402 `<lvl>`, 490 `<name>`, 131 `<loot>`, 66 `<reward>`, 495 `<mcs>`.
+**Cross-source parsers used (all A2):**
+`reference/decompiled/shs3_android_payload/scripts/XMLNpc.as` — the shipped parser for THIS file
+`.../NPCManager.as` · `.../NPC.as` · `.../XMLReward.as` · `.../XMLLoot.as` · `.../MCSCharacter.as`
 
----
-
-## HEADLINE — the ledger's #1 enemies-ai blocker is DEAD
-
-> **REBUILD_READINESS.md §4 enemies-ai, Blockers ①:**
-> *"enemy **level→stat formula** (governs the whole roster's balance — absent, not just inferred)."*
-> (echoed in §2's table: *"enemy level→stat formula; per-enemy HP"*)
-
-**It is not absent. It is in the payload, and it is EXACT.**
-
-`npcdata.xml` contains five structurally identical 57-unit armies at id blocks
-`200–256`, `300–356`, `400–456`, `500–556`, `600–656`. Every unit carries
-`<lvl>`, `<hp>`, `<attack>`, `<defense>`. Regressing them yields a closed form that
-reproduces **225 of 225** rows at lvl ≥ 11 with **zero** violations:
-
-| level band | hp | attack | defense |
-|---|---|---|---|
-| 1–5   | `1` (pinned) | `lvl` | `lvl` |
-| 6–10  | `lvl` | `lvl` | `lvl` |
-| 11–40 | `ceil(2.5 × lvl)` | `ceil(2.4 × lvl)` | `ceil(2.4 × lvl)` |
-| 45–60 (Heavy Soldier) | `ceil(2.5 × lvl)` | `ceil(2.5 × lvl)` | `ceil(2.8 × lvl)` |
-| 70 (Castle Guard) | `2.5 × lvl` | `2.5 × lvl` | `2.5 × lvl` |
-
-Verbatim anchor rows (block 2, `reference/extracted/npcdata.xml`):
-
-```
-4665  <id>212</id> <lvl>11</lvl> <hp>28</hp>  <attack>27</attack>  <defense>27</defense>   ceil(2.5*11)=28  ceil(2.4*11)=27
-4861  <id>223</id> <lvl>20</lvl> <hp>50</hp>  <attack>48</attack>  <defense>48</defense>
-5298  <id>247</id> <lvl>40</lvl> <hp>100</hp> <attack>96</attack>  <defense>96</defense>
-5317  <id>248</id> <lvl>45</lvl> <hp>113</hp> <attack>113</attack> <defense>126</defense>  ceil(2.8*45)=126
-5392  <id>252</id> <lvl>70</lvl> <hp>175</hp> <attack>175</attack> <defense>175</defense>
-```
-
-Verification command output:
-
-```
-checked 225 army NPCs lvl>=11 across all five blocks; formula violations: 0
-low band (lvl<=10) distinct (lvl,hp,atk,def):
- [(1,'1','1','1'),(2,'1','2','2'),(3,'1','3','3'),(4,'1','4','4'),(5,'1','5','5'),
-  (6,'6','6','6'),(7,'7','7','7'),(8,'8','8','8'),(9,'9','9','9'),(10,'10','10','10')]
-```
-
-**Consequence:** enemies-ai's 34/100 is not a floor, it is wrong. The single value the whole
-roster's balance funnels through is held, verbatim, at A2.
+**Android-vs-web caveat (S0-3): CLOSED FOR THIS FILE.** See claim `npcdata/build-parity`.
 
 ---
 
-## CLAIM LEDGER
+## Structural map of the file (first-hand, re-derived)
 
-### C1 — enemy level→stat formula is HELD (overturns §2/§4 enemies-ai ①)
-**Class A2 · cite** `reference/extracted/npcdata.xml` — `<npc>` blocks starting at lines
-4665, 4861, 5298, 5317, 5392 (fields sit at block-start + 3…6)
-**Quote (block 4665, npc 212)** `<lvl>11</lvl> <hp>28</hp> <attack>27</attack> <defense>27</defense>`
-See headline table. 225/225 rows reproduced by the closed form, across five independent armies.
-**Overturns:** *"enemy **level→stat formula** (governs the whole roster's balance — absent, not just inferred)"*
-**Lane:** enemies-ai (blocker ① closed). Also progression — the same 2.4/2.5/2.8-per-level
-shape is the only observed stat-vs-level transfer function in the payload.
+| id range | n | what it is |
+|---|---:|---|
+| 0 | 1 | bare paperdoll template, no name/ai/lvl (line 3) |
+| 1–91 | 90 | the hand-authored campaign bestiary (Ruffian → Undead → Oni → animals) |
+| 100–199 | 99 | named story NPCs + townsfolk (Beggar, Sensei, Hachi, Yasuka, Jinbei…) |
+| **200–256** | 57 | **clan army A** |
+| **300–356** | 57 | **clan army B** |
+| **400–456** | 57 | **clan army C** |
+| **500–556** | 57 | **clan army D** |
+| **600–656** | 57 | **clan army E** |
+| 800–819 | 20 | late-added bosses (Mad Cultist, Guardian, General Daisuke) + 6 mannequins |
 
-### C2 — per-enemy HP is HELD for 403 of 495 NPCs (overturns §4 enemies-ai ②)
-**Class A2 · cite** `reference/extracted/npcdata.xml:3125` (and 402 sibling rows)
-**Quote** `npc 144 "Hiroshi": <lvl>80</lvl> <hp>1000</hp> <attack>200</attack> <defense>200</defense>`
-Named-boss HP, all authored, all first-hand:
-Hiroshi L80 hp1000 · Mad Cultist L23 hp800 (`:4076`) · Amaya L30 hp600 (`:3846`) ·
-Tadao L10 hp200 (`:3446`) · Wolf L15 hp100 (`:1848`) · Bear L8 hp60 (`:1951`) ·
-Bandit Leader L10 hp30 (`:499`) · Guardian L10 hp30 (`:4115`) · Training Dummy L5 hp10 (`:2689`).
-The 92 NPCs with no `<hp>` are non-combat (shopkeepers, quest-givers, wardrobe entries).
-**Overturns:** *"② per-enemy HP"* listed as a blocker.
-**Lane:** enemies-ai.
-
-### C3 — a LIVE CONFIG COMMENT is factually wrong: named-enemy HP *is* authored
-**Class A2 · cite** `reference/extracted/npcdata.xml:3125` vs `src/config/combat-sim.ts` `ENEMY_BASE`
-**Quote (config, verbatim):** *"Named-enemy HP is not authored at all — it is recomputed at spawn
-as `effPlayerDmg × K`, and the source's own data authors trash HP as `<hp>1</hp>` and lets
-`max(scaledBase, …)` be a no-op."*
-The first half of that sentence is false. `<hp>1</hp>` is real (42 rows, C4) but it is the *trash*
-tier only; 361 further rows carry authored non-1 HP, including every named boss. The `max()`
-reasoning that justified `hp: 1` therefore rests on a claim the payload contradicts.
-**No file was modified** (this lane is read-only, §4 NO-TOUCH). Flagged for the build lane.
-**Lane:** enemies-ai, combat-core.
-
-### C4 — the "1-HP field trash" reading is CONFIRMED at A2, with an exact census
-**Class A2 · cite** `reference/extracted/npcdata.xml:26, :4455, :4542, :1659, :149, :1991, :2087, :2710`
-**Quote** `npc 1 "Ruffian": <lvl>3</lvl> <hp>1</hp> <ai>1</ai> <attack>3</attack> <defense>0</defense>`
-42 NPCs have `<hp>1</hp>`: Soldier ×25, Ruffian ×5, Elite Soldier ×5, Novice Swordsman ×3,
-Thug ×1, Deer ×1, Fox ×1, Training Dummy ×1. Every one dies to any hit ≥ 1.
-**Upgrades** the ledger's enemies-ai *Surface* bullet (*"the shipped `AI_TIERS`/`ENEMY_BASE` are a
-PvP-duel dummy (hp 150), not the ~1-HP-chip field trash the video shows; every PvE number lives
-only in notes"*) from "notes" to A2 payload. Note `src/config/combat-sim.ts` already ships `hp: 1`.
-**Lane:** enemies-ai, combat-core.
-
-### C5 — a 34-profile AI archetype table is HELD (partial on §4 enemies-ai ④)
-**Class A2 · cite** `reference/extracted/npcdata.xml:27` and 424 sibling rows
-**Quote** `<ai>1</ai>`
-425 NPCs carry `<ai>`; 34 distinct ids in 1..37 (**10, 15 and 16 are never used**). Distribution:
-ai1 ×56, ai2 ×48, ai3 ×52, ai4 ×47, ai5 ×48 (the five generic soldier ranks) · ai9 ×73
-(Elite/Heavy/Castle Guard) · ai28 ×24 · ai14 ×15 (captains/leaders) · ai26 ×8 (Undead) ·
-ai6 ×3 (Ninja/Kurai/Jonin) · one-off creature profiles ai8/11 Wolf, ai12 Horse, ai17 Bear,
-ai18 Boar, ai19 Deer, ai21 Stag, ai22/23/25 Oni, ai24 Fox · ai13 Training Dummy ·
-boss-unique ai29–ai37 (Aboshi, Magoichi, Gojo Takamori, Mitsuo, Mad Cultist, Guardian,
-Tadao, Amaya).
-**Honest limit:** the *assignment* is held; the *behaviour bodies* (aggro radius, leash, spawn
-geometry) are not in this file — they live in the AS3 bundles and remain STILL_UNHELD here.
-**Lane:** enemies-ai (blocker ④ half-closed: the taxonomy is now a table, not a guess).
-
-### C6 — drop tables with exact probabilities are HELD (overturns §1 known-unknown "loot/drop tables")
-**Class A2 · cite** `reference/extracted/npcdata.xml:39-42, :530-532, :1859-1861, :1975-1982`
-**Quote** `<loot> <id>2</id> <qty>1</qty> <chance>1</chance> </loot>` (npc 17 Bandit Leader, `:530`)
-66 NPCs carry `<reward>`, holding 131 `<loot>` rows. `<chance>` domain is exactly
-{0.05, 0.1, 0.3, 0.4, 0.5, 1}; `<qty>` ∈ {1,2,3,5}. Two clear authoring patterns:
-- **elite/boss guaranteed drop** — `id=2, qty=1, chance=1` on Bandit Leader 17, Soldier 25,
-  Ninja 32, Cultist 46, Wolf 67, Inokichi, Tadao, Aboshi, Mad Cultist, Guardian;
-- **animal butchery** — Boar/Deer `2113 Meat` 0.3 + `2112 Small Meat` 0.3; Stag `2114 Large
-  Meat` 0.4; Wolf `20028 Animal Fang` 0.5 (`:1859`).
-**Honest limit:** loot `<id>` 0/1/2/3 are **table references**, not item ids (real item ids in the
-same field are 5-digit: 2112/2113/2114/20028). What tables 0–3 resolve to is **STILL_UNHELD**
-from this file.
-**Overturns:** §1 KNOWN-UNKNOWNS *"Systems formulas: … loot/drop tables"*.
-**Lane:** items-equipment, economy, enemies-ai.
-
-### C7 — enemy skill loadouts (647 rows, 39 skills, with ranks) are HELD
-**Class A2 · cite** `reference/extracted/npcdata.xml:535, :1040, :3898, :3934`
-**Quote (npc 17, `:535`)** `<skills><skill><id>1000</id><lvl>10</lvl></skill><skill><id>1001</id><lvl>10</lvl></skill><skill><id>1002</id><lvl>10</lvl></skill><skill><id>1003</id><lvl>1</lvl></skill><skill><id>1004</id><lvl>5</lvl></skill><skill><id>1006</id><lvl>1</lvl></skill></skills>`
-96 NPCs carry `<skills>`; **647** `<skill>` rows; **39** distinct skill ids, 37 of which resolve
-against `skilldata.xml` + the string table — i.e. enemies draw from the **same** skill pool as the
-player. Frequency (top): Jump ×95, Roll ×95, Heavy Stance Mastery ×79, Slash Wave ×79, Balanced
-Stance Mastery ×77, Light Stance Mastery ×76, Dash Right ×16, Dash Left ×16.
-Only `1500` (×5) and `1501` (×2) fail to resolve — both are `<category>11</category>` stubs in
-`skilldata.xml:1948, :1960` with empty `<chi>`, `<cooldown>` and `<desc>`, carried by Aboshi,
-Magoichi and Gojo Takamori. Their identity is **STILL_UNHELD**.
-Boss loadouts are individually authored, e.g.:
-- `:3898` **Magoichi** — Shunpo(1039), Slash Wave@2, Chi Punch, Chi Kick, Spirit Thief,
-  Heavenly Sword@3, Back Throw, Air Stab
-- `:3934` **Gojo Takamori** — the same set **plus `<id>1068</id>` "Undying"**
-- `:3436` **Fumio** — Heavy Stance Mastery@3, Stab, Heavy Stance Launch, Deflect(1038),
-  Deadly Cleave, Ground Punch@2
-- `:3662` **Aboshi** — Throw Kunai, Smoke Bomb@2, Substitution Jutsu@2, Shadow Clone(1053)
-**Overturns** the framing that enemy movesets are "taxonomy + notes": they are a per-NPC,
-per-rank data table. Also lands on **skills-meters blocker ②** — Shunpo is real, is skill 1039,
-and its description is held: *"Ultimate Light Stance technique. Hold down the skill icon to
-increase the damage it inflicts. This skill can only be used when in Light Stance."*
-**Lane:** enemies-ai, skills-meters.
-
-### C8 — FIVE parallel clan armies are HELD (partially overturns §4 meta-social ①)
-**Class A2 · cite** `reference/extracted/npcdata.xml:4460, :5495, :6530, :7565, :8600`
-(blocks starting at 4451 / 5486 / 6521 / 7556 / 8591)
-**Quote** npc 200 `:4460 <armor>4038</armor>` · npc 300 `:5495 <armor>4041</armor>` ·
-npc 400 `:6530 <armor>4044</armor>` · npc 500 `:7565 <armor>4047</armor>` ·
-npc 600 `:8600 <armor>4053</armor>` — every other field identical
-(`<name>5053</name><lvl>1</lvl><hp>1</hp><ai>1</ai><attack>1</attack><defense>1</defense>`,
-same hair pool, `<pants>11006</pants>`, `<shoes>12002</shoes>`, `<weapon>13109</weapon>`).
-Five blocks × 57 units. Each block uses its own 4-id livery set drawn from the armor band:
-block2 {4038,4039,4040,4055} · block3 {4041,4042,4043,4056} · block4 {4044,4045,4046,4057} ·
-block5 {4047,4048,4049,4058} · block6 {4005,4051,4052,4053}. The livery ids resolve to the
-*same* display names across blocks ("Garment", "Light Armor") — i.e. **armor id is the clan
-heraldry channel**, one recolour per faction.
-**Honest limit / conflict:** the string table names only **four** clans —
-`275 "Clan Aka Ryu"`, `276 "Clan Midori Ken"`, `277 "Clan Aoi Hoiru"`, `278 "Clan Ki Sensu"`.
-Which faction the fifth army belongs to is **STILL_UNHELD**.
-**Bearing on** *"① **server-authoritative simulation** … **unrecoverable at 1:1**"* — the
-simulation logic is indeed not here, but the war's **unit roster, level ladder and per-clan
-livery are fully held**, which is most of what a rebuilt offline sim needs to be populated with.
-**Lane:** meta-social, enemies-ai, items-equipment.
-
-### C9 — the paperdoll is 12 render slots, not 9 (corrects §4 items-equipment "Ready")
-**Class A2 · cite** `reference/extracted/npcdata.xml:7-19` (npc 0, the reference paperdoll)
-**Quote**
-```
-7  <mcs>
-8    <armor>4031</armor>   9 <gloves>5005</gloves>  10 <hair>6001</hair>   11 <hat>7052</hat>
-12   <head>8008</head>    13 <mask>9000</mask>      14 <neck>10004</neck>  15 <pants>11030</pants>
-16   <shoes>12015</shoes> 17 <weapon>13012</weapon> 18 <prop1>13012</prop1>
-19 </mcs>
-```
-Plus `<prop2>` at `:3954`. That is **12** distinct `<mcs>` child tags. Cross-checked against
-`itemdata.xml`, the id-band ↔ `<type>` map is perfectly clean:
-
-| id band | `<type>` | slot | items |
-|---|---|---|---|
-| 4000s | *(no `<type>` tag)* | armor | 152 |
-| 5000s | 1 | gloves | 35 |
-| 6000s | 2 | hair | 73 |
-| 7000s | 3 | hat | 97 |
-| 8000s | 4 | head | 38 |
-| 9000s | 5 | mask | 60 |
-| 10000s | 6 | neck | 14 |
-| 11000s | 7 | pants | 93 |
-| 12000s | 8 | shoes | 55 |
-| 13000s | 9 | weapon / prop1 / prop2 | 177 |
-| 2000s | 10 | consumable | 98 |
-| 3000s | 11 | (9 items, unclassified) | 9 |
-| 20000s | 12 | material | 79 |
-
-**Corrects:** *"**Ready:** 9-slot paperdoll"* — there are **10 wearable slots** (armor + types 1–9)
-and **12 render slots** once `prop1`/`prop2` are counted.
-**Honest limit:** this gives the slot *set* and the id *namespace*, not the **layer order** —
-`<mcs>` children are emitted alphabetically (armor, gloves, hair, hat, head, mask, neck, pants,
-shoes, weapon, prop1, prop2), which is an authoring artefact, not z-order. The
-"sprite-compositing contract (layer order)" half of items-equipment blocker ⑤ is **STILL_UNHELD**.
-**Lane:** items-equipment, art-anim-audio-feel.
-
-### C10 — NPC appearance is a RANDOMISED wardrobe roll; the ledger has nothing on this
-**Class A2 · cite** `reference/extracted/npcdata.xml:31, :505, :506`
-**Quote (npc 1, `:31`)** `<hair>6000,6001,6002,6003,6004,6007,6008,6009,6013,6014,6015.6017,6018,6019</hair>`
-**Quote (npc 17, `:506`)** `<hat>0,0,0,0,0,0,0,0,0,7003,7008,7009,7010,7011,7012,7013,7014,7015,7016,7017</hat>`
-741 of 3,210 `<mcs>` slot rows (**23.1%**) are comma-separated **pools**, not single ids. The
-repeated `0` entries in the `<hat>` pool are a **weighting device** — 9 zeros to 11 real hats
-means ~45% of that archetype spawns bare-headed. So a single `<npc>` row is a *generator*: one
-archetype spawns visually varied instances by rolling each slot independently against its pool.
-Nothing in REBUILD_READINESS models this; it is a from-scratch-art and RNG-contract requirement
-that a system-siloed reader would never see, because it sits between items-equipment,
-enemies-ai and art-anim.
-**Lane:** art-anim-audio-feel, items-equipment, enemies-ai.
-
-### C11 — per-NPC render SCALE is HELD and reaches 2.0×; absent from the ledger
-**Class A2 · cite** `reference/extracted/npcdata.xml:4136-4137` (npc 802 Guardian),
-`:3880-3881` (npc 187 Yohei), `:3408-3409` (npc 162 Inokichi)
-**Quote (`:4136-4137`)** `<scalex>2</scalex>` `<scaley>2</scaley>`
-Exactly **16** NPCs carry explicit render scale; the domain is {0.95, 0.99, 1, 1.1, 1.3, 2}. Notables:
-Guardian **2.0 / 2.0** (a double-height boss — the only 2× entity in the file), Yohei **1.3 / 1.3**,
-Inokichi **1.3 / 1.1** (non-uniform — a *wide* fighter), Fumio / Mitsuo **1.0 / 0.95** (squat),
-Shou **0.99 / 0.99**. Non-uniform x≠y scaling means the renderer must scale axes independently.
-The ledger's art-anim §4 ("proportions", "fighter proportions") assumes one fighter size.
-**Lane:** art-anim-audio-feel, enemies-ai.
-
-### C12 — elemental typing exists ON NPCs, at 4 rows
-**Class A2 · cite** `reference/extracted/npcdata.xml:3380` (fire), `:3439, :4039, :4272` (earth)
-**Quote** `<fire>10</fire>` (npc 161 Satoshi) · `<earth>10</earth>` (npc 164 Fumio, 197 Mitsuo, 809 Mitsuo)
-Only four rows in 495, both valued `10`. Each of the four also carries a matching elemental
-*skill*: Satoshi has `1013 "Fire Breath"` — *"Close-ranged fire attack"*; Fumio/Mitsuo have
-`1033 "Ground Punch"` — *"Close-ranged earth attack."*
-**Bearing on** rebirth-elements blocker ② (*"elemental ATK-vs-DEF **formula**"*): the *field*
-exists on the NPC side and pairs with elemental skills, so elements are a live combat channel
-in v0.682 data, not a rebirth-only cosmetic. What the scalar `10` means (resist? affinity?
-damage bonus?) is **STILL_UNHELD** — no `water`/`wind` sibling appears anywhere in this file.
-**Lane:** rebirth-elements, combat-core.
-
-### C13 — the payload ships REAL DATA BUGS a rebuilder must handle
-**Class A2 · cite** `reference/extracted/npcdata.xml:1644`, `:4371`, and 355 rows containing `6015.6017`
-**Quote (`:1644`)** `<hair>6.5006501650265E+47</hair>`
-**Quote (`:4371`)** `<id>815</id> <name>5001</name> <attack>7092</attack>`
-Three distinct authoring defects, all shipped:
-1. `:1644` — an entire hair pool has been coerced to a **float** by the authoring tool
-   (`6.5006501650265E+47`). Unparseable as ids. 1 occurrence.
-2. **355 occurrences** of `6015.6017` — a period typed for a comma inside hair pools, silently
-   collapsing two ids (6015, 6017) into one bogus token. Present in the block-2..6 army rows,
-   i.e. in the most-instantiated NPC in the game.
-3. `:4371, :4389, :4408, :4425` — NPCs 815–818 carry `<attack>` values of **7092 / 7076 / 7077 /
-   7040**, all inside the **hat** id band (7000s), while each also has a real `<hat>`. These four
-   plus 814 have no `<lvl>`, `<hp>`, `<defense>` or `<ai>` — they are non-combat display entries
-   whose `<attack>` field is holding a mis-keyed second headwear id.
-**Consequence:** the index's `npcdata/npc/attack` `numeric_range [1.0, 7092.0]` is an artefact of
-defect 3, **not** a real 7,092-attack enemy. A naive importer would ship a boss with 7092 ATK.
-**Lane:** enemies-ai, items-equipment, art-anim-audio-feel.
-
-### C14 — stance mastery caps at rank **10**, contesting §3 correction #3's "mastery-9"
-**Class A2 · cite** `reference/extracted/npcdata.xml:535` + `reference/extracted/skilldata.xml` skills 1000/1001/1002
-**Quote** `<skill><id>1000</id><lvl>10</lvl></skill><skill><id>1001</id><lvl>10</lvl></skill><skill><id>1002</id><lvl>10</lvl></skill>`
-Every elite NPC ships the three stance masteries at rank **10**, and `skilldata.xml` gives each of
-1000/1001/1002 exactly **10** `<level>` rows. Resolved names confirm the mapping:
-1000 = "Light Stance Mastery", 1001 = "Balanced Stance Mastery", 1002 = "Heavy Stance Mastery".
-**Contests:** §3 #3 *"The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are **MASTERY-9
-CEILING** values, not base."* The ceiling rank is 10, not 9 — so either the wiki numbers are the
-rank-**10** ceiling, or they are a mid-curve row. **PARTIAL:** I hold the rank cap; I do **not**
-hold which rank the 300/200/100 reach figures belong to. That still needs the skilldata `<value>`
-rows read against the wiki.
-**Lane:** combat-core, skills-meters.
-
-### C15 — Heavy stance's defence penalty is confirmed verbatim at −20%
-**Class A2 · cite** skill 1002 (carried by 79 NPCs, e.g. `reference/extracted/npcdata.xml:535`),
-resolved through `docs/gauntlet/L0/index/strings.json`
-**Quote** *"Slow but powerful stance. Damage inflicted is increased but slash range is shorter.\nEffective against Balanced Stance.\n**Defense -20%**"*
-Confirms §1's *"Heavy defender Defense ×0.8 (one way)"* with a first-party string rather than a
-wiki restatement. Also confirms the stance rock-paper-scissors ring verbatim:
-Light *"Effective against Heavy Stance"* → Heavy *"Effective against Balanced Stance"* →
-Balanced *"Effective against Light Stance"*.
-⚠ ANDROID build v0.682 copy (S0-3). Web v0.717 parity not established.
-**Lane:** combat-core.
-
-### C16 — four "omitted bosses" the ledger names are absent from BOTH the roster and the string table
-**Class A2 (negative) · cite** `docs/gauntlet/L0/index/resolved_names.json` (484 resolved npc names)
-+ `docs/gauntlet/L0/index/strings.json` (2,533 entries)
-**Quote (ledger, enemies-ai Surface)** *"Boss table omits Hachisuka Kano, Honda Shizuka, Zabuza, Tengu Hotaru."*
-Zero hits for `Hachisuka`, `Honda`, `Zabuza`, `Tengu`, `Kano`, `Shizuka`, `Hotaru` — and zero for
-`Shira Tancho` (§4 meta-social's *"+ Shira Tancho story-only"*) — across the full 2,533-entry EN
-string table and the 484 resolved NPC names. The payload's actual named-boss roster is:
-Hiroshi, Amaya, Tadao, Mad Cultist, Guardian, Gojo Takamori, Magoichi, Yohei, Aboshi, Mitsuo,
-Kojuro, Chikako, Yuudai, Fumio, Satoshi, Hachimaru, Shou, Inokichi, Boss Tanaka, Den Boss,
-General Daisuke, Lady Oiwa, Nian Monster, Santa, Jinbei, Kurai, Jonin.
-**PARTIAL, deliberately.** Absence from the **Android v0.682** table is not proof of absence from
-web v0.717, and those four names may be wiki/fan or predecessor-game material. But they are
-currently **unsourced against any artifact we hold**, and the ledger presents them as a known gap
-in our boss table — which implies we know they exist. We do not.
-**Lane:** enemies-ai, quests-story.
-
-### C17 — FRAME MEASUREMENT: the longplay frames carry a 52 px pillarbox each side
-**Class A1 · cite** `reference/frames/duel_dense/Nr4fQstqHDM_428.0.png` (1920×1080 PNG).
-**Crop used:** two crops at 3× nearest-neighbour upscale — `crop=960:400:0:380` (left half) and
-`crop=960:400:960:380` (right half); then a full-frame per-column luminance scan.
-**Visibly in the crops:** a solid black vertical band at the extreme left of the left crop and at
-the extreme right of the right crop; game art (stone-wall backdrop, straw-hat fighter, blood
-spray) between them; a yellow **"SOUND360TM"** recorder watermark mid-frame.
-**Measured:** per-column mean luminance is `0.0–1.1` for columns 0–51, jumps to `40.9` at column
-**52** and `86.5` at 53; falls to `33.2` at column **1867** and `1.3` at 1868, staying ≤1.3 to
-1919. Identical on `Nr4fQstqHDM_432.0.png`. Active picture = **columns 52..1867 = 1816 × 1080**,
-aspect **1.6815 : 1**. That is not 16:9 (1.7778); it is within 0.9% of **5:3 (1.6667)**.
-**Confirms** §3 correction #12 (*"Native resolution is 800×480 (5:3), not 16:9 — HUD x-fractions
-measured off 1920×1080 video may be pillarbox-compressed"*) and lands directly on **ui-hud blocker
-①** (*"aspect-ratio truth (5:3 native → are x-fractions pillarbox-wrong?)"*). Any HUD x-fraction
-taken against the full 1920 is wrong by an offset of 52 px and a scale of 1816/1920 = **0.9458**.
-**Honest limit:** a single frame cannot separate a Flash-stage pillarbox from the screen
-recorder's own letterboxing of a browser window — and the `SOUND360TM` watermark proves a
-recorder overlay was present. The **existence and exact width** of the bars is HELD; their
-**origin** is STILL_UNHELD.
-**THE FRAME WINS:** where any HUD-geometry doc quotes an x-fraction of 1920, the frame says the
-picture is 1816 wide starting at x=52 — take the frame.
-**Lane:** ui-hud, art-anim-audio-feel.
-
-### C18 — the only unresolved NPC name, and what it is attached to
-**Class A2 · cite** `reference/extracted/npcdata.xml:1560, :1576, :1592, :1608, :1624, :1640`
-**Quote** `<name>5017</name>`
-Six NPCs (ids 50–55) reference string id `5017`, which has **no entry** in the 2,533-key Android
-EN table — the only 6 misses in 490 `<name>` rows (484/490 resolved). All six are non-combat:
-no `<lvl>`, no `<hp>`, no `<attack>`, no `<defense>`, no `<reward>`, and `<weapon>0</weapon>`.
-Four carry `<ai>7</ai>` (`:1561, :1577, :1593, :1609`) — the profile otherwise used only by
-"Peasant" and "Charcoal Burner", i.e. a **civilian idle** behaviour; the last two carry
-`<ai>32</ai>` (`:1625`) and `<ai>33</ai>` (`:1641`), the Kojuro and Chikako profiles.
-Only npc 55 (`:1646, :1648`) uses a **500-offset body sub-band** —
-`<head>8500,8501,8502,8503,8504,8505,8506</head>` and `<pants>11503</pants>` — head/pants ids
-that no other NPC in the file touches.
-**STILL_UNHELD:** what archetype 5017 is. The ai-7 civilian pairing points at a townsfolk type
-and the 500-band body parts at a second body rig (the payload's `MCSCharacter_*` blobs, S0-4,
-would settle it), but I will not guess.
-**Lane:** art-anim-audio-feel, enemies-ai.
+Direct `<npc>` child-tag census (mine): `id` 495 · `name` 490 · `ai` 425 · `attack` 406 ·
+`hp` 403 · `lvl` 402 · `defense` 394 · `scalex`/`scaley` 16 · `earth` 3 · `fire` 1.
+**No `<speed>`, no `<chi>`, no `<exp>`, no `<water>`, no `<wind>` anywhere in the file.**
 
 ---
 
-## WHAT I LOOKED FOR AND DID **NOT** FIND IN THIS FILE (STILL_UNHELD)
+## CLAIMS
 
-Recorded so the next lane does not re-open them against `npcdata.xml`:
+### 1. `npcdata/level-stat-formula` — **HELD (A2) — OVERTURNS §2 + §4 enemies-ai blocker ①**
 
-- **Telegraph / active / recovery / stagger frames** (enemies-ai ③) — no timing field of any kind
-  exists in `npcdata.xml`. Not here.
-- **Aggro radius, leash distance, spawn geometry** (enemies-ai ④) — `<ai>` is an *index*; the
-  behaviour bodies are in the AS3 bundles, not this file.
-- **Undead damage-reflect probability** (enemies-ai ⑤) — the 9 Undead NPCs carry ordinary
-  `<hp>/<attack>/<defense>` and no reflect field. Skill `1068 "Undying"` (Gojo Takamori `:3934`,
-  Aboshi `:4349`) is the closest candidate and has **no `<desc>`** in the string table.
-- **Arrow arc physics** — no projectile field.
-- **XP or coin reward per kill** — `<reward>` holds **only** `<loot>`. There is no `<xp>` and no
-  `<coins>` tag anywhere in the file. The economy ledger's *"coins-per-kill reality (`=8` is an
-  unconfirmed INFERRED seed)"* gets **no help** from npcdata; that number is not authored here.
-- **Sprite layer / z-order** (items-equipment ⑤) — see C9's honest limit.
-- **Which clan the fifth army belongs to** — see C8.
-- **Meaning of loot table ids 0–3** — see C6.
-- **Meaning of the elemental scalar `10`** — see C12.
+Ledger sentence overturned (§4 enemies-ai — 34):
+> "**Blockers:** ① enemy **level→stat formula** (governs the whole roster's balance — absent, not just inferred)."
+
+The formula is not absent. `npcdata.xml` carries a **contiguous, unbroken level-11→40
+ladder** (the `<name>5053</name>` "Soldier" rows, ids 212–247 and their four clan
+duplicates) whose stats are an exact closed form:
+
+```
+HP  = ceil(2.5 × lvl)
+ATK = ceil(2.4 × lvl)
+DEF = ceil(2.4 × lvl)      (ATK == DEF for every row in the band)
+```
+
+Verified against **all 30 levels 11–40 with zero exceptions** (script re-derivation over the
+parsed rows). Verbatim anchor, `reference/extracted/npcdata.xml:4666-4672`:
+
+```
+		<id>212</id>
+		<name>5053</name>
+		<lvl>11</lvl>
+		<hp>28</hp>
+		<ai>1</ai>
+		<attack>27</attack>
+		<defense>27</defense>
+```
+ceil(2.5×11)=28 ✓ · ceil(2.4×11)=27 ✓ (and lvl 12 at :4685-4689 → 30/29/29 ✓).
+
+**Lane impact — enemies-ai (L?):** blocker ① is dead. The whole roster's balance is now
+codeable as two constants.
+
+### 2. `npcdata/high-band-coefficients` — **HELD (A2)**
+
+The coefficient is **per-tier, not global** — a builder who extrapolates 2.5/2.4 past L40 is wrong.
+
+| band | rows | HP | ATK | DEF |
+|---|---|---|---|---|
+| lvl 11–40 ("Soldier") | 30 levels | ceil(2.5·L) | ceil(2.4·L) | ceil(2.4·L) |
+| lvl 45–60 ("Heavy Soldier") | 4 levels | ceil(2.5·L) | ceil(2.5·L) | **2.8·L** (exact) |
+| lvl 70 ("Castle Guard") | 1 level | 2.5·L | 2.5·L | 2.5·L |
+
+Anchor `npcdata.xml:5318-5324` (Heavy Soldier id 248): `<lvl>45</lvl> <hp>113</hp>
+<attack>113</attack> <defense>126</defense>` — 2.5×45=112.5→113, 2.8×45=126 exactly.
+Anchor `:5393-5399` (Castle Guard id 252, lvl 70): 175/175/175.
+
+### 3. `npcdata/per-enemy-hp` — **HELD (A2) — OVERTURNS enemies-ai blocker ②**
+
+Ledger: *"② per-enemy HP."* — 403 `<hp>` rows on disk, range 1…1000.
+
+- `npcdata.xml:22-27` Ruffian (lvl 3): `<hp>1</hp>` — **1 HP.** Independently corroborates the
+  SESSION-11 measured finding that field mobs die in ONE hit.
+- Highest: Hiroshi `:3121` lvl 80 `<hp>1000</hp>`; Mad Cultist `:4072` lvl 23 `<hp>800</hp>`;
+  Amaya `:3842` lvl 30 `<hp>600</hp>`; Tadao `:3442` lvl 10 `<hp>200</hp>`.
+
+Ledger §4 "Surface" line — *"the shipped `AI_TIERS`/`ENEMY_BASE` are a PvP-duel dummy (hp 150)"* —
+is now checkable: **hp 150 appears in the roster only at lvl 60** (Heavy Soldier). Nothing in the
+495-row roster is an hp-150 low-level enemy.
+
+### 4. `npcdata/ai-taxonomy` — **HELD (A2) — the complete 38-class AI table**
+
+`<ai>` is not an opaque tier number: `NPCManager.as:516-634` is a `switch(xml.ai)` that maps
+**ai 0–37 one-to-one onto named actor classes**. Verbatim (`NPCManager.as:521-525`):
+
+```
+            case 1:
+               actor = new EnemyKnife(MCSPool.getMCS());
+               break;
+            case 2:
+               actor = new EnemyArcher(MCSPool.getMCS());
+```
+
+Full map, cross-tabbed against which npcdata rows use it:
+
+| ai | class | rows | example NPCs |
+|---:|---|---:|---|
+|0|EnemyPlayer (networked duelist)|0|set at runtime, `XMLNpc.as:315`|
+|1|EnemyKnife|56|Ruffian, Bandit, Soldier|
+|2|**EnemyArcher**|48|Thug, Bandit, Cultist|
+|3|EnemyKatana|52|Duelist, Guard, Mercenery|
+|4|EnemySpear|47|Soldier, Ninja|
+|5|EnemyShield|48|Bandit, Cultist|
+|6|EnemyNinja|3|Kurai, Jonin, Ninja|
+|7|EnemyCivilian|6|Peasant, Charcoal Burner|
+|8|EnemyWolf|2|Wolf|
+|9|EnemyPlayer (AI, non-elite)|73|Elite/Heavy Soldier, Castle Guard, Santa|
+|10|EnemyWolf2|**0**|— unused in data|
+|11|EnemyWolfAlpha|1|Wolf (lvl 15, hp 100)|
+|12|EnemyHorse|1|Horse|
+|13|EnemyTrainingDummy|1|Training Dummy|
+|14|EnemyPlayer (elite flag)|15|Bandit Leader, Bounty Hunters, General Daisuke|
+|15|EnemyPlayerGiant|**0**|— unused in data|
+|16|EnemyNianMonster|**0**|— unused (the Nian Monster row uses ai 28)|
+|17|EnemyBear|1|Bear|
+|18|EnemyBoar|1|Boar|
+|19|EnemyDeer|1|Deer|
+|20|**EnemyVegePatch**|1|id 64 — a farm plot modelled as a 10-HP enemy|
+|21|EnemyStag|1|Stag|
+|22|EnemyGoblin|1|Oni|
+|23|EnemyOgre|1|Oni|
+|24|EnemyFox|1|Fox|
+|25|EnemyGoblinThrower|1|Oni|
+|26|EnemyZombie|8|Undead|
+|27|EnemyJiangSi|1|Undead|
+|28|EnemySpearElite|24|Hiroshi, Bear(L60), Blacksmith, Nian Monster|
+|29|EnemyElite|10|Aboshi, Gojo Takamori, Magoichi, Yohei|
+|30|**FriendlyElite**|8|Satoshi, Fumio, Hachimaru, Shou, Scout, Old Guard|
+|31|**FriendlySpearElite**|1|Yuudai|
+|32|EnemyCivilianOld|2|Kojuro|
+|33|EnemyCivilianFemale|2|Chikako|
+|34|**FriendlyArcher**|3|Mitsuo|
+|35|EnemySorcererBoss|1|Mad Cultist|
+|36|**EnemyKanjiGuardian**|1|Guardian (scale 2.0)|
+|37|EnemySpearElite(variant)|2|Tadao, Amaya|
+
+Secondary A2: `XMLNpc.as:647` — `return this.ai == 8 || this.ai == 10 || this.ai == 11 ||
+this.ai == 12 || this.ai == 16 || this.ai == 17 || this.ai == 18 || this.ai == 19 ||
+this.ai == 21 || this.ai == 24;` — the animal set, in code.
+
+### 5. `npcdata/friendly-npcs` — **HELD (A2) — a whole actor category the ledger never mentions**
+
+12 npcdata rows use **ally** AI ids (30 FriendlyElite / 31 FriendlySpearElite / 34 FriendlyArcher).
+`§4 enemies-ai` has no ally concept at all — it describes only enemies and "independent-aggro
+(no coordination)". Escort/ally combatants are shipped content: Satoshi (`:3365`), Fumio (`:3424`),
+Mitsuo (`:4021`, `:4256`), Hachimaru (`:3760`), Shou (`:3777`), Scout (`:4313`), Old Guard (`:2418`),
+Yuudai (`:3506`), Chikako (`:3573`).
+
+### 6. `npcdata/elemental-wheel` — **HELD (A2) — OVERTURNS rebirth-elements blocker ②**
+
+Ledger: *"② elemental ATK-vs-DEF **formula**."*
+`XMLNpc.as:194-213` — each element tag sets **an attack stat AND the defence stat of a
+different element**, a hard identity:
+
+```
+         if(xml.fire.toString() != "")
+         {
+            this.STAT_FIREATK = xml.fire;
+            this.STAT_EARTHDEF = xml.fire;
+         }
+```
+…and the same pattern for `wind → WINDATK + WATERDEF`, `water → WATERATK + FIREDEF`,
+`earth → EARTHATK + WINDDEF`. Re-stated for players at `XMLNpc.as:334-337`:
+`STAT_FIREDEF = stats[STAT_WATERATK] …; STAT_EARTHDEF = stats[STAT_FIREATK] …`.
+
+**The wheel: your Water-attack IS your Fire-defence · Fire-attack IS your Earth-defence ·
+Earth-attack IS your Wind-defence · Wind-attack IS your Water-defence.** There is no separate
+elemental-defence stat to find. Blocker ② is closed structurally.
+
+### 7. `npcdata/elemental-roster-empty` — **HELD (A2, negative)**
+
+Only **4 of 495** NPCs carry any elemental value, and **all four are player ALLIES**:
+Satoshi `:3380 <fire>10</fire>` (ai 30), Fumio `:3439 <earth>10</earth>` (ai 30),
+Mitsuo `:4039` and `:4272` `<earth>10</earth>` (ai 34). Zero `<water>`, zero `<wind>` in the file.
+→ **No enemy in the shipped roster is elemental.** Elemental combat is a player/ally-side system
+in v0.717 data, not an enemy-typing system.
+
+### 8. `npcdata/loot-enum-and-coins-per-kill` — **HELD (A2) — OVERTURNS economy blocker ①**
+
+Ledger (§4 economy — 48): *"① coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**…)."*
+
+`NPC.as:837-856` resolves the small loot ids that make `npcdata`'s reward blocks unreadable:
+
+```
+               if(lootType == 0)
+               {
+                  OverworldHUD.instance.lootDialog.addLootCoins(1 * qty);
+               }
+               else if(lootType == 1)
+               {
+                  OverworldHUD.instance.lootDialog.addLootCoins(5 * qty);
+               }
+               else if(lootType == 2)
+               {
+                  OverworldHUD.instance.lootDialog.addQuestLootItem();
+               }
+               else if(lootType == 3)
+               {
+                  OverworldHUD.instance.lootDialog.addRandomLootItem(this.level,false,true);
+               }
+               else
+               {
+                  OverworldHUD.instance.lootDialog.addLootItemBasic(lootType,qty);
+               }
+```
+Roll rule `NPC.as:805-806`: `chance = loot.chance * 100; if(chance == 100 || Math.random()*100 < chance)`
+— per-entry independent roll; `<chance>1</chance>` is guaranteed.
+
+Expected coins per kill, computed over the 66 NPCs that carry `<reward>`:
+
+| NPC (line) | lvl | EV coins | non-coin loot |
+|---|---:|---:|---|
+| Ruffian `:22` | 3 | **1.0** | — |
+| Thug `:145` | 2 | 1.5 | — |
+| Bandit `:273` | 10 | **0.75** | 10% random-item-at-enemy-level |
+| Soldier `:581` | 10 | 0.75 | 10% random item |
+| Ninja `:841` | 10 | 2.5 | — |
+| Mercenery `:1043` | 6 | 5.0 | — |
+| Mercenery Captain `:1216` | 10 | **10.0** | — |
+| Boar/Deer `:1961/:1987` | 8 | 0 | 30% Meat / 30% Small Meat |
+| Wolf `:1844` | 15 | 0 | 50% Animal Fang + guaranteed quest item |
+| bosses (Tadao, Aboshi, Mad Cultist, Guardian) | — | 0 | guaranteed quest item |
+
+**Field trash yields ~0.75–2.5 coins per kill, not 8.** `COINS_PER_KILL=8` matches nothing except a
+Mercenery Captain. Also: `addRandomLootItem(this.level, …)` — item drops roll off the **enemy's level**,
+which is the missing hook for items-equipment blocker ① (stat-vs-level curve).
+
+### 9. `npcdata/no-kill-xp` — **HELD (A2, negative)**
+
+`XMLReward.as` parses an `<exp>` field. `grep -c "<exp>" reference/extracted/npcdata.xml` → **0**.
+And **429 of 495 NPCs have no `<reward>` block at all** — including all 285 clan-army rows.
+→ Kill-XP is not in this file. §4 progression blocker ④ ("full XP-income model") stays open on the
+XP side; the *coin* side is closed by claim 8.
+
+### 10. `npcdata/paperdoll-13-slots` — **HELD (A2) — CONTRADICTS the ledger's "9-slot paperdoll"**
+
+Ledger §1 KNOWN-KNOWNS: *"9-slot paperdoll + affix prefix pool + soul-infusion rules"*;
+§4 items-equipment "Ready: **9-slot paperdoll**".
+
+`<mcs>` in npcdata carries **12 slot tags**: `armor gloves hair hat head mask neck pants shoes
+weapon prop1 prop2` (index counts: armor 479, gloves 58, hair 462, hat 287, head 115, mask 131,
+neck 29, pants 489, shoes 472, weapon 470, prop1 217, prop2 1). Plus per-slot colour overrides
+`armorpcolor/armorscolor/pantspcolor/pantsscolor/hatpcolor/hatscolor` (`MCSCharacter.as:524-547`).
+
+The equipment vector is **13 wide** — `XMLNpc.as:705` `new Vector.<Item>(13)`, and
+`XMLNpc.as:36`:
+```
+      public static var DEFAULT_EQSTRING:String = "4017|0|6019|0|8005|0|0|11017|12017|13002|13002|0|0";
+```
+(armor|gloves|hair|hat|head|mask|neck|pants|shoes|weapon|scabbard|·|·). Slot→ID-band contract:
+**4000 armor · 5000 gloves · 6000 hair · 7000 hat · 8000 head · 9000 mask · 10000 neck ·
+11000 pants · 12000 shoes · 13000 weapon/prop**; the 6500/8500/11500 sub-bands are the female art set.
+
+### 11. `npcdata/compositing-contract` — **HELD (A2) — OVERTURNS items-equipment blocker ⑤**
+
+Ledger: *"⑤ **sprite-compositing contract** (layer order, per-slot body render — a from-scratch-art blocker)."*
+
+It is not a flat layer stack — it is a **bone tree**, and each equipment slot paints multiple bones.
+`MCSCharacter.as` attach points (grep of `addChild`/`setChildIndex` in the component setters):
+
+- `head` ← component@index 0, `headMask`@1, `hatHair`@2, `hair`@3 (`:682-755` — explicit z-order)
+- `hat`, `neck`, `l_hand`, `r_hand`, `l_foot`, `r_foot`, `weapon`, `prop`, `prop2`
+- armor band paints `torso`, `stomach`, `l_uparm`, `r_uparm`, `l_lowarm`, `r_lowarm`, `pelvic`
+- pants band paints `crotch`, `l_thigh`, `r_thigh`, `l_calf`, `r_calf`
+- shoes band paints `l_foot`, `r_foot`; `l_calf`/`r_calf` also take a shoe component at child-index 0
+
+Independently corroborated by the **web** payload's surviving un-obfuscated class names
+(`reference/decompiled/shs3_payload/scripts/`): `torso4000.as stomach4000.as pelvic4000.as
+uparm4000.as lowarm4000.as hand5000.as hair6000.as hat7000.as head8000.as mask9000.as
+neck10000.as thigh11000.as crotch11000.as calf11000.as foot12000.as foottop12000.as
+weapon13000.as prop13000.as` — i.e. the band number IS the bone-art prefix.
+
+One more indirection to carry: `MCSCharacter.as:585-592` — the sprite key is **`xmlItem.art`,
+not the item id** (`var xmlItem:XMLItem = QuestEngine.getItemData(id); … art = xmlItem.art;`),
+which is why five clans can share one string name and differ visually (claim 15).
+
+### 12. `npcdata/random-appearance-weighting` — **HELD (A2)**
+
+The comma lists in `<mcs>` are not "the NPC wears all of these" — they are a uniform random pick,
+and repeated `0` entries are a **weighting device for "wear nothing"**.
+`MCSCharacter.as:574-579`:
+```
+      internal function processString(xmlstring:String) : int
+      {
+         var selectArray:Array = new Array();
+         selectArray = xmlstring.split(",");
+         return selectArray[int(Math.random() * selectArray.length)];
+      }
+```
+Applied to `npcdata.xml:155`:
+```
+			<hat>0,0,0,0,0,7003,7008,7009,7010,7011,7012,7013,7014,7015,7016,7017,7020</hat>
+```
+→ a lvl-2 Thug is bald with probability **5/17 ≈ 29.4%**, else one of 12 hats. Every "0,0,0,…" run
+in this file is a shipped probability, not padding. (Same pattern hard-coded in
+`XMLNpc.as:510/532/544` for procedural townsfolk.)
+
+### 13. `npcdata/shipped-bugs` — **HELD (A2) — three original defects, replicable for 1:1**
+
+**(a) `6015.6017` — period for comma.** Present in the data on ~100 hair lines, e.g.
+`npcdata.xml:31`:
+```
+			<hair>6000,6001,6002,6003,6004,6007,6008,6009,6013,6014,6015.6017,6018,6019</hair>
+```
+and — decisively — **also in the shipped ActionScript source**, `XMLNpc.as:460`:
+```
+            hairlist = [6000,6001,6002,6003,6004,6007,6008,6009,6013,6014,6015.6017,6018,6019];
+```
+(also `:486`, `:497`, `:531`). Effect: hair 6016 and 6017 never spawn on those archetypes;
+the token evaluates to 6015. This is an ORIGINAL bug, not an extraction artifact.
+
+**(b) `npcdata.xml:1644` — a whole pool collapsed into a float.**
+```
+			<hair>6.5006501650265E+47</hair>
+```
+This is NPC id 55 (a female civilian, ai 33). The intended pool was
+`6500,6501,…,6519`; the file ships the scientific-notation collapse of it.
+
+**(c) `npcdata.xml:4368-4430` — hat ids typed into `<attack>`.** NPCs 815–818 carry
+`<attack>7092</attack>`, `<attack>7076</attack>`, `<attack>7077</attack>`, `<attack>7040</attack>`
+while their `<hat>` reads 7093/7094/7095/7096. `XMLNpc.as:161` reads `this.attack = xml.attack`
+unconditionally. These are showcase mannequins (no lvl/hp/ai), so it never fired in play — but a
+faithful port must decide whether to reproduce it.
+
+### 14. `npcdata/build-parity` — **HELD (A3) — CLOSES the S0-3 android caveat for this file**
+
+S0-3 warns *"this is the ANDROID build, clientVersion 0.682 … combat tuning parity is NOT
+established."* For npcdata it now is. Byte-comparison (run this turn):
+
+```
+web bytes 218792 android(no decl) bytes 218793
+IDENTICAL: True
+```
+(`reference/extracted/npcdata.xml` vs `reference/extracted/android/125_Mobile_NpcData.bin`,
+after normalising CRLF→LF and stripping the Android copy's `<?xml …?>` declaration.)
+
+→ Every number in claims 1–13 is the **web v0.717** number, not an Android approximation.
+It also proves the three defects in claim 13 shipped in both builds.
+
+### 15. `npcdata/five-clan-armies` — **HELD (A2) — FIVE factions, not four**
+
+Ledger §4 meta-social: *"**Ready:** 4 clans (heraldry/masks/daimyo/capitals) + Shira Tancho story-only."*
+
+ids **200–256, 300–356, 400–456, 500–556, 600–656** are five *identical* 57-NPC ladders
+(lvl 1→70, ai 1/2/3/4/5/9/28), **285 rows = 58% of the whole file**, differing **only** by
+equipment item id:
+
+| clan block | base Soldier `<armor>` | Castle Guard `<armor>` / `<hat>` |
+|---|---|---|
+| 200s (`:4451`) | 4038 | 4040 / 7024 |
+| 300s (`:5486`) | 4041 | 4043 / 7025 |
+| 400s (`:6521`) | 4044 | 4046 / 7026 |
+| 500s (`:7556`) | 4047 | 4049 / 7027 |
+| 600s (`:8591`) | 4053 | 4052 / 7029 |
+
+All five armor ids resolve to the same string ("Garment" / "Medium Armor") — the differentiation is
+**per-item ART, not a tint** (see claim 11's `xmlItem.art` indirection). This is the War-Room /
+clan-war army roster, with a shared level curve — a topology the ledger calls
+*"② War-Room **map topology**"* and *"① server-authoritative simulation"*. The armies themselves
+are recoverable. **None of the 285 rows carries a `<reward>`** — clan-war kills drop nothing.
+
+### 16. `npcdata/procgen-town` — **HELD (A2)**
+
+`XMLNpc.initProcGenNPC` (`:403-597`) is the town-population generator that fills every room the
+authored roster does not. `XMLNpc.as:415-418`:
+```
+         var seed:int = nodeid * date + roomid * (index + 3);
+         var rng:RNG = new RNG(seed);
+         var male:Boolean = true;
+         dice = rng.rand(8);
+```
+Six archetypes with a shipped weighting: `rand(8)` → {0,6}=COMMONER, 1=OLDCOMMONER, 2=NOBLE,
+3=FATNOBLE, 4=FEMALE, {5,7}=SAMURAI (`:419-442`); female samurai at `rand(3)==2` (`:449-453`);
+OLDCOMMONER gets `ai = 32` on a coin flip (`:477-480`); FEMALE always `ai = 33` (`:523`).
+
+Two consequences the 12-system ledgers miss:
+- **`date` is in the seed** → the town's population changes with the real-world day. This is the
+  concrete hook for world-exploration blocker ③ *"real-world **'day'** length"*.
+- **NPC names come from the bindata name tables** (S0-1's blobs 94–98): `NameGenerator.getInstance()
+  .getCommonerName(rng,male)` / `getNobleName` / `getSamuraiName` / `getSentryBotName`
+  (`:296, :458, :484, :529`). The five name generators are wired to a specific consumer.
+
+### 17. `npcdata/boss-movesets` — **HELD (A2)**
+
+96 NPCs carry `<skills>` (647 `<skill>` rows), collapsing to **16 distinct movesets**, all
+resolvable through `docs/gauntlet/L0/index/strings.json`. Verbatim, `npcdata.xml:535`:
+```
+		<skills><skill><id>1000</id><lvl>10</lvl></skill><skill><id>1001</id><lvl>10</lvl></skill><skill><id>1002</id><lvl>10</lvl></skill><skill><id>1003</id><lvl>1</lvl></skill><skill><id>1004</id><lvl>5</lvl></skill><skill><id>1006</id><lvl>1</lvl></skill></skills>
+```
+= Light/Balanced/Heavy Stance Mastery @10, Jump @1, Roll @5, Slash Wave @1 — the standard
+elite kit, shared by 73 NPCs.
+
+Boss kits are individual, e.g. Gojo Takamori (`:3917`): *?1501@3, Jump, Roll@3, Dash R/L, **Shunpo**,
+Slash Wave@2, Chi Punch, Chi Kick, Spirit Thief, **Heavenly Sword@3**, Back Throw, Air Stab, **Undying***.
+Chikako (`:3573`): Balanced Mastery@3 … Smoke Bomb@2, Substitution Jutsu@2, **Flashbang**, **Shadow Clone**.
+Satoshi (`:3365`, an ally): … Thousand Stabs, **Fire Breath@2**.
+
+Two orthogonal facts fall out:
+- **Shunpo is a real, assignable skill** carried by Hachimaru/Shou/Magoichi/Gojo — skills-meters
+  blocker ② ("Shunpo's real effect") now has a skilldata row to read, not just a name.
+- **Skill category 11 is an enemy-only bucket**: Back Throw, Air Stab, Bull Charge, Punch Lunge,
+  Undying, **1500**, **1501** — and 1500/1501 have **no string-table entry at all**
+  (`skilldata.xml:1948` and `:1960`, both with empty `<chi>`/`<cooldown>`/`<desc>`). They are used
+  only by Aboshi/Magoichi (1500) and Gojo Takamori (1501). Together with the bindata
+  `dual_stance` / `reversed_stance` animation sets (S0-1), the shipped game has **five stance
+  masteries, two of them boss-only and unnamed** — not three.
+
+### 18. `npcdata/damage-is-a-range` — **PARTIAL (A2)**
+
+Ledger §1: *"Damage math: Physical = (ATK + WeaponDMG) × stanceMult."*
+`XMLNpc.as:352-364` shows the weapon term is a **range**, and exposes a hard floor constant:
+```
+            this.minDamage = this.attack;
+            this.damageRange = 0;
+            this.slashUsage = 48;
+         }
+         else
+         {
+            this.minDamage = this.attack + itemdata.mindamage;
+            this.damageRange = itemdata.maxdamage - itemdata.mindamage;
+            this.slashUsage = itemdata.slashusage;
+            if(this.slashUsage < 48)
+            {
+               this.slashUsage = 48;
+            }
+```
+→ `damage ∈ [attack + item.mindamage, attack + item.maxdamage]`, and **`slashUsage` is clamped to
+a minimum of 48**. Marked PARTIAL because this is the *PvP duelist* init path (`initDuelist`);
+whether the PvE `NPC.init(xml)` path applies the same range is not established here, and no
+stance multiplier appears in this function.
+
+### 19. `frames/pillarbox-confirmed` — **HELD (A1) — ANSWERS ui-hud blocker ①. THE FRAME WINS.**
+
+Ledger §1 UNKNOWN-UNKNOWNS: *"**Aspect-ratio truth** — native canvas is **800×480 (5:3)**, so HUD
+x-fractions measured off 16:9 video may be pillarbox-wrong."* §4 ui-hud blocker ①:
+*"① **aspect-ratio truth** (5:3 native → are x-fractions pillarbox-wrong?) — *inspect `unt.png`
+for side-bars*."*
+
+Opened the frame and looked. **The side bars are there.**
+Crops used: `reference/frames/duel_dense/Nr4fQstqHDM_428.0.png` (1920×1080), crop
+`(960,300)-(1920,760)` upscaled ×2 — a black vertical band is plainly visible down the right edge
+of the crop, against the stone-wall background. Column-brightness profile of the full frame
+(mean RGB per column, sampled every 3rd row):
+
+```
+left  cols : (48, 1.1) (50, 0.5) (52, 36.7) (54, 78.5) (56, 78.5) …
+right cols : … (1864, 87.3) (1866, 69.0) (1868, 1.1) (1870, 1.3) (1872, 0.4)
+```
+→ game content occupies **x ≈ 53 … 1866** (1,814 px of 1,920), full height 1080, both bars ~53 px.
+Same measurement on `Nr4fQstqHDM_431.5.png`: identical, x 52…1867.
+
+Measured aspect **1814/1080 = 1.680**, which is 5:3 (1.667) within video-scaling error and nowhere
+near 16:9 (1.778). **Any HUD x-fraction taken as `x_pixel / 1920` is wrong by ~5.5%** and must be
+re-based on `(x_pixel − 53) / 1814`. Ledger §3 item 12 ("native is 800×480") is corroborated;
+the unknown-unknown is closed.
+
+*(Also visible in the same crop and worth logging: an orange **coin-pouch loot projectile in
+mid-air**, and a bloodied kasa-wearing enemy collapsing bottom-left — the visual counterpart of
+`NPC.createLoot()` / `ProjectileManager.createLootProjectile` from claim 8.)*
+
+### 20. `npcdata/no-speed-no-chi` — **HELD (A2, negative)**
+
+`XMLNpc.as:151-182` defaults `chi = 1` and `speed = 1` when the tags are absent. Tag census over
+all 495 `<npc>` blocks: **zero `<chi>`, zero `<speed>`.**
+→ **Every NPC in the game ships with speed 1 and chi 1.** Enemy attack cadence/cooldowns are
+therefore *not* data-driven per-NPC — they live in the per-AI-class code (`EnemyKnife`,
+`EnemyArcher`, …). §4 enemies-ai blocker ③ ("telegraph/active/recovery + stagger frames") is
+**not** closable from npcdata; it is closable from those 38 classes. Recording as a lead, not a claim.
 
 ---
 
-## SCORING NOTE
+## STILL_UNHELD from this source
 
-On the strength of C1+C2+C5+C6+C7 alone, **enemies-ai's 34/100 is indefensible**. Four of its
-five listed blockers are wholly or half closed by one 228 KB file that predates the score by
-nothing — it was sitting in `reference/extracted/` unread. The document's own staleness banner
-already concedes this direction; this survey supplies the A2 cites it asked for.
+- **Aggro / leash / spawn geometry** (enemies-ai blocker ④). npcdata carries no position, radius or
+  spawn field. It is not in this file. Lead: the per-AI-class scripts + `112_Mobile_NodeData`.
+- **Telegraph / active / recovery / stagger frames** (blocker ③) — see claim 20.
+- **Undead damage-reflect probability** (blocker ⑤) — no such field in npcdata; `EnemyZombie` /
+  `EnemyJiangSi` are the places to look.
+- **NPC name id 5017** (6 rows, ids 50–55) is the one string-table miss in this file
+  (`resolved_names.json` → `misses: 6`, all id 5017). Unresolved; do not guess it.

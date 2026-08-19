@@ -1,344 +1,324 @@
-# GAUNTLET L0 — BLIND CRITIC (Lens 4: THE FRAME LENS) — unit `art-anim-audio-feel`
+# art-anim-audio-feel — LENS 4 (FRAME) blind critic
 
-Critic: blind-critic agent · date 2026-08-15 · reviewing
-`docs/gauntlet/L0/systems/art-anim-audio-feel.md` (proposed re-score 56 → 84).
-
-I did not see the surveyor's reasoning. Every verdict below cites an artifact **I** opened.
-Scratchpad for all derived files (nothing written into the repo outside this file):
-`/private/tmp/claude-501/-Users-kheshav-kheshav-code-SSHD-1-1/70279977-fb70-4a26-ba27-9b32a10d27dc/scratchpad`
+Reviewer opened every artifact listed below first-hand. Nothing here is taken from the
+surveyor's word. Commands and pixel values are pasted so any of it can be re-run.
 
 ---
 
-## HEADLINE
+## Headline
 
-**The audio result is real. I reproduced it end to end from raw bytes.** All five CWS blobs
-decode, the 13 SFX and 13 music stems come out as playable MP3, and every duration in the
-surveyor's table matched `afinfo` to the millisecond. Stage-0 **S0-5 is correctly overturned.**
+**14 of 18 claims survive. 4 are refuted — and 2 of those are the unit's two A1 (frame)
+claims.** That is the signature of the exact failure this lens exists to catch: the audio
+and code work in this survey is excellent and reproduces byte-for-byte, but where the
+surveyor reached for a *frame*, they graded the wrong object and asserted an equality the
+pixels deny.
 
-**Four claims are refuted, and one of them is the exact Lens-4 failure this lens exists to catch.**
-
-> ⛔ **The surveyor wrote: "no frame can arbitrate the visible cadence: the dense stills sample
-> at 0.1 s (10 Hz) and cannot resolve 24 vs 15." THAT IS FALSE.** Both primary reference videos
-> are **60 fps native** (`ffprobe`: `r_frame_rate=60/1`, 237,047 and 251,111 frames). The
-> surveyor graded a cadence question off a pre-baked still set while the 60 fps source sat on
-> disk — the same class of mistake as SESSION 18's A4-D. I extracted the source at 60 fps and
-> **the frames arbitrate it twice over** (§NF-1, §NF-2).
+| verdict | claims |
+|---|---|
+| HELD (re-derived independently) | audio-recovered · music-13-stems · adaptive-music-engine · sfx-playback-contract · font-identified · no-blend-modes · screen-shake · no-hitstop · gore-system · blood-vfx · android-web-byte-identity · kill-beat · hit-reaction · web-audio-parity-unheld |
+| **REFUTED — fatal** | `24fps-keyframe-stream` |
+| **REFUTED — material** | `21-node-rig-held` · `blade-trail-frame` (A1) · `aspect-ratio-frame-wins` (A1) |
 
 ---
 
-## VERDICT TABLE
+## R1 — FATAL. `24fps-keyframe-stream`: the data DOES hold frames, in 96 of 385 animations
 
-| # | claim | verdict | severity |
+The claim: *"the XML's @d equals the number of `<f>` children for every animation, so the
+data holds no hold frames; the 'latch' is injected in code by AnimData's per-animation
+duration tails."*
+
+I measured `@d` against `len(<f>)` across all 19 web-payload animdata blobs myself:
+
+```
+animdata files 19   total anims 385 (parseable)   mismatched d vs len(f): 96
+```
+
+The mismatches are not in some obscure creature blob. They are in **both files the
+surveyor names as their evidence**:
+
+| file | anims | @d > len(f) | example |
 |---|---|---|---|
-| 1 | audio-recovered-not-encrypted | **UPHELD** (reproduced from bytes) | — |
-| 2 | music-13-stems-measured | **UPHELD** | — |
-| 3 | adaptive-music-engine | **UPHELD** | — |
-| 4 | sfx-playback-contract | **UPHELD** | — |
-| 5 | font-identified | **UPHELD** | — |
-| 6 | no-blend-modes | **UPHELD + HARDENED** | — |
-| 7 | screen-shake-catalogued | **UPHELD** | — |
-| 8 | no-hitstop | **UPHELD** (PARTIAL is the right grade) | — |
-| 9 | gore-system-not-one-variant | **UPHELD** (no A1 corroboration exists) | — |
-| 10 | blood-vfx-exact | **UPHELD** | — |
-| 11 | 24fps-keyframe-stream | **UPHELD in substance; its stated ground is FALSE** | minor |
-| 12 | 21-node-rig-held | **REFUTED** — the rig is not 21 nodes | minor |
-| 13 | android-web-byte-identity | **UPHELD** (MD5 sweep reproduced) | — |
-| 14 | blade-trail-frame | **REFUTED** — the wedge does not taper to a point | minor |
-| 15 | aspect-ratio-frame-wins | **REFUTED** — 690 is the friend bar, not "container chrome" | **material** |
-| 16 | kill-beat-timings | **UPHELD + FRAME-CONFIRMED** | — |
-| 17 | hit-reaction-12-ticks | **REFUTED** — 12 is not uniform; 16/24/26/84 exist | **material** |
-| 18 | web-audio-parity-unheld | **UPHELD + HARDENED** | — |
+| `reference/extracted/bindata/108_1t4635s0.bin` (Human) | 120 | **23** | `heavyhorizontalslash_parta` d=6, 4 `<f>` |
+| `reference/extracted/bindata/118_1t4645s0.bin` (LightStance) | 17 | **6** | `light_horslash_parta` d=13, 11 `<f>`; `light_horslash_partc` d=6, 4 `<f>` |
+| `116_1t4643s0.bin` (HeavyStance) | 17 | 8 | `heavy_horslash_parta` d=5, **2** `<f>` — 60 % of that animation is a held pose |
+| `102_1t4629s0.bin` (Skills) | 50 | 16 | `fireball` d=12, 8 `<f>` |
+
+The surveyor quoted four clean rows — `light_stance 1/1`, `light_run 9/9`, `walk 20/20`,
+`death 38/38` — and generalised "hold=0 everywhere". Idle, locomotion and death happen to
+be clean. **Every horizontal/down/up slash is not.** In a sword game that is the motion
+that matters.
+
+The engine confirms the semantics, and it is the opposite of what the claim says:
+
+- `reference/decompiled/shs3_android/scripts/AnimData.as:16-21`
+  `this.duration = xml.@d;` … `var max:int = xml.f.length(); for(...) frameList.push(new FrameData(xml.f[i]));`
+  → `duration` and `frameList.length` are **independent**.
+- `MCSCharacter.as` `updateAnimation()`: `++this.frameCounter; if(this.frameCounter < this.currentAnimationDuration) this.updateFrame();`
+- `MCSCharacter.as` `updateFrame()`: `if(this.frameCounter < this.currentAnimation.frameList.length) { ...setPosition(this); }`
+
+So for every tick in `[len(frameList), duration)` the counter advances and **no new pose is
+applied — the rig latches on the last keyframe**. That is a hold, authored in the data.
+The `duration += 10 / 15 / 24` tails in `AnimData.as:23-142` are a *second*, additional
+hold stacked on top — not the origin of the latch.
+
+Correct model: **24 Hz playback; the keyframe stream is sparse; `@d − len(<f>)` held ticks
+are authored per-animation in the XML; code tails extend selected poses further.**
+A recreation built on the surveyor's model plays `heavy_horslash_parta` in 2 ticks instead
+of 5 — 2.5× too fast.
+
+The 24 Hz half of the claim is right and I verified it independently: my own parse of
+`reference/preservation/shs3.swf` gives `rect twips [0,16000,0,13800] framerate 24.0`, and
+`Mobile.as:117 GameEngine.getStageMC().frameRate = 24;`.
 
 ---
 
-## WHAT I REPRODUCED (upheld claims)
+## R2 — MATERIAL. `21-node-rig-held`: the rig is 27 parts, and 25 node ids are keyed
 
-**Audio (claims 1, 2, 4).** I re-implemented the transform from `reference/tools/payload_decode.py`
-and ran it over `reference/extracted/android/`:
+The structural half is correct — I verified `FrameNodeData` applies `x`/`y`/`rotation`
+straight onto MovieClip transforms, else a 2×2 matrix ÷100 — and the **487 anim count is
+correct** (I counted 487 `<anim ` tags across the 19 blobs).
+
+"21-node" is not. `reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62` declares
+**27** parts, `PART_l_hand:int = 0` … `PART_r_knee:* = 26`. Across the 19 animdata blobs the
+keyed node ids are `[0..7, 9..16, 18..26]` — **25 distinct ids** (8 = `crotch` and
+17 = `hat` are never keyed; they ride their parent). Per-blob maxima:
 
 ```
-122_Mobile_SoundResource.bin  key=111 -> CWS v17 declared=29,631    inflated=29,623
-113_Mobile_MusicResource.bin  key=117 -> CWS v17 declared=1,402,685 inflated=1,402,677
-124_Mobile_ImageResource.bin  key=109 -> CWS v17 declared=1,908,237 inflated=1,908,229
-115_Mobile_SHS3Resource.bin   key=104 -> CWS v17 declared=1,040,857 inflated=1,040,849
-120_Mobile_BGResource.bin     key=103 -> CWS v17 declared=4,412,348 inflated=4,412,340
+112_1t4639s0.bin (Wolf)      maxid 26  ids>20: [21,22,23,24,25,26]
+114_1t4641s0.bin (Goblin?)   maxid 24  ids>20: [21,22,23,24]
+108_1t4635s0.bin (Human)     maxid 21  ids>20: [21]
+110_1t4637s0.bin (DualStance) maxid 21 ids>20: [21]
+all others                   maxid 20
 ```
 
-My own SWF tag parser then found exactly 13 `DefineSound` + one `SymbolClass` in each of the
-two audio blobs, with the surveyor's name lists byte-for-byte. `afinfo` on the MP3s I extracted:
-`slash1 0.572000` `slash2 0.780000` `slash3 0.520000` `punch 0.572000` `deflect 1.040000`
-`die1 0.728 die2 0.884 die3 1.092` `hitmetal 0.780` `goodkoto 1.820` `fart 0.418` `sumo 3.120`
-`refund 0.988`; six overworld stems **79.872000 sec** each, four dungeon stems **45.760000 sec**
-each, `bgm_levelup 29.900000`, `bgm_lose 3.744000`, `bgm_gangnam 3.848000`. **Every number matched.**
-
-Stronger than the claim: the six overworld stems are not merely equal in *duration*, their MP3
-payloads are equal in *bytes* — **159,744 B / 882,144 samples** each; the four dungeon stems
-**91,520 B / 504,288 samples** each. That is the layering grid, confirmed at the byte level.
-
-**Font (claim 5).** `DefineFontName` tags I parsed myself:
-`115_Mobile_SHS3Resource` id 12 `EPSON 太行書体Ｂ` © `(C) 2000 SEIKO EPSON CORP. All rights reserved.`,
-id 61 `Adobe 고딕 Std B` © `Copyright © 2009-2011 Adobe Systems Incorporated.`,
-id 161 `MS UI Gothic 標準` © `(C)2009 data:RICOH Co.,Ltd. typeface:RYOBI IMAGIX CO.`,
-id 307 `Edo SZ` © `2008 Vic Fieger`; `124_Mobile_ImageResource` id 76 `Edo SZ` © `2008 Vic Fieger`.
-Licence flag is correct and I endorse it.
-
-**Shake / hitstop / gore / blood / kill-beat / behead (claims 7, 8, 9, 10, 16).** All quoted
-lines verified verbatim in `reference/decompiled/shs3_android/scripts/`. `doShake()` really is
-called *before* the `if(actionState != STATE_FROZEN)` gate (`StageManager.as:825-830`).
-`STATE_FROZEN` really is assigned at exactly two sites (`:162`, `:212`). `StatsManager.censored`
-really is `false` at `:314` and `clientVersion` really is `0.682` at `:30`.
-
-**Byte identity (claim 13).** I re-ran the MD5 sweep: **21 blobs identical** overall, **14 of 18**
-`MCSCharacter_*AnimationData` identical, differing exactly Ogre / Skills / Guardian / HumanSpear.
-`99_MCSCharacter_HumanAnimationData.bin` == `108_1t4635s0.bin` == `bcfd658e79fafb41f52431afb7d10622`.
-
-**Animation data (claim 11 substance).** `@d == len(<f>)` with **zero mismatches across all 487
-`<anim>`** in the 19 web animdata blobs — I counted 487 independently. `AnimData.as` carries 30
-`duration +=` tails. `updateAnimation()` compares `frameCounter` to `currentAnimationDuration`
-while `updateFrame()` guards on `frameList.length` — the latch mechanism is exactly as described.
+21 is what you get by counting `0..20` off one humanoid idle pose. A rig built to 21 nodes
+silently drops `prop2`, `prop3`, `l_shoulder`, `r_shoulder`, `l_knee`, `r_knee` — the
+shoulder and knee nodes are exactly what makes limb bending read right, and the Human blob
+already keys id 21.
 
 ---
 
-## REFUTATIONS
+## R3 — MATERIAL (A1). `blade-trail-frame`: the object graded is not a blade trail
 
-### R1 — claim 15 `aspect-ratio-frame-wins` — **MATERIAL**. The 690 is the FRIEND BAR.
-
-The surveyor staged a doc-vs-frame conflict and declared "THE FRAME WINS … the 690-tall document
-rect is container chrome, not play area." **There was never a conflict, and 690 is not chrome.**
-`GameEngine.as` `resizeHandler`, which the surveyor cites but did not read to the end:
-
-```
-:269  var originalWidth:int = 800;
-:270  var originalHeight:int = 480;
-:271  var originalHeightWithBar:int = 690;
-:272  var originalAspectRatio:Number = originalWidth / originalHeight;
-:273  var originalWithBarAspectRatio:Number = originalWidth / originalHeightWithBar;
-:275  if(newAspectRatio <= originalWithBarAspectRatio)
-:277     originalAspectRatio = originalWithBarAspectRatio;
-:278     originalHeight = originalHeightWithBar;
-:279     StatsManager.stageShowingFriendBar = true;
-:282     OverworldHUD.instance.friendpanel.init();
-```
-
-The extra 210 px is the **in-game friend panel**, a named second layout mode with its own state
-flag. The videos show 5:3 because they were captured in **fullscreen**, where
-`setFullScreen()` sets `fullScreenSourceRect = new Rectangle(0,0,800*newScale,480*newScale)`
-(`GameEngine.as:190`) and drops the bar. Both numbers are true simultaneously; the code holds the
-switch. Cross-lane: **ui-hud has a whole friend panel it does not know about.**
-
-Two further errors in the same claim:
-* The quoted letterbox formula is presented as unconditional. It is the **else** branch:
-  `if(originalAspectRatio >= newAspectRatio)` fits **width** (`offsetX = 0`, `offsetY` centred);
-  only the else fits height. A recreation copying the quoted line alone gets the wrong branch.
-* **"aspect 1.6815 = 800×480" is loose.** 5:3 at 1080 height is **1800** px, not 1816. My own
-  measurement of `Nr4fQstqHDM_432.0.png` reproduces cols 52…1867 (w 1816, aspect 1.68148) at
-  thresholds 12/25/40 — but the *other* longplay gives a different number:
-  `zFt_combat/zFtCaTO0_1M_t0320s.png` → cols 55…1861, **w 1807, aspect 1.67315**. Two captures
-  disagree by 9 px. **1816 is a property of that upload, not of the game.** What the frames
-  establish is "≈5:3, decisively not 800×690 (1.159)" — which is all that was needed.
-
-### R2 — claim 17 `hit-reaction-12-ticks` — **MATERIAL**. 12 is not uniform, and 16 is original.
-
-The claim: "a single uniform 12-tick window … set identically in **every** enemy class and in
-`MCSPlayer`", used to declare the ledger's authored `7/12/16f` tint ladder "a recreation invention".
-Exhaustive count of the assignment across `shs3_android/scripts/*.as`:
+I opened the cited frame `reference/frames/duel_dense/Nr4fQstqHDM_432.0.png` (1920×1080) and
+reproduced the cited crop (900,600)–(1300,900) upscaled ×3 Lanczos. Then I tracked the blue
+object across **all 42 frames** of `duel_dense` (427.0 → 433.0, 0.1 s spacing), masking
+`b>150 & b−r>110 & b−g>50 & g>60` and excluding the HUD (`y<960, x>400`):
 
 ```
-  23  gotHitCounter = 12
-   3  gotHitCounter = 0
-   2  gotHitCounter = 24
-   1  gotHitCounter = 84
-   1  gotHitCounter = 26
-   1  gotHitCounter = 16
+427.0  1140 px    428.9  1939 px    431.4  2915 px    432.4  1962 px
+427.4  3070 px    429.0  1938 px    431.9  1859 px    432.9  1395 px
+428.2  2737 px    431.0  2863 px    432.0  1960 px    433.0  1392 px
+        ... present in 42 of 42 frames, 6.0 s of footage ...
 ```
 
-The non-12 sites, read in context:
-* `EnemyShield.as:338` — an **enemy class** — sets `gotHitCounter = 24` when the blade hits
-  `PART_prop` (the shield): `damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal();`
-  (and this is what the `hitmetal` SFX from claim 1 is *for*).
-* `MCSPlayer.as:1457/1461` — `REDFREEZE_STATE`: `DOWNSTAB → 24`, player-controlled → **84**, else 12.
-* `MCSPlayer.as:1764/1768` — post-skill recovery: `SKILL_THOUSANDSTABS → 26`,
-  `SKILL_DEADLYCLEAVE → **16**`.
-* `MCSPlayer.as:1959` — `gotHitCounter = -1` sentinel.
+A blue mass of 1,392–3,134 px sits in the play area in **every single frame**, always
+anchored at the fighter's hands, rotating with him (vertical at 427.1, horizontal-right at
+428.9, horizontal-left at 431.2), with the same internal white chevron artwork each time.
 
-So **16 is in the original**, there is a 12/16/24/26/84 ladder, and "set identically in every
-enemy class" is false at `EnemyShield.as:338`. The derived conclusion ("the original's one number
-is 12") must not be shipped.
+That cannot be the slash FX. The surveyor's own supporting A2 says
+`bladeslashfx.as:12 addFrameScript(4,this.frame5)` — a 5-frame clip that removes itself,
+~0.21 s at 24 Hz. **0.21 s cannot occupy 42 consecutive 0.1 s samples.** The object is the
+fighter's equipped blade. (The transient slash mark in this footage is *red* — see the
+thick red stroke crossing frame 427.1.)
 
-**And the claim's own CAUTION note is now resolvable, and it guessed wrong.** It says the HUD's
-`150% DAMAGE` in `Nr4fQstqHDM_432.0.png` "reads as the stance modifier". It is not: the
-stance-triangle bonus sits **eleven lines above the behead multiplier in the same function** —
-`MCSPlayer.as:3701` `damage *= 1.2;` — so the stance modifier is **×1.2**, not ×1.5. The string
-table (Stage-0b S0-3, `docs/gauntlet/L0/index/strings.json`) resolves the HUD line outright:
-`4132 = "Eat this potato to get the 150% Damage buff.\n\nNote: Only one buff may be active at a
-time."` and `125 = "Stance Restriction"`. The two stacked HUD lines are an active **BUFF_ATTACK**
-buff (`StatsManager.as:290`) plus a stance-restriction debuff. Not un-reconciled any more.
-
-### R3 — claim 12 `21-node-rig-held` — minor. The rig is not 21 nodes.
-
-I opened the file the claim cites. `reference/extracted/bindata/118_1t4645s0.bin`, first pose:
+Two descriptors are also measurably inverted. Vertical scan at x=1000 on the cited frame:
 
 ```
-<anim i="light_stance" d="1">
-<f i="0">
-<n i="19" .../> <n i="16" .../> <n i="15" .../> ... <n i="18" .../> <n i="3" .../>
+y 796-808  (0,76,140) → (0,87,160)      upper band  — DARKER
+y 814      (231,226,223)                white stripe
+y 820-829  (0,106,185) → (0,116,183)    lower band  — BRIGHTER
+y 835      (188,205,222)                white stripe
 ```
 
-**19 `<n>` elements**, index space 0…20 with **8 and 17 absent** (same in `light_run`, and in
-every stance blob). Across all 19 web animdata blobs the distinct-index counts are 16…25 and the
-max index runs 20…26 (`112_1t4639s0.bin` reaches 26). And the code declares **22** parts:
-`MCSCharacter.as` `PART_l_hand = 0` … `PART_prop2 = 21`. There is no 21 on any reading.
+Reproduced at x=950 and x=1040. The claim says "mid-blue body over a **darker** blue lower
+half" — it is the other way round. And the left terminus is a **blunt flat edge**, not a
+point (crop (880,750)–(1120,880) ×6).
 
-Everything else in the claim holds: `FrameNodeData.as:60-70` really does apply `mc.x/mc.y/
-mc.rotation`, with the `rotation != 999` sentinel selecting the `matA…matD / 100` matrix path;
-and my independent count of `<anim>` across the 19 blobs is **exactly 487**.
-
-### R4 — claim 14 `blade-trail-frame` — minor. The wedge ends BLUNT, not in a point.
-
-I opened `reference/frames/duel_dense/Nr4fQstqHDM_432.0.png` (1920×1080) myself at three crops:
-`(900,600)-(1300,900) ×3`, `(900,760)-(1220,880) ×4`, `(920,780)-(1160,900) ×6 Lanczos`.
-
-Confirmed by eye at ×6: flat opaque blue wedge, hard black outline, a broad white stripe with a
-second thinner white line parallel below it, mid-blue over a darker blue; navy haori with red
-trim, cream obi, white hakama, straw kasa, bold flat-vector outlines; a bare-torso enemy doubled
-over at his feet with a straw kasa on the ground beside him, **no blood and no severed limb**.
-
-Confirmed numerically: the blue field is a near-constant `(0,112,191)` (second cluster
-`(0,88,161)`) across a *varying* backdrop — that is opacity, and it is exactly what "no blendMode"
-looks like. The claim's mechanism point stands.
-
-**But "tapering to a point" is wrong in this frame.** Column-wise extent of the blue field:
-
-```
-x  945 h 20 | x  960 h 26 | x  975 h 32 | x  990 h 34 | x 1005 h 38 | x 1020 h 40
-```
-
-The wedge is **widest at the hands and narrows leftward, terminating at x≈940 on a blunt,
-near-vertical flat edge ~20 px tall.** It never converges. (A *pointed* wedge does exist in the
-corpus — the black silhouette in `session24/reach-A28-forest-duel/ev2_S3_wintint_hz031.png`
-tapers to a point — so the shape varies across the 5-frame `bladeslashfx` clip and the surveyor
-appears to have merged two frames.) Minor second slip: in this crop the wedge lies over the
-mottled cliff/ground backdrop, not over grass.
-
-Supporting A2 verified: `bladeslashfx.as` is `addFrameScript(4,this.frame5)` → `removeChild(this)`,
-a 5-frame clip.
+**What does hold:** opacity. Horizontal scan at y=832 puts the object's left outline at
+x≈932 with dark grass `(38,41,33)` immediately outside and saturated `(0,110,190)`
+immediately inside — zero background bleed. No additive/screen lightening. So the
+*observation* survives; the *identification* does not, and the "no blendMode corroborated
+from the frame side" line is therefore unsupported: an opaque weapon sprite says nothing
+about how FX composite.
 
 ---
 
-## NEW FINDINGS THE SURVEYOR MISSED
+## R4 — MATERIAL (A1). `aspect-ratio-frame-wins`: the arithmetic fails, 690 is not chrome, and nothing was arbitrated
 
-### NF-1 (A1, **overturns the surveyor's reasoning**) — the reference videos are 60 fps, and they DO resolve the cadence.
-
-`ffprobe` on both primary references:
-`Nr4fQstqHDM.mp4` — `width=1920 height=1080 r_frame_rate=60/1 nb_frames=237047 duration=3950.875`
-`zFtCaTO0_1M.mp4` — `width=1920 height=1080 r_frame_rate=60/1 nb_frames=251111 duration=4185.258`
-
-I extracted native-rate windows (`ffmpeg -fps_mode passthrough`, 180–240 frames each) and
-autocorrelated the frame-to-frame mean-abs-difference over the game surface (cols 60…1860):
-
-| window | mean diff | ac[3] | **ac[4]** | ac[5] | peak lag → rate |
-|---|---:|---:|---:|---:|---|
-| Nr4f t420–423 | 2.238 | −0.243 | **+0.810** | −0.245 | 4 → **15.00 Hz** |
-| Nr4f t429–433 | 0.599 | −0.057 | **+0.800** | −0.059 | 4 → **15.00 Hz** |
-| Nr4f t2800–2803 | 1.358 | −0.156 | **+0.577** | −0.154 | 4 → **15.00 Hz** |
-| zFt t600–603 | 1.165 | −0.125 | **+0.842** | −0.117 | 4 → **15.00 Hz** |
-| zFt t1200–1204 | 1.834 | −0.136 | **+0.864** | −0.128 | 4 → **15.00 Hz** |
-| zFt t3000–3003 | 1.061 | −0.108 | **+0.718** | −0.108 | 4 → **15.00 Hz** |
-
-Windows on near-static scenes (Nr4f t1200, t1990, t2500, t3400) show no periodicity at all
-(|ac| < 0.04) — they do not contradict, they carry no signal. **`ac[5]` is negative in every
-window**, so there is no 24-in-60 (2/3-frame) signature anywhere. The on-screen content in both
-longplays updates at exactly **15.0 Hz**.
-
-### NF-2 (A1, **frame-CONFIRMS claims 11 and 16**) — the kill-beat measures 6.000 s, so the sim tick is 24 Hz and the 15 Hz is the CAPTURE.
-
-I located the end-of-battle red freezes in `Nr4fQstqHDM.mp4` by scanning at 4 Hz, then measured
-each at native 60 fps (red-fraction > 0.65 of a 64×36 downscale):
+**(a) 1.6815 ≠ 1.6667.** I re-ran the threshold sweep on the same frame and got the
+surveyor's numbers exactly:
 
 ```
-t = 516.683 .. 522.667   duration 6.000 s  (360 frames @60)
-t = 587.683 .. 593.667   duration 6.000 s  (360 frames @60)
-t = 697.550 .. 703.600   duration 6.067 s  (364 frames @60)
-t = 864.417 .. 871.067   duration 6.667 s  (400 frames @60)
+thr  5  cols 48 1871  w 1824  aspect 1.68889
+thr 12  cols 52 1868  w 1817  aspect 1.68241
+thr 25  cols 52 1867  w 1816  aspect 1.68148
+thr 40  cols 52 1867  w 1816  aspect 1.68148
+thr 60  cols 52 1867  w 1816  aspect 1.68148
+800/480 = 1.66667   →  a true 5:3 surface at 1080 tall is 1800 px wide, not 1816
 ```
 
-`StageManager.as:1101` sets `redFreezeCounter = 24 * 6` = 144 ticks. **144 ticks in 6.00 ± 0.07 s
-⇒ tick rate 24.0 ± 0.3 Hz.** A 15 Hz sim would take 9.6 s. So:
+The measurement is honest and reproducible; the claim built on it is not. 1816 vs 1800 is
+16 px of letterbox bleed — the frame is *consistent with* 5:3 to ~0.9 %, it does not
+*equal* it. Writing "aspect 1.6815 = 800x480" asserts an equality the numbers deny.
 
-* claim 16's `24*6` is **confirmed by frame**, to the frame, twice independently — and the
-  measured 6.0 s (rather than the code's normal 5.0 s exit at `counter == 24`) proves the
-  `SHEATHESWORDCHIBURI` branch at `StageManager.as:916` is the **common** case, not the exception.
-* claim 11's 24 Hz clock is **confirmed by frame**, so its PARTIAL grade is under-confident and
-  can be raised to HELD — but on evidence the surveyor said did not exist.
-* the 15.0 Hz of NF-1 is therefore the **capture rate of both uploads**, not the game's. This
-  matters more than it sounds: **every animation cadence ever measured off these two videos was
-  sampled at 15 Hz against a 24 Hz source and is under-resolved by 37%.** The ledger's "15fps
-  pose latch" is a correct description of the *video* and a wrong description of the *game*.
+**(b) "the 690-tall rect is container chrome, not play area" is wrong.**
+`reference/decompiled/shs3_android/scripts/GameEngine.as:269-312`:
 
-### NF-3 (A1) — what the kill beat LOOKS like was never opened.
-
-`reference/frames/session24/reach-A28-forest-duel/ev2_S3_wintint_hz031.png` (1100×630, viewed
-whole at ×0.87): a **flat saturated red field** with **every actor rendered as a pure black
-silhouette** — fighters, kasa, blade wedge, grass line, all solid black, no interior detail.
-That is `ColorCode.blackColorTransform = new ColorTransform(0,0,0,1,0,0,0,0)` (`ColorCode.as:12`)
-applied stage-wide, i.e. **claim 6's compositing vocabulary caught in the act, from the frame
-side.** The surveyor gave the kill-beat as timings only and never looked at it.
-
-### NF-4 (A2, hardens claim 6) — the AS3 grep could not see timeline blend modes. I checked them; they are all off.
-
-An ActionScript grep cannot see a blend mode set in the Flash IDE — that lives in the
-`PlaceObject3` / `DefineButton2` tag flags. I checked the shipped **web** client:
-
-```
-$ grep -a -o -E "[a-zA-Z]*blendMode=\"[^\"]*\"" reference/extracted/payload.xml | sort | uniq -c
- 194 buttonHasBlendMode="false"
- 304 placeFlagHasBlendMode="false"
+```as3
+var originalWidth:int = 800;
+var originalHeight:int = 480;
+var originalHeightWithBar:int = 690;
+...
+if(newAspectRatio <= originalWithBarAspectRatio)
+{
+   originalAspectRatio = originalWithBarAspectRatio;
+   originalHeight = originalHeightWithBar;
+   StatsManager.stageShowingFriendBar = true;
+   if(OverworldHUD.instance != null) { OverworldHUD.instance.friendpanel.init(); }
+}
+...
+StatsManager.stageBaseHeight = originalHeight;
 ```
 
-**498 of 498 false, zero true.** And in the three decoded Android resource SWFs I parsed
-`PlaceObject3` flags directly: `115_Mobile_SHS3Resource` 0, `124_Mobile_ImageResource` 0,
-`120_Mobile_BGResource` 0 tags with `HasBlendMode`. Claim 6's answer ("none — normal alpha only")
-now holds for authored timeline content too, not just code.
+690 is the game's **own friend-bar layout mode**. When the window is at or below 800:690
+the client switches its base height to 690 and initialises `OverworldHUD.friendpanel` into
+the extra 210 px. That is client-drawn UI, not browser chrome. (Cross-lane: this is a
+meta-social / ui-hud fact nobody holds.)
 
-### NF-5 (A3, hardens claim 18) — the web client ships NO audio tags of any kind.
+**(c) There was no conflict to arbitrate.** The video is a fullscreen capture, and
+`GameEngine.as:190` hard-codes `stageMC.fullScreenSourceRect = new Rectangle(0,0,800*newScale,480*newScale)`.
+A fullscreen frame reading ~5:3 is the code doing exactly what the code says. Invoking
+"THE FRAME WINS" here is theatre — the frame *confirms* the payload. My own parse of the
+SWF header (`CWS v10, rect twips [0,16000,0,13800] = 800×690, framerate 24.0, framecount 2`)
+is the **loader/preloader** stage, which is why it carries the with-bar height.
 
-Beyond the 27 bindata blobs (I checked every magic: 19 UTF-8-BOM XML, `92_1t4648s0.bin` = GIF89a,
-5 name tables, 2 plain XML — zero `FWS`/`CWS`/`ZWS`), the **entire 329 MB ffdec export** of the
-web client contains no sound tag at all: `grep -o -E 'type="[A-Za-z0-9]*(Sound|Audio|MP3)[A-Za-z0-9]*"'
-reference/extracted/payload.xml` → **no matches**. The STILL_UNHELD is correct and now airtight.
-
-### NF-6 (A3, cite correction) — `reference/preservation/shs3.swf` is the loader, not the client.
-
-Claim 11 cites it as "the real web client". It is 164 KB with **frameCount 2** and is byte-adjacent
-to `shs3preloader.swf` (164,533 B); both parse to `CWS v10, rect 16000×13800 twips = 800×690,
-framerate 24.0`. The **actual client** is `shs3_payload.swf` (6.88 MB), and its ffdec export header
-independently says `frameRate="24.0" frameCount="6"` with `displayRect Xmax="16000" Ymax="13800"`.
-Substance unaffected — both agree on 24.0 and 800×690 — but the better cite is
-`reference/extracted/payload.xml` line 1 `<swf … frameRate="24.0" version="17">`.
-
-### NF-7 (open, A1 gap) — the gore system has NO frame corroboration in the 7,381-frame set.
-
-I scanned all 7,364 readable frames under `reference/frames/` for saturated-red blobs. Every
-high-red hit resolved to a **full-screen red freeze**, not a localised blood spray. Claim 9's
-40/20/20/20 split, the `deathnohead`/`deathinhalf` variants and the `pttl=24` droplets are held
-from bytes only; **no frame in the corpus has been shown to display them.** Not a refutation —
-the payload cite is solid — but the visual half of blocker ⑤ is still unopened, and the 15 Hz
-capture rate (NF-2) means a `pttl=24` (1.0 s) spray is only ~15 sampled frames wide.
+The re-basing advice ("HUD fractions taken off 16:9 video must be re-based on 800×480") is
+still right, and `StageManager.as:159` independently corroborates the 480 play height:
+`battleIntroBar.y = (480 - 80) / 2 * StatsManager.stageScale + ...`.
 
 ---
 
-## SCORE OPINION
+## What I re-derived and confirms (own artifacts, not the surveyor's word)
 
-The **84** is defensible on the audio/font/FX/shake/gore/kill-beat wins, which I reproduced.
-But two rebuild-facing numbers in it are wrong (`21-node rig`; `uniform 12-tick reaction`), one
-cross-lane structure was mislabelled as chrome (the **friend panel**), and the unit's own headline
-methodological claim ("no frame can arbitrate") is false against a 60 fps source that was on disk
-the whole time. **I would hold at 78–80 until R1–R4 are corrected in the journal**, then 84+ —
-NF-1/NF-2 genuinely *raise* claim 11 from PARTIAL to frame-confirmed, which is worth more than
-the deductions.
+**Audio — the strongest work in the survey, and it reproduces exactly.**
+I wrote my own decoder (scratchpad, no repo writes) implementing the `payload_decode.py`
+transform and ran it over the five CWS blobs:
 
-**Standing invariant, stated out loud as required:** in NF-1/NF-2 the payload (24 fps SWF header)
-and the frames (15 Hz visible content) appear to disagree. **I looked, and the frames win — and
-what they show, once measured properly, is that both are true**: the sim ticks at 24.0 Hz
-(6.000 s red freeze = 144 ticks) and the videos were recorded at 15 fps. The disagreement was
-never real; it was the surveyor's refusal to open the video that made it look real.
+```
+122_Mobile_SoundResource.bin  key 111  CWS v17  declared 29,631     inflated 29,623
+113_Mobile_MusicResource.bin  key 117  CWS v17  declared 1,402,685  inflated 1,402,677
+115_Mobile_SHS3Resource.bin   key 104  CWS v17  declared 1,040,857  inflated 1,040,849
+124_Mobile_ImageResource.bin  key 109  CWS v17  declared 1,908,237  inflated 1,908,229
+120_Mobile_BGResource.bin     key 103  (brute-forced)  CWS v17      inflated 4,412,340
+```
+
+Stage-0 finding **S0-5 is dead** — all five are recovered, not merely held-but-encrypted.
+Tag parse of `122`: 13 × `DefineSound`, all `MP3 / 11025 Hz / 16-bit / mono`; `SymbolClass`
+= `[(13,'punch'),(12,'fart'),(11,'hitmetal'),(10,'goodkoto'),(9,'slash1'),(8,'slash2'),(7,'die1'),(6,'refund'),(5,'die3'),(4,'slash3'),(3,'sumo'),(2,'die2'),(1,'deflect')]` — verbatim as claimed.
+I carved `slash1` myself and ran the system decoder: `afinfo` → `1 ch, 11025 Hz, .mp3 …
+576 frames/packet`, `estimated duration: 0.572000 sec`. Matches the surveyor's quote.
+
+`113`: 13 × `DefineSound`; the six safe/battle stems are **882,144 samples / 159,753 bytes
+each**, the four dungeon stems **504,288 samples / 91,529 bytes each** — bit-identical, so
+the phase-lock mechanism is real.
+
+**Correction to carry (new):** the SWF `DefineSound` sample count, not `afinfo`, is what
+Flash plays. `slash1` is **3,809 samples @ 11025 Hz = 0.345 s**, while `afinfo` estimates
+0.572 s from the raw MP3 stream. Timing an SFX to 0.572 s would be 66 % too long. Likewise
+the stems are `882144/11025 = 80.013 s` and `504288/11025 = 45.741 s`, not the quoted
+79.872 / 45.760. And labelling `battlechants`/`battledrums` as "overworld" stems fights the
+engine's own preset table, which routes them to battle presets.
+
+**Music engine** — `MusicManager.as:301` `sndTransform.volume -= 0.05;` · `:329` `+= 0.05;` ·
+`:206` `playPosition = int(this.scArray[this.TRACK_FLUTES].position);` · presets are boolean
+masks; `MusicManager.instance.update()` is driven from `GameEngine.as:923` inside the
+per-frame update. Verified. Count nit: there are **18** `presetsArray[MUSIC_*]` entries
+(17 non-empty plus `MUSIC_NONE`), and the constants are non-contiguous — ids 10 and 13 do
+not exist.
+
+**SFX contract** — `SoundManager.as` `playSlash`/`playDie` both `var dice:int = Math.random() * 3;`,
+`playHit` and `playHurt` are byte-identical bodies both fetching `"punch"`, every call a bare
+`sound.play()`. Verified verbatim.
+
+**Fonts** — parsed `DefineFontName` (tag 88) myself:
+`115` → id 12 `EPSON 太行書体Ｂ` "(C) 2000 SEIKO EPSON CORP.", id 61 `Adobe 고딕 Std B`,
+id 161 `MS UI Gothic 標準`, id 307 `Edo SZ` "2008 Vic Fieger";
+`124` → id 76 `Edo SZ` "2008 Vic Fieger" (27,878-byte `DefineFont3` — the full program).
+Verified. The third-party licence flag on Edo SZ is correct and should stay attached.
+
+**No blend modes — and I can make it stronger.** The grep result is right (sole hit
+`mx/core/IFlexDisplayObject.as:87-89`). But code is only half the surface: SWF authoring
+can set a blend on the `PlaceObject3` tag. I parsed every decoded container —
+`shs3_payload_decoded.swf` (4,051 tags), `shs3_android_payload_decoded.swf` (3,311),
+`115` (3,756), `124` (330), `113`, `122`, `shs3.swf`, `shs3preloader.swf` —
+and found **zero `PlaceObject3` tags anywhere**, therefore zero authored blend modes.
+The negative is now complete on both the code and the art side. (Nit: the claim says "all
+559 client classes"; `shs3_android/scripts/*.as` is 553 files at top level, 956 including
+`mx/`.)
+
+**Screen-shake, hitstop, kill-beat, hit-reaction, gore, blood, MD5 parity** — all read
+first-hand and all match:
+`StageManager.as` `startShake(shakeDuration, shakeAmt:int = 30)`, `shakeAmount = Math.min(screenShakeAmt,screenShakeCounter)`,
+snap-back at counter 0, and `doShake()` called *before* the `if(actionState != STATE_FROZEN)` gate;
+`STATE_FROZEN` assigned at exactly two sites (`:162`, `:212`), both one line after
+`battleIntroBar.init(action);`; zero grep hits for `hitstop|hitpause|freezeframe|slowmo|timeScale|hitFreeze`;
+`redFreezeCounter = 24 * 6` with `showWin()` at `== 24*5` and `showLose()` at `== 24*3`;
+`MCSPlayer` behead on `PART_hat`/`PART_head`/`PART_neck`, `damage *= 1.5`, `gotHitCounter = 12`;
+`EnemyGoblin.as` `dice = Math.random() * 5` → `<=1 / ==2 / ==3 / ==4` = **40/20/20/20**;
+`StatsManager.as:314 public static var censored:Boolean = false;`;
+`BloodParticleEmitter.as:18-26 pnumber=20 … panglevariance=10 pvel=6 pvelvariance=2 pgravity=0.6 pttl=24`;
+death rows in `108_1t4635s0.bin`: `death 38 · deathenemy 23 · deathnohand 25 · deathnohead 31 ·
+deathwitharrow 23 · deathbyarrow 21 · deathdowned 7 · deathinhalf 28` (eight, as claimed);
+MD5 pairing = **21 identical blobs, 14 of 18 AnimationData identical**, differing set
+exactly `{Ogre, Skills, Guardian, HumanSpear}`, and
+`bcfd658e79fafb41f52431afb7d10622` on both `99_MCSCharacter_HumanAnimationData.bin` and
+`108_1t4635s0.bin`.
+
+**The STILL_UNHELD is honest.** I brute-forced all 256 keys against all 27 web bindata
+files: zero FWS/CWS/ZWS signatures. The web payload really does not carry its audio.
+`clientVersion 0.682` confirmed at `StatsManager.as:30`.
+
+---
+
+## Frame-side additions the surveyor did not make
+
+**F1 — the post-kill freeze is visible in the footage.** Mean |Δ| between consecutive
+`duel_dense` frames (grey, play area, 0.1 s spacing) runs 0.4–4.6 during action, then
+collapses:
+
+```
+432.1  0.46   432.2  0.02   432.3  0.08   432.4  0.02   432.5  0.01   432.6  0.01   432.7  0.50
+```
+
+A ≥0.5 s near-total freeze immediately after the kill. Far too long for hitstop, and it
+follows a kill — so it reads as the `redFreeze` kill-beat. This is frame-side support for
+the `no-hitstop` negative, which the surveyor graded PARTIAL on grep alone.
+
+**F2 — blood is visibly a discrete particle spray, and it decays on roughly the coded
+clock.** Connected-component count of strong-red blobs in the 428.x kill burst
+(crop (600,680)–(860,860)):
+
+```
+428.1  32 blobs   428.2  25   428.3  15   428.4  15
+```
+
+and total strong-red pixels over the whole play area rise 1,999 → 9,717 and fall back to
+~4,100 across 427.4 → 428.4, i.e. an event ~1.0 s long. Consistent with `pnumber = 20`
+(two emitters on some death variants) and `pttl = 24` ticks at 24 Hz. Corroboration, not
+a measurement — video compression merges and splits droplets.
+
+**F3 — the fighter reads as clothed and bold-outlined, confirming the style bullet by eye.**
+Crop (900,600)–(1300,900) ×3: straw kasa, navy haori with a red trim stripe, cream obi with
+a wave pattern over an orange band, white hakama, all flat fills behind a heavy black
+outline. No gradients, no soft shadows on the character.
+
+---
+
+## Score
+
+The surveyor proposed 56 → 84. On my reading the audio/font/FX/shake/gore work fully earns
+its keep, but the **animation model is wrong in its central assertion** and both A1 claims
+fail. Motion is the unit's headline "Ready" slice; shipping a 21-node rig with no
+data-authored holds would look wrong in exactly the frames a 1:1 recreation is judged on.
+**76** is the defensible number until the hold-frame table is rebuilt and re-cited.

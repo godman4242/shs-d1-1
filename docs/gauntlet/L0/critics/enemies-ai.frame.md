@@ -1,236 +1,342 @@
 # L0 CRITIC — enemies-ai — LENS 4 (THE FRAME LENS)
 
-Blind review. I did not see the surveyor's reasoning, only its output. Every verdict
-below rests on an artifact **I** opened. Frames were cropped and upscaled before grading;
-crops are stated.
+Blind review. I did not see the surveyor's reasoning, only its 20-claim output. Every
+verdict below rests on an artifact **I** personally opened. Every frame was cropped and
+upscaled before grading; the crop is stated on every visual verdict.
 
-**Headline:** the unit is unusually strong. 20 claims, 14 survive intact, 1 correctly
-self-reports STILL_UNHELD. **5 are refuted** — one materially (a fabricated
-frame-vs-doc conflict that misapplies the §0 "frame wins" invariant), one materially
-(an over-generalised animation rule contradicted by the surveyor's own quote), three at
-minor severity. No fabricated cites found: every file, line and number I checked existed
-and said what was claimed. That is the important result.
+**Headline:** a strong unit. 20 claims — **16 survive**, **4 are refuted** (2 material,
+2 minor), and the 1 self-reported STILL_UNHELD is honest and correct. **No fabricated
+cites.** Every file, line number, count and verbatim quote I checked existed and said
+what was claimed, with one garbled quote (R3). That is the important result and it
+should be said plainly.
 
-Both A1 frames are real, both are 1024×576 (not 1080p — the fighter is ~140 px tall here,
-so I upscaled ×3 on crops and ×2 on full frames).
+The two refutations that matter are both **over-reach on a universal**, not invention:
+claim 2 manufactures a frame-vs-doc conflict that does not exist and misapplies §0's
+standing invariant; claim 3's "every hostile" is false for elites and bosses.
+
+⚠ **Frame geometry correction that affects every crop in this unit.** The frames under
+`reference/frames/zFtCaTO0_1M/` are **1024×576, not 1080p**. §0's "the fighter is ~270 px
+tall in a 1080p frame" does not apply here — the fighter is **~110–140 px** tall in these
+files. I upscaled ×2 on full frames, ×3–×6 on crops. Any agent reusing the surveyor's
+stated crop numbers on an assumed 1920-wide frame will crop the wrong region (this is
+exactly how R1(a) happened).
 
 ---
 
 ## REFUTED — MATERIAL
 
-### R1 · `enemies-ai/nameplate-level-4-bandit` — the "frame wins" invocation is manufactured, and the HP-1 chain is false
+### R1 · `enemies-ai/nameplate-level-4-bandit` — the "frame wins" invocation is manufactured
 
-Two separate failures.
+**My cite:** `reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg`, the surveyor's
+own crop `(340,320)→(900,480)` LANCZOS ×3, plus the full frame at ×2; and
+`reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:30-37,76-82`.
 
-**(a) The stated crop does not contain two of its own observations.** I reproduced
-`(340,320)→(900,480)` LANCZOS ×3 on `reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg`
-exactly. It contains the two kasa-hatted bandits and the red `BANDIT (4)` plates — and
-nothing else the claim lists. The gold `GUEST` label sits at **x≈205** in 1024-space,
-left of the crop's x0=340. `TERRITORY (22,51) / SECTOR (1,2)` sits at **y≈272–295**,
-above the crop's y0=320. Both are true **of the frame** — I confirmed them at ×2 full-frame —
-but neither is "visibly in the crop". Under this lens the crop *is* the cite.
+Two failures, one cosmetic and one load-bearing.
 
-**(b) The load-bearing half is refuted by code.** The claim asserts the frame's level 4
-*disagrees* with npcdata's authored lvl 10, that the frame therefore wins, and that this
-"routes that bandit through setLevel(4) and the ≤10 clamp to a real on-screen HP of 1."
-There is no disagreement to resolve:
+**(a) The stated crop does not contain two of its own listed observations.** I reproduced
+`(340,320)→(900,480)` ×3 exactly. It contains the two kasa-hatted bandits and the red
+`BANDIT (4)` plates — and nothing else the quote lists. Measuring in the real 1024-space:
 
-- `reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:34-37` — the level is read
-  from the **room-object property string**, not from npcdata:
-  `if(strArray.length >= 2) { this.lvl = strArray[1]; }`
-- `Obj_NPCAggro.as:73-80` — it is a **display string only**, and the health bar is
-  explicitly suppressed:
-  `this.npc.mcs.hideHealthBar();`
-  `if(this.lvl == 0) { setDisplayName(this.npcname, 10027008); } else { setDisplayName(this.npcname + " (" + this.lvl + ")", 10027008); }`
-  (`10027008` = `0x990000`, dark red — the plate colour in the frame, now code-held.)
-- `Obj_NPCAggro.as:62` spawns via `NPCManager.createRoomNPC(this.npcid,posX,posY,doChase)`.
-  `NPCManager.as:671` — `createRoomNPC(npcID:int, x:int, y:int, doChase:Boolean = false)`.
-  **No `lvl` parameter. `setLevel()` is never called on this path.**
-- `setLevel()` has exactly four call sites, all wave/quest spawns:
-  `NPCManager.as:879, 895, 910, 934` (`createEnemy` / `createFriend` / `createNeutral` /
-  `createObjective`, each guarded by `if(lvl != 0)`).
+| listed as "visibly in the crop" | actual position | inside `(340,320)→(900,480)`? |
+|---|---|---|
+| red `BANDIT (4)` ×2 | x≈365–445, x≈745–840 | **yes** |
+| gold `GUEST` | **x≈186–236** | no — left of x0=340 |
+| `TERRITORY (22,51)` / `SECTOR (1,2)` | **y≈272–295** | no — above y0=320 |
 
-So the `(4)` is a cosmetic per-placement override; the bandit keeps npcdata's lvl 10 /
-hp 15 and the ≤10 clamp never fires. Invoking **THE FRAME WINS** where the source
-explicitly authors the value is a misuse of the §0 invariant — it manufactures a conflict
-in order to resolve it, which is the inverse of what the invariant is for.
+Both absent items *are* real — I confirmed them on the full frame at ×2 — but under this
+lens **the crop is the cite**, and the claim also places the player at "x≈430" when he is
+at **x≈205**. That x≈430 is the giveaway: it is the position the player would occupy in a
+1920-wide frame. The surveyor graded a 1024-wide image with 1080p arithmetic.
 
-**What survives:** red all-caps nameplate with parenthesised level; gold `GUEST` for the
-player. Both verified by me at ×2 full-frame. The colour rule is now A2-held as well as A1-held.
+**(b) There is no frame-vs-doc disagreement, so §0's invariant does not apply.** The claim
+asserts the frame's level 4 *disagrees* with `npcdata`'s authored `<lvl>10</lvl>`, that
+"THE FRAME WINS over the npcdata statline on level", and that this "routes that bandit
+through setLevel(4) and the ≤10 clamp to a real on-screen HP of 1." The source shows the
+two numbers are not competing measurements of the same quantity:
 
-### R2 · `enemies-ai/telegraph-active-recovery-frames` — "every stance attack ships as three named parts" is false, and its own quote says so
+```as3
+// Obj_NPCAggro.as:30-37 — the overworld roamer's level comes from the ROOM OBJECT,
+// not from npcdata
+strArray = props.split(",");
+var npcidstr:String = strArray[0];
+if(strArray.length >= 2) { this.lvl = strArray[1]; }
+...
+// Obj_NPCAggro.as:81 — and this is literally the string on screen
+this.npc.mcs.setDisplayName(this.npcname + " (" + this.lvl + ")", 10027008);
+```
 
-Every **duration** in this claim is exact — I re-parsed
-`reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin` myself (158 `<anim>`)
-and summed all 18 `*AnimationData.bin` to **471**, matching. `heavyhorizontalslash_parta` d=6,
-`_partb` d=9 `l="1"`, `_partc` d=7; `balancedhorizontalslash` 4/9/7; `katanaattack` 10;
-`stabattack` 14; `downstab` 15; `ninjaslash` 8; `pullbackarrow` 9; `pullbackarrow_full` 15;
-`firearrow` 1; `arrownormalpose` 22. All verbatim.
+`npcdata`'s `<lvl>10</lvl>` is the **authored template level** — the denominator that
+`NPC.setLevel()`'s `factor = lvl / this.level` divides by. The `(4)` is the **instantiated**
+level, supplied per-placement by the room-object property string. `setLevel()` exists
+precisely to convert one into the other. Nothing disagrees; nothing needs to win.
 
-The **rule** is wrong. My parse of the 158 human anims:
+Invoking the standing invariant where no conflict exists is worse than not invoking it —
+it spends the invariant's authority on a non-event, and it teaches the next reader that
+`npcdata` is unreliable when it is not. **The invariant is for real conflicts. This is not
+one.** (Where a real one exists, I flag it — see N1.)
 
-- Only **16 anim families** use `_part` decomposition (48 part-anims total).
-- The part count is **not uniformly three**: `balancedjumpslash` and `heavyjumpslash` have
-  **5**; `punchcombo` has **4**; `jutsu_ground`, `jutsu_punch`, `jutsu_blow`, `stomp`,
-  `punchground` have **2**; the rest have 3.
-- Many attacks have **no decomposition at all**: `lighthorizontalslash` (d=3, single),
-  `downstab` (15), `stabattack` (14), `katanaattack` (10), `ninjaslash` (8),
-  `holdshieldstabattack` (10), `downstab_up` (10).
+Finally, "a real on-screen HP of 1" is **not visible in this or any frame**: no enemy HP
+numeral is ever rendered (claim 3 says so itself). It is a code inference presented inside
+an A1 quote as observed frame content. The mechanism is right; the artifact class is wrong.
 
-`lighthorizontalslash:3` appears in the surveyor's own quote field, directly contradicting
-the claim text above it. A port built on "every stance attack = parta/partb/partc" would
-invent a three-phase light-stance slash and three-phase katana/stab attacks the source
-does not have — the precise class of authoring error this gauntlet exists to catch.
+**What survives:** the red all-caps `NAME (level)` plate, the gold `GUEST`, and the format
+string. Those are real and I confirmed them — see N2, where I upgrade them from eyeballed
+colour to exact hex.
 
-The underlying finding — telegraph/active/recovery timing **is** authored, per-frame, and
-blocker ③'s first half is dead — stands.
+---
+
+### R2 · `enemies-ai/combat-hud-drops-the-nameplate` — "every hostile" is false for elites and bosses
+
+**My cite:** `reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg`, crops
+`(560,300)→(1024,500)` and `(250,300)→(620,500)` LANCZOS ×3, plus full frame ×2; and
+`reference/decompiled/shs3_android/scripts/MCSCharacter.as:1419-1437,1533-1556` +
+`EnemyElite.as:26,114`.
+
+**The observation is HELD — I verified it and it generalises further than the surveyor
+showed.** The two stated crops reproduce faithfully: dungeon brick, full-screen red
+near-death vignette, HUD `16/20` green / `15/15` blue / `CANNOT CHANGE STANCE` /
+`AUTO SLASH OFF`, gold `GUEST` over a player mid-swing with a pickaxe, a bare-chested
+bandit lunging from the left, and **five thin horizontal bars — four green, one dim tan at
+far right — carrying no name, no level and no numerals.** The bar count and colours are
+exactly right (the leftmost bar reads olive on the darkened full frame but is plainly green
+at ×3). I also confirmed it is not dungeon-specific: `seg-10/frames/frame_0016.jpg`
+(crop `(200,320)→(700,480)` ×4) shows an overworld archer taking a hit with **no plate and
+no bar**, while gold `GUEST` persists.
+
+**But the universal quantifier is wrong.** Elites and bosses carry a nameplate *during
+combat*:
+
+```as3
+// EnemyElite.as:26  (class sets isBoss = true in its constructor)
+mcs.setDisplayName(charname + " (" + lvl + ")", 16777215);   // 16777215 = #FFFFFF
+// EnemyElite.as:114, EnemyKanjiGuardian.as:59, EnemyClone.as:81/85,
+// EnemyPlayer.as:1339/1344 — same white name+(level) plate
+```
+
+`EnemySpearElite` is `ai` case 37 and `EnemyKanjiGuardian` is case 36 in the very dispatch
+the surveyor cites in claim 5 — these are wave-spawned combat enemies. A recreation built
+from claim 3 as written would strip the nameplate off every boss.
+
+**And the stated mechanism is wrong.** It is not a mode switch. `MCSCharacter` gates the
+name on the *string*, not on a UI state:
+
+```as3
+public function showHealthBar() : * {
+   addChild(this.healthBar); this.healthBar.visible = true;
+   if(this.displayName.text != "") { this.displayName.visible = true; }   // ← the gate
+   if(this.displayName.y > this.healthBar.y) { this.displayName.y = this.healthBar.y; }
+}
+public function hideHealthBar() : * {
+   this.healthBar.visible = false; this.displayName.visible = false;      // hides BOTH
+}
+```
+
+Ordinary wave trash never has `setDisplayName()` called on it at all, so `text` stays `""`
+and `showHealthBar()` silently leaves the plate hidden. Overworld roamers get
+`hideHealthBar()` *then* `setDisplayName(...)`, which is why they show a name and no bar.
+Same code path, opposite results, driven entirely by whether a name was ever assigned.
+Full mechanism and the 60-px bar width in **N3**.
 
 ---
 
 ## REFUTED — MINOR
 
-### R3 · `enemies-ai/ai-id-to-class-map` — class count overstated by 3; a second dispatch missed
+### R3 · `enemies-ai/engagement-ranges` — the `EnemySpear.as:192` quote is not verbatim
 
-I counted `NPCManager.as:516-636` myself: **38 `case` labels**, but only **34 distinct
-classes** (`EnemyPlayer`×3, `EnemyWolf`×2, `EnemySpearElite`×2 are repeats). Of those 34,
-**3 are `Friendly*`**, so it is **31 `Enemy*` + 3 `Friendly*`**, not the claimed
-"34 named Enemy* classes plus 3 Friendly*" (=37). The score rationale's "38 behaviour
-classes are unwritten work" is likewise 34.
+**My cite:** `reference/decompiled/shs3_android/scripts/EnemySpear.as:192` and `:204`.
 
-Also missed: the 38-case switch is **not the only dispatch**. `NPCManager.as:671`
-`createRoomNPC()` — the path every overworld enemy takes — runs its own independent
-`if/else` chain on `xml.ai` (`ai==8` → `EnemyWolf`, `ai==11||16` → `EnemyWolfAlpha`,
-`ai==12` → …). A recreation that models only the switch will miss the overworld branch.
+Claimed as a verbatim quote of `:192`:
 
-Core structural point — `<ai>` indexes a behaviour class, not a difficulty tier, and the
-shipped 3-tier `AI_TIERS` is the wrong *shape* — **holds**, and is the most valuable claim
-in the unit.
+```
+EnemySpear.as:192  if(playerX - mcs.x < 400 && mcs.y - playerY < 10 && int(Math.random() * 4) == 0)
+```
 
-### R4 · `enemies-ai/stagger-is-a-counter-not-an-anim` — `gotHitCounter` is i-frames, not a "hit-lockout"
+Actual file contents:
 
-The number is right (`NPC.as:462` `this.gotHitCounter = 12;`) and the negative half is
-right — I confirmed **no** `stagger`/`flinch`/`gothit` anim among the 158 human names; only
-the launch/knockdown chain (`gotlaunchedupwards_parta/b/c` 4/9/7, `gotlauncheddowned` 18,
-`downedup` 4, `downedup2` 25, `deathdowned` 7). All verified.
+```as3
+:192   if(mcs.x - playerX < 400 && mcs.y - playerY < 10 && int(Math.random() * 4) == 0)
+:204   if(playerX - mcs.x < 400 && mcs.y - playerY < 50 && int(Math.random() * 4) == 0)
+```
 
-But "hit-lockout" is the wrong mechanic. I grepped every `canHit()` call site: all eleven
-are in **NPCManager's hit-detection**, in the form `!enemy.isDead() && enemy.canHit() &&
-enemy.testHit(thing)` — `NPCManager.as:1222, 1263, 1325, 1414, 1434, 1454, 1494, 1513,
-1534, 1564, 1579`. `gotHitCounter` gates whether the enemy **can be hit**, i.e. 12 frames
-of damage immunity. It does not stop the enemy acting. A porter reading "hit-lockout"
-implements an action lock — a real behavioural divergence. The `/ i-frames` hedge in
-`lane_impact` is the correct reading; the claim text is not.
+The quote is a **hybrid**: the operand order (`playerX - mcs.x`) is from `:204`, the
+`< 10` is from `:192`. The two lines are the facing-left / facing-right mirror pair and
+their vertical bands genuinely differ (10 vs 50) — so the merge erases a real asymmetry.
+Every *number* in the claim survives (400 px approach, 1-in-4 gate, and I re-verified
+`aiCounterMax = 24` at `NPC.as:22`, `checkAITrigger` at `:285-294`, Wolf `100>d>50` /
+`100–250` 1-in-3 at `EnemyWolf.as:255-260`, Archer `<100` at `EnemyArcher.as:202,219`).
+Minor: content sound, quote not quotable.
 
-The surveyor's own `PARTIAL` verdict and its call for frame-side confirmation are honest
-and correct.
+### R4 · `enemies-ai/creature-and-boss-roster` — three of nine roster names contradict the supplied string table
 
-### R5 · `enemies-ai/arrow-arc-physics` — the launch angle is not fixed at 30°
+**My cite:** `reference/extracted/npcdata.xml:1844, 2064, 2395` resolved through
+`docs/gauntlet/L0/index/strings.json` (the table S0-3 resolved *for* this run).
 
-The solve is quoted exactly (`EnemyArcher.as:271-302`), `GRAVITY = 3` (`Projectile.as:8`),
-`ttlMax = 48` (`Projectile.as:22`), `±4` scatter, and the knockdown gate (>50 → 1-in-2,
->20 → 1-in-3, >10 → 1-in-4, else never) are all verbatim-correct. I read all of them.
+All nine **statlines are exact** — I checked every cited line. The **names are not**:
 
-"A fixed 30° launch (0.866 = cos30)" is wrong. `0.866` only scales the **horizontal**
-speed: `velA = sqrt(g·dx/0.866)`, `velXa = 0.866·velA = sqrt(0.866·g·dx)`. The vertical
-component is then **solved** from the ballistic constraint to pass through the target
-(`velYa = (targetY - fireY - 0.5·g·t²)/t`), so the true launch angle `atan(velYa/velXa)`
-varies with range and height difference. Firing at a literal 30° reproduces neither the
-trajectory nor the hit rate.
+| npcdata | `<name>` id | resolved string | claim says |
+|---|---|---|---|
+| id 67, lvl 15, hp 100 | 5056 | **"Wolf"** | "Wolf Alpha" |
+| id 77, lvl 80, hp 40 | 5071 | **"Oni"** | "Ogre" |
+| id 89, lvl 30, hp 150 | 5073 | **"Undead"** | "Zombie" |
 
-Minor: `rotation = atan(velY/velX)*57.2727+180` sits **inside** `if(breakable)`
-(`ArrowProjectile.as:53`), not unconditionally.
+(The other six check out: 5090 "Tadao", 5107 "Amaya", 5118 "Mad Cultist", 5119 "Guardian",
+5058 "Hiroshi", 5011 "Bandit".) The surveyor substituted the **AS3 class** name
+(`EnemyOgre`, `EnemyZombie`) for the **display** name. Ordinarily pedantic — but claims 2
+and 3 just established that these strings are **rendered on screen in a nameplate**, so a
+recreation authoring "Ogre (80)" over a mob the original labels "Oni (80)" is a visible
+fidelity miss. S0-3 resolved this table precisely so it would not have to be guessed.
+
+Second, smaller point: `hp 800` / `hp 1000` for the bosses are **floors, not fight HP** —
+`EnemyElite.setLevel()` overwrites `maxhp` whenever its dynamic target exceeds it (N4).
 
 ---
 
 ## HELD — verified first-hand
 
-| claim | what I opened | result |
+Each re-derived from the artifact, not taken on trust.
+
+| claim | what I ran / opened | result |
 |---|---|---|
-| `level-stat-formula` | `NPC.as:239-260` | verbatim match incl. `×0.9` at ≤20, 1/1/1 clamp at ≤10, `xp = lvl*2+20` |
-| `per-enemy-hp` | my `grep -c "<hp>"` → **403**; `npcdata.xml:3121-3128` | exact; attack 406, defense 394 also confirmed |
-| `one-statline-six-movesets` | `npcdata.xml:273-465` | ids 11–15 identical (name 5011, lvl 10, hp 15) with `<ai>` 1,2,3,4,5. *I read through id 15; id 16/ai 9 not directly opened.* |
-| `engagement-ranges` | `NPC.as:22`, `:285-294`; `EnemySpear.as:192`; `EnemyWolf.as:255,259`; `EnemyArcher.as:202,219` | constants and `aiCounterMax=24` confirmed. Trivial: quoted `playerX - mcs.x < 400`; line 192 is `mcs.x - playerX < 400` (the faceLeft branch). Constant holds. |
-| `spawn-geometry` | my `grep -c "<wave>"` → **118**; `NPCManager.as:300-320` | `checkNextWave` gates on all `enemyList` dead — verbatim. **Strengthened below (N3).** |
-| `undead-rule-is-not-reflect` | `EnemyZombie.as:494-518`; `NPC.as:451-453`; my `grep -ril reflect` → **0 files** | held. Premise-refutation is correct and saves a wasted measurement pass. |
-| `no-squad-coordination` | `NPCManager.as:1360-1390` | verbatim match |
-| `no-per-enemy-chi-or-speed` | my `grep -c` → `<chi>` 0, `<speed>` 0; `XMLNpc.as:157,181` | held; correctly framed as work *deleted*, not added |
-| `creature-and-boss-roster` | all seven cited lines: `npcdata.xml:1844, 2064, 2395, 3442, 3842, 4072, 4111` | every statline exact (67/15/100, 77/80/40, 89/30/150, 165/10/200, 186/30/600, 800/23/800, 802/10/30), and each `<ai>` matches its claimed class in the switch |
-| `kill-rewards…` | `NPC.as:166-190` (calcXP) verbatim; my `grep -c` → 66 `<reward>`, 131 `<loot>`; `NPC.as:799-830` | held |
-| `boss-names-are-procgen` | decoded the three name bins myself (ASCII/CRLF): samurai **36** incl. `Hachisuka`,`Honda`; male **398** incl. `Kano`; female **291** incl. `Shizuka`; `XMLNpc.as:582-590` | held. Zabuza/Hotaru → 0. Prevents a real authoring error. |
-| `shipped-config-hp150-is-stale` | ran `npx vitest run tests/config-values.test.ts` → **57 passed**; `tests/config-values.test.ts:466-474` asserts `hp: 1`; `git log -S"hp: 150"` → `335e615` | held |
-| `tengu-is-not-in-the-payload` | my greps → 0 across all five extracted files, **0 of 559** android scripts | held — **and stronger than claimed**, see N6 |
-| `web-build-parity` (STILL_UNHELD) | `ls shs3_payload/scripts` → **652**, `grep -ci "enemy\|npc"` → **0**; android 559; `StatsManager.as:30` → `0.682` | correct, honest, and the right thing to cap the score on. Endorsed. |
-
-### `combat-hud-drops-the-nameplate` — core holds, two over-reads
-
-I opened `seg-11/frames/frame_0020.jpg` at ×2 full and cropped `(560,300)→(1024,500)` ×3.
-The core assertion — **in combat every hostile carries a bare thin HP bar with no name,
-no level, no numerals; only the player keeps a gold `GUEST`** — is confirmed. HUD reads
-16/20 green, 15/15 blue, `CANNOT CHANGE STANCE`, `AUTO SLASH OFF`. Not refuted.
-
-Two corrections:
-
-1. **"Two kasa-hatted archers with drawn longbows stand at the right" is wrong.** At ×3
-   the near archer is **bare-headed** — visible topknot, no hat. Only the far-right archer
-   wears a kasa. The figure between them wears a **rounded domed helmet** with a
-   shield/armband and is not an archer at all. Two archers, one kasa.
-2. **"five thin HP bars float above five separate hostiles" is an over-read.** The
-   bar→hostile mapping is not resolvable at this resolution, and one bar sits beside the
-   `GUEST` label. Compare `seg-10/frames/frame_0021.jpg` crop `(400,290)→(700,340)` ×6,
-   where a green bar **directly abuts** the `GUEST` text. Bar ownership is undetermined.
-
-The claim was also graded from a single frame. I corroborated it in a **second, independent
-scene** — see N2/N3.
+| `level-stat-formula` | `NPC.as:239-260` | **verbatim exact**, incl. `factor *= 0.9` at `lvl<=20`, `xp = lvl*2+20`, and the `lvl<=10 → 1/1/1` clamp. See N4 for the boss override. |
+| `per-enemy-hp` | `grep -c` on `npcdata.xml`; lines 3121-3128 | `<hp>` **403**, `<attack>` **406**, `<defense>` **394**, `<npc>` **495**. Line cite exact. |
+| `ai-id-to-class-map` | `NPCManager.as:516-634` | **38 `case` labels**, 0–37, exactly as quoted. |
+| `one-statline-six-movesets` | `npcdata.xml:273-465` | ids 11–16 all `hp 15`; `<ai>` = 1,2,3,4,5,9 at lines 280/315/352/389/426/463. Exact. |
+| `telegraph-active-recovery-frames` | counted `<anim ` across all 18 `*AnimationData.bin` | **471 total**, **158** in `99_MCSCharacter_Human…`. `heavyhorizontalslash_parta d=6 / _partb d=9 l="1" / _partc d=7`; `balanced… 4/9/7`. Exact. |
+| `stagger-is-a-counter-not-an-anim` | `NPC.as:462`, `:296-299`; grep over human anim names | `gotHitCounter = 12`, `canHit(){return gotHitCounter==0}`. **Zero** stagger/flinch/gothit/hurt anims. PARTIAL is the right self-verdict. See N5. |
+| `spawn-geometry` | `grep -c` on `questdata.xml`; `NPCManager.as:300-320` | `<wave>` **118**, `<enemy>` **169**, `<friend>` **70**. `checkNextWave()` gates on every `enemyList` entry dead. Exact. |
+| `arrow-arc-physics` | `EnemyArcher.as:271-302`; `Projectile.as:8,22` | **verbatim exact**: `GRAVITY=3`, `0.866`, `fireY = mcs.y - 60`, `velYa += Math.random()*8 - 4`, `ttlMax = 48`, knockdown ladder `>50` 1-in-2 / `>20` 1-in-3 / `>10` 1-in-4. |
+| `undead-rule-is-not-reflect` | `grep -ril reflect` over 559 classes → **0**; `EnemyZombie.as:493-518`; `NPC.as:451-453` | Held, and the premise-refutation is correct. Bonus: a hit on `PART_weapon` returns `damage = 0` outright — a parry the claim omits. |
+| `shipped-config-hp150-is-stale` | `npx vitest run tests/config-values.test.ts` | **`Test Files 1 passed / Tests 57 passed`**; `ENEMY_BASE.hp: 1` at `tests/config-values.test.ts:466`; `git log -S"hp: 150"` → `335e615`. Exact. |
+| `boss-names-are-procgen` | grep over `85/87/88_NameGenerator_*.bin` | "Hachisuka" ✓ and "Honda" ✓ in samurai family names, "Kano" ✓ male, "Shizuka" ✓ female. **"Zabuza" 0, "Hotaru" 0** across all of `reference/extracted/` + the Android tree. |
+| `tengu-is-not-in-the-payload` | grep over 4 XMLs + `ui_strings.txt` + whole decompile | **0 everywhere.** I also checked `docs/gauntlet/L0/index/strings.json` (the surveyor did not) → **0**. Stronger than claimed: Tengu is absent from the resolved string table too. |
+| `no-squad-coordination` | `NPCManager.as:1360-1390` | **verbatim exact**, incl. the `pos > -10 && pos < stageWidth + 10` bound. |
+| `no-per-enemy-chi-or-speed` | `grep -c "<chi>\|<speed>" npcdata.xml`; `XMLNpc.as:150-182` | **0 and 0.** Defaults confirmed. A correct "this system does not exist" answer. |
+| `kill-rewards-…` | `npcdata.xml:36-46`; `NPC.as:166-190, 94-126` | `<reward>` **66**, `<loot>` **131**; `calcXP` verbatim. Minor: `getGreyLevel()` has **four** branches (`<6`, `<40`, `<60`, else), not the one quoted. |
+| `web-build-parity` | `ls shs3_payload/scripts \| wc -l` → **652**, `grep -ci enemy\|npc` → **0**; android **559**; `StatsManager.as:30` → `0.682` | Held. Honest and correct STILL_UNHELD. One qualification: the sentence "nothing on disk establishes that v0.717 kept these numbers" is now **false** — the frames are on disk and I used them to establish two (N1, N2). The surveyor's own escape clause ("or a frame measurement corroborates that specific number") anticipated this, so I do not score it as refuted. |
 
 ---
 
-## NEW FINDINGS
+## NEW FINDINGS — what the surveyor missed
 
-**N1 — the nameplate/bar split is a spawn-path split, not a HUD mode switch.**
-`Obj_NPCAggro.as:73-80` gives overworld roamers `hideHealthBar()` + a permanent
-`setDisplayName(name + " (" + lvl + ")", 0x990000)`. Wave-spawned combat NPCs
-(`NPCManager.createEnemy`) get the inverse: a bar, no name. The aggro object carries its
-own `waveXML` (`Obj_NPCAggro.as:38-41`), so on trigger the billboard enemy is replaced by
-a real wave. Code and frame agree exactly — which is why the "mode switch" reads correctly
-on film. Model it as two spawn paths, not one HUD that toggles.
+### N1 · A1 — floating damage numerals exist, and a v0.717 frame measures the `lvl<=10` clamp at **damage = 1**
 
-**N2 — the readout rule holds outside the dungeon.** Same bare-bar-no-name behaviour in
-the outdoor field: `seg-10/frames/frame_0020.jpg` and `frame_0021.jpg`. The transition is
-visible across `seg-10` frames 0013→0021: nameplates up (0013–0015, `BANDIT (4)` still
-lit while the `PREPARE YOURSELF!` bubble fires) → combat → bars, no names.
+**Cite:** `reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0018.jpg`, crop
+`(450,300)→(900,470)` LANCZOS ×4; HUD strip `(30,480)→(330,560)` ×4 across frames
+0013 / 0016 / 0017 / 0018 / 0019 / 0020.
 
-**N3 — the drop-in-from-above spawn rule is VISIBLE ON FILM.** The surveyor asserted this
-from AS3 only. `reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0020.jpg`, crop
-`(400,150)→(1024,470)` LANCZOS ×2: a blue-clad kasa-hatted enemy is **fully airborne**,
-roughly a body-height above the reed line, mid-descent, with its green HP bar tracking
-above it. Under this lens that promotes `posY - Math.random()*200` from A2-only to **A2+A1**
-and makes it safe to stamp.
+A **black floating "1"** rises above the player at the instant of a hit, beside the gold
+`GUEST`. The player HUD reads:
 
-**N4 — `EnemyZombie` has a weapon-parry the claim missed.** Same switch,
-`EnemyZombie.as:502-505`: a hit landing on `PART_weapon` sets `gotHitFlag = false`,
-`damage = 0` and `return false` — the hit is eaten entirely. Sits alongside the
-half-damage-unless-behead gate.
+| frame | 0013 | 0016 | 0017 | **0018** | 0019 | 0020 |
+|---|---|---|---|---|---|---|
+| HP | 20/20 | 20/20 | 20/20 | **19/20** | 18/20 | 18/20 |
 
-**N5 — the `<ai>` dispatch has two tables, not one.** See R3: `NPCManager.as:671`
-`createRoomNPC()` dispatches independently of the 38-case switch.
+The HUD ticks 20→19 **on exactly the frame carrying the floating "1"**. So: floating damage
+numerals are a real HUD element (black, above the damaged actor, not mentioned anywhere in
+the ledger or the 20 claims), and a **level-4** roaming Bandit deals exactly **1** damage.
 
-**N6 — Tengu is absent from the *resolved* string table too.** The surveyor grepped the
-raw XML, where names are numeric ids — leaving open the objection "Tengu is behind an id".
-I closed it: `grep -ic tengu` over `docs/gauntlet/L0/index/strings.json` and
-`resolved_names.json` (the 2,533-entry S0-3 table) → **0 and 0**. Tengu is not a hidden id.
-The Ready-taxonomy bullet over-claims a faction. `Guardian` is real (`NPCManager.as:628`,
-`npcdata.xml:4111` id 802 lvl 10 hp 30 ai 36, plus a dedicated 16-anim
-`102_MCSCharacter_GuardianAnimationData.bin`).
+That is precisely what `NPC.as:253` predicts — `if(lvl <= 10) { this.damage = 1; … }` —
+**measured from a web-build v0.717 frame against an Android v0.682 constant.** This is the
+first frame-side corroboration of claim 1 and it materially reduces claim 20's dominant
+residual risk *for this constant*. It also does honestly what R1(b) tried to do
+rhetorically.
+
+### N2 · A2 + A1 — the nameplate colour system is **five** colours, not two, and the frame confirms the AS3 constants
+
+Claim 2 offers "hostile red / player gold". The source has five, and three are confirmed
+frame-side by peak-saturation sampling (JPEG-smeared, so near-matches):
+
+| role | AS3 constant | hex | frame peak I measured | where |
+|---|---|---|---|---|
+| hostile aggro roamer | `10027008` | `#990000` | `#8A0300` | `Obj_NPCAggro.as:78,81` · seg-10 f0013 |
+| player | `16763904` | `#FFCC00` | `#EDC728` | `MCSPlayer.as:245` · seg-10 f0013 |
+| procgen civilian | `39423` | `#0099FF` | `#1A97F4` | `Obj_NPCProcGen.as:51` · **seg-18 f0006** |
+| elite / boss / clone / PvP | `16777215` | `#FFFFFF` | — | `EnemyElite.as:26,114`, `EnemyKanjiGuardian.as:59`, `EnemyClone.as:81` |
+| quest-marked civilian | `12627019` | `#C0AC4B` | — | `Obj_NPCProcGen.as:60` |
+
+The blue is not theoretical: `reference/frames/zFtCaTO0_1M/seg-18/frames/frame_0006.jpg`,
+crop `(230,320)→(470,400)` LANCZOS ×6, shows two overlapping **blue** plates reading
+`KAWASHI I…` and `…SUGU` flanking the gold `GUEST`. A recreation built on claim 2 alone
+would paint townsfolk hostile-red.
+
+This is also a **second independent web/Android parity corroboration**: v0.717 frames match
+v0.682 colour constants to within JPEG error.
+
+### N3 · A2 — the nameplate/health-bar coupling, and the bar is **60 px** at full HP
+
+The mechanism behind both R1 and R2, worth banking as a unit:
+
+- `hideHealthBar()` hides **bar and name together**.
+- `showHealthBar()` re-shows the name **only if `displayName.text != ""`**.
+- `setDisplayName(str, color)` with `str != ""` sets `displayName.y = healthBar.y` when the
+  bar is visible, else `healthBar.y + 10` — so an un-barred overworld plate sits 10 px lower.
+- `NPC.updateHealthBar()` calls `hideHealthBar()` at `HP <= 0`, `showHealthBar()` otherwise.
+- **`MCSCharacter.updateHealthBar(fraction)` → `healthBar.bar.width = fraction * 60`.**
+  The enemy HP bar is **60 px wide at full**, a hard number for the recreation that appears
+  in no claim and no ledger row.
+
+Cite: `MCSCharacter.as:1419-1447`, `NPC.as:1182-1194`, `Obj_NPCAggro.as:74-82`,
+`Obj_NPCProcGen.as:49-51`.
+
+### N4 · A2 — there is a **second** level→stat formula, and it is a dynamic rubber-band that rescales bosses off the *player's* stats
+
+This is the largest thing missed, and it partly overturns ledger blocker ①'s framing
+("*the* enemy level→stat formula"). `EnemyElite` (parent of the elite/boss branch,
+`isBoss = true`, `aiCounterMax = 12`) **overrides `setLevel` entirely** — no `0.9` factor,
+no `lvl<=10` clamp, `xp = lvl*5 + 45` not `lvl*2 + 20`:
+
+```as3
+// EnemyElite.as:22-75
+var lvldiff:int = lvl - playerLVL;
+var hitsToKillBoss:int   = 10 + lvldiff;   if(hitsToKillBoss <= 3)   hitsToKillBoss = 3;
+var hitsToKillPlayer:int = 18 - lvldiff;   if(hitsToKillPlayer <= 0) hitsToKillPlayer = 1;
+var playerhit:int = playerATK - defense;
+if(playerLVL <= 10 && playerhit < 1)            playerhit = 1;
+else if(playerLVL <= 20 && playerhit < playerLVL/8) playerhit = playerLVL/8;
+else if(playerLVL <= 30 && playerhit < playerLVL/6) playerhit = playerLVL/6;
+else if(playerhit < playerLVL/4)                    playerhit = playerLVL/4;
+var bossHP:int = playerhit * hitsToKillBoss;
+if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); }
+var bosshit:int = playerHP / hitsToKillPlayer;
+var bossATK:int = bosshit + playerDEF;
+```
+
+Boss HP is set so the player needs `10 + lvlDiff` hits (floor 3); boss ATK is set so the
+player dies in `18 - lvlDiff` hits (floor 1). Authored `<hp>` is only a floor.
+
+**This is the missing source for the repo's own INFERRED derivation.**
+`src/config/combat-sim.ts` documents `ENEMY_BASE` as *"B4 makes hp and minDamage DERIVED at
+spawn from the player's own stats (`enemyHP = effPlayerDmg × K`) … the pre-scale floor the
+source's `max(scaledBase, …)` compares against"* — and calls it INFERRED with a standing
+veto. `bossHP = playerhit * hitsToKillBoss` **is** `effPlayerDmg × K`, and
+`if(bossHP > maxhp)` **is** the `max()`. K is now known: `K = 10 + (enemyLvl − playerLvl)`,
+floored at 3. That INFERRED comment can be promoted to A2 (labelled v0.682-ANDROID).
+
+### N5 · A2 — eight death animations keyed to *how* the killing blow landed
+
+`99_MCSCharacter_HumanAnimationData.bin` carries, with durations:
+`death 38 · deathenemy 23 · deathinhalf 28 · deathnohead 31 · deathnohand 25 ·
+deathbyarrow 21 · deathwitharrow 23 · deathdowned 7`.
+
+Dismemberment-specific deaths — cut in half, beheaded, disarmed, arrow-killed. This is the
+render-side partner of the `behead → damage *= 1.5` rule (claim 12) and of the archer
+knockdown gate (claim 11), and it is a far richer death system than the single
+`deathdowned 7` the surveyor reported. Bears on art-anim as much as on enemies-ai.
 
 ---
 
-## SCORE
+## Score
 
-**78 is defensible; I would land 74.** The blocker work is genuine — ①②④⑤ are dead and I
-verified the artifacts behind each. But R1 removes the frame-side corroboration the score
-leaned on for the level formula (the frame shows a *display* level, and the on-screen HP-1
-consequence is unproven), and R2 turns the ③ animation win from "authored rule" into
-"authored durations, no uniform rule". The four stated caps are the right four, and the
-v0.682-vs-v0.717 parity risk is correctly identified as dominant — `shs3_payload/scripts`
-really is 652 classes with **zero** Enemy*/NPC* gameplay code. Nothing here should be
-stamped CONTRACT on Android bytecode alone. Label every ported value **v0.682-ANDROID**.
+The surveyor scored **78** against the ledger's 34. I do not contest the direction — five
+blockers really do resolve on disk and I verified each one. I would land **72–75** rather
+than 78, for three reasons the surveyor did not price in:
+
+1. **Blocker ① is closed on the trash roster but half-open on bosses.** N4 shows a second,
+   rubber-banding formula the unit never mentions. Two formulas, one found.
+2. **The nameplate work is less finished than claims 2–3 imply** — five colours not two, a
+   mechanism that is a string-gate not a mode switch, and a bar width nobody had.
+3. **The Android-parity discount is real but now over-charged.** N1 and N2 discharge it for
+   two constants using v0.717 frames, which is the surveyor's own stated unlock condition.
+   Parity is no longer a uniform tax on every number.
+
+**No claim in this unit was fabricated, and that is worth more than the score.**

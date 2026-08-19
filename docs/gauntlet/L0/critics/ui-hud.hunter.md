@@ -1,359 +1,477 @@
-# GAUNTLET L0 — HUNTER critic: **ui-hud** (Pass 2 output under review)
+# GAUNTLET L0 — HUNTER critic: **ui-hud**
 
-Blind review. I did not see the surveyor's reasoning. Every verdict below cites an artifact
-**I opened myself**. Lens 2 (hunter): I went after every STILL_UNHELD / PARTIAL and tried to find it.
+Blind review under §0. I did not see the surveyor's reasoning. **Every verdict below cites an
+artifact I opened myself**, and every number I state I re-derived — by parsing the blob, by
+simulating the loop, by measuring the frame with a threshold sweep, or by opening the sprite.
+Lens 2 (hunter): I went after every STILL_UNHELD / PARTIAL and tried to find it.
 
-**Headline:** 8 of 13 claims survive. 5 are refuted — 3 material, 2 minor. The single most important
-thing this review adds is that **the obfuscated web payload decompile is readable enough to test
-build parity directly**, and when you do, one of the surveyor's claims breaks and four others get a
-strictly better cite than the one they carry.
+**Headline finding — the one thing this review adds that nothing else in the lane has:**
+`reference/extracted/sprites/` (827 `DefineSprite` exports, 39 of them class-named) and
+`reference/extracted/shapes/` (1,822 SVGs) are **on disk, from the WEB payload**, and they contain
+exactly the HUD art claim 13 says is "not on disk" — including a **802×481 `PauseScreen` that
+renders the words GAME PAUSED**, a **56×55 / 51×51 `skillSlotBG` in 5 states**, the **800×480
+7-frame `hurtred` vignette** that the ledger calls *uncatalogued*, and the **3 stance rings at
+#4242FF / #996600 / #990000**. Claim 13 is refuted, and so is ledger blocker ②'s "vignette ramp".
 
----
+**Second finding — a correctness hit the survey did not catch.** The web build (v0.717, the
+build in the videos) and the Android build (v0.682) **diverge inside `SkillSlotButton.update()`**:
+Android truncates the cooldown sweep, web rounds up. That single line disproves claim 7's
+licence sentence ("retires the 'android parity not established' caveat for the combat HUD").
 
-## 0. The unlock: the web build is NOT a black box
-
-The surveyor treated `reference/decompiled/shs3_android/` as the only AS3 on disk and used a frame
-match to argue Android→web parity. But `reference/decompiled/shs3_payload/scripts/` (652 files) is the
-**web v0.717** decompile. Class names are obfuscated (`§1t113s0§.as`) — but **numeric literals and
-public member names survive**, so a grep for a distinctive constant identifies the class outright.
-
-| web file | line | content | = android class |
-|---|---|---|---|
-| `§1t113s0§.as` | 170–171 | `_loc1_.x = 760 - _loc2_ * 60;` / `_loc1_.y = 450;` | `BattleUI` |
-| `§1t113s0§.as` | 160–161 | `getString(619)` / `getString(620)` | `BattleUI` autoslash labels |
-| `§1t5184s0§.as` | 226 | `Math.ceil(this.cooldown / this.cooldownmax * 12) + 1;` | `SkillSlotButton` |
-| `§1t5474s0§.as` | 46/49/53/105/136/147 | `button.x = 340` / `msgText.y = 187.5` / `220` / `button2.x = 425` / `button.x = 270` | `DialogBox` |
-| `§1t6497s0§.as` | 89/113 | `if(this.counter >= 17)` / `this.white.alpha -= 1 / 24;` | `ScreenTransition` |
-| `§1t1540s0§.as` | 271–273 | `_loc2_ = 800; _loc3_ = 480; _loc4_ = 690;` | `GameEngine.resizeHandler` |
-| `§1t5186s0§.as` | 26 | `addFrameScript(0,this.frame1,6,this.frame7,10,this.frame11);` | `WinUI` |
-| `§1t6407s0§ / §1t6422s0§` | 37–39 / 40–42 | `getString(396/492/752)` | `OptionsUI` (**two** variants) |
-
-Consequence: for most of this lane the "android parity not established" caveat can simply be
-**deleted by citing the web file** — no frame inference needed. And where the two builds *differ*,
-you can now see it. They do differ. See F2.
+Score view: I would hold ui-hud at **88** — the residual the surveyor priced (symbol geometry
+unexported) is smaller than he thought, but the parity licence he claimed is not earned, and the
+two cancel.
 
 ---
 
-## 1. Verdicts
+## Verdict table
 
-| # | claim | verdict | severity |
+| # | claim id | verdict | severity |
 |---|---|---|---|
-| 1 | `langmanager-uses-resname-not-id` | **HOLDS** | — |
-| 2 | `transition-durations-exact` | **HOLDS** | — |
-| 3 | `dialogbox-metrics-in-code` | **REFUTED** | minor |
-| 4 | `pause-is-click-anywhere` | **HOLDS** | — |
+| 1 | `langmanager-uses-resname-not-id` | **HOLDS** — and it is the best claim in the set | — |
+| 2 | `transition-durations-exact` | **REFUTED** | material |
+| 3 | `dialogbox-metrics-in-code` | **REFUTED** | material |
+| 4 | `pause-is-click-anywhere` | **HOLDS** (bounded) | — |
 | 5 | `options-screen-complete` | **REFUTED** | minor |
 | 6 | `skill-cooldown-12-step-quantised` | **REFUTED** | material |
 | 7 | `slot-geometry-frame-validated` | **REFUTED** | material |
 | 8 | `result-cards-exact` | **HOLDS** | — |
-| 9 | `interactui-menu-system` | **HOLDS** | — |
-| 10 | `typography-edo-sz` | **HOLDS** | — |
-| 11 | `tier3-video-repass-obsolete` | **HOLDS** | minor |
-| 12 | `690-friend-bar-never-filmed` | **HOLDS** (and upgraded) | — |
+| 9 | `interactui-menu-system` | **HOLDS** — verified to the byte | — |
+| 10 | `typography-edo-sz` | **HOLDS** — and I upgraded the cite to the web SWF itself | — |
+| 11 | `tier3-video-repass-obsolete` | **REFUTED** | minor |
+| 12 | `690-friend-bar-never-filmed` | **HOLDS** — I replicated all four measurements | — |
 | 13 | `hud-symbol-metrics` (STILL_UNHELD) | **REFUTED** | material |
 
+8 hold, 5 refuted (4 material, 2 minor — claim 7 counted once).
+
 ---
 
-### 1 — `langmanager-uses-resname-not-id` — HOLDS. Best claim in the lane.
+## 1 — `langmanager-uses-resname-not-id` — HOLDS. Strongest claim in the set.
 
-I opened the frame myself: `reference/frames/duel_dense/Nr4fQstqHDM_428.0.png`, crop **(40,0)–(560,200)
-upscaled 3×** → a brown plaque with a gold inner rule reading **AUTO SLASH OFF**, top-left. I re-parsed
-`reference/extracted/android/118_Mobile_Lang_EN.bin` independently: **2,555 `trans-unit`s, 2,343 with
-`id != resname`, 649 non-numeric resnames, first divergence `id="212" resname="222"`** — every number
-the surveyor gave, reproduced exactly. `resname 619 = "Auto Slash Off"`, `id 619 = "Special Event"`.
-Mechanism confirmed at `LangManager.as:78` — `Locale.loadStringEx(num.toString(), language)`, and
-`fl.lang.Locale` keys XLIFF by `@resname`.
-
-**I can strengthen it twice over:**
-- `resname 600 = "Special Control Point"` but **`id 600 = "Auto Slash Off"`**. That is direct proof
-  Pass 1 was reading the `id` column — and it kills Pass 1 claim 17's diagnosis ("the table is from a
-  *different build revision*"; "the true strings are present at **different** ids — 600/601").
-  Same table, wrong key.
-- The **web** build calls the same numbers: `§1t113s0§.as:160-161` → `getString(619)` / `getString(620)`.
-  So there is no build drift at all.
-
-Spot-check of the downstream corrections, all confirmed: `resname 388 = "Condition: Poor"` /
-`id 388 = "Game Paused"`; `resname 407 = "Game Paused"`; `resname 6014 = "Skill Slots+"`,
-`7009/7010/7011 = "4/5/6 skill slots"` (`id 1506/1648/1649/1650` = the same strings under the wrong key);
-`resname 104 = id 104 = "FIGHT!"`.
-
-### 2 — `transition-durations-exact` — HOLDS.
-
-I read `ScreenTransition.as:71-123, 125-147, 149-163, 165-180` in full. The displacement recurrence is
-right: speed is applied *before* it increments, so after *n* frames displacement = (n−2)(n−1);
-(17−2)(17−1) = **240 exactly**, which is why the gate is `counter >= 17`. `BLACKOPEN` (`:95-107`) has the
-same recurrence and also lands at exactly 17. The white fade needed one fact the surveyor didn't state —
-I checked it: **`ScreenTransition.as:173  this.white.alpha = 1;`** — so `alpha -= 1/24` is exactly 24 frames.
-
-Two things the claim needed and did not cite, which I verified:
-- **fps = 24.000**, read from the SWF headers of *both* payloads (see F3). Without this the ms figures
-  are ungrounded.
-- Web parity: `§1t6497s0§.as:89` `if(this.counter >= 17)` and `:113` `this.white.alpha -= 1 / 24;`.
-
-Pass 1 claim 21 is quoted verbatim and correctly (ui-hud.md:560-562). This claim genuinely closes it.
-
-### 3 — `dialogbox-metrics-in-code` — REFUTED (minor).
-
-The four numbers are real. I read them, and they are **identical in the web build**
-(`§1t5474s0§.as:46,49,53,105,136,147`). That part is a good find.
-
-What is wrong is the sentence the claim leads with: *"Dialogue-box exact metrics are NOT locked inside
-an assets.swf symbol"* and *"blocker (5)'s dialogue half is closed"*.
-
-> `reference/decompiled/shs3_android/scripts/DialogBox.as:8`
-> `[Embed(source="/_assets/assets.swf", symbol="symbol83")]`
-
-The box frame art, `msgText.x` / `.width` / `.height`, the `YellowButton` dimensions and the box's own
-stage position are **all** in symbol83, which is not exported — a fact the surveyor's own claim 13 states.
-Code supplies 4 numbers; the symbol supplies the rest. Blocker ⑤'s dialogue half is **materially
-advanced, not closed**, and `overturns_ledger: true` overstates it.
-
-### 4 — `pause-is-click-anywhere` — HOLDS.
-
-`BattleUI.as:179` (visible rule), `:268-272` (first branch of `gotClicked`), `:324-328` (raise + toggle) —
-all verbatim. The load-bearing word is *"anywhere"*, which the claim did not ground; I did:
-**`InputManager.as:254  if(BattleUI.instance.gotClicked(args.stageX,args.stageY))`** — every stage click
-enters that routine, and the paused branch is its first test. Web parity: `§1t113s0§.as:219` (same
-`!isDuelMode() && !isPvPRoomMode()` visibility), `:366-371` (same first-test resume), `:436-441`
-(same `visible = true` + `setChildIndex(..., numChildren - 1)`).
-
-### 5 — `options-screen-complete` — REFUTED (minor).
-
-Every string resolves exactly as claimed (`OptionsUI.as:34-43,44-51` read verbatim; Music / Sound /
-Blood / Chat notification / Record Duels / Full Screen / Title Screen / Return To Game / Options).
-Two conclusions are wrong:
-
-1. *"Adds three toggles Pass 1 missed (Chat notification 396, Record Duels 492, Full Screen 752)."*
-   Pass 1 did **not** miss them. `docs/gauntlet/L0/systems/ui-hud.md:532-533` already lists
-   `musiccheck, soundcheck, bloodcheck, chatcheck, recordcheck, fullscreencheck (all XCheckBox)`.
-   What is new is the **copy**, not the toggles.
-2. `overturns_ledger: true` is filed against *"⑤ pause/options/dialogue-box exact **metrics**"* — and the
-   claim supplies **zero metrics**. `OptionsUI.as:7` is `[Embed(... symbol="symbol1133")]`; not one
-   checkbox x/y is on disk. The claim also omits the declared `quitdialog:QuitDialog`.
-
-An inventory + copy list is not "completely held" for a screen whose blocker is about pixel metrics.
-
-### 6 — `skill-cooldown-12-step-quantised` — **REFUTED (material). Build divergence.**
-
-The Android lines are all verbatim (`:220, :146, :110, :114, :153`). But the number "12" is
-**Android-only**, and this lane is rebuilding the **web** game:
+I re-parsed the blob rather than trusting the summary:
 
 ```
-reference/decompiled/shs3_android/scripts/SkillSlotButton.as:220
-   newframe = int(this.cooldown / this.cooldownmax * 12) + 1;
-reference/decompiled/shs3_payload/scripts/§1t5184s0§.as:226      <-- WEB v0.717
-   _loc1_ = Math.ceil(this.cooldown / this.cooldownmax * 12) + 1;
+$ python3 -c "…re.findall(r'<trans-unit id=\"([^\"]*)\" resname=\"([^\"]*)\">\s*<source>(.*?)</source>' …)"
+units 2555
+id!=resname 2343
+nonnumeric resname 649
+first nonnum ('1906', 'IDS_Q0TITLE')
+first divergence ('212', '222')
+resname619 'Auto Slash Off' id= 600
+id619 'Special Event' resname= 638
 ```
 
-`int()` truncates, `Math.ceil()` rounds up. Both `update()` bodies are otherwise line-for-line identical
-(same three stance early-returns, same `--this.cooldown`, same `shade.currentFrame != newframe` guard,
-same `mouseEnabled = true` at 0). So with `cooldownmax = N > 12`:
+Every one of the surveyor's five numbers is exact. The mechanism is confirmed at
+`reference/decompiled/shs3_android/scripts/LangManager.as:78` —
+`Locale.loadStringEx(num.toString(),language)` — and `fl.lang.Locale` keys XLIFF by `resname`.
 
-| build | first tick (`c = N−1`) | last tick (`c = 0`) | shade frames used |
+**And the frame adjudicates, as §0 requires.** My own crop of
+`reference/frames/duel_dense/Nr4fQstqHDM_428.0.png`, region (40,0)–(560,200) upscaled 3×, shows a
+brown plaque top-left reading **AUTO SLASH OFF** in white brush type. `BattleUI.as:124` calls
+`getString(619)`. Under resname that is *"Auto Slash Off"*; under `id` it is *"Special Event"*.
+**THE FRAME WINS, and it picks resname.**
+
+Spot-checks I ran on the other resnames the lane depends on, all correct:
+`6/7/8`→Music/Sound/Blood · `396`→Chat notification · `492`→Record Duels · `752`→Full Screen ·
+`74/75`→Title Screen/Return To Game · `10`→Options · `104`→FIGHT! · `407`→**Game Paused**
+(while `id` 388 = Game Paused — exactly the Pass-1 error the claim describes) · `482/483`→
+Continue/Save Replay · `480`→Respawn · `208`→Change Stance · `620`→Auto Slash On.
+
+---
+
+## 2 — `transition-durations-exact` — REFUTED (material). "Each" is wrong, and the arithmetic is wrong.
+
+The quoted code is verbatim (`ScreenTransition.as:80-88,111,143-146,159-162` all check out), and
+the *white fade* half is right. Two things are not.
+
+**(a) The stated formula is wrong.** The claim says *"displacement after n frames is (n−2)(n−1);
+(17−2)(17−1) = 240"*. Speed is applied **then** incremented, so frame *n* adds `2(n−1)` and the
+cumulative displacement is **n(n−1)**, which hits 240 at **n = 16**, not 17. I simulated the loop
+exactly as written:
+
+```
+close frame 15 y -30 speed 30
+close frame 16 y 0   speed 32          <- shutters MEET here
+close frame 17 y 0   speed 34 DOACTION <- gate counter>=17 holds one extra frame
+```
+
+So `BLACKCLOSE` is **16 frames of motion (667 ms) + 1 held frame before the action (708 ms)** —
+two different numbers, and the claim collapses them into one and attributes it to a formula that
+does not produce it.
+
+**(b) "Each black shutter takes 17 frames" is false for the open shutter.** `TRANSITION_BLACKOPEN`
+(`:93-107`) has **no counter gate at all** — it fires `doAction()` the instant `blackup.y <= -240`:
+
+```
+open frame 15 y -210 speed 30
+open frame 16 y -240 DOACTION          <- 16 frames, 667 ms
+```
+
+**Open = 16 frames / 667 ms. Close = 16 frames of motion, action at 17 / 708 ms.** A rebuild that
+ships 708 ms for both is wrong on every room exit.
+
+**(c) The white fade holds — but only by an accident worth banking.** `1/24` per frame from
+`alpha = 1` reaches 0 on frame 24 → 1000 ms. ✓. But `doAction()` sets `transitioning = false`, and
+`update()` early-returns on that, so the `counter == 2` call at `:118-121` should freeze the fade
+at α ≈ 0.917 forever. It does not, because `startOpenWhite` has exactly **one** caller
+(`Overworld.as:377`) and it passes `ACTION_REFRESHROOMONOPEN`, whose case at `:289-292` re-arms
+`this.transitioning = true`. Any other action would break the fade. That coupling must be copied.
+
+**Parity is fine here** — I found the web build's own copy at
+`reference/decompiled/shs3_payload/scripts/§1t6497s0§.as:79-124`, structurally identical
+(`counter >= 17`, `<= -240`, `1 / 24`). So the *corrected* numbers are web-valid.
+
+**24 fps is not an assumption — I byte-checked it** (see F2 below).
+
+---
+
+## 3 — `dialogbox-metrics-in-code` — REFUTED (material). It contradicts the survey's own claim 13.
+
+The quotes are exact (`DialogBox.as:46,49,53,59,63,136,147` all verbatim). The **conclusion** is
+what fails. The claim's headline is *"Dialogue-box exact metrics are **NOT** locked inside an
+assets.swf symbol … so blocker ⑤'s dialogue half is closed."*
+
+I read the whole file and grepped every geometric assignment in it:
+
+```
+$ grep -n "\.x = \|\.y = \|width\|height\|scale" DialogBox.as
+46:  this.button.x = 340;      86:  this.button.x = 270;
+49:  this.msgText.y = 187.5;   89:  this.msgText.y = 187.5;
+53:  this.msgText.y = 220;     93:  this.msgText.y = 220;
+105: this.button2.x = 425;     136: this.button.x = 270;
+147: this.button2.x = 425;     162: this.button.x = 340;
+```
+
+That is **the complete list**. `button.y`, `button2.y`, `msgText.x`, the text field's width and
+height, and the panel/frame art itself are **never assigned in code** — they live in
+`[Embed(source="/_assets/assets.swf", symbol="symbol83")]` (`DialogBox.as:8`), which is precisely
+what the survey's *own* claim 13 says is not on disk. Two claims in one submission cannot both be
+true. Blocker ⑤'s dialogue half is **partly** closed (two x's, one y, one alignment rule), not
+closed.
+
+**Upgrade I can give it for free:** the web build's DialogBox is
+`reference/decompiled/shs3_payload/scripts/§1t5474s0§.as` and it is **line-for-line identical** —
+`button.x = 340` at :46, `msgText.y = 187.5` at :49, `= 220` at :53, `align` at :59/:63,
+`button.x = 270` at :86/:136, `button2.x = 425` at :105/:147. So these four constants carry **no
+Android caveat**. That is a strictly better cite than the one the claim shipped with.
+
+---
+
+## 4 — `pause-is-click-anywhere` — HOLDS, with one bound the claim overstates.
+
+`BattleUI.as:179`, `:267-272` and `:324-328` are verbatim and in that order — `isPaused` really is
+the **first** test in `gotClicked`, before the stance bust, the chat button and the pause button.
+
+The bound: `gotClicked` has exactly one caller, `InputManager.as:254`, and it sits behind two
+gates I read myself — `if(mouseY > 480){ return; }` (`:231`) and
+`if(drawArrayLength <= lengthThreshhold && (inputMode == BATTLE_MODE || …) && BattleUI.instance.visible)`
+(`:252`). So it is *"any **tap** anywhere **inside the 800×480 game area** while in battle input
+mode"*, not literally any click. A drawn slash-line does **not** resume. Not a refutation — but a
+rebuild that resumes on mouse-up after a slash gesture would be wrong.
+
+**And I can close the visual half the claim left open** — see F1: `PauseScreen` is on disk and
+renders black-out + logo + **GAME PAUSED**, which independently confirms resname 407 from art.
+
+---
+
+## 5 — `options-screen-complete` — REFUTED (minor). "Completely held" is not true.
+
+Copy and structure verified verbatim at `OptionsUI.as:34-43,44-51`, and all nine resnames resolve
+exactly as claimed (I checked each against the blob). Two problems with *"completely held"*:
+
+- **A child is missing from the inventory.** `OptionsUI.as:25` declares
+  `public var quitdialog:QuitDialog;`, hidden at `:60` on every `show()`. The screen has a
+  confirm-quit sub-dialog the claim never mentions.
+- **It claims the options half of blocker ⑤, which asks for *exact metrics*.** `OptionsUI` is
+  `[Embed(… symbol="symbol1133")]` (`:7`) and assigns **zero** coordinates in code. Copy ≠ metrics.
+
+---
+
+## 6 — `skill-cooldown-12-step-quantised` — REFUTED (material). Wrong build, and the step count is off.
+
+The Android quotes are verbatim (`:220,:146,:110,:114,:153`). But this claim is offered as a spec
+of the game in the videos, and **the web build rounds the other way**:
+
+```
+android  reference/decompiled/shs3_android/scripts/SkillSlotButton.as:220
+            newframe = int(this.cooldown / this.cooldownmax * 12) + 1;
+web      reference/decompiled/shs3_payload/scripts/§1t5184s0§.as:226
+            _loc1_ = Math.ceil(this.cooldown / this.cooldownmax * 12) + 1;
+```
+
+I confirmed `§1t5184s0§` **is** the web SkillSlotButton: same `stat 2501` ammo read at `:109`,
+same `Math.floor(… / 4)` Windmill rule at `:113`, same three stance-gated early returns at
+`:213/:217/:221`, same `--this.cooldown` at `:225`. `int()` truncates, `Math.ceil()` rounds up —
+they differ by one shade frame for **every** non-integral ratio, i.e. for essentially the whole
+sweep. A rebuild copying the Android line renders the wrong frame almost always.
+
+Secondary: *"exactly 12 steps with a 13th 'disabled' frame"* mis-describes the widget. The shade
+clip has **13 frames**; frame 13 is reached **both** by `disableButton()` (`:146`) **and** by the
+formula at full cooldown; and initialisation uses frame **12**, not 13 (`:105`
+`this.shade.gotoAndStop(12)` when `cooldown > 0`).
+
+---
+
+## 7 — `slot-geometry-frame-validated` — REFUTED (material). Right conclusion, wrong number, wrong licence.
+
+I measured the frame myself with a threshold sweep, not by eye. Crop
+`reference/frames/duel_dense/Nr4fQstqHDM_428.0.png`, region (1050,900)–(1880,1080) upscaled 3×
+for the look, then per-row/per-column scans at threshold >150 for the numbers:
+
+```
+y=975   left border 1448-1450   right border 1557-1559
+y=1050  left border 1448-1450   right border 1558-1559
+x=1470  top 961-962             bottom 1070-1072
+```
+→ empty-box centre **(1503.7, 1016.5)**. The surveyor's x (1503.5) replicates; his **y centre
+1012.5 does not** — I get 1016.5.
+
+**The 446.0 in the claim is an arithmetic slip.** The journal's own stated mapping
+(`systems/ui-hud.md`, Method notes) is *anisotropic* — `stage_x = (x−52)×800/1816`,
+`stage_y = y×480/1080` — but the claim card applies the **x** scale (2.270) to **y**. Redone
+correctly with my measurement: game **(639.5, 451.8)** vs code `(640, 450)`. The headline
+*"within ~1 px"* survives on the corrected arithmetic (0.5 px in x, 1.8 px in y); the number
+printed in the cite does not.
+
+**The licence sentence is the material part and it is disproven.** The claim says the match
+*"retires the 'android parity not established' caveat for the combat HUD."* It does not — claim 6
+above shows `SkillSlotButton`, the very class being geometry-matched here, **diverges between the
+builds** on the next method down. Geometry agreed; behaviour did not. Parity must stay
+per-constant, checked against `shs3_payload/`, not retired wholesale.
+
+**What I can add in its place** (and it is better evidence): the **asset** agrees with the frame.
+`reference/extracted/sprites/DefineSprite_934_shs3_fla.skillSlotBG_755/` is a 56×55 canvas whose
+bright border bounding box is **51×51 px** (alpha>200 ∧ luma>150, frames 1–5). My frame-measured
+outer border is 1448→1559 = 112 video px = **49.8 game px** at 1080/480. Asset 51 vs frame 49.8 —
+**web art and web frame agree to ~1 px, with no Android in the loop at all.**
+
+---
+
+## 8 — `result-cards-exact` — HOLDS.
+
+`WinUI.as:26,32-37,49-55,90` and `LoseUI.as:35-36,45,53` are all verbatim; I also opened
+`WinUI.frame11()` (`:104-107`) and it is `stop()`, so the 11-frame read is right, and
+`addFrameScript(0,…,6,…,10,…)` → winwords at frame 7 = 250 ms, stop at frame 11 = 417 ms @ 24 fps
+(fps byte-verified, F2). DRAW variant, the `isRecording()` gate, the replay URL and the LoseUI
+`gold` / `getgoldpromptdialog` / `payui` trio all check out.
+
+One over-generalisation, not a refutation: **only `WinUI` has an `addFrameScript` timeline.**
+`LoseUI` has none — it drives `this.brushStroke.gotoAndPlay(1)` (`:50`) on a child clip. "The
+win/lose result cards are an 11-frame timeline" is true of the win card only.
+
+*(The brush stroke itself is on disk — `animatedBrush_62`, 371×166, **8 frames**. See F1.)*
+
+---
+
+## 9 — `interactui-menu-system` — HOLDS. Verified to the byte.
+
+```
+bytes 20947 · enc utf8 · lines 314
+<ui> 19 · <title> 19 · <menu> 47 · <option> 139 · <icon> 139 · <condition> 28 · <has> 28 · <param> 67
+titles at 5/14/47/66/73/82/94/109/117/142/161/190/219/227/249/257/281/291/301
+```
+
+Every count, every line number and all 19 titles are exact. Lines 5–9 and 16 are verbatim as
+quoted. One nit: there is exactly **one** `<errormsg>` in the whole file, so "error copy" is
+singular, not a body of copy.
+
+---
+
+## 10 — `typography-edo-sz` — HOLDS, and I upgraded the cite.
+
+`ui_strings.txt:100,206,314` are verbatim. But that file is, per `docs/GAUNTLET.md:156`, an
+*alphabetised dump* — so I went to the source instead and found the run **inside the web payload's
+own bytes**:
+
+```
+$ python3 -c "zlib.decompress(open('reference/decrypted/shs3_payload_decoded.swf','rb').read()[8:]) …"
+b'ccccc" letterSpacing="0.00" kerning="1">physical dmg: 1234 - 1235 &nbsp;(heavy)</font></p>
+  <p align="center"><font face="Edo SZ" size="14" color="#cccccc" letterSpacing="0.00" kerning="1">
+  critical dmg: 1234-1235 *(heavy)</font></p>…'
+```
+
+816 occurrences of `Edo SZ` in the **web** payload (572 in Android). The "no Android caveat" claim
+is correct and now directly cited. `LangManager.as:127-141` verified — `embedFonts = false` only
+for `zh-CN` and `ja`.
+
+Two completeness notes: the size inventory is **13 (×2) / 14 (×5) / 16 (×4) / 18 (×1)**, and the
+18 px instance is `color="#000000"` (`ui_strings.txt:460`) — the claim's "13/14 body, 16 heading"
+misses an 18 px black style. And the *face* half of this was already banked as Stage-0 finding
+S0-2 and as GAUNTLET.md §1's "free win"; the genuinely new part is sizes/colours/letterSpacing.
+
+---
+
+## 11 — `tier3-video-repass-obsolete` — REFUTED (minor). It is two of five, not three.
+
+Ledger line verified: `docs/research/REBUILD_READINESS.md:339` reads exactly
+*"Archer moveset at full fps; VS/FIGHT exact ms; damage-popup animation; dialogue-box metrics;
+overworld HUD pixel geometry."*
+
+- **VS/FIGHT exact ms — genuinely closed.** I read the frame handlers, which the claim did not
+  quote: `DuelIntroBar.as:85-104` — `frame1` hides `actionWord`, `frame20` calls `showText()`
+  (busts + names in), `frame69` shows `actionWord` (whose text is `getString(104)` = **FIGHT!**,
+  `:69`), `frame88` ends the intro and stops. At 24 fps: busts 792 ms, FIGHT! 2833 ms, end
+  3625 ms. ✓
+- **Damage-popup animation — genuinely closed.** `TextProjectile.as:20-46` verbatim; spawn at
+  `MCSPlayer.as:3805` verbatim. ✓
+- **Dialogue-box metrics — NOT closed.** See claim 3: four constants are in code, the panel and
+  every y except `msgText`'s are in `symbol83`. ✗
+
+The *action* ("don't fund a video re-pass") survives for all three, because what is missing is a
+symbol export, not footage. The *reason given* is false for one of them.
+
+---
+
+## 12 — `690-friend-bar-never-filmed` — HOLDS. I replicated all four measurements.
+
+```
+Nr4fQstqHDM_428.0   x 52→1867  w 1816  rows 0→1079  aspect 1.6815
+Nr4fQstqHDM_t425.0s x 52→1867  w 1816  rows 0→1079  aspect 1.6815
+zFtCaTO0_1M_t0320s  x 55→1861  w 1807  rows 0→1079  aspect 1.6731
+zFtCaTO0_1M_t0325s  x 54→1861  w 1808  rows 0→1079  aspect 1.6741
+```
+Threshold sweep 5→80 on 428.0 puts the hard pillarbox edge at 52 and 1866-1867 either way.
+Pillarbox only, no letterbox, nothing near 800/690 = 1.159. The PARTIAL verdict is correct and
+honest.
+
+**I can tell you *why* it is unfilmable, which turns PARTIAL into a rule.**
+`GameEngine.as:271-284`: `originalHeightWithBar = 690` and the bar is enabled **only** when
+`newAspectRatio <= originalWidth / originalHeightWithBar` — i.e. **only in a browser window
+narrower than 1.159:1**. Both longplays sit at ~1.68. The bar therefore *cannot* appear in any
+frame of either video, and no denser sampling will ever find one. It is INFERRED-from-source
+permanently, exactly as the claim says.
+
+---
+
+## 13 — `hud-symbol-metrics` (STILL_UNHELD) — REFUTED (material). The art is on disk.
+
+The claim's load-bearing premise is *"only `scripts/` was exported, so symbol geometry is not on
+disk."* **That is false.** Two sibling directories exist, both from the **web** payload
+(`shs3_fla` naming, matching `reference/decompiled/shs3_payload/scripts/shs3_fla/`):
+
+```
+$ ls reference/extracted/sprites | wc -l   → 827      (DefineSprite exports, PNG per frame)
+$ ls reference/extracted/shapes  | wc -l   → 1822     (SVG per DefineShape)
+$ ls reference/extracted/sprites | grep shs3_fla | wc -l → 39   (class-named)
+```
+
+39 of them are class-named, and they are HUD:
+
+| sprite | size (game px) | frames | what it is |
 |---|---|---|---|
-| android v0.682 | `floor(12−12/N)+1` = **12** | **1** | 12 (frame 13 reserved for disabled) |
-| **web v0.717** | `ceil(12−12/N)+1` = **13** | **1** | **13 — the sweep uses frame 13, the same frame as `disableButton()`** |
+| `PauseScreen_51` | **802 × 481** | 1 | the pause overlay — black field, SHS:Duels logo, **"GAME PAUSED"** |
+| `skillSlotBG_755` | 56 × 55 canvas, **51 × 51** border | **5** | the skill-slot box, all five states |
+| `autoslashbutton_43` | **129 × 31** | 2 | the AUTO SLASH plaque, off/on |
+| `hurtred_32` | **800 × 480** | **7** | the damage vignette |
+| `stancecolor1_56` | **63 × 63** | **3** | the stance portrait ring |
+| `animatedBrush_62` | 371 × 166 | 8 | the win/lose card brush stroke |
+| `chatTextBattle_45` | 437 × 212 | 2 | in-battle chat panel |
+| `CharSlot_126` | 267 × 50 | 1 | character-select slot |
+| `MinimapIcon_668` | 15 × 18 | **20** | minimap icon set |
+| `MinimapRoomIcon_672` | 20 × 30 | **17** | minimap room icon set |
+| `speechbubble_422` | 137 × 110 | 6 | overworld speech bubble |
+| `skillnodeinner_89` | 64 × 64 | 7 | skill-tree node |
+| `QuestLogButtonBG_548` | 314 × 43 | 5 | quest-log button |
+| `clanemblem_778` | 47 × 47 | 7 | clan emblem set |
 
-So "exactly 12 steps with a 13th 'disabled' frame" is **wrong for the build being recreated**. This is
-precisely the failure Stage-0 finding S0-3 warned about ("combat tuning parity is NOT established —
-label which build any ported string came from"), and the claim carries no build label.
+I opened `PauseScreen_51/1.png`, `skillSlotBG_755/1–5.png`, `hurtred_32/1–7.png` and
+`stancecolor1_56/1–3.png` and looked at them. **802 × 481 is the 800 × 480 stage + 1 px AA** — a
+fourth independent confirmation of the game-area height, this time from a web-build asset.
 
-### 7 — `slot-geometry-frame-validated` — REFUTED (material).
+**Part (c) of the claim survives and I am not refuting it.** I byte-searched both decrypted
+payloads for the skill-icon class names `ResourceManager.getSkillImage` builds
+(`"skill" + id`, `:302-316`):
 
-I made the crop myself — `duel_dense/Nr4fQstqHDM_428.0.png`, **(1380,920)–(1880,1080) upscaled 3×** — and
-the frame shows exactly what is described: three boxes, leftmost empty and unnumbered, middle "2",
-right "3" with a gold up-arrow. I also re-measured the empty box's bright border cleanly (region
-(1430,930)–(1580,1080), threshold >150 on mean RGB, ≥5 px per row/col): **cols 1448→1559 (centre 1503.5),
-rows 961→1072 (centre 1016.5), 112 × 112 px.** The x centre matches the surveyor's to the half-pixel.
-Their y centre (1012.5) does not match mine (1016.5).
+```
+$ grep skill1[0-9]{3} in shs3_payload_decoded.swf     → []
+$ grep skill1[0-9]{3} in shs3_android_payload_decoded → []
+```
 
-Three problems:
+Zero hits in either. The icon art really is only inside the encrypted `115_Mobile_SHS3Resource`
+(S0-5). **Declining to name the gold up-arrow was correct** and I would have refuted any guess.
 
-**(a) "to within ~1 px" is not supported — by the claim's own numbers.** It reports game (639.4, **446.0**)
-against code (640, **450**). That is 4.0 px on y, not ~1.
+---
 
-**(b) the scale is not pinned to better than ~1.5%, and the derivation used is the wrong one.**
-`BattleUI.doResize()` (`:929-936`) is `scaleX = scaleY = StatsManager.stageScale; x = stageOffsetX; y = stageOffsetY`,
-so screen = game·scale + offset, and `GameEngine.resizeHandler:293-306` says that at a window aspect of
-1.68 (> 800/480) the branch taken is **height-fit**: `newScale = stageHeight/480 = 1080/480 = 2.25`,
-`offsetY = 0`. Three independent estimates disagree:
+## New findings the survey missed
 
-| source of scale | value | ⇒ empty-box centre in game px | code |
+### F1 — the vignette the ledger calls "uncatalogued" is on disk, and I catalogued it.
+
+Ledger blocker ② (`REBUILD_READINESS.md:235`) reads *"dynamic HUD 'feel' (bar tween vs snap,
+combo pop, **vignette ramp**) — uncatalogued."*
+
+`reference/extracted/sprites/DefineSprite_3607_shs3_fla.hurtred_32/` — **7 PNG frames, 800 × 480**,
+a red radial vignette: edge `#990000` at α 251, fully transparent at centre. Frames 1–6 render
+identically; **frame 7 is entirely blank** (`maxA 0`). The driver is
+`BattleUI.as:424-428` `showHurtRed(){ hurtred.visible = true; hurtred.gotoAndPlay(1); }`, and the
+clip's own timeline class `shs3_android_fla/hurtred_29.as:12,15-18` is
+`addFrameScript(6,this.frame7)` → `frame7(){ stop(); }`.
+
+**Spec: 800×480 full-screen red radial `#990000`→transparent, played from frame 1, holds 6 frames,
+blanks on frame 7 and stops — 7 frames = 292 ms at 24 fps.** Blocker ② is no longer uncatalogued
+for the vignette.
+
+### F2 — 24 fps and both stage rects, byte-checked from the SWF headers.
+
+Every millisecond figure in this lane rests on "24 fps". Nothing had verified it. I parsed the
+headers directly:
+
+```
+shs3_payload_decoded.swf          CWS v17  rect 0..800 × 0..690  fps=24.000  frames=6
+shs3_android_payload_decoded.swf  CWS v26  rect 0..800 × 0..480  fps=24.000  frames=6
+shs3.swf                          CWS v10  rect 0..800 × 0..690  fps=24.000
+shs3preloader.swf                 CWS v10  rect 0..800 × 0..690  fps=24.000
+```
+
+**24.000 fps is held (A3).** And the **authored web stage is 800 × 690 while Android is 800 × 480**
+— the friend bar is a real structural difference between the builds, not just a code path. Pair
+this with F1's 800×480 `hurtred` and PauseScreen's 802×481: the *game area* is 480 in both; the web
+build reserves 210 px more of authored stage for the bar.
+
+### F3 — the stance ring colours, exact.
+
+Ledger surface note (`:236`): *"portrait ring is stance-colored, not fixed red."* Now measured, from
+`DefineSprite_3394_shs3_fla.stancecolor1_56/` (63 × 63, 3 frames), dominant opaque hue per frame:
+
+| frame | ring | RGB | hex |
 |---|---|---|---|
-| `resizeHandler` height-fit | 2.250 | (641.6, 451.8) | (640, 450) |
-| content width 1815/800 (surveyor) | 2.270 | (639.2, 447.8) | (640, 450) |
-| measured numeral pitch 137/60 | 2.283 | — | — |
+| 1 | light stance | (66, 66, 255) | **#4242FF** |
+| 2 | balanced | (153, 102, 0) | **#996600** |
+| 3 | heavy | (153, 0, 0) | **#990000** |
 
-The pillarbox edges are sharp and real (I profiled rows 300–800: background ≤1.0 at col 51, 99.2 at col 53;
-1864→1867→0.9 on the right), so the game area really is ~1815 px for 800 game px — which is *not*
-consistent with a clean 2.25. The video is a lossy re-encode with ~1% geometric slop. The honest
-statement is **"code and frame agree to 1–2%, i.e. ±1–5 game px"**, not "~1 px".
+Driven by `BattleUI.as:372-374` `battlemodebust.stancecolor1.gotoAndStop(num)`. Note frame 3 is the
+same `#990000` as the `hurtred` edge — one red in the palette, used twice.
 
-**(c) the conclusion — "retires the 'android parity not established' caveat for the combat HUD" —
-is false, and the claim did not need the frame at all.** Parity in this exact widget is *broken*
-(finding 6: `Math.ceil` vs `int`). And the layout itself is directly readable in the web build:
+### F4 — the hotkey numbering rule, which explains the frame exactly.
 
-> `reference/decompiled/shs3_payload/scripts/§1t113s0§.as:170-171`
-> `_loc1_.x = 760 - _loc2_ * 60;`
-> `_loc1_.y = 450;`
+`BattleUI.as:133` lays slots out **right to left** (`x = 760 - i*60`), and `:504` labels them
+`initKeyPressText(this.slotCount - i)`. With `slotCount = 3`: i=0 (x=760, rightmost) → key **3**,
+i=1 (x=700) → key **2**, i=2 (x=640, leftmost) → key **1**. My wide crop (1050,900)–(1880,1080)
+shows exactly three boxes: leftmost bright-bordered, **empty and unnumbered**; middle labelled
+**2** with a pale claw/fang icon; right labelled **3** with the gold up-arrow. The leftmost is
+unnumbered because `skillSlots[2]` is null → `initEmpty()` clears `keypressText`
+(`SkillSlotButton.as:123-135`). Frame and code agree on all three slots, including the gap.
 
-That is the cite this claim should carry. A2 beats an A1 inference here.
+### F5 — `InteractUI` icon ids resolve without any art.
 
-What *does* hold, and is well reasoned: the empty-and-unnumbered leftmost box is exactly what
-`BattleUI.as:501-511` produces (`visible = i < slotCount`; a null slot takes the `initEmpty()` branch,
-and `SkillSlotButton.as:128` clears `keypressText`), with `initKeyPressText(slotCount - i)` at `:504`
-putting key 3 at i=0 (x=760, rightmost) and key 2 at i=1 (x=700). slotCount = 3, two skills equipped.
-
-### 8 — `result-cards-exact` — HOLDS.
-
-`WinUI.as:26` verbatim; I read the frame bodies the claim inferred from — `:94-97 frame1 → winwords.visible = false`,
-`:99-102 frame7 → winwords.visible = true`, `:104-107 frame11 → stop()`. So "winwords at frame 7 (250 ms),
-stop at frame 11 (417 ms)" is right at 24 fps. DRAW variant `:49-56`, replay URL `:90`, `showButtons()`
-gated on `isRecording()` `:32-39` (called from `BattleUI.as:449`), LoseUI `:35-36,:45,:53` + `gold` /
-`getgoldpromptdialog` / `payui` `:15,:21,:29` — all verbatim. Web parity: `§1t5186s0§.as:26` identical.
-One nit: *"brush stroke frames 1-6"* is an inference — frames 1–6 are only *"winwords hidden"*;
-`brushStroke` is a separate `MovieClip` with its own timeline.
-
-### 9 — `interactui-menu-system` — HOLDS.
-
-I parsed `90_InteractUI_UIData.bin` myself: **19 `<ui>` / 19 `<title>` / 47 `<menu>` / 139 `<option>` /
-139 `<icon>` / 139 `<action>` / 28 `<condition><has>` / 67 `<param>`, 20,947 bytes** — every count exact.
-All 19 titles sit on exactly the line numbers given. The peddler quote (lines 5,7,8,9) and the gated
-"sell crops" option are verbatim including the inline comment. Small mis-cite: the gated option is on
-**line 16**, not 17. `<errormsg>` occurs **once** in the whole file, so "error copy" is one instance,
-not a feature family. The under-claim finding itself is correct and valuable.
-
-### 10 — `typography-edo-sz` — HOLDS.
-
-`ui_strings.txt:100, 206, 314` read verbatim. Whole-file tallies I ran: `face="Edo SZ"` ×15,
-`face="Calibri"` ×2; `size="14"` ×10, `"16"` ×4, `"13"` ×2, `"18"` ×1. The 13 px is indeed `#cccccc`.
-`LangManager.as:127-137` confirmed — `embedFonts = false` only for `zh-CN` / `ja`. Unmentioned:
-one `size="18" color="#000000"` Edo SZ face. No Android caveat: `reference/extracted/ui_strings.txt`
-is the **web** payload (the Android blobs live under `reference/extracted/android/`).
-
-### 11 — `tier3-video-repass-obsolete` — HOLDS (minor).
-
-Ledger line verified verbatim at `docs/research/REBUILD_READINESS.md:339`. `TextProjectile.as:16-47`
-(`ttl = 12`, `velY = -5`, `ttl<10 → scale +0.1`, `ttl<4 → alpha -= 0.25`) and `MCSPlayer.as:3805` verbatim;
-web `§1t138s0§.as:20 ttl = 12`. Two nits: `DuelIntroBar`'s `addFrameScript` is on line **23**, not 22
-(I also read the bodies — `:85-87 frame1` hides `actionWord`, `:95-97 frame69` shows it, `:100-103 frame88`
-`stop()`, and `:69` sets it to `getString(104)` = FIGHT!; `BattleIntroBar.as:16` is the non-duel variant,
-frames 1/6/25). And "dialogue-box metrics … closed from source" inherits claim 3's overreach, so it is
-**2 of 3** closed, not 3.
-
-### 12 — `690-friend-bar-never-filmed` — HOLDS, and I upgraded it from PARTIAL to structural.
-
-I reproduced all five extent measurements to the pixel: `duel_dense/_428.0` and `_427.0` and
-`duel_frames/_t425.0s` → cols 52→1867 (1816, aspect 1.681); `zFt_combat/_t0320s` → 55→1861 (1807, 1.673);
-`_t0325s` → 54→1861 (1808, 1.674); rows 0→1079 in all.
-
-Then I did what the claim needed and didn't do — **scanned 267 frames sampled across all 45 frame
-directories**. 236 were full 1920×1080; **every one had content aspect ≥ 1.45. Zero friend-bar candidates.**
-
-More importantly, this is no longer an induction. `GameEngine.as:271-279` (web: `§1t1540s0§.as:271-273`):
-
-```
-var originalHeightWithBar:int = 690;
-var originalWithBarAspectRatio:Number = originalWidth / originalHeightWithBar;   // 800/690 = 1.1594
-if(newAspectRatio <= originalWithBarAspectRatio) { … stageShowingFriendBar = true; friendpanel.init(); }
-```
-
-The friend bar appears **only** when the player's window is at most 1.159 wide-to-tall — a portrait-ish
-window. A 16:9 fullscreen capture can never trigger it. "Never filmed" is not a sampling accident; it is
-structurally impossible in these recordings. The claim's conclusion (build it, but label it
-INFERRED-from-source) is correct.
-
-### 13 — `hud-symbol-metrics` (STILL_UNHELD) — **REFUTED (material). Two of three are findable.**
-
-The claim says *"HUD panel/bar/plaque pixel geometry, the icon manifest, and the identity of the gold
-up-arrow … remain ungrounded — I will not name any of them."* One third of that is right.
-
-**(a) The icon manifest exists on disk.** The claim says *"the 139 `<icon>` ids … map to unextracted art"*.
-There are not 139 ids — there are **20 distinct** ones (1,2,4,7,11,12,14,15,16,18,19,21,23,24,25,26,27,29,30,31),
-and every one resolves by name:
-
-> `reference/decompiled/shs3_android/scripts/GenericActionButton.as:262-345`
-> `public function setInteractIcon(iconID:int) : * { … switch(iconID) { case NodeUI.ACTION_LEAVE: this.image = new LeaveActionIcon(); … } }`
-> `reference/decompiled/shs3_android/scripts/NodeUI.as:13-75`
-> `ACTION_SHOP:int = 1 … ACTION_MEDAL:int = 31`
-
-25 `case NodeUI.ACTION_*` labels → 22 named icon classes (`ShopActionIcon`, `LeaveActionIcon`,
-`BackActionIcon`, `UseActionIcon`, `ItemActionIcon`, `TravelActionIcon`, `GiftIcon`, the four
-`*ElementActionIcon`s, …). **All 20 in-use ids are covered.** Only the vector art is unexported.
-`icon 15` = `ACTION_BUY` (42 uses), `14` = `ACTION_LEAVE` (22), `23` = `ACTION_BACK` (19).
-
-**(b) Some HUD pixel geometry is grounded — in code and in the frame.**
-- `BattleUI.as:339` (and web `§1t113s0§.as:451`): `if(mousey > 420 * StatsManager.stageScale + StatsManager.stageOffsetY)`
-  — the skill-bar hit band starts at **game y = 420** in an 800×480 stage.
-- From my own crop: the skill-slot box outer border is **112 × 112 video px = 49–50 game px**, on a
-  **137 video px = ~60 game px** pitch (numeral centres 1641.0 and 1777.5), centred at game y ≈ 450.
-  A 50-px-tall box centred on 450 spans 425–475, which is exactly why the hit band opens at 420.
-  That is a slot-widget spec good enough to build.
-
-**(c) What genuinely survives as unheld** — and here the claim is right, so I am not refuting this part.
-`BattleUI.doResize()` (`:929-936`) only sets `scaleX/scaleY/x/y` on the whole clip, so every panel,
-bar and plaque position really is authored inside `symbol2952` and is not on disk. And the slot-3
-up-arrow's skill identity is genuinely unproven — `ResourceManager.getSkillImage()` (`:302-316`) builds
-`"skill" + id` from `RESOURCE_BASE`, which is the encrypted `115_Mobile_SHS3Resource` (S0-5). The
-candidate set is enumerable (`SkillManager.as:8-106`, 50+ ids) but naming one would be guessing.
-**Declining to name it was correct.**
+Claim 13 says the 139 `<icon>` ids "map to unextracted art". The **ids** resolve in code even
+though the art does not: `NodeUI.as` declares `ACTION_*` constants and
+`GenericActionButton.setInteractIcon(iconID)` switches on them into named classes
+(`ShopActionIcon`, `LeaveActionIcon`, `BackActionIcon`, …). The 139 uses draw on a small distinct
+set, so "139 unresolved icons" overstates the gap by roughly 7×.
 
 ---
 
-## 2. New findings
+## What I would tell the next lane
 
-**F1 — the web build is directly citable; stop inferring parity.** `reference/decompiled/shs3_payload/scripts/`
-is web v0.717 with obfuscated class names but intact literals and public member names. Table in §0.
-This is a cross-lane unlock, not a ui-hud one. (Pass 1 claim 18 found the *method*; nobody applied it
-to the HUD.)
-
-**F2 — a real, measured build divergence: `Math.ceil` (web) vs `int` (android)** in `SkillSlotButton.update()`.
-See verdict 6. Every Android-only number in every lane is now suspect until spot-checked against
-`shs3_payload/scripts/`.
-
-**F3 — SWF header byte-check: web stage 800×690, android stage 800×480, both 24.000 fps.**
-Parsed straight from the file headers:
-```
-shs3_android_payload_decoded.swf   CWS v26   rect 0,800 × 0,480   fps=24.000
-shs3_payload_decoded.swf           CWS v17   rect 0,800 × 0,690   fps=24.000
-shs3_binarydata_9_decrypted.swf    CWS v10   rect 0,800 × 0,690   fps=24.000
-```
-Two consequences. (i) **24 fps is now held**, which is the missing premise under every ms figure in
-this lane (claim 2's 708/1000 ms, claim 8's 250/417 ms, claim 11's popup timings). (ii) The web build's
-*authored* stage is the with-friend-bar size; the logical stage is 800×480 in both
-(`§1t1523s0§.as:104,106  stageWidth = 800; stageHeight = 480;`).
-
-**F4 — `resname 600 = "Special Control Point"`, `id 600 = "Auto Slash Off"`.** Proves Pass 1 read the
-`id` column and kills its "different build revision" story. Overturns Pass 1 claim 17
-(ui-hud.md:505-509), which is still live in the journal as a rule for *other* lanes:
-*"ids below ~400 resolve directly; above that, resolve by string search"* — wrong advice.
-The right rule is: **resolve by `resname`, always, at every id.**
-
-**F5 — ledger blocker ④ is overturned with a proper cite.** Ledger (REBUILD_READINESS.md:235):
-*"④ the '3 skill slots' is really ~2 abilities + a stance up-arrow."* `BattleUI.as:501-511` gives a slot a
-keypress number **only** on the `StatsManager.skillSlots[i] != null` branch; the null branch calls
-`initEmpty()`, which clears `keypressText` (`SkillSlotButton.as:128`). In my crop the up-arrow box
-carries the numeral **3** and the blank box carries nothing — so the up-arrow is an **equipped skill**.
-Stance is bound to `battlemodebust` (`BattleUI.as:275, :192`). Pass 1 claim 10 said this; Pass 2 restated
-it inside a STILL_UNHELD claim with an empty `cite` and `overturns_ledger: false`, which loses it.
-
-**F6 — skill-slot widget geometry, measured.** 49–50 × 49–50 game px box, 60 game px pitch, centre
-y = 450, hit band opening at y = 420. Cites in verdict 13(b).
-
-**F7 — the friend bar is structurally unfilmable, not merely unfilmed.** `GameEngine.as:275`, plus my
-267-frame / 45-directory scan. Verdict 12.
-
----
-
-## 3. Score
-
-The surveyor put ui-hud at **88**. On this review: **85–86**.
-
-The +3 was justified as (a) blocker ⑤ closed, (b) transition durations, (c) InteractUI. (b) and (c) are
-real and well earned. (a) is not — ⑤ is a *metrics* blocker and neither the Options nor the Dialogue
-half supplies metrics; both screens are still symbol-locked. Against that, F1/F3 are worth something
-real (24 fps held; web-build cites available for most of the lane), and F2 is a **correctness debt**
-rather than a score change: it means at least one shipped number in this lane is from the wrong build.
-
-**Recommendation to the board: before any other lane spends effort, re-grep `shs3_payload/scripts/` for
-the literals it is about to ship.** That is a one-command check and it just caught a real divergence.
+1. **Re-derive every `Mobile_Lang_EN` id above 211 against `resname`.** Claim 1 is correct and it
+   is cross-lane. `strings.json` is the map; `id` is a trap.
+2. **Stop treating `shs3_android/` as the game.** Two divergences found in one review
+   (`int` vs `Math.ceil`; stage rect 480 vs 690). `reference/decompiled/shs3_payload/scripts/` is
+   obfuscated but **numeric literals and public member names survive**, so any constant can be
+   confirmed against the real build by grepping for the literal. I did it four times here
+   (DialogBox → `§1t5474s0§`, ScreenTransition → `§1t6497s0§`, SkillSlotButton → `§1t5184s0§`,
+   GameEngine → the 690 gate). Every future "the code says X" claim should carry the web cite too.
+3. **`reference/extracted/sprites/` and `shapes/` are unmined across the whole board.** 827 + 1,822
+   assets nobody in this lane knew existed. Three lanes are affected immediately: ui-hud (this
+   review), art-anim-audio-feel (vignette, brush stroke, stance rings), world-exploration
+   (minimap icon sets, `WorldMapMarkerBase`, `town_*`).

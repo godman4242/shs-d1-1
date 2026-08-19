@@ -1,32 +1,30 @@
-# enemies-ai — HUNTER CRITIC (blind)
+# enemies-ai — HUNTER LENS review
 
-Reviewer opened every artifact itself. No verdict below rests on the surveyor's text.
-Headline: **the survey is unusually well-grounded on the Android build — 15 of 20 claims
-survive verbatim re-derivation — but its single STILL_UNHELD is WRONG, and it is wrong in
-the direction this lane exists to catch.** The web v0.717 gameplay code IS on disk. The
-surveyor mistook *name obfuscation* for *code absence*.
+Blind critic. Every verdict below rests on an artifact I opened myself.
+Frames are **1024×576**, not 1080p (`PIL` size check) — noted because the §0 crop
+guidance assumes 1080p and the surveyor's stated crop coordinates are affected.
 
 ---
 
-## ⛔ FATAL — `enemies-ai/web-build-parity` is REFUTED
+## HEADLINE — the surveyor's single biggest under-claim
 
-The claim: *"the web v0.717 payload decompile holds 652 classes and zero Enemy*/NPC*
-gameplay classes, so nothing on disk establishes that v0.717 kept these numbers."*
+### The web v0.717 gameplay code IS on disk. It is symbol-obfuscated, not absent.
 
-The surveyor's method was `ls reference/decompiled/shs3_payload/scripts | grep -ci "enemy\|npc"` → 0.
-That test cannot work: **the web build is name-obfuscated.** No class is *named* `Enemy`
-anything. The gameplay code is all there, under `§…§` mangled names:
+The surveyor's `enemies-ai/web-build-parity` marks build parity STILL_UNHELD and calls
+it "the dominant residual risk", capping the score at 78. Its method was:
 
 ```
-$ find reference/decompiled/shs3_payload -name "*§*.as" | wc -l
-667
+ls reference/decompiled/shs3_payload/scripts | grep -ci "enemy\|npc"   → 0
 ```
 
-`reference/decompiled/shs3_payload/scripts/§1t68s0§.as` **is the web build's `NPC` class.**
-Its `setLevel` is semantically identical to Android `NPC.as:239-260`:
+That is a **non-recursive `ls` against renamed symbols**. `find` shows 1079 `.as`
+files under `shs3_payload`, of which **612 are obfuscated `§1tNNNsN§.as` classes**.
+Numeric literals survive symbol obfuscation, so parity is directly checkable:
+
+`reference/decompiled/shs3_payload/scripts/§1t68s0§.as` **is** the web NPC class:
 
 ```as3
-// §1t68s0§.as:258-279  (WEB v0.717)
+// §1t68s0§.as:258-278  — WEB v0.717
 public function setLevel(param1:int) : *
 {
    var _loc2_:Number = param1 / this.level;
@@ -34,198 +32,266 @@ public function setLevel(param1:int) : *
    this.level = param1;
    this.damage *= _loc2_;
    this.defense *= _loc2_;
-   this.§1t3257s0§ *= _loc2_;          // maxhp
-   this.§1t3308s0§(this.§1t3257s0§);   // setHP
-   this.§1t3301s0§();                  // updateHealthBar
+   this.§1t3257s0§ *= _loc2_;      // maxhp
+   this.§1t3308s0§(this.§1t3257s0§);
    this.xp = param1 * 2 + 20;
-   if(param1 <= 10) { this.damage = 1; this.defense = 1; this.§1t3257s0§ = 1; … }
+   if(param1 <= 10) { this.damage = 1; this.defense = 1; this.§1t3257s0§ = 1; ... }
 }
 ```
 
-Further parity, measured this pass:
+Parity table I measured (web `§1t68s0§.as` vs android `NPC.as`):
 
-| constant | Android v0.682 | Web v0.717 | parity |
+| constant | android v0.682 | web v0.717 | verdict |
 |---|---|---|---|
-| `aiCounterMax = 24` | `NPC.as:22` | `§1t68s0§.as:22` (same line) | ✅ |
-| hit lockout `= 12` | `NPC.as:462` | `§1t68s0§.as:483` | ✅ |
-| `xp = lvl*2+20` | `NPC.as:252` | `§1t68s0§.as:271` | ✅ |
-| `GRAVITY:Number = 3` | `Projectile.as:8` | `§1t128s0§.as:8` (same line) | ✅ |
-| `ttlMax:int = 48` | `Projectile.as:22` | `§1t128s0§.as:22` (same line) | ✅ |
-| `atan(velY/velX)*57.2727+180` | `ArrowProjectile.as:54` | `§1t137s0§.as:64` | ✅ |
-| ai dispatch switch | `switch(xml.ai)` cases **0..37** | `switch(_loc6_.ai)` cases **0..38** | ⚠️ **diverges** |
-| archer solve gravity | `Projectile.GRAVITY` always | overridden to **1.5** on knockdown | ⚠️ **diverges** |
+| setLevel rescale + 0.9 @≤20 + 1/1/1 @≤10 | NPC.as:239-260 | §1t68s0§.as:258-278 | **identical** |
+| `xp = lvl*2 + 20` | NPC.as:252 | §1t68s0§.as:270 | **identical** |
+| aiCounterMax | `= 24` NPC.as:22 | `§1t3244s0§:int = 24` §1t68s0§.as:26 | **identical** |
+| damage / defense defaults | `10` / `1` NPC.as:14,16 | `10` / `1` §1t68s0§.as:14,16 | **identical** |
+| TTLMAX | `96` NPC.as:28 | `96` §1t68s0§.as:28 | **identical** |
+| hit lockout | `gotHitCounter = 12` NPC.as:462 | `§1t3246s0§ = 12` §1t68s0§.as:483 | **identical** |
+| boss xp curve `lvl*5 + 45` | EnemyElite.as | §1t4523s0§.as:61,77 + 8 more | **identical** |
+| **arrow gravity** | **single `velY += GRAVITY`(3)** | **`1.5` for launch arrows / `3` otherwise** | **DIVERGES** |
 
-**Consequence for the score.** The rationale caps the re-score at 78 with "(1) build parity
-is unestablished and this is the dominant residual risk." That reason is now gone: parity is
-*demonstrated* for every core constant, and where it breaks it breaks *measurably*. Item (1)
-of the cap should be struck. Items (2) Tengu and (3) unwritten behaviour classes stand.
+So: parity is not unestablished — it is **established for eight constants and broken
+for one**. The STILL_UNHELD verdict is refuted, and the residual-risk framing that
+caps the score is built on a search artifact.
 
 ---
 
-## ⚠️ MATERIAL — two claims marked HELD are wrong for the 1:1 target
+## HEADLINE — the level→stat formula is TWO systems, and the surveyor reported one
 
-### `enemies-ai/arrow-arc-physics` — the web archer halves gravity on knockdown shots
-
-Android `EnemyArcher.as:277` computes the solve with `Projectile.GRAVITY` unconditionally,
-then rolls `doLaunch` *afterwards*. The web build inverts the order and **overrides gravity**:
+`grep -rn "setLevel(" reference/decompiled/shs3_android/scripts/*.as` returns
+**11 `override public function setLevel`** declarations. The base `NPC.setLevel()`
+the surveyor quotes is the **trash-mob path only**. The boss/elite path is a
+completely different mechanism — a **player-relative rubber-band tuned to a hit
+count**, not to absolute numbers:
 
 ```as3
-// §1t4542s0§.as:287-299  (WEB v0.717) — _loc1_ is the knockdown roll, computed FIRST
-var _loc6_:Number = §1t128s0§.§1t12543s0§;   // Projectile.GRAVITY == 3
-if(_loc1_) { _loc6_ = 1.5; }                 // ← NO ANDROID EQUIVALENT
-var _loc7_:Number = _loc6_ * Math.abs(_loc4_ - _loc2_) / 0.866;
-…
-var _loc10_:Number = (_loc5_ - _loc3_ - 0.5 * _loc6_ * _loc9_ * _loc9_) / _loc9_;
+// EnemyElite.as — override setLevel(lvl)
+xp = lvl * 5 + 45;                                   // NOT lvl*2+20
+var playerHP  = StatsManager.getPlayerStats(STAT_MAXHP)  + findBonusStat(STAT_MAXHP);
+var playerDEF = StatsManager.getPlayerStats(STAT_DEFENSE)+ findBonusStat(STAT_DEFENSE);
+var playerATK = StatsManager.getMinDamage() + StatsManager.getDamageRange()/2;
+var lvldiff = lvl - StatsManager.getLevel();
+var hitsToKillBoss   = 10 + lvldiff;   if(hitsToKillBoss   <= 3) hitsToKillBoss   = 3;
+var hitsToKillPlayer = 18 - lvldiff;   if(hitsToKillPlayer <= 0) hitsToKillPlayer = 1;
+var playerhit = playerATK - defense;
+   if(playerLVL <= 10 && playerhit < 1)            playerhit = 1;
+   else if(playerLVL <= 20 && playerhit < playerLVL/8) playerhit = playerLVL/8;
+   else if(playerLVL <= 30 && playerhit < playerLVL/6) playerhit = playerLVL/6;
+   else if(playerhit < playerLVL/4)                    playerhit = playerLVL/4;
+var bossHP = playerhit * hitsToKillBoss;
+   if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); }
+var bossATK = playerHP/hitsToKillPlayer + playerDEF;
+   if(bossATK > minDamage) { minDamage = bossATK; }
+if(lvl <= 5) { minDamage = 1; defense = 1; }          // clamp at 5, NOT 10
 ```
 
-Knockdown arrows in the game the videos show fly a **flatter, faster arc** than the claim's
-"GRAVITY = 3" describes. The ±4 jitter, the 0.866 launch factor, the 60px muzzle offset and
-the level-gated knockdown ladder (>50 1-in-2 · >20 1-in-3 · >10 1-in-4) are all confirmed
-verbatim in both builds. Only the gravity term diverges.
+Variants: `EnemyKanjiGuardian` uses `hitsToKillBoss = 5 + 8 + lvldiff` (floor 5) and
+`hitsToKillPlayer = 16 - lvldiff`; `EnemyWolfAlpha` uses `15 - lvldiff`;
+`EnemySpearElite`/`EnemyPlayer` branch on `isBoss`/`isDuelist` and fall through to
+`super.setLevel()` when false. **`EnemyOgre.setLevel` is an empty override** — the
+Ogre never rescales at all. `EnemyStag` re-implements the base formula verbatim.
+`EnemyTrainingDummy` repurposes `lvl` as a tutorial step index (`lvl==3 → maxhp = 8`).
 
-### `enemies-ai/ai-id-to-class-map` — miscounted, and Android-only
+Parity: the web build has the same boss path — `§1t4523s0§.as:77-80` reads the same
+four player stats right after `xp = param1 * 5 + 45`.
 
-Two defects:
-
-1. **Arithmetic.** "instantiates 34 named `Enemy*` classes plus 3 `Friendly*`" implies 37.
-   Measured on Android: **31 unique `Enemy*` + 3 `Friendly*` = 34 total** across 38 cases
-   (`EnemyPlayer` ×3, `EnemyWolf` ×2, `EnemySpearElite` ×2 account for the 4 extra cases).
-   The 34 is the *total*, not the `Enemy*` count.
-2. **Wrong build.** The web v0.717 switch runs **cases 0..38 — 39 cases, 36 unique classes**:
-   ```
-   $ sed -n '615,732p' §1t1543s0§.as | grep -o "case [0-9]*:" | sort -u | wc -l
-   39
-   ```
-   v0.717 carries **two more behaviour classes and one more ai id** than v0.682. A
-   recreation scoped to "38 behaviours" under-builds the actual target.
-
-The claim's *load-bearing* assertion — `<ai>` is a class index, not a difficulty tier, so the
-shipped `AI_TIERS easy|normal|hard` models a shape the original does not have — **holds
-in both builds.**
+**Consequence for the rebuild:** authored `<hp>` on a boss row is a **floor**, not the
+boss's HP. "Hiroshi lvl80/hp1000" is overwritten at spawn by `playerhit ×
+hitsToKillBoss` whenever that is larger. Porting the authored statlines as effective
+stats — which two of the surveyor's claims instruct — produces the wrong difficulty
+curve at every player level.
 
 ---
 
-## ⚠️ MINOR — one A1 crop does not contain what it says it contains
+## HEADLINE — the stagger animation exists; the surveyor searched one blob
 
-`enemies-ai/nameplate-level-4-bandit` states crop `(340,320)→(900,480)` and reports the gold
-`GUEST` label and the `TERRITORY (22,51) / SECTOR (1,2)` readout as visible in it.
+`enemies-ai/stagger-is-a-counter-not-an-anim` asserts *"there is NO stagger/flinch/
+gothit animation among the 158 human anim names"*. That is false. It searched
+`99_MCSCharacter_HumanAnimationData.bin`; the flinch lives in the **Human2** blob:
 
-I ran exactly that crop (LANCZOS ×3). It contains: `BANDIT (4)` in red all-caps at top-left,
-one kasa-hatted bandit, two stacked bandits right under overlapping red labels. **No gold
-GUEST. No HUD readout.** Measured from the full frame (`frame_0013.jpg` is **1024×576**, not
-1080p):
+```
+reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin
+   <anim i="flinch_weapon" d="8">
+   <anim i="flinch" d="8">
+```
 
-- gold `GUEST` sits at **x≈189-232, y≈314-326** → left of the crop's x=340 edge
-- `TERRITORY/SECTOR` sits at **x≈849-984, y≈273-286** → above the crop's y=320 edge
-- the claim says "the player at x≈430" — **x≈430 is a *bandit*.** The player is at x≈205.
-
-**The substance is correct and I confirmed it in the full frame**: hostiles carry a red
-all-caps name + parenthesised level, the player carries a gold `GUEST`, and the frame's
-level 4 does contradict `npcdata.xml:277 <hp>15</hp> / :276 <lvl>10</lvl>` — **the frame
-wins**, routing that bandit through `setLevel(4)` and the ≤10 clamp to a real on-screen HP
-of 1. Only the crop rectangle and the player x-coordinate are wrong. Corrected cite below.
-
-### `enemies-ai/engagement-ranges` — one of eleven cites is a talk radius, not aggro
-
-All 18 line cites reproduce **exactly** (Knife 50/50, Katana 100/100, Spear 400/400/100/50,
-Shield 50/50/100, Ogre 100/40, Wolf 100>d>50 and 100-250 at 1-in-3, Archer 100/100, JiangSi
-50, `aiCounterMax = 24`). One does not belong:
+And it is a first-class action state, not an unused asset:
 
 ```as3
-// Obj_NPCProcGen.as:131-136
-override public function isInInteractRange(mc:MovieClip) : Boolean {
-   if(this.questCompleted) { return false; }
-   return abs(this.npc.mcs.x - mc.x) < 100;
+MCSActor.as:170  internal static var FLINCH_WEAPON:String = "flinch_weapon";
+MCSActor.as:172  internal static var FLINCH:String        = "flinch";
+MCSActor.as:922  internal static var FLINCH_STATE:int     = 28;
+
+NPC.as:747-765
+   public function doFlinch() : * {
+      if(actionState == FLINCH_STATE || actionState == SLASH_STATE) return;  // slash is armour
+      this.prevActionState = actionState;
+      this.prevAnim        = mcs.animation;
+      this.prevFrameCounter= mcs.frameCounter;
+      actionState = FLINCH_STATE;
+      startAnim(FLINCH_WEAPON);
+   }
+   public function endFlinch() : * {
+      actionState = this.prevActionState;
+      startAnim(this.prevAnim);
+      mcs.frameCounter = this.prevFrameCounter;   // resumes the interrupted anim mid-frame
+   }
+```
+
+Also referenced by `EnemyZombie.as:285,544`, `EnemyShield.as:117-118`,
+`EnemyPlayer.as:1000`, `MCSPlayer.as:4311-4325` (player picks FLINCH vs FLINCH_WEAPON
+by whether a weapon is held).
+
+**Ledger blocker ③'s stagger half is HELD, not PARTIAL: 8 frames, state 28,
+save/restore-with-frame-offset, and immune while `SLASH_STATE`.** This was the
+surveyor's own stated reason #4 for capping the score.
+
+---
+
+## HEADLINE — the shipped web build's arrow physics is NOT single-gravity
+
+`enemies-ai/arrow-arc-physics` states "GRAVITY = 3" as the arrow constant. True for
+Android v0.682. **False for the shipped web v0.717 build**, which has a two-gravity
+arrow model keyed on the knockdown roll:
+
+```as3
+// WEB §1t4542s0§.as:275-305 — roll FIRST, then solve with the chosen gravity
+if(level > 50)      _loc1_ = int(Math.random()*2) > 0;
+else if(level > 20) _loc1_ = int(Math.random()*3) == 0;
+else if(level > 10) _loc1_ = int(Math.random()*4) == 0;
+var _loc6_:Number = §1t128s0§.§1t12543s0§;   // = 3   (§1t128s0§.as:8)
+if(_loc1_) { _loc6_ = 1.5; }                 // launch arrows fly on HALF gravity
+var _loc7_ = _loc6_ * Math.abs(_loc4_-_loc2_) / 0.866;  ...
+
+// WEB §1t137s0§.as:64-71 — integration matches the solve
+rotation = Math.atan(velY/velX) * 57.2727 + 180;
+if(this.§1t4425s0§) { velY += 1.5; } else { velY += §1t12543s0§; }
+```
+
+Android for comparison — one branch, and `grep -c "1\.5" ArrowProjectile.as` → **0**:
+
+```as3
+// ANDROID ArrowProjectile.as:55-56
+rotation = Math.atan(velY/velX) * 57.2727 + 180;
+velY += GRAVITY;
+```
+
+Android also rolls `doLaunch` **after** the solve (`EnemyArcher.as:286-300`), so it
+cannot affect the trajectory; web rolls it **before**, so it does. Knockdown arrows
+in the shipped game visibly float on a higher arc. A port using a fixed `GRAVITY = 3`
+is wrong on exactly the arrows the player is meant to read and dodge.
+
+---
+
+## The nameplate rule is per-entity, not per-mode — and the source gives the exact hues
+
+I opened both frames.
+
+**seg-10 `frame_0013.jpg`**, my crop `(340,320)→(900,480)` LANCZOS ×3: two kasa-hatted
+bandits under red all-caps `BANDIT (4)`; the right label is overlapping duplicates for
+stacked bandits. **The gold `GUEST` and the `TERRITORY (22,51)/SECTOR (1,2)` HUD that
+the surveyor lists as "visibly in the crop" are NOT in that crop** — on the full frame
+`GUEST` sits at x≈205 (left of the crop's x=340) and TERRITORY/SECTOR at y≈272 (above
+the crop's y=320). Both are in the *frame*, so the finding stands; the crop attribution
+is wrong. Full frame also shows: 138 COINS, player badge **level 4**, XP 3714/5150,
+20/20 green / 15/15 blue, HEAVY STANCE, "W TOSHIBARA FIELD".
+
+Worth noting the surveyor missed: **the player is also level 4**, so the roamers here
+are level-matched, not authored at 4. Confirmed elsewhere in the same system —
+`FriendlyElite.as:70`, `FriendlyArcher.as:58`, `FriendlySpearElite.as:56` all call
+`this.setLevel(StatsManager.getLevel())`.
+
+**seg-11 `frame_0020.jpg`**, my crop `(250,300)→(1024,500)` ×2 and the full frame:
+five thin horizontal HP bars (four green, one dim tan far right) over five hostiles,
+**no name or level on any of them**; gold `GUEST` over the player mid-swing with a
+pickaxe; two drawn-longbow archers at the right; brick interior, red near-death
+vignette; HUD 16/20, 15/15, "CANNOT CHANGE STANCE", "AUTO SLASH OFF". The surveyor's
+description is accurate.
+
+But its *mechanism* — "the enemy readout is **mode-switched**" — is contradicted by
+the source. Nameplates are decided **per entity at init**, and blanked explicitly:
+
+```as3
+// EnemyPlayer.as:768-810
+if(this.isDuelist || this.isBoss) {
+   namecolor = 16777215;                                   // 0xFFFFFF white
+   if(this.side != 0 && this.side != StatsManager.getSide())
+      namecolor = 10027008;                                // 0x990000 dark red
+   mcs.setDisplayName(xml.name + " (" + level + ")", namecolor);
+   ...
+} else {
+   mcs.setDisplayName("");                                 // field trash: no plate, ever
+   minDamage = xml.attack;  damageRange = 0;               // and no damage variance
 }
 ```
 
-That is a **quest-NPC talk radius gated on `questCompleted`** — "can I interact with this
-NPC", not "do I aggro". Listing it as "overworld roamer trigger 100px" inside a set of
-combat engagement distances mis-attributes it. Everything else in the claim stands.
+So the correct rules are: **format** `name + " (" + level + ")"`; **white 0xFFFFFF**
+by default, **dark red 0x990000** only when the entity's `side` is non-zero *and*
+differs from the player's side (hostile **faction**, not hostility); and **only bosses
+and duelists get a plate at all**. A recreation that implements a combat-mode toggle
+would be wrong. Same block also holds an unreported duelist stat band:
+`isBoss && level>70 → ×1.25` dmg/hp, `isBoss && level>50 → ×1.2`, `level>30 → ×1.1`,
+`level<10 → ×0.8`.
 
 ---
 
-## ✅ CONFIRMED — re-derived independently, no correction
+## Verified as stated (I re-derived each)
 
-| claim | what I ran |
-|---|---|
-| `level-stat-formula` | read `NPC.as:239-260` verbatim; **+ web parity above** |
-| `per-enemy-hp` | `grep -c "<hp>"` → **403**; `npcdata.xml:3121-3128` exact (id 144, lvl 80, hp 1000) |
-| `one-statline-six-movesets` | parsed ids 11-16 → identical statline, `<ai>` = 1,2,3,4,5,9; all six line cites exact |
-| `telegraph-active-recovery-frames` | summed all 18 `*AnimationData.bin` → **471 exactly**; `99_Human` = **158**; `heavyhorizontalslash_parta/b/c` = 6 / 9 `l="1"` / 7 — every duration exact |
-| `spawn-geometry` | 118 `<wave>`, **160 `<x>` inside wave blocks, range -400..2000**, 171 `<lvl>` range 1..80 — all reproduced; `questdata.xml:77-88` is precisely the quoted block |
-| `undead-rule-is-not-reflect` | `grep -ril reflect` over the Android tree → **0 files**; behead switch + `damage /= 2` verbatim at `EnemyZombie.as:495-517`; `damage *= 1.5` at `NPC.as:451-453` |
-| `shipped-config-hp150-is-stale` | ran both suites: **57 passed**, **14 passed**; assertion at `tests/config-values.test.ts:466-474` exact; `git log -S"hp: 150"` → **335e615 2026-07-26** |
-| `boss-names-are-procgen` | parsed the tables myself: Hachisuka **idx 6**, Honda **idx 10** (36 surnames), Kano **idx 79**, Shizuka **idx 225** (291 female) |
-| `creature-and-boss-roster` | all 7 npcdata line cites exact (67/5056 lvl15 hp100 · 77/5071 lvl80 hp40 · 89/5073 lvl30 hp150 · 165/5090 lvl10 hp200 · 186/5107 lvl30 hp600 · 800/5118 lvl23 hp800 · 802/5119 lvl10 hp30) |
-| `no-squad-coordination` | `getNearestEnemy` at `NPCManager.as:1360` verbatim — per-NPC nearest-target, no shared table |
-| `no-per-enemy-chi-or-speed` | `grep -c "<chi>"` → **0**; `grep -c "<speed>"` → **0**; `XMLNpc.as` defaults verbatim |
-| `kill-rewards-…` | 66 `<reward>` / 131 `<loot>`; `calcXP` verbatim at `NPC.as:166-189`; loot dispatch verbatim at `NPC.as:~837-855` |
-| `combat-hud-drops-the-nameplate` | **my own crops + full frame**: 5 thin bars (4 green + 1 dim tan far right), zero names, zero levels; gold `GUEST` the only fighter text; `16/20` · `15/15` · `CANNOT CHANGE STANCE` · `AUTO SLASH OFF` all present |
+- **403 `<hp>` / 406 `<attack>` / 394 `<defense>`** rows — `grep -c` on `npcdata.xml`. ✅
+- **ids 11-16 one statline, six AI** — `<lvl>10 <hp>15 <attack>24 <defense>20`,
+  `<ai>` = 1,2,3,4,5,9. ✅
+- **38-case dispatch** — read verbatim, `NPCManager.as:516-634`. ✅ (count nit below)
+- **`<ai>` histogram** — 34 distinct values over 425 rows; every bucket the surveyor
+  listed matches my `sort | uniq -c` exactly. ✅
+- **118 `<wave>`, 75 `<fatal>`**, wave-0-on-ground / wave-N `posY - Math.random()*200`. ✅
+- **Zombie head-gate** — `PART_hat/head/neck → behead`, `if(!behead) damage /= 2`;
+  base `NPC.as:451-453 if(behead) damage *= 1.5`. `grep -ric reflect` over all Android
+  scripts → **zero hits**. ✅ *Unreported extra rule:* hitting `PART_weapon` sets
+  `damage = 0` and returns false.
+- **No enemy Chi / speed** — `grep -c "<chi>\|<speed>" npcdata.xml` → **0**. ✅
+- **No squad coordination** — `getNearestEnemy` read in full at `NPCManager.as:1360-1390`;
+  independent nearest-live-target scan, `pos > -10 && pos < stageWidth + 10`, skips
+  dead and `SKILL_UNDYING_STATE`. No shared aggro table. ✅
+- **calcXP** — grey-level gate, `mobLevel - playerLevel > 3 → 0`, ±band, `elite ×2`. ✅
+- **Loot dispatch** — `chance = loot.chance*100`, ids 0→1 coin, 1→5 coins, 2→quest,
+  3→level-scaled random, else literal id. ✅
+- **`hp: 150` is stale** — `npx vitest run tests/config-values.test.ts` → **57 passed**;
+  `ENEMY_BASE` asserted at `tests/config-values.test.ts:466`. ✅
+- **Bounty names are procgen** — `Hachisuka` and `Honda` both present in
+  `87_NameGenerator_SamuraiFamilyNames.bin`; `Kano` in `85_MaleNames.bin`; `Shizuka`
+  in `88_FemaleNames.bin`. ✅
+- **Tengu** — I widened the hunt to `grep -ril "tengu" reference/` (**everything**:
+  all XML, all 8 decompiled bundles, android blobs, index JSONs) → **zero files**.
+  The STILL_UNHELD half is **correct and I am not refuting it**. Ledger line 219/221
+  ("Tengu/Guardian", "Tengu Hotaru") is a ledger invention or v0.717-only. Ledger text
+  quoted by the surveyor verified verbatim at `REBUILD_READINESS.md:218-221`. ✅
 
-Minor descriptive slip on the last row: of the two bow-carrying figures at the right, only
-the far-right one is kasa-hatted; the other is bare-chested and bare-headed. Does not touch
-the claim.
+## Minor defects (not refutations)
 
----
+1. `ai-id-to-class-map` says "34 named Enemy* classes plus 3 Friendly*". Measured:
+   **31 distinct `Enemy*` + 3 `Friendly*` = 34 total** across 38 cases (`EnemyPlayer`
+   is cases 0/9/14, `EnemySpearElite` is 28/37). The 34 is the total, mislabelled.
+2. `engagement-ranges` quotes `EnemySpear.as:192` as
+   `if(playerX - mcs.x < 400 && mcs.y - playerY < 10 ...)`. Line 192 is actually
+   `mcs.x - playerX < 400 && mcs.y - playerY < 10`; the `playerX - mcs.x` form with
+   `< 50` is line 204. Two lines spliced into one quote. Constants unaffected.
+3. `engagement-ranges` calls `Obj_NPCProcGen.as:135` an "overworld roamer trigger".
+   It is `isInInteractRange()`, gated on `if(this.questCompleted) return false` — a
+   quest/talk radius, not aggro.
+4. Frames are 1024×576. Any px measurement taken off them scales by 0.533 vs a 1080p
+   source.
 
-## 🎯 HUNTER RESULT — Tengu: the under-claim hunt FAILED, so the survey is right
+## Net effect on the score
 
-I tried hard to overturn `enemies-ai/tengu-is-not-in-the-payload`. Searched, all zero:
+The surveyor capped at 78 on four stated reasons. Three are now dead:
+(1) build parity — **checkable and largely confirmed**, via the 612 obfuscated web
+classes; (2) the 12-frame lockout wanting confirmation — **the flinch anim is 8 frames
+and the state machine is fully written**; (4) partly, since the 38 behaviours are now
+readable in *both* builds. Reason (2) (Tengu) survives intact.
 
-- all 5 extracted XMLs (`npcdata`, `itemdata`, `questdata`, `skilldata`) + `ui_strings.txt`
-- **all 27 `reference/extracted/bindata/` files** (`strings` piped to grep)
-- **all 42 `reference/extracted/android/` blobs**
-- `shs1`, `shs2`, `shs3_bin`, `shs3_loader`, `shs3_stage2`, `shs3_stage3`, `shs3_payload`
-- `docs/gauntlet/L0/index/strings.json` (the 2,533-entry table) and `resolved_names.json`
-- `docs/gauntlet/L0/index/frames.json`
-
-There is also **no Tengu animation blob** — the 18 `MCSCharacter_*AnimationData.bin` cover
-Deer/DualStance/Guardian/Wolf/HumanSpear/Goblin/HeavyStance/Boar/LightStance/Ogre/Bear/
-Skills/Human2/ReversedStance/Horse/BalancedStance/Undead/Human. `Guardian` is held
-(`102_MCSCharacter_GuardianAnimationData.bin`, 16 anims; `NPCManager.as:628`; `npcdata.xml:4111`).
-
-**`Tengu` in the ledger's Ready taxonomy is a ledger invention.** The survey's PARTIAL is
-the correct answer and is now backed by an exhaustive negative rather than a five-file grep.
-
----
-
-## 🔎 NEW — things the survey missed
-
-**N1 · Part-specific death animations (A2).** The 158 human anims carry a dismemberment set
-the survey never mentions while discussing behead: `deathnohead` d=31, `deathnohand` d=25,
-`deathinhalf` d=28, `deathwitharrow` d=23, `deathbyarrow` d=21, alongside plain `death` d=38
-and `deathenemy` d=23. This is the *visual* half of the `behead` ×1.5 / zombie head-gate
-mechanic and it is fully authored. `99_MCSCharacter_HumanAnimationData.bin`.
-
-**N2 · `stagger-is-a-counter` is under-claimed — it should be HELD, not PARTIAL.** I
-independently confirmed all three legs: `gotHitCounter = 12` (`NPC.as:462`, and web
-`§1t68s0§.as:483`), `canHit()` gating (`NPC.as:296-299`), and **zero** stagger/flinch/gothit
-names among the 158 — only the launch chain, whose durations are all exact as quoted
-(`gotlaunchedupwards` 4/9/7, `gotlauncheddowned` 18, `downedup` 4, `downedup2` 25,
-`deathdowned` 7). An A2 cite is admissible under §0; "wants frame-side confirmation" is a
-CONTRACT-stamping question, not a holding question.
-
-**N3 · The survival-mode engine is in the wave code (A2).** `NPCManager.as:381-388`:
-`if(currentWave >= waveCount) { if(endless && !StageManager.isSurviveCleanUp()) { currentWave -= 2; nextWave(); } }`
-— an `endless` flag that rewinds and replays waves. This is the runtime behind Stage-0's
-blob 119 `<survivalmodedata>`, the game mode absent from all 12 ledger systems.
-
-**N4 · Friendlies scale to the *player's* level (A2).** `FriendlyArcher.as:58`,
-`FriendlyElite.as:70`, `FriendlySpearElite.as:56` all call
-`this.setLevel(StatsManager.getLevel())`. Enemies take an authored `<lvl>` override through
-`NPCManager.createEnemy(…, lvl)`; allies take the player's. Different scaling rule per side.
-
----
-
-## Score
-
-The survey's 78 was capped by four things. **(1) is refuted** — parity is demonstrated, not
-unestablished. **(2) Tengu stands** (I strengthened it). **(3) unwritten behaviour work
-stands, but is bigger than stated** — 36 classes / 39 ai ids on the web build, not 34/38.
-**(4) is under-claimed** — the stagger finding is fully A2-held.
-
-Net: the evidence base is stronger than the survey credits, and the two divergences I found
-(archer gravity 1.5, +1 ai case) are *specific and fixable*, not diffuse risk. **A re-score
-above 78 is justified — but every ported number must now be labelled per-build, because
-v0.682 and v0.717 provably differ in at least two places in this system alone.**
+Pulling the other way, and new: the boss rubber-band overrides mean the authored boss
+statlines are floors, and the web arrow gravity diverges from the Android source every
+number in this unit was taken from. Those are corrections, not gaps — they raise
+confidence while changing what should be ported.

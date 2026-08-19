@@ -507,3 +507,332 @@ held; the work is not done.
   payload directly and need no Android caveat.
 - C2 is the only A1 claim here. Where a doc and a frame disagreed, the frame won,
   and I said so.
+
+---
+---
+
+# RUN-4 ADDENDUM — 2026-08-17 (second orthogonal pass over the same 27 files)
+
+**Everything above is the run-3 sweep and stands unaltered.** This pass re-read all
+27 blobs independently and adds C20–C27. It also **retracts two of its own
+first-pass errors** (R1, R2) — logged rather than deleted, because a silent
+correction is how a wrong claim survives.
+
+Independent re-verification of run-3's headline counts, done blind before reading it:
+`487 animations · 5,596 keyframes · 81,706 node transforms · 102 looping` (matches
+C17 exactly), `39 <wave> / 87 <enemy>` (matches C9/C11), `70 <room>` (matches C8),
+and the pillarbox box `x = 52 … 1867, 1816 × 1080` measured on **three** frames
+(`_427.0`, `_431.0`, `_433.0`) rather than one — C2 reproduces exactly, including
+the sharp edge at x=52 (max channel 10 → 82) and x=1867 (63 → 10).
+
+All AS3 line numbers below are from `reference/decompiled/shs3_android_payload/scripts/`
+(clientVersion 0.682); `diff -rq shs3_android/scripts shs3_android_payload/scripts`
+is empty, so the two bundles are byte-identical. The run-3 build caveat carries
+unchanged: these are claims about the engine's **data contract**, not tuned numbers.
+
+---
+
+## R1 — RETRACTION: I called `bindata/92` "a placeholder GIF stub". It is the world map (C1 is right).
+
+My first pass read the GIF header (`GIF89a`, 63×72, 4-entry greyscale table,
+272 bytes) and concluded "placeholder or mask, not shippable art". **That was
+reasoning from plausibility off a header instead of decoding the pixels — exactly
+the failure mode §0 forbids.** C1 decoded the LZW stream, found 735 land cells
+drawing Hokkaido/Honshu/Shikoku/Kyushu, matched the md5 against the class-named
+Android blob `110_Mobile_MapBitmapData.bin`, and checked the ledger's own start
+coordinate (21,51) onto a land cell. C1 stands; my BD-18 is withdrawn.
+
+## R2 — RETRACTION: I filed the animation frame-rate as STILL_UNHELD. It is 24 (C3 is right).
+
+My first pass found only `Mobile.as:117 GameEngine.getStageMC().frameRate = 24;` —
+an Android resume-from-background handler — judged that too weak to convert `d=` to
+time, and filed STILL_UNHELD. C3 read `framerate = 24.0` **from the web payload's own
+SWF header** and corroborated it against the trap duty cycles in `93…bin`, which are
+all multiples of 24. That is decisive and my caution was wrong-headed rather than
+merely conservative. **Adopt 24 Hz**: every `d=` in this document is 24ths of a second.
+
+---
+
+## C20 — The 11 "missing" war bosses are RIVAL PLAYERS injected at runtime. C19's hole is now explained, and proven closed-forever.
+
+- **Artifact:** A2 · `reference/extracted/bindata/119_1t4646s0.bin:18, 49, 80, 111,
+  142, 173, 204, 235, 266, 297, 328` + `WarHexUI.as:1405-1414`, `QuestEngine.as:1041`
+- **Quote (the blob):** `<id>700</id>` … `<id>710</id>`, one per boss wave, ascending.
+- **Quote (the consumer, `WarHexUI.startBattle`):**
+  ```as3
+  npcXML.initDuelist(innerStrArray[1],innerStrArray[2],innerStrArray[3],innerStrArray[4],innerStrArray[5],1,innerStrArray[0],false);
+  npcXML.id = 700 + i;
+  QuestEngine.insertNPCData(npcXML);
+  ```
+  driven by `sentryStr.split(String.fromCharCode(30))` — a server record-separated
+  list of enemy **sentries**. And `QuestEngine.as:1035-1043`:
+  ```as3
+  public static function clearPlayersInNPCData() : *
+  ...
+     if(npcList[i].id >= 700 && npcList[i].id <= 710 || npcList[i].id == XMLNpc.INDEX_NPCHOLDER)
+     { npcList.splice(i,1); }
+  ```
+  The method's own name says it: ids 700–710 are **players**.
+- **Upgrades:** run-3 **C19 (STILL_UNHELD)** — *"Eleven survival/war boss definitions
+  are referenced and absent from both builds we hold."* They are absent because they
+  were never authored: each is a live rival player's duelist, rebuilt from an
+  equipment string fetched at battle start. Naming is `getSentryBotName`
+  (`NameGenerator.as:105`) = samurai family + given name.
+- **Verdict: HELD.** C19's hole is not a gap in our extraction — it is a proven,
+  permanent hole in the *artifact*, and its shape is now exact. Practical
+  consequence: **28 of the 39 waves are fully recoverable content**; the 11 boss
+  waves must be re-authored (an offline rival-loadout generator is the honest
+  substitute). This sharpens §6 *"The live clan-war — warring alongside thousands of
+  real players is impossible offline"* from a system-wide write-off to an 11-slot one.
+
+## C21 — The original RNG is a three-line LCG. Every procedural system in the game is bit-reproducible.
+
+- **Artifact:** A2 · `RNG.as:10-19, 65-73`
+- **Quote:**
+  ```as3
+  this.randomSeed = (this.randomSeed * 9301 + 49297) % 233280;
+  return this.randomSeed / 233280;
+  ...
+  public function rand(num:int) : int { return Math.floor(this.rnd() * num); }
+  ```
+  Constructor negates a negative seed and burns one `rnd()` before first use.
+- **Reach:** this single function seeds place-name generation (C16 / C22), trap-room
+  selection (C23), room generation (`new RNG(nodeid * this.roomid)`,
+  `RoomGenNode.as:1916`), daily loot (`LootDialog.as:428`), interactables
+  (`InteractUI.as:780, 1562, 1614`), and enemy-player placement (`EnemyPlayer.as:160`).
+- **Ledger sentence overturned:** §6 — *"**Server-sim topology & save format** —
+  nothing to copy; design a single-player persistence schema from the observed field
+  set."*
+- **Verdict: PARTIAL (overturns half).** The *save format* is indeed gone. But
+  "nothing to copy" is false for the generation half: the world's daily content is a
+  pure deterministic function of `(seed) → LCG`, fully specified above.
+  **Build flag:** `CLAUDE.md` mandates an injected **mulberry32**. The original is
+  this LCG. That is a defensible divergence but must be *labelled* as one, not
+  presented as original fidelity.
+
+## C22 — The place-name table is a 26×26 lookup, and territory IDs are two packed 12-bit fields.
+
+- **Artifact:** A2 · `reference/extracted/bindata/98_1t4653s0.bin` (677 entries;
+  entry index 675 = `Uenohara` at `:676`) + `NameGenerator.as:135-166`
+- **Quote:**
+  ```as3
+  var territoryx:int = territoryID >> 12 & 0x0FFF;
+  var territoryy:int = territoryID & 0x0FFF;
+  var namex:int = territoryx % 137;
+  var namey:int = territoryy % 26;
+  if(namex < 26) { return this.getTownName1(namex,namey); }
+  return this.getTownName2(territoryID);
+  ...
+  var index:int = namex * 26 + namey;          // maximum 25*26+25 = 675
+  ```
+- **The structural proof:** the algorithm's maximum index is **675**; the table holds
+  exactly **676** usable rows. That fit is not a coincidence — the table IS a 26×26
+  grid, and this decode is confirmed by its own bounds.
+- **Un-tabled territories** (`namex ≥ 26`) are named procedurally by
+  `getTownName2` = `namestarting[rand(78)] + nameending[rand(37)]` seeded
+  `new RNG(territoryID * 2)` (`NameGenerator.as:40, 42, 162-166`) — 2,886 further
+  deterministic names.
+- **Two hardcoded towns:** `NameGenerator.as:137-144` — territoryID `1405272` →
+  **"Ibamaya"**, `1524045` → **"Gokura"**.
+- **Territory → node subdivision:** `WarHexUI.as:1422-1424`
+  ```as3
+  var zeronodex:int = (this.mapid >> 12 & 0x0FFF) * 6;
+  var zeronodey:int = (this.mapid & 0x0FFF) * 6;
+  var nodeid:int = zeronodex + this.selectedHex.xpos << 12 | zeronodey + this.selectedHex.ypos;
+  ```
+  → **each territory is 6×6 nodes**, and node ids re-use the identical 12-bit packing.
+  This is why the War-Room board is 6×6 (C10) — the board *is* the territory's nodes.
+- **Verdict: HELD**, and it composes with C1 (the 63×72 land mask) rather than
+  competing with it. **One reconciliation I am leaving open, honestly:** `% 137` on
+  the x field only makes sense if the populated territory-x range exceeds 137, which
+  is wider than C1's 63-cell bitmap; and the two hardcoded constants decode
+  arithmetically to (343,344) and (372,333), also outside 63×72 — though both land
+  near territory (57,57) if read as *node* ids (÷6). So the bitmap and the
+  territory-ID space are at **different scales**, and which unit `getPlaceName` is
+  called with is **not established**. I am not asserting a resolution.
+
+## C23 — Trap rooms are placed and tiered by exact rules, and the `veryhard` set rotates DAILY off a server-date seed.
+
+- **Artifact:** A2 · `RoomGenNode.as:1918-1975, 2380-2450`
+- **Placement quote** (three separate gates, all on 2-exit rooms):
+  ```as3
+  // BG_DUNGEON / BG_DUNGEON_FOG
+  if(totalExits == 2 && this.isEnterFromLeft() && rng.rand(4) == 0)   // 1-in-4
+  // BG_ANCIENTRUINS
+  if(totalExits == 2)                                                 // always
+  // ROOM_NINJATRAIL
+  if(this.isEnterFromLeft() && rng.rand(2) == 0)                      // 1-in-2
+  ```
+- **Tier quote** (identical in all four sites, `:1923, 1942, 1960, 2380`):
+  ```as3
+  if(lvl < 10)      { traplvl = ROOM_TRAPEASY; }
+  else if(lvl < 50) { traplvl = ROOM_TRAPMEDIUM; }
+  else              { traplvl = ROOM_TRAPHARD; }
+  ```
+- **Bleed dice** (`:2393-2431`): EASY `rand(4)`, roll 3 → medium (25 %). MEDIUM
+  `rand(5)`, 3 → easy, 4 → hard, else medium (20/20/60). HARD `rand(4)`, 3 → medium
+  (25 %).
+- **Daily rotation**, `:2445`:
+  ```as3
+  traprng = new RNG(this.roomid * QueryManager.instance.getServerDate());
+  ```
+  `veryhard` alone is seeded by **room id × server date** — it re-rolls once per
+  real-world day. The same `getServerDate()` day-index multiplies into quest expiry
+  (`ActiveQuest.as:56, 380`), completion (`CompletedQuest.as:69, 73`), dungeon loot
+  (`LootDialog.as:428`) and enemy players (`EnemyPlayer.as:160`).
+- **Ledger sentence:** §1 UNKNOWN-UNKNOWNS — *"The real-world "day" length governing
+  quest expiry, farming, AP regen, and the War-Room 24h tick."*
+- **Verdict: PARTIAL.** The day *length* is still unheld. The **mechanism** is now
+  exact: one integer day-index, multiplied into every procedural seed. Secondary and
+  load-bearing for progression: content is explicitly banded at **level 50+**, so the
+  L11–80 range is shipped content, not extrapolation (§4 progression blocker ②).
+
+## C24 — The four elements are an ordered enum with a projectile archetype each: 0 fire · 1 wind · 2 water · 3 earth.
+
+- **Artifact:** A2 · `reference/extracted/bindata/93_1t4647s0.bin:276, 284, 292, 300`
+  + `Trap_ElementAuto.as:24-48, 69-95`
+- **Quote (the blob — the file's own comments label each block):**
+  ```
+  276: <!-- 4x fire  -->  <obj>…<name>Trap_ElementAuto</name><x>200</x><property>0,0,0,96,48,1</property></obj>
+  284: <!-- 4x wind  -->  …<property>0,1,0,96,48,1</property>
+  292: <!-- 4x water -->  …<property>0,2,0,96,72,1</property>
+  300: <!-- 4x earth -->  …<property>0,3,0,96,72,1</property>
+  ```
+- **Quote (the decoder):**
+  ```as3
+  if(this.elementType == 0)       { projType = ProjectileManager.PROJ_FIREBREATH; }
+  else if(this.elementType == 1)  { projType = ProjectileManager.PROJ_WINDKICK; }
+  else if(this.elementType == 2)  { projType = ProjectileManager.PROJ_WATERSPLASH; yChange = 0; }
+  else if(this.elementType == 3)  { projType = ProjectileManager.PROJ_GROUNDPUNCH; yChange = 0; }
+  ```
+  Property signature: `xvel, elementType, onDuration, offDuration, startInterval,
+  active`. Emission offset `y − 55` for fire/wind, `y + 0` for water/earth;
+  `createProjectile(…, ±1, 0, 20, 1, null)` → speed **20**.
+- **Ledger sentence:** §4 rebirth-elements blocker ① — *"what each element **does**
+  (24 skills' damage/cost/AoE/status — names only)."*
+- **Verdict: PARTIAL.** Two things are now held that were not: the **canonical index
+  order** (fire 0, wind 1, water 2, earth 3 — not alphabetical, not the wiki order)
+  and each element's projectile archetype (breath / kick / splash / ground-punch),
+  with a hint at their delivery height (fire and wind are chest-high; water and earth
+  are ground-level). The 24 rebirth-skill *values* remain unheld — I claim nothing there.
+
+## C25 — A launcher / knockdown / ground-finisher verb set that no ledger system records.
+
+- **Artifact:** A2 · `reference/extracted/bindata/108_1t4635s0.bin:5846, 6142, 24174`
+  (+ same file for the rest)
+- **Quote / census** (all `d` = ticks at 24 Hz per C3):
+  ```
+  launchopponent 14        gotlaunchedupwards_parta/b/c 4 / 9 / 7
+  gotlauncheddowned 18     gotlauncheddownedend 1 (+24 hold, C6)
+  downed 23                downedup 4        downedup2 25    flipupfromdowned 21
+  downstab 15              downstab_up 10 (+10 hold)         deathdowned 7
+  forwardroll_start 6      forwardroll_end 14
+  backstep 16              forwardstep 16    brake 9
+  ```
+  `AnimData.as` names `downstab_up` and `gotlauncheddownedend` explicitly in its hold
+  table, so these are engine states, not orphan art.
+- **Ledger sentence:** §2 scorecard, combat-core 42 — *"**Rebuild-ready now:**
+  gesture map, damage formula, blade-path model, combo rules"*.
+- **Verdict: HELD (overturns by omission).** The ledger's combat model is
+  stand-and-slash plus a dash. The source holds a **launcher**, a synchronised
+  airborne-victim track, a downed state with three distinct recoveries, a ground
+  finisher (`downstab` → `downstab_up`), a dodge roll, and directional step/brake.
+  Combined with run-3's C13 (grab/throw + victim track), combat-core is not "42 with
+  five missing numbers" — a whole verb category is unmodelled. Pairs with C6: the
+  timings for all of it are exact.
+
+## C26 — `108` also holds mounted movement, a shield-user kit, the full archer chain, ten posing slots, and two shipped easter eggs.
+
+- **Artifact:** A2 · `reference/extracted/bindata/108_1t4635s0.bin:8071, 13327,
+  24123, 24919, 26860`
+- **Quote / census:**
+  ```
+  mounted_idle / mounted_walk / mounted_run   (d=1, all looping)      :24123
+  holdshield 1 · holdshield_crouch 1 · holdshield_defend 1
+  holdshield_startrun 7 · holdshield_run 10 (loop) · holdshieldwalk 19 (loop)
+  holdshieldstabattack 10                                             :13327
+  aimarrow 1 · pullbackarrow 9 · pullbackarrow_full 15 · firearrow 1 (+10)
+  arrownormalpose 22 · walkwithbow 20 (loop) · deathbyarrow 21 · deathwitharrow 23
+  japanesebow 32 · japanesebow2 42 · kneel 13 · kneeltostand 21 · crouchpickupstand 34
+  runinterror 11 (loop) · ninjastealthwalk 25 (loop) · ninjasmokebombvanish 12
+  nodepose_1 … nodepose_10  (10 × d=1)                                :8071
+  gangnam 88 (loop)  :24919      narutorun 12 (loop)  :26860
+  ```
+  `MCSActor.as:132-150` names `POSE1`…`POSE10` = `nodepose_1`…`nodepose_10`.
+- **Verdict: HELD.** Three ledger touch-points. (a) enemies-ai blocker ③: the
+  shielder has an explicit `holdshield_defend` **block** pose distinct from
+  `holdshield_crouch` — the pose set is held even where AI timing is not.
+  (b) The archer's full draw chain (`pullbackarrow` → `pullbackarrow_full` → 
+  `firearrow`+10) is exact, which §4 enemies-ai lists as "closed this pass" on
+  *taxonomy* only. (c) `mounted_idle/walk/run` on the human rig, alongside the
+  8-animation horse blob `105`, means **riding is an animated player state**, not
+  just a fast-travel menu (§4 world-exploration "4 travel methods").
+  `gangnam` (88 looping ticks = 3.67 s) and `narutorun` are shipped easter eggs in
+  no ledger.
+
+## C27 — Trap-room content, counted exactly: 70 rooms / 297 objects / 14 types, and every `easy` room is exactly 800 wide.
+
+- **Artifact:** A2 · `reference/extracted/bindata/93_1t4647s0.bin`
+- **Measured (per-tier, adds the split C8 did not carry):**
+
+  | tier | rooms | objects | room widths present |
+  |---|---:|---:|---|
+  | easy (`:32`) | 13 | 37 | 800 only |
+  | medium (`:126`) | 21 | 94 | 800, 1000, 1150, 1400 |
+  | hard (`:309`) | 15 | 72 | 800, 1000, 1100, 1150, 1400 |
+  | veryhard (`:446`) | 20 | 94 | 800, 1000, 1400 |
+  | **total** | **70** | **297** | |
+
+- **Object census** (`<name>` with the trailing instance digit stripped):
+  ```
+  Obj_FloorSwitch 54 · Trap_SawBladesAuto 46 · Trap_SpikeBallAuto 43
+  Trap_ElementAuto 38 · Trap_Kunai 33 · Trap_KunaiAuto 19 · Trap_Jump 17
+  Trap_CrushingColumnAuto 13 · Obj_LowCeiling 13 · Trap_SpikesAuto 12
+  Obj_Lever 10 · Trap_CrushingBlockAuto 8 · Trap_Boulder 5 · Obj_BonePile 3
+  ```
+- **Two geometry constants that fall out**, and they bear on ui-hud/world scale:
+  `93…bin:52` `<obj>…<name>Trap_Kunai</name><x>800</x><y>310</y><property>270,5</property></obj>`
+  under the authored comment *"horizontal shoot past head"* → the fighter's head sits
+  near **y = 310**; and `Obj_LowCeiling` is always placed at `<y>200</y>`. Every
+  `easy` room being exactly **800** wide is the same 800 as the stage width in
+  `GameEngine.as:269` — one easy trap room is **one screen**.
+- **Verdict: HELD.** Extends C8 with the numbers a builder needs to author the set.
+
+---
+
+## Run-4 lane-impact summary
+
+| Claim | Lane(s) | Direction |
+|---|---|---|
+| R1 retraction (map is real) | world-exploration | self-correction — C1 stands |
+| R2 retraction (24 Hz) | art-anim, combat-core | self-correction — C3 stands |
+| C20 boss ids = rival players | meta-social, enemies-ai | **resolves C19** — permanent hole, exact shape, 28/39 waves recoverable |
+| C21 LCG recovered | world-exploration, meta-social | **over-claim in §6** — "nothing to copy" half wrong |
+| C22 26×26 name grid + 12-bit territory + ×6 nodes | world-exploration | **under-claim** — extends C1/C16 |
+| C23 trap placement + level gate + daily seed | world-exploration, progression | **under-claim** — extends C8 |
+| C24 element enum order + archetypes | rebirth-elements | under-claim (partial) |
+| C25 launcher/downed/ground-finisher | combat-core | **omission** — extends C13 |
+| C26 mounted / shield / archer / poses / eggs | enemies-ai, world-exploration, art-anim | **omission** |
+| C27 trap census + 800-wide = one screen | world-exploration, ui-hud | under-claim — extends C8 |
+
+## Run-4 STILL_UNHELD (stated so the volume above is not mistaken for coverage)
+
+Searched and found nothing in any of the 27 blobs or in the AS3 combat classes:
+```
+$ grep -rn "reach|slashRange|attackRange|SLASH_LENGTH|maxLength" MCSActor.as Player.as BattleUI.as
+  (no output)
+$ grep -rln "slashLine|drawSlash|SlashLine" *.as
+  (no output)
+```
+- **combat-core ① reach cap in stage px per stance — STILL_UNHELD.** The animdata
+  gives the *weapon node's* local x/y/rotation per frame, but the blade's own length
+  lives in the vector art, not in bindata, so reach cannot be derived from this source.
+- **combat-core ② crit ×; ③ early-mob HP / TTK; ⑤ Focus gating — STILL_UNHELD.**
+- **art-anim ① ALL AUDIO — STILL_UNHELD.** bindata is XML / text / GIF only. The
+  audio blobs are the encrypted `CWS` Android resources (Stage-0b S0-5); I make no
+  claim on them.
+- **enemies-ai ① level→stat formula; ② per-enemy HP — STILL_UNHELD.**
+- **C22's bitmap-vs-territory scale reconciliation — STILL_UNHELD** (stated in C22).
+
+The 27 blobs contain zero damage numbers, zero HP values, zero costs, zero cooldowns
+and zero audio. Everything this file holds is *form, geometry, content and timing*.

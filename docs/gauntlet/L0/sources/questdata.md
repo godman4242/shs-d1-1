@@ -775,3 +775,284 @@ regress node id against known territory/sector pairs there, not in questdata.
 | §4 rebirth-elements Surface "Dragon Dance = 3×/6× rebirths" | **CORRECTED** (Q-22) |
 | §4 world-exploration ① "world bounds + geography" | **STILL_UNHELD** (Q-23) |
 | S0-3 caveat "parity NOT established" | **narrowed for questdata** (Q-20) |
+
+---
+---
+
+# RUN 2 ADDENDUM — orthogonal re-sweep, 2026-08-17
+
+**Everything above is the run-1 survey (2026-08-15) and is preserved verbatim.** This run
+re-read `questdata.xml` end-to-end independently and confirms run-1's headline findings
+(Q-01, Q-02, Q-03, Q-14, Q-15). What follows is only what run 1 did **not** have, plus two
+corrections to run 1 itself. Claim ids are `A-nn` to keep them distinct from `Q-nn`.
+
+---
+
+## A-01 — There are FIVE stances, not three. `dual_stance` and `reversed_stance` ship as boss movesets.
+
+**Ledger:** §1, §3.3 and §4 model exactly three stances (Light / Balanced / Heavy) everywhere.
+
+**Evidence (A2).**
+
+```
+questdata.xml:11787          <param>reversed_stance</param>              (Magoichi, npc 810/188)
+questdata.xml:26029          <param>191,dual_stance,0</param>            (Gojo Takamori, npc 191)
+questdata.xml:26078          <property>185,dual_stance,0</property>      (Takamori, npc 185)
+questdata.xml:12107          <property>161,balanced_stance</property>    (Satoshi)
+questdata.xml:12113          <property>164,heavy_stance</property>       (Fumio)
+questdata.xml:12101          <property>168,spear_idle</property>         (Yuudai — a SPEAR class)
+questdata.xml:2279           <property>117,lightstanceidle</property>    (training dummy 1)
+questdata.xml:2386           <property>117,heavystanceidle</property>    (training dummy 3)
+```
+
+This is shipped *content that actually uses them*, corroborating STAGE-0 FINDING S0-1
+(bindata 100–118 carry `reversed` and `dual_stance` animation sets). Companions also have
+**fixed stances**, which no ledger system models.
+
+**Verdict: HELD. Ledger overturned** — the stance model is 3 player stances + `reversed`
++ `dual` boss stances, and one companion class (`spear_*`) outside the stance system.
+
+---
+
+## A-02 — 88 named animation states, including a knockdown layer, a grapple and an aerial the ledger has no model for.
+
+**Evidence (A2).** Extracting every `[A-Za-z][A-Za-z0-9_]*` token from `<data><param>` and
+`<obj><property>` yields **88 distinct animation-state names**. Beyond stances and locomotion:
+
+| primitive | names | why it matters |
+|---|---|---|
+| grapple / throw | `backthrow` + `backthrow_victim` (`:19323`, `:19477`) | a **paired** thrower/victim clip — a throw mechanic absent from every moveset ledger |
+| aerial stab | `airstab_start` / `airstab_mid` / `airstab_stab` / `airstab_end` (`:19494`, `:19500`, `:19516`) | the down-stab gesture, decomposed into 4 clips |
+| knockdown | `downed`, `flipupfromdowned` (`:19778`), `kneel`, `kneeltostand` | a knocked-down state **and** a getup — no ledger system has a knockdown state |
+| dodge | `backstep_start`, `backstep_end` | a defensive backstep |
+| combo strings | `reversed_slash_parta/b/c` (`:19380`, `:19386`, `:19437`), `flurry_partc/d`, `spear_spin_parta/b/c`, `spear_stab_parta` | multi-part attack chains |
+| skill casts | `focus_start`, `warcry_start`, `buffarmor_start` | named cast animations → L2 skills-meters |
+| shielder | `holdshield_defend`, `holdshield_run` | the shielder's block state |
+| thrown item | `throwgrenade` | matches the *"thrown pouch mid-air"* Kheshav logged in §3's first-hand crux read |
+
+**Verdict: HELD.** L1 combat-core, L2 skills-meters, L11 art-anim.
+
+---
+
+## A-03 — Severed-limb death variants are NAMED in shipped content. The ledger's blocker ⑤ is dead.
+
+**Ledger (§4 art-anim-audio-feel):** *"⑤ severed-limb death variant"* — listed as a blocker.
+
+**Evidence (A2).**
+
+```
+questdata.xml:18459          <param>800,9,chargewithspear,deathinhalf,-1</param>
+questdata.xml:18471          <param>740,8,chargewithspear,deathnohand,-1</param>
+questdata.xml:18477          <param>750,9,holdshield_run,deathnohead,-1</param>
+questdata.xml:24051          <param>deathnohead</param>
+questdata.xml:24091          <param>deathnohead</param>
+```
+
+Five death states are named and used in the campaign: **`deathnohand`, `deathnohead`,
+`deathinhalf`, `deathbyarrow`, `deathenemy`** — plus `death`, `downed`, `corpse1/2/3`,
+`defeatedanimationv1/v2`. Three of them are literally the severed-limb variants the ledger
+says are missing.
+
+**Verdict: HELD. Ledger overturned.**
+
+---
+
+## A-04 — Arrow/projectile launch parameters are decoded: `typeId, x, y, vx, vy`.
+
+**Ledger (§4 enemies-ai):** *"⑤ Undead damage-reflect probability; **arrow arc physics**."*
+Run 1 counted `createprojectile 16` in the verb histogram but did not decode the params.
+
+**Evidence (A2).** The Episode 7 archer volley, `questdata.xml:18511`ff (Mitsuo firing left),
+each row paired with an `anim firearrow` at the same `<time>`:
+
+```
+t=0.3   <param>40,1150,300,-40,-15</param>
+t=0.7   <param>40,1150,300,-40,-12</param>
+t=1.1   <param>40,1150,300,-40,-9</param>
+t=1.5   <param>40,1150,300,-40,-9</param>
+t=1.9   <param>40,1150,300,-40,-6</param>
+```
+
+mirrored at `40,550,300,+40,{-15,-9,-6}`. Reading: **arrow type id = 40 · launch origin
+y = 300 · horizontal speed = ±40 · vertical launch speed ∈ {−15, −12, −9, −6} (a 4-value arc
+spread) · cadence 0.4 s.** The telegraph is named too: `arrownormalpose` → `pullbackarrow`
+(12×) → `firearrow` (12×). Other projectile types: 41 (a *decelerating* throw —
+`40,-6` → `30,-4` → `15,0` → `10,0`, `:19346`–`:19448`), 23, 24, 17, 42.
+
+**Verdict: PARTIAL — and say so.** This is **cutscene direction, not the live archer AI.**
+It fixes the projectile type ids, origin, velocity domain, telegraph clips and cadence; it
+does **not** give the AI's firing rule or gravity constant. Blocker ⑤ moves from open to
+partial.
+
+---
+
+## A-05 — Ambient NPC names are PROCEDURALLY GENERATED, so the ledger's "boss table omits Hachisuka Kano, Honda Shizuka" is an OVER-CLAIM.
+
+**Ledger (§4 enemies-ai, Surface):** *"Boss table omits Hachisuka Kano, Honda Shizuka, Zabuza,
+Tengu Hotaru."*
+
+**Frame (A1):** `reference/frames/zFtCaTO0_1M/seg-24/frames/frame_0003.jpg` (1024×576, read
+full-frame; the NPC caption sits mid-frame at ~x 310–420, y 330–345). **Visibly in it:** a
+street NPC captioned **`GOJO OTONDO`** with a `!` quest marker above him, a second character
+captioned `GUEST`, the location bar `MAIN STREET`, `310 COINS`, level 6, `10431 | 12150`
+EXPERIENCE POINTS, `TERRITORY (23,52)`, `INSIDE SECTOR (1,3)`, HP `20/20`, Chi `20/20`,
+`HEAVY STANCE`.
+
+**Decomposed against the shipped name tables (A2):**
+
+```
+android/86_NameGenerator_NobleFamilyNames.bin:5     Gojo         (32 entries)
+android/85_NameGenerator_MaleNames.bin:267          Otondo       (397 entries)
+android/87_NameGenerator_SamuraiFamilyNames.bin:7   Hachisuka    (35 entries)
+android/85_NameGenerator_MaleNames.bin:80           Kano
+android/87_NameGenerator_SamuraiFamilyNames.bin:11  Honda
+android/88_NameGenerator_FemaleNames.bin:226        Shizuka
+```
+
+`Gojo Otondo`, `Hachisuka Kano` and `Honda Shizuka` all decompose cleanly into
+family-table + given-name-table pairs. They are **runtime-generated NPCs, not authored
+bosses**; no boss table can or should contain them. (`Zabuza` and `Tengu Hotaru` do **not**
+decompose — those two stay open.) Corroborating: only **16 of 535** nodes in
+`112_Mobile_NodeData.bin` carry an authored `<name>`; the other 519 are named at runtime.
+
+**Verdict: HELD. Ledger overturned.** L7 enemies-ai (drop the generated names from the
+blocker list); L12 meta-social (PvP/bounty opponent names come from 5 tables:
+397 male / 290 female / 32 noble / 35 samurai / 676 place).
+
+---
+
+## A-06 — Second, independent proof of run-1's Q-02 divergence — this time in PLACE NAMES and the objective string. Zero hits in 329 MB. **The frame wins.**
+
+**Frames (A1).** Extracted at native 1920×1080 from `reference/videos/Nr4fQstqHDM.mp4`
+(`ffmpeg -ss <t> -frames:v 1`), then cropped `(80,250)-(720,330)` and upscaled 4× to
+2560×320 — the HUD type is unreadable at survey scale, so the crop is mandatory:
+
+* **t = 60 s** — location bar `S CHIKADA MINE`; objective, two lines:
+  **`STORY QUEST: FIND WORK AT` / `KAKUCHI TOWN`**.
+* **t = 300 s** — room bar `TRAP CHALLENGE`; same objective still displayed.
+* **t = 900 s** — location bar `N KAKUCHI MOUNTAIN PATH`.
+
+**Against every artifact we hold (A2/A3):**
+
+```
+grep -c "Kakuchi" reference/extracted/questdata.xml               -> 0
+grep -c "Kakuchi" reference/extracted/payload.xml   (329 MB)      -> 0
+grep -c "Chikada" reference/extracted/payload.xml                 -> 0
+Kakuchi|Chikada in docs/gauntlet/L0/index/strings.json (2,533)    -> 0 hits
+Kakuchi|Chikada in all 5 name-generator tables (676 places)       -> 0 hits
+```
+
+Run 1 proved the divergence from *dialogue wording*; this proves it again from *location and
+objective strings*, and pushes the search surface to the entire 329 MB payload. **THE FRAME
+WINS.** With A-05 in hand the most economical explanation is that wilderness node names — and
+the objective lines that embed them — are composed at runtime from a name source not shipped
+in the client (only 16/535 nodes carry an authored name).
+
+**Verdict: HELD.** Reinforces run-1 Q-02: label every ported string with its build, and never
+assume the held script covers 100 % of what v0.717 renders.
+
+---
+
+## A-07 — …but the divergence is REVISION-level, not wholesale: a v0.717 objective string matches questdata character-for-character.
+
+**Frame (A1):** `reference/frames/zFtCaTO0_1M/seg-24/frames/frame_0003.jpg`, 1024×576, read
+full-frame (objective text upper-left, ~x 60–300, y 135–175). **Visibly in it:**
+**`STORY QUEST: TURN IN INOKICHI'S CLUB AT THE BOUNTY BOARD`**.
+
+**Payload (A2):** `questdata.xml:4160` — `<title>Turn in Inokichi's Club at the Bounty Board</title>`.
+
+Character-for-character identical. This is the necessary counterweight to Q-02 / A-06: the
+held questdata **is** the filmed build's script for the beats it covers, so A2 quest cites are
+trustworthy as on-screen copy — they are simply not proven exhaustive.
+
+*(Free from the same two crops: the L6→L7 XP threshold reads `12150`, and
+`reference/frames/broad_survey/Nr4fQstqHDM_0060.jpg` reads L7→L8 = `16550` — two real points
+on the L11–80 curve the ledger calls unrecoverable. Handed to the L3 progression lane, not
+claimed here.)*
+
+---
+
+## A-08 — UPGRADE of run-1 Q-23: the `<node>` packing is partially decoded. STILL_UNHELD → PARTIAL.
+
+Run 1 concluded: *"**Verdict: STILL_UNHELD.** world-exploration blocker ① … therefore
+survives this survey."* It recommended regressing node ids against `112_Mobile_NodeData.bin`.
+Done:
+
+**Evidence (A2).** Parsing every exit object (`<obj><id>0</id>` whose `<property>` is
+`0,<range>,<destNodeId>,…`) out of `112_Mobile_NodeData.bin` and differencing against the
+owning node id gives a **bimodal, edge-correlated delta distribution**:
+
+| delta | count | exit `<x>` range |
+|---:|---:|---|
+| **−4096** | 19 | 50 … 721 (room's left side) |
+| **+4096** | 18 | 750 … 1550 (room's right side) |
+| **+1** | 18 | 50 (×12), 250 … 800 |
+| **−1** | 19 | 250 … 3000 |
+
+Worked example, `112_Mobile_NodeData.bin:4–27` — node `8382465`, room 0, `<bg>4</bg>`,
+`<width>800</width>`, one exit at `<x>750</x>` with `<property>0,50,8386561,1,2,2,1</property>`
+→ destination `8386561` = **+4096**. The next node declares the reverse edge at `<x>50</x>`
+(`:46`, `0,50,8382465`) = **−4096**, and its own right exit `:74` → `8390657` = **+4096**.
+
+**Decoded:** node ids are a **two-axis packing on a 4096 stride** — `node >> 12` is one map
+axis (traversed ±4096 by the left/right room exits, perfectly edge-correlated in 37/37 cases)
+and `node & 4095` is the orthogonal axis (traversed ±1). questdata's 51 node ids span
+hi12 2046…2175 and lo12 2011…2069.
+
+**Still unheld, honestly:** which axis is N–S vs E–W, and the mapping onto the game's own
+on-screen readout (`TERRITORY (23,52) / INSIDE SECTOR (1,3)`, A-05's frame). I tried the
+obvious linear packings against three frame-read territory/sector pairs and none reproduced
+both fields; I am not going to guess one.
+
+**Verdict: PARTIAL.** world-exploration blocker ① is no longer "absent" — the graph topology
+and its stride are held; only the coordinate *labelling* is open.
+
+---
+
+## A-09 — CORRECTION to run-1 Q-19: 52 dialogue portraits + 16 story cards = 68 `<img>` values, not 68 portraits.
+
+Run 1 wrote: *"1,892 `<img>` references on `<dialogue>` resolve to **68 distinct portrait
+assets**"* and then listed the 16 story cards **separately**.
+
+**Evidence (A2).** Parsing `<dialogue><img>` alone gives **52** distinct portraits
+(`aboshi`, `aboshi_mask`, `amaya`, `chikako`, `chikako_angry`, `chikako_blush`,
+`chikako_maked`, `chikako_mask`, `fumio`, `fumio_happy`, `hachimaru`, `hachimaru_serious`,
+`hiroshi`, `hiroshi_happy`, `inokichi`, `ito`, `jinbei`, `jinbei_angry`, `jonin`, `kojuro`,
+`kojuro_serious`, `ladyoiwa`, `ladyoiwa_angry`, `ladyoiwa_snake`, `magoichi`,
+`magoichi_masked`, `mai`, `mai_sad`, `mitsuo`, `mitsuo_dying`, `mitsuo_serious`,
+`noportrait`, `satoshi`, `satoshi_drunk`, `satoshi_happy`, `satoshi_serious`, `shinmen`,
+`shou`, `sorcerer`, `sparrowhawk`, `tadao`, `takahasi`, `takamori`, `takamori_dying`,
+`takamori_stand`, `takamori_undead`, `tanaka`, `yasuka`, `yasuka_hurt`, `yohei`, `yuudai`,
+`yuudai_before`). Step-level `<intro><img>` gives the other **16**. 52 + 16 = 68 — run 1's
+figure is the *union*, mislabelled as portraits.
+
+**Verdict: HELD (correction).** The art manifest to build against is **52 portraits**, not 68.
+
+---
+
+## A-10 — STILL_UNHELD: the source of v0.717's wilderness place names.
+
+A-06 proves `Kakuchi` / `Chikada` are absent from every held artifact; A-05 proves *person*
+names are generated from client tables. I could **not** establish the generation rule (or the
+server source) for **place** names: the 676-entry place table holds real Japanese city names
+(Anjo, Nagoya, Okazaki, Kariya) and contains neither `Kakuchi`, `Chikada`, nor even the
+story-authored `Kasuta` (`112_Mobile_NodeData.bin:6` `<name>1037</name>` →
+`strings.json["1037"]` = *"W Kasuta Forest"*).
+
+**Verdict: STILL_UNHELD.** Honest answer: unknown.
+
+---
+
+## Run-2 scoreboard delta
+
+| Ledger / prior-run claim | Status after RUN 2 |
+|---|---|
+| §1/§3.3 "three stances" | **OVERTURNED** — five (A-01) |
+| §4 art-anim ⑤ "severed-limb death variant" | **OVERTURNED** (A-03) |
+| §4 enemies-ai ⑤ "arrow arc physics" | **PARTIAL** — type/origin/velocity/telegraph held (A-04) |
+| §4 enemies-ai Surface "boss table omits Hachisuka Kano, Honda Shizuka" | **OVER-CLAIM — both are generated names** (A-05) |
+| §4 world-exploration ① "world bounds + geography" | **STILL_UNHELD → PARTIAL** (A-08, upgrades run-1 Q-23) |
+| run-1 Q-02 "held script ≠ v0.717" | **RE-PROVEN independently, and bounded** (A-06 + A-07) |
+| run-1 Q-19 "68 dialogue portraits" | **CORRECTED to 52** (A-09) |
+| combat-core: knockdown / grapple / aerial states | **new, absent from all 12 systems** (A-02) |
+| source of v0.717 place names | **STILL_UNHELD** (A-10) |

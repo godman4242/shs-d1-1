@@ -1,275 +1,277 @@
-# CITE-LENS CRITIC — unit `quests-story`
+# quests-story — CITE LENS review (blind critic, run 3)
 
-Blind review. I did not see the surveyor's reasoning. For every claim below I opened
-the cited artifact myself and, where the claim was a measurement, re-derived it from
-the raw file. Frames were re-extracted from the source video by me, cropped and
-upscaled, and looked at.
-
-**Headline:** 13 of 15 claims survive with their cites resolving exactly. **One claim is
-fatally wrong** (`choices-not-consequential`) — its measurement is true but its
-conclusion is the opposite of what the engine does, and I have a verified
-counterexample. Three claims carry small numeric slips. Both `STILL_UNHELD` claims are
-honest, and I close both with new payload cites.
+**Reviewer stance:** every cite below was opened by me. Where I say REFUTED I paste the artifact
+I opened, not the surveyor's. Nothing here is reasoned from memory of the game.
 
 ---
 
-## Method
+## HEADLINE — the provenance of `reference/extracted/questdata.xml` is mis-labelled, run-wide
 
-- Parsed `reference/extracted/questdata.xml` with `xml.etree` and re-derived every count
-  by tag PATH (not raw `grep`), because several tags occur at more than one path.
-- Re-ran the byte comparison in Q-05 from scratch.
-- Re-extracted the video frames with `ffmpeg -ss <t> -i reference/videos/zFtCaTO0_1M.mp4`,
-  cropped `crop=1920:340:0:720` and `crop=1400:360:0:700`, upscaled, and READ them.
-- Read every cited `.as` file at the cited line numbers.
+The surveyor (claim `android-caveat-retired`) asserts that `reference/extracted/questdata.xml`
+is **the web build's** quest data and that it is byte-identical to the Android blob, therefore the
+v0.682-vs-v0.717 caveat "does not apply to quests-story".
+
+The byte-check reproduces exactly. The **label does not**.
+
+I inflated both decoded payload SWFs and counted the data roots directly:
+
+```
+$ python3 - <<'EOF'
+import zlib
+for f in ['reference/decrypted/shs3_payload_decoded.swf',
+          'reference/decrypted/shs3_android_payload_decoded.swf']:
+    d=open(f,'rb').read(); b=d[:8]+zlib.decompress(d[8:])
+    print(f, len(b), {t: b.count(t) for t in
+        [b'<questdata>',b'<quest>',b'<itemdata>',b'<npcdata>',b'<skilldata>',
+         b'A new face in this territory']})
+EOF
+reference/decrypted/shs3_payload_decoded.swf          11892061
+   {b'<questdata>': 0, b'<quest>': 0, b'<itemdata>': 0, b'<npcdata>': 0,
+    b'<skilldata>': 0, b'A new face in this territory': 0}
+reference/decrypted/shs3_android_payload_decoded.swf  21688592
+   {b'<questdata>': 1, b'<quest>': 61, b'<itemdata>': 1, b'<npcdata>': 1,
+    b'<skilldata>': 1, b'A new face in this territory': 1}
+```
+
+The scan is valid because the **web** payload stores its DefineBinaryData blobs as *raw,
+uncompressed* XML — proved by taking a known web blob and finding its literal bytes inside the
+inflated web SWF:
+
+```
+bindata/119_1t4646s0.bin  ->  b'<?xml version="1.0" encoding="UTF-8"?>\r\n<survivalmodedata>...'
+raw first 200 bytes present in inflated web SWF ?  True
+inflated web SWF: <survivalmodedata> x1, <animdata> x19     (the 27 known web blobs)
+```
+
+So the web payload really does ship anim/survival/room-object/name-generator blobs and **no
+quest, item, npc or skill XML at all**. Corroborated by mtime ordering: `questdata.xml`,
+`itemdata.xml`, `npcdata.xml`, `skilldata.xml` were all written **Jul 25 18:27**, while
+`reference/decrypted/shs3_payload_decoded.swf` (the web payload) did not exist until
+**Jul 25 18:33** — the Android payload was decoded at 17:38 and decompiled at 17:51.
+
+**Consequence:** `reference/extracted/questdata.xml` is **ANDROID-derived (v0.682)**. Every
+measurement in this unit is a measurement of the *mobile* campaign. The standing Android caveat
+does not merely apply here — this unit is *entirely* Android-sourced, and the surveyor's own A1
+claim (`frame-beats-payload-dialogue-rewritten`) is the visible symptom: the shipped web build
+renders different words because it is running a different script source. **THE FRAME WINS, and
+now we know why it wins.**
+
+This is cross-cutting. Any other unit that has called `itemdata.xml` / `npcdata.xml` /
+`skilldata.xml` "the web payload's data" carries the same mislabel.
 
 ---
 
-## Verdict table
+## Verdicts
 
-| claim | cite resolves | measurement reproduces | verdict |
+### 1. `verbatim-script-held` — **REFUTED (material)**
+Cite resolves perfectly. `questdata.xml:128` is verbatim the quoted line; `LangManager.as:95-100`
+is verbatim `public static function getQuestString(id:String)` / `if(id.charAt(0) != "I" ||
+id.charAt(1) != "D") { return id; }`.
+
+What is wrong is the inference. The claim says the lines "sit as static XML in **the** client
+payload … **so those lines are what the game renders**." For the build in the longplays they are
+not: the inflated web payload holds **zero** `<quest>` elements and zero of that text (above), and
+five frames I re-extracted show the rendered Prologue using different wording. The ledger's
+conditional — *"if the story is server-fetched … the actual script is gone"* — is closer to true
+for the web build than the claim allows.
+
+**Survives:** a complete 2,771-block / 3,307-line script corpus IS held, on disk, un-gated by the
+string table. That is a real and large win — it is just the **Android v0.682 script**, and it is
+not proven to be what the web build rendered.
+
+### 2. `ep4-12-epilogue-shipped` — **HELD**
+All six line numbers land exactly on the quoted text (`:8521` Episode 4, `:24869` Episode 12,
+`:27347` Epilogue, `:27697` Season 2, `:27710` "(Unreleased) The adventure continues…",
+`:27726` the "not yet released" string). Full chapter list confirmed: Prologue(:5) → Ep1–Ep12 →
+Epilogue → Season 2 stub = 14 shipped chapters. Ledger text verified verbatim at
+`REBUILD_READINESS.md:166-167`. **Caveat to carry:** "ship" here means *ship in the Android
+bundle*; the web build's chapter count is unestablished (see HEADLINE).
+
+### 3. `triggers-coords-rewards-tabled` — **HELD, one count wrong (minor)**
+Reproduced by ElementTree parent-path histogram:
+`quest/step` 225 · `step/node` 225 · `step/roomobj` 225 · `step/action` 215 (domain
+`{0:169, 1:37, 6:5, 14:3, 4:1}`, closed at 5) · `roomobj/property/obj/x` 348 · `roomobj/x` 52 ·
+`teleportposx` 14 · `wave/enemy/x` 97 · `step/reward` 77 · `reward/exp` 69 (closed 10-value domain
+{100,200,250,290,500,600,750,1000,2000,3000}). `13100` → "Iron Sword", `2103` → "Small Rice Ball"
+resolve in `resolved_names.json`.
+
+**Wrong:** `<loot>` is **19**, not 18 — `grep -c "<loot>" reference/extracted/questdata.xml` → `19`,
+at lines 443, 448, 453, 761, 897, 1036, 1498, 2553, 2602, 3889, 4047, 4164, 4169, 4174, 8372,
+14013, 14018, 14580, 16139. The surveyor's own cited range `:442-456` in fact contains **three**
+loot rows and its quote shows only two (it stops one line short of `</loot>` on the third,
+`<id>20108</id>` = "Crane Feather").
+
+### 4. `choices-not-consequential` — **REFUTED (material)**
+The measurement is right and I reproduced it exactly over all 471 `<choice>` blocks:
+`goto` 471/471 · `outcome` **0**/471 · `condition` 7/471 · `gotolabel` 0/471. `XMLQuestChoice.as`
+is 49 lines and `applyOutcome()` is verbatim at :38-47.
+
+The **conclusion** does not follow. `<outcome>` in this schema is *positional*, not nested — it is
+a sibling in the `<intro>` child list, reached by falling through from a `<goto>` target. So
+"no nested `<outcome>`" says nothing about consequence. Two things I measured:
+
+* 25 of the 99 `<option>`-bearing `<intro>` blocks carry **≥2 `<outcome>` blocks that write `<set>`**,
+  interleaved with the options and `<goto>` reconvergence points — a shape that is not "a flat
+  jump table".
+* The `<goto>` index model needed to actually decide the question is **unresolved**. I tested every
+  constant offset into the `<intro>` child list: the best (−4) still leaves **44 of 469** gotos
+  out of range (offset 0 → 123 out of range). Without a settled target model, nobody can compute
+  branch divergence.
+
+**Survives:** the Prologue toll choice specifically IS cosmetic — both branches land on
+`<label>label2</label>` and the same `<outcome><id>111</id><set>5</set>`, and I watched both the
+choice rows (t=68) and the "sword" reply (t=72) in the video reach the same Jinbei-attacks beat.
+The honest verdict for blocker ④ is PARTIAL, not "answered, no".
+
+### 5. `android-caveat-retired` — **REFUTED (fatal)**
+The byte-check reproduces to the character:
+`web len 796383 · android len 796384 · android[:-1]==web True · last byte b'\n'` ·
+`sha256 e8ecb01f05cc47c3a331328a3278c70a986d93038838af5a27c8075a035aad2e` both sides.
+
+But the file it calls "the web questdata.xml" is not from the web build (HEADLINE). The web
+payload contains **no quest XML whatsoever**, so what the check actually demonstrates is that
+`reference/extracted/questdata.xml` *is* the Android blob. The claim is circular and its
+conclusion is inverted: the Android caveat applies to this unit **maximally**, not "not at all",
+and the surveyor's own frame claim is the proof.
+
+### 6. `frame-beats-payload-dialogue-rewritten` — **HELD (PARTIAL as stated)**
+I re-extracted `reference/videos/zFtCaTO0_1M.mp4` at t=62/66/68/72/76 (1920×1080), cropped the
+dialogue plate and read it myself. Crop used: `crop=1920:300:0:730` (the surveyor's stated
+1400-px-wide crop clips the first line — widen it). Verbatim on screen:
+
+| t | nameplate | on screen | payload |
 |---|---|---|---|
-| verbatim-script-held | YES | YES | HOLDS, one clause must be struck |
-| ep4-12-epilogue-shipped | YES (6/6 lines) | YES | HOLDS |
-| triggers-coords-rewards-tabled | YES | YES except `<loot>` 19 not 18 | HOLDS, fix number |
-| choices-not-consequential | YES | YES | **REFUTED — conclusion inverted** |
-| android-caveat-retired | YES | YES (sha256 identical) | HOLDS |
-| frame-beats-payload-dialogue-rewritten | YES (I re-extracted) | YES, every string | HOLDS |
-| questtype-taxonomy-wrong | YES | YES exactly | HOLDS |
-| quest-log-cap-is-a-row-count | YES | YES | HOLDS |
-| player-name-satoshi-resolved | YES | YES except `satoshi*` 411 not 406 | HOLDS, fix number |
-| reward-and-roster-undercount | YES | YES except `<loot>` 19 not 18 | HOLDS, fix number |
-| ally-waves-unlisted-system | YES | YES, every id and range | HOLDS |
-| cutscene-director-held | YES | YES, histogram exact | HOLDS |
-| two-yasukas-confirmed | YES (`:1508`) | YES | HOLDS |
-| step-action-enum-semantics | n/a (STILL_UNHELD) | n/a | honest — **I close it** |
-| outcome-id-namespace | n/a (STILL_UNHELD) | n/a | honest — **I close most of it** |
+| 62 | JINBEI | "IT'S NOT OFTEN WE MEET A NEW FACE ON THESE ROADS. IT'S THE BANDITS, YOU SEE. THEY'VE DRIVEN ALL THE HONEST FOLK AWAY." | :128 "Ah! A new face in this territory!…" — **different** |
+| 66 | JINBEI | "BUT I'LL TELL YOU WHAT, BECAUSE WE'RE SUCH A FRIENDLY BUNCH, ME AND MY FRIENDS WILL ESCORT YOU TO THE NEAREST TOWN, AND ALL IT'LL COST YOU IS HALF OF WHAT YOU'RE CARRYING." | :138 "If you want, I can guarantee you safe passage…" — **different** |
+| 68 | GUEST | row 1 "I'LL STAND MY GROUND AND ASK THEM TO LEAVE ME ALONE." / row 2 "THESE BANDITS DON'T SCARE ME!" | :149 **exact** / :153 "They'll get nothing from me!" — **different** |
+| 72 | GUEST | "HOW ABOUT I HAND OVER HALF THE LENGTH OF THIS SWORD -- SHARP END FIRST. WILL THAT SUFFICE AS PAYMENT?" | :183 same minus the leading "I say " — **near-exact** |
+| 76 | JINBEI | "THAT'S TOO BAD, TRAVELER. IT REALLY IS…" | :169 "WHAT–?! You dare defy Jinbei the Bandit King…" — **different** |
+
+Every quoted string is confirmed. I also searched the entire `reference/` tree for the *shipped*
+wording — `grep -rli "often we meet a new face" reference/` returns **nothing**. The web build's
+words are held nowhere but the videos. **THE FRAME WINS, and the mechanism is now known: the
+payload we hold is the Android script.**
+
+### 7. `questtype-taxonomy-wrong` — **REFUTED (material)**
+`QuestType.as` is 31 lines and :6-24 is verbatim the quoted 9-constant enum; the shipped
+distribution is exactly `{2:37, 4:22, 0:2}`. Both sub-facts hold.
+
+The claim's thesis does not. Calling the ledger's `trade / bounty / escort / gather` archetypes
+"the wrong taxonomy" and (in lane_impact) "the invented 7" is contradicted by an artifact in the
+same folder:
+
+```
+reference/decompiled/shs3_android_payload/scripts/QuestItem.as
+26: public static var QUEST_KILLWILDLIFE:int = 0;   38: QUEST_SUMMONONI:int = 6;
+28: QUEST_KILLBANDIT:int = 1;                       48: QUEST_DUEL:int = 11;
+34: QUEST_GIVEWEAPONS:int = 4;                      50: QUEST_GUIDE:int = 12;   <- escort
+36: QUEST_GIVEORE:int = 5;      <- gather           54: QUEST_TRADE:int = 14;   <- trade
+                                                    56: QUEST_BOUNTYBOARD:int = 15; <- bounty
+```
+17 `QUEST_*` templates × 20 `REASON_*` motives (:60-98). The ledger conflated two real axes;
+it did not invent one. Building "the 9-value enum, not the invented 7" would delete a held enum.
+
+Also wrong in lane_impact: "types 1/3/5/6/7/8 are produced at runtime by QuestGenerator.as."
+`grep -n "QuestType\." QuestGenerator.as` returns **nothing**; QuestGenerator only writes the bare
+`questData.type = 3` (16 sites). The runtime type rewrites live in `QuestEngine.as:736`
+(`QuestType.OngoingQuest`), `:752` (`NormalSideQuest`), `:756` (`HighLvlQuest`), `:760`
+(`LowLvlQuest`).
+
+### 8. `quest-log-cap-is-a-row-count` — **REFUTED (fatal)**
+`QuestLogUI.as:88-96` is verbatim as quoted (7 buttons, x=60, y=73+55i) and :553 is verbatim. The
+7-row scroller is real.
+
+But the claim's headline — "'QUEST_LOG_CAP = 7' is a misread of a UI row count … do NOT ship a
+7-quest limit" — is exactly backwards. The cap exists, as a named constant, and it gates
+acceptance:
+
+```
+reference/decompiled/shs3_android_payload/scripts/StatsManager.as
+ 164:      internal static var MAXQUESTS:int = 7;
+1252: public static function addActiveQuests(questID:int, forceAdd:Boolean = false) : Boolean
+1262:    if(activeQuestList.length < MAXQUESTS || forceAdd)
+ ...
+1273:    return false;                       <- refuses the quest when the log is full
+1303: public static function addProcGenDailyQuest(...) : int
+1313:    if(activeQuestList.length < MAXQUESTS)
+1323:    return -1;                          <- refuses the proc-gen daily when full
+```
+(identical at the same line numbers in `reference/decompiled/shs3_android/scripts/StatsManager.as`.)
+
+The surveyor says "a grep for an accept-time cap finds only a selection-index clamp" — the grep
+missed `MAXQUESTS` because the constant has no underscore. What IS correctable in the ledger is
+only the parenthetical gloss "(1 story + 6 side)": the cap is one pooled 7, and `setActiveQuest`
+(:1276-1301) pushes story progression unconditionally, bypassing it.
+
+### 9. `player-name-satoshi-resolved` — **HELD, one count wrong (minor)**
+I read both frames myself. `zFtCaTO0_1M.mp4` t=68, crop `1920:300:0:730`: the nameplate over the
+player's two choice rows reads **GUEST**. `reference/frames/broad_survey/Nr4fQstqHDM_0090.jpg`
+(480×270, upscaled ×1.5): the PLAYER sheet's name field over the paperdoll reads **SOUND360TM**.
+`questdata.xml:158` is `<id>-2</id>` under the player's own line. NPC 161 resolves to "Satoshi"
+in `resolved_names.json`, and appears 14× as `<wave><friend>`. All held.
+
+**Wrong:** `satoshi*` `<img>` tokens total **411**, not 406 — `satoshi` 176 + `satoshi_serious` 209
++ `satoshi_happy` 21 + `satoshi_drunk` 5.
+
+### 10. `reward-and-roster-undercount` — **HELD, one count wrong (minor)**
+77 `<reward>` ✓ · 69 `<exp>` ✓ · 68 distinct `<img>` ✓. Every one of the 14 quoted portrait counts
+reproduces exactly (kojuro 213 · yuudai 210 · satoshi_serious 209 · fumio 177 · satoshi 176 ·
+chikako_mask 77 · hiroshi 65 · hachimaru 65 · fumio_happy 52 · mitsuo 52 · chikako 47 · yasuka 41 ·
+shinmen 33 · tanaka 32). Same `<loot>` error as claim 3: **19**, not 18.
+
+### 11. `ally-waves-unlisted-system` — **HELD**
+Parent-path histogram: `step/wave/friend` 70 · `step/wave/enemy` 151 · `step/wave/neutral` 2 ·
+`step/wave/endless` 4 · `wave/friend/fatal` 59, every value `0`. Enemy `lvl` 2–35, `qty` 1–10,
+`x` −400…2000 — all exact. Every ally id resolves as claimed: 164 Fumio ×16, 168 Yuudai ×15,
+161 Satoshi ×14, 90 Old Guard ×6, 807 Soldier ×4, 806 Soldier ×4, 197 Mitsuo ×3, 181 Hachimaru ×3,
+182 Shou ×3, 144 Hiroshi ×1, 811 Chikako ×1; neutral 118 = "Training Dummy". Nothing to refute.
+(There are a further 18 `<enemy>` rows nested under `roomobj/property/obj/property/xml/wave` that
+the claim does not count — the claim's 151 is correctly scoped to `<wave><enemy>`.)
+
+### 12. `cutscene-director-held` — **HELD**
+`:27414-27420` is verbatim the quoted `<data>` block. The verb histogram reproduces exactly, all 15
+verbs summing to 399: anim 107 · walk 76 · create 75 · end 33 · sound 23 · say 16 ·
+createprojectile 16 · face 13 · remove 10 · addemitter 7 · removeemitter 7 · pose 6 · darkblur 6 ·
+setposition 3 · createobject 1. `<time>` range 0.0–8.0, `<x>` range −200…1600. 55 `<cutscene>` ✓.
+
+### 13. `two-yasukas-confirmed` — **HELD**
+`resolved_names.json` → `npcdata.xml.resolved`: exactly one name match for "yasuka",
+`('156', 'Yasuka')`. `questdata.xml` portrait tokens `yasuka` ×41, `yasuka_hurt` ×10.
+
+### 14. `step-action-enum-semantics` — **honest STILL_UNHELD, not refuted (but closable now)**
+### 15. `outcome-id-namespace` — **honest STILL_UNHELD, not refuted (but closable now)**
+Both are correct abstentions — the surveyor did not open the file and did not guess. I opened
+them; see New findings N4 and N5.
 
 ---
 
-## THE REFUTATION — `quests-story/choices-not-consequential` (FATAL)
+## New findings
 
-**The claim:** *"Blocker (4) is ANSWERED and the answer is no ... all 471 are pure
-`<goto>` jumps ... the choice graph is a flat jump table, not a consequence system."*
+**N1 — the web payload ships no quest/item/npc/skill XML.** See HEADLINE. Cross-cutting: this
+re-labels four "web payload" data files as Android v0.682 across every unit in the run.
 
-**Its measurement is TRUE.** I reproduced it exactly by path-parse:
-`questdata/quest/step/{intro,ending}/option/choice` = 469 + 2 = **471**; `choice/goto`
-471; `choice/condition` **7**; `choice/gotolabel` **0**; `choice/outcome` **0**.
-`XMLQuestChoice.as:38-47` `applyOutcome()` is verbatim as quoted, and it is dead code.
+**N2 — `MAXQUESTS:int = 7` is a real accept-time cap.** `StatsManager.as:164` + the gates at
+:1262 (`addActiveQuests` returns `false`) and :1313 (`addProcGenDailyQuest` returns `-1`).
+`setActiveQuest` (:1276-1301) bypasses it, so story progression is never blocked.
 
-**Its conclusion is WRONG.** The engine does not express choice consequence through a
-`<choice><outcome>` child. It expresses it **positionally**. Three payload facts, each
-opened by me:
+**N3 — the side-quest archetype table is held, in `QuestItem.as`.** 17 `QUEST_*` templates (:26-58)
+including `QUEST_TRADE`, `QUEST_BOUNTYBOARD`, `QUEST_GIVEORE`, `QUEST_GUIDE`, `QUEST_DUEL`, and
+20 `REASON_*` motives (:60-98). Side quests are *generated*, not authored — a generator port, not
+a table port.
 
-1. `XMLQuestStep.as:160-214` `getXMLIntroList()` flattens the `<intro>` children into a
-   `Vector.<XMLQuestIntro>` **display list**, and on `case "option"` it pushes the option
-   *and then one `null` per `<choice>`*:
-   ```
-   case "option":
-      questOption = new XMLQuestOption(currentDisplay);
-      vectorList.push(questOption);
-      max = int(questOption.choice.length);
-      for(j = 0; j < max; j++)
-      {
-         vectorList.push(null);
-      }
-   ```
-2. `CutsceneManager.as:80-102` `gotoStep()` sets `currentDisplayNo = goto` — the
-   `<goto>` integer is an **index into that display list** — then `display()`.
-3. `CutsceneManager.as:202-205` — when the walk reaches an `outcome` entry it calls
-   `XMLQuestOutcome.applyOutcome()`, which writes game state
-   (`StatsManager.setStat` / `changeStat` / item + coin grants, `XMLQuestOutcome.as:50-90`).
+**N4 — `<step><action>` semantics are held.** `GameEngine.as:81-109` is a 15-value enum:
+0 NOTHING · 1 FIGHT · 2 ASSASSINATE · 3 ESCORT · 4 SURVIVE · 5 REACHMARKER · 6 DUEL · 7 ADVENTURE ·
+8 HARVEST · 9 SURVIVALMODE · 10 WARROOMBATTLE · 11 PLAYBACK · 12 PVPROOM · 13 CUTSCENE ·
+14 SURVIVECLEANUP. Same namespace confirmed by `QuestEngine.as:1214` (`questStepData.action == 6`)
+and :1239/:1243 assigning `GameEngine.ACTION_ADVENTURE` / `ACTION_PVPROOM`. The campaign's measured
+domain therefore decodes to NOTHING ×169, FIGHT ×37, DUEL ×5, SURVIVECLEANUP ×3, SURVIVE ×1.
 
-So **whether a choice has consequences depends on which `<outcome>` nodes lie on the
-path its `<goto>` lands you in.** The surveyor never asked that question; it tested only
-for the unused direct hook.
+**N5 — the `<outcome><id>` namespace is the StatsManager stat-id space.**
+`XMLQuestOutcome.as:50-77`: with `<modify>`, `id == 11` → `addLootCoins`; `2000 <= id < 30000` →
+`addLootItemBasic(id, modify)` i.e. the id IS an itemdata id; `id == StatsManager.STAT_XP`
+(`StatsManager.as:188`, `STAT_XP = 9`) → `addLootXP`; otherwise `StatsManager.changeStat(id, modify)`.
+With `<set>` → `StatsManager.setStat(id, setNo)`. So the quest flag namespace and the save-game
+stat namespace are one namespace.
 
-**Verified counterexample — Prologue (`quest id 0`), step index 8, `<intro>`.** Display
-list rebuilt under the engine's own rule (3 choices → 3 `null` pads at 7/8/9):
-
-```
- 5  label   label1
- 6  option  "What's his story?"->10 | "(FIghting Tutorial) I may be able to learn something here."->14 | "I should go."->19
- 7  null (choice pad)
- 8  null (choice pad)
- 9  null (choice pad)
-10  dialogue  "So you served in the Old Guard?"
-13  goto      label1
-14  dialogue  "You said before that I'd be able to practice my sword technique here. Is the invitation still open?"
-16  outcome   id=113 set=8402944 end=0
-17  outcome   id=114 set=4        end=0
-18  outcome   id=102 set=0        end=1
-19  dialogue  "I'll leave you to your business."
-20  outcome   id=(none) modify=0  end=1
-```
-
-- Choice **"(FIghting Tutorial)…"** → index 14 → terminates at 18 having applied
-  **`setStat(113, 8402944)`, `setStat(114, 4)`, `setStat(102, 0)`** — three writes.
-- Choice **"I should go."** → index 19 → terminates at 20 having applied **no stat write
-  at all** (`id` absent → `XMLQuestOutcome.as:22-29` sets `id = -1`, and `:52` gates every
-  write behind `if(this.id >= 0)`).
-
-That every `<goto>` lands on a semantically correct line ("What's his story?"→"So you
-served in the Old Guard?", "I should go."→"I'll leave you to your business.") independently
-validates the index model.
-
-**Scale.** Simulating the engine's traversal over the whole file:
-- **12** shipped `<option>` blocks where *every* branch terminates and the applied
-  outcome sets differ. (Conservative floor.)
-- **86** `<option>` blocks where the branches diverge in applied outcomes at all
-  (includes branches that reach a nested option).
-
-The Prologue's Jinbei option — the surveyor's one worked example — genuinely does
-reconverge on `label2`. It generalised from that single sample.
-
-**Consequence for the board:** the lane_impact *"drops a large chunk of L1's assumed
-runtime risk"* is backwards. L1 must implement the display-list walker, the
-`null`-padded index space, and outcome application at traversal time. Building a "flat
-jump table" would silently drop 3 stat writes in the Prologue alone.
-
----
-
-## Small numeric corrections (claims still stand)
-
-| claim | says | actual | evidence |
-|---|---|---|---|
-| triggers-coords-rewards-tabled, reward-and-roster-undercount | `18 <loot>` | **19** | path `quest/step/reward/loot` = 19 |
-| triggers-coords-rewards-tabled | quote shows 2 loot rows for `:442-456` | the cited range holds **3** | `:453-456` `<id>20108</id>` = "Crane Feather", which also resolves |
-| player-name-satoshi-resolved | `satoshi*` ×406 | **411** | `satoshi` 176 + `satoshi_serious` 209 + `satoshi_happy` 21 + `satoshi_drunk` **5** (missed) |
-| outcome-id-namespace | 194 `<set>` write 28 ids (42..40002) | `<set>` rows write **25** ids (43..40002); **28** is the id count over all 386 `<outcome>` | two different populations conflated |
-
-`triggers-coords-rewards-tabled`'s unexplained `14` resolves correctly: it is
-`quest/step/teleportposx` (14 rows, paired with 14 `teleportnode`). 348 + 52 + 14 + 97 all
-confirmed by path.
-
-## One clause to strike
-
-`verbatim-script-held` ends *"…so those lines are what the game renders."* My own frame
-extraction disproves that for 4 of 6 comparable Prologue strings. **The frame wins.** The
-claim's ledger overturn stands in full; the trailing clause must be reworded to
-*"…so those lines are what the client holds; on-screen wording is only confirmed where a
-longplay shows the scene."*
-
-## One cite-hygiene note (not a refutation)
-
-`frame-beats-payload-dialogue-rewritten` cites the `.mp4` plus a path inside the
-surveyor's own private scratchpad. §0's A1 artifact class is a file under
-`reference/frames/`. I reproduced every string independently, so the finding is sound —
-but the extracted frames should be written into `reference/frames/` so the cite is
-re-openable by anyone who is not that agent.
-
----
-
-## What I confirmed by looking (A1)
-
-`reference/videos/zFtCaTO0_1M.mp4`, 1920×1080, crop `(0,700)-(1920,1060)` and
-`(0,700)-(1400,1060)`, upscaled:
-
-- **t=62 s**, nameplate **JINBEI**: "IT'S NOT OFTEN WE MEET A NEW FACE ON THESE ROADS.
-  IT'S THE BANDITS, YOU SEE. THEY'VE DRIVEN ALL THE HONEST FOLK AWAY."
-  → `questdata.xml:128` "Ah! A new face in this territory! My, it isn't often we see
-  people walk this road alone…" **DIFFERENT.**
-- **t=68 s**, nameplate **GUEST**, two stacked rows: "I'LL STAND MY GROUND AND ASK THEM
-  TO LEAVE ME ALONE." (= `:149` **exact**) / "THESE BANDITS DON'T SCARE ME!"
-  (vs `:153` "They'll get nothing from me!" **DIFFERENT**).
-- **t=72 s**, **GUEST**: "HOW ABOUT I HAND OVER HALF THE LENGTH OF THIS SWORD -- SHARP
-  END FIRST. WILL THAT SUFFICE AS PAYMENT?" (vs `:183`, which prefixes "I say ").
-- **t=76 s**, **JINBEI**: "THAT'S TOO BAD, TRAVELER. IT REALLY IS…"
-  (vs `:169` "WHAT–?! You dare defy Jinbei the Bandit King…" **DIFFERENT**).
-- `reference/frames/broad_survey/Nr4fQstqHDM_0090.jpg` (480×270, upscaled 1.6×): header
-  **PLAYER**, paperdoll name field **SOUND360TM**, WEIGHT 116/100, GOLDEN TOKEN
-  "USED FOR ENTERING TOURNAMENTS AND FOR PLACING FIGHT BETS / QUEST ITEM".
-
-The picked branch at t=72 is row 2 (`<goto>15</goto>`), and display-list index 15 in that
-`<intro>` is exactly `<text>I say how about I hand over half the length of this sword…`.
-The video independently confirms the `null`-pad index model above.
-
----
-
-## NEW FINDINGS
-
-### NF-1 — the `<step><action>` enum is `GameEngine.ACTION_*` (closes `step-action-enum-semantics`)
-
-`QuestEngine.as:1219` passes the step's action straight through as the battle-mode action type:
-
-```
-GameEngine.initBattleMode(quest,questStepData.action,questStepData.bg,...)
-```
-against `GameEngine.as:990` `initBattleMode(quest:int, actionType:int, ...)`. The enum is
-`GameEngine.as:81-109`:
-
-```
-ACTION_NOTHING 0 · ACTION_FIGHT 1 · ACTION_ASSASSINATE 2 · ACTION_ESCORT 3 ·
-ACTION_SURVIVE 4 · ACTION_REACHMARKER 5 · ACTION_DUEL 6 · ACTION_ADVENTURE 7 ·
-ACTION_HARVEST 8 · ACTION_SURVIVALMODE 9 · ACTION_WARROOMBATTLE 10 ·
-ACTION_PLAYBACK 11 · ACTION_PVPROOM 12 · ACTION_CUTSCENE 13 · ACTION_SURVIVECLEANUP 14
-```
-
-So the measured domain names itself:
-
-| value | name | steps |
-|---|---|---|
-| 0 | ACTION_NOTHING (talk / interact inline) | 169 |
-| 1 | ACTION_FIGHT | 37 |
-| 4 | ACTION_SURVIVE | 1 |
-| 6 | ACTION_DUEL | 5 |
-| 14 | ACTION_SURVIVECLEANUP | 3 |
-
-Corroborated at two independent consumers: `Obj_NPCAggro.as:214`
-`if(questAction != null && questAction.action == 0) { this.interact(); }` — action 0 opens
-dialogue in place rather than transitioning; `Obj_NPCAggro.as:139` `if(questAction.action == 6)
-{ QuestEngine.putInDuelistHolder(...) }` and `QuestEngine.as:1214-1216` `if(questStepData.action == 6)
-{ startingPosX = 150; }`.
-
-**Lane impact — L1:** the trigger dispatch is a 15-value enum, of which the campaign uses 5.
-Only **5 of 225 story steps are duels**; 37 are fights; 169 are pure dialogue. That is a
-materially different build order than "quest state machine, trigger types unknown".
-Also L2/L4: `ACTION_DUEL` steps start the player at x=150 instead of 400.
-
-### NF-2 — `<outcome><id>` is the `StatsManager` stat-id namespace, with an item band (closes most of `outcome-id-namespace`)
-
-`XMLQuestOutcome.as:50-90`:
-
-```
-if(this.id >= 0) {
-   if(this.hasModify) {
-      if(this.id == 11 && this.modify > 0)                    -> lootDialog.addLootCoins(modify)
-      else if(this.id >= 2000 && this.id < 30000 && modify>0) -> lootDialog.addLootItemBasic(id, modify)
-      else if(this.id == StatsManager.STAT_XP)                -> lootDialog.addLootXP(modify)
-      else                                                    -> StatsManager.changeStat(id, modify)
-   } else if(this.hasSet)                                     -> StatsManager.setStat(id, setNo)
-}
-if(end == -1) leaveCancel(); else if(end == 1) leaveOK(); else nextStep();
-```
-
-So: `<id>` is a **stat id**, except in the band `[2000, 30000)` with `<modify>` where it is an
-**itemdata item id**. Confirmed against the observed domain:
-
-- `id 11` = `STAT_GOLD` (`StatsManager.as:192`) → coin grant.
-- `id 9` = `STAT_XP` (`:188`) → xp grant.
-- `id 42` = **`STAT_CHIKAKOLOVE`** (`StatsManager.as:246`) — appears 3× as
-  `<outcome><id>42</id><modify>1</modify><end>1</end></outcome>`. **The campaign contains an
-  affection/romance stat.** No ledger system mentions one.
-- `id 43` = `STAT_LOCATION_ROOM` (`:248`).
-- `id 2211 / 20030 / 20040` fall in the item band and resolve via
-  `docs/gauntlet/L0/index/resolved_names.json` to **"Dragon Dance Scroll" / "Kanji Gourd" /
-  "Crops"** — these are item grants, not flags.
-- `id 100..130` are above the named stat block → free story-flag slots written with
-  `setStat`.
-
-`<end>` is also now a named 3-value enum: `-1` = leaveCancel (abort, quest step not
-advanced), `1` = leaveOK (step complete), `0`/absent = continue to next display entry.
-
-**Lane impact — L1 + L9 save schema:** the quest flag namespace is the *stat* array, not a
-separate story-flag table. `STAT_CHIKAKOLOVE` and the item band must both be modelled.
-What remains genuinely unheld: the human meaning of ids 100–130 individually.
-
-### NF-3 — `<goto>` indexes a `null`-padded display list, not the XML child list
-
-Already spelled out in the refutation above. Filed separately because it is a standalone
-implementation requirement: **every `<goto>` integer in the campaign is offset by the
-running count of `<choice>` elements in all preceding `<option>` blocks in the same
-`<intro>`.** An implementation that indexes raw XML children will mis-route every branch
-after the first option — in the Prologue's Jinbei scene, `<goto>15</goto>` would run off the
-end of a 15-element child list instead of landing on "I say how about I hand over half the
-length of this sword". Cite: `XMLQuestStep.as:193-201` + `CutsceneManager.as:80-102`, and
-the video at t=72 shows the correct destination on screen.
+**N6 — count correction:** `<loot>` = **19**, not 18 (claims 3 and 10).
+**N7 — count correction:** `satoshi*` `<img>` tokens = **411**, not 406 (claim 9).

@@ -1,190 +1,223 @@
-# rebirth-elements — PRECEDENCE LENS critic (blind)
+# PRECEDENCE CRITIC — unit: rebirth-elements
 
-Reviewer opened every artifact first-hand. No verdict below rests on the surveyor's text.
+**Lens 3.** I hunt stale-claiming: a claim that imports a doc statement a later
+measurement/ruling/frame overturned, or that cites a doc where a settling artifact
+already exists. Every verdict below carries the artifact **I** opened.
 
-**Headline:** this is a strong survey. 17 of 19 claims survive verbatim re-reading, several are
-more precise than they needed to be. Two claims fail, both for the same root cause: **a
-symbol/scope error that a second lookup would have caught.**
-
-- **Claim 7 (`tenth-gold-is-100`) — REFUTED, material.** The AS3 is quoted correctly but the
-  *currency is misidentified*. Stat 12 is **Heavenly Gold** (premium/PayVault), not gold/coins.
-- **Claim 17 (`stance-slash-multipliers-parity`) — REFUTED, material.** The "zero hits in the
-  desktop tree" negative grep is unsound. The v0.717 formulas **do exist**, in the obfuscated
-  MCSPlayer, and they **differ**. Parity is not *unestablished* — it is *disproven*.
-
-Claim 17's failure turned out to be the most productive thread in the lane: chasing it recovered
-the real v0.717 stance numbers and overturned a separate ledger claim (§3 item 3).
+**Headline:** 16 of 19 claims survive, and I *strengthened* four of them by finding the
+v0.717 desktop confirmation the surveyor said it did not look for or could not find.
+**Two claims are refuted**, and one of them is the survey's own parity flag —
+`rebirth/stance-slash-multipliers-parity` got the precedence direction exactly
+**backwards**. That is the single most important line in this review.
 
 ---
 
-## 1. Claim 7 — rebirth pays HEAVENLY GOLD, not gold
+## ⛔ REFUTATION 1 (fatal to the claim) — `rebirth/stance-slash-multipliers-parity`
 
-The quoted block at `§1t1523s0§.as:2644-2652` is verbatim correct. The mapping
-`§1t9413s0§ = 12` is also correct (`:228`). But 12 is not the coin purse:
+The claim: per-stance slash multipliers are Light ×1.5, Balanced ×(1+0.005·mastery),
+Heavy ×(0.5+0.005·mastery); *"I grepped the whole v0.717 desktop tree for the identical
+expressions and got zero hits, so parity is NOT established."*
 
-```
-StatsManager.as:192   internal static var STAT_GOLD:int  = 11;
-StatsManager.as:194   internal static var STAT_HGOLD:int = 12;
-```
-
-Stat 12's accessors name it outright, and they are wired to the microtransaction vault:
-
-```
-StatsManager.as:2668  public static function getHeavenlyGold() : int
-StatsManager.as:2674     hgold += QueryManagerPIO.instance.getPayVaultCoins();
-StatsManager.as:2679  public static function addHeavenlyGold(num:int) : *
-StatsManager.as:2698     QueryManagerPIO.instance.debitPayVaultCoins(deductgold, ...)
-```
-
-I read the whole desktop `doRebirth` body: it writes **only** stat 12. It never touches stat 11.
-So the +25 / +100 is premium hard currency, and rebirth grants **no coins at all**.
-
-Why this matters rather than being pedantry — the repo's config binds these names to coins:
+**The desktop code exists. I opened it.**
+`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3083-3153` — the exact structural
+analog of `MCSPlayer.setStance` (same five cases, same order, same `setStanceColor`
+1/2/3/2/3 sequence, same `< 100` floors on Heavy and Dual):
 
 ```
-tests/config-values.test.ts:521  expect(REBIRTH).toEqual({ earlyGold: 25, tenthGold: 100, ... });
-tests/progression.test.ts:183    expect(p.gold).toBe((MAX_DAN_RANK - 1) * REBIRTH.earlyGold);
-tests/progression.test.ts:192    expect(p.gold).toBe(... + REBIRTH.tenthGold);
+case §1t12220s0§:   this.§1t4417s0§ = this.§1t4420s0§ * 1.4;                              // LIGHT
+case §1t12221s0§:   this.§1t4417s0§ = this.§1t4420s0§ * (1 + 0.2 * this.§1t4422s0§ * 0.1); // BALANCED
+case §1t12222s0§:   this.§1t4417s0§ = this.§1t4420s0§ * (0.5 + 0.4 * this.§1t4423s0§ * 0.1); // HEAVY
+                    if(this.§1t4417s0§ < 100) { this.§1t4417s0§ = 100; }
+case §1t12224s0§:   this.§1t4417s0§ = this.§1t4420s0§ * 1.4;                              // REVERSED
+case §1t12223s0§:   this.§1t4417s0§ = this.§1t4420s0§;                                    // DUAL, floor 100
 ```
 
-Promoting `earlyGold`/`tenthGold` from INFERRED to **CONTRACT** on this evidence would stamp
-"verified against the original" onto a mapping that sends a premium-currency reward into `p.gold`.
+Symbol binding proved from the same file, `§1t99s0§.as:182-197` (`initPlayer` analog,
+15 params in the android order):
+`param10 → §1t4420s0§` = **baseSlashLength**, `param11 → this.slashUsage` (**not
+obfuscated** — this is what identifies the class), `param12/13/14 → §1t4421s0§ /
+§1t4422s0§ / §1t4423s0§` = **light / balanced / heavy mastery**.
+Corroborated by `§1t99s0§.as:222` `this.§1t4420s0§ *= 0.5;` matching
+`MCSPlayer.as:222 this.baseSlashLength *= 0.5;`.
 
-**Independent corroboration that stat 12 is the rebirth currency** — the android anti-cheat
-threshold is exactly the maximum a legitimate player can accumulate by rebirthing:
+### Three separate failures follow
 
-```
-OverworldHUD.as:1333  if(StatsManager.getStat(STAT_HGOLD) > 60 && StatsManager.getStat(STAT_DAN) < 9)
-                         QueryManager.instance.reportHack("gold");
-```
+1. **The negative grep is a false negative by construction.** Searching an *obfuscated*
+   tree for the *unobfuscated build's literal constants* (`'0.5 + 0.5 *'`, `'1 + 0.5 *'`,
+   `'0.005'`) can only miss: the desktop constants are **different numbers**
+   (`0.2 … 0.1`, `0.4 … 0.1`, `1.4`). Absence of the android's string is not absence of
+   the code. A negative grep is only admissible when the symbol you searched for is
+   build-invariant.
 
-Android pays 5 per rebirth for DAN 0–7 and 20 at DAN 8 → 8×5 + 20 = **60**, precisely the
-trip-wire. Note the same line proves the desktop's 25/100 could not run against a `>60` check
-(8×25 + 100 = 300) — further evidence the two builds' rebirth economies genuinely diverge.
+2. **The banked numbers are the wrong build's.** v0.717 Light is **×1.4**, not ×1.5.
+   The lane's own stated rule ("the desktop value wins", §A7) was applied to heavenly
+   gold and then not applied here — in the one place it changes a **combat-core** number.
 
-**What survives:** the numbers 25/100, and `MAX_DAN_RANK = 10`. The Dan-10 ceiling is quadruply
-attested and I confirm all four: `DAN < 9` increment guard (`§1t1523s0§.as:2654`), achievement 51
-`<val>9</val>` = "Reach Dan 10.", the UIData comment `>=10 dan, no element boost`, and
-`getString(864, [..., "10"])`. **Only the currency label fails.**
+3. **The ledger correction it questions is CONFIRMED by v0.717, not weakened.**
+   The claim's `lane_impact` says: *"mastery is a 0-100 percentage here, not 0-9, so the
+   ledger's 'mastery-9 ceiling' framing needs re-checking."* Wrong on both counts:
+   - Desktop scales mastery by **`* 0.1`**, i.e. a **0-10 domain**. Heavy reach runs
+     `0.5 → 0.9` across it. `REBUILD_READINESS.md` §3 #3 says, verbatim, *"Heavy's reach
+     also scales ×0.5→×0.9."* **The ledger is exactly right and the surveyor's flag is
+     the stale import.**
+   - Even inside the android file the surveyor cited, mastery is a small integer:
+     `MCSPlayer.as:3174-3184` gates abilities at `balancedMastery >= 3 / >= 4 / >= 5`.
+     A 0-100 percentage would make those thresholds nonsense. The claim is contradicted
+     by its own source file.
+
+**Net effect on the board:** the survey's score rationale lists *"v0.717 parity for the
+per-stance slash multipliers"* as a remaining gap. **That gap is not real** — the v0.717
+values are on disk in a file the surveyor had already fingerprinted. This one is worth
+re-running before anything downstream consumes the reach numbers.
 
 ---
 
-## 2. Claim 17 — the desktop stance formulas exist, and they differ
+## ⛔ REFUTATION 2 (material) — `rebirth/unlock-gate-is-stat-threshold`
 
-The claim rests on a negative: *"I grepped the whole v0.717 desktop tree for the identical
-expressions and got zero hits."* I reproduced the grep — the three patterns really do return
-nothing, across every non-android bundle. But the inference is invalid: **the desktop tree is
-obfuscated, so identifier-bearing expressions cannot survive a literal grep.** Only numeric
-literals do. Absence of the *string* is not absence of the *code*.
+The core survives: the gate **is** a stat threshold on element ATK at **10 / 30 / 60**,
+not a rebirth count. I confirmed the thresholds exhaustively —
+`reference/extracted/skilldata.xml`, counted by regex over `<req><has><id>28..31</id>`:
+**exactly 24 elemental-gated skills, 3 at qty 10 · 2 at qty 30 · 1 at qty 60, per element.**
+Grant site confirmed in **both** builds (`InteractUI.as:848-860` and
+`§1t401s0§.as:873-884`: `== 8 → +20`, `< 8 → +10`, then `changeStat(2202,-1)`).
 
-I located the class positionally instead. Desktop MCSPlayer is `§1t99s0§.as` — it is the file
-defining both `§1t4443s0§` (initPlayer) and `§1t4446s0§` (initElementDefenseStats), the two
-methods claim 8 and claim 15 already call from `StatsManager`. Its stance switch:
+Two statements attached to it are **false**:
 
-| stance | android v0.682 `MCSPlayer.as` | desktop v0.717 `§1t99s0§.as` |
-|---|---|---|
-| Light | `:3030` × **1.5** | `:3094` × **1.4** |
-| Balanced | `:3041` × (1 + 0.5·m·0.01) = **1+0.005m** | `:3105` × (1 + 0.2·m·0.1) = **1+0.02m** |
-| Heavy | `:3052` × (0.5 + 0.5·m·0.01) = **0.5+0.005m** | `:3116` × (0.5 + 0.4·m·0.1) = **0.5+0.04m** |
-| 4th case | `:3067` × 1.5 | `:3131` × 1.4 |
-| 5th case | `:3078` × 1.0, floor 100 | `:3142` × 1.0, floor 100 |
+**(a) "the entire usable elemental kit lands on the FIRST rebirth into that element."**
+Only 3 of 6 do. Fire's qty-10 set is `1013 Fire Breath`, `1025 Fire Element Trap`,
+`1029 Fire Kunai`. The AoE ultimate `1070 Inferno` and `1056 Dragon Dance Step: Fire`
+sit at **qty 30**; `1060 Dragon Dance Step: Fire II (Later Heaven)` at **qty 60**.
+The claim's own three-tier sentence contradicts its closing clause.
 
-Verbatim, desktop:
+**(b) "Gear affixes on stats 28-31 count toward the same threshold."** They do not.
+`StatsManager.checkCondition` routes element ids to the **base** stat only:
 
 ```
-3094:  this.§1t4417s0§ = this.§1t4420s0§ * 1.4;
-3105:  this.§1t4417s0§ = this.§1t4420s0§ * (1 + 0.2 * this.§1t4422s0§ * 0.1);
-3116:  this.§1t4417s0§ = this.§1t4420s0§ * (0.5 + 0.4 * this.§1t4423s0§ * 0.1);
+StatsManager.as:4229   else if(id >= 28 && id <= 31) { output = getStat(id); }
+StatsManager.as:2928   getStatType(id): if(id < 50) return PLAYERSTAT;
+StatsManager.as:3952   case PLAYERSTAT: … return getPlayerStats(id);     // no findBonusStat
 ```
-
-The claim's *conclusion* ("parity is NOT established") points the right way, so this is not a
-guess-refutation — but the claim understates its own finding and leaves recoverable v0.717
-numbers on the table. Per the precedent claim 7 itself sets ("the desktop value wins"), the
-recreation should take **Light ×1.4**, not ×1.5.
-
-### 2b. The sub-claim "mastery is a 0-100 percentage" is refuted in both builds
-
-Claim 17's `lane_impact` asserts *"mastery is a 0-100 percentage here, not 0-9."* That is inferred
-from the `* 0.01` alone, and both builds contradict it — abilities gate on single-digit mastery:
-
-```
-android  MCSPlayer.as:3166-3168   canLaunch = lightMastery >= 3;  canDeflect >= 4;  canAirCombo >= 5;
-android  MCSPlayer.as:3174-3176   canFlipUp = balancedMastery >= 3; ... >= 4; canLaunch >= 5;
-android  MCSPlayer.as:3182-3184   canLaunch = heavyMastery >= 3;  ... >= 4;  canStab >= 5;
-desktop  §1t99s0§.as:3231-3233 / 3239-3241   same >= 3 / >= 4 / >= 5 gates
-```
-
-A 0-100 scale would put every ability unlock inside the first 5% of the track. Mastery is a small
-integer, consistent with the ledger's "mastery-9" *scale* — though not with its *ceiling* reading,
-which §3 below overturns.
+Same branch in the desktop client at `§1t1523s0§.as:4906`. Gear **does** raise elemental
+*damage* (`StatsManager.as:1835` adds `findBonusStat` into `initAttackStats`), but it can
+**never** unlock a skill. A rebuild that wires affixes into the unlock check lets a player
+skip rebirths entirely.
 
 ---
 
-## 3. NEW — the ledger's "stance reach 300/200/100 = MASTERY-9 CEILING" is wrong (overturns §3 item 3)
+## ✅ CLAIMS I STRENGTHENED (surveyor under-cited its own case)
 
-`REBUILD_READINESS.md:155` states: *"The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are
-MASTERY-9 CEILING values, not base."* The reach half is refuted by the code above.
+The survey flagged parity risk on the stance numbers and then banked four other android-only
+numeric blocks without the same caveat. I checked those four. **They all hold in v0.717** —
+so the caveat was aimed at the one claim where parity actually *fails*, and withheld from
+the four where it holds. Precedence hygiene inverted.
 
-**Structural argument (decisive on its own):** Light-stance reach carries **no mastery term** in
-either build — it is a bare constant (`× 1.4` desktop, `× 1.5` android). A number that cannot vary
-with mastery cannot be a "mastery-9 ceiling". So the wiki's Light = 300 is a mastery-invariant value.
+| survey claim | desktop v0.717 confirmation I opened |
+|---|---|
+| `rebirth/aoe-radii-per-element` | `§1t8338s0§.as:36` **600** · `§1t8343s0§.as:38` **400** · `§1t8341s0§.as:37` **200** · `§1t8334s0§.as:72` **50** — all four, verbatim |
+| same, launch types | `§1t8341s0§.as:24` uses `§1t9117s0§` (Tornado) while 8338/8343/8334 use `§1t9118s0§` — the LAUNCH_AIR-vs-KNOCKDOWN split is real in v0.717 |
+| `rebirth/elemental-damage-ladder` | `§1t8365s0§.as:19-42` carries the identical ladder `0.8/0.9/1/1.1/1.2` with `scale 1→1.4`; also in `§1t8398s0§`, `§1t8359s0§`, `§1t8394s0§` (four classes = four elements) |
+| ultimate ×1.5, physical 0 | `§1t8338s0§.as:23` `new §1t67s0§(0,0,§1t67s0§.§1t9118s0§,-1,param3 * 1.5)`; `Damage.as:50` signature confirms slot 5 = fireDamage, slot 1 = physical |
+| `combat-core/dan-scaled-slash-length` | `§1t1523s0§.as:2344-2348` **byte-identical formula** `120 + floor((90 + DAN*5) * speed / (20 + speed))` |
+| `progression/post-rebirth-sp-economy` | `§1t1523s0§.as:2598` identical; `levelCap` = **80** at `§1t1523s0§.as:362` |
+| `rebirth/element-counter-wheel` | `§1t1523s0§.as:2270` — `(WATERATK+b, EARTHATK+b, WINDATK+b, FIREATK+b)` into a 4-param `initElementDefenseStats(FIREDEF, WINDDEF, WATERDEF, EARTHDEF)` (`MCSPlayer.as:260`). Wheel confirmed in v0.717. |
 
-**Numeric argument:** normalise the desktop multipliers.
+**"stage pixels" is now cited, not asserted.** The survey asserts the slash unit without an
+artifact. It holds: `MCSPlayer.as:3094` feeds `slashLength` to `InputManager.setMaxDistance`,
+`:2776` to `InputManager.drawEnemyLine` (which draws canvas `graphics` with it as a pixel
+run-length, `InputManager.as:487-492`), and `:4638` mixes it directly into a stage
+y-coordinate: `startY = endY - this.slashLength / 2;`. Stage px. Confirmed.
 
-- at **mastery 0** → 1.4 : 1.0 : 0.5 = **2.8 : 2.0 : 1.0**  ≈ the wiki's 3 : 2 : 1
-- at **mastery 9** → 1.4 : 1.18 : 0.86 = **1.63 : 1.37 : 1.0**  — nothing like 3 : 2 : 1
-
-The 300/200/100 table reproduces the **mastery-zero base**, not a ceiling. It also lands on the
-Heavy floor exactly: `getBaseSlashLengthVal` tops out at 210 px at Dan 0, and 210 × 0.5 = 105,
-clamped by the shipped `if (slashLength < 100) slashLength = 100`.
-
-Consequence for combat-core: the remediation at `REBUILD_READINESS.md:320` ("relabel mastery-9")
-is backwards — the tables should be labelled **mastery-0 base**, with mastery as a modest additive
-bonus on Balanced/Heavy only.
-
----
-
-## 4. Smaller corrections
-
-**String 455 is never displayed (claim 2).** The claim lists the kanji titles as "初段…十段
-(strings 455–464)" for STAT_DAN 0..9. `InventoryUI.as:2276-2278` sets `danfield.text = ""` at
-case 0, and `grep -rn "getString(455)"` over the android tree returns **zero** call sites. The
-displayed set is **456–464 for STAT_DAN 1..9, blank at Dan 0**. `455 = '(初段)'` is shipped-but-dead
-string data. The ladder and shogo mapping are otherwise exactly right.
-
-**Claim 13 is stronger than filed.** The surveyor cited only android `DragonDanceUI.as:70-71`.
-The desktop carries byte-identical arrays at `§1t5495s0§.as:70-71` — same order, same strings.
-This is the one android-only claim in the lane that I can upgrade to confirmed cross-build parity.
-
-**Unverified sub-clause (not refuted).** Claim 5's aside that "traps/kunai consume kunai AMMO on
-top of Chi" is outside its cited lines; I did not test it. Flagging, not scoring.
-
-**Claim 8's "stage pixels" is properly grounded** — I checked the consumers rather than taking it
-on trust: `slashLength` feeds `Vector.<Point>` geometry, `canvas.graphics.lineStyle`
-(`InputManager.as:485-492`), and `startX = getTargetPosition() ± slashLength/3`
-(`MCSPlayer.as:4663-4681`). Display coordinates. The unit call is correct.
+⚠ **But the ceiling arithmetic in that claim is stance-blind.** "210 px at Dan 0 → 255 at
+Dan 9" is the **base**; on-screen Light reach in v0.717 is `× 1.4` (not the android's 1.5),
+so 294 → 357 px. Do not bank the base as the reach.
 
 ---
 
-## 5. On the two STILL_UNHELD claims
+## 🔍 NEW FINDINGS THE SURVEY MISSED
 
-Both are correct and should not be pushed further.
+### N1 — §3 #7's "film shows a flat +25 gold" is a PHANTOM SOURCE (Tip-#27 class)
+The surveyor overturned §3 #7 with code but did not name **how** #7 went wrong.
+`REBUILD_READINESS.md:165` says *"film shows a flat +25 gold every rebirth, no 10th-rebirth
+tier."* `REBUILD_READINESS.md:205` says the rebirth flow was *"never filmed — both longplays
+pre-rebirth."* **The same ledger, two lines apart in its own §4, says the film both shows and
+does not show the rebirth.** Neither could be true of a 10th-rebirth tier anyway: a
+pre-rebirth longplay cannot film a Dan 8→9 payout. This is the exact failure mode of
+"hold-run per Tip #27" — a confident sourced-sounding sentence with no source behind it.
+It should be struck from §3, not merely corrected.
 
-- `element-circle-art` — `frames.json` carries **113** directories; every one is combat/duel/map or
-  a session analysis burst. None is rebirth, Dan or element related, consistent with the ledger's
-  own "both longplays pre-rebirth". **The "frame wins" rule never fired anywhere in this lane,
-  because no frame in the corpus depicts the rebirth flow at all.** Honest STILL_UNHELD.
-- `element-status-effects` — I confirmed the `Damage` constructor (`Damage.as:50`) takes eight
-  purely numeric parameters with no status/buff field, and that none of the four elemental
-  construction sites passes one. That is still not proof no status system exists elsewhere, and
-  the surveyor's refusal to assert absence without reading `BUFF_*` is the right call.
+### N2 — the +25 lands in `STAT_HGOLD` (id **12**), not `STAT_GOLD` (id **11**)
+`StatsManager.as:192,194`. The naming is inverted relative to the ledger's "100c/3g":
+`STAT_GOLD` is set to **100** at character start (`:705`) = the *copper*; `STAT_HGOLD` is
+set to **3** in the desktop client (`§1t1523s0§.as:1024`) = the *gold*. A rebuild that wires
+"+25 gold" to the stat literally named GOLD pays the wrong currency.
+
+### N3 — ⛔ A single character can NEVER unlock all four Dragon Dance Steps. The arithmetic forbids it.
+This overturns the survey's own design rationale. The **only** write to base element ATK in
+either bundle is the rebirth grant — I grepped every write site:
+`InteractUI.as:851` (+20 at DAN==8) and `:855` (+10 at DAN<8); nothing in `questdata.xml`
+(its single `<id>28</id>` at line 10721 is a quest id, not a stat). Rebirth at `STAT_DAN >= 9`
+hits **neither** branch — the shipped dev comment in `90_InteractUI_UIData.bin:97` says so:
+`"no element boost"`.
+
+So the lifetime budget is **exactly 100 points**: DAN 0..7 = 8 × 10, plus 20 at DAN 8.
+Four Dragon Dance Steps require **4 × 30 = 120**. **Impossible.**
+Best a solo character can do: one element to 60 + one to 30, or three elements to 30.
+
+Consequence: `rebirth/dragon-dance-bagua-input`'s `lane_impact` — *"which is the whole design
+rationale for rebirthing into all four elements"* — is **arithmetically impossible**, and
+`rebirth/dragon-dance-teachable` is not a nice-to-have social flavour: **the teaching loop is
+load-bearing.** The Later Heaven flip needs nodes {1,2,4,6} = {wind, water, earth, fire}
+(`DragonDanceUI.as:70,367`), and no one player can earn all four. A single-player recreation
+must substitute the teaching loop or the Later Heaven arrangement is unreachable by design.
+
+### N4 — the survey mislabels which skills are "tier-3"
+`rebirth/dragon-dance-bagua-input` calls `1056/1057/1058/1059` *"the four tier-3 passives."*
+They are the **qty-30 (3×)** tier, and their tooltips say plain *"Dragon Dance Step for Fire"*.
+The qty-60 (6×) tier is `1060/1061/1062/1063` — *"Dragon Dance Step: Fire **II**"*,
+*"…for Fire **(Later Heaven)**"*. Verified by parsing `skilldata.xml` for ids 1050-1075.
+Side effect: `REBUILD_READINESS.md:206`'s *"Dragon Dance unlocks at 3×/6× same-element
+rebirths"* is **exactly right** — Step at 3×, Step II / Later Heaven at 6×. The survey treats
+the ledger line as needing correction; it needs only the addition of the 1× tier.
+
+### N5 — the shogo title threshold is off by one between two shipped artifacts
+`114_Mobile_AchievementData.bin`: achievement **49 'Renshi'** fires at `<stat>25</stat>
+<val>2</val>` (STAT_DAN 2 = displayed Dan 3); achievement **50 'Kyoshi'** at `<val>5</val>`.
+But `InventoryUI.as:2285` awards the Renshi suffix from `case 3:` and Kyoshi from `case 6:`.
+The achievement names the rank one Dan **earlier** than the nameplate grants the suffix.
+A rebuild must pick one; flag it rather than silently averaging.
+(Full ladder confirmed while I was in there: cases 3/4/5 → 465 Renshi, 6/7 → 466 Kyoshi,
+8/9/default → 467 Hanshi, `InventoryUI.as:2285-2316`. The survey's 3-5 / 6-7 / 8-9 is right.)
+
+### N6 — `rebirth/element-status-effects` can be PARTIALLY closed, not left blank
+`Damage.as:1-60` enumerates every field the class carries: `damage, stance, launchType,
+attackerlvl, piercingDamage, fireDamage, waterDamage, windDamage, earthDamage, flyVelX,
+flyVelY, victimPosX`. **There is no status, buff, DoT or duration field anywhere on the
+object**, and `Damage` is the only payload an elemental projectile hands to
+`NPCManager.checkHitObject(this, damageObj, radius)`. That is strong negative evidence for
+"no per-element status effect". It is not conclusive — the projectile itself is also passed,
+so a receiver could branch on its type — so PARTIAL, not HELD. Better than a blank.
 
 ---
 
-## 6. Scoring note
+## Cite hygiene (noted, not refuted)
 
-The surveyor's 88 is close but slightly generous. Both refutations touch numbers the claim
-proposed to promote to **CONTRACT** (`tenthGold`, and the stance multipliers feeding combat-core's
-reach model), which is the highest-consequence category on the board. The evidence recovery in
-this lane is genuinely excellent — but two of the numbers it hands downstream are mislabelled, and
-one of those would have written a premium-currency value into the coin purse. **83.**
+- `rebirth/elemental-skill-tooltips` is **off by one** on two line numbers: `<chi>50</chi>`
+  is `skilldata.xml:1890` and `<cooldown>60</cooldown>` is `:1891` (the quoted 1889/1890 are
+  `<required>` and `<chi>`). Values correct, `:1884 qty 30` and `:1882 lvlreq 50` exact.
+  Repo rule is *cite symbols, not line numbers* — this is why.
+  Its kunai-ammo aside **checks out**: `1025 Fire Element Trap` and `1029 Fire Kunai` both
+  read *"Requires kunai ammo."*
+- `rebirth/kanji-statue-bonus` and `rebirth/mitigation-flat-min1` are **android-only** cites.
+  Both verified verbatim in v0.682 (`Obj_DragonDanceStatue.as:41-62,185,224,239`;
+  `MCSPlayer.as:3347-3357,3420`). I could not locate the desktop analogs; given that one in
+  three checked numbers moved between builds, label them v0.682 until confirmed.
+- `frames.json` has **113 keys but one is `"."`** (the manifest root, 16 loose files) —
+  112 real frame directories. Does not change the STILL_UNHELD verdict.
+
+## Where the "frame wins" rule stands in this lane
+
+It genuinely never fires. All 112 frame directories descend from the two longplays
+(`Nr4fQstqHDM`, `zFtCaTO0_1M`) plus derived crop/analysis sets; nothing is rebirth-flow
+material. And it is *structurally* impossible for a pre-rebirth longplay to show a Dan
+title: `InventoryUI.as:2276` renders `danfield.text = ""` at `case 0:`. Both STILL_UNHELD
+verdicts are honest and I let them stand.

@@ -1,242 +1,361 @@
-# ui-hud — PRECEDENCE CRITIC (blind, Lens 3)
+# GAUNTLET L0 — critic review: **ui-hud** — LENS 3 (PRECEDENCE / stale-claiming)
 
-Reviewer opened every artifact first-hand. No verdict below rests on the surveyor's text.
-Standing invariant applied: **when a measurement doc and a frame disagree, the frame wins.**
-
-Headline: **4 of 13 claims refuted** (2 material derivation errors, 1 material
-"blocker closed" over-claim ×2, 1 material *existence* error). The two strongest claims
-(resname keying; InteractUI subsystem) survive intact and one of them catches a
-**fabricated verbatim quote inside this lane's own Pass-1 journal**.
-
-The single biggest miss: **the JPEXS symbol export the pass says is missing already exists
-on disk**, from the WEB payload, and I opened it.
+Reviewer: blind critic. I did not see the surveyor's reasoning. Every verdict below carries an
+artifact **I** opened. Pass-2 output under review = 13 claims, proposed score 88.
 
 ---
 
-## Commands / measurements I ran myself
+## Headline
 
-```
-python3  parse 118_Mobile_Lang_EN.bin        -> 2555 <trans-unit>; first divergence id="212" resname="222";
-                                                649 non-numeric resnames; 2343 rows with id != resname
-python3  SWF header parse reference/decrypted/*.swf
-   shs3_payload_decoded.swf          CWS v17  stage 800x690 px  fps 24.0  frames 6     (WEB)
-   shs3_android_payload_decoded.swf  CWS v26  stage 800x480 px  fps 24.0  frames 6     (ANDROID)
-python3  simulate ScreenTransition   -> CLOSE done at frame 17 · OPEN done at frame 16 (y = -240.0)
-                                     -> WHITE: 25 frames under IEEE double, 24 under float32
-python3  PIL crop+3x  duel_dense/Nr4fQstqHDM_428.0.png (40,0)-(560,200)     -> reads "AUTO SLASH OFF"
-python3  PIL crop+3x  duel_dense/Nr4fQstqHDM_428.0.png (1380,920)-(1880,1080) -> 3 slots, empty/2/3
-python3  pillarbox scan, 63 random frames across all 18 reference/frames/ subdirs
-grep -n '\.x =|\.y =|width|height|scale' DialogBox.as   -> exactly 10 hits, all button.x/button2.x/msgText.y
-```
+**The citations are meticulous — and the build scoping is not.**
+
+I re-derived all 13 claims from artifacts. Every quoted AS3 line, every line number, every XML count,
+and the two headline frame measurements are **verbatim correct**. I found exactly one wrong number in
+a quote (claim P7's row measurement) and zero fabricated cites. That is the best cite hygiene I have
+seen in this gauntlet.
+
+The systemic failure is a different one, and it is squarely a **precedence** failure:
+
+> **Pass 2 published Android v0.682 constants as this lane's answer for seven claims whose
+> web v0.717 analogues are already on disk in `reference/decompiled/shs3_payload/scripts/`,
+> and never opened them.** For five of the seven the web build agrees (which *retires* the
+> S0-3 Android caveat — an upgrade Pass 2 left on the table). For two it **disagrees**, and
+> both disagreements are in numbers Pass 2 published as build-neutral fact.
+
+The unlock was already in this lane's own journal — Pass 1 claim 18 `ui-hud/rosetta-deobfuscation`
+("a general-purpose unlock for **every** gauntlet lane"). Pass 2 did not use it.
+
+The two divergences:
+
+| thing | Android v0.682 (what Pass 2 published) | Web v0.717 (what the frames show) |
+|---|---|---|
+| skill-cooldown quantiser | `int(cooldown/cooldownmax*12)+1` | `Math.ceil(cooldown/cooldownmax*12)+1` |
+| HUD `assets.swf` symbol ids | BattleUI 2952 · DialogBox 83 · SkillSlotButton 2915 · WinUI 2894 · DuelIntroBar 2861 · ScreenTransition 2758 · OptionsUI 1133 | 3640 · 91 · 3605 · 3584 · 3549 · 3430 · 3464 |
+
+Neither kills a claim's headline. Both would produce a wrong rebuild if copied as written — and the
+symbol-id one makes claim P13's stated close-path ("one JPEXS shape/sprite export away") point at the
+wrong file's index.
+
+Score: **88 is defensible, but for a reason Pass 2 did not give.** The lane is stronger than 88 on
+evidence quality and weaker than 88 on build discipline. I would leave the number and attach the
+build-scope correction as a standing condition on the lane.
 
 ---
 
 ## Verdicts
 
-### 1. `ui-hud/langmanager-uses-resname-not-id` — **UPHELD, and stronger than claimed**
-I cropped `reference/frames/duel_dense/Nr4fQstqHDM_428.0.png` at (40,0)-(560,200) and upscaled
-3x: a brown gold-bordered plaque top-left reads **AUTO SLASH OFF**. I then parsed the blob
-myself: 2,555 `<trans-unit>`, first divergence at `id="212" resname="222"`, 649 non-numeric
-resnames, 2,343 rows where `id != resname`. `resname 619 = "Auto Slash Off"` /
-`resname 620 = "Auto Slash On"` against `id 619 = "Special Event"` / `id 620 = "Unbreakable"` —
-and the two AS3 fields are literally named `autoslashofflabel` / `autoslashonlabel`
-(`BattleUI.as:124-125`). That is a second, frame-independent proof the surveyor did not use.
-`LangManager.getString` → `Locale.loadStringEx(num.toString(), language)` (`LangManager.as:78`),
-and `fl.lang.Locale` is resname-keyed. **THE FRAME WINS.**
+### P1 `langmanager-uses-resname-not-id` — **SURVIVES** (minor: under-claims)
 
-**Bonus refutation of the lane's own journal.** `docs/gauntlet/L0/systems/ui-hud.md:465`
-quotes `<trans-unit id="388" resname="388"><source>Game Paused</source></trans-unit>`.
-That string does not occur in the blob (`'<trans-unit id="388" resname="388">' in d` → `False`).
-The real row is `<trans-unit id="388" resname="407">\r\n<source>Game Paused</source>`, and
-`resname 388 = "Condition: Poor"` sits on `id="369"`. Pass 1 wrote a verbatim quote that does
-not exist. Pass 2 caught the consequence; nobody caught the fabrication. Flagging it here.
+**My cite:** `reference/decompiled/shs3_android/scripts/fl/lang/Locale.as:301,307` —
+`var _loc2_:String = param1.attributes.resname;` … `stringMap[_loc2_] = _loc3_;`
 
-### 2. `ui-hud/transition-durations-exact` — **REFUTED (material)**
-"**each** black shutter takes 17 frames" is wrong. `TRANSITION_BLACKOPEN`
-(`ScreenTransition.as:93-108`) has **no `counter` gate** — unlike `BLACKCLOSE` it fires
-`doAction()` the instant `blackup.y <= -240`. Simulated: **OPEN completes at frame 16**
-(y lands on exactly -240.0), i.e. **666.7 ms**, not 708.
+That is the mechanism, stated by the Flash runtime class itself, and it is stronger than the frame
+argument P1 leads with. I then re-parsed the blob independently: 2,555 `<trans-unit>`; 2,343 with
+`id != resname`; 649 non-numeric resnames, first `id="1906" resname="IDS_Q0TITLE"`; last agreeing
+pair `id="211" resname="211"`, first divergence `id="212" resname="222"`. **All exact.** "Above 211"
+is precisely right, not approximately right.
 
-The derivation is also wrong. Speed is applied *before* it increments, so displacement after
-n frames is **n(n-1)**, not the quoted `(n-2)(n-1)`. n=16 → 240 exactly. So the shutter is
-physically shut at frame 16 and the `counter >= 17` gate holds it one *extra* frame — that gate
-is not "why" the arithmetic lands on 240. The two formulas coincide numerically at 240 by
-accident; they diverge everywhere else.
+I re-cropped the frame myself — `duel_dense/Nr4fQstqHDM_428.0.png`, crop `(40,0)-(560,200)`,
+Lanczos ×3 — and the brown plaque reads **AUTO SLASH OFF**. Held.
 
-Surviving: CLOSE = 17 frames / 708.3 ms (confirmed by simulation). WHITE = 24 frames, but only
-because `startOpenWhite`'s **sole** caller is `Overworld.as:377` passing
-`ACTION_REFRESHROOMONOPEN`, whose case re-sets `transitioning = true` after the `counter == 2`
-`doAction()` — otherwise the fade would freeze at alpha 0.917. The surveyor never checked that.
-And "**exactly** 24" is not exact: `alpha -= 1/24` from 1.0 needs **25** iterations under IEEE
-doubles and only lands on 24 if Flash stores `DisplayObject.alpha` as float32.
+And I closed the loop P1 left open: the **web** build makes the same call.
+`reference/decompiled/shs3_payload/scripts/§1t113s0§.as:160` —
+`this.§1t5156s0§.text = §1t1521s0§.getString(619);`. So the resname map is authoritative for the
+build the frames come from, not just for Android. P1 could have said this and didn't.
 
-24 fps itself is fine, but the pass never cited it. It is not `Mobile.as:117` (a
-`frameRate == 0` fallback) — it is the SWF headers: **both payloads are 24.0 fps**, parsed above.
+Corrections verified: resname 388 = `Condition: Poor`, 407 = `Game Paused`; resname 6014 =
+`Skill Slots+`, 7009/7010/7011 = `4/5/6 skill slots`; the unit whose **id** is 600 has
+**resname 619**, source `Auto Slash Off` — which is exactly why Pass 1 claim 17 got confused.
 
-### 3. `ui-hud/dialogbox-metrics-in-code` — **REFUTED (material)**
-The three quoted assignments are real and line-exact (`:46, :49, :53, :86, :105, :136, :147,
-:162`). But I grepped every geometry assignment in the file:
+**Under-claim (see NEW-6 and NEW-7):** this mechanism does not just correct two numbers. It voids Pass 1
+claim 16's entire "The honest limit" paragraph and Pass 1 claim 17's "different build revision"
+diagnosis and its "~400" threshold — all three still sit in `systems/ui-hud.md` as live guidance
+for downstream lanes. P1 sets `overturns_ledger:false` and names neither.
 
-```
-46: button.x = 340 · 49: msgText.y = 187.5 · 53: msgText.y = 220 · 86: button.x = 270
-89/93: msgText.y · 105: button2.x = 425 · 136: button.x = 270 · 147: button2.x = 425
-162: button.x = 340
-```
+### P2 `transition-durations-exact` — **SURVIVES** (minor: under-cited to the wrong build)
 
-Ten hits, three distinct properties. `DialogBox.as` **never** sets `button.y`, `button2.y`,
-`msgText.x`, `msgText.width/height`, or any panel dimension — all of which live in
-`[Embed(source="/_assets/assets.swf", symbol="symbol83")]` (`DialogBox.as:8`), which the pass's
-own claim 13 says is not on disk. So "Dialogue-box exact metrics are **NOT** locked inside an
-assets.swf symbol" is false: most of them are. `overturns_ledger: true` against
-"⑤ pause/options/dialogue-box exact **metrics**" is not earned, and claims 3 and 13 contradict
-each other inside the same submission.
+**My cite:** `reference/decompiled/shs3_payload/scripts/§1t6497s0§.as:78-88,102-103,111` — the
+**web** ScreenTransition, `counter >= 17`, `§1t6843s0§ += 2`, `blackup.y = -240`,
+`blackdown.y = 480`/`240`, `this.white.alpha -= 1 / 24`. Identical to the Android file.
 
-### 4. `ui-hud/pause-is-click-anywhere` — **UPHELD (behaviour), ledger flag mis-set (minor)**
-All three cites verified: `:179` visibility, `:268-272` the resume branch is genuinely the FIRST
-test in `gotClicked`, `:324-328` toggle + `setChildIndex(pauseScreen, numChildren-1)`. Behaviour
-holds. But the claim supplies **zero metrics** and blocker ⑤ is literally "exact metrics", so
-`overturns_ledger: true` is wrong in kind. It is also unnecessary — see New Finding N2, where
-the actual pause-screen geometry turns out to be sitting on disk unopened.
+Plus a real byte-check on the fps rather than an inference: I parsed both SWF headers directly.
+`shs3_payload_decoded.swf` → stage 800×690 @ **24.0 fps**; `shs3_android_payload_decoded.swf` →
+stage 800×480 @ **24.0 fps**. P2's supporting cite for fps was `Mobile.as:117
+frameRate = 24` — a mobile-only *fallback* guarded by `if(frameRate == 0)`. The header is the real
+artifact.
 
-### 5. `ui-hud/options-screen-complete` — **REFUTED (material)**
-Every string resolves exactly as quoted (`:34-43` verified; resnames 6/7/8/396/492/752/74/75/10 →
-Music / Sound / Blood / Chat notification / Record Duels / Full Screen / Title Screen /
-Return To Game / Options). That part is clean. But "**completely held**" is false:
-`OptionsUI.as` contains **not one coordinate, size, or checkbox position** — the entire layout is
-inside `[Embed(... symbol="symbol1133")]` (`OptionsUI.as:7`). It also omits a member of the
-screen: `public var quitdialog:QuitDialog` (`:25`), reset on every `show()`. Flagging
-`overturns_ledger: true` on a blocker whose text is "exact metrics", from a claim with no
-metrics in it, is exactly the move Lens 3 exists to catch.
+Arithmetic re-derived: speed applies before it increments, so displacement after *n* frames is
+`(n-2)(n-1)`; `(17-2)(17-1) = 240` exactly, which is why the gate is `counter >= 17`. **Held, exact.**
 
-### 6. `ui-hud/skill-cooldown-12-step-quantised` — **UPHELD on substance, ledger flag wrong (minor)**
-All five cites line-exact. The 12-step math checks out: init latches `shade.gotoAndStop(12)`
-(`:105`), `update()` decrements *then* computes `int(cooldown/cooldownmax*12)+1` (`:219-220`) so
-the sweep spans 12→1, and 13 is the disabled frame (`:146`, `:153`). Ammo readout confirmed
-(`:110`, `:114`).
-Two corrections: (a) `overturns_ledger: true` contradicts the claim's own `lane_impact`, which
-says it "**extends** blocker (2)" — none of "bar tween vs snap, combo pop, vignette ramp" is
-resolved; extending a blocker is not overturning it. (b) "the same no-tween, snap character as
-the HP/Chi bars" is loose — `BattleUI.as:261` sets `reloadbar.bar.scaleX = percentage`, which is
-continuous, not quantised.
+The "480-px stage height" corollary is also correct and I want that on record, because it looks
+wrong next to the 800×690 web header and isn't: `GameEngine.as:271-273` names them
+`originalHeight = 480` and `originalHeightWithBar = 690`. 480 is the game canvas in **both** builds.
 
-### 7. `ui-hud/slot-geometry-frame-validated` — **UPHELD, but the quoted measurement is wrong (minor)**
-Substance is right and in fact **better** than claimed. My correction:
+### P3 `dialogbox-metrics-in-code` — **SURVIVES, but the scope word is wrong** (material)
 
-| | surveyor | me (reproducible) |
-|---|---|---|
-| empty-box bright cols | 1449→1558, ctr 1503.5 | 1448→1560, ctr **1504.0** ✓ agrees |
-| empty-box bright rows | 952→1073, ctr 1012.5 | 960/961→1073, ctr **1016.5** ✗ |
-| derived game (x,y) | (639.4, **446.0**) vs code (640, 450) | see below |
+**My cite:** `reference/decompiled/shs3_android/scripts/DialogBox.as:46,49,53,86,89,93,105,136,147,162`
+— and `DialogBox.as:194 public function showHTML(msg:String)`, which sets **none** of them.
 
-`rows 952` does not reproduce at any threshold I tried (120/150/180). Their y is 4 px off — so
-the headline "**to within ~1 px**" is not supported by their own arithmetic.
+The three re-assignments are real and verbatim, and the web build confirms them
+(`§1t5474s0§.as:46,49,89,105,147,162`). What is wrong is the sentence *"Dialogue-box exact metrics
+are **NOT** locked inside an assets.swf symbol."* Three metrics are not. The panel shape, the
+`msgText` TextField bounds and word-wrap width, the button dimensions, and the font metrics all
+still are — inside `symbol83` (Android) / `symbol91` (web). P13 concedes exactly this in the same
+output. "Blocker ⑤'s dialogue half is closed" over-reads its own evidence.
 
-Use the game's own fit routine instead of an ad-hoc uniform scale. `GameEngine.resizeHandler`
-(`:267-307`): for content wider than 800/480 it takes the else branch, `newScale =
-stageHeight/480`, `offsetY = 0`. With scale 2.25 vertically and the measured 2.27 horizontally,
-**all three visible slots** land on the code constants:
+Also worth logging: P3 found only `show()` and `showYesNoDialog`. `showAP()` at `:86,105` is a
+third variant with its own 270/425 pair.
 
-```
-box centres (frame x)  1503.0   1641.0   1777.5     [digits "2" and "3" measured at 1641.0 / 1777.5]
--> game x              639.4    700.0    760.1
-code  x = 760 - i*60   640      700      760        (i = 2, 1, 0)      <- 0.6 / 0.0 / 0.1 px
-game y = 1016.5/2.25 = 451.8   vs code y = 450                          <- 1.8 px
-```
+### P4 `pause-is-click-anywhere` — **SURVIVES, clean**
 
-That is a much stronger result than the pass reported. Separately, "retires the *android parity
-not established* caveat" over-reaches: one UI class's layout constants matching says nothing
-about combat tuning parity, which is what the S0-3 caveat was actually about.
+**My cite:** `BattleUI.as:179`, `:267-272`, `:324-328` read first-hand — line numbers exact, quotes
+verbatim, and the paused branch is genuinely the first statement in `gotClicked` before any
+`hitTestPoint`, so "any click resumes" is a property of the control flow, not an inference.
 
-### 8. `ui-hud/result-cards-exact` — **UPHELD**
-`WinUI.as:26 addFrameScript(0,frame1,6,frame7,10,frame11)` verified, and I opened the frame
-bodies the surveyor did not cite: `frame1(){ winwords.visible = false }` (:94),
-`frame7(){ winwords.visible = true }` (:99), `frame11(){ stop() }` (:104). So 250 ms / 417 ms
-hold. DRAW variant verified (`:49-56`). Resnames 482 "Continue" / 483 "Save Replay" /
-480 "Respawn" all confirmed against the blob. `LoseUI` gold gate confirmed (`payui = new PayUI()`
-:37, `getgoldpromptdialog.show(1)` :104).
-Minor: "brush stroke frames 1-6" is an inference — nothing in the cited code names a brush-stroke
-span; `frame1()` only hides `winwords`.
+Frame corroboration I ran myself: `duel_dense/Nr4fQstqHDM_428.0.png`, crop `(1780,0)-(1880,80)`,
+Lanczos ×6 — a red circled double-bar **pause glyph** is rendered top-right in a battle that also
+shows the AUTO SLASH OFF plaque and a HIT COMBO counter. Consistent with the
+`!isDuelMode() && !isPvPRoomMode()` branch. Nice unplanned frame↔code agreement.
 
-### 9. `ui-hud/interactui-menu-system` — **UPHELD (one line number off)**
-Every count reproduces **exactly**: 20,947 bytes, 19 `<ui>` / 19 `<title>`, 47 `<menu>`,
-139 `<option>`, 139 `<icon>`, 28 `<condition><has>`, 67 `<param>`. The 19 title line numbers are
-exactly the list given. Labels resolve (269 → "Sell crops", 270 → "You do not have any crops for
-sale.", 83 → "Buy").
-Correction: the gated sell-crops option is at **line 16**, not 17 — line 17 is the
-"buy commodities" `goto 2` row. Also there is exactly **one** `<errormsg>` in the whole file, so
-"error copy" is a single string, not a corpus.
+### P5 `options-screen-complete` — **SURVIVES** (minor: "Pass 1 missed" is not true)
 
-### 10. `ui-hud/typography-edo-sz` — **UPHELD (incomplete, minor)**
-Lines 100 / 206 / 314 verbatim-correct. Whole-file face inventory: **15× `Edo SZ`, 2× `Calibri`**.
-Full size/colour set, which the claim under-reports:
-`Edo SZ 13/#cccccc ×1 · 14/#cccccc ×2 · 14/#ffffff ×1 · 16/#ffffff ×3 · 18/#000000 ×1`.
-Provenance is right — `ui_strings.txt` sits at `reference/extracted/` top level beside the web
-`payload.xml`, not in `extracted/android/`, so the no-Android-caveat statement holds.
-One bad argument to drop: "`initTextField` turns embedFonts off only for zh/ja, **so** Edo SZ is
-embedded." `LangManager.as:127-141` never sets `embedFonts = true`; it only turns it *off*.
-That is suggestive, not proof.
+**My cite:** `OptionsUI.as:34-51` — all eight `setText` calls, `titletext = getString(10)`, and both
+conditional hides, verbatim. Copy resolves through `strings.json` exactly as claimed.
 
-### 11. `ui-hud/tier3-video-repass-obsolete` — **REFUTED (material)**
-Two of the three hold; the third does not, so "three of five... should not be funded" over-counts.
-- damage-popup animation — **holds** (`TextProjectile.as:20,23,39-45`; `MCSPlayer.as:3805` exact).
-- VS/FIGHT exact ms — **holds**, but the cite is off by one (`addFrameScript` is
-  `DuelIntroBar.as:23`, not `:22`) and the quote alone does not establish it. I had to open the
-  frame bodies (`:85-104`: frame1 hides `actionWord`, frame20 `showText()`, frame69
-  `actionWord.visible = true`, frame88 `introEnd(); stop()`) to get **0 / 792 / 2833 / 3625 ms**
-  at 24 fps. `actionWord` text is `getString(104)` = "FIGHT!" (`:69`).
-- dialogue-box metrics — **does not hold**, per verdict 3.
+But the lane_impact says *"Adds three toggles Pass 1 missed (Chat notification 396, Record Duels 492,
+Full Screen 752)."* Pass 1 did not miss them. `docs/gauntlet/L0/systems/ui-hud.md:531-533` already
+declares `musiccheck, soundcheck, bloodcheck, chatcheck, recordcheck, fullscreencheck` by name. What
+P5 adds is the resolved **copy** for three of the six, not the toggles. Small, but it is precisely
+the kind of "Pass 1 got this wrong" framing that later readers inherit uncritically.
 
-### 12. `ui-hud/690-friend-bar-never-filmed` — **UPHELD, and I widened it**
-Pillarbox replicated to the pixel: 52→1867 / w 1816 in `duel_dense/_427.0, _427.1, _427.2,
-_428.0, _431.5` and `duel_frames/_t425.0s`; 55→1861 / w 1807 and 54→1861 / w 1808 in
-`zFt_combat/_t0320s, _t0325s`; rows 0→1079 in all. I then ran a random 63-frame sample spanning
-**every one of the 18 `reference/frames/` subdirectories** — nothing anywhere near
-800/690 = 1.159; everything clusters 1.67–1.69 (the >2.0 outliers are dark scenes where the
-luminance threshold clipped, plus the hand-made `duel_crops`).
-And the code's own switch confirms the interpretation: `GameEngine.resizeHandler:275-284`
-sets `stageShowingFriendBar = true` and calls `friendpanel.init()` only when
-`newAspectRatio <= 800/690`. At 1.681 the friend bar is off. PARTIAL is the correct verdict.
+Web parity holds: `§1t6407s0§.as:37-39` and `§1t6422s0§.as:40-42` carry the same 396/492/752.
 
-### 13. `ui-hud/hud-symbol-metrics` — **REFUTED (material) — the biggest miss in the pass**
-"symbol geometry is not on disk", "HUD chrome art still sealed in the encrypted
-`124_Mobile_ImageResource`", and "Closing all three is **one JPEXS shape/sprite export away**"
-are all wrong. **That export already happened**, on 2026-07-26, alongside `payload.xml`:
+### P6 `skill-cooldown-12-step-quantised` — **SURVIVES; the published formula is the wrong build's** (material)
 
-```
-reference/extracted/shapes/     1,822 .svg   (ffdec objectType="shape", explicit px w/h + path data)
-reference/extracted/sprites/      827 dirs   (rendered PNG frames per DefineSprite)
-```
+**My cite:** `reference/decompiled/shs3_payload/scripts/§1t5184s0§.as:226` —
+`_loc1_ = Math.ceil(this.cooldown / this.cooldownmax * 12) + 1;`
+(that file is the web SkillSlotButton: `:6 [Embed(... symbol="symbol3605")]`, `:12 keypressText`,
+`:26 cooldownmax`, `:152/162/172/183/190 shade.gotoAndStop(13)`).
 
-and it is from the **WEB** payload, which is the build in the videos. Named HUD members present:
+The Android file P6 quotes uses `int(...)`. `int()` truncates, `Math.ceil()` rounds up. They agree
+only at exact twelfths and at the endpoints; for every intermediate value the **web build sits one
+shade frame higher than the number Pass 2 published**. A rebuild that copies `int(...)` will be
+visibly off by one step through most of every cooldown sweep.
 
-- `sprites/DefineSprite_3632_shs3_fla.PauseScreen_51/1.png` — **802 × 481**. I opened it: a
-  full-stage near-black overlay, the Straw Hat Samurai *DUELS* logo centred at roughly
-  y = 130–260, and a white "GAME PAUSED" line at roughly y = 285. That is the pause screen's
-  exact geometry, sitting unopened.
-- `sprites/DefineSprite_934_shs3_fla.skillSlotBG_755/` — 5 frames at **56 × 55**; I rendered the
-  strip and frame 4 (bright cream border + black fill) is precisely the empty highlighted slot in
-  `Nr4fQstqHDM_428.0`. 56-wide art on a 60-px pitch = 4 px gutter.
-- also `shs3_fla.autoslashbutton` (the plaque from verdict 1), `chatTextBattle`, `skillnodeinner`,
-  `MinimapIcon`, `MinimapRoomIcon`, `speechbubble`, `CharSlot`, `QuestLogButtonBG`.
+The headline — 12 quantised steps, 13th frame = disabled, no tween — survives in both builds. The
+formula does not. This is the exact failure mode the precedence lens exists to catch: an Android
+constant imported as if it were build-neutral, when the target build's own code is on disk and says
+something else.
 
-The reasoning error is a category error: `[Embed(source="/_assets/assets.swf", symbol="symbolNNNN")]`
-is the **AIR/Android** packaging pattern. The web build has no separate `assets.swf` — its symbols
-are inside the payload that was already decoded and exported. Reasoning from the android artifact
-when a web artifact settles it directly is the Lens-3 failure this review hunts.
+Everything else in P6 is verbatim-correct (`:220`, `:146`, `:110`, `:114`, `:153`).
 
-**What does survive in claim 13**, and is correct and grounded: the slot-3 up-arrow is an
-equipped-skill image — `SkillSlotButton.as:87 this.image = ResourceManager.getSkillImage(this._skillId);`
-— and the stance control is `battlemodebust` (`BattleUI.as:192-193` `changestancelabel` on
-MOUSE_OVER, `:275` `stanceButtonClick()`, `:374` `stancecolor1.gotoAndStop(num)`). That quietly
-refutes ledger blocker ④ ("the '3 skill slots' is really ~2 abilities + a stance up-arrow"), which
-the pass never flagged.
+### P7 `slot-geometry-frame-validated` — **SURVIVES; the row measurement in the quote is wrong** (minor)
+
+**My cite:** my own measurement of `reference/frames/duel_dense/Nr4fQstqHDM_428.0.png`
+(threshold `max-channel > 150` over `y∈[930,1080), x∈[1400,1620)`).
+
+Column borders **1449 / 1558** → centre **1503.5**. That matches P7 exactly.
+Row borders **962 / 1071** → centre **1016.5**. P7 says "rows 952→1073 (centre 1012.5)". P7's rows
+span 121 px against a 109-px width — a box that is not square. Mine are 109 × 109. **The frame wins
+over the quote.**
+
+P7's conversion also applies the *horizontal* scale to a vertical measurement. The correct model:
+content is 1816 px wide for an 800-px canvas → scale 2.270; 480 × 2.270 = 1089.6 > 1080, so ~5 px is
+cropped off the top and bottom (which is why rows run 0→1079 with no letterbox). Solving
+`frame_row = game_y × 2.270 + c` from **both** borders gives `c = −5.0` from each independently —
+self-consistent — and centre 1016.5 → game **y = 450.0**, exact.
+
+So the conclusion is *stronger* than P7 states, not weaker: not "~1 px", but a three-point match.
+Box centres 1503.5 / ≈1641 / ≈1778 → game x **639.4 / 700.0 / 760.4** against
+`skillSlotButton.x = 760 − i*60` → **640 / 700 / 760**. See NEW-4.
+
+I also confirm the visual reading (crop `(1380,920)-(1880,1080)`, ×3): three boxes, leftmost
+bright-bordered, **empty and unnumbered**; middle numbered **2** holding a beige claw/fang icon;
+right numbered **3** holding a gold up-arrow. And `SkillSlotButton.as:128
+this.keypressText.text = "";` inside `initEmpty()` is line-exact.
+
+Web parity: `§1t113s0§.as:170 _loc1_.x = 760 - _loc2_ * 60;`. The licence P7 asks for is granted —
+but by the web file, not by inference from Android.
+
+### P8 `result-cards-exact` — **SURVIVES, clean**
+
+**My cite:** `WinUI.as:26` `addFrameScript(0,this.frame1,6,this.frame7,10,this.frame11);` plus the
+handler bodies at `:94-105` (`frame1` hides `winwords`, `frame7` shows it, `frame11` calls `stop()`)
+— so the beats are not inferred from the registration line alone. `:32-37` gates both buttons on
+`isRecording()`; `:49-55` is the draw branch; `:90` is the replay URL. `LoseUI.as:35-38,43-46,53`
+verbatim.
+
+Web parity: `§1t5186s0§.as:26 addFrameScript(0,this.frame1,6,this.frame7,10,this.frame11);` —
+identical. The DRAW state and the gold-gated revive are real.
+
+### P9 `interactui-menu-system` — **SURVIVES** (minor: one off-by-one, one inflated noun)
+
+**My cite:** my own parse of `reference/extracted/android/90_InteractUI_UIData.bin`. Every count
+reproduces exactly: 20,947 bytes, root `<uidata>`, 19 `<ui>`, 19 `<title>`, 47 `<menu>`,
+139 `<option>`, 139 `<icon>`, 67 `<param>`, 28 `<condition><has>`. All 19 title strings and all 19
+line numbers match to the line.
+
+Two corrections:
+1. The gated `sell crops` example is at **line 16**, not 17. Line 17 is a different option
+   (`<label>523</label> … goto param 2`). The quote itself is verbatim from line 16.
+2. `grep -n errormsg` returns **exactly one hit in the whole file**. "inventory gates and error copy"
+   reads as a systematic feature; it is 28 gates and **one** error string.
+
+Novelty note: Stage-0 finding **S0-4** already named this blob and already mapped it to ui-hud
+blocker ⑤ ("`90_InteractUI_UIData` (167 ids, 139 option/label/icon) → ui-hud blocker ⑤"). "Appears
+in neither the ledger nor Pass 1" is literally true — I checked `REBUILD_READINESS.md:232-234` and
+the Ready bullet does omit the town UI — but the score rationale banks +1 for a discovery the
+gauntlet header had already handed over. P9 finds the *contents*; it does not find the *file*.
+
+### P10 `typography-edo-sz` — **SURVIVES** (minor: the size/colour split is tidier than the data)
+
+**My cite:** `reference/extracted/ui_strings.txt` lines 100, 101, 206, 212, 294, 314, 321 read
+first-hand. Lines 100/206/314 are verbatim as quoted. But `:101` is
+`face="Edo SZ" size="14" color="#ffffff"` and `:321` is `itemDesc123<font face="Edo SZ" size="14"
+color="#ffffff"` — 14 px white body text. The clean "13/14 px `#cccccc` body, 16 px `#ffffff`
+heading" rule does not survive contact with the file; there are at least three size/colour
+combinations in use. 17 `Edo SZ` occurrences total.
+
+Also: the claim asserts it "carries no Android-build caveat", then supports the embedding argument
+with `LangManager.as:127-137` — an **Android** file. The `ui_strings.txt` half is web-sourced and
+carries the claim; the `embedFonts` half does not.
+
+The blocker close itself is right and is worth the ledger edit
+(`REBUILD_READINESS.md:240` ② font (unidentified) — verified verbatim).
+
+### P11 `tier3-video-repass-obsolete` — **SURVIVES** (minor: two of three legs are Pass 1's, undisclosed)
+
+**My cite:** `docs/gauntlet/L0/systems/ui-hud.md:370-395` (Pass 1 claim 13 `intro-beats-exact`) and
+`:234-260` (Pass 1 claim 9 `floating-damage-popups`).
+
+Pass 1 already closed "VS/FIGHT exact ms" from the *same* `DuelIntroBar.as:22` line, with the beat
+table (792 / 2 042 / 3 667 ms), and already closed "damage-popup animation" from the *same*
+`TextProjectile.as:16-50` block. P11 re-derives both without saying so. Only the dialogue-box leg is
+new to Pass 2, and P3 over-claims that one. The re-prioritisation conclusion is sound; the framing
+implies three new closures where there is one.
+
+I checked the parity worry and it comes out in P11's favour, so I am *not* refuting it:
+`§1t5533s0§.as:23 addFrameScript(19,this.frame20,68,this.frame69,87,this.frame88);` — the web build
+carries the same 19/68/87 timeline beats (it omits only the frame-0 handler). And `ttl = 12` is
+present in the web payload. So the "don't fund the video re-pass" call holds on the merits.
+
+### P12 `690-friend-bar-never-filmed` — **SURVIVES as a measurement; the conclusion inverts the shipped default** (material)
+
+**My cite (frames):** I re-measured all four cited frames and reproduce them exactly —
+`duel_dense/Nr4fQstqHDM_427.0.png` cols 52→1867 (w 1816, aspect 1.681);
+`duel_frames/Nr4fQstqHDM_t425.0s.png` 52→1867 (1816, 1.681);
+`zFt_combat/zFtCaTO0_1M_t0320s.png` 55→1861 (1807, 1.673);
+`zFt_combat/zFtCaTO0_1M_t0325s.png` 54→1861 (1808, 1.674). Rows 0→1079 in all four.
+
+I then widened the sample far beyond P12's seven frames: a seeded random sample of **661 images
+across every directory under `reference/frames/`** (content bbox via max-channel > 25). Every
+genuine full-frame game capture lands at 1.67–1.68. **Nothing anywhere near 800/690 = 1.159.** P12's
+narrow assertion is not just true, it is now properly sampled. Credit where due.
+
+**But the conclusion is backwards.** P12 says shipping the 690 layout would be *"authoring, not
+copying"*. The web build's own artifacts say the opposite:
+- `reference/decrypted/shs3_payload_decoded.swf` header rect = **800 × 690** (I parsed it). That is
+  the authored canvas of the shipped web game.
+- `GameEngine.as:268-280`: `originalHeightWithBar:int = 690;` … `if(newAspectRatio <=
+  originalWithBarAspectRatio){ … StatsManager.stageShowingFriendBar = true; OverworldHUD.instance.friendpanel.init(); }`
+  — the threshold is **exactly** 800/690, so a container matching the SWF's own header selects the
+  friend bar.
+- `OverworldHUD.as:388-390`: `this.friendpanel = new FriendPanel(); addChild(this.friendpanel);
+  this.friendpanel.y = 480;` — the bar is the 210 px strip below the 480 canvas. The "friend bar"
+  name is grounded.
+
+And Pass 1 claim 2 (`systems/ui-hud.md:88-90`) already concluded *"The web SWF's own header rect is
+800×690, i.e. the tall layout is the authored canvas."* P12 contradicts its own journal without
+citing it.
+
+The correct reading: **the 690 friend-bar layout was almost certainly the default shipped
+experience; the videos captured the *non-default* wide mode.** "Frame-unverified" is right.
+"Authoring, not copying" is wrong — and it is the sentence a future session would act on.
+
+### P13 `hud-symbol-metrics` — **SURVIVES as an honest STILL_UNHELD; the ids are the wrong build's** (material)
+
+**My cite:** all eight `[Embed(...)]` lines read first-hand from
+`reference/decompiled/shs3_android/scripts/` — BattleUI symbol2952, OptionsUI symbol1133,
+DialogBox symbol83, SkillSlotButton symbol2915, WinUI symbol2894, BattleIntroBar symbol2855,
+DuelIntroBar symbol2861, ScreenTransition symbol2758. All verbatim. `ls
+reference/decompiled/shs3_android/` returns `scripts` and nothing else — the export-scope claim is
+true. `ResourceManager.as:302 getSkillImage(id:int)` and `BattleUI.as:274 battlemodebust` both
+check out. This is a well-disciplined refusal to name what isn't held.
+
+The defect: **every one of those symbol ids is Android-only.** The web analogues, which I pulled
+from `reference/decompiled/shs3_payload/scripts/`:
+
+| class | Android | Web (v0.717) |
+|---|---:|---:|
+| BattleUI | 2952 | **3640** (`§1t113s0§`) |
+| OptionsUI | 1133 | **3464** (`§1t6407s0§`) / 1348 (`§1t6422s0§`) |
+| DialogBox | 83 | **91** (`§1t5474s0§`) |
+| SkillSlotButton | 2915 | **3605** (`§1t5184s0§`) |
+| WinUI | 2894 | **3584** (`§1t5186s0§`) |
+| DuelIntroBar | 2861 | **3549** (`§1t5533s0§`) |
+| ScreenTransition | 2758 | **3430** (`§1t6497s0§`) |
+
+P13's stated close-path — "one JPEXS shape/sprite export away" — is correct in method and wrong in
+index. Anyone following it against the web `assets.swf` with these ids exports the wrong symbols.
 
 ---
 
-## Score
+## New findings
 
-Not proposing a number. The corrections push in both directions: verdicts 3, 5 and 11 argue the
-+3 for "blocker ⑤ closed except symbol geometry" was not earned, while verdict 13 shows more is
-held than the pass believed — the residual it priced into holding the score below 90
-("no assets.swf symbol geometry exported", "HUD chrome art still sealed") does not exist.
-Re-score after N2 is worked.
+**NEW-1 — The web build confirms five of Pass 2's seven Android-sourced claims, retiring the S0-3
+caveat for them.** `§1t6497s0§.as` (ScreenTransition: `counter >= 17`, `+= 2`, `alpha -= 1/24`,
+`±240/480`), `§1t5474s0§.as:46,49,105,147` (DialogBox 340/187.5/425), `§1t113s0§.as:160,170`
+(getString(619); `760 - i*60`), `§1t6407s0§.as:37-39` (options 396/492/752),
+`§1t5186s0§.as:26` (WinUI 0/6/10), `§1t5533s0§.as:23` (intro 19/68/87). Pass 2 should have said
+"both builds", not "Android".
+
+**NEW-2 — Web cooldown quantiser is `Math.ceil`, not `int`.** `§1t5184s0§.as:226`. Material for any
+rebuild. Detailed under P6.
+
+**NEW-3 — Web HUD symbol ids differ from Android across the board.** Table under P13.
+
+**NEW-4 — Corrected slot-box measurement, and a three-point geometry match.** Rows are 962→1071
+(109 px, square with the 109-px width), centre 1016.5, not P7's 952→1073/1012.5. With the ~5 px
+vertical overflow crop (`c = −5.0`, solved independently from both borders) the centre converts to
+game **y = 450.0** exactly. Box centres 1503.5 / ≈1641 / ≈1778 → game x **639.4 / 700.0 / 760.4** vs
+code **640 / 700 / 760**. Three slots, three matches. THE FRAME WINS over P7's quoted rows.
+
+**NEW-5 — The 690 friend-bar layout is the shipped default, not an unshipped code path.** SWF header
+800×690 + `GameEngine.as:271-278` + `OverworldHUD.as:388-390`. Detailed under P12.
+
+**NEW-6 — Two Pass-1 statements that P1 silently kills are still live in `systems/ui-hud.md`.**
+Pass 1 claim 16 (`:472,:475`) still tells readers *"Item/skill/npc display names remain
+**STILL_UNHELD**"* — dead, since resnames reach 7011 and S0-3 measures 804/0, 73/0, 484/6 resolved.
+Pass 1 claim 17 (`:491,:508`) still attributes the mismatch to *"a different build revision"* and
+still hands downstream lanes the rule *"ids below ~400 resolve directly"* — the true divergence is
+exactly at `id="212" resname="222"`, and the cause is the attribute, not the build. Both are stale
+claims of the type this repo has been burned by twice. P1 corrects two downstream numbers and leaves
+both governing sentences standing.
+
+**NEW-7 — Pass 1's "verbatim" XLIFF quote block is misquoted, and P1 did not catch it.**
+`systems/ui-hud.md:465-467` prints, inside a fenced quote block presented as the raw file:
+
+```
+<trans-unit id="388" resname="388"><source>Game Paused</source></trans-unit>
+<trans-unit id="600" resname="600"><source>Auto Slash Off</source></trans-unit>
+<trans-unit id="609" resname="609"><source>Draw a line to slash</source></trans-unit>
+```
+
+`reference/extracted/android/118_Mobile_Lang_EN.bin` actually says `resname="407"`,
+`resname="619"` and `resname="628"` for those three ids. The four rows at ids 45/104/175/208 are
+correct because they are below the divergence point. So the one attribute P1's entire thesis turns
+on was **silently rewritten** in the journal's own evidence block — a reader checking P1 against
+that block would conclude P1 is wrong. This is worse than the stale prose in NEW-6: a
+verbatim-looking quote that does not match the artifact is the failure mode §0 calls the worst
+outcome available. It needs correcting in `systems/ui-hud.md` directly, not just superseding.
+
+---
+
+## Bottom line
+
+Nothing here is fabricated and nothing is refuted outright. Four claims (P3, P6, P12, P13) carry
+material defects; five (P1, P5, P7, P9, P10, P11) carry minor ones; P4 and P8 are clean.
+
+If one line survives this review, make it this: **stop citing `shs3_android/` when
+`shs3_payload/` has the same class.** The rosetta method to read it is in this lane's own Pass 1
+claim 18. Two of the seven Android borrowings were already wrong.

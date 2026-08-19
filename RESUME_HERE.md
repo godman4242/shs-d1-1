@@ -1,46 +1,48 @@
 # RESUME HERE
 
-## ⏸ L0 IS MID-FLIGHT — RESUME IT, DO NOT RESTART IT (2026-08-15, `7110ece`)
+## ⏸ L0 IS MID-FLIGHT — FINISH IT, DO NOT RESTART IT (2026-08-15)
 
-**Two runs, both checkpointed on usage limits. All completed research is committed.
-Nothing needs redoing.** 👉 **Read `docs/gauntlet/L0/SALVAGE.md` first.**
+**Four runs, all four checkpointed on usage limits. Every completed agent's work is
+committed. Nothing needs redoing.** 👉 **Read `docs/gauntlet/L0/SALVAGE.md` first.**
 
 ### ⚑ THE HEADLINE: the string table is FOUND. `GAUNTLET.md` §2.1's blocker is DEAD.
 
 `reference/decrypted/shs3_android_payload_decoded.swf` holds **42 class-named blobs**
 (the web payload's 27 are anonymous). `118_Mobile_Lang_EN.bin` is a UTF-16LE XLIFF
-string table, 2,533 entries. **Measured resolution: 804 item names+descs / 0
-unresolved · 73 skill names+descs / 0 · 484 NPC names / 6.** Verified first-hand, not
-taken on an agent's word. `4050`→*Iron Sword*, `6000`→*Light Stance Mastery*,
-`5009`→*Ruffian*, `175`→*Critical Hit*.
+string table, 2,533 entries. **Measured: 804 item names+descs / 0 unresolved · 73
+skill / 0 · 484 NPC / 6.** Verified first-hand. `4050`→*Iron Sword*, `6000`→*Light
+Stance Mastery*, `5009`→*Ruffian*, `175`→*Critical Hit*.
 **→ L2 and L3 are UNBLOCKED. L1b is CLOSED before it ran.**
-⚠️ Caveat: Android build `0.682` vs web `0.717`; data-XML rows match exactly, UI copy
-and combat tuning parity NOT established. Label ported strings with their build.
+⚠️ Android build `0.682` vs web `0.717`; data-XML rows match exactly, UI copy and
+combat tuning parity NOT established. Label ported strings with their build.
 
-Also found: `112_Mobile_NodeData` kills world-exploration's *"ZERO world numbers"* ·
-`114_Mobile_AchievementData` (61) kills meta-social ③ *"one Ruffle session closes
-all"* · **~450 animations across 18 named blobs, not §2's "~150" — L6 is ~3× its
-assumed size** · audio is **held but encrypted** (nested `CWS` SWFs) — a LEAD for L7,
-not a solve; R4 still stands, the gate is your ears.
+### State: 1,087 claims · 1,767 verdicts · **0 VOID** · 349 refuted
 
-### What is banked vs what is only a lead
+- ✅ **ALL 12 SYSTEMS JUDGED — 232/232 claims**, each through 3–4 blind
+  artifact-citing critics, 140 ledger overturns. **These may enter the ledger.**
+- ⚠️ **855 claims are LEADS** — 6 source sweeps whose critics never ran (210 claims)
+  and 645 critic `new_findings` (210 claimed overturns) unjudged by construction.
+  Under §0 an unjudged claim is a lead. **`REBUILD_READINESS.md` is UNTOUCHED and
+  must stay so until they are judged.**
 
-- ✅ **JUDGED** (3–4 blind artifact-citing critics each): `items-equipment`,
-  `rebirth-elements`, `combat-core`, `progression` — **79 claims**. These may be
-  written into the ledger.
-- ⚠️ **LEADS ONLY** — the other 8 systems (153 claims) + 104 critic `new_findings`.
-  Surveyed but unjudged. Under `GAUNTLET.md` §0 an unjudged claim is a lead, not a
-  finding. **`REBUILD_READINESS.md` is deliberately UNTOUCHED and must stay so.**
-- ⏳ Never started: all 10 Sweep-B source surveys (incl. the never-surveyed
-  `android-blobs` and `string-table`), the dry-loop, the completeness critic, gates
-  L0-A…F.
+### ⛔ DO NOT try to resume the old workflow
 
-**Resume:** `Workflow({scriptPath: "scripts/gauntlet/l0-resurvey.workflow.js",
-resumeFromRunId: "wf_7e275b35-488"})` — do **not** edit the script first; an edit
-invalidates the cache and the 12 surveys are the expensive part.
+`resumeFromRunId` is **same-session only** — run `wf_7e275b35-488` cannot be resumed
+from a new session, and re-running `l0-resurvey.workflow.js` unmodified would
+re-execute 59 completed agents for nothing. **The cache is not load-bearing:** every
+result is already extracted to `docs/gauntlet/L0/run2/` and committed. Write a fresh,
+smaller **finish-L0 workflow** (~40 agents) — `SALVAGE.md` has the exact stage table.
 
-**`docs/GAUNTLET.md` needs correcting in the L0 re-arm commit:** §2.1's blocker is
-dead, the L1b lane row is obsolete, §2's L6 animation count is ~3× low.
+### Remaining work, in order
+
+1. **4 source surveys never run** — `android-blobs` and `string-table` have never been
+   opened by any agent in four runs; plus `frames`, `uistrings-payload`.
+2. **~12 source critics** · **judge the 645 `new_findings`** · dry-loop · completeness.
+3. **Rewrite `REBUILD_READINESS.md`** from the judged claims · **gates L0-A…F**.
+4. **Correct `docs/GAUNTLET.md`** — §2.1 blocker dead, L1b row obsolete, L6 is ~450
+   animations not ~150 — in the §3.7 re-arm commit.
+
+**Model: Opus 5 @ `xhigh`** (§2 routing for L0 is unchanged).
 
 ---
 
