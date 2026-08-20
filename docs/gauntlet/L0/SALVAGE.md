@@ -100,7 +100,7 @@ buildWorklist: 1243 rows -> 1204 distinct ids (39 duplicate rows merged)
 
 | Run | Script | Agents | What | State |
 |---|---|---:|---|---|
-| **WF-2b** | `l0-finish-wf2.workflow.js` | 8 | the 4 packets whose critics died — itemdata · bindata · actionscript · frames | ⏳ next |
+| **WF-2b** | `l0-finish-wf2b.workflow.js` | 8 | the 4 packets whose critics died — itemdata · bindata · actionscript · frames | ▶ `wf_b5bca0ad-f47` launched |
 | **WF-3a** | `l0-finish-wf3.workflow.js` args `t1` | 20 | judge the 235 findings CLAIMING A LEDGER OVERTURN | queued |
 | **WF-3b** | `l0-finish-wf3.workflow.js` args `t2` | 10 | judge the 459 corroborating findings | queued |
 | **WF-4** | `l0-finish-wf4.workflow.js` | ~17 | dry-loop x 4 targets (a round only counts if it RAN) + completeness | queued |
