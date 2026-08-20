@@ -1,0 +1,48 @@
+{
+ "gates": [
+  {
+   "detail": "the ledger cites no claim at all \u2014 the rewrite has not happened, so this passes vacuously",
+   "green": false,
+   "id": "L0-A",
+   "title": "CITE INTEGRITY"
+  },
+  {
+   "detail": "the ledger cites no claim at all \u2014 the rewrite has not happened, so this passes vacuously",
+   "green": false,
+   "id": "L0-B",
+   "title": "NOTHING UNJUDGED IN THE LEDGER"
+  },
+  {
+   "detail": "no convergence receipt at docs/gauntlet/L0/convergence.json \u2014 the dry-loop has not run",
+   "green": false,
+   "id": "L0-C",
+   "title": "CONVERGENCE IS REAL"
+  },
+  {
+   "detail": "android-blobs: only 1 critic review(s), need 2",
+   "green": false,
+   "id": "L0-D",
+   "title": "EVERY SOURCE OPENED"
+  },
+  {
+   "detail": "kept without a pasted negative search: - **Verbatim dialogue** \u2014 if the story is server-fetched and the server is dead, the actual script is gone; au; - **Exact original SFX & music synthesis params** \u2014 the *character* is study-able from audio; the exact wavefo; - **The live clan-war** \u2014 warring alongside thousands of real players is impossible offline; scope out or buil; - **L11\u201380 XP curve** \u2014 no table published; a solo build likely can't reach L11+; keep the extrapolation label; - **Server-sim topology & save format** \u2014 nothing to copy; design a single-player persistence schema from the ; - **The dead IAP economy** \u2014 design an offline gold faucet; `HAS_CASH_PURCHASE=false` already commits to this.",
+   "green": false,
+   "id": "L0-E",
+   "title": "\u00a76 IS PROVABLY MINIMAL"
+  },
+  {
+   "detail": "combat-core: score carries neither a [[claim]] nor an explicit STILL_UNHELD; skills-meters: score carries neither a [[claim]] nor an explicit STILL_UNHELD; progression: score carries neither a [[claim]] nor an explicit STILL_UNHELD; rebirth-elements: score carries neither a [[claim]] nor an explicit STILL_UNHELD; items-equipment: score carries neither a [[claim]] nor an explicit STILL_UNHELD; economy: score carries neither a [[claim]] nor an explicit STILL_UNHELD; enemies-ai: score carries neither a [[claim]] nor an explicit STILL_UNHELD; world-exploration: score carries neither a [[claim]] nor an explicit STILL_UNHELD; quests-story: score carries neither a [[claim]] nor an explicit STILL_UNHELD; ui-hud: score carries neither a [[claim]] nor an explicit STILL_UNHELD; art-anim-audio-feel: score carries neither a [[claim]] nor an explicit STILL_UNHELD; meta-social: score carries neither a [[claim]] nor an explicit STILL_UNHELD",
+   "green": false,
+   "id": "L0-F",
+   "title": "SCORECARD CARRIES ITS EVIDENCE"
+  }
+ ],
+ "green": false,
+ "pooled": {
+  "claims": 1323,
+  "judged_ids": 510,
+  "ledger_refs": 0,
+  "live_verdicts": 2289,
+  "verdicts": 2289
+ }
+}

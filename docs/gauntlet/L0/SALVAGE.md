@@ -95,7 +95,7 @@ buildWorklist: 1323 rows -> 1284 distinct ids (39 duplicate rows merged)
 
 | Run | Script | Agents | What | State |
 |---|---|---:|---|---|
-| **WF-3a** | `l0-finish-wf3.workflow.js` args `{tier:'t1',batches:12}` | 24 | judge the 282 findings CLAIMING A LEDGER OVERTURN | ⏳ next |
+| **WF-3a** | `l0-finish-wf3.workflow.js` args `{tier:'t1',batches:12}` | 24 | judge the 282 findings CLAIMING A LEDGER OVERTURN | ▶ `wf_771ab0e4-798` launched |
 | **WF-3b** | `l0-finish-wf3.workflow.js` args `{tier:'t2',batches:11}` | 11 | judge the 492 corroborating findings | queued |
 | **WF-4** | `l0-finish-wf4.workflow.js` | ~17 | dry-loop x 4 targets (a round only counts if it RAN) + completeness | queued |
 
@@ -110,6 +110,44 @@ and a claim nobody judges is a lead forever.
 Packets are **blind-safe by construction** (§3.2): they carry the structured claim and
 the machine cite audit, never the surveyor's prose. Critics are told explicitly not to
 open `sources/*.md` — that is what keeps the review blind while still not re-surveying.
+
+### THE BINARY GATE — `scripts/gauntlet/gateL0.py`, 6 items, all currently RED
+
+`GAUNTLET.md` §3.6: *"Binary. Every item green with pasted output, or the lane is open.
+Never soften a gate to fit a result."* A gate a human eyeballs is a gate that gets
+softened, so every item is decided mechanically and the script exits non-zero if any is
+red. 14 hermetic tests, watched RED at 13/13, all seven guards chaos-planted.
+
+```
+GATE L0 — 1323 claims pooled · 510 judged ids · 0 ledger references
+   RED   L0-A  CITE INTEGRITY        the ledger cites no claim at all — the rewrite has not happened
+   RED   L0-B  NOTHING UNJUDGED      same
+   RED   L0-C  CONVERGENCE IS REAL   no convergence receipt — the dry-loop has not run
+   RED   L0-D  EVERY SOURCE OPENED   android-blobs: only 1 critic review, need 2
+   RED   L0-E  §6 PROVABLY MINIMAL   6 entries kept with no pasted negative search
+   RED   L0-F  SCORECARD EVIDENCE    12 system scores carry neither a [[claim]] nor a STILL_UNHELD
+LANE L0: ⛔ OPEN — at least one gate item is RED
+```
+
+**How the ledger will carry its evidence:** the rewrite cites claims inline as
+`[[unit/claim-slug]]`, and L0-B resolves every reference against the pooled verdicts. A
+claim with no verdict, whose only verdicts are VOID (no `own_cite`, §0), or that the
+critics refuted turns the gate red and names itself. That is §0's *"an unjudged claim is
+a LEAD"* made mechanical — the rule does not break because someone decides to break it,
+it breaks when a claim quietly drifts into a rewrite nobody re-checked.
+
+⚑ **The gate had its own fail-open and it is closed.** With an un-rewritten ledger,
+"every cited claim resolves" and "every cited claim was judged" are both VACUOUSLY TRUE
+over an empty set — L0-A and L0-B reported GREEN on a lane that had done none of the
+work. Both now go RED when the ledger cites nothing.
+
+⚑ **L0-D immediately caught a real gap the worklist could not.** `android-blobs` has only
+its `cite` critic: the `hunter` died at wall #5, and because the surviving critic HAD
+judged every claim, the unit dropped out of `buildWorklist`'s packet list. Judged-ness and
+§3.3's two-lens minimum are different questions, and only the gate asks the second.
+**One agent owed: `android-blobs:hunter`.**
+
+---
 
 ---
 
