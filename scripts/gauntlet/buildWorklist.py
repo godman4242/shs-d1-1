@@ -97,9 +97,9 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default="docs/gauntlet/L0")
-    ap.add_argument("--runs", nargs="+", default=["run2", "run3"],
+    ap.add_argument("--runs", nargs="+", default=["run2", "run3", "run4"],
                     help="extracted run directories to pool, oldest first")
-    ap.add_argument("--lint", nargs="+", default=["citelint.json", "citelint-run3.json"],
+    ap.add_argument("--lint", nargs="+", default=["citelint.json", "citelint-run3.json", "citelint-run4.json"],
                     help="citeLint reports to pool")
     ap.add_argument("--batch-size", type=int, default=BATCH_SIZE)
     args = ap.parse_args()

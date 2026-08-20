@@ -1,6 +1,51 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/extracted/bindata/118_1t4645s0.bin, light_stance frame 0; reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/rig-is-19-nodes",
+  "lane_impact": "art-anim-audio-feel (L6): the skeleton spec for the recreation. A 21-joint rig will not map onto the shipped keyframe data; build 19 keyed nodes for stances, 20 for the human set, and reserve the 27-slot part table for equipment/props.",
+  "overturns_ledger": false,
+  "quote": "light_stance frame0 node ids: ['19','16','15','14','13','12','11','10','9','7','6','5','4','2','1','0','20','18','3'] COUNT = 19  \u00b7  MCSCharacter.as: 'public static var PART_l_hand:int = 0;' ... 'public static var PART_r_knee:* = 26;' (27 constants)",
+  "text": "The character rig keys 19 nodes per pose in the stance sets (20 in the human set, 26 max in the wolf set), against 27 named PART_ constants in code \u2014 the survey's \"21-node rig\" matches none of these.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62, :120, :141; plus my <n i=> id scan over all 19 animdata blobs in reference/extracted/bindata/",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/rig-is-23-parts-27-slots",
+  "lane_impact": "art-anim-audio-feel and items-equipment: the paperdoll slot count is load-bearing for both the rig and the equipment-compositing contract. 23 built parts / 27 named slots is the number to code against.",
+  "overturns_ledger": false,
+  "quote": "MCSCharacter.as:120 `internal var partListLength:int = 22;` \u00b7 :141 `for(var i:int = 0; i <= this.partListLength; i++)` \u00b7 :10 `public static var PART_l_hand:int = 0;` ... :62 `public static var PART_r_knee:* = 26;` \u00b7 measured distinct node ids across the 19 web blobs = 25 (0-26 minus 8 and 17); per-frame node-count histogram {9:1,16:22,17:39,18:56,19:240,20:17,25:9,26:1} \u2014 21 never occurs",
+  "text": "The paperdoll rig is 23 MovieClips built at runtime over 27 named part slots, and the animdata references 25 distinct node ids \u2014 the survey's '21-node rig' matches none of these.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62 (PART_ constants), :120 (partListLength), :141 (the build loop); MCSWolf.as:13",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/rig-is-23-slots-26-for-wolves",
+  "lane_impact": "art-anim-audio-feel: the rebuild's skeleton must be 23 slots (0..22) for humans with a 26-slot creature variant, and the `<n i=\"\u2026\">` index in every animdata blob is a direct index into that list. Note indices 8 (crotch) and 17 (hat) are declared but never written by the light-stance blob \u2014 they are driven elsewhere (the hat is a separate detachable, see createFlyingHat).",
+  "overturns_ledger": false,
+  "quote": "MCSCharacter.as:120 `internal var partListLength:int = 22;` \u00b7 :141 `for(var i:int = 0; i <= this.partListLength; i++) { mc = new MovieClip(); addChild(mc); this.partList.push(mc); }` -> 23 slots \u00b7 PART_l_hand=0 \u2026 PART_hat=17 \u2026 PART_prop2=21, PART_prop3=22, PART_l_shoulder=23, PART_r_shoulder=24, PART_l_knee=25, PART_r_knee=26 \u00b7 MCSWolf.as:13 `partListLength = 25;`",
+  "text": "The character rig is 23 part slots for humans and 26 for wolves, out of 27 named parts \u2014 not 21.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3699-3719; HUD text visible in reference/frames/duel_dense/Nr4fQstqHDM_432.0.png bottom-left",
   "citelint": {
    "notes": [],
@@ -118,6 +163,196 @@
   "quote": "internal static var resourceFileNameArray:Array = [\"shs3resource.swf\",\"musicresource.swf\",\"soundresource.swf\",\"imageresource.swf\",\"bgresource.swf\"];  /  public static var useExternalResource:Boolean = true;  /  StatsManager.mainTimeLine.loadingScreen.loadertext.text = \"Loading art assets... \";",
   "text": "All equipment art is loaded at runtime from an external shs3resource.swf (POST to getresource.php, pass=12345), because useExternalResource is hard-set true \u2014 so the roster art was never in either payload and the getDefinitionByName symbol path is dead code in shipped builds.",
   "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/extracted/bindata/98_1t4653s0.bin:677 + reference/decompiled/shs3_android_payload/scripts/NameGenerator.as:147-148,158",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/bindata/98_1t4653s0.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/NEW-place-name-table-has-one-dead-row",
+  "lane_impact": "Prevents an off-by-one in any port of the world-naming algorithm and settles the 'usable row count' wording.",
+  "ledger_text": "Place-name grid is 26x26 = 676 reachable entries indexed namex*26+namey; the shipped table has 677 rows, the last (Yamanashi) being unreachable.",
+  "overturns_ledger": false,
+  "quote": "NameGenerator.as:147 `var namex:int = territoryx % 137;` :148 `var namey:int = territoryy % 26;` with getTownName1 called only when `namex < 26`, and :158 `var index:int = namex * 26 + namey;` \u2014 so index max = 25*26+25 = 675. 98_1t4653s0.bin:676 `Uenohara` is the last reachable row; :677 `Yamanashi` can never be selected.",
+  "text": "The place-name table holds 677 entries but the lookup can only reach indices 0..675, so its last row is unreachable dead data.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/GameEngine.as:269-271",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "bindata/NEW-swf-690-is-480-plus-bar",
+  "lane_impact": "Closes the open conflict carried by bindata/aspect-frame-beats-swf-header without weakening the frame-wins invariant \u2014 the frame and the header were measuring different rectangles.",
+  "ledger_text": "Stage is 800x480 gameplay; 800x690 is the stage including the bar. The SWF header rect (twips [0,16000,0,13800]) is the with-bar figure, not a conflicting stage size.",
+  "overturns_ledger": false,
+  "quote": "269 `var originalWidth:int = 800;` 270 `var originalHeight:int = 480;` 271 `var originalHeightWithBar:int = 690;` \u2014 inside `internal static function resizeHandler(event:Event) : void`.",
+  "text": "The apparent contradiction between the web SWF header's 800x690 stage rect and the 800x480 gameplay canvas is not a contradiction \u2014 the engine declares both, with 690 being the stage height WITH the bar. This reconciles the frame measurement (1816x1080 pillarboxed, aspect 1.6815) with the payload header without anyone having to lose.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/extracted/bindata/119_1t4646s0.bin:466,471,479,484,492,497,505,510,518,523,531,536,544,549 vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (same lines)",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/bindata/119_1t4646s0.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/NEW-web-android-survival-data-differ-in-14-lines",
+  "lane_impact": "Gives a concrete, bounded measurement of web-vs-android data drift instead of a blanket caveat: 14 lines out of 556, all late-wave density.",
+  "ledger_text": "Web v0.717 war waves are denser than Android v0.682 in the final nine waves (pair repeated + one Soldier appended). Use the web file (bindata/119) for v0.717 tuning.",
+  "overturns_ledger": false,
+  "quote": "web :466 `<id>449|454|449|454|443</id>` vs android :466 `<id>449|454</id>`; web :492 `<id>450|455|450|455|443</id>` vs android `<id>450|455</id>`; web :518 `<id>451|456|451|456|443</id>` vs android `<id>451|456</id>`. All other 542 lines are byte-identical; both files are 556 lines, 39 <wave>, 87 <enemy>.",
+  "text": "The web survival/war wave table and its Android counterpart are not identical: exactly 14 lines differ, all in the late 449/450/451 waves, where the web build repeats the enemy pair and appends a 443 (Soldier). Wave count, enemy count, spawn geometry and the 700-710 slots are identical.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t58s0\u00a7.as:84-85 and :12-20; reference/decompiled/shs3_payload/scripts/\u00a71t783s0\u00a7.as:42-145",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/NEW-web-payload-is-decompiled-parity-is-checkable",
+  "lane_impact": "Removes the blanket build-parity caveat from every AS3-sourced claim in this lane; each one is now individually checkable rather than presumptively android-only.",
+  "ledger_text": "Web v0.717 code IS recovered (obfuscated). RNG and animation hold-table are byte-equivalent across builds; other android-only cites can and should be parity-checked here before being marked as parity holes.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t58s0\u00a7.as:84 `this.randomSeed = (this.randomSeed * 9301 + 49297) % 233280;` :85 `return this.randomSeed / 233280;` \u2014 with the same negate-negative-seed-then-burn-one-rnd() constructor at :12-20. \u00a71t783s0\u00a7.as duration ladder = 10,15,24,6,24,10,4,8,10,12,6,6,2,20,2,6,48,6,6,50,24,24,24,24,24,6,12,6,12 (+ one extra +12 case at :145).",
+  "text": "The WEB v0.717 payload is decompiled and on disk at reference/decompiled/shs3_payload/scripts/ \u2014 1,079 .as files with obfuscated identifiers (\u00a71t58s0\u00a7.as etc.). Every Android-v0.682 cite in this packet is therefore parity-checkable against the actual web build, and the gauntlet's standing 'android string while asserting web behaviour' hole is narrower than assumed. I used it twice: the RNG LCG is identical in both builds, and the AnimData post-clip hold table carries the same value sequence.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/RoomGenNode.as:2437-2440 + reference/extracted/bindata/93_1t4647s0.bin:22-30",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/bindata/93_1t4647s0.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/default-block-overrides-all-traps",
+  "lane_impact": "L-traps: explains a live counting trap in this source and documents a shipped dev switch.",
+  "overturns_ledger": false,
+  "quote": "RoomGenNode.as:2437-2440 `if(QuestEngine.trapRoomData.\u00a7default\u00a7.toString() != \"\") { trapRoom = QuestEngine.trapRoomData.\u00a7default\u00a7.room; }` \u2014 evaluated before the `else if(roomList.room.length() > 0)` tier branch at :2441. 93_1t4647s0.bin:22-30 `<!--<default>` \u2026 `<room><width>1000</width>` + 4x Trap_ElementAuto \u2026 `</room></default>-->`",
+  "text": "The trap system ships with a debug override the packet never mentions, and it is the source of the census inflation in bindata/trap-census-and-800-is-one-screen. RoomGenNode checks for a <default> element in traproomdata BEFORE any tier selection and, if present, replaces every trap room in the game with it. 93_1t4647s0.bin:22-30 is exactly that block, shipped commented out \u2014 which is why raw greps of the file return 70 rooms and 314 objects instead of the live 69 and 297.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/QuestGenerator.as:38 \u00b7 ItemGenerator.as:701 \u00b7 Obj_PickableItemProcGen.as:57-60 + reference/decompiled/shs3_payload/scripts/\u00a71t8608s0\u00a7.as:60",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/item-colour-palette-11",
+  "lane_impact": "L-art: eleven exact OG hues, in scope of the licensed 1:1 permission ruling. Scoped to procgen quest items, not to the fighter.",
+  "overturns_ledger": false,
+  "quote": "Obj_PickableItemProcGen.as:57-60 `var colorindex:int = rng.rand(11); var colorhexlist:Array = [16711680,16737792,16763904,39168,13311,6684927,16751103,6697728,16777215,10066329,0]; this.color = colorhexlist[colorindex]; ColorCode.changeColor(this.primary,this.color);` = #FF0000 #FF6600 #FFCC00 #009900 #0033FF #6600FF #FF99FF #663300 #FFFFFF #999999 #000000",
+  "text": "An eleven-entry exact-hue palette used for procedurally generated quest items, selected by rng.rand(11) and applied through ColorCode.changeColor. Present in three classes in the Android build and in the web build.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/extracted/bindata/114_1t4641s0.bin and 108_1t4635s0.bin (regex census over 1[01][0-9]_*.bin) + reference/decompiled/shs3_android_payload/scripts/FrameData.as:74-89",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/matrix-nodes-and-reorder-frames",
+  "lane_impact": "L-art-anim: sizes the remaining transcription work honestly (src/config/ogAnims.ts already models the matrix quad, so this is coverage, not a bug) and names an engine asymmetry a faithful renderer must reproduce.",
+  "overturns_ledger": false,
+  "quote": "Measured: nodes with r= 79,867 \u00b7 nodes with a/b/c/d 1,839 \u00b7 per-file {114:817, 108:492, 116:171, 102:157, 110:54, 104:32, 113:32, 106:21, 118:16, 100:14, 111:14, 115:14, 101:2, 112:2, 103:1} \u00b7 matA range -101..150 \u00b7 <f r=\"1\"> total 258. FrameData.as:77 `var partMax:int = 22;` then :78-81 hides 0..21 only, :87-88 `mcs.partList[MCSCharacter.PART_hat].visible = true; mcs.partList[MCSCharacter.PART_crotch].visible = true;`",
+  "text": "Two measured coverage numbers nobody in the packet states. (1) Of the 81,706 <n> nodes across the 19 animdata blobs, 79,867 use the plain rotation form and 1,839 (2.25%) use the a/b/c/d 2x2 matrix form \u2014 concentrated in 114 (spider, 817) and 108 (human, 492), spread over 15 of the 19 blobs. matA spans -101..150 in fixed-point x100, so parts are mirrored and scaled up to 1.5x, not merely rotated. (2) There are 258 <f r=\"1\"> layer-reorder frames across all 19 blobs; claim bindata/sprite-compositing-contract's '89 in file 108' is exact but is only a third of the total. Also: FrameData.setVisible hides only slots 0..21, so prop3(22), l_shoulder(23), r_shoulder(24), l_knee(25) and r_knee(26) are never hidden, then hat and crotch are force-shown.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/GameEngine.as:267-312 + InputManager.as:185-186",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/stage-letterbox-algorithm",
+  "lane_impact": "L-render/L-input: the frame still wins on what the playfield is (1816x1080 measured, 5:3), and this is the code that produces those pillars. It also gives the exact screen-to-stage mapping any input port needs.",
+  "overturns_ledger": false,
+  "quote": "GameEngine.as:269-274 `var originalWidth:int = 800; var originalHeight:int = 480; var originalHeightWithBar:int = 690; var originalAspectRatio:Number = originalWidth / originalHeight; var originalWithBarAspectRatio:Number = originalWidth / originalHeightWithBar; var newAspectRatio:Number = stageMC.stageWidth / stageMC.stageHeight;` ; :293-306 fit-width vs fit-height with `offsetX = (stageMC.stageWidth - originalWidth * newScale) / 2;` ; :307-312 publishes stageScale/stageOffsetX/stageOffsetY/stageFitWidth/stageBaseWidth/stageBaseHeight ; InputManager.as:185-186 `mouseX = (args.stageX - StatsManager.stageOffsetX) / StatsManager.stageScale;`",
+  "text": "The engine's own letterbox/pillarbox algorithm, which resolves the apparent 800x690-vs-800x480 contradiction between the web SWF header and the longplay frames. The base canvas is 800x480; 690 is 800x480 plus a 210px friend bar that is only shown when the window is TALLER than 800/690. The engine fits width or height, centres with an offset, and publishes stageScale / stageOffsetX / stageOffsetY / stageFitWidth / stageBaseWidth / stageBaseHeight \u2014 the same values InputManager uses to convert mouse coordinates back into stage space.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/RoomGenNode.as:78,1978-1981,2378 + DungeonGenerator.as:967",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/two-more-trap-placement-rules",
+  "lane_impact": "L-traps: completes the placement model that bindata/trap-room-placement-and-level-gate started.",
+  "overturns_ledger": false,
+  "quote": "RoomGenNode.as:1978-1981 `else if(this.roomType == ROOM_KEY && this.isEnterFromLeft() && rng.rand(2) == 0) { this.roomType = ROOM_TRAPKEY; }` ; :2378 `if(this.roomType == ROOM_TRAP || this.roomType == ROOM_TRAPKEY)` re-enters the lvl<10 / lvl<50 gate ; :78 `public static var ROOM_TRAPVERYHARD:int = 35;` ; DungeonGenerator.as:967 `traproomIndex = this.createRoute(traproomIndex,nodeid,bg,6,rng,RoomGenNode.ROOM_TRAPVERYHARD,RoomGenNode.ROOM_TRAPVERYHARD,roomArray,null,null,NodeGenerator.EXIT_N,true);`",
+  "text": "Trap-room placement has FIVE paths, not the three in bindata/trap-room-placement-and-level-gate. A fourth converts key rooms into ROOM_TRAPKEY, and a fifth places the veryhard tier as a dedicated 6-room route \u2014 which is exactly why veryhard alone gets the daily reroll.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t136s0\u00a7.as:10-18 \u00b7 \u00a71t1524s0\u00a7.as:83,87 \u00b7 \u00a71t7785s0\u00a7.as:13 \u00b7 \u00a71t75s0\u00a7.as:79-103",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "bindata/web-build-owns-the-bindata-map",
+  "lane_impact": "Cross-cutting: upgrades bindata/procedural-name-generator, bindata/trap-dungeon-system and bindata/survival-is-warroom-content from Android-inferred to web-proven.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t136s0\u00a7.as:10-18 `internal static const \u00a71t11470s0\u00a7:Class = \u00a71t4651s0\u00a7;` (=94 male) `\u2026 \u00a71t11471s0\u00a7:Class = \u00a71t4650s0\u00a7;` (=97 female) `\u2026 \u00a71t11472s0\u00a7:Class = \u00a71t4649s0\u00a7;` (=95 noble) `\u2026 \u00a71t11473s0\u00a7:Class = \u00a71t4652s0\u00a7;` (=96 samurai) `\u2026 \u00a71t11474s0\u00a7:Class = \u00a71t4653s0\u00a7;` (=98 place) \u2014 the same declaration order as Android NameGenerator.as:10-18. \u00a71t1524s0\u00a7.as:83 `internal static const \u00a71t9843s0\u00a7:Class = \u00a71t4647s0\u00a7;` and :87 `\u2026 = \u00a71t4648s0\u00a7;`. \u00a71t7785s0\u00a7.as:13 `internal static const \u00a71t12534s0\u00a7:Class = \u00a71t4646s0\u00a7;`.",
+  "text": "The web bindata -> consumer mapping is provable FROM THE WEB BUILD, without relying on Android class names, which closes the S0 build-parity hole for the structural claims. The web AS3 is symbol-obfuscated (which is why the Android decompile was necessary at all), but the ByteArrayAsset bindings survive: NameGenerator \u00a71t136s0\u00a7 binds 94/97/95/96/98 in male/female/noble/samurai/place order; QuestEngine \u00a71t1524s0\u00a7 owns 93 (traproomdata) and 92 (map bitmap); WarHexUI \u00a71t7785s0\u00a7 owns 119 (survivalmodedata); MCSCharacter \u00a71t75s0\u00a7 owns all 19 animdata blobs.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t136s0\u00a7.as:140-151 vs reference/decompiled/shs3_android_payload/scripts/NameGenerator.as:137-144",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/web-has-third-hardcoded-town",
+  "lane_impact": "L-world-map / build-parity: proves the two builds' content is NOT identical and gives the first measured example.",
+  "overturns_ledger": false,
+  "quote": "WEB \u00a71t136s0\u00a7.as:140-151 `if(param1 == 1405272) { return \"Ibamaya\"; } if(param1 == 1524045) { return \"Gokura\"; } if(param1 == 1519945) { return \"Iwakuni\"; }` \u2014 ANDROID NameGenerator.as:137-144 stops after Gokura.",
+  "text": "A located WEB-vs-ANDROID divergence: the web build (v0.717) getPlaceName has THREE hardcoded towns, the Android build (v0.682) has only two. The web adds territoryID 1519945 -> 'Iwakuni', which decodes under the recovered transform to bitmap pixel (43,39) \u2014 a land cell. This is a concrete instance of the S0 build-parity caveat and a reason to prefer the web decompile wherever it is legible.",
+  "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
@@ -534,222 +769,6 @@
   "overturns_ledger": false,
   "quote": "Mobile.as:117 `GameEngine.getStageMC().frameRate = 24;` \u00b7 MCSPlayer.as:15-19 `lightSlashSpeed:int = 50 / balancedSlashSpeed:int = 40 / heavySlashSpeed:int = 30` \u00b7 src/config/combat-sim.ts:77 `/** CONTRACT-SRC \u2014 dash travel per 60 Hz frame, in WORLD px, by stance. */` \u00b7 src/core/Sim.ts:670 `speedPxS: DASH_SPEED_PX_PER_FRAME[player.stance] * FIXED_HZ,`",
   "text": "src/core/Sim.ts converts the source's per-frame dash speed with FIXED_HZ = 60 although the original runs at 24 fps, so the sim dashes at 3000/2400/1800 px/s instead of 1200/960/720 \u2014 2.5\u00d7 too fast.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:80,82,86 + InputManager.as:342-343, 472-478; desktop confirm reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:104,106",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/slash-units-are-800x480-stage",
-  "lane_impact": "combat-core blocker \u2460: the recovered 120..255 base slash values are 800x480 stage units. Anyone measuring blade span in a 1080p frame must divide by the frame-to-stage factor (~2.25-2.4) first, or the number comes out ~2.3x too large.",
-  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale)",
-  "overturns_ledger": false,
-  "quote": "StatsManager.as:80  public static var stageWidth:int = 800;\nStatsManager.as:82  public static var stageHeight:int = 480;\nInputManager.as:342 mouseX = (stageMC.mouseX - StatsManager.stageOffsetX) / StatsManager.stageScale;",
-  "text": "Slash length is denominated in the 800x480 logical stage, not screen or video-frame pixels: the slash budget is consumed in unscaled stage coordinates and stageScale is re-applied only when drawing.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3160-3171",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/stance-change-costs-48-meter",
-  "lane_impact": "combat-core: stance switching is not free. Combined with the crit rule above, switching stance while at full meter throws away the crit - a real tactical constraint the current model has no representation for.",
-  "ledger_text": "\u2464 Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
-  "overturns_ledger": false,
-  "quote": "if(\u00a71t1525s0\u00a7.\u00a71t9948s0\u00a7()) { this.\u00a71t4414s0\u00a7 -= 48; if(this.\u00a71t4414s0\u00a7 < 0) { this.\u00a71t4414s0\u00a7 = 0; }",
-  "text": "Changing stance costs a flat 48 off the slash meter in v0.717, and only in battle - a cost that appears in no ledger system.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session11/crit-focus/{t1081.100,t1004.800,t1082.100,t1082.900,t1083.100,t3779.000}.png \u2014 crop (230,1015)-(530,1050) upscaled 4x NEAREST, six-tile contact sheet",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/stance-label-is-a-frame-clock",
-  "lane_impact": "L5 + L8 \u2014 a free, reusable frame-side probe of the reload meter: the label boundary pins the gate to the SAME constant as the display offset (48), which is the web rule, not android's maxreload/6 = 20. Future build-parity questions about the meter can be settled from this overlay alone.",
-  "overturns_ledger": false,
-  "quote": "Visible in the crop, top to bottom: sliver fill / no label; ~21% fill / no label; ~35% fill / no label; EMPTY bar with 'CANNOT CHANGE STANCE' printed across it; ~12.5% fill / no label; ~46% fill / no label.",
-  "text": "The 'CANNOT CHANGE STANCE' overlay is an on-frame readout of the reload gate: absent at 4.2%, 12.5%, 21.3%, 35.0% and 46.4% fill, and back the instant a slash lands \u2014 t1082.900 shows 35% with no label, t1083.100 (0.200 s later) shows an empty bar with the label on.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3687-3720, read in full",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/stance-triangle-1.2-and-damage-order",
-  "lane_impact": "combat-core: a stance rock-paper-scissors multiplier of exactly 1.2 with a white damage-popup colour (0xFFFFFF, set only when controlledBy != 0) and a defined order of operations. The surveyor extracted the x1.5 from this same block but not the x1.2 or the ordering, and the ordering is what makes the two multipliers non-commutative with the defense subtraction.",
-  "overturns_ledger": false,
-  "quote": "if(this.stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE || this.stance == BALANCED_STANCE && enemyStance == HEAVY_STANCE || this.stance == HEAVY_STANCE && enemyStance == LIGHT_STANCE) { damage *= 1.2; if(this.controlledBy != 0) { damagetextcol = 16777215; } } damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); } if(behead) { damage *= 1.5; }",
-  "text": "MCSPlayer's damage pipeline holds an unreported stance-triangle x1.2 (LIGHT beats BALANCED beats HEAVY beats LIGHT) and a strict evaluation ORDER: stance x1.2, then minus defense, then clamp to the Damage object's minDamage, then x1.5 if behead.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3788-3799 (web); reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3704 (android, x1.2 only)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/stance-triangle-damage-magnitudes",
-  "lane_impact": "L5 + L4 \u2014 STANCE_BEATS gets its magnitudes (+20% favourable, -10% unfavourable, applied BEFORE defence subtraction and before the behead x1.5); the x0.9 branch is web-only and must not be dropped when porting from the android read.",
-  "overturns_ledger": false,
-  "quote": "if(this.stance == \u00a71t12220s0\u00a7 && _loc11_ == \u00a71t12221s0\u00a7 || this.stance == \u00a71t12221s0\u00a7 && _loc11_ == \u00a71t12222s0\u00a7 || this.stance == \u00a71t12222s0\u00a7 && _loc11_ == \u00a71t12220s0\u00a7) { _loc5_ *= 1.2; ... } else if(this.stance == \u00a71t12220s0\u00a7 && _loc11_ == \u00a71t12222s0\u00a7 || this.stance == \u00a71t12221s0\u00a7 && _loc11_ == \u00a71t12220s0\u00a7 || this.stance == \u00a71t12222s0\u00a7 && _loc11_ == \u00a71t12221s0\u00a7) { _loc5_ *= 0.9; }",
-  "text": "The stance counter-triangle is a damage multiplier in code, not just tutorial copy: the victim takes x1.2 when the attacker's stance beats theirs, and the web build additionally applies x0.9 when the attacker's stance loses.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3699-3706",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/stance-triangle-is-1p2",
-  "lane_impact": "combat-core: the damage pipeline in one order \u2014 stance triangle x1.2, then subtract defense, then clamp to damageObj.getMinDamage(), then behead x1.5, then add the four elemental damages. Three distinct multipliers exist (stance 1.2, behead 1.5, BUFF_ATTACK 150%) and the ledger conflates none of them because it holds none of them.",
-  "overturns_ledger": false,
-  "quote": "`if(this.stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE || this.stance == BALANCED_STANCE && enemyStance == HEAVY_STANCE || this.stance == HEAVY_STANCE && enemyStance == LIGHT_STANCE) { damage *= 1.2; if(this.controlledBy != 0) { damagetextcol = 16777215; } }`",
-  "text": "The stance rock-paper-scissors multiplier is x1.2, not x1.5, and a stance-advantage hit also recolours the damage popup to white.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session11/stance-reach/B_t862.600_HEAVY_bold-bright-red-head-only.png and B_t862.667_HEAVY_thin-dark-tail-plus-bold-head.png, both crop (400,690)-(1020,820) LANCZOS x3",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/stroke-render-frame-confirmed",
-  "lane_impact": "L5 + L8 \u2014 the stroke renderer can be built and gated today with no remaining unknowns, and any reach number expressed in screen px converts at exactly 2.25. Also re-classes combat-core/reach-is-arclength from A2 to A2+A1.",
-  "overturns_ledger": false,
-  "quote": "t862.600 shows one BOLD red segment over the enemy (\u2248x 840-940) and no tail; t862.667, 67 ms later at the identical crop, shows that same bold segment PLUS a thin red line now extending left across the whole crop. Red-pixel column heights along the stroke: x=460 2px, x=540 5px, x=780 4px, x=900 13px, x=940 18px. Modal stroke colour (150,0,0); 10027008 = 0x990000 = (153,0,0). 18 px \u00f7 8 world units = 2.25 px/unit = 1080/480.",
-  "text": "The drawn-stroke render is settled on frames, not just in code: thickness 8 world units (measured 18 screen px), colour 0x990000 (measured modal (150,0,0)), tapering from the START of the stroke to a point at the end \u2014 which also pins the world\u2192screen scale at 2.25 px/unit and so confirms the 800\u00d7480 world.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decrypted/shs3_payload_decoded.swf (CWS v17, framerate 24.0, stage 800.0x690.0) and reference/decrypted/shs3_android_payload_decoded.swf (CWS v26, framerate 24.0, stage 800.0x480.0); world space at reference/decompiled/shs3_android/scripts/StatsManager.as:80-82",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "combat-core/two-builds-differ-in-stage-height",
-  "lane_impact": "L5 + L8 + L6 \u2014 gives the px<->world-unit scale (2.26-2.27) needed to grade ANY reach/stroke/hitbox measurement off the 1080p longplays, and warns that the 690 in the web SWF header is chrome, not playfield. My own stroke measurement on that frame (416->971 = 555 px = 245 world units) is the first reach figure in the lane with a stated scale.",
-  "overturns_ledger": false,
-  "quote": "StatsManager.as:80 `public static var stageWidth:int = 800;` \u00b7 :82 `public static var stageHeight:int = 480;` \u2014 and the frame: the game viewport in reference/frames/session11/stance-reach/B_t785.200_LIGHT_stroke553px_endtoend.png measures x=52..1867 (1816 px) at 1080 px tall = 5:3, i.e. 2.27 screen px per world unit.",
-  "text": "Both SWF headers run at 24.000 fps, but the web payload declares an 800x690 stage against the android build's 800x480 \u2014 the 800x480 world space the reach unit lives in is established by StatsManager (stageWidth 800 / stageHeight 480) and confirmed on-frame by the 5:3 game viewport, not by the SWF header.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3274",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/web-crit-is-flat-1.3",
-  "lane_impact": "L5 \u2014 crit = 1.3x + flat gear term, applied after the stance damage curve, gated on a full meter. The x3 candidate is dead. src/config/combat.ts's 1.3 coefficient was right; only its application to the legacy 1.17/1.56/1.82 dmgMults needs replacing with the mastery curves.",
-  "ledger_text": "(2) crit 1.3 vs 3 final \u2014 *read one crit popup.*",
-  "overturns_ledger": false,
-  "quote": "if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7; } return _loc2_;",
-  "text": "Ledger blocker (2) resolves to 1.3: in v0.717 a full-meter slash multiplies damage by a flat 1.3 in EVERY stance and adds the STAT_CRITICALDMG gear term \u2014 there is no light/non-light split.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 and :1205; display mapping reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:328",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/web-focus-economy",
-  "lane_impact": "L5 + L8 \u2014 build focusMax 192, hidden offset 48, visible span 144 frames = 6.000 s at 24fps. Use 6.000 s CONTRACT-SRC, not the 5.8 s frame estimate. This also independently reconfirms docs/research/fidelity/SOURCE_CONSTANTS.md \u00a73.2, which the survey overwrote with android numbers.",
-  "ledger_text": "(5) Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
-  "overturns_ledger": false,
-  "quote": "this.\u00a71t4415s0\u00a7 = 8 * 24;   ///   if(this.\u00a71t4414s0\u00a7 < this.\u00a71t4415s0\u00a7) { ++this.\u00a71t4414s0\u00a7; ... }   ///   var _loc3_:Number = (param1 - 48) / (param2 - 48);",
-  "text": "The v0.717 Focus/crit meter is 192 points (8x24) filling +1/frame, displayed as (reload-48)/(maxreload-48) so the first 48 points are invisible \u2014 giving exactly 144 visible frames = 6.000 s, which matches the frame measurement of ~5.8-5.97 s and leaves no doc-vs-frame conflict.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3804-3807; flag declared at \u00a71t67s0\u00a7.as:52 and \u00a71t68s0\u00a7.as:62",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/web-only-1.3-state-multiplier",
-  "lane_impact": "L5 \u2014 a state-gated +30% damage-taken multiplier exists in the shipped build and no ledger system records it. The boolean itself is not yet identified (set/cleared across EnemyClone/EnemyPlayer/boss classes; a downed-or-launched juggle state is the likely reading). Flagged as a LEAD, not a closed constant.",
-  "overturns_ledger": false,
-  "quote": "_loc5_ -= this.\u00a71t4477s0\u00a7(); if(_loc5_ < param2.\u00a71t1088s0\u00a7()) { _loc5_ = param2.\u00a71t1088s0\u00a7(); } if(\u00a71t1071s0\u00a7) { _loc5_ *= 1.3; }",
-  "text": "The web build has a fifth damage term with no android counterpart: a boolean character-state flag that multiplies incoming damage by 1.3 after the min-damage floor.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/ \u2014 1,079 .as files; worked example \u00a71t1523s0\u00a7.as:2346-2347",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/web-payload-as3-is-readable",
-  "lane_impact": "L5 + every lane that deferred to 'the web AS3 is obfuscated' \u2014 the android-vs-web caveat stops being a blanket blocker and becomes a per-constant diff that can be run today.",
-  "overturns_ledger": false,
-  "quote": "internal static function \u00a71t9593s0\u00a7(param1:int) : int { var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1))); }",
-  "text": "The web v0.717 payload is fully decompiled and readable in this repo \u2014 1,079 .as files with renamed identifiers but every numeric literal and control-flow structure intact \u2014 so the whole lane can and must be re-read against the build actually being recreated.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/ (1,079 .as files); \u00a71t1523s0\u00a7.as:36 = 0.717; reference/decompiled/shs3_android/scripts/StatsManager.as:30 = 0.682; docs/research/fidelity/SOURCE_CONSTANTS.md (515 lines, 2026-07-25)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/web-payload-is-cross-readable",
-  "lane_impact": "L5 + every other lane citing shs3_android \u2014 the correct protocol is: read v0.682 for structure, then confirm each constant in shs3_payload by literal shape before it becomes CONTRACT. Nine of this unit's twenty claims cite v0.682 numbers that were never checked against the target build.",
-  "overturns_ledger": false,
-  "quote": "\u00a71t1523s0\u00a7.as:36  public static var \u00a71t9323s0\u00a7:Number = 0.717;   ///   StatsManager.as:30  public static var clientVersion:Number = 0.682;   ///   DIVERGENCES.md: 'BUILD IDENTIFIED: v0.717 \u2026 The android payload is 0.682 \u2014 an earlier build despite a newer SWF container; its four data tables are therefore tagged CONTRACT-SRC (0.682) and must never be quoted as 0.717.'",
-  "text": "The web v0.717 AS3 is fully cross-readable \u2014 1,079 decompiled .as files with obfuscated names but plain bodies \u2014 so the build-parity question the survey filed as STILL_UNHELD is answerable in minutes by numeric-literal grep, and was already answered in-repo three weeks ago.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:6 (1,079 .as files under that directory; docs/research/fidelity/SOURCE_CONSTANTS.md:1-6)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/web-payload-is-readable",
-  "lane_impact": "L5 \u2014 kills the lane's blanket CONTRACT-SRC-v0.682 labelling requirement. Every constant below can be graded against the shipped build today; nothing in combat-core needs to wait on a parity study.",
-  "overturns_ledger": false,
-  "quote": "public class \u00a71t99s0\u00a7 extends \u00a71t68s0\u00a7   ///   SOURCE_CONSTANTS.md: \"Status: CRACKED AND MINED (2026-07-25). ... Build identified as v0.717 \u2014 the same build our video measurements came from. 189 constants extracted\"",
-  "text": "The web v0.717 payload is fully decompiled and cross-readable on disk \u2014 1,079 .as files with mangled identifiers but plain AS3 bodies \u2014 so every combat constant in this lane can and must be verified against it rather than against the android build.",
   "verdict": "HELD"
  }
 ]

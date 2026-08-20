@@ -265,6 +265,54 @@
  {
   "artifact_class": "A2",
   "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyClone.as:434-441 (compare MCSPlayer.as:3701-3707; absent from NPC.as:429-460 and from web \u00a71t68s0\u00a7.as:465-481)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "actionscript/stance-triangle-second-android-site",
+  "lane_impact": "L-combat-core / L-enemies-ai: fixes the scope of the triangle \u2014 it is a duellist/player-vs-player rule in BOTH builds, not something web widens to field mobs.",
+  "overturns_ledger": false,
+  "quote": "EnemyClone.as:434:            if(stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE || stance == BALANCED_STANCE && enemyStance == HEAVY_STANCE || stance == HEAVY_STANCE && enemyStance == LIGHT_STANCE)\nEnemyClone.as:436:               damage *= 1.2;\nEnemyClone.as:439:                  damagetextcol = 16777215;",
+  "text": "The stance counter-triangle has a second Android implementation site beyond MCSPlayer: EnemyClone applies the same x1.2 unfavourable multiplier with the same white 16777215 popup. Both builds therefore spread the rule across MCSPlayer plus its EnemyPlayer-derived subclasses, and neither build applies it in the plain NPC class.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1082-1096 and GetGoldPromptDialog.as:225-235 (prompt copy at docs/gauntlet/L0/index/strings.json[\"669\"])",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "actionscript/unbreakable-and-reinforce-prices",
+  "lane_impact": "L-economy: two more priced services with exact numbers; premium (Heavenly Gold) currency confirmed as a distinct wallet.",
+  "overturns_ledger": false,
+  "quote": "InteractUI.as:1083:               cost = 5000;   ||   GetGoldPromptDialog.as:227: if(StatsManager.getHeavenlyGold() >= 2)   ||   strings.json[\"669\"] = \"Your weapon broke!\\nWould you like to make it unbreakable for 2 Gold?\"",
+  "text": "Two more previously-uncaptured service prices sit in the same switch and dialog: reinforce/upgrade weapon is a flat 5,000 coins, and making a weapon unbreakable (which also names it) costs 2 Heavenly Gold.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:458-461 (part index \u00a71t12380s0\u00a7 = 3 = PART_weapon at \u00a71t75s0\u00a7.as:19); absent from \u00a71t99s0\u00a7.as:3736-3747 and from shs3_android MCSPlayer.as:3687-3697",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "actionscript/web-weapon-parry-lives-in-the-npc-class",
+  "lane_impact": "L-combat-core: corrects the cite for the parry half of the behead/parry claim and bounds the mechanic to NPC defenders.",
+  "overturns_ledger": false,
+  "quote": "458:             case mcs.\u00a71t6231s0\u00a7[\u00a71t75s0\u00a7.\u00a71t12380s0\u00a7]:\n459:                this.\u00a71t3256s0\u00a7 = false;\n460:                _loc3_ = 0;\n461:                return false;",
+  "text": "The weapon-part parry (zero damage, hit not consumed) exists in web v0.717 but in the NPC class, not MCSPlayer. Neither build gives it to player-derived defenders, so it is an NPC-defender-only surface \u2014 worth stating explicitly because the mechanic is easy to over-generalise into a universal parry.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
   "cite": "reference/extracted/android/112_Mobile_NodeData.bin:1 (`<?xml version=\"1.0\" encoding=\"utf-8\"?>`), first-8-byte dump of all 42 files in reference/extracted/android/",
   "citelint": {
    "notes": [
@@ -726,51 +774,6 @@
   "overturns_ledger": false,
   "quote": "shs3.swf -> CWS v10, fileLength 165,252, rect 16000x13800 twips = 800.0x690.0, framerate 24.0, frameCount 2 ; shs3preloader.swf -> CWS v10, 165,305 B, same rect, framerate 24.0, frameCount 2 ; payload.xml line 1 -> `<swf ... frameCount=\"6\" frameRate=\"24.0\" ... version=\"17\">` with `<displayRect type=\"RECT\" Xmax=\"16000\" Ymax=\"13800\"/>`",
   "text": "reference/preservation/shs3.swf is the 164 KB, 2-frame LOADER stub, not 'the real web client'; the actual client is shs3_payload.swf and it independently reports the same framerate and rect.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/bindata/118_1t4645s0.bin, light_stance frame 0; reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/rig-is-19-nodes",
-  "lane_impact": "art-anim-audio-feel (L6): the skeleton spec for the recreation. A 21-joint rig will not map onto the shipped keyframe data; build 19 keyed nodes for stances, 20 for the human set, and reserve the 27-slot part table for equipment/props.",
-  "overturns_ledger": false,
-  "quote": "light_stance frame0 node ids: ['19','16','15','14','13','12','11','10','9','7','6','5','4','2','1','0','20','18','3'] COUNT = 19  \u00b7  MCSCharacter.as: 'public static var PART_l_hand:int = 0;' ... 'public static var PART_r_knee:* = 26;' (27 constants)",
-  "text": "The character rig keys 19 nodes per pose in the stance sets (20 in the human set, 26 max in the wolf set), against 27 named PART_ constants in code \u2014 the survey's \"21-node rig\" matches none of these.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62, :120, :141; plus my <n i=> id scan over all 19 animdata blobs in reference/extracted/bindata/",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/rig-is-23-parts-27-slots",
-  "lane_impact": "art-anim-audio-feel and items-equipment: the paperdoll slot count is load-bearing for both the rig and the equipment-compositing contract. 23 built parts / 27 named slots is the number to code against.",
-  "overturns_ledger": false,
-  "quote": "MCSCharacter.as:120 `internal var partListLength:int = 22;` \u00b7 :141 `for(var i:int = 0; i <= this.partListLength; i++)` \u00b7 :10 `public static var PART_l_hand:int = 0;` ... :62 `public static var PART_r_knee:* = 26;` \u00b7 measured distinct node ids across the 19 web blobs = 25 (0-26 minus 8 and 17); per-frame node-count histogram {9:1,16:22,17:39,18:56,19:240,20:17,25:9,26:1} \u2014 21 never occurs",
-  "text": "The paperdoll rig is 23 MovieClips built at runtime over 27 named part slots, and the animdata references 25 distinct node ids \u2014 the survey's '21-node rig' matches none of these.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62 (PART_ constants), :120 (partListLength), :141 (the build loop); MCSWolf.as:13",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/rig-is-23-slots-26-for-wolves",
-  "lane_impact": "art-anim-audio-feel: the rebuild's skeleton must be 23 slots (0..22) for humans with a 26-slot creature variant, and the `<n i=\"\u2026\">` index in every animdata blob is a direct index into that list. Note indices 8 (crotch) and 17 (hat) are declared but never written by the light-stance blob \u2014 they are driven elsewhere (the hat is a separate detachable, see createFlyingHat).",
-  "overturns_ledger": false,
-  "quote": "MCSCharacter.as:120 `internal var partListLength:int = 22;` \u00b7 :141 `for(var i:int = 0; i <= this.partListLength; i++) { mc = new MovieClip(); addChild(mc); this.partList.push(mc); }` -> 23 slots \u00b7 PART_l_hand=0 \u2026 PART_hat=17 \u2026 PART_prop2=21, PART_prop3=22, PART_l_shoulder=23, PART_r_shoulder=24, PART_l_knee=25, PART_r_knee=26 \u00b7 MCSWolf.as:13 `partListLength = 25;`",
-  "text": "The character rig is 23 part slots for humans and 26 for wolves, out of 27 named parts \u2014 not 21.",
   "verdict": "HELD"
  }
 ]

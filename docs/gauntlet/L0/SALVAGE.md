@@ -54,66 +54,62 @@ claim did receive a verdict. And §2's L6 *"~150 animations"* is **471**, measur
 `index/android_blobs.json` (`<anim>` summed over the 18 `MCSCharacter_*` blobs;
 `99_HumanAnimationData` alone = 158). Not "~450".
 
-### The finish sweep — WALL #5 HIT MID-FLIGHT. Both runs partly landed; all work salvaged.
+### The finish sweep — ALL 10 SOURCE SWEEPS ARE NOW JUDGED. Judged: 232 → 510.
 
-WF-1 and WF-2 ran concurrently and both were cut by the same session limit (reset 5pm
-Asia/Kuala_Lumpur, 2026-08-20). **The fail-closed accounting worked** — each returned a
-loud `INTEGRITY: INCOMPLETE` naming every dead agent by label, so nothing was
-mis-counted as clean.
-
-| Run | Run ID | Agents | Landed | Died |
-|---|---|---:|---|---|
-| **WF-1** | `wf_54dcdf8e-9a3` | 12 | **4/4 surveys** + 4 critics | `android-blobs:hunter` `uistrings-payload:hunter` `frames:cite` `frames:hunter` |
-| **WF-2** | `wf_db13a5de-161` | 12 | 6/12 critics | both lenses of `itemdata` `bindata` `actionscript` |
-
-**Harvest, extracted to `run3/` and committed:**
+| Run | Run ID | Agents | Result |
+|---|---|---:|---|
+| **WF-1** | `wf_54dcdf8e-9a3` | 12 | **4/4 surveys landed** + 4 critics · wall #5 killed `android-blobs:hunter` `uistrings-payload:hunter` `frames:cite` `frames:hunter` |
+| **WF-2** | `wf_db13a5de-161` | 12 | 6/12 critics · wall #5 killed both lenses of `itemdata` `bindata` `actionscript` |
+| **WF-2b** | `wf_b5bca0ad-f47` | 8 | ✅ **`INTEGRITY: CLEAN`** — all 8 returned, every packet fully judged, 0 died, 0 VOID |
 
 ```
-salvageJournal: surveys=4 critics=10 claims=156 verdicts=242
-citeLint run3:  156 claims — 133 RESOLVES · 0 BROKEN · 18 QUOTE_UNVERIFIED · 5 UNCHECKABLE
+run3  (WF-1+WF-2)  surveys=4 critics=10 claims=156 verdicts=242
+run4  (WF-2b)      surveys=0 critics=8  claims=80  verdicts=280
+citeLint run3: 156 claims — 133 RESOLVES · 0 BROKEN · 18 QUOTE_UNVERIFIED · 5 UNCHECKABLE
+citeLint run4:  80 claims —  69 RESOLVES · 0 BROKEN · 10 QUOTE_UNVERIFIED · 1 UNCHECKABLE
 ```
 
-**0 BROKEN on 156 fresh claims** — against 22-before-fixes on the older corpus. The
-machine-check warning carried in the workflow LAW block changed how agents cite.
-**0 VOID on 242 verdicts** — every verdict carries the artifact its author opened.
+**236 fresh claims, 0 BROKEN cites, 522 verdicts, 0 VOID.** Against 22-BROKEN-before-fixes
+on the pre-citeLint corpus. The machine-check warning carried in each workflow's LAW
+block — *"citeLint.py opens every path you name; cite line numbers, never record IDs"* —
+changed how agents cite. Step 0 paid for itself twice over.
 
-⚑ **The write-to-disk-before-returning rule paid out again.** `critics/src-uistrings-payload.hunter.md`
-(21 KB) is on disk even though that agent is counted DEAD — it finished its review, wrote
-it, then died before returning the structured object. Prose recovered, verdicts lost.
+⚑ **The write-to-disk-before-returning rule paid out at wall #5 too.**
+`critics/src-uistrings-payload.hunter.md` is on disk at 21 KB even though that agent is
+counted DEAD — it finished its review, wrote it, then died before returning the
+structured object. Prose recovered, verdicts lost. Five consecutive walls, zero data lost.
 
-**Judged went 232 → 370.** `questdata` `skilldata` `npcdata` are now fully judged, and so
-are the 3 new surveys `android-blobs` `string-table` `uistrings-payload`.
-
-### What is left — `worklist/` self-heals, so this table is regenerated, not maintained
+### What is left
 
 `python3 scripts/gauntlet/buildWorklist.py --root docs/gauntlet/L0` pools every run,
 drops any unit whose critics have since landed, and rewrites both the packets and
-`SEEN_CLAIM_IDS.txt`. Current output:
+`SEEN_CLAIM_IDS.txt`. It SELF-HEALS, so this table is regenerated, never maintained:
 
 ```
-buildWorklist: 1243 rows -> 1204 distinct ids (39 duplicate rows merged)
-  already judged           370
-  WF-2 source-sweep claims 140 across 4 packets   (itemdata 38 · bindata 36 · actionscript 45 · frames 21)
-  WF-3a critic findings   235 across 10 batches x cite+hunter = 20 agents
-  WF-3b critic findings   459 across 10 batches x cite = 10 agents
+buildWorklist: 1323 rows -> 1284 distinct ids (39 duplicate rows merged)
+  already judged           510
+  WF-2 source-sweep claims 0 across 0 packets     <- ALL 10 SWEEPS JUDGED
+  WF-3a critic findings   282 across 12 batches x cite+hunter = 24 agents
+  WF-3b critic findings   492 across 11 batches x cite = 11 agents
 ```
 
 | Run | Script | Agents | What | State |
 |---|---|---:|---|---|
-| **WF-2b** | `l0-finish-wf2b.workflow.js` | 8 | the 4 packets whose critics died — itemdata · bindata · actionscript · frames | ▶ `wf_b5bca0ad-f47` launched |
-| **WF-3a** | `l0-finish-wf3.workflow.js` args `t1` | 20 | judge the 235 findings CLAIMING A LEDGER OVERTURN | queued |
-| **WF-3b** | `l0-finish-wf3.workflow.js` args `t2` | 10 | judge the 459 corroborating findings | queued |
+| **WF-3a** | `l0-finish-wf3.workflow.js` args `{tier:'t1',batches:12}` | 24 | judge the 282 findings CLAIMING A LEDGER OVERTURN | ⏳ next |
+| **WF-3b** | `l0-finish-wf3.workflow.js` args `{tier:'t2',batches:11}` | 11 | judge the 492 corroborating findings | queued |
 | **WF-4** | `l0-finish-wf4.workflow.js` | ~17 | dry-loop x 4 targets (a round only counts if it RAN) + completeness | queued |
 
-**No claim is left unjudged.** The tiers differ in DEPTH only — §0 gives no third
-option, and a claim nobody judges is a lead forever.
+⚠ **Pass `batches` explicitly.** The count MOVES every run — each stage's critics add new
+findings, so buildWorklist emits more packets next time. A hardcoded literal silently
+drops the tail batches, and a dropped batch means those findings stay UNJUDGED, which
+under §0 kills them.
+
+**No claim is left unjudged.** The tiers differ in DEPTH only — §0 gives no third option,
+and a claim nobody judges is a lead forever.
 
 Packets are **blind-safe by construction** (§3.2): they carry the structured claim and
 the machine cite audit, never the surveyor's prose. Critics are told explicitly not to
 open `sources/*.md` — that is what keeps the review blind while still not re-surveying.
-
-⚠ **233 vs 232 is not a discrepancy** — 233 claim ROWS carried a verdict at run 2, across
-232 distinct IDS. Two judged rows share an id with a duplicate.
 
 ---
 

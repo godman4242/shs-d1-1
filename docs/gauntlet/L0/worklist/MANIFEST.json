@@ -15,6 +15,18 @@
   },
   {
    "reason": "every claim already judged",
+   "unit": "itemdata"
+  },
+  {
+   "reason": "every claim already judged",
+   "unit": "bindata"
+  },
+  {
+   "reason": "every claim already judged",
+   "unit": "actionscript"
+  },
+  {
+   "reason": "every claim already judged",
    "unit": "android-blobs"
   },
   {
@@ -23,34 +35,14 @@
   },
   {
    "reason": "every claim already judged",
+   "unit": "frames"
+  },
+  {
+   "reason": "every claim already judged",
    "unit": "uistrings-payload"
   }
  ],
  "packets": [
-  {
-   "claims": 38,
-   "file": "src-itemdata.claims.json",
-   "stage": "WF-2",
-   "unit": "itemdata"
-  },
-  {
-   "claims": 36,
-   "file": "src-bindata.claims.json",
-   "stage": "WF-2",
-   "unit": "bindata"
-  },
-  {
-   "claims": 45,
-   "file": "src-actionscript.claims.json",
-   "stage": "WF-2",
-   "unit": "actionscript"
-  },
-  {
-   "claims": 21,
-   "file": "src-frames.claims.json",
-   "stage": "WF-2",
-   "unit": "frames"
-  },
   {
    "claims": 24,
    "file": "t1-overturns-01.json",
@@ -69,7 +61,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 23,
+   "overturns": 24,
    "stage": "WF-3a",
    "unit": "t1-overturns-02"
   },
@@ -91,7 +83,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 24,
+   "overturns": 23,
    "stage": "WF-3a",
    "unit": "t1-overturns-04"
   },
@@ -113,7 +105,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 23,
+   "overturns": 24,
    "stage": "WF-3a",
    "unit": "t1-overturns-06"
   },
@@ -124,7 +116,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 23,
+   "overturns": 24,
    "stage": "WF-3a",
    "unit": "t1-overturns-07"
   },
@@ -146,20 +138,42 @@
     "cite",
     "hunter"
    ],
-   "overturns": 22,
+   "overturns": 23,
    "stage": "WF-3a",
    "unit": "t1-overturns-09"
   },
   {
-   "claims": 19,
+   "claims": 24,
    "file": "t1-overturns-10.json",
    "lenses": [
     "cite",
     "hunter"
    ],
-   "overturns": 19,
+   "overturns": 23,
    "stage": "WF-3a",
    "unit": "t1-overturns-10"
+  },
+  {
+   "claims": 24,
+   "file": "t1-overturns-11.json",
+   "lenses": [
+    "cite",
+    "hunter"
+   ],
+   "overturns": 22,
+   "stage": "WF-3a",
+   "unit": "t1-overturns-11"
+  },
+  {
+   "claims": 18,
+   "file": "t1-overturns-12.json",
+   "lenses": [
+    "cite",
+    "hunter"
+   ],
+   "overturns": 18,
+   "stage": "WF-3a",
+   "unit": "t1-overturns-12"
   },
   {
    "claims": 48,
@@ -252,7 +266,7 @@
    "unit": "t2-corroborating-09"
   },
   {
-   "claims": 27,
+   "claims": 48,
    "file": "t2-corroborating-10.json",
    "lenses": [
     "cite"
@@ -260,15 +274,25 @@
    "overturns": 0,
    "stage": "WF-3b",
    "unit": "t2-corroborating-10"
+  },
+  {
+   "claims": 12,
+   "file": "t2-corroborating-11.json",
+   "lenses": [
+    "cite"
+   ],
+   "overturns": 0,
+   "stage": "WF-3b",
+   "unit": "t2-corroborating-11"
   }
  ],
  "totals": {
-  "already_judged": 370,
-  "claim_rows": 1243,
-  "critic_findings_claiming_overturn": 235,
-  "critic_findings_unjudged": 694,
-  "distinct_ids": 1204,
+  "already_judged": 510,
+  "claim_rows": 1323,
+  "critic_findings_claiming_overturn": 282,
+  "critic_findings_unjudged": 774,
+  "distinct_ids": 1284,
   "duplicate_rows_merged": 39,
-  "source_sweep_unjudged": 140
+  "source_sweep_unjudged": 0
  }
 }

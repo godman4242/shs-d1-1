@@ -34,6 +34,12 @@ const tierKey = (typeof args === 'string' ? args : args?.tier) || 't1'
 const TIER = TIERS[tierKey]
 if (!TIER) throw new Error(`unknown tier "${tierKey}" — expected t1 or t2`)
 
+// The batch count MOVES between runs: every stage adds new critic findings, so
+// buildWorklist emits more packets each time. Passing it in beats a literal that
+// silently drops the tail batches — and dropping a batch means those findings stay
+// UNJUDGED, which under §0 kills them.
+const batchCount = (typeof args === 'object' && args?.batches) || TIER.batches
+
 const LAW = `
 === GAUNTLET §0 — THE LAW. READ IT BEFORE YOU DO ANYTHING. ===
 Straw Hat Samurai: Duels is DEAD. There is no playable build (proven definitively,
@@ -229,7 +235,7 @@ run must survive a usage wall. Then return the structured object.`
 
 // ---------------------------------------------------------------------------
 
-const BATCHES = Array.from({ length: TIER.batches }, (_, i) =>
+const BATCHES = Array.from({ length: batchCount }, (_, i) =>
   `${TIER.prefix}-${String(i + 1).padStart(2, '0')}`)
 
 phase('Judge')

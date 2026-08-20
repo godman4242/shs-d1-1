@@ -1,56 +1,56 @@
 # SEEN CLAIM IDS — every claim banked across every run of L0 so far.
 # A finding matching one of these is NOT new. Report it ONLY if you can
 # materially STRENGTHEN or CONTRADICT it — and say which, explicitly.
-# 1243 rows, 1204 unique ids, pooled from: run2, run3.
-# 370 of them carry at least one artifact-citing verdict;
+# 1323 rows, 1284 unique ids, pooled from: run2, run3, run4.
+# 510 of them carry at least one artifact-citing verdict;
 # the rest are LEADS and may not enter the ledger (§0).
 
-## actionscript  (45 unique, 0 judged)
-    actionscript/adaptive-music-system
-    actionscript/affix-generator-complete
-    actionscript/anim-format
-    actionscript/animation-manifest-with-durations
-    actionscript/ap-and-war-clocks
-    actionscript/auto-slash-is-the-enemy-ai
-    actionscript/behead-and-weapon-parry
-    actionscript/build-divergence
-    actionscript/coins-per-kill-is-data
-    actionscript/crit-is-focus-gated-deterministic
-    actionscript/damage-is-a-random-roll
-    actionscript/damage-popup-colors
-    actionscript/dan-cap-and-post-rebirth-sp
-    actionscript/defense-is-flat-subtraction
-    actionscript/drawn-line-render-contract
-    actionscript/enemy-level-scaling-and-1hp-trash
-    actionscript/farming-and-prosperity-numbers
-    actionscript/focus-bar-is-the-third-hud-bar
-    actionscript/focus-meter-numerics
-    actionscript/hit-registration-window
-    actionscript/in-combat-stance-not-hard-locked
-    actionscript/loot-tables-held
-    actionscript/multi-target-full-damage
-    actionscript/native-resolution
-    actionscript/no-condition-damage-multiplier
-    actionscript/paperdoll-compositing-contract
-    actionscript/reach-300-200-100-refuted
-    actionscript/reach-formula
-    actionscript/repair-cost
-    actionscript/repair-cost-is-two-consumables
-    actionscript/save-schema
-    actionscript/screenshake-and-killbeat
-    actionscript/sell-price-formula
-    actionscript/shunpo-is-teleport-double-damage
-    actionscript/slash-frames-ordering-conflict
-    actionscript/spd-to-cooldown
-    actionscript/stance-counter-triangle
-    actionscript/stance-counter-triangle-confirmed
-    actionscript/stance-damage-is-mastery-10
-    actionscript/territory-daily-sim-vocabulary
-    actionscript/three-shipped-languages
-    actionscript/war-board-is-a-hex-grid
-    actionscript/web-payload-obfuscated
-    actionscript/xp-curve-l11-80
-    actionscript/xp-income-model
+## actionscript  (45 unique, 45 judged)
+  * actionscript/adaptive-music-system
+  * actionscript/affix-generator-complete
+  * actionscript/anim-format
+  * actionscript/animation-manifest-with-durations
+  * actionscript/ap-and-war-clocks
+  * actionscript/auto-slash-is-the-enemy-ai
+  * actionscript/behead-and-weapon-parry
+  * actionscript/build-divergence
+  * actionscript/coins-per-kill-is-data
+  * actionscript/crit-is-focus-gated-deterministic
+  * actionscript/damage-is-a-random-roll
+  * actionscript/damage-popup-colors
+  * actionscript/dan-cap-and-post-rebirth-sp
+  * actionscript/defense-is-flat-subtraction
+  * actionscript/drawn-line-render-contract
+  * actionscript/enemy-level-scaling-and-1hp-trash
+  * actionscript/farming-and-prosperity-numbers
+  * actionscript/focus-bar-is-the-third-hud-bar
+  * actionscript/focus-meter-numerics
+  * actionscript/hit-registration-window
+  * actionscript/in-combat-stance-not-hard-locked
+  * actionscript/loot-tables-held
+  * actionscript/multi-target-full-damage
+  * actionscript/native-resolution
+  * actionscript/no-condition-damage-multiplier
+  * actionscript/paperdoll-compositing-contract
+  * actionscript/reach-300-200-100-refuted
+  * actionscript/reach-formula
+  * actionscript/repair-cost
+  * actionscript/repair-cost-is-two-consumables
+  * actionscript/save-schema
+  * actionscript/screenshake-and-killbeat
+  * actionscript/sell-price-formula
+  * actionscript/shunpo-is-teleport-double-damage
+  * actionscript/slash-frames-ordering-conflict
+  * actionscript/spd-to-cooldown
+  * actionscript/stance-counter-triangle
+  * actionscript/stance-counter-triangle-confirmed
+  * actionscript/stance-damage-is-mastery-10
+  * actionscript/territory-daily-sim-vocabulary
+  * actionscript/three-shipped-languages
+  * actionscript/war-board-is-a-hex-grid
+  * actionscript/web-payload-obfuscated
+  * actionscript/xp-curve-l11-80
+  * actionscript/xp-income-model
 
 ## android-blobs  (15 unique, 15 judged)
   * android-blobs/all-thirteen-episode-cards-shipped
@@ -89,43 +89,43 @@
   * art-anim-audio-feel/sfx-playback-contract
   * art-anim-audio-feel/web-audio-parity-unheld
 
-## bindata  (36 unique, 0 judged)
-    bindata/487-anims-held-4-ported
-    bindata/51-skill-animations
-    bindata/RETRACTION-animation-rate-is-24hz
-    bindata/RETRACTION-gif92-is-the-world-map
-    bindata/anim-duration-holds
-    bindata/aspect-frame-beats-swf-header
-    bindata/audio-not-in-this-source
-    bindata/boss-telegraph-triads
-    bindata/clan-band-tail-holds-seasonal-event-enemies
-    bindata/element-enum-order-and-archetypes
-    bindata/engine-ticks-24fps
-    bindata/five-stances-not-three
-    bindata/launcher-downed-ground-finisher-verbset
-    bindata/map-bitmap-vs-territory-scale-unreconciled
-    bindata/missing-boss-npcs-700-710
-    bindata/mounted-shield-archer-poses-eggs
-    bindata/original-rng-is-a-specific-lcg
-    bindata/paired-grab-throw-victim-anims
-    bindata/per-stance-idle-poses
-    bindata/pillarbox-independently-reverified
-    bindata/place-name-26x26-lookup
-    bindata/procedural-name-generator
-    bindata/reach-cap-not-in-this-source
-    bindata/severed-limb-deaths
-    bindata/slash-is-four-part-looping-hold
-    bindata/spawn-geometry
-    bindata/sprite-compositing-contract
-    bindata/survival-is-warroom-content
-    bindata/territory-12bit-packing-and-6x6-nodes
-    bindata/trap-census-and-800-is-one-screen
-    bindata/trap-dungeon-system
-    bindata/trap-room-placement-and-level-gate
-    bindata/veryhard-rooms-rotate-daily
-    bindata/war-boss-ids-are-rival-players
-    bindata/warhex-board-6x6
-    bindata/world-map-bitmap
+## bindata  (36 unique, 36 judged)
+  * bindata/487-anims-held-4-ported
+  * bindata/51-skill-animations
+  * bindata/RETRACTION-animation-rate-is-24hz
+  * bindata/RETRACTION-gif92-is-the-world-map
+  * bindata/anim-duration-holds
+  * bindata/aspect-frame-beats-swf-header
+  * bindata/audio-not-in-this-source
+  * bindata/boss-telegraph-triads
+  * bindata/clan-band-tail-holds-seasonal-event-enemies
+  * bindata/element-enum-order-and-archetypes
+  * bindata/engine-ticks-24fps
+  * bindata/five-stances-not-three
+  * bindata/launcher-downed-ground-finisher-verbset
+  * bindata/map-bitmap-vs-territory-scale-unreconciled
+  * bindata/missing-boss-npcs-700-710
+  * bindata/mounted-shield-archer-poses-eggs
+  * bindata/original-rng-is-a-specific-lcg
+  * bindata/paired-grab-throw-victim-anims
+  * bindata/per-stance-idle-poses
+  * bindata/pillarbox-independently-reverified
+  * bindata/place-name-26x26-lookup
+  * bindata/procedural-name-generator
+  * bindata/reach-cap-not-in-this-source
+  * bindata/severed-limb-deaths
+  * bindata/slash-is-four-part-looping-hold
+  * bindata/spawn-geometry
+  * bindata/sprite-compositing-contract
+  * bindata/survival-is-warroom-content
+  * bindata/territory-12bit-packing-and-6x6-nodes
+  * bindata/trap-census-and-800-is-one-screen
+  * bindata/trap-dungeon-system
+  * bindata/trap-room-placement-and-level-gate
+  * bindata/veryhard-rooms-rotate-daily
+  * bindata/war-boss-ids-are-rival-players
+  * bindata/warhex-board-6x6
+  * bindata/world-map-bitmap
 
 ## combat-core  (20 unique, 20 judged)
   * combat-core/150pct-damage-is-a-buff
@@ -149,7 +149,7 @@
   * combat-core/slash-type-map
   * combat-core/stance-triangle
 
-## critic-new_findings  (694 unique, 0 judged)
+## critic-new_findings  (774 unique, 0 judged)
     NF-1-crit-is-deterministic-full-focus
     NF-10-category-tab-mapping-declared-in-code
     NF-11-category-11-skills-are-in-npcdata
@@ -182,6 +182,13 @@
     NF-shira-tancho-is-player-clan
     NF-stage-800x480
     NF-string-5017-empty-by-design
+    actionscript/build-divergence-7-cooldown-cap
+    actionscript/repair-weapon-cost-formula
+    actionscript/slash-line-colour-is-0x990000
+    actionscript/stance-triangle-second-android-site
+    actionscript/unbreakable-and-reinforce-prices
+    actionscript/war-board-is-a-6x6-square-grid
+    actionscript/web-weapon-parry-lives-in-the-npc-class
     android-blobs/android-blob-encoding-census
     android-blobs/bgdata-override-census-corrected
     android-blobs/dead-portrait-throws-it-does-not-fall-back
@@ -245,6 +252,29 @@
     art-anim-audio-feel/zero-blendmode-byte-proof
     art-anim-audio-feel/zero-placeobject3-tags
     art-anim/equipment-art-was-server-streamed
+    bindata/NEW-70th-trap-room-is-commented-out
+    bindata/NEW-place-name-table-has-one-dead-row
+    bindata/NEW-setvisible-partmax-22-leaves-5-slots-unhidden
+    bindata/NEW-swf-690-is-480-plus-bar
+    bindata/NEW-trap-name-suffix-is-the-trigger-wiring
+    bindata/NEW-warhex-has-14-states-not-7
+    bindata/NEW-web-android-survival-data-differ-in-14-lines
+    bindata/NEW-web-payload-is-decompiled-parity-is-checkable
+    bindata/audio-inventory-is-held
+    bindata/default-block-overrides-all-traps
+    bindata/item-colour-palette-11
+    bindata/matrix-nodes-and-reorder-frames
+    bindata/place-name-table-is-dead-data
+    bindata/reach-cap-recovered-per-stance
+    bindata/six-ledger-names-decompose
+    bindata/slash-line-colours-exact
+    bindata/stage-letterbox-algorithm
+    bindata/territory-to-bitmap-transform
+    bindata/trap-duty-cycle-domain-measured
+    bindata/two-more-trap-placement-rules
+    bindata/warhex-14-states-not-7
+    bindata/web-build-owns-the-bindata-map
+    bindata/web-has-third-hardcoded-town
     combat-core/300-200-100-is-base-not-ceiling
     combat-core/36-was-not-a-crit
     combat-core/android-stance-numbers-are-a-rebalance
@@ -404,9 +434,58 @@
     enemies-ai/web-v0717-gameplay-code-is-on-disk
     enemies-ai/zombie-weapon-hit-deals-zero
     enemies-ai/zombie-weapon-parry
+    frames/HUNT-39-hardcoded-tips-in-GameEngine
+    frames/HUNT-combat-corpus-never-opened
+    frames/HUNT-death-card-header-and-warroom-death
+    frames/HUNT-duel-combat-hud-widgets
+    frames/HUNT-duel-refresh-token-delta
+    frames/HUNT-fourth-clan-and-domain-collision
+    frames/HUNT-gold-to-resource-exchange-rate
+    frames/HUNT-item-rarity-colour-on-film
+    frames/HUNT-player-screen-stat-contract
+    frames/HUNT-rebirth-picker-recoverable-from-strings
+    frames/HUNT-repair-cost-is-runtime-parameterised
+    frames/HUNT-six-buff-potatoes
+    frames/HUNT-stance-triangle-and-ring-colours
+    frames/HUNT-ui-strings-txt-is-unmined
+    frames/HUNT-war-tick-is-24-hours
+    frames/two-clans-share-the-north-east-domain
+    frames/v0717-rewords-the-daily-streak-ladder
+    frames/world-map-has-a-fifth-banner-colour
+    frames/world-map-zoom-in-is-a-viewport-not-the-board
     gauntlet/android-string-table-has-gaps
     gauntlet/index-firstlines-are-leafname-scoped
     gauntlet/no-web-gameplay-code-or-string-table
+    hunter/blade-impact-vfx-contract
+    hunter/buff-table-and-video-contamination
+    hunter/crit-spent-on-release-not-on-hit
+    hunter/elemental-rebirth-reward-table
+    hunter/focus-plus6-is-a-kill-bonus
+    hunter/hp-chi-regen-is-per-battle
+    hunter/interactui-service-cost-table
+    hunter/paperdoll-is-23-slots-plus-quadruped-extension
+    hunter/repair-cost-formula-found
+    hunter/skillui-gesture-input-mode
+    hunter/tenth-rebirth-tier-exists
+    hunter/two-drawn-line-colours-and-the-real-red
+    hunter/web-focus-bar-dead-zone-is-48
+    hunter/web-speed-cooldown-cap-is-600
+    hunter/web-weapon-parry-and-part-index-parity
+    itemdata-hunter/damage-table-is-non-monotonic
+    itemdata-hunter/full-bar-is-the-crit
+    itemdata-hunter/itemdata-ships-an-empty-item-row
+    itemdata-hunter/modifier-dispatch-numeric-fallback
+    itemdata-hunter/npc-loot-ids-are-not-only-an-enum
+    itemdata-hunter/reach-is-per-stance
+    itemdata-hunter/reload-bar-max-is-flat-not-speed
+    itemdata-hunter/sellpercentage-is-dead-data
+    itemdata-hunter/stance-gate-threshold-differs-by-build
+    itemdata-hunter/v0717-strings-are-loaded-over-the-network
+    itemdata/dot-baseprice-bug-is-inert
+    itemdata/nine-paperdoll-slots-are-fully-named
+    itemdata/reload-bar-max-is-a-hard-constant-and-diverges
+    itemdata/sellpercentage-is-dead
+    itemdata/two-gold-items-are-coin-buyable
     items-equipment/23-render-slots-not-27
     items-equipment/27-parts-but-23-human-layers
     items-equipment/affix-eligibility-matrix
@@ -549,6 +628,7 @@
     npcdata/hp-less-combat-rows-default-to-1
     npcdata/kill-xp-formula
     npcdata/setlevel-pins-everything-to-1-below-11
+    payload/repair-weapon-cost-is-a-template-not-a-constant
     progression/a02-second-frame-corroboration
     progression/android-caps-also-drifted
     progression/android-stat-caps-are-a-different-formula
@@ -889,68 +969,68 @@
   * enemies-ai/undead-rule-is-not-reflect
   * enemies-ai/web-build-parity
 
-## frames  (21 unique, 0 judged)
-    frames/achievements-daily-and-tokens-all-on-film
-    frames/choice-text-diverges-from-payload
-    frames/clan-identity-bound-on-screen
-    frames/consumable-buffs-run-a-30-minute-real-clock
-    frames/critical-evade-states-the-focus-gate
-    frames/death-card-offers-free-respawn
-    frames/forge-cost-is-level-parameterised
-    frames/jinbei-greeting-diverges-too
-    frames/levelup-card-corroborates-banked-numbers
-    frames/private-pvp-room-door
-    frames/pvp-duel-screen-fully-filmed
-    frames/quest-card-expiry-prosperity-and-coords
-    frames/rebirth-element-picker-still-unfilmed
-    frames/recruit-gets-three-moves-a-turn
-    frames/repair-weapon-cost-still-unheld
-    frames/save-policy-is-checkpoint-at-towns-and-dungeons
-    frames/two-font-faces-and-where-the-second-one-lives
-    frames/v0717-is-a-string-superset-not-identity
-    frames/war-room-territory-board-frame-exists
-    frames/web-v0717-renders-android-string-table
-    frames/world-map-is-a-tile-lattice-with-clan-banners
+## frames  (21 unique, 21 judged)
+  * frames/achievements-daily-and-tokens-all-on-film
+  * frames/choice-text-diverges-from-payload
+  * frames/clan-identity-bound-on-screen
+  * frames/consumable-buffs-run-a-30-minute-real-clock
+  * frames/critical-evade-states-the-focus-gate
+  * frames/death-card-offers-free-respawn
+  * frames/forge-cost-is-level-parameterised
+  * frames/jinbei-greeting-diverges-too
+  * frames/levelup-card-corroborates-banked-numbers
+  * frames/private-pvp-room-door
+  * frames/pvp-duel-screen-fully-filmed
+  * frames/quest-card-expiry-prosperity-and-coords
+  * frames/rebirth-element-picker-still-unfilmed
+  * frames/recruit-gets-three-moves-a-turn
+  * frames/repair-weapon-cost-still-unheld
+  * frames/save-policy-is-checkpoint-at-towns-and-dungeons
+  * frames/two-font-faces-and-where-the-second-one-lives
+  * frames/v0717-is-a-string-superset-not-identity
+  * frames/war-room-territory-board-frame-exists
+  * frames/web-v0717-renders-android-string-table
+  * frames/world-map-is-a-tile-lattice-with-clan-banners
 
-## itemdata  (38 unique, 0 judged)
-    itemdata/adjacent-speed-formulas
-    itemdata/affix-count-per-rarity
-    itemdata/affix-magnitude-curve
-    itemdata/affix-suffix-pool
-    itemdata/android-string-table-matches-v0717-ui
-    itemdata/android-vs-web-constants-diverge
-    itemdata/art-is-only-for-sharing
-    itemdata/baseprice-dot-data-bug
-    itemdata/buff-system-30min
-    itemdata/coins-per-kill-is-1-or-5
-    itemdata/condition-has-no-damage-multiplier
-    itemdata/consumable-effect-table
-    itemdata/dragon-dance-input
-    itemdata/duel-token-economy
-    itemdata/five-stances-and-stance-locked-weapons
-    itemdata/frame-validates-the-payload
-    itemdata/gold-catalogue
-    itemdata/guest-start-state
-    itemdata/item-name-template
-    itemdata/loot-tables-held
-    itemdata/modifier-103-grants-items
-    itemdata/no-items-config-still-true
-    itemdata/paperdoll-9-boxes-13-indices
-    itemdata/procedural-item-colour
-    itemdata/rebirth-gold-25-and-100
-    itemdata/repair-weapon-cost
-    itemdata/sell-price-formula
-    itemdata/shipped-data-bugs
-    itemdata/slashusage-is-a-reload-economy
-    itemdata/sprite-compositing-contract
-    itemdata/stancerestriction-is-dead-data
-    itemdata/stat-vs-level-is-a-table
-    itemdata/type-is-the-slot-enum
-    itemdata/unique-2-is-npc-only
-    itemdata/v0717-affix-words
-    itemdata/web-android-schema-parity
-    itemdata/xp-curve-l1-l98-held
-    itemdata/xp-per-kill-formula
+## itemdata  (38 unique, 38 judged)
+  * itemdata/adjacent-speed-formulas
+  * itemdata/affix-count-per-rarity
+  * itemdata/affix-magnitude-curve
+  * itemdata/affix-suffix-pool
+  * itemdata/android-string-table-matches-v0717-ui
+  * itemdata/android-vs-web-constants-diverge
+  * itemdata/art-is-only-for-sharing
+  * itemdata/baseprice-dot-data-bug
+  * itemdata/buff-system-30min
+  * itemdata/coins-per-kill-is-1-or-5
+  * itemdata/condition-has-no-damage-multiplier
+  * itemdata/consumable-effect-table
+  * itemdata/dragon-dance-input
+  * itemdata/duel-token-economy
+  * itemdata/five-stances-and-stance-locked-weapons
+  * itemdata/frame-validates-the-payload
+  * itemdata/gold-catalogue
+  * itemdata/guest-start-state
+  * itemdata/item-name-template
+  * itemdata/loot-tables-held
+  * itemdata/modifier-103-grants-items
+  * itemdata/no-items-config-still-true
+  * itemdata/paperdoll-9-boxes-13-indices
+  * itemdata/procedural-item-colour
+  * itemdata/rebirth-gold-25-and-100
+  * itemdata/repair-weapon-cost
+  * itemdata/sell-price-formula
+  * itemdata/shipped-data-bugs
+  * itemdata/slashusage-is-a-reload-economy
+  * itemdata/sprite-compositing-contract
+  * itemdata/stancerestriction-is-dead-data
+  * itemdata/stat-vs-level-is-a-table
+  * itemdata/type-is-the-slot-enum
+  * itemdata/unique-2-is-npc-only
+  * itemdata/v0717-affix-words
+  * itemdata/web-android-schema-parity
+  * itemdata/xp-curve-l1-l98-held
+  * itemdata/xp-per-kill-formula
 
 ## items-equipment  (20 unique, 20 judged)
   * items-equipment/affix-suffix-pool-and-counts

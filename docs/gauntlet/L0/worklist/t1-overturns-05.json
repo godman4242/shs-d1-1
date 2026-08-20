@@ -1,6 +1,264 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:36 and \u00a71t99s0\u00a7.as:249/:3094/:3105/:3116/:3274; corroborated by docs/research/fidelity/SOURCE_CONSTANTS.md \u00a70 (2026-07-25, 'CRACKED AND MINED \u2026 Build identified as v0.717')",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "combat-core/web-v0717-ast-is-readable",
+  "lane_impact": "L5 (and every other lane that inherited the 'android is all we have' framing) \u2014 v0.717 constants are directly readable, so any A2 in a combat lane can and must be taken from shs3_payload, with shs3_android used only for the four data XMLs (which SOURCE_CONSTANTS \u00a73.7 already tags CONTRACT-SRC (0.682)). The gauntlet's standing android caveat should be narrowed to the XML tables, not applied to code constants.",
+  "ledger_text": "\u2461 crit 1.3 vs 3 final \u2014 *read one crit popup.*",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:36 `public static var \u00a71t9323s0\u00a7:Number = 0.717;` \u00b7 \u00a71t99s0\u00a7.as:249 `this.\u00a71t4415s0\u00a7 = 8 * 24;` \u00b7 :3094 `this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;` \u00b7 :3274 `return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;` \u00b7 shell: `ls reference/decompiled/shs3_payload/scripts/ | grep -c '\u00a7'` \u2192 612",
+  "text": "The web v0.717 payload's ActionScript is decompiled and readable in this repo \u2014 612 obfuscated top-level classes, 1,079 .as files, plain bodies \u2014 so no combat constant in this lane needed to be sourced from the android build at all.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/Nr4fQstqHDM/seg-28/frames/frame_0007.jpg, crop (470,110)-(780,290) upscaled \u00d74 LANCZOS",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/ap-cap-is-40-not-30",
+  "lane_impact": "L9 (WORLD): blocker \u2463's regen half closes at 1 AP per 60 s (APINTERVAL, web \u00a71t1523s0\u00a7.as:196 = 60); the CAP half does not close at 30 and must not be written into config. THE FRAME WINS. Same failure mode as reading MAXDUELTOKENS=30 as a cap when the HUD reads 40/40.",
+  "ledger_text": "\u2463 AP regen rate + cap (world-exploration blocker)",
+  "overturns_ledger": true,
+  "quote": "Visibly in the crop, the character-summary bars: 'HP 20 / 30' (green), 'CHI 47 / 47' (blue), 'AP 30 / 40' (pale blue), with ATK/DEF/SPD diamonds down the right edge.",
+  "text": "AP max is 40 in the filmed web build; STAT_MAXAP,30 in StatsManager is a level-1 creation initial, exactly like STAT_MAXHP,10 which the same frame shows at 30.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:166-190, with helpers at :94-110 (getGreyLevel, three bands) and :112-164 (getZeroDifference, eleven bands)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/calcxp-hard-cutoffs",
+  "lane_impact": "L4/L10: the XP half of blocker \u2460 is fully dead \u2014 grey-out floor, +3 over-level ceiling and elite \u00d72 included, portable today with no build needed. This also gives L4 (ENEMIES) its trivial-mob suppression rule for free.",
+  "ledger_text": "\u2460 coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either).",
+  "overturns_ledger": true,
+  "quote": "NPC.as:168-188 \u2014 \"if(mobLevel <= getGreyLevel()) { return 0; }\\nif(mobLevel - playerLevel > 3) { return 0; }\\nvar finalXP:int = xp;\\nif(playerLevel < mobLevel) { finalXP = xp * (1 + 0.05 * (mobLevel - playerLevel)); }\\nelse if(playerLevel > mobLevel) { finalXP = xp * (1 - (playerLevel - mobLevel) / getZeroDifference()); }\\nif(elite) { finalXP *= 2; }\". getGreyLevel: <6 -> 0; <40 -> lvl - floor(lvl/10) - 5; <60 -> lvl - floor(lvl/5) - 1; else lvl - 9.",
+  "text": "calcXP carries two hard zero cut-offs and an elite doubler that the survey did not quote \u2014 the XP model is more completely held than claimed.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/videos/Nr4fQstqHDM.mp4 \u2014 t=21:25 (BLACKSMITH menu open, wallet 531 COINS) and t=21:45 (STABLES, wallet 461 COINS), both extracted at 1920x1080 and read from a 640x360 contact sheet; corroborating formula at reference/decompiled/shs3_android/scripts/InteractUI.as:1058.",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/minus-70-is-repair-not-artifact",
+  "lane_impact": "L10: closes a discrepancy SYNTHESIS.md:243 marks 'unresolved ... do NOT hardcode'. Forge = min(nodeLevel,80) x 100 and repair = nodeLevel x 10 are now both frame-corroborated at the same node in the same visit, and the ledger's dismissive 'capture artifact' parenthetical should be struck.",
+  "ledger_text": "Forge 700c (the \u221270 HUD read is a capture artifact)",
+  "overturns_ledger": true,
+  "quote": "t=21:25 crop shows the BLACKSMITH panel with options FORGE A WEAPON / REPAIR WEAPON / REINFORCE WEAPON / LEAVE and the top-left wallet reading 531 COINS; t=21:45 shows the stables with 461 COINS. Delta = -70. InteractUI.as:1058 \u2014 \"cost = StageManager.getCurrentNodeLevel() * 10;\". The stables leg 545 -> 531 = -14 = nodeLevel 7 x 2 confirms the node level independently (InteractUI.as:241).",
+  "text": "The ledger's unresolved '-70 HUD read' at the blacksmith is a Repair Weapon at node level 7 (7 x 10), not a capture artifact \u2014 and the forge was never paid because the player held 531 coins against a 700 quote.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/QuestGenerator.as:844 (and :1006 bounty, :917 emission, :876 outcome-11 emission); web twin reference/decompiled/shs3_payload/scripts/\u00a71t123s0\u00a7.as:883 and :955; consumed at QuestLogUI.as:455-461",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/quest-coin-reward-formula",
+  "lane_impact": "L1 (CAMPAIGN) + L10 (ECONOMY): quests are the PRIMARY repeatable coin faucet, not a zero. Against the 0.5 coins/kill mob EV, one level-7 quest (35c) equals 70 mob kills \u2014 an offline economy that omits it starves by ~2 orders of magnitude. The law is fully offline-reproducible: nodeLevel x 5, x10 for bounties, paid as loot id 0.",
+  "ledger_text": "\u2460 coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either).",
+  "overturns_ledger": true,
+  "quote": "QuestGenerator.as:844 \u2014 \"var questCoinReward:int = nodelvl * 5;\"; :1006 \u2014 \"var questCoinReward:int = nodelvl * 10;\"; :917 \u2014 \"rewardStr += \\\"<loot><id>0</id><qty>\\\" + questCoinReward + \\\"</qty></loot>\\\";\"; :876 \u2014 \"introStr += \\\"<outcome><id>11</id><modify>\\\" + questCoinReward + \\\"</modify><end>0</end></outcome>\\\";\". WEB \u00a71t123s0\u00a7.as:883 \u2014 \"var _loc17_:int = _loc15_ * 5;\" and :955 \u2014 \"_loc25_ = _loc25_ + (\\\"<loot><id>\\\" + 0 + \\\"</id><qty>\\\" + _loc17_ + \\\"</qty></loot>\\\");\". QuestLogUI.as:455-461 \u2014 \"else if(lootType == 0 || lootType == 11){coinReward += qty;} else if(lootType == 1){coinReward += 5 * qty;}\"",
+  "text": "Quest coin reward is a held, portable law in BOTH builds \u2014 questCoinReward = nodeLevel x 5 (bounty quests nodeLevel x 10) \u2014 emitted at runtime as <reward><loot><id>0</id>, which is why it is nearly absent from the static questdata.xml.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/zFtCaTO0_1M/seg-29/frames/frame_0013.jpg, crop (480,335)-(770,465) upscaled x5 LANCZOS; mechanism at reference/decompiled/shs3_android/scripts/QuestGenerator.as:846,850,921,1094 and web reference/decompiled/shs3_payload/scripts/\u00a71t123s0\u00a7.as:885,889,959,1140,1349; consumed at Overworld.as:357-359",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/quest-prosperity-plus5-is-client-side",
+  "lane_impact": "L9/L11: split blocker \u2461 three ways, not two. Sell-price DEAD (claim 9). Player-driven prosperity DEAD \u2014 +5/+10 per quest, client-side, frame-confirmed. Only the DAILY-SIM deltas (bandit raids, merchant trade, mercenary upkeep, town attacks) remain server-side and must be authored + labelled in DIVERGENCES.",
+  "ledger_text": "\u2461 sell-price + prosperity-daily-sim formulas.",
+  "overturns_ledger": true,
+  "quote": "Visible in the crop, four lines: \"REWARD / 250 XP / 30 COINS / TOWN PROSPERITY: +5\". QuestGenerator.as:846 \u2014 \"var prosperityReward:int = 10;\"; :850 \u2014 \"prosperityReward = 5;\"; :1094 \u2014 \"rewardStr += \\\"<loot><id>50007</id><qty>5</qty></loot>\\\";\" (and 11 further literal-5 sites). Overworld.as:357-359 \u2014 \"else if(lootType == 50007){ StatsManager.changeStat(50007,qty); }\". HistoryItem.as:373 names the channel \u2014 \"Players changed prosperity through quests by \" + val1.",
+  "text": "Town-prosperity deltas from quests are hard-coded client-side literals in BOTH builds (+5, or +10 on the non-halved branch) and one of them is confirmed on film \u2014 so prosperity is not wholly server-authored.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:192, 194, 2668-2698 + reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2638-2660 + OverworldHUD.as:1333",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/rebirth-pays-heavenly-gold",
+  "lane_impact": "economy + rebirth-elements: config REBIRTH.earlyGold/tenthGold currently feed p.gold (tests/progression.test.ts:183,192), i.e. coins \u2014 the wrong purse. The 25/100 numbers and MAX_DAN_RANK=10 are sound and can be promoted, but the currency must be modelled as a separate premium resource or the mapping relabelled. Corroboration that stat 12 is the rebirth currency: the android anti-cheat trips at HGOLD>60 while DAN<9, and android pays 8x5+20 = exactly 60. The same line shows desktop's 25/100 (8x25+100 = 300) could not run against a >60 check \u2014 further evidence the two builds' rebirth economies genuinely diverge.",
+  "ledger_text": "film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
+  "overturns_ledger": true,
+  "quote": "StatsManager.as:192  internal static var STAT_GOLD:int  = 11;\nStatsManager.as:194  internal static var STAT_HGOLD:int = 12;\nStatsManager.as:2668 public static function getHeavenlyGold() : int\nStatsManager.as:2674    hgold += QueryManagerPIO.instance.getPayVaultCoins();\nOverworldHUD.as:1333 if(getStat(STAT_HGOLD) > 60 && getStat(STAT_DAN) < 9) reportHack(\"gold\");",
+  "text": "Rebirth pays HEAVENLY GOLD (stat 12, the PayVault-backed premium currency), not gold/coins (stat 11) \u2014 the desktop doRebirth never touches the coin purse at all.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7144s0\u00a7.as:34-48 and :81-82; grep -rli tournament over shs3_payload/scripts \u2192 5 files, over shs3_android/scripts \u2192 0 files",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/tournament-is-web-only",
+  "lane_impact": "L10/L11: the 2026-08-13 critic's 'grep returns 0 files, the tournament half is untouched' was true of Android and is FALSE of the web bundle. A follow-up pass should read \u00a71t7144s0\u00a7.as and its four siblings for entry fees, payouts and bracket rules. Also a sixth witness that web \u2260 Android in CONTENT, not just tuning.",
+  "ledger_text": "\u2463 token/tournament economy numbers.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t7144s0\u00a7.as:34 'public var notournamenttext:TextField;' \u00b7 :44 'public var tournamentCreate:\u00a71t7091s0\u00a7;' \u00b7 :46 'public var tournamentdetailstext:TextField;' \u00b7 :48 'public var tournamenttitletext:TextField;' \u00b7 :82 'this.notournamenttext.text = \u00a71t1521s0\u00a7.getString(11018);' \u2014 member names survive SWFDefender mangling.",
+  "text": "The tournament system exists ONLY in the web v0.717 bundle \u2014 zero Android files mention it \u2014 so economy blocker \u2463's tournament half is openable rather than dead, and the survey's own claim 1 is the key that unlocks it.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as (setLevel override) + EnemyKanjiGuardian.as:48 + EnemyWolfAlpha.as:52 + EnemyOgre.as:51 + EnemySpearElite.as:32 + EnemyPlayer.as:57 + EnemyStag.as:48 + EnemyTrainingDummy.as:23; web parity at \u00a71t4523s0\u00a7.as:77-80",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/boss-rubber-band-hits-to-kill",
+  "lane_impact": "L0 enemies-ai blocker \u2460 and cross-lane into combat-core/progression. Variants: KanjiGuardian 5+8+lvldiff / 16\u2212lvldiff; WolfAlpha 15\u2212lvldiff; SpearElite and EnemyPlayer branch on isBoss/isDuelist and fall back to super.setLevel(); EnemyOgre.setLevel is an EMPTY override so the Ogre never rescales; EnemyTrainingDummy repurposes lvl as a tutorial step index (lvl==3 \u2192 maxhp = 8). Authored boss <hp> rows are FLOORS, not effective stats \u2014 the game is tuned to a number of hits, not to absolute numbers.",
+  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
+  "overturns_ledger": true,
+  "quote": "xp = lvl * 5 + 45; var playerHP:int = StatsManager.getPlayerStats(StatsManager.STAT_MAXHP) + StatsManager.findBonusStat(StatsManager.STAT_MAXHP); ... var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff; if(hitsToKillBoss <= 3) { hitsToKillBoss = 3; } ... var playerhit:int = playerATK - defense; if(playerLVL <= 10 && playerhit < 1) { playerhit = 1; } else if(playerLVL <= 20 && playerhit < playerLVL / 8) { playerhit = playerLVL / 8; } else if(playerLVL <= 30 && playerhit < playerLVL / 6) { playerhit = playerLVL / 6; } else if(playerhit < playerLVL / 4) { playerhit = playerLVL / 4; } var bossHP:int = playerhit * hitsToKillBoss; if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); } var bosshit:int = playerHP / hitsToKillPlayer; var bossATK:int = bosshit + playerDEF; if(bossATK > minDamage) { minDamage = bossATK; } if(lvl <= 5) { minDamage = 1; defense = 1; }",
+  "text": "Bosses and elites do not use the base level\u2192stat formula at all: 11 subclasses override setLevel, and the boss path solves the statline backwards from a target hit count against the player's LIVE stats \u2014 bossHP = playerhit \u00d7 (10 + lvldiff) and bossATK = playerHP/(18 \u2212 lvldiff) + playerDEF, taken as the max against the authored XML row.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (my grep of <anim i=\"(got|downed|death)...\" d=\"...\"> tags)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/eight-death-animations-by-killing-blow",
+  "lane_impact": "L0 enemies-ai + art-anim-audio-feel. The render-side partner of the behead damage *= 1.5 rule (claim 12) and the archer knockdown gate (claim 11): the game selects a dismemberment-specific death by how the fighter died. Blocker (3)'s 'stagger' half resolves as no-stagger-but-eight-deaths, which is a much richer answer than the claim's single deathdowned 7 and directly shapes what the recreation must animate.",
+  "ledger_text": "(3) telegraph/active/recovery + stagger frames.",
+  "overturns_ledger": true,
+  "quote": "<anim i=\"death\" d=\"38\"> \u00b7 <anim i=\"deathbyarrow\" d=\"21\"> \u00b7 <anim i=\"deathdowned\" d=\"7\"> \u00b7 <anim i=\"deathenemy\" d=\"23\"> \u00b7 <anim i=\"deathinhalf\" d=\"28\"> \u00b7 <anim i=\"deathnohand\" d=\"25\"> \u00b7 <anim i=\"deathnohead\" d=\"31\"> \u00b7 <anim i=\"deathwitharrow\" d=\"23\"> \u00b7 (reaction chain: gotlaunchedupwards_parta 4 / _partb 9 / _partc 7, gotlauncheddowned 18, gotlauncheddownedend 1, downed 23, downedup 4, downedup2 25)",
+  "text": "The death system is eight distinct animations keyed to how the killing blow landed -- cut in half, beheaded, disarmed, arrow-killed -- not the single deathdowned the surveyor reported.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as:22-75 (and :105-120); cross-referenced to src/config/combat-sim.ts:110-130",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/elite-boss-second-level-formula-rubber-band",
+  "lane_impact": "L0 enemies-ai, and the biggest thing this unit missed. Blocker (1) is closed for trash but only half-closed for bosses: there are TWO formulas and the surveyor found one, so the 78 is over-scored on that axis. Boss HP is set so the player needs 10 + lvlDiff hits (floor 3) and boss ATK so the player dies in 18 - lvlDiff hits (floor 1); authored <hp> is only a floor, which qualifies the roster claim. Critically, src/config/combat-sim.ts documents ENEMY_BASE as INFERRED with 'B4 makes hp and minDamage DERIVED at spawn from the player's own stats (enemyHP = effPlayerDmg x K) ... the pre-scale floor the source's max(scaledBase, ...) compares against' -- bossHP = playerhit * hitsToKillBoss IS that formula and if(bossHP > maxhp) IS that max(). K = 10 + (enemyLvl - playerLvl), floored at 3. That INFERRED comment can be promoted to A2, labelled v0.682-ANDROID.",
+  "ledger_text": "(1) enemy **level->stat formula** (governs the whole roster's balance -- absent, not just inferred).",
+  "overturns_ledger": true,
+  "quote": "var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff; if(hitsToKillBoss <= 3) { hitsToKillBoss = 3; } if(hitsToKillPlayer <= 0) { hitsToKillPlayer = 1; } var playerhit:int = playerATK - defense; if(playerLVL <= 10 && playerhit < 1) { playerhit = 1; } else if(playerLVL <= 20 && playerhit < playerLVL / 8) { playerhit = playerLVL / 8; } else if(playerLVL <= 30 && playerhit < playerLVL / 6) { playerhit = playerLVL / 6; } else if(playerhit < playerLVL / 4) { playerhit = playerLVL / 4; } var bossHP:int = playerhit * hitsToKillBoss; if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); } var bosshit:int = playerHP / hitsToKillPlayer; var bossATK:int = bosshit + playerDEF;   ... xp = lvl * 5 + 45;   ... mcs.setDisplayName(charname + \" (\" + lvl + \")\",16777215);",
+  "text": "There is a SECOND level->stat formula: EnemyElite.setLevel overrides NPC.setLevel entirely for elites and bosses, dropping the 0.9 factor and the lvl<=10 clamp, using xp = lvl*5+45, and rubber-banding boss HP and ATK off the PLAYER's live stats -- which is the missing A2 source for the repo's INFERRED 'enemyHP = effPlayerDmg x K' derivation.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/MCSActor.as:170,172,922 + NPC.as:747-763",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/flinch-is-8-frames",
+  "lane_impact": "L0 enemies-ai + art-anim: closes the SECOND half of blocker \u2462 outright, which the survey wrongly declared unimplementable. Stagger = 8 frames, and the resume-mid-animation behaviour is a feel-critical detail. It also removes cap reason (4) from the 78 score rationale.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
+  "overturns_ledger": true,
+  "quote": "94_MCSCharacter_Human2AnimationData.bin: ('flinch_weapon','8'), ('flinch','8')  \u00b7  MCSActor.as:170 internal static var FLINCH_WEAPON:String = \"flinch_weapon\"; :172 internal static var FLINCH:String = \"flinch\"; :922 internal static var FLINCH_STATE:int = 28;  \u00b7  NPC.as:747 public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }",
+  "text": "The hit reaction the survey called nonexistent is an authored 8-frame interruptible flinch: `flinch` and `flinch_weapon` both d=8, FLINCH_STATE = 28, and NPC.doFlinch() saves prevActionState/prevAnim/prevFrameCounter before playing it so endFlinch() resumes the interrupted animation mid-frame.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/MCSActor.as:170,172,922 + NPC.as:747-765",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/flinch-is-a-real-8-frame-state",
+  "lane_impact": "L0 enemies-ai + art-anim: blocker \u2462 is now dead in BOTH halves, not just the telegraph half. The surveyor searched only 99_MCSCharacter_HumanAnimationData.bin and concluded absence; the flinch is in the Human2 blob. Note the mechanic for the port: flinch does NOT interrupt SLASH_STATE (an attack in progress is armoured), and it resumes the prior animation at the exact frame it was cut off.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
+  "overturns_ledger": true,
+  "quote": "<anim i=\"flinch_weapon\" d=\"8\">  \u00b7  <anim i=\"flinch\" d=\"8\">  \u00b7  MCSActor.as:922 internal static var FLINCH_STATE:int = 28;  \u00b7  NPC.as:747 public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }  \u00b7  NPC.as:758 public function endFlinch() : * { actionState = this.prevActionState; startAnim(this.prevAnim); mcs.frameCounter = this.prevFrameCounter; }",
+  "text": "The stagger the ledger asks for is fully implemented: an 8-frame flinch animation in the Human2 anim blob plus FLINCH_STATE 28 and a doFlinch/endFlinch pair that saves and restores the interrupted animation's frame offset.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:747-764 + MCSActor.as:922,170,172 + reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + EnemyZombie.as:544 + EnemyShield.as:117-119 + MCSPlayer.as:4309-4326",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/flinch-state-exists",
+  "lane_impact": "L0 enemies-ai + art-anim: blocker \u2462's stagger half is CLOSED, not absent, and the survey's score cap built on 'a counter with no stagger animation' must be dropped. The port is: on hit, save actionState/anim/frameCounter, enter FLINCH_STATE, play flinch_weapon (8 frames), then restore the exact prior frame. It is guard-interrupted by SLASH_STATE and SKILL_CHICHARGE_STATE (NPC.as:749, MCSPlayer.as:4311) and stacks on top of, not instead of, the 12-frame gotHitCounter i-frame window. Note the animation lives in the 94_Human2 blob, not the 99_Human blob the survey searched.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
+  "overturns_ledger": true,
+  "quote": "NPC.as:747-758 `public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }` \u00b7 NPC.as:760-764 `public function endFlinch() : * { actionState = this.prevActionState; startAnim(this.prevAnim); mcs.frameCounter = this.prevFrameCounter; }` \u00b7 MCSActor.as:922 `internal static var FLINCH_STATE:int = 28;` \u00b7 MCSActor.as:170,172 `FLINCH_WEAPON:String = \"flinch_weapon\"` / `FLINCH:String = \"flinch\"` \u00b7 94_MCSCharacter_Human2AnimationData.bin `('flinch_weapon','8')`, `('flinch','8')` \u00b7 EnemyZombie.as:542-544 `else if(!this.isDowned() && !isAirborne()) { this.startAction(FLINCH_STATE); }` \u00b7 EnemyShield.as:117-119 `case FLINCH_WEAPON: case FLINCH: endFlinch();`",
+  "text": "The stagger mechanic blocker \u2462 asks for is fully implemented: FLINCH_STATE (id 28) with a base-class doFlinch/endFlinch pair that saves and restores animation + frameCounter, driving an authored 8-frame flinch / flinch_weapon animation \u2014 a mechanism entirely separate from the 12-frame gotHitCounter i-frame lockout.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:296-299 + every call site: NPCManager.as:1222,1263,1325,1414,1434,1454,1494,1513,1534,1564,1579",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/gothitcounter-is-iframes",
+  "lane_impact": "L0 enemies-ai + combat-core: the 12 frames are i-frames, so the ledger's 'stagger' question is genuinely STILL_UNHELD - the source implements no hit-reaction at all, neither a stagger animation nor an action lock. A recreation that locks the enemy out of acting for 12 frames is wrong.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
+  "overturns_ledger": true,
+  "quote": "NPC.as:296 public function canHit() : Boolean { return this.gotHitCounter == 0; }  \u00b7  NPCManager.as:1564 if(!enemy.isDead() && enemy.canHit() && enemy.testHit(thing))  \u00b7  NPCManager.as:1414 if(!enemy.isDead() && enemy.canHit() && enemy.checkHitTrap(thing,damage))",
+  "text": "gotHitCounter = 12 is invulnerability, not an action lockout: canHit() is called only from NPCManager's hit-detection, so the counter gates whether the enemy CAN BE HIT for 12 frames.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A4",
+  "cite": "docs/research/fidelity/MOTION_MEASUREMENTS.md:24 (carries frame cite 'duel-strike-A: frames 036-047 after streak') + reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/NPC.as:462",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/hit-lockout-decomposes-exactly",
+  "lane_impact": "L0 enemies-ai + art-anim: blocker (3) dies in BOTH halves, not one and a half. The recreation's hit reaction is 4 frames of held pose then the 8-frame flinch clip, with the poise rule on top from SOURCE_CONSTANTS.md:261 (v0.717 CONTRACT-SRC). Also means art-anim's Ready bullet 'hit-stagger' was right and enemies-ai's blocker list was double-counting it.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
+  "overturns_ledger": true,
+  "quote": "MOTION_MEASUREMENTS.md:24 \u2014 | Hit stagger | **12 frames total: 4 upright + 8 bent-forward** | duel-strike-A: frames 036-047 after streak | `ANIM_TIMING.hitRecoilMs = 67`, `hitReturnMs = 133` |  \u00b7  94_Human2 blob \u2014 <anim i=\"flinch\" d=\"8\">, <anim i=\"flinch_weapon\" d=\"8\">  \u00b7  NPC.as:462 \u2014 this.gotHitCounter = 12;  \u00b7  SOURCE_CONSTANTS.md:261 \u2014 | stagger / poise | hyperarmor after 3 staggers (5 if the attacker is in light stance) |",
+  "text": "The 12-frame hit lockout decomposes exactly into 4 frames held + an 8-frame flinch animation, triangulated across three independent artifacts \u2014 so blocker (3)'s stagger half is fully CLOSED, not partial.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:1533 + MCSPlayer.as:245 + FriendlyElite.as:64 + FriendlyArcher.as:57 + Obj_NPCAggro.as:76,79 + EnemyPlayer.as:83,771,774,880 + EnemyClone.as:81,85 + Obj_NPCProcGen.as:51,60",
   "citelint": {
    "notes": [],
@@ -127,273 +385,6 @@
   "overturns_ledger": true,
   "quote": "docs/gauntlet/L0/index/strings.json:0   docs/gauntlet/L0/index/resolved_names.json:0   (the 2,533-entry S0-3 table in which itemdata resolves 804/0 unresolved, skilldata 73/0, npcdata 484/6)",
   "text": "Tengu is absent from the RESOLVED string table as well as the raw XML, which closes the 'it is hidden behind a numeric id' escape hatch that a raw-XML grep alone leaves open.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyZombie.as:501-505",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/weapon-part-hit-deals-zero",
-  "lane_impact": "L0 enemies-ai + combat-core: appears in no ledger bullet and is modelled nowhere in src/. It qualifies (does not contradict) SOURCE_CONSTANTS.md \u00a73.5's 'no counter/parry/riposte mechanic at all' \u2014 there is no timed block, but there IS a hit-the-weapon whiff decided purely by which paperdoll part the slash line intersects. Wants its own pass plus a frame check for a spark/clang VFX on the weapon-hit case.",
-  "ledger_text": "the shipped `AI_TIERS`/`ENEMY_BASE` are a **PvP-duel dummy** (hp 150), not the ~1-HP-chip field trash the video shows; every PvE number lives only in notes.",
-  "overturns_ledger": true,
-  "quote": "case mcs.partList[MCSCharacter.PART_weapon]: gotHitFlag = false; damage = 0; return false;",
-  "text": "A blade that lands on the enemy's weapon part deals zero damage, sets no hit flag and triggers no lockout \u2014 the game's only block-like mechanic, and it is geometric rather than stateful.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t4542s0\u00a7.as:275-305 + \u00a71t137s0\u00a7.as:64-71 + \u00a71t128s0\u00a7.as:8; contrast reference/decompiled/shs3_android/scripts/ArrowProjectile.as:55-56",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/web-arrow-dual-gravity",
-  "lane_impact": "L0 enemies-ai: blocker \u2464's arrow half is closed, but with a version-specific answer. Porting a fixed GRAVITY=3 is wrong on exactly the arrows the player is meant to read and dodge. This is also the first CONCRETE v0.682-vs-v0.717 behavioural difference found, which turns 'build parity is an unknown risk' into 'build parity is a known, enumerable diff'.",
-  "ledger_text": "\u2464 Undead damage-reflect probability; arrow arc physics.",
-  "overturns_ledger": true,
-  "quote": "\u00a71t128s0\u00a7.as:8 internal static var \u00a71t12543s0\u00a7:Number = 3;  \u00b7  \u00a71t4542s0\u00a7.as:288-299 var _loc6_:Number = \u00a71t128s0\u00a7.\u00a71t12543s0\u00a7; if(_loc1_) { _loc6_ = 1.5; } var _loc7_:Number = _loc6_ * Math.abs(_loc4_ - _loc2_) / 0.866; ... var _loc10_:Number = (_loc5_ - _loc3_ - 0.5 * _loc6_ * _loc9_ * _loc9_) / _loc9_;  \u00b7  \u00a71t137s0\u00a7.as:64-71 rotation = Math.atan(velY / velX) * 57.2727 + 180; if(this.\u00a71t4425s0\u00a7) { velY += 1.5; } else { velY += \u00a71t12543s0\u00a7; }  \u00b7  ANDROID ArrowProjectile.as:55-56 rotation = Math.atan(velY / velX) * 57.2727 + 180; velY += GRAVITY;   (grep -c \"1\\.5\" ArrowProjectile.as \u2192 0)",
-  "text": "In the shipped web v0.717 build knockdown arrows fly on HALF gravity (1.5) while normal arrows use 3 \u2014 the launch roll happens before the ballistic solve and feeds it \u2014 whereas the Android v0.682 decompile every cited number came from has a single unconditional GRAVITY.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1543s0\u00a7.as:615-732 (contrast reference/decompiled/shs3_android/scripts/NPCManager.as:516-634)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "enemies-ai/web-has-39-ai-cases-not-38",
-  "lane_impact": "L0 enemies-ai: corrects the survey's own correction. The unwritten-behaviour work item \u2014 cap-reason (3) on the score \u2014 is BIGGER than stated: 36 classes across 39 ai ids for the 1:1 web target, not 34/38. Any roster or dispatch table built to the Android decompile will be missing an enemy type.",
-  "ledger_text": "full taxonomy (Humans/Undead/Oni/Animals + Tengu/Guardian) with movesets incl. **the archer** (closed this pass); boss roster",
-  "overturns_ledger": true,
-  "quote": "\u00a71t1543s0\u00a7.as:615 switch(_loc6_.ai) with case labels 0 through 38 (39 unique, verified by `grep -o \"case [0-9]*:\" | sort -u | wc -l` -> 39; `grep -o \"new \u00a7[^(]*\" | sort -u | wc -l` -> 36)  \u00b7  NPCManager.as:516 switch(xml.ai) with cases 0..37 (38 cases; 31 unique Enemy* + 3 Friendly* = 34)",
-  "text": "The web v0.717 AI dispatch switch runs cases 0..38 \u2014 39 cases instantiating 36 unique classes \u2014 against the Android v0.682 build's 38 cases / 34 unique classes, so v0.717 carries two more behaviour classes and one more ai id than the survey scopes for.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:995,1868 (grep \"\u00a71t536s0\u00a7\" over reference/decompiled/shs3_payload/scripts/ returns exactly 2 hits)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "items-equipment/condition-blocker-dead-in-both-builds",
-  "lane_impact": "L1/L2 (combat core + damage) -- removes the S0-3 Android-parity caveat for blocker 2 that the surveyor left open. The phantom wear curve is dead in the build we are actually recreating (v0.717), not just in the Android port.",
-  "ledger_text": "\u2461 condition\u2192DMG **multiplier** (current \"evidence\" confounds condition with a 2-level gap).",
-  "overturns_ledger": true,
-  "quote": "\u00a71t17s0\u00a7.as:1868  public function \u00a71t536s0\u00a7() : int   /   \u00a71t17s0\u00a7.as:995  var _loc1_:int = this.\u00a71t536s0\u00a7();   [only call site, inside the getDesc equivalent]",
-  "text": "Blocker 2 (condition->DMG multiplier) is dissolved in the WEB v0.717 build as well as Android: the web getCondition has exactly two references in the whole payload -- its definition and one call inside getDesc -- so no damage path reads it.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:4417-4445; Item.as:229-259; MCSCharacter.as:618",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/equipment-save-format-is-13-field",
-  "lane_impact": "L10 (persistence) -- corrects the surveyor's cite. Copying MCSCharacter.as:348 instead loses the scabbard, both accessory slots and every per-slot modifier, and adds two prop fields that are not equipment slots.",
-  "ledger_text": "**Server-sim topology & save format** \u2014 nothing to copy; design a single-player persistence schema from the observed field set.",
-  "overturns_ledger": true,
-  "quote": "public static function getEquipmentString() : String { var max:int = int(equipment.length); for(var i:int = 0; i < max; i++) { if(i == max - 1) { str += equipment[i].toStringNoQty(); } else { str += equipment[i].toStringNoQty() + \"|\"; } } return str; }  /  public static function parseEquipmentString(str:String) : * { equipment.length = 0; var strArray:Array = str.split(\"|\"); for(var i:* = 0; i < strArray.length; i++) { equipment.push(Item.parseNoQty(strArray[i])); } }  /  MCSCharacter.as:618  return this.mcsString;",
-  "text": "The equipment save format is StatsManager.getEquipmentString/parseEquipmentString -- all 13 equipment slots joined by \"|\", each field an Item.toStringNoQty() record carrying id plus modifiers, colours, uses, name and creator. MCSCharacter's 12-field mcsString is the character APPEARANCE string, not persistence.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Damage.as:53,149-172; MCSPlayer.as:3415-3418 and :1930; NPC.as:447",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/generic-defense-floor-is-attacker-keyed",
-  "lane_impact": "L1/L2 (combat core + damage) - the ledger bullet is INCOMPLETE, not wrong: EnemyLevel is the right variable for the player-taking-damage case and /4 is the right top band. It should read: floor = 1 (atkLvl<=10) / atkLvl\u00f78 (<=20) / atkLvl\u00f76 (<=30) / atkLvl\u00f74, plus piercingDamage. Do not delete the bullet.",
-  "ledger_text": "defense min-floor (EnemyLevel/4)",
-  "overturns_ledger": true,
-  "quote": "public function Damage(damage:int = 0, attackerlvl:int = 0, launchType:int = 0, stance:int = -1, ...)  /  if(this.attackerlvl <= 10) { return 1 + this.piercingDamage; } if(this.attackerlvl <= 20) { return this.attackerlvl / 8 + this.piercingDamage; } if(this.attackerlvl <= 30) { return this.attackerlvl / 6 + this.piercingDamage; } return this.attackerlvl / 4 + this.piercingDamage;  /  damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); }  /  damage = new Damage(this.slashDamage,level,0,this.stance);",
-  "text": "The real defense min-floor lives in Damage.getMinDamage(), is keyed to the ATTACKER's level, and has four bands (1 / lvl\u00f78 / lvl\u00f76 / lvl\u00f74, each + piercingDamage); it is applied at the single point where damage meets defense in MCSPlayer, NPC and every enemy takeDamage.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSItem.as:203-210, :226-233; ShopItem.as:134-199; row counts measured over reference/extracted/itemdata.xml",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/icon-namespaces-item-and-acc",
-  "lane_impact": "L6 (art) - blocker 5 is only HALF dead. The compositing contract is genuinely closed, but the icon manifest is not: 99 consumables (2000-2999) + 79 quest items (20000-29999) + 9 accessories (3000-3999) require item*/acc* symbols with no paperdoll counterpart. This is a scoring-relevant correction to the surveyor's 78.",
-  "ledger_text": "\u2464 **sprite-compositing contract** (layer order, per-slot body render \u2014 a from-scratch-art blocker) + item **icon manifest**.",
-  "overturns_ledger": true,
-  "quote": "public function setConsumable(id:int) : * { this.clearItem(); this.displayItem = this.getMCSComponent(\"item\",id); if(this.displayItem == null) { this.displayItem = new item0(); ... } }  /  public function setAccessory(id:int) : * { this.displayItem = this.getMCSComponent(\"acc\",id); if(this.displayItem == null) { this.displayItem = new AccessoryDummyIcon(); ... } }",
-  "text": "The item-icon art is NOT all paperdoll parts: consumables and quest items render from an 'item<art>' symbol namespace and accessories from an 'acc<art>' namespace, neither of which exists on the character rig - 187 of 982 itemdata rows need icon art the paperdoll cannot supply.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1057-1080 (cost at :1058, uses clamp at :1073-1076, reinforce at :1082-1083)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/repair-weapon-cost-held",
-  "lane_impact": "L4 (economy) \u2014 kills economy blocker \u2462 outright with a two-term formula and a gold currency (not coins). Also settles an items question the survey left dangling: repair floors `uses` at 1, which is 'Condition: Well-Maintained' (string 392), never 0 ('Unbreakable', string 639). That one-way door explains the otherwise-odd uses==0 branch in the condition ladder. Repair is refused when the weapon slot is empty or holds id 13000 (bare hands).",
-  "ledger_text": "\u2462 Repair-Weapon cost (never captured).",
-  "overturns_ledger": true,
-  "quote": "case \"repairweapon\": cost = StageManager.getCurrentNodeLevel() * 10; ... weapon = StatsManager.equipment[StatsManager.EQ_WEAPON]; if(weapon == null || weapon.itemID == 0 || weapon.itemID == 13000) { ...error... } StatsManager.changeGold(-cost); if(weapon.uses > 1) { weapon.uses = 1; } ... case \"reinforceweapon\": cost = 5000;",
-  "text": "The Repair-Weapon cost is held exactly \u2014 currentNodeLevel * 10 gold \u2014 and repair sets the wear counter to 1, not 0, so a repaired weapon can never return to the 'Unbreakable' state.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSItem.as:203-224 (setConsumable) and :226-245 (setAccessory); DummyIcon class census in reference/decompiled/shs3_android/scripts/; visual consequence at reference/frames/s21_weapon/t708.0.png crop (900,590)-(1640,960) upscaled x2",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/two-icon-only-art-namespaces",
-  "lane_impact": "L6 (art) \u2014 the icon-manifest half of blocker \u2464 is NOT dissolved; it is a third and fourth art namespace on top of the paperdoll parts. Five of the seven inventory icons in the reference frame (scroll, onigiri x3, black stone, two feathers) are consumables/accessories that cannot be composed from body parts. Only item0 (the fallback) exists as a named class in any bundle, so this widens the residual art gap rather than closing it.",
-  "ledger_text": "\u2464 **sprite-compositing contract** (layer order, per-slot body render \u2014 a from-scratch-art blocker) + item **icon manifest**.",
-  "overturns_ledger": true,
-  "quote": "public function setConsumable(id:int) : * { this.clearItem(); this.displayItem = this.getMCSComponent(\"item\",id); if(this.displayItem == null) { this.displayItem = new item0(); ... } }  /  public function setAccessory(id:int) : * { ... this.displayItem = this.getMCSComponent(\"acc\",id); if(this.displayItem == null) { this.displayItem = new AccessoryDummyIcon(); ... } }  /  11 classes: Accessory/Achievement/Armor/Consumable/Gloves/Hat/Invalid/Mask/Pants/Shoes/Weapon DummyIcon",
-  "text": "Consumables and accessories have their own icon symbol namespaces ('item<art>' and 'acc<art>') that are not paperdoll parts, plus 11 named placeholder icon classes \u2014 so the item icon pipeline is genuinely separate from the paperdoll pipeline.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5374s0\u00a7.as:686-724",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/web-soul-infusion-superset",
-  "lane_impact": "L4 (economy/crafting) \u2014 implement the v0.717 rule set; the Android-only version silently no-ops for armour and pants.",
-  "ledger_text": "soul-infusion + stat-transfer rules (patch-note-sourced)",
-  "overturns_ledger": true,
-  "quote": "_loc6_ = _loc5_.defense; _loc7_ = \u2026(statsSlot).defense; if(_loc3_.\u00a71t523s0\u00a7(7) == 0) { _loc3_.\u00a71t493s0\u00a7(7,_loc7_ - _loc6_); } \u2026 if(_loc1_ == 4 || _loc1_ == 11) { _loc8_ = statsItem.\u00a71t545s0\u00a7(); _loc9_ = _loc5_.weight; _loc3_.\u00a71t478s0\u00a7 = _loc8_ - _loc9_; } \u2026 if(_loc5_.durability != 0) { _loc3_.uses = statsItem.uses; }",
-  "text": "The shipped web v0.717 soul-infusion transfers a DEFENSE delta (modifier id 7) for every item type and a WEIGHT delta for armor (type 4) and pants (type 11), and gates the durability copy on the design item having non-zero durability \u2014 none of which exists in the Android v0.682 code the survey quoted.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/Nr4fQstqHDM/seg-05/frames/frame_0025.jpg and reference/frames/zFtCaTO0_1M/seg-20/frames/frame_0019.jpg \u2014 top-22% HUD strips, 2x LANCZOS upscale",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ledger/film-shows-rebirth-is-unsourced",
-  "lane_impact": "rebirth-elements + economy + ledger hygiene. THE FRAME WINS, and here it wins against the ledger's own sourcing claim: the longplays cap at L5/L8 so no rebirth could have been observed, and REBUILD_READINESS.md:205 concedes it ('never filmed \u2014 both longplays pre-rebirth') \u2014 the ledger contradicts itself at :165 vs :205. The '+25' number is NOT wrong; it is the value already banked in the ledger's KNOWN-KNOWNS at :79 ('rebirth scroll 1000c (+25g)') and it is now CONFIRMED by v0.717 code. Only the 'no 10th-rebirth tier' half of \u00a73 #7 is disproven. Downstream lanes must stop treating '+25' as a film measurement \u2014 the frames prove that provenance is fictitious. The frames also confirm COINS and GOLD are two distinct on-screen currencies, so STAT_HGOLD is the on-screen 'GOLD'.",
-  "ledger_text": "film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
-  "overturns_ledger": true,
-  "quote": "Visibly in the crops: a level badge reading 8 beside '20880 / 20900 EXPERIENCE POINTS', and a level badge reading 5 beside '8093 / 8350 EXPERIENCE POINTS' with 'REGISTER TO SAVE YOUR PROGRESS AND PLAY ONLINE!' (a guest session). Both HUDs also show a silver '507 / 259 COINS' readout separate from a gold '2 GOLD' readout with a 'GET GOLD' button, and an EMPTY Dan field.",
-  "text": "REBUILD_READINESS.md \u00a73 #7 attributes its '+25 gold' to film, but nothing about rebirth was ever filmed \u2014 both longplays are frame-verified at level 5 and level 8, seventy-plus levels below the L80 rebirth gate, and the ledger's own \u00a74 says so.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:1412-1413 and :1523 + QuestEngine.as:1039-1043 + reference/extracted/npcdata.xml and reference/extracted/android/125_Mobile_NpcData.bin (both: 495 <npc>, max id 819, zero ids in 690-720)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "meta-social/700-block-is-live-players",
-  "lane_impact": "L0 meta-social + L-enemies-ai -- an offline war-room battle should spawn 340 troops from the 39-wave table and zero id-700 entities; the '350/351 samurai' framing must not be built.",
-  "ledger_text": "kill cap 350",
-  "overturns_ledger": true,
-  "quote": "WarHexUI.as:1412 `npcXML.initDuelist(innerStrArray[1],innerStrArray[2],innerStrArray[3],innerStrArray[4],innerStrArray[5],1,innerStrArray[0],false);` :1413 `npcXML.id = 700 + i;` \u00b7 QuestEngine.as:1038 `public static function clearPlayersInNPCData() : *` :1041 `if(npcList[i].id >= 700 && npcList[i].id <= 710 || npcList[i].id == XMLNpc.INDEX_NPCHOLDER)` \u00b7 war-rules string 374: \"if enemy players are present in the sector, you will also encounter them during battle.\"",
-  "text": "NPC ids 700-710 in the war-room wave table are runtime slots for live enemy players, not payload NPCs -- so the payload-deterministic kill count of a war-room battle is 340, and the extra 11 are the server half that cannot be recreated offline.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/114_Mobile_AchievementData.bin, achievement row index 58, resolved via docs/gauntlet/L0/index/strings.json",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/achievement-58-pins-340",
-  "lane_impact": "L0 meta-social \u2014 supports the 340-troop half of the kill-cap correction without relying on the wave-table sum, and separates the 340 troops from the 11 unresolved boss slots.",
-  "ledger_text": "kill cap 350",
-  "overturns_ledger": true,
-  "quote": "row 58: stat 60018, val 340 \u2192 name 'Warrior III', desc 'Defeat 340 in a war room attack.'",
-  "text": "The game's own achievement text independently pins 340 as the rank-and-file war-room kill count, corroborating the wave-table sum from a second, unrelated table.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/payload.xml:119088-119148 compared element-wise to reference/extracted/android/114_Mobile_AchievementData.bin resolved via docs/gauntlet/L0/index/strings.json",
-  "citelint": {
-   "notes": [
-    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml",
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "meta-social/achievements-in-web-payload",
-  "lane_impact": "L0 meta-social -- and this is the strongest available validation of the whole S0-3 Android string table against the desktop build: 61 independently-authored strings agreeing name-for-name and order-for-order.",
-  "ledger_text": "\u2462 achievements list, daily-reward table, token costs \u2014 one Ruffle session closes all.",
-  "overturns_ledger": true,
-  "quote": "payload.xml:119088 `<item>Duelist I</item>` ... :119133 `<item>Chi Master</item>` :119134 `<item>Ninja Master</item>` ... :119148 `<item>Be Awesome</item>`. My comparison printed: `android n= 61   web n= 61` / `EXACT MATCH: True`.",
-  "text": "The 61 achievement names are in the WEB v0.717 payload itself, in the same order as the Android blob, so blocker \u2462's achievement third closes on a desktop cite with no Android caveat.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/114_Mobile_AchievementData.bin:436-470 (ids 48/49/50/51) joined to strings 8041-8044 / 8121-8124 and InventoryUI.as:2285-2317",
-  "citelint": {
-   "notes": [
-    "LINE_ON_BINARY:reference/extracted/android/114_Mobile_AchievementData.bin"
-   ],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/four-dan-achievement-rows",
-  "lane_impact": "meta-social blocker 3 gets four concrete rows; rebirth-elements gets a four-point proof that displayed Dan = STAT_DAN + 1. Reproduce the quirk: the achievement NAMED 'Renshi' fires at STAT_DAN 2 while the Renshi title is only awarded from STAT_DAN 3, and 'Kyoshi' fires at STAT_DAN 5 while the Kyoshi title starts at STAT_DAN 6.",
-  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
-  "overturns_ledger": true,
-  "quote": "id 48 stat 25 val 1 -> 8041='Rebirth' / 8121='Reach Dan 2.'\\nid 49 stat 25 val 2 -> 8042='Renshi' / 8122='Reach Dan 3.'\\nid 50 stat 25 val 5 -> 8043='Kyoshi' / 8123='Reach Dan 6.'\\nid 51 stat 25 val 9 -> 8044='Ultimate Warrior' / 8124='Reach Dan 10.'",
-  "text": "There are four Dan achievements, not one, and together they pin the display offset at exactly +1 across four points \u2014 with a shipped off-by-one between the shogo-named achievements and the shogo titles themselves.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/zFtCaTO0_1M/map/frames/frame_0020.jpg, crop (370,45)-(505,180) upscaled x9 LANCZOS (source frame is 512x288)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/frame-shows-6x6-sector-board",
-  "lane_impact": "L0 meta-social \u2014 blocker \u2461's sector half now has A1 backing as well as A2: the 0..5 board and its 4-way blocked/open adjacency are visible, matching WarHexUI's `x > 5 || y > 5` bounds and the war-rules 'if the adjacent sector is blocked' rule. Also L-world-exploration: this is the sector-navigation UI.",
-  "ledger_text": "\u2461 War-Room **map topology** (board/adjacency)",
-  "overturns_ledger": true,
-  "quote": "Visibly on screen: a bordered map panel with top header row '0 1 2 3 4 5' and left column '0 1 2 3 4 5', N top / E right / S bottom / W left, white line segments between cells marking open vs walled exits, two arch glyphs on the top row and a third at (1,2), an X at (4,2), a white player arrow with exit chevron at (4,4); beneath the panel 'TERRITORY (21,51)' / 'SECTOR (5,4)'.",
-  "text": "The 6x6 sector board IS photographed: the overworld HUD minimap in the second longplay draws the whole board with axis labels 0-5 on both axes, N/E/S/W compass letters and the wall segments that encode blocked vs open adjacency.",
   "verdict": "HELD"
  }
 ]

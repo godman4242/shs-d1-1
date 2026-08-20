@@ -1,6 +1,222 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:80,82,86 + InputManager.as:342-343, 472-478; desktop confirm reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:104,106",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/slash-units-are-800x480-stage",
+  "lane_impact": "combat-core blocker \u2460: the recovered 120..255 base slash values are 800x480 stage units. Anyone measuring blade span in a 1080p frame must divide by the frame-to-stage factor (~2.25-2.4) first, or the number comes out ~2.3x too large.",
+  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale)",
+  "overturns_ledger": false,
+  "quote": "StatsManager.as:80  public static var stageWidth:int = 800;\nStatsManager.as:82  public static var stageHeight:int = 480;\nInputManager.as:342 mouseX = (stageMC.mouseX - StatsManager.stageOffsetX) / StatsManager.stageScale;",
+  "text": "Slash length is denominated in the 800x480 logical stage, not screen or video-frame pixels: the slash budget is consumed in unscaled stage coordinates and stageScale is re-applied only when drawing.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3160-3171",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/stance-change-costs-48-meter",
+  "lane_impact": "combat-core: stance switching is not free. Combined with the crit rule above, switching stance while at full meter throws away the crit - a real tactical constraint the current model has no representation for.",
+  "ledger_text": "\u2464 Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
+  "overturns_ledger": false,
+  "quote": "if(\u00a71t1525s0\u00a7.\u00a71t9948s0\u00a7()) { this.\u00a71t4414s0\u00a7 -= 48; if(this.\u00a71t4414s0\u00a7 < 0) { this.\u00a71t4414s0\u00a7 = 0; }",
+  "text": "Changing stance costs a flat 48 off the slash meter in v0.717, and only in battle - a cost that appears in no ledger system.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/session11/crit-focus/{t1081.100,t1004.800,t1082.100,t1082.900,t1083.100,t3779.000}.png \u2014 crop (230,1015)-(530,1050) upscaled 4x NEAREST, six-tile contact sheet",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/stance-label-is-a-frame-clock",
+  "lane_impact": "L5 + L8 \u2014 a free, reusable frame-side probe of the reload meter: the label boundary pins the gate to the SAME constant as the display offset (48), which is the web rule, not android's maxreload/6 = 20. Future build-parity questions about the meter can be settled from this overlay alone.",
+  "overturns_ledger": false,
+  "quote": "Visible in the crop, top to bottom: sliver fill / no label; ~21% fill / no label; ~35% fill / no label; EMPTY bar with 'CANNOT CHANGE STANCE' printed across it; ~12.5% fill / no label; ~46% fill / no label.",
+  "text": "The 'CANNOT CHANGE STANCE' overlay is an on-frame readout of the reload gate: absent at 4.2%, 12.5%, 21.3%, 35.0% and 46.4% fill, and back the instant a slash lands \u2014 t1082.900 shows 35% with no label, t1083.100 (0.200 s later) shows an empty bar with the label on.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3687-3720, read in full",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/stance-triangle-1.2-and-damage-order",
+  "lane_impact": "combat-core: a stance rock-paper-scissors multiplier of exactly 1.2 with a white damage-popup colour (0xFFFFFF, set only when controlledBy != 0) and a defined order of operations. The surveyor extracted the x1.5 from this same block but not the x1.2 or the ordering, and the ordering is what makes the two multipliers non-commutative with the defense subtraction.",
+  "overturns_ledger": false,
+  "quote": "if(this.stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE || this.stance == BALANCED_STANCE && enemyStance == HEAVY_STANCE || this.stance == HEAVY_STANCE && enemyStance == LIGHT_STANCE) { damage *= 1.2; if(this.controlledBy != 0) { damagetextcol = 16777215; } } damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); } if(behead) { damage *= 1.5; }",
+  "text": "MCSPlayer's damage pipeline holds an unreported stance-triangle x1.2 (LIGHT beats BALANCED beats HEAVY beats LIGHT) and a strict evaluation ORDER: stance x1.2, then minus defense, then clamp to the Damage object's minDamage, then x1.5 if behead.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3788-3799 (web); reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3704 (android, x1.2 only)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/stance-triangle-damage-magnitudes",
+  "lane_impact": "L5 + L4 \u2014 STANCE_BEATS gets its magnitudes (+20% favourable, -10% unfavourable, applied BEFORE defence subtraction and before the behead x1.5); the x0.9 branch is web-only and must not be dropped when porting from the android read.",
+  "overturns_ledger": false,
+  "quote": "if(this.stance == \u00a71t12220s0\u00a7 && _loc11_ == \u00a71t12221s0\u00a7 || this.stance == \u00a71t12221s0\u00a7 && _loc11_ == \u00a71t12222s0\u00a7 || this.stance == \u00a71t12222s0\u00a7 && _loc11_ == \u00a71t12220s0\u00a7) { _loc5_ *= 1.2; ... } else if(this.stance == \u00a71t12220s0\u00a7 && _loc11_ == \u00a71t12222s0\u00a7 || this.stance == \u00a71t12221s0\u00a7 && _loc11_ == \u00a71t12220s0\u00a7 || this.stance == \u00a71t12222s0\u00a7 && _loc11_ == \u00a71t12221s0\u00a7) { _loc5_ *= 0.9; }",
+  "text": "The stance counter-triangle is a damage multiplier in code, not just tutorial copy: the victim takes x1.2 when the attacker's stance beats theirs, and the web build additionally applies x0.9 when the attacker's stance loses.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3699-3706",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/stance-triangle-is-1p2",
+  "lane_impact": "combat-core: the damage pipeline in one order \u2014 stance triangle x1.2, then subtract defense, then clamp to damageObj.getMinDamage(), then behead x1.5, then add the four elemental damages. Three distinct multipliers exist (stance 1.2, behead 1.5, BUFF_ATTACK 150%) and the ledger conflates none of them because it holds none of them.",
+  "overturns_ledger": false,
+  "quote": "`if(this.stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE || this.stance == BALANCED_STANCE && enemyStance == HEAVY_STANCE || this.stance == HEAVY_STANCE && enemyStance == LIGHT_STANCE) { damage *= 1.2; if(this.controlledBy != 0) { damagetextcol = 16777215; } }`",
+  "text": "The stance rock-paper-scissors multiplier is x1.2, not x1.5, and a stance-advantage hit also recolours the damage popup to white.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/session11/stance-reach/B_t862.600_HEAVY_bold-bright-red-head-only.png and B_t862.667_HEAVY_thin-dark-tail-plus-bold-head.png, both crop (400,690)-(1020,820) LANCZOS x3",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/stroke-render-frame-confirmed",
+  "lane_impact": "L5 + L8 \u2014 the stroke renderer can be built and gated today with no remaining unknowns, and any reach number expressed in screen px converts at exactly 2.25. Also re-classes combat-core/reach-is-arclength from A2 to A2+A1.",
+  "overturns_ledger": false,
+  "quote": "t862.600 shows one BOLD red segment over the enemy (\u2248x 840-940) and no tail; t862.667, 67 ms later at the identical crop, shows that same bold segment PLUS a thin red line now extending left across the whole crop. Red-pixel column heights along the stroke: x=460 2px, x=540 5px, x=780 4px, x=900 13px, x=940 18px. Modal stroke colour (150,0,0); 10027008 = 0x990000 = (153,0,0). 18 px \u00f7 8 world units = 2.25 px/unit = 1080/480.",
+  "text": "The drawn-stroke render is settled on frames, not just in code: thickness 8 world units (measured 18 screen px), colour 0x990000 (measured modal (150,0,0)), tapering from the START of the stroke to a point at the end \u2014 which also pins the world\u2192screen scale at 2.25 px/unit and so confirms the 800\u00d7480 world.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decrypted/shs3_payload_decoded.swf (CWS v17, framerate 24.0, stage 800.0x690.0) and reference/decrypted/shs3_android_payload_decoded.swf (CWS v26, framerate 24.0, stage 800.0x480.0); world space at reference/decompiled/shs3_android/scripts/StatsManager.as:80-82",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "combat-core/two-builds-differ-in-stage-height",
+  "lane_impact": "L5 + L8 + L6 \u2014 gives the px<->world-unit scale (2.26-2.27) needed to grade ANY reach/stroke/hitbox measurement off the 1080p longplays, and warns that the 690 in the web SWF header is chrome, not playfield. My own stroke measurement on that frame (416->971 = 555 px = 245 world units) is the first reach figure in the lane with a stated scale.",
+  "overturns_ledger": false,
+  "quote": "StatsManager.as:80 `public static var stageWidth:int = 800;` \u00b7 :82 `public static var stageHeight:int = 480;` \u2014 and the frame: the game viewport in reference/frames/session11/stance-reach/B_t785.200_LIGHT_stroke553px_endtoend.png measures x=52..1867 (1816 px) at 1080 px tall = 5:3, i.e. 2.27 screen px per world unit.",
+  "text": "Both SWF headers run at 24.000 fps, but the web payload declares an 800x690 stage against the android build's 800x480 \u2014 the 800x480 world space the reach unit lives in is established by StatsManager (stageWidth 800 / stageHeight 480) and confirmed on-frame by the 5:3 game viewport, not by the SWF header.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3274",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/web-crit-is-flat-1.3",
+  "lane_impact": "L5 \u2014 crit = 1.3x + flat gear term, applied after the stance damage curve, gated on a full meter. The x3 candidate is dead. src/config/combat.ts's 1.3 coefficient was right; only its application to the legacy 1.17/1.56/1.82 dmgMults needs replacing with the mastery curves.",
+  "ledger_text": "(2) crit 1.3 vs 3 final \u2014 *read one crit popup.*",
+  "overturns_ledger": false,
+  "quote": "if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7; } return _loc2_;",
+  "text": "Ledger blocker (2) resolves to 1.3: in v0.717 a full-meter slash multiplies damage by a flat 1.3 in EVERY stance and adds the STAT_CRITICALDMG gear term \u2014 there is no light/non-light split.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 and :1205; display mapping reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:328",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/web-focus-economy",
+  "lane_impact": "L5 + L8 \u2014 build focusMax 192, hidden offset 48, visible span 144 frames = 6.000 s at 24fps. Use 6.000 s CONTRACT-SRC, not the 5.8 s frame estimate. This also independently reconfirms docs/research/fidelity/SOURCE_CONSTANTS.md \u00a73.2, which the survey overwrote with android numbers.",
+  "ledger_text": "(5) Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
+  "overturns_ledger": false,
+  "quote": "this.\u00a71t4415s0\u00a7 = 8 * 24;   ///   if(this.\u00a71t4414s0\u00a7 < this.\u00a71t4415s0\u00a7) { ++this.\u00a71t4414s0\u00a7; ... }   ///   var _loc3_:Number = (param1 - 48) / (param2 - 48);",
+  "text": "The v0.717 Focus/crit meter is 192 points (8x24) filling +1/frame, displayed as (reload-48)/(maxreload-48) so the first 48 points are invisible \u2014 giving exactly 144 visible frames = 6.000 s, which matches the frame measurement of ~5.8-5.97 s and leaves no doc-vs-frame conflict.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3804-3807; flag declared at \u00a71t67s0\u00a7.as:52 and \u00a71t68s0\u00a7.as:62",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/web-only-1.3-state-multiplier",
+  "lane_impact": "L5 \u2014 a state-gated +30% damage-taken multiplier exists in the shipped build and no ledger system records it. The boolean itself is not yet identified (set/cleared across EnemyClone/EnemyPlayer/boss classes; a downed-or-launched juggle state is the likely reading). Flagged as a LEAD, not a closed constant.",
+  "overturns_ledger": false,
+  "quote": "_loc5_ -= this.\u00a71t4477s0\u00a7(); if(_loc5_ < param2.\u00a71t1088s0\u00a7()) { _loc5_ = param2.\u00a71t1088s0\u00a7(); } if(\u00a71t1071s0\u00a7) { _loc5_ *= 1.3; }",
+  "text": "The web build has a fifth damage term with no android counterpart: a boolean character-state flag that multiplies incoming damage by 1.3 after the min-damage floor.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/ \u2014 1,079 .as files; worked example \u00a71t1523s0\u00a7.as:2346-2347",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/web-payload-as3-is-readable",
+  "lane_impact": "L5 + every lane that deferred to 'the web AS3 is obfuscated' \u2014 the android-vs-web caveat stops being a blanket blocker and becomes a per-constant diff that can be run today.",
+  "overturns_ledger": false,
+  "quote": "internal static function \u00a71t9593s0\u00a7(param1:int) : int { var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1))); }",
+  "text": "The web v0.717 payload is fully decompiled and readable in this repo \u2014 1,079 .as files with renamed identifiers but every numeric literal and control-flow structure intact \u2014 so the whole lane can and must be re-read against the build actually being recreated.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/ (1,079 .as files); \u00a71t1523s0\u00a7.as:36 = 0.717; reference/decompiled/shs3_android/scripts/StatsManager.as:30 = 0.682; docs/research/fidelity/SOURCE_CONSTANTS.md (515 lines, 2026-07-25)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/web-payload-is-cross-readable",
+  "lane_impact": "L5 + every other lane citing shs3_android \u2014 the correct protocol is: read v0.682 for structure, then confirm each constant in shs3_payload by literal shape before it becomes CONTRACT. Nine of this unit's twenty claims cite v0.682 numbers that were never checked against the target build.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t1523s0\u00a7.as:36  public static var \u00a71t9323s0\u00a7:Number = 0.717;   ///   StatsManager.as:30  public static var clientVersion:Number = 0.682;   ///   DIVERGENCES.md: 'BUILD IDENTIFIED: v0.717 \u2026 The android payload is 0.682 \u2014 an earlier build despite a newer SWF container; its four data tables are therefore tagged CONTRACT-SRC (0.682) and must never be quoted as 0.717.'",
+  "text": "The web v0.717 AS3 is fully cross-readable \u2014 1,079 decompiled .as files with obfuscated names but plain bodies \u2014 so the build-parity question the survey filed as STILL_UNHELD is answerable in minutes by numeric-literal grep, and was already answered in-repo three weeks ago.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:6 (1,079 .as files under that directory; docs/research/fidelity/SOURCE_CONSTANTS.md:1-6)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/web-payload-is-readable",
+  "lane_impact": "L5 \u2014 kills the lane's blanket CONTRACT-SRC-v0.682 labelling requirement. Every constant below can be graded against the shipped build today; nothing in combat-core needs to wait on a parity study.",
+  "overturns_ledger": false,
+  "quote": "public class \u00a71t99s0\u00a7 extends \u00a71t68s0\u00a7   ///   SOURCE_CONSTANTS.md: \"Status: CRACKED AND MINED (2026-07-25). ... Build identified as v0.717 \u2014 the same build our video measurements came from. 189 constants extracted\"",
+  "text": "The web v0.717 payload is fully decompiled and cross-readable on disk \u2014 1,079 .as files with mangled identifiers but plain AS3 bodies \u2014 so every combat constant in this lane can and must be verified against it rather than against the android build.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116-3120",
   "citelint": {
    "notes": [],
@@ -535,232 +751,6 @@
   "overturns_ledger": false,
   "quote": "Visibly in the crop: a black floating numeral \"1\" rising above the player, immediately left of the gold GUEST label, while the player swings a pickaxe and a red slash trail plus blood spray marks a killed archer to the right. In the HUD strip the green bar reads 20/20 at frames 0013, 0016 and 0017, then 19/20 at frame 0018 -- the exact frame carrying the floating \"1\" -- then 18/20 at 0019 and 0020. Blue chi stays 15/15 throughout.",
   "text": "Floating black damage numerals are a real HUD element the ledger and the surveyor both miss, and a web-build v0.717 frame measures a level-4 Bandit's damage at exactly 1 -- the first frame-side corroboration of NPC.as:253's lvl<=10 clamp.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (own regex dump of all 158 <anim> names + durations)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/light-stance-has-no-telegraph",
-  "lane_impact": "L0 enemies-ai + combat-core + art-anim: a rebuild that assumes 3 parts per attack invents a telegraph for the light stance that the original does not have -- the 3-frame single anim IS the mechanical reason light stance reads as instant. Port the part counts per move from the anim table, never from a rule.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": false,
-  "quote": "'lighthorizontalslash' d=3 (no _parta/_partb/_partc siblings anywhere in the 158 names)  \u00b7  'balancedjumpslash_parta','_partb','_partc','_partd','_parte'  \u00b7  'heavyjumpslash_parta'..'_parte'  \u00b7  'lightjumpslash_parta','_partb','_partc'  \u00b7  vs 'heavyhorizontalslash_parta' d=6 / '_partb' d=9 l=1 / '_partc' d=7",
-  "text": "The three-part telegraph/active/recovery structure is per-move, not universal: lighthorizontalslash is a SINGLE 3-frame animation with no parts and therefore no telegraph phase at all, while the jump slashes ship five parts (parta..parte).",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/zFtCaTO0_1M/seg-18/frames/frame_0006.jpg -- crop (230,320)->(470,400) LANCZOS x6; peak-saturation sampling on seg-18 f0006, seg-10 f0013; + reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:78,81, MCSPlayer.as:245, Obj_NPCProcGen.as:51,60, EnemyElite.as:26,114, EnemyKanjiGuardian.as:59, EnemyClone.as:81",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "enemies-ai/nameplate-colour-system-is-five-colours",
-  "lane_impact": "L0 enemies-ai + ui-hud. Claim 2's 'hostile red / player gold' would have a recreation paint townsfolk hostile-red. The real rule is five-way: #990000 aggro hostile, #FFCC00 player, #0099FF procgen civilian, #FFFFFF elite/boss, #C0AC4B quest-marked. Also a second independent web/Android parity corroboration -- v0.717 frames match v0.682 constants to within JPEG error.",
-  "ledger_text": "nameplate (N)=level",
-  "overturns_ledger": false,
-  "quote": "Visibly in the seg-18 crop: two overlapping BLUE all-caps nameplates reading \"KAWASHI I...\" and \"...SUGU\" flanking a gold \"GUEST\", above two robed townsfolk outside a shop front. Measured peak-saturation pixels: blue #1A97F4 (AS3 constant 39423 = #0099FF), red BANDIT plate #8A0300 (constant 10027008 = #990000), gold GUEST #EDC728 (constant 16763904 = #FFCC00). Code adds white #FFFFFF (16777215) for elite/boss/clone/PvP and #C0AC4B (12627019) for quest-marked civilians.",
-  "text": "The nameplate colour rule is five colours, not the two claim 2 offers, and three of them are confirmed frame-side -- which independently corroborates web/Android parity on the UI constants.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:1419-1447 and :1533-1556; NPC.as:1182-1194; Obj_NPCAggro.as:74-82; Obj_NPCProcGen.as:49-51",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/nameplate-healthbar-coupling-and-60px-bar",
-  "lane_impact": "L0 enemies-ai + ui-hud. This is the mechanism behind both frames, and it is not the 'mode switch' claim 3 asserts: wave trash never has setDisplayName called, so text stays \"\" and showHealthBar's guard leaves the plate hidden; overworld roamers call hideHealthBar then setDisplayName, giving name-and-no-bar. Also supplies the 60 px full-width bar and the +10 px vertical offset when no bar is present -- both needed to lay the widget out correctly.",
-  "ledger_text": "nameplate (N)=level",
-  "overturns_ledger": false,
-  "quote": "public function showHealthBar() : * { addChild(this.healthBar); this.healthBar.visible = true; if(this.displayName.text != \"\") { this.displayName.visible = true; } if(this.displayName.y > this.healthBar.y) { this.displayName.y = this.healthBar.y; } }  ...  public function hideHealthBar() : * { this.healthBar.visible = false; this.displayName.visible = false; }  ...  public function updateHealthBar(fraction:Number) : * { if(fraction > 1) { fraction = 1; } this.healthBar.bar.width = fraction * 60; }  ...  setDisplayName: if(this.healthBar.visible) { this.displayName.y = this.healthBar.y; } else { this.displayName.y = this.healthBar.y + 10; }",
-  "text": "The nameplate and health bar are one coupled widget gated on the name STRING, not a combat mode -- and the enemy HP bar is 60 px wide at full health, a hard number in no claim and no ledger row.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:34-37,62,73-80 + NPCManager.as:671",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/nameplate-is-cosmetic-override",
-  "lane_impact": "L0 enemies-ai + ui-hud: refutes the surveyor's 'frame wins over npcdata, therefore HP 1' chain. There is no frame-vs-doc conflict - the level is authored per placement. Also code-holds the plate colour as 10027008 (0x990000, dark red), which the ledger omits.",
-  "ledger_text": "nameplate (N)=level",
-  "overturns_ledger": false,
-  "quote": "if(strArray.length >= 2) { this.lvl = strArray[1]; } ... this.npc = NPCManager.createRoomNPC(this.npcid,posX,posY,doChase); ... this.npc.mcs.hideHealthBar(); if(this.lvl == 0) { this.npc.mcs.setDisplayName(this.npcname,10027008); } else { this.npc.mcs.setDisplayName(this.npcname + \" (\" + this.lvl + \")\",10027008); }  \u00b7  NPCManager.as:671 public static function createRoomNPC(npcID:int, x:int, y:int, doChase:Boolean = false) : NPC",
-  "text": "The overworld nameplate's parenthesised level is a cosmetic per-placement display string read from the room-object property, not a stat: it never reaches setLevel(), so the enemy keeps its authored npcdata statline.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (my own parse of all 158 <anim> blocks)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/part-decomposition-is-variable",
-  "lane_impact": "L0 enemies-ai + art-anim: corrects the surveyor's 'every stance attack ships as three named parts'. A port following that rule would invent a three-phase light-stance slash and three-phase katana/stab attacks that do not exist. The durations themselves are authored and correct - it is the generalisation that fails.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": false,
-  "quote": "families using _part: heavyhorizontalslash 3, balancedhorizontalslash 3, balancedfallslash 3, heavyfallslash 3, jumpunsheathed 3, jumpsheathed 3, lightjumpslash 3, gotlaunchedupwards 3, balancedjumpslash 5, heavyjumpslash 5, punchcombo 4, jutsu_ground 2, jutsu_punch 2, jutsu_blow 2, stomp 2, punchground 2  \u00b7  NO parts: lighthorizontalslash 3, downstab 15, stabattack 14, katanaattack 10, downstab_up 10, holdshieldstabattack 10, ninjaslash 8",
-  "text": "The parta/partb/partc attack decomposition is neither universal nor uniformly three-part: only 16 of 158 human anim families use it, with 2, 3, 4 or 5 parts, and most attacks have no decomposition at all.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (parsed: 158 <anim> blocks)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/part-specific-death-animations",
-  "lane_impact": "L0 enemies-ai + art-anim: the survey establishes the behead DAMAGE rule (NPC.as x1.5, EnemyZombie half-unless-behead) but never connects it to the authored dismemberment ART. deathnohead is the behead death, deathnohand the disarm death, deathinhalf the bisection death \u2014 all with frame durations. A recreation that plays one generic death clip loses a visibly authored feature.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": false,
-  "quote": "death d=38 \u00b7 deathenemy d=23 \u00b7 deathnohand d=25 \u00b7 deathnohead d=31 \u00b7 deathwitharrow d=23 \u00b7 deathbyarrow d=21 \u00b7 deathinhalf d=28 \u00b7 deathdowned d=7",
-  "text": "Death animation is part-specific, not a single clip: the human anim set ships deathnohead, deathnohand, deathinhalf, deathwitharrow and deathbyarrow alongside plain death \u2014 the visual half of the behead x1.5 and zombie head-gate mechanics.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:38-41,73-80 vs NPCManager.as:869-882 (createEnemy)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/readout-split-is-two-spawn-paths",
-  "lane_impact": "L0 ui-hud + enemies-ai: model it as two spawn paths, not one HUD that toggles. The aggro object carries its own waveXML, so on trigger the billboard enemy is replaced by a real wave - which is exactly what the seg-10 0013->0021 footage shows.",
-  "ledger_text": "nameplate (N)=level",
-  "overturns_ledger": false,
-  "quote": "Obj_NPCAggro.as:73 this.npc.mcs.hideHealthBar();  \u00b7  :38-41 if(strArray.length >= 3) { this.waveXML = new XMLList(strArray[2]); }  \u00b7  NPCManager.as:869 public static function createEnemy(npcID:int, x:int, y:int, fatal:Boolean, lvl:int = 0) : NPC { var actor:NPC = createNPC(npcID,x,y,fatal); ... enemyList.push(actor); if(lvl != 0) { actor.setLevel(lvl); }",
-  "text": "The nameplate-vs-HP-bar split is not a HUD mode switch but two different spawn paths: overworld Obj_NPCAggro roamers get hideHealthBar() plus a permanent display name, while wave-spawned combat NPCs get the inverse - a bar and no name.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "docs/gauntlet/L0/index/resolved_names.json \u2192 npcdata.xml.resolved (484 rows): '67' {'name':'Wolf'}, '77' {'name':'Oni'}, '89' {'name':'Undead'}, '11' {'name':'Bandit'}, '144' {'name':'Hiroshi'}, '165' {'name':'Tadao'}, '186' {'name':'Amaya'}, '800' {'name':'Mad Cultist'}, '802' {'name':'Guardian'}",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "enemies-ai/roster-display-names-differ-from-class-names",
-  "lane_impact": "L0 enemies-ai + ui-hud: the OG's nameplate prints the string-table name, not the class name \u2014 proved by the seg-10 frame in claim 2, where npc 11 renders as \"BANDIT (4)\". Any roster table for the recreation must be keyed on resolved_names.json, with the class name used only as the behaviour selector. Cheap to fix now, expensive after the nameplate ships.",
-  "ledger_text": "boss roster",
-  "overturns_ledger": false,
-  "quote": "npcdata.xml:1844-1849 `<npc><id>67</id><name>5056</name><lvl>15</lvl><hp>100</hp><ai>11</ai>` \u2192 5056 resolves to \"Wolf\", while ai 11 = `new EnemyWolfAlpha()` (NPCManager.as:559-561). Same split at id 77 (\"Oni\", ai 23 = EnemyOgre) and id 89 (\"Undead\", ai 26 = EnemyZombie).",
-  "text": "Three roster entries the survey names after their AI class carry different display names in the shipped string table \u2014 npc 67 is \"Wolf\" (not Wolf Alpha), npc 77 is \"Oni\" (not Ogre), npc 89 is \"Undead\" (not Zombie) \u2014 which matters because the nameplate displays this string.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NPCManager.as:671-700 (contrast the switch at :516-636)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/second-ai-dispatch",
-  "lane_impact": "L0 enemies-ai: a recreation that models only the 38-case switch misses the overworld branch entirely. Also corrects the class arithmetic: 38 cases resolve to 34 DISTINCT classes (31 Enemy* + 3 Friendly*), because EnemyPlayer appears 3x and EnemyWolf/EnemySpearElite 2x each.",
-  "ledger_text": "full taxonomy (Humans/Undead/Oni/Animals + Tengu/Guardian) with movesets incl. the archer (closed this pass); boss roster",
-  "overturns_ledger": false,
-  "quote": "public static function createRoomNPC(npcID:int, x:int, y:int, doChase:Boolean = false) : NPC { ... var xml:XMLNpc = QuestEngine.getNPCData(npcID); ... if(xml.ai == 8) { actor = new EnemyWolf(); } else if(xml.ai == 11 || xml.ai == 16) { actor = new EnemyWolfAlpha(); } else if(xml.ai == 12) {",
-  "text": "The <ai> field is resolved by two independent dispatch tables, not one: NPCManager.createRoomNPC has its own if/else chain distinct from the 38-case createNPC switch, and it is the path every overworld enemy takes.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemySpearElite.as:32-70 + EnemyPlayer.as:777-790 (full list from `grep -rln \"override public function setLevel\"`: EnemySpearElite, EnemyPlayer, EnemyElite, EnemyOgre, EnemyWolfAlpha, EnemyStag, EnemyKanjiGuardian, EnemyTrainingDummy, FriendlyArcher, FriendlyElite, FriendlySpearElite)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/setlevel-is-plural",
-  "lane_impact": "L0 enemies-ai: blocker (1) still dies, but the port needs the base formula PLUS 11 overrides. Bosses are not 0.9-scaled, are never clamped to 1 HP, give xp = lvl*5 + 45, and run a hitsToKillBoss/hitsToKillPlayer solve against the live player's stats \u2014 a whole balancing routine the claim does not mention. Also: setLevel only fires when a <lvl> override is supplied (NPCManager.as:877-880 gates it `if(lvl != 0)`), so the ordinary spawn path uses the authored statline unrescaled.",
-  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
-  "overturns_ledger": false,
-  "quote": "EnemySpearElite.as:47-66 \u2014 if(!this.isBoss) { super.setLevel(lvl); } else { factor = lvl / level; level = lvl; damage *= factor; defense *= factor; maxhp *= factor; setHP(maxhp); updateHealthBar(); if(this.isBoss) { xp = lvl * 5 + 45; namecolor = 16777215; } else { xp = lvl * 2 + 20; } ... }  \u00b7  EnemyPlayer.as:781-790 \u2014 if(this.isBoss && level > 70) { minDamage *= 1.25; maxhp *= 1.25; setHP(maxhp); } else if(this.isBoss && level > 50) { minDamage *= 1.2; maxhp *= 1.2; ...",
-  "text": "There is no single enemy level-to-stat formula: 11 classes override NPC.setLevel(), and the boss branch drops both the x0.9 factor and the level-10 clamp and awards a different XP curve.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t4542s0\u00a7.as:287-299 (contrast reference/decompiled/shs3_android/scripts/EnemyArcher.as:277-281)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/web-archer-halves-gravity-on-knockdown",
-  "lane_impact": "L0 enemies-ai: the first PROVEN v0.682-vs-v0.717 behavioural divergence. It lands inside the very claim the survey marked HELD, and it vindicates the parity caveat while showing the risk is specific and fixable rather than diffuse. Port the web value: gravity 3 normally, 1.5 on knockdown shots.",
-  "overturns_ledger": false,
-  "quote": "var _loc6_:Number = \u00a71t128s0\u00a7.\u00a71t12543s0\u00a7; if(_loc1_) { _loc6_ = 1.5; } var _loc7_:Number = _loc6_ * Math.abs(_loc4_ - _loc2_) / 0.866; _loc7_ = Math.sqrt(_loc7_); var _loc8_:Number = _loc7_ * 0.866; var _loc9_:Number = Math.abs(_loc4_ - _loc2_) / _loc8_; var _loc10_:Number = (_loc5_ - _loc3_ - 0.5 * _loc6_ * _loc9_ * _loc9_) / _loc9_;   \u00b7   ANDROID has no override: var velA:Number = Projectile.GRAVITY * Math.abs(targetX - fireX) / 0.866;",
-  "text": "The web v0.717 archer overrides the ballistic gravity term from 3 to 1.5 for shots that rolled a knockdown, producing a flatter, faster arc \u2014 a branch that does not exist in the Android v0.682 build.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:14,16,26,28,258-278,483",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/web-gameplay-code-is-obfuscated-not-absent",
-  "lane_impact": "L0 enemies-ai and every lane that deferred to 'v0.682-ANDROID only'. The surveyor's non-recursive `ls | grep -ci enemy\\|npc` returned 0 because symbols were renamed, not because the code is missing. Any lane that capped its score on 'web parity unestablished' should re-check against the obfuscated bundle: numeric literals and standard-library calls survive obfuscation intact.",
-  "overturns_ledger": false,
-  "quote": "public function setLevel(param1:int) : * { var _loc2_:Number = param1 / this.level; if(param1 <= 20) { _loc2_ *= 0.9; } this.level = param1; this.damage *= _loc2_; this.defense *= _loc2_; this.\u00a71t3257s0\u00a7 *= _loc2_; ... this.xp = param1 * 2 + 20; if(param1 <= 10) { this.damage = 1; this.defense = 1; this.\u00a71t3257s0\u00a7 = 1; ... } }  \u00b7  :26 internal var \u00a71t3244s0\u00a7:int = 24;  \u00b7  :483 this.\u00a71t3246s0\u00a7 = 12;  \u00b7  :14 damage:int = 10  :16 defense:int = 1  :28 \u00a71t3247s0\u00a7:int = 96",
-  "text": "The web v0.717 gameplay code is on disk as 612 symbol-obfuscated \u00a71tNNNsN\u00a7 classes; \u00a71t68s0\u00a7.as is the web NPC class and eight enemy-behaviour constants are byte-equivalent to the Android decompile, so build parity is directly checkable rather than unestablished.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:36 (plus `find reference/decompiled/shs3_payload -name \"\u00a7*\" -type f | wc -l` \u2192 667; scripts/\u00a71t51s0\u00a7/ is an obfuscated package dir)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "enemies-ai/web-payload-is-obfuscated-not-absent",
-  "lane_impact": "L0 enemies-ai and every lane that cites the Android decompile: the survey's dominant residual risk is mis-framed. Web parity is NOT unestablishable \u2014 it is a name-recovery job on 667 obfuscated classes with at least one anchor constant already matched (0.717 \u2194 0.682, same slot). That is schedulable verification work and should be opened as a lane, rather than treating AS3-sourced numbers as permanently un-CONTRACT-able. The caution itself still stands: keep labelling ported values v0.682-ANDROID until the mapping is done.",
-  "overturns_ledger": false,
-  "quote": "\u00a71t1523s0\u00a7.as:36 `public static var \u00a71t9323s0\u00a7:Number = 0.717;` followed at :38 by `public static var \u00a71t9324s0\u00a7:int = 80;` \u2014 compare reference/decompiled/shs3_android/scripts/StatsManager.as:30 `public static var clientVersion:Number = 0.682;`",
-  "text": "The web v0.717 build's gameplay code is present on disk under obfuscated identifiers, not missing: 667 \u00a71t\u2026s0\u00a7-named files, with the version constant at \u00a71t1523s0\u00a7.as:36 in the same structural slot Android's StatsManager.as:30 holds 0.682 \u2014 so \u00a71t1523s0\u00a7 is the web StatsManager and a name mapping between the two decompiles is achievable.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:22,122,128,237,258-278,483",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/web-payload-is-obfuscated-not-empty",
-  "lane_impact": "L0 enemies-ai, and every lane that has ever written off the web payload: the correct standing caveat is NOT 'label everything v0.682-ANDROID' but 'diff the obfuscated shs3_payload class before stamping CONTRACT \u2014 public method names survive obfuscation, so grep for the METHOD, not the class'. Removes the surveyor's stated dominant residual risk and the reason it capped at 78.",
-  "overturns_ledger": false,
-  "quote": "public function setLevel(param1:int) : * { var _loc2_:Number = param1 / this.level; if(param1 <= 20) { _loc2_ *= 0.9; } this.level = param1; this.damage *= _loc2_; this.defense *= _loc2_; this.\u00a71t3257s0\u00a7 *= _loc2_; ... this.xp = param1 * 2 + 20; if(param1 <= 10) { this.damage = 1; this.defense = 1; this.\u00a71t3257s0\u00a7 = 1; ... } }  \u00b7  :22 internal var \u00a71t3244s0\u00a7:int = 24;  \u00b7  :483 this.\u00a71t3246s0\u00a7 = 12;  \u00b7  :122 return _loc1_ - Math.floor(_loc1_ / 10) - 5;  \u00b7  :237 this.xp = this.level * 2 + 20;",
-  "text": "The web v0.717 payload decompile is fully present but NAME-OBFUSCATED \u2014 \u00a71t68s0\u00a7.as is NPC.as, and every headline enemies-ai constant is identical to the Android v0.682 build, so build parity is ESTABLISHED rather than open.",
   "verdict": "HELD"
  }
 ]

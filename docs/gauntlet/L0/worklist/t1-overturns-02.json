@@ -1,5 +1,69 @@
 [
  {
+  "artifact_class": "A3",
+  "cite": "my recursive DefineSprite/PlaceObject3 walker over reference/decrypted/shs3_payload_decoded.swf, reference/decrypted/shs3_android_payload_decoded.swf, and my decodes of 115_Mobile_SHS3Resource (k=104), 120_Mobile_BGResource (k=103), 124_Mobile_ImageResource (k=109)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/blend-modes-none-at-byte-level-web",
+  "lane_impact": "L6 art-anim-audio-feel: closes blocker \u2462 with the RIGHT kind of evidence. Flash stores authored blend modes in PlaceObject3, not in code, so the survey's AS3 grep could not have settled this; the byte scan can, and it also carries web parity the grep could not. Positive side-finding for the render budget: 263 sprites in the web payload DO carry filter lists and 54 use cacheAsBitmap.",
+  "ledger_text": "\u2462 FX **blend modes**;",
+  "overturns_ledger": true,
+  "quote": "shs3_payload_decoded.swf (WEB): sprites=827 PlaceObject3=304 withFilters=263 cacheAsBitmap=54 BLENDMODES={} \u00b7 shs3_android_payload_decoded.swf: sprites=675 PlaceObject3=248 withFilters=214 cacheAsBitmap=47 BLENDMODES={} \u00b7 115_Mobile_SHS3Resource: sprites=1949 PlaceObject3=12 BLENDMODES={} \u00b7 120_Mobile_BGResource: sprites=552 PlaceObject3=54 cacheAsBitmap=53 BLENDMODES={} \u00b7 124_Mobile_ImageResource: BLENDMODES={}",
+  "text": "'No blend modes' is provable at byte level and in the WEB build, not just by an AS3 grep: zero of 2,091 PlaceObject3 tags across the web payload, the android payload and all three decoded resource SWFs set the HasBlendMode flag.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "my recursive SWF tag scan of reference/decrypted/shs3_payload_decoded.swf: 827 DefineSprite, 7,196 PlaceObject2, 304 PlaceObject3, 0 with PlaceFlagHasBlendMode, 262 filter placements = 205 GlowFilter / 57 BlurFilter / 2 DropShadowFilter across 71 sprites",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/glow-filters-are-the-real-fx-answer",
+  "lane_impact": "art-anim-audio-feel: blocker \u2462 is closed correctly only as 'zero blend modes, 205 authored glows'. Also methodological \u2014 an ActionScript grep is the wrong instrument for a Flash compositing question, because blend modes and filters are authored into PlaceObject3, not code; the byte scan must be the cite. Cross-lane into ui-hud: at least one glow-bearing sprite is a named UI portrait.",
+  "ledger_text": "\u2462 FX **blend modes**;",
+  "overturns_ledger": true,
+  "quote": "sprites containing glow placements: 71  total glow placements: 203  \u00b7  sprite id 2250 glows 50 (anonymous) \u00b7 sprite id 3110 glows 47 \u00b7 sprite id 1624 glows 2 class: shs3_fla.InteractUI_chikako_portrait_610",
+  "text": "The shipped web payload authors 205 GlowFilter placements (plus 57 Blur and 2 DropShadow) in PlaceObject3 tags, so blocker \u2462's real answer is 'no blend modes, but glow everywhere' \u2014 not 'one class with ColorTransform + Blur + ColorMatrix'.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:1454-1465 and :1763-1768; EnemyShield.as:330-339; census of all 32 gotHitCounter assignments across reference/decompiled/shs3_android/scripts/*.as",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/hit-reaction-is-a-ladder",
+  "lane_impact": "L6 art-anim-audio-feel and L1 combat-core: reverses the survey's verdict. The recreation's 7/12/16-frame tint ladder is NOT an invention to be deleted \u2014 the original has its own ladder and it contains 12 and 16. The 84-tick (3.5 s) local-player redfreeze reaction and the shield's damage-nullifying PART_weapon/PART_prop cases are combat mechanics no ledger holds.",
+  "ledger_text": "hit-tint scaling (7/12/16f), death sword-detach, dash-snap, scarf physics, FINISHER_FLASH \u2014 all measured/authored but missing from the art digest \u00a75.",
+  "overturns_ledger": true,
+  "quote": "census: `12 x23 \u00b7 24 x2 \u00b7 16 x1 \u00b7 26 x1 \u00b7 84 x1 \u00b7 0 x3 \u00b7 -1 x1` \u00b7 MCSPlayer.as:1456-1465 `if(mcs.animation == DOWNSTAB) { gotHitCounter = 24; } else if(this.controlledBy == 0) { gotHitCounter = 84; } else { gotHitCounter = 12;` \u00b7 :1763-1768 `else if(prevActionState == SKILL_THOUSANDSTABS_STATE) { gotHitCounter = 26; } else if(prevActionState == SKILL_DEADLYCLEAVE_STATE) { gotHitCounter = 16; }` \u00b7 EnemyShield.as:331-339 `case mcs.partList[MCSCharacter.PART_weapon]: gotHitFlag = false; damage = 0; return false;` / `case mcs.partList[MCSCharacter.PART_prop]: ... damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal(); return false;`",
+  "text": "The hit-reaction window is not a single 12-tick number but a ladder of {12 default, 16, 24, 26, 84} plus 0/-1 sentinels, keyed on action state and body part \u2014 and hitting a shield enemy's weapon produces no reaction at all.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/bindata/116_1t4643s0.bin `heavy_horslash_parta` d=5 with 2 <f>; 118_1t4645s0.bin `light_horslash_parta` d=13 with 11 <f>; 108_1t4635s0.bin `heavyhorizontalslash_parta` d=6 with 4 <f>; reference/decompiled/shs3_android/scripts/AnimData.as:16-21 and MCSCharacter.as updateAnimation/updateFrame",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/hold-frames-are-authored-in-data",
+  "lane_impact": "L-art-anim-audio-feel: replaces both the ledger's '15fps pose latch' AND the surveyor's 'no hold frames in data' model. Correct model = 24 Hz playback over a sparse keyframe stream, with per-animation held ticks authored as @d minus len(<f>) and further code tails on top. Every slash recovery in a recreation depends on this table; it must be extracted per-animation before any motion work starts.",
+  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
+  "overturns_ledger": true,
+  "quote": "AnimData.as:16-21 `this.duration = xml.@d;` ... `var max:int = xml.f.length(); for(var i:int = 0; i < max; i++) { this.frameList.push(new FrameData(xml.f[i])); }`  \u00b7  MCSCharacter updateFrame `if(this.frameCounter < this.currentAnimation.frameList.length) { this.currentAnimation.frameList[this.frameCounter].setPosition(this); }`  \u00b7  measured: 96/385 rows with @d > len(<f>), incl. 23 in 108_1t4635s0.bin and 6 in 118_1t4645s0.bin",
+  "text": "Hold frames are authored in the animation DATA, not only injected by code: 96 of 385 <anim> rows across the 19 web-payload animdata blobs have @d greater than their <f> count, concentrated on the slash animations, and MCSCharacter.updateFrame's `if(frameCounter < frameList.length)` guard is what turns that gap into a latch on the last pose.",
+  "verdict": "HELD"
+ },
+ {
   "artifact_class": "A2",
   "cite": "reference/extracted/itemdata.xml:237-249 (item 2115) resolved through reference/extracted/android/118_Mobile_Lang_EN.bin; reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3703",
   "citelint": {
@@ -260,44 +324,64 @@
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/InputManager.as:51 + MCSPlayer.as:3030, 3041, 3052 (arithmetic over the two quoted lines, offered as a lead)",
+  "build": "both",
+  "cite": "reference/extracted/bindata/93_1t4647s0.bin:22-30 + reference/decompiled/shs3_android_payload/scripts/RoomGenNode.as:2437",
   "citelint": {
-   "notes": [],
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/bindata/93_1t4647s0.bin",
+    "QUOTE_NOT_LOCATED"
+   ],
    "problems": [],
-   "status": "RESOLVES"
+   "status": "QUOTE_UNVERIFIED"
   },
-  "id": "combat-core/300-200-100-is-base-not-ceiling",
-  "lane_impact": "combat-core L2: 300/200/100 should be re-labelled BASE (mastery 0) rather than ceiling. PARTIAL because it is arithmetic over two quoted lines, not a single line that states it, and because the v0.717 multipliers give 280/200/100 for the same base.",
-  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "id": "bindata/NEW-70th-trap-room-is-commented-out",
+  "lane_impact": "Corrects the room count in two separate claims and flags a dead engine branch that a reimplementation would otherwise waste time supporting.",
+  "ledger_text": "Trap-dungeon system ships 69 rooms across 4 tiers (easy 13 / medium 21 / hard 15 / veryhard 20) and 297 placed objects across 14 base object types. A 70th room exists only inside an XML comment.",
   "overturns_ledger": true,
-  "quote": "InputManager.as:51  internal static var maxDistance:int = 200;\nMCSPlayer.as:3030   this.slashLength = this.baseSlashLength * 1.5;   -> 300\nMCSPlayer.as:3041   ... * (1 + 0.5 * balancedMastery * 0.01) at mastery 0 -> 200\nMCSPlayer.as:3052   ... * (0.5 + 0.5 * heavyMastery * 0.01) at mastery 0 -> 100",
-  "text": "The wiki's 300/200/100 stance reach numbers reproduce exactly as the shipped default slash budget (200) times the mastery-ZERO multipliers {1.5, 1.0, 0.5}, which contradicts the ledger's reading of them as mastery-9 ceiling values.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session11/damage-ttk/t19*.png (18 frames), row-1032 crit-bar scan x\u2208[247,515]; plus t1961.900.png HUD crop (100,940)-(620,1080) LANCZOS x3",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/36-was-not-a-crit",
-  "lane_impact": "L5 \u2014 closes the 'crit 1.3' folklore from the frame side as well as the source side, and gives the next measurer a real crit-detection protocol: pair every popup value with the third bar's state in the same frame (full + 'CRITICAL HIT' = crit, anything else = roll).",
-  "ledger_text": "36/27 = 1.333 does match the forum-derived \"crit 1.3\"",
-  "overturns_ledger": true,
-  "quote": "bar_px = 0 (0%) on all 18 frames t1940.000 \u2026 t1979.000. The t1961.900 HUD crop reads green 10/20, blue 20/20, and the third bar showing 'CANNOT CHANGE STANCE' \u2014 i.e. reload < maxreload/6 (MCSPlayer.as:2977), so a crit was impossible. The red '36' popup lands on JINBEI (4) in that same frame.",
-  "text": "The repo's only numeric basis for 'crit 1.3' (red 36 vs 27 on the same target) is dead: the crit bar was EMPTY on every frame of that fight, so 27/30/36 is a random damage roll \u2014 frame proof of the RNG term in getDamage().",
+  "quote": "93_1t4647s0.bin:22 `<!--<default>` \u2026 :29 `</room>` :30 `</default>-->`, containing one <room> with four Trap_ElementAuto objects. RoomGenNode.as:2437 `if(QuestEngine.trapRoomData.\u00a7default\u00a7.toString() != \"\")` \u2014 the guard that reads it.",
+  "text": "The trap-dungeon file's 70th <room> is inside a commented-out <default> template block and is never shipped \u2014 the real count is 69, matching the per-tier split 13+21+15+20. The engine branch that would have consumed a live <default> is consequently dead code.",
   "verdict": "HELD"
  },
  {
-  "alternate_cites": [
-   "reference/decompiled/shs3_android/scripts/MCSPlayer.as:105, :182, :190 (the only three occurrences in the class) vs :1158-1160; StatsManager.as:1840-1843",
-   "reference/decompiled/shs3_android/scripts/MCSPlayer.as:105, :182, :190 and EnemyClone.as:49 \u2014 the only four occurrences of `baseReload` across all 553 files",
-   "reference/decompiled/shs3_android/scripts/StatsManager.as:1839-1842 and MCSPlayer.as:105, :182, :190; exhaustive grep over reference/decompiled/shs3_android/scripts/"
-  ],
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:105 and :190 (assignments only); exhaustive grep `grep -rni basereload reference/decompiled/shs3_android/scripts/ | grep -v \"var baseReload\\|this.baseReload = \\|baseReload:int\"` returns no rows",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/FrameData.as (setVisible)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/NEW-setvisible-partmax-22-leaves-5-slots-unhidden",
+  "lane_impact": "A faithful renderer must reproduce this or the shoulder/knee overlays will disappear where the original keeps them \u2014 a visible-feel difference that no test currently guards.",
+  "ledger_text": "Per-frame visibility resets only part slots 0-21; slots 22-26 (prop3, l/r shoulder, l/r knee) are never auto-hidden and carry over between frames.",
+  "overturns_ledger": true,
+  "quote": "`public function setVisible(mcs:MCSCharacter) : * { var i:int = 0; var partMax:int = 22; for(i = 0; i < partMax; i++) { mcs.getPart(i).visible = false; } \u2026 }` \u2014 against MCSCharacter.as:56-62 which declares PART_prop3 = 22, PART_l_shoulder = 23, PART_r_shoulder = 24, PART_l_knee = 25, PART_r_knee = 26.",
+  "text": "The sprite-compositing contract has a gap the packet's own claim does not mention: the per-frame visibility pass only clears part slots 0..21, so slots 22-26 (prop3, both shoulders, both knees) are never hidden and persist from the previous frame.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/extracted/bindata/93_1t4647s0.bin:51 and the Obj_FloorSwitch1/Trap_Kunai1 pairing in the medium tier",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/bindata/93_1t4647s0.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "bindata/NEW-trap-name-suffix-is-the-trigger-wiring",
+  "lane_impact": "Any trap-room reimplementation needs the name-reference resolver; without it switches do nothing. Also explains why a naive <name> census returns 47 types instead of 14.",
+  "ledger_text": "Trap rooms are a wired graph, not a flat object list: Obj_FloorSwitch / Obj_Lever carry a pipe- or comma-separated list of TARGET NAMES in <property>, and numeric name suffixes (Trap_Kunai1, Obj_FloorSwitch3, Trap_SawBladesAuto10) exist solely to make those references unique within a room.",
+  "overturns_ledger": true,
+  "quote": ":51 `<obj><id>7</id><name>Obj_FloorSwitch</name><x>200</x><property>Trap_Kunai</property></obj>` paired with :52 `<obj><id>32</id><name>Trap_Kunai</name>\u2026`; and `<obj><id>7</id><name>Obj_FloorSwitch1</name><x>300</x><property>Trap_Kunai1</property></obj>`. Schema at :6 declares the property as `triggered object,triggered object...`.",
+  "text": "Trap object <name> values carry instance suffixes \u2014 47 distinct raw strings collapsing to 14 base types \u2014 and the suffix is the trigger-wiring id: a floor switch's <property> holds the NAME of the object it fires. This is how switches, levers and traps are linked, and the packet never states it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/WarHex.as:11-37",
   "citelint": {
    "notes": [
     "QUOTE_NOT_LOCATED"
@@ -305,111 +389,31 @@
    "problems": [],
    "status": "QUOTE_UNVERIFIED"
   },
-  "duplicate_count": 4,
-  "id": "combat-core/basereload-is-dead-code",
-  "lane_impact": "L5 \u2014 delete '48 + SPD*6 refill' from the Focus economy. The meter fills at a flat +1 per frame regardless of SPD (MCSPlayer.as:1160 / web \u00a71t99s0\u00a7.as:1205). SPD affects reach (getBaseSlashLength) and skill cooldowns, not Focus.",
-  "overturns_ledger": false,
-  "quote": "internal var baseReload:int = 48;   ///   this.baseReload = baseReload;   ///   [no read site anywhere in 2,700+ classes]",
-  "reported_by": [
-   "critic"
-  ],
-  "text": "getBaseReload() = 48 + SPD*6 is a write-only dead field in the android build: it is stored into MCSPlayer.baseReload and never read anywhere, so meter refill is SPD-independent and 48+SPD*6 must not be built as a refill rate.",
+  "id": "bindata/NEW-warhex-has-14-states-not-7",
+  "lane_impact": "The board-topology blocker can be closed properly rather than with 7 of 14 states; the numeric ids also mean saved war state can be decoded.",
+  "ledger_text": "War-Room board: 6x6 hex grid, 55 px pitch on BOTH axes (x = 90 + xpos*55, y = 92 + ypos*55), with FOURTEEN enumerated hex states carrying explicit numeric ids (10 and 14 unused).",
+  "overturns_ledger": true,
+  "quote": "11 `public static var HEX_NOTHING:int = 0;` \u00b7 13 `HEX_SPAWNPOINT:int = 1;` \u00b7 15 `HEX_FORWARDBASE:int = 2;` \u00b7 17 `HEX_CONTROLPOINT:int = 3;` \u00b7 19 `HEX_TOWN:int = 4;` \u00b7 21 `HEX_POTENTIALSPAWNPOINT:int = 5;` \u00b7 23 `HEX_UPCOMINGSPAWNPOINT:int = 6;` \u00b7 25 `HEX_LADDER:int = 7;` \u00b7 27 `HEX_DEFENSE:int = 8;` \u00b7 29 `HEX_VILLAGE:int = 9;` \u00b7 31 `HEX_CITY:int = 11;` \u00b7 33 `HEX_CASTLE:int = 12;` \u00b7 35 `HEX_DISABLEDSPAWNPOINT:int = 13;` \u00b7 37 `HEX_DEMOLISHEDSPAWNPOINT:int = 15;`",
+  "text": "WarHex.as carries the canonical hex-state enumeration with numeric values: fourteen states, not the seven the packet reports. Values 10 and 14 are unused, which is itself evidence the enum was edited over the game's life.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3276 (meter identified as the slash meter by :3162 and :3302-3310); android divergence at reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3215-3222",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/SoundManager.as:114-360 + MusicManager.as:12-46 (waveforms: reference/extracted/android/113_Mobile_MusicResource.bin and 122_Mobile_SoundResource.bin remain unopenable)",
   "citelint": {
-   "notes": [],
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
    "problems": [],
-   "status": "RESOLVES"
+   "status": "QUOTE_UNVERIFIED"
   },
-  "id": "combat-core/crit-is-1.3-gated-on-full-slash-meter",
-  "lane_impact": "combat-core blockers \u2461 and \u2464 both close without a video read. The 1.3-vs-3 question is settled at 1.3 (+ STAT_CRITICALDMG, an additive gear affix). The Focus/crit gating rule is: crit applies only while the meter is at max, and the meter is spent by slashing (\u00a71t99s0\u00a7.as:3302-3310, -slashUsage/2, -slashUsage, -slashUsage*1.5 by stance) and by changing stance (:3162, a flat -48) - so crit is a first-strike-from-full mechanic, not a random roll. The android v0.682 twin instead uses x1.2, or x1.5 for Light, on 'reload == maxreload' - the desktop wins.",
-  "ledger_text": "\u2461 crit 1.3 vs 3 final \u2014 *read one crit popup.*",
+  "id": "bindata/audio-inventory-is-held",
+  "lane_impact": "L-art-anim-audio-feel: the blocker is half-open. WebAudio synthesis now has a named 13-SFX target list and an 18-preset music state machine with the exact per-background selection rule, even with no waveform to copy.",
+  "ledger_text": "| **art-anim-audio-feel** | \u2026 | **all audio** (SFX + music params) |",
   "overturns_ledger": true,
-  "quote": "if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7; } return _loc2_;",
-  "text": "Crit in v0.717 is a flat x1.3 plus the crit-damage affix, and it fires exactly when the slash/reload meter is full - which answers combat-core blockers 2 and 5 in one expression.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3271-3273 and \u00a71t5957s0\u00a7.as:2727/2736/2745",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/crit-is-flat-1.3",
-  "lane_impact": "combat-core blocker 2 closed with no footage needed; promote crit to CONTRACT = 1.3. Note the android v0.682 build differs (1.2 in Light, 1.5 elsewhere, MCSPlayer.as:3215-3221) \u2014 another datapoint that v0.682 combat tuning is NOT v0.717.",
-  "ledger_text": "\u2461 crit 1.3 vs 3 final \u2014 *read one crit popup.*",
-  "overturns_ledger": true,
-  "quote": "if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)\\n{\\n   return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;\\n}",
-  "text": "Critical damage in v0.717 is a flat x1.3 in every stance, applied when the reload bar is full, plus the STAT_CRITICALDMG gear affix.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 and :3060; \u00a71t113s0\u00a7.as:328-338",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/crit-meter-is-6-seconds",
-  "lane_impact": "L5 + L8 \u2014 build 6.000 s, not 5.8 s and not 4.0 s. Independently confirmed on frames: my three measured windows fit 6.000 s to <=1.2 px (t1004.800->t1005.000 9 vs 8.8 px; t1082.100->t1082.900 36 vs 35.1; t1081.100->t1082.100 45 vs 43.8), and 5.845 s is not realisable as an integer tick count at the SWF-header 24.0 fps.",
-  "ledger_text": "\u2464 Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
-  "overturns_ledger": true,
-  "quote": "this.\u00a71t4415s0\u00a7 = 8 * 24;   ///   if(this.\u00a71t4414s0\u00a7 < 48) { return; }   ///   var _loc3_:Number = (param1 - 48) / (param2 - 48); if(_loc3_ < 0) { _loc3_ = 0; } this.\u00a71t5182s0\u00a7.bar.scaleX = _loc3_;",
-  "text": "The web crit meter is maxreload = 8x24 = 192 ticks drawn as (reload-48)/(192-48) = 144 ticks at 24 fps = exactly 6.000 s of visible travel, and the stance-switch gate is a flat reload < 48 \u2014 which is why 'CANNOT CHANGE STANCE' shows only at displayed 0%.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session11/gap-focus-trigger/t2175.933.png \u2014 white-pixel extent over rows 1026-1049, x\u2208[200,600]; HUD crop (100,940)-(620,1080) LANCZOS x3",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/crit-track-268px-six-seconds",
-  "lane_impact": "L5 + L8 \u2014 build the meter at 6.0 s, and use 268 px / x 245..512 as the HUD track geometry for all three bars. Measuring a bar's track on an EMPTY bar is the error mode; measure it on a full one.",
-  "ledger_text": "Measured on frames, the web build's crit meter fills at ~17.3%/s (\u22485.8 s end to end)",
-  "overturns_ledger": true,
-  "quote": "bar white extent x 245 -> 512, width 268. The crop shows green 4/20, blue 47/47, and the third bar 100% solid white with 'CRITICAL HIT' printed across it. Rate from crit-focus/t1082.100 (edge 303) to t1082.900 (edge 339) = 36 px / 0.8 s = 45.0 px/s \u21d2 268/45.0 = 5.96 s. Independent third route: focusbar_scan2_videoB_fps15.tsv, edge 247 @ t2170.000 \u2192 512 @ t2176.000 = 6.000 s.",
-  "text": "The crit/reload track is 268 px wide at 1080p (x 245..512), measured on a bar that is actually FULL \u2014 which makes the fill rate 45.0 px/s = 16.8 %/s and the empty\u2192full sweep 5.96 s, not 5.8 s.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:27-35 with :3130-3146; named confirmation in reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:27-35 + setStance",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/dual-reversed-reach-inverted",
-  "lane_impact": "L5 (COMBAT CORE): the reach table is Light \u00d71.4 \u00b7 Balanced \u00d7(1+0.02M) \u00b7 Heavy \u00d7(0.5+0.04M) floor 100 \u00b7 Dual \u00d71.0 floor 100 \u00b7 Reversed \u00d71.4. Shipping the survey's version gives both bonus stances the wrong blade reach.",
-  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale)",
-  "overturns_ledger": true,
-  "quote": "33:      internal static var \u00a71t12223s0\u00a7:int = 3;   // = DUAL_STANCE\n35:      internal static var \u00a71t12224s0\u00a7:int = 4;   // = REVERSED_STANCE\n3130:             case \u00a71t12224s0\u00a7:            // REVERSED\n3131:                this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;\n3141:             case \u00a71t12223s0\u00a7:            // DUAL\n3142:                this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7;\n3143:                if(this.\u00a71t4417s0\u00a7 < 100) { 3145: = 100 }",
-  "text": "Reversed stance has the \u00d71.4 reach and no floor; Dual stance has \u00d71.0 floored at 100 px \u2014 the survey's per-stance reach table has these two swapped.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/npcdata.xml \u2014 full <npc> enumeration; ids 7/8/9/10 alongside the already-cited id 6 at :145-152",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/early-mob-hp-distribution",
-  "lane_impact": "L5 + L4 \u2014 the L1 TTK model is bimodal, not 'one hit'. 77% of early mobs die to a single stroke; a distinct 18% tier takes five. Frame-side this is exactly what damage-ttk shows: '1' and '2' popups on enemies whose green bars do not empty.",
-  "ledger_text": "\u2462 early-mob HP + starter weapon DMG + hits-to-kill \u2014 *read L1 bandit-fight popups in video A.*",
-  "overturns_ledger": true,
-  "quote": "npcdata.xml id 6 <lvl>2</lvl><hp>1</hp><attack>5</attack><defense>3</defense> (one-hit) vs ids 7,8,9,10 <lvl>2</lvl><hp>5</hp><defense>3</defense> \u2014 Branch roll 2, minus defense 3, floored by Damage.getMinDamage() at 1+piercing => 5 hits.",
-  "text": "Of the 495 <npc> rows, 22 are lvl<=2 and their HP is 1 (x17), 2 (x1) and 5 (x4); the four 5-HP rows (ids 7, 8, 9, 10) all carry defense 3, so against the starter Branch they take five hits, not one.",
-  "verdict": "HELD"
+  "quote": "SoundManager.as SFX names via ResourceManager.getSound: \"slash1\",\"slash2\",\"slash3\",\"die1\",\"die2\",\"die3\",\"punch\" (playHit AND playHurt),\"hitmetal\",\"deflect\",\"fart\",\"goodkoto\",\"sumo\",\"refund\" = 13. MusicManager.as:12-46 `MUSIC_NONE=0 \u00b7 MUSIC_EXPLOREBATTLE=1 \u00b7 MUSIC_TOUGHBATTLE=2 \u00b7 MUSIC_QUIET=3 \u00b7 MUSIC_EXPLORESAFE=4 \u00b7 MUSIC_EXPLOREDANGER=5 \u00b7 MUSIC_EXPLORETOWN=6 \u00b7 MUSIC_DUNGEONBATTLE=7 \u00b7 MUSIC_PVP=8 \u00b7 MUSIC_DUNGEON=9 \u00b7 MUSIC_DUNGEONCREEPY=11 \u00b7 MUSIC_DUNGEONCREEPYDANGER=12 \u00b7 MUSIC_DOJO=14 \u00b7 MUSIC_BATTLEDRUMS=15 \u00b7 MUSIC_DUNGEONDANGER=16 \u00b7 MUSIC_GANGNAM=100 \u00b7 MUSIC_LEVELUP=101 \u00b7 MUSIC_LOSE=102` (gaps at 10, 13). Encryption re-confirmed by me: 113_Mobile_MusicResource.bin is `CWS` with version byte 100 and declared length 1,969,230,408 vs 1,340,647 actual; zlib and raw-deflate both fail.",
+  "text": "The audio WAVEFORMS are lost, but the audio INVENTORY and its trigger rules are fully recovered \u2014 the ledger's 'ALL AUDIO' blocker should be split in two. There are exactly 13 named SFX and 18 music presets with explicit ids. Slash and death each pick randomly from three variants; 'punch' serves both playHit and playHurt. Music is selected by background via SoundManager.pickMusic(bg, isHostile, isPvP).",
+  "verdict": "PARTIAL"
  }
 ]

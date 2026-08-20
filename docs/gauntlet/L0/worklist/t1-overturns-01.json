@@ -276,6 +276,74 @@
  },
  {
   "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2289-2295 vs reference/decompiled/shs3_android/scripts/StatsManager.as:1854-1860",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "actionscript/build-divergence-7-cooldown-cap",
+  "lane_impact": "L-skills-meters / L-progression: any SPEED-scaling CONTRACT must be tagged per build; add this row to the build-divergence table before any of it is marked CONTRACT.",
+  "ledger_text": "SPEED 300 is the cooldown cap",
+  "overturns_ledger": true,
+  "quote": "web \u00a71t1523s0\u00a7.as:2291:         if(param1 > 600)\nweb \u00a71t1523s0\u00a7.as:2293:            param1 = 600;\nweb \u00a71t1523s0\u00a7.as:2295:         return 1 - param1 / 600 * 0.5;   ||   android StatsManager.as:1856: if(speed > 300) \u2026 :1860: return 1 - speed / 300 * 0.5;   (twin identity: \u00a71t105s0\u00a7.as:318 `return _loc2_ * \u00a71t1523s0\u00a7.\u00a71t9589s0\u00a7();` == XMLSkill.as:310 `return val * StatsManager.getSkillCooldownModifier();`)",
+  "text": "A seventh combat-tuning divergence the build-divergence claim missed: the SPEED-to-skill-cooldown clamp is 300 in Android v0.682 but 600 in web v0.717. Both give a 50% maximum cooldown reduction and both apply the SPEED buff x1.5 before the clamp, so only the cap constant moved \u2014 but it halves the effective value of SPEED for cooldowns in the build this project targets.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1057-1081 (node level resolver at StageManager.as:782-785)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "actionscript/repair-weapon-cost-formula",
+  "lane_impact": "L-economy: the repair-cost blocker closes with a real formula instead of a consumables workaround. Web-parity check still owed (find the \u00a71t\u2026 twin of InteractUI).",
+  "ledger_text": "Repair-Weapon cost never captured",
+  "overturns_ledger": true,
+  "quote": "1057:            case \"repairweapon\":\n1058:               cost = StageManager.getCurrentNodeLevel() * 10;\n1059:               if(StatsManager.getGold() < cost)\n1072:               StatsManager.changeGold(-cost);\n1073:               if(weapon.uses > 1)\n1075:                  weapon.uses = 1;",
+  "text": "The Repair-Weapon service cost IS in the tree and is a one-liner: cost = currentNodeLevel x 10 gold, deducted immediately, and the repair restores the weapon to uses = 1 (near-full condition) rather than to zero wear. This is the exact ledger item that actionscript/repair-cost declared not found.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android/scripts/InputManager.as:360 and reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as:174 and :179",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "actionscript/slash-line-colour-is-0x990000",
+  "lane_impact": "L-art-anim-audio-feel / L-ui-hud: the correct hue is 0x990000 (already what src/config/palette.ts:58 carries as winRed); the green 0x009900 variant is an unbanked second render state that needs a frame pass to identify.",
+  "ledger_text": "slash line colour 0xA30000",
+  "overturns_ledger": true,
+  "quote": "InputManager.as:360:            canvas.graphics.lineStyle(thickness - thickness * ((maxDistance - distanceLeft) / maxDistance),10027008,1,false,LineScaleMode.NONE,CapsStyle.ROUND,JointStyle.ROUND,3);   ||   \u00a71t1541s0\u00a7.as:174:          canvas.graphics.lineStyle(thickness,39168,1,\u2026);   \u00a71t1541s0\u00a7.as:179:          canvas.graphics.lineStyle(thickness,10027008,1,\u2026);",
+  "text": "The drawn slash line and the physical-damage popup both use literal 10027008, which is 0x990000, not 0xA30000 (=10682368, which appears nowhere in reference/decompiled/). The web build additionally carries a second stroke colour, 39168 = 0x009900, on a separate lineStyle setter alongside the red one.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:350-360 and :443-464 (arrow gating at WarHex.as:219-222)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "actionscript/war-board-is-a-6x6-square-grid",
+  "lane_impact": "L-meta-social: prevents an implementer building cube/axial hex coordinates for what is a 6x6 square board; the 14 typed cell roles and the arrow rendering survive unchanged.",
+  "ledger_text": "War board is a hexagonal grid",
+  "overturns_ledger": true,
+  "quote": "WarHexUI.as:350:            for(i = 0; i < 6; i++)\nWarHexUI.as:352:               for(j = 0; j < 6; j++)\nWarHexUI.as:359:                  hex.x = 90 + xpos * 55;\nWarHexUI.as:360:                  hex.y = 92 + ypos * 55;\nWarHexUI.as:447:         if(xpos == 0) \u2026 getOwner(territoryx - 1,territoryy);   :451 xpos == 5 \u2026 :455 ypos == 0 \u2026 :459 ypos == 5   ||   WarHex.as:219: this.narrow.visible = exitArray[0] == 0 && this.ypos != 0;",
+  "text": "The War-Room board is a 6x6 SQUARE lattice, not a hex grid: cells are laid out on a uniform 55 px pitch with no odd-row offset and adjacency is strictly 4-way cardinal (N/S/E/W), with the four board edges (xpos or ypos == 0 or 5) exiting to the neighbouring territory. The cells are drawn as hexagon art (class WarHex, [Embed] symbol622) which is what makes the name misleading.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:267-310; SWF header rects of reference/decrypted/shs3_android_payload_decoded.swf and my k=109 decode of 124_Mobile_ImageResource.bin",
   "citelint": {
    "notes": [],
@@ -338,70 +406,6 @@
   "overturns_ledger": true,
   "quote": "AnimData.as:10 `public var looping:Boolean = false;` \u00b7 AnimData.as:16 `this.looping = xml.@l == 1;` \u00b7 MCSCharacter.as:1293 `this.currentAnimationLooping = this.currentAnimation.looping;` \u00b7 data: `<anim i=\"ogre_walk\" d=\"24\" l=\"1\">`, and l=\"1\" on lightstanceidle, balancedstanceidle, heavystanceidle, walk, run_sheathed, lightstancerun, balancedstancerun, heavystancerun, ninjastealthwalk, mining, femalewalk, zom_crawl and every *_partb slash tail",
   "text": "The animdata carries a third attribute the survey missed \u2014 l=\"1\" marks a LOOPING animation, present on 102 of the 487 anims, parsed into AnimData.looping and read by MCSCharacter, so every stance idle, gait and *_partb slash tail cycles rather than latching on its final pose.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "cite": "my recursive DefineSprite/PlaceObject3 walker over reference/decrypted/shs3_payload_decoded.swf, reference/decrypted/shs3_android_payload_decoded.swf, and my decodes of 115_Mobile_SHS3Resource (k=104), 120_Mobile_BGResource (k=103), 124_Mobile_ImageResource (k=109)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/blend-modes-none-at-byte-level-web",
-  "lane_impact": "L6 art-anim-audio-feel: closes blocker \u2462 with the RIGHT kind of evidence. Flash stores authored blend modes in PlaceObject3, not in code, so the survey's AS3 grep could not have settled this; the byte scan can, and it also carries web parity the grep could not. Positive side-finding for the render budget: 263 sprites in the web payload DO carry filter lists and 54 use cacheAsBitmap.",
-  "ledger_text": "\u2462 FX **blend modes**;",
-  "overturns_ledger": true,
-  "quote": "shs3_payload_decoded.swf (WEB): sprites=827 PlaceObject3=304 withFilters=263 cacheAsBitmap=54 BLENDMODES={} \u00b7 shs3_android_payload_decoded.swf: sprites=675 PlaceObject3=248 withFilters=214 cacheAsBitmap=47 BLENDMODES={} \u00b7 115_Mobile_SHS3Resource: sprites=1949 PlaceObject3=12 BLENDMODES={} \u00b7 120_Mobile_BGResource: sprites=552 PlaceObject3=54 cacheAsBitmap=53 BLENDMODES={} \u00b7 124_Mobile_ImageResource: BLENDMODES={}",
-  "text": "'No blend modes' is provable at byte level and in the WEB build, not just by an AS3 grep: zero of 2,091 PlaceObject3 tags across the web payload, the android payload and all three decoded resource SWFs set the HasBlendMode flag.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "cite": "my recursive SWF tag scan of reference/decrypted/shs3_payload_decoded.swf: 827 DefineSprite, 7,196 PlaceObject2, 304 PlaceObject3, 0 with PlaceFlagHasBlendMode, 262 filter placements = 205 GlowFilter / 57 BlurFilter / 2 DropShadowFilter across 71 sprites",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/glow-filters-are-the-real-fx-answer",
-  "lane_impact": "art-anim-audio-feel: blocker \u2462 is closed correctly only as 'zero blend modes, 205 authored glows'. Also methodological \u2014 an ActionScript grep is the wrong instrument for a Flash compositing question, because blend modes and filters are authored into PlaceObject3, not code; the byte scan must be the cite. Cross-lane into ui-hud: at least one glow-bearing sprite is a named UI portrait.",
-  "ledger_text": "\u2462 FX **blend modes**;",
-  "overturns_ledger": true,
-  "quote": "sprites containing glow placements: 71  total glow placements: 203  \u00b7  sprite id 2250 glows 50 (anonymous) \u00b7 sprite id 3110 glows 47 \u00b7 sprite id 1624 glows 2 class: shs3_fla.InteractUI_chikako_portrait_610",
-  "text": "The shipped web payload authors 205 GlowFilter placements (plus 57 Blur and 2 DropShadow) in PlaceObject3 tags, so blocker \u2462's real answer is 'no blend modes, but glow everywhere' \u2014 not 'one class with ColorTransform + Blur + ColorMatrix'.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:1454-1465 and :1763-1768; EnemyShield.as:330-339; census of all 32 gotHitCounter assignments across reference/decompiled/shs3_android/scripts/*.as",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/hit-reaction-is-a-ladder",
-  "lane_impact": "L6 art-anim-audio-feel and L1 combat-core: reverses the survey's verdict. The recreation's 7/12/16-frame tint ladder is NOT an invention to be deleted \u2014 the original has its own ladder and it contains 12 and 16. The 84-tick (3.5 s) local-player redfreeze reaction and the shield's damage-nullifying PART_weapon/PART_prop cases are combat mechanics no ledger holds.",
-  "ledger_text": "hit-tint scaling (7/12/16f), death sword-detach, dash-snap, scarf physics, FINISHER_FLASH \u2014 all measured/authored but missing from the art digest \u00a75.",
-  "overturns_ledger": true,
-  "quote": "census: `12 x23 \u00b7 24 x2 \u00b7 16 x1 \u00b7 26 x1 \u00b7 84 x1 \u00b7 0 x3 \u00b7 -1 x1` \u00b7 MCSPlayer.as:1456-1465 `if(mcs.animation == DOWNSTAB) { gotHitCounter = 24; } else if(this.controlledBy == 0) { gotHitCounter = 84; } else { gotHitCounter = 12;` \u00b7 :1763-1768 `else if(prevActionState == SKILL_THOUSANDSTABS_STATE) { gotHitCounter = 26; } else if(prevActionState == SKILL_DEADLYCLEAVE_STATE) { gotHitCounter = 16; }` \u00b7 EnemyShield.as:331-339 `case mcs.partList[MCSCharacter.PART_weapon]: gotHitFlag = false; damage = 0; return false;` / `case mcs.partList[MCSCharacter.PART_prop]: ... damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal(); return false;`",
-  "text": "The hit-reaction window is not a single 12-tick number but a ladder of {12 default, 16, 24, 26, 84} plus 0/-1 sentinels, keyed on action state and body part \u2014 and hitting a shield enemy's weapon produces no reaction at all.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/bindata/116_1t4643s0.bin `heavy_horslash_parta` d=5 with 2 <f>; 118_1t4645s0.bin `light_horslash_parta` d=13 with 11 <f>; 108_1t4635s0.bin `heavyhorizontalslash_parta` d=6 with 4 <f>; reference/decompiled/shs3_android/scripts/AnimData.as:16-21 and MCSCharacter.as updateAnimation/updateFrame",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/hold-frames-are-authored-in-data",
-  "lane_impact": "L-art-anim-audio-feel: replaces both the ledger's '15fps pose latch' AND the surveyor's 'no hold frames in data' model. Correct model = 24 Hz playback over a sparse keyframe stream, with per-animation held ticks authored as @d minus len(<f>) and further code tails on top. Every slash recovery in a recreation depends on this table; it must be extracted per-animation before any motion work starts.",
-  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
-  "overturns_ledger": true,
-  "quote": "AnimData.as:16-21 `this.duration = xml.@d;` ... `var max:int = xml.f.length(); for(var i:int = 0; i < max; i++) { this.frameList.push(new FrameData(xml.f[i])); }`  \u00b7  MCSCharacter updateFrame `if(this.frameCounter < this.currentAnimation.frameList.length) { this.currentAnimation.frameList[this.frameCounter].setPosition(this); }`  \u00b7  measured: 96/385 rows with @d > len(<f>), incl. 23 in 108_1t4635s0.bin and 6 in 118_1t4645s0.bin",
-  "text": "Hold frames are authored in the animation DATA, not only injected by code: 96 of 385 <anim> rows across the 19 web-payload animdata blobs have @d greater than their <f> count, concentrated on the slash animations, and MCSCharacter.updateFrame's `if(frameCounter < frameList.length)` guard is what turns that gap into a latch on the last pose.",
   "verdict": "HELD"
  }
 ]
