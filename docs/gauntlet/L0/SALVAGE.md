@@ -54,9 +54,39 @@ claim did receive a verdict. And §2's L6 *"~150 animations"* is **471**, measur
 `index/android_blobs.json` (`<anim>` summed over the 18 `MCSCharacter_*` blobs;
 `99_HumanAnimationData` alone = 158). Not "~450".
 
-**Wall-survival note:** the finish sweep runs as **four small workflows**, not one 45-agent
-script — WF-1 surveys · WF-2 source critics · WF-3 judge · WF-4 converge — each extracted
-and committed on landing, so a usage wall costs one run instead of a stage table.
+### The finish sweep — 5 small runs, not one 45-agent script
+
+A usage wall then costs ONE run, not a stage table. Every run extracts and commits on
+landing. **Never edit a live workflow script mid-run** — it burns the resume cache.
+
+| Run | Script | Agents | What | Run ID | State |
+|---|---|---:|---|---|---|
+| **WF-1** | `l0-finish-wf1.workflow.js` | 12 | the 4 surveys never run (android-blobs · string-table · frames · uistrings-payload) + cite/hunter critics | `wf_54dcdf8e-9a3` | ▶ launched 2026-08-20 |
+| **WF-2** | `l0-finish-wf2.workflow.js` | 12 | the 12 source critics over the 6 completed sweeps — judges 206 banked claims, does NOT re-survey | — | authored, queued |
+| **WF-3a** | — | 18 | judge the **203** critic findings that CLAIM A LEDGER OVERTURN — 9 batches x cite+hunter | — | packets built |
+| **WF-3b** | — | 9 | judge the **407** corroborating findings — 9 batches x cite | — | packets built |
+| **WF-4** | — | ~5 | dry-loop (a round only counts if it RAN) + completeness critic | — | queued |
+
+**No claim is left unjudged.** An earlier plan capped WF-3 at the overturn-claimers and
+declared the rest leads; ultracode removed the budget reason for that, so the tiers now
+differ in DEPTH only — 610 of 610 findings get a critic.
+
+**`worklist/` is the judging input**, built by `scripts/gauntlet/buildWorklist.py`:
+
+```
+buildWorklist: 1087 rows -> 1048 distinct ids (39 duplicate rows merged)
+  already judged           232
+  WF-2 source-sweep claims 206 across 6 packets
+  WF-3a critic findings   203 across 9 batches x cite+hunter = 18 agents
+  WF-3b critic findings   407 across 9 batches x cite = 9 agents
+```
+
+Packets are **blind-safe by construction** (§3.2): they carry the structured claim and
+the machine cite audit, never the surveyor's prose. Critics are told explicitly not to
+open `sources/*.md` — that is what keeps the review blind while still not re-surveying.
+
+⚠ **233 vs 232 is not a discrepancy** — 233 claim ROWS carry a verdict, across 232
+distinct IDS. Two of the judged rows share an id with a duplicate.
 
 ---
 

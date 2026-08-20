@@ -1,0 +1,424 @@
+[
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:364 vs reference/decompiled/shs3_android/scripts/StatsManager.as:78 (parsed and compared: equal True)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/xp-curve-is-web-native",
+  "lane_impact": "L1/L-progression -- src/config/xp.ts can drop the INFERRED label entirely and take the measured v0.717 values, not an Android port.",
+  "ledger_text": "**L11\u201380 XP curve** \u2014 no table published; a solo build likely can't reach L11+; keep the extrapolation labeled INFERRED.",
+  "overturns_ledger": true,
+  "quote": "web `public static const \u00a71t5923s0\u00a7:Array = [0,550,1450,2950,5150,8350,12150,16350,20900,25900,31400,...,25395800,29395800];` -- 99 entries, [9]=25900, [10]=31400, [79]=4025800; identical to the Android expArray element for element. levelCap = 80 (StatsManager.as:76).",
+  "text": "The 99-entry L1-L80 XP array is byte-identical in the WEB v0.717 payload, so the lane's biggest cross-lane overturn carries no Android caveat at all.",
+  "verdict": "HELD"
+ },
+ {
+  "alternate_cites": [
+   "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3415-3420; web parity at reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3484-3490"
+  ],
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3484-3489 and reference/decompiled/shs3_android/scripts/MCSPlayer.as:3415-3418, :3709-3718",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "duplicate_count": 2,
+  "id": "progression/elemental-damage-bypasses-def",
+  "lane_impact": "L4 completeness on the DEF claim, and a CROSS-LANE GIFT to L1 combat-core: stacking DEF has zero effect on elemental builds, which is a real balance property of the original, not an approximation.",
+  "overturns_ledger": false,
+  "quote": "MCSPlayer.as:3415-3418  damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); }\nMCSPlayer.as:3714-3718  if(behead) { damage *= 1.5; }  setHP(getHP() - (damage + fireDamage + windDamage + waterDamage + earthDamage));\n\u00a71t99s0\u00a7.as:3489  _loc17_ = _loc5_ + _loc7_ + _loc9_ + _loc8_ + _loc10_;",
+  "reported_by": [
+   "critic"
+  ],
+  "text": "Defense is subtracted from the physical damage term only \u2014 fire, wind, water and earth damage are added after the min-damage floor and are never mitigated by DEF; and a behead multiplies x1.5 after the floor too.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3347-3357, :3415, :3420 and StatsManager.as:1836; web parity reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2270 with constants \u00a71t1235s0\u00a7..\u00a71t1242s0\u00a7 at :260-294",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/elemental-def-crosswheel",
+  "lane_impact": "L5 rebirth-elements blocker \u2461 dies outright \u2014 the formula is held in BOTH builds with identical argument order, and it is a counter-wheel (Water beats Fire, Earth beats Wind, Wind beats Water, Fire beats Earth) rather than a curve. L1 combat-core: the damage pipeline is two-stage, physical DEF then four channels DEF never touches. L4 progression: completes progression/def-mitigation-is-flat, whose 'exactly one modifier' is true of physical damage only.",
+  "ledger_text": "\u2461 elemental ATK-vs-DEF **formula**.",
+  "overturns_ledger": true,
+  "quote": "MCSPlayer.as:3347 'var fireDamage:int = damageObj.fireDamage - STAT_FIREDEF;' :3348 waterDamage-STAT_WATERDEF :3349 windDamage-STAT_WINDDEF :3350 earthDamage-STAT_EARTHDEF (each floored at 1 if the attack carried that element, else clamped to 0, :3351-3357) \u00b7 :3415 'damage -= this.getDefense();' (physical only) \u00b7 :3420 'setHP(getHP() - (damage + fireDamage + windDamage + waterDamage + earthDamage));' \u00b7 StatsManager.as:1836 'player.initElementDefenseStats(getPlayerStats(STAT_WATERATK) + findBonusStat(STAT_FIREDEF), getPlayerStats(STAT_EARTHATK) + findBonusStat(STAT_WINDDEF), getPlayerStats(STAT_WINDATK) + findBonusStat(STAT_WATERDEF), getPlayerStats(STAT_FIREATK) + findBonusStat(STAT_EARTHDEF));' \u00b7 web constants match one-for-one: \u00a71t1235s0\u00a7=28=FIREATK, \u00a71t1236s0\u00a7=29=WINDATK, \u00a71t1237s0\u00a7=30=WATERATK, \u00a71t1238s0\u00a7=31=EARTHATK, \u00a71t1239s0\u00a7=200=FIREDEF through \u00a71t1242s0\u00a7=203=EARTHDEF",
+  "text": "Elemental damage bypasses the DEF stat entirely and runs a parallel four-channel pipeline whose per-element defense is CROSS-WIRED to the opposite element's ATK stat \u2014 fireDef=waterAtk, windDef=earthAtk, waterDef=windAtk, earthDef=fireAtk \u2014 which is the elemental ATK-vs-DEF formula the rebirth-elements ledger lists as blocker \u2461.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:78 and reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:364 (consumed at \u00a71t1523s0\u00a7.as:2013, 2024, 2029); arrays compared element-wise this pass, identical",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "progression/full-xp-table-recovered",
+  "lane_impact": "progression blocker \u2461 dies outright and the XP curve moves from INFERRED-extrapolation to CONTRACT. Found while verifying levelCap for the SP formula; belongs to the progression lane, which should drop its extrapolated table.",
+  "ledger_text": "\u2461 **L11\u201380 XP curve \u2014 likely unrecoverable** (no wiki table; both longplays cap at L10; a solo build probably can't reach L11+ offline). Keep the extrapolation as labeled INFERRED.",
+  "overturns_ledger": true,
+  "quote": "public static const \u00a71t5923s0\u00a7:Array = [0,550,1450,2950,5150,8350,12150,16350,20900,25900,31400,\u2026,22095800,25395800,29395800];   // 99 entries, levelCap = 80",
+  "text": "The complete cumulative XP-per-level table is on disk in both builds \u2014 a 99-entry array, byte-identical between v0.682 android and v0.717 desktop \u2014 so the L11-80 curve is not unrecoverable and needs no extrapolation.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeUI.as:554-608 (runMine + doMine) and Obj_OreDeposit.as:40-78 (interact + gates); ore node names resolved at docs/gauntlet/L0/index/strings.json entries 650-659",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/mining-pipeline-zero-xp",
+  "lane_impact": "L4: refutes progression/xp-from-gather-and-dungeon's PARTIAL \u2014 the gather-XP value IS held and it is zero, so payload and frame (A-04 line 32, 'XP bar unmoved ... no XP awarded from mining') AGREE rather than merely not contradicting. CROSS-LANE GIFT to L10 world-exploration blocker 2: full yield table (oreType 1-8 -> items 20059-20066), full skill-gate ladder (getStat(1022) >= 1/2/3/4/5 for Iron/Copper/Silver/Titanium/Diamond; Rock, Coal and Tin ungated), the whiff rule (flat 50% downgrade to Rock for every ore except coal), the consumption rule (nodes 2-8 cleared via clearOre(), node 1 repeatable), the 24-tick action bar, and the pickaxe / broken-weapon / AP preconditions. Also touches L7 economy: mining awards no coins either.",
+  "ledger_text": "\u2461 gather/mine/farm **yield + whiff + respawn** tables.",
+  "overturns_ledger": true,
+  "quote": "NodeUI.as:566-608  internal function doMine() : * { if(this.oreType == 1) { ...addLootItemBasic(20059,1); } else if(this.oreType == 2) { ...addLootItemBasic(20060,1); } ... oreType == 8 -> 20066 ... if(this.oreType != 1) { (this.interactiveStageObjectHolder as Obj_OreDeposit).clearOre(); } ... StatsManager.updateWeaponUse(1); StatsManager.reportAchievementStat(60003,1); }   \u2014 NO addLootXP and NO changeXP anywhere in the function.\nObj_OreDeposit.as:46  if(StatsManager.getStat(59) != 13022) -> LangManager.getString(651) 'You need to equip a pickaxe.'\nObj_OreDeposit.as:57-58  var miningskill:int = StatsManager.getStat(1022); if(oreType == 8 && miningskill < 5 || oreType == 7 && miningskill < 4 || oreType == 6 && miningskill < 3 || oreType == 5 && miningskill < 2 || oreType == 3 && miningskill < 1) -> getString(650) 'You are not skilled enough to mine this.'\nObj_OreDeposit.as:70-76  if(oreType != 2 && int(Math.random() * 2) != 0) { runMine(1,this); } else { runMine(currentFrame,this); }   \u2014 flat 50% whiff to Rock on every ore EXCEPT coal\nNodeUI.as:558  StatsManager.getPlayer().getProgressBar().startProgress(24,ACTION_MINE);\nstrings.json 652-659: Mine Rock / Coal Deposit / Iron / Tin / Copper / Silver / Titanium / Diamond -> items 20059-20066",
+  "text": "The complete mining pipeline is on disk and it awards ZERO XP \u2014 doMine() yields an item and nothing else \u2014 which closes the surveyor's PARTIAL and hands world-exploration its gather yield/whiff/gate table.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "grep -rn addLootXP reference/decompiled/shs3_android/scripts/ \u2014 13 sites, all enumerated: NPC.as:863; EnemyPlayer.as:1318/1322/1327; NetworkManager.as:1268/1272/2818/2822; ConnectionPIO.as:643/647; Overworld.as:318; XMLQuestOutcome.as:66; definition LootDialog.as:638",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/no-gather-xp-path-exists",
+  "lane_impact": "L4: upgrades progression/xp-from-gather-and-dungeon from PARTIAL to a held negative \u2014 stop looking for a gather-XP constant. Corroborated on camera by A-04 (XP bar frozen at 2098/2950 for an entire mining session), so code and frame agree.",
+  "ledger_text": "\u2463 full XP-income model (quest/gather/dungeon, not just kills).",
+  "overturns_ledger": true,
+  "quote": "NPC.as:863 addLootXP(calcXP(getLevel(),this.level,this.xp,false)) \u00b7 EnemyPlayer.as:1318/1322/1327 duellist+boss \u00b7 NetworkManager/ConnectionPIO lvl*5+45 PvP \u00b7 Overworld.as:318 addLootXP(reward.exp) \u00b7 XMLQuestOutcome.as:66 addLootXP(this.modify) \u2014 plus the one non-loot path InventoryUI.as:906 StatsManager.changeXP(item.modifierXML[i].value) for item modifier id 9. No mining/farming/scavenging site exists.",
+  "text": "An exhaustive enumeration of every addLootXP call site proves there is NO gather/mine/farm XP path at all \u2014 gathering XP can only arrive as a quest outcome, so the missing 'gather XP number' is not missing, it does not exist.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/videos/zFtCaTO0_1M.mp4 @ -ss 653.0 and -ss 656.5 vs @ -ss 1600; crops crop=iw*0.55:ih*0.30:iw*0.42:ih*0.15 scale=1.5x lanczos and crop=iw*0.55:ih*0.30:iw*0.42:ih*0.12 / :ih*0.36 scale=2x lanczos",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/per-point-two-frame-delta",
+  "lane_impact": "L4: this should replace the single-frame budget sum as the canonical evidence for the web-build ruling \u2014 it is gear-proof because it is a delta and because the HUD renders equipment bonus separately (DEF 7 + 2 -> DEF 10 + 13). Gauntlet-wide it is the hardest available proof that shs3_android v0.682 is a decoder ring only.",
+  "ledger_text": "- **Ready:** +3 stat/+1 skill/full refill per level; +10HP/+5Chi/+1AP/+3-stat per point; L1\u2013L10 XP caps; cap 80; 80 SP first run; unlock cadence; start pools (HP10/Chi10/AP30).",
+  "overturns_ledger": true,
+  "quote": "Visibly at -ss 653.0 AND -ss 656.5: level badge 3, '2098 / 2950 EXPERIENCE POINTS', 'AVAILABLE STAT POINTS: 0', HP 20/20, CHI 10/10, AP 30/30, ATK 7, DEF 7 + 2 (orange +2), SPD 4. Visibly at -ss 1600: level badge 4, '5110 / 5150', 'AVAILABLE STAT POINTS: 0', HP 20/20, CHI 9/15, AP 15/30, ATK 10, DEF 10 + 13, SPD 4, WEIGHT: 73 / 100. Delta across exactly one level (=3 points, \u00a71t1523s0\u00a7.as:2075) with 0 unspent at both ends: Chi max +5, ATK +3, DEF base +3.",
+  "text": "A two-frame differential in video A proves the WEB per-point magnitudes without any assumption about gear folding into displayed maxima: one level-up spends exactly 3 stat points and buys Chi +5, ATK +3, DEF +3 \u2014 3 points under web magnitudes, 7 under Android.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/QuestGenerator.as:839 and :916 (and ~28 sibling sites at 1001/1228/1465/1644/1839/2105/2266/2417\u2026); WEB parity reference/decompiled/shs3_payload/scripts/\u00a71t123s0\u00a7.as:878, :1039, :1283, :1522 and \u00a71t27s0\u00a7.as:317; consumed via reference/decompiled/shs3_android/scripts/StatsManager.as:1604-1606",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/procgen-quest-xp-formula",
+  "lane_impact": "L4: overturns the surveyor's own progression/quest-xp-tabled ('a table, not a formula') and closes blocker \u2463's quest side more completely than claimed. L9 quests-story: the daily-quest generator is a second reward system with its own XP curve. Also an independent VALIDATION of the newly recovered expArray, since the formula consumes it \u2014 the frame's 473 could not be reproduced without the real table.",
+  "ledger_text": "\u2463 full XP-income model (quest/gather/dungeon, not just kills).",
+  "overturns_ledger": true,
+  "quote": "QuestGenerator.as:839  var questReward:int = (StatsManager.getXPLevelThreshhold(nodelvl + 1) - StatsManager.getXPLevelThreshhold(nodelvl)) / ((nodelvl + 1) * 1.2);\nQuestGenerator.as:916  rewardStr += \"<exp>\" + questReward + \"</exp>\";\nStatsManager.as:1604-1606  public static function getXPLevelThreshhold(level:int) : int { return expArray[level]; }\nWEB \u00a71t123s0\u00a7.as:878  var _loc16_:int = (\u00a71t1523s0\u00a7.\u00a71t5928s0\u00a7(_loc15_ + 1) - \u00a71t1523s0\u00a7.\u00a71t5928s0\u00a7(_loc15_)) / ((_loc15_ + 1) * 1.2);\n\u2014 evaluated by me: nodelvl 5\u2192527 \u00b7 6\u2192500 \u00b7 7\u2192473 \u00b7 8\u2192462 \u00b7 9\u2192458 \u00b7 10\u2192454 \u00b7 11\u2192423; nodelvl 7 = (20900\u221216350)/9.6 = 473.958 \u2192 int 473, matching the on-screen 473 XP quest reward exactly, a value absent from the 69-row table (100/200/250/290/500/600/750/1000/2000/3000).",
+  "text": "Proc-gen daily quests compute their XP at runtime from the recovered expArray \u2014 questReward = (expArray[nodelvl+1] \u2212 expArray[nodelvl]) / ((nodelvl+1) \u00d7 1.2) \u2014 and this formula, not the 69-row table, produces the only quest-XP number visible in either longplay.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/questdata.xml \u2014 my own sum over all 69 <exp> rows; compared against expArray at reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:364",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "progression/quest-xp-sum-kills-blocker2-rationale",
+  "lane_impact": "L4: blocker \u2461's parenthetical was doing the persuasive work, and it is now false on two counts \u2014 the curve is on disk AND a solo build reaches L11+ from quests alone. Also strengthens L9 quests-story (the reward side is fully tabled) and L8 enemies-ai level-band pacing.",
+  "ledger_text": "\u2461 **L11\u201380 XP curve \u2014 likely unrecoverable** (no wiki table; both longplays cap at L10; a solo build probably can't reach L11+ offline). Keep the extrapolation as labeled INFERRED.",
+  "overturns_ledger": true,
+  "quote": "quest exp rows 69, sum 79890. expArray[10]=31,400 \u00b7 expArray[17]=80,300 \u2014 79,890 XP from quest turn-ins alone, before a single mob kill, lands at level 17. Supporting: reference/extracted/itemdata.xml carries 142 <minlvl> rows spanning 0-79, i.e. gear authored for the whole band.",
+  "text": "The 69 tabled quest XP rewards sum to 79,890 \u2014 enough on their own to carry a solo offline player to level 17, which destroys the ledger's stated reason for calling the L11-80 curve unrecoverable.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A4",
+  "cite": "docs/research/video-study/segments/A-02-dojo-tutorial-3-stances-chi-punch-on-dum.md:24-25 (segment carries its own frame cites); adjudicated against reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3422,3434,3443",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/second-frame-confirms-plus3-per-point",
+  "lane_impact": "L4: closes A-02's open INFERRED flag with a payload cite, and shows the frame evidence for +3/point was already on disk. CHI 10/10 and AP 30/30 in the same frame confirm the start pools directly. No replay needed \u2014 mark A-02:25 RESOLVED.",
+  "ledger_text": "- **Ready:** +3 stat/+1 skill/full refill per level; +10HP/+5Chi/+1AP/+3-stat per point; L1\u2013L10 XP caps; cap 80; 80 SP first run; unlock cadence; start pools (HP10/Chi10/AP30).",
+  "overturns_ledger": true,
+  "quote": "A-02:24  \"Three resource bars with `+` allocate buttons: `HP 20/20`, `CHI 10/10`, `AP 30/30`\"\nA-02:25  \"Observed progression: ATK 4\u21927, DEF 4+2\u21927+2 (i.e., DEF base 4\u21927 too), SPD 1\u21924, spending the 3 stat points \u2026 total distributed points = (7-4)+(7-4)+(4-1)=3+3+3=9 \u2026 treat exact point-to-stat ratio as INFERRED, needs frame-by-frame combat-panel replay to confirm\"",
+  "text": "A second frame reading, already in the video study and flagged INFERRED there, independently confirms +3 per stat point and the start pools \u2014 it was sitting unused while the ledger carried the wrong +1AP figure.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t29s0\u00a7.as:30 (the array), :326-328 (curve selection), :459-486 (letter ladder), :24 (const \u00a71t12495s0\u00a7 = 10); corroborated by docs/gauntlet/L0/index/strings.json:1774",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/second-xp-curve-mastery-ranks",
+  "lane_impact": "L4: a second progression axis absent from the ledger's progression row entirely \u2014 5 graded sub-bars per unit on their own 11-entry XP table, cap 10, surfaced as an E-to-S letter rank. Straddles L11 meta-social: \u00a71t24s0\u00a7 imports playerio and pushes \u00a71t29s0\u00a7 instances into a roster (\u00a71t553s0\u00a7) placed on a grid (\u00a71t558s0\u00a7[x][y]), with the player inserted by charname at \u00a71t24s0\u00a7.as:265 \u2014 this is the clan/castle roster. WEB-ONLY: the array and the letter ladder are both absent from shs3_android (grep returns nothing), another concrete instance of the S0-3 parity caveat. Its UI copy is still unheld \u2014 the 22xxx string ids it calls (getString(22080/22101/22102)) are OUTSIDE the Android Mobile_Lang_EN table, whose max id is 9010.",
+  "ledger_text": "| **progression** | 55 | level-up spine, L1\u2013L10 XP, stat-point effects, unlock cadence | DEF/SPD transfer functions; L11\u201380 curve (likely unrecoverable); post-rebirth SP economy |",
+  "overturns_ledger": true,
+  "quote": "\u00a71t29s0\u00a7.as:30  public static const \u00a71t12498s0\u00a7:Array = [0,300,900,2100,4800,10200,21000,42600,85800,172200,345000];\n\u00a71t29s0\u00a7.as:326-328  if(param1 == \u00a71t24s0\u00a7.\u00a71t8755s0\u00a7) { return \u00a71t5923s0\u00a7[this.\u00a71t7323s0\u00a7(param1,false) + 1] - _loc2_; } return \u00a71t12498s0\u00a7[this.\u00a71t7323s0\u00a7(param1,false) + 1] - _loc2_;   [\u00a71t8755s0\u00a7 = 0, so bar 0 uses the CHARACTER expArray and bars 1-5 use this second curve]\n\u00a71t29s0\u00a7.as:459-486  0->\"E\" 1->\"E+\" 2->\"D\" 3->\"D+\" 4->\"C\" 5->\"C+\" 6->\"B\" 7->\"B+\" 8->\"A\" 9->\"A+\" 10->\"S\"  (\u00a71t7329s0\u00a7 takes the MAX over bars 1..\u00a71t8761s0\u00a7 = 6)\nstrings.json 8131/8132/8133 = 'Light / Balanced / Heavy Stance Mastery Level 10.'  \u2014 a 10-level mastery track topping out at 10",
+  "text": "There is a SECOND cumulative XP curve in the web payload \u2014 an 11-entry array [0,300,900,2100,4800,10200,21000,42600,85800,172200,345000] capped at level 10 \u2014 driving five per-unit sub-bars that roll up into an E, E+, D, D+, C, C+, B, B+, A, A+, S letter-grade rank, and neither the ledger nor the surveyor mentions it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3030, :3041, :3052-3055, :3078-3081, :3094",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/stance-reach-multipliers-held",
+  "lane_impact": "L1 combat-core blocker \u2460 dies in full, not partially: base = 120 + floor((90+Dan*5)*spd/(20+spd)) (floor 120, Dan-0 asymptote 210), then Light x1.5, Balanced x(1+0.5*balancedMastery*0.01), Heavy x(0.5+0.5*heavyMastery*0.01) with a hard floor of 100, fed to InputManager.setMaxDistance. The units are the same stage-space the gesture input uses.",
+  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) \u2014 *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
+  "overturns_ledger": true,
+  "quote": "MCSPlayer.as:3030  this.slashLength = this.baseSlashLength * 1.5;   (Light)\nMCSPlayer.as:3041  this.slashLength = this.baseSlashLength * (1 + 0.5 * this.balancedMastery * 0.01);\nMCSPlayer.as:3052-3055  this.slashLength = this.baseSlashLength * (0.5 + 0.5 * this.heavyMastery * 0.01); if(this.slashLength < 100) { this.slashLength = 100; }\nMCSPlayer.as:3078  this.slashLength = this.baseSlashLength;   (default, floor 100)\nMCSPlayer.as:3094  InputManager.setMaxDistance(this.slashLength);",
+  "text": "The per-stance reach multipliers sit directly on top of the SPD slash-length base and are fully held, making the L1 combat-core gift the COMPLETE reach model rather than only its base term.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:255-257 (id 1004, displayname 6007, lvlreq 3) with strings.json 6007 \u2192 'Roll'",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/unlock-rule-ends-in-0-or-5-false",
+  "lane_impact": "L4: REBUILD_READINESS.md:77 carries THREE errors in one sentence \u2014 '+1AP' (really +5), '80 SP first run' (really 79), and the 'levels ending 0/5' rule (broken at L3 by Roll). The unit overturned the first two but did not mark line 77 itself, only the line-199 Ready bullet. Both lines need the edit.",
+  "ledger_text": "- **Progression spine:** XP caps L1\u2013L10 (550\u202631 400), +3 stat/+1 skill per level, +10HP/+5Chi/+1AP/+3-stat per point, level cap 80, 80 SP first run, skills unlock at levels ending 0 (Ninja) / 5 (Chi).",
+  "overturns_ledger": true,
+  "quote": "skilldata.xml:255-257 '<id>1004</id> / <displayname>6007</displayname> / <lvlreq>3</lvlreq>'; strings.json '6007 -> Roll'. Full measured ladder: 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80.",
+  "text": "The ledger's stated unlock rule 'skills unlock at levels ending 0 (Ninja) / 5 (Chi)' is falsified on the first row of the lvlreq table.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "docs/GAUNTLET.md:373-374 \u00b7 docs/CALIBRATION.md:38 (row 17) \u00b7 docs/research/REBUILD_READINESS.md:62 and :93",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/xp-curve-kills-three-more-docs",
+  "lane_impact": "Blast radius is wider than L4. GAUNTLET.md:373 mis-states what L11 (meta+rebirth) must author as a deviation \u2014 L11 loses one authored-deviation obligation. CALIBRATION.md row 17's \u00b15% band is worse than stale: the real curve misses it by \u221261.3% at L80, so the gate as written would have green-lit a refuted model; rewrite row 17 as CONTRACT against the 99-entry table. REBUILD_READINESS.md:62 and :93 need the same edit as :200/:350.",
+  "ledger_text": "\u2461 **L11\u201380 XP curve \u2014 likely unrecoverable** (no wiki table; both longplays cap at L10; a solo build probably can't reach L11+ offline). Keep the extrapolation as labeled INFERRED.",
+  "overturns_ledger": true,
+  "quote": "GAUNTLET.md:373 'it does not claim the server-side systems (live clan war, L11\u201380 curve, IAP economy) are recoverable \u2014 those are named as authored deviations in L11, not hidden.' \u00b7 CALIBRATION.md:38 '| 17 | XP curve tail (L11+) | `xp.ts` XP_DELTA_STEP | threshold \u00b15% vs any future high-level HUD read | +500/level delta growth extrapolating the CONTRACT L1\u2013L10 table (observed tail 4550\u21925000\u21925500) | INFERRED |' \u00b7 REBUILD_READINESS.md:62 'Some things are structurally unrecoverable ... the live clan-war population, and the L11\u201380 XP curve. See \u00a76.' \u00b7 :93 lists 'L11\u201380 XP curve' under KNOWN-UNKNOWNS.",
+  "text": "The dead 'L11\u201380 curve is unrecoverable' statement is load-bearing in three documents beyond the two the unit names \u2014 including the gauntlet's own charter and a calibration row whose acceptance gate would have passed the refuted model.",
+  "verdict": "HELD"
+ },
+ {
+  "alternate_cites": [
+   "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:113-128 (grey level), :131+ (zero difference), :185-208 (calcXP)",
+   "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:185-208 (calcXP) and :113-129 (getGreyLevel)",
+   "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:198, :186-208, :122, :126, :128"
+  ],
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:185-208 (calcXP), :120-128 (grey level), :131-182 (zeroDifference); \u00a71t4574s0\u00a7.as:39 (mob base); \u00a71t4902s0\u00a7.as:26 (duellist base)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "duplicate_count": 4,
+  "id": "progression/xp-income-web-parity",
+  "lane_impact": "L4 \u2014 hardens progression/xp-income-model against the very build-drift risk the same survey proved is real (per-point magnitudes). Record the web line numbers; the model may now be ported as CONTRACT from the filmed build rather than inferred from android.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t68s0\u00a7.as:185-208  public static function \u00a71t12070s0\u00a7(param1:int, param2:int, param3:int, param4:Boolean) : * { if(param2 <= \u00a71t12068s0\u00a7()) { return 0; } if(param2 - param1 > 3) { return 0; } var _loc5_:int = param3; if(param1 < param2) { _loc5_ = param3 * (1 + 0.05 * (param2 - param1)); } else if(param1 > param2) { _loc5_ = param3 * (1 - (param1 - param2) / \u00a71t12069s0\u00a7()); } if(param4) { _loc5_ *= 2; } return _loc5_; }\n\u00a71t68s0\u00a7.as:120-128  if(_loc1_ < 40) { return _loc1_ - Math.floor(_loc1_ / 10) - 5; } if(_loc1_ < 60) { return _loc1_ - Math.floor(_loc1_ / 5) - 1; } return _loc1_ - 9;\n\u00a71t4574s0\u00a7.as:39  xp = level * 2 + 20;\n\u00a71t4902s0\u00a7.as:26  xp = level * 5 + 45;",
+  "reported_by": [
+   "critic"
+  ],
+  "text": "The XP-income model was cited entirely from the differently-tuned Android v0.682 build; the WEB v0.717 parity it needed is present and byte-for-byte identical, so the claim survives on web evidence too.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/CutsceneManager.as:203-206 + XMLQuestStep.as:158-212 + reference/extracted/questdata.xml:971, :814, :1851, :2410",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "quests-story/choices-are-consequential",
+  "lane_impact": "L1 CAMPAIGN \u2014 REVERSES the surveyor's lane impact. L1 MUST build the outcome/consequence system: a positional display walker with index-based <goto>, per-branch outcome application, and divergent end codes (1=leaveOK starts the fight, -1=leaveCancel aborts it). 54 options break without it.",
+  "ledger_text": "\u2463 are player choices consequential?",
+  "overturns_ledger": true,
+  "quote": "CutsceneManager.display(): case \"outcome\": outcome = XMLQuestOutcome(currentDisplay); outcome.applyOutcome(); break;  ||  CutsceneManager.gotoStep: this.currentDisplayNo = goto;  ||  walker over 195 multi-choice options -> 54 DIVERGENT. :971 \"Let's start mining.\" -> set 113=8402942, set 114=2, set 115=350, set 102=0, END 1  vs  \"Not right now.\" -> END 1",
+  "text": "Player choices ARE consequential: consequence is positional, not nested \u2014 <goto> lands the display walker in a branch that carries its own <outcome> nodes, and 54 of 195 multi-choice options reach divergent outcomes.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/questdata.xml:814-882 (worked case) + simulation of all 196 options under XMLQuestStep.getXMLIntroList / CutsceneManager.display semantics",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "quests-story/choices-are-consequential-via-goto",
+  "lane_impact": "L1 CAMPAIGN \u2014 the answer to blocker \u2463 is YES, delivered positionally rather than declaratively. Building 'a flat jump table, not a consequence system' and dropping L1's runtime risk (as quests-story/choices-not-consequential advises) would produce wrong save state.",
+  "ledger_text": "\u2463 are player choices consequential?",
+  "overturns_ledger": true,
+  "quote": "questdata.xml:820-822 <choice><text>(FIghting Tutorial) I may be able to learn something here.</text><goto>14</goto></choice> routes through :860 <outcome><id>113</id><set>8402944</set> :865 <id>114</id><set>4</set> :870 <id>102</id><set>0</set><end>1</end>; the sibling :824-826 <choice><text>I should go.</text><goto>19</goto></choice> routes to :879 <outcome><modify>0</modify><end>1</end> and writes nothing. Measured over the file: 55/196 options branch into differing effects or differing terminals (leaveOK vs leaveCancel).",
+  "text": "Player choices ARE consequential: 55 of the 196 shipped <option> blocks have choices whose branches write different StatsManager state or terminate the scene differently, even though zero choices carry a <outcome> child.",
+  "verdict": "HELD"
+ },
+ {
+  "alternate_cites": [
+   "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:164, :1257-1274, :1313"
+  ],
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:164, :1252-1273, :1303-1323, :1276-1301 (identical line numbers in reference/decompiled/shs3_android/scripts/StatsManager.as)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "duplicate_count": 2,
+  "id": "quests-story/maxquests-cap-is-real",
+  "lane_impact": "L1 CAMPAIGN + L8 UI \u2014 ship BOTH: the pooled 7-quest acceptance cap (addActiveQuests returns false when full) AND the 7-row scroller (QuestLogUI.as:88-96, x=60, y=73+55i). Only the ledger's '(1 story + 6 side)' gloss is wrong: there is no reserved story slot; setActiveQuest pushes story steps unconditionally.",
+  "ledger_text": "QUEST_LOG_CAP = 7 (1 story + 6 side).",
+  "overturns_ledger": true,
+  "quote": " 164:      internal static var MAXQUESTS:int = 7;\n1252: public static function addActiveQuests(questID:int, forceAdd:Boolean = false) : Boolean\n1262:    if(activeQuestList.length < MAXQUESTS || forceAdd)\n1273:    return false;\n1313:    if(activeQuestList.length < MAXQUESTS)\n1323:    return -1;",
+  "reported_by": [
+   "critic"
+  ],
+  "text": "The quest-log cap is a real accept-time constant, not a UI row count: MAXQUESTS = 7 refuses quest acceptance when the log is full, while story progression bypasses it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "byte-check over reference/decrypted/shs3_payload_decoded.swf vs reference/decrypted/shs3_android_payload_decoded.swf (both zlib-inflated), plus ls -laT mtime ordering of reference/extracted and reference/decrypted",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "quests-story/payload-provenance-is-android",
+  "lane_impact": "Cross-cutting, hits L1 CAMPAIGN, L1b STRING TABLE, L3 ITEMS, L2 SKILLS, L4 ENEMIES. The ledger's \u00a76 fear was half right: for the WEB build the script really is absent from the client. The corpus we hold is the Android script, which is why the frame and the payload disagree. Every data claim in this run derived from questdata/itemdata/npcdata/skilldata must carry the v0.682 label, and any scene visible in the two longplays must be frame-reconciled rather than ported byte-exact.",
+  "ledger_text": "**Verbatim dialogue** \u2014 if the story is server-fetched and the server is dead, the actual script is gone; author original lines to the summaries (RECREATE-NEVER-RIP already requires original dialogue anyway).",
+  "overturns_ledger": true,
+  "quote": "web  shs3_payload_decoded.swf        inflated 11,892,061 -> {<questdata>: 0, <quest>: 0, <itemdata>: 0, <npcdata>: 0, <skilldata>: 0, 'A new face in this territory': 0}\nandroid shs3_android_payload_decoded.swf inflated 21,688,592 -> {<questdata>: 1, <quest>: 61, <itemdata>: 1, <npcdata>: 1, <skilldata>: 1, 'A new face in this territory': 1}\nvalidity check \u2014 web blobs are stored UNCOMPRESSED: bindata/119_1t4646s0.bin raw first 200 bytes present in inflated web SWF ? True; inflated web SWF has <survivalmodedata> x1 and <animdata> x19 (the known 27 web blobs)\nmtimes \u2014 questdata/itemdata/npcdata/skilldata written Jul 25 18:27; shs3_payload_decoded.swf (WEB) created Jul 25 18:33 (six minutes LATER); shs3_android_payload_decoded.swf decoded Jul 25 17:38, decompiled 17:51",
+  "text": "reference/extracted/questdata.xml \u2014 and itemdata.xml, npcdata.xml, skilldata.xml with it \u2014 are ANDROID v0.682 files, not web v0.717: the inflated web payload ships zero quest/item/npc/skill XML, so the whole run's data measurements are mobile-build measurements and must be labelled as such.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/QuestDialogueUI.as:46,67-75 + ResourceManager.as:37,270,286 + PortraitBust.as + reference/decompiled/shs3_payload/scripts/portrait_kojuro.as",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "quests-story/portraits-held-but-encrypted",
+  "lane_impact": "L6 ART \u2014 corrects the survey's own score rationale ('the art itself is a separate recovery problem'). RESOURCE_IMAGE is 124_Mobile_ImageResource, a nested-CWS blob = Stage-0 finding S0-5's held-but-encrypted class, NOT a fresh recovery problem; and portrait_kojuro.as is already decompiled in three bundles, proving the class shape. Two asset families, not one: 52 NPC portraits (class portrait_<token>) and 16 full-screen chapter splashes (class image<token>: _episode0.._episode12, _epilogue, _exposition, _exposition_epilogue). Placement is exact (x=800, y=0), and the no-<img> fallback is the 2x-scaled MCS paperdoll bust built from the NPC's equipment \u2014 so most speakers need no bespoke art at all.",
+  "ledger_text": "| \u00a74 quests-story: *\"verbatim dialogue \u2014 captured NOWHERE\"*; \u00a76: *\"structurally unrecoverable\"* |",
+  "overturns_ledger": true,
+  "quote": "QuestDialogueUI.as:67  if(portrait != \"\") { this.bust.visible = false; this.npcPortrait = ResourceManager.getPortrait(portrait); this.portraitCanvas.addChild(this.npcPortrait); this.npcPortrait.x = 800; this.npcPortrait.y = 0; } else { this.bust.visible = true; }  ||  QuestDialogueUI.as:46  if(ID == -2) { this.npcName.text = StatsManager.charname; if(portrait == \"\") this.bust.initMCSFromPlayer(); }  ||  ResourceManager.as:286  mcname = \"portrait_\" + id;  (applicationDomain RESOURCE_IMAGE = 3)  ||  ResourceManager.as:270  mcname = \"image\" + id;  ||  PortraitBust.as  this.bust.scaleX = 2; ... initMCSFromNPCID(npcID)",
+  "text": "Dialogue portrait art is not a separate unrecovered problem \u2014 it is held-but-encrypted in the same nested-CWS blob as the audio, behind a fully-specified two-mode renderer, with one portrait class already decompiled.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:479,70 + Mobile.as:216,244 + QuestEngine.as:281 + QueryManagerPIO.as:124",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "quests-story/questdata-is-live-updated",
+  "lane_impact": "CROSS-LANE, all 12 systems. The ledger's 'server-fetched' fear was HALF right: the corpus is on disk, but the on-disk copy is version 1 and the live client preferred a server revision. Every data-XML claim in L1 (quests), L2/L3 (items), L4 (npcs), L5 (skills), L9 (nodes/bg) must be labelled 'embedded v1 \u2014 the shipped build may have live-updated past this'. L1's done-criterion 'all 3,307 lines byte-exact' is provably not on-screen fidelity; the two longplays are the only arbiter for scenes they cover.",
+  "ledger_text": "**Verbatim dialogue** \u2014 if the story is server-fetched and the server is dead, the actual script is gone; author original lines to the summaries (RECREATE-NEVER-RIP already requires original dialogue anyway).",
+  "overturns_ledger": true,
+  "quote": "StatsManager.as:479  embeddedVersionArray[FILE_QUESTDATA] = 1;  ||  StatsManager.as:70  xmlFileIdArray:Array = [0,1,2,3,4,5,6,7,8,9];  ||  Mobile.as:216  var versionUrl:String = \"http://r.playerio.com/r/straw-hat-samurai-duels-5nsekxalfuoiuqdxrmtxw/liveupdate/shs3_data_version.swf\";  ||  Mobile.as:244  this.versionArray[StatsManager.FILE_QUESTDATA] = versionInfo.questdata;  ||  QuestEngine.as:281  loadExternalQuestDataXML() { ... myLoader.load(new URLRequest(QueryManagerPIO.instance.getDataXML(\"questdata.xml\"))); }  ||  QueryManagerPIO.as:124  return PlayerIO.gameFS(this.gameid).getUrl(\"/data/\" + str);",
+  "text": "questdata.xml (and the other nine data XMLs) is a server-live-updated file: the extracted copy is the baked-in version 1 fallback, and the client fetched newer revisions from PlayerIO gameFS \u2014 which is the mechanism behind the frame-vs-payload dialogue divergence.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/QuestItem.as:26-58 (templates) and :60-98 (reasons)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "quests-story/questitem-archetype-templates",
+  "lane_impact": "L1 CAMPAIGN \u2014 side quests need a GENERATOR port (17 templates x 20 reasons composed at runtime by QuestGenerator.as, which writes only questData.type = 3), not a table port and not the deletion the surveyor recommends. Runtime type rewrites live in QuestEngine.as:736/752/756/760, not in QuestGenerator.",
+  "ledger_text": "archetype taxonomy (story/normal/trade + bounty/escort/gather/timed)",
+  "overturns_ledger": true,
+  "quote": "26: public static var QUEST_KILLWILDLIFE:int = 0;  28: QUEST_KILLBANDIT:int = 1;  30: QUEST_KILLONI:int = 2;  32: QUEST_KILLUNDEAD:int = 3;  34: QUEST_GIVEWEAPONS:int = 4;  36: QUEST_GIVEORE:int = 5;  38: QUEST_SUMMONONI:int = 6;  40: QUEST_SUMMONMERC:int = 7;  42: QUEST_SUMMONNINJA:int = 8;  44: QUEST_UNWANTEDMERC:int = 9;  46: QUEST_GRAVEYARD:int = 10;  48: QUEST_DUEL:int = 11;  50: QUEST_GUIDE:int = 12;  52: QUEST_ITEM:int = 13;  54: QUEST_TRADE:int = 14;  56: QUEST_BOUNTYBOARD:int = 15;  58: QUEST_GIVECROPS:int = 16;",
+  "text": "The ledger's trade/bounty/escort/gather archetypes are not invented \u2014 they are a second, real enum: QuestItem holds 17 QUEST_* procgen templates and 20 REASON_* motives, orthogonal to QuestType's 9 values.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/GameEngine.as:81-109; namespace confirmed at QuestEngine.as:1214 and :1239/:1243; read into the step at QuestAction.as:49",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "quests-story/step-action-enum-closed",
+  "lane_impact": "L1 CAMPAIGN \u2014 the quest state machine's step-dispatch switch is fully specified, closing the surveyor's STILL_UNHELD Q-14. Ten unused members (ASSASSINATE, ESCORT, REACHMARKER, HARVEST, SURVIVALMODE, WARROOMBATTLE, PLAYBACK, PVPROOM, CUTSCENE, ADVENTURE) are inputs for L9 WORLD and L11.",
+  "ledger_text": "\u2462 per-quest trigger types + coords + rewards (sampled, not tabled).",
+  "overturns_ledger": true,
+  "quote": "81: ACTION_NOTHING:int = 0;  83: ACTION_FIGHT:int = 1;  85: ACTION_ASSASSINATE:int = 2;  87: ACTION_ESCORT:int = 3;  89: ACTION_SURVIVE:int = 4;  91: ACTION_REACHMARKER:int = 5;  93: ACTION_DUEL:int = 6;  95: ACTION_ADVENTURE:int = 7;  97: ACTION_HARVEST:int = 8;  99: ACTION_SURVIVALMODE:int = 9;  101: ACTION_WARROOMBATTLE:int = 10;  103: ACTION_PLAYBACK:int = 11;  105: ACTION_PVPROOM:int = 12;  107: ACTION_CUTSCENE:int = 13;  109: ACTION_SURVIVECLEANUP:int = 14;  ||  QuestEngine.as:1214 'if(questStepData.action == 6)' ; :1239 'action = GameEngine.ACTION_ADVENTURE;'",
+  "text": "The <step><action> enum is held: GameEngine defines a 15-value ACTION_* namespace, and the campaign's measured domain decodes to NOTHING x169, FIGHT x37, DUEL x5, SURVIVECLEANUP x3, SURVIVE x1.",
+  "verdict": "HELD"
+ },
+ {
+  "alternate_cites": [
+   "reference/decompiled/shs3_android_payload/scripts/QuestEngine.as:1214,1218 + GameEngine.as:81-109,990,1014 + Overworld.as:258"
+  ],
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/GameEngine.as:81-109 + QuestEngine.as:1214-1219 + GameEngine.as:990 + Obj_NPCAggro.as:139,214",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "duplicate_count": 2,
+  "id": "quests-story/step-action-is-gameengine-action-enum",
+  "lane_impact": "L1 CAMPAIGN \u2014 closes the quest state machine's trigger dispatch: build the 15-value GameEngine.ACTION_* enum, wire 0/1/4/6/14. Scope fact for the board: only 5 of 225 story steps are DUELS, 37 are FIGHT, 169 are pure dialogue. L2/L4: ACTION_DUEL steps spawn the player at startingPosX 150 instead of 400.",
+  "ledger_text": "quests-story/step-action-enum-semantics: \"I did not find the enum mapping those ints to behaviours (talk-to / kill / gather / enter-room). Per-step trigger TYPES are therefore enumerated but not named.\"",
+  "overturns_ledger": false,
+  "quote": "GameEngine.as:81-109 'ACTION_NOTHING:int = 0; ACTION_FIGHT:int = 1; ACTION_ASSASSINATE:int = 2; ACTION_ESCORT:int = 3; ACTION_SURVIVE:int = 4; ACTION_REACHMARKER:int = 5; ACTION_DUEL:int = 6; ACTION_ADVENTURE:int = 7; ACTION_HARVEST:int = 8; ACTION_SURVIVALMODE:int = 9; ACTION_WARROOMBATTLE:int = 10; ACTION_PLAYBACK:int = 11; ACTION_PVPROOM:int = 12; ACTION_CUTSCENE:int = 13; ACTION_SURVIVECLEANUP:int = 14;'  ||  QuestEngine.as:1219 'GameEngine.initBattleMode(quest,questStepData.action,questStepData.bg,questStepData.stagewidth,questStepData.time,questStepData.wave,startingPosX);' against GameEngine.as:990 'initBattleMode(quest:int, actionType:int, ...)'  ||  QuestEngine.as:1214-1216 'if(questStepData.action == 6) { startingPosX = 150; }'  ||  Obj_NPCAggro.as:214 'if(questAction != null && questAction.action == 0) { this.interact(); }'  ||  Obj_NPCAggro.as:139 'if(questAction.action == 6) { QuestEngine.putInDuelistHolder(...) }'",
+  "reported_by": [
+   "critic"
+  ],
+  "text": "The <step><action> integer is GameEngine.ACTION_*, a 15-value enum, of which the 225 shipped steps use five: 169 ACTION_NOTHING (talk), 37 ACTION_FIGHT, 5 ACTION_DUEL, 3 ACTION_SURVIVECLEANUP, 1 ACTION_SURVIVE.",
+  "verdict": "HELD"
+ }
+]

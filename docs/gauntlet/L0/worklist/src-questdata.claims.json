@@ -1,0 +1,190 @@
+[
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/questdata.xml:27552, :27557, :27617 (quest 59 'Epilogue' begins :27347)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "questdata/epilogue-verbatim-script",
+  "lane_impact": "L9 quests-story blocker \u2460 closed and \u00a76's dialogue bullet must be deleted. 3,307 <text> nodes / 2,771 <dialogue> blocks / 40,119 words, complete through the Epilogue. The duplicated clause at :27617 ('has finally arrived. has arrived.') is a shipped authoring error \u2014 the strongest available proof this is the authored script rather than a summary. Carries the A-06 caveat: verbatim where it exists, not proven exhaustive for v0.717.",
+  "ledger_text": "**Verbatim dialogue** \u2014 if the story is server-fetched and the server is dead, the actual script is gone; author original lines to the summaries (RECREATE-NEVER-RIP already requires original dialogue anyway).",
+  "overturns_ledger": true,
+  "quote": "questdata.xml:27552  <text>Hideaki Jodai, the so-called Koe No Jigoku, is preparing to threaten this land once again.</text>  ||  :27557  <text>You mean the Silent Song, brother, surely? Hideaki Jodai was defeated five years ago.</text>  ||  :27617  <text>Good. Then the time for action has finally arrived. has arrived.</text>",
+  "text": "\u00a76's highest-value 'structurally unrecoverable' line is dead, and the proof extends to the very last beat of the campaign: the Epilogue's villain reveal is verbatim on disk, complete with a shipped authoring typo that no reconstruction would contain.",
+  "unit": "questdata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/questdata.xml:11787 and :26029 (also :26078, :12101, :12107, :12113)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "questdata/five-stances",
+  "lane_impact": "L1 combat-core (+L2 skills-meters, L11 art-anim): STANCE_TABLE must carry 5 entries, not 3. Corroborates STAGE-0 S0-1's bindata animation-set list with content that actually uses reversed/dual. Companions have fixed stances (Satoshi=balanced, Fumio=heavy), which no ledger system models.",
+  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.** A level-1 Shugyosha does Light \u00d70.5 / Balanced \u00d71.0 / Heavy \u00d71.4 (Heavy is fixed); Heavy's *reach* also scales \u00d70.5\u2192\u00d70.9.",
+  "overturns_ledger": true,
+  "quote": "questdata.xml:11787  <param>reversed_stance</param>   (Magoichi)  ||  questdata.xml:26029  <param>191,dual_stance,0</param>   (Gojo Takamori)  ||  questdata.xml:26078  <property>185,dual_stance,0</property>  ||  questdata.xml:12101  <property>168,spear_idle</property>  (Yuudai)",
+  "text": "The game ships FIVE stances, not the three the ledger models everywhere: reversed_stance and dual_stance are used as boss movesets in shipped campaign content, and one companion class (spear_*) sits outside the stance system entirely.",
+  "unit": "questdata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/zFtCaTO0_1M/seg-24/frames/frame_0003.jpg (1024x576, read full-frame; objective text upper-left ~x60-300, y135-175) vs reference/extracted/questdata.xml:4160",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "questdata/frame-corroborates-objective",
+  "lane_impact": "L9 quests-story: bounds run-1's Q-02 in the other direction and validates the \u00a76 dialogue overturn. Free by-product handed to L3 progression: the same crop reads the L6->L7 XP threshold as 12150, and reference/frames/broad_survey/Nr4fQstqHDM_0060.jpg reads L7->L8 = 16550 \u2014 two real points on the L11-80 curve the ledger calls likely unrecoverable.",
+  "overturns_ledger": false,
+  "quote": "VISIBLE IN THE FRAME: 'STORY QUEST: TURN IN INOKICHI'S CLUB AT THE BOUNTY BOARD'.  ||  questdata.xml:4160  <title>Turn in Inokichi's Club at the Bounty Board</title>",
+  "text": "The divergence is revision-level, not wholesale: a v0.717 on-screen objective string matches the extracted questdata title character-for-character, so A2 quest cites are trustworthy as on-screen copy \u2014 they are simply not proven exhaustive.",
+  "unit": "questdata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/videos/Nr4fQstqHDM.mp4 at t=60s, t=300s, t=900s \u2014 extracted at native 1920x1080 via ffmpeg -ss, cropped (80,250)-(720,330) and upscaled 4x to 2560x320 (the HUD type is unreadable at survey scale)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "questdata/frame-vs-payload-placenames",
+  "lane_impact": "Global caveat on L9 quests-story and a direct qualifier on STAGE-0b FINDING S0-3. Run 1 proved this divergence from dialogue wording; this is an independent second proof from location/objective strings, with the search surface pushed to the whole 329 MB payload. THE FRAME WINS \u2014 said out loud. With the generated-NPC-name finding in hand, the most economical explanation is that wilderness node names, and the objective lines embedding them, are composed at runtime from a source not shipped in the client.",
+  "overturns_ledger": false,
+  "quote": "VISIBLE IN THE CROPS: t=60s location bar 'S CHIKADA MINE' and objective on two lines 'STORY QUEST: FIND WORK AT' / 'KAKUCHI TOWN'; t=300s room bar 'TRAP CHALLENGE' with the same objective still shown; t=900s location bar 'N KAKUCHI MOUNTAIN PATH'. Against the payload: grep -c \"Kakuchi\" reference/extracted/questdata.xml -> 0; grep -c \"Kakuchi\" reference/extracted/payload.xml (329 MB) -> 0; grep -c \"Chikada\" reference/extracted/payload.xml -> 0; zero hits in docs/gauntlet/L0/index/strings.json (2,533 entries) and in all five name-generator tables (676 places).",
+  "text": "THE FRAME WINS: the v0.717 longplay displays an objective line and location names that occur ZERO times in questdata.xml, in the entire 329 MB payload.xml, in the 2,533-entry Android string table, or in any of the five name-generator tables \u2014 so the held script, though verbatim, is NOT proven to cover everything v0.717 renders.",
+  "unit": "questdata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/zFtCaTO0_1M/seg-24/frames/frame_0003.jpg (1024x576, read full-frame; NPC caption at ~x310-420, y330-345), decomposed against reference/extracted/android/86_NameGenerator_NobleFamilyNames.bin:5, 85_NameGenerator_MaleNames.bin:267 / :80, 87_NameGenerator_SamuraiFamilyNames.bin:7 / :11, 88_NameGenerator_FemaleNames.bin:226",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/86_NameGenerator_NobleFamilyNames.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "questdata/generated-npc-names",
+  "lane_impact": "L7 enemies-ai: remove Hachisuka Kano and Honda Shizuka from the blocker list \u2014 they are runtime-generated, not authored (Zabuza and Tengu Hotaru do NOT decompose and stay open). L12 meta-social: PvP/bounty opponent naming is a 5-table generator (397 male / 290 female / 32 noble / 35 samurai / 676 place). Corroborated by only 16 of 535 nodes in 112_Mobile_NodeData.bin carrying an authored <name>.",
+  "ledger_text": "Boss table omits Hachisuka Kano, Honda Shizuka, Zabuza, Tengu Hotaru.",
+  "overturns_ledger": true,
+  "quote": "VISIBLE IN THE CROP: a street NPC captioned 'GOJO OTONDO' with a '!' quest marker, a second character captioned 'GUEST', location bar 'MAIN STREET', '310 COINS', level 6, '10431 | 12150 EXPERIENCE POINTS', 'TERRITORY (23,52)', 'INSIDE SECTOR (1,3)', HP 20/20, Chi 20/20, 'HEAVY STANCE'. Tables: 86_...NobleFamilyNames.bin:5 'Gojo' + 85_...MaleNames.bin:267 'Otondo'; 87_...SamuraiFamilyNames.bin:7 'Hachisuka' + 85:80 'Kano'; 87:11 'Honda' + 88_...FemaleNames.bin:226 'Shizuka'.",
+  "text": "Ambient overworld NPC names are procedurally generated by pairing a family-name table with a given-name table, so the ledger's demand for boss-table entries for 'Hachisuka Kano' and 'Honda Shizuka' is an OVER-CLAIM \u2014 both decompose into shipped generator tables and are not authored bosses.",
+  "unit": "questdata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/questdata.xml:19323, :19477, :19494, :19500, :19516, :19778",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "questdata/knockdown-grapple-aerial",
+  "lane_impact": "L1 combat-core: a knocked-down state (downed / flipupfromdowned / kneel / kneeltostand), a thrower+victim grapple pair, a 4-clip aerial stab and backstep_start/end are all absent from the ledger's moveset model. L2 skills-meters gains named cast animations focus_start / warcry_start / buffarmor_start. L11 art-anim gains the 88-name vocabulary as a cross-check against the ~450 anims in the 18 MCSCharacter_* blobs. throwgrenade matches the 'thrown pouch mid-air' Kheshav logged in \u00a73's first-hand crux read.",
+  "overturns_ledger": false,
+  "quote": "questdata.xml:19323  <param>350,-15,reversed_run,backthrow,-1</param>  ||  questdata.xml:19477  <param>backthrow_victim</param>  ||  questdata.xml:19494  <param>560,10,reversed_run,airstab_start,-1</param>  ||  questdata.xml:19500  <param>630,10,airstab_mid,airstab_stab,-1</param>  ||  questdata.xml:19516  <param>airstab_end</param>  ||  questdata.xml:19778  <param>flipupfromdowned</param>",
+  "text": "88 distinct animation-state names appear in questdata alone, and they include a knockdown/getup layer, a paired grapple throw, a 4-part aerial stab and a backstep dodge \u2014 combat primitives that appear in NONE of the 12 ledger systems.",
+  "unit": "questdata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/112_Mobile_NodeData.bin:4-27 and :46, :74 (joined to reference/extracted/questdata.xml:15)",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/112_Mobile_NodeData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "questdata/node-packing-decoded",
+  "lane_impact": "L8 world-exploration blocker \u2460 is no longer 'absent': the graph topology, its 4096 stride, per-room <bg> and per-room <width> (800 px for the Prologue room \u2014 exactly the ledger's 800x480 native canvas) and the gather table (<search><id>20000</id><chance>5</chance>) are all held. STILL OPEN and not guessed: which axis is N-S vs E-W and the mapping onto the on-screen TERRITORY/SECTOR readout \u2014 three frame-read territory/sector pairs failed to fit any obvious linear packing.",
+  "ledger_text": "\u2460 **world bounds + geography** (sparse Japan-outline, not a W\u00d7H grid) \u2014 *mine Fandom Category:Territories via API; trace the map image.*",
+  "overturns_ledger": true,
+  "quote": "questdata.xml:15  <node>8382465</node>  ||  112_Mobile_NodeData.bin:5  <id>8382465</id>  :6  <name>1037</name>  :11  <bg>4</bg>  :12  <width>800</width>  :16  <property>0,50,8386561,1,2,2,1</property>  (exit at <x>750</x> -> 8386561 = +4096)  ||  :46  <property> 0,50,8382465,1,3,3</property>  (exit at <x>50</x> -> -4096)  ||  :74  <property>0,50,8386561,1,3,3</property>. Measured delta distribution: -4096 x19 at exit x 50..721; +4096 x18 at exit x 750..1550; +1 x18; -1 x19.",
+  "text": "questdata's <node> integers are a two-axis packing on a 4096 stride: parsing every exit object out of the Android world graph shows left-side room exits go to node-4096 in 19/19 cases and right-side exits to node+4096 in 18/18 cases, with the orthogonal axis traversed by +/-1. This upgrades the questdata lane's own STILL_UNHELD from run 1.",
+  "unit": "questdata",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "STILL_UNHELD",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "questdata/placename-source",
+  "lane_impact": "L8 world-exploration: 'Kakuchi' and 'Chikada' are absent from all held artifacts, and the 676-entry place table holds real Japanese city names (Anjo, Nagoya, Okazaki, Kariya) containing neither them nor even the story-authored 'Kasuta' (112_Mobile_NodeData.bin:6 <name>1037</name> -> strings.json['1037'] = 'W Kasuta Forest'). Person names ARE generated from client tables (see questdata/generated-npc-names); place names are not, by the same mechanism. Honest answer: unknown.",
+  "overturns_ledger": false,
+  "text": "The source of v0.717's wilderness place names could not be established \u2014 neither the payload, the string table nor the name-generator tables contain them, and I will not guess a generation rule.",
+  "unit": "questdata",
+  "verdict": "STILL_UNHELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/questdata.xml \u2014 parse of <dialogue><img> (52 distinct) vs <intro><img> (16 distinct)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "questdata/portrait-count-correction",
+  "lane_impact": "L11 art-anim / L10 ui-hud: the from-scratch art manifest to build against is 52 character portraits with emotional variants plus 16 full-screen story cards \u2014 not 68 portraits.",
+  "overturns_ledger": false,
+  "quote": "<dialogue><img> distinct set (52): aboshi, aboshi_mask, amaya, chikako, chikako_angry, chikako_blush, chikako_maked, chikako_mask, fumio, fumio_happy, hachimaru, hachimaru_serious, hiroshi, hiroshi_happy, inokichi, ito, jinbei, jinbei_angry, jonin, kojuro, kojuro_serious, ladyoiwa, ladyoiwa_angry, ladyoiwa_snake, magoichi, magoichi_masked, mai, mai_sad, mitsuo, mitsuo_dying, mitsuo_serious, noportrait, satoshi, satoshi_drunk, satoshi_happy, satoshi_serious, shinmen, shou, sorcerer, sparrowhawk, tadao, takahasi, takamori, takamori_dying, takamori_stand, takamori_undead, tanaka, yasuka, yasuka_hurt, yohei, yuudai, yuudai_before. <intro><img> distinct set (16): _exposition, _episode0.._episode12, _epilogue, _exposition_epilogue. 52 + 16 = 68.",
+  "text": "Correction to this lane's own run-1 claim: there are 52 distinct dialogue portraits, not 68. Run 1's figure was the union of 52 portraits plus the 16 full-screen story cards, mislabelled as portraits.",
+  "unit": "questdata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/questdata.xml:18511-18512, :18535, :18591, :18614, :18659 (mirrored at :18889, :18917, :18945; decelerating type 41 at :19346-:19448)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "questdata/projectile-launch-params",
+  "lane_impact": "L7 enemies-ai blocker \u2464 moves from open to PARTIAL. HONEST LIMIT stated in the journal: this is scripted cutscene direction, not the live archer AI \u2014 it fixes projectile type ids, origin, velocity domain, telegraph clips and cadence, NOT the AI firing rule or the gravity constant. Run 1 counted createprojectile in the verb histogram but never decoded the params.",
+  "ledger_text": "\u2464 Undead damage-reflect probability; arrow arc physics.",
+  "overturns_ledger": true,
+  "quote": "questdata.xml:18512  <param>40,1150,300,-40,-15</param>  ||  :18535  <param>40,1150,300,-40,-12</param>  ||  :18591  <param>40,1150,300,-40,-9</param>  ||  :18659  <param>40,1150,300,-40,-6</param>  ||  mirrored :18889  <param>40,550,300,40,-15</param>",
+  "text": "createprojectile's param grammar decodes to typeId,x,y,vx,vy \u2014 giving the archer's projectile type id (40), launch origin y=300, horizontal speed \u00b140, a four-value vertical-launch spread {-15,-12,-9,-6}, a 0.4 s volley cadence, and the named telegraph clips arrownormalpose -> pullbackarrow -> firearrow.",
+  "unit": "questdata",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/questdata.xml:18459, :18471, :18477, :24051, :24091",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "questdata/severed-limb-deaths",
+  "lane_impact": "L11 art-anim-audio-feel blocker \u2464 is closed: three severed-limb death states are named in shipped content, plus deathbyarrow, deathenemy, death, downed, corpse1/2/3 and defeatedanimationv1/v2.",
+  "ledger_text": "\u2462 FX **blend modes**; \u2463 **screen-shake** + **hitstop-on-landed-hit** (never catalogued); \u2464 severed-limb death variant.",
+  "overturns_ledger": true,
+  "quote": "questdata.xml:18459  <param>800,9,chargewithspear,deathinhalf,-1</param>  ||  questdata.xml:18471  <param>740,8,chargewithspear,deathnohand,-1</param>  ||  questdata.xml:18477  <param>750,9,holdshield_run,deathnohead,-1</param>  ||  questdata.xml:24051  <param>deathnohead</param>",
+  "text": "Severed-limb death variants are not missing \u2014 deathnohand, deathnohead and deathinhalf are named and used in shipped campaign cutscenes, alongside deathbyarrow and deathenemy.",
+  "unit": "questdata",
+  "verdict": "HELD"
+ }
+]

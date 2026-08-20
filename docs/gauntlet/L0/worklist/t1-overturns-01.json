@@ -1,0 +1,407 @@
+[
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:267-310; SWF header rects of reference/decrypted/shs3_android_payload_decoded.swf and my k=109 decode of 124_Mobile_ImageResource.bin",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/690-is-the-friend-bar",
+  "lane_impact": "L6 art-anim-audio-feel and L8 ui-hud: removes the need to invoke 'the frame wins' at all \u2014 two byte-checks agree with 800x480 outright. The 210 px band is a named friend-bar mode with its own HUD init call, which is a L11 meta-social finding (an overworld friend panel) the ledger does not hold. NOTE: the frame's measured content box is 1816x1080 (aspect 1.6815), 0.89% wider than the 1800 px that 800x480 predicts \u2014 the capture is not pixel-exact, so do not treat frame-derived HUD fractions as exact against the 800x480 grid.",
+  "ledger_text": "**Aspect-ratio truth** \u2014 native canvas is **800\u00d7480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong.",
+  "overturns_ledger": true,
+  "quote": "GameEngine.as:269-281 `var originalWidth:int = 800; var originalHeight:int = 480; var originalHeightWithBar:int = 690; ... if(newAspectRatio <= originalWithBarAspectRatio) { originalAspectRatio = originalWithBarAspectRatio; originalHeight = originalHeightWithBar; StatsManager.stageShowingFriendBar = true; OverworldHUD.instance.friendpanel.init(); }` \u00b7 SWF rects: shs3_android_payload_decoded.swf = 800.0 x 480.0 px \u00b7 124_Mobile_ImageResource (k=109) = 800.0 x 480.0 px \u00b7 shs3_payload_decoded.swf (web) = 800.0 x 690.0 px",
+  "text": "The 800x690 document rect is not unspecified 'container chrome' \u2014 GameEngine names it originalHeightWithBar and the extra 210 px is the FRIEND BAR, a selectable canvas mode entered when the window is taller-relative-to-width than 800/690; and 800x480 is independently attested by two SWF document rects.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:269-306, and :190 for the fullscreen path",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/690-is-the-friend-panel",
+  "lane_impact": "ui-hud gains a whole layout mode and a friend panel it does not hold; world-exploration/meta-social gain the social strip. art-anim-audio-feel: the claimed doc-vs-frame conflict never existed - the code holds 800x480 AND 800x690 with an explicit aspect branch, and the videos read 5:3 only because they were captured in fullscreen where fullScreenSourceRect clips to 800x480.",
+  "ledger_text": "**Aspect-ratio truth** \u2014 native canvas is **800\u00d7480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong.",
+  "overturns_ledger": true,
+  "quote": "GameEngine.as:271 `var originalHeightWithBar:int = 690;` :275 `if(newAspectRatio <= originalWithBarAspectRatio)` :278 `originalHeight = originalHeightWithBar;` :279 `StatsManager.stageShowingFriendBar = true;` :282 `OverworldHUD.instance.friendpanel.init();` ; and :190 `stageMC.fullScreenSourceRect = new Rectangle(0,0,800 * newScale,480 * newScale);`",
+  "text": "The 800x690 rect is not container chrome: GameEngine.resizeHandler names the extra 210 px as originalHeightWithBar and switches to it with StatsManager.stageShowingFriendBar = true plus OverworldHUD.instance.friendpanel.init() - an in-game friend panel that is a second, unbuilt UI surface.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:267-312",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/800x690-is-the-friend-bar-layout",
+  "lane_impact": "art-anim-audio-feel and ui-hud: the ledger's open item closes as TWO payload contracts, not one. 800x480 is the play-field canvas; 800x690 is the friend-bar layout, and the 210 px difference is a social panel, which is why the web SWF document rect is authored at 690. HUD fractions must be re-based on 800x480 AND the recreation must decide whether it ships the friend bar at all. There is no frame-vs-doc conflict to invoke the FRAME-WINS invariant over. Caveat: this formula exists only in the Android bundle \u2014 grep over reference/decompiled/shs3_payload/scripts/ for originalWidth/originalHeight returns zero hits \u2014 so it inherits the S0-3 Android-parity caveat.",
+  "ledger_text": "**Aspect-ratio truth** \u2014 native canvas is **800\u00d7480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong.",
+  "overturns_ledger": true,
+  "quote": "GameEngine.as:271 `var originalHeightWithBar:int = 690;` :273 `var originalWithBarAspectRatio:Number = originalWidth / originalHeightWithBar;` :275 `if(newAspectRatio <= originalWithBarAspectRatio)` :278 `originalHeight = originalHeightWithBar;` :279 `StatsManager.stageShowingFriendBar = true;` \u2026 :311-312 `StatsManager.stageBaseWidth = originalWidth; StatsManager.stageBaseHeight = originalHeight;`",
+  "text": "800x690 is not container chrome \u2014 it is `originalHeightWithBar`, a named second canvas the engine switches to when the window is narrower than 800/690, which also turns the friend panel on.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/AnimData.as:10 and :16; MCSCharacter.as:1293; measured across reference/extracted/bindata/*.bin (102 of 487 <anim> carry l=\"1\")",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "art-anim-audio-feel/anim-loop-flag",
+  "lane_impact": "L6 art-anim-audio-feel: completes the motion contract. The survey's model (24 Hz stream + code-added duration tails + hold-on-final-pose) is only the non-looping path; 21% of authored motion loops instead, and it is exactly the motion a duel spends most of its time in. A rebuild following the survey as written will freeze the stance idle. Also confirms across ALL 487 anims (not the survey's 4-anim sample) that @d == the <f> count with zero mismatches.",
+  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
+  "overturns_ledger": true,
+  "quote": "AnimData.as:10 `public var looping:Boolean = false;` \u00b7 AnimData.as:16 `this.looping = xml.@l == 1;` \u00b7 MCSCharacter.as:1293 `this.currentAnimationLooping = this.currentAnimation.looping;` \u00b7 data: `<anim i=\"ogre_walk\" d=\"24\" l=\"1\">`, and l=\"1\" on lightstanceidle, balancedstanceidle, heavystanceidle, walk, run_sheathed, lightstancerun, balancedstancerun, heavystancerun, ninjastealthwalk, mining, femalewalk, zom_crawl and every *_partb slash tail",
+  "text": "The animdata carries a third attribute the survey missed \u2014 l=\"1\" marks a LOOPING animation, present on 102 of the 487 anims, parsed into AnimData.looping and read by MCSCharacter, so every stance idle, gait and *_partb slash tail cycles rather than latching on its final pose.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "my recursive DefineSprite/PlaceObject3 walker over reference/decrypted/shs3_payload_decoded.swf, reference/decrypted/shs3_android_payload_decoded.swf, and my decodes of 115_Mobile_SHS3Resource (k=104), 120_Mobile_BGResource (k=103), 124_Mobile_ImageResource (k=109)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/blend-modes-none-at-byte-level-web",
+  "lane_impact": "L6 art-anim-audio-feel: closes blocker \u2462 with the RIGHT kind of evidence. Flash stores authored blend modes in PlaceObject3, not in code, so the survey's AS3 grep could not have settled this; the byte scan can, and it also carries web parity the grep could not. Positive side-finding for the render budget: 263 sprites in the web payload DO carry filter lists and 54 use cacheAsBitmap.",
+  "ledger_text": "\u2462 FX **blend modes**;",
+  "overturns_ledger": true,
+  "quote": "shs3_payload_decoded.swf (WEB): sprites=827 PlaceObject3=304 withFilters=263 cacheAsBitmap=54 BLENDMODES={} \u00b7 shs3_android_payload_decoded.swf: sprites=675 PlaceObject3=248 withFilters=214 cacheAsBitmap=47 BLENDMODES={} \u00b7 115_Mobile_SHS3Resource: sprites=1949 PlaceObject3=12 BLENDMODES={} \u00b7 120_Mobile_BGResource: sprites=552 PlaceObject3=54 cacheAsBitmap=53 BLENDMODES={} \u00b7 124_Mobile_ImageResource: BLENDMODES={}",
+  "text": "'No blend modes' is provable at byte level and in the WEB build, not just by an AS3 grep: zero of 2,091 PlaceObject3 tags across the web payload, the android payload and all three decoded resource SWFs set the HasBlendMode flag.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "my recursive SWF tag scan of reference/decrypted/shs3_payload_decoded.swf: 827 DefineSprite, 7,196 PlaceObject2, 304 PlaceObject3, 0 with PlaceFlagHasBlendMode, 262 filter placements = 205 GlowFilter / 57 BlurFilter / 2 DropShadowFilter across 71 sprites",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/glow-filters-are-the-real-fx-answer",
+  "lane_impact": "art-anim-audio-feel: blocker \u2462 is closed correctly only as 'zero blend modes, 205 authored glows'. Also methodological \u2014 an ActionScript grep is the wrong instrument for a Flash compositing question, because blend modes and filters are authored into PlaceObject3, not code; the byte scan must be the cite. Cross-lane into ui-hud: at least one glow-bearing sprite is a named UI portrait.",
+  "ledger_text": "\u2462 FX **blend modes**;",
+  "overturns_ledger": true,
+  "quote": "sprites containing glow placements: 71  total glow placements: 203  \u00b7  sprite id 2250 glows 50 (anonymous) \u00b7 sprite id 3110 glows 47 \u00b7 sprite id 1624 glows 2 class: shs3_fla.InteractUI_chikako_portrait_610",
+  "text": "The shipped web payload authors 205 GlowFilter placements (plus 57 Blur and 2 DropShadow) in PlaceObject3 tags, so blocker \u2462's real answer is 'no blend modes, but glow everywhere' \u2014 not 'one class with ColorTransform + Blur + ColorMatrix'.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:1454-1465 and :1763-1768; EnemyShield.as:330-339; census of all 32 gotHitCounter assignments across reference/decompiled/shs3_android/scripts/*.as",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/hit-reaction-is-a-ladder",
+  "lane_impact": "L6 art-anim-audio-feel and L1 combat-core: reverses the survey's verdict. The recreation's 7/12/16-frame tint ladder is NOT an invention to be deleted \u2014 the original has its own ladder and it contains 12 and 16. The 84-tick (3.5 s) local-player redfreeze reaction and the shield's damage-nullifying PART_weapon/PART_prop cases are combat mechanics no ledger holds.",
+  "ledger_text": "hit-tint scaling (7/12/16f), death sword-detach, dash-snap, scarf physics, FINISHER_FLASH \u2014 all measured/authored but missing from the art digest \u00a75.",
+  "overturns_ledger": true,
+  "quote": "census: `12 x23 \u00b7 24 x2 \u00b7 16 x1 \u00b7 26 x1 \u00b7 84 x1 \u00b7 0 x3 \u00b7 -1 x1` \u00b7 MCSPlayer.as:1456-1465 `if(mcs.animation == DOWNSTAB) { gotHitCounter = 24; } else if(this.controlledBy == 0) { gotHitCounter = 84; } else { gotHitCounter = 12;` \u00b7 :1763-1768 `else if(prevActionState == SKILL_THOUSANDSTABS_STATE) { gotHitCounter = 26; } else if(prevActionState == SKILL_DEADLYCLEAVE_STATE) { gotHitCounter = 16; }` \u00b7 EnemyShield.as:331-339 `case mcs.partList[MCSCharacter.PART_weapon]: gotHitFlag = false; damage = 0; return false;` / `case mcs.partList[MCSCharacter.PART_prop]: ... damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal(); return false;`",
+  "text": "The hit-reaction window is not a single 12-tick number but a ladder of {12 default, 16, 24, 26, 84} plus 0/-1 sentinels, keyed on action state and body part \u2014 and hitting a shield enemy's weapon produces no reaction at all.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/bindata/116_1t4643s0.bin `heavy_horslash_parta` d=5 with 2 <f>; 118_1t4645s0.bin `light_horslash_parta` d=13 with 11 <f>; 108_1t4635s0.bin `heavyhorizontalslash_parta` d=6 with 4 <f>; reference/decompiled/shs3_android/scripts/AnimData.as:16-21 and MCSCharacter.as updateAnimation/updateFrame",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/hold-frames-are-authored-in-data",
+  "lane_impact": "L-art-anim-audio-feel: replaces both the ledger's '15fps pose latch' AND the surveyor's 'no hold frames in data' model. Correct model = 24 Hz playback over a sparse keyframe stream, with per-animation held ticks authored as @d minus len(<f>) and further code tails on top. Every slash recovery in a recreation depends on this table; it must be extracted per-animation before any motion work starts.",
+  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
+  "overturns_ledger": true,
+  "quote": "AnimData.as:16-21 `this.duration = xml.@d;` ... `var max:int = xml.f.length(); for(var i:int = 0; i < max; i++) { this.frameList.push(new FrameData(xml.f[i])); }`  \u00b7  MCSCharacter updateFrame `if(this.frameCounter < this.currentAnimation.frameList.length) { this.currentAnimation.frameList[this.frameCounter].setPosition(this); }`  \u00b7  measured: 96/385 rows with @d > len(<f>), incl. 23 in 108_1t4635s0.bin and 6 in 118_1t4645s0.bin",
+  "text": "Hold frames are authored in the animation DATA, not only injected by code: 96 of 385 <anim> rows across the 19 web-payload animdata blobs have @d greater than their <f> count, concentrated on the slash animations, and MCSCharacter.updateFrame's `if(frameCounter < frameList.length)` guard is what turns that gap into a latch on the last pose.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/itemdata.xml:237-249 (item 2115) resolved through reference/extracted/android/118_Mobile_Lang_EN.bin; reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3703",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/hud-150-is-a-potato-buff",
+  "lane_impact": "art-anim-audio-feel: overturns the CAUTION inside claim art-anim-audio-feel/hit-reaction-12-ticks, which reads the HUD's '150% DAMAGE' as the stance modifier. It is neither the stance modifier nor a second 1.5 to avoid conflating - it is an active-buff readout from a type-10 consumable, paired with its restriction line 'CANNOT CHANGE STANCE'. Cross-lane: ui-hud gains an active-buff HUD element no ledger holds (buff name + restriction, bottom-left under the HP/Chi bars); combat-core gains the real stance-advantage number, x1.2, contradicting any 1.5 assumption; items-equipment gains the buff-item shape (type 10, modifier id 38, one buff active at a time).",
+  "ledger_text": "hit-tint scaling (7/12/16f), death sword-detach, dash-snap, scarf physics, FINISHER_FLASH - all measured/authored but missing from the art digest S5.",
+  "overturns_ledger": true,
+  "quote": "itemdata.xml:238-248 `<id>2115</id><type>10</type><name>4125</name> ... <desc>4132</desc><modifier><id>38</id><value>1</value></modifier>`  \u00b7  Lang_EN resname 4125 = 'Potato Dog', resname 4132 = 'Eat this potato to get the 150% Damage buff. Note: Only one buff may be active at a time.'  \u00b7  MCSPlayer.as:3703 `damage *= 1.2;` (the stance-advantage branch opening at :3701)",
+  "text": "The '150% DAMAGE' line in the reference frame is a consumable food-buff readout, not a stance modifier - and the shipped stance rock-paper-scissors multiplier is x1.2, not x1.5.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "docs/gauntlet/L0/index/strings.json entries 4132/4133/4134/4135/4229/4230 and 4125-4128/4227-4228 and 125; reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3703; corroborated in reference/frames/duel_dense/Nr4fQstqHDM_432.0.png",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/hud-150-is-potato-buff",
+  "lane_impact": "Resolves the survey's own flagged-unreconciled CAUTION. L1 combat-core gains the real damage pipeline order \u2014 stance triangle x1.2, then minus getDefense(), then behead x1.5 \u2014 and learns the stance modifier is 1.2 not 1.5. L4 items-equipment / L3 economy gain a six-item consumable buff family with an exclusive-buff rule. L8 ui-hud gains the bottom-left HUD stack read off the frame: portrait, HP 20/20, AP 26/26, restriction line, active-buff line.",
+  "ledger_text": "hit-tint scaling (7/12/16f), death sword-detach, dash-snap, scarf physics, FINISHER_FLASH \u2014 all measured/authored but missing from the art digest \u00a75.",
+  "overturns_ledger": true,
+  "quote": "strings 4132 `\"Eat this potato to get the 150% Damage buff.\\n\\nNote: Only one buff may be active at a time.\"` \u00b7 4133 150% Defense \u00b7 4134 150% XP \u00b7 4135 150% Speed \u00b7 4229 200% AP Regeneration \u00b7 4230 200% Duel Token Regeneration \u00b7 items 4125-4128/4227-4228 `Potato Dog \u00b7 Potato Bear \u00b7 Potato Raccoon \u00b7 Potato Cat \u00b7 Potato Pig \u00b7 Potato Duck` \u00b7 125 `\"Stance Restriction\"` \u00b7 MCSPlayer.as:3701-3703 `if(this.stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE || ...) { damage *= 1.2; }`",
+  "text": "The '150% DAMAGE' line in the battle HUD is a consumable food buff, not the stance modifier and not the behead multiplier \u2014 the stance triangle is x1.2, and the string table names a whole potato-buff family with a one-buff-at-a-time rule.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/videos/Nr4fQstqHDM.mp4, my 60 fps extraction + red-fraction (>0.65 of a 64x36 downscale) measurement at t=514-526 and t=585-597; against reference/decompiled/shs3_android/scripts/StageManager.as:1101",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/killbeat-6000ms-pins-24hz-tick",
+  "lane_impact": "art-anim-audio-feel: raises claim 24fps-keyframe-stream from PARTIAL to frame-confirmed HELD, and confirms claim kill-beat-timings from the frame side. The ledger's '15fps pose latch' is a correct description of the VIDEO and a wrong description of the GAME - the sim ticks at 24 Hz and both uploads were recorded at 15 fps. Bonus: the code's normal exit is at counter==24 (5.0 s), so measuring 6.0 s twice proves the SHEATHESWORDCHIBURI branch at StageManager.as:916 is the common case.",
+  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
+  "overturns_ledger": true,
+  "quote": "red run t=516.683..522.667 duration=6.000s (360 frames @60); red run t=587.683..593.667 duration=6.000s (360 frames @60); t=697.550..703.600 6.067s; t=864.417..871.067 6.667s. StageManager.as:1101 'redFreezeCounter = 24 * 6;' => 144 ticks in 6.00 +/- 0.07 s => 24.0 +/- 0.3 Hz. A 15 Hz sim would take 9.6 s.",
+  "text": "The end-of-battle red freeze measures exactly 6.000 s (360 frames at 60 fps) twice independently, which is redFreezeCounter = 24*6 = 144 ticks and pins the simulation tick rate at 24.0 +/- 0.3 Hz - frame-confirming both the 24 Hz clock and the kill-beat number, and proving the 15 Hz on-screen cadence is the capture rate, not the game.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "grep -a -o -E '[a-zA-Z]*blendMode=\"[^\"]*\"' reference/extracted/payload.xml | sort | uniq -c ; plus my PlaceObject3 flag parse of the three decoded Android resource SWFs",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/no-blendmode-holds-for-timeline-tags-too",
+  "lane_impact": "art-anim-audio-feel: blocker 3 was closed on an AS3 grep alone, which cannot see a blend mode set in the Flash IDE (PlaceObject3 / DefineButton2 tag flags). I checked those and they are all off, so the 'none - normal alpha only' answer now covers authored timeline content too. A recreation may use plain alpha compositing with confidence.",
+  "ledger_text": "\u2462 FX **blend modes**;",
+  "overturns_ledger": true,
+  "quote": "194 buttonHasBlendMode=\"false\" / 304 placeFlagHasBlendMode=\"false\" \u2014 zero \"true\". PlaceObject3 tags with HasBlendMode set: 115_Mobile_SHS3Resource 0, 124_Mobile_ImageResource 0, 120_Mobile_BGResource 0.",
+  "text": "The no-blend-mode finding survives the check an ActionScript grep cannot do: every blend-mode flag in the shipped web client's timeline tags is false, 498 of 498.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "my PlaceObject3 flag scan (top-level and nested inside every DefineSprite) of the decoded 115_Mobile_SHS3Resource, 124_Mobile_ImageResource, 120_Mobile_BGResource, 113_Mobile_MusicResource, 122_Mobile_SoundResource",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_PARSEABLE_PATH"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "art-anim-audio-feel/no-blendmode-in-authored-data",
+  "lane_impact": "art-anim-audio-feel: this is the half of blocker \u2462 a code grep structurally cannot answer, because in Flash a blend mode is normally authored on the timeline and rides in a PlaceObject3 tag without ever touching ActionScript. With both paths checked, 'none \u2014 normal alpha only' is now a closed result rather than an argument from absence.",
+  "ledger_text": "\u2462 FX **blend modes**;",
+  "overturns_ledger": true,
+  "quote": "PlaceObject3-with-blendmode-flag count: 0 \u2014 reported for every one of the five decoded containers",
+  "text": "No blend mode is set in the authored timeline data either, not just in ActionScript: zero PlaceObject3 tags carry the blend-mode flag across all five decoded resource SWFs.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "own recursive SWF tag walk (descending into DefineSprite bodies) over the decoded 115_Mobile_SHS3Resource, 120_Mobile_BGResource and 124_Mobile_ImageResource",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_PARSEABLE_PATH"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "art-anim-audio-feel/no-blendmode-in-swf-tags-either",
+  "lane_impact": "art-anim-audio-feel: closes the remaining hole in blocker \u2462. An AS3 grep cannot see blend modes authored in the Flash IDE onto symbol instances \u2014 those live in the PlaceObject3 flag byte. Both channels now agree on 'none'. Any additive/screen blending in the recreation is an authored deviation.",
+  "ledger_text": "\u2462 FX **blend modes**;",
+  "overturns_ledger": true,
+  "quote": "115_SHS3Resource: PlaceObject2=2032 PlaceObject3=12 blendFlagSet=0 sprites=1949 \u00b7 120_BGResource: PlaceObject2=2105 PlaceObject3=54 blendFlagSet=0 sprites=552 \u00b7 124_ImageResource: PlaceObject2=4653 PlaceObject3=1473 blendFlagSet=0 sprites=94",
+  "text": "No blendMode is set at authoring time either: across 1,539 PlaceObject3 tags in the three decoded art containers, not one has the blend-mode flag set.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "own scan splitting on <anim \u2026> headers across every file in reference/extracted/bindata/ whose root is <animdata>",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/no-hold-frames-across-all-487",
+  "lane_impact": "art-anim-audio-feel: the survey measured two blobs and generalized; the generalization is correct and now proven exhaustively. Every hold in the game is code-injected by AnimData's per-animation duration tail and held by the frameList.length guard in MCSCharacter.updateFrame \u2014 none of it is authored into the data. This is a directly testable invariant: a rebuild importing these blobs can assert `@d == len(<f>)` as a data-integrity gate.",
+  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
+  "overturns_ledger": true,
+  "quote": "animdata files: 19 \u00b7 TOTAL <anim tags: 487 \u00b7 checked 487 mismatches 0 \u2014 per-file counts 100:20 101:7 102:51 103:25 104:13 105:8 106:21 107:20 108:158 109:8 110:21 111:17 112:16 113:26 114:10 115:16 116:21 117:8 118:21",
+  "text": "The 'data holds no hold frames' property is universal, not sampled: @d equals the <f> child count for every one of the 487 authored animations across all 19 web animdata blobs.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:898 (override die), :1005 (the dice), :1005-1082 (the branches)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/npc-death-dice-is-seven-way",
+  "lane_impact": "art-anim-audio-feel: blocker \u2464 is closed, but with THIS distribution, not the goblin one. 31 of 34 Enemy* classes inherit it (only EnemyGoblin, EnemyGoblinThrower and EnemyZombie override). The `else` branch is also the source for the ledger's otherwise-unsourced 'death sword-detach' bullet \u2014 createFlyingWeapon() + createFlyingHat() + hair reveal is a named, code-driven beat. Cross-lane into enemies-ai: DEFEATED2 is suppressed during redFreeze, so the end-of-battle kill uses a different variant mix than mid-battle kills.",
+  "ledger_text": "\u2464 severed-limb death variant.",
+  "overturns_ledger": true,
+  "quote": "NPC.as:1005 `dice = Math.random() * 7;` -> `<=1 ENEMYDEATH` (2/7) \u00b7 `==2 DEATH_FORWARD` \u00b7 `==3 DEFEATED2 && !StageManager.isRedFreeze()` \u00b7 `==4 ENEMYDEATHNOHAND` \u00b7 `==5 DEATHINHALF` \u00b7 else `startAnim(ENEMYDEATH); ... mcs.hair.visible = true; mcs.hatHair.visible = false; mcs.createFlyingWeapon(); mcs.createFlyingHat();`",
+  "text": "The real death-variant distribution for human enemies is a seven-way dice in the NPC base class, not the goblin's five-way 40/20/20/20, and it contains two death animations plus a flying-weapon/flying-hat beat that the goblin path does not have at all.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "MD5 comparison of my extracted Duels SFX (from 122_Mobile_SoundResource k=111) against my extractions from reference/predecessors/shs1_462631_shunpo202c.swf (10 DefineSound) and reference/predecessors/shs2_kon.swf (20 DefineSound)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/predecessor-sfx-lineage",
+  "lane_impact": "L6 art-anim-audio-feel: bounds the survey's 'all audio must carry an Android v0.682 label'. For punch and slash1 an independent WEB-distributed Lut Games build carries the exact bytes, so those two need no build caveat. Graded PARTIAL because 11 of 13 are still Android-only and SHS2 is a different game, not proof of Duels web parity. Also opens a lead nobody has worked: SHS1 and SHS2 hold 30 DefineSound tags plus a 310-block streamed music track, all in the clear.",
+  "ledger_text": "**Exact original SFX & music synthesis params** \u2014 the *character* is study-able from audio; the exact waveforms/envelopes are not.",
+  "overturns_ledger": true,
+  "quote": "md5 punch = cfd26c816a723ed36c45f79877924082 in Duels, SHS2/punch AND SHS1/punch \u00b7 md5 slash1 = da4e98632c18a175715a1e679a3d42a2 in Duels, SHS2/slash1 AND SHS1/sword1 \u00b7 same length + same sample count but re-encoded (differ from byte 13, 68-89% of bytes): slash2/slash3/die1/die2/die3/deflect/hitmetal \u00b7 SHS1 rename map sword1|2|3 -> slash1|2|3 and hit1|2|3 -> die1|2|3 \u00b7 shs2_kon.swf SymbolClass includes 'com.kongregate.as3.client.KongregateAPI' (a web build)",
+  "text": "Two of the thirteen Duels SFX (punch, slash1) are BYTE-IDENTICAL to assets held in the unencrypted, web-distributed predecessor SWFs SHS1 and SHS2, and seven more share identical sample counts and byte lengths with same-named SHS2 assets \u2014 the SFX set is a franchise-inherited library.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "alternate_cites": [
+   "reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62; node-id sweep over all 19 animdata blobs in reference/extracted/bindata/"
+  ],
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62; index census of reference/extracted/bindata/108_1t4635s0.bin and all 19 animdata blobs",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "duplicate_count": 2,
+  "id": "art-anim-audio-feel/rig-is-27-parts",
+  "lane_impact": "L6 art-anim-audio-feel, and any lane building the fighter: the rig spec is 27 slots, with two weapon/prop slots (weapon=3, prop=4) plus prop2/prop3, and four extra joints (l/r_shoulder, l/r_knee) that only the creature rigs use. A 21-node rig is short. Also fixes the matrix-vs-rotation ratio: only 2.0% of node-frames use the skew matrix, discriminated by FrameNodeData's rotation==999 sentinel.",
+  "ledger_text": "motion (15fps latch, gaits, slash frames, death), byte-exact palette",
+  "overturns_ledger": true,
+  "quote": "MCSCharacter.as:10-62 `PART_l_hand=0 \u00b7 l_uparm=1 \u00b7 l_lowarm=2 \u00b7 weapon=3 \u00b7 prop=4 \u00b7 l_foot=5 \u00b7 l_thigh=6 \u00b7 l_calf=7 \u00b7 crotch=8 \u00b7 r_foot=9 \u00b7 r_thigh=10 \u00b7 r_calf=11 \u00b7 neck=12 \u00b7 stomach=13 \u00b7 pelvic=14 \u00b7 torso=15 \u00b7 head=16 \u00b7 hat=17 \u00b7 r_hand=18 \u00b7 r_uparm=19 \u00b7 r_lowarm=20 \u00b7 prop2=21 \u00b7 prop3=22 \u00b7 l_shoulder=23 \u00b7 r_shoulder=24 \u00b7 l_knee=25 \u00b7 r_knee=26` \u00b7 measured: distinct <n i=> in 108 = [0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,18,19,20,21] (20); across all blobs 0-26 (25 in use); node attrs in 108 = 24,502 with i/x/y, 24,010 with r, 492 with the a/b/c/d matrix",
+  "reported_by": [
+   "critic"
+  ],
+  "text": "The skeletal rig is 27 named parts indexed 0-26, not 21: the Human animdata keyframes 20 distinct node indices (0-7, 9-16, 18-21; crotch=8 and hat=17 are never keyframed) and the full index space across all 19 web blobs spans 0-26 with 25 in use.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StageManager.as:1200, :1225; call sites HeavenlySwordProjectile.as:76, MCSPlayer.as:911/:946/:4180, Trap_CrusherColumnAuto.as:90, Trap_CrusherBlockAuto.as:88, StatsManager.as:3535, Marker_RumbleTrigger.as:44",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "art-anim-audio-feel/screen-shake-amplitude-is-inert",
+  "lane_impact": "art-anim-audio-feel: sharpens blocker \u2463. The recreation should implement shake as `offset = uniform(-t/2, +t/2)` on both axes where t is the REMAINING tick count \u2014 a 12-tick Cleave shake starts at \u00b15.5 px and decays to 0, it never reaches \u00b115. The 30 default only ever binds through Marker_RumbleTrigger's data-driven amt. Also the full trigger set is 8 call sites, three more than the survey listed: HeavenlySwordProjectile.as:76 (12), Trap_CrusherBlockAuto.as:88 (6), StatsManager.as:3535 (data-driven).",
+  "ledger_text": "\u2463 **screen-shake** + **hitstop-on-landed-hit** (never catalogued);",
+  "overturns_ledger": true,
+  "quote": "StageManager.as:1200 `startShake(shakeDuration:int, shakeAmt:int = 30)` \u00b7 :1225 `shakeAmount = Math.min(screenShakeAmt,screenShakeCounter);` \u00b7 all hard-coded calls pass duration only: `startShake(12)` x3, `startShake(24)`, `startShake(6)` x2 \u2014 so amt=30 is never the binding term",
+  "text": "The screen-shake amplitude parameter is effectively dead for every in-game trigger: because shakeAmount = min(amt, counter) and every hard-coded call passes a duration of 24 or less against a default amt of 30, the amplitude is always just the remaining tick count \u2014 a pure linear ramp-down from the duration value.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:269-288",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/second-layout-mode-800x690",
+  "lane_impact": "art-anim-audio-feel and ui-hud: the ledger's aspect-ratio item has TWO answers, not one - 800x480 when window aspect > 1.1594, and 800x690 (480 play area plus a friend bar) otherwise, with StatsManager.stageBaseHeight switching between them. This dissolves the doc-vs-frame conflict that claim art-anim-audio-feel/aspect-ratio-frame-wins invokes the standing frame-wins invariant to settle, and it hands ui-hud a friend-panel layout (OverworldHUD.instance.friendpanel.init()) that no ledger holds.",
+  "ledger_text": "**Aspect-ratio truth** - native canvas is **800x480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong.",
+  "overturns_ledger": true,
+  "quote": "GameEngine.as:271 `var originalHeightWithBar:int = 690;` \u00b7 :273 `var originalWithBarAspectRatio:Number = originalWidth / originalHeightWithBar;` \u00b7 :275 `if(newAspectRatio <= originalWithBarAspectRatio)` \u00b7 :277-282 `originalAspectRatio = originalWithBarAspectRatio; originalHeight = originalHeightWithBar; StatsManager.stageShowingFriendBar = true; ... OverworldHUD.instance.friendpanel.init();`",
+  "text": "The client ships a SECOND layout mode - 800x690 with a friend bar - entered whenever the window aspect drops to 800/690 or below, which is why the SWF document rect decodes to 800x690.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/SoundManager.as:187/:221/:255/:268/:281/:294/:307/:320/:333/:346; EnemyShield.as:335-339",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "art-anim-audio-feel/sfx-contract-ten-routines",
+  "lane_impact": "L6 art-anim-audio-feel: completes blocker \u2460's replacement. Every one of the 13 recovered assets now has a named trigger, so the SFX lane is a full asset->event table rather than a partial one. playHitMetal + damage=0 on PART_prop is also an L2 enemies-ai / L1 combat-core fact: shields nullify damage and answer with a distinct metal sound.",
+  "ledger_text": "\u2460 **ALL AUDIO** \u2014 every SFX + music param is INFERRED, no composer sourced.",
+  "overturns_ledger": true,
+  "quote": "SoundManager.as: `playSlash -> slash1|2|3 (1-of-3)` \u00b7 `playDie -> die1|2|3 (1-of-3)` \u00b7 `playHit -> punch` \u00b7 `playHurt -> punch` \u00b7 `:281 playHitMetal -> :287 getSound(\"hitmetal\")` \u00b7 `:294 playDeflect -> :300 \"deflect\"` \u00b7 `:307 playFart -> :313 \"fart\"` \u00b7 `:320 playGoodKoto -> :326 \"goodkoto\"` \u00b7 `:333 playSumo -> :339 \"sumo\"` \u00b7 `:346 playRefund -> :352 \"refund\"` \u00b7 EnemyShield.as:335-339 `case mcs.partList[MCSCharacter.PART_prop]: gotHitFlag = true; damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal();`",
+  "text": "The SFX playback contract is ten routines covering all thirteen assets, not the four the survey mapped \u2014 the five unmapped include playHitMetal, which is fired on a shield hit alongside damage=0.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "recursive PlaceObject3 parse (descending into every DefineSprite) of reference/extracted/android/115_Mobile_SHS3Resource.bin, 124_Mobile_ImageResource.bin, 120_Mobile_BGResource.bin, reference/decrypted/shs3_payload_decoded.swf, reference/decrypted/shs3_android_payload_decoded.swf",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/zero-blendmode-byte-proof",
+  "lane_impact": "art-anim-audio-feel: blocker 3 closes on bytes, not on an ActionScript grep that could not have seen timeline-authored blend modes. Upgrades the survey's evidence class for the same conclusion.",
+  "ledger_text": "\u2462 FX **blend modes**;",
+  "overturns_ledger": true,
+  "quote": "115: PO3=12 blendmodes={} \u00b7 124: PO3=1473 blendmodes={} \u00b7 120: PO3=54 blendmodes={} \u00b7 shs3_payload_decoded.swf: PO3=304 blendmodes={} \u00b7 shs3_android_payload_decoded.swf: PO3=248 blendmodes={}",
+  "text": "The no-blend-mode negative is now a byte proof rather than a grep: 2,091 PlaceObject3 tags across all three decoded art containers and both decoded payloads carry zero blend-mode fields.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "own SWF tag histogram over reference/decrypted/shs3_payload_decoded.swf (4,051 tags), shs3_android_payload_decoded.swf (3,311), and my decodes of 115_Mobile_SHS3Resource (3,756), 124_Mobile_ImageResource (330), 113_Mobile_MusicResource, 122_Mobile_SoundResource, plus reference/preservation/shs3.swf and shs3preloader.swf",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/zero-placeobject3-tags",
+  "lane_impact": "L-art-anim-audio-feel: closes blocker (3) completely rather than only on the code side. The answer is 'none, normal alpha only' at BOTH the ActionScript layer and the authored-timeline layer, so any additive/screen compositing in the recreation is a deliberate deviation and must be labelled.",
+  "ledger_text": "\u2462 FX **blend modes**;",
+  "overturns_ledger": true,
+  "quote": "PlaceObject3 (tag 70) count = 0 in every container scanned; withBlendModeFlag = {} everywhere",
+  "text": "No blend mode is authored at the art level either: across every decoded container (both payloads and all four resource SWFs, ~11,500 tags) there is not a single PlaceObject3 tag, which is the only place a SWF can carry a per-instance blend mode.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/InputManager.as:51 + MCSPlayer.as:3030, 3041, 3052 (arithmetic over the two quoted lines, offered as a lead)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/300-200-100-is-base-not-ceiling",
+  "lane_impact": "combat-core L2: 300/200/100 should be re-labelled BASE (mastery 0) rather than ceiling. PARTIAL because it is arithmetic over two quoted lines, not a single line that states it, and because the v0.717 multipliers give 280/200/100 for the same base.",
+  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "overturns_ledger": true,
+  "quote": "InputManager.as:51  internal static var maxDistance:int = 200;\nMCSPlayer.as:3030   this.slashLength = this.baseSlashLength * 1.5;   -> 300\nMCSPlayer.as:3041   ... * (1 + 0.5 * balancedMastery * 0.01) at mastery 0 -> 200\nMCSPlayer.as:3052   ... * (0.5 + 0.5 * heavyMastery * 0.01) at mastery 0 -> 100",
+  "text": "The wiki's 300/200/100 stance reach numbers reproduce exactly as the shipped default slash budget (200) times the mastery-ZERO multipliers {1.5, 1.0, 0.5}, which contradicts the ledger's reading of them as mastery-9 ceiling values.",
+  "verdict": "PARTIAL"
+ }
+]

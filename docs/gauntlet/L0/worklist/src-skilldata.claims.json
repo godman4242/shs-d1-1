@@ -1,0 +1,705 @@
+[
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/XMLSkill.as:300 and :308 (multiply), :116/:189/:205/:223 (divide for display); MCSPlayer.as:239",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim/engine-tick-is-24fps",
+  "lane_impact": "L5 combat-core and L6 art-anim \u2014 our Sim is fixed 60Hz, so every duration ported from skilldata or the AS3 in FRAMES must be rescaled x2.5, and 24fps-exact sub-frame timings will not land on 60Hz boundaries. This is distinct from the ledger's ':84 15fps pose latch', which is an animation-hold rate, not the sim rate.",
+  "overturns_ledger": false,
+  "quote": "XMLSkill.as:308  val = this.levelList[lvl].cooldown * 24;\\nXMLSkill.as:116  cooldown = this.getCooldown(1) / 24;\\nMCSPlayer.as:239 this.maxreload = 5 * 24;\\n(LangManager.getString(647) = \"Cooldown\", getString(648) = \"sec\")",
+  "text": "The original simulation ticks at 24 fps \u2014 skilldata cooldowns are stored in seconds and multiplied by 24 to become engine units, and maxreload is initialised as 5 * 24.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:1947-1957 and :1959-1969 (category 11, no displayname/desc/order/lvlreq); EnemyPlayer.as:836-843, EnemyElite.as:161-167, FriendlyElite.as:84-90",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "combat-core/five-stances-not-three",
+  "lane_impact": "L5 combat-core (the damage/reach model is 3-stance and must become 5), L4 enemies-ai (two boss/elite stances with their own AI), L6 art-anim (S0-1's 'reversed' and 'dual_stance' bindata sets and android blobs 95_MCSCharacter_ReversedStanceAnimationData.bin / 101_MCSCharacter_DualStanceAnimationData.bin are these two).",
+  "ledger_text": "- `STANCE_TABLE` already carries reach 300/200/120 + speed \u2014 but **never wired into `resolveSlash`** and mislabeled INFERRED when they're actually the wiki's **mastery-9** values (and Heavy should be 100, not 120).",
+  "overturns_ledger": true,
+  "quote": "if(xml.getMastery(1500) > 0)\\n{\\n   setStance(REVERSED_STANCE);\\n}\\nelse if(xml.getMastery(1501) > 0)\\n{\\n   setStance(DUAL_STANCE);\\n}\\n\\n(grep -i \"reversed\\\\|dual\" docs/research/REBUILD_READINESS.md returns nothing.)",
+  "text": "The game shipped FIVE stances, not three: skills 1500 and 1501 are NPC-only stance selectors for REVERSED_STANCE and DUAL_STANCE, and the ledger contains zero occurrences of either word.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "STILL_UNHELD",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "combat-core/mastery-domain",
+  "lane_impact": "L5 combat-core \u2014 port the formula shape, leave the mastery domain flagged INFERRED until someone finds the conversion. This is also the likely real explanation of the ledger's 'mastery-9 ceilings' framing (:58, :155), which my progression/required-is-skill-points claim gives a competing explanation for.",
+  "overturns_ledger": false,
+  "quote": "0.5 * mastery * 0.01 only produces a meaningful spread if mastery runs 0-100 (Balanced 1.0->1.5, Heavy 0.5->1.0). But skilldata.xml <value> runs 1-10 and XMLNpc.as:671-686 getMastery() returns that <value> verbatim. I could not find a conversion between getStat(1001) and a 0-100 scale.",
+  "text": "Whether the mastery term in the stance-reach formula is the 1-10 skilldata <value> or a 0-100 derived figure is not resolved by anything I read, so the coefficient cannot be ported as a number.",
+  "unit": "skilldata",
+  "verdict": "STILL_UNHELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1915-1919; MCSPlayer.as:3030 / :3041 / :3052-3055 / :3067 / :3078-3081; consumed at MCSPlayer.as:3094",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/stance-reach-formula",
+  "lane_impact": "L5 combat-core \u2014 blocker \u2460 no longer needs a footage measurement. It also confirms the ledger's own :101 correction: Heavy's 100 is a hard FLOOR in the source, not a table entry. Light takes a flat x1.5 with no mastery term, so Light reach never scales with mastery.",
+  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) \u2014 *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
+  "overturns_ledger": true,
+  "quote": "internal static function getBaseSlashLengthVal(speed:int) : int\\n{\\n   var maxincrement:int = 90 + getPlayerStats(STAT_DAN) * 5;\\n   return int(120 + Math.floor(maxincrement * speed / (20 + speed)));\\n}\\n\\n// MCSPlayer.as:3052-3055\\nthis.slashLength = this.baseSlashLength * (0.5 + 0.5 * this.heavyMastery * 0.01);\\nif(this.slashLength < 100)\\n{\\n   this.slashLength = 100;\\n}\\n\\n// MCSPlayer.as:3094\\nInputManager.setMaxDistance(this.slashLength);",
+  "text": "The reach cap the ledger calls 'the one value the whole model needs' is in the payload in stage px: base = 120 + floor((90 + DAN*5) * SPD/(20+SPD)), multiplied per stance (Light x1.5 flat, Balanced x(1+0.005*mastery), Heavy x(0.5+0.005*mastery) with a hard floor of 100), and fed straight to InputManager.setMaxDistance as the max drawn-line length.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:531-574 (1011 Coin Purse+, strings 7020-7023 + 7007), :420-498 (1009 Carrying Weight+, strings 7014-7018 + 7029-7033), :844-887 (1022 Mining, strings 7059-7063)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "economy/coin-cap-weight-cap-mining-tiers",
+  "lane_impact": "L10 progression+economy and L3 items \u2014 'weight cap 100' is the BASE only; a fully invested character carries 300. The coin cap is a hard sink the economy model needs. Cat 5 also holds Farming (7039 rare-crop chance) and Scavenging (7040 hidden-item chance): three gathering professions, 5 levels each.",
+  "ledger_text": "- **Ready:** 9-slot paperdoll; 4 rarity tiers; affix **prefix** pool (verbatim); item-name template; full ItemStats field list; (EQ:n) comparison UX; condition tier names; weight cap 100; soul-infusion + stat-transfer rules (patch-note-sourced); measured weight table + a few named-item stat blocks; defense min-floor (EnemyLevel/4).",
+  "overturns_ledger": true,
+  "quote": "7020-7023 + 7007 = \"Coin purse is able to hold 2000/4000/6000/8000/10000 coins\"; 7014-7018 + 7029-7033 = \"Carrying weight: 120/140/160/180/200/220/240/260/280/300\"; 7059-7063 = \"Allows you to mine coal and iron deposits.\" ... \"coal, iron, tin, copper silver, titanium and diamond deposits.\"  (7060 ships a verbatim typo: \"coal, iron, tin and tin deposits.\")",
+  "text": "Three hard economy ceilings and the full ore-tier ladder sit in skilldata's Survival category and are absent from the ledger's economy and items sections: coin cap 2000->10000, carrying weight 120->300 (not a flat 100), and mining tiers coal/iron through diamond.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:825-829, :30/:32/:34/:36, :1079; EnemyElite.as:197-203; reference/extracted/skilldata.xml:1842-1847 (skill 1068)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/npcs-run-on-skilldata",
+  "lane_impact": "L4 enemies-ai \u2014 the level->stat half is npcdata's to close, but the MOVESET + per-skill cooldown half is already held in skilldata (bucket sizes: veryClose 16, close 13, mid 22, long 16). Category 11's Back Throw / Air Stab / Bull Charge / Punch Lunge / Undying are enemy-only and appear in no ledger system.",
+  "ledger_text": "\u2460 enemy level\u2192stat formula\u2026 absent",
+  "overturns_ledger": true,
+  "quote": "EnemyPlayer.as:825-828\\nskilldata = QuestEngine.getSkillData(skillList[i].getId());\\nif(skilldata != null)\\n{ this.cooldownArray[skillList[i].getId()] = skilldata.getCooldown(skillList[i].getValue()); }\\n\\nEnemyPlayer.as:1079  if(this.canUseSkill(SkillManager.SKILL_AIRSTAB) && downedDist > 50 && downedDist < 200)\\nEnemyElite.as:197-203  if(!hasSkill(SkillManager.SKILL_UNDYING)) ... startAction(SKILL_UNDYING_STATE);\\n\\nskilldata.xml:1842-1847 \u2014 skill 1068 Undying is the ONLY skill in the file with no <level> block at all.",
+  "text": "Enemy AI is driven by skilldata: NPCs pull their per-skill cooldowns from this file via getSkillData().getCooldown(), and their usage policy is four hard-coded range buckets containing the category-11 skills that appear in no player tree.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:1575-1604 and :1637-1652 (strings 6111/6115); orphan strings 7024-7028 + 6022/6023 in docs/gauntlet/L0/index/strings.json; StealActionIcon.as:5-6 wired at GenericActionButton.as:191-193 and :309-311",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/pvp-rooms-and-a-cut-steal-skill",
+  "lane_impact": "L11 meta+rebirth and L8 ui-hud \u2014 per-skill PvP-room exclusion is a shipped rule the ledger's meta-social section does not carry. The steal content should be recorded as cut-or-node-only with orphaned strings, NOT as skill 1023; the id-1023 attribution is circumstantial (it sits exactly where the other 5-level cat-5 professions live) and I will not assert it.",
+  "ledger_text": "\u2462 achievements list, daily-reward table, token costs \u2014 *one Ruffle session closes all.*",
+  "overturns_ledger": true,
+  "quote": "6111 = \"Creates a clone to distract your enemy. / This skill cannot be used in PvP rooms.\"\\n7024 = \"Steal up to 5 coins from other players. If target is online, 50% chance to get caught.\" ... 7028 = \"Steal up to 25 coins ... 30% chance to get caught.\"\\n6022 = \"Steal\"  6023 = \"Steal other players' money\"\\nGenericActionButton.as:191-193  case NodeUI.ACTION_STEAL: this.image = new StealActionIcon();\\n\\nNOT held: SkillManager.as has no SKILL_STEAL constant and no reference to 1023 anywhere in the AS3. skilldata.xml:887 closes skill 1022 and :890 opens <id>1024</id> \u2014 1023 is the single gap in the contiguous 1000-1073 run.",
+  "text": "Two skills are explicitly excluded from PvP rooms, and a complete five-level coin-stealing ability exists in the shipped string table and art with NO skill row referencing it \u2014 but attributing it to the missing id 1023 is inference, not evidence.",
+  "unit": "skilldata",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/XMLSkill.as:253-263 with strings.json[\"158\"]; ladder at reference/extracted/skilldata.xml:10-79",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/required-is-skill-points",
+  "lane_impact": "L10 progression \u2014 makes the whole SP economy computable (ledger blocker \u2462 'post-rebirth SP economy' still needs the post-rebirth grant, but the SPEND side is fully priced). Because levels 1 AND 2 both cost 1 SP, the ladder tops out 9 above its start, which is the likely origin of the wiki's 'mastery-9' framing the ledger repeats at :58 and :155 \u2014 the data says TEN levels.",
+  "ledger_text": "the stance tables are **mastery-9 ceilings**, not base; Season 1 is **14 chapters**, not 4",
+  "overturns_ledger": true,
+  "quote": "required = int(this.levelList[lvl].required);\\nif(StatsManager.getStat(StatsManager.STAT_SKILLPOINTS) < required)\\n{ ... return outputString + (LangManager.getString(158) + \": \" + required + \"</font>\"); }\\n\\nstrings.json[\"158\"] = \"Required Skill Points\"\\n\\nskilldata.xml:73-79  <level><value>10</value><required>9</required><chi></chi><cooldown></cooldown><desc>7000</desc></level>",
+  "text": "The <required> field is the skill-point PRICE of that level, not a character level (that is the separate <lvlreq>), and each stance mastery is a 10-level ladder costing 1,1,2,3,4,5,6,7,8,9 SP = 46 SP to max.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:607-650 (1013 Fire Breath, 5 levels, chi 5/6/7/8/10, cd 15, descs 7034-7038) and :1879-1894 (1070 Inferno, chi 50, cd 60, desc 6143); strings 7034-7038 / 6143 via docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth-elements/24-elemental-skills-with-numbers",
+  "lane_impact": "L11 meta+rebirth \u2014 blocker \u2460 dead; blocker \u2461 ('elemental ATK-vs-DEF formula') half-dead, the ATK side is a straight percentage of the element ATK stat. Also L2: these 4 categories are 24 of the 75 skills and were never counted in skills-meters' '6-category tree'.",
+  "ledger_text": "\u2460 what each element **does** (24 skills' damage/cost/AoE/status \u2014 names only).",
+  "overturns_ledger": true,
+  "quote": "7034 = \"Fire Damage: 80% Fire ATK\"  7035 = \"Fire Damage: 90% Fire ATK\"  7036 = \"100%\"  7037 = \"110%\"  7038 = \"120%\";  6143 = \"Area of Effect Fire Attack / Fire Damage: 150% Fire ATK\". Water 7053-7057, Wind 7048-7052, Earth 7043-7047 are structurally identical with the same chi/cd ladders.",
+  "text": "The 24 elemental skills the ledger has as 'names only' carry full numbers: 6 per element in categories 7-10, with exact chi, cooldown and per-level damage stated as a percentage of that element's ATK stat (80/90/100/110/120% for the close-range attack, 150% for the AoE ultimate).",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:1654-1669 (1056), :1722-1737 (1060) and the six parallel rows 1057-1059 / 1061-1063; strings 6117/6119/6121/6123/6125/6127/6129/6131",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "rebirth-elements/dragon-dance-is-eight-and-teachable",
+  "lane_impact": "L11 meta+rebirth \u2014 the unlock structure and a player-to-player TEACHING mechanic are now held (and the teaching mechanic is absent from the ledger's meta-social section entirely). The Dragon Dance INPUT itself and the Kanji-statue bonus remain unheld; skilldata says nothing about either.",
+  "ledger_text": "\u2463 Dragon Dance **input** + Kanji-statue bonus.",
+  "overturns_ledger": true,
+  "quote": "6117 = \"Unlocks the Dragon Dance Step for Fire and gives you the ability to teach it to others.\"  6125 = \"Unlocks the Dragon Dance Step for Fire (Later Heaven) and gives you the ability to teach it to others.\"",
+  "text": "There are EIGHT Dragon Dance Steps, not four \u2014 each element has an Early-Heaven step (qty 30) and a 'II (Later Heaven)' step (qty 60), all passive, and every one of them is described as granting the ability to TEACH it to other players.",
+  "unit": "skilldata",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:1658 (Dragon Dance Step: Fire) resolved via StatsManager.as:226-232 and StatsManager.as:4152-4177 (checkConditions defaults comp to \"gte\")",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth-elements/element-gate-is-a-stat-threshold",
+  "lane_impact": "L11 meta+rebirth \u2014 port the stat threshold, not the rebirth count (the 3x/6x reading is consistent only if a rebirth grants exactly +10 element ATK, and StatsManager.as:1835 adds findBonusStat(STAT_FIREATK) from equipment, so gear can also open these skills).",
+  "ledger_text": "Dragon Dance unlocks at 3\u00d7/6\u00d7 same-element rebirths \u2014 explains why point-stacking matters.",
+  "overturns_ledger": true,
+  "quote": "skilldata.xml:1658  <req><has><id>28</id><qty>30</qty></has></req>\\nStatsManager.as:226  internal static var STAT_FIREATK:int = 28;\\nStatsManager.as:228  internal static var STAT_WINDATK:int = 29;\\nStatsManager.as:230  internal static var STAT_WATERATK:int = 30;\\nStatsManager.as:232  internal static var STAT_EARTHATK:int = 31;\\nStatsManager.as:4171-4174  if(has[i].comp.toString() == \"\") { comparison = \"gte\"; }",
+  "text": "The elemental-skill gate is a STAT threshold, not a rebirth count: req/has/id 28/29/30/31 are STAT_FIREATK/WINDATK/WATERATK/EARTHATK and the qty is a >= comparison, giving thresholds of 10 (kunai/trap/close-range), 30 (Dragon Dance Step + AoE ultimate) and 60 (Step II) \u2014 reachable through gear bonuses as well as rebirths.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/XMLSkill.as:308 and :116; reference/decompiled/shs3_android/scripts/Mobile.as:117",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/24fps-tick",
+  "lane_impact": "combat-core and art-anim-audio-feel \u2014 a global unit-conversion hazard that lives in the parser, not the data, so no system-siloed lane would surface it; skills-meters.",
+  "overturns_ledger": false,
+  "quote": "XMLSkill.as:308: val = this.levelList[lvl].cooldown * 24;   //  XMLSkill.as:116: cooldown = this.getCooldown(1) / 24;   //  Mobile.as:117: GameEngine.getStageMC().frameRate = 24;",
+  "text": "<cooldown> is in seconds and the engine multiplies it by 24 to get internal frames \u2014 the OG runs at 24 FPS, so every duration recovered from this payload (cooldowns and every animation d= value) converts to this repo's fixed 60Hz Sim at x2.5, not x1 or x2.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/93_MCSCharacter_SkillsAnimationData.bin (tag census animdata 1 / anim 51 / f 547 / n 8351)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/51-skill-animations",
+  "lane_impact": "art-anim-audio-feel \u2014 skill animation is HELD with exact bone translation+rotation and 24fps timings; combat-core \u2014 per-skill startup/active/recovery is derivable from the d= frame counts.",
+  "ledger_text": "Some things are structurally unrecoverable and must become honest, labeled deviations",
+  "overturns_ledger": true,
+  "quote": "<animdata>\\n<anim i=\"chargedshot_start\" d=\"4\">\\n<f i=\"0\">\\n<n i=\"20\" x=\"9\" y=\"-44\" r=\"-54\"></n>\\n<n i=\"19\" x=\"25\" y=\"-50\" r=\"69\"></n>",
+  "text": "51 skill animations with full per-bone keyframes are on disk (51 <anim>, 547 keyframes, 8,351 bone transform rows), including paired attacker/victim rigs of DIFFERENT lengths \u2014 backthrow d=39 with backthrow_victim d=36, kneegroin d=30 with kneegroin_victim d=41 \u2014 and explicit _pose holds.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "sha1 over whitespace-normalised, decl-stripped content of reference/extracted/android/117_Mobile_SkillData.bin vs reference/extracted/skilldata.xml",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "skilldata/android-web-byte-identical",
+  "lane_impact": "L2 skills-meters \u2014 the S0-3 caveat ('UI copy and combat tuning parity is NOT established') no longer applies to skilldata; the android string table's skill names and descs port to the web build without a label caveat. Still applies to AS3 constants not independently cross-checked.",
+  "overturns_ledger": false,
+  "quote": "android sha1 bdc45aec04640165b78a133483c3a429f13bae27\\nweb     sha1 bdc45aec04640165b78a133483c3a429f13bae27\\nIDENTICAL\\n\\n(difflib over non-blank stripped lines: one hunk, android line 1 = '<?xml version=\"1.0\" encoding=\"utf-8\"?>'; 1,895 other lines identical; same 75 ids both sides, no id in one and not the other.)",
+  "text": "The Android v0.682 skilldata blob and the web v0.717 skilldata.xml are byte-identical apart from the XML declaration line, which discharges the S0-3 'parity NOT established' caveat for this unit.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "python3 normalized-XML comparison of reference/extracted/skilldata.xml vs reference/extracted/android/117_Mobile_SkillData.bin (see journal SK-1 for the pasted run)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "skilldata/android-web-parity",
+  "lane_impact": "skills-meters, combat-core, rebirth-elements \u2014 removes the Android-vs-web provenance discount from every skilldata-derived number and from every skill name/desc resolved through the Android string table.",
+  "overturns_ledger": false,
+  "quote": "web skills: 75 android skills: 75 / in android NOT web: [] / in web NOT android: [] / normalized identical: True",
+  "text": "reference/extracted/skilldata.xml (web v0.717) and reference/extracted/android/117_Mobile_SkillData.bin (Android v0.682) are the same file modulo line endings \u2014 75 skills, identical ids and identical normalized bodies \u2014 so the Stage-0b S0-3 build-parity caveat does not apply to any skill number or string.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:1842-1847 (skill 1068, no <level>); reference/decompiled/shs3_android/scripts/SkillManager.as:88-96; EnemyElite.as:197,203; MCSActor.as:978; MCSPlayer.as:2164; grep of <skill>NNNN</skill> over reference/extracted/npcdata.xml returns 0 for all seven",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "skilldata/category-11-enemy-only",
+  "lane_impact": "enemies-ai \u2014 five previously-uncatalogued enemy abilities plus a two-tier Undying with no data row; combat-core.",
+  "overturns_ledger": false,
+  "quote": "SkillManager.as:88-96: SKILL_BACKTHROW:int = 1064; SKILL_AIRSTAB:int = 1065; SKILL_BULLCHARGE:int = 1066; SKILL_PUNCHLUNGE:int = 1067; SKILL_UNDYING:int = 1068;   //  EnemyElite.as:197: if(!hasSkill(SkillManager.SKILL_UNDYING))   //  MCSPlayer.as:2164: if(this.getSkillLevel(SkillManager.SKILL_UNDYING) == 2)",
+  "text": "Category 11 is a seven-row enemy-only skill set (Back Throw, Air Stab, Bull Charge, Punch Lunge, Undying, plus two unnamed flag skills 1500/1501) that is granted in code, appears in ZERO npcdata rows, and would be invisible to any system-siloed enemies-ai reader; Undying additionally has no <level> element at all while MCSPlayer branches on its level being 2.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "docs/gauntlet/L0/index/strings.json ids 6024-6033, cross-checked against the <category> value of all 75 rows in reference/extracted/skilldata.xml",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/category-to-tree-names",
+  "lane_impact": "ui-hud \u2014 the skill screen's tab set, tab copy and ordering key are now fully specified; skills-meters; progression.",
+  "overturns_ledger": false,
+  "quote": "6024='Light Stance Skills \\n \\n Skills that are usable when in light stance.' 6027='Chi Skills \\n \\n Skills that channel chi to create protective and offensive effects.' 6028='Survival Skills \\n \\n General skills that make life easier.' 6029='Ninja Skills \\n \\n Skills that are based on stealth, deception and illusion.' 6030-6033='Fire/Water/Wind/Earth Element Skills'",
+  "text": "The bare integer <category> resolves 1:1 to a ten-tab skill screen \u2014 Light/Balanced/Heavy Stance, Chi, Survival, Ninja, Fire, Water, Wind, Earth \u2014 with <order> giving the within-tab row position; category 11 alone has no header string because it is not a player tab.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:1648 (skill 1055 Mass Shadow Clone) and :1353 (skill 1044, an explicit <chi>0</chi>); full distribution counted over all 182 level rows, journal SK-7",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "skilldata/chi-costs-not-single-digit",
+  "lane_impact": "skills-meters \u2014 surface verdict refuted and the config re-scale ruling needs re-opening; combat-core; progression \u2014 a 100-chi skill forces >=18 stat points into Chi at +5/point from a base of 10.",
+  "ledger_text": "real Chi costs are single-digit (2/5); config's 30/25/10 is a fabricated-100-meter rescale.",
+  "overturns_ledger": true,
+  "quote": "skilldata.xml:1648: <chi>100</chi>   //  distribution: '':101, 10:18, 50:14, 5:11, 20:9, 3:8, 2:5, 6:4, 7:4, 8:4, 0:3, 100:1",
+  "text": "The ledger's claim that real chi costs are single-digit is an over-claim: across the 81 non-empty <chi> rows the costs are 10 (x18), 50 (x14), 20 (x9) and 100 (x1) as well as 2/3/5-8, with Mass Shadow Clone at 100 chi \u2014 so a ~100-point chi pool is implied by the data, not a fabricated rescale.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/combat_frames/Nr4fQstqHDM_t0130s.png, crop (0,0)-(700,260) upscaled 3x LANCZOS; corroborated by reference/decompiled/shs3_android/scripts/StatsManager.as:2632-2650, :2298-2300, :2653-2656",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/coin-cap-carry-weight-gold-trap",
+  "lane_impact": "economy \u2014 two exact caps plus a naming hazard: a rebuild mapping STAT_GOLD onto the gold counter would cap premium currency at 1000 and leave coins unbounded. THE FRAME WINS over the code's identifier, and I say so explicitly. items-equipment (carry weight closed against itemdata <weight>); ui-hud.",
+  "ledger_text": "**economy** | 48",
+  "overturns_ledger": true,
+  "quote": "Visibly in the crop: a silver-coin icon with '425' over 'COINS', a '+' button, an oval gold-coin icon with '2' over 'GOLD', and a red 'GET G\u2026' button.  //  StatsManager.as:2655: return getPlayerStats(STAT_GOLD) >= getMaxCoins();  //  :2300: return 100 + getStat(1009) * 20;",
+  "text": "Coin cap is 1000 base rising 2000/4000/6000/8000/10000 with Coin Purse+, and carrying weight is 100 + 20 per Carrying Weight+ level to a max of 300 \u2014 and the AS3 identifier STAT_GOLD actually holds the COINS value, which the frame settles because the HUD shows COINS and GOLD as two separate counters.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:226-232 and :4230; reference/extracted/skilldata.xml:924; docs/gauntlet/L0/index/strings.json ids 726-729",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/element-stat-is-one-system",
+  "lane_impact": "rebirth-elements \u2014 kills the 'never linked' surface verdict and supplies the join; items-equipment \u2014 elemental gear ATK now has a named consumer; skills-meters.",
+  "ledger_text": "elements are TWO systems (rebirth skills **and** gear ATK/DEF typing) \u2014 the gear side is measured (A-17) but never linked to the rebirth domain.",
+  "overturns_ledger": true,
+  "quote": "internal static var STAT_FIREATK:int = 28;  internal static var STAT_WINDATK:int = 29;  internal static var STAT_WATERATK:int = 30;  internal static var STAT_EARTHATK:int = 31;   //  skilldata.xml:924: <req><has><id>28</id><qty>10</qty></has></req>   //  strings 726='Fire Specialization' 727='Wind Specialization' 728='Water Specialization' 729='Earth Specialization'",
+  "text": "The elemental skill-tree gate and the elemental gear ATK stat are literally the same stat id: req/has/id 28/29/30/31 are STAT_FIREATK / STAT_WINDATK / STAT_WATERATK / STAT_EARTHATK, shown to the player as 'Fire/Wind/Water/Earth Specialization' \u2014 and the id order is Fire, WIND, WATER, Earth, not Fire/Water/Wind/Earth.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:615-650 (skill 1013 Fire Breath) and :1879-1894 (skill 1070 Inferno); level-desc string ids 7034-7038, 7043-7057 and skill-desc 6143-6146 in docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/elemental-values-held",
+  "lane_impact": "rebirth-elements \u2014 blocker \u2460 dead outright, blocker \u2461 (ATK-vs-DEF formula) half closed on the ATK side; combat-core \u2014 24 skills gain exact damage/cost/cooldown.",
+  "ledger_text": "\u2460 what each element **does** (24 skills' damage/cost/AoE/status \u2014 names only).",
+  "overturns_ledger": true,
+  "quote": "7034='Fire Damage: 80% Fire ATK' \u2026 7038='Fire Damage: 120% Fire ATK'; 6143='Area of Effect Fire Attack\\n\\nFire Damage: 150% Fire ATK'; skilldata.xml:1890 <chi>50</chi> :1891 <cooldown>60</cooldown> :1882 <lvlreq>50</lvlreq>",
+  "text": "Every elemental skill's damage, chi cost and cooldown is on disk: the close-range elemental attacks scale 80/90/100/110/120% of their element's ATK stat across 5 levels at chi 5-10 and 15s cooldown, and the four AoE ultimates (Inferno/Tsunami/Tornado/Earthquake) do 150% element ATK at chi 50 / 60s / lvlreq 50.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:30-36",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/enemy-range-bands",
+  "lane_impact": "enemies-ai \u2014 the skill-selection policy is HELD (the level\u2192stat formula genuinely is not, so blocker \u2460 itself stands); combat-core.",
+  "ledger_text": "\u00a72 enemies-ai **34/100**, blocker \u2460 *\"enemy level\u2192stat formula\u2026 absent\"*",
+  "overturns_ledger": true,
+  "quote": "internal var veryCloseRangeSkillList:Array = [SkillManager.SKILL_DEADLYCLEAVE,SkillManager.SKILL_DEATHTOUCH,SkillManager.SKILL_SPIRITTHIEF,SkillManager.SKILL_SLASHWAVE,...,SkillManager.SKILL_BACKTHROW]; ... internal var longRangeSkillList:Array = [SkillManager.SKILL_KUNAITHROW,SkillManager.SKILL_TRAP,...,SkillManager.SKILL_BULLCHARGE];",
+  "text": "Enemy AI selects skills from four hard-coded distance bands declared verbatim in EnemyPlayer.as \u2014 veryClose (16 skills), close (13), mid (22), long (16) \u2014 a large, exact piece of enemy behaviour the ledger scores as absent; Heavenly Sword appears in all four bands, Throw Kunai only in mid and long.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "STILL_UNHELD",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "skilldata/focus-and-crit-not-here",
+  "lane_impact": "skills-meters \u2014 blockers \u2462 and \u2464 confirmed still open after an exhaustive read of this source; the ledger is right here and I am not manufacturing a close.",
+  "ledger_text": "\u2462 Focus numerics (max/fill/switch-cost). \u2464 crit **proc** rule (chance vs deterministic) \u2014 entirely absent.",
+  "overturns_ledger": false,
+  "text": "Focus meter numerics and the crit proc rule are genuinely absent from this source: skilldata holds the Focus SKILL (1005, 'Instantly recharges your focus bar', chi 5, cooldown 10/9/8s, lvlreq 5, requires Chi Punch) but nothing about the bar's capacity, fill rate or spend, and nothing anywhere in skilldata, XMLSkill or SkillManager touches criticals.",
+  "unit": "skilldata",
+  "verdict": "STILL_UNHELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/combat_frames/Nr4fQstqHDM_t0130s.png, crop (0,820)-(700,1080) upscaled 3x LANCZOS to 2100x780",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/hud-two-bars-a1",
+  "lane_impact": "skills-meters \u2014 corroborates the raw-integer chi pool behind SK-7 and leaves Focus blocker \u2462 open; ui-hud \u2014 the status cluster is now specified; combat-core.",
+  "overturns_ledger": false,
+  "quote": "Visibly in the crop: circular straw-hat portrait medallion bottom-left; a green bar reading '20 / 20' directly above a blue bar reading '26 / 26'; white label 'BALANCED STANCE' beneath both.",
+  "text": "I opened the frame: the in-combat player HUD shows exactly two bars \u2014 green HP 20/20 above blue Chi 26/26 \u2014 labelled BALANCED STANCE, proving Chi is a small raw integer pool rather than a 0-100 percentage meter; no Focus or Critical bar is present in that cluster.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/XMLSkill.as:18, :24, :60-75; grep -c \"<input>\" and grep -c \"<imageurl>\" over reference/extracted/skilldata.xml both return 0",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/input-field-empty",
+  "lane_impact": "rebirth-elements \u2014 blocker \u2463 confirmed STILL OPEN and its most likely home eliminated, which is a real result even though nothing is closed; ui-hud (skill icons must be embedded art, not data); art-anim-audio-feel.",
+  "ledger_text": "\u2463 Dragon Dance **input** + Kanji-statue bonus.",
+  "overturns_ledger": false,
+  "quote": "XMLSkill.as:18: public var input:String;  XMLSkill.as:60: if(xml.input != \"\") { this.input = xml.input; }   //  $ grep -c \"<input>\" reference/extracted/skilldata.xml  \u2192  0",
+  "text": "XMLSkill parses a per-skill <input> gesture string and an <imageurl>, but skilldata.xml sets NEITHER in any of the 75 rows \u2014 so the file you would expect to hold the Dragon Dance input notation has an empty slot for it, and skill icons are not data-driven.",
+  "unit": "skilldata",
+  "verdict": "STILL_UNHELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSActor.as:636-644; keyframe data in reference/extracted/android/93_MCSCharacter_SkillsAnimationData.bin; grep -rli over reference/decompiled/shs3_android/scripts/ returns only MCSActor.as",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/orphan-buff-animations",
+  "lane_impact": "art-anim-audio-feel \u2014 three usable animated abilities not in any roster; enemies-ai; combat-core. I do NOT claim they were playable.",
+  "overturns_ledger": false,
+  "quote": "internal static var ENCHANTWEAPON:String = \"enchantweapon\"; internal static var BUFFARMOR_START:String = \"buffarmor_start\"; internal static var BUFFARMOR_END:String = \"buffarmor_end\"; internal static var WARCRY_START:String = \"warcry_start\"; internal static var WARCRY_END:String = \"warcry_end\";",
+  "text": "Three fully-keyframed buff skills \u2014 enchantweapon, buffarmor, warcry \u2014 exist as animation constants declared in MCSActor.as and referenced nowhere else in the entire Android script set, with no <skill> row and no SkillManager id: animated-but-unwired abilities.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "docs/gauntlet/L0/index/strings.json ids 6022, 6023, 7024-7028, 6051, 6055, 7042; absent from reference/extracted/skilldata.xml and from reference/decompiled/shs3_android/scripts/SkillManager.as",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/orphan-steal-and-smithing",
+  "lane_impact": "meta-social (scored 31/100 and does not mention theft at all) \u2014 an asynchronous PvP steal mechanic with exact numbers; economy; items-equipment (weapon repair). PARTIAL because attributing the Steal set to id 1023 is inference from the id hole, not an artifact.",
+  "overturns_ledger": false,
+  "quote": "6022='Steal'  6023=\"Steal other players' money\"  7024='Steal up to 5 coins from other players. If target is online, 50% chance to get caught.' \u2026 7028='Steal up to 25 coins from other players. If target is online, 30% chance to get caught.'  //  6051='Smithing' 6055='Train to improve your abilities as a blacksmith.' 7042='Increases your effectiveness in repairing weapons.'",
+  "text": "Two complete skills were specified, costed and localised but never shipped in the data: a five-level player-vs-player coin theft (5/10/15/20/25 coins, get-caught chance falling 50%\u219230% and conditional on the target being ONLINE) and a Smithing profession with weapon repair \u2014 neither has a <skill> row anywhere, and skill id 1023 is the single hole in the 1000-1073 run.",
+  "unit": "skilldata",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as:88 versus reference/decompiled/shs3_android/scripts/SkillManager.as:8-106",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/read-android-not-web",
+  "lane_impact": "all 12 lanes \u2014 this is the read-order rule for the remainder of the gauntlet, and it supplies an independent non-string-table confirmation of S0-3's name mapping across the skill domain.",
+  "overturns_ledger": false,
+  "quote": "web: public static var \u00a71t10163s0\u00a7:int = 1064;   //  android: public static var SKILL_BACKTHROW:int = 1064;   //  SkillManager.as:54 SKILL_SHUNPO:int = 1039; :60 SKILL_CHIPUNCH:int = 1042; :106 SKILL_EARTHQUAKE:int = 1073;",
+  "text": "The web decompile is symbol-obfuscated (classes named \u00a71t120s0\u00a7, members \u00a71t10163s0\u00a7) while the Android decompile is clean, and since the two builds' skilldata is byte-identical the correct working rule for the rest of L0 is to read skill logic from shs3_android/scripts/ and treat it as authoritative \u2014 SkillManager.as independently names 50 of the 75 skill ids and every one matches the string-table resolution.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:1235-1247 (skill 1039); skill-desc string 6085; reference/decompiled/shs3_android/scripts/SkillManager.as:54",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/shunpo-effect",
+  "lane_impact": "skills-meters \u2014 blocker \u2461 closed; combat-core \u2014 a third hold-to-charge input alongside Charged Shot (1046).",
+  "ledger_text": "\u2461 Shunpo's real effect (Light L10 ultimate; spacebar-slowmo belongs to the **predecessor SHS2**, not Duels).",
+  "overturns_ledger": true,
+  "quote": "skilldata.xml:1238 <req><has><id>1000</id><qty>10</qty></has></req>, :1244 <chi>50</chi>, :1245 <cooldown>60</cooldown>; string 6085 = 'Ultimate Light Stance technique. \\n\\nHold down the skill icon to increase the damage it inflicts.\\n\\nThis skill can only be used when in Light Stance.'",
+  "text": "Shunpo's real effect is held: a hold-to-charge damage-scaling ultimate hard-locked to Light Stance, one level only, 50 chi, 60s cooldown, gated on Light Stance Mastery level 10 \u2014 with Thousand Stabs and Deadly Cleave identical in shape for Balanced and Heavy.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:2293-2296; reference/extracted/skilldata.xml:383-417 (skill 1008); level-desc strings 7009-7013; reference/decompiled/shs3_android/scripts/XMLSkill.as:345-348",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/skill-slots-3-to-8",
+  "lane_impact": "ui-hud \u2014 blocker \u2463 answered from source rather than eyeball; skills-meters; progression \u2014 15 SP buys the full 8 slots.",
+  "ledger_text": "\u2463 the \"3 skill slots\" is really ~2 abilities + a stance up-arrow.",
+  "overturns_ledger": true,
+  "quote": "public static function getSkillSlotCount() : int { return 3 + getStat(1008); }   //  7009='4 skill slots' 7010='5 skill slots' 7011='6 skill slots' 7012='7 skill slots' 7013='8 skill slots'   //  XMLSkill.as:345 canEquip(): return !this.passive && StatsManager.getStat(this.id) > 0 && (...)",
+  "text": "Base skill slots = 3, not '~2 abilities + a stance arrow': getSkillSlotCount() returns 3 + the level of skill 1008 Skill Slots+, which has 5 levels reading '4 skill slots' through '8 skill slots' \u2014 and passives never occupy a slot, leaving 41 player-equippable actives competing for 3-8 slots.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1844-1861, applied at reference/decompiled/shs3_android/scripts/XMLSkill.as:310",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/spd-cooldown-formula",
+  "lane_impact": "skills-meters \u2014 blocker \u2463 closed with an exact formula; combat-core; items-equipment \u2014 SPD-modifier gear now has a quantified effect.",
+  "ledger_text": "\u2463 SPD\u2192cooldown formula.",
+  "overturns_ledger": true,
+  "quote": "internal static function getSkillCooldownModifierVal(speed:int) : Number { if(speed > 300) { speed = 300; } return 1 - speed / 300 * 0.5; }   //  XMLSkill.as:310: return val * StatsManager.getSkillCooldownModifier();",
+  "text": "The SPD-to-cooldown formula is not missing: cooldown multiplier = 1 - min(SPD,300)/300 * 0.5, i.e. SPD is hard-capped at 300 and the maximum possible cooldown reduction is exactly 50%, with the speed buff multiplying SPD by 1.5 before the cap.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml \u2014 every <lvlreq> in the file (max 80); :656 (qty 3), :673 (qty 5), :1187 (qty 4), :1238 (qty 10) for the Light tree; skill 1000's ten <required> values 1,1,2,3,4,5,6,7,8,9 at :12-:75",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/unlock-cadence-and-stance-sp-cost",
+  "lane_impact": "progression \u2014 the SP budget versus tree cost is a hard, previously-unstated constraint and the real economic argument for rebirth; it also explains the ledger's \u00a73 'mastery-9 ceilings' correction (the level-10 row's <required> is 9 while <value> is 10 \u2014 the ceiling is 10). rebirth-elements; skills-meters.",
+  "ledger_text": "skills unlock at levels ending 0 (Ninja) / 5 (Chi)",
+  "overturns_ledger": true,
+  "quote": "skilldata.xml:1238 <req><has><id>1000</id><qty>10</qty></has></req>  //  skill 1000 <required> column: 1,1,2,3,4,5,6,7,8,9 = 46 SP to reach <value>10</value>  //  Chi tree lvlreq: 0,5,15,25,35,45,50,55,65,75 \u00b7 Ninja tree: 10,15,20,30,40,50,60,70,80",
+  "text": "The 'unlock at levels ending 0 (Ninja) / 5 (Chi)' cadence holds for 17 of 19 gated skills with two exceptions (Lay Trap at 15 in Ninja, Chi Charge at 50 in Chi), and the stance trees have NO character-level gate at all \u2014 they are gated purely by mastery level, which runs to 10 and costs 46 SP per stance, so 80 SP on a first run cannot max even two of the three stances.",
+  "unit": "skilldata",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:508-514 (Smoke Bomb 1010 L1), :897-903 (Lay Trap 1024 L1), :927-933 (Fire Trap 1025 L1), :991-997 (Fire Kunai 1029 L1)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skills-meters/chi-cooldown-table-held",
+  "lane_impact": "L2 skills-meters \u2014 blocker \u2460 dead. L2's gate ('zero INFERRED cooldowns remain') is now a transcription loop, not research.",
+  "ledger_text": "\u2460 every other skill's Chi cost + cooldown (Smoke Bomb, Kunai chi, Lay Trap, elemental) \u2014 *read skill cards in a preserved build.*",
+  "overturns_ledger": true,
+  "quote": "<level>\\n\\t<value>1</value>\\n\\t<required>1</required>\\n\\t<chi>5</chi>\\n\\t<cooldown>6</cooldown>\\n\\t<desc></desc>\\n</level>  (skill 1010 Smoke Bomb). Chi domain across the file: 0,2,3,5,6,7,8,10,20,50,100. Cooldown domain: 2,3,3.5,4,5,6,8,9,10,15,20,30,60,70.",
+  "text": "All 182 level rows carry verbatim <chi> and <cooldown>, including every skill the ledger's blocker \u2460 names by name (Smoke Bomb, Kunai, Lay Trap, elemental), so zero INFERRED cooldowns need remain in config.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "STILL_UNHELD",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "skills-meters/crit-proc-rule",
+  "lane_impact": "L2 skills-meters \u2014 blocker \u2464 stands. Of the five skills-meters blockers, four are now closed by this sweep and this one is not. Do not let the four closures imply the fifth.",
+  "ledger_text": "\u2464 crit **proc** rule (chance vs deterministic) \u2014 entirely absent.",
+  "overturns_ledger": false,
+  "quote": "skilldata.xml contains no <crit> field, no crit term among the 6xxx or 7xxx description strings, and no crit term in XMLSkill.as. STAT_CRITICALDMG:int = 204 exists (StatsManager.as:258) but it is an item/gear stat plumbed through MCSPlayer.initAttackStats(..., findBonusStat(STAT_CRITICALDMG), ...), not a skill field and not a proc rule.",
+  "text": "The crit proc rule is not in skilldata and I found nothing that grounds it \u2014 this blocker survives the sweep.",
+  "unit": "skilldata",
+  "verdict": "STILL_UNHELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/SkillManager.as:218-221; StatsManager.as:1839-1842; StatsManager.as:1921-1930; MCSPlayer.as:3098-3105; skilldata.xml:291-311 (skill 1005)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skills-meters/focus-is-the-reload-meter",
+  "lane_impact": "L2 skills-meters \u2014 blocker \u2462 dead. Also L5 combat-core blocker \u2464 ('Focus/crit gating rule \u2014 watch the Focus bar fill/consume'): the fill/consume half is now sourced; the crit-gating half is not (see crit-proc-rule).",
+  "ledger_text": "\u2462 Focus numerics (max/fill/switch-cost).",
+  "overturns_ledger": true,
+  "quote": "case SKILL_FOCUS:\\n   owner.reload = owner.maxreload - 1;\\n\\n// StatsManager.as:1841\\nreturn 48 + (getPlayerStats(STAT_SPEED) + findBonusStat(STAT_SPEED)) * 6;\\n\\n// MCSPlayer.as:3098-3104, inside setStance()\\nif(this.reload > this.maxreload / 2)\\n{ this.reload = this.maxreload / 3; }\\nelse\\n{ this.reload -= this.maxreload / 6; }",
+  "text": "The Focus bar IS the engine's reload meter, which closes all three parts of blocker \u2462: max = 48 + 6xSPD frames at 24fps, fill = the Focus skill setting reload to maxreload-1, per-slash drain = the weapon's slashusage (floor 48), and the stance-switch cost = reload cut to a third if above half, else minus a sixth.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:1288-1294 (1042 L1 cd 5), :291-297 (1005 L1 cd 10), :298-304 (1005 L2 cd 9) + XMLSkill.as:289-311 (returns int)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "skills-meters/measured-cooldowns-explained",
+  "lane_impact": "L2 skills-meters \u2014 also corrects two ledger details: Chi Punch has a level 3 (30 damage, string 7066) the ledger's '10/20 dmg' misses, and the skill is named 'Focus' (string 6008), not 'Replenish Focus'.",
+  "ledger_text": "- **Ready:** Chi Punch (10/20 dmg, cost 2, cd 4.96s); Replenish Focus (cost 5, cd 9.92\u21928.92s); full 6-category tree structure + per-stance unlock levels; crit = 1.3\u00d7 formula.",
+  "overturns_ledger": true,
+  "quote": "5*24=120 -> 120*(1-5/600)=119.0 -> int 119 -> 119/24=4.9583 -> toFixed(2)=\"4.96\"; 10*24=240 -> 238.0 -> 238/24=9.9166 -> \"9.92\"; 9*24=216 -> 214.2 -> int 214 -> 214/24=8.9166 -> \"8.92\". Ledger:194 measured \"cd 4.96s\" and \"cd 9.92\u21928.92s\".",
+  "text": "The three oddly precise cooldowns the ledger measured off the WEB v0.717 longplay (Chi Punch 4.96s, Focus 9.92s then 8.92s) are reproduced to the hundredth by the payload's xml cooldowns 5/10/9 run through the SPD formula with int truncation at SPD=5 \u2014 proving the android-build data IS the web build's tuning.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1854-1861 and :1844-1853; applied at XMLSkill.as:289-311",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skills-meters/spd-cooldown-formula",
+  "lane_impact": "L2 skills-meters \u2014 blocker \u2463 dead. Also L10 progression: this is one of the two SPD transfer functions progression blocker \u2460 asks for ('DEF mitigation curve + SPD range/cooldown scaling \u2014 wiki gives only direction').",
+  "ledger_text": "\u2463 SPD\u2192cooldown formula.",
+  "overturns_ledger": true,
+  "quote": "internal static function getSkillCooldownModifierVal(speed:int) : Number\\n{\\n   if(speed > 300)\\n   {\\n      speed = 300;\\n   }\\n   return 1 - speed / 300 * 0.5;\\n}   // and XMLSkill.as:308-310  val = this.levelList[lvl].cooldown * 24;  return val * StatsManager.getSkillCooldownModifier();",
+  "text": "The SPEED-to-cooldown formula is in the source verbatim: effective cooldown = xmlCooldown x (1 - SPD/600), SPD capped at 300 (max -50%), with the Speed buff multiplying SPD by 1.5 before the cap.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "strings 6085/6086/6087 (skills 1039/1040/1041), 6099 (1046), 6100 (1047), 6103/6105 (1049/1050) via docs/gauntlet/L0/index/strings.json, rows at reference/extracted/skilldata.xml:1234-1280, :1435-1464, :1483-1511",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/skill-icons-are-gestural",
+  "lane_impact": "L8 ui-hud \u2014 the skill bar needs press-and-hold charge state and drag-to-aim, neither of which is in the ledger. Also L5 combat-core: Charged Shot scales 20/40/60 dmg per second to a 200/400/600 cap (strings 7075-7077) and is cancelled by taking a hit.",
+  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued.",
+  "overturns_ledger": true,
+  "quote": "6099 = \"Shoots a charged projectile from your blade. / Hold down the skill icon to increase the damage it inflicts. / Getting hit while charging will cancel the skill.\"  6100 = \"Calls down a mystical sword from the heavens. / Drag and drop skill icon to select target location.\"  6103 = \"Short burst of speed. / Interchangable with Dash Left Skill if you drag and drop skill icon to select direction.\"",
+  "text": "Skill icons are not tap-once buttons: the shipped descriptions state two additional input verbs \u2014 hold-the-icon-to-charge (the three stance ultimates plus Charged Shot) and drag-and-drop-the-icon to pick a target location or a direction (Heavenly Sword, and one slot that holds BOTH dashes).",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:2295, :126, :749; SkillManager.as:14; reference/extracted/skilldata.xml:375-418 (skill 1008) with strings 7009-7013; passives at skilldata.xml:7, :86, :165",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/skill-slots-3-to-8",
+  "lane_impact": "L8 ui-hud \u2014 blocker \u2463 dead; the HUD must support 3 to 8 slots driven by skill 1008, with Jump as the default slot-0 occupant. 3 + 5 = 8 = the vector length, so the two sources agree exactly.",
+  "ledger_text": "\u2463 the \"3 skill slots\" is really ~2 abilities + a stance up-arrow.",
+  "overturns_ledger": true,
+  "quote": "StatsManager.as:2295  return 3 + getStat(1008);\\nStatsManager.as:126   public static var skillSlots:Vector.<IntStat> = new Vector.<IntStat>(8);\\nStatsManager.as:749   skillSlots[0] = new IntStat(1003,1);\\nSkillManager.as:14    public static var SKILL_JUMP:int = 1003;\\nstrings 7009-7013 = \"4 skill slots\" / \"5 skill slots\" / \"6 skill slots\" / \"7 skill slots\" / \"8 skill slots\"  (skill 1008 \"Skill Slots+\")",
+  "text": "Skill slots are base 3, hard max 8, with slot 0 pre-filled with the Jump skill \u2014 so the ledger's guess that the third HUD element is 'a stance up-arrow' is wrong, because the three stance masteries are <passive>1</passive> and passives cannot occupy an action slot.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_431.0.png \u2014 crop (1380, 900) -> (1920, 1080) of the 1920x1080 frame, Lanczos-upscaled 3x to 1620x540",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/three-slots-on-screen",
+  "lane_impact": "L8 ui-hud \u2014 grounds the slot-count claim in the primary reference. The fist is skill 1042 Chi Punch ('Focuses Chi into your fist for a deadly punch') and the up-arrow is skill 1003 Jump per the slot claim; frame and payload agree.",
+  "overturns_ledger": false,
+  "quote": "Visibly in the crop: three rounded-square slots with bevelled pale-grey frames on black. Slot 1 (leftmost) empty, no number label. Slot 2 labelled \"2\", a gold clenched fist with motion streaks, whole tile dimmed/tinted. Slot 3 labelled \"3\", a plain gold up-arrow. Same frame's left HUD reads 20/20 green, 26/26 blue, \"CANNOT CHANGE STANCE\", \"150% DAMAGE\".",
+  "text": "A frame confirms exactly three skill slots on the bottom-right HUD, holding an empty tile, a dimmed gold fist (Chi Punch on cooldown) and a gold up-arrow \u2014 matching the payload's base-3 slot count with no conflict to adjudicate.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml:835-841 (skill 1021 Scavenging, level 5, <desc>7094</desc>) resolved via docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/secret-areas-behind-bushes",
+  "lane_impact": "L9 world \u2014 a room-content mechanic (concealed exits + a skill-driven reveal) that appears in no ledger system; world-exploration's known-unknowns list only trigger types, coords and geography. Pairs with S0-4's 112_Mobile_NodeData (535 ids, 372 <x>, 343 <obj>).",
+  "ledger_text": "- **Content depth:** Ep4\u201312 + epilogue (10 undocumented chapters); verbatim dialogue; per-quest trigger types + coords; the full territory map/geography; elemental-skill effect values.",
+  "overturns_ledger": true,
+  "quote": "7094 = \"Bushes concealing paths to secret areas will be highlighted in red.\"",
+  "text": "Overworld rooms have a hidden-passage layer: Scavenging level 5 highlights in red the bushes that conceal paths to secret areas.",
+  "unit": "skilldata",
+  "verdict": "HELD"
+ }
+]

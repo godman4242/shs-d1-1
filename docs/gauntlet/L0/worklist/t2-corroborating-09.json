@@ -1,0 +1,367 @@
+[
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:160, :1133, :1148",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/fifth-clock-duel-tokens",
+  "lane_impact": "L1 world-exploration and L11 meta-social: the real clock inventory is AP 60 s, duel tokens 120 s, war move 3600 s, crops 900/3600/21600/43200 s (+900 s grace), quest repeat 86400 s \u2014 five, not three. Persisted as save slot 101 (nextDTUpdate), same timestamp-based offline-accrual shape as AP.",
+  "overturns_ledger": false,
+  "quote": "internal static var DTINTERVAL:int = 2 * 60;\n...\ndiff = Math.floor(timeDiff / DTINTERVAL) + 1;\n...\nsetNextDTUpdate(timeVariable,DTINTERVAL - timeDiff % DTINTERVAL);",
+  "text": "A fifth independent real-time clock exists that the \"three clocks\" framing omits: duel tokens regenerate on a 120-second interval.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:393-400 + recomputation over reference/extracted/android/110_Mobile_MapBitmapData.bin",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/frozen-town-levels-are-19-not-12",
+  "lane_impact": "L1 world-exploration and L11 meta-social: extends the journal's prosperity-thresholds claim, which lists only the 12 hard-coded ids. The real rule is a radius: any territory with level < 8, i.e. Manhattan distance <= 4 from (341,341). I counted these over the land mask myself \u2014 19 territories (L3x1 + L4x2 + L5x4 + L6x5 + L7x7). So the starting region is a fixed, non-warrable tutorial zone by construction, and only the 716 outer territories have dynamic prosperity.",
+  "overturns_ledger": false,
+  "quote": "public function isNoChangeTown(territoryID:int) : Boolean\n{\n   if(territoryID == 1466699 || territoryID == 1503572 || territoryID == 1368424 || territoryID == 1540387)\n   {\n      return true;\n   }\n   var lvl:int = this.getTerritoryLevel(territoryID);\n   return lvl < this.LEVELSTART + 5;\n}",
+  "text": "Town levels are frozen for 19 territories, not the 12 explicitly listed ids \u2014 isNoChangeTown also returns true for every territory whose level is below LEVELSTART+5.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/Nr4fQstqHDM/map/frames/frame_0020.jpg crops (0,30)-(300,80) x5 and (400,120)-(512,180) x8, vs my Python re-implementation of reference/decompiled/shs3_android/scripts/RNG.as:66-77 + NameGenerator.as:40,42,162-166 + NodeGenerator.as:485-512",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "world-exploration/kakuchi-is-cross-build-parity-proof",
+  "lane_impact": "L1 world-exploration: upgrades world-exploration/cross-build-numeric-parity from 'only the land mask is proven' to 'the land mask is byte-proven AND the whole coordinate/naming stack is behaviourally proven'. Specifically validated in v0.717 by this single frame: getTerritory, getTerritorySector, TERRSHIFTX=21, TERRSHIFTY=51, the LCG (s*9301+49297)%233280, RNG's constructor-advances-once behaviour, getPlaceName's %137 branch, the 78-entry namestarting and 37-entry nameending tables, and getNodeCompassDir's <=1 / >=4 bands. That is far above the 'string-pool inference' the score rationale settles for. It does NOT extend to the tuning constants (APINTERVAL, LEVELSTART, AP costs, crop timers) \u2014 those remain Android-labelled.",
+  "overturns_ledger": false,
+  "quote": "Frame title bar reads \"W KAKUCHI MOUNTAIN PATH\"; frame HUD reads \"TERRITORY (24,52) / SECTOR (1,3)\". Android code path: (24,52) -> internal (344,342) -> id 1409366 -> 344%137=70 >= 26 -> getTownName2 -> RNG(2818732) -> indices (74,19) -> \"Ka\"+\"kuchi\" = Kakuchi; terrSector.x=1 <= 1 -> getString(401) = \"W\", terrSector.y=3 in the dead band -> no N/S prefix.",
+  "text": "The Kakuchi reproduction is itself a web-vs-Android parity proof and is under-claimed: a WEB v0.717 video frame renders a name that only falls out of ANDROID v0.682 code if the coordinate law, TERRSHIFTX/Y, the LCG constants, both name tables and the compass-band rule are all identical across builds.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/shapes/188.svg (svg header: height=\"785.15px\" width=\"663.65px\", 399 sub-paths); provenance docs/research/fidelity/ART_EXTRACTION.md:18 + docs/sessions/SESSION15_KICKOFF.md:58",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "world-exploration/map-art-is-held-web-shape-188",
+  "lane_impact": "L1 world-exploration: kills the surveyor's own STILL_UNHELD world-exploration/map-art-unheld and removes one of the four negatives holding its score at 85. It also moves the map art from 'Android, encrypted' to 'web v0.717, already extracted on disk' \u2014 the one artifact class this lane most wanted. Why it was missed is on the record: docs/sessions/-SESSION-LOG.md:2392 and docs/DIVERGENCES.md:3191 say that of the 1,822 shapes in reference/extracted/shapes/, only the 16 the fighter uses had ever been opened. The remaining ~1,806 are an unswept evidence pool for every art-bearing lane (L6 art-anim-audio-feel, L5 ui-hud), not just this one.",
+  "overturns_ledger": false,
+  "quote": "<svg ... ffdec:objectType=\"shape\" height=\"785.15px\" width=\"663.65px\" ...> -- rasterising its 399 sub-paths renders Hokkaido top-right, the Honshu diagonal, Shikoku/Kyushu bottom-left and the Ryukyu chain trailing SW; overlaying reference/extracted/bindata/92_1t4648s0.bin at (i*10, j*10) lands every land cell on that landmass.",
+  "text": "The rendered world-map ART is HELD, in the WEB v0.717 build: reference/extracted/shapes/188.svg is the filled Japanese-archipelago vector the world map is drawn from, and the 63x72 land mask is a 10-px-per-cell quantisation of it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "my overlay of reference/extracted/bindata/92_1t4648s0.bin onto the 36-tile composite of reference/extracted/sprites/DefineSprite_*/1.png, transform cell (i,j) -> px (10i+80, 10j) derived from WorldMapUI.as:208 and :230",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/map-art-validates-projection",
+  "lane_impact": "L1 world-exploration: the projection claim previously rested on two lines of code (WorldMapUI.as:208 getPixel(territoryx + 21 - 8, territoryy + 51) and :230 (terrx + 21) * 10 + 5). It now has a picture behind it. The 83 'misses' are coastline cells sampled at cell centre on a 10 px grid plus my own tile-assembly seams, not a transform error. Practical upshot for the port: a renderer can draw the OG map by blitting the 36 tiles at (i*80, j*80) and index territories with x = i_mask + 328, y = j_mask + 290.",
+  "overturns_ledger": false,
+  "quote": "land cells over drawn land: 652 over sea: 83 agreement %: 88.7",
+  "text": "Overlaying the 63x72 land mask on the reassembled map art at the code's own projection agrees on 652 of 735 land cells (88.7% by cell centre) and traces the coastline exactly, independently confirming the mask-to-screen transform.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/Nr4fQstqHDM/map/frames/frame_0020.jpg, crop (393,38)-(502,138), Lanczos x10 -> 1090x1000",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/minimap-x-at-3-2",
+  "lane_impact": "L1 world-exploration and L5 ui-hud: the frame wins over the surveyor's hedged reading. The substantive claim (6x6 grid, player at (1,3)) is unaffected, but the icon inventory needs amending - and the arch/gate distinction is a real minimap-iconography datum that maps onto NodeGenerator's 24-value ICON_ enum.",
+  "overturns_ledger": false,
+  "quote": "In the x10 crop the column label centres fall at x ~ 195/320/450/570/690/815 and the row label centres at y ~ 190/310/432/557/675/800. The gold X is centred at ~(565,437) = column 3, row 2. The gold up-arrow is at (570,190) = (3,0), gate glyphs at (815,190) = (5,0) and (195,800) = (0,5), and a distinct gold arch at (812,800) = (5,5). The white player triangle is at ~(378,557) = column 1, row 3, matching the HUD's SECTOR (1,3).",
+  "text": "On frame_0020 the gold X marker sits at minimap column 3 row 2, not the claimed ~(2,2), and there is a sixth gold icon - an arch, visually distinct from the gate glyph - at (5,5) that the claim's quote omits.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/Nr4fQstqHDM/map/frames/frame_0020.jpg, crop (395,38)-(505,148) Lanczos x9 -> 990x990; cross-read with frame_0080.jpg crops (0,30)-(300,80) x5 and (355,110)-(512,180) x7",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/minimap-x-is-quest-target",
+  "lane_impact": "L1 world-exploration and L4 ui-hud: corrects the surveyor's '~(2,2)' misread and upgrades the finding. The minimap's gold X is the quest destination, and frames 0020 and 0080 are a matched before/after pair for the same objective - a reusable behaviour cite for the minimap iconography Ready bullet. The same x9 crop also shows a sixth icon at (5,5) that the original quote omits (the journal lists only the (5,0) and (0,5) gates).",
+  "overturns_ledger": false,
+  "quote": "In the x9 crop the column-label centres fall at x = 168/278/390/497/607/722 and the row-label centres at y = 172/280/388/497/605/718. The gold X sits at (483,390) = column 3, row 2. frame_0080 prints 'TERRITORY (24,52)' / 'SECTOR (3,2)' with the title bar 'KAKUCHI DOJO GATES' and the quest line 'SIDE QUEST: DEFEAT HATTORI'.",
+  "text": "The gold X on the frame_0020 minimap sits at sector (3,2), not (2,2) - and (3,2) is exactly the sector the player reaches in frame_0080, so the X is the active quest-target marker.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/Nr4fQstqHDM/map/frames/frame_0020.jpg, crop (395,40)-(490,135), Lanczos x10 -> 950x950 with a 10-px red coordinate grid overlaid",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/minimap-x-marker-column",
+  "lane_impact": "L1 world-exploration: correction only, and non-load-bearing \u2014 the grid shape, the 0-5 labelling on both axes, the player triangle at column 1 row 3 and the HUD's 'SECTOR (1,3)' all verify. Worth fixing before anyone ports the minimap icon layout from the journal's prose rather than from the frame.",
+  "overturns_ledger": false,
+  "quote": "Visible in the crop: column labels 0-5 centred at original-frame x = 413/425/438/449/463/475; row labels 0-5 at y = 53/66/80/93/105/118. The gold X centroid is at x approx 449, y approx 82 \u2014 column 3, row 2 \u2014 i.e. the same column as the gold up-arrow at (3,0), which the surveyor labels correctly.",
+  "text": "The minimap's gold X marker in frame_0020 sits at column 3 row 2, not the \"~(2,2)\" the surveyor's crop description reports.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/payload.xml:119152-119260",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/name-tables-in-web-payload",
+  "lane_impact": "L1 world-exploration: the Android namestarting/nameending arrays appear in the v0.717 pool in the same order, minus only the entries the string pool deduplicates ('Kiyo' which occurs twice in the array, and the short strings 'i' and 'no'). Combined with the LCG constants at :104820-104821, the whole place-name law is cross-build corroborated. Strengthens world-exploration/place-name-reproduced-from-payload from an Android derivation to a v0.717-grounded one.",
+  "overturns_ledger": false,
+  "quote": "<item>Cho</item> <item>Dai</item> <item>Ryo</item> <item>Shin</item> <item>Ryu</item> <item>Mata</item> ... <item>Iwa</item> <item>Ka</item> <item>Kasu</item> <item>Ko</item> <item>ta</item> <item>yama</item> <item>kawa</item> <item>moto</item> ... <item>harah</item> <item>kuchi</item> <item>da</item> ... <item>maki</item> <item>bara</item>",
+  "text": "The name-generator vocabulary ships verbatim in the web v0.717 payload string pool, so the place-name derivation is corroborated across builds and is not an Android-only reconstruction.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:392-400 and :417-447",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/nochange-ring",
+  "lane_impact": "L1 world-exploration and L11 meta-social: with LEVELSTART=3 the threshold is level 8, which by my recomputation over the land mask covers 46 territories (L3x1 L4x2 L5x4 L6x5 L7x7 plus the L8 boundary excluded) - the whole newbie ring has RNG-fixed, war-immune town levels. The surveyor's 'specific territories pinned' reads as a list of 12 exceptions; it is actually a rule plus 12 exceptions.",
+  "overturns_ledger": false,
+  "quote": "if(territoryID == 1466699 || territoryID == 1503572 || territoryID == 1368424 || territoryID == 1540387)\n{\n   return true;\n}\nvar lvl:int = this.getTerritoryLevel(territoryID);\nreturn lvl < this.LEVELSTART + 5;",
+  "text": "isNoChangeTown freezes far more than the four hard-coded ids: every territory whose level is below 8 is also frozen, with its town level drawn deterministically from new RNG(territoryID).rand(7).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:392-400",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/nochange-town-covers-all-level-under-8",
+  "lane_impact": "L1 world-exploration and L11 meta-social: the surveyor's prosperity claim lists only the explicit id pins and so understates the rule. Combined with its own verified level histogram (L3x1 L4x2 L5x4 L6x5 L7x7 = 19 territories at level < 8), this means 19 of the 735 land territories \u2014 the whole starting region including spawn \u2014 never change town level, and their level comes from getNoChangeTownLevel, whose fallback is RNG(territoryID).rand(7) with dice 0 AND dice 6 both mapping to level 0. Prosperity accumulation only ever moves towns in the level>=8 outer world.",
+  "overturns_ledger": false,
+  "quote": "public function isNoChangeTown(territoryID:int) : Boolean\n{\n   if(territoryID == 1466699 || territoryID == 1503572 || territoryID == 1368424 || territoryID == 1540387)\n   {\n      return true;\n   }\n   var lvl:int = this.getTerritoryLevel(territoryID);\n   return lvl < this.LEVELSTART + 5;\n}",
+  "text": "The pinned-town rule is far broader than the twelve listed ids: isNoChangeTown returns true for EVERY territory whose level is below LEVELSTART+5 (i.e. level < 8), so the entire low-level core of the world has permanently fixed town levels.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeUI.as:600 (doMine) + Obj_OreDeposit.as:79-86 (clearOre)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/rock-deposit-never-clears",
+  "lane_impact": "L1 world-exploration and L2 economy: refines the journal's \"'Respawn' is not a timer\" line, which is right but incomplete. Combined with the 50% downgrade-to-Rock rule at Obj_OreDeposit.as:70, the real loop is: any non-Coal deposit has a 50% chance of yielding item 20059 (\"Unusable rocks\") AND staying on the map, so the node is farmable until the player rolls the real ore. That is an economy sink/faucet the ledger has no line for.",
+  "overturns_ledger": false,
+  "quote": "if(this.oreType != 1)\n{\n   (this.interactiveStageObjectHolder as Obj_OreDeposit).clearOre();\n}\n---\npublic function clearOre() : *\n{\n   gotoAndStop(1);\n   StageManager.addToDeadList(objectName);",
+  "text": "A Rock deposit (oreType 1) is an unlimited faucet \u2014 the despawn is guarded on oreType != 1, so it can be mined for 2 AP indefinitely, unlike every other ore which is added to the dead list on first success.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "$ grep -o 'saveUpdate([0-9]*' reference/decompiled/shs3_android/scripts/ | sort -u  +  QueryManagerBase.as:15",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/save-schema-has-three-timers",
+  "lane_impact": "L1 world-exploration and every lane inheriting \u00a76: corrects the journal's save-schema-recovered claim, which says \"20 numbered data slots plus four timer slots\" while its own enumeration lists only three timers, and the score rationale which says \"24-slot\". DATASLOTS:int = 20 at QueryManagerBase.as:15 is the literal the schema is sized on, and 103 (getBattleStatsString) is written next to slot 1 as a data slot. The headline \u2014 \u00a76's \"design a persistence schema\" is false, it needs transcribing \u2014 is unaffected.",
+  "overturns_ledger": false,
+  "quote": "saveUpdate(0 \u2026 saveUpdate(12, saveUpdate(14 \u2026 saveUpdate(19, saveUpdate(100, saveUpdate(101, saveUpdate(102, saveUpdate(103\n(no saveUpdate(13 anywhere)\n---\ninternal static var DATASLOTS:int = 20;",
+  "text": "The save schema is 20 data slots (ids 0-12, 14-19, 103) plus THREE timer slots (100/101/102), 23 distinct ids in total \u2014 slot 13 is never written and slot 103 is battle stats, not a timer.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/QueryManagerPIO.as:1047-1187 (23 saveUpdate call sites) + NetworkManager.as:1870 (the saveUpdate definition, which is the 24th grep hit)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "world-exploration/save-schema-is-23-slots",
+  "lane_impact": "L1 world-exploration: cosmetic correction to save-schema-recovered. Data slots are 0-12, 14-19 and 103 (= 20); timer slots are 100 nextAPUpdate, 101 nextDTUpdate, 102 nextWarTurn (= 3). Slot 13 is genuinely absent from the writer. The substantive claim - that the format is transcribable rather than designable, and that slot 10 is the packed world position - is unaffected.",
+  "overturns_ledger": false,
+  "quote": "public function saveUpdate(saveIndex:int, savedata:String) : *",
+  "text": "The recovered save schema is 23 slots - 20 data and 3 timers - not the 24 / 'four timer slots' the journal states.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/QueryManagerPIO.as:1047-1187 (23 saveUpdate calls, enumerated) + NetworkManager.as:1870",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/save-slot-count-23",
+  "lane_impact": "L1 world-exploration: arithmetic correction to the claim text ('20 numbered data slots plus four timer slots') and to the score rationale ('the 24-slot save schema'). A repo-wide grep confirms QueryManagerPIO holds every call site; NetworkManager.as:1870 is the definition. Slot 13 is genuinely unused. The three timers map exactly onto the three sub-day clocks (AP 60 s, duel tokens 120 s, war turn 3600 s).",
+  "overturns_ledger": false,
+  "quote": "saveUpdate(100,StatsManager.nextAPUpdate.toString());\nsaveUpdate(101,StatsManager.nextDTUpdate.toString());\nsaveUpdate(102,StatsManager.nextWarTurn.toString());",
+  "text": "The recovered save schema is 23 slots, not 24: 20 data slots (0-12, 14-19, 103) and only three timer slots (100, 101, 102).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1680 (initStablesButtons) and :1720-1745 (travel); string ids 525/735 'Stables', 5061 'Stablehand' in docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/stables-is-the-5ap-object",
+  "lane_impact": "L1 world-exploration and L10 economy: docs/gauntlet/L0/CLAIMS.md:2751 (world-exploration/ap-cost-table-stable-mislabelled, PARTIAL) should be marked SUPERSEDED. The ledger's Ready bullet 'stable 5' does not need downgrading to PARTIAL after all -- it needs the gold fare appended. The economy lane's 'section-1 line 79 stable 14c+5AP' reconciles cleanly as one level-7 observation of nodeLevel x 2 (7 x 2 = 14). The current survey reaches the right answer but never declares that it is reversing a banked claim, so the ledger of banked claims stays wrong unless this is recorded.",
+  "overturns_ledger": false,
+  "quote": "internal function initStablesButtons() : *\n{\n   ...\n   var neighbourList:Array = NodeGenerator.instance.getAdjacentTerritories();\n   ... if(territoryData.hasTown() && territoryData.isInBoundary())\n}\n\ninternal function travel(nodeid:int) : *\n{\n   var cost:int = NodeGenerator.instance.getNodeLevel(StageManager.getCurrentNode()) * 2;\n   ...\n   if(!StatsManager.checkAP(5))",
+  "text": "The prior round's banked PARTIAL 'there is no 5-AP stable object' is wrong: the adjacent-town travel dialog is built by a function literally named initStablesButtons, and the action it fires costs 5 AP plus nodeLevel x 2 gold -- so the ledger's 'stable 5' entry is correct and merely omits the fare.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/112_Mobile_NodeData.bin:5-6 + docs/gauntlet/L0/index/strings.json id 1037",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/112_Mobile_NodeData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/start-node-name-confirms-rng",
+  "lane_impact": "L1 world-exploration: a second, independent artifact corroborating claim place-name-reproduced-from-payload. The surveyor derived \"Kasuta\" purely from re-running the LCG; the authored node file plus the XLIFF string table produce the same word from a completely different path, and also confirm the 'W' quadrant prefix is baked into authored names as well as generated ones. Also worth carrying: 8382465 appears three times in the node file (:5 as the start node id, :46 and :2731 as signpost destinations), so the start node is a routed hub, not an isolated spawn.",
+  "overturns_ledger": false,
+  "quote": "\t\t<id>8382465</id>\n\t\t<name>1037</name>\n---\nstrings.json 1037 = 'W Kasuta Forest'",
+  "text": "The payload's own string table independently confirms the NameGenerator reproduction: the start node's authored label resolves to \"W Kasuta Forest\", matching the LCG-derived town name \"Kasuta\" for territory 1397077.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NameGenerator.as:40,42,163-166 + RNG.as:64-75, reproduced by me; corroborated by docs/research/video-study/segments/A-00-boot-login.md:61",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/start-town-is-kasuta",
+  "lane_impact": "L1 world-exploration: raises the name-generator result from one match to two, from two different territory ids, one of which (the spawn) also independently confirms STAT_LOCATION=8382465 -> sector (0,3) and displayed territory (21,51). Note the corroborating source is a video-study segment summary, i.e. a LEAD not an artifact - the A2 reproduction is what carries this finding.",
+  "overturns_ledger": false,
+  "quote": "getTownName2(1397077) = new RNG(2794154); rand(78)=75 -> namestarting[75]='Ka'; rand(37)=0 -> nameending[0]='suta'  =>  'Kasuta'. With terrSector.x = 0 (<=1) -> getString(401)='W' and BG_FOREST -> getString(1003)='Forest', getNodeName emits 'W Kasuta Forest'. The repo's own video-study record of the guest boot screen reads: location banner \"W KASUTA FOREST\", TERRITORY (21,51), SECTOR (0,3) advancing 0,3 -> 1,3 -> 2,3.",
+  "text": "The start territory's generated name is 'Kasuta' and the boot banner is 'W KASUTA FOREST' - a second, independent reproduction of the name generator from a different territory id.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:1228-1232",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/tired-idle-not-death",
+  "lane_impact": "L1 world-exploration (removes a fabricated rule from the AP claim) and L6 art-anim-audio-feel (adds a real, uncatalogued one). TIRED appears exactly twice in the class - here and in a sheathed-state test at :4319 - so it is unambiguously an idle pose, not a state transition. The combat half is the more valuable half: the fighter visibly changes idle at quarter health, which is a feel cue the art lane can implement.",
+  "overturns_ledger": false,
+  "quote": "case IDLE_STATE:\n   if(!GameEngine.isAdventureMode() && !StageManager.isRedFreeze() && getHP() <= maxhp / 4 || GameEngine.isAdventureMode() && this.controlledBy == 0 && StatsManager.getStat(StatsManager.STAT_AP) == 0)\n   {\n      startAnim(TIRED);\n   }",
+  "text": "AP == 0 in adventure mode is not a death or retreat condition - it swaps the player to a TIRED idle animation, and the same branch fires in combat at HP <= 25% of max.",
+  "verdict": "HELD"
+ },
+ {
+  "alternate_cites": [
+   "reference/decompiled/shs3_android/scripts/InteractUI_crops.as:160-169 (and the mirror in Obj_VegePatch.as case 4)",
+   "reference/decompiled/shs3_android/scripts/Obj_VegePatch.as:133-140 (web mirror: \u00a71t8621s0\u00a7.as:138)"
+  ],
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/Obj_VegePatch.as:131-140 (also duplicated at InteractUI_crops.as:158-168)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "duplicate_count": 3,
+  "id": "world-exploration/twelve-hour-crop-never-rots",
+  "lane_impact": "L1 world-exploration: corrects the journal's farming-tables claim, which states a 15-minute grace before ROT across all four crop tiers. Three of four. The 12-hour crop is the safe overnight plant \u2014 it cannot be lost to inattention, which is a deliberate free-to-play design choice and exactly the kind of feel rule a port would silently get wrong if it applied the grace uniformly.",
+  "overturns_ledger": false,
+  "quote": "case 4:\n   timePeriod = 12 * 60 * 60;\n   if(QueryManager.instance.getServerTime() - plantTime < timePeriod)\n   {\n      vegState = PLANTED;\n   }\n   else\n   {\n      vegState = READYFORHARVEST;\n   }",
+  "reported_by": [
+   "critic"
+  ],
+  "text": "The 12-hour crop has no ROTTED state \u2014 its state machine is two-way (PLANTED, then READYFORHARVEST forever), unlike the 15-minute, 1-hour and 6-hour crops which all rot after a 900-second grace.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/Obj_VegePatch.as:134-143",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/twelve-hour-crops-never-rot",
+  "lane_impact": "L1 world-exploration: corrects world-exploration/farming-tables, which states all four tiers carry 'a 15-minute harvest grace before ROT'. Cases 1, 2 and 3 do (900/3600/21600 s + 900 s grace, else ROTTED); case 4 does not. Any ported farming.ts must special-case the 12 h crop as non-perishable, or it will destroy player crops the OG never destroyed.",
+  "overturns_ledger": false,
+  "quote": "case 4:\n   timePeriod = 12 * 60 * 60;\n   if(QueryManager.instance.getServerTime() - plantTime < timePeriod)\n   {\n      vegState = PLANTED;\n   }\n   else\n   {\n      vegState = READYFORHARVEST;\n   }",
+  "text": "The 15-minute harvest grace does not apply to the 12-hour crop: Obj_VegePatch's case 4 has no grace or ROTTED branch at all, so a 12-hour crop sits in READYFORHARVEST indefinitely.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/payload.xml:104820-104834 (and :104821 for the modulus)",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/web-payload-carries-world-constants",
+  "lane_impact": "L1 world-exploration: upgrades the surveyor's own STILL_UNHELD 'cross-build-numeric-parity'. 49297 and 233280 are the RNG.rnd() increment and modulus; the twelve ids that follow are exactly the pinned-town table from Android NodeGenerator.getNoChangeTownLevel, in the same clustered order. `grep -c \">8382465<\"` also returns 1, so the spawn node ships in v0.717 too. This is constant-pool evidence, not byte-proof \u2014 but it is the identical evidence class the surveyor already accepted for the procedural room builder at payload.xml:118249-118266, so the same standard must extend the verdict. What remains genuinely Android-only: APINTERVAL=60, LEVELSTART=3, the crop timers, the AP costs.",
+  "overturns_ledger": false,
+  "quote": "104820:            <item>49297</item>\n104821:            <item>233280</item>\n104823-104834:  <item>1466699</item> <item>1503572</item> <item>1368424</item> <item>1540387</item> <item>1397077</item> <item>1397078</item> <item>1401173</item> <item>1405270</item> <item>1413461</item> <item>1409366</item> <item>1401176</item> <item>1397081</item>",
+  "text": "The web v0.717 payload's own constant pool carries the world's LCG constants and all twelve pinned-territory ids in one contiguous run, so cross-build parity for the world extends far past the land mask the surveyor conceded.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "STILL_UNHELD",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "world-exploration/web-third-placename-hardcode",
+  "lane_impact": "L1 world-exploration: a porting hazard against world-exploration/place-name-reproduced-from-payload, logged as a lead because it rests on constant-pool adjacency rather than a quoted line of code. Evidence for: NameGenerator.as:136-144 hardcodes exactly two exceptions ('Ibamaya' for territoryID 1405272, 'Gokura' for 1524045), neither of which appears in 89_NameGenerator_PlaceNames.bin; the WEB payload's constant pool carries three capitalised place names adjacently at payload.xml:119264-119266 -- Ibamaya, Gokura, Iwakuni -- immediately after the nameending array and the 'replace' token used only by the name functions; and grep -rn Iwakuni over all 559 android classes returns 0 files. Evidence against my own hypothesis: 'Iwakuni' IS a normal row of the PlaceNames blob, sitting in a run of real Japanese cities (Hofu / Iwakuni / Kudamatsu / Mine / Nagato), so its presence in the blob is innocent -- but a blob row does not need to be an AS3 string constant. Separately confirmed and NOT in doubt: the web pool's namestarting and nameending runs match the android arrays in order and content with exactly the two absences a deduplicating pool predicts (Kiyo once instead of twice; 'i' and 'no' deduped), so the generator TABLES are cross-build consistent. Closing this needs a web-side NameGenerator decompile, which the repo does not hold.",
+  "overturns_ledger": false,
+  "text": "The web v0.717 build may carry a third hardcoded territory-name exception ('Iwakuni') that the Android v0.682 getPlaceName does not, which would make the ported name generator emit the wrong name for at least one territory.",
+  "verdict": "STILL_UNHELD"
+ }
+]
