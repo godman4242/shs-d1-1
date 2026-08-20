@@ -49,7 +49,10 @@ SYSTEMS = {
 }
 
 # The 6 source sweeps whose surveys landed but whose critics never ran.
-UNJUDGED_SOURCES = ["questdata", "skilldata", "npcdata", "itemdata", "bindata", "actionscript"]
+# The 10 source sweeps. A unit only produces a packet if it still has UNJUDGED claims,
+# so a sweep whose critics have since landed drops out on the next build automatically.
+UNJUDGED_SOURCES = ["questdata", "skilldata", "npcdata", "itemdata", "bindata", "actionscript",
+                    "android-blobs", "string-table", "frames", "uistrings-payload"]
 
 # Fields a blind critic may see: the claim itself, never how it was reached.
 BLIND_FIELDS = ("id", "text", "artifact_class", "cite", "quote", "verdict",
@@ -94,16 +97,30 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default="docs/gauntlet/L0")
+    ap.add_argument("--runs", nargs="+", default=["run2", "run3"],
+                    help="extracted run directories to pool, oldest first")
+    ap.add_argument("--lint", nargs="+", default=["citelint.json", "citelint-run3.json"],
+                    help="citeLint reports to pool")
     ap.add_argument("--batch-size", type=int, default=BATCH_SIZE)
     args = ap.parse_args()
 
     root = Path(args.root)
-    claims = json.loads((root / "run2" / "claims.json").read_text(encoding="utf-8"))
-    verdicts = json.loads((root / "run2" / "verdicts.json").read_text(encoding="utf-8"))
-    lint = json.loads((root / "citelint.json").read_text(encoding="utf-8"))
+    # Runs POOL, they do not supersede. A later run judges earlier claims and adds new
+    # ones; both halves have to be present or the judged set silently shrinks.
+    claims: list[dict] = []
+    verdicts: list[dict] = []
+    for run in args.runs:
+        claims += json.loads((root / run / "claims.json").read_text(encoding="utf-8"))
+        verdicts += json.loads((root / run / "verdicts.json").read_text(encoding="utf-8"))
+
+    lint_rows: list[dict] = []
+    for name in args.lint:
+        path = root / name
+        if path.exists():
+            lint_rows += json.loads(path.read_text(encoding="utf-8"))["claims"]
 
     lint_by_id: dict[str, dict] = {}
-    for row in lint["claims"]:
+    for row in lint_rows:
         # A duplicated id lints once per row; keep the worst status, since that is
         # the one a critic needs to see.
         prior = lint_by_id.get(row["id"])
@@ -137,11 +154,14 @@ def main() -> int:
 
     manifest: dict = {"batch_size": args.batch_size, "packets": [], "deferred": []}
 
-    # ---- WF-2: the 6 completed source sweeps, never judged ------------------
+    # ---- WF-2: source sweeps still carrying unjudged claims -----------------
     for unit in UNJUDGED_SOURCES:
         ids = sorted({cid for cid, rows in by_id.items()
                       if any((r.get("unit") == unit and r.get("origin") != "critic") for r in rows)
                       and cid not in judged})
+        if not ids:
+            manifest["deferred"].append({"unit": unit, "reason": "every claim already judged"})
+            continue
         rows = [packet(i) for i in ids]
         path = out_dir / f"src-{unit}.claims.json"
         path.write_text(json.dumps(rows, indent=1, sort_keys=True), encoding="utf-8")
@@ -187,6 +207,32 @@ def main() -> int:
     emit(tier2, "t2-corroborating", args.batch_size * 2, "WF-3b", ["cite"])
     overturns = len(tier1)
 
+    # ---- the dedup ground-truth every later hunter reads --------------------
+    # Regenerated here rather than by hand, so it can never drift from the pooled
+    # claim set. A dry-loop that dedups against a stale list re-reports old findings
+    # forever and never converges (§3.5).
+    seen_lines = [
+        "# SEEN CLAIM IDS — every claim banked across every run of L0 so far.",
+        "# A finding matching one of these is NOT new. Report it ONLY if you can",
+        "# materially STRENGTHEN or CONTRADICT it — and say which, explicitly.",
+        f"# {len(claims)} rows, {len(by_id)} unique ids, pooled from: {', '.join(args.runs)}.",
+        f"# {len(judged & set(by_id))} of them carry at least one artifact-citing verdict;",
+        "# the rest are LEADS and may not enter the ledger (§0).",
+        "",
+    ]
+    seen_by_unit: dict[str, set[str]] = defaultdict(set)
+    for cid, rows in by_id.items():
+        unit = next((r.get("unit") for r in rows if r.get("unit")), None) or "critic-new_findings"
+        seen_by_unit[unit].add(cid)
+    for unit in sorted(seen_by_unit):
+        ids = sorted(seen_by_unit[unit])
+        n_judged = sum(1 for i in ids if i in judged)
+        seen_lines.append(f"## {unit}  ({len(ids)} unique, {n_judged} judged)")
+        seen_lines += [f"  {'*' if i in judged else ' '} {i}" for i in ids]
+        seen_lines.append("")
+    seen_lines.append("# A leading '*' marks a claim that has already been judged.")
+    (root / "SEEN_CLAIM_IDS.txt").write_text("\n".join(seen_lines), encoding="utf-8")
+
     manifest["totals"] = {
         "claim_rows": len(claims),
         "distinct_ids": len(by_id),
@@ -210,6 +256,7 @@ def main() -> int:
         print(f"  {stage} critic findings   {sum(p['claims'] for p in packs)} across "
               f"{len(packs)} batches x {lenses} = {len(packs) * len(lenses.split('+'))} agents")
     print(f"  -> {out_dir}")
+    print(f"  -> {root/'SEEN_CLAIM_IDS.txt'}  ({len(by_id)} ids, {len(judged & set(by_id))} judged)")
     return 0
 
 

@@ -1,1091 +1,1258 @@
-# SEEN CLAIM IDS — every claim already banked across 4 runs of L0.
+# SEEN CLAIM IDS — every claim banked across every run of L0 so far.
 # A finding matching one of these is NOT new. Report it ONLY if you can
 # materially STRENGTHEN or CONTRADICT it — and say which, explicitly.
-# 1087 rows, 1048 unique ids.
+# 1243 rows, 1204 unique ids, pooled from: run2, run3.
+# 370 of them carry at least one artifact-citing verdict;
+# the rest are LEADS and may not enter the ledger (§0).
 
-## actionscript  (45 unique)
-  actionscript/adaptive-music-system
-  actionscript/affix-generator-complete
-  actionscript/anim-format
-  actionscript/animation-manifest-with-durations
-  actionscript/ap-and-war-clocks
-  actionscript/auto-slash-is-the-enemy-ai
-  actionscript/behead-and-weapon-parry
-  actionscript/build-divergence
-  actionscript/coins-per-kill-is-data
-  actionscript/crit-is-focus-gated-deterministic
-  actionscript/damage-is-a-random-roll
-  actionscript/damage-popup-colors
-  actionscript/dan-cap-and-post-rebirth-sp
-  actionscript/defense-is-flat-subtraction
-  actionscript/drawn-line-render-contract
-  actionscript/enemy-level-scaling-and-1hp-trash
-  actionscript/farming-and-prosperity-numbers
-  actionscript/focus-bar-is-the-third-hud-bar
-  actionscript/focus-meter-numerics
-  actionscript/hit-registration-window
-  actionscript/in-combat-stance-not-hard-locked
-  actionscript/loot-tables-held
-  actionscript/multi-target-full-damage
-  actionscript/native-resolution
-  actionscript/no-condition-damage-multiplier
-  actionscript/paperdoll-compositing-contract
-  actionscript/reach-300-200-100-refuted
-  actionscript/reach-formula
-  actionscript/repair-cost
-  actionscript/repair-cost-is-two-consumables
-  actionscript/save-schema
-  actionscript/screenshake-and-killbeat
-  actionscript/sell-price-formula
-  actionscript/shunpo-is-teleport-double-damage
-  actionscript/slash-frames-ordering-conflict
-  actionscript/spd-to-cooldown
-  actionscript/stance-counter-triangle
-  actionscript/stance-counter-triangle-confirmed
-  actionscript/stance-damage-is-mastery-10
-  actionscript/territory-daily-sim-vocabulary
-  actionscript/three-shipped-languages
-  actionscript/war-board-is-a-hex-grid
-  actionscript/web-payload-obfuscated
-  actionscript/xp-curve-l11-80
-  actionscript/xp-income-model
+## actionscript  (45 unique, 0 judged)
+    actionscript/adaptive-music-system
+    actionscript/affix-generator-complete
+    actionscript/anim-format
+    actionscript/animation-manifest-with-durations
+    actionscript/ap-and-war-clocks
+    actionscript/auto-slash-is-the-enemy-ai
+    actionscript/behead-and-weapon-parry
+    actionscript/build-divergence
+    actionscript/coins-per-kill-is-data
+    actionscript/crit-is-focus-gated-deterministic
+    actionscript/damage-is-a-random-roll
+    actionscript/damage-popup-colors
+    actionscript/dan-cap-and-post-rebirth-sp
+    actionscript/defense-is-flat-subtraction
+    actionscript/drawn-line-render-contract
+    actionscript/enemy-level-scaling-and-1hp-trash
+    actionscript/farming-and-prosperity-numbers
+    actionscript/focus-bar-is-the-third-hud-bar
+    actionscript/focus-meter-numerics
+    actionscript/hit-registration-window
+    actionscript/in-combat-stance-not-hard-locked
+    actionscript/loot-tables-held
+    actionscript/multi-target-full-damage
+    actionscript/native-resolution
+    actionscript/no-condition-damage-multiplier
+    actionscript/paperdoll-compositing-contract
+    actionscript/reach-300-200-100-refuted
+    actionscript/reach-formula
+    actionscript/repair-cost
+    actionscript/repair-cost-is-two-consumables
+    actionscript/save-schema
+    actionscript/screenshake-and-killbeat
+    actionscript/sell-price-formula
+    actionscript/shunpo-is-teleport-double-damage
+    actionscript/slash-frames-ordering-conflict
+    actionscript/spd-to-cooldown
+    actionscript/stance-counter-triangle
+    actionscript/stance-counter-triangle-confirmed
+    actionscript/stance-damage-is-mastery-10
+    actionscript/territory-daily-sim-vocabulary
+    actionscript/three-shipped-languages
+    actionscript/war-board-is-a-hex-grid
+    actionscript/web-payload-obfuscated
+    actionscript/xp-curve-l11-80
+    actionscript/xp-income-model
 
-## art-anim-audio-feel  (18 unique)
-  art-anim-audio-feel/21-node-rig-held
-  art-anim-audio-feel/24fps-keyframe-stream
-  art-anim-audio-feel/adaptive-music-engine
-  art-anim-audio-feel/android-web-byte-identity
-  art-anim-audio-feel/aspect-ratio-frame-wins
-  art-anim-audio-feel/audio-recovered-not-encrypted
-  art-anim-audio-feel/blade-trail-frame
-  art-anim-audio-feel/blood-vfx-exact
-  art-anim-audio-feel/font-identified
-  art-anim-audio-feel/gore-system-not-one-variant
-  art-anim-audio-feel/hit-reaction-12-ticks
-  art-anim-audio-feel/kill-beat-timings
-  art-anim-audio-feel/music-13-stems-measured
-  art-anim-audio-feel/no-blend-modes
-  art-anim-audio-feel/no-hitstop
-  art-anim-audio-feel/screen-shake-catalogued
-  art-anim-audio-feel/sfx-playback-contract
-  art-anim-audio-feel/web-audio-parity-unheld
+## android-blobs  (15 unique, 15 judged)
+  * android-blobs/all-thirteen-episode-cards-shipped
+  * android-blobs/bgdata-is-a-parallax-spec
+  * android-blobs/blobs-are-utf8-not-utf16
+  * android-blobs/boss-timings-recut-across-builds
+  * android-blobs/comp-rand-is-the-encounter-roll
+  * android-blobs/data-xml-parity-proofs-are-circular
+  * android-blobs/foreground-layer-occludes-the-fighters
+  * android-blobs/item-and-skill-icon-art-is-held
+  * android-blobs/mapdata-has-no-web-counterpart
+  * android-blobs/nothing-was-rendered
+  * android-blobs/parallax-and-dof-contract
+  * android-blobs/portraits-decrypted-and-one-dead-reference
+  * android-blobs/spider-is-web-only-enemy
+  * android-blobs/web-is-an-animation-superset
+  * android-blobs/web-payload-holds-zero-data-roots
 
-## bindata  (36 unique)
-  bindata/487-anims-held-4-ported
-  bindata/51-skill-animations
-  bindata/RETRACTION-animation-rate-is-24hz
-  bindata/RETRACTION-gif92-is-the-world-map
-  bindata/anim-duration-holds
-  bindata/aspect-frame-beats-swf-header
-  bindata/audio-not-in-this-source
-  bindata/boss-telegraph-triads
-  bindata/clan-band-tail-holds-seasonal-event-enemies
-  bindata/element-enum-order-and-archetypes
-  bindata/engine-ticks-24fps
-  bindata/five-stances-not-three
-  bindata/launcher-downed-ground-finisher-verbset
-  bindata/map-bitmap-vs-territory-scale-unreconciled
-  bindata/missing-boss-npcs-700-710
-  bindata/mounted-shield-archer-poses-eggs
-  bindata/original-rng-is-a-specific-lcg
-  bindata/paired-grab-throw-victim-anims
-  bindata/per-stance-idle-poses
-  bindata/pillarbox-independently-reverified
-  bindata/place-name-26x26-lookup
-  bindata/procedural-name-generator
-  bindata/reach-cap-not-in-this-source
-  bindata/severed-limb-deaths
-  bindata/slash-is-four-part-looping-hold
-  bindata/spawn-geometry
-  bindata/sprite-compositing-contract
-  bindata/survival-is-warroom-content
-  bindata/territory-12bit-packing-and-6x6-nodes
-  bindata/trap-census-and-800-is-one-screen
-  bindata/trap-dungeon-system
-  bindata/trap-room-placement-and-level-gate
-  bindata/veryhard-rooms-rotate-daily
-  bindata/war-boss-ids-are-rival-players
-  bindata/warhex-board-6x6
-  bindata/world-map-bitmap
+## art-anim-audio-feel  (18 unique, 18 judged)
+  * art-anim-audio-feel/21-node-rig-held
+  * art-anim-audio-feel/24fps-keyframe-stream
+  * art-anim-audio-feel/adaptive-music-engine
+  * art-anim-audio-feel/android-web-byte-identity
+  * art-anim-audio-feel/aspect-ratio-frame-wins
+  * art-anim-audio-feel/audio-recovered-not-encrypted
+  * art-anim-audio-feel/blade-trail-frame
+  * art-anim-audio-feel/blood-vfx-exact
+  * art-anim-audio-feel/font-identified
+  * art-anim-audio-feel/gore-system-not-one-variant
+  * art-anim-audio-feel/hit-reaction-12-ticks
+  * art-anim-audio-feel/kill-beat-timings
+  * art-anim-audio-feel/music-13-stems-measured
+  * art-anim-audio-feel/no-blend-modes
+  * art-anim-audio-feel/no-hitstop
+  * art-anim-audio-feel/screen-shake-catalogued
+  * art-anim-audio-feel/sfx-playback-contract
+  * art-anim-audio-feel/web-audio-parity-unheld
 
-## combat-core  (20 unique)
-  combat-core/150pct-damage-is-a-buff
-  combat-core/build-version-parity
-  combat-core/crit-gating
-  combat-core/crit-meter-exists-in-web-build
-  combat-core/crit-meter-fill-rate
-  combat-core/crit-multiplier
-  combat-core/damage-formula
-  combat-core/early-ttk
-  combat-core/gesture-classifier
-  combat-core/heavy-def-0.8
-  combat-core/hit-registration-instant-at-endslash
-  combat-core/launch-unlock-levels
-  combat-core/mitigation-and-part-rule
-  combat-core/multi-target-full-damage
-  combat-core/pass-through-dash
-  combat-core/reach-cap
-  combat-core/reach-is-arclength
-  combat-core/reach-stance-mults
-  combat-core/slash-type-map
-  combat-core/stance-triangle
+## bindata  (36 unique, 0 judged)
+    bindata/487-anims-held-4-ported
+    bindata/51-skill-animations
+    bindata/RETRACTION-animation-rate-is-24hz
+    bindata/RETRACTION-gif92-is-the-world-map
+    bindata/anim-duration-holds
+    bindata/aspect-frame-beats-swf-header
+    bindata/audio-not-in-this-source
+    bindata/boss-telegraph-triads
+    bindata/clan-band-tail-holds-seasonal-event-enemies
+    bindata/element-enum-order-and-archetypes
+    bindata/engine-ticks-24fps
+    bindata/five-stances-not-three
+    bindata/launcher-downed-ground-finisher-verbset
+    bindata/map-bitmap-vs-territory-scale-unreconciled
+    bindata/missing-boss-npcs-700-710
+    bindata/mounted-shield-archer-poses-eggs
+    bindata/original-rng-is-a-specific-lcg
+    bindata/paired-grab-throw-victim-anims
+    bindata/per-stance-idle-poses
+    bindata/pillarbox-independently-reverified
+    bindata/place-name-26x26-lookup
+    bindata/procedural-name-generator
+    bindata/reach-cap-not-in-this-source
+    bindata/severed-limb-deaths
+    bindata/slash-is-four-part-looping-hold
+    bindata/spawn-geometry
+    bindata/sprite-compositing-contract
+    bindata/survival-is-warroom-content
+    bindata/territory-12bit-packing-and-6x6-nodes
+    bindata/trap-census-and-800-is-one-screen
+    bindata/trap-dungeon-system
+    bindata/trap-room-placement-and-level-gate
+    bindata/veryhard-rooms-rotate-daily
+    bindata/war-boss-ids-are-rival-players
+    bindata/warhex-board-6x6
+    bindata/world-map-bitmap
 
-## critic-new_findings  (610 unique)
-  art-anim-audio-feel/150-percent-damage-is-a-potato-buff
-  art-anim-audio-feel/150pct-damage-is-a-buff-not-the-stance-modifier
-  art-anim-audio-feel/16pct-of-frames-are-authored-holds
-  art-anim-audio-feel/24hz-proven-on-web-build
-  art-anim-audio-feel/690-is-a-friend-panel
-  art-anim-audio-feel/690-is-the-friend-bar
-  art-anim-audio-feel/690-is-the-friend-bar-layout
-  art-anim-audio-feel/690-is-the-friend-panel
-  art-anim-audio-feel/800x690-is-the-friend-bar-layout
-  art-anim-audio-feel/anim-loop-flag
-  art-anim-audio-feel/animdata-loop-and-reorder-attrs
-  art-anim-audio-feel/animdata-loop-flag-parsing-trap
-  art-anim-audio-feel/blend-modes-none-at-byte-level-web
-  art-anim-audio-feel/blue-object-is-persistent-not-a-trail
-  art-anim-audio-feel/definesound-samplecount-is-authoritative
-  art-anim-audio-feel/glow-filters-are-the-real-fx-answer
-  art-anim-audio-feel/glow-is-part-of-the-vocabulary
-  art-anim-audio-feel/gore-has-no-frame-corroboration
-  art-anim-audio-feel/gore-is-humanoid-only
-  art-anim-audio-feel/gore-roll-is-per-class
-  art-anim-audio-feel/gothit-is-a-ladder-not-a-constant
-  art-anim-audio-feel/hit-reaction-is-a-ladder
-  art-anim-audio-feel/hit-reaction-ladder-not-uniform
-  art-anim-audio-feel/hold-frames-are-authored-in-data
-  art-anim-audio-feel/hud-150-damage-is-a-buff
-  art-anim-audio-feel/hud-150-is-a-potato-buff
-  art-anim-audio-feel/hud-150-is-potato-buff
-  art-anim-audio-feel/killbeat-6000ms-pins-24hz-tick
-  art-anim-audio-feel/killbeat-looks-like-red-field-black-silhouettes
-  art-anim-audio-feel/no-blendmode-holds-for-timeline-tags-too
-  art-anim-audio-feel/no-blendmode-in-authored-data
-  art-anim-audio-feel/no-blendmode-in-swf-tags-either
-  art-anim-audio-feel/no-hold-frames-across-all-487
-  art-anim-audio-feel/no-hold-frames-verified-exhaustively
-  art-anim-audio-feel/npc-death-dice-is-seven-way
-  art-anim-audio-feel/pose-cadence-is-15hz-measured
-  art-anim-audio-feel/predecessor-sfx-lineage
-  art-anim-audio-feel/predecessor-swfs-hold-sfx
-  art-anim-audio-feel/preservation-shs3swf-is-the-loader
-  art-anim-audio-feel/rig-is-19-nodes
-  art-anim-audio-feel/rig-is-23-parts-27-slots
-  art-anim-audio-feel/rig-is-23-slots-26-for-wolves
-  art-anim-audio-feel/rig-is-27-parts
-  art-anim-audio-feel/screen-shake-amplitude-is-inert
-  art-anim-audio-feel/second-layout-mode-800x690
-  art-anim-audio-feel/sfx-contract-ten-routines
-  art-anim-audio-feel/stance-triangle-1p2-before-behead
-  art-anim-audio-feel/stance-triangle-is-1.2
-  art-anim-audio-feel/three-missed-shake-triggers
-  art-anim-audio-feel/three-uncatalogued-shake-triggers
-  art-anim-audio-feel/videos-are-60fps-frames-do-arbitrate
-  art-anim-audio-feel/web-and-android-stages-differ
-  art-anim-audio-feel/web-payload-has-no-game-code
-  art-anim-audio-feel/zero-blendmode-byte-proof
-  art-anim-audio-feel/zero-placeobject3-tags
-  art-anim/equipment-art-was-server-streamed
-  combat-core/300-200-100-is-base-not-ceiling
-  combat-core/36-was-not-a-crit
-  combat-core/android-stance-numbers-are-a-rebalance
-  combat-core/attacker-level-min-damage-floor
-  combat-core/basereload-is-dead-code
-  combat-core/cannot-change-stance-not-in-android-strings
-  combat-core/crit-is-1.3-gated-on-full-slash-meter
-  combat-core/crit-is-flat-1.3
-  combat-core/crit-is-full-reload-1p3
-  combat-core/crit-meter-is-6-seconds
-  combat-core/crit-track-268px-six-seconds
-  combat-core/desktop-stance-multipliers
-  combat-core/dual-reversed-reach-inverted
-  combat-core/duel-path-damage-terms-unsurveyed
-  combat-core/early-mob-hp-distribution
-  combat-core/every-checked-combat-number-moved-between-builds
-  combat-core/focus-6s-is-the-source-not-a-parity-break
-  combat-core/focus-fill-remeasured-on-frames
-  combat-core/footage-runs-at-nominal-24fps
-  combat-core/formula-resolves-c2-balanced-gap
-  combat-core/full-reload-crit-is-1p3-in-v0717
-  combat-core/generic-post-defense-damage-floor
-  combat-core/heavy-launch-unlock-is-3-on-target-build
-  combat-core/hud-track-is-269px
-  combat-core/injured-buff-halves-reach
-  combat-core/mastery-caps-at-ten
-  combat-core/mastery-domain-unresolved
-  combat-core/mastery-is-0-to-9
-  combat-core/mastery-is-single-digit
-  combat-core/mastery-is-small-integer
-  combat-core/mastery-is-ten-level-skill
-  combat-core/min-damage-floor-is-generic-and-attacker-keyed
-  combat-core/parity-confirmed-set
-  combat-core/parity-established-for-ten-quantities
-  combat-core/payload-swf-framerate-24
-  combat-core/player-unlocks-are-skills-not-mastery
-  combat-core/popup-animation-and-black-variant
-  combat-core/popup-colour-is-a-semantic
-  combat-core/raw-frames-show-full-crit-meter
-  combat-core/reach-and-crit-configs-already-correct
-  combat-core/reach-table-is-mastery-zero
-  combat-core/reach-table-is-mastery-zero-not-a-ceiling
-  combat-core/reach-ts-was-right
-  combat-core/reach-units-unreconciled
-  combat-core/reversed-and-dual-reach
-  combat-core/sim-dash-hz-unit-bug
-  combat-core/slash-distance-is-player-visible
-  combat-core/slash-units-are-800x480-stage
-  combat-core/stance-change-costs-48-meter
-  combat-core/stance-damage-mastery10-ceiling
-  combat-core/stance-label-is-a-frame-clock
-  combat-core/stance-modifier-table-in-payload
-  combat-core/stance-reach-is-mastery-zero-base
-  combat-core/stance-reach-modifiers
-  combat-core/stance-triangle-1.2-and-damage-order
-  combat-core/stance-triangle-damage-magnitudes
-  combat-core/stance-triangle-is-1p2
-  combat-core/stroke-render-frame-confirmed
-  combat-core/two-builds-differ-in-stage-height
-  combat-core/v0717-crit-is-flat-1.3
-  combat-core/v0717-stance-curves-are-already-in-config
-  combat-core/v0717-stance-multipliers
-  combat-core/v0717-stance-slash-multipliers
-  combat-core/v0717-stance-table
-  combat-core/web-as3-is-readable
-  combat-core/web-behead-is-1.3
-  combat-core/web-build-as3-is-readable
-  combat-core/web-crit-is-1.3-flat
-  combat-core/web-crit-is-flat-1.3
-  combat-core/web-damage-stance-curves
-  combat-core/web-focus-economy
-  combat-core/web-heavy-damage-1.4
-  combat-core/web-maxreload-192
-  combat-core/web-maxreload-192-and-48-offset
-  combat-core/web-only-1.3-state-multiplier
-  combat-core/web-payload-as3-is-readable
-  combat-core/web-payload-is-cross-readable
-  combat-core/web-payload-is-readable
-  combat-core/web-reach-and-damage-curves-match-repo
-  combat-core/web-reach-stance-mults
-  combat-core/web-stance-switch-rule
-  combat-core/web-v0717-ast-is-readable
-  economy/2208-is-the-gold-to-coin-sku
-  economy/5x-redenomination-is-a-code-fact
-  economy/ap-cap-is-40-not-30
-  economy/bank-weight-v0717-has-200-base
-  economy/calcxp-hard-cutoffs
-  economy/cash-tier-redenomination-is-not-clean-5x
-  economy/chest-coin-formula-missing-from-faucet-set
-  economy/coin-faucet-set-now-cited
-  economy/fast-travel-costs-5-gold
-  economy/five-fold-redenomination-is-A2-grade
-  economy/five-x-is-a-direction-not-a-multiplier
-  economy/heavenlyprice-has-no-multiplier
-  economy/itemdata-line-identical-across-builds
-  economy/minus-70-is-repair-not-artifact
-  economy/no-multiplier-in-web-shop-chain
-  economy/no-web-itemdata-exists
-  economy/premium-price-exception-set
-  economy/prosperity-tier-thresholds-recoverable
-  economy/quest-coin-reward-formula
-  economy/quest-coins-are-the-biggest-early-faucet
-  economy/quest-prosperity-plus5-is-client-side
-  economy/quests-do-pay-coins
-  economy/quests-move-prosperity
-  economy/rebirth-pays-heavenly-gold
-  economy/rebirth-pays-premium-currency
-  economy/rebirth-pays-premium-gold
-  economy/sell-price-edge-cases
-  economy/tournament-is-web-only
-  economy/tradegoods-web-seed-drops-node
-  economy/web-build-has-unresolvable-content
-  economy/web-build-ships-no-game-data
-  economy/web-payload-has-no-itemdata-table
-  economy/web-trade-goods-seed-resolved
-  enemies-ai/allies-level-match-the-player
-  enemies-ai/allies-scale-to-player-level-enemies-do-not
-  enemies-ai/boss-rubber-band-hits-to-kill
-  enemies-ai/drop-in-spawn-is-on-film
-  enemies-ai/eight-death-animations-by-killing-blow
-  enemies-ai/elite-boss-second-level-formula-rubber-band
-  enemies-ai/endless-wave-flag-is-the-survival-engine
-  enemies-ai/flinch-is-8-frames
-  enemies-ai/flinch-is-a-real-8-frame-state
-  enemies-ai/flinch-state-exists
-  enemies-ai/floating-damage-numeral-measures-the-clamp
-  enemies-ai/gothitcounter-is-iframes
-  enemies-ai/hit-lockout-decomposes-exactly
-  enemies-ai/light-stance-has-no-telegraph
-  enemies-ai/nameplate-colour-is-five-valued
-  enemies-ai/nameplate-colour-system-is-five-colours
-  enemies-ai/nameplate-colour-table
-  enemies-ai/nameplate-healthbar-coupling-and-60px-bar
-  enemies-ai/nameplate-is-a-spawner-split-with-hex-colours
-  enemies-ai/nameplate-is-cosmetic-override
-  enemies-ai/nameplate-is-per-entity-with-exact-hues
-  enemies-ai/part-decomposition-is-variable
-  enemies-ai/part-specific-death-animations
-  enemies-ai/readout-split-is-two-spawn-paths
-  enemies-ai/roster-display-names-differ-from-class-names
-  enemies-ai/second-ai-dispatch
-  enemies-ai/setlevel-has-11-overrides
-  enemies-ai/setlevel-is-eleven-formulas
-  enemies-ai/setlevel-is-plural
-  enemies-ai/setlevel-is-twelve-formulas
-  enemies-ai/tengu-absent-from-resolved-strings
-  enemies-ai/weapon-part-hit-deals-zero
-  enemies-ai/web-archer-halves-gravity-on-knockdown
-  enemies-ai/web-arrow-dual-gravity
-  enemies-ai/web-gameplay-code-is-obfuscated-not-absent
-  enemies-ai/web-has-39-ai-cases-not-38
-  enemies-ai/web-payload-is-obfuscated-not-absent
-  enemies-ai/web-payload-is-obfuscated-not-empty
-  enemies-ai/web-v0717-gameplay-code-is-on-disk
-  enemies-ai/zombie-weapon-hit-deals-zero
-  enemies-ai/zombie-weapon-parry
-  gauntlet/android-string-table-has-gaps
-  gauntlet/index-firstlines-are-leafname-scoped
-  items-equipment/23-render-slots-not-27
-  items-equipment/27-parts-but-23-human-layers
-  items-equipment/affix-eligibility-matrix
-  items-equipment/art-override-rows-are-only-146
-  items-equipment/art-payload-is-a-named-external-swf
-  items-equipment/border-is-four-tier-16-frames
-  items-equipment/border-is-four-tier-frame-labels
-  items-equipment/border-is-the-four-tier-ladder
-  items-equipment/border-is-the-rarity-ladder
-  items-equipment/build-parity-caveat-proven-live
-  items-equipment/build-provenance-drift-in-ui-claims
-  items-equipment/condition-blocker-dead-in-both-builds
-  items-equipment/consumable-accessory-icon-families
-  items-equipment/consumable-and-accessory-icon-families
-  items-equipment/copymodifiers-excludes-85-88
-  items-equipment/durability-is-the-uses-tag-115-items
-  items-equipment/durability-is-uses-and-mostly-absent
-  items-equipment/elemental-def-affix-rotation-is-deliberate
-  items-equipment/elemental-def-affix-wheel-is-deliberate
-  items-equipment/elemental-def-pools-are-opposition-not-bug
-  items-equipment/eleven-modifier-ids-unnamed
-  items-equipment/equipment-save-format-is-13-field
-  items-equipment/frame-equipped-item-also-resolves
-  items-equipment/frame-level-label-unsourced
-  items-equipment/full-modifier-id-table
-  items-equipment/generic-defense-floor-is-attacker-keyed
-  items-equipment/generic-defense-floor-is-attackerlvl
-  items-equipment/generic-min-damage-floor-is-attacker-keyed
-  items-equipment/getweight-diverges-between-builds
-  items-equipment/getweight-is-stack-weight
-  items-equipment/getweight-is-stack-weight-and-diverges
-  items-equipment/human-part-stack-is-23-not-27
-  items-equipment/human-render-stack-is-23
-  items-equipment/humanoid-partlist-is-23-not-27
-  items-equipment/humanoid-stack-is-23-layers
-  items-equipment/icon-art-is-a-separate-family
-  items-equipment/icon-dispatch-id-band-table
-  items-equipment/icon-namespaces-item-and-acc
-  items-equipment/icon-only-symbol-families-still-open
-  items-equipment/icon-renderer-band-table
-  items-equipment/icon-symbol-families-still-unheld
-  items-equipment/item-panel-level-caption-unsourced
-  items-equipment/item-panel-level-row-unexplained
-  items-equipment/mcs-human-partlist-is-23-not-27
-  items-equipment/mcs-human-rig-is-23-layers
-  items-equipment/mcs-partlist-is-23-layers
-  items-equipment/modifier-rows-are-mostly-set-ids
-  items-equipment/nine-slot-ui-mapping-resolved
-  items-equipment/nine-ui-boxes-are-the-nine-stat-bearing-slots
-  items-equipment/paperdoll-ui-slot-mapping-resolved
-  items-equipment/part-stack-is-23-not-27
-  items-equipment/pickaxe-frame-payload-identity
-  items-equipment/placeholder-icon-art-set
-  items-equipment/prog-spike-and-dead-slashusage
-  items-equipment/prog-spike-and-minlvl-coverage
-  items-equipment/removeparts-leaks-prop3
-  items-equipment/repair-weapon-cost-held
-  items-equipment/ring-slots-are-accessory1-and-2
-  items-equipment/roster-art-absent-from-both-exports
-  items-equipment/second-icon-art-family-item-and-acc
-  items-equipment/section3-item9-rarity-half-survives
-  items-equipment/sell-price-input-diverges-across-builds
-  items-equipment/sell-price-reads-stack-weight
-  items-equipment/sell-weight-branch-is-stack-weight
-  items-equipment/sell-weight-is-stack-weight-and-builds-diverge
-  items-equipment/sell-weight-test-is-stack-weight
-  items-equipment/setarmor-drives-8-parts
-  items-equipment/slashusage-24-is-dead
-  items-equipment/stancerestriction-is-dead-data
-  items-equipment/two-icon-only-art-namespaces
-  items-equipment/two-ring-slots-are-accessory1-and-2
-  items-equipment/ui-slot-map-resolved
-  items-equipment/ui-slot-mapping-resolved
-  items-equipment/ui-slot-table-held
-  items-equipment/uses-zero-is-a-never-wears-sentinel
-  items-equipment/weapon-ladder-minlvl-coverage-and-prog-spike
-  items-equipment/web-build-has-a-fifth-name-colour-band
-  items-equipment/web-build-has-fifth-item-colour
-  items-equipment/web-build-has-fifth-item-colour-tier
-  items-equipment/web-build-has-fifth-name-colour
-  items-equipment/web-condition-string-11496-unresolved
-  items-equipment/web-only-xp-item-colour
-  items-equipment/web-save-format-has-modifier-id-206
-  items-equipment/web-soul-infusion-superset
-  ledger/film-shows-rebirth-is-unsourced
-  meta-social/700-block-is-live-players
-  meta-social/achievement-58-pins-340
-  meta-social/achievements-in-web-payload
-  meta-social/android-string-table-is-not-v0717s-copy
-  meta-social/clan-crops-resource
-  meta-social/clan-pays-5-coins-per-move
-  meta-social/clan-pays-5-coins-per-move-and-war-hero-grants-clan-deed
-  meta-social/clan-pays-five-coins-per-move
-  meta-social/desktop-v0717-decompile-was-on-disk-unopened
-  meta-social/enemy-remap-second-witness
-  meta-social/filmed-build-is-neither-artifact
-  meta-social/four-dan-achievement-rows
-  meta-social/frame-shows-6x6-sector-board
-  meta-social/frame-shows-world-territory-board
-  meta-social/premium-catalogue-is-143-skus
-  meta-social/rank-ladder-a1-confirmed
-  meta-social/second-longplay-never-swept
-  meta-social/side-to-clan-bound-in-code
-  meta-social/side-to-clan-direct-binding
-  meta-social/side-to-clan-is-direct-not-inferred
-  meta-social/six-by-six-sector-board-is-pictured
-  meta-social/survivalmode-web-android-diverge
-  meta-social/survivalmode-web-vs-android-differ
-  meta-social/v0717-rebirth-gold-25-100-300
-  meta-social/war-boss-npcs-unresolvable
-  meta-social/war-mechanics-are-in-the-web-build
-  meta-social/warroom-board-is-on-screen
-  meta-social/warrules-page3-frame
-  meta-social/web-barricade-bonus-has-owner-clause
-  meta-social/web-barricade-bonus-owner-gated
-  meta-social/web-barricade-guard-stricter
-  meta-social/web-bindata-119-class-name-match
-  meta-social/web-chikako-ladder-differs
-  meta-social/web-daily-prize-rolls-differ
-  meta-social/web-duel-token-cap-40
-  meta-social/web-lang-is-network-loaded
-  meta-social/web-new-player-starts-with-3-gold
-  meta-social/web-payload-decompile-is-the-authority
-  meta-social/web-payload-decompile-is-the-reference
-  meta-social/web-rebirth-25-100
-  meta-social/web-rebirth-faucet-25-100-300
-  meta-social/web-rebirth-grants-25-and-100-gold
-  meta-social/web-string-table-is-an-external-dead-file
-  meta-social/web-survival-table-differs-in-composition
-  meta-social/web-troop-cap-50000
-  meta-social/web-warrules-7-pages
-  meta-social/web-warrules-max-7
-  meta-social/web-wave-roster-differs-from-android
-  meta-social/world-map-tiers-and-level-gating
-  meta-social/xp-curve-has-a-web-cite
-  meta-social/xp-curve-in-web-build
-  meta-social/xp-curve-is-in-the-web-build
-  meta-social/xp-curve-is-web-native
-  progression/a02-second-frame-corroboration
-  progression/android-caps-also-drifted
-  progression/android-stat-caps-are-a-different-formula
-  progression/autoassign-android-only
-  progression/autoassign-is-android-only
-  progression/duel-token-refill-mismatch
-  progression/elemental-damage-bypasses-def
-  progression/elemental-def-crosswheel
-  progression/enemy-base-xp-is-lvl5plus45
-  progression/expArray-levelcap-clamp
-  progression/full-xp-table-recovered
-  progression/getlevel-pins-cumulative-cap-semantics
-  progression/kill-xp-never-validated-on-screen
-  progression/l3-budget-second-confirmation
-  progression/level-10-scroll-xp-item
-  progression/level10-scroll-validates-xp-table
-  progression/levelcap-const-vs-var
-  progression/mining-pipeline-zero-xp
-  progression/new-character-start-table
-  progression/no-gather-xp-path-exists
-  progression/paid-level-skip-item
-  progression/per-point-plus3-direct-frame-proof
-  progression/per-point-two-frame-delta
-  progression/procgen-quest-xp-formula
-  progression/quest-xp-sum-kills-blocker2-rationale
-  progression/rebirth-pays-heavenly-gold
-  progression/respec-costs-premium-gold
-  progression/respec-is-premium-gated
-  progression/second-frame-confirms-plus3-per-point
-  progression/second-xp-curve
-  progression/second-xp-curve-mastery-ranks
-  progression/second-xp-curve-web-only
-  progression/setlevel-console-confirms-xp-indexing
-  progression/slash-length-settles-balanced-reach
-  progression/spent-points-audit-second-witness
-  progression/stance-reach-multipliers-held
-  progression/start-pools-third-frame
-  progression/unlock-rule-ends-in-0-or-5-false
-  progression/web-anticheat-and-console-differ
-  progression/web-calcxp-parity
-  progression/web-level-cap-is-const
-  progression/web-only-maxdueltokens-40
-  progression/web-payload-is-v0717
-  progression/web-rebirth-gold-25-not-5
-  progression/web-stance-triangle-has-a-penalty-branch
-  progression/xp-curve-kills-three-more-docs
-  progression/xp-income-web-parity
-  quests-story/blank-choice-rows
-  quests-story/choices-are-consequential
-  quests-story/choices-are-consequential-positionally
-  quests-story/choices-are-consequential-via-goto
-  quests-story/condition-grammar-closed
-  quests-story/dialogue-divergence-is-build-divergence
-  quests-story/ending-track-unclaimed
-  quests-story/goto-index-semantics
-  quests-story/img-tokens-are-two-asset-classes
-  quests-story/ledger-banner-already-banks-two-overturns
-  quests-story/loot-count-19
-  quests-story/loot-count-correction
-  quests-story/maxquests-7-is-real
-  quests-story/maxquests-cap-is-real
-  quests-story/nested-roomobj-waves
-  quests-story/npc-name-collisions-and-typo
-  quests-story/outcome-id-is-a-22-opcode-director
-  quests-story/outcome-id-is-stat-namespace
-  quests-story/outcome-id-is-statsmanager
-  quests-story/outcome-id-is-statsmanager-namespace
-  quests-story/payload-provenance-is-android
-  quests-story/pipe-delimited-enemy-pools
-  quests-story/portraits-held-but-encrypted
-  quests-story/questdata-is-live-updated
-  quests-story/questitem-archetype-templates
-  quests-story/step-action-enum-closed
-  quests-story/step-action-is-gameengine-action
-  quests-story/step-action-is-gameengine-action-enum
-  quests-story/wave-enemy-count-correction
-  quests-story/web-build-fetches-questdata
-  quests-story/web-payload-has-no-quest-data
-  rebirth/damage-has-no-status-field
-  rebirth/damage-packet-has-no-status-field
-  rebirth/dan-1-has-no-kanji
-  rebirth/dan-romaji-ladder
-  rebirth/dan-zero-has-no-title
-  rebirth/dan-zero-shows-no-title
-  rebirth/dan0-renders-no-kanji
-  rebirth/dan1-has-no-kanji-title
-  rebirth/dan1-renders-blank
-  rebirth/dan1-shows-no-kanji
-  rebirth/dragon-dance-tier-ids
-  rebirth/dragon-dance-ui-art-is-held
-  rebirth/dragon-dance-ui-art-recovered
-  rebirth/dragon-dance-v0717-parity
-  rebirth/element-atk-budget-is-100
-  rebirth/element-circle-art-FOUND
-  rebirth/element-circle-art-is-held
-  rebirth/element-circle-art-is-on-disk
-  rebirth/element-circle-art-recovered
-  rebirth/elemental-aoe-is-a-horizontal-band
-  rebirth/elemental-gate-roster
-  rebirth/elemental-gate-table
-  rebirth/entry-is-scroll-of-rebirth-item-2202
-  rebirth/gear-affixes-do-not-unlock
-  rebirth/gold-is-premium-hgold
-  rebirth/hgold-is-premium-currency
-  rebirth/ledger-film-phantom-source
-  rebirth/no-elemental-buff-channel
-  rebirth/no-elemental-status-effects
-  rebirth/no-elemental-status-effects-exist
-  rebirth/payout-is-the-premium-gold-purse
-  rebirth/romaji-dan-ladder
-  rebirth/romaji-dan-ladder-in-v0717
-  rebirth/shogo-threshold-off-by-one
-  rebirth/statue-rng-only-later-heaven
-  rebirth/statue-sequence-v0717-diverges
-  rebirth/statue-two-sequence-modes
-  rebirth/status-not-on-damage-packet
-  rebirth/string-455-never-displayed
-  rebirth/unlock-gate-ignores-gear-affixes
-  rebirth/v717-stance-multipliers
-  skills-meters/43-sfx-event-names-in-web-bundle
-  skills-meters/baseReload-is-a-dead-stat
-  skills-meters/basereload-is-48-plus-spd6
-  skills-meters/blank-cells-are-passives-plus-two-npc-rows
-  skills-meters/canchangestance-is-a-named-gate
-  skills-meters/cooldowns-are-not-all-integers
-  skills-meters/damage-roll-still-uses-rng
-  skills-meters/dan-caps-at-9-and-the-100-gold-tier-is-real
-  skills-meters/dual-reversed-are-swapped
-  skills-meters/dual-reversed-swapped
-  skills-meters/elemental-kunai-ammo-costs
-  skills-meters/elemental-per-level-numbers-are-blank
-  skills-meters/focus-fill-rate-plus-one-per-frame
-  skills-meters/focus-skill-web-effect
-  skills-meters/full-focus-negates-a-hit
-  skills-meters/full-meter-buys-evasion-web-only
-  skills-meters/heavy-defense-penalty-is-web-true
-  skills-meters/kunai-ammo-cost
-  skills-meters/kunai-ammo-is-web-and-tiered
-  skills-meters/maxreload-is-192
-  skills-meters/maxreload-is-192-frames
-  skills-meters/maxreload-is-192-not-120
-  skills-meters/only-83-level-rows-carry-a-number
-  skills-meters/only-83-numeric-level-rows
-  skills-meters/reach-triple-is-a-floor-not-a-ceiling
-  skills-meters/roll-cooldown-is-a-float
-  skills-meters/roll-cooldown-is-fractional
-  skills-meters/roll-dodge-is-75-85-95-in-web
-  skills-meters/shunpo-damage-ignores-stance-and-crit-in-web
-  skills-meters/skill-animation-data-is-plain-xml
-  skills-meters/skill-slot-base-is-web-sourced
-  skills-meters/slashusage-is-a-weapon-stat
-  skills-meters/slashusage-is-weapon-derived
-  skills-meters/spd-dead-in-web-meter
-  skills-meters/spd-does-not-touch-the-meter-in-web
-  skills-meters/spd-inputs-are-buffable
-  skills-meters/speed-buff-premultiplies-spd
-  skills-meters/stance-switch-gate-and-cycle
-  skills-meters/stance-switch-gate-is-48
-  skills-meters/stance-switch-gate-is-reload-48
-  skills-meters/stance-switch-hard-gate-48
-  skills-meters/web-kunai-ammo-gate-1-4-8
-  skills-meters/web-maxreload-is-192
-  skills-meters/web-only-skills-1074-1077
-  ui-hud/150-percent-damage-is-a-buff
-  ui-hud/24fps-from-swf-headers
-  ui-hud/aspect-ratio-truth-closed-from-source
-  ui-hud/bars-are-untweened-continuous-scalex
-  ui-hud/blackopen-shutter-is-16-frames
-  ui-hud/blocker-4-is-wrong-2-abilities-plus-empty-slot
-  ui-hud/blocker4-uparrow-is-an-equipped-skill
-  ui-hud/combo-widget-content-held-pop-unheld
-  ui-hud/frame-refutes-stance-up-arrow
-  ui-hud/frame-to-stage-mapping-is-anisotropic
-  ui-hud/frame-to-stage-transform
-  ui-hud/framerate-and-stage-rects-bytechecked
-  ui-hud/friend-bar-690
-  ui-hud/friend-bar-gated-by-resizehandler
-  ui-hud/friend-bar-is-structurally-unfilmable
-  ui-hud/friend-bar-is-the-shipped-default
-  ui-hud/hotkey-numbering-rule
-  ui-hud/hp-chi-bar-geometry-measured
-  ui-hud/hud-art-already-exported
-  ui-hud/hud-sprite-art-on-disk
-  ui-hud/hurtred-vignette-catalogued
-  ui-hud/interact-icon-manifest-found
-  ui-hud/interactui-icon-ids-resolve
-  ui-hud/interactui-panel-geometry
-  ui-hud/jpexs-export-already-on-disk
-  ui-hud/keypress-index-is-reversed
-  ui-hud/paperdoll-9-box-to-eq-slot-map
-  ui-hud/pass1-fabricated-transunit-quote
-  ui-hud/pass1-stale-string-rules-still-live
-  ui-hud/pass1-xliff-quote-is-misquoted
-  ui-hud/pausescreen-sprite-confirms-play-field
-  ui-hud/reload-crit-meter-code-live-frame-absent
-  ui-hud/resname-600-proves-pass1-read-the-id-column
-  ui-hud/respawn-costs-one-heavenly-gold
-  ui-hud/shade-wipe-is-vertical
-  ui-hud/shutter-frame-counts-corrected
-  ui-hud/shutter-is-asymmetric
-  ui-hud/skill-slot-widget-geometry-measured
-  ui-hud/slot-box-measurement-corrected
-  ui-hud/slot-strip-matches-all-three-constants
-  ui-hud/stance-ring-colours-exact
-  ui-hud/swf-header-24fps-and-stage-rects
-  ui-hud/swf-headers-24fps-and-stage-rects
-  ui-hud/up-arrow-is-a-skill-not-a-stance-control
-  ui-hud/up-arrow-is-a-skill-not-the-stance-control
-  ui-hud/web-android-cooldown-divergence
-  ui-hud/web-battleui-diverges-from-android
-  ui-hud/web-build-confirms-resname
-  ui-hud/web-cooldown-uses-ceil
-  ui-hud/web-hud-copy-absent-from-android-table
-  ui-hud/web-hud-status-lines-absent-from-android
-  ui-hud/web-payload-confirms-android-claims
-  ui-hud/web-payload-is-directly-citable
-  ui-hud/web-payload-logic-is-on-disk
-  ui-hud/web-symbol-ids-differ
-  ui-hud/web-vs-android-cooldown-rounding
-  world-exploration/12h-crop-never-rots
-  world-exploration/21-of-27-blobs-are-cross-build-identical
-  world-exploration/ap-cap-formula-is-frame-confirmed
-  world-exploration/ap-ceiling-plus-gear
-  world-exploration/ap-zero-is-a-pose-not-a-death
-  world-exploration/authored-start-node-name-confirms-derivation
-  world-exploration/compass-prefix-is-two-axis
-  world-exploration/dead-exit-branch
-  world-exploration/duel-token-clock
-  world-exploration/farm-guaranteed-yield-is-harvest-two
-  world-exploration/fifth-clock-duel-tokens
-  world-exploration/fourth-clock-dtinterval
-  world-exploration/frozen-town-levels-are-19-not-12
-  world-exploration/kakuchi-is-cross-build-parity-proof
-  world-exploration/map-art-is-held-web-shape-188
-  world-exploration/map-art-validates-projection
-  world-exploration/minimap-x-at-3-2
-  world-exploration/minimap-x-is-quest-target
-  world-exploration/minimap-x-marker-column
-  world-exploration/name-tables-in-web-payload
-  world-exploration/nochange-ring
-  world-exploration/nochange-town-covers-all-level-under-8
-  world-exploration/rock-deposit-never-clears
-  world-exploration/save-schema-has-three-timers
-  world-exploration/save-schema-is-23-slots
-  world-exploration/save-slot-count-23
-  world-exploration/stables-is-the-5ap-object
-  world-exploration/start-node-name-confirms-rng
-  world-exploration/start-town-is-kasuta
-  world-exploration/tired-idle-not-death
-  world-exploration/twelve-hour-crop-never-rots
-  world-exploration/twelve-hour-crops-never-rot
-  world-exploration/war-tick-is-hourly
-  world-exploration/war-tick-is-hourly-not-daily
-  world-exploration/war-tick-is-one-hour
-  world-exploration/web-decompile-holds-full-logic
-  world-exploration/web-payload-carries-world-constants
-  world-exploration/web-third-placename-hardcode
-  world-exploration/world-map-art-recovered
+## combat-core  (20 unique, 20 judged)
+  * combat-core/150pct-damage-is-a-buff
+  * combat-core/build-version-parity
+  * combat-core/crit-gating
+  * combat-core/crit-meter-exists-in-web-build
+  * combat-core/crit-meter-fill-rate
+  * combat-core/crit-multiplier
+  * combat-core/damage-formula
+  * combat-core/early-ttk
+  * combat-core/gesture-classifier
+  * combat-core/heavy-def-0.8
+  * combat-core/hit-registration-instant-at-endslash
+  * combat-core/launch-unlock-levels
+  * combat-core/mitigation-and-part-rule
+  * combat-core/multi-target-full-damage
+  * combat-core/pass-through-dash
+  * combat-core/reach-cap
+  * combat-core/reach-is-arclength
+  * combat-core/reach-stance-mults
+  * combat-core/slash-type-map
+  * combat-core/stance-triangle
 
-## economy  (20 unique)
-  economy/cho-han-is-ev-neutral
-  economy/coin-purse-cap-ladder
-  economy/coins-per-kill-and-xp
-  economy/crop-price-is-supply-oscillator
-  economy/duel-token-cap-40
-  economy/guest-start-3-gold-confirmed
-  economy/heavenlyprice-is-5x-deflated
-  economy/iap-tiers-held-both-builds
-  economy/premium-exchange-rate-200
-  economy/premiumdata-blob-is-extracted
-  economy/prosperity-magnitudes-server-side
-  economy/quests-never-pay-coins
-  economy/rebirth-payout-config-is-right
-  economy/repair-weapon-cost
-  economy/sell-price-formula
-  economy/service-prices-are-formulas
-  economy/trade-goods-arbitrage-loop
-  economy/war-room-structure-costs
-  economy/web-payload-is-decompilable
-  economy/writ-25g-upheld-by-frame
+## critic-new_findings  (694 unique, 0 judged)
+    NF-1-crit-is-deterministic-full-focus
+    NF-10-category-tab-mapping-declared-in-code
+    NF-11-category-11-skills-are-in-npcdata
+    NF-12-web-swf-header-declares-24fps
+    NF-13-steal-was-a-node-action-not-a-skill
+    NF-14-canchangestance-is-a-state-whitelist
+    NF-15-consumable-buff-enum-and-150pc-damage-potato
+    NF-16-heavenly-sword-numbers-unclaimed
+    NF-17-four-actives-cost-zero-skill-points
+    NF-18-full-skill-prerequisite-dag-unenumerated
+    NF-2-crittext-gated-on-full-reload-bar
+    NF-3-inventory-preview-contradicts-sim-on-crit
+    NF-38-cases-35-classes
+    NF-4-mastery-domain-is-1-to-10
+    NF-5-per-stance-damage-multipliers
+    NF-6-heavy-stance-takes-80pc-defense
+    NF-7-focus-drain-is-stance-scaled-and-crit-empties-bar
+    NF-8-focus-bar-displayed-zero-is-24-not-0
+    NF-9-dragon-dance-input-recovered
+    NF-ai0-duel-opponent-absent
+    NF-boss-hp-derivation
+    NF-category-11-decoded
+    NF-enemy-skill-ladder
+    NF-four-faction-spawn-model
+    NF-kill-xp-formula
+    NF-level10-clamp
+    NF-melee-ai-geometry
+    NF-npcdata-silences
+    NF-procgen-surnames
+    NF-shira-tancho-is-player-clan
+    NF-stage-800x480
+    NF-string-5017-empty-by-design
+    android-blobs/android-blob-encoding-census
+    android-blobs/bgdata-override-census-corrected
+    android-blobs/dead-portrait-throws-it-does-not-fall-back
+    android-blobs/four-shipped-bg-id-collisions
+    android-blobs/ground-blur-applies-to-two-layers-only
+    android-blobs/item-art-ids-are-shared-not-identity
+    android-blobs/parallax-z-order-is-authored-not-code
+    art-anim-audio-feel/150-percent-damage-is-a-potato-buff
+    art-anim-audio-feel/150pct-damage-is-a-buff-not-the-stance-modifier
+    art-anim-audio-feel/16pct-of-frames-are-authored-holds
+    art-anim-audio-feel/24hz-proven-on-web-build
+    art-anim-audio-feel/690-is-a-friend-panel
+    art-anim-audio-feel/690-is-the-friend-bar
+    art-anim-audio-feel/690-is-the-friend-bar-layout
+    art-anim-audio-feel/690-is-the-friend-panel
+    art-anim-audio-feel/800x690-is-the-friend-bar-layout
+    art-anim-audio-feel/anim-loop-flag
+    art-anim-audio-feel/animdata-loop-and-reorder-attrs
+    art-anim-audio-feel/animdata-loop-flag-parsing-trap
+    art-anim-audio-feel/blend-modes-none-at-byte-level-web
+    art-anim-audio-feel/blue-object-is-persistent-not-a-trail
+    art-anim-audio-feel/definesound-samplecount-is-authoritative
+    art-anim-audio-feel/glow-filters-are-the-real-fx-answer
+    art-anim-audio-feel/glow-is-part-of-the-vocabulary
+    art-anim-audio-feel/gore-has-no-frame-corroboration
+    art-anim-audio-feel/gore-is-humanoid-only
+    art-anim-audio-feel/gore-roll-is-per-class
+    art-anim-audio-feel/gothit-is-a-ladder-not-a-constant
+    art-anim-audio-feel/hit-reaction-is-a-ladder
+    art-anim-audio-feel/hit-reaction-ladder-not-uniform
+    art-anim-audio-feel/hold-frames-are-authored-in-data
+    art-anim-audio-feel/hud-150-damage-is-a-buff
+    art-anim-audio-feel/hud-150-is-a-potato-buff
+    art-anim-audio-feel/hud-150-is-potato-buff
+    art-anim-audio-feel/killbeat-6000ms-pins-24hz-tick
+    art-anim-audio-feel/killbeat-looks-like-red-field-black-silhouettes
+    art-anim-audio-feel/no-blendmode-holds-for-timeline-tags-too
+    art-anim-audio-feel/no-blendmode-in-authored-data
+    art-anim-audio-feel/no-blendmode-in-swf-tags-either
+    art-anim-audio-feel/no-hold-frames-across-all-487
+    art-anim-audio-feel/no-hold-frames-verified-exhaustively
+    art-anim-audio-feel/npc-death-dice-is-seven-way
+    art-anim-audio-feel/pose-cadence-is-15hz-measured
+    art-anim-audio-feel/predecessor-sfx-lineage
+    art-anim-audio-feel/predecessor-swfs-hold-sfx
+    art-anim-audio-feel/preservation-shs3swf-is-the-loader
+    art-anim-audio-feel/rig-is-19-nodes
+    art-anim-audio-feel/rig-is-23-parts-27-slots
+    art-anim-audio-feel/rig-is-23-slots-26-for-wolves
+    art-anim-audio-feel/rig-is-27-parts
+    art-anim-audio-feel/screen-shake-amplitude-is-inert
+    art-anim-audio-feel/second-layout-mode-800x690
+    art-anim-audio-feel/sfx-contract-ten-routines
+    art-anim-audio-feel/stance-triangle-1p2-before-behead
+    art-anim-audio-feel/stance-triangle-is-1.2
+    art-anim-audio-feel/three-missed-shake-triggers
+    art-anim-audio-feel/three-uncatalogued-shake-triggers
+    art-anim-audio-feel/videos-are-60fps-frames-do-arbitrate
+    art-anim-audio-feel/web-and-android-stages-differ
+    art-anim-audio-feel/web-payload-has-no-game-code
+    art-anim-audio-feel/zero-blendmode-byte-proof
+    art-anim-audio-feel/zero-placeobject3-tags
+    art-anim/equipment-art-was-server-streamed
+    combat-core/300-200-100-is-base-not-ceiling
+    combat-core/36-was-not-a-crit
+    combat-core/android-stance-numbers-are-a-rebalance
+    combat-core/attacker-level-min-damage-floor
+    combat-core/basereload-is-dead-code
+    combat-core/cannot-change-stance-not-in-android-strings
+    combat-core/crit-is-1.3-gated-on-full-slash-meter
+    combat-core/crit-is-flat-1.3
+    combat-core/crit-is-full-reload-1p3
+    combat-core/crit-meter-is-6-seconds
+    combat-core/crit-track-268px-six-seconds
+    combat-core/desktop-stance-multipliers
+    combat-core/dual-reversed-reach-inverted
+    combat-core/duel-path-damage-terms-unsurveyed
+    combat-core/early-mob-hp-distribution
+    combat-core/every-checked-combat-number-moved-between-builds
+    combat-core/focus-6s-is-the-source-not-a-parity-break
+    combat-core/focus-fill-remeasured-on-frames
+    combat-core/footage-runs-at-nominal-24fps
+    combat-core/formula-resolves-c2-balanced-gap
+    combat-core/full-reload-crit-is-1p3-in-v0717
+    combat-core/generic-post-defense-damage-floor
+    combat-core/heavy-launch-unlock-is-3-on-target-build
+    combat-core/hud-track-is-269px
+    combat-core/injured-buff-halves-reach
+    combat-core/mastery-caps-at-ten
+    combat-core/mastery-domain-is-1-to-10-resolved
+    combat-core/mastery-domain-unresolved
+    combat-core/mastery-is-0-to-9
+    combat-core/mastery-is-single-digit
+    combat-core/mastery-is-small-integer
+    combat-core/mastery-is-ten-level-skill
+    combat-core/min-damage-floor-is-generic-and-attacker-keyed
+    combat-core/parity-confirmed-set
+    combat-core/parity-established-for-ten-quantities
+    combat-core/payload-swf-framerate-24
+    combat-core/player-unlocks-are-skills-not-mastery
+    combat-core/popup-animation-and-black-variant
+    combat-core/popup-colour-is-a-semantic
+    combat-core/raw-frames-show-full-crit-meter
+    combat-core/reach-and-crit-configs-already-correct
+    combat-core/reach-table-is-mastery-zero
+    combat-core/reach-table-is-mastery-zero-not-a-ceiling
+    combat-core/reach-ts-was-right
+    combat-core/reach-units-unreconciled
+    combat-core/reversed-and-dual-reach
+    combat-core/sim-dash-hz-unit-bug
+    combat-core/slash-distance-is-player-visible
+    combat-core/slash-units-are-800x480-stage
+    combat-core/stance-change-costs-48-meter
+    combat-core/stance-damage-mastery10-ceiling
+    combat-core/stance-label-is-a-frame-clock
+    combat-core/stance-modifier-table-in-payload
+    combat-core/stance-reach-is-mastery-zero-base
+    combat-core/stance-reach-modifiers
+    combat-core/stance-triangle-1.2-and-damage-order
+    combat-core/stance-triangle-damage-magnitudes
+    combat-core/stance-triangle-is-1p2
+    combat-core/stroke-render-frame-confirmed
+    combat-core/two-builds-differ-in-stage-height
+    combat-core/v0717-crit-is-flat-1.3
+    combat-core/v0717-stance-curves-are-already-in-config
+    combat-core/v0717-stance-multipliers
+    combat-core/v0717-stance-slash-multipliers
+    combat-core/v0717-stance-table
+    combat-core/web-as3-is-readable
+    combat-core/web-behead-is-1.3
+    combat-core/web-build-as3-is-readable
+    combat-core/web-crit-is-1.3-flat
+    combat-core/web-crit-is-flat-1.3
+    combat-core/web-damage-stance-curves
+    combat-core/web-focus-economy
+    combat-core/web-heavy-damage-1.4
+    combat-core/web-maxreload-192
+    combat-core/web-maxreload-192-and-48-offset
+    combat-core/web-only-1.3-state-multiplier
+    combat-core/web-payload-as3-is-readable
+    combat-core/web-payload-is-cross-readable
+    combat-core/web-payload-is-readable
+    combat-core/web-reach-and-damage-curves-match-repo
+    combat-core/web-reach-stance-mults
+    combat-core/web-stance-damage-and-reach-are-inverse
+    combat-core/web-stance-switch-rule
+    combat-core/web-v0717-ast-is-readable
+    economy/2208-is-the-gold-to-coin-sku
+    economy/5x-redenomination-is-a-code-fact
+    economy/ap-cap-is-40-not-30
+    economy/bank-weight-v0717-has-200-base
+    economy/calcxp-hard-cutoffs
+    economy/cash-tier-redenomination-is-not-clean-5x
+    economy/chest-coin-formula-missing-from-faucet-set
+    economy/coin-faucet-set-now-cited
+    economy/fast-travel-costs-5-gold
+    economy/five-fold-redenomination-is-A2-grade
+    economy/five-x-is-a-direction-not-a-multiplier
+    economy/heavenlyprice-has-no-multiplier
+    economy/itemdata-line-identical-across-builds
+    economy/minus-70-is-repair-not-artifact
+    economy/no-multiplier-in-web-shop-chain
+    economy/no-web-itemdata-exists
+    economy/premium-price-exception-set
+    economy/prosperity-tier-thresholds-recoverable
+    economy/quest-coin-reward-formula
+    economy/quest-coins-are-the-biggest-early-faucet
+    economy/quest-prosperity-plus5-is-client-side
+    economy/quests-do-pay-coins
+    economy/quests-move-prosperity
+    economy/rebirth-pays-heavenly-gold
+    economy/rebirth-pays-premium-currency
+    economy/rebirth-pays-premium-gold
+    economy/sell-price-edge-cases
+    economy/tournament-is-web-only
+    economy/tradegoods-web-seed-drops-node
+    economy/web-build-has-unresolvable-content
+    economy/web-build-ships-no-game-data
+    economy/web-payload-has-no-itemdata-table
+    economy/web-trade-goods-seed-resolved
+    enemies-ai/allies-level-match-the-player
+    enemies-ai/allies-scale-to-player-level-enemies-do-not
+    enemies-ai/boss-rubber-band-hits-to-kill
+    enemies-ai/category-11-skills-are-in-npcdata
+    enemies-ai/drop-in-spawn-is-on-film
+    enemies-ai/eight-death-animations-by-killing-blow
+    enemies-ai/elite-boss-second-level-formula-rubber-band
+    enemies-ai/endless-wave-flag-is-the-survival-engine
+    enemies-ai/flinch-is-8-frames
+    enemies-ai/flinch-is-a-real-8-frame-state
+    enemies-ai/flinch-state-exists
+    enemies-ai/floating-damage-numeral-measures-the-clamp
+    enemies-ai/gothitcounter-is-iframes
+    enemies-ai/hit-lockout-decomposes-exactly
+    enemies-ai/light-stance-has-no-telegraph
+    enemies-ai/nameplate-colour-is-five-valued
+    enemies-ai/nameplate-colour-system-is-five-colours
+    enemies-ai/nameplate-colour-table
+    enemies-ai/nameplate-healthbar-coupling-and-60px-bar
+    enemies-ai/nameplate-is-a-spawner-split-with-hex-colours
+    enemies-ai/nameplate-is-cosmetic-override
+    enemies-ai/nameplate-is-per-entity-with-exact-hues
+    enemies-ai/part-decomposition-is-variable
+    enemies-ai/part-specific-death-animations
+    enemies-ai/readout-split-is-two-spawn-paths
+    enemies-ai/roster-display-names-differ-from-class-names
+    enemies-ai/second-ai-dispatch
+    enemies-ai/setlevel-has-11-overrides
+    enemies-ai/setlevel-is-eleven-formulas
+    enemies-ai/setlevel-is-plural
+    enemies-ai/setlevel-is-twelve-formulas
+    enemies-ai/tengu-absent-from-resolved-strings
+    enemies-ai/weapon-part-hit-deals-zero
+    enemies-ai/web-archer-halves-gravity-on-knockdown
+    enemies-ai/web-arrow-dual-gravity
+    enemies-ai/web-gameplay-code-is-obfuscated-not-absent
+    enemies-ai/web-has-39-ai-cases-not-38
+    enemies-ai/web-payload-is-obfuscated-not-absent
+    enemies-ai/web-payload-is-obfuscated-not-empty
+    enemies-ai/web-v0717-gameplay-code-is-on-disk
+    enemies-ai/zombie-weapon-hit-deals-zero
+    enemies-ai/zombie-weapon-parry
+    gauntlet/android-string-table-has-gaps
+    gauntlet/index-firstlines-are-leafname-scoped
+    gauntlet/no-web-gameplay-code-or-string-table
+    items-equipment/23-render-slots-not-27
+    items-equipment/27-parts-but-23-human-layers
+    items-equipment/affix-eligibility-matrix
+    items-equipment/art-override-rows-are-only-146
+    items-equipment/art-payload-is-a-named-external-swf
+    items-equipment/border-is-four-tier-16-frames
+    items-equipment/border-is-four-tier-frame-labels
+    items-equipment/border-is-the-four-tier-ladder
+    items-equipment/border-is-the-rarity-ladder
+    items-equipment/build-parity-caveat-proven-live
+    items-equipment/build-provenance-drift-in-ui-claims
+    items-equipment/condition-blocker-dead-in-both-builds
+    items-equipment/consumable-accessory-icon-families
+    items-equipment/consumable-and-accessory-icon-families
+    items-equipment/copymodifiers-excludes-85-88
+    items-equipment/durability-is-the-uses-tag-115-items
+    items-equipment/durability-is-uses-and-mostly-absent
+    items-equipment/elemental-def-affix-rotation-is-deliberate
+    items-equipment/elemental-def-affix-wheel-is-deliberate
+    items-equipment/elemental-def-pools-are-opposition-not-bug
+    items-equipment/eleven-modifier-ids-unnamed
+    items-equipment/equipment-save-format-is-13-field
+    items-equipment/frame-equipped-item-also-resolves
+    items-equipment/frame-level-label-unsourced
+    items-equipment/full-modifier-id-table
+    items-equipment/generic-defense-floor-is-attacker-keyed
+    items-equipment/generic-defense-floor-is-attackerlvl
+    items-equipment/generic-min-damage-floor-is-attacker-keyed
+    items-equipment/getweight-diverges-between-builds
+    items-equipment/getweight-is-stack-weight
+    items-equipment/getweight-is-stack-weight-and-diverges
+    items-equipment/human-part-stack-is-23-not-27
+    items-equipment/human-render-stack-is-23
+    items-equipment/humanoid-partlist-is-23-not-27
+    items-equipment/humanoid-stack-is-23-layers
+    items-equipment/icon-art-is-a-separate-family
+    items-equipment/icon-dispatch-id-band-table
+    items-equipment/icon-namespaces-item-and-acc
+    items-equipment/icon-only-symbol-families-still-open
+    items-equipment/icon-renderer-band-table
+    items-equipment/icon-symbol-families-still-unheld
+    items-equipment/item-panel-level-caption-unsourced
+    items-equipment/item-panel-level-row-unexplained
+    items-equipment/mcs-human-partlist-is-23-not-27
+    items-equipment/mcs-human-rig-is-23-layers
+    items-equipment/mcs-partlist-is-23-layers
+    items-equipment/modifier-rows-are-mostly-set-ids
+    items-equipment/nine-slot-ui-mapping-resolved
+    items-equipment/nine-ui-boxes-are-the-nine-stat-bearing-slots
+    items-equipment/paperdoll-ui-slot-mapping-resolved
+    items-equipment/part-stack-is-23-not-27
+    items-equipment/pickaxe-frame-payload-identity
+    items-equipment/placeholder-icon-art-set
+    items-equipment/prog-spike-and-dead-slashusage
+    items-equipment/prog-spike-and-minlvl-coverage
+    items-equipment/removeparts-leaks-prop3
+    items-equipment/repair-weapon-cost-held
+    items-equipment/ring-slots-are-accessory1-and-2
+    items-equipment/roster-art-absent-from-both-exports
+    items-equipment/second-icon-art-family-item-and-acc
+    items-equipment/section3-item9-rarity-half-survives
+    items-equipment/sell-price-input-diverges-across-builds
+    items-equipment/sell-price-reads-stack-weight
+    items-equipment/sell-weight-branch-is-stack-weight
+    items-equipment/sell-weight-is-stack-weight-and-builds-diverge
+    items-equipment/sell-weight-test-is-stack-weight
+    items-equipment/setarmor-drives-8-parts
+    items-equipment/slashusage-24-is-dead
+    items-equipment/stancerestriction-is-dead-data
+    items-equipment/two-icon-only-art-namespaces
+    items-equipment/two-ring-slots-are-accessory1-and-2
+    items-equipment/ui-slot-map-resolved
+    items-equipment/ui-slot-mapping-resolved
+    items-equipment/ui-slot-table-held
+    items-equipment/uses-zero-is-a-never-wears-sentinel
+    items-equipment/weapon-ladder-minlvl-coverage-and-prog-spike
+    items-equipment/web-build-has-a-fifth-name-colour-band
+    items-equipment/web-build-has-fifth-item-colour
+    items-equipment/web-build-has-fifth-item-colour-tier
+    items-equipment/web-build-has-fifth-name-colour
+    items-equipment/web-condition-string-11496-unresolved
+    items-equipment/web-only-xp-item-colour
+    items-equipment/web-save-format-has-modifier-id-206
+    items-equipment/web-soul-infusion-superset
+    ledger/film-shows-rebirth-is-unsourced
+    meta-social/700-block-is-live-players
+    meta-social/achievement-58-pins-340
+    meta-social/achievements-in-web-payload
+    meta-social/android-string-table-is-not-v0717s-copy
+    meta-social/clan-crops-resource
+    meta-social/clan-pays-5-coins-per-move
+    meta-social/clan-pays-5-coins-per-move-and-war-hero-grants-clan-deed
+    meta-social/clan-pays-five-coins-per-move
+    meta-social/desktop-v0717-decompile-was-on-disk-unopened
+    meta-social/enemy-remap-second-witness
+    meta-social/filmed-build-is-neither-artifact
+    meta-social/four-dan-achievement-rows
+    meta-social/frame-shows-6x6-sector-board
+    meta-social/frame-shows-world-territory-board
+    meta-social/premium-catalogue-is-143-skus
+    meta-social/rank-ladder-a1-confirmed
+    meta-social/second-longplay-never-swept
+    meta-social/side-to-clan-bound-in-code
+    meta-social/side-to-clan-direct-binding
+    meta-social/side-to-clan-is-direct-not-inferred
+    meta-social/six-by-six-sector-board-is-pictured
+    meta-social/survivalmode-web-android-diverge
+    meta-social/survivalmode-web-vs-android-differ
+    meta-social/v0717-rebirth-gold-25-100-300
+    meta-social/war-boss-npcs-unresolvable
+    meta-social/war-mechanics-are-in-the-web-build
+    meta-social/warroom-board-is-on-screen
+    meta-social/warrules-page3-frame
+    meta-social/web-barricade-bonus-has-owner-clause
+    meta-social/web-barricade-bonus-owner-gated
+    meta-social/web-barricade-guard-stricter
+    meta-social/web-bindata-119-class-name-match
+    meta-social/web-chikako-ladder-differs
+    meta-social/web-daily-prize-rolls-differ
+    meta-social/web-duel-token-cap-40
+    meta-social/web-lang-is-network-loaded
+    meta-social/web-new-player-starts-with-3-gold
+    meta-social/web-payload-decompile-is-the-authority
+    meta-social/web-payload-decompile-is-the-reference
+    meta-social/web-rebirth-25-100
+    meta-social/web-rebirth-faucet-25-100-300
+    meta-social/web-rebirth-grants-25-and-100-gold
+    meta-social/web-string-table-is-an-external-dead-file
+    meta-social/web-survival-table-differs-in-composition
+    meta-social/web-troop-cap-50000
+    meta-social/web-warrules-7-pages
+    meta-social/web-warrules-max-7
+    meta-social/web-wave-roster-differs-from-android
+    meta-social/world-map-tiers-and-level-gating
+    meta-social/xp-curve-has-a-web-cite
+    meta-social/xp-curve-in-web-build
+    meta-social/xp-curve-is-in-the-web-build
+    meta-social/xp-curve-is-web-native
+    npcdata/five-stances-reversed-and-dual
+    npcdata/hp-less-combat-rows-default-to-1
+    npcdata/kill-xp-formula
+    npcdata/setlevel-pins-everything-to-1-below-11
+    progression/a02-second-frame-corroboration
+    progression/android-caps-also-drifted
+    progression/android-stat-caps-are-a-different-formula
+    progression/autoassign-android-only
+    progression/autoassign-is-android-only
+    progression/duel-token-refill-mismatch
+    progression/elemental-damage-bypasses-def
+    progression/elemental-def-crosswheel
+    progression/enemy-base-xp-is-lvl5plus45
+    progression/expArray-levelcap-clamp
+    progression/full-xp-table-recovered
+    progression/getlevel-pins-cumulative-cap-semantics
+    progression/kill-xp-never-validated-on-screen
+    progression/l3-budget-second-confirmation
+    progression/level-10-scroll-xp-item
+    progression/level10-scroll-validates-xp-table
+    progression/levelcap-const-vs-var
+    progression/mining-pipeline-zero-xp
+    progression/new-character-start-table
+    progression/no-gather-xp-path-exists
+    progression/paid-level-skip-item
+    progression/per-point-plus3-direct-frame-proof
+    progression/per-point-two-frame-delta
+    progression/procgen-quest-xp-formula
+    progression/quest-xp-sum-kills-blocker2-rationale
+    progression/rebirth-pays-heavenly-gold
+    progression/respec-costs-premium-gold
+    progression/respec-is-premium-gated
+    progression/second-frame-confirms-plus3-per-point
+    progression/second-xp-curve
+    progression/second-xp-curve-mastery-ranks
+    progression/second-xp-curve-web-only
+    progression/setlevel-console-confirms-xp-indexing
+    progression/slash-length-settles-balanced-reach
+    progression/spent-points-audit-second-witness
+    progression/stance-reach-multipliers-held
+    progression/start-pools-third-frame
+    progression/unlock-rule-ends-in-0-or-5-false
+    progression/web-anticheat-and-console-differ
+    progression/web-calcxp-parity
+    progression/web-level-cap-is-const
+    progression/web-only-maxdueltokens-40
+    progression/web-payload-is-v0717
+    progression/web-rebirth-gold-25-not-5
+    progression/web-stance-triangle-has-a-penalty-branch
+    progression/xp-curve-kills-three-more-docs
+    progression/xp-income-web-parity
+    questdata-critic/namegen-table-sizes-corrected
+    questdata-critic/overworld-is-generated
+    questdata-critic/placename-generator-held
+    questdata-critic/questdata-no-build-parity-hole
+    questdata-critic/territory-sector-mapping-closed
+    questdata-critic/xp-curve-held-web
+    questdata/archer-ai-firing-rule-and-gravity
+    questdata/count-corrections-to-packet
+    questdata/cutscene-say-lines-are-string-ids
+    questdata/dialogue-carries-inline-html-markup
+    questdata/dialogue-is-a-branching-VM
+    questdata/node-name-pipeline-END-TO-END
+    questdata/placename-generator-DECODED
+    questdata/projectile-type-enum-47-and-web-delta
+    questdata/wave-encounter-table-and-pipe-grammar
+    quests-story/blank-choice-rows
+    quests-story/choices-are-consequential
+    quests-story/choices-are-consequential-positionally
+    quests-story/choices-are-consequential-via-goto
+    quests-story/condition-grammar-closed
+    quests-story/dialogue-divergence-is-build-divergence
+    quests-story/ending-track-unclaimed
+    quests-story/goto-index-semantics
+    quests-story/img-tokens-are-two-asset-classes
+    quests-story/ledger-banner-already-banks-two-overturns
+    quests-story/loot-count-19
+    quests-story/loot-count-correction
+    quests-story/maxquests-7-is-real
+    quests-story/maxquests-cap-is-real
+    quests-story/nested-roomobj-waves
+    quests-story/npc-name-collisions-and-typo
+    quests-story/outcome-id-is-a-22-opcode-director
+    quests-story/outcome-id-is-stat-namespace
+    quests-story/outcome-id-is-statsmanager
+    quests-story/outcome-id-is-statsmanager-namespace
+    quests-story/payload-provenance-is-android
+    quests-story/pipe-delimited-enemy-pools
+    quests-story/portraits-held-but-encrypted
+    quests-story/questdata-is-live-updated
+    quests-story/questitem-archetype-templates
+    quests-story/step-action-enum-closed
+    quests-story/step-action-is-gameengine-action
+    quests-story/step-action-is-gameengine-action-enum
+    quests-story/wave-enemy-count-correction
+    quests-story/web-build-fetches-questdata
+    quests-story/web-payload-has-no-quest-data
+    rebirth/damage-has-no-status-field
+    rebirth/damage-packet-has-no-status-field
+    rebirth/dan-1-has-no-kanji
+    rebirth/dan-romaji-ladder
+    rebirth/dan-zero-has-no-title
+    rebirth/dan-zero-shows-no-title
+    rebirth/dan0-renders-no-kanji
+    rebirth/dan1-has-no-kanji-title
+    rebirth/dan1-renders-blank
+    rebirth/dan1-shows-no-kanji
+    rebirth/dragon-dance-tier-ids
+    rebirth/dragon-dance-ui-art-is-held
+    rebirth/dragon-dance-ui-art-recovered
+    rebirth/dragon-dance-v0717-parity
+    rebirth/element-atk-budget-is-100
+    rebirth/element-circle-art-FOUND
+    rebirth/element-circle-art-is-held
+    rebirth/element-circle-art-is-on-disk
+    rebirth/element-circle-art-recovered
+    rebirth/elemental-aoe-is-a-horizontal-band
+    rebirth/elemental-gate-roster
+    rebirth/elemental-gate-table
+    rebirth/entry-is-scroll-of-rebirth-item-2202
+    rebirth/gear-affixes-do-not-unlock
+    rebirth/gold-is-premium-hgold
+    rebirth/hgold-is-premium-currency
+    rebirth/ledger-film-phantom-source
+    rebirth/no-elemental-buff-channel
+    rebirth/no-elemental-status-effects
+    rebirth/no-elemental-status-effects-exist
+    rebirth/payout-is-the-premium-gold-purse
+    rebirth/romaji-dan-ladder
+    rebirth/romaji-dan-ladder-in-v0717
+    rebirth/shogo-threshold-off-by-one
+    rebirth/statue-rng-only-later-heaven
+    rebirth/statue-sequence-v0717-diverges
+    rebirth/statue-two-sequence-modes
+    rebirth/status-not-on-damage-packet
+    rebirth/string-455-never-displayed
+    rebirth/unlock-gate-ignores-gear-affixes
+    rebirth/v717-stance-multipliers
+    skilldata/web-cooldown-modifier-caps-spd-at-600
+    skills-meters/43-sfx-event-names-in-web-bundle
+    skills-meters/baseReload-is-a-dead-stat
+    skills-meters/basereload-is-48-plus-spd6
+    skills-meters/blank-cells-are-passives-plus-two-npc-rows
+    skills-meters/canchangestance-is-a-named-gate
+    skills-meters/cooldowns-are-not-all-integers
+    skills-meters/crit-is-deterministic-at-full-reload-bar
+    skills-meters/damage-roll-still-uses-rng
+    skills-meters/dan-caps-at-9-and-the-100-gold-tier-is-real
+    skills-meters/dual-reversed-are-swapped
+    skills-meters/dual-reversed-swapped
+    skills-meters/elemental-kunai-ammo-costs
+    skills-meters/elemental-per-level-numbers-are-blank
+    skills-meters/focus-fill-rate-plus-one-per-frame
+    skills-meters/focus-reload-meter-web-numbers
+    skills-meters/focus-skill-web-effect
+    skills-meters/full-focus-negates-a-hit
+    skills-meters/full-meter-buys-evasion-web-only
+    skills-meters/heavy-defense-penalty-is-web-true
+    skills-meters/kunai-ammo-cost
+    skills-meters/kunai-ammo-is-web-and-tiered
+    skills-meters/maxreload-is-192
+    skills-meters/maxreload-is-192-frames
+    skills-meters/maxreload-is-192-not-120
+    skills-meters/only-83-level-rows-carry-a-number
+    skills-meters/only-83-numeric-level-rows
+    skills-meters/reach-triple-is-a-floor-not-a-ceiling
+    skills-meters/roll-cooldown-is-a-float
+    skills-meters/roll-cooldown-is-fractional
+    skills-meters/roll-dodge-is-75-85-95-in-web
+    skills-meters/shunpo-damage-ignores-stance-and-crit-in-web
+    skills-meters/skill-animation-data-is-plain-xml
+    skills-meters/skill-slot-base-is-web-sourced
+    skills-meters/slashusage-is-a-weapon-stat
+    skills-meters/slashusage-is-weapon-derived
+    skills-meters/spd-dead-in-web-meter
+    skills-meters/spd-does-not-touch-the-meter-in-web
+    skills-meters/spd-inputs-are-buffable
+    skills-meters/speed-buff-premultiplies-spd
+    skills-meters/stance-switch-gate-and-cycle
+    skills-meters/stance-switch-gate-is-48
+    skills-meters/stance-switch-gate-is-reload-48
+    skills-meters/stance-switch-hard-gate-48
+    skills-meters/web-kunai-ammo-gate-1-4-8
+    skills-meters/web-maxreload-is-192
+    skills-meters/web-only-skills-1074-1077
+    string-table/balanced-ring-is-khaki-on-film-not-ochre
+    string-table/global-effect-titles-a-different-dialog
+    string-table/hell-is-a-first-class-room-type
+    string-table/inn-rest-is-a-floor-not-a-faucet
+    string-table/piercing-and-crit-are-web-v0717-held
+    string-table/stance-tint-covers-the-whole-medallion
+    string-table/target-mode-strings-161-166-are-dead
+    string-table/ui-hud-md-still-carries-the-refuted-id-drift-table
+    string-table/war-room-gate-has-a-dan-escape-hatch
+    string-table/war-turn-expiry-resets-moves-to-max
+    string-table/weight-gate-is-a-travel-guard-in-code
+    ui-hud/150-percent-damage-is-a-buff
+    ui-hud/24fps-from-swf-headers
+    ui-hud/aspect-ratio-truth-closed-from-source
+    ui-hud/bars-are-untweened-continuous-scalex
+    ui-hud/blackopen-shutter-is-16-frames
+    ui-hud/blocker-4-is-wrong-2-abilities-plus-empty-slot
+    ui-hud/blocker4-uparrow-is-an-equipped-skill
+    ui-hud/combo-widget-content-held-pop-unheld
+    ui-hud/frame-refutes-stance-up-arrow
+    ui-hud/frame-to-stage-mapping-is-anisotropic
+    ui-hud/frame-to-stage-transform
+    ui-hud/framerate-and-stage-rects-bytechecked
+    ui-hud/friend-bar-690
+    ui-hud/friend-bar-gated-by-resizehandler
+    ui-hud/friend-bar-is-structurally-unfilmable
+    ui-hud/friend-bar-is-the-shipped-default
+    ui-hud/hotkey-numbering-rule
+    ui-hud/hp-chi-bar-geometry-measured
+    ui-hud/hud-art-already-exported
+    ui-hud/hud-sprite-art-on-disk
+    ui-hud/hurtred-vignette-catalogued
+    ui-hud/in-combat-hud-is-three-bars
+    ui-hud/interact-icon-manifest-found
+    ui-hud/interactui-icon-ids-resolve
+    ui-hud/interactui-panel-geometry
+    ui-hud/jpexs-export-already-on-disk
+    ui-hud/keypress-index-is-reversed
+    ui-hud/paperdoll-9-box-to-eq-slot-map
+    ui-hud/pass1-fabricated-transunit-quote
+    ui-hud/pass1-stale-string-rules-still-live
+    ui-hud/pass1-xliff-quote-is-misquoted
+    ui-hud/pausescreen-sprite-confirms-play-field
+    ui-hud/reload-crit-meter-code-live-frame-absent
+    ui-hud/resname-600-proves-pass1-read-the-id-column
+    ui-hud/respawn-costs-one-heavenly-gold
+    ui-hud/shade-wipe-is-vertical
+    ui-hud/shutter-frame-counts-corrected
+    ui-hud/shutter-is-asymmetric
+    ui-hud/skill-slot-widget-geometry-measured
+    ui-hud/slot-box-measurement-corrected
+    ui-hud/slot-strip-matches-all-three-constants
+    ui-hud/stance-ring-colours-exact
+    ui-hud/swf-header-24fps-and-stage-rects
+    ui-hud/swf-headers-24fps-and-stage-rects
+    ui-hud/up-arrow-is-a-skill-not-a-stance-control
+    ui-hud/up-arrow-is-a-skill-not-the-stance-control
+    ui-hud/web-android-cooldown-divergence
+    ui-hud/web-battleui-diverges-from-android
+    ui-hud/web-build-confirms-resname
+    ui-hud/web-cooldown-uses-ceil
+    ui-hud/web-hud-copy-absent-from-android-table
+    ui-hud/web-hud-status-lines-absent-from-android
+    ui-hud/web-payload-confirms-android-claims
+    ui-hud/web-payload-is-directly-citable
+    ui-hud/web-payload-logic-is-on-disk
+    ui-hud/web-symbol-ids-differ
+    ui-hud/web-vs-android-cooldown-rounding
+    uistrings-payload/chat-surface-is-31-commands-including-three-debug
+    uistrings-payload/fight-wordmark-is-the-live-duel-intro-field
+    uistrings-payload/rake-branch-tests-the-pool-not-a-nan
+    uistrings-payload/tower-is-the-name-of-the-thirteenth-system
+    uistrings-payload/warroom-web-has-a-seventh-rules-page
+    uistrings-payload/web-and-android-font-sets-diverge
+    uistrings-payload/web-lang-files-are-en-fr-es-only
+    world-exploration/12h-crop-never-rots
+    world-exploration/21-of-27-blobs-are-cross-build-identical
+    world-exploration/ap-cap-formula-is-frame-confirmed
+    world-exploration/ap-ceiling-plus-gear
+    world-exploration/ap-zero-is-a-pose-not-a-death
+    world-exploration/authored-start-node-name-confirms-derivation
+    world-exploration/compass-prefix-is-two-axis
+    world-exploration/dead-exit-branch
+    world-exploration/duel-token-clock
+    world-exploration/farm-guaranteed-yield-is-harvest-two
+    world-exploration/fifth-clock-duel-tokens
+    world-exploration/fourth-clock-dtinterval
+    world-exploration/frozen-town-levels-are-19-not-12
+    world-exploration/kakuchi-is-cross-build-parity-proof
+    world-exploration/map-art-is-held-web-shape-188
+    world-exploration/map-art-validates-projection
+    world-exploration/minimap-x-at-3-2
+    world-exploration/minimap-x-is-quest-target
+    world-exploration/minimap-x-marker-column
+    world-exploration/name-tables-in-web-payload
+    world-exploration/nochange-ring
+    world-exploration/nochange-town-covers-all-level-under-8
+    world-exploration/rock-deposit-never-clears
+    world-exploration/save-schema-has-three-timers
+    world-exploration/save-schema-is-23-slots
+    world-exploration/save-slot-count-23
+    world-exploration/stables-is-the-5ap-object
+    world-exploration/start-node-name-confirms-rng
+    world-exploration/start-town-is-kasuta
+    world-exploration/tired-idle-not-death
+    world-exploration/twelve-hour-crop-never-rots
+    world-exploration/twelve-hour-crops-never-rot
+    world-exploration/war-tick-is-hourly
+    world-exploration/war-tick-is-hourly-not-daily
+    world-exploration/war-tick-is-one-hour
+    world-exploration/web-decompile-holds-full-logic
+    world-exploration/web-payload-carries-world-constants
+    world-exploration/web-third-placename-hardcode
+    world-exploration/world-map-art-recovered
 
-## enemies-ai  (20 unique)
-  enemies-ai/ai-id-to-class-map
-  enemies-ai/arrow-arc-physics
-  enemies-ai/boss-names-are-procgen
-  enemies-ai/combat-hud-drops-the-nameplate
-  enemies-ai/creature-and-boss-roster
-  enemies-ai/engagement-ranges
-  enemies-ai/kill-rewards-close-two-economy-blockers
-  enemies-ai/level-stat-formula
-  enemies-ai/nameplate-level-4-bandit
-  enemies-ai/no-per-enemy-chi-or-speed
-  enemies-ai/no-squad-coordination
-  enemies-ai/one-statline-six-movesets
-  enemies-ai/per-enemy-hp
-  enemies-ai/shipped-config-hp150-is-stale
-  enemies-ai/spawn-geometry
-  enemies-ai/stagger-is-a-counter-not-an-anim
-  enemies-ai/telegraph-active-recovery-frames
-  enemies-ai/tengu-is-not-in-the-payload
-  enemies-ai/undead-rule-is-not-reflect
-  enemies-ai/web-build-parity
+## economy  (20 unique, 20 judged)
+  * economy/cho-han-is-ev-neutral
+  * economy/coin-purse-cap-ladder
+  * economy/coins-per-kill-and-xp
+  * economy/crop-price-is-supply-oscillator
+  * economy/duel-token-cap-40
+  * economy/guest-start-3-gold-confirmed
+  * economy/heavenlyprice-is-5x-deflated
+  * economy/iap-tiers-held-both-builds
+  * economy/premium-exchange-rate-200
+  * economy/premiumdata-blob-is-extracted
+  * economy/prosperity-magnitudes-server-side
+  * economy/quests-never-pay-coins
+  * economy/rebirth-payout-config-is-right
+  * economy/repair-weapon-cost
+  * economy/sell-price-formula
+  * economy/service-prices-are-formulas
+  * economy/trade-goods-arbitrage-loop
+  * economy/war-room-structure-costs
+  * economy/web-payload-is-decompilable
+  * economy/writ-25g-upheld-by-frame
 
-## itemdata  (38 unique)
-  itemdata/adjacent-speed-formulas
-  itemdata/affix-count-per-rarity
-  itemdata/affix-magnitude-curve
-  itemdata/affix-suffix-pool
-  itemdata/android-string-table-matches-v0717-ui
-  itemdata/android-vs-web-constants-diverge
-  itemdata/art-is-only-for-sharing
-  itemdata/baseprice-dot-data-bug
-  itemdata/buff-system-30min
-  itemdata/coins-per-kill-is-1-or-5
-  itemdata/condition-has-no-damage-multiplier
-  itemdata/consumable-effect-table
-  itemdata/dragon-dance-input
-  itemdata/duel-token-economy
-  itemdata/five-stances-and-stance-locked-weapons
-  itemdata/frame-validates-the-payload
-  itemdata/gold-catalogue
-  itemdata/guest-start-state
-  itemdata/item-name-template
-  itemdata/loot-tables-held
-  itemdata/modifier-103-grants-items
-  itemdata/no-items-config-still-true
-  itemdata/paperdoll-9-boxes-13-indices
-  itemdata/procedural-item-colour
-  itemdata/rebirth-gold-25-and-100
-  itemdata/repair-weapon-cost
-  itemdata/sell-price-formula
-  itemdata/shipped-data-bugs
-  itemdata/slashusage-is-a-reload-economy
-  itemdata/sprite-compositing-contract
-  itemdata/stancerestriction-is-dead-data
-  itemdata/stat-vs-level-is-a-table
-  itemdata/type-is-the-slot-enum
-  itemdata/unique-2-is-npc-only
-  itemdata/v0717-affix-words
-  itemdata/web-android-schema-parity
-  itemdata/xp-curve-l1-l98-held
-  itemdata/xp-per-kill-formula
+## enemies-ai  (20 unique, 20 judged)
+  * enemies-ai/ai-id-to-class-map
+  * enemies-ai/arrow-arc-physics
+  * enemies-ai/boss-names-are-procgen
+  * enemies-ai/combat-hud-drops-the-nameplate
+  * enemies-ai/creature-and-boss-roster
+  * enemies-ai/engagement-ranges
+  * enemies-ai/kill-rewards-close-two-economy-blockers
+  * enemies-ai/level-stat-formula
+  * enemies-ai/nameplate-level-4-bandit
+  * enemies-ai/no-per-enemy-chi-or-speed
+  * enemies-ai/no-squad-coordination
+  * enemies-ai/one-statline-six-movesets
+  * enemies-ai/per-enemy-hp
+  * enemies-ai/shipped-config-hp150-is-stale
+  * enemies-ai/spawn-geometry
+  * enemies-ai/stagger-is-a-counter-not-an-anim
+  * enemies-ai/telegraph-active-recovery-frames
+  * enemies-ai/tengu-is-not-in-the-payload
+  * enemies-ai/undead-rule-is-not-reflect
+  * enemies-ai/web-build-parity
 
-## items-equipment  (20 unique)
-  items-equipment/affix-suffix-pool-and-counts
-  items-equipment/condition-has-no-damage-multiplier
-  items-equipment/condition-tier-thresholds
-  items-equipment/defense-min-floor-is-wrong
-  items-equipment/eq-comparison-frame-payload-identity
-  items-equipment/item-save-format-held
-  items-equipment/modifier-id-stat-table
-  items-equipment/no-separate-icon-manifest
-  items-equipment/paperdoll-is-13-slots-not-9
-  items-equipment/per-item-art-payload-unknown
-  items-equipment/purple-border-is-unique-not-rarity
-  items-equipment/rarity-is-derived-not-a-field
-  items-equipment/sell-price-corrects-section3-item9
-  items-equipment/sell-price-formula
-  items-equipment/slashusage-stancerestriction-omitted
-  items-equipment/soul-infusion-is-code
-  items-equipment/sprite-compositing-contract-held
-  items-equipment/stat-vs-level-curve
-  items-equipment/ui-slot-mapping-unknown
-  items-equipment/weight-cap-is-a-base-not-a-cap
+## frames  (21 unique, 0 judged)
+    frames/achievements-daily-and-tokens-all-on-film
+    frames/choice-text-diverges-from-payload
+    frames/clan-identity-bound-on-screen
+    frames/consumable-buffs-run-a-30-minute-real-clock
+    frames/critical-evade-states-the-focus-gate
+    frames/death-card-offers-free-respawn
+    frames/forge-cost-is-level-parameterised
+    frames/jinbei-greeting-diverges-too
+    frames/levelup-card-corroborates-banked-numbers
+    frames/private-pvp-room-door
+    frames/pvp-duel-screen-fully-filmed
+    frames/quest-card-expiry-prosperity-and-coords
+    frames/rebirth-element-picker-still-unfilmed
+    frames/recruit-gets-three-moves-a-turn
+    frames/repair-weapon-cost-still-unheld
+    frames/save-policy-is-checkpoint-at-towns-and-dungeons
+    frames/two-font-faces-and-where-the-second-one-lives
+    frames/v0717-is-a-string-superset-not-identity
+    frames/war-room-territory-board-frame-exists
+    frames/web-v0717-renders-android-string-table
+    frames/world-map-is-a-tile-lattice-with-clan-banners
 
-## meta-social  (22 unique)
-  meta-social/achievements-61-resolved
-  meta-social/chikako-affinity-meter
-  meta-social/daily-reward-table
-  meta-social/flag-120-is-mislabelled-terrain-row
-  meta-social/four-clans-named-led-located
-  meta-social/frame-prints-coordinate-system
-  meta-social/frame-proves-string-table-parity
-  meta-social/kisensu-domain-typo-in-shipped-data
-  meta-social/ninja-services-priced-catalogue
-  meta-social/offline-gold-faucet-exists
-  meta-social/rank-ladder-thresholds-and-moves
-  meta-social/rival-clan-ai
-  meta-social/section6-live-clan-war-overbroad
-  meta-social/six-actions-understated
-  meta-social/structure-costs-and-donation-rate
-  meta-social/survivalmode-is-the-warroom-wave-table
-  meta-social/two-token-pools-quantified
-  meta-social/war-kill-cap-351
-  meta-social/war-rules-page-7-content
-  meta-social/warroom-board-frame
-  meta-social/world-board-63x72-byte-identical
-  meta-social/xp-curve-l11-80-recovered
+## itemdata  (38 unique, 0 judged)
+    itemdata/adjacent-speed-formulas
+    itemdata/affix-count-per-rarity
+    itemdata/affix-magnitude-curve
+    itemdata/affix-suffix-pool
+    itemdata/android-string-table-matches-v0717-ui
+    itemdata/android-vs-web-constants-diverge
+    itemdata/art-is-only-for-sharing
+    itemdata/baseprice-dot-data-bug
+    itemdata/buff-system-30min
+    itemdata/coins-per-kill-is-1-or-5
+    itemdata/condition-has-no-damage-multiplier
+    itemdata/consumable-effect-table
+    itemdata/dragon-dance-input
+    itemdata/duel-token-economy
+    itemdata/five-stances-and-stance-locked-weapons
+    itemdata/frame-validates-the-payload
+    itemdata/gold-catalogue
+    itemdata/guest-start-state
+    itemdata/item-name-template
+    itemdata/loot-tables-held
+    itemdata/modifier-103-grants-items
+    itemdata/no-items-config-still-true
+    itemdata/paperdoll-9-boxes-13-indices
+    itemdata/procedural-item-colour
+    itemdata/rebirth-gold-25-and-100
+    itemdata/repair-weapon-cost
+    itemdata/sell-price-formula
+    itemdata/shipped-data-bugs
+    itemdata/slashusage-is-a-reload-economy
+    itemdata/sprite-compositing-contract
+    itemdata/stancerestriction-is-dead-data
+    itemdata/stat-vs-level-is-a-table
+    itemdata/type-is-the-slot-enum
+    itemdata/unique-2-is-npc-only
+    itemdata/v0717-affix-words
+    itemdata/web-android-schema-parity
+    itemdata/xp-curve-l1-l98-held
+    itemdata/xp-per-kill-formula
 
-## npcdata  (35 unique)
-  frames/pillarbox-52px
-  frames/pillarbox-confirmed
-  npcdata/absent-boss-names
-  npcdata/ai-profile-table
-  npcdata/ai-taxonomy
-  npcdata/boss-movesets
-  npcdata/build-parity
-  npcdata/compositing-contract
-  npcdata/damage-is-a-range
-  npcdata/elemental-roster-empty
-  npcdata/elemental-wheel
-  npcdata/enemy-render-scale
-  npcdata/enemy-skill-loadouts
-  npcdata/five-clan-armies
-  npcdata/friendly-npcs
-  npcdata/heavy-stance-def-penalty
-  npcdata/high-band-coefficients
-  npcdata/level-stat-formula
-  npcdata/loot-drop-tables
-  npcdata/loot-enum-and-coins-per-kill
-  npcdata/named-boss-hp-authored
-  npcdata/no-kill-xp
-  npcdata/no-speed-no-chi
-  npcdata/npc-elemental-typing
-  npcdata/one-hp-field-trash
-  npcdata/paperdoll-12-slots
-  npcdata/paperdoll-13-slots
-  npcdata/per-enemy-hp
-  npcdata/procgen-town
-  npcdata/random-appearance-weighting
-  npcdata/shipped-bugs
-  npcdata/shipped-data-defects
-  npcdata/stance-mastery-rank-10
-  npcdata/unresolved-name-5017
-  npcdata/wardrobe-randomiser
+## items-equipment  (20 unique, 20 judged)
+  * items-equipment/affix-suffix-pool-and-counts
+  * items-equipment/condition-has-no-damage-multiplier
+  * items-equipment/condition-tier-thresholds
+  * items-equipment/defense-min-floor-is-wrong
+  * items-equipment/eq-comparison-frame-payload-identity
+  * items-equipment/item-save-format-held
+  * items-equipment/modifier-id-stat-table
+  * items-equipment/no-separate-icon-manifest
+  * items-equipment/paperdoll-is-13-slots-not-9
+  * items-equipment/per-item-art-payload-unknown
+  * items-equipment/purple-border-is-unique-not-rarity
+  * items-equipment/rarity-is-derived-not-a-field
+  * items-equipment/sell-price-corrects-section3-item9
+  * items-equipment/sell-price-formula
+  * items-equipment/slashusage-stancerestriction-omitted
+  * items-equipment/soul-infusion-is-code
+  * items-equipment/sprite-compositing-contract-held
+  * items-equipment/stat-vs-level-curve
+  * items-equipment/ui-slot-mapping-unknown
+  * items-equipment/weight-cap-is-a-base-not-a-cap
 
-## progression  (20 unique)
-  progression/271-cap-explained
-  progression/ap-regen
-  progression/campaign-level-band
-  progression/def-mitigation-is-flat
-  progression/frame-confirms-xp-caps
-  progression/inferred-extrapolation-error
-  progression/l1-l10-caps-confirmed
-  progression/levels-81-99
-  progression/levelup-refill-and-cap
-  progression/per-point-magnitudes
-  progression/per-stat-hard-caps
-  progression/post-rebirth-sp
-  progression/quest-xp-tabled
-  progression/sp-first-run-off-by-one
-  progression/spd-scaling
-  progression/start-pools-and-respec
-  progression/unlock-cadence-to-l80
-  progression/xp-curve-l11-80
-  progression/xp-from-gather-and-dungeon
-  progression/xp-income-model
+## meta-social  (22 unique, 22 judged)
+  * meta-social/achievements-61-resolved
+  * meta-social/chikako-affinity-meter
+  * meta-social/daily-reward-table
+  * meta-social/flag-120-is-mislabelled-terrain-row
+  * meta-social/four-clans-named-led-located
+  * meta-social/frame-prints-coordinate-system
+  * meta-social/frame-proves-string-table-parity
+  * meta-social/kisensu-domain-typo-in-shipped-data
+  * meta-social/ninja-services-priced-catalogue
+  * meta-social/offline-gold-faucet-exists
+  * meta-social/rank-ladder-thresholds-and-moves
+  * meta-social/rival-clan-ai
+  * meta-social/section6-live-clan-war-overbroad
+  * meta-social/six-actions-understated
+  * meta-social/structure-costs-and-donation-rate
+  * meta-social/survivalmode-is-the-warroom-wave-table
+  * meta-social/two-token-pools-quantified
+  * meta-social/war-kill-cap-351
+  * meta-social/war-rules-page-7-content
+  * meta-social/warroom-board-frame
+  * meta-social/world-board-63x72-byte-identical
+  * meta-social/xp-curve-l11-80-recovered
 
-## questdata  (11 unique)
-  questdata/epilogue-verbatim-script
-  questdata/five-stances
-  questdata/frame-corroborates-objective
-  questdata/frame-vs-payload-placenames
-  questdata/generated-npc-names
-  questdata/knockdown-grapple-aerial
-  questdata/node-packing-decoded
-  questdata/placename-source
-  questdata/portrait-count-correction
-  questdata/projectile-launch-params
-  questdata/severed-limb-deaths
+## npcdata  (35 unique, 35 judged)
+  * frames/pillarbox-52px
+  * frames/pillarbox-confirmed
+  * npcdata/absent-boss-names
+  * npcdata/ai-profile-table
+  * npcdata/ai-taxonomy
+  * npcdata/boss-movesets
+  * npcdata/build-parity
+  * npcdata/compositing-contract
+  * npcdata/damage-is-a-range
+  * npcdata/elemental-roster-empty
+  * npcdata/elemental-wheel
+  * npcdata/enemy-render-scale
+  * npcdata/enemy-skill-loadouts
+  * npcdata/five-clan-armies
+  * npcdata/friendly-npcs
+  * npcdata/heavy-stance-def-penalty
+  * npcdata/high-band-coefficients
+  * npcdata/level-stat-formula
+  * npcdata/loot-drop-tables
+  * npcdata/loot-enum-and-coins-per-kill
+  * npcdata/named-boss-hp-authored
+  * npcdata/no-kill-xp
+  * npcdata/no-speed-no-chi
+  * npcdata/npc-elemental-typing
+  * npcdata/one-hp-field-trash
+  * npcdata/paperdoll-12-slots
+  * npcdata/paperdoll-13-slots
+  * npcdata/per-enemy-hp
+  * npcdata/procgen-town
+  * npcdata/random-appearance-weighting
+  * npcdata/shipped-bugs
+  * npcdata/shipped-data-defects
+  * npcdata/stance-mastery-rank-10
+  * npcdata/unresolved-name-5017
+  * npcdata/wardrobe-randomiser
 
-## quests-story  (15 unique)
-  quests-story/ally-waves-unlisted-system
-  quests-story/android-caveat-retired
-  quests-story/choices-not-consequential
-  quests-story/cutscene-director-held
-  quests-story/ep4-12-epilogue-shipped
-  quests-story/frame-beats-payload-dialogue-rewritten
-  quests-story/outcome-id-namespace
-  quests-story/player-name-satoshi-resolved
-  quests-story/quest-log-cap-is-a-row-count
-  quests-story/questtype-taxonomy-wrong
-  quests-story/reward-and-roster-undercount
-  quests-story/step-action-enum-semantics
-  quests-story/triggers-coords-rewards-tabled
-  quests-story/two-yasukas-confirmed
-  quests-story/verbatim-script-held
+## progression  (20 unique, 20 judged)
+  * progression/271-cap-explained
+  * progression/ap-regen
+  * progression/campaign-level-band
+  * progression/def-mitigation-is-flat
+  * progression/frame-confirms-xp-caps
+  * progression/inferred-extrapolation-error
+  * progression/l1-l10-caps-confirmed
+  * progression/levels-81-99
+  * progression/levelup-refill-and-cap
+  * progression/per-point-magnitudes
+  * progression/per-stat-hard-caps
+  * progression/post-rebirth-sp
+  * progression/quest-xp-tabled
+  * progression/sp-first-run-off-by-one
+  * progression/spd-scaling
+  * progression/start-pools-and-respec
+  * progression/unlock-cadence-to-l80
+  * progression/xp-curve-l11-80
+  * progression/xp-from-gather-and-dungeon
+  * progression/xp-income-model
 
-## rebirth-elements  (19 unique)
-  combat-core/dan-scaled-slash-length
-  progression/post-rebirth-sp-economy
-  rebirth/aoe-radii-per-element
-  rebirth/dan-achievements-prove-ten
-  rebirth/dan-ladder-titles
-  rebirth/dragon-dance-bagua-input
-  rebirth/dragon-dance-teachable
-  rebirth/element-circle-art
-  rebirth/element-counter-wheel
-  rebirth/element-picker-uidata
-  rebirth/element-status-effects
-  rebirth/elemental-damage-ladder
-  rebirth/elemental-skill-tooltips
-  rebirth/kanji-statue-bonus
-  rebirth/mitigation-flat-min1
-  rebirth/stance-slash-multipliers-parity
-  rebirth/string-table-resolved
-  rebirth/tenth-gold-is-100
-  rebirth/unlock-gate-is-stat-threshold
+## questdata  (11 unique, 11 judged)
+  * questdata/epilogue-verbatim-script
+  * questdata/five-stances
+  * questdata/frame-corroborates-objective
+  * questdata/frame-vs-payload-placenames
+  * questdata/generated-npc-names
+  * questdata/knockdown-grapple-aerial
+  * questdata/node-packing-decoded
+  * questdata/placename-source
+  * questdata/portrait-count-correction
+  * questdata/projectile-launch-params
+  * questdata/severed-limb-deaths
 
-## skilldata  (42 unique)
-  art-anim/engine-tick-is-24fps
-  combat-core/five-stances-not-three
-  combat-core/mastery-domain
-  combat-core/stance-reach-formula
-  economy/coin-cap-weight-cap-mining-tiers
-  enemies-ai/npcs-run-on-skilldata
-  meta-social/pvp-rooms-and-a-cut-steal-skill
-  progression/required-is-skill-points
-  rebirth-elements/24-elemental-skills-with-numbers
-  rebirth-elements/dragon-dance-is-eight-and-teachable
-  rebirth-elements/element-gate-is-a-stat-threshold
-  skilldata/24fps-tick
-  skilldata/51-skill-animations
-  skilldata/android-web-byte-identical
-  skilldata/android-web-parity
-  skilldata/category-11-enemy-only
-  skilldata/category-to-tree-names
-  skilldata/chi-costs-not-single-digit
-  skilldata/coin-cap-carry-weight-gold-trap
-  skilldata/element-stat-is-one-system
-  skilldata/elemental-values-held
-  skilldata/enemy-range-bands
-  skilldata/focus-and-crit-not-here
-  skilldata/hud-two-bars-a1
-  skilldata/input-field-empty
-  skilldata/orphan-buff-animations
-  skilldata/orphan-steal-and-smithing
-  skilldata/read-android-not-web
-  skilldata/shunpo-effect
-  skilldata/skill-slots-3-to-8
-  skilldata/spd-cooldown-formula
-  skilldata/unlock-cadence-and-stance-sp-cost
-  skills-meters/chi-cooldown-table-held
-  skills-meters/crit-proc-rule
-  skills-meters/focus-is-the-reload-meter
-  skills-meters/measured-cooldowns-explained
-  skills-meters/shunpo-effect
-  skills-meters/spd-cooldown-formula
-  ui-hud/skill-icons-are-gestural
-  ui-hud/skill-slots-3-to-8
-  ui-hud/three-slots-on-screen
-  world-exploration/secret-areas-behind-bushes
+## quests-story  (15 unique, 15 judged)
+  * quests-story/ally-waves-unlisted-system
+  * quests-story/android-caveat-retired
+  * quests-story/choices-not-consequential
+  * quests-story/cutscene-director-held
+  * quests-story/ep4-12-epilogue-shipped
+  * quests-story/frame-beats-payload-dialogue-rewritten
+  * quests-story/outcome-id-namespace
+  * quests-story/player-name-satoshi-resolved
+  * quests-story/quest-log-cap-is-a-row-count
+  * quests-story/questtype-taxonomy-wrong
+  * quests-story/reward-and-roster-undercount
+  * quests-story/step-action-enum-semantics
+  * quests-story/triggers-coords-rewards-tabled
+  * quests-story/two-yasukas-confirmed
+  * quests-story/verbatim-script-held
 
-## skills-meters  (22 unique)
-  skills-meters/150pct-damage-is-a-food-buff
-  skills-meters/blocker1-costs-cooldowns
-  skills-meters/chi-costs-are-not-single-digit
-  skills-meters/crit-is-deterministic
-  skills-meters/crit-mult-is-1.3-ledger-vindicated
-  skills-meters/focus-meter-numerics-web
-  skills-meters/frame-cracks-web-string-960
-  skills-meters/frame-crit-appears-at-exactly-full
-  skills-meters/in-combat-stance-switch-is-real
-  skills-meters/kunai-chi-is-a-phantom
-  skills-meters/ledger-decimals-are-display-artefacts
-  skills-meters/per-level-effect-numbers
-  skills-meters/per-stance-reach-formula
-  skills-meters/shunpo-effect
-  skills-meters/skill-vfx-anim-audio
-  skills-meters/skilldata-byte-identical-across-builds
-  skills-meters/spd-cooldown-cap-600
-  skills-meters/stab-is-a-passive-tree-node
-  skills-meters/stance-damage-ceiling-is-mastery-10
-  skills-meters/string-table-resolves-all-73
-  skills-meters/ten-categories-all-named
-  skills-meters/ultimates-and-elemental-projectile-constants
+## rebirth-elements  (19 unique, 19 judged)
+  * combat-core/dan-scaled-slash-length
+  * progression/post-rebirth-sp-economy
+  * rebirth/aoe-radii-per-element
+  * rebirth/dan-achievements-prove-ten
+  * rebirth/dan-ladder-titles
+  * rebirth/dragon-dance-bagua-input
+  * rebirth/dragon-dance-teachable
+  * rebirth/element-circle-art
+  * rebirth/element-counter-wheel
+  * rebirth/element-picker-uidata
+  * rebirth/element-status-effects
+  * rebirth/elemental-damage-ladder
+  * rebirth/elemental-skill-tooltips
+  * rebirth/kanji-statue-bonus
+  * rebirth/mitigation-flat-min1
+  * rebirth/stance-slash-multipliers-parity
+  * rebirth/string-table-resolved
+  * rebirth/tenth-gold-is-100
+  * rebirth/unlock-gate-is-stat-threshold
 
-## ui-hud  (13 unique)
-  ui-hud/690-friend-bar-never-filmed
-  ui-hud/dialogbox-metrics-in-code
-  ui-hud/hud-symbol-metrics
-  ui-hud/interactui-menu-system
-  ui-hud/langmanager-uses-resname-not-id
-  ui-hud/options-screen-complete
-  ui-hud/pause-is-click-anywhere
-  ui-hud/result-cards-exact
-  ui-hud/skill-cooldown-12-step-quantised
-  ui-hud/slot-geometry-frame-validated
-  ui-hud/tier3-video-repass-obsolete
-  ui-hud/transition-durations-exact
-  ui-hud/typography-edo-sz
+## skilldata  (41 unique, 41 judged)
+  * art-anim/engine-tick-is-24fps
+  * combat-core/five-stances-not-three
+  * combat-core/mastery-domain
+  * combat-core/stance-reach-formula
+  * economy/coin-cap-weight-cap-mining-tiers
+  * enemies-ai/npcs-run-on-skilldata
+  * meta-social/pvp-rooms-and-a-cut-steal-skill
+  * progression/required-is-skill-points
+  * rebirth-elements/24-elemental-skills-with-numbers
+  * rebirth-elements/dragon-dance-is-eight-and-teachable
+  * rebirth-elements/element-gate-is-a-stat-threshold
+  * skilldata/24fps-tick
+  * skilldata/51-skill-animations
+  * skilldata/android-web-byte-identical
+  * skilldata/android-web-parity
+  * skilldata/category-11-enemy-only
+  * skilldata/category-to-tree-names
+  * skilldata/chi-costs-not-single-digit
+  * skilldata/coin-cap-carry-weight-gold-trap
+  * skilldata/element-stat-is-one-system
+  * skilldata/elemental-values-held
+  * skilldata/enemy-range-bands
+  * skilldata/focus-and-crit-not-here
+  * skilldata/hud-two-bars-a1
+  * skilldata/input-field-empty
+  * skilldata/orphan-buff-animations
+  * skilldata/orphan-steal-and-smithing
+  * skilldata/read-android-not-web
+  * skilldata/shunpo-effect
+  * skilldata/skill-slots-3-to-8
+  * skilldata/spd-cooldown-formula
+  * skilldata/unlock-cadence-and-stance-sp-cost
+  * skills-meters/chi-cooldown-table-held
+  * skills-meters/crit-proc-rule
+  * skills-meters/focus-is-the-reload-meter
+  * skills-meters/measured-cooldowns-explained
+  * skills-meters/spd-cooldown-formula
+  * ui-hud/skill-icons-are-gestural
+  * ui-hud/skill-slots-3-to-8
+  * ui-hud/three-slots-on-screen
+  * world-exploration/secret-areas-behind-bushes
 
-## world-exploration  (23 unique)
-  world-exploration/ap-cost-table
-  world-exploration/ap-regen-and-cap
-  world-exploration/config-still-empty
-  world-exploration/coordinate-law
-  world-exploration/cross-build-numeric-parity
-  world-exploration/day-length-is-three-clocks
-  world-exploration/farming-tables
-  world-exploration/frame-confirms-6x6-grid
-  world-exploration/gather-yield-whiff-tables
-  world-exploration/is-a-wxh-grid
-  world-exploration/land-mask-version-parity
-  world-exploration/level-gradient
-  world-exploration/map-art-unheld
-  world-exploration/mapdata-blob-empty
-  world-exploration/place-name-reproduced-from-payload
-  world-exploration/prosperity-thresholds
-  world-exploration/room-object-enum-and-node-graph
-  world-exploration/save-schema-recovered
-  world-exploration/search-chance-semantics
-  world-exploration/sector-room-mapping
-  world-exploration/start-coords-derived
-  world-exploration/world-bounds-land-mask
-  world-exploration/world-is-procedural
+## skills-meters  (22 unique, 22 judged)
+  * skills-meters/150pct-damage-is-a-food-buff
+  * skills-meters/blocker1-costs-cooldowns
+  * skills-meters/chi-costs-are-not-single-digit
+  * skills-meters/crit-is-deterministic
+  * skills-meters/crit-mult-is-1.3-ledger-vindicated
+  * skills-meters/focus-meter-numerics-web
+  * skills-meters/frame-cracks-web-string-960
+  * skills-meters/frame-crit-appears-at-exactly-full
+  * skills-meters/in-combat-stance-switch-is-real
+  * skills-meters/kunai-chi-is-a-phantom
+  * skills-meters/ledger-decimals-are-display-artefacts
+  * skills-meters/per-level-effect-numbers
+  * skills-meters/per-stance-reach-formula
+  * skills-meters/shunpo-effect
+  * skills-meters/skill-vfx-anim-audio
+  * skills-meters/skilldata-byte-identical-across-builds
+  * skills-meters/spd-cooldown-cap-600
+  * skills-meters/stab-is-a-passive-tree-node
+  * skills-meters/stance-damage-ceiling-is-mastery-10
+  * skills-meters/string-table-resolves-all-73
+  * skills-meters/ten-categories-all-named
+  * skills-meters/ultimates-and-elemental-projectile-constants
+
+## string-table  (17 unique, 17 judged)
+  * string-table/achievement-roster-is-61-and-19-slots-unauthored
+  * string-table/autoslash-is-hands-off-auto-attack
+  * string-table/carry-weight-gates-travel
+  * string-table/castle-assault-is-an-unlisted-system
+  * string-table/crop-market-is-supply-and-demand
+  * string-table/forge-and-reinforce-reagent-bills
+  * string-table/inn-restores-one-third-of-max-ap
+  * string-table/jigoku-is-a-timed-penalty-jail
+  * string-table/level-gates-war-room-10-duel-2
+  * string-table/no-chi-cost-or-cooldown-numbers-in-prose
+  * string-table/no-condition-damage-multiplier-in-prose
+  * string-table/offline-duel-opponents-are-ai
+  * string-table/piercing-damage-is-a-stat-channel
+  * string-table/skill-card-field-set-six-target-modes
+  * string-table/skill-usage-grammar-pvp-ban-charge-cancel-drag-target
+  * string-table/stance-ring-colours-named-in-tutorial-copy
+  * string-table/war-turn-is-clock-driven
+
+## ui-hud  (13 unique, 13 judged)
+  * ui-hud/690-friend-bar-never-filmed
+  * ui-hud/dialogbox-metrics-in-code
+  * ui-hud/hud-symbol-metrics
+  * ui-hud/interactui-menu-system
+  * ui-hud/langmanager-uses-resname-not-id
+  * ui-hud/options-screen-complete
+  * ui-hud/pause-is-click-anywhere
+  * ui-hud/result-cards-exact
+  * ui-hud/skill-cooldown-12-step-quantised
+  * ui-hud/slot-geometry-frame-validated
+  * ui-hud/tier3-video-repass-obsolete
+  * ui-hud/transition-durations-exact
+  * ui-hud/typography-edo-sz
+
+## uistrings-payload  (19 unique, 19 judged)
+  * uistrings-payload/bets-are-tokens-paid-out-in-gold
+  * uistrings-payload/character-stat-sheet-complete
+  * uistrings-payload/clan-hq-rooms-staff-missions-absent-from-all-12-systems
+  * uistrings-payload/duel-betting-book-is-web-only-with-full-odds-math
+  * uistrings-payload/duel-replay-is-a-first-class-feature
+  * uistrings-payload/emote-and-chat-command-surface
+  * uistrings-payload/golden-tokens-are-spendable-in-v0717
+  * uistrings-payload/nine-embedded-fonts-not-two
+  * uistrings-payload/payload-tag-families-unswept
+  * uistrings-payload/pvp-transport-is-rtmfp-p2p
+  * uistrings-payload/server-rpc-surface-is-enumerable
+  * uistrings-payload/tournament-field-set-and-create-form
+  * uistrings-payload/uistrings-is-design-time-not-shipped
+  * uistrings-payload/war-sector-panel-format
+  * uistrings-payload/warroom-build-menu-is-ladder-in-web-copy
+  * uistrings-payload/warroom-earlier-design-preserved-in-payload
+  * uistrings-payload/warroom-rules-web-uses-android-id-set
+  * uistrings-payload/weapon-unbreakable-price-differs-between-builds
+  * uistrings-payload/web-ui-string-ids-outrun-android-table
+
+## world-exploration  (23 unique, 23 judged)
+  * world-exploration/ap-cost-table
+  * world-exploration/ap-regen-and-cap
+  * world-exploration/config-still-empty
+  * world-exploration/coordinate-law
+  * world-exploration/cross-build-numeric-parity
+  * world-exploration/day-length-is-three-clocks
+  * world-exploration/farming-tables
+  * world-exploration/frame-confirms-6x6-grid
+  * world-exploration/gather-yield-whiff-tables
+  * world-exploration/is-a-wxh-grid
+  * world-exploration/land-mask-version-parity
+  * world-exploration/level-gradient
+  * world-exploration/map-art-unheld
+  * world-exploration/mapdata-blob-empty
+  * world-exploration/place-name-reproduced-from-payload
+  * world-exploration/prosperity-thresholds
+  * world-exploration/room-object-enum-and-node-graph
+  * world-exploration/save-schema-recovered
+  * world-exploration/search-chance-semantics
+  * world-exploration/sector-room-mapping
+  * world-exploration/start-coords-derived
+  * world-exploration/world-bounds-land-mask
+  * world-exploration/world-is-procedural
+
+# A leading '*' marks a claim that has already been judged.

@@ -1,26 +1,44 @@
 [
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 (assignment) with :95 (declaration) and :3323 (clamp); contrast :55 '\u00a71t12234s0\u00a7:int = 5 * 24' -> \u00a71t4440s0\u00a7 at :147/:266/:1244-1246",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/QuestItem.as:26-58 (templates) and :60-98 (reasons)",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "skills-meters/maxreload-is-192",
-  "lane_impact": "L2 (SKILLS + METERS): this is what actually closes the 'max' third of blocker \u2462. Config must encode MAX_RELOAD = 192 frames, DEAD_ZONE = 48, usable = 144. The surveyed value (120) would run the crit meter 60% fast and price a stance switch at 2x its real cost. L5 inherits the tempo: 8 s from empty to a guaranteed crit.",
-  "ledger_text": "\u2462 Focus numerics (max/fill/switch-cost).",
+  "id": "quests-story/questitem-archetype-templates",
+  "lane_impact": "L1 CAMPAIGN \u2014 side quests need a GENERATOR port (17 templates x 20 reasons composed at runtime by QuestGenerator.as, which writes only questData.type = 3), not a table port and not the deletion the surveyor recommends. Runtime type rewrites live in QuestEngine.as:736/752/756/760, not in QuestGenerator.",
+  "ledger_text": "archetype taxonomy (story/normal/trade + bounty/escort/gather/timed)",
   "overturns_ledger": true,
-  "quote": "249:         this.\u00a71t4415s0\u00a7 = 8 * 24;\n---\n 55:      internal static var \u00a71t12234s0\u00a7:int = 5 * 24;\n147:      internal var \u00a71t4440s0\u00a7:int = 0;\n266:            this.\u00a71t4440s0\u00a7 = \u00a71t12234s0\u00a7;\n1246:            --this.\u00a71t4440s0\u00a7;",
-  "text": "The reload/Focus meter's maximum is 192 frames (8 s) \u2014 'this.\u00a71t4415s0\u00a7 = 8 * 24;' \u2014 and it is the ONLY assignment of maxreload in the web bundle, so the usable range above the 48-frame dead zone is 144 frames (6 s) and a stance switch costs one-third of it.",
+  "quote": "26: public static var QUEST_KILLWILDLIFE:int = 0;  28: QUEST_KILLBANDIT:int = 1;  30: QUEST_KILLONI:int = 2;  32: QUEST_KILLUNDEAD:int = 3;  34: QUEST_GIVEWEAPONS:int = 4;  36: QUEST_GIVEORE:int = 5;  38: QUEST_SUMMONONI:int = 6;  40: QUEST_SUMMONMERC:int = 7;  42: QUEST_SUMMONNINJA:int = 8;  44: QUEST_UNWANTEDMERC:int = 9;  46: QUEST_GRAVEYARD:int = 10;  48: QUEST_DUEL:int = 11;  50: QUEST_GUIDE:int = 12;  52: QUEST_ITEM:int = 13;  54: QUEST_TRADE:int = 14;  56: QUEST_BOUNTYBOARD:int = 15;  58: QUEST_GIVECROPS:int = 16;",
+  "text": "The ledger's trade/bounty/escort/gather archetypes are not invented \u2014 they are a second, real enum: QuestItem holds 17 QUEST_* procgen templates and 20 REASON_* motives, orthogonal to QuestType's 9 values.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/GameEngine.as:81-109; namespace confirmed at QuestEngine.as:1214 and :1239/:1243; read into the step at QuestAction.as:49",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "quests-story/step-action-enum-closed",
+  "lane_impact": "L1 CAMPAIGN \u2014 the quest state machine's step-dispatch switch is fully specified, closing the surveyor's STILL_UNHELD Q-14. Ten unused members (ASSASSINATE, ESCORT, REACHMARKER, HARVEST, SURVIVALMODE, WARROOMBATTLE, PLAYBACK, PVPROOM, CUTSCENE, ADVENTURE) are inputs for L9 WORLD and L11.",
+  "ledger_text": "\u2462 per-quest trigger types + coords + rewards (sampled, not tabled).",
+  "overturns_ledger": true,
+  "quote": "81: ACTION_NOTHING:int = 0;  83: ACTION_FIGHT:int = 1;  85: ACTION_ASSASSINATE:int = 2;  87: ACTION_ESCORT:int = 3;  89: ACTION_SURVIVE:int = 4;  91: ACTION_REACHMARKER:int = 5;  93: ACTION_DUEL:int = 6;  95: ACTION_ADVENTURE:int = 7;  97: ACTION_HARVEST:int = 8;  99: ACTION_SURVIVALMODE:int = 9;  101: ACTION_WARROOMBATTLE:int = 10;  103: ACTION_PLAYBACK:int = 11;  105: ACTION_PVPROOM:int = 12;  107: ACTION_CUTSCENE:int = 13;  109: ACTION_SURVIVECLEANUP:int = 14;  ||  QuestEngine.as:1214 'if(questStepData.action == 6)' ; :1239 'action = GameEngine.ACTION_ADVENTURE;'",
+  "text": "The <step><action> enum is held: GameEngine defines a 15-value ACTION_* namespace, and the campaign's measured domain decodes to NOTHING x169, FIGHT x37, DUEL x5, SURVIVECLEANUP x3, SURVIVE x1.",
   "verdict": "HELD"
  },
  {
   "alternate_cites": [
-   "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 (player), \u00a71t4904s0\u00a7.as:77 (clone), refill at \u00a71t99s0\u00a7.as:1203-1205"
+   "reference/decompiled/shs3_android_payload/scripts/QuestEngine.as:1214,1218 + GameEngine.as:81-109,990,1014 + Overworld.as:258"
   ],
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 (only other assignment \u00a71t4904s0\u00a7.as:77); Android at reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:239",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/GameEngine.as:81-109 + QuestEngine.as:1214-1219 + GameEngine.as:990 + Obj_NPCAggro.as:139,214",
   "citelint": {
    "notes": [
     "QUOTE_NOT_LOCATED"
@@ -29,23 +47,120 @@
    "status": "QUOTE_UNVERIFIED"
   },
   "duplicate_count": 2,
-  "id": "skills-meters/maxreload-is-192-frames",
-  "lane_impact": "L2 (SKILLS + METERS): MAX_RELOAD = 192 frames; usable range after the 48-frame dead zone is 144 frames, not 72; a stance switch costs one third of the bar, not two-thirds. Coding 120 fills the crit bar 60% too fast \u2014 the single most visible timing error available in this lane.",
-  "ledger_text": "\u2462 Focus numerics (max/fill/switch-cost).",
+  "id": "quests-story/step-action-is-gameengine-action-enum",
+  "lane_impact": "L1 CAMPAIGN \u2014 closes the quest state machine's trigger dispatch: build the 15-value GameEngine.ACTION_* enum, wire 0/1/4/6/14. Scope fact for the board: only 5 of 225 story steps are DUELS, 37 are FIGHT, 169 are pure dialogue. L2/L4: ACTION_DUEL steps spawn the player at startingPosX 150 instead of 400.",
+  "ledger_text": "quests-story/step-action-enum-semantics: \"I did not find the enum mapping those ints to behaviours (talk-to / kill / gather / enter-room). Per-step trigger TYPES are therefore enumerated but not named.\"",
   "overturns_ledger": false,
-  "quote": "web  249:         this.\u00a71t4415s0\u00a7 = 8 * 24;\nweb   77 (\u00a71t4904s0\u00a7):         \u00a71t4415s0\u00a7 = 8 * 24;\nandroid 239:         this.maxreload = 5 * 24;\n--- the mis-cited line ---\nweb   55:      internal static var \u00a71t12234s0\u00a7:int = 5 * 24;   // used ONLY at :266 to set \u00a71t4440s0\u00a7",
+  "quote": "GameEngine.as:81-109 'ACTION_NOTHING:int = 0; ACTION_FIGHT:int = 1; ACTION_ASSASSINATE:int = 2; ACTION_ESCORT:int = 3; ACTION_SURVIVE:int = 4; ACTION_REACHMARKER:int = 5; ACTION_DUEL:int = 6; ACTION_ADVENTURE:int = 7; ACTION_HARVEST:int = 8; ACTION_SURVIVALMODE:int = 9; ACTION_WARROOMBATTLE:int = 10; ACTION_PLAYBACK:int = 11; ACTION_PVPROOM:int = 12; ACTION_CUTSCENE:int = 13; ACTION_SURVIVECLEANUP:int = 14;'  ||  QuestEngine.as:1219 'GameEngine.initBattleMode(quest,questStepData.action,questStepData.bg,questStepData.stagewidth,questStepData.time,questStepData.wave,startingPosX);' against GameEngine.as:990 'initBattleMode(quest:int, actionType:int, ...)'  ||  QuestEngine.as:1214-1216 'if(questStepData.action == 6) { startingPosX = 150; }'  ||  Obj_NPCAggro.as:214 'if(questAction != null && questAction.action == 0) { this.interact(); }'  ||  Obj_NPCAggro.as:139 'if(questAction.action == 6) { QuestEngine.putInDuelistHolder(...) }'",
   "reported_by": [
    "critic"
   ],
-  "text": "The web v0.717 crit/Focus meter holds 192 frames (8 s), not the 120 (5 s) the survey banked \u2014 120 is the Android v0.682 value.",
+  "text": "The <step><action> integer is GameEngine.ACTION_*, a 15-value enum, of which the 225 shipped steps use five: 169 ACTION_NOTHING (talk), 37 ACTION_FIGHT, 5 ACTION_DUEL, 3 ACTION_SURVIVECLEANUP, 1 ACTION_SURVIVE.",
   "verdict": "HELD"
  },
  {
-  "alternate_cites": [
-   "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 (sole assignment; \u00a71t4904s0\u00a7.as:77 is the only other, also 8 * 24) vs reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:239"
-  ],
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 (inside \u00a71t4443s0\u00a7, declared :183) with \u00a71t113s0\u00a7.as:328; corroborated by docs/research/fidelity/COMBAT_MEASUREMENTS.md:101 and rows f-5/f-6 (:589-590)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1524s0\u00a7.as:330-658 + reference/decompiled/shs3_android_payload/scripts/QuestEngine.as:281-291 + reference/decompiled/shs3_android_payload/scripts/Mobile_QuestData.as:5 + grep -c binaryData reference/extracted/payload.xml -> 27",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "quests-story/web-build-fetches-questdata",
+  "lane_impact": "L1 CAMPAIGN \u2014 the ledger's antecedent is TRUE, not false: the script IS server-fetched on the shipped build. What survives is an Android v0.682 SNAPSHOT, which is why the longplay Prologue is reworded. Every ported line must be labelled 'v0.682 Android embed, may differ from shipped', and every scene visible in the two longplays must be frame-reconciled. Kills the basis of quests-story/android-caveat-retired and the 'not server-fetched' half of quests-story/verbatim-script-held.",
+  "ledger_text": "- **Verbatim dialogue** \u2014 if the story is server-fetched and the server is dead, the actual script is gone; author original lines to the summaries (RECREATE-NEVER-RIP already requires original dialogue anyway).",
+  "overturns_ledger": true,
+  "quote": "QuestEngine.as:281-291  public static function loadExternalQuestDataXML() : void { var myLoader:URLLoader = new URLLoader(); if(StatsManager.useLocalXML) { myLoader.load(new URLRequest(xmlURL + \"questdata.xml\")); } else { myLoader.load(new URLRequest(QueryManagerPIO.instance.getDataXML(\"questdata.xml\"))); } ...  ||  Mobile_QuestData.as:5  [Embed(source=\"/_assets/116_Mobile_QuestData.bin\", mimeType=\"application/octet-stream\")]  ||  $ grep -c \"binaryData|DefineBinaryData\" reference/extracted/payload.xml -> 27, and all 27 blobs in reference/extracted/bindata/ are 19 animdata + 1 survivalmodedata + 1 room-object XML + 5 name-generator lists + 1 GIF89a \u2014 no quest/item/npc/skill data  ||  'Jinbei the Bandit King' occurs in exactly 2 files under reference/: extracted/questdata.xml and extracted/android/116_Mobile_QuestData.bin; 0 hits in reference/decrypted/ (UTF-8 and UTF-16LE) and 0 in reference/decompiled/",
+  "text": "The shipped web v0.717 build does NOT carry the quest script at all \u2014 it downloads questdata.xml from the Player.IO CDN at runtime; only the Android v0.682 build embeds a copy, and that copy is the one we hold.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t408s0\u00a7.as:531-564 (android twin at PlayerPanel.as:380-415)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/dan-romaji-ladder",
+  "lane_impact": "rebirth-elements 3 closed a second, independent way, and it is the PROOF for what the survey only asserted about the wiki garble: kyudan is STAT_DAN 8 = displayed Dan 9. These romaji strings are hardcoded ASCII, NOT in the string table, so a recreation cannot get them from strings.json. Also ui-hud: the inspect panel renders romaji while the inventory sheet renders kanji (455-464) \u2014 two different presentations of the same value.",
+  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
+  "overturns_ledger": true,
+  "quote": "case 8:\\n   dantext = \"(kyudan) \" + \u00a71t1521s0\u00a7.getString(467);\\n   break;\\ncase 9:\\n   dantext = \"(judan) \" + \u00a71t1521s0\u00a7.getString(467);",
+  "text": "The v0.717 client hardcodes the full romaji Dan ladder in the player-inspect panel \u2014 nidan, sandan, yondan, godan, rokudan, nanadan, hachidan, kyudan, judan \u2014 with the shogo suffix appended.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/DefineSprite_1810_1t5495s0/1.png (819x500, viewed whole) + DefineSprite_1800/1.png (green bagua ring 437x437), DefineSprite_1802/1.png (dark-red bagua ring 437x437), DefineSprite_1808/1.png (taiji 242x242), DefineSprite_1797_shs3_fla.dragondancewords_235 (39x40, 58 frames), DefineSprite_1798_1t5501s0 (64x64); class link via reference/decompiled/shs3_payload/scripts/\u00a71t5495s0\u00a7.as:70-71",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/dragon-dance-ui-art-is-held",
+  "lane_impact": "L rebirth-elements blocker (4): the survey closed the INPUT half only and left the art unmentioned. The art half is held too. The 58-frame dragondancewords strip is exactly what DragonDanceUI.as:359 and :364 index (word.gotoAndStop(num + 11) for Earlier Heaven, (num + 31) for Later Heaven), so the glyph-per-node mapping is reproducible frame-for-frame.",
+  "ledger_text": "\u2463 Dragon Dance **input** + Kanji-statue bonus.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t5495s0\u00a7.as:70  this.\u00a71t5516s0\u00a7 = [\"sky\",\"wind\",\"water\",\"mountain\",\"earth\",\"thunder\",\"fire\",\"lake\"];\n\u00a71t5495s0\u00a7.as:71  this.\u00a71t5517s0\u00a7 = [\"fire\",\"earth\",\"lake\",\"sky\",\"water\",\"mountain\",\"thunder\",\"wind\"];\n(art) DefineSprite_1810_1t5495s0/1.png visibly shows the 8-node click ring, the trigram ring and a yin-yang centre reading \"FIRE\"",
+  "text": "The Dragon Dance ritual UI art is fully on disk: a dark-red double outer ring, eight green-outlined white kanji nodes, an inner dark-red bagua trigram ring, a black/white taiji centre carrying the element name, and an X close button.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/DefineSprite_1810_1t5495s0/1.png (opened, 813x480) + reference/decompiled/shs3_payload/scripts/\u00a71t5495s0\u00a7.as:7 and :70-71; second variant at reference/extracted/sprites/DefineSprite_3555_1t6980s0/1.png",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/dragon-dance-ui-art-recovered",
+  "lane_impact": "rebirth-elements blocker \u2463 loses its art half too, which nobody in this unit claimed. The node `word` sub-clip frame map is also held (DragonDanceUI.as:358 gotoAndStop(num+11) Earlier Heaven / :362 num+31 Later Heaven), so the per-node kanji swap is reproducible. Feeds ui-hud.",
+  "ledger_text": "\u2463 Dragon Dance **input** + Kanji-statue bonus.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t5495s0\u00a7.as:7  [Embed(source=\"/_assets/assets.swf\", symbol=\"symbol1810\")]   \u00a71t5495s0\u00a7.as:70-71  this.\u00a71t5516s0\u00a7 = [\"sky\",\"wind\",\"water\",\"mountain\",\"earth\",\"thunder\",\"fire\",\"lake\"]; this.\u00a71t5517s0\u00a7 = [\"fire\",\"earth\",\"lake\",\"sky\",\"water\",\"mountain\",\"thunder\",\"wind\"];   |   VISIBLE IN PNG: three concentric dark-red rings; 8 white click nodes with bright-green outlines at the 8 compass points, each bearing a green kanji (frame-1 default \u5929 = 'sky'); 8 dark-red bagua trigram glyphs on an inner ring; a taijitu (yin-yang) centre labelled 'FIRE' in the brush font; red \u2715 close button top-right.",
+  "text": "The entire Dragon Dance bagua UI art is also on disk and rendered - the 8-node click ring with taijitu centre, trigram glyphs and close button - class-linked to the v0.717 DragonDanceUI.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/InteractUI.as:848-880 (only writes to base STAT_FIREATK/WIND/WATER/EARTH in either bundle; desktop twin \u00a71t401s0\u00a7.as:873-895) + reference/extracted/android/90_InteractUI_UIData.bin:97 + StatsManager.as:2209",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/90_InteractUI_UIData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/element-atk-budget-is-100",
+  "lane_impact": "rebirth-elements + meta-social: rebirths at STAT_DAN>=9 hit NEITHER grant branch (the shipped dev comment says 'no element boost'), so the budget is DAN 0..7 at +10 plus DAN 8 at +20 = 100 points. Best solo outcome is one element at 60 + one at 30, or three at 30. The Later Heaven flip needs nodes {1,2,4,6} = {wind,water,earth,fire}, i.e. all four Steps \u2014 unreachable solo. A single-player recreation must substitute the teaching loop or Later Heaven is unreachable by design. Also refutes the survey's stated rationale 'the whole design rationale for rebirthing into all four elements'.",
+  "ledger_text": "Dragon Dance unlocks at 3\u00d7/6\u00d7 same-element rebirths \u2014 explains why point-stacking matters.",
+  "overturns_ledger": true,
+  "quote": "if(StatsManager.getPlayerStats(StatsManager.STAT_DAN) == 8) { StatsManager.changeStat(StatsManager.STAT_FIREATK,20); }\nelse if(StatsManager.getPlayerStats(StatsManager.STAT_DAN) < 8) { StatsManager.changeStat(StatsManager.STAT_FIREATK,10); }\n<!-- \"yes\" useicon >=10 dan, no element boost-->",
+  "text": "A character's lifetime base element-ATK budget is exactly 100 points, so it is arithmetically impossible for one player to unlock all four Dragon Dance Steps (4 x 30 = 120) \u2014 which is why the Steps are a teachable, player-to-player mechanic.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/payload.xml:626581 -> reference/extracted/sprites/DefineSprite_1650/1.png (808x480; crop (500,60)-(800,370), LANCZOS x3)",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/element-circle-art-FOUND",
+  "lane_impact": "L-rebirth blocker 5 closed OUTRIGHT (data + flow + copy + icons + art), not reduced to 'art unknown'. Also ui-hud: the InteractUI parent symbol is DefineSprite_1691_1t401s0 and every named child is enumerable from payload.xml PlaceObject2Tag `name=` attributes \u2014 a general close-path for every remaining 'UI art never filmed' blocker on the board.",
+  "ledger_text": "\u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth).",
+  "overturns_ledger": true,
+  "quote": "<item type=\"PlaceObject2Tag\" characterId=\"1650\" depth=\"37\" forceWriteAsLong=\"true\" name=\"elementCircle\" placeFlagHasCharacter=\"true\" ...>  \u2014 the render shows FIRE top, EARTH right, WIND bottom, WATER left with their kanji, joined by four grey arrows each labelled 'STRONG AGAINST' running FIRE->EARTH->WIND->WATER->FIRE",
+  "text": "The rebirth element-picker circle's art is fully recovered on disk: DefineSprite 1650, a four-node clockwise counter ring in FIRE #FF3300 / EARTH #7D5500 / WIND #BBBBBB / WATER #0099FF on #333333 discs.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/DefineSprite_1650/1.png (808x480; viewed whole, then crop (230,80)-(620,420) upscaled x3 LANCZOS); parent symbol reference/extracted/sprites/DefineSprite_1691_1t401s0/1.png (crop (520,250)-(860,470) x4) linked by reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:9 [Embed symbol=\"symbol1691\"] and :77 elementCircle:MovieClip",
   "citelint": {
    "notes": [
     "QUOTE_NOT_LOCATED"
@@ -53,104 +168,213 @@
    "problems": [],
    "status": "QUOTE_UNVERIFIED"
   },
-  "duplicate_count": 2,
-  "id": "skills-meters/maxreload-is-192-not-120",
-  "lane_impact": "L2: this UPGRADES COMBAT_MEASUREMENTS f-6 from 'total INFERRED' to CONTRACT \u2014 the extrapolation was right and no longer needs to be an extrapolation. Config: RELOAD_MAX = 192 frames, dead zone 48, usable 144, stance switch 48 = one third of usable (not two thirds). Also the standing rule to carry: the frame and the web code agree here and both refute a doc-derived number, so cite the code AND the measurement together.",
-  "ledger_text": "**Focus empty\u2192full \u2248 5.9 s** (268 px \u00f7 45.5 px/s) \u2026 **rate MEASURED; total INFERRED** \u2014 the observed ramps only span 0\u219249 % of the track, so the full time extrapolates a constant rate; no full-fill or consumption event was captured",
+  "id": "rebirth/element-circle-art-is-held",
+  "lane_impact": "L rebirth-elements blocker (5) closed OUTRIGHT, art half included - it is not merely 'data held, art unheld'. The arrow direction independently corroborates the code wheel at StatsManager.as:1836, so art and AS3 agree with no measurement doc in between. The 808x480 sprite size is also fresh corroboration of ledger \u00a73 #12's 800x480 native stage. Prompt copy recovered too: string 611 = 'Choose an element to specialize in.' (InteractUI.as:556-559).",
+  "ledger_text": "\u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth).",
   "overturns_ledger": true,
-  "quote": "249:         this.\u00a71t4415s0\u00a7 = 8 * 24;\n---\n328:         var _loc3_:Number = (param1 - 48) / (param2 - 48);\n--- COMBAT_MEASUREMENTS.md:101 ---\n- Rate **45.05 \u00b1 0.30 px/s** \u21d2 empty\u2192full **5.97 s** (confirms 6.00 s).\n--- arithmetic ---\n(192-48)/24 = 6.000 s visible travel   <== matches the measurement exactly\n(120-48)/24 = 3.000 s                  <== the survey's number, off by 2x",
-  "reported_by": [
-   "critic"
-  ],
-  "text": "The web v0.717 Focus/reload meter maxes at 8*24 = 192 frames (8.00 s), of which the first 48 frames render as a zero-width bar, leaving exactly 6.000 s of visible travel \u2014 which is what the frame-derived fill measurement has been reporting all along.",
+  "quote": "Visibly in the crop: four circular element badges - FIRE at top (bright red ring, \u706b in red on a near-black disc, white label 'FIRE'), EARTH at right (dark-gold ring, \u571f, 'EARTH'), WIND at bottom (light-grey ring, \u98a8, 'WIND'), WATER at left (blue ring, \u6c34 in blue, 'WATER') - connected by grey curved arrows each captioned 'STRONG AGAINST' in white, on a plain grey field.",
+  "text": "The rebirth element-picker circle's art, layout and colours are fully recovered from the exported asset set: an 808x480 panel with FIRE (red) / EARTH (dark gold) / WIND (white-grey) / WATER (blue) kanji badges on a ring, joined by grey 'STRONG AGAINST' arrows running FIRE->EARTH->WIND->WATER->FIRE.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/extracted/sprites/DefineSprite_1691_1t401s0/1.png \u2014 crop (500,260)-(850,420) of the 856x853 export, alpha matted white, upscaled x4 LANCZOS; symbol identified by reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:9 [Embed symbol=\"symbol1691\"] with elementCircle at :77 and :574",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "rebirth/element-circle-art-is-on-disk",
+  "lane_impact": "rebirth-elements blocker \u2464: the art half is no longer fully unheld. Layout (circular, element name below centre, two opposed arc labels naming the counter relationship) is held from an asset render, and it visually corroborates the code-side counter wheel at StatsManager.as:1836. Still open: a clean per-layer render (the export flattens the whole InteractUI symbol so the character bust occludes the disc) and the exact hues. The close-path is now narrow - re-export symbol1691's elementCircle child on its own, rather than searching video frames the ledger correctly says never filmed it.",
+  "ledger_text": "\u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth).",
+  "overturns_ledger": true,
+  "quote": "Visibly in the crop: a large dark disc behind the character bust; the element name 'WIND' in the game's brush face below disc centre; two arc labels at the disc flanks reading '...AGA[INST]' (left) and '...NG ...AINST' (right).",
+  "text": "The rebirth element-picker circle is recoverable art, already extracted: the v0.717 InteractUI symbol export shows the disc with its element name and its STRONG AGAINST / WEAK AGAINST label ring.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/DefineSprite_1650/1.png (opened; crop (510,50)-(808,370) upscaled 3x to 894x960, Lanczos) + reference/extracted/payload.xml:626581 + reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:9",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/element-circle-art-recovered",
+  "lane_impact": "rebirth-elements blocker \u2464 is now CLOSED OUTRIGHT - data, flow, copy, geometry AND art. Also feeds ui-hud: the four element hexes are the OG's canonical element palette, and #7D5500 is the same gold InventoryUI.as:2286 draws the shogo title in. Also art-anim: this is v0.717 web art, so no build-parity caveat applies.",
+  "ledger_text": "\u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth).",
+  "overturns_ledger": true,
+  "quote": "payload.xml:626581  <item type=\"PlaceObject2Tag\" characterId=\"1650\" depth=\"37\" name=\"elementCircle\" .../>   |   \u00a71t401s0\u00a7.as:9  [Embed(source=\"/_assets/assets.swf\", symbol=\"symbol1691\")]   |   VISIBLE IN CROP: four ringed circular nodes - FIRE \u706b top, EARTH \u571f right, WIND \u98a8 bottom, WATER \u6c34 left - joined by four clockwise grey arrowed arcs each captioned 'STRONG AGAINST' on two lines, English label beneath each node, hand-drawn brush display face. Sampled hexes: FIRE #FF3300, EARTH #7D5500, WIND #BBBBBB, WATER #0099FF, node fill #333333.",
+  "text": "The rebirth element-picker circle's art, layout, colours and copy are fully recovered from the WEB v0.717 payload: sprite 1650 'elementCircle' inside InteractUI's symbol 1691, already rendered to PNG on disk.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116 (reach multipliers) with \u00a71t1523s0\u00a7.as:2344-2348 (base, asymptote 210 at DAN 0)",
+  "cite": "reference/extracted/skilldata.xml, all 24 skills carrying <req><has><id>28|29|30|31</id>, names resolved via docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "rebirth/elemental-gate-roster",
+  "lane_impact": "rebirth-elements: confirms the survey's 1x/3x/6x correction and adds the exact roster, with the correction that the AoE ultimates are 3x-tier, so the first rebirth into an element yields Breath/Trap/Kunai/tier-2 melee only.",
+  "ledger_text": "Dragon Dance unlocks at 3\u00d7/6\u00d7 same-element rebirths \u2014 explains why point-stacking matters.",
+  "overturns_ledger": true,
+  "quote": "qty 10 (12): 1013 Fire Breath \u00b7 1025-1028 Fire/Water/Wind/Earth Element Trap \u00b7 1029-1032 Fire/Water/Wind/Earth Kunai \u00b7 1033 Ground Punch \u00b7 1034 Wind Combo \u00b7 1035 Water Stomp\nqty 30 (8): 1056-1059 Dragon Dance Step Fire/Water/Wind/Earth \u00b7 1070-1073 Inferno/Tsunami/Tornado/Earthquake\nqty 60 (4): 1060-1063 Dragon Dance Step \u2026 II",
+  "text": "The full elemental unlock roster splits 12 / 8 / 4 across the 10 / 30 / 60 element-ATK thresholds, and the four ultimates sit at the 30 (3x rebirth) tier rather than the first tier.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml \u2014 every <req><has><id>28|29|30|31</id><qty>\u2026</qty> block, names joined through docs/gauntlet/L0/index/strings.json (anchors verified at :988, :1726, :1884)",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "skills-meters/reach-triple-is-a-floor-not-a-ceiling",
-  "lane_impact": "L5 (COMBAT CORE) / L2: the ledger sentence is half-right and half-backwards, and the survey corrected only the half it noticed. 1.4x210=294 / 1.0x210=210 / 0.5x210=105 reproduces the wiki triple ONLY at mastery 0; the survey's own reconciliation quietly assumes that while its sibling claim leaves the ledger's 'ceiling' framing intact. Config must model reach as base-at-M0 growing with mastery, not as a ceiling to be walked back.",
-  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "id": "rebirth/elemental-gate-table",
+  "lane_impact": "L-rebirth-elements + L-skills-meters: the ledger's Dragon Dance sentence is correct as written; what it omits is the 1x tier (breath/traps/kunai/stomps) and the fact that the four ultimates share the 3x gate with the Dragon Dance Steps. This is the table that refutes the rebirth lane's 'entire usable elemental kit lands on the FIRST rebirth'.",
+  "ledger_text": "Dragon Dance unlocks at 3\u00d7/6\u00d7 same-element rebirths \u2014 explains why point-stacking matters.",
   "overturns_ledger": true,
-  "quote": "3094:               this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;                              (Light, FLAT)\n3105:               this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);  (Balanced 1.0->1.2)\n3116:               this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);(Heavy 0.5->0.9)\n---\n2347:         return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));   -> 210 as SPD->inf at DAN 0",
-  "text": "THE FRAME/PAYLOAD ORDERING THE SURVEY MISSED: the ledger's reach triple 300/200/100 is a MASTERY-0 read, the opposite of its own label \u2014 at mastery 10 the triple is ~294/252/189. Only the damage triple 0.9/1.2/1.4 is a ceiling.",
+  "quote": "988:  <req><has><id>28</id><qty>10</qty></has></req>   skill 1029 = 'Fire Kunai'\n1884: <req><has><id>28</id><qty>30</qty></has></req>   skill 1070 = 'Inferno'\n1726: <req><has><id>28</id><qty>60</qty></has></req>   skill 1060 = PASSIVE 'Dragon Dance Step: Fire II'",
+  "text": "The complete elemental unlock table is recoverable by name: qty 10 opens Fire Breath, the four Element Traps, the four Kunai, Ground Punch, Wind Combo and Water Stomp; qty 30 opens the four Dragon Dance Steps AND the four ultimates Inferno/Tsunami/Tornado/Earthquake; qty 60 opens the four Dragon Dance Step II passives.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/extracted/android/93_MCSCharacter_SkillsAnimationData.bin (opened this session; 338,096 bytes, UTF-8 with BOM; 50 <anim>, 547 <f>, 8,351 <n>, 19 distinct bone ids)",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:2669-2682 and :2684-2711; desktop thresholds at reference/decompiled/shs3_payload/scripts/\u00a71t406s0\u00a7.as:1544 and :1581",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "skills-meters/skill-animation-data-is-plain-xml",
-  "lane_impact": "L6 (ART/ANIM): every skill animation in the game is transcribable to config today \u2014 bone id, x, y, rotation, per frame. The `d=` attribute equals the frame count in every anim checked, so durations are held too. Two-actor moves (backthrow/backthrow_victim, kneegroin/kneegroin_victim) confirm paired-animation grabs exist. Caveat: this is the Android blob; the web equivalent should be diffed, but the XML-vs-AS3 rule says data blobs port.",
+  "id": "rebirth/hgold-is-premium-currency",
+  "lane_impact": "economy + rebirth-elements: rebirth is a premium-currency faucet, which is why the desktop anti-cheat tolerates 300 of it only once DAN >= 9 (\u00a71t406s0\u00a7.as:1544) while capping coins separately (OverworldHUD.as:1338, STAT_GOLD > 10000). The ledger's film-derived '+25 gold' was reading the Heavenly Gold counter, not the coin counter. For a single-player recreation with no PayVault this reward has no destination and should be flagged as a design decision, not ported.",
+  "ledger_text": "film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
+  "overturns_ledger": true,
+  "quote": "public static function getHeavenlyGold() : int { var hgold:int = getPlayerStats(STAT_HGOLD); if(usePlayerIO) { hgold += QueryManagerPIO.instance.getPayVaultCoins(); } return hgold; } ... QueryManagerPIO.instance.debitPayVaultCoins(deductgold, ...)",
+  "text": "The rebirth payout is Heavenly Gold, the real-money PayVault currency, not the coin economy - so a 'tenthGold' config key modelled as coins would be wrong even with the right number.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "docs/research/REBUILD_READINESS.md:165 vs :205, adjudicated by reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2644-2652",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/ledger-film-phantom-source",
+  "lane_impact": "rebirth-elements + the ledger's own credibility: this is the Tip-#27 failure mode (a confident sourced-sounding sentence with nothing behind it). \u00a73 #7 should be STRUCK, not merely corrected \u2014 an unsourced 'film shows' assertion that contradicts its own document two lines away is worse than a gap. Flag any other \u00a73 item that cites 'film' without a frame path.",
+  "ledger_text": "**`MAX_DAN_RANK=10` and `tenthGold=100` should be INFERRED, not CONTRACT.** The only wiki datum is garbled (\"dan rank 5 (kyudan)\" \u2014 kyudan=9th); film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
+  "overturns_ledger": true,
+  "quote": ":165  film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.\n:205  \u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth).",
+  "text": "REBUILD_READINESS.md \u00a73 #7's 'film shows a flat +25 gold every rebirth, no 10th-rebirth tier' is a phantom source \u2014 the same ledger says the rebirth flow was never filmed, and a pre-rebirth longplay could not film a Dan 8->9 payout in any case.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/Damage.as:26-63 + StatsManager.as:288-312 + MCSPlayer.as:3347-3420; negative grep for BUFF_/burn/poison/freeze across all *Projectile*.as",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/no-elemental-status-effects",
+  "lane_impact": "rebirth-elements 1 fully closed INCLUDING the 'status' clause \u2014 the honest answer is a bounded NEGATIVE, not an unknown. The BUFF_* table is a meta/out-of-combat system (XP, ATK, DEF, SPEED, AP, tokens, coins, loot, mute, hell, injured, moderator) with zero projectile references. Also skills-meters: that BUFF_* enum is the shipped buff roster that lane's blocker asks for.",
+  "ledger_text": "\u2460 what each element **does** (24 skills' damage/cost/AoE/status \u2014 names only).",
+  "overturns_ledger": true,
+  "quote": "internal var damage:int; internal var stance:int; internal var launchType:int; internal var attackerlvl:int; internal var piercingDamage:int = 0; internal var fireDamage:int = 0; internal var waterDamage:int = 0; internal var windDamage:int = 0; internal var earthDamage:int = 0; internal var flyVelX:int = 0; internal var flyVelY:int = 0; internal var victimPosX:int = -1;",
+  "text": "No per-element status effect exists anywhere in the shipped damage pipeline; elements differ only by damage channel, launch type and AoE radius.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/Damage.as:26-48 (complete field list) and :6-24 (launchType enum) + StatsManager.as:288-312 (complete BUFF_* list)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "rebirth/no-elemental-status-effects-exist",
+  "lane_impact": "L rebirth-elements blocker (1): the 'status' clause resolves to a clean NEGATIVE rather than staying open. Build the elemental kit statusless and label it. The only per-hit reaction is launchType (Tornado = LAUNCH_AIR, the other three ultimates = LAUNCH_KNOCKDOWN).",
+  "ledger_text": "\u2460 what each element **does** (24 skills' damage/cost/AoE/status \u2014 names only).",
+  "overturns_ledger": true,
+  "quote": "Damage.as fields: damage, stance, launchType, attackerlvl, piercingDamage, fireDamage, waterDamage, windDamage, earthDamage, flyVelX, flyVelY, victimPosX.\nStatsManager.as:288-312: BUFF_XP 0, BUFF_ATTACK 1, BUFF_DEFENSE 2, BUFF_SPEED 3, BUFF_AP 4, BUFF_DUELTOKENS 5, BUFF_COINS 6, BUFF_RARELOOT 7, BUFF_MUTE 8, BUFF_FULLMUTE 9, BUFF_HELL 10, BUFF_INJURED 11, BUFF_MODERATOR 12",
+  "text": "Elemental skills apply no status effect at all - no burn, slow, root or DoT - because the Damage packet has no field to carry one and every BUFF_* constant is a meta/economy buff.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t408s0\u00a7.as:532-566, rendered at :582",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/romaji-dan-ladder",
+  "lane_impact": "rebirth-elements blocker \u2462 + ui-hud: the versus panel reads 'Level: N (yondan) Renshi' in ROMAJI, while the inventory panel shows the KANJI danfield \u2014 two different display formats for the same stat, and only the kanji one was recovered by the survey. This also settles the ledger's \u00a73 #7 garble: the game itself prints '(kyudan)' at STAT_DAN 8, so a wiki editor transcribing the versus panel would write exactly the string the ledger calls garbled. Copy '(nanadan)' for 7th verbatim \u2014 it is a non-standard romanisation and is what shipped.",
+  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
+  "overturns_ledger": true,
+  "quote": "case 0: dantext = \"\";                                case 5: dantext = \"(rokudan) \"  + \u00a71t1521s0\u00a7.getString(465);\\ncase 1: dantext = \"(nidan)\";                         case 6: dantext = \"(nanadan) \"  + \u00a71t1521s0\u00a7.getString(466);\\ncase 2: dantext = \"(sandan)\";                        case 7: dantext = \"(hachidan) \" + \u00a71t1521s0\u00a7.getString(466);\\ncase 3: dantext = \"(yondan) \" + getString(465);      case 8: dantext = \"(kyudan) \"   + \u00a71t1521s0\u00a7.getString(467);\\ncase 4: dantext = \"(godan) \"  + getString(465);      case 9: dantext = \"(judan) \"    + \u00a71t1521s0\u00a7.getString(467);\\n:582  this.playerText.text = \u00a71t1521s0\u00a7.getString(155) + \": \" + String(level) + \" \" + dantext;",
+  "text": "The v0.717 desktop build ships a SECOND Dan ladder \u2014 hard-coded English romaji, absent from the string table and from the android build \u2014 printed in the versus/duel panel, and it is the direct explanation of the 'garbled wiki datum' the ledger complains about.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t408s0\u00a7.as:532-565",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/romaji-dan-ladder-in-v0717",
+  "lane_impact": "rebirth-elements blocker \u2462 closes in the TARGET build, not just the android port: '(kyudan)' is STAT_DAN 8 = displayed Dan 9, proving rather than inferring the two-layer numbering the wiki collapsed. Corollary for the S0-3 caveat: the desktop calls getString(458)/(465) at \u00a71t5957s0\u00a7.as:3073-3074 with the same ids as 118_Mobile_Lang_EN.bin, the strongest string-table parity evidence produced so far.",
+  "ledger_text": "7. **`MAX_DAN_RANK=10` and `tenthGold=100` should be INFERRED, not CONTRACT.** The only wiki datum is garbled (\"dan rank 5 (kyudan)\" \u2014 kyudan=9th)",
+  "overturns_ledger": true,
+  "quote": "532: switch(dan)\n533:    case 0:  dantext = \"\";\n538:             dantext = \"(nidan)\";\n544:             dantext = \"(yondan) \" + \u00a71t1521s0\u00a7.getString(465);\n559:             dantext = \"(kyudan) \" + \u00a71t1521s0\u00a7.getString(467);\n562:             dantext = \"(judan) \"  + \u00a71t1521s0\u00a7.getString(467);",
+  "text": "The v0.717 desktop client hardcodes the full romaji Dan ladder in ASCII \u2014 dan 0 blank, then nidan, sandan, yondan, godan, rokudan, nanadan, hachidan, kyudan, judan \u2014 with Renshi at 3-5, Kyoshi at 6-7 and Hanshi at 8-9, so the Dan ladder is held in the target build with no android-parity caveat and the wiki's 'kyudan' garble is settled outright.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2279-2295, consumed at reference/decompiled/shs3_payload/scripts/\u00a71t105s0\u00a7.as:318; contrast reference/decompiled/shs3_android/scripts/StatsManager.as:1854-1861",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skilldata/web-cooldown-modifier-caps-spd-at-600",
+  "lane_impact": "L5 combat-core and skills-meters \u2014 closes ledger blocker \u2463, but with the WEB constants. Porting the android form would double every SPD point's cooldown reduction and would make the two measured Focus cooldowns irreproducible.",
+  "ledger_text": "\u2463 SPD\u2192cooldown formula. [REBUILD_READINESS.md:195]",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:2289  internal static function \u00a71t9590s0\u00a7(param1:int) : Number\\n{\\n   if(param1 > 600)\\n   {\\n      param1 = 600;\\n   }\\n   return 1 - param1 / 600 * 0.5;\\n}\\n\u00a71t105s0\u00a7.as:318  return _loc2_ * \u00a71t1523s0\u00a7.\u00a71t9589s0\u00a7();\\n\\n(android StatsManager.as:1856  if(speed > 300) { speed = 300; }  :1860  return 1 - speed / 300 * 0.5;)",
+  "text": "WEB v0.717's SPD\u2192cooldown modifier caps SPD at 600 and returns 1 - SPD/1200, i.e. exactly half the per-point effect of the ANDROID v0.682 form (cap 300, 1 - SPD/600). The -50% ceiling and the x1.5 speed-buff step before the cap are the same in both. This also re-pins the reader's SPD in the longplay: the measured 4.96 / 9.92 / 8.92 s cooldowns come from raw 5 / 10 / 9 s at SPD 10, not SPD 5.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/ \u2014 43 unique \"Snd_*\" string literals; call sites incl. \u00a71t113s0\u00a7.as:352, \u00a71t5045s0\u00a7.as:1263, \u00a71t24s0\u00a7.as:849, \u00a71t406s0\u00a7.as:1226/1245/1264/1289, \u00a71t99s0\u00a7.as:3379/3386",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skills-meters/43-sfx-event-names-in-web-bundle",
+  "lane_impact": "L7 (AUDIO): 43 synth targets with named triggers \u2014 three slash variants, three death variants, deflect vs hitMetal as separate impacts, Snd_smokebomb tied to skill 1010, Snd_jump reused for both dodge paths. Stage-0b S0-5 still holds for waveforms; it never covered the event table.",
   "ledger_text": "### skills-meters \u2014 33",
   "overturns_ledger": true,
-  "quote": "<?xml version=\"1.0\"?>\\r\\n<animdata>\\r\\n<anim i=\"chargedshot_start\" d=\"4\">\\r\\n<f i=\"0\">\\r\\n<n i=\"20\" x=\"9\" y=\"-44\" r=\"-54\"></n>\n--- 50 anims incl. ---\nshunpo_start d=4 \u00b7 shunpo_end d=1 \u00b7 focus_start d=8 \u00b7 focus_end d=13 \u00b7 cleave_start d=9 \u00b7 cleave_end d=14 \u00b7 cleave_pose d=1 \u00b7 flurry_parta..d + flurry_pose \u00b7 deathtouch_parta..d \u00b7 chicharge_start/end/fly \u00b7 airstab_start/mid/stab/end \u00b7 backthrow d=39 + backthrow_victim d=36 \u00b7 bullcharge_start \u00b7 warcry_start/end \u00b7 buffarmor_start/end \u00b7 enchantweapon \u00b7 dash_start/end \u00b7 backstep_start/end \u00b7 punchlunge_start/mid/end \u00b7 kneegroin + kneegroin_victim",
-  "text": "reference/extracted/android/93_MCSCharacter_SkillsAnimationData.bin is unencrypted plain XML holding 50 named skill animations with full skeletal keyframes \u2014 it was never opened.",
-  "verdict": "HELD"
- },
- {
-  "alternate_cites": [
-   "reference/decompiled/shs3_payload/scripts/\u00a71t76s0\u00a7.as:413-422 and :94; consumed at \u00a71t99s0\u00a7.as:195 and :3302/:3306/:3310; Android name at StatsManager.as:1921-1929"
-  ],
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2350-2358; reference/extracted/itemdata.xml:8044; docs/gauntlet/L0/index/itemdata.json -> itemdata/item/slashusage (count 106, distinct_values 3, numeric_range [24,96], sample_values ['24','72','96'])",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "duplicate_count": 2,
-  "id": "skills-meters/slashusage-is-a-weapon-stat",
-  "lane_impact": "L2/L9: the crit economy is weapon-dependent and codeable today \u2014 slashUsage comes from the equipped weapon, is clamped up to 48, and is then scaled x0.5 (Light) / x1.0 (Balanced, Reversed) / x1.5 (Heavy, Dual). Cross-lane hand-off to items-equipment: 106 items carry the field and it takes only three values.",
-  "overturns_ledger": false,
-  "quote": "2353:         if(_loc1_ == null || _loc1_.slashusage < 48)\n2355:            return 48;\n2357:         return _loc1_.slashusage;\n---\nitemdata.xml:8044:\t\t<slashusage>72</slashusage>",
-  "reported_by": [
-   "critic"
-  ],
-  "text": "The meter's slash cost is a per-weapon itemdata field floored at 48, with an effective domain of {48, 72, 96} \u2014 so Light slashes cost {24, 36, 48} frames against a 144-frame visible bar.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2350-2358 (param 11 of the init call at :2268); reference/extracted/itemdata.xml:8044",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "skills-meters/slashusage-is-weapon-derived",
-  "lane_impact": "L2/L10: this is the number that makes the meter simulable and the survey left it an opaque symbol. With max 192 / usable 144 and a 72-usage weapon: Light slash = 36, Balanced = 72, Heavy = 108 focus. Weapon choice therefore controls crit cadence \u2014 a cross-lane hook into items-equipment that no lane has claimed.",
-  "ledger_text": "\u2462 Focus numerics (max/fill/switch-cost).",
-  "overturns_ledger": true,
-  "quote": "2350:      internal static function \u00a71t9594s0\u00a7() : int\n2353:         if(_loc1_ == null || _loc1_.slashusage < 48)\n2355:            return 48;\n2357:         return _loc1_.slashusage;\n---\nitemdata.xml:8044:\t\t<slashusage>72</slashusage>   (106 such rows in the file)",
-  "text": "slashUsage \u2014 the multiplicand in the whole Focus-spend model \u2014 is read off the equipped weapon with a hard floor of 48, and itemdata carries 106 <slashusage> rows.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3048-3051 and :3058-3079, read against \u00a71t113s0\u00a7.as:328-343",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "skills-meters/stance-switch-gate-and-cycle",
-  "lane_impact": "L2/L5: this is the direct proof the ledger's \u00a73.4 is dead \u2014 the survey argued it indirectly from caption states. Also an authenticity detail worth reproducing rather than fixing: bar% = (reload-48)/144, so at reload exactly 48 the bar reads 0% and the CANNOT CHANGE STANCE caption is on screen for the frame in which switching first becomes legal.",
-  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\"). The recreation's Focus-gated in-combat switch models **removed 2014 behavior**",
-  "overturns_ledger": true,
-  "quote": "3050:          return this.\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48;\n3060:          if(this.\u00a71t4414s0\u00a7 < 48)\n3062:             return;\n3066:             this.\u00a71t3489s0\u00a7(\u00a71t12220s0\u00a7);\n3070:             this.\u00a71t3489s0\u00a7(\u00a71t12221s0\u00a7);\n3074:             this.\u00a71t3489s0\u00a7(\u00a71t12222s0\u00a7);\n3078:             this.\u00a71t3489s0\u00a7(\u00a71t12220s0\u00a7);",
-  "text": "The stance-switch gate is a hard reload >= 48 and the button cycles only Light -> Balanced -> Heavy -> Light; Dual and Reversed are unreachable from it, and the switch unlocks at the exact reload value where the bar still displays 0%.",
+  "quote": "Snd_addStat Snd_back Snd_birds1 Snd_birds2 Snd_birds3 Snd_bowFire Snd_bowFireMany Snd_challenge Snd_click Snd_criticalDamage Snd_deflect Snd_die1 Snd_die2 Snd_die3 Snd_drop Snd_equip Snd_error Snd_fart Snd_goodKoto Snd_hitMetal Snd_jump Snd_mail Snd_menu Snd_menuClose Snd_mining Snd_ninja Snd_notification Snd_punch Snd_put Snd_refund Snd_rimshot Snd_sadTrombone Snd_slash1 Snd_slash2 Snd_slash3 Snd_smallClick Snd_smokebomb Snd_sumo Snd_upgradeSkill Snd_wrAttack Snd_wrDeploy Snd_wrMove Snd_wrScout",
+  "text": "The web bundle names 43 distinct SFX events, not one \u2014 the audio EVENT VOCABULARY is fully held even though the waveforms stay CWS-encrypted.",
   "verdict": "HELD"
  },
  {
@@ -161,258 +385,29 @@
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "skills-meters/stance-switch-gate-is-48",
-  "lane_impact": "L5/L2: \u00a71t4472s0\u00a7 is the whole stance cycle (-1 -> Light -> Balanced -> Heavy -> Light, :3064-3079) and it refuses below 48. Since the bar reads 0 iff reload <= 48, the caption fires exactly when the cycle refuses. Ship a Focus-gated switch with gate 48 and cost 48 \u2014 and note only THREE stances are player-cyclable; Dual and Reversed are never reached by \u00a71t4472s0\u00a7.",
+  "id": "skills-meters/canchangestance-is-a-named-gate",
+  "lane_impact": "L2/L5: the recreation's Focus-gated switch is FAITHFUL. The gate value and the charge value are the same 48, so the rule is simply 'costs 48, refused below 48'. Two documents must be struck, not one: REBUILD_READINESS.md:158 and SHSD_MASTER_REFERENCE.md:388, which grades the hard lock [CONTRACT].",
   "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\"). The recreation's Focus-gated in-combat switch models **removed 2014 behavior**",
   "overturns_ledger": true,
   "quote": "3048:      public function \u00a71t4470s0\u00a7() : Boolean\n3050:         return this.\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48;\n---\n3058:      public function \u00a71t4472s0\u00a7() : *\n3060:         if(this.\u00a71t4414s0\u00a7 < 48)\n3062:            return;",
-  "text": "In-combat stance switching is hard-gated on reload >= 48 by an explicit early-return, so 'CANNOT CHANGE STANCE' is a literally true refusal rather than an inference from the switch cost.",
+  "text": "In-combat stance switching has a named public gate in the web build: canChangeStance() = valid action state AND reload >= 48 \u2014 the ledger's HARD-LOCK line is dead code-level, not just caption-level.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3048-3051 (canChangeStance) and :3058-3080 (cycleStance)",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3275 (web v0.717); reference/decompiled/shs3_android/scripts/MCSPlayer.as:3215-3222 (android v0.682); reference/decompiled/shs3_android/scripts/BattleUI.as:262 and :102; docs/gauntlet/L0/index/strings.json[\"175\"]",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "skills-meters/stance-switch-gate-is-reload-48",
-  "lane_impact": "L2/L5: gate = reload >= 48; cost = flat 48; cycle order is strictly Light -> Balanced -> Heavy -> Light (only the three core stances are reachable by the cycle key). Also disproves the previous survey's Android-derived 'maxreload/6' gate \u2014 that constant does not exist in the web player class.",
-  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\"). The recreation's Focus-gated in-combat switch models **removed 2014 behavior**",
+  "id": "skills-meters/crit-is-deterministic-at-full-reload-bar",
+  "lane_impact": "L5 combat-core and skills-meters \u2014 closes ledger blocker \u2464 outright. Crit is a skill-expression mechanic, not RNG: hold the Focus bar at max and your next slash crits. Port the WEB value x1.3 flat; the ledger's existing 'crit = 1.3\u00d7 formula' (REBUILD_READINESS.md:194) was RIGHT and must not be overturned. Also gives the Focus meter its purpose, which the ledger had as a blocker.",
+  "ledger_text": "\u2464 crit **proc** rule (chance vs deterministic) \u2014 entirely absent. [REBUILD_READINESS.md:195]",
   "overturns_ledger": true,
-  "quote": "3048:      public function \u00a71t4470s0\u00a7() : Boolean\n3050:         return this.\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48;\n3058:      public function \u00a71t4472s0\u00a7() : *\n3060:         if(this.\u00a71t4414s0\u00a7 < 48)\n3062:            return;\n3066:            this.\u00a71t3489s0\u00a7(\u00a71t12220s0\u00a7);   // -1 -> Light\n3070:            this.\u00a71t3489s0\u00a7(\u00a71t12221s0\u00a7);   // Light -> Balanced\n3074:            this.\u00a71t3489s0\u00a7(\u00a71t12222s0\u00a7);   // Balanced -> Heavy\n3078:            this.\u00a71t3489s0\u00a7(\u00a71t12220s0\u00a7);   // Heavy -> Light",
-  "text": "The in-combat stance-switch gate is an explicit `reload >= 48` check written down twice \u2014 it did not need to be inferred from the 48-frame charge.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3048-3050 and :3058-3078",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "skills-meters/stance-switch-hard-gate-48",
-  "lane_impact": "L2/L5: settles the survey's claim outright with a direct gate instead of an inference from caption states. Note the off-by-one to reproduce faithfully: the gate opens at raw reload 48, which is exactly where the displayed bar still reads 0 ((48-48)/(192-48)=0), so the refusal caption is on screen for the first frame the switch is legal.",
-  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\")",
-  "overturns_ledger": true,
-  "quote": "3050:         return this.\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48;\n3060:         if(this.\u00a71t4414s0\u00a7 < 48)\n3062:            return;\n3066:            this.\u00a71t3489s0\u00a7(\u00a71t12220s0\u00a7);\n3070:            this.\u00a71t3489s0\u00a7(\u00a71t12221s0\u00a7);\n3074:            this.\u00a71t3489s0\u00a7(\u00a71t12222s0\u00a7);\n3078:            this.\u00a71t3489s0\u00a7(\u00a71t12220s0\u00a7);",
-  "text": "In-combat stance switching is gated by a hard reload >= 48 check, and the switch button cycles only Light -> Balanced -> Heavy -> Light; Dual and Reversed are unreachable from it.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:267-306, cross-applied to the measured 1816x1080 content region of reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/aspect-ratio-truth-closed-from-source",
-  "lane_impact": "ui-hud lane, and every lane holding frame-measured x-fractions. The blocker prescribed 'read stage.stageWidth in a build' -- there is no build, but resizeHandler is the whole answer, and StatsManager.stageScale/stageOffsetX/stageOffsetY/stageFitWidth/stageBaseWidth/stageBaseHeight are the exported contract. Correct conversion for video B is x_game = (x_frame - 60)/2.25 and y_game = y_frame/2.25. This also corrects claim 7's scale model (it used width-fit 2.270 with x0=52, which the game's own code contradicts) -- and under the correct model claim 7's slot match improves to ~2 px on both axes instead of 0.6 px in x and 4 px in y.",
-  "ledger_text": "\u2460 **aspect-ratio truth** (5:3 native \u2192 are x-fractions pillarbox-wrong?) \u2014 *inspect `unt.png` for side-bars; read `stage.stageWidth` in a build.*",
-  "overturns_ledger": true,
-  "quote": "`var originalWidth:int = 800; var originalHeight:int = 480; var originalHeightWithBar:int = 690;` ... `if(originalAspectRatio >= newAspectRatio){ newScale = stageMC.stageWidth / originalWidth; offsetX = 0; offsetY = (stageMC.stageHeight - originalHeight * newScale) / 2; fitWidth = true; } else { newScale = stageMC.stageHeight / originalHeight; offsetX = (stageMC.stageWidth - originalWidth * newScale) / 2; offsetY = 0; fitWidth = false; }` then `StatsManager.stageScale = newScale; StatsManager.stageOffsetX = offsetX; ...`. Measured content 1816x1080 -> newAspectRatio 1.681 > originalAspectRatio 1.667, so the ELSE branch runs: newScale = 1080/480 = 2.25, offsetX = (1816 - 1800)/2 = 8, offsetY = 0.",
-  "text": "Ledger blocker (1) 'aspect-ratio truth' is closed from source without a build: the game min-fits a fixed 800x480 stage and centres on the overflow axis, so for the filmed sessions the scale is 2.25 with an 8 px in-engine inset on top of the 52 px video pillarbox -- frame-measured x-fractions ARE pillarbox-wrong.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:244-256",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/bars-are-untweened-continuous-scalex",
-  "lane_impact": "ui-hud lane + art-anim-audio-feel: closes the first third of blocker (2) outright and supplies the exact readout format, which I frame-confirmed (the same crop shows 20/20 and 26/26 centred on full green and blue bars, matching hp + \"/\" + maxhp). Note the paired *shadow field: every HUD number is drawn twice with an offset, a fidelity detail no ledger row carries. Also corrects claim 6's rider -- the bars are continuous, the cooldown is 12-step quantised; they are not 'the same character'.",
-  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued.",
-  "overturns_ledger": true,
-  "quote": "`this.hptext.text = hp + \"/\" + maxhp; this.hptextshadow.text = hp + \"/\" + maxhp; this.hpbar.bar.scaleX = hp / maxhp;` and `this.chitext.text = chi + \"/\" + maxchi; this.chitextshadow.text = chi + \"/\" + maxchi; this.chibar.bar.scaleX = chi / maxchi;` -- no Tween, no easing, no interpolation anywhere in the class.",
-  "text": "Ledger blocker (2)'s 'bar tween vs snap' question is closed and the answer is snap: both HP and Chi bars are direct, untweened, continuous scaleX assignments with a paired drop-shadow text field.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png, crop (900,900)-(1880,1080) upscaled 2x and crop (0,780)-(1920,1080), adjudicating reference/decompiled/shs3_android/scripts/BattleUI.as:26,275,374,500-511",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "ui-hud/blocker-4-is-wrong-2-abilities-plus-empty-slot",
-  "lane_impact": "ui-hud lane: blocker (4) should be STRUCK, not narrowed. A rebuild following the ledger would wire the third slot to a stance toggle, which the frame shows is wrong -- the stance toggle is the bottom-left bust portrait and the third slot is simply unequipped in this session. Also explains the bright-vs-dark border difference, which no lane had accounted for.",
-  "ledger_text": "\u2463 the \"3 skill slots\" is really ~2 abilities + a stance up-arrow.",
-  "overturns_ledger": true,
-  "quote": "In the crop, left to right: an EMPTY, UNNUMBERED, un-shaded box with a bright silver border; a box labelled '2' holding a claw/fang icon; a box labelled '3' holding the gold up-arrow. The stance control is visibly bottom-LEFT, ~1,100 px away: a circular bust portrait in a red ring. Code: BattleUI.as:503 `skillSlotButton.visible = i < this.slotCount;` makes three boxes; :504 `skillSlotButton.initKeyPressText(this.slotCount - i);` runs only when `StatsManager.skillSlots[i] != null`, else :510 `skillSlotButton.initEmpty();` which clears keypressText (SkillSlotButton.as:128, hence unnumbered) and sets `this.shade.visible = false` (:129, hence the brighter border). battlemodebust is a separate member (BattleUI.as:26) with stancecolor1/highlight/bustcanvas, clicked at :275 -> stanceButtonClick().",
-  "text": "Ledger blocker (4) is factually wrong: the three combat slots are two equipped abilities plus one genuinely EMPTY slot, and the gold up-arrow is one of the abilities -- the stance control is a separate widget on the opposite side of the HUD.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png crop (1380,920)-(1880,1080) upscaled 3x, adjudicated against reference/decompiled/shs3_android/scripts/BattleUI.as:501-511, SkillSlotButton.as:123-135 and BattleUI.as:275,192",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/blocker4-uparrow-is-an-equipped-skill",
-  "lane_impact": "ui-hud: Pass 1 claim 10 made this call; Pass 2 restated it inside claim ui-hud/hud-symbol-metrics with an EMPTY cite and overturns_ledger:false, which loses a real ledger overturn. Filed here with a cite so it is not dropped. It also fixes the slot reading: slotCount = 3 with two skills equipped, key 3 at i=0 (x=760) and key 2 at i=1 (x=700).",
-  "ledger_text": "\u2463 the \"3 skill slots\" is really ~2 abilities + a stance up-arrow.",
-  "overturns_ledger": true,
-  "quote": "Visible in the crop: leftmost box empty AND carrying no numeral, middle box numeral 2 over a claw/fang icon, right box numeral 3 over a gold up-arrow. Code: `skillSlotButton.visible = i < this.slotCount;` then `if(i < equippedSkillsCount && StatsManager.skillSlots[i] != null){ skillSlotButton.initKeyPressText(this.slotCount - i); skillSlotButton.initSkill(...); } else { skillSlotButton.initEmpty(); }`, and initEmpty does `this.keypressText.text = \"\";` (SkillSlotButton.as:128). Stance is bound elsewhere: `if(this.battlemodebust.hitTestPoint(mousex,mousey)){ this.stanceButtonClick(); }` (BattleUI.as:275).",
-  "text": "Ledger blocker (4) is wrong: the gold up-arrow in slot 3 is an equipped skill, not the stance control, because a slot only receives a keypress numeral on the branch where StatsManager.skillSlots[i] is non-null.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:56,98-100,382-395",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/combo-widget-content-held-pop-unheld",
-  "lane_impact": "ui-hud lane + art-anim-audio-feel: catalogues the combo widget (structure + copy + show/hide rule) and localises the remaining unknown precisely to symbol2952's timeline. Frame-confirmed in crop (1560,0)-(1920,200) upscaled 3x of duel_dense/Nr4fQstqHDM_428.0.png: a red brush '3' with a hard black offset shadow above a black plaque reading HIT COMBO -- the number+shadow pair rendered. Also a third independent confirmation of claim 1's resname keying.",
-  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued.",
-  "overturns_ledger": true,
-  "quote": "`this.combo.combolabel.text = LangManager.getString(45);` (resname 45 = 'Hit Combo'), `this.combo.mouseEnabled = false;`, then `showCombo(num)`: `this.combo.visible = true; this.combo.combo.text = num.toString(); this.combo.comboshadow.text = num.toString();` and `hideCombo()`: `this.combo.visible = false;`. No tween, no gotoAndPlay, no scale or alpha touched.",
-  "text": "The combo counter's content and structure are fully held -- a number plus a shadow duplicate under a label reading 'Hit Combo' -- but there is no code-side animation, so the 'combo pop' half of blocker (2) is timeline motion inside symbol2952 and stays open.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png, crops (40,900)-(700,1080) upscaled 2.4x and (1380,920)-(1880,1080) upscaled 3x",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/frame-refutes-stance-up-arrow",
-  "lane_impact": "L-ui-hud: closes ledger blocker \u2463 outright rather than leaving it inside a STILL_UNHELD. Corroborated in code \u2014 stance is battlemodebust.hitTestPoint -> stanceButtonClick() (BattleUI.as:275-277), while slot art comes from SkillSlotButton.image and initEmpty() clears keypressText (:124-129). THE FRAME WINS over the ledger. Also touches skills-meters (the slot strip is 3 skill slots, one empty, not 2 skills + a stance widget).",
-  "ledger_text": "\u2463 the \"3 skill slots\" is really ~2 abilities + a stance up-arrow.",
-  "overturns_ledger": true,
-  "quote": "Bottom-left crop shows a portrait bust inside a RED stance ring, a green 20/20 HP bar, a blue 26/26 Chi bar, a brown 'CANNOT CHANGE STANCE' plaque directly beneath them and a yellow '150% DAMAGE' line. Slot-strip crop shows three boxes: leftmost empty with a bright metallic border and NO number, middle labelled '2' holding a pale claw/beast icon, right labelled '3' holding a gold up-arrow. A stance control does not carry a keypress label.",
-  "text": "Ledger blocker \u2463 is wrong: the gold up-arrow is a keypress-bound skill in slot 3, not a stance control \u2014 the stance control is the bottom-left portrait bust.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:271, :277-283; SWF headers of reference/decrypted/shs3_payload_decoded.swf and reference/decrypted/shs3_android_payload_decoded.swf",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/friend-bar-690",
-  "lane_impact": "ui-hud and meta-social, not art: the ledger's aspect-ratio unknown resolves to a TWO-MODE layout \u2014 800x480 with the friend bar off (wide viewports, which is what both longplays record) and 800x690 with a game-drawn friendpanel on (narrow viewports). Neither ui-hud nor meta-social holds a friend panel. Also retires the false frame-vs-doc conflict in art-anim-audio-feel/aspect-ratio-frame-wins.",
-  "ledger_text": "**Aspect-ratio truth** \u2014 native canvas is **800\u00d7480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong.",
-  "overturns_ledger": true,
-  "quote": "GameEngine.as:271 `var originalHeightWithBar:int = 690;`  \u00b7  :277-283 `if(newAspectRatio <= originalWithBarAspectRatio) { originalAspectRatio = originalWithBarAspectRatio; originalHeight = originalHeightWithBar; StatsManager.stageShowingFriendBar = true; if(OverworldHUD.instance != null) { OverworldHUD.instance.friendpanel.init(); } }`  \u00b7  headers I decoded: shs3_payload_decoded.swf rect 800.0 x 690.0 \u00b7 shs3_android_payload_decoded.swf rect 800.0 x 480.0",
-  "text": "The 690-px stage height is not container chrome: it is originalHeightWithBar, a viewport-driven in-game friend panel the engine lays out itself, and the web build shipped the 690 stage while the Android build shipped the 480 one.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png, crop (200,940)-(600,1070), colour-keyed masks (green: G>110 and G-R>45 and G-B>45; blue: B>110 and B-R>45 and B-G>25)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/hp-chi-bar-geometry-measured",
-  "lane_impact": "L4 ui-hud: partially closes 'combat-HUD geometry' without any JPEXS symbol export. Directly overturns the surveyor's own ui-hud/hud-symbol-metrics STILL_UNHELD, which refused to name these numbers on the grounds that assets.swf symbol shapes were not exported \u2014 the frame settles the on-screen geometry, which is what a 1:1 rebuild needs.",
-  "ledger_text": "| **ui-hud** | 57 | combat-HUD geometry, VS/FIGHT/result cards, chrome family | aspect-ratio truth; dynamic HUD \"feel\" (bar tween, combo pop); off-screen screens (pause/options/dialogue metrics) |",
-  "overturns_ledger": true,
-  "quote": "HP green fill (reading 20/20, so full width): frame x 246..513, y 972..988 -> game x 85.5..203.2, y 430.6..437.7, ~118 x 7.5 game px. Chi blue fill (26/26): frame x 245..513, y 1000..1019 -> game x 85.1..203.2, y 442.9..451.3, ~118.6 x 8.8 game px. Shared left edge at game x ~85, shared right edge at ~203. Also: pause glyph centre at game (785.2, 17.0), 56 frame px across; AUTO SLASH plaque brown fill game (13.2, 11.0) to (136.2, 37.9).",
-  "text": "The HP and Chi bar rectangles the ledger calls 'combat-HUD geometry' and the surveyor called ungrounded are measurable straight off a frame, and I measured them.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/extracted/sprites/DefineSprite_3632_shs3_fla.PauseScreen_51/1.png (opened whole, 802x481, alpha-composited over a dark ground and viewed) and reference/extracted/sprites/DefineSprite_934_shs3_fla.skillSlotBG_755/1-5.png (opened, 5 frames at 56x55, rendered as a 4x NEAREST strip)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/hud-art-already-exported",
-  "lane_impact": "ui-hud lane, and it changes the close-path for every art-bearing lane. The ledger's Tier-3 'overworld HUD pixel geometry' and blocker \u2464's pause half are closable today by reading files already in the repo - no new export, no video re-pass, and nothing gated on the encrypted 124_Mobile_ImageResource. It also overturns this pass's own STILL_UNHELD residual (ui-hud/hud-symbol-metrics) and removes one of the two reasons its score rationale gives for holding ui-hud below 90. Cross-lane: art-anim-audio-feel and world-exploration inherit the same 1,822-SVG / 827-sprite corpus.",
-  "ledger_text": "\u2464 pause/options/dialogue-box exact metrics.",
-  "overturns_ledger": true,
-  "quote": "Visibly in PauseScreen_51/1.png: a full-stage near-black overlay 802x481 px carrying the Straw Hat Samurai 'DUELS' logo (white kanji over a red brush DUELS) centred around y=130-260 and a white 'GAME PAUSED' line at about y=285. Visibly in skillSlotBG_755: five 56x55 rounded-square slot faces - dark border/olive fill, bright cream border/olive fill, dark border/black fill, bright cream border/black fill, dark border/olive fill. Frame 4 is exactly the empty highlighted slot seen in duel_dense/Nr4fQstqHDM_428.0.png. Also present: shs3_fla.autoslashbutton, chatTextBattle, skillnodeinner, MinimapIcon, MinimapRoomIcon, speechbubble, CharSlot, QuestLogButtonBG.",
-  "text": "The JPEXS shape/sprite export that this lane's residual says is missing already exists on disk from the WEB payload: 1,822 shape SVGs and 827 rendered DefineSprite directories, including the pause screen at 802x481 and the 5-frame skill-slot box at 56x55.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/sprites/ \u2014 DefineSprite_3632_shs3_fla.PauseScreen_51/1.png (802x481), DefineSprite_934_shs3_fla.skillSlotBG_755/1-5.png (56x55 canvas, 51x51 bright border), DefineSprite_3621_shs3_fla.autoslashbutton_43/1-2.png (129x31), DefineSprite_3607_shs3_fla.hurtred_32/1-7.png (800x480), DefineSprite_3394_shs3_fla.stancecolor1_56/1-3.png (63x63), DefineSprite_*_animatedBrush_62 (371x166, 8), chatTextBattle_45 (437x212, 2), CharSlot_126 (267x50), MinimapIcon_668 (15x18, 20), MinimapRoomIcon_672 (20x30, 17), speechbubble_422 (137x110, 6), skillnodeinner_89 (64x64, 7), QuestLogButtonBG_548 (314x43, 5), clanemblem_778 (47x47, 7); plus reference/extracted/shapes/ 1822 .svg",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/hud-sprite-art-on-disk",
-  "lane_impact": "L-ui-hud: refutes the survey's own STILL_UNHELD claim 13 and closes the pause half of blocker \u2464 as art, not just behaviour. Also cross-lane: art-anim-audio-feel (vignette, brush stroke, stance rings) and world-exploration (minimap icon sets, WorldMapMarkerBase, town_* sprites) are all sitting on unmined assets. The next lane should treat reference/extracted/sprites+shapes as a first-class evidence source alongside the XML.",
-  "ledger_text": "\u2464 pause/options/dialogue-box exact metrics.",
-  "overturns_ledger": true,
-  "quote": "$ ls reference/extracted/sprites | wc -l -> 827 ; $ ls reference/extracted/sprites | grep shs3_fla | wc -l -> 39 ; $ ls reference/extracted/shapes | wc -l -> 1822. Measured: PauseScreen_51/1.png = 802x481 RGBA and visibly renders a black field, the SHS:Duels kanji logo and the words GAME PAUSED. skillSlotBG_755 frames 1-5 = 56x55 canvas with a 51x51 bright-border bbox (alpha>200 and luma>150).",
-  "text": "The web payload's HUD symbol art is already exported to disk \u2014 reference/extracted/sprites/ holds 827 DefineSprite renders (39 class-named, PNG per frame) and reference/extracted/shapes/ holds 1,822 shape SVGs \u2014 so 'symbol geometry is not on disk' is false and the HUD panel/plaque/slot pixel geometry is available now, at 1:1 game-pixel scale, with no Android caveat.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/sprites/DefineSprite_3607_shs3_fla.hurtred_32/1-7.png + reference/decompiled/shs3_android/scripts/BattleUI.as:424-428 + shs3_android_fla/hurtred_29.as:12,15-18",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "ui-hud/hurtred-vignette-catalogued",
-  "lane_impact": "L-ui-hud: closes the 'vignette ramp' third of blocker \u2461, which the survey left open (its claim 6 only extended blocker \u2461 to the cooldown widget). Also feeds art-anim-audio-feel, whose palette digest can now carry the exact hurt-vignette hue and duration.",
-  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued.",
-  "overturns_ledger": true,
-  "quote": "BattleUI.as:426-427 `this.hurtred.visible = true; this.hurtred.gotoAndPlay(1);`; hurtred_29.as:12 `addFrameScript(6,this.frame7);` and :15-18 `internal function frame7() : * { stop(); }`. Measured per frame: frames 1-6 corner RGBA [153,0,0,251], centre RGBA [0,0,0,0], mean alpha 135.88; frame 7 maxA 0 (entirely blank).",
-  "text": "The damage vignette the ledger calls 'uncatalogued' is fully specified: an 800x480 full-screen red radial (#990000 at alpha 251 on the edge, transparent at centre), played from frame 1, holding 6 identical frames and blanking on frame 7 where it stops \u2014 7 frames = 292 ms at 24 fps.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/payload.xml:626573-626600 (DefineSpriteTag spriteId=1691, the symbol \u00a71t401s0\u00a7/InteractUI embeds)",
-  "citelint": {
-   "notes": [
-    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
-   ],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/interactui-panel-geometry",
-  "lane_impact": "ui-hud + rebirth-elements: twips/20 = px, so titleText sits at (10.3, 70) px, buttons share x = 10 px at y = 109 / 148 / 187 / 226 / 265 px \u2014 a uniform 39 px row pitch \u2014 and elementCircle anchors at the sprite origin. Same technique opens every other named UI sprite in payload.xml.",
-  "ledger_text": "\u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth).",
-  "overturns_ledger": true,
-  "quote": "name=\"elementCircle\" translateX=\"0\" translateY=\"0\" (depth 37)\nname=\"titleText\"     translateX=\"206\"  translateY=\"1400\"\nname=\"button1\"       translateX=\"200\"  translateY=\"2180\"\nname=\"button2\"       translateX=\"200\"  translateY=\"2960\"\nname=\"button3\"       translateX=\"200\"  translateY=\"3740\"\nname=\"button4\"       translateX=\"200\"  translateY=\"4520\"\nname=\"button5\"       translateX=\"200\"  translateY=\"5300\"",
-  "text": "InteractUI's panel geometry is held in stage pixels straight from the payload placement matrices, so the rebirth menu can be laid out without guessing.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/shapes/ (1,822 *.svg) and reference/extracted/sprites/ (827 dirs), e.g. DefineSprite_3621_shs3_fla.autoslashbutton_43/1.png, DefineSprite_934_shs3_fla.skillSlotBG_755/1.png, DefineSprite_3632_shs3_fla.PauseScreen_51/1.png",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/jpexs-export-already-on-disk",
-  "lane_impact": "L-ui-hud: the declared residual is already closed, so the lane's STILL_UNHELD is stale and its Tier-3 recommendation mis-directs. Also feeds art-anim-audio-feel (HUD chrome art no longer needs the encrypted 124_Mobile_ImageResource) and any lane that assumed only scripts/ was recovered from the payload.",
-  "ledger_text": "\u2464 pause/options/dialogue-box exact metrics.",
-  "overturns_ledger": true,
-  "quote": "Measured opaque bounding boxes: autoslashbutton_43 = 129x31 (bbox fills canvas), skillSlotBG_755 = 56x55 (opened it: the rounded metallic slot frame visible in the frame crop), PauseScreen_51 = 802x481. shapes/1003.svg header: `ffdec:objectType=\"shape\" height=\"30.55px\" wid...`. Also present: stancecolor1_56, chatTextBattle_45, MinimapIcon_668, MinimapRoomIcon_672, skillnodeinner_89, speechbubble_422, QuestLogButtonBG_548.",
-  "text": "The JPEXS shape/sprite export that this lane schedules as the remaining close-path has already been run and is in the repo \u2014 1,822 web-build SVGs and 827 sprite directories, including the HUD symbols declared missing.",
+  "quote": "\u00a71t99s0\u00a7.as:3272  if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)\\n{\\n   return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;\\n}\\n\\nMCSPlayer.as:3215  if(this.reload == this.maxreload)\\n{\\n   if(this.stance != LIGHT_STANCE)\\n   {\\n      return maxDamage * 1.2 + this.STAT_CRITICALDMG;\\n   }\\n   return maxDamage * 1.5 + this.STAT_CRITICALDMG;\\n}\\n\\nBattleUI.as:262  this.crittext.visible = percentage >= 1 && this.reloadbar.visible;\\nstrings.json[\"175\"] = 'Critical Hit'",
+  "text": "The crit proc rule is NOT missing. Criticals are deterministic, not a chance roll: a slash crits exactly when the reload/Focus bar is full (reload == maxreload). WEB v0.717 multiplies by a flat 1.3 and adds the gear stat STAT_CRITICALDMG; ANDROID v0.682 retuned this to x1.5 in Light Stance and x1.2 in every other stance. The UI confirms it \u2014 the 'Critical Hit' text is bound to the reload bar being at 100%.",
   "verdict": "HELD"
  }
 ]

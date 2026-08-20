@@ -54,39 +54,66 @@ claim did receive a verdict. And §2's L6 *"~150 animations"* is **471**, measur
 `index/android_blobs.json` (`<anim>` summed over the 18 `MCSCharacter_*` blobs;
 `99_HumanAnimationData` alone = 158). Not "~450".
 
-### The finish sweep — 5 small runs, not one 45-agent script
+### The finish sweep — WALL #5 HIT MID-FLIGHT. Both runs partly landed; all work salvaged.
 
-A usage wall then costs ONE run, not a stage table. Every run extracts and commits on
-landing. **Never edit a live workflow script mid-run** — it burns the resume cache.
+WF-1 and WF-2 ran concurrently and both were cut by the same session limit (reset 5pm
+Asia/Kuala_Lumpur, 2026-08-20). **The fail-closed accounting worked** — each returned a
+loud `INTEGRITY: INCOMPLETE` naming every dead agent by label, so nothing was
+mis-counted as clean.
 
-| Run | Script | Agents | What | Run ID | State |
-|---|---|---:|---|---|---|
-| **WF-1** | `l0-finish-wf1.workflow.js` | 12 | the 4 surveys never run (android-blobs · string-table · frames · uistrings-payload) + cite/hunter critics | `wf_54dcdf8e-9a3` | ▶ launched 2026-08-20 |
-| **WF-2** | `l0-finish-wf2.workflow.js` | 12 | the 12 source critics over the 6 completed sweeps — judges 206 banked claims, does NOT re-survey | `wf_db13a5de-161` | ▶ launched 2026-08-20, concurrent with WF-1 |
-| **WF-3a** | `l0-finish-wf3.workflow.js` (args `t1`) | 18 | judge the **203** critic findings that CLAIM A LEDGER OVERTURN — 9 batches x cite+hunter | — | packets built |
-| **WF-3b** | `l0-finish-wf3.workflow.js` (args `t2`) | 9 | judge the **407** corroborating findings — 9 batches x cite | — | packets built |
-| **WF-4** | `l0-finish-wf4.workflow.js` | ~17 | dry-loop (a round only counts if it RAN) + completeness critic | — | queued |
+| Run | Run ID | Agents | Landed | Died |
+|---|---|---:|---|---|
+| **WF-1** | `wf_54dcdf8e-9a3` | 12 | **4/4 surveys** + 4 critics | `android-blobs:hunter` `uistrings-payload:hunter` `frames:cite` `frames:hunter` |
+| **WF-2** | `wf_db13a5de-161` | 12 | 6/12 critics | both lenses of `itemdata` `bindata` `actionscript` |
 
-**No claim is left unjudged.** An earlier plan capped WF-3 at the overturn-claimers and
-declared the rest leads; ultracode removed the budget reason for that, so the tiers now
-differ in DEPTH only — 610 of 610 findings get a critic.
-
-**`worklist/` is the judging input**, built by `scripts/gauntlet/buildWorklist.py`:
+**Harvest, extracted to `run3/` and committed:**
 
 ```
-buildWorklist: 1087 rows -> 1048 distinct ids (39 duplicate rows merged)
-  already judged           232
-  WF-2 source-sweep claims 206 across 6 packets
-  WF-3a critic findings   203 across 9 batches x cite+hunter = 18 agents
-  WF-3b critic findings   407 across 9 batches x cite = 9 agents
+salvageJournal: surveys=4 critics=10 claims=156 verdicts=242
+citeLint run3:  156 claims — 133 RESOLVES · 0 BROKEN · 18 QUOTE_UNVERIFIED · 5 UNCHECKABLE
 ```
+
+**0 BROKEN on 156 fresh claims** — against 22-before-fixes on the older corpus. The
+machine-check warning carried in the workflow LAW block changed how agents cite.
+**0 VOID on 242 verdicts** — every verdict carries the artifact its author opened.
+
+⚑ **The write-to-disk-before-returning rule paid out again.** `critics/src-uistrings-payload.hunter.md`
+(21 KB) is on disk even though that agent is counted DEAD — it finished its review, wrote
+it, then died before returning the structured object. Prose recovered, verdicts lost.
+
+**Judged went 232 → 370.** `questdata` `skilldata` `npcdata` are now fully judged, and so
+are the 3 new surveys `android-blobs` `string-table` `uistrings-payload`.
+
+### What is left — `worklist/` self-heals, so this table is regenerated, not maintained
+
+`python3 scripts/gauntlet/buildWorklist.py --root docs/gauntlet/L0` pools every run,
+drops any unit whose critics have since landed, and rewrites both the packets and
+`SEEN_CLAIM_IDS.txt`. Current output:
+
+```
+buildWorklist: 1243 rows -> 1204 distinct ids (39 duplicate rows merged)
+  already judged           370
+  WF-2 source-sweep claims 140 across 4 packets   (itemdata 38 · bindata 36 · actionscript 45 · frames 21)
+  WF-3a critic findings   235 across 10 batches x cite+hunter = 20 agents
+  WF-3b critic findings   459 across 10 batches x cite = 10 agents
+```
+
+| Run | Script | Agents | What | State |
+|---|---|---:|---|---|
+| **WF-2b** | `l0-finish-wf2.workflow.js` | 8 | the 4 packets whose critics died — itemdata · bindata · actionscript · frames | ⏳ next |
+| **WF-3a** | `l0-finish-wf3.workflow.js` args `t1` | 20 | judge the 235 findings CLAIMING A LEDGER OVERTURN | queued |
+| **WF-3b** | `l0-finish-wf3.workflow.js` args `t2` | 10 | judge the 459 corroborating findings | queued |
+| **WF-4** | `l0-finish-wf4.workflow.js` | ~17 | dry-loop x 4 targets (a round only counts if it RAN) + completeness | queued |
+
+**No claim is left unjudged.** The tiers differ in DEPTH only — §0 gives no third
+option, and a claim nobody judges is a lead forever.
 
 Packets are **blind-safe by construction** (§3.2): they carry the structured claim and
 the machine cite audit, never the surveyor's prose. Critics are told explicitly not to
 open `sources/*.md` — that is what keeps the review blind while still not re-surveying.
 
-⚠ **233 vs 232 is not a discrepancy** — 233 claim ROWS carry a verdict, across 232
-distinct IDS. Two of the judged rows share an id with a duplicate.
+⚠ **233 vs 232 is not a discrepancy** — 233 claim ROWS carried a verdict at run 2, across
+232 distinct IDS. Two judged rows share an id with a duplicate.
 
 ---
 

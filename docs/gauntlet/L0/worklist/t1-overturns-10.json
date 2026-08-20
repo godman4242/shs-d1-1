@@ -1,0 +1,319 @@
+[
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:271, :277-283; SWF headers of reference/decrypted/shs3_payload_decoded.swf and reference/decrypted/shs3_android_payload_decoded.swf",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/friend-bar-690",
+  "lane_impact": "ui-hud and meta-social, not art: the ledger's aspect-ratio unknown resolves to a TWO-MODE layout \u2014 800x480 with the friend bar off (wide viewports, which is what both longplays record) and 800x690 with a game-drawn friendpanel on (narrow viewports). Neither ui-hud nor meta-social holds a friend panel. Also retires the false frame-vs-doc conflict in art-anim-audio-feel/aspect-ratio-frame-wins.",
+  "ledger_text": "**Aspect-ratio truth** \u2014 native canvas is **800\u00d7480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong.",
+  "overturns_ledger": true,
+  "quote": "GameEngine.as:271 `var originalHeightWithBar:int = 690;`  \u00b7  :277-283 `if(newAspectRatio <= originalWithBarAspectRatio) { originalAspectRatio = originalWithBarAspectRatio; originalHeight = originalHeightWithBar; StatsManager.stageShowingFriendBar = true; if(OverworldHUD.instance != null) { OverworldHUD.instance.friendpanel.init(); } }`  \u00b7  headers I decoded: shs3_payload_decoded.swf rect 800.0 x 690.0 \u00b7 shs3_android_payload_decoded.swf rect 800.0 x 480.0",
+  "text": "The 690-px stage height is not container chrome: it is originalHeightWithBar, a viewport-driven in-game friend panel the engine lays out itself, and the web build shipped the 690 stage while the Android build shipped the 480 one.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png, crop (200,940)-(600,1070), colour-keyed masks (green: G>110 and G-R>45 and G-B>45; blue: B>110 and B-R>45 and B-G>25)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/hp-chi-bar-geometry-measured",
+  "lane_impact": "L4 ui-hud: partially closes 'combat-HUD geometry' without any JPEXS symbol export. Directly overturns the surveyor's own ui-hud/hud-symbol-metrics STILL_UNHELD, which refused to name these numbers on the grounds that assets.swf symbol shapes were not exported \u2014 the frame settles the on-screen geometry, which is what a 1:1 rebuild needs.",
+  "ledger_text": "| **ui-hud** | 57 | combat-HUD geometry, VS/FIGHT/result cards, chrome family | aspect-ratio truth; dynamic HUD \"feel\" (bar tween, combo pop); off-screen screens (pause/options/dialogue metrics) |",
+  "overturns_ledger": true,
+  "quote": "HP green fill (reading 20/20, so full width): frame x 246..513, y 972..988 -> game x 85.5..203.2, y 430.6..437.7, ~118 x 7.5 game px. Chi blue fill (26/26): frame x 245..513, y 1000..1019 -> game x 85.1..203.2, y 442.9..451.3, ~118.6 x 8.8 game px. Shared left edge at game x ~85, shared right edge at ~203. Also: pause glyph centre at game (785.2, 17.0), 56 frame px across; AUTO SLASH plaque brown fill game (13.2, 11.0) to (136.2, 37.9).",
+  "text": "The HP and Chi bar rectangles the ledger calls 'combat-HUD geometry' and the surveyor called ungrounded are measurable straight off a frame, and I measured them.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/extracted/sprites/DefineSprite_3632_shs3_fla.PauseScreen_51/1.png (opened whole, 802x481, alpha-composited over a dark ground and viewed) and reference/extracted/sprites/DefineSprite_934_shs3_fla.skillSlotBG_755/1-5.png (opened, 5 frames at 56x55, rendered as a 4x NEAREST strip)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/hud-art-already-exported",
+  "lane_impact": "ui-hud lane, and it changes the close-path for every art-bearing lane. The ledger's Tier-3 'overworld HUD pixel geometry' and blocker \u2464's pause half are closable today by reading files already in the repo - no new export, no video re-pass, and nothing gated on the encrypted 124_Mobile_ImageResource. It also overturns this pass's own STILL_UNHELD residual (ui-hud/hud-symbol-metrics) and removes one of the two reasons its score rationale gives for holding ui-hud below 90. Cross-lane: art-anim-audio-feel and world-exploration inherit the same 1,822-SVG / 827-sprite corpus.",
+  "ledger_text": "\u2464 pause/options/dialogue-box exact metrics.",
+  "overturns_ledger": true,
+  "quote": "Visibly in PauseScreen_51/1.png: a full-stage near-black overlay 802x481 px carrying the Straw Hat Samurai 'DUELS' logo (white kanji over a red brush DUELS) centred around y=130-260 and a white 'GAME PAUSED' line at about y=285. Visibly in skillSlotBG_755: five 56x55 rounded-square slot faces - dark border/olive fill, bright cream border/olive fill, dark border/black fill, bright cream border/black fill, dark border/olive fill. Frame 4 is exactly the empty highlighted slot seen in duel_dense/Nr4fQstqHDM_428.0.png. Also present: shs3_fla.autoslashbutton, chatTextBattle, skillnodeinner, MinimapIcon, MinimapRoomIcon, speechbubble, CharSlot, QuestLogButtonBG.",
+  "text": "The JPEXS shape/sprite export that this lane's residual says is missing already exists on disk from the WEB payload: 1,822 shape SVGs and 827 rendered DefineSprite directories, including the pause screen at 802x481 and the 5-frame skill-slot box at 56x55.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/ \u2014 DefineSprite_3632_shs3_fla.PauseScreen_51/1.png (802x481), DefineSprite_934_shs3_fla.skillSlotBG_755/1-5.png (56x55 canvas, 51x51 bright border), DefineSprite_3621_shs3_fla.autoslashbutton_43/1-2.png (129x31), DefineSprite_3607_shs3_fla.hurtred_32/1-7.png (800x480), DefineSprite_3394_shs3_fla.stancecolor1_56/1-3.png (63x63), DefineSprite_*_animatedBrush_62 (371x166, 8), chatTextBattle_45 (437x212, 2), CharSlot_126 (267x50), MinimapIcon_668 (15x18, 20), MinimapRoomIcon_672 (20x30, 17), speechbubble_422 (137x110, 6), skillnodeinner_89 (64x64, 7), QuestLogButtonBG_548 (314x43, 5), clanemblem_778 (47x47, 7); plus reference/extracted/shapes/ 1822 .svg",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/hud-sprite-art-on-disk",
+  "lane_impact": "L-ui-hud: refutes the survey's own STILL_UNHELD claim 13 and closes the pause half of blocker \u2464 as art, not just behaviour. Also cross-lane: art-anim-audio-feel (vignette, brush stroke, stance rings) and world-exploration (minimap icon sets, WorldMapMarkerBase, town_* sprites) are all sitting on unmined assets. The next lane should treat reference/extracted/sprites+shapes as a first-class evidence source alongside the XML.",
+  "ledger_text": "\u2464 pause/options/dialogue-box exact metrics.",
+  "overturns_ledger": true,
+  "quote": "$ ls reference/extracted/sprites | wc -l -> 827 ; $ ls reference/extracted/sprites | grep shs3_fla | wc -l -> 39 ; $ ls reference/extracted/shapes | wc -l -> 1822. Measured: PauseScreen_51/1.png = 802x481 RGBA and visibly renders a black field, the SHS:Duels kanji logo and the words GAME PAUSED. skillSlotBG_755 frames 1-5 = 56x55 canvas with a 51x51 bright-border bbox (alpha>200 and luma>150).",
+  "text": "The web payload's HUD symbol art is already exported to disk \u2014 reference/extracted/sprites/ holds 827 DefineSprite renders (39 class-named, PNG per frame) and reference/extracted/shapes/ holds 1,822 shape SVGs \u2014 so 'symbol geometry is not on disk' is false and the HUD panel/plaque/slot pixel geometry is available now, at 1:1 game-pixel scale, with no Android caveat.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/DefineSprite_3607_shs3_fla.hurtred_32/1-7.png + reference/decompiled/shs3_android/scripts/BattleUI.as:424-428 + shs3_android_fla/hurtred_29.as:12,15-18",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/hurtred-vignette-catalogued",
+  "lane_impact": "L-ui-hud: closes the 'vignette ramp' third of blocker \u2461, which the survey left open (its claim 6 only extended blocker \u2461 to the cooldown widget). Also feeds art-anim-audio-feel, whose palette digest can now carry the exact hurt-vignette hue and duration.",
+  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued.",
+  "overturns_ledger": true,
+  "quote": "BattleUI.as:426-427 `this.hurtred.visible = true; this.hurtred.gotoAndPlay(1);`; hurtred_29.as:12 `addFrameScript(6,this.frame7);` and :15-18 `internal function frame7() : * { stop(); }`. Measured per frame: frames 1-6 corner RGBA [153,0,0,251], centre RGBA [0,0,0,0], mean alpha 135.88; frame 7 maxA 0 (entirely blank).",
+  "text": "The damage vignette the ledger calls 'uncatalogued' is fully specified: an 800x480 full-screen red radial (#990000 at alpha 251 on the edge, transparent at centre), played from frame 1, holding 6 identical frames and blanking on frame 7 where it stops \u2014 7 frames = 292 ms at 24 fps.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_431.0.png, crop (150,960)-(560,1050) upscaled 4x LANCZOS, compared against frames 427.0 and 429.0 (same crop); contrast reference/frames/combat_frames/Nr4fQstqHDM_t0130s.png (full 1920x1080, overworld); docs/gauntlet/L0/index/strings.json[\"4132\"]",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/in-combat-hud-is-three-bars",
+  "lane_impact": "L7 ui-hud and L5 combat-core \u2014 the HUD spec needs a third meter, and it is the same meter that gates stance switching and triggers criticals. The overworld HUD (two bars + XP + minimap + action row) is a genuinely different layout and should be specced separately.",
+  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued. [REBUILD_READINESS.md:235]",
+  "overturns_ledger": true,
+  "quote": "Visibly in the crop: a circular straw-hat portrait medallion ringed in RED; a green bar reading '20/20'; directly below it a blue bar reading '26/26'; directly below that a tan/gold bar with 'CANNOT CHANGE STANCE' overlaid; below the cluster yellow text '150% DAMAGE'. Across frames 427.0 / 429.0 / 431.0 the tan bar's fill length changes, so it is a meter, not a plate. Corroboration: BattleUI.as:60 'public var reloadbar:MovieClip;' and MCSPlayer.as:2977 'if(this.reload < this.maxreload / 6) { return; }'. strings.json[\"4132\"] = 'Eat this potato to get the 150% Damage buff.\\n\\nNote: Only one buff may be active at a time.'",
+  "text": "The in-combat player HUD has THREE bars, not two: green HP over blue Chi over a third tan/gold reload (Focus) bar. The third bar carries the status text 'CANNOT CHANGE STANCE' when it is below a sixth of max. The two-bar reading comes from overworld frames, where the reload bar is hidden. Separately, the yellow '150% DAMAGE' text under the bars is a temporary food buff, not a stance or crit multiplier \u2014 mis-reading it as a combat constant is an easy trap.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/payload.xml:626573-626600 (DefineSpriteTag spriteId=1691, the symbol \u00a71t401s0\u00a7/InteractUI embeds)",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/interactui-panel-geometry",
+  "lane_impact": "ui-hud + rebirth-elements: twips/20 = px, so titleText sits at (10.3, 70) px, buttons share x = 10 px at y = 109 / 148 / 187 / 226 / 265 px \u2014 a uniform 39 px row pitch \u2014 and elementCircle anchors at the sprite origin. Same technique opens every other named UI sprite in payload.xml.",
+  "ledger_text": "\u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth).",
+  "overturns_ledger": true,
+  "quote": "name=\"elementCircle\" translateX=\"0\" translateY=\"0\" (depth 37)\nname=\"titleText\"     translateX=\"206\"  translateY=\"1400\"\nname=\"button1\"       translateX=\"200\"  translateY=\"2180\"\nname=\"button2\"       translateX=\"200\"  translateY=\"2960\"\nname=\"button3\"       translateX=\"200\"  translateY=\"3740\"\nname=\"button4\"       translateX=\"200\"  translateY=\"4520\"\nname=\"button5\"       translateX=\"200\"  translateY=\"5300\"",
+  "text": "InteractUI's panel geometry is held in stage pixels straight from the payload placement matrices, so the rebirth menu can be laid out without guessing.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/shapes/ (1,822 *.svg) and reference/extracted/sprites/ (827 dirs), e.g. DefineSprite_3621_shs3_fla.autoslashbutton_43/1.png, DefineSprite_934_shs3_fla.skillSlotBG_755/1.png, DefineSprite_3632_shs3_fla.PauseScreen_51/1.png",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/jpexs-export-already-on-disk",
+  "lane_impact": "L-ui-hud: the declared residual is already closed, so the lane's STILL_UNHELD is stale and its Tier-3 recommendation mis-directs. Also feeds art-anim-audio-feel (HUD chrome art no longer needs the encrypted 124_Mobile_ImageResource) and any lane that assumed only scripts/ was recovered from the payload.",
+  "ledger_text": "\u2464 pause/options/dialogue-box exact metrics.",
+  "overturns_ledger": true,
+  "quote": "Measured opaque bounding boxes: autoslashbutton_43 = 129x31 (bbox fills canvas), skillSlotBG_755 = 56x55 (opened it: the rounded metallic slot frame visible in the frame crop), PauseScreen_51 = 802x481. shapes/1003.svg header: `ffdec:objectType=\"shape\" height=\"30.55px\" wid...`. Also present: stancecolor1_56, chatTextBattle_45, MinimapIcon_668, MinimapRoomIcon_672, skillnodeinner_89, speechbubble_422, QuestLogButtonBG_548.",
+  "text": "The JPEXS shape/sprite export that this lane schedules as the remaining close-path has already been run and is in the repo \u2014 1,822 web-build SVGs and 827 sprite directories, including the HUD symbols declared missing.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/DefineSprite_3632_shs3_fla.PauseScreen_51/1.png; SWF headers of reference/decrypted/shs3_payload_decoded.swf and shs3_android_payload_decoded.swf parsed first-hand",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/pausescreen-sprite-confirms-play-field",
+  "lane_impact": "L-ui-hud: separates the two numbers the lane has been conflating \u2014 the web STAGE is 800x690 (the authored canvas, friend-bar layout) while the web PLAY FIELD is 800x480. Both are now held from web-build artifacts, so no android caveat is needed for either, and the 'read stage.stageWidth in a build' instruction in the ledger is moot.",
+  "ledger_text": "\u2460 aspect-ratio truth (5:3 native \u2192 are x-fractions pillarbox-wrong?) \u2014 inspect unt.png for side-bars; read stage.stageWidth in a build.",
+  "overturns_ledger": true,
+  "quote": "PauseScreen_51 rasterises to 802 x 481 px with the opaque bbox filling the canvas \u2014 a full-play-field overlay from the WEB payload. Parsed SWF header rects: shs3_payload_decoded.swf = 800.0 x 690.0 @ 24.0 fps, 6 frames; shs3_android_payload_decoded.swf = 800.0 x 480.0 @ 24.0 fps, 6 frames.",
+  "text": "A web-build-native artifact confirms the 800x480 play field, so blocker \u2460 no longer has to borrow the Android build's stage rect \u2014 which matters, because the web SWF's own stage rect is 800x690.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png vs Nr4fQstqHDM_428.9.png, crop (1710,955)-(1845,1080) upscaled 4x side by side; plus max-vertical-luminance-step tracking across all 42 duel_dense frames, interior rows 968..1064",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/shade-wipe-is-vertical",
+  "lane_impact": "L4 ui-hud: closes the cooldown-widget part of blocker (2) with the one thing the source cannot supply \u2014 the wipe's shape and direction. Confirms the snap-not-tween character from pixels rather than from code inference, and feeds L5 skills-meters (the same shade drives every equipped skill).",
+  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued.",
+  "overturns_ledger": true,
+  "quote": "At t=428.0 slot 3's border is grey and the left ~53% of the face is visibly darker behind a hard vertical boundary; at t=428.9 the border is bright cream and the face is uniformly lit. Edge tracking on slot i=0: 0.53 of slot width held constant from 427.0 through 428.6, then snapped to 0.01 at 428.7 and stayed \u2014 a discrete jump, no tween. Slot i=1 independently went 0.00 -> 0.95 -> 0.01. The undimmed bright-cream border also explains the leftmost slot's appearance: initEmpty() sets shade.visible = false (SkillSlotButton.as:130-135), so ready and empty slots share the undimmed look.",
+  "text": "The skill-slot cooldown shade is a straight VERTICAL wipe that reveals right-to-left and dims the slot's border as well as its face \u2014 geometry that exists only in the frames, because shade frames 1..13 live inside the unexported assets.swf.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/DefineSprite_3394_shs3_fla.stancecolor1_56/1-3.png + reference/decompiled/shs3_android/scripts/BattleUI.as:372-374",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/stance-ring-colours-exact",
+  "lane_impact": "L-ui-hud: the ledger's surface note said only that the ring is stance-coloured; the three hexes are now held from the web asset. Feeds art-anim-audio-feel's byte-exact HUD palette (note #990000 is reused as the hurt-vignette edge \u2014 one red, two uses).",
+  "ledger_text": "Surface: overworld HUD lives only in segment A-00, not MASTER \u00a78 (which is combat-only); portrait ring is stance-colored, not fixed red.",
+  "overturns_ledger": true,
+  "quote": "Dominant opaque RGB per frame (alpha>200): frame 1 (66,66,255) = #4242FF, frame 2 (153,102,0) = #996600, frame 3 (153,0,0) = #990000. Driven by `battlemodebust.stancecolor1.gotoAndStop(num)`.",
+  "text": "The stance-coloured portrait ring is a 63x63 three-frame clip whose colours are exactly #4242FF (light), #996600 (balanced) and #990000 (heavy) \u2014 the last identical to the hurt-vignette red.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png, crop (1380,920)-(1880,1080) upscaled 3x, adjudicating reference/decompiled/shs3_android/scripts/BattleUI.as:133,504 and :112-113,275,374",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/up-arrow-is-a-skill-not-a-stance-control",
+  "lane_impact": "L4 ui-hud: retires ledger blocker (4) outright. The surveyor stated the 'not the stance control' half inside its STILL_UNHELD claim but set overturns_ledger:false with an empty ledger_text, so a dead blocker would have stayed on the board. Also feeds L5 skills-meters: the third visible slot is unequipped, so a rebuild must render an empty-slot state, not a third ability.",
+  "ledger_text": "\u2463 the \"3 skill slots\" is really ~2 abilities + a stance up-arrow.",
+  "overturns_ledger": true,
+  "quote": "The up-arrow box measures to game x 759.7, i.e. i=0 under BattleUI.as:133 `skillSlotButton.x = 760 - i * 60;`, and carries the keypress label '3' assigned by BattleUI.as:504 `skillSlotButton.initKeyPressText(this.slotCount - i);`. The stance control is a different object entirely \u2014 `battlemodebust` in the bottom-left (BattleUI.as:112 `this.battlemodebust.highlight.visible = false;`, :275 hitTest, :374 `this.battlemodebust.stancecolor1.gotoAndStop(num);`). The leftmost box is i=2, would be keypress '1', and is blank because initEmpty() clears keypressText. So the row is 2 abilities + 1 empty slot.",
+  "text": "Ledger blocker (4) is dead: the gold up-arrow in slot 3 is an ordinary equipped-skill slot, not a stance control, and the third box is an EMPTY slot \u2014 the surveyor found this and failed to flag it as overturning the ledger.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/SkillSlotButton.as:87 and BattleUI.as:26,112-113,192-193,275,374",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/up-arrow-is-a-skill-not-the-stance-control",
+  "lane_impact": "ui-hud lane: closes blocker \u2463 as a misreading - the strip is N equipped-skill slots (8 are constructed, BattleUI.as:130-137) and the stance control lives on the portrait bust, elsewhere on the HUD. The pass stated this correctly but buried it inside a STILL_UNHELD claim and never flagged the overturn. Feeds skills-meters: whichever skill carries the up-arrow icon is now a lookup against ResourceManager.getSkillImage plus the 139-icon manifest, not a video-re-pass question.",
+  "ledger_text": "\u2463 the \"3 skill slots\" is really ~2 abilities + a stance up-arrow.",
+  "overturns_ledger": true,
+  "quote": "`this.image = ResourceManager.getSkillImage(this._skillId);` (SkillSlotButton.as:87) - a slot's face is always the equipped skill's image. The stance control is a separate object: `public var battlemodebust:MovieClip;` (BattleUI.as:26) with `battlemodebust.buttonMode = true` (:113), `battlemodebust.addEventListener(MouseEvent.MOUSE_OVER, this.showChangeStanceLabel)` (:192), `if(this.battlemodebust.hitTestPoint(mousex,mousey)){ this.stanceButtonClick(); ... }` (:275) and `this.battlemodebust.stancecolor1.gotoAndStop(num)` (:374).",
+  "text": "The gold up-arrow occupying a combat skill slot is an equipped-skill icon, not a stance control, so the ledger's 'really ~2 abilities + a stance up-arrow' reading of the slot strip is wrong.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:160 + QueryManagerPIO.as:1181",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/fourth-clock-dtinterval",
+  "lane_impact": "L1 world-exploration and L11 meta-social: strengthens world-exploration/day-length-is-three-clocks \u2014 it is four clocks, not three (AP 60 s, duel tokens 120 s, crops 900/3600/21600/43200 s, quest rollover 86400 s), plus nextWarTurn as a fifth persisted timer at save slot 102. The ledger blocker's 'one day length governs expiry, farming, AP regen and the war tick' premise is even further from the truth than the surveyor claimed. Start values are STAT_DUELTOKENS 20 / STAT_MAXDUELTOKENS 20 (StatsManager.as:709-710).",
+  "ledger_text": "\u2462 real-world **\"day\" length** (governs expiry, farming, AP regen, war tick).",
+  "overturns_ledger": true,
+  "quote": "internal static var DTINTERVAL:int = 2 * 60;",
+  "text": "There is a fourth independent real-time clock the day-length claim does not name: DTINTERVAL = 120 seconds, the duel-token regen interval, persisted alongside AP as save slot 101 nextDTUpdate.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:162 and :818-820",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/war-tick-is-hourly",
+  "lane_impact": "L1 world-exploration and L11 meta-social: strengthens the surveyor's blocker-(3) refutation from 'mis-framed' to 'contains a factually wrong number'. The war turn is hourly and timestamp-based off QueryManager.getServerTime(), and it persists in save slot 102 (nextWarTurn). Any war-room port that assumed a daily tick is 24x too slow.",
+  "ledger_text": "- **The real-world \"day\" length** governing quest expiry, farming, AP regen, and the War-Room 24h tick.",
+  "overturns_ledger": true,
+  "quote": "internal static var WARMOVEINTERVAL:int = 60 * 60;\n...\nif(nextWarTurn - QueryManager.instance.getServerTime() < 0)\n{\n   nextWarTurn = QueryManager.instance.getServerTime() + WARMOVEINTERVAL;",
+  "text": "The War-Room tick is 3600 real seconds (one hour), not 24 hours, so REBUILD_READINESS.md's one concrete number for the 'day' blocker is wrong by 24x.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:158,:160,:162",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/war-tick-is-hourly-not-daily",
+  "lane_impact": "L1 world-exploration and L11 meta-social: strengthens and corrects the journal's day-length-is-three-clocks claim. The ledger's \u2462 explicitly lists the \"war tick\" as governed by the day length; WARMOVEINTERVAL=3600 kills that outright \u2014 the war moves hourly. Full clock inventory: AP 60 s, duel tokens 120 s, war move 3600 s, crops 900/3600/21600/43200 s (+900 s grace), quest repeat + daily streak 86400 s. Five independent real-time clocks, all measured in raw seconds off QueryManager.getServerTime(). The save schema corroborates: slots 100/101/102 are nextAPUpdate / nextDTUpdate / nextWarTurn, three separate persisted timestamps.",
+  "ledger_text": "\u2462 real-world **\"day\" length** (governs expiry, farming, AP regen, war tick).",
+  "overturns_ledger": true,
+  "quote": "internal static var APINTERVAL:int = 60;\n\ninternal static var DTINTERVAL:int = 2 * 60;\n\ninternal static var WARMOVEINTERVAL:int = 60 * 60;",
+  "text": "The war tick the ledger names as a consumer of the \"day\" length runs on a 3600-second clock, and duel tokens on a 120-second clock, so blocker \u2462's single-day-clock premise fails on five independent clocks, not three.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:162 and :820",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/war-tick-is-one-hour",
+  "lane_impact": "L1 world-exploration and L11 meta-social: the surveyor asserted the single-day-clock premise was false but never produced this number. With it, REBUILD_READINESS.md:116 is not merely mis-framed \u2014 one of its four named consumers is off by 24x. The war turn is hourly, persisted as save slot 102 (nextWarTurn) and surfaced by updateWarMoveCounter at StatsManager.as:782.",
+  "ledger_text": "- **The real-world \"day\" length** governing quest expiry, farming, AP regen, and the War-Room 24h tick.",
+  "overturns_ledger": true,
+  "quote": "internal static var WARMOVEINTERVAL:int = 60 * 60;\n...\nnextWarTurn = QueryManager.instance.getServerTime() + WARMOVEINTERVAL;",
+  "text": "The ledger's \"War-Room 24h tick\" is numerically wrong: the war move interval is 60*60 = 3600 seconds, one hour.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:36 (StatsManager), \u00a71t70s0\u00a7.as:146,:399-404 (NodeGenerator), \u00a71t6481s0\u00a7.as:17-21,:285-286 (WorldMapUI), \u00a71t58s0\u00a7.as (RNG), \u00a71t136s0\u00a7.as:40,42 (NameGenerator), \u00a71t8621s0\u00a7.as:82-138 (Obj_VegePatch), \u00a71t72s0\u00a7.as:32,98 (XMLWorldNode)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/web-decompile-holds-full-logic",
+  "lane_impact": "Affects EVERY L0 unit, not just L1. The Stage-0b caveat 'this is the ANDROID build, clientVersion 0.682 ... combat tuning parity is NOT established' is far weaker than assumed: the web v0.717 logic is on disk and greppable by constant. Verified identical across builds in this lane: APINTERVAL 60, DTINTERVAL 2*60, WARMOVEINTERVAL 60*60, start AP/MAXAP 30, STAT_LOCATION 8382465, quest 24*60*60, level formula abs(x-341)+abs(y-341)+3 with cap 200 (and the cap-100 variant), territory = floor(sector/6), TERRSHIFTX 21 / TERRSHIFTY 51 / WARMARKERSHIFTX 8, projection *10+5 and *10+8.5, LCG 9301/49297/233280, crop timers 15m/1h/6h/12h + 15m grace, and both NameGenerator arrays element-for-element (78 and 37 entries, diffed: IDENTICAL). New standing rule for the board: before declaring an Android-only caveat, grep shs3_payload for the VALUE. Only divergence found here: XMLWorldNode does XMLList(param1.search).copy() on web vs xml.search on android.",
+  "ledger_text": "**Server-sim topology & save format** \u2014 nothing to copy; design a single-player persistence schema from the observed field set.",
+  "overturns_ledger": true,
+  "quote": "public static var \u00a71t9323s0\u00a7:Number = 0.717;",
+  "text": "reference/decompiled/shs3_payload/ is the complete web v0.717 game-logic decompile under obfuscated class names, not 'only display symbols' - so cross-build parity is checkable for every world constant by grepping values instead of names.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/payload.xml:395761-395830 (DefineSpriteTag spriteId=\"262\") + reference/extracted/sprites/DefineSprite_{191,193,195,197,199,201,203,205,207,209,211,213,215,217,219,221,223,225,227,229,231,233,235,237,239,241,243,245,247,249,251,253,255,257,259,261}/1.png",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/world-map-art-recovered",
+  "lane_impact": "L1 world-exploration: kills the journal's own STILL_UNHELD 'map-art-unheld' and removes one of the four negatives holding the score at 85. 36 tiles map_0_7..map_8_1, characterIds 191-261, placed at translateX = i*80*20 twips and translateY = j*80*20 twips (map_1_6 -> 79.9, 480 px), plus a 'shadowmap' underlay at characterId 189. Every tile PNG is already on disk from the earlier ffdec export; nothing new needs decrypting. I composited all 36 and LOOKED: Hokkaido, Honshu, Shikoku, Kyushu, Sado and Awaji are all present and correctly shaped. The ledger's 'trace the map image' close-path is doubly obsolete - the image does not need tracing, it needs compositing.",
+  "ledger_text": "\u2460 **world bounds + geography** (sparse Japan-outline, not a W\u00d7H grid) \u2014 *mine Fandom Category:Territories via API; trace the map image.*",
+  "overturns_ledger": true,
+  "quote": "<item type=\"PlaceObject3Tag\" characterId=\"189\" depth=\"1\" ... name=\"shadowmap\" ...\n<item type=\"PlaceObject2Tag\" characterId=\"227\" depth=\"39\" ... name=\"map_1_6\" ...\n  <matrix type=\"MATRIX\" ... translateX=\"1598\" translateY=\"9600\"/>",
+  "text": "The drawn world-map art IS held: the web v0.717 payload carries it as 36 tiles inside DefineSprite 262, already exported to reference/extracted/sprites/, and reassembling them at their own twip offsets renders the Japanese archipelago.",
+  "verdict": "HELD"
+ }
+]

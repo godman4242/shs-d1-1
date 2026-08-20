@@ -1,0 +1,1775 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A2",
+   "id": "string-table/achievement-roster-is-61-and-19-slots-unauthored",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/114_Mobile_AchievementData.bin",
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/114_Mobile_AchievementData.bin",
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"8061\"]"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/castle-assault-is-an-unlisted-system",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"599\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/forge-and-reinforce-reagent-bills",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"847\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/crop-market-is-supply-and-demand",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"838\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/jigoku-is-a-timed-penalty-jail",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"1026\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/level-gates-war-room-10-duel-2",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"320\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/piercing-damage-is-a-stat-channel",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"876\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/skill-card-field-set-six-target-modes",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"164\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/skill-usage-grammar-pvp-ban-charge-cancel-drag-target",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"6099\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/autoslash-is-hands-off-auto-attack",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"IDS_Q50S6NODE1\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/offline-duel-opponents-are-ai",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"IDS_Q50S7NODE2\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/carry-weight-gates-travel",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"138\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/inn-restores-one-third-of-max-ap",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"512\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/stance-ring-colours-named-in-tutorial-copy",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"IDS_Q50S3NODE1\"]",
+    "reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png",
+    "reference/frames/session11/stance-reach/B_t851.933_BALANCED_ring_tan_one-tick-after-click.png",
+    "reference/frames/session11/stance-reach/B_t855.800_HEAVY_ring_red.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/war-turn-is-clock-driven",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json[\"395\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "STILL_UNHELD",
+   "id": "string-table/no-chi-cost-or-cooldown-numbers-in-prose",
+   "notes": [],
+   "paths": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  {
+   "artifact_class": "STILL_UNHELD",
+   "id": "string-table/no-condition-damage-multiplier-in-prose",
+   "notes": [],
+   "paths": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/web-ui-string-ids-outrun-android-table",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t396s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/uistrings-is-design-time-not-shipped",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7924s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/warroom-rules-web-uses-android-id-set",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7924s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/warroom-earlier-design-preserved-in-payload",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/duel-betting-book-is-web-only-with-full-odds-math",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t396s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/bets-are-tokens-paid-out-in-gold",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/golden-tokens-are-spendable-in-v0717",
+   "notes": [],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/tournament-field-set-and-create-form",
+   "notes": [],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/server-rpc-surface-is-enumerable",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/pvp-transport-is-rtmfp-p2p",
+   "notes": [],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/nine-embedded-fonts-not-two",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/character-stat-sheet-complete",
+   "notes": [],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/warroom-build-menu-is-ladder-in-web-copy",
+   "notes": [],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/emote-and-chat-command-surface",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/duel-replay-is-a-first-class-feature",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/clan-hq-rooms-staff-missions-absent-from-all-12-systems",
+   "notes": [],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/weapon-unbreakable-price-differs-between-builds",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/war-sector-panel-format",
+   "notes": [],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "STILL_UNHELD",
+   "id": "uistrings-payload/payload-tag-families-unswept",
+   "notes": [],
+   "paths": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/web-payload-holds-zero-data-roots",
+   "notes": [],
+   "paths": [
+    "reference/decrypted/shs3_payload_decoded.swf",
+    "reference/decrypted/shs3_android_payload_decoded.swf"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "android-blobs/data-xml-parity-proofs-are-circular",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/skilldata.xml",
+    "reference/extracted/android/117_Mobile_SkillData.bin"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/spider-is-web-only-enemy",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/bindata/114_1t4641s0.bin",
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/bindata/114_1t4641s0.bin",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1544s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "android-blobs/web-is-an-animation-superset",
+   "notes": [],
+   "paths": [
+    "reference/extracted/bindata/*.bin",
+    "reference/extracted/android/*AnimationData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/boss-timings-recut-across-builds",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/bindata/100_1t4627s0.bin",
+    "LINE_ON_BINARY:reference/extracted/android/91_MCSCharacter_OgreAnimationData.bin"
+   ],
+   "paths": [
+    "reference/extracted/bindata/100_1t4627s0.bin",
+    "reference/extracted/android/91_MCSCharacter_OgreAnimationData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/bgdata-is-a-parallax-spec",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/123_Mobile_BGData.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/123_Mobile_BGData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/parallax-and-dof-contract",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/XMLBG.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "android-blobs/foreground-layer-occludes-the-fighters",
+   "notes": [],
+   "paths": [
+    "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/item-and-skill-icon-art-is-held",
+   "notes": [],
+   "paths": [
+    "reference/extracted/android/115_Mobile_SHS3Resource.bin",
+    "reference/decompiled/shs3_android_payload/scripts/ResourceManager.as",
+    "reference/extracted/android/111_Mobile_ItemData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/portraits-decrypted-and-one-dead-reference",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/124_Mobile_ImageResource.bin",
+    "docs/gauntlet/L0/run2/claims.json"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/all-thirteen-episode-cards-shipped",
+   "notes": [],
+   "paths": [
+    "reference/extracted/android/124_Mobile_ImageResource.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/mapdata-has-no-web-counterpart",
+   "notes": [],
+   "paths": [
+    "reference/extracted/android/119_Mobile_MapData.bin",
+    "reference/decrypted/shs3_payload_decoded.swf"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/comp-rand-is-the-encounter-roll",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/112_Mobile_NodeData.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/112_Mobile_NodeData.bin",
+    "reference/decompiled/shs3_android_payload/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/blobs-are-utf8-not-utf16",
+   "notes": [],
+   "paths": [
+    "reference/extracted/android/112_Mobile_NodeData.bin",
+    "reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "STILL_UNHELD",
+   "id": "android-blobs/nothing-was-rendered",
+   "notes": [],
+   "paths": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/web-v0717-renders-android-string-table",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0018.jpg",
+    "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0001.jpg",
+    "reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0042.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/v0717-is-a-string-superset-not-identity",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0011.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/death-card-offers-free-respawn",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-22/frames/frame_0026.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/pvp-duel-screen-fully-filmed",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0018.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/war-room-territory-board-frame-exists",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0014.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/recruit-gets-three-moves-a-turn",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0014.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/achievements-daily-and-tokens-all-on-film",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-04/frames/frame_0001.jpg",
+    "reference/frames/Nr4fQstqHDM/seg-00/frames/frame_0001.jpg",
+    "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0018.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/clan-identity-bound-on-screen",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0007.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/choice-text-diverges-from-payload",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-00/frames/frame_0023.jpg",
+    "reference/extracted/questdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/jinbei-greeting-diverges-too",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-00/frames/frame_0021.jpg",
+    "reference/extracted/questdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/critical-evade-states-the-focus-gate",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0013.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/forge-cost-is-level-parameterised",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0040.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/repair-weapon-cost-still-unheld",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0041.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/world-map-is-a-tile-lattice-with-clan-banners",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-08/frames/frame_0029.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/quest-card-expiry-prosperity-and-coords",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-08/frames/frame_0016.jpg",
+    "reference/frames/zFtCaTO0_1M/seg-00/frames/frame_0057.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/two-font-faces-and-where-the-second-one-lives",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0018.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/private-pvp-room-door",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-04/frames/frame_0017.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/consumable-buffs-run-a-30-minute-real-clock",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-04/frames/frame_0017.jpg",
+    "reference/frames/Nr4fQstqHDM/seg-04/frames/frame_0007.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/save-policy-is-checkpoint-at-towns-and-dungeons",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-00/frames/frame_0002.jpg",
+    "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0003.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/levelup-card-corroborates-banked-numbers",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-00/frames/frame_0049.jpg",
+    "reference/frames/zFtCaTO0_1M/seg-00/frames/frame_0051.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "STILL_UNHELD",
+   "id": "frames/rebirth-element-picker-still-unfilmed",
+   "notes": [],
+   "paths": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/piercing-and-crit-are-web-v0717-held",
+   "notes": [],
+   "paths": [
+    "reference/extracted/ui_strings.txt"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "string-table/balanced-ring-is-khaki-on-film-not-ochre",
+   "notes": [],
+   "paths": [
+    "reference/frames/session11/stance-reach/B_t851.933_BALANCED_ring_tan_one-tick-after-click.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/item-art-ids-are-shared-not-identity",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/111_Mobile_ItemData.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/111_Mobile_ItemData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/dead-portrait-throws-it-does-not-fall-back",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/116_Mobile_QuestData.bin",
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/ResourceManager.as",
+    "reference/decompiled/shs3_android_payload/scripts/QuestDialogueUI.as",
+    "reference/extracted/android/116_Mobile_QuestData.bin"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/ground-blur-applies-to-two-layers-only",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/BG_Loader.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/parallax-z-order-is-authored-not-code",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/BG_Loader.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/four-shipped-bg-id-collisions",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/GameStage.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/bgdata-override-census-corrected",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/123_Mobile_BGData.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/123_Mobile_BGData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/android-blob-encoding-census",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/112_Mobile_NodeData.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/112_Mobile_NodeData.bin",
+    "reference/extracted/android/"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/warroom-web-has-a-seventh-rules-page",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7924s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/tower-is-the-name-of-the-thirteenth-system",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/web-lang-files-are-en-fr-es-only",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/rake-branch-tests-the-pool-not-a-nan",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t396s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/fight-wordmark-is-the-live-duel-intro-field",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5533s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/web-and-android-font-sets-diverge",
+   "notes": [],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/chat-surface-is-31-commands-including-three-debug",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/inn-rest-is-a-floor-not-a-faucet",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/ScreenTransition.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/war-room-gate-has-a-dan-escape-hatch",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/OverworldHUD.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/target-mode-strings-161-166-are-dead",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/XMLSkill.as",
+    "reference/decompiled/shs3_android",
+    "reference/extracted/skilldata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/weight-gate-is-a-travel-guard-in-code",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/Obj_TownSign.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/hell-is-a-first-class-room-type",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/XMLRoomData.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/war-turn-expiry-resets-moves-to-max",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/WarUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/global-effect-titles-a-different-dialog",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/GlobalVarDialog.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "string-table/stance-tint-covers-the-whole-medallion",
+   "notes": [],
+   "paths": [
+    "reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "string-table/ui-hud-md-still-carries-the-refuted-id-drift-table",
+   "notes": [],
+   "paths": [
+    "docs/gauntlet/L0/systems/ui-hud.md",
+    "reference/decompiled/shs3_android/scripts/LangManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata-critic/placename-generator-held",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t136s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/NameGenerator.as",
+    "reference/decompiled/shs3_android/scripts/RNG.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata-critic/xp-curve-held-web",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata-critic/territory-sector-mapping-closed",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/OverworldHUD.as",
+    "reference/decompiled/shs3_android/scripts/WarSelectUI.as",
+    "reference/decompiled/shs3_android/scripts/NodeGenerator.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata-critic/overworld-is-generated",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NodeGenerator.as",
+    "reference/extracted/android/112_Mobile_NodeData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata-critic/questdata-no-build-parity-hole",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/116_Mobile_QuestData.bin",
+    "reference/extracted/questdata.xml"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata-critic/namegen-table-sizes-corrected",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NameGenerator.as",
+    "reference/extracted/android/85_NameGenerator_MaleNames.bin"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata/placename-generator-DECODED",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NameGenerator.as",
+    "reference/decompiled/shs3_android/scripts/RNG.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata/node-name-pipeline-END-TO-END",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/112_Mobile_NodeData.bin"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NodeGenerator.as",
+    "reference/extracted/android/112_Mobile_NodeData.bin",
+    "reference/extracted/questdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata/archer-ai-firing-rule-and-gravity",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/Projectile.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata/projectile-type-enum-47-and-web-delta",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/ProjectileManager.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t112s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata/dialogue-is-a-branching-VM",
+   "notes": [],
+   "paths": [
+    "reference/extracted/questdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata/wave-encounter-table-and-pipe-grammar",
+   "notes": [],
+   "paths": [
+    "reference/extracted/questdata.xml",
+    "docs/gauntlet/L0/index/resolved_names.json"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata/cutscene-say-lines-are-string-ids",
+   "notes": [],
+   "paths": [
+    "reference/extracted/questdata.xml",
+    "docs/gauntlet/L0/index/strings.json[\"9001\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "questdata/dialogue-carries-inline-html-markup",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/questdata.xml"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "questdata/count-corrections-to-packet",
+   "notes": [],
+   "paths": [
+    "reference/extracted/android/85_NameGenerator_MaleNames.bin",
+    "reference/extracted/android/112_Mobile_NodeData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "npcdata/five-stances-reversed-and-dual",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/EnemyElite.as",
+    "reference/extracted/android/95_MCSCharacter_ReversedStanceAnimationData.bin",
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "npcdata/kill-xp-formula",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "npcdata/setlevel-pins-everything-to-1-below-11",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "npcdata/hp-less-combat-rows-default-to-1",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/XMLNpc.as",
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "gauntlet/no-web-gameplay-code-or-string-table",
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/",
+    "reference/extracted/payload.xml",
+    "reference/extracted/android/125_Mobile_NpcData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-1-crit-is-deterministic-full-focus",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-2-crittext-gated-on-full-reload-bar",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "docs/gauntlet/L0/index/strings.json[\"175\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-3-inventory-preview-contradicts-sim-on-crit",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-4-mastery-domain-is-1-to-10",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-5-per-stance-damage-multipliers",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-6-heavy-stance-takes-80pc-defense",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-7-focus-drain-is-stance-scaled-and-crit-empties-bar",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-8-focus-bar-displayed-zero-is-24-not-0",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-9-dragon-dance-input-recovered",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/DragonDanceUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-10-category-tab-mapping-declared-in-code",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/SkillScreenUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-11-category-11-skills-are-in-npcdata",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "NF-12-web-swf-header-declares-24fps",
+   "notes": [],
+   "paths": [
+    "reference/decrypted/shs3_payload_decoded.swf",
+    "reference/decrypted/shs3_android_payload_decoded.swf"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-13-steal-was-a-node-action-not-a-skill",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NodeUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-14-canchangestance-is-a-state-whitelist",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/frames/duel_dense/Nr4fQstqHDM_431.0.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "NF-15-consumable-buff-enum-and-150pc-damage-potato",
+   "notes": [],
+   "paths": [
+    "reference/frames/duel_dense/Nr4fQstqHDM_431.0.png",
+    "docs/gauntlet/L0/index/strings.json[\"4132\"]",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-16-heavenly-sword-numbers-unclaimed",
+   "notes": [],
+   "paths": [
+    "reference/extracted/skilldata.xml",
+    "docs/gauntlet/L0/index/strings.json[\"7078\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-17-four-actives-cost-zero-skill-points",
+   "notes": [],
+   "paths": [
+    "reference/extracted/skilldata.xml",
+    "reference/decompiled/shs3_android/scripts/XMLSkill.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-18-full-skill-prerequisite-dag-unenumerated",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/skilldata.xml"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "skills-meters/crit-is-deterministic-at-full-reload-bar",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "docs/gauntlet/L0/index/strings.json[\"175\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/web-stance-damage-and-reach-are-inverse",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/mastery-domain-is-1-to-10-resolved",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_android/scripts/XMLNpc.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/extracted/skilldata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "skills-meters/focus-reload-meter-web-numbers",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_android/scripts/SkillManager.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "skilldata/web-cooldown-modifier-caps-spd-at-600",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t105s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "enemies-ai/category-11-skills-are-in-npcdata",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/in-combat-hud-is-three-bars",
+   "notes": [],
+   "paths": [
+    "reference/frames/duel_dense/Nr4fQstqHDM_431.0.png",
+    "reference/frames/combat_frames/Nr4fQstqHDM_t0130s.png",
+    "docs/gauntlet/L0/index/strings.json[\"4132\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-stage-800x480",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/StatsManager.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-kill-xp-formula",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-boss-hp-derivation",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-level10-clamp",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-enemy-skill-ladder",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-ai0-duel-opponent-absent",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPCManager.as",
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-melee-ai-geometry",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/EnemyKnife.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-string-5017-empty-by-design",
+   "notes": [],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-shira-tancho-is-player-clan",
+   "notes": [],
+   "paths": [
+    "reference/extracted/questdata.xml",
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-procgen-surnames",
+   "notes": [],
+   "paths": [
+    "reference/extracted/bindata/96_1t4652s0.bin",
+    "reference/extracted/bindata/94_1t4651s0.bin",
+    "reference/extracted/bindata/97_1t4650s0.bin",
+    "reference/decompiled/shs3_android_payload/scripts/XMLNpc.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-four-faction-spawn-model",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPCManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-38-cases-35-classes",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPCManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-category-11-decoded",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/skilldata.xml",
+    "docs/gauntlet/L0/index/strings.json",
+    "reference/extracted/npcdata.xml",
+    "reference/extracted/android/101_MCSCharacter_DualStanceAnimationData.bin"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-npcdata-silences",
+   "notes": [],
+   "paths": [
+    "reference/extracted/npcdata.xml",
+    "reference/decompiled/shs3_android_payload/scripts/MCSCharacter.as",
+    "docs/gauntlet/L0/index/strings.json"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 18,
+  "resolves": 133,
+  "total": 156,
+  "uncheckable": 5
+ }
+}
