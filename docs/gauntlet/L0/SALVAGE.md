@@ -62,10 +62,10 @@ landing. **Never edit a live workflow script mid-run** — it burns the resume c
 | Run | Script | Agents | What | Run ID | State |
 |---|---|---:|---|---|---|
 | **WF-1** | `l0-finish-wf1.workflow.js` | 12 | the 4 surveys never run (android-blobs · string-table · frames · uistrings-payload) + cite/hunter critics | `wf_54dcdf8e-9a3` | ▶ launched 2026-08-20 |
-| **WF-2** | `l0-finish-wf2.workflow.js` | 12 | the 12 source critics over the 6 completed sweeps — judges 206 banked claims, does NOT re-survey | — | authored, queued |
-| **WF-3a** | — | 18 | judge the **203** critic findings that CLAIM A LEDGER OVERTURN — 9 batches x cite+hunter | — | packets built |
-| **WF-3b** | — | 9 | judge the **407** corroborating findings — 9 batches x cite | — | packets built |
-| **WF-4** | — | ~5 | dry-loop (a round only counts if it RAN) + completeness critic | — | queued |
+| **WF-2** | `l0-finish-wf2.workflow.js` | 12 | the 12 source critics over the 6 completed sweeps — judges 206 banked claims, does NOT re-survey | `wf_db13a5de-161` | ▶ launched 2026-08-20, concurrent with WF-1 |
+| **WF-3a** | `l0-finish-wf3.workflow.js` (args `t1`) | 18 | judge the **203** critic findings that CLAIM A LEDGER OVERTURN — 9 batches x cite+hunter | — | packets built |
+| **WF-3b** | `l0-finish-wf3.workflow.js` (args `t2`) | 9 | judge the **407** corroborating findings — 9 batches x cite | — | packets built |
+| **WF-4** | `l0-finish-wf4.workflow.js` | ~17 | dry-loop (a round only counts if it RAN) + completeness critic | — | queued |
 
 **No claim is left unjudged.** An earlier plan capped WF-3 at the overturn-claimers and
 declared the rest leads; ultracode removed the budget reason for that, so the tiers now
