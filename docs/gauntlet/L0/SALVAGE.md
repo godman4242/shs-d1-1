@@ -119,6 +119,21 @@ through.
 10 units and taking `{units:[...], lenses:[...]}` from args — so a re-run after a wall
 never needs another cloned script.
 
+### ▶ IN FLIGHT, launched 2026-08-20
+
+| Run | Script + args | Agents | What | Run ID |
+|---|---|---:|---|---|
+| **WF-3a′** | `l0-finish-wf3.workflow.js` `{tier:'t1',batches:10}` | 20 | the 226 findings still CLAIMING A LEDGER OVERTURN | `wf_88793137-368` |
+| **WF-2d** | `l0-finish-source-critics.workflow.js` `{units:['android-blobs'],lenses:['hunter']}` | 1 | the lens gate L0-D says is owed | `wf_a8e116f0-38b` |
+| **WF-3b** | `l0-finish-wf3.workflow.js` `{tier:'t2',batches:11}` | 11 | the 513 corroborating findings | queued |
+| **WF-4** | `l0-finish-wf4.workflow.js` | ~17 | dry-loop x 4 targets (a round only counts if it RAN) + completeness | queued |
+
+⚠ **Always read `batches` fresh from `MANIFEST.json` at launch.** The count MOVES every
+run: judged findings drop out and each stage's critics add new ones, so the packets are
+renumbered on every build — WF-3a's original 12 batches are now 10. A stale literal
+silently drops the tail batches, and a dropped batch leaves those findings UNJUDGED,
+which under §0 kills them.
+
 ---
 
 ### THE BINARY GATE — `scripts/gauntlet/gateL0.py`, 6 items, all currently RED
