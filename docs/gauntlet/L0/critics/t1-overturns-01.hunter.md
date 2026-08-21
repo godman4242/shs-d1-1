@@ -1,6 +1,14 @@
 # t1-overturns-01 — HUNTER LENS review (blind critic)
 
 Packet: `docs/gauntlet/L0/worklist/t1-overturns-01.json` — **24 findings, 24 judged, 0 skipped.**
+
+> **NOTE — THE PACKET WAS RE-SLICED MID-REVIEW.** The file changed on disk while I was
+> writing. Still 24 items, but six `android-blobs-hunter/*` findings rotated **in** and six
+> `combat-core/*` findings rotated **out** (`stance-reach-modifiers`, `v0717-crit-is-flat-1.3`,
+> `v0717-stance-curves-are-already-in-config`, `v0717-stance-multipliers`,
+> `v0717-stance-slash-multipliers`, `v0717-stance-table`). **I judged all six new arrivals from
+> scratch (§B below) AND I am keeping the six rulings I had already finished (§C), so nothing is
+> destroyed.** My structured `verdicts` array covers the 24 ids in the packet as it now stands.
 Every verdict below rests on an artifact **I opened myself**. Where I only re-read another
 agent's cite I say so; where I re-ran the byte-check I paste the output.
 
@@ -45,6 +53,11 @@ The web build fetched those from the dead CDN (`ResourceManager.as:41`). Web-aud
 parity is NOT established. The *architecture* is (see NF-1).
 
 ---
+
+# §A — THE FIRST SLICE (18 of these are still in the packet; 6 rotated out — see §C)
+
+⚠️ The `#` column below is the **original** packet order, not the current one. Ids are stable;
+use those. The six rows numbered 18, 19, 20, 21, 22, 23 are the ones that rotated out.
 
 ## THE OVERTURN CHECK — the scoreboard
 
@@ -508,10 +521,242 @@ holds a single `DefineSound` tag (I histogrammed both: web 4 051 tags, android 3
 
 ---
 
-## THE ONE-LINE SUMMARY FOR THE LEDGER EDITOR
+## THE ONE-LINE SUMMARY FOR THE LEDGER EDITOR (first slice)
 
 Twelve real overturns, and three of them are load-bearing: **the L11–80 XP curve is a shipped
 99-entry constant** (:200, :350 die), **all 26 audio waveforms are byte-exact recoverable**
 (:240 ①, :348 die — and S0-5 dies with them), and **combat-core blocker ① dies in full** (:190 ①).
 Eleven claims either point at a sentence they confirm, at a sentence that isn't in the document,
 or at a question the repo's own fidelity ledger closed on 2026-07-25.
+
+---
+
+# §B — THE SIX FINDINGS THAT ROTATED IN (judged from scratch)
+
+None of these six names a REBUILD_READINESS.md sentence. Two target **gauntlet §0 law**
+(S0-5, S0-1) and four target **other banked claims**. I judged each on the same rule: does the
+evidence make the quoted sentence false?
+
+### B1 · android-blobs-hunter/audio-decrypts-26-named-mp3-streams — **HELD, overturn UPHELD (S0-5 falls)**
+Independently reproduced in full (my decrypt/inflate/tag dump is at the top of this file). Its
+per-cue table is right where I sampled it: `safepercussion 882144 (80.01 s)`, `battledrums 882144`,
+`slash1 3809 (0.35 s)`, `deflect 8700 (0.79 s)`, `hitmetal 5717 (0.52 s)` — all four match my
+`DefineSound` header parse to the sample. Cites resolve: `shs3_android_payload/ResourceManager.as`
+carries the loop at **:205-216** (the finding says :206-217 — off by one, harmless) and
+`Mobile.as:352` is verbatim `ResourceManager.decryptByteArray(ba,
+ResourceManager.resourceFileNameArray[resourceIndex].charCodeAt(1))`.
+**This is the best-behaved of the four audio findings in the packet** because it states its own
+limit honestly — *"I did NOT listen to or grade any of it; I read tag headers only"* — and because
+its lane_impact correctly separates what dies in S0-5 (the "ffdec cannot open it" premise) from
+what survives (nobody has graded the audio yet). Prefer its wording over findings 13/14 when
+rewriting S0-5.
+
+### B2 · android-blobs-hunter/bgdata-override-vocabulary-is-22-tags — **HELD, overturn UPHELD**
+I decoded `123_Mobile_BGData.bin` (UTF-8, 623 content lines, 49 `<bg>`) and built the histogram
+myself. **Every one of the 22 counts matches the quote exactly:**
+```
+id 49 · name 49 · ffcount 49 · fcount 49 · ppcount 49 · gcount 49 · fgcount 49
+contentwidth 17 · wrap 17 · fscroll 16 · ffscroll 14 · fwrap 11 · fblur 11
+ppwrap 9 · ppblur 9 · ffwrap 8 · ppscroll 6 · ffblur 3 · fgscroll 3 · gscroll 2 · fgblur 2 · gblur 1
+```
+And all three "breaks the ladder" anomalies check out against `XMLBG.as`'s defaults
+(`:48-56` farthest 0.25 / far 0.3333 / playerPlane 0.5 / ground 1 / foreground 2):
+`<gscroll>` is authored twice and **both values are `0`** (locked ground plane); `<fgscroll>` is
+authored three times and **all three are `1.2`** (against the default 2.0); `<ffscroll>` includes a
+`1` (farthest plane collapsed onto the camera). `<gwrap>`, `<fgwrap>`, `<groundy>`, `<flatground>`
+appear **zero** times. The two corrections to the banked claim both land: **ffwrap is 8 rows**
+(`1670, 1640, 2000, 1750, 2000, 1770, 2000, 2000`), not 6, and **ffscroll's range is 0.05–1.0**
+(`{0.05, 0.1, 0.125, 0.14, 0.27, 1}`), not 0.05–0.27. Clean.
+
+### B3 · android-blobs-hunter/foreground-plane-is-the-most-blurred-element — **HELD, overturn UPHELD. I OPENED THE FRAME.**
+This is an **A1** claim, so I did the A1 work: opened
+`reference/frames/duel_dense/Nr4fQstqHDM_428.0.png` (1920×1080), cut the finding's own crop
+`(760,780)-(1240,1010)`, upscaled ×3 NEAREST, **and looked at it.**
+
+**What is visibly in the crop:** a grass band across the bottom third whose blades have **soft,
+fuzzy, gradient edges and no outline at all**, occluding the lower legs of both fighters — while
+the purple ninja and the tan samurai above it carry **hard near-black bold-vector outlines** on
+every limb. The blue blade arc at left is likewise crisply outlined. The contrast is not subtle.
+
+My own gradient measurement, run independently on the finding's own boxes:
+```
+grass A (780,885)-(850,955)              p99grad=  3.0   (finding: 3.0)
+grass B (1100,885)-(1230,955)            p99grad=  3.0   (finding: 3.0)
+grass C (300,885)-(560,955)              p99grad=  3.2   (finding: 3.4)
+far rock (1300,300)-(1500,450)           p99grad=  7.5   (finding: 7.0)
+tan fighter torso (960,700)-(1080,840)   p99grad= 85.2   (finding: 82.0)
+purple shoulder (820,830)-(900,880)      p99grad= 88.6   (finding: 101.6)
+```
+And the outline test the finding asserts — I ran it: the three grass boxes bottom out at
+luminance **20–27**, i.e. **no near-black pixels**, while the fighter-torso box reaches **0.0**.
+
+`XMLBG.as:46 internal var foregroundLayerBlur:int = 8;` and `:38 farthestLayerBlur:int = 8;` —
+tied for the hardest blur in the ladder, exactly as claimed.
+
+**STANDING INVARIANT, SAID OUT LOUD: THE FRAME WINS.** The banked claim
+*"a sharply-outlined grass band … The grass carries the same outline weight as the fighters"* is
+**inverted**. The occlusion half survives; the outline half is false. Building crisp foreground
+grass off that wording would be a visible 1:1 miss on all 49 backgrounds that declare `<fgcount>`.
+
+### B4 · android-blobs-hunter/item-icon-coverage-corrected — **HELD, overturn UPHELD**
+I decrypted `115_Mobile_SHS3Resource.bin` (key 104, `CWS v17`, inflates to 1 040 857 B) and did
+the join myself. **Every figure reproduces exactly:**
+```
+SymbolClass names: 1912          item#### symbols: 112      skill#### symbols: 79
+band 2000-2999 : rows=99 covered=50 MISSING=49
+   -> 2000 2001 2131..2139 2142 2144..2175 2204 2206 2500 2502 2503      (identical to the quote)
+band 20000-29999: rows=79 covered=58 MISSING=21
+   -> 20005 20009..20012 20017 20023 20054..20058 20100..20107 20111     (identical to the quote)
+skilldata: 75 rows, 68 with a skill#### icon, 7 without -> 1064 1065 1066 1067 1068 1500 1501
+           11 skill symbols have no skilldata row
+```
+**I checked the obvious way this could be an artifact and it is not.** Accessories do NOT ship
+under `item####` — they ship under `acc####` — so I enumerated every symbol prefix in the file
+(`torso 151 · lowarm 151 · uparm 151 · pelvic 151 · stomach 150 · item 112 · weapon 109 · hat 96 ·
+calf/crotch/thigh 85 · skill 79 · hair 73 · prop 60 · mask 59 · … · acc 8`) and confirmed
+`acc#### = {3000..3006, 3008}` — **8 of the 9 accessory rows, with 3007 the sole gap**, exactly as
+the finding retains from the banked claim. Then I asked whether any *other* prefix covers the 49
+"missing" consumables: **none does.** The 50/99 figure is real.
+The banked claim's "94/99 consumables", "67/79 quest items" and its five-item residual list are
+all wrong; the corrected numbers are 50/99, 58/79 and a 49-item list. Its PARTIAL verdict is
+honest — the art IS on disk, the coverage is just half what was banked.
+(The prefix census also independently corroborates finding 1's 13-slot paperdoll: torso, lowarm,
+uparm, pelvic, stomach, calf, crotch, thigh, foot, foottop, head, hand, neck, hair, hat, mask,
+weapon, prop, acc.)
+
+### B5 · android-blobs-hunter/shipped-vector-art-yields-solid-fill-palettes — **HELD, overturn UPHELD**
+I decrypted all three resource SWFs (115 key 104, 120 key 103, 124 key 109 — all `CWS v17`, all
+inflate) and wrote my own `DefineShape/2/3/4` FILLSTYLEARRAY parser. **Shape-record counts match
+to the unit: 115 → 1755, 120 → 562, 124 → 106** (= the finding's 2,423 total). Fill rankings are
+identical in all three files, and the mid-table counts match exactly
+(`#333333 x160 · #CCCCCC x147 · #FECA98 x127 · #B78F6C x120` in 115;
+`#30291D x35 · #5A4D2E x33 · #3A3323 x23 · #251F16 x21 · #453929 x21` in 120). My top-1/top-2
+counts run 5–20 % higher because my parser recovered a few more records (1669/516/99 with solid
+fills vs. their implied totals) — a parser delta, not a disagreement.
+**All three per-symbol resolutions reproduce exactly:**
+```
+torso4000 -> charId 1195 -> shape 1194 (DefineShape4) fills ['#FECA98', '#B78F6C']
+skill1000 -> charId  145 -> shape  144                fills ['#C0AC4B']
+acc3000   -> charId 3726 -> shape 3725                fills ['#ABABAB', '#EEE684']
+```
+The semantic sanity check passes both ways (skin tones dominate the portrait file, earth tones the
+background file). The banked claim *"not one DefineShape record was decoded, so no fill colour …
+is held"* is now false.
+⚠️ **Two limits to carry with it.** (a) The finding's own honest limit is right and should stay:
+first-fill-array only, no edge records, no outline weights. (b) I add one it does not state — the
+histogram is **fill-style-SLOT frequency, not rendered area**. `#000000 x243` means 243 shapes
+declare a black fill slot, not that black covers the most pixels. Do not build a palette ranking
+from it. And these are **v0.682** resource files; no web `shs3resource.swf` is held (NF-10).
+Its acc3000 line quotes only the first of two fills — cosmetic.
+
+### B6 · android-blobs-hunter/survival-achievement-premium-namegen-blobs-unread — **HELD, overturn UPHELD, and I UPGRADED IT TO BOTH BUILDS**
+Every cited line resolves, verbatim:
+```
+109:3 <wave>  :4 <enemy>  :5 <id>400|401|402|403|404</id>  :6 <qty>4</qty>  :7 <x>-50</x>
+114:4 <achievement> :5 <id>0</id> :6 <img>1</img> :7 <name>8000</name> :8 <desc>8080</desc>
+     :9 <stat>60000</stat> :10 <val>1</val>
+121:3 <default>  :22 <special>  :35 <rotation>  :37 <set>
+strings.json["8000"] = 'Duelist I'   ["8080"] = 'Win an online duel.'
+```
+Counts reproduce: 109 → **39 `<wave>`, 87 `<enemy>`**, x histogram **`-50` ×49, `1650` ×37,
+`-1650` ×1**; 114 → **61 `<achievement>`**, `<img>` values exactly `{1,2,3,4}`; 121 → **23 `<set>`,
+176 `<item>`**. The citelint `LINE_ON_BINARY` flag on 109 is a **false alarm** — the `.bin`
+decodes to plain UTF-8 XML and its line numbers are meaningful; I read them.
+`XMLBG.as:14 internal var contentWidth:int = 1600;` is the default, so the "just off both edges of
+a 1600-wide stage" reading is right.
+
+**MY UPGRADE — survival mode is not merely "present in both payloads", it is IDENTICAL in both.**
+I parsed the WEB blob `reference/extracted/bindata/119_1t4646s0.bin`:
+```
+WEB survivalmodedata: <wave> 39 · <enemy> 87 · x histogram {-50: 49, 1650: 37, -1650: 1}
+                      id alternation ['400|401|402|403|404', …]
+```
+Byte-for-byte the same content as the android blob. **S0-1's "a whole game mode absent from all 12
+ledger systems" is confirmed as a gap and now has its authored content in hand, in the TARGET
+build.**
+⚠️ Minor: the NameGenerator counts are `wc -l` values. Actual entry counts are male **398**,
+female **291**, place **677**, samurai family **36**, noble family **33** = **1,435** proper
+nouns, not 1,430.
+
+---
+
+# §C — RULINGS I HAD ALREADY FINISHED ON THE SIX FINDINGS THAT ROTATED OUT
+
+Preserved so the work is not destroyed. All six were verified against artifacts I opened.
+
+- **`combat-core/stance-reach-modifiers`** — **HELD, overturn UPHELD (fatal).** The strongest
+  finding I saw. All ten cited lines verified in both builds, including `§1t99s0§.as:3130`
+  (REVERSED ×1.4) and `:3141-3145` (DUAL = base, floored 100), and I confirmed the stance mapping
+  is not guesswork (android `DUAL_STANCE = 3`, `REVERSED_STANCE = 4`, switch order
+  LIGHT/BALANCED/HEAVY/REVERSED/DUAL ⇒ web `§1t12224s0§` = REVERSED, `§1t12223s0§` = DUAL).
+  **Combat-core blocker ① at REBUILD_READINESS.md:190 dies in full.** `(120+95) × 1.4 = 301 ≈ 300` ✓.
+- **`combat-core/v0717-crit-is-flat-1.3`** — **HELD, overturn UPHELD.** `§1t99s0§.as:3272-3276`
+  verbatim, and I pinned the symbols against android `MCSPlayer.as:3215-3221`: `§1t4414s0§ ==
+  §1t4415s0§` is `reload == maxreload`, `§1t1243s0§` is `STAT_CRITICALDMG`. v0.682 has a stance
+  split (Light ×1.5 / others ×1.2) that v0.717 **removed** for a flat ×1.3. Blocker ② at :190
+  closes, in the ledger's own favour. `SOURCE_CONSTANTS.md:158` verified (file lives at
+  `docs/research/fidelity/`, not `docs/research/`).
+- **`combat-core/v0717-stance-curves-are-already-in-config`** — **HELD, overturn UPHELD**, and
+  redundant with `reach-ts-was-right`. Build stamp confirmed: `§1t1523s0§.as:36 §1t9323s0§:Number
+  = 0.717` (android twin `StatsManager.as:30 clientVersion = 0.682`).
+- **`combat-core/v0717-stance-multipliers`** (`overturns_ledger=false`) — **HELD on the core, TWO
+  FALSE CLAUSES.** (a) *"vindicates the ledger's 0.9/1.2/1.4 line as REACH-at-mastery-ceiling"* is
+  **false** — the ledger labels that triple `dmg`, and it IS the damage ceiling
+  (`§1t99s0§.as:3262-3270` at m=10 → Light 0.9 / Balanced 1.2 / Heavy 1.4). Reach at ceiling is
+  1.4 / 1.2 / 0.9 — the same three numbers in **reverse stance order**. Re-labelling the dmg row as
+  reach would corrupt the ledger. (b) *"differ from android on every constant"* is overstated:
+  Heavy's 0.5 base, the 100 floor and DUAL's ×1.0 are **identical** in both builds.
+- **`combat-core/v0717-stance-slash-multipliers`** — **HELD, overturn UPHELD (reach half), ONE
+  FALSE CLAUSE.** The identification chain is excellent and I verified it end-to-end
+  (`§1t99s0§.as:282` defines a 4-int `§1t4446s0§`; `§1t1523s0§.as:2270` calls it with four
+  element-defence stats; android `MCSPlayer.as:260 initElementDefenseStats(...)` called the same
+  way from `EnemyPlayer.as:763` ⇒ **`§1t99s0§` IS the web MCSPlayer**; param order at `:183-199`
+  pins `§1t4420s0§ = baseSlashLength` and `§1t4421s0§/§1t4422s0§/§1t4423s0§` = light/balanced/heavy
+  mastery). **But its negative grep is wrong:** `0.5 + 0.5 *` occurs **four times** in the android
+  build — `MCSPlayer.as:3052`, `:3205`, `InventoryUI.as:1945`, `:1966`. Only `0.005` is absent from
+  both. Dismissing another survey on a grep that is itself wrong is the same error twice.
+- **`combat-core/v0717-stance-table`** — **HELD (best single cite in the whole packet), overturn
+  REFUSED by its own words.** `§1t5957s0§.as:2721-2747` is verbatim right and is the densest
+  artifact I read: one character-sheet function carrying damage, crit, defence AND reach for all
+  three stances with their mastery terms, keyed off `§1t9714s0§(1000/1001/1002)`, with
+  `_loc42_ = 1.3` on every row. **But its own lane_impact says it "CONFIRMS the ledger's mastery-9
+  reading rather than overturning it."** A finding that says it confirms the sentence cannot be
+  filed as overturning it. Bank it as a new ledger row.
+
+---
+
+# §D — FINAL TALLY FOR THE PACKET AS IT NOW STANDS (24 ids)
+
+**24 judged · 0 skipped · 0 refuted · 18 overturns upheld · 5 overturns refused · 1 scoped.**
+
+Not one claim in this packet is false at its core — every single cite I opened resolved, and the
+numeric claims I re-ran (the 99-entry XP array, 487/487 `@d == count(<f>)`, both SWF headers, both
+audio decrypts + ffprobe, the 22-tag BGData histogram, the item-icon join, 2,423 shape records, the
+frame gradients, 39 survival waves) reproduced to the unit. This is an unusually strong packet.
+
+**The five overturns I refuse, and why:**
+
+| id | why the overturn fails |
+|---|---|
+| `combat-core/reach-and-crit-configs-already-correct` | **its `ledger_text` is not in REBUILD_READINESS.md** — `grep` returns nothing. It overturns another agent's survey, not the ledger. |
+| `art-anim-audio-feel/NEW-24hz-killbeat-is-web-parity-closed` | points at the art-anim **Ready** list, whose own "kill-beat" item its evidence *confirms*. A `24 * N` multiplier is not a frame-rate proof. |
+| `art-anim-audio-feel/animdata-code-injected-hold-table` | a terminal-**hold** table is orthogonal to a **step-rate** claim; nothing in it sets a Hz. (Best new *content* in the packet — bank it as a new row.) |
+| `combat-core/slash-distance-is-player-visible` | the "345 conflict" was closed by name on 2026-07-25 as a Flash-IDE placeholder (`SOURCE_CONSTANTS.md:31-36`); and the finding declines to supply the number blocker ① asks for. |
+| `combat-core/stance-damage-mastery10-ceiling` | the sentence it names is **confirmed verbatim** by the code (ceiling not base; level-1 = ×0.5 / ×1.0 / ×1.4 fixed; Heavy reach ×0.5→×0.9). Only "9" should read "10". |
+
+**Scoped:** `art-anim-audio-feel/web-swf-header-is-24fps-and-800x690` overturns "15fps pose latch"
+but **NOT** "native canvas is 800×480" — 800×690 is the friend-bar layout
+(`§1t1540s0§.as:271-273`, `GameEngine.as:271 originalHeightWithBar:int = 690`).
+
+**The three that actually rewrite the document:**
+1. **L11–80 XP curve** — a shipped 99-entry constant in both builds. `:200` blocker ② and `:350` die.
+2. **All 26 audio waveforms** — byte-exact recoverable. `:240` ① and `:348` die, **and S0-5 dies**.
+3. **Combat-core blocker ①** — reach in stage px is an exact formula. `:190` ① dies.
+
+**And two gauntlet §0 laws need editing, not just the ledger:**
+- **S0-5 is FALSE** and must be replaced with the honest residue: *the containers open with the
+  game's own key schedule; 26 named MP3 cues are in hand; nobody has listened to or graded them;
+  they are v0.682 and web audio is not held.*
+- **S0-1's "Data-XML row counts match exactly"** premise cannot be checked — the web payload
+  carries **no** itemdata/skilldata/npcdata/questdata at all (NF-6). Survival mode, by contrast,
+  IS byte-identical across both payloads (B6).

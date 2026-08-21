@@ -1,61 +1,130 @@
 [
  {
   "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:364",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "NEW-3-full-xp-curve-is-shipped-in-both-builds",
-  "lane_impact": "L-progression: blocker \u2461 closes outright and the \u00a76 'unrecoverable' list loses an entry. This is the largest un-banked win I found while judging \u2014 no claim in this packet mentions it. Delete the INFERRED extrapolation and paste the table.",
-  "ledger_text": "\u2461 **L11\u201380 XP curve \u2014 likely unrecoverable** (no wiki table; both longplays cap at L10; a solo build probably can't reach L11+ offline). Keep the extrapolation as labeled INFERRED.",
-  "overturns_ledger": true,
-  "quote": "public static const \u00a71t5923s0\u00a7:Array = [0,550,1450,2950,5150,8350,12150,16350,20900,25900,31400,37400,43500,49850,56550,63900,71900,80300,89100,98300,108000,\u2026,29395800];   (android twin: reference/decompiled/shs3_android/scripts/StatsManager.as:78  public static var expArray:Array = [0,550,1450,2950,\u2026] \u2014 same 99 entries)",
-  "text": "THE FULL LEVEL CURVE IS RECOVERED. A 99-entry expArray, [0,550,1450,2950,5150,8350,12150,16350,20900,25900,31400,37400,\u2026,29395800], is a shipped constant in BOTH builds. Index 10 = 31 400, matching the known L1\u2013L10 caps exactly; index 80 = 4 285 800; the table runs to index 98. REBUILD_READINESS.md's progression blocker \u2461 and its \u00a76 'structurally unrecoverable' list both name the L11\u201380 XP curve as likely unrecoverable and tell the project to keep an INFERRED extrapolation. That is now false \u2014 the curve is A2, in two independent bundles.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:262-286",
+  "build": "web v0.717",
+  "cite": "docs/research/REBUILD_READINESS.md:79-80, :165, :205 + reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2644-2651",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "NEW-4-paperdoll-is-13-slots-not-9",
-  "lane_impact": "L-items-equipment + L-art-anim: four more render/equip slots than the ledger models, including a scabbard and two accessories. Any sprite-compositing contract (blocker \u2464) has to cover 13 layers. Combine with NF-npcdata-silences (b): zero colour overrides are ever authored, so each slot is separately painted art.",
-  "ledger_text": "- **Ready:** 9-slot paperdoll; 4 rarity tiers; affix **prefix** pool (verbatim); item-name template; full ItemStats field list;",
+  "id": "NF-1/ledger-rebirth-25-is-code-sourced-not-film",
+  "lane_impact": "ledger hygiene + rebirth-elements + economy \u2014 stop citing film for a number no camera ever saw; the value survives on an A2 cite.",
+  "ledger_text": "film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
   "overturns_ledger": true,
-  "quote": "internal static var EQ_ARMOR:int = 0;  EQ_GLOVES:int = 1;  EQ_HAIR:int = 2;  EQ_HAT:int = 3;  EQ_HEAD:int = 4;  EQ_MASK:int = 5;  EQ_NECK:int = 6;  EQ_PANTS:int = 7;  EQ_SHOES:int = 8;  EQ_WEAPON:int = 9;  EQ_SCABBARD:int = 10;  EQ_ACCESSORY1:int = 11;  EQ_ACCESSORY2:int = 12;",
-  "text": "The paperdoll is THIRTEEN slots, not nine. StatsManager enumerates EQ_ARMOR 0, EQ_GLOVES 1, EQ_HAIR 2, EQ_HAT 3, EQ_HEAD 4, EQ_MASK 5, EQ_NECK 6, EQ_PANTS 7, EQ_SHOES 8, EQ_WEAPON 9, EQ_SCABBARD 10, EQ_ACCESSORY1 11, EQ_ACCESSORY2 12. Corroborated twice: XMLNpc.as:36's DEFAULT_EQSTRING has 13 pipe-separated fields, and XMLNpc.as:705 allocates `new Vector.<Item>(13)`. npcdata's <mcs> blocks use twelve of them (armor, gloves, hair, hat, head, mask, neck, pants, shoes, weapon, prop1, prop2). REBUILD_READINESS.md says '9-slot paperdoll' in two places \u2014 KNOWN-KNOWNS at :82 and items-equipment Ready at :209 \u2014 and both are wrong.",
+  "quote": ":165 '(\"dan rank 5 (kyudan)\" \u2014 kyudan=9th); film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.'  \u00b7  :205 '\u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth).'  \u00b7  \u00a71t1523s0\u00a7.as:2644 `if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8)` :2646 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);` :2651 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25);`",
+  "text": "REBUILD_READINESS.md contradicts itself on rebirth sourcing, and the fix is a re-tag, not a deletion: :165 claims 'film shows a flat +25 gold every rebirth, no 10th-rebirth tier' while :205 concedes '\u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth)'. The +25 VALUE is correct \u2014 it is banked at :79-80 ('rebirth scroll 1000c (+25g)') and is now CONFIRMED by shipped web code \u2014 but its film provenance is fictitious and the 'no 10th-rebirth tier' half is disproven by the Dan-8 100-Gold arm. Re-tag the row A2/code-sourced.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "android v0.682 string table; skilldata row ids identical in the web payload",
-  "cite": "docs/gauntlet/L0/index/resolved_names.json \u2014 skilldata.xml resolved[\"1039\"], resolving reference/extracted/skilldata.xml's <displayname>/<desc> ids against docs/gauntlet/L0/index/strings.json",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3484, :3800, :4391 and :3284-3290 (android twins: reference/decompiled/shs3_android/scripts/MCSPlayer.as:3415, :3709, :3231-3238)",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "NEW-6-shunpo-effect-recovered",
-  "lane_impact": "L2 skills-meters: blocker \u2461 closes \u2014 and the ledger's own suspicion (that the slowmo belongs to SHS2) is vindicated. Carries the S0-3 Android-string caveat for the COPY, but the skill id and category are identical in both builds' skilldata.",
-  "ledger_text": "\u2461 Shunpo's real effect (Light L10 ultimate; spacebar-slowmo belongs to the **predecessor SHS2**, not Duels).",
+  "id": "NF-3-def-mitigation-is-flat-subtraction-both-builds",
+  "lane_impact": "L-progression + L1 combat-core: blocker \u2460 at :200 closes in FULL when combined with the SPD formulas (NF-4 and stance-modifier-table-in-payload). Nothing about DEF needs measuring.",
+  "ledger_text": "\u2460 DEF mitigation curve + SPD range/cooldown scaling (wiki gives only direction) \u2014 *measure per-point deltas in a build.*",
   "overturns_ledger": true,
-  "quote": "'1039': {'displayname': 'Shunpo', 'desc': 'Ultimate Light Stance technique. \\n\\nHold down the skill icon to increase the damage it inflicts.\\n\\nThis skill can only be used when in Light Stance.'}",
-  "text": "Shunpo's real effect is held, closing skills-meters blocker \u2461. Skill 1039 'Shunpo' is the Light-stance ultimate and is a HOLD-TO-CHARGE damage skill, not the SHS2 spacebar-slowmo: 'Ultimate Light Stance technique. Hold down the skill icon to increase the damage it inflicts. This skill can only be used when in Light Stance.' The same shape holds for its two siblings, 1040 'Thousand Stabs' (Balanced) and 1041 'Deadly Cleave' (Heavy), and all three sit at the level-70 rung of the enemy skill ladder.",
+  "quote": "web \u00a71t99s0\u00a7.as:3484 `_loc5_ -= this.\u00a71t4477s0\u00a7();` (also :3800, :4391)  \u00b7  :3284-3290 `internal function \u00a71t4477s0\u00a7() : int { if(this.stance == \u00a71t12222s0\u00a7) { return defense * 0.8; } return defense; }`  \u00b7  android MCSPlayer.as:3415 `damage -= this.getDefense();`",
+  "text": "DEF mitigation is FLAT SUBTRACTION in both builds and no curve exists. Damage is reduced by `damage -= getDefense()`, and getDefense returns `defense * 0.8` only when the DEFENDER is in Heavy stance, otherwise `defense`. This closes the DEF half of REBUILD_READINESS.md:200 progression blocker \u2460 ('DEF mitigation curve \u2026 measure per-point deltas in a build') \u2014 there is no build to measure and no curve to find. It corroborates docs/research/fidelity/SOURCE_CONSTANTS.md:149 ('defence SUBTRACTS, it never divides'), a ruling the ledger never absorbed.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "reference/extracted/android/113_Mobile_MusicResource.bin and 122_Mobile_SoundResource.bin, decrypted with reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:206-217 keyed from Mobile.as:352 (charCodeAt(1) => 'u'=117 and 'o'=111); 13 DefineSound + 13 SymbolClass entries each",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1057-1087",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NF-3/web-twin-of-repair-and-reinforce",
+  "lane_impact": "L4 economy \u2014 closes REBUILD_READINESS.md:215 \u2462 on a WEB cite, and shows the repair block was ported verbatim between builds.",
+  "ledger_text": "\u2462 Repair-Weapon cost (never captured).",
+  "overturns_ledger": true,
+  "quote": ":1058 `cost = \u00a71t1525s0\u00a7.\u00a71t9936s0\u00a7() * 10;` :1068 `if(weapon == null || weapon.\u00a71t483s0\u00a7() == 0 || weapon.\u00a71t483s0\u00a7() == 13000)` :1076 `\u00a71t1523s0\u00a7.\u00a71t9619s0\u00a7(-cost);` :1077-1080 `if(weapon.uses > 1) { weapon.uses = 1; }` :1081 `\u00a71t1523s0\u00a7.\u00a71t1684s0\u00a7(60005,1);` :1086-1087 `case ...\u00a71t9093s0\u00a7: cost = 5000;`",
+  "text": "The web v0.717 twin of the repair/reinforce block exists and carries identical numbers, so the repair economy needs no Android caveat: repair costs currentNodeLevel * 10 (coins), clamps a worn weapon's uses down to 1, refuses an empty slot or item 13000, and reports achievement 60005; reinforce costs a flat 5000.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 (web parity not separately checked; the sibling getBaseSlashLengthVal IS identical in both builds)",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1854-1860, consumed at InventoryUI.as:1937 and printed at :2233",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NF-4-spd-to-cooldown-formula-recovered",
+  "lane_impact": "L2 skills-meters: 'the SPEED-stat\u2192cooldown formula' stops being a known-unknown. Cross-check: the payload's own placeholder character sheet prints 0.75, which back-solves to SPD 150.",
+  "ledger_text": "\u2463 SPD\u2192cooldown formula.",
+  "overturns_ledger": true,
+  "quote": "internal static function getSkillCooldownModifierVal(speed:int) : Number { if(speed > 300) { speed = 300; } return 1 - speed / 300 * 0.5;",
+  "text": "The SPEED-stat \u2192 skill-cooldown transfer function is a shipped two-line formula: cooldownModifier = 1 - min(speed, 300) / 300 * 0.5, i.e. a linear halving that saturates at SPD 300. It is consumed by the character sheet at InventoryUI.as:1937 and printed to the player at :2233 ('skill cooldown modifier: 0.' + int(mod*1000)). This closes skills-meters blocker \u2463 at REBUILD_READINESS.md:195 and the SPD half of progression blocker \u2460 at :200.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both (list Android, prices WEB itemdata.xml)",
+  "cite": "reference/extracted/android/121_Mobile_PremiumData.bin joined to reference/extracted/itemdata.xml <heavenlyprice> and docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NF-4/premium-ladder-has-a-2-gold-tier",
+  "lane_impact": "L4 economy + L-items-equipment \u2014 two SKUs would be mispriced by a 1/3/5/12 ladder, and the outfit-bundle count is off by seven.",
+  "ledger_text": "Ninja-Services prices",
+  "overturns_ledger": true,
+  "quote": "heavenlyprice histogram over the 143 unique premium ids: {'1': 20, '2': 2, '3': 94, '5': 4, '12': 23}. Price-2 rows: 2101 'Medium Soldier Pill', 2126 '25 Duel Tokens'. Price-12 rows: 2130 'Assassin Outfit' \u2026 2171 'Swords of the Mist', 23 rows total.",
+  "text": "The premium (Ninja Services) price ladder is 1/2/3/5/12 Gold, not 1/3/5/12: a 2-Gold tier exists holding 2101 'Medium Soldier Pill' and 2126 '25 Duel Tokens'. Measured tier counts over the 143 unique SKUs: 1 Gold x20, 2 Gold x2, 3 Gold x94, 5 Gold x4, 12 Gold x23. The 12-Gold outfit tier is 23 bundles, not 30.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/extracted/skilldata.xml (skills 1000, 1001, 1002) + reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3262, :3265, :3270 + docs/research/REBUILD_READINESS.md:155",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NF-5/stance-mastery-caps-at-10-not-9",
+  "lane_impact": "L5 combat-core \u2014 if the build 'targets mastery-9' as REBUILD_READINESS.md:157 offers, the correct ceiling is 0.86/1.18/1.4, not 0.9/1.2/1.4; the published table is the mastery-10 row.",
+  "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "overturns_ledger": true,
+  "quote": "skilldata.xml skill 1000 <level><value> = [1,2,3,4,5,6,7,8,9,10]; likewise 1001 and 1002.  \u00b7  \u00a71t99s0\u00a7.as:3262 `_loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);` at m=10 -> 0.9 ; :3265 `* (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1)` at m=10 -> 1.2 ; :3270 `* 1.4`.",
+  "text": "Stance mastery caps at level 10, not 9. The three stance-mastery skills each enumerate levels 1..10, which is why the web damage curve only reaches Light x0.9 / Balanced x1.2 / Heavy x1.4 at mastery 10. Every 'mastery-9 ceiling' label in the project docs is off by one.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "build": "web v0.717",
+  "cite": "docs/gauntlet/L0/index/bindata.json (all 27 web blob roots) + reference/extracted/skilldata.xml vs reference/extracted/android/117_Mobile_SkillData.bin + reference/extracted/payload.xml (streamed)",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml",
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "NF-6-web-payload-carries-no-data-xml",
+  "lane_impact": "Cross-cutting, and it qualifies gauntlet \u00a70 itself: the 'Data-XML row counts match exactly' premise cannot be checked, because there is no web data XML to compare against. Every skilldata/itemdata/npcdata/questdata claim in this lane carries the v0.682 caveat \u2014 including NEW-6-shunpo-effect-recovered, stance-damage-mastery10-ceiling and v0717-stance-multipliers.",
+  "ledger_text": "S0-3 CAVEAT: Data-XML row counts match exactly; UI copy and combat tuning parity is NOT established.",
+  "overturns_ledger": true,
+  "quote": "web bindata roots: 100-118 animdata (19) \u00b7 119 survivalmodedata \u00b7 93 obj \u00b7 94-98 text \u00b7 92 image/gif \u2014 no data XML.  \u00b7  android/117_Mobile_SkillData.bin head: '<?xml version=\"1.0\" encoding=\"utf-8\"?>\\r\\n<skilldata>\\r\\n\\r\\n\\t<skill>\\r\\n\\t\\t<id>1000</id>\u2026' identical to reference/extracted/skilldata.xml after strip.  \u00b7  grep -c skilldata payload.xml \u2192 0",
+  "text": "The WEB v0.717 payload contains NO itemdata, skilldata, npcdata or questdata. Its 27 embedded bindata blobs are 19 animdata, 1 survivalmodedata, 1 room-object table, 5 name tables and a GIF \u2014 no data XML and no lang table. All four reference/extracted/*.xml files are the ANDROID blobs with the XML declaration and CRLFs stripped (skilldata.xml 39,003 B vs android/117_Mobile_SkillData.bin 39,045 B; itemdata 184,002/184,044; npcdata 228,413/228,455 \u2014 the same 42-byte delta). Streaming the 329 MB payload.xml finds 'skilldata' 0 times and '<npcdata' 0 times (the two 'itemdata'/'questdata' hits are BigDB table-name string constants at bytes 19,503,638 and 19,502,309). The web build fetched these from the dead CDN.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/extracted/bindata/119_1t4646s0.bin (web, parsed by me) vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin; default at reference/decompiled/shs3_android_payload/scripts/XMLBG.as:14",
   "citelint": {
    "notes": [
     "QUOTE_NOT_LOCATED"
@@ -63,18 +132,18 @@
    "problems": [],
    "status": "QUOTE_UNVERIFIED"
   },
-  "id": "android-blobs-hunter/audio-decrypts-26-named-mp3-streams",
-  "lane_impact": "L6 art-anim-audio-feel. The 'ffdec cannot open it' half of S0-5 is dead - the containers open with the game's own key schedule. What survives of S0-5 is only the honest part: nobody has listened to or graded the audio. A named, timed, format-known 26-cue manifest replaces a black box, and the 4-stem adaptive beds are a mechanic the ledger has nowhere.",
-  "ledger_text": "S0-5: audio is HELD but ENCRYPTED (nested \"CWS\" SWFs ffdec cannot open). You may NOT claim audio is recovered.",
+  "id": "NF-8-survival-mode-is-byte-identical-in-both-builds",
+  "lane_impact": "Cross-cutting: the gap S0-1 flagged now has its authored wave content in hand IN THE TARGET BUILD, so it can be specified rather than merely noted. Upgrades survival-achievement-premium-namegen-blobs-unread from 'android v0.682' to 'both'.",
+  "ledger_text": "S0-1: 119 <survivalmodedata> (a whole game mode absent from all 12 ledger systems)",
   "overturns_ledger": true,
-  "quote": "113_Mobile_MusicResource -> CWS v17, 13 DefineSound: id=2 safepercussion MP3 11025Hz 16bit mono samples=882144 (80.01s); id=12 battledrums 882144 (80.01s). 122_Mobile_SoundResource -> id=9 slash1 MP3 11025Hz samples=3809 (0.35s); id=1 deflect 8700 (0.79s); id=11 hitmetal 5717 (0.52s).",
-  "text": "The audio blocker is not a wall. ffdec cannot open 113_Mobile_MusicResource and 122_Mobile_SoundResource because they are XOR-obfuscated BEFORE the SWF header; applying the shipped key schedule turns both into ordinary CWS v17 SWFs that inflate and parse. Each holds 13 DefineSound tags, all MP3, 11025 Hz, 16-bit, mono, each bound to a SymbolClass name: music bgm_lose 3.53s, safepercussion/safekoto/safeambience 80.01s each, bgm_levelup 29.78s, bgm_gangnam 3.63s, flutes 80.01s, dungeonpiano/dungeonpercussion/dungeonflute/dungeonambience 45.74s each, battledrums 80.01s, battlechants 80.01s; sfx deflect 0.79s, die1 0.48s, die2 0.66s, die3 0.87s, slash1 0.35s, slash2 0.56s, slash3 0.27s, hitmetal 0.52s, punch 0.31s, sumo 2.90s, refund 0.73s, goodkoto 1.57s, fart 0.42s. The stem structure is itself a design fact: the 'safe' and 'dungeon' beds are 4 and 4 co-length stems (80.01s and 45.74s) - layered adaptive music, not single tracks. I did NOT listen to or grade any of it; I read tag headers only.",
+  "quote": "WEB survivalmodedata: <wave> 39 \u00b7 <enemy> 87 \u00b7 x histogram {-50: 49, 1650: 37, -1650: 1} \u00b7 id alternation ['400|401|402|403|404', \u2026]  \u00b7  XMLBG.as:14 internal var contentWidth:int = 1600;",
+  "text": "Survival mode \u2014 the game mode S0-1 flags as absent from all 12 ledger systems \u2014 is not merely present in both payloads, its authored content is IDENTICAL. I parsed the WEB blob directly: 39 <wave>, 87 <enemy>, spawn-x histogram {-50: 49, 1650: 37, -1650: 1}, and the same enemy-id alternation lists '400|401|402|403|404'. Every figure matches the android 109_WarHexUI_SurvivalModeData blob exactly. The spawn x values sit just off both edges of XMLBG's default contentWidth = 1600.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "reference/extracted/android/123_Mobile_BGData.bin - tag histogram over all 49 <bg> records (623 lines); field mapping at reference/decompiled/shs3_android_payload/scripts/XMLBG.as:58-140",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/ \u2014 43 distinct \"Snd_*\" literals (my own grep -rhoE over the directory); representative call sites at reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:472 and :478",
   "citelint": {
    "notes": [
     "QUOTE_NOT_LOCATED"
@@ -82,18 +151,103 @@
    "problems": [],
    "status": "QUOTE_UNVERIFIED"
   },
-  "id": "android-blobs-hunter/bgdata-override-vocabulary-is-22-tags",
-  "lane_impact": "L6 art-anim + L1 world-exploration. A recreation that implements only the five default scroll/blur constants will render 49 backgrounds and get roughly twenty of them wrong. Also corrects two numbers in the banked claim: ffwrap is 8 rows (lines 12, 23, 259, 330, 356, 370, 514, 530), and ffscroll's range is 0.05-1.0, not 0.05-0.27.",
-  "ledger_text": "android-blobs/bgdata-is-a-parallax-spec: 'Overrides present: ffwrap 6 rows (1640/1670/1750/1770/2000/2000), ffscroll 14 rows (0.05-0.27), fscroll 16 rows (0.1-1.0), contentwidth 17 rows ..., wrap 17 rows all 0.'",
+  "id": "art-anim/43-named-sfx-cues-held-in-web-v0717",
+  "lane_impact": "L6 art-anim-audio-feel: RR:240 blocker \u2460 is overstated. The WAVEFORMS remain unrecovered (S0-5: nested CWS SWFs ffdec cannot open) and that half stands, but 'every SFX ... is INFERRED' is now false \u2014 the cue set and its trigger map are HELD from web source. A WebAudio recreation can be authored against a real 43-cue manifest with correct trigger points instead of guessed ones.",
+  "ledger_text": "- **Blockers:** \u2460 **ALL AUDIO** \u2014 every SFX + music param is INFERRED, no composer sourced.",
   "overturns_ledger": true,
-  "quote": "tag histogram over 49 <bg>: {'id':49,'name':49,'ffcount':49,'fcount':49,'ppcount':49,'gcount':49,'fgcount':49,'wrap':17,'contentwidth':17,'fscroll':16,'ffscroll':14,'fblur':11,'fwrap':11,'ppwrap':9,'ppblur':9,'ffwrap':8,'ppscroll':6,'fgscroll':3,'ffblur':3,'gscroll':2,'fgblur':2,'gblur':1}",
-  "text": "The per-background override vocabulary in 123_Mobile_BGData is 22 tags, not the four the packet lists, and three of the overrides break the default ladder in ways the defaults cannot predict. Measured over all 49 rows: id 49, name 49, ffcount/fcount/ppcount/gcount/fgcount 49 each, wrap 17, contentwidth 17, fscroll 16, ffscroll 14, fblur 11, fwrap 11, ppwrap 9, ppblur 9, ffwrap 8, ppscroll 6, fgscroll 3, ffblur 3, gscroll 2, fgblur 2, gblur 1. Two rows set <gscroll>0</gscroll> - a LOCKED ground plane; three rows set <fgscroll>1.2</fgscroll>, overriding the 2.0 foreground ladder value; one row sets <ffscroll>1</ffscroll>, collapsing the farthest plane onto the camera. <gwrap> and <fgwrap> are never authored, and neither is <groundy> or <flatground>.",
+  "quote": "$ grep -rhoE '\"Snd_[A-Za-z0-9_]+\"' reference/decompiled/shs3_payload/scripts/ | sort -u | wc -l  ->  43\nSnd_addStat Snd_back Snd_birds1..3 Snd_bowFire Snd_bowFireMany Snd_challenge Snd_click Snd_criticalDamage Snd_deflect Snd_die1..3 Snd_drop Snd_equip Snd_error Snd_fart Snd_goodKoto Snd_hitMetal Snd_jump Snd_mail Snd_menu Snd_menuClose Snd_mining Snd_ninja Snd_notification Snd_punch Snd_put Snd_refund Snd_rimshot Snd_sadTrombone Snd_slash1..3 Snd_smallClick Snd_smokebomb Snd_sumo Snd_upgradeSkill Snd_wrAttack",
+  "text": "The SFX CUE INVENTORY and its trigger map are held for web v0.717 even though the audio bytes are encrypted: 43 distinct \"Snd_*\" string literals appear across the web payload's decompiled classes, each at a live call site, so which sound fires on which event is recoverable today. Examples: Snd_smallClick on a legal stance switch and Snd_error on a refused one (\u00a71t113s0\u00a7.as:472/:478); Snd_slash1/2/3, Snd_deflect, Snd_hitMetal, Snd_criticalDamage, Snd_die1/2/3, Snd_smokebomb, Snd_bowFire, Snd_punch, Snd_jump, Snd_mining.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 blob (asset, not tuning)",
+  "cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin \u2014 decoded utf-8-sig (NOT utf-16le) and regex-scanned for `<anim i=\"\u2026\" d=\"\u2026\">`; 158 anims total",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim/severed-limb-death-variant-is-held",
+  "lane_impact": "art-anim-audio-feel: blocker \u2464 closes outright. Also a standing correction to the gauntlet's own \u00a70 note \u2014 99_ and 94_ are UTF-8-with-BOM, not UTF-16LE; the UTF-16LE instruction produces mojibake and zero hits on these two files and will cause false refutations.",
+  "ledger_text": "\u2464 severed-limb death variant.",
+  "overturns_ledger": true,
+  "quote": "<anim i=\"deathnohand\" d=\"25\"> \u00b7 <anim i=\"deathnohead\" d=\"31\"> \u00b7 <anim i=\"deathinhalf\" d=\"28\"> \u00b7 <anim i=\"deathbyarrow\" d=\"21\"> \u00b7 <anim i=\"deathwitharrow\" d=\"23\"> \u00b7 <anim i=\"death\" d=\"38\"> \u00b7 <anim i=\"deathenemy\" d=\"23\"> \u00b7 <anim i=\"deathdowned\" d=\"7\">",
+  "text": "Art-anim blocker \u2464, 'severed-limb death variant', is dead. The Human animation blob authors three dismemberment-specific deaths alongside the ordinary ones: deathnohand (25 frames), deathnohead (31), deathinhalf (28), plus deathbyarrow (21) and deathwitharrow (23). The packet's animation claim aimed at blocker \u2462 and therefore left \u2464 standing by mis-aiming.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 table vs web v0.717 code",
+  "cite": "docs/gauntlet/L0/index/strings.json (per-century census over all 2,533 numeric IDs); reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:111; reference/frames/duel_dense/Nr4fQstqHDM_428.0.png crop (230,960)-(560,1070) @4x LANCZOS",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "cite04/android-string-table-has-no-900-block",
+  "lane_impact": "All lanes porting UI copy: the android table is not merely reworded relative to v0.717, it is INCOMPLETE \u2014 the whole 900-999 block is missing, so any v0.717 string in that range must come from film, never from strings.json.",
+  "ledger_text": "S0-3 caveat: 'UI copy and combat tuning parity is NOT established' between android v0.682 and web v0.717",
+  "overturns_ledger": true,
+  "quote": "census: 0-99 \u2192 100 entries \u00b7 100-199 \u2192 100 \u00b7 200-299 \u2192 90 \u00b7 300-399 \u2192 91 \u00b7 400-499 \u2192 100 \u00b7 500-599 \u2192 100 \u00b7 600-699 \u2192 99 \u00b7 700-799 \u2192 100 \u00b7 800-899 \u2192 79 (highest = 880) \u00b7 900-999 \u2192 0 \u00b7 1000-1099 \u2192 45. Web \u00a71t113s0\u00a7.as:111 'this.\u00a71t5204s0\u00a7 = \"<font color=\\'#BBBBBB\\'>\" + \u00a71t1521s0\u00a7.getString(960) + \"</font>\";' \u2014 and the frame shows that field reading 'CANNOT CHANGE STANCE'.",
+  "text": "The android v0.682 language table has NO entries at all in the 900-999 range - the highest ID below 900 is 880, and IDs resume at 1000. Yet the web v0.717 client renders getString(960) as the greyed label beneath the Focus bar (the 'CANNOT CHANGE STANCE' text visible on film). That is machine-checkable proof that the web language table carries string IDs the android table does not, which is the hardest evidence yet for the S0-3 parity caveat: the android table cannot be used as a complete stand-in for v0.717 UI copy, because some v0.717 strings have no android row to read at all.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A1",
-  "build": "web v0.717 (longplay footage)",
-  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - crops (900,560)-(1180,960) x3 NEAREST, (760,780)-(1240,1010) x3, (950,840)-(1090,930) x8; gradient boxes (780,885)-(850,955), (1100,885)-(1230,955), (300,885)-(560,955) vs (1300,300)-(1500,450) and (960,700)-(1080,840) - cross-checked to reference/decompiled/shs3_android_payload/scripts/XMLBG.as:46",
+  "build": "web v0.717",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - horizontal row scan at y=540 for pixels with R+G+B < 25; vertical column scan at x=960; cross-checked against reference/decompiled/shs3_android/scripts/StatsManager.as:80-82 (stageWidth 800, stageHeight 480)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "cite04/longplay-frames-are-pillarboxed-scale-is-2.27",
+  "lane_impact": "Every video-measurement lane: fix the px conversion at 2.27 and subtract a 52-px left offset before converting any x coordinate. L5 combat-core reach figures taken at 2.4 must be re-scaled.",
+  "ledger_text": "12. **Native resolution is 800\u00d7480 (5:3)**, not 16:9 \u2014 HUD x-fractions measured off 1920\u00d71080 video may be pillarbox-compressed. Verify before trusting horizontal coords.",
+  "overturns_ledger": true,
+  "quote": "measured: size 1920x1080 \u00b7 left bar 52 px \u00b7 right bar 52 px \u00b7 content width 1816 \u00b7 top bar 0 \u00b7 bottom bar 0 \u00b7 content height 1080. StatsManager.as:80 'public static var stageWidth:int = 800;' :82 'public static var stageHeight:int = 480;'",
+  "text": "Every 1920x1080 longplay still is PILLARBOXED: 52 px of true black on the left and 52 px on the right, leaving a 1816x1080 game area. The game-px-to-screen-px scale for measuring anything off film is therefore 2.27 (1816/800), or 2.25 vertically (1080/480) - NOT 1920/800 = 2.4. Any reach, stroke-length or HUD-width figure converted at 2.4 is inflated ~6%. This upgrades ledger item 12 from a warning ('may be pillarbox-compressed') to a measured constant, and it directly corrects the conversion note appended to itemdata-hunter/reach-is-per-stance.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (contrasted with android v0.682)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2644-2651 and :228; reference/decompiled/shs3_android/scripts/StatsManager.as:194 and :2201-2207",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "cite04/web-rebirth-pays-25-and-100-heavenly-gold",
+  "lane_impact": "L-rebirth-elements and L-economy: rebirth payout becomes CONTRACT for v0.717 (25/100 HGold), and ledger item 7 flips from 'should be INFERRED' to 'sourced from code', minus its final clause.",
+  "ledger_text": "7. `MAX_DAN_RANK=10` and `tenthGold=100` should be INFERRED, not CONTRACT. \u2026 film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:2644 'if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8)' \u00b7 :2646 '\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);' \u00b7 :2647 announces getString(864,[name,\"10\"]) \u00b7 :2651 '\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25);'  ||  \u00a71t1523s0\u00a7.as:228 'internal static const \u00a71t9413s0\u00a7:int = 12;'  ||  android StatsManager.as:194 'internal static var STAT_HGOLD:int = 12;'",
+  "text": "The web v0.717 rebirth payout is 25 Heavenly Gold normally and 100 Heavenly Gold at STAT_DAN == 8 - NOT the android build's 5/20. This is the correct overturn of ledger item 7: 'tenthGold=100' and the film's '+25' are both the RIGHT v0.717 numbers and become CONTRACT for the web build, while the clause 'no 10th-rebirth tier' is false (a Dan-8 tier pays 4x). The only thing the film got wrong is the currency label - it is Heavenly Gold (the premium currency, stat slot 12), not coins. This simultaneously refutes hunter/tenth-rebirth-tier-exists, which would have written android's 5/20 into a web-target ledger.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3276 and :3284-3290",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/damage-triple-crit-1p3-and-heavy-def-confirmed-in-web-source",
+  "lane_impact": "L5 combat-core: blocker \u2461 is CLOSED from source \u2014 crit is 1.3x and it is DETERMINISTIC, fired by reload == maxreload (i.e. a full Focus bar), not by a chance roll. That also answers skills-meters blocker \u2464 ('crit proc rule (chance vs deterministic) \u2014 entirely absent'): it is deterministic, and the spend at \u00a71t99s0\u00a7.as:3297 zeroes the bar on the critting slash.",
+  "ledger_text": "\u2461 crit 1.3 vs 3 final \u2014 *read one crit popup.*",
+  "overturns_ledger": true,
+  "quote": "3258:         var _loc1_:int = this.minDamage + Math.random() * this.damageRange;\n3262:                _loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);\n3265:                _loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);\n3270:                _loc2_ = _loc1_ * 1.4;\n3272:         if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)\n3274:            return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;\n---\n3286:         if(this.stance == \u00a71t12222s0\u00a7)\n3288:            return defense * 0.8;",
+  "text": "The damage half of the stance model and the crit multiplier are held from WEB source, not inferred: damage is dmg x (0.5 + 0.04\u00b7lightMastery) for Light, x (1 + 0.02\u00b7balancedMastery) for Balanced, and a FLAT x1.4 for Heavy/Dual/Reversed; at reload == maxreload the result is x1.3 plus an item crit-damage add; and Heavy stance takes defense x0.8. This confirms REBUILD_READINESS.md:189 and the damage half of RR:155 from primary source and closes combat-core blocker \u2461 ('crit 1.3 vs 3 final').",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 (animation half also confirmed byte-identical in web v0.717 \u2014 see the bindata md5 finding)",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyShield.as:39 and :123-125 + MCSCharacter.as:1309-1329 + EnemyZombie.as:522 and :544",
   "citelint": {
    "notes": [
     "QUOTE_NOT_LOCATED"
@@ -101,327 +255,165 @@
    "problems": [],
    "status": "QUOTE_UNVERIFIED"
   },
-  "id": "android-blobs-hunter/foreground-plane-is-the-most-blurred-element",
-  "lane_impact": "L6 art-anim. THE FRAME WINS over the measurement claim. The occlusion survives; the outline characterisation is inverted. Building crisp foreground grass from the original wording would be a visible 1:1 miss on every one of the 49 backgrounds that declares an <fgcount>.",
-  "ledger_text": "android-blobs/foreground-layer-occludes-the-fighters: 'a sharply-outlined grass band ... The grass carries the same outline weight as the fighters - it is not the blurred far layer'",
+  "id": "combat-core/flinch-is-nested-inside-the-iframe-window",
+  "lane_impact": "L0 combat-core + art-anim: fixes the shape of the hit reaction that blocker (3) asks for. It also supplies the frame-unit discipline that killed enemies-ai/hit-lockout-decomposes-exactly \u2014 game ticks, animation poses (15fps latch) and 60fps video frames are three different clocks and must never be added together.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
   "overturns_ledger": true,
-  "quote": "p99 gradient - grass (780,885)-(850,955)=3.0, (1100,885)-(1230,955)=3.0, (300,885)-(560,955)=3.4 ; far rock (1300,300)-(1500,450)=7.0 ; tan fighter torso (960,700)-(1080,840)=82.0 ; purple shoulder (820,830)-(900,880)=101.6",
-  "text": "Corrected frame reading. In the cited longplay frame the foreground plane does occlude both fighters' lower legs, but it is the SOFTEST element in the frame, not the sharpest: p99 local luminance gradient measures 3.0 / 3.0 / 3.4 across three grass boxes clear of the fighters, versus 7.0 for the far rock background, 7.0 for the tree trunk, 82.0 for the tan fighter's torso and 101.6 for the purple fighter's shoulder. The grass carries no near-black outline pixels. This is exactly what XMLBG.as:46 predicts - foregroundLayerBlur = 8, tied with farthestLayerBlur = 8 for the hardest blur in the ladder - so the frame and the AS3 agree, and a recreation must blur its foreground scenery as hard as its farthest layer.",
+  "quote": "EnemyShield.as:39 `var finishedAnimation:String = mcs.updateAnimation();` then :123-125 `if(gotHitCounter > 0) { --gotHitCounter; }` \u2014 one call each per NPC update. MCSCharacter.as:1315 `++this.frameCounter;` \u2014 exactly one pose per call. EnemyZombie.as:522 `gotHitCounter = 12;` and :544 `this.startAction(FLINCH_STATE);` are in the SAME gotHit() call.",
+  "text": "The 8-frame flinch clip and the 12-frame gotHitCounter start on the SAME tick and run on the SAME clock, so the flinch is nested inside the invulnerability window (ticks 0-7 flinch, ticks 0-11 invulnerable). There is no held pose before it and no lockout after it. Any port that plays the flinch after a hold, or that reads 12 = 4 + 8 as a sequence, is wrong.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
   "build": "android v0.682",
-  "cite": "decrypted reference/extracted/android/115_Mobile_SHS3Resource.bin (1,912 SymbolClass names) joined by id to reference/extracted/android/111_Mobile_ItemData.bin (982 <item>) and 117_Mobile_SkillData.bin (75 <skill>); resolution path reference/decompiled/shs3_android_payload/scripts/MCSItem.as:203",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:239,1158-1168,2977,3098-3112,3242-3272 + BattleUI.as:261-262",
   "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
+   "notes": [],
    "problems": [],
-   "status": "QUOTE_UNVERIFIED"
+   "status": "RESOLVES"
   },
-  "id": "android-blobs-hunter/item-icon-coverage-corrected",
-  "lane_impact": "L3 items-equipment + L10 ui-hud. The banked STILL_UNHELDs are still correctly retired - the art IS on disk - but roughly half the consumable roster falls back to item0 (MCSItem.as:206) rather than one in twenty. A builder planning icon work needs 70 originals, not 18.",
-  "ledger_text": "android-blobs/item-and-skill-icon-art-is-held: 'covering 94/99 consumables, 8/9 accessories and 67/79 quest items ... Residual named exactly: consumable arts 2000, 2001, 2500, 2502, 2503; accessory art 3007; 12 quest-item arts.'",
+  "id": "combat-core/focus-crit-gating-rule-is-held",
+  "lane_impact": "L5 combat-core blocker 5 and L5 skills-meters blocker 3 both close: max 120 frames, +6/tick recharge, per-stance slash drain, on-hit penalty, stance gate at 1/6, crit unlocked at 100%. Web-parity not yet checked by value - apply the shs3_payload grep rule before promoting to CONTRACT.",
+  "ledger_text": "\u2464 Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
   "overturns_ledger": true,
-  "quote": "band 2000-2999: rows=99 covered=50 MISSING=49 -> [2000, 2001, 2131..2139, 2142, 2144..2175, 2204, 2206, 2500, 2502, 2503]; band 20000-29999: rows=79 covered=58 MISSING=21",
-  "text": "Corrected icon coverage for the decrypted 115_Mobile_SHS3Resource, replacing the packet's figures. Joining the 112 item#### symbols by id against the 982 itemdata rows: band 2000-2999 is 50/99 covered (49 rows have no icon), band 20000-29999 is 58/79 (21 rows have no icon), accessories 8/9 (3007 missing). The consumable gap is one contiguous authored block plus strays: 2000, 2001, 2131-2141 (except 2140,2141 which DO ship), 2142, 2144-2175, 2204, 2206, 2500, 2502, 2503. Missing quest-item icons: 20005, 20009-20012, 20017, 20023, 20054-20058, 20100-20107, 20111. Skills, which the packet did not quantify: 68 of the 75 <skill> rows have a skill#### icon and 7 do not (1064, 1065, 1066, 1067, 1068, 1500, 1501); 11 skill symbols have no skilldata row.",
-  "verdict": "PARTIAL"
+  "quote": "MCSPlayer.as:239 `this.maxreload = 5 * 24;`  \u00b7  :2977 `if(this.reload < this.maxreload / 6) { return; }`  \u00b7  :3098-3104 `if(this.reload > this.maxreload / 2) { this.reload = this.maxreload / 3; } else { this.reload -= this.maxreload / 6; }`  \u00b7  :3242-3244 `if(this.reload == this.maxreload) { this.reload = 0; }`  \u00b7  :3249-3257 `this.reload -= this.slashUsage / 2; ... this.reload -= this.slashUsage; ... this.reload -= this.slashUsage * 1.5;`  \u00b7  :3267 `this.reload += 6;`  \u00b7  :3272 `StageManager.getBattleUI().updateReload((this.reload - 24) / (this.maxreload - 24));`  \u00b7  BattleUI.as:261-262 `this.reloadbar.bar.scaleX = percentage; this.crittext.visible = percentage >= 1 && this.reloadbar.visible;`",
+  "text": "The Focus/crit gating rule that REBUILD_READINESS.md lists as ABSENT in two separate blockers is fully specified in the source. The reload meter is 5*24 = 120 frames (5 s at 24 fps). It recharges +6 per tick, drains by slashUsage (x0.5 light / x1 / x1.5 heavy) per slash, is zeroed when a slash fires at full, is penalised on being hit (reload > max/2 collapses to max/3, else -max/6), gates stance switching below max/6, and drives the HUD bar by scaleX with the crit text appearing only at percentage >= 1.",
+  "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
   "build": "android v0.682",
-  "cite": "decrypted reference/extracted/android/115_Mobile_SHS3Resource.bin (1,755 shape records), 120_Mobile_BGResource.bin (562), 124_Mobile_ImageResource.bin (106) - DefineShape/2/3/4 FILLSTYLEARRAY parse; decrypt per reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:206-217",
+  "cite": "docs/gauntlet/L0/index/strings.json entries strings.json[\"8131\"], [\"8132\"], [\"8133\"] and [\"6005\"]",
   "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
+   "notes": [],
    "problems": [],
-   "status": "QUOTE_UNVERIFIED"
+   "status": "RESOLVES"
   },
-  "id": "android-blobs-hunter/shipped-vector-art-yields-solid-fill-palettes",
-  "lane_impact": "L6 art-anim. Under the 2026-07-24 owner permission ruling, exact OG hues are now permitted targets, and these are exact OG hues from the shipped art rather than eyedropper reads off a compressed video frame. HONEST LIMIT: first-fill-array reads only - no edge records, no silhouettes, and my LINESTYLE2 parse is not trustworthy, so I report NO outline weights.",
-  "ledger_text": "android-blobs/nothing-was-rendered: 'not one DefineShape record was decoded, so no fill colour, outline weight, silhouette or per-slot geometry is held by this pass.'",
+  "id": "combat-core/mastery-caps-at-10-per-the-string-table",
+  "lane_impact": "L5 \u2014 every 'mastery-9' label in the ledger should read mastery-10. Evaluate the web curves at m=10: damage light 0.9, balanced 1.2, heavy 1.4 \u2014 the wiki triple exactly. Caveat: this is the ANDROID string table, so the ceiling is CONTRACT-SRC (0.682) until a web string source is found.",
+  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
   "overturns_ledger": true,
-  "quote": "115 top fills: #000000 x225 - #FFFFFF x224 - #333333 x160 - #CCCCCC x147 - #FECA98 x127 - #B78F6C x120. torso4000 -> charId=1195, shape id=1194 tag=83, fills ['#FECA98','#B78F6C']",
-  "text": "The shipped vector art is decodable, which closes the packet's own 'nothing was rendered' lead. Parsing FILLSTYLEARRAY across the three decrypted resource SWFs yields 2,423 shape records with solid fills. Most-used: 115_Mobile_SHS3Resource (fighter parts + icons) #000000 x225, #FFFFFF x224, #333333 x160, #CCCCCC x147, #FECA98 x127, #B78F6C x120, #222222 x100; 120_Mobile_BGResource #000000 x45, #30291D x35, #5A4D2E x33, #3A3323 x23, #251F16 x21, #453929 x21; 124_Mobile_ImageResource (portraits/cards) #DF9671 x52, #FCC6A6 x51, #000000 x39, #9E6750 x31. Per-symbol resolution works: torso4000 -> charId 1195 -> shape 1194 (DefineShape4) fills #FECA98 and #B78F6C; skill1000 -> shape 144 fill #C0AC4B; acc3000 -> shape 3725 fill #ABABAB. Semantic sanity check passes both ways - skin tones dominate the portrait file, earth tones the background file.",
-  "verdict": "PARTIAL"
+  "quote": "strings.json[\"8131\"] = 'Light Stance Mastery Level 10.'  \u00b7  [\"8132\"] = 'Balanced Stance Mastery Level 10.'  \u00b7  [\"8133\"] = 'Heavy Stance Mastery Level 10.'  \u00b7  [\"6005\"] = 'Slow but powerful stance. Damage inflicted is increased but slash range is shorter.\\nEffective against Balanced Stance.\\nDefense -20%'",
+  "text": "Mastery caps at level 10, stated in the game's own strings \u2014 which independently settles the 'mastery-9 ceiling vs mastery-10' argument the ledger's \u00a73 item 3 raises, and confirms Heavy's defence penalty as -20% (x0.8).",
+  "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
   "build": "android v0.682",
-  "cite": "reference/extracted/android/109_WarHexUI_SurvivalModeData.bin:3-14 + 114_Mobile_AchievementData.bin:4-11 + 121_Mobile_PremiumData.bin:3,22,35,37 + 85_NameGenerator_MaleNames.bin (397 lines), 88_NameGenerator_FemaleNames.bin (290), 89_NameGenerator_PlaceNames.bin (676), 87_NameGenerator_SamuraiFamilyNames.bin (35), 86_NameGenerator_NobleFamilyNames.bin (32); names resolved via docs/gauntlet/L0/index/strings.json[\"8000\"]=\"Duelist I\", [\"8080\"]=\"Win an online duel.\"",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3718",
   "citelint": {
-   "notes": [
-    "LINE_ON_BINARY:reference/extracted/android/109_WarHexUI_SurvivalModeData.bin",
-    "QUOTE_NOT_LOCATED"
-   ],
+   "notes": [],
    "problems": [],
-   "status": "QUOTE_UNVERIFIED"
+   "status": "RESOLVES"
   },
-  "id": "android-blobs-hunter/survival-achievement-premium-namegen-blobs-unread",
-  "lane_impact": "Cross-cutting: L1 world-exploration, L-progression, L-meta-social, L-economy. S0-1 flagged survival mode as absent from all 12 systems; this is its authored wave content, and <survivalmodedata> is one of only two roots present in BOTH payloads, so it is not an Android-only mode. The 61-achievement system and the premium rotation are likewise entirely outside the ledger.",
-  "ledger_text": "S0-1: 119 <survivalmodedata> (a whole game mode absent from all 12 ledger systems)",
+  "id": "combat-core/stance-counter-triangle-x1.2",
+  "lane_impact": "L1 combat-core \u2014 a missing rock-paper-scissors term in the core damage pipeline, sitting in a KNOWN-KNOWN bullet the ledger says a builder can code today. Any Sim written from :74 alone would be wrong by 20% on every countered stance matchup.",
+  "ledger_text": "**Damage math:** Physical = (ATK + WeaponDMG) \u00d7 stanceMult; Heavy defender Defense \u00d70.8 (one way);",
   "overturns_ledger": true,
-  "quote": "109:3 <wave> 4:<enemy> 5:<id>400|401|402|403|404</id> 6:<qty>4</qty> 7:<x>-50</x> ; 114:5 <id>0</id> :6 <img>1</img> :7 <name>8000</name> :8 <desc>8080</desc> :9 <stat>60000</stat> :10 <val>1</val> ; 121:35 <rotation> :37 <set>",
-  "text": "Four more shipped data blobs are named by no claim in the packet. 109_WarHexUI_SurvivalModeData: 555 lines, 39 <wave>, 87 <enemy>, enemy ids as alternation lists (400|401|402|403|404) - a spawn primitive nothing else in the corpus uses - and spawn x of -50 (49x), 1650 (37x), -1650 (1x), i.e. just off both edges of a 1600-wide stage, independently corroborating XMLBG contentWidth=1600. 114_Mobile_AchievementData: 553 lines, 61 <achievement> with id/img/name/desc/stat/val, all string-resolvable and stat-threshold driven; icon art is complete (img takes only 1-4 and achievement0-4 all ship). 121_Mobile_PremiumData: 257 lines, <default> :3, <special> :22, <rotation> :35 with 23 <set> and 176 <item> refs - the live-ops offer schedule. 85-89_NameGenerator_*: 1,430 authored proper nouns (male 397, female 290, place 676, samurai family 35, noble family 32).",
+  "quote": "MCSPlayer.as:3701 `if(this.stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE || this.stance == BALANCED_STANCE && enemyStance == HEAVY_STANCE || this.stance == HEAVY_STANCE && enemyStance == LIGHT_STANCE)` :3703 `damage *= 1.2;`",
+  "text": "There is a three-way stance counter-triangle worth x1.2 that the ledger's damage math does not carry. MCSPlayer.as:3701-3707: if (attacker Light vs defender Balanced) or (Balanced vs Heavy) or (Heavy vs Light), damage *= 1.2 \u2014 and it is applied BEFORE the physical defense subtraction at :3709 and before the min-damage floor at :3710-3713, so it compounds with everything downstream including the behead x1.5 at :3716. The ledger records only 'Heavy defender Defense x0.8 (one way)', which is a different mechanic on the defender's DEF stat.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 vs android v0.682 \u2014 REAL divergence, the two builds are differently tuned here",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116, :3142 vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:3030, :3041, :3052",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat/stance-reach-multipliers-diverge-web-vs-android",
+  "lane_impact": "L1 combat-core: blocker \u2460 closes, but with the WEB constants, not the android ones the packet supplied. Any config written from progression/stance-reach-multipliers-held as filed would ship the mobile build's reach.",
+  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) \u2014 *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
+  "overturns_ledger": true,
+  "quote": "\u00a71t99s0\u00a7.as:3094  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;\n\u00a71t99s0\u00a7.as:3105  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);\n\u00a71t99s0\u00a7.as:3116  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);  if(... < 100) = 100;\nvs MCSPlayer.as:3030  this.slashLength = this.baseSlashLength * 1.5;",
+  "text": "The per-stance reach multipliers are NOT the same in the two builds, so any port must take the WEB numbers. WEB v0.717 (\u00a71t99s0\u00a7.\u00a71t3489s0\u00a7, the MCSPlayer twin): Light x1.4 (:3094), Balanced x(1 + 0.2*balancedMastery*0.1) (:3105), Heavy x(0.5 + 0.4*heavyMastery*0.1) with floor 100 (:3116), Reversed x1.4 (:3131), Dual x1.0 floor 100 (:3142). ANDROID v0.682 (MCSPlayer.as): Light x1.5, Balanced x(1 + 0.5*m*0.01), Heavy x(0.5 + 0.5*m*0.01). The mastery scale differs too \u2014 android is 0..100, web is 0..10. The WEB form is the one that reconciles with REBUILD_READINESS.md:155-156 ('Heavy's reach also scales x0.5 -> x0.9': web gives 0.9 at mastery 10, 0.86 at mastery 9) and with the wiki's 300/200/100 stance-reach shape. The shared base is identical in both builds: 120 + floor((90 + Dan*5) * spd / (20 + spd)), web \u00a71t1523s0\u00a7.as:2347, android StatsManager.as:1915-1918.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (contrasted against android v0.682)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116-3119, :3131, :3142-3145, :183-199, :3158; reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as:106-108; reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2344-2347",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat/web-stance-reach-multipliers-diverge-from-android",
+  "lane_impact": "L1 combat-core blocker \u2460 dies \u2014 but on THESE constants. Any port of the android multipliers will miss the filmed build's reach on three of five stances. Also a general warning for this lane: combat tuning is exactly where v0.682 and v0.717 drift, so every combat number cited from shs3_android/ needs its web twin located before it is promoted to CONTRACT.",
+  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) \u2014 *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
+  "overturns_ledger": true,
+  "quote": "3094  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;\n3105  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);\n3116  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);\n3117-3119  if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }\n3131  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;\n3142  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7;\n3158  \u00a71t1541s0\u00a7.\u00a71t10094s0\u00a7(this.\u00a71t4417s0\u00a7);\n2346  var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5;\n2347  return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));",
+  "text": "The WEB v0.717 build uses DIFFERENT per-stance reach multipliers from Android v0.682, so the reach model L1 must port is not the one the android decompile gives. Web: Light = base x1.4, Balanced = base x(1 + 0.2*balancedMastery*0.1), Heavy = base x(0.5 + 0.4*heavyMastery*0.1) with a hard floor of 100, Reversed = base x1.4, Dual = base x1.0 floor 100. Android: 1.5 / (1+0.5*m*0.01) / (0.5+0.5*m*0.01) / 1.5 / 1.0. At mastery 9 the balanced multiplier is 1.18 web against 1.045 android and heavy is 0.86 against 0.545. The SPD base term 120 + floor((90 + Dan*5)*spd/(20+spd)) IS identical in both builds (\u00a71t1523s0\u00a7.as:2346-2347 vs StatsManager.as:1917-1918), and both feed InputManager.setMaxDistance, so only the multipliers diverge. Class identity is not guessed: \u00a71t99s0\u00a7 is the MCSPlayer twin by its 15-arg initPlayer at :183-199 (param10 -> \u00a71t4420s0\u00a7, declared = 10 exactly like baseSlashLength:int = 10 at MCSPlayer.as:107; param13/14 -> balanced/heavy mastery) and by :3158 calling \u00a71t1541s0\u00a7.\u00a71t10094s0\u00a7(this.\u00a71t4417s0\u00a7), the setMaxDistance(slashLength) twin.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717 (filmed)",
+  "cite": "reference/videos/Nr4fQstqHDM.mp4 at t=21:26 (repair dialog, wallet 531) and t=21:23 (forge dialog 'FORGE AN IRON SWORD (LEVEL 7)? / COST: 700 COINS'), extracted at 1920\u00d71080 with ffmpeg and read from a 640\u00d7360 contact sheet; formula at reference/decompiled/shs3_android/scripts/InteractUI.as:1058",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/repair-weapon-cost-was-captured-on-film",
+  "lane_impact": "L10 ECONOMY: blocker \u2462 closes from footage already in the repo. It rides on the same 21:23-21:27 sequence that kills the '\u221270 is a capture artifact' parenthetical, so both ledger corrections land in one edit.",
+  "ledger_text": "\u2462 Repair-Weapon cost (never captured).",
+  "overturns_ledger": true,
+  "quote": "t=21:26 crop: 'BLACKSMITH / REPAIR YOUR CURRENTLY EQUIPPED WEAPON? / COST: 70 COINS' with YES / NO, wallet 531 COINS \u00b7 t=21:27 wallet 461 COINS \u00b7 t=21:23: 'FORGE AN IRON SWORD (LEVEL 7)? / COST: 700 COINS / MATERIALS NEEDED: 2 IRON ORE' \u00b7 InteractUI.as:1058 \u2014 'cost = StageManager.getCurrentNodeLevel() * 10;'",
+  "text": "Economy blocker \u2462, 'Repair-Weapon cost (never captured)', is dead. The blacksmith dialog prints the price on screen: 'REPAIR YOUR CURRENTLY EQUIPPED WEAPON? / COST: 70 COINS', at a node the forge dialog independently labels '(LEVEL 7)' \u2014 i.e. repair = nodeLevel \u00d7 10, frame-confirmed against the source formula.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7091s0\u00a7.as:406-412 (prize formula), :147-180 (player-count ladder), :183-200 (entry-fee 0\u2026100), :203-300 (level clamps 5\u202680), :303-360 (round-duration ladder); reference/decompiled/shs3_payload/scripts/\u00a71t7144s0\u00a7.as:572 and :585 (create charges 5 of stat 20112), :600 and :610 (join charges entryfee of stat 20112)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/tournament-payout-formula-is-client-side",
+  "lane_impact": "L10/L11 ECONOMY \u2014 blocker \u2463's tournament half closes from the client with no build needed. The pot is NOT redistributed whole: 0.75/7 \u00d7 (fee\u00d7players+5) is the unit and 7 units are paid, so the house rake is exactly 25%. Note \u00a71t7144s0\u00a7.as itself contains NO literals \u2014 it only reads server-supplied fields \u2014 so the packet's stated close-path would have found nothing. Residual STILL_UNHELD: currency stat 20112 has no name (absent from itemdata.xml and from the v0.682 string table).",
+  "ledger_text": "\u2463 token/tournament economy numbers.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t7091s0\u00a7.as:408-412  var _loc1_:int = Math.floor((this.\u00a71t7121s0\u00a7 * this.\u00a71t7120s0\u00a7 + 5) * 0.75 / 7); var _loc2_:int = _loc1_ * 4; var _loc3_:int = _loc1_ * 2; var _loc4_:int = _loc1_; this.prizefield.text = _loc2_ + \" / \" + _loc3_ + \" / \" + _loc4_;   ///   \u00a71t7144s0\u00a7.as:585  this.goldtext.text = \u00a71t1523s0\u00a7.\u00a71t9713s0\u00a7(20112,-5).toString();   ///   \u00a71t7144s0\u00a7.as:610  this.goldtext.text = \u00a71t1523s0\u00a7.\u00a71t9713s0\u00a7(20112,-this.\u00a71t7159s0\u00a7.entryfee).toString();",
+  "text": "The tournament economy numbers ARE in the web client, in the CREATE panel \u2014 not in the details panel the packet nominated. Prize unit = floor((entryFee \u00d7 playerCount + 5) \u00d7 0.75 / 7), paid out 4u / 2u / 1u to 1st/2nd/3rd. Player count ladder 2/4/8/16 (2 gated on a premium flag), entry fee clamped 0\u2026100, level range clamped 5\u202680, round duration ladder 0.5/1/2/24/48 h. Creating a tournament costs 5 of currency-stat 20112 (waived on the premium flag); joining costs `entryfee` of the same stat.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t4523s0\u00a7.as:77, :83, :84",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/boss-rubber-band-is-in-the-web-build",
+  "lane_impact": "L0 enemies-ai \u2014 src/config/combat-sim.ts:110-113's INFERRED comment can be promoted to CONTRACT (0.717), not merely CONTRACT-SRC (0.682) as the packet's two claims conservatively propose.",
+  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
+  "overturns_ledger": true,
+  "quote": ":77  xp = param1 * 5 + 45;   ///   :83  _loc9_ = 10 + _loc8_;   ///   :84  _loc10_ = 18 - _loc8_;   (with _loc8_ = param1 - playerLevel at :82, and the <=3 / <=0 clamps at :85-92)",
+  "text": "The elite/boss rubber-band level->stat formula is present in the shipped web v0.717 build, not only in android v0.682 \u2014 so the enemies-ai blocker closes at the TARGET build.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
   "build": "both",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1525s0\u00a7.as:1026, :1049, :1225, :1230 \u2014 against reference/decompiled/shs3_android/scripts/StageManager.as:903, :926, :1096, :1101",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "art-anim-audio-feel/NEW-24hz-killbeat-is-web-parity-closed",
-  "lane_impact": "L6 art-anim-audio-feel: the 6.000 s red freeze I measured twice in reference/videos/Nr4fQstqHDM.mp4 is against a WEB recording, and the WEB code sets the same 144 ticks \u2014 so 24.0 Hz is a web-build fact, not an Android inference. The ledger's '15fps pose latch' is a description of the 15 fps capture, and the sim clock is 24 Hz. This is the general lesson for the whole lane: the obfuscated web payload can be used to check Android-derived constants by structural match even when the symbol names are gone.",
-  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
-  "overturns_ledger": true,
-  "quote": "WEB \u00a71t1525s0\u00a7.as:1230 `\u00a71t9905s0\u00a7 = 24 * 6;` \u00b7 :1225 `\u00a71t9905s0\u00a7 = 24 * 3 + 6;` \u00b7 :1026 `if(\u00a71t9905s0\u00a7 == 24 * 5)` \u00b7 :1049 `else if(\u00a71t9905s0\u00a7 == 24 * 3)` \u2014 line-for-line structural match with ANDROID StageManager.as:1101 `redFreezeCounter = 24 * 6;` :1096 `redFreezeCounter = 24 * 3 + 6;` :903 `if(redFreezeCounter == 24 * 5)` :926 `else if(redFreezeCounter == 24 * 3)`",
-  "text": "The 24 Hz tick and the 144-tick kill-beat are NOT Android-only. The obfuscated web payload carries the identical redFreeze constants in the identical control structure, so the v0.717-vs-v0.682 caveat on the kill-beat measurement can be struck.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682 (the 19 web animdata blobs the table keys on are the WEB build's, and their names match)",
-  "cite": "reference/decompiled/shs3_android/scripts/AnimData.as:16-21 (duration = xml.@d, frameList built from xml.f) and :23-141 (the switch(xml.@i.toString()) tail table); reference/decompiled/shs3_android/scripts/MCSCharacter.as:1316 and :1334",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:769-786 + \u00a71t99s0\u00a7.as:4679-4703 + \u00a71t1544s0\u00a7.as:170,172 + reference/extracted/bindata/103_1t4630s0.bin",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "art-anim-audio-feel/animdata-code-injected-hold-table",
-  "lane_impact": "This is the actual 'pose latch' spec the ledger calls rebuild-ready but never contains. Every slash recovery window in a recreation is (@d from data) + (this table's tail), played at 24 Hz. It is also directly testable: a rebuild can assert @d == len(<f>) as a data-integrity gate on import.",
-  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; ...",
+  "id": "enemies-ai/flinch-is-build-parity-confirmed-in-web-v0717",
+  "lane_impact": "enemies-ai + art-anim: the stagger half of blocker \u2462 closes at the TARGET build, not just at v0.682. Port from the web constants.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
   "overturns_ledger": true,
-  "quote": "this.duration = xml.@d;  \u00b7  switch(xml.@i.toString()) { case \"light_afterslashpose\": this.duration += 10; break; case MCSActor.LIGHTSLASH_POSE: ... this.duration += 10; break; case MCSActor.LIGHTFALLSLASH_END: ... this.duration += 15; break; case \"sheathesword\": case \"sheathesword3\": this.duration += 24; break; ... }  \u00b7  MCSCharacter.as:1316 if(this.frameCounter < this.currentAnimationDuration)  \u00b7  :1334 if(this.frameCounter < this.currentAnimation.frameList.length)",
-  "text": "Because the animation data authors zero hold frames (487/487 rows have @d == len(<f>)), every hold in the game comes from one hard-coded table in AnimData's constructor: a switch on the animation name that adds a per-animation duration tail, then MCSCharacter's frameList.length guard latches the last pose for the extra ticks. ~35 named entries with tails from +2 to +50: all 13 *SLASH_POSE states +10, all 10 *FALLSLASH_END / *JUMPSLASH_LAND +15, sheathesword/sheathesword3 +24, six death anims + KNEEGROIN_VICTIM +6, gotlauncheddownedend +24, downstab_up +10, katanaattack +8, katanadropdown +4, firearrow +10, throwgrenade +12, ogre_nap1_mid +48, DEATHTOUCH_PARTA +50, FLURRY_POSE / CLEAVE_POSE / JUTSU_GROUND_PARTB / GUARDIAN_STOMPFREEZE / AIRSTAB_STAB +24.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "reference/decompiled/shs3_android/scripts/MusicManager.as:50-76 (TRACK_BATTLECHANTS=0 .. TRACK_LOSE=12, TOTALTRACKS=13) and :133-186 (presetsArray construction); stem names and sample counts from reference/extracted/android/113_Mobile_MusicResource.bin decrypted per ResourceManager.as:200-216",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/music-is-13-stems-and-18-layer-presets",
-  "lane_impact": "Corrects claim bindata/audio-inventory-is-held's '18 music presets with explicit ids' framing \u2014 a recreation that synthesises 18 separate tracks reproduces the wrong system. It needs 13 loop-locked stems plus a crossfade layer mask, with fade-in/fade-out actions (ACTION_FADEIN/ACTION_FADEOUT at :78-82).",
-  "ledger_text": "| **art-anim-audio-feel** | 56 | ... | **all audio** (SFX + music params); font; FX blend modes; screen-shake/hitstop |",
-  "overturns_ledger": true,
-  "quote": "internal var TOTALTRACKS:int = 13;  \u00b7  this.presetsArray[MUSIC_TOUGHBATTLE][this.TRACK_FLUTES] = true; this.presetsArray[MUSIC_TOUGHBATTLE][this.TRACK_BATTLEDRUMS] = true; this.presetsArray[MUSIC_TOUGHBATTLE][this.TRACK_BATTLECHANTS] = true;  \u00b7  this.presetsArray[MUSIC_DOJO][this.TRACK_FLUTES/SAFEAMBIENCE/SAFEKOTO/SAFEPERCUSSION] = true;",
-  "text": "The music system is an adaptive layered-stem mixer, not an 18-track jukebox. MusicManager declares 13 TRACK_* stems (TOTALTRACKS = 13) \u2014 exactly the 13 DefineSound names in the decrypted 113_Mobile_MusicResource \u2014 and builds each of the 18 MUSIC_* presets as a boolean layer mask over those stems, e.g. MUSIC_TOUGHBATTLE = flutes + battledrums + battlechants, MUSIC_DUNGEONCREEPYDANGER = dungeonambience + dungeonflute + dungeonpercussion + dungeonpiano, MUSIC_DOJO = flutes + safeambience + safekoto + safepercussion, MUSIC_QUIET = flutes alone. Stems are loop-length-matched (882,144 or 504,288 samples) so the layers stay phase-locked.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "build": "both",
-  "cite": "reference/decrypted/shs3_payload_decoded.swf and reference/decrypted/shs3_android_payload_decoded.swf \u2014 my own SWF header parse (RECT bit-reader then UI16 frameRate as 8.8 fixed)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/web-swf-header-is-24fps-and-800x690",
-  "lane_impact": "Gives claims killbeat-6000ms-pins-24hz-tick and second-layout-mode-800x690 the WEB-side evidence neither had \u2014 both previously rested on Android v0.682 ActionScript plus a video measurement. Any recreation ticking at 15 Hz or assuming a single 800x480 canvas is wrong.",
-  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; ...  \u00b7  **Aspect-ratio truth** \u2014 native canvas is **800\u00d7480 (5:3)**",
-  "overturns_ledger": true,
-  "quote": "shs3_payload_decoded.swf: sig=CWS ver=17 stage=800.0 x 690.0 framerate=24.0 framecount=6  \u00b7  shs3_android_payload_decoded.swf: sig=CWS ver=26 stage=800.0 x 480.0 framerate=24.0 framecount=6",
-  "text": "The WEB v0.717 payload's own SWF header settles two ledger bullets at the byte level, with no video and no Android-parity caveat: frameRate = 24.0 and stage rect = 800 x 690. The Android payload header reads frameRate = 24.0 and stage 800 x 480. So the simulation tick is 24 Hz (not the ledger's 15fps), and the web build's document rect really is the friend-bar layout size.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682 (the container files ship in the Android build; the decrypt routine is build-agnostic)",
-  "cite": "reference/decompiled/shs3_android/scripts/ResourceManager.as:200-216 (decryptByteArray), :186 (key = filename.charCodeAt(1)), :41 (resourceFileNameArray) applied to reference/extracted/android/122_Mobile_SoundResource.bin and 113_Mobile_MusicResource.bin",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "audio/RECOVERED-not-encrypted-resourcemanager-decrypt",
-  "lane_impact": "L6 art-anim-audio-feel: blocker \u2460 is CLOSED, not half-open. Also overturns gauntlet law S0-5 ('audio is HELD but ENCRYPTED ... You may NOT claim audio is recovered') \u2014 that instruction is now false and every downstream claim resting on it should be re-opened. The listen-pass plan at :240 is superseded: there is nothing to characterise by ear, the waveforms are in hand.",
-  "ledger_text": "\u2460 **ALL AUDIO** \u2014 every SFX + music param is INFERRED, no composer sourced.  \u00b7  **Exact original SFX & music synthesis params** \u2014 the *character* is study-able from audio; the exact waveforms/envelopes are not.",
-  "overturns_ledger": true,
-  "quote": "internal static function decryptByteArray(source:ByteArray, key:int) : ByteArray { ... for(var i:int = 3; i < 256; i++) { if(i % 11 == 0) { temp = int(ba[i]); ba[i] = ba[i + 256]; ba[i + 256] = temp; } ba[i] ^= key; } ... }  \u00b7  resourceFileNameArray:Array = [\"shs3resource.swf\",\"musicresource.swf\",\"soundresource.swf\",\"imageresource.swf\",\"bgresource.swf\"]  =>  keys h=104 u=117 o=111 m=109 g=103",
-  "text": "The audio is RECOVERED, not encrypted-beyond-reach. The game's own decryptor is in the repo: ResourceManager.decryptByteArray XORs bytes 3..255 with key = resourceFileNameArray[num].charCodeAt(1) AND swaps ba[i] with ba[i+256] whenever i%11==0. Applying it to all five Mobile_*Resource.bin files yields valid SWFs. 122_Mobile_SoundResource inflates to 29,623 bytes holding 13 DefineSound tags (deflect, die1, die2, die3, slash1, slash2, slash3, punch, hitmetal, fart, goodkoto, sumo, refund) and 113_Mobile_MusicResource inflates to 1,402,677 bytes holding 13 DefineSound music stems (bgm_lose, safepercussion, safekoto, safeambience, bgm_levelup, bgm_gangnam, flutes, dungeonpiano, dungeonpercussion, dungeonflute, dungeonambience, battledrums, battlechants) \u2014 all MP3, 11025 Hz, 16-bit, mono. These are byte-exact original assets, not characterisations from a YouTube rip. A plain whole-file XOR fails 68 bytes into the deflate stream, which is why every prior pass concluded 'unopenable'; the i%11 byte-swap is the missing step.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "build": "android v0.682",
-  "cite": "reference/extracted/android/122_Mobile_SoundResource.bin and reference/extracted/android/113_Mobile_MusicResource.bin, decoded with reference/tools/payload_decode.py:22-29; DefineSound tags extracted and written to MP3, verified with ffprobe",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "bindata/NEW-audio-waveforms-are-recovered-not-encrypted",
-  "lane_impact": "L6 art-anim-audio-feel: blocker \u2460 'ALL AUDIO \u2014 every SFX + music param is INFERRED' does not need closing by synthesis at all; the originals are extractable. REBUILD_READINESS.md:348 ('the exact waveforms/envelopes are not [study-able]') falls. This also contradicts the \u00a70 preamble S0-5 ('audio is HELD but ENCRYPTED ... You may NOT claim audio is recovered'): S0-5's stated basis is that ffdec cannot open the nested CWS SWFs, which is true and irrelevant \u2014 the repo's own decoder opens them. Per the standing invariant I say it out loud: the byte-check beats the doc. Caveat: these are the ANDROID v0.682 resource blobs; web v0.717 audio parity is not established, and the assets stay study-only/local-only under the permission ruling.",
-  "ledger_text": "**Exact original SFX & music synthesis params** \u2014 the *character* is study-able from audio; the exact waveforms/envelopes are not.",
-  "overturns_ledger": true,
-  "quote": "113_Mobile_MusicResource k=117 ver 17 declen 1402685 actual 1340647 INFLATES -> 1402677 \u00b7 122_Mobile_SoundResource k=111 ver 17 declen 29631 actual 23928 INFLATES -> 29623 \u00b7 122 DefineSound=13: slash1 slash2 slash3 die1 die2 die3 punch hitmetal deflect fart goodkoto sumo refund \u00b7 ffprobe slash1.mp3 -> format_name=mp3 duration=0.572000 \u00b7 ffprobe battledrums.mp3 -> format_name=mp3 duration=79.872000 bit_rate=16000",
-  "text": "The audio is RECOVERED, not merely held-but-encrypted. 113_Mobile_MusicResource.bin and 122_Mobile_SoundResource.bin decode with the transform this repo already commits (reference/tools/payload_decode.py), and the key is derivable from the file itself because every blob is CWS v17: key = byte[3] XOR 0x11 (117 and 111 respectively). Both inflate on the first try and each is an ordinary SWF holding 13 DefineSound MP3 tags at 11,025 Hz mono \u2014 26 real waveforms, byte-exact. ffdec cannot open them; this transform can.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "build": "android v0.682",
-  "cite": "reference/extracted/android/113_Mobile_MusicResource.bin decoded (k=117); my own DefineSound (tag 14) extraction with SymbolClass name resolution; reference/decompiled/shs3_android_payload/scripts/MusicManager.as:48+ (TRACK_BATTLECHANTS\u2026)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "bindata/NEW-music-is-layered-stems-not-tracks",
-  "lane_impact": "L6 art-anim-audio-feel: the 18-preset MusicManager enum is a MIXER state machine over ~13 stems, not 18 separate tracks. A WebAudio recreation should crossfade layers on the same loop clock, not swap files. This is a structural fact no ledger system holds.",
-  "ledger_text": "\u2460 **ALL AUDIO** \u2014 every SFX + music param is INFERRED, no composer sourced.",
-  "overturns_ledger": true,
-  "quote": "battlechants MP3 11025Hz nsamp=882144 bytes=159746 ~80.0s \u00b7 battledrums 882144 \u00b7 flutes 882144 \u00b7 safeambience 882144 \u00b7 safekoto 882144 \u00b7 safepercussion 882144 \u00b7 dungeonambience 504288 \u00b7 dungeonflute 504288 \u00b7 dungeonpiano 504288 \u00b7 dungeonpercussion 504288 \u00b7 bgm_lose 38880 \u00b7 bgm_levelup 328320 \u00b7 bgm_gangnam 40032",
-  "text": "The music system is layered STEMS, not a track list. 113_Mobile_MusicResource holds six stems at exactly 882,144 samples / 11,025 Hz = 79.872 s (battlechants, battledrums, flutes, safeambience, safekoto, safepercussion) and four at exactly 504,288 samples = 45.7 s (dungeonambience, dungeonflute, dungeonpiano, dungeonpercussion), plus three one-shots (bgm_lose 3.5 s, bgm_levelup 29.8 s, bgm_gangnam 3.6 s). Identical sample counts within a family is the signature of co-mixed layers, which is what MusicManager's TRACK_* indices select between. No ledger system holds a layered-music model.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116-3119, :3274 vs src/config/reach.ts (REACH block) and src/config/combat.ts:17",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/reach-and-crit-configs-already-correct",
-  "lane_impact": "L5 \u2014 this is a DO-NOT-TOUCH ruling on four live constants that are already right and already labelled CONTRACT-SRC. Only stances.ts LAUNCH_UNLOCK_LEVEL.heavy (5, source 3 in both builds) is a genuine live bug.",
-  "ledger_text": "three live constants in src/config/reach.ts and one in src/config/stances.ts are WRONG against the source and must be fixed before any of it is wired in",
-  "overturns_ledger": true,
-  "quote": "\u00a71t99s0\u00a7.as:3094  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;   :3105  * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);   :3116-3119  * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1); if(... < 100) { ... = 100; }   :3274  return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;   ///   reach.ts: lightMult: 1.4, balancedPerMastery: 0.02, heavyBase: 0.5, heavyPerMastery: 0.04, heavyFloor: 100   ///   combat.ts:17  export const CRIT_MULT = 1.3;",
-  "text": "src/config/reach.ts's lightMult 1.4 / balancedPerMastery 0.02 / heavyPerMastery 0.04 and src/config/combat.ts's CRIT_MULT 1.3 are all EXACTLY the shipped web build's values \u2014 they must not be 'fixed' to the android numbers this unit recommends.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "combat-core/reach-table-is-mastery-zero",
-  "lane_impact": "L-combat-core: the ledger's \u00a73 correction is HALF wrong. Damage 0.9/1.2/1.4 is a mastery ceiling (see combat-core/mastery-is-small-integer) but reach 300/200/100 is the mastery-0 ratio. Treating reach as a ceiling would shrink every low-mastery stance reach in the rebuild.",
-  "ledger_text": "The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.",
-  "overturns_ledger": true,
-  "quote": "3094: * 1.4                    (LIGHT, mastery-independent)\n3105: * (1 + 0.2 * m * 0.1)     (BALANCED, = 1.0 at m=0, 1.2 at m=10)\n3116: * (0.5 + 0.4 * m * 0.1)   (HEAVY,    = 0.5 at m=0, 0.9 at m=10)",
-  "text": "The stance REACH table is the mastery-ZERO case, not a ceiling: the v0.717 multipliers at mastery 0 are 1.4 : 1.0 : 0.5 = 2.8 : 2 : 1, which is the ledger's 300/200/100; at mastery 10 they become 1.4 : 1.2 : 0.9, which is nothing like 3:2:1.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2344-2348 (base) combined with \u00a71t99s0\u00a7.as:3094/3105/3116 (mastery-0 multipliers); android confirm StatsManager.as:1915-1919",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/reach-table-is-mastery-zero-not-a-ceiling",
-  "lane_impact": "L combat-core blocker (1): the damage table and the reach table are read off DIFFERENT rows of the mastery curve - damage at mastery 10, reach at mastery 0. The ledger sweeps both into one claim. At mastery 10 the reaches are 294/252/189, nothing like 300/200/100. Note the crossover the ledger misses: the mastery-scaled term is each stance's WEAK axis (Light's damage, Heavy's reach); its strong axis is a fixed 1.4.",
-  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
-  "overturns_ledger": true,
-  "quote": "internal static function \u00a71t9593s0\u00a7(param1:int) : int\n{\n   var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5;\n   return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));\n}",
-  "text": "The wiki reach table 300/200/100 is the mastery-ZERO base at high speed, not a mastery ceiling: base slash length asymptotes to 210 stage px at Dan 0, and the mastery-0 stance multipliers 1.4/1.0/0.5 give 294/210/105.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116-3120",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/reach-ts-was-right",
-  "lane_impact": "L5 \u2014 reach.ts needs no change; promote its five multiplier constants from CONTRACT-SRC to CONTRACT-SRC-v0.717 with file/line. The reach<->damage permutation its comment documents is real in the web build (reach light 1.4 flat / damage heavy 1.4 flat, sharing the same two mastery curves).",
-  "ledger_text": "- `STANCE_TABLE` already carries reach 300/200/120 + speed \u2014 but **never wired into `resolveSlash`** and mislabeled INFERRED when they're actually the wiki's **mastery-9** values (and Heavy should be 100, not 120).",
-  "overturns_ledger": true,
-  "quote": "case LIGHT: this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;  ...  case BALANCED: this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);  ...  case HEAVY: this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1); if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }",
-  "text": "src/config/reach.ts's lightMult 1.4, balancedPerMastery 0.02 and heavyPerMastery 0.04 are the CORRECT v0.717 values read out of the web payload; the survey's prescription to replace them with 1.5/0.005/0.005 would have broken three correct CONTRACT-SRC constants.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2232 + reference/extracted/ui_strings.txt:361",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/slash-distance-is-player-visible",
-  "lane_impact": "combat-core 1: confirms the reach number is a first-class, player-facing quantity in the game's own display units, and gives its exact label format. BUT it also opens a real conflict \u2014 345 for Heavy exceeds the v0.717 ceiling (base <= 255 at Dan 9 with infinite speed, x Heavy <= 0.86 -> <= 219). Either the authored default text is stale from an earlier build, or a slash-length term exists outside getBaseSlashLengthVal. Do NOT treat 345 as measured; treat it as an open discrepancy to resolve before the reach model is frozen.",
-  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale)",
-  "overturns_ledger": true,
-  "quote": "str += \"slash distance: \" + FONTCOLOR1 + int(baseSlashLength * slashModifier).toString() + FONTEND + \" (\" + stanceName + \")<br>\";\\n\\nui_strings.txt:361  ->  n=\"center\">wind def: 2earth def: 3slash distance: 345 (heavy)<p align=\"c",
-  "text": "The character sheet prints the slash reach to the player as 'slash distance: N (stance)', and the web payload's own authored copy of that field reads 345 for Heavy \u2014 a value the v0.717 formula cannot produce.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3276, joined to reference/extracted/skilldata.xml skills 1000/1001/1002 (10 <level> rows each)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/stance-damage-mastery10-ceiling",
-  "lane_impact": "combat-core: the damage multipliers become CONTRACT from the shipped v0.717 client rather than a wiki reading. Light scales 0.54 -> 0.9 across mastery 1-10, Balanced 1.02 -> 1.2, Heavy/Dual/Reversed a flat 1.4 with no mastery term at all. The ceiling is mastery 10 (skilldata gives skills 1000/1001/1002 exactly ten levels), so every 'mastery-9' label in the ledger should read mastery-10. It also means Heavy is the only stance whose damage does NOT improve with mastery - a design fact absent from the board.",
-  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
-  "overturns_ledger": true,
-  "quote": "internal function \u00a71t4475s0\u00a7() : int { var _loc1_:int = this.minDamage + Math.random() * this.damageRange; switch(this.stance) { case \u00a71t12220s0\u00a7: _loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1); break;   // LIGHT -> 0.9 at mastery 10 | case \u00a71t12221s0\u00a7: _loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1); break;   // BALANCED -> 1.2 at mastery 10 | case \u00a71t12222s0\u00a7: case \u00a71t12223s0\u00a7: case \u00a71t12224s0\u00a7: _loc2_ = _loc1_ * 1.4;   // HEAVY/DUAL/REVERSED, flat }",
-  "text": "The wiki's stance damage triple 0.9 / 1.2 / 1.4 is not a mystery table - it is the v0.717 desktop's own per-stance damage function evaluated at mastery 10, and the ledger's 'mastery-9 ceiling' framing is off by one.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:1940-1970, consumed at :2232",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/stance-modifier-table-in-payload",
-  "lane_impact": "L1 combat-core: supplies stance damage / crit / defense / reach multipliers in one table, independently corroborates progression/def-mitigation-is-flat (Heavy defModifier 0.8), and confirms COMBAT_MEASUREMENTS c-0's reading that the wiki tables are mastery ceilings. \u26a0 Cited android-only here \u2014 must be re-verified in the web payload before porting, per this lane's own rule.",
-  "ledger_text": "\u2460 DEF mitigation curve + SPD range/cooldown scaling (wiki gives only direction) \u2014 *measure per-point deltas in a build.*",
-  "overturns_ledger": true,
-  "quote": "LIGHT_STANCE:    dmgModifier = 0.5 + 0.5 * mastery * 0.01; critModifier = 1.2; defModifier = 1;   slashModifier = 1.5;\nBALANCED_STANCE: dmgModifier = 1   + 0.5 * mastery * 0.01; critModifier = 1.5; defModifier = 1;   slashModifier = 1 + 0.5 * mastery * 0.01;\nHEAVY_STANCE:    dmgModifier = 1.5;                        critModifier = 1.5; defModifier = 0.8; slashModifier = 0.5 + 0.5 * mastery * 0.01;\nInventoryUI.as:2232  str += \"slash distance: \" + FONTCOLOR1 + int(baseSlashLength * slashModifier).toString() + FONTEND + \" (\" + stanceName + \")<br>\";",
-  "text": "The full per-stance modifier table \u2014 damage, crit, defense AND slash distance, each with its mastery term \u2014 is sitting in the payload and no claim in this lane cited it; it is the multiplier half of combat-core blocker \u2460.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094 (Light, constant), :3105, :3116; android MCSPlayer.as:3030; StatsManager.as:1915-1919 (base tops out at 210 px at Dan 0)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "combat-core/stance-reach-is-mastery-zero-base",
-  "lane_impact": "combat-core: structural argument is decisive on its own \u2014 a bare constant cannot be a mastery-9 ceiling. Numerically, desktop multipliers at mastery 0 give 1.4 : 1.0 : 0.5 = 2.8 : 2.0 : 1.0, matching the wiki's 3 : 2 : 1; at mastery 9 they give 1.63 : 1.37 : 1.0, which does not. Heavy also lands on the shipped floor exactly (210 x 0.5 = 105, clamped to 100). The remediation at REBUILD_READINESS.md:320 ('relabel mastery-9') is backwards \u2014 label the tables mastery-0 BASE, with mastery a modest additive bonus on Balanced/Heavy only.",
-  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
-  "overturns_ledger": true,
-  "quote": "3094:  this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;   // Light \u2014 NO mastery variable in the expression",
-  "text": "The wiki stance reach table 300/200/100 records MASTERY-ZERO BASE values, not mastery-9 ceilings \u2014 Light-stance reach carries no mastery term at all in either build, so it cannot be a mastery-9 ceiling.",
+  "quote": "\u00a71t68s0\u00a7.as:770-778 `if(this.actionState == \u00a71t11169s0\u00a7 || this.actionState == \u00a71t11149s0\u00a7) { return; } this.\u00a71t3251s0\u00a7 = this.actionState; this.\u00a71t3252s0\u00a7 = mcs.animation; this.\u00a71t3253s0\u00a7 = mcs.\u00a71t6269s0\u00a7; this.actionState = \u00a71t11169s0\u00a7; \u00a71t1557s0\u00a7(\u00a71t10421s0\u00a7);` \u00b7 :783-785 `this.actionState = this.\u00a71t3251s0\u00a7; \u00a71t1557s0\u00a7(this.\u00a71t3252s0\u00a7); mcs.\u00a71t6269s0\u00a7 = this.\u00a71t3253s0\u00a7;` \u00b7 \u00a71t99s0\u00a7.as:4688-4695 the player override branching FLINCH vs FLINCH_WEAPON on sheathed anims \u00b7 \u00a71t1544s0\u00a7.as:170 `internal static var \u00a71t10421s0\u00a7:String = \"flinch_weapon\";` :172 `... = \"flinch\";` \u00b7 bindata/103_1t4630s0.bin `<anim i=\"flinch_weapon\" d=\"8\">`",
+  "text": "The FLINCH mechanism is not android-only: the web v0.717 payload carries the identical save-and-restore flinch state machine and the same 8-frame authored clip, so the S0-3 android-parity hedge lifts for this mechanism specifically.",
   "verdict": "HELD"
  }
 ]

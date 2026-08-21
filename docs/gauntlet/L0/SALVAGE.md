@@ -123,9 +123,9 @@ never needs another cloned script.
 
 | Run | Script + args | Agents | What | Run ID |
 |---|---|---:|---|---|
-| **WF-3a′** | `l0-finish-wf3.workflow.js` `{tier:'t1',batches:10}` | 20 | the 226 findings still CLAIMING A LEDGER OVERTURN | `wf_88793137-368` |
-| **WF-2d** | `l0-finish-source-critics.workflow.js` `{units:['android-blobs'],lenses:['hunter']}` | 1 | the lens gate L0-D says is owed | `wf_a8e116f0-38b` |
-| **WF-3b** | `l0-finish-wf3.workflow.js` `{tier:'t2',batches:11}` | 11 | the 513 corroborating findings | queued |
+| **WF-3a″** | `l0-finish-wf3.workflow.js` `{tier:'t1',batches:3}` | 6 | the 67 overturn-claimers left after WF-3a′ | `wf_9066e979-45c` |
+| ~~WF-2d~~ | `l0-finish-source-critics.workflow.js` | 1 | ✅ done — `wf_a8e116f0-38b`, gate L0-D now GREEN | — |
+| **WF-3b** | `l0-finish-wf3.workflow.js` `{tier:'t2',batches:13}` | 13 | the 586 corroborating findings | `wf_957bdce7-923` |
 | **WF-4** | `l0-finish-wf4.workflow.js` | ~17 | dry-loop x 4 targets (a round only counts if it RAN) + completeness | queued |
 
 ⚠ **Always read `batches` fresh from `MANIFEST.json` at launch.** The count MOVES every
@@ -133,6 +133,52 @@ run: judged findings drop out and each stage's critics add new ones, so the pack
 renumbered on every build — WF-3a's original 12 batches are now 10. A stale literal
 silently drops the tail batches, and a dropped batch leaves those findings UNJUDGED,
 which under §0 kills them.
+
+---
+
+### ▶ TIER 1 IS DONE — judged 232 → 814, and ALL SIX §6 UNRECOVERABLES ARE UNDER FIRE
+
+WF-3a′ landed **19/20 with ZERO unjudged batches and ZERO shortfalls**; the single loss
+was an API error, not a wall. 448 verdicts, 0 VOID.
+
+```
+run7 (WF-3a′): critics=19 claims=136 verdicts=448   0 BROKEN · 0 VOID
+overturn rulings 437 — UPHELD 275 · REJECTED 162     (37% rejected)
+buildLedgerEvidence: 1467 claims — 559 UPHELD · 54 NOT-UPHELD · 854 KILLED
+  413 surviving overturns on 229 distinct ledger sentences
+```
+
+**§6 — "What is structurally UNRECOVERABLE" — every entry now carries surviving overturns:**
+
+| §6 entry | surviving overturns |
+|---|---:|
+| L11–80 XP curve | **16** |
+| Verbatim dialogue | 8 |
+| Server-sim topology & save format | 7 |
+| Exact original SFX & music synthesis params | 4 |
+| The live clan-war | 4 |
+| The dead IAP economy | 3 |
+
+Gate **L0-E** explicitly permits an EMPTY §6 — *a provably minimal list may be empty* —
+and there is a test pinning that. Every entry that survives must instead carry a **pasted
+negative search**; *"I looked and did not find it"* is worthless without the command and
+its output.
+
+Four judged findings worth carrying into the rewrite:
+
+- **`NEW-3-full-xp-curve-is-shipped-in-both-builds`** — the 99-entry `expArray` is verbatim
+  in the WEB build (`§1t1523s0§.as:364`) AND element-identical to the Android twin. §6's
+  *"L11–80 XP curve — no table published"* is dead **and build-parity closed**. `levelCap`
+  is 80, so indices 81–98 are shipped-but-unreachable tail.
+- **`NEW-4-paperdoll-is-13-slots-not-9`** — `EQ_ARMOR 0 … EQ_WEAPON 9, EQ_SCABBARD 10,
+  EQ_ACCESSORY1 11, EQ_ACCESSORY2 12`, corroborated by a 13-field `DEFAULT_EQSTRING` and
+  `new Vector.<Item>(13)`. The ledger says "9-slot paperdoll" at **:82 and :209** — both wrong.
+- **`art-anim-audio-feel/NEW-24hz-killbeat-is-web-parity-closed`** — the web SWF header
+  parses to **framerate 24.0**, and the freeze counters read `24 * 5` / `24 * 3` / `24 * 6`
+  in both builds. The ledger's *"sim runs at 15fps"* at **:239** falls. ⚠ This is a LEDGER
+  correction, not a licence to touch `OG_ANIMS`' 15 fps latch — that is L6 and §4 no-touch.
+- **`art-anim-audio-feel/animdata-code-injected-hold-table`** — `AnimData.as:15-141` is a
+  code-injected hold table on top of the XML, re-measured 487/487 rows with 0 mismatches.
 
 ---
 
@@ -180,9 +226,8 @@ phase), the **adaptive-music engine** (17 boolean presets over the 13 stems, cro
 contract**. §6's *"Exact original SFX & music synthesis params ... are not [study-able]"*
 is dead, and **L7's gate changes character** — the target is now exact, not inferred.
 
-⛔ **`l0-finish-wf3.workflow.js` still carries the stale S0-5 / UTF-16LE text.** It could
-not be patched because WF-3a′ was running on it, and §3.4's rule is never edit a live
-workflow script. **Patch it before launching WF-3b.**
+✅ **`l0-finish-wf3.workflow.js` was patched the moment WF-3a′ landed**, before WF-3a″ and
+WF-3b launched on it. All three finish-lane scripts now carry the CORRECTIONS block.
 
 ---
 

@@ -61,97 +61,20 @@
     "cite",
     "hunter"
    ],
-   "overturns": 23,
+   "overturns": 24,
    "stage": "WF-3a",
    "unit": "t1-overturns-02"
   },
   {
-   "claims": 24,
+   "claims": 19,
    "file": "t1-overturns-03.json",
    "lenses": [
     "cite",
     "hunter"
    ],
-   "overturns": 24,
+   "overturns": 19,
    "stage": "WF-3a",
    "unit": "t1-overturns-03"
-  },
-  {
-   "claims": 24,
-   "file": "t1-overturns-04.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 24,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-04"
-  },
-  {
-   "claims": 24,
-   "file": "t1-overturns-05.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 24,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-05"
-  },
-  {
-   "claims": 24,
-   "file": "t1-overturns-06.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 23,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-06"
-  },
-  {
-   "claims": 24,
-   "file": "t1-overturns-07.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 22,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-07"
-  },
-  {
-   "claims": 24,
-   "file": "t1-overturns-08.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 24,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-08"
-  },
-  {
-   "claims": 24,
-   "file": "t1-overturns-09.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 22,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-09"
-  },
-  {
-   "claims": 16,
-   "file": "t1-overturns-10.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 16,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-10"
   },
   {
    "claims": 48,
@@ -254,7 +177,7 @@
    "unit": "t2-corroborating-10"
   },
   {
-   "claims": 37,
+   "claims": 48,
    "file": "t2-corroborating-11.json",
    "lenses": [
     "cite"
@@ -262,14 +185,34 @@
    "overturns": 0,
    "stage": "WF-3b",
    "unit": "t2-corroborating-11"
+  },
+  {
+   "claims": 48,
+   "file": "t2-corroborating-12.json",
+   "lenses": [
+    "cite"
+   ],
+   "overturns": 0,
+   "stage": "WF-3b",
+   "unit": "t2-corroborating-12"
+  },
+  {
+   "claims": 10,
+   "file": "t2-corroborating-13.json",
+   "lenses": [
+    "cite"
+   ],
+   "overturns": 0,
+   "stage": "WF-3b",
+   "unit": "t2-corroborating-13"
   }
  ],
  "totals": {
-  "already_judged": 582,
-  "claim_rows": 1370,
-  "critic_findings_claiming_overturn": 232,
-  "critic_findings_unjudged": 749,
-  "distinct_ids": 1331,
+  "already_judged": 814,
+  "claim_rows": 1506,
+  "critic_findings_claiming_overturn": 67,
+  "critic_findings_unjudged": 653,
+  "distinct_ids": 1467,
   "duplicate_rows_merged": 39,
   "source_sweep_unjudged": 0
  }
