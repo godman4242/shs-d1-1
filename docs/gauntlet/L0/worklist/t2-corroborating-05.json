@@ -1,6 +1,70 @@
 [
  {
   "artifact_class": "A2",
+  "build": "android v0.682 (web twin \u00a71t68s0\u00a7.as:875-879 identical)",
+  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:854-856; reference/extracted/npcdata.xml:31 and my parse of all 495 <mcs> blocks",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "itemdata-hunter/npc-loot-ids-are-not-only-an-enum",
+  "lane_impact": "L-enemies-ai / L-economy: the drop model needs a fifth case (fixed item by id) that claim #9's four-case summary omits, and the art fallback to part '0' fires on 355 NPCs, not on a handful.",
+  "overturns_ledger": false,
+  "quote": "NPC.as:853-856 'else { OverworldHUD.instance.lootDialog.addLootItemBasic(lootType,qty); }' with addLootItemBasic at :855. npcdata.xml:31 '<hair>6000,6001,6002,6003,6004,6007,6008,6009,6013,6014,6015.6017,6018,6019</hair>' \u2014 that exact string appears in 355 of 495 blocks.",
+  "text": "NPC <loot><id> carries raw item ids as well as the 0-3 enum, and the malformed <hair> run claim #27 flags is systemic rather than a one-off. Measured over all 495 <npc> rows the loot-id histogram is 0 x77, 3 x28, 2 x10, 1 x10, 2113 x2, 2112 x2, 2114 x1, 20028 x1 \u2014 six rows fall through to the else branch, addLootItemBasic(lootType, qty), i.e. 'drop item #lootType'. Separately, the malformed id run '6015.6017' recurs in 355 of the 495 <mcs> blocks (the collapsed float '6.5006501650265E+47' really is a single occurrence).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/ShopUI.as:58 and :401",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "itemdata-hunter/sellpercentage-is-dead-data",
+  "lane_impact": "L-economy: the sell price is exactly (1 + modifierCount) x 10 or x 5 with no percentage applied. Guards against a 2x error in every sale.",
+  "overturns_ledger": false,
+  "quote": "ShopUI.as:58 'internal var sellPercentage:Number = 0.5;' \u2014 sole occurrence in `grep -n \"sellPercentage\" reference/decompiled/shs3_android/scripts/*.as`. ShopUI.as:401 'slot.setCost(slot.getItem().getSellAmt(),0);'",
+  "text": "ShopUI's sellPercentage = 0.5 is declared and never read \u2014 do not apply it on top of getSellAmt(). Claim #26 cites the line without saying it is unreferenced, which invites a 50% haircut the original never applies. grep across the entire Android bundle returns exactly one occurrence (the declaration), and the only consumer of the sell price calls getSellAmt() unmodified.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both \u2014 1/6 on android v0.682, 1/4 on web v0.717",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:2975-2979 and :239; reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "itemdata-hunter/stance-gate-threshold-differs-by-build",
+  "lane_impact": "L-combat-core / L-ui-hud: pins the stance-switch gate to a quarter bar for the v0.717 target and flags the Android bundle as an unsafe source for this specific constant.",
+  "overturns_ledger": false,
+  "quote": "MCSPlayer.as:2977 'if(this.reload < this.maxreload / 6) { return; }' with MCSPlayer.as:239 'this.maxreload = 5 * 24;' -> threshold 20/120 = 1/6. Web: \u00a71t99s0\u00a7.as:249 '= 8 * 24' (192) with the documented Focus >= 48 gate -> 48/192 = 1/4.",
+  "text": "The in-combat stance-change gate uses a different threshold in each build. Android v0.682 gates nextStance() on reload >= maxreload/6, which with the flat maxreload of 120 is 20 units = one sixth of the bar. The web v0.717 build gates the same action on Focus >= 48 against a max of 192 = one quarter of the bar. Anyone porting the 'CANNOT CHANGE STANCE' threshold must take the web number and must not read the Android fraction as authoritative.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1521s0\u00a7.as:63-84 (and the duplicate path at :91-94)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "itemdata-hunter/v0717-strings-are-loaded-over-the-network",
+  "lane_impact": "L-items-equipment / L-ui-copy: settles that NO amount of further searching in what we hold will recover v0.717 UI copy above string id 9010. The Android v0.682 hardcoded word lists (ItemGenerator.as:102-127) are the only wording we will ever have, and using them is a knowing v0.682 substitution.",
+  "overturns_ledger": false,
+  "quote": "var _loc2_:String = \"./data/\"; if(\u00a71t1523s0\u00a7.\u00a71t9495s0\u00a7) { ... _loc2_ = \u00a71t3317s0\u00a7.instance.server + \"strings/\"; } ... Locale.addXMLPath(\u00a71t9271s0\u00a7,_loc2_ + \"shs3_en.xml\"); Locale.addXMLPath(\u00a71t9277s0\u00a7,_loc2_ + \"shs3_fr.xml\"); Locale.addXMLPath(\u00a71t9279s0\u00a7,_loc2_ + \"shs3_es.xml\"); Locale.loadLanguageXML(param1,\u00a71t9286s0\u00a7);",
+  "text": "Positive mechanism evidence for why the v0.717 affix wording is gone, upgrading claim #34 from an absence argument. The web build never embeds its string table: LangManager.setLanguage builds a path of './data/' (or server + 'strings/') and hands Locale the URLs shs3_en.xml / shs3_fr.xml / shs3_es.xml, then calls Locale.loadLanguageXML. The table was fetched from the now-dead server at runtime. `find reference -iname \"*shs3_en*\"` returns nothing, and LC_ALL=C grep over the 329 MB reference/extracted/payload.xml for 'Slaughter' and 'of Attack' returns 0 hits each.",
+  "verdict": "STILL_UNHELD"
+ },
+ {
+  "artifact_class": "A2",
   "build": "both (schema parity proven)",
   "cite": "reference/extracted/itemdata.xml:6897-6906 (item 11037 in full); reference/decompiled/shs3_android/scripts/XMLItem.as:14 (public var gvalue:int) and :86-93",
   "citelint": {
@@ -710,67 +774,6 @@
   "overturns_ledger": false,
   "quote": "internal var partListLength:int = 22;  /  for(var i:int = 0; i <= this.partListLength; i++) { mc = new MovieClip(); addChild(mc); this.partList.push(mc); }",
   "text": "The MCS render stack instantiates 23 layers (indices 0-22), not 27: PART_l_shoulder 23, PART_r_shoulder 24, PART_l_knee 25 and PART_r_knee 26 are declared but never used anywhere in the corpus.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/XMLItem.as:231-298 (the switch) evaluated against my parse of all 412 <modifier> rows in reference/extracted/itemdata.xml (34 distinct ids)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/modifier-rows-are-mostly-set-ids",
-  "lane_impact": "L4/L7 (economy + loot) \u2014 the modifier table is transcribed but the DATA is not thereby readable: the dominant channel is set membership (344 rows), which needs a separate set-bonus table that no one has looked for, and 11 ids shipped in the data have no handler at all.",
-  "overturns_ledger": false,
-  "quote": "Unmapped by the table, with row counts: 25 x1, 38 x6, 78 x2, 79 x2, 84 x2, 90 x1, 96 x1, 97 x1, 98 x1, 99 x1, 40000 x1 = 19 rows / 11 distinct ids. Set-band (101-1999) = 344 rows. Stat switch (0-16) = 47 rows. Code: default: if(int(this.modifierXML[q].id) < 2000 && int(this.modifierXML[q].id) > 100) { tempString += LangManager.getString(123) + \": \" + this.modifierXML[q].id; } else { trace(\"ErrorValue: \" + this.modifierXML[q].id); }",
-  "text": "Only 47 of the 412 <modifier> rows in itemdata.xml (11%) resolve to a named stat channel; 344 rows (83%) fall in the 101-1999 Set band and render as the literal string 'Set: <id>', and 19 rows across 11 distinct ids resolve to nothing and hit the trace(\"ErrorValue\") branch.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:461-535; corroborated visually by reference/frames/s21_weapon/t708.0.png crop (170,240)-(870,1040) upscaled x2 LANCZOS",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/nine-slot-ui-mapping-resolved",
-  "lane_impact": "L5 (UI/HUD) - closes the surveyor's only non-art STILL_UNHELD. Also yields the 'empty' sentinel IDs the UI paints as unfilled: armor 4000/4001, pants 11001, everything else 0.",
-  "overturns_ledger": false,
-  "quote": "for(var i:int = 0; i < 9; i++) { switch(i) { case 0: tempItem = StatsManager.equipment[StatsManager.EQ_HAT]; ... tempShopItem = this.equippedSlots[this.SLOT_HAT]; ... case 7: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY1]; ... this.equippedSlots[this.SLOT_RING1]; case 8: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY2]; ... this.equippedSlots[this.SLOT_RING2]; } }",
-  "text": "The nine paperdoll boxes map one-for-one onto named EQ_ constants in a literal nine-iteration loop, resolving the two ring boxes as ACCESSORY1 and ACCESSORY2 and excluding EQ_NECK from the UI entirely.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:163-179, :261-269, :460-535; StatsManager.as:1944 (findBonusStat) and :1983 (findWeight); frame reference/frames/s21_weapon/t708.0.png crop (170,240)-(870,1040) upscaled x2 LANCZOS",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/nine-ui-boxes-are-the-nine-stat-bearing-slots",
-  "lane_impact": "L5 (UI/HUD) + L6 (art) \u2014 closes the surveyor's only STILL_UNHELD UI item and corrects their '9 UI boxes over a 13-slot model, loses hair/head/scabbard' to FOUR hidden slots (hair, head, neck, scabbard), all cosmetic-only. The SLOT_ index order 0..8 is literally the frame's reading order, box for box \u2014 an independent frame-to-code lock. Shipped asymmetry to carry: findWeight skips only HEAD/NECK/SCABBARD, so hair carries weight but grants no stats.",
-  "ledger_text": "**Ready:** 9-slot paperdoll; 4 rarity tiers;",
-  "overturns_ledger": false,
-  "quote": "InventoryUI.as:163-179  SLOT_HAT 0 \u00b7 SLOT_MASK 1 \u00b7 SLOT_ARMOR 2 \u00b7 SLOT_GLOVES 3 \u00b7 SLOT_PANTS 4 \u00b7 SLOT_WEAPON 5 \u00b7 SLOT_RING1 6 \u00b7 SLOT_SHOES 7 \u00b7 SLOT_RING2 8   /   :268-269 this.equippedSlots[this.SLOT_RING1] = this.equipAccessory1; this.equippedSlots[this.SLOT_RING2] = this.equipAccessory2;   /   :460 for(var i:int = 0; i < 9; i++)   /   StatsManager.findBonusStat: for(var q:* = 0; q < 13; q++) { if(q != EQ_HEAD && q != EQ_NECK && q != EQ_SCABBARD && q != EQ_HAIR && !(skipWeapon && q == EQ_WEAPON)) {",
-  "text": "The 9 paperdoll boxes are not an arbitrary UI subset of the 13-slot model \u2014 they are exactly the 9 slots that grant stats, with the two ring boxes resolved as EQ_ACCESSORY1 (left) and EQ_ACCESSORY2 (right), and EQ_NECK carrying no box at all.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:520-533, plus the dummy-icon roster in reference/decompiled/shs3_android/scripts/ (8 slot-dummy classes, no Neck/Hair/Head/Scabbard dummy)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/paperdoll-ui-slot-mapping-resolved",
-  "lane_impact": "L5 (UI/HUD) \u2014 closes the survey's only STILL_UNHELD UI item and fixes the 13-vs-9 delta: the four model-only slots are HAIR, HEAD, NECK, SCABBARD. The paperdoll switch has exactly 9 cases (0..8), matching the frame's 9 boxes, so the whole slot map is now codeable.",
-  "overturns_ledger": false,
-  "quote": "case 7: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY1]; if(tempItem.getItemID() == 0) { this.acc1Icon.visible = true; } tempShopItem = this.equippedSlots[this.SLOT_RING1]; break; case 8: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY2]; if(tempItem.getItemID() == 0) { this.acc2Icon.visible = true; } tempShopItem = this.equippedSlots[this.SLOT_RING2];",
-  "text": "The two visually identical ring boxes in the 9-box paperdoll are EQ_ACCESSORY1 and EQ_ACCESSORY2 (named SLOT_RING1/SLOT_RING2 in source); EQ_NECK, EQ_HAIR, EQ_HEAD and EQ_SCABBARD have no UI box at all.",
   "verdict": "HELD"
  }
 ]

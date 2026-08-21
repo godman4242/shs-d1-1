@@ -1,5 +1,105 @@
 [
  {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1216-1219, 1535, 1588 (streak/cooldown block at :1514-1527)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/web-daily-prize-rolls-differ",
+  "lane_impact": "L0 meta-social \u2014 the daily-reward third of blocker \u2462 is closed from the WEB payload, but with different probability tables than the survey filed; a 1:1 recreation must use 37+level / 8 / 10.",
+  "ledger_text": "\u2462 achievements list, daily-reward table, token costs \u2014 one Ruffle session closes all.",
+  "overturns_ledger": true,
+  "quote": "`:1218 var _loc1_:int = 37 + this.\u00a71t5864s0\u00a7.getLevel(); :1219 var _loc2_:int = Math.random() * _loc1_;` ... `:1588 _loc4_ = Math.random() * 8;` ... `:1535 _loc4_ = Math.random() * 10;`",
+  "text": "The WEB v0.717 daily-login prize uses a level-scaled base roll of (37 + player level) outcomes and an eight-outcome day-10 bonus; only the 30-day super-bonus (10 outcomes) matches the Android table.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:200, :1401, :1405, :2079 + \u00a71t6519s0\u00a7.as:827 + reference/extracted/itemdata.xml line 402 (item 2127)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/web-duel-token-cap-40",
+  "lane_impact": "L0 meta-social -- completes blocker 3's token third with the RIGHT number; the web premium SKU selling 40 tokens is the independent cross-check.",
+  "ledger_text": "\u2462 achievements list, daily-reward table, token costs \u2014 one Ruffle session closes all.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:200 `internal static const \u00a71t9400s0\u00a7:int = 40;` -- same slot as Android's `MAXDUELTOKENS:int = 30` in an otherwise identical constant block (60 / 2*60 / 60*60 / 7 / ? / 40) \u00b7 :1401 `if(\u00a71t7356s0\u00a7(\u00a71t9416s0\u00a7) > \u00a71t9400s0\u00a7)` :1405 `\u00a71t7357s0\u00a7(\u00a71t9416s0\u00a7,\u00a71t9400s0\u00a7);` \u00b7 \u00a71t6519s0\u00a7.as:827 `... \u00a71t9416s0\u00a7) + \"/\" + ... \u00a71t9400s0\u00a7` \u00b7 itemdata.xml item 2127 resolves to \"40 Duel Tokens\"",
+  "text": "The v0.717 Duel Token hard cap is 40, not the Android build's 30.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2644-2651, :1024, :228 + reference/decompiled/shs3_payload/scripts/\u00a71t406s0\u00a7.as:1544, :1549, :1581",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/web-rebirth-25-100",
+  "lane_impact": "L0 meta-social -- blocker 4 is closed, but at 25/100/303, and the Kongregate forum's 'Rebirthing = 25 FREE Gold' is CONFIRMED rather than contradicted. Any config written from the survey's 5/20/60 would be wrong for v0.717.",
+  "ledger_text": "\u2463 offline gold faucet rate (primary source was dead IAP)",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:2644 `if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8)` :2646 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);` :2651 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25);` \u00b7 :228 `internal static const \u00a71t9413s0\u00a7:int = 12;` (= STAT_HGOLD) \u00b7 :1024 `\u00a71t7357s0\u00a7(\u00a71t9413s0\u00a7,3);` \u00b7 \u00a71t406s0\u00a7.as:1544 `if(...\u00a71t9413s0\u00a7) > 300 && ...\u00a71t9426s0\u00a7) < 9)` \u00b7 :1581 `if((...\u00a71t9413s0\u00a7) - 3) / 25 > _loc3_)`",
+  "text": "In the target WEB v0.717 build, rebirth grants 25 premium Gold (100 at the Dan 8 rebirth), new characters start with 3 Gold, and the client's own anti-cheat ceiling is 300 -- not the 5/20/60 the survey reported from the Android build.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2638-2656 (and :222,:228,:254) + reference/decompiled/shs3_payload/scripts/\u00a71t406s0\u00a7.as:1544",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/web-rebirth-faucet-25-100-300",
+  "lane_impact": "L0 meta-social -- blocker \u2463 closes, but at 25/100/300 not 5/20/60. Also vindicates docs/research/KONGREGATE_FORUM_FINDINGS.md:308 ('25 gold is awarded EVERY rebirth, rising to 100 gold on the 9th'), which the survey declared refuted by the payload; the forum was describing the desktop build the survey never opened.",
+  "ledger_text": "\u2463 offline gold faucet rate (primary source was dead IAP)",
+  "overturns_ledger": true,
+  "quote": ":2644 `if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8)` :2646 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);` :2649 `else` :2651 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25);` -- with :228 `internal static const \u00a71t9413s0\u00a7:int = 12;` (STAT_HGOLD) and :254 `internal static const \u00a71t9426s0\u00a7:int = 25;` (STAT_DAN), the same ids as android StatsManager.as:194/:220. The paid-player test: \u00a71t406s0\u00a7.as:1544 `if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9413s0\u00a7) > 300 && \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9426s0\u00a7) < 9)`. 8x25 + 100 = 300 exactly.",
+  "text": "The v0.717 rebirth faucet is 25 Gold per rebirth and 100 at the Dan 8 rebirth -- a 300-Gold lifetime ceiling that the desktop client itself uses as its paid-player test -- exactly 5x the Android values the survey reported.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2638-2656 (stat ids fixed by :222/:228/:254)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/web-rebirth-grants-25-and-100-gold",
+  "lane_impact": "L0 meta-social \u2014 blocker \u2463 IS closed, but at 25/100/300, not 5/20/60; also restores KONGREGATE_FORUM_FINDINGS' 'Rebirthing = 25 FREE Gold' as a corroborated source, and shows the Android >60-Gold reportHack ceiling has no web equivalent.",
+  "ledger_text": "\u2463 offline gold faucet rate (primary source was dead IAP)",
+  "overturns_ledger": true,
+  "quote": "`public static function \u00a71t9600s0\u00a7() : * { ... \u00a71t9712s0\u00a7(\u00a71t8755s0\u00a7,0); if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8) { \u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100); ... } else { \u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25); } if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) < 9) { \u00a71t9713s0\u00a7(\u00a71t9426s0\u00a7,1); } ... }` \u2014 \u00a71t8755s0\u00a7=9 (XP), \u00a71t9413s0\u00a7=12 (HGOLD), \u00a71t9426s0\u00a7=25 (DAN).",
+  "text": "In the WEB v0.717 build rebirth grants 25 Heavenly Gold, and 100 at the Dan 8 rebirth \u2014 a 300-Gold lifetime offline faucet, five times the Android build's 5/20/60, and an exact match for the Kongregate thread the survey dismissed.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "byte/diff check: reference/extracted/bindata/119_1t4646s0.bin (11,721 B) vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (11,553 B)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/web-survival-table-differs-in-composition",
+  "lane_impact": "L0 meta-social / enemies-ai \u2014 the 351 kill total is safe from either build, but the per-wave enemy MIX must be read from the web file (bindata/119); the Android copy is a different, thinner draw.",
+  "ledger_text": "kill cap 350",
+  "overturns_ledger": true,
+  "quote": "168-line unified diff, all of it inside <id> elements: web `<id>449|454|449|454|443</id>` / `<id>450|455|450|455|443</id>` / `<id>451|456|451|456|443</id>` vs android `<id>449|454</id>` / `<id>450|455</id>` / `<id>451|456</id>`. Both files: 39 <wave>, sum<qty> = 351, blocks {400: 340, 700: 11}.",
+  "text": "The web and Android war-room wave tables agree on 39 waves and 351 total enemies but not on composition: seven late waves in the web build draw from a five-slot id pool that includes an extra id 443, which the Android build reduces to two slots.",
+  "verdict": "HELD"
+ },
+ {
   "artifact_class": "A1",
   "cite": "reference/frames/zFtCaTO0_1M/map/frames/frame_0025.jpg (whole frame, 512x288 upscaled x3 LANCZOS)",
   "citelint": {
@@ -306,112 +406,6 @@
   "overturns_ledger": true,
   "quote": "\u00a71t29s0\u00a7.as:30  public static const \u00a71t12498s0\u00a7:Array = [0,300,900,2100,4800,10200,21000,42600,85800,172200,345000];\n\u00a71t29s0\u00a7.as:326-328  if(param1 == \u00a71t24s0\u00a7.\u00a71t8755s0\u00a7) { return \u00a71t5923s0\u00a7[this.\u00a71t7323s0\u00a7(param1,false) + 1] - _loc2_; } return \u00a71t12498s0\u00a7[this.\u00a71t7323s0\u00a7(param1,false) + 1] - _loc2_;   [\u00a71t8755s0\u00a7 = 0, so bar 0 uses the CHARACTER expArray and bars 1-5 use this second curve]\n\u00a71t29s0\u00a7.as:459-486  0->\"E\" 1->\"E+\" 2->\"D\" 3->\"D+\" 4->\"C\" 5->\"C+\" 6->\"B\" 7->\"B+\" 8->\"A\" 9->\"A+\" 10->\"S\"  (\u00a71t7329s0\u00a7 takes the MAX over bars 1..\u00a71t8761s0\u00a7 = 6)\nstrings.json 8131/8132/8133 = 'Light / Balanced / Heavy Stance Mastery Level 10.'  \u2014 a 10-level mastery track topping out at 10",
   "text": "There is a SECOND cumulative XP curve in the web payload \u2014 an 11-entry array [0,300,900,2100,4800,10200,21000,42600,85800,172200,345000] capped at level 10 \u2014 driving five per-unit sub-bars that roll up into an E, E+, D, D+, C, C+, B, B+, A, A+, S letter-grade rank, and neither the ledger nor the surveyor mentions it.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3030, :3041, :3052-3055, :3078-3081, :3094",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/stance-reach-multipliers-held",
-  "lane_impact": "L1 combat-core blocker \u2460 dies in full, not partially: base = 120 + floor((90+Dan*5)*spd/(20+spd)) (floor 120, Dan-0 asymptote 210), then Light x1.5, Balanced x(1+0.5*balancedMastery*0.01), Heavy x(0.5+0.5*heavyMastery*0.01) with a hard floor of 100, fed to InputManager.setMaxDistance. The units are the same stage-space the gesture input uses.",
-  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) \u2014 *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
-  "overturns_ledger": true,
-  "quote": "MCSPlayer.as:3030  this.slashLength = this.baseSlashLength * 1.5;   (Light)\nMCSPlayer.as:3041  this.slashLength = this.baseSlashLength * (1 + 0.5 * this.balancedMastery * 0.01);\nMCSPlayer.as:3052-3055  this.slashLength = this.baseSlashLength * (0.5 + 0.5 * this.heavyMastery * 0.01); if(this.slashLength < 100) { this.slashLength = 100; }\nMCSPlayer.as:3078  this.slashLength = this.baseSlashLength;   (default, floor 100)\nMCSPlayer.as:3094  InputManager.setMaxDistance(this.slashLength);",
-  "text": "The per-stance reach multipliers sit directly on top of the SPD slash-length base and are fully held, making the L1 combat-core gift the COMPLETE reach model rather than only its base term.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/skilldata.xml:255-257 (id 1004, displayname 6007, lvlreq 3) with strings.json 6007 \u2192 'Roll'",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/unlock-rule-ends-in-0-or-5-false",
-  "lane_impact": "L4: REBUILD_READINESS.md:77 carries THREE errors in one sentence \u2014 '+1AP' (really +5), '80 SP first run' (really 79), and the 'levels ending 0/5' rule (broken at L3 by Roll). The unit overturned the first two but did not mark line 77 itself, only the line-199 Ready bullet. Both lines need the edit.",
-  "ledger_text": "- **Progression spine:** XP caps L1\u2013L10 (550\u202631 400), +3 stat/+1 skill per level, +10HP/+5Chi/+1AP/+3-stat per point, level cap 80, 80 SP first run, skills unlock at levels ending 0 (Ninja) / 5 (Chi).",
-  "overturns_ledger": true,
-  "quote": "skilldata.xml:255-257 '<id>1004</id> / <displayname>6007</displayname> / <lvlreq>3</lvlreq>'; strings.json '6007 -> Roll'. Full measured ladder: 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80.",
-  "text": "The ledger's stated unlock rule 'skills unlock at levels ending 0 (Ninja) / 5 (Chi)' is falsified on the first row of the lvlreq table.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "docs/GAUNTLET.md:373-374 \u00b7 docs/CALIBRATION.md:38 (row 17) \u00b7 docs/research/REBUILD_READINESS.md:62 and :93",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/xp-curve-kills-three-more-docs",
-  "lane_impact": "Blast radius is wider than L4. GAUNTLET.md:373 mis-states what L11 (meta+rebirth) must author as a deviation \u2014 L11 loses one authored-deviation obligation. CALIBRATION.md row 17's \u00b15% band is worse than stale: the real curve misses it by \u221261.3% at L80, so the gate as written would have green-lit a refuted model; rewrite row 17 as CONTRACT against the 99-entry table. REBUILD_READINESS.md:62 and :93 need the same edit as :200/:350.",
-  "ledger_text": "\u2461 **L11\u201380 XP curve \u2014 likely unrecoverable** (no wiki table; both longplays cap at L10; a solo build probably can't reach L11+ offline). Keep the extrapolation as labeled INFERRED.",
-  "overturns_ledger": true,
-  "quote": "GAUNTLET.md:373 'it does not claim the server-side systems (live clan war, L11\u201380 curve, IAP economy) are recoverable \u2014 those are named as authored deviations in L11, not hidden.' \u00b7 CALIBRATION.md:38 '| 17 | XP curve tail (L11+) | `xp.ts` XP_DELTA_STEP | threshold \u00b15% vs any future high-level HUD read | +500/level delta growth extrapolating the CONTRACT L1\u2013L10 table (observed tail 4550\u21925000\u21925500) | INFERRED |' \u00b7 REBUILD_READINESS.md:62 'Some things are structurally unrecoverable ... the live clan-war population, and the L11\u201380 XP curve. See \u00a76.' \u00b7 :93 lists 'L11\u201380 XP curve' under KNOWN-UNKNOWNS.",
-  "text": "The dead 'L11\u201380 curve is unrecoverable' statement is load-bearing in three documents beyond the two the unit names \u2014 including the gauntlet's own charter and a calibration row whose acceptance gate would have passed the refuted model.",
-  "verdict": "HELD"
- },
- {
-  "alternate_cites": [
-   "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:113-128 (grey level), :131+ (zero difference), :185-208 (calcXP)",
-   "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:185-208 (calcXP) and :113-129 (getGreyLevel)",
-   "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:198, :186-208, :122, :126, :128"
-  ],
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:185-208 (calcXP), :120-128 (grey level), :131-182 (zeroDifference); \u00a71t4574s0\u00a7.as:39 (mob base); \u00a71t4902s0\u00a7.as:26 (duellist base)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "duplicate_count": 4,
-  "id": "progression/xp-income-web-parity",
-  "lane_impact": "L4 \u2014 hardens progression/xp-income-model against the very build-drift risk the same survey proved is real (per-point magnitudes). Record the web line numbers; the model may now be ported as CONTRACT from the filmed build rather than inferred from android.",
-  "overturns_ledger": false,
-  "quote": "\u00a71t68s0\u00a7.as:185-208  public static function \u00a71t12070s0\u00a7(param1:int, param2:int, param3:int, param4:Boolean) : * { if(param2 <= \u00a71t12068s0\u00a7()) { return 0; } if(param2 - param1 > 3) { return 0; } var _loc5_:int = param3; if(param1 < param2) { _loc5_ = param3 * (1 + 0.05 * (param2 - param1)); } else if(param1 > param2) { _loc5_ = param3 * (1 - (param1 - param2) / \u00a71t12069s0\u00a7()); } if(param4) { _loc5_ *= 2; } return _loc5_; }\n\u00a71t68s0\u00a7.as:120-128  if(_loc1_ < 40) { return _loc1_ - Math.floor(_loc1_ / 10) - 5; } if(_loc1_ < 60) { return _loc1_ - Math.floor(_loc1_ / 5) - 1; } return _loc1_ - 9;\n\u00a71t4574s0\u00a7.as:39  xp = level * 2 + 20;\n\u00a71t4902s0\u00a7.as:26  xp = level * 5 + 45;",
-  "reported_by": [
-   "critic"
-  ],
-  "text": "The XP-income model was cited entirely from the differently-tuned Android v0.682 build; the WEB v0.717 parity it needed is present and byte-for-byte identical, so the claim survives on web evidence too.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682 \u2014 web parity NOT yet established for NodeGenerator specifically; closing it means locating the obfuscated web twin the way \u00a71t136s0\u00a7.as was located for NameGenerator",
-  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:330, :566, :1539, :1570, :1637; node count measured in reference/extracted/android/112_Mobile_NodeData.bin",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "questdata-critic/overworld-is-generated",
-  "lane_impact": "L8 world-exploration must model a GENERATOR, not a map. This reframes the whole system: there is no finite authored geography to recover beyond 44 story nodes.",
-  "ledger_text": "(1) world bounds + geography (sparse Japan-outline, not a WxH grid)",
-  "overturns_ledger": true,
-  "quote": "NodeGenerator.as:330  `public function generateNode(nodex:int, nodey:int) : XMLWorldNode`  ||  :566 `public function generateRooms(nodeid:int, generateInnerRooms:Boolean = true, locationType:int = -1, theme:int = -1, overwriteType:int = 0) : Array`  ||  :1637 `public function getNodeName(nodeid:int) : String`",
-  "text": "The overworld is PROCEDURALLY GENERATED, not authored. NodeGenerator exposes generateNode(nodex,nodey), generateRooms(nodeid,...), getLocationType(nodeid), getRoomBG(nodeid) and getNodeName(nodeid). reference/extracted/android/112_Mobile_NodeData.bin holds only 44 <node> elements \u2014 the hand-authored story nodes \u2014 of which 30 carry a <name>. Any claim treating that file as 'the world graph' is scoped wrong by orders of magnitude.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "web v0.717 (identical logic in android v0.682) \u2014 no parity hole",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t136s0\u00a7.as:152 (WEB v0.717) and reference/decompiled/shs3_android/scripts/NameGenerator.as:135, :162, :40, :42 + reference/decompiled/shs3_android/scripts/RNG.as:68",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "questdata-critic/placename-generator-held",
-  "lane_impact": "L8 world-exploration blocker (1) is closed for place naming. Refutes questdata/placename-source outright and destroys the inference in questdata/frame-vs-payload-placenames. Recreation needs the 677-entry table, the 78+37 syllable arrays, the LCG seed*9301+49297 mod 233280, and the two hard-coded overrides.",
-  "ledger_text": "(1) world bounds + geography (sparse Japan-outline, not a WxH grid) \u2014 mine Fandom Category:Territories via API; trace the map image.",
-  "overturns_ledger": true,
-  "quote": "\u00a71t136s0\u00a7.as:152  `var _loc2_:int = param1 >> 12 & 0x0FFF;`  ||  :154 `% 137`  ||  :155 `% 26`  ||  :140 `if(param1 == 1405272)`  ||  NameGenerator.as:162 `public function getTownName2(territoryID:int) : String` -> `namestarting[rng.rand(...)] + nameending[rng.rand(...)]`",
-  "text": "The overworld place-name system is HELD end-to-end and machine-reproducible from the shipped WEB client. getPlaceName(territoryID) splits the id into territoryx = id>>12 & 0xFFF and territoryy = id & 0xFFF, takes namex = territoryx % 137 and namey = territoryy % 26, and either indexes the 677-entry place table at [namex*26+namey] (when namex < 26) or composes namestarting[RNG(id*2).rand(78)] + nameending[rand(37)]. Run unmodified against the coordinates visible in the frames it produces 'Chikada' (tid 1405270), 'Kakuchi' (1409366) and 'Kasuta' (1397077) exactly. Two territory IDs are hard-coded overrides: 1405272 -> 'Ibamaya', 1524045 -> 'Gokura'. The on-screen location bar is a three-part composite: direction + getPlaceName(territoryID) + a room-type string from the string table (strings.json[\"1005\"]='Mine', [\"1015\"]='Mountain Path', [\"1003\"]='Forest').",
   "verdict": "HELD"
  }
 ]

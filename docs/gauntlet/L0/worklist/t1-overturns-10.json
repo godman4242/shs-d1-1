@@ -1,6 +1,107 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/DefineSprite_3607_shs3_fla.hurtred_32/1-7.png + reference/decompiled/shs3_android/scripts/BattleUI.as:424-428 + shs3_android_fla/hurtred_29.as:12,15-18",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/hurtred-vignette-catalogued",
+  "lane_impact": "L-ui-hud: closes the 'vignette ramp' third of blocker \u2461, which the survey left open (its claim 6 only extended blocker \u2461 to the cooldown widget). Also feeds art-anim-audio-feel, whose palette digest can now carry the exact hurt-vignette hue and duration.",
+  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued.",
+  "overturns_ledger": true,
+  "quote": "BattleUI.as:426-427 `this.hurtred.visible = true; this.hurtred.gotoAndPlay(1);`; hurtred_29.as:12 `addFrameScript(6,this.frame7);` and :15-18 `internal function frame7() : * { stop(); }`. Measured per frame: frames 1-6 corner RGBA [153,0,0,251], centre RGBA [0,0,0,0], mean alpha 135.88; frame 7 maxA 0 (entirely blank).",
+  "text": "The damage vignette the ledger calls 'uncatalogued' is fully specified: an 800x480 full-screen red radial (#990000 at alpha 251 on the edge, transparent at centre), played from frame 1, holding 6 identical frames and blanking on frame 7 where it stops \u2014 7 frames = 292 ms at 24 fps.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_431.0.png, crop (150,960)-(560,1050) upscaled 4x LANCZOS, compared against frames 427.0 and 429.0 (same crop); contrast reference/frames/combat_frames/Nr4fQstqHDM_t0130s.png (full 1920x1080, overworld); docs/gauntlet/L0/index/strings.json[\"4132\"]",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/in-combat-hud-is-three-bars",
+  "lane_impact": "L7 ui-hud and L5 combat-core \u2014 the HUD spec needs a third meter, and it is the same meter that gates stance switching and triggers criticals. The overworld HUD (two bars + XP + minimap + action row) is a genuinely different layout and should be specced separately.",
+  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued. [REBUILD_READINESS.md:235]",
+  "overturns_ledger": true,
+  "quote": "Visibly in the crop: a circular straw-hat portrait medallion ringed in RED; a green bar reading '20/20'; directly below it a blue bar reading '26/26'; directly below that a tan/gold bar with 'CANNOT CHANGE STANCE' overlaid; below the cluster yellow text '150% DAMAGE'. Across frames 427.0 / 429.0 / 431.0 the tan bar's fill length changes, so it is a meter, not a plate. Corroboration: BattleUI.as:60 'public var reloadbar:MovieClip;' and MCSPlayer.as:2977 'if(this.reload < this.maxreload / 6) { return; }'. strings.json[\"4132\"] = 'Eat this potato to get the 150% Damage buff.\\n\\nNote: Only one buff may be active at a time.'",
+  "text": "The in-combat player HUD has THREE bars, not two: green HP over blue Chi over a third tan/gold reload (Focus) bar. The third bar carries the status text 'CANNOT CHANGE STANCE' when it is below a sixth of max. The two-bar reading comes from overworld frames, where the reload bar is hidden. Separately, the yellow '150% DAMAGE' text under the bars is a temporary food buff, not a stance or crit multiplier \u2014 mis-reading it as a combat constant is an easy trap.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/payload.xml:626573-626600 (DefineSpriteTag spriteId=1691, the symbol \u00a71t401s0\u00a7/InteractUI embeds)",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/interactui-panel-geometry",
+  "lane_impact": "ui-hud + rebirth-elements: twips/20 = px, so titleText sits at (10.3, 70) px, buttons share x = 10 px at y = 109 / 148 / 187 / 226 / 265 px \u2014 a uniform 39 px row pitch \u2014 and elementCircle anchors at the sprite origin. Same technique opens every other named UI sprite in payload.xml.",
+  "ledger_text": "\u2464 rebirth/element-picker UI (never filmed \u2014 both longplays pre-rebirth).",
+  "overturns_ledger": true,
+  "quote": "name=\"elementCircle\" translateX=\"0\" translateY=\"0\" (depth 37)\nname=\"titleText\"     translateX=\"206\"  translateY=\"1400\"\nname=\"button1\"       translateX=\"200\"  translateY=\"2180\"\nname=\"button2\"       translateX=\"200\"  translateY=\"2960\"\nname=\"button3\"       translateX=\"200\"  translateY=\"3740\"\nname=\"button4\"       translateX=\"200\"  translateY=\"4520\"\nname=\"button5\"       translateX=\"200\"  translateY=\"5300\"",
+  "text": "InteractUI's panel geometry is held in stage pixels straight from the payload placement matrices, so the rebirth menu can be laid out without guessing.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/shapes/ (1,822 *.svg) and reference/extracted/sprites/ (827 dirs), e.g. DefineSprite_3621_shs3_fla.autoslashbutton_43/1.png, DefineSprite_934_shs3_fla.skillSlotBG_755/1.png, DefineSprite_3632_shs3_fla.PauseScreen_51/1.png",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/jpexs-export-already-on-disk",
+  "lane_impact": "L-ui-hud: the declared residual is already closed, so the lane's STILL_UNHELD is stale and its Tier-3 recommendation mis-directs. Also feeds art-anim-audio-feel (HUD chrome art no longer needs the encrypted 124_Mobile_ImageResource) and any lane that assumed only scripts/ was recovered from the payload.",
+  "ledger_text": "\u2464 pause/options/dialogue-box exact metrics.",
+  "overturns_ledger": true,
+  "quote": "Measured opaque bounding boxes: autoslashbutton_43 = 129x31 (bbox fills canvas), skillSlotBG_755 = 56x55 (opened it: the rounded metallic slot frame visible in the frame crop), PauseScreen_51 = 802x481. shapes/1003.svg header: `ffdec:objectType=\"shape\" height=\"30.55px\" wid...`. Also present: stancecolor1_56, chatTextBattle_45, MinimapIcon_668, MinimapRoomIcon_672, skillnodeinner_89, speechbubble_422, QuestLogButtonBG_548.",
+  "text": "The JPEXS shape/sprite export that this lane schedules as the remaining close-path has already been run and is in the repo \u2014 1,822 web-build SVGs and 827 sprite directories, including the HUD symbols declared missing.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/sprites/DefineSprite_3632_shs3_fla.PauseScreen_51/1.png; SWF headers of reference/decrypted/shs3_payload_decoded.swf and shs3_android_payload_decoded.swf parsed first-hand",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/pausescreen-sprite-confirms-play-field",
+  "lane_impact": "L-ui-hud: separates the two numbers the lane has been conflating \u2014 the web STAGE is 800x690 (the authored canvas, friend-bar layout) while the web PLAY FIELD is 800x480. Both are now held from web-build artifacts, so no android caveat is needed for either, and the 'read stage.stageWidth in a build' instruction in the ledger is moot.",
+  "ledger_text": "\u2460 aspect-ratio truth (5:3 native \u2192 are x-fractions pillarbox-wrong?) \u2014 inspect unt.png for side-bars; read stage.stageWidth in a build.",
+  "overturns_ledger": true,
+  "quote": "PauseScreen_51 rasterises to 802 x 481 px with the opaque bbox filling the canvas \u2014 a full-play-field overlay from the WEB payload. Parsed SWF header rects: shs3_payload_decoded.swf = 800.0 x 690.0 @ 24.0 fps, 6 frames; shs3_android_payload_decoded.swf = 800.0 x 480.0 @ 24.0 fps, 6 frames.",
+  "text": "A web-build-native artifact confirms the 800x480 play field, so blocker \u2460 no longer has to borrow the Android build's stage rect \u2014 which matters, because the web SWF's own stage rect is 800x690.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png vs Nr4fQstqHDM_428.9.png, crop (1710,955)-(1845,1080) upscaled 4x side by side; plus max-vertical-luminance-step tracking across all 42 duel_dense frames, interior rows 968..1064",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/shade-wipe-is-vertical",
+  "lane_impact": "L4 ui-hud: closes the cooldown-widget part of blocker (2) with the one thing the source cannot supply \u2014 the wipe's shape and direction. Confirms the snap-not-tween character from pixels rather than from code inference, and feeds L5 skills-meters (the same shade drives every equipped skill).",
+  "ledger_text": "\u2461 dynamic HUD \"feel\" (bar tween vs snap, combo pop, vignette ramp) \u2014 uncatalogued.",
+  "overturns_ledger": true,
+  "quote": "At t=428.0 slot 3's border is grey and the left ~53% of the face is visibly darker behind a hard vertical boundary; at t=428.9 the border is bright cream and the face is uniformly lit. Edge tracking on slot i=0: 0.53 of slot width held constant from 427.0 through 428.6, then snapped to 0.01 at 428.7 and stayed \u2014 a discrete jump, no tween. Slot i=1 independently went 0.00 -> 0.95 -> 0.01. The undimmed bright-cream border also explains the leftmost slot's appearance: initEmpty() sets shade.visible = false (SkillSlotButton.as:130-135), so ready and empty slots share the undimmed look.",
+  "text": "The skill-slot cooldown shade is a straight VERTICAL wipe that reveals right-to-left and dims the slot's border as well as its face \u2014 geometry that exists only in the frames, because shade frames 1..13 live inside the unexported assets.swf.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/extracted/sprites/DefineSprite_3394_shs3_fla.stancecolor1_56/1-3.png + reference/decompiled/shs3_android/scripts/BattleUI.as:372-374",
   "citelint": {
    "notes": [

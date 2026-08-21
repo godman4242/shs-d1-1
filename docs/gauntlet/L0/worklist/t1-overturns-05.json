@@ -1,6 +1,106 @@
 [
  {
   "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:105, :182, :190, :239 and EnemyClone.as:49 and :77; reference/decompiled/shs3_android/scripts/StatsManager.as:1839-1842; reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:103, :191, :249 and \u00a71t4904s0\u00a7.as:49 and :77",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "itemdata/reload-bar-max-is-a-hard-constant-and-diverges",
+  "lane_impact": "L1/L5 COMBAT CORE: the slash economy must be modelled as a flat 192-frame (8 s at 24 fps) bar for v0.717 fidelity, NOT as 48 + SPEED*6. SPEED does not lengthen the bar at all; it only affects reach and cooldowns. L6/L3: one more constant that must name its build. Also a general methodology lesson \u2014 a value that is computed and passed is not thereby used.",
+  "ledger_text": "itemdata/slashusage-is-a-reload-economy: 'the bar's max is 48 + SPEED*6, its floor is 24'",
+  "overturns_ledger": true,
+  "quote": "MCSPlayer.as:239 \u2014 'this.maxreload = 5 * 24;' set INSIDE initPlayer, after :190 'this.baseReload = baseReload;'. MCSPlayer.as:105 \u2014 'internal var baseReload:int = 48;'. StatsManager.as:1839-1842 \u2014 'internal static function getBaseReload() : int { return 48 + (getPlayerStats(STAT_SPEED) + findBonusStat(STAT_SPEED)) * 6; }'. Web: \u00a71t99s0\u00a7.as:249 \u2014 'this.\u00a71t4415s0\u00a7 = 8 * 24;' and \u00a71t99s0\u00a7.as:103 \u2014 'internal var \u00a71t4419s0\u00a7:int = 48;'. grep -rn \"baseReload\" reference/decompiled/shs3_android/scripts/ returns MCSPlayer.as:105,:182,:190 and EnemyClone.as:49 \u2014 declaration, parameter, assignment, copy. Zero readers. grep -rn \"\u00a71t4419s0\u00a7\" reference/decompiled/shs3_payload/scripts/ returns \u00a71t99s0\u00a7.as:103,:191 and \u00a71t4904s0\u00a7.as:49. Zero readers.",
+  "text": "The reload/focus bar MAXIMUM is a hard-coded constant, not a SPEED formula, and it DIVERGES between builds: 5*24 = 120 on Android v0.682 and 8*24 = 192 on web v0.717. In both builds the value StatsManager.getBaseReload() computes (48 + SPEED*6) is passed into initPlayer, stored in a field, and never read by anything - it is dead code. This is a third android-vs-web tuning divergence beyond the two in itemdata/android-vs-web-constants-diverge, and it is what refutes itemdata/slashusage-is-a-reload-economy's bar-max half.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both (schema parity proven)",
+  "cite": "reference/extracted/itemdata.xml:2446-2459 (item 2212) and :5218-5226 (item 7049); reference/decompiled/shs3_android/scripts/XMLItem.as:86-93 (and web parity reference/decompiled/shs3_payload/scripts/\u00a71t104s0\u00a7.as:84-91)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "itemdata/two-gold-items-are-coin-buyable",
+  "lane_impact": "L6 economy: the premium catalogue is 301 Gold-only rows plus 2 that also carry a 1-coin price. A recreation that hard-codes 'heavenlyprice > 0 implies coin price 0' will diverge on these two rows.",
+  "ledger_text": "itemdata/gold-catalogue: 'Every one of these rows also carries <baseprice>0</baseprice> \u2014 Gold-only, not buyable with coins.'",
+  "overturns_ledger": true,
+  "quote": "itemdata.xml:2446-2454 \u2014 '<id>2212</id><type>10</type><name>4400</name><unique>1</unique><heavenlyprice>5</heavenlyprice><weight>0</weight><nogive>1</nogive><nodrop>1</nodrop><desc>4401</desc>' \u2014 no <baseprice> line at all. itemdata.xml:5218-5225 \u2014 '<id>7049</id><type>3</type><name>4346</name><unique>1</unique><heavenlyprice>3</heavenlyprice><defense>2</defense><weight>1</weight><desc>4347</desc>' \u2014 likewise. XMLItem.as:86-93 \u2014 'if(xml.baseprice.toString() != \"\") { this.gvalue = xml.baseprice; } else { this.gvalue = 1; }'.",
+  "text": "Exactly two premium items carry a <heavenlyprice> but NO <baseprice> tag, so XMLItem's default fires and they are purchasable for 1 coin: item 2212 (heavenlyprice 5) and item 7049 (heavenlyprice 3). Every other Gold item writes <baseprice>0</baseprice>. This is the counterexample to 'Gold-only, not buyable with coins'.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:995,1868 (grep \"\u00a71t536s0\u00a7\" over reference/decompiled/shs3_payload/scripts/ returns exactly 2 hits)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "items-equipment/condition-blocker-dead-in-both-builds",
+  "lane_impact": "L1/L2 (combat core + damage) -- removes the S0-3 Android-parity caveat for blocker 2 that the surveyor left open. The phantom wear curve is dead in the build we are actually recreating (v0.717), not just in the Android port.",
+  "ledger_text": "\u2461 condition\u2192DMG **multiplier** (current \"evidence\" confounds condition with a 2-level gap).",
+  "overturns_ledger": true,
+  "quote": "\u00a71t17s0\u00a7.as:1868  public function \u00a71t536s0\u00a7() : int   /   \u00a71t17s0\u00a7.as:995  var _loc1_:int = this.\u00a71t536s0\u00a7();   [only call site, inside the getDesc equivalent]",
+  "text": "Blocker 2 (condition->DMG multiplier) is dissolved in the WEB v0.717 build as well as Android: the web getCondition has exactly two references in the whole payload -- its definition and one call inside getDesc -- so no damage path reads it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:4417-4445; Item.as:229-259; MCSCharacter.as:618",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/equipment-save-format-is-13-field",
+  "lane_impact": "L10 (persistence) -- corrects the surveyor's cite. Copying MCSCharacter.as:348 instead loses the scabbard, both accessory slots and every per-slot modifier, and adds two prop fields that are not equipment slots.",
+  "ledger_text": "**Server-sim topology & save format** \u2014 nothing to copy; design a single-player persistence schema from the observed field set.",
+  "overturns_ledger": true,
+  "quote": "public static function getEquipmentString() : String { var max:int = int(equipment.length); for(var i:int = 0; i < max; i++) { if(i == max - 1) { str += equipment[i].toStringNoQty(); } else { str += equipment[i].toStringNoQty() + \"|\"; } } return str; }  /  public static function parseEquipmentString(str:String) : * { equipment.length = 0; var strArray:Array = str.split(\"|\"); for(var i:* = 0; i < strArray.length; i++) { equipment.push(Item.parseNoQty(strArray[i])); } }  /  MCSCharacter.as:618  return this.mcsString;",
+  "text": "The equipment save format is StatsManager.getEquipmentString/parseEquipmentString -- all 13 equipment slots joined by \"|\", each field an Item.toStringNoQty() record carrying id plus modifiers, colours, uses, name and creator. MCSCharacter's 12-field mcsString is the character APPEARANCE string, not persistence.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/Damage.as:53,149-172; MCSPlayer.as:3415-3418 and :1930; NPC.as:447",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/generic-defense-floor-is-attacker-keyed",
+  "lane_impact": "L1/L2 (combat core + damage) - the ledger bullet is INCOMPLETE, not wrong: EnemyLevel is the right variable for the player-taking-damage case and /4 is the right top band. It should read: floor = 1 (atkLvl<=10) / atkLvl\u00f78 (<=20) / atkLvl\u00f76 (<=30) / atkLvl\u00f74, plus piercingDamage. Do not delete the bullet.",
+  "ledger_text": "defense min-floor (EnemyLevel/4)",
+  "overturns_ledger": true,
+  "quote": "public function Damage(damage:int = 0, attackerlvl:int = 0, launchType:int = 0, stance:int = -1, ...)  /  if(this.attackerlvl <= 10) { return 1 + this.piercingDamage; } if(this.attackerlvl <= 20) { return this.attackerlvl / 8 + this.piercingDamage; } if(this.attackerlvl <= 30) { return this.attackerlvl / 6 + this.piercingDamage; } return this.attackerlvl / 4 + this.piercingDamage;  /  damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); }  /  damage = new Damage(this.slashDamage,level,0,this.stance);",
+  "text": "The real defense min-floor lives in Damage.getMinDamage(), is keyed to the ATTACKER's level, and has four bands (1 / lvl\u00f78 / lvl\u00f76 / lvl\u00f74, each + piercingDamage); it is applied at the single point where damage meets defense in MCSPlayer, NPC and every enemy takeDamage.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSItem.as:203-210, :226-233; ShopItem.as:134-199; row counts measured over reference/extracted/itemdata.xml",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/icon-namespaces-item-and-acc",
+  "lane_impact": "L6 (art) - blocker 5 is only HALF dead. The compositing contract is genuinely closed, but the icon manifest is not: 99 consumables (2000-2999) + 79 quest items (20000-29999) + 9 accessories (3000-3999) require item*/acc* symbols with no paperdoll counterpart. This is a scoring-relevant correction to the surveyor's 78.",
+  "ledger_text": "\u2464 **sprite-compositing contract** (layer order, per-slot body render \u2014 a from-scratch-art blocker) + item **icon manifest**.",
+  "overturns_ledger": true,
+  "quote": "public function setConsumable(id:int) : * { this.clearItem(); this.displayItem = this.getMCSComponent(\"item\",id); if(this.displayItem == null) { this.displayItem = new item0(); ... } }  /  public function setAccessory(id:int) : * { this.displayItem = this.getMCSComponent(\"acc\",id); if(this.displayItem == null) { this.displayItem = new AccessoryDummyIcon(); ... } }",
+  "text": "The item-icon art is NOT all paperdoll parts: consumables and quest items render from an 'item<art>' symbol namespace and accessories from an 'acc<art>' namespace, neither of which exists on the character rig - 187 of 982 itemdata rows need icon art the paperdoll cannot supply.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1057-1080 (cost at :1058, uses clamp at :1073-1076, reinforce at :1082-1083)",
   "citelint": {
    "notes": [],
@@ -298,106 +398,6 @@
   "overturns_ledger": true,
   "quote": "`internal static const \u00a71t12534s0\u00a7:Class = \u00a71t4646s0\u00a7;` (web, line 13) \u2014 cf. reference/decompiled/shs3_android/scripts/WarHexUI.as:13 `internal static const SurvivalModeData:Class = WarHexUI_SurvivalModeData;`",
   "text": "The web bindata blob 119 is bound to the war-room wave table by NAME, not by inference: the web WarHexUI declares its SurvivalModeData class as \u00a71t4646s0\u00a7, which is literally the class token in the extracted filename 119_1t4646s0.bin.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1216-1219, 1535, 1588 (streak/cooldown block at :1514-1527)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/web-daily-prize-rolls-differ",
-  "lane_impact": "L0 meta-social \u2014 the daily-reward third of blocker \u2462 is closed from the WEB payload, but with different probability tables than the survey filed; a 1:1 recreation must use 37+level / 8 / 10.",
-  "ledger_text": "\u2462 achievements list, daily-reward table, token costs \u2014 one Ruffle session closes all.",
-  "overturns_ledger": true,
-  "quote": "`:1218 var _loc1_:int = 37 + this.\u00a71t5864s0\u00a7.getLevel(); :1219 var _loc2_:int = Math.random() * _loc1_;` ... `:1588 _loc4_ = Math.random() * 8;` ... `:1535 _loc4_ = Math.random() * 10;`",
-  "text": "The WEB v0.717 daily-login prize uses a level-scaled base roll of (37 + player level) outcomes and an eight-outcome day-10 bonus; only the 30-day super-bonus (10 outcomes) matches the Android table.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:200, :1401, :1405, :2079 + \u00a71t6519s0\u00a7.as:827 + reference/extracted/itemdata.xml line 402 (item 2127)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "meta-social/web-duel-token-cap-40",
-  "lane_impact": "L0 meta-social -- completes blocker 3's token third with the RIGHT number; the web premium SKU selling 40 tokens is the independent cross-check.",
-  "ledger_text": "\u2462 achievements list, daily-reward table, token costs \u2014 one Ruffle session closes all.",
-  "overturns_ledger": true,
-  "quote": "\u00a71t1523s0\u00a7.as:200 `internal static const \u00a71t9400s0\u00a7:int = 40;` -- same slot as Android's `MAXDUELTOKENS:int = 30` in an otherwise identical constant block (60 / 2*60 / 60*60 / 7 / ? / 40) \u00b7 :1401 `if(\u00a71t7356s0\u00a7(\u00a71t9416s0\u00a7) > \u00a71t9400s0\u00a7)` :1405 `\u00a71t7357s0\u00a7(\u00a71t9416s0\u00a7,\u00a71t9400s0\u00a7);` \u00b7 \u00a71t6519s0\u00a7.as:827 `... \u00a71t9416s0\u00a7) + \"/\" + ... \u00a71t9400s0\u00a7` \u00b7 itemdata.xml item 2127 resolves to \"40 Duel Tokens\"",
-  "text": "The v0.717 Duel Token hard cap is 40, not the Android build's 30.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2644-2651, :1024, :228 + reference/decompiled/shs3_payload/scripts/\u00a71t406s0\u00a7.as:1544, :1549, :1581",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "meta-social/web-rebirth-25-100",
-  "lane_impact": "L0 meta-social -- blocker 4 is closed, but at 25/100/303, and the Kongregate forum's 'Rebirthing = 25 FREE Gold' is CONFIRMED rather than contradicted. Any config written from the survey's 5/20/60 would be wrong for v0.717.",
-  "ledger_text": "\u2463 offline gold faucet rate (primary source was dead IAP)",
-  "overturns_ledger": true,
-  "quote": "\u00a71t1523s0\u00a7.as:2644 `if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8)` :2646 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);` :2651 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25);` \u00b7 :228 `internal static const \u00a71t9413s0\u00a7:int = 12;` (= STAT_HGOLD) \u00b7 :1024 `\u00a71t7357s0\u00a7(\u00a71t9413s0\u00a7,3);` \u00b7 \u00a71t406s0\u00a7.as:1544 `if(...\u00a71t9413s0\u00a7) > 300 && ...\u00a71t9426s0\u00a7) < 9)` \u00b7 :1581 `if((...\u00a71t9413s0\u00a7) - 3) / 25 > _loc3_)`",
-  "text": "In the target WEB v0.717 build, rebirth grants 25 premium Gold (100 at the Dan 8 rebirth), new characters start with 3 Gold, and the client's own anti-cheat ceiling is 300 -- not the 5/20/60 the survey reported from the Android build.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2638-2656 (and :222,:228,:254) + reference/decompiled/shs3_payload/scripts/\u00a71t406s0\u00a7.as:1544",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/web-rebirth-faucet-25-100-300",
-  "lane_impact": "L0 meta-social -- blocker \u2463 closes, but at 25/100/300 not 5/20/60. Also vindicates docs/research/KONGREGATE_FORUM_FINDINGS.md:308 ('25 gold is awarded EVERY rebirth, rising to 100 gold on the 9th'), which the survey declared refuted by the payload; the forum was describing the desktop build the survey never opened.",
-  "ledger_text": "\u2463 offline gold faucet rate (primary source was dead IAP)",
-  "overturns_ledger": true,
-  "quote": ":2644 `if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8)` :2646 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);` :2649 `else` :2651 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25);` -- with :228 `internal static const \u00a71t9413s0\u00a7:int = 12;` (STAT_HGOLD) and :254 `internal static const \u00a71t9426s0\u00a7:int = 25;` (STAT_DAN), the same ids as android StatsManager.as:194/:220. The paid-player test: \u00a71t406s0\u00a7.as:1544 `if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9413s0\u00a7) > 300 && \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9426s0\u00a7) < 9)`. 8x25 + 100 = 300 exactly.",
-  "text": "The v0.717 rebirth faucet is 25 Gold per rebirth and 100 at the Dan 8 rebirth -- a 300-Gold lifetime ceiling that the desktop client itself uses as its paid-player test -- exactly 5x the Android values the survey reported.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2638-2656 (stat ids fixed by :222/:228/:254)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/web-rebirth-grants-25-and-100-gold",
-  "lane_impact": "L0 meta-social \u2014 blocker \u2463 IS closed, but at 25/100/300, not 5/20/60; also restores KONGREGATE_FORUM_FINDINGS' 'Rebirthing = 25 FREE Gold' as a corroborated source, and shows the Android >60-Gold reportHack ceiling has no web equivalent.",
-  "ledger_text": "\u2463 offline gold faucet rate (primary source was dead IAP)",
-  "overturns_ledger": true,
-  "quote": "`public static function \u00a71t9600s0\u00a7() : * { ... \u00a71t9712s0\u00a7(\u00a71t8755s0\u00a7,0); if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8) { \u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100); ... } else { \u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25); } if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) < 9) { \u00a71t9713s0\u00a7(\u00a71t9426s0\u00a7,1); } ... }` \u2014 \u00a71t8755s0\u00a7=9 (XP), \u00a71t9413s0\u00a7=12 (HGOLD), \u00a71t9426s0\u00a7=25 (DAN).",
-  "text": "In the WEB v0.717 build rebirth grants 25 Heavenly Gold, and 100 at the Dan 8 rebirth \u2014 a 300-Gold lifetime offline faucet, five times the Android build's 5/20/60, and an exact match for the Kongregate thread the survey dismissed.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "cite": "byte/diff check: reference/extracted/bindata/119_1t4646s0.bin (11,721 B) vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (11,553 B)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/web-survival-table-differs-in-composition",
-  "lane_impact": "L0 meta-social / enemies-ai \u2014 the 351 kill total is safe from either build, but the per-wave enemy MIX must be read from the web file (bindata/119); the Android copy is a different, thinner draw.",
-  "ledger_text": "kill cap 350",
-  "overturns_ledger": true,
-  "quote": "168-line unified diff, all of it inside <id> elements: web `<id>449|454|449|454|443</id>` / `<id>450|455|450|455|443</id>` / `<id>451|456|451|456|443</id>` vs android `<id>449|454</id>` / `<id>450|455</id>` / `<id>451|456</id>`. Both files: 39 <wave>, sum<qty> = 351, blocks {400: 340, 700: 11}.",
-  "text": "The web and Android war-room wave tables agree on 39 waves and 351 total enemies but not on composition: seven late waves in the web build draw from a five-slot id pool that includes an extra id 443, which the Android build reduces to two slots.",
   "verdict": "HELD"
  }
 ]

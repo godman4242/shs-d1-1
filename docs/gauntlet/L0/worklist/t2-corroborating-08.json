@@ -1,6 +1,66 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:2132-2139",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/setlevel-console-confirms-xp-indexing",
+  "lane_impact": "L4: independently confirms the expArray indexing convention (expArray[N-1] is the cap you must cross to BECOME level N, i.e. expArray[L] is the cumulative cap to FINISH level L) \u2014 the exact convention src/core/xp.ts already implements. Also resolves the unlabeled '\u00a71t9713s0\u00a7(9,param1)' in the web changeXP at \u00a71t1523s0\u00a7.as:2036 as stat 9 = raw XP. Cross-lane: this is a live debug console (/setlevel, /changestat, loot spawners) that may be reachable in the shipped build \u2014 relevant to L11 meta-social.",
+  "overturns_ledger": false,
+  "quote": "if(strArray[0] == \"/setlevel\")\n{\n   if(strArray.length == 2)\n   {\n      StatsManager.setStat(9,StatsManager.expArray[int(strArray[1]) - 1] - 1);\n      StatsManager.changeXP(1);\n   }\n   ...",
+  "text": "A shipped dev console command proves stat id 9 is the raw cumulative XP total and that expArray is indexed directly by character level.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A4",
+  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md \u00a7c-2 (reach-per-stance table, method 'distance from the player's body to the far end of the drawn stroke, counting only strokes whose near end starts within 30 px', n=17 Balanced) combined with reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2346-2347",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/slash-length-settles-balanced-reach",
+  "lane_impact": "L1 combat-core blocker \u2460 : the cross-lane gift is no longer just a lead \u2014 it is frame-corroborated at the one stance/level where a measurement exists. STANCE_TABLE's Balanced entry should become 124 at SPD 1 and track 120 + 90\u00b7spd/(20+spd), not the wiki's 200. Corroborated by strings.json 6005 (Heavy: 'slash range is shorter'), matching measured Heavy 97\u2013103 < Balanced 116\u2013131. CARRY THIS CAVEAT: \u00a7S24-H's re-run REFUTED the older 775 px / '\u2248413 stage px' reading at COMBAT_MEASUREMENTS.md:221 ('No normal-anatomy stroke >280 px anywhere re-checked; the 775 refutation REPRODUCED') \u2014 reconcile against the \u00a7S24-H-corrected figures, never :221. Left PARTIAL because Light/Heavy multipliers and the stage-px unit domain are still unverified.",
+  "overturns_ledger": false,
+  "quote": "\u00a7c-2: '| **Balanced** | 116\u2013131 | **131** | 17 | 200 | \u274c **NOT CONFIRMED** \u2014 measured 131 |' and 'The Balanced gap cannot be resolved from this footage. The *only* Balanced combat in either video is the level-1 tutorial fight'. Payload \u00a71t1523s0\u00a7.as:2346-2347: 'var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' \u2192 at SPD 1, Dan 0: 120 + floor(90/21) = 124.",
+  "text": "The SPD slash-length formula reconciles with a frame measurement the combat lane declared unresolvable: at SPD 1 it returns 124 stage px, landing inside the frame-measured level-1 Balanced plateau of 116\u2013131 \u2014 so Balanced \u2248 \u00d71.0 base, and the wiki's Balanced 200 is refuted.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3450-3457",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/spent-points-audit-second-witness",
+  "lane_impact": "L4: raises the per-point table (HP+10/Chi+5/AP+5/ATK,DEF,SPD+3) and the start pools (10/10/30/1/1/1) from single-witness to triple-witness \u2014 the click handlers, this audit, and the frame budget arithmetic all agree, all within the WEB payload. Ready to land in config as CONTRACT.",
+  "overturns_ledger": false,
+  "quote": "_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9403s0\u00a7) - 10) / 10;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9406s0\u00a7) - 10) / 5;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9415s0\u00a7) - 30) / 5;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9408s0\u00a7) - 1) / 3;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9409s0\u00a7) - 1) / 3;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9410s0\u00a7) - 1) / 3;\n_loc1_ += \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9419s0\u00a7);",
+  "text": "A second, structurally independent WEB witness for both the start pools and the per-point magnitudes: a spent-points audit whose divisors are the magnitudes and whose subtrahends are the start pools.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A4",
+  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md:203 \u00a7H-1 (tagged MEASURED, carries its own frame cite 'A t\u2248152 PLAYER screen, re-read at full resolution') and docs/research/video-study/segments/A-02-dojo-tutorial-3-stances-chi-punch-on-dum.md:25",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/start-pools-third-frame",
+  "lane_impact": "L4: \u00a7H-1 is at level 2 with all 3 points UNSPENT, so its ATK 1 / DEF 1 / SPD 1 / Chi 10 / AP 30 ARE the unAssignStatPoints() literals \u2014 the unit's added start values are frame-confirmed, not payload-only. A-02:25's INFERRED flag on the point-to-stat ratio is now closed twice over (payload + my L3\u2192L4 delta). Four independent confirmations of +3 now exist: A-02, \u00a7H-1, the L3 absolute fit, and the L3\u2192L4 delta.",
+  "overturns_ledger": false,
+  "quote": "\u00a7H-1: 'Early player pools + stats (PLAYER screen, level 2) | HP green \u00b7 Chi 10/10 \u00b7 AP 30/30; ATK 1 \u00b7 DEF 1 (+2) \u00b7 SPD 1; weight 14/100; available stat points 3'. A-02:25: 'Observed progression: ATK 4\u21927, DEF 4+2\u21927+2 ..., SPD 1\u21924, spending the 3 stat points ... total distributed points = (7-4)+(7-4)+(4-1)=3+3+3=9, inconsistent with \"3 points\" label \u2014 likely +1 stat point grants +3 to the underlying stat ... treat exact point-to-stat ratio as INFERRED, needs frame-by-frame combat-panel replay to confirm'.",
+  "text": "A third, level-2 frame-backed reading independently confirms the virgin base stats including the ATK/DEF/SPD = 1 the unit added, and a fourth observation (A-02) had already inferred the +3-per-point ratio the payload now proves.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2042, :2043, :2049 vs reference/decompiled/shs3_android/scripts/StatsManager.as:1619, :1625, :336",
   "citelint": {
    "notes": [],
@@ -707,70 +767,6 @@
   "overturns_ledger": false,
   "quote": "case 0:\\n   this.danfield.text = \"\";\\n   break;",
   "text": "Dan 1 displays no kanji rank at all - string 455 (\u521d\u6bb5) ships in the table but is never rendered by either display path.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/skilldata.xml, ids 1050-1075 parsed with displaynames resolved via docs/gauntlet/L0/index/strings.json",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "rebirth/dragon-dance-tier-ids",
-  "lane_impact": "rebirth-elements + skills-meters: the ledger's '3x/6x' line is EXACTLY right (Step at 3x, Step II / Later Heaven at 6x) and needs only the addition of the 1x tier, not correction. Full per-element census from the same file: 3 skills at qty10 (Breath, Elemental Trap, Kunai), 2 at qty30 (Dragon Dance Step, AoE ultimate), 1 at qty60 (Step II) \u2014 24 elemental skills total, matching the ledger's '4 elements x 6 named skills'.",
-  "ledger_text": "Dragon Dance unlocks at 3\u00d7/6\u00d7 same-element rebirths \u2014 explains why point-stacking matters.",
-  "overturns_ledger": false,
-  "quote": "1056 'Dragon Dance Step: Fire'    <req><has><id>28</id><qty>30</qty></has>   desc: 'Unlocks the Dragon Dance Step for Fire and gives you the ability to teach it to others.'\n1060 'Dragon Dance Step: Fire II'  <req><has><id>28</id><qty>60</qty></has>   desc: 'Unlocks the Dragon Dance Step for Fire (Later Heaven) and gives you the ability to teach it to others.'",
-  "text": "The Dragon Dance Step skills 1056-1059 are the qty-30 (3x) tier, not tier 3; the qty-60 (6x) tier is 1060-1063, the '... II' skills whose tooltips alone say '(Later Heaven)'.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5495s0\u00a7.as:70-71, :382 vs reference/decompiled/shs3_android_payload/scripts/DragonDanceUI.as:70-71, :367",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "rebirth/dragon-dance-v0717-parity",
-  "lane_impact": "rebirth-elements: promote the Dragon Dance input from android-only to build-agnostic CONTRACT. Contrast with the statue (diverges) and the stance multipliers (diverge) \u2014 parity must be checked per-mechanic, never assumed either way.",
-  "ledger_text": "\u2463 Dragon Dance **input** + Kanji-statue bonus.",
-  "overturns_ledger": false,
-  "quote": "\u00a71t5495s0\u00a7.as:382  if(Boolean(this.\u00a71t5519s0\u00a7 && this.\u00a71t5518s0\u00a7.length == 4) && Boolean(this.\u00a71t5512s0\u00a7[1]) && Boolean(this.\u00a71t5512s0\u00a7[2]) && Boolean(this.\u00a71t5512s0\u00a7[4]) && Boolean(this.\u00a71t5512s0\u00a7[6]))",
-  "text": "The Dragon Dance input logic has full v0.717 parity \u2014 the label arrays and the {1,2,4,6} Later-Heaven trigger are byte-identical to android, at the same line numbers \u2014 so the S0-3 build caveat does not apply to this mechanic.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/NPCManager.as:1422-1449",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "rebirth/elemental-aoe-is-a-horizontal-band",
-  "lane_impact": "L rebirth-elements + combat-core: the survey's numbers are right but its word 'radii' is not. A circular-radius implementation would let an airborne or elevated target dodge an ultimate that in the original always connects. The same function is the generic melee/projectile hit test, so this applies well beyond the elemental kit.",
-  "ledger_text": "\u2460 what each element **does** (24 skills' damage/cost/AoE/status \u2014 names only).",
-  "overturns_ledger": false,
-  "quote": "public static function checkHitObject(thing:MovieClip, damage:Damage, dist:int = 100, checkByAttacker:Boolean = false, objectToCheckDist:MovieClip = null) : Boolean\n{\n   var distsq:int = dist * dist;\n   ...\n   enemydist = enemy.getMCS().x - thing.x;\n   if(enemydist * enemydist < distsq && enemy.checkHitObject(thing,damage,checkByAttacker))",
-  "text": "The elemental AoE parameter is a horizontal half-width, not a radius: the hit test compares x-distance only, so Inferno 600 / Tsunami 400 / Tornado 200 / Earthquake 50 describe a band +/-N px wide with unbounded y.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/itemdata.xml:2311-2325 (strings 4154/4155) + reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:911-923, desktop confirm reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:1261-1276; levelCap 80 at \u00a71t1523s0\u00a7.as:362",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "rebirth/entry-is-scroll-of-rebirth-item-2202",
-  "lane_impact": "rebirth-elements: the ledger had this at prose level; what is new is the exact ids and semantics for a 1:1 build \u2014 item 2202, baseprice 1000 COINS (STAT_GOLD), modifier id 25 as the 'opens rebirth UI' marker, and the gate is `== levelCap`, not `>= levelCap`. The item's second modifier (id 12, value 5) is DEAD DATA in both builds: the modifier loop returns inside the id-25 branch before reaching it. Also items-equipment: modifier ids 25/90/97 are UI-trigger modifiers, not stat grants \u2014 that pattern needs its own row.",
-  "ledger_text": "**Ready:** rebirth trigger (1000c scroll, L80, +25g, \"next Dan rank + specialize in an element\")",
-  "overturns_ledger": false,
-  "quote": "<id>2202</id><type>10</type><name>4154</name><baseprice>1000</baseprice><modifier><id>25</id></modifier>   ->  4154='Scroll of Rebirth', 4155='New Game +\\nProgress on to the next Dan Rank and specialize in an element. \\nLevel 80 required.'\\n\\nif(StatsManager.getLevel() > StatsManager.levelCap || StatsManager.didRebirth) { QueryManager.instance.reportHack(\"multiple rebirth\"); return; }\\nif(StatsManager.getLevel() == StatsManager.levelCap) { OverworldHUD.instance.interactUI.show(InteractUI.UIMODE_REBIRTH); return; }",
-  "text": "Rebirth is triggered by consuming inventory item 2202 'Scroll of Rebirth' at EXACTLY level 80, with a one-per-session anti-cheat lock \u2014 not by talking to an NPC.",
   "verdict": "HELD"
  }
 ]

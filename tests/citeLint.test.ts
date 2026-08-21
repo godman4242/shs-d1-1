@@ -400,6 +400,20 @@ describe('citeLint — GATE L0-A', () => {
     expect(only(report).problems).toEqual([]);
   });
 
+  it('strips a JSON key subscript even with trailing prose glued to it', () => {
+    put('docs/gauntlet/fake/strings.json', '{"83": "Blacksmith"}');
+    const { report } = lint([
+      {
+        id: 'ui-hud/keyed-with-tail',
+        artifact_class: 'A2',
+        cite: 'docs/gauntlet/fake/strings.json["83"]=\'Blacksmith\' and ["84"]=\'Innkeeper\'',
+        quote: '',
+      },
+    ]);
+    expect(only(report).status).toBe('RESOLVES');
+    expect(only(report).problems).toEqual([]);
+  });
+
   it('still anchors on a genuine repo scripts/ path', () => {
     put('scripts/gauntlet/thing.py', 'print("hello")');
     const { report } = lint([

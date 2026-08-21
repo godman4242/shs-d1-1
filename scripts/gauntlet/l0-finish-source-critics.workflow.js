@@ -82,10 +82,38 @@ S0-1: all 27 web bindata files identified — 100-118 <animdata>, 119 <survivalm
 S0-2: the game font is CLOSED — ui_strings.txt:100 face="Edo SZ", :182 face="Calibri".
 S0-4: <anim> summed over the 18 MCSCharacter_* Android blobs = 471 (measured
   2026-08-20), not the board's "~150". 99_HumanAnimationData alone = 158.
-S0-5: audio is HELD but ENCRYPTED (nested "CWS" SWFs ffdec cannot open). You may NOT
-  claim audio is recovered. You MAY claim it is held-but-encrypted.
-⚠ THE ANDROID BLOBS ARE UTF-16LE. A byte-level grep returns 0 hits and WILL fool you
-  into wrongly refuting a sound claim. Decode before you judge.
+=== ⚑ CORRECTIONS TO THE STAGE-0 BRIEF, judged and carried forward (2026-08-20) ===
+Earlier stages of THIS lane overturned three things the Stage-0 brief asserted. They are
+corrected here, and a claim that repeats the OLD version is auto-REFUTED.
+
+C1 — THE BLOB ENCODING RULE. The old brief said "the Android blobs are UTF-16LE". That is
+  over-general in a way that HIDES CONTENT. Magic-byte census over all 42 files:
+    36 of 42  plain greppable text
+    1         UTF-16LE, BOM fffe — 118_Mobile_Lang_EN.bin only
+    5         XOR-obfuscated zlib SWFs — 113_MusicResource, 115_SHS3Resource,
+              120_BGResource, 122_SoundResource, 124_ImageResource (magic "CW")
+              -> ResourceManager.decryptByteArray, key 'm'=109 (Mobile.as:352), then inflate
+    1         GIF89a 63x72 — 110_Mobile_MapBitmapData.bin (magic "GI")
+  A plain grep of those SIX returns 0 hits for content that IS THERE. That is the real
+  false-negative trap, and it is what hid the portrait, icon and audio inventories.
+
+C2 — THE S0-3 PARITY CAVEAT IS UNDISCHARGED, and any "byte-identical" proof between
+  reference/extracted/{questdata,skilldata,npcdata,itemdata}.xml and the Android blobs is
+  CIRCULAR. Verified first-hand: the web payload carries ZERO <questdata>, <skilldata>,
+  <npcdata> or <itemdata> roots — not in payload.xml, not in any of the 27 web bindata
+  files. Those four XMLs came from the ANDROID build, so diffing them against the Android
+  blobs compares a file with itself. Every row ported from them is v0.682 until a WEB-side
+  artifact says otherwise. Do NOT cite that diff as parity evidence.
+
+C3 — S0-5 IS DEAD: THE AUDIO IS RECOVERED, NOT ENCRYPTED. 122_Mobile_SoundResource.bin
+  decodes at XOR key 111 into a valid CWS v17 SWF holding 13 DefineSound tags plus a
+  SymbolClass table naming every SFX, all extracted to playable MP3. Survived 8 critics.
+  Also held: 13 named music stems (six overworld at exactly 79.872 s, four dungeon at
+  exactly 45.760 s), the adaptive-music engine (17 boolean presets over the 13 stems,
+  crossfade +/-0.05 per tick, new stems entering at the anchor stem's playhead), and the
+  SFX playback contract. You MAY now claim audio is recovered. The old "held-but-encrypted"
+  line is superseded.
+
 `
 
 const CRITIC_SCHEMA = {

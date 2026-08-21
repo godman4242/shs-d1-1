@@ -136,6 +136,56 @@ which under §0 kills them.
 
 ---
 
+### ⚑ THREE STAGE-0 FACTS THIS LANE OVERTURNED — carried into every later prompt
+
+WF-2d was ONE agent, and it corrected two things this lane had been repeating — including
+one of the standing warnings the workflow briefs carry. A claim repeating the OLD version
+is now auto-REFUTED.
+
+**C1 — the blob encoding rule was over-general in the direction that HIDES CONTENT.**
+The brief said *"the Android blobs are UTF-16LE"*. Magic-byte census over all 42:
+
+| count | kind | how to read it |
+|---:|---|---|
+| 36 | plain text | grep works |
+| 1 | UTF-16LE (BOM `fffe`) | `118_Mobile_Lang_EN.bin` only |
+| 5 | XOR'd zlib SWF (magic `CW`) | `113` `115` `120` `122` `124` → `ResourceManager.decryptByteArray`, key `'m'`=109 (`Mobile.as:352`), then inflate |
+| 1 | GIF89a 63×72 (magic `GI`) | `110_Mobile_MapBitmapData.bin` |
+
+A plain grep of those **six** returns 0 hits for content that IS there — the real
+false-negative trap, and what hid the portrait, icon and audio inventories.
+
+**C2 — the S0-3 parity caveat is UNDISCHARGED, and the "byte-identical" proof was CIRCULAR.**
+Verified first-hand this session: the web payload carries **ZERO** `<questdata>`,
+`<skilldata>`, `<npcdata>` or `<itemdata>` roots — not in `payload.xml`, not in any of the
+27 web bindata files.
+
+```
+<questdata> in web bindata: 0 files · in payload.xml: 0     (same for the other three)
+```
+
+So `reference/extracted/{questdata,skilldata,npcdata,itemdata}.xml` came from the **ANDROID**
+build, and diffing them against the Android blobs compares a file with itself. ⚠ **This
+reverses an earlier WF-2 critic's claim that `questdata` had "no parity hole".** Every row
+ported from those four files is **v0.682 until a WEB-side artifact says otherwise** —
+which raises build-parity risk for L1, L2, L3 and L4, the lanes that port them.
+
+**C3 — S0-5 IS DEAD: THE AUDIO IS RECOVERED, NOT ENCRYPTED.** Survived **8 critics**.
+`122_Mobile_SoundResource.bin` decodes at XOR key 111 into a valid CWS v17 SWF with 13
+`DefineSound` tags plus a SymbolClass table naming every SFX, all extracted to playable
+MP3. Also held: **13 named music stems** (six overworld at exactly 79.872 s, four dungeon
+at exactly 45.760 s — bit-identical lengths are the mechanism that lets them layer in
+phase), the **adaptive-music engine** (17 boolean presets over the 13 stems, crossfade
+±0.05/tick, a new stem entering at the anchor stem's playhead), and the **SFX playback
+contract**. §6's *"Exact original SFX & music synthesis params ... are not [study-able]"*
+is dead, and **L7's gate changes character** — the target is now exact, not inferred.
+
+⛔ **`l0-finish-wf3.workflow.js` still carries the stale S0-5 / UTF-16LE text.** It could
+not be patched because WF-3a′ was running on it, and §3.4's rule is never edit a live
+workflow script. **Patch it before launching WF-3b.**
+
+---
+
 ### THE LEDGER REWRITE'S ONLY ADMISSIBLE INPUT — `buildLedgerEvidence.py`
 
 The rewrite has exactly one legal input under §0: claims that were **JUDGED and
@@ -186,7 +236,7 @@ GATE L0 — 1323 claims pooled · 510 judged ids · 0 ledger references
    RED   L0-A  CITE INTEGRITY        the ledger cites no claim at all — the rewrite has not happened
    RED   L0-B  NOTHING UNJUDGED      same
    RED   L0-C  CONVERGENCE IS REAL   no convergence receipt — the dry-loop has not run
-   RED   L0-D  EVERY SOURCE OPENED   android-blobs: only 1 critic review, need 2
+  GREEN  L0-D  EVERY SOURCE OPENED   all 10 sources surveyed with >= 2 critics each ✅
    RED   L0-E  §6 PROVABLY MINIMAL   6 entries kept with no pasted negative search
    RED   L0-F  SCORECARD EVIDENCE    12 system scores carry neither a [[claim]] nor a STILL_UNHELD
 LANE L0: ⛔ OPEN — at least one gate item is RED

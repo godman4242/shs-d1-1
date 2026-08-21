@@ -1,0 +1,107 @@
+[
+ {
+  "claim_id": "android-blobs/all-thirteen-episode-cards-shipped",
+  "own_cite": "reference/extracted/android/124_Mobile_ImageResource.bin (my own decrypt, key 'm'=109 per reference/decompiled/shs3_android_payload/scripts/Mobile.as:352 + ResourceManager.as:206-217; 85 SymbolClass names) cross-joined to reference/extracted/android/116_Mobile_QuestData.bin <img> values",
+  "reason": "I decrypted 124_Mobile_ImageResource myself (ResourceManager.decryptByteArray schedule, key 'm'=109 per Mobile.as:352 charCodeAt(1)) -> CWS v17 -> 85 SymbolClass entries. The image_* set is EXACTLY the 16 quoted: image_episode0..image_episode12, image_exposition, image_exposition_epilogue, image_epilogue. Independently strengthened: 116_Mobile_QuestData.bin emits 68 distinct <img> values, 16 of which begin '_', and \"image\"+value (ResourceManager.as:277) maps them one-for-one onto the 16 shipped cards with zero misses either direction - so Ep4-12 art is not merely shipped, it is wired into shipped quest rows. Only nit: the file contains ZERO ExportAssets tags, so the cite's 'SymbolClass/ExportAssets' is loose wording, not a substantive error.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/bgdata-is-a-parallax-spec",
+  "own_cite": "reference/extracted/android/123_Mobile_BGData.bin:4-13 (623 lines, 49 <bg>; ffwrap at :12,:23,:259,:330,:356,:370,:514,:530) + decrypted reference/extracted/android/120_Mobile_BGResource.bin SymbolClass list",
+  "reason": "Reproduced exactly from the file: 623 lines, 49 <bg>, lines 4-13 verbatim, layer sums 147/211/311/92/113 = 874, ids 0-54 with exactly {4,19,23,24,25,43} unused, contentwidth 17 rows spanning 800-5000 with BG_NinjaVillage=5000, wrap 17 rows all 0. The name<->symbol bijection also holds: the 49 <name> values and the 49 BG_* SymbolClass names in my decrypted 120_Mobile_BGResource have an EMPTY set difference in both directions. Two non-load-bearing numeric nits: <ffwrap> is 8 rows not 6 (lines 12,23,259,330,356,370,514,530) and <ffscroll>'s range is 0.05-1.0 not 0.05-0.27. The claim's headline and its ledger consequence stand.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/blobs-are-utf8-not-utf16",
+  "own_cite": "magic-byte census (xxd -p -l 2) over all 42 files in reference/extracted/android/ : 'fffe' only on 118_Mobile_Lang_EN.bin; '4357'(CW..) on 113/115/120/122/124; '4749'(GI) on 110_Mobile_MapBitmapData.bin",
+  "reason": "The useful half is right and I confirm it: a magic-byte census over all 42 blobs shows EXACTLY ONE UTF-16LE BOM (118_Mobile_Lang_EN.bin, 'fffe'). But the universal form is false and the operational advice is unsafe. Six of the 42 are not text at all: 113, 115, 120, 122 and 124 are XOR-obfuscated zlib-compressed SWFs, and 110_Mobile_MapBitmapData.bin is a GIF89a 63x72, 272 bytes ('4749'). A plain grep of those six returns 0 hits for content that IS there - the exact false-negative trap the standing warning exists to prevent, and the trap that hides the portrait/icon/audio inventories. Corrected rule: 36 of 42 are greppable text, 1 needs a UTF-16LE decode, 5 need the ResourceManager XOR + inflate, 1 is a GIF.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "android-blobs/boss-timings-recut-across-builds",
+  "own_cite": "reference/extracted/bindata/100_1t4627s0.bin:901,1223,1325 and 111_1t4638s0.bin:1174 vs reference/extracted/android/91_MCSCharacter_OgreAnimationData.bin:901,1183 and 102_MCSCharacter_GuardianAnimationData.bin:1174, plus a full <anim i= d=> join across all 19 web bindata and 18 android AnimationData blobs",
+  "reason": "Every cited line reads back verbatim from my own sed: web 100_1t4627s0.bin:901 d=16, :1223 d=5, :1325 ogre_swingdownend d=11; android 91:901 d=14, :1183 d=18 and no ogre_swingdownend; web 111:1174 guardian_swingdownhit d=7 vs android 102:1174 d=18. My independent whole-corpus name-joined diff finds EXACTLY 7 duration divergences and no others - the 6 ogre pairs plus guardian_swingdownhit - confirming the claim's full divergence set and its assertion that the skills blob (51 anims) and spear blob diverge in zero durations. The 1:1 target being v0.717 follows.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/comp-rand-is-the-encounter-roll",
+  "own_cite": "reference/extracted/android/112_Mobile_NodeData.bin:117-118 + reference/decompiled/shs3_android_payload/scripts/StatsManager.as:4173,4222,4224",
+  "reason": "Verbatim on both sides: 112_Mobile_NodeData.bin:117 carries the wave property and :118 the <condition><has><id>100</id><qty>50</qty><comp>rand</comp></has></condition>; StatsManager.as:4222 'if(comparison == \"rand\")' with :4224 'return Math.random() * id <= val;' and the default 'gte' assignment at :4173. id=100/qty=50 is therefore a flat 50% roll. The claim's restraint is also correct - it asserts nothing about aggro radius or leash. And it is genuinely the only one: <comp>rand</comp> occurs exactly once across all 42 blobs.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/data-xml-parity-proofs-are-circular",
+  "own_cite": "diff reference/extracted/{skilldata,itemdata,npcdata,questdata}.xml against reference/extracted/android/{117_Mobile_SkillData,111_Mobile_ItemData,125_Mobile_NpcData,116_Mobile_QuestData}.bin - only the prolog/newline lines differ",
+  "reason": "I ran all four diffs myself. reference/extracted/skilldata.xml vs android/117_Mobile_SkillData.bin differs only by the added XML prolog line and the trailing newline; identical shape for itemdata/111, npcdata/125, questdata/116 (questdata's blob has no prolog, so that pair differs by 1 byte only). Sizes reproduce to the byte: 184,002/184,044 - 39,003/39,045 - 228,413/228,455 - 796,383/796,384. Combined with my own root-tag census showing the web payload carries none of those roots, the banked 'android-web-byte-identical' proof is indeed a file compared with itself, and the S0-3 parity caveat stays undischarged for those four units.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/foreground-layer-occludes-the-fighters",
+  "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - crops (900,560)-(1180,960) x3 NEAREST, (760,780)-(1240,1010) x3, (950,840)-(1090,930) x8; gradient stats on boxes (780,885)-(850,955), (1100,885)-(1230,955), (300,885)-(560,955), (1300,300)-(1500,450), (960,700)-(1080,840), (820,830)-(900,880)",
+  "reason": "THE FRAME WINS, and it splits the claim. I opened the frame and cropped (900,560)-(1180,960) x3 NEAREST, (760,780)-(1240,1010) x3, and (950,840)-(1090,930) x8. The OCCLUSION IS REAL - a green band is painted over the tan fighter's hakama and the purple fighter's lower body, crossing at y~870-880 with the head crown at y~687. But the claim's stated evidence is false: it says the grass 'carries the same outline weight as the fighters - it is not the blurred far layer'. Measured p99 local luminance gradient on that same frame: grass band 3.0 / 3.0 / 3.4 (three boxes clear of the fighters), far rock background 7.0, tree trunk 7.0, tan fighter torso 82.0, purple fighter shoulder 101.6. The foreground grass is the SOFTEST element in the frame - softer than the far layer, ~30x softer than the fighters - and carries no near-black outline pixels. There is no hard-black-outlined grass blade here. The correct reading is stronger than the claim: XMLBG.as:46 sets foregroundLayerBlur = 8, tied with farthestLayerBlur for the hardest blur in the ladder, and the frame is that constant. A builder following the claim would draw crisp foreground grass and break the 1:1.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "android-blobs/item-and-skill-icon-art-is-held",
+  "own_cite": "decrypted reference/extracted/android/115_Mobile_SHS3Resource.bin (key 'h'=104; 1,912 SymbolClass names) joined by id to reference/extracted/android/111_Mobile_ItemData.bin (982 <item> rows) and 117_Mobile_SkillData.bin (75 <skill> rows); resolution path at reference/decompiled/shs3_android_payload/scripts/MCSItem.as:203",
+  "reason": "The symbol inventory is exact - I reproduce all 1,912 SymbolClass names and every prefix count (item 112, acc 8, skill 79, weapon 109, torso/uparm/lowarm/pelvic/stomach 151 each, ...), and MCSItem.as:203 setConsumable -> getMCSComponent(\"item\",id) confirms art-id = item-id so the join is legitimate. The COVERAGE FRACTIONS are wrong by roughly 2x, and they are the part a builder plans on. Measured by joining the 112 item#### symbols against the 982 itemdata rows: band 2000-2999 is 50/99 (claim says 94/99) and band 20000-29999 is 58/79 (claim says 67/79); only accessories 8/9 is right (3007 missing). The claim's 'residual named exactly: 2000, 2001, 2500, 2502, 2503' omits the entire contiguous 2131-2175 block plus 2142, 2144, 2204, 2206 - 44 further consumables with no icon. Correct missing quest-item list: 20005, 20009-20012, 20017, 20023, 20054-20058, 20100-20107, 20111. Keep the headline (the icon art IS on disk and the banked web-payload STILL_UNHELDs are correctly retired); do not bank the fractions.",
+  "refuted": true,
+  "severity": "material"
+ },
+ {
+  "claim_id": "android-blobs/mapdata-has-no-web-counterpart",
+  "own_cite": "reference/extracted/android/119_Mobile_MapData.bin (entire 65-byte file) + root-tag census of reference/decrypted/shs3_payload_decoded.swf (inflated) + reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:318-332 vs the decrypted 115_Mobile_SHS3Resource symbol list",
+  "reason": "Verified verbatim: 119_Mobile_MapData.bin is 65 bytes and its entire content is the prolog, <mapdata>, a blank line and </mapdata>, all CRLF. My own root-tag census of the inflated web payload gives <mapdata> = 0, and LC_ALL=C grep -c over the 329 MB reference/extracted/payload.xml also gives 0. The PARTIAL scoping (server-side question permanently open) is honest. STRENGTHENED, not refuted: ResourceManager.as:318-332 getMap(num) builds \"Map\"+num from RESOURCE_BASE and falls back to \"CloudsMap\", and my decrypted 115_Mobile_SHS3Resource symbol list contains neither any Map* symbol nor CloudsMap - so the map is missing in art as well as in data on this build.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/nothing-was-rendered",
+  "own_cite": "decrypted reference/extracted/android/115_Mobile_SHS3Resource.bin, 120_Mobile_BGResource.bin, 124_Mobile_ImageResource.bin - DefineShape/2/3/4 FILLSTYLEARRAY parse over 1,755 + 562 + 106 shape records",
+  "reason": "The claim is honestly scoped to its own pass and its tag histograms reproduce exactly under my decrypt (115: 3,756 tags / 1,949 DefineSprite / 1,594 DefineShape4 / 127 DefineShape / 4 DefineFont3; 120: 1,124 / 552 / 370; 124: 330; 113 and 122: 22 each). I refute the LEAD, not the integrity: with the same key already in hand I parsed the FILLSTYLEARRAY of 2,423 shape records and now hold real hues, including per-symbol resolution (torso4000 -> charId 1195 -> shape 1194 fills #FECA98 and #B78F6C; skill1000 -> shape 144 fill #C0AC4B; acc3000 -> shape 3725 fill #ABABAB). Dominant solid fills: 115 #000000 x225, #FFFFFF x224, #333333 x160, #CCCCCC x147, #FECA98 x127, #B78F6C x120; 120 #000000 x45, #30291D x35, #5A4D2E x33; 124 #DF9671 x52, #FCC6A6 x51. Sanity check passes both ways (skin tones dominate the portrait file, earth tones the background file). Caveat I keep: first-fill-array reads, no edge records, no strokes - I report no outline weights.",
+  "refuted": true,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/parallax-and-dof-contract",
+  "own_cite": "reference/decompiled/shs3_android_payload/scripts/XMLBG.as:10-58 and :58-140, cross-checked against the tag histogram of all 49 <bg> records in reference/extracted/android/123_Mobile_BGData.bin",
+  "reason": "Verbatim at XMLBG.as:10-58: groundY=400 (:10), flatGround=true (:12), contentWidth=1600 (:14), wrapAround=true (:16), blur ladder 8/4/0/4/8 (:38-46), scroll ladder 0.25 / 0.3333333333333333 / 0.5 / 1 / 2 (:48-56). The symmetry about the player plane is arithmetic fact, not interpretation. STRENGTHENED: the constructor (XMLBG.as:58-140) overrides each field only when the matching tag is present, and across all 49 <bg> rows in 123_Mobile_BGData there is NO <groundy> and NO <flatground> tag at all - so groundY=400 and flatGround=true are not defaults, they are global constants for every location in the game.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/portraits-decrypted-and-one-dead-reference",
+  "own_cite": "decrypted reference/extracted/android/124_Mobile_ImageResource.bin (66 portrait_* SymbolClass names) joined to the 52 portrait <img> values in reference/extracted/android/116_Mobile_QuestData.bin + reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:286-300",
+  "reason": "Every particular reproduced from my own decrypt and join. 124_Mobile_ImageResource carries 66 portrait_* symbols; questdata references 52 portrait names; set difference gives exactly one dead reference, chikako_maked, against a shipped portrait_chikako_mask - a shipped authoring typo. 15 shipped-but-unreferenced, of which 12 are exactly the {blue,green,red,yellow} x {sergeant,captain,general} grid and the other three are ladyoiwa_snake2, takamori_masked, takamori_standmask. 'Resolves to nothing' is literal, not inferred: ResourceManager.as:286-300 getPortrait returns null when the applicationDomain has no such definition, so a 1:1 recreation should reproduce the null, not invent art.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/spider-is-web-only-enemy",
+  "own_cite": "reference/extracted/bindata/114_1t4641s0.bin:3,24,503,614,745,909,1357,1566,1755,2106 + reference/decompiled/shs3_payload/scripts/\u00a71t1544s0\u00a7.as:480,498 + a UTF-16LE decode of reference/extracted/android/118_Mobile_Lang_EN.bin (0 hits for 'pider')",
+  "reason": "All ten cited lines of reference/extracted/bindata/114_1t4641s0.bin read back verbatim, and the AS3 cite holds - I opened the file with the section-sign name and :480 is 'spider_idle', :498 is 'spider_dig'. The negative side survives the encoding trap that would normally kill it: I DECODED 118_Mobile_Lang_EN.bin as UTF-16LE before searching and 'pider' occurs 0 times in the decoded text, 0 times in strings.json, 0 times in 125_Mobile_NpcData.bin, and 0 files in the android AS3 tree. My independent cross-build anim join confirms the 10 spider_* names are among the 16 web-only animations. Web-only is established.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/web-is-an-animation-superset",
+  "own_cite": "full <anim i= d=> extraction over reference/extracted/bindata/*.bin (19 blobs, 487) vs reference/extracted/android/*AnimationData.bin (18 blobs, 471), name-set differenced both directions",
+  "reason": "Exact on my own recount. 487 web <anim> tags across 19 bindata blobs vs 471 across 18 android AnimationData blobs, and the per-blob web list matches the quoted 100:20 101:7 102:51 ... 118:21 item for item. Web-only names = exactly 16: the 10 spider_*, ogre_stompend, ogre_swingdownend, guardian_swingdownend, spear_flourish, spear_relax2, spear_relax3. ANDROID-ONLY = 0, so it is a strict superset and the methodological consequence (an Android grep never proves absence in the shipped game) is sound. One note for whoever banks it: the web corpus has 487 tags but 482 distinct names - mining, walkwithspear, spearbowjump, spearbowdropdown and chargewithspear each appear twice - which does not disturb the delta arithmetic.",
+  "refuted": false,
+  "severity": "minor"
+ },
+ {
+  "claim_id": "android-blobs/web-payload-holds-zero-data-roots",
+  "own_cite": "zlib-inflated reference/decrypted/shs3_payload_decoded.swf (11,892,053 B body) vs reference/decrypted/shs3_android_payload_decoded.swf (21,688,584 B body) - root-tag occurrence census of all 13 roots",
+  "reason": "Independently re-derived, and all thirteen counts match the quote exactly. I inflated both payloads myself (web CWS v17, body 11,892,053 B; android CWS v26, body 21,688,584 B) and counted root tags in the inflated bytes: questdata 0/1, itemdata 0/1, skilldata 0/1, npcdata 0/1, nodedata 0/1, achievementdata 0/1, uidata 0/1, bgdata 0/1, premiumdata 0/1, mapdata 0/1, survivalmodedata 1/1, traproomdata 1/1, animdata 19/18. So ten of the game's data roots exist only as Android v0.682 measurements and the S0-3 build caveat is not dischargeable for any of them. This is the load-bearing cross-cutting claim in the packet and it is clean.",
+  "refuted": false,
+  "severity": "minor"
+ }
+]

@@ -1,0 +1,142 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs-hunter/audio-decrypts-26-named-mp3-streams",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/113_Mobile_MusicResource.bin",
+    "reference/decompiled/shs3_android_payload/scripts/ResourceManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs-hunter/uidata-is-the-whole-town-interaction-spec",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/90_InteractUI_UIData.bin",
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/90_InteractUI_UIData.bin",
+    "docs/gauntlet/L0/index/strings.json[\"83\"]="
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs-hunter/traproomdata-70-rooms-four-difficulty-tiers",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/84_QuestEngine_TrapRoomData.bin"
+   ],
+   "paths": [
+    "reference/extracted/android/84_QuestEngine_TrapRoomData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs-hunter/item-icon-coverage-corrected",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/115_Mobile_SHS3Resource.bin",
+    "reference/extracted/android/111_Mobile_ItemData.bin",
+    "reference/decompiled/shs3_android_payload/scripts/MCSItem.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "android-blobs-hunter/foreground-plane-is-the-most-blurred-element",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
+    "reference/decompiled/shs3_android_payload/scripts/XMLBG.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs-hunter/shipped-vector-art-yields-solid-fill-palettes",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/115_Mobile_SHS3Resource.bin",
+    "reference/decompiled/shs3_android_payload/scripts/ResourceManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs-hunter/bgdata-override-vocabulary-is-22-tags",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/123_Mobile_BGData.bin",
+    "reference/decompiled/shs3_android_payload/scripts/XMLBG.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs-hunter/groundy-400-is-a-global-not-a-default",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/XMLBG.as",
+    "reference/extracted/android/123_Mobile_BGData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs-hunter/condition-comparison-enum-is-seven-operators",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/StatsManager.as",
+    "reference/extracted/android/*.bin"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs-hunter/survival-achievement-premium-namegen-blobs-unread",
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/109_WarHexUI_SurvivalModeData.bin",
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/109_WarHexUI_SurvivalModeData.bin",
+    "docs/gauntlet/L0/index/strings.json[\"8000\"]="
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 8,
+  "resolves": 2,
+  "total": 10,
+  "uncheckable": 0
+ }
+}

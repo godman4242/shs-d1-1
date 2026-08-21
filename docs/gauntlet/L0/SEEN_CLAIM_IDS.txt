@@ -1,7 +1,7 @@
 # SEEN CLAIM IDS — every claim banked across every run of L0 so far.
 # A finding matching one of these is NOT new. Report it ONLY if you can
 # materially STRENGTHEN or CONTRADICT it — and say which, explicitly.
-# 1360 rows, 1321 unique ids, pooled from: run2, run3, run4, run5.
+# 1370 rows, 1331 unique ids, pooled from: run2, run3, run4, run5, run6.
 # 582 of them carry at least one artifact-citing verdict;
 # the rest are LEADS and may not enter the ledger (§0).
 
@@ -149,7 +149,7 @@
   * combat-core/slash-type-map
   * combat-core/stance-triangle
 
-## critic-new_findings  (811 unique, 72 judged)
+## critic-new_findings  (821 unique, 72 judged)
     NEW-1-web-crit-is-flat-1.3
     NEW-10-obfuscated-bundle-grep-method
     NEW-2-web-per-stance-damage-and-mastery-10-ceiling
@@ -199,6 +199,16 @@
     actionscript/unbreakable-and-reinforce-prices
   * actionscript/war-board-is-a-6x6-square-grid
     actionscript/web-weapon-parry-lives-in-the-npc-class
+    android-blobs-hunter/audio-decrypts-26-named-mp3-streams
+    android-blobs-hunter/bgdata-override-vocabulary-is-22-tags
+    android-blobs-hunter/condition-comparison-enum-is-seven-operators
+    android-blobs-hunter/foreground-plane-is-the-most-blurred-element
+    android-blobs-hunter/groundy-400-is-a-global-not-a-default
+    android-blobs-hunter/item-icon-coverage-corrected
+    android-blobs-hunter/shipped-vector-art-yields-solid-fill-palettes
+    android-blobs-hunter/survival-achievement-premium-namegen-blobs-unread
+    android-blobs-hunter/traproomdata-70-rooms-four-difficulty-tiers
+    android-blobs-hunter/uidata-is-the-whole-town-interaction-spec
     android-blobs/android-blob-encoding-census
     android-blobs/bgdata-override-census-corrected
     android-blobs/dead-portrait-throws-it-does-not-fall-back

@@ -1,5 +1,67 @@
 [
  {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:192-194, :2627-2677 + reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2644-2652 and :228; docs/gauntlet/L0/index/strings.json keys 63/64",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/rebirth-pays-premium-currency",
+  "lane_impact": "L-economy + L-rebirth-elements: the rebirth reward touches the premium wallet, which also means it is entangled with the dead Player.IO PayVault backend and needs an offline substitute. If the ledger's filmed '+25 gold' was read off the Coins counter, the film and the code describe different currencies - and per the standing invariant the frame wins, so that reading needs re-checking against the frame.",
+  "ledger_text": "film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
+  "overturns_ledger": false,
+  "quote": "192: internal static var STAT_GOLD:int = 11;\n194: internal static var STAT_HGOLD:int = 12;\n2653: public static function isCoinPurseFull() : Boolean { return getPlayerStats(STAT_GOLD) >= getMaxCoins(); }\n2669: public static function getHeavenlyGold() : int { var hgold:int = getPlayerStats(STAT_HGOLD); if(usePlayerIO) { hgold += QueryManagerPIO.instance.getPayVaultCoins(); } return hgold; }\n---\nstrings 63 = 'Coins'   64 = 'Gold'",
+  "text": "The rebirth payout is Heavenly Gold (STAT_HGOLD = 12, the PayVault premium currency), not the soft coin purse (STAT_GOLD = 11), so any tenthGold config value must be wired to the premium wallet.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:192, 194, 2201-2207; desktop reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:228 (=12), 2644-2652",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/rebirth-pays-premium-gold",
+  "lane_impact": "economy + rebirth-elements: the +25/+100 is premium currency, which changes what the reward is worth and which wallet the recreation must credit. Two separate currencies exist and the ledger's single word 'gold' does not distinguish them.",
+  "ledger_text": "film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
+  "overturns_ledger": false,
+  "quote": "StatsManager.as:192  internal static var STAT_GOLD:int = 11;\nStatsManager.as:194  internal static var STAT_HGOLD:int = 12;\n\u00a71t1523s0\u00a7.as:2646   \u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);   // \u00a71t9413s0\u00a7 = 12 = HGOLD",
+  "text": "The rebirth reward is written to STAT_HGOLD (id 12, the premium Gold wallet), not STAT_GOLD (id 11, the coin wallet).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/ShopUI.as:58, :394-401, :536-540",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/sell-price-edge-cases",
+  "lane_impact": "L4 (economy) \u2014 prevents a builder wiring a 50% vendor haircut that the game never applies.",
+  "overturns_ledger": false,
+  "quote": "else if(slot.getItemID() == 13002) { slot.setCost(0,0); } else { slot.setCost(slot.getItem().getSellAmt(),0); }  /  internal var sellPercentage:Number = 0.5;   [no other reference]  /  StatsManager.changeGold(this.displayItem.getCost());",
+  "text": "Two shipped edge cases sit on top of the sell formula: item 13002 (the starter Branch) is force-priced at 0 in the sell list, and ShopUI.sellPercentage = 0.5 is dead code \u2014 onSell pays getSellAmt() unmodified.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1676 vs reference/decompiled/shs3_android/scripts/InteractUI.as:1562",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "economy/tradegoods-web-seed-drops-node",
+  "lane_impact": "L9/L10: the survey's 'fully reproducible offline with mulberry32, no server needed' is premature for a v0.717 target. Someone must read the web call site to find whether a node offset is applied there; until then the arbitrage loop is reproducible only in the Android formulation. GameEngine.as:636's tip ('buy goods from a market and sell in another town') is the constraint the resolution has to satisfy.",
+  "overturns_ledger": false,
+  "quote": "Android: \"var rng:RNG = new RNG(StageManager.getCurrentNode() * QueryManager.instance.getServerDate() * index);\" (three factors). Web: \"var _loc4_:int = \u00a71t3317s0\u00a7.instance.\u00a71t1848s0\u00a7() * param1;\" then \"\u00a71t58s0\u00a7.random(_loc3_,_loc4_)\" (two factors). \u00a71t3317s0\u00a7 is QueryManager \u2014 it carries saveModifiedCharData and reportPremiumBuy(4,\"convertgold\",1) in the block at :953-959 \u2014 so \u00a71t1848s0\u00a7() is getServerDate(). The missing factor is the NODE.",
+  "text": "The web trade-goods price seed omits getCurrentNode(), which if literal makes every town quote the same daily price and would destroy the arbitrage loop the game's own tutorial tip advertises.",
+  "verdict": "PARTIAL"
+ },
+ {
   "artifact_class": "A1",
   "cite": "reference/videos/Nr4fQstqHDM.mp4 t=48:04 self-extracted 1920\u00d71080, tooltip panel right of the grid (approx (1100,250)-(1780,820)), read at 1280-wide render; cross-checked against reference/extracted/android/118_Mobile_Lang_EN.bin via docs/gauntlet/L0/index/strings.json",
   "citelint": {
@@ -716,69 +778,5 @@
   "quote": "else if(modid < 2000) { StatsManager.changeStat(modid,item.modifierXML[i].value); } else if(modid >= 30000) { StatsManager.setStat(modid,item.modifierXML[i].value); } else { StatsManager.changeItemQty(modid,item.modifierXML[i].value); }  |  itemdata.xml:2412 <id>2210</id> ... :2425 <id>40000</id>",
   "text": "The consumable modifier dispatch has a three-way numeric fallback that no claim decodes, plus nine named engine actions the packet's 'consumable effect table' omits. After the named branches, InventoryUI.onUseItem falls through to: modid < 2000 -> changeStat(modid, value) (so ANY id under 2000 is a stat delta, not just the 0-16 enum); modid >= 30000 -> setStat(modid, value) (a raw stat write); otherwise -> changeItemQty(modid, value), i.e. 'give `value` of item #modid'. itemdata exercises the second branch: item 2210 'Reset Quests' carries <modifier><id>40000</id>. Undocumented named branches: 34 (addGeneratedItemToInventory), 96 (teleport to territory dojo), 104/105/106 (loot-dialog control, RNG seed from server date, addLootItemBasic), 117 (wipe quest log + teleport), 123/124 (create clan).",
   "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682 (web twin \u00a71t68s0\u00a7.as:875-879 identical)",
-  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:854-856; reference/extracted/npcdata.xml:31 and my parse of all 495 <mcs> blocks",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "itemdata-hunter/npc-loot-ids-are-not-only-an-enum",
-  "lane_impact": "L-enemies-ai / L-economy: the drop model needs a fifth case (fixed item by id) that claim #9's four-case summary omits, and the art fallback to part '0' fires on 355 NPCs, not on a handful.",
-  "overturns_ledger": false,
-  "quote": "NPC.as:853-856 'else { OverworldHUD.instance.lootDialog.addLootItemBasic(lootType,qty); }' with addLootItemBasic at :855. npcdata.xml:31 '<hair>6000,6001,6002,6003,6004,6007,6008,6009,6013,6014,6015.6017,6018,6019</hair>' \u2014 that exact string appears in 355 of 495 blocks.",
-  "text": "NPC <loot><id> carries raw item ids as well as the 0-3 enum, and the malformed <hair> run claim #27 flags is systemic rather than a one-off. Measured over all 495 <npc> rows the loot-id histogram is 0 x77, 3 x28, 2 x10, 1 x10, 2113 x2, 2112 x2, 2114 x1, 20028 x1 \u2014 six rows fall through to the else branch, addLootItemBasic(lootType, qty), i.e. 'drop item #lootType'. Separately, the malformed id run '6015.6017' recurs in 355 of the 495 <mcs> blocks (the collapsed float '6.5006501650265E+47' really is a single occurrence).",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "reference/decompiled/shs3_android/scripts/ShopUI.as:58 and :401",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "itemdata-hunter/sellpercentage-is-dead-data",
-  "lane_impact": "L-economy: the sell price is exactly (1 + modifierCount) x 10 or x 5 with no percentage applied. Guards against a 2x error in every sale.",
-  "overturns_ledger": false,
-  "quote": "ShopUI.as:58 'internal var sellPercentage:Number = 0.5;' \u2014 sole occurrence in `grep -n \"sellPercentage\" reference/decompiled/shs3_android/scripts/*.as`. ShopUI.as:401 'slot.setCost(slot.getItem().getSellAmt(),0);'",
-  "text": "ShopUI's sellPercentage = 0.5 is declared and never read \u2014 do not apply it on top of getSellAmt(). Claim #26 cites the line without saying it is unreferenced, which invites a 50% haircut the original never applies. grep across the entire Android bundle returns exactly one occurrence (the declaration), and the only consumer of the sell price calls getSellAmt() unmodified.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both \u2014 1/6 on android v0.682, 1/4 on web v0.717",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:2975-2979 and :239; reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "itemdata-hunter/stance-gate-threshold-differs-by-build",
-  "lane_impact": "L-combat-core / L-ui-hud: pins the stance-switch gate to a quarter bar for the v0.717 target and flags the Android bundle as an unsafe source for this specific constant.",
-  "overturns_ledger": false,
-  "quote": "MCSPlayer.as:2977 'if(this.reload < this.maxreload / 6) { return; }' with MCSPlayer.as:239 'this.maxreload = 5 * 24;' -> threshold 20/120 = 1/6. Web: \u00a71t99s0\u00a7.as:249 '= 8 * 24' (192) with the documented Focus >= 48 gate -> 48/192 = 1/4.",
-  "text": "The in-combat stance-change gate uses a different threshold in each build. Android v0.682 gates nextStance() on reload >= maxreload/6, which with the flat maxreload of 120 is 20 units = one sixth of the bar. The web v0.717 build gates the same action on Focus >= 48 against a max of 192 = one quarter of the bar. Anyone porting the 'CANNOT CHANGE STANCE' threshold must take the web number and must not read the Android fraction as authoritative.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "web v0.717",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1521s0\u00a7.as:63-84 (and the duplicate path at :91-94)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "itemdata-hunter/v0717-strings-are-loaded-over-the-network",
-  "lane_impact": "L-items-equipment / L-ui-copy: settles that NO amount of further searching in what we hold will recover v0.717 UI copy above string id 9010. The Android v0.682 hardcoded word lists (ItemGenerator.as:102-127) are the only wording we will ever have, and using them is a knowing v0.682 substitution.",
-  "overturns_ledger": false,
-  "quote": "var _loc2_:String = \"./data/\"; if(\u00a71t1523s0\u00a7.\u00a71t9495s0\u00a7) { ... _loc2_ = \u00a71t3317s0\u00a7.instance.server + \"strings/\"; } ... Locale.addXMLPath(\u00a71t9271s0\u00a7,_loc2_ + \"shs3_en.xml\"); Locale.addXMLPath(\u00a71t9277s0\u00a7,_loc2_ + \"shs3_fr.xml\"); Locale.addXMLPath(\u00a71t9279s0\u00a7,_loc2_ + \"shs3_es.xml\"); Locale.loadLanguageXML(param1,\u00a71t9286s0\u00a7);",
-  "text": "Positive mechanism evidence for why the v0.717 affix wording is gone, upgrading claim #34 from an absence argument. The web build never embeds its string table: LangManager.setLanguage builds a path of './data/' (or server + 'strings/') and hands Locale the URLs shs3_en.xml / shs3_fr.xml / shs3_es.xml, then calls Locale.loadLanguageXML. The table was fetched from the now-dead server at runtime. `find reference -iname \"*shs3_en*\"` returns nothing, and LC_ALL=C grep over the 329 MB reference/extracted/payload.xml for 'Slaughter' and 'of Attack' returns 0 hits each.",
-  "verdict": "STILL_UNHELD"
  }
 ]

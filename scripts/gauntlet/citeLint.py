@@ -243,6 +243,13 @@ def resolve(rel: str, repo: Path) -> list[Path]:
         keyed = re.sub(r"\[[^\[\]]*\]$", "", variant)
         if keyed != variant and (repo / keyed).exists():
             found.append(repo / keyed)
+            continue
+        # Same key lookup, but with prose glued straight onto it —
+        # `strings.json["83"]='Blacksmith'`. Truncating at the first `[` recovers the
+        # file whatever follows it. Last resort, and only when nothing above matched.
+        head = variant.split("[", 1)[0]
+        if head != variant and head and (repo / head).is_file():
+            found.append(repo / head)
     return found
 
 

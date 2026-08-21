@@ -1,6 +1,67 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/XMLItem.as:231-298 (the switch) evaluated against my parse of all 412 <modifier> rows in reference/extracted/itemdata.xml (34 distinct ids)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/modifier-rows-are-mostly-set-ids",
+  "lane_impact": "L4/L7 (economy + loot) \u2014 the modifier table is transcribed but the DATA is not thereby readable: the dominant channel is set membership (344 rows), which needs a separate set-bonus table that no one has looked for, and 11 ids shipped in the data have no handler at all.",
+  "overturns_ledger": false,
+  "quote": "Unmapped by the table, with row counts: 25 x1, 38 x6, 78 x2, 79 x2, 84 x2, 90 x1, 96 x1, 97 x1, 98 x1, 99 x1, 40000 x1 = 19 rows / 11 distinct ids. Set-band (101-1999) = 344 rows. Stat switch (0-16) = 47 rows. Code: default: if(int(this.modifierXML[q].id) < 2000 && int(this.modifierXML[q].id) > 100) { tempString += LangManager.getString(123) + \": \" + this.modifierXML[q].id; } else { trace(\"ErrorValue: \" + this.modifierXML[q].id); }",
+  "text": "Only 47 of the 412 <modifier> rows in itemdata.xml (11%) resolve to a named stat channel; 344 rows (83%) fall in the 101-1999 Set band and render as the literal string 'Set: <id>', and 19 rows across 11 distinct ids resolve to nothing and hit the trace(\"ErrorValue\") branch.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:461-535; corroborated visually by reference/frames/s21_weapon/t708.0.png crop (170,240)-(870,1040) upscaled x2 LANCZOS",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/nine-slot-ui-mapping-resolved",
+  "lane_impact": "L5 (UI/HUD) - closes the surveyor's only non-art STILL_UNHELD. Also yields the 'empty' sentinel IDs the UI paints as unfilled: armor 4000/4001, pants 11001, everything else 0.",
+  "overturns_ledger": false,
+  "quote": "for(var i:int = 0; i < 9; i++) { switch(i) { case 0: tempItem = StatsManager.equipment[StatsManager.EQ_HAT]; ... tempShopItem = this.equippedSlots[this.SLOT_HAT]; ... case 7: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY1]; ... this.equippedSlots[this.SLOT_RING1]; case 8: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY2]; ... this.equippedSlots[this.SLOT_RING2]; } }",
+  "text": "The nine paperdoll boxes map one-for-one onto named EQ_ constants in a literal nine-iteration loop, resolving the two ring boxes as ACCESSORY1 and ACCESSORY2 and excluding EQ_NECK from the UI entirely.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:163-179, :261-269, :460-535; StatsManager.as:1944 (findBonusStat) and :1983 (findWeight); frame reference/frames/s21_weapon/t708.0.png crop (170,240)-(870,1040) upscaled x2 LANCZOS",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/nine-ui-boxes-are-the-nine-stat-bearing-slots",
+  "lane_impact": "L5 (UI/HUD) + L6 (art) \u2014 closes the surveyor's only STILL_UNHELD UI item and corrects their '9 UI boxes over a 13-slot model, loses hair/head/scabbard' to FOUR hidden slots (hair, head, neck, scabbard), all cosmetic-only. The SLOT_ index order 0..8 is literally the frame's reading order, box for box \u2014 an independent frame-to-code lock. Shipped asymmetry to carry: findWeight skips only HEAD/NECK/SCABBARD, so hair carries weight but grants no stats.",
+  "ledger_text": "**Ready:** 9-slot paperdoll; 4 rarity tiers;",
+  "overturns_ledger": false,
+  "quote": "InventoryUI.as:163-179  SLOT_HAT 0 \u00b7 SLOT_MASK 1 \u00b7 SLOT_ARMOR 2 \u00b7 SLOT_GLOVES 3 \u00b7 SLOT_PANTS 4 \u00b7 SLOT_WEAPON 5 \u00b7 SLOT_RING1 6 \u00b7 SLOT_SHOES 7 \u00b7 SLOT_RING2 8   /   :268-269 this.equippedSlots[this.SLOT_RING1] = this.equipAccessory1; this.equippedSlots[this.SLOT_RING2] = this.equipAccessory2;   /   :460 for(var i:int = 0; i < 9; i++)   /   StatsManager.findBonusStat: for(var q:* = 0; q < 13; q++) { if(q != EQ_HEAD && q != EQ_NECK && q != EQ_SCABBARD && q != EQ_HAIR && !(skipWeapon && q == EQ_WEAPON)) {",
+  "text": "The 9 paperdoll boxes are not an arbitrary UI subset of the 13-slot model \u2014 they are exactly the 9 slots that grant stats, with the two ring boxes resolved as EQ_ACCESSORY1 (left) and EQ_ACCESSORY2 (right), and EQ_NECK carrying no box at all.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:520-533, plus the dummy-icon roster in reference/decompiled/shs3_android/scripts/ (8 slot-dummy classes, no Neck/Hair/Head/Scabbard dummy)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/paperdoll-ui-slot-mapping-resolved",
+  "lane_impact": "L5 (UI/HUD) \u2014 closes the survey's only STILL_UNHELD UI item and fixes the 13-vs-9 delta: the four model-only slots are HAIR, HEAD, NECK, SCABBARD. The paperdoll switch has exactly 9 cases (0..8), matching the frame's 9 boxes, so the whole slot map is now codeable.",
+  "overturns_ledger": false,
+  "quote": "case 7: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY1]; if(tempItem.getItemID() == 0) { this.acc1Icon.visible = true; } tempShopItem = this.equippedSlots[this.SLOT_RING1]; break; case 8: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY2]; if(tempItem.getItemID() == 0) { this.acc2Icon.visible = true; } tempShopItem = this.equippedSlots[this.SLOT_RING2];",
+  "text": "The two visually identical ring boxes in the 9-box paperdoll are EQ_ACCESSORY1 and EQ_ACCESSORY2 (named SLOT_RING1/SLOT_RING2 in source); EQ_NECK, EQ_HAIR, EQ_HEAD and EQ_SCABBARD have no UI box at all.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62, :120, :141-146; grep 'partList[PART_*]' over the same file -> 22 distinct indices used",
   "citelint": {
    "notes": [],
@@ -692,68 +753,6 @@
   "overturns_ledger": false,
   "quote": "Visibly on screen: 'ROOM RULES 1/7  (JOINING A BATTLE)' and body 'IS A CLAN-BASED STRATEGY GAME WITHIN STRAW HAT SAMURAI: DUELS. / A CLAN, YOU CAN MAY SELECT AN ON-GOING BATTLE TO TAKE PART IN.' \u2014 versus payload.xml:528044 (characterID 745, initialText, tags stripped): '1) pick a side.2) select a battle to join.3) select the sector with your side's castle HQ and select the \"MOVE\" action to enter the battlefield.' and payload.xml:528040/528048/528056/528064/528072/528080 titles 'War room rules 1/6' \u2026 '6/6' (characterIDs 744-755 = six title/body pairs). Over the 329 MB payload.xml: '1/7' 0 hits, 'you can may' 0 hits, 'on-going battle' 0 hits, 'clan-based' 0 hits. grep 'room rules' over reference/decompiled/shs3_payload/scripts/ returns nothing, so those static TextFields ARE the desktop copy. STANDING INVARIANT: the measurement source and the frame disagree \u2014 THE FRAME WINS, and it disagrees with the WEB artifact, not just the Android one.",
   "text": "The build shown in the longplay is NOT reference/extracted/payload.xml (web v0.717) and NOT the Android decompile \u2014 its war-rules dialog has 7 pages and Android-family prose, while the v0.717 payload has 6 pages with completely different wording, so every 'it came from the WEB build, no version caveat' upgrade in this lane is provisional.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/Nr4fQstqHDM/seg-29/frames/frame_0015.jpg (whole frame x3 LANCZOS) and frame_0019.jpg",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/rank-ladder-a1-confirmed",
-  "lane_impact": "L0 meta-social -- the 11-rank ladder moves from decompile-only to frame-confirmed, and flags a trap in ui_strings.txt that a text-only pass would have copied.",
-  "overturns_ledger": false,
-  "quote": "frame_0015 bottom-left: 'ALLEGIANCE: CLAN AKA RYU / RANK: RECRUIT (3 MOVES A TURN) / MOVES MADE: 0/36', bottom-right '3 MOVE(S) LEFT'; frame_0019 bottom-right 'NEXT TURN IN 59:58'. Matches getWarRank rank 0 = string 330 'recruit', getMaxWarMoves(0) = 3, the 12*3 = 36 threshold, and WARMOVEINTERVAL = 60*60. Note the WEB authoring placeholder reference/extracted/ui_strings.txt:215 reads 'allegiance: AKA RYU clanrank: soldier (3 moves a turn)moves made: 15/60' -- THE FRAME WINS: shipped v0.717 renders 'recruit' and '/36', so the placeholder's 'soldier' and '/60' must not be ported.",
-  "text": "The rank ladder, its first threshold and the one-hour turn are all rendered by the live v0.717 client, upgrading the survey's A2-only rank claim to A1.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/map_analysis/zFtCaTO0_1M_map_006_t272s.jpg \u2026 _015_t649s.jpg (10 frames, 512x288) \u2014 contact sheet built and read at 256x144 per cell",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/second-longplay-never-swept",
-  "lane_impact": "L0 meta-social \u2014 the STILL_UNHELD on the 6x6 board stands over both videos now, but the 240-frame broad_survey/ set is still unswept and is the real close-path for a board frame.",
-  "overturns_ledger": false,
-  "quote": "Visible across the 10 cells: skills panel with 'CRITICAL EDGE' and available skill points, mining with a pickaxe NPC, 'RARE CROPS COLLECTION' harvest UI, vegetable patch, dialogue with TAKAMASU. No hex board, no war-room map. reference/videos/ holds Nr4fQstqHDM.mp4 AND zFtCaTO0_1M.mp4; only the former was swept.",
-  "text": "The war-room board search covered only one of the two longplays the project invariant names as primary reference; the second video's map frames exist and were never opened by this lane.",
-  "verdict": "STILL_UNHELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/WarSelectUI.as:381-395 + TerritoryData.as:694-709 + WarHexUI.as:1075-1090",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "meta-social/side-to-clan-bound-in-code",
-  "lane_impact": "L0 meta-social + L-art -- the mapping is now A2-direct, but a clan-coloured render must choose which palette to reproduce: the bright territory-map hues or the darker hex-UI hues.",
-  "overturns_ledger": false,
-  "quote": "WarSelectUI.as:381 `if(side == 1){ sidename = LangManager.getString(275); }` ... `else if(side == 4){ sidename = LangManager.getString(278); }` \u00b7 TerritoryData.as:696/700/704/708 pair townSide 1-4 with `#FF0000` / `#00FF00` / `#00FFFF` / `#FFFF00` \u00b7 WarHexUI.as:1077-1089 uses 16711680 / 39168 (0x009900) / 26367 (0x0066FF) / 16776960 for the same four sides",
-  "text": "The side-number to clan-name binding is explicit in code, not an inference from colour semantics -- and the two war UIs use different hues for the same sides.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/WarSelectUI.as:379-396",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/side-to-clan-direct-binding",
-  "lane_impact": "L0 meta-social \u2014 upgrades the clan-to-side binding from inference to artifact, and `clanemblem.gotoAndStop(side)` says the four heraldry emblems are frames 1-4 of one MovieClip, which is what the ledger's 'heraldry' Ready bullet actually needs.",
-  "overturns_ledger": false,
-  "quote": "`this.clanemblem.gotoAndStop(side);` ... `if(side == 1){ sidename = LangManager.getString(275); } else if(side == 2){ sidename = LangManager.getString(276); } else if(side == 3){ sidename = LangManager.getString(277); } else if(side == 4){ sidename = LangManager.getString(278); }` \u2014 strings 275-278 = Clan Aka Ryu / Midori Ken / Aoi Hoiru / Ki Sensu.",
-  "text": "There is a direct payload switch binding war side numbers to clan names, so the clan-to-side mapping does not need to be inferred from the Japanese colour words at all.",
   "verdict": "HELD"
  }
 ]

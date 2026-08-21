@@ -1,5 +1,104 @@
 [
  {
+  "artifact_class": "A3",
+  "build": "android v0.682",
+  "cite": "grep -ln 'override public function die' over reference/decompiled/shs3_android/scripts/Enemy*.as (34 files), then a per-file body scan for super.die()",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "enemies-ai/NEW-npc-die-override-count-is-18-not-3",
+  "lane_impact": "L2 enemies-ai: corrects the lane_impact line inside claim art-anim-audio-feel/npc-death-dice-is-seven-way ('31 of 34 inherit it, only EnemyGoblin, EnemyGoblinThrower and EnemyZombie override'), which is false and must not enter the ledger. The death-variant model is a two-tier system: a humanoid seven-way base dice plus 15 fully custom creature/boss death routines.",
+  "ledger_text": "\u2464 severed-limb death variant.",
+  "overturns_ledger": true,
+  "quote": "override die() in 18 files: EnemyArcher EnemyBear EnemyBoar EnemyClone EnemyDeer EnemyElite EnemyGoblin EnemyGoblinThrower EnemyHorse EnemyKanjiGuardian EnemyNianMonster EnemyOgre EnemyStag EnemyTrainingDummy EnemyVegePatch EnemyWolf EnemyWolfAlpha EnemyZombie \u00b7 calls super.die(): EnemyArcher(1) EnemyElite(1) EnemyTrainingDummy(1), all others 0 \u00b7 EnemyGoblin.as:386 `dice = Math.random() * 5;` \u00b7 EnemyGoblin.as has 0 hits for DEATH_FORWARD|DEFEATED2 and 0 for createFlyingWeapon|createFlyingHat",
+  "text": "18 of the 34 Enemy*.as classes override die(), not 3 \u2014 and only 3 of those 18 (Archer, Elite, TrainingDummy) call super.die(), so 15 classes bypass the seven-way NPC dice entirely. The seven-way dice governs the humanoid roster that does NOT override (Katana, Knife, Ninja, Shield, Spear, SpearElite, Civilian x3, Player, PlayerGiant, SorcererBoss, Fox, JiangSi, Wolf2, Clone-adjacent, Enemy_VegePatch).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as (setLevel override) + EnemyKanjiGuardian.as:48 + EnemyWolfAlpha.as:52 + EnemyOgre.as:51 + EnemySpearElite.as:32 + EnemyPlayer.as:57 + EnemyStag.as:48 + EnemyTrainingDummy.as:23; web parity at \u00a71t4523s0\u00a7.as:77-80",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/boss-rubber-band-hits-to-kill",
+  "lane_impact": "L0 enemies-ai blocker \u2460 and cross-lane into combat-core/progression. Variants: KanjiGuardian 5+8+lvldiff / 16\u2212lvldiff; WolfAlpha 15\u2212lvldiff; SpearElite and EnemyPlayer branch on isBoss/isDuelist and fall back to super.setLevel(); EnemyOgre.setLevel is an EMPTY override so the Ogre never rescales; EnemyTrainingDummy repurposes lvl as a tutorial step index (lvl==3 \u2192 maxhp = 8). Authored boss <hp> rows are FLOORS, not effective stats \u2014 the game is tuned to a number of hits, not to absolute numbers.",
+  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
+  "overturns_ledger": true,
+  "quote": "xp = lvl * 5 + 45; var playerHP:int = StatsManager.getPlayerStats(StatsManager.STAT_MAXHP) + StatsManager.findBonusStat(StatsManager.STAT_MAXHP); ... var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff; if(hitsToKillBoss <= 3) { hitsToKillBoss = 3; } ... var playerhit:int = playerATK - defense; if(playerLVL <= 10 && playerhit < 1) { playerhit = 1; } else if(playerLVL <= 20 && playerhit < playerLVL / 8) { playerhit = playerLVL / 8; } else if(playerLVL <= 30 && playerhit < playerLVL / 6) { playerhit = playerLVL / 6; } else if(playerhit < playerLVL / 4) { playerhit = playerLVL / 4; } var bossHP:int = playerhit * hitsToKillBoss; if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); } var bosshit:int = playerHP / hitsToKillPlayer; var bossATK:int = bosshit + playerDEF; if(bossATK > minDamage) { minDamage = bossATK; } if(lvl <= 5) { minDamage = 1; defense = 1; }",
+  "text": "Bosses and elites do not use the base level\u2192stat formula at all: 11 subclasses override setLevel, and the boss path solves the statline backwards from a target hit count against the player's LIVE stats \u2014 bossHP = playerhit \u00d7 (10 + lvldiff) and bossATK = playerHP/(18 \u2212 lvldiff) + playerDEF, taken as the max against the authored XML row.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (my grep of <anim i=\"(got|downed|death)...\" d=\"...\"> tags)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/eight-death-animations-by-killing-blow",
+  "lane_impact": "L0 enemies-ai + art-anim-audio-feel. The render-side partner of the behead damage *= 1.5 rule (claim 12) and the archer knockdown gate (claim 11): the game selects a dismemberment-specific death by how the fighter died. Blocker (3)'s 'stagger' half resolves as no-stagger-but-eight-deaths, which is a much richer answer than the claim's single deathdowned 7 and directly shapes what the recreation must animate.",
+  "ledger_text": "(3) telegraph/active/recovery + stagger frames.",
+  "overturns_ledger": true,
+  "quote": "<anim i=\"death\" d=\"38\"> \u00b7 <anim i=\"deathbyarrow\" d=\"21\"> \u00b7 <anim i=\"deathdowned\" d=\"7\"> \u00b7 <anim i=\"deathenemy\" d=\"23\"> \u00b7 <anim i=\"deathinhalf\" d=\"28\"> \u00b7 <anim i=\"deathnohand\" d=\"25\"> \u00b7 <anim i=\"deathnohead\" d=\"31\"> \u00b7 <anim i=\"deathwitharrow\" d=\"23\"> \u00b7 (reaction chain: gotlaunchedupwards_parta 4 / _partb 9 / _partc 7, gotlauncheddowned 18, gotlauncheddownedend 1, downed 23, downedup 4, downedup2 25)",
+  "text": "The death system is eight distinct animations keyed to how the killing blow landed -- cut in half, beheaded, disarmed, arrow-killed -- not the single deathdowned the surveyor reported.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as:22-75 (and :105-120); cross-referenced to src/config/combat-sim.ts:110-130",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/elite-boss-second-level-formula-rubber-band",
+  "lane_impact": "L0 enemies-ai, and the biggest thing this unit missed. Blocker (1) is closed for trash but only half-closed for bosses: there are TWO formulas and the surveyor found one, so the 78 is over-scored on that axis. Boss HP is set so the player needs 10 + lvlDiff hits (floor 3) and boss ATK so the player dies in 18 - lvlDiff hits (floor 1); authored <hp> is only a floor, which qualifies the roster claim. Critically, src/config/combat-sim.ts documents ENEMY_BASE as INFERRED with 'B4 makes hp and minDamage DERIVED at spawn from the player's own stats (enemyHP = effPlayerDmg x K) ... the pre-scale floor the source's max(scaledBase, ...) compares against' -- bossHP = playerhit * hitsToKillBoss IS that formula and if(bossHP > maxhp) IS that max(). K = 10 + (enemyLvl - playerLvl), floored at 3. That INFERRED comment can be promoted to A2, labelled v0.682-ANDROID.",
+  "ledger_text": "(1) enemy **level->stat formula** (governs the whole roster's balance -- absent, not just inferred).",
+  "overturns_ledger": true,
+  "quote": "var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff; if(hitsToKillBoss <= 3) { hitsToKillBoss = 3; } if(hitsToKillPlayer <= 0) { hitsToKillPlayer = 1; } var playerhit:int = playerATK - defense; if(playerLVL <= 10 && playerhit < 1) { playerhit = 1; } else if(playerLVL <= 20 && playerhit < playerLVL / 8) { playerhit = playerLVL / 8; } else if(playerLVL <= 30 && playerhit < playerLVL / 6) { playerhit = playerLVL / 6; } else if(playerhit < playerLVL / 4) { playerhit = playerLVL / 4; } var bossHP:int = playerhit * hitsToKillBoss; if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); } var bosshit:int = playerHP / hitsToKillPlayer; var bossATK:int = bosshit + playerDEF;   ... xp = lvl * 5 + 45;   ... mcs.setDisplayName(charname + \" (\" + lvl + \")\",16777215);",
+  "text": "There is a SECOND level->stat formula: EnemyElite.setLevel overrides NPC.setLevel entirely for elites and bosses, dropping the 0.9 factor and the lvl<=10 clamp, using xp = lvl*5+45, and rubber-banding boss HP and ATK off the PLAYER's live stats -- which is the missing A2 source for the repo's INFERRED 'enemyHP = effPlayerDmg x K' derivation.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/MCSActor.as:170,172,922 + NPC.as:747-763",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/flinch-is-8-frames",
+  "lane_impact": "L0 enemies-ai + art-anim: closes the SECOND half of blocker \u2462 outright, which the survey wrongly declared unimplementable. Stagger = 8 frames, and the resume-mid-animation behaviour is a feel-critical detail. It also removes cap reason (4) from the 78 score rationale.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
+  "overturns_ledger": true,
+  "quote": "94_MCSCharacter_Human2AnimationData.bin: ('flinch_weapon','8'), ('flinch','8')  \u00b7  MCSActor.as:170 internal static var FLINCH_WEAPON:String = \"flinch_weapon\"; :172 internal static var FLINCH:String = \"flinch\"; :922 internal static var FLINCH_STATE:int = 28;  \u00b7  NPC.as:747 public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }",
+  "text": "The hit reaction the survey called nonexistent is an authored 8-frame interruptible flinch: `flinch` and `flinch_weapon` both d=8, FLINCH_STATE = 28, and NPC.doFlinch() saves prevActionState/prevAnim/prevFrameCounter before playing it so endFlinch() resumes the interrupted animation mid-frame.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/MCSActor.as:170,172,922 + NPC.as:747-765",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/flinch-is-a-real-8-frame-state",
+  "lane_impact": "L0 enemies-ai + art-anim: blocker \u2462 is now dead in BOTH halves, not just the telegraph half. The surveyor searched only 99_MCSCharacter_HumanAnimationData.bin and concluded absence; the flinch is in the Human2 blob. Note the mechanic for the port: flinch does NOT interrupt SLASH_STATE (an attack in progress is armoured), and it resumes the prior animation at the exact frame it was cut off.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
+  "overturns_ledger": true,
+  "quote": "<anim i=\"flinch_weapon\" d=\"8\">  \u00b7  <anim i=\"flinch\" d=\"8\">  \u00b7  MCSActor.as:922 internal static var FLINCH_STATE:int = 28;  \u00b7  NPC.as:747 public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }  \u00b7  NPC.as:758 public function endFlinch() : * { actionState = this.prevActionState; startAnim(this.prevAnim); mcs.frameCounter = this.prevFrameCounter; }",
+  "text": "The stagger the ledger asks for is fully implemented: an 8-frame flinch animation in the Human2 anim blob plus FLINCH_STATE 28 and a doFlinch/endFlinch pair that saves and restores the interrupted animation's frame offset.",
+  "verdict": "HELD"
+ },
+ {
   "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android/scripts/NPC.as:747-764 + MCSActor.as:922,170,172 + reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + EnemyZombie.as:544 + EnemyShield.as:117-119 + MCSPlayer.as:4309-4326",
   "citelint": {
@@ -293,108 +392,6 @@
   "overturns_ledger": true,
   "quote": "'PLAYER' card: 114 COINS, 3 GOLD, level badge 2 with '787 / 1450 EXPERIENCE POINTS', 'AVAILABLE STAT POINTS: 3'; HP 10/10 (green), CHI 10/10 (blue), AP 30/30 (light blue) with a bare '30' beneath; ATK 1, DEF '1 +2' (base + bonus), SPD 1; 'ADD HP' affordance; 'WEIGHT: 14 / 100'. ui_strings.txt:197 'Weight: 50/50'; :314 'hp: 123 / 123 (hp regen 12 ) chi: 123 / 434 (chi regen 13)'.",
   "text": "The PLAYER screen prints a complete stat contract the ledger records nowhere: a 9-slot equipment doll (hat, mask, torso, gloves, legs, weapon, 2x ring, boots), three meters HP/CHI/AP, three stats ATK/DEF/SPD with equipment bonuses rendered separately from base, and a WEIGHT encumbrance cap. Weight appears nowhere in any of the twelve ledger systems.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "strings.json[\"611\"], [\"4155\"], [\"610\"], [\"6030\"]-[\"6033\"], [\"507\"]-[\"510\"], [\"6058\"]-[\"6061\"], [\"4154\"], [\"864\"]",
-  "citelint": {
-   "notes": [],
-   "problems": [
-    "NO_PARSEABLE_PATH"
-   ],
-   "status": "UNCHECKABLE"
-  },
-  "id": "frames/HUNT-rebirth-picker-recoverable-from-strings",
-  "lane_impact": "rebirth-elements: prompt, four-element enum, level-80 gate and effect list all become buildable; only the picker's visual layout stays unheld",
-  "ledger_text": "(5) rebirth/element-picker UI (never filmed - both longplays pre-rebirth).",
-  "overturns_ledger": true,
-  "quote": "[\"611\"] 'Choose an element to specialize in.' [\"4155\"] 'New Game +\\nProgress on to the next Dan Rank and specialize in an element. \\nLevel 80 required.' [\"610\"] '...reborn as a level 1 character while retaining your inventory, skill points and clan rank. Your current equipment will be automatically unequipped.\\n\\nSlash length and bank storage is increased with each dan rank.' [\"6030\"]-[\"6033\"] Fire / Water / Wind / Earth Element Skills. [\"864\"] '[0] has rebirthed and is now Dan [1]!'",
-  "text": "The rebirth/element picker is unfilmable (see the level-80 gate) but its CONTENT is A2-recoverable: the picker's own prompt string, a closed four-element set, a hard level gate and the full effect list. Ledger blocker (5) 'rebirth/element-picker UI (never filmed)' is mostly closable without a picture.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "strings.json[\"848\"], [\"849\"]-[\"852\"], [\"636\"], [\"669\"], [\"393\"], [\"4143\"], [\"7042\"]; weapon condition field at reference/extracted/ui_strings.txt:257",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "frames/HUNT-repair-cost-is-runtime-parameterised",
-  "lane_impact": "economy, items-equipment: re-state the blocker as 'derive repair cost f(runtime)'; correct 'Reinforce 5000c+1 silver ore' to a three-tier material table",
-  "ledger_text": "(3) Repair-Weapon cost (never captured).",
-  "overturns_ledger": true,
-  "quote": "[\"848\"] 'Repair your currently equipped weapon?\\nCost: [0] coins'. [\"850\"]/[\"851\"]/[\"852\"] all read 'Reinforce ... Cost: 5000 coins' but with 1 Silver Ore / 1 Titanium Ore / 1 Uncut Diamond respectively. [\"636\"] 'Name your currently equipped weapon and make it unbreakable for 2 Gold?' ui_strings.txt:257 'condition: well-maintained23'.",
-  "text": "The Repair-Weapon blocker is mis-specified and can never be closed by finding a frame: repair cost is a runtime fill, exactly like Forge. Reinforce is also not one constant but three material variants, and there is a second gold-priced unbreakable path via Ninja Services.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682 string table; ring colours corroborated on web v0.717 frames",
-  "cite": "strings.json[\"6001\"], [\"6003\"], [\"6005\"], [\"IDS_Q50S3NODE0\"], [\"IDS_Q50S3NODE1\"], [\"6085\"]-[\"6087\"]; visual corroboration reference/frames/session11/lead/t396.0_counter-triangle.png (tan/brown ring, BALANCED STANCE) and reference/frames/session11/stance-reach/B_t785.200_LIGHT_stroke553px_endtoend.png (blue ring, LIGHT)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "frames/HUNT-stance-triangle-and-ring-colours",
-  "lane_impact": "combat-core (counter triangle + Defense -20%), ui-hud (ring colour enum), skills-meters (per-stance hold-to-charge ultimates)",
-  "overturns_ledger": true,
-  "quote": "[\"6001\"] 'Swift but light stance. Slash range is longer but damage inflicted is lower.\\nEffective against Heavy Stance.' [\"6003\"] 'Balanced stance.\\nEffective against Light Stance.' [\"6005\"] 'Slow but powerful stance. Damage inflicted is increased but slash range is shorter.\\nEffective against Balanced Stance.\\nDefense -20%' [\"IDS_Q50S3NODE1\"] 'Your stance is indicated by the color of the circle around your portrait: Light stance - blue, Balanced stance - brown, Heavy stance - red.'",
-  "text": "The complete stance rock-paper-scissors and its only hard number are held in the string table, plus the HUD portrait-ring colour enum - and none of it is in the packet. Heavy stance carries an explicit Defense -20% penalty, which is directly codeable.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "web (pre-v0.717 snapshot - its war-room deck still reads /6 where the v0.717 frame reads /7)",
-  "cite": "reference/extracted/ui_strings.txt:7, :26, :100, :193, :197, :212, :214, :215, :257, :314",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "frames/HUNT-ui-strings-txt-is-unmined",
-  "lane_impact": "meta-social (betting + tournaments), combat-core (damage taxonomy), skills-meters (next-level deltas), and it names v0.717's extra war-room rules page",
-  "overturns_ledger": true,
-  "quote": ":7 '\"Odds\" refers to the estimated profit that you will make for each token that you bet. example: If you bet 2 tokens at 1.5 odds, you will make an estimated profit of 3 gold when your bet wins'. :26 'Odds are changed whenever someone makes a bet and are only finalized when betting is closed.' :193 'War room rules 5/6  (WINNING AND LOSING)'. :214 'level requirement: 10 - 30 autostarts upon full roster round duration: 30 min'. :100 'physical dmg: 1234 - 1235  (heavy) critical dmg: 1234-1235 *(heavy) piercing dmg: 20'. :212 'next level damage: 10 def: 20'.",
-  "text": "reference/extracted/ui_strings.txt is a 471-line WEB-build artifact the packet uses for exactly one thing (font faces). It contains a duel BETTING system with odds, a tournament/arena mode template, a three-way damage taxonomy, next-level skill previews, HP/CHI regen fields, and the war-room rules page that v0.717 added.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682; the same pages render in web v0.717 (verified verbatim on frames 1/7, 3/7, 6/7)",
-  "cite": "strings.json[\"376\"], [\"372\"], [\"378\"], [\"380\"]; rendering verified at reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0011.jpg, frame_0012.jpg, frame_0013.jpg",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "frames/HUNT-war-tick-is-24-hours",
-  "lane_impact": "meta-social, world-exploration, economy: the war-tick half of blocker (3) closes outright",
-  "ledger_text": "(3) real-world \"day\" length (governs expiry, farming, AP regen, war tick).",
-  "overturns_ledger": true,
-  "quote": "[\"376\"] '- Troops will advance on enemy sectors every 24 hours.\\n\\n- If a sector has more attacking troops than defending troops, the sector will be captured by the attackers.\\n\\n- The Clan that captures all the control points in the battlefield will gain control of the territory.' [\"372\"] '- the effect of moves is dependent on the terrain. mountains have the highest tactical advantage, followed by forests and fields.\\n\\n- the clan will pay the player 5 coins per move made.' [\"380\"] names Command HQ / Forward base / Barricades / Tunnels / Towns at 500 coins per contributing player.",
-  "text": "Ledger blocker (3) asks for the real-world 'day' length that governs the war tick. It is written down: troops advance every 24 hours. The same rules pages also give the capture rule, win condition, five structure types, the 500-coin contribution, terrain advantage order and a 5-coins-per-move payout.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "build": "web v0.717 frame vs android v0.682 string table",
-  "cite": "reference/frames/Nr4fQstqHDM/seg-00/frames/frame_0001.jpg (crop 0,380-700,576 @2.14x LANCZOS; source still is 1024x576)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "frames/v0717-rewords-the-daily-streak-ladder",
-  "lane_impact": "ui-hud, meta-social, and every lane porting UI copy: the android-only hedge stays on any string not confirmed from a frame",
-  "ledger_text": "S0-3 caveat: 'UI copy and combat tuning parity is NOT established' between android v0.682 and web v0.717",
-  "overturns_ledger": true,
-  "quote": "On screen in v0.717: 'YOU HAVE CLAIMED YOUR DAILY PRIZE FOR 0 CONSECUTIVE DAYS. / AFTER EVERY 10 CONSECUTIVE DAYS: BONUS PRIZE! / AFTER EVERY 30 CONSECUTIVE DAYS: SUPER BONUS PRIZE!!!' Android table: strings.json[\"843\"] = 'Every 10 consecutive days: bonus prize!', strings.json[\"844\"] = 'Every 30 consecutive days: super bonus prize!!!'. THE FRAME WINS.",
-  "text": "The v0.717 web client REWORDS the daily-prize streak ladder relative to the android v0.682 string table: it prepends 'AFTER'. This is a second, independent rewording class alongside the War Room rules 1/6 -> 1/7 page count, and together they mean the S0-3 android-parity hedge cannot be lifted wholesale \u2014 it can only be lifted for strings personally seen on film.",
   "verdict": "HELD"
  }
 ]

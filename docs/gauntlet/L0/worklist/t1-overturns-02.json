@@ -1,5 +1,122 @@
 [
  {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3093, :3105, :3115-3119, :3130, :3141-3145 (web v0.717) vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:3030, :3041, :3052-3055, :3067, :3078-3081 (android v0.682)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/stance-reach-modifiers",
+  "lane_impact": "L1 combat-core blocker \u2460 dies in full, not partially: base = 120 + floor((90 + Dan*5)*spd/(20+spd)) from progression/spd-scaling, then the per-stance multiplier above. COMBAT_MEASUREMENTS \u00a7S24-B's measured band (30 strokes, 120\u2013280 px @1080 = 53\u2013124 world px) sits entirely UNDER these caps, which is exactly what a truncation cap predicts, and the wiki ceilings in \u00a7S24-B/c-0 (Light 300 / Balanced 200 / Heavy 100) land on the payload: HEAVY's hard floor is literally 100, and LIGHT at the Dan-1 asymptote is (120+95)\u00d71.4 = 301 \u2248 300. Also the SECOND independent proof in this lane that Android is differently tuned \u2014 generalising Stage-0b S0-3 from 'per-point magnitudes' to 'combat tuning at large'. Port from WEB.",
+  "ledger_text": "\u2460 **reach cap in stage px per stance** \u2014 the one value the whole model needs.",
+  "overturns_ledger": true,
+  "quote": "WEB \u00a71t99s0\u00a7.as:3093 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;' \u00b7 :3105 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);' \u00b7 :3115-3119 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1); if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }'  ||  ANDROID MCSPlayer.as:3030 'this.slashLength = this.baseSlashLength * 1.5;' \u00b7 :3041 '\u2026 * (1 + 0.5 * this.balancedMastery * 0.01);' \u00b7 :3052-3055 '\u2026 * (0.5 + 0.5 * this.heavyMastery * 0.01); if(this.slashLength < 100) { this.slashLength = 100; }'",
+  "text": "The per-stance slash-length modifiers are held verbatim in the WEB payload \u2014 LIGHT \u00d71.4, BALANCED \u00d7(1+0.02\u00b7balancedMastery), HEAVY \u00d7(0.5+0.04\u00b7heavyMastery) with a hard floor of 100, REVERSED \u00d71.4, DUAL = base floored at 100 \u2014 which closes L1 combat-core blocker \u2460 outright, and they are DIFFERENTLY TUNED in the Android build.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3276",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/v0717-crit-is-flat-1.3",
+  "lane_impact": "L5 \u2014 blocker \u2461 is closed at the TARGET build, in the ledger's own favour. The \u00d71.5/\u00d71.2 split is a v0.682-only retune. SOURCE_CONSTANTS.md:158 additionally records a SECOND, stacking \u00d71.3 for body parts 12 neck / 16 head / 17 hat \u2014 which is the v0.717 answer to the survey's \u00d71.5 behead.",
+  "ledger_text": "\u2461 crit 1.3 vs 3 final \u2014 *read one crit popup.*",
+  "overturns_ledger": true,
+  "quote": "if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7; } return _loc2_;",
+  "text": "Blocker \u2461 resolves to 1.3 after all: the v0.717 build applies a flat \u00d71.3 plus a flat crit-damage stat at full meter, with no stance branch \u2014 so CRIT_MULT = 1.3 in src/config/combat.ts is already right.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116-3119 (reach) and :3258-3271 (damage); build stamped 0.717 at \u00a71t1523s0\u00a7.as:36",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/v0717-stance-curves-are-already-in-config",
+  "lane_impact": "L5 \u2014 do NOT touch src/config/reach.ts. lightMult 1.4, balancedPerMastery 0.02, heavyPerMastery 0.04, heavyFloor 100 are the target build's own numbers and were read from this file on 2026-07-25 (SOURCE_CONSTANTS.md:193, 204-206). The android 1.5/0.005/0.005 values are v0.682 and must never be quoted as 0.717.",
+  "ledger_text": "- `STANCE_TABLE` already carries reach 300/200/120 + speed \u2014 but **never wired into `resolveSlash`** and mislabeled INFERRED when they're actually the wiki's **mastery-9** values (and Heavy should be 100, not 120).",
+  "overturns_ledger": true,
+  "quote": "3094: this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;  \u00b7  3105: this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);  \u00b7  3116-3119: this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1); if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }  \u00b7  3262-3270: _loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1); \u2026 _loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1); \u2026 _loc2_ = _loc1_ * 1.4;",
+  "text": "The v0.717 web payload gives light reach \u00d71.4, balanced \u00d7(1+0.02\u00b7mastery), heavy \u00d7(0.5+0.04\u00b7mastery) floored at 100, and damage light \u00d7(0.5+0.04\u00b7m) / balanced \u00d7(1+0.02\u00b7m) / heavy \u00d71.4 \u2014 i.e. src/config/reach.ts is already correct and the survey's 'three wrong constants' would regress it.",
+  "verdict": "HELD"
+ },
+ {
+  "alternate_cites": [
+   "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3146 (compare reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3029-3082)"
+  ],
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116-3117, :3130, :3141 + reference/extracted/skilldata.xml skills 1000/1001/1002 (10 <level> rows each) + reference/decompiled/shs3_android_payload/scripts/StatsManager.as:1834",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "duplicate_count": 2,
+  "id": "combat-core/v0717-stance-multipliers",
+  "lane_impact": "combat-core: use the v0.717 constants, not the android ones (android is 1.5 / (1+0.5\u00b7m\u00b70.01) / (0.5+0.5\u00b7m\u00b70.01)). Mastery is skill level 1..10, NOT a 0-100 percentage. Combined with combat-core/dan-scaled-slash-length this makes reach fully closed in stage px: Light 1.4\u00d7(120+90\u00b7s/(20+s)) etc., Heavy floored at 100 px. Also note there are FIVE stances (Reversed \u00d71.4, Dual \u00d71.0) - the unit only listed three.",
+  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "overturns_ledger": false,
+  "quote": "3094 LIGHT    this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;\n3105 BALANCED this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);\n3116 HEAVY    this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);\n3117          if(this.\u00a71t4417s0\u00a7 < 100) { ... = 100; }\n3130 REVERSED this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;\n3141 DUAL     this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7;   floor 100",
+  "reported_by": [
+   "critic"
+  ],
+  "text": "The v0.717 per-stance slash-length multipliers ARE recoverable and differ from android on every constant; with mastery capped at 10 their ceilings are Light 1.4 / Balanced 1.2 / Heavy 0.9, which vindicates the ledger's 0.9/1.2/1.4 line as REACH-at-mastery-ceiling.",
+  "verdict": "HELD"
+ },
+ {
+  "alternate_cites": [
+   "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, 3105, 3116-3117, 3131, 3142"
+  ],
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3155 (desktop MCSPlayer; identified because it defines \u00a71t4446s0\u00a7, the initElementDefenseStats callee at \u00a71t1523s0\u00a7.as:2270), param order pinned at :183-199",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "duplicate_count": 2,
+  "id": "combat-core/v0717-stance-slash-multipliers",
+  "lane_impact": "L combat-core: the reach multipliers stop being android-only guesses. Also kills the survey's PARTIAL on rebirth/stance-slash-multipliers-parity - the surveyor's grep terms ('0.005', '0.5 + 0.5 *') exist in neither build, so its negative grep proved nothing.",
+  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.** A level-1 Shugyosha does Light \u00d70.5 / Balanced \u00d71.0 / Heavy \u00d71.4 (Heavy is fixed); Heavy's *reach* also scales \u00d70.5\u2192\u00d70.9.",
+  "overturns_ledger": true,
+  "quote": "case \u00a71t12220s0\u00a7:\n   this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;\ncase \u00a71t12221s0\u00a7:\n   this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);\ncase \u00a71t12222s0\u00a7:\n   this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);\n   if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }",
+  "reported_by": [
+   "critic"
+  ],
+  "text": "The v0.717 desktop build's per-stance slash-length multipliers are on disk and differ from the android v0.682 set the survey adopted: Light and Reversed are x1.4 (not x1.5), Balanced is base*(1 + 0.2*balancedMastery*0.1), Heavy is base*(0.5 + 0.4*heavyMastery*0.1) floored at 100 px, Dual is base floored at 100 px.",
+  "verdict": "HELD"
+ },
+ {
+  "alternate_cites": [
+   "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094/:3105/:3116-3119 + reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:2721-2748"
+  ],
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:2721-2747 (character sheet), corroborated by \u00a71t99s0\u00a7.as:3083-3155 (setStance) and :3255-3276 (getDamage)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "duplicate_count": 2,
+  "id": "combat-core/v0717-stance-table",
+  "lane_impact": "combat-core: the mastery curve no longer has to be modelled or decide-and-flagged \u2014 it is an exact formula in both damage and reach. At mastery 9 the damage row is 0.86/1.18/1.4, i.e. the wiki's 0.9/1.2/1.4 rounded, which CONFIRMS the ledger's mastery-9 reading rather than overturning it. Heavy's 100 floor is the literal constant the ledger's line-101 correction asked for. The android v0.682 values (x1.5, 0.005m) must not be shipped.",
+  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "overturns_ledger": true,
+  "quote": "_loc41_ = 0.5 + 0.4 * _loc46_ * 0.1;  _loc42_ = 1.3;  _loc47_ = 1;    _loc48_ = 1.4;                        // LIGHT\\n_loc41_ = 1 + 0.2 * _loc46_ * 0.1;    _loc42_ = 1.3;  _loc47_ = 1;    _loc48_ = 1 + 0.2 * _loc46_ * 0.1;    // BALANCED\\n_loc41_ = 1.4;                        _loc42_ = 1.3;  _loc47_ = 0.8;  _loc48_ = 0.5 + 0.4 * _loc46_ * 0.1;  // HEAVY",
+  "reported_by": [
+   "critic"
+  ],
+  "text": "The complete v0.717 stance table is recovered \u2014 Light dmg (0.5+0.04m)/reach x1.4, Balanced dmg and reach (1+0.02m), Heavy dmg x1.4/reach (0.5+0.04m) floored at 100, Heavy defence x0.8 \u2014 and it differs from the android v0.682 numbers on every row.",
+  "verdict": "HELD"
+ },
+ {
   "alternate_cites": [
    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:9-19"
   ],
@@ -316,104 +433,5 @@
   "quote": "\u00a71t7144s0\u00a7.as:34 'public var notournamenttext:TextField;' \u00b7 :44 'public var tournamentCreate:\u00a71t7091s0\u00a7;' \u00b7 :46 'public var tournamentdetailstext:TextField;' \u00b7 :48 'public var tournamenttitletext:TextField;' \u00b7 :82 'this.notournamenttext.text = \u00a71t1521s0\u00a7.getString(11018);' \u2014 member names survive SWFDefender mangling.",
   "text": "The tournament system exists ONLY in the web v0.717 bundle \u2014 zero Android files mention it \u2014 so economy blocker \u2463's tournament half is openable rather than dead, and the survey's own claim 1 is the key that unlocks it.",
   "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A3",
-  "build": "android v0.682",
-  "cite": "grep -ln 'override public function die' over reference/decompiled/shs3_android/scripts/Enemy*.as (34 files), then a per-file body scan for super.die()",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "enemies-ai/NEW-npc-die-override-count-is-18-not-3",
-  "lane_impact": "L2 enemies-ai: corrects the lane_impact line inside claim art-anim-audio-feel/npc-death-dice-is-seven-way ('31 of 34 inherit it, only EnemyGoblin, EnemyGoblinThrower and EnemyZombie override'), which is false and must not enter the ledger. The death-variant model is a two-tier system: a humanoid seven-way base dice plus 15 fully custom creature/boss death routines.",
-  "ledger_text": "\u2464 severed-limb death variant.",
-  "overturns_ledger": true,
-  "quote": "override die() in 18 files: EnemyArcher EnemyBear EnemyBoar EnemyClone EnemyDeer EnemyElite EnemyGoblin EnemyGoblinThrower EnemyHorse EnemyKanjiGuardian EnemyNianMonster EnemyOgre EnemyStag EnemyTrainingDummy EnemyVegePatch EnemyWolf EnemyWolfAlpha EnemyZombie \u00b7 calls super.die(): EnemyArcher(1) EnemyElite(1) EnemyTrainingDummy(1), all others 0 \u00b7 EnemyGoblin.as:386 `dice = Math.random() * 5;` \u00b7 EnemyGoblin.as has 0 hits for DEATH_FORWARD|DEFEATED2 and 0 for createFlyingWeapon|createFlyingHat",
-  "text": "18 of the 34 Enemy*.as classes override die(), not 3 \u2014 and only 3 of those 18 (Archer, Elite, TrainingDummy) call super.die(), so 15 classes bypass the seven-way NPC dice entirely. The seven-way dice governs the humanoid roster that does NOT override (Katana, Knife, Ninja, Shield, Spear, SpearElite, Civilian x3, Player, PlayerGiant, SorcererBoss, Fox, JiangSi, Wolf2, Clone-adjacent, Enemy_VegePatch).",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as (setLevel override) + EnemyKanjiGuardian.as:48 + EnemyWolfAlpha.as:52 + EnemyOgre.as:51 + EnemySpearElite.as:32 + EnemyPlayer.as:57 + EnemyStag.as:48 + EnemyTrainingDummy.as:23; web parity at \u00a71t4523s0\u00a7.as:77-80",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/boss-rubber-band-hits-to-kill",
-  "lane_impact": "L0 enemies-ai blocker \u2460 and cross-lane into combat-core/progression. Variants: KanjiGuardian 5+8+lvldiff / 16\u2212lvldiff; WolfAlpha 15\u2212lvldiff; SpearElite and EnemyPlayer branch on isBoss/isDuelist and fall back to super.setLevel(); EnemyOgre.setLevel is an EMPTY override so the Ogre never rescales; EnemyTrainingDummy repurposes lvl as a tutorial step index (lvl==3 \u2192 maxhp = 8). Authored boss <hp> rows are FLOORS, not effective stats \u2014 the game is tuned to a number of hits, not to absolute numbers.",
-  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
-  "overturns_ledger": true,
-  "quote": "xp = lvl * 5 + 45; var playerHP:int = StatsManager.getPlayerStats(StatsManager.STAT_MAXHP) + StatsManager.findBonusStat(StatsManager.STAT_MAXHP); ... var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff; if(hitsToKillBoss <= 3) { hitsToKillBoss = 3; } ... var playerhit:int = playerATK - defense; if(playerLVL <= 10 && playerhit < 1) { playerhit = 1; } else if(playerLVL <= 20 && playerhit < playerLVL / 8) { playerhit = playerLVL / 8; } else if(playerLVL <= 30 && playerhit < playerLVL / 6) { playerhit = playerLVL / 6; } else if(playerhit < playerLVL / 4) { playerhit = playerLVL / 4; } var bossHP:int = playerhit * hitsToKillBoss; if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); } var bosshit:int = playerHP / hitsToKillPlayer; var bossATK:int = bosshit + playerDEF; if(bossATK > minDamage) { minDamage = bossATK; } if(lvl <= 5) { minDamage = 1; defense = 1; }",
-  "text": "Bosses and elites do not use the base level\u2192stat formula at all: 11 subclasses override setLevel, and the boss path solves the statline backwards from a target hit count against the player's LIVE stats \u2014 bossHP = playerhit \u00d7 (10 + lvldiff) and bossATK = playerHP/(18 \u2212 lvldiff) + playerDEF, taken as the max against the authored XML row.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (my grep of <anim i=\"(got|downed|death)...\" d=\"...\"> tags)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/eight-death-animations-by-killing-blow",
-  "lane_impact": "L0 enemies-ai + art-anim-audio-feel. The render-side partner of the behead damage *= 1.5 rule (claim 12) and the archer knockdown gate (claim 11): the game selects a dismemberment-specific death by how the fighter died. Blocker (3)'s 'stagger' half resolves as no-stagger-but-eight-deaths, which is a much richer answer than the claim's single deathdowned 7 and directly shapes what the recreation must animate.",
-  "ledger_text": "(3) telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": true,
-  "quote": "<anim i=\"death\" d=\"38\"> \u00b7 <anim i=\"deathbyarrow\" d=\"21\"> \u00b7 <anim i=\"deathdowned\" d=\"7\"> \u00b7 <anim i=\"deathenemy\" d=\"23\"> \u00b7 <anim i=\"deathinhalf\" d=\"28\"> \u00b7 <anim i=\"deathnohand\" d=\"25\"> \u00b7 <anim i=\"deathnohead\" d=\"31\"> \u00b7 <anim i=\"deathwitharrow\" d=\"23\"> \u00b7 (reaction chain: gotlaunchedupwards_parta 4 / _partb 9 / _partc 7, gotlauncheddowned 18, gotlauncheddownedend 1, downed 23, downedup 4, downedup2 25)",
-  "text": "The death system is eight distinct animations keyed to how the killing blow landed -- cut in half, beheaded, disarmed, arrow-killed -- not the single deathdowned the surveyor reported.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as:22-75 (and :105-120); cross-referenced to src/config/combat-sim.ts:110-130",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/elite-boss-second-level-formula-rubber-band",
-  "lane_impact": "L0 enemies-ai, and the biggest thing this unit missed. Blocker (1) is closed for trash but only half-closed for bosses: there are TWO formulas and the surveyor found one, so the 78 is over-scored on that axis. Boss HP is set so the player needs 10 + lvlDiff hits (floor 3) and boss ATK so the player dies in 18 - lvlDiff hits (floor 1); authored <hp> is only a floor, which qualifies the roster claim. Critically, src/config/combat-sim.ts documents ENEMY_BASE as INFERRED with 'B4 makes hp and minDamage DERIVED at spawn from the player's own stats (enemyHP = effPlayerDmg x K) ... the pre-scale floor the source's max(scaledBase, ...) compares against' -- bossHP = playerhit * hitsToKillBoss IS that formula and if(bossHP > maxhp) IS that max(). K = 10 + (enemyLvl - playerLvl), floored at 3. That INFERRED comment can be promoted to A2, labelled v0.682-ANDROID.",
-  "ledger_text": "(1) enemy **level->stat formula** (governs the whole roster's balance -- absent, not just inferred).",
-  "overturns_ledger": true,
-  "quote": "var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff; if(hitsToKillBoss <= 3) { hitsToKillBoss = 3; } if(hitsToKillPlayer <= 0) { hitsToKillPlayer = 1; } var playerhit:int = playerATK - defense; if(playerLVL <= 10 && playerhit < 1) { playerhit = 1; } else if(playerLVL <= 20 && playerhit < playerLVL / 8) { playerhit = playerLVL / 8; } else if(playerLVL <= 30 && playerhit < playerLVL / 6) { playerhit = playerLVL / 6; } else if(playerhit < playerLVL / 4) { playerhit = playerLVL / 4; } var bossHP:int = playerhit * hitsToKillBoss; if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); } var bosshit:int = playerHP / hitsToKillPlayer; var bossATK:int = bosshit + playerDEF;   ... xp = lvl * 5 + 45;   ... mcs.setDisplayName(charname + \" (\" + lvl + \")\",16777215);",
-  "text": "There is a SECOND level->stat formula: EnemyElite.setLevel overrides NPC.setLevel entirely for elites and bosses, dropping the 0.9 factor and the lvl<=10 clamp, using xp = lvl*5+45, and rubber-banding boss HP and ATK off the PLAYER's live stats -- which is the missing A2 source for the repo's INFERRED 'enemyHP = effPlayerDmg x K' derivation.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/MCSActor.as:170,172,922 + NPC.as:747-763",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/flinch-is-8-frames",
-  "lane_impact": "L0 enemies-ai + art-anim: closes the SECOND half of blocker \u2462 outright, which the survey wrongly declared unimplementable. Stagger = 8 frames, and the resume-mid-animation behaviour is a feel-critical detail. It also removes cap reason (4) from the 78 score rationale.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": true,
-  "quote": "94_MCSCharacter_Human2AnimationData.bin: ('flinch_weapon','8'), ('flinch','8')  \u00b7  MCSActor.as:170 internal static var FLINCH_WEAPON:String = \"flinch_weapon\"; :172 internal static var FLINCH:String = \"flinch\"; :922 internal static var FLINCH_STATE:int = 28;  \u00b7  NPC.as:747 public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }",
-  "text": "The hit reaction the survey called nonexistent is an authored 8-frame interruptible flinch: `flinch` and `flinch_weapon` both d=8, FLINCH_STATE = 28, and NPC.doFlinch() saves prevActionState/prevAnim/prevFrameCounter before playing it so endFlinch() resumes the interrupted animation mid-frame.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/MCSActor.as:170,172,922 + NPC.as:747-765",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/flinch-is-a-real-8-frame-state",
-  "lane_impact": "L0 enemies-ai + art-anim: blocker \u2462 is now dead in BOTH halves, not just the telegraph half. The surveyor searched only 99_MCSCharacter_HumanAnimationData.bin and concluded absence; the flinch is in the Human2 blob. Note the mechanic for the port: flinch does NOT interrupt SLASH_STATE (an attack in progress is armoured), and it resumes the prior animation at the exact frame it was cut off.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": true,
-  "quote": "<anim i=\"flinch_weapon\" d=\"8\">  \u00b7  <anim i=\"flinch\" d=\"8\">  \u00b7  MCSActor.as:922 internal static var FLINCH_STATE:int = 28;  \u00b7  NPC.as:747 public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }  \u00b7  NPC.as:758 public function endFlinch() : * { actionState = this.prevActionState; startAnim(this.prevAnim); mcs.frameCounter = this.prevFrameCounter; }",
-  "text": "The stagger the ledger asks for is fully implemented: an 8-frame flinch animation in the Human2 anim blob plus FLINCH_STATE 28 and a doFlinch/endFlinch pair that saves and restores the interrupted animation's frame offset.",
-  "verdict": "HELD"
  }
 ]

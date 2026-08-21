@@ -1,5 +1,107 @@
 [
  {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "strings.json[\"611\"], [\"4155\"], [\"610\"], [\"6030\"]-[\"6033\"], [\"507\"]-[\"510\"], [\"6058\"]-[\"6061\"], [\"4154\"], [\"864\"]",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_PARSEABLE_PATH"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "frames/HUNT-rebirth-picker-recoverable-from-strings",
+  "lane_impact": "rebirth-elements: prompt, four-element enum, level-80 gate and effect list all become buildable; only the picker's visual layout stays unheld",
+  "ledger_text": "(5) rebirth/element-picker UI (never filmed - both longplays pre-rebirth).",
+  "overturns_ledger": true,
+  "quote": "[\"611\"] 'Choose an element to specialize in.' [\"4155\"] 'New Game +\\nProgress on to the next Dan Rank and specialize in an element. \\nLevel 80 required.' [\"610\"] '...reborn as a level 1 character while retaining your inventory, skill points and clan rank. Your current equipment will be automatically unequipped.\\n\\nSlash length and bank storage is increased with each dan rank.' [\"6030\"]-[\"6033\"] Fire / Water / Wind / Earth Element Skills. [\"864\"] '[0] has rebirthed and is now Dan [1]!'",
+  "text": "The rebirth/element picker is unfilmable (see the level-80 gate) but its CONTENT is A2-recoverable: the picker's own prompt string, a closed four-element set, a hard level gate and the full effect list. Ledger blocker (5) 'rebirth/element-picker UI (never filmed)' is mostly closable without a picture.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "strings.json[\"848\"], [\"849\"]-[\"852\"], [\"636\"], [\"669\"], [\"393\"], [\"4143\"], [\"7042\"]; weapon condition field at reference/extracted/ui_strings.txt:257",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-repair-cost-is-runtime-parameterised",
+  "lane_impact": "economy, items-equipment: re-state the blocker as 'derive repair cost f(runtime)'; correct 'Reinforce 5000c+1 silver ore' to a three-tier material table",
+  "ledger_text": "(3) Repair-Weapon cost (never captured).",
+  "overturns_ledger": true,
+  "quote": "[\"848\"] 'Repair your currently equipped weapon?\\nCost: [0] coins'. [\"850\"]/[\"851\"]/[\"852\"] all read 'Reinforce ... Cost: 5000 coins' but with 1 Silver Ore / 1 Titanium Ore / 1 Uncut Diamond respectively. [\"636\"] 'Name your currently equipped weapon and make it unbreakable for 2 Gold?' ui_strings.txt:257 'condition: well-maintained23'.",
+  "text": "The Repair-Weapon blocker is mis-specified and can never be closed by finding a frame: repair cost is a runtime fill, exactly like Forge. Reinforce is also not one constant but three material variants, and there is a second gold-priced unbreakable path via Ninja Services.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 string table; ring colours corroborated on web v0.717 frames",
+  "cite": "strings.json[\"6001\"], [\"6003\"], [\"6005\"], [\"IDS_Q50S3NODE0\"], [\"IDS_Q50S3NODE1\"], [\"6085\"]-[\"6087\"]; visual corroboration reference/frames/session11/lead/t396.0_counter-triangle.png (tan/brown ring, BALANCED STANCE) and reference/frames/session11/stance-reach/B_t785.200_LIGHT_stroke553px_endtoend.png (blue ring, LIGHT)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-stance-triangle-and-ring-colours",
+  "lane_impact": "combat-core (counter triangle + Defense -20%), ui-hud (ring colour enum), skills-meters (per-stance hold-to-charge ultimates)",
+  "overturns_ledger": true,
+  "quote": "[\"6001\"] 'Swift but light stance. Slash range is longer but damage inflicted is lower.\\nEffective against Heavy Stance.' [\"6003\"] 'Balanced stance.\\nEffective against Light Stance.' [\"6005\"] 'Slow but powerful stance. Damage inflicted is increased but slash range is shorter.\\nEffective against Balanced Stance.\\nDefense -20%' [\"IDS_Q50S3NODE1\"] 'Your stance is indicated by the color of the circle around your portrait: Light stance - blue, Balanced stance - brown, Heavy stance - red.'",
+  "text": "The complete stance rock-paper-scissors and its only hard number are held in the string table, plus the HUD portrait-ring colour enum - and none of it is in the packet. Heavy stance carries an explicit Defense -20% penalty, which is directly codeable.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web (pre-v0.717 snapshot - its war-room deck still reads /6 where the v0.717 frame reads /7)",
+  "cite": "reference/extracted/ui_strings.txt:7, :26, :100, :193, :197, :212, :214, :215, :257, :314",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-ui-strings-txt-is-unmined",
+  "lane_impact": "meta-social (betting + tournaments), combat-core (damage taxonomy), skills-meters (next-level deltas), and it names v0.717's extra war-room rules page",
+  "overturns_ledger": true,
+  "quote": ":7 '\"Odds\" refers to the estimated profit that you will make for each token that you bet. example: If you bet 2 tokens at 1.5 odds, you will make an estimated profit of 3 gold when your bet wins'. :26 'Odds are changed whenever someone makes a bet and are only finalized when betting is closed.' :193 'War room rules 5/6  (WINNING AND LOSING)'. :214 'level requirement: 10 - 30 autostarts upon full roster round duration: 30 min'. :100 'physical dmg: 1234 - 1235  (heavy) critical dmg: 1234-1235 *(heavy) piercing dmg: 20'. :212 'next level damage: 10 def: 20'.",
+  "text": "reference/extracted/ui_strings.txt is a 471-line WEB-build artifact the packet uses for exactly one thing (font faces). It contains a duel BETTING system with odds, a tournament/arena mode template, a three-way damage taxonomy, next-level skill previews, HP/CHI regen fields, and the war-room rules page that v0.717 added.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682; the same pages render in web v0.717 (verified verbatim on frames 1/7, 3/7, 6/7)",
+  "cite": "strings.json[\"376\"], [\"372\"], [\"378\"], [\"380\"]; rendering verified at reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0011.jpg, frame_0012.jpg, frame_0013.jpg",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-war-tick-is-24-hours",
+  "lane_impact": "meta-social, world-exploration, economy: the war-tick half of blocker (3) closes outright",
+  "ledger_text": "(3) real-world \"day\" length (governs expiry, farming, AP regen, war tick).",
+  "overturns_ledger": true,
+  "quote": "[\"376\"] '- Troops will advance on enemy sectors every 24 hours.\\n\\n- If a sector has more attacking troops than defending troops, the sector will be captured by the attackers.\\n\\n- The Clan that captures all the control points in the battlefield will gain control of the territory.' [\"372\"] '- the effect of moves is dependent on the terrain. mountains have the highest tactical advantage, followed by forests and fields.\\n\\n- the clan will pay the player 5 coins per move made.' [\"380\"] names Command HQ / Forward base / Barricades / Tunnels / Towns at 500 coins per contributing player.",
+  "text": "Ledger blocker (3) asks for the real-world 'day' length that governs the war tick. It is written down: troops advance every 24 hours. The same rules pages also give the capture rule, win condition, five structure types, the 500-coin contribution, terrain advantage order and a 5-coins-per-move payout.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717 frame vs android v0.682 string table",
+  "cite": "reference/frames/Nr4fQstqHDM/seg-00/frames/frame_0001.jpg (crop 0,380-700,576 @2.14x LANCZOS; source still is 1024x576)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/v0717-rewords-the-daily-streak-ladder",
+  "lane_impact": "ui-hud, meta-social, and every lane porting UI copy: the android-only hedge stays on any string not confirmed from a frame",
+  "ledger_text": "S0-3 caveat: 'UI copy and combat tuning parity is NOT established' between android v0.682 and web v0.717",
+  "overturns_ledger": true,
+  "quote": "On screen in v0.717: 'YOU HAVE CLAIMED YOUR DAILY PRIZE FOR 0 CONSECUTIVE DAYS. / AFTER EVERY 10 CONSECUTIVE DAYS: BONUS PRIZE! / AFTER EVERY 30 CONSECUTIVE DAYS: SUPER BONUS PRIZE!!!' Android table: strings.json[\"843\"] = 'Every 10 consecutive days: bonus prize!', strings.json[\"844\"] = 'Every 30 consecutive days: super bonus prize!!!'. THE FRAME WINS.",
+  "text": "The v0.717 web client REWORDS the daily-prize streak ladder relative to the android v0.682 string table: it prepends 'AFTER'. This is a second, independent rewording class alongside the War Room rules 1/6 -> 1/7 page count, and together they mean the S0-3 android-parity hedge cannot be lifted wholesale \u2014 it can only be lifted for strings personally seen on film.",
+  "verdict": "HELD"
+ },
+ {
   "artifact_class": "A1",
   "build": "web v0.717",
   "cite": "reference/frames/zFtCaTO0_1M/seg-08/frames/frame_0029.jpg (crop 700,160-780,230 @15x LANCZOS; row context at crops 40,155-950,235 and 40,220-950,305 @1.65x)",
@@ -299,106 +401,6 @@
   "overturns_ledger": true,
   "quote": "StatsManager.as:284 \u2014 'internal static var EQ_ACCESSORY1:int = 11;'  \u00b7  :286 \u2014 'internal static var EQ_ACCESSORY2:int = 12;'  \u00b7  :1943-1945 \u2014 'for(var q:* = 0; q < 13; q++) { if(q != EQ_HEAD && q != EQ_NECK && q != EQ_SCABBARD && q != EQ_HAIR && !(skipWeapon && q == EQ_WEAPON))'. In the t708.0 crop the nine boxes are, in reading order: hat (straw hat, filled) / mask (ghost outline); armor (grey robe, filled) / gloves (ghost); pants (white hakama, filled) / weapon (pickaxe, filled); ring (ghost) / shoes (sandals, filled) / ring (ghost).",
   "text": "The nine stat-bearing equipment slots are completely named in AS3 and match the nine paperdoll boxes box-for-box: {0 EQ_ARMOR, 1 EQ_GLOVES, 3 EQ_HAT, 5 EQ_MASK, 7 EQ_PANTS, 8 EQ_SHOES, 9 EQ_WEAPON, 11 EQ_ACCESSORY1, 12 EQ_ACCESSORY2}. The four body-only indices findBonusStat skips are 4 EQ_HEAD, 6 EQ_NECK, 10 EQ_SCABBARD, 2 EQ_HAIR. Nothing has to be invented for the two ring boxes.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:105, :182, :190, :239 and EnemyClone.as:49 and :77; reference/decompiled/shs3_android/scripts/StatsManager.as:1839-1842; reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:103, :191, :249 and \u00a71t4904s0\u00a7.as:49 and :77",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "itemdata/reload-bar-max-is-a-hard-constant-and-diverges",
-  "lane_impact": "L1/L5 COMBAT CORE: the slash economy must be modelled as a flat 192-frame (8 s at 24 fps) bar for v0.717 fidelity, NOT as 48 + SPEED*6. SPEED does not lengthen the bar at all; it only affects reach and cooldowns. L6/L3: one more constant that must name its build. Also a general methodology lesson \u2014 a value that is computed and passed is not thereby used.",
-  "ledger_text": "itemdata/slashusage-is-a-reload-economy: 'the bar's max is 48 + SPEED*6, its floor is 24'",
-  "overturns_ledger": true,
-  "quote": "MCSPlayer.as:239 \u2014 'this.maxreload = 5 * 24;' set INSIDE initPlayer, after :190 'this.baseReload = baseReload;'. MCSPlayer.as:105 \u2014 'internal var baseReload:int = 48;'. StatsManager.as:1839-1842 \u2014 'internal static function getBaseReload() : int { return 48 + (getPlayerStats(STAT_SPEED) + findBonusStat(STAT_SPEED)) * 6; }'. Web: \u00a71t99s0\u00a7.as:249 \u2014 'this.\u00a71t4415s0\u00a7 = 8 * 24;' and \u00a71t99s0\u00a7.as:103 \u2014 'internal var \u00a71t4419s0\u00a7:int = 48;'. grep -rn \"baseReload\" reference/decompiled/shs3_android/scripts/ returns MCSPlayer.as:105,:182,:190 and EnemyClone.as:49 \u2014 declaration, parameter, assignment, copy. Zero readers. grep -rn \"\u00a71t4419s0\u00a7\" reference/decompiled/shs3_payload/scripts/ returns \u00a71t99s0\u00a7.as:103,:191 and \u00a71t4904s0\u00a7.as:49. Zero readers.",
-  "text": "The reload/focus bar MAXIMUM is a hard-coded constant, not a SPEED formula, and it DIVERGES between builds: 5*24 = 120 on Android v0.682 and 8*24 = 192 on web v0.717. In both builds the value StatsManager.getBaseReload() computes (48 + SPEED*6) is passed into initPlayer, stored in a field, and never read by anything - it is dead code. This is a third android-vs-web tuning divergence beyond the two in itemdata/android-vs-web-constants-diverge, and it is what refutes itemdata/slashusage-is-a-reload-economy's bar-max half.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both (schema parity proven)",
-  "cite": "reference/extracted/itemdata.xml:2446-2459 (item 2212) and :5218-5226 (item 7049); reference/decompiled/shs3_android/scripts/XMLItem.as:86-93 (and web parity reference/decompiled/shs3_payload/scripts/\u00a71t104s0\u00a7.as:84-91)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "itemdata/two-gold-items-are-coin-buyable",
-  "lane_impact": "L6 economy: the premium catalogue is 301 Gold-only rows plus 2 that also carry a 1-coin price. A recreation that hard-codes 'heavenlyprice > 0 implies coin price 0' will diverge on these two rows.",
-  "ledger_text": "itemdata/gold-catalogue: 'Every one of these rows also carries <baseprice>0</baseprice> \u2014 Gold-only, not buyable with coins.'",
-  "overturns_ledger": true,
-  "quote": "itemdata.xml:2446-2454 \u2014 '<id>2212</id><type>10</type><name>4400</name><unique>1</unique><heavenlyprice>5</heavenlyprice><weight>0</weight><nogive>1</nogive><nodrop>1</nodrop><desc>4401</desc>' \u2014 no <baseprice> line at all. itemdata.xml:5218-5225 \u2014 '<id>7049</id><type>3</type><name>4346</name><unique>1</unique><heavenlyprice>3</heavenlyprice><defense>2</defense><weight>1</weight><desc>4347</desc>' \u2014 likewise. XMLItem.as:86-93 \u2014 'if(xml.baseprice.toString() != \"\") { this.gvalue = xml.baseprice; } else { this.gvalue = 1; }'.",
-  "text": "Exactly two premium items carry a <heavenlyprice> but NO <baseprice> tag, so XMLItem's default fires and they are purchasable for 1 coin: item 2212 (heavenlyprice 5) and item 7049 (heavenlyprice 3). Every other Gold item writes <baseprice>0</baseprice>. This is the counterexample to 'Gold-only, not buyable with coins'.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:995,1868 (grep \"\u00a71t536s0\u00a7\" over reference/decompiled/shs3_payload/scripts/ returns exactly 2 hits)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "items-equipment/condition-blocker-dead-in-both-builds",
-  "lane_impact": "L1/L2 (combat core + damage) -- removes the S0-3 Android-parity caveat for blocker 2 that the surveyor left open. The phantom wear curve is dead in the build we are actually recreating (v0.717), not just in the Android port.",
-  "ledger_text": "\u2461 condition\u2192DMG **multiplier** (current \"evidence\" confounds condition with a 2-level gap).",
-  "overturns_ledger": true,
-  "quote": "\u00a71t17s0\u00a7.as:1868  public function \u00a71t536s0\u00a7() : int   /   \u00a71t17s0\u00a7.as:995  var _loc1_:int = this.\u00a71t536s0\u00a7();   [only call site, inside the getDesc equivalent]",
-  "text": "Blocker 2 (condition->DMG multiplier) is dissolved in the WEB v0.717 build as well as Android: the web getCondition has exactly two references in the whole payload -- its definition and one call inside getDesc -- so no damage path reads it.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:4417-4445; Item.as:229-259; MCSCharacter.as:618",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/equipment-save-format-is-13-field",
-  "lane_impact": "L10 (persistence) -- corrects the surveyor's cite. Copying MCSCharacter.as:348 instead loses the scabbard, both accessory slots and every per-slot modifier, and adds two prop fields that are not equipment slots.",
-  "ledger_text": "**Server-sim topology & save format** \u2014 nothing to copy; design a single-player persistence schema from the observed field set.",
-  "overturns_ledger": true,
-  "quote": "public static function getEquipmentString() : String { var max:int = int(equipment.length); for(var i:int = 0; i < max; i++) { if(i == max - 1) { str += equipment[i].toStringNoQty(); } else { str += equipment[i].toStringNoQty() + \"|\"; } } return str; }  /  public static function parseEquipmentString(str:String) : * { equipment.length = 0; var strArray:Array = str.split(\"|\"); for(var i:* = 0; i < strArray.length; i++) { equipment.push(Item.parseNoQty(strArray[i])); } }  /  MCSCharacter.as:618  return this.mcsString;",
-  "text": "The equipment save format is StatsManager.getEquipmentString/parseEquipmentString -- all 13 equipment slots joined by \"|\", each field an Item.toStringNoQty() record carrying id plus modifiers, colours, uses, name and creator. MCSCharacter's 12-field mcsString is the character APPEARANCE string, not persistence.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Damage.as:53,149-172; MCSPlayer.as:3415-3418 and :1930; NPC.as:447",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/generic-defense-floor-is-attacker-keyed",
-  "lane_impact": "L1/L2 (combat core + damage) - the ledger bullet is INCOMPLETE, not wrong: EnemyLevel is the right variable for the player-taking-damage case and /4 is the right top band. It should read: floor = 1 (atkLvl<=10) / atkLvl\u00f78 (<=20) / atkLvl\u00f76 (<=30) / atkLvl\u00f74, plus piercingDamage. Do not delete the bullet.",
-  "ledger_text": "defense min-floor (EnemyLevel/4)",
-  "overturns_ledger": true,
-  "quote": "public function Damage(damage:int = 0, attackerlvl:int = 0, launchType:int = 0, stance:int = -1, ...)  /  if(this.attackerlvl <= 10) { return 1 + this.piercingDamage; } if(this.attackerlvl <= 20) { return this.attackerlvl / 8 + this.piercingDamage; } if(this.attackerlvl <= 30) { return this.attackerlvl / 6 + this.piercingDamage; } return this.attackerlvl / 4 + this.piercingDamage;  /  damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); }  /  damage = new Damage(this.slashDamage,level,0,this.stance);",
-  "text": "The real defense min-floor lives in Damage.getMinDamage(), is keyed to the ATTACKER's level, and has four bands (1 / lvl\u00f78 / lvl\u00f76 / lvl\u00f74, each + piercingDamage); it is applied at the single point where damage meets defense in MCSPlayer, NPC and every enemy takeDamage.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSItem.as:203-210, :226-233; ShopItem.as:134-199; row counts measured over reference/extracted/itemdata.xml",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/icon-namespaces-item-and-acc",
-  "lane_impact": "L6 (art) - blocker 5 is only HALF dead. The compositing contract is genuinely closed, but the icon manifest is not: 99 consumables (2000-2999) + 79 quest items (20000-29999) + 9 accessories (3000-3999) require item*/acc* symbols with no paperdoll counterpart. This is a scoring-relevant correction to the surveyor's 78.",
-  "ledger_text": "\u2464 **sprite-compositing contract** (layer order, per-slot body render \u2014 a from-scratch-art blocker) + item **icon manifest**.",
-  "overturns_ledger": true,
-  "quote": "public function setConsumable(id:int) : * { this.clearItem(); this.displayItem = this.getMCSComponent(\"item\",id); if(this.displayItem == null) { this.displayItem = new item0(); ... } }  /  public function setAccessory(id:int) : * { this.displayItem = this.getMCSComponent(\"acc\",id); if(this.displayItem == null) { this.displayItem = new AccessoryDummyIcon(); ... } }",
-  "text": "The item-icon art is NOT all paperdoll parts: consumables and quest items render from an 'item<art>' symbol namespace and accessories from an 'acc<art>' namespace, neither of which exists on the character rig - 187 of 982 itemdata rows need icon art the paperdoll cannot supply.",
   "verdict": "HELD"
  }
 ]

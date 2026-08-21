@@ -1,5 +1,67 @@
 [
  {
+  "artifact_class": "A1",
+  "cite": "reference/frames/Nr4fQstqHDM/seg-29/frames/frame_0015.jpg (whole frame x3 LANCZOS) and frame_0019.jpg",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/rank-ladder-a1-confirmed",
+  "lane_impact": "L0 meta-social -- the 11-rank ladder moves from decompile-only to frame-confirmed, and flags a trap in ui_strings.txt that a text-only pass would have copied.",
+  "overturns_ledger": false,
+  "quote": "frame_0015 bottom-left: 'ALLEGIANCE: CLAN AKA RYU / RANK: RECRUIT (3 MOVES A TURN) / MOVES MADE: 0/36', bottom-right '3 MOVE(S) LEFT'; frame_0019 bottom-right 'NEXT TURN IN 59:58'. Matches getWarRank rank 0 = string 330 'recruit', getMaxWarMoves(0) = 3, the 12*3 = 36 threshold, and WARMOVEINTERVAL = 60*60. Note the WEB authoring placeholder reference/extracted/ui_strings.txt:215 reads 'allegiance: AKA RYU clanrank: soldier (3 moves a turn)moves made: 15/60' -- THE FRAME WINS: shipped v0.717 renders 'recruit' and '/36', so the placeholder's 'soldier' and '/60' must not be ported.",
+  "text": "The rank ladder, its first threshold and the one-hour turn are all rendered by the live v0.717 client, upgrading the survey's A2-only rank claim to A1.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/map_analysis/zFtCaTO0_1M_map_006_t272s.jpg \u2026 _015_t649s.jpg (10 frames, 512x288) \u2014 contact sheet built and read at 256x144 per cell",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/second-longplay-never-swept",
+  "lane_impact": "L0 meta-social \u2014 the STILL_UNHELD on the 6x6 board stands over both videos now, but the 240-frame broad_survey/ set is still unswept and is the real close-path for a board frame.",
+  "overturns_ledger": false,
+  "quote": "Visible across the 10 cells: skills panel with 'CRITICAL EDGE' and available skill points, mining with a pickaxe NPC, 'RARE CROPS COLLECTION' harvest UI, vegetable patch, dialogue with TAKAMASU. No hex board, no war-room map. reference/videos/ holds Nr4fQstqHDM.mp4 AND zFtCaTO0_1M.mp4; only the former was swept.",
+  "text": "The war-room board search covered only one of the two longplays the project invariant names as primary reference; the second video's map frames exist and were never opened by this lane.",
+  "verdict": "STILL_UNHELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/WarSelectUI.as:381-395 + TerritoryData.as:694-709 + WarHexUI.as:1075-1090",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/side-to-clan-bound-in-code",
+  "lane_impact": "L0 meta-social + L-art -- the mapping is now A2-direct, but a clan-coloured render must choose which palette to reproduce: the bright territory-map hues or the darker hex-UI hues.",
+  "overturns_ledger": false,
+  "quote": "WarSelectUI.as:381 `if(side == 1){ sidename = LangManager.getString(275); }` ... `else if(side == 4){ sidename = LangManager.getString(278); }` \u00b7 TerritoryData.as:696/700/704/708 pair townSide 1-4 with `#FF0000` / `#00FF00` / `#00FFFF` / `#FFFF00` \u00b7 WarHexUI.as:1077-1089 uses 16711680 / 39168 (0x009900) / 26367 (0x0066FF) / 16776960 for the same four sides",
+  "text": "The side-number to clan-name binding is explicit in code, not an inference from colour semantics -- and the two war UIs use different hues for the same sides.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/WarSelectUI.as:379-396",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/side-to-clan-direct-binding",
+  "lane_impact": "L0 meta-social \u2014 upgrades the clan-to-side binding from inference to artifact, and `clanemblem.gotoAndStop(side)` says the four heraldry emblems are frames 1-4 of one MovieClip, which is what the ledger's 'heraldry' Ready bullet actually needs.",
+  "overturns_ledger": false,
+  "quote": "`this.clanemblem.gotoAndStop(side);` ... `if(side == 1){ sidename = LangManager.getString(275); } else if(side == 2){ sidename = LangManager.getString(276); } else if(side == 3){ sidename = LangManager.getString(277); } else if(side == 4){ sidename = LangManager.getString(278); }` \u2014 strings 275-278 = Clan Aka Ryu / Midori Ken / Aoi Hoiru / Ki Sensu.",
+  "text": "There is a direct payload switch binding war side numbers to clan names, so the clan-to-side mapping does not need to be inferred from the Japanese colour words at all.",
+  "verdict": "HELD"
+ },
+ {
   "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android/scripts/PlayerPanel.as:424-438 and InteractUI.as:362-380",
   "citelint": {
@@ -692,65 +754,5 @@
   "quote": "\u00a71t29s0\u00a7.as:30  public static const \u00a71t12498s0\u00a7:Array = [0,300,900,2100,4800,10200,21000,42600,85800,172200,345000];\n\u00a71t29s0\u00a7.as:336-347  if(param1 == \u00a71t24s0\u00a7.\u00a71t8755s0\u00a7) { if(_loc2_ == \u00a71t1523s0\u00a7.\u00a71t9470s0\u00a7) { return 1; } return (_loc3_ - \u00a71t5923s0\u00a7[_loc2_ - 1]) / \u00a71t5923s0\u00a7[_loc2_]; } if(_loc2_ == 5) { return 1; } return (_loc3_ - \u00a71t12498s0\u00a7[_loc2_]) / \u00a71t12498s0\u00a7[_loc2_ + 1];\n\u00a71t24s0\u00a7.as:28 public static const \u00a71t8754s0\u00a7:int = 7;  (seven bar slots; slot 0 = STAT_XP, slots 1-5 fed from \u00a71t12498s0\u00a7 at \u00a71t24s0\u00a7.as:1124-1128)\ngrep -rn \"300,900,2100\" reference/decompiled/shs3_android/scripts/  ->  no match",
   "text": "A second literal progression curve exists in the web payload only \u2014 an 11-entry array [0,300,900,2100,4800,10200,21000,42600,85800,172200,345000] driving five parallel non-character tracks in the same XP-bar widget, capped at level 5, and absent from the Android build entirely.",
   "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:2132-2139",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/setlevel-console-confirms-xp-indexing",
-  "lane_impact": "L4: independently confirms the expArray indexing convention (expArray[N-1] is the cap you must cross to BECOME level N, i.e. expArray[L] is the cumulative cap to FINISH level L) \u2014 the exact convention src/core/xp.ts already implements. Also resolves the unlabeled '\u00a71t9713s0\u00a7(9,param1)' in the web changeXP at \u00a71t1523s0\u00a7.as:2036 as stat 9 = raw XP. Cross-lane: this is a live debug console (/setlevel, /changestat, loot spawners) that may be reachable in the shipped build \u2014 relevant to L11 meta-social.",
-  "overturns_ledger": false,
-  "quote": "if(strArray[0] == \"/setlevel\")\n{\n   if(strArray.length == 2)\n   {\n      StatsManager.setStat(9,StatsManager.expArray[int(strArray[1]) - 1] - 1);\n      StatsManager.changeXP(1);\n   }\n   ...",
-  "text": "A shipped dev console command proves stat id 9 is the raw cumulative XP total and that expArray is indexed directly by character level.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A4",
-  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md \u00a7c-2 (reach-per-stance table, method 'distance from the player's body to the far end of the drawn stroke, counting only strokes whose near end starts within 30 px', n=17 Balanced) combined with reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2346-2347",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/slash-length-settles-balanced-reach",
-  "lane_impact": "L1 combat-core blocker \u2460 : the cross-lane gift is no longer just a lead \u2014 it is frame-corroborated at the one stance/level where a measurement exists. STANCE_TABLE's Balanced entry should become 124 at SPD 1 and track 120 + 90\u00b7spd/(20+spd), not the wiki's 200. Corroborated by strings.json 6005 (Heavy: 'slash range is shorter'), matching measured Heavy 97\u2013103 < Balanced 116\u2013131. CARRY THIS CAVEAT: \u00a7S24-H's re-run REFUTED the older 775 px / '\u2248413 stage px' reading at COMBAT_MEASUREMENTS.md:221 ('No normal-anatomy stroke >280 px anywhere re-checked; the 775 refutation REPRODUCED') \u2014 reconcile against the \u00a7S24-H-corrected figures, never :221. Left PARTIAL because Light/Heavy multipliers and the stage-px unit domain are still unverified.",
-  "overturns_ledger": false,
-  "quote": "\u00a7c-2: '| **Balanced** | 116\u2013131 | **131** | 17 | 200 | \u274c **NOT CONFIRMED** \u2014 measured 131 |' and 'The Balanced gap cannot be resolved from this footage. The *only* Balanced combat in either video is the level-1 tutorial fight'. Payload \u00a71t1523s0\u00a7.as:2346-2347: 'var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' \u2192 at SPD 1, Dan 0: 120 + floor(90/21) = 124.",
-  "text": "The SPD slash-length formula reconciles with a frame measurement the combat lane declared unresolvable: at SPD 1 it returns 124 stage px, landing inside the frame-measured level-1 Balanced plateau of 116\u2013131 \u2014 so Balanced \u2248 \u00d71.0 base, and the wiki's Balanced 200 is refuted.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3450-3457",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/spent-points-audit-second-witness",
-  "lane_impact": "L4: raises the per-point table (HP+10/Chi+5/AP+5/ATK,DEF,SPD+3) and the start pools (10/10/30/1/1/1) from single-witness to triple-witness \u2014 the click handlers, this audit, and the frame budget arithmetic all agree, all within the WEB payload. Ready to land in config as CONTRACT.",
-  "overturns_ledger": false,
-  "quote": "_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9403s0\u00a7) - 10) / 10;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9406s0\u00a7) - 10) / 5;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9415s0\u00a7) - 30) / 5;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9408s0\u00a7) - 1) / 3;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9409s0\u00a7) - 1) / 3;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9410s0\u00a7) - 1) / 3;\n_loc1_ += \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9419s0\u00a7);",
-  "text": "A second, structurally independent WEB witness for both the start pools and the per-point magnitudes: a spent-points audit whose divisors are the magnitudes and whose subtrahends are the start pools.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A4",
-  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md:203 \u00a7H-1 (tagged MEASURED, carries its own frame cite 'A t\u2248152 PLAYER screen, re-read at full resolution') and docs/research/video-study/segments/A-02-dojo-tutorial-3-stances-chi-punch-on-dum.md:25",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/start-pools-third-frame",
-  "lane_impact": "L4: \u00a7H-1 is at level 2 with all 3 points UNSPENT, so its ATK 1 / DEF 1 / SPD 1 / Chi 10 / AP 30 ARE the unAssignStatPoints() literals \u2014 the unit's added start values are frame-confirmed, not payload-only. A-02:25's INFERRED flag on the point-to-stat ratio is now closed twice over (payload + my L3\u2192L4 delta). Four independent confirmations of +3 now exist: A-02, \u00a7H-1, the L3 absolute fit, and the L3\u2192L4 delta.",
-  "overturns_ledger": false,
-  "quote": "\u00a7H-1: 'Early player pools + stats (PLAYER screen, level 2) | HP green \u00b7 Chi 10/10 \u00b7 AP 30/30; ATK 1 \u00b7 DEF 1 (+2) \u00b7 SPD 1; weight 14/100; available stat points 3'. A-02:25: 'Observed progression: ATK 4\u21927, DEF 4+2\u21927+2 ..., SPD 1\u21924, spending the 3 stat points ... total distributed points = (7-4)+(7-4)+(4-1)=3+3+3=9, inconsistent with \"3 points\" label \u2014 likely +1 stat point grants +3 to the underlying stat ... treat exact point-to-stat ratio as INFERRED, needs frame-by-frame combat-panel replay to confirm'.",
-  "text": "A third, level-2 frame-backed reading independently confirms the virgin base stats including the ATK/DEF/SPD = 1 the unit added, and a fourth observation (A-02) had already inferred the +3-per-point ratio the payload now proves.",
-  "verdict": "HELD"
  }
 ]

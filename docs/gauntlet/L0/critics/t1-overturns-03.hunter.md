@@ -1,286 +1,255 @@
-# t1-overturns-03 — HUNTER LENS review (blind critic)
+# t1-overturns-03 — HUNTER LENS (blind critic, Lens 2)
 
-Packet: `docs/gauntlet/L0/worklist/t1-overturns-03.json` — **24 findings, 24 judged, 0 skipped.**
-Every verdict below carries an artifact I opened myself. Line numbers were re-derived with
-`sed -n 'Np'`, not trusted from the claim.
+Packet: `docs/gauntlet/L0/worklist/t1-overturns-03.json` — **24 claims, all `verdict: HELD`,
+all `overturns_ledger: true`.** 24 judged, 0 skipped.
 
-## Headline results
+I opened `docs/research/REBUILD_READINESS.md` in full (378 lines) and read every named
+`ledger_text` in its surrounding context before ruling on the overturn.
 
-1. **THE FRAME WINS, and it wins loudly.** `reference/frames/session11/gap-focus-trigger/t1747.000.png`
-   and `t2175.933.png`, cropped (240,1022)-(525,1052) and upscaled ×6 LANCZOS, show the third HUD bar
-   **100% white with "CRITICAL HIT" printed in dark caps across it**. I read the glyphs with my own eyes.
-   `docs/research/fidelity/session11-raw/crit-focus.txt:2` says "the OG has ... **NO Critical meter at
-   all**" and `:40` says "the bar never once reached full (max 67.7%)". **The measurement doc and the
-   frame disagree, and THE FRAME WINS.** SESSION-11's meter conclusion must be re-opened.
-2. **Two findings are materially WRONG and are refuted** (`bindata/reach-cap-recovered-per-stance`,
-   `bindata/slash-line-colours-exact`) — both because a correct android-v0.682 reading was pushed onto
-   the shipped web v0.717 build, or a colour constant was attached to the wrong drawing path.
-3. **13 of 22 claimed ledger overturns do not survive the overturn check.** Six name a "ledger sentence"
-   that does not exist anywhere in `docs/research/REBUILD_READINESS.md` (`| **combat-model** | …`,
-   `| **world-map** | 63x72 bitmap …`, `| **war-room** | board topology — BLOCKER |`, and three with
-   `ledger_text: null`). Others name a real sentence that survives the evidence.
-4. **New, unclaimed:** the **web v0.717 stage rect is 800×690**, not 800×480. All four web SWFs
-   (`shs3.swf`, `shs3preloader.swf`, `shs3_payload_decoded.swf`, `shs3_binarydata_9_decrypted.swf`)
-   declare `rect 0..16000 × 0..13800 twips = 800 × 690 px @ 24.0 fps`; only
-   `shs3_android_payload_decoded.swf` declares 800×480. `REBUILD_READINESS.md:118` and §3 item 12 assert
-   "native canvas is **800×480 (5:3)**" flatly. That is an ANDROID figure.
+**Headline.** The *evidence* in this packet is unusually good — 19 of 24 A2 quotes reproduced
+verbatim, and all four A1 pixel/frame claims held when I cropped and looked myself. The
+*overturns* are not. **Only 6 of 24 overturns survive.** The rest name a ledger sentence the
+evidence confirms, restates, or never touches. Four claims are additionally wrong on a stated
+fact and are refuted.
+
+- Refuted: **5** (`hit-lockout-decomposes-exactly`, `nameplate-is-per-entity-with-exact-hues`,
+  `weapon-part-hit-deals-zero`, `web-has-39-ai-cases-not-38`, `HUNT-player-screen-stat-contract`)
+- Overturn upheld: **6 of 24** (0, 7, 8, 9, 10, 12, 14 — see table; 14 overturns a *memory* line, not a ledger line)
+- Overturn refuted as inflated: **18**
 
 ---
 
-## Verdicts
+## THE FRAME WINS — two adjudications, said out loud
 
-### 0. `bindata/place-name-table-is-dead-data` — HELD · overturn NOT upheld
-I opened `reference/extracted/android/110_Mobile_MapBitmapData.bin`: it is a **63×72 GIF89a** with
-exactly **735 non-black pixels**. Applying the verified transform (`QuestEngine.as:522-526`,
-`WorldMapUI.as:15,17,19`) gives territoryx ∈ **[329,389]**, and `territoryx % 137` ∈ **[55,115]** —
-never < 26 on any of the 735. `NameGenerator.as:147-153` and `:162-165` are verbatim as quoted;
-`namestarting` = **78**, `nameending` = **37** (counted from the array literals at `:40` and `:42`),
-and the web twin `§1t136s0§.as:§1t1828s0§/§1t1829s0§` = 78/37 as well, with the same `%137` gate at
-`:154-160`. `98_1t4653s0.bin` has **677** records (`grep -c ""`; no trailing newline).
-**Every number in this finding reproduces exactly.** Overturn not upheld only because `ledger_text` is
-null and nothing in `REBUILD_READINESS.md` concerns place names — this overturns a sibling claim.
+**(1) `reference/extracted/ui_strings.txt:189` says `War room rules 1/6 (joining a battle)`.
+`reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0011.jpg` shows, on screen, in the shipped
+v0.717 client: `WAR ROOM RULES 1/7 (JOINING A BATTLE)`. THE FRAME WINS.**
+Corroborated at `frame_0012.jpg` = `3/7 (ATTACKING AND DEFENDING)` and `frame_0013.jpg` =
+`6/7 (BUILDING STRUCTURES)`. The android string table agrees with the doc, not the frame —
+`strings.json["369"]`..`["379"]` are `1/6`…`6/6`.
+Consequence: **`ui_strings.txt` is authored TextField *placeholder* text, not runtime copy.**
+Its own `:100 "physical dmg: 1234 - 1235"` is the tell. This is decisive for claim 21.
 
-### 1. `bindata/reach-cap-recovered-per-stance` — **REFUTED (material)** · overturn NOT upheld
-The cites are exact (`MCSPlayer.as:3019,3030,3041,3052-3055,3078-3081,3094`, `StatsManager.as:1915-1918`,
-`EnemyPlayer.as:757`, `InputManager.as:51,106-108,198`, `§1t1523s0§.as:2347`). The **conclusion is wrong
-for the shipped build.** Web v0.717 `§1t99s0§.as` gives:
-`:3094 LIGHT ×1.4` · `:3105 BALANCED ×(1+0.2·M·0.1)` · `:3116 HEAVY ×(0.5+0.4·M·0.1)` floor 100 ·
-`:3131 REVERSED ×1.4` · `:3142 DUAL ×1.0` floor 100.
-The finding asserts LIGHT ×1.5 and REVERSED ×1.5 and a `·0.01` mastery form — those are **android
-v0.682 only** — and then states "Web-verified, so the S0 build-parity caveat does not apply." Its only
-web cite is the *base-length* formula, not the multipliers. It also says heavy "reaches parity only at
-100% heavy mastery", which is unreachable: mastery is a **ten-level** skill (`skilldata.xml`, verified
-under finding 19), and in v0.717 heavy tops out at ×0.9.
-
-### 2. `bindata/six-ledger-names-decompose` — HELD · overturn NOT upheld
-All ten line lookups reproduce byte-for-byte: `96:7 Hachisuka`, `96:10 Hojo`, `96:11 Honda`,
-`95:11 Inokuma`, `94:80 Kano`, `94:107 Kinkiyo`, `97:38 Gin`, `97:170 Niji`, `97:226 Shizuka`,
-`97:236 Taka`. Zabuza / Tengu / Hotaru: zero hits in 94–98. `NameGenerator.as:78-103` confirms three
-distinct generators (`getCommonerName` bare given-name, `getNobleName` = 95 + given, `getSamuraiName`
-= 96 + given), so the Inokuma→noble attribution is right. `SYNTHESIS.md:429` and
-`REBUILD_READINESS.md:221` are verbatim as quoted. **Overturn not upheld:** RR:221 says the *project's*
-boss table omits those names — still true after this finding.
-
-### 3. `bindata/slash-line-colours-exact` — **REFUTED (material)** · overturn NOT upheld
-The three hex values and the taper are exact (`InputManager.as:174` = 39168 = 0x009900, `:179` =
-10027008 = 0x990000, `:360` and `:472` taper, `:492` enemy line colour `0`; web `§1t1541s0§.as:174,179,
-361,477,499` identical). **The semantics are fabricated.** `greenLine()`/`redLine()` have exactly two
-callers in each build — `SkillUI.as:75` (on `reset()`) and `SkillUI.as:136` (when the gesture string
-== `"012"`), i.e. the **skill-gesture node grid**, never the slash path. The player's slash guide line
-is *unconditionally* 0x990000 with a distance taper. "Green when the slash is affordable" is not in the
-source. Overturn also fails on its own terms: `REBUILD_READINESS.md:126` lists "byte-exact palette" in
-the **Rebuild-ready-now** column, not as a blocker.
-
-### 4. `bindata/territory-to-bitmap-transform` — HELD (exceptionally) · overturn NOT upheld
-Verified against the bitmap itself. `(terrX+341)<<12 | (terrY+341)` with `terrX = i-21+8`,
-`terrY = j-51` collapses to `pixel_x = (id>>12 & 0xFFF) - 328`, `pixel_y = (id & 0xFFF) - 290` — my own
-decode of all 735 land pixels gives mapid range **[1347935, 1593647]** (claim: identical) and puts
-Ibamaya 1405272 → (15,54), Gokura 1524045 → (44,43), Iwakuni 1519945 → (43,39) — **all three land on
-land cells**, exactly as claimed. Only nit: y spans **[291,360]**, not [290,361]. Web has all three
-hardcoded towns (`§1t136s0§.as:140,144,148`); android has only two. **Overturn not upheld:**
-`| **world-map** | 63x72 bitmap … |` does not exist in `REBUILD_READINESS.md` (no "world-map" row, no
-"63x72", no "unreconciled"); the live neighbour is `world-exploration` (line 132) → "world map/geography".
-
-### 5. `bindata/trap-duty-cycle-domain-measured` — HELD · overturn NOT upheld
-I re-parsed `93_1t4647s0.bin` against its own schema comment (`:6-18`) and reproduce the domains
-**exactly**: onDuration {0,24,48}; offDuration {0,24,36,48,60,96,1000}; startInterval
-{0,6,8,12,16,18,24,30,32,36,42,48,54,64,72}; **gcd = 2**. Line cites `:451`, `:92-94`, `:99`, `:106`,
-`:198-206` are verbatim. I zlib-decompressed `reference/decrypted/shs3_payload_decoded.swf` and parsed
-the header myself: **CWS v17, rect [0,16000,0,13800], fps 24.0, 6 frames** — all four facts confirmed.
-Minor variance: I count **81** non-multiples of 24, not 75 (row-filter dependent); the point is unaffected.
-Overturn not upheld: `ledger_text` is null and `REBUILD_READINESS.md` contains no trap/duty-cycle sentence.
-
-### 6. `bindata/warhex-14-states-not-7` — HELD · overturn NOT upheld
-`WarHex.as:11` → `:37` carries exactly 14 `public static var HEX_*` constants with values
-0-9,11,12,13,15 (10 and 14 unused) — verified line by line. `WarHexUI.as:175` `this.ht = 6;`,
-`:176` `this.wt = 6;`, `:253` `hex.x = 90 + xpos * 55;`, `:254` `hex.y = 92 + ypos * 55;` — all exact.
-**Overturn not upheld:** there is no `| **war-room** | board topology — BLOCKER |` row in
-`REBUILD_READINESS.md`; the live neighbour is `meta-social` (line 131) → "map board".
-
-### 7. `combat-core/300-200-100-is-base-not-ceiling` — HELD as a PARTIAL lead · **overturn UPHELD**
-`InputManager.as:51` = 200 and the three mastery-0 multipliers are exact, and the finding honestly
-flags that v0.717 yields 280/200/100. `REBUILD_READINESS.md:155` — "reach 300/200/100 are MASTERY-9
-CEILING values, not base" — **falls**: Light's reach multiplier is mastery-INDEPENDENT in both builds
-(`§1t99s0§.as:3094`, `MCSPlayer.as:3030`), so 300 cannot be a mastery-9 ceiling, and Balanced/Heavy
-only *increase* with mastery, so 200/100 must be the mastery-0 row. Caveat recorded: 200 is
-`InputManager`'s compile-time initialiser, overwritten by `setStance` on every battle init
-(`§1t99s0§.as:3156-3158`), so it is not a gameplay "base"; the exact 300 reproduces only in android.
-
-### 8. `combat-core/36-was-not-a-crit` — HELD with a measured correction (minor) · overturn NOT upheld
-I opened `t1961.900.png`, crop (100,940)-(620,1080) ×3: **HP 10/20 green, Chi 20/20 blue, third bar an
-empty brown track reading "CANNOT CHANGE STANCE"** — exactly as claimed, so that red 36 cannot have
-been a crit (crit requires `reload == maxreload`, `§1t99s0§.as:3272`). **But the quoted evidence is
-wrong:** "bar_px = 0 (0%) on all 18 frames" fails on two of them. `t1958.967.png` shows a white run
-x **251–333** (≈83/268 px ≈ 31%) and `t1970.333.png` x **251–318** (≈68/268 ≈ 25%). The inference
-survives (31% ≠ full); the stated measurement does not. **Overturn not upheld:** the named sentence
-(`session11-raw/damage-ttk.txt:12`, echoed at `COMBAT_MEASUREMENTS.md:642`) ends "…**so it is an
-inference, not a measurement**" — the ledger already concedes exactly this, and `36/27 = 1.333` is
-still arithmetically true.
-
-### 9. `combat-core/basereload-is-dead-code` — HELD with a correction (minor) · no ledger overturn claimed
-Confirmed where it matters: `MCSPlayer.as:239` `this.maxreload = 5 * 24;` (a constant, not derived from
-`baseReload`) and `:1158-1160` `if(this.reload < this.maxreload) { ++this.reload; }` — refill is a flat
-+1/frame, SPD-independent. Web twin at `§1t99s0§.as:1203-1205`. **Correction:** "[no read site anywhere
-in 2,700+ classes]" is literally false — `EnemyClone.as:49` `this.baseReload = owner.baseReload;` reads
-it (propagation only, still never consumed). `48 + SPD*6` is computed at `EnemyPlayer.as:754`,
-`EnemyElite.as:99`, `FriendlyElite.as:49` and web `§1t1523s0§.as:2276`, and dies there.
-
-### 10. `combat-core/crit-is-1.3-gated-on-full-slash-meter` — HELD · **overturn UPHELD**
-`§1t99s0§.as:3272-3276` verbatim: `if(reload == maxreload) return dmg * 1.3 + STAT_CRITICALDMG;`.
-Meter identification exact: `:3162` `reload -= 48` on stance change; `:3295` `if(reload == maxreload)
-reload = 0;`; `:3302/3306/3310` `-slashUsage/2` (Light) · `-slashUsage` (Balanced, Reversed) ·
-`-slashUsage*1.5` (Heavy, Dual). Android divergence at `MCSPlayer.as:3215-3222` (×1.2 / ×1.5 Light) is
-real and correctly flagged. `REBUILD_READINESS.md:190 ②` ("crit 1.3 vs 3 final — *read one crit popup*")
-falls: the answer is in the shipped source and needs no popup. Note the ledger already carried
-"crit 1.3×" as READY at line 189, so the real delta is the **gate**, not the multiplier.
-
-### 11. `combat-core/crit-is-flat-1.3` — HELD, minor cite slip · **overturn UPHELD**
-The 1.3 lives at `§1t99s0§.as:3274`; the cited range `3271-3273` stops one line short (it brackets the
-`if` at 3272 but not the return). The second cite carries the claim on its own and is **exact**:
-`§1t5957s0§.as:2727 / :2736 / :2745` each set the displayed crit multiplier to **1.3** for Light,
-Balanced and Heavy respectively — an independent, stance-by-stance confirmation from the stats UI.
-
-### 12. `combat-core/crit-meter-is-6-seconds` — HELD · **overturn UPHELD**
-`§1t99s0§.as:249` `maxreload = 8 * 24` (=192); `§1t113s0§.as:328` `(param1 - 48) / (param2 - 48)` →
-144 ticks of visible travel = **6.000 s at 24.0 fps** (header-verified); `§1t99s0§.as:3060`
-`if(reload < 48) return;` is the stance gate, and `§1t113s0§.as:336-341` prints the caption exactly
-when the displayed fraction is 0 — so "CANNOT CHANGE STANCE" at displayed 0% is a source-level fact.
-I re-measured the frames myself: `crit-focus/t1081.100` edge **258** → `t1082.100` edge **303** = 45 px
-in 1.000 s; `t1004.800` **281** → `t1005.000` **290** = 9 px in 0.200 s. Both = 45.0 px/s. Blocker ⑤
-falls (it is source-recoverable, no footage needed).
-
-### 13. `combat-core/crit-track-268px-six-seconds` — HELD · **overturn NOT upheld**
-Every number reproduces. My own scan of `t2175.933.png` rows 1036/1040 gives the track **x 246…512**
-(268 px). `focusbar_scan2_videoB_fps15.tsv` rows: edge **247 @ t2170.0000** → edge **512 @ t2176.0000**
-= **6.000 s** — exact. Rate `t1082.100`→`t1082.900`: I read edges 303→**340** (37 px / 0.8 s = 46.3),
-one px off the claimed 339/36/45.0; immaterial. **The overturn is inflated.** The sentence it names —
-"Measured on frames, the web build's crit meter fills at ~17.3%/s (≈5.8 s end to end)" — appears
-**nowhere** in the repo outside the gauntlet worklist (`grep -rn --exclude-dir=gauntlet "17.3%/s" docs/`
-and `"5.8 s"` both return nothing). The standing measurement already says **6.00 s / 16.67 %/s**
-(`session11-raw/crit-focus.txt:20`, `COMBAT_MEASUREMENTS.md:621`) and the track already measured
-269-270 px, not "measured on an empty bar". This finding **confirms** the ledger; it does not overturn it.
-
-### 14. `combat-core/dual-reversed-reach-inverted` — HELD · overturn NOT upheld
-`§1t99s0§.as:3131` REVERSED (`§1t12224s0§` = 4) `= base * 1.4`, no floor; `:3142` DUAL
-(`§1t12223s0§` = 3) `= base`, floored at 100 (`:3143-3145`). Constants at `:26,28,30,32,34`; the quote
-labels them 33/35, which are the **android** line numbers (`MCSPlayer.as:33` DUAL=3, `:35` REVERSED=4) —
-both files are inside the cited `:27-35` range, so this is not a mis-cite. **Overturn not upheld:**
-blocker ① asks for the reach cap *in stage px*; this fixes a Reversed/Dual swap and does not itself
-supply the base-length formula that sets the scale. ① does die — on findings 1/16's chain, not this one.
-
-### 15. `combat-core/early-mob-hp-distribution` — HELD · **overturn UPHELD**
-My own parse of `npcdata.xml`: 495 `<npc>`, **22** with lvl ≤ 2, HP histogram **{1:×17, 2:×1, 5:×4}**,
-and ids **7, 8, 9, 10** all `<hp>5</hp><defense>3</defense>` — identical to the claim. id 6 at
-`:146-152` is `lvl 2 / hp 1 / attack 5 / defense 3`. The damage law is confirmed:
-`MCSPlayer.as:3415-3418` `damage -= getDefense(); if(damage < damageObj.getMinDamage()) damage =
-damageObj.getMinDamage();` and `Damage.as:150-162` returns `1 + piercingDamage` for attackerlvl ≤ 10.
-Starter weapon = item **13002** "Branch" (`strings.json["4041"]`), mindamage 1 / maxdamage 2 — so 5 HP
-takes 5 strokes. `REBUILD_READINESS.md:190 ③` closes from payload, no video read needed.
-
-### 16. `combat-core/formula-resolves-c2-balanced-gap` — HELD · **overturn NOT upheld**
-The c-2 quotes are verbatim (`COMBAT_MEASUREMENTS.md:396-398` table rows, `:403` warning). The arithmetic checks:
-base(SPD 1, dan 0) = 120 + floor(90·1/21) = **124**, inside the measured 116–131 Balanced band; Heavy =
-max(124 × 0.5, 100) = **100**, on the measured 97–103 plateau — the clamp at `§1t99s0§.as:3117-3119`,
-not a mastery ceiling. **But the named sentence survives.** "⚠️ The Balanced gap cannot be resolved
-**from this footage**" is a claim about the footage's evidentiary limits, and this finding resolves it
-from *source*. Read in context (`:403-409`) the sentence is a method warning worth keeping. What should
-actually be rewritten is the c-2 verdict cell ("Balanced ❌ NOT CONFIRMED") and c-0 ("mastery-9
-CEILINGS") — different sentences.
-
-### 17. `combat-core/full-reload-crit-is-1p3-in-v0717` — HELD · **overturn UPHELD**
-`§1t99s0§.as:3272-3276` verbatim. Symbol resolution verified end to end: `§1t1523s0§.as:2269` passes
-`§1t7358s0§(§1t1243s0§)` as param6 of `§1t4445s0§`, and `§1t99s0§.as:271-278` binds param6 to
-`this.§1t1243s0§` — the android twin `MCSPlayer.as:249-256` names that same param6 **STAT_CRITICALDMG**.
-`:3162` and `:3169` confirm `§1t4414s0§`/`§1t4415s0§` = reload/maxreload. Android v0.682 split
-(`MCSPlayer.as:3215-3221`) correctly excluded from the shipped claim.
-
-### 18. `combat-core/injured-buff-halves-reach` — HELD, and I extend it · overturn NOT upheld
-`MCSPlayer.as:214-223` is verbatim. **The cite is android-only but the fact is not:** the web build
-carries the identical branch at `§1t99s0§.as:221-223`, where `:223` is `this.§1t4420s0§ *= 0.5;` and
-`§1t4420s0§` is baseSlashLength (param10 of `§1t4443s0§`, bound at `:194`). So this holds in v0.717 too.
-**Overturn not upheld:** blocker ① asks for the reach cap per stance; a status-effect modifier on the
-base does not supply it.
-
-### 19. `combat-core/mastery-caps-at-ten` — HELD · **overturn UPHELD**
-`§1t99s0§.as:3255-3271` verbatim: Light `×(0.5+0.4·M·0.1)`, Balanced `×(1+0.2·M·0.1)`,
-Heavy/Dual/Reversed `×1.4`. My own parse of `skilldata.xml`: skills 1000 (lines 3-80), 1001 (81-159),
-1002 (160-238) each carry **exactly ten** `<level>` blocks with `<value>` 1…10. At M = 10 the three
-multipliers are **0.9 / 1.2 / 1.4** — the wiki table, reproduced to the digit. `REBUILD_READINESS.md:155`
-says **MASTERY-9**; the ceiling is mastery-**10**, so the sentence is false as written. Its next clause
-("a level-1 Shugyosha does Light ×0.5 / Balanced ×1.0 / Heavy ×1.4") is *confirmed* as the mastery-0 row.
-
-### 20. `combat-core/mastery-is-ten-level-skill` — HELD · **overturn UPHELD**
-`MCSPlayer.as:3174/3175/3176` (canFlipUp ≥3, canDeflect ≥4, canLaunch ≥5 on `balancedMastery`) and
-`:3182/3183/3184` (heavy: canLaunch ≥3, canDeflect ≥4, canStab ≥5) are exact; web twins at
-`§1t99s0§.as:3231-3233` and `:3239-3241` are exact. Ten-level ladder confirmed as above. The citelint
-`QUOTE_UNVERIFIED` is caused by an inline annotation (`// strings.json 6000 = 'Light Stance Mastery'`)
-parked on a `balancedMastery` line — sloppy placement, but the lookup itself is right
-(`strings.json["6000"]` = "Light Stance Mastery" = skill 1000's `<displayname>`).
-
-### 21. `combat-core/popup-animation-and-black-variant` — HELD · **overturn UPHELD**
-I built the five-tile sheet at crop (780,480)-(1180,680) ×2 and looked at it: a dark-red **"1"** above
-the left enemy at t125.350, higher and larger at .417/.450; at t125.467 a fresh dark-red **"2"** *and a
-BLACK "2"* over the GUEST/JINBEI pair; both much larger and higher at t125.733. Exactly as described.
-`TextProjectile.as:20` `ttl = 12;`, `:23` `this.velY = -5;`, `:39-45` `if(ttl < 10) { scaleX += 0.1;
-scaleY += 0.1; if(ttl < 4) { alpha -= 0.25; } }` — 12 ticks at 24 fps = 0.5 s, 60-unit rise, ≈1.9×
-final scale. Note the cite range `:17-25` covers ttl/velY only; the scale/alpha half of the quote is at
-`:39-45` — an under-cite, not a mis-cite. `REBUILD_READINESS.md:235 ③` falls.
-
-### 22. `combat-core/popup-colour-is-a-semantic` — HELD (strongest A1 in the packet) · overturn NOT upheld
-I reproduced **both** stated pixel modes. `t1960.000.png` crop (680,480)-(1000,760) ×3 shows a grey
-**"2"** fading directly above the player tagged **GUEST** (yellow name plate); the glyph's modal pixels
-are **(140-149, 156-160, 180-185)** — no red dominance, a black glyph alpha-fading over sky.
-`t1961.900.png` crop (470,580)-(680,700) ×5 shows a red **"36"** over **JINBEI (4)**'s half-empty HP
-bar, core modal **(163, 14, 0)** — the claim's exact triple. Source agrees:
-`MCSPlayer.as:3542` colour `0` when `controlledBy == 0` (the victim is the player), `:3546` colour
-`10027008` otherwise; element colours at `:3551/3555/3559/3563` = 16737792 / 13421772 / 26367 / 6697728;
-chi at `:1633` = 3394815; seppuku uses colour 0 at `:709` and `:724`. All line numbers exact.
-**Overturn not upheld:** the `ledger_text` is another agent's claim sentence ("damage popups spawn at
-(mcs.x, mcs.y-100) in 0x990000 …"), not a `REBUILD_READINESS.md` sentence — `grep` for `mcs.y - 100`
-outside `docs/gauntlet` returns nothing. The live sentence this bears on is RR:235 ③.
-
-### 23. `combat-core/raw-frames-show-full-crit-meter` — HELD · **overturn UPHELD**
-`t1746.733.png`, crop (240,1022)-(525,1052) ×6: the third bar is **solid white, unbroken, no text**, to
-a thin brown sliver at the right end (white run x 245–508 of a 245–513 track). `t1747.000.png`, same
-crop, 0.267 s later: **100% white with "CRITICAL HIT" in dark caps** — I read the letters. The wide HUD
-crop confirms **HP 11/20 green, Chi 47/47 blue** on both, with a "150% DAMAGE" buff below.
-`t2175.933.png` is a third instance (HP 4/20, Chi 47/47). `session11-raw/crit-focus.txt:2` — "the OG
-has ... NO Critical meter at all" — and `:40` — "the bar never once reached full (max 67.7%)" — both
-**fall**. Standing invariant invoked: **the measurement doc and the frame disagree; THE FRAME WINS.**
-(The target sentence lives in the session-11 fidelity ledger, not `REBUILD_READINESS.md` — fix it there.)
+**(2) `strings.json["843"]/["844"]` read `Every 10 / 30 consecutive days: …`.
+`reference/frames/Nr4fQstqHDM/seg-00/frames/frame_0001.jpg` reads
+`AFTER EVERY 10 CONSECUTIVE DAYS: BONUS PRIZE!`. THE FRAME WINS** — claim 23's own point, and
+I confirmed it with my own eyes (crop `(0,330)-(1024,576)` @2.2× LANCZOS).
 
 ---
 
-## New findings (unclaimed by anyone)
+## Verdict table
 
-**NF-1 — the web stage is 800×690, not 800×480.** Parsed headers of every SWF in `reference/`:
-`shs3.swf`, `shs3preloader.swf`, `shs3_payload_decoded.swf`, `shs3_binarydata_9_decrypted.swf` all
-declare `rect [0,16000,0,13800]` twips = **800×690 px @ 24.0 fps**. Only
-`shs3_android_payload_decoded.swf` declares **800×480**. `REBUILD_READINESS.md:118` and §3 item 12
-state "native canvas is **800×480 (5:3)**" without qualification — that is the android figure.
-`ui-hud` blocker ① ("aspect-ratio truth … read `stage.stageWidth` in a build") is answerable from bytes.
+| # | id | refuted | overturn upheld | why |
+|---|---|---|---|---|
+| 0 | enemies-ai/flinch-state-exists | no | **YES** (scoped) | verbatim at NPC.as:747-764; anim `d="8"` = 8 `<f>` children. Kills the *stagger* half of blocker ③; telegraph/active/recovery survives |
+| 1 | enemies-ai/gothitcounter-is-iframes | no | no | text true (canHit() called only from NPCManager, 11 sites). Its `lane_impact` "no hit-reaction at all" is **refuted** by NPC.as:747 + MCSPlayer.as:4433. It *confirms* blocker ③, cannot overturn it |
+| 2 | enemies-ai/hit-lockout-decomposes-exactly | **YES** | no | 12 = 4 + 8 is numerology across three unit spaces; flinch is per-class (`zom_stumble d="39"`) |
+| 3 | enemies-ai/nameplate-colour-is-five-valued | no | no | all 5 literals verified; `nameplate (N)=level` is **confirmed** by EnemyPlayer.as:776, not falsified |
+| 4 | enemies-ai/nameplate-colour-table | no | no | I reproduced the exact pixels. Same: confirms `(N)=level` |
+| 5 | enemies-ai/nameplate-is-a-spawner-split… | no | no | Obj_NPCAggro.as:73/76/80 verified; frame shows red plates + zero health bars. Same overturn problem |
+| 6 | enemies-ai/nameplate-is-per-entity… | **YES** | no | "only bosses and duelists get one" is false game-wide |
+| 7 | enemies-ai/setlevel-has-11-overrides | no | **YES** | `grep -l` → exactly 11, list exact. Blocker ① "absent" dies |
+| 8 | enemies-ai/setlevel-is-eleven-formulas | no | **YES** | every quote verbatim; npc 77 name id 5071 = "Oni" |
+| 9 | enemies-ai/setlevel-is-twelve-formulas | no | **YES** | `13 + lvldiff` found (KanjiGuardian.as:65 `5 + 8 + lvldiff`); ai 9 = 73 rows = largest = EnemyPlayer |
+| 10 | enemies-ai/tengu-absent-from-resolved-strings | no | **YES** | I extended the sweep to 8 more source families — 0 everywhere |
+| 11 | enemies-ai/weapon-part-hit-deals-zero | **YES** | no | "the game's only block-like mechanic" is false (EnemyShield.as:335-340); "in no ledger bullet" false (:189) |
+| 12 | enemies-ai/web-arrow-dual-gravity | no | **YES** (scoped) | fully verified in both builds. Arrow-arc half of ⑤ dies; undead-reflect half survives |
+| 13 | enemies-ai/web-has-39-ai-cases-not-38 | **YES** | no | android is 38/**35**, not 38/34 ⇒ web carries **one** extra class, not two |
+| 14 | frames/HUNT-39-hardcoded-tips-in-GameEngine | no | **YES** | 39 tips confirmed; Tip #27 = `dice == 26` = hold-run at :640. ⚠ android-only |
+| 15 | frames/HUNT-combat-corpus-never-opened | no | n/a (`ledger_text: None`) | 2,675 / 7,381 is **exact**; A1 content verified by eye |
+| 16 | frames/HUNT-gold-to-resource-exchange-rate | no | no | frame verified; an absent AP line in a prompt does not falsify `stable 14c+5AP` |
+| 17 | frames/HUNT-player-screen-stat-contract | **YES** | no | "Weight appears nowhere in any of the twelve ledger systems" is false — :209 and :107 |
+| 18 | frames/HUNT-rebirth-picker-recoverable… | no | no | every id resolves; but blocker ⑤ says "never filmed" and the finding **agrees** |
+| 19 | frames/HUNT-repair-cost-is-runtime-parameterised | no | no | `Cost: [0] coins` verified. Named sentence stays true; it should have named **:80** |
+| 20 | frames/HUNT-stance-triangle-and-ring-colours | no | n/a (`ledger_text: None`) | strings + rings verified by eye. 2 of 3 headline items already at :169 and :74 |
+| 21 | frames/HUNT-ui-strings-txt-is-unmined | no | n/a (`ledger_text: None`) | all 10 lines verbatim — but the file is **placeholder text** (see adjudication 1) |
+| 22 | frames/HUNT-war-tick-is-24-hours | no | no | A2 sound; **frame leg mis-cited**; ledger already says "the War-Room 24h tick" at :116 and "24h resolution" at :244 |
+| 23 | frames/v0717-rewords-the-daily-streak-ladder | no | no | verified by eye — and it **upholds** the S0-3 caveat it claims to overturn |
 
-**NF-2 — v0.717 and v0.682 disagree on BOTH stance tables.** Reach: web Light ×1.4 / Reversed ×1.4 vs
-android ×1.5 / ×1.5, and the mastery term is `·M·0.1` (web) vs `·M·0.01` (android). Damage: web
-`0.5+0.4M·0.1 / 1+0.2M·0.1 / 1.4` vs android `0.5+0.5M·0.01 / 1+0.5M·0.01 / 1.5`. With a 0-10 mastery
-ladder the android form barely scales at all. **Any stance number sourced from `MCSPlayer.as` is
-v0.682 and must not be shipped as v0.717.**
+---
 
-**NF-3 — the meter constants split too, and the frames pick the web one.** Web `maxreload = 8*24 = 192`
-with display `(reload-48)/(192-48)` → 144 ticks = **6.000 s**; android `maxreload = 5*24 = 120` with
-`(reload-24)/(120-24)` → 96 ticks = **4.000 s**. The frame-measured fill is 45.0 px/s over a 268 px
-track = **5.96–6.00 s**, so the footage independently selects the WEB constants. That is the cleanest
-cross-build parity datum in the repo and it is positive for v0.717.
+## The four false statements, with the artifact that kills each
 
-**NF-4 — the world map bitmap is in the repo and is byte-checkable.**
-`reference/extracted/android/110_Mobile_MapBitmapData.bin` is a 272-byte GIF89a, 63×72, with exactly
-**735 non-black pixels**. The "735 territories" figure is now measured, not inferred.
+**#2 `hit-lockout-decomposes-exactly` — REFUTED.**
+The claim sums three quantities in three different unit spaces and calls the coincidence a
+triangulation.
+- `gotHitCounter = 12` (NPC.as:462) is an **i-frame window**, not a lockout — proven by claim 1
+  in this same packet, which I verified: `canHit()` (NPC.as:296-299) is called from nowhere but
+  NPCManager's 11 hit-detection sites. A window that gates *being hit* cannot "decompose".
+- `MOTION_MEASUREMENTS.md:24`'s "4 upright + 8 bent-forward" is **video** frames
+  (`duel-strike-A: frames 036–047`), and the same table's line 18 fixes the pose latch at
+  **15 fps = one pose per 4 video frames**. `<anim d="8">` is 8 **animation** frames
+  (`MCSCharacter.updateAnimation` advances `frameCounter` by 1 per game tick against
+  `currentAnimationDuration`). Three units, summed.
+- Decisive: **the flinch clip is not universally 8 frames.** `EnemyZombie.as:285-286` routes
+  `FLINCH_STATE` to `ZOM_STUMBLE`, and
+  `reference/extracted/android/98_MCSCharacter_UndeadAnimationData.bin` holds
+  `<anim i="zom_stumble" d="39">`. 4 + 39 ≠ 12.
+- No code anywhere holds 4 frames before entering flinch — `doFlinch()` starts the anim on the
+  same tick as the hit.
 
-**NF-5 — `InputManager.maxDistance = 200` is not a gameplay base.** It is a compile-time initialiser,
-overwritten by `setStance` on every battle init (`§1t99s0§.as:3156-3158`, `MCSPlayer.as:3092-3094`).
-Any derivation of the wiki's 300/200/100 that treats 200 as "the shipped default slash budget" rests
-on a value the player never plays at.
+**#6 `nameplate-is-per-entity-with-exact-hues` — REFUTED.**
+"only bosses and duelists get one, everyone else is explicitly blanked" is true **inside
+`EnemyPlayer`** (its `else` branch at :806-811 does blank) and false everywhere else:
+`EnemyElite.as:114`, `EnemyKanjiGuardian.as:59`, `Obj_NPCAggro.as:76,80`,
+`Obj_NPCProcGen.as:51,60`, `FriendlyElite.as:64`, `FriendlyArcher.as:57`,
+`FriendlySpearElite.as:55` all set a display name unconditionally. And the frame settles it:
+`reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg` shows **three red `BANDIT (4)`
+plates on plain field mobs**. A builder following this claim would suppress plates that are
+visibly on screen. It is also internally inconsistent with claims 3/4/5 in its own packet.
 
-**NF-6 — two frames in the damage-ttk crit window are NOT empty.** `t1958.967.png` focus bar x251-333
-(≈31%) and `t1970.333.png` x251-318 (≈25%). Any future "the bar was zero all fight" statement about
-that window is wrong; the correct statement is "never full, so never a crit".
+**#11 `weapon-part-hit-deals-zero` — REFUTED on two stated facts.**
+The `EnemyZombie.as:502-505` quote is verbatim correct. But:
+- "the game's **only** block-like mechanic" is false. `EnemyShield.as:335-340`:
+  `case mcs.partList[MCSCharacter.PART_prop]: gotHitFlag = true; damage = 0; gotHitCounter = 24;
+  SoundManager.instance.playHitMetal(); return false;` — that is a *shield block*: zero damage,
+  a **doubled** 24-frame i-frame window (vs 12 everywhere else), and a metal-clang SFX. It also
+  answers the claim's own open question about a clang VFX — the clang exists, on the *prop* case.
+- "appears in no ledger bullet" is false: `REBUILD_READINESS.md:189` already lists
+  "part-based weak points (shielder legs, undead heads)" as combat-core **Ready**.
+- Under-claim, in its favour: the weapon whiff is not zombie-only — same block at
+  `EnemyOgre.as:333`, `EnemyJiangSi.as:294`, `EnemyNianMonster.as:374`,
+  `EnemyWolfAlpha.as:470`, `EnemyShield.as:331`, `CutsceneActor.as:303`.
+
+**#13 `web-has-39-ai-cases-not-38` — REFUTED on the delta.**
+Measured, not hand-counted:
+```
+WEB  §1t1543s0§.as:615-733    cases 39  unique classes 36
+AND  NPCManager.as:516-634    cases 38  unique classes 35  (32 Enemy* + 3 Friendly*)
+```
+The claim says android is "31 unique Enemy* + 3 Friendly* = 34" and concludes v0.717 carries
+"**two** more behaviour classes". It carries **one**. The web half (39/36) is exactly right.
+
+**#17 `HUNT-player-screen-stat-contract` — REFUTED on the novelty claim.**
+I read `zFtCaTO0_1M/seg-00/frames/frame_0051.jpg` at 1.9× and every number checks out
+(114 COINS · 3 GOLD · badge 2 · 787/1450 XP · AVAILABLE STAT POINTS: 3 · HP 10/10 · CHI 10/10 ·
+AP 30/30 with a bare `30` · ATK 1 · DEF `1 +2` · SPD 1 · ADD HP · WEIGHT: 14 / 100 · 9 doll slots).
+But "the ledger records nowhere" and "**Weight appears nowhere in any of the twelve ledger
+systems**" are both false:
+- `:209` items-equipment **Ready** — "9-slot paperdoll; … **weight cap 100**; … measured weight table"
+- `:107` — "the full measured weight table"
+- `:163` §3 item 6 — "AP is a real third on-screen resource (base 30, +1/point)"
+- `:199` progression **Ready** — "start pools (HP10/Chi10/AP30)"
+Genuinely new here: the **base-vs-bonus split rendered separately** (`DEF 1 +2`) and
+**HP/CHI regen as displayed stats** (`ui_strings.txt:314`). That is a much smaller claim.
+
+---
+
+## The inflated overturns (18) — what still stands after the evidence lands
+
+**`nameplate (N)=level` (:219) — claims 3, 4, 5, 6.** Four claims fire at a **Ready**-list bullet
+that says the parenthetical is the level. `EnemyPlayer.as:776`
+`mcs.setDisplayName(xml.name + " (" + level + ")",namecolor)` **confirms it verbatim**. Adding a
+five-value colour table is *extension*, not overturn. Everything the sentence claims survives.
+(The colour table itself is excellent and should land as new ledger content under ui-hud.)
+
+**`③ telegraph/active/recovery + stagger frames` (:220) — claim 1.** Claim 1's own `lane_impact`
+argues the blocker **stays open**. A claim that confirms a gap cannot overturn the sentence
+naming it.
+
+**`(5) rebirth/element-picker UI (never filmed…)` (:205) — claim 18.** The sentence is about
+*filming*. The claim opens by conceding "The rebirth/element picker is unfilmable". It agrees.
+What its evidence actually kills is rebirth-elements ① and ③ — a **different sentence**, two
+lines up.
+
+**`(3) Repair-Weapon cost (never captured)` (:215) — claim 19.** Literally true and stays true.
+The real casualty is **`:80` "Reinforce 5000c+1 silver ore"**, which `strings.json["850"]`/`["851"]`/
+`["852"]` split into a **three-material table** (Silver Ore / Titanium Ore / Uncut Diamond).
+That is the sentence this claim should have named — a good correction pointed at the wrong line.
+
+**`(3) real-world "day" length … war tick` (:225) — claim 22.** The ledger **already concedes the
+24 h war tick, twice**: `:116` "the War-Room **24h tick**" and `:244` meta-social **Ready** —
+"kill cap 350; flag +120%; **24h resolution**". The blocker's live half — what a "day" means for
+quest expiry, farming and AP regen — is untouched. Additionally the frame leg is **mis-cited**:
+`frame_0011/0012/0013` are pages **1/7, 3/7 and 6/7**, none of which carries the 24-hour line.
+
+**S0-3 android-parity caveat — claim 23.** The claim's own conclusion is "the android-parity hedge
+**stays**". It strengthens the caveat; it cannot overturn it. (The claim itself is correct and its
+`1/6 → 1/7` parenthetical is independently confirmed — see adjudication 1. I doubted it from
+`ui_strings.txt` and the frame overrode me.)
+
+**`ledger_text: None` — claims 15, 17, 20, 21.** Four claims are flagged `overturns_ledger: true`
+with no sentence named. Nothing can fall. Worse, claim 20's two headline items are *already in the
+ledger*: `:169` "Portrait ring is stance-colored (Light blue / Balanced brown / Heavy red), not
+fixed red" and `:74` "Heavy defender Defense ×0.8" ( = the `["6005"]` "Defense -20%" it presents as
+new). What is genuinely new in 20: the `Effective against …` triangle wording and the per-stance
+hold-to-charge ultimates (`["6085"]`-`["6087"]`). Claim 21's betting/tournament headline is likewise
+half-conceded at `:214` "gold has legit non-cash faucets (rebirth/**tournament/betting**)".
+
+---
+
+## The 6 that do overturn — and how far
+
+- **① enemy level→stat formula "absent, not just inferred" (:220) — DEAD** (claims 7, 8, 9).
+  `grep -l "override public function setLevel"` returns exactly 11 files, and the list matches
+  claim 7 character for character. Base `NPC.setLevel` (:239-260) is `factor ×0.9 if lvl<=20`,
+  `xp = lvl*2+20`, hard `1/1/1` clamp at `lvl<=10`. `EnemyOgre.as:51-53` is `{ }`. Elites/bosses
+  inverse-solve off the **live player**: `hitsToKillBoss` is **8 + lvldiff** (EnemyPlayer:97),
+  **10 + lvldiff** (EnemyElite:40, EnemySpearElite:84, EnemyWolfAlpha:86) and **13 + lvldiff**
+  (EnemyKanjiGuardian:65, written `5 + 8 + lvldiff` — claim 9 found this and it is real).
+  Note the ledger's staleness banner (:32) pointed at `npcdata.xml` for this blocker; npcdata
+  carries per-NPC static rows, **not** a formula, so this is the first genuine kill.
+  ⚠ Correction to claim 9: `hitsToKillPlayer` is **not** universally `16 - lvldiff` — it is 16
+  (EnemyPlayer:98, KanjiGuardian:66), **18** (EnemyElite:41, EnemySpearElite:85) and **15**
+  (EnemyWolfAlpha:87).
+- **③ stagger frames (:220) — the stagger half DEAD** (claim 0), telegraph/active/recovery alive.
+- **⑤ arrow arc physics (:220) — the arrow half DEAD** (claim 12), undead-reflect alive.
+- **"full taxonomy (… + Tengu/Guardian)" (:219) and "Tengu Hotaru" (:221) — DEAD** (claim 10).
+- **memory line "hold-run per Tip #27 … never sourced" — DEAD** (claim 14): `GameEngine.as:640`,
+  `dice == 26` (the 27th tip counting from `dice == 0`),
+  `"Tip: When not in battle, you can hold down the mouse button to keep running in that direction."`
+  This restores `REBUILD_READINESS.md:146`. ⚠ v0.682 only — see NEW-6.
+
+---
+
+## Hunting I did that the packet did not (Lens 2a)
+
+**NEW-1 — the flinch mechanism is BUILD-PARITY CONFIRMED in web v0.717.** HELD.
+`reference/decompiled/shs3_payload/scripts/§1t68s0§.as:769-786` and `§1t99s0§.as:4679-4703`
+mirror `NPC.doFlinch/endFlinch` and `MCSPlayer.doFlinch` line for line (same
+save-actionState/anim/frameCounter → set FLINCH → restore); `§1t1544s0§.as:170,172` carry
+`"flinch_weapon"` / `"flinch"`; `reference/extracted/bindata/103_1t4630s0.bin` holds
+`<anim i="flinch_weapon" d="8">`. Claim 0 is therefore **not** android-only — the S0-3 hedge
+lifts for this mechanism.
+
+**NEW-2 — flinch duration is per-character-family, not a universal 8.** `zom_stumble d="39"`.
+
+**NEW-3 — a SECOND block mechanic: the shielder prop-block.** `EnemyShield.as:335-340`,
+`gotHitCounter = 24`, `playHitMetal()`.
+
+**NEW-4 — v0.717 War Room rules have SEVEN pages, not six.** Frame-proven. Hard, enumerable
+v0.682 ↔ v0.717 UI diff #2 (arrow gravity is #1, the daily-streak rewording #3).
+
+**NEW-5 — `ui_strings.txt` is placeholder TextField text.** Any number read out of it
+(`:214 "level requirement: 10 - 30 … round duration: 30 min"`, `:100 "piercing dmg: 20"`) is
+design-time filler of the same class as `"physical dmg: 1234 - 1235"`. **STILL_UNHELD** as tuning.
+
+**NEW-6 — the 39-tip ladder is ANDROID-ONLY.** Zero of the 39 tip strings appear anywhere in the
+web build: `grep -rn '"Tip: ' reference/decompiled/shs3_payload/scripts/*.as` → 0;
+`green border indicates` → 0 across all 27 `reference/extracted/bindata/*.bin`; 0 in
+`reference/extracted/payload.xml`. Android has exactly 39 (`grep -c '"Tip: ' GameEngine.as` → 39).
+Also: `dice == 33` *does* route through `LangManager.getString(723)`, so "in NO string table" has
+one exception.
+
+**NEW-7 — the war map is already on film.** `Nr4fQstqHDM/seg-20/frames/frame_0014.jpg`:
+`SELECT TERRITORY / CLAN CROPS: 402 (+2 HQ)` over a flat-vector Japan outline (Honshu, Shikoku,
+Kyushu, Sado, the Izu chain) with a **uniform grid overlay** and a clan flag marker. This bears
+directly on world-exploration ① (`:225`, whose close-path is "trace the map image") and
+meta-social ② (`:245` "War-Room map topology (board/adjacency)") — both say go find a map;
+the map is in the repo.
+
+**NEW-8 — "Guardian" is real, "Tengu" is not.** `strings.json["5119"] = 'Guardian'`,
+`EnemyKanjiGuardian` at ai 36. `tengu` = 0 hits in strings.json, resolved_names.json, all four
+data XMLs, `ui_strings.txt`, the whole `reference/decompiled/` tree, all 27 web bindata + 42
+android blobs, and the 329 MB `payload.xml`.
+
+**NEW-9 — npc 77 resolves.** `<name>5071</name>` → `strings.json["5071"] = 'Oni'`, `<lvl>80</lvl>`,
+`<hp>40</hp>`, `<ai>23</ai>` → `NPCManager.as:587-588 case 23: new EnemyOgre(...)` → empty
+`setLevel`. The "Oni never scales" reading is now name-resolved end to end.
+
+## Not verifiable by me
+Claims 15 and 21 assert things about *another packet's* cite distribution
+("all 21 cites point at seg-NN", "used for exactly one thing"). Adjudicating that would require
+opening `docs/gauntlet/L0/sources/*.md`, which §3.2 forbids. I ruled on the corpus arithmetic
+instead — `2,675 / 7,381` is exact — and left the packet-composition half unjudged inside an
+otherwise HELD claim.

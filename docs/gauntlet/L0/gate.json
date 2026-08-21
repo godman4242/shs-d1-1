@@ -19,8 +19,8 @@
    "title": "CONVERGENCE IS REAL"
   },
   {
-   "detail": "android-blobs: only 1 critic review(s), need 2",
-   "green": false,
+   "detail": "all 10 sources surveyed with >= 2 critics each",
+   "green": true,
    "id": "L0-D",
    "title": "EVERY SOURCE OPENED"
   },
@@ -39,10 +39,10 @@
  ],
  "green": false,
  "pooled": {
-  "claims": 1323,
-  "judged_ids": 510,
+  "claims": 1370,
+  "judged_ids": 582,
   "ledger_refs": 0,
-  "live_verdicts": 2289,
-  "verdicts": 2289
+  "live_verdicts": 2448,
+  "verdicts": 2448
  }
 }

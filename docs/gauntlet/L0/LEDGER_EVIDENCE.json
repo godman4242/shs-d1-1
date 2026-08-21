@@ -15184,11 +15184,11 @@
    "id": "android-blobs/web-payload-holds-zero-data-roots",
    "lane_impact": "Cross-cutting, hits all 12 lanes. Strengthens the banked quests-story/payload-provenance-is-android from 4 roots to 10, and re-derives it independently (root-tag census of both inflated payloads, not mtime ordering). Practical effect: every quest line, item row, skill row, NPC row, world node, achievement, UI menu, background definition and premium SKU in the L0 corpus is an Android v0.682 measurement with no web counterpart in existence to check it against.",
    "ledger_text": "",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "The web v0.717 payload contains ZERO of ten XML data roots (questdata, itemdata, skilldata, npcdata, nodedata, achievementdata, uidata, bgdata, premiumdata, mapdata) that the Android v0.682 payload carries one of each \u2014 so the Android blobs are the SOLE source for ten of the game's thirteen data roots and the S0-3 build caveat is not dischargeable for any of them.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A3",
@@ -15198,11 +15198,11 @@
    "id": "android-blobs/data-xml-parity-proofs-are-circular",
    "lane_impact": "L2 skills-meters, L3 items-equipment, L4 enemies-ai, L-quests-story. CONTRADICTS the banked claim skilldata/android-web-byte-identical ('...which discharges the S0-3 parity NOT established caveat for this unit'). There is no web v0.717 skilldata.xml \u2014 comparing a file to itself proves nothing. I explicitly do NOT dispute itemdata/web-android-schema-parity (two AS3 parser classes, a real cross-build comparison) or world-exploration/21-of-27-blobs-are-cross-build-identical (27 web bindata vs android, also real). The S0-3 caveat stands undischarged for questdata/itemdata/skilldata/npcdata.",
    "ledger_text": "",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "The banked 'Android blob and web v0.717 XML are byte-identical, so the parity caveat is discharged' proof is CIRCULAR: reference/extracted/{item,skill,npc,quest}data.xml ARE the Android blobs with the XML prolog stripped, and the web payload holds no such root at all.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -15212,11 +15212,11 @@
    "id": "android-blobs/spider-is-web-only-enemy",
    "lane_impact": "L4 enemies-ai: an enemy outside the ledger's taxonomy, with two entry behaviours (spider_descend = drop-in, spider_dig = burrow, both looping) that no other creature has. The blob's EXISTENCE is already catalogued (docs/gauntlet/L0/journal.md:26 lists spider_idle among the 19 web sets); what is new is that it is web-ONLY, which means the only npcdata we hold carries no spider row, no stats, no AI id and no name \u2014 a permanent, now-localised hole.",
    "ledger_text": "**Ready:** full taxonomy (Humans/Undead/Oni/Animals + Tengu/Guardian) with movesets incl. **the archer** (closed this pass); boss roster; projectile set",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "A complete 10-animation SPIDER enemy ships ONLY in the web v0.717 build \u2014 engine-known in the web AS3 \u2014 and appears nowhere in the Android npcdata, string table or ActionScript, so the Android corpus every survey reads is blind to a whole creature.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A3",
@@ -15226,11 +15226,11 @@
    "id": "android-blobs/web-is-an-animation-superset",
    "lane_impact": "L6 art-anim + L4 enemies-ai. Both banked counts were right and nobody had reconciled them; the difference is content the Android port dropped, not a counting error. Methodological consequence for the whole corpus: every 'X does not exist' claim resting on an Android grep is provisional.",
    "ledger_text": "",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "The web build is a strict animation superset of the Android build \u2014 487 vs 471 animations, delta exactly 16, zero Android-only animations \u2014 which reconciles bindata C17's 487 against Stage-0b S0-4's 471 and proves that absence in the Android build never proves absence in the shipped game.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -15240,11 +15240,11 @@
    "id": "android-blobs/boss-timings-recut-across-builds",
    "lane_impact": "L4 enemies-ai blocker \u2462 + L6 art-anim. bindata.md C12 closed the blocker with the WEB numbers (0.67s telegraph / 0.21s active / 0.46s recovery at 24Hz) and is correct \u2014 but the Android bundle, which the corpus routinely uses as the readable stand-in, says 0.58 / 0.75 / none, an active window 3.6x too long. Where the builds differ, v0.717 is the 1:1 target.",
    "ledger_text": "",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "Ogre and Guardian attack timing was re-cut between v0.682 and v0.717: the Android build ships NO *end recovery clip and folds recovery into a *hit clip up to 3.6x longer, so the telegraph/active/recovery triad that closes enemies-ai blocker \u2462 is a web-only fact.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -15254,11 +15254,11 @@
    "id": "android-blobs/bgdata-is-a-parallax-spec",
    "lane_impact": "L6 art-anim + L1 world-exploration: an omission. The art 'Ready' list is fighter-only and the world list is node-graph-only; the scene behind and in front of the fighter \u2014 49 named locations, five parallax planes, 874 layer slots \u2014 is in neither. The 49 names match the 49 BG_* symbols exported by the decrypted 120_Mobile_BGResource one-for-one.",
    "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle; flat-vector bold-outline style; **byte-exact HUD/result palette**; blade-trail colors; kill-beat.",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "123_Mobile_BGData is a 49-background parallax specification holding 874 authored layer instances across five depth planes with per-background scroll and wrap overrides \u2014 and no ledger system mentions backgrounds, parallax or layer counts at all.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -15268,11 +15268,11 @@
    "id": "android-blobs/parallax-and-dof-contract",
    "lane_impact": "L6 art-anim: STRENGTHENS the banked art-anim-audio-feel/depth-of-field-blur, which read BG_Loader.as call sites and reported 'observed constants 4 and 8'. The declaration site gives all five values, their plane assignment (the foreground is blurred as hard as the farthest layer \u2014 that is the half a call-site read cannot recover) and the scroll ladder the same layers use. groundY=400 is the authored standing line; contentWidth=1600 is two 800-px screens.",
    "ledger_text": "",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "XMLBG declares the complete parallax contract: a five-plane scroll ladder 0.25/0.333/0.5/1/2 and a blur ladder 8/4/0/4/8 that is SYMMETRIC about the player plane \u2014 a true depth-of-field with the focal plane on the fighter, not a monotone distance haze \u2014 plus groundY 400, contentWidth 1600 and wrapAround true.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A1",
@@ -15282,11 +15282,11 @@
    "id": "android-blobs/foreground-layer-occludes-the-fighters",
    "lane_impact": "L6 art-anim: grounds bgdata's <fgcount> and XMLBG's foregroundLayerScroll=2 in a frame. BG_Forest declares <fgcount>4</fgcount> at 123_Mobile_BGData.bin:11, and an occluding plane is exactly what a foreground layer is for; a recreation that draws all scenery behind the fighter loses this. HONEST LIMIT: I did NOT read groundY=400 off this frame \u2014 the fighter is in the combat crouch and his feet are hidden by the very layer this claim is about, so the standing line is not readable here. That number stays STILL_UNHELD from this frame.",
    "ledger_text": "",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "KILLED",
    "text": "A frame confirms the foreground parallax plane is real and is drawn IN FRONT of the fighters: a sharply-outlined grass band occludes both fighters' lower legs in the same frame where the far rock layer is soft-edged.",
    "unit": "android-blobs",
-   "why": "REFUTED by 1 of 1 live critics"
+   "why": "REFUTED by 2 of 2 live critics"
   },
   {
    "artifact_class": "A2",
@@ -15296,11 +15296,11 @@
    "id": "android-blobs/item-and-skill-icon-art-is-held",
    "lane_impact": "L3 items-equipment + L10 ui-hud. CONTRADICTS the banked items-equipment/icon-symbol-families-still-unheld (STILL_UNHELD: 'an item icon art set (~187 of ~983 roster rows, plus every accessory) remains unrecovered') and items-equipment/icon-only-symbol-families-still-open (PARTIAL: 'only the fallback item0 survives in the web payload, with zero acc classes'). Both reasoned from the WEB payload's class list; the art was never in the web payload \u2014 the web client streamed shs3resource.swf from the server (ResourceManager.as:41,82). ~169 of the ~187 rows are held, plus 79 skill icons the ledger's ui-hud block never lists. CAVEAT I INSIST ON: I enumerated symbol NAMES, not pixels \u2014 no DefineShape was decoded.",
    "ledger_text": "\u2464 **sprite-compositing contract** (layer order, per-slot body render \u2014 a from-scratch-art blocker) + item **icon manifest**.",
-   "live_critics": 1,
-   "status": "UPHELD",
+   "live_critics": 2,
+   "status": "KILLED",
    "text": "The item/accessory/skill ICON art is on disk after all: 115_Mobile_SHS3Resource exports 112 item####, 8 acc#### and 79 skill#### symbols, covering 94/99 consumables, 8/9 accessories and 67/79 quest items \u2014 retiring a banked STILL_UNHELD that read the WEB payload, where the art was never embedded.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "REFUTED by 1 of 2 live critics"
   },
   {
    "artifact_class": "A2",
@@ -15310,11 +15310,11 @@
    "id": "android-blobs/portraits-decrypted-and-one-dead-reference",
    "lane_impact": "L-quests-story + L10 ui-hud + L0 meta-social. STRENGTHENS the banked quests-story/portraits-held-but-encrypted by discharging the 'encrypted' half and giving the exact manifest. NEW defect: `chikako_maked` is a dead reference in shipped questdata \u2014 ResourceManager.getPortrait resolves it to nothing at runtime, so a 1:1 recreation should reproduce the fallback, not invent a portrait. NEW content: the 12 clan-officer portraits are War-Room/clan art that appears in no dialogue and in no ledger.",
    "ledger_text": "",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "The 66 dialogue portraits and 16 story cards are decrypted and enumerated \u2014 51 of the 52 questdata-referenced portraits are present, the 52nd (chikako_maked) is a shipped authoring TYPO that resolves to nothing, and 12 unreferenced portraits form a clan-officer grid of 4 colours x 3 ranks.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -15324,11 +15324,11 @@
    "id": "android-blobs/all-thirteen-episode-cards-shipped",
    "lane_impact": "L-quests-story. The staleness banner already killed \u00a73.8 with questdata's 61 quests, but 'the quest rows exist' is weaker than 'the bespoke chapter art for every episode was drawn, exported and shipped'. Nobody ships 13 chapter cards for 4 chapters. \u00a73.8 contains the one line in the ledger that tells a builder what to CUT, and that line rests on a falsehood.",
    "ledger_text": "**Season 1 is Prologue + 12 episodes + epilogue = 14 chapters**, not 4. Only Prologue\u2013Ep3 are documented/reachable; Ep4\u201312 were likely never shipped. **Scope decision:** faithful campaign = Prologue\u2013Ep3, with Ep4\u201312 labeled canonical-but-unshipped.",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "Bespoke full-screen splash art for every one of episodes 0 through 12 plus the exposition and epilogue cards shipped in the binary \u2014 so \u00a73.8's scope decision to cut Ep4-12 as 'canonical-but-unshipped' must be withdrawn, not footnoted.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -15338,11 +15338,11 @@
    "id": "android-blobs/mapdata-has-no-web-counterpart",
    "lane_impact": "L1 world-exploration. Closes the client-side half of the banked STILL_UNHELD world-exploration/mapdata-blob-empty ('possible Android-only stripping \u2026 Whether the web v0.717 build shipped a populated mapdata is not established'). Ruled out: stripping of web client content, because there is no web client copy. Still open and permanently unresolvable: whether the web build fetched a populated mapdata from the dead server (ResourceManager.loadResource -> getresource.php / Player.IO).",
    "ledger_text": "",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "119_Mobile_MapData is a 65-byte empty stub, and the 'possible Android-only stripping' hypothesis is now dead: the web payload contains no <mapdata> root at all, populated or otherwise, so no client-side comparison can exist.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -15352,11 +15352,11 @@
    "id": "android-blobs/comp-rand-is-the-encounter-roll",
    "lane_impact": "L4 enemies-ai blocker \u2463 + L1 world-exploration. This is spawn PROBABILITY, not aggro radius or leash distance \u2014 neither of which is in this blob, and I claim nothing about them. But it is the first authored encounter-rate number in the corpus, and the primitive generalises: any <condition> in nodedata, questdata or uidata can be made probabilistic by the same three tags.",
    "ledger_text": "",
-   "live_critics": 1,
+   "live_critics": 2,
    "status": "UPHELD",
    "text": "The condition system carries a probability primitive \u2014 <comp>rand</comp> evaluates Math.random()*id <= qty \u2014 and the one authored use in the world data is a flat 50% random-encounter roll on an aggro spawn.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -15366,11 +15366,11 @@
    "id": "android-blobs/blobs-are-utf8-not-utf16",
    "lane_impact": "Method, all lanes reading this unit. The kickoff's standing warning ('\u26a0 THEY ARE UTF-16LE. A byte-level grep returns 0 hits and will fool you') is true only for the string table. Recorded so run 6 does not pay the decode tax, and so nobody discards a correct grep result as a false negative.",
    "ledger_text": "",
-   "live_critics": 1,
-   "status": "UPHELD",
+   "live_critics": 2,
+   "status": "KILLED",
    "text": "Method correction to this lane's own standing instruction: 41 of the 42 Android blobs are plain UTF-8 and grep works directly on them with correct line numbers \u2014 only 118_Mobile_Lang_EN.bin is UTF-16LE.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "REFUTED by 1 of 2 live critics"
   },
   {
    "artifact_class": "STILL_UNHELD",
@@ -15380,11 +15380,11 @@
    "id": "android-blobs/nothing-was-rendered",
    "lane_impact": "L6 art-anim. Stated so the volume of art findings above is not mistaken for having GRADED the art. The ledger's \u00a74 art-anim 'byte-exact HUD/result palette' is untouched by me in both directions, and the banked art-anim-audio-feel/web-audio-parity-unheld note that 'the newly-opened vector art was not rendered or graded this pass' remains true after this pass too.",
    "ledger_text": "",
-   "live_critics": 1,
-   "status": "UPHELD",
+   "live_critics": 2,
+   "status": "KILLED",
    "text": "Every art claim in this survey is about exported symbol NAMES and counts; not one DefineShape record was decoded, so no fill colour, outline weight, silhouette or per-slot geometry is held by this pass.",
    "unit": "android-blobs",
-   "why": "survived 1 live critic(s); overturn not separately ruled on"
+   "why": "REFUTED by 1 of 2 live critics"
   },
   {
    "artifact_class": "A1",
@@ -18493,16 +18493,156 @@
    "text": "The shipped web build v0.717 has FIFTEEN war-room hex states, not the fourteen the android build carries. The web WarHex class is \u00a71t416s0\u00a7.as -- identified by its identical shape to the android WarHex.as (same imports flash.display.MovieClip / SimpleButton / playerio, same MovieClip members logo, narrow, sarrow, boundary, bg, button, earrow, flag, hqflag, hqflag2) -- and its state constants at :11-39 take the values 0,1,2,3,4,5,6,7,8,9,10,11,12,13,15. Value 10, which the android enum skips entirely, is a live state in v0.717; only 14 is unused. Anyone porting the war room from the android enum will be missing one board state.",
    "unit": "critic-new_finding",
    "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/extracted/android/113_Mobile_MusicResource.bin and 122_Mobile_SoundResource.bin, decrypted with reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:206-217 keyed from Mobile.as:352 (charCodeAt(1) => 'u'=117 and 'o'=111); 13 DefineSound + 13 SymbolClass entries each",
+   "claims_overturn": true,
+   "id": "android-blobs-hunter/audio-decrypts-26-named-mp3-streams",
+   "lane_impact": "L6 art-anim-audio-feel. The 'ffdec cannot open it' half of S0-5 is dead - the containers open with the game's own key schedule. What survives of S0-5 is only the honest part: nobody has listened to or graded the audio. A named, timed, format-known 26-cue manifest replaces a black box, and the 4-stem adaptive beds are a mechanic the ledger has nowhere.",
+   "ledger_text": "S0-5: audio is HELD but ENCRYPTED (nested \"CWS\" SWFs ffdec cannot open). You may NOT claim audio is recovered.",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "The audio blocker is not a wall. ffdec cannot open 113_Mobile_MusicResource and 122_Mobile_SoundResource because they are XOR-obfuscated BEFORE the SWF header; applying the shipped key schedule turns both into ordinary CWS v17 SWFs that inflate and parse. Each holds 13 DefineSound tags, all MP3, 11025 Hz, 16-bit, mono, each bound to a SymbolClass name: music bgm_lose 3.53s, safepercussion/safekoto/safeambience 80.01s each, bgm_levelup 29.78s, bgm_gangnam 3.63s, flutes 80.01s, dungeonpiano/dungeonpercussion/dungeonflute/dungeonambience 45.74s each, battledrums 80.01s, battlechants 80.01s; sfx deflect 0.79s, die1 0.48s, die2 0.66s, die3 0.87s, slash1 0.35s, slash2 0.56s, slash3 0.27s, hitmetal 0.52s, punch 0.31s, sumo 2.90s, refund 0.73s, goodkoto 1.57s, fart 0.42s. The stem structure is itself a design fact: the 'safe' and 'dungeon' beds are 4 and 4 co-length stems (80.01s and 45.74s) - layered adaptive music, not single tracks. I did NOT listen to or grade any of it; I read tag headers only.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/extracted/android/90_InteractUI_UIData.bin:5,14,47,66 (<title> peddler/market/vegpatch/stables) + docs/gauntlet/L0/index/strings.json[\"83\"]=\"Buy\", [\"84\"]=\"Sell\", [\"85\"]=\"Leave\", [\"269\"]=\"Sell crops\"",
+   "claims_overturn": false,
+   "id": "android-blobs-hunter/uidata-is-the-whole-town-interaction-spec",
+   "lane_impact": "L1 world-exploration, L3 items-equipment, L-economy, L10 ui-hud. Every shop, bank, gambling and rebirth interaction the ledger discusses second-hand is authored here as data, with resolvable labels and an explicit error-message path for failed conditions.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "90_InteractUI_UIData.bin is named by no claim in the packet and is the only spec in the corpus for how a player interacts with a town: 314 lines, root <uidata>, 19 <ui> screens, 47 <menu>, 139 <option>, 28 <condition>. Screens: peddler, market, vegpatch, stables, merchant, inn, rebirth, barber, bank, gambling den, getcoins, getap, leaveclan, blacksmith, recentevents, playerpanel, joincustomclanrecruit, joincustomclangeneral, towntoll. A 46-verb action vocabulary drives them (goto x34, close x24, sellgoods, buygoods, sellcrop, plant, harvest, withdraw, deposit, bet, chohan, redeem, nameweapon, forgeweapon, repairweapon, reinforceweapon, crafting, fullhpchi, fire/wind/water/earthrebirth, dailyprize, convertgold, buypremium, achievement, duelreplay, challenge, addfriend, bankstorage, innrest, innbuy, barberbuy, paytowntoll, entertown, giveitem, givecoins). Labels are string-table ids that resolve today, and options carry conditions AND per-action conditions with <errormsg>.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/extracted/android/84_QuestEngine_TrapRoomData.bin:5-20 (legend), :21 <traproomdata>, :32 <easy>, :126 <medium>, :309 <hard>, :446 <veryhard>, :33-37 (first authored room)",
+   "claims_overturn": false,
+   "id": "android-blobs-hunter/traproomdata-70-rooms-four-difficulty-tiers",
+   "lane_impact": "L1 world-exploration. The ledger's world model is a node graph; this is the room-interior content that hangs off it, with a typed trap vocabulary and an authored difficulty curve. Nothing in the 12 systems mentions traps, rooms or difficulty tiers.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "84_QuestEngine_TrapRoomData.bin is unmentioned by any claim and holds a complete procedural level system: 622 lines, 70 <room>, 314 <obj>, 70 <width>, partitioned into four difficulty tiers - <easy> at line 32, <medium> at 126, <hard> at 309, <veryhard> at 446. Its shipped comment header is an authoring legend giving the property signature of every trap type: Obj_FloorSwitch, Obj_Lever, Obj_LowCeiling, Trap_Kunai, Trap_KunaiAuto, Trap_SawBladesAuto, Trap_CrushingBlockAuto, Trap_CrushingColumnAuto, Trap_ElementAuto, Trap_Jump, Trap_SpikesAuto, Trap_Boulder, Trap_SpikeBallAuto - each with its ordered <property> parameter list.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "decrypted reference/extracted/android/115_Mobile_SHS3Resource.bin (1,912 SymbolClass names) joined by id to reference/extracted/android/111_Mobile_ItemData.bin (982 <item>) and 117_Mobile_SkillData.bin (75 <skill>); resolution path reference/decompiled/shs3_android_payload/scripts/MCSItem.as:203",
+   "claims_overturn": true,
+   "id": "android-blobs-hunter/item-icon-coverage-corrected",
+   "lane_impact": "L3 items-equipment + L10 ui-hud. The banked STILL_UNHELDs are still correctly retired - the art IS on disk - but roughly half the consumable roster falls back to item0 (MCSItem.as:206) rather than one in twenty. A builder planning icon work needs 70 originals, not 18.",
+   "ledger_text": "android-blobs/item-and-skill-icon-art-is-held: 'covering 94/99 consumables, 8/9 accessories and 67/79 quest items ... Residual named exactly: consumable arts 2000, 2001, 2500, 2502, 2503; accessory art 3007; 12 quest-item arts.'",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "Corrected icon coverage for the decrypted 115_Mobile_SHS3Resource, replacing the packet's figures. Joining the 112 item#### symbols by id against the 982 itemdata rows: band 2000-2999 is 50/99 covered (49 rows have no icon), band 20000-29999 is 58/79 (21 rows have no icon), accessories 8/9 (3007 missing). The consumable gap is one contiguous authored block plus strays: 2000, 2001, 2131-2141 (except 2140,2141 which DO ship), 2142, 2144-2175, 2204, 2206, 2500, 2502, 2503. Missing quest-item icons: 20005, 20009-20012, 20017, 20023, 20054-20058, 20100-20107, 20111. Skills, which the packet did not quantify: 68 of the 75 <skill> rows have a skill#### icon and 7 do not (1064, 1065, 1066, 1067, 1068, 1500, 1501); 11 skill symbols have no skilldata row.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A1",
+   "build": "web v0.717 (longplay footage)",
+   "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - crops (900,560)-(1180,960) x3 NEAREST, (760,780)-(1240,1010) x3, (950,840)-(1090,930) x8; gradient boxes (780,885)-(850,955), (1100,885)-(1230,955), (300,885)-(560,955) vs (1300,300)-(1500,450) and (960,700)-(1080,840) - cross-checked to reference/decompiled/shs3_android_payload/scripts/XMLBG.as:46",
+   "claims_overturn": true,
+   "id": "android-blobs-hunter/foreground-plane-is-the-most-blurred-element",
+   "lane_impact": "L6 art-anim. THE FRAME WINS over the measurement claim. The occlusion survives; the outline characterisation is inverted. Building crisp foreground grass from the original wording would be a visible 1:1 miss on every one of the 49 backgrounds that declares an <fgcount>.",
+   "ledger_text": "android-blobs/foreground-layer-occludes-the-fighters: 'a sharply-outlined grass band ... The grass carries the same outline weight as the fighters - it is not the blurred far layer'",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "Corrected frame reading. In the cited longplay frame the foreground plane does occlude both fighters' lower legs, but it is the SOFTEST element in the frame, not the sharpest: p99 local luminance gradient measures 3.0 / 3.0 / 3.4 across three grass boxes clear of the fighters, versus 7.0 for the far rock background, 7.0 for the tree trunk, 82.0 for the tan fighter's torso and 101.6 for the purple fighter's shoulder. The grass carries no near-black outline pixels. This is exactly what XMLBG.as:46 predicts - foregroundLayerBlur = 8, tied with farthestLayerBlur = 8 for the hardest blur in the ladder - so the frame and the AS3 agree, and a recreation must blur its foreground scenery as hard as its farthest layer.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "decrypted reference/extracted/android/115_Mobile_SHS3Resource.bin (1,755 shape records), 120_Mobile_BGResource.bin (562), 124_Mobile_ImageResource.bin (106) - DefineShape/2/3/4 FILLSTYLEARRAY parse; decrypt per reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:206-217",
+   "claims_overturn": true,
+   "id": "android-blobs-hunter/shipped-vector-art-yields-solid-fill-palettes",
+   "lane_impact": "L6 art-anim. Under the 2026-07-24 owner permission ruling, exact OG hues are now permitted targets, and these are exact OG hues from the shipped art rather than eyedropper reads off a compressed video frame. HONEST LIMIT: first-fill-array reads only - no edge records, no silhouettes, and my LINESTYLE2 parse is not trustworthy, so I report NO outline weights.",
+   "ledger_text": "android-blobs/nothing-was-rendered: 'not one DefineShape record was decoded, so no fill colour, outline weight, silhouette or per-slot geometry is held by this pass.'",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "The shipped vector art is decodable, which closes the packet's own 'nothing was rendered' lead. Parsing FILLSTYLEARRAY across the three decrypted resource SWFs yields 2,423 shape records with solid fills. Most-used: 115_Mobile_SHS3Resource (fighter parts + icons) #000000 x225, #FFFFFF x224, #333333 x160, #CCCCCC x147, #FECA98 x127, #B78F6C x120, #222222 x100; 120_Mobile_BGResource #000000 x45, #30291D x35, #5A4D2E x33, #3A3323 x23, #251F16 x21, #453929 x21; 124_Mobile_ImageResource (portraits/cards) #DF9671 x52, #FCC6A6 x51, #000000 x39, #9E6750 x31. Per-symbol resolution works: torso4000 -> charId 1195 -> shape 1194 (DefineShape4) fills #FECA98 and #B78F6C; skill1000 -> shape 144 fill #C0AC4B; acc3000 -> shape 3725 fill #ABABAB. Semantic sanity check passes both ways - skin tones dominate the portrait file, earth tones the background file.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/extracted/android/123_Mobile_BGData.bin - tag histogram over all 49 <bg> records (623 lines); field mapping at reference/decompiled/shs3_android_payload/scripts/XMLBG.as:58-140",
+   "claims_overturn": true,
+   "id": "android-blobs-hunter/bgdata-override-vocabulary-is-22-tags",
+   "lane_impact": "L6 art-anim + L1 world-exploration. A recreation that implements only the five default scroll/blur constants will render 49 backgrounds and get roughly twenty of them wrong. Also corrects two numbers in the banked claim: ffwrap is 8 rows (lines 12, 23, 259, 330, 356, 370, 514, 530), and ffscroll's range is 0.05-1.0, not 0.05-0.27.",
+   "ledger_text": "android-blobs/bgdata-is-a-parallax-spec: 'Overrides present: ffwrap 6 rows (1640/1670/1750/1770/2000/2000), ffscroll 14 rows (0.05-0.27), fscroll 16 rows (0.1-1.0), contentwidth 17 rows ..., wrap 17 rows all 0.'",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "The per-background override vocabulary in 123_Mobile_BGData is 22 tags, not the four the packet lists, and three of the overrides break the default ladder in ways the defaults cannot predict. Measured over all 49 rows: id 49, name 49, ffcount/fcount/ppcount/gcount/fgcount 49 each, wrap 17, contentwidth 17, fscroll 16, ffscroll 14, fblur 11, fwrap 11, ppwrap 9, ppblur 9, ffwrap 8, ppscroll 6, fgscroll 3, ffblur 3, gscroll 2, fgblur 2, gblur 1. Two rows set <gscroll>0</gscroll> - a LOCKED ground plane; three rows set <fgscroll>1.2</fgscroll>, overriding the 2.0 foreground ladder value; one row sets <ffscroll>1</ffscroll>, collapsing the farthest plane onto the camera. <gwrap> and <fgwrap> are never authored, and neither is <groundy> or <flatground>.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android_payload/scripts/XMLBG.as:10 (groundY=400), :12 (flatGround=true), :58-140 (override-if-present constructor) against the full tag histogram of reference/extracted/android/123_Mobile_BGData.bin (49 records, zero groundy / flatground / gwrap / fgwrap tags)",
+   "claims_overturn": false,
+   "id": "android-blobs-hunter/groundy-400-is-a-global-not-a-default",
+   "lane_impact": "L6 art-anim + L5 combat-core. A single authored ground line at y=400 for every scene in the game is a hard layout constant a recreation can bake in, and it is stronger than the banked reading of groundY as a mere default.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "groundY = 400 and flatGround = true are not per-background defaults that locations override - they are global constants for every location in the game. XMLBG's constructor overrides each field only when the matching tag is present (<groundy>, <flatground>), and across all 49 <bg> records in 123_Mobile_BGData neither tag occurs even once. The same is true of <gwrap> and <fgwrap>, so groundLayerWrap and foregroundLayerWrap are universally 1600.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:4222 (rand), :4279-4295 (switch eq/gte/gt/lt/lte/not/default), :4173 (default gte); authored <comp> census over reference/extracted/android/*.bin",
+   "claims_overturn": false,
+   "id": "android-blobs-hunter/condition-comparison-enum-is-seven-operators",
+   "lane_impact": "L4 enemies-ai, L1 world-exploration, L-quests-story, L-economy. The ledger treats conditions as flat 'has item X' gates; the shipped evaluator is a six-operator comparison plus a probability primitive, and 'lte' is declared but never authored.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "The <condition> evaluator's comparison enum is seven operators, not the two the packet names. StatsManager.checkCondition special-cases 'rand' first and then runs a full switch: eq, gte, gt, lt, lte, not, with default returning false. Authored usage across the whole Android corpus is 13 sites: nodedata rand x1; achievementdata not x1; questdata eq x5, gt x1, gte x2, not x1; uidata gte x1, lt x1, not x1. An absent <comp> defaults to 'gte'. Every <condition> in nodedata, questdata, uidata and achievementdata draws on the same evaluator, so any of them can be made probabilistic, negated or bounded.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/extracted/android/109_WarHexUI_SurvivalModeData.bin:3-14 + 114_Mobile_AchievementData.bin:4-11 + 121_Mobile_PremiumData.bin:3,22,35,37 + 85_NameGenerator_MaleNames.bin (397 lines), 88_NameGenerator_FemaleNames.bin (290), 89_NameGenerator_PlaceNames.bin (676), 87_NameGenerator_SamuraiFamilyNames.bin (35), 86_NameGenerator_NobleFamilyNames.bin (32); names resolved via docs/gauntlet/L0/index/strings.json[\"8000\"]=\"Duelist I\", [\"8080\"]=\"Win an online duel.\"",
+   "claims_overturn": true,
+   "id": "android-blobs-hunter/survival-achievement-premium-namegen-blobs-unread",
+   "lane_impact": "Cross-cutting: L1 world-exploration, L-progression, L-meta-social, L-economy. S0-1 flagged survival mode as absent from all 12 systems; this is its authored wave content, and <survivalmodedata> is one of only two roots present in BOTH payloads, so it is not an Android-only mode. The 61-achievement system and the premium rotation are likewise entirely outside the ledger.",
+   "ledger_text": "S0-1: 119 <survivalmodedata> (a whole game mode absent from all 12 ledger systems)",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "Four more shipped data blobs are named by no claim in the packet. 109_WarHexUI_SurvivalModeData: 555 lines, 39 <wave>, 87 <enemy>, enemy ids as alternation lists (400|401|402|403|404) - a spawn primitive nothing else in the corpus uses - and spawn x of -50 (49x), 1650 (37x), -1650 (1x), i.e. just off both edges of a 1600-wide stage, independently corroborating XMLBG contentWidth=1600. 114_Mobile_AchievementData: 553 lines, 61 <achievement> with id/img/name/desc/stat/val, all string-resolvable and stat-threshold driven; icon art is complete (img takes only 1-4 and achievement0-4 all ship). 121_Mobile_PremiumData: 257 lines, <default> :3, <special> :22, <rotation> :35 with 23 <set> and 176 <item> refs - the live-ops offer schedule. 85-89_NameGenerator_*: 1,430 authored proper nouns (male 397, female 290, place 676, samurai family 35, noble family 32).",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
   }
  ],
  "summary": {
-  "claims_total": 1321,
-  "killed": 911,
+  "claims_total": 1331,
+  "killed": 924,
   "ledger_sentences_hit": 166,
   "not_upheld": 16,
   "overturns_claimed_but_not_upheld": 15,
-  "surviving_overturns": 256,
-  "upheld": 394,
-  "usable_findings": 410
+  "surviving_overturns": 255,
+  "upheld": 391,
+  "usable_findings": 407
  }
 }

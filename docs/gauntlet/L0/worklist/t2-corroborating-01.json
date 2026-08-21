@@ -429,6 +429,77 @@
  {
   "artifact_class": "A2",
   "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:4222 (rand), :4279-4295 (switch eq/gte/gt/lt/lte/not/default), :4173 (default gte); authored <comp> census over reference/extracted/android/*.bin",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "android-blobs-hunter/condition-comparison-enum-is-seven-operators",
+  "lane_impact": "L4 enemies-ai, L1 world-exploration, L-quests-story, L-economy. The ledger treats conditions as flat 'has item X' gates; the shipped evaluator is a six-operator comparison plus a probability primitive, and 'lte' is declared but never authored.",
+  "overturns_ledger": false,
+  "quote": "4279:switch(comparison) 4281:case \"eq\": 4283:case \"gte\": 4285:case \"gt\": 4287:case \"lt\": 4289:case \"lte\": 4291:case \"not\": 4293:default: return false;",
+  "text": "The <condition> evaluator's comparison enum is seven operators, not the two the packet names. StatsManager.checkCondition special-cases 'rand' first and then runs a full switch: eq, gte, gt, lt, lte, not, with default returning false. Authored usage across the whole Android corpus is 13 sites: nodedata rand x1; achievementdata not x1; questdata eq x5, gt x1, gte x2, not x1; uidata gte x1, lt x1, not x1. An absent <comp> defaults to 'gte'. Every <condition> in nodedata, questdata, uidata and achievementdata draws on the same evaluator, so any of them can be made probabilistic, negated or bounded.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/XMLBG.as:10 (groundY=400), :12 (flatGround=true), :58-140 (override-if-present constructor) against the full tag histogram of reference/extracted/android/123_Mobile_BGData.bin (49 records, zero groundy / flatground / gwrap / fgwrap tags)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "android-blobs-hunter/groundy-400-is-a-global-not-a-default",
+  "lane_impact": "L6 art-anim + L5 combat-core. A single authored ground line at y=400 for every scene in the game is a hard layout constant a recreation can bake in, and it is stronger than the banked reading of groundY as a mere default.",
+  "overturns_ledger": false,
+  "quote": "XMLBG.as:10 'internal var groundY:int = 400;' :12 'internal var flatGround:Boolean = true;' :66 'if(xml.groundy.toString() != \"\") { this.groundY = xml.groundy; }' - and <groundy> occurs 0 times across all 49 <bg> records.",
+  "text": "groundY = 400 and flatGround = true are not per-background defaults that locations override - they are global constants for every location in the game. XMLBG's constructor overrides each field only when the matching tag is present (<groundy>, <flatground>), and across all 49 <bg> records in 123_Mobile_BGData neither tag occurs even once. The same is true of <gwrap> and <fgwrap>, so groundLayerWrap and foregroundLayerWrap are universally 1600.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/extracted/android/84_QuestEngine_TrapRoomData.bin:5-20 (legend), :21 <traproomdata>, :32 <easy>, :126 <medium>, :309 <hard>, :446 <veryhard>, :33-37 (first authored room)",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/84_QuestEngine_TrapRoomData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "android-blobs-hunter/traproomdata-70-rooms-four-difficulty-tiers",
+  "lane_impact": "L1 world-exploration. The ledger's world model is a node graph; this is the room-interior content that hangs off it, with a typed trap vocabulary and an authored difficulty curve. Nothing in the 12 systems mentions traps, rooms or difficulty tiers.",
+  "overturns_ledger": false,
+  "quote": "32:\t<easy> 33:\t\t<room> 34:\t\t<!-- 1x sawblade --> 35:\t\t\t<width>800</width> 36:\t\t\t<obj><id>43</id><name>Trap_SawBladesAuto</name><x>400</x><property>0,24,24,0,1</property></obj> 37:\t\t</room> ; legend :10 <obj><id>42</id><name>Trap_KunaiAuto</name>...<property>angle, speed, kunaicount, spread, onDuration, offDuration, startInterval, active, bigDamage</property></obj>",
+  "text": "84_QuestEngine_TrapRoomData.bin is unmentioned by any claim and holds a complete procedural level system: 622 lines, 70 <room>, 314 <obj>, 70 <width>, partitioned into four difficulty tiers - <easy> at line 32, <medium> at 126, <hard> at 309, <veryhard> at 446. Its shipped comment header is an authoring legend giving the property signature of every trap type: Obj_FloorSwitch, Obj_Lever, Obj_LowCeiling, Trap_Kunai, Trap_KunaiAuto, Trap_SawBladesAuto, Trap_CrushingBlockAuto, Trap_CrushingColumnAuto, Trap_ElementAuto, Trap_Jump, Trap_SpikesAuto, Trap_Boulder, Trap_SpikeBallAuto - each with its ordered <property> parameter list.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/extracted/android/90_InteractUI_UIData.bin:5,14,47,66 (<title> peddler/market/vegpatch/stables) + docs/gauntlet/L0/index/strings.json[\"83\"]=\"Buy\", [\"84\"]=\"Sell\", [\"85\"]=\"Leave\", [\"269\"]=\"Sell crops\"",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/90_InteractUI_UIData.bin",
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "android-blobs-hunter/uidata-is-the-whole-town-interaction-spec",
+  "lane_impact": "L1 world-exploration, L3 items-equipment, L-economy, L10 ui-hud. Every shop, bank, gambling and rebirth interaction the ledger discusses second-hand is authored here as data, with resolvable labels and an explicit error-message path for failed conditions.",
+  "overturns_ledger": false,
+  "quote": "5:\t\t<title>peddler</title> ; 6: <option><label>83</label><icon>15</icon><action><id>peddlerbuy</id></action></option> ; 15: <option><label>269</label><icon>1</icon><condition><has><id>20040</id><qty>1</qty></has></condition><action><id>goto</id><param>1</param><condition>...<errormsg>270</errormsg></action></option>",
+  "text": "90_InteractUI_UIData.bin is named by no claim in the packet and is the only spec in the corpus for how a player interacts with a town: 314 lines, root <uidata>, 19 <ui> screens, 47 <menu>, 139 <option>, 28 <condition>. Screens: peddler, market, vegpatch, stables, merchant, inn, rebirth, barber, bank, gambling den, getcoins, getap, leaveclan, blacksmith, recentevents, playerpanel, joincustomclanrecruit, joincustomclangeneral, towntoll. A 46-verb action vocabulary drives them (goto x34, close x24, sellgoods, buygoods, sellcrop, plant, harvest, withdraw, deposit, bet, chohan, redeem, nameweapon, forgeweapon, repairweapon, reinforceweapon, crafting, fullhpchi, fire/wind/water/earthrebirth, dailyprize, convertgold, buypremium, achievement, duelreplay, challenge, addfriend, bankstorage, innrest, innbuy, barberbuy, paytowntoll, entertown, giveitem, givecoins). Labels are string-table ids that resolve today, and options carry conditions AND per-action conditions with <errormsg>.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
   "cite": "reference/extracted/android/112_Mobile_NodeData.bin:1 (`<?xml version=\"1.0\" encoding=\"utf-8\"?>`), first-8-byte dump of all 42 files in reference/extracted/android/",
   "citelint": {
    "notes": [
@@ -720,71 +791,6 @@
   "overturns_ledger": false,
   "quote": "DefineSound id=9 fmt=MP3 rate=11025 16bit mono samples=3809 bytes=1153  \u00b7  afinfo: 'estimated duration: 0.572000 sec', 'audio packets: 11' (11 x 576 = 6,336 decoded samples)",
   "text": "Flash plays the DefineSound sampleCount, not the raw MP3 stream length, so afinfo durations overstate the in-game length: slash1 is 3,809 samples at 11025 Hz = 0.345 s, while afinfo estimates 0.572 s from the same bytes.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "reference/decompiled/shs3_android/scripts/Enemy*.as \u2014 grep -l 'override public function die' returns 18 of 34 files; EnemyArcher.as:304-308, EnemyElite.as:195-205, EnemyClone.as:747-755",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/eighteen-of-34-enemy-classes-override-die",
-  "lane_impact": "L2 enemies-ai: the death-variant mix is per-class, and a rebuild needs the override map (three-tier: full replacement, delegate-with-addendum, pure inherit), not a single global dice.",
-  "ledger_text": "(none \u2014 this corrects a peer claim's lane_impact, not a REBUILD_READINESS.md sentence)",
-  "overturns_ledger": false,
-  "quote": "EnemyArcher.as:304 override public function die() : * { super.die(); mcs.setProp(13000); }  \u00b7  EnemyElite.as:195 override public function die() : * { if(!hasSkill(SkillManager.SKILL_UNDYING)) { super.die(); } else { startAction(SKILL_UNDYING_STATE); } }  \u00b7  EnemyClone.as:747 override public function die() : * { dead = true; startAnim(ENEMYDEATH); ... }",
-  "text": "Correction to a sub-claim in npc-death-dice-is-seven-way: 18 of the 34 Enemy*.as classes declare `override public function die()`, not 3. EnemyBoar, EnemyArcher, EnemyDeer, EnemyBear, EnemyClone, EnemyGoblinThrower, EnemyElite, EnemyHorse, EnemyOgre, EnemyGoblin, EnemyKanjiGuardian, EnemyTrainingDummy, EnemyVegePatch, EnemyStag, EnemyWolfAlpha, EnemyNianMonster, EnemyZombie, EnemyWolf. Several delegate straight back (EnemyArcher.as:306 super.die(); EnemyElite.as:199 super.die() unless SKILL_UNDYING), so the seven-way NPC dice does remain the common path for standard human enemies \u2014 but 'only EnemyGoblin, EnemyGoblinThrower and EnemyZombie override' is wrong and must not be copied into the ledger.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A3",
-  "cite": "same PlaceObject3 parse, filter-list decode; cross-checked against reference/decompiled/shs3_android/scripts/ColorCode.as:1-10 imports",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "art-anim-audio-feel/glow-is-part-of-the-vocabulary",
-  "lane_impact": "art-anim-audio-feel and ui-hud: corrects the survey's 'the entire compositing vocabulary is one class'. A recreation built from that sentence would omit glow entirely \u2014 and glow is visible in-frame on the yellow nameplate and the HUD text in Nr4fQstqHDM_432.0.png, and the blurred background matches BGResource's 29 Blur filters.",
-  "overturns_ledger": false,
-  "quote": "124_Mobile_ImageResource.bin filters={'Glow': 1469, 'Blur': 4} \u00b7 120_Mobile_BGResource.bin filters={'Blur': 29} \u00b7 115_Mobile_SHS3Resource.bin filters={'Glow': 8} \u00b7 shs3_payload_decoded.swf filters={'Glow': 152, 'Blur': 41, 'DropShadow': 2} \u00b7 ColorCode.as imports only BlurFilter and ColorMatrixFilter",
-  "text": "Timeline-authored Glow, Blur and DropShadow filters are a core part of the compositing vocabulary and ColorCode.as never builds them \u2014 1,469 Glow filters in ImageResource alone.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "STILL_UNHELD",
-  "citelint": {
-   "notes": [],
-   "problems": [
-    "NO_CITE_STILL_UNHELD"
-   ],
-   "status": "UNCHECKABLE"
-  },
-  "id": "art-anim-audio-feel/gore-has-no-frame-corroboration",
-  "lane_impact": "art-anim-audio-feel: bounds blocker 5. The 40/20/20/20 split, the behead flag and the pttl=24 droplets are solid from EnemyGoblin.as and BloodParticleEmitter.as, but the VISUAL half of the severed-limb blocker is still unopened - nobody has shown a frame of it. Compounded by the 15 fps capture rate (NF-1/NF-2): a 1.0 s spray is only ~15 sampled frames wide, so a targeted 60 fps re-extraction around a kill is the cheap way to close it.",
-  "overturns_ledger": false,
-  "quote": "My red-blob scan (r>100, r-g>60, r-b>55) over all 7,364 readable files under reference/frames/: median 519 red pixels per 480x270 thumbnail, and every one of the top 60 hits (97,000-105,000 red pixels, i.e. ~75% of frame) is a full-screen redFreeze, not a spray. No candidate showing deathnohead, deathnohand, deathinhalf or a blood emitter was found.",
-  "text": "The gore system is held from bytes only: a scan of all 7,364 readable frames in reference/frames/ produced no localised blood spray - every saturated-red hit resolved to a full-screen red freeze.",
-  "verdict": "STILL_UNHELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/ - my own grep for DEATHNOHEAD across the 34 Enemy*.as files",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/gore-is-humanoid-only",
-  "lane_impact": "art-anim-audio-feel: bounds the gore win claimed by art-anim-audio-feel/gore-system-not-one-variant, whose cite asserts the selection rule is 'mirrored in every Enemy* class'. Every animal plus the player-clone / elite / boss-monster classes take a plain death path. A recreation wiring the 40/20/20/20 dismemberment split onto wolves, boars or clones is diverging from the original.",
-  "overturns_ledger": false,
-  "quote": "No DEATHNOHEAD branch in: EnemyBear, EnemyBoar, EnemyCivilianFemale, EnemyClone, EnemyDeer, EnemyElite, EnemyFox, EnemyHorse, EnemyNianMonster, EnemyPlayer, EnemyPlayerGiant, EnemyStag, EnemyVegePatch, EnemyWolf, EnemyWolf2, EnemyWolfAlpha, Enemy_VegePatch (17 of 34)",
-  "text": "The dismemberment/gore death system applies only to humanoids: 17 of the 34 Enemy*.as classes carry no DEATHNOHEAD branch at all.",
   "verdict": "HELD"
  }
 ]

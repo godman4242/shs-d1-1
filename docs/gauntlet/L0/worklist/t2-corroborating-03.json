@@ -1,6 +1,69 @@
 [
  {
   "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as:51,106-108 + \u00a71t99s0\u00a7.as:3156-3158 + \u00a71t1523s0\u00a7.as:2346-2347",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/inputmanager-200-is-not-a-gameplay-base",
+  "lane_impact": "L-combat-core: weakens (without killing) the 300/200/100-as-base arithmetic, and tells the port to derive reach from the SPD/DAN formula rather than from the 200 constant.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t1541s0\u00a7.as:51 `internal static var maxDistance:int = 200;` \u00b7 :106-108 `public static function \u00a71t10094s0\u00a7(param1:int) : * { maxDistance = param1; }` \u00b7 \u00a71t99s0\u00a7.as:3158 `\u00a71t1541s0\u00a7.\u00a71t10094s0\u00a7(this.\u00a71t4417s0\u00a7);` inside setStance \u00b7 \u00a71t1523s0\u00a7.as:2347 `return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));`",
+  "text": "InputManager.maxDistance = 200 is a compile-time initialiser, not a gameplay base. setStance calls InputManager.setMaxDistance(slashLength) on every battle init for the local player (web \u00a71t99s0\u00a7.as:3156-3158, android MCSPlayer.as:3092-3094), so the 200 is overwritten before the player ever draws a stroke. Any derivation of the wiki's 300/200/100 that treats 200 as 'the shipped default slash budget' rests on a value the player never plays at. The real base is 120 + floor((90 + 5*DAN) * SPD / (20 + SPD)) \u2014 124 at SPD 1 / dan 0, asymptotically 210 at dan 0.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1834; reference/decompiled/shs3_android/scripts/XMLNpc.as:671-686; reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3105 and :3116; reference/extracted/skilldata.xml:73-79",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/mastery-domain-is-1-to-10-resolved",
+  "lane_impact": "L5 combat-core \u2014 closes the open question the packet honestly left STILL_UNHELD (combat-core/mastery-domain). Mastery is the raw 1-10 skill level; no rescale, no INFERRED flag needed, as long as the coefficients are taken from the web build.",
+  "overturns_ledger": false,
+  "quote": "StatsManager.as:1834  player.initPlayer(0,\u2026,getStat(1000),getStat(1001),getStat(1002),getLevel());\\nXMLNpc.as:680  if(this.skillList[i].getId() == skillid)\\nXMLNpc.as:682     return this.skillList[i].getValue();\\nskilldata.xml:74  <value>10</value>   (skill 1000's top level \u2014 the domain ceiling)\\n\u00a71t99s0\u00a7.as:3105  * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1)\\n\u00a71t99s0\u00a7.as:3116  * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1)",
+  "text": "The stance-mastery domain is RESOLVED as the skilldata 1-10 <value>, and the WEB coefficients are built for it. Player masteries are getStat(1000)/getStat(1001)/getStat(1002) passed straight into initPlayer; NPC masteries are the npcdata <lvl> returned verbatim by XMLNpc.getMastery. On the web coefficients (0.2*m*0.1 = 0.02 per level, 0.4*m*0.1 = 0.04 per level) that domain gives a real spread \u2014 Balanced 1.02\u21921.20, Heavy 0.54\u21920.90 \u2014 so no 0-100 conversion exists or is needed. The android build's 0.5*m*0.01 form is the anomaly that made the domain look broken.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "STILL_UNHELD",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_CITE_STILL_UNHELD"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "combat-core/mastery-domain-unresolved",
+  "lane_impact": "L5 \u2014 blocks promoting the 0.005-per-mastery terms in reach.ts/damage to CONTRACT at any domain. Close-path: measure a balanced-stance stroke at lvl 1 (stance-reach/A_t121.667, 239 px \u21d2 106 world at 2.25 px/unit) against a late-game balanced stroke at known SPD; the two readings pin the coefficient's domain directly, since the domain is the only free variable left in the formula.",
+  "overturns_ledger": false,
+  "text": "Whether stance mastery runs 0-10 or 0-100 is UNRESOLVED and it silently scales both the reach and damage tables \u2014 on the 0-10 reading the heavy reach mastery term can never do anything, because its maximum (\u00d70.55) stays permanently under its own 100-unit floor.",
+  "verdict": "STILL_UNHELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3166-3184; reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3231-3241",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/mastery-is-0-to-9",
+  "lane_impact": "combat-core: directly refutes the survey's assertion that 'mastery is a 0-100 percentage here, not 0-9, so the ledger's mastery-9 framing needs re-checking'. It does not. The same gates also hand combat-core a free per-stance ability ladder: mastery 3 = launch/flip-up, 4 = deflect, 5 = air-combo/launch/stab.",
+  "ledger_text": "the stance tables are **mastery-9 ceilings**, not base",
+  "overturns_ledger": false,
+  "quote": "this.canLaunch = this.lightMastery >= 3;\\nthis.canDeflect = this.lightMastery >= 4;\\nthis.canAirCombo = this.lightMastery >= 5;",
+  "text": "Stance mastery is a 0-9 integer in BOTH builds, not a 0-100 percentage.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3166-3168, 3174-3176, 3182-3184 + reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3231-3233, 3239-3241",
   "citelint": {
    "notes": [
@@ -686,67 +749,5 @@
   "quote": "HistoryItem.as:373 \u2014 \"return \\\"Players changed prosperity through quests by \\\" + val1;\"",
   "text": "Quests are a player-side prosperity lever \u2014 a seventh prosperity event the survey's taxonomy omits.",
   "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:192-194, :2627-2677 + reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2644-2652 and :228; docs/gauntlet/L0/index/strings.json keys 63/64",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "economy/rebirth-pays-premium-currency",
-  "lane_impact": "L-economy + L-rebirth-elements: the rebirth reward touches the premium wallet, which also means it is entangled with the dead Player.IO PayVault backend and needs an offline substitute. If the ledger's filmed '+25 gold' was read off the Coins counter, the film and the code describe different currencies - and per the standing invariant the frame wins, so that reading needs re-checking against the frame.",
-  "ledger_text": "film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
-  "overturns_ledger": false,
-  "quote": "192: internal static var STAT_GOLD:int = 11;\n194: internal static var STAT_HGOLD:int = 12;\n2653: public static function isCoinPurseFull() : Boolean { return getPlayerStats(STAT_GOLD) >= getMaxCoins(); }\n2669: public static function getHeavenlyGold() : int { var hgold:int = getPlayerStats(STAT_HGOLD); if(usePlayerIO) { hgold += QueryManagerPIO.instance.getPayVaultCoins(); } return hgold; }\n---\nstrings 63 = 'Coins'   64 = 'Gold'",
-  "text": "The rebirth payout is Heavenly Gold (STAT_HGOLD = 12, the PayVault premium currency), not the soft coin purse (STAT_GOLD = 11), so any tenthGold config value must be wired to the premium wallet.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:192, 194, 2201-2207; desktop reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:228 (=12), 2644-2652",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "economy/rebirth-pays-premium-gold",
-  "lane_impact": "economy + rebirth-elements: the +25/+100 is premium currency, which changes what the reward is worth and which wallet the recreation must credit. Two separate currencies exist and the ledger's single word 'gold' does not distinguish them.",
-  "ledger_text": "film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
-  "overturns_ledger": false,
-  "quote": "StatsManager.as:192  internal static var STAT_GOLD:int = 11;\nStatsManager.as:194  internal static var STAT_HGOLD:int = 12;\n\u00a71t1523s0\u00a7.as:2646   \u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);   // \u00a71t9413s0\u00a7 = 12 = HGOLD",
-  "text": "The rebirth reward is written to STAT_HGOLD (id 12, the premium Gold wallet), not STAT_GOLD (id 11, the coin wallet).",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/ShopUI.as:58, :394-401, :536-540",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "economy/sell-price-edge-cases",
-  "lane_impact": "L4 (economy) \u2014 prevents a builder wiring a 50% vendor haircut that the game never applies.",
-  "overturns_ledger": false,
-  "quote": "else if(slot.getItemID() == 13002) { slot.setCost(0,0); } else { slot.setCost(slot.getItem().getSellAmt(),0); }  /  internal var sellPercentage:Number = 0.5;   [no other reference]  /  StatsManager.changeGold(this.displayItem.getCost());",
-  "text": "Two shipped edge cases sit on top of the sell formula: item 13002 (the starter Branch) is force-priced at 0 in the sell list, and ShopUI.sellPercentage = 0.5 is dead code \u2014 onSell pays getSellAmt() unmodified.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1676 vs reference/decompiled/shs3_android/scripts/InteractUI.as:1562",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "economy/tradegoods-web-seed-drops-node",
-  "lane_impact": "L9/L10: the survey's 'fully reproducible offline with mulberry32, no server needed' is premature for a v0.717 target. Someone must read the web call site to find whether a node offset is applied there; until then the arbitrage loop is reproducible only in the Android formulation. GameEngine.as:636's tip ('buy goods from a market and sell in another town') is the constraint the resolution has to satisfy.",
-  "overturns_ledger": false,
-  "quote": "Android: \"var rng:RNG = new RNG(StageManager.getCurrentNode() * QueryManager.instance.getServerDate() * index);\" (three factors). Web: \"var _loc4_:int = \u00a71t3317s0\u00a7.instance.\u00a71t1848s0\u00a7() * param1;\" then \"\u00a71t58s0\u00a7.random(_loc3_,_loc4_)\" (two factors). \u00a71t3317s0\u00a7 is QueryManager \u2014 it carries saveModifiedCharData and reportPremiumBuy(4,\"convertgold\",1) in the block at :953-959 \u2014 so \u00a71t1848s0\u00a7() is getServerDate(). The missing factor is the NODE.",
-  "text": "The web trade-goods price seed omits getCurrentNode(), which if literal makes every town quote the same daily price and would destroy the arbitrage loop the game's own tutorial tip advertises.",
-  "verdict": "PARTIAL"
  }
 ]

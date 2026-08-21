@@ -1,6 +1,70 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/extracted/skilldata.xml, ids 1050-1075 parsed with displaynames resolved via docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/dragon-dance-tier-ids",
+  "lane_impact": "rebirth-elements + skills-meters: the ledger's '3x/6x' line is EXACTLY right (Step at 3x, Step II / Later Heaven at 6x) and needs only the addition of the 1x tier, not correction. Full per-element census from the same file: 3 skills at qty10 (Breath, Elemental Trap, Kunai), 2 at qty30 (Dragon Dance Step, AoE ultimate), 1 at qty60 (Step II) \u2014 24 elemental skills total, matching the ledger's '4 elements x 6 named skills'.",
+  "ledger_text": "Dragon Dance unlocks at 3\u00d7/6\u00d7 same-element rebirths \u2014 explains why point-stacking matters.",
+  "overturns_ledger": false,
+  "quote": "1056 'Dragon Dance Step: Fire'    <req><has><id>28</id><qty>30</qty></has>   desc: 'Unlocks the Dragon Dance Step for Fire and gives you the ability to teach it to others.'\n1060 'Dragon Dance Step: Fire II'  <req><has><id>28</id><qty>60</qty></has>   desc: 'Unlocks the Dragon Dance Step for Fire (Later Heaven) and gives you the ability to teach it to others.'",
+  "text": "The Dragon Dance Step skills 1056-1059 are the qty-30 (3x) tier, not tier 3; the qty-60 (6x) tier is 1060-1063, the '... II' skills whose tooltips alone say '(Later Heaven)'.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5495s0\u00a7.as:70-71, :382 vs reference/decompiled/shs3_android_payload/scripts/DragonDanceUI.as:70-71, :367",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/dragon-dance-v0717-parity",
+  "lane_impact": "rebirth-elements: promote the Dragon Dance input from android-only to build-agnostic CONTRACT. Contrast with the statue (diverges) and the stance multipliers (diverge) \u2014 parity must be checked per-mechanic, never assumed either way.",
+  "ledger_text": "\u2463 Dragon Dance **input** + Kanji-statue bonus.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t5495s0\u00a7.as:382  if(Boolean(this.\u00a71t5519s0\u00a7 && this.\u00a71t5518s0\u00a7.length == 4) && Boolean(this.\u00a71t5512s0\u00a7[1]) && Boolean(this.\u00a71t5512s0\u00a7[2]) && Boolean(this.\u00a71t5512s0\u00a7[4]) && Boolean(this.\u00a71t5512s0\u00a7[6]))",
+  "text": "The Dragon Dance input logic has full v0.717 parity \u2014 the label arrays and the {1,2,4,6} Later-Heaven trigger are byte-identical to android, at the same line numbers \u2014 so the S0-3 build caveat does not apply to this mechanic.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/NPCManager.as:1422-1449",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/elemental-aoe-is-a-horizontal-band",
+  "lane_impact": "L rebirth-elements + combat-core: the survey's numbers are right but its word 'radii' is not. A circular-radius implementation would let an airborne or elevated target dodge an ultimate that in the original always connects. The same function is the generic melee/projectile hit test, so this applies well beyond the elemental kit.",
+  "ledger_text": "\u2460 what each element **does** (24 skills' damage/cost/AoE/status \u2014 names only).",
+  "overturns_ledger": false,
+  "quote": "public static function checkHitObject(thing:MovieClip, damage:Damage, dist:int = 100, checkByAttacker:Boolean = false, objectToCheckDist:MovieClip = null) : Boolean\n{\n   var distsq:int = dist * dist;\n   ...\n   enemydist = enemy.getMCS().x - thing.x;\n   if(enemydist * enemydist < distsq && enemy.checkHitObject(thing,damage,checkByAttacker))",
+  "text": "The elemental AoE parameter is a horizontal half-width, not a radius: the hit test compares x-distance only, so Inferno 600 / Tsunami 400 / Tornado 200 / Earthquake 50 describe a band +/-N px wide with unbounded y.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/itemdata.xml:2311-2325 (strings 4154/4155) + reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:911-923, desktop confirm reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:1261-1276; levelCap 80 at \u00a71t1523s0\u00a7.as:362",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/entry-is-scroll-of-rebirth-item-2202",
+  "lane_impact": "rebirth-elements: the ledger had this at prose level; what is new is the exact ids and semantics for a 1:1 build \u2014 item 2202, baseprice 1000 COINS (STAT_GOLD), modifier id 25 as the 'opens rebirth UI' marker, and the gate is `== levelCap`, not `>= levelCap`. The item's second modifier (id 12, value 5) is DEAD DATA in both builds: the modifier loop returns inside the id-25 branch before reaching it. Also items-equipment: modifier ids 25/90/97 are UI-trigger modifiers, not stat grants \u2014 that pattern needs its own row.",
+  "ledger_text": "**Ready:** rebirth trigger (1000c scroll, L80, +25g, \"next Dan rank + specialize in an element\")",
+  "overturns_ledger": false,
+  "quote": "<id>2202</id><type>10</type><name>4154</name><baseprice>1000</baseprice><modifier><id>25</id></modifier>   ->  4154='Scroll of Rebirth', 4155='New Game +\\nProgress on to the next Dan Rank and specialize in an element. \\nLevel 80 required.'\\n\\nif(StatsManager.getLevel() > StatsManager.levelCap || StatsManager.didRebirth) { QueryManager.instance.reportHack(\"multiple rebirth\"); return; }\\nif(StatsManager.getLevel() == StatsManager.levelCap) { OverworldHUD.instance.interactUI.show(InteractUI.UIMODE_REBIRTH); return; }",
+  "text": "Rebirth is triggered by consuming inventory item 2202 'Scroll of Rebirth' at EXACTLY level 80, with a one-per-session anti-cheat lock \u2014 not by talking to an NPC.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:4216-4232, :2926-2940, :3937-3953; desktop twin at reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:4906",
   "citelint": {
    "notes": [],
@@ -721,70 +785,6 @@
   "overturns_ledger": false,
   "quote": "getString(161)..getString(166) = 0 hits across shs3_android/scripts and shs3_payload/scripts, versus (126)->2, (158)->2, (159)->2, (160)->2, (167)->8, (647)->12. `grep -c '<target>' reference/extracted/skilldata.xml` = 0 and the same in 117_Mobile_SkillData.bin. XMLSkill.as's complete getString inventory over :101-263 is 160,157,155,156,167,647,648,124,302,120,726,727,728,729,158 \u2014 e.g. :119 `outputString += LangManager.getString(167) + \": \" + cost + \"<br>\";` and :123 `outputString += LangManager.getString(647) + \": \" + cooldown.toFixed(2) + \" \" + LangManager.getString(648) + \"<br>\";`",
   "text": "The six 'Target: ...' strings (161-166) are dead design copy, not a shipped skill-card row: they have ZERO call sites in either build, skilldata carries no <target> tag, and the actual skill-card composer XMLSkill.as renders no targeting row at all \u2014 so there is no evidence of an ally-targeting branch in the skill schema.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682 (string table + LangManager); mechanism identical in web v0.717",
-  "cite": "docs/gauntlet/L0/systems/ui-hud.md:502-508 + reference/decompiled/shs3_android/scripts/LangManager.as:78 + OverworldHUD.as:211 + BattleUI.as:124-125",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "string-table/ui-hud-md-still-carries-the-refuted-id-drift-table",
-  "lane_impact": "cross-lane hygiene, NOT a new discovery \u2014 the fact is already banked as ui-hud/langmanager-uses-resname-not-id (SEEN_CLAIM_IDS.txt:1058) together with ui-hud/resname-600-proves-pass1-read-the-id-column and ui-hud/web-build-confirms-resname. I report it only because systems/ui-hud.md was never corrected and still hands the wrong resolution rule to the next reader of that survey. It also vindicates this unit: the string-table surveyor keyed by resname throughout and was right to; docs/gauntlet/L0/index/strings.json is resname-keyed and correct.",
-  "overturns_ledger": false,
-  "quote": "ui-hud.md:502 '| `BattleUI.as:124-125` autoslash off/on | 619/620 | \"Special Event\"/\"Unbreakable\" | X |' and :505-506 'The true strings for the mismatches are present at different ids \u2014 600 \"Auto Slash Off\", 601 \"Auto Slash On\"'. Against: LangManager.as:78 `var output:String = Locale.loadStringEx(num.toString(),language);` \u2014 fl.lang.Locale keys XLIFF by resname. By resname, 619='Auto Slash Off' (unit at bin line 1807, `<trans-unit id=\"600\" resname=\"619\">`) and 223='AP', which is exactly right for OverworldHUD.as:211 `this.overworldHUD_ap.apbaricon.text = LangManager.getString(223);`. Decisive: itemdata's `<name>4000</name>` resolves to 'Small Soldier Pill' ONLY by resname \u2014 id 4000 does not exist, ids stop at 2554. First divergence is id 212 / resname 222, which is why every check-marked row in that table is id <= 208.",
-  "text": "systems/ui-hud.md still presents `ui-hud/lang-id-drift-caveat` as HELD and issues a downstream rule ('never resolve by id alone') that is inverted \u2014 LangManager keys the XLIFF by resname, so 619 IS 'Auto Slash Off' and 223 IS 'AP', and the doc's two red-X rows are its own mis-keying, not a build-revision drift.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1260-1272",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "string-table/war-room-gate-has-a-dan-escape-hatch",
-  "lane_impact": "progression + meta-social + rebirth-elements \u2014 refutes string-table/level-gates-war-room-10-duel-2's headline rule. The level-10 message is copy, not the rule; the rule is level-10 OR any Dan. This also hands rebirth a second concrete privilege beyond the banked gold faucet. The duel gate IS flat and is confirmed in the same file at :1172 `else if(StatsManager.getLevel() < 2)`. Zero corpus hits for 'STAT_DAN) == 0'.",
-  "overturns_ledger": false,
-  "quote": "1260-1262: this.showDialog(\"War Room is disabled for this character\",\"OK\"); return;  \u00b7  1264-1268: if(StatsManager.getLevel() < 10 && StatsManager.getPlayerStats(StatsManager.STAT_DAN) == 0) { this.showDialog(LangManager.getString(320),LangManager.getString(5)); return; }  \u00b7  1269-1272: if(QueryManager.instance.offlineMode) { this.showDialog(\"Not available in offline mode\",LangManager.getString(5)); return; }",
-  "text": "The war room is NOT a flat level-10 gate: the guard is `getLevel() < 10 && getPlayerStats(STAT_DAN) == 0`, so any rebirthed character (Dan >= 1) enters at any level \u2014 and two further gates the copy never mentions bracket it, a per-character War-Room disable flag and an offline-mode block.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "reference/decompiled/shs3_android/scripts/WarUI.as:525-547",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "string-table/war-turn-expiry-resets-moves-to-max",
-  "lane_impact": "meta-social \u2014 supplies the missing half of string-table/war-turn-is-clock-driven: the string proves it is a countdown, this proves what the countdown DOES. Combined with the banked getMaxWarMoves() ladder (3,4,4,4,4,5,5,5,5,5,6 by rank, meta-social.md:288) the move economy is fully specified except the period, which is a server delta (timediff) and stays unheld.",
-  "overturns_ledger": false,
-  "quote": "533-537: maxmoves = StatsManager.getMaxWarMoves(); warmoves = StatsManager.getPlayerStats(StatsManager.STAT_WARMOVES); if(warmoves != maxmoves) { StatsManager.setStat(StatsManager.STAT_WARMOVES,maxmoves); }  \u00b7  546: this.readytomovelabel.text = LangManager.getString(309) + this.getTimeString(-timediff);",
-  "text": "When the 'Next turn in' countdown expires the client SETS war moves to getMaxWarMoves() rather than incrementing them, so a turn is a full refill window and unspent moves do not accumulate.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "android v0.682",
-  "cite": "reference/decompiled/shs3_android/scripts/Obj_TownSign.as:44-48 + Obj_DirectionSign.as:161 + Obj_Hut.as:72 + Obj_PathBush.as:112 + Obj_HiddenTemple.as:189 + Obj_DragonDancePath.as:277 + NodeUI.as:381 + InteractUI.as:1732 + BankUI.as:641",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "string-table/weight-gate-is-a-travel-guard-in-code",
-  "lane_impact": "items-equipment + world-exploration \u2014 upgrades string-table/carry-weight-gates-travel from one prose string to eight code call sites, and adds the PvP-room exemption (weight is not enforced inside duel rooms). It also separates the two weight systems the claim conflated: carry weight gates travel, bank storageMaxWeight gates deposits (that second one is already banked at rebirth-elements.md:293).",
-  "overturns_ledger": false,
-  "quote": "Obj_TownSign.as:44-47 \u2014 override public function interact() : * { if(!GameEngine.isPvPRoomMode() && StatsManager.findWeight() > StatsManager.getCarryingWeight()) { OverworldHUD.instance.showDialogBig(LangManager.getString(138),LangManager.getString(5)); return; }  \u00b7  BankUI.as:641 \u2014 if(this.storageWeight + this.selectedSlotItem.getWeight() / this.selectedSlotItem.getQuantity() > this.storageMaxWeight)",
-  "text": "The carry-weight gate is enforced in code as a travel/interact guard at eight movement objects \u2014 `findWeight() > getCarryingWeight()` aborts interact() \u2014 and it is exempted inside PvP rooms; the bank's container cap is a separate, independent limit.",
   "verdict": "HELD"
  }
 ]

@@ -1,337 +1,339 @@
 # t1-overturns-02 — CITE LENS review (blind critic)
 
 Packet: `docs/gauntlet/L0/worklist/t1-overturns-02.json` — **24 findings, 24 judged, 0 skipped.**
-Every verdict below rests on an artifact **I opened myself**. Where a citelint status
-(`QUOTE_UNVERIFIED` / `UNCHECKABLE`) disagrees with my hand check, I say which won.
+Every verdict below rests on an artifact **I opened myself** in this run. No verdict
+here is taken from another agent's prose; I did not open `critics/` or `sources/`.
 
-**Headline: 3 refuted (1 fatal, 2 material), 21 upheld.** The three refutations are all
-cases where the *conclusion* was defensible but the *stated measurement* is false — and one
-of them (`audio-inventory-is-held`) is false in a direction that has been suppressing a
-recoverable asset set for the whole project.
+## Headline
 
----
+This is the strongest packet I have audited on cite hygiene. **All five
+`QUOTE_UNVERIFIED` flags are false alarms of the linter, not over-claims** — in every
+case the quoted text is really in the cited file; the linter choked on composite
+quotes that splice several files together with `///` / `·` separators, and on a quote
+that is a *shell command result* rather than a file line. I located every one of them.
 
-## 0. Tooling I built to judge this packet (reproducible)
+**0 of 24 refuted.** That is not a rubber stamp — it is what happens when a packet
+cites decompiled AS3 by line and the lines are actually right. I did find real defects,
+all of them line-reference slips or over-reaching *lane_impact* prose, recorded per
+claim below with the corrected cite. **6 of the 24 claims are TRUE but do NOT overturn
+the ledger sentence they name** (IDX 1, 2, 14, 17, 18, 20) — that is the single most
+common failure in this packet and the thing the ledger editor must not wave through.
 
-* `swfwalk.py` — recursive SWF tag walker that **descends into every `DefineSprite` body**
-  and reads the `PlaceObject3` flag pair (byte1 bit1 = `PlaceFlagHasBlendMode`,
-  bit0 = `HasFilterList`, bit2 = `HasCacheAsBitmap`).
-* `filters.py` — full `PlaceObject3` field parser (MATRIX / CXFORMWITHALPHA bit-readers,
-  FILTERLIST with per-filter-id sizes) so filter *types* can be counted, not just presence.
-* Resource-blob decoder — the transform is already committed in this repo at
-  `reference/tools/payload_decode.py` (swap `b[i]`↔`b[i+256]` when `i%11==0` for `i` in 3..255,
-  then `b[i] ^= key`, key only over the first 512 bytes). **The key is recoverable from the file
-  itself: `key = byte[3] XOR 0x11`,** because every one of these blobs is CWS v17.
+## Method
 
-Measured, whole-file, no sampling:
+- Web AS3: `reference/decompiled/shs3_payload/scripts/*.as` (612 obfuscated top-level
+  classes, 1,079 `.as` total — I counted both).
+- Android AS3: `reference/decompiled/shs3_android/scripts/`, `shs3_android_payload/scripts/`.
+- Anim blobs: `reference/extracted/android/*.bin`. ⚠️ **These two blobs are UTF-8 with a
+  BOM, NOT UTF-16LE** — decoding them as UTF-16LE returns 0 `<anim>` hits and would have
+  fooled me into refuting three sound claims. Decoded with `utf-8-sig`.
+- Frames: opened, cropped and upscaled with PIL/LANCZOS at the crops the claims state.
+- Video: frames extracted myself with `ffmpeg -ss <t> -frames:v 1`.
+- SWF header: parsed `reference/decrypted/shs3_payload_decoded.swf` in Python
+  (`CWS`, v17, stage 800×690, **frameRate 24.000**, 6,880,328 bytes) — matches the two
+  claims that quote it, byte for byte.
 
-| container | body bytes | total tags | DefineSprite | PlaceObject2 | **PlaceObject3** | **blend-flag set** | filter lists | cacheAsBitmap |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| `reference/decrypted/shs3_payload_decoded.swf` (WEB) | 11,892,053 | 17,523 | 827 | 7,196 | **304** | **0** | 263 | 54 |
-| `reference/decrypted/shs3_android_payload_decoded.swf` | 21,688,584 | 14,727 | 675 | 6,010 | **248** | **0** | 214 | 47 |
-| `115_Mobile_SHS3Resource` (k=104) | 1,040,849 | 9,698 | 1,949 | 2,032 | **12** | **0** | 12 | 0 |
-| `120_Mobile_BGResource` (k=103) | 4,412,340 | 4,497 | 552 | 2,105 | **54** | **0** | 37 | 53 |
-| `124_Mobile_ImageResource` (k=109) | 1,908,229 | 10,096 | 94 | 4,653 | **1,473** | **0** | 1,473 | 0 |
-| `113_Mobile_MusicResource` (k=117) | 1,402,677 | 22 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `122_Mobile_SoundResource` (k=111) | 29,623 | 22 | 0 | 0 | 0 | 0 | 0 | 0 |
+## The class map, re-derived independently
 
-304 + 248 + 12 + 54 + 1,473 = **2,091 PlaceObject3 tags, zero with a blend mode.**
+Several claims rest on an obfuscated→real class mapping. I did not take it on trust; I
+re-derived it from the **parameter order of `initPlayer`**, which is unobfuscated in
+android and positionally identical in web:
 
----
+`§1t99s0§.as:183-199` vs `MCSPlayer.as:182-196` line up 1:1, giving
+`§1t4420s0§`=baseSlashLength, `§1t4421s0§`=lightMastery, `§1t4422s0§`=balancedMastery,
+`§1t4423s0§`=heavyMastery, `§1t4419s0§`=baseReload. `§1t99s0§.as:9-19` additionally
+carries **unobfuscated** `standingRange/jumpThreshhold/lightSlashSpeed/...`. So
+`§1t99s0§` = MCSPlayer, `§1t68s0§` = NPC, `§1t1523s0§` = StatsManager,
+`§1t113s0§` = BattleUI, `§1t123s0§` = QuestGenerator. Confirmed.
 
-## 1. REFUTED
-
-### R1 (FATAL) — `art-anim-audio-feel/hold-frames-are-authored-in-data`
-Claim: "96 of 385 `<anim>` rows across the 19 web-payload animdata blobs have `@d` greater
-than their `<f>` count."
-
-**Every number in that sentence is wrong, and all three named examples are wrong.**
-
-My scan of all 27 files in `reference/extracted/bindata/`, keeping the 19 whose root is
-`<animdata>`, splitting on `<anim …>` headers and counting `<f ` children per row:
-
-```
-animdata files: 19
-TOTAL <anim tags: 487
-mismatches (d != len(f)): 0    (d > f: 0   d < f: 0)
-per-file 100:20 101:7 102:51 103:25 104:13 105:8 106:21 107:20 108:158
-         109:8 110:21 111:17 112:16 113:26 114:10 115:16 116:21 117:8 118:21
-```
-
-The three cited rows, read directly:
-
-| cite | claimed | **actual** |
-|---|---|---|
-| `reference/extracted/bindata/116_1t4643s0.bin` `heavy_horslash_parta` | d=5, 2 `<f>` | **d=5, 5 `<f>`** (`<f i="0..4">`) |
-| `reference/extracted/bindata/118_1t4645s0.bin` `light_horslash_parta` | d=13, 11 `<f>` | **d=13, 13 `<f>`** |
-| `reference/extracted/bindata/108_1t4635s0.bin` `heavyhorizontalslash_parta` | d=6, 4 `<f>` | **d=6, 6 `<f>`** |
-
-Raw first line of the 116 row: `<anim i="heavy_horslash_parta" d="5">` followed by `<f i="0">`
-… `<f i="4">`. There is no authored hold anywhere in the data.
-
-Worse for the claim, the artifact it cites *contains the real answer and contradicts it*:
-`reference/decompiled/shs3_android/scripts/AnimData.as:15` reads `this.duration = xml.@d;`
-and then a hard-coded switch **adds** the tail in code —
-`:26 this.duration += 10;` (`"light_afterslashpose"`), `:41 += 10` (every
-`*SLASH_POSE`), `:53 += 15` (every `*FALLSLASH_END` / `*JUMPSLASH_LAND`),
-`:57 += 24` (`"sheathesword"`), `:66 += 6` (`"deathenemy"`/`"death"`/`"gob_death"`…),
-and 25 more cases through `:141`. The hold table is **code**, not data. Refuted.
-
-### R2 (MATERIAL) — `art-anim-audio-feel/zero-placeobject3-tags`
-Claim: "across every decoded container … there is not a single PlaceObject3 tag."
-
-**False. There are 2,091** (table above). The claim's own tag totals give the mistake away:
-its 4,051 / 3,311 / 3,756 / 330 are exactly my **top-level-only** counts —
-
-```
-shs3_payload_decoded.swf         toplevel tags 4051  PO3@top 0  sprites@top 827
-shs3_android_payload_decoded.swf toplevel tags 3311  PO3@top 0  sprites@top 675
-115_Mobile_SHS3Resource          toplevel tags 3756  PO3@top 0  sprites@top 1949
-124_Mobile_ImageResource         toplevel tags  330  PO3@top 0  sprites@top  94
-```
-
-— i.e. the scan never descended into `DefineSprite` bodies, which is the only place
-`PlaceObject3` ever appears in these files. The conclusion ("no blend modes") is correct and
-is carried by five other claims in this same packet with real recursive scans; this one's
-evidence is an artifact of a broken walker and it directly contradicts its siblings
-(`zero-blendmode-byte-proof` says 124 has PO3=1473; this says 0). Refuted as stated.
-
-### R3 (MATERIAL) — `bindata/audio-inventory-is-held`
-Claim: "The audio **WAVEFORMS are lost** … `113_Mobile_MusicResource.bin` and
-`122_Mobile_SoundResource.bin` remain unopenable … zlib and raw-deflate both fail."
-
-**The inventory half is exactly right. The waveform half is false — I opened both.**
-
-`zlib` fails only if you skip the 11-byte-swap step; with the repo's own committed transform
-(`reference/tools/payload_decode.py`) both inflate on the first try:
-
-```
-113_Mobile_MusicResource k=117 ver 17 declen 1402685 actual 1340647  INFLATES -> 1402677
-122_Mobile_SoundResource k=111 ver 17 declen 1869552848->29631 actual 23928  INFLATES -> 29623
-```
-
-(The claim's own "declared length 1,969,230,408" for 113 is the *encrypted* header read; after
-the transform it is 1,402,685, and the body inflates to 1,402,677.)
-
-Both are ordinary SWFs holding **13 `DefineSound` tags each, MP3, 11,025 Hz, mono:**
-
-* `122_Mobile_SoundResource` → `slash1 slash2 slash3 die1 die2 die3 punch hitmetal deflect fart goodkoto sumo refund` — the exact 13 the claim names.
-* `113_Mobile_MusicResource` → `battlechants battledrums flutes safeambience safekoto safepercussion` (all 882,144 samples = **79.872 s**), `dungeonambience dungeonflute dungeonpiano dungeonpercussion` (504,288 samples = 45.7 s), `bgm_gangnam bgm_levelup bgm_lose`.
-
-Written out and probed: `ffprobe battledrums.mp3 → format_name=mp3 duration=79.872000
-bit_rate=16000`; `ffprobe slash1.mp3 → format_name=mp3 duration=0.572000`.
-
-So the claim's proposed ledger split ("waveforms lost / inventory recovered") is the **wrong
-split**, and it is the load-bearing half of the finding. Refuted; see N1/N2 for the replacement.
+Stance-constant mapping, from the identical `setStance` switch in both builds
+(`§1t99s0§.as:3091-3155` vs `MCSPlayer.as:3019-3095`):
+`§1t12220s0§`=LIGHT, `§1t12221s0§`=BALANCED, `§1t12222s0§`=HEAVY,
+`§1t12223s0§`=DUAL, `§1t12224s0§`=REVERSED.
 
 ---
 
-## 2. UPHELD — with what I opened
+## Verdicts
 
-* **`blend-modes-none-at-byte-level-web`** — every figure reproduced exactly (827/304/263/54,
-  675/248/214/47, 1949/12, 552/54/53, 2,091 total, zero blend flags). HELD.
-* **`glow-filters-are-the-real-fx-answer`** — my full `PlaceObject3` filter parse of the web
-  payload: `{'Glow': 205, 'Blur': 57, 'DropShadow': 2}` across 263 filter placements,
-  **205 glows over 71 sprites**. Top sprites: 2250 ×50 (anonymous), 3110 ×47, and sprite
-  **1624 = `shs3_fla.InteractUI_chikako_portrait_610`** — I resolved that name out of the
-  SymbolClass table myself. HELD. *(Two wobbles worth logging: the cite says "262 filter
-  placements" — it is 263; the quote says "203 glow placements" — it is 205, which is the
-  number the claim TEXT gets right.)*
-* **`no-blendmode-holds-for-timeline-tags-too`** — full 329,520,665-byte streaming scan of
-  `reference/extracted/payload.xml`: `194 buttonHasBlendMode="false"` + `304
-  placeFlagHasBlendMode="false"`, **zero `"true"`, 498/498**. The 304 is a clean cross-check:
-  it is exactly the web payload's PlaceObject3 count. HELD.
-* **`no-blendmode-in-authored-data`** (citelint UNCHECKABLE) — verified by hand across all
-  five decoded containers; 113 and 122 hold 0 PlaceObject3, the other three hold 12/54/1473,
-  all blend-free. **My check beats the linter here.** HELD.
-* **`no-blendmode-in-swf-tags-either`** (citelint UNCHECKABLE) — 115 `PO2=2032 PO3=12
-  sprites=1949`, 120 `PO2=2105 PO3=54 sprites=552`, 124 `PO2=4653 PO3=1473 sprites=94`,
-  total **1,539**. Every single number exact. HELD.
-* **`zero-blendmode-byte-proof`** — 12 / 1473 / 54 / 304 / 248 = 2,091, all blendmodes={}. HELD.
-* **`hit-reaction-is-a-ladder`** — `MCSPlayer.as:1455-1466` (DOWNSTAB→24, `controlledBy==0`→84,
-  else 12) and `:1762-1768` (THOUSANDSTABS→26, DEADLYCLEAVE→16) read verbatim;
-  `EnemyShield.as:331-334` `PART_weapon → gotHitFlag=false; damage=0; return false` and
-  `:335-340` `PART_prop → damage=0; gotHitCounter=24; playHitMetal()`. Census reproduced
-  **exactly**: `12 ×23 · 0 ×3 · 24 ×2 · 84 ×1 · 26 ×1 · 16 ×1 · -1 ×1 = 32`. HELD.
-* **`hud-150-is-a-potato-buff`** and **`hud-150-is-potato-buff`** — `itemdata.xml:237-249`
-  is item 2115 `<type>10</type><name>4125</name><desc>4132</desc><modifier><id>38</id>`;
-  `strings.json["4125"]="Potato Dog"`, `["4132"]="Eat this potato to get the 150% Damage
-  buff.\n\nNote: Only one buff may be active at a time."`, plus 4133/4134/4135/4229/4230 and
-  the six potato names and `["125"]="Stance Restriction"` — all read verbatim.
-  `MCSPlayer.as:3701-3703` is the stance triangle with **`damage *= 1.2;`**, then `:3705
-  damage -= this.getDefense();`. **I then closed it independently:
-  `reference/decompiled/shs3_android/scripts/OverworldHUD.as:1404` literally reads
-  `buffstr = "150% DAMAGE";` inside `updateBuff(bufftype, duration)` under
-  `StatsManager.BUFF_ATTACK`.** The HUD line *is* the buff readout. Both HELD.
-* **`killbeat-6000ms-pins-24hz-tick`** — I re-measured the video myself. `ffmpeg -ss 512 -t 18
-  -i reference/videos/Nr4fQstqHDM.mp4 -vf fps=60,scale=64:36`, red = `R>G+30 & R>B+30`,
-  run = frac > 0.65:
-  `run t=516.683..522.667 frames=360 dur=6.000s` and, from the second window,
-  `run t=587.683..593.667 frames=360 dur=6.000s`. Both **exactly 360 frames @ 60 fps = 6.000 s**.
-  Against `StageManager.as:1101 redFreezeCounter = 24 * 6;` (144 ticks) ⇒ **24.0 Hz**; a 15 Hz
-  sim needs 9.6 s. `:916` reads exactly as quoted, so the SHEATHESWORDCHIBURI branch is the
-  common case. HELD — **and I closed the build-parity hole the claim left open**: see N6. HELD.
-* **`no-hold-frames-across-all-487`** — reproduced exactly, including all 19 per-file counts
-  and `checked 487 mismatches 0`. HELD (and it is the claim R1 collides with; R1 loses).
-* **`npc-death-dice-is-seven-way`** — `NPC.as:898 override public function die()`,
-  `:1005 dice = Math.random() * 7;`, branches `<=1 ENEMYDEATH`, `==2 DEATH_FORWARD`,
-  `==3 DEFEATED2 && !StageManager.isRedFreeze()`, `==4 ENEMYDEATHNOHAND`, `==5 DEATHINHALF`,
-  `else` → `ENEMYDEATH` + `mcs.hair.visible = true; mcs.hatHair.visible = false;
-  mcs.createFlyingWeapon(); mcs.createFlyingHat();` — all verbatim. `EnemyGoblin.as:386` is
-  indeed `Math.random() * 5`, and greps 0 hits for `DEATH_FORWARD|DEFEATED2` and for
-  `createFlyingWeapon` in that file. HELD. **But see N4 — the finding's lane-impact line
-  "only EnemyGoblin, EnemyGoblinThrower and EnemyZombie override" is false.**
-* **`predecessor-sfx-lineage`** — I extracted the DefineSound sets myself. **SHS1 = 10,
-  SHS2 = 20 → 30**, and SHS2 carries `SoundStreamHead ×1 + SoundStreamBlock ×310` — the
-  "310-block streamed music track", exact. `shs2_kon.swf` SymbolClass does contain
-  `com.kongregate.as3.client.KongregateAPI`. The identity relations reproduce:
-  `punch` md5 `2db351a0…` is **the same bytes in Duels, SHS1 and SHS2**; Duels `slash1` md5
-  `322f92e4…` is **the same bytes as SHS2 `slash1` and SHS1 `sword1`**. And exactly **seven**
-  more match on both sample count and byte length while differing in bytes —
-  slash2 (6130/1562), slash3 (2976/1042), die1 (5290/1458), die2 (7264/1770), die3
-  (9545/2186), deflect (8700/2082), hitmetal (5717/1562). HELD. *(The claim's md5 strings are
-  a different digest convention from mine — its `cfd26c81…` for punch is not the md5 of the
-  DefineSound payload — but the equality relations it asserts are the substance and they
-  reproduce exactly, so this is a notation gripe, not an over-claim. One nit: SHS1 `sword3`
-  is 6314/1666 and does NOT size-match Duels `slash3`; the 7-way size match is against SHS2,
-  which is what the claim actually says.)*
-* **`rig-is-27-parts`** (citelint QUOTE_NOT_LOCATED — **I located all of it**) —
-  `MCSCharacter.as:10-62` declares PART_l_hand=0 … PART_r_knee=26 exactly as quoted.
-  My census: 108's distinct `<n i=>` = `[0..7, 9..16, 18..21]` = **20**; across all 19 blobs
-  `0-26` with **25 in use**, missing exactly **8 (crotch) and 17 (hat)**; 108 node attrs =
-  **24,502 with i/x/y, 24,010 with r, 492 with a/b/c/d** (492/24502 = **2.0 %**). Sentinel
-  confirmed at `FrameNodeData.as:17 public var rotation:int = 999;` and `:53 if(this.rotation
-  != 999)`. Every figure exact. HELD.
-* **`screen-shake-amplitude-is-inert`** (citelint QUOTE_NOT_LOCATED — **located**) —
-  `StageManager.as:1200 startShake(shakeDuration:int, shakeAmt:int = 30)`, `:1211
-  --screenShakeCounter;`, `:1225 shakeAmount = Math.min(screenShakeAmt,screenShakeCounter);`,
-  `:1226-1227 gameStage.x/y = start + (-shakeAmount/2 + Math.random()*shakeAmount)`.
-  `grep startShake(` returns **exactly the 8 call sites cited and no others**:
-  HeavenlySwordProjectile.as:76 (12), MCSPlayer.as:911 (12) / :946 (24) / :4180 (12),
-  Trap_CrusherBlockAuto.as:88 (6), Trap_CrusherColumnAuto.as:90 (6), StatsManager.as:3535
-  (data), Marker_RumbleTrigger.as:44 (data). Every hard-coded duration ≤ 24 < 30, so the
-  amplitude arg never binds and the recommended `uniform(-t/2, +t/2)` is literally the source
-  line. HELD.
-* **`second-layout-mode-800x690`** — `GameEngine.as:269 originalWidth=800`, `:270
-  originalHeight=480`, `:271 originalHeightWithBar:int = 690`, `:273 originalWithBarAspectRatio
-  = originalWidth / originalHeightWithBar`, `:275 if(newAspectRatio <=
-  originalWithBarAspectRatio)`, `:277-282` incl. `StatsManager.stageShowingFriendBar = true;`
-  and `OverworldHUD.instance.friendpanel.init();` — **every line number exact.**
-  I also decoded the stage RECTs myself: **web `shs3_payload_decoded.swf` = 800×690**,
-  android payload = 800×480, `reference/preservation/shs3.swf` = 800×690. The claim's
-  "which is why the SWF document rect decodes to 800×690" is confirmed at byte level. HELD.
-* **`sfx-contract-ten-routines`** (citelint QUOTE_NOT_LOCATED — **located, all ten**) —
-  `SoundManager.as:187 playSlash · 221 playDie · 255 playHit · 268 playHurt · 281 playHitMetal
-  · 294 playDeflect · 307 playFart · 320 playGoodKoto · 333 playSumo · 346 playRefund`, with
-  `getSound(...)` at :197/:205/:213, :231/:239/:247, :261, :274, :287, :300, :313, :326, :339,
-  :352. All ten line numbers exact, and the 13 names they request are **exactly** the 13
-  `DefineSound` names I extracted from `122_Mobile_SoundResource`. HELD.
-* **`bindata/NEW-70th-trap-room-is-commented-out`** (citelint QUOTE_NOT_LOCATED —
-  **located**) — `93_1t4647s0.bin` line 22 is `\t<!--<default>`, line 29 `</room>`, line 30
-  `\t</default>-->`, and the block holds one `<room>` with **four** `Trap_ElementAuto` objects
-  (lines 25-28). Counting: **70 `<room>` raw, 69 after stripping XML comments**; tiers
-  **easy 13 / medium 21 / hard 15 / veryhard 20 = 69**. And the dead branch is real:
-  `shs3_android_payload/scripts/RoomGenNode.as:2437
-  if(QuestEngine.trapRoomData.§default§.toString() != "")` → `:2439 trapRoom =
-  …§default§.room;`. HELD.
-* **`bindata/NEW-setvisible-partmax-22-leaves-5-slots-unhidden`** — `FrameData.as:74-89`
-  verbatim: `var partMax:int = 22; for(i = 0; i < partMax; i++){ mcs.getPart(i).visible =
-  false; }` then re-show from nodeList then force `PART_hat` and `PART_crotch` visible.
-  Nothing else in the file touches 22-26. `MCSCharacter.as:54/56/58/60/62` declares
-  prop3=22 … r_knee=26. Corroborated: those five slots are referenced **only** by
-  `MCSWolf.as:148/184/188/193/197`, i.e. creature rigs. HELD.
-  *(Nit: the cite says `MCSCharacter.as:56-62`; `PART_prop3 = 22` is at :54, one line above
-  the range. Content is verbatim correct.)*
-* **`bindata/NEW-trap-name-suffix-is-the-trigger-wiring`** — `93_1t4647s0.bin:51`
-  `<obj><id>7</id><name>Obj_FloorSwitch</name><x>200</x><property>Trap_Kunai</property></obj>`
-  paired with `:52 <obj><id>32</id><name>Trap_Kunai</name>…`, schema at `:6`
-  `…<property>triggered object,triggered object...</property>` and `:7` Obj_Lever with the
-  pipe form. Census reproduced: **297 objects, 47 distinct raw names, 14 base types**
-  (FloorSwitch 0-5, Kunai 0-5, KunaiAuto 0-3, …), and the medium tier does carry
-  `Obj_FloorSwitch1 → property Trap_Kunai1` at x=300 next to `Trap_Kunai1` at x=300. HELD.
-* **`bindata/NEW-warhex-has-14-states-not-7`** (citelint QUOTE_NOT_LOCATED — **located, all
-  fourteen**) — `shs3_android_payload/scripts/WarHex.as` lines 11,13,15,17,19,21,23,25,27,29,
-  31,33,35,37 = NOTHING 0 · SPAWNPOINT 1 · FORWARDBASE 2 · CONTROLPOINT 3 · TOWN 4 ·
-  POTENTIALSPAWNPOINT 5 · UPCOMINGSPAWNPOINT 6 · LADDER 7 · DEFENSE 8 · VILLAGE 9 · CITY 11 ·
-  CASTLE 12 · DISABLEDSPAWNPOINT 13 · DEMOLISHEDSPAWNPOINT 15. **Gaps at 10 and 14 confirmed.**
-  Every line number exact. HELD.
+### IDX 0 — combat-core/web-as3-is-readable · NOT REFUTED · overturn UPHELD
+`§1t1523s0§.as:36` = `public static var §1t9323s0§:Number = 0.717;` — exact.
+`§1t99s0§.as:9-19` = standingRange 50 / jumpThreshhold 100 / lightSlashSpeed 50 /
+balancedSlashSpeed 40 / heavySlashSpeed 30 — exact, and those identifiers are NOT
+obfuscated. `payload_export.log:4` = `Exported script 1/1079 mx.core.mx_internal` — exact.
+The named ledger sentence ("cannot be cross-read") is flatly false: its "5 files" refers
+to `§1t51s0§/§1t51s1§/` (SWFReader, Utilities, Converter, BinarySerializer, `§1t52s0§`),
+a *library* subfolder, while 612 obfuscated game classes sit at the scripts root.
+
+### IDX 1 — combat-core/web-behead-is-1.3 · NOT REFUTED (minor mis-cite) · overturn NOT upheld
+**Corrected cite: `§1t68s0§.as:472-475`, not `:470-472`.** The quote is real and I read
+it — `if(this.§1t1071s0§) { _loc3_ *= 1.3; }` — but it sits two lines lower; 470-472 is
+the `getMinDamage()` floor plus the `if`. Android side `NPC.as:451-453` is EXACT.
+I proved `§1t1071s0§` is `behead` independently: `§1t99s0§.as:3737-3746` sets it true on
+`PART_hat / PART_head / PART_neck`, the line-for-line twin of `MCSPlayer.as:3688-3692`.
+So web ×1.3 vs android ×1.5 is real.
+**Overturn NOT upheld:** the sentence named is "part-based weak points (shielder legs,
+undead heads)" (REBUILD_READINESS.md:189), listed under *Ready*. A universal
+head/neck/hat multiplier ADDS to that line; it does not falsify it.
+
+### IDX 2 — combat-core/web-build-as3-is-readable · NOT REFUTED · overturn NOT upheld
+`actionscript.json` bundles verified verbatim, `shs3_payload = 1079`. `find … -name '*.as' | wc -l` → 1079.
+`ls '§1t51s0§/' | wc -l` → 1. Build stamp exact.
+**Overturn NOT upheld:** the named sentence (REBUILD_READINESS.md:273, :290) says
+"no offline playable build … the ~40 INFERRED values will NOT be measured **from a live
+build**". That is still literally true — nothing here makes the game run. What the claim
+earns is an ADDITION to the ledger (a static-source recovery route), not a retraction.
+The ledger editor must not record this as "P0 overturned".
+
+### IDX 3 — combat-core/web-crit-is-1.3-flat · NOT REFUTED · overturn UPHELD
+`§1t99s0§.as:3272-3276` exact, character for character. No stance branch.
+Android contrast confirmed at `MCSPlayer.as:3215-3222` (×1.2 non-light / ×1.5 light) —
+so the "1.2/1.5 split" really is a v0.682 retune. `src/config/combat.ts:17` is
+`export const CRIT_MULT = 1.3;` — the claim's "do not change it" is right.
+Blocker ② (REBUILD_READINESS.md:190) closes at 1.3, in the ledger's own favour.
+
+### IDX 4 — combat-core/web-damage-stance-curves · NOT REFUTED · overturn UPHELD
+`§1t99s0§.as:3258-3270` exact. Light ×(0.5+0.4·m·0.1), Balanced ×(1+0.2·m·0.1),
+HEAVY/DUAL/REVERSED flat ×1.4, over a per-slash roll `minDamage + Math.random()*damageRange`.
+I checked `StatsManager.getMinDamage()` (android :1863) — it IS ATK+weapon — so the
+ledger's "(ATK+Wpn)×stance" is the roll's *floor*, not the damage. The ledger's *Ready*
+line at :189 must be rewritten. Mastery identifiers confirmed via the initPlayer map.
+
+### IDX 5 — combat-core/web-heavy-damage-1.4 · NOT REFUTED · overturn UPHELD
+Same block; `:3270` is `_loc2_ = _loc1_ * 1.4;`, android `MCSPlayer.as:3213` is `* 1.5`.
+The named sentence (an android-derived "flat 1.5 / 0.005m" line) genuinely falls.
+
+### IDX 6 — combat-core/web-maxreload-192 · NOT REFUTED · overturn UPHELD
+QUOTE_UNVERIFIED is a linter artifact. All four fragments located:
+`§1t99s0§.as:249` = `this.§1t4415s0§ = 8 * 24;`; `:1203-1205` = `if(this.§1t4414s0§ <
+this.§1t4415s0§) { ++this.§1t4414s0§;` **inside `override public function update()`
+(:1179)**; `§1t113s0§.as:328` = `var _loc3_:Number = (param1 - 48) / (param2 - 48);`;
+SWF header frameRate **24.000** parsed by me.
+`§1t4415s0§` is provably the crit meter: it is the same variable the crit test at
+`:3272` compares against. `:1208` feeds it straight into the BattleUI bar setter.
+(192−48)/24 = **6.000 s**, and `COMBAT_MEASUREMENTS.md` f-9 measures **6.00 s
+(6.01/6.00/5.98)** off frames. **Source and frame AGREE** — there is no frame-vs-source
+conflict to adjudicate, which is exactly the claim. Android is `MCSPlayer.as:239 =
+5 * 24` = 120, a genuine retune.
+
+### IDX 7 — combat-core/web-maxreload-192-and-48-offset · NOT REFUTED (minor) · overturn UPHELD
+`§1t113s0§.as:326-330` is an EXACT hit including the function signature. I additionally
+confirmed the lane_impact's stance-lock claim first-hand: `§1t99s0§.as:103`
+(`§1t4419s0§:int = 48`), `:3050` (`… && this.§1t4414s0§ >= 48;`), `:3060`
+(`if(this.§1t4414s0§ < 48)`), `:3162` (`this.§1t4414s0§ -= 48;`).
+**Minor defect:** the "re-measure of the cited frames at y=1032: 281/290/304/340/370"
+carries **no frame path anywhere in the claim**. Under §0 that half is STILL_UNHELD and
+must not enter the ledger as a measurement; the source half stands on its own.
+Likewise the `t1003.000.png` reference is path-less. (The empty-bar↔"CANNOT CHANGE
+STANCE" link is nevertheless corroborated structurally: `§1t113s0§.as:336-342` shows the
+message text takes over the same slot when `_loc3_ == 0`, which is `COMBAT_MEASUREMENTS`
+f-7's "shared slot" observation read from the other side.)
+
+### IDX 8 — combat-core/web-reach-and-damage-curves-match-repo · NOT REFUTED · overturn UPHELD
+`:3094`, `:3105`, `:3116-3120`, `:3262-3270` all exact. I then opened
+`src/config/reach.ts` — `lightMult: 1.4`, `balancedPerMastery: 0.02`, `heavyBase: 0.5`,
+`heavyPerMastery: 0.04`, `heavyFloor: 100`, base `120 + floor((90+5·dan)·SPD/(20+SPD))`.
+The repo is already exactly the v0.717 source. The ledger's "reach 300/200/120 triple"
+(REBUILD_READINESS.md:100-101) is dead: reach is a formula, not a per-stance constant.
+
+### IDX 9 — combat-core/web-stance-damage-and-reach-are-inverse · NOT REFUTED (minor) · overturn UPHELD
+The most thorough claim in the packet and every line lands: `:3091-3155` is precisely
+the `setStance` switch and `:3255-3277` precisely `getMaxDamage`. The five-stance
+assignment (REVERSED ×1.4 at `:3131`, DUAL base-floored-100 at `:3142-3146`) is right —
+I verified it against the positionally identical android switch (`MCSPlayer.as:3066-3090`).
+Base term `§1t1523s0§.as:2344-2347` is EXACT and byte-identical to android
+`StatsManager.as:1915-1919`.
+**Minor defect:** the bracketed `[REBUILD_READINESS.md:194]` inside `ledger_text` is the
+wrong line — blocker ① is at **:190**; :194 is the skills-meters *Ready* line.
+
+### IDX 10 — combat-core/web-v0717-ast-is-readable · NOT REFUTED · overturn UPHELD
+`ls … | grep -c '§'` → **612**, `find … -name '*.as' | wc -l` → **1079**: reproduced
+both. All six `.as` line cites exact. Corroboration cite resolves:
+`SOURCE_CONSTANTS.md:3-4` = "Status: CRACKED AND MINED (2026-07-25)… Build identified
+as v0.717". Blocker ② falls via `:3274`.
+
+### IDX 11 — economy/ap-cap-is-40-not-30 · NOT REFUTED (minor mis-cite) · overturn UPHELD
+**I opened the frame and looked.** `reference/frames/Nr4fQstqHDM/seg-28/frames/frame_0007.jpg`
+(1024×576), crop (470,110)-(780,290) upscaled ×4 LANCZOS: **HP 20 / 30** green,
+**CHI 47 / 47** blue, **AP 30 / 40** pale blue, ATK/DEF/SPD diamonds down the right edge.
+Exactly as quoted. THE FRAME WINS over `STAT_MAXAP,30` — which android
+`StatsManager.as:708` and `:2134` show is a character-creation initial, sitting right
+next to `setPlayerStats(STAT_MAXHP,10)` (:695, :2119) that the same frame shows grown to 30.
+**Minor defect: APINTERVAL is `§1t1523s0§.as:192`, not `:196`.** Line 196 is
+`60 * 60` (=3600, the war-move interval). The `= 60` constant is at :192. Corrected.
+*Bonus divergence found while checking:* web `§1t1523s0§.as:200` = **40** where android
+`StatsManager.as:166` `MAXDUELTOKENS` = **30** — the same slot in the same constant run.
+
+### IDX 12 — economy/calcxp-hard-cutoffs · NOT REFUTED (minor) · overturn UPHELD
+`NPC.as:166-190` is EXACT, quote included. `getGreyLevel` at `:94-110` (three bands),
+`getZeroDifference` at `:112-164`. **Minor:** that helper has **12** bands, not the
+claim's "eleven". The ledger's "20+ samples show no XP formula either" (:215) falls.
+**I closed the claim's own build-parity hole:** the WEB build carries the identical
+functions — `§1t68s0§.as:113-129` (greyLevel), `:131-183` (zeroDifference),
+`:185-209` (calcXP, same two zero cut-offs, same `*(1+0.05·Δ)`, same `*2` elite doubler).
+So this is safe to port as v0.717, not merely as android.
+
+### IDX 13 — economy/minus-70-is-repair-not-artifact · NOT REFUTED · overturn UPHELD
+**I extracted the video frames myself** with ffmpeg and looked.
+t=21:25 (1285 s): BLACKSMITH panel open, options FORGE A WEAPON / REPAIR WEAPON /
+REINFORCE WEAPON / LEAVE, wallet **531 COINS / 2 GOLD** — exactly as claimed.
+t=21:45 (1305 s): stables (horses), wallet **461 COINS**. Δ = **−70**.
+I also independently confirmed the node level: sampling t=1180 → **545 COINS**,
+t=1250 → **531 COINS**, i.e. **−14** across the stable leg = nodeLevel 7 × 2 per
+`InteractUI.as:241` (`travelcost = … getNodeLevel(…) * 2`, exact). Repair formula
+`InteractUI.as:1058` `cost = StageManager.getCurrentNodeLevel() * 10;` — exact, under
+`case "repairweapon":`. 7×10 = 70. The player held 531 against a 700 forge quote, so the
+forge was never paid.
+`SYNTHESIS.md:243` reads "HUD delta was −70 (B-10, unresolved discrepancy, do NOT
+hardcode)" — exact. **REBUILD_READINESS.md:216's "(the −70 HUD read is a capture
+artifact)" must be struck.** Blocker ③ "Repair-Weapon cost (never captured)" (:215)
+also closes.
+
+### IDX 14 — economy/quest-coin-reward-formula · NOT REFUTED · overturn NOT upheld
+Every one of the seven cites is EXACT: `QuestGenerator.as:844` (`nodelvl * 5`), `:1006`
+(`nodelvl * 10`), `:917`, `:876`; web twin `§1t123s0§.as:883` (`_loc17_ = _loc15_ * 5`)
+and `:955`; consumer `QuestLogUI.as:455-461`. Two builds, same law.
+**Overturn NOT upheld:** the sentence named is blocker ① *coins-per-**kill*** reality
+(:215). Quest coins are a different faucet. This claim supplements the ledger; it does
+not falsify the sentence it points at. File it as a new *Ready* line, not an overturn.
+
+### IDX 15 — economy/quest-prosperity-plus5-is-client-side · NOT REFUTED · overturn UPHELD
+**I opened the frame and looked.** `reference/frames/zFtCaTO0_1M/seg-29/frames/frame_0013.jpg`,
+crop (480,335)-(770,465) ×5 LANCZOS: **REWARD / 250 XP / 30 COINS / TOWN PROSPERITY: +5**.
+Verbatim. Mechanism cites all exact: `QuestGenerator.as:846` (`prosperityReward = 10`),
+`:850` (`= 5`), `:921`, `:1094` (literal `<qty>5</qty>`); web `§1t123s0§.as:885, 889,
+959, 1140, 1349`; consumed at `Overworld.as:357-359`; channel named at
+`HistoryItem.as:373`. (The 30 COINS on the same card is nodeLevel 6 × 5 — IDX 14's law,
+frame-confirmed for free.) Blocker ② (:215) splits: the player-driven half is dead.
+
+### IDX 16 — economy/rebirth-pays-heavenly-gold · NOT REFUTED · overturn UPHELD
+`StatsManager.as:192` STAT_GOLD=11, `:194` STAT_HGOLD=12, `:2669-2676` getHeavenlyGold
+with the PayVault line at `:2674` — all exact. `OverworldHUD.as:1333` exact in BOTH
+android bundles.
+I then verified the *substance* in the web build: `§1t1523s0§.as:2638` is doRebirth, and
+`:2646`/`:2651` pay `§1t9413s0§` — which `§1t1523s0§.as:228` defines as **12**, i.e.
+STAT_HGOLD. Coins (stat 11) are `§1t9412s0§` at `:226` and are never touched.
+I also pinned the HUD labels so nobody re-confuses them: `OverworldHUD.as:1554-1556`
+routes **STAT_GOLD → `coinstext`** ("COINS") and `:1567-1569` routes **STAT_HGOLD →
+`goldtext`** ("GOLD"). So the wiki's "+25 g" is heavenly gold, and mapping it to `p.gold`
+in `tests/progression.test.ts:183,192` (verified — both lines exist and assert on
+`p.gold`) is the wrong purse. **There IS a tier** — 100 at DAN==8, 25 otherwise, with
+DAN incrementing while <9 — so REBUILD_READINESS.md:164-165's "no 10th-rebirth tier"
+falls and `MAX_DAN_RANK=10`/`tenthGold=100` can leave INFERRED. Note the repo's total
+(9×25+100=325) is one rebirth off the source's (8×25+100=300).
+
+### IDX 17 — economy/tournament-is-web-only · NOT REFUTED (PARTIAL is the honest verdict) · overturn NOT upheld
+`§1t7144s0§.as:34, 44, 46, 48, 82` — all exact, member names really do survive the
+mangling. `grep -rli tournament`: **shs3_payload/scripts → 5 files**, **shs3_android →
+0**, and I also ran **shs3_android_payload → 0**.
+*Independent corroboration I found:* the web file calls `getString(11005/11006/11018)`,
+and the parsed Android string table (`index/strings.json`) tops out at id **9010** with
+**zero** entries containing "tournament". Content divergence, not just tuning.
+**Overturn NOT upheld:** blocker ④ asks for *token/tournament economy numbers* (:215).
+None are read here — the claim itself says a follow-up pass must read the five files.
+The blocker stands; only the "grep returns 0, the half is dead" framing dies.
+
+### IDX 18 — enemies-ai/NEW-npc-die-override-count-is-18-not-3 · NOT REFUTED · overturn NOT upheld
+I re-ran the scan. `ls Enemy*.as` → **34**. `grep -ln 'override public function die'` →
+**18**, and the 18 filenames match the claim's list exactly. Per-file `super.die()`
+count: **EnemyArcher 1, EnemyElite 1, EnemyTrainingDummy 1, all other 15 → 0.** Exact.
+`EnemyGoblin.as:386` = `dice = Math.random() * 5;` exact; 0 hits for
+`DEATH_FORWARD|DEFEATED2` and 0 for `createFlyingWeapon|createFlyingHat` — reproduced.
+The roster list is right too, including the easily-missed fact that `EnemyVegePatch.as`
+and `Enemy_VegePatch.as` are **two different files** (the underscored one does not override).
+Only slip: "Clone-adjacent" is listed among non-overriders, but `EnemyClone.as` overrides.
+**Overturn NOT upheld:** the sentence named is art-anim blocker ⑤ *severed-limb death
+variant* (:240). A count of `die()` overrides does not close or falsify it; the claim's
+own text says it is correcting **another claim's** lane_impact line.
+
+### IDX 19 — enemies-ai/boss-rubber-band-hits-to-kill · NOT REFUTED · overturn UPHELD
+`EnemyElite.as:23-84` carries the quote verbatim, including `xp = lvl*5+45` (:34),
+`hitsToKillBoss = 10 + lvldiff` (:40), `hitsToKillPlayer = 18 - lvldiff` (:41), the
+four-band `playerhit` floor (:51-66), `bossHP = playerhit * hitsToKillBoss` (:67),
+`bossATK = bosshit + playerDEF` (:75), and `if(lvl <= 5){minDamage=1;defense=1;}` (:80-84).
+All **seven** per-file line cites land exactly on `override public function setLevel`:
+KanjiGuardian:48, WolfAlpha:52, Ogre:51, SpearElite:32, Player:57, Stag:48,
+TrainingDummy:23. `EnemyOgre.as:51` really is an **empty** override.
+KanjiGuardian's variant is exact: `:65` `5 + 8 + lvldiff`, `:66` `16 - lvldiff`.
+**The web-parity cite holds** — `§1t4523s0§.as:77` `xp = param1*5+45`, `:83` `10 + Δ`,
+`:84` `18 − Δ`. So this is NOT android-only; it is in the shipped v0.717 build too.
+`override public function setLevel` count across all scripts = **11** (8 Enemy* + 3
+Friendly*) — exact. Blocker ① "absent, not just inferred" (:220) falls.
+
+### IDX 20 — enemies-ai/eight-death-animations-by-killing-blow · NOT REFUTED · overturn NOT upheld · ⚠ MATERIAL GLOSS ERROR
+I decoded `99_MCSCharacter_HumanAnimationData.bin` (**UTF-8 BOM, not UTF-16LE**) and got
+**158 `<anim>`** — matching S0-4 — with all eight death tags at the exact durations
+quoted: death 38 · deathbyarrow 21 · deathdowned 7 · deathenemy 23 · deathinhalf 28 ·
+deathnohand 25 · deathnohead 31 · deathwitharrow 23. Reaction chain also exact:
+gotlaunchedupwards_parta 4 / _partb 9 / _partc 7, gotlauncheddowned 18,
+gotlauncheddownedend 1, downed 23, downedup 4, downedup2 25. Core claim TRUE.
+**⚠ Its lane_impact is WRONG and must not enter the ledger:** "Blocker ③'s 'stagger'
+half resolves as **no-stagger**-but-eight-deaths." I opened
+`94_MCSCharacter_Human2AnimationData.bin` in the same run — `flinch` d=8 and
+`flinch_weapon` d=8 are there. The stagger exists. IDX 22/23 in this same packet prove it.
+**Overturn NOT upheld:** death animations do not falsify "telegraph/active/recovery +
+stagger frames"; and its cross-reference to "the behead damage *= 1.5 rule" is the
+ANDROID number — the web is ×1.3 (IDX 1).
+
+### IDX 21 — enemies-ai/elite-boss-second-level-formula-rubber-band · NOT REFUTED · overturn UPHELD
+Same source block as IDX 19, verified line by line. `:105-120` resolves to the `init`
+body with `initPlayer(...)` at `:106`. The repo cross-reference is exact:
+`src/config/combat-sim.ts:110-113` really does read "B4 makes hp and minDamage DERIVED
+at spawn from the player's own stats (`enemyHP = effPlayerDmg × K`) … the pre-scale
+floor the source's `max(scaledBase, …)` compares against". `bossHP = playerhit *
+hitsToKillBoss` with `if(bossHP > maxhp)` IS that formula and that `max()`. The INFERRED
+comment can be promoted — and per my IDX 19 finding it can be labelled **v0.717**, not
+just v0.682, because `§1t4523s0§.as:83-84` carries the same K.
+
+### IDX 22 — enemies-ai/flinch-is-8-frames · NOT REFUTED · overturn UPHELD
+`94_MCSCharacter_Human2AnimationData.bin` (25 anims): `('flinch_weapon','8')`,
+`('flinch','8')` — reproduced exactly. `MCSActor.as:170` FLINCH_WEAPON, `:172` FLINCH,
+`:922` `FLINCH_STATE:int = 28` — all three land on the exact declaration.
+`NPC.as:747-758` `doFlinch()` verbatim, including the SLASH_STATE armour guard and the
+prevActionState/prevAnim/prevFrameCounter save. The stagger half of blocker ③ (:220) is
+dead. (Cite says `:747-763`; `endFlinch` actually closes at `:765` — trivial.)
+
+### IDX 23 — enemies-ai/flinch-is-a-real-8-frame-state · NOT REFUTED (minor) · overturn UPHELD
+Same evidence, and its range `NPC.as:747-765` is the exact one. `endFlinch()` at
+`:760-765` restores `actionState`, `startAnim(prevAnim)` and `mcs.frameCounter` —
+verbatim. **I confirmed its sharpest sub-claim myself: `99_MCSCharacter_HumanAnimationData.bin`
+contains NO flinch tag at all; the flinch really is only in the Human2 blob** — which is
+exactly why a search of the wrong blob concluded absence.
+**Minor over-reach:** "blocker ③ is now dead in BOTH halves" — this claim's own evidence
+kills only the stagger half; the telegraph half is asserted, not shown here.
 
 ---
 
-## 3. NEW FINDINGS (nobody in this packet holds these)
+## New findings (mine, unclaimed by anyone in this packet)
 
-**N1 — THE AUDIO IS RECOVERED, NOT ENCRYPTED. This overturns the §0 preamble S0-5 and
-`docs/research/REBUILD_READINESS.md:348`.**
-S0-5 says "audio is HELD but ENCRYPTED (nested 'CWS' SWFs ffdec cannot open) … You may NOT
-claim audio is recovered." ffdec cannot; **this repo's own committed decoder can.** Applying
-`reference/tools/payload_decode.py`'s transform with `key = byte[3] XOR 0x11`,
-`122_Mobile_SoundResource.bin` and `113_Mobile_MusicResource.bin` both inflate to valid
-CWS v17 SWFs holding **13 `DefineSound` MP3 tags each** — 26 real waveforms. Written to disk
-and confirmed by `ffprobe` (`battledrums.mp3` 79.872 s, `slash1.mp3` 0.572 s). Ledger line 348
-("the exact waveforms/envelopes are not [study-able]") **falls**, and blocker ① "ALL AUDIO —
-every SFX + music param is INFERRED" collapses to "held, extractable, byte-exact". I flag the
-tension with S0-5 out loud, per the standing invariant: the byte-check beats the doc.
+1. **The web build carries calcXP verbatim.** `§1t68s0§.as:113-129 / :131-183 / :185-209`
+   are the exact twins of android `NPC.as:94-110 / :112-164 / :166-190`. Closes the
+   android-parity hole on the entire XP model.
+2. **The boss rubber-band is in the WEB build.** `§1t4523s0§.as:77-84` — `xp = lvl*5+45`,
+   `10 + lvldiff`, `18 - lvldiff`. The elite/boss level→stat formula is v0.717, not
+   v0.682-only.
+3. **Web/android divergence, duel tokens:** web `§1t1523s0§.as:200` = **40**; android
+   `StatsManager.as:166` `MAXDUELTOKENS` = **30**. Same slot in the same constant run.
+4. **Web/android divergence, crit meter:** web `§1t99s0§.as:249` = `8 * 24` (192);
+   android `MCSPlayer.as:239` = `5 * 24` (120).
+5. **Web/android divergence, crit multiplier:** web flat ×1.3 (`§1t99s0§.as:3274`);
+   android split ×1.2 non-light / ×1.5 light (`MCSPlayer.as:3215-3221`).
+6. **The 48-tick stance gate, in full:** `§1t99s0§.as:103` (baseReload 48), `:3050`
+   (`>= 48` to allow), `:3060` (`< 48`), `:3162` (`-= 48` cost).
+7. **The Android lang table cannot serve the web build's UI.** `index/strings.json`
+   maxes at id **9010**; web code calls `getString(11005/11006/11018)` and `getString(960)`.
+   Any web UI-copy claim resting on that table has a hard hole — this is the concrete
+   shape of the S0 build-parity caveat.
+8. **Mastery caps at 10, from the string table itself:** ids 8131/8132/8133 =
+   "Light/Balanced/Heavy Stance Mastery Level 10." And id 6005 states Heavy's
+   "Defense -20%", i.e. the ×0.8 the ledger lists.
+9. **⚠ Decoding warning for the next critic:** `94_` and `99_MCSCharacter_*AnimationData.bin`
+   are **UTF-8 with BOM**, not UTF-16LE. Decoding them per the S0 note returns 0 `<anim>`
+   hits and will produce a false refutation.
 
-**N2 — the music is a LAYERED STEM system, not a track list.** `113_Mobile_MusicResource`
-holds six stems all at exactly 882,144 samples / 11,025 Hz = **79.872 s**
-(`battlechants battledrums flutes safeambience safekoto safepercussion`) and four at 504,288
-samples = **45.7 s** (`dungeonambience dungeonflute dungeonpiano dungeonpercussion`), plus
-three one-shots (`bgm_lose` 3.5 s, `bgm_levelup` 29.8 s, `bgm_gangnam` 3.6 s). Identical
-sample counts within a family means these are **co-mixed layers**, which is what
-`MusicManager`'s `TRACK_BATTLECHANTS`-style track indices are for. Nothing in the 12-system
-ledger holds a layered-music model.
+## What the ledger editor must NOT do with this packet
 
-**N3 — the real per-animation hold table is `AnimData.as`'s constructor switch, not the XML.**
-`AnimData.as:15` copies `@d`, then `:25-141` adds a hard-coded tail: **+10** for
-`"light_afterslashpose"` and for all twelve `*SLASH_POSE` variants, **+15** for the five
-`*FALLSLASH_END` and five `*JUMPSLASH_LAND`, **+24** for `"sheathesword"`/`"sheathesword3"`
-and `"gotlauncheddownedend"`, **+6** for the death set
-(`deathenemy · deathnohand · deathnohead · defeatedanimationv2 · death · gob_death ·
-KNEEGROIN_VICTIM`), plus ~25 more single cases up to **+50**. This is the table a motion
-rebuild actually needs, and it is code, so no data extraction will ever find it.
-
-**N4 — `NPC.die()` is overridden by 18 of 34 `Enemy*` classes, not 3.**
-`grep -l "override public function die"` over `reference/decompiled/shs3_android/scripts/Enemy*.as`
-returns 18 files (Archer, Bear, Boar, Clone, Deer, Elite, Goblin, GoblinThrower, Horse,
-KanjiGuardian, NianMonster, Ogre, Stag, TrainingDummy, VegePatch, Wolf, WolfAlpha, Zombie),
-and only 3 of those (Archer, Elite, TrainingDummy) call `super.die()`. The seven-way dice
-governs the **humanoid** enemies (Katana, Knife, Ninja, Shield, Spear, SpearElite, Civilian×3,
-Player, PlayerGiant, SorcererBoss …), which is what the claim's TEXT says — but its
-lane-impact figure "31 of 34 inherit it" is wrong and must not enter the ledger.
-
-**N5 — the two payloads ship different stage RECTs.** Byte-read of the SWF header RECT:
-web `shs3_payload_decoded.swf` = **800×690**, `shs3_android_payload_decoded.swf` = **800×480**,
-`reference/preservation/shs3.swf` = 800×690. The "800×480 vs 800×690" question is not a
-measurement dispute at all — the two builds literally ship different document rects.
-
-**N6 — the 24 Hz kill-beat is WEB-PARITY CLOSED, not Android-only.** The obfuscated web
-payload carries the identical constants: `reference/decompiled/shs3_payload/scripts/§1t1525s0§.as:1230
-§1t9905s0§ = 24 * 6;`, `:1225 = 24 * 3 + 6;`, `:1026 if(§1t9905s0§ == 24 * 5)`,
-`:1049 else if(§1t9905s0§ == 24 * 3)` — a line-for-line structural match with
-`StageManager.as:1101 / :1096 / :903 / :926`. The v0.717-vs-v0.682 caveat on the
-`killbeat-6000ms` claim can be struck.
-
-**N7 — the HUD buff line is literally hard-coded.** `OverworldHUD.as:1404
-buffstr = "150% DAMAGE";` under `StatsManager.BUFF_ATTACK`, inside
-`updateBuff(bufftype:int, duration:int)`, alongside `"150% XP" · "150% DEFENSE" ·
-"150% SPEED" · "200% AP REGEN" · "200% DUEL TOKEN REGEN"` and four non-potato buff strings
-(`BUFF_COINS`, `BUFF_RARELOOT`, `BUFF_MUTE`, `BUFF_FULLMUTE`, `BUFF_HELL`). The HUD
-"150% DAMAGE" question is closed on a string literal, not an inference.
-
----
-
-## 4. Accounting
-
-* packet_size 24 · judged 24 · **skipped 0**
-* refuted 3 (`hold-frames-are-authored-in-data` FATAL, `zero-placeobject3-tags` MATERIAL,
-  `audio-inventory-is-held` MATERIAL) · upheld 21
-* citelint disagreements: 8 claims were flagged `QUOTE_UNVERIFIED`/`UNCHECKABLE`
-  (`rig-is-27-parts`, `screen-shake-amplitude-is-inert`, `sfx-contract-ten-routines`,
-  `NEW-warhex-has-14-states-not-7`, `NEW-70th-trap-room-is-commented-out`,
-  `no-blendmode-in-authored-data`, `no-blendmode-in-swf-tags-either`, and `audio-inventory-is-held`) — **I located every
-  quote by hand; seven of the eight survive** (only `audio-inventory-is-held` fails, and it
-  fails on a fact, not on its quote). The linter's misses were binary-file line addressing
-  and cites that name a method rather than a line.
-* Conversely, **two claims the linter passed as RESOLVES are false**
-  (`hold-frames-are-authored-in-data`, `zero-placeobject3-tags`) — both had well-formed paths
-  and wrong measurements, which is exactly the part a script cannot see.
+Six claims are TRUE but do not overturn the sentence they name — **IDX 1, 2, 14, 17, 18,
+20.** Recording them as overturns would put four wrong things into REBUILD_READINESS.md:
+that P0's no-playable-build verdict was reversed (it was not), that coins-per-kill is
+solved (it is not), that the tournament economy numbers are read (they are not), and
+that there is no stagger (there is — flinch d=8).

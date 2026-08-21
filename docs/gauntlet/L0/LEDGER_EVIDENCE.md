@@ -4,11 +4,11 @@
 > to the `REBUILD_READINESS.md` rewrite: claims that were JUDGED and SURVIVED (§0).
 > Gate **L0-B** independently re-checks every `[[claim-id]]` the rewrite ends up citing.
 
-- **UPHELD** 394 — survived, and where a critic ruled on the overturn, it holds.
+- **UPHELD** 391 — survived, and where a critic ruled on the overturn, it holds.
 - **NOT-UPHELD** 16 — TRUE, but the ledger sentence it names does not fall.
-- **KILLED** 911 — refuted by its critics, or never judged at all (a LEAD, §0).
+- **KILLED** 924 — refuted by its critics, or never judged at all (a LEAD, §0).
 
-**256 surviving overturns land on 166 distinct ledger sentences.**
+**255 surviving overturns land on 166 distinct ledger sentences.**
 **15 claimed overturns were rejected** — the finding is
 real, the deletion it asked for is not. Collapsing those two is how a readiness ledger
 gets rewritten by findings that never actually contradicted it.
@@ -234,27 +234,6 @@ gets rewritten by findings that never actually contradicted it.
   - Cite: `reference/decompiled/shs3_android/scripts/SoundManager.as:187-219 (playSlash), :221-253 (playDie), :255-279 (playHit/playHurt)`
   - Lane impact: art-anim-audio-feel: 'every SFX param is INFERRED' is false in both halves — the asset and its playback contract are both held. Note the shared punch asset: a recreation with separate hit/hurt sounds is a deviation.
 
-### “⑤ **sprite-compositing contract** (layer order, per-slot body render — a from-scratch-art blocker) + item **icon manifest**.”
-
-*4 surviving finding(s) hit this line.*
-
-- **`[[android-blobs/item-and-skill-icon-art-is-held]]`** [A2] (1 critic · build **android v0.682**)
-  - The item/accessory/skill ICON art is on disk after all: 115_Mobile_SHS3Resource exports 112 item####, 8 acc#### and 79 skill#### symbols, covering 94/99 consumables, 8/9 accessories and 67/79 quest items — retiring a banked STILL_UNHELD that read the WEB payload, where the art was never embedded.
-  - Cite: `reference/extracted/android/115_Mobile_SHS3Resource.bin (654,169 B; decrypts per reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:41,200-216 at key 'h'=104 -> CWS v17, declared 1,040,857 B, zlib body inflates to 1,040,849 B) cross-checked against reference/extracted/android/111_M`
-  - Lane impact: L3 items-equipment + L10 ui-hud. CONTRADICTS the banked items-equipment/icon-symbol-families-still-unheld (STILL_UNHELD: 'an item icon art set (~187 of ~983 roster rows, plus every accessory) remains unrecovered') and items-equipment/icon-only-symbol-families-still-open (PARTIAL: 'only the fallback 
-- **`[[bindata/sprite-compositing-contract]]`** [A2] (2 critics)
-  - The full sprite-compositing contract — 27-slot part map, transform semantics, z-order rule and per-frame visibility — is specified exactly, decoding every <n i="…"> in all 19 animdata blobs.
-  - Cite: `reference/decompiled/shs3_android_payload/scripts/MCSCharacter.as:10-62 + FrameData.as (reorderLayers, setVisible) + FrameNodeData.as (setPosition)`
-  - Lane impact: L-items-equipment: the layer-order half of blocker ⑤ is dead. Corroborated by the web payload's own art symbol classes in reference/decompiled/shs3_payload/scripts/ — torso4000.as, uparm4000.as, lowarm4000.as, hand5000.as, hair6000.as, hat7000.as, head8000.as, mask9000.as, neck10000.as, thigh11000.a
-- **`[[itemdata/sprite-compositing-contract]]`** [A2] (2 critics)
-  - The sprite-compositing contract and the item icon manifest are both fully held: the symbol class name is literally partType + art, art defaults to the item id, and the z-ordered part list is 27 entries — with the web payload itself shipping the fallback symbols under exactly that naming scheme.
-  - Cite: `reference/decompiled/shs3_android/scripts/MCSCharacter.as:581-607 (getMCSComponent) + MCSCharacter.as:10-62 (PART_* z-order) + XMLItem.as:110-117 + the symbol classes in reference/decompiled/shs3_payload/scripts/ (torso4000.as, calf11000.as, hat7000.as, ...)`
-  - Lane impact: L3 + L6 (ART + ANIM): one ARMOR item paints 5 parts (torso, stomach, pelvic, uparm, lowarm), PANTS paints 3 (crotch, thigh, calf), SHOES 2 (foot, foottop), the rest 1. This is the from-scratch-art blocker dissolved: the layer order and per-slot decomposition are both explicit.
-- **`[[npcdata/compositing-contract]]`** [A2] (2 critics)
-  - The sprite-compositing contract is recovered: the paperdoll is a bone tree (not a flat layer stack) in which one equipment slot paints several bones, with explicit z-order on the head, and the sprite key is the item's <art> field rather than its id.
-  - Cite: `reference/decompiled/shs3_android_payload/scripts/MCSCharacter.as:682-755 (head z-order), :832-1265 (bone attach points), :585-592 (art indirection); corroborated by the un-obfuscated web class names in reference/decompiled/shs3_payload/scripts/ (torso4000.as, pelvic4000.as, thigh11000.as, foottop12`
-  - Lane impact: items-equipment — kills blocker ⑤, the named from-scratch-art blocker; also gives art-anim-audio-feel the exact bone set the animation data is authored against.
-
 ### “② condition→DMG **multiplier** (current "evidence" confounds condition with a 2-level gap).”
 
 *3 surviving finding(s) hit this line.*
@@ -441,6 +420,23 @@ gets rewritten by findings that never actually contradicted it.
   - Drop tables with exact probabilities are held: 66 NPCs carry <reward> holding 131 <loot> rows, <chance> domain exactly {0.05, 0.1, 0.3, 0.4, 0.5, 1} and <qty> ∈ {1,2,3,5}, with a visible boss pattern (id=2, qty=1, chance=1 guaranteed) and an animal-butchery pattern (Meat 0.3 / Small Meat 0.3 / Large Meat 0.4 / Animal Fang 0.5).
   - Cite: `reference/extracted/npcdata.xml:530-532 (npc 17 Bandit Leader), :39-42 (npc 1), :1859-1861 (npc 67 Wolf), :1975-1982 (npc 73 Boar)`
   - Lane impact: L-items-equipment / L-economy / L-enemies-ai: the §1 known-unknown 'loot/drop tables' is overturned as to STRUCTURE and PROBABILITIES. PARTIAL because loot <id> 0/1/2/3 are table references, not item ids (real item ids in the same field are 4–5 digit: 2112/2113/2114/20028) — what tables 0–3 resolve 
+
+### “⑤ **sprite-compositing contract** (layer order, per-slot body render — a from-scratch-art blocker) + item **icon manifest**.”
+
+*3 surviving finding(s) hit this line.*
+
+- **`[[bindata/sprite-compositing-contract]]`** [A2] (2 critics)
+  - The full sprite-compositing contract — 27-slot part map, transform semantics, z-order rule and per-frame visibility — is specified exactly, decoding every <n i="…"> in all 19 animdata blobs.
+  - Cite: `reference/decompiled/shs3_android_payload/scripts/MCSCharacter.as:10-62 + FrameData.as (reorderLayers, setVisible) + FrameNodeData.as (setPosition)`
+  - Lane impact: L-items-equipment: the layer-order half of blocker ⑤ is dead. Corroborated by the web payload's own art symbol classes in reference/decompiled/shs3_payload/scripts/ — torso4000.as, uparm4000.as, lowarm4000.as, hand5000.as, hair6000.as, hat7000.as, head8000.as, mask9000.as, neck10000.as, thigh11000.a
+- **`[[itemdata/sprite-compositing-contract]]`** [A2] (2 critics)
+  - The sprite-compositing contract and the item icon manifest are both fully held: the symbol class name is literally partType + art, art defaults to the item id, and the z-ordered part list is 27 entries — with the web payload itself shipping the fallback symbols under exactly that naming scheme.
+  - Cite: `reference/decompiled/shs3_android/scripts/MCSCharacter.as:581-607 (getMCSComponent) + MCSCharacter.as:10-62 (PART_* z-order) + XMLItem.as:110-117 + the symbol classes in reference/decompiled/shs3_payload/scripts/ (torso4000.as, calf11000.as, hat7000.as, ...)`
+  - Lane impact: L3 + L6 (ART + ANIM): one ARMOR item paints 5 parts (torso, stomach, pelvic, uparm, lowarm), PANTS paints 3 (crotch, thigh, calf), SHOES 2 (foot, foottop), the rest 1. This is the from-scratch-art blocker dissolved: the layer order and per-slot decomposition are both explicit.
+- **`[[npcdata/compositing-contract]]`** [A2] (2 critics)
+  - The sprite-compositing contract is recovered: the paperdoll is a bone tree (not a flat layer stack) in which one equipment slot paints several bones, with explicit z-order on the head, and the sprite key is the item's <art> field rather than its id.
+  - Cite: `reference/decompiled/shs3_android_payload/scripts/MCSCharacter.as:682-755 (head z-order), :832-1265 (bone attach points), :585-592 (art indirection); corroborated by the un-obfuscated web class names in reference/decompiled/shs3_payload/scripts/ (torso4000.as, pelvic4000.as, thigh11000.as, foottop12`
+  - Lane impact: items-equipment — kills blocker ⑤, the named from-scratch-art blocker; also gives art-anim-audio-feel the exact bone set the animation data is authored against.
 
 ### “② crit 1.3 vs 3 final — *read one crit popup.*”
 
@@ -1731,7 +1727,7 @@ gets rewritten by findings that never actually contradicted it.
 
 *1 surviving finding(s) hit this line.*
 
-- **`[[android-blobs/spider-is-web-only-enemy]]`** [A2] (1 critic · build **web v0.717 (absent from android v0.682)**)
+- **`[[android-blobs/spider-is-web-only-enemy]]`** [A2] (2 critics · build **web v0.717 (absent from android v0.682)**)
   - A complete 10-animation SPIDER enemy ships ONLY in the web v0.717 build — engine-known in the web AS3 — and appears nowhere in the Android npcdata, string table or ActionScript, so the Android corpus every survey reads is blind to a whole creature.
   - Cite: `reference/extracted/bindata/114_1t4641s0.bin:3,24,503,614,745,909,1357,1566,1755,2106 + reference/decompiled/shs3_payload/scripts/§1t1544s0§.as:480-498`
   - Lane impact: L4 enemies-ai: an enemy outside the ledger's taxonomy, with two entry behaviours (spider_descend = drop-in, spider_dig = burrow, both looping) that no other creature has. The blob's EXISTENCE is already catalogued (docs/gauntlet/L0/journal.md:26 lists spider_idle among the 19 web sets); what is new 
@@ -1740,7 +1736,7 @@ gets rewritten by findings that never actually contradicted it.
 
 *1 surviving finding(s) hit this line.*
 
-- **`[[android-blobs/bgdata-is-a-parallax-spec]]`** [A2] (1 critic · build **android v0.682 (no web counterpart exists — see web-payload-holds-zero-data-roots)**)
+- **`[[android-blobs/bgdata-is-a-parallax-spec]]`** [A2] (2 critics · build **android v0.682 (no web counterpart exists — see web-payload-holds-zero-data-roots)**)
   - 123_Mobile_BGData is a 49-background parallax specification holding 874 authored layer instances across five depth planes with per-background scroll and wrap overrides — and no ledger system mentions backgrounds, parallax or layer counts at all.
   - Cite: `reference/extracted/android/123_Mobile_BGData.bin:4-13 (623 lines, root <bgdata>, 49 <bg>)`
   - Lane impact: L6 art-anim + L1 world-exploration: an omission. The art 'Ready' list is fighter-only and the world list is node-graph-only; the scene behind and in front of the fighter — 49 named locations, five parallax planes, 874 layer slots — is in neither. The 49 names match the 49 BG_* symbols exported by th
@@ -1749,7 +1745,7 @@ gets rewritten by findings that never actually contradicted it.
 
 *1 surviving finding(s) hit this line.*
 
-- **`[[android-blobs/all-thirteen-episode-cards-shipped]]`** [A2] (1 critic · build **android v0.682**)
+- **`[[android-blobs/all-thirteen-episode-cards-shipped]]`** [A2] (2 critics · build **android v0.682**)
   - Bespoke full-screen splash art for every one of episodes 0 through 12 plus the exposition and epilogue cards shipped in the binary — so §3.8's scope decision to cut Ep4-12 as 'canonical-but-unshipped' must be withdrawn, not footnoted.
   - Cite: `reference/extracted/android/124_Mobile_ImageResource.bin — decrypted SymbolClass/ExportAssets name list (16 story-card symbols)`
   - Lane impact: L-quests-story. The staleness banner already killed §3.8 with questdata's 61 quests, but 'the quest rows exist' is weaker than 'the bespoke chapter art for every episode was drawn, exported and shipped'. Nobody ships 13 chapter cards for 4 chapters. §3.8 contains the one line in the ledger that tell
@@ -1939,4 +1935,4 @@ gets rewritten by findings that never actually contradicted it.
 | ui-hud | 6 | 0 | 7 |
 | art-anim-audio-feel | 12 | 0 | 6 |
 | meta-social | 15 | 0 | 7 |
-| critic-new_finding | 46 | 16 | 749 |
+| critic-new_finding | 46 | 16 | 759 |
