@@ -54,62 +54,72 @@ claim did receive a verdict. And §2's L6 *"~150 animations"* is **471**, measur
 `index/android_blobs.json` (`<anim>` summed over the 18 `MCSCharacter_*` blobs;
 `99_HumanAnimationData` alone = 158). Not "~450".
 
-### The finish sweep — ALL 10 SOURCE SWEEPS ARE NOW JUDGED. Judged: 232 → 510.
+### The finish sweep — judged 232 → 582. WALL #6 took 18 of WF-3a's 24 judges.
 
 | Run | Run ID | Agents | Result |
 |---|---|---:|---|
-| **WF-1** | `wf_54dcdf8e-9a3` | 12 | **4/4 surveys landed** + 4 critics · wall #5 killed `android-blobs:hunter` `uistrings-payload:hunter` `frames:cite` `frames:hunter` |
+| **WF-1** | `wf_54dcdf8e-9a3` | 12 | **4/4 surveys landed** + 4 critics · wall #5 killed 4 critics |
 | **WF-2** | `wf_db13a5de-161` | 12 | 6/12 critics · wall #5 killed both lenses of `itemdata` `bindata` `actionscript` |
-| **WF-2b** | `wf_b5bca0ad-f47` | 8 | ✅ **`INTEGRITY: CLEAN`** — all 8 returned, every packet fully judged, 0 died, 0 VOID |
+| **WF-2b** | `wf_b5bca0ad-f47` | 8 | ✅ **`INTEGRITY: CLEAN`** — all 8 returned, 0 died, 0 VOID |
+| **WF-3a** | `wf_771ab0e4-798` | 24 | 6/24 judges · **wall #6** killed batches 04–12 outright |
 
 ```
-run3  (WF-1+WF-2)  surveys=4 critics=10 claims=156 verdicts=242
-run4  (WF-2b)      surveys=0 critics=8  claims=80  verdicts=280
-citeLint run3: 156 claims — 133 RESOLVES · 0 BROKEN · 18 QUOTE_UNVERIFIED · 5 UNCHECKABLE
-citeLint run4:  80 claims —  69 RESOLVES · 0 BROKEN · 10 QUOTE_UNVERIFIED · 1 UNCHECKABLE
+run3 (WF-1+WF-2) surveys=4 critics=10 claims=156 verdicts=242   0 BROKEN · 0 VOID
+run4 (WF-2b)     surveys=0 critics=8  claims=80  verdicts=280   0 BROKEN · 0 VOID
+run5 (WF-3a)     surveys=0 critics=6  claims=37  verdicts=144   0 BROKEN · 0 VOID
 ```
 
-**236 fresh claims, 0 BROKEN cites, 522 verdicts, 0 VOID.** Against 22-BROKEN-before-fixes
-on the pre-citeLint corpus. The machine-check warning carried in each workflow's LAW
-block — *"citeLint.py opens every path you name; cite line numbers, never record IDs"* —
-changed how agents cite. Step 0 paid for itself twice over.
+**273 fresh claims, 0 BROKEN cites. 666 verdicts, 0 VOID.** Against 22-BROKEN-before-fixes
+on the pre-citeLint corpus. The machine-check warning in each workflow's LAW block changed
+how agents cite.
 
-⚑ **The write-to-disk-before-returning rule paid out at wall #5 too.**
-`critics/src-uistrings-payload.hunter.md` is on disk at 21 KB even though that agent is
-counted DEAD — it finished its review, wrote it, then died before returning the
-structured object. Prose recovered, verdicts lost. Five consecutive walls, zero data lost.
+### ⚑ THE OVERTURN CHECK IS THE HIGHEST-VALUE THING IN THIS LANE
+
+WF-3a's hunter lens must open the `REBUILD_READINESS.md` sentence a finding claims to
+falsify, read it in context, and rule separately on whether it actually falls —
+`overturn_upheld` is a different boolean from `refuted`, because a finding can be
+perfectly TRUE and still not overturn what it points at.
+
+```
+overturn rulings 143 — UPHELD 77 · REJECTED 66      (46% rejected)
+refuted outright  16
+```
+
+**Nearly half of all claimed ledger overturns do not overturn anything.** Without this
+check, 66 false overturns would have rewritten the readiness ledger. Two live examples:
+
+- `NF-1-crit-is-deterministic-full-focus` — REFUTED **fatal**. Its 1.5×/1.2× stance-split
+  crit is ANDROID-only; the web v0.717 twin at `§1t99s0§.as:3272-3274` is a single arm,
+  flat 1.3×. So the ledger's *"Keep CRIT_MULT=1.3"* is **VINDICATED by shipped web code**,
+  not killed. What survives is the narrower, real finding: crit is deterministic on a full
+  reload bar, plus a flat `STAT_CRITICALDMG` gear term.
+- `NF-5-per-stance-damage-multipliers` — true, overturn REJECTED: the ledger's own stance
+  table *"dmg 0.9/1.2/1.4"* reproduces **to the digit** from the web expression at mastery 10.
 
 ### What is left
 
-`python3 scripts/gauntlet/buildWorklist.py --root docs/gauntlet/L0` pools every run,
-drops any unit whose critics have since landed, and rewrites both the packets and
-`SEEN_CLAIM_IDS.txt`. It SELF-HEALS, so this table is regenerated, never maintained:
-
 ```
-buildWorklist: 1323 rows -> 1284 distinct ids (39 duplicate rows merged)
-  already judged           510
-  WF-2 source-sweep claims 0 across 0 packets     <- ALL 10 SWEEPS JUDGED
-  WF-3a critic findings   282 across 12 batches x cite+hunter = 24 agents
-  WF-3b critic findings   492 across 11 batches x cite = 11 agents
+buildWorklist: 1360 rows -> 1321 distinct ids (39 duplicate rows merged)
+  already judged           582
+  WF-2 source-sweep claims  15 across 1 packet   (android-blobs — see below)
+  WF-3a critic findings    226 across 10 batches x cite+hunter = 20 agents
+  WF-3b critic findings    513 across 11 batches x cite = 11 agents
 ```
 
-| Run | Script | Agents | What | State |
-|---|---|---:|---|---|
-| **WF-3a** | `l0-finish-wf3.workflow.js` args `{tier:'t1',batches:12}` | 24 | judge the 282 findings CLAIMING A LEDGER OVERTURN | ▶ `wf_771ab0e4-798` launched |
-| **WF-3b** | `l0-finish-wf3.workflow.js` args `{tier:'t2',batches:11}` | 11 | judge the 492 corroborating findings | queued |
-| **WF-4** | `l0-finish-wf4.workflow.js` | ~17 | dry-loop x 4 targets (a round only counts if it RAN) + completeness | queued |
+⚑ **`buildWorklist` and gate L0-D now ask the SAME two questions.** L0-D caught what the
+worklist could not: `android-blobs` had every claim judged by its surviving cite critic
+while its hunter lay dead at wall #5, so it vanished from the packet list while still
+failing §3.3's two-lens minimum. Judged-ness and lens-coverage are different questions.
+A unit now drops out only when it has BOTH no unjudged claims AND two critic lenses on
+disk — and when it is short of lenses, the packet carries its WHOLE claim set, because a
+hunter that only sees the unjudged remainder cannot hunt what the surviving lens let
+through.
 
-⚠ **Pass `batches` explicitly.** The count MOVES every run — each stage's critics add new
-findings, so buildWorklist emits more packets next time. A hardcoded literal silently
-drops the tail batches, and a dropped batch means those findings stay UNJUDGED, which
-under §0 kills them.
+`l0-finish-wf2b.workflow.js` is now `l0-finish-source-critics.workflow.js`, carrying all
+10 units and taking `{units:[...], lenses:[...]}` from args — so a re-run after a wall
+never needs another cloned script.
 
-**No claim is left unjudged.** The tiers differ in DEPTH only — §0 gives no third option,
-and a claim nobody judges is a lead forever.
-
-Packets are **blind-safe by construction** (§3.2): they carry the structured claim and
-the machine cite audit, never the surveyor's prose. Critics are told explicitly not to
-open `sources/*.md` — that is what keeps the review blind while still not re-surveying.
+---
 
 ### THE BINARY GATE — `scripts/gauntlet/gateL0.py`, 6 items, all currently RED
 

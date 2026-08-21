@@ -1,6 +1,316 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1388-1428 (updateBuff); docs/gauntlet/L0/index/strings.json id 4132; corroborated in reference/frames/duel_dense/Nr4fQstqHDM_432.0.png crop (52,900)-(700,1080) x3",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/150-percent-damage-is-a-buff",
+  "lane_impact": "ui-hud gains a required buff-text slot (OverworldHUD.bufftext, htmlText, hidden when duration <= 0 or the stats button is hidden). Closes the \"un-reconciled\" caution the surveyor left on art-anim-audio-feel/hit-reaction-12-ticks, and closes it against the surveyor's own guess.",
+  "overturns_ledger": false,
+  "quote": "OverworldHUD.as:1402-1405 `else if(bufftype == StatsManager.BUFF_ATTACK) { buffstr = \"150% DAMAGE\"; }` (siblings \"150% XP\", \"150% DEFENSE\", \"150% SPEED\", \"200% AP REGEN\")  \u00b7  strings.json 4132 'Eat this potato to get the 150% Damage buff.\\n\\nNote: Only one buff may be active at a time.'  \u00b7  in my HUD crop the two rows are visually distinct: \"CANNOT CHANGE STANCE\" sits in a brown pill under the bars, \"150% DAMAGE\" is a separate gold line below it.",
+  "text": "The \"150% DAMAGE\" line in the duel HUD is the timed BUFF_ATTACK consumable readout, not the stance modifier \u2014 the string is a literal in the client.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decrypted/shs3_payload_decoded.swf and reference/decrypted/shs3_android_payload_decoded.swf (SWF header parse: signature/version/rect/frameRate/frameCount)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/24fps-from-swf-headers",
+  "lane_impact": "ui-hud lane: puts an A2 floor under every ms conversion in the lane (708 ms close shutter, 667 ms open shutter, 250/417 ms result-card beats, 0/792/2833/3625 ms duel intro, 12-frame damage popup). Cross-lane: combat-core and skills-meters convert frame counts to ms with the same constant and can now cite the header instead of inferring it. Also confirms both build stage rects in one place - web 800x690 authored canvas, android 800x480.",
+  "overturns_ledger": false,
+  "quote": "shs3_payload_decoded.swf = CWS v17, stage rect 16000x13800 twips -> 800x690 px, frameRate 24.0, frameCount 6. shs3_android_payload_decoded.swf = CWS v26, stage rect 16000x9600 twips -> 800x480 px, frameRate 24.0, frameCount 6. (The only frameRate reference in the AS3 is Mobile.as:113-117, `if(GameEngine.getStageMC().frameRate == 0){ ... frameRate = 24; }`, which is a wake-from-sleep fallback, not the authored rate.)",
+  "text": "The 24 fps that every millisecond figure in this lane depends on is provable from the SWF headers of both payloads, not from the conditional fallback the pass implicitly relied on.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1388-1440",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/NEW-hud-buff-line-is-a-hardcoded-string-table",
+  "lane_impact": "L8 ui-hud: independently closes the '150% DAMAGE' question on a string literal rather than on the itemdata/strings inference the two potato-buff claims rest on, and adds five buff types (COINS, RARELOOT, MUTE, FULLMUTE, HELL) plus the exact clear-condition that no ledger holds. Cross-lane into L3 economy: BUFF_COINS and BUFF_RARELOOT are loot/drop-rate modifiers with no numbers exposed here \u2014 a real remaining gap.",
+  "ledger_text": "**Surface:** overworld HUD lives only in segment A-00, not MASTER \u00a78 (which is combat-only); portrait ring is stance-colored, not fixed red.",
+  "overturns_ledger": false,
+  "quote": ":1388 `public function updateBuff(bufftype:int, duration:int) : *` \u00b7 :1391 `if(duration <= 0 || !this.playerStatsButton.visible)` -> `this.bufftext.htmlText = \"\"; this.bufftext.visible = false;` \u00b7 :1400 `buffstr = \"150% XP\";` \u00b7 :1404 `buffstr = \"150% DAMAGE\";` \u00b7 :1408 `\"150% DEFENSE\"` \u00b7 :1412 `\"150% SPEED\"` \u00b7 :1416 `\"200% AP REGEN\"` \u00b7 :1420 `\"200% DUEL TOKEN REGEN\"` \u00b7 :1424 `\"Increased chance of finding more coins\"` \u00b7 :1428 `\"Increased chance of finding rare loot\"` \u00b7 :1432 `\"Anti-Spam Muting\"` \u00b7 :1436 `\"Anti-Spam Full Muting\"` \u00b7 :1440 `\"Hell Imprisonment\"`",
+  "text": "The battle HUD's buff line is a hard-coded string ladder in OverworldHUD.updateBuff(bufftype, duration), not a computed percentage: eleven literal strings keyed on StatsManager.BUFF_* ids, including four non-potato buffs (coins, rare loot, anti-spam muting, hell imprisonment) that no ledger holds. The line is cleared whenever duration <= 0 or the stats button is hidden.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/ScreenTransition.as:93-108,159-162",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/blackopen-shutter-is-16-frames",
+  "lane_impact": "ui-hud lane: corrects this pass's claim ui-hud/transition-durations-exact, which asserts 17 frames for both shutters. A rebuild that ports 708 ms to the open shutter will be 41.7 ms slow on every room entry, node explore, teleport and rest - i.e. on essentially every world-exploration transition. Also invalidates the stated derivation (n-2)(n-1); the correct displacement law is n(n-1).",
+  "overturns_ledger": false,
+  "quote": "`else if(this.transitionType == TRANSITION_BLACKOPEN){ this.blackup.y -= this.blackMovtSpeed; this.blackdown.y += this.blackMovtSpeed; this.blackMovtSpeed += 2; if(this.blackup.y <= -240){ this.blackup.y = -240; this.blackdown.y = 480; ... this.doAction(); } }` - no `counter` test anywhere in the branch. From startOpen (`blackup.y = 0; blackMovtSpeed = 0; counter = 0;`) displacement after n frames is n(n-1), so n=16 gives exactly 240 and the branch fires at frame 16. Simulation output: 'OPEN done at frame 16 y -240.0' vs 'CLOSE done at frame 17'.",
+  "text": "The two black shutters are NOT symmetric: the closing shutter runs 17 frames (708 ms) because of an explicit counter gate, but the opening shutter has no gate and completes in 16 frames (667 ms).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717 (video capture of the live web game)",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_432.0.png \u2014 crop (x 0-640, y 820-1080) of the 1920x1080 frame, upscaled 3x with LANCZOS",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/buff-row-is-frame-confirmed-A1",
+  "lane_impact": "L8 ui-hud gains an active-buff HUD element and a restriction-line element no ledger holds, both frame-measured. Pairs with strings.json[\"125\"] = 'Stance Restriction' and the type-10 / modifier-38 consumable shape at itemdata.xml:237-249.",
+  "ledger_text": "(none \u2014 this supplies the A1 evidence class for an existing A2 claim)",
+  "overturns_ledger": false,
+  "quote": "(visible in the crop) red circular portrait ring \u00b7 green bar '20/20' \u00b7 blue bar '26/26' \u00b7 tan strip 'CANNOT CHANGE STANCE' \u00b7 yellow text '150% DAMAGE'",
+  "text": "Frame-level (A1) confirmation of the bottom-left combat HUD stack that claims hud-150-is-potato-buff and hud-150-is-a-potato-buff asserted only at A2 class. The stack is five rows: a red-ringed kasa-wearing portrait; a green HP bar reading 20/20; a blue AP bar reading 26/26; a tan/brown strip reading CANNOT CHANGE STANCE; and beneath it a yellow line reading 150% DAMAGE. The restriction line and the buff line are two SEPARATE rows in two different colours, which is independent visual proof that the 150% figure is a buff readout and not a stance modifier.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:283-290, cross-checked against pillarbox measured on reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (cols 52->1867 w 1816, rows 0->1079) and all 240 reference/frames/broad_survey/*.jpg",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/frame-to-stage-mapping-is-anisotropic",
+  "lane_impact": "Cross-lane measuring convention. Any lane converting a frame Y with 2.270 is 1 % wrong \u2014 this lane's own claim 7 did exactly that and published (639.4, 446.0) against a code truth of (640, 450). The lane journal already states the correct rule at docs/gauntlet/L0/systems/ui-hud.md:31-32; the structured claim contradicted it.",
+  "overturns_ledger": false,
+  "quote": "`newScale = stageMC.stageHeight / originalHeight; offsetX = (stageMC.stageWidth - originalWidth * newScale) / 2; offsetY = 0; fitWidth = false;` \u2014 the wide-container branch fits HEIGHT and pillarboxes. At 1080 px that is exactly 1080/480 = 2.250 vertical; the measured horizontal is 1816/800 = 2.270, a ~0.9 % stretch introduced by the re-encode (a true 2.250 fit would give 1800 px of content, not 1816).",
+  "text": "The reference video's frame-to-stage mapping is anisotropic \u2014 x divides by 2.270 but y divides by 2.250 \u2014 and the fit branch in the shipped code explains exactly why.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png \u2014 border scanlines at y=1000/1050/1060 across x 1400..1900, plus full-frame pillarbox extents",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/frame-to-stage-transform",
+  "lane_impact": "Cross-lane tooling, not just ui-hud (L4 ui-hud, but usable by L1 combat-core, L6 art-anim, L11 world-exploration). Any lane measuring anything off Nr4fQstqHDM can now convert frame pixels to game pixels directly. It also corrects the surveyor's transform, which applied the horizontal scale to the vertical axis with y0=0 and so mis-converted the slot row as 446 instead of 450.",
+  "overturns_ledger": false,
+  "quote": "Slot border spans 1447..1561, 1585..1696, 1721..1832 give centres 1503.75 / 1640.5 / 1776.5. Against BattleUI.as:133 `skillSlotButton.x = 760 - i * 60;` (i=2,1,0) the least-squares fit with x0 fixed at the measured pillarbox edge 52 gives scale 2.2689 and residuals -0.35 / +0.30 / +0.10 px. Flash scales uniformly here (GameEngine.resizeHandler applies one newScale to both axes), so frame_y = -5.0 + 2.2689 * game_y; the capture crops ~5 px off the top and ~4 px off the bottom because 480 * 2.2689 = 1089 px > 1080.",
+  "text": "The frame-to-game transform for video B is now pinned: game stage 800x480 rendered at scale 2.2689 with origin (52, -5.0) in frame pixels, fitted on three code-known slot centres with sub-0.4 px residuals.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "SWF header parse of reference/decrypted/shs3_payload_decoded.swf, reference/decrypted/shs3_android_payload_decoded.swf, reference/preservation/shs3.swf, reference/preservation/shs3preloader.swf",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/framerate-and-stage-rects-bytechecked",
+  "lane_impact": "L-ui-hud and every lane quoting a millisecond: 24 fps was assumed, never held. Now held. The 800x690 vs 800x480 split also grounds the friend-bar claim structurally (the web build reserves 210 px of authored stage the Android build does not) and warns that any '480' constant lifted from the Android decompile is the GAME AREA height, not the web stage height.",
+  "overturns_ledger": false,
+  "quote": "shs3_payload_decoded.swf CWS v17 rect [0.0, 800.0, 0.0, 690.0] fps=24.000 frames=6 | shs3_android_payload_decoded.swf CWS v26 rect [0.0, 800.0, 0.0, 480.0] fps=24.000 frames=6 | shs3.swf CWS v10 rect 800x690 fps=24.000 | shs3preloader.swf CWS v10 rect 800x690 fps=24.000",
+  "text": "24.000 fps is byte-verified from the SWF headers of both builds \u2014 the missing premise under every millisecond figure in this lane \u2014 and the same parse shows the authored WEB stage is 800x690 while the ANDROID stage is 800x480, so the friend bar is a structural difference between the builds, not merely a code path.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:267-280, plus SWF headers of reference/decrypted/shs3_payload_decoded.swf and reference/decrypted/shs3_android_payload_decoded.swf",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/friend-bar-gated-by-resizehandler",
+  "lane_impact": "L4 ui-hud: upgrades ui-hud/690-friend-bar-never-filmed from 'nobody happened to film it' to a code-proven gate, and supplies the aspect-ratio mechanism ledger blocker (1) ('aspect-ratio truth ... read stage.stageWidth in a build') was asking for \u2014 without a build. Also supplies the counterexample that refutes the surveyor's 'android parity retired' conclusion: the two builds ship different authored stage heights.",
+  "overturns_ledger": false,
+  "quote": "`var originalHeight:int = 480; var originalHeightWithBar:int = 690; var originalWithBarAspectRatio:Number = originalWidth / originalHeightWithBar; var newAspectRatio:Number = stageMC.stageWidth / stageMC.stageHeight; if(newAspectRatio <= originalWithBarAspectRatio){ ... StatsManager.stageShowingFriendBar = true; ... }` \u2014 the bar appears only when the window aspect is <= 800/690 = 1.159; both captures are ~16:9. The else-branch (`newScale = stageMC.stageHeight / originalHeight; offsetX = (stageMC.stageWidth - originalWidth * newScale) / 2;`) is exactly the pillarbox both videos show. SWF headers: web payload stage 0,800,0,690 px @ 24.0 fps; Android payload stage 0,800,0,480 px @ 24.0 fps.",
+  "text": "The 800x690 friend-bar layout was structurally unfilmable at the aspect ratios both longplays were captured at, and the web build authors it into the SWF stage while the Android build does not \u2014 a measured build divergence inside the HUD.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:271-279 (web equivalent reference/decompiled/shs3_payload/scripts/\u00a71t1540s0\u00a7.as:271-273), corroborated by my scan of 267 frames sampled across all 45 directories under reference/frames/",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/friend-bar-is-structurally-unfilmable",
+  "lane_impact": "ui-hud: upgrades claim ui-hud/690-friend-bar-never-filmed from PARTIAL (a 7-frame induction) to HELD with a code proof and a 267-frame scan. The practical conclusion is unchanged and correct - if the friend bar is built it must be labelled INFERRED-from-source, because no artifact anywhere shows it rendered.",
+  "overturns_ledger": false,
+  "quote": "`var originalWidth:int = 800; var originalHeight:int = 480; var originalHeightWithBar:int = 690; var originalWithBarAspectRatio:Number = originalWidth / originalHeightWithBar; var newAspectRatio:Number = stageMC.stageWidth / stageMC.stageHeight; if(newAspectRatio <= originalWithBarAspectRatio) { originalHeight = originalHeightWithBar; StatsManager.stageShowingFriendBar = true; ... friendpanel.init(); }` \u2014 800/690 = 1.1594. Scan result: 236 full 1920x1080 frames, every one with content aspect >= 1.45, zero candidates below.",
+  "text": "The 800x690 friend-bar layout cannot appear in any 16:9 capture: the game enables it only when the player's window aspect is at most 800/690 = 1.1594, so its absence from the reference videos is structural rather than a sampling accident.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "SWF header of reference/decrypted/shs3_payload_decoded.swf + reference/decompiled/shs3_android/scripts/GameEngine.as:268-280 + OverworldHUD.as:388-390",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/friend-bar-is-the-shipped-default",
+  "lane_impact": "ui-hud: bounds P12 the other way. The videos captured the non-default wide mode; the 210 px friend strip below the 480 canvas was the authored default. Also settles that 480 is the game canvas in BOTH builds, so P2's 480 corollary is safe.",
+  "overturns_ledger": false,
+  "quote": "Header parse: shs3_payload_decoded.swf stage rect 800 x 690 @ 24.0 fps (android payload 800 x 480 @ 24.0 fps). `var originalHeight:int = 480; var originalHeightWithBar:int = 690; ... if(newAspectRatio <= originalWithBarAspectRatio){ originalHeight = originalHeightWithBar; StatsManager.stageShowingFriendBar = true; OverworldHUD.instance.friendpanel.init(); }`. `this.friendpanel = new FriendPanel(); addChild(this.friendpanel); this.friendpanel.y = 480;`",
+  "text": "The 800x690 friend-bar layout is the web build's authored, default-shipped canvas \u2014 not an unshipped code path \u2014 so building it is copying, not authoring.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png crop (1050,900)-(1880,1080) upscaled 3x, adjudicating reference/decompiled/shs3_android/scripts/BattleUI.as:133-134,492-512 and SkillSlotButton.as:123-135",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/hotkey-numbering-rule",
+  "lane_impact": "L-ui-hud: turns the survey's rule-level note ('unnumbered empty slot matches initEmpty()') into a full three-slot frame-vs-code match including the gap and the numbering direction. Also bounds ledger blocker \u2463 ('the 3 skill slots is really ~2 abilities + a stance up-arrow') \u2014 the frame shows slot 1 EMPTY, so the filmed session had two equipped skills in a three-slot bar, not two abilities plus a stance control.",
+  "overturns_ledger": false,
+  "quote": "Code: `skillSlotButton.x = 760 - i * 60;` (:133) with `skillSlotButton.initKeyPressText(this.slotCount - i);` (:504) \u2014 slotCount 3 gives i=0 at x=760 -> key 3, i=1 at x=700 -> key 2, i=2 at x=640 -> key 1; the null-slot branch at :510 calls initEmpty(), which clears keypressText (SkillSlotButton.as:128). Crop shows exactly three boxes: leftmost bright-bordered, EMPTY and UNNUMBERED; middle labelled 2 with a pale claw/fang icon; right labelled 3 with the gold up-arrow. Nothing further left.",
+  "text": "Skill-slot hotkey numbers are assigned right-to-left by initKeyPressText(slotCount - i) against a right-to-left layout, which reproduces the filmed HUD exactly \u2014 three slots, leftmost empty and unnumbered because its skillSlots entry is null, middle key 2, right key 3.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/GenericActionButton.as:262-345 and NodeUI.as:13-75, against reference/extracted/android/90_InteractUI_UIData.bin",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/interact-icon-manifest-found",
+  "lane_impact": "ui-hud: refutes the 'no icon manifest for the 139 icon ids' half of claim ui-hud/hud-symbol-metrics and of the score rationale. Only the vector art is unexported; the id->class mapping is complete. Also feeds world-exploration and economy, since the same 20 action icons drive every town interaction menu in 90_InteractUI_UIData.bin.",
+  "overturns_ledger": false,
+  "quote": "`public function setInteractIcon(iconID:int) : * { ... switch(iconID){ case NodeUI.ACTION_LEAVE: this.image = new LeaveActionIcon(); break; case NodeUI.ACTION_LOOK: this.image = new LookActionIcon(); break; case NodeUI.ACTION_SHOP: case NodeUI.ACTION_BUY: case NodeUI.ACTION_SELL: this.image = new ShopActionIcon(); break; ... } }` with `ACTION_SHOP:int = 1` ... `ACTION_MEDAL:int = 31`. 25 case labels -> 22 named icon classes. Distinct ids actually used in the blob: 1,2,4,7,11,12,14,15,16,18,19,21,23,24,25,26,27,29,30,31 - all 20 covered. Frequency: 15=ACTION_BUY x42, 14=ACTION_LEAVE x22, 23=ACTION_BACK x19, 12=ACTION_USE x10, 16=ACTION_SELL x8.",
+  "text": "The InteractUI icon manifest is on disk and the id space is far smaller than assumed: only 20 distinct icon ids appear across the 139 references, and GenericActionButton resolves every one of them to a named MovieClip class.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeUI.as (ACTION_* constants) and GenericActionButton.as setInteractIcon(iconID) switch",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/interactui-icon-ids-resolve",
+  "lane_impact": "L-ui-hud: shrinks the residual the survey priced into its score. Its claim 13 says 'the 139 <icon> ids map to unextracted art', implying 139 unknowns; the id->name mapping is held in code and only the art is unexported. I mark this PARTIAL rather than HELD because I read the switch but did not enumerate every distinct id against every case myself.",
+  "overturns_ledger": false,
+  "quote": "setInteractIcon switches iconID against `case NodeUI.ACTION_*` labels into named icon classes (ShopActionIcon, LeaveActionIcon, BackActionIcon, UseActionIcon, ItemActionIcon, TravelActionIcon, the four *ElementActionIcon variants, ...). The 139 <icon> uses in 90_InteractUI_UIData.bin draw on that small distinct set.",
+  "text": "The 139 InteractUI <icon> ids are not 139 unresolved unknowns \u2014 they draw on a small enumerated ACTION_* set that resolves by name in code, so only the vector art is missing, not the mapping.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:504 with :133 and :500-501",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/keypress-index-is-reversed",
+  "lane_impact": "L4 ui-hud, and L5 skills-meters for the input binding. A rebuild that binds key N to skillSlots[N-1] mirrors the OG's bindings left-to-right. Verified against the frame: the '2' and '3' labels sit on the middle and right boxes respectively, which is only consistent with slotCount - i.",
+  "overturns_ledger": false,
+  "quote": "`skillSlotButton.initKeyPressText(this.slotCount - i);` inside the loop that also does `skillSlotButton.visible = i < this.slotCount;` and `skillSlotButton.initSkill(StatsManager.skillSlots[i]);`, against `skillSlotButton.x = 760 - i * 60;` at :133. With slotCount=3: i=0 sits at game x 760 (rightmost) and is labelled 3; i=2 sits at x 640 (leftmost) and is labelled 1.",
+  "text": "The on-screen skill number is the reverse of the skill-array index, so key 3 fires skillSlots[0] and key 1 fires the leftmost slot.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:163-179, :261-269, :459, :472-535",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/paperdoll-9-box-to-eq-slot-map",
+  "lane_impact": "L5 (UI/HUD) - closes the survey's only STILL_UNHELD UI item outright. The SLOT_ index order (hat, mask, armor, gloves, pants, weapon, ring1, shoes, ring2) matches the frame's reading order exactly, so the layout AND the binding are now both codeable; also sharpens the '9 boxes over a 13-slot model' bullet to name all four unrendered-in-UI slots including NECK.",
+  "overturns_ledger": false,
+  "quote": "internal var SLOT_HAT:int = 0; internal var SLOT_MASK:int = 1; internal var SLOT_ARMOR:int = 2; internal var SLOT_GLOVES:int = 3; internal var SLOT_PANTS:int = 4; internal var SLOT_WEAPON:int = 5; internal var SLOT_RING1:int = 6; internal var SLOT_SHOES:int = 7; internal var SLOT_RING2:int = 8;  /  for(var i:int = 0; i < 9; i++) { switch(i) { case 0: tempItem = StatsManager.equipment[StatsManager.EQ_HAT]; ... case 7: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY1]; tempShopItem = this.equippedSlots[this.SLOT_RING1]; case 8: tempItem = StatsManager.equipment[StatsManager.EQ_ACCESSORY2]; tempShopItem = this.equippedSlots[this.SLOT_RING2]; } }",
+  "text": "The nine paperdoll boxes are explicitly bound to model slots in InventoryUI: hat, mask, armor, gloves, pants, weapon, accessory1 (left ring), shoes, accessory2 (right ring) - so both ring boxes are the two accessory slots and NEITHER is EQ_NECK; the four model slots with no UI box are EQ_HAIR, EQ_HEAD, EQ_NECK and EQ_SCABBARD.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/118_Mobile_Lang_EN.bin vs docs/gauntlet/L0/systems/ui-hud.md:465",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/pass1-fabricated-transunit-quote",
+  "lane_impact": "ui-hud lane hygiene, and a cross-lane warning: \u00a70 calls a fabricated cite the worst available outcome, and one is already banked in a journal. Pass 2 caught the downstream consequence (resname vs id keying) but not the fabrication itself. Any other lane that re-derived a string from a journal-quoted <trans-unit> line rather than from the blob should be re-checked against reference/extracted/android/118_Mobile_Lang_EN.bin directly.",
+  "overturns_ledger": false,
+  "quote": "The journal reads `<trans-unit id=\"388\" resname=\"388\"><source>Game Paused</source></trans-unit>`. Substring test over the decoded blob: `'<trans-unit id=\"388\" resname=\"388\">' in d` -> False. The two real rows are `<trans-unit id=\"369\" resname=\"388\">\\r\\n<source>Condition: Poor</source>` and `<trans-unit id=\"388\" resname=\"407\">\\r\\n<source>Game Paused</source>`.",
+  "text": "This lane's Pass-1 journal contains a verbatim XML quote that does not exist in the artifact it cites.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "docs/gauntlet/L0/systems/ui-hud.md:472,475 and :491,508",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/pass1-stale-string-rules-still-live",
+  "lane_impact": "ui-hud and every lane reading this journal: resnames reach 7011 and Stage-0 S0-3 measures itemdata 804/0, skilldata 73/0, npcdata 484/6 resolved, so claim 16's limit is dead. Claim 17's cause is wrong (it is the attribute, not the build) and its ~400 threshold is wrong (divergence is exactly at id=212 / resname=222). Both need striking, not just superseding.",
+  "overturns_ledger": false,
+  "quote": "Claim 16: \"**The honest limit.** This closes UI/HUD strings and nothing more\" ... \"every lookup returns `None`. Item/skill/npc display names remain **STILL_UNHELD**.\" Claim 17: \"The extracted table is from a **different build revision** than the decompiled `BattleUI`.\" ... \"Rule for downstream lanes: ids below ~400 resolve directly; above that, resolve by **string search**\"",
+  "text": "Two Pass-1 statements that P1's resname discovery kills are still standing in the lane journal as guidance for downstream lanes, and P1 names neither.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/118_Mobile_Lang_EN.bin adjudicating docs/gauntlet/L0/systems/ui-hud.md:465-467",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/pass1-xliff-quote-is-misquoted",
+  "lane_impact": "ui-hud (and every lane that reads this journal): the single attribute P1's whole thesis turns on was altered inside a block presented as the raw file. Needs a direct correction in systems/ui-hud.md, not just a superseding Pass-2 claim. P1 did not notice it.",
+  "overturns_ledger": false,
+  "quote": "The journal prints `<trans-unit id=\"388\" resname=\"388\"><source>Game Paused</source>`, `<trans-unit id=\"600\" resname=\"600\"><source>Auto Slash Off</source>` and `<trans-unit id=\"609\" resname=\"609\"><source>Draw a line to slash</source>`. The blob actually carries resname=\"407\", resname=\"619\" and resname=\"628\" for those three ids. The rows at ids 45 / 104 / 175 / 208 are correct because they sit below the id=211 / resname=211 divergence point.",
+  "text": "Pass 1's fenced 'verbatim' XLIFF evidence block in the lane journal silently rewrites the resname attribute on every row above the divergence point, so the journal's own evidence contradicts the artifact and would make P1 look wrong to anyone who checked it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:48,60,102,259-262 and MCSPlayer.as:241,1168,3112,3272",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/reload-crit-meter-code-live-frame-absent",
+  "lane_impact": "skills-meters and combat-core, flagged not banked. It contests the standing line 'OG has NO Critical meter (Focus buys evasion)', but my crop (0,910)-(700,1080) at 2x of duel_dense/Nr4fQstqHDM_428.0.png shows TWO bars only -- no third meter -- so THE FRAME WINS and the existing line survives. Treat as a lead: the widget is compiled in and driven by reload/maxreload with a -24 (one-second-at-24fps) offset, but nothing proves it was ever visible in v0.717.",
+  "overturns_ledger": false,
+  "quote": "`public var crittext:TextField;` (:48), `public var reloadbar:MovieClip;` (:60), `this.crittext.text = LangManager.getString(175);` (:102, resname 175 = 'Critical Hit'), and `updateReload(percentage:Number){ this.reloadbar.bar.scaleX = percentage; this.crittext.visible = percentage >= 1 && this.reloadbar.visible; }` (:259-262). Driven live from four MCSPlayer sites: `updateReload(this.reload / this.maxreload)` (:3112), `updateReload((this.reload - 24) / (this.maxreload - 24))` (:3272), `updateReload(this.tempreload / (this.maxreload - 24))` (:1168), `updateReload(0)` (:241). But `reloadbar.visible` is never ASSIGNED in any Android script -- only read.",
+  "text": "A third combat meter exists and is live in code -- a reload bar whose fill drives a 'Critical Hit' label at 100% -- but it renders in zero reference frames, so it is code-held and frame-absent, not recovered.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/extracted/android/118_Mobile_Lang_EN.bin, trans-units id/resname 600 and 601, adjudicating docs/gauntlet/L0/systems/ui-hud.md:505-509",
   "citelint": {
    "notes": [
@@ -448,314 +758,6 @@
   "overturns_ledger": false,
   "quote": "case 4:\n   timePeriod = 12 * 60 * 60;\n   if(QueryManager.instance.getServerTime() - plantTime < timePeriod)\n   {\n      vegState = PLANTED;\n   }\n   else\n   {\n      vegState = READYFORHARVEST;\n   }",
   "text": "The 12-hour crop (plantType 4) has no ROTTED branch at all - once ready it stays harvestable forever, so the '15-minute grace before ROT' rule applies only to the 15 min / 1 h / 6 h crops.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "cite": "md5 sweep of reference/extracted/bindata/*.bin (27 files) vs reference/extracted/android/*.bin (42 files)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/21-of-27-blobs-are-cross-build-identical",
-  "lane_impact": "L1 world-exploration, and every lane that inherits the Stage-0b Android caveat. It refutes this journal's own cross-build-numeric-parity claim ('only the land mask is byte-proven identical') and its score rationale ('the one world artifact with proven cross-build parity'). Concretely it upgrades place-name-reproduced-from-payload: the PlaceNames table the generator reads is cross-build proven, so only the AS3 exception list is in doubt. It also hands L6 art-anim a fact worth its own claim -- 14 of the 19 web animation sets are byte-identical to the Android ones, so the Android animation data is not a port-specific rebuild.",
-  "overturns_ledger": false,
-  "quote": "110_Mobile_MapBitmapData.bin == 92_1t4648s0.bin (272 B) | 84_QuestEngine_TrapRoomData.bin == 93_1t4647s0.bin (39,193 B) | 85_NameGenerator_MaleNames.bin == 94_1t4651s0.bin (3,618 B) | 86_NameGenerator_NobleFamilyNames.bin == 95_1t4649s0.bin (279 B) | 87_NameGenerator_SamuraiFamilyNames.bin == 96_1t4652s0.bin (289 B) | 88_NameGenerator_FemaleNames.bin == 97_1t4650s0.bin (2,094 B) | 89_NameGenerator_PlaceNames.bin == 98_1t4653s0.bin (5,698 B) | + 14 MCSCharacter_* animation sets (Deer, DualStance, Wolf, Goblin, HeavyStance, Boar, LightStance, Bear, Human2, ReversedStance, Horse, BalancedStance, Undead, Human) | total web bindata 27, matched 21",
-  "text": "Twenty-one of the twenty-seven web-payload bindata blobs are byte-identical to their Android counterparts, including all five NameGenerator tables, the QuestEngine trap-room file and fourteen MCSCharacter animation sets -- so the Stage-0b v0.682 caveat applies to AS3 constants, not to the data blobs.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/Nr4fQstqHDM/seg-28/frames/frame_0007.jpg, crop (470,110)-(780,290) Lanczos x4 AND crop (300,0)-(1024,130) Lanczos x3 of the same frame; formula at reference/decompiled/shs3_android/scripts/InventoryUI.as:2409",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/ap-cap-formula-is-frame-confirmed",
-  "lane_impact": "L1 world-exploration and L10 economy. (1) It upgrades world-exploration/ap-regen-and-cap from A2 to A2+A1 -- the cap is FRAME-CONFIRMED, not merely code-sourced. (2) It partially overturns the banked claim economy/ap-and-token-caps-are-40 (docs/gauntlet/L0/CLAIMS.md:2288), which ruled 'AP max is 40' and 'the 30 max does not and must not be ported': AP max is neither 30 nor 40, it is level+30, and both observations are instances of it (30 = the level-1 creation initial at StatsManager.as:707-708, 40 = the level-10 ceiling). (3) It is a FOURTH frame-code agreement showing an Android v0.682 AS3 constant reproducing web v0.717 behaviour, which materially weakens the blanket 'every ported number is v0.682' discount. The duel-token half of CLAIMS.md:2288 is untouched and still needs its own check.",
-  "overturns_ledger": false,
-  "quote": "Visible in crop (470,110)-(780,290): three stat bars reading 'HP 20 / 30', 'CHI 47 / 47', 'AP 30 / 40'. Visible in crop (300,0)-(1024,130) of the SAME frame: a gold diamond level badge reading '10', beside '26234 / 31400' captioned 'EXPERIENCE POINTS', and 'AVAILABLE STAT POINTS: 0'. Code: this.statsPanel.APadd.visible = StatsManager.getStat(StatsManager.STAT_MAXAP) < 20 + (charlevel + 10);",
-  "text": "The Android level+30 max-AP formula reproduces the web build's own HUD exactly -- the frame that was used to rule 'the 30 max must not be ported' shows a LEVEL 10 player with AP 30/40, and 10+30 = 40 -- so there is no frame-vs-payload conflict on AP cap, and the prior banked ruling that 'AP max is 40' (flat) is itself wrong.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1031-1035 (vs the spend gate at InventoryUI.as:2409)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/ap-ceiling-plus-gear",
-  "lane_impact": "L1 world-exploration and L4 items-equipment: the regen loop stops at base MAXAP + gear bonus, so AP-boosting equipment raises the real ceiling above level+30. Two separate numbers that must not be collapsed into one config constant.",
-  "overturns_ledger": false,
-  "quote": "if(getPlayerStats(STAT_AP) >= getPlayerStats(STAT_MAXAP) + findBonusStat(STAT_MAXAP))\n{\n   serverTimeVariable = QueryManager.instance.getServerTime();\n   nextAPUpdate = -1;\n   setStat(STAT_AP,getPlayerStats(STAT_MAXAP) + findBonusStat(STAT_MAXAP));",
-  "text": "Max AP is not hard-capped at level+30: level+30 is only the stat-point spend ceiling, and equipment adds on top via findBonusStat(STAT_MAXAP).",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:1230 (+ MCSActor.as:116)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/ap-zero-is-a-pose-not-a-death",
-  "lane_impact": "L1 world-exploration and L6 art-anim: CORRECTS the world-exploration journal's own lane_impact on claim ap-regen-and-cap, which reads this line as \"a death/retreat condition\". It is an idle-pose selector. grep for `STAT_AP) == 0` across all 559 android classes returns this single line \u2014 there is no AP-death rule anywhere. The portable rule is: adventure-mode idle has two poses (tired / idle_sheathed) gated on AP==0, and duel-mode idle has two poses gated on HP <= 25%. That is a real L6 animation-state finding the ledger does not carry.",
-  "overturns_ledger": false,
-  "quote": "case IDLE_STATE:\n   if(!GameEngine.isAdventureMode() && !StageManager.isRedFreeze() && getHP() <= maxhp / 4 || GameEngine.isAdventureMode() && this.controlledBy == 0 && StatsManager.getStat(StatsManager.STAT_AP) == 0)\n   {\n      startAnim(TIRED);\n   }\n   else\n   {\n      startAnim(IDLE_SHEATHED);\n   }\n---\ninternal static var TIRED:String = \"tired\";",
-  "text": "AP==0 in adventure mode does not kill or retreat the player \u2014 it swaps the idle animation to \"tired\"; outside adventure mode the same pose fires at HP <= maxhp/4.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/112_Mobile_NodeData.bin:6 <name>1037</name> + docs/gauntlet/L0/index/strings.json id 1037",
-  "citelint": {
-   "notes": [
-    "LINE_ON_BINARY:reference/extracted/android/112_Mobile_NodeData.bin"
-   ],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/authored-start-node-name-confirms-derivation",
-  "lane_impact": "L1 world-exploration: the hand-authored name for node 8382465 equals the name my independent re-run of the LCG generates for its territory 1397077 ('Kasuta'), plus the prefix getNodeName emits for terrSector.x=2046%6=0 <= 1 (string 401 = 'W') and the bg suffix for a forest (string 1003). That is a second, non-circular proof of the naming law \u2014 the surveyor proved it against a video frame, this proves it against the payload's own authored data.",
-  "overturns_ledger": false,
-  "quote": "112_Mobile_NodeData.bin:6:\t\t<name>1037</name>\nstrings.json 1037: 'W Kasuta Forest'",
-  "text": "The authored start node's name string is itself \"W Kasuta Forest\", independently confirming both the procedural place-name derivation and the direction-prefix law.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:1643-1663 + docs/gauntlet/L0/index/strings.json (398='N', 399='S', 400='E', 401='W')",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/compass-prefix-is-two-axis",
-  "lane_impact": "L1 world-exploration: completes the name generator. Of the 36 sectors in a territory, the 4x4 interior block (x and y both in 2..3) gets no prefix, the edge sectors get one letter and the 16 corner sectors get two. frame_0020 (sector 1,3 -> 'W') and frame_0080 (sector 3,2 -> none) are both consistent, and the full name is dir + territoryName + ' ' + bgString where bgString is a switch over 8 background families (strings 1002/1003/1006/1015/1020/1021/1022).",
-  "overturns_ledger": false,
-  "quote": "if(terrSector.y <= 1)\n{\n   dir1 = LangManager.getString(398);\n}\nelse if(terrSector.y >= 4)\n{\n   dir1 = LangManager.getString(399);\n}\nif(terrSector.x <= 1)\n{\n   dir2 = LangManager.getString(401);\n}\nelse if(terrSector.x >= 4)\n{\n   dir2 = LangManager.getString(400);\n}\nvar dir:String = dir1 + dir2;",
-  "text": "The generated node-name prefix is two-axis, not one: dir1 comes from the sector Y (<=1 -> string 398 'N', >=4 -> 399 'S') and dir2 from the sector X (<=1 -> 401 'W', >=4 -> 400 'E'), concatenated - so corner sectors emit 'NW', 'SE' and so on.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/TerritoryData.as:86-99 + RNG.as:73-75",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/dead-exit-branch",
-  "lane_impact": "L1 world-exploration: a latent bug in the original world generator, not a design choice. Because rnd() returns [0,1), rand(3) is confined to {0,1,2}. A faithful 1:1 port must decide explicitly whether to reproduce the bug (always 1 exit) or the evident intent (sometimes 2) - and must say which. Worth checking the sibling getSouth/East/WestExits for the same pattern.",
-  "overturns_ledger": false,
-  "quote": "var rng:RNG = new RNG(territoryId);\nvar dice:int = rng.rand(3);\nvar count:int = 1;\nif(dice == 3)\n{\n   count = 2;\n}\n...\npublic function rand(num:int) : int\n{\n   return Math.floor(this.rnd() * num);\n}",
-  "text": "TerritoryData.getNorthExits contains a dead branch: rng.rand(3) can only return 0, 1 or 2, but the code tests dice == 3 to set count = 2 - so every territory generates exactly one north exit.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:160 and :1130-1148",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/duel-token-clock",
-  "lane_impact": "L1 world-exploration and L11 meta-social: the correct count is at least five clocks - AP 60 s, duel tokens 120 s, war turn 3600 s, crops 900/3600/21600/43200 s, quest repeat 86400 s. Duel tokens start at 20 (STAT_DUELTOKENS/STAT_MAXDUELTOKENS, StatsManager.as:709-710) and persist via save slot 101.",
-  "overturns_ledger": false,
-  "quote": "internal static var DTINTERVAL:int = 2 * 60;\n...\nif(timeVariable >= nextDTUpdate)\n{\n   timeDiff = timeVariable - nextDTUpdate;\n   diff = Math.floor(timeDiff / DTINTERVAL) + 1;",
-  "text": "A fifth independent real-time clock exists that the 'three clocks' claim omits: duel-token regen runs on a 120-second interval.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/InteractUI_crops.as:607, with the stat's identity fixed at :104-107",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/farm-guaranteed-yield-is-harvest-two",
-  "lane_impact": "L1 world-exploration: corrects world-exploration/farming-tables. startingIndex+2 is the cumulative harvest counter (capped 50), which getPatchLevel(:457) maps to soil grade 1-6 at 10/20/30/40/50 -- Obj_VegePatch.as:78 mislabels the same stat 'soilLevel', which is probably what misled the survey. The guard is `== 1` exactly, not `== 0` and not `<= 1`, so a brand-new patch's first harvest rolls the normal 1/(10-farmSkill) dice (10% at skill 0) and only the next one is free. Oddly specific -- flag it as either an authored quirk or an original-code off-by-one when it lands in config/farming.ts, and label it v0.682.",
-  "overturns_ledger": false,
-  "quote": "if(StatsManager.getStat(this.startingIndex + 2) == 1 || int(Math.random() * (10 - StatsManager.getStat(1020))) == 0)\n...\nthis.harvestedTimes = StatsManager.getStat(startingIndex + 2);\nif(this.harvestedTimes > 50)\n{\n   this.harvestedTimes = 50;\n}",
-  "text": "The farming guaranteed-yield rule is 'harvestedTimes == 1', i.e. the SECOND harvest, not the first -- the survey's 'first harvest guaranteed' would be ported wrong.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:160, :1133, :1148",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/fifth-clock-duel-tokens",
-  "lane_impact": "L1 world-exploration and L11 meta-social: the real clock inventory is AP 60 s, duel tokens 120 s, war move 3600 s, crops 900/3600/21600/43200 s (+900 s grace), quest repeat 86400 s \u2014 five, not three. Persisted as save slot 101 (nextDTUpdate), same timestamp-based offline-accrual shape as AP.",
-  "overturns_ledger": false,
-  "quote": "internal static var DTINTERVAL:int = 2 * 60;\n...\ndiff = Math.floor(timeDiff / DTINTERVAL) + 1;\n...\nsetNextDTUpdate(timeVariable,DTINTERVAL - timeDiff % DTINTERVAL);",
-  "text": "A fifth independent real-time clock exists that the \"three clocks\" framing omits: duel tokens regenerate on a 120-second interval.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:393-400 + recomputation over reference/extracted/android/110_Mobile_MapBitmapData.bin",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/frozen-town-levels-are-19-not-12",
-  "lane_impact": "L1 world-exploration and L11 meta-social: extends the journal's prosperity-thresholds claim, which lists only the 12 hard-coded ids. The real rule is a radius: any territory with level < 8, i.e. Manhattan distance <= 4 from (341,341). I counted these over the land mask myself \u2014 19 territories (L3x1 + L4x2 + L5x4 + L6x5 + L7x7). So the starting region is a fixed, non-warrable tutorial zone by construction, and only the 716 outer territories have dynamic prosperity.",
-  "overturns_ledger": false,
-  "quote": "public function isNoChangeTown(territoryID:int) : Boolean\n{\n   if(territoryID == 1466699 || territoryID == 1503572 || territoryID == 1368424 || territoryID == 1540387)\n   {\n      return true;\n   }\n   var lvl:int = this.getTerritoryLevel(territoryID);\n   return lvl < this.LEVELSTART + 5;\n}",
-  "text": "Town levels are frozen for 19 territories, not the 12 explicitly listed ids \u2014 isNoChangeTown also returns true for every territory whose level is below LEVELSTART+5.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/Nr4fQstqHDM/map/frames/frame_0020.jpg crops (0,30)-(300,80) x5 and (400,120)-(512,180) x8, vs my Python re-implementation of reference/decompiled/shs3_android/scripts/RNG.as:66-77 + NameGenerator.as:40,42,162-166 + NodeGenerator.as:485-512",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "world-exploration/kakuchi-is-cross-build-parity-proof",
-  "lane_impact": "L1 world-exploration: upgrades world-exploration/cross-build-numeric-parity from 'only the land mask is proven' to 'the land mask is byte-proven AND the whole coordinate/naming stack is behaviourally proven'. Specifically validated in v0.717 by this single frame: getTerritory, getTerritorySector, TERRSHIFTX=21, TERRSHIFTY=51, the LCG (s*9301+49297)%233280, RNG's constructor-advances-once behaviour, getPlaceName's %137 branch, the 78-entry namestarting and 37-entry nameending tables, and getNodeCompassDir's <=1 / >=4 bands. That is far above the 'string-pool inference' the score rationale settles for. It does NOT extend to the tuning constants (APINTERVAL, LEVELSTART, AP costs, crop timers) \u2014 those remain Android-labelled.",
-  "overturns_ledger": false,
-  "quote": "Frame title bar reads \"W KAKUCHI MOUNTAIN PATH\"; frame HUD reads \"TERRITORY (24,52) / SECTOR (1,3)\". Android code path: (24,52) -> internal (344,342) -> id 1409366 -> 344%137=70 >= 26 -> getTownName2 -> RNG(2818732) -> indices (74,19) -> \"Ka\"+\"kuchi\" = Kakuchi; terrSector.x=1 <= 1 -> getString(401) = \"W\", terrSector.y=3 in the dead band -> no N/S prefix.",
-  "text": "The Kakuchi reproduction is itself a web-vs-Android parity proof and is under-claimed: a WEB v0.717 video frame renders a name that only falls out of ANDROID v0.682 code if the coordinate law, TERRSHIFTX/Y, the LCG constants, both name tables and the compass-band rule are all identical across builds.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/shapes/188.svg (svg header: height=\"785.15px\" width=\"663.65px\", 399 sub-paths); provenance docs/research/fidelity/ART_EXTRACTION.md:18 + docs/sessions/SESSION15_KICKOFF.md:58",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "world-exploration/map-art-is-held-web-shape-188",
-  "lane_impact": "L1 world-exploration: kills the surveyor's own STILL_UNHELD world-exploration/map-art-unheld and removes one of the four negatives holding its score at 85. It also moves the map art from 'Android, encrypted' to 'web v0.717, already extracted on disk' \u2014 the one artifact class this lane most wanted. Why it was missed is on the record: docs/sessions/-SESSION-LOG.md:2392 and docs/DIVERGENCES.md:3191 say that of the 1,822 shapes in reference/extracted/shapes/, only the 16 the fighter uses had ever been opened. The remaining ~1,806 are an unswept evidence pool for every art-bearing lane (L6 art-anim-audio-feel, L5 ui-hud), not just this one.",
-  "overturns_ledger": false,
-  "quote": "<svg ... ffdec:objectType=\"shape\" height=\"785.15px\" width=\"663.65px\" ...> -- rasterising its 399 sub-paths renders Hokkaido top-right, the Honshu diagonal, Shikoku/Kyushu bottom-left and the Ryukyu chain trailing SW; overlaying reference/extracted/bindata/92_1t4648s0.bin at (i*10, j*10) lands every land cell on that landmass.",
-  "text": "The rendered world-map ART is HELD, in the WEB v0.717 build: reference/extracted/shapes/188.svg is the filled Japanese-archipelago vector the world map is drawn from, and the 63x72 land mask is a 10-px-per-cell quantisation of it.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "cite": "my overlay of reference/extracted/bindata/92_1t4648s0.bin onto the 36-tile composite of reference/extracted/sprites/DefineSprite_*/1.png, transform cell (i,j) -> px (10i+80, 10j) derived from WorldMapUI.as:208 and :230",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/map-art-validates-projection",
-  "lane_impact": "L1 world-exploration: the projection claim previously rested on two lines of code (WorldMapUI.as:208 getPixel(territoryx + 21 - 8, territoryy + 51) and :230 (terrx + 21) * 10 + 5). It now has a picture behind it. The 83 'misses' are coastline cells sampled at cell centre on a 10 px grid plus my own tile-assembly seams, not a transform error. Practical upshot for the port: a renderer can draw the OG map by blitting the 36 tiles at (i*80, j*80) and index territories with x = i_mask + 328, y = j_mask + 290.",
-  "overturns_ledger": false,
-  "quote": "land cells over drawn land: 652 over sea: 83 agreement %: 88.7",
-  "text": "Overlaying the 63x72 land mask on the reassembled map art at the code's own projection agrees on 652 of 735 land cells (88.7% by cell centre) and traces the coastline exactly, independently confirming the mask-to-screen transform.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/Nr4fQstqHDM/map/frames/frame_0020.jpg, crop (393,38)-(502,138), Lanczos x10 -> 1090x1000",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/minimap-x-at-3-2",
-  "lane_impact": "L1 world-exploration and L5 ui-hud: the frame wins over the surveyor's hedged reading. The substantive claim (6x6 grid, player at (1,3)) is unaffected, but the icon inventory needs amending - and the arch/gate distinction is a real minimap-iconography datum that maps onto NodeGenerator's 24-value ICON_ enum.",
-  "overturns_ledger": false,
-  "quote": "In the x10 crop the column label centres fall at x ~ 195/320/450/570/690/815 and the row label centres at y ~ 190/310/432/557/675/800. The gold X is centred at ~(565,437) = column 3, row 2. The gold up-arrow is at (570,190) = (3,0), gate glyphs at (815,190) = (5,0) and (195,800) = (0,5), and a distinct gold arch at (812,800) = (5,5). The white player triangle is at ~(378,557) = column 1, row 3, matching the HUD's SECTOR (1,3).",
-  "text": "On frame_0020 the gold X marker sits at minimap column 3 row 2, not the claimed ~(2,2), and there is a sixth gold icon - an arch, visually distinct from the gate glyph - at (5,5) that the claim's quote omits.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/Nr4fQstqHDM/map/frames/frame_0020.jpg, crop (395,38)-(505,148) Lanczos x9 -> 990x990; cross-read with frame_0080.jpg crops (0,30)-(300,80) x5 and (355,110)-(512,180) x7",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/minimap-x-is-quest-target",
-  "lane_impact": "L1 world-exploration and L4 ui-hud: corrects the surveyor's '~(2,2)' misread and upgrades the finding. The minimap's gold X is the quest destination, and frames 0020 and 0080 are a matched before/after pair for the same objective - a reusable behaviour cite for the minimap iconography Ready bullet. The same x9 crop also shows a sixth icon at (5,5) that the original quote omits (the journal lists only the (5,0) and (0,5) gates).",
-  "overturns_ledger": false,
-  "quote": "In the x9 crop the column-label centres fall at x = 168/278/390/497/607/722 and the row-label centres at y = 172/280/388/497/605/718. The gold X sits at (483,390) = column 3, row 2. frame_0080 prints 'TERRITORY (24,52)' / 'SECTOR (3,2)' with the title bar 'KAKUCHI DOJO GATES' and the quest line 'SIDE QUEST: DEFEAT HATTORI'.",
-  "text": "The gold X on the frame_0020 minimap sits at sector (3,2), not (2,2) - and (3,2) is exactly the sector the player reaches in frame_0080, so the X is the active quest-target marker.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/Nr4fQstqHDM/map/frames/frame_0020.jpg, crop (395,40)-(490,135), Lanczos x10 -> 950x950 with a 10-px red coordinate grid overlaid",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/minimap-x-marker-column",
-  "lane_impact": "L1 world-exploration: correction only, and non-load-bearing \u2014 the grid shape, the 0-5 labelling on both axes, the player triangle at column 1 row 3 and the HUD's 'SECTOR (1,3)' all verify. Worth fixing before anyone ports the minimap icon layout from the journal's prose rather than from the frame.",
-  "overturns_ledger": false,
-  "quote": "Visible in the crop: column labels 0-5 centred at original-frame x = 413/425/438/449/463/475; row labels 0-5 at y = 53/66/80/93/105/118. The gold X centroid is at x approx 449, y approx 82 \u2014 column 3, row 2 \u2014 i.e. the same column as the gold up-arrow at (3,0), which the surveyor labels correctly.",
-  "text": "The minimap's gold X marker in frame_0020 sits at column 3 row 2, not the \"~(2,2)\" the surveyor's crop description reports.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/payload.xml:119152-119260",
-  "citelint": {
-   "notes": [
-    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
-   ],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/name-tables-in-web-payload",
-  "lane_impact": "L1 world-exploration: the Android namestarting/nameending arrays appear in the v0.717 pool in the same order, minus only the entries the string pool deduplicates ('Kiyo' which occurs twice in the array, and the short strings 'i' and 'no'). Combined with the LCG constants at :104820-104821, the whole place-name law is cross-build corroborated. Strengthens world-exploration/place-name-reproduced-from-payload from an Android derivation to a v0.717-grounded one.",
-  "overturns_ledger": false,
-  "quote": "<item>Cho</item> <item>Dai</item> <item>Ryo</item> <item>Shin</item> <item>Ryu</item> <item>Mata</item> ... <item>Iwa</item> <item>Ka</item> <item>Kasu</item> <item>Ko</item> <item>ta</item> <item>yama</item> <item>kawa</item> <item>moto</item> ... <item>harah</item> <item>kuchi</item> <item>da</item> ... <item>maki</item> <item>bara</item>",
-  "text": "The name-generator vocabulary ships verbatim in the web v0.717 payload string pool, so the place-name derivation is corroborated across builds and is not an Android-only reconstruction.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:392-400 and :417-447",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/nochange-ring",
-  "lane_impact": "L1 world-exploration and L11 meta-social: with LEVELSTART=3 the threshold is level 8, which by my recomputation over the land mask covers 46 territories (L3x1 L4x2 L5x4 L6x5 L7x7 plus the L8 boundary excluded) - the whole newbie ring has RNG-fixed, war-immune town levels. The surveyor's 'specific territories pinned' reads as a list of 12 exceptions; it is actually a rule plus 12 exceptions.",
-  "overturns_ledger": false,
-  "quote": "if(territoryID == 1466699 || territoryID == 1503572 || territoryID == 1368424 || territoryID == 1540387)\n{\n   return true;\n}\nvar lvl:int = this.getTerritoryLevel(territoryID);\nreturn lvl < this.LEVELSTART + 5;",
-  "text": "isNoChangeTown freezes far more than the four hard-coded ids: every territory whose level is below 8 is also frozen, with its town level drawn deterministically from new RNG(territoryID).rand(7).",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:392-400",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "world-exploration/nochange-town-covers-all-level-under-8",
-  "lane_impact": "L1 world-exploration and L11 meta-social: the surveyor's prosperity claim lists only the explicit id pins and so understates the rule. Combined with its own verified level histogram (L3x1 L4x2 L5x4 L6x5 L7x7 = 19 territories at level < 8), this means 19 of the 735 land territories \u2014 the whole starting region including spawn \u2014 never change town level, and their level comes from getNoChangeTownLevel, whose fallback is RNG(territoryID).rand(7) with dice 0 AND dice 6 both mapping to level 0. Prosperity accumulation only ever moves towns in the level>=8 outer world.",
-  "overturns_ledger": false,
-  "quote": "public function isNoChangeTown(territoryID:int) : Boolean\n{\n   if(territoryID == 1466699 || territoryID == 1503572 || territoryID == 1368424 || territoryID == 1540387)\n   {\n      return true;\n   }\n   var lvl:int = this.getTerritoryLevel(territoryID);\n   return lvl < this.LEVELSTART + 5;\n}",
-  "text": "The pinned-town rule is far broader than the twelve listed ids: isNoChangeTown returns true for EVERY territory whose level is below LEVELSTART+5 (i.e. level < 8), so the entire low-level core of the world has permanently fixed town levels.",
   "verdict": "HELD"
  }
 ]

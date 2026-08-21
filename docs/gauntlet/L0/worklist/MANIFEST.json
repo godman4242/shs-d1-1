@@ -2,47 +2,52 @@
  "batch_size": 24,
  "deferred": [
   {
-   "reason": "every claim already judged",
+   "reason": "every claim judged and 2 critic lenses on disk",
    "unit": "questdata"
   },
   {
-   "reason": "every claim already judged",
+   "reason": "every claim judged and 2 critic lenses on disk",
    "unit": "skilldata"
   },
   {
-   "reason": "every claim already judged",
+   "reason": "every claim judged and 2 critic lenses on disk",
    "unit": "npcdata"
   },
   {
-   "reason": "every claim already judged",
+   "reason": "every claim judged and 2 critic lenses on disk",
    "unit": "itemdata"
   },
   {
-   "reason": "every claim already judged",
+   "reason": "every claim judged and 2 critic lenses on disk",
    "unit": "bindata"
   },
   {
-   "reason": "every claim already judged",
+   "reason": "every claim judged and 2 critic lenses on disk",
    "unit": "actionscript"
   },
   {
-   "reason": "every claim already judged",
-   "unit": "android-blobs"
-  },
-  {
-   "reason": "every claim already judged",
+   "reason": "every claim judged and 2 critic lenses on disk",
    "unit": "string-table"
   },
   {
-   "reason": "every claim already judged",
+   "reason": "every claim judged and 2 critic lenses on disk",
    "unit": "frames"
   },
   {
-   "reason": "every claim already judged",
+   "reason": "every claim judged and 2 critic lenses on disk",
    "unit": "uistrings-payload"
   }
  ],
  "packets": [
+  {
+   "claims": 15,
+   "critic_lenses_on_disk": 1,
+   "file": "src-android-blobs.claims.json",
+   "reason": "only 1 critic lens(es) on disk, \u00a73.3 needs 2",
+   "stage": "WF-2",
+   "unit": "android-blobs",
+   "unjudged": 0
+  },
   {
    "claims": 24,
    "file": "t1-overturns-01.json",
@@ -50,7 +55,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 24,
+   "overturns": 23,
    "stage": "WF-3a",
    "unit": "t1-overturns-01"
   },
@@ -72,7 +77,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 23,
+   "overturns": 24,
    "stage": "WF-3a",
    "unit": "t1-overturns-03"
   },
@@ -83,7 +88,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 23,
+   "overturns": 24,
    "stage": "WF-3a",
    "unit": "t1-overturns-04"
   },
@@ -105,7 +110,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 24,
+   "overturns": 22,
    "stage": "WF-3a",
    "unit": "t1-overturns-06"
   },
@@ -116,7 +121,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 24,
+   "overturns": 23,
    "stage": "WF-3a",
    "unit": "t1-overturns-07"
   },
@@ -127,7 +132,7 @@
     "cite",
     "hunter"
    ],
-   "overturns": 23,
+   "overturns": 22,
    "stage": "WF-3a",
    "unit": "t1-overturns-08"
   },
@@ -138,42 +143,20 @@
     "cite",
     "hunter"
    ],
-   "overturns": 23,
+   "overturns": 24,
    "stage": "WF-3a",
    "unit": "t1-overturns-09"
   },
   {
-   "claims": 24,
+   "claims": 10,
    "file": "t1-overturns-10.json",
    "lenses": [
     "cite",
     "hunter"
    ],
-   "overturns": 23,
+   "overturns": 10,
    "stage": "WF-3a",
    "unit": "t1-overturns-10"
-  },
-  {
-   "claims": 24,
-   "file": "t1-overturns-11.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 22,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-11"
-  },
-  {
-   "claims": 18,
-   "file": "t1-overturns-12.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 18,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-12"
   },
   {
    "claims": 48,
@@ -276,7 +259,7 @@
    "unit": "t2-corroborating-10"
   },
   {
-   "claims": 12,
+   "claims": 33,
    "file": "t2-corroborating-11.json",
    "lenses": [
     "cite"
@@ -287,12 +270,12 @@
   }
  ],
  "totals": {
-  "already_judged": 510,
-  "claim_rows": 1323,
-  "critic_findings_claiming_overturn": 282,
-  "critic_findings_unjudged": 774,
-  "distinct_ids": 1284,
+  "already_judged": 582,
+  "claim_rows": 1360,
+  "critic_findings_claiming_overturn": 226,
+  "critic_findings_unjudged": 739,
+  "distinct_ids": 1321,
   "duplicate_rows_merged": 39,
-  "source_sweep_unjudged": 0
+  "source_sweep_unjudged": 15
  }
 }

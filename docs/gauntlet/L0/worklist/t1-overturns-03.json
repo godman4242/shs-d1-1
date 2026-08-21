@@ -1,345 +1,167 @@
 [
  {
   "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/NameGenerator.as:145-166 + QuestEngine.as:522-526 + reference/extracted/bindata/98_1t4653s0.bin",
+  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:747-764 + MCSActor.as:922,170,172 + reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + EnemyZombie.as:544 + EnemyShield.as:117-119 + MCSPlayer.as:4309-4326",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "bindata/place-name-table-is-dead-data",
-  "lane_impact": "L-world-map: refutes bindata/place-name-26x26-lookup's 'recovered whole'. The correct generator is the 78x37 compound, giving 2,886 possible names, deterministic per territory.",
+  "id": "enemies-ai/flinch-state-exists",
+  "lane_impact": "L0 enemies-ai + art-anim: blocker \u2462's stagger half is CLOSED, not absent, and the survey's score cap built on 'a counter with no stagger animation' must be dropped. The port is: on hit, save actionState/anim/frameCounter, enter FLINCH_STATE, play flinch_weapon (8 frames), then restore the exact prior frame. It is guard-interrupted by SLASH_STATE and SKILL_CHICHARGE_STATE (NPC.as:749, MCSPlayer.as:4311) and stacks on top of, not instead of, the 12-frame gotHitCounter i-frame window. Note the animation lives in the 94_Human2 blob, not the 99_Human blob the survey searched.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
   "overturns_ledger": true,
-  "quote": "NameGenerator.as:147-153 `var namex:int = territoryx % 137; var namey:int = territoryy % 26; if(namex < 26) { return this.getTownName1(namex,namey); } return this.getTownName2(territoryID);` ; :162-165 `public function getTownName2(territoryID:int) : String { var rng:RNG = new RNG(territoryID * 2); return this.namestarting[rng.rand(this.namestarting.length)] + this.nameending[rng.rand(this.nameending.length)]; }` \u2014 I counted the arrays: namestarting = 78, nameending = 37. Measured over all 735 land territories: territoryx in [329,389], namex in [55,115], getTownName1 hit count = 0/735.",
-  "text": "bindata/98's 677 place names are DORMANT in the shipped world. getPlaceName gates the 26x26 lookup on `namex = territoryx % 137` being < 26, but every real territory's raw x lies in [329,389] (from the bitmap transform), so namex is always in [55,115]. getTownName1 is reached for ZERO of the 735 land territories. Every shipped place name is either a hardcoded exception or a getTownName2 compound: namestarting[78] concatenated with nameending[37], seeded RNG(territoryID*2). Anyone porting world naming from the 677-entry table will produce names the original never generated.",
+  "quote": "NPC.as:747-758 `public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }` \u00b7 NPC.as:760-764 `public function endFlinch() : * { actionState = this.prevActionState; startAnim(this.prevAnim); mcs.frameCounter = this.prevFrameCounter; }` \u00b7 MCSActor.as:922 `internal static var FLINCH_STATE:int = 28;` \u00b7 MCSActor.as:170,172 `FLINCH_WEAPON:String = \"flinch_weapon\"` / `FLINCH:String = \"flinch\"` \u00b7 94_MCSCharacter_Human2AnimationData.bin `('flinch_weapon','8')`, `('flinch','8')` \u00b7 EnemyZombie.as:542-544 `else if(!this.isDowned() && !isAirborne()) { this.startAction(FLINCH_STATE); }` \u00b7 EnemyShield.as:117-119 `case FLINCH_WEAPON: case FLINCH: endFlinch();`",
+  "text": "The stagger mechanic blocker \u2462 asks for is fully implemented: FLINCH_STATE (id 28) with a base-class doFlinch/endFlinch pair that saves and restores animation + frameCounter, driving an authored 8-frame flinch / flinch_weapon animation \u2014 a mechanism entirely separate from the 12-frame gotHitCounter i-frame lockout.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3019-3095, :107, :222 + StatsManager.as:1905-1919 + EnemyPlayer.as:757 + InputManager.as:51,106-108,198 + reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2347",
+  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:296-299 + every call site: NPCManager.as:1222,1263,1325,1414,1434,1454,1494,1513,1534,1564,1579",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "bindata/reach-cap-recovered-per-stance",
-  "lane_impact": "L-combat-model: directly refutes bindata/reach-cap-not-in-this-source and closes the ledger's single named blocker. Web-verified, so the S0 build-parity caveat does not apply.",
-  "ledger_text": "| **combat-model** | reach cap | the single per-stance value the whole combat model needs \u2014 MISSING |",
+  "id": "enemies-ai/gothitcounter-is-iframes",
+  "lane_impact": "L0 enemies-ai + combat-core: the 12 frames are i-frames, so the ledger's 'stagger' question is genuinely STILL_UNHELD - the source implements no hit-reaction at all, neither a stagger animation nor an action lock. A recreation that locks the enemy out of acting for 12 frames is wrong.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
   "overturns_ledger": true,
-  "quote": "MCSPlayer.as:3030 `this.slashLength = this.baseSlashLength * 1.5;` \u00b7 :3041 `this.slashLength = this.baseSlashLength * (1 + 0.5 * this.balancedMastery * 0.01);` \u00b7 :3052-3055 `this.slashLength = this.baseSlashLength * (0.5 + 0.5 * this.heavyMastery * 0.01); if(this.slashLength < 100) { this.slashLength = 100; }` \u00b7 :3078-3081 DUAL `this.slashLength = this.baseSlashLength;` floor 100 \u00b7 :3094 `InputManager.setMaxDistance(this.slashLength);` ; StatsManager.as:1915-1918 `internal static function getBaseSlashLengthVal(speed:int) : int { var maxincrement:int = 90 + getPlayerStats(STAT_DAN) * 5; return int(120 + Math.floor(maxincrement * speed / (20 + speed))); }` ; EnemyPlayer.as:757 `var baseSlashLength:int = 120 + Math.floor(maxincrement * val / (20 + val));` ; InputManager.as:51 `internal static var maxDistance:int = 200;` ; WEB \u00a71t1523s0\u00a7.as:2347 `return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));`",
-  "text": "THE PER-STANCE REACH CAP IN STAGE PIXELS IS RECOVERED IN FULL. MCSPlayer.setStance sets it per stance and feeds it straight to the input line: LIGHT = baseSlashLength*1.5; BALANCED = baseSlashLength*(1 + 0.5*balancedMastery*0.01); HEAVY = baseSlashLength*(0.5 + 0.5*heavyMastery*0.01) with a hard floor of 100; REVERSED = *1.5; DUAL = base with floor 100; then InputManager.setMaxDistance(slashLength). The base is 120 + floor((90 + STAT_DAN*5) * speed / (20 + speed)), speed = STAT_SPEED + bonus, x1.5 under BUFF_SPEED, halved by BUFF_INJURED. AI opponents use the same shape with maxincrement fixed at 90. Default before any stance is set is 200. So reach IS the stance trade-off: light reaches 1.5x, heavy only 0.5x at zero mastery and reaches parity only at 100% heavy mastery.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/extracted/bindata/96_1t4652s0.bin:7,10,11 \u00b7 95_1t4649s0.bin:11 \u00b7 94_1t4651s0.bin:80,107 \u00b7 97_1t4650s0.bin:38,170,226,236 + docs/research/video-study/SYNTHESIS.md:429 + docs/research/REBUILD_READINESS.md:221",
-  "citelint": {
-   "notes": [
-    "LINE_ON_BINARY:reference/extracted/bindata/96_1t4652s0.bin"
-   ],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "bindata/six-ledger-names-decompose",
-  "lane_impact": "L-content: triples the recovered coverage of bindata/procedural-name-generator and separates procedural NPCs from authored ones, which tells the port which names to generate and which to transcribe.",
-  "overturns_ledger": true,
-  "quote": "Exact-match lookup (`grep -n '^NAME$'`): 96:7 Hachisuka \u00b7 96:10 Hojo \u00b7 96:11 Honda \u00b7 95:11 Inokuma \u00b7 94:80 Kano \u00b7 94:107 Kinkiyo \u00b7 97:38 Gin \u00b7 97:170 Niji \u00b7 97:226 Shizuka \u00b7 97:236 Taka. Zabuza / Tengu / Hotaru: no hit in any of 94-98. Ledger names from SYNTHESIS.md:429 'Honda Shizuka, Honda Gin, Hojo Taka, Hachisuka Kano, Inokuma Kinkiyo, Niji,' and REBUILD_READINESS.md:221 'Boss table omits Hachisuka Kano, Honda Shizuka, Zabuza, Tengu Hotaru.'",
-  "text": "SIX of the ledger's named NPCs decompose from the five bindata name tables, not two \u2014 and they exercise all THREE generators, proving getCommonerName, getNobleName and getSamuraiName are all live in the shipped game. Hachisuka Kano = samurai 96:7 + male 94:80. Honda Shizuka = samurai 96:11 + female 97:226. Honda Gin = 96:11 + female 97:38. Hojo Taka = samurai 96:10 + female 97:236. Inokuma Kinkiyo = NOBLE 95:11 + male 94:107 (getNobleName, not getSamuraiName). Niji = bare female 97:170 (getCommonerName). Zabuza, Tengu and Hotaru appear in NONE of the tables, so those are authored npcdata NPCs and must be sourced differently.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/InputManager.as:172-180,360,467-472,485-492 + reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as:174,179,361,477",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "bindata/slash-line-colours-exact",
-  "lane_impact": "L-art-anim-audio-feel: three byte-exact colours plus the taper law for the slash guide line, straight from the shipped source. Should be cross-checked against a frame before banking as final, since the frames also show a blue effect line that these constants do not explain.",
-  "ledger_text": "| **art-anim-audio-feel** | \u2026 byte-exact palette |",
-  "overturns_ledger": true,
-  "quote": "InputManager.as:172-180 `public static function greenLine() : * { canvas.graphics.lineStyle(thickness,39168,1,\u2026); }` / `public static function redLine() : * { canvas.graphics.lineStyle(thickness,10027008,1,\u2026); }` \u2014 39168 = 0x009900, 10027008 = 0x990000. :360 `lineStyle(thickness - thickness * ((maxDistance - distanceLeft) / maxDistance),10027008,\u2026)` \u2014 the taper. :492 the enemy line uses colour `0`. WEB \u00a71t1541s0\u00a7.as:174,179,361 identical.",
-  "text": "The exact hues of the drawn slash line \u2014 the most visible element of a duel \u2014 are two constants in the input layer, identical in both builds. The player's guide line is drawn green when the slash is affordable and dark red otherwise, and the stroke tapers as the allowed distance is consumed; the enemy's line is drawn pure black.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/QuestEngine.as:518-526, :1204-1206 + WorldMapUI.as:15,17,19,377 + WarSelectUI.as:15,17,19 + reference/decompiled/shs3_payload/scripts/\u00a71t7934s0\u00a7.as:15,17,19 + \u00a71t1524s0\u00a7.as:1463",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "bindata/territory-to-bitmap-transform",
-  "lane_impact": "L-world-map: refutes bindata/map-bitmap-vs-territory-scale-unreconciled and makes the world grid fully implementable. Also identifies the ledger's 'start coordinate (21,51)' as (TERRSHIFTX, TERRSHIFTY), the territory-space origin in bitmap pixels \u2014 not a coordinate at all.",
-  "ledger_text": "| **world-map** | 63x72 bitmap and 12-bit territory ids at unreconciled scales |",
-  "overturns_ledger": true,
-  "quote": "QuestEngine.as:522-526 `if(mapBitmapData.getPixel(i,j) != 0) { terrX = i - WorldMapUI.TERRSHIFTX + WorldMapUI.WARMARKERSHIFTX; terrY = j - WorldMapUI.TERRSHIFTY; warMarkerList.push(terrX + 341 << 12 | terrY + 341); }` ; QuestEngine.as:1206 `return mapBitmapData.getPixel(x + WarSelectUI.TERRSHIFTX - 341 - WarSelectUI.WARMARKERSHIFTX,y + WarSelectUI.TERRSHIFTY - 341) != 0;` ; WorldMapUI.as:15 `public static var WARMARKERSHIFTX:int = 8;` :17 `TERRSHIFTX:int = 21;` :19 `TERRSHIFTY:int = 51;` ; WEB \u00a71t7934s0\u00a7.as:15,17,19 = 8, 21, 51",
-  "text": "The 63x72 map bitmap and the 12-bit territory-ID space ARE reconciled, exactly, and the transform is entirely in the payload. The 12-bit fields are biased by 341, and the bitmap is offset by the constants WARMARKERSHIFTX=8, TERRSHIFTX=21, TERRSHIFTY=51. Collapsed: pixel_x = (id>>12 & 0xFFF) - 328, pixel_y = (id & 0xFFF) - 290. Every land pixel becomes one war-marker territory, so the 735 white cells ARE the shipped territory count; raw territory-x spans [329,389] and y spans [290,361], mapid spans [1347935, 1593647]. Proof: all three hardcoded towns land on land cells \u2014 Ibamaya 1405272 -> pixel (15,54), Gokura 1524045 -> (44,43), web-only Iwakuni 1519945 -> (43,39).",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "web v0.717",
-  "cite": "reference/extracted/bindata/93_1t4647s0.bin:6-18 (schema) and :92-94,:131,:176-177,:183-184,:233-235,:243-245,:404-406,:451 (counter-examples) + reference/decrypted/shs3_payload_decoded.swf header",
-  "citelint": {
-   "notes": [
-    "LINE_ON_BINARY:reference/extracted/bindata/93_1t4647s0.bin"
-   ],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "bindata/trap-duty-cycle-domain-measured",
-  "lane_impact": "L-motion/L-traps: preserves the 24 Hz result while removing a false universal that two packet claims were resting on.",
-  "overturns_ledger": true,
-  "quote": "93_1t4647s0.bin:451 `<obj><id>48</id><name>Trap_SpikesAuto</name><x>500</x><property>0,24,36,0,1,1,1</property></obj>` \u2014 schema :15 gives `direction, onDuration, offDuration, startInterval, active, spikelook, bigDamage`, so offDuration = 36. Also :99,:106,:198-206 `Trap_CrushingBlockAuto/ColumnAuto` offDuration = 1000. Web SWF header parsed by me: CWS v17, rect [0,16000,0,13800], framerate 24.0, 6 frames.",
-  "text": "CORRECTED replacement for the false 'every trap duty cycle is a multiple of 24' corroboration. The 24 Hz engine tick is right (web SWF header framerate 24.0 + ENTER_FRAME gameloop + one keyframe per updateAnimation call), but the trap timings do NOT corroborate it. Measured over every live <property> in 93_1t4647s0.bin against the file's own schema comment: onDuration in {0,24,48}; offDuration in {0,24,36,48,60,96,1000}; startInterval in {0,6,8,12,16,18,24,30,32,36,42,48,54,64,72}. 75 values are not multiples of 24 and the gcd of the whole domain is 2. Trap timings are authored in raw ticks at 1/24 s, not in whole seconds.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/WarHex.as:11-37 + WarHexUI.as:175-176,253-254",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "bindata/warhex-14-states-not-7",
-  "lane_impact": "L-war-room: replaces bindata/warhex-board-6x6's seven-state list with the real fourteen-value enum plus the y pitch the claim omitted.",
-  "ledger_text": "| **war-room** | board topology \u2014 BLOCKER |",
-  "overturns_ledger": true,
-  "quote": "WarHex.as:11 `public static var HEX_NOTHING:int = 0;` \u2026 :37 `public static var HEX_DEMOLISHEDSPAWNPOINT:int = 15;` (14 constants, `grep -c 'public static var HEX_' WarHex.as` = 14) ; WarHexUI.as:175-176 `this.ht = 6; this.wt = 6;` ; :253-254 `hex.x = 90 + xpos * 55; hex.y = 92 + ypos * 55;`",
-  "text": "The War-Room hex-state enum has FOURTEEN members with explicit integer values and two gaps, not the seven a render switch happens to touch. WarHex.as:11-37: HEX_NOTHING=0, HEX_SPAWNPOINT=1, HEX_FORWARDBASE=2, HEX_CONTROLPOINT=3, HEX_TOWN=4, HEX_POTENTIALSPAWNPOINT=5, HEX_UPCOMINGSPAWNPOINT=6, HEX_LADDER=7, HEX_DEFENSE=8, HEX_VILLAGE=9, HEX_CITY=11, HEX_CASTLE=12, HEX_DISABLEDSPAWNPOINT=13, HEX_DEMOLISHEDSPAWNPOINT=15 (10 and 14 unused). The board geometry is 6x6 at 55px pitch in BOTH axes: x = 90 + xpos*55, y = 92 + ypos*55.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/InputManager.as:51 + MCSPlayer.as:3030, 3041, 3052 (arithmetic over the two quoted lines, offered as a lead)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/300-200-100-is-base-not-ceiling",
-  "lane_impact": "combat-core L2: 300/200/100 should be re-labelled BASE (mastery 0) rather than ceiling. PARTIAL because it is arithmetic over two quoted lines, not a single line that states it, and because the v0.717 multipliers give 280/200/100 for the same base.",
-  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
-  "overturns_ledger": true,
-  "quote": "InputManager.as:51  internal static var maxDistance:int = 200;\nMCSPlayer.as:3030   this.slashLength = this.baseSlashLength * 1.5;   -> 300\nMCSPlayer.as:3041   ... * (1 + 0.5 * balancedMastery * 0.01) at mastery 0 -> 200\nMCSPlayer.as:3052   ... * (0.5 + 0.5 * heavyMastery * 0.01) at mastery 0 -> 100",
-  "text": "The wiki's 300/200/100 stance reach numbers reproduce exactly as the shipped default slash budget (200) times the mastery-ZERO multipliers {1.5, 1.0, 0.5}, which contradicts the ledger's reading of them as mastery-9 ceiling values.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session11/damage-ttk/t19*.png (18 frames), row-1032 crit-bar scan x\u2208[247,515]; plus t1961.900.png HUD crop (100,940)-(620,1080) LANCZOS x3",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/36-was-not-a-crit",
-  "lane_impact": "L5 \u2014 closes the 'crit 1.3' folklore from the frame side as well as the source side, and gives the next measurer a real crit-detection protocol: pair every popup value with the third bar's state in the same frame (full + 'CRITICAL HIT' = crit, anything else = roll).",
-  "ledger_text": "36/27 = 1.333 does match the forum-derived \"crit 1.3\"",
-  "overturns_ledger": true,
-  "quote": "bar_px = 0 (0%) on all 18 frames t1940.000 \u2026 t1979.000. The t1961.900 HUD crop reads green 10/20, blue 20/20, and the third bar showing 'CANNOT CHANGE STANCE' \u2014 i.e. reload < maxreload/6 (MCSPlayer.as:2977), so a crit was impossible. The red '36' popup lands on JINBEI (4) in that same frame.",
-  "text": "The repo's only numeric basis for 'crit 1.3' (red 36 vs 27 on the same target) is dead: the crit bar was EMPTY on every frame of that fight, so 27/30/36 is a random damage roll \u2014 frame proof of the RNG term in getDamage().",
-  "verdict": "HELD"
- },
- {
-  "alternate_cites": [
-   "reference/decompiled/shs3_android/scripts/MCSPlayer.as:105, :182, :190 (the only three occurrences in the class) vs :1158-1160; StatsManager.as:1840-1843",
-   "reference/decompiled/shs3_android/scripts/MCSPlayer.as:105, :182, :190 and EnemyClone.as:49 \u2014 the only four occurrences of `baseReload` across all 553 files",
-   "reference/decompiled/shs3_android/scripts/StatsManager.as:1839-1842 and MCSPlayer.as:105, :182, :190; exhaustive grep over reference/decompiled/shs3_android/scripts/"
-  ],
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:105 and :190 (assignments only); exhaustive grep `grep -rni basereload reference/decompiled/shs3_android/scripts/ | grep -v \"var baseReload\\|this.baseReload = \\|baseReload:int\"` returns no rows",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "duplicate_count": 4,
-  "id": "combat-core/basereload-is-dead-code",
-  "lane_impact": "L5 \u2014 delete '48 + SPD*6 refill' from the Focus economy. The meter fills at a flat +1 per frame regardless of SPD (MCSPlayer.as:1160 / web \u00a71t99s0\u00a7.as:1205). SPD affects reach (getBaseSlashLength) and skill cooldowns, not Focus.",
-  "overturns_ledger": false,
-  "quote": "internal var baseReload:int = 48;   ///   this.baseReload = baseReload;   ///   [no read site anywhere in 2,700+ classes]",
-  "reported_by": [
-   "critic"
-  ],
-  "text": "getBaseReload() = 48 + SPD*6 is a write-only dead field in the android build: it is stored into MCSPlayer.baseReload and never read anywhere, so meter refill is SPD-independent and 48+SPD*6 must not be built as a refill rate.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3276 (meter identified as the slash meter by :3162 and :3302-3310); android divergence at reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3215-3222",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/crit-is-1.3-gated-on-full-slash-meter",
-  "lane_impact": "combat-core blockers \u2461 and \u2464 both close without a video read. The 1.3-vs-3 question is settled at 1.3 (+ STAT_CRITICALDMG, an additive gear affix). The Focus/crit gating rule is: crit applies only while the meter is at max, and the meter is spent by slashing (\u00a71t99s0\u00a7.as:3302-3310, -slashUsage/2, -slashUsage, -slashUsage*1.5 by stance) and by changing stance (:3162, a flat -48) - so crit is a first-strike-from-full mechanic, not a random roll. The android v0.682 twin instead uses x1.2, or x1.5 for Light, on 'reload == maxreload' - the desktop wins.",
-  "ledger_text": "\u2461 crit 1.3 vs 3 final \u2014 *read one crit popup.*",
-  "overturns_ledger": true,
-  "quote": "if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7; } return _loc2_;",
-  "text": "Crit in v0.717 is a flat x1.3 plus the crit-damage affix, and it fires exactly when the slash/reload meter is full - which answers combat-core blockers 2 and 5 in one expression.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3271-3273 and \u00a71t5957s0\u00a7.as:2727/2736/2745",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/crit-is-flat-1.3",
-  "lane_impact": "combat-core blocker 2 closed with no footage needed; promote crit to CONTRACT = 1.3. Note the android v0.682 build differs (1.2 in Light, 1.5 elsewhere, MCSPlayer.as:3215-3221) \u2014 another datapoint that v0.682 combat tuning is NOT v0.717.",
-  "ledger_text": "\u2461 crit 1.3 vs 3 final \u2014 *read one crit popup.*",
-  "overturns_ledger": true,
-  "quote": "if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)\\n{\\n   return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;\\n}",
-  "text": "Critical damage in v0.717 is a flat x1.3 in every stance, applied when the reload bar is full, plus the STAT_CRITICALDMG gear affix.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 and :3060; \u00a71t113s0\u00a7.as:328-338",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/crit-meter-is-6-seconds",
-  "lane_impact": "L5 + L8 \u2014 build 6.000 s, not 5.8 s and not 4.0 s. Independently confirmed on frames: my three measured windows fit 6.000 s to <=1.2 px (t1004.800->t1005.000 9 vs 8.8 px; t1082.100->t1082.900 36 vs 35.1; t1081.100->t1082.100 45 vs 43.8), and 5.845 s is not realisable as an integer tick count at the SWF-header 24.0 fps.",
-  "ledger_text": "\u2464 Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
-  "overturns_ledger": true,
-  "quote": "this.\u00a71t4415s0\u00a7 = 8 * 24;   ///   if(this.\u00a71t4414s0\u00a7 < 48) { return; }   ///   var _loc3_:Number = (param1 - 48) / (param2 - 48); if(_loc3_ < 0) { _loc3_ = 0; } this.\u00a71t5182s0\u00a7.bar.scaleX = _loc3_;",
-  "text": "The web crit meter is maxreload = 8x24 = 192 ticks drawn as (reload-48)/(192-48) = 144 ticks at 24 fps = exactly 6.000 s of visible travel, and the stance-switch gate is a flat reload < 48 \u2014 which is why 'CANNOT CHANGE STANCE' shows only at displayed 0%.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session11/gap-focus-trigger/t2175.933.png \u2014 white-pixel extent over rows 1026-1049, x\u2208[200,600]; HUD crop (100,940)-(620,1080) LANCZOS x3",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/crit-track-268px-six-seconds",
-  "lane_impact": "L5 + L8 \u2014 build the meter at 6.0 s, and use 268 px / x 245..512 as the HUD track geometry for all three bars. Measuring a bar's track on an EMPTY bar is the error mode; measure it on a full one.",
-  "ledger_text": "Measured on frames, the web build's crit meter fills at ~17.3%/s (\u22485.8 s end to end)",
-  "overturns_ledger": true,
-  "quote": "bar white extent x 245 -> 512, width 268. The crop shows green 4/20, blue 47/47, and the third bar 100% solid white with 'CRITICAL HIT' printed across it. Rate from crit-focus/t1082.100 (edge 303) to t1082.900 (edge 339) = 36 px / 0.8 s = 45.0 px/s \u21d2 268/45.0 = 5.96 s. Independent third route: focusbar_scan2_videoB_fps15.tsv, edge 247 @ t2170.000 \u2192 512 @ t2176.000 = 6.000 s.",
-  "text": "The crit/reload track is 268 px wide at 1080p (x 245..512), measured on a bar that is actually FULL \u2014 which makes the fill rate 45.0 px/s = 16.8 %/s and the empty\u2192full sweep 5.96 s, not 5.8 s.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:27-35 with :3130-3146; named confirmation in reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:27-35 + setStance",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/dual-reversed-reach-inverted",
-  "lane_impact": "L5 (COMBAT CORE): the reach table is Light \u00d71.4 \u00b7 Balanced \u00d7(1+0.02M) \u00b7 Heavy \u00d7(0.5+0.04M) floor 100 \u00b7 Dual \u00d71.0 floor 100 \u00b7 Reversed \u00d71.4. Shipping the survey's version gives both bonus stances the wrong blade reach.",
-  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale)",
-  "overturns_ledger": true,
-  "quote": "33:      internal static var \u00a71t12223s0\u00a7:int = 3;   // = DUAL_STANCE\n35:      internal static var \u00a71t12224s0\u00a7:int = 4;   // = REVERSED_STANCE\n3130:             case \u00a71t12224s0\u00a7:            // REVERSED\n3131:                this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;\n3141:             case \u00a71t12223s0\u00a7:            // DUAL\n3142:                this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7;\n3143:                if(this.\u00a71t4417s0\u00a7 < 100) { 3145: = 100 }",
-  "text": "Reversed stance has the \u00d71.4 reach and no floor; Dual stance has \u00d71.0 floored at 100 px \u2014 the survey's per-stance reach table has these two swapped.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/npcdata.xml \u2014 full <npc> enumeration; ids 7/8/9/10 alongside the already-cited id 6 at :145-152",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/early-mob-hp-distribution",
-  "lane_impact": "L5 + L4 \u2014 the L1 TTK model is bimodal, not 'one hit'. 77% of early mobs die to a single stroke; a distinct 18% tier takes five. Frame-side this is exactly what damage-ttk shows: '1' and '2' popups on enemies whose green bars do not empty.",
-  "ledger_text": "\u2462 early-mob HP + starter weapon DMG + hits-to-kill \u2014 *read L1 bandit-fight popups in video A.*",
-  "overturns_ledger": true,
-  "quote": "npcdata.xml id 6 <lvl>2</lvl><hp>1</hp><attack>5</attack><defense>3</defense> (one-hit) vs ids 7,8,9,10 <lvl>2</lvl><hp>5</hp><defense>3</defense> \u2014 Branch roll 2, minus defense 3, floored by Damage.getMinDamage() at 1+piercing => 5 hits.",
-  "text": "Of the 495 <npc> rows, 22 are lvl<=2 and their HP is 1 (x17), 2 (x1) and 5 (x4); the four 5-HP rows (ids 7, 8, 9, 10) all carry defense 3, so against the starter Branch they take five hits, not one.",
+  "quote": "NPC.as:296 public function canHit() : Boolean { return this.gotHitCounter == 0; }  \u00b7  NPCManager.as:1564 if(!enemy.isDead() && enemy.canHit() && enemy.testHit(thing))  \u00b7  NPCManager.as:1414 if(!enemy.isDead() && enemy.canHit() && enemy.checkHitTrap(thing,damage))",
+  "text": "gotHitCounter = 12 is invulnerability, not an action lockout: canHit() is called only from NPCManager's hit-detection, so the counter gates whether the enemy CAN BE HIT for 12 frames.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A4",
-  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md \u00a7(c) c-2 (frame-measured: Light plateau 233\u2013241 / max 303 n=17; Balanced 116\u2013131 n=17; Heavy 97\u2013103 n=25) against reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2346-2347 and \u00a71t99s0\u00a7.as:3094/:3105/:3116-3119",
+  "cite": "docs/research/fidelity/MOTION_MEASUREMENTS.md:24 (carries frame cite 'duel-strike-A: frames 036-047 after streak') + reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/NPC.as:462",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "combat-core/formula-resolves-c2-balanced-gap",
-  "lane_impact": "L5 \u2014 three frame-measured reach numbers, taken at two different character levels, are reproduced by the v0.717 constants. That is the cross-build parity evidence the survey said did not exist, and it is positive for reach. It also retires the wiki's 300/200/100 triple for good: 200 was never a reach value.",
-  "ledger_text": "\u26a0\ufe0f **The Balanced gap cannot be resolved from this footage.**",
+  "id": "enemies-ai/hit-lockout-decomposes-exactly",
+  "lane_impact": "L0 enemies-ai + art-anim: blocker (3) dies in BOTH halves, not one and a half. The recreation's hit reaction is 4 frames of held pose then the 8-frame flinch clip, with the poise rule on top from SOURCE_CONSTANTS.md:261 (v0.717 CONTRACT-SRC). Also means art-anim's Ready bullet 'hit-stagger' was right and enemies-ai's blocker list was double-counting it.",
+  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
   "overturns_ledger": true,
-  "quote": "c-2: 'Balanced | 116\u2013131 | 131 | 17 | wiki 200 | \u274c NOT CONFIRMED \u2014 measured 131' and '\u26a0\ufe0f The Balanced gap cannot be resolved from this footage \u2026 Light and Heavy were both measured on a level-8 character.' \u2014 vs base(SPD 1, dan 0) = 120 + floor(90\u00b71/21) = 124, balanced = base \u00d7 (1+0.02m) \u2248 124; heavy = max(base\u00d7(0.5+0.04m), 100) = 100.",
-  "text": "The reach formula resolves COMBAT_MEASUREMENTS c-2's 'unresolvable' Balanced gap: balanced was measured on the level-1 tutorial where base = 124, which lands inside the measured 116\u2013131 band, and Heavy's measured 97\u2013103 plateau is the source's hard 100-px floor clamp rather than a mastery-9 ceiling.",
+  "quote": "MOTION_MEASUREMENTS.md:24 \u2014 | Hit stagger | **12 frames total: 4 upright + 8 bent-forward** | duel-strike-A: frames 036-047 after streak | `ANIM_TIMING.hitRecoilMs = 67`, `hitReturnMs = 133` |  \u00b7  94_Human2 blob \u2014 <anim i=\"flinch\" d=\"8\">, <anim i=\"flinch_weapon\" d=\"8\">  \u00b7  NPC.as:462 \u2014 this.gotHitCounter = 12;  \u00b7  SOURCE_CONSTANTS.md:261 \u2014 | stagger / poise | hyperarmor after 3 staggers (5 if the attacker is in light stance) |",
+  "text": "The 12-frame hit lockout decomposes exactly into 4 frames held + an 8-frame flinch animation, triangulated across three independent artifacts \u2014 so blocker (3)'s stagger half is fully CLOSED, not partial.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3276 (\u00a71t1243s0\u00a7 = STAT_CRITICALDMG per the initAttackStats call at \u00a71t1523s0\u00a7.as:2269; \u00a71t4414s0\u00a7/\u00a71t4415s0\u00a7 = reload/maxreload per :3162 and :3169); android v0.682 diverges at MCSPlayer.as:3215-3221",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:1533 + MCSPlayer.as:245 + FriendlyElite.as:64 + FriendlyArcher.as:57 + Obj_NPCAggro.as:76,79 + EnemyPlayer.as:83,771,774,880 + EnemyClone.as:81,85 + Obj_NPCProcGen.as:51,60",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "combat-core/full-reload-crit-is-1p3-in-v0717",
-  "lane_impact": "L combat-core blocker (2) closed without a video frame. Also names the trigger the ledger lists as unknown ('the Focus/crit gating rule (fill trigger/amount/consumption)'): the gate is reload == maxreload, and android v0.682 splits it x1.2 non-Light / x1.5 Light, so the split is NOT in the shipped build.",
-  "ledger_text": "\u2461 crit 1.3 vs 3 final \u2014 *read one crit popup.*",
+  "id": "enemies-ai/nameplate-colour-is-five-valued",
+  "lane_impact": "L0 ui-hud + enemies-ai: the single ledger bullet flattens FIVE states, not two. A recreation shipping only hostile-red / player-gold gets the friendly, neutral-procgen and quest-marker nameplates wrong \u2014 and the quest-marker colour is one of only two overworld quest indicators.",
+  "ledger_text": "nameplate (N)=level",
   "overturns_ledger": true,
-  "quote": "if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)\n{\n   return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;\n}\nreturn _loc2_;",
-  "text": "The v0.717 crit is a flat x1.3 on every stance when the reload gauge is full, plus the gear crit-damage affix - so the ledger's open 'crit 1.3 vs 3' question is closed at 1.3 for the shipped build.",
+  "quote": "MCSCharacter.as:1533 public function setDisplayName(str:String, color:uint = 0)  \u00b7  16763904 = #FFCC00 gold \u2014 MCSPlayer.as:245 (player), FriendlyElite.as:64 and FriendlyArcher.as:57 (friendlies)  \u00b7  10027008 = #990000 dark red \u2014 Obj_NPCAggro.as:79 setDisplayName(npcname + \" (\" + lvl + \")\", 10027008)  \u00b7  16777215 = #FFFFFF \u2014 EnemyPlayer.as:771 (duelist/boss/network) and EnemyClone.as:81  \u00b7  39423 = #0099FF \u2014 Obj_NPCProcGen.as:51 (neutral procgen NPC)  \u00b7  12627019 = #C0AC4B \u2014 Obj_NPCProcGen.as:60 (quest-marked NPC, also showIcon(2))",
+  "text": "The nameplate colour rule is five-valued, not the two the claim adds, and gold does not mean 'player' \u2014 it means player OR friendly.",
   "verdict": "HELD"
  },
  {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:214-223",
+  "artifact_class": "A1",
+  "cite": "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg \u2014 glyph-pixel sample, crop (340,315)-(480,350) for BANDIT and (180,315)-(240,350) for GUEST, LANCZOS x3; corroborated by MCSPlayer.as:245, EnemyPlayer.as:771/774/776, EnemyElite.as:114, EnemyKanjiGuardian.as:59, FriendlyArcher.as:57, FriendlyElite.as:64, FriendlySpearElite.as:55, Obj_NPCProcGen.as:51/60",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "combat-core/injured-buff-halves-reach",
-  "lane_impact": "L-combat-core: reach is not a pure function of speed, Dan and stance - a status effect scales the base by 0.5 before the stance multiplier. Any reach test that does not control for BUFF_INJURED can measure the wrong number.",
-  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale)",
+  "id": "enemies-ai/nameplate-colour-table",
+  "lane_impact": "L0 ui-hud + enemies-ai: replaces the ledger's single `nameplate (N)=level` bullet AND the surveyor's 'hostile red / player gold' simplification. Gold is NOT player-exclusive (all Friendly* share it), and elites/guardians/duelists are WHITE, not red. 0x990000 is reserved for opposing-SIDE duelists/bosses. Since 0xFFCC00 and 0x990000 are confirmed simultaneously by the frame's pixels and the AS3 literal, these two are the strongest CONTRACT candidates in the unit despite the v0.682 parity caveat \u2014 a frame from v0.717 corroborates the v0.682 constant.",
+  "ledger_text": "nameplate (N)=level",
   "overturns_ledger": true,
-  "quote": "216:    this.defense *= 1.5;\n218: else if(StatsManager.hasBuff(StatsManager.BUFF_INJURED))\n219: {\n220:    this.minDamage *= 0.5;\n221:    this.defense *= 0.5;\n222:    this.baseSlashLength *= 0.5;\n223: }",
-  "text": "The INJURED buff halves base slash length alongside min damage and defence - a reach modifier neither the ledger nor the rebirth lane records.",
+  "quote": "Measured in the frame: BANDIT (4) core glyph pixels (138,3,0) and (133,4,0); GUEST core glyph pixels (244,213,61) and (240,208,48). In the payload: EnemyPlayer.as:774 `namecolor = 10027008;` then `mcs.setDisplayName(xml.name + \" (\" + level + \")\",namecolor);` \u00b7 MCSPlayer.as:245 `mcs.setDisplayName(StatsManager.charname,16763904);` \u00b7 EnemyElite.as:114 `mcs.setDisplayName(xml.name + \" (\" + level + \")\",16777215);` \u00b7 Obj_NPCProcGen.as:51 `setDisplayName(this.npcname,39423);` \u00b7 :60 `setDisplayName(this.npcname,12627019);`",
+  "text": "The nameplate is a five-value colour table keyed by RELATIONSHIP, not a two-value hostile-red/player-gold rule, and the frame and the payload agree on the exact constants: gold 0xFFCC00 (16763904) for the player AND all three Friendly* classes, white 0xFFFFFF (16777215) for elites/Kanji Guardian/same-side duelists and bosses, dark red 0x990000 (10027008) for an opposing-side duelist or boss, blue 0x0099FF (39423) for a procgen quest-giver, and khaki 0xC0AC4B (12627019) for a MARKED quest-giver; the format is literally name + \" (\" + lvl + \")\", and the plain mob classes get no plate at all.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3271 joined to reference/extracted/skilldata.xml skills 1000 (lines 3-80), 1001 (82-159), 1002 (161-238), each carrying exactly ten <level><value> rows 1..10; param binding at \u00a71t99s0\u00a7.as:183-199",
+  "cite": "reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:73,76,80 + MCSPlayer.as:245 + FriendlyArcher.as:57 / FriendlySpearElite.as:55 / FriendlyElite.as:64 + EnemyElite.as:114 + EnemyKanjiGuardian.as:59 + Obj_NPCProcGen.as:51,60 + MCSCharacter.as:258,1533",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "combat-core/mastery-caps-at-ten",
-  "lane_impact": "L combat-core: 'mastery-9' becomes 'mastery-10' everywhere, and 0.5+0.4*10*0.1 = 0.9, 1+0.2*10*0.1 = 1.2, Heavy 1.4 reproduces the wiki table exactly. The ledger's 'level-1 Shugyosha does Light x0.5 / Balanced x1.0 / Heavy x1.4' is confirmed as the mastery-0 row.",
-  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "id": "enemies-ai/nameplate-is-a-spawner-split-with-hex-colours",
+  "lane_impact": "L0 ui-hud + enemies-ai: supersedes the survey's mode-switch claim with the real mechanism and turns an A1-only colour observation into exact hex CONTRACT values. Both cited frames corroborate it: seg-10/frame_0013 overworld shows red plates and ZERO health bars (Obj_NPCAggro calls hideHealthBar first), seg-11/frame_0020 combat shows health bars and zero plates. A recreation must NOT suppress nameplates in combat -- elites and guardians keep a white NAME (lvl).",
+  "ledger_text": "nameplate (N)=level",
   "overturns_ledger": true,
-  "quote": "internal function \u00a71t4475s0\u00a7() : int\n{\n   var _loc1_:int = this.minDamage + Math.random() * this.damageRange;\n   switch(this.stance)\n   {\n      case \u00a71t12220s0\u00a7:  _loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);\n      case \u00a71t12221s0\u00a7:  _loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);\n      case \u00a71t12222s0\u00a7: case \u00a71t12223s0\u00a7: case \u00a71t12224s0\u00a7:  _loc2_ = _loc1_ * 1.4;",
-  "text": "Stance mastery is a 0-10 skill level, not 0-9 and not a 0-100 percentage, so the wiki's stance-damage table 0.9/1.2/1.4 is the mastery-TEN ceiling, and the v0.717 stance damage roll is Light x(0.5+0.4*m*0.1), Balanced x(1+0.2*m*0.1), Heavy/Dual/Reversed x1.4 flat.",
+  "quote": "Obj_NPCAggro.as:73 this.npc.mcs.hideHealthBar();  :80 this.npc.mcs.setDisplayName(this.npcname + \" (\" + this.lvl + \")\",10027008);   [10027008 = 0x990000]  \u00b7  MCSPlayer.as:245 mcs.setDisplayName(StatsManager.charname,16763904);   [16763904 = 0xFFCC00, no level]  \u00b7  FriendlyElite.as:64 mcs.setDisplayName(xml.name,16763904);  \u00b7  EnemyElite.as:114 mcs.setDisplayName(xml.name + \" (\" + level + \")\",16777215);   [0xFFFFFF]  \u00b7  Obj_NPCProcGen.as:51 setDisplayName(this.npcname,39423);  [0x0099FF]  :60 ...,12627019);  [0xC0AC4B]  \u00b7  MCSCharacter.as:1533 public function setDisplayName(str:String, color:uint = 0) { ... if(str != \"\") { ...textColor = color; ... if(this.healthBar.visible) { this.displayName.y = this.healthBar.y; }",
+  "text": "The overworld-vs-combat enemy readout is not a HUD mode switch but two spawner wrappers, and every nameplate colour is an exact literal: Obj_NPCAggro hides the health bar and paints NAME (lvl) in 0x990000 dark red; the player gets a bare charname in 0xFFCC00 gold with no level; friendlies share the gold, name-only; elites, guardians and duel opponents use 0xFFFFFF white WITH a level; procgen townsfolk use 0x0099FF and 0xC0AC4B.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/extracted/skilldata.xml skill 1000 (10 <level> blocks, max <value>10); reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3174-3176 and 3182-3184; reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3231-3233 and 3239-3241",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:768-810",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/nameplate-is-per-entity-with-exact-hues",
+  "lane_impact": "L0 enemies-ai + ui-hud. Supplies the exact format string and the two exact hues (0xFFFFFF / 0x990000) that were previously only eyeballed off a frame, and replaces the surveyor's 'mode-switched HUD' model with the real per-entity rule. Also holds two unreported combat facts: field trash has damageRange = 0 (flat damage, no variance), and player-controlled duelists get a level-banded stat multiplier.",
+  "ledger_text": "nameplate (N)=level",
+  "overturns_ledger": true,
+  "quote": "if(this.isDuelist || this.isBoss) { namecolor = 16777215; if(this.side != 0 && this.side != StatsManager.getSide()) { namecolor = 10027008; } mcs.setDisplayName(xml.name + \" (\" + level + \")\",namecolor); ... if(this.isBoss && level > 70) { minDamage *= 1.25; maxhp *= 1.25; setHP(maxhp); } else if(this.isBoss && level > 50) { minDamage *= 1.2; maxhp *= 1.2; ... } else if(level > 30) { minDamage *= 1.1; maxhp *= 1.1; ... } else if(level < 10) { minDamage *= 0.8; maxhp *= 0.8; ... } } else { mcs.setDisplayName(\"\"); minDamage = xml.attack; damageRange = 0; }",
+  "text": "Nameplates are a per-entity property decided at init \u2014 only bosses and duelists get one, everyone else is explicitly blanked \u2014 formatted name + \" (\" + level + \")\" in white 0xFFFFFF, switching to dark red 0x990000 only when the entity's side is non-zero and differs from the player's side.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyOgre.as:51-53, EnemyKanjiGuardian.as:48-59, EnemyElite.as:23-40, EnemyWolfAlpha.as:52+ (11 files total via grep -l \"override public function setLevel\")",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/setlevel-has-11-overrides",
+  "lane_impact": "L0 enemies-ai + progression: blocker \u2460 needs TWO formulas plus an opt-out, not one. Shipping only NPC.setLevel() would clamp every boss below level 11 to 1/1/1 HP and give every elite the wrong XP award. This is the correct reason to cap the re-score, replacing the survey's refuted stagger caveat.",
+  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
+  "overturns_ledger": true,
+  "quote": "EnemyOgre.as:51 override public function setLevel(lvl:int) : * { }   \u00b7   EnemyKanjiGuardian.as:48-58 factor = lvl / level; level = lvl; damage *= factor; defense *= factor; maxhp *= factor; setHP(maxhp); updateHealthBar(); xp = lvl * 5 + 45;   \u00b7   EnemyElite.as:23-40 minDamage = damage * factor; ... xp = lvl * 5 + 45; ... var hitsToKillBoss:int = 10 + lvldiff;   \u00b7   overriding files: EnemyElite, EnemyOgre, EnemySpearElite, EnemyStag, EnemyPlayer, EnemyKanjiGuardian, EnemyTrainingDummy, EnemyWolfAlpha, FriendlySpearElite, FriendlyArcher, FriendlyElite",
+  "text": "NPC.setLevel() is the trash-mob curve only: 11 classes override it, EnemyOgre's override is EMPTY (the Ogre never scales, which is why id 77 ships lvl 80 with hp 40), and the elite/boss/alpha branch drops both the x0.9 and the <=10 clamp and uses xp = lvl*5 + 45 plus a player-relative hitsToKillBoss re-derivation.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as:23-52 (plus EnemyOgre.as:51-53, EnemyWolfAlpha.as:52-78, EnemyPlayer.as:57-86, EnemySpearElite.as:32-78, EnemyTrainingDummy.as:23-47, EnemyKanjiGuardian.as:48, EnemyStag.as:48-70, FriendlyArcher.as:21, FriendlyElite.as:23, FriendlySpearElite.as:19)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/setlevel-is-eleven-formulas",
+  "lane_impact": "L0 enemies-ai: blocker \u2460 dies, but as >=5 distinct formulas rather than one, and it drags in a system the board has never scoped \u2014 a live-player-relative boss balancer. Field trash uses NPC.setLevel (\u00d70.9 sub-21, 1/1/1 clamp at lvl<=10, xp lvl*2+20); the Oni ignores level entirely; the training dummy's setLevel is a tutorial script; every Elite/Boss/duelist derives its numbers from the player's current MAXHP/DEFENSE/damage at spawn. A recreation that ports only NPC.setLevel gets 100% of bosses wrong. It also means ENEMY_BASE.hp = 1 is retro-justified for TRASH ONLY.",
+  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
+  "overturns_ledger": true,
+  "quote": "EnemyElite.as:34-41 `xp = lvl * 5 + 45; var playerHP:int = StatsManager.getPlayerStats(StatsManager.STAT_MAXHP) + StatsManager.findBonusStat(StatsManager.STAT_MAXHP); var playerDEF:int = ...; var playerATK:int = StatsManager.getMinDamage() + StatsManager.getDamageRange() / 2; var playerLVL:int = StatsManager.getLevel(); var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff;` \u00b7 EnemyOgre.as:51-53 `override public function setLevel(lvl:int) : * { }` \u00b7 EnemyWolfAlpha.as:73-78 `xp = lvl * 5 + 45; if(lvl <= 5) { damage = 1; defense = 1; }` (no maxhp clamp, no \u00d70.9) \u00b7 EnemyTrainingDummy.as:36-41 `else if(lvl == 3) { startAnim(IDLE_HEAVY); maxhp = 8; setHP(maxhp); ... }`",
+  "text": "There is no single enemy level\u2192stat formula: NPC.setLevel is overridden in 11 subclasses, and the elite/boss family does not scale off its own statline at all \u2014 it inverse-solves HP and damage from the LIVE player's stats via hitsToKillBoss = 10 + lvldiff and hitsToKillPlayer = 18 - lvldiff.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:57-100, EnemyElite.as:23-40, EnemyKanjiGuardian.as:48-65, EnemyOgre.as:51-53, EnemyWolfAlpha.as:52-70 (plus EnemySpearElite.as:32, EnemyStag.as:48, EnemyTrainingDummy.as:23, FriendlyArcher.as:21, FriendlyElite.as:23, FriendlySpearElite.as:19)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "enemies-ai/setlevel-is-twelve-formulas",
+  "lane_impact": "L0 enemies-ai: blocker \u2460 is advanced but NOT dead, and the shape is different from what the surveyor banked. A recreation needs a scaling POLICY per AI class (base / player-mirror / elite-with-autobalance / none), not one function. The empty EnemyOgre override plus the fact that ai 9 (73 of 425 npcdata rows, the largest bucket) skips the clamp means the '1-HP field trash' story cannot be sourced to this code \u2014 it has to come back from the frames.",
+  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
+  "overturns_ledger": true,
+  "quote": "EnemyOgre.as:51-53 `override public function setLevel(lvl:int) : * { }` \u00b7 EnemyPlayer.as:73-88 `factor = lvl / level; level = lvl; minDamage = damage * factor; defense *= factor; maxhp *= factor; setHP(maxhp); updateHealthBar(); if(this.isBoss || this.isDuelist) { xp = lvl * 5 + 45; namecolor = 16777215; mcs.setDisplayName(...); } else { xp = lvl * 2 + 20; }` \u00b7 EnemyElite.as:40 `var hitsToKillBoss:int = 10 + lvldiff;` \u00b7 EnemyKanjiGuardian.as:59 `xp = lvl * 5 + 45;`",
+  "text": "Enemy level scaling is not one formula but twelve: NPC.setLevel is overridden by eleven subclasses, EnemyOgre's override is EMPTY (ogres never level-scale), EnemyPlayer / EnemyElite / EnemyKanjiGuardian drop both the x0.9 sub-21 factor and the 1/1/1 clamp and pay xp = lvl*5 + 45, and the elite/boss variants additionally run a player-relative autobalance (hitsToKillBoss = 8 or 10 or 13 + lvldiff, hitsToKillPlayer = 16 - lvldiff) that rewrites minDamage and maxhp against the live player's stats.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "grep -ic tengu over docs/gauntlet/L0/index/strings.json and docs/gauntlet/L0/index/resolved_names.json -> 0 and 0",
   "citelint": {
    "notes": [
     "QUOTE_NOT_LOCATED"
@@ -347,60 +169,232 @@
    "problems": [],
    "status": "QUOTE_UNVERIFIED"
   },
-  "id": "combat-core/mastery-is-ten-level-skill",
-  "lane_impact": "combat-core L2: fixes the scale the whole stance table is expressed in. Ten levels (1..10), so 'mastery-9' is at most the 9th of ten levels, and the technique unlocks (FlipUp 3, Deflect 4, Launch/Stab 5) are a second, independent use of the same ladder.",
-  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "id": "enemies-ai/tengu-absent-from-resolved-strings",
+  "lane_impact": "L0 enemies-ai: the Ready-taxonomy bullet over-claims an entire faction, and this closes the last defence of it. Either a v0.717-only addition or a ledger invention. Do not build a Tengu.",
+  "ledger_text": "full taxonomy (Humans/Undead/Oni/Animals + Tengu/Guardian)",
   "overturns_ledger": true,
-  "quote": "MCSPlayer.as:3174  this.canFlipUp = this.balancedMastery >= 3;\nMCSPlayer.as:3175  this.canDeflect = this.balancedMastery >= 4;\nMCSPlayer.as:3176  this.canLaunch  = this.balancedMastery >= 5;   // strings.json 6000 = 'Light Stance Mastery'",
-  "text": "Stance mastery is a skill level with exactly ten levels (skills 1000/1001/1002 have 10 <level> blocks, max value 10), not a 0-100 percentage, and both builds gate FlipUp/Deflect/Launch/Stab on it at 3/4/5.",
+  "quote": "docs/gauntlet/L0/index/strings.json:0   docs/gauntlet/L0/index/resolved_names.json:0   (the 2,533-entry S0-3 table in which itemdata resolves 804/0 unresolved, skilldata 73/0, npcdata 484/6)",
+  "text": "Tengu is absent from the RESOLVED string table as well as the raw XML, which closes the 'it is hidden behind a numeric id' escape hatch that a raw-XML grep alone leaves open.",
   "verdict": "HELD"
  },
  {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session11/damage-ttk/{t125.350,t125.417,t125.450,t125.467,t125.733}.png \u2014 crop (780,480)-(1180,680) upscaled 2x, five-tile sheet; code at reference/decompiled/shs3_android/scripts/TextProjectile.as:17-25",
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyZombie.as:501-505",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "combat-core/popup-animation-and-black-variant",
-  "lane_impact": "L8 + L5 \u2014 ui-hud blocker 3 closes with an actual animation spec, not just a spawn point and a colour. The black variant needs one grep to attribute (MCSPlayer.as:709/:724 uses colour 0 for seppuku damage, so black may mark self/ally damage in v0.717) before any popup is built.",
-  "ledger_text": "floating damage/crit popups (absent from the ledger)",
+  "id": "enemies-ai/weapon-part-hit-deals-zero",
+  "lane_impact": "L0 enemies-ai + combat-core: appears in no ledger bullet and is modelled nowhere in src/. It qualifies (does not contradict) SOURCE_CONSTANTS.md \u00a73.5's 'no counter/parry/riposte mechanic at all' \u2014 there is no timed block, but there IS a hit-the-weapon whiff decided purely by which paperdoll part the slash line intersects. Wants its own pass plus a frame check for a spark/clang VFX on the weapon-hit case.",
+  "ledger_text": "the shipped `AI_TIERS`/`ENEMY_BASE` are a **PvP-duel dummy** (hp 150), not the ~1-HP-chip field trash the video shows; every PvE number lives only in notes.",
   "overturns_ledger": true,
-  "quote": "Visible in the crop: a dark-red '1' above the left enemy at t125.350, higher and larger at t125.417/.450; a fresh dark-red '2' at t125.467 with a BLACK '2' beside it over the GUEST/Jinbei pair; both much larger and higher by t125.733. Code: `ttl = 12; this.velY = -5;` and `--ttl; if(ttl < 10) { scaleX += 0.1; scaleY += 0.1; if(ttl < 4) { alpha -= 0.25; } }`.",
-  "text": "Damage popups have a full animation contract nobody read (ttl 12 frames, velY -5, scale +0.1/frame from ttl<10, alpha -0.25/frame from ttl<4 => a 0.5 s, 60-world-unit rise ending at ~1.9x scale), and the frames show a BLACK popup alongside the dark-red one, so 0x990000 is not the whole colour story.",
+  "quote": "case mcs.partList[MCSCharacter.PART_weapon]: gotHitFlag = false; damage = 0; return false;",
+  "text": "A blade that lands on the enemy's weapon part deals zero damage, sets no hit flag and triggers no lockout \u2014 the game's only block-like mechanic, and it is geometric rather than stateful.",
   "verdict": "HELD"
  },
  {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session11/damage-ttk/t1960.000.png crop (760,500)-(900,620) LANCZOS x6, and t1961.900.png crop (470,580)-(680,700) LANCZOS x5",
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t4542s0\u00a7.as:275-305 + \u00a71t137s0\u00a7.as:64-71 + \u00a71t128s0\u00a7.as:8; contrast reference/decompiled/shs3_android/scripts/ArrowProjectile.as:55-56",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "combat-core/popup-colour-is-a-semantic",
-  "lane_impact": "L8 \u2014 the HUD spec needs a colour TABLE keyed on victim and damage element, not a single popup colour; building the surveyor's version paints every hit the player takes dark red. L5 \u2014 the same branch is a free 'is this me' flag for the popup emitter.",
-  "ledger_text": "damage popups spawn at (mcs.x, mcs.y-100) in 0x990000, closing ui-hud blocker \u2462",
+  "id": "enemies-ai/web-arrow-dual-gravity",
+  "lane_impact": "L0 enemies-ai: blocker \u2464's arrow half is closed, but with a version-specific answer. Porting a fixed GRAVITY=3 is wrong on exactly the arrows the player is meant to read and dodge. This is also the first CONCRETE v0.682-vs-v0.717 behavioural difference found, which turns 'build parity is an unknown risk' into 'build parity is a known, enumerable diff'.",
+  "ledger_text": "\u2464 Undead damage-reflect probability; arrow arc physics.",
   "overturns_ledger": true,
-  "quote": "t1960.000: above the player (tag 'GUEST', HP 14/20) a fading '2' whose modal pixels over the sky are (140,160,180)/(140,140,180) \u2014 a black glyph alpha-fading, zero red dominance. t1961.900: above JINBEI (4) (enemy, HP bar ~55%) a red '36', core pixels (163,14,0). Source agrees: MCSPlayer.as:3542 `if(this.controlledBy == 0) ProjectileManager.createFloatingText(mcs.x,mcs.y - 100,damage.toString(),0);` :3546 `else ... ,10027008);`; element colours 16737792 / 13421772 / 26367 / 6697728 at :3551-3563 and chi 3394815 at :1633.",
-  "text": "Damage-popup colour is a SEMANTIC, not a constant: black (0x000000) for damage the player takes, 0x990000 for damage dealt to anyone else, plus four element colours and a chi colour \u2014 so ui-hud blocker \u2462 closes on the rule, not on one hue.",
+  "quote": "\u00a71t128s0\u00a7.as:8 internal static var \u00a71t12543s0\u00a7:Number = 3;  \u00b7  \u00a71t4542s0\u00a7.as:288-299 var _loc6_:Number = \u00a71t128s0\u00a7.\u00a71t12543s0\u00a7; if(_loc1_) { _loc6_ = 1.5; } var _loc7_:Number = _loc6_ * Math.abs(_loc4_ - _loc2_) / 0.866; ... var _loc10_:Number = (_loc5_ - _loc3_ - 0.5 * _loc6_ * _loc9_ * _loc9_) / _loc9_;  \u00b7  \u00a71t137s0\u00a7.as:64-71 rotation = Math.atan(velY / velX) * 57.2727 + 180; if(this.\u00a71t4425s0\u00a7) { velY += 1.5; } else { velY += \u00a71t12543s0\u00a7; }  \u00b7  ANDROID ArrowProjectile.as:55-56 rotation = Math.atan(velY / velX) * 57.2727 + 180; velY += GRAVITY;   (grep -c \"1\\.5\" ArrowProjectile.as \u2192 0)",
+  "text": "In the shipped web v0.717 build knockdown arrows fly on HALF gravity (1.5) while normal arrows use 3 \u2014 the launch roll happens before the ballistic solve and feeds it \u2014 whereas the Android v0.682 decompile every cited number came from has a single unconditional GRAVITY.",
   "verdict": "HELD"
  },
  {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session11/gap-focus-trigger/t1746.733.png and t1747.000.png \u2014 crop (150,940)-(620,1070) upscaled 3\u00d7 (LANCZOS); third full-bar frame at t2175.933.png",
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1543s0\u00a7.as:615-732 (contrast reference/decompiled/shs3_android/scripts/NPCManager.as:516-634)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "enemies-ai/web-has-39-ai-cases-not-38",
+  "lane_impact": "L0 enemies-ai: corrects the survey's own correction. The unwritten-behaviour work item \u2014 cap-reason (3) on the score \u2014 is BIGGER than stated: 36 classes across 39 ai ids for the 1:1 web target, not 34/38. Any roster or dispatch table built to the Android decompile will be missing an enemy type.",
+  "ledger_text": "full taxonomy (Humans/Undead/Oni/Animals + Tengu/Guardian) with movesets incl. **the archer** (closed this pass); boss roster",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1543s0\u00a7.as:615 switch(_loc6_.ai) with case labels 0 through 38 (39 unique, verified by `grep -o \"case [0-9]*:\" | sort -u | wc -l` -> 39; `grep -o \"new \u00a7[^(]*\" | sort -u | wc -l` -> 36)  \u00b7  NPCManager.as:516 switch(xml.ai) with cases 0..37 (38 cases; 31 unique Enemy* + 3 Friendly* = 34)",
+  "text": "The web v0.717 AI dispatch switch runs cases 0..38 \u2014 39 cases instantiating 36 unique classes \u2014 against the Android v0.682 build's 38 cases / 34 unique classes, so v0.717 carries two more behaviour classes and one more ai id than the survey scopes for.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 (shs3_android); identical block present in shs3_android_payload",
+  "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:536-695 (39 tips); key lines :564, :568, :572, :584, :588, :592, :596, :608, :612, :616, :620, :624, :640, :644, :679, :683, :695",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "combat-core/raw-frames-show-full-crit-meter",
-  "lane_impact": "L5 + L8 \u2014 the surveyor's own cite (m_nearfull.png) is a derived montage; these are its raw sources and are the citable artifacts. SESSION-11's 'Focus buys evasion, not crit' conclusion and its Critical-meter deletion recommendation both need re-opening.",
-  "ledger_text": "SUMMARY: HEADLINE: our build's meter set is wrong. The OG has exactly three meters \u2014 HP (green), CHI (blue), and FOCUS (white, no numerals) \u2014 and NO Critical meter at all. ... CRIT: NOT FOUND, and this matters. Across ~845 s of sampled play the bar never once reached full (max 67.7% at B t=837.683)",
+  "id": "frames/HUNT-39-hardcoded-tips-in-GameEngine",
+  "lane_impact": "items-equipment (rarity enum), combat-core (SPD->cooldown+reach, hold-run, undead heads), ui-hud (input map), world-exploration (settlement upgrade ladder), meta-social (Duels TV)",
+  "ledger_text": "memory: \"\u00a73's 'hold-run per Tip #27' was REVERSED by measurement 2026-07-25 - it was never sourced\"",
   "overturns_ledger": true,
-  "quote": "t1746.733: HP 11/20 green, Chi 47/47 blue, third bar solid white to a ~2 px brown sliver at the right end, no text. t1747.000 (0.267 s later): identical HP 11/20 and Chi 47/47, third bar 100% white with 'CRITICAL HIT' in dark caps across it. Found by scanning all 309 1920\u00d71080 session11 frames for a contiguous white run on row y=1032 from x=246.",
-  "text": "Two raw 1920\u00d71080 video frames \u2014 not a montage \u2014 show the third HUD bar at 99% and then at 100% with CRITICAL HIT printed across it, permanently killing SESSION-11's 'the bar never once reached full (max 67.7%)' and 'OG has NO Critical meter'.",
+  "quote": ":564 'Tip: A green border indicates that an item is special.' :568 blue = rare :572 purple = unique. :683 'Tip: A higher speed stat will reduce skill cooldown times and also give you a longer slash line.' :640 'Tip: When not in battle, you can hold down the mouse button to keep running in that direction.' :644 'Tip: Crops grown from 12-hour seeds do not rot.' :612 'Tip: When fighting undead, target their heads.'",
+  "text": "39 hardcoded gameplay rules live in an if(dice==n) ladder in GameEngine.as and are in NO string table and NO ledger. They state, in words, mechanics that several blockers are waiting on: the item rarity colour enum (green=special, blue=rare, purple=unique - which decodes the coloured quest-item names on film), SPD driving both skill cooldown and slash length, the hold-mouse-to-run rule that project memory records as 'never sourced', the full keyboard/gesture input map (spacebar=stance, number keys=skills, drag-and-drop to aim a skill), a 12-hour crop seed constant, undead head-targeting, the village->town->city->castle upgrade ladder behind TOWN PROSPERITY, a whole duel-recording/'Duels TV' feature, chat emotes, Scavenging L5 revealing hidden paths, and AP replenishing via duels/war room.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "docs/gauntlet/L0/index/frames.json (directory counts) + reference/frames/session11/lead/t396.0_counter-triangle.png (1920x1080, read whole) + reference/frames/session11/stance-reach/B_t785.200_LIGHT_stroke553px_endtoend.png (1920x1080, read whole)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "frames/HUNT-combat-corpus-never-opened",
+  "lane_impact": "combat-core, art-anim-audio-feel, skills-meters: the entire 1:1 combat evidence base is unsurveyed. Re-run the frames survey against session11/* and session24/* before anything else.",
+  "overturns_ledger": true,
+  "quote": "t396.0_counter-triangle.png: TRAINING HALL / 'STORY QUEST: ATTACK TRAINING DUMMY USING HEAVY STANCE', articulated wooden dummy, HUD 'BALANCED STANCE' with a TAN/BROWN ring round the portrait, '1257 / 1450 EXPERIENCE POINTS'. B_t785.200: live duel - 'AUTO SLASH OFF' toggle, '1 HIT COMBO' counter, enemy nameplate 'FUKUSHIMA CHIKO' over a red/green HP bar, player 'SOUND360TM', a RED SLASH LINE drawn end-to-end with a steel blade sprite at its head, portrait ring BLUE (Light stance), HP 14/20, CHI 26/31, '150% DAMAGE' buff, skill tray slots numbered 2 and 3.",
+  "text": "58% of the frame corpus was never read by this survey. Of 7,381 frames, only 2,675 sit in the two longplay chapter directories - and every single one of the packet's 21 cites points at a seg-NN longplay directory. 4,256 frames across 44 directories are purpose-shot 1920x1080 COMBAT/DUEL measurement stills (session24/svm-B05-mountain-duel/fight15 480, svm-A16-beach-duel 406, reach-A28-forest-duel 372, reach-B-dojo 342, reach-B-honda-duel 248, gait-duel-speeds 194, session11/stance-reach, gap-gait-hitbox, strike-travel-duration, duel_dense, combat_analysis...) and NOT ONE claim touches them. Every claim in the packet is a UI screen, menu or dialogue box. The lane this repo exists for - 1:1 duel combat feel - is 100% absent from the packet, and it is the half of the corpus shot at full resolution with self-describing measurement filenames (e.g. A_t117.400_BALANCED_lvl1_stroke235px.png, B_t783.400_LIGHT_stroke-anchored-at-body_farGap436px.png, t393.0_stance-ring-colours.png, t396.0_counter-triangle.png).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 strings; stable price from web v0.717 frame",
+  "cite": "strings.json[\"61\"], [\"100\"], [\"122\"], [\"4173\"]-[\"4175\"]; stable prompt at reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0048.jpg (crop 0,400-700,576 @2x)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-gold-to-resource-exchange-rate",
+  "lane_impact": "economy: adds the hard-currency conversion rate; puts the '+5AP' half of the stable static in doubt",
+  "ledger_text": "**Economy statics:** ... stable 14c+5AP ...",
+  "overturns_ledger": true,
+  "quote": "[\"61\"] 'You are out of Duel Tokens.\\nWould you like to get 10 more Duel Tokens for 1 Gold?' [\"100\"] 'You are out of AP.\\nWould you like to get 10 more AP for 1 Gold?' [\"4173\"]/[\"4174\"]/[\"4175\"] '10 Duel Tokens'/'25 Duel Tokens'/'40 Duel Tokens'. frame_0048: 'STABLEHAND / WOULD YOU LIKE TO RENT A HORSE TO TRAVEL TO A NEIGHBOURING VILLAGE? / COST: 14 COINS' - no AP line rendered.",
+  "text": "The gold-to-resource exchange rate is stated twice and identically: 1 Gold buys 10 AP or 10 Duel Tokens. Token IAP packs and a max-token cap exist too. Separately, the frame that shows the stable price shows NO AP component, so the ledger's 'stable 14c+5AP' needs its own cite for the +5AP half or should be trimmed.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/zFtCaTO0_1M/seg-00/frames/frame_0051.jpg (read whole @1.9x); corroborated at reference/extracted/ui_strings.txt:197 and :314",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-player-screen-stat-contract",
+  "lane_impact": "progression, items-equipment, ui-hud: encumbrance cap, slot count, stat/bonus split, HP+CHI regen as displayed stats",
+  "overturns_ledger": true,
+  "quote": "'PLAYER' card: 114 COINS, 3 GOLD, level badge 2 with '787 / 1450 EXPERIENCE POINTS', 'AVAILABLE STAT POINTS: 3'; HP 10/10 (green), CHI 10/10 (blue), AP 30/30 (light blue) with a bare '30' beneath; ATK 1, DEF '1 +2' (base + bonus), SPD 1; 'ADD HP' affordance; 'WEIGHT: 14 / 100'. ui_strings.txt:197 'Weight: 50/50'; :314 'hp: 123 / 123 (hp regen 12 ) chi: 123 / 434 (chi regen 13)'.",
+  "text": "The PLAYER screen prints a complete stat contract the ledger records nowhere: a 9-slot equipment doll (hat, mask, torso, gloves, legs, weapon, 2x ring, boots), three meters HP/CHI/AP, three stats ATK/DEF/SPD with equipment bonuses rendered separately from base, and a WEIGHT encumbrance cap. Weight appears nowhere in any of the twelve ledger systems.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "strings.json[\"611\"], [\"4155\"], [\"610\"], [\"6030\"]-[\"6033\"], [\"507\"]-[\"510\"], [\"6058\"]-[\"6061\"], [\"4154\"], [\"864\"]",
+  "citelint": {
+   "notes": [],
+   "problems": [
+    "NO_PARSEABLE_PATH"
+   ],
+   "status": "UNCHECKABLE"
+  },
+  "id": "frames/HUNT-rebirth-picker-recoverable-from-strings",
+  "lane_impact": "rebirth-elements: prompt, four-element enum, level-80 gate and effect list all become buildable; only the picker's visual layout stays unheld",
+  "ledger_text": "(5) rebirth/element-picker UI (never filmed - both longplays pre-rebirth).",
+  "overturns_ledger": true,
+  "quote": "[\"611\"] 'Choose an element to specialize in.' [\"4155\"] 'New Game +\\nProgress on to the next Dan Rank and specialize in an element. \\nLevel 80 required.' [\"610\"] '...reborn as a level 1 character while retaining your inventory, skill points and clan rank. Your current equipment will be automatically unequipped.\\n\\nSlash length and bank storage is increased with each dan rank.' [\"6030\"]-[\"6033\"] Fire / Water / Wind / Earth Element Skills. [\"864\"] '[0] has rebirthed and is now Dan [1]!'",
+  "text": "The rebirth/element picker is unfilmable (see the level-80 gate) but its CONTENT is A2-recoverable: the picker's own prompt string, a closed four-element set, a hard level gate and the full effect list. Ledger blocker (5) 'rebirth/element-picker UI (never filmed)' is mostly closable without a picture.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "strings.json[\"848\"], [\"849\"]-[\"852\"], [\"636\"], [\"669\"], [\"393\"], [\"4143\"], [\"7042\"]; weapon condition field at reference/extracted/ui_strings.txt:257",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-repair-cost-is-runtime-parameterised",
+  "lane_impact": "economy, items-equipment: re-state the blocker as 'derive repair cost f(runtime)'; correct 'Reinforce 5000c+1 silver ore' to a three-tier material table",
+  "ledger_text": "(3) Repair-Weapon cost (never captured).",
+  "overturns_ledger": true,
+  "quote": "[\"848\"] 'Repair your currently equipped weapon?\\nCost: [0] coins'. [\"850\"]/[\"851\"]/[\"852\"] all read 'Reinforce ... Cost: 5000 coins' but with 1 Silver Ore / 1 Titanium Ore / 1 Uncut Diamond respectively. [\"636\"] 'Name your currently equipped weapon and make it unbreakable for 2 Gold?' ui_strings.txt:257 'condition: well-maintained23'.",
+  "text": "The Repair-Weapon blocker is mis-specified and can never be closed by finding a frame: repair cost is a runtime fill, exactly like Forge. Reinforce is also not one constant but three material variants, and there is a second gold-priced unbreakable path via Ninja Services.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 string table; ring colours corroborated on web v0.717 frames",
+  "cite": "strings.json[\"6001\"], [\"6003\"], [\"6005\"], [\"IDS_Q50S3NODE0\"], [\"IDS_Q50S3NODE1\"], [\"6085\"]-[\"6087\"]; visual corroboration reference/frames/session11/lead/t396.0_counter-triangle.png (tan/brown ring, BALANCED STANCE) and reference/frames/session11/stance-reach/B_t785.200_LIGHT_stroke553px_endtoend.png (blue ring, LIGHT)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-stance-triangle-and-ring-colours",
+  "lane_impact": "combat-core (counter triangle + Defense -20%), ui-hud (ring colour enum), skills-meters (per-stance hold-to-charge ultimates)",
+  "overturns_ledger": true,
+  "quote": "[\"6001\"] 'Swift but light stance. Slash range is longer but damage inflicted is lower.\\nEffective against Heavy Stance.' [\"6003\"] 'Balanced stance.\\nEffective against Light Stance.' [\"6005\"] 'Slow but powerful stance. Damage inflicted is increased but slash range is shorter.\\nEffective against Balanced Stance.\\nDefense -20%' [\"IDS_Q50S3NODE1\"] 'Your stance is indicated by the color of the circle around your portrait: Light stance - blue, Balanced stance - brown, Heavy stance - red.'",
+  "text": "The complete stance rock-paper-scissors and its only hard number are held in the string table, plus the HUD portrait-ring colour enum - and none of it is in the packet. Heavy stance carries an explicit Defense -20% penalty, which is directly codeable.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web (pre-v0.717 snapshot - its war-room deck still reads /6 where the v0.717 frame reads /7)",
+  "cite": "reference/extracted/ui_strings.txt:7, :26, :100, :193, :197, :212, :214, :215, :257, :314",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-ui-strings-txt-is-unmined",
+  "lane_impact": "meta-social (betting + tournaments), combat-core (damage taxonomy), skills-meters (next-level deltas), and it names v0.717's extra war-room rules page",
+  "overturns_ledger": true,
+  "quote": ":7 '\"Odds\" refers to the estimated profit that you will make for each token that you bet. example: If you bet 2 tokens at 1.5 odds, you will make an estimated profit of 3 gold when your bet wins'. :26 'Odds are changed whenever someone makes a bet and are only finalized when betting is closed.' :193 'War room rules 5/6  (WINNING AND LOSING)'. :214 'level requirement: 10 - 30 autostarts upon full roster round duration: 30 min'. :100 'physical dmg: 1234 - 1235  (heavy) critical dmg: 1234-1235 *(heavy) piercing dmg: 20'. :212 'next level damage: 10 def: 20'.",
+  "text": "reference/extracted/ui_strings.txt is a 471-line WEB-build artifact the packet uses for exactly one thing (font faces). It contains a duel BETTING system with odds, a tournament/arena mode template, a three-way damage taxonomy, next-level skill previews, HP/CHI regen fields, and the war-room rules page that v0.717 added.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682; the same pages render in web v0.717 (verified verbatim on frames 1/7, 3/7, 6/7)",
+  "cite": "strings.json[\"376\"], [\"372\"], [\"378\"], [\"380\"]; rendering verified at reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0011.jpg, frame_0012.jpg, frame_0013.jpg",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/HUNT-war-tick-is-24-hours",
+  "lane_impact": "meta-social, world-exploration, economy: the war-tick half of blocker (3) closes outright",
+  "ledger_text": "(3) real-world \"day\" length (governs expiry, farming, AP regen, war tick).",
+  "overturns_ledger": true,
+  "quote": "[\"376\"] '- Troops will advance on enemy sectors every 24 hours.\\n\\n- If a sector has more attacking troops than defending troops, the sector will be captured by the attackers.\\n\\n- The Clan that captures all the control points in the battlefield will gain control of the territory.' [\"372\"] '- the effect of moves is dependent on the terrain. mountains have the highest tactical advantage, followed by forests and fields.\\n\\n- the clan will pay the player 5 coins per move made.' [\"380\"] names Command HQ / Forward base / Barricades / Tunnels / Towns at 500 coins per contributing player.",
+  "text": "Ledger blocker (3) asks for the real-world 'day' length that governs the war tick. It is written down: troops advance every 24 hours. The same rules pages also give the capture rule, win condition, five structure types, the 500-coin contribution, terrain advantage order and a 5-coins-per-move payout.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717 frame vs android v0.682 string table",
+  "cite": "reference/frames/Nr4fQstqHDM/seg-00/frames/frame_0001.jpg (crop 0,380-700,576 @2.14x LANCZOS; source still is 1024x576)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "frames/v0717-rewords-the-daily-streak-ladder",
+  "lane_impact": "ui-hud, meta-social, and every lane porting UI copy: the android-only hedge stays on any string not confirmed from a frame",
+  "ledger_text": "S0-3 caveat: 'UI copy and combat tuning parity is NOT established' between android v0.682 and web v0.717",
+  "overturns_ledger": true,
+  "quote": "On screen in v0.717: 'YOU HAVE CLAIMED YOUR DAILY PRIZE FOR 0 CONSECUTIVE DAYS. / AFTER EVERY 10 CONSECUTIVE DAYS: BONUS PRIZE! / AFTER EVERY 30 CONSECUTIVE DAYS: SUPER BONUS PRIZE!!!' Android table: strings.json[\"843\"] = 'Every 10 consecutive days: bonus prize!', strings.json[\"844\"] = 'Every 30 consecutive days: super bonus prize!!!'. THE FRAME WINS.",
+  "text": "The v0.717 web client REWORDS the daily-prize streak ladder relative to the android v0.682 string table: it prepends 'AFTER'. This is a second, independent rewording class alongside the War Room rules 1/6 -> 1/7 page count, and together they mean the S0-3 android-parity hedge cannot be lifted wholesale \u2014 it can only be lifted for strings personally seen on film.",
   "verdict": "HELD"
  }
 ]

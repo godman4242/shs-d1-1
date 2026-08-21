@@ -1,6 +1,145 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NPC.as die() non-behead branch; EnemyZombie.as die(); EnemyClone.as:747; EnemyOgre.as:351; only 8 of 35 Enemy*.as files contain 'Math.random() * 5'",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/gore-roll-is-per-class",
+  "lane_impact": "art-anim-audio-feel and enemies-ai: the duel-relevant human death table is 7-way with a surrender-shaped DEFEATED2 branch that is suppressed during red-freeze. Do not port EnemyGoblin's 40/20/20/20 as the game's rule.",
+  "overturns_ledger": false,
+  "quote": "NPC.as: dice = Math.random() * 7; if(dice <= 1) startAnim(ENEMYDEATH) ... else if(dice == 2) startAnim(DEATH_FORWARD) ... else if(dice == 3 && !StageManager.isRedFreeze()) startAnim(DEFEATED2) ... else if(dice == 4) startAnim(ENEMYDEATHNOHAND) ... else if(dice == 5) startAnim(DEATHINHALF) ... else startAnim(ENEMYDEATH)",
+  "text": "The death-variant roll is per enemy class, not one global 40/20/20/20: NPC (the human enemy) rolls Math.random()*7 over six branches including a non-gore DEFEATED2, EnemyZombie rolls *6, EnemyClone has no gore path at all, and EnemyOgre plays a single OGRE_DEATH.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/EnemyShield.as:335-339; MCSPlayer.as:1457, :1461, :1764, :1768, :3719",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/gothit-is-a-ladder-not-a-constant",
+  "lane_impact": "art-anim-audio-feel: blocks the survey's recommendation to delete the recreation's 7/12/16 tint ladder as 'an invention'. The original's reaction window is context-dependent and does contain a 16. Cross-lane into enemies-ai: EnemyShield's PART_prop branch zeroes damage and returns false - a shield is a hard block with its own 24-tick beat and its own SFX (hitmetal), not a damage reduction.",
+  "overturns_ledger": false,
+  "quote": "EnemyShield.as:335-339 `case mcs.partList[MCSCharacter.PART_prop]: gotHitFlag = true; damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal(); return false;`  \u00b7  MCSPlayer.as:1768 `else if(prevActionState == SKILL_DEADLYCLEAVE_STATE) { gotHitCounter = 16; }`  \u00b7  :1764 `gotHitCounter = 26;`  \u00b7  :1457 `gotHitCounter = 24;`  \u00b7  :1461 `gotHitCounter = 84;`",
+  "text": "The got-hit reaction is a ladder, not a constant: 12 general, 24 on a shield block, 16 after Deadly Cleave, 26 after Thousand Stabs, 24/84 in redfreeze - so a 16-frame reaction does exist in the original.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "grep -rhno 'gotHitCounter = [0-9]*' over reference/decompiled/shs3_android/scripts/*.as; contexts at EnemyShield.as:330-342 and MCSPlayer.as:1445-1470, :1752-1775",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/hit-reaction-ladder-not-uniform",
+  "lane_impact": "art-anim-audio-feel: do not ship 'the original's one number is 12'. Cross-lane into combat-core and skills-meters: the per-skill recovery lockouts (THOUSANDSTABS 26, DEADLYCLEAVE 16) and the 84-tick player red-freeze lock are recovery-frame numbers no ledger holds. EnemyShield.as:338 also explains what the recovered `hitmetal` SFX is for - a zero-damage shield block.",
+  "ledger_text": "hit-tint scaling (7/12/16f), death sword-detach, dash-snap, scarf physics, FINISHER_FLASH \u2014 all measured/authored but missing from the art digest \u00a75.",
+  "overturns_ledger": false,
+  "quote": "counts: 23x `gotHitCounter = 12`, 3x `= 0`, 2x `= 24`, 1x `= 84`, 1x `= 26`, 1x `= 16`. EnemyShield.as:335-340 `case mcs.partList[MCSCharacter.PART_prop]: gotHitFlag = true; damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal();` \u00b7 MCSPlayer.as:1457-1461 `if(mcs.animation == DOWNSTAB) { gotHitCounter = 24; } else if(this.controlledBy == 0) { gotHitCounter = 84; }` \u00b7 MCSPlayer.as:1764-1768 `else if(prevActionState == SKILL_THOUSANDSTABS_STATE) { gotHitCounter = 26; } else if(prevActionState == SKILL_DEADLYCLEAVE_STATE) { gotHitCounter = 16; }`",
+  "text": "gotHitCounter is not a uniform 12: there is a 12/16/24/26/84 ladder, EnemyShield sets 24 on a shield block, and 16 is in the original for the DEADLYCLEAVE recovery - so the ledger's 7/12/16f tint ladder is not a recreation invention.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1388 (updateBuff) and :1404; corroborated by docs/gauntlet/L0/index/strings.json id 4132",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/hud-150-damage-is-a-buff",
+  "lane_impact": "art-anim-audio-feel: resolves the survey's own un-reconciled CAUTION on claim hit-reaction-12-ticks \u2014 there was never a second 1.5 to conflate. Cross-lane: ui-hud gains a buff-readout element with a one-buff-at-a-time rule; items-equipment and economy gain a consumable buff family (ATTACK/DEFENSE/SPEED/XP at 150%, AP and duel-token regen at 200%).",
+  "overturns_ledger": false,
+  "quote": "OverworldHUD.as:1400 `if(bufftype == StatsManager.BUFF_XP) { buffstr = \"150% XP\"; }` :1404 `else if(bufftype == StatsManager.BUFF_ATTACK) { buffstr = \"150% DAMAGE\"; }` \u2026 `\"150% DEFENSE\"` / `\"150% SPEED\"` / `\"200% AP REGEN\"` / `\"200% DUEL TOKEN REGEN\"` \u00b7 strings.json 4132 = 'Eat this potato to get the 150% Damage buff.\\n\\nNote: Only one buff may be active at a time.'",
+  "text": "The '150% DAMAGE' text visible in the duel HUD is a timed consumable buff readout, not the stance modifier and not the behead multiplier \u2014 it is one of a family of buff strings driven by bufftype.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/session24/reach-A28-forest-duel/ev2_S3_wintint_hz031.png (1100x630), viewed whole at 0.87x; against reference/decompiled/shs3_android/scripts/ColorCode.as:12",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/killbeat-looks-like-red-field-black-silhouettes",
+  "lane_impact": "art-anim-audio-feel: gives the kill-beat a visual spec, not just timings, and corroborates the no-blend-mode compositing vocabulary from the frame side (a full-alpha ColorTransform to black, not a multiply/darken blend). Note the blade wedge in THIS frame does taper to a point, unlike the one in Nr4fQstqHDM_432.0.png - the bladeslashfx silhouette varies across its 5 frames.",
+  "overturns_ledger": false,
+  "quote": "Visibly in the frame: a uniform saturated red field filling the screen; both fighters, their kasa, the blade wedge and the entire grass line rendered as SOLID BLACK with no interior detail, only the small white eye/highlight shapes surviving. ColorCode.as:12 `internal static var blackColorTransform:ColorTransform = new ColorTransform(0,0,0,1,0,0,0,0);`",
+  "text": "The kill beat is visually a flat saturated red field with every actor rendered as a pure black silhouette - ColorCode's makeBlack ColorTransform applied stage-wide - and no frame of it was ever opened.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "my parse of every <anim> block in reference/extracted/bindata/*.bin",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/no-hold-frames-verified-exhaustively",
+  "lane_impact": "art-anim-audio-feel: promotes the survey's four-sample check (light_stance, light_run, walk, death) to a measured universal, which is what lets the \"holds are code-injected by AnimData duration tails\" model be asserted without qualification. It also means any hold frame observed on screen must come from AnimData's tail table, so that table is a hard requirement for the recreation, not an optimisation.",
+  "overturns_ledger": false,
+  "quote": "total anim blocks parsed: 487 \u00b7 anims with NO d attr: 0 \u00b7 d != frame count: 0",
+  "text": "The \"no hold frames in the data\" result is universal, not a spot-check: @d equals the number of <f> children for all 487 authored animations across all 19 web animdata blobs.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/videos/Nr4fQstqHDM.mp4 (ffprobe r_frame_rate=60/1) 150 frames from t=428s, and reference/videos/zFtCaTO0_1M.mp4 (r_frame_rate=60/1) 120 frames from t=900s; luma MAE on play-area crop [400:1000, 500:1500]",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/pose-cadence-is-15hz-measured",
+  "lane_impact": "art-anim-audio-feel (L-art): DEFENDS the ledger rather than overturning it, and voids the survey's proposed correction. THE FRAME WINS \u2014 stated out loud, as the standing invariant requires. Cross-lane: every tick->seconds conversion in this unit (0.5 s hit reaction, 0.83 s music fade, 1.0 s blood ttl, 6.0 s kill beat) is contingent on the clock and must ship as TICKS with the seconds labelled INFERRED.",
+  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
+  "overturns_ledger": false,
+  "quote": "Nr4fQstqHDM mean MAE by index mod 4 = [0.061, 3.076, 0.026, 0.069]; raw deltas 0.42 5.94 0.05 0.02 0.02 5.29 0.02 0.02 0.03 4.95 0.00 0.03 0.00 3.17 ... \u00b7 zFtCaTO0_1M mean MAE by index mod 4 = [0.003, 0.040, 6.438, 0.078]",
+  "text": "The shipped game visibly steps poses at 15 Hz, not 24: both 1080p60 longplays show unique content on exactly every 4th frame, phase-locked, so the ledger's '15fps pose latch' is frame-backed and stands while the SWF's declared 24 fps describes only the stage timeline.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "reference/predecessors/shs2_kon.swf (20 DefineSound) and reference/predecessors/shs1_462631_shunpo202c.swf (10 DefineSound), MD5-compared by me against the decoded reference/extracted/android/122_Mobile_SoundResource.bin",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/predecessor-swfs-hold-sfx",
+  "lane_impact": "art-anim-audio-feel: bounds the bound. The STILL_UNHELD on web-audio parity is right that the SHS3 web payload holds no audio, but 'all audio claims here are Android v0.682' is too wide \u2014 punch and slash1 shipped unchanged in two web Flash builds. Marked PARTIAL because only 2 of 13 are byte-identical; the other seven shared names match in sample count and byte length but differ in bytes (re-encode). Also flags 7 SHS2 music tracks no lane has ever opened.",
+  "overturns_ledger": false,
+  "quote": "shs3 'punch' == shs2 'punch' == shs1 'punch' = cfd26c816a723ed36c45f79877924082  \u00b7  shs3 'slash1' == shs2 'slash1' == shs1 'sword1' = da4e98632c18a175715a1e679a3d42a2  \u00b7  shs2_kon.swf DefineSound names: deflect die1 die2 die3 hitmetal punch slash1 slash2 slash3 boom1 boom2 boom3 power_mp3 area2_mp3 area3_mp3 area4_mp3 boss_fight_mp3 cutscene4_mp3 ending_cutscene_mp3",
+  "text": "Two SHS3 SFX masters are byte-identical to assets in the studio's earlier WEB Flash games, both already in this repo \u2014 so they are provably not Android-only, and 30 predecessor sound assets sit entirely unsurveyed.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "my SWF header parse of reference/preservation/shs3.swf, shs3preloader.swf and the ffdec export header of the client at reference/extracted/payload.xml line 1",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/preservation-shs3swf-is-the-loader",
+  "lane_impact": "art-anim-audio-feel: cite hygiene only - the 24.0 fps and 800x690 conclusions are unaffected because the real client agrees, but any future claim sourcing 'the real web client SWF' should cite reference/extracted/payload.xml or reference/preservation/shs3_payload.swf, not the 2-frame stub. Also worth banking: the loader's 24 fps IS the Flash stage rate the player actually ran at, since a loaded child SWF cannot override the root's framerate.",
+  "overturns_ledger": false,
+  "quote": "shs3.swf -> CWS v10, fileLength 165,252, rect 16000x13800 twips = 800.0x690.0, framerate 24.0, frameCount 2 ; shs3preloader.swf -> CWS v10, 165,305 B, same rect, framerate 24.0, frameCount 2 ; payload.xml line 1 -> `<swf ... frameCount=\"6\" frameRate=\"24.0\" ... version=\"17\">` with `<displayRect type=\"RECT\" Xmax=\"16000\" Ymax=\"13800\"/>`",
+  "text": "reference/preservation/shs3.swf is the 164 KB, 2-frame LOADER stub, not 'the real web client'; the actual client is shs3_payload.swf and it independently reports the same framerate and rect.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/extracted/bindata/118_1t4645s0.bin, light_stance frame 0; reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62",
   "citelint": {
    "notes": [],
@@ -567,6 +706,22 @@
  },
  {
   "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as:51,106-108 + \u00a71t99s0\u00a7.as:3156-3158 + \u00a71t1523s0\u00a7.as:2346-2347",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/inputmanager-200-is-not-a-gameplay-base",
+  "lane_impact": "L-combat-core: weakens (without killing) the 300/200/100-as-base arithmetic, and tells the port to derive reach from the SPD/DAN formula rather than from the 200 constant.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t1541s0\u00a7.as:51 `internal static var maxDistance:int = 200;` \u00b7 :106-108 `public static function \u00a71t10094s0\u00a7(param1:int) : * { maxDistance = param1; }` \u00b7 \u00a71t99s0\u00a7.as:3158 `\u00a71t1541s0\u00a7.\u00a71t10094s0\u00a7(this.\u00a71t4417s0\u00a7);` inside setStance \u00b7 \u00a71t1523s0\u00a7.as:2347 `return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));`",
+  "text": "InputManager.maxDistance = 200 is a compile-time initialiser, not a gameplay base. setStance calls InputManager.setMaxDistance(slashLength) on every battle init for the local player (web \u00a71t99s0\u00a7.as:3156-3158, android MCSPlayer.as:3092-3094), so the 200 is overwritten before the player ever draws a stroke. Any derivation of the wiki's 300/200/100 that treats 200 as 'the shipped default slash budget' rests on a value the player never plays at. The real base is 120 + floor((90 + 5*DAN) * SPD / (20 + SPD)) \u2014 124 at SPD 1 / dan 0, asymptotically 210 at dan 0.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "build": "web v0.717",
   "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1834; reference/decompiled/shs3_android/scripts/XMLNpc.as:671-686; reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3105 and :3116; reference/extracted/skilldata.xml:73-79",
   "citelint": {
@@ -610,165 +765,6 @@
   "overturns_ledger": false,
   "quote": "this.canLaunch = this.lightMastery >= 3;\\nthis.canDeflect = this.lightMastery >= 4;\\nthis.canAirCombo = this.lightMastery >= 5;",
   "text": "Stance mastery is a 0-9 integer in BOTH builds, not a 0-100 percentage.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3166-3168, 3174-3176, 3182-3184 + reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3231-3233, 3239-3241",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "combat-core/mastery-is-single-digit",
-  "lane_impact": "combat-core: a 0-100 scale would put every ability unlock inside the first 5% of the track, which is absurd. The ledger's 'mastery-9' SCALE reading is right even though its 'mastery-9 ceiling' reading of the reach table is wrong. The 0-100 inference came from reading '* 0.01' in isolation without checking any consumer of the variable.",
-  "ledger_text": "n/a \u2014 this refutes the surveyor's lane_impact sub-claim that 'mastery is a 0-100 percentage here, not 0-9'",
-  "overturns_ledger": false,
-  "quote": "MCSPlayer.as:3166  this.canLaunch = this.lightMastery >= 3;\nMCSPlayer.as:3167  this.canDeflect = this.lightMastery >= 4;\nMCSPlayer.as:3168  this.canAirCombo = this.lightMastery >= 5;",
-  "text": "Stance mastery is a single-digit integer scale in BOTH builds, not a 0-100 percentage \u2014 ability unlocks gate at mastery >= 3 / >= 4 / >= 5.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3271 + reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3166-3184 and StatsManager.as:1834",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/mastery-is-small-integer",
-  "lane_impact": "L-combat-core: CONFIRMS the ledger's mastery-ceiling reading for the damage table and refutes the rebirth lane's counter-assertion that mastery is a 0-100 percentage. Also gives the recreation the ability-unlock ladder for free: light 3/4/5 = launch/deflect/air-combo, balanced 3/4/5 = flip-up/deflect/launch, heavy 3/4/5 = launch/deflect/stab; reversed and dual grant all five unconditionally (MCSPlayer.as:3188-3195).",
-  "ledger_text": "The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.",
-  "overturns_ledger": false,
-  "quote": "3262: _loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);   // LIGHT    -> 0.9 at mastery 10\n3265: _loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);       // BALANCED -> 1.2 at mastery 10\n3270: _loc2_ = _loc1_ * 1.4;                                     // HEAVY/DUAL/REVERSED\n---\nMCSPlayer.as:3174: this.canFlipUp = this.balancedMastery >= 3;\nMCSPlayer.as:3175: this.canDeflect = this.balancedMastery >= 4;\nMCSPlayer.as:3176: this.canLaunch = this.balancedMastery >= 5;",
-  "text": "Stance mastery is a small integer (roughly 0-10), not a 0-100 percentage: abilities are gated at mastery >= 3 / 4 / 5, and substituting mastery=10 into the v0.717 damage switch reproduces the ledger's stance damage table 0.9 / 1.2 / 1.4 exactly.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Damage.as:150-172; MCSPlayer.as:3415-3419; EnemyWolf.as:296; EnemyFox.as:169; EnemyNianMonster.as:295; EnemyJiangSi.as:206",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/min-damage-floor-is-generic-and-attacker-keyed",
-  "lane_impact": "L1/L2 (combat core + damage) - this OVERTURNS the survey's claim 14, not the ledger. The ledger's 'EnemyLevel/4' bullet stays Ready; what it needs is the three lower bands (<=10 -> flat 1, <=20 -> lvl/8, <=30 -> lvl/6) and the +piercingDamage term added, plus the note that the same ladder applies with the PLAYER's level when the player is the attacker. Integer division throughout.",
-  "ledger_text": "defense min-floor (EnemyLevel/4)",
-  "overturns_ledger": false,
-  "quote": "public function getMinDamage() : int { if(this.damage == 0) return 0; if(this.attackerlvl == 0) return this.damage; if(this.attackerlvl <= 10) return 1 + this.piercingDamage; if(this.attackerlvl <= 20) return this.attackerlvl / 8 + this.piercingDamage; if(this.attackerlvl <= 30) return this.attackerlvl / 6 + this.piercingDamage; return this.attackerlvl / 4 + this.piercingDamage; }  /  MCSPlayer: damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); }  /  EnemyWolf: target.checkHitObject(mcs.partList[MCSCharacter.PART_weapon], new Damage(damage,level));",
-  "text": "The post-defense minimum-damage floor is a GENERIC pipeline rule, not boss scaling: Damage.getMinDamage() is a four-band ladder keyed to the ATTACKER's level (1 / lvl/8 / lvl/6 / lvl/4, each plus piercingDamage) and is applied immediately after defense subtraction on every hit - so for enemy-on-player above L30 the floor really is EnemyLevel/4, and the ledger bullet is incomplete rather than wrong.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2346-2347 \u00b7 \u00a71t99s0\u00a7.as:9,:11,:15-19,:2377,:2548,:3223-3241,:3286-3288 \u00b7 \u00a71t1541s0\u00a7.as:51 \u00b7 \u00a71t1543s0\u00a7.as:1486 \u00b7 \u00a71t67s0\u00a7.as:197-209",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/parity-confirmed-set",
-  "lane_impact": "L5 \u2014 promote to CONTRACT: reach base formula 120+floor((90+5*dan)*SPD/(20+SPD)); arc-length budget with maxDistance 200; multi-target |dx|<200 pre-filter; tap dead-zone 25 units; standingRange 50; slashSpeed 50/40/30; jumpThreshhold 100; mastery unlock ladder 3/4/5 (heavy launch = 3); four-band damage floor; heavy defence x0.8. The lane's real, safe yield.",
-  "overturns_ledger": false,
-  "quote": "return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));   ///   standingRange:int = 50; jumpThreshhold:int = 100; lightSlashSpeed:int = 50; balancedSlashSpeed:int = 40; heavySlashSpeed:int = 30;   ///   maxDistance:int = 200;   ///   if(_loc12_ * _loc12_ < 40000 && ...)   ///   if(_loc8_ * _loc8_ < 625)   ///   if(this.attackerlvl <= 10) ... / 8 + ... / 6 + ... / 4 +   ///   this.\u00a71t4425s0\u00a7 = this.\u00a71t4421s0\u00a7 >= 3;   ///   return defense * 0.8;",
-  "text": "Ten combat facts are byte-identical between android v0.682 and web v0.717 and can be promoted straight to plain CONTRACT with no parity caveat at all.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:9-19, :3221-3251, :3283-3289; \u00a71t1541s0\u00a7.as:52-60; \u00a71t67s0\u00a7.as:199-209; \u00a71t68s0\u00a7.as:465-483; \u00a71t122s0\u00a7.as:771-774",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "combat-core/parity-established-for-ten-quantities",
-  "lane_impact": "L5 \u2014 promotes to CONTRACT: the reach base formula, reload refill 48+SPD\u00b76, standingRange 50, slashSpeed 50/40/30, jumpThreshhold 100, the whole InputManager gesture/arc-length constant set, the 12-frame i-frame window, the four-band defence floor table, heavy defence \u00d70.8, and the 3/4/5 mastery ability ladder (heavy launch at 3). src/config/stances.ts LAUNCH_UNLOCK_LEVEL.heavy 5 -> 3 is the one config edit from this unit that is safe to make.",
-  "overturns_ledger": false,
-  "quote": "\u00a71t99s0\u00a7.as:9-19 standingRange 50 / jumpThreshhold 100 / runSpeed 12 / lightSlashSpeed 50 / balancedSlashSpeed 40 / heavySlashSpeed 30  \u00b7  \u00a71t99s0\u00a7.as:3288 `return defense * 0.8;`  \u00b7  \u00a71t99s0\u00a7.as:3238 `this.\u00a71t4425s0\u00a7 = this.\u00a71t4423s0\u00a7 >= 3;` (heavy canLaunch at mastery 3)  \u00b7  \u00a71t1541s0\u00a7.as:52-60 maxDistance 200 / 4 / 400 / thickness 8 / 20  \u00b7  \u00a71t67s0\u00a7.as:203-209 `attackerlvl / 8`, `/ 6`, `/ 4`  \u00b7  \u00a71t68s0\u00a7.as:467 `_loc3_ -= this.defense;` :483 `this.\u00a71t3246s0\u00a7 = 12;`  \u00b7  \u00a71t122s0\u00a7.as:771-774 `_loc3_ = 48 + param1.speed * 6;` ... `120 + Math.floor(_loc5_ * _loc4_ / (20 + _loc4_))`",
-  "text": "Ten combat quantities the survey flagged as android-only are byte-identical in the shipped web build, so they can be labelled CONTRACT rather than CONTRACT-SRC-v0.682.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decrypted/shs3_payload_decoded.swf \u2014 SWF header (signature CWS, version 17, RECT, then the 8.8-fixed FrameRate field)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/payload-swf-framerate-24",
-  "lane_impact": "L5 + L6 \u2014 every ticks-based constant (i-frames gotHitCounter=12 \u2192 0.5 s, reload 192 \u2192 8.0 s raw / 6.0 s displayed, doReload jitter) now converts to seconds from a web-build artifact.",
-  "overturns_ledger": false,
-  "quote": "('CWS', 17, 24.0, 6, 6880328) \u2014 parsed signature, version, frameRate, frameCount, file bytes",
-  "text": "The web payload SWF's own header declares 24.0 fps, so the tick\u2192second conversion for every v0.717 frame-counted constant is first-party and no longer borrowed from the android Mobile.as.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3126-3161 (and identically reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3186-3212)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/player-unlocks-are-skills-not-mastery",
-  "lane_impact": "L5 + L2 + L3 \u2014 src/config/stances.ts LAUNCH_UNLOCK_LEVEL is the wrong SHAPE, not merely wrong for heavy. Replace it with a skill-ownership predicate over skilldata ids 1014-1019 and 1036-1038 (names/descs already resolvable via docs/gauntlet/L0/index/strings.json), and keep the mastery ladder only for the enemy-AI side in L4.",
-  "overturns_ledger": false,
-  "quote": "if(this.controlledBy == 0 || this.controlledBy == 2) { if(this.stance == LIGHT_STANCE) { this.canLaunch = this.getSkillLevel(1014) > 0; this.canDeflect = this.getSkillLevel(1036) > 0; this.canAirCombo = this.getSkillLevel(1015) > 0; ... } else if(HEAVY) { this.canStab = this.getSkillLevel(1018) > 0; this.canDeflect = this.getSkillLevel(1038) > 0; this.canLaunch = this.getSkillLevel(1019) > 0; } } else if(this.stance == LIGHT_STANCE) { this.canLaunch = this.lightMastery >= 3; ...",
-  "text": "For the PLAYER (controlledBy 0 or 2) launch/deflect/stab/flip-up/air-combo are gated on owning specific skills (1014/1015/1036 light, 1016/1017/1037 balanced, 1018/1019/1038 heavy), never on mastery level; the >=3/>=4/>=5 mastery ladder is the enemy branch.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A4",
-  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md \u00a7c-2 'REACH PER STANCE, measured' (Light plateau 233-241 / max 303 n=17; Balanced 116-131 n=17; Heavy 97-103 / max 121 n=25 \u2014 each row carries its own frame evidence), adjudicated against reference/decompiled/shs3_android/scripts/StatsManager.as:1915-1919 and InventoryUI.as:1940-1970",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "combat-core/reach-units-unreconciled",
-  "lane_impact": "L1 + L4: downgrade progression/spd-scaling's cross-lane gift from 'closes combat-core blocker \u2460 \u2014 the one value the whole model needs' to 'supplies the model SHAPE (base \u00d7 stance modifier \u00d7 mastery); the stage-px MAGNITUDE is still frame-bound.' THE FRAME WINS on the stage-px values and I say so explicitly: do not port 120/210 as stage px until the unit factor between COMBAT_MEASUREMENTS' 'stage px' and payload px is established. Separately, the 3.00-vs-3.03 ratio match is a genuine independent cross-validation of both artifacts and should be recorded as such.",
-  "overturns_ledger": false,
-  "quote": "\u00a7c-2: Light plateau 233-241, max 303 (n=17) \u00b7 Balanced 116-131, max 131 (n=17) \u00b7 Heavy plateau 97-103, max 121 (n=25). Payload: baseSlashLength = 120 + Math.floor((90 + Dan*5) * speed / (20 + speed)); slashModifier Light 1.5 / Balanced 1+0.005m / Heavy 0.5+0.005m. RATIO TEST PASSES: payload Light/Heavy at mastery 0 = 1.5/0.5 = 3.00; frame, same level-8 character = 303/100 = 3.03. MAGNITUDE TEST FAILS: both frame readings imply base \u2248 202 (303/1.5 = 202; 100/0.5 = 200), and inverting 120 + floor(90*s/(20+s)) = 202 needs s \u2248 205, while the web per-stat cap at level 8 is 1+(8+10)*3 = 55 and the whole formula's Dan-0 asymptote is 210.",
-  "text": "The payload slash-length formula and the frame-measured stage-px reaches agree on RATIO but not on MAGNITUDE \u2014 the frames imply a base of ~202 px, which the payload's own formula cannot produce at level 8 \u2014 so an unestablished unit/scale factor sits between them and the frame still wins on stage-px values.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3130-3152",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/reversed-and-dual-reach",
-  "lane_impact": "L5 + L2 \u2014 combined with the unconditional ability grants for Reversed/Dual, these two stances are a complete fourth and fifth kit; the reach floor of 100 applies to Reversed as well as Heavy.",
-  "overturns_ledger": false,
-  "quote": "case \u00a71t12224s0\u00a7 (DUAL): this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;   ///   case \u00a71t12223s0\u00a7 (REVERSED): this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7; if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }",
-  "text": "Reversed and Dual stances have their own reach multipliers the three-stance model has no slot for: Dual = base x1.4, Reversed = base x1.0, both hard-floored at 100.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Mobile.as:117 (frame rate) + MCSPlayer.as:15-19 (50/40/30) \u2192 applied at src/core/Sim.ts:670 with FIXED_HZ=60 from src/config/timing.ts:8",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "combat-core/sim-dash-hz-unit-bug",
-  "lane_impact": "L5 \u2014 a live, shipped 2.5\u00d7 error in dash travel speed, sitting inside the exact constants combat-core/pass-through-dash quoted without checking the unit. The rest of the config already bridges 24\u219260 correctly (combat.ts:83-91 names FOCUS_FILL_PER_S = 24 and FOCUS_ACC 2/5 = 24/60); the dash is the one constant that skipped the conversion. Fix: DASH_SPEED_PX_PER_FRAME \u00d7 24, or relabel as px/s = {1200,960,720}.",
-  "overturns_ledger": false,
-  "quote": "Mobile.as:117 `GameEngine.getStageMC().frameRate = 24;` \u00b7 MCSPlayer.as:15-19 `lightSlashSpeed:int = 50 / balancedSlashSpeed:int = 40 / heavySlashSpeed:int = 30` \u00b7 src/config/combat-sim.ts:77 `/** CONTRACT-SRC \u2014 dash travel per 60 Hz frame, in WORLD px, by stance. */` \u00b7 src/core/Sim.ts:670 `speedPxS: DASH_SPEED_PX_PER_FRAME[player.stance] * FIXED_HZ,`",
-  "text": "src/core/Sim.ts converts the source's per-frame dash speed with FIXED_HZ = 60 although the original runs at 24 fps, so the sim dashes at 3000/2400/1800 px/s instead of 1200/960/720 \u2014 2.5\u00d7 too fast.",
   "verdict": "HELD"
  }
 ]

@@ -1,0 +1,423 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A2",
+   "id": "NEW-1-web-crit-is-flat-1.3",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NEW-2-web-per-stance-damage-and-mastery-10-ceiling",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NEW-3-full-xp-curve-is-shipped-in-both-builds",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NEW-4-paperdoll-is-13-slots-not-9",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NEW-5-skill-1500-reversed-1501-dual",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NEW-6-shunpo-effect-recovered",
+   "notes": [],
+   "paths": [
+    "docs/gauntlet/L0/index/resolved_names.json",
+    "reference/extracted/skilldata.xml",
+    "docs/gauntlet/L0/index/strings.json"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NEW-7-web-friend-bar-resize-parity",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1540s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NEW-8-dragon-dance-web-parity",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5495s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NEW-9-heavy-defense-0.8-double-confirmed",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NEW-10-obfuscated-bundle-grep-method",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "bindata/NEW-audio-waveforms-are-recovered-not-encrypted",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/122_Mobile_SoundResource.bin",
+    "reference/extracted/android/113_Mobile_MusicResource.bin",
+    "reference/tools/payload_decode.py"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "bindata/NEW-music-is-layered-stems-not-tracks",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/113_Mobile_MusicResource.bin",
+    "reference/decompiled/shs3_android_payload/scripts/MusicManager.as:48+"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "art-anim-audio-feel/NEW-hold-tail-table-is-the-animdata-constructor-switch",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/AnimData.as",
+    "reference/decompiled/shs3_android/scripts/MCSCharacter.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "enemies-ai/NEW-npc-die-override-count-is-18-not-3",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/Enemy*.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "ui-hud/NEW-web-and-android-payloads-ship-different-stage-rects",
+   "notes": [],
+   "paths": [
+    "reference/decrypted/shs3_payload_decoded.swf",
+    "reference/decrypted/shs3_android_payload_decoded.swf",
+    "reference/preservation/shs3.swf"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "art-anim-audio-feel/NEW-24hz-killbeat-is-web-parity-closed",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1525s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StageManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/NEW-hud-buff-line-is-a-hardcoded-string-table",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/OverworldHUD.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "audio/RECOVERED-not-encrypted-resourcemanager-decrypt",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/ResourceManager.as",
+    "reference/extracted/android/122_Mobile_SoundResource.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "art-anim-audio-feel/web-swf-header-is-24fps-and-800x690",
+   "notes": [],
+   "paths": [
+    "reference/decrypted/shs3_payload_decoded.swf",
+    "reference/decrypted/shs3_android_payload_decoded.swf"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "art-anim-audio-feel/animdata-code-injected-hold-table",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/AnimData.as",
+    "reference/decompiled/shs3_android/scripts/MCSCharacter.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "art-anim-audio-feel/music-is-13-stems-and-18-layer-presets",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MusicManager.as",
+    "reference/extracted/android/113_Mobile_MusicResource.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "art-anim-audio-feel/eighteen-of-34-enemy-classes-override-die",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/Enemy*.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/buff-row-is-frame-confirmed-A1",
+   "notes": [],
+   "paths": [
+    "reference/frames/duel_dense/Nr4fQstqHDM_432.0.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "kh-web-getdamage-twin-crit-is-1.3",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "kh-1500-1501-are-reversed-and-dual-stance",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "kh-boss-scaling-build-divergence",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t122s0\u00a7.as",
+    "reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "kh-dragondance-is-in-the-web-build-too",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5495s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "kh-greenline-and-redline-are-named-in-both-builds",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/InputManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "kh-base-aicountermax-is-24-not-12",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "stage/web-native-canvas-is-800x690-not-800x480",
+   "notes": [],
+   "paths": [
+    "reference/decrypted/shs3_payload_decoded.swf",
+    "reference/decrypted/shs3_android_payload_decoded.swf",
+    "reference/preservation/shs3.swf"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "parity/stance-tables-diverge-web-vs-android",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "parity/meter-constants-diverge-and-frames-pick-the-web-one",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as",
+    "reference/frames/session11/crit-focus/t1081.100.png"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "world/map-bitmap-is-in-the-repo-735-land-pixels",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/110_Mobile_MapBitmapData.bin",
+    "reference/decompiled/shs3_android_payload/scripts/QuestEngine.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/inputmanager-200-is-not-a-gameplay-base",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "frames/damage-ttk-crit-window-is-not-empty-on-two-frames",
+   "notes": [],
+   "paths": [
+    "reference/frames/session11/damage-ttk/t1958.967.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "measurement/stage-scale-is-2p25-not-1p875",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1540s0\u00a7.as",
+    "reference/frames/session11/gap-focus-trigger/t1747.000.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "warroom/web-warhex-has-fifteen-states",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t416s0\u00a7.as",
+    "reference/decompiled/shs3_android_payload/scripts/WarHex.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 9,
+  "resolves": 28,
+  "total": 37,
+  "uncheckable": 0
+ }
+}

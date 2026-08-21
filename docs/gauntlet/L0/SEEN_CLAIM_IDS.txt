@@ -1,8 +1,8 @@
 # SEEN CLAIM IDS — every claim banked across every run of L0 so far.
 # A finding matching one of these is NOT new. Report it ONLY if you can
 # materially STRENGTHEN or CONTRADICT it — and say which, explicitly.
-# 1323 rows, 1284 unique ids, pooled from: run2, run3, run4.
-# 510 of them carry at least one artifact-citing verdict;
+# 1360 rows, 1321 unique ids, pooled from: run2, run3, run4, run5.
+# 582 of them carry at least one artifact-citing verdict;
 # the rest are LEADS and may not enter the ledger (§0).
 
 ## actionscript  (45 unique, 45 judged)
@@ -149,45 +149,55 @@
   * combat-core/slash-type-map
   * combat-core/stance-triangle
 
-## critic-new_findings  (774 unique, 0 judged)
-    NF-1-crit-is-deterministic-full-focus
+## critic-new_findings  (811 unique, 72 judged)
+    NEW-1-web-crit-is-flat-1.3
+    NEW-10-obfuscated-bundle-grep-method
+    NEW-2-web-per-stance-damage-and-mastery-10-ceiling
+    NEW-3-full-xp-curve-is-shipped-in-both-builds
+    NEW-4-paperdoll-is-13-slots-not-9
+    NEW-5-skill-1500-reversed-1501-dual
+    NEW-6-shunpo-effect-recovered
+    NEW-7-web-friend-bar-resize-parity
+    NEW-8-dragon-dance-web-parity
+    NEW-9-heavy-defense-0.8-double-confirmed
+  * NF-1-crit-is-deterministic-full-focus
     NF-10-category-tab-mapping-declared-in-code
     NF-11-category-11-skills-are-in-npcdata
     NF-12-web-swf-header-declares-24fps
     NF-13-steal-was-a-node-action-not-a-skill
     NF-14-canchangestance-is-a-state-whitelist
-    NF-15-consumable-buff-enum-and-150pc-damage-potato
+  * NF-15-consumable-buff-enum-and-150pc-damage-potato
     NF-16-heavenly-sword-numbers-unclaimed
     NF-17-four-actives-cost-zero-skill-points
     NF-18-full-skill-prerequisite-dag-unenumerated
     NF-2-crittext-gated-on-full-reload-bar
     NF-3-inventory-preview-contradicts-sim-on-crit
-    NF-38-cases-35-classes
+  * NF-38-cases-35-classes
     NF-4-mastery-domain-is-1-to-10
-    NF-5-per-stance-damage-multipliers
+  * NF-5-per-stance-damage-multipliers
     NF-6-heavy-stance-takes-80pc-defense
     NF-7-focus-drain-is-stance-scaled-and-crit-empties-bar
     NF-8-focus-bar-displayed-zero-is-24-not-0
-    NF-9-dragon-dance-input-recovered
-    NF-ai0-duel-opponent-absent
-    NF-boss-hp-derivation
-    NF-category-11-decoded
-    NF-enemy-skill-ladder
-    NF-four-faction-spawn-model
-    NF-kill-xp-formula
-    NF-level10-clamp
-    NF-melee-ai-geometry
-    NF-npcdata-silences
-    NF-procgen-surnames
+  * NF-9-dragon-dance-input-recovered
+  * NF-ai0-duel-opponent-absent
+  * NF-boss-hp-derivation
+  * NF-category-11-decoded
+  * NF-enemy-skill-ladder
+  * NF-four-faction-spawn-model
+  * NF-kill-xp-formula
+  * NF-level10-clamp
+  * NF-melee-ai-geometry
+  * NF-npcdata-silences
+  * NF-procgen-surnames
     NF-shira-tancho-is-player-clan
-    NF-stage-800x480
+  * NF-stage-800x480
     NF-string-5017-empty-by-design
-    actionscript/build-divergence-7-cooldown-cap
-    actionscript/repair-weapon-cost-formula
-    actionscript/slash-line-colour-is-0x990000
+  * actionscript/build-divergence-7-cooldown-cap
+  * actionscript/repair-weapon-cost-formula
+  * actionscript/slash-line-colour-is-0x990000
     actionscript/stance-triangle-second-android-site
     actionscript/unbreakable-and-reinforce-prices
-    actionscript/war-board-is-a-6x6-square-grid
+  * actionscript/war-board-is-a-6x6-square-grid
     actionscript/web-weapon-parry-lives-in-the-npc-class
     android-blobs/android-blob-encoding-census
     android-blobs/bgdata-override-census-corrected
@@ -201,47 +211,52 @@
     art-anim-audio-feel/16pct-of-frames-are-authored-holds
     art-anim-audio-feel/24hz-proven-on-web-build
     art-anim-audio-feel/690-is-a-friend-panel
-    art-anim-audio-feel/690-is-the-friend-bar
+  * art-anim-audio-feel/690-is-the-friend-bar
     art-anim-audio-feel/690-is-the-friend-bar-layout
-    art-anim-audio-feel/690-is-the-friend-panel
-    art-anim-audio-feel/800x690-is-the-friend-bar-layout
-    art-anim-audio-feel/anim-loop-flag
+  * art-anim-audio-feel/690-is-the-friend-panel
+  * art-anim-audio-feel/800x690-is-the-friend-bar-layout
+    art-anim-audio-feel/NEW-24hz-killbeat-is-web-parity-closed
+    art-anim-audio-feel/NEW-hold-tail-table-is-the-animdata-constructor-switch
+  * art-anim-audio-feel/anim-loop-flag
+    art-anim-audio-feel/animdata-code-injected-hold-table
     art-anim-audio-feel/animdata-loop-and-reorder-attrs
     art-anim-audio-feel/animdata-loop-flag-parsing-trap
-    art-anim-audio-feel/blend-modes-none-at-byte-level-web
+  * art-anim-audio-feel/blend-modes-none-at-byte-level-web
     art-anim-audio-feel/blue-object-is-persistent-not-a-trail
     art-anim-audio-feel/definesound-samplecount-is-authoritative
-    art-anim-audio-feel/glow-filters-are-the-real-fx-answer
+    art-anim-audio-feel/eighteen-of-34-enemy-classes-override-die
+  * art-anim-audio-feel/glow-filters-are-the-real-fx-answer
     art-anim-audio-feel/glow-is-part-of-the-vocabulary
     art-anim-audio-feel/gore-has-no-frame-corroboration
     art-anim-audio-feel/gore-is-humanoid-only
     art-anim-audio-feel/gore-roll-is-per-class
     art-anim-audio-feel/gothit-is-a-ladder-not-a-constant
-    art-anim-audio-feel/hit-reaction-is-a-ladder
+  * art-anim-audio-feel/hit-reaction-is-a-ladder
     art-anim-audio-feel/hit-reaction-ladder-not-uniform
-    art-anim-audio-feel/hold-frames-are-authored-in-data
+  * art-anim-audio-feel/hold-frames-are-authored-in-data
     art-anim-audio-feel/hud-150-damage-is-a-buff
-    art-anim-audio-feel/hud-150-is-a-potato-buff
-    art-anim-audio-feel/hud-150-is-potato-buff
-    art-anim-audio-feel/killbeat-6000ms-pins-24hz-tick
+  * art-anim-audio-feel/hud-150-is-a-potato-buff
+  * art-anim-audio-feel/hud-150-is-potato-buff
+  * art-anim-audio-feel/killbeat-6000ms-pins-24hz-tick
     art-anim-audio-feel/killbeat-looks-like-red-field-black-silhouettes
-    art-anim-audio-feel/no-blendmode-holds-for-timeline-tags-too
-    art-anim-audio-feel/no-blendmode-in-authored-data
-    art-anim-audio-feel/no-blendmode-in-swf-tags-either
-    art-anim-audio-feel/no-hold-frames-across-all-487
+    art-anim-audio-feel/music-is-13-stems-and-18-layer-presets
+  * art-anim-audio-feel/no-blendmode-holds-for-timeline-tags-too
+  * art-anim-audio-feel/no-blendmode-in-authored-data
+  * art-anim-audio-feel/no-blendmode-in-swf-tags-either
+  * art-anim-audio-feel/no-hold-frames-across-all-487
     art-anim-audio-feel/no-hold-frames-verified-exhaustively
-    art-anim-audio-feel/npc-death-dice-is-seven-way
+  * art-anim-audio-feel/npc-death-dice-is-seven-way
     art-anim-audio-feel/pose-cadence-is-15hz-measured
-    art-anim-audio-feel/predecessor-sfx-lineage
+  * art-anim-audio-feel/predecessor-sfx-lineage
     art-anim-audio-feel/predecessor-swfs-hold-sfx
     art-anim-audio-feel/preservation-shs3swf-is-the-loader
     art-anim-audio-feel/rig-is-19-nodes
     art-anim-audio-feel/rig-is-23-parts-27-slots
     art-anim-audio-feel/rig-is-23-slots-26-for-wolves
-    art-anim-audio-feel/rig-is-27-parts
-    art-anim-audio-feel/screen-shake-amplitude-is-inert
-    art-anim-audio-feel/second-layout-mode-800x690
-    art-anim-audio-feel/sfx-contract-ten-routines
+  * art-anim-audio-feel/rig-is-27-parts
+  * art-anim-audio-feel/screen-shake-amplitude-is-inert
+  * art-anim-audio-feel/second-layout-mode-800x690
+  * art-anim-audio-feel/sfx-contract-ten-routines
     art-anim-audio-feel/stance-triangle-1p2-before-behead
     art-anim-audio-feel/stance-triangle-is-1.2
     art-anim-audio-feel/three-missed-shake-triggers
@@ -249,72 +264,77 @@
     art-anim-audio-feel/videos-are-60fps-frames-do-arbitrate
     art-anim-audio-feel/web-and-android-stages-differ
     art-anim-audio-feel/web-payload-has-no-game-code
-    art-anim-audio-feel/zero-blendmode-byte-proof
-    art-anim-audio-feel/zero-placeobject3-tags
+    art-anim-audio-feel/web-swf-header-is-24fps-and-800x690
+  * art-anim-audio-feel/zero-blendmode-byte-proof
+  * art-anim-audio-feel/zero-placeobject3-tags
     art-anim/equipment-art-was-server-streamed
-    bindata/NEW-70th-trap-room-is-commented-out
+    audio/RECOVERED-not-encrypted-resourcemanager-decrypt
+  * bindata/NEW-70th-trap-room-is-commented-out
+    bindata/NEW-audio-waveforms-are-recovered-not-encrypted
+    bindata/NEW-music-is-layered-stems-not-tracks
     bindata/NEW-place-name-table-has-one-dead-row
-    bindata/NEW-setvisible-partmax-22-leaves-5-slots-unhidden
+  * bindata/NEW-setvisible-partmax-22-leaves-5-slots-unhidden
     bindata/NEW-swf-690-is-480-plus-bar
-    bindata/NEW-trap-name-suffix-is-the-trigger-wiring
-    bindata/NEW-warhex-has-14-states-not-7
+  * bindata/NEW-trap-name-suffix-is-the-trigger-wiring
+  * bindata/NEW-warhex-has-14-states-not-7
     bindata/NEW-web-android-survival-data-differ-in-14-lines
     bindata/NEW-web-payload-is-decompiled-parity-is-checkable
-    bindata/audio-inventory-is-held
+  * bindata/audio-inventory-is-held
     bindata/default-block-overrides-all-traps
     bindata/item-colour-palette-11
     bindata/matrix-nodes-and-reorder-frames
-    bindata/place-name-table-is-dead-data
-    bindata/reach-cap-recovered-per-stance
-    bindata/six-ledger-names-decompose
-    bindata/slash-line-colours-exact
+  * bindata/place-name-table-is-dead-data
+  * bindata/reach-cap-recovered-per-stance
+  * bindata/six-ledger-names-decompose
+  * bindata/slash-line-colours-exact
     bindata/stage-letterbox-algorithm
-    bindata/territory-to-bitmap-transform
-    bindata/trap-duty-cycle-domain-measured
+  * bindata/territory-to-bitmap-transform
+  * bindata/trap-duty-cycle-domain-measured
     bindata/two-more-trap-placement-rules
-    bindata/warhex-14-states-not-7
+  * bindata/warhex-14-states-not-7
     bindata/web-build-owns-the-bindata-map
     bindata/web-has-third-hardcoded-town
-    combat-core/300-200-100-is-base-not-ceiling
-    combat-core/36-was-not-a-crit
+  * combat-core/300-200-100-is-base-not-ceiling
+  * combat-core/36-was-not-a-crit
     combat-core/android-stance-numbers-are-a-rebalance
     combat-core/attacker-level-min-damage-floor
-    combat-core/basereload-is-dead-code
+  * combat-core/basereload-is-dead-code
     combat-core/cannot-change-stance-not-in-android-strings
-    combat-core/crit-is-1.3-gated-on-full-slash-meter
-    combat-core/crit-is-flat-1.3
+  * combat-core/crit-is-1.3-gated-on-full-slash-meter
+  * combat-core/crit-is-flat-1.3
     combat-core/crit-is-full-reload-1p3
-    combat-core/crit-meter-is-6-seconds
-    combat-core/crit-track-268px-six-seconds
+  * combat-core/crit-meter-is-6-seconds
+  * combat-core/crit-track-268px-six-seconds
     combat-core/desktop-stance-multipliers
-    combat-core/dual-reversed-reach-inverted
+  * combat-core/dual-reversed-reach-inverted
     combat-core/duel-path-damage-terms-unsurveyed
-    combat-core/early-mob-hp-distribution
+  * combat-core/early-mob-hp-distribution
     combat-core/every-checked-combat-number-moved-between-builds
     combat-core/focus-6s-is-the-source-not-a-parity-break
     combat-core/focus-fill-remeasured-on-frames
     combat-core/footage-runs-at-nominal-24fps
-    combat-core/formula-resolves-c2-balanced-gap
-    combat-core/full-reload-crit-is-1p3-in-v0717
+  * combat-core/formula-resolves-c2-balanced-gap
+  * combat-core/full-reload-crit-is-1p3-in-v0717
     combat-core/generic-post-defense-damage-floor
     combat-core/heavy-launch-unlock-is-3-on-target-build
     combat-core/hud-track-is-269px
-    combat-core/injured-buff-halves-reach
-    combat-core/mastery-caps-at-ten
+  * combat-core/injured-buff-halves-reach
+    combat-core/inputmanager-200-is-not-a-gameplay-base
+  * combat-core/mastery-caps-at-ten
     combat-core/mastery-domain-is-1-to-10-resolved
     combat-core/mastery-domain-unresolved
     combat-core/mastery-is-0-to-9
     combat-core/mastery-is-single-digit
     combat-core/mastery-is-small-integer
-    combat-core/mastery-is-ten-level-skill
+  * combat-core/mastery-is-ten-level-skill
     combat-core/min-damage-floor-is-generic-and-attacker-keyed
     combat-core/parity-confirmed-set
     combat-core/parity-established-for-ten-quantities
     combat-core/payload-swf-framerate-24
     combat-core/player-unlocks-are-skills-not-mastery
-    combat-core/popup-animation-and-black-variant
-    combat-core/popup-colour-is-a-semantic
-    combat-core/raw-frames-show-full-crit-meter
+  * combat-core/popup-animation-and-black-variant
+  * combat-core/popup-colour-is-a-semantic
+  * combat-core/raw-frames-show-full-crit-meter
     combat-core/reach-and-crit-configs-already-correct
     combat-core/reach-table-is-mastery-zero
     combat-core/reach-table-is-mastery-zero-not-a-ceiling
@@ -392,6 +412,7 @@
     economy/web-build-ships-no-game-data
     economy/web-payload-has-no-itemdata-table
     economy/web-trade-goods-seed-resolved
+    enemies-ai/NEW-npc-die-override-count-is-18-not-3
     enemies-ai/allies-level-match-the-player
     enemies-ai/allies-scale-to-player-level-enemies-do-not
     enemies-ai/boss-rubber-band-hits-to-kill
@@ -449,6 +470,7 @@
     frames/HUNT-stance-triangle-and-ring-colours
     frames/HUNT-ui-strings-txt-is-unmined
     frames/HUNT-war-tick-is-24-hours
+    frames/damage-ttk-crit-window-is-not-empty-on-two-frames
     frames/two-clans-share-the-north-east-domain
     frames/v0717-rewords-the-daily-streak-ladder
     frames/world-map-has-a-fifth-banner-colour
@@ -570,7 +592,14 @@
     items-equipment/web-only-xp-item-colour
     items-equipment/web-save-format-has-modifier-id-206
     items-equipment/web-soul-infusion-superset
+    kh-1500-1501-are-reversed-and-dual-stance
+    kh-base-aicountermax-is-24-not-12
+    kh-boss-scaling-build-divergence
+    kh-dragondance-is-in-the-web-build-too
+    kh-greenline-and-redline-are-named-in-both-builds
+    kh-web-getdamage-twin-crit-is-1.3
     ledger/film-shows-rebirth-is-unsourced
+    measurement/stage-scale-is-2p25-not-1p875
     meta-social/700-block-is-live-players
     meta-social/achievement-58-pins-340
     meta-social/achievements-in-web-payload
@@ -628,6 +657,8 @@
     npcdata/hp-less-combat-rows-default-to-1
     npcdata/kill-xp-formula
     npcdata/setlevel-pins-everything-to-1-below-11
+    parity/meter-constants-diverge-and-frames-pick-the-web-one
+    parity/stance-tables-diverge-web-vs-android
     payload/repair-weapon-cost-is-a-template-not-a-constant
     progression/a02-second-frame-corroboration
     progression/android-caps-also-drifted
@@ -810,6 +841,7 @@
     skills-meters/web-kunai-ammo-gate-1-4-8
     skills-meters/web-maxreload-is-192
     skills-meters/web-only-skills-1074-1077
+    stage/web-native-canvas-is-800x690-not-800x480
     string-table/balanced-ring-is-khaki-on-film-not-ochre
     string-table/global-effect-titles-a-different-dialog
     string-table/hell-is-a-first-class-room-type
@@ -823,11 +855,14 @@
     string-table/weight-gate-is-a-travel-guard-in-code
     ui-hud/150-percent-damage-is-a-buff
     ui-hud/24fps-from-swf-headers
+    ui-hud/NEW-hud-buff-line-is-a-hardcoded-string-table
+    ui-hud/NEW-web-and-android-payloads-ship-different-stage-rects
     ui-hud/aspect-ratio-truth-closed-from-source
     ui-hud/bars-are-untweened-continuous-scalex
     ui-hud/blackopen-shutter-is-16-frames
     ui-hud/blocker-4-is-wrong-2-abilities-plus-empty-slot
     ui-hud/blocker4-uparrow-is-an-equipped-skill
+    ui-hud/buff-row-is-frame-confirmed-A1
     ui-hud/combo-widget-content-held-pop-unheld
     ui-hud/frame-refutes-stance-up-arrow
     ui-hud/frame-to-stage-mapping-is-anisotropic
@@ -885,6 +920,7 @@
     uistrings-payload/warroom-web-has-a-seventh-rules-page
     uistrings-payload/web-and-android-font-sets-diverge
     uistrings-payload/web-lang-files-are-en-fr-es-only
+    warroom/web-warhex-has-fifteen-states
     world-exploration/12h-crop-never-rots
     world-exploration/21-of-27-blobs-are-cross-build-identical
     world-exploration/ap-cap-formula-is-frame-confirmed
@@ -924,6 +960,7 @@
     world-exploration/web-payload-carries-world-constants
     world-exploration/web-third-placename-hardcode
     world-exploration/world-map-art-recovered
+    world/map-bitmap-is-in-the-repo-735-land-pixels
 
 ## economy  (20 unique, 20 judged)
   * economy/cho-han-is-ev-neutral

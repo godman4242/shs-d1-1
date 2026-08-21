@@ -1,6 +1,165 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3166-3168, 3174-3176, 3182-3184 + reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3231-3233, 3239-3241",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "combat-core/mastery-is-single-digit",
+  "lane_impact": "combat-core: a 0-100 scale would put every ability unlock inside the first 5% of the track, which is absurd. The ledger's 'mastery-9' SCALE reading is right even though its 'mastery-9 ceiling' reading of the reach table is wrong. The 0-100 inference came from reading '* 0.01' in isolation without checking any consumer of the variable.",
+  "ledger_text": "n/a \u2014 this refutes the surveyor's lane_impact sub-claim that 'mastery is a 0-100 percentage here, not 0-9'",
+  "overturns_ledger": false,
+  "quote": "MCSPlayer.as:3166  this.canLaunch = this.lightMastery >= 3;\nMCSPlayer.as:3167  this.canDeflect = this.lightMastery >= 4;\nMCSPlayer.as:3168  this.canAirCombo = this.lightMastery >= 5;",
+  "text": "Stance mastery is a single-digit integer scale in BOTH builds, not a 0-100 percentage \u2014 ability unlocks gate at mastery >= 3 / >= 4 / >= 5.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3271 + reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3166-3184 and StatsManager.as:1834",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/mastery-is-small-integer",
+  "lane_impact": "L-combat-core: CONFIRMS the ledger's mastery-ceiling reading for the damage table and refutes the rebirth lane's counter-assertion that mastery is a 0-100 percentage. Also gives the recreation the ability-unlock ladder for free: light 3/4/5 = launch/deflect/air-combo, balanced 3/4/5 = flip-up/deflect/launch, heavy 3/4/5 = launch/deflect/stab; reversed and dual grant all five unconditionally (MCSPlayer.as:3188-3195).",
+  "ledger_text": "The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.",
+  "overturns_ledger": false,
+  "quote": "3262: _loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);   // LIGHT    -> 0.9 at mastery 10\n3265: _loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);       // BALANCED -> 1.2 at mastery 10\n3270: _loc2_ = _loc1_ * 1.4;                                     // HEAVY/DUAL/REVERSED\n---\nMCSPlayer.as:3174: this.canFlipUp = this.balancedMastery >= 3;\nMCSPlayer.as:3175: this.canDeflect = this.balancedMastery >= 4;\nMCSPlayer.as:3176: this.canLaunch = this.balancedMastery >= 5;",
+  "text": "Stance mastery is a small integer (roughly 0-10), not a 0-100 percentage: abilities are gated at mastery >= 3 / 4 / 5, and substituting mastery=10 into the v0.717 damage switch reproduces the ledger's stance damage table 0.9 / 1.2 / 1.4 exactly.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/Damage.as:150-172; MCSPlayer.as:3415-3419; EnemyWolf.as:296; EnemyFox.as:169; EnemyNianMonster.as:295; EnemyJiangSi.as:206",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/min-damage-floor-is-generic-and-attacker-keyed",
+  "lane_impact": "L1/L2 (combat core + damage) - this OVERTURNS the survey's claim 14, not the ledger. The ledger's 'EnemyLevel/4' bullet stays Ready; what it needs is the three lower bands (<=10 -> flat 1, <=20 -> lvl/8, <=30 -> lvl/6) and the +piercingDamage term added, plus the note that the same ladder applies with the PLAYER's level when the player is the attacker. Integer division throughout.",
+  "ledger_text": "defense min-floor (EnemyLevel/4)",
+  "overturns_ledger": false,
+  "quote": "public function getMinDamage() : int { if(this.damage == 0) return 0; if(this.attackerlvl == 0) return this.damage; if(this.attackerlvl <= 10) return 1 + this.piercingDamage; if(this.attackerlvl <= 20) return this.attackerlvl / 8 + this.piercingDamage; if(this.attackerlvl <= 30) return this.attackerlvl / 6 + this.piercingDamage; return this.attackerlvl / 4 + this.piercingDamage; }  /  MCSPlayer: damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); }  /  EnemyWolf: target.checkHitObject(mcs.partList[MCSCharacter.PART_weapon], new Damage(damage,level));",
+  "text": "The post-defense minimum-damage floor is a GENERIC pipeline rule, not boss scaling: Damage.getMinDamage() is a four-band ladder keyed to the ATTACKER's level (1 / lvl/8 / lvl/6 / lvl/4, each plus piercingDamage) and is applied immediately after defense subtraction on every hit - so for enemy-on-player above L30 the floor really is EnemyLevel/4, and the ledger bullet is incomplete rather than wrong.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2346-2347 \u00b7 \u00a71t99s0\u00a7.as:9,:11,:15-19,:2377,:2548,:3223-3241,:3286-3288 \u00b7 \u00a71t1541s0\u00a7.as:51 \u00b7 \u00a71t1543s0\u00a7.as:1486 \u00b7 \u00a71t67s0\u00a7.as:197-209",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/parity-confirmed-set",
+  "lane_impact": "L5 \u2014 promote to CONTRACT: reach base formula 120+floor((90+5*dan)*SPD/(20+SPD)); arc-length budget with maxDistance 200; multi-target |dx|<200 pre-filter; tap dead-zone 25 units; standingRange 50; slashSpeed 50/40/30; jumpThreshhold 100; mastery unlock ladder 3/4/5 (heavy launch = 3); four-band damage floor; heavy defence x0.8. The lane's real, safe yield.",
+  "overturns_ledger": false,
+  "quote": "return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));   ///   standingRange:int = 50; jumpThreshhold:int = 100; lightSlashSpeed:int = 50; balancedSlashSpeed:int = 40; heavySlashSpeed:int = 30;   ///   maxDistance:int = 200;   ///   if(_loc12_ * _loc12_ < 40000 && ...)   ///   if(_loc8_ * _loc8_ < 625)   ///   if(this.attackerlvl <= 10) ... / 8 + ... / 6 + ... / 4 +   ///   this.\u00a71t4425s0\u00a7 = this.\u00a71t4421s0\u00a7 >= 3;   ///   return defense * 0.8;",
+  "text": "Ten combat facts are byte-identical between android v0.682 and web v0.717 and can be promoted straight to plain CONTRACT with no parity caveat at all.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:9-19, :3221-3251, :3283-3289; \u00a71t1541s0\u00a7.as:52-60; \u00a71t67s0\u00a7.as:199-209; \u00a71t68s0\u00a7.as:465-483; \u00a71t122s0\u00a7.as:771-774",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "combat-core/parity-established-for-ten-quantities",
+  "lane_impact": "L5 \u2014 promotes to CONTRACT: the reach base formula, reload refill 48+SPD\u00b76, standingRange 50, slashSpeed 50/40/30, jumpThreshhold 100, the whole InputManager gesture/arc-length constant set, the 12-frame i-frame window, the four-band defence floor table, heavy defence \u00d70.8, and the 3/4/5 mastery ability ladder (heavy launch at 3). src/config/stances.ts LAUNCH_UNLOCK_LEVEL.heavy 5 -> 3 is the one config edit from this unit that is safe to make.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:9-19 standingRange 50 / jumpThreshhold 100 / runSpeed 12 / lightSlashSpeed 50 / balancedSlashSpeed 40 / heavySlashSpeed 30  \u00b7  \u00a71t99s0\u00a7.as:3288 `return defense * 0.8;`  \u00b7  \u00a71t99s0\u00a7.as:3238 `this.\u00a71t4425s0\u00a7 = this.\u00a71t4423s0\u00a7 >= 3;` (heavy canLaunch at mastery 3)  \u00b7  \u00a71t1541s0\u00a7.as:52-60 maxDistance 200 / 4 / 400 / thickness 8 / 20  \u00b7  \u00a71t67s0\u00a7.as:203-209 `attackerlvl / 8`, `/ 6`, `/ 4`  \u00b7  \u00a71t68s0\u00a7.as:467 `_loc3_ -= this.defense;` :483 `this.\u00a71t3246s0\u00a7 = 12;`  \u00b7  \u00a71t122s0\u00a7.as:771-774 `_loc3_ = 48 + param1.speed * 6;` ... `120 + Math.floor(_loc5_ * _loc4_ / (20 + _loc4_))`",
+  "text": "Ten combat quantities the survey flagged as android-only are byte-identical in the shipped web build, so they can be labelled CONTRACT rather than CONTRACT-SRC-v0.682.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decrypted/shs3_payload_decoded.swf \u2014 SWF header (signature CWS, version 17, RECT, then the 8.8-fixed FrameRate field)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/payload-swf-framerate-24",
+  "lane_impact": "L5 + L6 \u2014 every ticks-based constant (i-frames gotHitCounter=12 \u2192 0.5 s, reload 192 \u2192 8.0 s raw / 6.0 s displayed, doReload jitter) now converts to seconds from a web-build artifact.",
+  "overturns_ledger": false,
+  "quote": "('CWS', 17, 24.0, 6, 6880328) \u2014 parsed signature, version, frameRate, frameCount, file bytes",
+  "text": "The web payload SWF's own header declares 24.0 fps, so the tick\u2192second conversion for every v0.717 frame-counted constant is first-party and no longer borrowed from the android Mobile.as.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3126-3161 (and identically reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3186-3212)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/player-unlocks-are-skills-not-mastery",
+  "lane_impact": "L5 + L2 + L3 \u2014 src/config/stances.ts LAUNCH_UNLOCK_LEVEL is the wrong SHAPE, not merely wrong for heavy. Replace it with a skill-ownership predicate over skilldata ids 1014-1019 and 1036-1038 (names/descs already resolvable via docs/gauntlet/L0/index/strings.json), and keep the mastery ladder only for the enemy-AI side in L4.",
+  "overturns_ledger": false,
+  "quote": "if(this.controlledBy == 0 || this.controlledBy == 2) { if(this.stance == LIGHT_STANCE) { this.canLaunch = this.getSkillLevel(1014) > 0; this.canDeflect = this.getSkillLevel(1036) > 0; this.canAirCombo = this.getSkillLevel(1015) > 0; ... } else if(HEAVY) { this.canStab = this.getSkillLevel(1018) > 0; this.canDeflect = this.getSkillLevel(1038) > 0; this.canLaunch = this.getSkillLevel(1019) > 0; } } else if(this.stance == LIGHT_STANCE) { this.canLaunch = this.lightMastery >= 3; ...",
+  "text": "For the PLAYER (controlledBy 0 or 2) launch/deflect/stab/flip-up/air-combo are gated on owning specific skills (1014/1015/1036 light, 1016/1017/1037 balanced, 1018/1019/1038 heavy), never on mastery level; the >=3/>=4/>=5 mastery ladder is the enemy branch.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A4",
+  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md \u00a7c-2 'REACH PER STANCE, measured' (Light plateau 233-241 / max 303 n=17; Balanced 116-131 n=17; Heavy 97-103 / max 121 n=25 \u2014 each row carries its own frame evidence), adjudicated against reference/decompiled/shs3_android/scripts/StatsManager.as:1915-1919 and InventoryUI.as:1940-1970",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "combat-core/reach-units-unreconciled",
+  "lane_impact": "L1 + L4: downgrade progression/spd-scaling's cross-lane gift from 'closes combat-core blocker \u2460 \u2014 the one value the whole model needs' to 'supplies the model SHAPE (base \u00d7 stance modifier \u00d7 mastery); the stage-px MAGNITUDE is still frame-bound.' THE FRAME WINS on the stage-px values and I say so explicitly: do not port 120/210 as stage px until the unit factor between COMBAT_MEASUREMENTS' 'stage px' and payload px is established. Separately, the 3.00-vs-3.03 ratio match is a genuine independent cross-validation of both artifacts and should be recorded as such.",
+  "overturns_ledger": false,
+  "quote": "\u00a7c-2: Light plateau 233-241, max 303 (n=17) \u00b7 Balanced 116-131, max 131 (n=17) \u00b7 Heavy plateau 97-103, max 121 (n=25). Payload: baseSlashLength = 120 + Math.floor((90 + Dan*5) * speed / (20 + speed)); slashModifier Light 1.5 / Balanced 1+0.005m / Heavy 0.5+0.005m. RATIO TEST PASSES: payload Light/Heavy at mastery 0 = 1.5/0.5 = 3.00; frame, same level-8 character = 303/100 = 3.03. MAGNITUDE TEST FAILS: both frame readings imply base \u2248 202 (303/1.5 = 202; 100/0.5 = 200), and inverting 120 + floor(90*s/(20+s)) = 202 needs s \u2248 205, while the web per-stat cap at level 8 is 1+(8+10)*3 = 55 and the whole formula's Dan-0 asymptote is 210.",
+  "text": "The payload slash-length formula and the frame-measured stage-px reaches agree on RATIO but not on MAGNITUDE \u2014 the frames imply a base of ~202 px, which the payload's own formula cannot produce at level 8 \u2014 so an unestablished unit/scale factor sits between them and the frame still wins on stage-px values.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3130-3152",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/reversed-and-dual-reach",
+  "lane_impact": "L5 + L2 \u2014 combined with the unconditional ability grants for Reversed/Dual, these two stances are a complete fourth and fifth kit; the reach floor of 100 applies to Reversed as well as Heavy.",
+  "overturns_ledger": false,
+  "quote": "case \u00a71t12224s0\u00a7 (DUAL): this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;   ///   case \u00a71t12223s0\u00a7 (REVERSED): this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7; if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }",
+  "text": "Reversed and Dual stances have their own reach multipliers the three-stance model has no slot for: Dual = base x1.4, Reversed = base x1.0, both hard-floored at 100.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/Mobile.as:117 (frame rate) + MCSPlayer.as:15-19 (50/40/30) \u2192 applied at src/core/Sim.ts:670 with FIXED_HZ=60 from src/config/timing.ts:8",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/sim-dash-hz-unit-bug",
+  "lane_impact": "L5 \u2014 a live, shipped 2.5\u00d7 error in dash travel speed, sitting inside the exact constants combat-core/pass-through-dash quoted without checking the unit. The rest of the config already bridges 24\u219260 correctly (combat.ts:83-91 names FOCUS_FILL_PER_S = 24 and FOCUS_ACC 2/5 = 24/60); the dash is the one constant that skipped the conversion. Fix: DASH_SPEED_PX_PER_FRAME \u00d7 24, or relabel as px/s = {1200,960,720}.",
+  "overturns_ledger": false,
+  "quote": "Mobile.as:117 `GameEngine.getStageMC().frameRate = 24;` \u00b7 MCSPlayer.as:15-19 `lightSlashSpeed:int = 50 / balancedSlashSpeed:int = 40 / heavySlashSpeed:int = 30` \u00b7 src/config/combat-sim.ts:77 `/** CONTRACT-SRC \u2014 dash travel per 60 Hz frame, in WORLD px, by stance. */` \u00b7 src/core/Sim.ts:670 `speedPxS: DASH_SPEED_PX_PER_FRAME[player.stance] * FIXED_HZ,`",
+  "text": "src/core/Sim.ts converts the source's per-frame dash speed with FIXED_HZ = 60 although the original runs at 24 fps, so the sim dashes at 3000/2400/1800 px/s instead of 1200/960/720 \u2014 2.5\u00d7 too fast.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:80,82,86 + InputManager.as:342-343, 472-478; desktop confirm reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:104,106",
   "citelint": {
    "notes": [],
@@ -589,168 +748,5 @@
   "quote": "Android: \"var rng:RNG = new RNG(StageManager.getCurrentNode() * QueryManager.instance.getServerDate() * index);\" (three factors). Web: \"var _loc4_:int = \u00a71t3317s0\u00a7.instance.\u00a71t1848s0\u00a7() * param1;\" then \"\u00a71t58s0\u00a7.random(_loc3_,_loc4_)\" (two factors). \u00a71t3317s0\u00a7 is QueryManager \u2014 it carries saveModifiedCharData and reportPremiumBuy(4,\"convertgold\",1) in the block at :953-959 \u2014 so \u00a71t1848s0\u00a7() is getServerDate(). The missing factor is the NODE.",
   "text": "The web trade-goods price seed omits getCurrentNode(), which if literal makes every town quote the same daily price and would destroy the arbitrage loop the game's own tutorial tip advertises.",
   "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/videos/Nr4fQstqHDM.mp4 t=48:04 self-extracted 1920\u00d71080, tooltip panel right of the grid (approx (1100,250)-(1780,820)), read at 1280-wide render; cross-checked against reference/extracted/android/118_Mobile_Lang_EN.bin via docs/gauntlet/L0/index/strings.json",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "economy/web-build-has-unresolvable-content",
-  "lane_impact": "L3/L10: a soul-infused item-levelling system is visible on film and absent from every extracted data source. Any lane porting item names or premium SKUs from resolved_names.json must label them ANDROID 0.682 and expect gaps against the filmed build.",
-  "overturns_ledger": false,
-  "quote": "Tooltip reads: \"TRAINING GARMENT / OWNED: 0 / SOUL-INFUSED / THIS ITEM LEVELS UP AS YOU GAIN XP. / DEFENSE: +21 (EQ: 4) / EARTH DEF: +3 (EQ: 1) / PIERCING DAMAGE: +2 (EQ: 0) / MAX CHI: +15 (EQ: 0) / WEIGHT: 10\", badge 15 gold, LEVEL 7. Searching the 2,533-entry android table for 'Training' returns Training Hall / Training Sword / Training Dummy and no garment; searching for 'levels up as you gain' returns zero hits.",
-  "text": "The filmed web build contains item content the android 0.682 string table cannot name at all, proving the S0-3 provenance caveat is a live hazard rather than a formality.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/payload.xml byte offsets 19403382 ('heavenlyprice') and 19503662 ('itemdata') \u2014 each the ONLY occurrence in 329 MB, both inside an AS3 string constant pool listed between 'baseprice' and 'minlvl'; plus the 27-file header dump of reference/extracted/bindata/",
-  "citelint": {
-   "notes": [
-    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
-   ],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "economy/web-build-ships-no-game-data",
-  "lane_impact": "ALL LANES (L1 campaign, L3 items, L4 enemies, L5 skills, L10, L11): every row ported out of reference/extracted/*.xml must be labelled clientVersion 0.682. Four independent web-vs-disk divergences are already known \u2014 item 2208 pays 1000 coins on disk and 200 on film/code; the premium gold ladder is 5\u00d7; 'Soul-Infused'/'Training Garment' are on the web frame but score 0 hits in 118_Mobile_Lang_EN.bin; quest loot id 50007 (town prosperity) renders in the client and appears 0 times in the 0.682 questdata. Where a frame exists, the frame is the ONLY web-side authority.",
-  "overturns_ledger": false,
-  "quote": "payload.xml @19403382: \"<item>shop</item> <item>roomdata</item> <item>property</item> <item>baseprice</item> <item>heavenlyprice</item> <item>minlvl</item> <item>scalex</item>\" \u2014 tag names for a parser, not rows. bindata/ headers: 100-118 + 102/103 etc. all '<?xml version=\"1.0\"?> <animdata> <anim i=\"\u2026\"', 119 '<survivalmodedata', 93 room-object defs, 94-98 name lists, 92 'GIF89a'. Zero item/skill/npc/quest blobs. And: diff reference/extracted/{itemdata,skilldata,npcdata,questdata}.xml against android/{111,117,125,116}_*.bin differs ONLY by the <?xml?> declaration and a trailing newline.",
-  "text": "The web v0.717 payload contains NO item, skill, npc or quest data \u2014 it fetched all four tables from the dead Player.IO backend \u2014 so every reference/extracted/*.xml on disk is Android v0.682 data and the \u00a70 S0-3 build caveat can never be retired by diff, only by frame.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/payload.xml, single occurrence of 'heavenlyprice' at byte offset 19403382 of 329520665; reference/extracted/itemdata.xml vs reference/extracted/android/111_Mobile_ItemData.bin",
-  "citelint": {
-   "notes": [
-    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml",
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "economy/web-payload-has-no-itemdata-table",
-  "lane_impact": "ALL LANES (L1-L11): narrows claim economy/web-payload-is-decompilable. AS3 can now be cited from the web build, but itemdata/npcdata/skilldata/questdata are Android-provenance and the web build fetched its tables from the dead Player.IO server. This is the root cause of the heavenlyprice-vs-frame mismatch, and it means any DATA number ported from reference/extracted/*.xml must still be labelled Android v0.682 and frame-checked before use.",
-  "overturns_ledger": false,
-  "quote": "<item>shop</item>\\n<item>roomdata</item>\\n<item>property</item>\\n<item>baseprice</item>\\n<item>heavenlyprice</item>\\n<item>minlvl</item>\\n<item>scalex</item>\\n<item>scaley</item>  \u2014 i.e. the ABC string constant pool, not a data row. grep -o 'heavenlyprice' payload.xml | wc -l = 1. Meanwhile the Android blob 111_Mobile_ItemData.bin is content-identical to reference/extracted/itemdata.xml (differs only by the 40-byte XML declaration plus a 2-byte trailing newline).",
-  "text": "The web v0.717 payload contains NO itemdata table at all \u2014 only the parser's field names in the SWF string constant pool \u2014 so every data XML on disk is Android v0.682 provenance and the S0-3 build caveat must stay on data even though it can be dropped for AS3.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1676 (and display path :1706); identity proofs at \u00a71t401s0\u00a7.as:1641, \u00a71t401s0\u00a7.as:796 and \u00a71t7216s0\u00a7.as:256 against reference/decompiled/shs3_android/scripts/InteractUI.as:1552, :1562 and XMLShopData.as:101-102",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "economy/web-trade-goods-seed-resolved",
-  "lane_impact": "L9/L10: the trade-goods loop is fully reproducible offline with mulberry32 \u2014 but the v0.717 rule makes prices node-INDEPENDENT, which contradicts the tutorial tip at GameEngine.as:636 ('buying goods from a market and selling in another town'). The rebuild must pick one and label it in DIVERGENCES: v0.717 fidelity (no cross-town arbitrage, only cross-day) or v0.682 behaviour (node in the seed). This is now a decision, not an unknown.",
-  "overturns_ledger": false,
-  "quote": "\u00a71t401s0\u00a7.as:1676-1677 \u2014 \"var _loc4_:int = \u00a71t3317s0\u00a7.instance.\u00a71t1848s0\u00a7() * param1;\\nreturn _loc2_ * (100 - _loc3_ / 2 + \u00a71t58s0\u00a7.random(_loc3_,_loc4_)) / 100;\" vs Android InteractUI.as:1562 \"var rng:RNG = new RNG(StageManager.getCurrentNode() * QueryManager.instance.getServerDate() * index);\". Identity chain: \u00a71t3317s0\u00a7=QueryManager (\u00a71t401s0\u00a7.as:1641 \u00a71t1955s0\u00a7(50000+param1,_loc3_) \u2261 InteractUI.as:1552 updateGlobalVar(50000+house,count)); \u00a71t1848s0\u00a7=getServerDate and \u00a71t1847s0\u00a7=getServerTime (\u00a71t7216s0\u00a7.as:256 \"\u00a71t1848s0\u00a7() * Math.floor(\u00a71t1847s0\u00a7() / (60 * 60))\" \u2261 XMLShopData.as:102, and \u00a71t401s0\u00a7.as:796 \"\u00a71t58s0\u00a7.\u00a71t8804s0\u00a7(\u00a71t1525s0\u00a7.\u00a71t9935s0\u00a7() * \u00a71t3317s0\u00a7.instance.\u00a71t1848s0\u00a7())\" \u2261 RNG(getCurrentNode()*getServerDate())).",
-  "text": "RESOLVES the surveyor's PARTIAL: the web v0.717 trade-goods price seed is getServerDate() \u00d7 commodityIndex, with the getCurrentNode() factor DROPPED \u2014 so in v0.717 every town shows the same commodity price on a given day and cross-town arbitrage does not exist.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/FriendlyElite.as:70, FriendlyArcher.as:58, FriendlySpearElite.as:56",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/allies-level-match-the-player",
-  "lane_impact": "L0 enemies-ai: explains the 70 <friend> entries in questdata's wave blocks \u2014 escorts and allied troops scale with you, so their authored <lvl> rows are inert. Also the most likely explanation for the seg-10 frame showing roaming BANDIT (4) while the player badge reads level 4.",
-  "overturns_ledger": false,
-  "quote": "this.setLevel(StatsManager.getLevel());",
-  "text": "Friendly NPCs are level-matched to the player at spawn rather than using their authored <lvl>.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/FriendlyArcher.as:58, FriendlyElite.as:70, FriendlySpearElite.as:56 (contrast NPCManager.as:868-881)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/allies-scale-to-player-level-enemies-do-not",
-  "lane_impact": "L0 enemies-ai: completes blocker \u2460. setLevel is the shared mechanism but the INPUT differs by faction \u2014 allies read StatsManager.getLevel(), enemies read the wave's <lvl> (171 such overrides authored, range 1..80) and fall through to the authored statline when it is 0. Note the consequence: an ally at player level <=10 also hits the 1/1/1 clamp.",
-  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
-  "overturns_ledger": false,
-  "quote": "FriendlyArcher.as:58 this.setLevel(StatsManager.getLevel());  \u00b7  FriendlyElite.as:70 this.setLevel(StatsManager.getLevel());  \u00b7  FriendlySpearElite.as:56 this.setLevel(StatsManager.getLevel());  \u00b7  NPCManager.as:868-881 public static function createEnemy(npcID:int, x:int, y:int, fatal:Boolean, lvl:int = 0) : NPC { ... if(lvl != 0) { actor.setLevel(lvl); } return actor; }",
-  "text": "Friendly NPCs scale to the PLAYER's level at spawn while enemies take an authored per-wave <lvl> override \u2014 two different scaling rules by side, which the ledger and the survey both treat as one formula.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/extracted/npcdata.xml:3898 and :3934 (647 <skill> occurrences across the file, 39 distinct ids)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "enemies-ai/category-11-skills-are-in-npcdata",
-  "lane_impact": "L4 enemies-ai \u2014 the enemy-only move set is fully authored per-NPC and can be read straight out of npcdata; no code archaeology needed to know which enemies throw, air-stab, bull-charge or resurrect. It also confirms the reversed/dual stance flags are assigned to specific NPCs (5 and 2 rows) with <lvl>3</lvl>, which is what EnemyPlayer.as:836-843 branches on.",
-  "overturns_ledger": false,
-  "quote": "npcdata.xml:3898  <skills><skill><id>1500</id><lvl>3</lvl></skill><skill><id>1003</id><lvl>1</lvl></skill>\u2026<skill><id>1064</id><lvl>1</lvl></skill><skill><id>1065</id><lvl>1</lvl></skill></skills>\\nnpcdata.xml:3934  <skills><skill><id>1501</id><lvl>3</lvl></skill>\u2026<skill><id>1064</id><lvl>1</lvl></skill><skill><id>1065</id><lvl>1</lvl></skill><skill><id>1068</id><lvl>1</lvl></skill></skills>",
-  "text": "All seven category-11 skills DO appear in npcdata rows, contrary to the packet's claim that they appear in zero. The counts are Back Throw 1064 x4, Air Stab 1065 x4, Bull Charge 1066 x1, Punch Lunge 1067 x1, Undying 1068 x2, and the two stance-selector flags 1500 x5 and 1501 x2. The reason a text grep misses them is schema: npcdata writes <skill><id>N</id><lvl>L</lvl></skill>, so the pattern <skill>N</skill> can never match.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0020.jpg - crop (400,150)->(1024,470), LANCZOS x2",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/drop-in-spawn-is-on-film",
-  "lane_impact": "L0 enemies-ai: promotes NPCManager's posY - Math.random()*200 drop-in rule from A2-only to A2+A1, so it is safe to stamp. Also independently corroborates the combat-readout rule in a second scene (outdoor field, not the dungeon the surveyor cited).",
-  "ledger_text": "\u2463 aggro/leash/spawn geometry.",
-  "overturns_ledger": false,
-  "quote": "Visibly in the crop: a blue-clad kasa-hatted enemy fully airborne, roughly a body-height above the reed line, legs trailing, mid-descent, with a green HP bar floating directly above him; two more green bars over grounded hostiles at left; the gold GUEST player standing at right. No hostile carries a name or level.",
-  "text": "The drop-in-from-above wave-spawn rule, asserted from AS3 only, is directly visible in a frame: a wave-2 enemy descends through the air with its HP bar already tracking it.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NPCManager.as:381-388",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/endless-wave-flag-is-the-survival-engine",
-  "lane_impact": "Cross-lane: connects Stage-0 finding S0-1 (bindata 119 = <survivalmodedata>, plus the Android 109_WarHexUI_SurvivalModeData.bin) to executable behaviour. Survival mode is not a separate system to reverse-engineer \u2014 it is the existing wave spawner with one boolean and a -2 rewind.",
-  "overturns_ledger": false,
-  "quote": "++currentWave; if(currentWave >= waveCount) { if(endless && !StageManager.isSurviveCleanUp()) { currentWave -= 2; nextWave(); } }",
-  "text": "The wave engine carries an `endless` flag that rewinds the wave counter by 2 and recurses instead of ending the fight \u2014 the runtime behind the survivalmodedata blob that Stage-0 flagged as an entire game mode absent from all 12 ledger systems.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0018.jpg -- crop (450,300)->(900,470) LANCZOS x4; HUD strip crop (30,480)->(330,560) x4 across frames 0013/0016/0017/0018/0019/0020",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/floating-damage-numeral-measures-the-clamp",
-  "lane_impact": "L0 enemies-ai + ui-hud. Two things. (1) Floating damage numerals exist -- black, above the damaged actor -- and appear in no ledger row and no claim; a recreation without them is visibly wrong. (2) This is a v0.717 WEB frame measuring an ANDROID v0.682 constant and finding it correct, which is precisely the unlock condition claim 20 set for discharging the parity risk. It also does honestly what claim 2 tried to do rhetorically: supply real frame evidence for the lvl<=10 clamp.",
-  "ledger_text": "(1) enemy **level->stat formula** (governs the whole roster's balance -- absent, not just inferred).",
-  "overturns_ledger": false,
-  "quote": "Visibly in the crop: a black floating numeral \"1\" rising above the player, immediately left of the gold GUEST label, while the player swings a pickaxe and a red slash trail plus blood spray marks a killed archer to the right. In the HUD strip the green bar reads 20/20 at frames 0013, 0016 and 0017, then 19/20 at frame 0018 -- the exact frame carrying the floating \"1\" -- then 18/20 at 0019 and 0020. Blue chi stays 15/15 throughout.",
-  "text": "Floating black damage numerals are a real HUD element the ledger and the surveyor both miss, and a web-build v0.717 frame measures a level-4 Bandit's damage at exactly 1 -- the first frame-side corroboration of NPC.as:253's lvl<=10 clamp.",
-  "verdict": "HELD"
  }
 ]

@@ -1,377 +1,105 @@
 [
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:36 and \u00a71t99s0\u00a7.as:249/:3094/:3105/:3116/:3274; corroborated by docs/research/fidelity/SOURCE_CONSTANTS.md \u00a70 (2026-07-25, 'CRACKED AND MINED \u2026 Build identified as v0.717')",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "combat-core/web-v0717-ast-is-readable",
-  "lane_impact": "L5 (and every other lane that inherited the 'android is all we have' framing) \u2014 v0.717 constants are directly readable, so any A2 in a combat lane can and must be taken from shs3_payload, with shs3_android used only for the four data XMLs (which SOURCE_CONSTANTS \u00a73.7 already tags CONTRACT-SRC (0.682)). The gauntlet's standing android caveat should be narrowed to the XML tables, not applied to code constants.",
-  "ledger_text": "\u2461 crit 1.3 vs 3 final \u2014 *read one crit popup.*",
-  "overturns_ledger": true,
-  "quote": "\u00a71t1523s0\u00a7.as:36 `public static var \u00a71t9323s0\u00a7:Number = 0.717;` \u00b7 \u00a71t99s0\u00a7.as:249 `this.\u00a71t4415s0\u00a7 = 8 * 24;` \u00b7 :3094 `this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;` \u00b7 :3274 `return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;` \u00b7 shell: `ls reference/decompiled/shs3_payload/scripts/ | grep -c '\u00a7'` \u2192 612",
-  "text": "The web v0.717 payload's ActionScript is decompiled and readable in this repo \u2014 612 obfuscated top-level classes, 1,079 .as files, plain bodies \u2014 so no combat constant in this lane needed to be sourced from the android build at all.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/Nr4fQstqHDM/seg-28/frames/frame_0007.jpg, crop (470,110)-(780,290) upscaled \u00d74 LANCZOS",
+  "cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1057-1080 (cost at :1058, uses clamp at :1073-1076, reinforce at :1082-1083)",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "economy/ap-cap-is-40-not-30",
-  "lane_impact": "L9 (WORLD): blocker \u2463's regen half closes at 1 AP per 60 s (APINTERVAL, web \u00a71t1523s0\u00a7.as:196 = 60); the CAP half does not close at 30 and must not be written into config. THE FRAME WINS. Same failure mode as reading MAXDUELTOKENS=30 as a cap when the HUD reads 40/40.",
-  "ledger_text": "\u2463 AP regen rate + cap (world-exploration blocker)",
+  "id": "items-equipment/repair-weapon-cost-held",
+  "lane_impact": "L4 (economy) \u2014 kills economy blocker \u2462 outright with a two-term formula and a gold currency (not coins). Also settles an items question the survey left dangling: repair floors `uses` at 1, which is 'Condition: Well-Maintained' (string 392), never 0 ('Unbreakable', string 639). That one-way door explains the otherwise-odd uses==0 branch in the condition ladder. Repair is refused when the weapon slot is empty or holds id 13000 (bare hands).",
+  "ledger_text": "\u2462 Repair-Weapon cost (never captured).",
   "overturns_ledger": true,
-  "quote": "Visibly in the crop, the character-summary bars: 'HP 20 / 30' (green), 'CHI 47 / 47' (blue), 'AP 30 / 40' (pale blue), with ATK/DEF/SPD diamonds down the right edge.",
-  "text": "AP max is 40 in the filmed web build; STAT_MAXAP,30 in StatsManager is a level-1 creation initial, exactly like STAT_MAXHP,10 which the same frame shows at 30.",
+  "quote": "case \"repairweapon\": cost = StageManager.getCurrentNodeLevel() * 10; ... weapon = StatsManager.equipment[StatsManager.EQ_WEAPON]; if(weapon == null || weapon.itemID == 0 || weapon.itemID == 13000) { ...error... } StatsManager.changeGold(-cost); if(weapon.uses > 1) { weapon.uses = 1; } ... case \"reinforceweapon\": cost = 5000;",
+  "text": "The Repair-Weapon cost is held exactly \u2014 currentNodeLevel * 10 gold \u2014 and repair sets the wear counter to 1, not 0, so a repaired weapon can never return to the 'Unbreakable' state.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:166-190, with helpers at :94-110 (getGreyLevel, three bands) and :112-164 (getZeroDifference, eleven bands)",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSItem.as:203-224 (setConsumable) and :226-245 (setAccessory); DummyIcon class census in reference/decompiled/shs3_android/scripts/; visual consequence at reference/frames/s21_weapon/t708.0.png crop (900,590)-(1640,960) upscaled x2",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "economy/calcxp-hard-cutoffs",
-  "lane_impact": "L4/L10: the XP half of blocker \u2460 is fully dead \u2014 grey-out floor, +3 over-level ceiling and elite \u00d72 included, portable today with no build needed. This also gives L4 (ENEMIES) its trivial-mob suppression rule for free.",
-  "ledger_text": "\u2460 coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either).",
+  "id": "items-equipment/two-icon-only-art-namespaces",
+  "lane_impact": "L6 (art) \u2014 the icon-manifest half of blocker \u2464 is NOT dissolved; it is a third and fourth art namespace on top of the paperdoll parts. Five of the seven inventory icons in the reference frame (scroll, onigiri x3, black stone, two feathers) are consumables/accessories that cannot be composed from body parts. Only item0 (the fallback) exists as a named class in any bundle, so this widens the residual art gap rather than closing it.",
+  "ledger_text": "\u2464 **sprite-compositing contract** (layer order, per-slot body render \u2014 a from-scratch-art blocker) + item **icon manifest**.",
   "overturns_ledger": true,
-  "quote": "NPC.as:168-188 \u2014 \"if(mobLevel <= getGreyLevel()) { return 0; }\\nif(mobLevel - playerLevel > 3) { return 0; }\\nvar finalXP:int = xp;\\nif(playerLevel < mobLevel) { finalXP = xp * (1 + 0.05 * (mobLevel - playerLevel)); }\\nelse if(playerLevel > mobLevel) { finalXP = xp * (1 - (playerLevel - mobLevel) / getZeroDifference()); }\\nif(elite) { finalXP *= 2; }\". getGreyLevel: <6 -> 0; <40 -> lvl - floor(lvl/10) - 5; <60 -> lvl - floor(lvl/5) - 1; else lvl - 9.",
-  "text": "calcXP carries two hard zero cut-offs and an elite doubler that the survey did not quote \u2014 the XP model is more completely held than claimed.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/videos/Nr4fQstqHDM.mp4 \u2014 t=21:25 (BLACKSMITH menu open, wallet 531 COINS) and t=21:45 (STABLES, wallet 461 COINS), both extracted at 1920x1080 and read from a 640x360 contact sheet; corroborating formula at reference/decompiled/shs3_android/scripts/InteractUI.as:1058.",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "economy/minus-70-is-repair-not-artifact",
-  "lane_impact": "L10: closes a discrepancy SYNTHESIS.md:243 marks 'unresolved ... do NOT hardcode'. Forge = min(nodeLevel,80) x 100 and repair = nodeLevel x 10 are now both frame-corroborated at the same node in the same visit, and the ledger's dismissive 'capture artifact' parenthetical should be struck.",
-  "ledger_text": "Forge 700c (the \u221270 HUD read is a capture artifact)",
-  "overturns_ledger": true,
-  "quote": "t=21:25 crop shows the BLACKSMITH panel with options FORGE A WEAPON / REPAIR WEAPON / REINFORCE WEAPON / LEAVE and the top-left wallet reading 531 COINS; t=21:45 shows the stables with 461 COINS. Delta = -70. InteractUI.as:1058 \u2014 \"cost = StageManager.getCurrentNodeLevel() * 10;\". The stables leg 545 -> 531 = -14 = nodeLevel 7 x 2 confirms the node level independently (InteractUI.as:241).",
-  "text": "The ledger's unresolved '-70 HUD read' at the blacksmith is a Repair Weapon at node level 7 (7 x 10), not a capture artifact \u2014 and the forge was never paid because the player held 531 coins against a 700 quote.",
+  "quote": "public function setConsumable(id:int) : * { this.clearItem(); this.displayItem = this.getMCSComponent(\"item\",id); if(this.displayItem == null) { this.displayItem = new item0(); ... } }  /  public function setAccessory(id:int) : * { ... this.displayItem = this.getMCSComponent(\"acc\",id); if(this.displayItem == null) { this.displayItem = new AccessoryDummyIcon(); ... } }  /  11 classes: Accessory/Achievement/Armor/Consumable/Gloves/Hat/Invalid/Mask/Pants/Shoes/Weapon DummyIcon",
+  "text": "Consumables and accessories have their own icon symbol namespaces ('item<art>' and 'acc<art>') that are not paperdoll parts, plus 11 named placeholder icon classes \u2014 so the item icon pipeline is genuinely separate from the paperdoll pipeline.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/QuestGenerator.as:844 (and :1006 bounty, :917 emission, :876 outcome-11 emission); web twin reference/decompiled/shs3_payload/scripts/\u00a71t123s0\u00a7.as:883 and :955; consumed at QuestLogUI.as:455-461",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5374s0\u00a7.as:686-724",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "economy/quest-coin-reward-formula",
-  "lane_impact": "L1 (CAMPAIGN) + L10 (ECONOMY): quests are the PRIMARY repeatable coin faucet, not a zero. Against the 0.5 coins/kill mob EV, one level-7 quest (35c) equals 70 mob kills \u2014 an offline economy that omits it starves by ~2 orders of magnitude. The law is fully offline-reproducible: nodeLevel x 5, x10 for bounties, paid as loot id 0.",
-  "ledger_text": "\u2460 coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either).",
+  "id": "items-equipment/web-soul-infusion-superset",
+  "lane_impact": "L4 (economy/crafting) \u2014 implement the v0.717 rule set; the Android-only version silently no-ops for armour and pants.",
+  "ledger_text": "soul-infusion + stat-transfer rules (patch-note-sourced)",
   "overturns_ledger": true,
-  "quote": "QuestGenerator.as:844 \u2014 \"var questCoinReward:int = nodelvl * 5;\"; :1006 \u2014 \"var questCoinReward:int = nodelvl * 10;\"; :917 \u2014 \"rewardStr += \\\"<loot><id>0</id><qty>\\\" + questCoinReward + \\\"</qty></loot>\\\";\"; :876 \u2014 \"introStr += \\\"<outcome><id>11</id><modify>\\\" + questCoinReward + \\\"</modify><end>0</end></outcome>\\\";\". WEB \u00a71t123s0\u00a7.as:883 \u2014 \"var _loc17_:int = _loc15_ * 5;\" and :955 \u2014 \"_loc25_ = _loc25_ + (\\\"<loot><id>\\\" + 0 + \\\"</id><qty>\\\" + _loc17_ + \\\"</qty></loot>\\\");\". QuestLogUI.as:455-461 \u2014 \"else if(lootType == 0 || lootType == 11){coinReward += qty;} else if(lootType == 1){coinReward += 5 * qty;}\"",
-  "text": "Quest coin reward is a held, portable law in BOTH builds \u2014 questCoinReward = nodeLevel x 5 (bounty quests nodeLevel x 10) \u2014 emitted at runtime as <reward><loot><id>0</id>, which is why it is nearly absent from the static questdata.xml.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/zFtCaTO0_1M/seg-29/frames/frame_0013.jpg, crop (480,335)-(770,465) upscaled x5 LANCZOS; mechanism at reference/decompiled/shs3_android/scripts/QuestGenerator.as:846,850,921,1094 and web reference/decompiled/shs3_payload/scripts/\u00a71t123s0\u00a7.as:885,889,959,1140,1349; consumed at Overworld.as:357-359",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "economy/quest-prosperity-plus5-is-client-side",
-  "lane_impact": "L9/L11: split blocker \u2461 three ways, not two. Sell-price DEAD (claim 9). Player-driven prosperity DEAD \u2014 +5/+10 per quest, client-side, frame-confirmed. Only the DAILY-SIM deltas (bandit raids, merchant trade, mercenary upkeep, town attacks) remain server-side and must be authored + labelled in DIVERGENCES.",
-  "ledger_text": "\u2461 sell-price + prosperity-daily-sim formulas.",
-  "overturns_ledger": true,
-  "quote": "Visible in the crop, four lines: \"REWARD / 250 XP / 30 COINS / TOWN PROSPERITY: +5\". QuestGenerator.as:846 \u2014 \"var prosperityReward:int = 10;\"; :850 \u2014 \"prosperityReward = 5;\"; :1094 \u2014 \"rewardStr += \\\"<loot><id>50007</id><qty>5</qty></loot>\\\";\" (and 11 further literal-5 sites). Overworld.as:357-359 \u2014 \"else if(lootType == 50007){ StatsManager.changeStat(50007,qty); }\". HistoryItem.as:373 names the channel \u2014 \"Players changed prosperity through quests by \" + val1.",
-  "text": "Town-prosperity deltas from quests are hard-coded client-side literals in BOTH builds (+5, or +10 on the non-halved branch) and one of them is confirmed on film \u2014 so prosperity is not wholly server-authored.",
+  "quote": "_loc6_ = _loc5_.defense; _loc7_ = \u2026(statsSlot).defense; if(_loc3_.\u00a71t523s0\u00a7(7) == 0) { _loc3_.\u00a71t493s0\u00a7(7,_loc7_ - _loc6_); } \u2026 if(_loc1_ == 4 || _loc1_ == 11) { _loc8_ = statsItem.\u00a71t545s0\u00a7(); _loc9_ = _loc5_.weight; _loc3_.\u00a71t478s0\u00a7 = _loc8_ - _loc9_; } \u2026 if(_loc5_.durability != 0) { _loc3_.uses = statsItem.uses; }",
+  "text": "The shipped web v0.717 soul-infusion transfers a DEFENSE delta (modifier id 7) for every item type and a WEIGHT delta for armor (type 4) and pants (type 11), and gates the durability copy on the design item having non-zero durability \u2014 none of which exists in the Android v0.682 code the survey quoted.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:192, 194, 2668-2698 + reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2638-2660 + OverworldHUD.as:1333",
+  "build": "both (divergent)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3290 vs reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3198-3224",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "economy/rebirth-pays-heavenly-gold",
-  "lane_impact": "economy + rebirth-elements: config REBIRTH.earlyGold/tenthGold currently feed p.gold (tests/progression.test.ts:183,192), i.e. coins \u2014 the wrong purse. The 25/100 numbers and MAX_DAN_RANK=10 are sound and can be promoted, but the currency must be modelled as a separate premium resource or the mapping relabelled. Corroboration that stat 12 is the rebirth currency: the android anti-cheat trips at HGOLD>60 while DAN<9, and android pays 8x5+20 = exactly 60. The same line shows desktop's 25/100 (8x25+100 = 300) could not run against a >60 check \u2014 further evidence the two builds' rebirth economies genuinely diverge.",
+  "id": "kh-web-getdamage-twin-crit-is-1.3",
+  "lane_impact": "L5 combat-core: this is the single most load-bearing formula in the project and it must be tagged per build. Tag the WEB row CONTRACT for v0.717 (0.04/0.02/1.4, crit 1.3x, Heavy-def 0.8) and the android row as a divergence. It also kills packet claim NF-1's demanded rewrite and confirms REBUILD_READINESS.md:152 and :189. Add it to the build-divergence table as divergence #8.",
+  "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "overturns_ledger": true,
+  "quote": "web \u00a71t99s0\u00a7.as:3262: _loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);  \u00b7  :3265: _loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);  \u00b7  :3270: _loc2_ = _loc1_ * 1.4;  \u00b7  :3272-3275: if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7; }  \u00b7  :3288: return defense * 0.8;",
+  "text": "The damage and crit formula is a BUILD DIVERGENCE, and the ledger had the web numbers right all along. The web v0.717 twin of MCSPlayer.getDamage() is \u00a71t99s0\u00a7.as:3255-3277 (identifiable beyond doubt: same 'minDamage + Math.random() * damageRange' opener at :3258, same getBaseDamage at :3281, same Heavy-defender 'defense * 0.8' at :3286-3290, same reload-reset-on-full at :3295-3297, stance constants 0..4 at :27-35). Its numbers are Light *(0.5 + 0.4*m*0.1), Balanced *(1 + 0.2*m*0.1), Heavy/Dual/Reversed FLAT *1.4, and a SINGLE crit arm '*1.3 + STAT_CRITICALDMG' on reload == maxreload. Android v0.682 carries 0.005/0.005/1.5 and a two-arm 1.5x-Light / 1.2x-other crit. Two consequences: REBUILD_READINESS.md:152's 'Keep CRIT_MULT=1.3' is VINDICATED by shipped web code, and the ledger's stance table at :155 (0.9 / 1.2 / 1.4) reproduces to the digit from the web expression at mastery 10 -- so those numbers are web-build truth, not folklore. The ledger's own label is off by one: they are mastery-10 values, not mastery-9.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/Nr4fQstqHDM/seg-05/frames/frame_0025.jpg and reference/frames/zFtCaTO0_1M/seg-20/frames/frame_0019.jpg \u2014 top-22% HUD strips, 2x LANCZOS upscale",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ledger/film-shows-rebirth-is-unsourced",
+  "lane_impact": "rebirth-elements + economy + ledger hygiene. THE FRAME WINS, and here it wins against the ledger's own sourcing claim: the longplays cap at L5/L8 so no rebirth could have been observed, and REBUILD_READINESS.md:205 concedes it ('never filmed \u2014 both longplays pre-rebirth') \u2014 the ledger contradicts itself at :165 vs :205. The '+25' number is NOT wrong; it is the value already banked in the ledger's KNOWN-KNOWNS at :79 ('rebirth scroll 1000c (+25g)') and it is now CONFIRMED by v0.717 code. Only the 'no 10th-rebirth tier' half of \u00a73 #7 is disproven. Downstream lanes must stop treating '+25' as a film measurement \u2014 the frames prove that provenance is fictitious. The frames also confirm COINS and GOLD are two distinct on-screen currencies, so STAT_HGOLD is the on-screen 'GOLD'.",
   "ledger_text": "film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
   "overturns_ledger": true,
-  "quote": "StatsManager.as:192  internal static var STAT_GOLD:int  = 11;\nStatsManager.as:194  internal static var STAT_HGOLD:int = 12;\nStatsManager.as:2668 public static function getHeavenlyGold() : int\nStatsManager.as:2674    hgold += QueryManagerPIO.instance.getPayVaultCoins();\nOverworldHUD.as:1333 if(getStat(STAT_HGOLD) > 60 && getStat(STAT_DAN) < 9) reportHack(\"gold\");",
-  "text": "Rebirth pays HEAVENLY GOLD (stat 12, the PayVault-backed premium currency), not gold/coins (stat 11) \u2014 the desktop doRebirth never touches the coin purse at all.",
+  "quote": "Visibly in the crops: a level badge reading 8 beside '20880 / 20900 EXPERIENCE POINTS', and a level badge reading 5 beside '8093 / 8350 EXPERIENCE POINTS' with 'REGISTER TO SAVE YOUR PROGRESS AND PLAY ONLINE!' (a guest session). Both HUDs also show a silver '507 / 259 COINS' readout separate from a gold '2 GOLD' readout with a 'GET GOLD' button, and an EMPTY Dan field.",
+  "text": "REBUILD_READINESS.md \u00a73 #7 attributes its '+25 gold' to film, but nothing about rebirth was ever filmed \u2014 both longplays are frame-verified at level 5 and level 8, seventy-plus levels below the L80 rebirth gate, and the ledger's own \u00a74 says so.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7144s0\u00a7.as:34-48 and :81-82; grep -rli tournament over shs3_payload/scripts \u2192 5 files, over shs3_android/scripts \u2192 0 files",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1540s0\u00a7.as:271-307 + \u00a71t1523s0\u00a7.as:104,106 + reference/frames/session11/gap-focus-trigger/t1747.000.png",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "economy/tournament-is-web-only",
-  "lane_impact": "L10/L11: the 2026-08-13 critic's 'grep returns 0 files, the tournament half is untouched' was true of Android and is FALSE of the web bundle. A follow-up pass should read \u00a71t7144s0\u00a7.as and its four siblings for entry fees, payouts and bracket rules. Also a sixth witness that web \u2260 Android in CONTENT, not just tuning.",
-  "ledger_text": "\u2463 token/tournament economy numbers.",
+  "id": "measurement/stage-scale-is-2p25-not-1p875",
+  "lane_impact": "L5 + L8 + every MEASURED row that carries a stage-px conversion. Re-derive COMBAT_MEASUREMENTS.md and MOTION_MEASUREMENTS.md at /2.25 and offsetX=60 before any of those numbers become CONTRACT. It also gives the port an exact viewport contract: logical stage 800x480, uniform fit-height scaling, horizontal pillarbox.",
+  "ledger_text": "c-2 stage-px conversion: 'at 1920x1080 then converted at /1.875'",
   "overturns_ledger": true,
-  "quote": "\u00a71t7144s0\u00a7.as:34 'public var notournamenttext:TextField;' \u00b7 :44 'public var tournamentCreate:\u00a71t7091s0\u00a7;' \u00b7 :46 'public var tournamentdetailstext:TextField;' \u00b7 :48 'public var tournamenttitletext:TextField;' \u00b7 :82 'this.notournamenttext.text = \u00a71t1521s0\u00a7.getString(11018);' \u2014 member names survive SWFDefender mangling.",
-  "text": "The tournament system exists ONLY in the web v0.717 bundle \u2014 zero Android files mention it \u2014 so economy blocker \u2463's tournament half is openable rather than dead, and the survey's own claim 1 is the key that unlocks it.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as (setLevel override) + EnemyKanjiGuardian.as:48 + EnemyWolfAlpha.as:52 + EnemyOgre.as:51 + EnemySpearElite.as:32 + EnemyPlayer.as:57 + EnemyStag.as:48 + EnemyTrainingDummy.as:23; web parity at \u00a71t4523s0\u00a7.as:77-80",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/boss-rubber-band-hits-to-kill",
-  "lane_impact": "L0 enemies-ai blocker \u2460 and cross-lane into combat-core/progression. Variants: KanjiGuardian 5+8+lvldiff / 16\u2212lvldiff; WolfAlpha 15\u2212lvldiff; SpearElite and EnemyPlayer branch on isBoss/isDuelist and fall back to super.setLevel(); EnemyOgre.setLevel is an EMPTY override so the Ogre never rescales; EnemyTrainingDummy repurposes lvl as a tutorial step index (lvl==3 \u2192 maxhp = 8). Authored boss <hp> rows are FLOORS, not effective stats \u2014 the game is tuned to a number of hits, not to absolute numbers.",
-  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
-  "overturns_ledger": true,
-  "quote": "xp = lvl * 5 + 45; var playerHP:int = StatsManager.getPlayerStats(StatsManager.STAT_MAXHP) + StatsManager.findBonusStat(StatsManager.STAT_MAXHP); ... var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff; if(hitsToKillBoss <= 3) { hitsToKillBoss = 3; } ... var playerhit:int = playerATK - defense; if(playerLVL <= 10 && playerhit < 1) { playerhit = 1; } else if(playerLVL <= 20 && playerhit < playerLVL / 8) { playerhit = playerLVL / 8; } else if(playerLVL <= 30 && playerhit < playerLVL / 6) { playerhit = playerLVL / 6; } else if(playerhit < playerLVL / 4) { playerhit = playerLVL / 4; } var bossHP:int = playerhit * hitsToKillBoss; if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); } var bosshit:int = playerHP / hitsToKillPlayer; var bossATK:int = bosshit + playerDEF; if(bossATK > minDamage) { minDamage = bossATK; } if(lvl <= 5) { minDamage = 1; defense = 1; }",
-  "text": "Bosses and elites do not use the base level\u2192stat formula at all: 11 subclasses override setLevel, and the boss path solves the statline backwards from a target hit count against the player's LIVE stats \u2014 bossHP = playerhit \u00d7 (10 + lvldiff) and bossATK = playerHP/(18 \u2212 lvldiff) + playerDEF, taken as the max against the authored XML row.",
+  "quote": "\u00a71t1540s0\u00a7.as:271-273 `var _loc2_:int = 800; var _loc3_:int = 480; var _loc4_:int = 690;` ; :304-305 `_loc8_ = \u00a71t9973s0\u00a7.stageHeight / _loc3_; _loc9_ = (\u00a71t9973s0\u00a7.stageWidth - _loc2_ * _loc8_) / 2;` ; :309 `\u00a71t1523s0\u00a7.\u00a71t9358s0\u00a7 = _loc8_;` ; \u00a71t1523s0\u00a7.as:104 `public static var stageWidth:int = 800;` :106 `public static var stageHeight:int = 480;`",
+  "text": "EVERY 'stage px' NUMBER IN docs/research/fidelity/COMBAT_MEASUREMENTS.md THAT WAS CONVERTED AT /1.875 IS 20% TOO LARGE. The correct 1080p divisor is 2.25. The web build's letterbox routine sets base 800x480 and, for a viewport wider than 800/480 = 1.6667, takes the fit-height branch: scale = stageHeight/480 and offsetX = (stageWidth - 800*scale)/2. At 1920x1080 that is scale 2.25 with 60 px pillarbox bars. Three independent confirmations: (1) source, \u00a71t1540s0\u00a7.as:271-307 plus \u00a71t1523s0\u00a7.as:104/106 (stageWidth 800, stageHeight 480); (2) frames -- I measured the pillarbox on four session11 frames (first/last column with any pixel >12): damage-ttk/t125.350.png 54->1862, gap-focus-trigger/t1747.000.png 48->1867, stance-reach/B_t783.400_LIGHT_stroke-anchored-at-body_farGap436px.png 52->1868, stance-reach/A_t117.400_BALANCED_lvl1_stroke235px.png 54->1863, i.e. content ~1810-1820 px = 800x2.25 = 1800 plus compression bleed, whereas /1.875 demands 210 px black bars that are simply not present; (3) reductio -- the HUD reload bar sits at row y=1036 (I measured it), which at /1.875 maps to stage y ~504, off the bottom of a 480-tall stage, physically impossible, while at /2.25 it maps to stage y ~460 of 480, i.e. the bottom HUD strip. Corrected c-2 reach bands: LIGHT 233-241 -> 194-201 (max 303 -> 252); BALANCED 116-131 -> 97-109; HEAVY 97-103 -> 81-86 (max 121 -> 101). Note the corrected Heavy MAX of 101 now kisses the source's hard 100-px floor, and every band sits at or below its source cap, which is what a body-to-endpoint distance should do against a path-length budget.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (my grep of <anim i=\"(got|downed|death)...\" d=\"...\"> tags)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/eight-death-animations-by-killing-blow",
-  "lane_impact": "L0 enemies-ai + art-anim-audio-feel. The render-side partner of the behead damage *= 1.5 rule (claim 12) and the archer knockdown gate (claim 11): the game selects a dismemberment-specific death by how the fighter died. Blocker (3)'s 'stagger' half resolves as no-stagger-but-eight-deaths, which is a much richer answer than the claim's single deathdowned 7 and directly shapes what the recreation must animate.",
-  "ledger_text": "(3) telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": true,
-  "quote": "<anim i=\"death\" d=\"38\"> \u00b7 <anim i=\"deathbyarrow\" d=\"21\"> \u00b7 <anim i=\"deathdowned\" d=\"7\"> \u00b7 <anim i=\"deathenemy\" d=\"23\"> \u00b7 <anim i=\"deathinhalf\" d=\"28\"> \u00b7 <anim i=\"deathnohand\" d=\"25\"> \u00b7 <anim i=\"deathnohead\" d=\"31\"> \u00b7 <anim i=\"deathwitharrow\" d=\"23\"> \u00b7 (reaction chain: gotlaunchedupwards_parta 4 / _partb 9 / _partc 7, gotlauncheddowned 18, gotlauncheddownedend 1, downed 23, downedup 4, downedup2 25)",
-  "text": "The death system is eight distinct animations keyed to how the killing blow landed -- cut in half, beheaded, disarmed, arrow-killed -- not the single deathdowned the surveyor reported.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as:22-75 (and :105-120); cross-referenced to src/config/combat-sim.ts:110-130",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/elite-boss-second-level-formula-rubber-band",
-  "lane_impact": "L0 enemies-ai, and the biggest thing this unit missed. Blocker (1) is closed for trash but only half-closed for bosses: there are TWO formulas and the surveyor found one, so the 78 is over-scored on that axis. Boss HP is set so the player needs 10 + lvlDiff hits (floor 3) and boss ATK so the player dies in 18 - lvlDiff hits (floor 1); authored <hp> is only a floor, which qualifies the roster claim. Critically, src/config/combat-sim.ts documents ENEMY_BASE as INFERRED with 'B4 makes hp and minDamage DERIVED at spawn from the player's own stats (enemyHP = effPlayerDmg x K) ... the pre-scale floor the source's max(scaledBase, ...) compares against' -- bossHP = playerhit * hitsToKillBoss IS that formula and if(bossHP > maxhp) IS that max(). K = 10 + (enemyLvl - playerLvl), floored at 3. That INFERRED comment can be promoted to A2, labelled v0.682-ANDROID.",
-  "ledger_text": "(1) enemy **level->stat formula** (governs the whole roster's balance -- absent, not just inferred).",
-  "overturns_ledger": true,
-  "quote": "var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff; if(hitsToKillBoss <= 3) { hitsToKillBoss = 3; } if(hitsToKillPlayer <= 0) { hitsToKillPlayer = 1; } var playerhit:int = playerATK - defense; if(playerLVL <= 10 && playerhit < 1) { playerhit = 1; } else if(playerLVL <= 20 && playerhit < playerLVL / 8) { playerhit = playerLVL / 8; } else if(playerLVL <= 30 && playerhit < playerLVL / 6) { playerhit = playerLVL / 6; } else if(playerhit < playerLVL / 4) { playerhit = playerLVL / 4; } var bossHP:int = playerhit * hitsToKillBoss; if(bossHP > maxhp) { maxhp = bossHP; setHP(maxhp); updateHealthBar(); } var bosshit:int = playerHP / hitsToKillPlayer; var bossATK:int = bosshit + playerDEF;   ... xp = lvl * 5 + 45;   ... mcs.setDisplayName(charname + \" (\" + lvl + \")\",16777215);",
-  "text": "There is a SECOND level->stat formula: EnemyElite.setLevel overrides NPC.setLevel entirely for elites and bosses, dropping the 0.9 factor and the lvl<=10 clamp, using xp = lvl*5+45, and rubber-banding boss HP and ATK off the PLAYER's live stats -- which is the missing A2 source for the repo's INFERRED 'enemyHP = effPlayerDmg x K' derivation.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/MCSActor.as:170,172,922 + NPC.as:747-763",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/flinch-is-8-frames",
-  "lane_impact": "L0 enemies-ai + art-anim: closes the SECOND half of blocker \u2462 outright, which the survey wrongly declared unimplementable. Stagger = 8 frames, and the resume-mid-animation behaviour is a feel-critical detail. It also removes cap reason (4) from the 78 score rationale.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": true,
-  "quote": "94_MCSCharacter_Human2AnimationData.bin: ('flinch_weapon','8'), ('flinch','8')  \u00b7  MCSActor.as:170 internal static var FLINCH_WEAPON:String = \"flinch_weapon\"; :172 internal static var FLINCH:String = \"flinch\"; :922 internal static var FLINCH_STATE:int = 28;  \u00b7  NPC.as:747 public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }",
-  "text": "The hit reaction the survey called nonexistent is an authored 8-frame interruptible flinch: `flinch` and `flinch_weapon` both d=8, FLINCH_STATE = 28, and NPC.doFlinch() saves prevActionState/prevAnim/prevFrameCounter before playing it so endFlinch() resumes the interrupted animation mid-frame.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/MCSActor.as:170,172,922 + NPC.as:747-765",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/flinch-is-a-real-8-frame-state",
-  "lane_impact": "L0 enemies-ai + art-anim: blocker \u2462 is now dead in BOTH halves, not just the telegraph half. The surveyor searched only 99_MCSCharacter_HumanAnimationData.bin and concluded absence; the flinch is in the Human2 blob. Note the mechanic for the port: flinch does NOT interrupt SLASH_STATE (an attack in progress is armoured), and it resumes the prior animation at the exact frame it was cut off.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": true,
-  "quote": "<anim i=\"flinch_weapon\" d=\"8\">  \u00b7  <anim i=\"flinch\" d=\"8\">  \u00b7  MCSActor.as:922 internal static var FLINCH_STATE:int = 28;  \u00b7  NPC.as:747 public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }  \u00b7  NPC.as:758 public function endFlinch() : * { actionState = this.prevActionState; startAnim(this.prevAnim); mcs.frameCounter = this.prevFrameCounter; }",
-  "text": "The stagger the ledger asks for is fully implemented: an 8-frame flinch animation in the Human2 anim blob plus FLINCH_STATE 28 and a doFlinch/endFlinch pair that saves and restores the interrupted animation's frame offset.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:747-764 + MCSActor.as:922,170,172 + reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + EnemyZombie.as:544 + EnemyShield.as:117-119 + MCSPlayer.as:4309-4326",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/flinch-state-exists",
-  "lane_impact": "L0 enemies-ai + art-anim: blocker \u2462's stagger half is CLOSED, not absent, and the survey's score cap built on 'a counter with no stagger animation' must be dropped. The port is: on hit, save actionState/anim/frameCounter, enter FLINCH_STATE, play flinch_weapon (8 frames), then restore the exact prior frame. It is guard-interrupted by SLASH_STATE and SKILL_CHICHARGE_STATE (NPC.as:749, MCSPlayer.as:4311) and stacks on top of, not instead of, the 12-frame gotHitCounter i-frame window. Note the animation lives in the 94_Human2 blob, not the 99_Human blob the survey searched.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": true,
-  "quote": "NPC.as:747-758 `public function doFlinch() : * { if(actionState == FLINCH_STATE || actionState == SLASH_STATE) { return; } this.prevActionState = actionState; this.prevAnim = mcs.animation; this.prevFrameCounter = mcs.frameCounter; actionState = FLINCH_STATE; startAnim(FLINCH_WEAPON); }` \u00b7 NPC.as:760-764 `public function endFlinch() : * { actionState = this.prevActionState; startAnim(this.prevAnim); mcs.frameCounter = this.prevFrameCounter; }` \u00b7 MCSActor.as:922 `internal static var FLINCH_STATE:int = 28;` \u00b7 MCSActor.as:170,172 `FLINCH_WEAPON:String = \"flinch_weapon\"` / `FLINCH:String = \"flinch\"` \u00b7 94_MCSCharacter_Human2AnimationData.bin `('flinch_weapon','8')`, `('flinch','8')` \u00b7 EnemyZombie.as:542-544 `else if(!this.isDowned() && !isAirborne()) { this.startAction(FLINCH_STATE); }` \u00b7 EnemyShield.as:117-119 `case FLINCH_WEAPON: case FLINCH: endFlinch();`",
-  "text": "The stagger mechanic blocker \u2462 asks for is fully implemented: FLINCH_STATE (id 28) with a base-class doFlinch/endFlinch pair that saves and restores animation + frameCounter, driving an authored 8-frame flinch / flinch_weapon animation \u2014 a mechanism entirely separate from the 12-frame gotHitCounter i-frame lockout.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NPC.as:296-299 + every call site: NPCManager.as:1222,1263,1325,1414,1434,1454,1494,1513,1534,1564,1579",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/gothitcounter-is-iframes",
-  "lane_impact": "L0 enemies-ai + combat-core: the 12 frames are i-frames, so the ledger's 'stagger' question is genuinely STILL_UNHELD - the source implements no hit-reaction at all, neither a stagger animation nor an action lock. A recreation that locks the enemy out of acting for 12 frames is wrong.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": true,
-  "quote": "NPC.as:296 public function canHit() : Boolean { return this.gotHitCounter == 0; }  \u00b7  NPCManager.as:1564 if(!enemy.isDead() && enemy.canHit() && enemy.testHit(thing))  \u00b7  NPCManager.as:1414 if(!enemy.isDead() && enemy.canHit() && enemy.checkHitTrap(thing,damage))",
-  "text": "gotHitCounter = 12 is invulnerability, not an action lockout: canHit() is called only from NPCManager's hit-detection, so the counter gates whether the enemy CAN BE HIT for 12 frames.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A4",
-  "cite": "docs/research/fidelity/MOTION_MEASUREMENTS.md:24 (carries frame cite 'duel-strike-A: frames 036-047 after streak') + reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin + reference/decompiled/shs3_android/scripts/NPC.as:462",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/hit-lockout-decomposes-exactly",
-  "lane_impact": "L0 enemies-ai + art-anim: blocker (3) dies in BOTH halves, not one and a half. The recreation's hit reaction is 4 frames of held pose then the 8-frame flinch clip, with the poise rule on top from SOURCE_CONSTANTS.md:261 (v0.717 CONTRACT-SRC). Also means art-anim's Ready bullet 'hit-stagger' was right and enemies-ai's blocker list was double-counting it.",
-  "ledger_text": "\u2462 telegraph/active/recovery + stagger frames.",
-  "overturns_ledger": true,
-  "quote": "MOTION_MEASUREMENTS.md:24 \u2014 | Hit stagger | **12 frames total: 4 upright + 8 bent-forward** | duel-strike-A: frames 036-047 after streak | `ANIM_TIMING.hitRecoilMs = 67`, `hitReturnMs = 133` |  \u00b7  94_Human2 blob \u2014 <anim i=\"flinch\" d=\"8\">, <anim i=\"flinch_weapon\" d=\"8\">  \u00b7  NPC.as:462 \u2014 this.gotHitCounter = 12;  \u00b7  SOURCE_CONSTANTS.md:261 \u2014 | stagger / poise | hyperarmor after 3 staggers (5 if the attacker is in light stance) |",
-  "text": "The 12-frame hit lockout decomposes exactly into 4 frames held + an 8-frame flinch animation, triangulated across three independent artifacts \u2014 so blocker (3)'s stagger half is fully CLOSED, not partial.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:1533 + MCSPlayer.as:245 + FriendlyElite.as:64 + FriendlyArcher.as:57 + Obj_NPCAggro.as:76,79 + EnemyPlayer.as:83,771,774,880 + EnemyClone.as:81,85 + Obj_NPCProcGen.as:51,60",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/nameplate-colour-is-five-valued",
-  "lane_impact": "L0 ui-hud + enemies-ai: the single ledger bullet flattens FIVE states, not two. A recreation shipping only hostile-red / player-gold gets the friendly, neutral-procgen and quest-marker nameplates wrong \u2014 and the quest-marker colour is one of only two overworld quest indicators.",
-  "ledger_text": "nameplate (N)=level",
-  "overturns_ledger": true,
-  "quote": "MCSCharacter.as:1533 public function setDisplayName(str:String, color:uint = 0)  \u00b7  16763904 = #FFCC00 gold \u2014 MCSPlayer.as:245 (player), FriendlyElite.as:64 and FriendlyArcher.as:57 (friendlies)  \u00b7  10027008 = #990000 dark red \u2014 Obj_NPCAggro.as:79 setDisplayName(npcname + \" (\" + lvl + \")\", 10027008)  \u00b7  16777215 = #FFFFFF \u2014 EnemyPlayer.as:771 (duelist/boss/network) and EnemyClone.as:81  \u00b7  39423 = #0099FF \u2014 Obj_NPCProcGen.as:51 (neutral procgen NPC)  \u00b7  12627019 = #C0AC4B \u2014 Obj_NPCProcGen.as:60 (quest-marked NPC, also showIcon(2))",
-  "text": "The nameplate colour rule is five-valued, not the two the claim adds, and gold does not mean 'player' \u2014 it means player OR friendly.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg \u2014 glyph-pixel sample, crop (340,315)-(480,350) for BANDIT and (180,315)-(240,350) for GUEST, LANCZOS x3; corroborated by MCSPlayer.as:245, EnemyPlayer.as:771/774/776, EnemyElite.as:114, EnemyKanjiGuardian.as:59, FriendlyArcher.as:57, FriendlyElite.as:64, FriendlySpearElite.as:55, Obj_NPCProcGen.as:51/60",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/nameplate-colour-table",
-  "lane_impact": "L0 ui-hud + enemies-ai: replaces the ledger's single `nameplate (N)=level` bullet AND the surveyor's 'hostile red / player gold' simplification. Gold is NOT player-exclusive (all Friendly* share it), and elites/guardians/duelists are WHITE, not red. 0x990000 is reserved for opposing-SIDE duelists/bosses. Since 0xFFCC00 and 0x990000 are confirmed simultaneously by the frame's pixels and the AS3 literal, these two are the strongest CONTRACT candidates in the unit despite the v0.682 parity caveat \u2014 a frame from v0.717 corroborates the v0.682 constant.",
-  "ledger_text": "nameplate (N)=level",
-  "overturns_ledger": true,
-  "quote": "Measured in the frame: BANDIT (4) core glyph pixels (138,3,0) and (133,4,0); GUEST core glyph pixels (244,213,61) and (240,208,48). In the payload: EnemyPlayer.as:774 `namecolor = 10027008;` then `mcs.setDisplayName(xml.name + \" (\" + level + \")\",namecolor);` \u00b7 MCSPlayer.as:245 `mcs.setDisplayName(StatsManager.charname,16763904);` \u00b7 EnemyElite.as:114 `mcs.setDisplayName(xml.name + \" (\" + level + \")\",16777215);` \u00b7 Obj_NPCProcGen.as:51 `setDisplayName(this.npcname,39423);` \u00b7 :60 `setDisplayName(this.npcname,12627019);`",
-  "text": "The nameplate is a five-value colour table keyed by RELATIONSHIP, not a two-value hostile-red/player-gold rule, and the frame and the payload agree on the exact constants: gold 0xFFCC00 (16763904) for the player AND all three Friendly* classes, white 0xFFFFFF (16777215) for elites/Kanji Guardian/same-side duelists and bosses, dark red 0x990000 (10027008) for an opposing-side duelist or boss, blue 0x0099FF (39423) for a procgen quest-giver, and khaki 0xC0AC4B (12627019) for a MARKED quest-giver; the format is literally name + \" (\" + lvl + \")\", and the plain mob classes get no plate at all.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:73,76,80 + MCSPlayer.as:245 + FriendlyArcher.as:57 / FriendlySpearElite.as:55 / FriendlyElite.as:64 + EnemyElite.as:114 + EnemyKanjiGuardian.as:59 + Obj_NPCProcGen.as:51,60 + MCSCharacter.as:258,1533",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/nameplate-is-a-spawner-split-with-hex-colours",
-  "lane_impact": "L0 ui-hud + enemies-ai: supersedes the survey's mode-switch claim with the real mechanism and turns an A1-only colour observation into exact hex CONTRACT values. Both cited frames corroborate it: seg-10/frame_0013 overworld shows red plates and ZERO health bars (Obj_NPCAggro calls hideHealthBar first), seg-11/frame_0020 combat shows health bars and zero plates. A recreation must NOT suppress nameplates in combat -- elites and guardians keep a white NAME (lvl).",
-  "ledger_text": "nameplate (N)=level",
-  "overturns_ledger": true,
-  "quote": "Obj_NPCAggro.as:73 this.npc.mcs.hideHealthBar();  :80 this.npc.mcs.setDisplayName(this.npcname + \" (\" + this.lvl + \")\",10027008);   [10027008 = 0x990000]  \u00b7  MCSPlayer.as:245 mcs.setDisplayName(StatsManager.charname,16763904);   [16763904 = 0xFFCC00, no level]  \u00b7  FriendlyElite.as:64 mcs.setDisplayName(xml.name,16763904);  \u00b7  EnemyElite.as:114 mcs.setDisplayName(xml.name + \" (\" + level + \")\",16777215);   [0xFFFFFF]  \u00b7  Obj_NPCProcGen.as:51 setDisplayName(this.npcname,39423);  [0x0099FF]  :60 ...,12627019);  [0xC0AC4B]  \u00b7  MCSCharacter.as:1533 public function setDisplayName(str:String, color:uint = 0) { ... if(str != \"\") { ...textColor = color; ... if(this.healthBar.visible) { this.displayName.y = this.healthBar.y; }",
-  "text": "The overworld-vs-combat enemy readout is not a HUD mode switch but two spawner wrappers, and every nameplate colour is an exact literal: Obj_NPCAggro hides the health bar and paints NAME (lvl) in 0x990000 dark red; the player gets a bare charname in 0xFFCC00 gold with no level; friendlies share the gold, name-only; elites, guardians and duel opponents use 0xFFFFFF white WITH a level; procgen townsfolk use 0x0099FF and 0xC0AC4B.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:768-810",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/nameplate-is-per-entity-with-exact-hues",
-  "lane_impact": "L0 enemies-ai + ui-hud. Supplies the exact format string and the two exact hues (0xFFFFFF / 0x990000) that were previously only eyeballed off a frame, and replaces the surveyor's 'mode-switched HUD' model with the real per-entity rule. Also holds two unreported combat facts: field trash has damageRange = 0 (flat damage, no variance), and player-controlled duelists get a level-banded stat multiplier.",
-  "ledger_text": "nameplate (N)=level",
-  "overturns_ledger": true,
-  "quote": "if(this.isDuelist || this.isBoss) { namecolor = 16777215; if(this.side != 0 && this.side != StatsManager.getSide()) { namecolor = 10027008; } mcs.setDisplayName(xml.name + \" (\" + level + \")\",namecolor); ... if(this.isBoss && level > 70) { minDamage *= 1.25; maxhp *= 1.25; setHP(maxhp); } else if(this.isBoss && level > 50) { minDamage *= 1.2; maxhp *= 1.2; ... } else if(level > 30) { minDamage *= 1.1; maxhp *= 1.1; ... } else if(level < 10) { minDamage *= 0.8; maxhp *= 0.8; ... } } else { mcs.setDisplayName(\"\"); minDamage = xml.attack; damageRange = 0; }",
-  "text": "Nameplates are a per-entity property decided at init \u2014 only bosses and duelists get one, everyone else is explicitly blanked \u2014 formatted name + \" (\" + level + \")\" in white 0xFFFFFF, switching to dark red 0x990000 only when the entity's side is non-zero and differs from the player's side.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyOgre.as:51-53, EnemyKanjiGuardian.as:48-59, EnemyElite.as:23-40, EnemyWolfAlpha.as:52+ (11 files total via grep -l \"override public function setLevel\")",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/setlevel-has-11-overrides",
-  "lane_impact": "L0 enemies-ai + progression: blocker \u2460 needs TWO formulas plus an opt-out, not one. Shipping only NPC.setLevel() would clamp every boss below level 11 to 1/1/1 HP and give every elite the wrong XP award. This is the correct reason to cap the re-score, replacing the survey's refuted stagger caveat.",
-  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
-  "overturns_ledger": true,
-  "quote": "EnemyOgre.as:51 override public function setLevel(lvl:int) : * { }   \u00b7   EnemyKanjiGuardian.as:48-58 factor = lvl / level; level = lvl; damage *= factor; defense *= factor; maxhp *= factor; setHP(maxhp); updateHealthBar(); xp = lvl * 5 + 45;   \u00b7   EnemyElite.as:23-40 minDamage = damage * factor; ... xp = lvl * 5 + 45; ... var hitsToKillBoss:int = 10 + lvldiff;   \u00b7   overriding files: EnemyElite, EnemyOgre, EnemySpearElite, EnemyStag, EnemyPlayer, EnemyKanjiGuardian, EnemyTrainingDummy, EnemyWolfAlpha, FriendlySpearElite, FriendlyArcher, FriendlyElite",
-  "text": "NPC.setLevel() is the trash-mob curve only: 11 classes override it, EnemyOgre's override is EMPTY (the Ogre never scales, which is why id 77 ships lvl 80 with hp 40), and the elite/boss/alpha branch drops both the x0.9 and the <=10 clamp and uses xp = lvl*5 + 45 plus a player-relative hitsToKillBoss re-derivation.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyElite.as:23-52 (plus EnemyOgre.as:51-53, EnemyWolfAlpha.as:52-78, EnemyPlayer.as:57-86, EnemySpearElite.as:32-78, EnemyTrainingDummy.as:23-47, EnemyKanjiGuardian.as:48, EnemyStag.as:48-70, FriendlyArcher.as:21, FriendlyElite.as:23, FriendlySpearElite.as:19)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/setlevel-is-eleven-formulas",
-  "lane_impact": "L0 enemies-ai: blocker \u2460 dies, but as >=5 distinct formulas rather than one, and it drags in a system the board has never scoped \u2014 a live-player-relative boss balancer. Field trash uses NPC.setLevel (\u00d70.9 sub-21, 1/1/1 clamp at lvl<=10, xp lvl*2+20); the Oni ignores level entirely; the training dummy's setLevel is a tutorial script; every Elite/Boss/duelist derives its numbers from the player's current MAXHP/DEFENSE/damage at spawn. A recreation that ports only NPC.setLevel gets 100% of bosses wrong. It also means ENEMY_BASE.hp = 1 is retro-justified for TRASH ONLY.",
-  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
-  "overturns_ledger": true,
-  "quote": "EnemyElite.as:34-41 `xp = lvl * 5 + 45; var playerHP:int = StatsManager.getPlayerStats(StatsManager.STAT_MAXHP) + StatsManager.findBonusStat(StatsManager.STAT_MAXHP); var playerDEF:int = ...; var playerATK:int = StatsManager.getMinDamage() + StatsManager.getDamageRange() / 2; var playerLVL:int = StatsManager.getLevel(); var lvldiff:int = lvl - playerLVL; var hitsToKillBoss:int = 10 + lvldiff; var hitsToKillPlayer:int = 18 - lvldiff;` \u00b7 EnemyOgre.as:51-53 `override public function setLevel(lvl:int) : * { }` \u00b7 EnemyWolfAlpha.as:73-78 `xp = lvl * 5 + 45; if(lvl <= 5) { damage = 1; defense = 1; }` (no maxhp clamp, no \u00d70.9) \u00b7 EnemyTrainingDummy.as:36-41 `else if(lvl == 3) { startAnim(IDLE_HEAVY); maxhp = 8; setHP(maxhp); ... }`",
-  "text": "There is no single enemy level\u2192stat formula: NPC.setLevel is overridden in 11 subclasses, and the elite/boss family does not scale off its own statline at all \u2014 it inverse-solves HP and damage from the LIVE player's stats via hitsToKillBoss = 10 + lvldiff and hitsToKillPlayer = 18 - lvldiff.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:57-100, EnemyElite.as:23-40, EnemyKanjiGuardian.as:48-65, EnemyOgre.as:51-53, EnemyWolfAlpha.as:52-70 (plus EnemySpearElite.as:32, EnemyStag.as:48, EnemyTrainingDummy.as:23, FriendlyArcher.as:21, FriendlyElite.as:23, FriendlySpearElite.as:19)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "enemies-ai/setlevel-is-twelve-formulas",
-  "lane_impact": "L0 enemies-ai: blocker \u2460 is advanced but NOT dead, and the shape is different from what the surveyor banked. A recreation needs a scaling POLICY per AI class (base / player-mirror / elite-with-autobalance / none), not one function. The empty EnemyOgre override plus the fact that ai 9 (73 of 425 npcdata rows, the largest bucket) skips the clamp means the '1-HP field trash' story cannot be sourced to this code \u2014 it has to come back from the frames.",
-  "ledger_text": "\u2460 enemy **level\u2192stat formula** (governs the whole roster's balance \u2014 absent, not just inferred).",
-  "overturns_ledger": true,
-  "quote": "EnemyOgre.as:51-53 `override public function setLevel(lvl:int) : * { }` \u00b7 EnemyPlayer.as:73-88 `factor = lvl / level; level = lvl; minDamage = damage * factor; defense *= factor; maxhp *= factor; setHP(maxhp); updateHealthBar(); if(this.isBoss || this.isDuelist) { xp = lvl * 5 + 45; namecolor = 16777215; mcs.setDisplayName(...); } else { xp = lvl * 2 + 20; }` \u00b7 EnemyElite.as:40 `var hitsToKillBoss:int = 10 + lvldiff;` \u00b7 EnemyKanjiGuardian.as:59 `xp = lvl * 5 + 45;`",
-  "text": "Enemy level scaling is not one formula but twelve: NPC.setLevel is overridden by eleven subclasses, EnemyOgre's override is EMPTY (ogres never level-scale), EnemyPlayer / EnemyElite / EnemyKanjiGuardian drop both the x0.9 sub-21 factor and the 1/1/1 clamp and pay xp = lvl*5 + 45, and the elite/boss variants additionally run a player-relative autobalance (hitsToKillBoss = 8 or 10 or 13 + lvldiff, hitsToKillPlayer = 16 - lvldiff) that rewrites minDamage and maxhp against the live player's stats.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "grep -ic tengu over docs/gauntlet/L0/index/strings.json and docs/gauntlet/L0/index/resolved_names.json -> 0 and 0",
+  "cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:1412-1413 and :1523 + QuestEngine.as:1039-1043 + reference/extracted/npcdata.xml and reference/extracted/android/125_Mobile_NpcData.bin (both: 495 <npc>, max id 819, zero ids in 690-720)",
   "citelint": {
    "notes": [
     "QUOTE_NOT_LOCATED"
@@ -379,12 +107,297 @@
    "problems": [],
    "status": "QUOTE_UNVERIFIED"
   },
-  "id": "enemies-ai/tengu-absent-from-resolved-strings",
-  "lane_impact": "L0 enemies-ai: the Ready-taxonomy bullet over-claims an entire faction, and this closes the last defence of it. Either a v0.717-only addition or a ledger invention. Do not build a Tengu.",
-  "ledger_text": "full taxonomy (Humans/Undead/Oni/Animals + Tengu/Guardian)",
+  "id": "meta-social/700-block-is-live-players",
+  "lane_impact": "L0 meta-social + L-enemies-ai -- an offline war-room battle should spawn 340 troops from the 39-wave table and zero id-700 entities; the '350/351 samurai' framing must not be built.",
+  "ledger_text": "kill cap 350",
   "overturns_ledger": true,
-  "quote": "docs/gauntlet/L0/index/strings.json:0   docs/gauntlet/L0/index/resolved_names.json:0   (the 2,533-entry S0-3 table in which itemdata resolves 804/0 unresolved, skilldata 73/0, npcdata 484/6)",
-  "text": "Tengu is absent from the RESOLVED string table as well as the raw XML, which closes the 'it is hidden behind a numeric id' escape hatch that a raw-XML grep alone leaves open.",
+  "quote": "WarHexUI.as:1412 `npcXML.initDuelist(innerStrArray[1],innerStrArray[2],innerStrArray[3],innerStrArray[4],innerStrArray[5],1,innerStrArray[0],false);` :1413 `npcXML.id = 700 + i;` \u00b7 QuestEngine.as:1038 `public static function clearPlayersInNPCData() : *` :1041 `if(npcList[i].id >= 700 && npcList[i].id <= 710 || npcList[i].id == XMLNpc.INDEX_NPCHOLDER)` \u00b7 war-rules string 374: \"if enemy players are present in the sector, you will also encounter them during battle.\"",
+  "text": "NPC ids 700-710 in the war-room wave table are runtime slots for live enemy players, not payload NPCs -- so the payload-deterministic kill count of a war-room battle is 340, and the extra 11 are the server half that cannot be recreated offline.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/114_Mobile_AchievementData.bin, achievement row index 58, resolved via docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/achievement-58-pins-340",
+  "lane_impact": "L0 meta-social \u2014 supports the 340-troop half of the kill-cap correction without relying on the wave-table sum, and separates the 340 troops from the 11 unresolved boss slots.",
+  "ledger_text": "kill cap 350",
+  "overturns_ledger": true,
+  "quote": "row 58: stat 60018, val 340 \u2192 name 'Warrior III', desc 'Defeat 340 in a war room attack.'",
+  "text": "The game's own achievement text independently pins 340 as the rank-and-file war-room kill count, corroborating the wave-table sum from a second, unrelated table.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/payload.xml:119088-119148 compared element-wise to reference/extracted/android/114_Mobile_AchievementData.bin resolved via docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [
+    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml",
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/achievements-in-web-payload",
+  "lane_impact": "L0 meta-social -- and this is the strongest available validation of the whole S0-3 Android string table against the desktop build: 61 independently-authored strings agreeing name-for-name and order-for-order.",
+  "ledger_text": "\u2462 achievements list, daily-reward table, token costs \u2014 one Ruffle session closes all.",
+  "overturns_ledger": true,
+  "quote": "payload.xml:119088 `<item>Duelist I</item>` ... :119133 `<item>Chi Master</item>` :119134 `<item>Ninja Master</item>` ... :119148 `<item>Be Awesome</item>`. My comparison printed: `android n= 61   web n= 61` / `EXACT MATCH: True`.",
+  "text": "The 61 achievement names are in the WEB v0.717 payload itself, in the same order as the Android blob, so blocker \u2462's achievement third closes on a desktop cite with no Android caveat.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/114_Mobile_AchievementData.bin:436-470 (ids 48/49/50/51) joined to strings 8041-8044 / 8121-8124 and InventoryUI.as:2285-2317",
+  "citelint": {
+   "notes": [
+    "LINE_ON_BINARY:reference/extracted/android/114_Mobile_AchievementData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/four-dan-achievement-rows",
+  "lane_impact": "meta-social blocker 3 gets four concrete rows; rebirth-elements gets a four-point proof that displayed Dan = STAT_DAN + 1. Reproduce the quirk: the achievement NAMED 'Renshi' fires at STAT_DAN 2 while the Renshi title is only awarded from STAT_DAN 3, and 'Kyoshi' fires at STAT_DAN 5 while the Kyoshi title starts at STAT_DAN 6.",
+  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
+  "overturns_ledger": true,
+  "quote": "id 48 stat 25 val 1 -> 8041='Rebirth' / 8121='Reach Dan 2.'\\nid 49 stat 25 val 2 -> 8042='Renshi' / 8122='Reach Dan 3.'\\nid 50 stat 25 val 5 -> 8043='Kyoshi' / 8123='Reach Dan 6.'\\nid 51 stat 25 val 9 -> 8044='Ultimate Warrior' / 8124='Reach Dan 10.'",
+  "text": "There are four Dan achievements, not one, and together they pin the display offset at exactly +1 across four points \u2014 with a shipped off-by-one between the shogo-named achievements and the shogo titles themselves.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/zFtCaTO0_1M/map/frames/frame_0020.jpg, crop (370,45)-(505,180) upscaled x9 LANCZOS (source frame is 512x288)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/frame-shows-6x6-sector-board",
+  "lane_impact": "L0 meta-social \u2014 blocker \u2461's sector half now has A1 backing as well as A2: the 0..5 board and its 4-way blocked/open adjacency are visible, matching WarHexUI's `x > 5 || y > 5` bounds and the war-rules 'if the adjacent sector is blocked' rule. Also L-world-exploration: this is the sector-navigation UI.",
+  "ledger_text": "\u2461 War-Room **map topology** (board/adjacency)",
+  "overturns_ledger": true,
+  "quote": "Visibly on screen: a bordered map panel with top header row '0 1 2 3 4 5' and left column '0 1 2 3 4 5', N top / E right / S bottom / W left, white line segments between cells marking open vs walled exits, two arch glyphs on the top row and a third at (1,2), an X at (4,2), a white player arrow with exit chevron at (4,4); beneath the panel 'TERRITORY (21,51)' / 'SECTOR (5,4)'.",
+  "text": "The 6x6 sector board IS photographed: the overworld HUD minimap in the second longplay draws the whole board with axis labels 0-5 on both axes, N/E/S/W compass letters and the wall segments that encode blocked vs open adjacency.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/zFtCaTO0_1M/map/frames/frame_0025.jpg upscaled x3 (source frame 512x288)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/frame-shows-world-territory-board",
+  "lane_impact": "L0 meta-social \u2014 pairs with the 63x72 GIF mask: the mask is the land shape, this frame is how the 735 territories render, tier by tier, with the clan flag the war-room rules say marks on-going battles. Also gives ui-hud the world-map screen and world-exploration the territory-level gate.",
+  "ledger_text": "\u2461 War-Room **map topology** (board/adjacency)",
+  "overturns_ledger": true,
+  "quote": "Visibly on screen: 'NAGANO (26,52) LEVEL: 9' with a ZOOM OUT button and a 'WORLD MAP' side tab; a grid of rounded territory tiles carrying hut / larger-hut / city / pagoda icons, several with rectangular flags in red, blue and yellow; some tiles bear an X. Legend row: 'VILLAGE  TOWN  CITY  CASTLE TOWN  DESTROYED  QUEST' and 'GREY TERRITORIES - LEVEL TOO LOW / RED TERRITORIES - LEVEL TOO HIGH'.",
+  "text": "The world territory board is photographed too \u2014 a tile grid of territories with settlement-tier icons and per-territory clan flags in the clan colours, plus the level-gating legend.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/extracted/android/121_Mobile_PremiumData.bin joined to reference/extracted/itemdata.xml <heavenlyprice> and docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/premium-catalogue-is-143-skus",
+  "lane_impact": "L0 meta-social and L-items-equipment \u2014 the cosmetic tier is the bulk of the premium economy and is entirely absent from the lane's 12-row account.",
+  "ledger_text": "Ninja-Services prices",
+  "overturns_ledger": true,
+  "quote": "176 <item> rows, 143 unique ids, 0 unresolved against the web itemdata.xml. Ladder: 1 Gold = consumables + '1000 coins' (2208) + 'Clan Invitation' (2213) + 'Edit Clan' (2215) + 12 Hair SKUs; 3 Gold = every cosmetic equipment piece (armor 4063-4099, gloves 5008-5020, headgear 7034-7082, masks 9025-9049, pants 11035-11056, shoes 12018-12041, weapons 13014-13043); 5 Gold = 'Amnesia Scroll' 2200, 'Writ of Release' 2203, 'Name Change Scroll' 2207, 'Clan Deed' 2212; 12 Gold = 30 named outfit bundles, 2130 'Assassin Outfit' through 2171 'Swords of the Mist'.",
+  "text": "The premium (Ninja Services) catalogue is 143 unique SKUs on a 1/3/5/12 Gold ladder, not the 12 rows the lane reports, and every one of them resolves in the WEB itemdata.xml.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/map_analysis/zFtCaTO0_1M_map_013_t565s.jpg and zFtCaTO0_1M_map_010_t439s.jpg, crop (395,20)-(512,125) upscaled x10 LANCZOS",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/six-by-six-sector-board-is-pictured",
+  "lane_impact": "L0 meta-social \u2014 kills one of the three deductions holding the score at 78. Also exposes the search scope: reference/frames/map_analysis/ (20 frames, 10 per longplay) and the entire zFtCaTO0_1M longplay were never opened by this lane.",
+  "ledger_text": "\u2461 War-Room map topology (board/adjacency)",
+  "overturns_ledger": true,
+  "quote": "Visibly in the crop: a gold-cornered panel with column headers '0 1 2 3 4 5' across the top and row headers '0 1 2 3 4 5' down the left side; cells containing yellow gate/arch icons, an X marker and a white triangular player arrow; white lines drawn between adjacent cells. Directly beneath the panel: 'TERRITORY (21,51)'. A2 corroboration: Territorymap.as:65-75 `for(var i:int = 0; i < 6; i++){ this.minimapRoomList[i] = new Array(6); for(j = 0; j < 6; j++){ ... x = i * 20 - 77 + 28 ...` with north/south/east/west labels, and :501-504 A* over the same 6x6. Same board the war room draws: WarHexUI.as:175-176 `this.ht = 6; this.wt = 6;` built at :208-209 from getShiftedNodeId(zeronodeid,i,j) / getNodeExitsNum(i,j).",
+  "text": "The 6x6 sector board the lane files as unpictured is plainly on screen in the SECOND longplay, complete with 0-5 axis labels on both axes and the white connector lines that are its exit topology.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2638,2646,2651 + \u00a71t406s0\u00a7.as:1544",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/v0717-rebirth-gold-25-100-300",
+  "lane_impact": "L0 meta-social + L-rebirth/economy \u2014 closes blocker \u2463 at 25/100/300 instead of 5/20/60; makes tenthGold=100 CONTRACT; and re-validates KONGREGATE_FORUM_FINDINGS.md:308 rather than retiring it.",
+  "ledger_text": "**`MAX_DAN_RANK=10` and `tenthGold=100` should be INFERRED, not CONTRACT.** The only wiki datum is garbled \u2026 film shows a **flat +25 gold** every rebirth, no 10th-rebirth tier.",
+  "overturns_ledger": true,
+  "quote": ":2638 `public static function \u00a71t9600s0\u00a7() : *` \u2026 :2646 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);` \u2026 :2651 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25);` (\u00a71t9413s0\u00a7 = 12 = STAT_HGOLD, :228). \u00a71t406s0\u00a7.as:1544 `if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9413s0\u00a7) > 300 && \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9426s0\u00a7) < 9)` \u2014 8 x 25 + 100 = 300.",
+  "text": "The v0.717 offline Gold faucet is 25 Gold per rebirth and 100 at the Dan-8 rebirth \u2014 a 300-Gold lifetime ceiling the client itself enforces \u2014 which restores the Kongregate forum finding and the ledger's own film-sourced +25, and upgrades tenthGold=100 from INFERRED to CONTRACT.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as:1108, :1123, :2119-2145, :2150",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/war-mechanics-are-in-the-web-build",
+  "lane_impact": "L0 meta-social \u2014 blocker \u2461 closes on WEB evidence rather than Android, which is what the ledger actually needed.",
+  "ledger_text": "\u2461 War-Room **map topology** (board/adjacency).",
+  "overturns_ledger": true,
+  "quote": "`:1108 _loc2_ = 100 * this.\u00a71t7871s0\u00a7();` \u00b7 `:1123 _loc3_ = 80 + Math.random() * 40 * this.\u00a71t7871s0\u00a7();` \u00b7 `:2119 internal function \u00a71t7871s0\u00a7() : Number` with `case 2: return 1.5; case 1: return 1.2; case 0: return 1; case -1: return 0.75; case -2: return 0.6; case -3: return 0.5; case -4: return 0.25;` \u00b7 `:2150 if(param1 < 0 || param2 < 0 || param1 > 5 || param2 > 5)` \u2014 the 6x6 board bound, web-confirmed. WarSelectUI's 63 also appears at \u00a71t1056s0\u00a7.as:136.",
+  "text": "The entire war deploy/arrow/terrain/6x6-board stack is present in the WEB v0.717 build, so the Android caveat is removable for war-room mechanics.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "cite": "reference/frames/Nr4fQstqHDM/seg-29/frames/frame_0019.jpg and frame_0018.jpg (whole frame, 512x288 upscaled x3 LANCZOS); reference/frames/zFtCaTO0_1M/map/frames/frame_0024.jpg crop (398,40)-(502,160) upscaled x10 LANCZOS",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/warroom-board-is-on-screen",
+  "lane_impact": "L0 meta-social -- retires the survey's only frame-side STILL_UNHELD, and gives A1 confirmation of the 0..5 sector clamp, the [N,S,E,W] exit model, the one-hour turn (NEXT TURN IN 59:58) and the 24h capture advance, none of which had a picture before.",
+  "ledger_text": "\u2461 War-Room **map topology** (board/adjacency)",
+  "overturns_ledger": true,
+  "quote": "frame_0019: right-rail 'WAR ROOM'; 'SELECT A SECTOR'; 'TROOPS WILL ATTEMPT SECTOR CAPTURE IN 16:44:05'; '2 MOVE(S) LEFT' / 'NEXT TURN IN 59:58'; a 6-wide sector grid with black sector boundaries, mountains vs open ground vs trees, green clan shading with green banner flags, red enemy shading, two Command-HQ fist medallions with directional arrows, a barricade icon, a samurai on the contested cell; 'RYUWARA MESSAGE BOARD' with 'SEND TO SIDE'/'SEND TO ALL' and the log line 'ASUTORARU: BUILDING BARRICADES AT SECTOR (4,3)'. frame_0018 is the same board headed 'SELECT HQ/TOWN TO ENTER TERRITORY' with '3 MOVE(S) LEFT'. zFt frame_0024 minimap: digits 0 1 2 3 4 5 across the top AND down the left, compass N/W/E/S on the four edges, wall/exit segments, gate glyphs, '!' and 'X' markers, player arrow at column 2 row 4, with 'TERRITORY (22,51) SECTOR (2,4)' printed beneath.",
+  "text": "The war-room board is on screen in at least four frames in a segment the survey never opened -- reference/frames/Nr4fQstqHDM/seg-29/ is a War Room segment, and the 6x6 sector board with printed 0-5 axes appears in the second longplay's map segment.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as:13 vs reference/extracted/bindata/119_1t4646s0.bin",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/web-bindata-119-class-name-match",
+  "lane_impact": "L0 meta-social / enemies-ai \u2014 Stage-0 S0-1's orphan 'survival mode' is definitively the war-room battle wave table in the WEB build too, and the anonymous web bindata filenames turn out to encode the consuming class token, which is a general decoding key for the other 26 web blobs.",
+  "ledger_text": "119 = <survivalmodedata> \u2014 an ENTIRE GAME MODE absent from all 12 ledger systems",
+  "overturns_ledger": true,
+  "quote": "`internal static const \u00a71t12534s0\u00a7:Class = \u00a71t4646s0\u00a7;` (web, line 13) \u2014 cf. reference/decompiled/shs3_android/scripts/WarHexUI.as:13 `internal static const SurvivalModeData:Class = WarHexUI_SurvivalModeData;`",
+  "text": "The web bindata blob 119 is bound to the war-room wave table by NAME, not by inference: the web WarHexUI declares its SurvivalModeData class as \u00a71t4646s0\u00a7, which is literally the class token in the extracted filename 119_1t4646s0.bin.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1216-1219, 1535, 1588 (streak/cooldown block at :1514-1527)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/web-daily-prize-rolls-differ",
+  "lane_impact": "L0 meta-social \u2014 the daily-reward third of blocker \u2462 is closed from the WEB payload, but with different probability tables than the survey filed; a 1:1 recreation must use 37+level / 8 / 10.",
+  "ledger_text": "\u2462 achievements list, daily-reward table, token costs \u2014 one Ruffle session closes all.",
+  "overturns_ledger": true,
+  "quote": "`:1218 var _loc1_:int = 37 + this.\u00a71t5864s0\u00a7.getLevel(); :1219 var _loc2_:int = Math.random() * _loc1_;` ... `:1588 _loc4_ = Math.random() * 8;` ... `:1535 _loc4_ = Math.random() * 10;`",
+  "text": "The WEB v0.717 daily-login prize uses a level-scaled base roll of (37 + player level) outcomes and an eight-outcome day-10 bonus; only the 30-day super-bonus (10 outcomes) matches the Android table.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:200, :1401, :1405, :2079 + \u00a71t6519s0\u00a7.as:827 + reference/extracted/itemdata.xml line 402 (item 2127)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/web-duel-token-cap-40",
+  "lane_impact": "L0 meta-social -- completes blocker 3's token third with the RIGHT number; the web premium SKU selling 40 tokens is the independent cross-check.",
+  "ledger_text": "\u2462 achievements list, daily-reward table, token costs \u2014 one Ruffle session closes all.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:200 `internal static const \u00a71t9400s0\u00a7:int = 40;` -- same slot as Android's `MAXDUELTOKENS:int = 30` in an otherwise identical constant block (60 / 2*60 / 60*60 / 7 / ? / 40) \u00b7 :1401 `if(\u00a71t7356s0\u00a7(\u00a71t9416s0\u00a7) > \u00a71t9400s0\u00a7)` :1405 `\u00a71t7357s0\u00a7(\u00a71t9416s0\u00a7,\u00a71t9400s0\u00a7);` \u00b7 \u00a71t6519s0\u00a7.as:827 `... \u00a71t9416s0\u00a7) + \"/\" + ... \u00a71t9400s0\u00a7` \u00b7 itemdata.xml item 2127 resolves to \"40 Duel Tokens\"",
+  "text": "The v0.717 Duel Token hard cap is 40, not the Android build's 30.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2644-2651, :1024, :228 + reference/decompiled/shs3_payload/scripts/\u00a71t406s0\u00a7.as:1544, :1549, :1581",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/web-rebirth-25-100",
+  "lane_impact": "L0 meta-social -- blocker 4 is closed, but at 25/100/303, and the Kongregate forum's 'Rebirthing = 25 FREE Gold' is CONFIRMED rather than contradicted. Any config written from the survey's 5/20/60 would be wrong for v0.717.",
+  "ledger_text": "\u2463 offline gold faucet rate (primary source was dead IAP)",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:2644 `if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8)` :2646 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);` :2651 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25);` \u00b7 :228 `internal static const \u00a71t9413s0\u00a7:int = 12;` (= STAT_HGOLD) \u00b7 :1024 `\u00a71t7357s0\u00a7(\u00a71t9413s0\u00a7,3);` \u00b7 \u00a71t406s0\u00a7.as:1544 `if(...\u00a71t9413s0\u00a7) > 300 && ...\u00a71t9426s0\u00a7) < 9)` \u00b7 :1581 `if((...\u00a71t9413s0\u00a7) - 3) / 25 > _loc3_)`",
+  "text": "In the target WEB v0.717 build, rebirth grants 25 premium Gold (100 at the Dan 8 rebirth), new characters start with 3 Gold, and the client's own anti-cheat ceiling is 300 -- not the 5/20/60 the survey reported from the Android build.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2638-2656 (and :222,:228,:254) + reference/decompiled/shs3_payload/scripts/\u00a71t406s0\u00a7.as:1544",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/web-rebirth-faucet-25-100-300",
+  "lane_impact": "L0 meta-social -- blocker \u2463 closes, but at 25/100/300 not 5/20/60. Also vindicates docs/research/KONGREGATE_FORUM_FINDINGS.md:308 ('25 gold is awarded EVERY rebirth, rising to 100 gold on the 9th'), which the survey declared refuted by the payload; the forum was describing the desktop build the survey never opened.",
+  "ledger_text": "\u2463 offline gold faucet rate (primary source was dead IAP)",
+  "overturns_ledger": true,
+  "quote": ":2644 `if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8)` :2646 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100);` :2649 `else` :2651 `\u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25);` -- with :228 `internal static const \u00a71t9413s0\u00a7:int = 12;` (STAT_HGOLD) and :254 `internal static const \u00a71t9426s0\u00a7:int = 25;` (STAT_DAN), the same ids as android StatsManager.as:194/:220. The paid-player test: \u00a71t406s0\u00a7.as:1544 `if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9413s0\u00a7) > 300 && \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9426s0\u00a7) < 9)`. 8x25 + 100 = 300 exactly.",
+  "text": "The v0.717 rebirth faucet is 25 Gold per rebirth and 100 at the Dan 8 rebirth -- a 300-Gold lifetime ceiling that the desktop client itself uses as its paid-player test -- exactly 5x the Android values the survey reported.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2638-2656 (stat ids fixed by :222/:228/:254)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/web-rebirth-grants-25-and-100-gold",
+  "lane_impact": "L0 meta-social \u2014 blocker \u2463 IS closed, but at 25/100/300, not 5/20/60; also restores KONGREGATE_FORUM_FINDINGS' 'Rebirthing = 25 FREE Gold' as a corroborated source, and shows the Android >60-Gold reportHack ceiling has no web equivalent.",
+  "ledger_text": "\u2463 offline gold faucet rate (primary source was dead IAP)",
+  "overturns_ledger": true,
+  "quote": "`public static function \u00a71t9600s0\u00a7() : * { ... \u00a71t9712s0\u00a7(\u00a71t8755s0\u00a7,0); if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) == 8) { \u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,100); ... } else { \u00a71t9713s0\u00a7(\u00a71t9413s0\u00a7,25); } if(\u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) < 9) { \u00a71t9713s0\u00a7(\u00a71t9426s0\u00a7,1); } ... }` \u2014 \u00a71t8755s0\u00a7=9 (XP), \u00a71t9413s0\u00a7=12 (HGOLD), \u00a71t9426s0\u00a7=25 (DAN).",
+  "text": "In the WEB v0.717 build rebirth grants 25 Heavenly Gold, and 100 at the Dan 8 rebirth \u2014 a 300-Gold lifetime offline faucet, five times the Android build's 5/20/60, and an exact match for the Kongregate thread the survey dismissed.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "byte/diff check: reference/extracted/bindata/119_1t4646s0.bin (11,721 B) vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (11,553 B)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/web-survival-table-differs-in-composition",
+  "lane_impact": "L0 meta-social / enemies-ai \u2014 the 351 kill total is safe from either build, but the per-wave enemy MIX must be read from the web file (bindata/119); the Android copy is a different, thinner draw.",
+  "ledger_text": "kill cap 350",
+  "overturns_ledger": true,
+  "quote": "168-line unified diff, all of it inside <id> elements: web `<id>449|454|449|454|443</id>` / `<id>450|455|450|455|443</id>` / `<id>451|456|451|456|443</id>` vs android `<id>449|454</id>` / `<id>450|455</id>` / `<id>451|456</id>`. Both files: 39 <wave>, sum<qty> = 351, blocks {400: 340, 700: 11}.",
+  "text": "The web and Android war-room wave tables agree on 39 waves and 351 total enemies but not on composition: seven late waves in the web build draw from a five-slot id pool that includes an extra id 443, which the Android build reduces to two slots.",
   "verdict": "HELD"
  }
 ]

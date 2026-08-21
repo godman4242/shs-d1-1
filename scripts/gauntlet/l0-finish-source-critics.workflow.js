@@ -1,7 +1,7 @@
 export const meta = {
   name: 'gauntlet-l0-finish-wf2b',
-  description: 'GAUNTLET L0 finish, run 2b: re-run the 4 source packets whose critics died at wall #5',
-  whenToUse: 'After the WF-1/WF-2 salvage. Judges the 140 claims still carrying no verdict. Does NOT re-survey.',
+  description: 'GAUNTLET L0 finish: run the source critics buildWorklist still lists as owed',
+  whenToUse: 'Whenever MANIFEST.json shows a WF-2 packet. Pass args {units:[...], lenses:[...]} to narrow it. Does NOT re-survey.',
   phases: [
     { title: 'Source critics', detail: '4 surviving packets x (cite + hunter), reading the blind-safe worklist packets' },
   ],
@@ -131,12 +131,26 @@ const CRITIC_SCHEMA = {
   },
 }
 
-const UNITS = [
+// Which units and lenses to run comes from args, so a re-run after a wall never needs a
+// cloned script — the worklist decides, and MANIFEST.json says why each packet is owed.
+const WANT_UNITS = (typeof args === 'object' && args?.units) || null
+const WANT_LENSES = (typeof args === 'object' && args?.lenses) || ['cite', 'hunter']
+
+const ALL_UNITS = [
+  { key: 'questdata', file: 'src-questdata.claims.json', source: 'reference/extracted/questdata.xml (796 K) — quests, steps, dialogue, choices, cutscene direction, waves' },
+  { key: 'skilldata', file: 'src-skilldata.claims.json', source: 'reference/extracted/skilldata.xml (37 K) — 75 skills x 182 level rows, chi/cooldown/value/required' },
+  { key: 'npcdata', file: 'src-npcdata.claims.json', source: 'reference/extracted/npcdata.xml (219 K) — 495 NPCs, paperdoll slots, ai, lvl, hp, attack, defense, reward/loot' },
   { key: 'itemdata', file: 'src-itemdata.claims.json', source: 'reference/extracted/itemdata.xml (173 K) — 982 items, type, baseprice, weight, modifiers, defense, unique, heavenlyprice' },
   { key: 'bindata', file: 'src-bindata.claims.json', source: 'reference/extracted/bindata/ — all 27 web files (19 animdata, survivalmodedata, room objects, 5 name tables, 1 GIF)' },
   { key: 'actionscript', file: 'src-actionscript.claims.json', source: 'reference/decompiled/**/*.as — 2,768 classes across 8 bundles; shs3_payload has 1,079 files, obfuscated §1t<N>s0§.as names' },
+  { key: 'android-blobs', file: 'src-android-blobs.claims.json', source: 'reference/extracted/android/ — the 42 CLASS-NAMED Android blobs (v0.682). ⚠ UTF-16LE: a byte-level grep returns 0 hits and WILL fool you into wrongly refuting a sound claim. Decode first. Inventory at ' + IDX + '/android_blobs.json.' },
+  { key: 'string-table', file: 'src-string-table.claims.json', source: 'reference/extracted/android/118_Mobile_Lang_EN.bin via ' + IDX + '/strings.json — 2,533 entries, ALREADY PARSED. Android v0.682.' },
   { key: 'frames', file: 'src-frames.claims.json', visual: true, source: 'reference/frames/ — 7,381 stills, manifest at ' + IDX + '/frames.json. A1 TERRITORY: the fighter is ~270 px tall in a 1080p frame.' },
+  { key: 'uistrings-payload', file: 'src-uistrings-payload.claims.json', source: 'reference/extracted/ui_strings.txt (471 fields, WEB v0.717) + reference/extracted/payload.xml (329 MB — STREAM it, histogram at ' + IDX + '/payload_histogram.json)' },
 ]
+
+const UNITS = WANT_UNITS ? ALL_UNITS.filter((u) => WANT_UNITS.includes(u.key)) : ALL_UNITS
+if (!UNITS.length) throw new Error(`no units matched ${JSON.stringify(WANT_UNITS)}`)
 
 const LENSES = {
   frame: `LENS 1V — THE FRAME LENS. This packet is VISUAL, so the cite lens IS the frame
@@ -228,15 +242,15 @@ this run must survive a usage wall. Then return the structured object.`
 // ---------------------------------------------------------------------------
 
 phase('Source critics')
-log(`WF-2b armed: ${UNITS.length} surviving packets x 2 blind critics = ${UNITS.length * 2} agents. ` +
-    `140 banked claims that still carry no verdict after wall #5.`)
+log(`WF-2 critics armed: ${UNITS.length} packet(s) x [${WANT_LENSES.join(', ')}] = ${UNITS.length * WANT_LENSES.length} agents. ` +
+    `Units: ${UNITS.map((u) => u.key).join(', ')}.`)
 
 const deadAgents = []
 const reviews = []
 
 const results = await parallel(
   UNITS.flatMap((unit) =>
-    ['cite', 'hunter'].map((lens) => () =>
+    WANT_LENSES.map((lens) => () =>
       agent(criticPrompt(unit, unit.visual && lens === 'cite' ? 'frame' : lens), {
         label: `critic:${unit.key}:${lens}`,
         phase: 'Source critics',
@@ -270,7 +284,7 @@ const coverage = reviews.map((r) => ({
 }))
 const shortfalls = coverage.filter((c) => c.judged !== null && c.packet !== null && c.judged < c.packet)
 
-log(`WF-2b done: ${live.length}/${UNITS.length * 2} critics returned · ${liveVerdicts.length} live verdicts · ` +
+log(`WF-2b done: ${live.length}/${UNITS.length * WANT_LENSES.length} critics returned · ${liveVerdicts.length} live verdicts · ` +
     `${verdicts.length - liveVerdicts.length} VOID · ${newFindings.length} new findings · ` +
     `${deadAgents.length} agents died.`)
 
@@ -278,7 +292,7 @@ const clean = deadAgents.length === 0 && unjudgedUnits.length === 0 && shortfall
 
 return {
   critics_run: live.length,
-  critics_expected: UNITS.length * 2,
+  critics_expected: UNITS.length * WANT_LENSES.length,
   verdicts_total: verdicts.length,
   verdicts_live: liveVerdicts.length,
   verdicts_void: verdicts.length - liveVerdicts.length,
@@ -289,8 +303,8 @@ return {
   coverage,
   shortfalls,
   INTEGRITY: clean
-    ? `CLEAN — all ${UNITS.length * 2} critics returned, every packet fully judged, 0 agents died, 0 VOID verdicts`
-    : `INCOMPLETE — ${live.length}/${UNITS.length * 2} critics returned · units with NO live critic: ` +
+    ? `CLEAN — all ${UNITS.length * WANT_LENSES.length} critics returned, every packet fully judged, 0 agents died, 0 VOID verdicts`
+    : `INCOMPLETE — ${live.length}/${UNITS.length * WANT_LENSES.length} critics returned · units with NO live critic: ` +
       `[${unjudgedUnits.join(', ') || 'none'}] · packets only partly judged: ` +
       `[${shortfalls.map((s) => `${s.unit}:${s.lens} ${s.judged}/${s.packet}`).join(', ') || 'none'}] · ` +
       `${deadAgents.length} agents DIED (${deadAgents.join(', ') || 'none'}). ` +

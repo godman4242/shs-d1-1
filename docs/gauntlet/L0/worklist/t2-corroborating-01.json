@@ -1,6 +1,122 @@
 [
  {
   "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3276",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NEW-1-web-crit-is-flat-1.3",
+  "lane_impact": "L5 combat-core / L2 skills-meters: CRIT_MULT=1.3 graduates from wiki-sourced to A2-CONTRACT for v0.717, and the crit proc rule (deterministic, consumes a full Focus/reload bar \u2014 deductReloadBar zeroes it at \u00a71t99s0\u00a7.as:3295-3298) closes skills-meters blocker \u2464 and combat-core blocker \u2464 together. Any android-sourced combat constant must now be diffed against the web twin before banking.",
+  "ledger_text": "2. **The \"iaido-duel MEASURED 3.0\u00d7 crit\" is a DIFFERENT GAME** \u2026 Keep `CRIT_MULT=1.3`.",
+  "overturns_ledger": false,
+  "quote": "if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)\n{\n   return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;\n}\nreturn _loc2_;",
+  "text": "The WEB v0.717 crit multiplier is a FLAT 1.3\u00d7 with no stance split \u2014 the ledger's 'Keep CRIT_MULT=1.3' ruling is CONFIRMED by shipped code, not killed. Deterministic in both builds (fires exactly when reload == maxreload, no random term), but the 1.5\u00d7Light / 1.2\u00d7other split cited by NF-1 is android v0.682 only. \u00a71t99s0\u00a7.as is the web MCSPlayer twin: same four functions in the same order with identical bodies (getDamage/getDefense/deductReloadBar/bonusReload), same BALANCED+REVERSED vs HEAVY+DUAL reload grouping, same 5*24 constant; bundle version pinned at \u00a71t1523s0\u00a7.as:36 = 0.717.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:812",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "NEW-10-obfuscated-bundle-grep-method",
+  "lane_impact": "All lanes: re-run any STILL_UNHELD verdict that rests on a shs3_payload identifier grep. Two in this packet alone were wrong (the friend-bar 'android-only' caveat) or needed literal-level confirmation (the repair-cost parity hole, which I confirmed IS real).",
+  "overturns_ledger": false,
+  "quote": "case \"/fart\":   \u2014 proof that string literals survive the obfuscation, so the zero-hit result for \"repairweapon\" in the same bundle is a genuine absence while the zero-hit result for the identifier `originalWidth` is not.",
+  "text": "METHOD FINDING for every remaining L0 lane: absence in reference/decompiled/shs3_payload/ cannot be concluded from grepping an identifier. That bundle renames classes, members AND locals (\u00a71t\u2026\u00a7 / _loc*). Numeric and string LITERALS survive intact. Two claims in this packet reached wrong conclusions from identifier greps. The reliable technique \u2014 which established every web twin used in this review \u2014 is to search for the numeric literals and then confirm by function ORDER and body shape. Twins established this session: \u00a71t99s0\u00a7 = MCSPlayer, \u00a71t1523s0\u00a7 = StatsManager (version 0.717 at :36), \u00a71t1540s0\u00a7 = GameEngine, \u00a71t1541s0\u00a7 = InputManager, \u00a71t5495s0\u00a7 = DragonDanceUI, \u00a71t4906s0\u00a7 = EnemyPlayer-init path.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3277",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NEW-2-web-per-stance-damage-and-mastery-10-ceiling",
+  "lane_impact": "L5 combat-core: the '\u00d7stance' term is now an exact three-way expression for the target build, base damage is minDamage + Math.random()*damageRange, and Heavy/Dual/Reversed do not scale with mastery at all. Confirms REBUILD_READINESS.md:155 rather than overturning it, and supplies the mastery curve the ledger asked to be modelled or flagged.",
+  "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "overturns_ledger": false,
+  "quote": "case \u00a71t12220s0\u00a7:\n   _loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);\n   break;\ncase \u00a71t12221s0\u00a7:\n   _loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);\n   break;\ncase \u00a71t12222s0\u00a7:\ncase \u00a71t12223s0\u00a7:\ncase \u00a71t12224s0\u00a7:\n   _loc2_ = _loc1_ * 1.4;",
+  "text": "The WEB v0.717 per-stance damage multipliers are Light \u00d7(0.5 + 0.04\u00b7lightMastery), Balanced \u00d7(1 + 0.02\u00b7balancedMastery), Heavy/Dual/Reversed a flat \u00d71.4 \u2014 and at maximum mastery they reproduce the ledger's stance table EXACTLY. skilldata skill 1000 (Light Stance Mastery) carries ten <level> rows, value 1\u202610, with <required>9</required> on the level-10 row. At mastery 10: Light 0.5+0.4 = 0.90, Balanced 1+0.2 = 1.20, Heavy 1.40 \u2014 i.e. the '0.9/1.2/1.4 MASTERY-9 CEILING' table, confirmed to three decimals by shipped code. The android v0.682 curve (0.005 per point, flat 1.5) is a different, later re-tune and must not be coded for this recreation.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as:836-843",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NEW-5-skill-1500-reversed-1501-dual",
+  "lane_impact": "L-skills-meters + L-enemies-ai: upgrades NF-category-11-decoded from PARTIAL to functionally HELD. Both extra stances take the flat Heavy multiplier in getDamage (\u00d71.4 web / \u00d71.5 android) and REVERSED groups with BALANCED for reload cost while DUAL groups with HEAVY (\u00d71.5 slashUsage).",
+  "overturns_ledger": false,
+  "quote": "if(xml.getMastery(1500) > 0)\n{\n   setStance(REVERSED_STANCE);\n}\nelse if(xml.getMastery(1501) > 0)\n{\n   setStance(DUAL_STANCE);\n}\n   (twin: EnemyElite.as:160-166; web twin: reference/decompiled/shs3_payload/scripts/\u00a71t4906s0\u00a7.as:90-95)",
+  "text": "Skill 1500 is REVERSED-stance mastery and 1501 is DUAL-stance mastery \u2014 a direct functional identification, in both builds, replacing the positional inference NF-category-11 had to rely on. Any npcdata row whose skills carry 1500 at any level spawns in REVERSED_STANCE; 1501 spawns DUAL_STANCE; only if neither is present does the actor pick a stance from the light/balanced/heavy mastery comparison. The two extra stances are therefore real and NPC-only in the data (npcdata carries 1500 on 5 rows and 1501 on 2, all ai 29 = EnemyElite), and their combat identity is settled even though their display NAMES remain unheld (1500/1501 have no string-table entry \u2014 resolved_names resolves 73 of 75 skilldata rows and these are the two misses).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1540s0\u00a7.as:269-290",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NEW-7-web-friend-bar-resize-parity",
+  "lane_impact": "L6 art-anim-audio-feel + L8 ui-hud + L11 meta-social: the friend bar is a shipped v0.717 layout mode, not an Android-only artefact, which is why the web SWF document rect is authored at 800\u00d7690 while the play-field canvas stays 800\u00d7480.",
+  "overturns_ledger": false,
+  "quote": "internal static function \u00a71t10021s0\u00a7(param1:Event) : void\n{\n   var _loc2_:int = 800;\n   var _loc3_:int = 480;\n   var _loc4_:int = 690;\n   var _loc5_:Number = _loc2_ / _loc3_;\n   var _loc6_:Number = _loc2_ / _loc4_;\n   var _loc7_:Number = \u00a71t9973s0\u00a7.stageWidth / \u00a71t9973s0\u00a7.stageHeight;\n   if(_loc7_ <= _loc6_)\n   {\n      _loc5_ = _loc6_;\n      _loc3_ = _loc4_;\n      \u00a71t1523s0\u00a7.\u00a71t9362s0\u00a7 = true;",
+  "text": "The 800/480/690 resize handler and its friend-panel branch exist in the WEB v0.717 build, so the whole 690/friend-bar cluster has full build parity and does NOT inherit the S0-3 Android caveat. The web twin is byte-for-byte the same algorithm with locals renamed: 800, 480, 690, the same `<=` aspect comparison, the same stageShowingFriendBar flag and the same friend-panel init() call. METHOD WARNING: the finding that claimed android-exclusivity reached that conclusion by grepping shs3_payload for `originalWidth`/`originalHeight` \u2014 identifiers the obfuscator rewrites to _loc*. Grep the numeric literals, never the identifiers.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5495s0\u00a7.as:70-71",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NEW-8-dragon-dance-web-parity",
+  "lane_impact": "L11 meta+rebirth: blocker \u2463's input half closes for the TARGET build, not just for Android \u2014 no parity flag needed on the Dragon Dance input contract.",
+  "overturns_ledger": false,
+  "quote": "this.\u00a71t5516s0\u00a7 = [\"sky\",\"wind\",\"water\",\"mountain\",\"earth\",\"thunder\",\"fire\",\"lake\"];\nthis.\u00a71t5517s0\u00a7 = [\"fire\",\"earth\",\"lake\",\"sky\",\"water\",\"mountain\",\"thunder\",\"wind\"];   (permutations: \u00a71t8695s0\u00a7.as:172-212)",
+  "text": "The Dragon Dance ring is in the WEB v0.717 build too, so NF-9's android-only scoping is unnecessarily conservative. \u00a71t5495s0\u00a7 is the web DragonDanceUI twin and carries both trigram label arrays verbatim; \u00a71t8695s0\u00a7 carries the same five target permutations ('1246','4216','1642','1426','6241') the Kanji statue draws from.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3284-3290",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NEW-9-heavy-defense-0.8-double-confirmed",
+  "lane_impact": "L5 combat-core: the 'one way' qualifier in the ledger is right \u2014 the multiplier is applied in getDefense on the defender's own stance, so it is a property of being in Heavy, not of being hit by Heavy.",
+  "overturns_ledger": false,
+  "quote": "internal function \u00a71t4477s0\u00a7() : int\n{\n   if(this.stance == \u00a71t12222s0\u00a7)\n   {\n      return defense * 0.8;\n   }\n   return defense;\n}   (corroboration: resolved_names skilldata['1002'] = 'Heavy Stance Mastery' \u2026 'Effective against Balanced Stance.\\nDefense -20%')",
+  "text": "Heavy-stance Defense \u00d70.8 is confirmed twice in the target build: the web getDefense twin returns `defense * 0.8` for HEAVY, and skill 1002's own in-game description ends 'Defense -20%'. The ledger's damage-math line (:74) and combat-core Ready line (:189) are A2-backed on this term rather than wiki-sourced.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "build": "android v0.682",
   "cite": "reference/decompiled/shs3_android/scripts/SkillScreenUI.as:104",
   "citelint": {
@@ -529,6 +645,23 @@
  },
  {
   "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/AnimData.as:15, :25-26, :28-41, :43-53, :55-57, :58-66, :69, :105, :114, :141; reference/decompiled/shs3_android/scripts/MCSCharacter.as:1316 and :1334",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/NEW-hold-tail-table-is-the-animdata-constructor-switch",
+  "lane_impact": "L6 art-anim-audio-feel and L1 combat-core: this is the recovery-window table for every slash. Two counters exist \u2014 currentAnimationDuration (the @d + code tail, MCSCharacter.as:1316) and frameList.length (MCSCharacter.as:1334) \u2014 and the gap between them IS the pose latch. It is the correct replacement for the ledger's '15fps pose latch' shorthand and for the refuted claim art-anim-audio-feel/hold-frames-are-authored-in-data.",
+  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
+  "overturns_ledger": false,
+  "quote": "AnimData.as:15 `this.duration = xml.@d;` \u00b7 :25 `case \"light_afterslashpose\":` :26 `this.duration += 10;` \u00b7 :28-40 the twelve `case MCSActor.*SLASH_POSE:` then :41 `this.duration += 10;` \u00b7 :43-52 the ten `case MCSActor.*FALLSLASH_END/*JUMPSLASH_LAND:` then :53 `this.duration += 15;` \u00b7 :55-56 `case \"sheathesword\": case \"sheathesword3\":` :57 `+= 24;` \u00b7 :58-65 `case \"deathenemy\"/\"deathnohand\"/\"deathnohead\"/\"defeatedanimationv2\"/\"death\"/\"gob_death\"/KNEEGROIN_VICTIM:` :66 `+= 6;` \u00b7 MCSCharacter.as:1316 `if(this.frameCounter < this.currentAnimationDuration)` \u00b7 :1334 `if(this.frameCounter < this.currentAnimation.frameList.length)`",
+  "text": "The real per-animation hold table is a hard-coded switch in AnimData's constructor, not the XML. AnimData.as:15 copies @d verbatim from the data (which always equals len(<f>)), then :25-141 ADDS the tail: +10 for 'light_afterslashpose' and for all twelve *SLASH_POSE variants, +15 for the five *FALLSLASH_END and five *JUMPSLASH_LAND, +24 for 'sheathesword'/'sheathesword3' and 'gotlauncheddownedend', +6 for the whole death set, and ~25 more single cases running up to +50. This is the table a motion rebuild actually needs, and no amount of data extraction will find it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "attribute census over all 19 animdata blobs in reference/extracted/bindata/; semantics from reference/decompiled/shs3_android/scripts/AnimData.as:16, FrameData.as:15-17, MCSCharacter.as:1306",
   "citelint": {
    "notes": [
@@ -590,6 +723,23 @@
   "verdict": "HELD"
  },
  {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/Enemy*.as \u2014 grep -l 'override public function die' returns 18 of 34 files; EnemyArcher.as:304-308, EnemyElite.as:195-205, EnemyClone.as:747-755",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "art-anim-audio-feel/eighteen-of-34-enemy-classes-override-die",
+  "lane_impact": "L2 enemies-ai: the death-variant mix is per-class, and a rebuild needs the override map (three-tier: full replacement, delegate-with-addendum, pure inherit), not a single global dice.",
+  "ledger_text": "(none \u2014 this corrects a peer claim's lane_impact, not a REBUILD_READINESS.md sentence)",
+  "overturns_ledger": false,
+  "quote": "EnemyArcher.as:304 override public function die() : * { super.die(); mcs.setProp(13000); }  \u00b7  EnemyElite.as:195 override public function die() : * { if(!hasSkill(SkillManager.SKILL_UNDYING)) { super.die(); } else { startAction(SKILL_UNDYING_STATE); } }  \u00b7  EnemyClone.as:747 override public function die() : * { dead = true; startAnim(ENEMYDEATH); ... }",
+  "text": "Correction to a sub-claim in npc-death-dice-is-seven-way: 18 of the 34 Enemy*.as classes declare `override public function die()`, not 3. EnemyBoar, EnemyArcher, EnemyDeer, EnemyBear, EnemyClone, EnemyGoblinThrower, EnemyElite, EnemyHorse, EnemyOgre, EnemyGoblin, EnemyKanjiGuardian, EnemyTrainingDummy, EnemyVegePatch, EnemyStag, EnemyWolfAlpha, EnemyNianMonster, EnemyZombie, EnemyWolf. Several delegate straight back (EnemyArcher.as:306 super.die(); EnemyElite.as:199 super.die() unless SKILL_UNDYING), so the seven-way NPC dice does remain the common path for standard human enemies \u2014 but 'only EnemyGoblin, EnemyGoblinThrower and EnemyZombie override' is wrong and must not be copied into the ledger.",
+  "verdict": "PARTIAL"
+ },
+ {
   "artifact_class": "A3",
   "cite": "same PlaceObject3 parse, filter-list decode; cross-checked against reference/decompiled/shs3_android/scripts/ColorCode.as:1-10 imports",
   "citelint": {
@@ -635,145 +785,6 @@
   "overturns_ledger": false,
   "quote": "No DEATHNOHEAD branch in: EnemyBear, EnemyBoar, EnemyCivilianFemale, EnemyClone, EnemyDeer, EnemyElite, EnemyFox, EnemyHorse, EnemyNianMonster, EnemyPlayer, EnemyPlayerGiant, EnemyStag, EnemyVegePatch, EnemyWolf, EnemyWolf2, EnemyWolfAlpha, Enemy_VegePatch (17 of 34)",
   "text": "The dismemberment/gore death system applies only to humanoids: 17 of the 34 Enemy*.as classes carry no DEATHNOHEAD branch at all.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/NPC.as die() non-behead branch; EnemyZombie.as die(); EnemyClone.as:747; EnemyOgre.as:351; only 8 of 35 Enemy*.as files contain 'Math.random() * 5'",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/gore-roll-is-per-class",
-  "lane_impact": "art-anim-audio-feel and enemies-ai: the duel-relevant human death table is 7-way with a surrender-shaped DEFEATED2 branch that is suppressed during red-freeze. Do not port EnemyGoblin's 40/20/20/20 as the game's rule.",
-  "overturns_ledger": false,
-  "quote": "NPC.as: dice = Math.random() * 7; if(dice <= 1) startAnim(ENEMYDEATH) ... else if(dice == 2) startAnim(DEATH_FORWARD) ... else if(dice == 3 && !StageManager.isRedFreeze()) startAnim(DEFEATED2) ... else if(dice == 4) startAnim(ENEMYDEATHNOHAND) ... else if(dice == 5) startAnim(DEATHINHALF) ... else startAnim(ENEMYDEATH)",
-  "text": "The death-variant roll is per enemy class, not one global 40/20/20/20: NPC (the human enemy) rolls Math.random()*7 over six branches including a non-gore DEFEATED2, EnemyZombie rolls *6, EnemyClone has no gore path at all, and EnemyOgre plays a single OGRE_DEATH.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/EnemyShield.as:335-339; MCSPlayer.as:1457, :1461, :1764, :1768, :3719",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/gothit-is-a-ladder-not-a-constant",
-  "lane_impact": "art-anim-audio-feel: blocks the survey's recommendation to delete the recreation's 7/12/16 tint ladder as 'an invention'. The original's reaction window is context-dependent and does contain a 16. Cross-lane into enemies-ai: EnemyShield's PART_prop branch zeroes damage and returns false - a shield is a hard block with its own 24-tick beat and its own SFX (hitmetal), not a damage reduction.",
-  "overturns_ledger": false,
-  "quote": "EnemyShield.as:335-339 `case mcs.partList[MCSCharacter.PART_prop]: gotHitFlag = true; damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal(); return false;`  \u00b7  MCSPlayer.as:1768 `else if(prevActionState == SKILL_DEADLYCLEAVE_STATE) { gotHitCounter = 16; }`  \u00b7  :1764 `gotHitCounter = 26;`  \u00b7  :1457 `gotHitCounter = 24;`  \u00b7  :1461 `gotHitCounter = 84;`",
-  "text": "The got-hit reaction is a ladder, not a constant: 12 general, 24 on a shield block, 16 after Deadly Cleave, 26 after Thousand Stabs, 24/84 in redfreeze - so a 16-frame reaction does exist in the original.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "grep -rhno 'gotHitCounter = [0-9]*' over reference/decompiled/shs3_android/scripts/*.as; contexts at EnemyShield.as:330-342 and MCSPlayer.as:1445-1470, :1752-1775",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/hit-reaction-ladder-not-uniform",
-  "lane_impact": "art-anim-audio-feel: do not ship 'the original's one number is 12'. Cross-lane into combat-core and skills-meters: the per-skill recovery lockouts (THOUSANDSTABS 26, DEADLYCLEAVE 16) and the 84-tick player red-freeze lock are recovery-frame numbers no ledger holds. EnemyShield.as:338 also explains what the recovered `hitmetal` SFX is for - a zero-damage shield block.",
-  "ledger_text": "hit-tint scaling (7/12/16f), death sword-detach, dash-snap, scarf physics, FINISHER_FLASH \u2014 all measured/authored but missing from the art digest \u00a75.",
-  "overturns_ledger": false,
-  "quote": "counts: 23x `gotHitCounter = 12`, 3x `= 0`, 2x `= 24`, 1x `= 84`, 1x `= 26`, 1x `= 16`. EnemyShield.as:335-340 `case mcs.partList[MCSCharacter.PART_prop]: gotHitFlag = true; damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal();` \u00b7 MCSPlayer.as:1457-1461 `if(mcs.animation == DOWNSTAB) { gotHitCounter = 24; } else if(this.controlledBy == 0) { gotHitCounter = 84; }` \u00b7 MCSPlayer.as:1764-1768 `else if(prevActionState == SKILL_THOUSANDSTABS_STATE) { gotHitCounter = 26; } else if(prevActionState == SKILL_DEADLYCLEAVE_STATE) { gotHitCounter = 16; }`",
-  "text": "gotHitCounter is not a uniform 12: there is a 12/16/24/26/84 ladder, EnemyShield sets 24 on a shield block, and 16 is in the original for the DEADLYCLEAVE recovery - so the ledger's 7/12/16f tint ladder is not a recreation invention.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1388 (updateBuff) and :1404; corroborated by docs/gauntlet/L0/index/strings.json id 4132",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/hud-150-damage-is-a-buff",
-  "lane_impact": "art-anim-audio-feel: resolves the survey's own un-reconciled CAUTION on claim hit-reaction-12-ticks \u2014 there was never a second 1.5 to conflate. Cross-lane: ui-hud gains a buff-readout element with a one-buff-at-a-time rule; items-equipment and economy gain a consumable buff family (ATTACK/DEFENSE/SPEED/XP at 150%, AP and duel-token regen at 200%).",
-  "overturns_ledger": false,
-  "quote": "OverworldHUD.as:1400 `if(bufftype == StatsManager.BUFF_XP) { buffstr = \"150% XP\"; }` :1404 `else if(bufftype == StatsManager.BUFF_ATTACK) { buffstr = \"150% DAMAGE\"; }` \u2026 `\"150% DEFENSE\"` / `\"150% SPEED\"` / `\"200% AP REGEN\"` / `\"200% DUEL TOKEN REGEN\"` \u00b7 strings.json 4132 = 'Eat this potato to get the 150% Damage buff.\\n\\nNote: Only one buff may be active at a time.'",
-  "text": "The '150% DAMAGE' text visible in the duel HUD is a timed consumable buff readout, not the stance modifier and not the behead multiplier \u2014 it is one of a family of buff strings driven by bufftype.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/frames/session24/reach-A28-forest-duel/ev2_S3_wintint_hz031.png (1100x630), viewed whole at 0.87x; against reference/decompiled/shs3_android/scripts/ColorCode.as:12",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/killbeat-looks-like-red-field-black-silhouettes",
-  "lane_impact": "art-anim-audio-feel: gives the kill-beat a visual spec, not just timings, and corroborates the no-blend-mode compositing vocabulary from the frame side (a full-alpha ColorTransform to black, not a multiply/darken blend). Note the blade wedge in THIS frame does taper to a point, unlike the one in Nr4fQstqHDM_432.0.png - the bladeslashfx silhouette varies across its 5 frames.",
-  "overturns_ledger": false,
-  "quote": "Visibly in the frame: a uniform saturated red field filling the screen; both fighters, their kasa, the blade wedge and the entire grass line rendered as SOLID BLACK with no interior detail, only the small white eye/highlight shapes surviving. ColorCode.as:12 `internal static var blackColorTransform:ColorTransform = new ColorTransform(0,0,0,1,0,0,0,0);`",
-  "text": "The kill beat is visually a flat saturated red field with every actor rendered as a pure black silhouette - ColorCode's makeBlack ColorTransform applied stage-wide - and no frame of it was ever opened.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "cite": "my parse of every <anim> block in reference/extracted/bindata/*.bin",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/no-hold-frames-verified-exhaustively",
-  "lane_impact": "art-anim-audio-feel: promotes the survey's four-sample check (light_stance, light_run, walk, death) to a measured universal, which is what lets the \"holds are code-injected by AnimData duration tails\" model be asserted without qualification. It also means any hold frame observed on screen must come from AnimData's tail table, so that table is a hard requirement for the recreation, not an optimisation.",
-  "overturns_ledger": false,
-  "quote": "total anim blocks parsed: 487 \u00b7 anims with NO d attr: 0 \u00b7 d != frame count: 0",
-  "text": "The \"no hold frames in the data\" result is universal, not a spot-check: @d equals the number of <f> children for all 487 authored animations across all 19 web animdata blobs.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "cite": "reference/videos/Nr4fQstqHDM.mp4 (ffprobe r_frame_rate=60/1) 150 frames from t=428s, and reference/videos/zFtCaTO0_1M.mp4 (r_frame_rate=60/1) 120 frames from t=900s; luma MAE on play-area crop [400:1000, 500:1500]",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/pose-cadence-is-15hz-measured",
-  "lane_impact": "art-anim-audio-feel (L-art): DEFENDS the ledger rather than overturning it, and voids the survey's proposed correction. THE FRAME WINS \u2014 stated out loud, as the standing invariant requires. Cross-lane: every tick->seconds conversion in this unit (0.5 s hit reaction, 0.83 s music fade, 1.0 s blood ttl, 6.0 s kill beat) is contingent on the clock and must ship as TICKS with the seconds labelled INFERRED.",
-  "ledger_text": "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;",
-  "overturns_ledger": false,
-  "quote": "Nr4fQstqHDM mean MAE by index mod 4 = [0.061, 3.076, 0.026, 0.069]; raw deltas 0.42 5.94 0.05 0.02 0.02 5.29 0.02 0.02 0.03 4.95 0.00 0.03 0.00 3.17 ... \u00b7 zFtCaTO0_1M mean MAE by index mod 4 = [0.003, 0.040, 6.438, 0.078]",
-  "text": "The shipped game visibly steps poses at 15 Hz, not 24: both 1080p60 longplays show unique content on exactly every 4th frame, phase-locked, so the ledger's '15fps pose latch' is frame-backed and stands while the SWF's declared 24 fps describes only the stage timeline.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "cite": "reference/predecessors/shs2_kon.swf (20 DefineSound) and reference/predecessors/shs1_462631_shunpo202c.swf (10 DefineSound), MD5-compared by me against the decoded reference/extracted/android/122_Mobile_SoundResource.bin",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/predecessor-swfs-hold-sfx",
-  "lane_impact": "art-anim-audio-feel: bounds the bound. The STILL_UNHELD on web-audio parity is right that the SHS3 web payload holds no audio, but 'all audio claims here are Android v0.682' is too wide \u2014 punch and slash1 shipped unchanged in two web Flash builds. Marked PARTIAL because only 2 of 13 are byte-identical; the other seven shared names match in sample count and byte length but differ in bytes (re-encode). Also flags 7 SHS2 music tracks no lane has ever opened.",
-  "overturns_ledger": false,
-  "quote": "shs3 'punch' == shs2 'punch' == shs1 'punch' = cfd26c816a723ed36c45f79877924082  \u00b7  shs3 'slash1' == shs2 'slash1' == shs1 'sword1' = da4e98632c18a175715a1e679a3d42a2  \u00b7  shs2_kon.swf DefineSound names: deflect die1 die2 die3 hitmetal punch slash1 slash2 slash3 boom1 boom2 boom3 power_mp3 area2_mp3 area3_mp3 area4_mp3 boss_fight_mp3 cutscene4_mp3 ending_cutscene_mp3",
-  "text": "Two SHS3 SFX masters are byte-identical to assets in the studio's earlier WEB Flash games, both already in this repo \u2014 so they are provably not Android-only, and 30 predecessor sound assets sit entirely unsurveyed.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A3",
-  "cite": "my SWF header parse of reference/preservation/shs3.swf, shs3preloader.swf and the ffdec export header of the client at reference/extracted/payload.xml line 1",
-  "citelint": {
-   "notes": [
-    "QUOTE_SKIPPED_LARGE:reference/extracted/payload.xml"
-   ],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "art-anim-audio-feel/preservation-shs3swf-is-the-loader",
-  "lane_impact": "art-anim-audio-feel: cite hygiene only - the 24.0 fps and 800x690 conclusions are unaffected because the real client agrees, but any future claim sourcing 'the real web client SWF' should cite reference/extracted/payload.xml or reference/preservation/shs3_payload.swf, not the 2-frame stub. Also worth banking: the loader's 24 fps IS the Flash stage rate the player actually ran at, since a loaded child SWF cannot override the root's framerate.",
-  "overturns_ledger": false,
-  "quote": "shs3.swf -> CWS v10, fileLength 165,252, rect 16000x13800 twips = 800.0x690.0, framerate 24.0, frameCount 2 ; shs3preloader.swf -> CWS v10, 165,305 B, same rect, framerate 24.0, frameCount 2 ; payload.xml line 1 -> `<swf ... frameCount=\"6\" frameRate=\"24.0\" ... version=\"17\">` with `<displayRect type=\"RECT\" Xmax=\"16000\" Ymax=\"13800\"/>`",
-  "text": "reference/preservation/shs3.swf is the 164 KB, 2-frame LOADER stub, not 'the real web client'; the actual client is shs3_payload.swf and it independently reports the same framerate and rect.",
   "verdict": "HELD"
  }
 ]

@@ -48,10 +48,10 @@ SYSTEMS = {
     "quests-story", "ui-hud", "art-anim-audio-feel", "meta-social",
 }
 
-# The 6 source sweeps whose surveys landed but whose critics never ran.
-# The 10 source sweeps. A unit only produces a packet if it still has UNJUDGED claims,
-# so a sweep whose critics have since landed drops out on the next build automatically.
-UNJUDGED_SOURCES = ["questdata", "skilldata", "npcdata", "itemdata", "bindata", "actionscript",
+# The 10 evidence sources. A unit drops out of the packet list only when it has BOTH
+# no unjudged claims AND the two critic lenses §3.3 requires — the same two questions
+# gate L0-D asks, so the worklist and the gate can never disagree about what is left.
+ALL_SOURCES = ["questdata", "skilldata", "npcdata", "itemdata", "bindata", "actionscript",
                     "android-blobs", "string-table", "frames", "uistrings-payload"]
 
 # Fields a blind critic may see: the claim itself, never how it was reached.
@@ -62,6 +62,12 @@ BLIND_FIELDS = ("id", "text", "artifact_class", "cite", "quote", "verdict",
 # batches buy throughput by making each verdict shallower, which is the failure
 # this lane exists to prevent.
 BATCH_SIZE = 24
+
+# §3.3: a heavy lane's finding faces 3-5 lenses, a bounded one 1-2. Two is the floor
+# for a source sweep, and it is a SEPARATE question from whether the claims got judged:
+# android-blobs had every claim judged by its surviving cite critic while its hunter lay
+# dead, so it vanished from the worklist while still failing gate L0-D.
+MIN_CRITICS_PER_SOURCE = 2
 
 
 def strength(claim: dict) -> tuple:
@@ -97,9 +103,9 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default="docs/gauntlet/L0")
-    ap.add_argument("--runs", nargs="+", default=["run2", "run3", "run4"],
+    ap.add_argument("--runs", nargs="+", default=["run2", "run3", "run4", "run5"],
                     help="extracted run directories to pool, oldest first")
-    ap.add_argument("--lint", nargs="+", default=["citelint.json", "citelint-run3.json", "citelint-run4.json"],
+    ap.add_argument("--lint", nargs="+", default=["citelint.json", "citelint-run3.json", "citelint-run4.json", "citelint-run5.json"],
                     help="citeLint reports to pool")
     ap.add_argument("--batch-size", type=int, default=BATCH_SIZE)
     args = ap.parse_args()
@@ -155,18 +161,30 @@ def main() -> int:
     manifest: dict = {"batch_size": args.batch_size, "packets": [], "deferred": []}
 
     # ---- WF-2: source sweeps still carrying unjudged claims -----------------
-    for unit in UNJUDGED_SOURCES:
-        ids = sorted({cid for cid, rows in by_id.items()
-                      if any((r.get("unit") == unit and r.get("origin") != "critic") for r in rows)
-                      and cid not in judged})
-        if not ids:
-            manifest["deferred"].append({"unit": unit, "reason": "every claim already judged"})
+    for unit in ALL_SOURCES:
+        own = {cid for cid, rows in by_id.items()
+               if any((r.get("unit") == unit and r.get("origin") != "critic") for r in rows)}
+        unjudged_ids = sorted(own - judged)
+        lenses_on_disk = len(list((root / "critics").glob(f"src-{unit}.*.md")))
+        short_of_lenses = lenses_on_disk < MIN_CRITICS_PER_SOURCE
+
+        if not unjudged_ids and not short_of_lenses:
+            manifest["deferred"].append({
+                "unit": unit,
+                "reason": f"every claim judged and {lenses_on_disk} critic lenses on disk"})
             continue
+        # Short of lenses but fully judged: the packet carries the WHOLE claim set, because
+        # the missing lens still has to look at all of it — a hunter that only sees the
+        # unjudged remainder cannot hunt what the surviving lens quietly let through.
+        ids = unjudged_ids or sorted(own)
         rows = [packet(i) for i in ids]
         path = out_dir / f"src-{unit}.claims.json"
         path.write_text(json.dumps(rows, indent=1, sort_keys=True), encoding="utf-8")
-        manifest["packets"].append({"file": path.name, "unit": unit, "claims": len(rows),
-                                    "stage": "WF-2"})
+        manifest["packets"].append({
+            "file": path.name, "unit": unit, "claims": len(rows), "stage": "WF-2",
+            "unjudged": len(unjudged_ids), "critic_lenses_on_disk": lenses_on_disk,
+            "reason": "unjudged claims" if unjudged_ids
+                      else f"only {lenses_on_disk} critic lens(es) on disk, §3.3 needs {MIN_CRITICS_PER_SOURCE}"})
 
     # ---- WF-3: the uncritiqued critic new_findings --------------------------
     finding_ids = sorted({cid for cid, rows in by_id.items()

@@ -1,0 +1,378 @@
+# L0 — salvaged claim set (raw surveyor output)
+
+> **UNVERIFIED.** These are surveyor claims. A claim is only CONFIRMED
+> once blind artifact-citing critics have judged it (GAUNTLET.md §0/§3.3).
+> Banked: 0 surveys · 6 critic reviews · 37 claims · 144 verdicts.
+
+## unassigned — re-scored ?
+
+### `NEW-3-full-xp-curve-is-shipped-in-both-builds` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+THE FULL LEVEL CURVE IS RECOVERED. A 99-entry expArray, [0,550,1450,2950,5150,8350,12150,16350,20900,25900,31400,37400,…,29395800], is a shipped constant in BOTH builds. Index 10 = 31 400, matching the known L1–L10 caps exactly; index 80 = 4 285 800; the table runs to index 98. REBUILD_READINESS.md's progression blocker ② and its §6 'structurally unrecoverable' list both name the L11–80 XP curve as likely unrecoverable and tell the project to keep an INFERRED extrapolation. That is now false — the curve is A2, in two independent bundles.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:364`
+- **Quote:** public static const §1t5923s0§:Array = [0,550,1450,2950,5150,8350,12150,16350,20900,25900,31400,37400,43500,49850,56550,63900,71900,80300,89100,98300,108000,…,29395800];   (android twin: reference/decompiled/shs3_android/scripts/StatsManager.as:78  public static var expArray:Array = [0,550,1450,2950,…] — same 99 entries)
+- **Overturns:** "② **L11–80 XP curve — likely unrecoverable** (no wiki table; both longplays cap at L10; a solo build probably can't reach L11+ offline). Keep the extrapolation as labeled INFERRED."
+- **Lane impact:** L-progression: blocker ② closes outright and the §6 'unrecoverable' list loses an entry. This is the largest un-banked win I found while judging — no claim in this packet mentions it. Delete the INFERRED extrapolation and paste the table.
+
+### `NEW-4-paperdoll-is-13-slots-not-9` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The paperdoll is THIRTEEN slots, not nine. StatsManager enumerates EQ_ARMOR 0, EQ_GLOVES 1, EQ_HAIR 2, EQ_HAT 3, EQ_HEAD 4, EQ_MASK 5, EQ_NECK 6, EQ_PANTS 7, EQ_SHOES 8, EQ_WEAPON 9, EQ_SCABBARD 10, EQ_ACCESSORY1 11, EQ_ACCESSORY2 12. Corroborated twice: XMLNpc.as:36's DEFAULT_EQSTRING has 13 pipe-separated fields, and XMLNpc.as:705 allocates `new Vector.<Item>(13)`. npcdata's <mcs> blocks use twelve of them (armor, gloves, hair, hat, head, mask, neck, pants, shoes, weapon, prop1, prop2). REBUILD_READINESS.md says '9-slot paperdoll' in two places — KNOWN-KNOWNS at :82 and items-equipment Ready at :209 — and both are wrong.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/StatsManager.as:262-286`
+- **Quote:** internal static var EQ_ARMOR:int = 0;  EQ_GLOVES:int = 1;  EQ_HAIR:int = 2;  EQ_HAT:int = 3;  EQ_HEAD:int = 4;  EQ_MASK:int = 5;  EQ_NECK:int = 6;  EQ_PANTS:int = 7;  EQ_SHOES:int = 8;  EQ_WEAPON:int = 9;  EQ_SCABBARD:int = 10;  EQ_ACCESSORY1:int = 11;  EQ_ACCESSORY2:int = 12;
+- **Overturns:** "- **Ready:** 9-slot paperdoll; 4 rarity tiers; affix **prefix** pool (verbatim); item-name template; full ItemStats field list;"
+- **Lane impact:** L-items-equipment + L-art-anim: four more render/equip slots than the ledger models, including a scabbard and two accessories. Any sprite-compositing contract (blocker ⑤) has to cover 13 layers. Combine with NF-npcdata-silences (b): zero colour overrides are ever authored, so each slot is separately painted art.
+
+### `NEW-6-shunpo-effect-recovered` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+Shunpo's real effect is held, closing skills-meters blocker ②. Skill 1039 'Shunpo' is the Light-stance ultimate and is a HOLD-TO-CHARGE damage skill, not the SHS2 spacebar-slowmo: 'Ultimate Light Stance technique. Hold down the skill icon to increase the damage it inflicts. This skill can only be used when in Light Stance.' The same shape holds for its two siblings, 1040 'Thousand Stabs' (Balanced) and 1041 'Deadly Cleave' (Heavy), and all three sit at the level-70 rung of the enemy skill ladder.
+
+- **Cite:** `docs/gauntlet/L0/index/resolved_names.json — skilldata.xml resolved["1039"], resolving reference/extracted/skilldata.xml's <displayname>/<desc> ids against docs/gauntlet/L0/index/strings.json`
+- **Quote:** '1039': {'displayname': 'Shunpo', 'desc': 'Ultimate Light Stance technique. \n\nHold down the skill icon to increase the damage it inflicts.\n\nThis skill can only be used when in Light Stance.'}
+- **Overturns:** "② Shunpo's real effect (Light L10 ultimate; spacebar-slowmo belongs to the **predecessor SHS2**, not Duels)."
+- **Lane impact:** L2 skills-meters: blocker ② closes — and the ledger's own suspicion (that the slowmo belongs to SHS2) is vindicated. Carries the S0-3 Android-string caveat for the COPY, but the skill id and category are identical in both builds' skilldata.
+
+### `art-anim-audio-feel/NEW-24hz-killbeat-is-web-parity-closed` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The 24 Hz tick and the 144-tick kill-beat are NOT Android-only. The obfuscated web payload carries the identical redFreeze constants in the identical control structure, so the v0.717-vs-v0.682 caveat on the kill-beat measurement can be struck.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t1525s0§.as:1026, :1049, :1225, :1230 — against reference/decompiled/shs3_android/scripts/StageManager.as:903, :926, :1096, :1101`
+- **Quote:** WEB §1t1525s0§.as:1230 `§1t9905s0§ = 24 * 6;` · :1225 `§1t9905s0§ = 24 * 3 + 6;` · :1026 `if(§1t9905s0§ == 24 * 5)` · :1049 `else if(§1t9905s0§ == 24 * 3)` — line-for-line structural match with ANDROID StageManager.as:1101 `redFreezeCounter = 24 * 6;` :1096 `redFreezeCounter = 24 * 3 + 6;` :903 `if(redFreezeCounter == 24 * 5)` :926 `else if(redFreezeCounter == 24 * 3)`
+- **Overturns:** "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;"
+- **Lane impact:** L6 art-anim-audio-feel: the 6.000 s red freeze I measured twice in reference/videos/Nr4fQstqHDM.mp4 is against a WEB recording, and the WEB code sets the same 144 ticks — so 24.0 Hz is a web-build fact, not an Android inference. The ledger's '15fps pose latch' is a description of the 15 fps capture, and the sim clock is 24 Hz. This is the general lesson for the whole lane: the obfuscated web payload can be used to check Android-derived constants by structural match even when the symbol names are gone.
+
+### `art-anim-audio-feel/animdata-code-injected-hold-table` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+Because the animation data authors zero hold frames (487/487 rows have @d == len(<f>)), every hold in the game comes from one hard-coded table in AnimData's constructor: a switch on the animation name that adds a per-animation duration tail, then MCSCharacter's frameList.length guard latches the last pose for the extra ticks. ~35 named entries with tails from +2 to +50: all 13 *SLASH_POSE states +10, all 10 *FALLSLASH_END / *JUMPSLASH_LAND +15, sheathesword/sheathesword3 +24, six death anims + KNEEGROIN_VICTIM +6, gotlauncheddownedend +24, downstab_up +10, katanaattack +8, katanadropdown +4, firearrow +10, throwgrenade +12, ogre_nap1_mid +48, DEATHTOUCH_PARTA +50, FLURRY_POSE / CLEAVE_POSE / JUTSU_GROUND_PARTB / GUARDIAN_STOMPFREEZE / AIRSTAB_STAB +24.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/AnimData.as:16-21 (duration = xml.@d, frameList built from xml.f) and :23-141 (the switch(xml.@i.toString()) tail table); reference/decompiled/shs3_android/scripts/MCSCharacter.as:1316 and :1334`
+- **Quote:** this.duration = xml.@d;  ·  switch(xml.@i.toString()) { case "light_afterslashpose": this.duration += 10; break; case MCSActor.LIGHTSLASH_POSE: ... this.duration += 10; break; case MCSActor.LIGHTFALLSLASH_END: ... this.duration += 15; break; case "sheathesword": case "sheathesword3": this.duration += 24; break; ... }  ·  MCSCharacter.as:1316 if(this.frameCounter < this.currentAnimationDuration)  ·  :1334 if(this.frameCounter < this.currentAnimation.frameList.length)
+- **Overturns:** "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; ..."
+- **Lane impact:** This is the actual 'pose latch' spec the ledger calls rebuild-ready but never contains. Every slash recovery window in a recreation is (@d from data) + (this table's tail), played at 24 Hz. It is also directly testable: a rebuild can assert @d == len(<f>) as a data-integrity gate on import.
+
+### `art-anim-audio-feel/music-is-13-stems-and-18-layer-presets` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The music system is an adaptive layered-stem mixer, not an 18-track jukebox. MusicManager declares 13 TRACK_* stems (TOTALTRACKS = 13) — exactly the 13 DefineSound names in the decrypted 113_Mobile_MusicResource — and builds each of the 18 MUSIC_* presets as a boolean layer mask over those stems, e.g. MUSIC_TOUGHBATTLE = flutes + battledrums + battlechants, MUSIC_DUNGEONCREEPYDANGER = dungeonambience + dungeonflute + dungeonpercussion + dungeonpiano, MUSIC_DOJO = flutes + safeambience + safekoto + safepercussion, MUSIC_QUIET = flutes alone. Stems are loop-length-matched (882,144 or 504,288 samples) so the layers stay phase-locked.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/MusicManager.as:50-76 (TRACK_BATTLECHANTS=0 .. TRACK_LOSE=12, TOTALTRACKS=13) and :133-186 (presetsArray construction); stem names and sample counts from reference/extracted/android/113_Mobile_MusicResource.bin decrypted per ResourceManager.as:200-216`
+- **Quote:** internal var TOTALTRACKS:int = 13;  ·  this.presetsArray[MUSIC_TOUGHBATTLE][this.TRACK_FLUTES] = true; this.presetsArray[MUSIC_TOUGHBATTLE][this.TRACK_BATTLEDRUMS] = true; this.presetsArray[MUSIC_TOUGHBATTLE][this.TRACK_BATTLECHANTS] = true;  ·  this.presetsArray[MUSIC_DOJO][this.TRACK_FLUTES/SAFEAMBIENCE/SAFEKOTO/SAFEPERCUSSION] = true;
+- **Overturns:** "| **art-anim-audio-feel** | 56 | ... | **all audio** (SFX + music params); font; FX blend modes; screen-shake/hitstop |"
+- **Lane impact:** Corrects claim bindata/audio-inventory-is-held's '18 music presets with explicit ids' framing — a recreation that synthesises 18 separate tracks reproduces the wrong system. It needs 13 loop-locked stems plus a crossfade layer mask, with fade-in/fade-out actions (ACTION_FADEIN/ACTION_FADEOUT at :78-82).
+
+### `art-anim-audio-feel/web-swf-header-is-24fps-and-800x690` — HELD [A3] ⚑ OVERTURNS LEDGER
+
+The WEB v0.717 payload's own SWF header settles two ledger bullets at the byte level, with no video and no Android-parity caveat: frameRate = 24.0 and stage rect = 800 x 690. The Android payload header reads frameRate = 24.0 and stage 800 x 480. So the simulation tick is 24 Hz (not the ledger's 15fps), and the web build's document rect really is the friend-bar layout size.
+
+- **Cite:** `reference/decrypted/shs3_payload_decoded.swf and reference/decrypted/shs3_android_payload_decoded.swf — my own SWF header parse (RECT bit-reader then UI16 frameRate as 8.8 fixed)`
+- **Quote:** shs3_payload_decoded.swf: sig=CWS ver=17 stage=800.0 x 690.0 framerate=24.0 framecount=6  ·  shs3_android_payload_decoded.swf: sig=CWS ver=26 stage=800.0 x 480.0 framerate=24.0 framecount=6
+- **Overturns:** "**Ready (strongest slice):** 15fps pose latch; ...  ·  **Aspect-ratio truth** — native canvas is **800×480 (5:3)**"
+- **Lane impact:** Gives claims killbeat-6000ms-pins-24hz-tick and second-layout-mode-800x690 the WEB-side evidence neither had — both previously rested on Android v0.682 ActionScript plus a video measurement. Any recreation ticking at 15 Hz or assuming a single 800x480 canvas is wrong.
+
+### `audio/RECOVERED-not-encrypted-resourcemanager-decrypt` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The audio is RECOVERED, not encrypted-beyond-reach. The game's own decryptor is in the repo: ResourceManager.decryptByteArray XORs bytes 3..255 with key = resourceFileNameArray[num].charCodeAt(1) AND swaps ba[i] with ba[i+256] whenever i%11==0. Applying it to all five Mobile_*Resource.bin files yields valid SWFs. 122_Mobile_SoundResource inflates to 29,623 bytes holding 13 DefineSound tags (deflect, die1, die2, die3, slash1, slash2, slash3, punch, hitmetal, fart, goodkoto, sumo, refund) and 113_Mobile_MusicResource inflates to 1,402,677 bytes holding 13 DefineSound music stems (bgm_lose, safepercussion, safekoto, safeambience, bgm_levelup, bgm_gangnam, flutes, dungeonpiano, dungeonpercussion, dungeonflute, dungeonambience, battledrums, battlechants) — all MP3, 11025 Hz, 16-bit, mono. These are byte-exact original assets, not characterisations from a YouTube rip. A plain whole-file XOR fails 68 bytes into the deflate stream, which is why every prior pass concluded 'unopenable'; the i%11 byte-swap is the missing step.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/ResourceManager.as:200-216 (decryptByteArray), :186 (key = filename.charCodeAt(1)), :41 (resourceFileNameArray) applied to reference/extracted/android/122_Mobile_SoundResource.bin and 113_Mobile_MusicResource.bin`
+- **Quote:** internal static function decryptByteArray(source:ByteArray, key:int) : ByteArray { ... for(var i:int = 3; i < 256; i++) { if(i % 11 == 0) { temp = int(ba[i]); ba[i] = ba[i + 256]; ba[i + 256] = temp; } ba[i] ^= key; } ... }  ·  resourceFileNameArray:Array = ["shs3resource.swf","musicresource.swf","soundresource.swf","imageresource.swf","bgresource.swf"]  =>  keys h=104 u=117 o=111 m=109 g=103
+- **Overturns:** "① **ALL AUDIO** — every SFX + music param is INFERRED, no composer sourced.  ·  **Exact original SFX & music synthesis params** — the *character* is study-able from audio; the exact waveforms/envelopes are not."
+- **Lane impact:** L6 art-anim-audio-feel: blocker ① is CLOSED, not half-open. Also overturns gauntlet law S0-5 ('audio is HELD but ENCRYPTED ... You may NOT claim audio is recovered') — that instruction is now false and every downstream claim resting on it should be re-opened. The listen-pass plan at :240 is superseded: there is nothing to characterise by ear, the waveforms are in hand.
+
+### `bindata/NEW-audio-waveforms-are-recovered-not-encrypted` — HELD [A3] ⚑ OVERTURNS LEDGER
+
+The audio is RECOVERED, not merely held-but-encrypted. 113_Mobile_MusicResource.bin and 122_Mobile_SoundResource.bin decode with the transform this repo already commits (reference/tools/payload_decode.py), and the key is derivable from the file itself because every blob is CWS v17: key = byte[3] XOR 0x11 (117 and 111 respectively). Both inflate on the first try and each is an ordinary SWF holding 13 DefineSound MP3 tags at 11,025 Hz mono — 26 real waveforms, byte-exact. ffdec cannot open them; this transform can.
+
+- **Cite:** `reference/extracted/android/122_Mobile_SoundResource.bin and reference/extracted/android/113_Mobile_MusicResource.bin, decoded with reference/tools/payload_decode.py:22-29; DefineSound tags extracted and written to MP3, verified with ffprobe`
+- **Quote:** 113_Mobile_MusicResource k=117 ver 17 declen 1402685 actual 1340647 INFLATES -> 1402677 · 122_Mobile_SoundResource k=111 ver 17 declen 29631 actual 23928 INFLATES -> 29623 · 122 DefineSound=13: slash1 slash2 slash3 die1 die2 die3 punch hitmetal deflect fart goodkoto sumo refund · ffprobe slash1.mp3 -> format_name=mp3 duration=0.572000 · ffprobe battledrums.mp3 -> format_name=mp3 duration=79.872000 bit_rate=16000
+- **Overturns:** "**Exact original SFX & music synthesis params** — the *character* is study-able from audio; the exact waveforms/envelopes are not."
+- **Lane impact:** L6 art-anim-audio-feel: blocker ① 'ALL AUDIO — every SFX + music param is INFERRED' does not need closing by synthesis at all; the originals are extractable. REBUILD_READINESS.md:348 ('the exact waveforms/envelopes are not [study-able]') falls. This also contradicts the §0 preamble S0-5 ('audio is HELD but ENCRYPTED ... You may NOT claim audio is recovered'): S0-5's stated basis is that ffdec cannot open the nested CWS SWFs, which is true and irrelevant — the repo's own decoder opens them. Per the standing invariant I say it out loud: the byte-check beats the doc. Caveat: these are the ANDROID v0.682 resource blobs; web v0.717 audio parity is not established, and the assets stay study-only/local-only under the permission ruling.
+
+### `bindata/NEW-music-is-layered-stems-not-tracks` — HELD [A3] ⚑ OVERTURNS LEDGER
+
+The music system is layered STEMS, not a track list. 113_Mobile_MusicResource holds six stems at exactly 882,144 samples / 11,025 Hz = 79.872 s (battlechants, battledrums, flutes, safeambience, safekoto, safepercussion) and four at exactly 504,288 samples = 45.7 s (dungeonambience, dungeonflute, dungeonpiano, dungeonpercussion), plus three one-shots (bgm_lose 3.5 s, bgm_levelup 29.8 s, bgm_gangnam 3.6 s). Identical sample counts within a family is the signature of co-mixed layers, which is what MusicManager's TRACK_* indices select between. No ledger system holds a layered-music model.
+
+- **Cite:** `reference/extracted/android/113_Mobile_MusicResource.bin decoded (k=117); my own DefineSound (tag 14) extraction with SymbolClass name resolution; reference/decompiled/shs3_android_payload/scripts/MusicManager.as:48+ (TRACK_BATTLECHANTS…)`
+- **Quote:** battlechants MP3 11025Hz nsamp=882144 bytes=159746 ~80.0s · battledrums 882144 · flutes 882144 · safeambience 882144 · safekoto 882144 · safepercussion 882144 · dungeonambience 504288 · dungeonflute 504288 · dungeonpiano 504288 · dungeonpercussion 504288 · bgm_lose 38880 · bgm_levelup 328320 · bgm_gangnam 40032
+- **Overturns:** "① **ALL AUDIO** — every SFX + music param is INFERRED, no composer sourced."
+- **Lane impact:** L6 art-anim-audio-feel: the 18-preset MusicManager enum is a MIXER state machine over ~13 stems, not 18 separate tracks. A WebAudio recreation should crossfade layers on the same loop clock, not swap files. This is a structural fact no ledger system holds.
+
+### `enemies-ai/NEW-npc-die-override-count-is-18-not-3` — HELD [A3] ⚑ OVERTURNS LEDGER
+
+18 of the 34 Enemy*.as classes override die(), not 3 — and only 3 of those 18 (Archer, Elite, TrainingDummy) call super.die(), so 15 classes bypass the seven-way NPC dice entirely. The seven-way dice governs the humanoid roster that does NOT override (Katana, Knife, Ninja, Shield, Spear, SpearElite, Civilian x3, Player, PlayerGiant, SorcererBoss, Fox, JiangSi, Wolf2, Clone-adjacent, Enemy_VegePatch).
+
+- **Cite:** `grep -ln 'override public function die' over reference/decompiled/shs3_android/scripts/Enemy*.as (34 files), then a per-file body scan for super.die()`
+- **Quote:** override die() in 18 files: EnemyArcher EnemyBear EnemyBoar EnemyClone EnemyDeer EnemyElite EnemyGoblin EnemyGoblinThrower EnemyHorse EnemyKanjiGuardian EnemyNianMonster EnemyOgre EnemyStag EnemyTrainingDummy EnemyVegePatch EnemyWolf EnemyWolfAlpha EnemyZombie · calls super.die(): EnemyArcher(1) EnemyElite(1) EnemyTrainingDummy(1), all others 0 · EnemyGoblin.as:386 `dice = Math.random() * 5;` · EnemyGoblin.as has 0 hits for DEATH_FORWARD|DEFEATED2 and 0 for createFlyingWeapon|createFlyingHat
+- **Overturns:** "⑤ severed-limb death variant."
+- **Lane impact:** L2 enemies-ai: corrects the lane_impact line inside claim art-anim-audio-feel/npc-death-dice-is-seven-way ('31 of 34 inherit it, only EnemyGoblin, EnemyGoblinThrower and EnemyZombie override'), which is false and must not enter the ledger. The death-variant model is a two-tier system: a humanoid seven-way base dice plus 15 fully custom creature/boss death routines.
+
+### `kh-web-getdamage-twin-crit-is-1.3` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The damage and crit formula is a BUILD DIVERGENCE, and the ledger had the web numbers right all along. The web v0.717 twin of MCSPlayer.getDamage() is §1t99s0§.as:3255-3277 (identifiable beyond doubt: same 'minDamage + Math.random() * damageRange' opener at :3258, same getBaseDamage at :3281, same Heavy-defender 'defense * 0.8' at :3286-3290, same reload-reset-on-full at :3295-3297, stance constants 0..4 at :27-35). Its numbers are Light *(0.5 + 0.4*m*0.1), Balanced *(1 + 0.2*m*0.1), Heavy/Dual/Reversed FLAT *1.4, and a SINGLE crit arm '*1.3 + STAT_CRITICALDMG' on reload == maxreload. Android v0.682 carries 0.005/0.005/1.5 and a two-arm 1.5x-Light / 1.2x-other crit. Two consequences: REBUILD_READINESS.md:152's 'Keep CRIT_MULT=1.3' is VINDICATED by shipped web code, and the ledger's stance table at :155 (0.9 / 1.2 / 1.4) reproduces to the digit from the web expression at mastery 10 -- so those numbers are web-build truth, not folklore. The ledger's own label is off by one: they are mastery-10 values, not mastery-9.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3255-3290 vs reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3198-3224`
+- **Quote:** web §1t99s0§.as:3262: _loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);  ·  :3265: _loc2_ = _loc1_ * (1 + 0.2 * this.§1t4422s0§ * 0.1);  ·  :3270: _loc2_ = _loc1_ * 1.4;  ·  :3272-3275: if(this.§1t4414s0§ == this.§1t4415s0§) { return _loc2_ * 1.3 + this.§1t1243s0§; }  ·  :3288: return defense * 0.8;
+- **Overturns:** "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**"
+- **Lane impact:** L5 combat-core: this is the single most load-bearing formula in the project and it must be tagged per build. Tag the WEB row CONTRACT for v0.717 (0.04/0.02/1.4, crit 1.3x, Heavy-def 0.8) and the android row as a divergence. It also kills packet claim NF-1's demanded rewrite and confirms REBUILD_READINESS.md:152 and :189. Add it to the build-divergence table as divergence #8.
+
+### `measurement/stage-scale-is-2p25-not-1p875` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+EVERY 'stage px' NUMBER IN docs/research/fidelity/COMBAT_MEASUREMENTS.md THAT WAS CONVERTED AT /1.875 IS 20% TOO LARGE. The correct 1080p divisor is 2.25. The web build's letterbox routine sets base 800x480 and, for a viewport wider than 800/480 = 1.6667, takes the fit-height branch: scale = stageHeight/480 and offsetX = (stageWidth - 800*scale)/2. At 1920x1080 that is scale 2.25 with 60 px pillarbox bars. Three independent confirmations: (1) source, §1t1540s0§.as:271-307 plus §1t1523s0§.as:104/106 (stageWidth 800, stageHeight 480); (2) frames -- I measured the pillarbox on four session11 frames (first/last column with any pixel >12): damage-ttk/t125.350.png 54->1862, gap-focus-trigger/t1747.000.png 48->1867, stance-reach/B_t783.400_LIGHT_stroke-anchored-at-body_farGap436px.png 52->1868, stance-reach/A_t117.400_BALANCED_lvl1_stroke235px.png 54->1863, i.e. content ~1810-1820 px = 800x2.25 = 1800 plus compression bleed, whereas /1.875 demands 210 px black bars that are simply not present; (3) reductio -- the HUD reload bar sits at row y=1036 (I measured it), which at /1.875 maps to stage y ~504, off the bottom of a 480-tall stage, physically impossible, while at /2.25 it maps to stage y ~460 of 480, i.e. the bottom HUD strip. Corrected c-2 reach bands: LIGHT 233-241 -> 194-201 (max 303 -> 252); BALANCED 116-131 -> 97-109; HEAVY 97-103 -> 81-86 (max 121 -> 101). Note the corrected Heavy MAX of 101 now kisses the source's hard 100-px floor, and every band sits at or below its source cap, which is what a body-to-endpoint distance should do against a path-length budget.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:271-307 + §1t1523s0§.as:104,106 + reference/frames/session11/gap-focus-trigger/t1747.000.png`
+- **Quote:** §1t1540s0§.as:271-273 `var _loc2_:int = 800; var _loc3_:int = 480; var _loc4_:int = 690;` ; :304-305 `_loc8_ = §1t9973s0§.stageHeight / _loc3_; _loc9_ = (§1t9973s0§.stageWidth - _loc2_ * _loc8_) / 2;` ; :309 `§1t1523s0§.§1t9358s0§ = _loc8_;` ; §1t1523s0§.as:104 `public static var stageWidth:int = 800;` :106 `public static var stageHeight:int = 480;`
+- **Overturns:** "c-2 stage-px conversion: 'at 1920x1080 then converted at /1.875'"
+- **Lane impact:** L5 + L8 + every MEASURED row that carries a stage-px conversion. Re-derive COMBAT_MEASUREMENTS.md and MOTION_MEASUREMENTS.md at /2.25 and offsetX=60 before any of those numbers become CONTRACT. It also gives the port an exact viewport contract: logical stage 800x480, uniform fit-height scaling, horizontal pillarbox.
+
+### `stage/web-native-canvas-is-800x690-not-800x480` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The web v0.717 native stage is 800 x 690, not 800 x 480. I parsed the SWF header of every SWF under reference/: shs3.swf, shs3preloader.swf, shs3_payload_decoded.swf and shs3_binarydata_9_decrypted.swf ALL declare rect [0,16000,0,13800] twips = 800 x 690 px at 24.0 fps. Only shs3_android_payload_decoded.swf declares 800 x 480 (SWF ver 26). REBUILD_READINESS.md:118 and §3 item 12 state 'native canvas is 800x480 (5:3)' flatly, with no build qualifier — that is the ANDROID figure. ui-hud blocker (1) ('aspect-ratio truth ... read stage.stageWidth in a build') is answerable from bytes, and every HUD x-fraction derived from a 5:3 assumption needs re-checking against 800x690 (1.159:1).
+
+- **Cite:** `reference/decrypted/shs3_payload_decoded.swf header (CWS v17, rect [0,16000,0,13800], 24.0 fps, 6 frames) vs reference/decrypted/shs3_android_payload_decoded.swf header (rect [0,16000,0,9600] = 800x480); corroborated by reference/preservation/shs3.swf and shs3preloader.swf, both 800x690`
+- **Quote:** parsed by me: sig CWS, ver 17, nbits 15, rect twips [0, 16000, 0, 13800] -> px [0.0, 800.0, 0.0, 690.0], framerate 24.0, framecount 6 (shs3_payload_decoded.swf) ; rect px [0.0, 800.0, 0.0, 480.0], framerate 24.0, framecount 6 (shs3_android_payload_decoded.swf)
+- **Overturns:** "- **Aspect-ratio truth** — native canvas is **800×480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong."
+- **Lane impact:** L-ui-hud + L-art: closes ui-hud blocker (1) from bytes and forces a re-derivation of every stage-px conversion done under the 800x480 assumption. Also flags that RR:118 / §3 item 12 are android values presented as universal.
+
+### `ui-hud/NEW-web-and-android-payloads-ship-different-stage-rects` — HELD [A3] ⚑ OVERTURNS LEDGER
+
+The 800x480-vs-800x690 question is not a measurement dispute — the two builds literally ship different SWF document rects. The WEB payload's header RECT decodes to 800x690; the ANDROID payload's decodes to 800x480; reference/preservation/shs3.swf is 800x690.
+
+- **Cite:** `reference/decrypted/shs3_payload_decoded.swf, reference/decrypted/shs3_android_payload_decoded.swf, reference/preservation/shs3.swf — my own SWF header RECT bit-decode (nbits = byte[0]>>3, four signed twips fields, /20)`
+- **Quote:** shs3_payload_decoded.swf [0.0, 800.0, 0.0, 690.0] · shs3_android_payload_decoded.swf [0.0, 800.0, 0.0, 480.0] · shs3.swf [0.0, 800.0, 0.0, 690.0]
+- **Overturns:** "**Aspect-ratio truth** — native canvas is **800×480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong."
+- **Lane impact:** L8 ui-hud and L6 art-anim-audio-feel: corroborates art-anim-audio-feel/second-layout-mode-800x690 at byte level rather than from code alone. The web build reserves the extra 210 px for the friend bar in its document rect; the android build does not ship the bar at all. HUD x-fractions read off the longplay are against a 800x480 PLAY AREA inside a 800x690 stage, which is a different correction from a simple pillarbox.
+
+### `warroom/web-warhex-has-fifteen-states` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+The shipped web build v0.717 has FIFTEEN war-room hex states, not the fourteen the android build carries. The web WarHex class is §1t416s0§.as -- identified by its identical shape to the android WarHex.as (same imports flash.display.MovieClip / SimpleButton / playerio, same MovieClip members logo, narrow, sarrow, boundary, bg, button, earrow, flag, hqflag, hqflag2) -- and its state constants at :11-39 take the values 0,1,2,3,4,5,6,7,8,9,10,11,12,13,15. Value 10, which the android enum skips entirely, is a live state in v0.717; only 14 is unused. Anyone porting the war room from the android enum will be missing one board state.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t416s0§.as:11-39 + reference/decompiled/shs3_android_payload/scripts/WarHex.as:11-37`
+- **Quote:** §1t416s0§.as:31 `public static var §1t12529s0§:int = 10;` — the android twin has no constant with value 10 (WarHex.as jumps :29 `HEX_VILLAGE:int = 9;` straight to :31 `HEX_CITY:int = 11;`). Counted: web 15 constants at :11,13,15,17,19,21,23,25,27,29,31,33,35,37,39; android 14 at :11..:37.
+- **Overturns:** "| **war-room** | board topology — BLOCKER |"
+- **Lane impact:** L-war-room: bank FIFTEEN states for v0.717, with 14 as the only gap. The 6x6 board at 55 px pitch is separately web-confirmed at §1t7785s0§.as:261-262 (`x = 90 + _loc18_ * 55; y = 92 + _loc19_ * 55;`), so the topology blocker does close — just not with the android enum.
+
+### `NEW-1-web-crit-is-flat-1.3` — HELD [A2]
+
+The WEB v0.717 crit multiplier is a FLAT 1.3× with no stance split — the ledger's 'Keep CRIT_MULT=1.3' ruling is CONFIRMED by shipped code, not killed. Deterministic in both builds (fires exactly when reload == maxreload, no random term), but the 1.5×Light / 1.2×other split cited by NF-1 is android v0.682 only. §1t99s0§.as is the web MCSPlayer twin: same four functions in the same order with identical bodies (getDamage/getDefense/deductReloadBar/bonusReload), same BALANCED+REVERSED vs HEAVY+DUAL reload grouping, same 5*24 constant; bundle version pinned at §1t1523s0§.as:36 = 0.717.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3272-3276`
+- **Quote:** if(this.§1t4414s0§ == this.§1t4415s0§)
+{
+   return _loc2_ * 1.3 + this.§1t1243s0§;
+}
+return _loc2_;
+- **Overturns:** "2. **The "iaido-duel MEASURED 3.0× crit" is a DIFFERENT GAME** … Keep `CRIT_MULT=1.3`."
+- **Lane impact:** L5 combat-core / L2 skills-meters: CRIT_MULT=1.3 graduates from wiki-sourced to A2-CONTRACT for v0.717, and the crit proc rule (deterministic, consumes a full Focus/reload bar — deductReloadBar zeroes it at §1t99s0§.as:3295-3298) closes skills-meters blocker ⑤ and combat-core blocker ⑤ together. Any android-sourced combat constant must now be diffed against the web twin before banking.
+
+### `NEW-10-obfuscated-bundle-grep-method` — HELD [A2]
+
+METHOD FINDING for every remaining L0 lane: absence in reference/decompiled/shs3_payload/ cannot be concluded from grepping an identifier. That bundle renames classes, members AND locals (§1t…§ / _loc*). Numeric and string LITERALS survive intact. Two claims in this packet reached wrong conclusions from identifier greps. The reliable technique — which established every web twin used in this review — is to search for the numeric literals and then confirm by function ORDER and body shape. Twins established this session: §1t99s0§ = MCSPlayer, §1t1523s0§ = StatsManager (version 0.717 at :36), §1t1540s0§ = GameEngine, §1t1541s0§ = InputManager, §1t5495s0§ = DragonDanceUI, §1t4906s0§ = EnemyPlayer-init path.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t113s0§.as:812`
+- **Quote:** case "/fart":   — proof that string literals survive the obfuscation, so the zero-hit result for "repairweapon" in the same bundle is a genuine absence while the zero-hit result for the identifier `originalWidth` is not.
+- **Lane impact:** All lanes: re-run any STILL_UNHELD verdict that rests on a shs3_payload identifier grep. Two in this packet alone were wrong (the friend-bar 'android-only' caveat) or needed literal-level confirmation (the repair-cost parity hole, which I confirmed IS real).
+
+### `NEW-2-web-per-stance-damage-and-mastery-10-ceiling` — HELD [A2]
+
+The WEB v0.717 per-stance damage multipliers are Light ×(0.5 + 0.04·lightMastery), Balanced ×(1 + 0.02·balancedMastery), Heavy/Dual/Reversed a flat ×1.4 — and at maximum mastery they reproduce the ledger's stance table EXACTLY. skilldata skill 1000 (Light Stance Mastery) carries ten <level> rows, value 1…10, with <required>9</required> on the level-10 row. At mastery 10: Light 0.5+0.4 = 0.90, Balanced 1+0.2 = 1.20, Heavy 1.40 — i.e. the '0.9/1.2/1.4 MASTERY-9 CEILING' table, confirmed to three decimals by shipped code. The android v0.682 curve (0.005 per point, flat 1.5) is a different, later re-tune and must not be coded for this recreation.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3255-3277`
+- **Quote:** case §1t12220s0§:
+   _loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);
+   break;
+case §1t12221s0§:
+   _loc2_ = _loc1_ * (1 + 0.2 * this.§1t4422s0§ * 0.1);
+   break;
+case §1t12222s0§:
+case §1t12223s0§:
+case §1t12224s0§:
+   _loc2_ = _loc1_ * 1.4;
+- **Overturns:** "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**"
+- **Lane impact:** L5 combat-core: the '×stance' term is now an exact three-way expression for the target build, base damage is minDamage + Math.random()*damageRange, and Heavy/Dual/Reversed do not scale with mastery at all. Confirms REBUILD_READINESS.md:155 rather than overturning it, and supplies the mastery curve the ledger asked to be modelled or flagged.
+
+### `NEW-5-skill-1500-reversed-1501-dual` — HELD [A2]
+
+Skill 1500 is REVERSED-stance mastery and 1501 is DUAL-stance mastery — a direct functional identification, in both builds, replacing the positional inference NF-category-11 had to rely on. Any npcdata row whose skills carry 1500 at any level spawns in REVERSED_STANCE; 1501 spawns DUAL_STANCE; only if neither is present does the actor pick a stance from the light/balanced/heavy mastery comparison. The two extra stances are therefore real and NPC-only in the data (npcdata carries 1500 on 5 rows and 1501 on 2, all ai 29 = EnemyElite), and their combat identity is settled even though their display NAMES remain unheld (1500/1501 have no string-table entry — resolved_names resolves 73 of 75 skilldata rows and these are the two misses).
+
+- **Cite:** `reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as:836-843`
+- **Quote:** if(xml.getMastery(1500) > 0)
+{
+   setStance(REVERSED_STANCE);
+}
+else if(xml.getMastery(1501) > 0)
+{
+   setStance(DUAL_STANCE);
+}
+   (twin: EnemyElite.as:160-166; web twin: reference/decompiled/shs3_payload/scripts/§1t4906s0§.as:90-95)
+- **Lane impact:** L-skills-meters + L-enemies-ai: upgrades NF-category-11-decoded from PARTIAL to functionally HELD. Both extra stances take the flat Heavy multiplier in getDamage (×1.4 web / ×1.5 android) and REVERSED groups with BALANCED for reload cost while DUAL groups with HEAVY (×1.5 slashUsage).
+
+### `NEW-7-web-friend-bar-resize-parity` — HELD [A2]
+
+The 800/480/690 resize handler and its friend-panel branch exist in the WEB v0.717 build, so the whole 690/friend-bar cluster has full build parity and does NOT inherit the S0-3 Android caveat. The web twin is byte-for-byte the same algorithm with locals renamed: 800, 480, 690, the same `<=` aspect comparison, the same stageShowingFriendBar flag and the same friend-panel init() call. METHOD WARNING: the finding that claimed android-exclusivity reached that conclusion by grepping shs3_payload for `originalWidth`/`originalHeight` — identifiers the obfuscator rewrites to _loc*. Grep the numeric literals, never the identifiers.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269-290`
+- **Quote:** internal static function §1t10021s0§(param1:Event) : void
+{
+   var _loc2_:int = 800;
+   var _loc3_:int = 480;
+   var _loc4_:int = 690;
+   var _loc5_:Number = _loc2_ / _loc3_;
+   var _loc6_:Number = _loc2_ / _loc4_;
+   var _loc7_:Number = §1t9973s0§.stageWidth / §1t9973s0§.stageHeight;
+   if(_loc7_ <= _loc6_)
+   {
+      _loc5_ = _loc6_;
+      _loc3_ = _loc4_;
+      §1t1523s0§.§1t9362s0§ = true;
+- **Lane impact:** L6 art-anim-audio-feel + L8 ui-hud + L11 meta-social: the friend bar is a shipped v0.717 layout mode, not an Android-only artefact, which is why the web SWF document rect is authored at 800×690 while the play-field canvas stays 800×480.
+
+### `NEW-8-dragon-dance-web-parity` — HELD [A2]
+
+The Dragon Dance ring is in the WEB v0.717 build too, so NF-9's android-only scoping is unnecessarily conservative. §1t5495s0§ is the web DragonDanceUI twin and carries both trigram label arrays verbatim; §1t8695s0§ carries the same five target permutations ('1246','4216','1642','1426','6241') the Kanji statue draws from.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t5495s0§.as:70-71`
+- **Quote:** this.§1t5516s0§ = ["sky","wind","water","mountain","earth","thunder","fire","lake"];
+this.§1t5517s0§ = ["fire","earth","lake","sky","water","mountain","thunder","wind"];   (permutations: §1t8695s0§.as:172-212)
+- **Lane impact:** L11 meta+rebirth: blocker ④'s input half closes for the TARGET build, not just for Android — no parity flag needed on the Dragon Dance input contract.
+
+### `NEW-9-heavy-defense-0.8-double-confirmed` — HELD [A2]
+
+Heavy-stance Defense ×0.8 is confirmed twice in the target build: the web getDefense twin returns `defense * 0.8` for HEAVY, and skill 1002's own in-game description ends 'Defense -20%'. The ledger's damage-math line (:74) and combat-core Ready line (:189) are A2-backed on this term rather than wiki-sourced.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3284-3290`
+- **Quote:** internal function §1t4477s0§() : int
+{
+   if(this.stance == §1t12222s0§)
+   {
+      return defense * 0.8;
+   }
+   return defense;
+}   (corroboration: resolved_names skilldata['1002'] = 'Heavy Stance Mastery' … 'Effective against Balanced Stance.\nDefense -20%')
+- **Lane impact:** L5 combat-core: the 'one way' qualifier in the ledger is right — the multiplier is applied in getDefense on the defender's own stance, so it is a property of being in Heavy, not of being hit by Heavy.
+
+### `art-anim-audio-feel/NEW-hold-tail-table-is-the-animdata-constructor-switch` — HELD [A2]
+
+The real per-animation hold table is a hard-coded switch in AnimData's constructor, not the XML. AnimData.as:15 copies @d verbatim from the data (which always equals len(<f>)), then :25-141 ADDS the tail: +10 for 'light_afterslashpose' and for all twelve *SLASH_POSE variants, +15 for the five *FALLSLASH_END and five *JUMPSLASH_LAND, +24 for 'sheathesword'/'sheathesword3' and 'gotlauncheddownedend', +6 for the whole death set, and ~25 more single cases running up to +50. This is the table a motion rebuild actually needs, and no amount of data extraction will find it.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/AnimData.as:15, :25-26, :28-41, :43-53, :55-57, :58-66, :69, :105, :114, :141; reference/decompiled/shs3_android/scripts/MCSCharacter.as:1316 and :1334`
+- **Quote:** AnimData.as:15 `this.duration = xml.@d;` · :25 `case "light_afterslashpose":` :26 `this.duration += 10;` · :28-40 the twelve `case MCSActor.*SLASH_POSE:` then :41 `this.duration += 10;` · :43-52 the ten `case MCSActor.*FALLSLASH_END/*JUMPSLASH_LAND:` then :53 `this.duration += 15;` · :55-56 `case "sheathesword": case "sheathesword3":` :57 `+= 24;` · :58-65 `case "deathenemy"/"deathnohand"/"deathnohead"/"defeatedanimationv2"/"death"/"gob_death"/KNEEGROIN_VICTIM:` :66 `+= 6;` · MCSCharacter.as:1316 `if(this.frameCounter < this.currentAnimationDuration)` · :1334 `if(this.frameCounter < this.curre
+- **Overturns:** "**Ready (strongest slice):** 15fps pose latch; walk + run gaits; per-stance slash frames; hit-stagger; death collapse; proportions; combat-crouch idle;"
+- **Lane impact:** L6 art-anim-audio-feel and L1 combat-core: this is the recovery-window table for every slash. Two counters exist — currentAnimationDuration (the @d + code tail, MCSCharacter.as:1316) and frameList.length (MCSCharacter.as:1334) — and the gap between them IS the pose latch. It is the correct replacement for the ledger's '15fps pose latch' shorthand and for the refuted claim art-anim-audio-feel/hold-frames-are-authored-in-data.
+
+### `art-anim-audio-feel/eighteen-of-34-enemy-classes-override-die` — PARTIAL [A2]
+
+Correction to a sub-claim in npc-death-dice-is-seven-way: 18 of the 34 Enemy*.as classes declare `override public function die()`, not 3. EnemyBoar, EnemyArcher, EnemyDeer, EnemyBear, EnemyClone, EnemyGoblinThrower, EnemyElite, EnemyHorse, EnemyOgre, EnemyGoblin, EnemyKanjiGuardian, EnemyTrainingDummy, EnemyVegePatch, EnemyStag, EnemyWolfAlpha, EnemyNianMonster, EnemyZombie, EnemyWolf. Several delegate straight back (EnemyArcher.as:306 super.die(); EnemyElite.as:199 super.die() unless SKILL_UNDYING), so the seven-way NPC dice does remain the common path for standard human enemies — but 'only EnemyGoblin, EnemyGoblinThrower and EnemyZombie override' is wrong and must not be copied into the ledger.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/Enemy*.as — grep -l 'override public function die' returns 18 of 34 files; EnemyArcher.as:304-308, EnemyElite.as:195-205, EnemyClone.as:747-755`
+- **Quote:** EnemyArcher.as:304 override public function die() : * { super.die(); mcs.setProp(13000); }  ·  EnemyElite.as:195 override public function die() : * { if(!hasSkill(SkillManager.SKILL_UNDYING)) { super.die(); } else { startAction(SKILL_UNDYING_STATE); } }  ·  EnemyClone.as:747 override public function die() : * { dead = true; startAnim(ENEMYDEATH); ... }
+- **Overturns:** "(none — this corrects a peer claim's lane_impact, not a REBUILD_READINESS.md sentence)"
+- **Lane impact:** L2 enemies-ai: the death-variant mix is per-class, and a rebuild needs the override map (three-tier: full replacement, delegate-with-addendum, pure inherit), not a single global dice.
+
+### `combat-core/inputmanager-200-is-not-a-gameplay-base` — HELD [A2]
+
+InputManager.maxDistance = 200 is a compile-time initialiser, not a gameplay base. setStance calls InputManager.setMaxDistance(slashLength) on every battle init for the local player (web §1t99s0§.as:3156-3158, android MCSPlayer.as:3092-3094), so the 200 is overwritten before the player ever draws a stroke. Any derivation of the wiki's 300/200/100 that treats 200 as 'the shipped default slash budget' rests on a value the player never plays at. The real base is 120 + floor((90 + 5*DAN) * SPD / (20 + SPD)) — 124 at SPD 1 / dan 0, asymptotically 210 at dan 0.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:51,106-108 + §1t99s0§.as:3156-3158 + §1t1523s0§.as:2346-2347`
+- **Quote:** §1t1541s0§.as:51 `internal static var maxDistance:int = 200;` · :106-108 `public static function §1t10094s0§(param1:int) : * { maxDistance = param1; }` · §1t99s0§.as:3158 `§1t1541s0§.§1t10094s0§(this.§1t4417s0§);` inside setStance · §1t1523s0§.as:2347 `return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));`
+- **Lane impact:** L-combat-core: weakens (without killing) the 300/200/100-as-base arithmetic, and tells the port to derive reach from the SPD/DAN formula rather than from the 200 constant.
+
+### `frames/damage-ttk-crit-window-is-not-empty-on-two-frames` — HELD [A1]
+
+Two frames in the damage-ttk 1940-1979 window show a partially filled focus bar, contradicting any 'the bar was zero on every frame' statement about that window. I scanned the focus row of all 18 frames: t1958.967.png has a contiguous white run x251-333 (about 83 px of a 268 px track, ~31%) and t1970.333.png has x251-318 (~68 px, ~25%); the other 16 are empty. I confirmed t1958.967 visually — a clean partial white fill with no caption, HP 16/20, Chi 20/20. The defensible statement is 'never FULL in this window, so no popup in it can have been a crit' (crit requires reload == maxreload, §1t99s0§.as:3272), not 'zero on all 18 frames'.
+
+- **Cite:** `reference/frames/session11/damage-ttk/t1958.967.png crop (100,940)-(620,1080) LANCZOS x3 (focus bar ~31% white, x251-333) and t1970.333.png (x251-318)`
+- **Quote:** my row scan, y in 1020..1060, x in 230..560: t1958.967 row 1033 single white segment (251,333); t1970.333 row 1033 single white segment (251,318); all sixteen other t19*.png frames have no white in the focus row.
+- **Lane impact:** L5 measurement hygiene: corrects the evidence line under combat-core/36-was-not-a-crit without disturbing its conclusion, and shows the focus bar does charge inside that fight.
+
+### `kh-1500-1501-are-reversed-and-dual-stance` — HELD [A2]
+
+The two unnamed category-11 skills, 1500 and 1501, are named by CODE even though neither carries a <displayname> or a string-table entry: EnemyPlayer.init() reads them as masteries and uses them to set the stance. 1500 = REVERSED_STANCE (reversed grip), 1501 = DUAL_STANCE (dual wield). This settles the two extra stances far more directly than any category or positional argument. The same block also holds an unbanked enemy-behaviour rule: with neither flag set, the enemy's stance is the argmax of light/balanced/heavy mastery, and a uniform random pick among the three when all are equal.
+
+- **Cite:** `reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as:836-859`
+- **Quote:** 836: if(xml.getMastery(1500) > 0)
+838:    setStance(REVERSED_STANCE);
+840: else if(xml.getMastery(1501) > 0)
+842:    setStance(DUAL_STANCE);
+844: else if(lightMastery == balancedMastery && balancedMastery == heavyMastery)
+846:    setStance(Math.random() * 3);
+- **Lane impact:** L-skills-meters + L-enemies-ai: the two boss-only extra stances are now code-held, not inferred, and their skill ids are fixed at 1500/1501. Their DISPLAY names remain genuinely unheld (no string entry exists), which is the honest STILL_UNHELD residue. The stance-selection rule is new to every ledger system.
+
+### `kh-base-aicountermax-is-24-not-12` — HELD [A2]
+
+The default enemy retarget cadence is 24 frames, not 12. NPC.as:22 declares 'internal var aiCounterMax:int = 24;' and only EnemyPlayer overrides it (EnemyPlayer.as:52, to 12). EnemyKnife and the other melee Enemy* classes inherit 24, so the melee-AI geometry claim's '12 frames' is a cross-class conflation.
+
+- **Cite:** `reference/decompiled/shs3_android_payload/scripts/NPC.as:22 and :285-294, plus EnemyPlayer.as:52`
+- **Quote:** NPC.as:22: internal var aiCounterMax:int = 24;
+NPC.as:287-292: --this.aiCounter; if(this.aiCounter <= 0) { this.aiCounter = this.aiCounterMax; return true; }
+EnemyPlayer.as:52: aiCounterMax = 12;
+- **Lane impact:** L-enemies-ai: two retarget cadences, not one -- 24 frames for the ordinary melee roster and 12 for the EnemyPlayer rig (ai 0/9/14). A rebuild using 12 everywhere makes every mob twice as reactive as the original.
+
+### `kh-boss-scaling-build-divergence` — HELD [A2]
+
+A fourth combat-tuning divergence between the two builds, inside the boss/duelist setLevel path. Android bands boss stats at x1.25 (lvl>70), x1.2 (lvl>50), x1.1 (lvl>30) and x0.8 (lvl<10); web v0.717 bands only x1.1 (30 < lvl < 80) and x0.9 (lvl < 10). Android floors hitsToKillPlayer at 2; web floors it at 3. Android derives the boss's attack as max(authored, playerHP/hitsToKillPlayer + playerDEF); web does not -- it sets minDamage = 1 and assigns playerHP/hitsToKillPlayer to a separate field. Web also sets a field to 10 * lvl that android's setLevel has no counterpart for. The boss HP half (max(levelScaledAuthoredHP, playerhit * hitsToKillBoss) with the four playerhit floors) IS identical in both.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:77, :112-148, :810-824 vs reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as:97-142 and :778-803`
+- **Quote:** web §1t122s0§.as:118: if(_loc13_ <= 3) { _loc13_ = 3; }  ·  :146: minDamage = 1;  ·  :147: §1t1244s0§ = _loc7_ / _loc13_;  ·  :812-822: if(level > 30 && level < 80) { minDamage *= 1.1; ... } else if(level < 10) { minDamage *= 0.9; ... }   ||   android EnemyPlayer.as:103-105: if(hitsToKillPlayer <= 0) { hitsToKillPlayer = 2; }  ·  :132-135: bossATK = bosshit + playerDEF; if(bossATK > minDamage) { minDamage = bossATK; }  ·  :780-801: 1.25 / 1.2 / 1.1 / 0.8
+- **Lane impact:** L-enemies-ai + L-combat-core: bounds packet claim NF-boss-hp-derivation, whose 'build: both' is only half true. Any boss-scaling CONTRACT must be tagged per build; the web row is the one this project targets.
+
+### `kh-dragondance-is-in-the-web-build-too` — HELD [A2]
+
+The Dragon Dance input is NOT android-only. The web v0.717 payload carries the same class at the same line numbers: §1t5495s0§.as:70-71 are the Earlier Heaven and Later Heaven trigram label arrays verbatim, and §1t8695s0§.as:172/176/188 hold the same statue target sequences '1246', '4216' and '6241'. So packet claim NF-9's 'build: android v0.682' can be upgraded to 'both' and the meta+rebirth blocker closes without any parity caveat.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t5495s0§.as:70-71 and §1t8695s0§.as:172, :176, :188`
+- **Quote:** §1t5495s0§.as:70: this.§1t5516s0§ = ["sky","wind","water","mountain","earth","thunder","fire","lake"];
+§1t5495s0§.as:71: this.§1t5517s0§ = ["fire","earth","lake","sky","water","mountain","thunder","wind"];
+§1t8695s0§.as:172: _loc3_ = "1246";
+- **Lane impact:** L11 meta+rebirth: removes the S0-3 android-parity caveat from the Dragon Dance recovery.
+
+### `kh-greenline-and-redline-are-named-in-both-builds` — HELD [A2]
+
+The second slash-stroke render state is not an unidentified colour needing a frame pass -- the android source names it. InputManager.as:172-175 is 'public static function greenLine()' setting lineStyle to 39168 (0x009900) and :177-180 is 'public static function redLine()' setting it to 10027008 (0x990000). Both builds carry the identical pair (web twin at §1t1541s0§.as:174 and :179). This corrects the build attribution in packet claim actionscript/slash-line-colour-is-0x990000, which says the green is web-only and unidentified.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/InputManager.as:172-180`
+- **Quote:** 172: public static function greenLine() : *
+174:    canvas.graphics.lineStyle(thickness,39168,1,false,LineScaleMode.NONE,CapsStyle.ROUND,JointStyle.ROUND,3);
+177: public static function redLine() : *
+179:    canvas.graphics.lineStyle(thickness,10027008,1,false,LineScaleMode.NONE,CapsStyle.ROUND,JointStyle.ROUND,3);
+- **Lane impact:** L-art-anim-audio-feel + L-ui-hud: two named slash-line states, red 0x990000 and green 0x009900, with function names that say which is which. The remaining open question is only WHEN greenLine() is used -- that part is still STILL_UNHELD from this cite alone.
+
+### `parity/meter-constants-diverge-and-frames-pick-the-web-one` — HELD [A2]
+
+The reload/focus meter constants also split by build, and the footage selects the web set — the cleanest cross-build parity datum in the repo. Web: maxreload = 8*24 = 192, HUD fraction (reload-48)/(192-48) = 144 ticks of visible travel = 6.000 s at 24.0 fps. Android: maxreload = 5*24 = 120, HUD fraction (reload-24)/(120-24) = 96 ticks = 4.000 s. Refill is +1 per frame unconditionally in both (web §1t99s0§.as:1205, android MCSPlayer.as:1160), so fill time is SPD-independent. The frame-measured fill is 45.0 px/s across a 268 px track = 5.96-6.00 s, which matches the WEB constants and rules out the android ones by 2 seconds.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249,1205 + §1t113s0§.as:328 vs reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:239,1160,1168; frame side re-measured by me at reference/frames/session11/crit-focus/t1081.100.png (edge 258) -> t1082.100.png (edge 303)`
+- **Quote:** web §1t99s0§.as:249 `this.§1t4415s0§ = 8 * 24;` and §1t113s0§.as:328 `var _loc3_:Number = (param1 - 48) / (param2 - 48);` — android MCSPlayer.as:239 `this.maxreload = 5 * 24;` and :1168 `StageManager.getBattleUI().updateReload(this.tempreload / (this.maxreload - 24));`
+- **Lane impact:** L-combat-core + L-ui-hud: positive cross-build parity evidence for the web build, and it retires 'the android source is a safe proxy for v0.717 combat tuning' for the meter as well as the stance tables.
+
+### `parity/stance-tables-diverge-web-vs-android` — HELD [A2]
+
+v0.717 (web) and v0.682 (android) disagree on BOTH stance tables, so any stance number sourced from MCSPlayer.as is v0.682 and must not be shipped as v0.717. REACH (setStance): web Light x1.4, Balanced x(1+0.2*M*0.1), Heavy x(0.5+0.4*M*0.1) floor 100, Reversed x1.4, Dual x1.0 floor 100 — android Light x1.5, Balanced x(1+0.5*M*0.01), Heavy x(0.5+0.5*M*0.01) floor 100, Reversed x1.5, Dual x1.0 floor 100. DAMAGE (getDamage): web Light x(0.5+0.4*M*0.1), Balanced x(1+0.2*M*0.1), Heavy/Dual/Reversed x1.4 — android x(0.5+0.5*M*0.01), x(1+0.5*M*0.01), x1.5. With the verified 1..10 mastery ladder, the android '*0.01' form barely scales at all (Balanced tops out at 1.05), while the web '*0.1' form reproduces the wiki 0.9/1.2/1.4 exactly at M=10. The web form is the coherent one.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3094,3105,3116,3131,3142 and :3255-3271 vs reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3030,3041,3052,3067,3078 and :3204-3213`
+- **Quote:** web :3094 `this.§1t4417s0§ = this.§1t4420s0§ * 1.4;` · :3105 `* (1 + 0.2 * this.§1t4422s0§ * 0.1)` · :3116 `* (0.5 + 0.4 * this.§1t4423s0§ * 0.1)` · :3131 `* 1.4` (REVERSED) — android :3030 `this.slashLength = this.baseSlashLength * 1.5;` · :3041 `* (1 + 0.5 * this.balancedMastery * 0.01)` · :3052 `* (0.5 + 0.5 * this.heavyMastery * 0.01)` · :3067 `* 1.5` (REVERSED)
+- **Lane impact:** L-combat-core: this is the concrete instance of the S0 build-parity caveat. It refutes any claim that quotes MCSPlayer.as stance numbers as v0.717, and it gives the correct web table for the port.
+
+### `ui-hud/NEW-hud-buff-line-is-a-hardcoded-string-table` — HELD [A2]
+
+The battle HUD's buff line is a hard-coded string ladder in OverworldHUD.updateBuff(bufftype, duration), not a computed percentage: eleven literal strings keyed on StatsManager.BUFF_* ids, including four non-potato buffs (coins, rare loot, anti-spam muting, hell imprisonment) that no ledger holds. The line is cleared whenever duration <= 0 or the stats button is hidden.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/OverworldHUD.as:1388-1440`
+- **Quote:** :1388 `public function updateBuff(bufftype:int, duration:int) : *` · :1391 `if(duration <= 0 || !this.playerStatsButton.visible)` -> `this.bufftext.htmlText = ""; this.bufftext.visible = false;` · :1400 `buffstr = "150% XP";` · :1404 `buffstr = "150% DAMAGE";` · :1408 `"150% DEFENSE"` · :1412 `"150% SPEED"` · :1416 `"200% AP REGEN"` · :1420 `"200% DUEL TOKEN REGEN"` · :1424 `"Increased chance of finding more coins"` · :1428 `"Increased chance of finding rare loot"` · :1432 `"Anti-Spam Muting"` · :1436 `"Anti-Spam Full Muting"` · :1440 `"Hell Imprisonment"`
+- **Overturns:** "**Surface:** overworld HUD lives only in segment A-00, not MASTER §8 (which is combat-only); portrait ring is stance-colored, not fixed red."
+- **Lane impact:** L8 ui-hud: independently closes the '150% DAMAGE' question on a string literal rather than on the itemdata/strings inference the two potato-buff claims rest on, and adds five buff types (COINS, RARELOOT, MUTE, FULLMUTE, HELL) plus the exact clear-condition that no ledger holds. Cross-lane into L3 economy: BUFF_COINS and BUFF_RARELOOT are loot/drop-rate modifiers with no numbers exposed here — a real remaining gap.
+
+### `ui-hud/buff-row-is-frame-confirmed-A1` — HELD [A1]
+
+Frame-level (A1) confirmation of the bottom-left combat HUD stack that claims hud-150-is-potato-buff and hud-150-is-a-potato-buff asserted only at A2 class. The stack is five rows: a red-ringed kasa-wearing portrait; a green HP bar reading 20/20; a blue AP bar reading 26/26; a tan/brown strip reading CANNOT CHANGE STANCE; and beneath it a yellow line reading 150% DAMAGE. The restriction line and the buff line are two SEPARATE rows in two different colours, which is independent visual proof that the 150% figure is a buff readout and not a stance modifier.
+
+- **Cite:** `reference/frames/duel_dense/Nr4fQstqHDM_432.0.png — crop (x 0-640, y 820-1080) of the 1920x1080 frame, upscaled 3x with LANCZOS`
+- **Quote:** (visible in the crop) red circular portrait ring · green bar '20/20' · blue bar '26/26' · tan strip 'CANNOT CHANGE STANCE' · yellow text '150% DAMAGE'
+- **Overturns:** "(none — this supplies the A1 evidence class for an existing A2 claim)"
+- **Lane impact:** L8 ui-hud gains an active-buff HUD element and a restriction-line element no ledger holds, both frame-measured. Pairs with strings.json["125"] = 'Stance Restriction' and the type-10 / modifier-38 consumable shape at itemdata.xml:237-249.
+
+### `world/map-bitmap-is-in-the-repo-735-land-pixels` — HELD [A2]
+
+The world map bitmap is IN the repo and is byte-checkable — nobody has cited it. reference/extracted/android/110_Mobile_MapBitmapData.bin is a 272-byte GIF89a, 63 x 72, with exactly 735 non-black pixels. Applying QuestEngine.processMapBitmapData's transform to all 735 gives territoryx in [329,389], territoryy in [291,360], and mapid in [1347935, 1593647]. The '735 territories' figure is therefore MEASURED, not inferred, and the entire world grid can be generated deterministically from a 272-byte artifact already on disk.
+
+- **Cite:** `reference/extracted/android/110_Mobile_MapBitmapData.bin (GIF89a 63x72, 735 non-black pixels, decoded by me) + reference/decompiled/shs3_android_payload/scripts/QuestEngine.as:522-526`
+- **Quote:** `file` reports: GIF image data, version 89a, 63 x 72. My decode: land px 735, i range 1..61, j range 1..70, territoryx range 329..389, territoryy range 291..360, mapid range 1347935..1593647; Ibamaya 1405272 -> pixel (15,54), Gokura 1524045 -> (44,43), Iwakuni 1519945 -> (43,39), all three present in the land set.
+- **Lane impact:** L-world-exploration: 'world map/geography' (REBUILD_READINESS.md:132) is no longer a must-measure — the projection and the full territory set are recoverable from one committed file.
