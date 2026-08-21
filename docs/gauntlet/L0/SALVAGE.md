@@ -136,6 +136,44 @@ which under §0 kills them.
 
 ---
 
+### THE LEDGER REWRITE'S ONLY ADMISSIBLE INPUT — `buildLedgerEvidence.py`
+
+The rewrite has exactly one legal input under §0: claims that were **JUDGED and
+SURVIVED**. Deciding that by reading 1,321 claims by hand is how a refuted claim slips
+back in, so a script does it and gate **L0-B** independently re-checks whatever the
+rewrite ends up citing.
+
+```
+buildLedgerEvidence: 1321 claims — 394 UPHELD · 16 NOT-UPHELD · 911 KILLED
+  256 surviving overturns on 166 distinct ledger sentences
+  15 claimed overturns REJECTED (true finding, wrong target)
+```
+
+**KILLED 911 = 739 still UNJUDGED + 172 genuinely REFUTED.** The unjudged half shrinks
+as WF-3a′ and WF-3b land; it is counted as KILLED because §0 gives no third option —
+an unjudged claim is a LEAD and may not enter the ledger.
+
+**The three-way status is the point.** `NOT-UPHELD` exists because *"true"* and
+*"overturns the thing it says it overturns"* are DIFFERENT QUESTIONS. Collapsing them is
+how a readiness ledger gets rewritten by findings that never contradicted it.
+
+`LEDGER_EVIDENCE.md` groups the surviving overturns **by the ledger sentence each one
+names**, so the rewrite works sentence by sentence instead of claim by claim. The lines
+taking the most fire right now:
+
+| ledger sentence | surviving findings |
+|---|---:|
+| ③ FX **blend modes** | 7 |
+| ① what each element **does** (24 skills' damage/cost/AoE/status — names only) | 6 |
+| ④ Dragon Dance **input** + Kanji-statue bonus | 5 |
+| **The stance tables are MASTERY-9 CEILING values, not base** | 5 |
+| **Server-sim topology & save format** — *"nothing to copy"* (a §6 unrecoverable) | 4 |
+| ① **ALL AUDIO** — *"every SFX + music param is INFERRED"* | 4 |
+| ⑤ **sprite-compositing contract** + item **icon manifest** | 4 |
+| Boss table omits Hachisuka Kano, Honda Shizuka, Zabuza, Tengu Hotaru | 4 |
+
+---
+
 ### THE BINARY GATE — `scripts/gauntlet/gateL0.py`, 6 items, all currently RED
 
 `GAUNTLET.md` §3.6: *"Binary. Every item green with pasted output, or the lane is open.
