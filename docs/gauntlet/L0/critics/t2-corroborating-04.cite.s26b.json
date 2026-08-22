@@ -1,0 +1,370 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "combat-core/web-payload-as3-is-readable",
+   "refuted": false,
+   "reason": "HELD, verbatim. `find reference/decompiled/shs3_payload/scripts -name '*.as' | wc -l` -> 1079 (652 at top level, the rest under playerio/, fl/, mx/, com/, shs3_fla/, §1t51s0§/). The worked example resolves exactly: lines 2346-2347 of §1t1523s0§.as are `var _loc2_:int = 90 + §1t7356s0§(§1t9426s0§) * 5;` and `return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));` — the two lines quoted, character for character. Every numeric literal is intact and the control flow is plain; only identifiers are mangled. The build stamp on the same file (:36 = 0.717) makes it the target build.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2344-2348 and :36"
+  },
+  {
+   "claim_id": "combat-core/web-payload-is-cross-readable",
+   "refuted": false,
+   "reason": "HELD. §1t1523s0§.as:36 is `public static var §1t9323s0§:Number = 0.717;` and shs3_android/scripts/StatsManager.as:30 is `public static var clientVersion:Number = 0.682;` — both verbatim. docs/research/fidelity/SOURCE_CONSTANTS.md is 515 lines. The sentence attributed to DIVERGENCES.md is verbatim at docs/DIVERGENCES.md:514-520 ('BUILD IDENTIFIED: v0.717 ... The android payload is 0.682 — an earlier build despite a newer SWF container; its four data tables are therefore tagged CONTRACT-SRC (0.682) and must never be quoted as 0.717.'). One cite-hygiene nit only: DIVERGENCES.md is quoted in the quote field but is absent from the cite field; it exists and the quote is exact, so nothing falls.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:36 · reference/decompiled/shs3_android/scripts/StatsManager.as:30 · docs/DIVERGENCES.md:514-520"
+  },
+  {
+   "claim_id": "combat-core/web-payload-is-readable",
+   "refuted": false,
+   "reason": "HELD, both halves verbatim. §1t99s0§.as:6 is exactly `public class §1t99s0§ extends §1t68s0§`. SOURCE_CONSTANTS.md:3-5 reads 'Status: CRACKED AND MINED (2026-07-25).' / 'Build identified as v0.717 — the same build our video measurements came from.** 189 constants extracted' — inside the cited :1-6 range.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:6 · docs/research/fidelity/SOURCE_CONSTANTS.md:1-6"
+  },
+  {
+   "claim_id": "combat-core/web-reach-stance-mults",
+   "refuted": false,
+   "reason": "HELD and I strengthened it. :3094 `this.§1t4417s0§ = this.§1t4420s0§ * 1.4;`, :3105 `* (1 + 0.2 * this.§1t4422s0§ * 0.1)`, :3116-3119 `* (0.5 + 0.4 * this.§1t4423s0§ * 0.1)` then `if(< 100) { = 100 }` — all verbatim at the cited lines. The stance-slot mapping the claim depends on is real: §1t99s0§.as:27/29/31 give §1t12220s0§=0, §1t12221s0§=1, §1t12222s0§=2, matching MCSPlayer.as:27/29/31 LIGHT/BALANCED/HEAVY_STANCE = 0/1/2. src/config/reach.ts holds lightMult 1.4, balancedPerMastery 0.02, heavyBase 0.5, heavyPerMastery 0.04, heavyFloor 100 and its header comment states base 124 / light 173.6 / balanced 124 / heavy 100 — exactly what the claim says.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3091-3120 and :27,29,31 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:27,29,31 · src/config/reach.ts:38-56"
+  },
+  {
+   "claim_id": "combat-core/web-stance-switch-rule",
+   "refuted": false,
+   "reason": "HELD, and the one inferential link in it is now A2. :3058-3060 is `public function §1t4472s0§() : * {` / `if(this.§1t4414s0§ < 48)` / `return;` and :3162-3166 is `this.§1t4414s0§ -= 48;` with the `< 0 -> 0` clamp — verbatim. The claim's load-bearing inference ('48 is precisely the meter's hidden display offset') is not an inference at all: the HUD writer §1t113s0§.as:328 computes `var _loc3_:Number = (param1 - 48) / (param2 - 48);` and at :336-343 sets the third bar's htmlText to §1t5204s0§ exactly when that ratio is 0. I opened reference/frames/session11/crit-focus/t1003.000.png myself, cropped (0,910)-(620,1080) at 2x: HP 14/20 green, Chi 31/31 blue, third bar an empty brown track reading CANNOT CHANGE STANCE, '150% DAMAGE' in gold below. Frame and source agree.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3050,3058-3063,3160-3171 · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:326-343 · reference/frames/session11/crit-focus/t1003.000.png crop (0,910)-(620,1080) 2x LANCZOS"
+  },
+  {
+   "claim_id": "combat/projectile-gravity-has-web-parity",
+   "refuted": false,
+   "reason": "HELD, and the parity is exact where the claim says it is. Web: §1t128s0§.as:8 `internal static var §1t12543s0§:Number = 3;`, §1t4539s0§.as:552 `mcs.y - 60`, :555 `* Math.abs(_loc3_ - _loc1_) / 0.866`, :557 `* 0.866`, :559 the half-g solve, :564 `Math.random() * 8 - 4` — every quoted line verbatim. Android twin: Projectile.as:8 `GRAVITY:Number = 3` and EnemyArcher.as:274-286, structurally identical line for line. The claim's own honest caveat is also correct: web :565 calls with five args plus `this` and carries no doLaunch flag, whereas EnemyArcher.as:287-290 has `var doLaunch:Boolean = false; if(level > 50) { doLaunch = int(Math.random() * 2) > 0; }`. Note the second web twin at §1t4545s0§ is the Kanji-Guardian variant (y-100, 0.866/3), so only its :470 line is 'identical' — the claim cites exactly that line and nothing more.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t128s0§.as:8 · reference/decompiled/shs3_payload/scripts/§1t4539s0§.as:549-566 · reference/decompiled/shs3_payload/scripts/§1t4545s0§.as:460-477 · reference/decompiled/shs3_android/scripts/Projectile.as:8 · reference/decompiled/shs3_android/scripts/EnemyArcher.as:271-290"
+  },
+  {
+   "claim_id": "combat/slashlength-is-arc-length-not-radius",
+   "refuted": false,
+   "reason": "HELD. InputManager.as:106-108 is the `setMaxDistance` setter, :198 is `distanceLeft = maxDistance;` on mouse-down, :353 is the `mousePressed && distanceLeft > 0 && !BattleUI.instance.isDraggingSkill()` gate, :363-367 is the truncate-and-subtract block — all verbatim. The two supporting details also check out: :360 taper is `thickness - thickness * ((maxDistance - distanceLeft) / maxDistance)` and :185-186 unscales to game-stage space as `(args.stageX - StatsManager.stageOffsetX) / StatsManager.stageScale`. The build note is right too: §1t99s0§.as:3156-3158 feeds the computed reach into §1t1541s0§.§1t10094s0§(), and §1t1541s0§.as:106 is that class's setMaxDistance twin. ONE MIS-LABEL, non-fatal: the quote tags `distanceTravelled = Math.sqrt(distanceTravelledSQ);` as ':362' — it is line 361 (:362 is `originalDistanceTravelled = distanceTravelled;`). The cite field's range :353-367 covers it, so nothing falls.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InputManager.as:106-108,185-186,198,353-367 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3156-3158 · reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:106"
+  },
+  {
+   "claim_id": "economy/2208-is-the-gold-to-coin-sku",
+   "refuted": false,
+   "reason": "HELD on every code cite. ShopUI.as:428 `if(this.displayItem.itemID == 2208)` guarded at :430 by `if(StatsManager.isCoinPurseFull())`; :482-485 `if(this.displayItem.itemID == 2208) { StatsManager.changeGold(1000); SoundManager.instance.playGoodKoto(); }`; :487-490 the 2209 `StatsManager.fullHealth()` branch — all verbatim. The payout divergence is real: web §1t401s0§.as:952 `§1t1523s0§.§1t9619s0§(200);` against android InteractUI.as:923 `StatsManager.changeGold(1000);`, both inside the same 'convertgold' block. itemdata.xml:2393-2400 gives item 2208 `<heavenlyprice>1</heavenlyprice>` and resolved_names itemdata 2208 = name '1000 coins', desc 'Buy 1000 coins.'. ONE SOFT SPOT: 'The filmed banknote tile is item 2208' is asserted with no frame in the cite field — I confirmed the banknote tile printed '200' at badge 1 myself in the 48:04 shop frame, so the assertion survives, but it was carried on an A2 cite that does not contain it.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/ShopUI.as:426-435,480-491 · reference/decompiled/shs3_payload/scripts/§1t401s0§.as:947-959 · reference/decompiled/shs3_android/scripts/InteractUI.as:918-927 · reference/extracted/itemdata.xml:2393-2400 · self-extracted reference/videos/Nr4fQstqHDM.mp4 t=2884s, tile grid crop (185,260)-(950,1035) 2x LANCZOS"
+  },
+  {
+   "claim_id": "economy/5x-redenomination-is-a-code-fact",
+   "refuted": false,
+   "reason": "HELD — this is the honest version of the redenomination claim and every leg of it survives my own reading. Rebirth: §1t1523s0§.as:2646 `§1t9713s0§(§1t9413s0§,100);` and :2651 `(...,25);` against StatsManager.as:2203 `changeStat(STAT_HGOLD,20);` and :2207 `(...,5);` — line numbers exact (unlike the sibling claim that writes :2202). convertgold: §1t401s0§.as:952 vs InteractUI.as:923. IAP: §1t410s0§.as:136-140 = 50/125/200/275/400 vs PayUI.as:127-131 = 10/25/40/55/75, and the claim correctly says '5x on FOUR of five tiers' rather than five. No-multiplier chain: XMLItem.as:96 `this.hvalue = xml.heavenlyprice;`, §1t104s0§.as:94 the same assignment, XMLShopItem.as:37 and :123 `this.hvalue = itemData.hvalue;`, XMLShopData.as:109 `xsi.assignFromId(defaultItems[i]);`, ShopUI.as:393 `slot.setCost(...value, ...hvalue)` — all verbatim. Byte-identity: md5 of reference/extracted/itemdata.xml = 75d5344925e13de09924120b4136ae2a, and md5 of 111_Mobile_ItemData.bin with its 40-byte declaration and trailing CRLF stripped = the same digest. The claim's STILL_UNHELD flag ('how the web shop renders 25 from a shared heavenlyprice of 5 remains untraced') is the correct answer, not a gap.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2644-2652 · reference/decompiled/shs3_android/scripts/StatsManager.as:2195-2208 · reference/decompiled/shs3_payload/scripts/§1t410s0§.as:136-140 · reference/decompiled/shs3_android/scripts/PayUI.as:127-131 · reference/decompiled/shs3_android/scripts/XMLItem.as:94-96 · reference/decompiled/shs3_payload/scripts/§1t104s0§.as:92-94 · md5 of reference/extracted/itemdata.xml"
+  },
+  {
+   "claim_id": "economy/bank-weight-v0717-has-200-base",
+   "refuted": false,
+   "reason": "HELD, verbatim and with the stat ids checked. §1t1523s0§.as:3175-3183 is `public static function §1t9630s0§() : int { var _loc1_:int = 100; if(§1t9714s0§(40018) == 1) { _loc1_ = 200; } return _loc1_ + §1t7356s0§(§1t9426s0§) * 10 + §1t7356s0§(§1t9434s0§) * 10; }`. The two stat constants resolve inside the same file: :254 `§1t9426s0§:int = 25` and :278 `§1t9434s0§:int = 41`, which are STAT_DAN (StatsManager.as:220) and STAT_PAIDSTORAGE (StatsManager.as:244). The android counterpart is BankUI.as:264 `this.storageMaxWeight = 100 + StatsManager.getPlayerStats(StatsManager.STAT_DAN) * 10 + StatsManager.getPlayerStats(StatsManager.STAT_PAIDSTORAGE) * 10;` with no 40018 branch — so the v0.717 doubling unlock is genuinely new, and the getter genuinely moved into StatsManager.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:3175-3183,254,278 · reference/decompiled/shs3_android_payload/scripts/BankUI.as:264 · reference/decompiled/shs3_android/scripts/StatsManager.as:220,244"
+  },
+  {
+   "claim_id": "economy/calcxp-has-a-web-v0717-twin",
+   "refuted": false,
+   "reason": "HELD, and the correction it carries is right. §1t68s0§.as:116-128 is byte-for-byte the same ladder as NPC.as:97-109 (`< 6 -> 0`, `< 40 -> lvl - floor(lvl/10) - 5`, `< 60 -> lvl - floor(lvl/5) - 1`, else `lvl - 9`). §1t68s0§.as:187-207 is the same calcXP as NPC.as:168-188, including both hard zeros (`mobLevel <= greyLevel` and `mobLevel - playerLevel > 3`), the `1 + 0.05*(diff)` over-level bonus, the `1 - diff/zeroDifference` under-level decay and the elite `*= 2`. I counted the zero-difference ladder myself in §1t68s0§.as:131-183: twelve `if` branches (<8,<10,<12,<16,<20,<30,<40,<45,<50,<55,<60,<80) plus the fallthrough — so 'twelve branches, not eleven bands' is correct.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:113-129,131-183,185-209 · reference/decompiled/shs3_android/scripts/NPC.as:94-110,166-190"
+  },
+  {
+   "claim_id": "economy/cash-tier-redenomination-is-not-clean-5x",
+   "refuted": false,
+   "reason": "HELD, and this is the arithmetically honest sibling of the '5x five-for-five' claim I refuted. §1t410s0§.as:136-140 goldtext0..4 = 50/125/200/275/400; :325-329 pricetext0..4 = '50 KREDS'/'100 KREDS'/'150 KREDS'/'200 KREDS'/'250 KREDS'. PayUI.as:127-131 goldtext0..4 = 10/25/40/55/75; :137-141 oldpricetext0..4 = '4.99'/'9.99'/'14.99'/'19.99'/'24.99'. All ten lines verbatim. Ratios recomputed: 5.00, 5.00, 5.00, 5.00, 5.333 — exactly what the claim reports. Minor wording nit: 'NOT a clean uniform multiple anywhere' overstates — four of five tiers ARE exactly 5.00; what is not uniform is the ladder taken as a whole. The lane instruction that follows ('by table lookup, never by multiplying') is the right conclusion.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t410s0§.as:136-140,325-329 · reference/decompiled/shs3_android/scripts/PayUI.as:127-131,137-141",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "economy/chest-coin-formula-missing-from-faucet-set",
+   "refuted": false,
+   "reason": "HELD, all five lines verbatim. Obj_ChestGoodLoot.as:62 and Obj_DragonDanceLoot.as:331 are the identical string `OverworldHUD.instance.lootDialog.addLootCoins(Math.random() * this.lvl + this.lvl * 5);`. NetworkManager.as:1264 `addLootCoins(Math.random() * msg.lvl)`, :2814 `addLootCoins(Math.random() * lootlvl)`, WarUI.as:241 `addLootCoins(5)` — all present at the cited lines. The arithmetic checks: at lvl 40 a good chest pays 200-240 against a lvl-1 mob's 0.5 expectation, a 400x gap. The 'commonest-mob expectation of 0.5 coins/kill' silently assumes a level-1 mob; that is a modelling premise, not a cite failure.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Obj_ChestGoodLoot.as:62 · Obj_DragonDanceLoot.as:331 · NetworkManager.as:1264,2814 · WarUI.as:241"
+  },
+  {
+   "claim_id": "economy/coin-faucet-set-now-cited",
+   "refuted": false,
+   "reason": "HELD on the citability claim, which is what the finding says. I read all seven lines and every one is verbatim: EnemyPlayer.as:1298 `addLootCoins(Math.random() * level)`, Obj_ChestLoot.as:45 `(Math.random() * this.lvl)`, Obj_ChestGoodLoot.as:62 and Obj_DragonDanceLoot.as:331 `(Math.random() * this.lvl + this.lvl * 5)`, WarUI.as:491 `(newrank * 100)`, WarUI.as:241 `(5)`, InteractUI.as:1548 `(count * price)`. CAVEAT: the lane_impact's word 'closed' does not survive its own packet — quest turn-ins pay coins through QuestLogUI.parseReward (QuestLogUI.as:455-461), which is a faucet none of these seven lines covers. Citability holds; closure does not.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:1298 · Obj_ChestLoot.as:45 · Obj_ChestGoodLoot.as:62 · Obj_DragonDanceLoot.as:331 · WarUI.as:241,491 · InteractUI.as:1548 · QuestLogUI.as:455-461",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "economy/fast-travel-costs-5-gold",
+   "refuted": false,
+   "reason": "HELD — I extracted the frame myself and it reads exactly as described. `ffmpeg -ss 21:35 -i reference/videos/Nr4fQstqHDM.mp4 -frames:v 1` gives a 1920x1080 QUESTS journal on SHIGENOI TOKIMASA'S QUEST. Crop (1290,440)-(1700,560) at 4x LANCZOS: a gold-bordered red button reading 'TAKE ME THERE'. Crop (1650,450)-(1790,530) at 7x LANCZOS: a yellow oval koban with black kanji strokes, then the numeral '5'. The icon is the same glyph as the top-right HUD badge, which in the same frame is labelled 'GOLD' and reads 2 — so it is heavenly gold, not the silver COINS icon. Gold sinks really are missing from the surveyed faucet-only model.",
+   "own_cite": "self-extracted reference/videos/Nr4fQstqHDM.mp4 t=21:35 (1920x1080); crops (1290,440)-(1700,560) 4x and (1650,450)-(1790,530) 7x LANCZOS"
+  },
+  {
+   "claim_id": "economy/five-fold-redenomination-is-A2-grade",
+   "refuted": true,
+   "reason": "REFUTED on the arithmetic it presents as a reading of its own cites, and on the porting rule it issues. (1) The quote says the IAP ladder is 'exactly x5, five for five'. I read both files: §1t410s0§.as:140 sets goldtext4 to 400 and PayUI.as:131 sets goldtext4 to 75. 400/75 = 5.333, not 5. Four of five tiers are exactly 5.00; the fifth is not, and two other claims in this same packet (cash-tier-redenomination-is-not-clean-5x, five-x-is-a-direction-not-a-multiplier) report the 5.33 correctly. 'Five for five' is a false measurement dressed as a code reading. (2) MIS-CITED: the rebirth cite is 'StatsManager.as:2202/:2207'. Line 2202 is a bare `{`; the `changeStat(STAT_HGOLD,20)` is at :2203. (3) The lane_impact — 'Every heavenly-gold figure ported from a 0.682 artifact must be multiplied by 5 for a v0.717 target' — is contradicted by artifacts I opened: reference/extracted/itemdata.xml and 111_Mobile_ItemData.bin are the same bytes once the 40-byte declaration and trailing CRLF are removed (md5 75d5344925e13de09924120b4136ae2a both sides), and the web shop chain applies no transform at all (§1t104s0§.as:94 -> §1t61s0§.as:35 -> §1t394s0§.as:78 `this.§1t6859s0§.text = param2.toString();`). Applying x5 to <heavenlyprice> mis-prices items 2208 and 2209, which the 48:04 frame shows at 1 gold against an itemdata row of 1. WHAT SURVIVES: the DIRECTION (web heavenly gold is roughly 5x finer than android) and the three code witnesses as witnesses. What must not enter the ledger is 'five for five' and the multiply-every-row rule.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t410s0§.as:136-140 · reference/decompiled/shs3_android/scripts/PayUI.as:127-131 · reference/decompiled/shs3_android/scripts/StatsManager.as:2201-2208 · reference/decompiled/shs3_payload/scripts/§1t394s0§.as:69-94 · md5 of reference/extracted/itemdata.xml vs reference/extracted/android/111_Mobile_ItemData.bin · self-extracted reference/videos/Nr4fQstqHDM.mp4 t=2884s tile grid",
+   "severity": "material"
+  },
+  {
+   "claim_id": "economy/five-x-is-a-direction-not-a-multiplier",
+   "refuted": false,
+   "reason": "HELD — all three breakers reproduce. (a) §1t61s0§.as:100 `this.§1t847s0§.§1t695s0§(5);` sits in the same slot of the same function body as XMLShopItem.as:102 `this.hvalue = 2;` (both immediately after `getRandomLegendaryMerchantPremiumItem`, `this.id = itemId`), ratio 2.5x. (b) §1t410s0§.as:140 = 400 vs PayUI.as:131 = 75, ratio 5.33x. (c) ShopUI.as:421-424 `if(this.displayItem.getHCost() < itemData.hvalue) { QueryManager.instance.reportHack(\"shop buy\"); return; }` — the anti-cheat compares the DISPLAYED cost against the raw hvalue, which is only sound if they are the same number. I extracted t=2884s myself and the frame carries exactly the three 1-gold badges the claim names (banknote printed '200', green+blue '++', a single yellow skull). And 0.2 is absent from the heavenlyprice domain: the only values in reference/extracted/itemdata.xml are 0,1,2,3,5,8,12,25,100.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t61s0§.as:90-104 · reference/decompiled/shs3_android/scripts/XMLShopItem.as:92-106 · reference/decompiled/shs3_payload/scripts/§1t410s0§.as:140 · reference/decompiled/shs3_android/scripts/PayUI.as:131 · reference/decompiled/shs3_android/scripts/ShopUI.as:420-425 · self-extracted reference/videos/Nr4fQstqHDM.mp4 t=2884s crop (185,260)-(950,640) 2x LANCZOS"
+  },
+  {
+   "claim_id": "economy/heavenlyprice-has-no-multiplier",
+   "refuted": false,
+   "reason": "HELD on the whole parse-to-render chain, which I walked end to end. XMLItem.as:94-96 `if(xml.heavenlyprice.toString() != \"\"){ this.hvalue = xml.heavenlyprice; }` and its web twin §1t104s0§.as:92-94 are the same three lines. XMLShopItem.as:37 and :123 copy hvalue raw; XMLShopData.as:109 calls assignFromId; ShopUI.as:393 `slot.setCost(this.currentItemList[index].value,this.currentItemList[index].hvalue);`; ShopItem.as:62-65 `public function setCost(amt:int, hamt:int) : * { this.cost = amt; this.hcost = hamt;`. Web render twin §1t6519s0§.as:466 passes the same pair. Byte side: web 184002 B starting `<itemdata>`, android 184044 B starting `<?xml ...?>`, and the android body minus its trailing CRLF is byte-identical to the web file. CAVEAT worth flagging: the 'counter-example pair' names item 2125 as the badge-5 tile, while a sibling claim in this same packet names 2125 as a badge-1 tile. The tile-to-id mapping is inferred from the android PremiumData order, not read; the conclusion does not depend on it (2208 hp=1 -> badge 1 and 2200/2203/2207 hp=5 -> badge 25 already break any single multiplier).",
+   "own_cite": "reference/decompiled/shs3_android/scripts/XMLItem.as:94-96 · reference/decompiled/shs3_payload/scripts/§1t104s0§.as:92-94 · XMLShopItem.as:37,123 · XMLShopData.as:109 · ShopUI.as:393 · ShopItem.as:62-65 · reference/decompiled/shs3_payload/scripts/§1t6519s0§.as:466 · byte compare reference/extracted/itemdata.xml vs reference/extracted/android/111_Mobile_ItemData.bin",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "economy/itemdata-line-identical-across-builds",
+   "refuted": false,
+   "reason": "HELD in substance; one number is loose. I ran the diff. Web file: 184002 bytes, 10545 newlines, no final newline, so 10546 logical lines. Android blob: 184044 bytes; its `<itemdata>` starts at offset 40; stripping that 40-byte declaration leaves 10546 lines. `diff reference/extracted/itemdata.xml <(tail -c +41 111_Mobile_ItemData.bin)` prints ONE hunk — `10546c10546` with `\\ No newline at end of file` — i.e. the only difference in the entire file is whether the last line is terminated. The claim's '10,546 lines each' is right and its 42-byte decomposition is exactly right (38-char declaration + CRLF = 40, plus the 2-byte trailing CRLF). 'diff hunks: 0' is off by that one content-free EOF hunk, which the claim's own byte accounting already discloses. Not enough to fall.",
+   "own_cite": "diff of reference/extracted/itemdata.xml against reference/extracted/android/111_Mobile_ItemData.bin (declaration stripped)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "economy/no-multiplier-in-web-shop-chain",
+   "refuted": false,
+   "reason": "HELD, and this is the cleanest proof of the no-multiplier point in the packet because it is entirely web-side. §1t104s0§.as:94 `this.§1t847s0§.§1t695s0§(param1.heavenlyprice);`; §1t61s0§.as:35 `this.§1t847s0§.§1t695s0§(_loc2_.§1t854s0§());`; and §1t394s0§.as:69-79 is `public function §1t6868s0§(param1:int, param2:int) : * { ... if(param2 > 0) { this.coin.visible = false; this.gold.visible = true; this.§1t6859s0§.text = param2.toString(); this.§1t6866s0§ = 2; }` — verbatim, and `param2.toString()` is the end of the line: the gold badge prints the raw integer. The class-map contribution (§1t394s0§ = ShopItem, found by the surviving `coin`/`gold` instance names) is correct and useful.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t104s0§.as:94 · §1t61s0§.as:35 · §1t394s0§.as:69-94"
+  },
+  {
+   "claim_id": "economy/no-web-itemdata-exists",
+   "refuted": false,
+   "reason": "HELD on every cite, with one over-broad headline word. All thirteen loads exist verbatim: §1t1524s0§.as:334, 357, 388, 420, 453, 479, 505, 528, 554, 580, 606, 632, 658 are `_loc1_.load(new URLRequest(§1t3318s0§.instance.§1t3331s0§(...)))`, and :683 is the lone literal `_loc1_.load(new URLRequest(§1t9801s0§ + \"traproomdata.xml\"));`. Android Mobile_ItemData.as:5 is `[Embed(source=\"/_assets/111_Mobile_ItemData.bin\", mimeType=\"application/octet-stream\")]`. The byte proof holds (see itemdata-line-identical). CORRECTION: 'The web v0.717 build ships NO data XML at all' is false as a universal — I dumped the headers of all 27 files in reference/extracted/bindata/ and nineteen of them are `<?xml version=\"1.0\"?><animdata><anim i=\"...\">`, 119 is `<survivalmodedata>`, 93 is room-object defs and 94-98 are name tables. The operative clause ('it URL-loads itemdata/npcdata/questdata/skilldata') and the lane_impact are correctly scoped, so the finding stands; the headline sentence must be narrowed before it is quoted.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1524s0§.as:334,357,388,420,453,479,505,528,554,580,606,632,658,683 · reference/decompiled/shs3_android/scripts/Mobile_ItemData.as:5 · header dump of all 27 files in reference/extracted/bindata/",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "economy/premium-price-exception-set",
+   "refuted": false,
+   "reason": "HELD on its headline and its frame reading, which I reproduced exactly; two of its identifications do not survive the frame. I extracted t=2884s myself and cropped (185,260)-(950,1035) at 2x. All sixteen badges match the quote row for row: 200-banknote 1, green+blue '++' 1, one grey skull 5, two grey skulls 10, five grey skulls 15, one gold skull 1, gold skull cluster 10, red/gold gift 5, green egg 5, three scrolls 25/25/25, pink shell 5, blue gift 60, black hood 15, dark garment 15. Three tiles at badge 1 against thirteen at 5/10/15/25/60 is directly visible, and 2208/2209 are certain (banknote printed '200'; green+blue heal cross-pair), both with `<heavenlyprice>1</heavenlyprice>` in itemdata — so the conclusion 'read premium prices per item from frames, not by multiplying' is frame-proven. The 'outfits hp=12 -> 60' entry also checks out: item 2133 'Santa Outfit' is `<heavenlyprice>12</heavenlyprice>` at reference/extracted/itemdata.xml:561-566, and the blue-gift tile reads 60. TWO CORRECTIONS, and per the standing invariant THE FRAME WINS over the PremiumData-order inference: (a) '7034/4065 hp=3 -> 15' is wrong — hovering the two 15-gold apparel tiles in the same shop session names them TRAINING HELMET and TRAINING GARMENT, and those two names return zero hits in the 2,533-entry android string table (as do 'soul-infused' and 'levels up as you gain'), so no heavenlyprice ratio can be computed for them at all; (b) the third badge-1 tile is a GOLD skull while the DUEL TOKENS HUD glyph in the same frame is a WHITE/GREY skull, so calling it 2125 '10 Duel Tokens' is unproven and directly contradicts the sibling claim heavenlyprice-has-no-multiplier, which puts 2125 at badge 5.",
+   "own_cite": "self-extracted reference/videos/Nr4fQstqHDM.mp4 t=2884s (1920x1080), grid crop (185,260)-(950,1035) 2x LANCZOS and rows-1-2 crop (185,260)-(950,640) 2x; hover tooltips sampled at 2 s intervals over t=2860-2920, crop 1100x220 at (1250,230); reference/extracted/itemdata.xml:375-379, :561-566, :2268-2273, :2328-2333, :2380-2385 · reference/extracted/android/121_Mobile_PremiumData.bin <default> list · docs/gauntlet/L0/index/strings.json searched for 'training', 'soul-infused', 'levels up as you gain'",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "economy/prosperity-tier-thresholds-recoverable",
+   "refuted": false,
+   "reason": "HELD, verbatim. TerritoryData.as:782-805 is exactly the quoted `getTownLevel()`: 0 -> 0, < 500 -> 1, < 1000 -> 2, < 2000 -> 3, < 4000 -> 4, else 5. The PARTIAL grading is also correct and honest: QueryManagerBase.as:2259 is `var request:URLRequest = new URLRequest(this.server + \"/town/updatetownprosperity.php\");`, so the per-event deltas really are server-side and only the SCALE is recovered here.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/TerritoryData.as:782-805 · reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2259"
+  },
+  {
+   "claim_id": "economy/quest-coins-are-the-biggest-early-faucet",
+   "refuted": false,
+   "reason": "HELD on the evidence; the superlative is decoration. I cropped reference/frames/zFtCaTO0_1M/seg-29/frames/frame_0013.jpg (1024x576) at (490,340)-(760,460) 5x LANCZOS and it reads, verbatim, 'REWARD / 250 XP / 30 COINS / TOWN PROSPERITY: +5'. questdata.xml:4162-4168 is `<reward><exp>750</exp><loot><id>0</id><qty>30</qty><chance>1</chance></loot>`. TWO NOTES: the questdata row is STRUCTURAL backing only — its 750 XP does not match the frame's 250, so 'backed at' means 'the same <reward><loot><id>0</id>' shape, not the same quest. And 'the largest single early-game coin payout in the game' has no cite and is contradicted inside its own packet: the sibling quest frame at t=21:35 reads 35 COINS, and Obj_ChestGoodLoot.as:62 pays `Math.random()*lvl + lvl*5`, which passes 30 at node level 6.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-29/frames/frame_0013.jpg crop (490,340)-(760,460) 5x LANCZOS · reference/extracted/questdata.xml:4162-4168 · reference/decompiled/shs3_android/scripts/Obj_ChestGoodLoot.as:62",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "economy/quests-do-pay-coins",
+   "refuted": false,
+   "reason": "HELD — I extracted the frame myself and it is exact. reference/videos/Nr4fQstqHDM.mp4 at 21:35, QUESTS journal, SHIGENOI TOKIMASA'S QUEST detail panel, crop (950,700)-(1350,880) 4x LANCZOS: three lines in white caps, '473 XP' / '35 COINS' / 'TOWN PROSPERITY: +10'. The parser is verbatim too: QuestLogUI.as:455-465 `else if(lootType == 0 || lootType == 11) { coinReward += qty; } else if(lootType == 1) { coinReward += 5 * qty; } else if(lootType == 50007) { townProsperityReward += qty; }` and :490/:494/:498 build the three strings in exactly that order. questdata.xml:4164-4167 carries a `<loot><id>0</id><qty>30</qty>` reward. Minor: the cite ranges are each one line loose at an edge (:454 is `}`, and the prosperity line is :498, one past the quoted :490-497) — content unaffected.",
+   "own_cite": "self-extracted reference/videos/Nr4fQstqHDM.mp4 t=21:35, crop (950,700)-(1350,880) 4x LANCZOS · reference/decompiled/shs3_android/scripts/QuestLogUI.as:455-465,488-499 · reference/extracted/questdata.xml:4162-4168"
+  },
+  {
+   "claim_id": "economy/quests-move-prosperity",
+   "refuted": false,
+   "reason": "HELD, verbatim and unambiguous. HistoryItem.as:373 is exactly `return \"Players changed prosperity through quests by \" + val1;`, inside a `if(type == TYPE_PROSPERITY)` branch at :371. The claim's own limit is stated correctly — val1 arrives from the server, so this narrows the blocker rather than closing it.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/HistoryItem.as:369-376"
+  },
+  {
+   "claim_id": "economy/rebirth-pays-premium-currency",
+   "refuted": false,
+   "reason": "HELD, every line verbatim. shs3_android_payload/scripts/StatsManager.as:192 `internal static var STAT_GOLD:int = 11;` and :194 `STAT_HGOLD:int = 12;`; :2653-2655 `isCoinPurseFull() { return getPlayerStats(STAT_GOLD) >= getMaxCoins(); }`; :2669-2675 `getHeavenlyGold()` adding `QueryManagerPIO.instance.getPayVaultCoins()` when `usePlayerIO` — so the premium wallet really is PayVault-backed and really is a different stat from the coin purse. Web side: §1t1523s0§.as:228 `§1t9413s0§:int = 12` and :2644-2652 writes 100/25 to that id. strings.json[\"63\"] = 'Coins' and [\"64\"] = 'Gold' as quoted. Note shs3_android_payload/scripts/StatsManager.as and shs3_android/scripts/StatsManager.as are the same file (md5 f19009bd8c04f98707d88b2a380aa402), so the two directories are interchangeable here.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:192,194,2653-2655,2669-2675 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:228,2644-2652 · docs/gauntlet/L0/index/strings.json[\"63\"] and [\"64\"]"
+  },
+  {
+   "claim_id": "economy/rebirth-pays-premium-gold",
+   "refuted": false,
+   "reason": "HELD. Same artifacts as its sibling and they read the same way: StatsManager.as:192/194 give STAT_GOLD 11 and STAT_HGOLD 12; StatsManager.as:2201-2207 writes 20 or 5 to STAT_HGOLD on rebirth; §1t1523s0§.as:228 defines §1t9413s0§ = 12 and :2646 writes 100 to it. The rebirth reward therefore lands in the premium wallet, and the ledger's single word 'gold' genuinely does not distinguish the two.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:192,194,2195-2208 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:228,2644-2652"
+  },
+  {
+   "claim_id": "economy/reinforce-weapon-cost-is-a-held-constant-5000",
+   "refuted": false,
+   "reason": "HELD on both artifacts, and it is a clean payload-plus-frame pair. strings.json[\"850\"] is exactly 'Reinforce your currently equipped weapon to make it unbreakable?\\nCost: 5000 coins\\nMaterials needed: 1 Silver Ore' with no substitution slot anywhere in it. I opened reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0042.jpg (1024x576) and cropped y=370-576 full width at 1.8x: a BLACKSMITH dialog reading 'REINFORCE YOUR CURRENTLY EQUIPPED WEAPON TO MAKE IT UNBREAKABLE? / COST: 5000 COINS / MATERIALS NEEDED: 1 SILVER ORE'. The control the claim invokes also holds: strings.json[\"848\"] is 'Repair your currently equipped weapon?\\nCost: [0] coins' — the bare [0] really is the contrast case.",
+   "own_cite": "docs/gauntlet/L0/index/strings.json[\"850\"] and [\"848\"] · reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0042.jpg crop y=370-576 full width 1.8x LANCZOS"
+  },
+  {
+   "claim_id": "economy/sell-price-edge-cases",
+   "refuted": false,
+   "reason": "HELD, both edge cases verified. ShopUI.as:58 is `internal var sellPercentage:Number = 0.5;` and a recursive grep over the whole android bundle returns that line and nothing else — it really is dead. ShopUI.as:395-397 force `slot.setCost(0,0)` for itemID 13002 (resolved_names: 'Branch') and :401 otherwise sets `slot.setCost(slot.getItem().getSellAmt(),0)`; onSell at :536-540 pays `StatsManager.changeGold(this.displayItem.getCost());` with no percentage applied. A builder wiring a 50% vendor haircut would be inventing it.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/ShopUI.as:58,390-402,536-540 · grep -rn 'sellPercentage' reference/decompiled/shs3_android/scripts/ (1 hit) · docs/gauntlet/L0/index/resolved_names.json itemdata resolved \"13002\""
+  },
+  {
+   "claim_id": "economy/tradegoods-web-seed-drops-node",
+   "refuted": false,
+   "reason": "HELD as the honest PARTIAL it claims to be. Android InteractUI.as:1562 is verbatim `var rng:RNG = new RNG(StageManager.getCurrentNode() * QueryManager.instance.getServerDate() * index);` — three factors. Web §1t401s0§.as:1676 is `var _loc4_:int = §1t3317s0§.instance.§1t1848s0§() * param1;` — two. The QueryManager identification is sound: §1t401s0§.as:953 and :959 are `§1t3317s0§.instance.§1t1946s0§();` and `§1t3317s0§.instance.§1t1986s0§(4,\"convertgold\",1);`, structurally identical to InteractUI.as:924 `saveModifiedCharData()` and :926 `reportPremiumBuy(4,\"convertgold\",1)`. The tutorial-tip constraint is real: GameEngine.as:636 is 'Tip: You can make money easily by buying goods from a market and selling in another town.' Refusing to close it on two factors alone is the correct call.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t401s0§.as:1676-1677,947-959 · reference/decompiled/shs3_android/scripts/InteractUI.as:1562,918-927 · reference/decompiled/shs3_android/scripts/GameEngine.as:636"
+  },
+  {
+   "claim_id": "economy/web-build-has-unresolvable-content",
+   "refuted": false,
+   "reason": "HELD, and I reproduced both halves. I extracted t=2884s myself: the tooltip panel reads 'TRAINING GARMENT / OWNED: 0 / SOUL-INFUSED / THIS ITEM LEVELS UP AS YOU GAIN XP. / DEFENSE: +21 (EQ: 4) / EARTH DEF: +3 (EQ: 1) / PIERCING DAMAGE: +2 (EQ: 0) / MAX CHI: +15 (EQ: 0) / WEIGHT: 10', with a 15-gold badge and 'LEVEL 7' under the icon — verbatim. Then I searched the 2,533-entry android table myself: 'training' returns Training Hall, Training Sword, Training Dummy and tutorial sentences, no garment; 'levels up as you gain' returns 0; 'soul-infused' returns 0. This is NOT the dead S0-3 blocker (it does not say ids are unresolvable) — it is the live v0.682-vs-v0.717 parity caveat, discharged with a frame. Adjacent frames in the same shop session add SANTA HAT and SANTA SUIT at the same 15 gold with the same LEVEL badge, so the levelling apparel line is a family, not one item.",
+   "own_cite": "self-extracted reference/videos/Nr4fQstqHDM.mp4 t=2884s tooltip panel, read at 1280-wide render · docs/gauntlet/L0/index/strings.json (2,533 entries) searched for 'training', 'levels up as you gain', 'soul-infused'"
+  },
+  {
+   "claim_id": "economy/web-build-ships-no-game-data",
+   "refuted": false,
+   "reason": "HELD — five sub-assertions, all five verified first-hand. (1) I mmap-scanned all 329,520,665 bytes of reference/extracted/payload.xml: 'heavenlyprice' occurs exactly ONCE, at byte 19403382, and 'itemdata' exactly ONCE at 19503662; 'skilldata' and 'npcdata' occur ZERO times. (2) The context at 19403382 is `<item>shop</item> <item>roomdata</item> <item>property</item> <item>baseprice</item> <item>heavenlyprice</item> <item>minlvl</item> <item>scalex</item> <item>scaley</item>` — the AS3 constant pool, exactly as quoted. (3) The 27 bindata headers are as described: 100-118 animdata, 119 <survivalmodedata>, 93 room-object defs, 94-98 name lists, 92 GIF89a, zero item/skill/npc/quest blobs. (4) All four disk XMLs equal their android blobs modulo the declaration and one trailing newline (itemdata 111, skilldata 117, npcdata 125, questdata 116 — questdata's blob has no declaration and differs by exactly 1 byte). (5) `grep -c 50007 reference/extracted/questdata.xml` = 0 while QuestLogUI.as:463 renders it and the 21:35 frame prints 'TOWN PROSPERITY: +10'. That last one is a genuine, independently-checkable web-vs-disk divergence.",
+   "own_cite": "reference/extracted/payload.xml byte offsets 19403382 and 19503662 (mmap scan of 329520665 bytes) · header dump of all 27 files in reference/extracted/bindata/ · byte compare of reference/extracted/{itemdata,skilldata,npcdata,questdata}.xml against reference/extracted/android/{111,117,125,116}_*.bin · grep -c 50007 reference/extracted/questdata.xml = 0"
+  },
+  {
+   "claim_id": "economy/web-payload-has-no-itemdata-table",
+   "refuted": false,
+   "reason": "HELD, and the numbers are exact. payload.xml is 329,520,665 bytes and contains exactly one occurrence of 'heavenlyprice', at byte offset 19403382 — I confirmed the count and the offset with my own mmap scan, and the surrounding bytes are the `<item>...</item>` constant-pool list quoted. The android side is exact too: 111_Mobile_ItemData.bin is 184,044 bytes against the web file's 184,002, and the 42-byte delta decomposes precisely as the claim states — a 40-byte `<?xml version=\"1.0\" encoding=\"utf-8\"?>\\r\\n` declaration plus a 2-byte trailing CRLF; strip both and the md5s match at 75d5344925e13de09924120b4136ae2a.",
+   "own_cite": "reference/extracted/payload.xml (mmap scan, 1 hit at 19403382 of 329520665) · byte/md5 compare reference/extracted/itemdata.xml vs reference/extracted/android/111_Mobile_ItemData.bin"
+  },
+  {
+   "claim_id": "economy/web-trade-goods-seed-resolved",
+   "refuted": false,
+   "reason": "HELD, and the identity chain is the strongest part of it. §1t401s0§.as:1676-1677 is verbatim `var _loc4_:int = §1t3317s0§.instance.§1t1848s0§() * param1;` / `return _loc2_ * (100 - _loc3_ / 2 + §1t58s0§.random(_loc3_,_loc4_)) / 100;`, and the display path repeats it at :1706-1707. Android InteractUI.as:1562 has the three-factor RNG. Each identity link checks: §1t401s0§.as:1641 `§1t1955s0§(50000 + param1,_loc3_)` is InteractUI.as:1552 `updateGlobalVar(50000 + house,count)`; §1t7216s0§.as:256 `§1t1848s0§() * Math.floor(§1t1847s0§() / (60 * 60))` is XMLShopData.as:101-102 `seed = getServerDate(); setRNGSeed(seed * Math.floor(getServerTime() / (60*60)))`; and §1t401s0§.as:796 shows the web build still HAS getCurrentNode and uses it for a different RNG, which is what makes the omission at :1676 a deliberate v0.717 change rather than a decompiler artefact. The framing as 'a decision, not an unknown' is fair.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t401s0§.as:1641,796,1676-1677,1706-1707 · reference/decompiled/shs3_payload/scripts/§1t7216s0§.as:256 · reference/decompiled/shs3_android/scripts/InteractUI.as:1552,1562 · reference/decompiled/shs3_android/scripts/XMLShopData.as:101-102"
+  },
+  {
+   "claim_id": "enemies-ai/allies-level-match-the-player",
+   "refuted": false,
+   "reason": "HELD. FriendlyElite.as:70, FriendlyArcher.as:58 and FriendlySpearElite.as:56 are each exactly `this.setLevel(StatsManager.getLevel());`. The supporting count is right too: `grep -o '<friend>' reference/extracted/questdata.xml | wc -l` = 70. And the seg-10 explanation checks out — I opened reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg and the roamers read 'BANDIT (4)' while the top-right XP badge reads 4.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/FriendlyElite.as:70 · FriendlyArcher.as:58 · FriendlySpearElite.as:56 · grep -o '<friend>' reference/extracted/questdata.xml = 70 · reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg"
+  },
+  {
+   "claim_id": "enemies-ai/allies-scale-to-player-level-enemies-do-not",
+   "refuted": false,
+   "reason": "HELD, including the numbers in the lane_impact. The three Friendly* setLevel lines are verbatim. NPCManager.as:869-881 is `public static function createEnemy(npcID:int, x:int, y:int, fatal:Boolean, lvl:int = 0) : NPC { ... if(lvl != 0) { actor.setLevel(lvl); } return actor; }` — so the input really does differ by faction. `grep -o '<lvl>' reference/extracted/questdata.xml | wc -l` = 171, matching '171 such overrides'. The consequence the claim draws is also real: NPC.as:253-258 is `if(lvl <= 10) { this.damage = 1; this.defense = 1; maxhp = 1; setHP(maxhp); }`, so a level-matched ally under player level 11 hits the same 1/1/1 clamp.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/FriendlyArcher.as:58 · FriendlyElite.as:70 · FriendlySpearElite.as:56 · NPCManager.as:869-881 · NPC.as:253-259 · grep -o '<lvl>' reference/extracted/questdata.xml = 171"
+  },
+  {
+   "claim_id": "enemies-ai/android-ai-dispatch-is-38-cases-35-classes",
+   "refuted": false,
+   "reason": "HELD — I re-measured both sides rather than trusting the count. Android NPCManager.as:516 `switch(xml.ai)` with cases 0..37: my parse of lines 516-634 returns 38 case labels, 38 `new` sites and 35 distinct class names (32 Enemy* + FriendlyElite/FriendlySpearElite/FriendlyArcher). The collision explanation is right: EnemyPlayer appears at cases 0, 9 and 14 and EnemySpearElite at 28 and 37 — that is where a hand count loses one. Web §1t1543s0§.as:615 `switch(_loc6_.ai)` with cases 0..38: my parse of lines 615-733 returns 39 case labels, 39 `new` sites, 36 distinct classes, and the extra id is exactly `case 38: _loc5_ = new §1t4551s0§();` at :731-732. Friendly cases 30/31/34 verified individually.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NPCManager.as:516-634 (parsed) · reference/decompiled/shs3_payload/scripts/§1t1543s0§.as:615-733 (parsed), extra class at :731-732"
+  },
+  {
+   "claim_id": "enemies-ai/category-11-skills-are-in-npcdata",
+   "refuted": false,
+   "reason": "HELD, and every count is exact. npcdata.xml:3898 and :3934 are verbatim the two `<skills>` lines quoted, opening with `<skill><id>1500</id><lvl>3</lvl></skill>` and `<skill><id>1501</id><lvl>3</lvl></skill>`. `grep -o '<skill>' reference/extracted/npcdata.xml | wc -l` = 647 and my regex over `<skill><id>N</id>` returns 39 distinct ids — both as claimed. Per-id counts reproduce exactly: 1064 x4, 1065 x4, 1066 x1, 1067 x1, 1068 x2, 1500 x5, 1501 x2. And 'all seven category-11 skills' is precise, not loose: parsing reference/extracted/skilldata.xml, the ids with `<category>11</category>` are exactly {1064,1065,1066,1067,1068,1500,1501}, resolving to Back Throw / Air Stab / Bull Charge / Punch Lunge / Undying plus the two unnamed stance flags. The consumer is real too: EnemyPlayer.as:836-843 branches `if(xml.getMastery(1500) > 0) setStance(REVERSED_STANCE); else if(xml.getMastery(1501) > 0) setStance(DUAL_STANCE);`. The schema explanation for the false negative is correct.",
+   "own_cite": "reference/extracted/npcdata.xml:3898,3934 (647 <skill>, 39 distinct ids, per-id counts recomputed) · reference/extracted/skilldata.xml category-11 parse · docs/gauntlet/L0/index/resolved_names.json skilldata resolved \"1064\"-\"1068\" · reference/decompiled/shs3_android/scripts/EnemyPlayer.as:836-843"
+  },
+  {
+   "claim_id": "enemies-ai/drop-in-spawn-is-on-film",
+   "refuted": false,
+   "reason": "HELD, and I made it stronger than the claim did. The crop is exactly as described: reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0020.jpg at (400,150)-(1024,470) 2x shows a blue-clad kasa-hatted hostile fully airborne with a green HP bar directly above him, two more green bars over grounded hostiles at left, the gold GUEST player at right, and no names or levels on any hostile. I then pulled the neighbours: at frame_0019 none of the three hostiles exists (only the player and a red slash trail), at frame_0020 all three appear with one still airborne, at frame_0021 all are grounded and engaged. That sequence rules out a jump-attack reading and makes it a witnessed wave spawn. The AS3 rule the lane_impact names is real — NPCManager.as:411, :424 and :437 all pass `posY - Math.random() * 200` — though it is referenced only in the lane text, not in the cite field.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0019.jpg, frame_0020.jpg, frame_0021.jpg — crop (400,150)-(1024,470) 2x LANCZOS on each · reference/decompiled/shs3_android/scripts/NPCManager.as:411,424,437"
+  },
+  {
+   "claim_id": "enemies-ai/endless-wave-flag-is-the-survival-engine",
+   "refuted": false,
+   "reason": "HELD, verbatim. NPCManager.as:381-388 is exactly `++currentWave; if(currentWave >= waveCount) { if(endless && !StageManager.isSurviveCleanUp()) { currentWave -= 2; nextWave(); } }`. The connection it draws to Stage-0's S0-1 also checks out on my side: reference/extracted/bindata/119_1t4646s0.bin opens `<?xml version=\"1.0\" encoding=\"UTF-8\"?><survivalmodedata>`, so the mode's data blob and its runtime are now both located.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NPCManager.as:378-392 · header of reference/extracted/bindata/119_1t4646s0.bin"
+  },
+  {
+   "claim_id": "enemies-ai/flinch-duration-is-per-family-not-8",
+   "refuted": false,
+   "reason": "HELD, all four artifacts verbatim. `grep -o '<anim i=\"zom_stumble\"[^>]*>' reference/extracted/android/98_MCSCharacter_UndeadAnimationData.bin` returns `<anim i=\"zom_stumble\" d=\"39\">`. The same grep on 94_MCSCharacter_Human2AnimationData.bin returns `<anim i=\"flinch_weapon\" d=\"8\">` and `<anim i=\"flinch\" d=\"8\">`. EnemyZombie.as:285-286 is `case FLINCH_STATE:` / `startAnim(ZOM_STUMBLE);` and MCSActor.as:518 is `internal static var ZOM_STUMBLE:String = \"zom_stumble\";`. So the same FLINCH_STATE really does play a 39-frame clip on the undead paperdoll and an 8-frame clip on the human one. The claim honestly labels itself android v0.682.",
+   "own_cite": "reference/extracted/android/98_MCSCharacter_UndeadAnimationData.bin · reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin · reference/decompiled/shs3_android/scripts/EnemyZombie.as:285-286 · reference/decompiled/shs3_android/scripts/MCSActor.as:518"
+  },
+  {
+   "claim_id": "enemies-ai/floating-damage-numeral-measures-the-clamp",
+   "refuted": false,
+   "reason": "HELD, and the HUD series reproduces frame for frame. Crop (450,300)-(900,470) at 4x on reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0018.jpg: a black floating '1' immediately left of and above the gold GUEST label, the player mid-swing with a pickaxe, a red slash trail and blood spray to the right. I then read the HUD strip (30,480)-(330,560) at 4x across all six named frames and got 20/20 at 0013, 20/20 at 0016, 20/20 at 0017, 19/20 at 0018, 18/20 at 0019, 18/20 at 0020, with blue chi 15/15 throughout — exactly the sequence claimed, and the drop lands on the same frame as the numeral. NPC.as:253-258 is the clamp it corroborates (`if(lvl <= 10) { this.damage = 1; ... }`). The frames are from the web guest flow (the same scene shows 'REGISTER TO SAVE YOUR PROGRESS AND PLAY ONLINE!'), so the v0.717-frame-measures-v0.682-constant framing is fair.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0018.jpg crop (450,300)-(900,470) 4x LANCZOS · HUD strip (30,480)-(330,560) 4x on frames 0013/0016/0017/0018/0019/0020 · reference/decompiled/shs3_android/scripts/NPC.as:253-259"
+  },
+  {
+   "claim_id": "enemies-ai/hitstokillplayer-has-three-bands",
+   "refuted": false,
+   "reason": "HELD, all ten lines verbatim and the floors too. EnemyPlayer.as:97-98 `hitsToKillBoss = 8 + lvldiff; hitsToKillPlayer = 16 - lvldiff;`; EnemyElite.as:40-41 `10 + lvldiff` / `18 - lvldiff`; EnemySpearElite.as:84-85 the same pair; EnemyWolfAlpha.as:86-87 `10 + lvldiff` / `15 - lvldiff`; EnemyKanjiGuardian.as:65-66 `5 + 8 + lvldiff` / `16 - lvldiff`. Floors: Elite clamps hitsToKillBoss at 3 (:42-45), KanjiGuardian at 5 (:67-70), EnemyPlayer at 1 (:99-102), WolfAlpha at 1 (:88-91) — the claimed 1/3/5. Small extra I noticed and the claim did not: EnemyPlayer's hitsToKillPlayer floor is 2 (:103-106) while Elite's and KanjiGuardian's are 1, so there is a fourth clamp value the claim does not list. That is an omission, not an error.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/EnemyPlayer.as:92-106 · EnemyElite.as:35-49 · EnemySpearElite.as:84-85 · EnemyWolfAlpha.as:86-95 · EnemyKanjiGuardian.as:60-74"
+  },
+  {
+   "claim_id": "enemies-ai/light-stance-has-no-telegraph",
+   "refuted": false,
+   "reason": "HELD — I re-ran the regex dump myself. `grep -o '<anim ' reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin | wc -l` = 158, matching the claimed name count. In the slash family: `<anim i=\"lighthorizontalslash\" d=\"3\">` exists exactly once with no _parta/_partb/_partc sibling anywhere in the file; balancedjumpslash and heavyjumpslash each ship parta..parte; lightjumpslash ships parta/partb/partc; and heavyhorizontalslash_parta d=6, _partb d=9 l=1, _partc d=7 are exact. I also checked the obvious escape hatch — 108_MCSCharacter_LightStanceAnimationData.bin holds 21 anims and none of them is a horizontal-slash part — so the single 3-frame clip really is the whole move.",
+   "own_cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (158 <anim>, own regex dump) · reference/extracted/android/108_MCSCharacter_LightStanceAnimationData.bin (21 <anim>, no slash parts)"
+  },
+  {
+   "claim_id": "enemies-ai/nameplate-colour-system-is-five-colours",
+   "refuted": false,
+   "reason": "HELD, and the pixel measurements reproduce to the digit. Frame: reference/frames/zFtCaTO0_1M/seg-18/frames/frame_0006.jpg cropped (230,320)-(470,400) at 6x shows two overlapping BLUE all-caps plates 'KAWASHI I' and 'SUGU' flanking a gold 'GUEST', above two robed townsfolk outside a shop front — exactly as quoted. My own peak-saturation scan of that crop returns #1A97F4 for the blue (the claim's number, identical) and #ECC522 for the gold (claim #EDC728, within JPEG noise). Scanning the BANDIT text region of seg-10 frame_0013.jpg returns #8A0300 — again the claim's number exactly. Code side, all five constants land: Obj_NPCProcGen.as:51 setDisplayName(...,39423 = 0x0099FF), :60 (...,12627019 = 0xC0AC4B), MCSPlayer.as:245 (...,16763904 = 0xFFCC00), EnemyElite.as:26 and :114, EnemyKanjiGuardian.as:59, EnemyClone.as:81 all (...,16777215 = 0xFFFFFF). ONE MIS-CITE, non-fatal: the aggro red 10027008 is at Obj_NPCAggro.as:76 and :80, not the cited :78 and :81.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-18/frames/frame_0006.jpg crop (230,320)-(470,400) 6x LANCZOS with peak-saturation scan · reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg red scan over (350,310)-(460,340) · reference/decompiled/shs3_android/scripts/Obj_NPCProcGen.as:51,60 · MCSPlayer.as:245 · EnemyElite.as:26,114 · EnemyKanjiGuardian.as:59 · EnemyClone.as:81 · Obj_NPCAggro.as:76,80"
+  },
+  {
+   "claim_id": "enemies-ai/nameplate-healthbar-coupling-and-60px-bar",
+   "refuted": false,
+   "reason": "HELD, verbatim, and both frame predictions check out. MCSCharacter.as:1419-1431 is showHealthBar with the `if(this.displayName.text != \"\")` guard; :1433-1437 hideHealthBar killing both; :1439-1446 `updateHealthBar(fraction)` with `this.healthBar.bar.width = fraction * 60;` — the 60 px is a literal, not an inference; :1533-1556 setDisplayName with `this.displayName.y = this.healthBar.y + 10;` in the no-bar branch. NPC.as:1182-1193 drives it. The mechanism predicts two different screen states and I saw both: seg-10 frame_0020 shows green bars over unnamed wave hostiles, seg-10 frame_0013 shows named 'BANDIT (4)' roamers with no bars at all.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:1419-1447,1533-1556 · NPC.as:1182-1193 · reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg and frame_0020.jpg"
+  },
+  {
+   "claim_id": "enemies-ai/nameplate-is-cosmetic-override",
+   "refuted": false,
+   "reason": "HELD, and the load-bearing step is airtight. Obj_NPCAggro.as:34-37 reads the level out of the room-object property string (`if(strArray.length >= 2) { this.lvl = strArray[1]; }`); :73 is `this.npc.mcs.hideHealthBar();`; :74-80 is the `if(this.lvl == 0) setDisplayName(this.npcname,10027008) else setDisplayName(this.npcname + \" (\" + this.lvl + \")\",10027008)` pair — verbatim. The decisive part: NPCManager.as:671 is `public static function createRoomNPC(npcID:int, x:int, y:int, doChase:Boolean = false) : NPC` — there is NO lvl parameter, and the body (:671-700) dispatches on xml.ai and never calls setLevel, so the parenthesised number provably cannot reach the statline. I confirmed the rendered result in reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg: three dark-red 'BANDIT (4)' plates, no health bars. MINOR: the createRoomNPC call is at :63, not the cited :62.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:34-37,63,73-80 · NPCManager.as:671-700 · reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0013.jpg"
+  }
+ ],
+ "judged_count": 48,
+ "packet_size": 48,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "economy/premium-15g-apparel-tiles-are-training-gear-with-no-0682-row",
+   "text": "The two 15-gold apparel tiles in the 48:04 premium shop are TRAINING HELMET and TRAINING GARMENT — tooltip-named on film — not items 7034 Assassin Hood and 4065 Assassin Robes. Neither name exists anywhere in the 2,533-entry android v0.682 string table, and neither has an itemdata row, so no heavenlyprice ratio can be computed for them in either direction. The contrast is sharp and useful: SANTA HAT and SANTA SUIT, also priced at 15 gold in the same shop session, DO have rows (items 7067 and 4069, both `<heavenlyprice>3</heavenlyprice>`), and 3 x 5 = 15 — the x5 prior holds cleanly for them, and for the Santa Outfit box (item 2133, heavenlyprice 12, filmed at badge 60). So the frame overturns the tile-to-id mapping, not the x5 prior.",
+   "artifact_class": "A1",
+   "cite": "self-extracted reference/videos/Nr4fQstqHDM.mp4, hover tooltips sampled every 2 s over t=2860-2920, crop 1100x220 at (1250,230); plus the t=2884s grid crop (185,260)-(950,1035) 2x LANCZOS; rows at reference/extracted/itemdata.xml:5373-5378 (7067 Santa Hat), :3156-3160 (4069 Santa Suit), :561-566 (2133 Santa Outfit); names in docs/gauntlet/L0/index/strings.json[\"4207\"], [\"4203\"]",
+   "quote": "Tooltips read, verbatim: 'TRAINING HELMET / OWNED: 0' badge 15; 'TRAINING GARMENT / OWNED: 0 / LEVEL 7' badge 15; 'SANTA HAT / OWNED: 0 / LEVEL 7' badge 15; 'SANTA SUIT / OWNED: 0 / LEVEL 7' badge 15; 'WRIT OF RELEASE / OWNED: 0' badge 25. String-table search over 2,533 entries: 'training' -> Training Hall / Training Sword / Training Dummy only, no garment and no helmet; 'soul-infused' -> 0; 'levels up as you gain' -> 0; 'santa' -> Santa Suit (4203), Santa Pants, Santa Beard, Santa Hat (4207), Santa Outfit.",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "build": "web v0.717",
+   "lane_impact": "L3/L10/L11 — STANDING INVARIANT APPLIED: the frame beats the PremiumData-order inference. Delete '7034/4065 hp=3 -> 15' from the premium price table and put Training Helmet / Training Garment in the DIVERGENT column: they are filmed v0.717 SKUs with no v0.682 row, carrying a SOUL-INFUSED / 'levels up as you gain XP' mechanic and a LEVEL badge that no extracted data source describes. Santa Hat 7067, Santa Suit 4069 and Santa Outfit 2133 are the opposite case and can be banked at x5."
+  },
+  {
+   "id": "combat-core/cannot-change-stance-string-is-driven-by-the-48-offset",
+   "text": "The 'you cannot switch while the visible bar reads empty' equivalence is not an inference — it is one line of web v0.717 code. The HUD bar writer computes its fill as (raw - 48) / (max - 48) and prints the CANNOT-CHANGE-STANCE string precisely when that ratio is 0, which is the same raw < 48 predicate the stance-switch guard uses. Source and frame therefore agree with no arbitration needed.",
+   "artifact_class": "A2",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:326-343; guard at reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3060; cost at :3162; corroborated in reference/frames/session11/crit-focus/t1003.000.png crop (0,910)-(620,1080) 2x",
+   "quote": "§1t113s0§.as:328  var _loc3_:Number = (param1 - 48) / (param2 - 48);   ///   :336-342  if(_loc3_ == 0) { if(this.§1t5169s0§.htmlText != this.§1t5204s0§) { this.§1t5169s0§.htmlText = this.§1t5204s0§; } this.§1t5169s0§.visible = true; }   ///   §1t99s0§.as:3060  if(this.§1t4414s0§ < 48) { return; }",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "build": "web v0.717",
+   "lane_impact": "L5 + L8 — the third HUD bar's display transform is (raw-48)/(max-48), the empty-bar label is a code-driven state and not a separate UI mode, and the same :348-358 branch fires Snd_criticalDamage and swaps to the full-meter string at ratio >= 1. Anyone laying out the meter can take offset 48 and the two label states straight from this function."
+  },
+  {
+   "id": "enemies-ai/seg10-wave-spawn-is-witnessed-across-three-frames",
+   "text": "The seg-10 drop-in is not a single ambiguous airborne pose: across three consecutive extracted frames the wave materialises. At frame_0019 none of the three hostiles is on screen; at frame_0020 all three are present with one still fully airborne and its HP bar already tracking it; at frame_0021 all three are grounded and engaging the player. That sequence excludes a jump-attack reading and makes NPCManager's posY - Math.random()*200 spawn offset a filmed behaviour rather than a code-only one.",
+   "artifact_class": "A1",
+   "cite": "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0019.jpg, frame_0020.jpg, frame_0021.jpg — identical crop (400,150)-(1024,470) 2x LANCZOS on all three; rule at reference/decompiled/shs3_android/scripts/NPCManager.as:411,424,437",
+   "quote": "NPCManager.as:411  createEnemy(npcHolder.getNPCID(),npcHolder.getXPos(),posY - Math.random() * 200,npcHolder.getFatal(),npcHolder.getLvl());  — identical at :424 (createNeutral) and :437 (createObjective). Frames: 0019 shows only the player and a red slash trail; 0020 shows three hostiles, one airborne with a green bar above it; 0021 shows all three grounded.",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L0 enemies-ai — the drop-in spawn can be stamped A1+A2 on a three-frame witness rather than a single still, and the same sequence shows the HP bar is attached at spawn, before the actor lands."
+  },
+  {
+   "id": "economy/web-build-does-embed-27-xml-data-blobs",
+   "text": "The web v0.717 build is not data-free. It embeds 27 XML/binary blobs: nineteen <animdata> tables (100-118), one <survivalmodedata> (119), one room-object definition file (93), five name tables (94-98) and one GIF89a (92). What it does NOT embed is the four gameplay tables — itemdata, skilldata, npcdata, questdata — which it URL-loads. Any restatement of 'the web build ships no data XML at all' must be narrowed to those four or it contradicts the Stage-0 S0-1 inventory.",
+   "artifact_class": "A2",
+   "cite": "header dump of all 27 files in reference/extracted/bindata/ (first 60 bytes each); reference/extracted/bindata/119_1t4646s0.bin; reference/extracted/bindata/92_1t4648s0.bin; load sites at reference/decompiled/shs3_payload/scripts/§1t1524s0§.as:334,357,453,479,505,528,554,580,606,632,658,683",
+   "quote": "100_1t4627s0.bin '<?xml version=\"1.0\"?><animdata><anim i=\"ogre_idle\" d=' ... 118_1t4645s0.bin '<?xml version=\"1.0\"?><animdata><anim i=\"light_stance\"' · 119_1t4646s0.bin '<?xml version=\"1.0\" encoding=\"UTF-8\"?><survivalmodedata>' · 93_1t4647s0.bin '<?xml version=\"1.0\" encoding=\"UTF-8\"?><!--<obj><id' · 94_1t4651s0.bin 'AkenoAkifusaAkihideAkihikoAkihiraAkihiroAkihito' · 92_1t4648s0.bin 'GIF89a'",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "build": "web v0.717",
+   "lane_impact": "Cross-lane bookkeeping — animation timings, the survival-mode table, room-object definitions and the NPC name generator ARE web-side v0.717 artifacts and do not carry the 0.682 caveat. Only itemdata/skilldata/npcdata/questdata do."
+  },
+  {
+   "id": "economy/web-iap-usd-tiers-are-identical-to-android",
+   "text": "The web v0.717 PayUI carries the SAME five USD price points as android v0.682 — 4.99 / 9.99 / 14.99 / 19.99 / 24.99 — in its non-Kongregate branch, alongside a 50/100/150/200/250 KREDS ladder for the Kongregate branch. That is what makes the gold change a pure redenomination: identical real money buys 5x more nominal heavenly gold on web, and that gold buys 1/5 the coins. Neither surveyed claim cites this line, though one asserts it.",
+   "artifact_class": "A2",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t410s0§.as:323-338 against reference/decompiled/shs3_android/scripts/PayUI.as:137-141",
+   "quote": "§1t410s0§.as:325-329  this.pricetext0.text = \"50 KREDS\"; ... this.pricetext4.text = \"250 KREDS\";  ///  :333-337  this.pricetext0.text = \"4.99 USD\"; this.pricetext1.text = \"9.99 USD\"; this.pricetext2.text = \"14.99 USD\"; this.pricetext3.text = \"19.99 USD\"; this.pricetext4.text = \"24.99 USD\";  ///  PayUI.as:137-141  oldpricetext0..4 = \"4.99\" / \"9.99\" / \"14.99\" / \"19.99\" / \"24.99\"",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "build": "both",
+   "lane_impact": "L10/L11 — the USD anchor is build-invariant, so real-money value per tier is the correct cross-build unit and nominal gold is not. It also fixes the top-tier anomaly's meaning: web tier 5 gives 400 gold for the same 24.99 that buys 75 android gold, a 5.33x bonus tier rather than a broken multiplier."
+  },
+  {
+   "id": "economy/duel-token-badge-identity-is-still-unheld",
+   "text": "Which premium tile is item 2125 ('10 Duel Tokens') cannot be settled from the artifacts in this packet, and two surveyed claims give opposite answers. In the 48:04 shop the skull icons split into two families: three GREY skulls at badges 5 / 10 / 15 and two GOLD skulls at badges 1 and 10. The DUEL TOKENS counter in the same frame's top bar uses a WHITE/GREY skull, which points at the grey family (badges 5/10/15 against heavenlyprice 1/2/3, a clean x5) — but the tile order that a PremiumData-derived mapping produces points at the gold family instead. Until a hover tooltip names one of the five skull tiles, this is STILL_UNHELD.",
+   "artifact_class": "A1",
+   "cite": "self-extracted reference/videos/Nr4fQstqHDM.mp4 t=2884s: rows-1-2 crop (185,260)-(950,640) 2x LANCZOS and DUEL TOKENS HUD crop (1500,120)-(1750,230) 4x LANCZOS; heavenlyprice rows at reference/extracted/itemdata.xml:375-379 (2125=1), :389-393 (2126=2), :403 (2127=3), :28-32 (2100=1), :42-46 (2101=2), :56-60 (2102=3)",
+   "quote": "Row 1 tiles 3-4: one grey skull badge 5, two grey skulls badge 10. Row 2 tile 1: five grey skulls badge 15. Row 2 tiles 2-3: one GOLD skull badge 1, five GOLD skulls badge 10. Top-bar HUD: a white/grey skull in a green diamond, '40/40', label 'DUEL TOKENS'.",
+   "verdict": "STILL_UNHELD",
+   "overturns_ledger": false,
+   "build": "web v0.717",
+   "lane_impact": "L3/L10 — do not bank any per-SKU premium price that depends on the skull-tile mapping. The three badge-1 tiles remain a fact; naming the third one does not. Closing this needs one hover tooltip over a skull tile from any shop session in either longplay."
+  }
+ ]
+}

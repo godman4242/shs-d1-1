@@ -10,11 +10,69 @@
 |---|---|---:|---|
 | **0** | wall-#9 insurance — structured JSON side-writes + `--critic-json` salvage | 0 | ✅ **LANDED** — 60 files / 953 tests |
 | **1** | `l0-finish-wf3` `{tier:'t1', batches:3, tag:'s26a'}` — 67 overturn-claimers | 6 | ✅ **CLEAN** — `wf_54792c81-6cd` → `run8` |
-| **2** | `l0-finish-wf3` `{tier:'t2', batches:13, tag:'s26b'}` — 586 corroborating | 13 | ⏳ |
+| **2** | `l0-finish-wf3` `{tier:'t2', batches:13, tag:'s26b'}` — 586 corroborating | 13 | ⚠ **WALL #9** — 4 returned, 9 died; **6 batches banked** → `run9` |
+| **2b** | relaunch the remainder: t1 `{batches:2, tag:'s26c'}` then t2 `{batches:8, tag:'s26d'}` | 4 + 8 | ⏳ |
 | **3** | mop-up t1 over the overturn-claimers waves 1–2 generate | ~2–8 | ⏳ |
 | **4** | `l0-finish-wf4` `{tag:'s26d'}` — dry-loop + completeness | ≤17 | ⏳ |
 | **5** | ledger rewrite — 12 system writers ⇉ 12 blind verifiers, + §6 | 27 | ⏳ |
 | **6** | gates green · `GAUNTLET.md` corrections · §3.7 re-arm | 0 | ⏳ |
+
+### ⚑ WALL #9 — AND THE INSURANCE PAID, IN NUMBERS
+
+The session usage limit killed **9 of wave 2's 13 agents** (`You've hit your session
+limit · resets 1:40pm`). The workflow returned, correctly and fail-closed:
+
+```
+critics_run 4/13 · 192 verdicts · 9 agents DIED
+INTEGRITY: INCOMPLETE — batches with NO live critic:
+  [t2-corroborating-01, 06, 07, 08, 09, 10, 11, 12, 13]
+Zero live critics means UNJUDGED, never confirmed (§0).
+```
+
+**But six batches were on disk, not four.** Batches 01 and 06 wrote their structured JSON
+and *then* died before returning, so the workflow could not know about them:
+
+```
+salvage: journal + side-files, deduped
+  critics=10  (4 from the journal + 6 from disk)
+  verdicts=288  (deduped 192 verdict rows — the overlap)
+```
+
+**96 verdicts — two complete 48/48 batches — recovered that the run itself reported as
+lost.** That is wave 0's whole purpose, paid out on its first real wall. Under the old
+regime those two batches would have been re-judged from scratch at full agent cost.
+
+⚠ **And the workflow's INTEGRITY string is still right to name them.** It reports what
+IT observed; the salvage reports what is on DISK. Both are true, and the fail-closed one
+must never be quietly overwritten by the optimistic one — the worklist is what reconciles
+them, by asking only "does this claim have a live verdict".
+
+### ⚑ THE STALE-WORKLIST DEFECT WALL #9 EXPOSED
+
+`buildWorklist.py` had its run list **hardcoded** — `run2 … run7` — while `gateL0.py` and
+`buildLedgerEvidence.py` both glob `run*`. So after run8/run9 landed:
+
+```
+gate:      1,587 claims pooled · 1,169 judged ids
+worklist:  1,506 rows           ·   814 judged   ← STALE
+```
+
+It was offering **653 already-judged findings for re-judging**, and the relaunch would
+have paid full agent cost to rule on them a second time. Nothing warned, because a
+hardcoded list that is merely OUT OF DATE looks exactly like one that is complete.
+
+Fixed by globbing, with the first tests `buildWorklist.py` has ever had (4, red-first,
+chaos-planted). Correct remainder after the fix:
+
+```
+buildWorklist: 1587 rows -> 1548 distinct ids · already judged 1169
+  WF-3a critic findings   31 across 2 batches x cite+hunter = 4 agents
+  WF-3b critic findings  348 across 8 batches x cite       = 8 agents
+```
+
+**379 findings left, 12 agents — not 653 and 19.**
+
+---
 
 ### ⚑ WAVE 1 — `INTEGRITY: CLEAN`. Judged **814 → 881**.
 

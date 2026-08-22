@@ -1,0 +1,387 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A2",
+   "id": "gauntlet-s26b/behead-multiplier-diverges-1p5-to-1p3",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NPC.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "gauntlet-s26b/web-npcmanager-switch-is-the-name-mapping-anchor",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1543s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/NPCManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "gauntlet-s26b/createnpc-switch-is-35-distinct-classes",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NPCManager.as",
+    "reference/decompiled/shs3_android/scripts/EnemyWolf2.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "gauntlet-s26b/weapon-part-parry-is-universal-not-undead",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NPC.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/EnemyZombie.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "gauntlet-s26b/itemdata-ships-nineteen-empty-item-rows",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/itemdata.xml"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "newfind/mastery-ceiling-is-10-not-9",
+   "notes": [],
+   "paths": [
+    "reference/extracted/skilldata.xml",
+    "docs/gauntlet/L0/index/strings.json",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "newfind/stance-enum-pinned-by-declared-value",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "newfind/1071-is-the-behead-flag-and-it-moved-1p5-to-1p3",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t4904s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "newfind/cannot-change-stance-is-getstring-960",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "newfind/per-stat-caps-diverge-between-builds",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "newfind/heavy-defence-penalty-is-in-the-string-table",
+   "notes": [],
+   "paths": [
+    "docs/gauntlet/L0/index/strings.json",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "web-parity/web-payload-carries-the-same-resizehandler",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1540s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/shs3resource-decrypts-1912-equipment-symbols",
+   "notes": [],
+   "paths": [
+    "reference/extracted/android/115_Mobile_SHS3Resource.bin",
+    "reference/decompiled/shs3_android/scripts/ResourceManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "android-blobs/blob-xor-key-is-per-file-not-109",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/ResourceManager.as",
+    "reference/extracted/android/"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "art-anim-audio-feel/startshake-first-arg-is-duration-not-amplitude",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/StageManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "android-blobs/farthest-plane-also-has-a-blur-cutoff",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/BG_Loader.as",
+    "reference/extracted/android/123_Mobile_BGData.bin"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "enemies-ai/npc-die-has-four-paths-before-the-seven-way-dice",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "economy/premium-15g-apparel-tiles-are-training-gear-with-no-0682-row",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/videos/Nr4fQstqHDM.mp4",
+    "reference/extracted/itemdata.xml",
+    "docs/gauntlet/L0/index/strings.json[\"4207\"]"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/cannot-change-stance-string-is-driven-by-the-48-offset",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/frames/session11/crit-focus/t1003.000.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "enemies-ai/seg10-wave-spawn-is-witnessed-across-three-frames",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0019.jpg",
+    "reference/decompiled/shs3_android/scripts/NPCManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "economy/web-build-does-embed-27-xml-data-blobs",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/bindata/",
+    "reference/extracted/bindata/119_1t4646s0.bin",
+    "reference/extracted/bindata/92_1t4648s0.bin",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1524s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "economy/web-iap-usd-tiers-are-identical-to-android",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t410s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/PayUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "economy/duel-token-badge-identity-is-still-unheld",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/videos/Nr4fQstqHDM.mp4",
+    "reference/extracted/itemdata.xml"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "npcdata-category11-grant-census-corrected",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/npcdata.xml",
+    "reference/extracted/skilldata.xml",
+    "reference/decompiled/shs3_android/scripts/SkillManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "coins-gold-hud-strip-correct-frame",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-05/frames/frame_0029.jpg",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "web-charsheet-heavy-defence-0.8-is-web-side",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "web-charsheet-per-stance-slash-reach-ladder",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-lens-s26b/five-resource-blobs-all-decrypt",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/ResourceManager.as",
+    "reference/decompiled/shs3_android/scripts/Mobile.as",
+    "reference/extracted/android/115_Mobile_SHS3Resource.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-lens-s26b/green-border-tip-completes-the-ladder",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/GameEngine.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-lens-s26b/rarity-colour-key-has-two-palettes",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/Item.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-lens-s26b/mcswolf-partlist-is-49-not-26",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSWolf.as",
+    "reference/decompiled/shs3_android/scripts/MCSCharacter.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-lens-s26b/web-stance-gate-is-artifact-backed",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 10,
+  "resolves": 22,
+  "total": 32,
+  "uncheckable": 0
+ }
+}

@@ -1,0 +1,400 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "enemies-ai/npc77-resolves-to-oni-and-never-scales",
+   "refuted": false,
+   "reason": "All four cites open and are verbatim. npcdata.xml:2065 is <id>77</id> in a block reading id 77 / name 5071 / lvl 80 / hp 40 / ai 23 / attack 2000 exactly as quoted; strings.json[\"5071\"]='Oni'; NPCManager.as:587-588 is exactly 'case 23:' / 'actor = new EnemyOgre(MCSPool.getMCS());'; EnemyOgre.as:51-53 is exactly 'override public function setLevel(lvl:int) : *' / '{' / '}' - an empty body. The 'authored, not derived' reading is further supported by NPCManager.as:877-880, which only calls setLevel when a <lvl> override is supplied.",
+   "own_cite": "reference/extracted/npcdata.xml:2065-2071 + reference/decompiled/shs3_android/scripts/NPCManager.as:587-588 + reference/decompiled/shs3_android/scripts/EnemyOgre.as:51-53 + docs/gauntlet/L0/index/strings.json[\"5071\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/part-decomposition-is-variable",
+   "refuted": false,
+   "reason": "I re-parsed the blob myself (format is <anim i=\"name\" d=\"N\">, not <name>): 158 anim tags, 158 unique names. Exactly 16 families use a _part suffix, and the per-family counts match the claim's sixteen entries one for one (heavyhorizontalslash 3, balancedhorizontalslash 3, balancedfallslash 3, heavyfallslash 3, jumpunsheathed 3, jumpsheathed 3, lightjumpslash 3, gotlaunchedupwards 3, balancedjumpslash 5, heavyjumpslash 5, punchcombo 4, jutsu_ground 2, jutsu_punch 2, jutsu_blow 2, stomp 2, punchground 2). The seven 'NO parts' entries have zero _part variants and their d= values are exactly 3/15/14/10/10/10/8 as quoted.",
+   "own_cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (my own parse: 158 <anim> tags, 16 _part families)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/part-specific-death-animations",
+   "refuted": false,
+   "reason": "Re-parsed the same blob: all eight death clips exist as distinct anim families with exactly the quoted durations - death d=38, deathenemy d=23, deathnohand d=25, deathnohead d=31, deathwitharrow d=23, deathbyarrow d=21, deathinhalf d=28, deathdowned d=7. Nothing over-claimed; the finding does not assert which clip fires when, only that the art is authored per-part.",
+   "own_cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin (my own parse: 8 death families with d= durations)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/readout-split-is-two-spawn-paths",
+   "refuted": false,
+   "reason": "Both spawn paths verified verbatim. Obj_NPCAggro.as:38-41 is exactly 'if(strArray.length >= 3) { this.waveXML = new XMLList(strArray[2]); }'; :63 calls NPCManager.createRoomNPC; :73 is exactly 'this.npc.mcs.hideHealthBar();'; :74-81 then sets a permanent display name, with ' (' + this.lvl + ')' appended when lvl != 0 - which is the nameplate format I also saw rendered on film as 'TYLUV (3)'. NPCManager.as:869-882 (createEnemy) goes through createNPC and calls neither hideHealthBar nor setDisplayName, so the wave path really is the inverse. Two distinct spawn paths, not one HUD toggle.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:38-41,63,73-81 + reference/decompiled/shs3_android/scripts/NPCManager.as:869-882",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/roster-display-names-differ-from-class-names",
+   "refuted": false,
+   "reason": "The declared CITE is exact. resolved_names.json npcdata.xml.resolved holds 484 rows and all nine quoted values verify: 67 Wolf, 77 Oni, 89 Undead, 11 Bandit, 144 Hiroshi, 165 Tadao, 186 Amaya, 800 Mad Cultist, 802 Guardian. npcdata.xml:1844-1849 is verbatim as quoted. The split is real: npc 67 name 5056='Wolf' but ai 11 constructs EnemyWolfAlpha; npc 77 'Oni' -> ai 23 EnemyOgre; npc 89 name 5073='Undead' -> ai 26 EnemyZombie. CORRECTION: the inline parenthetical 'NPCManager.as:559-561' for new EnemyWolfAlpha() is wrong - the real location is :551-552; :559-561 is 'break; case 14: actor = new EnemyPlayer(...)'. That is a mis-numbered aside inside the quote, not the cite, and the substantive claim is unaffected.",
+   "own_cite": "docs/gauntlet/L0/index/resolved_names.json (npcdata.xml.resolved, 484 rows) + reference/extracted/npcdata.xml:1844-1849 + reference/decompiled/shs3_android/scripts/NPCManager.as:551-552",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/second-ai-dispatch",
+   "refuted": true,
+   "reason": "REFUTED for the arithmetic it explicitly offers as a correction. The headline is TRUE and I verified it - NPCManager.as:671-700 is a second, independent if/else dispatch on xml.ai ('if(xml.ai == 8) { actor = new EnemyWolf(); } else if(xml.ai == 11 || xml.ai == 16) { actor = new EnemyWolfAlpha(); } else if(xml.ai == 12) {' is verbatim), and it is the overworld path (Obj_NPCAggro.as:63, Obj_NPCCivilian.as:24, Obj_Corpse.as:28 all call it). But the appended 'correction' is wrong: the 38-case switch resolves to 35 distinct classes, not 34. My counts over NPCManager.as:516-636: 35 distinct 'new X', 32 Enemy*, 3 Friendly*. EnemyWolf (case 8) and EnemyWolf2 (case 10) are DIFFERENT classes - EnemyWolf2.as:3 reads 'public class EnemyWolf2 extends EnemyWolf' and both files exist. Only EnemyPlayer (x3) and EnemySpearElite (x2) repeat; 3 + 2 + 33 = 38. A wrong roster count filed as a correction propagates silently, so this must not enter the ledger. The true half is re-filed as new finding N3.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NPCManager.as:516-636 and :671-700 + reference/decompiled/shs3_android/scripts/EnemyWolf2.as:3",
+   "severity": "material"
+  },
+  {
+   "claim_id": "enemies-ai/setlevel-is-plural",
+   "refuted": false,
+   "reason": "grep -rl 'override public function setLevel' over the android bundle returns exactly 11 files and exactly the 11 named (EnemySpearElite, EnemyPlayer, EnemyElite, EnemyOgre, EnemyWolfAlpha, EnemyStag, EnemyKanjiGuardian, EnemyTrainingDummy, FriendlyArcher, FriendlyElite, FriendlySpearElite). EnemySpearElite.as:47-68 is verbatim as quoted, and the boss branch really does drop the x0.9 and the clamp: base NPC.as:239-259 applies 'factor *= 0.9' when lvl <= 20 and clamps damage/defense/maxhp to 1 when lvl <= 10, while the boss branch computes a raw factor and sets xp = lvl * 5 + 45. NPCManager.as:877-880 does gate setLevel behind 'if(lvl != 0)'. CORRECTION: the EnemyPlayer boss branch opens at :780, not the :781 the quote labels; the declared cite range :777-790 covers it.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/EnemySpearElite.as:32-70 + reference/decompiled/shs3_android/scripts/EnemyPlayer.as:780-795 + reference/decompiled/shs3_android/scripts/NPC.as:239-259",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/web-archer-halves-gravity-on-knockdown",
+   "refuted": false,
+   "reason": "Verbatim and, crucially, on the RIGHT class. §1t4542s0§.as:290-294 is exactly 'var _loc6_:Number = §1t128s0§.§1t12543s0§; if(_loc1_) { _loc6_ = 1.5; }' and :295-299 the solve as quoted; §1t128s0§.as:8 defines that constant as 3. Android EnemyArcher.as:277-281 uses Projectile.GRAVITY directly with no override. I confirmed §1t4542s0§ IS the web archer by recovering the web dispatcher: §1t1543s0§.as:623-624 maps ai case 2 to it, matching android NPCManager.as case 2 = EnemyArcher. This claim is the correct reading of the file that claim 14 mis-identified.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t4542s0§.as:290-299 + reference/decompiled/shs3_payload/scripts/§1t128s0§.as:8 + reference/decompiled/shs3_android/scripts/EnemyArcher.as:277-281 + reference/decompiled/shs3_payload/scripts/§1t1543s0§.as:623-624",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/web-gameplay-code-is-obfuscated-not-absent",
+   "refuted": false,
+   "reason": "Core verified. 'ls | grep -c' over reference/decompiled/shs3_payload/scripts gives 612 non-recursive §-named files; the setLevel body at §1t68s0§.as:258-279 is verbatim; :14 damage=10, :16 defense=1, :28 §1t3247s0§=96, :483 §1t3246s0§=12 all verify, and android NPC.as carries the same constants at the SAME line numbers (:14, :16, :22, :28, :462), which is strong independent evidence that §1t68s0§.as is NPC.as. The conclusion offered - 'build parity is directly checkable rather than unestablished' - is a claim about method availability and is true. CORRECTION: '§1t3244s0§:int = 24' is at :22, not the :26 the quote and cite give (:26 is 'internal var §1t3246s0§:int = 0'). One bad line number out of six.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:14,16,22,28,258-279,483 + reference/decompiled/shs3_android/scripts/NPC.as:14,16,22,28",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/web-payload-is-obfuscated-not-absent",
+   "refuted": false,
+   "reason": "citelint's QUOTE_UNVERIFIED was a false alarm - I located the quote exactly. §1t1523s0§.as:36 is 'public static var §1t9323s0§:Number = 0.717;' and :38 is 'public static var §1t9324s0§:int = 80;', verbatim; it is the only 0.717 literal anywhere in the payload scripts. Android StatsManager.as:30 is 'public static var clientVersion:Number = 0.682;'. The StatsManager identification is independently confirmed: §1t1523s0§.as:226-230 declares 11/12/13 in the same order as StatsManager.as:192-196 (STAT_GOLD/STAT_HGOLD/STAT_AP), and its :2644-2651 is the rebirth payout twin. 'find -name §*' returns 667; scripts/§1t51s0§/ is an obfuscated package dir. The conclusion is properly hedged ('keep labelling ported values v0.682-ANDROID until the mapping is done') and is the honest version of what claim 10 over-states.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:36,38,226-230,2644-2651 + reference/decompiled/shs3_android/scripts/StatsManager.as:30,192-196",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/web-payload-is-obfuscated-not-empty",
+   "refuted": true,
+   "reason": "REFUTED as an over-claim. Every line cite resolves and every quoted line is verbatim - I checked §1t68s0§.as at :22, :122, :128, :237, :258-278 and :483 and all six are exact. What fails is the conclusion 'every headline enemies-ai constant is identical to the Android v0.682 build, so build parity is ESTABLISHED rather than open', which is disproven INSIDE THE VERY FILE IT CITES: android NPC.as:451-453 is 'if(behead) { damage *= 1.5; }' while web §1t68s0§.as:472-474 is 'if(this.§1t1071s0§) { _loc3_ *= 1.3; }'. The behead multiplier is a headline enemies-ai constant and it moved 1.5 -> 1.3. Three more divergences are proven by claims I upheld in this same packet (stance refusal 48/192 vs maxreload/6 of 120; rebirth 100/25 vs 20/5; the archer gravity override that exists only in web). Its impact line - 'Removes the surveyor's stated dominant residual risk' - would license stamping android numbers CONTRACT for a v0.717 target. Claims 9 and 11 carry the same true core without the false conclusion, so refusing this costs nothing.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:472-474 vs reference/decompiled/shs3_android/scripts/NPC.as:451-453",
+   "severity": "material"
+  },
+  {
+   "claim_id": "enemies-ai/web-v0717-gameplay-code-is-on-disk",
+   "refuted": false,
+   "reason": "Every cite exact. 'find reference/decompiled/shs3_payload -name *§* -type f | wc -l' = 667. §1t68s0§.as:258-279 is the setLevel body verbatim including the 0.9 factor and the <=10 clamp; :22 is 'internal var §1t3244s0§:int = 24;' (the 24-frame AI cadence, matching android NPC.as:22 aiCounterMax); :483 is 'this.§1t3246s0§ = 12;' (the 12-frame hit lockout, matching android NPC.as:462 gotHitCounter = 12). Unlike claim 10, this one stops at 'parity is now directly CHECKABLE by constant-matching', which is exactly what the artifacts support.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:22,258-279,483 + reference/decompiled/shs3_android/scripts/NPC.as:22,462",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/zombie-weapon-hit-deals-zero",
+   "refuted": false,
+   "reason": "EnemyZombie.as:494-508 is the quoted switch verbatim, line for line: :496-501 the hat/head/neck behead case, :502-505 'case mcs.partList[MCSCharacter.PART_weapon]: gotHitFlag = false; damage = 0; return false;', :506-507 the default. The 'third branch' framing is right, and the half-damage rule it sits alongside is at :516-519 'if(!behead) { damage /= 2; }'. Note for the ledger: the same weapon case exists in the BASE class at NPC.as:437-440, so the branch is universal rather than undead-specific - an enrichment, not a defect in this claim, which is scoped to the zombie.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/EnemyZombie.as:494-519 + reference/decompiled/shs3_android/scripts/NPC.as:437-440",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies-ai/zombie-weapon-parry",
+   "refuted": false,
+   "reason": "EnemyZombie.as:502-505 is verbatim exactly as quoted. The mechanic is real: a hit landing on PART_weapon sets gotHitFlag false, zeroes damage and returns false, so the hit never reaches the HP path at :509-520. CORRECTION worth carrying: it is not something EnemyZombie 'has' specially - NPC.as:437-440 carries the identical case in the base class and web §1t68s0§.as:458-461 confirms it in v0.717, so EVERY npc nullifies a blade hit on its rendered weapon. That widens the finding rather than sinking it. Near-duplicate of claim 12; both cite correctly.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/EnemyZombie.as:502-505 + reference/decompiled/shs3_android/scripts/NPC.as:437-440 + reference/decompiled/shs3_payload/scripts/§1t68s0§.as:458-461",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "enemies/archer-knockdown-is-android-only",
+   "refuted": true,
+   "reason": "REFUTED - wrong web class, and the conclusion is backwards. §1t4539s0§ is NOT the web archer. I recovered the web dispatcher: §1t1543s0§.as:615 'switch(_loc6_.ai)', :623-624 'case 2: _loc5_ = new §1t4542s0§(...)' and :692-693 'case 25: _loc5_ = new §1t4539s0§(...)'. Android NPCManager.as case 2 = EnemyArcher, case 25 = EnemyGoblinThrower. The real web archer, §1t4542s0§.as:273-285, carries the knockdown ladder verbatim - 'if(level > 50) { _loc1_ = int(Math.random() * 2) > 0; } else if(level > 20) { _loc1_ = int(Math.random() * 3) == 0; } else if(level > 10) { _loc1_ = int(Math.random() * 4) == 0; }' - and :305 passes _loc1_ as the SIXTH argument of a SEVEN-argument create-arrow call, identical to android EnemyArcher.as:288-300. So the rule is build-identical, and the instruction 'do not ship it in a v0.717-targeted recreation' would delete a shipped mechanic. FATAL. Two side-facts do survive: GRAVITY = 3 at §1t128s0§.as:8, and the KanjiGuardian's flatter /(0.866/3) arc at §1t4545s0§.as:466. Claim 7 in this same packet is the correct reading of the same file.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1543s0§.as:615,623-624,692-693 + reference/decompiled/shs3_payload/scripts/§1t4542s0§.as:273-285,305 + reference/decompiled/shs3_android/scripts/EnemyArcher.as:288-300",
+   "severity": "fatal"
+  },
+  {
+   "claim_id": "frames/39-tip-ladder-is-android-only",
+   "refuted": false,
+   "reason": "Every measurement reproduced. 'grep -c \"Tip: \" GameEngine.as' = 39. GameEngine.as:533 is 'var dice:int = Math.random() * 39;' and the ladder closes at :693-695 with dice == 38. Web side: 'grep -rn \"Tip: \" reference/decompiled/shs3_payload/scripts/*.as' = 0 hits; 'green border indicates' = 0 across all 27 reference/extracted/bindata/*.bin; 'LC_ALL=C grep -c -a' over the 329 MB payload.xml = 0, and I also got 0 for 'record duels', 'keep running in that direction', 'replenishes' and 'Chikako for special Ninja'. String literals survive AS3 obfuscation intact, so this negative is sound where claim 28's was not. GameEngine.as:668-675 does route dice == 33 through LangManager.getString(723), and strings.json[\"723\"] is the Chikako Refund tip. The hold-run tip is at :640 and REBUILD_READINESS.md:146 is the line it restores.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:533,640,668-675,693-695 + reference/extracted/payload.xml (my own LC_ALL=C greps, 0 hits) + docs/research/REBUILD_READINESS.md:146",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/HUNT-death-card-header-and-warroom-death",
+   "refuted": false,
+   "reason": "I opened the frame whole at 1.9x and looked. It is a crimson defeat card reading 'YOU WERE DEFEATED!' over two buttons, 'LEAVE AREA' and 'FREE RESPAWN', with battlefield silhouettes below. strings.json[\"92\"] = 'You were defeated!' - an exact match for the header. I searched the whole 2,533-entry table for the two button labels: 'leave area' 0 hits, 'free respawn' 0 hits (only [\"480\"]='Respawn'), so the claim that the buttons do NOT resolve is right. strings.json[\"831\"] = 'You were defeated in the war room!' exists and is a distinct war-room defeat path. Mixed table-backed / hardcoded card, exactly as filed.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-22/frames/frame_0026.jpg (whole frame @1.9x LANCZOS) + docs/gauntlet/L0/index/strings.json[\"92\"], [\"831\"], [\"480\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/HUNT-duel-combat-hud-widgets",
+   "refuted": false,
+   "reason": "I opened the frame whole at 1.9x and looked. Every listed widget is there: an 'AUTO SLASH OFF' button at top-left, the opponent nameplate 'TYLUV (3)' above a green HP bar at right, and the player block at bottom-left showing a green 20/20 bar, a blue 10/10 bar and the caption 'CANNOT CHANGE STANCE' beneath them; the skill tray at bottom-right has slots numbered 2 and 3. The four string ids resolve exactly: [\"619\"]='Auto Slash Off', [\"620\"]='Auto Slash On', [\"125\"]='Stance Restriction', [\"208\"]='Change Stance'. The frame also independently confirms the 'NAME (level)' nameplate format that claims 3 and 4 rely on.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0019.jpg (whole frame @1.9x LANCZOS) + docs/gauntlet/L0/index/strings.json[\"619\"], [\"620\"], [\"125\"], [\"208\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/HUNT-duel-refresh-token-delta",
+   "refuted": false,
+   "reason": "I cropped all three frames at 50,60-220,180 @6x and looked, then opened frame_0016 whole at 1.6x. frame_0016 has the 'REFRESHING...' modal up and the widget renders BOTH a '40' inside the skull-diamond box AND a bare '30' printed directly under the 'DUEL TOKENS' caption. frame_0017 and frame_0018 show '40' only, with nothing under the caption. Exactly as described. The finding is also correctly scoped - it explicitly refuses to bank a direction from three frames and files itself as a lead for a dense re-extract, which is the right call from this evidence.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0016.jpg (crop 50,60-220,180 @6x, plus whole @1.6x), frame_0017.jpg and frame_0018.jpg (same crop)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/HUNT-fourth-clan-and-domain-collision",
+   "refuted": false,
+   "reason": "I opened frame_0007 whole at 1.6x: it is the clan-join screen, with four crest tiles plus a '?' random button. The crests are a gold folding fan, a red dragon, a blue four-wheel and a GREEN FIST, and the open card reads 'CLAN KI SENSU ... CLAN KI SENSU RULES THE DOMAIN IN THE NORTH-EAST.' with the gold fan tile selected. frame_0001 (cropped 550,380-940,480 @4x) reads 'CLAN AKA RYU RULES THE DOMAIN IN THE NORTH-EAST.' Same compass point, two clans - confirmed on film. The name set is closed by strings.json [\"289\"]-[\"292\"] (Aka Ryu / Midori Ken / Aoi Hoiru / Ki Sensu Crops), and by elimination the green fist is Midori Ken - the other three crests bind to Aka Ryu (red dragon), Aoi Hoiru (blue wheel) and Ki Sensu (fan, proven by the open card). Bios at [\"326\"] and [\"327\"] verify.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0007.jpg (whole @1.6x) and frame_0001.jpg (crop 550,380-940,480 @4x) + docs/gauntlet/L0/index/strings.json[\"289\"]-[\"292\"], [\"326\"], [\"327\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/HUNT-item-rarity-colour-on-film",
+   "refuted": false,
+   "reason": "citelint's QUOTE_UNVERIFIED was a false alarm - the quote is a description of pixels, and I looked. Cropping both frames at 0,400-700,576 @2.6x: frame_0033 reads 'QUEST: FIND FAST SHOES OF FOCUS' with the item name rendered in GREEN; frame_0038 reads 'QUEST: FIND RESERVED SHARP IRON SWORD OF WATER' with the item name in BLUE, over the two options 'I'LL SEE WHAT I CAN DO' and 'MAYBE LATER'. Exact. The enum cite also resolves: GameEngine.as:564 'A green border indicates that an item is special.', :568 'A blue border indicates that an item is rare.', :572 'A purple border indicates that an item is unique.' - green before blue, matching the on-film ordering. The four-part name grammar is legible in the second sample (RESERVED / SHARP / IRON SWORD / OF WATER).",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0033.jpg and frame_0038.jpg (crop 0,400-700,576 @2.6x LANCZOS) + reference/decompiled/shs3_android/scripts/GameEngine.as:564-572",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/HUNT-six-buff-potatoes",
+   "refuted": false,
+   "reason": "All six string ids resolve and all six end with the identical clause 'Note: Only one buff may be active at a time.': [\"4132\"] 150% Damage, [\"4133\"] 150% Defense, [\"4134\"] 150% XP, [\"4135\"] 150% Speed, [\"4229\"] 200% AP Regeneration, [\"4230\"] 200% Duel Token Regeneration. The render check holds - I cropped seg-04 frame_0007 at 600,80-1024,260 @5x and the tooltip renders [\"4132\"] verbatim: 'EAT THIS POTATO TO GET THE 150% DAMAGE BUFF. NOTE: ONLY ONE BUFF MAY BE ACTIVE AT A TIME.' The 30-minute timer is real too - InventoryUI.as:1096 is 'StatsManager.setBuff(item.modifierXML[i].value,30 * 60);'. CORRECTION: the impact line understates - OverworldHUD.as:1388-1470 renders THIRTEEN buff labels, not six; the six is the potato-purchasable family.",
+   "own_cite": "docs/gauntlet/L0/index/strings.json[\"4132\"]-[\"4135\"], [\"4229\"], [\"4230\"] + reference/frames/Nr4fQstqHDM/seg-04/frames/frame_0007.jpg (crop 600,80-1024,260 @5x) + reference/decompiled/shs3_android/scripts/OverworldHUD.as:1388-1470",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/damage-ttk-crit-window-is-not-empty-on-two-frames",
+   "refuted": false,
+   "reason": "I re-ran the row scan independently rather than trusting it: y=1033, x in [230,560], white = r,g,b all > 200, over all 18 t19*.png frames in reference/frames/session11/damage-ttk/. Result: t1958.967 one contiguous run (251,333); t1970.333 one run (251,318); the other sixteen empty. Both runs match the claim exactly. I then cropped t1958.967.png at (100,940)-(620,1080) LANCZOS x3 and looked: a clean partial white fill on the third bar, no caption, HP 16/20 green, Chi 20/20 blue. The track runs x251-x518 = 268 px, so 83/268 = 31% and 68/268 = 25% as stated. The crit predicate is real - §1t99s0§.as:3272 is 'if(this.§1t4414s0§ == this.§1t4415s0§)' returning '_loc2_ * 1.3 + ...'. A model of scope discipline: it corrects the evidence line without disturbing the conclusion.",
+   "own_cite": "reference/frames/session11/damage-ttk/t1958.967.png and t1970.333.png (own row scan at y=1033, x 230-560; crop (100,940)-(620,1080) LANCZOS x3) + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3272",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/two-clans-share-the-north-east-domain",
+   "refuted": false,
+   "reason": "Confirmed on film and in the table. Cropping seg-20 frame_0001 and frame_0007 at 550,380-940,480 @4x, frame_0001 reads 'CLAN AKA RYU RULES THE DOMAIN IN THE NORTH-EAST.' and frame_0007 reads 'CLAN KI SENSU RULES THE DOMAIN IN THE NORTH-EAST.' The string table agrees: [\"324\"] Aka Ryu and [\"327\"] Ki Sensu both end 'rules the domain in the North-East', while [\"325\"] Midori Ken = South-East and [\"326\"] Aoi Hoiru = South-West. Only three of four quadrants are used - there is no North-West clan. An original-data collision, not a reading error, and the conclusion (domain is flavour, not a partition key) follows.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0001.jpg and frame_0007.jpg (crop 550,380-940,480 @4x LANCZOS) + docs/gauntlet/L0/index/strings.json[\"324\"]-[\"327\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/ui-strings-txt-is-placeholder-not-runtime-copy",
+   "refuted": false,
+   "reason": "THE FRAME WINS, and I watched it happen. ui_strings.txt:189 reads 'War room rules 1/6 &nbsp;(joining a battle)'. I opened reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0011.jpg whole at 1.6x and the shipped screen reads 'WAR ROOM RULES 1/7 (JOINING A BATTLE)'. The doc loses. The filler is verbatim too: :100 'physical dmg: 1234 - 1235 &nbsp;(heavy)critical dmg: 1234-1235 *(heavy)piercing dmg: 20', :197 'Weight: 50/50', :214 'level requirement: 10 - 30autostarts upon full rosterround duration: 30 min', :314 'hp: 123 / 123 &nbsp;(hp regen 12 ) chi: 123 / 434 &nbsp;(chi regen 13)'. 1234/1235 and 123/123 are unmistakable design-time placeholders. The distinction the finding draws - field names and layout are A2-grade, the numbers are not - is exactly right.",
+   "own_cite": "reference/extracted/ui_strings.txt:100,189,197,214,314 vs reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0011.jpg (whole @1.6x)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "frames/world-map-zoom-in-is-a-viewport-not-the-board",
+   "refuted": false,
+   "reason": "I opened all three frames. seg-08 frame_0029 whole at 1.37x: header 'NAGANO (26,52) LEVEL: 9' with a ZOOM OUT button, over a tile grid I counted at exactly THIRTEEN columns, pitch ~66 px in source coords, panel ending around x~912. seg-08 frame_0016 whole at 1.37x: 'TERRITORY (22,51) SECTOR (5,2)'. seg-00 frame_0057 whole at 1.37x: 'TERRITORY (21,51) SECTOR (2,3)'. A 13-wide board cannot hold column 26, 22 or 21 at the same time as being the whole board, so the panel is a scrolling viewport. The conclusion is correctly bounded: tile geometry held, world extents STILL OPEN from the frame corpus.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-08/frames/frame_0029.jpg (whole @1.37x, 13 columns counted), frame_0016.jpg and reference/frames/zFtCaTO0_1M/seg-00/frames/frame_0057.jpg (both whole @1.37x)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "gauntlet/android-string-table-has-gaps",
+   "refuted": false,
+   "reason": "citelint's QUOTE_UNVERIFIED was a false alarm - I found the quote. §1t5957s0§.as:2724 is exactly '_loc45_ = §1t1521s0§.getString(979);', :2733 getString(980), :2742 getString(981), each inside a distinct stance branch. §1t1521s0§.as:122 declares 'public static function getString(param1:int, param2:Array = null) : String', so it is LangManager. The 'LIGHT stance' annotation checks out: the :2724 branch tests §1t99s0§.§1t12220s0§, which is declared = 0 at §1t99s0§.as:27, the same slot and value as android MCSPlayer.as:27 LIGHT_STANCE = 0. And I enumerated docs/gauntlet/L0/index/strings.json: of its 2,533 keys, ZERO fall in 960..999. The v0.682 table genuinely does not cover ids the v0.717 client calls.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:2724,2733,2742 + reference/decompiled/shs3_payload/scripts/§1t1521s0§.as:122 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:27 + docs/gauntlet/L0/index/strings.json (no keys in 960..999)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "gauntlet/index-firstlines-are-leafname-scoped",
+   "refuted": false,
+   "reason": "Verified by walking the index myself. questdata.json reports first_lines [93, 226, 240, 1698, 2329, 2401] identically for the /lvl leaf under FOUR distinct paths (wave/enemy, wave/friend, wave/neutral and roomobj/property/obj/property/xml/wave/enemy). I opened questdata.xml:93 and it is '<lvl>1</lvl>' inside '<neutral><id>118</id><qty>1</qty><x>2000</x><lvl>1</lvl></neutral>' - exactly as quoted, and belonging to NONE of the paths a lane would most likely cite. The unique-leaf counter-examples verify too: <exp> -> [215, 412] and questdata.xml:215 is '<exp>290</exp>'. Minor notes: it is four paths, not three, and the <lvlreq> -> [257, 286] example comes from skilldata.json/skilldata.xml (where :257 is '<lvlreq>3</lvlreq>' and :286 '<lvlreq>5</lvlreq>'), not questdata. Both are immaterial to a warning that is correct and cross-cutting.",
+   "own_cite": "docs/gauntlet/L0/index/questdata.json (four /lvl paths sharing first_lines) + reference/extracted/questdata.xml:93,215 + reference/extracted/skilldata.xml:257,286",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "gauntlet/no-web-gameplay-code-or-string-table",
+   "refuted": true,
+   "reason": "REFUTED - part (1) is false and is the single most expensive error in the packet. The command output is real ('ls | grep -ci enemy' -> 0 over 652 files) but the inference is wrong: the web classes are SYMBOL-OBFUSCATED, not absent. Of those 652 entries only 40 are the skins it describes (ColorPicker_*, torso/hair/calf); 612 are §-named gameplay classes, 667 counting the §1t51s0§/ package. I opened six by hand and they are unmistakable: §1t68s0§.as:258-279 is NPC.setLevel with the 0.9 factor and the <=10 clamp; §1t99s0§.as:249 is MCSPlayer maxreload = 8 * 24; §1t120s0§.as:503-514 is SkillManager's trap ammo cases; §1t1523s0§.as:36 is clientVersion 0.717; §1t1541s0§.as:57 is InputManager thickness = 8; §1t1543s0§.as:615-730 is NPCManager's 38-case ai switch. Part (2) IS true - I reproduced all three payload.xml greps at 0 - and the 125_Mobile_NpcData.bin encoding note is true (first bytes are the plain UTF-8 '<?xml version=\"1.0\" encoding=\"utf-8\"?>\\r\\n<npcdata>'). But the finding's operative instruction ('there is no web AS3 to cross-check against ... stamp it on the ledger once instead of refuting ten claims') would tell every lane to stop reading the one bundle that answers the parity question. FATAL.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/ (612 § files non-recursive, 40 non-§) + §1t68s0§.as:258-279 + §1t99s0§.as:249 + §1t120s0§.as:503-514 + §1t1523s0§.as:36 + §1t1541s0§.as:57 + §1t1543s0§.as:615-730",
+   "severity": "fatal"
+  },
+  {
+   "claim_id": "hunter/android-rebirth-pays-20-5-hgold-vs-web-100-25",
+   "refuted": false,
+   "reason": "Both sides verbatim. Web §1t1523s0§.as:2644 'if(§1t7356s0§(§1t9426s0§) == 8)', :2646 '§1t9713s0§(§1t9413s0§,100);', :2651 '§1t9713s0§(§1t9413s0§,25);', with §1t9413s0§ declared = 12 at :228. Android StatsManager.as:2201 'if(getPlayerStats(STAT_DAN) == 8)', :2203 'changeStat(STAT_HGOLD,20);', :2207 'changeStat(STAT_HGOLD,5);', with STAT_HGOLD = 12 at :194. The dan cap is identical in both - web :2653 'if(... < 9)', android :2209 'if(getPlayerStats(STAT_DAN) < 9)'. A genuine 5x tuning divergence, correctly attributed, and one of the artifacts that sinks claim 10.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:228,2644-2653 + reference/decompiled/shs3_android/scripts/StatsManager.as:194,2201-2209",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter/blade-impact-vfx-contract",
+   "refuted": false,
+   "reason": "Every single line number is exact - I checked all eight. NPCManager.as:1232 'if(enemy.checkHit(scaledX,scaledY,damage))', :1234 'if(!StageManager.isRedFreeze())', :1236 'bladeslash = new bladeslashfx();', :1238-1239 the x/y assignment with the same '- offset', :1240-1241 'ptA = j; ptB = j - 1;', :1242-1244 'if(ptB < 0) { ptB = j + 1; }', :1246 the atan2 rotation with the literal 57.2727. The contract as stated - spawn per connecting polyline point, orient by the local segment tangent (previous point, or next at index 0), suppress entirely during redFreeze - is exactly what the code does.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NPCManager.as:1232-1247",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter/traps-cost-one-kunai-not-four",
+   "refuted": false,
+   "reason": "Verified in both builds plus the data. SkillManager.as:30-38 declares SKILL_TRAP=1024 through SKILL_TRAPEARTH=1028; :467-471 are the five cases; :474 refuses at 0 ammo and :479 is exactly 'StatsManager.changeStat(2501,-1);'. The web twin §1t120s0§.as:503-507 has the same five cases and :514 '§1t1523s0§.§1t9713s0§(2501,-1);'. The /4 belongs solely to SKILL_WINDMILL: SkillSlotButton.as:170 'else if(this._skillId == SkillManager.SKILL_WINDMILL)' and :172 'ammo = Math.floor(StatsManager.getStat(2501) / 4);', with SkillManager.as:78 SKILL_WINDMILL = 1051. And skilldata.xml skill 1051 has displayname 6106 / desc 6107, which resolve to 'Windmill Shuriken' and a description literally ending 'Uses 4 kunai.' Airtight.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/SkillManager.as:30-38,78,467-479 + reference/decompiled/shs3_payload/scripts/§1t120s0§.as:503-514 + reference/decompiled/shs3_android_payload/scripts/SkillSlotButton.as:118-120,170-172 + docs/gauntlet/L0/index/strings.json[\"6106\"], [\"6107\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter/web-only-skills-1074-1077",
+   "refuted": false,
+   "reason": "Core verified. §1t120s0§.as:108, :110, :112, :114 declare 1074, 1075, 1076, 1077 exactly as quoted; :344 'case §1t10176s0§:' (=1077) with :347 'if(§1t1523s0§.§1t9714s0§(2501) < 8)' and :351 '...(2501,-8)'. I parsed skilldata.xml: 75 <skill> blocks, and none carries an id in 1074..1077. Android SkillManager.as has exactly 50 'public static var SKILL_' constants with a maximum id of 1073. The 8-cost really is unique - grepping '2501,-' gives web {-1 x2, -4 x1, -8 x1} and android {-1 x2, -4 x1}. CORRECTION: the parenthetical 'max id below 1074' is wrong - skilldata's max skill id is 1501 (skilldata.xml:1948 id 1500, :1960 id 1501). Immaterial: 1074-1077 are still absent from all 75 rows.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t120s0§.as:108,110,112,114,344-351 + reference/extracted/skilldata.xml (75 <skill> blocks, ids 1000..1501, none in 1074..1077; :1948, :1960) + reference/decompiled/shs3_android/scripts/SkillManager.as (50 SKILL_* constants, max 1073)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter/web-stance-refusal-is-flat-48",
+   "refuted": false,
+   "reason": "Every line exact, and a real divergence. Web §1t99s0§.as:249 'this.§1t4415s0§ = 8 * 24;' (=192), :3050 'return this.§1t4469s0§() && this.§1t4414s0§ >= 48;', :3060 'if(this.§1t4414s0§ < 48) { return; }', :3162 'this.§1t4414s0§ -= 48;'. Android MCSPlayer.as:239 'this.maxreload = 5 * 24;' (=120) and :2977 'if(this.reload < this.maxreload / 6) { return; }' (=20). The field mapping is confirmed structurally - both files set maxreload then zero reload on consecutive lines. 48/192 = 25% versus 20/120 = 16.7%; porting the android fraction would visibly change stance-switch feel and would not reproduce the 'CANNOT CHANGE STANCE' timing I saw on film.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249,3050,3060,3162 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:239,2977",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter/web-weapon-parry-and-part-index-parity",
+   "refuted": false,
+   "reason": "Verified and, notably, honest. §1t68s0§.as:458-461 is 'case mcs.§1t6231s0§[§1t75s0§.§1t12380s0§]: this.§1t3256s0§ = false; _loc3_ = 0; return false;' - the free weapon-parry in the WEB build. The part constants decode exactly: §1t75s0§.as:19 = 3, :37 = 12, :45 = 16, :47 = 17, matching MCSCharacter.as:16 PART_weapon=3, :34 PART_neck=12, :42 PART_head=16, :44 PART_hat=17. The claim quotes the behead line as '_loc3_ *= 1.3' at :474 WITHOUT asserting it equals the android value - which is right, because android NPC.as:453 is 'damage *= 1.5'. That divergence is my new finding N1; this claim does not over-reach into it.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:450-478 + reference/decompiled/shs3_payload/scripts/§1t75s0§.as:19,37,45,47 + reference/decompiled/shs3_android/scripts/MCSCharacter.as:16,34,42,44",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter04/blade-stroke-tapers-8px-to-zero-across-the-reach-cap",
+   "refuted": false,
+   "reason": "The render contract is correct and I verified every component. Android InputManager.as:57 'internal static var thickness:int = 8;' and :360 the lineStyle with 'thickness - thickness * ((maxDistance - distanceLeft) / maxDistance)', colour 10027008 = 0x990000, CapsStyle.ROUND, JointStyle.ROUND, miter 3 - verbatim. Web §1t1541s0§.as:57 is byte-identical. greenLine()/redLine() are declared at InputManager.as:172 and :177 and their ONLY callers anywhere are SkillUI.as:75 and :136, so they are not the blade (39168 = 0x009900). TWO CORRECTIONS: the web lineStyle is at :361, not :360 (:360 is 'return;'), and the two lines are NOT byte-identical - android says 'distanceLeft' where web says '§1t10078s0§'. Semantically identical; 'byte-identical' is the wrong word. Neither touches the contract the lane will implement.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InputManager.as:57,172,177,360 + reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:57,361 + reference/decompiled/shs3_android/scripts/SkillUI.as:75,136",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter04/buff-attack-scales-minDamage-only",
+   "refuted": false,
+   "reason": "Code and film both verified. MCSPlayer.as:210-212 is exactly 'if(StatsManager.hasBuff(StatsManager.BUFF_ATTACK)) { this.minDamage *= 1.5; }', :3201 exactly 'var baseDamage:int = this.minDamage + Math.random() * this.damageRange;' - so the buff lifts the FLOOR, and damageRange is untouched. The web twin §1t99s0§.as:211-213 is structurally identical. The chain really is else-if (:214 BUFF_DEFENSE, :218 BUFF_INJURED), so exactly one buff is ever active. BUFF_INJURED at :220-222 does halve minDamage, defense AND baseSlashLength - reach included. StatsManager.as:288-312 is the 13-entry buff table and OverworldHUD.as:1388-1425 the labels, both exact. And I opened reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (crop 230,960-560,1070 @4x): gold '150% DAMAGE' under the bars, confirming that corpus is BUFF_ATTACK-active. Tiny note: baseSlashLength is at :222, one past the quoted :218-221.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:210-222,3201 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:211-222 + reference/decompiled/shs3_android/scripts/StatsManager.as:288-312 + reference/decompiled/shs3_android/scripts/OverworldHUD.as:1388-1425 + reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (crop 230,960-560,1070 @4x)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter05/premium-ladder-is-1-2-3-5-12",
+   "refuted": false,
+   "reason": "citelint's QUOTE_UNVERIFIED was a false alarm - the 'quote' is a derived measurement, and I re-derived it. Parsing 121_Mobile_PremiumData.bin: 176 raw <item> rows, 143 unique ids, and every one of them resolves in itemdata.xml (0 missing). Joining on <heavenlyprice>: unique-id ladder {1:20, 2:2, 3:94, 5:4, 12:23} and raw-row ladder {1:23, 2:2, 3:123, 5:4, 12:24} - both EXACT. The 23 twelve-Gold ids come out as 2130,2131,2132,2133,2135-2139,2146,2151-2162,2171, exactly the list given, with 24 raw rows. The 2-Gold pair resolves through the string table to 'Medium Soldier Pill' (2101, name 4001) and '25 Duel Tokens' (2126, name 4174). Every number reproduced.",
+   "own_cite": "reference/extracted/android/121_Mobile_PremiumData.bin joined to reference/extracted/itemdata.xml <heavenlyprice> (my own parse: 176 rows / 143 unique) + docs/gauntlet/L0/index/strings.json[\"4001\"], [\"4174\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter05/repair-and-reinforce-are-priced-in-coins",
+   "refuted": false,
+   "reason": "The currency split is exactly as claimed. StatsManager.as:192 STAT_GOLD=11, :194 STAT_HGOLD=12; :2627-2629 'public static function getGold() : int { return getPlayerStats(STAT_GOLD); }'; changeGold at :2658 clamps via getMaxCoins() with a local named 'newCoins' and writes stat 11; :705-706 seed 'setPlayerStats(STAT_GOLD,100); setPlayerStats(STAT_HGOLD,0);'; getHeavenlyGold at :2669 reads STAT_HGOLD. I also traced the two services to confirm the downstream: InteractUI.as:1058 'cost = StageManager.getCurrentNodeLevel() * 10;' followed by :1059 getGold() and :1072 changeGold(-cost); and :1083 'cost = 5000;' followed by :1084 getGold() and :1132 changeGold(-cost). Both are coin-priced. The correction to 'a gold currency (not coins)' is warranted.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:192,194,705-706,2627-2669 + reference/decompiled/shs3_android/scripts/InteractUI.as:1058-1072,1083-1132",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter05/seg05-frame0025-is-a-you-win-card",
+   "refuted": false,
+   "reason": "I opened the frame whole at 1.9x LANCZOS and looked. It is exactly what the finding describes and nothing else: a flat crimson field, a blood-splatter wordmark reading 'YOU WIN' in red with a white outline, a black grass silhouette across the lower fifth, and two black silhouettes at right - a straw-hat samurai with a sheathed sword and an archer drawing a bow. There is NO HUD chrome anywhere on the frame: no level badge, no experience readout, no coins or gold readout, no Dan field. THE FRAME WINS - any A1 quote describing a level-8 HUD on this path describes something that is not in the frame.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-05/frames/frame_0025.jpg (1024x576, whole frame @1.9x LANCZOS)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter05/third-baseprice-exception-item-11037",
+   "refuted": false,
+   "reason": "Verbatim and, better, exhaustive. itemdata.xml:6897 opens the block and :6898-6902 read '<id>11037</id><type>7</type><name>4204</name><unique>1</unique><baseprice>.</baseprice>' exactly as quoted. I scanned all 982 items for a non-numeric <baseprice> and 11037 is the ONLY one. The gold-item census also checks: 303 rows carry baseprice 0, and the exceptions among items with a non-zero <heavenlyprice> are exactly 2212 (no baseprice), 7049 (no baseprice) and 11037 ('.') - so 303 = 300 + 1 + 2 as stated. The parse consequence verifies too: XMLItem.as:86 tests 'xml.baseprice.toString() != \"\"', which is TRUE for '.', so gvalue coerces to 0 instead of firing the :92 default of 1.",
+   "own_cite": "reference/extracted/itemdata.xml:6897-6906 (and my own scan of all 982 <item> rows: exactly one non-numeric baseprice) + reference/decompiled/shs3_android/scripts/XMLItem.as:86-92",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter05/wear-gates-damage-as-a-binary-cliff",
+   "refuted": false,
+   "reason": "All four cites exact. Web §1t17s0§.as:1854-1865 is the isBroken twin, ending 'return this.uses >= _loc1_.durability + this.§1t523s0§(83);'. §1t1523s0§.as:2306 is 'if(_loc2_ == null || §1t7316s0§[§1t9448s0§].§1t535s0§())' inside getMinDamage, with :2311 giving '... + 1' and :2315 '... + _loc2_.mindamage'; the getDamageRange twin at :2322 has the same predicate and returns 0. Android StatsManager.getMinDamage is verbatim as quoted: 'if(itemdata == null || equipment[EQ_WEAPON].isBroken()) { basedamage = getPlayerStats(STAT_ATTACK) + findBonusStat(STAT_ATTACK) + 1; } else { basedamage = ... + itemdata.mindamage; }'. The qualification the finding demands - 'no condition MULTIPLIER; a broken-weapon damage cliff instead' - is precisely right.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t17s0§.as:1854-1865 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2300-2325 + reference/decompiled/shs3_android/scripts/StatsManager.as (getMinDamage)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "hunter05/web-references-item-2218-that-no-held-table-contains",
+   "refuted": false,
+   "reason": "Verified, including the diff. §1t5374s0§.as:609 is verbatim '... || param1 == 2218;' and :681 'if(this.§1t5384s0§.§1t483s0§() == 2218)'; all ten cited line numbers do carry a 2218 branch. I re-ran the diff myself: reference/extracted/itemdata.xml has 982 <item> blocks / 982 ids, reference/extracted/android/111_Mobile_ItemData.bin has 982 / 982, the symmetric difference is EMPTY, and 2218 is in neither; that id block runs 2200..2216. The finding's refusal to guess between 'the held web table is really the Android one' and 'sentinel' is the correct STILL_UNHELD posture. Minor: 2218 actually branches at twelve sites (add :957 and :1014), an undercount only.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5374s0§.as:368,385,430,465,609,644,664,681,746,893,957,1014 + my own id-set diff of reference/extracted/itemdata.xml vs reference/extracted/android/111_Mobile_ItemData.bin (982 = 982, symmetric difference empty)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "itemdata-hunter/damage-table-is-non-monotonic",
+   "refuted": false,
+   "reason": "citelint's QUOTE_UNVERIFIED was a false alarm - the quote is a measurement and I reproduced it. itemdata.xml:9591 opens item 13179 with minlvl 65 / mindamage 39 / maxdamage 108 and :9925 opens item 13225 with minlvl 79 / mindamage 81 / maxdamage 90, both verbatim. Sorting all 982 rows by maxdamage gives, in order: 13179 108/39/65, 13178 96/57/70, 13176 94/55/66, 13177 92/53/64, 13227 92/50/63, 13225 90/81/79 - the claim's six entries, exactly, in exactly that order. Names resolve: 4160 = 'Steel Sword', 4161 = 'Steel Sabre'. Exactly 158 rows carry a damage table, matching the '158-row table' the impact line asks the port to copy verbatim. Non-monotonic in level: proven.",
+   "own_cite": "reference/extracted/itemdata.xml:9591-9603 and :9925-9937 (plus my own sort of all 982 rows by maxdamage; 158 rows carry one) + docs/gauntlet/L0/index/strings.json[\"4160\"], [\"4161\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "itemdata-hunter/itemdata-ships-an-empty-item-row",
+   "refuted": false,
+   "reason": "The core is verbatim: itemdata.xml:5449-5451 is exactly '<item>' / '<id>7075</id>' / '</item>' - a record with an id and nothing else. The named companion stubs verify at the exact lines given (:2775 opens 4021, :3165 opens 4070, :3457 opens 4102). The census is exact: over all 982 items, 804 carry <name> and 178 do not, and of those 178 exactly 103 are unique=2 and 75 are not. The parse consequences check against XMLItem.as: :68 displayname = \"\" when name is absent, :76 type = 0, :92 gvalue = 1, :116 art = this.id. CORRECTIONS: 7075 is not the only fully-empty row - there are NINETEEN (4021, 4022, 4070, 4102-4107, 4110-4117, 4138, 7075) - and 'around 90 further rows are stubs' actually measures 166 rows carrying only id/type/unique. Under-counts, not wrongness; the operational instruction stands.",
+   "own_cite": "reference/extracted/itemdata.xml:5449-5451, :2775, :3165, :3457 (plus my own census of all 982 rows: 804/178, 103/75, 19 fully empty, 166 stubs) + reference/decompiled/shs3_android/scripts/XMLItem.as:68,76,92,116",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "itemdata-hunter/modifier-dispatch-numeric-fallback",
+   "refuted": false,
+   "reason": "Outstanding - I reproduced the histogram entry for entry. InventoryUI.as:1098-1109 is the three-way fallback verbatim ('else if(modid < 2000) { StatsManager.changeStat(...); } else if(modid >= 30000) { StatsManager.setStat(...); } else { StatsManager.changeItemQty(...); }'). itemdata.xml:2412 is '<id>2210</id>' and :2425 '<id>40000</id>', exactly as quoted, and strings.json[\"4356\"] = 'Reset Quests'. My own scan of all 982 items gives 412 modifiers total (matching the brief's verified count) distributed as 103x223, 104x42, 105x40, 106x33, 0x13, 3x13, 38x6, 1/2/13/15 x3 each, 5/8/9/78/79/82/84 x2 each, and singletons 6,7,12,25,90,96,97,98,99,101,102,117,122,123,124,40000 - every entry matches. The named branches exist at :1009 (106), :1013 (104), :1020 (105), :1025 (34), :1032 (96), :1052 (117), :1077 (123), :1088 (124).",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:1009-1109 + reference/extracted/itemdata.xml:2411-2429 (plus my own modifier histogram over all 982 rows: 412 total) + docs/gauntlet/L0/index/strings.json[\"4356\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "itemdata-hunter/npc-loot-ids-are-not-only-an-enum",
+   "refuted": false,
+   "reason": "Histogram reproduced exactly. My own scan of all 495 <npc> rows gives loot ids 0x77, 3x28, 2x10, 1x10, 2113x2, 2112x2, 2114x1, 20028x1 - identical to the claim - so exactly six rows fall through to the else branch. NPC.as:853-856 is verbatim 'else { OverworldHUD.instance.lootDialog.addLootItemBasic(lootType,qty); }' with the call on :855, sitting after the 0/1/2/3 enum branches at :841-852; the web twin §1t68s0§.as:877-879 is structurally identical. npcdata.xml:31 carries the malformed hair run verbatim including '6015.6017'. My counts: that string occurs 355 times and the collapsed float '6.5006501650265E+47' occurs once, exactly as stated (the 355 sit in 352 <mcs> blocks - a trivial slip). The fifth drop case is real.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NPC.as:841-856 + reference/decompiled/shs3_payload/scripts/§1t68s0§.as:873-879 + reference/extracted/npcdata.xml:31 (plus my own parse of all 495 <npc>/<mcs> blocks)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "itemdata-hunter/sellpercentage-is-dead-data",
+   "refuted": false,
+   "reason": "Confirmed exactly. 'grep -rn sellPercentage' across the entire android bundle returns ONE line and one only: ShopUI.as:58 'internal var sellPercentage:Number = 0.5;'. It is never read. ShopUI.as:401 is verbatim 'slot.setCost(slot.getItem().getSellAmt(),0);' - the sell price used unmodified. Item.as:1582-1593 gives getSellAmt as '(1 + this.getModifierCount()) * 10' when weight >= 10 and '* 5' otherwise, matching the impact line. The warning against a 50% haircut is well founded. Minor: getSellAmt also has an 'if(this.itemID < 3000) return 1;' branch at :1584-1586 that the impact summary omits.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/ShopUI.as:58,401 + reference/decompiled/shs3_android/scripts/Item.as:1582-1593 (grep -rn sellPercentage over the whole bundle: 1 hit)",
+   "severity": "minor"
+  }
+ ],
+ "judged_count": 48,
+ "packet_size": 48,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "gauntlet-s26b/behead-multiplier-diverges-1p5-to-1p3",
+   "text": "The behead damage multiplier is a v0.682->v0.717 TUNING DIVERGENCE: android NPC.as multiplies a behead hit by 1.5, the web NPC class multiplies it by 1.3. Both sit in the same method of the same class, after the same defense subtraction and the same getMinDamage floor, so this is a straight retune and not a structural difference. A v0.717-targeted recreation must port 1.3.",
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_android/scripts/NPC.as:451-453 vs reference/decompiled/shs3_payload/scripts/§1t68s0§.as:472-474",
+   "quote": "android NPC.as:451-453 `if(behead) { damage *= 1.5; }`  ·  web §1t68s0§.as:472-474 `if(this.§1t1071s0§) { _loc3_ *= 1.3; }`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L-enemies-ai + L-combat-core: a fourth proven build divergence, and the one that sinks the packet's 'build parity is ESTABLISHED' reading (claim 10) using claim 10's own cited file. The S0-3 parity caveat stays undischarged: the two bundles diverge on combat tuning even inside classes whose structure matches line for line."
+  },
+  {
+   "id": "gauntlet-s26b/web-npcmanager-switch-is-the-name-mapping-anchor",
+   "text": "The web NPCManager is §1t1543s0§.as and its ai switch has 38 cases in the SAME ORDER as the android createNPC switch, which turns the obfuscated enemy roster into a one-pass name-recovery job. Confirmed pairs: ai 0 -> §1t122s0§ = EnemyPlayer (same `,true,false` args), ai 2 -> §1t4542s0§ = EnemyArcher, ai 25 -> §1t4539s0§ = EnemyGoblinThrower, ai 36 -> §1t4545s0§ = EnemyKanjiGuardian, ai 37 -> §1t4523s0§ = EnemySpearElite(boss, same trailing `true`).",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t1543s0§.as:615-730 vs reference/decompiled/shs3_android/scripts/NPCManager.as:516-636",
+   "quote": "§1t1543s0§.as:615 `switch(_loc6_.ai)` · :623-624 `case 2: _loc5_ = new §1t4542s0§(§1t1744s0§.§1t1559s0§());` · :692-693 `case 25: _loc5_ = new §1t4539s0§(...);` · :725-726 `case 36: _loc5_ = new §1t4545s0§(...);`  vs  NPCManager.as case 2 = `new EnemyArcher(...)`, case 25 = `new EnemyGoblinThrower(...)`, case 36 = `new EnemyKanjiGuardian(...)`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "ALL AS3-SOURCED LANES: this is the schedulable anchor claim 9 asked for, already half-built. It is also the artifact that refutes claim 14 - without the case map, §1t4539s0§ looks like the archer and the knockdown mechanic gets deleted from the port."
+  },
+  {
+   "id": "gauntlet-s26b/createnpc-switch-is-35-distinct-classes",
+   "text": "The android createNPC switch resolves 38 cases to 35 DISTINCT classes - 32 Enemy* plus 3 Friendly* - not 34. EnemyWolf (case 8) and EnemyWolf2 (case 10) are separate classes, not one class used twice; only EnemyPlayer (x3, cases 0/9/14) and EnemySpearElite (x2, cases 28/37) actually repeat. 3 + 2 + 33 = 38. Separately, 34 Enemy*.as files exist on disk, so two Enemy* classes are never reached by this switch.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/NPCManager.as:516-636 + reference/decompiled/shs3_android/scripts/EnemyWolf2.as:3",
+   "quote": "NPCManager.as:548-552 `case 10: actor = new EnemyWolf2(); break; case 11: actor = new EnemyWolfAlpha();` · EnemyWolf2.as:3 `public class EnemyWolf2 extends EnemyWolf` · my counts over :516-636 -> 35 distinct `new X`, 32 Enemy*, 3 Friendly*",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L-enemies-ai: the corrected form of packet claim 5, which I refuted for shipping 34/31+3 as a lane correction. The error came from a `grep -oE 'new [A-Za-z_]*'` character class that silently ate the trailing digit of EnemyWolf2. Claim 5's true half - that createRoomNPC at NPCManager.as:671-700 is a SECOND, independent ai dispatch and the path every overworld object takes (Obj_NPCAggro.as:63, Obj_NPCCivilian.as:24, Obj_Corpse.as:28) - stands and should enter the ledger in this corrected form."
+  },
+  {
+   "id": "gauntlet-s26b/weapon-part-parry-is-universal-not-undead",
+   "text": "The free weapon-part parry is a BASE-CLASS rule, not an EnemyZombie quirk: NPC.as carries the identical `case mcs.partList[MCSCharacter.PART_weapon]: gotHitFlag = false; damage = 0; return false;` in its own hit switch, and the web NPC class confirms it in v0.717. Every NPC in the game nullifies a blade-path hit that intersects its rendered weapon, and the hit is aborted before the HP path rather than merely reduced.",
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_android/scripts/NPC.as:437-440 + reference/decompiled/shs3_payload/scripts/§1t68s0§.as:458-461 (contrast the EnemyZombie override at reference/decompiled/shs3_android/scripts/EnemyZombie.as:502-505)",
+   "quote": "NPC.as:437-440 `case mcs.partList[MCSCharacter.PART_weapon]: gotHitFlag = false; damage = 0; return false;` · §1t68s0§.as:458-461 `case mcs.§1t6231s0§[§1t75s0§.§1t12380s0§]: this.§1t3256s0§ = false; _loc3_ = 0; return false;` with §1t75s0§.as:19 `= 3` and MCSCharacter.as:16 `PART_weapon:int = 3`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L-combat-core: packet claims 12 and 13 both read the EnemyZombie override correctly but scope the mechanic to the undead. It is universal and build-stable, which promotes it from an undead flavour note to a first-order blade-path rule: the per-part damage verdict needs a NULLIFY outcome for every enemy, and the rendered sword is a parry surface on the whole roster."
+  },
+  {
+   "id": "gauntlet-s26b/itemdata-ships-nineteen-empty-item-rows",
+   "text": "itemdata.xml ships NINETEEN completely empty item records, not one: ids 4021, 4022, 4070, 4102, 4103, 4104, 4105, 4106, 4107, 4110, 4111, 4112, 4113, 4114, 4115, 4116, 4117, 4138 and 7075 each carry an <id> and no other field. A further 147 rows carry only <id> plus <type> and/or <unique>, giving 166 stub rows in total out of 982.",
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/extracted/itemdata.xml:5449-5451, :2775-2777, :3165-3167, :3457-3459 (plus my own scan of all 982 <item> blocks)",
+   "quote": "itemdata.xml:5449-5451 `<item>` / `<id>7075</id>` / `</item>` · my scan: 19 blocks whose only tag is <id>, 166 blocks whose tag set is a subset of {id, type, unique}",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L-items-equipment: sharpens packet claim 44 (which I upheld) - its 'around 90 further rows are stubs' measures 166, and 7075 is one of nineteen empty rows rather than a singleton. The 1:1-vs-deviate decision the claim asks for therefore applies to a whole class of rows, not to one anomaly."
+  }
+ ]
+}

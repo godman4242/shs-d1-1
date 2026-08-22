@@ -103,24 +103,37 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default="docs/gauntlet/L0")
-    ap.add_argument("--runs", nargs="+", default=["run2", "run3", "run4", "run5", "run6", "run7"],
-                    help="extracted run directories to pool, oldest first")
-    ap.add_argument("--lint", nargs="+", default=["citelint.json", "citelint-run3.json", "citelint-run4.json", "citelint-run5.json", "citelint-run6.json", "citelint-run7.json"],
-                    help="citeLint reports to pool")
+    ap.add_argument("--runs", nargs="+", default=None,
+                    help="extracted run directories to pool. Default: every run*/ on disk.")
+    ap.add_argument("--lint", nargs="+", default=None,
+                    help="citeLint reports to pool. Default: every citelint*.json on disk.")
     ap.add_argument("--batch-size", type=int, default=BATCH_SIZE)
     args = ap.parse_args()
 
     root = Path(args.root)
+    # DISCOVER THE RUNS, NEVER HARDCODE THEM. This list used to be a literal ending at
+    # run7, and the moment run8 landed the worklist reported 1,506 rows / 814 judged
+    # while gateL0 — which globs — pooled 1,587 / 1,169. It offered 653 already-judged
+    # findings for re-judging, and a relaunch would have paid full agent cost to rule on
+    # them twice. Nothing warned, because a hardcoded list that is merely OUT OF DATE
+    # looks exactly like one that is complete. gateL0.py and buildLedgerEvidence.py both
+    # glob; this is the third of three, and now they cannot disagree.
+    runs = args.runs if args.runs is not None else [
+        d.name for d in sorted(root.glob("run*")) if (d / "claims.json").is_file()]
+    lints = args.lint if args.lint is not None else [
+        p.name for p in sorted(root.glob("citelint*.json"))]
     # Runs POOL, they do not supersede. A later run judges earlier claims and adds new
     # ones; both halves have to be present or the judged set silently shrinks.
     claims: list[dict] = []
     verdicts: list[dict] = []
-    for run in args.runs:
+    for run in runs:
         claims += json.loads((root / run / "claims.json").read_text(encoding="utf-8"))
-        verdicts += json.loads((root / run / "verdicts.json").read_text(encoding="utf-8"))
+        vpath = root / run / "verdicts.json"
+        if vpath.is_file():
+            verdicts += json.loads(vpath.read_text(encoding="utf-8"))
 
     lint_rows: list[dict] = []
-    for name in args.lint:
+    for name in lints:
         path = root / name
         if path.exists():
             lint_rows += json.loads(path.read_text(encoding="utf-8"))["claims"]
@@ -233,7 +246,7 @@ def main() -> int:
         "# SEEN CLAIM IDS — every claim banked across every run of L0 so far.",
         "# A finding matching one of these is NOT new. Report it ONLY if you can",
         "# materially STRENGTHEN or CONTRADICT it — and say which, explicitly.",
-        f"# {len(claims)} rows, {len(by_id)} unique ids, pooled from: {', '.join(args.runs)}.",
+        f"# {len(claims)} rows, {len(by_id)} unique ids, pooled from: {', '.join(runs)}.",
         f"# {len(judged & set(by_id))} of them carry at least one artifact-citing verdict;",
         "# the rest are LEADS and may not enter the ledger (§0).",
         "",

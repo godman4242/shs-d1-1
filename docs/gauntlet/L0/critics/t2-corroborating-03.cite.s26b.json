@@ -1,0 +1,412 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "bindata/web-build-owns-the-bindata-map",
+   "refuted": false,
+   "reason": "HELD. citelint's QUOTE_NOT_LOCATED is a false positive of the quote's '…' compression; every line is verbatim. I opened the ByteArrayAsset classes themselves: §1t4651s0§.as:5 is [Embed(source=\"/_assets/94_1t4651s0.bin\", mimeType=\"application/octet-stream\")], and the siblings give 97/95/96/98 — so §1t136s0§.as:10,12,14,16,18 really do bind 94/97/95/96/98 in male/female/noble/samurai/place order, matching NameGenerator.as:10-18 name-for-name. §1t1524s0§.as:83 -> §1t4647s0§ = 93_ ; :87 -> §1t4648s0§ = 92_ ; §1t7785s0§.as:13 -> §1t4646s0§ = 119_. §1t75s0§ binds nineteen assets 100_ through 118_. NIT: those nineteen sit at lines 67-103, not the cited 79-103 — an under-cite of six declarations, not an over-claim.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t136s0§.as:10-18 · reference/decompiled/shs3_payload/scripts/§1t4651s0§.as:5 · reference/decompiled/shs3_payload/scripts/§1t4647s0§.as:5 · reference/decompiled/shs3_payload/scripts/§1t4646s0§.as:5",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "bindata/web-has-third-hardcoded-town",
+   "refuted": false,
+   "reason": "HELD, exact. Web :140-151 returns \"Ibamaya\" (1405272), \"Gokura\" (1524045), \"Iwakuni\" (1519945); android NameGenerator.as:137-144 stops after Gokura and falls through to the procedural path at :145. A real, located web-vs-android content divergence. NIT: the aside 'decodes under the recovered transform to bitmap pixel (43,39)' names no transform in the cite and I could not check it; the finding does not depend on it.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t136s0§.as:140-151",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "cite04/bar-equals-stance-gate-is-web-only",
+   "refuted": false,
+   "reason": "HELD, all six lines exact. Web: §1t113s0§.as:328 '(param1 - 48) / (param2 - 48)', §1t99s0§.as:3050 'return this.§1t4469s0§() && this.§1t4414s0§ >= 48;', :3060 'if(this.§1t4414s0§ < 48)'. Android: MCSPlayer.as:1163 'this.tempreload = this.reload - 24;', :1168 'updateReload(this.tempreload / (this.maxreload - 24))', :2977 'if(this.reload < this.maxreload / 6)'. I confirmed maxreload = 5*24 = 120 at MCSPlayer.as:239, so maxreload/6 = 20 while the bar's dead zone is 24 — the 20-23 window where the android bar reads zero and the stance change is still legal is real.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:1163 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:2977 · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:328",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "cite04/buff-attack-scales-mindamage-only",
+   "refuted": false,
+   "reason": "HELD, exact. MCSPlayer.as:210 'if(StatsManager.hasBuff(StatsManager.BUFF_ATTACK))' :212 'this.minDamage *= 1.5;'; :191-192 assign minDamage/damageRange; :3201 'var baseDamage:int = this.minDamage + Math.random() * this.damageRange;'. BUFF_DEFENSE (:216) touches defense only and BUFF_INJURED (:220-222) halves minDamage/defense/baseSlashLength — both as stated. Web §1t99s0§.as:211-213 is the same three lines under the obfuscated test. The conclusion (the duel_dense correction is not a flat /1.5) follows. Independently: reference/frames/session11/crit-focus/t1003.000.png visibly prints '150% DAMAGE'.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:210-212 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3201 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:211-213",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "cite04/three-war-room-decks-disagree",
+   "refuted": false,
+   "reason": "HELD. I opened all three artifacts. strings.json[\"377\"]='War room rules 5/6  (rank)' and [\"379\"]='War room rules 6/6  (building structures)'; a value search for 'inning'+'osing' over all 2,533 entries returns []. ui_strings.txt:193='War room rules 5/6 &nbsp;(WINNING AND LOSING)', :194='War room rules 6/6 &nbsp;(rank)'. On film I read frame_0011 'WAR ROOM RULES 1/7 (JOINING A BATTLE)', frame_0012 '3/7 (ATTACKING AND DEFENDING)', frame_0013 '6/7 (BUILDING STRUCTURES)', each carrying the android body text of strings.json[\"370\"]/[\"374\"]/[\"380\"] verbatim. Three decks, exactly as claimed. NIT: the build field calls ui_strings.txt 'the web payload's baked text fields'; I could not establish that provenance from the file, and docs/GAUNTLET.md:156 only calls it 'an alphabetised dump of the SWF's static UI fields'.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0011.jpg · frame_0012.jpg · frame_0013.jpg (whole frame, 1024x576 native, read at 1:1) · reference/extracted/ui_strings.txt:193-194",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "cite04/web-crit-label-and-sfx-symbol",
+   "refuted": false,
+   "reason": "HELD, character-exact. :110 'this.§1t5203s0§ = \"<font color=\\'#000000\\'>\" + §1t1521s0§.getString(175) + \"</font>\";'; strings.json[\"175\"]='Critical Hit'; :348 'else if(_loc3_ >= 1)' :352 '§1t88s0§.instance.§1t1516s0§(\"Snd_criticalDamage\");'. STRIKE BEFORE LEDGER ENTRY: its closing clause 'given S0-5 says the audio is held but encrypted' repeats a line superseded by correction C3. The clause is a motivating aside, not part of the claim — the claim asserts nothing about audio recoverability — so I hold the finding and flag the aside for deletion rather than refuting a verified A2 fact on it.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110 · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:348-352",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/android-stance-numbers-are-a-rebalance",
+   "refuted": false,
+   "reason": "HELD; QUOTE_NOT_LOCATED is a false positive of the '·'/'||' compression. Every value checks: android slash 3030 *1.5, 3041 (1+0.5*m*0.01), 3052 (0.5+0.5*m*0.01); android dmg 3205 (0.5+0.5*m*0.01), 3213 *1.5, crit 3219 *1.2 / 3221 *1.5. Web slash 3094 *1.4, 3105 (1+0.2*m*0.1), 3116 (0.5+0.4*m*0.1); web dmg 3262 (0.5+0.4*m*0.1), 3265 (1+0.2*m*0.1), 3270 *1.4, crit 3274 flat *1.3. Its contrast list is also right: getBaseSlashLengthVal, the reach base formula and the mastery ladder ARE character-identical across builds.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3030 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3205-3221 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3094 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262-3274",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/attacker-level-min-damage-floor",
+   "refuted": false,
+   "reason": "HELD. Damage.as:150-173 is the quoted function verbatim: damage==0 -> 0; attackerlvl==0 -> damage; <=10 -> 1+piercing; <=20 -> lvl/8+piercing; <=30 -> lvl/6+piercing; else lvl/4+piercing. Applied right after defence subtraction at MCSPlayer.as:3415-3418. NIT: the cite range 149-171 stops one line short of the final '/ 4' return at :172, which the quote does include — a range nit, not a mis-cite.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Damage.as:150-173 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3415-3418",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/cannot-change-stance-not-in-android-strings",
+   "refuted": false,
+   "reason": "HELD; QUOTE_NOT_LOCATED is expected for a claim whose 'quote' is a search result. I cropped and read both frames: 'CANNOT CHANGE STANCE' is plainly legible over the third bar in each (t1003.000 also shows HP 14/20, Chi 31/31, red stance ring, '150% DAMAGE'). The exhaustive search reproduces exactly: entries containing 'annot' AND 'tance' = [], entries starting 'Cannot' = [], nearest are strings.json[\"208\"]='Change Stance' and [\"125\"]='Stance Restriction'. STRONGER PROOF AVAILABLE — see my new finding cite04-nf/cannot-change-stance-is-getstring-960: the label is getString(960) at §1t113s0§.as:111 and key 960 is absent from the android table entirely.",
+   "own_cite": "reference/frames/session11/damage-ttk/t1961.900.png crop (100,940)-(620,1080) x3 LANCZOS · reference/frames/session11/crit-focus/t1003.000.png crop (0,900)-(640,1080) x3 NEAREST",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/crit-is-full-reload-1p3",
+   "refuted": false,
+   "reason": "HELD, character-exact — the four quoted lines are literally lines 3272-3276. The trigger is reload == maxreload (a full bar), the multiplier is a flat 1.3 in every stance, and §1t1243s0§ (STAT_CRITICALDMG) is added after. Android twin confirmed at MCSPlayer.as:3215-3221, which splits 1.2 non-light / 1.5 light — so the 1.3 is genuinely a v0.717 reading, not an android port.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3272-3276",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/desktop-stance-multipliers",
+   "refuted": false,
+   "reason": "HELD, exact. 3094 '* 1.4'; 3105 '* (1 + 0.2 * this.§1t4422s0§ * 0.1)' = 1+0.02m; 3116 '* (0.5 + 0.4 * this.§1t4423s0§ * 0.1)' = 0.5+0.04m with the 100 floor at 3117-3120. Differs from android 3030/3041/3052 (1.5, 1+0.005m, 0.5+0.005m). Its positional-identification note also checks out: §1t99s0§ is MCSPlayer and §1t4443s0§ is initPlayer (called at §1t122s0§.as:778 with the mastery triple).",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3094 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3105 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3116",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/duel-path-damage-terms-unsurveyed",
+   "refuted": false,
+   "reason": "HELD, exact and important. §1t4904s0§.as:406-408 is the hat/head/neck case, :409 '_loc3_ *= 1.3;' :410 '§1t1071s0§ = true;', then :419-429 the 1.2/0.9 stance triangle, then :431 '_loc3_ -= §1t4477s0§();'. So on this class the behead multiplier really is applied BEFORE defence subtraction. Android MCSPlayer.as:3701-3708 has only the *1.2 branch (no *0.9) and applies behead *1.5 at :3714-3716, after the floor — exactly as claimed. Note the ordering differs between the two WEB classes too: §1t99s0§.as:3805-3807 applies the same 1.3 after the floor.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t4904s0§.as:406-431 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3717",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/every-checked-combat-number-moved-between-builds",
+   "refuted": false,
+   "reason": "HELD; QUOTE_NOT_LOCATED is a compression artifact. Six for six: rebirth payout web §1t1523s0§.as:2646 '100' / :2651 '25' vs android StatsManager.as:2203 '20' / :2207 '5'; Light+Reversed reach 1.5 vs 1.4; mastery scaling *0.01 vs *0.1; heavy dmg 1.5 vs 1.4; crit 1.2//1.5 vs flat 1.3; stance-change penalty android MCSPlayer.as:3098-3104 'if(reload > maxreload/2) reload = maxreload/3; else reload -= maxreload/6;' vs web §1t99s0§.as:3162 flat '-= 48'. The Light/Reversed attribution is correct under the true enum mapping (see my new finding on the enum values).",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2646 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2651 · reference/decompiled/shs3_android/scripts/StatsManager.as:2203 · reference/decompiled/shs3_android/scripts/StatsManager.as:2207 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3098-3104",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/focus-6s-is-the-source-not-a-parity-break",
+   "refuted": false,
+   "reason": "HELD; QUOTE_NOT_LOCATED is a '///'-separator artifact. §1t99s0§.as:249 is 'this.§1t4415s0§ = 8 * 24;' and :1203-1208 is the '++reload … updateReload(reload,maxreload)' block, both exact. COMBAT_MEASUREMENTS.md:618 reads 'empty -> full | 6.00 s | agreeing to 0.5 % (6.01 / 6.00 / 5.98)' with the '3 independent 60 fps regressions' basis at :617 — the quote is verbatim. src/config/combat.ts:82/:100/:101 already carry 192/48/144. 192-48 = 144 frames / 24 fps = 6.000 s. No frame-vs-doc conflict exists here and the finding is right to say the invariant does not fire.",
+   "own_cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md:618 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249 · src/config/combat.ts:82",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/focus-fill-remeasured-on-frames",
+   "refuted": false,
+   "reason": "HELD — I re-ran the measurement myself and reproduced all five numbers to the pixel. Right edges at y=1036: t1081.100 x=259, t1082.100 x=304, t1082.900 x=340, t1004.800 x=282, t1005.000 x=291. Deltas 45 px/s (259->304 over 1.0 s), 45 px/s (304->340 over 0.8 s), 45 px/s (282->291 over 0.2 s). Track from the full Chi bar on t1003.000: x=245..513 on both rows 1008 and 1010 = 269 px. 45/269 = 16.7 %/s => 5.98 s (the finding's 267 px gives 5.92 s). Either way the frames and the source's 6.000 s agree, so the frame-beats-doc invariant genuinely does not apply.",
+   "own_cite": "reference/frames/session11/crit-focus/t1082.100.png · t1082.900.png · t1081.100.png · t1004.800.png · t1005.000.png (own white-fill right-edge scan at y=1036) · t1003.000.png (own blue-channel track scan rows 1008/1010)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/footage-runs-at-nominal-24fps",
+   "refuted": false,
+   "reason": "HELD — reproduced first-hand. My header parse returns CWS, version 17, frameRate 24.000, frameCount 6, rect 0..16000 x 0..13800 twips: character-for-character the claimed byte-check. My own 60 fps burst shows the crit-bar fill edge moving on ONLY every 4th video frame (15 Hz content floor, confirmed) and the subpixel steps are bimodal at ~1.9 px and ~3.8 px, exactly as claimed; 267 / 1.9 = 140.5 displayed ticks against the source's 144. NIT: my combined tick rate came out 22.5 ticks/s against the claim's 23.75 — a ~5 % spread traceable to edge thresholding and ffmpeg's approximate -ss seek. The conclusion (a capture floor, not a slow game; nothing under 66.7 ms resolvable) reproduces cleanly.",
+   "own_cite": "reference/decrypted/shs3_payload_decoded.swf (own header parse) · reference/videos/Nr4fQstqHDM.mp4 (own 60 fps bursts at 1084.3333 s and 1089.2667 s, fill edge at y=1034, x in [246,513])",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/generic-post-defense-damage-floor",
+   "refuted": false,
+   "reason": "HELD, and the 'generic' claim is the part I checked hardest. The four-band ladder is verbatim at Damage.as:150-173. I opened every application site named: MCSPlayer.as:3415-3418 and :3710, EnemyWolf.as:384, EnemyShield.as:347, EnemyNianMonster.as:383, EnemyClone.as:222 and :443, EnemyJiangSi.as:304 — all read 'if(damage < damageObj.getMinDamage())'. It is a pipeline rule, not boss scaling. The web twin is §1t67s0§.as:197-209, character-identical.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Damage.as:150-173 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3415-3418 · reference/decompiled/shs3_android/scripts/EnemyWolf.as:384 · reference/decompiled/shs3_android/scripts/EnemyShield.as:347 · reference/decompiled/shs3_android/scripts/EnemyClone.as:222",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/heavy-launch-unlock-is-3-on-target-build",
+   "refuted": false,
+   "reason": "HELD; QUOTE_NOT_LOCATED is a '·'-separator artifact. Web light 3223/3224/3225 = >=3/>=4/>=5; balanced 3231/3232/3233; heavy 3239/3240/3241 (canLaunch >=3, canDeflect >=4, canStab >=5); reversed/dual 3245-3252 all five true. Identical to android 3164-3195. src/config/stances.ts:58-62 currently reads light 3 / balanced 5 / heavy 5, so heavy is indeed wrong on both builds. CAVEAT the parent must carry: player-unlocks-are-skills-not-mastery shows this ladder is the NPC branch only, so 'heavy: 3' is right for enemies but the config key is the wrong shape for the player. Land that claim first.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3221-3252 · src/config/stances.ts:58-62",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/hud-track-is-269px",
+   "refuted": false,
+   "reason": "HELD — reproduced exactly. My own scan: blue Chi span x=245..513 on BOTH rows 1008 and 1010, width 269. HP green edge at x=433; (433-245)/269 = 69.9 % against the displayed 14/20 = 70.0 % (I read '14/20' off the cropped frame myself). COMBAT_MEASUREMENTS.md:588 does say 'track 268 px @1080' and :610 does say 'width 269-270 @1080'. Frame beats doc and the finding is 269.",
+   "own_cite": "reference/frames/session11/crit-focus/t1003.000.png (own blue-channel scan rows 1008/1010, green scan row 980) · docs/research/fidelity/COMBAT_MEASUREMENTS.md:588 and :610",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/inputmanager-200-is-not-a-gameplay-base",
+   "refuted": false,
+   "reason": "HELD, every line exact. §1t1541s0§.as:51 'internal static var maxDistance:int = 200;'; :106-108 is the setter 'public static function §1t10094s0§(param1:int) : * { maxDistance = param1; }'; §1t99s0§.as:3158 '§1t1541s0§.§1t10094s0§(this.§1t4417s0§);' sits inside setStance under 'if(controlledBy == 0)' at :3156, so it fires on every stance set including battle init (android twin MCSPlayer.as:3092-3094). §1t1523s0§.as:2346-2347 gives base = 120 + floor((90+5*DAN)*SPD/(20+SPD)); at SPD 1 / Dan 0 that is 120+4 = 124 and the Dan-0 asymptote is 210. Both arithmetic claims check.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:51 · reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:106-108 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3156-3158 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2346-2347",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/mastery-domain-is-1-to-10-resolved",
+   "refuted": false,
+   "reason": "HELD, and it is the correct answer to the domain question three other claims in this packet get wrong. skilldata.xml:74 '<value>10</value>' is skill 1000's top level (id 1000 opens at :4, the block closes at :80). StatsManager.as:1834 passes getStat(1000)/(1001)/(1002) into initPlayer, and getStat routes SKILL ids to skillStat.getValue() (StatsManager.as:3956-3962), 0 when unowned. XMLNpc.as:680-682 returns the npcdata value verbatim. Web coefficients 0.02/level and 0.04/level give 1.02->1.20 and 0.54->0.90 across 1..10, exactly as stated. Independent corroboration I found: strings.json[\"8131\"]='Light Stance Mastery Level 10.' and skill 1000's displayname 6000 = 'Light Stance Mastery'. NIT: build is labelled 'web v0.717' but four of five cites are android-side; the web §1t99s0§ coefficients are what make the conclusion safe.",
+   "own_cite": "reference/extracted/skilldata.xml:73-79 · reference/decompiled/shs3_android/scripts/StatsManager.as:1834 · reference/decompiled/shs3_android/scripts/XMLNpc.as:680-682 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3105 and :3116",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/mastery-domain-unresolved",
+   "refuted": true,
+   "reason": "REFUTED. Two grounds, neither of which is 'it is uncertain' — I do not penalise honest STILL_UNHELDs. (1) Its substantive sub-claim is false on the target build: 'on the 0-10 reading the heavy reach mastery term can never do anything, because its maximum (x0.55) stays permanently under its own 100-unit floor'. x0.55 is the ANDROID coefficient (0.5+0.5*m*0.01 at m=10). v0.717's §1t99s0§.as:3116 reads '* (0.5 + 0.4 * this.§1t4423s0§ * 0.1)' -> x0.90 at m=10, and with base >= 124 (§1t1523s0§.as:2346-2347) the product clears the 100 floor easily. The term does plenty. (2) The question it declares open is closed by artifacts I opened: skilldata.xml:74 <value>10</value> for skill 1000, getStat's SKILL branch at StatsManager.as:3956-3962, and strings.json[\"8131\"] 'Light Stance Mastery Level 10.' It also carries no cite at all, so under §0 it could never enter the ledger regardless.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3116 · reference/extracted/skilldata.xml:73-79 · reference/decompiled/shs3_android/scripts/StatsManager.as:3956-3962",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/mastery-is-0-to-9",
+   "refuted": true,
+   "reason": "REFUTED on the ceiling. The cited lines (MCSPlayer.as:3166-3184, §1t99s0§.as:3231-3241) are verbatim and prove exactly one thing: ability gates at >=3 / >=4 / >=5. They say NOTHING about a ceiling. '0-9' is an inference dressed as a citation, and it is contradicted by three artifacts I opened: skilldata.xml:74 gives skill 1000 a top <value>10</value>; strings.json[\"8131\"] is the achievement 'Light Stance Mastery Level 10.'; and only m=10 substituted into §1t99s0§.as:3262 (0.5+0.4*m*0.1 -> 0.9) and :3265 (1+0.2*m*0.1 -> 1.2) reproduces the ledger's own damage table — m=9 gives 0.86/1.18 and reproduces nothing. The domain is 0 (unlearned) / 1-10. The half that matters — that mastery is NOT a 0-100 percentage — is right, and is carried correctly by mastery-is-small-integer and mastery-domain-is-1-to-10-resolved, both HELD, so nothing is lost by dropping this row.",
+   "own_cite": "reference/extracted/skilldata.xml:73-79 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262 and :3265",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/mastery-is-single-digit",
+   "refuted": true,
+   "reason": "REFUTED on the ceiling, same defect as mastery-is-0-to-9. Its cites are exact — I read MCSPlayer.as:3166-3168, 3174-3176, 3182-3184 and §1t99s0§.as:3231-3233, 3239-3241 and every gate is >=3/>=4/>=5 as quoted — but 'single-digit integer scale' asserts a <=9 ceiling that no cited line establishes and that skilldata.xml:74 (<value>10</value>) and strings.json[\"8131\"] ('Light Stance Mastery Level 10.') contradict. Its lane note compounds it by explicitly endorsing the ledger's 'mastery-9' scale reading. Refuted narrowly: the '0-100 percentage' rebuttal it exists to deliver is correct and survives in mastery-is-small-integer.",
+   "own_cite": "reference/extracted/skilldata.xml:73-79 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262 and :3265",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/mastery-is-small-integer",
+   "refuted": false,
+   "reason": "HELD. Quote is character-exact: 3262 '_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);', 3265 '* (1 + 0.2 * this.§1t4422s0§ * 0.1)', 3270 '* 1.4'; MCSPlayer.as:3174-3176 the balanced 3/4/5 ladder. Its m=10 substitution is the RIGHT one and reproduces 0.9 / 1.2 / 1.4 exactly — which is why I refuted the two sibling claims that assert a ceiling of 9. Its 'roughly 0-10' hedge is accurate. The reversed/dual unconditional grant at MCSPlayer.as:3188-3195 is also verbatim.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262-3270 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3174-3176 · reference/decompiled/shs3_android/scripts/StatsManager.as:1834",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/min-damage-floor-is-generic-and-attacker-keyed",
+   "refuted": false,
+   "reason": "HELD. I opened every cited line. Damage.as:150-172 is the function verbatim; MCSPlayer.as:3415-3418 is 'damage -= this.getDefense(); if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); }'; EnemyWolf.as:296, EnemyFox.as:169 and EnemyNianMonster.as:295 are all 'target.checkHitObject(mcs.partList[MCSCharacter.PART_weapon],new Damage(damage,level));' exactly as quoted (EnemyJiangSi.as:206 is the same call with 'mcs' instead of the part, a harmless variant the finding does not quote). Integer division throughout is correct — the return type is int.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Damage.as:150-173 · reference/decompiled/shs3_android/scripts/EnemyWolf.as:296 · reference/decompiled/shs3_android/scripts/EnemyFox.as:169 · reference/decompiled/shs3_android/scripts/EnemyNianMonster.as:295 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3415-3419",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/parity-confirmed-set",
+   "refuted": false,
+   "reason": "HELD — I checked BOTH sides of all ten. standingRange 50 / jumpThreshhold 100 / runSpeed 12 / slashSpeed 50-40-30 sit at lines 9,11,13,15,17,19 in BOTH files. maxDistance 200 / 4 / 400 / thickness 8 / 20 sit at 51,53,55,57,59 in BOTH. Tap dead-zone '< 625' at §1t99s0§.as:2377 vs MCSPlayer.as:2301. Multi-target '< 40000' at §1t1543s0§.as:1486 vs NPCManager.as:1230. Reach base formula §1t1523s0§.as:2346-2347 vs StatsManager.as:1917-1918. Four-band floor §1t67s0§.as:197-209 vs Damage.as:160-172. Heavy defence '* 0.8' §1t99s0§.as:3288 vs MCSPlayer.as:3235. Mastery ladder 3/4/5. Ten for ten, byte-identical. This is the packet's real safe yield.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:9-19 · reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:51 · reference/decompiled/shs3_payload/scripts/§1t1543s0§.as:1486 · reference/decompiled/shs3_payload/scripts/§1t67s0§.as:197-209 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2346-2347 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:9-19 · reference/decompiled/shs3_android/scripts/InputManager.as:51 · reference/decompiled/shs3_android/scripts/NPCManager.as:1230",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/parity-established-for-ten-quantities",
+   "refuted": false,
+   "reason": "HELD; QUOTE_NOT_LOCATED is a compression artifact. §1t122s0§.as:771 'var _loc3_:int = 48 + param1.speed * 6;' and :774 '120 + Math.floor(_loc5_ * _loc4_ / (20 + _loc4_))' are exact; §1t68s0§.as:467 '_loc3_ -= this.defense;' and :483 'this.§1t3246s0§ = 12;' are exact; §1t99s0§.as:3288 'return defense * 0.8;' and :3238 the heavy canLaunch >= 3 gate are exact. NIT: the cite says §1t1541s0§.as:52-60 but 'maxDistance:int = 200' is at :51, OUTSIDE that range — an off-by-one on the range start. The other four constants (4/400/8/20) are at 53/55/57/59, inside it.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t122s0§.as:771 · reference/decompiled/shs3_payload/scripts/§1t122s0§.as:774 · reference/decompiled/shs3_payload/scripts/§1t68s0§.as:467 · reference/decompiled/shs3_payload/scripts/§1t68s0§.as:483 · reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:51-59",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/payload-swf-framerate-24",
+   "refuted": false,
+   "reason": "HELD — I parsed the header myself and got ('CWS', 17, 24.0, 6, 6880328), character-for-character the claimed tuple. First-party web-build evidence for the tick->second conversion, so gotHitCounter 12 -> 0.5 s and reload 192 -> 8.0 s raw / 6.0 s displayed no longer borrow the android Mobile.as:117 line.",
+   "own_cite": "reference/decrypted/shs3_payload_decoded.swf (own header parse)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/player-unlocks-are-skills-not-mastery",
+   "refuted": false,
+   "reason": "HELD, and it is the strongest of the three unlock claims. Web §1t99s0§.as:3186 'if(controlledBy == 0 || controlledBy == 2)' then 3190-3192 skill 1014/1036/1015 (light), 3198-3200 1016/1037/1017 (balanced), 3206-3208 1018/1038/1019 (heavy), 3212-3219 reversed/dual all-true; the >=3/>=4/>=5 mastery ladder starts at 3221 in the ELSE branch. Android MCSPlayer.as:3129-3162 is the same block with the same nine skill ids. So the mastery ladder is the NPC path and LAUNCH_UNLOCK_LEVEL is the wrong SHAPE for the player, exactly as claimed. This should land before the heavy 5->3 edit.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3186-3212 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3129-3162",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/reach-units-unreconciled",
+   "refuted": true,
+   "reason": "REFUTED on its cross-validation half; the conservative half is right and should be salvaged. Cites resolve: COMBAT_MEASUREMENTS.md:394-398 reads Light 233-241/303 n=17, Balanced 116-131/131 n=17, Heavy 97-103/121 n=25 verbatim; StatsManager.as:1915-1919 is getBaseSlashLengthVal verbatim; InventoryUI.as:1940-1970 is the slashModifier table verbatim; and its uncited 'web per-stat cap at level 8 = 1+(8+10)*3 = 55' is TRUE — I located it at §1t5957s0§.as:3344-3346. THE FAILURE: 'RATIO TEST PASSES: payload Light/Heavy at mastery 0 = 1.5/0.5 = 3.00'. The 1.5 is the v0.682 Light modifier (MCSPlayer.as:3030, InventoryUI.as:1948); the footage is v0.717, where §1t99s0§.as:3094 reads '* 1.4'. The target-build ratio is 1.4/0.5 = 2.80, an 8 % miss against the frames' 3.03 — not a match. Worse, §1t99s0§.as:3117-3120 clamps Heavy to 100 and the measured Heavy plateau of 97-103 is exactly where that clamp sits, so the denominator carries no information about the modifier at all. The finding asks the ledger to record this as 'a genuine independent cross-validation'; it would be a false corroboration built from the wrong build's constant — the precise error the rest of this packet warns against. SALVAGE: keep the magnitude gap and the explicit THE-FRAME-WINS ruling on stage-px; strike the ratio test.",
+   "own_cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md:394-398 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3094 and :3116-3120 · reference/decompiled/shs3_android/scripts/InventoryUI.as:1948 · reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3344",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/reversed-and-dual-reach",
+   "refuted": true,
+   "reason": "REFUTED — two errors in one sentence. (1) THE NAMES ARE TRANSPOSED. §1t99s0§.as:27-35 declares §1t12220s0§=0, §1t12221s0§=1, §1t12222s0§=2, §1t12223s0§=3, §1t12224s0§=4; MCSPlayer.as:27-35 declares LIGHT=0, BALANCED=1, HEAVY=2, DUAL=3, REVERSED=4 at the SAME line numbers. So §1t12223s0§ is DUAL and §1t12224s0§ is REVERSED — the claim has them the other way round. Cross-checked against the bodies: web :3130 case §1t12224s0§ -> '* 1.4', colour 2, which matches android :3066 REVERSED (* 1.5, colour 2); web :3141 case §1t12223s0§ -> base x1 with the 100 floor, colour 3, which matches android :3077 DUAL structurally line for line. (2) 'BOTH hard-floored at 100' IS FALSE. The clamp at :3143-3146 exists only in the §1t12223s0§ (DUAL) case; the §1t12224s0§ (REVERSED) case at :3130-3140 has no floor at all. Correct row: on v0.717 REVERSED = base x1.4, no floor; DUAL = base x1.0, floored at 100. A port taking this claim ships each stance with the other's reach plus an invented clamp. The packet's own stance-constant-identity-is-pinned-by-hud-colour gets this right and is HELD; the two are in direct contradiction and only one can enter the ledger.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:27-35 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3130-3146 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:27-35 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3066-3090",
+   "severity": "material"
+  },
+  {
+   "claim_id": "combat-core/sim-dash-hz-unit-bug",
+   "refuted": false,
+   "reason": "HELD, and the bug is real. Mobile.as:117 'GameEngine.getStageMC().frameRate = 24;' exact; MCSPlayer.as:15-19 lightSlashSpeed 50 / balancedSlashSpeed 40 / heavySlashSpeed 30 exact. I verified the UNIT rather than taking it on trust: movement(speed) at MCSPlayer.as:2890-2907 sets velX = +/-speed and calls movePlayer(velX) once per enterFrame, and :2696-2698 derives velX = xdiff/time with time = dist/slashSpeed — so these are px per 24 Hz frame = 1200/960/720 px/s. src/core/Sim.ts:670 'speedPxS: DASH_SPEED_PX_PER_FRAME[player.stance] * FIXED_HZ,' with src/config/timing.ts:8 'export const FIXED_HZ = 60;' yields 3000/2400/1800 px/s — 2.5x too fast. src/config/combat-sim.ts:77 is the quoted CONTRACT-SRC comment verbatim. I read only; Sim.ts is NO-TOUCH under §4.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Mobile.as:117 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:2890-2907 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:2696-2698 · src/core/Sim.ts:670 · src/config/timing.ts:8 · src/config/combat-sim.ts:77-78",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/slash-units-are-800x480-stage",
+   "refuted": false,
+   "reason": "HELD, every line exact. StatsManager.as:80 'public static var stageWidth:int = 800;' :82 '...stageHeight:int = 480;' :86 'stageScale:Number = 1;'. InputManager.as:342-343 divide the raw mouse by stageScale to get stage coords, and :469-479 re-apply stageScale only when drawing (:469 'var scaledThickness:int = thickness * StatsManager.stageScale;'). The desktop confirm holds: web §1t1523s0§.as:104/:106 are stageWidth 800 / stageHeight 480 under their own unobfuscated names. So the slash budget really is consumed in unscaled 800x480 stage units.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:80 and :82 and :86 · reference/decompiled/shs3_android_payload/scripts/InputManager.as:342-343 and :469-479 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:104 and :106",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/stance-change-costs-48-meter",
+   "refuted": false,
+   "reason": "HELD, character-exact — :3160 'if(§1t1525s0§.§1t9948s0§())' :3162 'this.§1t4414s0§ -= 48;' :3163-3166 the clamp to 0, :3169 the HUD update. The battle-only gate is real (the whole block sits under the isBattle test). Its tactical consequence also checks: §1t99s0§.as:3272 crits on reload == maxreload, so a stance change at a full meter throws the crit away.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3160-3171",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/stance-constant-identity-is-pinned-by-hud-colour",
+   "refuted": false,
+   "reason": "HELD, and its mapping is CORRECT: §1t12220s0§=LIGHT(1), §1t12221s0§=BALANCED(2), §1t12222s0§=HEAVY(3), §1t12223s0§=DUAL(base x1, floor 100, colour 3), §1t12224s0§=REVERSED(x1.4, colour 2). Both quoted equivalences are exact (web :3141-3153 vs android :3077-3089; web :3130-3138 vs android :3066-3074). NOTE FOR THE PARENT: I found a stronger proof than the colour fingerprint — §1t99s0§.as:27-35 and MCSPlayer.as:27-35 declare the five constants at IDENTICAL line numbers with IDENTICAL integer values 0/1/2/3/4. Colour alone cannot separate BALANCED from REVERSED (both 2) or HEAVY from DUAL (both 3); the declared value can. Filed as a new finding. This claim directly contradicts reversed-and-dual-reach, which I refuted.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:27-35 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3130-3153 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:27-35 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3066-3090",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/stance-gate-is-a-flat-48-tick-toll",
+   "refuted": false,
+   "reason": "HELD. All five lines exact: :3050 gate '>= 48', :3060 early-return '< 48', :3162 toll '-= 48', §1t113s0§.as:328 the (x-48)/(max-48) render, :336-342 the label swap when _loc3_ == 0. COMBAT_MEASUREMENTS.md:591 (f-7) does say 'the message replaces the bar in the same slot', so the source-side explanation is real. NIT: the cite also lists §1t99s0§.as:103 'internal var §1t4419s0§:int = 48;' as if it were the toll constant — it is not; :191 shows §1t4419s0§ is assigned from initPlayer's param7 (baseReload, = 48 + speed*6 per §1t122s0§.as:771), so its 48 is a coincidental speed-0 default. The claim does not rest on it.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:328 · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:336-342 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3050 and :3060 and :3162 · docs/research/fidelity/COMBAT_MEASUREMENTS.md:591",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/stance-label-is-a-frame-clock",
+   "refuted": false,
+   "reason": "HELD — I built the contact sheet and looked. Reading the six tiles: sliver / no label; ~13 % / no label; ~22 % / no label; ~35 % / no label; EMPTY BAR WITH 'CANNOT CHANGE STANCE' PRINTED ACROSS IT (t1083.100); ~47 % / no label. The load-bearing sentence is exactly right: t1082.900 shows 35 % with no label and t1083.100, 0.200 s later, shows an empty bar with the label on. My own fill scan puts the five label-absent frames at 5.2 / 13.8 / 21.9 / 35.3 / 46.8 % against the finding's 4.2 / 12.5 / 21.3 / 35.0 / 46.4 % — within a point, and the finding used a 267-268 px track. NIT: the quote's tile ordering does not match its own cite ordering (tiles 2 and 5 are swapped in the prose); the five percentages in the text are all correct.",
+   "own_cite": "reference/frames/session11/crit-focus/t1083.100.png · t1082.900.png · t1081.100.png · t1004.800.png · t3779.000.png (own six-tile sheet, crop (230,1015)-(530,1050) x4 NEAREST)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/stance-triangle-1.2-and-damage-order",
+   "refuted": true,
+   "reason": "REFUTED on direction. The order-of-operations half is right and I verified it verbatim at MCSPlayer.as:3701-3717 (stance x1.2 -> minus getDefense() -> clamp to damageObj.getMinDamage() -> behead x1.5 -> then the four elemental terms at :3718), as is the white damagetextcol 16777215 gated on controlledBy != 0. But the parenthetical 'LIGHT beats BALANCED beats HEAVY beats LIGHT' is EXACTLY INVERTED. The quoted block is the VICTIM's gotHit: 'this' is the character taking the hit, so 'this.stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE -> damage *= 1.2' means a LIGHT victim takes +20 % from a BALANCED attacker, i.e. BALANCED beats LIGHT. Settled independently by the game's own tutorial copy, strings.json[\"IDS_Q50S3NODE2\"]: 'Balanced is effective against Light. Heavy is effective against Balanced. Light is effective against Heavy.', corroborated by [\"6001\"]/[\"6003\"]/[\"6005\"]. Direction is the one thing a STANCE_BEATS table encodes, so this is material. stance-triangle-damage-magnitudes states the direction correctly and is HELD; take that row instead.",
+   "own_cite": "docs/gauntlet/L0/index/strings.json (entries [\"IDS_Q50S3NODE2\"], [\"6001\"], [\"6003\"], [\"6005\"]) · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3717",
+   "severity": "material"
+  },
+  {
+   "claim_id": "combat-core/stance-triangle-damage-magnitudes",
+   "refuted": false,
+   "reason": "HELD, character-exact, and its DIRECTION is right where a sibling claim's is not. Web :3788-3795 is the x1.2 branch with damagetextcol 16777215; :3796-3799 is the else-if x0.9 branch, which android MCSPlayer.as:3701-3708 genuinely lacks. Its text — 'the victim takes x1.2 when the attacker's stance beats theirs' — is the correct reading of the victim-side gotHit, and matches strings.json[\"IDS_Q50S3NODE2\"] ('Balanced is effective against Light...'). The ordering claim (before defence subtraction and before behead) checks at :3800-3807. This is the row the ledger should take.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3788-3799 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3708",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/stance-triangle-is-1p2",
+   "refuted": false,
+   "reason": "HELD. The quoted block is verbatim at :3701-3707 (the closing brace the quote includes is at :3708, one line past the cited 3699-3706 range — a range nit). x1.2 not x1.5 is right, and 'damagetextcol = 16777215' set only when controlledBy != 0 is right. Crucially this claim states NO direction, so it does not carry the inversion that killed stance-triangle-1.2-and-damage-order. Its lane note's pipeline order (stance 1.2 -> minus defense -> clamp -> behead 1.5 -> elemental) is verbatim correct at :3701-3718.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3707",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/stroke-render-frame-confirmed",
+   "refuted": false,
+   "reason": "HELD — I cropped, looked, and re-scanned. t862.600: one bold red segment over the enemy, no tail. t862.667, 67 ms later at the identical crop: the same bold segment PLUS a thin red line running the full width of the crop. My red-column heights at x=460/780/900 came out 2/4/13, matching the claim; 540 and 940 came out 8 and 17 against the claimed 5 and 18 (my mask also catches the fighter's red sash) — noise, not error. My modal stroke colour is (153,0,0), BETTER than the claimed (150,0,0), and InputManager.as:472 hard-codes 10027008 = 0x990000 with 'thickness:int = 8' at :57. 18 px / 8 world units = 2.25 px/unit = 1080/480. The taper direction also matches the source: lineStyle(scaledThickness - scaledThickness*((maxDistance-distLeft)/maxDistance)) is full at the stroke's start and zero at its end.",
+   "own_cite": "reference/frames/session11/stance-reach/B_t862.667_HEAVY_thin-dark-tail-plus-bold-head.png and B_t862.600_HEAVY_bold-bright-red-head-only.png (own crop (400,690)-(1020,820) x3 LANCZOS + own red-column scan) · reference/decompiled/shs3_android_payload/scripts/InputManager.as:472 and :57",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/two-builds-differ-in-stage-height",
+   "refuted": false,
+   "reason": "HELD — reproduced on all three legs. My header parses: web CWS v17, frameRate 24.000, rect 800.0 x 690.0; android CWS v26, frameRate 24.000, rect 800.0 x 480.0. StatsManager.as:80/:82 give the 800x480 world space under their own names. My own scan of B_t785.200: first non-black column 52, last 1867, width 1816 — identical to the claim; 1816/800 = 2.27 px per world unit. The warning that the web header's 690 is chrome rather than playfield is the right reading. NIT: 1816/1080 = 1.68, so '5:3' is rounded; the vertical scale is 1080/480 = 2.25 exactly, which is what the sibling stroke claim measures. The 1 % spread between 2.25 and 2.27 is within edge-threshold noise and neither claim is thereby wrong.",
+   "own_cite": "reference/decrypted/shs3_payload_decoded.swf and reference/decrypted/shs3_android_payload_decoded.swf (own header parses) · reference/frames/session11/stance-reach/B_t785.200_LIGHT_stroke553px_endtoend.png (own column-brightness scan) · reference/decompiled/shs3_android_payload/scripts/StatsManager.as:80 and :82",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/web-android-combat-tuning-diverges-on-four-constants",
+   "refuted": false,
+   "reason": "HELD; QUOTE_NOT_LOCATED is a '///'-separator artifact. All five pairs exact: §1t99s0§.as:249 '8 * 24' vs MCSPlayer.as:239 '5 * 24'; :3274 '* 1.3' vs :3219/:3221 '* 1.2'/'* 1.5'; :3270 '* 1.4' vs :3213 '* 1.5'; :3094 '* 1.4' vs :3030 '* 1.5'; §1t1523s0§.as:200 'internal static const §1t9400s0§:int = 40;' vs StatsManager.as:166 'MAXDUELTOKENS:int = 30' — positionally locked by the identical neighbours 60*60 at :196/:162, 7 at :198/:164 and 40 at :202/:168. NIT ON WORDING: it says the S0 caveat's 'combat tuning parity is NOT established' is 'positively DISPROVEN'. These counterexamples STRENGTHEN that caveat; they disprove parity, not the caveat. Substance is right.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:200 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:239 · reference/decompiled/shs3_android/scripts/StatsManager.as:166",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/web-calcxp-is-verbatim-in-v0717",
+   "refuted": false,
+   "reason": "HELD, and it is the cleanest parity proof in the packet. I diffed both by eye: §1t68s0§.as:185-209 is NPC.as:166-190 line for line — the grey cut-off, the mob-minus-player > 3 cut-off, 'xp * (1 + 0.05 * (mobLevel - playerLevel))', 'xp * (1 - (playerLevel - mobLevel) / getZeroDifference())', 'if(elite) finalXP *= 2'. getGreyLevel (§1t68s0§.as:113-129 vs NPC.as:94-110) is identical including the <6 / <40 / <60 bands. Every quoted line number is right. CONTRACT at 0.717 is justified.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:185-209 · reference/decompiled/shs3_android/scripts/NPC.as:166-190 · reference/decompiled/shs3_payload/scripts/§1t68s0§.as:113-129 · reference/decompiled/shs3_android/scripts/NPC.as:94-110",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/web-crit-is-flat-1.3",
+   "refuted": false,
+   "reason": "HELD, character-exact. 'if(this.§1t4414s0§ == this.§1t4415s0§) { return _loc2_ * 1.3 + this.§1t1243s0§; }' — flat 1.3 in every stance (the switch above at 3267-3270 groups HEAVY/DUAL/REVERSED, so no light/non-light split survives into the crit), plus the flat gear term. The x3 candidate is dead. src/config/combat.ts's 1.3 is confirmed by the shipped client rather than by the forum.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3272-3274",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/web-focus-economy",
+   "refuted": false,
+   "reason": "HELD, all three exact. :249 '8 * 24' = 192; :1203-1205 'if(this.§1t4414s0§ < this.§1t4415s0§) { ++this.§1t4414s0§;' = +1/frame; §1t113s0§.as:328 '(param1 - 48) / (param2 - 48)'. 192 - 48 = 144 visible frames / 24 fps = 6.000 s. My own frame re-measurement (see focus-fill-remeasured) gives 5.92-5.98 s, so there is genuinely no doc-vs-frame conflict and 6.000 s CONTRACT-SRC is the right call.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1203-1208 · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:328",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "combat-core/web-only-1.3-state-multiplier",
+   "refuted": true,
+   "reason": "REFUTED. The quoted lines are exact (§1t99s0§.as:3800-3807, though the cite says 3804-3807 and the first two clauses sit at 3800-3803), but both substantive assertions are false. (1) 'The boolean itself is not yet identified' — it is identified 64 lines above the cite IN THE SAME FUNCTION: §1t99s0§.as:3736-3747 is a switch over mcs.§1t6231s0§[§1t75s0§.§1t12394s0§/12393/12389] (the hat/head/neck part slots) that sets §1t1071s0§ = true at :3741 and false in the default at :3745. §1t4904s0§.as:406-410 repeats it with '_loc3_ *= 1.3; §1t1071s0§ = true;'. It is the BEHEAD flag, not a juggle state. (2) 'no android counterpart' — MCSPlayer.as:3689-3692 sets 'behead = true' on the identical PART_hat/PART_head/PART_neck switch and :3714-3716 applies 'if(behead) { damage *= 1.5; }' after the same min-damage floor. So there is no fifth damage term: there is the behead term, retuned 1.5 -> 1.3 between builds. Left standing, this row would sit in the ledger ALONGSIDE the behead multiplier and double-count the same +30 % on every head hit. Correct disposition: a sixth web-vs-android divergence row.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3736-3747 · reference/decompiled/shs3_payload/scripts/§1t4904s0§.as:406-410 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3689-3692 and :3714-3716",
+   "severity": "material"
+  }
+ ],
+ "judged_count": 48,
+ "packet_size": 48,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "newfind/mastery-ceiling-is-10-not-9",
+   "text": "The mastery domain's ceiling is 10, not 9, so the ledger's 'mastery-9 ceilings' phrase is off by one — the stance tables are MASTERY-10 ceiling values. Three independent artifacts: skilldata.xml:73-79 gives skill 1000 (displayname 6000 = 'Light Stance Mastery') a top <value>10</value>; strings.json[\"8131\"] is the achievement 'Light Stance Mastery Level 10.' (so 10 is reachable); and only m=10 substituted into the v0.717 damage switch reproduces the ledger's own 0.9 / 1.2 / 1.4 table — m=9 yields 0.86 / 1.18 and reproduces nothing. getStat(1000/1001/1002) routes through StatsManager.as:3956-3962 to skillStat.getValue(), returning 0 when unlearned, so the full domain is 0 / 1-10. The 'ceiling, not base' half of the ledger sentence survives; only its number falls.",
+   "artifact_class": "A2",
+   "build": "both — web v0.717 coefficients, android v0.682 data tables",
+   "cite": "reference/extracted/skilldata.xml:73-79 · docs/gauntlet/L0/index/strings.json (entry [\"8131\"]) · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262 and :3265 · reference/decompiled/shs3_android/scripts/StatsManager.as:3956-3962",
+   "quote": "skilldata.xml:74 '<value>10</value>' (skill 1000's top level, block closes at :80) · strings.json[\"8131\"] = 'Light Stance Mastery Level 10.' · §1t99s0§.as:3262 '_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);' -> 0.9 at m=10 · :3265 '* (1 + 0.2 * this.§1t4422s0§ * 0.1)' -> 1.2 at m=10 · StatsManager.as:3960 'return skillStat.getValue();'",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "the stance tables are **mastery-9 ceilings**, not base",
+   "lane_impact": "L5 combat-core — replace 'mastery-9' with 'mastery-10' wherever it appears, and ship the domain as 0/1-10. This is also why I refuted combat-core/mastery-is-0-to-9 and combat-core/mastery-is-single-digit."
+  },
+  {
+   "id": "newfind/stance-enum-pinned-by-declared-value",
+   "text": "The five obfuscated stance constants are pinned by their DECLARED INTEGER VALUE, not by a HUD-colour fingerprint, and the value proof is strictly stronger. §1t99s0§.as and MCSPlayer.as declare them at IDENTICAL line numbers with IDENTICAL values: 27 -> 0, 29 -> 1, 31 -> 2, 33 -> 3, 35 -> 4, against LIGHT/BALANCED/HEAVY/DUAL/REVERSED. setStanceColor cannot separate them on its own — it emits 2 for BOTH BALANCED and REVERSED and 3 for BOTH HEAVY and DUAL — so any claim resting on colour alone is under-determined. This is the artifact that settles §1t12223s0§ = DUAL and §1t12224s0§ = REVERSED, and it is what killed combat-core/reversed-and-dual-reach. Generalises: for any obfuscated enum with a named android twin, compare the declaration block first.",
+   "artifact_class": "A2",
+   "build": "both — web v0.717 and android v0.682",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:27-35 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:27-35",
+   "quote": "web §1t99s0§.as:27 'internal static var §1t12220s0§:int = 0;' :29 '§1t12221s0§:int = 1;' :31 '§1t12222s0§:int = 2;' :33 '§1t12223s0§:int = 3;' :35 '§1t12224s0§:int = 4;'  ||  android MCSPlayer.as:27 'internal static var LIGHT_STANCE:int = 0;' :29 'BALANCED_STANCE:int = 1;' :31 'HEAVY_STANCE:int = 2;' :33 'DUAL_STANCE:int = 3;' :35 'REVERSED_STANCE:int = 4;'",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L5 + every lane reading the obfuscated web bundle — a general de-obfuscation method, and the decisive evidence for the DUAL/REVERSED reach rows."
+  },
+  {
+   "id": "newfind/1071-is-the-behead-flag-and-it-moved-1p5-to-1p3",
+   "text": "§1t1071s0§ is the BEHEAD flag, and the behead multiplier is a sixth counted web-vs-android combat divergence: 1.5 on android v0.682, 1.3 on web v0.717. It is set by a switch over the hat/head/neck part slots at §1t99s0§.as:3736-3747 and again at §1t4904s0§.as:406-410; android does the identical thing at MCSPlayer.as:3689-3692 with the name 'behead'. The two web classes also disagree on ORDER: §1t4904s0§ applies x1.3 at :409 BEFORE the defence subtraction at :431, while §1t99s0§ applies it at :3805-3807 AFTER the min-damage floor — so the same head hit produces different numbers on the two paths, and a port must pick per class.",
+   "artifact_class": "A2",
+   "build": "both — web v0.717 x1.3, android v0.682 x1.5",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3736-3747 and :3805-3807 · reference/decompiled/shs3_payload/scripts/§1t4904s0§.as:406-410 and :431 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3689-3692 and :3714-3716",
+   "quote": "web §1t99s0§.as:3738-3741 'case mcs.§1t6231s0§[§1t75s0§.§1t12394s0§]: case […12393…]: case […12389…]: §1t1071s0§ = true;' :3745 'default: §1t1071s0§ = false;' :3805-3807 'if(§1t1071s0§) { _loc5_ *= 1.3; }'  ||  §1t4904s0§.as:409-410 '_loc3_ *= 1.3; §1t1071s0§ = true;'  ||  android MCSPlayer.as:3692 'behead = true;' :3714-3716 'if(behead) { damage *= 1.5; }'",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L5 + L4 — retires combat-core/web-only-1.3-state-multiplier's phantom 'fifth damage term' and replaces it with a divergence row plus an ordering warning. Prevents double-counting +30 % on every head hit."
+  },
+  {
+   "id": "newfind/cannot-change-stance-is-getstring-960",
+   "text": "A source-side proof of the 'CANNOT CHANGE STANCE' build divergence that is stronger than any English-text search. The web build builds that label from §1t1521s0§.getString(960) at §1t113s0§.as:111 — the sibling line to the getString(175) 'Critical Hit' label at :110. The android string table has NO key 960: its numeric keys skip the entire 940-999 band, with 1000 the next present entry. So the divergence is proven at the ID level and does not depend on any assumption about how the copy was worded.",
+   "artifact_class": "A2",
+   "build": "both — web v0.717 references id 960, android v0.682 table lacks it",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111 · docs/gauntlet/L0/index/strings.json (entries [\"175\"], [\"1000\"]; no entry [\"960\"])",
+   "quote": "§1t113s0§.as:111 'this.§1t5204s0§ = \"<font color=\\'#BBBBBB\\'>\" + §1t1521s0§.getString(960) + \"</font>\";' — and §1t113s0§.as:336-342 assigns §1t5204s0§ to the bar's label when the fill is exactly 0. strings.json has no key \"960\"; the numeric keys jump from the 800s to \"1000\".",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L8 + L5 — upgrades combat-core/cannot-change-stance-not-in-android-strings from an exhaustive-search argument to a source-side one, and gives the recreation the exact string slot to fill."
+  },
+  {
+   "id": "newfind/per-stat-caps-diverge-between-builds",
+   "text": "The per-stat CAP formulas diverge between builds in four of six rows, and one of them feeds the reach model directly. Positionally aligned, same six handlers in the same order: MAXHP web '10 + (lvl+10)*10' vs android '10 + (lvl+10)*5'; MAXCHI identical in both; MAXAP web '30 + (lvl+10)*5' vs android '20 + (lvl+10)'; ATK/DEF/SPD web '1 + (lvl+10)*3' vs android 'lvl + 10'. At level 8 the SPD cap is 55 on web and 18 on android — a 3x difference in the input to baseSlashLength = 120 + floor((90+5*DAN)*SPD/(20+SPD)). This makes the web level-8 Dan-0 reach ceiling 120 + floor(90*55/75) = 186, not the ~130 an android-capped reading gives.",
+   "artifact_class": "A2",
+   "build": "both — web v0.717 and android v0.682",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3341-3346 · reference/decompiled/shs3_android/scripts/InventoryUI.as:2407-2412",
+   "quote": "web §1t5957s0§.as:3341 '< 10 + (_loc2_ + 10) * 10' :3342 '< 10 + (_loc2_ + 10) * 5' :3343 '< 30 + (_loc2_ + 10) * 5' :3344-3346 '< 1 + (_loc2_ + 10) * 3'  ||  android InventoryUI.as:2407 '< 10 + (charlevel + 10) * 5' :2408 '< 10 + (charlevel + 10) * 5' :2409 '< 20 + (charlevel + 10)' :2410-2412 '< charlevel + 10'",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L1 + L4 + L10 — a 6th/7th/8th/9th counted web-vs-android divergence beyond the five in combat-core/web-android-combat-tuning-diverges-on-four-constants, and the concrete resolution of the 'SPD 205 is impossible' leg of the reach-magnitude gap. Any progression or reach row derived from the android caps is wrong for v0.717 by a wide margin."
+  },
+  {
+   "id": "newfind/heavy-defence-penalty-is-in-the-string-table",
+   "text": "The game's own tooltip copy sources two combat constants the lane has only ever read out of AS3. strings.json[\"6005\"] (heavy stance description) ends 'Defense -20%', which is the player-facing statement of getDefense()'s 'return defense * 0.8'. And strings.json[\"IDS_Q50S3NODE2\"] states the stance triangle in words — 'Balanced is effective against Light. Heavy is effective against Balanced. Light is effective against Heavy.' — which is the artifact that fixed the triangle's DIRECTION and refuted combat-core/stance-triangle-1.2-and-damage-order. strings.json[\"IDS_Q50S3NODE1\"] additionally fixes the HUD ring colours: 'Light stance - blue, Balanced stance - brown, Heavy stance - red', matching setStanceColor 1/2/3.",
+   "artifact_class": "A2",
+   "build": "android v0.682 string table; the AS3 it corroborates is web v0.717",
+   "cite": "docs/gauntlet/L0/index/strings.json (entries [\"6005\"], [\"IDS_Q50S3NODE1\"], [\"IDS_Q50S3NODE2\"]) · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3286-3288",
+   "quote": "strings.json[\"6005\"] = 'Slow but powerful stance. Damage inflicted is increased but slash range is shorter.\\nEffective against Balanced Stance.\\nDefense -20%' · [\"IDS_Q50S3NODE2\"] = 'Balanced is effective against Light. Heavy is effective against Balanced. Light is effective against Heavy.' · [\"IDS_Q50S3NODE1\"] = 'Your stance is indicated by the color of the circle around your portrait: Light stance - blue, Balanced stance - brown, Heavy stance - red.' · §1t99s0§.as:3288 'return defense * 0.8;'",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L5 + L8 — a second, player-facing source for the heavy defence penalty and the stance triangle direction, and a check on the stance ring colours the frames show (t1003.000.png's ring is red = heavy)."
+  }
+ ]
+}

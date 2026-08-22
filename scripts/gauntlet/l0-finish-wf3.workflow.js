@@ -55,14 +55,21 @@ const TAG = (typeof args === 'object' && args?.tag) ? `.${args.tag}` : ''
 // prose. scripts/gauntlet/salvageJournal.py --critic-json extracts those even when the
 // run returns nothing at all.
 function writeBack(stem) {
-  return `⛔ BEFORE YOU RETURN — TWO FILES, and this run dies without them:
-  1. Your full prose review to ${stem}.md
-  2. The EXACT structured object you are about to return, as JSON, to ${stem}.json
-     — same fields, same values, valid JSON, no markdown fence around it.
-This run must survive a usage wall. At wall #8 the prose survived and the structured
-verdicts did NOT, and seven reviews' worth of judging was destroyed because a blind
-re-judge may never read another agent's prose (§3.2). Write file 2 even if you think
-you are about to return normally. THEN return the structured object.`
+  return `⛔ BEFORE YOU RETURN — TWO FILES, IN THIS ORDER. This run dies without file 1.
+  1. FIRST, before you compose a single line of prose: the EXACT structured object you
+     are about to return, as JSON, to ${stem}.json — same fields, same values, valid
+     JSON, no markdown fence around it. Write it the moment you have your verdicts.
+     THIS FILE IS THE WORK. Everything else is a record of it.
+  2. THEN your full prose to ${stem}.md.
+
+⛔ THE ORDER IS NOT A STYLE PREFERENCE — IT IS THE WHOLE INSURANCE. This lane has hit the
+usage limit NINE times. At wall #8, seven finished reviews sat on disk as .md while the
+journals held zero results, and every structured verdict was lost. At wall #9 it happened
+again to two more batches, for one reason only: they wrote the prose first. A blind
+re-judge may NEVER read another agent's prose (§3.2), so a lost verdict cannot be
+recovered from a surviving review — it has to be earned again from nothing.
+
+Write file 1 even if you are certain you are about to return normally.`
 }
 
 const LAW = `

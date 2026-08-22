@@ -1,0 +1,377 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "android-blobs/four-shipped-bg-id-collisions",
+   "refuted": false,
+   "reason": "HELD verbatim. I opened GameStage.as: grep -n gives :102 BG_JINMAKU_OUTSIDE=46, :104 BG_JINMAKU_NIGHT_OUTSIDE=47, :108 BG_TEMPLERUINS_FOG=49, :110 BG_TEMPLEINTERIOR2=50, :122 BG_MINE2=46, :124 BG_RIVERBANK=47, :126 BG_DOJO4=49, :128 BG_DOJO5=50 - all eight line numbers exact, text exact (citelint's QUOTE_NOT_LOCATED is only the 6-space decompiler indent). Counted mechanically: 60 'BG_*:int = N' declarations, 56 distinct ids. I also independently checked the lane_impact: 123_Mobile_BGData.bin holds exactly 49 <bg> records over ids 0-54 with six unused slots (4,19,23,24,25,43), and the decrypted 120_Mobile_BGResource.bin (key 'g'=103) exports exactly 49 BG_* symbols whose names set-match bgdata's 49 names with ZERO difference either way. So four named constants genuinely have no scene of their own.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/GameStage.as:102,:104,:108,:110,:122,:124,:126,:128 (opened; 60 BG_* declared, 56 distinct ids) + reference/extracted/android/123_Mobile_BGData.bin (49 <bg>, ids 0-54, missing 4/19/23/24/25/43)"
+  },
+  {
+   "claim_id": "android-blobs/ground-blur-applies-to-two-layers-only",
+   "refuted": false,
+   "reason": "Operative claim HELD verbatim: BG_Loader.as:248-252 reads exactly 'if(i <= 2 && groundLayerBlur != 0) { ColorCode.blur(mc,groundLayerBlur); mc.cacheAsBitmap = true; }' - the ground plane is the only plane whose blur AND cacheAsBitmap sit inside an index test, so blurring all ground layers at 4 is wrong. TWO CORRECTIONS, both minor, neither touching the operative rule. (1) 'the one exception ... every other plane guards only on if(<plane>LayerBlur != 0) with no index test' is WRONG: BG_Loader.as:186 wraps the farthest-plane blur in 'if(!(this.bgType == BG_FORESTSPOOKY && i > 2))', an index+bgType test the claim's own contrast range (:188-191) sits directly beneath. (2) I parsed 123_Mobile_BGData.bin: FIVE records carry gcount=4 (id 6 BG_ForestSpooky, 32 BG_Graveyard, 48 BG_TempleExteriorFog, 49 BG_TempleRuinsFog, 51 BG_DungeonFog), not the four named - BG_TempleExteriorFog is missing from the list.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/BG_Loader.as:186 and :245-252 (opened) + reference/extracted/android/123_Mobile_BGData.bin (gcount histogram {2:34, 0:6, 4:5, 1:4})",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "android-blobs/item-art-ids-are-shared-not-identity",
+   "refuted": false,
+   "reason": "HELD. I parsed 111_Mobile_ItemData.bin myself: line 327 is '\\t\\t<art>20041</art>' and line 485 is '\\t\\t<art>2130</art>' - both exact. Measured 146 <art> tags over 982 <item> records, 68 distinct art targets, art 2130 appears 39 times, and rows where art==id: ZERO. The resolution rule is confirmed in code at XMLItem.as:110-116: 'if(xml.art.toString() != \"\") { this.art = xml.art; } else { this.art = this.id; }'. That kills the parenthetical it targets ('itemdata has no <art> tag anywhere') outright. One cosmetic drift: my id-band histogram (a//1000*1000) gives 2000:47 and 20000:7 where the claim says 2000:45 and 20000:9; totals agree at 146 and nothing rests on the binning.",
+   "own_cite": "reference/extracted/android/111_Mobile_ItemData.bin lines 327 and 485 (opened; 146 <art>, 68 distinct, 982 <item>, 0 self-referential) + reference/decompiled/shs3_android_payload/scripts/XMLItem.as:110-116"
+  },
+  {
+   "claim_id": "android-blobs/parallax-z-order-is-authored-not-code",
+   "refuted": false,
+   "reason": "HELD. I opened BG_Loader.as and grepped every getChildByName: :182 'ff_'+i, :205 'f_'+i, :225 'pp_'+i, :245 'ground_'+i, :257 'fg_'+i - all five line numbers exact. :51 'this.stageContent = ResourceManager.getBG(bgXML.name);' then :52 'addChild(this.stageContent);' confirms one authored container is added and every plane is fetched, never composited. I also confirmed the lane_impact's 874: summing ffcount+fcount+ppcount+gcount+fgcount over 123_Mobile_BGData.bin's 49 records gives 147+211+311+92+113 = 874 exactly. Minor over-claim: ':52 is the only addChild in the class' is not literally true - :650 'this.stageContent.ff_1.addChild(npc)' and :669/:681 'this.stageContent.playercanvas.addChild(npc)' also add children, but they add NPCs into pre-existing authored containers, which if anything strengthens the point (the fighter lives in an authored 'playercanvas' whose depth the FLA author fixed).",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/BG_Loader.as:51-52,:182,:205,:225,:245,:257,:650,:669,:681 (opened) + reference/extracted/android/123_Mobile_BGData.bin (layer-slot sum 874)"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/150-percent-damage-is-a-potato-buff",
+   "refuted": false,
+   "reason": "HELD. docs/gauntlet/L0/index/strings.json[\"4132\"] is exactly 'Eat this potato to get the 150% Damage buff.\\n\\nNote: Only one buff may be active at a time.'; [\"125\"] = 'Stance Restriction'; [\"208\"] = 'Change Stance'. I then closed the loop the claim only gestures at: OverworldHUD.as:1388 updateBuff(bufftype,duration) and :1404 'buffstr = \"150% DAMAGE\";' make the HUD line a buff readout, and MCSPlayer.as:3703 'damage *= 1.2;' is the stance-matchup branch. Both halves of the disambiguation are artifact-backed.",
+   "own_cite": "docs/gauntlet/L0/index/strings.json[\"4132\"], [\"125\"], [\"208\"] (opened) + reference/decompiled/shs3_android/scripts/OverworldHUD.as:1404 + MCSPlayer.as:3703"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/150pct-damage-is-a-buff-not-the-stance-modifier",
+   "refuted": false,
+   "reason": "HELD, every cite exact. MCSPlayer.as:3701 is the stance-triangle condition and :3703 is 'damage *= 1.2;'; :3716 is 'damage *= 1.5;' inside 'if(behead)' (the claim says :3715 for the if, :3716 is the multiply - within its own cited block). StatsManager.as:290 is exactly 'internal static var BUFF_ATTACK:int = 1;'. strings.json[\"4132\"] and [\"125\"] verbatim. I opened the frame myself: reference/frames/duel_dense/Nr4fQstqHDM_432.0.png (1920x1080), crop (40,760)-(760,1060) upscaled 2x Lanczos - the bottom-left HUD stack visibly reads a green 20/20 bar, a blue 26/26 bar, then 'CANNOT CHANGE STANCE' and (yellow) '150% DAMAGE'. Frame and bytes agree; nothing to arbitrate.",
+   "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_432.0.png crop (40,760)-(760,1060) @2x Lanczos - HUD reads 'CANNOT CHANGE STANCE' / '150% DAMAGE' + reference/decompiled/shs3_android/scripts/StatsManager.as:290 + MCSPlayer.as:3701-3716"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/16pct-of-frames-are-authored-holds",
+   "refuted": false,
+   "reason": "HELD, and I reproduced every number. Robust parse ('<anim\\b[^>]*>') over the 19 animdata blobs in reference/extracted/bindata/: 487 anims, 5,596 <f>, 896 frames with zero <n> children = 16.0%. Per-file: 108_1t4635s0.bin 183 empty of 1,638 = 11.2%; 118_1t4645s0.bin 1 empty of 104 = 1.0%. Per-anim worst cases match exactly: zom_getup 49/95, zom_downedtocrawl 49/92, gangnam 44/88, ogre_death 28/54; ogre_walk d=24 has its 12 empties at indices 1,3,5,7,... and zom_idle d=56 has 28 empties on the same odd stride. Every figure in the claim is exact. This is also the strongest counter-evidence in the packet to a 15 Hz render clock: 12-Hz-inside-24 content only makes sense on a 24 Hz tick.",
+   "own_cite": "reference/extracted/bindata/*.bin - my own robust parse of all 19 animdata blobs (487 anims / 5,596 <f> / 896 empty = 16.0%; ogre_walk empties at i=1,3,5,...)"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/24hz-proven-on-web-build",
+   "refuted": false,
+   "reason": "HELD. I decoded the SWF header myself: reference/decrypted/shs3_payload_decoded.swf = CWS v17, fileLength field 11,892,061, rect twips [0,16000,0,13800] = 800.0 x 690.0 px, framerate 24.0, frameCount 6 - every field matches the claim exactly, and it is the web client (reference/extracted/payload.xml, the ffdec export of the web payload, independently declares frameCount=6 frameRate=24.0 version=17 with displayRect Xmax=16000 Ymax=13800). Calling 24 Hz 'the animation clock' is not a stretch: AnimData durations are integer tick counts advanced one per MCSCharacter.updateAnimation (:1315 '++this.frameCounter'), i.e. one stage frame per pose, and the web build carries the same class (see my verdict on bindata/NEW-web-payload-is-decompiled-parity-is-checkable).",
+   "own_cite": "reference/decrypted/shs3_payload_decoded.swf header parsed by me (CWS v17, 11892061, 16000x13800 twips = 800x690, fps 24.0, 6 frames) + reference/extracted/payload.xml:5-6"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/690-is-a-friend-panel",
+   "refuted": false,
+   "reason": "HELD, and stronger than filed. GameEngine.as:271 'var originalHeightWithBar:int = 690;', :275 'if(newAspectRatio <= originalWithBarAspectRatio)', :278 'originalHeight = originalHeightWithBar;', :279 'StatsManager.stageShowingFriendBar = true;' all exact; friendpanel.init() is at :282 not :281 (one line off, inside the cited :269-281 range). My own SWF header parses: reference/preservation/shs3.swf 16000x13800 twips = 800x690 fps 24.0, reference/decrypted/shs3_android_payload_decoded.swf 16000x9600 = 800x480 fps 24.0 - both exact. Two things I proved that the claim only asserts: OverworldHUD.as:144 'internal var friendpanel:FriendPanel;' with :390 'this.friendpanel.y = 480;' puts the panel at y 480..690, literally the 210 px delta and literally its own class (FriendPanel.as exists); and the WEB payload carries the identical handler at §1t1540s0§.as:271-273 (800/480/690), so 'settled by the payload alone' is now true for the web build too, not by Android inference.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:269-282 + OverworldHUD.as:144,:390 (opened) + reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:271-273 + my SWF header parses of reference/preservation/shs3.swf and reference/decrypted/shs3_android_payload_decoded.swf"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/690-is-the-friend-bar-layout",
+   "refuted": false,
+   "reason": "HELD verbatim. GameEngine.as:269-312 reads exactly as quoted: :271 originalHeightWithBar=690, :275 the '<=' aspect test, :277-278 originalAspectRatio/originalHeight swap, :279 stageShowingFriendBar=true, :282 friendpanel.init(), :312 'StatsManager.stageBaseHeight = originalHeight;'. The '210 px' is not an inference: OverworldHUD.as:390 sets 'this.friendpanel.y = 480;', so the panel occupies 480..690. And the condition direction is right - 800/690 = 1.159, so the bar appears when the window aspect falls to or below that (a narrower/taller window).",
+   "own_cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:269-312 and OverworldHUD.as:388-390 (both opened)"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/NEW-hold-tail-table-is-the-animdata-constructor-switch",
+   "refuted": false,
+   "reason": "HELD - I read the whole constructor. AnimData.as:15 'this.duration = xml.@d;'; :25-26 light_afterslashpose +10; :43-52 exactly ten *FALLSLASH_END / *JUMPSLASH_LAND cases then :53 '+= 15'; :55-57 sheathesword/sheathesword3 '+= 24'; :59-65 the seven-case death set then :66 '+= 6'; :68-69 gotlauncheddownedend '+= 24'; :105 ogre_nap1_mid '+= 48'; :114 DEATHTOUCH_PARTA '+= 50'; :141 PUNCHLUNGE_END '+= 12'. The two-counter model is exact: MCSCharacter.as:1316 'if(this.frameCounter < this.currentAnimationDuration)' vs :1334 'if(this.frameCounter < this.currentAnimation.frameList.length)'. One miscount: the *SLASH_POSE block at :28-40 is THIRTEEN cases (REVERSEDSLASH_POSE at :40 is the 13th), not twelve, with the '+= 10' at :41.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/AnimData.as:15,:23-142 read in full + MCSCharacter.as:1309-1338 (opened)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/animdata-loop-and-reorder-attrs",
+   "refuted": false,
+   "reason": "HELD, numbers exact. My attribute census over the 19 animdata blobs: anim attribute sets = {('d','i'): 385, ('d','i','l'): 102}; f attribute sets = {('i',): 5338, ('i','r'): 258}. Both match the claim character for character. Semantics verified in code: AnimData.as:16 'this.looping = xml.@l == 1;'; FrameData.as:15-17 'if(xml.@r.toString() != \"\") { this.reorder = xml.@r == 1; }'; MCSCharacter.as:1306 'this.currentAnimation.frameList[this.frameCounter].reorderLayers(this);'. citelint's QUOTE_NOT_LOCATED was the census line, not the code lines - all three code lines resolve exactly.",
+   "own_cite": "reference/extracted/bindata/*.bin - my attribute census (anim {('d','i'):385, ('d','i','l'):102}; f {('i',):5338, ('i','r'):258}) + reference/decompiled/shs3_android/scripts/AnimData.as:16, FrameData.as:15-17, MCSCharacter.as:1306"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/animdata-loop-flag-parsing-trap",
+   "refuted": false,
+   "reason": "TEXT HELD. Robust parse over all 19 blobs: 487 anims, anims with no @d = 0, @d != len(<f>) = 0. Strict '<anim i=\"X\" d=\"N\">' on 108_1t4635s0.bin returns 120 against the robust 158 - exactly the 38 dropped the claim states - and 'walk' there is 'i=\"walk\" d=\"20\" l=\"1\"', missed by the strict form. Two blemishes: light_run d=9 l=1 lives in 118_1t4645s0.bin, not in 108 (it is still missed by a strict parse, so the point stands); and ogre_swingdownhit in 100_1t4627s0.bin is d=5 with 5 frames under a robust parse, so the '~96 false mismatches such as d=5 vs 3 frames' is a property of one particular broken parser rather than of the artifact. IMPACT CORRECTION: 'the data genuinely holds no hold frames anywhere' is WRONG - 896 of the 5,596 <f> elements carry zero <n> children (see art-anim-audio-feel/16pct-of-frames-are-authored-holds, which I verified independently). @d never pads; individual frames do hold.",
+   "own_cite": "reference/extracted/bindata/108_1t4635s0.bin (robust 158 vs strict 120 = 38 dropped; walk d=20 l=1) + reference/extracted/bindata/*.bin robust parse (487 anims, 0 mismatches, 896 node-less frames)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/blue-object-is-persistent-not-a-trail",
+   "refuted": false,
+   "reason": "HELD, and I looked. I ran the claim's own mask (b>150 & b-r>110 & b-g>50 & g>60, restricted to y<960, x>400) over all 42 PNGs in reference/frames/duel_dense/: never zero, minimum 1,140. Spot values reproduce: 427.0=1140, 427.4=3070, 428.2=2737, 431.0=2863, 432.0=1960, 433.0=1392 (429.0 I get 1938 vs their 1939). Then I cropped (640,540)-(990,775) at 427.1 and upscaled to 700x470 Lanczos and looked: a large blue lens/wedge with white chevron highlights converging at the fighter's hands, AND a separate thick RED stroke crossing the scene - exactly as described. At 432.0 the same blue wedge is horizontal at the hands. A 5-frame self-removing effect cannot be present in 21 consecutive 0.1 s samples. One wording error: the 42 files are NOT consecutive - there is a hole between 429.0 and 431.0 - so it is 42 frames spanning 6.0 s with a 2 s gap, not 42 consecutive frames. The 427.0-429.0 run alone (21/21) settles it.",
+   "own_cite": "reference/frames/duel_dense/ all 42 PNGs, my own blue-mask scan (min 1140, never 0) + crop (640,540)-(990,775) of Nr4fQstqHDM_427.1.png @700x470 Lanczos - blue wedge at the hands plus a separate red slash stroke",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/definesound-samplecount-is-authoritative",
+   "refuted": false,
+   "reason": "HELD, verified from the bytes. I decrypted 122_Mobile_SoundResource.bin with ResourceManager.decryptByteArray (key = 'soundresource.swf'.charCodeAt(1) = 'o' = 111), inflated it, and parsed the 13 DefineSound tags myself. id=9 'slash1': fmt=MP3, rate=11025, 16-bit, mono, sampleCount=3809 -> 3809/11025 = 0.345 s exactly as claimed. The stem numbers also reproduce: six overworld stems (safepercussion, safekoto, safeambience, flutes, battledrums, battlechants) all at sampleCount 882,144 = 80.013 s, four dungeon stems (dungeonpiano/percussion/flute/ambience) all at 504,288 = 45.740 s. THIS OVERTURNS THE STAGE-0 C3 FIGURES (79.872 s / 45.760 s) - those are the afinfo-derived numbers this claim exists to correct, and the SWF tag beats them. Only drift: their tag byte length 1153 vs my 1146 (a 7-byte header accounting choice).",
+   "own_cite": "reference/extracted/android/122_Mobile_SoundResource.bin decrypted (key 111) and DefineSound-parsed by me: id=9 slash1 MP3 11025Hz mono samples=3809 = 0.345s; stems 882144 = 80.013s and 504288 = 45.740s"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/eighteen-of-34-enemy-classes-override-die",
+   "refuted": false,
+   "reason": "HELD exactly. ls reference/decompiled/shs3_android/scripts/Enemy*.as = 34 files; grep -l 'override public function die' = 18, and the 18 filenames are the same set the claim lists (Archer, Boar, Bear, Clone, Elite, Goblin, Horse, KanjiGuardian, Deer, GoblinThrower, TrainingDummy, Wolf, Ogre, WolfAlpha, NianMonster, Stag, VegePatch, Zombie). All three sample bodies are verbatim: EnemyArcher.as:304-308 'override public function die() : * { super.die(); mcs.setProp(13000); }'; EnemyElite.as:195-205 with the SKILL_UNDYING guard and super.die() at :199; EnemyClone.as:747-755 with dead=true / startAnim(ENEMYDEATH) / createSmoke3 / ttl=12 / mcs.visible=false.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Enemy*.as (34 files, 18 with 'override public function die') + EnemyArcher.as:304-308, EnemyElite.as:195-205, EnemyClone.as:747-755 (all opened)"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/glow-is-part-of-the-vocabulary",
+   "refuted": false,
+   "reason": "HELD - and this was the QUOTE_UNVERIFIED I most wanted to break, so I rebuilt the measurement from scratch. I decrypted 124_Mobile_ImageResource.bin (key 'm'=109), inflated it, walked the tag stream INCLUDING recursion into DefineSprite bodies, and decoded every PlaceObject3 filter list: Glow 1469, Blur 4 - the claim's figures to the unit. 115_Mobile_SHS3Resource.bin (key 'h'=104) gives Glow 8, matching. ColorCode.as:3-7 imports only MovieClip, BitmapFilterQuality, BlurFilter, ColorMatrixFilter and ColorTransform - no GlowFilter, no DropShadowFilter, so the class demonstrably never builds them. And I looked: reference/frames/duel_dense/Nr4fQstqHDM_432.0.png shows the yellow 'SOUND360TM' nameplate with a dark glow halo over a visibly blurred background. Drift: my PlaceObject3 walk gives 120_Mobile_BGResource Blur=33 (claim 29) and web-payload Blur=100 (claim 41); my web-payload walk desyncs on some records, so I treat their web figure as the better one. Nothing load-bearing moves.",
+   "own_cite": "reference/extracted/android/124_Mobile_ImageResource.bin decrypted (key 109) + PlaceObject3 filter parse by me = {Glow: 1469, Blur: 4}; reference/decompiled/shs3_android/scripts/ColorCode.as:3-7; reference/frames/duel_dense/Nr4fQstqHDM_432.0.png viewed at 0.5x"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/gore-has-no-frame-corroboration",
+   "refuted": false,
+   "reason": "HONEST STILL_UNHELD - and I replicated it rather than taking it on trust. I ran the same red mask (r>100, r-g>60, r-b>55) over all 7,364 image files under reference/frames/, normalised to 480x270: median 507 red px (they report 519 - filter choice), and the top 60 hits run 107,191 down to 97,376, i.e. ~75-83% of a 129,600-px frame, all full-screen red freezes. I then hunted specifically for what a spray would look like: over the 2,475 seg-*/frames/*.jpg video stills, the highest-fill localised red blobs are all 437x18 horizontal bars (a HUD element), and every compact square-ish candidate has fill <= 0.24, i.e. scattered scenery/UI red, not a coherent emitter. No deathnohead / deathnohand / deathinhalf / blood-spray frame exists in this corpus. The claim's own bound - that the byte-side gore model has no frame corroboration - is correct.",
+   "own_cite": "reference/frames/ - my own red-mask scan of all 7,364 files (median 507, top-60 range 107191-97376, all full-screen freezes; best localised candidates are 437x18 HUD bars)"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/gore-is-humanoid-only",
+   "refuted": false,
+   "reason": "HELD exactly. My own grep for DEATHNOHEAD across the 34 Enemy*.as files returns 17 with no such branch, and the 17 filenames are character-for-character the claim's list: EnemyBear, EnemyBoar, EnemyCivilianFemale, EnemyClone, EnemyDeer, EnemyElite, EnemyFox, EnemyHorse, EnemyNianMonster, EnemyPlayer, EnemyPlayerGiant, EnemyStag, EnemyVegePatch, EnemyWolf, EnemyWolf2, EnemyWolfAlpha, Enemy_VegePatch. Corroborated on the other side by EnemyOgre.as:351-363, whose die() plays a single OGRE_DEATH with one torso emitter and no dismemberment branch at all.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Enemy*.as - my grep for DEATHNOHEAD (17 of 34 absent, list matches) + EnemyOgre.as:351-363"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/gore-roll-is-per-class",
+   "refuted": false,
+   "reason": "HELD, verbatim where it matters. NPC.as:1005 'dice = Math.random() * 7;' then :1006 'if(dice <= 1)' ENEMYDEATH, :1012 'else if(dice == 2)' DEATH_FORWARD, :1017 'else if(dice == 3 && !StageManager.isRedFreeze())' DEFEATED2, :1029 'else if(dice == 4)' ENEMYDEATHNOHAND, :1051 'else if(dice == 5)' DEATHINHALF, :1069 'else' ENEMYDEATH - six branches with the red-freeze suppression exactly as quoted. EnemyZombie.as:641 'dice = Math.random() * 6;'. EnemyClone.as:747-755 has no gore path. EnemyOgre.as:360 'startAnim(OGRE_DEATH);' single. Only slip: 'only 8 of 35 Enemy*.as files contain Math.random() * 5' - the 8 is right, the denominator is 34, not 35.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NPC.as:1005-1081 (opened), EnemyZombie.as:641, EnemyClone.as:747-755, EnemyOgre.as:351-363",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/gothit-is-a-ladder-not-a-constant",
+   "refuted": false,
+   "reason": "HELD. EnemyShield.as:335-340 is verbatim 'case mcs.partList[MCSCharacter.PART_prop]: gotHitFlag = true; damage = 0; gotHitCounter = 24; SoundManager.instance.playHitMetal(); return false;' (the claim cites :335-339; the return is on :340, inside its own block). MCSPlayer.as:1457 gotHitCounter=24 under 'if(mcs.animation == DOWNSTAB)', :1461 = 84 under 'else if(this.controlledBy == 0)', both inside case REDFREEZE_STATE at :1454; :1764 = 26 after SKILL_THOUSANDSTABS_STATE, :1768 = 16 after SKILL_DEADLYCLEAVE_STATE. Every number in the ladder is in the shipped code, so '16 is a recreation invention' is dead. Also confirmed the adjacent point: EnemyShield.as:331-334 zeroes damage on a PART_weapon hit and :337 zeroes it on PART_prop, so a shield block is a hard block, not damage reduction.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/EnemyShield.as:331-340 + MCSPlayer.as:1454-1466 and :1762-1769 (all opened)"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/hit-reaction-ladder-not-uniform",
+   "refuted": false,
+   "reason": "HELD, histogram exact. My own 'grep -rhno gotHitCounter = [0-9]*' over reference/decompiled/shs3_android/scripts/*.as tallies 23x 12, 3x 0, 2x 24, 1x 26, 1x 16, 1x 84 - identical to the claim. All four context blocks are at the cited lines (EnemyShield.as:335-340; MCSPlayer.as:1455-1465 for the DOWNSTAB 24 / controlledBy-0 84 pair; MCSPlayer.as:1762-1768 for THOUSANDSTABS 26 and DEADLYCLEAVE 16). The SFX hookup is real too: EnemyShield.as:339 'SoundManager.instance.playHitMetal();', and I confirmed a DefineSound named 'hitmetal' (id 11, 5717 samples = 0.519 s) exists in the decrypted 122_Mobile_SoundResource.bin.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/*.as - my gotHitCounter histogram (12x23, 0x3, 24x2, 26x1, 16x1, 84x1) + EnemyShield.as:335-340 + MCSPlayer.as:1455-1465,:1762-1768 + DefineSound 'hitmetal' in decrypted 122_Mobile_SoundResource.bin"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/hud-150-damage-is-a-buff",
+   "refuted": false,
+   "reason": "HELD, cites exact. OverworldHUD.as:1388 'public function updateBuff(bufftype:int, duration:int) : *'; :1400 '\"150% XP\"'; :1404 '\"150% DAMAGE\"'; :1408 '\"150% DEFENSE\"'; :1412 '\"150% SPEED\"'; :1416 '\"200% AP REGEN\"'; :1420 '\"200% DUEL TOKEN REGEN\"' - the whole family, at the lines given. strings.json[\"4132\"] verbatim. And I looked at the frame: reference/frames/duel_dense/Nr4fQstqHDM_432.0.png bottom-left renders '150% DAMAGE' as a HUD row directly under 'CANNOT CHANGE STANCE', which is what a buff/debuff stack looks like. The 'one buff at a time' rule comes from the string itself.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1388-1420 (opened) + docs/gauntlet/L0/index/strings.json[\"4132\"] + reference/frames/duel_dense/Nr4fQstqHDM_432.0.png bottom-left crop @2x"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/killbeat-looks-like-red-field-black-silhouettes",
+   "refuted": false,
+   "reason": "HELD - I opened the frame and looked. reference/frames/session24/reach-A28-forest-duel/ev2_S3_wintint_hz031.png is 1100x630; viewed whole at 0.87x it is a uniform saturated red field with both fighters, their kasa, the blade wedge and the entire grass line rendered as SOLID BLACK with no interior detail, and exactly two small white diamond highlights surviving. ColorCode.as:12 is verbatim 'internal static var blackColorTransform:ColorTransform = new ColorTransform(0,0,0,1,0,0,0,0);' with makeBlack() applying it at :28-30 - a full-alpha ColorTransform, not a blend mode, which is what the frame shows. The claim's aside also checks out: the blade wedge here tapers to a point, unlike the blunt one at Nr4fQstqHDM_432.0.png. Independently, my red-mask scan ranks this frame #2 of all 7,364 at 106,787 red px in a 480x270 normalisation (~82% of frame).",
+   "own_cite": "reference/frames/session24/reach-A28-forest-duel/ev2_S3_wintint_hz031.png viewed whole at 0.87x (red field, black silhouettes, two white highlights) + reference/decompiled/shs3_android/scripts/ColorCode.as:12,:28-30"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/no-hold-frames-verified-exhaustively",
+   "refuted": false,
+   "reason": "TEXT HELD. My independent robust parse of every <anim> block across the 19 animdata blobs in reference/extracted/bindata/: 487 anim blocks, anims with no @d = 0, @d != number of <f> children = 0. Universal, as stated. IMPACT CORRECTION, same as for the parsing-trap claim: 'any hold frame observed on screen must come from AnimData's tail table' is too strong - 896 of the 5,596 <f> elements carry zero <n> children, so the data DOES author in-clip holds (ogre_walk holds on every odd frame). @d never pads the clip; individual frames absolutely do.",
+   "own_cite": "reference/extracted/bindata/*.bin - my parse of all 487 <anim> blocks (0 missing @d, 0 count mismatches, but 896 node-less <f>)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/pose-cadence-is-15hz-measured",
+   "refuted": true,
+   "reason": "MEASUREMENT REPLICATED EXACTLY; CONCLUSION UNGROUNDED. I extracted 150 frames from Nr4fQstqHDM.mp4 at t=428 and 120 from zFtCaTO0_1M.mp4 at t=900 with '-fps_mode passthrough' and computed luma MAE on [400:1000, 500:1500]. Nr4f mod-4 means = [0.061, 3.076, 0.026, 0.069] and raw deltas 0.42 5.94 0.05 0.02 0.02 5.29 0.02 0.02 0.03 4.95 0.00 0.03 0.00 3.17 - identical to the claim to three decimals. zFt mod-4 = [0.003, 0.040, 6.438, 0.078] - also identical. So the videos deliver unique content on exactly every 4th 60 fps frame. What that proves is that the VIDEO's temporal resolution is 15.0 Hz, not that the game steps poses at 15 Hz: a 15 fps capture of a 24 Hz game produces a bit-identical signature, and the fact that phases 0/2/3 sit at 0.003-0.078 MAE (NOTHING changes between updates - not parallax, not particles, not the HUD) is the signature of a 15 fps SOURCE rather than of a 24 Hz renderer with a pose latch. The final clause, 'the SWF's declared 24 fps describes only the stage timeline', is contradicted by the code I read: AnimData durations are integer stage-frame ticks, MCSCharacter.as:1315 advances frameCounter once per updateAnimation, the AnimData tails are multiples of 6 and 24, and 896 animdata frames deliberately carry no node updates on alternating indices - 12 Hz content inside a 24 Hz clock, which is impossible to author against a 15 Hz clock. Both payload headers independently read 24.0. The frame does not DISAGREE with the byte here; it under-samples it, so the frame-wins invariant does not fire. The honest verdict on 'does the shipped game step poses at 15 Hz' is STILL_UNHELD.",
+   "own_cite": "my own ffmpeg passthrough extraction from reference/videos/Nr4fQstqHDM.mp4 t=428 (mod-4 MAE [0.061, 3.076, 0.026, 0.069]) and reference/videos/zFtCaTO0_1M.mp4 t=900 ([0.003, 0.040, 6.438, 0.078]) + reference/extracted/bindata/*.bin (896 node-less frames on alternating indices) + reference/decrypted/shs3_payload_decoded.swf header fps 24.0",
+   "severity": "material"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/predecessor-swfs-hold-sfx",
+   "refuted": false,
+   "reason": "HELD - I re-ran the comparison myself. Parsed DefineSound tags from reference/predecessors/shs2_kon.swf (20 tags) and shs1_462631_shunpo202c.swf (10 tags) and MD5'd each against the 13 in the decrypted 122_Mobile_SoundResource.bin. Exactly two collide, and they are the two named: shs3 'punch' == shs2 'punch' == shs1 'punch', and shs3 'slash1' == shs2 'slash1' == shs1 'sword1'. (My digests differ from the claim's because I hashed the tag payload after the 7-byte header; the identity relation is the same.) The shs2 name list matches: deflect die1 die2 die3 hitmetal punch slash1 slash2 slash3 boom1 boom2 boom3 power_mp3 area2_mp3 area3_mp3 area4_mp3 boss_fight_mp3 cutscene4_mp3 ending_cutscene_mp3 - 19 named plus one unnamed id, hence 20 tags. Nine names are shared with shs3 and 7 of those 9 differ in bytes, so PARTIAL is the right self-grade. The 7 unsurveyed SHS2 music tracks are real.",
+   "own_cite": "reference/predecessors/shs2_kon.swf (20 DefineSound) and shs1_462631_shunpo202c.swf (10 DefineSound), MD5-compared by me against the decrypted reference/extracted/android/122_Mobile_SoundResource.bin - 2 exact collisions: punch and slash1/sword1"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/preservation-shs3swf-is-the-loader",
+   "refuted": false,
+   "reason": "HELD on substance. My own header parses: reference/preservation/shs3.swf = CWS v10, fileLength field 165,252, rect 16000x13800 twips = 800x690, framerate 24.0, frameCount 2 (164,505 bytes on disk); shs3preloader.swf = CWS v10, 165,305, same rect, 24.0, 2 frames - every field exact. A 2-frame 164 KB SWF is a loader stub, and the real client agrees on rate and rect. Mis-cite, minor: the ffdec header is NOT on payload.xml line 1 - line 1 is the '<?xml ...?><!--' preamble; '<swf ... frameCount=\"6\" frameRate=\"24.0\" ... version=\"17\">' is on line 5 and '<displayRect type=\"RECT\" Xmax=\"16000\" Xmin=\"0\" Ymax=\"13800\" Ymin=\"0\" nbits=\"15\"/>' on line 6. Content verbatim, line number wrong.",
+   "own_cite": "reference/preservation/shs3.swf and shs3preloader.swf headers parsed by me (CWS v10, 2 frames, 800x690, 24.0) + reference/extracted/payload.xml:5-6",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/rig-is-19-nodes",
+   "refuted": false,
+   "reason": "HELD, list exact. I pulled light_stance frame 0 out of 118_1t4645s0.bin myself and got the node ids in the claim's own order: 19,16,15,14,13,12,11,10,9,7,6,5,4,2,1,0,20,18,3 - COUNT = 19. MCSCharacter.as:10 'public static var PART_l_hand:int = 0;' through :62 'public static var PART_r_knee:* = 26;' = 27 PART_ constants (grep -c confirms 27). And the decisive negative holds: across all 19 blobs my per-anim first-frame node-count histogram is {9:1, 13:3, 16:36, 17:58, 18:71, 19:280, 20:22, 25:15, 26:1} - 21 NEVER OCCURS.",
+   "own_cite": "reference/extracted/bindata/118_1t4645s0.bin light_stance frame 0 (19 ids, order matches) + reference/decompiled/shs3_android/scripts/MCSCharacter.as:10-62 (27 PART_ constants)"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/rig-is-23-parts-27-slots",
+   "refuted": false,
+   "reason": "HELD. MCSCharacter.as:120 'internal var partListLength:int = 22;' and :141 'for(var i:int = 0; i <= this.partListLength; i++)' with :143-145 building a MovieClip per iteration = 23 slots; :10 PART_l_hand=0 ... :62 PART_r_knee=26 = 27 names. My own <n i=> scan over all 19 blobs: 25 distinct node ids, exactly 0-26 minus 8 and 17 - character-for-character the claim's figure. Their per-frame histogram differs from mine ({9:1,16:22,17:39,18:56,19:240,20:17,25:9,26:1} sums to 385, which is the count the STRICT anim regex returns - so it was computed with the parse trap this same packet documents); mine sums to 487. The load-bearing assertion is unaffected: 21 never occurs in either.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:120,:141-145,:10-62 + my <n i=> id scan over reference/extracted/bindata/*.bin (25 distinct ids = 0..26 minus 8 and 17)"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/rig-is-23-slots-26-for-wolves",
+   "refuted": false,
+   "reason": "HELD, every cite exact. MCSCharacter.as:120 partListLength=22 and :141 'for(var i:int = 0; i <= this.partListLength; i++) { mc = new MovieClip(); addChild(mc); this.partList.push(mc); }' -> 23 slots. MCSWolf.as:13 'partListLength = 25;' with the same '<=' loop at :14 -> 26. The named slots check out one by one: PART_crotch=8 (:26), PART_hat=17 (:44), PART_prop2=21 (:52), PART_prop3=22 (:54), PART_l_shoulder=23 (:56), PART_r_shoulder=24 (:58), PART_l_knee=25 (:60), PART_r_knee=26 (:62). And the aside is measured: ids 8 and 17 are the exact two never written by ANY of the 19 blobs, which is stronger than the claim's light-stance-only framing.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:26,:44,:52-62,:120,:141-145 + MCSWolf.as:13-14 + my node-id scan over reference/extracted/bindata/*.bin (8 and 17 absent everywhere)"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/stance-triangle-1p2-before-behead",
+   "refuted": false,
+   "reason": "HELD - I read the whole block. MCSPlayer.as:3699-3719 runs in exactly this order: :3700 damagetextcol=0; :3701 the three-way stance-triangle condition; :3703 'damage *= 1.2;'; :3706 damagetextcol=16777215 (guarded by 'if(this.controlledBy != 0)'); :3709 'damage -= this.getDefense();'; :3710-3713 'if(damage < damageObj.getMinDamage()) { damage = damageObj.getMinDamage(); }'; :3714-3717 'if(behead) { damage *= 1.5; }'; :3719 gotHitCounter=12. behead is set at :3690-3692 by a PART_head / PART_neck hit. So x1.2 before defence, x1.5 after the minimum clamp - the ordering claim is exact and the low-damage consequence is real.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3690-3719 read in full (opened) + reference/frames/duel_dense/Nr4fQstqHDM_432.0.png HUD crop"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/stance-triangle-is-1.2",
+   "refuted": false,
+   "reason": "HELD. MCSPlayer.as:3701 is verbatim 'if(this.stance == LIGHT_STANCE && enemyStance == BALANCED_STANCE || this.stance == BALANCED_STANCE && enemyStance == HEAVY_STANCE || this.stance == HEAVY_STANCE && enemyStance == LIGHT_STANCE)' and :3703 is 'damage *= 1.2;'. One line off: 'damagetextcol = 16777215;' is at :3706, not :3705 (still inside the cited :3701-3707). One nuance the claim flattens: the white recolour is conditional on 'if(this.controlledBy != 0)' at :3704, so 0xFFFFFF is the popup colour when the victim is NOT the player-controlled fighter, not unconditionally.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3707 (opened; damagetextcol at :3706 under 'if(this.controlledBy != 0)')",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/three-missed-shake-triggers",
+   "refuted": false,
+   "reason": "COUNT HELD, PARAMETER MIS-READ. My own grep for 'startShake(' over reference/decompiled/shs3_android/scripts/ returns exactly 8 call sites: Marker_RumbleTrigger.as:44, Trap_CrusherColumnAuto.as:90, MCSPlayer.as:911, :946, :4180, Trap_CrusherBlockAuto.as:88, HeavenlySwordProjectile.as:76, StatsManager.as:3535 - all three quoted lines verbatim. CORRECTION: the argument is NOT amplitude. StageManager.as:1200 declares 'public static function startShake(shakeDuration:int, shakeAmt:int = 30)', so startShake(12), startShake(6), startShake(24) and startShake(val) all set DURATION in ticks at the default amplitude 30. StatsManager.as:3535 is therefore a data-driven DURATION; the one genuinely data-driven AMPLITUDE is Marker_RumbleTrigger.as:44 'StageManager.startShake(this.shakeDuration,this.shakeAmt)'. The actionable core - 8 triggers, not 5, and a parameterised API is needed - survives.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/ - my grep for startShake( (8 sites) + StageManager.as:1200 'startShake(shakeDuration:int, shakeAmt:int = 30)' + Marker_RumbleTrigger.as:44",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/three-uncatalogued-shake-triggers",
+   "refuted": false,
+   "reason": "Same evidence, same verdict as its twin. 8 call sites confirmed by my own grep, and HeavenlySwordProjectile.as:76 'StageManager.startShake(12);', Trap_CrusherBlockAuto.as:88 'StageManager.startShake(6);', StatsManager.as:3535 'StageManager.startShake(val);' are all verbatim at those lines. CORRECTION: 'a fully data-driven one whose amplitude comes from game data' and 'both crusher traps shake at amplitude 6' are wrong on the artifact - StageManager.as:1200 is 'startShake(shakeDuration:int, shakeAmt:int = 30)', so 6 is a 6-TICK duration at the default amplitude 30 (Trap_CrusherColumnAuto.as:90 is the second crusher, also 6 ticks). A rebuilder copying 'amplitude 6' would be materially wrong.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/HeavenlySwordProjectile.as:76, Trap_CrusherBlockAuto.as:88, Trap_CrusherColumnAuto.as:90, StatsManager.as:3535, StageManager.as:1200 (all opened)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/videos-are-60fps-frames-do-arbitrate",
+   "refuted": false,
+   "reason": "HELD as written. My own ffprobe: Nr4fQstqHDM.mp4 width=1920 height=1080 r_frame_rate=60/1 nb_frames=237047 duration=3950.875283; zFtCaTO0_1M.mp4 r_frame_rate=60/1 nb_frames=251111 duration=4185.257506 - every figure exact. My own passthrough extractions confirm the 4-frame stride in both files (Nr4f t=428 mod-4 MAE [0.061, 3.076, 0.026, 0.069]; zFt t=900 [0.003, 0.040, 6.438, 0.078]), i.e. peak at lag 4 = 15.00 Hz with no 24-in-60 signature. Crucially this claim states the correct interpretation - '[timings] sampled at 15 Hz against a 24 Hz sim, under-resolved by 37%' (24/15 = 1.6, so 37.5%) - which is exactly where its twin pose-cadence-is-15hz-measured over-reaches. The methodological point stands: any duration cited off reference/frames/ should be re-extracted from the mp4 at 60 fps.",
+   "own_cite": "my own ffprobe on reference/videos/Nr4fQstqHDM.mp4 and zFtCaTO0_1M.mp4 (both 1920x1080, 60/1, nb_frames 237047 / 251111) + my passthrough extractions at t=428 and t=900"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/web-and-android-stages-differ",
+   "refuted": true,
+   "reason": "HEADERS EXACT, CONCLUSION REFUTED BY THE WEB BUILD'S OWN CODE. My header parses reproduce the quote to the byte: reference/decrypted/shs3_payload_decoded.swf CWS v17, rect [0,800,0,690] px, fps 24.0, 6 frames, 6,880,328 bytes on disk; shs3_android_payload_decoded.swf CWS v26, rect [0,800,0,480], fps 24.0, 6 frames. But the operative conclusion - 'every canvas/scale/letterbox constant taken from shs3_android/scripts/GameEngine.as is Mobile-only and cannot be asserted for the web build' - is false. reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269-320 is the WEB build's own resizeHandler and it declares :271 '_loc2_ = 800', :272 '_loc3_ = 480', :273 '_loc4_ = 690', then the identical aspect test, the identical fit-width/fit-height branch and the identical six published stage values. The impact clause is worse: 'shs3_payload/scripts contains no game classes at all' is flatly wrong - 612 obfuscated §1t...s0§.as classes sit at the TOP LEVEL of that directory (1,079 .as files recursively), including the RNG (§1t58s0§.as:84) and AnimData (§1t783s0§.as). The absence of the NAMES StageManager/MCSPlayer/GameEngine proves obfuscation, not absence.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269-320 (web resizeHandler declaring 800/480/690) + my SWF header parses of reference/decrypted/shs3_payload_decoded.swf and shs3_android_payload_decoded.swf + directory count (612 §-named .as at top level, 1,079 .as recursive)",
+   "severity": "material"
+  },
+  {
+   "claim_id": "art-anim-audio-feel/web-payload-has-no-game-code",
+   "refuted": true,
+   "reason": "REFUTED. The evidence is real but the conclusion inverts it. Yes, StageManager.as / MCSPlayer.as / SoundManager.as / MusicManager.as / ColorCode.as / BloodParticleEmitter.as / AnimData.as / StatsManager.as / GameEngine.as / EnemyGoblin.as are all absent BY NAME from reference/decompiled/shs3_payload/scripts/. But 'contains no game-logic classes at all' is false: 'ls' returns 652 entries and 612 of them are obfuscated §1t...s0§.as classes; 'find -name *.as' returns 1,079. I opened two and they ARE the game logic - §1t58s0§.as:84-85 is 'this.randomSeed = (this.randomSeed * 9301 + 49297) % 233280; return this.randomSeed / 233280;' (the RNG), and §1t783s0§.as:14-145 is AnimData: '@d' copy at :17, '@l == 1' looping at :18, and the same 30-entry post-clip duration ladder. The 'art + mx/fl/com frameworks only' characterisation comes from reading only the alphabetically-first page of a listing. The global caveat this claim tries to impose on all 11 lanes ('every code claim is Android v0.682 only') does not follow, and I closed one such hole myself in this review (the letterbox constants).",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/ - 652 ls entries of which 612 are §-named .as, 1,079 .as recursive; §1t58s0§.as:12-20,:84-85 and §1t783s0§.as:14-145 opened and read",
+   "severity": "material"
+  },
+  {
+   "claim_id": "art-anim/equipment-art-was-server-streamed",
+   "refuted": true,
+   "reason": "REFUTED - and this is the packet's most consequential error, because it declares a blocker that does not exist. What holds: StatsManager.as:360 'public static var useExternalResource:Boolean = true;'; ResourceManager.as:41 resourceFileNameArray = [\"shs3resource.swf\",\"musicresource.swf\",\"soundresource.swf\",\"imageresource.swf\",\"bgresource.swf\"]; :91 the getresource.php URL and :105 'variables.pass = \"12345\";'; and the getDefinitionByName path IS dead (MCSItem.as:419-421 and MCSCharacter.as:594-596 return via ResourceManager.getMCSComponent before reaching it). What is FALSE: 'the roster art was never in either payload'. Mobile.as:50 'internal static const SHS3Resource:Class = Mobile_SHS3Resource;' and :330 'this.processResource(ByteArray(new SHS3Resource()),resourceIndex);' load it from an EMBEDDED blob on Android. And the lane_impact's 'zlib fails: unknown compression method' is a false negative of exactly the kind Stage-0 C1 warns about: 115_Mobile_SHS3Resource.bin decrypts with ResourceManager.decryptByteArray at key 'shs3resource.swf'.charCodeAt(1) = 'h' = 104 (bytes 3..255 only, with the i%11 swap at :207-211), then inflates to a 1,040,849-byte CWS v17 SWF. I parsed its SymbolClass/ExportAssets tables: 1,912 exported symbols including 151 torso / 151 lowarm / 151 uparm / 151 pelvic / 150 stomach / 112 item / 109 weapon / 96 hat / 85 calf / 85 crotch / 85 thigh / 79 skill / 73 hair / 60 prop / 59 mask, plus the full creature part sets. Equipment art does NOT have to be authored from frames.",
+   "own_cite": "reference/extracted/android/115_Mobile_SHS3Resource.bin decrypted by me (ResourceManager.as:200-217, key 104) and inflated to a CWS v17 SWF with 1,912 exported symbols (hair6000, calf11000, hat7000, mask9000, acc3000-3008, 109 weapon*, ...) + Mobile.as:50,:330 + ResourceManager.as:41,:91,:105 + MCSItem.as:419-421",
+   "severity": "fatal"
+  },
+  {
+   "claim_id": "bindata/NEW-place-name-table-has-one-dead-row",
+   "refuted": false,
+   "reason": "HELD, arithmetic checked end to end. 98_1t4653s0.bin is 5,698 bytes / 677 CRLF lines; line 676 is 'Uenohara', line 677 is 'Yamanashi' (no trailing newline). NameGenerator.as:145-153: territoryx/territoryy are masked out of territoryID, :147 'var namex:int = territoryx % 137;', :148 'var namey:int = territoryy % 26;', :149 'if(namex < 26)' gates the call, :151 returns getTownName1(namex,namey), and :158 'var index:int = namex * 26 + namey;'. namex <= 25 and namey <= 25, so index max = 25*26+25 = 675 = the 676th row = Uenohara. Index 676 (Yamanashi) is unreachable. Both the code lines and the data lines are exact.",
+   "own_cite": "reference/extracted/bindata/98_1t4653s0.bin lines 676-677 (677 lines total) + reference/decompiled/shs3_android_payload/scripts/NameGenerator.as:145-153,:156-159 (opened)"
+  },
+  {
+   "claim_id": "bindata/NEW-swf-690-is-480-plus-bar",
+   "refuted": false,
+   "reason": "HELD verbatim, and now web-verified. reference/decompiled/shs3_android_payload/scripts/GameEngine.as:269 'var originalWidth:int = 800;', :270 'var originalHeight:int = 480;', :271 'var originalHeightWithBar:int = 690;', all inside 'internal static function resizeHandler(event:Event) : void' opening at :267 - exact. I also measured the frame myself rather than trusting the number: reference/frames/duel_dense/Nr4fQstqHDM_432.0.png has non-black content spanning columns 52..1867 over all 1080 rows = 1816x1080, aspect 1.6815, as quoted. And the claim's reconciliation no longer depends on Android: the web payload declares the same three constants at reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:271-273.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/GameEngine.as:267-271 + my own pillarbox measurement of reference/frames/duel_dense/Nr4fQstqHDM_432.0.png (content cols 52-1867 = 1816x1080, aspect 1.6815) + §1t1540s0§.as:271-273"
+  },
+  {
+   "claim_id": "bindata/NEW-web-android-survival-data-differ-in-14-lines",
+   "refuted": false,
+   "reason": "HELD, exact. I diffed reference/extracted/bindata/119_1t4646s0.bin against reference/extracted/android/109_WarHexUI_SurvivalModeData.bin line by line: both 556 lines, both 39 <wave>, both 87 <enemy>, and exactly 14 lines differ - at 466, 471, 479, 484, 492, 497, 505, 510, 518, 523, 531, 536, 544, 549, the identical list. Content matches: web :466 '<id>449|454|449|454|443</id>' vs android '<id>449|454</id>'; web :492 '<id>450|455|450|455|443</id>' vs '<id>450|455</id>'. I resolved the ids through docs/gauntlet/L0/index/resolved_names.json: 443 = Soldier, 449/450/451 = Heavy Soldier - so the web build really does repeat the pair and append a Soldier in the late waves. This is the only quantified web-vs-android data-drift measurement I have seen in this lane, and it is correct.",
+   "own_cite": "reference/extracted/bindata/119_1t4646s0.bin vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin - my own line diff (14 lines, exactly the cited numbers; 556/556, 39 waves, 87 enemies) + resolved_names.json npcdata 443 = Soldier"
+  },
+  {
+   "claim_id": "bindata/NEW-web-payload-is-decompiled-parity-is-checkable",
+   "refuted": false,
+   "reason": "HELD, and it is the most important true thing in this packet. reference/decompiled/shs3_payload/scripts/ holds 1,079 .as files, 669 with § in the name, 612 of them at the top level. §1t58s0§.as:84-85 is exactly 'this.randomSeed = (this.randomSeed * 9301 + 49297) % 233280;' / 'return this.randomSeed / 233280;', with the constructor at :12-21 negating a negative seed and burning one rnd() - identical to the Android RNG. §1t783s0§.as is AnimData: :17 '@d', :18 '@l == 1', then the duration ladder whose += values from :42 to :142 are 10,15,24,6,24,10,4,8,10,12,6,6,2,20,2,6,48,6,6,50,24,24,24,24,24,6,12,6,12 with one extra +12 at :145 - the claim's sequence character for character, and the same values Android's AnimData.as carries. I used this file myself in three other verdicts. It refutes both blanket 'Android-only' claims in this same packet.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t58s0§.as:12-21,:84-85 and §1t783s0§.as:14-145 (both opened; ladder verified against reference/decompiled/shs3_android/scripts/AnimData.as:25-141)"
+  },
+  {
+   "claim_id": "bindata/default-block-overrides-all-traps",
+   "refuted": false,
+   "reason": "HELD, and I reproduced the counting artefact. RoomGenNode.as:2437-2440 is verbatim 'if(QuestEngine.trapRoomData.§default§.toString() != \"\") { trapRoom = QuestEngine.trapRoomData.§default§.room; }' and it is evaluated BEFORE 'else if(roomList.room.length() > 0)' at :2441 - so a live <default> really would replace every trap room. 93_1t4647s0.bin lines 22-30 are exactly the commented-out block: :22 '\\t<!--<default>', :23 '<room>', :24 '<width>1000</width>', :25-28 four Trap_ElementAuto objects at x 200/400/600/800, :29 '</room>', :30 '\\t</default>-->'. And the census claim is exact: raw counts give 70 <room> / 314 <obj>, stripping XML comments gives 69 <room> / 297 <obj>.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/RoomGenNode.as:2437-2441 + reference/extracted/bindata/93_1t4647s0.bin lines 22-30 (raw 70/314 vs comment-stripped 69/297, measured by me)"
+  },
+  {
+   "claim_id": "bindata/item-colour-palette-11",
+   "refuted": false,
+   "reason": "HELD, all four cites exact, including the web one. Obj_PickableItemProcGen.as:57-60 is verbatim 'var colorindex:int = rng.rand(11); var colorhexlist:Array = [16711680,16737792,16763904,39168,13311,6684927,16751103,6697728,16777215,10066329,0]; this.color = colorhexlist[colorindex]; ColorCode.changeColor(this.primary,this.color);'. Same array at QuestGenerator.as:38 and ItemGenerator.as:701. The web build carries it at reference/decompiled/shs3_payload/scripts/§1t8608s0§.as:59-62 with 'rand(11)' and the identical 11 integers - so build='both' is correct and this is one of the few art facts in the packet that is NOT Android-only. I decoded every value: FF0000, FF6600, FFCC00, 009900, 0033FF, 6600FF, FF99FF, 663300, FFFFFF, 999999, 000000 - all eleven match the claim's hex list exactly.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/Obj_PickableItemProcGen.as:57-60, QuestGenerator.as:38, ItemGenerator.as:701 + reference/decompiled/shs3_payload/scripts/§1t8608s0§.as:59-62 (all opened)"
+  },
+  {
+   "claim_id": "bindata/matrix-nodes-and-reorder-frames",
+   "refuted": false,
+   "reason": "HELD, and it is the most precisely measured claim in the packet - every figure reproduced. My own census over the 19 animdata blobs: 81,706 <n> nodes total, 79,867 with the plain r= form, 1,839 with the a/b/c/d matrix form (2.25%), spread over 15 of 19 blobs, per-file {114:817, 108:492, 116:171, 102:157, 110:54, 104:32, 113:32, 106:21, 118:16, 100:14, 111:14, 115:14, 101:2, 112:2, 103:1} - identical, file for file, to the claim. matA range -101..150, exact. <f r=\"1\"> total 258, and file 108 carries 89 of them, exact. FrameData.as:74-89 reads as quoted: :77 'var partMax:int = 22;', :78-81 the 0..21 hide loop, :87-88 force-showing PART_hat and PART_crotch - so slots 22-26 are indeed never hidden. Nothing to refute here.",
+   "own_cite": "reference/extracted/bindata/*.bin - my own <n> census (81,706 total / 79,867 r-form / 1,839 matrix / matA -101..150 / 258 reorder frames, 89 in 108) + reference/decompiled/shs3_android_payload/scripts/FrameData.as:74-89"
+  },
+  {
+   "claim_id": "bindata/stage-letterbox-algorithm",
+   "refuted": false,
+   "reason": "HELD, line-exact. GameEngine.as:269-274 declares 800 / 480 / 690 and the three aspect ratios; :275-288 sets stageShowingFriendBar and swaps in the with-bar height; :293-306 is the fit-width vs fit-height branch with :303 'offsetX = (stageMC.stageWidth - originalWidth * newScale) / 2;'; :307-312 publishes stageScale, stageOffsetX, stageOffsetY, stageFitWidth, stageBaseWidth, stageBaseHeight. InputManager.as:185-186 is verbatim 'mouseX = (args.stageX - StatsManager.stageOffsetX) / StatsManager.stageScale;' and the matching mouseY. I also verified the '210px friend bar' independently: OverworldHUD.as:390 'this.friendpanel.y = 480;'. And I measured the frame myself - 1816x1080 content, aspect 1.6815 - which the claim correctly lets win on what the playfield is (note 800/480 = 1.6667 would predict 1800x1080, so the measured pillars sit ~16 px wider than the ideal; a ~0.9% encode/measurement margin, not a contradiction).",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/GameEngine.as:267-312 + InputManager.as:182-186 + OverworldHUD.as:390 + my own measurement of reference/frames/duel_dense/Nr4fQstqHDM_432.0.png (content 1816x1080, aspect 1.6815)"
+  },
+  {
+   "claim_id": "bindata/two-more-trap-placement-rules",
+   "refuted": false,
+   "reason": "HELD, all five cites exact. RoomGenNode.as:1978-1981 is verbatim 'else if(this.roomType == ROOM_KEY && this.isEnterFromLeft() && rng.rand(2) == 0) { this.roomType = ROOM_TRAPKEY; }'. :2378 is 'if(this.roomType == ROOM_TRAP || this.roomType == ROOM_TRAPKEY)' re-entering the lvl<10 gate at :2380. :78 is 'public static var ROOM_TRAPVERYHARD:int = 35;'. DungeonGenerator.as:967 is the veryhard createRoute, and I checked the signature at :1011 - the 4th parameter is 'steps:int', so the 6 really is a 6-room route (against 2 for medium at :965, 3 for hard at :966). The daily-reroll link is real too: RoomGenNode.as:2443-2446 seeds 'traprng = new RNG(this.roomid * QueryManager.instance.getServerDate())' only for ROOM_TRAPVERYHARD.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/RoomGenNode.as:78,:1978-1981,:2378-2382,:2443-2446 + DungeonGenerator.as:967 and the createRoute signature at :1011 (all opened)"
+  }
+ ],
+ "judged_count": 48,
+ "packet_size": 48,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "web-parity/web-payload-carries-the-same-resizehandler",
+   "text": "The build-parity hole on the whole canvas/letterbox contract is CLOSED from the web side. reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269-320 is the web v0.717 payload's own resize handler and it declares :271 _loc2_=800, :272 _loc3_=480, :273 _loc4_=690, then the identical '<=' with-bar aspect test, the identical fit-width/fit-height branch with the same centring offsets, and publishes the same six stage values that InputManager reads back. 800x480 base + a 210px bar is a WEB fact, not an Android inference.",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269-320",
+   "quote": "271 `var _loc2_:int = 800;` 272 `var _loc3_:int = 480;` 273 `var _loc4_:int = 690;` 277 `if(_loc7_ <= _loc6_)` 280 `_loc3_ = _loc4_;` 281 `§1t1523s0§.§1t9362s0§ = true;` 313-314 `§1t1523s0§.§1t9363s0§ = _loc2_; §1t1523s0§.§1t9364s0§ = _loc3_;`",
+   "lane_impact": "L-ui-hud / L-render: HUD x-fraction re-basing on 800x480 is now legitimate for the web build. Kills the 'every canvas constant is Mobile-only' caveat.",
+   "verdict": "HELD",
+   "overturns_ledger": false
+  },
+  {
+   "id": "android-blobs/shs3resource-decrypts-1912-equipment-symbols",
+   "text": "THE EQUIPMENT-ART BLOCKER IS DEAD. 115_Mobile_SHS3Resource.bin decrypts with ResourceManager.decryptByteArray at key 'shs3resource.swf'.charCodeAt(1) = 'h' = 104 and inflates to a 1,040,849-byte CWS v17 SWF. Its SymbolClass/ExportAssets tables name 1,912 exported symbols: 151 torso / 151 lowarm / 151 uparm / 151 pelvic / 150 stomach / 112 item / 109 weapon / 96 hat / 85 calf / 85 crotch / 85 thigh / 79 skill / 73 hair / 60 prop / 59 mask / 44 foot / 44 foottop / 38 head / 33 hand / 33 neck / 8 acc / 5 achievement, plus complete bear, boar, deer, horse and wolf part sets. The roster art has been in the repo the whole time.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/extracted/android/115_Mobile_SHS3Resource.bin (decrypted per reference/decompiled/shs3_android/scripts/ResourceManager.as:200-217, key 104) + Mobile.as:50 and :330",
+   "quote": "ResourceManager.as:200 `internal static function decryptByteArray(source:ByteArray, key:int) : ByteArray` :205 `for(var i:int = 3; i < 256; i++)` :207 `if(i % 11 == 0)` :213 `ba[i] ^= key;` · Mobile.as:50 `internal static const SHS3Resource:Class = Mobile_SHS3Resource;` :330 `this.processResource(ByteArray(new SHS3Resource()),resourceIndex);` · decoded: 1,912 exported symbols incl. hair6000, calf11000, hat7000, mask9000, acc3000-3008",
+   "lane_impact": "L6 art + L3 items-equipment: overturns art-anim/equipment-art-was-server-streamed's residual blocker. Equipment art must NOT be authored from frames; it must be transcribed from this SWF.",
+   "verdict": "HELD",
+   "overturns_ledger": false
+  },
+  {
+   "id": "android-blobs/blob-xor-key-is-per-file-not-109",
+   "text": "Stage-0 C1's 'key m=109' is one of FIVE keys, and the transform is not a plain XOR. ResourceManager.as:186 and Mobile.as:352 both pass resourceFileNameArray[n].charCodeAt(1), so: 115_SHS3Resource = 'h' = 104, 113_MusicResource = 'u' = 117, 122_SoundResource = 'o' = 111, 124_ImageResource = 'm' = 109, 120_BGResource = 'g' = 103. The transform itself (ResourceManager.as:205-214) touches only bytes 3..255 and, when i%11==0, first SWAPS ba[i] with ba[i+256]. I decrypted all five: every one yields CWS\\x11 and inflates (image 1,908,229 B, bg 4,412,340 B, shs3 1,040,849 B, sound 29,623 B, music 1,402,677 B).",
+   "artifact_class": "A3",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/ResourceManager.as:41,:186,:200-217 + Mobile.as:352; all five blobs under reference/extracted/android/ decrypted and inflated by me",
+   "quote": "ResourceManager.as:41 `internal static var resourceFileNameArray:Array = [\"shs3resource.swf\",\"musicresource.swf\",\"soundresource.swf\",\"imageresource.swf\",\"bgresource.swf\"];` · :186 `ba = decryptByteArray(ba,resourceFileNameArray[num].charCodeAt(1));` · :209-211 `temp = int(ba[i]); ba[i] = ba[i + 256]; ba[i + 256] = temp;`",
+   "lane_impact": "Method, all lanes: anyone re-deriving from the blobs with a single key 109 will silently fail on four of the five and re-report them as unrecoverable - which is exactly how the equipment-art blocker was invented.",
+   "verdict": "HELD",
+   "overturns_ledger": false
+  },
+  {
+   "id": "art-anim-audio-feel/startshake-first-arg-is-duration-not-amplitude",
+   "text": "Every screen-shake number in this lane is being read in the wrong slot. StageManager.as:1200 declares `public static function startShake(shakeDuration:int, shakeAmt:int = 30)`, so the single-argument call sites - startShake(12) at MCSPlayer.as:911 and :4180 and HeavenlySwordProjectile.as:76, startShake(24) at MCSPlayer.as:946, startShake(6) at Trap_CrusherBlockAuto.as:88 and Trap_CrusherColumnAuto.as:90, startShake(val) at StatsManager.as:3535 - all set DURATION IN TICKS and inherit amplitude 30. The only data-driven amplitude in the game is Marker_RumbleTrigger.as:44 `StageManager.startShake(this.shakeDuration,this.shakeAmt)`.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/StageManager.as:1200-1206 + Marker_RumbleTrigger.as:44 + my grep of all 8 startShake( call sites",
+   "quote": "StageManager.as:1200 `public static function startShake(shakeDuration:int, shakeAmt:int = 30) : *` :1203 `screenShakeCounter = shakeDuration;` :1204 `screenShakeAmt = shakeAmt;` · Marker_RumbleTrigger.as:44 `StageManager.startShake(this.shakeDuration,this.shakeAmt);`",
+   "lane_impact": "L6 art-anim: a rebuild that ships 'crusher trap shakes at amplitude 6' will be wrong twice over - wrong axis and wrong default. The shake API needs (durationTicks, amplitude=30).",
+   "verdict": "HELD",
+   "overturns_ledger": false
+  },
+  {
+   "id": "android-blobs/farthest-plane-also-has-a-blur-cutoff",
+   "text": "The ground plane is not the only plane with a per-layer blur exception. BG_Loader.as:186 wraps the farthest-plane blur in `if(!(this.bgType == BG_FORESTSPOOKY && i > 2))`, so BG_ForestSpooky's farthest layers 3 and 4 render sharp. Separately, FIVE bgdata records carry gcount=4, not four: id 6 BG_ForestSpooky, 32 BG_Graveyard, 48 BG_TempleExteriorFog, 49 BG_TempleRuinsFog, 51 BG_DungeonFog.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android_payload/scripts/BG_Loader.as:186-191 + reference/extracted/android/123_Mobile_BGData.bin (gcount census)",
+   "quote": "BG_Loader.as:186 `if(!(this.bgType == BG_FORESTSPOOKY && i > 2))` 188 `if(farthestLayerBlur != 0)` 190 `ColorCode.blur(mc,farthestLayerBlur);` · gcount histogram over 49 records = {2:34, 0:6, 4:5, 1:4}",
+   "lane_impact": "L6 art-anim: bounds android-blobs/ground-blur-applies-to-two-layers-only. The depth-of-field rule is per-plane AND per-background, not a single ladder with one exception.",
+   "verdict": "HELD",
+   "overturns_ledger": false
+  },
+  {
+   "id": "enemies-ai/npc-die-has-four-paths-before-the-seven-way-dice",
+   "text": "The 7-way human death dice is the LAST of five branches in NPC.die(), and the four ahead of it are unheld by any claim in this packet. NPC.as:909-913 returns bare dead=true from GOTLAUNCHED_STATE with no animation at all; :914-925 handles isDowned() with DEATHDOWNED plus a 90-degree torso emitter at variance 15; :926-954 handles SEPPUKU_START, splitting into SEPPUKU_MID or, when behead is set and censorship is off, SEPPUKU_NOHEAD with its own 3-way emitter dice over PART_neck at 130 degrees and the detached head at 180; and :1084+ handles a plain behead. Only if none of those fire does :1005 roll Math.random()*7.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/NPC.as:898-1005 read in full",
+   "quote": "NPC.as:909 `if(actionState == GOTLAUNCHED_STATE) { dead = true; return; }` · :914 `if(this.isDowned())` :917 `startAnim(DEATHDOWNED);` · :926 `if(mcs.animation == SEPPUKU_START)` :939 `startAnim(SEPPUKU_NOHEAD);` :941 `dice = Math.random() * 3;` · :1005 `dice = Math.random() * 7;`",
+   "lane_impact": "L2 enemies-ai + L6 art-anim: a rebuild wiring only the 7-way dice loses the launched, downed and seppuku deaths entirely, and StatsManager.censored gates the emitters on every one of them.",
+   "verdict": "HELD",
+   "overturns_ledger": false
+  }
+ ]
+}
