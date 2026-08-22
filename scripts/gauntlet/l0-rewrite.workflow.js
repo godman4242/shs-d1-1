@@ -117,7 +117,19 @@ EACH ENTRY ENDS EXACTLY ONE OF TWO WAYS. There is no third.
 
 ⚑ AN EMPTY §6 IS A LEGAL, PASSING RESULT. The gate's own words: a provably minimal list
 may be empty. Do not keep an entry out of caution. Keep it because a pasted search
-failed to find it.`,
+failed to find it.
+
+⛔ ONE FORMATTING RULE, AND IT DECIDES THE GATE. L0-E treats EVERY line in §6 starting
+with "- " or "* " as a surviving unrecoverable entry, and reds it if it lacks the
+NEGATIVE-SEARCH: marker. So a bulleted deletion note — "- Verbatim dialogue: DELETED,
+killed by [[id]]" — reads to the gate as an entry you KEPT without a search, and turns
+the gate red on work you actually did correctly.
+
+  ONLY a surviving unrecoverable may be a bullet in §6.
+  Write deletions, context and commentary as PROSE or as a TABLE. Both are ungated.
+
+Return the deletions in deleted_lines regardless — that is how the lead records what
+§6 lost and why.`,
 
   corrections: `=== YOU OWN §3 — "Corrections this pass forced on the project's own docs" ===
 
