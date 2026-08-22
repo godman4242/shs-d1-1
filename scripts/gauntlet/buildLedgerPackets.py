@@ -83,6 +83,39 @@ ALIASES: dict[str, list[str]] = {
 USABLE = ("UPHELD", "NOT-UPHELD")
 
 
+# Worst status wins when a claim was linted more than once, exactly as gateL0.py pools.
+LINT_RANK = {"BROKEN": 3, "QUOTE_UNVERIFIED": 2, "UNCHECKABLE": 1, "RESOLVES": 0}
+
+
+def load_lint(root: Path) -> tuple[dict[str, str], int]:
+    """Pool every citeLint report. Returns (worst status per id, number of reports)."""
+    worst: dict[str, str] = {}
+    reports = sorted(root.glob("citelint*.json"))
+    for path in reports:
+        for row in json.loads(path.read_text(encoding="utf-8"))["claims"]:
+            prior = worst.get(row["id"])
+            if prior is None or LINT_RANK[row["status"]] > LINT_RANK[prior]:
+                worst[row["id"]] = row["status"]
+    return worst, len(reports)
+
+
+def quarantined(claim: dict, lint: dict[str, str]) -> str | None:
+    """Why this claim may not be cited, or None if it may.
+
+    Gate L0-A reds on a cited claim whose cite is BROKEN *and* on one that was never
+    linted at all. Both land at the END of the rewrite wave, after ~28 agents have run.
+    QUOTE_UNVERIFIED is deliberately NOT quarantined: it is soft by design (a prose gloss
+    the script could not locate whole), the gate treats it as passing, and the agent
+    critics were pointed at exactly those claims as priority targets and already ruled.
+    """
+    status = lint.get(claim.get("id"))
+    if status == "BROKEN":
+        return "its cite is mechanically BROKEN — gate L0-A goes RED if the ledger cites it"
+    if status is None:
+        return "the machine cite audit never covered it — gate L0-A goes RED if the ledger cites it"
+    return None
+
+
 def norm(text: str | None) -> str:
     """Markdown emphasis and whitespace stripped, so a quote matches its source line."""
     return re.sub(r"\s+", " ", re.sub(r"[*_`]", "", text or "")).strip()
@@ -165,7 +198,8 @@ def route(claim: dict, lines: list[str], owner: list[str]) -> tuple[str, str]:
     return "frame", "frame_fallback"
 
 
-def render(dest: str, claims: list[dict], ledger_section: str) -> str:
+def render(dest: str, claims: list[dict], ledger_section: str,
+           blocked: list[tuple[dict, str]]) -> str:
     """One writer's whole admissible world, in the order it should be read."""
     overturns = [c for c in claims if c["status"] == "UPHELD" and c.get("claims_overturn")]
     rejected = [c for c in claims if c["status"] == "NOT-UPHELD"]
@@ -235,6 +269,23 @@ def render(dest: str, claims: list[dict], ledger_section: str) -> str:
           "These add or sharpen; they do not contradict.",
           corroborating)
 
+    if blocked:
+        out += [
+            "---",
+            "",
+            "## ⛔ QUARANTINED — **DO NOT CITE** these, whatever they say",
+            "",
+            "These findings survived their critics, so the knowledge in them is real and you may",
+            "USE it to decide what a section says. But their machine cite audit does not vouch",
+            "for them, and gate **L0-A** goes RED — naming the id — the moment the ledger cites",
+            "one. Write around them: state the point from a citable finding, or say STILL_UNHELD.",
+            "",
+        ]
+        for c, why in sorted(blocked, key=lambda r: r[0].get("id") or ""):
+            out.append(f"- **`{c.get('id')}`** — {why}")
+            out.append(f"  - {(c.get('text') or '')[:300]}")
+        out.append("")
+
     out += [
         "---",
         "",
@@ -270,29 +321,42 @@ def main() -> int:
     lines = [norm(l) for l in ledger.splitlines()]
     body = sections(ledger, owner)
 
+    lint, lint_reports = load_lint(Path(args.root))
     usable = [c for c in evidence["claims"] if c.get("status") in USABLE]
     buckets: dict[str, list[dict]] = {name: [] for name in SYSTEMS + EXTRA}
+    blocked: dict[str, list[tuple[dict, str]]] = {}
     routed, rules = [], Counter()
     for claim in usable:
         dest, rule = route(claim, lines, owner)
-        buckets.setdefault(dest, []).append(claim)
-        routed.append({"id": claim.get("id"), "dest": dest, "rule": rule})
+        # A quarantined claim is still PLACED — conservation is about coverage, not about
+        # citability. It just lands in the packet's do-not-cite block instead.
+        why = quarantined(claim, lint) if lint_reports else None
+        if why:
+            blocked.setdefault(dest, []).append((claim, why))
+        else:
+            buckets.setdefault(dest, []).append(claim)
+        buckets.setdefault(dest, buckets.get(dest, []))
+        routed.append({"id": claim.get("id"), "dest": dest, "rule": rule,
+                       "quarantined": bool(why)})
         rules[rule] += 1
 
-    placed = sum(len(v) for v in buckets.values())
+    placed = sum(len(v) for v in buckets.values()) + sum(len(v) for v in blocked.values())
     conserved = placed == len(usable) and len({r["id"] for r in routed}) == len(routed)
 
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
     for dest, rows in buckets.items():
-        (out_dir / f"{dest}.md").write_text(render(dest, rows, body.get(dest, "")),
-                                            encoding="utf-8")
+        (out_dir / f"{dest}.md").write_text(
+            render(dest, rows, body.get(dest, ""), blocked.get(dest, [])), encoding="utf-8")
 
     report = {
         "usable": len(usable),
         "placed": placed,
         "conserved": conserved,
-        "destinations": {k: len(v) for k, v in sorted(buckets.items())},
+        "quarantined": sum(len(v) for v in blocked.values()),
+        "lint_reports": lint_reports,
+        "destinations": {k: len(v) + len(blocked.get(k, []))
+                         for k, v in sorted(buckets.items())},
         "rules": dict(rules),
         "routed": routed,
     }
@@ -303,6 +367,12 @@ def main() -> int:
     for dest, rows in sorted(buckets.items(), key=lambda kv: -len(kv[1])):
         print(f"  {dest:22s} {len(rows):4d}")
     print(f"  rules: {dict(rules)}")
+    q = sum(len(v) for v in blocked.values())
+    if not lint_reports:
+        print("  ⚠ NO citelint*.json FOUND — the lint quarantine did NOT run. Every finding "
+              "below is offered as citable on the strength of its verdicts alone.")
+    else:
+        print(f"  quarantined (DO NOT CITE): {q} across {lint_reports} cite-audit report(s)")
     if not conserved:
         # A partition that loses a finding is worse than no partition: it reads as full
         # coverage. Fail closed and say which ones (§3, no silent caps).

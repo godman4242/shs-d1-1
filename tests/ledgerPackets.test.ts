@@ -37,6 +37,8 @@ interface Routing {
   routed: Array<{ id: string; dest: string; rule: string }>;
   usable: number;
   conserved: boolean;
+  quarantined: number;
+  lint_reports: number;
 }
 
 let dir = '';
@@ -77,6 +79,10 @@ const LEDGER = [
   'Not for a pixel-perfect 1:1.',
   '',
 ].join('\n');
+
+function lintReport(rows: Array<{ id: string; status: string }>): void {
+  put('L0/citelint.json', JSON.stringify({ claims: rows.map((r) => ({ ...r, problems: [], notes: [] })) }));
+}
 
 function build(claims: unknown[], summary: Record<string, unknown> = {}): Routing {
   put('L0/LEDGER_EVIDENCE.json', JSON.stringify({ claims, summary }));
@@ -193,5 +199,57 @@ describe('buildLedgerPackets — conservation', () => {
       claim('ui-hud/b'),
     ]);
     expect(r.rules).toMatchObject({ ledger_text: 1, id_prefix: 1 });
+  });
+});
+
+/**
+ * A CLAIM THE MACHINE CITE AUDIT CANNOT VOUCH FOR MUST NOT REACH A WRITER.
+ *
+ * Gate L0-A goes RED on a cited claim whose cite is BROKEN — and equally on one that was
+ * never linted at all. Both failures are real, both are correct, and both land at the END
+ * of the most expensive wave in the lane, after ~28 agents have run. This corpus had two
+ * BROKEN claims sitting UPHELD with nine live critics each, one packet away from a writer.
+ * Catching it here costs nothing.
+ */
+describe('buildLedgerPackets — lint quarantine', () => {
+  it('quarantines a BROKEN-cite claim instead of offering it as citable', () => {
+    lintReport([{ id: 'x/broken', status: 'BROKEN' }, { id: 'x/fine', status: 'RESOLVES' }]);
+    const r = build([
+      claim('x/broken', { ledger_text: 'aspect-ratio truth' }),
+      claim('x/fine', { ledger_text: 'aspect-ratio truth' }),
+    ]);
+    const body = packet('ui-hud');
+    expect(body).toContain('DO NOT CITE');
+    expect(body.split('DO NOT CITE')[1]).toContain('x/broken');
+    expect(body.split('DO NOT CITE')[0]).toContain('[[x/fine]]');
+    expect(body.split('DO NOT CITE')[0]).not.toContain('x/broken');
+    expect(r.quarantined).toBe(1);
+  });
+
+  it('quarantines a claim the cite audit never covered — L0-A reds on those too', () => {
+    lintReport([{ id: 'x/fine', status: 'RESOLVES' }]);
+    build([claim('x/never-linted', { ledger_text: 'aspect-ratio truth' })]);
+    expect(packet('ui-hud').split('DO NOT CITE')[1]).toContain('x/never-linted');
+  });
+
+  it('leaves QUOTE_UNVERIFIED citable — soft by design, and the critics already ruled', () => {
+    lintReport([{ id: 'x/soft', status: 'QUOTE_UNVERIFIED' }]);
+    const r = build([claim('x/soft', { ledger_text: 'aspect-ratio truth' })]);
+    expect(r.quarantined).toBe(0);
+    expect(packet('ui-hud').split('DO NOT CITE')[0]).toContain('[[x/soft]]');
+  });
+
+  it('still conserves: a quarantined claim is placed, not dropped', () => {
+    lintReport([{ id: 'x/broken', status: 'BROKEN' }]);
+    const r = build([claim('x/broken', { ledger_text: 'aspect-ratio truth' })]);
+    expect(r.usable).toBe(1);
+    expect(r.conserved).toBe(true);
+    expect(Object.values(r.destinations).reduce((a, b) => a + b, 0)).toBe(1);
+  });
+
+  it('says out loud when there is no cite audit at all, rather than quarantining nothing in silence', () => {
+    const r = build([claim('x/a', { ledger_text: 'aspect-ratio truth' })]);
+    expect(r.lint_reports).toBe(0);
+    expect(r.quarantined).toBe(0);
   });
 });
