@@ -1,0 +1,357 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "NEW-1-web-crit-is-flat-1.3",
+   "refuted": false,
+   "reason": "EXACT. I opened the file: :3272 `if(this.§1t4414s0§ == this.§1t4415s0§)`, :3274 `return _loc2_ * 1.3 + this.§1t1243s0§;`, :3276 `return _loc2_;` — verbatim, inside §1t4475s0§ (getDamage twin) whose stance switch immediately above has NO crit branch. Flat 1.3, no stance split, deterministic on reload==maxreload. I separately confirmed the build pin: §1t1523s0§.as:36 `public static var §1t9323s0§:Number = 0.717;`, and the crit-consumes-bar rule at §1t99s0§.as:3294-3298 (§1t4478s0§ zeroes §1t4414s0§ when it equals §1t4415s0§).",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3272-3276"
+  },
+  {
+   "claim_id": "NEW-10-obfuscated-bundle-grep-method",
+   "refuted": false,
+   "reason": "citelint said QUOTE_UNVERIFIED only because the quote field trails an em-dash argument. The literal quote resolves EXACTLY: §1t113s0§.as:812 is `case \"/fart\":`. I then tested both halves of the method claim myself: `grep -rl originalWidth reference/decompiled/shs3_payload/` = 0 files (identifier scrubbed), `grep -rl repairweapon reference/decompiled/shs3_payload/` = 0 files, while `repairweapon` DOES survive as a string literal in the android twin at shs3_android/scripts/InteractUI.as:1057 `case \"repairweapon\":`. So string literals survive and identifiers do not, exactly as claimed. Twin identifications spot-checked and correct: §1t1523s0§ (0.717 at :36), §1t1540s0§ (resizeHandler twin), §1t5495s0§ (DragonDance arrays), §1t99s0§ (MCSPlayer twin).",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:812"
+  },
+  {
+   "claim_id": "NEW-2-web-per-stance-damage-and-mastery-10-ceiling",
+   "refuted": false,
+   "reason": "EXACT. §1t99s0§.as:3262 `_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);`, :3265 `* (1 + 0.2 * this.§1t4422s0§ * 0.1)`, :3270 `* 1.4` for the §1t12222/12223/12224§ group — all inside §1t4475s0§ at :3255-3277. I also opened skilldata.xml myself: skill 1000's block runs lines 3-80 and carries exactly ten <level> rows, <value> 1..10, with <required>9</required> on the value-10 row (line 74-75). Arithmetic checks: 0.5+0.4=0.90, 1+0.2=1.20, 1.40. CAVEAT WORTH BANKING: the ceiling is reached at mastery VALUE 10, not value 9 — at value 9 the numbers are 0.86/1.18/1.40. The ledger's 'MASTERY-9' label refers to the level-10 row's <required>9</required>, and the claim says so explicitly, so it corroborates rather than contradicts.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3255-3277",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "NEW-5-skill-1500-reversed-1501-dual",
+   "refuted": false,
+   "reason": "EXACT at all three sites I opened. EnemyPlayer.as:836-843 is verbatim the quoted getMastery(1500)->REVERSED_STANCE / getMastery(1501)->DUAL_STANCE block; EnemyElite.as:160-166 is the same; the web twin §1t4906s0§.as:90-95 is `if(param1.§1t1255s0§(1500) > 0) { §1t3489s0§(§1t12224s0§); } else if(...1501...) { §1t3489s0§(§1t12223s0§); }`. Every derived count checks out on my own parse: npcdata carries 1500 on exactly 5 rows (3662, 3683, 3898, 4290, 4349) and 1501 on exactly 2 (3934, 3956), all <ai>29</ai>, and NPCManager.as:605-606 `case 29: actor = new EnemyElite(...)`. 1500/1501 are real skilldata rows (category 11) with NO <displayname>, and resolved_names.json['skilldata.xml']['resolved'] holds 73 keys with neither 1500 nor 1501 — exactly the two misses claimed.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as:836-843"
+  },
+  {
+   "claim_id": "NEW-7-web-friend-bar-resize-parity",
+   "refuted": false,
+   "reason": "EXACT. §1t1540s0§.as:269 is the handler decl, :271-273 `var _loc2_:int = 800; var _loc3_:int = 480; var _loc4_:int = 690;`, :277 `if(_loc7_ <= _loc6_)`, :281 `§1t1523s0§.§1t9362s0§ = true;`, :284 `§1t406s0§.instance.§1t6500s0§.init();`. I put the android twin beside it: GameEngine.as:267-285 is the same algorithm with names — originalWidth 800 / originalHeight 480 / originalHeightWithBar 690, `newAspectRatio <= originalWithBarAspectRatio`, StatsManager.stageShowingFriendBar = true, OverworldHUD.instance.friendpanel.init(). The 690/friend-bar cluster is web-build fact, not an S0-3 android inheritance.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269-290"
+  },
+  {
+   "claim_id": "NEW-8-dragon-dance-web-parity",
+   "refuted": false,
+   "reason": "EXACT. §1t5495s0§.as:70 `this.§1t5516s0§ = [\"sky\",\"wind\",\"water\",\"mountain\",\"earth\",\"thunder\",\"fire\",\"lake\"];` and :71 `this.§1t5517s0§ = [\"fire\",\"earth\",\"lake\",\"sky\",\"water\",\"mountain\",\"thunder\",\"wind\"];` — verbatim, alongside an eight-node array at :68. I also opened the second cite: §1t8695s0§.as carries \"1246\" :172, \"4216\" :176, \"1642\" :180, \"1426\" :184, \"6241\" :188 (all within the cited :172-212, and repeated at :208-224). Web parity holds.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5495s0§.as:70-71"
+  },
+  {
+   "claim_id": "NEW-9-heavy-defense-0.8-double-confirmed",
+   "refuted": false,
+   "reason": "EXACT. §1t99s0§.as:3284 `internal function §1t4477s0§() : int`, :3286 `if(this.stance == §1t12222s0§)`, :3288 `return defense * 0.8;`, :3290 `return defense;`. §1t12222s0§ is HEAVY — pinned by the damage switch at :3268-3270 where it takes the ×1.4 branch. Second corroboration verified in docs/gauntlet/L0/index/resolved_names.json: skilldata.xml resolved['1002'] = displayname 'Heavy Stance Mastery', desc ending 'Effective against Balanced Stance.\\nDefense -20%'. I found a THIRD, purely web-side confirmation the claim does not use: §1t5957s0§.as:2746 `_loc47_ = 0.8;` in the heavy branch of the web character sheet (carried as a new finding).",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3284-3290"
+  },
+  {
+   "claim_id": "NF-1-layered-music-is-both-builds",
+   "refuted": false,
+   "reason": "EXACT on every sub-cite I opened. §1t133s0§.as:76 `internal var §1t1730s0§:int = 13;`. init() opens at :113 and :115-127 load exactly thirteen stems in exactly the claimed order: battlechants, battledrums, flutes, safeambience, safekoto, safepercussion, dungeonambience, dungeonflute, dungeonpercussion, dungeonpiano, bgm_gangnam, bgm_levelup, bgm_lose. `grep -c 'new Array(this.§1t1730s0§)'` on the same file returns 18. The 13-stem / 18-preset ARCHITECTURE is web v0.717 fact.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t133s0§.as:76,:115-127"
+  },
+  {
+   "claim_id": "NF-1-web-gameplay-canvas-really-is-800x480",
+   "refuted": false,
+   "reason": "Cite EXACT: §1t1523s0§.as:104 `public static var stageWidth:int = 800;` and :106 `public static var stageHeight:int = 480;`, plus the second pair at :120 (§1t9363s0§ = 800) and :122 (§1t9364s0§ = 480). DEFECT, non-fatal: the trailing sentence 'the extra 210 px in the document rect is the Kongregate friend-bar band' is unsourced and is contradicted by this packet's own web-side evidence — §1t1540s0§.as:284 initialises the GAME's own §1t406s0§ (OverworldHUD) friendpanel, so the 210 px band is an in-game surface, not Kongregate chrome. The load-bearing claim (web canvas = 800x480 from web code) stands.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:104,:106",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "NF-10-category-tab-mapping-declared-in-code",
+   "refuted": false,
+   "reason": "EXACT: SkillScreenUI.as:104 `this.categoryDesc = [6024,6025,6026,6027,6028,6029,6030,6031,6032,6033];`, with categoryIcons = [1..10] on :103. I checked the indexing myself — :285 and :668 both read `this.categoryDesc[cat - 1]`, so a ten-element array covers categories 1..10 only and category 11 indexes past the end. My own skilldata census confirms category 11 exists and holds 7 skills (1064,1065,1066,1067,1068,1500,1501), none of which has a tab. strings['6024'] = 'Light Stance Skills\\n\\nSkills that are usable when in light stance.'",
+   "own_cite": "reference/decompiled/shs3_android/scripts/SkillScreenUI.as:104"
+  },
+  {
+   "claim_id": "NF-10-no-web-audio-is-held",
+   "refuted": false,
+   "reason": "An honest STILL_UNHELD, and every leg of it is true. I ran my own SWF tag walk (decompress CWS, skip RECT, walk the tag stream): reference/decrypted/shs3_payload_decoded.swf = CWS v17, rect 800.0x690.0, frameRate 24.000, 4051 tags, DefineSound(14) = 0; shs3_android_payload_decoded.swf = CWS v26, rect 800.0x480.0, 3311 tags, DefineSound(14) = 0. `ls reference/preservation/` returns exactly p0_ruffle_titlescreen.png, shs3.swf, shs3_android_payload.swf, shs3_payload.swf, shs3_payload_version.swf, shs3preloader.swf — no soundresource.swf, no musicresource.swf. ResourceManager.as:41 is verbatim `internal static var resourceFileNameArray:Array = [\"shs3resource.swf\",\"musicresource.swf\",\"soundresource.swf\",\"imageresource.swf\",\"bgresource.swf\"];`. Web-side audio really is unheld.",
+   "own_cite": "reference/decrypted/shs3_payload_decoded.swf (my own tag walk: 4051 tags, DefineSound=0) + reference/preservation/ listing"
+  },
+  {
+   "claim_id": "NF-11-category-11-skills-are-in-npcdata",
+   "refuted": true,
+   "reason": "REFUTED on its census, which is wrong five ways. The cite lines are EXACT and the HEADLINE is true — npcdata.xml:3662/:3898/:3934/:4349 all open `<skills><skill><id>1500|1501</id><lvl>3</lvl></skill>...`, so category-11 skills ARE in npcdata and the nested `<skill><id>N</id><lvl>N</lvl>` encoding is why a `<skill>NNNN</skill>` grep returned zero. But the claim's grant census is false. My own raw count over npcdata.xml (grep of `<skill><id>NNNN</id><lvl>`): 1500 = 5 rows (3662,3683,3898,4290,4349) OK; 1501 = 2 rows (3934,3956) OK; 1068 = 2 rows, NOT 5 (3934 lvl 1, 4349 lvl 2); 1064 = 4 rows, NOT 5 (3898,3934,3956,4290); 1065 = 4 rows, NOT 5 (same four); 1066 = 1 row, NOT 2 (3879); 1067 = 1 row, NOT 2 (3879). Five of seven figures overstated by 25-150%. I carry the corrected census forward as a new finding so the true part is not lost.",
+   "own_cite": "reference/extracted/npcdata.xml:3934 and :4349 (opened; plus my own occurrence count over all 495 <npc> blocks)",
+   "severity": "material"
+  },
+  {
+   "claim_id": "NF-11-negative-grep-in-v0717-stance-slash-multipliers-is-false",
+   "refuted": false,
+   "reason": "EXACT and I re-ran the greps myself. `grep -rn '0\\.5 + 0\\.5 \\*' reference/decompiled/shs3_android/scripts/` returns exactly FOUR hits, at exactly the four cited lines: MCSPlayer.as:3052 `this.slashLength = this.baseSlashLength * (0.5 + 0.5 * this.heavyMastery * 0.01);`, MCSPlayer.as:3205 `maxDamage = baseDamage * (0.5 + 0.5 * this.lightMastery * 0.01);`, InventoryUI.as:1945 `dmgModifier = 0.5 + 0.5 * mastery * 0.01;`, InventoryUI.as:1966 `slashModifier = 0.5 + 0.5 * mastery * 0.01;`. And `grep -rn '0\\.005'` over BOTH shs3_android/scripts and shs3_payload/scripts returns nothing. So the dismissed survey was killed by a false negative grep, exactly as claimed.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3052,:3205 and InventoryUI.as:1945,:1966"
+  },
+  {
+   "claim_id": "NF-12-shape-fill-histogram-is-slot-frequency-not-area",
+   "refuted": false,
+   "reason": "I reproduced the parse independently and it matches to the unit. I derived the keys from source rather than taking them on trust: ResourceManager.as:200-217 decryptByteArray XORs bytes 3..255 (with an i%11 swap into i+256) using resourceFileNameArray[n].charCodeAt(1), i.e. 'shs3resource.swf'[1]='h'=104, 'bgresource.swf'[1]='g'=103, 'imageresource.swf'[1]='m'=109 — exactly the claim's 104/103/109. Decrypting and walking the tag streams: 115 = CWS v17, 1755 shape records split {DefineShape 2:127, 22:26, 32:8, 83:1594} and 1912 SymbolClass names; 120 = 562 shape records; 124 = 106 shape records. Every one of those figures is the claim's figure. The methodological point — a FILLSTYLEARRAY census counts declared fill SLOTS, not rendered area — is correct and is a real limit on the finding it bounds.",
+   "own_cite": "reference/extracted/android/115_Mobile_SHS3Resource.bin, 120_*, 124_* — my own decrypt (keys 104/103/109 derived from reference/decompiled/shs3_android/scripts/ResourceManager.as:200-217) + SWF tag walk"
+  },
+  {
+   "claim_id": "NF-12-web-swf-header-declares-24fps",
+   "refuted": false,
+   "reason": "I parsed both headers myself (sig, version, 32-bit length, nbits-prefixed RECT, then the 8.8 fixed LE frameRate and 16-bit frameCount). reference/decrypted/shs3_payload_decoded.swf = CWS, version 17, frameRate 24.000, frameCount 6. reference/decrypted/shs3_android_payload_decoded.swf = CWS, version 26, frameRate 24.000, frameCount 6. Verbatim match to the quoted tuples. The 24 Hz clock is now web-build fact with no android caveat.",
+   "own_cite": "reference/decrypted/shs3_payload_decoded.swf + shs3_android_payload_decoded.swf (my own SWF header parse)"
+  },
+  {
+   "claim_id": "NF-13-steal-was-a-node-action-not-a-skill",
+   "refuted": false,
+   "reason": "EXACT on every cite, and the honest PARTIAL is right. NodeUI.as:55/:57/:59 are `ACTION_ATTACK:int = 21;` / `ACTION_STEAL:int = 22;` / `ACTION_BACK:int = 23;`. GenericActionButton.as:191-193 and :309-311 are both `case NodeUI.ACTION_STEAL: this.image = new StealActionIcon(); break;`. StealActionIcon.as:5 is `[Embed(source=\"/_assets/assets.swf\", symbol=\"symbol1076\")]`. I checked the string ids too: 6022='Steal', 6023=\"Steal other players' money\", 7024-7028 are the five 'Steal up to N coins ... % chance to get caught' level descriptions. And `grep -c '<id>1023</id>' reference/extracted/skilldata.xml` = 0, so there is no skill row to attribute it to.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NodeUI.as:57; GenericActionButton.as:191-193; StealActionIcon.as:5"
+  },
+  {
+   "claim_id": "NF-14-canchangestance-is-a-state-whitelist",
+   "refuted": false,
+   "reason": "Both halves confirmed by me. Code: MCSPlayer.as:2965-2968 is verbatim the quoted canChangeStance(), whitelisting IDLE/POSE/RUN/WALK/SKILL_CHICHARGE plus FLINCH-with-prev-in-set. FRAME: I opened reference/frames/duel_dense/Nr4fQstqHDM_431.0.png (1920x1080), cropped (0,864)-(1056,1080) and upscaled x1.5 LANCZOS — visibly a circular portrait, a green 20/20 bar, a blue 26/26 bar, and directly beneath them a brown bar reading 'CANNOT CHANGE STANCE', with '150% DAMAGE' in yellow below it. The player-facing form of the rule is exactly where the claim says it is.",
+   "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_431.0.png (crop 0,864-1056,1080 @ x1.5 LANCZOS) + reference/decompiled/shs3_android/scripts/MCSPlayer.as:2965-2968"
+  },
+  {
+   "claim_id": "NF-16-heavenly-sword-numbers-unclaimed",
+   "refuted": false,
+   "reason": "EXACT to the line. skilldata.xml:1435 `<skill>`, :1436 `<id>1047</id>`, :1437 displayname 6093, :1438 `<lvlreq>65</lvlreq>`, :1439 `<desc>6100</desc>`, :1440 `<req><has><id>1046</id><qty>1</qty></has></req>`, :1442 category 4, then three <level> rows each with `<chi>50</chi>` and `<cooldown>30</cooldown>` (:1446/:1447 on level 1) and descs 7078/7079/7080. strings.json: 7078='500 damage, 5 sec delay', 7079='500 damage, 4 sec delay', 7080='500 damage, 3 sec delay', 6100='Calls down a mystical sword from the heavens.\\n\\nDrag and drop skill icon to select target location.' Flat damage, shortening delay — exactly as stated.",
+   "own_cite": "reference/extracted/skilldata.xml:1435-1464 + docs/gauntlet/L0/index/strings.json[\"7078\"],[\"7079\"],[\"7080\"],[\"6100\"]"
+  },
+  {
+   "claim_id": "NF-17-four-actives-cost-zero-skill-points",
+   "refuted": false,
+   "reason": "Confirmed, including the part I initially mis-parsed. skilldata.xml:240 opens skill 1003 (displayname 6006 = 'Jump'), whose single level carries `<required></required>` (empty) at :246. :1282 opens skill 1042 (displayname 6088 = 'Chi Punch'), whose LEVEL 1 carries `<required></required>` at :1290 while levels 2 and 3 carry 2 and 3. :1491 and :1506 are literally `<required>0</required>`, and I confirmed by walking back to the enclosing <skill> that they belong to skill 1049 (block opens :1483) and skill 1050 (block opens :1498). XMLSkill.as:253 is verbatim `required = int(this.levelList[lvl].required);` — and AS3 int(\"\") is 0, so both spellings are free. Four free actives, two spellings.",
+   "own_cite": "reference/extracted/skilldata.xml:1282-1308 (skill 1042 block, empty <required> at :1290) + :1491, :1506 + reference/decompiled/shs3_android/scripts/XMLSkill.as:253"
+  },
+  {
+   "claim_id": "NF-18-full-skill-prerequisite-dag-unenumerated",
+   "refuted": false,
+   "reason": "I re-extracted the DAG with a real XML parser (ElementTree, root <skilldata>, 75 <skill> children) and got the claim's numbers exactly: 52 <req><has> edges total; target histogram 28:6, 29:6, 30:6, 31:6, 1000:4, 1001:4, 1002:4 plus exactly sixteen singletons on 1005,1006,1007,1010,1012,1024,1042,1043,1044,1045,1046,1047,1051,1052,1053,1054. Element gates carry qty {10,30,60}; stance gates carry qty {3,4,5,10}. checkConditions verified at reference/decompiled/shs3_android/scripts/StatsManager.as:4152 with the `if(has[i].comp.toString() == \"\") { comparison = \"gte\"; }` default at :4171-4173. DEFECT, non-fatal: the prose enumerates 14 of the 16 skill-to-skill edges — it omits 1047->1048 and 1010->1051. Incomplete, not wrong.",
+   "own_cite": "reference/extracted/skilldata.xml (my own ElementTree extraction: 52 <req><has> edges) + reference/decompiled/shs3_android/scripts/StatsManager.as:4152-4177",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "NF-2-animdata-hold-table-is-both-builds",
+   "refuted": false,
+   "reason": "EXACT. I opened §1t783s0§.as (164 lines): :17 `this.duration = param1.@d;`, :18 `this.looping = param1.@l == 1;`, :27 `switch(param1.@i.toString())`, thirteen cases :29-41 then :42 `this.duration += 10;`, ten cases :44-53 then :54 `+= 15;`, :56-57 then :58 `+= 24;`, and the tail runs to :146 with +6/+12/+24 groups. The sheathesword identification is nailed — §1t1544s0§.as:10 `§1t10261s0§:String = \"sheathesword\";` and :12 `§1t10263s0§:String = \"sheathesword3\";`. The clamp is real: :149-156 `if(param1 >= this.§1t787s0§) { param1 = this.§1t787s0§ - 1; } return this.§1t784s0§[param1];`. DEFECT, cosmetic: the +6 death group is SEVEN cases (:60-66), not six.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t783s0§.as:17,:27-146,:149-156",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "NF-2-crittext-gated-on-full-reload-bar",
+   "refuted": false,
+   "reason": "EXACT. BattleUI.as:262 is verbatim `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` and :102 is verbatim `this.crittext.text = LangManager.getString(175);`. docs/gauntlet/L0/index/strings.json[\"175\"] = 'Critical Hit'. The HUD half of the crit rule is exactly where the claim puts it.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:102,:262 + docs/gauntlet/L0/index/strings.json[\"175\"]"
+  },
+  {
+   "claim_id": "NF-2-recovered-audio-is-android-only-web-audio-still-unheld",
+   "refuted": false,
+   "reason": "Reproduced by my own tag walk of the decoded web payload: 4051 tags, DefineSound(14) = 0, DefineBinaryData(87) = 27 — both numbers exactly as quoted, and the 27 matches S0-1's count of web bindata files, which is a real parser self-check. For contrast the android payload gives DefineBinaryData = 42, matching the 42 android blobs. The web build embeds no sound; the recovered waveforms are android v0.682 only. Consistent with S0's C3, which scopes the audio recovery to 122_Mobile_SoundResource.",
+   "own_cite": "reference/decrypted/shs3_payload_decoded.swf (my own tag walk: DefineSound=0, DefineBinaryData=27)"
+  },
+  {
+   "claim_id": "NF-2/coins-and-gold-are-two-onscreen-currencies",
+   "refuted": true,
+   "reason": "REFUTED on its A1 artifact — THE FRAME WINS. I opened reference/frames/Nr4fQstqHDM/seg-05/frames/frame_0027.jpg (1024x576, viewed whole at x1.5 LANCZOS). It shows a 'YOU RECEIVED' loot dialog on a full-screen red-freeze background: a coin icon with '15', 'XP 510', three PANTS item slots and an OK button. There is NO top HUD strip in it at all — no COINS, no GOLD, no GET GOLD button, no EXPERIENCE POINTS bar, no level badge. The described strip is real but two frames later: I built a top-strip contact sheet of frames 0029-0048 in the same directory and the exact described row — silver coin '480' over 'COINS', a '+' button, gold coin '2' over 'GOLD', a red 'GET GOLD' button, a level badge '7' and '14901 / 16350 EXPERIENCE POINTS' — appears in frame_0029, frame_0030, frame_0040, frame_0041 and frame_0042. The code half is all correct (§1t1523s0§.as:226 §1t9412s0§=11, :228 §1t9413s0§=12, :1023-1024 set them to 100 and 3; StatsManager.as:190/192/194 STAT_LEVEL=10/STAT_GOLD=11/STAT_HGOLD=12; REBUILD_READINESS.md:79 '100c/3g guest start'), and the quote's inline StatsManager line numbers are 2 low (isCoinPurseFull is :2653, its return :2655, both inside the cited :2627-2664). I carry the whole finding forward with the correct frame.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-05/frames/frame_0027.jpg (opened whole @ x1.5 LANCZOS) and frame_0029.jpg (top strip 0,0-1024,52 @ ~x1.46 LANCZOS)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "NF-3-inventory-preview-contradicts-sim-on-crit",
+   "refuted": false,
+   "reason": "EXACT on every line. InventoryUI.as:1943-1948 light block (dmgModifier :1945, critModifier = 1.2 :1946, defModifier = 1 :1947, slashModifier = 1.5 :1948); :1955 `critModifier = 1.5;` balanced; :1964 `critModifier = 1.5;` heavy. MCSPlayer.as:3215 `if(this.reload == this.maxreload)`, :3217 `if(this.stance != LIGHT_STANCE)`, :3219 `return maxDamage * 1.2 + this.STAT_CRITICALDMG;`, :3221 `return maxDamage * 1.5 + this.STAT_CRITICALDMG;`. That is exactly inverted against the panel. The readout cite is right too: InventoryUI.as:2087 `str += \"critical dmg: \" + ... + \" (\" + stanceName + \")<br>\";`. A shipped self-contradiction, correctly caught.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:1946,:1955,:1964,:2087 vs MCSPlayer.as:3215-3221"
+  },
+  {
+   "claim_id": "NF-3-obfuscated-web-payload-is-symbol-mappable-by-call-signature",
+   "refuted": false,
+   "reason": "EXACT and the mapping is sound. §1t99s0§.as:183 declares a fifteen-int-param function and :185-199 assign them in order: controlledBy, (setter param2), §1t3257s0§=param3, (setter param4), §1t4413s0§=param5, defense=param6, §1t4419s0§=param7, minDamage=param8, damageRange=param9, §1t4420s0§=param10, slashUsage=param11, §1t4421s0§=param12, §1t4422s0§=param13, §1t4423s0§=param14, level=param15. shs3_android_payload/scripts/StatsManager.as:1834 is a single line calling initPlayer(0, HP, MAXHP+bonus, CHI, MAXCHI+bonus, DEFENSE+bonus, getBaseReload(), getMinDamage(), getDamageRange(), getBaseSlashLength(), getSlashUsage(), getStat(1000), getStat(1001), getStat(1002), getLevel()) — fifteen args, positionally identical. §1t4420s0§ = baseSlashLength and §1t4421/4422/4423s0§ = light/balanced/heavy mastery are pinned. Independently corroborated by §1t99s0§.as:3262-3270, where §1t4421s0§ drives the LIGHT branch and §1t4422s0§ the BALANCED branch.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:183-199 vs reference/decompiled/shs3_android_payload/scripts/StatsManager.as:1834"
+  },
+  {
+   "claim_id": "NF-4-live-bug-launch-unlock-level-heavy",
+   "refuted": false,
+   "reason": "CONFIRMED, and it is a genuine live defect. I opened src/config/stances.ts — :58 `export const LAUNCH_UNLOCK_LEVEL: Record<StanceId, number> = {`, :59 `light: 3,`, :60 `balanced: 5,`, :61 `heavy: 5,`. Both builds disagree on the heavy row and agree on the other two. WEB §1t99s0§.as: :3223 light `§1t4425s0§ = §1t4421s0§ >= 3`, :3233 balanced `§1t4425s0§ = §1t4422s0§ >= 5`, :3239 heavy `§1t4425s0§ = §1t4423s0§ >= 3`. ANDROID MCSPlayer.as: :3166 light canLaunch >= 3, :3176 balanced canLaunch >= 5, :3182 heavy canLaunch >= 3. So heavy should be 3, not 5, and the whole row can be promoted to CONTRACT with two-build backing. (Read-only: I changed nothing.)",
+   "own_cite": "src/config/stances.ts:61 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3223,:3233,:3239 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3166,:3176,:3182",
+   "severity": "material"
+  },
+  {
+   "claim_id": "NF-4-mastery-domain-is-1-to-10",
+   "refuted": false,
+   "reason": "EXACT on all five sub-cites. MCSPlayer.as:3166/3167/3168 are verbatim `this.canLaunch = this.lightMastery >= 3;` / `canDeflect = ... >= 4;` / `canAirCombo = ... >= 5;`, and the heavy block at :3182-3184 mirrors them. The routing chain checks out end to end: StatsManager.as:1834 passes getStat(1000/1001/1002) into initPlayer; :2940-2943 is `if(id < 2000) { return SKILL; }`; :3956-3961 is `case SKILL: skillStat = findSkillStat(id); if(skillStat != null) { return skillStat.getValue(); }` with :3960 exactly as quoted. And skilldata's <value> ladder is 1..10 (skill 1000 verified directly). InventoryUI.as:1941-1966 recomputes from the same getStat calls. The 1-10 domain is established.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3166-3184 + StatsManager.as:2940-2943,:3956-3961"
+  },
+  {
+   "claim_id": "NF-5-v0682-charsheet-contradicts-its-own-crit",
+   "refuted": false,
+   "reason": "EXACT. The three InventoryUI lines are literally critModifier = 1.2 (:1946, light), 1.5 (:1955, balanced), 1.5 (:1964, heavy); MCSPlayer.as:3215-3221 is verbatim the quoted reload==maxreload block returning maxDamage*1.2 for non-Light and *1.5 for Light. Exactly inverted, in the same shipped build. The parenthetical is right too — I confirmed the web build is flat 1.3 with no stance branch at §1t99s0§.as:3272-3276. Correctly rules the android crit column unusable as a source.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:1946,:1955,:1964 vs MCSPlayer.as:3215-3221"
+  },
+  {
+   "claim_id": "NF-5-v0717-crit-is-flat-do-not-port-android-crit-column",
+   "refuted": false,
+   "reason": "EXACT, and this is the strongest cite in the packet. I opened §1t5957s0§.as: the web character sheet's three stance branches set _loc42_ = 1.3 at :2727 (light), :2736 (balanced) and :2745 (heavy) — all three literally `_loc42_ = 1.3;`. The same branches set _loc41_ (damage) to 0.5+0.4*m*0.1 / 1+0.2*m*0.1 / 1.4, matching §1t99s0§'s sim exactly, and _loc47_ (defence) to 1 / 1 / 0.8. Android's InventoryUI gives 1.2/1.5/1.5 and dmgModifier 1.5 for heavy. So the web char sheet AGREES with the web sim on crit while the android char sheet contradicts the android sim — the android crit column must not be ported. Every sub-claim held.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:2727,:2736,:2745"
+  },
+  {
+   "claim_id": "NF-6-heavy-stance-takes-80pc-defense",
+   "refuted": false,
+   "reason": "Primary cite EXACT: MCSPlayer.as:3231 `internal function getDefense() : int`, :3233 `if(this.stance == HEAVY_STANCE)`, :3235 `return defense * 0.8;`, :3237 `return defense;`, :3238 `}` — the quoted body verbatim across :3231-3238. DEFECT, non-fatal: the corroborating cite is off by one. InventoryUI.as:1964 is `critModifier = 1.5;`; the `defModifier = 0.8;` the claim describes is at :1965. The corroboration exists, the line number does not. Bank it as InventoryUI.as:1965.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3231-3238 + InventoryUI.as:1965 (not :1964)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "NF-6-xp-array-runs-past-the-level-cap",
+   "refuted": false,
+   "reason": "EXACT, and I re-derived the array myself. §1t1523s0§.as:362 is verbatim `public static const §1t9470s0§:int = 80;` and :364 declares §1t5923s0§ — I split the literal and got exactly 99 elements, index 80 = 4285800, index 98 = 29395800 = last. Android StatsManager.as:76 `public static var levelCap:int = 80;` and :78 `public static var expArray:Array = [0,550,1450,...]`, same opening run. Indices 81..98 are shipped-but-unreachable. Correct.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:362,:364 + reference/decompiled/shs3_android/scripts/StatsManager.as:76,:78"
+  },
+  {
+   "claim_id": "NF-7-800x690-is-the-friend-bar-layout",
+   "refuted": false,
+   "reason": "EXACT. §1t1540s0§.as:271-273 is verbatim `var _loc2_:int = 800; var _loc3_:int = 480; var _loc4_:int = 690;`, the android twin GameEngine.as:269-271 is the named form, and §1t1523s0§.as:104/:106 are stageWidth 800 / stageHeight 480. My own header parse adds a decisive independent leg the claim does not use: the WEB payload SWF's document rect is 800.0 x 690.0 while the ANDROID payload SWF's is 800.0 x 480.0 — same code, different authored rect, which is exactly what 'the 690 is a layout mode, not a second canvas' predicts. REBUILD_READINESS.md:117 survives.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:271-273 + §1t1523s0§.as:104,:106 + my SWF header parse of reference/decrypted/shs3_payload_decoded.swf (800x690) and shs3_android_payload_decoded.swf (800x480)"
+  },
+  {
+   "claim_id": "NF-7-focus-drain-is-stance-scaled-and-crit-empties-bar",
+   "refuted": false,
+   "reason": "EXACT. MCSPlayer.as:3240 opens deductReloadBar(); :3242-3244 zero a full bar; the switch at :3246 gives LIGHT `reload -= slashUsage / 2` (:3249), BALANCED and REVERSED `reload -= slashUsage` (:3253), HEAVY and DUAL `reload -= slashUsage * 1.5` (:3257); and :3259-3262 clamp at 0 (a detail the quote truncates but which does not change the claim). Every ratio in the prose follows.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3240-3263"
+  },
+  {
+   "claim_id": "NF-8-focus-bar-displayed-zero-is-24-not-0",
+   "refuted": false,
+   "reason": "EXACT to the line. MCSPlayer.as:3265 `public function bonusReload() : *`, :3267 `this.reload += 6;`, :3268-3271 clamp to maxreload, :3272 `StageManager.getBattleUI().updateReload((this.reload - 24) / (this.maxreload - 24));`. The [24, maxreload] -> [0,1] remap and the flat +6 are both exactly as claimed. Pairs cleanly with NF-2-crittext (crittext.visible = percentage >= 1).",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3265-3272"
+  },
+  {
+   "claim_id": "NF-9-345-and-200-are-already-ruled-placeholders",
+   "refuted": false,
+   "reason": "The quoted ledger text is verbatim. SOURCE_CONSTANTS.md:33-36 is exactly '1. **Static UI mockup text.** ... `slash distance: 345 (heavy)` · `physical dmg: 1234 - 1235` · `hp: 123 / 123` · `chi: 123 / 434`. A naive read hands you \"Balanced reach = 345\". **Nothing sourced from a static text field is admissible.**' and :37-40 is exactly the maxDistance = 200 paragraph. The underlying code is there too: InputManager.as:51 `internal static var maxDistance:int = 200;` and :108 `maxDistance = num;` inside setMaxDistance. DEFECT, cosmetic: the 'precedence clause (:11-14)' pointer is loose — :11-13 is the 'What is committed' paragraph; the closest precedence statement is :9 ('its §2 audit table is superseded by §6 here').",
+   "own_cite": "docs/research/fidelity/SOURCE_CONSTANTS.md:33-40 + reference/decompiled/shs3_android/scripts/InputManager.as:51,:108",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "NF-shira-tancho-is-player-clan",
+   "refuted": false,
+   "reason": "The three questdata lines are verbatim at :514, :550 and :560, and `grep -o 'Shira Tancho' reference/extracted/questdata.xml | wc -l` returns exactly 104. npcdata.xml:2418 is indeed the `<npc>` opening the id-90 block, with `<ai>30</ai>` at :2423. DEFECT, non-fatal: the name id is transposed. The block's tag is `<name>5121</name>` at :2420, and strings.json[\"5121\"] = 'Old Guard'. The claim writes 5012, and strings.json[\"5012\"] = 'Guard' — a different NPC. The resolved value it asserts is right; the id it names is not. Bank 5121. Second caveat: 'the PLAYER's own clan' is a reading of the quoted lines, not a stated fact in them — what IS established beyond argument is that Shira Tancho is a heavily-sourced named clan with an Old Guard, crane-feather heraldry and named members, which is all the claim needs to refute 'unsourced'.",
+   "own_cite": "reference/extracted/questdata.xml:514,:550,:560 + reference/extracted/npcdata.xml:2418-2423 + docs/gauntlet/L0/index/strings.json[\"5121\"]",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "NF-string-5017-empty-by-design",
+   "refuted": false,
+   "reason": "EXACT, and I reproduced the whole census. Decoding 118_Mobile_Lang_EN.bin as UTF-16LE (BOM fffe confirmed on the first two bytes) gives 7,676 lines; :4162 `<trans-unit id=\"1385\" resname=\"5017\">`, :4163 `<source></source>`, :4164 `</trans-unit>` — verbatim. The neighbours match: :4160 'Pugilist' (5016), :4166 'Merchant' (5018), :4169 'Old man' (5019). My regex census over all trans-units returns 2,555 entries with exactly 21 empty sources, and the id list is character-for-character the claim's list: 665, 820, 5002, 5017, 5022, 5023, 5024, 5025, 5034, 7003, 7041, 9000, IDS_Q0TITLE, IDS_Q0S0NODE2, IDS_Q3S1NODE1, IDS_Q3S1NODE2, IDS_Q4S1NODE1, IDS_Q4S1NODE2, IDS_Q7TITLE, IDS_Q50S5NODE1, IDS_Q50S5NODE2. The 'NPCs 50-55' aside is unverified and does not follow from the id list, but the finding itself is airtight.",
+   "own_cite": "reference/extracted/android/118_Mobile_Lang_EN.bin (my own UTF-16LE decode; lines 4162-4164 + 21-empty census over 2,555 trans-units)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "actionscript/stance-triangle-second-android-site",
+   "refuted": false,
+   "reason": "EXACT, including both negatives. EnemyClone.as:434 is verbatim the three-clause stance-triangle condition, :436 `damage *= 1.2;`, :439 `damagetextcol = 16777215;` guarded on `controlledBy != 0` at :437. MCSPlayer.as:3701-3707 is the identical block with `this.` prefixes. I checked the two absences myself: NPC.as:429-460 contains no 'stance' and no '1.2' at all; and the web §1t68s0§.as:465-481 is the damage-resolution tail (defense subtraction, min-damage clamp, a `_loc3_ *= 1.3;` gated on §1t1071s0§, a 500-damage branch) with no stance-triangle condition anywhere in it.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/EnemyClone.as:434-441 + MCSPlayer.as:3701-3707 + NPC.as:429-460 + reference/decompiled/shs3_payload/scripts/§1t68s0§.as:465-481"
+  },
+  {
+   "claim_id": "actionscript/unbreakable-and-reinforce-prices",
+   "refuted": false,
+   "reason": "EXACT. InteractUI.as:1082 `case \"reinforceweapon\":` and :1083 `cost = 5000;`, checked immediately against `StatsManager.getGold()` at :1084 — and getGold reads STAT_GOLD = id 11 = the COINS readout, so 'flat 5,000 coins' is right. GetGoldPromptDialog.as:227 `if(StatsManager.getHeavenlyGold() >= 2)` inside the MODE_REPAIRWEAPON branch opened at :225, with :229 `OverworldHUD.instance.changeNameDialog.show(ChangeNameDialog.MODE_NAMEWEAPON);` — which independently confirms the 'which also names it' aside. strings.json[\"669\"] = 'Your weapon broke!\\nWould you like to make it unbreakable for 2 Gold?' verbatim.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1082-1083 + GetGoldPromptDialog.as:225-229 + docs/gauntlet/L0/index/strings.json[\"669\"]"
+  },
+  {
+   "claim_id": "actionscript/web-weapon-parry-lives-in-the-npc-class",
+   "refuted": false,
+   "reason": "EXACT, and the part-index identification is now airtight rather than asserted. §1t68s0§.as:458-461 is verbatim `case mcs.§1t6231s0§[§1t75s0§.§1t12380s0§]: this.§1t3256s0§ = false; _loc3_ = 0; return false;`, and §1t75s0§.as:19 is `public static var §1t12380s0§:int = 3;`. I pinned the whole part table across builds: web §1t12380s0§=3, §1t12389s0§=12, §1t12393s0§=16, §1t12394s0§=17 vs android MCSCharacter.as PART_weapon=3, PART_neck=12, PART_head=16, PART_hat=17 — a four-value match, so index 3 really is the weapon. Both absences confirmed: §1t99s0§.as:3736-3747 and MCSPlayer.as:3687-3697 are the hat/head/neck behead switches with no weapon case and no early return.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:458-461 + §1t75s0§.as:19 + reference/decompiled/shs3_android/scripts/MCSCharacter.as:16,:34,:42,:44"
+  },
+  {
+   "claim_id": "android-blobs-hunter/condition-comparison-enum-is-seven-operators",
+   "refuted": false,
+   "reason": "Code cites EXACT: StatsManager.as (shs3_android_payload) :4216 declares checkCondition(id, val, comparison:String = \"gte\"), :4222 `if(comparison == \"rand\") { return Math.random() * id <= val; }`, :4279 `switch(comparison)` with cases at :4281 eq, :4283 gte, :4285 gt, :4287 lt, :4289 lte, :4291 not and :4293 `default: return false;`, and :4173 `comparison = \"gte\";` as the absent-<comp> default. Seven operators, confirmed. DEFECT, arithmetic only: I ran the authored <comp> census over reference/extracted/android/*.bin myself and it is FOURTEEN sites, not 13 — 112_Mobile_NodeData rand x1; 114_Mobile_AchievementData not x1; 116_Mobile_QuestData eq x5, gt x1, gte x2, not x1; 90_InteractUI_UIData gte x1, lt x1, not x1. Every itemised figure the claim gives is exactly right; only the total is mis-added (its own items sum to 14).",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:4216-4222,:4279-4295,:4173 + my own <comp> census over reference/extracted/android/112_Mobile_NodeData.bin, reference/extracted/android/114_Mobile_AchievementData.bin, reference/extracted/android/116_Mobile_QuestData.bin and reference/extracted/android/90_InteractUI_UIData.bin",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "android-blobs-hunter/groundy-400-is-a-global-not-a-default",
+   "refuted": false,
+   "reason": "Confirmed on my own parse. XMLBG.as:10 `internal var groundY:int = 400;`, :12 `internal var flatGround:Boolean = true;`, constructor opens :58, and the override-if-present pattern is real (`if(xml.groundy.toString() != \"\") { this.groundY = xml.groundy; }`). My tag count over 123_Mobile_BGData.bin: 49 `<bg>` records, and `<groundy>` 0, `<flatground>` 0, `<gwrap>` 0, `<fgwrap>` 0 — not one occurrence. The wrap corollary holds too: XMLBG.as:34 groundLayerWrap = 1600 and :36 foregroundLayerWrap = 1600, overridden only at :117/:121 from the tags that never appear. DEFECT, cosmetic: the inline quote labels the groundy override ':66'; :66 is `this.name = xml.name;` and the override is :67 (inside the cited :58-140 range).",
+   "own_cite": "reference/extracted/android/123_Mobile_BGData.bin (my own tag census: 49 <bg>, zero groundy/flatground/gwrap/fgwrap) + reference/decompiled/shs3_android_payload/scripts/XMLBG.as:10,:12,:34,:36,:67",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "android-blobs-hunter/traproomdata-70-rooms-four-difficulty-tiers",
+   "refuted": false,
+   "reason": "The blob is plain UTF-8 XML — citelint's LINE_ON_BINARY flag is a false alarm, line numbers are legitimate here. Everything checks: :21 `<traproomdata>`, :32 `<easy>`, :126 `<medium>`, :309 `<hard>`, :446 `<veryhard>`, and the first authored room is verbatim :33 `<room>`, :34 `<!-- 1x sawblade -->`, :35 `<width>800</width>`, :36 the Trap_SawBladesAuto obj with x 400 and property 0,24,24,0,1, :37 `</room>`. My own counts: 70 `<room>`, 314 `<obj>`, 70 `<width>`, 622 content lines. The legend at :5-19 names exactly the thirteen types listed, each with its ordered <property> signature. DEFECT, cosmetic: Trap_KunaiAuto (id 42, the property list the quote reproduces) is at :9, not :10 — :10 is Trap_SawBladesAuto id 43.",
+   "own_cite": "reference/extracted/android/84_QuestEngine_TrapRoomData.bin:5-19,:21,:32,:33-37,:126,:309,:446 (my own parse: 70 room / 314 obj / 70 width)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "android-blobs-hunter/uidata-is-the-whole-town-interaction-spec",
+   "refuted": false,
+   "reason": "Plain UTF-8 XML, so LINE_ON_BINARY is again a false alarm. All four title cites EXACT: :5 peddler, :14 market, :47 vegpatch, :66 stables. My own structural counts reproduce the claim to the unit: 314 content lines, root <uidata>, 19 <ui>, 47 <menu>, 139 <option>, 28 <condition>, and the 19 <title> values in file order are exactly the 19 screens listed. Strings verify: 83='Buy', 84='Sell', 85='Leave', 269='Sell crops'. DEFECT, non-fatal: the action vocabulary is FIFTY-THREE distinct <action><id> values, not 46 — the prose omits peddlerbuy, peddlersell, merchantbuy, merchantsell, leaveclan, recenteventsscrolldown, teachfire1/2, teachwater1/2, teachwind1/2, teachearth1/2, joincustomclanrecruit and joincustomclangeneral. Also cosmetic: the two option quotes are one line low (:7 and :16, not :6 and :15).",
+   "own_cite": "reference/extracted/android/90_InteractUI_UIData.bin:5,:14,:47,:66 (my own parse: 19 ui / 47 menu / 139 option / 28 condition / 53 distinct actions)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "android-blobs/android-blob-encoding-census",
+   "refuted": false,
+   "reason": "Reproduced byte-for-byte. I dumped the first 8 bytes of all 42 files in reference/extracted/android/ myself: 18 carry the UTF-8 BOM efbbbf and every one of those is an MCSCharacter_*AnimationData.bin (91-108 plus 99); 17 are plain UTF-8 text with no BOM; exactly 1 is UTF-16LE (fffe) and it is 118_Mobile_Lang_EN.bin and nothing else; exactly 5 start 'CWS' — 113_Mobile_MusicResource, 115_Mobile_SHS3Resource, 120_Mobile_BGResource, 122_Mobile_SoundResource, 124_Mobile_ImageResource; exactly 1 is GIF89a and it is 110_Mobile_MapBitmapData.bin. 18+17 = 35 UTF-8 text, as claimed. The cite line resolves: 112_Mobile_NodeData.bin:1 is `<?xml version=\"1.0\" encoding=\"utf-8\"?>`. This is S0's C1 corroborated independently.",
+   "own_cite": "reference/extracted/android/112_Mobile_NodeData.bin:1 + my own first-8-byte dump of all 42 files in reference/extracted/android/"
+  },
+  {
+   "claim_id": "android-blobs/bgdata-override-census-corrected",
+   "refuted": false,
+   "reason": "Reproduced exactly, every figure. 123_Mobile_BGData.bin:411 is `<ffscroll>1</ffscroll>` (and so is :428); ffscroll occurs on 14 rows with value set {0.05, 0.1, 0.125, 0.14, 0.27, 1} — so the range does run to 1.0, not 0.27. :530 is `<ffwrap>2000</ffwrap>`; ffwrap occupies exactly lines 12, 23, 259, 330, 356, 370, 514, 530 = 8 rows, of which four (259, 356, 514, 530) are 2000. The three uncensused families are exactly as stated: ppscroll 6 rows {0.2, 0.6, 1}, gscroll 2 rows {0}, fgscroll 3 rows {1.2}. A clean correction to a peer census.",
+   "own_cite": "reference/extracted/android/123_Mobile_BGData.bin:411,:428,:530 (my own override census)"
+  },
+  {
+   "claim_id": "android-blobs/dead-portrait-throws-it-does-not-fall-back",
+   "refuted": false,
+   "reason": "Every link in the chain verified, including the part the claim asserts without proof. ResourceManager.as (shs3_android_payload) :293 builds `\"portrait_\" + id`, :294 `if(!applicationDomain.hasDefinition(mcname))`, :296 `return null;`. QuestDialogueUI.as:69 `this.bust.visible = false;`, :70 `this.npcPortrait = ResourceManager.getPortrait(portrait);`, :71 `this.portraitCanvas.addChild(this.npcPortrait);` — no null guard between them. 116_Mobile_QuestData.bin:12460 is verbatim `<img>chikako_maked</img>`, and my count over that file shows it occurs exactly ONCE against 77 occurrences of chikako_mask — a typo, not a variant. I then decrypted 124_Mobile_ImageResource (XOR key 109, derived from ResourceManager.as:200-217 and 'imageresource.swf'.charCodeAt(1)) and listed its symbols: 66 portrait_* names including portrait_chikako, _angry, _blush and _mask — no portrait_chikako_maked — and portrait_noportrait does exist but is unreachable past the early return. DEFECT, cosmetic: AS3's addChild(null) raises TypeError #2007, not ArgumentError #2007; the number and the crash are right.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:293-296 + QuestDialogueUI.as:69-71 + reference/extracted/android/116_Mobile_QuestData.bin:12460 + my decrypt/symbol-list of reference/extracted/android/124_Mobile_ImageResource.bin",
+   "severity": "minor"
+  }
+ ],
+ "judged_count": 48,
+ "packet_size": 48,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "npcdata-category11-grant-census-corrected",
+   "text": "Corrected grant census for the category-11 (NPC-only) skills in npcdata.xml, replacing the numbers in NF-11-category-11-skills-are-in-npcdata. Measured by raw occurrence of `<skill><id>NNNN</id><lvl>` over the whole file: 1500 (Reversed-stance mastery) 5 rows at lines 3662, 3683, 3898, 4290, 4349, all <lvl>3</lvl>; 1501 (Dual-stance mastery) 2 rows at 3934, 3956, both <lvl>3</lvl>; 1064 4 rows (3898, 3934, 3956, 4290); 1065 4 rows (same four); 1066 1 row (3879); 1067 1 row (3879); 1068 (SkillManager.SKILL_UNDYING) 2 rows — 3934 at <lvl>1</lvl> and 4349 at <lvl>2</lvl>. Category 11 holds exactly seven skilldata rows: 1064, 1065, 1066, 1067, 1068, 1500, 1501. The encoding point stands: npcdata nests these as `<skill><id>N</id><lvl>N</lvl></skill>`, which is why a `<skill>NNNN</skill>` grep finds nothing.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/extracted/npcdata.xml:3662, :3683, :3879, :3898, :3934, :3956, :4290, :4349 + reference/extracted/skilldata.xml (category-11 rows) + reference/decompiled/shs3_android/scripts/SkillManager.as:96",
+   "quote": "npcdata.xml:3934 `<skills><skill><id>1501</id><lvl>3</lvl></skill>…<skill><id>1064</id><lvl>1</lvl></skill><skill><id>1065</id><lvl>1</lvl></skill><skill><id>1068</id><lvl>1</lvl></skill></skills>` · npcdata.xml:4349 `…<skill><id>1068</id><lvl>2</lvl></skill>` · SkillManager.as:96 `public static var SKILL_UNDYING:int = 1068;`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L2 skills-meters / L2 enemies-ai: replaces a peer claim's overstated census. Anyone sizing the elite-enemy skill grants from the old numbers would over-provision 1064/1065 by 25%, 1066/1067 by 100% and 1068 by 150%."
+  },
+  {
+   "id": "coins-gold-hud-strip-correct-frame",
+   "text": "The COINS/GOLD dual-currency HUD strip is real and I have opened it — but it is NOT in frame_0027, which NF-2/coins-and-gold cites. frame_0027 is a 'YOU RECEIVED' loot dialog on a full-screen red freeze (coin icon + 15, 'XP 510', three PANTS slots, OK button) with no HUD strip at all. The strip appears in the same directory at frame_0029, frame_0030, frame_0040, frame_0041 and frame_0042. Visible in the top band, left to right: a silver coin icon with '480' over the label 'COINS'; a red '+' button; a gold coin icon with '2' over the label 'GOLD'; a red 'GET GOLD' button; and at the right a level badge '7' beside a yellow bar reading '14901 / 16350' over 'EXPERIENCE POINTS'. 16350 is expArray[7], consistent with a level-7 player. The code mapping the claim pairs with it is sound: STAT_GOLD = id 11 renders as COINS and STAT_HGOLD = id 12 renders as GOLD, and character creation sets 11 -> 100 and 12 -> 3. THE FRAME WINS: bank frame_0029, not frame_0027.",
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "reference/frames/Nr4fQstqHDM/seg-05/frames/frame_0029.jpg (top strip crop 0,0-1024,52, ~x1.46 LANCZOS) + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:226, :228, :1023-1024 + reference/decompiled/shs3_android/scripts/StatsManager.as:192, :194",
+   "quote": "Visibly in the crop of frame_0029: silver coin '480' / 'COINS' · '+' · gold coin '2' / 'GOLD' · 'GET GOLD' · level badge '7' · '14901 / 16350' / 'EXPERIENCE POINTS'. · §1t1523s0§.as:226 `internal static const §1t9412s0§:int = 11;` :228 `…§1t9413s0§:int = 12;` :1023 `§1t7357s0§(§1t9412s0§,100);` :1024 `§1t7357s0§(§1t9413s0§,3);` · StatsManager.as:192 `internal static var STAT_GOLD:int = 11;` :194 `internal static var STAT_HGOLD:int = 12;`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L10 ui-hud / L4 economy: gives the dual-currency HUD a frame cite that actually opens. Also settles that getGold()/changeGold() are COIN operations, so every 'gold' price read out of StatsManager is a coin price."
+  },
+  {
+   "id": "web-charsheet-heavy-defence-0.8-is-web-side",
+   "text": "Heavy-stance Defence x0.8 has a THIRD confirmation nobody has banked, and it is entirely web-side — no android string and no wiki. The web v0.717 character sheet sets its defence modifier per stance at §1t5957s0§.as:2728 (light = 1), :2737 (balanced = 1) and :2746 (heavy = 0.8), and consumes it at :2947 as `int(_loc3_ * _loc47_)` beside the stance name — the positional twin of android InventoryUI.as:2166 `\"physical def: \" + int(defense * defModifier) + \" (\" + stanceName + \")\"`. So in v0.717 the character sheet and the simulation AGREE on defence (§1t99s0§.as:3288 `return defense * 0.8;`), unlike the android build where they contradict each other on crit. That agreement is itself worth banking: it means the v0.717 char-sheet path is a usable cross-check, whereas the v0.682 one is not.",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:2728, :2737, :2746, :2947 + §1t99s0§.as:3288",
+   "quote": "§1t5957s0§.as:2746 `_loc47_ = 0.8;` (heavy branch) · :2728 `_loc47_ = 1;` · :2737 `_loc47_ = 1;` · :2947 `_loc55_ += §1t1521s0§.getString(987) + \": \" + _loc53_ + int(_loc3_ * _loc47_).toString() + _loc52_ + \" (\" + _loc45_ + \")<br>\";` · §1t99s0§.as:3288 `return defense * 0.8;`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L5 combat-core: promotes the Heavy def x0.8 term from android-plus-skill-description to a two-site web v0.717 fact, and establishes that the v0.717 character sheet is a trustworthy cross-check on the sim (the v0.682 one demonstrably is not)."
+  },
+  {
+   "id": "web-charsheet-per-stance-slash-reach-ladder",
+   "text": "UNCLAIMED AND LANE-RELEVANT: the web v0.717 character sheet carries a per-stance SLASH-DISTANCE ladder that no claim in this packet touches, and it is the mirror image of the damage ladder. In the same three stance branches that set damage and crit, §1t5957s0§.as sets a fourth modifier: :2729 light = 1.4 flat; :2738 balanced = 1 + 0.2*balancedMastery*0.1; :2747 heavy = 0.5 + 0.4*heavyMastery*0.1. It is consumed at :3013 as `int(_loc21_ * _loc48_)` beside the stance name — positionally the twin of android InventoryUI.as:2232 `\"slash distance: \" + int(baseSlashLength * slashModifier) + \" (\" + stanceName + \")\"`, where the variable is literally named slashModifier. At mastery 10 the ladder reads Light 1.4 / Balanced 1.2 / Heavy 0.9, exactly inverting the damage ladder 0.9 / 1.2 / 1.4 that NEW-2 confirms from the same file. PARTIAL, not HELD, for one reason: this is the DISPLAY path, and NF-3/NF-5 prove a shipped build can display a modifier its own sim does not apply (v0.682 crit). It is not yet shown that the v0.717 sim uses the same coefficients — that needs the InputManager.setMaxDistance call site in the web bundle. What it does do is give the reach question its first ratio-shaped web-build evidence, and it is not a static text field, so SOURCE_CONSTANTS.md:33-36's placeholder ruling does not apply to it.",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:2729, :2738, :2747, :3013 + reference/decompiled/shs3_android/scripts/InventoryUI.as:2232",
+   "quote": "§1t5957s0§.as:2729 `_loc48_ = 1.4;` · :2738 `_loc48_ = 1 + 0.2 * _loc46_ * 0.1;` · :2747 `_loc48_ = 0.5 + 0.4 * _loc46_ * 0.1;` · :3013 `_loc55_ += §1t1521s0§.getString(982) + _loc53_ + int(_loc21_ * _loc48_).toString() + _loc52_ + \" (\" + _loc45_ + \")<br>\";` · InventoryUI.as:2232 `str += \"slash distance: \" + FONTCOLOR1 + int(baseSlashLength * slashModifier).toString() + FONTEND + \" (\" + stanceName + \")<br>\";`",
+   "verdict": "PARTIAL",
+   "overturns_ledger": false,
+   "lane_impact": "L5 combat-core / L2 skills-meters: the reach blocker has been stuck on '345 and 200 are placeholders' with nothing to put in their place. This is a web-build, computed (not static-text) reach ratio ladder of 1.4 / 1.2 / 0.9 at max mastery. It must be confirmed against the web sim's own setMaxDistance call site before it is promoted past PARTIAL — the v0.682 crit case proves the char sheet can lie."
+  }
+ ]
+}

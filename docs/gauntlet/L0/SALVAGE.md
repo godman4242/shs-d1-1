@@ -9,12 +9,41 @@
 | Wave | Work | Agents | State |
 |---|---|---:|---|
 | **0** | wall-#9 insurance — structured JSON side-writes + `--critic-json` salvage | 0 | ✅ **LANDED** — 60 files / 953 tests |
-| **1** | `l0-finish-wf3` `{tier:'t1', batches:3, tag:'s26a'}` — 67 overturn-claimers | 6 | ⏳ |
+| **1** | `l0-finish-wf3` `{tier:'t1', batches:3, tag:'s26a'}` — 67 overturn-claimers | 6 | ✅ **CLEAN** — `wf_54792c81-6cd` → `run8` |
 | **2** | `l0-finish-wf3` `{tier:'t2', batches:13, tag:'s26b'}` — 586 corroborating | 13 | ⏳ |
 | **3** | mop-up t1 over the overturn-claimers waves 1–2 generate | ~2–8 | ⏳ |
 | **4** | `l0-finish-wf4` `{tag:'s26d'}` — dry-loop + completeness | ≤17 | ⏳ |
 | **5** | ledger rewrite — 12 system writers ⇉ 12 blind verifiers, + §6 | 27 | ⏳ |
 | **6** | gates green · `GAUNTLET.md` corrections · §3.7 re-arm | 0 | ⏳ |
+
+### ⚑ WAVE 1 — `INTEGRITY: CLEAN`. Judged **814 → 881**.
+
+```
+critics 6/6 returned · 134 verdicts, 134 LIVE, 0 VOID · 17 refuted
+overturn rulings 134 — UPHELD 103 · REJECTED 31   (23% rejected)
+every packet fully judged: 24/24 · 24/24 · 19/19, both lenses. 0 shortfalls. 0 agents died.
+49 new findings · citeLint on them: 39 RESOLVES · 0 BROKEN · 10 QUOTE_UNVERIFIED
+```
+
+Pooled after run8: **1,555 claim rows · 881 judged ids · 612 UPHELD · 58 NOT-UPHELD**,
+**466 surviving overturns on 243 distinct ledger sentences.**
+
+**The wall insurance paid before it was needed.** All six agents wrote their structured
+object to `critics/<batch>.<lens>.s26a.json` *before* returning — verified on disk while
+the run was still live (24/24 judged, 0 skipped, 0 VOID). A wall at that moment would
+have cost wall-clock and nothing else.
+
+**Verdict quality, spot-checked rather than assumed.** These critics re-derived rather
+than re-read: one streamed the whole 329 MB `payload.xml` in 4 MB chunks to prove
+`skilldata`/`npcdata` appear **zero** times and the two `itemdata`/`questdata` hits are
+BigDB table names in a string pool, not XML roots (C2, independently reconfirmed). One
+recomputed the entire PremiumData↔`heavenlyprice` join from scratch and **corrected the
+finding's own `build` field** — `reference/extracted/itemdata.xml` is the ANDROID blob
+(184,002 B vs 184,044 B, the 42-byte decl+CRLF delta), so the row is v0.682, not "both".
+One refuted a "byte-identical in both builds" claim by diffing the blobs and finding
+enemy id 443 added to every late-game survival wave in the WEB build only.
+
+---
 
 ### ⚑ WAVE 0 — THE HOLE WALL #8 LEFT IS CLOSED
 

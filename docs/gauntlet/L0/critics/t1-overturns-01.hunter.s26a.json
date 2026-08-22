@@ -1,0 +1,297 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "NF-1/ledger-rebirth-25-is-code-sourced-not-film",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2644-2651 and :228 (opened; :2644 `if(§1t7356s0§(§1t9426s0§) == 8)`, :2646 `§1t9713s0§(§1t9413s0§,100);`, :2651 `§1t9713s0§(§1t9413s0§,25);`, :228 `internal static const §1t9413s0§:int = 12;`) + docs/research/REBUILD_READINESS.md:79-80, :164-165, :205",
+   "overturn_upheld": true,
+   "reason": "HOLDS. I opened the web function and the two ledger lines. The +25 value is in shipped web code, and the ledger's ':165 vs :205' contradiction is real as stated (§205 concedes both longplays are pre-rebirth, so no camera saw a rebirth payout). The overturn stands on its stronger half: 'no 10th-rebirth tier' is FALSE — the Dan-8 arm pays 100 and announces getString(864,[name,\"10\"]) at :2647. Two corrections to the finding, neither fatal: (1) it never notices the payout is stat 12 = HEAVENLY gold (§1t9413s0§=12 at :228, and the web stat-index block :200-250 maps 1:1 onto StatsManager.as:170-215 where STAT_HGOLD=12; :2643 §1t9712s0§(§1t8755s0§,0) is setStat(STAT_XP,0), pinning the mapping), not the ledger's '+25g'; (2) the sibling claim cite04/web-rebirth-pays-25-and-100-heavenly-gold makes the same point completely and should be the row that lands."
+  },
+  {
+   "claim_id": "NF-3-def-mitigation-is-flat-subtraction-both-builds",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3284-3290 (`if(this.stance == §1t12222s0§) { return defense * 0.8; } return defense;`), :3484, :3800, :4391 (`_loc5_ -= this.§1t4477s0§();`) + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3709 (`damage -= this.getDefense();`)",
+   "overturn_upheld": true,
+   "reason": "HOLDS — I opened all four web sites and the android twin. Mitigation is flat subtraction; the only conditional is defender-in-Heavy → defense*0.8 (corroborated by strings.json[\"6005\"] 'Defense -20%'). :200 blocker ① falls in full, and I verified the SPD halves myself too: SPD→range is 120 + floor((90 + Dan*5)*spd/(20+spd)) at §1t1523s0§.as:2346-2347, and SPD→cooldown is §1t1523s0§.as:2289-2296. One omission the rewriter must carry: every subtraction site is immediately followed by a MIN-DAMAGE FLOOR — `if(_loc5_ < param2.§1t1088s0§()) { _loc5_ = param2.§1t1088s0§(); }` — so DEF can never push a hit below the attacker's minDamage. 'Flat subtraction' without the floor is an incomplete port. Also note the web (not android) applies a stance-matchup x1.2/x0.9 BEFORE the subtraction at :3788-3798."
+  },
+  {
+   "claim_id": "NF-3/web-twin-of-repair-and-reinforce",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t401s0§.as:1058 (`cost = §1t1525s0§.§1t9936s0§() * 10;`), :1068, :1076, :1077-1080, :1081, :1086-1087 (`cost = 5000;`) compared line-for-line against reference/decompiled/shs3_android/scripts/InteractUI.as:1057-1082",
+   "overturn_upheld": true,
+   "reason": "HOLDS exactly. I opened both files side by side: the web `case §1t9092s0§` block is the android `case \"repairweapon\"` block with identical structure and identical numbers — nodeLevel*10, the itemID==0 || ==13000 refusal, the uses>1 → uses=1 clamp, achievement 60005 — and `case §1t9093s0§` is `case \"reinforceweapon\"` with a flat 5000. :215 blocker ③ 'Repair-Weapon cost (never captured)' is an atomic claim and it is false: the cost is in the shipped web client, no capture needed."
+  },
+  {
+   "claim_id": "NF-4-spd-to-cooldown-formula-recovered",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1854-1860 (`if(speed > 300) { speed = 300; } return 1 - speed / 300 * 0.5;`), consumed at InventoryUI.as:1937, printed at :2233 — AND the web twin I located myself: reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2289-2296",
+   "overturn_upheld": true,
+   "reason": "HOLDS, and the blocker falls — but NOT on this constant. Cites are exact (I counted lines: 1854 is the function head, 1860 the return; InventoryUI.as:2233 is the 'skill cooldown modifier: 0.' + int(mod*1000) line). The finding is honest that web parity was unchecked, so I ran the hunt: the web twin EXISTS at §1t1523s0§.as:2289-2296 and saturates at 600, not 300 — `if(param1 > 600) { param1 = 600; } return 1 - param1 / 600 * 0.5;` — reached via §1t1523s0§.as:2279-2286 (STAT_SPEED = §1t9410s0§ = 8, x1.5 under the speed buff) and consumed at §1t105s0§.as:318 `return _loc2_ * §1t1523s0§.§1t9589s0§();` where _loc2_ = levelList[lvl].cooldown * 24. :195 blocker ④ dies; anyone who ships '300' ships the mobile build's tuning and halves the effect at a given SPD. Filed as new finding NF-C."
+  },
+  {
+   "claim_id": "NF-4/premium-ladder-has-a-2-gold-tier",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/extracted/android/121_Mobile_PremiumData.bin joined to reference/extracted/itemdata.xml <heavenlyprice> — I re-ran the join myself: 176 <item> tags, 143 unique, 0 unpriced, histogram {'1': 20, '2': 2, '3': 94, '5': 4, '12': 23}; names via docs/gauntlet/L0/index/resolved_names.json",
+   "overturn_upheld": false,
+   "reason": "The MEASUREMENT holds and reproduces to the row: the 2-Gold tier is exactly 2101 'Medium Soldier Pill' and 2126 '25 Duel Tokens'; the 12-Gold tier is 23 rows, 2130 'Assassin Outfit' … 2171 'Swords of the Mist'. But the OVERTURN does not. Its ledger_text is the two words 'Ninja-Services prices', which appear at REBUILD_READINESS.md:135 and :244 in the READY column with NO values attached — the ledger never states a 1/3/5/12 ladder and never states 30 bundles, so there is no sentence to falsify; this refines a conceded item. Build correction: the finding's build field says 'prices WEB itemdata.xml', but under carried correction C2 reference/extracted/itemdata.xml IS the android blob (184,002 B vs android/111 184,044 B — the same Δ42 as skilldata and npcdata). Both sources are v0.682; nothing here is web-side."
+  },
+  {
+   "claim_id": "NF-5/stance-mastery-caps-at-10-not-9",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/extracted/skilldata.xml — I parsed skills 1000/1001/1002 and each enumerates <value> 1,2,3,4,5,6,7,8,9,10 (n=10) — + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262, :3265, :3270",
+   "overturn_upheld": true,
+   "reason": "HOLDS. At m=10 the web curve lands on exactly Light 0.9 / Balanced 1.2 / Heavy 1.4 — the wiki triple — so :155's 'MASTERY-9 CEILING values' is off by one and the published table is the mastery-10 row. The m=9 arithmetic in the lane_impact is right too (0.86 / 1.18 / 1.4). One build caveat to carry: the 1..10 enumeration comes from skilldata.xml, which under C2 is the ANDROID blob, so the CAP itself is v0.682-sourced; the web evidence is only that the curve hits the known ceiling triple at m=10. The reach half of :155 ('reach 300/200/100') is separately wrong — web reach at m=10 is base x1.4 / x1.2 / x0.9, which cannot produce 300/200/100 from any single base."
+  },
+  {
+   "claim_id": "NF-6-web-payload-carries-no-data-xml",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "docs/gauntlet/L0/index/bindata.json (I tallied all 27 roots: 19 animdata, 1 survivalmodedata, 1 obj, 5 text, 1 gif) + `ls -l` on reference/extracted/{skilldata,itemdata,npcdata}.xml vs reference/extracted/android/{117,111,125} (39,003/39,045 · 184,002/184,044 · 228,413/228,455 — Δ42 each) + LC_ALL=C grep over reference/extracted/payload.xml",
+   "overturn_upheld": false,
+   "reason": "Every number reproduces first-hand: `grep -c skilldata payload.xml` → 0, `grep -c '<npcdata' ` → 0, and the lone itemdata/questdata hits (byte offsets 19,503,662 and 19,502,336) sit inside an ABC constant-pool dump among 'terrX','terrY','war','prosperity','encounterdata','battlereports','clanId','ByLevel' — BigDB table/field names, exactly as claimed. android/117 head is `<?xml version=\"1.0\" encoding=\"utf-8\"?>\\r\\n<skilldata>…`, i.e. the extracted XML minus declaration+CRLF. So the claim is TRUE. The overturn is not: its ledger_text is the gauntlet STAGE-0 brief's S0-3 caveat, not a REBUILD_READINESS.md sentence, and carried correction C2 already states this finding verbatim ('the web payload carries ZERO <questdata>, <skilldata>, <npcdata> or <itemdata> roots … those four XMLs came from the ANDROID build'). No ledger sentence falls; this is a restatement of an already-judged correction, valuable as machine-checkable proof and nothing more."
+  },
+  {
+   "claim_id": "NF-8-survival-mode-is-byte-identical-in-both-builds",
+   "refuted": true,
+   "severity": "material",
+   "own_cite": "reference/extracted/bindata/119_1t4646s0.bin (11,721 B, md5 f3dd11714d…) vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (11,553 B, different md5) — I parsed and diffed both wave-by-wave",
+   "overturn_upheld": false,
+   "reason": "REFUTED. The blobs are NOT byte-identical (168-byte difference, different md5) and the authored content is NOT identical: waves 33-39 differ in every one of the seven. Android carries '449|454' / '450|455' / '451|456'; the WEB build carries '449|454|449|454|443' / '450|455|450|455|443' / '451|456|451|456|443' — adding enemy id 443 to every late-game pool and reweighting the base pair from 1/2 each to 2/5 each. The three aggregates the finding measured (39 <wave>, 87 <enemy>, x histogram {-50:49, 1650:37, -1650:1}) do reproduce exactly, and that is precisely the problem: none of them can see an id-list edit, so 'every figure matches' is not a parity proof. XMLBG.as:14 contentWidth=1600 checks out. The surviving true half — survival mode IS present in the target build with 39 authored waves — I re-file as new finding NF-D."
+  },
+  {
+   "claim_id": "art-anim/43-named-sfx-cues-held-in-web-v0717",
+   "refuted": true,
+   "severity": "material",
+   "own_cite": "my own `grep -rhoE '\"Snd_[A-Za-z0-9_]+\"' reference/decompiled/shs3_payload/scripts/ | sort -u | wc -l` → 43, with §1t113s0§.as:472/:478 opened — AND reference/extracted/android/122_Mobile_SoundResource.bin decrypted by hand per reference/decompiled/shs3_android/scripts/ResourceManager.as:200-217",
+   "overturn_upheld": false,
+   "reason": "REFUTED for repeating the superseded S0-5 line, which carried correction C3 declares dead. The finding asserts 'the audio bytes are encrypted' and 'the WAVEFORMS remain unrecovered (S0-5: nested CWS SWFs ffdec cannot open) and that half stands'. I disproved that first-hand rather than by citing C3: decryptByteArray touches ONLY bytes 3..255 (which is why the file's plain 'CWS' magic defeats a naive whole-file XOR), swapping ba[i] with ba[i+256] when i%11==0 then XOR key = charCodeAt(1) of 'Mobile_SoundResource' = 'o' = 111 (Mobile.as:352). Applying it yields header CWS v17, filelen 29,631, inflate 29,623, tag histogram {69:1,77:1,9:1,86:1,45:1,14:13,82:1,76:1,1:1,0:1} — 13 DefineSound tags — with SymbolClass ['punch','fart','hitmetal','goodkoto','slash1','slash2','die1','refund','die3','slash3','sumo','die2','deflect']. The 43-cue web inventory and its trigger sites are real and reproduce exactly; I re-file them as NF-F with the precise residual (13 waveforms vs 43 named cues → 30 cues have no PCM in blob 122). The overturn also fails independently: :240 blocker ① is already dead per C3, and by more than this finding claims."
+  },
+  {
+   "claim_id": "art-anim/severed-limb-death-variant-is-held",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin — I decoded it utf-8-sig (first bytes ef bb bf) and regex-scanned: 158 anims, death 38 · deathenemy 23 · deathnohand 25 · deathnohead 31 · deathwitharrow 23 · deathbyarrow 21 · deathdowned 7 · deathinhalf 28",
+   "overturn_upheld": true,
+   "reason": "HOLDS exactly — every frame count in the finding matches my parse. :240 blocker ⑥ 'severed-limb death variant' is atomic and it is dead: deathnohand, deathnohead and deathinhalf are authored, named clips. The encoding note is correct but redundant — carried correction C1 already states only 118_Mobile_Lang_EN.bin is UTF-16LE. UPGRADE the finding's build label: I md5'd all 27 web bindata blobs against all 42 android blobs and reference/extracted/bindata/108_1t4635s0.bin is BYTE-IDENTICAL to 99_MCSCharacter_HumanAnimationData.bin (md5 bcfd658e79…, 977,277 B), so this is 'both', not android-only. Filed as NF-E."
+  },
+  {
+   "claim_id": "cite04/android-string-table-has-no-900-block",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "docs/gauntlet/L0/index/strings.json — my own census: max ID below 900 = 880, entries in 900-999 = 0, resumes at 1000 · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:111 `§1t1521s0§.getString(960)` in #BBBBBB · my own 4x LANCZOS crop (230,960)-(560,1070) of reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
+   "overturn_upheld": false,
+   "reason": "The CLAIM holds and it is one of the strongest in the packet. My crop shows HP 20/20 (green), Chi 26/26 (blue) and a grey 'CANNOT CHANGE STANCE' immediately below — the #BBBBBB field §1t113s0§.as:111 builds from getString(960), an ID with no row anywhere in the v0.682 table. Machine-checkable proof that the web build reads string IDs the android table lacks. But the OVERTURN is misfiled: the finding's own text says this is 'the hardest evidence yet FOR the S0-3 parity caveat'. It confirms the caveat, it does not falsify it — and the caveat is gauntlet §0 brief text, not a REBUILD_READINESS.md sentence. Nothing in the ledger falls."
+  },
+  {
+   "claim_id": "cite04/longplay-frames-are-pillarboxed-scale-is-2.27",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png — my own row scan at y=100/300/540/800 with R+G+B<25 → L=52 R=52, column scan at x=960 → T=0 B=0, content 1816x1080; pixels at x=52 are (60,55,29)/(48,49,33), real game colour — plus reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:271-273 and :296-306",
+   "overturn_upheld": false,
+   "reason": "The MEASUREMENT holds — I reproduced 52/52/0/0 on the cited frame and confirmed the bar boundary is genuine, not a threshold artifact. But this does NOT overturn ledger item 12 at :171, which reads 'HUD x-fractions measured off 1920x1080 video MAY BE pillarbox-compressed. VERIFY before trusting horizontal coords.' The finding performs exactly the verification the sentence asks for; the sentence survives, satisfied. An upgrade is not an overturn. Two accuracy notes: (1) 'Every 1920x1080 longplay still' is over-general — I sampled 12 frames across directories and the second longplay (zFtCaTO0_1M) measures L≈54 / R≈58, content ≈1808, scale ≈2.26; (2) the finding's 800x480 cite is ANDROID (StatsManager.as:80-82) for a claim about the web build. I found the web-side cite: §1t1540s0§.as:271-273 `var _loc2_:int = 800; var _loc3_:int = 480; var _loc4_:int = 690;`, with a uniform-scale centring fit at :294-307 and a second supported layout of 800x690. Filed as NF-G."
+  },
+  {
+   "claim_id": "cite04/web-rebirth-pays-25-and-100-heavenly-gold",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2644-2651, :228, :2643 vs reference/decompiled/shs3_android/scripts/StatsManager.as:194 (`STAT_HGOLD:int = 12`) and :2201-2207 (`if(getPlayerStats(STAT_DAN) == 8) { changeStat(STAT_HGOLD,20); } else { changeStat(STAT_HGOLD,5); }`)",
+   "overturn_upheld": true,
+   "reason": "HOLDS, and this is the row that should land. I verified the stat-index mapping rather than assuming it: the web const block at §1t1523s0§.as:200-250 runs 0..23 in the same order as StatsManager.as:170-215, §1t9413s0§=12=STAT_HGOLD, and the web function's first line §1t9712s0§(§1t8755s0§,0) is doRebirth's setStat(STAT_XP,0) — the twin is beyond doubt. Web pays 25 / 100 Heavenly Gold; android pays 5 / 20. Ledger item 7 at :164-165 falls on both halves: MAX_DAN_RANK=10 and tenthGold=100 become code-sourced (the Dan<9 increment at :2653-2656 caps dan at 9, and the Dan-8 branch announces getString(864,[name,\"10\"])), and 'no 10th-rebirth tier' is false. The currency-label correction (Heavenly Gold, stat 12, not the ledger's '+25g') is right and is the part the sibling NF-1 row misses."
+  },
+  {
+   "claim_id": "combat-core/damage-triple-crit-1p3-and-heavy-def-confirmed-in-web-source",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3258 (`this.minDamage + Math.random() * this.damageRange`), :3262, :3265, :3270, :3272-3274 (`if(this.§1t4414s0§ == this.§1t4415s0§) return _loc2_ * 1.3 + this.§1t1243s0§;`), :3286-3288, :3295-3297",
+   "overturn_upheld": true,
+   "reason": "HOLDS on every line — I opened the whole function. :190 blocker ② 'crit 1.3 vs 3 final — read one crit popup' is atomic and falsified: crit is x1.3 plus a flat item crit-damage add, from primary web source, no popup needed. The bonus claim is right too — crit is DETERMINISTIC (fired by reload == maxreload, spent to zero at :3295-3297), which also answers :195 blocker ⑤ 'crit proc rule (chance vs deterministic) — entirely absent'. Corroborated on the android side by BattleUI.as:262 `crittext.visible = percentage >= 1`. Caution for the porter: this x1.3 is applied inside getDamage() on the ATTACKER side, while the stance-matchup and DEF terms are applied on the DEFENDER side in gotHit (:3788-3800), so the pipeline order is attacker-crit → matchup → minus DEF → floor."
+  },
+  {
+   "claim_id": "combat-core/flinch-is-nested-inside-the-iframe-window",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_android/scripts/EnemyShield.as:39 and :123-125, MCSCharacter.as:1315 (`++this.frameCounter;`), EnemyZombie.as:522 and :544 — plus MCSPlayer.as:3589 `if(gotHitCounter > 0) { return false; }` INSIDE gotHit (which opens at :3580), and `<anim i=\"flinch\" d=\"8\">` in reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin",
+   "overturn_upheld": false,
+   "reason": "The CLAIM holds and every line number is exact. I checked the one thing the finding asserts without citing: that gotHitCounter is an INVULNERABILITY window — MCSPlayer.as:3589 returns false from gotHit while it is positive, so yes. Both clocks advance once per NPC update (EnemyShield.as:39 → one pose via MCSCharacter.as:1315; :123-125 → one decrement), and both start in the same gotHit() call, so ticks 0-7 flinch nested in ticks 0-11 i-frames is correct. Both flinch clips are d=8 in BOTH builds (the blob is md5-identical). But the OVERTURN is inflated: :220 blocker ③ is 'telegraph/active/recovery + stagger frames' — this closes STAGGER only. Telegraph, active and recovery windows are untouched by anything cited here and survive as open gaps. Strike half the line, not the line."
+  },
+  {
+   "claim_id": "combat-core/focus-crit-gating-rule-is-held",
+   "refuted": true,
+   "severity": "material",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:1158-1160 (`if(this.reload < this.maxreload) { ++this.reload; }`), :3019 (`public function setStance(num:int)`), :3096-3113, :3265-3267, NPCManager.as:1711 — plus the web twins reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249, :1203-1205, :3050, :3060, :3162",
+   "overturn_upheld": false,
+   "reason": "REFUTED on two headline mechanics. (1) '+6 per tick recharge' is FALSE: MCSPlayer.as:1158-1160 increments reload by ONE per tick, in the same housekeeping block that decrements gotHitCounter and speechCounter; the +6 is bonusReload() at :3265-3267 whose ONLY caller is NPCManager.as:1711 inside `if(deathCount > 0)` — a kill bonus. A Sim built from this fills Focus six times too fast. (2) 'penalised on being hit (reload > max/2 collapses to max/3, else -max/6)' is FALSE: that block at :3098-3104 sits inside setStance(), which opens at :3019, under `if(StageManager.isBattle())` — it is the in-battle STANCE-SWITCH cost, not an on-hit penalty. The true parts (maxreload = 5*24, the x0.5/x1/x1.5 per-stance drain, zero-at-full, the maxreload/6 nextStance gate at :2977, BattleUI.as:261-262) all verify, and the numbers are android-only: the web build sets maxreload = 8*24 = 192 (§1t99s0§.as:249), charges a FLAT -48 per in-battle stance switch (:3162) and gates nextStance at reload >= 48 (:3050, :3060). Corrected mechanism re-filed as NF-A."
+  },
+  {
+   "claim_id": "combat-core/mastery-caps-at-10-per-the-string-table",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "docs/gauntlet/L0/index/strings.json[\"8131\"] = 'Light Stance Mastery Level 10.', [\"8132\"], [\"8133\"], [\"6005\"] = '…Defense -20%' — all four opened, plus [\"6001\"] and [\"6003\"]",
+   "overturn_upheld": true,
+   "reason": "HOLDS. The four quoted strings are verbatim. Combined with the web curve landing on 0.9/1.2/1.4 at m=10, :155's 'MASTERY-9 CEILING values' is off by one and falls. The -20% defence string independently confirms §1t99s0§.as:3288 `defense * 0.8`. Its own android caveat is honest and should be kept. Bonus I verified while here: the same string family fixes the counter-triangle DIRECTION — [\"6001\"] Light 'Effective against Heavy Stance', [\"6003\"] Balanced 'Effective against Light Stance', [\"6005\"] Heavy 'Effective against Balanced Stance' — which is the opposite of what the sibling stance-counter-triangle claim asserts."
+  },
+  {
+   "claim_id": "combat-core/stance-counter-triangle-x1.2",
+   "refuted": true,
+   "severity": "material",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3580 (`override public function gotHit(target:MovieClip, damageObj:Damage) : Boolean`), :3654 (`var enemyStance:int = damageObj.stance;`), :3701-3707, :3709, :3716 — cross-checked against docs/gauntlet/L0/index/strings.json[\"6001\"], [\"6003\"], [\"6005\"]",
+   "overturn_upheld": false,
+   "reason": "REFUTED for an inverted mechanic. The x1.2 term is real and every line number is exact (I confirmed :3703 damage*=1.2, :3709 the DEF subtraction, :3710-3713 the floor, :3716 behead x1.5, in that order). But the enclosing method is gotHit at :3580, so `this` is the DEFENDER and `enemyStance` (assigned damageObj.stance at :3654) is the ATTACKER. The shipped rule is therefore defender-Light/attacker-Balanced, defender-Balanced/attacker-Heavy, defender-Heavy/attacker-Light — i.e. Balanced beats Light, Heavy beats Balanced, Light beats Heavy — which is exactly what the game's own stance copy says (strings 6001/6003/6005). The finding writes it as '(attacker Light vs defender Balanced) or (Balanced vs Heavy) or (Heavy vs Light)', the reverse, which puts the 20% on the three wrong matchups in both directions — the precise error its own lane_impact warns about. It also misses that the WEB build adds an `else if` losing-side term x0.9 at §1t99s0§.as:3796-3798 that android has no counterpart for. Corrected and completed as NF-B."
+  },
+  {
+   "claim_id": "combat/stance-reach-multipliers-diverge-web-vs-android",
+   "refuted": true,
+   "severity": "material",
+   "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1834 (`player.initPlayer(…,getStat(1000),getStat(1001),getStat(1002),getLevel())`), MCSPlayer.as:3166-3184 (mastery >= 3/4/5 gates) and :182 — vs reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3223-3241 and reference/extracted/skilldata.xml skills 1000/1001/1002 (<value> 1..10)",
+   "overturn_upheld": false,
+   "reason": "REFUTED for a false sub-claim that would mislead the port. The multiplier lines are exact (web :3094 x1.4, :3105, :3116; android :3030 x1.5, :3041, :3052) and the divergence is real. But 'The mastery scale differs too — android is 0..100, web is 0..10' is FALSE: StatsManager.as:1834 feeds initPlayer the three stance-mastery SKILL levels getStat(1000/1001/1002), which skilldata.xml enumerates 1..10, and MCSPlayer.as:3166-3184 gates abilities at mastery >= 3/4/5 — identical to web §1t99s0§.as:3223-3241. A 0..100 scale would make those gates nonsense. Both builds run 1..10; only the coefficients differ, and they differ harder than the finding says (android Balanced 1.05 vs web 1.2 at m=10; android Heavy 0.55 vs web 0.9). Believing the scale story invites a rescale that would 'reconcile' two genuinely different tunings. The reach divergence itself survives intact via combat/web-stance-reach-multipliers-diverge-from-android, which I uphold, so refuting this row costs the lane nothing."
+  },
+  {
+   "claim_id": "combat/web-stance-reach-multipliers-diverge-from-android",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3094, :3105, :3116-3119, :3131, :3142, :3158, :105 (`internal var §1t4420s0§:int = 10;`), :183-199 (15-arg initPlayer twin) · §1t1541s0§.as:106-108 (`§1t10094s0§(param1:int) { maxDistance = param1; }`) · §1t1523s0§.as:2344-2347 — vs MCSPlayer.as:3030/3041/3052, :107, InputManager.as:106, StatsManager.as:1915-1918",
+   "overturn_upheld": true,
+   "reason": "HOLDS, and it is the version of the reach story the lane should keep. Every line resolves; the class identification is airtight (param10 → §1t4420s0§ declared = 10, exactly baseSlashLength:int = 10 at MCSPlayer.as:107; :3158 calls the setMaxDistance twin, which sits at LINE 106 in BOTH builds). The m=9 arithmetic checks: web balanced 1+0.02*9 = 1.18 vs android 1+0.005*9 = 1.045; web heavy 0.5+0.04*9 = 0.86 vs android 0.545. The shared SPD base 120 + floor((90 + Dan*5)*spd/(20+spd)) is byte-for-byte the same formula in both. :190 blocker ① 'reach cap in stage px per stance — measure blade-FX tip-to-body span from footage' falls: reach is now computable from SPD, Dan and mastery, no film measurement required. This row does NOT repeat the 0..100 scale error its sibling makes."
+  },
+  {
+   "claim_id": "economy/repair-weapon-cost-was-captured-on-film",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/videos/Nr4fQstqHDM.mp4 — I extracted t=21:23, 21:26, 21:27 myself with ffmpeg at 1920x1080 and read them, plus a 3x crop of the wallet strip (60,0)-(620,110)",
+   "overturn_upheld": true,
+   "reason": "HOLDS — A1 verified with my own eyes, not second-hand. t=21:26 reads 'BLACKSMITH / REPAIR YOUR CURRENTLY EQUIPPED WEAPON? / COST: 70 COINS' with YES/NO and wallet 531 COINS / 2 GOLD; t=21:27 the wallet reads 461 COINS (a clean -70); t=21:23 reads 'FORGE AN IRON SWORD (LEVEL 7)? / COST: 700 COINS / MATERIALS NEEDED: 2 IRON ORE'. :215 blocker ③ 'Repair-Weapon cost (never captured)' is false on its face. The joint inference to nodeLevel*10 is sound and matches InteractUI.as:1058 and its web twin §1t401s0§.as:1058. This also kills the :216 parenthetical 'Forge 700c (the -70 HUD read is a capture artifact)' — the -70 is a real repair charge in the same four-second sequence."
+  },
+  {
+   "claim_id": "economy/tournament-payout-formula-is-client-side",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t7091s0§.as:406-412 (`Math.floor((this.§1t7121s0§ * this.§1t7120s0§ + 5) * 0.75 / 7)` then *4/*2/*1), :147-180, :183-200, :205-236, :303-330 · §1t7144s0§.as:572, :585, :600, :610",
+   "overturn_upheld": false,
+   "reason": "The CLAIM holds in full — I opened every cited range and all of it verifies: prize unit and 4/2/1 split, player ladder 2/4/8/16 with 2 premium-gated, entry fee clamped 0..100, level clamp 5..80, round-duration ladder 48/24/2/1/0.5 h (plus a premium-only '-' the finding omits), create charges 5 of stat 20112 and join charges entryfee of the same stat. The 25% rake arithmetic is right. But the OVERTURN is inflated: :215 blocker ④ is 'token/tournament economy numbers' — a compound. The tournament half closes completely; the TOKEN half does not, and the finding concedes as much itself (stat 20112 has no name in itemdata.xml or the v0.682 string table, and duel-token / Golden-Token costs are untouched). Strike the tournament clause only."
+  },
+  {
+   "claim_id": "enemies-ai/boss-rubber-band-is-in-the-web-build",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t4523s0§.as:61-124 — I read the whole block: :68 `if(this.§1t4528s0§)` gate, :70-74 the level-ratio rescale, :77 xp, :82 `_loc8_ = param1 - _loc7_`, :83 `_loc9_ = 10 + _loc8_`, :84 `_loc10_ = 18 - _loc8_`, :85-92 clamps, :110-116 HP = playerDamage * _loc9_, :117-120 damage = playerHP / _loc10_ — vs docs/research/REBUILD_READINESS.md:32 and :220",
+   "overturn_upheld": false,
+   "reason": "The CLAIM holds — the elite/boss rubber-band is in the shipped web build and the 0.682→0.717 upgrade for src/config/combat-sim.ts is justified. Reading further than the finding did confirms it really is a rubber-band: _loc9_ = 10 + (enemyLevel - playerLevel) is a hits-to-kill target that sets elite HP, and _loc10_ = 18 - delta divides player HP to set elite damage. But the OVERTURN fails twice. (1) :220 blocker ① 'enemy level→stat formula … absent' is ALREADY struck by the doc's own STALENESS BANNER at :32 ('npcdata.xml — 495 NPCs, full paperdoll + <lvl> + <ai> + <skill>') — the ledger concedes it 188 lines earlier. (2) This code is gated on `if(this.§1t4528s0§)`, the elite flag, and is keyed to the PLAYER's level; it is a different mechanism from the roster-wide level→stat formula the sentence names, which lives in npcdata.xml as data, not as a formula."
+  },
+  {
+   "claim_id": "enemies-ai/flinch-is-build-parity-confirmed-in-web-v0717",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:768-785, §1t99s0§.as:4680-4695, §1t1544s0§.as:170 (`= \"flinch_weapon\";`) and :172 (`= \"flinch\";`), reference/extracted/bindata/103_1t4630s0.bin (`<anim i=\"flinch\" d=\"8\">` and `<anim i=\"flinch_weapon\" d=\"8\">`) — plus my md5 census showing 103_1t4630s0.bin == android/94_MCSCharacter_Human2AnimationData.bin",
+   "overturn_upheld": false,
+   "reason": "The CLAIM holds and is well made — every line resolves exactly (:774-778 save actionState/animation/facing then set FLINCH and play flinch_weapon; :783-785 restore all three; the player override at :4688-4695 branches flinch vs flinch_weapon on the sheathed animations). I strengthened it: the web blob carrying both 8-frame clips is BYTE-IDENTICAL to its android twin, so 'the same 8-frame authored clip' is provable, not inferred. But the OVERTURN is the same inflation as its sibling: :220 blocker ③ is 'telegraph/active/recovery + stagger frames', and only STAGGER closes. Telegraph, active and recovery windows are not addressed by any cite here and remain open."
+  }
+ ],
+ "judged_count": 24,
+ "packet_size": 24,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "NF-A/web-focus-meter-constants-diverge-and-the-recharge-is-plus-one",
+   "text": "The Focus/crit gating rule closes, but on WEB constants that differ from android on three of five terms, and the per-tick recharge is +1, not +6, in BOTH builds. WEB v0.717: maxreload = 8*24 = 192 frames (§1t99s0§.as:249) against android's 5*24 = 120 (MCSPlayer.as:239). Recharge +1 per tick while reload < maxreload (web §1t99s0§.as:1203-1205; android MCSPlayer.as:1158-1160); the +6 is bonusReload(), whose only caller is NPCManager.as:1711 inside `if(deathCount > 0)` — a KILL bonus (web twin §1t99s0§.as:3320-3323). In-battle stance switch costs a FLAT -48 in web (§1t99s0§.as:3162, inside §1t3489s0§ under the isBattle guard) where android collapses reload>max/2 to max/3 else -max/6 (MCSPlayer.as:3098-3104, inside setStance which opens at :3019). The stance gate is reload >= 48 in web (§1t99s0§.as:3050, :3060) vs reload < maxreload/6 = 20 in android (MCSPlayer.as:2977). Identical in both: zero-at-full on a slash, and the x0.5 / x1 / x1.5 per-stance drain. Nothing about this system needs measuring — but the android numbers are the wrong build's.",
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249, :1203-1205, :3050, :3060, :3162, :3295-3310, :3320-3323 vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:239, :1158-1160, :2977, :3098-3104, :3242-3272 and NPCManager.as:1711",
+   "quote": "web §1t99s0§.as:249 `this.§1t4415s0§ = 8 * 24;` · :1205 `++this.§1t4414s0§;` · :3162 `this.§1t4414s0§ -= 48;` · :3060 `if(this.§1t4414s0§ < 48)` ‖ android MCSPlayer.as:239 `this.maxreload = 5 * 24;` · :1160 `++this.reload;` · :3104 `this.reload -= this.maxreload / 6;` · NPCManager.as:1711 `StatsManager.getPlayer().bonusReload();`",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "⑤ Focus/crit gating rule — *watch the Focus bar fill/consume.*",
+   "lane_impact": "L5 combat-core ①/⑤ and skills-meters ③ close on WEB numbers: max 192, +1/tick, +6 per kill, -48 per in-battle stance switch, gate at 48, x0.5/x1/x1.5 slash drain, crit at full."
+  },
+  {
+   "id": "NF-B/stance-triangle-is-defender-keyed-and-web-adds-a-losing-side",
+   "text": "The stance counter-triangle runs in the DEFENDER's frame and the web build has a losing side android lacks. Both x1.2 branches sit inside gotHit (android MCSPlayer.as:3580; web §1t99s0§ — _loc11_ is assigned param2.stance at :3754, param2 being the Damage object), so `this.stance` is the defender and the attacker's stance is the operand. The shipped rule is: Balanced beats Light, Heavy beats Balanced, Light beats Heavy — confirmed independently by the game's own copy, strings.json[\"6001\"]/[\"6003\"]/[\"6005\"]. The WEB build additionally applies x0.9 on each reversed matchup (§1t99s0§.as:3796-3798), which android has no counterpart for: six ordered outcomes, not three. Both terms land BEFORE the DEF subtraction and the min-damage floor.",
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3754, :3788-3794, :3796-3798, :3800-3804 vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:3580, :3654, :3701-3709 + docs/gauntlet/L0/index/strings.json[\"6001\"], [\"6003\"], [\"6005\"]",
+   "quote": "web §1t99s0§.as:3754 `_loc11_ = param2.stance;` · :3790 `_loc5_ *= 1.2;` · :3796 `else if(this.stance == §1t12220s0§ && _loc11_ == §1t12222s0§ || …)` :3798 `_loc5_ *= 0.9;` ‖ android MCSPlayer.as:3580 `override public function gotHit(target:MovieClip, damageObj:Damage) : Boolean` · :3654 `var enemyStance:int = damageObj.stance;` ‖ strings.json[\"6003\"] 'Balanced stance.\\nEffective against Light Stance.'",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "**Damage math:** Physical = (ATK + WeaponDMG) × stanceMult; Heavy defender Defense ×0.8 (one way);",
+   "lane_impact": "L1 combat-core: the :74 KNOWN-KNOWN damage line is missing a rock-paper-scissors term entirely, and the web build's version is a 6-way table (x1.2 / x0.9 / x1.0), not the 3-way the android decompile shows."
+  },
+  {
+   "id": "NF-C/web-spd-to-cooldown-saturates-at-600-not-300",
+   "text": "The SPEED-stat → skill-cooldown transfer function exists in the WEB build too, and its saturation point is 600, not the android build's 300: cooldownModifier = 1 - min(speed, 600) / 600 * 0.5. It is reached from §1t1523s0§.as:2279-2286 (STAT_SPEED = §1t9410s0§ = 8, x1.5 while the speed buff is up) and consumed at §1t105s0§.as:318, where a skill's cooldown is levelList[level].cooldown * 24 multiplied by the modifier. Porting the android constant halves the benefit at any given SPD (e.g. at SPD 300 android is already at the 0.5 floor while web is at 0.75).",
+   "artifact_class": "A2",
+   "build": "web v0.717 (contrasted with android v0.682)",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2289-2296 and :2279-2286 · reference/decompiled/shs3_payload/scripts/§1t105s0§.as:297-319 vs reference/decompiled/shs3_android/scripts/StatsManager.as:1854-1860",
+   "quote": "web §1t1523s0§.as:2291 `if(param1 > 600)` :2293 `param1 = 600;` :2295 `return 1 - param1 / 600 * 0.5;` · §1t105s0§.as:308 `_loc2_ = this.levelList[this.levelList.length - 1].cooldown * 24;` :318 `return _loc2_ * §1t1523s0§.§1t9589s0§();` ‖ android StatsManager.as:1856 `if(speed > 300)` :1860 `return 1 - speed / 300 * 0.5;`",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "④ SPD→cooldown formula.",
+   "lane_impact": "L2 skills-meters ④ closes at the TARGET build — and closes with 600, not the 300 the android-sourced claim would have written into a v0.717 config."
+  },
+  {
+   "id": "NF-D/survival-mode-is-in-the-web-build-but-its-last-seven-waves-differ",
+   "text": "Survival mode — the game mode S0-1 flags as absent from all 12 ledger systems — IS in the web v0.717 payload with its authored content: 39 <wave>, 87 <enemy>, spawn-x histogram {-50: 49, 1650: 37, -1650: 1}. It is NOT byte-identical to the android blob (11,721 B vs 11,553 B, different md5) and waves 33-39 are differently authored: android spawns '449|454' / '450|455' / '451|456' where the web build spawns '449|454|449|454|443' / '450|455|450|455|443' / '451|456|451|456|443', adding enemy id 443 to every late pool and reweighting the base pair from 1/2 to 2/5 each. Waves 1-32 are identical. The spawn x values sit just off both edges of XMLBG's contentWidth = 1600.",
+   "artifact_class": "A2",
+   "build": "both (content diverges)",
+   "cite": "reference/extracted/bindata/119_1t4646s0.bin vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (both parsed and diffed wave-by-wave) + reference/decompiled/shs3_android_payload/scripts/XMLBG.as:14",
+   "quote": "web wave 33 `<id>449|454|449|454|443</id><qty>3</qty><x>-50</x>` ‖ android wave 33 `<id>449|454</id><qty>3</qty><x>-50</x>` ‖ XMLBG.as:14 `internal var contentWidth:int = 1600;`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "ledger_text": "S0-1: 119 <survivalmodedata> (a whole game mode absent from all 12 ledger systems)",
+   "lane_impact": "Cross-cutting: the mode can be specified from the TARGET build's own wave table — and anyone who ports the android blob ships the wrong late-game enemy mix."
+  },
+  {
+   "id": "NF-E/bindata-parity-map-21-of-27-identical-and-a-spider-only-in-web",
+   "text": "md5 census of all 27 web bindata blobs against all 42 android blobs: 21 are BYTE-IDENTICAL, including 108_1t4635s0.bin == 99_MCSCharacter_HumanAnimationData.bin (so the severed-limb deaths deathnohand/deathnohead/deathinhalf are v0.717, not android-only) and 103_1t4630s0.bin == 94_MCSCharacter_Human2AnimationData.bin (so the two 8-frame flinch clips are provably shared). Six differ: ogre (100, 184,193 vs 184,120), skills (102, 333,768 vs 338,096), guardian (111, 117,638 vs 117,596), spear (113, 153,258 vs 132,270), survivalmodedata (119) — and 114_1t4641s0.bin, a SPIDER animation set of 10 anims (spider_idle, spider_walk, spider_attackstart, spider_attackend, spider_lunge, spider_death, spider_flinch, spider_descend, spider_dig, spider_death2) with NO android counterpart at all. An enemy type that exists only in the target build.",
+   "artifact_class": "A3",
+   "build": "web v0.717 vs android v0.682",
+   "cite": "reference/extracted/bindata/ (27 files) hashed against reference/extracted/android/ (42 files) + docs/gauntlet/L0/index/bindata.json child_ids for 114_1t4641s0.bin",
+   "quote": "108_1t4635s0.bin 977277 md5=bcfd658e79 -> android twin: 99_MCSCharacter_HumanAnimationData.bin · 103_1t4630s0.bin 135328 md5=6852a591ab -> android twin: 94_MCSCharacter_Human2AnimationData.bin · 114_1t4641s0.bin 90473 md5=7bb9f40339 -> android twin: None · exact md5 matches: 21 of 27",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "⑥ severed-limb death variant.",
+   "lane_impact": "art-anim ⑥ closes at the TARGET build, not merely at v0.682; enemies-ai gains an unlisted enemy (spider) that no ledger system mentions; and the lane gets a hard parity map saying which animation assets may be ported from android and which may not."
+  },
+  {
+   "id": "NF-F/audio-recovered-13-waveforms-against-43-web-cue-names",
+   "text": "The SFX side of the audio blocker is closed on both halves, with a precise residual. The DECRYPT is not a whole-file XOR — ResourceManager.decryptByteArray touches only bytes 3..255, swapping ba[i] with ba[i+256] when i%11==0 and then XORing with charCodeAt(1) of the resource name, which is why the raw blob already reads 'CWS' and a naive XOR fails. For Mobile_SoundResource the key is 'o' = 111; the result is a valid CWS v17 SWF (filelen 29,631, inflate 29,623) carrying 13 DefineSound tags and a SymbolClass table naming every one: punch, fart, hitmetal, goodkoto, slash1, slash2, die1, refund, die3, slash3, sumo, die2, deflect. Separately, the WEB payload's own source names 43 distinct \"Snd_*\" cues at live call sites. So the residual is exact: 13 waveforms recovered, 43 cue names known, 30 cues with no PCM in blob 122.",
+   "artifact_class": "A2",
+   "build": "both (waveforms android blob; cue names web source)",
+   "cite": "reference/extracted/android/122_Mobile_SoundResource.bin decoded per reference/decompiled/shs3_android/scripts/ResourceManager.as:200-217 and Mobile.as:352 + my grep over reference/decompiled/shs3_payload/scripts/ with call sites at reference/decompiled/shs3_payload/scripts/§1t113s0§.as:472 and :478",
+   "quote": "ResourceManager.as:205 `for(var i:int = 3; i < 256; i++)` :207 `if(i % 11 == 0)` :213 `ba[i] ^= key;` ‖ decoded header b'CWS\\x11' ver 17, DefineSound(14) x 13, SymbolClass ['punch','fart','hitmetal','goodkoto','slash1','slash2','die1','refund','die3','slash3','sumo','die2','deflect'] ‖ §1t113s0§.as:472 `§1t88s0§.instance.§1t1516s0§(\"Snd_smallClick\");` :478 `…(\"Snd_error\");`",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "- **Blockers:** ① **ALL AUDIO** — every SFX + music param is INFERRED, no composer sourced.",
+   "lane_impact": "L6 art-anim-audio-feel ①: 'every SFX is INFERRED' is false twice over — 13 SFX exist as real PCM and 43 are named with trigger points in web source. The honest remaining gap is 30 named cues without waveforms, not 'all audio'."
+  },
+  {
+   "id": "NF-G/web-side-cite-for-800x480-and-a-second-800x690-layout",
+   "text": "The 800x480 native resolution has a WEB-side cite, so it no longer rests on an android file: §1t1540s0§.as:271-273 declares baseW 800, baseH 480 and an ALTERNATE height of 690, and :277-289 selects the 690 layout whenever the viewport is narrower than 800/690. The fit at :294-307 is a single UNIFORM scale with centring — scale = stageWidth/800 with letterbox when the viewport is narrower than 5:3, scale = stageHeight/480 with pillarbox when wider — and :388 hides the four blocker bars when the stage is exactly 800x480 or 800x690. Consequence for film measurement: the shipped renderer never stretches, so the horizontal and vertical scales in a longplay frame are equal by construction, and the 1816-vs-1800 px gap in video A is a recording/re-encode artifact, not a game-side anisotropy.",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:271-273, :274-289, :294-307, :388",
+   "quote": ":271 `var _loc2_:int = 800;` :272 `var _loc3_:int = 480;` :273 `var _loc4_:int = 690;` · :297 `_loc8_ = §1t9973s0§.stageWidth / _loc2_;` :304 `_loc8_ = §1t9973s0§.stageHeight / _loc3_;` :305 `_loc9_ = (§1t9973s0§.stageWidth - _loc2_ * _loc8_) / 2;` · :388 `… || §1t9973s0§.stageWidth == 800 && (§1t9973s0§.stageHeight == 480 || §1t9973s0§.stageHeight == 690)`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "ledger_text": "12. **Native resolution is 800×480 (5:3)**, not 16:9 — HUD x-fractions measured off 1920×1080 video may be pillarbox-compressed. Verify before trusting horizontal coords.",
+   "lane_impact": "UI-HUD ① ('aspect-ratio truth — read stage.stageWidth in a build') closes from source with no build needed; ledger item 12 is CONFIRMED, not overturned, and gains a second supported layout (800x690) it never mentions."
+  },
+  {
+   "id": "NF-I/def-subtraction-is-floored-by-the-attackers-min-damage",
+   "text": "Every DEF subtraction in both builds is immediately floored by the ATTACKER's minimum damage, so defence can never reduce a hit below that floor — a term the 'DEF is flat subtraction' statement omits. All three web damage paths do `_loc5_ -= getDefense();` then `if(_loc5_ < param2.getMinDamage()) { _loc5_ = param2.getMinDamage(); }`, and android does the same at MCSPlayer.as:3709-3713. A Sim that subtracts DEF without the floor will produce zero-damage hits the original never produces.",
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3484-3488, :3800-3804, :4391-4395 vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:3709-3713",
+   "quote": "web §1t99s0§.as:3800 `_loc5_ -= this.§1t4477s0§();` :3801 `if(_loc5_ < param2.§1t1088s0§())` :3803 `_loc5_ = param2.§1t1088s0§();` ‖ android MCSPlayer.as:3709 `damage -= this.getDefense();` :3710 `if(damage < damageObj.getMinDamage())` :3712 `damage = damageObj.getMinDamage();`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "ledger_text": "① DEF mitigation curve + SPD range/cooldown scaling (wiki gives only direction) — *measure per-point deltas in a build.*",
+   "lane_impact": "L-progression ① / L1 combat-core: completes the DEF model — flat subtraction, floored at the attacker's minDamage, with the defender-in-Heavy x0.8 as the only conditional."
+  }
+ ]
+}

@@ -1,0 +1,309 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "enemies-ai/shielder-prop-block-is-a-second-block-mechanic",
+   "refuted": false,
+   "reason": "CLAIM HOLDS, OVERTURN DOES NOT. I opened EnemyShield.as: :331-340 is verbatim as quoted, and I verified the i-frame semantics the finding only asserted - NPC.as:296-298 'public function canHit() : Boolean { return this.gotHitCounter == 0; }', EnemyShield.as:282 returns false out of gotHit while the counter is up, :123-125 decrements it once per tick. So gotHitCounter=24 on the shield vs =12 on a landed hit really is a doubled invulnerability window with playHitMetal(). But the sentence it names, SOURCE_CONSTANTS.md:258, is about COUNTER_BONUS - an attacker-side stance-triangle damage bonus; a shield absorbing a hit is not a counter (no damage returned), not a parry (no timing window - the finding concedes this) and not a riposte, and nothing here gives an attacker bonus damage. The claim that COUNTER_BONUS=1.25 models a mechanic the original lacks survives intact. Worse, the same document ALREADY concedes the block at SOURCE_CONSTANTS.md:365 'mobs can block with the weapon hitbox (part 3 -> 0 damage); duelists cannot'. The finding paraphrases :258 into 'no block at all' and refutes the paraphrase. Genuinely new and worth banking at :365, not :258: the PART_prop shield case, the 24-frame window, the clang SFX.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/EnemyShield.as:331-340 and :282 and :123-125 + reference/decompiled/shs3_android/scripts/NPC.as:296-298 + docs/research/fidelity/SOURCE_CONSTANTS.md:365",
+   "severity": "material",
+   "overturn_upheld": false
+  },
+  {
+   "claim_id": "frames/v0717-war-room-rules-are-seven-pages",
+   "refuted": false,
+   "reason": "HEADLINE HOLDS ON MY OWN EYES, SUB-CLAUSE AND OVERTURN BOTH FAIL. I cropped all three frames at (30,20)-(1000,420) @1.6x LANCZOS and read them: frame_0011 'WAR ROOM RULES 1/7 (JOINING A BATTLE)', frame_0012 'WAR ROOM RULES 3/7 (ATTACKING AND DEFENDING)', frame_0013 'WAR ROOM RULES 6/7 (BUILDING STRUCTURES)'. Android strings.json[\"369\"]/[\"373\"]/[\"379\"] read 1/6 joining a battle, 3/6 attacking and defending, 6/6 building structures. Seven pages vs six is CONFIRMED. But the finding's actionable sub-clause - 'a page was inserted and the numbering shifted, so any android war-room rule text ported by page number lands on the wrong page' - is REFUTED by those same frames: pages 1, 3 and 6 hold their exact positions AND titles, so no shift touches 1-6 and the seventh page is appended, not inserted. And the overturn cannot stand at all: the S0-3 caveat asserts that UI-copy parity is NOT established, so a demonstrated copy divergence CORROBORATES it rather than making it false.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0011.jpg, frame_0012.jpg, frame_0013.jpg (crop (30,20)-(1000,420) @1.6x LANCZOS) + docs/gauntlet/L0/index/strings.json[\"369\"],[\"373\"],[\"379\"]",
+   "severity": "minor",
+   "overturn_upheld": false
+  },
+  {
+   "claim_id": "hunter/all-24-elemental-skills-fully-specced",
+   "refuted": false,
+   "reason": "HOLDS, with two corrections. My own ElementTree parse of reference/extracted/skilldata.xml returned all 24 requested ids: 1013/1033/1034/1035 are 5-level rows chi 5,6,7,8,10 cd 15; 1025-1028 chi 3 cd 6; 1029-1032 chi 3 cd 2; 1070-1073 chi 50 cd 60 with descs 'Area of Effect Fire Attack / Fire Damage: 150% Fire ATK' etc; 1056-1063 are <passive>1</passive>. BigTornadoProjectile.as:24 is verbatim. CORRECTION 1: only the four ultimates carry a damage-scaling description - the other twelve actives say only 'deals fire damage' / 'Throws a kunai', and <value> is the LEVEL INDEX, not a damage number, so 'a string-table description that states the damage scaling' is true of 4 of 24, not 24 of 24; the 8 passives have EMPTY <chi>/<cooldown>. CORRECTION 2: the build label 'web v0.717' is wrong for the skilldata half - skilldata.xml is android-sourced per C2 and there is no <skilldata> root in any of the 27 web bindata blobs. I closed that hole myself: the four Big*Projectile constructors exist in the WEB payload too (see new_findings). Overturn upheld: ledger :205 (1) 'names only' is dead by any reading.",
+   "own_cite": "reference/extracted/skilldata.xml (my ElementTree parse of ids 1013, 1025-1035, 1056-1063, 1070-1073) + reference/decompiled/shs3_android_payload/scripts/BigTornadoProjectile.as:24 + docs/research/REBUILD_READINESS.md:205",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter/audio-blocker-is-the-right-target-for-the-sfx-names",
+   "refuted": true,
+   "reason": "REFUTED. Its downgrade to PARTIAL rests entirely on 'the waveforms remain CWS-encrypted per Stage-0b S0-5' - the superseded line C3 auto-refutes. I did not take C3 on trust; I re-derived it. ResourceManager.as:200-217 defines decryptByteArray(source,key) = XOR bytes 3..255 with key, swapping ba[i]<->ba[i+256] where i%11==0, and ResourceManager.as:41 fixes the key as 'soundresource.swf'.charCodeAt(1) = 111. Applying that to 122_Mobile_SoundResource.bin gives header 43 57 53 11 bf 73 00 00 - CWS v17, 29,631 bytes - inflating to 29,623 bytes holding THIRTEEN DefineSound tags (all format 2 = MP3, rate 1 = 11 kHz, 16-bit mono, sample counts 8700/7264/31928/2976/9545/8033/5290/6130/3809/17331/5717/4608/3456) plus a SymbolClass table naming every one: deflect, die2, sumo, slash3, die3, refund, die1, slash2, slash1, goodkoto, hitmetal, fart, punch. So 13 of the 43 named triggers have RECOVERED WAVEFORMS, and 'not a single SFX or music PARAMETER' is false. The 43 unique Snd_* literals and the three quoted call sites are all real (I counted them), but the finding's load-bearing reason for the PARTIAL is dead. It also mis-cites the ledger: :241 is the art-anim SURFACE bullet; the 'ALL AUDIO' blocker is :240. That sentence does fall - harder than the finding allows.",
+   "own_cite": "reference/extracted/android/122_Mobile_SoundResource.bin (my own decrypt at key 111 + inflate + SWF tag walk) + reference/decompiled/shs3_android/scripts/ResourceManager.as:200-217 and :41 + docs/research/REBUILD_READINESS.md:240",
+   "severity": "material",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter/dragon-dance-input-rule-held",
+   "refuted": false,
+   "reason": "HOLDS, verbatim. reference/decompiled/shs3_payload/scripts/§1t5495s0§.as:382 reads exactly 'if(Boolean(this.§1t5519s0§ && this.§1t5518s0§.length == 4) && Boolean(this.§1t5512s0§[1]) && Boolean(this.§1t5512s0§[2]) && Boolean(this.§1t5512s0§[4]) && Boolean(this.§1t5512s0§[6]))' and :70 reads '[\"sky\",\"wind\",\"water\",\"mountain\",\"earth\",\"thunder\",\"fire\",\"lake\"]' - so nodes 1/2/4/6 are wind/water/earth/fire, exactly as claimed. The deobfuscated twin at DragonDanceUI.as:367 is identical and :369 calls setLaterHeaven(). :71 gives the Later-Heaven array. The rule is order-insensitive (a length check plus four set flags), which the finding correctly does not overstate. Overturn upheld on the INPUT half of ledger :205 (4); the Kanji-statue bonus half is untouched and the finding says so.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5495s0§.as:70-71 and :382 + reference/decompiled/shs3_android/scripts/DragonDanceUI.as:367-369 + docs/research/REBUILD_READINESS.md:205",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter/elemental-atk-vs-def-formula-held",
+   "refuted": false,
+   "reason": "HOLDS, and I upgraded its build label from asserted to proven. MCSPlayer.as:3347-3350 subtracts the four elemental DEFs, :3351-3381 applies the 1-floor-if-attacker-carried-any / 0-otherwise rule on all four channels, :3420 sums 'damage + fireDamage + windDamage + waterDamage + earthDamage'. StatsManager.as:1836 is verbatim, and I checked the parameter order at MCSPlayer.as:260-266 - initElementDefenseStats(STAT_FIREDEF, STAT_WINDDEF, STAT_WATERDEF, STAT_EARTHDEF) - which confirms fireDef<-WATERATK, windDef<-EARTHATK, waterDef<-WINDATK, earthDef<-FIREATK, i.e. the counter-element wheel exactly as described. The build label 'both' was unproven on the cites given (all android), so I proved it: the same pipeline is in the WEB player class - see new_findings. Overturn upheld: ledger :205 (2) closes.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3347-3381, :3420 and :260-266 + reference/decompiled/shs3_android/scripts/StatsManager.as:1836 + docs/research/REBUILD_READINESS.md:205",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter/ten-kanji-dan-ranks-in-string-table",
+   "refuted": false,
+   "reason": "HOLDS despite the QUOTE_UNVERIFIED flag - I read the entries directly and every one matches: [\"455\"]='(初段)' [\"456\"]='(弐段)' [\"457\"]='(参段)' [\"458\"]='(四段)' [\"459\"]='(五段)' [\"460\"]='(六段)' [\"461\"]='(七段)' [\"462\"]='(八段)' [\"463\"]='(九段)' [\"464\"]='(十段)', with [\"454\"]='Town Prosperity' and [\"465\"]='Renshi' bracketing them, so the ladder really is closed at ten. §1t408s0§.as:532-565 is the romaji switch, dan 0..9 -> ''/nidan/sandan/yondan/godan/rokudan/nanadan/hachidan/kyudan/judan with default also judan - ten rungs, clamped. Overturn upheld: REBUILD_READINESS.md:164-165 is a conjunction and its MAX_DAN_RANK=10 half plus its 'the only wiki datum' clause both fall. Note the finding does NOT touch tenthGold=100 (that is IDX 8's job). I also proved its asserted second display format rather than leaving it asserted - see new_findings.",
+   "own_cite": "docs/gauntlet/L0/index/strings.json[\"454\"] through [\"465\"] + reference/decompiled/shs3_payload/scripts/§1t408s0§.as:532-565 + docs/research/REBUILD_READINESS.md:164-165",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter04/full-xp-table-l1-to-l80-is-in-both-builds",
+   "refuted": false,
+   "reason": "HOLDS, and it is the strongest finding in the packet. I regex-extracted both arrays and compared them element-wise: StatsManager.as:78 and §1t1523s0§.as:364 are each 99 entries and BYTE-FOR-BYTE IDENTICAL (a==b). Indices 1-10 are 550, 1450, 2950, 5150, 8350, 12150, 16350, 20900, 25900, 31400 - exactly the L1-L10 caps the ledger already trusts at :77. Index 79 = 4,025,800 and index 98 = 29,395,800, both as claimed. And it really is the level table, not a decorative array: StatsManager.as:1591 walks it to derive level from currentXP, :1601 returns expArray[getLevel()] - STAT_XP, :1606 returns expArray[level]. Overturn upheld twice over - REBUILD_READINESS.md:200 (2) 'likely unrecoverable ... keep the extrapolation as labeled INFERRED' dies, and so does the §6 entry at :350.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:78, :1591, :1601, :1606 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:364 + docs/research/REBUILD_READINESS.md:200 and :350",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter04/rebirth-payout-is-25-and-100-hgold-in-v0717",
+   "refuted": false,
+   "reason": "HOLDS, verbatim on both sides. Web §1t1523s0§.as:2644 'if(§1t7356s0§(§1t9426s0§) == 8)', :2646 '§1t9713s0§(§1t9413s0§,100);', :2650 '§1t9713s0§(§1t9413s0§,25);', :2652 'if(§1t7356s0§(§1t9426s0§) < 9)', :228 'internal static const §1t9413s0§:int = 12;'. Android StatsManager.as:194 'STAT_HGOLD:int = 12', doRebirth at :2201 changeStat(STAT_HGOLD,20) on dan==8 else :2205 changeStat(STAT_HGOLD,5), :2207 'if(getPlayerStats(STAT_DAN) < 9)'. All exact. Overturn upheld on REBUILD_READINESS.md:164-165: a 10th-rebirth tier demonstrably exists, so 'film shows a flat +25 gold every rebirth, no 10th-rebirth tier' is false; DAN<9 caps the ladder at ten rungs; tenthGold=100 and +25g are both exactly right and become CONTRACT. This finding is also the key that refutes IDX 15 - it establishes a clean 5x HGold rescale between the builds.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:228 and :2644-2652 + reference/decompiled/shs3_android/scripts/StatsManager.as:194 and :2201-2207 + docs/research/REBUILD_READINESS.md:164-165",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter04/territory-owners-are-open-ended-not-four",
+   "refuted": false,
+   "reason": "CLAIM HOLDS, OVERTURN DOES NOT. I read all twelve string entries and every one is verbatim: [\"275\"]-[\"278\"] = Clan Aka Ryu / Midori Ken / Aoi Hoiru / Ki Sensu, [\"491\"]='Neutral', [\"816\"]='Clan Color', [\"818\"]='Clan Acronym', [\"834\"]='Minor Clan  ( [0] territories owned )', [\"835\"]='Major Clan  ( [0] territories owned )', [\"4400\"]='Clan Deed', [\"4401\"]='Form your own clan.\\nWar Hero rank required...', [\"4405\"]=\"Edit your Clan's name, acronym, color and banner\". I also opened seg-08/frame_0029.jpg at 2x and counted the banner colours myself: gold, green, blue, red AND a black banner on a castle-town tile - five distinct owners rendered, so >=5 is a floor, as claimed. BUT the ledger sentence it names, :245 (2) 'War-Room map topology (board/adjacency)', is about the BOARD and its ADJACENCY RULE. Territory OWNERSHIP is a different axis and this evidence says nothing about either. The sentence this finding actually falsifies is :244 'Ready: 4 clans (heraldry/masks/daimyo/capitals)' - point it there instead. :245 (2) survives untouched.",
+   "own_cite": "docs/gauntlet/L0/index/strings.json[\"275\"]-[\"278\"], [\"491\"], [\"816\"], [\"818\"], [\"834\"], [\"835\"], [\"4400\"], [\"4401\"], [\"4405\"] + reference/frames/zFtCaTO0_1M/seg-08/frames/frame_0029.jpg (whole frame @2x LANCZOS) + docs/research/REBUILD_READINESS.md:244 and :245",
+   "severity": "minor",
+   "overturn_upheld": false
+  },
+  {
+   "claim_id": "hunter04/v0717-stance-switch-is-focus-gated-at-48-not-hard-locked",
+   "refuted": false,
+   "reason": "HOLDS, verbatim, and this is a high-value reversal. §1t99s0§.as:3050 reads exactly 'return this.§1t4469s0§() && this.§1t4414s0§ >= 48;'; :3060 is the unconditional early return 'if(this.§1t4414s0§ < 48) { return; }' at the top of the next-stance function; and the charge at :3162 'this.§1t4414s0§ -= 48;' with a 0-clamp at :3163-3166 sits INSIDE the battle predicate opened at :3160 'if(§1t1525s0§.§1t9948s0§())' - structurally identical to android nextStance() at MCSPlayer.as:2975-3105 where the same block is guarded by 'if(StageManager.isBattle())'. So the in-combat switch is permitted and priced, not locked. Android uses a different rule entirely (gate at maxreload/6, graded cost maxreload/3 or -=maxreload/6), which the finding states correctly. Overturn upheld: REBUILD_READINESS.md:158-160 §3 item 4 must be reversed - the Focus-gated in-combat switch is ORIGINAL behaviour, not a recreation divergence. Note the fidelity ledger already agreed (SOURCE_CONSTANTS.md:259 'costs 48 focus'); it is REBUILD_READINESS that is stale.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3048-3066 and :3156-3166 + reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:2975-3105 + docs/research/REBUILD_READINESS.md:158-160",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter04/web-v0717-crit-is-flat-1_3-vindicating-the-ledger",
+   "refuted": false,
+   "reason": "HOLDS, verbatim. §1t99s0§.as:3255-3276 is the web damage function: :3258 baseDamage = minDamage + Math.random()*damageRange; :3262 LIGHT * (0.5 + 0.4*mastery*0.1); :3265 BALANCED * (1 + 0.2*mastery*0.1); :3270 the three-case fallthrough (§1t12222s0§/§1t12223s0§/§1t12224s0§) * 1.4; :3272-3275 'if(this.§1t4414s0§ == this.§1t4415s0§) { return _loc2_ * 1.3 + this.§1t1243s0§; }' with NO Light special case. Android MCSPlayer.as:3198-3223 is the stated contrast: x1.5 stance factor, crit x1.2 non-Light / x1.5 Light, mastery scale *0.01. Both exact. So the crit is deterministic on a full Focus bar and CRIT_MULT=1.3 becomes a code fact - ledger :190 (2) and :195 (5) both close. ONE ARITHMETIC CORRECTION: the finding says mastery 9 gives 0.86/1.18/1.40 'matching the ledger's 0.9/1.2/1.4'. The web coefficients hit 0.90/1.20/1.40 EXACTLY at mastery 10, not 9 - see new_findings; :155's 'MASTERY-9 CEILING' label may need to become mastery-10 for the web build.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3255-3276 + reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3198-3223 + docs/research/REBUILD_READINESS.md:190 and :195",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter04/web-v0717-per-stance-reach-coefficients-differ",
+   "refuted": false,
+   "reason": "HOLDS, verbatim, and I re-derived the worked example. §1t99s0§.as:3094 LIGHT '= this.§1t4420s0§ * 1.4'; :3105 BALANCED '* (1 + 0.2 * this.§1t4422s0§ * 0.1)'; :3116 HEAVY '* (0.5 + 0.4 * this.§1t4423s0§ * 0.1)' with the 100-floor at :3117-3120; :3131 (case §1t12224s0§) '* 1.4'; :3142-3146 (case §1t12223s0§) base with a 100-floor. I fixed the enum mapping independently against android setStance at MCSPlayer.as:3027-3090: REVERSED = baseSlashLength*1.5 with setStanceColor(2), DUAL = baseSlashLength with a 100-floor and setStanceColor(3) - so web §1t12224s0§ = REVERSED and §1t12223s0§ = DUAL, exactly as the finding assigns them. §1t1523s0§.as:2346-2347 'var _loc2_:int = 90 + §1t7356s0§(§1t9426s0§) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' and :104 'stageWidth:int = 800' are both exact, and android getBaseSlashLengthVal at StatsManager.as:1915-1919 is the deobfuscated twin. Worked example reproduces: SPD 1 DAN 0 -> 120 + floor(90/21) = 124; LIGHT 173, BALANCED 124, HEAVY max(62,100)=100; 1920/800 = 2.4. Overturn upheld: ledger :190 (1) 'reach cap in stage px per stance' closes, and reach is a computed function of SPEED and DAN, killing STANCE_TABLE's fixed 300/200/120 in kind.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3091-3150 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:104 and :2346-2347 + reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3027-3090 + reference/decompiled/shs3_android/scripts/StatsManager.as:1915-1919 + docs/research/REBUILD_READINESS.md:190",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter05/offline-sharedobject-save-path-exists",
+   "refuted": false,
+   "reason": "HOLDS despite the QUOTE_UNVERIFIED flag, and it badly UNDER-CLAIMS. QueryManagerBase.as:2907 and :2917 are both exactly 'sharedObject.data.equipment = StatsManager.getEquipmentString();' and :2980 is 'StatsManager.parseEquipmentString(sharedObject.data.equipment);'. But :2903 opens SharedObject.getLocal(cookieName + '_' + charname) and :2910-2930 is an ELSE branch on 'if(!this.offlineMode)' that writes NINETEEN named fields with matching serializer/parser pairs - the complete single-player save schema, not just the equipment string. Overturn upheld and then some: §6 :351 'Server-sim topology & save format - nothing to copy; design a single-player persistence schema from the observed field set' is wrong on both halves. I also closed the 'web parity not checked' hedge myself - see new_findings.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2903-2932 and :2975-2985 + docs/research/REBUILD_READINESS.md:351",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter05/war-wave-table-is-340-plus-11-equals-351",
+   "refuted": false,
+   "reason": "HOLDS on my own parse. Both files decode as UTF-8 to <survivalmodedata> with 39 <wave> and 87 <enemy>; summing <qty> over all 87 rows gives 351 in BOTH, the non-700 block sums to 340 in both, and the 700 block is exactly eleven single-id rows 700,701,...,710 at qty 1 each in both. Identical to the row, as claimed. I also cross-checked the interpretation the finding asserts: npcdata.xml has 495 <npc> spanning ids 0-819 with NOTHING in 690-730, so the 700-block ids are non-authored slots, consistent with live-player placeholders. Overturn upheld: 'kill cap 350' at :244 is wrong. Nit on wording - 'wrong in both directions' overstates it; the total is 351 and the rank-and-file half is 340, so the ledger is short by one on the samurai half only.",
+   "own_cite": "reference/extracted/bindata/119_1t4646s0.bin and reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (my own ElementTree parse: 87 rows, sum 351, 400-block 340, 700-block 11 ids 700-710, identical in both) + reference/extracted/npcdata.xml + docs/research/REBUILD_READINESS.md:244",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "hunter05/writ-of-release-is-5-gold-not-25",
+   "refuted": true,
+   "reason": "REFUTED - FATAL, AND THE FRAME WINS. The XML quote is verbatim-correct: itemdata.xml:2328-2335 gives item 2203 <baseprice>0</baseprice> <heavenlyprice>5</heavenlyprice>, strings.json[\"4156\"]='Writ of Release'. But I then opened a WEB v0.717 FRAME: reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg, crop (570,150)-(1000,230) @4x LANCZOS, is the BUY screen detail panel showing the item icon with a gold-coin price badge reading 25, label 'WRIT OF RELEASE', 'OWNED: 0'. A MEASUREMENT DOC AND A FRAME DISAGREE - THE FRAME WINS. The shipped web price is 25 gold, so REBUILD_READINESS.md:216 is CORRECT and must not be edited. The mechanism is in this very packet: IDX 8 (which I verified) shows the android build divides Heavenly Gold by exactly five - rebirth 5 vs web 25 (§1t1523s0§.as:2650 vs StatsManager.as:2205) and tenth-rebirth 20 vs web 100 (:2646 vs :2201). 5 x 5 = 25. The android heavenlyprice is the android-nerfed number. The build label 'both (itemdata id sets identical across builds)' is also unsupported: I enumerated every web bindata root and there is NO itemdata root on the web side (19 animdata, 1 survivalmodedata, 1 obj, 5 text tables, 1 GIF), so no id-set comparison was possible. Two further web-side corroborations of 25g exist and were not consulted: video-study/segments/B-17-ninja-services-hidden-vendor.md:31 (same shop scroll, t=48:12) and KONGREGATE_FORUM_FINDINGS.md:385.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg (crop (570,150)-(1000,230) @4x LANCZOS) + reference/extracted/itemdata.xml:2328-2335 + docs/gauntlet/L0/index/bindata.json + docs/research/REBUILD_READINESS.md:216",
+   "severity": "fatal",
+   "overturn_upheld": false
+  },
+  {
+   "claim_id": "meta-social/achievements-list-is-on-disk",
+   "refuted": false,
+   "reason": "HOLDS on my own parse. 114_Mobile_AchievementData.bin opens as plain UTF-8 XML declaring encoding='utf-8', root <achievementdata>, exactly 61 <achievement> rows. The first row is verbatim as quoted: <id>0</id><img>1</img><name>8000</name><desc>8080</desc><stat>60000</stat><val>1</val>. The desc = name + 80 rule holds across every row I checked, and the resolutions are exact: [\"8000\"]='Duelist I' / [\"8080\"]='Win an online duel.'; [\"8003\"]='Killer I' / [\"8083\"]='Defeat 100 enemies.' (stat 60017, val 100); [\"8006\"]='Eye of the Beheader I'; [\"8058\"]='Warrior III' / [\"8138\"]='Defeat 340 in a war room attack.' (stat 60018, val 340); [\"8060\"]='Be Awesome' / [\"8140\"]='Completed Season 1'. The 340 independently cross-checks the survival-wave sum. Overturn upheld on the achievements third of :245 (3), and the finding is honest that only that third closes. HEDGE TO CARRY: this is an android-only blob - it has no byte-identical web twin in my md5 run - so the row set is v0.682 until a web artifact says otherwise.",
+   "own_cite": "reference/extracted/android/114_Mobile_AchievementData.bin (my own ElementTree parse: 61 achievement rows) + docs/gauntlet/L0/index/strings.json[\"8000\"],[\"8058\"],[\"8080\"],[\"8138\"] + docs/research/REBUILD_READINESS.md:245",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "meta-social/kill-cap-is-351-not-350",
+   "refuted": false,
+   "reason": "HOLDS despite the QUOTE_UNVERIFIED flag - I re-ran the parse independently and got exactly the stated numbers on BOTH files: 39 waves, 87 <enemy> rows, sum <qty> = 351, non-700 bucket 340, 700 bucket 11 with distinct ids 700 through 710. And both target sentences are verbatim where claimed: SHSD_MASTER_REFERENCE.md:170 '| Kill cap (troops) | 350 (= 340 troops + 10 samurai) |' and REBUILD_READINESS.md:244 '...terrain deploy mods; kill cap 350; flag +120%...'. The troop half is right, the samurai half is 11 not 10. Overturn upheld - and this one lands on a value already sitting in the ledger's Ready column, so it would have shipped wrong.",
+   "own_cite": "reference/extracted/bindata/119_1t4646s0.bin and reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (my own parse) + docs/research/SHSD_MASTER_REFERENCE.md:170 + docs/research/REBUILD_READINESS.md:244",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "meta-social/world-board-is-a-coordinate-grid-not-a-japan-outline",
+   "refuted": false,
+   "reason": "HOLDS ON MY OWN EYES. I opened reference/frames/zFtCaTO0_1M/map/frames/frame_0025.jpg (512x288) upscaled 3x LANCZOS. The header reads 'NAGANO (26,52)  LEVEL: 9' with a 'ZOOM OUT' button at the right. Below it: uniform rounded-square tiles at constant size and pitch in strict rows and columns - I count 13 full columns across five visible rows - with a soft brown landmass painted BEHIND and bleeding across tile borders, and one tile carrying a white selection outline. The legend reads 'LEGEND / VILLAGE  TOWN  CITY  CASTLE TOWN  DESTROYED  QUEST', plus a line the finding did not mention: 'GREY TERRITORIES - LEVEL TOO LOW / RED TERRITORIES - LEVEL TOO HIGH'. Overturn upheld: :115's characterisation ('sparse geographic Japan outline, not a grid') is falsified - the coastline is wallpaper and the board is an integer-addressed lattice. RESIDUE TO KEEP: you still cannot generate the territory SET from W x H alone; you need the 63x72 mask. Say that in the rewrite rather than deleting the line whole.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/map/frames/frame_0025.jpg (whole frame 512x288 upscaled x3 LANCZOS) + docs/research/REBUILD_READINESS.md:115",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "meta-social/world-map-topology-is-a-bitmap-mask",
+   "refuted": false,
+   "reason": "CLAIM HOLDS IN FULL, OVERTURN MIS-TARGETED. I reproduced every number myself: 110_Mobile_MapBitmapData.bin has magic GIF89a, PIL reports GIF 63x72 mode P, and I counted exactly 735 non-black pixels; rendered at 8x nearest-neighbour it is an unmistakable pixel silhouette of Japan with Hokkaido, Honshu, Shikoku, Kyushu and the Ryukyu chain all legible. WorldMapUI.as:208 is verbatim as quoted; WarSelectUI.as:15/17/19 give 8/21/51 verbatim; :377 'var mapid:int = territoryx + 341 << 12 | territoryy + 341;'; QuestEngine.as:1206 reuses the same mask. TWO CAVEATS. (a) The frame cross-validation is weaker than presented: WorldMapUI.as:208 evaluates to getPixel(tx+13, ty+51) and the displayed '(26,52)' lives in a different space (see :723), so the two plausible transforms give getPixel(18,52) and getPixel(26,52) - I read BOTH and both are pure white, so the test cannot discriminate, and 735/4536 = 16% of the mask is white anyway. (b) The overturn is aimed wrong. :245 (2) names the War-Room BOARD and its ADJACENCY; that board is WarHexUI's hexArray, built at WarHexUI.as:226-229 as a wt x ht array of WarHex from server-supplied state, a different object from the world map. This evidence closes :225 (1) 'world bounds + geography' and supports :115 - not :245 (2). 'Kills :245 (2) outright' is false; the battlefield board's dimensions and adjacency rule survive as a blocker.",
+   "own_cite": "reference/extracted/android/110_Mobile_MapBitmapData.bin (my own PIL read: GIF89a 63x72, 735 non-black px, pixel(18,52) and pixel(26,52) both (255,255,255)) + reference/decompiled/shs3_android/scripts/WorldMapUI.as:206-208, :371-390 and :723 + reference/decompiled/shs3_android/scripts/WarSelectUI.as:15-19 + reference/decompiled/shs3_android/scripts/QuestEngine.as:1204-1206 + reference/decompiled/shs3_android/scripts/WarHexUI.as:226-229 + docs/research/REBUILD_READINESS.md:225 and :245",
+   "severity": "minor",
+   "overturn_upheld": false
+  },
+  {
+   "claim_id": "meta/interactui-uidata-blob-is-utf8-not-utf16le",
+   "refuted": false,
+   "reason": "HOLDS, exactly. I hex-dumped the file: bytes 00-25 are '<?xml version=\"1.0\" encoding=\"UTF-8\"?>' followed by 0d 0a and '<uidata>' - so it is plain UTF-8 text, not UTF-16LE, and it is a 314-line text file (the citelint LINE_ON_BINARY note is a false alarm from the .bin extension). Line 97 is verbatim as quoted, including the trailing comment '<!-- \"yes\" useicon >=10 dan, no element boost-->'. Overturn upheld against the blanket UTF-16LE warning - BUT note this is already landed: the §0 brief's own correction C1 retired that warning across all 42 blobs with a magic-byte census (36 plain text, 1 UTF-16LE, 5 XOR'd zlib SWFs, 1 GIF). This finding is a single-file instance of C1, so it is true but subsumed and adds nothing new to the ledger rewrite. It is also not a REBUILD_READINESS.md sentence.",
+   "own_cite": "reference/extracted/android/90_InteractUI_UIData.bin (my own hexdump of bytes 0x00-0x3b, and wc -l = 314) + docs/gauntlet/L0/index/bindata.json",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "npcdata/five-stances-are-in-the-web-build-too",
+   "refuted": false,
+   "reason": "HOLDS despite the QUOTE_UNVERIFIED flag - all four cites are verbatim where claimed. §1t4906s0§.as:90 'if(param1.§1t1255s0§(1500) > 0)'; §1t4907s0§.as:157 'else if(param1.§1t1255s0§(1500) > 0)'; §1t122s0§.as:862 'else if(param1.§1t1255s0§(1500) > 0)' - each followed by §1t3489s0§(§1t12224s0§) and an 1501 branch to §1t12223s0§. The android original at EnemyElite.as:160-167 is exactly 'if(xml.getMastery(1500) > 0) { setStance(REVERSED_STANCE); } else if(xml.getMastery(1501) > 0) { setStance(DUAL_STANCE); }', and MCSPlayer.as:33/:35 are precisely 'DUAL_STANCE:int = 3;' and 'REVERSED_STANCE:int = 4;'. I independently confirmed §1t12224s0§=REVERSED / §1t12223s0§=DUAL from the reach switch (see my IDX 12 verdict), and the WEB player class itself handles both at §1t99s0§.as:3130-3146, so this is not enemy-only. The build hedge really can come off. ONE PROCESS FLAG: 'Stance system = 3 stances (light / balanced / heavy)' is NOT a REBUILD_READINESS.md sentence - I grepped the file and it is not there; it is src/config/stances.ts:7. The overturn is against code, not the ledger.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t4906s0§.as:90-97 and §1t4907s0§.as:157-164 and §1t122s0§.as:862-869 + reference/decompiled/shs3_android_payload/scripts/EnemyElite.as:160-167 and MCSPlayer.as:28-35 + src/config/stances.ts:7",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "npcdata/spawn-level-comes-from-the-quest-wave",
+   "refuted": false,
+   "reason": "HOLDS despite the QUOTE_UNVERIFIED flag - I checked every limb. NPCManager.as:131 'enemyWave[i].push(new NPCHolder(id,fatal,xpos,lvl));' verbatim; :407 'createEnemy(npcHolder.getNPCID(),npcHolder.getXPos(),posY,npcHolder.getFatal(),npcHolder.getLvl());'; :877-879 and :932-934 both 'if(lvl != 0) { actor.setLevel(lvl); }'. NPC.as:241 'var factor:Number = lvl / this.level;', :242-245 'if(lvl <= 20) { factor *= 0.9; }', :247-249 damage/defense/maxhp *= factor, :253-258 the lvl<=10 clamp to 1. FriendlyElite.as:70 and FriendlyArcher.as:58 are both exactly 'this.setLevel(StatsManager.getLevel());'. NPCManager.as:608 is case 30 -> FriendlyElite and :620 is case 34 -> FriendlyArcher. My own parse of questdata.xml returns 169 <enemy> blocks with 160 carrying <lvl>, and the two spot cites are exact: :26101 '<id>190</id>' with :26105 '<lvl>25</lvl>', and :25862 '<id>191</id>' with :25866 '<lvl>35</lvl>'. Only nit: the quote labels ':113' for 'lvl = wave[i].enemy[j].lvl;' which is actually :114 (:113 is the xpos line) - inside the cited :110-131 range. Overturn upheld: ledger :220 (1) 'enemy level->stat formula ... absent, not just inferred' is false. I also found an unclaimed line three rows away - see new_findings.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NPCManager.as:109-131, :405-412, :875-882, :928-936, :605-621 + reference/decompiled/shs3_android/scripts/NPC.as:239-260 + FriendlyElite.as:70 + FriendlyArcher.as:58 + reference/extracted/questdata.xml:26101, :26105, :25862, :25866 + docs/research/REBUILD_READINESS.md:220",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "parity/21-of-27-web-bindata-blobs-are-byte-identical-to-android",
+   "refuted": true,
+   "reason": "REFUTED on its universal quantifier, though its arithmetic is exact. I re-ran the md5 cross-product myself: 27 web files, 42 android files, 21 exact matches, and the enumerated 'Full identical set' in the quote is correct file-for-file - including md5 6852a591ab2d5895090b3d37ccec9ba2 for BOTH bindata/103_1t4630s0.bin and android/94_MCSCharacter_Human2AnimationData.bin. But 'including the ENTIRE character-animation layer' is measurably FALSE, and it is the clause the lane_impact hangs on ('the animation data layer needs NO build hedge at all'). Five web animdata blobs have NO android byte-twin and differ in CONTENT, not just bytes: 100_1t4627s0.bin (ogre) has 20 <anim> in 184,193 B vs android 91_Ogre's 18 in 184,120 B; 102_1t4629s0.bin (skills - shunpo, deathtouch, fireball) 51 anims in 333,768 B vs android 93_Skills 51 in 338,096 B; 111_1t4638s0.bin 17 vs android 102_Guardian 16; 113_1t4640s0.bin 26 anims / 153,258 B vs android 104_HumanSpear 23 / 132,270 B; 114_1t4641s0.bin (10 anims) unmatched entirely. So the animation layer is 14 of 19, not 'entire', and the two most gameplay-load-bearing sets (skills and ogre) are precisely the exceptions. The hedge lifts for the 21 named files ONLY. Corrected version supplied in new_findings so the good measurement is not lost.",
+   "own_cite": "md5 over reference/extracted/bindata/*.bin vs reference/extracted/android/*.bin (my own run: 27 web, 42 android, 21 matches) + my ElementTree counts on reference/extracted/bindata/100_1t4627s0.bin, 102_1t4629s0.bin, 111_1t4638s0.bin, 113_1t4640s0.bin, 114_1t4641s0.bin vs reference/extracted/android/91_MCSCharacter_OgreAnimationData.bin, 93_MCSCharacter_SkillsAnimationData.bin, 102_MCSCharacter_GuardianAnimationData.bin, 104_MCSCharacter_HumanSpearAnimationData.bin",
+   "severity": "material",
+   "overturn_upheld": true
+  }
+ ],
+ "judged_count": 24,
+ "packet_size": 24,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "hunter-s26a/web-sound-resource-decrypts-to-13-mp3-sfx",
+   "text": "The audio is not merely 'named' - 13 SFX waveforms are RECOVERED. reference/extracted/android/122_Mobile_SoundResource.bin decrypts by the game's own routine (ResourceManager.as:200-217 decryptByteArray: XOR bytes 3..255 with key, swapping ba[i]<->ba[i+256] where i%11==0; key = 'soundresource.swf'.charCodeAt(1) = 111 per ResourceManager.as:41) into a CWS v17 SWF of 29,631 bytes that inflates to 29,623 bytes containing 13 DefineSound tags - every one format 2 (MP3), rate 1 (11 kHz), 16-bit, mono - plus a SymbolClass table naming all 13: deflect, die2, sumo, slash3, die3, refund, die1, slash2, slash1, goodkoto, hitmetal, fart, punch. Sample counts: 8700, 7264, 31928, 2976, 9545, 8033, 5290, 6130, 3809, 17331, 5717, 4608, 3456.",
+   "artifact_class": "A2",
+   "build": "android v0.682 (the 43 Snd_* trigger names are web v0.717)",
+   "cite": "reference/extracted/android/122_Mobile_SoundResource.bin (my own decrypt + inflate + SWF tag walk) + reference/decompiled/shs3_android/scripts/ResourceManager.as:41 and :200-217",
+   "quote": "ResourceManager.as:200 'internal static function decryptByteArray(source:ByteArray, key:int) : ByteArray' · :205-213 'for(var i:int = 3; i < 256; i++) { if(i % 11 == 0) { temp = int(ba[i]); ba[i] = ba[i + 256]; ba[i + 256] = temp; } ba[i] ^= key; }' · :41 'internal static var resourceFileNameArray:Array = [\"shs3resource.swf\",\"musicresource.swf\",\"soundresource.swf\",\"imageresource.swf\",\"bgresource.swf\"];' · decrypted header 43 57 53 11 bf 73 00 00 = CWS v17, 29,631 B",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "Exact original SFX & music synthesis params — the *character* is study-able from audio; the exact waveforms/envelopes are not.",
+   "lane_impact": "L7 audio + §6. Nobody in this packet aimed at REBUILD_READINESS.md:348, and it is the sentence that actually falls: the exact waveforms ARE recoverable for 13 named SFX. :240's 'every SFX param is INFERRED' falls with it. This also independently re-verifies brief correction C3 first-hand rather than on trust."
+  },
+  {
+   "id": "hunter-s26a/full-offline-save-schema-is-19-fields-in-both-builds",
+   "text": "The offline SharedObject save is not one field, it is the whole player. QueryManagerBase.as:2903 opens SharedObject.getLocal(cookieName + '_' + charname); :2910-2930 is the offlineMode branch and it writes NINETEEN fields, each with a matching StatsManager get*String/parse*String pair: nextAPUpdate, nextDTUpdate, lastUpdate, playerlevel, playerStats, equipment, skillStats, skillSlots, inventory, stash, questItems, intStats, achievementStats, booleanStats, activeQuestList, completedQuestList, playerlocation, taunt, friends. The WEB build carries the same path: §1t1832s0§.as:2797-2800 writes data.equipment and data.playerlevel to the same per-character SharedObject, and the reset function at :2813-2825 enumerates the same field set (playerLevel, equipment, inventory, stash, ...).",
+   "artifact_class": "A2",
+   "build": "both — android v0.682 full branch, web v0.717 same SharedObject path",
+   "cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2903-2932 + reference/decompiled/shs3_payload/scripts/§1t1832s0§.as:2797-2800 and :2813-2825",
+   "quote": "QueryManagerBase.as:2916-2926 'sharedObject.data.playerStats = StatsManager.getPlayerStatsString(); sharedObject.data.equipment = StatsManager.getEquipmentString(); sharedObject.data.skillStats = StatsManager.getSkillStatsString(); sharedObject.data.skillSlots = StatsManager.getSkillSlotsString(); sharedObject.data.inventory = StatsManager.getInventoryString(); sharedObject.data.stash = StatsManager.getStashString(); sharedObject.data.questItems = StatsManager.getQuestItemsString(); sharedObject.data.intStats = StatsManager.getIntStatsString(); sharedObject.data.achievementStats = StatsManager.getAchievementStatsString(); sharedObject.data.booleanStats = StatsManager.getBooleanStatsString(); sharedObject.data.activeQuestList = StatsManager.getActiveQuestString();' · §1t1832s0§.as:2797 'var _loc2_:SharedObject = SharedObject.getLocal(§1t1523s0§.§1t2501s0§ + \"_\" + §1t1523s0§.charname);'",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "**Server-sim topology & save format** — nothing to copy; design a single-player persistence schema from the observed field set.",
+   "lane_impact": "L10 persistence. hunter05/offline-sharedobject-save-path-exists named ONE field and hedged 'web parity not checked'; the real artifact is a 19-field schema present in both builds. §6 :351 does not merely bend, it inverts - the schema is already written and does not need designing."
+  },
+  {
+   "id": "hunter-s26a/per-enemy-xp-formula-is-lvl-times-2-plus-20",
+   "text": "The per-kill XP formula is on disk and nobody claimed it: NPC.setLevel sets this.xp = lvl * 2 + 20, three lines below a quote npcdata/spawn-level-comes-from-the-quest-wave already made. Combined with NPCManager passing the quest-wave <lvl> into setLevel, every combat NPC's XP award is fully determined by its spawn level.",
+   "artifact_class": "A2",
+   "build": "android v0.682 (web parity not checked)",
+   "cite": "reference/decompiled/shs3_android/scripts/NPC.as:239-259 (key line :252)",
+   "quote": "NPC.as:252 'this.xp = lvl * 2 + 20;' in context :241 'var factor:Number = lvl / this.level;' :244 'factor *= 0.9;' :247-249 'this.damage *= factor; this.defense *= factor; maxhp *= factor;' :253-258 'if(lvl <= 10) { this.damage = 1; this.defense = 1; maxhp = 1; setHP(maxhp); }'",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "① coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either).",
+   "lane_impact": "L4 economy + L-progression. The 'no XP formula' half of :215 (1) is dead, and :200 (4) 'full XP-income model' gains its kill term. Note the clause survives on coins-per-kill, which this does not touch."
+  },
+  {
+   "id": "hunter-s26a/web-twins-of-the-four-elemental-ultimate-projectiles",
+   "text": "The four elemental-ultimate projectile constructors exist in the WEB v0.717 payload with the same damage*1.5 in the same element channel, closing the build hole in hunter/all-24-elemental-skills-fully-specced (which labelled itself web v0.717 while citing only android artifacts).",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t8341s0§.as:24 + §1t8334s0§.as:27 + §1t8338s0§.as:23 + §1t8343s0§.as:24",
+   "quote": "§1t8341s0§.as:24 '§1t8103s0§ = new §1t67s0§(0,0,§1t67s0§.§1t9117s0§,-1,0,0,param3 * 1.5);' (wind, 7th arg — twin of BigTornadoProjectile.as:24) · §1t8334s0§.as:27 '... §1t9118s0§,-1,0,0,0,param3 * 1.5);' (earth, 8th arg) · §1t8338s0§.as:23 '... §1t9118s0§,-1,param3 * 1.5);' (fire, 5th arg) · §1t8343s0§.as:24 '... §1t9118s0§,-1,0,param3 * 1.5);' (water, 6th arg)",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "ledger_text": "① what each element **does** (24 skills' damage/cost/AoE/status — names only).",
+   "lane_impact": "rebirth-elements. Makes the 150%-of-element-ATK damage of the four ultimates a WEB-build fact, not an android-only one. The <chi>/<cooldown> half stays v0.682 — skilldata.xml is android-sourced and there is no <skilldata> root in any web bindata blob."
+  },
+  {
+   "id": "hunter-s26a/web-elemental-def-pipeline-confirms-both-builds",
+   "text": "The elemental ATK-vs-DEF pipeline is in the WEB player class too, so hunter/elemental-atk-vs-def-formula-held's 'both' label is now proven rather than asserted (it cited only android artifacts).",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3391-3394, :3395-3422, :3489",
+   "quote": "§1t99s0§.as:3391-3394 'var _loc7_:int = param2.§1t1062s0§ - §1t1239s0§; var _loc8_:int = param2.§1t1063s0§ - §1t1241s0§; var _loc9_:int = param2.§1t1064s0§ - §1t1240s0§; var _loc10_:int = param2.§1t1065s0§ - §1t1242s0§;' · :3395 'if(param2.§1t1062s0§ > 0 && _loc7_ < 1)' (the 1-floor, repeated at :3403, :3411, :3419) · :3489 '_loc17_ = _loc5_ + _loc7_ + _loc9_ + _loc8_ + _loc10_;' (physical + four element channels summed)",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "ledger_text": "② elemental ATK-vs-DEF **formula**.",
+   "lane_impact": "L-combat-core / rebirth-elements. Removes the android hedge from the one blocker that closes outright."
+  },
+  {
+   "id": "hunter-s26a/web-kanji-dan-display-path",
+   "text": "The kanji dan-rank display path is in the WEB build and clamps at ten, proving what hunter/ten-kanji-dan-ranks-in-string-table only asserted ('the inventory/panel path prints kanji'). §1t5957s0§.as:3067-3102 sets danfield.text from getString(456) through getString(464), with the dan>=9 and default cases BOTH resolving to 464 = 十段.",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3067-3102 + docs/gauntlet/L0/index/strings.json[\"456\"]-[\"464\"]",
+   "quote": "§1t5957s0§.as:3067 'this.danfield.text = §1t1521s0§.getString(456);' … :3098 'this.danfield.text = §1t1521s0§.getString(464);' :3102 'this.danfield.text = §1t1521s0§.getString(464);' · strings.json[\"464\"] = '(十段)'",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "**`MAX_DAN_RANK=10` and `tenthGold=100` should be INFERRED, not CONTRACT.** The only wiki datum is garbled (\"dan rank 5 (kyudan)\" — kyudan=9th)",
+   "lane_impact": "ui-hud + rebirth-elements. A THIRD independent artifact for a ten-rung ladder, and the first one that is web-side and consumes the kanji table. MAX_DAN_RANK=10 is CONTRACT from three artifacts, not one garbled wiki line."
+  },
+  {
+   "id": "hunter-s26a/five-web-animdata-blobs-have-no-android-twin",
+   "text": "CORRECTION to parity/21-of-27-web-bindata-blobs-are-byte-identical-to-android. The 21/27 count and its enumerated list are exact, but the character-animation layer is NOT entirely byte-identical: five of the nineteen web animdata blobs have no android byte-twin, and they differ in ANIMATION COUNT, not just bytes. Web 100_1t4627s0.bin (ogre) = 20 <anim> / 184,193 B vs android 91_Ogre = 18 / 184,120 B. Web 102_1t4629s0.bin (skills: shunpo, deathtouch, fireball, spartakick) = 51 / 333,768 B vs android 93_Skills = 51 / 338,096 B. Web 111_1t4638s0.bin = 17 vs android 102_Guardian = 16. Web 113_1t4640s0.bin = 26 / 153,258 B vs android 104_HumanSpear = 23 / 132,270 B. Web 114_1t4641s0.bin (10 anims) has no android counterpart at all. So the parity hedge lifts for the 21 named files and MUST NOT lift for these five.",
+   "artifact_class": "A3",
+   "build": "both — web v0.717 vs android v0.682",
+   "cite": "md5 over reference/extracted/bindata/*.bin vs reference/extracted/android/*.bin (my own run: 27 web, 42 android, 21 matches) + my ElementTree child counts on reference/extracted/bindata/100_1t4627s0.bin, 102_1t4629s0.bin, 111_1t4638s0.bin, 113_1t4640s0.bin, 114_1t4641s0.bin and reference/extracted/android/91_MCSCharacter_OgreAnimationData.bin, 93_MCSCharacter_SkillsAnimationData.bin, 102_MCSCharacter_GuardianAnimationData.bin, 104_MCSCharacter_HumanSpearAnimationData.bin",
+   "quote": "unmatched web blobs: 100_1t4627s0.bin, 102_1t4629s0.bin, 111_1t4638s0.bin, 113_1t4640s0.bin, 119_1t4646s0.bin, 114_1t4641s0.bin · web 100 animdata child_count 20 vs android 91_Ogre 18 · web 113 animdata child_count 26 / 153,258 B vs android 104_HumanSpear 23 / 132,270 B",
+   "verdict": "PARTIAL",
+   "overturns_ledger": false,
+   "ledger_text": "S0-3 caveat: 'UI copy and combat tuning parity is NOT established' between android v0.682 and web v0.717",
+   "lane_impact": "L0 art-anim. The hedge comes off 21 files (incl. flinch, which lives in the matched Human2 blob) and stays on the ogre and skills animation sets — exactly the two most gameplay-load-bearing. Any 'the animation layer needs no build hedge' line in the rewrite would be wrong."
+  },
+  {
+   "id": "hunter-s26a/web-stance-ceilings-are-mastery-10-not-9",
+   "text": "The web mastery coefficients hit the ledger's 0.9 / 1.2 / 1.4 stance table EXACTLY at mastery 10, not mastery 9. §1t99s0§.as:3262 gives LIGHT = base * (0.5 + 0.4*lightMastery*0.1) and :3265 BALANCED = base * (1 + 0.2*balancedMastery*0.1); at mastery 10 those are 0.90 and 1.20 exactly, with HEAVY fixed at 1.4 (:3270). At mastery 9 they are 0.86 and 1.18. REBUILD_READINESS.md:155 labels 0.9/1.2/1.4 'MASTERY-9 CEILING values'; for the web build the exact-fit ceiling is mastery 10. The same *0.1 scale appears in the reach switch (:3105, :3116), so the correction propagates to reach as well.",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262, :3265, :3270, :3105, :3116 + docs/research/REBUILD_READINESS.md:155",
+   "quote": "§1t99s0§.as:3262 '_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);' · :3265 '_loc2_ = _loc1_ * (1 + 0.2 * this.§1t4422s0§ * 0.1);' · :3270 '_loc2_ = _loc1_ * 1.4;'",
+   "verdict": "PARTIAL",
+   "overturns_ledger": true,
+   "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+   "lane_impact": "L-combat-core. PARTIAL, not HELD: the arithmetic is certain but I did not locate the mastery CAP, so 'mastery-9' may still be right about the reachable maximum while being wrong about which mastery reproduces the table. The rewrite should state the coefficient, not the label."
+  },
+  {
+   "id": "hunter-s26a/war-room-battlefield-board-is-server-dimensioned",
+   "text": "The half of REBUILD_READINESS.md:245 ② that survives every map finding in this packet: the War-Room BATTLEFIELD board is a separate object from the world map. WarHexUI builds hexArray as a wt x ht array of WarHex from a pipe-delimited server state string, so its dimensions and therefore its adjacency graph do not come from the 63x72 territory mask and are not recoverable from the shipped blobs.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:226-232, :252, :418-428",
+   "quote": "WarHexUI.as:226-230 'this.hexArray = new Array(); for(i = 0; i < this.wt; i++) { this.hexArray.push(new Array(this.ht)); }' :231 'var hexList:Array = str.split(\"|\");' :252 'this.hexArray[xpos][ypos] = hex;'",
+   "verdict": "STILL_UNHELD",
+   "overturns_ledger": false,
+   "ledger_text": "② War-Room **map topology** (board/adjacency)",
+   "lane_impact": "L0 meta-social. Two findings in this packet (world-map-topology-is-a-bitmap-mask, territory-owners-are-open-ended) both claim to kill :245 ② and both miss: one closes the world/territory map (:225 ① and :115), the other addresses ownership. The battlefield board's dimensions stay a blocker. Keep :245 ② open, narrowed to 'battlefield sector board dimensions + adjacency'."
+  }
+ ]
+}

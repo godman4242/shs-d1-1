@@ -1,0 +1,269 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "payload/repair-cost-formula-is-node-level-times-10",
+   "refuted": false,
+   "reason": "HELD. I opened InteractUI.as and :647 is verbatim `this.detailstext.text = LangManager.getString(848,[level * 10]);` with :621 `level = StageManager.getCurrentNodeLevel();` and the 80-cap at :622-625. strings.json[\"848\"] = 'Repair your currently equipped weapon?\\nCost: [0] coins' - one substitution slot, so Repair = nodeLevel x 10 coins. Forge = nodeLevel x 100 at :634/:638/:642 (strings 845/846/847, each 'Cost: [1] coins'). I then cropped the web frame myself: reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0040.jpg crop (0,370)-(1024,576) @1.6x LANCZOS renders 'FORGE AN IRON SWORD (LEVEL 7)? / COST: 700 COINS / MATERIALS NEEDED: 2 IRON ORE' - string 845 with [0]=7 and [1]=700, i.e. the WEB build rendering the same template family from the same `level`. ONE CORRECTION: Reinforce is flat 5000 across THREE tiers, and at weapon level >=60 it needs 1 Uncut Diamond (strings.json[\"852\"]), not the Titanium Ore the finding names for 'level 30+'. OVERTURN UPHELD: RR:215 economy blocker (3) 'Repair-Weapon cost (never captured)' is now captured as a formula.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:620-621,:634,:638,:642,:647,:649-673 + docs/gauntlet/L0/index/strings.json[\"845\"],[\"848\"],[\"850\"],[\"851\"],[\"852\"] + reference/frames/Nr4fQstqHDM/seg-10/frames/frame_0040.jpg (crop 0,370-1024,576 @1.6x LANCZOS, read by eye)",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "progression/expArray-validated-on-camera",
+   "refuted": false,
+   "reason": "HELD, and I reproduced all of it plus a third confirmation. I re-parsed the array at reference/decompiled/shs3_payload/scripts/1t1523s0.as:364 - 99 entries, idx3=2950, idx4=5150, idx9=25900, idx10=31400, idx11=37400, idx80=4285800. I then extracted the frames myself with ffmpeg: zFtCaTO0_1M.mp4 -ss 653.0 shows level badge 3 and '2098 / 2950 EXPERIENCE POINTS'; -ss 1600 shows badge 4 and '5110 / 5150'. Both match exactly. UNCLAIMED THIRD: reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0015.jpg (crop 600,0-1024,40 @3x) shows badge 10 and '25988 / 31400', matching expArray[10]. OVERTURN UPHELD: REBUILD_READINESS.md:350 ('L11-80 XP curve - no table published ... keep the extrapolation labeled INFERRED') and :200 blocker (2) both die - the array covers indices 11..80 outright, and frame-plus-payload now AGREE at three separate levels rather than merely not contradicting.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:364 (re-parsed, 99 entries) + my own ffmpeg extractions from reference/videos/zFtCaTO0_1M.mp4 at -ss 653.0 and -ss 1600 + reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0015.jpg",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "progression/per-point-ap-is-plus-5-not-plus-1",
+   "refuted": false,
+   "reason": "HELD. All six web handlers verified verbatim in reference/decompiled/shs3_payload/scripts/1t5957s0.as: :3394 MAXHP+10, :3406 MAXCHI+5, :3413-3414 spend a point then call 1t9609s0(5), :3422 ATK+3, :3434 DEF+3, :3443 SPD+3, each preceded by changeStat(1t9419s0,-1) with 1t9419s0=18=android STAT_STATPOINTS. 1t1523s0.as:2807-2814 is changeStat(1t9415s0,param1) and :232 gives 1t9415s0=14, matching android StatsManager.as:198 STAT_MAXAP=14; the whole body matches android addMaxAP (StatsManager.as:2361-2369) line for line. The android auto-allocator at StatsManager.as:1669-1684 does give +5/+5/+1/+1, exactly as the finding says. OVERTURN UPHELD: RR:199 and RR:77-78 both print '+10HP/+5Chi/+1AP/+3-stat per point'; the +1AP term is false for web v0.717. Corroborated on film without being claimed: at zFtCaTO0_1M -ss 653.0 the level-3 sheet reads ATK 7 / DEF 7 / CHI 10-10 with 0 stat points available, and at -ss 1600 the level-4 sheet reads ATK 10 / DEF 10 / CHI 9-15 with 0 available - the three points bought +3 ATK, +3 DEF, +5 CHI, exactly the web magnitudes.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3390-3445 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:232,:2807-2814 + reference/decompiled/shs3_android/scripts/StatsManager.as:198,:2361-2369,:1655-1688",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "progression/unlock-rule-breaks-inside-ninja-and-chi",
+   "refuted": false,
+   "reason": "HELD. I re-parsed reference/extracted/skilldata.xml with ElementTree and resolved displayname through docs/gauntlet/L0/index/strings.json myself. Category 6 (unmistakably Ninja by content: Throw Kunai, Lay Trap, Smoke Bomb, Windmill Shuriken, Flashbang, Shadow Clone, Stealth, Substitution Jutsu, Mass Shadow Clone) has lvlreq 10/15/20/30/40/50/60/70/80 - Lay Trap at 15 ends in 5. Category 4 (Chi Punch, Focus, Slash Wave, Chi Kick, Spirit Thief, Chi Burst, Chi Charge, Charged Shot, Heavenly Sword, Deadly Touch) has 0/5/15/25/35/45/50/55/65/75 - Chi Charge at 50 ends in 0. Both counterexamples are real and both sit inside the ledger's own two NAMED families, so the rule cannot be rescued as family-specific. OVERTURN UPHELD against RR:78 'skills unlock at levels ending 0 (Ninja) / 5 (Chi)'. BUILD CAVEAT recorded: skilldata.xml is v0.682 (C2); the web build embeds no copy, so this is v0.682 until a web-side artifact says otherwise - the finding labels this honestly.",
+   "own_cite": "reference/extracted/skilldata.xml:4,:74,:83 (re-parsed in full with ElementTree; 75 skills, categories 1-11) + docs/gauntlet/L0/index/strings.json[\"6000\"],[\"6007\"]",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "progression/web-ap-per-point-is-5-not-1",
+   "refuted": false,
+   "reason": "HELD - the same claim as progression/per-point-ap-is-plus-5-not-plus-1, and it survives on the same first-hand read. 1t5957s0.as:3412-3415 is verbatim as quoted; 1t1523s0.as:2807-2809 is verbatim; :232 gives 14; android StatsManager.as:198 STAT_MAXAP=14. Extra thing I found that STRENGTHENS it: android's MANUAL stat panel (InventoryUI.as:2415-2455) is +5HP / +5CHI / +1AP / +1ATK / +1DEF / +1SPD - a THIRD table, different from both the web panel and the android auto-allocator. The ledger's '+10HP/+5Chi/+1AP/+3-stat' line is therefore a splice of the web table with the android AP value. OVERTURN UPHELD at both RR:199 and RR:77-78, as the finding states.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3410-3416 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:232,:2807-2814 + reference/decompiled/shs3_android/scripts/InventoryUI.as:2415-2455",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "rebirth/tenth-dan-tier-is-real",
+   "refuted": false,
+   "reason": "HELD. reference/decompiled/shs3_payload/scripts/1t1523s0.as:2644-2652 is verbatim: if(getStat(1t9426s0)==8) { changeStat(1t9413s0,100); announce getString(864,[name,\"10\"]) } else { changeStat(1t9413s0,25) }, and :2653-2656 increments DAN only while < 9. Stat ids check out first-hand: :254 1t9426s0=25=android STAT_DAN, :228 1t9413s0=12=android STAT_HGOLD. Android contrast confirmed at shs3_android_payload/scripts/StatsManager.as:2201-2214 (20/5). strings.json[\"864\"] = '[0] has rebirthed and is now Dan [1]!'. So DAN ceils at 9 and is DISPLAYED as 10, the tenth-rebirth gold tier is a literal 100, and both are CONTRACT on v0.717. UNCLAIMED CORROBORATION I found: strings.json[\"8124\"] = 'Reach Dan 10.' - an achievement, so rank 10 is a real reachable rank, not a garbled wiki datum. OVERTURN UPHELD: RR:165's 'no 10th-rebirth tier' is false; the flat +25 on film is true only because the player never reached DAN 8, exactly as the finding says.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:228,:254,:2644-2659 + reference/decompiled/shs3_android_payload/scripts/StatsManager.as:2195-2214 + docs/gauntlet/L0/index/strings.json[\"864\"],[\"8124\"]",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "skills-meters/web-stance-damage-ladder-and-crit-are-fully-transcribable",
+   "refuted": false,
+   "reason": "HELD on the artifact, with one correction and one honest limit on the overturn. 1t99s0.as:3255-3277 and :3284-3290 are verbatim as quoted. I verified the symbol identities structurally against android MCSPlayer.as:3198-3238, which is the same function unobfuscated: 1t4475s0=getDamage, 1t4477s0=getDefense, 1t4414s0/1t4415s0=reload/maxreload (so the crit gate really is DETERMINISTIC at reload==maxreload), 1t1243s0=STAT_CRITICALDMG, 1t4421s0/1t4422s0=light/balancedMastery, 1t12222s0=HEAVY_STANCE. The android ladder really is different (0.5->1.0 / 1.0->1.5 / 1.5 flat, crit x1.5 light x1.2 other, mastery on 0-100) - the warning not to seed config from it is correct. CORRECTION: the ceiling is MASTERY 10, not 9 - skilldata declares <level> 1..10 for skills 1000/1001/1002 (skilldata.xml:4,:74,:83,:153,:232) and strings.json[\"8131\"/\"8132\"/\"8133\"] read 'Light/Balanced/Heavy Stance Mastery Level 10.'. LIMIT ON THE OVERTURN: RR:155-156's factual claims are CONFIRMED, not overturned - 0.9/1.2/1.4 really are ceiling values, level 1 really is 0.5/1.0/1.4, and Heavy's reach really does scale 0.5->0.9 (1t99s0.as:3116, floored at 100 by :3117-3120). What actually falls is RR:157's FORK ('either model the mastery curve or decide-and-flag'), which the finding names in its lane_impact - the curve is written down, so there is no decision. I mark the overturn upheld on that narrower basis only.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3093-3120,:3255-3291 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3020-3060,:3198-3238 + reference/extracted/skilldata.xml:4,:74 + docs/gauntlet/L0/index/strings.json[\"8131\"]",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "stance/in-combat-switch-is-live-in-web-battleui",
+   "refuted": false,
+   "reason": "HELD, and stronger than claimed. 1t113s0.as:468-479 is verbatim. The gate at 1t99s0.as:3048-3051 reads `return this.1t4469s0() && this.1t4414s0 >= 48;` - reload >= 48 AND an actionState guard the finding omits (incompleteness, not error). The 48 deduction really is inside `if(1t1525s0.1t9948s0())` at :3160-3166, and 1t9948s0 is isBattle by structural match with android MCSPlayer.as:3022 StageManager.isBattle(). Version stamp 1t1523s0.as:36 `public static var 1t9323s0:Number = 0.717;` verbatim. Android's counterpart BattleUI.stanceButtonClick (:360-370) has the identical canChangeStance/nextStance gate and NO sounds, so the two SFX are a v0.717 addition, not a leftover. UNCLAIMED KILLER I found while checking: 1t113s0.as:110-111 builds two labels - getString(175) 'Critical Hit' in black and getString(960) in grey - and :328-358 shows the GREY one exactly when (reload-48)/(max-48)==0, hides it while 0<r<1, and swaps to 'Critical Hit' plus Snd_criticalDamage at r>=1. String 960 does not exist in the v0.682 table, i.e. it is a v0.717 addition. So the on-screen 'CANNOT CHANGE STANCE' the ledger read as a hard lock is that meter's own low-end readout. OVERTURN UPHELD: RR:158 must be struck, not softened.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111,:326-360,:379-381,:468-480 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3043-3051,:3156-3177 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:36 + reference/decompiled/shs3_android/scripts/BattleUI.as:259-263,:360-375",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "ui-hud/blocker-2-falls-entirely-no-pop-no-ramp",
+   "refuted": false,
+   "reason": "HELD - I ran my own SWF tag walk rather than trusting the quote. Inflating reference/decrypted/shs3_payload_decoded.swf past the CWS prefix and walking tags: DefineSprite 3611 declares 1 frame and contains PlaceObject2 depth1/charid74, depth2/3608, depth3/3609, depth4/3610, ShowFrame, End - and NONE of the four placements sets the HasColorTransform bit (flags 0b0110 and 0b100110 = character|matrix|name), so there is no alpha or tint motion either. DefineSprite 3607 declares 7 frames: PlaceObject2 charid 3606, SIX ShowFrames, RemoveObject2 depth1, ShowFrame, End. QUOTE CORRECTION: the finding writes 'ShowFrame x5'; it is six - but its stated conclusion (a 6-frame flat hold = 0.25 s at 24 fps, then removed) is the arithmetically correct one, so the error is in the transcription, not the result. Art on disk confirms: reference/extracted/sprites/DefineSprite_3607_shs3_fla.hurtred_32/ holds 7 PNGs all 800x480, and reference/extracted/sprites/DefineSprite_3611/ holds exactly ONE PNG (117x92). Bars: 1t113s0.as:316,:323,:333 are bare `bar.scaleX =` writes and the whole file has ZERO matches for Tween or ENTER_FRAME. OVERTURN UPHELD: RR:235 blocker (2) falls in all three parts.",
+   "own_cite": "my own tag walk of reference/decrypted/shs3_payload_decoded.swf (DefineSprite 3611 and 3607) + reference/extracted/sprites/DefineSprite_3607_shs3_fla.hurtred_32/1.png..7.png (all 800x480) + reference/extracted/sprites/DefineSprite_3611/1.png + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:304-333,:492-506,:534-538",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "ui-hud/filmed-session-scale-is-2.27-not-2.25-THE-FRAME-WINS",
+   "refuted": false,
+   "reason": "HELD - I re-measured the frame three independent ways and finding 9's model is the one that survives. (a) Full-frame max-over-RGB scan at threshold 18 on reference/frames/duel_dense/Nr4fQstqHDM_428.0.png: non-black cols 52..1867 (content 1816 px), rows 0..1079. 1816/800 = 2.270. (b) Sub-pixel gradient-centroid on the three slot boxes' outer edges over rows 995..1060: centres 1503.46 / 1640.35 / 1776.53, widths 113.3 / 113.1 / 113.5 - mean pitch 136.5 for 60 game px => s = 2.275. (c) Normalised cross-correlation of slot-2's top-border art against slot-3's over rows 958..988: best shift exactly 136.00 px. All three exclude s = 2.25 (which predicts pitch 135.0 and slot i=0 at 1770.0, 6.5 px from measurement); s=2.270 with x0=52 predicts 1777.2 against a measured 1776.5. CLOSED ON THE SOURCE, which the finding could not do: the WEB resize handler is on disk at 1t1540s0.as:295-307 - pillarbars are the offsetX branch, scale = stageHeight/480, offsetX = (stageWidth - 800*scale)/2. Plug in s=2.270: stageHeight = 1089.6 and offsetX = (1920-1816)/2 = 52.0 exactly. The browser window was ~1920x1090, not 1920x1080, which is precisely why a code-only 1080/480 = 2.25 is wrong. THE FRAME WON, and I say so out loud. ONE WORDING ERROR: this is the code's FIT-HEIGHT branch (fitWidth=false, offsetX!=0), not 'FIT-WIDTH' as the finding labels it; the numbers are right, the name is backwards. OVERTURN UPHELD on RR:235 blocker (1).",
+   "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (my own luminance scan, sub-pixel edge fit and cross-correlation, numbers pasted above) + reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269-314 + reference/decompiled/shs3_android/scripts/BattleUI.as:133",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "ui-hud/longplay-frames-are-pillarboxed",
+   "refuted": true,
+   "reason": "REFUTED ON ITS RULER, and its overturn does not hold. The pillarbox fact is real and I reproduced the finding's own scan exactly - non-black cols 52..1867, rows 0..1079 on reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - so that half is honest. But the measurement it builds the correction factor on is wrong, and I measured the same three boxes myself three ways. It claims slot centres 1777.5 / 1642.5 / 1507.5 and pitch 135.0; I get 1503.46 / 1640.35 / 1776.53 by sub-pixel gradient centroid (rows 995..1060), 1504.0 / 1640.5 / 1776.5 by dark-run midpoints at y=975, and a cross-correlation pitch of exactly 136.00 px between the identical slot-2 and slot-3 border art. Its left centre is 4.0 px out and its pitch is 1.5 px per slot out. Its derived model is also internally inconsistent: it states s = 2.264 AND pitch 135.0, but 2.264 x 60 = 135.8. The content is 1816 px, not 1811, and the left bar is 52 px, not 57, so its prescribed re-derivation `(x-57)/1811` is wrong in both terms, and its '800x480 stage scaled by 2.25' is contradicted by 1816/800 = 2.270. THE FRAME WINS over its arithmetic. OVERTURN NOT UPHELD: RR:235 blocker (1) is answered by finding ui-hud/filmed-session-scale-is-2.27, which measured it correctly; this finding contributes nothing that finding does not already carry, and would inject a ~1% horizontal error into every re-derived HUD coordinate if admitted.",
+   "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - my own column/row luminance scan (threshold 18, cols 52..1867), dark-run midpoints at y=975, sub-pixel edge-gradient centroids over rows 995..1060, and NCC of the slot-2/slot-3 top borders over rows 958..988",
+   "severity": "material",
+   "overturn_upheld": false
+  },
+  {
+   "claim_id": "ui-hud/payload-swf-stage-is-800x690",
+   "refuted": true,
+   "reason": "HEADER CONFIRMED, CONCLUSION REFUTED. I re-parsed the SWF myself (zlib-inflating from byte 8 first, since CWS is compressed and a naive read of the RECT gives garbage): sig CWS, version 17, declared length 11,892,061, file 6,880,328 bytes, RECT [0,16000,0,13800] twips = 800.0 x 690.0 px, frameRate 24.0, frameCount 6. Every number the finding gives is exactly right. But its load-bearing sentence - 'the flat 800x480 assertion is unsupported by the artifact' - is FALSE, and I found the artifact that supports it, in the WEB build: reference/decompiled/shs3_payload/scripts/1t1540s0.as:271-273 is `var _loc2_:int = 800; var _loc3_:int = 480; var _loc4_:int = 690;`, the twin of android GameEngine.as:269-271 (originalWidth / originalHeight / originalHeightWithBar). The 690 is the FRIEND-BAR stage variant, selected only when the viewport aspect is <= 800/690 = 1.159; the game canvas is 800 x 480. Independent corroboration: the full-screen hurt-vignette art at reference/extracted/sprites/DefineSprite_3607_shs3_fla.hurtred_32/ is 800x480 on all seven frames. So REBUILD_READINESS.md:117 and :171 are CORRECT and now web-sourced. OVERTURN NOT UPHELD. Credit where due: the finding's own 'which stage the game VIEW uses is STILL_UNHELD' hedge was the honest part, and it is now HELD - against its own conclusion.",
+   "own_cite": "my own zlib-inflate + header parse of reference/decrypted/shs3_payload_decoded.swf + reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269-314 + reference/decompiled/shs3_android/scripts/GameEngine.as:267-312 + reference/extracted/sprites/DefineSprite_3607_shs3_fla.hurtred_32/1.png (800x480)",
+   "severity": "material",
+   "overturn_upheld": false
+  },
+  {
+   "claim_id": "ui-hud/v0717-duel-nameplate-has-no-level",
+   "refuted": false,
+   "reason": "FRAME CONFIRMED, RULE WRONG, OVERTURN STILL UPHELD. I cropped (520,580)-(840,650) at 4x LANCZOS on reference/frames/session11/stance-reach/B_t785.200_LIGHT_stroke553px_endtoend.png and read 'FUKUSHIMA CHIKO' in white over a green/red bar - no parentheses, no digits (the red vertical mark crossing the plate is a blade streak, not a glyph). The four android call sites quoted are verbatim (EnemyPlayer.as:776,:881; EnemyElite.as:114; EnemyKanjiGuardian.as:59). THE PROPOSED RULE IS WRONG, and I found the real one in the web build: 1t122s0.as:92-99 is `if(param1 > 0 && !this.1t4895s0()) { charname + \" (\" + param1 + \")\" } else { charname }`, with the same if/else at :802-809, :917/:921 and :1418/:1422; android EnemyPlayer.as:84/:776/:881 has no else branch at all. And the RED overworld aggro plate carries the identical lvl==0 split in BOTH builds (1t8638s0.as:79-86 / Obj_NPCAggro.as:74-81). So the rule is 'append (N) iff level > 0', added web-side - NOT 'red plates carry the level, white duel plates do not'. Do not port that colour rule. OVERTURN UPHELD anyway: RR:219's blanket 'nameplate (N)=level' is false as a universal, and a recreation that always appends '(N)' is visibly wrong against this frame.",
+   "own_cite": "reference/frames/session11/stance-reach/B_t785.200_LIGHT_stroke553px_endtoend.png (crop 520,580-840,650 @4x LANCZOS, read by eye) + reference/decompiled/shs3_payload/scripts/§1t122s0§.as:82-99,:794-809,:1413-1422 + reference/decompiled/shs3_android/scripts/EnemyPlayer.as:78-90,:766-777,:879-882 + reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:73-81",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "ui-hud/web-battleui-is-1t113s0-and-owns-the-in-combat-stance-switch",
+   "refuted": false,
+   "reason": "CORE HELD, ONE MIS-IDENTIFICATION. The load-bearing cite is exact: 1t113s0.as:468-479 is verbatim, and the class really is the web BattleUI - :304-317/:319-324 are android BattleUI.updateHp/updateChi (:245-257) line for line. 1t99s0.as:3175 is verbatim. MIS-CITE: :293 1t5198s0() is NOT android setStanceColor. Android setStanceColor(num) is `this.battlemodebust.stancecolor1.gotoAndStop(num)` (BattleUI.as:372-375), whose web twin is 1t5208s0 at :482 (`this.1t5158s0.1t15895s0.gotoAndStop(param1)`), called from 1t99s0.as:3101/:3112/:3127 exactly where android calls setStanceColor(1/2/3). Line :293 takes no argument and loops eight skill slots. The ':326 = updateReload' mapping is functionally right but not literal - android takes a Number percentage, the web takes (int,int) and computes (param1-48)/(param2-48), which is a real behavioural difference worth carrying. Also, the handler's binding is at :379-381 (a hit-test on the stance bust, the twin of android BattleUI.gotClicked :275-284), not at :293. Neither error touches the conclusion. OVERTURN UPHELD: RR:158 falls.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:288-333,:370-388,:468-485 + reference/decompiled/shs3_android/scripts/BattleUI.as:245-263,:265-284,:360-375 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3093-3130,:3156-3177",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "ui-hud/web-battleui-stance-button-plays-an-error-sound-when-the-gate-refuses",
+   "refuted": false,
+   "reason": "CORE HELD, ONE MIS-CITE. 1t113s0.as:468-479 verbatim; the gate at 1t99s0.as:3048-3051 verbatim (`return this.1t4469s0() && this.1t4414s0 >= 48;`). The argument is sound and I can strengthen it: android's counterpart BattleUI.stanceButtonClick (:360-370) runs the SAME canChangeStance/nextStance gate with NO sounds at all, so Snd_smallClick and Snd_error are a v0.717 addition to a gate that already existed - a hard lock would not have grown a refusal sound. MIS-CITE: 1t406s0.as:944 is not the BattleUI button binding. 1t406s0 is the OVERWORLD HUD - :944-946 bind bustUI.battlemodebust to CLICK/MOUSE_OVER/MOUSE_OUT, the exact twin of android OverworldHUD.as:838-840 (nextStance / showChangeStanceLabel / hideChangeStanceLabel), and its 1t4472s0(param1:Event) at :3064 is a different class's method that handles mail and dialogs. The real in-battle binding is 1t113s0.as:379-381. OVERTURN UPHELD: RR:158 and the [CONTRACT]-graded SHSD_MASTER_REFERENCE.md:388 must both be struck. The two SFX keys are real and worth porting.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:370-388,:468-480 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3043-3051 + reference/decompiled/shs3_payload/scripts/§1t406s0§.as:938-952,:3064-3080 + reference/decompiled/shs3_android/scripts/OverworldHUD.as:838-840 + reference/decompiled/shs3_android/scripts/BattleUI.as:360-370",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "world-exploration/farm-timers-and-patch-ladder",
+   "refuted": false,
+   "reason": "CLAIM TRUE, OVERTURN INFLATED. Every number verified verbatim in reference/decompiled/shs3_android/scripts/InteractUI_crops.as: :116 `this.timePeriod = 15 * 60;`, :131 `= 60 * 60;`, :146 `= 6 * 60 * 60;`, :161 `= 12 * 60 * 60;`; :105-107 caps harvestedTimes at 50; :457-479 is a six-rank ladder stepping at 10/20/30/40/50; :549-558 repeats the four periods on the planting path. TWO ERRORS: gracePeriod is 900 s (:55), a value the finding never states, and case 4 (the 12 h crop) has NO grace/ROTTED branch at all (:160-169) - it goes PLANTED then READYFORHARVEST forever - so 'each followed by a gracePeriod window' is wrong for one of the four. OVERTURN NOT UPHELD: the ledger sentence it targets is RR:225 blocker (2) 'gather/mine/farm YIELD + WHIFF + RESPAWN tables', and growth timers plus a patch ladder are none of those three. The finding concedes it ('Yield rows per crop remain to be read out'). This answers a neighbouring question. Hunting for the missing part, I found it 150 lines further down in the same file - see new findings - so the ledger sentence does fall, but not to this finding's evidence.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI_crops.as:55,:100-170,:455-482,:545-562",
+   "severity": "minor",
+   "overturn_upheld": false
+  },
+  {
+   "claim_id": "world-exploration/ore-node-respawn-rule",
+   "refuted": false,
+   "reason": "HELD. I traced the whole chain first-hand. Obj_OreDeposit.as:80-87 clearOre() calls StageManager.addToDeadList(objectName) - the call is on line :83, not :82 as the finding writes, but it is inside its own cited range. StageManager.as:621-627 pushes onto roomDeadList; GameStage.as:602-632 createRoomObjects sets skipFlag for any object whose name is in the list; roomDeadList is cleared at :249 (initRooms) and :366 (node change) and NOWHERE else - I checked every reference, and :451, the within-node room change, passes roomDeadList to createRoomObjects WITHOUT clearing it, which is exactly what makes the rule per-node rather than per-room. So a mined-out deposit repopulates on the next node visit, with no timer and no server tick. OVERTURN UPHELD, narrowly and honestly: RR:225 blocker (2) names yield + whiff + RESPAWN as tables that must be measured, and the respawn third turns out to need no table at all - it is a code rule. The other two thirds are not touched by this finding.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Obj_OreDeposit.as:75-92 + reference/decompiled/shs3_android/scripts/StageManager.as:245-252,:362-370,:445-455,:615-640 + reference/decompiled/shs3_android/scripts/GameStage.as:598-632",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "world/map-bitmap-is-held-byte-exact",
+   "refuted": false,
+   "reason": "HELD, and it is the strongest finding in the packet. I verified every part myself. md5 of reference/extracted/bindata/92_1t4648s0.bin = 13068dfa1a5cc5628720a25782f93fed; md5 of reference/extracted/android/110_Mobile_MapBitmapData.bin = the SAME, both 272 bytes. Pillow opens it as GIF, size (63,72), mode P, and a per-pixel count gives exactly 735 non-black pixels. Rendered at 10x NEAREST it is unmistakably the Japanese archipelago - Hokkaido top-right, the Honshu arc, Shikoku and Kyushu bottom-left, Sado and the Izu chain as separate blobs. This is NOT the circular android-vs-android comparison C2 warns about: 92_1t4648s0.bin is a WEB bindata file, embedded by reference/decompiled/shs3_payload/scripts/1t4648s0.as:4 `[Embed(source=\"/_assets/92_1t4648s0.bin\", ...)]`. Enumeration verbatim at 1t1524s0.as:716-739 (`push(_loc2_ + 341 << 12 | _loc3_ + 341)` for every non-zero pixel); android twin QuestEngine.as:514-529; bounds test QuestEngine.as:1204-1207; constants WarSelectUI.as:15/17/19 = WARMARKERSHIFTX 8, TERRSHIFTX 21, TERRSHIFTY 51. The derived span checks out arithmetically: i in [0,62] gives terrX = i-21+8 in [-13,49], j in [0,71] gives terrY = j-51 in [-51,20]. OVERTURN UPHELD OUTRIGHT: RR:225 blocker (1) dies - the close-path ('mine Fandom Category:Territories via API; trace the map image') is obsolete because we hold the map image itself, byte-identical in both builds.",
+   "own_cite": "my own md5 + Pillow decode + full-pixel census + 10x render of reference/extracted/bindata/92_1t4648s0.bin and reference/extracted/android/110_Mobile_MapBitmapData.bin, plus reference/decompiled/shs3_payload/scripts/§1t4648s0§.as:4, §1t1524s0§.as:697-702,:716-742, reference/decompiled/shs3_android/scripts/QuestEngine.as:510-530,:1204-1207 and WarSelectUI.as:15,:17,:19,:233-234",
+   "severity": "minor",
+   "overturn_upheld": true
+  },
+  {
+   "claim_id": "world/war-map-is-already-on-film",
+   "refuted": false,
+   "reason": "FRAME CONFIRMED VERBATIM, OVERTURN NOT UPHELD. I cropped (20,30)-(720,420) at 2x LANCZOS on reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0014.jpg and every element is there: 'SELECT TERRITORY', 'ZOOM IN', 'HELP', 'CLAN CROPS: 402 (+2 HQ)' (it really does read CROPS), a brown flat-vector Honshu/Shikoku/Kyushu coastline with Sado and the Izu chain as separate blobs, a uniform square grid ruled over the whole board, one red clan flag mid-Honshu, and the 'WAR ROOM' right rail. Nothing in the transcription is wrong. But a 1024x576 PICTURE of the map delivers neither world bounds nor geography - it satisfies the precondition of RR:225 blocker (1)'s close-path ('trace the map image') without falsifying the blocker, which is exactly the pattern this tier exists to catch. The blocker dies to world/map-bitmap-is-held-byte-exact's 63x72 mask (md5 13068dfa1a5cc5628720a25782f93fed, 735 land pixels, embedded web-side at 1t4648s0.as:4), not to this frame. The finding's own PARTIAL label is the honest read; I am only declining the overturn, not the observation. Unclaimed value in the same frame: 'ALLEGIANCE: CLAN AKA RYU', 'RANK: RECRUIT (3 MOVES A TURN)', 'MOVES MADE: 0/36', '3 MOVE(S) LEFT', 'FLAGS INDICATE BATTLES THAT THE CLANS ARE CURRENTLY ENGAGED IN' - see new findings.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0014.jpg (crop 20,30-720,420 @2x LANCZOS and a full-frame 1024x576 read, both by eye)",
+   "severity": "minor",
+   "overturn_upheld": false
+  }
+ ],
+ "judged_count": 19,
+ "packet_size": 19,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "ui-hud/web-resize-handler-names-800x480-and-690-is-the-friend-bar-variant",
+   "text": "The WEB v0.717 build carries the whole stage-fit model on disk, and it names all three numbers the ui-hud lane has been arguing about. 1t1540s0.as:271-273 declares originalWidth 800, originalHeight 480, originalHeightWithBar 690 - so the 690 in the payload SWF header is the FRIEND-BAR stage variant, taken only when the browser viewport aspect is <= 800/690 = 1.1594 (:277), and the game canvas is 800 x 480. :295-307 then picks fit-width (offsetX 0, letterbars) or fit-height (offsetX = (stageWidth - 800*scale)/2, pillarbars) and writes scale/offsetX/offsetY/fitWidth into 1t1523s0.1t9358s0/9359/9360/9361, which 1t113s0.as:375 consumes to convert mouse coords into game space. This CONFIRMS REBUILD_READINESS.md:117 and :171 from a web artifact, kills the 800x690 overturn, and supplies the mechanism the aspect-ratio blocker asked for. The only thing still per-video is the BRANCH, since the viewport aspect is not recorded anywhere.",
+   "artifact_class": "A2",
+   "build": "web v0.717 (android GameEngine.as:267-312 is the identical twin)",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269-314 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:375 + reference/decompiled/shs3_android/scripts/GameEngine.as:267-312",
+   "quote": "§1t1540s0§.as:271-273  var _loc2_:int = 800;  var _loc3_:int = 480;  var _loc4_:int = 690;   ///  :304-306  _loc8_ = §1t9973s0§.stageHeight / _loc3_;  _loc9_ = (§1t9973s0§.stageWidth - _loc2_ * _loc8_) / 2;  _loc10_ = 0;",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "ledger_text": "**Aspect-ratio truth** - native canvas is **800x480 (5:3)**",
+   "lane_impact": "L8 ui-hud: RR:117/:171/:235-(1) are VINDICATED, not overturned, and the close-path 'read stage.stageWidth in a build' is discharged from source. The per-video calibration finding 9 prescribes is still needed because the branch depends on the viewport."
+  },
+  {
+   "id": "ui-hud/cannot-change-stance-is-the-reload-meter-low-end-readout",
+   "text": "The single sentence RR:158 rests on - the on-screen 'CANNOT CHANGE STANCE' - is not a lock notice, it is the reload/crit meter's own low-end label, and the web build shows it switching. 1t113s0.as:110-111 builds two htmlText strings: a black one from getString(175) ('Critical Hit') and a GREY (#BBBBBB) one from getString(960). :328-358 computes ratio = (reload-48)/(maxreload-48) clamped at 0, then shows the grey label exactly when ratio == 0, HIDES it while 0 < ratio < 1, and swaps to the black 'Critical Hit' plus Snd_criticalDamage at ratio >= 1. The gate the stance button asks (1t99s0.as:3048-3051) is the same threshold, reload >= 48. String 960 does not exist in the v0.682 table (docs/gauntlet/L0/index/strings.json has no key 960), i.e. it is a v0.717 addition - which is also why the label has never been sourced. So one bar drives three states: below 48 'cannot change stance', above 48 stance switching is legal, at max the crit fires.",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111,:326-360 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3043-3051 + docs/gauntlet/L0/index/strings.json[\"175\"] (present) and [\"960\"] (absent)",
+   "quote": "§1t113s0§.as:110-111  this.§1t5203s0§ = \"<font color='#000000'>\" + §1t1521s0§.getString(175) + \"</font>\";  this.§1t5204s0§ = \"<font color='#BBBBBB'>\" + §1t1521s0§.getString(960) + \"</font>\";   ///  :328  var _loc3_:Number = (param1 - 48) / (param2 - 48);   ///  :336-342  if(_loc3_ == 0) { ... this.§1t5169s0§.htmlText = this.§1t5204s0§; this.§1t5169s0§.visible = true; }",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\")",
+   "lane_impact": "L2/L5/L8: this is the artifact that kills RR:158 at its own evidence rather than around it - the label the ledger read as a lock is the gate's 'not yet'. Ship: one meter, threshold 48 for stance, max for crit, grey label below 48, 'Critical Hit' + Snd_criticalDamage at max."
+  },
+  {
+   "id": "world-exploration/farm-yield-and-whiff-are-on-disk-too",
+   "text": "The farm yield and whiff rows the packet's farming finding says still need a read-out are in the same file, 150 lines below the timers. InteractUI_crops.as:607 is the whiff gate: `if(StatsManager.getStat(this.startingIndex + 2) == 1 || int(Math.random() * (10 - StatsManager.getStat(1020))) == 0)` - stat 1020 is the Farming skill (skilldata id 1020 = 'Farming'), so the proc chance is 1/(10 - farmingLevel), and the very first harvest on a patch is a guaranteed drop. :609-610 then rolls `dice = Math.random() * getPatchLevel(harvestedTimes)`, i.e. the six-rank patch ladder IS the yield table's index, and :611-646 map dice 0..5 onto items 2115 / 2116 / 2117 / 2118 / 2140 / 2141, each also bumping a counter stat (30008-30011) and achievement 60002. Also: gracePeriod is a flat 900 s (:55), and the 12-hour crop (case 4, :160-169) has no rot branch at all.",
+   "artifact_class": "A2",
+   "build": "android v0.682 (the web build embeds no crops UI copy I could locate)",
+   "cite": "reference/decompiled/shs3_android/scripts/InteractUI_crops.as:55,:160-170,:455-482,:598-648 + reference/extracted/skilldata.xml (skill id 1020 = 'Farming' via docs/gauntlet/L0/index/strings.json)",
+   "quote": "InteractUI_crops.as:607  if(StatsManager.getStat(this.startingIndex + 2) == 1 || int(Math.random() * (10 - StatsManager.getStat(1020))) == 0)   ///  :609-610  patchlevel = this.getPatchLevel(StatsManager.getStat(this.startingIndex + 2));  dice = Math.random() * patchlevel;   ///  :613  OverworldHUD.instance.lootDialog.addLootItemBasic(2115,1);",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "(2) gather/mine/farm **yield + whiff + respawn** tables.",
+   "lane_impact": "L10 world-exploration + L7 economy: with the packet's mining finding (yield/gates), the ore-respawn finding (respawn) and this (farm yield + whiff), RR:225 blocker (2) is closed end to end and needs no measurement pass. The Farming skill level feeds the whiff denominator directly, so farming.ts needs the skill level as an input."
+  },
+  {
+   "id": "ui-hud/nameplate-level-suffix-is-gated-on-level-greater-than-zero-web-only",
+   "text": "The real web v0.717 nameplate rule, which the packet's nameplate finding states as a colour split. 1t122s0.as (the web EnemyPlayer) has an if/else at every plate write: :92-99, :802-809, :917/:921 and :1418/:1422, all of the form `if(level > 0 && !this.1t4895s0()) { name + \" (\" + level + \")\" } else { name }`. Android v0.682 EnemyPlayer.as:84, :776 and :881 have NO else branch - they always format the level in. Meanwhile the RED overworld aggro plate carries the same lvl==0 split in BOTH builds (1t8638s0.as:79-86 / Obj_NPCAggro.as:74-81). So the rule is 'append (N) iff level > 0', not 'red carries it, white does not', and the change is a v0.717 addition on the duelist/boss path only. 1t4895s0 (:1763-1766) is a spectator-mode predicate, not a level predicate.",
+   "artifact_class": "A2",
+   "build": "web v0.717 vs android v0.682",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t122s0§.as:82-99,:794-809,:915-921,:1413-1422,:1763-1771 + reference/decompiled/shs3_android/scripts/EnemyPlayer.as:78-90,:766-777,:879-882 + reference/decompiled/shs3_payload/scripts/§1t8638s0§.as:79-86 + reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:73-81",
+   "quote": "§1t122s0§.as:92-99  if(param1 > 0 && !this.§1t4895s0§()) { mcs.§1t6287s0§(this.charname + \" (\" + param1 + \")\",_loc6_); } else { mcs.§1t6287s0§(this.charname,_loc6_); }",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "nameplate (N)=level",
+   "lane_impact": "L0 ui-hud + enemies-ai: RR:219's blanket rule is wrong, but so is the colour-based replacement in the packet. Code it as `suffix = level > 0 ? \" (\" + level + \")\" : \"\"` and it matches both the FUKUSHIMA CHIKO frame and every red BANDIT (4) plate in the same corpus."
+  },
+  {
+   "id": "progression/mastery-ceiling-is-10-not-9",
+   "text": "REBUILD_READINESS.md:155-157 labels 0.9/1.2/1.4 'MASTERY-9 CEILING values' and offers a decide-and-flag 'the build targets mastery-9'. The ceiling is 10. Each of the three stance-mastery skills declares exactly ten <level> rows: skilldata.xml:4 is <id>1000</id> and its tenth level value is at :74, :83 is <id>1001</id> with its tenth at :153, and skill 1002's tenth is at :232. The achievement copy says it in words: strings.json[\"8131\"] = 'Light Stance Mastery Level 10.', [\"8132\"] and [\"8133\"] the same for Balanced and Heavy. Put mastery = 10 into the web formulas (1t99s0.as:3262/:3265) and you get exactly 0.5 + 0.4*10*0.1 = 0.9 and 1 + 0.2*10*0.1 = 1.2, i.e. the ledger's own ceiling numbers. At mastery 9 they would be 0.86 and 1.18.",
+   "artifact_class": "A2",
+   "build": "web v0.717 formulas + android v0.682 skilldata/strings",
+   "cite": "reference/extracted/skilldata.xml:4,:74,:83,:153,:232 + docs/gauntlet/L0/index/strings.json[\"8131\"],[\"8132\"],[\"8133\"] + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262,:3265",
+   "quote": "strings.json[\"8131\"] = 'Light Stance Mastery Level 10.'   ///   §1t99s0§.as:3262  _loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+   "lane_impact": "L5 combat-core + L2 skills-meters: the ledger's numbers are right and its LABEL is off by one. Anywhere the corpus says 'mastery-9', read mastery-10, and the decide-and-flag at RR:157 evaporates."
+  },
+  {
+   "id": "rebirth/reach-dan-10-is-a-shipped-achievement-string",
+   "text": "Independent corroboration that Dan 10 is a real, reachable rank rather than a garbled wiki reading: the shipped string table carries an achievement description reading exactly 'Reach Dan 10.', alongside 'Reach Dan 2.', 'Reach Dan 3.' and 'Reach Dan 6.'. That is four rank milestones with 10 as the top one, which matches the web rebirth code paying +100 heavenly gold and announcing rank '10' at STAT_DAN == 8 while capping DAN at 9.",
+   "artifact_class": "A2",
+   "build": "android v0.682 string table; the web rebirth code that pays the tier is web v0.717",
+   "cite": "docs/gauntlet/L0/index/strings.json[\"8121\"],[\"8122\"],[\"8123\"],[\"8124\"] + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2644-2659",
+   "quote": "strings.json[\"8124\"] = 'Reach Dan 10.'   (with [\"8121\"] 'Reach Dan 2.', [\"8122\"] 'Reach Dan 3.', [\"8123\"] 'Reach Dan 6.')",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "7. **`MAX_DAN_RANK=10` and `tenthGold=100` should be INFERRED, not CONTRACT.** The only wiki datum is garbled",
+   "lane_impact": "rebirth-elements: RR:164-165's demotion to INFERRED is unsupportable - MAX_DAN_RANK=10 is named in the game's own achievement copy AND in the rebirth announcement's literal \"10\"."
+  },
+  {
+   "id": "progression/level-3-to-4-on-film-buys-plus3-atk-plus3-def-plus5-chi",
+   "text": "An A1 confirmation of the web per-point stat magnitudes that nobody has claimed. In reference/videos/zFtCaTO0_1M.mp4 the player sheet at -ss 653.0 reads level badge 3, ATK 7, DEF 7 (+2), SPD 4, HP 20/20, CHI 10/10, AP 30/30, AVAILABLE STAT POINTS: 0. At -ss 1600 the same sheet reads level badge 4, ATK 10, DEF 10 (+13), SPD 4, HP 20/20, CHI 9/15, AP 15/30, AVAILABLE STAT POINTS: 0. Between them the player gained exactly one level and spent all three of that level's stat points: ATK +3, DEF +3, CHI max +5, AP max unchanged. Those are precisely the web handler magnitudes (1t5957s0.as:3422 ATK+3, :3434 DEF+3, :3406 MAXCHI+5) and they are NOT the android manual-panel magnitudes (InventoryUI.as:2439/:2446 +1, :2424 +5). It also confirms '+3 stat points per level' directly.",
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "my own ffmpeg single-frame extractions from reference/videos/zFtCaTO0_1M.mp4 at -ss 653.0 and -ss 1600 (1920x1080, read at 960x540 LANCZOS) + reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3402-3445",
+   "quote": "On screen at -ss 653.0: badge 3, 'ATK 7', 'DEF 7 +2', 'SPD 4', 'CHI 10 / 10', 'AP 30 / 30', 'AVAILABLE STAT POINTS: 0'. At -ss 1600: badge 4, 'ATK 10', 'DEF 10 +13', 'SPD 4', 'CHI 9 / 15', 'AP 15 / 30', 'AVAILABLE STAT POINTS: 0'.",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "ledger_text": "- **Ready:** +3 stat/+1 skill/full refill per level; +10HP/+5Chi/+1AP/+3-stat per point",
+   "lane_impact": "L4 progression: promotes the web per-point table from decompile-only to frame-plus-payload agreement for ATK/DEF/CHI. AP is still decompile-only, because the filmed player never spent a point on it - which is exactly why the ledger's +1AP survived this long."
+  },
+  {
+   "id": "meta-social/war-room-frame-carries-rank-moves-and-clan-numbers",
+   "text": "The same War Room frame the packet cites for the map also carries meta-social numbers nobody has claimed. Reading the full 1024x576 frame: 'ALLEGIANCE: CLAN AKA RYU', 'RANK: RECRUIT (3 MOVES A TURN)', 'MOVES MADE: 0/36', '3 MOVE(S) LEFT', 'CLAN CROPS: 402 (+2 HQ)', 'FLAGS INDICATE BATTLES THAT THE CLANS ARE CURRENTLY ENGAGED IN', and a 'SHOW CLAN MSG' button. The rank line settles the ledger's own open question at RR:246 in favour of a per-turn cap that the UI states in words - Recruit gets 3 moves a turn - while 36 is a separate cumulative counter, not the cap. The board is also confirmed as a uniform square grid over a vector coastline, at 10 px per territory per WarSelectUI.as:233-234.",
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "reference/frames/Nr4fQstqHDM/seg-20/frames/frame_0014.jpg (full-frame read at 1024x576 plus crop 20,30-720,420 @2x LANCZOS) + reference/decompiled/shs3_android/scripts/WarSelectUI.as:233-234",
+   "quote": "On screen: 'ALLEGIANCE: CLAN AKA RYU' / 'RANK: RECRUIT (3 MOVES A TURN)' / 'MOVES MADE: 0/36' / '3 MOVE(S) LEFT' / 'CLAN CROPS: 402 (+2 HQ)' / 'FLAGS INDICATE BATTLES THAT THE CLANS ARE CURRENTLY ENGAGED IN' / 'SHOW CLAN MSG'.",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "\"moves per turn\" reconciles as \"per hour\" (36 = Private's rank threshold, not a turn cap)",
+   "lane_impact": "L11 meta-social: RR:246's reconciliation is contradicted on camera - the UI says 'RECRUIT (3 MOVES A TURN)' in so many words, and 36 is the denominator of a separate MOVES MADE counter. Also closes part of RR:245 (2) War-Room map topology when read with world/map-bitmap-is-held-byte-exact."
+  },
+  {
+   "id": "world/war-map-renders-at-10px-per-territory",
+   "text": "The rendering constant that turns the 63x72 land mask into the board seen on film. WarSelectUI.as:233-234 places a war flag at `(terrx + TERRSHIFTX) * 10 + 4.5` , `(terry + TERRSHIFTY) * 10 + 8.8`, and :253-254 places the player marker at the same *10 pitch with +5 / +8.5 offsets. So one territory is a 10 x 10 px cell and the whole 63 x 72 mask draws as a 630 x 720 board - which is why the on-film War Room shows a uniform square grid ruled over a vector coastline. Together with the 735-pixel mask and the 21/51/8 shifts this is a complete, buildable specification of the board.",
+   "artifact_class": "A2",
+   "build": "android v0.682 (the web twin is §1t1524s0§; the shift constants are identical)",
+   "cite": "reference/decompiled/shs3_android/scripts/WarSelectUI.as:15,:17,:19,:233-234,:253-254 + reference/extracted/bindata/92_1t4648s0.bin (63x72 GIF, 735 land pixels, md5 13068dfa1a5cc5628720a25782f93fed)",
+   "quote": "WarSelectUI.as:233-234  warFlag.x = (terrx + TERRSHIFTX) * 10 + 4.5;  warFlag.y = (terry + TERRSHIFTY) * 10 + 8.8;",
+   "verdict": "HELD",
+   "overturns_ledger": true,
+   "ledger_text": "(1) **world bounds + geography** (sparse Japan-outline, not a WxH grid) - *mine Fandom Category:Territories via API; trace the map image.*",
+   "lane_impact": "L10 world-exploration: with the mask, the shifts and this 10 px pitch, the board can be rendered pixel-for-pixel without touching Fandom or tracing anything."
+  }
+ ]
+}
