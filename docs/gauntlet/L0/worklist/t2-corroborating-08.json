@@ -1,6 +1,98 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:392-400",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/nochange-town-covers-all-level-under-8",
+  "lane_impact": "L1 world-exploration and L11 meta-social: the surveyor's prosperity claim lists only the explicit id pins and so understates the rule. Combined with its own verified level histogram (L3x1 L4x2 L5x4 L6x5 L7x7 = 19 territories at level < 8), this means 19 of the 735 land territories \u2014 the whole starting region including spawn \u2014 never change town level, and their level comes from getNoChangeTownLevel, whose fallback is RNG(territoryID).rand(7) with dice 0 AND dice 6 both mapping to level 0. Prosperity accumulation only ever moves towns in the level>=8 outer world.",
+  "overturns_ledger": false,
+  "quote": "public function isNoChangeTown(territoryID:int) : Boolean\n{\n   if(territoryID == 1466699 || territoryID == 1503572 || territoryID == 1368424 || territoryID == 1540387)\n   {\n      return true;\n   }\n   var lvl:int = this.getTerritoryLevel(territoryID);\n   return lvl < this.LEVELSTART + 5;\n}",
+  "text": "The pinned-town rule is far broader than the twelve listed ids: isNoChangeTown returns true for EVERY territory whose level is below LEVELSTART+5 (i.e. level < 8), so the entire low-level core of the world has permanently fixed town levels.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeUI.as:600 (doMine) + Obj_OreDeposit.as:79-86 (clearOre)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/rock-deposit-never-clears",
+  "lane_impact": "L1 world-exploration and L2 economy: refines the journal's \"'Respawn' is not a timer\" line, which is right but incomplete. Combined with the 50% downgrade-to-Rock rule at Obj_OreDeposit.as:70, the real loop is: any non-Coal deposit has a 50% chance of yielding item 20059 (\"Unusable rocks\") AND staying on the map, so the node is farmable until the player rolls the real ore. That is an economy sink/faucet the ledger has no line for.",
+  "overturns_ledger": false,
+  "quote": "if(this.oreType != 1)\n{\n   (this.interactiveStageObjectHolder as Obj_OreDeposit).clearOre();\n}\n---\npublic function clearOre() : *\n{\n   gotoAndStop(1);\n   StageManager.addToDeadList(objectName);",
+  "text": "A Rock deposit (oreType 1) is an unlimited faucet \u2014 the despawn is guarded on oreType != 1, so it can be mined for 2 AP indefinitely, unlike every other ore which is added to the dead list on first success.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "cite": "$ grep -o 'saveUpdate([0-9]*' reference/decompiled/shs3_android/scripts/ | sort -u  +  QueryManagerBase.as:15",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/save-schema-has-three-timers",
+  "lane_impact": "L1 world-exploration and every lane inheriting \u00a76: corrects the journal's save-schema-recovered claim, which says \"20 numbered data slots plus four timer slots\" while its own enumeration lists only three timers, and the score rationale which says \"24-slot\". DATASLOTS:int = 20 at QueryManagerBase.as:15 is the literal the schema is sized on, and 103 (getBattleStatsString) is written next to slot 1 as a data slot. The headline \u2014 \u00a76's \"design a persistence schema\" is false, it needs transcribing \u2014 is unaffected.",
+  "overturns_ledger": false,
+  "quote": "saveUpdate(0 \u2026 saveUpdate(12, saveUpdate(14 \u2026 saveUpdate(19, saveUpdate(100, saveUpdate(101, saveUpdate(102, saveUpdate(103\n(no saveUpdate(13 anywhere)\n---\ninternal static var DATASLOTS:int = 20;",
+  "text": "The save schema is 20 data slots (ids 0-12, 14-19, 103) plus THREE timer slots (100/101/102), 23 distinct ids in total \u2014 slot 13 is never written and slot 103 is battle stats, not a timer.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/QueryManagerPIO.as:1047-1187 (23 saveUpdate call sites) + NetworkManager.as:1870 (the saveUpdate definition, which is the 24th grep hit)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "world-exploration/save-schema-is-23-slots",
+  "lane_impact": "L1 world-exploration: cosmetic correction to save-schema-recovered. Data slots are 0-12, 14-19 and 103 (= 20); timer slots are 100 nextAPUpdate, 101 nextDTUpdate, 102 nextWarTurn (= 3). Slot 13 is genuinely absent from the writer. The substantive claim - that the format is transcribable rather than designable, and that slot 10 is the packed world position - is unaffected.",
+  "overturns_ledger": false,
+  "quote": "public function saveUpdate(saveIndex:int, savedata:String) : *",
+  "text": "The recovered save schema is 23 slots - 20 data and 3 timers - not the 24 / 'four timer slots' the journal states.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/QueryManagerPIO.as:1047-1187 (23 saveUpdate calls, enumerated) + NetworkManager.as:1870",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/save-slot-count-23",
+  "lane_impact": "L1 world-exploration: arithmetic correction to the claim text ('20 numbered data slots plus four timer slots') and to the score rationale ('the 24-slot save schema'). A repo-wide grep confirms QueryManagerPIO holds every call site; NetworkManager.as:1870 is the definition. Slot 13 is genuinely unused. The three timers map exactly onto the three sub-day clocks (AP 60 s, duel tokens 120 s, war turn 3600 s).",
+  "overturns_ledger": false,
+  "quote": "saveUpdate(100,StatsManager.nextAPUpdate.toString());\nsaveUpdate(101,StatsManager.nextDTUpdate.toString());\nsaveUpdate(102,StatsManager.nextWarTurn.toString());",
+  "text": "The recovered save schema is 23 slots, not 24: 20 data slots (0-12, 14-19, 103) and only three timer slots (100, 101, 102).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1680 (initStablesButtons) and :1720-1745 (travel); string ids 525/735 'Stables', 5061 'Stablehand' in docs/gauntlet/L0/index/strings.json",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world-exploration/stables-is-the-5ap-object",
+  "lane_impact": "L1 world-exploration and L10 economy: docs/gauntlet/L0/CLAIMS.md:2751 (world-exploration/ap-cost-table-stable-mislabelled, PARTIAL) should be marked SUPERSEDED. The ledger's Ready bullet 'stable 5' does not need downgrading to PARTIAL after all -- it needs the gold fare appended. The economy lane's 'section-1 line 79 stable 14c+5AP' reconciles cleanly as one level-7 observation of nodeLevel x 2 (7 x 2 = 14). The current survey reaches the right answer but never declares that it is reversing a banked claim, so the ledger of banked claims stays wrong unless this is recorded.",
+  "overturns_ledger": false,
+  "quote": "internal function initStablesButtons() : *\n{\n   ...\n   var neighbourList:Array = NodeGenerator.instance.getAdjacentTerritories();\n   ... if(territoryData.hasTown() && territoryData.isInBoundary())\n}\n\ninternal function travel(nodeid:int) : *\n{\n   var cost:int = NodeGenerator.instance.getNodeLevel(StageManager.getCurrentNode()) * 2;\n   ...\n   if(!StatsManager.checkAP(5))",
+  "text": "The prior round's banked PARTIAL 'there is no 5-AP stable object' is wrong: the adjacent-town travel dialog is built by a function literally named initStablesButtons, and the action it fires costs 5 AP plus nodeLevel x 2 gold -- so the ledger's 'stable 5' entry is correct and merely omits the fare.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/extracted/android/112_Mobile_NodeData.bin:5-6 + docs/gauntlet/L0/index/strings.json id 1037",
   "citelint": {
    "notes": [
@@ -164,6 +256,23 @@
   "overturns_ledger": false,
   "quote": "\u00a71t70s0\u00a7.as:399  var _loc3_:int = Math.abs(_loc2_.x - 341) + Math.abs(_loc2_.y - 341) + this.\u00a71t1138s0\u00a7;  ||  NodeGenerator.as:385  var lvl:int = Math.abs(territory.x - 341) + Math.abs(territory.y - 341) + this.LEVELSTART;",
   "text": "The web-parity hole that questdata-critic/overworld-is-generated flagged open for NodeGenerator is now closed. The web v0.717 twin is \u00a71t70s0\u00a7.as, and \u00a71t70s0\u00a7.as:399 carries the identical node-level formula: Math.abs(territory.x - 341) + Math.abs(territory.y - 341) + LEVELSTART. The overworld generator ships in both builds.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/zFt_combat/zFtCaTO0_1M_t0330s.png \u2014 full 1920x1080 frame downscaled to 960x540; minimap panel occupies roughly x 760-930, y 70-280",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world/the-hud-prints-territory-21-51-on-film",
+  "lane_impact": "L10 world-exploration + L0 ui-hud: the minimap prints TERRITORY (x,y) and SECTOR (x,y) verbatim, and the coordinate origin matches the payload's TERRSHIFTX/Y.",
+  "ledger_text": "- **Ready:** territory/sector coord system (start 21,51 / 0,3)",
+  "overturns_ledger": false,
+  "quote": "on-screen: 'TERRITORY (21,51)' / 'SECTOR (4,3)'; red plate 'GUESTDIT (3)'",
+  "text": "Frame-side confirmation of the two shift constants the war-map finding rests on. reference/frames/zFt_combat/zFtCaTO0_1M_t0330s.png shows the overworld minimap panel top-right with 'TERRITORY (21,51)' and 'SECTOR (4,3)' printed beneath it. TERRSHIFTX=21 and TERRSHIFTY=51 are therefore not merely code constants \u2014 they are the start territory the ledger already records as 'start 21,51 / 0,3', now seen on film. The same frame also shows a red overworld nameplate reading 'GUESTDIT (3)', which is independent frame evidence for the (N)=level plate.",
   "verdict": "HELD"
  },
  {

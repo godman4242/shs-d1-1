@@ -44,26 +44,15 @@
  ],
  "packets": [
   {
-   "claims": 24,
+   "claims": 20,
    "file": "t1-overturns-01.json",
    "lenses": [
     "cite",
     "hunter"
    ],
-   "overturns": 24,
+   "overturns": 20,
    "stage": "WF-3a",
    "unit": "t1-overturns-01"
-  },
-  {
-   "claims": 7,
-   "file": "t1-overturns-02.json",
-   "lenses": [
-    "cite",
-    "hunter"
-   ],
-   "overturns": 7,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-02"
   },
   {
    "claims": 48,
@@ -136,7 +125,7 @@
    "unit": "t2-corroborating-07"
   },
   {
-   "claims": 12,
+   "claims": 19,
    "file": "t2-corroborating-08.json",
    "lenses": [
     "cite"
@@ -147,11 +136,11 @@
   }
  ],
  "totals": {
-  "already_judged": 1169,
-  "claim_rows": 1587,
-  "critic_findings_claiming_overturn": 31,
-  "critic_findings_unjudged": 379,
-  "distinct_ids": 1548,
+  "already_judged": 1200,
+  "claim_rows": 1614,
+  "critic_findings_claiming_overturn": 20,
+  "critic_findings_unjudged": 375,
+  "distinct_ids": 1575,
   "duplicate_rows_merged": 39,
   "source_sweep_unjudged": 0
  }

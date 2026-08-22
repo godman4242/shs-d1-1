@@ -1,5 +1,69 @@
 [
  {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as:108-114, diffed against reference/decompiled/shs3_android_payload/scripts/SkillManager.as and reference/extracted/skilldata.xml (measured this session)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skills-meters/web-only-skills-1074-1077",
+  "lane_impact": "L2: the survey's headline ('the system is essentially solved on paper: 75 skills') is 4 short, and those 4 have runtime behaviour but no data row and no name string. Also caps the byte-identity claim: skilldata.xml being byte-identical proves what IS in it is web-true, not that it is exhaustive.",
+  "overturns_ledger": false,
+  "quote": "108:      public static var \u00a71t10173s0\u00a7:int = 1074;\n110:      public static var \u00a71t10174s0\u00a7:int = 1075;\n112:      public static var \u00a71t10175s0\u00a7:int = 1076;\n114:      public static var \u00a71t10176s0\u00a7:int = 1077;\n--- measured ---\nweb SkillManager ids: 54   android: 50\nweb-only vs android: [1074, 1075, 1076, 1077]\nweb ids NOT in skilldata.xml: [1074, 1075, 1076, 1077]",
+  "text": "skilldata.xml is NOT a complete inventory of v0.717: the web SkillManager declares four skill ids (1074, 1075, 1076, 1077) that exist in neither skilldata.xml nor the Android build.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as:503-514 (web v0.717) + reference/decompiled/shs3_android/scripts/SkillManager.as:468, :474, :479",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skills/traps-cost-one-kunai-ammo",
+  "lane_impact": "skills-meters + economy: the kunai-ammo curve is flat at 1 for every kunai and every trap; only Windmill Shuriken (4) and skill 1077 (8) cost more. Two claims in this packet got this backwards and nobody cites this block.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t120s0\u00a7.as:503-507  case \u00a71t10134s0\u00a7: case \u00a71t10135s0\u00a7: case \u00a71t10136s0\u00a7: case \u00a71t10137s0\u00a7: case \u00a71t10138s0\u00a7:   (= skills 1024, 1025, 1026, 1027, 1028)\n\u00a71t120s0\u00a7.as:510   if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(2501) == 0)\n\u00a71t120s0\u00a7.as:514   \u00a71t1523s0\u00a7.\u00a71t9713s0\u00a7(2501,-1);\nSkillManager.as:474   if(StatsManager.getStat(2501) == 0)\nSkillManager.as:479   StatsManager.changeStat(2501,-1);",
+  "text": "Lay Trap and all four elemental Element Traps deduct exactly ONE unit of kunai ammo (stat 2501), not four. The four-kunai cost belongs to Windmill Shuriken (skill 1051) alone, which says so in its own shipped description.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1540s0\u00a7.as:269-314",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "stage/web-payload-has-its-own-800-480-690-resize-handler",
+  "lane_impact": "L8 ui-hud + every lane holding frame-derived coordinates: RR:117 stands, and it stands for BOTH builds. The friend-bar mode is real but conditional (viewport narrower than 800/690 = 1.159:1), which neither longplay is. Cite this file, not the Android GameEngine, for any web-build layout claim.",
+  "ledger_text": "- **Aspect-ratio truth** \u2014 native canvas is **800\u00d7480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong.",
+  "overturns_ledger": false,
+  "quote": "269:      internal static function \u00a71t10021s0\u00a7(param1:Event) : void\n271:         var _loc2_:int = 800;\n272:         var _loc3_:int = 480;\n273:         var _loc4_:int = 690;\n277:         if(_loc7_ <= _loc6_)\n280:            _loc3_ = _loc4_;\n281:            \u00a71t1523s0\u00a7.\u00a71t9362s0\u00a7 = true;\n295:         if(_loc5_ >= _loc7_)\n297:            _loc8_ = \u00a71t9973s0\u00a7.stageWidth / _loc2_;\n304:            _loc8_ = \u00a71t9973s0\u00a7.stageHeight / _loc3_;",
+  "text": "The WEB v0.717 payload carries its OWN resize handler with the identical three constants as the Android build \u2014 originalWidth 800, originalHeight 480, originalHeightWithBar 690. Every aspect-ratio claim in this packet cited the ANDROID GameEngine and left a build-parity hole; the hole is closed, and the answer is that the two builds share the layout model exactly. This is also what refutes 'that is the ANDROID figure': 800x480 is the web build's own base canvas.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "docs/gauntlet/L0/index/strings.json (1,893 numeric ids, max id 9010, zero entries containing 'tournament') vs reference/decompiled/shs3_payload/scripts/\u00a71t7144s0\u00a7.as:80, :82, :84 and \u00a71t113s0\u00a7.as:111",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "stage0/android-lang-table-cannot-serve-web-ui",
+  "lane_impact": "All lanes \u2014 narrows S0-3's caveat from a vague warning to a testable rule: an id >= 9011 (and id 960) is unresolvable from the held table, so the string is web-only content.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t7144s0\u00a7.as:82  this.notournamenttext.text = \u00a71t1521s0\u00a7.getString(11018);   ///   \u00a71t113s0\u00a7.as:111  this.\u00a71t5204s0\u00a7 = \"<font color='#BBBBBB'>\" + \u00a71t1521s0\u00a7.getString(960) + \"</font>\";",
+  "text": "The parsed Android string table cannot resolve the web build's UI copy at all: it tops out at string id 9010, while the web payload calls getString(960), getString(11005), getString(11006) and getString(11018). Any WEB UI-copy claim resting on 118_Mobile_Lang_EN.bin has a hard, measurable hole \u2014 this is the concrete shape of the S0 build-parity caveat.",
+  "verdict": "HELD"
+ },
+ {
   "artifact_class": "A3",
   "build": "android v0.682",
   "cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin and 99_MCSCharacter_HumanAnimationData.bin \u2014 first bytes are EF BB BF, and utf-8-sig decoding yields 25 and 158 <anim> tags respectively while utf-16-le yields 0 and 0",
@@ -192,6 +256,24 @@
   "overturns_ledger": false,
   "quote": "Obj_TownSign.as:44-47 \u2014 override public function interact() : * { if(!GameEngine.isPvPRoomMode() && StatsManager.findWeight() > StatsManager.getCarryingWeight()) { OverworldHUD.instance.showDialogBig(LangManager.getString(138),LangManager.getString(5)); return; }  \u00b7  BankUI.as:641 \u2014 if(this.storageWeight + this.selectedSlotItem.getWeight() / this.selectedSlotItem.getQuantity() > this.storageMaxWeight)",
   "text": "The carry-weight gate is enforced in code as a travel/interact guard at eight movement objects \u2014 `findWeight() > getCarryingWeight()` aborts interact() \u2014 and it is exempted inside PvP rooms; the bank's container cap is a separate, independent limit.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/extracted/android/118_Mobile_Lang_EN.bin (UTF-16LE XLIFF, 2555 trans-unit ids parsed) + docs/gauntlet/L0/index/strings.json (2533 entries, same gaps)",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "strings/the-android-lang-table-skips-ids-881-999-entirely",
+  "lane_impact": "Cross-lane evidence hygiene. Two claims in this packet inferred 'v0.717 addition' from id 960's absence. The inference happens to be harmless there (the frame resolved 960 directly), but as a rule it is unsound and should not be reused.",
+  "overturns_ledger": false,
+  "quote": "ids present in 850..1010: 850,851,...,865,867,868,...,880,1000,1001,...,1010 - nothing in 881..999. Gap list over the whole table: (211,222) (356,366) (664,666) (819,821) (865,867) (880,1000) (1044,2000) (2014,3000) (3018,4000) (4427,5000) (5001,5003) (5016,5018) (5021,5026) (5033,5035) (5122,6000) (6146,7000) (7002,7004) (7040,7042) (7095,8000) (8159,9001).",
+  "text": "A false-negative trap of the same family as correction C1, for the string table this time. 'String N is absent from strings.json' does NOT imply 'N is a v0.717 addition'. Parsing the raw UTF-16LE XLIFF in reference/extracted/android/118_Mobile_Lang_EN.bin yields 2555 trans-unit ids, and in the range 850-1010 they run 850..865, 867..880, then jump straight to 1000. The whole block 881-999 is missing from the android v0.682 table - 119 consecutive ids, not one. So string 960's absence is a block gap, and any claim that infers 'web-only addition' from a single absent id in that range is resting on a hole, not on evidence. There are 20 such gaps in the table (largest: 1044->2000).",
   "verdict": "HELD"
  },
  {
@@ -683,84 +765,6 @@
   "overturns_ledger": false,
   "quote": "Measured in the frame: empty slot bright-border cols 1448->1560 (centre 1504.0), rows 960->1073 (centre 1016.5); digit '2' centroid x=1641.0, digit '3' centroid x=1777.5 (pitch 136.5 px). GameEngine.resizeHandler:267-307 gives offsetY=0 and newScale = stageHeight/480 = 2.25 for content wider than 800/480; horizontal offset/scale measured as x0=52, 1816/800 = 2.27. Converting: game x = 639.4 / 700.0 / 760.1 against `skillSlotButton.x = 760 - i * 60` = 640 / 700 / 760 for i = 2 / 1 / 0; game y = 1016.5/2.25 = 451.8 against `skillSlotButton.y = 450`.",
   "text": "Converted with the game's own fit routine rather than a single uniform scale, all three visible skill slots land on the shipped constants, and the y error collapses from 4 px to under 2 px.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "cite": "Header parse of reference/decrypted/shs3_payload_decoded.swf, shs3_android_payload_decoded.swf and shs3_binarydata_9_decrypted.swf (CWS signature, zlib body, RECT + frameRate + frameCount fields)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/swf-header-24fps-and-stage-rects",
-  "lane_impact": "ui-hud: claim ui-hud/transition-durations-exact asserts 708 ms and 1000 ms 'at the SWF's 24 fps' but cites no artifact for 24 fps; likewise claim ui-hud/result-cards-exact's 250/417 ms. This supplies it for both builds. It also shows the web build's AUTHORED stage is the with-friend-bar size while the LOGICAL stage is 800x480 in both (\u00a71t1523s0\u00a7.as:104,106), which is what keeps the frame-vs-code geometry consistent.",
-  "overturns_ledger": false,
-  "quote": "shs3_android_payload_decoded.swf  CWS v26  rect [0.0, 800.0, 0.0, 480.0]  fps=24.000  frames=6\nshs3_payload_decoded.swf          CWS v17  rect [0.0, 800.0, 0.0, 690.0]  fps=24.000  frames=6\nshs3_binarydata_9_decrypted.swf   CWS v10  rect [0.0, 800.0, 0.0, 690.0]  fps=24.000  frames=1",
-  "text": "Byte-check of the SWF headers: the web payload's authored stage is 800x690, the android payload's is 800x480, and BOTH run at exactly 24.000 fps - which is the missing premise under every millisecond figure in this lane.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A3",
-  "cite": "SWF header byte-read of reference/decrypted/shs3_android_payload_decoded.swf, reference/decrypted/shs3_payload_decoded.swf, reference/preservation/shs3.swf",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/swf-headers-24fps-and-stage-rects",
-  "lane_impact": "ui-hud lane: grounds claim 2's 708 ms / 1000 ms, claim 8's 250 ms / 417 ms and claim 11's VS/FIGHT beats, all of which asserted '24 fps' without a cite. Also sharpens claim 12: 800x690 is not an exotic branch, it is the web build's OWN stage rect -- the videos were captured with the friend bar suppressed by window aspect (GameEngine.as:275). Third: the 800x480 Android stage independently confirms ScreenTransition's shutter halves parking at +/-240.",
-  "overturns_ledger": false,
-  "quote": "Parsed signature/version/RECT/frameRate from each header: ('shs3_android_payload_decoded.swf', 'CWS', 26, 21688592, 'stage 800.0x480.0', 'fps 24.0', 'frames 6'); ('shs3_payload_decoded.swf', 'CWS', 17, 11892061, 'stage 800.0x690.0', 'fps 24.0', 'frames 6'); ('shs3.swf', 'CWS', 10, 165252, 'stage 800.0x690.0', 'fps 24.0', 'frames 2').",
-  "text": "Both builds run at exactly 24 fps and the web SWF's native stage is 800x690 while the Android SWF's is 800x480 -- the byte-check that every frame-to-milliseconds conversion in this lane silently depends on.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A1",
-  "build": "web v0.717",
-  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_427.0.png, _429.0.png, _431.0.png and 5 more, column-mean profile of rows 1030-1032 over x 250-525, plus right-edge tracking over band y1029-1047 (threshold: >35% of the band's rows above luminance 45)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/tan-reload-bar-is-static-across-427-432",
-  "lane_impact": "L7 ui-hud: strikes the 'fill length changes' evidence from ui-hud/in-combat-hud-is-three-bars. The bar IS a meter, but only BattleUI.as:261 proves it. THE FRAME WINS over the packet's measurement.",
-  "overturns_ledger": false,
-  "quote": "427.0  20  23 167 182 168 124  47 112 135  83 131 144  51 ...\n429.0  20  22 166 182 176 127  47 107 136  75 126 146  56 ...\n431.0  22  22 162 181 173 128  41 105 132  82 123 141  54 ...\nright edge: 427.0 -> 509, 429.0 -> 509, 431.0 -> 511",
-  "text": "The in-combat reload/Focus bar does NOT change length anywhere in the duel_dense window, contrary to the packet's claim that it visibly varies across 427.0 / 429.0 / 431.0. Its top-strip column profile is identical to within compression noise across 427.0, 427.5, 428.0, 428.5, 429.0, 431.0, 431.5 and 432.0, and its right edge measures 509 / 509 / 511 for the three frames the packet contrasts. Anyone re-deriving Focus timing from these frames will get nothing; the meter's behaviour has to come from the source.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5184s0\u00a7.as:226 vs reference/decompiled/shs3_android/scripts/SkillSlotButton.as:220",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/web-android-cooldown-divergence",
-  "lane_impact": "Cross-lane guard rail. It disproves the survey's licence sentence ('retires the android parity not established caveat for the combat HUD') by counterexample INSIDE the same class, and it establishes the working method for every future claim: shs3_payload/scripts/ is obfuscated but numeric literals and public member names survive, so any constant can be confirmed against the real web build by grepping for the literal. I did it four times (DialogBox -> \u00a71t5474s0\u00a7, ScreenTransition -> \u00a71t6497s0\u00a7, SkillSlotButton -> \u00a71t5184s0\u00a7, GameEngine 690 gate).",
-  "overturns_ledger": false,
-  "quote": "android: `newframe = int(this.cooldown / this.cooldownmax * 12) + 1;` \u2014 web: `_loc1_ = Math.ceil(this.cooldown / this.cooldownmax * 12) + 1;`. \u00a71t5184s0\u00a7 is confirmed as the web SkillSlotButton by four independent markers: stat 2501 ammo read at :109, Math.floor(getStat(2501)/4) Windmill rule at :113, three stance-gated early returns at :213/:217/:221, and --this.cooldown at :225 \u2014 the same structure as android :110/:114/:211-219.",
-  "text": "The web build v0.717 and the Android build v0.682 diverge inside SkillSlotButton.update(): Android truncates the cooldown sweep with int(), the web rounds up with Math.ceil(), so the two builds show a different shade frame for essentially every intermediate cooldown value.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:169-171,1269-1316 vs reference/decompiled/shs3_android/scripts/BattleUI.as (wc -l: 1344 vs 939)",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "ui-hud/web-battleui-diverges-from-android",
-  "lane_impact": "Cross-lane, and it is the counter to this lane's own claim 7. Any lane that resolved a web-build string id through the Android blob must first check the id EXISTS there -- 11 do not in this one class. It also means the ui-hud lane's Android-sourced HUD behaviour is a lower bound on the web build's, not a match.",
-  "overturns_ledger": false,
-  "quote": "Web: `_loc1_.x = 760 - _loc2_ * 60;` `_loc1_.y = 450;` (:170-171, identifying this as BattleUI, together with `getString(619)`/`getString(620)` on the autoslash labels at :161-162). Its getString id set is {45,126,175,184,208,419,420,421,619,620,713,868,960,11119,11120,11121,11122,11123,11124,11125,11126,11130,11131}; the Android class's is {45,126,175,184,208,419,420,421,619,620,713,868}. The 11 extras resolve to NOTHING in 118_Mobile_Lang_EN.bin (max numeric resname there = 9010). :1269-1316 is an 8-branch selector ending `_loc4_ = \"<font color='#FF0000'>\" + getString(11130) + \"</font>\";` written into a status field as htmlText.",
-  "text": "The web v0.717 BattleUI is a strictly larger class than the Android v0.682 one -- 1,344 lines vs 939 -- and calls eleven string ids that do not exist anywhere in the Android string table, so combat-HUD parity between the two builds is disproven, not merely unestablished.",
   "verdict": "HELD"
  }
 ]

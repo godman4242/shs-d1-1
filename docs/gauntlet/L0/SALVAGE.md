@@ -11,7 +11,12 @@
 | **0** | wall-#9 insurance — structured JSON side-writes + `--critic-json` salvage | 0 | ✅ **LANDED** — 60 files / 953 tests |
 | **1** | `l0-finish-wf3` `{tier:'t1', batches:3, tag:'s26a'}` — 67 overturn-claimers | 6 | ✅ **CLEAN** — `wf_54792c81-6cd` → `run8` |
 | **2** | `l0-finish-wf3` `{tier:'t2', batches:13, tag:'s26b'}` — 586 corroborating | 13 | ⚠ **WALL #9** — 4 returned, 9 died; **6 batches banked** → `run9` |
-| **2b** | relaunch the remainder: t1 `{batches:2, tag:'s26c'}` then t2 `{batches:8, tag:'s26d'}` | 4 + 8 | ⏳ |
+| **2b** | t1 `{batches:2, tag:'s26c'}` — the 31 remaining overturn-claimers | 4 | ✅ **CLEAN** — `wf_26e01058-359` → `run10` |
+| **2c** | t2 `{batches:8, tag:'s26d'}` — 355 corroborating | 8 | ⏳ |
+| **2d** | final t1 mop-up over every accumulated overturn-claimer | ~2 | ⏳ |
+
+> ⛔ **ONE WORKFLOW IN FLIGHT** (owner rule 2026-08-22, `GAUNTLET.md` §3 item 8). Waves 1
+> and 2 ran together and took wall #9 as a pair. Every wave from 2b on runs alone.
 | **3** | mop-up t1 over the overturn-claimers waves 1–2 generate | ~2–8 | ⏳ |
 | **4** | `l0-finish-wf4` `{tag:'s26d'}` — dry-loop + completeness | ≤17 | ⏳ |
 | **5** | ledger rewrite — 12 system writers ⇉ 12 blind verifiers, + §6 | 27 | ⏳ |

@@ -1,0 +1,329 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/string-960-is-cannot-change-stance-frame-resolved",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/frames/session11/crit-focus/t1003.000.png",
+    "reference/frames/session11/crit-focus/t1082.100.png",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/the-video-study-notes-misread-the-cannot-change-stance-slot",
+   "notes": [],
+   "paths": [
+    "reference/frames/session11/crit-focus/t1003.000.png",
+    "docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/in-combat-stance-cycling-is-live-code-in-v0717",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "world/the-war-map-mask-is-byte-identical-across-web-and-android",
+   "notes": [],
+   "paths": [
+    "reference/extracted/bindata/92_1t4648s0.bin",
+    "reference/extracted/android/110_Mobile_MapBitmapData.bin",
+    "reference/decompiled/shs3_android/scripts/WarSelectUI.as",
+    "reference/decompiled/shs3_android/scripts/Mobile_MapBitmapData.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "skills-meters/heavy-stance-damage-is-flat-and-only-heavy-reach-scales",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "strings/the-android-lang-table-skips-ids-881-999-entirely",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/frame-proof-the-stance-label-hides-when-the-third-bar-fills",
+   "notes": [],
+   "paths": [
+    "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/the-stance-label-is-grey-not-yellow-the-frame-wins",
+   "notes": [],
+   "paths": [
+    "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "skills-meters/stance-mastery-domain-is-1-to-10-in-skilldata",
+   "notes": [],
+   "paths": [
+    "reference/extracted/skilldata.xml",
+    "docs/gauntlet/L0/index/strings.json[\"6000\"]",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/the-game-ships-a-loading-tip-telling-you-to-change-stance-in-battle",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/GameEngine.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/battleui-carries-its-own-change-stance-button-in-both-builds",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "docs/gauntlet/L0/index/strings.json[\"208\"]="
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "world/the-war-map-mask-and-pitch-are-web-side-too-parity-closed",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7934s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t6481s0\u00a7.as",
+    "reference/extracted/bindata/92_1t4648s0.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "world/the-hud-prints-territory-21-51-on-film",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFt_combat/zFtCaTO0_1M_t0330s.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/crit-multiplier-1-3-is-in-the-web-damage-function",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26c/the-271-cap-IS-the-shipped-level-80-base-stat-cap",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26c/web-payload-carries-the-same-xp-lvl-times-2-plus-20-setLevel",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "s26c/survival-mode-id-sets-are-IDENTICAL-across-builds",
+   "notes": [],
+   "paths": [
+    "reference/extracted/bindata/119_1t4646s0.bin",
+    "reference/extracted/android/109_WarHexUI_SurvivalModeData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26c/web-offline-save-reset-enumerates-the-same-nineteen-fields",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/QueryManagerBase.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s26c/the-271-cap-is-the-web-per-stat-cap-at-level-80",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s26c/tenthgold-100-is-contract-and-the-dan-ladder-is-hard-capped",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "docs/gauntlet/L0/index/strings.json[\"464\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s26c/web-crit-is-flat-1p3-and-the-proc-rule-is-deterministic",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s26c/web-parity-for-the-per-kill-xp-formula",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t4574s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s26c/web-parity-for-the-three-tier-reinforce",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InteractUI.as",
+    "docs/gauntlet/L0/index/strings.json[\"849\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "hunter-s26c/survival-mode-enemy-id-sets-are-equal-not-unequal",
+   "notes": [],
+   "paths": [
+    "reference/extracted/bindata/119_1t4646s0.bin",
+    "reference/extracted/android/109_WarHexUI_SurvivalModeData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s26c/web-19-field-save-schema-is-a-positional-twin",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/QueryManagerBase.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s26c/war-room-10px-territory-pitch-is-web-side-too",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7934s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/WarSelectUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s26c/deathnohead-is-31-frames-of-bone-transforms-not-a-name",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/bindata/108_1t4635s0.bin",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 4,
+  "resolves": 23,
+  "total": 27,
+  "uncheckable": 0
+ }
+}

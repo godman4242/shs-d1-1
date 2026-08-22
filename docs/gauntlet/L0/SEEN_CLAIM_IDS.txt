@@ -1,8 +1,8 @@
 # SEEN CLAIM IDS — every claim banked across every run of L0 so far.
 # A finding matching one of these is NOT new. Report it ONLY if you can
 # materially STRENGTHEN or CONTRADICT it — and say which, explicitly.
-# 1587 rows, 1548 unique ids, pooled from: run2, run3, run4, run5, run6, run7, run8, run9.
-# 1169 of them carry at least one artifact-citing verdict;
+# 1614 rows, 1575 unique ids, pooled from: run10, run2, run3, run4, run5, run6, run7, run8, run9.
+# 1200 of them carry at least one artifact-citing verdict;
 # the rest are LEADS and may not enter the ledger (§0).
 
 ## actionscript  (45 unique, 45 judged)
@@ -149,7 +149,7 @@
   * combat-core/slash-type-map
   * combat-core/stance-triangle
 
-## critic-new_findings  (1038 unique, 659 judged)
+## critic-new_findings  (1065 unique, 690 judged)
   * NEW-1-web-crit-is-flat-1.3
   * NEW-10-obfuscated-bundle-grep-method
   * NEW-2-web-per-stance-damage-and-mastery-10-ceiling
@@ -202,19 +202,19 @@
   * NF-8-survival-mode-is-byte-identical-in-both-builds
   * NF-9-345-and-200-are-already-ruled-placeholders
   * NF-9-dragon-dance-input-recovered
-    NF-A/web-focus-meter-constants-diverge-and-the-recharge-is-plus-one
-    NF-A/web-stance-triangle-has-a-second-0p9-arm
-    NF-B/stance-triangle-is-defender-keyed-and-web-adds-a-losing-side
-    NF-B/web-focus-numerics-diverge-from-android-on-four-constants
+  * NF-A/web-focus-meter-constants-diverge-and-the-recharge-is-plus-one
+  * NF-A/web-stance-triangle-has-a-second-0p9-arm
+  * NF-B/stance-triangle-is-defender-keyed-and-web-adds-a-losing-side
+  * NF-B/web-focus-numerics-diverge-from-android-on-four-constants
     NF-C/focus-fills-plus-one-per-tick-plus-six-per-kill
-    NF-C/web-spd-to-cooldown-saturates-at-600-not-300
+  * NF-C/web-spd-to-cooldown-saturates-at-600-not-300
     NF-D/survival-mode-is-in-the-web-build-but-its-last-seven-waves-differ
-    NF-D/web-spd-to-cooldown-saturates-at-600-not-300
-    NF-E/bindata-parity-map-21-of-27-identical-and-a-spider-only-in-web
-    NF-E/survival-mode-content-diverges-14-of-87-rows
-    NF-F/audio-recovered-13-waveforms-against-43-web-cue-names
-    NF-F/two-animation-blobs-are-md5-identical-web-to-android
-    NF-G/43-web-sfx-cues-refiled-without-the-dead-s0-5-clause
+  * NF-D/web-spd-to-cooldown-saturates-at-600-not-300
+  * NF-E/bindata-parity-map-21-of-27-identical-and-a-spider-only-in-web
+  * NF-E/survival-mode-content-diverges-14-of-87-rows
+  * NF-F/audio-recovered-13-waveforms-against-43-web-cue-names
+  * NF-F/two-animation-blobs-are-md5-identical-web-to-android
+  * NF-G/43-web-sfx-cues-refiled-without-the-dead-s0-5-clause
     NF-G/web-side-cite-for-800x480-and-a-second-800x690-layout
     NF-I/def-subtraction-is-floored-by-the-attackers-min-damage
   * NF-ai0-duel-opponent-absent
@@ -373,6 +373,7 @@
   * combat-core/crit-is-flat-1.3
   * combat-core/crit-is-full-reload-1p3
   * combat-core/crit-meter-is-6-seconds
+    combat-core/crit-multiplier-1-3-is-in-the-web-damage-function
   * combat-core/crit-track-268px-six-seconds
   * combat-core/damage-triple-crit-1p3-and-heavy-def-confirmed-in-web-source
   * combat-core/desktop-stance-multipliers
@@ -390,6 +391,7 @@
   * combat-core/generic-post-defense-damage-floor
   * combat-core/heavy-launch-unlock-is-3-on-target-build
   * combat-core/hud-track-is-269px
+    combat-core/in-combat-stance-cycling-is-live-code-in-v0717
   * combat-core/injured-buff-halves-reach
   * combat-core/inputmanager-200-is-not-a-gameplay-base
   * combat-core/mastery-caps-at-10-per-the-string-table
@@ -431,6 +433,7 @@
   * combat-core/stance-triangle-damage-magnitudes
   * combat-core/stance-triangle-is-1p2
   * combat-core/stroke-render-frame-confirmed
+    combat-core/the-game-ships-a-loading-tip-telling-you-to-change-stance-in-battle
   * combat-core/two-builds-differ-in-stage-height
   * combat-core/v0717-crit-is-flat-1.3
   * combat-core/v0717-stance-curves-are-already-in-config
@@ -588,14 +591,23 @@
   * gauntlet/index-firstlines-are-leafname-scoped
   * gauntlet/no-web-gameplay-code-or-string-table
     hunter-s26a/five-web-animdata-blobs-have-no-android-twin
-    hunter-s26a/full-offline-save-schema-is-19-fields-in-both-builds
-    hunter-s26a/per-enemy-xp-formula-is-lvl-times-2-plus-20
+  * hunter-s26a/full-offline-save-schema-is-19-fields-in-both-builds
+  * hunter-s26a/per-enemy-xp-formula-is-lvl-times-2-plus-20
     hunter-s26a/war-room-battlefield-board-is-server-dimensioned
     hunter-s26a/web-elemental-def-pipeline-confirms-both-builds
-    hunter-s26a/web-kanji-dan-display-path
-    hunter-s26a/web-sound-resource-decrypts-to-13-mp3-sfx
-    hunter-s26a/web-stance-ceilings-are-mastery-10-not-9
+  * hunter-s26a/web-kanji-dan-display-path
+  * hunter-s26a/web-sound-resource-decrypts-to-13-mp3-sfx
+  * hunter-s26a/web-stance-ceilings-are-mastery-10-not-9
     hunter-s26a/web-twins-of-the-four-elemental-ultimate-projectiles
+    hunter-s26c/deathnohead-is-31-frames-of-bone-transforms-not-a-name
+    hunter-s26c/survival-mode-enemy-id-sets-are-equal-not-unequal
+    hunter-s26c/tenthgold-100-is-contract-and-the-dan-ladder-is-hard-capped
+    hunter-s26c/the-271-cap-is-the-web-per-stat-cap-at-level-80
+    hunter-s26c/war-room-10px-territory-pitch-is-web-side-too
+    hunter-s26c/web-19-field-save-schema-is-a-positional-twin
+    hunter-s26c/web-crit-is-flat-1p3-and-the-proc-rule-is-deterministic
+    hunter-s26c/web-parity-for-the-per-kill-xp-formula
+    hunter-s26c/web-parity-for-the-three-tier-reinforce
   * hunter/all-24-elemental-skills-fully-specced
   * hunter/android-rebirth-pays-20-5-hgold-vs-web-100-25
   * hunter/audio-blocker-is-the-right-target-for-the-sfx-names
@@ -773,8 +785,8 @@
   * meta-social/v0717-rebirth-gold-25-100-300
     meta-social/war-boss-npcs-unresolvable
   * meta-social/war-mechanics-are-in-the-web-build
-    meta-social/war-room-frame-carries-rank-moves-and-clan-numbers
-    meta-social/war-room-frame-says-moves-a-turn-not-per-hour
+  * meta-social/war-room-frame-carries-rank-moves-and-clan-numbers
+  * meta-social/war-room-frame-says-moves-a-turn-not-per-hour
   * meta-social/warroom-board-is-on-screen
     meta-social/warrules-page3-frame
     meta-social/web-barricade-bonus-has-owner-clause
@@ -808,7 +820,7 @@
     newfind/1071-is-the-behead-flag-and-it-moved-1p5-to-1p3
     newfind/cannot-change-stance-is-getstring-960
     newfind/heavy-defence-penalty-is-in-the-string-table
-    newfind/mastery-ceiling-is-10-not-9
+  * newfind/mastery-ceiling-is-10-not-9
     newfind/per-stat-caps-diverge-between-builds
     newfind/stance-enum-pinned-by-declared-value
     npcdata-category11-grant-census-corrected
@@ -824,7 +836,7 @@
     parity/stance-tables-diverge-web-vs-android
     parity/web-build-ships-a-spider-animation-set-android-lacks
     parity/writ-of-release-is-25g-in-web-and-5g-in-android
-    payload/reinforce-has-three-material-tiers-not-two
+  * payload/reinforce-has-three-material-tiers-not-two
   * payload/repair-cost-formula-is-node-level-times-10
   * payload/repair-weapon-cost-is-a-template-not-a-constant
     persistence/offline-save-schema-is-fourteen-fields-already-written
@@ -847,7 +859,7 @@
     progression/level-3-to-4-on-film-buys-plus3-atk-plus3-def-plus5-chi
     progression/level10-scroll-validates-xp-table
     progression/levelcap-const-vs-var
-    progression/mastery-ceiling-is-10-not-9
+  * progression/mastery-ceiling-is-10-not-9
   * progression/mining-pipeline-zero-xp
     progression/new-character-start-table
   * progression/no-gather-xp-path-exists
@@ -855,9 +867,9 @@
   * progression/per-point-ap-is-plus-5-not-plus-1
     progression/per-point-plus3-direct-frame-proof
   * progression/per-point-two-frame-delta
-    progression/per-stat-caps-are-a-level-formula-and-they-prove-the-build-split
+  * progression/per-stat-caps-are-a-level-formula-and-they-prove-the-build-split
     progression/player-stance-cycle-is-three
-    progression/plus1ap-is-androids-manual-panel-not-a-typo
+  * progression/plus1ap-is-androids-manual-panel-not-a-typo
   * progression/procgen-quest-xp-formula
   * progression/quest-xp-sum-kills-blocker2-rationale
     progression/rebirth-pays-heavenly-gold
@@ -881,7 +893,7 @@
     progression/web-level-cap-is-const
     progression/web-only-maxdueltokens-40
     progression/web-payload-is-v0717
-    progression/web-per-point-table-is-confirmed-on-camera-L3-to-L4
+  * progression/web-per-point-table-is-confirmed-on-camera-L3-to-L4
     progression/web-rebirth-gold-25-not-5
     progression/web-stance-triangle-has-a-penalty-branch
     progression/xp-array-outruns-level-cap
@@ -967,7 +979,7 @@
   * rebirth/no-elemental-status-effects
   * rebirth/no-elemental-status-effects-exist
     rebirth/payout-is-the-premium-gold-purse
-    rebirth/reach-dan-10-is-a-shipped-achievement-string
+  * rebirth/reach-dan-10-is-a-shipped-achievement-string
   * rebirth/romaji-dan-ladder
   * rebirth/romaji-dan-ladder-in-v0717
     rebirth/romaji-dan-ladder-is-cross-build-not-desktop-only
@@ -980,6 +992,10 @@
   * rebirth/tenth-dan-tier-is-real
     rebirth/unlock-gate-ignores-gear-affixes
     rebirth/v717-stance-multipliers
+    s26c/survival-mode-id-sets-are-IDENTICAL-across-builds
+    s26c/the-271-cap-IS-the-shipped-level-80-base-stat-cap
+    s26c/web-offline-save-reset-enumerates-the-same-nineteen-fields
+    s26c/web-payload-carries-the-same-xp-lvl-times-2-plus-20-setLevel
     skilldata/skill-1077-missing-from-extract
   * skilldata/web-cooldown-modifier-caps-spd-at-600
   * skills-meters/43-sfx-event-names-in-web-bundle
@@ -1001,6 +1017,7 @@
     skills-meters/full-focus-negates-a-hit
     skills-meters/full-meter-buys-evasion-web-only
     skills-meters/heavy-defense-penalty-is-web-true
+    skills-meters/heavy-stance-damage-is-flat-and-only-heavy-reach-scales
   * skills-meters/kunai-ammo-cost
     skills-meters/kunai-ammo-is-web-and-tiered
     skills-meters/mastery-scale-differs-between-builds
@@ -1022,7 +1039,8 @@
     skills-meters/spd-does-not-touch-the-meter-in-web
     skills-meters/spd-inputs-are-buffable
     skills-meters/speed-buff-premultiplies-spd
-    skills-meters/stance-mastery-ceiling-is-10-not-9
+  * skills-meters/stance-mastery-ceiling-is-10-not-9
+    skills-meters/stance-mastery-domain-is-1-to-10-in-skilldata
   * skills-meters/stance-switch-gate-and-cycle
   * skills-meters/stance-switch-gate-is-48
   * skills-meters/stance-switch-gate-is-reload-48
@@ -1049,6 +1067,7 @@
     string-table/war-room-gate-has-a-dan-escape-hatch
     string-table/war-turn-expiry-resets-moves-to-max
     string-table/weight-gate-is-a-travel-guard-in-code
+    strings/the-android-lang-table-skips-ids-881-999-entirely
     tooling/source-constants-mined-the-0682-decompile
     ui-hud/150-percent-damage-is-a-buff
     ui-hud/24fps-from-swf-headers
@@ -1057,15 +1076,17 @@
   * ui-hud/NEW-web-and-android-payloads-ship-different-stage-rects
   * ui-hud/aspect-ratio-truth-closed-from-source
   * ui-hud/bars-are-untweened-continuous-scalex
+    ui-hud/battleui-carries-its-own-change-stance-button-in-both-builds
     ui-hud/blackopen-shutter-is-16-frames
   * ui-hud/blocker-2-falls-entirely-no-pop-no-ramp
   * ui-hud/blocker-4-is-wrong-2-abilities-plus-empty-slot
   * ui-hud/blocker4-uparrow-is-an-equipped-skill
     ui-hud/buff-row-is-frame-confirmed-A1
-    ui-hud/cannot-change-stance-is-the-reload-meter-low-end-readout
+  * ui-hud/cannot-change-stance-is-the-reload-meter-low-end-readout
     ui-hud/combat-keeps-the-player-nameplate
   * ui-hud/combo-widget-content-held-pop-unheld
   * ui-hud/filmed-session-scale-is-2.27-not-2.25-THE-FRAME-WINS
+    ui-hud/frame-proof-the-stance-label-hides-when-the-third-bar-fills
   * ui-hud/frame-refutes-stance-up-arrow
     ui-hud/frame-to-stage-mapping-is-anisotropic
     ui-hud/frame-to-stage-transform
@@ -1087,7 +1108,7 @@
   * ui-hud/jpexs-export-already-on-disk
     ui-hud/keypress-index-is-reversed
   * ui-hud/longplay-frames-are-pillarboxed
-    ui-hud/nameplate-level-suffix-is-gated-on-level-greater-than-zero-web-only
+  * ui-hud/nameplate-level-suffix-is-gated-on-level-greater-than-zero-web-only
     ui-hud/paperdoll-9-box-to-eq-slot-map
     ui-hud/pass1-fabricated-transunit-quote
     ui-hud/pass1-stale-string-rules-still-live
@@ -1104,10 +1125,13 @@
     ui-hud/slot-box-measurement-corrected
     ui-hud/slot-strip-matches-all-three-constants
   * ui-hud/stance-ring-colours-exact
+    ui-hud/string-960-is-cannot-change-stance-frame-resolved
     ui-hud/swf-header-24fps-and-stage-rects
     ui-hud/swf-headers-24fps-and-stage-rects
     ui-hud/tan-reload-bar-is-static-across-427-432
-    ui-hud/the-cannot-change-stance-label-is-the-focus-gate-readout
+  * ui-hud/the-cannot-change-stance-label-is-the-focus-gate-readout
+    ui-hud/the-stance-label-is-grey-not-yellow-the-frame-wins
+    ui-hud/the-video-study-notes-misread-the-cannot-change-stance-slot
   * ui-hud/up-arrow-is-a-skill-not-a-stance-control
   * ui-hud/up-arrow-is-a-skill-not-the-stance-control
   * ui-hud/v0717-duel-nameplate-has-no-level
@@ -1149,7 +1173,7 @@
     world-exploration/duel-token-clock
     world-exploration/farm-guaranteed-yield-is-harvest-two
   * world-exploration/farm-timers-and-patch-ladder
-    world-exploration/farm-yield-and-whiff-are-on-disk-too
+  * world-exploration/farm-yield-and-whiff-are-on-disk-too
     world-exploration/fifth-clock-duel-tokens
   * world-exploration/fourth-clock-dtinterval
     world-exploration/frozen-town-levels-are-19-not-12
@@ -1184,10 +1208,13 @@
   * world/map-bitmap-is-held-byte-exact
     world/map-bitmap-is-in-the-repo-735-land-pixels
     world/nodegenerator-web-parity-closed
+    world/the-hud-prints-territory-21-51-on-film
+    world/the-war-map-mask-and-pitch-are-web-side-too-parity-closed
+    world/the-war-map-mask-is-byte-identical-across-web-and-android
     world/third-hardcoded-placename-override-web-only
     world/third-placename-override-is-web-only
   * world/war-map-is-already-on-film
-    world/war-map-renders-at-10px-per-territory
+  * world/war-map-renders-at-10px-per-territory
 
 ## economy  (20 unique, 20 judged)
   * economy/cho-han-is-ev-neutral

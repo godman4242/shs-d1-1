@@ -269,6 +269,23 @@
  },
  {
   "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3274 + \u00a71t99s0\u00a7.as:3048-3051 + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:348-358",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "combat-core/crit-multiplier-1-3-is-in-the-web-damage-function",
+  "lane_impact": "L5 combat-core: CRIT_MULT=1.3 upgrades from wiki-sourced to payload CONTRACT, and the crit trigger is 'meter at max', not a random roll.",
+  "ledger_text": "SHS:Duels' own wiki (2016 + 2025) states the formula \"Critical = **1.3x Physical**.\" Keep `CRIT_MULT=1.3`.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:3272-3274  if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7; }",
+  "text": "Found while judging, unclaimed by anyone in this packet: the 1.3x crit multiplier is not wiki folklore, it is in the shipped web damage function. \u00a71t99s0\u00a7.as:3272-3274 reads `if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7; }` \u2014 i.e. when the reload meter is at maximum, post-stance damage is multiplied by exactly 1.3 and a flat bonus is added. Same meter as the stance gate (>=48 at :3050) and the same meter the BattleUI crit label watches (\u00a71t113s0\u00a7.as:348-358 fires Snd_criticalDamage at ratio>=1). This makes CRIT_MULT=1.3 CONTRACT from the payload, independent of the wiki.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "build": "both - web v0.717 vs android v0.682",
   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:239",
   "citelint": {
@@ -541,6 +558,39 @@
   "verdict": "HELD"
  },
  {
+  "artifact_class": "A3",
+  "build": "web v0.717 vs android v0.682",
+  "cite": "reference/extracted/bindata/119_1t4646s0.bin vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (own pairwise <enemy> diff + both unique-id set differences)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s26c/survival-mode-enemy-id-sets-are-equal-not-unequal",
+  "lane_impact": "Cross-cutting: absorb the 14/87 divergence, drop the 'unequal id sets' clause, and widen the enumerated rows from 73-84 to 73-86.",
+  "ledger_text": "(no REBUILD_READINESS.md sentence \u2014 this corrects a packet finding before it is absorbed)",
+  "overturns_ledger": false,
+  "quote": "web-only ids: [] \u00b7 android-only ids: [] \u00b7 differing rows (0-indexed): [73,74,75,76,77,78,79,80,81,82,83,84,85,86] \u00b7 row 85 web '<id>451|456|451|456|443</id><qty>6</qty>' vs android '<id>451|456</id><qty>6</qty>'",
+  "text": "A correction that must ride along with NF-E/survival-mode-content-diverges-14-of-87-rows so a false line does not enter the ledger with a true one. That finding asserts 'The unique-id sets are unequal in both directions.' I computed both differences over reference/extracted/bindata/119_1t4646s0.bin and reference/extracted/android/109_WarHexUI_SurvivalModeData.bin by splitting every <id> on '|': web-minus-android is EMPTY and android-minus-web is EMPTY. Enemy 443 is already present elsewhere in the android blob. What actually differs is the alternation POOL of fourteen late-wave rows (0-indexed 73-86, not the twelve the finding enumerates), where web appends '|443' \u2014 a re-authored wave composition, not a roster change. Everything else in that finding reproduces exactly: 11,721 vs 11,553 bytes, 39 waves, 87 enemy rows, identical spawn-x histogram {-50:49, 1650:37, -1650:1}.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (confirms android v0.682)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7934s0\u00a7.as:299 \u00b7 reference/decompiled/shs3_android/scripts/WarSelectUI.as:225-236",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s26c/war-room-10px-territory-pitch-is-web-side-too",
+  "lane_impact": "L11/L12 meta-social: the War-Room board pitch is target-build evidence, contributing to RR:245's blocker (2) map topology rather than sitting on a mobile-only cite.",
+  "overturns_ledger": false,
+  "quote": "web \u00a71t7934s0\u00a7.as:299 '_loc11_.x = (_loc8_ + \u00a71t12536s0\u00a7) * 10 + 4.5;' \u2016 android WarSelectUI.as:233 'warFlag.x = (terrx + TERRSHIFTX) * 10 + 4.5;' :234 'warFlag.y = (terry + TERRSHIFTY) * 10 + 8.8;'",
+  "text": "Repairs the build label on meta-social/war-room-frame-carries-rank-moves-and-clan-numbers, which is filed as 'web v0.717' but cites the ANDROID WarSelectUI.as for its 10-px territory pitch \u2014 exactly the kind of cross-build slip correction C2 warns about. The web payload carries the same transform: \u00a71t7934s0\u00a7.as:299 '_loc11_.x = (_loc8_ + \u00a71t12536s0\u00a7) * 10 + 4.5;', the twin of android WarSelectUI.as:233 'warFlag.x = (terrx + TERRSHIFTX) * 10 + 4.5;'. So the pitch claim survives at the target build and the frame cite and the code cite are now the same build.",
+  "verdict": "HELD"
+ },
+ {
   "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:163-179, :261-269, :460-535; StatsManager.as:1944 (findBonusStat) and :1983 (findWeight); frame reference/frames/s21_weapon/t708.0.png crop (170,240)-(870,1040) upscaled x2 LANCZOS",
   "citelint": {
@@ -748,50 +798,5 @@
   "quote": "ANDROID: var itemXML:XMLItem = QuestEngine.getItemData(this.itemID); if(itemXML != null) { this.weight = itemXML.weight; } else { this.weight = 0; } return this.weight;   WEB v0.717: else { this.weight = 0; } return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7();",
   "text": "The sell formula body is byte-identical in both builds but its input is not: Android Item.getWeight() returns the raw weight while web v0.717 returns (weight + bonus) * multiplier, so the same item can fall on opposite sides of the getWeight()>=10 step that picks the 5x vs 10x multiplier.",
   "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Item.as:1564-1568 (getWeight) feeding Item.as:1582-1593 (getSellAmt); web divergence at reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:1974",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/sell-price-reads-stack-weight",
-  "lane_impact": "L4 (economy) \u2014 a port that evaluates the >=10 threshold on the XML row's <weight> mis-prices every stack. Also note the web build adds a weight-modifier term the Android build lacks, so the sell formula's INPUT is not cross-build identical even though its body is.",
-  "overturns_ledger": false,
-  "quote": "public function getWeight() : int { if(this.weight != -1) { return this.weight * this.getQuantity(); } ... }  /  web v0.717: return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7();",
-  "text": "getSellAmt's weight>=10 test reads stack weight, not row weight, because getWeight() multiplies by quantity \u2014 so ten weight-1 items in one stack each sell at x10 instead of x5.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Item.as:1564-1579; reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:1958-1975",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/sell-weight-branch-is-stack-weight",
-  "lane_impact": "L4 (economy) - the sell formula is safe to copy but its input is not: ten weight-1 branches trip the >=10 *10 branch, and the web build's extra weight term means an Android-derived weight table may not reproduce web sell prices. Marked PARTIAL because \u00a71t478s0\u00a7 is unresolved - I did not establish what it is.",
-  "overturns_ledger": false,
-  "quote": "android: public function getWeight() : int { if(this.weight != -1) { return this.weight * this.getQuantity(); } ... return this.weight; }   /   web v0.717: if(this.weight != -1) { return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7(); } ... return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7();",
-  "text": "The sell-price weight branch tests STACK weight, not unit weight, and the getWeight() it tests differs between the two builds - the web adds an extra per-item weight term the Android build lacks.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android/scripts/Item.as:1564-1568; reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:1958-1974; sole call site ShopUI.as:401",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "items-equipment/sell-weight-is-stack-weight-and-builds-diverge",
-  "lane_impact": "L4 (economy) \u2014 the sell formula itself is identical across builds, but its input is not: implementing 'weight >= 10' as per-item weight puts a stack of ten weight-1 items on the wrong branch (5c/unit instead of 10c/unit). This is the first concrete instance of the S0-3 Android/web parity caveat biting on a combat-adjacent number, and it should be labelled per-build. ShopUI.as:401 being the only call site is also what proves there is no shop-side level multiplier.",
-  "overturns_ledger": false,
-  "quote": "Android: public function getWeight() : int { if(this.weight != -1) { return this.weight * this.getQuantity(); } ... return this.weight; }  /  Web v0.717: public function \u00a71t545s0\u00a7() : int { if(this.weight != -1) { return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7(); } ... return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7(); }  /  ShopUI.as:401 slot.setCost(slot.getItem().getSellAmt(),0);",
-  "text": "The weight>=10 branch of the sell formula reads STACK weight (base x quantity), and the web v0.717 build adds a per-item weight-modifier term that the Android v0.682 build does not have.",
-  "verdict": "HELD"
  }
 ]

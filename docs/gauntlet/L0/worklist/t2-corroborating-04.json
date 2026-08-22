@@ -1,5 +1,50 @@
 [
  {
+  "artifact_class": "A4",
+  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md \u00a7c-2 (reach-per-stance table, method 'distance from the player's body to the far end of the drawn stroke, counting only strokes whose near end starts within 30 px', n=17 Balanced) combined with reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2346-2347",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/slash-length-settles-balanced-reach",
+  "lane_impact": "L1 combat-core blocker \u2460 : the cross-lane gift is no longer just a lead \u2014 it is frame-corroborated at the one stance/level where a measurement exists. STANCE_TABLE's Balanced entry should become 124 at SPD 1 and track 120 + 90\u00b7spd/(20+spd), not the wiki's 200. Corroborated by strings.json 6005 (Heavy: 'slash range is shorter'), matching measured Heavy 97\u2013103 < Balanced 116\u2013131. CARRY THIS CAVEAT: \u00a7S24-H's re-run REFUTED the older 775 px / '\u2248413 stage px' reading at COMBAT_MEASUREMENTS.md:221 ('No normal-anatomy stroke >280 px anywhere re-checked; the 775 refutation REPRODUCED') \u2014 reconcile against the \u00a7S24-H-corrected figures, never :221. Left PARTIAL because Light/Heavy multipliers and the stage-px unit domain are still unverified.",
+  "overturns_ledger": false,
+  "quote": "\u00a7c-2: '| **Balanced** | 116\u2013131 | **131** | 17 | 200 | \u274c **NOT CONFIRMED** \u2014 measured 131 |' and 'The Balanced gap cannot be resolved from this footage. The *only* Balanced combat in either video is the level-1 tutorial fight'. Payload \u00a71t1523s0\u00a7.as:2346-2347: 'var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' \u2192 at SPD 1, Dan 0: 120 + floor(90/21) = 124.",
+  "text": "The SPD slash-length formula reconciles with a frame measurement the combat lane declared unresolvable: at SPD 1 it returns 124 stage px, landing inside the frame-measured level-1 Balanced plateau of 116\u2013131 \u2014 so Balanced \u2248 \u00d71.0 base, and the wiki's Balanced 200 is refuted.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3450-3457",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/spent-points-audit-second-witness",
+  "lane_impact": "L4: raises the per-point table (HP+10/Chi+5/AP+5/ATK,DEF,SPD+3) and the start pools (10/10/30/1/1/1) from single-witness to triple-witness \u2014 the click handlers, this audit, and the frame budget arithmetic all agree, all within the WEB payload. Ready to land in config as CONTRACT.",
+  "overturns_ledger": false,
+  "quote": "_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9403s0\u00a7) - 10) / 10;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9406s0\u00a7) - 10) / 5;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9415s0\u00a7) - 30) / 5;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9408s0\u00a7) - 1) / 3;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9409s0\u00a7) - 1) / 3;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9410s0\u00a7) - 1) / 3;\n_loc1_ += \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9419s0\u00a7);",
+  "text": "A second, structurally independent WEB witness for both the start pools and the per-point magnitudes: a spent-points audit whose divisors are the magnitudes and whose subtrahends are the start pools.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A4",
+  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md:203 \u00a7H-1 (tagged MEASURED, carries its own frame cite 'A t\u2248152 PLAYER screen, re-read at full resolution') and docs/research/video-study/segments/A-02-dojo-tutorial-3-stances-chi-punch-on-dum.md:25",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "progression/start-pools-third-frame",
+  "lane_impact": "L4: \u00a7H-1 is at level 2 with all 3 points UNSPENT, so its ATK 1 / DEF 1 / SPD 1 / Chi 10 / AP 30 ARE the unAssignStatPoints() literals \u2014 the unit's added start values are frame-confirmed, not payload-only. A-02:25's INFERRED flag on the point-to-stat ratio is now closed twice over (payload + my L3\u2192L4 delta). Four independent confirmations of +3 now exist: A-02, \u00a7H-1, the L3 absolute fit, and the L3\u2192L4 delta.",
+  "overturns_ledger": false,
+  "quote": "\u00a7H-1: 'Early player pools + stats (PLAYER screen, level 2) | HP green \u00b7 Chi 10/10 \u00b7 AP 30/30; ATK 1 \u00b7 DEF 1 (+2) \u00b7 SPD 1; weight 14/100; available stat points 3'. A-02:25: 'Observed progression: ATK 4\u21927, DEF 4+2\u21927+2 ..., SPD 1\u21924, spending the 3 stat points ... total distributed points = (7-4)+(7-4)+(4-1)=3+3+3=9, inconsistent with \"3 points\" label \u2014 likely +1 stat point grants +3 to the underlying stat ... treat exact point-to-stat ratio as INFERRED, needs frame-by-frame combat-panel replay to confirm'.",
+  "text": "A third, level-2 frame-backed reading independently confirms the virgin base stats including the ATK/DEF/SPD = 1 the unit added, and a fourth observation (A-02) had already inferred the +3-per-point ratio the payload now proves.",
+  "verdict": "HELD"
+ },
+ {
   "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2042, :2043, :2049 vs reference/decompiled/shs3_android/scripts/StatsManager.as:1619, :1625, :336",
   "citelint": {
@@ -727,54 +772,6 @@
   "overturns_ledger": false,
   "quote": "case 0:\\n   this.danfield.text = \"\";\\n   break;\\ncase 1:\\n   this.danfield.text = LangManager.getString(456);      // 456 = '(second-dan kanji)'",
   "text": "STAT_DAN 0 renders an EMPTY dan field \u2014 string 455 (first-dan kanji) is never displayed by the client, so the kanji ladder actually shown runs 456..464 for STAT_DAN 1..9.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2316",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "rebirth/dan1-has-no-kanji-title",
-  "lane_impact": "rebirth-elements + ui-hud: a recreation that prints \u521d\u6bb5 at Dan 1 renders something the OG never renders. Ten ranks, nine kanji labels (456 \u5f10\u6bb5 \u2026 464 \u5341\u6bb5), blank at rank 1. The shogo bands are separately correct: 465 Renshi at STAT_DAN 3-5, 466 Kyoshi at 6-7, 467 Hanshi at 8-9 and default.",
-  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
-  "overturns_ledger": false,
-  "quote": "case 0:\n   this.danfield.text = \"\";\n   break;\ncase 1:\n   this.danfield.text = LangManager.getString(456);   // 456 = '(\u5f10\u6bb5)' = 2nd dan",
-  "text": "Dan 1 displays NO kanji title \u2014 string 455 (\u521d\u6bb5) is never shown \u2014 so the live map is STAT_DAN n \u2192 string 455+n for n\u22651 only.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2275-2277 and desktop twin reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3063-3065",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "rebirth/dan1-renders-blank",
-  "lane_impact": "rebirth-elements + ui-hud: corrects the surveyor's claim rebirth/dan-ladder-titles. The display mapping is STAT_DAN n \u2192 string 456+(n-1) for n>=1 and BLANK at n=0, not 455..464 across the board. A recreation copying the survey verbatim would render '(\u521d\u6bb5)' where the OG renders nothing \u2014 and every HUD frame in both longplays shows exactly that empty field, so this is frame-consistent too.",
-  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
-  "overturns_ledger": false,
-  "quote": "case 0:\\n   this.danfield.text = \"\";\\n   break;      // grep -rn \"getString(455)\" over BOTH decompiled trees returns zero hits",
-  "text": "String 455 '(\u521d\u6bb5)' is never displayed: at STAT_DAN 0 both builds set the Dan field to an empty string, so a Dan-1 character shows NO rank text at all.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2278 and PlayerPanel.as:384-386",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "rebirth/dan1-shows-no-kanji",
-  "lane_impact": "rebirth-elements + ui-hud: a recreation must leave the dan field blank at Dan 1 and start printing kanji at Dan 2 (\u5f10\u6bb5). Both display paths agree, and PlayerPanel.as additionally gives the romaji ladder the wiki garbled - nidan, sandan, yondan, godan, rokudan, nanadan, hachidan, kyudan, judan for STAT_DAN 1..9.",
-  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
-  "overturns_ledger": false,
-  "quote": "case 0:\\n   this.danfield.text = \"\";\\n   break;",
-  "text": "Dan 1 displays no kanji rank at all - string 455 (\u521d\u6bb5) ships in the table but is never rendered by either display path.",
   "verdict": "HELD"
  }
 ]

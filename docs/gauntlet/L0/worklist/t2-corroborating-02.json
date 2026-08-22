@@ -1,6 +1,51 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/Item.as:1564-1568 (getWeight) feeding Item.as:1582-1593 (getSellAmt); web divergence at reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:1974",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/sell-price-reads-stack-weight",
+  "lane_impact": "L4 (economy) \u2014 a port that evaluates the >=10 threshold on the XML row's <weight> mis-prices every stack. Also note the web build adds a weight-modifier term the Android build lacks, so the sell formula's INPUT is not cross-build identical even though its body is.",
+  "overturns_ledger": false,
+  "quote": "public function getWeight() : int { if(this.weight != -1) { return this.weight * this.getQuantity(); } ... }  /  web v0.717: return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7();",
+  "text": "getSellAmt's weight>=10 test reads stack weight, not row weight, because getWeight() multiplies by quantity \u2014 so ten weight-1 items in one stack each sell at x10 instead of x5.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/Item.as:1564-1579; reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:1958-1975",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/sell-weight-branch-is-stack-weight",
+  "lane_impact": "L4 (economy) - the sell formula is safe to copy but its input is not: ten weight-1 branches trip the >=10 *10 branch, and the web build's extra weight term means an Android-derived weight table may not reproduce web sell prices. Marked PARTIAL because \u00a71t478s0\u00a7 is unresolved - I did not establish what it is.",
+  "overturns_ledger": false,
+  "quote": "android: public function getWeight() : int { if(this.weight != -1) { return this.weight * this.getQuantity(); } ... return this.weight; }   /   web v0.717: if(this.weight != -1) { return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7(); } ... return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7();",
+  "text": "The sell-price weight branch tests STACK weight, not unit weight, and the getWeight() it tests differs between the two builds - the web adds an extra per-item weight term the Android build lacks.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android/scripts/Item.as:1564-1568; reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:1958-1974; sole call site ShopUI.as:401",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "items-equipment/sell-weight-is-stack-weight-and-builds-diverge",
+  "lane_impact": "L4 (economy) \u2014 the sell formula itself is identical across builds, but its input is not: implementing 'weight >= 10' as per-item weight puts a stack of ten weight-1 items on the wrong branch (5c/unit instead of 10c/unit). This is the first concrete instance of the S0-3 Android/web parity caveat biting on a combat-adjacent number, and it should be labelled per-build. ShopUI.as:401 being the only call site is also what proves there is no shop-side level multiplier.",
+  "overturns_ledger": false,
+  "quote": "Android: public function getWeight() : int { if(this.weight != -1) { return this.weight * this.getQuantity(); } ... return this.weight; }  /  Web v0.717: public function \u00a71t545s0\u00a7() : int { if(this.weight != -1) { return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7(); } ... return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7(); }  /  ShopUI.as:401 slot.setCost(slot.getItem().getSellAmt(),0);",
+  "text": "The weight>=10 branch of the sell formula reads STACK weight (base x quantity), and the web v0.717 build adds a per-item weight-modifier term that the Android v0.682 build does not have.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_android/scripts/Item.as:1564-1571 and :1582-1593",
   "citelint": {
    "notes": [],
@@ -699,55 +744,6 @@
   "overturns_ledger": false,
   "quote": "`import flash.net.URLLoader; import flash.net.URLRequest;` in the class that owns `public static function getString(param1:int, param2:Array = null) : String` at :122, with setLanguage printing 'Loading language data...' before the fetch",
   "text": "No v0.717 string table exists on disk because the web LangManager streams language data from the dead server at runtime -- the structural reason page 7 is unrecoverable and why every Android-sourced string in this lane must stay labelled.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:1023-1028 vs reference/decompiled/shs3_android/scripts/StatsManager.as:705-710",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "meta-social/web-new-player-starts-with-3-gold",
-  "lane_impact": "L0 meta-social / economy \u2014 the starting purse for a 1:1 v0.717 recreation is 100 coins + 3 Gold + 30/30 AP + 20/20 Duel Tokens.",
-  "overturns_ledger": false,
-  "quote": "web `:1023 \u00a71t7357s0\u00a7(\u00a71t9412s0\u00a7,100); :1024 \u00a71t7357s0\u00a7(\u00a71t9413s0\u00a7,3); :1025 \u00a71t7357s0\u00a7(\u00a71t9414s0\u00a7,30); :1026 \u00a71t7357s0\u00a7(\u00a71t9415s0\u00a7,30); :1027 \u00a71t7357s0\u00a7(\u00a71t9416s0\u00a7,20); :1028 \u00a71t7357s0\u00a7(\u00a71t9417s0\u00a7,20);` \u2014 \u00a71t9412s0\u00a7=11 coins, \u00a71t9413s0\u00a7=12 heavenly gold. Android: `setPlayerStats(STAT_GOLD,100); setPlayerStats(STAT_HGOLD,0);`",
-  "text": "A new character in the WEB v0.717 build starts with 3 Heavenly Gold; the Android build starts at 0.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:36 vs reference/decompiled/shs3_android/scripts/StatsManager.as:30",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "meta-social/web-payload-decompile-is-the-authority",
-  "lane_impact": "ALL LANES (L0-L11) \u2014 any gauntlet claim sourced from shs3_android/ must be re-read in shs3_payload/ before it enters src/config/. Stage-0b's S0-3 caveat was correct and was not applied.",
-  "overturns_ledger": false,
-  "quote": "web `public static var \u00a71t9323s0\u00a7:Number = 0.717;` vs android `public static var clientVersion:Number = 0.682;`. Divergences measured: rebirth Gold 25/100 vs 5/20; MAXDUELTOKENS 40 (:200) vs 30; daily base roll `37 + getLevel()` (\u00a71t401s0\u00a7.as:1218) vs 36; daily 10-day bonus 8 (:1588) vs 6; barricade modifier gated on `owner != playerside` (\u00a71t7785s0\u00a7.as:2123) vs ungated; starting premium Gold 3 (:1024) vs 0.",
-  "text": "The whole lane was surveyed off the Android v0.682 decompile while a full v0.717 decompile of the target build sits in the same repo \u2014 652 files under reference/decompiled/shs3_payload/ \u2014 and five of the lane's numbers change when you read it.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/ \u2014 1,079 .as files; aliases \u00a71t1523s0\u00a7.as = StatsManager, \u00a71t7785s0\u00a7.as = WarHexUI, \u00a71t7790s0\u00a7.as = WarHexUIBuildMenu, \u00a71t401s0\u00a7.as = InteractUI, \u00a71t7924s0\u00a7.as = WarRules, \u00a71t5865s0\u00a7.as = InteractUI_chikako, \u00a71t1521s0\u00a7.as = LangManager",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "meta-social/web-payload-decompile-is-the-reference",
-  "lane_impact": "L0 meta-social and every other lane that sourced from shs3_android/ \u2014 the gauntlet's standing Android caveat is load-bearing, not bookkeeping: five numbers in this lane alone change between the two builds.",
-  "overturns_ledger": false,
-  "quote": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:222 `internal static const \u00a71t8755s0\u00a7:int = 9;` :228 `\u00a71t9413s0\u00a7:int = 12;` :254 `\u00a71t9426s0\u00a7:int = 25;` \u2014 the same stat-id numbering as Android's STAT_XP 9 / STAT_HGOLD 12 / STAT_DAN 25, which is what makes the obfuscated web classes decodable line-for-line.",
-  "text": "The WEB v0.717 build is fully decompiled at reference/decompiled/shs3_payload/scripts/ (1,079 .as files, name-obfuscated but with every numeric literal intact) \u2014 a larger bundle than the Android decompile (970 files) and the build the two longplays actually show, so every Android-sourced number must be cross-checked there before it can be called v0.717 fidelity.",
   "verdict": "HELD"
  }
 ]

@@ -1,0 +1,136 @@
+{
+  "packet_size": 7,
+  "judged_count": 7,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "rebirth/reach-dan-10-is-a-shipped-achievement-string",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "material",
+      "own_cite": "docs/gauntlet/L0/index/strings.json[\"8121\"],[\"8122\"],[\"8123\"],[\"8124\"] + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2644-2659 (file is 6236 lines) + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:228,:254,:2865",
+      "reason": "citelint said QUOTE_UNVERIFIED only because the quote is an ID lookup, not literal file text. I opened strings.json myself: [\"8121\"]='Reach Dan 2.', [\"8122\"]='Reach Dan 3.', [\"8123\"]='Reach Dan 6.', [\"8124\"]='Reach Dan 10.' - verbatim, all four. The AS cite is exact too: :2644 'if(§1t7356s0§(§1t9426s0§) == 8)', :2646 '§1t9713s0§(§1t9413s0§,100);', :2647 announces getString(864,[...,\"10\"]), :2651 else grants 25, :2653 'if(§1t7356s0§(§1t9426s0§) < 9)'. I resolved the two opaque stat ids myself rather than take them on trust: :228 '§1t9413s0§:int = 12' and :2865 'currentHGold = §1t7356s0§(§1t9413s0§);' make 9413 the heavenly-gold stat; :254 '§1t9426s0§:int = 25' is the DAN stat, displayed as stat+1 at :2659. OVERTURN UPHELD, and harder than the claim states: RR:164-165 says 'film shows a flat +25 gold every rebirth, no 10th-rebirth tier'. The web v0.717 code has exactly that tier and pays exactly 100. MAX_DAN_RANK=10 and tenthGold=100 are CONTRACT, not INFERRED. Build note: the strings are android v0.682, but the web code carries the literal \"10\" and the literal 100 on its own, so the overturn does not depend on the android table."
+    },
+    {
+      "claim_id": "skills-meters/stance-mastery-ceiling-is-10-not-9",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262 and :3265 (file is 5162 lines) + reference/extracted/skilldata.xml skill <id>1000</id> block + docs/gauntlet/L0/index/strings.json[\"8131\"]",
+      "reason": "Cite resolves verbatim. :3262 is exactly '_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);' and :3265 exactly '_loc2_ = _loc1_ * (1 + 0.2 * this.§1t4422s0§ * 0.1);'. I verified the variable identities instead of assuming them: :3221-3241 branch on this.stance and pair §1t12220s0§ with §1t4421s0§, §1t12221s0§ with §1t4422s0§, §1t12222s0§ with §1t4423s0§, so 4421/4422/4423 are the light/balanced/heavy masteries. Arithmetic checks: 0.5+0.04m gives 0.86 at m=9 and exactly 0.90 at m=10; 1+0.02m gives 1.18 at m=9 and exactly 1.20 at m=10. strings.json[\"8131\"]='Light Stance Mastery Level 10.' verbatim. I added a third artifact the claim did not use: skilldata.xml gives skills 1000/1001/1002 exactly ten <level> rows each, max <value>10 - the ceiling is 10 by data, not only by achievement copy. OVERTURN UPHELD: RR:155's 'MASTERY-9 CEILING' is wrong on the number."
+    },
+    {
+      "claim_id": "ui-hud/cannot-change-stance-is-the-reload-meter-low-end-readout",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "fatal",
+      "own_cite": "reference/frames/session11/crit-focus/t1003.000.png and reference/frames/session11/crit-focus/t1082.100.png - crop (0,820)-(660,1080) of the 1920x1080 frame, upscaled 3x LANCZOS + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111,:326-358 (file is 1344 lines) + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3048-3051,:3058-3081",
+      "reason": "Every line of the cite resolves verbatim - :110 getString(175), :111 the '#BBBBBB' getString(960) label, :328 '(param1 - 48) / (param2 - 48)', :336-342 the ratio==0 branch, :343-346 the hide branch, :347-358 the crit branch with Snd_criticalDamage. I then closed the one gap the claim had to infer, WITH A FRAME. In t1003.000.png the combat HUD's THIRD bar is empty and the words 'CANNOT CHANGE STANCE' sit centred on that empty track in pale grey, with the yellow '150% DAMAGE' on the line BELOW it. In t1082.100.png the same third bar is roughly 28% filled and there is NO label on it at all, only '150% DAMAGE'. That is the code's ratio==0 branch and its 0<ratio<1 hide branch, photographed. getString(960) = 'CANNOT CHANGE STANCE' is now resolved by artifact, not inferred. I also confirmed the field's owner: §1t113s0§.as:117 sets a text field to getString(45)='Hit Combo', so §1t113s0§ is the battle HUD, and §1t99s0§.as:256,:1208,:3169,:3325 all call §1t5205s0§(this.§1t4414s0§,this.§1t4415s0§), so the bar is the reload meter against its max. OVERTURN UPHELD and then some."
+    },
+    {
+      "claim_id": "ui-hud/nameplate-level-suffix-is-gated-on-level-greater-than-zero-web-only",
+      "refuted": false,
+      "overturn_upheld": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t122s0§.as:92-99,:802-809,:915-921,:1416-1422,:1763-1766 (file is 1800 lines) + reference/decompiled/shs3_android/scripts/EnemyPlayer.as:84,:776,:881 (1647 lines) + reference/decompiled/shs3_payload/scripts/§1t8638s0§.as:79-86 (273 lines) + reference/decompiled/shs3_android/scripts/Obj_NPCAggro.as:74-81 (265 lines)",
+      "reason": "The evidence is impeccable - the best-cited claim in the packet. All four web if/else sites land on the exact lines named and the headline quote at :92-99 is verbatim to the character. Android EnemyPlayer.as:84, :776 and :881 are bare setDisplayName calls with no else, exactly as claimed. §1t8638s0§.as:79-86 and Obj_NPCAggro.as:74-81 both carry the lvl==0 split with namecolor 10027008 (0x990000, the red plate) in BOTH builds. And :1763-1766 really is a spectator predicate ('return this.spectator == ...'), not a level predicate - the claim was right to say so. I still mark the OVERTURN NOT UPHELD. RR:219 says 'nameplate (N)=level'. That is an identity claim and it is TRUE: the parenthetical N is the level. The finding adds a gate to it; it does not falsify it. This is an enrichment of RR:219, not an overturn, and it should enter the ledger as the refined rule `suffix = level > 0 && !spectator ? \" (\" + level + \")\" : \"\"` without RR:219 being struck."
+    },
+    {
+      "claim_id": "ui-hud/the-cannot-change-stance-label-is-the-focus-gate-readout",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "fatal",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3058-3081 and :3048-3051 (5162 lines) + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:468-479 (1344 lines) + reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:607 (684 lines) + reference/frames/session11/crit-focus/t1003.000.png (crop (0,820)-(660,1080), 3x)",
+      "reason": "An honest PARTIAL that earns its hedge. The claim declares its own gap - 'string 960 ... is a web-only string I cannot resolve to text' - and does not pretend otherwise, which is the correct STILL_UNHELD posture on that sub-fact. Its cites resolve exactly (:328, :111, :336-342 all verbatim). I upgrade it twice from artifacts I opened. First, the frame resolves string 960: t1003.000.png shows grey 'CANNOT CHANGE STANCE' on the empty third bar, so the PARTIAL closes. Second, the hard-lock sentence falls on a stronger artifact than either claim used: §1t99s0§.as:3058-3081 is §1t4472s0§, an in-combat stance CYCLER that returns early iff reload < 48 and otherwise steps light->balanced->heavy->light, and it is called from the battle HUD's own handler at §1t113s0§.as:468-479 (Snd_smallClick on success, Snd_error on refusal) and from SPACE at §1t1541s0§.as:607. In-combat stance switching is live code in web v0.717. RR:158 is dead."
+    },
+    {
+      "claim_id": "world-exploration/farm-yield-and-whiff-are-on-disk-too",
+      "refuted": false,
+      "overturn_upheld": false,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI_crops.as:55,:160-169,:457-479,:589,:607,:609-610,:611-646 (file is 651 lines) + reference/extracted/skilldata.xml:755 + docs/gauntlet/L0/index/resolved_names.json skilldata.xml.resolved[\"1020\"]",
+      "reason": "Cite is exact on every line. :607 is verbatim the whiff gate, :609-610 verbatim the patchlevel/dice roll, :613 verbatim addLootItemBasic(2115,1), :55 'internal var gracePeriod:int = 900;', and case 4 at :160-169 does indeed have only PLANTED/READYFORHARVEST with no ROTTED branch, unlike the case above it. skilldata.xml:755 is '<id>1020</id>' and resolved_names gives it displayname 'Farming', desc 'Train to improve your abilities as a farmer.' - so 1/(10-farmingLevel) is right. I checked the one thing that could have made the whole yield ladder dead code and the claim did not mention: :589 declares 'var dice:int = 0;', so 'dice = Math.random() * patchlevel' truncates to an integer in [0, patchlevel-1] and the 0..5 ladder is live. :457-479 confirms getPatchLevel is a six-rank ladder at 10/20/30/40/50 harvests. OVERTURN NOT UPHELD, on scope only: RR:225 blocker (2) reads 'gather/mine/farm yield + whiff + respawn tables'. This claim closes the FARM third of it outright (yield, whiff and timers). The gather and mine thirds rest on sibling findings that were not in my packet and that I therefore cannot verify, so the blocker sentence as written does not yet fall on this claim's own evidence. The lane_impact overreaches; the finding itself does not."
+    },
+    {
+      "claim_id": "world/war-map-renders-at-10px-per-territory",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_android/scripts/WarSelectUI.as:15,:17,:19,:153,:233-234,:253-254 (file is 971 lines) + reference/extracted/bindata/92_1t4648s0.bin (md5 13068dfa1a5cc5628720a25782f93fed, GIF 63x72, colour census 735 white / 3801 black = 4536 px) + reference/decompiled/shs3_payload/scripts/§1t7934s0§.as:17,:19,:299-300 (1287 lines)",
+      "reason": "Everything checkable checks out. md5 of 92_1t4648s0.bin is 13068dfa1a5cc5628720a25782f93fed exactly as quoted; PIL reports GIF, size (63,72), and the RGB census is exactly 735 white against 3801 black. WarSelectUI.as:15/:17/:19 are WARMARKERSHIFTX=8, TERRSHIFTX=21, TERRSHIFTY=51, and :233-234 / :253-254 are verbatim. I closed two things the claim left open. (1) The GIF really is the war board's own bitmap, not a lookalike: WarSelectUI.as:153 is 'this.mapBitmapData = QuestEngine.getMapBitmapData();' and Mobile_MapBitmapData.as:5 embeds 110_Mobile_MapBitmapData.bin, whose md5 is the SAME 13068dfa1a5cc5628720a25782f93fed. (2) The build-parity hole is closed on the WEB side: the real web twin carries TERRSHIFTX=21 at §1t7934s0§.as:17, TERRSHIFTY=51 at :19 and the identical pitch at :299-300, '(_loc8_ + §1t12536s0§) * 10 + 4.5' / '(_loc9_ + §1t12537s0§) * 10 + 8.8'. OVERTURN UPHELD: RR:225 blocker (1) prescribes 'mine Fandom Category:Territories via API; trace the map image' and calls the world 'not a WxH grid'. It is a 63x72 grid with 735 land cells, shipped in the payload, at a 10 px pitch, in both builds. One minor error, not in the cite field: the claim's build note calls the web twin §1t1524s0§ - that file has none of these constants; §1t7934s0§ does. The substantive half of that note ('the shift constants are identical') is correct."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "ui-hud/string-960-is-cannot-change-stance-frame-resolved",
+      "text": "The web-only string 960, unresolvable from the android v0.682 table, is resolved by film. Crop (0,820)-(660,1080) of reference/frames/session11/crit-focus/t1003.000.png upscaled 3x shows the combat HUD as portrait + THREE stacked bars: green HP 14/20, blue Chi 31/31, and a third bar whose track is EMPTY, with the words CANNOT CHANGE STANCE centred on that empty track in pale grey. The same crop of t1082.100.png shows HP 11/20, Chi 31/47, and the third bar about 28% filled with NO text on it. That is exactly §1t113s0§.as:336-342 (show the #BBBBBB getString(960) label when (reload-48)/(max-48) == 0) and :343-346 (hide it while 0 < ratio < 1). getString(960) = 'CANNOT CHANGE STANCE'. The label is a meter readout, not a battle-state lock.",
+      "artifact_class": "A1",
+      "cite": "reference/frames/session11/crit-focus/t1003.000.png + reference/frames/session11/crit-focus/t1082.100.png, crop (0,820)-(660,1080) of 1920x1080, 3x LANCZOS; read against reference/decompiled/shs3_payload/scripts/§1t113s0§.as:111,:328,:336-346",
+      "verdict": "HELD",
+      "build": "web v0.717 code; frames are from the reference longplays",
+      "quote": "t1003.000.png: third bar track empty, pale-grey 'CANNOT CHANGE STANCE' centred on it, yellow '150% DAMAGE' on the line below. t1082.100.png: third bar ~28% filled, no text on it.",
+      "overturns_ledger": true,
+      "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\")",
+      "lane_impact": "L8 ui-hud + L5 combat. Ship the label as a third bar under HP/Chi: empty track -> grey 'CANNOT CHANGE STANCE'; partially filled -> no label; full -> black 'Critical Hit' + Snd_criticalDamage."
+    },
+    {
+      "id": "ui-hud/the-video-study-notes-misread-the-cannot-change-stance-slot",
+      "text": "THE FRAME WINS, AND IT OVERTURNS A MEASUREMENT DOC. Three video-study segment notes describe this HUD element wrongly and the ledger inherited the error. docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7 calls the label 'Yellow text'; :45 and :71 read the slot as 'a green X/20 bar (stance-lock resource, label CANNOT CHANGE STANCE)' fluctuating 4/20 -> 2/20 -> 3/20; docs/research/video-study/segments/A-16-beach-fights-named-enemy-jinbei-archer.md:23 calls it a 'blue bar ... 20/20'. The frame shows otherwise: in t1003.000.png the CANNOT CHANGE STANCE label is PALE GREY, distinctly not the saturated yellow of the '150% DAMAGE' line directly beneath it, and its bar carries NO numerals at all - the numeric bars are the green HP (14/20) and blue Chi (31/31) ABOVE it. The notes conflated the third bar with the HP bar and the label colour with the buff banner's. The code agrees with the frame: §1t113s0§.as:111 builds the label at '#BBBBBB', and §1t5205s0§ sets only bar.scaleX with no text, while the numeric bars are set by §1t5202s0§ at :319-324.",
+      "artifact_class": "A1",
+      "cite": "reference/frames/session11/crit-focus/t1003.000.png, crop (0,820)-(660,1080), 3x LANCZOS; against docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7,:45,:71 and reference/decompiled/shs3_payload/scripts/§1t113s0§.as:111,:319-324,:326-346",
+      "verdict": "HELD",
+      "build": "web v0.717",
+      "quote": "B-11:71 'the small green \"X/20\" bar (stance-lock resource, label \"CANNOT CHANGE STANCE\")' - the frame shows the label sits on a SEPARATE, numeral-free third bar, grey, below the green 14/20 HP bar and the blue 31/31 Chi bar.",
+      "overturns_ledger": true,
+      "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\")",
+      "lane_impact": "L8 ui-hud. Do not port the 'green X/20 stance-lock resource' from the segment notes into config - it does not exist. There are three bars: HP (numeric), Chi (numeric), crit/reload (no numerals)."
+    },
+    {
+      "id": "combat-core/in-combat-stance-cycling-is-live-code-in-v0717",
+      "text": "RR:158's hard-lock sentence is not merely reinterpretable, it is contradicted by executable code. §1t99s0§.as:3058-3081 is a stance CYCLER: it returns early iff reload < 48, then steps -1 -> light, light -> balanced, balanced -> heavy, heavy -> light and pushes the new stance to §1t251s0§. Its gate §1t4470s0§ at :3048-3051 is 'return this.§1t4469s0§() && this.§1t4414s0§ >= 48;'. It has exactly two callers, both in-combat: §1t113s0§.as:468-479, the battle HUD's own button handler (Snd_smallClick on success, Snd_error on refusal), and §1t1541s0§.as:607, the SPACE key. §1t113s0§ is the battle HUD - :117 sets a field to getString(45) = 'Hit Combo'. So the switch is not removed 2014 behaviour; it shipped in v0.717, Focus-gated at the same threshold 48 that the meter's low-end label reports on.",
+      "artifact_class": "A2",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3048-3051,:3058-3081 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:117,:468-479 + reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:607",
+      "verdict": "HELD",
+      "build": "web v0.717",
+      "quote": "§1t99s0§.as:3050 'return this.§1t4469s0§() && this.§1t4414s0§ >= 48;' · :3060 'if(this.§1t4414s0§ < 48)' then 'return;' · §1t113s0§.as:473-474 '§1t1523s0§.§1t9586s0§().§1t4472s0§(); §1t1523s0§.stance = §1t1523s0§.§1t9586s0§().§1t4473s0§();'",
+      "overturns_ledger": true,
+      "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\"). The recreation's Focus-gated in-combat switch models **removed 2014 behavior**.",
+      "lane_impact": "L5 combat-core. The recreation's Focus-gated in-combat switch is NOT a divergence - it is the original. Strike RR:158 and the matching rows at docs/research/SHSD_MASTER_REFERENCE.md:388 and :2099, both of which are labelled [CONTRACT] on a false premise. Implement: cycle light->balanced->heavy->light, gated reload >= 48, Snd_error on refusal."
+    },
+    {
+      "id": "world/the-war-map-mask-is-byte-identical-across-web-and-android",
+      "text": "A genuine, non-circular web/android parity datum - rare in this corpus, and it survives correction C2. reference/extracted/bindata/92_1t4648s0.bin (a WEB payload bindata file) and reference/extracted/android/110_Mobile_MapBitmapData.bin (the ANDROID blob) have the identical md5 13068dfa1a5cc5628720a25782f93fed. Both are a GIF89a 63x72 with exactly 735 white and 3801 black pixels. C2's circularity warning does not apply here, because 92 is a web-side artifact and 110 is android-side - this is not a file diffed against itself. Android WarSelectUI.as:153 wires it to the war board via QuestEngine.getMapBitmapData(), and Mobile_MapBitmapData.as:5 embeds 110 by name, so the file's role is named by the game, not inferred.",
+      "artifact_class": "A2",
+      "cite": "reference/extracted/bindata/92_1t4648s0.bin + reference/extracted/android/110_Mobile_MapBitmapData.bin (both md5 13068dfa1a5cc5628720a25782f93fed) + reference/decompiled/shs3_android/scripts/WarSelectUI.as:153 + reference/decompiled/shs3_android/scripts/Mobile_MapBitmapData.as:5",
+      "verdict": "HELD",
+      "build": "both",
+      "quote": "Mobile_MapBitmapData.as:5 '[Embed(source=\"/_assets/110_Mobile_MapBitmapData.bin\", mimeType=\"application/octet-stream\")]' · WarSelectUI.as:153 'this.mapBitmapData = QuestEngine.getMapBitmapData();'",
+      "overturns_ledger": true,
+      "ledger_text": "(1) **world bounds + geography** (sparse Japan-outline, not a W×H grid) - *mine Fandom Category:Territories via API; trace the map image.*",
+      "lane_impact": "L10 world-exploration. The world geography is a shipped 63x72 bitmap with 735 land cells, identical in both builds. No Fandom mining and no tracing. Also: bindata file 92 now has a role, closing part of S0-1's '92 a GIF'."
+    },
+    {
+      "id": "skills-meters/heavy-stance-damage-is-flat-and-only-heavy-reach-scales",
+      "text": "RR:155 packs two different formulas into one sentence and gets the pairing backwards. In web v0.717 DAMAGE (§1t99s0§.as:3255-3271) light scales with light mastery (0.5 -> 0.9), balanced with balanced mastery (1.0 -> 1.2), and heavy is FLAT x1.4 with no mastery term at all - :3267-3270 fall through three cases to '_loc2_ = _loc1_ * 1.4;'. REACH (§1t99s0§.as:3091-3121) is the mirror image: light is FLAT x1.4 of base, balanced scales with balanced mastery (1.0 -> 1.2), and heavy scales with heavy mastery (0.5 -> 0.9) AND is clamped to a floor of 100 at :3117-3119. So exactly one of the three stances is mastery-flat in each table, and it is a different stance in each. The ledger's '(Heavy is fixed)' is true for damage only, and its 'Heavy's reach also scales x0.5 -> x0.9' is right but is the ONLY reach term it names.",
+      "artifact_class": "A2",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3091-3121 and :3255-3271",
+      "verdict": "HELD",
+      "build": "web v0.717",
+      "quote": "§1t99s0§.as:3270 '_loc2_ = _loc1_ * 1.4;' (heavy damage, no mastery term) · :3094 'this.§1t4417s0§ = this.§1t4420s0§ * 1.4;' (light reach, no mastery term) · :3116-3119 'this.§1t4417s0§ = this.§1t4420s0§ * (0.5 + 0.4 * this.§1t4423s0§ * 0.1); if(this.§1t4417s0§ < 100) { this.§1t4417s0§ = 100; }'",
+      "overturns_ledger": true,
+      "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.** A level-1 Shugyosha does Light ×0.5 / Balanced ×1.0 / Heavy ×1.4 (Heavy is fixed); Heavy's *reach* also scales ×0.5→×0.9.",
+      "lane_impact": "L2 skills-meters + L5 combat-core. Model two separate 3-entry tables with a mastery term on a DIFFERENT stance in each, plus a hard reach floor of 100 on heavy. The ledger's reach triple 300/200/100 is not reproducible from these multipliers at any single base."
+    },
+    {
+      "id": "strings/the-android-lang-table-skips-ids-881-999-entirely",
+      "text": "A false-negative trap of the same family as correction C1, for the string table this time. 'String N is absent from strings.json' does NOT imply 'N is a v0.717 addition'. Parsing the raw UTF-16LE XLIFF in reference/extracted/android/118_Mobile_Lang_EN.bin yields 2555 trans-unit ids, and in the range 850-1010 they run 850..865, 867..880, then jump straight to 1000. The whole block 881-999 is missing from the android v0.682 table - 119 consecutive ids, not one. So string 960's absence is a block gap, and any claim that infers 'web-only addition' from a single absent id in that range is resting on a hole, not on evidence. There are 20 such gaps in the table (largest: 1044->2000).",
+      "artifact_class": "A2",
+      "cite": "reference/extracted/android/118_Mobile_Lang_EN.bin (UTF-16LE XLIFF, 2555 trans-unit ids parsed) + docs/gauntlet/L0/index/strings.json (2533 entries, same gaps)",
+      "verdict": "HELD",
+      "build": "android v0.682",
+      "quote": "ids present in 850..1010: 850,851,...,865,867,868,...,880,1000,1001,...,1010 - nothing in 881..999. Gap list over the whole table: (211,222) (356,366) (664,666) (819,821) (865,867) (880,1000) (1044,2000) (2014,3000) (3018,4000) (4427,5000) (5001,5003) (5016,5018) (5021,5026) (5033,5035) (5122,6000) (6146,7000) (7002,7004) (7040,7042) (7095,8000) (8159,9001).",
+      "overturns_ledger": false,
+      "lane_impact": "Cross-lane evidence hygiene. Two claims in this packet inferred 'v0.717 addition' from id 960's absence. The inference happens to be harmless there (the frame resolved 960 directly), but as a rule it is unsound and should not be reused."
+    }
+  ]
+}

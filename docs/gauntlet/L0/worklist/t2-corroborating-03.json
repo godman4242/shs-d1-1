@@ -1,6 +1,55 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:1023-1028 vs reference/decompiled/shs3_android/scripts/StatsManager.as:705-710",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/web-new-player-starts-with-3-gold",
+  "lane_impact": "L0 meta-social / economy \u2014 the starting purse for a 1:1 v0.717 recreation is 100 coins + 3 Gold + 30/30 AP + 20/20 Duel Tokens.",
+  "overturns_ledger": false,
+  "quote": "web `:1023 \u00a71t7357s0\u00a7(\u00a71t9412s0\u00a7,100); :1024 \u00a71t7357s0\u00a7(\u00a71t9413s0\u00a7,3); :1025 \u00a71t7357s0\u00a7(\u00a71t9414s0\u00a7,30); :1026 \u00a71t7357s0\u00a7(\u00a71t9415s0\u00a7,30); :1027 \u00a71t7357s0\u00a7(\u00a71t9416s0\u00a7,20); :1028 \u00a71t7357s0\u00a7(\u00a71t9417s0\u00a7,20);` \u2014 \u00a71t9412s0\u00a7=11 coins, \u00a71t9413s0\u00a7=12 heavenly gold. Android: `setPlayerStats(STAT_GOLD,100); setPlayerStats(STAT_HGOLD,0);`",
+  "text": "A new character in the WEB v0.717 build starts with 3 Heavenly Gold; the Android build starts at 0.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:36 vs reference/decompiled/shs3_android/scripts/StatsManager.as:30",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "meta-social/web-payload-decompile-is-the-authority",
+  "lane_impact": "ALL LANES (L0-L11) \u2014 any gauntlet claim sourced from shs3_android/ must be re-read in shs3_payload/ before it enters src/config/. Stage-0b's S0-3 caveat was correct and was not applied.",
+  "overturns_ledger": false,
+  "quote": "web `public static var \u00a71t9323s0\u00a7:Number = 0.717;` vs android `public static var clientVersion:Number = 0.682;`. Divergences measured: rebirth Gold 25/100 vs 5/20; MAXDUELTOKENS 40 (:200) vs 30; daily base roll `37 + getLevel()` (\u00a71t401s0\u00a7.as:1218) vs 36; daily 10-day bonus 8 (:1588) vs 6; barricade modifier gated on `owner != playerside` (\u00a71t7785s0\u00a7.as:2123) vs ungated; starting premium Gold 3 (:1024) vs 0.",
+  "text": "The whole lane was surveyed off the Android v0.682 decompile while a full v0.717 decompile of the target build sits in the same repo \u2014 652 files under reference/decompiled/shs3_payload/ \u2014 and five of the lane's numbers change when you read it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_payload/scripts/ \u2014 1,079 .as files; aliases \u00a71t1523s0\u00a7.as = StatsManager, \u00a71t7785s0\u00a7.as = WarHexUI, \u00a71t7790s0\u00a7.as = WarHexUIBuildMenu, \u00a71t401s0\u00a7.as = InteractUI, \u00a71t7924s0\u00a7.as = WarRules, \u00a71t5865s0\u00a7.as = InteractUI_chikako, \u00a71t1521s0\u00a7.as = LangManager",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "meta-social/web-payload-decompile-is-the-reference",
+  "lane_impact": "L0 meta-social and every other lane that sourced from shs3_android/ \u2014 the gauntlet's standing Android caveat is load-bearing, not bookkeeping: five numbers in this lane alone change between the two builds.",
+  "overturns_ledger": false,
+  "quote": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:222 `internal static const \u00a71t8755s0\u00a7:int = 9;` :228 `\u00a71t9413s0\u00a7:int = 12;` :254 `\u00a71t9426s0\u00a7:int = 25;` \u2014 the same stat-id numbering as Android's STAT_XP 9 / STAT_HGOLD 12 / STAT_DAN 25, which is what makes the obfuscated web classes decodable line-for-line.",
+  "text": "The WEB v0.717 build is fully decompiled at reference/decompiled/shs3_payload/scripts/ (1,079 .as files, name-obfuscated but with every numeric literal intact) \u2014 a larger bundle than the Android decompile (970 files) and the build the two longplays actually show, so every Android-sourced number must be cross-checked there before it can be called v0.717 fidelity.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1521s0\u00a7.as:80-95 (plus a repo-wide find for shs3_*.xml returning nothing)",
   "citelint": {
    "notes": [],
@@ -723,51 +772,6 @@
   "overturns_ledger": false,
   "quote": "2132: `if(strArray[0] == \"/setlevel\")` 2134: `if(strArray.length == 2)` 2136: `StatsManager.setStat(9,StatsManager.expArray[int(strArray[1]) - 1] - 1);` 2137: `StatsManager.changeXP(1);` \u2014 sitting beside sibling cheats /giverandomlegendaryitem (:2115) and /changestat (:2142).",
   "text": "There is a fourteenth XP write site that the addLootXP enumeration misses by construction: OverworldHUD's /setlevel developer chat command writes STAT_XP directly and then nudges changeXP(1) to trigger the level-up path. It is a GM cheat, not a gameplay faucet, so it does not weaken the no-gather-XP negative \u2014 but any future exhaustive XP census must grep changeXP as well as addLootXP or it will miss it.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A4",
-  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md \u00a7c-2 (reach-per-stance table, method 'distance from the player's body to the far end of the drawn stroke, counting only strokes whose near end starts within 30 px', n=17 Balanced) combined with reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2346-2347",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/slash-length-settles-balanced-reach",
-  "lane_impact": "L1 combat-core blocker \u2460 : the cross-lane gift is no longer just a lead \u2014 it is frame-corroborated at the one stance/level where a measurement exists. STANCE_TABLE's Balanced entry should become 124 at SPD 1 and track 120 + 90\u00b7spd/(20+spd), not the wiki's 200. Corroborated by strings.json 6005 (Heavy: 'slash range is shorter'), matching measured Heavy 97\u2013103 < Balanced 116\u2013131. CARRY THIS CAVEAT: \u00a7S24-H's re-run REFUTED the older 775 px / '\u2248413 stage px' reading at COMBAT_MEASUREMENTS.md:221 ('No normal-anatomy stroke >280 px anywhere re-checked; the 775 refutation REPRODUCED') \u2014 reconcile against the \u00a7S24-H-corrected figures, never :221. Left PARTIAL because Light/Heavy multipliers and the stage-px unit domain are still unverified.",
-  "overturns_ledger": false,
-  "quote": "\u00a7c-2: '| **Balanced** | 116\u2013131 | **131** | 17 | 200 | \u274c **NOT CONFIRMED** \u2014 measured 131 |' and 'The Balanced gap cannot be resolved from this footage. The *only* Balanced combat in either video is the level-1 tutorial fight'. Payload \u00a71t1523s0\u00a7.as:2346-2347: 'var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' \u2192 at SPD 1, Dan 0: 120 + floor(90/21) = 124.",
-  "text": "The SPD slash-length formula reconciles with a frame measurement the combat lane declared unresolvable: at SPD 1 it returns 124 stage px, landing inside the frame-measured level-1 Balanced plateau of 116\u2013131 \u2014 so Balanced \u2248 \u00d71.0 base, and the wiki's Balanced 200 is refuted.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3450-3457",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/spent-points-audit-second-witness",
-  "lane_impact": "L4: raises the per-point table (HP+10/Chi+5/AP+5/ATK,DEF,SPD+3) and the start pools (10/10/30/1/1/1) from single-witness to triple-witness \u2014 the click handlers, this audit, and the frame budget arithmetic all agree, all within the WEB payload. Ready to land in config as CONTRACT.",
-  "overturns_ledger": false,
-  "quote": "_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9403s0\u00a7) - 10) / 10;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9406s0\u00a7) - 10) / 5;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9415s0\u00a7) - 30) / 5;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9408s0\u00a7) - 1) / 3;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9409s0\u00a7) - 1) / 3;\n_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9410s0\u00a7) - 1) / 3;\n_loc1_ += \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9419s0\u00a7);",
-  "text": "A second, structurally independent WEB witness for both the start pools and the per-point magnitudes: a spent-points audit whose divisors are the magnitudes and whose subtrahends are the start pools.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A4",
-  "cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md:203 \u00a7H-1 (tagged MEASURED, carries its own frame cite 'A t\u2248152 PLAYER screen, re-read at full resolution') and docs/research/video-study/segments/A-02-dojo-tutorial-3-stances-chi-punch-on-dum.md:25",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "progression/start-pools-third-frame",
-  "lane_impact": "L4: \u00a7H-1 is at level 2 with all 3 points UNSPENT, so its ATK 1 / DEF 1 / SPD 1 / Chi 10 / AP 30 ARE the unAssignStatPoints() literals \u2014 the unit's added start values are frame-confirmed, not payload-only. A-02:25's INFERRED flag on the point-to-stat ratio is now closed twice over (payload + my L3\u2192L4 delta). Four independent confirmations of +3 now exist: A-02, \u00a7H-1, the L3 absolute fit, and the L3\u2192L4 delta.",
-  "overturns_ledger": false,
-  "quote": "\u00a7H-1: 'Early player pools + stats (PLAYER screen, level 2) | HP green \u00b7 Chi 10/10 \u00b7 AP 30/30; ATK 1 \u00b7 DEF 1 (+2) \u00b7 SPD 1; weight 14/100; available stat points 3'. A-02:25: 'Observed progression: ATK 4\u21927, DEF 4+2\u21927+2 ..., SPD 1\u21924, spending the 3 stat points ... total distributed points = (7-4)+(7-4)+(4-1)=3+3+3=9, inconsistent with \"3 points\" label \u2014 likely +1 stat point grants +3 to the underlying stat ... treat exact point-to-stat ratio as INFERRED, needs frame-by-frame combat-panel replay to confirm'.",
-  "text": "A third, level-2 frame-backed reading independently confirms the virgin base stats including the ATK/DEF/SPD = 1 the unit added, and a fourth observation (A-02) had already inferred the +3-per-point ratio the payload now proves.",
   "verdict": "HELD"
  }
 ]

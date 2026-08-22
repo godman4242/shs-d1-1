@@ -1,6 +1,54 @@
 [
  {
   "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2316",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/dan1-has-no-kanji-title",
+  "lane_impact": "rebirth-elements + ui-hud: a recreation that prints \u521d\u6bb5 at Dan 1 renders something the OG never renders. Ten ranks, nine kanji labels (456 \u5f10\u6bb5 \u2026 464 \u5341\u6bb5), blank at rank 1. The shogo bands are separately correct: 465 Renshi at STAT_DAN 3-5, 466 Kyoshi at 6-7, 467 Hanshi at 8-9 and default.",
+  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
+  "overturns_ledger": false,
+  "quote": "case 0:\n   this.danfield.text = \"\";\n   break;\ncase 1:\n   this.danfield.text = LangManager.getString(456);   // 456 = '(\u5f10\u6bb5)' = 2nd dan",
+  "text": "Dan 1 displays NO kanji title \u2014 string 455 (\u521d\u6bb5) is never shown \u2014 so the live map is STAT_DAN n \u2192 string 455+n for n\u22651 only.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2275-2277 and desktop twin reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3063-3065",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/dan1-renders-blank",
+  "lane_impact": "rebirth-elements + ui-hud: corrects the surveyor's claim rebirth/dan-ladder-titles. The display mapping is STAT_DAN n \u2192 string 456+(n-1) for n>=1 and BLANK at n=0, not 455..464 across the board. A recreation copying the survey verbatim would render '(\u521d\u6bb5)' where the OG renders nothing \u2014 and every HUD frame in both longplays shows exactly that empty field, so this is frame-consistent too.",
+  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
+  "overturns_ledger": false,
+  "quote": "case 0:\\n   this.danfield.text = \"\";\\n   break;      // grep -rn \"getString(455)\" over BOTH decompiled trees returns zero hits",
+  "text": "String 455 '(\u521d\u6bb5)' is never displayed: at STAT_DAN 0 both builds set the Dan field to an empty string, so a Dan-1 character shows NO rank text at all.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2278 and PlayerPanel.as:384-386",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "rebirth/dan1-shows-no-kanji",
+  "lane_impact": "rebirth-elements + ui-hud: a recreation must leave the dan field blank at Dan 1 and start printing kanji at Dan 2 (\u5f10\u6bb5). Both display paths agree, and PlayerPanel.as additionally gives the romaji ladder the wiki garbled - nidan, sandan, yondan, godan, rokudan, nanadan, hachidan, kyudan, judan for STAT_DAN 1..9.",
+  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
+  "overturns_ledger": false,
+  "quote": "case 0:\\n   this.danfield.text = \"\";\\n   break;",
+  "text": "Dan 1 displays no kanji rank at all - string 455 (\u521d\u6bb5) ships in the table but is never rendered by either display path.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "cite": "reference/extracted/skilldata.xml, ids 1050-1075 parsed with displaynames resolved via docs/gauntlet/L0/index/strings.json",
   "citelint": {
    "notes": [],
@@ -273,6 +321,23 @@
   "overturns_ledger": false,
   "quote": "case \u00a71t12220s0\u00a7:   this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;\ncase \u00a71t12221s0\u00a7:   this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);\ncase \u00a71t12222s0\u00a7:   this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);\n                    if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }",
   "text": "The v0.717 desktop client's per-stance slash multipliers are on disk and differ from the android build: Light x1.4, Balanced x(1 + 0.2*mastery*0.1), Heavy x(0.5 + 0.4*mastery*0.1) floored at 100, Reversed x1.4, Dual x1.0 \u2014 and the *0.1 scaling means mastery is a 0-10 domain, giving Heavy reach exactly 0.5 -> 0.9.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "build": "web v0.717 vs android v0.682",
+  "cite": "reference/extracted/bindata/119_1t4646s0.bin vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s26c/survival-mode-id-sets-are-IDENTICAL-across-builds",
+  "lane_impact": "Cross-cutting: keeps the survival-mode overturn honest. The mode's ROSTER is shared; only 14 late-wave spawn pools diverge, and the web blob is the one to author from.",
+  "ledger_text": "n/a \u2014 corrects a packet claim, not a ledger sentence",
+  "overturns_ledger": false,
+  "quote": "my own parse: web ids == android ids == {400..429, 435..451, 453..456, 700..710}, 62 each; set difference empty in both directions; differing <enemy> row indices = 73,74,75,76,77,78,79,80,81,82,83,84,85,86",
+  "text": "Correction to NF-E/survival-mode-content-diverges-14-of-87-rows, which is otherwise HELD. Its sentence 'The unique-id sets are unequal in both directions' is FALSE. I extracted every <id> token from both blobs: web reference/extracted/bindata/119_1t4646s0.bin and android reference/extracted/android/109_WarHexUI_SurvivalModeData.bin each carry the SAME 62 distinct enemy ids (400-429, 435-451, 453-456, 700-710), web-only set empty and android-only set empty. Enemy 443 is present in the android file too \u2014 what the web build changed is the alternation POOL of 14 late-wave rows (73-86), not the roster. Also, the differing block runs rows 73-86 inclusive, not 73-84 as enumerated; the stated total of 14 is correct but rows 85-86 ('451|456|451|456|443', qty 6) were left out of the list. Strike the id-set sentence before this enters the ledger, or the rewrite will assert a roster difference that does not exist.",
   "verdict": "HELD"
  },
  {
@@ -721,70 +786,6 @@
   "overturns_ledger": false,
   "quote": "web  249:         this.\u00a71t4415s0\u00a7 = 8 * 24;\nweb  \u00a71t4904s0\u00a7.as:77:         \u00a71t4415s0\u00a7 = 8 * 24;\nandroid 239:         this.maxreload = 5 * 24;",
   "text": "The web v0.717 Focus/crit meter maximum is 192 frames (8 seconds), not the 120 frames (5s) the survey banked; 120 is the Android value.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as:108-114, diffed against reference/decompiled/shs3_android_payload/scripts/SkillManager.as and reference/extracted/skilldata.xml (measured this session)",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "skills-meters/web-only-skills-1074-1077",
-  "lane_impact": "L2: the survey's headline ('the system is essentially solved on paper: 75 skills') is 4 short, and those 4 have runtime behaviour but no data row and no name string. Also caps the byte-identity claim: skilldata.xml being byte-identical proves what IS in it is web-true, not that it is exhaustive.",
-  "overturns_ledger": false,
-  "quote": "108:      public static var \u00a71t10173s0\u00a7:int = 1074;\n110:      public static var \u00a71t10174s0\u00a7:int = 1075;\n112:      public static var \u00a71t10175s0\u00a7:int = 1076;\n114:      public static var \u00a71t10176s0\u00a7:int = 1077;\n--- measured ---\nweb SkillManager ids: 54   android: 50\nweb-only vs android: [1074, 1075, 1076, 1077]\nweb ids NOT in skilldata.xml: [1074, 1075, 1076, 1077]",
-  "text": "skilldata.xml is NOT a complete inventory of v0.717: the web SkillManager declares four skill ids (1074, 1075, 1076, 1077) that exist in neither skilldata.xml nor the Android build.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as:503-514 (web v0.717) + reference/decompiled/shs3_android/scripts/SkillManager.as:468, :474, :479",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "skills/traps-cost-one-kunai-ammo",
-  "lane_impact": "skills-meters + economy: the kunai-ammo curve is flat at 1 for every kunai and every trap; only Windmill Shuriken (4) and skill 1077 (8) cost more. Two claims in this packet got this backwards and nobody cites this block.",
-  "overturns_ledger": false,
-  "quote": "\u00a71t120s0\u00a7.as:503-507  case \u00a71t10134s0\u00a7: case \u00a71t10135s0\u00a7: case \u00a71t10136s0\u00a7: case \u00a71t10137s0\u00a7: case \u00a71t10138s0\u00a7:   (= skills 1024, 1025, 1026, 1027, 1028)\n\u00a71t120s0\u00a7.as:510   if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(2501) == 0)\n\u00a71t120s0\u00a7.as:514   \u00a71t1523s0\u00a7.\u00a71t9713s0\u00a7(2501,-1);\nSkillManager.as:474   if(StatsManager.getStat(2501) == 0)\nSkillManager.as:479   StatsManager.changeStat(2501,-1);",
-  "text": "Lay Trap and all four elemental Element Traps deduct exactly ONE unit of kunai ammo (stat 2501), not four. The four-kunai cost belongs to Windmill Shuriken (skill 1051) alone, which says so in its own shipped description.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "web v0.717",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1540s0\u00a7.as:269-314",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "stage/web-payload-has-its-own-800-480-690-resize-handler",
-  "lane_impact": "L8 ui-hud + every lane holding frame-derived coordinates: RR:117 stands, and it stands for BOTH builds. The friend-bar mode is real but conditional (viewport narrower than 800/690 = 1.159:1), which neither longplay is. Cite this file, not the Android GameEngine, for any web-build layout claim.",
-  "ledger_text": "- **Aspect-ratio truth** \u2014 native canvas is **800\u00d7480 (5:3)**, so HUD x-fractions measured off 16:9 video may be pillarbox-wrong.",
-  "overturns_ledger": false,
-  "quote": "269:      internal static function \u00a71t10021s0\u00a7(param1:Event) : void\n271:         var _loc2_:int = 800;\n272:         var _loc3_:int = 480;\n273:         var _loc4_:int = 690;\n277:         if(_loc7_ <= _loc6_)\n280:            _loc3_ = _loc4_;\n281:            \u00a71t1523s0\u00a7.\u00a71t9362s0\u00a7 = true;\n295:         if(_loc5_ >= _loc7_)\n297:            _loc8_ = \u00a71t9973s0\u00a7.stageWidth / _loc2_;\n304:            _loc8_ = \u00a71t9973s0\u00a7.stageHeight / _loc3_;",
-  "text": "The WEB v0.717 payload carries its OWN resize handler with the identical three constants as the Android build \u2014 originalWidth 800, originalHeight 480, originalHeightWithBar 690. Every aspect-ratio claim in this packet cited the ANDROID GameEngine and left a build-parity hole; the hole is closed, and the answer is that the two builds share the layout model exactly. This is also what refutes 'that is the ANDROID figure': 800x480 is the web build's own base canvas.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "both",
-  "cite": "docs/gauntlet/L0/index/strings.json (1,893 numeric ids, max id 9010, zero entries containing 'tournament') vs reference/decompiled/shs3_payload/scripts/\u00a71t7144s0\u00a7.as:80, :82, :84 and \u00a71t113s0\u00a7.as:111",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "stage0/android-lang-table-cannot-serve-web-ui",
-  "lane_impact": "All lanes \u2014 narrows S0-3's caveat from a vague warning to a testable rule: an id >= 9011 (and id 960) is unresolvable from the held table, so the string is web-only content.",
-  "overturns_ledger": false,
-  "quote": "\u00a71t7144s0\u00a7.as:82  this.notournamenttext.text = \u00a71t1521s0\u00a7.getString(11018);   ///   \u00a71t113s0\u00a7.as:111  this.\u00a71t5204s0\u00a7 = \"<font color='#BBBBBB'>\" + \u00a71t1521s0\u00a7.getString(960) + \"</font>\";",
-  "text": "The parsed Android string table cannot resolve the web build's UI copy at all: it tops out at string id 9010, while the web payload calls getString(960), getString(11005), getString(11006) and getString(11018). Any WEB UI-copy claim resting on 118_Mobile_Lang_EN.bin has a hard, measurable hole \u2014 this is the concrete shape of the S0 build-parity caveat.",
   "verdict": "HELD"
  }
 ]
