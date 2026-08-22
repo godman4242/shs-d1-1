@@ -265,26 +265,24 @@
    "id": "rebirth/elemental-skill-tooltips",
    "notes": [],
    "paths": [
-    "docs/gauntlet/L0/index/strings.json",
+    "docs/gauntlet/L0/index/strings.json[\"6143\"]",
+    "docs/gauntlet/L0/index/strings.json[\"6146\"]",
     "reference/extracted/skilldata.xml"
    ],
-   "problems": [
-    "LINE_OOR:docs/gauntlet/L0/index/strings.json:6143>2535",
-    "LINE_OOR:docs/gauntlet/L0/index/strings.json:6146>2535"
-   ],
-   "status": "BROKEN"
+   "problems": [],
+   "status": "RESOLVES"
   },
   {
    "artifact_class": "A2",
    "id": "rebirth/dragon-dance-teachable",
    "notes": [],
    "paths": [
-    "docs/gauntlet/L0/index/strings.json"
+    "docs/gauntlet/L0/index/strings.json[\"6117\"]",
+    "docs/gauntlet/L0/index/strings.json[\"6125\"]",
+    "docs/gauntlet/L0/index/strings.json[\"750\"]"
    ],
-   "problems": [
-    "LINE_OOR:docs/gauntlet/L0/index/strings.json:6117>2535"
-   ],
-   "status": "BROKEN"
+   "problems": [],
+   "status": "RESOLVES"
   },
   {
    "artifact_class": "A2",
@@ -11956,9 +11954,9 @@
  ],
  "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
  "summary": {
-  "broken": 2,
+  "broken": 0,
   "quote_unverified": 177,
-  "resolves": 872,
+  "resolves": 874,
   "total": 1087,
   "uncheckable": 36
  }

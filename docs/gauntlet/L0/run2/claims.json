@@ -281,7 +281,9 @@
  },
  {
   "artifact_class": "A2",
-  "cite": "docs/gauntlet/L0/index/strings.json:6143-6146 + reference/extracted/skilldata.xml:1880-1893",
+  "cite": "docs/gauntlet/L0/index/strings.json[\"6143\"] + docs/gauntlet/L0/index/strings.json[\"6146\"] + reference/extracted/skilldata.xml:1880-1893",
+  "cite_before_correction": "docs/gauntlet/L0/index/strings.json:6143-6146 + reference/extracted/skilldata.xml:1880-1893",
+  "cite_correction": "string IDs were written as LINE numbers into a 2,535-line file (LINE_OOR). Re-formed as key lookups; every key verified present by citeLint JSON_KEY_ABSENT. Substance and verdicts untouched.",
   "id": "rebirth/elemental-skill-tooltips",
   "lane_impact": "rebirth-elements blocker \u2460 closed for damage/cost/AoE. Also closes skills-meters blocker \u2460 for the elemental branch ('read skill cards in a preserved build' \u2014 no build needed). Tooltips also reveal traps/kunai consume kunai AMMO on top of Chi, a cost the ledger never records.",
   "ledger_text": "\u2460 what each element **does** (24 skills' damage/cost/AoE/status \u2014 names only).",
@@ -293,7 +295,9 @@
  },
  {
   "artifact_class": "A2",
-  "cite": "docs/gauntlet/L0/index/strings.json:6117, 6125, 750",
+  "cite": "docs/gauntlet/L0/index/strings.json[\"6117\"] + docs/gauntlet/L0/index/strings.json[\"6125\"] + docs/gauntlet/L0/index/strings.json[\"750\"]",
+  "cite_before_correction": "docs/gauntlet/L0/index/strings.json:6117, 6125, 750",
+  "cite_correction": "string IDs were written as LINE numbers into a 2,535-line file (LINE_OOR). Re-formed as key lookups; every key verified present by citeLint JSON_KEY_ABSENT. Substance and verdicts untouched.",
   "id": "rebirth/dragon-dance-teachable",
   "lane_impact": "rebirth-elements blocker \u2463 + meta-social: the Dragon Dance is a social propagation system, not a solo unlock, so a single-player recreation must decide how to substitute the teaching loop.",
   "ledger_text": "\u2463 Dragon Dance **input** + Kanji-statue bonus.",

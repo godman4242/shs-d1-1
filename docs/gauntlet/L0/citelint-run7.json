@@ -1187,7 +1187,9 @@
   {
    "artifact_class": "A2",
    "id": "string-table/the-CANNOT-CHANGE-STANCE-string-id-960-is-absent-from-the-parsed-table",
-   "notes": [],
+   "notes": [
+    "JSON_KEY_ABSENT_AS_CLAIMED:docs/gauntlet/L0/index/strings.json[\"960\"]:960"
+   ],
    "paths": [
     "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
     "docs/gauntlet/L0/index/strings.json[\"960\"]"

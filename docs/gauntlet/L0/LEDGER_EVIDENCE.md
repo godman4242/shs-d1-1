@@ -84,7 +84,7 @@ gets rewritten by findings that never actually contradicted it.
   - Lane impact: rebirth-elements blocker ① (damage half). Carried from the PASS-1 journal and re-read line by line this pass; independently corroborated by the shipped tooltip '150% Fire ATK'. The FX sprite scale 1.0→1.4 moves in lockstep with the damage ladder.
 - **`[[rebirth/elemental-skill-tooltips]]`** [A2] (9 critics)
   - The 24 elemental skills are not 'names only' — the shipped tooltips state their AoE nature and damage magnitude in words, and skilldata.xml carries every Chi cost and cooldown.
-  - Cite: `docs/gauntlet/L0/index/strings.json:6143-6146 + reference/extracted/skilldata.xml:1880-1893`
+  - Cite: `docs/gauntlet/L0/index/strings.json["6143"] + docs/gauntlet/L0/index/strings.json["6146"] + reference/extracted/skilldata.xml:1880-1893`
   - Lane impact: rebirth-elements blocker ① closed for damage/cost/AoE. Also closes skills-meters blocker ① for the elemental branch ('read skill cards in a preserved build' — no build needed). Tooltips also reveal traps/kunai consume kunai AMMO on top of Chi, a cost the ledger never records.
 - **`[[rebirth/no-elemental-status-effects]]`** [A2] (2 critics)
   - No per-element status effect exists anywhere in the shipped damage pipeline; elements differ only by damage channel, launch type and AoE radius.
@@ -216,7 +216,7 @@ gets rewritten by findings that never actually contradicted it.
   - Lane impact: rebirth-elements blocker ④ (input half). The four tier-3 passives 1056/1057/1058/1059 teach precisely nodes 6/2/1/4 — exactly the set that opens Later Heaven — which is the whole design rationale for rebirthing into all four elements. Carried from PASS 1, re-verified.
 - **`[[rebirth/dragon-dance-teachable]]`** [A2] (9 critics)
   - Dragon Dance steps are a player-to-player transmission mechanic, and the game's own name for the second bagua arrangement is 'Later Heaven' — neither fact appears anywhere in the ledger.
-  - Cite: `docs/gauntlet/L0/index/strings.json:6117, 6125, 750`
+  - Cite: `docs/gauntlet/L0/index/strings.json["6117"] + docs/gauntlet/L0/index/strings.json["6125"] + docs/gauntlet/L0/index/strings.json["750"]`
   - Lane impact: rebirth-elements blocker ④ + meta-social: the Dragon Dance is a social propagation system, not a solo unlock, so a single-player recreation must decide how to substitute the teaching loop.
 - **`[[rebirth/dragon-dance-ui-art-is-held]]`** [A2] (2 critics)
   - The Dragon Dance ritual UI art is fully on disk: a dark-red double outer ring, eight green-outlined white kanji nodes, an inner dark-red bagua trigram ring, a black/white taiji centre carrying the element name, and an X close button.

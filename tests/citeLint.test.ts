@@ -95,6 +95,10 @@ beforeEach(() => {
     ].join('\n'),
   );
   put('reference/frames/fake/t708.0.png', 'not-really-a-png');
+  put(
+    'docs/gauntlet/L0/index/strings.json',
+    JSON.stringify({ '750': 'You learnt a new dragon dance step!', '6143': 'Area of Effect Fire Attack' }),
+  );
 });
 
 afterEach(() => {
@@ -462,5 +466,139 @@ describe('citeLint — GATE L0-A', () => {
       uncheckable: 1,
     });
     expect(code).toBe(1);
+  });
+});
+
+/**
+ * A KEY LOOKUP IS A CITE, AND IT HAS TO RESOLVE LIKE ONE.
+ *
+ * The string table is a 2,533-entry JSON map, so a claim points into it by KEY, not by
+ * line: `strings.json["6143"]`. Two claims in this corpus wrote that as
+ * `strings.json:6143` — a LINE number into a 2,535-line file — and the line check caught
+ * both. But the key form was only ever checked for FILE EXISTENCE, so the obvious
+ * "correction" (rewrite it as a key lookup) would have moved both to RESOLVES while
+ * proving nothing, and a wholly invented string ID would have passed gate L0-A the same
+ * way. §0 says a claim whose cite does not resolve is REFUTED, full stop; for a key
+ * lookup, resolving means THE KEY IS THERE.
+ */
+describe('citeLint — key lookups into a JSON artifact', () => {
+  it('RESOLVES a key lookup whose key is actually in the table', () => {
+    const { report } = lint([
+      {
+        id: 'rebirth/dragon-dance-line',
+        artifact_class: 'A2',
+        cite: 'docs/gauntlet/L0/index/strings.json["750"]',
+        quote: 'You learnt a new dragon dance step!',
+      },
+    ]);
+    expect(only(report).status).toBe('RESOLVES');
+  });
+
+  it('BREAKS a key lookup whose key is NOT in the table — the file existing proves nothing', () => {
+    const { report, code } = lint([
+      {
+        id: 'rebirth/invented-string-id',
+        artifact_class: 'A2',
+        cite: 'docs/gauntlet/L0/index/strings.json["999999"]',
+        quote: 'a line nobody ever shipped',
+      },
+    ]);
+    expect(only(report).status).toBe('BROKEN');
+    expect(only(report).problems.join(' ')).toContain('JSON_KEY_ABSENT');
+    expect(code).toBe(1);
+  });
+
+  it('names the absent key, so the fix is obvious without re-reading the table', () => {
+    const { report } = lint([
+      {
+        id: 'x/absent',
+        artifact_class: 'A2',
+        cite: 'docs/gauntlet/L0/index/strings.json["4041"]',
+      },
+    ]);
+    expect(only(report).problems.join(' ')).toContain('4041');
+  });
+
+  it('checks EVERY key when a claim cites several', () => {
+    const { report } = lint([
+      {
+        id: 'x/mixed',
+        artifact_class: 'A2',
+        cite: 'docs/gauntlet/L0/index/strings.json["750"] + docs/gauntlet/L0/index/strings.json["31337"]',
+      },
+    ]);
+    expect(only(report).status).toBe('BROKEN');
+    expect(only(report).problems.join(' ')).toContain('31337');
+  });
+
+  it("accepts either quote style — ['195'] is the same lookup as [\"195\"]", () => {
+    const { report } = lint([
+      {
+        id: 'quests-story/single-quoted-key',
+        artifact_class: 'A2',
+        cite: "docs/gauntlet/L0/index/strings.json['750']",
+        quote: 'You learnt a new dragon dance step!',
+      },
+    ]);
+    expect(only(report).status).toBe('RESOLVES');
+  });
+
+  /**
+   * A NEGATIVE-EXISTENCE CITE IS NOT A BROKEN ONE.
+   *
+   * "the web build calls getString(960) and 960 is NOT in the table" is a finding whose
+   * whole content is an absence, and the honest way to cite it is to name the key that
+   * is not there. Treating that as BROKEN auto-refutes a true claim under §0 — and the
+   * judging packets tell critics that BROKEN means "already proven wrong mechanically,
+   * do not re-litigate", so the finding would die without anyone looking. The claim has
+   * to SAY it is asserting absence; an unmarked absent key stays fatal.
+   */
+  it('accepts an absent key the cite itself marks as absent — that is the finding', () => {
+    const { report } = lint([
+      {
+        id: 'string-table/id-960-is-absent',
+        artifact_class: 'A2',
+        cite: 'docs/gauntlet/L0/index/strings.json["960"] (absent) and ["750"] present',
+      },
+    ]);
+    expect(only(report).status).not.toBe('BROKEN');
+    expect(only(report).notes.join(' ')).toContain('JSON_KEY_ABSENT_AS_CLAIMED');
+  });
+
+  it('still BREAKS an absent key the cite does not mark — silence is not an assertion', () => {
+    const { report } = lint([
+      {
+        id: 'string-table/id-960-unmarked',
+        artifact_class: 'A2',
+        cite: 'docs/gauntlet/L0/index/strings.json["960"] proves the caption text',
+      },
+    ]);
+    expect(only(report).status).toBe('BROKEN');
+    expect(only(report).problems.join(' ')).toContain('JSON_KEY_ABSENT');
+  });
+
+  it('scopes the absence marker to the key it follows — one marked key does not excuse another', () => {
+    const { report } = lint([
+      {
+        id: 'string-table/one-marked-one-not',
+        artifact_class: 'A2',
+        cite: 'docs/gauntlet/L0/index/strings.json["960"] (absent), and docs/gauntlet/L0/index/strings.json["31337"] carries the caption',
+      },
+    ]);
+    expect(only(report).status).toBe('BROKEN');
+    expect(only(report).problems.join(' ')).toContain('31337');
+    expect(only(report).notes.join(' ')).toContain('960');
+  });
+
+  it('leaves a plain path with no subscript alone — this check is opt-in by syntax', () => {
+    const { report } = lint([
+      {
+        id: 'x/whole-file',
+        artifact_class: 'A2',
+        cite: 'docs/gauntlet/L0/index/strings.json',
+        quote: 'You learnt a new dragon dance step!',
+      },
+    ]);
+    expect(only(report).status).toBe('RESOLVES');
   });
 });

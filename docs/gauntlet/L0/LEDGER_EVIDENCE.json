@@ -339,7 +339,7 @@
   {
    "artifact_class": "A2",
    "build": null,
-   "cite": "docs/gauntlet/L0/index/strings.json:6143-6146 + reference/extracted/skilldata.xml:1880-1893",
+   "cite": "docs/gauntlet/L0/index/strings.json[\"6143\"] + docs/gauntlet/L0/index/strings.json[\"6146\"] + reference/extracted/skilldata.xml:1880-1893",
    "claims_overturn": true,
    "id": "rebirth/elemental-skill-tooltips",
    "lane_impact": "rebirth-elements blocker \u2460 closed for damage/cost/AoE. Also closes skills-meters blocker \u2460 for the elemental branch ('read skill cards in a preserved build' \u2014 no build needed). Tooltips also reveal traps/kunai consume kunai AMMO on top of Chi, a cost the ledger never records.",
@@ -353,7 +353,7 @@
   {
    "artifact_class": "A2",
    "build": null,
-   "cite": "docs/gauntlet/L0/index/strings.json:6117, 6125, 750",
+   "cite": "docs/gauntlet/L0/index/strings.json[\"6117\"] + docs/gauntlet/L0/index/strings.json[\"6125\"] + docs/gauntlet/L0/index/strings.json[\"750\"]",
    "claims_overturn": true,
    "id": "rebirth/dragon-dance-teachable",
    "lane_impact": "rebirth-elements blocker \u2463 + meta-social: the Dragon Dance is a social propagation system, not a solo unlock, so a single-player recreation must decide how to substitute the teaching loop.",

@@ -210,6 +210,48 @@ def expand_braces(rel: str) -> list[str]:
     return out
 
 
+# Either quote style, or none: agents write ["6143"], ['195'] and [6143] all three ways.
+# Stripping only one style leaves the quotes glued to the key, and the lookup then fails
+# against a key that is genuinely there — a false BROKEN, which kills a true claim.
+JSON_KEY_RE = re.compile(r"""\[\s*['"]?([^'"\[\]]+?)['"]?\s*\]\s*$""")
+
+
+# The words a cite uses when the ABSENCE of a key is the finding. Kept deliberately
+# short and literal: this is an escape hatch from an auto-refute, so it must be something
+# the surveyor wrote on purpose, never something prose falls into by accident.
+ABSENCE_MARKERS = ("absent", "missing", "not present", "no such key", "keyerror",
+                   "not in the table", "does not exist")
+
+
+def claims_absence(cite: str, key: str) -> bool:
+    """Does this cite ASSERT that `key` is missing, rather than rely on it being there?
+
+    "the web build calls getString(960) and 960 is NOT in the table" is a finding whose
+    whole content is an absence, and the honest way to cite it is to name the key that is
+    not there. Auto-refuting that under §0 kills a true claim — and the judging packets
+    tell critics BROKEN means "already proven wrong mechanically, do not re-litigate", so
+    it would die without anyone looking. The marker must follow the subscript closely:
+    a marker anywhere in a long prose cite would excuse an unrelated broken key.
+    """
+    low = cite.lower()
+    for m in re.finditer(re.escape(key.lower()) + r"['\"]?\]", low):
+        window = low[m.end():m.end() + 40]
+        if any(marker in window for marker in ABSENCE_MARKERS):
+            return True
+    return False
+
+
+def json_keys(rel: str) -> list[str]:
+    """The key a cite looks up INTO a JSON artifact: `strings.json["6143"]` -> ["6143"].
+
+    The string table is a 2,533-entry map, so a claim points into it by KEY, not by line.
+    Empty for every ordinary path — this check is opt-in by syntax, and a cite naming a
+    whole file is still a cite naming a whole file.
+    """
+    m = JSON_KEY_RE.search(rel)
+    return [m.group(1)] if m else []
+
+
 def resolve(rel: str, repo: Path) -> list[Path]:
     """Expand a cited path: brace forms, the `bindata/*.bin` glob form, or a plain path.
 
@@ -287,6 +329,26 @@ def check_claim(claim: dict, repo: Path, corpus: Corpus) -> dict:
         if not matches:
             problems.append(f"MISSING_PATH:{rel}")
             continue
+
+        # A KEY LOOKUP IS A CITE AND MUST RESOLVE LIKE ONE. Checking only that the file
+        # exists lets a wholly invented string ID pass gate L0-A, and it would have let
+        # this corpus's two LINE_OOR claims be "corrected" into RESOLVES while proving
+        # nothing. §0: a claim whose cite does not resolve is REFUTED, full stop — and
+        # for a key lookup, resolving means the key is there.
+        for key in json_keys(rel):
+            for target in matches:
+                if target.suffix.lower() != ".json":
+                    continue
+                try:
+                    table = json.loads(target.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError) as exc:
+                    problems.append(f"UNREADABLE_JSON:{rel}:{exc.__class__.__name__}")
+                    continue
+                if not isinstance(table, dict) or key not in table:
+                    if claims_absence(cite, key):
+                        notes.append(f"JSON_KEY_ABSENT_AS_CLAIMED:{rel}:{key}")
+                    else:
+                        problems.append(f"JSON_KEY_ABSENT:{rel}:{key}")
 
         for target in matches:
             if target.is_dir():
