@@ -201,6 +201,31 @@ the decompiled AS3 under `reference/decompiled/shs3_payload/scripts/`.
    lane in §2, and name the next lane. The engine is not done until it has
    pointed at its own next run.
 
+8. **ONE WORKFLOW IN FLIGHT.** (Owner rule, 2026-08-22.) A stage may fan out to as
+   many agents as the lane needs, but **only one workflow runs at a time.** Two reasons,
+   and the second is the one that actually forces it:
+   - **Concurrency is what CAUSES the wall.** Session limits are rate-based. Waves 1 and
+     2 of L0 ran together — 19 agents — and took wall #9 as a pair. The same work run
+     serially spreads the spend over a longer window and may never hit the limit at all.
+     **Avoiding the wall beats surviving it**, however good the journal insurance is.
+   - **You cannot rebuild shared state while a run is live.** `buildWorklist.py`
+     renumbers the judging packets on every build, and a live run's queued agents have
+     not read theirs yet — rebuilding mid-flight hands them a packet nobody assigned
+     them, while the findings they were meant to judge stay UNJUDGED, which under §0
+     kills them. One run at a time makes bank → rebuild → relaunch always safe. That is
+     a **correctness** argument, so it holds even when tokens are free.
+
+   > ⚠ **Do not justify this rule by "we would lose everything."** Since §3.4's agents
+   > write their structured output to disk *before* returning, wall #9 killed 9 of 13
+   > agents and lost **zero** verdicts from any batch that reached its JSON — two
+   > complete 48/48 batches were recovered that the workflow itself reported as lost.
+   > The rule is right; catastrophic loss is not the reason any more.
+
+   **The only carve-outs:** a second run that must **review or adversarially check** the
+   first, where seeing its finished output would defeat running it blind; or two runs
+   over genuinely **disjoint** state where **neither rebuilds a shared index**. Anything
+   else waits. When in doubt, serialise and say so.
+
 **No silent caps.** If a run bounds coverage — top-N, sampling, skipped rows —
 it must say what was dropped. Silent truncation reads as "covered everything."
 
