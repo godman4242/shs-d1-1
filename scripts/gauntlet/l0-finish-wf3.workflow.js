@@ -47,6 +47,24 @@ const batchCount = (typeof args === 'object' && args?.batches) || TIER.batches
 // wall #8; git had the originals, but only by luck.
 const TAG = (typeof args === 'object' && args?.tag) ? `.${args.tag}` : ''
 
+// ⛔ WALL INSURANCE. Eight usage walls have hit this lane. Prose alone is NOT enough:
+// at wall #8 seven finished reviews sat on disk as .md while the journals held zero
+// result records, so the STRUCTURED VERDICTS were destroyed — and §3.2 bars a blind
+// re-judge from reading another agent's prose, so they could not be recovered from it.
+// Every agent now writes the exact object it is about to return, as JSON, next to its
+// prose. scripts/gauntlet/salvageJournal.py --critic-json extracts those even when the
+// run returns nothing at all.
+function writeBack(stem) {
+  return `⛔ BEFORE YOU RETURN — TWO FILES, and this run dies without them:
+  1. Your full prose review to ${stem}.md
+  2. The EXACT structured object you are about to return, as JSON, to ${stem}.json
+     — same fields, same values, valid JSON, no markdown fence around it.
+This run must survive a usage wall. At wall #8 the prose survived and the structured
+verdicts did NOT, and seven reviews' worth of judging was destroyed because a blind
+re-judge may never read another agent's prose (§3.2). Write file 2 even if you think
+you are about to return normally. THEN return the structured object.`
+}
+
 const LAW = `
 === GAUNTLET §0 — THE LAW. READ IT BEFORE YOU DO ANYTHING. ===
 Straw Hat Samurai: Duels is DEAD. There is no playable build (proven definitively,
@@ -264,8 +282,7 @@ if you genuinely could not rule on one, name it there and say why. NO SILENT CAP
 
 ${LENSES[lens]}
 
-Write your full review to ${OUT}/critics/${batch}.${lens}${TAG}.md BEFORE you return — this
-run must survive a usage wall. Then return the structured object.`
+${writeBack(`${OUT}/critics/${batch}.${lens}${TAG}`)}`
 }
 
 // ---------------------------------------------------------------------------

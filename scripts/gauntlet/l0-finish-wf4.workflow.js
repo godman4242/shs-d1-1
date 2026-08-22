@@ -94,6 +94,24 @@ C3 — S0-5 IS DEAD: THE AUDIO IS RECOVERED, NOT ENCRYPTED. 122_Mobile_SoundReso
 // `dryloop-r1-t1.md` collides across runs without it.
 const TAG = (typeof args === 'object' && args?.tag) ? `.${args.tag}` : ''
 
+// ⛔ WALL INSURANCE. Eight usage walls have hit this lane. Prose alone is NOT enough:
+// at wall #8 seven finished reviews sat on disk as .md while the journals held zero
+// result records, so the STRUCTURED VERDICTS were destroyed — and §3.2 bars a blind
+// re-judge from reading another agent's prose, so they could not be recovered from it.
+// Every agent now writes the exact object it is about to return, as JSON, next to its
+// prose. scripts/gauntlet/salvageJournal.py --critic-json extracts those even when the
+// run returns nothing at all.
+function writeBack(stem) {
+  return `⛔ BEFORE YOU RETURN — TWO FILES, and this run dies without them:
+  1. Your full prose review to ${stem}.md
+  2. The EXACT structured object you are about to return, as JSON, to ${stem}.json
+     — same fields, same values, valid JSON, no markdown fence around it.
+This run must survive a usage wall. At wall #8 the prose survived and the structured
+verdicts did NOT, and seven reviews' worth of judging was destroyed because a blind
+re-judge may never read another agent's prose (§3.2). Write file 2 even if you think
+you are about to return normally. THEN return the structured object.`
+}
+
 const CLAIM_SCHEMA = {
   type: 'object',
   required: ['id', 'text', 'artifact_class', 'cite', 'verdict'],
@@ -185,7 +203,7 @@ rounds end this loop. Do not pad. A padded round costs another whole round of ag
 Fill in "searched" with what you actually opened. An empty result is only credible if
 that field is full, and a full one is how the next reader knows the ground was covered.
 
-Write to ${OUT}/critics/dryloop-r${round}-t${idx + 1}${TAG}.md before you return.`
+${writeBack(`${OUT}/critics/dryloop-r${round}-t${idx + 1}${TAG}`)}`
 }
 
 // ---------------------------------------------------------------------------
@@ -284,7 +302,7 @@ READ, do not assume: ${OUT}/SEEN_CLAIM_IDS.txt · ${OUT}/citelint.json (the mach
 audit: which claims are BROKEN or QUOTE_UNVERIFIED) · ${OUT}/worklist/MANIFEST.json ·
 ${OUT}/sources/ · docs/research/REBUILD_READINESS.md.
 
-Write to ${OUT}/critics/completeness${TAG}.md before you return.`,
+${writeBack(`${OUT}/critics/completeness${TAG}`)}`,
   { label: 'completeness', phase: 'Completeness', schema: HUNT_SCHEMA },
 )
 

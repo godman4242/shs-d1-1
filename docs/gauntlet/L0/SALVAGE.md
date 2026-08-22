@@ -4,6 +4,52 @@
 > that usage was about to run out. Everything below is on disk and committed.
 > **No completed research needs to be redone.**
 
+## ▶ SESSION 26 (2026-08-22) — THE FINISH RUN. Live progress at the top.
+
+| Wave | Work | Agents | State |
+|---|---|---:|---|
+| **0** | wall-#9 insurance — structured JSON side-writes + `--critic-json` salvage | 0 | ✅ **LANDED** — 60 files / 953 tests |
+| **1** | `l0-finish-wf3` `{tier:'t1', batches:3, tag:'s26a'}` — 67 overturn-claimers | 6 | ⏳ |
+| **2** | `l0-finish-wf3` `{tier:'t2', batches:13, tag:'s26b'}` — 586 corroborating | 13 | ⏳ |
+| **3** | mop-up t1 over the overturn-claimers waves 1–2 generate | ~2–8 | ⏳ |
+| **4** | `l0-finish-wf4` `{tag:'s26d'}` — dry-loop + completeness | ≤17 | ⏳ |
+| **5** | ledger rewrite — 12 system writers ⇉ 12 blind verifiers, + §6 | 27 | ⏳ |
+| **6** | gates green · `GAUNTLET.md` corrections · §3.7 re-arm | 0 | ⏳ |
+
+### ⚑ WAVE 0 — THE HOLE WALL #8 LEFT IS CLOSED
+
+Wall #8's damage was specific and it was NOT recoverable: seven finished critic reviews
+sat on disk as `.md` while both journals held **zero result records**, so the structured
+verdicts were destroyed. Prose cannot substitute — **§3.2 bars a blind re-judge from
+reading another agent's reasoning**, so a lost verdict can only be re-earned by judging
+the claim again from scratch. The `.md` write-back saved the *record* and lost the *work*.
+
+**Both halves of the fix are in:**
+
+1. `l0-finish-wf3` and `l0-finish-wf4` now make every agent write **two** files before
+   returning — its prose to `<stem>.md` **and the exact object it is about to return** to
+   `<stem>.json`.
+2. `salvageJournal.py` takes `--critic-json <glob>` and extracts from those side-files
+   **with or without a journal**. Journal and side-files may be given together — the
+   partial-wall case — and rows are **deduped** so an agent that both returned and wrote
+   to disk is not counted twice. That dedupe is not cosmetic: gate **L0-B** rules a claim
+   refuted on a **majority** of its live verdicts, and one duplicated ruling manufactures
+   a majority that never happened.
+
+**Recovery command after a wall** (the tag is the run's, e.g. `s26a`):
+
+```bash
+python3 scripts/gauntlet/salvageJournal.py --out docs/gauntlet/L0/run8 \
+    --critic-json 'docs/gauntlet/L0/critics/*.s26a.json'
+```
+
+`tests/salvageCriticJson.test.ts` — 11 tests, watched RED at 9/11 before the patch, and
+**both new guards chaos-planted**: disabling the verdict dedupe reds *"does NOT count a
+verdict twice"*, and silently dropping an unparseable side-file reds *"NAMES a side-file
+it could not parse"*. Suite **59 files / 942 → 60 files / 953 green**; tsc ×2 = 0; eslint = 0.
+
+---
+
 ## What is banked (counted on disk 2026-08-22, not asserted)
 
 | Artifact | Where | State |
