@@ -16,6 +16,15 @@
 #   runN             the run directory to write, e.g. run8
 #   tag              the run-unique tag passed to the workflow, e.g. s26a
 #   transcript-dir   the workflow's transcript dir (holds journal.jsonl)
+#   --skip-worklist  MANDATORY while any other judging run is still in flight.
+#
+# ⛔ WHY --skip-worklist EXISTS. buildWorklist RENUMBERS the packets on every build:
+# judged findings drop out and new ones arrive, so `t1-overturns-01.json` names a
+# different claim set each time. A live run's agents read their packet when they START,
+# and the ones still queued behind the concurrency cap have not read theirs yet. Rebuild
+# mid-flight and those agents judge a packet nobody assigned them, while the findings
+# they were meant to judge stay UNJUDGED — which under §0 kills them. Bank the run,
+# skip the worklist, and rebuild once the last run lands.
 #
 # Both salvage inputs are used: the harness journal AND the JSON side-files the agents
 # wrote themselves. After a partial wall only one of the two exists, and which one is
@@ -26,6 +35,7 @@ set -euo pipefail
 RUN="${1:?usage: checkpointL0.sh <runN> <tag> <transcript-dir>}"
 TAG="${2:?usage: checkpointL0.sh <runN> <tag> <transcript-dir>}"
 TDIR="${3:?usage: checkpointL0.sh <runN> <tag> <transcript-dir>}"
+SKIP_WORKLIST="${4:-}"
 
 ROOT="docs/gauntlet/L0"
 JOURNAL="$ROOT/wf-journal-$TAG.jsonl"
@@ -47,8 +57,14 @@ python3 scripts/gauntlet/salvageJournal.py ${JOURNAL:+"$JOURNAL"} \
 echo "=== 3. machine cite audit for the new claims (gate L0-A reads every citelint*.json) ==="
 python3 scripts/gauntlet/citeLint.py "$ROOT/$RUN/claims.json" --out "$ROOT/citelint-$RUN.json"
 
-echo "=== 4. rebuild the worklist (renumbers batches — read MANIFEST fresh before relaunching) ==="
-python3 scripts/gauntlet/buildWorklist.py --root "$ROOT"
+if [ "$SKIP_WORKLIST" = "--skip-worklist" ]; then
+  echo "=== 4. worklist rebuild SKIPPED — another judging run is in flight ==="
+  echo "  The packets on disk still belong to that run. Rebuild AFTER it lands, or its"
+  echo "  queued agents will judge a packet nobody assigned them."
+else
+  echo "=== 4. rebuild the worklist (renumbers batches — read MANIFEST fresh before relaunching) ==="
+  python3 scripts/gauntlet/buildWorklist.py --root "$ROOT"
+fi
 
 echo "=== 5. rebuild the ledger evidence (the rewrite's only admissible input) ==="
 python3 scripts/gauntlet/buildLedgerEvidence.py --root "$ROOT"
