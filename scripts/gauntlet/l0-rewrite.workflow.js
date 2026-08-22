@@ -32,13 +32,21 @@ const TAG = (typeof args === 'object' && args?.tag) ? `.${args.tag}` : ''
 // records, so the STRUCTURED output was destroyed. Every agent writes the exact object
 // it is about to return, as JSON, next to its prose.
 function writeBack(stem) {
-  return `⛔ BEFORE YOU RETURN — TWO FILES, and this run dies without them:
-  1. Your full prose to ${stem}.md
-  2. The EXACT structured object you are about to return, as JSON, to ${stem}.json
-     — same fields, same values, valid JSON, no markdown fence around it.
-This lane has hit the usage limit EIGHT times. At wall #8 the prose survived and the
-structured output did NOT. Write file 2 even if you think you are about to return
-normally. THEN return the structured object.`
+  return `⛔ BEFORE YOU RETURN — TWO FILES, IN THIS ORDER. This run dies without file 1.
+  1. FIRST, before you compose a single line of prose: the EXACT structured object you
+     are about to return, as JSON, to ${stem}.json — same fields, same values, valid
+     JSON, no markdown fence around it. Write it the moment you have your verdicts.
+     THIS FILE IS THE WORK. Everything else is a record of it.
+  2. THEN your full prose to ${stem}.md.
+
+⛔ THE ORDER IS NOT A STYLE PREFERENCE — IT IS THE WHOLE INSURANCE. This lane has hit the
+usage limit NINE times. At wall #8, seven finished reviews sat on disk as .md while the
+journals held zero results, and every structured verdict was lost. At wall #9 it happened
+again to two more batches, for one reason only: they wrote the prose first. A blind
+re-judge may NEVER read another agent's prose (§3.2), so a lost verdict cannot be
+recovered from a surviving review — it has to be earned again from nothing.
+
+Write file 1 even if you are certain you are about to return normally.`
 }
 
 const LAW = `
