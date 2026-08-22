@@ -1,46 +1,81 @@
 # RESUME HERE
 
-## ⏸ L0 IS MID-FLIGHT — FINISH IT, DO NOT RESTART IT (2026-08-15)
+## ⏸ L0 IS MID-FLIGHT — FINISH IT, DO NOT RESTART IT (updated 2026-08-22)
 
-**Four runs, all four checkpointed on usage limits. Every completed agent's work is
-committed. Nothing needs redoing.** 👉 **Read `docs/gauntlet/L0/SALVAGE.md` first.**
+**Eight usage walls, seven landed runs, zero data lost.** Everything is extracted and
+committed. 👉 **Read `docs/gauntlet/L0/SALVAGE.md` first** — it has the exact stage table.
 
-### ⚑ THE HEADLINE: the string table is FOUND. `GAUNTLET.md` §2.1's blocker is DEAD.
+### State: judged **232 → 814** · gate **L0-D GREEN** · **419 fresh claims, 0 BROKEN cites**
 
-`reference/decrypted/shs3_android_payload_decoded.swf` holds **42 class-named blobs**
-(the web payload's 27 are anonymous). `118_Mobile_Lang_EN.bin` is a UTF-16LE XLIFF
-string table, 2,533 entries. **Measured: 804 item names+descs / 0 unresolved · 73
-skill / 0 · 484 NPC / 6.** Verified first-hand. `4050`→*Iron Sword*, `6000`→*Light
-Stance Mastery*, `5009`→*Ruffian*, `175`→*Critical Hit*.
-**→ L2 and L3 are UNBLOCKED. L1b is CLOSED before it ran.**
-⚠️ Android build `0.682` vs web `0.717`; data-XML rows match exactly, UI copy and
-combat tuning parity NOT established. Label ported strings with their build.
+```
+$ python3 scripts/gauntlet/gateL0.py --root docs/gauntlet/L0 \
+      --ledger docs/research/REBUILD_READINESS.md --out docs/gauntlet/L0/gate.json
+GATE L0 — 1506 claims pooled · 814 judged ids · 0 ledger references
+   RED   L0-A  CITE INTEGRITY        the ledger cites no claim at all
+   RED   L0-B  NOTHING UNJUDGED      same
+   RED   L0-C  CONVERGENCE IS REAL   no convergence receipt — the dry-loop has not run
+  GREEN  L0-D  EVERY SOURCE OPENED   all 10 sources surveyed with >= 2 critics each ✅
+   RED   L0-E  §6 PROVABLY MINIMAL   6 entries kept with no pasted negative search
+   RED   L0-F  SCORECARD EVIDENCE    12 scores carry neither a [[claim]] nor a STILL_UNHELD
+LANE L0: ⛔ OPEN — at least one gate item is RED
+```
 
-### State: 1,087 claims · 1,767 verdicts · **0 VOID** · 349 refuted
+### ⚑ THE HEADLINE: all six of §6's "structurally UNRECOVERABLE" entries are overturned
 
-- ✅ **ALL 12 SYSTEMS JUDGED — 232/232 claims**, each through 3–4 blind
-  artifact-citing critics, 140 ledger overturns. **These may enter the ledger.**
-- ⚠️ **855 claims are LEADS** — 6 source sweeps whose critics never ran (210 claims)
-  and 645 critic `new_findings` (210 claimed overturns) unjudged by construction.
-  Under §0 an unjudged claim is a lead. **`REBUILD_READINESS.md` is UNTOUCHED and
-  must stay so until they are judged.**
+| §6 entry | surviving, judged overturns |
+|---|---:|
+| L11–80 XP curve | **16** — the 99-entry `expArray` is verbatim in the **web** build AND identical to Android |
+| Verbatim dialogue | 8 |
+| Server-sim topology & save format | 7 |
+| Exact original SFX & music synthesis params | 4 — **the audio is RECOVERED, not encrypted** |
+| The live clan-war | 4 |
+| The dead IAP economy | 3 |
 
-### ⛔ DO NOT try to resume the old workflow
+Gate L0-E permits an **empty** §6 (*a provably minimal list may be empty*, with a test
+pinning it). Anything that survives must carry a **pasted negative search**.
 
-`resumeFromRunId` is **same-session only** — run `wf_7e275b35-488` cannot be resumed
-from a new session, and re-running `l0-resurvey.workflow.js` unmodified would
-re-execute 59 completed agents for nothing. **The cache is not load-bearing:** every
-result is already extracted to `docs/gauntlet/L0/run2/` and committed. Write a fresh,
-smaller **finish-L0 workflow** (~40 agents) — `SALVAGE.md` has the exact stage table.
+### ⚑ The overturn check is the most valuable thing this lane built
 
-### Remaining work, in order
+A finding can be perfectly TRUE and still not falsify the sentence it points at, so
+`overturn_upheld` is a separate boolean from `refuted`. Result so far:
 
-1. **4 source surveys never run** — `android-blobs` and `string-table` have never been
-   opened by any agent in four runs; plus `frames`, `uistrings-payload`.
-2. **~12 source critics** · **judge the 645 `new_findings`** · dry-loop · completeness.
-3. **Rewrite `REBUILD_READINESS.md`** from the judged claims · **gates L0-A…F**.
-4. **Correct `docs/GAUNTLET.md`** — §2.1 blocker dead, L1b row obsolete, L6 is ~450
-   animations not ~150 — in the §3.7 re-arm commit.
+**580 overturn rulings — 352 UPHELD · 210 REJECTED. 36% of claimed overturns are wrong
+about their own target.** Without that check they would have rewritten the ledger.
+
+### ⚑ Three Stage-0 facts this lane OVERTURNED — carry them, do not re-derive
+
+- **C1** — *"the Android blobs are UTF-16LE"* is **wrong**. 36 of 42 are plain text; **one**
+  is UTF-16LE (`118_Mobile_Lang_EN.bin`); **five** are XOR'd zlib SWFs (`113 115 120 122
+  124`, key `'m'`=109 then inflate); one is a GIF. Grepping those six returns 0 hits for
+  content that IS there.
+- **C2** — **the build-parity caveat is UNDISCHARGED, and the old "byte-identical" proof was
+  CIRCULAR.** The web payload carries **zero** `<questdata>/<skilldata>/<npcdata>/<itemdata>`
+  roots, so those four XMLs came from the **Android** build and diffing them against the
+  Android blobs compares a file with itself. Every row ported from them is **v0.682** until
+  a web-side artifact says otherwise. **This raises risk for L1–L4.**
+- **C3** — **S0-5 is DEAD: the audio is RECOVERED.** `122_Mobile_SoundResource.bin` decodes at
+  XOR key 111 into a valid SWF with 13 `DefineSound` tags. Held: 13 named music stems (six
+  overworld at exactly 79.872 s, four dungeon at 45.760 s), the adaptive-music engine (17
+  presets, ±0.05/tick crossfade), and the SFX playback contract. Survived 8 critics.
+
+### What is left, in order
+
+1. **Judge the last 653 findings** — 67 overturn-claimers (3 batches × cite+hunter) and 586
+   corroborating (13 batches × cite). Both died at wall #8 with **0 agents done**.
+2. **WF-4** — dry-loop until two rounds **that actually ran** find nothing, then completeness.
+3. **Rewrite `REBUILD_READINESS.md`** from `LEDGER_EVIDENCE.md` only, citing `[[claim-id]]`.
+4. **Drive gates L0-A…F green** with pasted output.
+5. **Correct `docs/GAUNTLET.md`** — §2.1 blocker dead · L1b row obsolete · §2's L6
+   "~150 animations" is **471** measured — and re-arm per §3.7 in the SAME commit.
+
+### ⛔ Two rules that cost real work when broken
+
+- **`resumeFromRunId` is SAME-SESSION ONLY.** The cache is not load-bearing — every result
+  is extracted to `run2/`…`run7/` and committed.
+- **Always pass a run-unique `tag`** to `l0-finish-wf3` / `l0-finish-wf4`. `buildWorklist`
+  renumbers batches every build, so `<batch>.<lens>.md` collides across runs. At wall #8 a
+  later run's partial work overwrote an earlier run's committed reviews; git had them, but
+  that was luck. Fixed — but only if you pass the tag.
 
 **Model: Opus 5 @ `xhigh`** (§2 routing for L0 is unchanged).
 
@@ -54,13 +89,8 @@ smaller **finish-L0 workflow** (~40 agents) — `SALVAGE.md` has the exact stage
 |---|---|---|
 | **Surface** | **Claude Code CLI** | terminal + git + build-heavy |
 | **Model** | **Opus 5** at **`xhigh`** | §2 routes L0 to Opus (R6); judgement-dense. **NOT Fable** — that is L7/L9/L11 |
-| **Context** | **fresh session** | the previous one closed at 4 usage walls |
-| **Ultracode** | **ON** | the finish-sweep is a ~40-agent fan-out |
-
-> ⚠️ The old A12.2 / SESSION 24 kickoff that used to sit here has been **retired for
-> now**. That is lane **L5** and it stays queued: §2's ordering rule is L0 first, and
-> L0's re-score is what routes L5 anyway. `docs/sessions/SESSION24_KICKOFF.md` is
-> still on disk, unchanged, for when L5 comes up.
+| **Context** | **fresh session** | the previous one closed at eight usage walls |
+| **Ultracode** | **ON** | ~36 judging agents + a dry-loop remain |
 
 Copy everything **between** the `'''` lines (the markers are not part of the prompt):
 
@@ -70,77 +100,105 @@ You're the lead engineer on SSHD 1:1. Follow the repo's CLAUDE.md and my ship-ba
 
 READ FIRST, then tell me the state and your plan before you spawn anything:
 - RESUME_HERE.md
-- docs/gauntlet/L0/SALVAGE.md   <- the resume card; it has the exact stage table
+- docs/gauntlet/L0/SALVAGE.md   <- the resume card; exact stage table + what is banked
 - docs/GAUNTLET.md              <- the standing engine; §2 is the lane board, §0 is the law
 
-THE TASK: FINISH lane L0 to its binary gate. It is 4 runs deep and mid-flight.
-DO NOT restart it and DO NOT try to resume the old workflow - resumeFromRunId is
-SAME-SESSION ONLY, so wf_7e275b35-488 is dead to you. The cache is not load-bearing:
-every completed agent result is already extracted to docs/gauntlet/L0/run2/ and
-committed. Write a FRESH, SMALLER finish-L0 workflow (~40 agents) against the
-on-disk state. SALVAGE.md gives you the stages.
+THE TASK: FINISH lane L0 to its binary gate. It is 8 usage walls deep and mid-flight.
+DO NOT restart it. DO NOT try to resume a dead run - resumeFromRunId is SAME-SESSION
+ONLY. The cache is not load-bearing: every completed agent result is extracted to
+docs/gauntlet/L0/run2..run7 and committed.
 
 ALREADY BANKED - do NOT re-derive any of this:
-- The string table is FOUND (S0-3). 804 item / 73 skill / 484 NPC names resolve.
-  docs/gauntlet/L0/index/strings.json + resolved_names.json. §2.1 is DEAD, L1b is
-  CLOSED. Caveat: Android build 0.682 vs web 0.717 - label which build a string
-  came from; data-XML rows match, UI copy and combat tuning parity do NOT.
-- ALL 12 SYSTEMS ARE JUDGED: 232/232 claims through 3-4 blind critics each.
-- 1,087 claims / 1,767 verdicts / 0 VOID are in docs/gauntlet/L0/run2/.
+- 814 of 1,467 claims are JUDGED. 1,506 claim rows / 2,896 verdict rows / 0 VOID.
+- ALL 12 systems and ALL 10 source sweeps are judged. Gate L0-D is GREEN.
+- The tooling exists and is tested: citeLint.py (gate L0-A), buildWorklist.py,
+  buildLedgerEvidence.py, gateL0.py. 59 files / 942 tests green.
+- ALL SIX of §6's "structurally unrecoverable" entries are overturned by judged claims.
+- Three Stage-0 facts were OVERTURNED - RESUME_HERE.md calls them C1/C2/C3. Carry them:
+  the blobs are NOT all UTF-16LE; the build-parity proof was CIRCULAR and the caveat is
+  UNDISCHARGED; and S0-5 is dead because the audio IS recovered.
 
 WHAT IS LEFT, in order:
-1. The 4 source surveys that never ran: android-blobs, string-table, frames,
-   uistrings-payload. The first two have NEVER been opened by any agent in four
-   runs - that is where the remaining value is concentrated.
-2. ~12 source critics (cite + hunter) over the 6 completed sweeps in sources/*.md -
-   feed those files in as input, do NOT re-survey.
-3. JUDGE the 645 critic new_findings (210 claimed ledger overturns, currently
-   unusable because nothing judged them). Batch them; never one agent per finding.
-4. Dry-loop until TWO rounds THAT ACTUALLY RAN find nothing new, then completeness.
-5. Rewrite docs/research/REBUILD_READINESS.md from the JUDGED claims only.
-6. Drive gates L0-A..F green with PASTED output. Build scripts/gauntlet/citeLint.py
-   red-first and chaos-plant it.
-7. Correct docs/GAUNTLET.md itself - §2.1 blocker dead, the L1b lane row obsolete,
-   §2's L6 "~150 animations" is really ~450 - and re-arm per §3.7 in the SAME commit.
+1. Judge the last 653 findings. Read the CURRENT batch counts from
+   docs/gauntlet/L0/worklist/MANIFEST.json - they renumber every build:
+     l0-finish-wf3.workflow.js  args {tier:'t1', batches:N, tag:'<unique>'}
+     l0-finish-wf3.workflow.js  args {tier:'t2', batches:M, tag:'<unique>'}
+   ALWAYS PASS A UNIQUE tag. Without it the review filenames collide across runs and a
+   later run silently overwrites an earlier run's committed prose - it already happened.
+2. WF-4: dry-loop until TWO rounds THAT ACTUALLY RAN find nothing, then completeness.
+   Write docs/gauntlet/L0/convergence.json - gate L0-C reads it.
+3. Rewrite docs/research/REBUILD_READINESS.md from docs/gauntlet/L0/LEDGER_EVIDENCE.md
+   ONLY. Cite every claim inline as [[unit/claim-slug]] - gate L0-B resolves every one
+   against the pooled verdicts and goes RED on anything unjudged, refuted, or unknown.
+4. Drive gates L0-A..F green with PASTED output from gateL0.py.
+5. Correct docs/GAUNTLET.md itself - §2.1's string-table blocker is dead, the L1b lane row
+   is obsolete, §2's L6 "~150 animations" is 471 measured - and re-arm per §3.7 in the
+   SAME commit.
 
-THE BAR - §0 is absolute: EVERY CRITIC IS AN ARTIFACT CRITIC. This game is DEAD; no
-agent has ever seen it run, so a verdict must cite a frame under reference/frames/, a
-row under reference/extracted/ or reference/decompiled/, a byte-check in the suite, a
-ledger number carrying its own frame cite, or my own logged LOOK. A verdict citing
-memory, another agent's summary, or "it looks right" is VOID. Crop and upscale before
-grading any frame. When a measurement doc and a frame disagree, THE FRAME WINS - say
-so out loud. An UNJUDGED claim is a LEAD, not a finding: it may NOT enter the ledger.
+THE BAR - §0 is absolute: EVERY CRITIC IS AN ARTIFACT CRITIC. This game is DEAD; no agent
+has ever seen it run, so a verdict must cite a frame under reference/frames/, a row under
+reference/extracted/ or reference/decompiled/, a byte-check in the suite, a ledger number
+carrying its own frame cite, or my own logged LOOK. A verdict citing memory, another
+agent's summary, or "it looks right" is VOID. Crop and upscale before grading any frame.
+When a measurement doc and a frame disagree, THE FRAME WINS - say so out loud. An
+UNJUDGED claim is a LEAD, not a finding: it may NOT enter the ledger.
 
-FAIL CLOSED (two bugs I already fixed - do not reintroduce them): zero live critics
-means UNJUDGED, never confirmed; and a round where agents DIED is not a round that
-found nothing, so it may not count toward convergence. Return a loud INTEGRITY string.
+AND THE ONE THIS LANE ADDED: a finding can be perfectly TRUE and still not overturn the
+sentence it names. 36% of claimed overturns were rejected on exactly that. Keep
+overturn_upheld separate from refuted, and never let a true-but-wrong-target finding
+delete a ledger line.
 
-SURVIVE THE WALL: this lane has hit the usage limit four times. Agents write their
-output to disk BEFORE returning; copy the journal into the repo and extract it the
-moment a stage lands (scripts/gauntlet/salvageJournal.py); COMMIT at every
-checkpoint; keep SALVAGE.md current. Never edit a live workflow script mid-run.
+FAIL CLOSED (bugs already fixed - do not reintroduce): zero live critics means UNJUDGED,
+never confirmed; a VOID verdict is not judgement; and a round where agents DIED is not a
+round that found nothing, so it may not count toward convergence. Return a loud INTEGRITY
+string naming every dead agent.
+
+SURVIVE THE WALL: this lane has hit the usage limit EIGHT times. Agents write their output
+to disk BEFORE returning - that has now saved work at five separate walls; copy the
+journal into the repo and extract it the moment a stage lands
+(scripts/gauntlet/salvageJournal.py); COMMIT at every checkpoint; keep SALVAGE.md current.
+Never edit a live workflow script mid-run.
 
 WHAT NOT TO BREAK: §4's no-touch list. Sim.ts and the duel-baseline move only in L5.
-Floors go UP or stay. core/ keeps zero numeric literals. Scenes stay render-only.
+Floors go UP or stay. core/ keeps zero numeric literals. Scenes stay render-only. The
+"web SWF is 24 fps" finding is a LEDGER correction only - it does not license touching
+OG_ANIMS' 15 fps latch, which is L6.
 
-FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 56 files / 894),
-report the judged-vs-leads split from run2/claims.json, and show me the finish-L0
-fan-out shape. Don't spawn until I ok it.
+FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 59 files / 942), paste the
+current gateL0.py output, report the judged-vs-leads split from
+docs/gauntlet/L0/LEDGER_EVIDENCE.json, and show me the fan-out shape. Don't spawn until
+I ok it.
 '''
 ```
 
 **Start command** (from the repo root):
 
 ```bash
-cd "/Users/kheshav/kheshav-code/SSHD 1-1" && git log --oneline -1 && npm test 2>&1 | tail -5
+cd "/Users/kheshav/kheshav-code/SSHD 1-1" && git log --oneline -1 && npm test 2>&1 | tail -5 \
+  && python3 scripts/gauntlet/gateL0.py --root docs/gauntlet/L0 \
+       --ledger docs/research/REBUILD_READINESS.md --out /tmp/gate.json
 ```
 
-**Bar verdict: ✅ meets the "cannot be improved further" bar** — it names the lane, the
-model, and the exact remaining stages; it front-loads everything already banked so no
-agent re-derives the string table; it carries §0's law, the two fail-closed rules that
-make this lane's numbers trustworthy, and the wall-survival discipline that has now
-saved the run four times; and it blocks the one mistake that would cost real money
-(trying to resume a dead run ID). The next change would be churn.
+**Bar verdict: ✅ meets the "cannot be improved further" bar.** It front-loads everything
+banked so nothing is re-derived; it carries §0's law, the *new* overturn rule this lane
+discovered, and the three fail-closed accounting rules that make the numbers trustworthy;
+it names the exact scripts and args including the `tag` whose absence has already cost
+work; it blocks the two mistakes that cost real money (resuming a dead run, re-deriving
+the string table); and it ends with a concrete, checkable first action. The next change
+would be churn.
+
+### Two owner decisions queued (neither blocks the next session)
+
+1. **L7 / audio.** CLAUDE.md fixes the stack as *"WebAudio-synthesized SFX only"*. We now
+   hold the real 13 stems and every SFX. That does not change what ships — but it changes
+   whether L7 means *synthesize to a written spec* or *synthesize to match a file you can
+   A/B against*. **Recommendation: the second.**
+2. **§3.8 campaign scope.** *"Ep4–12 were likely never shipped; faithful campaign =
+   Prologue–Ep3."* Bespoke splash art for all 13 episodes IS in the binary, and the 16
+   `image_*` symbols map one-for-one onto shipped quest rows. **Recommendation: withdraw
+   the cut.** It widens L1.
+
+---
 
 ## 🔁 THE GAUNTLET — the standing engine (adopted 2026-08-13)
 

@@ -40,6 +40,13 @@ if (!TIER) throw new Error(`unknown tier "${tierKey}" — expected t1 or t2`)
 // UNJUDGED, which under §0 kills them.
 const batchCount = (typeof args === 'object' && args?.batches) || TIER.batches
 
+// A run-unique suffix for every review filename. buildWorklist RENUMBERS batches on every
+// build — judged findings drop out, new ones arrive — so `t1-overturns-01` names a
+// different claim set each run. Without a tag the filename collides and a later run's
+// partial work silently overwrites an earlier run's committed review. That happened at
+// wall #8; git had the originals, but only by luck.
+const TAG = (typeof args === 'object' && args?.tag) ? `.${args.tag}` : ''
+
 const LAW = `
 === GAUNTLET §0 — THE LAW. READ IT BEFORE YOU DO ANYTHING. ===
 Straw Hat Samurai: Duels is DEAD. There is no playable build (proven definitively,
@@ -257,7 +264,7 @@ if you genuinely could not rule on one, name it there and say why. NO SILENT CAP
 
 ${LENSES[lens]}
 
-Write your full review to ${OUT}/critics/${batch}.${lens}.md BEFORE you return — this
+Write your full review to ${OUT}/critics/${batch}.${lens}${TAG}.md BEFORE you return — this
 run must survive a usage wall. Then return the structured object.`
 }
 

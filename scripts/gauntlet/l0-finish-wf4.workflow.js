@@ -90,6 +90,10 @@ C3 — S0-5 IS DEAD: THE AUDIO IS RECOVERED, NOT ENCRYPTED. 122_Mobile_SoundReso
 
 `
 
+// Run-unique suffix — see the wf3 note: dry-loop round numbers restart every run, so
+// `dryloop-r1-t1.md` collides across runs without it.
+const TAG = (typeof args === 'object' && args?.tag) ? `.${args.tag}` : ''
+
 const CLAIM_SCHEMA = {
   type: 'object',
   required: ['id', 'text', 'artifact_class', 'cite', 'verdict'],
@@ -181,7 +185,7 @@ rounds end this loop. Do not pad. A padded round costs another whole round of ag
 Fill in "searched" with what you actually opened. An empty result is only credible if
 that field is full, and a full one is how the next reader knows the ground was covered.
 
-Write to ${OUT}/critics/dryloop-r${round}-t${idx + 1}.md before you return.`
+Write to ${OUT}/critics/dryloop-r${round}-t${idx + 1}${TAG}.md before you return.`
 }
 
 // ---------------------------------------------------------------------------
@@ -280,7 +284,7 @@ READ, do not assume: ${OUT}/SEEN_CLAIM_IDS.txt · ${OUT}/citelint.json (the mach
 audit: which claims are BROKEN or QUOTE_UNVERIFIED) · ${OUT}/worklist/MANIFEST.json ·
 ${OUT}/sources/ · docs/research/REBUILD_READINESS.md.
 
-Write to ${OUT}/critics/completeness.md before you return.`,
+Write to ${OUT}/critics/completeness${TAG}.md before you return.`,
   { label: 'completeness', phase: 'Completeness', schema: HUNT_SCHEMA },
 )
 
