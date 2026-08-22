@@ -12,8 +12,9 @@
 | **1** | `l0-finish-wf3` `{tier:'t1', batches:3, tag:'s26a'}` — 67 overturn-claimers | 6 | ✅ **CLEAN** — `wf_54792c81-6cd` → `run8` |
 | **2** | `l0-finish-wf3` `{tier:'t2', batches:13, tag:'s26b'}` — 586 corroborating | 13 | ⚠ **WALL #9** — 4 returned, 9 died; **6 batches banked** → `run9` |
 | **2b** | t1 `{batches:2, tag:'s26c'}` — the 31 remaining overturn-claimers | 4 | ✅ **CLEAN** — `wf_26e01058-359` → `run10` |
-| **2c** | t2 `{batches:8, tag:'s26d'}` — 355 corroborating | 8 | ⏳ |
-| **2d** | final t1 mop-up over every accumulated overturn-claimer | ~2 | ⏳ |
+| **2c** | t2 `{batches:8, tag:'s26d'}` — 355 corroborating | 8 | ✅ **CLEAN** — `wf_0504102f-f7a` → `run11` |
+| **2d** | t2 `{batches:1, tag:'s26e'}` — the 45 second-generation corroborating | 1 | ⏳ |
+| **2e** | final t1 mop-up over every accumulated overturn-claimer | ~2 | ⏳ |
 
 > ⛔ **ONE WORKFLOW IN FLIGHT** (owner rule 2026-08-22, `GAUNTLET.md` §3 item 8). Waves 1
 > and 2 ran together and took wall #9 as a pair. Every wave from 2b on runs alone.
@@ -21,6 +22,31 @@
 | **4** | `l0-finish-wf4` `{tag:'s26d'}` — dry-loop + completeness | ≤17 | ⏳ |
 | **5** | ledger rewrite — 12 system writers ⇉ 12 blind verifiers, + §6 | 27 | ⏳ |
 | **6** | gates green · `GAUNTLET.md` corrections · §3.7 re-arm | 0 | ⏳ |
+
+### ⚑ C1 IS CORRECTED AGAIN — THE BLOB XOR KEY IS PER-FILE, NOT 109
+
+A wave-2c critic did not take C1 on trust. It read `ResourceManager.as:186`
+(`decryptByteArray(ba, resourceFileNameArray[num].charCodeAt(1))` — the key is **the
+second character of the file's own name**), then RAN the decrypt+inflate on all five
+blobs and reported the byte counts:
+
+| blob | key | inflated |
+|---|---|---:|
+| `115_Mobile_SHS3Resource` | `'h'` = 104 | 1,040,849 |
+| `113_Mobile_MusicResource` | `'u'` = 117 | 1,402,677 |
+| `122_Mobile_SoundResource` | `'o'` = 111 | 29,623 |
+| `124_Mobile_ImageResource` | `'m'` = 109 | 1,908,229 |
+| `120_Mobile_BGResource` | `'g'` = 103 | 4,412,340 |
+
+**C1 said "key `'m'`=109" as though it were universal. 109 is the IMAGE key only.** C3's
+audio recovery at key 111 was right and is now explained rather than coincidental. Every
+later brief must carry the per-file rule, or four of the five blobs read as noise.
+
+Same critic parsed `115` and found **1,912 exported equipment symbols** (torso/lowarm/
+uparm/pelvic 151 each, stomach 150, item 112, weapon 109, hat 96 …) — the sprite-
+compositing manifest §4's ⑤ calls a from-scratch-art blocker.
+
+---
 
 ### ⚑ WALL #9 — AND THE INSURANCE PAID, IN NUMBERS
 

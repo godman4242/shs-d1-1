@@ -1,0 +1,398 @@
+{
+  "packet_size": 48,
+  "judged_count": 48,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "items-equipment/sell-price-reads-stack-weight",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/Item.as:1564-1568 and :1582-1593; reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:1963,1974",
+      "reason": "Opened both. Item.as:1564 'public function getWeight() : int' with :1568 'return this.weight * this.getQuantity();'; getSellAmt at :1582 tests 'if(this.getWeight() >= 10)' at :1587. The >=10 test therefore reads stack weight. Web \u00a71t17s0\u00a7.as:1974 'return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7();' and \u00a71t484s0\u00a7 at :230 returns this.qty.\u00a71t697s0\u00a7() \u2014 i.e. getQuantity \u2014 so the web adds a weight term Android lacks (grep 'weight' over Android Item.as returns 12 hits, none a modifier term). Only looseness: 'each sell at x10' \u2014 getSellAmt prices the STACK once, not per unit."
+    },
+    {
+      "claim_id": "items-equipment/sell-weight-branch-is-stack-weight",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:60,230,300,1407,1963,1974; reference/decompiled/shs3_android/scripts/Item.as:1564-1579",
+      "reason": "Both quoted bodies are verbatim at the cited ranges (android getWeight 1564-1579; web \u00a71t545s0\u00a7 1958-1975). The PARTIAL hedge is honest but I closed it: \u00a71t478s0\u00a7 is declared at :60 'internal var \u00a71t478s0\u00a7:int = 0;', serialised under modifier id \u00a71t8741s0\u00a7=208 at :300, and printed at :1407 as getString(139)+': '+(_loc2_.weight + this.\u00a71t478s0\u00a7) \u2014 it is the per-item weight MODIFIER. Claim survives and can be upgraded to HELD."
+    },
+    {
+      "claim_id": "items-equipment/sell-weight-is-stack-weight-and-builds-diverge",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/ShopUI.as:401; reference/decompiled/shs3_android/scripts/Item.as:1564-1568; reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:1958-1974,1977-1988",
+      "reason": "ShopUI.as:401 is verbatim 'slot.setCost(slot.getItem().getSellAmt(),0);' and grep -rn getSellAmt over all 559 android scripts returns only the declaration and that one call \u2014 sole-call-site claim confirmed for Android. Web \u00a71t546s0\u00a7 body (:1977-1988) is identical arithmetic to Android getSellAmt, and its input \u00a71t545s0\u00a7 is not. Caveat I add: the WEB build has a second call site the claim does not know about, \u00a71t6172s0\u00a7.as:417 '_loc2_ += _loc5_.\u00a71t546s0\u00a7();', so 'sole call site' is an Android-only fact."
+    },
+    {
+      "claim_id": "items-equipment/sell-weight-test-is-stack-weight",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/Item.as:1564-1571,1582-1593",
+      "reason": "Both cited ranges open exactly as quoted. :1582 'public function getSellAmt() : int' -> :1584 'if(this.itemID < 3000){ return 1; }' -> :1587 'if(this.getWeight() >= 10)'. getWeight at :1568 multiplies by getQuantity(). Line numbers are exact, quote is verbatim."
+    },
+    {
+      "claim_id": "items-equipment/setarmor-drives-8-parts",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/MCSCharacter.as:915-1088 (decls :917-924, neck attach :1071-1087) and :795-813",
+      "reason": "setArmor opens at :915; its local declaration block :917-924 is exactly eight partList slots \u2014 torso, stomach, l_uparm, r_uparm, l_lowarm, r_lowarm, pelvic, neck. The removeChildAt(0) prologue at :927-933 covers only seven (neck excluded), and the tail at :1071 'componentObject = this.getMCSComponent(\"neck\",id);' ... :1082 'neck.addChild(componentObject);' attaches the eighth. setNeck at :795 does clear two-deep (:798 removeChildAt(1), :802 removeChildAt(0)), proving the slot is deliberately shared. Every quoted fragment is verbatim."
+    },
+    {
+      "claim_id": "items-equipment/slashusage-24-is-dead",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1921-1930; reference/decompiled/shs3_android/scripts/XMLNpc.as:361-364; reference/extracted/itemdata.xml",
+      "reason": "getSlashUsage opens at :1921 and the quoted body is verbatim, floor 48 at :1924. My own count over itemdata.xml reproduces the histogram exactly: 106 rows, {72:70, 96:35, 24:1}. I also closed the hole the claim left open \u2014 the only other reader, XMLNpc.initDuelist, applies the SAME floor at :361-364 ('if(this.slashUsage < 48){ this.slashUsage = 48; }'), so 24 is dead on the NPC path too. Live domain is {48,72,96}."
+    },
+    {
+      "claim_id": "items-equipment/stancerestriction-is-dead-data",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t104s0\u00a7.as:30,172,174,178; reference/decompiled/shs3_android/scripts/XMLItem.as:38,160,162,166,321,327; reference/extracted/itemdata.xml",
+      "reason": "grep -rln stancerestriction over BOTH script trees returns exactly one file each, at exactly the cited lines. Web parses it and never reads it again; Android adds the description branch at :321-327 'this.desc += LangManager.getString(125) + \": \" + this.stancerestriction;' and string 125 = 'Stance Restriction'. My own count: 53 <stancerestriction> rows in itemdata.xml, matching the impact line. No stance gate exists."
+    },
+    {
+      "claim_id": "items-equipment/two-ring-slots-are-accessory1-and-2",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/MCSItem.as:64,89,120,152,177,203,226,249,279,324,362; reference/frames/s21_weapon/t708.0.png crop (170,240)-(870,1040) upscaled x2 LANCZOS",
+      "reason": "grep 'public function set' over MCSItem.as returns exactly the eleven cited setters plus the two colour setters \u2014 no setNeck. I opened the frame myself: nine boxes, the two identical empty rings sit bottom-left and bottom-right, no neck box. Core claim holds. Two mis-statements to log: (a) 'setNeck exists only at MCSCharacter.as:795 and MCSBust.as:47' \u2014 MCSBust.as:47 is a CALL site, the declaration is at MCSBust.as:359, and CreateCharForm.as:229-237 references it too; (b) 'setAccessory is the only one that draws a repeatable identical empty box' \u2014 setHat/setHair/setHead all draw HatDummyIcon (MCSItem.as:70,95,126). Neither touches the conclusion, because neither hair nor head has a paperdoll box."
+    },
+    {
+      "claim_id": "items-equipment/ui-slot-map-resolved",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:162-178,521-535; reference/frames/s21_weapon/t708.0.png crop (170,240)-(870,1040) x2 LANCZOS",
+      "reason": "The nine SLOT_ constants are verbatim (SLOT_HAT at :162 through SLOT_RING2 at :178 \u2014 the cite starts one line late at 163, a harmless off-by-one). case 7/case 8 at :521-535 bind EQ_ACCESSORY1->SLOT_RING1 and EQ_ACCESSORY2->SLOT_RING2 exactly as quoted. I cropped the frame myself: reading order is hat,mask / armor,gloves / pants,weapon / ring,shoes,ring \u2014 identical to SLOT index order, and there is no neck box."
+    },
+    {
+      "claim_id": "items-equipment/ui-slot-mapping-resolved",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:162-180,261-269,475,491,522-535,537; reference/frames/s21_weapon/t708.0.png crop (170,240)-(870,1040) x2 LANCZOS",
+      "reason": "totalEquippedSlots:int = 9 at :180, the SLOT_ table at :162-178, and the equippedSlots[SLOT_RING1]=equipAccessory1 / [SLOT_RING2]=equipAccessory2 assignments at :268-269 are all verbatim. Frame corroboration verified by my own crop. One line-number slip in the bonus remark: the 4000/4001 armor test is at :475 (correct) but the 11001 pants test is at :491, not :493 (:493 is 'this.pantsIcon.visible = true;'); both are also restated at :537. Substance unaffected."
+    },
+    {
+      "claim_id": "items-equipment/ui-slot-table-held",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:162-178,268-269,823-824; reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:37,39,175-193,281-289",
+      "reason": "Strongest of the four UI-slot claims and it holds on both builds. Android onUnequip at :823-824 is verbatim 'case this.equippedSlots[this.SLOT_RING1]: StatsManager.removeEquipment(StatsManager.EQ_ACCESSORY1);'. Web twin opened: acc1Icon at :37 and acc2Icon at :39, the 0..9 constant ladder at :175-193 (\u00a71t6002s0\u00a7=0 .. \u00a71t6010s0\u00a7=8, \u00a71t6011s0\u00a7=9), and :288/:287/:289 bind \u00a71t6008s0\u00a7->equipAccessory1, \u00a71t6009s0\u00a7->equipShoes, \u00a71t6010s0\u00a7->equipAccessory2. 'No Android-parity caveat' is earned."
+    },
+    {
+      "claim_id": "items-equipment/uses-zero-is-a-never-wears-sentinel",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/Item.as:1420-1424,1439-1449,712-724; docs/gauntlet/L0/index/strings.json[\"639\"],[\"392\"]",
+      "reason": "repair() is exactly :1439-1449 with the uses==0 early return at :1441-1444 and the clamp 'if(this.uses <= 0){ this.uses = 1; }' at :1446-1449. gotUsed declares at :1420 (cite says 1419, a blank line \u2014 harmless) with the same early return. getDesc at :712 opens the ladder at :718 'if(this.uses == 0){ conditionStr = LangManager.getString(639); }'. strings.json resolves 639 = 'Unbreakable' and 392 = 'Condition: Well-Maintained' exactly as quoted. uses==0 is a never-degrades sentinel; fresh wearables must start at 1."
+    },
+    {
+      "claim_id": "items-equipment/weapon-ladder-minlvl-coverage-and-prog-spike",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/ItemGenerator.as:58,157,164,171,172-183; reference/extracted/itemdata.xml (own parse)",
+      "reason": "QUOTE_UNVERIFIED was a lint artifact \u2014 the quote embeds 'ItemGenerator.as:157 ' prefixes. I located every line: :157 'this.prog1[MAXINDEX] += 10;', :164 prog2, :171 prog3, and the prog4 loop (:174-177) and prog5 loop (:180-183) get NO such line. MAXINDEX is 79 (:58). My own parse of itemdata.xml reproduces the arithmetic exactly: 982 <item>, 158 carry <mindamage>, all with <type>9</type>, 122 of those carry <minlvl>, range -4..79. Both corrections are true; this deserves HELD, not PARTIAL."
+    },
+    {
+      "claim_id": "items-equipment/web-build-has-a-fifth-name-colour-band",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:42,677-681,698-701; reference/decompiled/shs3_android/scripts/Item.as:407-450",
+      "reason": "Line-exact. :42 'internal var xp:\u00a71t98s0\u00a7 = null;'; :677 'if(this.xp != null)' -> :679 '#ff9900' tested BEFORE the unique branch at :681 '#b048f8'; :698 'else if(this.xp != null)' -> :700 '#ff6600'. Android getName() opens at :407 and its two palettes are four-deep each (b048f8/0080ff/1eff00/FFFFFF and 6600cc/003399/336600/000000) with no xp branch \u2014 grep -c xp over Android Item.as returns 0. Five bands in the target build, four in Android."
+    },
+    {
+      "claim_id": "items-equipment/web-build-has-fifth-item-colour",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:677,679,698,700,767,834; reference/decompiled/shs3_android/scripts/Item.as (grep ff9900|ff6600 -> 0)",
+      "reason": "All four primary lines open verbatim, and the two extra sites are exact too: :767 '_loc1_ += \"<font color=\\\"#ff9900\\\">\";' and :834 the bracketed variant. grep -rn 'ff9900|ff6600' over all 559 shs3_android scripts returns nothing at all. The tier palette is five states in v0.717."
+    },
+    {
+      "claim_id": "items-equipment/web-build-has-fifth-item-colour-tier",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:42,679,700; reference/decompiled/shs3_android/scripts/Item.as:417-451",
+      "reason": "Three single-line cites, all three exact to the line. Android :417-451 is the two four-deep palettes with no xp test anywhere. The claim's 'highest-precedence' wording is right: the xp test is the FIRST branch in both web palettes."
+    },
+    {
+      "claim_id": "items-equipment/web-build-has-fifth-name-colour",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:677-681,698-702; reference/decompiled/shs3_android/scripts/Item.as:417-451",
+      "reason": "Fourth independent statement of the same fact and it holds identically. Both cited ranges open with the quoted text verbatim. Nothing in Android getName() references xp."
+    },
+    {
+      "claim_id": "items-equipment/web-condition-string-11496-unresolved",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:1028-1037; reference/decompiled/shs3_android/scripts/Item.as:712-745; docs/gauntlet/L0/index/strings.json",
+      "reason": "Exact. Web \u00a71t514s0\u00a7 runs the same seven-branch condition ladder as Android getDesc, then adds an eighth block at :1028 'if(this.\u00a71t482s0\u00a7)' appending getString(11496) at :1032/:1036. Android's ladder ends at the else branch and has no such block. strings.json['11496'] is None \u2014 I checked it directly. The Android XLIFF does not close web UI copy."
+    },
+    {
+      "claim_id": "items-equipment/web-only-xp-item-colour",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:677,700; reference/decompiled/shs3_android/scripts/Item.as:407-450 + tree-wide grep of 559 scripts",
+      "reason": "Both single-line cites are exact. I ran the tree-wide grep myself: 'ff9900|ff6600' over reference/decompiled/shs3_android/scripts returns zero hits, and grep -c xp over Android Item.as returns 0. Since the reference videos are the WEB build, the fifth colour is the one a recreation must ship."
+    },
+    {
+      "claim_id": "items-equipment/web-save-format-has-modifier-id-206",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:14-22,119,187,304,350,429; reference/decompiled/shs3_android/scripts/Item.as:6-16,317-330",
+      "reason": "\u00a71t8739s0\u00a7 = 206 at :18 and the wire line at :304 '_loc2_ += \u00a71t8739s0\u00a7 + \"@\" + this.xp.\u00a71t697s0\u00a7() + \"#\";' are both verbatim, and all six cited references resolve. Android's Item.as:6-16 reserves exactly the five listed IDs. copyModifiers is at :317-330 and blacklists 85/86/87/88 exactly as stated. Under-claim to log: the web reserves THREE extra IDs, not one \u2014 \u00a71t8740s0\u00a7 = 207 at :20 and \u00a71t8741s0\u00a7 = 208 at :22 (208 is the weight modifier)."
+    },
+    {
+      "claim_id": "kh-1500-1501-are-reversed-and-dual-stance",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as:836-859; reference/extracted/skilldata.xml; docs/gauntlet/L0/index/strings.json",
+      "reason": "Every quoted line number is exact to the line: :836 'if(xml.getMastery(1500) > 0)', :838 'setStance(REVERSED_STANCE);', :840 the 1501 test, :842 'setStance(DUAL_STANCE);', :844 the all-equal test, :846 'setStance(Math.random() * 3);'. The argmax tail is at :848-859. I checked the data side too: skilldata.xml rows 1500 and 1501 are category 11 with an empty <desc> and no <displayname>, and strings.json has no 1500/1501 entry \u2014 so the honest STILL_UNHELD residue on their display names is right."
+    },
+    {
+      "claim_id": "kh-base-aicountermax-is-24-not-12",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/NPC.as:22,287-292; EnemyPlayer.as:52; MCSPlayer.as:165; EnemyElite.as:18; FriendlyElite.as:18; EnemyKnife.as:3",
+      "reason": "Core fact confirmed to the line: NPC.as:22 'internal var aiCounterMax:int = 24;' and the checkAITrigger reload at :290. EnemyKnife.as:3 is 'public class EnemyKnife extends NPC' with no override, so it inherits 24. But 'only EnemyPlayer overrides it' is wrong: grep -rn aiCounterMax finds FOUR assignments of 12 \u2014 MCSPlayer.as:165 (EnemyPlayer's own base), EnemyPlayer.as:52, EnemyElite.as:18 and FriendlyElite.as:18. All four are the EnemyPlayer rig, so the two-cadence conclusion survives intact; the enumeration does not."
+    },
+    {
+      "claim_id": "kh-boss-scaling-build-divergence",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t122s0\u00a7.as:77,118,146,147,812-822; reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as:103-105,132-135,780-801",
+      "reason": "Every one of the nine line cites is exact. Web :118 'if(_loc13_ <= 3){ _loc13_ = 3; }' vs android :103-105 'if(hitsToKillPlayer <= 0){ hitsToKillPlayer = 2; }'. Web :146 'minDamage = 1;' and :147 '\u00a71t1244s0\u00a7 = _loc7_ / _loc13_;' vs android :132-135 'bossATK = bosshit + playerDEF; if(bossATK > minDamage){ minDamage = bossATK; }'. Bands 1.25/1.2/1.1/0.8 at android :782/788/794/800 vs web 1.1/0.9 only at :814/821. Web :77 '\u00a71t4413s0\u00a7 = 10 * param1;' has no android counterpart. And the HP half really is identical \u2014 the four playerhit floors (<=10 ->1, <=20 -> /8, <=30 -> /6, else /4) appear byte-for-byte in web :122-141 and android :107-130."
+    },
+    {
+      "claim_id": "kh-dragondance-is-in-the-web-build-too",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5495s0\u00a7.as:70-71; reference/decompiled/shs3_payload/scripts/\u00a71t8695s0\u00a7.as:172,176,188; reference/decompiled/shs3_android/scripts/DragonDanceUI.as:70",
+      "reason": "Exact. \u00a71t5495s0\u00a7.as:70 and :71 are the two eight-element trigram arrays verbatim, and I confirmed the 'same line numbers' assertion \u2014 grep -rln for the sky/wind/water/mountain literal finds DragonDanceUI.as:70 in BOTH android trees and \u00a71t5495s0\u00a7.as:70 in the web. \u00a71t8695s0\u00a7.as:172='1246', :176='4216', :188='6241' all land on the exact quoted lines. The android-only attribution on NF-9 can be upgraded to 'both'."
+    },
+    {
+      "claim_id": "kh-greenline-and-redline-are-named-in-both-builds",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/InputManager.as:172,174,177,179; reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as:174,179",
+      "reason": "Line-exact in both builds. Android :172 'public static function greenLine() : *' with :174 lineStyle(thickness,39168,...) and :177 'redLine()' with :179 lineStyle(thickness,10027008,...). Web twin carries the identical lineStyle calls at :174 and :179 under obfuscated names \u00a71t10101s0\u00a7 / \u00a71t10102s0\u00a7. Arithmetic checks: 39168 = 0x009900 and 10027008 = 0x990000. The function names do say which is which; WHEN greenLine() fires is correctly left unheld."
+    },
+    {
+      "claim_id": "meta-social/android-string-table-is-not-v0717s-copy",
+      "refuted": false,
+      "own_cite": "reference/frames/Nr4fQstqHDM/map/frames/frame_0084.jpg (512x288, whole frame x3 LANCZOS); docs/gauntlet/L0/index/strings.json[\"369\"],[\"371\"]; reference/decompiled/shs3_payload/scripts/\u00a71t7924s0\u00a7.as:96; reference/decompiled/shs3_android/scripts/WarRules.as:95",
+      "reason": "I upscaled the frame myself and read 'WAR ROOM RULES 1/7  (JOINING A BATTLE)' with my own eyes. strings.json 369 = 'War room rules 1/6  (joining a battle)' and 371 = 'War room rules 2/6  (Turns AND MOVES)'. Both builds do render page 1 through getString(369) \u2014 web \u00a71t7924s0\u00a7.as:96, android WarRules.as:95. THE FRAME WINS: the shipped v0.717 title reads 1/7 while the Android table's id 369 reads 1/6, so the tables are siblings, not copies. Independently reinforced by \u00a71t7924s0\u00a7.as:23 max=7 and its case 7 calling ids 11016/11017, neither of which exists in the 2,533-entry Android table."
+    },
+    {
+      "claim_id": "meta-social/clan-crops-resource",
+      "refuted": false,
+      "own_cite": "reference/frames/Nr4fQstqHDM/seg-29/frames/frame_0015.jpg (whole frame x2 LANCZOS); reference/extracted/ui_strings.txt:211,248",
+      "reason": "I opened the frame: 'CLAN CROPS: 402 (+2 HQ)' is plainly rendered at the top-left of the war-room map panel, exactly as quoted. ui_strings.txt:248 reads 'clan crops: 130 *(+1 hq)' and :211 reads 'aka ryu crops: +2bob crops: -2' \u2014 both verbatim to the character. A per-clan stockpile with HQ-derived income and per-clan deltas is real and is on film."
+    },
+    {
+      "claim_id": "meta-social/clan-pays-5-coins-per-move",
+      "refuted": false,
+      "own_cite": "docs/gauntlet/L0/index/strings.json[\"372\"] (from reference/extracted/android/118_Mobile_Lang_EN.bin, 500,024 B)",
+      "reason": "I printed string 372 in full. Its final line is exactly '- the clan will pay the player 5 coins per move made.' The two other sentences quoted are also present verbatim, including the terrain ranking 'mountains have the highest tactical advantage, followed by forests and fields.' Note per S0-3 this is the v0.682 rulebook; the payout is corroborated in code by WarUI.as:241 (see the sibling claim)."
+    },
+    {
+      "claim_id": "meta-social/clan-pays-5-coins-per-move-and-war-hero-grants-clan-deed",
+      "refuted": false,
+      "own_cite": "docs/gauntlet/L0/index/strings.json[\"372\"],[\"2212\" via resolved_names.json]; reference/decompiled/shs3_android/scripts/WarUI.as:235,241; reference/decompiled/shs3_payload/scripts/\u00a71t6483s0\u00a7.as:526-533",
+      "reason": "Best of the three coin-per-move claims because it holds in CODE, not just copy. WarUI.as:235 opens 'internal function useWarMove(val:int)' and :241 is verbatim 'OverworldHUD.instance.lootDialog.addLootCoins(5);' \u2014 the very first statement. Web \u00a71t6483s0\u00a7.as:526-529 grants 11006 and 12002 for rank <= 3 and :531-533 grants item 2212 at rank == 10; resolved_names.json gives 2212 = 'Clan Deed', desc 'Form your own clan.\\nWar Hero rank required.' Only nit: the 2212 call sits at :533, one line past the cited :526-531 range."
+    },
+    {
+      "claim_id": "meta-social/clan-pays-five-coins-per-move",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "docs/gauntlet/L0/index/strings.json[\"372\"]; reference/decompiled/shs3_android/scripts/WarRules.as:100-101; reference/decompiled/shs3_android/scripts/WarTerrain.as:8,10,12",
+      "reason": "String 372 verified verbatim including the final payout line. WarRules.as:100-101 is exactly 'this.warrulestitle.text = LangManager.getString(371); this.warruleswords.text = LangManager.getString(372);' under 'case 2:' at :99 \u2014 the page-2 binding is exact. One off-by-one: the WarTerrain constants are at :8 (TERRAIN_FIELD=0), :10 (FOREST=1) and :12 (MOUNTAIN=2), so the cite ':9-13' misses FIELD by one line. Values and ordering are right."
+    },
+    {
+      "claim_id": "meta-social/desktop-v0717-decompile-was-on-disk-unopened",
+      "refuted": false,
+      "own_cite": "docs/gauntlet/L0/index/actionscript.json (bundles); reference/decompiled/shs3_payload/scripts/\u00a71t7924s0\u00a7.as:23,121-123; \u00a71t7785s0\u00a7.as:2123,1321,1388,1407,1413,1423,1433,1443; \u00a71t1523s0\u00a7.as:192,194,196,264,364; reference/decompiled/shs3_android/scripts/WarRules.as:23; WarHexUI.as:2285; StatsManager.as:78; OverworldHUD.as:1333",
+      "reason": "QUOTE_UNVERIFIED was a lint artifact. I verified EVERY sub-claim first-hand. actionscript.json bundles read shs3_android 970 / shs3_payload 1079, verbatim. (1) \u00a71t7924s0\u00a7.as:23 'internal var max:int = 7;' and :121-123 'case 7:' -> getString(11016) / getString(11017), against WarRules.as:23 'max:int = 6'. (2) \u00a71t7785s0\u00a7.as:2123 carries '&& this.\u00a71t7807s0\u00a7.owner != this.\u00a71t7812s0\u00a7' that WarHexUI.as:2285 lacks. (3) I parsed both expArrays: 99 entries each, identical element-for-element, a[79] = 4025800. (4) :192=60, :194=2*60, :196=60*60, :264=30. (5) :1321/1388/1407 all '500'; :1413=10000, :1423=5000, :1433=10000, :1443=10000. (6) The negative holds: grep '> 60 &&' finds OverworldHUD.as:1333 in Android and NOTHING in the 645 web scripts. Only nit: shs3_payload/scripts holds 652 entries but 645 are .as (7 are package dirs); android is 559 / 553."
+    },
+    {
+      "claim_id": "meta-social/enemy-remap-second-witness",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:365,370,375,380; reference/decompiled/shs3_android/scripts/WarHexUI.as:1733,1736-1751",
+      "reason": "QUOTE_UNVERIFIED was a lint artifact; I located every line and all four are exact to the line. InteractUI.as:365 'this.bust.initMCSFromNPCID(247);' for clanId 1, :370 (447) for 2, :375 (347) for 3, :380 (547) for 4. The guard the claim adds is real and exact: WarHexUI.as:1733 'if(tempid >= 200 && tempid < 600)', with the +200/+400/+300/+500 remap at :1736-1751. That guard is exactly why the 700-block singletons are never remapped."
+    },
+    {
+      "claim_id": "meta-social/filmed-build-is-neither-artifact",
+      "refuted": true,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7924s0\u00a7.as:7,23,96,121-123; reference/extracted/payload.xml:113188,528040-528088,2653462; reference/frames/Nr4fQstqHDM/map/frames/frame_0084.jpg (whole frame x3 LANCZOS)",
+      "reason": "REFUTED. The premise 'the v0.717 payload has 6 pages with completely different wording' is false, and its supporting inference is a non sequitur. payload.xml IS the same SWF as shs3_payload \u2014 the obfuscated class name '1t7924s0' appears in it at lines 113188 and 2653462, and that class declares [Embed(source=\"/_assets/assets.swf\", symbol=\"symbol756\")] at :7, i.e. the very DefineSpriteTag at payload.xml:528088 that immediately follows the six war-rules title/body pairs (characterIDs 744-755 at :528040-528084). That class sets max:int = 7 at :23 and has a case 7 at :121-123 pulling getString(11016)/(11017). It overwrites warrulestitle.text and warruleswords.text from getString() on EVERY page turn, so the '1/6'..'6/6' DefineEditText strings are dead authoring placeholders \u2014 exactly the trap the sibling claim rank-ladder-a1-confirmed correctly flags in ui_strings.txt. The claim's own reasoning gives it away: 'grep room rules over shs3_payload/scripts returns nothing' is expected, because v0.717 streams its strings (\u00a71t1521s0\u00a7.as:5-6 URLLoader/URLRequest). The frame's 1/7 does not contradict v0.717 \u2014 it CONFIRMS it. No frame-vs-artifact conflict exists here, the 'caps meta-social below 78' conclusion is unearned, and the crop the claim states, (60,20)-(300,45), cannot contain the body text it quotes (the body lines sit near y=58 and y=82 in a 512x288 frame)."
+    },
+    {
+      "claim_id": "meta-social/only-3-of-7-war-room-pages-were-ever-filmed",
+      "refuted": false,
+      "own_cite": "reference/frames/Nr4fQstqHDM/seg-20/frames/ (20 files; frame_0011, frame_0012, frame_0013 read whole-frame x3 LANCZOS, plus my own 20-row title-strip contact sheet over the whole segment)",
+      "reason": "Every frame reading is exact. I built my own title-strip sheet across all 20 seg-20 frames: 0001-0010 are the level-10 'CONGRATULATIONS' dialog, 0011 = 'WAR ROOM RULES 1/7  (JOINING A BATTLE)', 0012 = '3/7  (ATTACKING AND DEFENDING)', 0013 = '6/7  (BUILDING STRUCTURES)', 0014 = 'SELECT TERRITORY', 0015+ leave the UI. No other rules page appears in seg-20, confirmed. Page 6/7 does render strings.json['380'] word for word, typo 'CONTRUCTION' included, plus all five structure names. The PARTIAL verdict is the honest one and the conservative conclusion \u2014 the 24h war-tick page is not on film, so it keeps the S0-3 hedge \u2014 is right. Scope note: the universal 'only 3 of 7 exist on film' rests on one 20-frame segment; my own brightness sweep of all 1,302 Nr4fQstqHDM frames surfaced no fourth page either."
+    },
+    {
+      "claim_id": "meta-social/rank-ladder-a1-confirmed",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/Nr4fQstqHDM/seg-29/frames/frame_0015.jpg (whole frame x2 LANCZOS) and frame_0019.jpg / frame_0020.jpg (bottom-right crop (0.60,0.86)-(0.98,0.94) x~2.4); reference/extracted/ui_strings.txt:215; reference/decompiled/shs3_android/scripts/StatsManager.as:162,824-830,916-921,966-971",
+      "reason": "The load-bearing half is exact. frame_0015 renders 'ALLEGIANCE: CLAN AKA RYU / RANK: RECRUIT (3 MOVES A TURN) / MOVES MADE: 0/36' bottom-left and '3 MOVE(S) LEFT' bottom-right \u2014 I read all of it myself. The code matches: getWarRank returns 0 while num < 12*3 (:827), getWarRankName rank 0 -> getString(330) = 'recruit' (:919-921), getMaxWarMoves(0) = 3 (:969-971), WARMOVEINTERVAL = 60*60 (:162). The ui_strings.txt:215 trap is verbatim ('clanrank: soldier (3 moves a turn)moves made: 15/60') and THE FRAME WINS. One correction: 'NEXT TURN IN 59:58' is on frame_0020, not frame_0019 \u2014 frame_0019 reads 'NEXT TURN IN 1:00:00'. Both bracket the same 3600 s interval, so the conclusion is untouched, but the quote is misattributed by one frame."
+    },
+    {
+      "claim_id": "meta-social/second-longplay-never-swept",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/map_analysis/zFtCaTO0_1M_map_006_t272s.jpg .. _015_t649s.jpg (10 files, 512x288, my own 2x5 contact sheet at 1024x576 per cell); reference/videos/; reference/frames/broad_survey/",
+      "reason": "The structural facts are all exact: reference/videos/ holds Nr4fQstqHDM.mp4 AND zFtCaTO0_1M.mp4; map_analysis holds exactly 10 zFtCaTO0_1M frames spanning _006_t272s to _015_t649s; broad_survey/ holds exactly 240 files. I built the contact sheet and read all ten cells: NO hex board and NO war-room map appear \u2014 the load-bearing observation, and STILL_UNHELD is the correct verdict. Two quote misreadings to log: the skills panel reads 'CRITICAL EVADE (PASSIVE SKILL)', not 'CRITICAL EDGE'; and the pickaxe NPC is named TAKAHASI, not TAKAMASU. 'AVAILABLE SKILL POINTS: 1', 'RARE CROPS COLLECTION (0X)' and 'VEGETABLE PATCH' are all verbatim."
+    },
+    {
+      "claim_id": "meta-social/side-to-clan-bound-in-code",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/WarSelectUI.as:381-395; TerritoryData.as:696,700,704,708; WarHexUI.as:1075-1089; docs/gauntlet/L0/index/strings.json[\"275\"-\"278\"]",
+      "reason": "QUOTE_UNVERIFIED was a lint artifact. All three cites are exact to the line: WarSelectUI.as:381 'if(side == 1)' -> :383 getString(275) through :395 getString(278); TerritoryData.as:696/700/704/708 pair townSide 1-4 with #FF0000/#00FF00/#00FFFF/#FFFF00; WarHexUI.as:1077/1081/1085/1089 use 16711680/39168/26367/16776960. strings 275-278 resolve to Clan Aka Ryu / Midori Ken / Aoi Hoiru / Ki Sensu. Refinement: only TWO of the four sides actually differ between the palettes \u2014 side 1 (16711680 = 0xFF0000) and side 4 (16776960 = 0xFFFF00) are identical; side 2 is #00FF00 vs 0x009900 and side 3 is #00FFFF vs 0x0066FF."
+    },
+    {
+      "claim_id": "meta-social/side-to-clan-direct-binding",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/WarSelectUI.as:379-396; docs/gauntlet/L0/index/strings.json[\"275\"-\"278\"]",
+      "reason": "Exact. :379 is verbatim 'this.clanemblem.gotoAndStop(side);' and :381-395 is the literal four-branch switch onto getString(275..278). strings.json resolves those four to Clan Aka Ryu / Clan Midori Ken / Clan Aoi Hoiru / Clan Ki Sensu. gotoAndStop(side) does say the four heraldry emblems are frames 1-4 of one MovieClip. No inference from colour words is needed."
+    },
+    {
+      "claim_id": "meta-social/side-to-clan-is-direct-not-inferred",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/PlayerPanel.as:424-438; InteractUI.as:362-380; WarHexUI.as:1736-1751",
+      "reason": "Both cited ranges are exact to the line. PlayerPanel.as:424 'switch(side)' with case 1..4 appending getString(275..278) through :438. InteractUI.as:362-380 pairs clanId 1-4 with getString(275..278) AND initMCSFromNPCID(247/447/347/547) at :365/:370/:375/:380. Those bust ids do reproduce WarHexUI's remap exactly: base 47 plus the +200/+400/+300/+500 offsets at :1738/1742/1746/1750."
+    },
+    {
+      "claim_id": "meta-social/survivalmode-web-android-diverge",
+      "refuted": false,
+      "own_cite": "reference/extracted/bindata/119_1t4646s0.bin vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (my own shasum + XML parse)",
+      "reason": "I re-ran the byte check. web 11,721 B sha256 709d94cb28c08ba159bce5add59d53d66b914c682e49d70daa050ca25b6a9097; android 11,553 B sha256 b56f8c6a028357c4e9ff9b0997374edf5483f476ebcabf6e98162a788ffd8328; identical False. Both parse to 39 <wave> and 87 <enemy> summing to 351 <qty>. My own row diff returns differing enemy indices [73..86] \u2014 exactly 'rows 73-86', 14 rows. Web '<id>449|454|449|454|443</id>' vs android '<id>449|454</id>', and the same pattern on 450|455 and 451|456. Every figure in the claim reproduces."
+    },
+    {
+      "claim_id": "meta-social/survivalmode-web-vs-android-differ",
+      "refuted": false,
+      "own_cite": "reference/extracted/bindata/119_1t4646s0.bin vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (my own CRLF-normalised diff and qty tally)",
+      "reason": "Every number reproduces exactly. After replacing CRLF with LF: 11,166 vs 10,998 bytes, 556 lines each, 14 differing lines. Totals identical in both: 39 waves, 87 <enemy>, 351 total <qty>, split {400-block 340, 700-block 11}. NPC 443 appears only in the web pool \u2014 and resolved_names.json gives 443 = 'Soldier', so the web-only addition is a named NPC, not an unresolvable id."
+    },
+    {
+      "claim_id": "meta-social/war-boss-npcs-unresolvable",
+      "refuted": false,
+      "own_cite": "reference/extracted/npcdata.xml (own parse); reference/extracted/android/125_Mobile_NpcData.bin; docs/gauntlet/L0/index/resolved_names.json; reference/extracted/bindata/119_1t4646s0.bin",
+      "reason": "citelint marked it UNCHECKABLE for an empty cite field, but the quote names its artifacts precisely and every one of them checks out. My own parse of npcdata.xml: 495 npc rows, ids 0..656 then a gap straight to 800..819, zero 7xx rows. Regex for <id>70x</id> over the 228,455-byte 125_Mobile_NpcData.bin returns zero hits. resolved_names.json returns None for 700, 701, 705 and 710. bindata/119 holds exactly 11 rows of the form <enemy><id>7NN</id><qty>1</qty><x>-50</x></enemy> for 700..710. STILL_UNHELD is the correct, respected answer here and calling them 'named samurai' would be the \u00a72.1 failure."
+    },
+    {
+      "claim_id": "meta-social/warrules-page3-frame",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/Nr4fQstqHDM/seg-29/frames/frame_0013.jpg (1024x576, whole frame x3 LANCZOS); docs/gauntlet/L0/index/strings.json[\"374\"]",
+      "reason": "I opened it and read it. 'WAR ROOM RULES 3/7 (ATTACKING AND DEFENDING)' over all three bullets, with PREVIOUS and NEXT buttons \u2014 verbatim as quoted, and word-for-word identical to strings.json['374']. Two nits: the frame is 1024x576, not the '512x288' the cite states; and the impact's 'the only web/Android delta on rules pages 1-6 is the /7 vs /6 suffix' generalises from three sampled pages (1, 3, 6) to six."
+    },
+    {
+      "claim_id": "meta-social/web-barricade-bonus-has-owner-clause",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as:2123-2125; reference/decompiled/shs3_android/scripts/WarHexUI.as:2285",
+      "reason": "Exact to the line. Web :2123 carries the full guard including '&& this.\u00a71t7807s0\u00a7.owner != this.\u00a71t7812s0\u00a7' and :2125 is '_loc2_ += 2;'. Android WarHexUI.as:2285 is the same expression with the owner conjunct absent. The +2 terrain step for a completed Barricade really is owner-gated in v0.717."
+    },
+    {
+      "claim_id": "meta-social/web-barricade-bonus-owner-gated",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as:67,1109,1122,2123; reference/decompiled/shs3_android/scripts/WarHexUI.as:1075,2285",
+      "reason": "Both quoted lines open verbatim at :2123 and :2285 respectively. The \u00a71t7812s0\u00a7 = playerside identification holds: it is declared 'internal var \u00a71t7812s0\u00a7:int;' at :67 and passed as the side argument at :1109 and :1122, and the android twin uses the literal name 'playerside' in the structurally identical block (WarHexUI.as:1075 'if(this.playerside == 1)'). Your own completed barricade does not penalise your deploys in v0.717."
+    },
+    {
+      "claim_id": "meta-social/web-barricade-guard-stricter",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as:2123,2127-2145; reference/decompiled/shs3_android/scripts/WarHexUI.as:2285,2289-2307",
+      "reason": "The web half is exact at :2123 and the extra assertion checks out: the switch is byte-identical in both builds \u2014 case 2 -> 1.5, 1 -> 1.2, 0 -> 1, -1 -> 0.75, -2 -> 0.6, -3 -> 0.5, -4 -> 0.25, default 1. One mis-cite: the Android guard is at WarHexUI.as:2285, NOT :2287 \u2014 line 2287 is 'toValue += 2;'. Two sibling claims in this same packet give 2285 correctly, so this is a two-line slip on a supporting comparison, not a wrong finding."
+    },
+    {
+      "claim_id": "meta-social/web-chikako-ladder-differs",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5865s0\u00a7.as:24,26,42; \u00a71t1523s0\u00a7.as:280; reference/decompiled/shs3_android/scripts/InteractUI_chikako.as:24,26,40; StatsManager.as:246",
+      "reason": "All three web line cites are exact. :24 '[0,50,150,300,500,750]', :26 'maxLevel:int = 5', :42 'return ...(\u00a71t9435s0\u00a7) + \u00a71t1524s0\u00a7.\u00a71t9890s0\u00a7() * 5;'. \u00a71t9435s0\u00a7 = 42 at \u00a71t1523s0\u00a7.as:280, matching Android STAT_CHIKAKOLOVE = 42 at StatsManager.as:246. I then opened the Android counterpart, which the claim only asserted: InteractUI_chikako.as:24 'expArray:Array = [0,10,30,60,100,150];' and :40 'return StatsManager.getPlayerStats(StatsManager.STAT_CHIKAKOLOVE) + QuestEngine.getAchievementScore();'. The web ladder is exactly 5x steeper and the achievement weight is exactly x5 vs x1. Fully confirmed."
+    },
+    {
+      "claim_id": "meta-social/web-lang-is-network-loaded",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1521s0\u00a7.as:5,6,47,60,122,228-229; reference/decompiled/shs3_android/scripts/LangManager.as:1-6",
+      "reason": "Exact. :5 'import flash.net.URLLoader;' and :6 'import flash.net.URLRequest;' sit in the class that declares 'public static function getString(param1:int, param2:Array = null) : String' at :122. setLanguage prints 'Loading language data...' at :47 and :60, and the fetch itself is at :228-229 'new URLLoader() ... load(new URLRequest(filename))'. The Android LangManager imports neither. This is the structural reason no v0.717 string table exists on disk, why ids 11016/11017/11496 resolve to nothing, and why the Android-vs-web string caveat is permanent."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "nf/payload-xml-static-textfields-are-authoring-placeholders",
+      "text": "Static DefineEditText copy inside reference/extracted/payload.xml is AUTHORING PLACEHOLDER, not shipped v0.717 UI copy, for every field LangManager writes to at runtime. The war-rules dialog proves it: payload.xml:528040-528084 embeds six title/body pairs reading 'War room rules 1/6'..'6/6' (characterIDs 744-755), and the DefineSpriteTag that owns them is spriteId 756 at :528088 \u2014 which is precisely the symbol the shipping class embeds ([Embed(symbol=\"symbol756\")] at \u00a71t7924s0\u00a7.as:7). That class declares max:int = 7 (:23) and overwrites warrulestitle.text / warruleswords.text from getString() on every page turn (:96-123, case 7 at :121-123). This is the same class of trap as ui_strings.txt:215's 'soldier ... 15/60'. Treat payload.xml static text as a dead draft unless no code writes that field.",
+      "artifact_class": "A2",
+      "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7924s0\u00a7.as:7,23,96,121-123; reference/extracted/payload.xml:113188,528040,528088,2653462",
+      "quote": "\u00a71t7924s0\u00a7.as:7 [Embed(source=\"/_assets/assets.swf\", symbol=\"symbol756\")] \u00b7 :23 internal var max:int = 7; \u00b7 :121-123 case 7: this.warrulestitle.text = \u00a71t1521s0\u00a7.getString(11016); this.warruleswords.text = \u00a71t1521s0\u00a7.getString(11017);  ||  payload.xml:528040 initialText \"War room rules 1/6 &nbsp;(joining a battle)\" characterID=\"744\" \u00b7 :528088 <item type=\"DefineSpriteTag\" frameCount=\"6\" spriteId=\"756\">",
+      "verdict": "HELD",
+      "build": "web v0.717",
+      "overturns_ledger": false,
+      "lane_impact": "L0 meta-social and every lane porting UI copy \u2014 this is what kills the 'the filmed build is neither artifact' reading, and it is the general rule that prevents the next agent from porting a 6-page rulebook, 'soldier' rank, or '/60' move cap out of a placeholder."
+    },
+    {
+      "id": "nf/web-item-weight-modifier-is-id-208",
+      "text": "The web-only weight term \u00a71t478s0\u00a7 that makes the sell-price input diverge from Android is NOT unresolved: it is the payload of modifier id 208. \u00a71t17s0\u00a7.as declares three non-stat modifier ids Android lacks, not one \u2014 206 (xp), 207 and 208 \u2014 and 208 carries \u00a71t478s0\u00a7 into the save string and into the displayed Weight line. So the web weight shown to the player is (row weight + modifier-208 value), and getWeight() multiplies that sum by quantity.",
+      "artifact_class": "A2",
+      "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:18,20,22,60,300,1407,1963,1974; reference/decompiled/shs3_android/scripts/Item.as:6-16",
+      "quote": ":60 internal var \u00a71t478s0\u00a7:int = 0; \u00b7 :22 public static var \u00a71t8741s0\u00a7:int = 208; \u00b7 :300 _loc2_ += \u00a71t8741s0\u00a7 + \"@\" + this.\u00a71t478s0\u00a7 + \"#\"; \u00b7 :1407 _loc3_ += \u00a71t1521s0\u00a7.getString(139) + \": \" + (_loc2_.weight + this.\u00a71t478s0\u00a7) + \"\\n\"; \u00b7 :1974 return (this.weight + this.\u00a71t478s0\u00a7) * this.\u00a71t484s0\u00a7();",
+      "verdict": "HELD",
+      "build": "web v0.717",
+      "overturns_ledger": false,
+      "lane_impact": "L4 economy + L10 persistence \u2014 closes the PARTIAL on items-equipment/sell-weight-branch-is-stack-weight and adds ids 207 and 208 to the web save schema alongside the already-claimed 206."
+    },
+    {
+      "id": "nf/slashusage-48-floor-is-duplicated-on-the-npc-path",
+      "text": "The 48 floor that kills the lone <slashusage>24</slashusage> row is applied TWICE, not once. Besides StatsManager.getSlashUsage(), XMLNpc.initDuelist() clamps the same value for every AI duelist. So 24 is unreachable for both the player and every NPC, and no path in either build can produce a slash budget below 48.",
+      "artifact_class": "A2",
+      "cite": "reference/decompiled/shs3_android/scripts/XMLNpc.as:360-364; reference/decompiled/shs3_android/scripts/StatsManager.as:1921-1930",
+      "quote": "XMLNpc.as:360-364 this.slashUsage = itemdata.slashusage; if(this.slashUsage < 48) { this.slashUsage = 48; }",
+      "verdict": "HELD",
+      "build": "android v0.682",
+      "overturns_ledger": false,
+      "lane_impact": "L1 combat core \u2014 hardens items-equipment/slashusage-24-is-dead from 'dead on the player path' to 'dead everywhere'."
+    },
+    {
+      "id": "nf/four-classes-run-the-12-frame-ai-cadence",
+      "text": "The 12-frame retarget cadence is set by four classes, not one: MCSPlayer (EnemyPlayer's own base), EnemyPlayer, EnemyElite and FriendlyElite. Every Enemy* class that extends NPC directly \u2014 Archer, Katana, Knife, Ninja, Ogre, Shield, Spear, SpearElite, Zombie, Goblin, JiangSi, KanjiGuardian, NianMonster, SorcererBoss, TrainingDummy and the animal roster \u2014 inherits NPC.as:22's 24. The two-cadence model is right; 'only EnemyPlayer overrides it' is not.",
+      "artifact_class": "A2",
+      "cite": "reference/decompiled/shs3_android_payload/scripts/NPC.as:22; MCSPlayer.as:165; EnemyPlayer.as:52; EnemyElite.as:3,18; FriendlyElite.as:3; EnemyKnife.as:3",
+      "quote": "NPC.as:22 internal var aiCounterMax:int = 24; \u00b7 MCSPlayer.as:165 aiCounterMax = 12; \u00b7 EnemyPlayer.as:52 aiCounterMax = 12; \u00b7 EnemyElite.as:18 aiCounterMax = 12; \u00b7 FriendlyElite.as:18 aiCounterMax = 12; \u00b7 EnemyElite.as:3 public class EnemyElite extends EnemyPlayer \u00b7 EnemyKnife.as:3 public class EnemyKnife extends NPC",
+      "verdict": "HELD",
+      "build": "android v0.682",
+      "overturns_ledger": false,
+      "lane_impact": "L-enemies-ai \u2014 an implementer wiring '24 for everything except EnemyPlayer' makes elites half as reactive as the original."
+    },
+    {
+      "id": "nf/web-has-a-second-getsellamt-call-site",
+      "text": "'ShopUI.as:401 is the sole call site of getSellAmt' is an ANDROID-only fact. The web v0.717 build has two: the shop slot (\u00a71t6519s0\u00a7.as:474) and an accumulator at \u00a71t6172s0\u00a7.as:417 that sums sell amounts across items. The no-shop-side-level-multiplier inference still stands, but it must be re-derived on the web build rather than inherited from the Android grep.",
+      "artifact_class": "A2",
+      "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t6172s0\u00a7.as:417; \u00a71t6519s0\u00a7.as:474; \u00a71t17s0\u00a7.as:1977; reference/decompiled/shs3_android/scripts/ShopUI.as:401",
+      "quote": "\u00a71t6172s0\u00a7.as:417 _loc2_ += _loc5_.\u00a71t546s0\u00a7(); \u00b7 \u00a71t6519s0\u00a7.as:474 _loc4_.\u00a71t6868s0\u00a7(_loc4_.\u00a71t2217s0\u00a7().\u00a71t546s0\u00a7(),0);",
+      "verdict": "HELD",
+      "build": "web v0.717",
+      "overturns_ledger": false,
+      "lane_impact": "L4 economy \u2014 a bulk-sell total exists in v0.717 that the Android-sourced survey has no row for."
+    },
+    {
+      "id": "nf/war-turn-timer-bracketed-on-film",
+      "text": "The one-hour war turn is confirmed on film by two consecutive frames, not one: seg-29 frame_0019 reads 'NEXT TURN IN 1:00:00' and frame_0020 reads 'NEXT TURN IN 59:58'. That brackets WARMOVEINTERVAL = 60*60 as a full-hour countdown that starts at exactly 1:00:00, which no single frame establishes.",
+      "artifact_class": "A1",
+      "cite": "reference/frames/Nr4fQstqHDM/seg-29/frames/frame_0019.jpg and frame_0020.jpg (1024x576, bottom-right crop (0.60,0.86)-(0.98,0.94) upscaled ~2.4x LANCZOS); reference/decompiled/shs3_android/scripts/StatsManager.as:162",
+      "quote": "frame_0019: '2 MOVE(S) LEFT / NEXT TURN IN 1:00:00' \u00b7 frame_0020: 'NEXT TURN IN 59:58' \u00b7 StatsManager.as:162 internal static var WARMOVEINTERVAL:int = 60 * 60;",
+      "verdict": "HELD",
+      "build": "web v0.717",
+      "overturns_ledger": false,
+      "lane_impact": "L0 meta-social \u2014 corrects the frame attribution in meta-social/rank-ladder-a1-confirmed and upgrades the turn timer from a decompile constant to a frame-confirmed countdown."
+    },
+    {
+      "id": "nf/territory-and-hex-clan-palettes-differ-on-only-two-sides",
+      "text": "The two war UIs do not use different hues for all four clans \u2014 only for two. Sides 1 and 4 are identical across both (0xFF0000 red, 0xFFFF00 yellow). Side 2 is #00FF00 in the territory map but 0x009900 in the hex UI, and side 3 is #00FFFF vs 0x0066FF. So the palette choice a renderer has to make is confined to the green and cyan clans.",
+      "artifact_class": "A2",
+      "cite": "reference/decompiled/shs3_android/scripts/TerritoryData.as:696,700,704,708; WarHexUI.as:1077,1081,1085,1089",
+      "quote": "TerritoryData.as:696/700/704/708 -> '#FF0000' / '#00FF00' / '#00FFFF' / '#FFFF00' \u00b7 WarHexUI.as:1077/1081/1085/1089 -> 16711680 (0xFF0000) / 39168 (0x009900) / 26367 (0x0066FF) / 16776960 (0xFFFF00)",
+      "verdict": "HELD",
+      "build": "android v0.682",
+      "overturns_ledger": false,
+      "lane_impact": "L-art + L0 meta-social \u2014 sharpens meta-social/side-to-clan-bound-in-code from 'the two UIs disagree' to exactly which two sides disagree."
+    },
+    {
+      "id": "nf/web-only-survival-enemy-443-is-named",
+      "text": "The enemy id the web survivalmode wave table adds and Android's drops is not an unresolvable number: npc 443 resolves to 'Soldier' in the already-parsed S0-3 table. The web-only late-wave additions are therefore fully named content, not a gap.",
+      "artifact_class": "A2",
+      "cite": "docs/gauntlet/L0/index/resolved_names.json (npcdata.xml.resolved id 443); reference/extracted/bindata/119_1t4646s0.bin",
+      "quote": "resolved_names.json npcdata.xml.resolved[\"443\"] = {\"name\": \"Soldier\"}; web rows read <id>449|454|449|454|443</id> where android reads <id>449|454</id>",
+      "verdict": "HELD",
+      "build": "web v0.717",
+      "overturns_ledger": false,
+      "lane_impact": "L-enemies-ai \u2014 the web wave mix can be ported outright; nothing in the 14 divergent rows is blocked."
+    }
+  ]
+}

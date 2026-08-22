@@ -1,0 +1,353 @@
+{
+  "packet_size": 48,
+  "judged_count": 48,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "progression/slash-length-settles-balanced-reach",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2344-2347 (opened; verbatim 'var _loc2_:int = 90 + §1t7356s0§(§1t9426s0§) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));'), :254 '§1t9426s0§:int = 25', and docs/research/fidelity/COMBAT_MEASUREMENTS.md:397 '| **Balanced** | 116–131 | **131** | 17 | 200 | ❌ **NOT CONFIRMED** — measured 131 |'",
+      "reason": "HOLDS. I opened both artifacts. The formula is verbatim at :2346-2347 and I identified the function independently: shs3_android/StatsManager.as:1915-1918 'getBaseSlashLengthVal(speed)' is line-for-line identical with maxincrement = 90 + STAT_DAN*5, so §1t9593s0§ IS base slash length, and §1t9426s0§ = 25 = STAT_DAN. Arithmetic checks: SPD 1, Dan 0 -> 120 + floor(90/21) = 124, which lands inside the frame-measured 116-131 Balanced plateau at :397. The §S24-H caveat is real: COMBAT_MEASUREMENTS.md:997 does read 'No normal-anatomy stroke >280 px anywhere re-checked; the 775 refutation REPRODUCED', so the :221 775px/413 stage-px figure is correctly flagged as superseded. Minor weakness, not a refutation: §c-2's evidence is a 1 fps video-range scan (A t=100-2400, B t=880-4080) rather than a named frame file, so it is a weaker A4 than a path-carrying row; and PARTIAL is the honest verdict the finding already gives."
+    },
+    {
+      "claim_id": "progression/spent-points-audit-second-witness",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3453-3459 (the seven '_loc1_ +=' lines, verbatim) joined to §1t1523s0§.as:206 '§1t9403s0§:int = 1', :212 '=4', :232 '=14', :216 '=6', :218 '=7', :220 '=8', :240 '=18'",
+      "reason": "HOLDS. I opened the audit and resolved every obfuscated stat id myself against shs3_android/StatsManager.as:170-260: 1=STAT_MAXHP, 4=STAT_MAXCHI, 14=STAT_MAXAP, 6=STAT_ATTACK, 7=STAT_DEFENSE, 8=STAT_SPEED, 18=STAT_STATPOINTS. The subtrahends are therefore HP 10 / Chi 10 / AP 30 / ATK 1 / DEF 1 / SPD 1 and the divisors are 10/5/5/3/3/3 — exactly the start pools and per-point magnitudes claimed, all inside the WEB payload. Minor: the cite range :3450-3457 is 3 lines short; the quoted block actually sits at :3453-3459. Content, not location, is what carries the claim, and the content is verbatim."
+    },
+    {
+      "claim_id": "progression/start-pools-third-frame",
+      "refuted": false,
+      "own_cite": "docs/research/fidelity/COMBAT_MEASUREMENTS.md:203 (H-1, verbatim: 'Early player pools + stats (PLAYER screen, level 2) | **HP green · Chi 10/10 · AP 30/30**; **ATK 1 · DEF 1 (+2) · SPD 1**; weight **14/100**; available stat points 3 | A t≈152 PLAYER screen, re-read at full resolution ... | MEASURED') and docs/research/video-study/segments/A-02-dojo-tutorial-3-stances-chi-punch-on-dum.md:25",
+      "reason": "HOLDS. Both line numbers are exact — H-1 is line 203 on the nose and A-02's INFERRED point-to-stat sentence is line 25 on the nose. H-1 carries its own frame cite (A t≈152 plus session11/lead/t114.0_first-combat-hud.png), so it is a proper A4. The logic also checks against the payload I opened for claim 1: web levelUp() (§1t1523s0§.as:2072-2082) adds skill/stat points and refills AP and duel tokens but never touches MAXHP/MAXCHI/MAXAP, so a level-2 character with all 3 points unspent still shows the virgin literals — Chi 10, AP 30, ATK/DEF/SPD 1, matching the audit's subtrahends exactly."
+    },
+    {
+      "claim_id": "progression/web-anticheat-and-console-differ",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2042 'var _loc5_:Boolean = false;', :2043 'if(!_loc5_ && _loc4_ > §1t9470s0§)', :2049 'if(!_loc5_ && _loc6_ > 2)' vs reference/decompiled/shs3_android/scripts/StatsManager.as:1619 'if(!consoleEnabled && newlevel > levelCap)', :1625 'if(!consoleEnabled && leveldiff >= 5)', :336 'internal static var consoleEnabled:Boolean = true;'",
+      "reason": "HOLDS. Every one of the six cited lines is verbatim at the cited line number. The two divergences are real: web rejects leveldiff > 2, android rejects leveldiff >= 5; and in web the flag is a local constant-folded 'false', making every '!flag &&' guard unconditional. One minor correction to the parenthetical inside the quote: consoleEnabled is assigned at shs3_android/StatsManager.as:496 (set false), not :586 — :586 is toggleAutoAssignStats(). OverworldHUD.as:2715 'StatsManager.consoleEnabled = true;' is exact. The mis-numbered supporting line does not touch the claim."
+    },
+    {
+      "claim_id": "progression/web-calcxp-parity",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:113-129 (greyLevel), :131-183 (zeroDifference), :185-211 (calcXP) read side by side against reference/decompiled/shs3_android/scripts/NPC.as:96-190 (getGreyLevel / getZeroDifference / calcXP)",
+      "reason": "HOLDS, and it is the strongest sourcing fix in the packet. I diffed the two functions by eye: greyLevel is identical (<6 -> 0; <40 -> lvl - floor(lvl/10) - 5; <60 -> lvl - floor(lvl/5) - 1; else lvl-9), the 13-band zeroDifference ladder is identical (5,6,7,8,9,11,12,13,14,15,16,17,17), and calcXP is identical including the grey cut, the >3 level gap cut, the +5%/level bonus, the /zeroDifference penalty and the elite x2. The quoted :122 'return _loc1_ - Math.floor(_loc1_ / 10) - 5;' is exact. Minor: the calcXP range should read :185-211, not :180-202 (:180 is still inside zeroDifference)."
+    },
+    {
+      "claim_id": "progression/web-level-cap-is-const",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:362 'public static const §1t9470s0§:int = 80;' vs reference/decompiled/shs3_android/scripts/StatsManager.as:76 'public static var levelCap:int = 80;'; dead band at §1t68s0§.as:178-182",
+      "reason": "HOLDS as PARTIAL, with two blemishes worth logging. Both declaration lines are verbatim at the cited numbers, and the web guard at :2043 does reject any level above 80, so 81-98 really are dead headroom in v0.717. Blemish 1: the dead-band quote sits at :178-182, not :176-179 (:176 is 'return 16;'). Blemish 2, and the more substantive one: I grepped every 'levelCap' reference in shs3_android and all ~20 are READS — android never reassigns it either. So the const-vs-var contrast is decorative, and the finding's 'because' clause carries less weight than its conclusion. The conclusion itself survives on the :2043 guard."
+    },
+    {
+      "claim_id": "progression/web-only-maxdueltokens-40",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:200 'internal static const §1t9400s0§:int = 40;', :2079 '§1t9712s0§(§1t9416s0§,§1t9400s0§);' inside levelUp §1t9577s0§, :234 '§1t9416s0§:int = 15' vs reference/decompiled/shs3_android/scripts/StatsManager.as:166 'internal static var MAXDUELTOKENS:int = 30;' and :1691 'setStat(STAT_DUELTOKENS,MAXDUELTOKENS);'",
+      "reason": "HOLDS. 40 in web, 30 in android, verbatim at both cited lines, and I confirmed the web :2079 call sits inside the level-up function and writes stat 15 = STAT_DUELTOKENS (shs3_android/StatsManager.as:200 'STAT_DUELTOKENS:int = 15'). Minor: the android levelUp write is at :1691, not :1690 (:1690 is the AP refill)."
+    },
+    {
+      "claim_id": "progression/web-payload-is-v0717",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:36 'public static var §1t9323s0§:Number = 0.717;' plus §1t7017s0§.as:65 'this.versiontext.text = \"v\" + §1t1523s0§.§1t9323s0§.toString();'; my own 'grep -rn 0\\.706' over shs3_payload/scripts shs3_loader/scripts shs3_stage2/scripts shs3_stage3/scripts returned zero matches; docs/gauntlet/L0/CLAIMS.md:1213 does carry the 'stamps v0.706 under a v0.717 preloader' sentence",
+      "reason": "HOLDS, and I strengthened it. Not only is 0.717 the only version literal in the four web bundles, I traced §1t9323s0§ to §1t7017s0§.as:65 where it is written straight into an on-screen version text field — so the payload PRINTS v0.717. The android twin at StatsManager.as:30 is 'clientVersion:Number = 0.682' verbatim. The provenance discount at CLAIMS.md:1213 is unsupported by the decompiled bundles, exactly as claimed."
+    },
+    {
+      "claim_id": "progression/web-rebirth-gold-25-not-5",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2643-2655 (the if(dan==8) -> changeStat(12,100) / else changeStat(12,25) / if(dan<9) changeStat(25,1) block, verbatim), stat id resolved at :228 '§1t9413s0§:int = 12' against reference/decompiled/shs3_android/scripts/StatsManager.as:194 'STAT_HGOLD:int = 12'; android twin at StatsManager.as:2194-2211 doRebirth() reads changeStat(STAT_HGOLD,20) / changeStat(STAT_HGOLD,5)",
+      "reason": "HOLDS decisively. I opened both rebirth functions. Web grants 100 hard gold at Dan 8 and 25 otherwise; android grants 20 and 5. The ledger's +25g is vindicated and the surveyor's +5 cross-lane gift was an android number. The Dan cap survives in both builds identically ('if(dan < 9) changeStat(DAN,1)' -> Dan maxes at 9, i.e. 10 ranks). Cite is off by one at the start (:2643, not :2644); content verbatim."
+    },
+    {
+      "claim_id": "progression/web-stance-triangle-has-a-penalty-branch",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3788-3799 (x1.2 if-branch AND the x0.9 else-if branch) vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:3701-3708 (x1.2 branch only, then straight to 'damage -= this.getDefense()')",
+      "reason": "HOLDS, and this is a genuinely load-bearing structural divergence. I read both blocks. Web §1t99s0§.as:3795-3798 carries an else-if covering the three losing matchups with '_loc5_ *= 0.9;' that has NO counterpart in android — android goes straight from the x1.2 block to the defense subtraction. Both builds apply the multiplier BEFORE the flat DEF subtraction, exactly as the finding states, so the x1.2/1.0/0.9 pipeline order is confirmed too."
+    },
+    {
+      "claim_id": "progression/xp-array-outruns-level-cap",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:362 (const 80) and :364 (the array); I parsed :364 and counted 99 entries, first 0, last 29395800, and confirmed byte-equality with reference/decompiled/shs3_android/scripts/StatsManager.as:78",
+      "reason": "HOLDS. I counted the array myself rather than trusting the claim: exactly 99 comma-separated entries, indices 0-98, and the android expArray at StatsManager.as:78 is character-for-character the same list. The level-cap const two lines above really is 80. PARTIAL is the right verdict — 'why 99 entries' is left open rather than guessed at, which is the honest answer under §0."
+    },
+    {
+      "claim_id": "provenance/extracted-sprites-and-shapes-are-web-v0717",
+      "refuted": false,
+      "own_cite": "reference/decrypted/shs3_payload_decoded.swf and reference/decrypted/shs3_android_payload_decoded.swf — my OWN zlib-inflate + tag-stream walk: web DefineSprite(39)=827, DefineShape 2/22/32/83 = 767+135+110+810 = 1822, max character id 3641; android 675 / 671+129+95+662 = 1557 / 2953. 'ls reference/extracted/sprites | wc -l' = 827, 'ls reference/extracted/shapes | wc -l' = 1822",
+      "reason": "HOLDS, reproduced independently. I wrote my own SWF tag walker rather than accepting the numbers, and every figure in the claim came back identical to the digit. 827 sprite dirs and 1822 shape SVGs match the web payload's tag counts exactly and match the android payload's counts not at all (675/1557), so the extracted art corpus is web v0.717 by construction. This is one of the few claims in the packet that genuinely escapes the §0 android caveat, and it earns it."
+    },
+    {
+      "claim_id": "questdata-critic/namegen-table-sizes-corrected",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/NameGenerator.as:50 'this.maleNamesArray = s.split(/\\n/);' (verbatim, line 50 exactly) and my own split of all five .bin tables: 85 -> 398 (Akeno..Yutaka), 88 -> 291 (Ai..Yutsuko), 86 -> 33 (Konoe..Yamashina), 87 -> 36 (Asai..Watanabe), 89 -> 677 (Anjo..Yamanashi); every file endswith('\\n') == False; 'tail -c 12 85_...bin' = 7361 6461 0d0a 5975 7461 6b61 = 'sada\\r\\nYutaka'",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared. I located both halves of the quote myself. The split-on-newline count is what the engine sees, and because none of the five blobs ends with a newline, split() returns one more element than wc -l counts. 398/291/33/36/677 reproduced exactly, first and last names included. The build note is also right: grep -l '\"Kitsu\"' hits reference/decompiled/shs3_payload/scripts/§1t136s0§.as, so the web build carries the same namestarting array."
+    },
+    {
+      "claim_id": "questdata-critic/questdata-no-build-parity-hole",
+      "refuted": true,
+      "severity": "fatal",
+      "own_cite": "reference/extracted/payload.xml — my own hex grep: 3c7175657374646174613e (<questdata>) = 0 hits, 3c6974656d646174613e = 0, 3c6e7063646174613e = 0, 3c736b696c6c646174613e = 0, 4a696e626569 (Jinbei) = 0, control 3c616e696d646174613e (<animdata>) = 19; plus my own byte compare of reference/extracted/android/116_Mobile_QuestData.bin against reference/extracted/questdata.xml, which locates the XML at offset 0 inside the blob with only b'\\n' remaining",
+      "reason": "REFUTED — the measurement is right and the conclusion is exactly backwards. Every number in the quote reproduces perfectly (796384 vs 796383, b == w + b'\\n' True, <quest> 61, <title> 260, Motoharah 5, Chikada 1). But the finding labels reference/extracted/questdata.xml the 'web' side and concludes 'the same content in web v0.717 and android v0.682 ... without a build-parity caveat'. That is the circular diff §0 correction C2 explicitly bans. I verified C2 first-hand: the 329 MB web payload.xml contains ZERO <questdata> and zero occurrences of 'Jinbei' while the <animdata> control returns 19, and the file called questdata.xml sits at offset 0 inside the ANDROID blob. So the comparison is the android file against itself, and it CONFIRMS the v0.682 hole rather than removing it. Two other findings in this same packet (questdata/extracted-xml-is-verbatim-the-android-embed and quests-story/web-payload-has-no-quest-data) run the identical byte check and draw the correct conclusion, which is what this one should have said. Its 'build: both' label is wrong; the correct label is android v0.682 only."
+    },
+    {
+      "claim_id": "questdata-critic/territory-sector-mapping-closed",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:2187 (verbatim nodeid expression), WarSelectUI.as:17 'TERRSHIFTX:int = 21' and :19 'TERRSHIFTY:int = 51' (and :21 'DTERRSHIFTX:int = TERRSHIFTX'), NodeGenerator.as:318 'var territoryx:int = sectorx % 6;', plus NodeGenerator.as:305-311 getTerritoryId, NameGenerator.as:135-165 getPlaceName/getTownName2 and RNG.as:65-74 — which I re-implemented and ran",
+      "reason": "HOLDS, and I closed the loop end to end rather than eyeballing it. All four code cites are verbatim at the cited lines. I then ported the LCG (seed*9301+49297 mod 233280, one warm-up call) and the two name arrays into Python and ran the full chain: TERRITORY (23,52) SECTOR (3,5) -> nodeid ((23+341-21)*6+3)<<12 | ((52+341-51)*6+5) = 8443913 -> getTerritoryId = 343<<12|342 = 1405270 -> namex 343%137 = 69 >= 26 -> getTownName2(1405270) = namestarting[..] + nameending[..] = 'Chikada'. Landing on that exact string through a four-stage chain cannot be coincidence. Caveat I flag honestly: the finding's frame path is not given, so I verified the code and the generator, not the on-screen location bar. The finding's own cite field lists only .as files, so it is not over-claiming its class."
+    },
+    {
+      "claim_id": "questdata/count-corrections-to-packet",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/extracted/android/112_Mobile_NodeData.bin — my own ElementTree histogram: id 535, obj 343, property 339, name 149, room 98, node 44, roomdata 44, wave 32, search 1; 16 of 44 nodes carry a non-empty <name>; door-property target-minus-self deltas over 6-and-7-field properties = -4096 x19, +4096 x18 (17 six-field + 1 seven-field), +1 x19, -1 x19; and the five name tables at 398/291/33/36/677",
+      "reason": "HOLDS on three of four corrections, all reproduced to the digit. The NodeData histogram matched exactly — 44 <node>, and 535 is indeed the <id> count across nodes/rooms/objs, so anyone sizing the overworld off '535 nodes' really would be out by 12x. 16/44 named = 36% confirmed. The exit-delta histogram reproduced only under the natural filter (the 6-field door properties plus the single 7-field one), and under that filter it hit the claim's numbers exactly, which is a good sign the claimant did the same census rather than guessing. Correction 4 is the weak one and I log it: questdata <text> holds 40,119 prose words by itertext and 40,135 only if you count the '<br/>' and '<font>' markup tokens as words. So 40,135 is not a correction of 40,119, it is a different (and arguably worse) measurement. That sub-claim is unsound; the finding as a whole is not."
+    },
+    {
+      "claim_id": "questdata/cutscene-say-lines-are-string-ids",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml:102 '<param>9006</param>', :108 '<param>9000</param>', :773 '<param>9003</param>', :779 '<param>9004</param>', :11732 '<param>9001</param>' (all verbatim, each immediately under <action>say</action>) joined to docs/gauntlet/L0/index/strings.json[\"9001\"] = 'The castle town of Motoharah has fallen to our army, my lord.', [\"9002\"], [\"9003\"] as quoted, [\"9000\"] absent; my own regex census: 16 <action>say</action>, 16 with <param>, 10 distinct ids 9000-9009",
+      "reason": "HOLDS as PARTIAL. Every one of the five questdata line numbers is exact and every string.json lookup returns exactly the quoted text. My own census confirms 16 uses / 10 distinct ids, and 9000 is the single id with no entry in the android table — a real, correctly-bounded parity hole. The 'Motoharah' observation is a nice independent tie-back: it is 'Moto' + 'harah', both present in the NameGenerator arrays I loaded for claim 14."
+    },
+    {
+      "claim_id": "questdata/dialogue-carries-inline-html-markup",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml:3898/:3899/:3901 '<br/>' and :3908 + :4193 '<font color=\"#b048f8\">Inokichi’s club</font>' (all verbatim at the cited lines); my own counts: 14 '<br/>', 2 '<font color=\"#b048f8\">' and no other font color anywhere in the file; :3902 reads 'Reward: 100 coins' on its own <br/>-delimited line",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared; the machine miss is an apostrophe-encoding artifact (the file uses a typographic ’ in 'Inokichi’s'). Every line number is exact. #b048f8 is the only font color in the file and both uses wrap a quest-item name, so 'quest item names render purple' is supported rather than extrapolated. The bounty-board layout point is visible in the same block: the reward really is its own line."
+    },
+    {
+      "claim_id": "questdata/extracted-xml-is-verbatim-the-android-embed",
+      "refuted": false,
+      "own_cite": "my own byte compare — reference/extracted/android/116_Mobile_QuestData.bin is 796,384 B, reference/extracted/questdata.xml is 796,383 B, blob.find(xml) == 0 and blob == xml + b'\\n' evaluates True",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared by running the quoted one-liner myself; it prints 796384 796383 True. This is the correct reading of exactly the same measurement that questdata-critic/questdata-no-build-parity-hole inverts, and the contrast is instructive: identity between the extracted XML and the android blob proves PROVENANCE (the file IS the android embed), never PARITY. I also ran the same check on the other three: itemdata/npcdata/skilldata all sit at offset 40 inside their android blobs behind a 40-byte '<?xml version=\"1.0\" encoding=\"utf-8\"?>\\r\\n' prolog, with b'\\r\\n' remaining — an extractor signature that makes the provenance argument airtight for all four."
+    },
+    {
+      "claim_id": "questdata/fatal-tag-census-correction",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml — my own ElementTree census with a parent map: 75 <fatal>, 70 <friend>, values Counter({'0': 75}), fatal parents Counter({'friend': 59, 'enemy': 16}), friends carrying a <fatal> = 59; representative instance verbatim at :11710 '<fatal>0</fatal>' inside the <friend> that closes at :11711",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared. Every number reproduced exactly, and the representative line/closing-tag pair is precisely where the finding says it is. The 16 non-friend <fatal> tags are all under <enemy>, which the finding accounts for arithmetically (75 - 59). The design consequence is correct and useful: an ally death flag must be modelled optional-defaulting-absent, not required."
+    },
+    {
+      "claim_id": "questdata/projectile-type-enum-47-and-web-delta",
+      "refuted": true,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_android/scripts/GameStage.as:112 'BG_DUNGEON_FOG:int = 51', :120 'BG_BAMBOOFORESTTOWN:int = 55', :122 'BG_MINE2:int = 46', :124 'BG_RIVERBANK:int = 47', :126 'BG_DOJO4:int = 49', :128 'BG_DOJO5:int = 50', :130 'screenWidth:int = 800' — line-for-line identical to reference/decompiled/shs3_payload/scripts/§1t112s0§.as:112/:120/:122/:124/:126/:128/:130; and the REAL web ProjectileManager at §1t1712s0§.as (same imports, same two Vectors, enum :14 = 0 through :108 = 47)",
+      "reason": "REFUTED on its headline. The android half is fine — ProjectileManager.as:14-106 does hold 47 ids 0..46 with PROJ_ARROW 40, PROJ_ARROWDUD 41, PROJ_EARTHQUAKE 46 verbatim at :94/:96/:106. But the 'MEASURED BUILD DELTA' compares a projectile enum to a BACKGROUND enum. §1t112s0§.as is not ProjectileManager: it extends MovieClip, opens with a 400-pixel visible buffer and ends with screenWidth = 800, and its lines 112-130 match android GameStage.as:112-130 value for value (51, 55, 46, 47, 49, 50, 800). Android's own GameStage also runs to 55, so the delta the finding reports is zero, not nine. I then located the actual web ProjectileManager by structural signature (§1t1712s0§.as: flash.display.DisplayObject/MovieClip/geom.Point imports, two Vectors, enum 0 at :14): it runs 0..47, so the true web-vs-android projectile delta is +1, not +9. Because the finding's own lane_impact leans on that number ('the first quantified v0.682 vs v0.717 parity measurement this lane has'), the error is material, not cosmetic — it would have entered the ledger as a parity bound that is off by 8."
+    },
+    {
+      "claim_id": "quests-story/blank-choice-rows",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml — my own recursive path census: /questdata/quest/step/intro/option/choice = 469, .../choice/goto = 469, .../choice/text = 465; /questdata/quest/step/ending/option/choice = 2, .../text = 2",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared by re-running the census. 469 + 2 = 471 reconciles with the §0 verified <choice> count exactly, every choice has a <goto>, and exactly four intro choices carry no <text>. The UI consequence is sound: the option list must tolerate an empty label rather than assuming a row always has text."
+    },
+    {
+      "claim_id": "quests-story/choices-are-consequential-positionally",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/XMLQuestStep.as:193-201 (case \"option\" pushing the option then one null per choice, case \"choice\" pushing nothing — verbatim), CutsceneManager.as:93-94 'this.currentDisplayNo = goto; this.display();' and :202-204 'case \"outcome\": outcome = XMLQuestOutcome(currentDisplay); outcome.applyOutcome();'; plus my own flatten of questdata.xml quest id 0 step[8]",
+      "reason": "HOLDS, and the Prologue example reproduces slot for slot. I built the flattened display list myself and got exactly the claim's listing: [6] option with three choices going to 10 / 14 / 19 (including the source's own 'FIghting' typo), [7]-[9] nulls, [14] 'You said before that I’d be able to practice my sword technique here...', [16] outcome id=113 set=8402944 end=0, [17] id=114 set=4 end=0, [18] id=102 set=0 end=1, [19] 'I’ll leave you to your business.', [20] outcome modify=0 end=1. So the branch to 14 walks three setStat writes on its way out and the branch to 19 walks none — consequence is applied positionally, exactly as claimed, and a flat jump table really would drop those three writes."
+    },
+    {
+      "claim_id": "quests-story/condition-grammar-closed",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:4152-4214 checkConditions (has-list ANDed with comp defaulting to \"gte\" at :4171-4178, completedquest '!' prefix -> checkNotCompletedQuest at :4187-4193, activequest as an OR set returning true on any hit at :4206-4212) and :4222-4224 'if(comparison == \"rand\") { return Math.random() * id <= val; }'; counts from my own grep of reference/extracted/questdata.xml: condition 62, startcondition 17, activequest 97, completedquest 32",
+      "reason": "HOLDS. Every grammar feature quoted is verbatim in the cited range, including the probabilistic comparator at :4222 and the negation prefix. All four questdata counts reproduce exactly. The note about routing 'rand' through the injected mulberry32 rather than Math.random is the correct read of the src/core invariant, not an embellishment."
+    },
+    {
+      "claim_id": "quests-story/dialogue-divergence-is-build-divergence",
+      "refuted": false,
+      "own_cite": "MY OWN CROPS of reference/videos/zFtCaTO0_1M.mp4 at t=62, 68, 76 — crop=1400:360:0:700 upscaled to 2100x540, written to /private/tmp/claude-501/-Users-kheshav-kheshav-code-SSHD-1-1/dbd420d7-4128-429f-9cef-72f8eb08d83c/scratchpad/critq/c62.png, c68.png, c76.png — read and looked at; joined to reference/extracted/questdata.xml:128, :149, :153 and my own 'grep -n -i \"too bad\"' returning only :4262, :19794, :24531",
+      "reason": "HOLDS — and I say the standing invariant out loud: THE FRAME WINS. The other agent's crops were gone, so I cut my own from the video and looked. t=62 nameplate JINBEI, text 'IT'S NOT OFTEN WE MEET A NEW FACE ON THESE ROADS. IT'S THE BANDITS, YOU SEE. THEY'VE DRIVEN ALL THE HONEST FOLK AWAY.' against questdata.xml:128 'Ah! A new face in this territory! My, it isn't often we see people walk this road alone, what with all the bandits infesting it...' — same beat, different script. t=68 nameplate GUEST, two option rows: 'I'LL STAND MY GROUND AND ASK THEM TO LEAVE ME ALONE.' which is :149 word for word, and 'THESE BANDITS DON'T SCARE ME!' where :153 reads 'They'll get nothing from me!'. t=76 JINBEI 'THAT'S TOO BAD, TRAVELER. IT REALLY IS...' and my own grep proves that line exists in no build data we hold. One qualifier I add rather than refute on: what is PROVEN is that the shipped screen diverges from the android-sourced questdata; whether the cause is a recompiled script or a server-fetched one is inference. Either way the operative consequence for L1 is identical and correct — the frames win, and '3,307 lines byte-exact' cannot be the done-criterion."
+    },
+    {
+      "claim_id": "quests-story/ending-track-unclaimed",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/XMLQuestStep.as:130-131 'this.intro = this.getXMLIntroList(xml.intro); this.ending = this.getXMLIntroList(xml.ending);' (verbatim, exact lines) and my own path census of reference/extracted/questdata.xml: 5 /questdata/quest/step/ending/outcome, 2 /questdata/quest/step/ending/option/choice, 5 <ending> blocks total",
+      "reason": "HOLDS. The two-line cite is exact and it is the whole argument: both vectors are built by the SAME parser, so every opcode available to <intro> is available to <ending>. My census confirms 5 ending blocks carrying 5 outcomes and 2 choices. A cutscene interpreter driven only over the intro vector would silently skip the post-battle track."
+    },
+    {
+      "claim_id": "quests-story/goto-index-semantics",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/XMLQuestStep.as:193-202 (getXMLIntroList: option -> push option then one null per choice; choice -> break, pushing nothing), CutsceneManager.as:93-94 gotoStep and :175-179 (null slot -> trace then nextStep()); plus my own flatten of reference/extracted/questdata.xml:8687-8809, the Chikako intro",
+      "reason": "HOLDS, and the verification is decisive. I flattened that intro under the rule and every branch target lands perfectly: goto 11 -> 'Someone who can take down an entire team of shinobi...', 20 -> 'Thank you for your assistance, Chikako...', 22 -> 'You did as you were ordered...', 24 -> 'You're still here? Go on - scram!', 26 -> 'Sorry, Chikako, for your clan's loss...', 28 -> 'Quit your sniffling, Chikako...'. Without the null padding every one of the six would be off by three and land on the wrong line. The null-slot fallthrough at CutsceneManager.as:175-179 is verbatim as described (cite says :174-179, one line early — immaterial)."
+    },
+    {
+      "claim_id": "quests-story/img-tokens-are-two-asset-classes",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml — my own <img> census keyed by parent tag: parent=dialogue 1902 uses / 52 distinct (including the 'noportrait' sentinel), parent=intro 16 uses / 16 distinct = _epilogue, _episode0.._episode12, _exposition, _exposition_epilogue; 68 distinct overall. Rendering split verified at reference/decompiled/shs3_android_payload/scripts/CutsceneManager.as case \"dialogue\" -> questDialogueUI.show(npcID, text, portrait) vs case \"image\" -> questImageUI.show(XMLQuestImage(currentDisplay).image)",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared. Every count reproduced exactly, including the 16 intro tokens by name, and the two different UI call sites are verbatim in CutsceneManager's display switch. 52 dialogue tokens minus the 'noportrait' sentinel gives the 51-portrait manifest. This is a real save for L6: briefing an artist with '68 portraits' would commission 17 things that are not people."
+    },
+    {
+      "claim_id": "quests-story/ledger-banner-already-banks-two-overturns",
+      "refuted": false,
+      "own_cite": "docs/research/REBUILD_READINESS.md:21-40 — the '⛔ STALENESS BANNER — 2026-08-13: THIS DOC IS WRONG ON ITS BIGGEST CALLS' block, with the §4/§6 row and the §3.8 row verbatim as quoted; superseded bodies confirmed at :229-231 (§4 'verbatim dialogue — captured NOWHERE', 'Ep4–12 + epilogue') and :347 (§6 'Verbatim dialogue — if the story is server-fetched and the server is dead...')",
+      "reason": "HOLDS. The banner exists, is dated 2026-08-13, and its table rows are word for word what the finding quotes. Both superseded bodies are exactly where the finding says. The scoring consequence is sound and worth acting on: an overturn of a REBUILD_READINESS body that the banner already retired is not new, and the banner sits at the top of the same file, so there is no excuse for double-counting it."
+    },
+    {
+      "claim_id": "quests-story/loot-count-19",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml — my own path census: 19 /questdata/quest/step/reward/loot",
+      "reason": "HOLDS. Trivial but correct, and I counted it independently by two methods (path census and grep -c '<loot>'), both returning 19. Anything generated off 18 drops a row."
+    },
+    {
+      "claim_id": "quests-story/loot-count-correction",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml — 'grep -n \"<loot>\"' returns exactly the 19 lines 443 448 453 761 897 1036 1498 2553 2602 3889 4047 4164 4169 4174 8372 14013 14018 14580 16139; my <img> census gives satoshi 176 + satoshi_serious 209 + satoshi_happy 21 + satoshi_drunk 5 = 411; reference/extracted/questdata.xml:453 is <id>20108</id>, which docs/gauntlet/L0/index/resolved_names.json resolves (itemdata.xml -> resolved -> key \"20108\") to 'Crane Feather'",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared. The line list matches to the digit, the satoshi token arithmetic is exact, and the truncation point is real: an excerpt ending at :456 does cut off the third loot row, whose id resolves to Crane Feather. Note the apparent tension with quests-story/img-tokens-are-two-asset-classes is not a contradiction — 68 distinct <img> TOKENS is correct, and that other finding's point is that only 51 of them are portraits."
+    },
+    {
+      "claim_id": "quests-story/maxquests-7-is-real",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:164 'internal static var MAXQUESTS:int = 7;', :1262 'if(activeQuestList.length < MAXQUESTS || forceAdd)', :1313 'if(activeQuestList.length < MAXQUESTS)', :3418 'addActiveQuests(val,true);'; Overworld.as:251 verbatim as quoted; docs/gauntlet/L0/index/strings.json['195'] = 'You have exceeded the maximum number of concurrent quests.' and ['5'] = 'OK'",
+      "reason": "HOLDS. All four StatsManager lines and the Overworld line are verbatim at the cited numbers, and the string table returns exactly the quoted error copy plus its 'OK' button. The three mechanisms hang together: a hard cap of 7, a Dialogue-type exemption in the Overworld guard, and outcome opcode 110's force-add at :3418 bypassing the cap. Restoring the ledger bullet at REBUILD_READINESS.md:231 ('QUEST_LOG_CAP = 7 (1 story + 6 side)') is right; shipping only the 7-row scroller would be a fidelity bug."
+    },
+    {
+      "claim_id": "quests-story/nested-roomobj-waves",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml:20568-20580 (the '<xml><wave><enemy><id>19|20|21|22|23|24</id><lvl>25</lvl><qty>5</qty>' block inside a roomobj <property>, verbatim) and my own path census: 12 /questdata/quest/step/roomobj/property/obj/property/xml/wave and 18 .../xml/wave/enemy against 106 /questdata/quest/step/wave and 151 /questdata/quest/step/wave/enemy",
+      "reason": "HOLDS. The nested-document structure is real and I saw it: a second XML document lives inside a room-object property, and ElementTree parses it as elements because it is not escaped. 106 + 12 = 118 waves and 151 + 18 = 169 enemies, exactly as claimed. The design consequence — some encounters hang off room objects rather than quest steps — follows directly from the parentage path."
+    },
+    {
+      "claim_id": "quests-story/npc-name-collisions-and-typo",
+      "refuted": false,
+      "own_cite": "docs/gauntlet/L0/index/resolved_names.json — npcdata.xml -> resolved, keys \"171\" and \"811\" both {'name': 'Chikako'}, keys \"806\" and \"807\" both {'name': 'Soldier'}; plus my own <img> census of reference/extracted/questdata.xml: chikako 47, chikako_mask 77, chikako_angry 14, chikako_blush 9, chikako_maked 1",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared. All four npc resolutions and all five token counts reproduce exactly. The 'chikako_maked' typo is real and single-use, and the art consequence is correct: ship the misspelled token or that one dialogue node renders portrait-less. The 'one name => one NPC row' rule is genuinely broken by both collisions."
+    },
+    {
+      "claim_id": "quests-story/outcome-id-is-a-22-opcode-director",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:2926-2964 getStatType (all ten bands verbatim in the cited range) and the setStat opcode chain in :3352-3560 — I read 'if(id == 100)' autoSlash, 102, 107, 108 player.setPosition, 109, 110 addActiveQuests(val,true), 111 SoundManager.playMusic(val), 112 with val 0=playGoodKoto/1=playDie/2=playHit/3=..., 113/114/115, 116 StageManager.keepPlayerInView, 118 with taunts LangManager.getString(472)..(479), 119, 120 Overworld.doWhiteIn, 121, 126 StageManager.startShake(val), 127, 128 StageManager.gotoRoom, 129 payUI.show, 130 questDialogueUI.darkBlurBust(val); plus my own <outcome><id> census of reference/extracted/questdata.xml",
+      "reason": "HOLDS, and it is the most impressively verified claim in the packet. The getStatType band table is verbatim to the boundary. Every named opcode exists in the cited range with the exact call the finding attributes to it. Most telling: I censused the campaign's outcome ids myself and got 28 distinct ids whose USE COUNTS match the finding's parenthetical numbers one for one — 42(3), 43(5), 100(1), 102(12), 108(11), 109(2), 110(17), 111(47), 112(4), 113(13), 114(11), 115(8), 116(5), 118(6), 119(1), 120(14), 121(10), 126(4), 127(2), 128(1), 129(1), 130(2), 2211(1), 20030(1), 20040(1), 30017(13), 40000(1), 40002(2). That is a measured census, not a recollection. The 47 music cues and 4 SFX cues are real numbers off real data."
+    },
+    {
+      "claim_id": "quests-story/outcome-id-is-stat-namespace",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/XMLQuestOutcome.as:50-77 applyOutcome — :52 'if(this.id >= 0)', :54 'if(this.hasModify)', :56 'if(this.id == 11 && this.modify > 0)' -> addLootCoins, :60 'else if(this.id >= 2000 && this.id < 30000 && this.modify > 0)' -> addLootItemBasic, :64 'else if(this.id == StatsManager.STAT_XP)' -> addLootXP, :70 'else { StatsManager.changeStat(...) }', :73 'else if(this.hasSet)', :75 'StatsManager.setStat(...)'; StatsManager.as:188 'internal static var STAT_XP:int = 9;'",
+      "reason": "HOLDS. Every single line number inside the quote is exact — I checked all eight against the file. The band structure is exactly as described: id 11 coins, [2000,30000) item grant, id 9 XP, everything else a stat write, and a <set> takes the setStat path. This genuinely closes the 'is there a private story-flag table' question with code rather than inference."
+    },
+    {
+      "claim_id": "quests-story/outcome-id-is-statsmanager",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/XMLQuestOutcome.as:50-77 applyOutcome (verbatim), StatsManager.as:188 STAT_XP=9, :192 STAT_GOLD=11, :246 STAT_CHIKAKOLOVE=42, :248 STAT_LOCATION_ROOM=43 — all four exact at the cited lines; reference/extracted/questdata.xml:8776, :8785, :8794, each opening an '<outcome><id>42</id><modify>1</modify><end>1</end></outcome>' block, verbatim",
+      "reason": "HOLDS. All three questdata line numbers land precisely on the three id-42 outcomes, and all four StatsManager constants are exact. STAT_CHIKAKOLOVE is real and the campaign really does increment it — an affinity track that appears in no ledger system block, which is a genuine cross-lane find. Worth logging for L1: in this particular Chikako scene all three branches write the same +1, so it is the Prologue example (claim 22) that carries the 'branches write DIFFERENT stats' point, not this one."
+    },
+    {
+      "claim_id": "quests-story/outcome-id-is-statsmanager-namespace",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/XMLQuestOutcome.as:50-90 — the applyOutcome body plus :78-89 'if(this.end == -1) leaveCancel(); else if(this.end == 1) leaveOK(); else nextStep();' verbatim; StatsManager.as:188/:192/:246/:248 exact; item ids 2211/20030/20040 resolved via docs/gauntlet/L0/index/resolved_names.json to 'Dragon Dance Scroll', 'Kanji Gourd', 'Crops'",
+      "reason": "HOLDS as PARTIAL. The <end> enum is verbatim in the cited range and the three item-id resolutions all return exactly the quoted names from the index. PARTIAL is the honest verdict the finding already gives — the [2000,30000) carve-out and the stat namespace are closed, while the individual meanings of ids 100-130 are named by the sibling finding rather than this one. Nothing here over-claims."
+    },
+    {
+      "claim_id": "quests-story/pipe-delimited-enemy-pools",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml:4054-4058 '<enemy><id>11|12|13|14|15</id><qty>4</qty><x>900</x><lvl>6</lvl>', :5195-5199 '<id>11|12|13|14|15|16</id>...<lvl>7</lvl>', :10089-10093 '<id>40|41|42|43|44|45</id>...<lvl>15</lvl>' — all verbatim; my own census: 114 of 169 <enemy> rows contain a '|'",
+      "reason": "HOLDS. All three sampled rows are exact, including the lvl and qty values quoted alongside them, and the 114/169 ratio reproduces. The spawner consequence is right and important: two thirds of the encounter table is a random pool, so any 'encounter table with resolved names' built by treating <id> as a scalar is wrong for 114 rows. The note about drawing through the injected mulberry32 rather than Math.random is the correct src/core reading."
+    },
+    {
+      "claim_id": "quests-story/step-action-is-gameengine-action",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/GameEngine.as:81-109 (ACTION_NOTHING 0 through ACTION_SURVIVECLEANUP 14, all fifteen verbatim at the cited range), QuestEngine.as:1214-1218 'if(questStepData.action == 6) { startingPosX = 150; } GameEngine.initBattleMode(...)', Overworld.as:258 'if(questStepInfo.action > 0 && questStepInfo.wave.length > 0)', Obj_NPCAggro.as:139 'if(questAction.action == 6)' and :214 'if(questAction != null && questAction.action == 0)'; plus my own <step><action> census of reference/extracted/questdata.xml",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared, every one of the fifteen enum names and all five call-site lines are verbatim at the cited numbers. My census returns action 0 x169, 1 x37, 6 x5, 14 x3, 4 x1 — the finding's histogram to the digit. Minor precision note: the file holds 225 <step> elements, of which 215 carry an <action>; the other 10 omit it and inherit the parser default, so 'the 215 shipped steps' should read '215 of 225 steps carry an explicit action'."
+    },
+    {
+      "claim_id": "quests-story/wave-enemy-count-correction",
+      "refuted": false,
+      "own_cite": "reference/extracted/questdata.xml — my own ElementTree parse with a parent map over all 169 <enemy>: parents Counter({'wave': 169}), child tags Counter({'id': 169, 'qty': 169, 'lvl': 160, 'x': 109, 'fatal': 16}), lvl range 2..35, x range -400..2000, sum(qty) = 773; <loot> 19; friend <fatal> Counter({'0': 59, None: 11})",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared, and every single figure in the quote came back identical from my own parse, down to the x range and the friend-fatal breakdown. 773 spawned instances across 169 rows is a real content-budgeting number and the 12% undercount it corrects is real. This dovetails cleanly with quests-story/nested-roomobj-waves: 151 step-level rows plus 18 nested rows is exactly the 169 measured here."
+    },
+    {
+      "claim_id": "quests-story/web-payload-has-no-quest-data",
+      "refuted": false,
+      "own_cite": "reference/extracted/payload.xml (329,520,665 bytes) — MY OWN hex grep: <questdata> 0, <itemdata> 0, <npcdata> 0, <skilldata> 0, 'Jinbei' 0, control <animdata> 19; 'ls reference/extracted/bindata | wc -l' = 27; my own extractor-signature check — itemdata/npcdata/skilldata each sit at offset 40 inside their android blob behind '<?xml version=\"1.0\" encoding=\"utf-8\"?>\\r\\n' with b'\\r\\n' remaining, questdata at offset 0 with b'\\n' remaining; mtimes Jul 25 18:27 for the four XMLs, android SWF 17:38, web SWF 18:33",
+      "reason": "HOLDS, and it is the load-bearing provenance claim for the whole lane. I ran the hex grep myself over the full 329 MB and got the finding's exact six numbers, control included — the <animdata> hit proves the grep works, which is precisely the right way to guard a negative. The extractor signature and the mtime ordering both reproduce. Consequence stands: every L0 unit citing questdata/itemdata/npcdata/skilldata is citing android v0.682 and must carry the label. This is also the artifact that refutes questdata-critic/questdata-no-build-parity-hole in the same packet."
+    },
+    {
+      "claim_id": "rebirth/damage-has-no-status-field",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/Damage.as:26-48 — the complete instance-field list, verbatim: damage, stance, launchType, attackerlvl, piercingDamage, fireDamage, waterDamage, windDamage, earthDamage, flyVelX, flyVelY, victimPosX, and nothing else before the constructor at :50; FireBreathProjectile.as:53 'damageObj = new Damage(0,0,2,-1,damage);' and :59 'NPCManager.checkHitObject(this,damageObj,200);'",
+      "reason": "HOLDS as PARTIAL — QUOTE_UNVERIFIED cleared. I read Damage.as top to bottom: the class declares ten launch-type constants and then exactly the twelve instance fields quoted, with no status, buff, DoT or duration channel anywhere. The elemental projectile really does hand only that object to the hit check. PARTIAL is the correct and honest ceiling: absence from the packet is strong negative evidence, not proof, since checkHitObject also receives the projectile itself. The finding says so itself rather than over-reaching."
+    },
+    {
+      "claim_id": "rebirth/damage-packet-has-no-status-field",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/Damage.as:26-48 (twelve instance fields, verbatim) and :18 'public static var STUN:int = 6;', :20 'public static var DEATHTOUCH:int = 7;'; my own 'grep -ci buff' over FireBreathProjectile.as and BigFireBreathProjectile.as returned 0 and 0",
+      "reason": "HOLDS as PARTIAL — QUOTE_UNVERIFIED cleared. Same evidence as its sibling, verified independently: the field list is exact, the STUN/DEATHTOUCH constants really are at :18 and :20, and both negative greps really return zero. Its hedge is the better of the two — pointing out that STUN and DEATHTOUCH prove status-like effects exist somewhere, just not on any elemental construction site, is exactly the right way to bound a negative. Minor: the field list runs to :48 (victimPosX), not :47."
+    },
+    {
+      "claim_id": "rebirth/dan-1-has-no-kanji",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2280 — 'case 0: this.danfield.text = \"\"; break; case 1: this.danfield.text = LangManager.getString(456);' verbatim at those exact lines; docs/gauntlet/L0/index/strings.json['455'] = '(初段)' and ['456'] = '(弐段)'; my own 'grep -rn \"getString(455\"' over all of reference/decompiled/ returned zero hits",
+      "reason": "HOLDS. The switch is verbatim at the cited lines, 455 really is the first-dan kanji and 456 really is the second, and the negative grep is clean across BOTH script trees, not just one. So the displayed ladder is 456..464 over STAT_DAN 1..9 and string 455 is dead copy. A recreation painting 初段 on a fresh character would contradict the shipped build on the most common screen state in the game."
+    },
+    {
+      "claim_id": "rebirth/dan-zero-has-no-title",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2277 'case 0: this.danfield.text = \"\";' verbatim; reference/decompiled/shs3_payload/scripts/§1t408s0§.as:532-538 'switch(dan) { case 0: dantext = \"\"; break; case 1: dantext = \"(nidan)\";'; my own grep for 'getString(455' over both trees returns nothing",
+      "reason": "HOLDS — QUOTE_UNVERIFIED cleared, and the WEB half is the valuable part: I opened §1t408s0§.as myself and the web build also blanks the field at dan 0. The full displayed map 0->blank, 1->456 ... 9->464, default->464 is verbatim in InventoryUI at :2276-2315. Minor: the web block starts at :532 with 'case 0:' at :534 and the blank assignment at :535, so the cite :533-534 is one line short of the payload line."
+    },
+    {
+      "claim_id": "rebirth/dan-zero-shows-no-title",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2315 — the complete switch read line by line: case 0 blank; cases 1-9 -> getString(456)..(464); shogo suffix getString(465) at cases 3/4/5, (466) at 6/7, (467) at 8/9, default (467) + (464); strings.json 465='Renshi', 466='Kyoshi', 467='Hanshi'",
+      "reason": "HOLDS, and it is the most complete of the four Dan claims. I checked the shogo bands the finding vouches for and they are exactly right at every case — 465 at 3/4/5, 466 at 6/7, 467 at 8/9, default 467 plus 464. The cited range :2276-2312 is accurate (the default arm runs to :2315). Confirming a sibling claim's bands rather than just restating one's own is good critic behaviour and it checks out."
+    },
+    {
+      "claim_id": "rebirth/dan0-renders-no-kanji",
+      "refuted": false,
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2274-2282 (switch on STAT_DAN, case 0 blank, case 1 getString(456)) and the WEB confirm at reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3062-3065 'case 0: this.danfield.text = \"\"; break; case 1: this.danfield.text = §1t1521s0§.getString(456);'",
+      "reason": "HOLDS, and its web cite is the strongest of the four. §1t5957s0§.as:3060-3070 does contain the web twin of the same switch, blank at dan 0 and getString(456) at dan 1, continuing into the 465 shogo suffix at case 3. So the 456..464 ladder over STAT_DAN 1..9 is confirmed in v0.717, not just v0.682 — which matters because this is a UI-copy claim and §0's parity caveat bites hardest exactly there."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "provenance/web-projectilemanager-is-1t1712s0-not-1t112s0",
+      "text": "The web v0.717 ProjectileManager is reference/decompiled/shs3_payload/scripts/§1t1712s0§.as (enum 0..47 = 48 projectile types), NOT §1t112s0§.as. §1t112s0§.as is GameStage: it extends MovieClip, opens with a 400-px visible buffer, ends with screenWidth = 800, and its lines 112-130 match android GameStage.as:112-130 value for value (51, 55, 46, 47, 49, 50, 800) — that 0..55 run is the BG_* background enum, not projectiles. The true web-vs-android projectile delta is therefore +1 (48 vs 47), not the +9 asserted in questdata/projectile-type-enum-47-and-web-delta. Identification method: android ProjectileManager's structural signature (imports flash.display.DisplayObject + MovieClip + geom.Point, two leading Vectors, enum value 0 at line 14, value 46 at line 106) matches §1t1712s0§.as uniquely across all 2,768 web classes.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t1712s0§.as:1-14 and :108; reference/decompiled/shs3_payload/scripts/§1t112s0§.as:112,:120,:122,:124,:126,:128,:130 vs reference/decompiled/shs3_android/scripts/GameStage.as:112,:120,:122,:124,:126,:128,:130",
+      "quote": "web §1t1712s0§.as:10 'internal static var §1t11271s0§:* = new Vector.<§1t128s0§>();' :12 'internal static var §1t5834s0§:* = new Vector.<§1t129s0§>();' :14 'public static var §1t11272s0§:int = 0;' :108 'public static var §1t11319s0§:int = 47;'  ||  android GameStage.as:120 'public static var BG_BAMBOOFORESTTOWN:int = 55;' :122 'public static var BG_MINE2:int = 46;' :130 'public static var screenWidth:int = 800;'  ==  web §1t112s0§.as:120 '...:int = 55;' :122 '...:int = 46;' :130 'public static var screenWidth:int = 800;'",
+      "verdict": "HELD",
+      "lane_impact": "L7 enemies-ai + L2 skills-meters: the 47-name android projectile enum is still good, but the build-delta number attached to it is not. Anyone porting it must use +1, and any lane using '9 more projectile types in web' as a parity bound should drop it. Gauntlet-wide: obfuscated web class §1t112s0§ is GameStage — add it to the name map so the next unit does not repeat the substitution.",
+      "overturns_ledger": false
+    },
+    {
+      "id": "ui-hud/two-dan-title-renderers-romaji-and-kanji",
+      "text": "The Dan rank has TWO different on-screen renderers shipping side by side in BOTH builds, and a recreation needs both. InventoryUI paints the kanji ladder from the string table (455 unused, 456..464 over STAT_DAN 1..9) plus a Renshi/Kyoshi/Hanshi shogo suffix; PlayerPanel paints a HARDCODED ASCII romaji ladder instead — '(nidan)', '(sandan)', '(yondan)' ... '(judan)' as literals in the AS3, with only the shogo suffix fetched from the string table. Both renderers blank the field at STAT_DAN 0, so the dan-0-is-blank finding is confirmed twice over in each build.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t408s0§.as:532-565 and reference/decompiled/shs3_android/scripts/PlayerPanel.as:388; vs reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2315 and reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3062-3065",
+      "quote": "web §1t408s0§.as:534-538 'case 0: dantext = \"\"; break; case 1: dantext = \"(nidan)\";' · :543 'case 3: dantext = \"(yondan) \" + §1t1521s0§.getString(465);' · :563 'default: dantext = \"(judan) \" + §1t1521s0§.getString(467);'  ||  android PlayerPanel.as:388 'dantext = \"(nidan)\";'  ||  InventoryUI.as:2280 'this.danfield.text = LangManager.getString(456);' where strings.json['456'] = '(弐段)'",
+      "verdict": "HELD",
+      "lane_impact": "L-ui-hud: two panels show the rank in two different scripts (kanji on the inventory/character sheet, romaji on the player panel). Shipping only one is a visible divergence. It also independently corroborates the four dan-0 findings in this packet: the blank-at-0 behaviour is present in four separate switch statements across two builds and two UIs.",
+      "overturns_ledger": false
+    },
+    {
+      "id": "housekeeping/questdata-text-word-count-is-40119",
+      "text": "The questdata <text> prose word count is 40,119 words across 3,307 <text> nodes (ElementTree itertext, which flattens the inline <br/> and <font> children). The 40,135 figure circulating as a 'correction' comes from a raw regex over the <text> blocks that counts the 14 '<br/>' and 2 '<font ...>/</font>' markup tokens as words. 40,135 is therefore not a correction of 40,119 — it is a worse measurement of the same thing.",
+      "artifact_class": "A3",
+      "build": "android v0.682 embed",
+      "cite": "reference/extracted/questdata.xml — two counts I ran side by side: sum(len(''.join(t.itertext()).split()) for t in root.iter('text')) = 40119; sum over re.findall(r'<text>(.*?)</text>', raw, re.S) = 40135 over the same 3,307 blocks",
+      "quote": "itertext words 40119 · regex blocks 3307 raw words 40135",
+      "verdict": "HELD",
+      "lane_impact": "L9 quests-story content budgeting: use 40,119 for prose volume. Trivial in isolation, but it is being passed around as a correction, and a 'correction' that counts HTML tags as words will keep getting re-corrected by the next unit that measures it properly.",
+      "overturns_ledger": false
+    },
+    {
+      "id": "progression/android-never-reassigns-levelcap-either",
+      "text": "The const-vs-var contrast between the two builds' level caps is decorative, not functional: shs3_android declares levelCap a mutable var, but every one of its references across the whole script tree is a READ (DungeonGenerator, Item, LootDialog, OverworldHUD, ItemGenerator, QuestGenerator, ...). No code path in either build ever assigns it. So 'levels 81-99 are structurally unreachable' is equally true of v0.682 and v0.717, and the web build's 'const' keyword adds nothing on top of the anti-cheat guard that already rejects any level above the cap.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:76 (declaration) with my own 'grep -rn levelCap reference/decompiled/shs3_android/scripts/' — every hit a comparison or a clamp read, none an assignment; web guard at reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2043",
+      "quote": "android StatsManager.as:76 'public static var levelCap:int = 80;'  ·  representative reads: Item.as:295 'if(lvl > StatsManager.levelCap)', OverworldHUD.as:1528 'if(StatsManager.getLevel() >= StatsManager.levelCap)', QuestGenerator.as:840 'if(StatsManager.getLevel() == StatsManager.levelCap)'  —  zero assignments anywhere  ||  web §1t1523s0§.as:2043 'if(!_loc5_ && _loc4_ > §1t9470s0§) { … return false; }'",
+      "verdict": "HELD",
+      "lane_impact": "L4 progression: keep the conclusion (expArray[81..98] is dead headroom, cap 80) but drop the const-vs-var reasoning — it does not distinguish the builds and would mislead anyone auditing the android side for a reachable path above 80.",
+      "overturns_ledger": false
+    }
+  ]
+}

@@ -44,18 +44,18 @@
  ],
  "packets": [
   {
-   "claims": 20,
+   "claims": 21,
    "file": "t1-overturns-01.json",
    "lenses": [
     "cite",
     "hunter"
    ],
-   "overturns": 20,
+   "overturns": 21,
    "stage": "WF-3a",
    "unit": "t1-overturns-01"
   },
   {
-   "claims": 48,
+   "claims": 45,
    "file": "t2-corroborating-01.json",
    "lenses": [
     "cite"
@@ -63,84 +63,14 @@
    "overturns": 0,
    "stage": "WF-3b",
    "unit": "t2-corroborating-01"
-  },
-  {
-   "claims": 48,
-   "file": "t2-corroborating-02.json",
-   "lenses": [
-    "cite"
-   ],
-   "overturns": 0,
-   "stage": "WF-3b",
-   "unit": "t2-corroborating-02"
-  },
-  {
-   "claims": 48,
-   "file": "t2-corroborating-03.json",
-   "lenses": [
-    "cite"
-   ],
-   "overturns": 0,
-   "stage": "WF-3b",
-   "unit": "t2-corroborating-03"
-  },
-  {
-   "claims": 48,
-   "file": "t2-corroborating-04.json",
-   "lenses": [
-    "cite"
-   ],
-   "overturns": 0,
-   "stage": "WF-3b",
-   "unit": "t2-corroborating-04"
-  },
-  {
-   "claims": 48,
-   "file": "t2-corroborating-05.json",
-   "lenses": [
-    "cite"
-   ],
-   "overturns": 0,
-   "stage": "WF-3b",
-   "unit": "t2-corroborating-05"
-  },
-  {
-   "claims": 48,
-   "file": "t2-corroborating-06.json",
-   "lenses": [
-    "cite"
-   ],
-   "overturns": 0,
-   "stage": "WF-3b",
-   "unit": "t2-corroborating-06"
-  },
-  {
-   "claims": 48,
-   "file": "t2-corroborating-07.json",
-   "lenses": [
-    "cite"
-   ],
-   "overturns": 0,
-   "stage": "WF-3b",
-   "unit": "t2-corroborating-07"
-  },
-  {
-   "claims": 19,
-   "file": "t2-corroborating-08.json",
-   "lenses": [
-    "cite"
-   ],
-   "overturns": 0,
-   "stage": "WF-3b",
-   "unit": "t2-corroborating-08"
   }
  ],
  "totals": {
-  "already_judged": 1200,
-  "claim_rows": 1614,
-  "critic_findings_claiming_overturn": 20,
-  "critic_findings_unjudged": 375,
-  "distinct_ids": 1575,
+  "already_judged": 1555,
+  "claim_rows": 1660,
+  "critic_findings_claiming_overturn": 21,
+  "critic_findings_unjudged": 66,
+  "distinct_ids": 1621,
   "duplicate_rows_merged": 39,
   "source_sweep_unjudged": 0
  }

@@ -1,0 +1,208 @@
+{
+  "judged_count": 19,
+  "packet_size": 19,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "world-exploration/nochange-town-covers-all-level-under-8",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:393-400 (isNoChangeTown, quoted verbatim: `return lvl < this.LEVELSTART + 5;` at :400) + :144 `internal var LEVELSTART:int = 3;`",
+      "reason": "I opened NodeGenerator.as myself. The quote is verbatim at :393-400 (the cited 392-400 range includes the blank line before the signature). LEVELSTART=3 is at :144, so LEVELSTART+5 = 8 and the guard really is `level < 8` for EVERY territory, on top of the four explicit ids. I also read getNoChangeTownLevel at :402-450 and confirm it references exactly twelve ids and that its RNG fallback `new RNG(territoryID); dice = rng.rand(7)` maps dice 0 to 0 and falls through `return 0` for dice 6, so the lane_impact's 'dice 0 AND dice 6 both map to level 0' is also correct. HELD."
+    },
+    {
+      "claim_id": "world-exploration/rock-deposit-never-clears",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/NodeUI.as:600 `if(this.oreType != 1)` -> :602 clearOre(); + Obj_OreDeposit.as:80-86 clearOre body + :126-129 `override public function getAPUse() : int { return 2; }`",
+      "reason": "Opened both files. NodeUI.as:600 is exactly the guard `if(this.oreType != 1)` wrapping the clearOre() call at :602; Obj_OreDeposit.clearOre() at :80-86 is the only caller of StageManager.addToDeadList for a deposit. getAPUse() returns 2 at :128, so '2 AP indefinitely' is exact. NodeUI.doMine:570 maps oreType 1 to addLootItemBasic(20059,1), and resolved_names.json itemdata 20059 = 'Unusable rocks', 20060 = 'Coal' - so the lane_impact's 'non-Coal' reading of the `oreType != 2` downgrade roll at Obj_OreDeposit.as:70 is also correct. Nit: the cite says :79-86 but clearOre's signature is at :80 (:79 is blank). HELD."
+    },
+    {
+      "claim_id": "world-exploration/save-schema-has-three-timers",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:15 `internal static var DATASLOTS:int = 20;` + my own `grep -rn saveUpdate reference/decompiled/` = 23 call sites in QueryManagerPIO.as + 1 definition in NetworkManager.as",
+      "reason": "I ran the grep myself. The 23 written ids are exactly 0-12, 14-19, 103, 100, 101, 102: 20 data + 3 timers = 23. `grep -rn 'saveUpdate(13' reference/decompiled/` returns nothing repo-wide, so 'slot 13 is never written' is confirmed, and 103 is getBattleStatsString (data), not a timer. QueryManagerBase.as:15 is verbatim. CAVEAT I am carrying forward, not a refutation: DATASLOTS=20 is used only as `new Vector.<Boolean>(DATASLOTS)` at :41 and as the bound of `for(i=0;i<DATASLOTS;i++)` at :66/:74/:1875, i.e. it indexes 0..19 INCLUDING the never-written slot 13 and EXCLUDING slot 103 - so the numeric agreement with 'the 20 written data ids' is coincidental, and the lane_impact's 'the literal the schema is sized on' should not be read as 'the literal that counts them'. The headline arithmetic is independently verified by the enumeration. HELD."
+    },
+    {
+      "claim_id": "world-exploration/save-schema-is-23-slots",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/NetworkManager.as:1870 `public function saveUpdate(saveIndex:int, savedata:String) : *` (grep -n, exact) + QueryManagerPIO.as:1047-1187 (first call saveUpdate(0 at :1047, last saveUpdate(102 at :1187)",
+      "reason": "citelint's QUOTE_UNVERIFIED is OVERTURNED by my own read: the quoted signature is verbatim at NetworkManager.as:1870, which is one of the two cited files (the linter appears to have searched only the first path). Line bounds check out - :1047 and :1187 are the true first and last saveUpdate call sites in QueryManagerPIO.as (2931 lines). Slot 13 absent repo-wide. 20 data + 3 timers = 23. HELD."
+    },
+    {
+      "claim_id": "world-exploration/save-slot-count-23",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/QueryManagerPIO.as:1175/1181/1187 - `saveUpdate(100,StatsManager.nextAPUpdate.toString());` / `saveUpdate(101,StatsManager.nextDTUpdate.toString());` / `saveUpdate(102,StatsManager.nextWarTurn.toString());`",
+      "reason": "The three quoted timer lines are verbatim at :1175, :1181 and :1187 (prefixed `NetworkManager.instance.`). My own repo-wide grep confirms the claim's 'QueryManagerPIO holds every call site': hits are 23 in shs3_android/QueryManagerPIO.as + 1 definition in shs3_android/NetworkManager.as:1870, mirrored identically in shs3_android_payload. Slot 13 genuinely unused. HELD. Scope note for the ledger, not a refutation: `grep -rn saveUpdate reference/decompiled/` returns ZERO hits under shs3_payload, so the whole 23-slot schema is android v0.682 evidence with an undischarged S0-3 web-parity hole; none of the three save-schema findings claims otherwise."
+    },
+    {
+      "claim_id": "world-exploration/stables-is-the-5ap-object",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI.as:1680 `internal function initStablesButtons() : *` and :1721-1745 travel(), with :1723 `var cost:int = NodeGenerator.instance.getNodeLevel(StageManager.getCurrentNode()) * 2;` and :1736 `if(!StatsManager.checkAP(5))`",
+      "reason": "Opened InteractUI.as. initStablesButtons is at :1680 exactly and emits `<action><id>travel</id>` options for adjacent territories gated on `territoryData.hasTown() && territoryData.isInBoundary()`. travel() at :1721 charges nodeLevel*2 gold and calls checkAP(5); I also opened StatsManager.checkAP, which does `if(num <= ap) { changeAP(-num); return true; }`, so the 5 is a real deduction, not a threshold test. strings.json 525='Stables', 735='Stables', 5061='Stablehand', 95='Travel' - all verified in the index. I opened docs/gauntlet/L0/CLAIMS.md:2751 and it is indeed `world-exploration/ap-cost-table-stable-mislabelled - PARTIAL` asserting 'there is no 5-AP stable object'; this finding's evidence does defeat that assertion. HELD."
+    },
+    {
+      "claim_id": "world-exploration/start-node-name-confirms-rng",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/extracted/android/112_Mobile_NodeData.bin:5-6 `<id>8382465</id>` / `<name>1037</name>` (plain XML, CRLF, 53502 bytes) + docs/gauntlet/L0/index/strings.json[\"1037\"] = 'W Kasuta Forest'",
+      "reason": "Opened the .bin - it is plain XML text despite the extension, and lines 5 and 6 are exactly as quoted. strings.json id 1037 resolves to 'W Kasuta Forest'. `grep -n 8382465` returns 3 hits (:5 as the node id, :46 and :2731 as signpost properties), confirming the 'routed hub' detail too. Wording nit, not a refutation: both artifacts are ANDROID-side (reference/extracted/android/...), so 'the payload's own string table' means the Android Lang blob - the independence is of DERIVATION PATH (authored label vs LCG), not of build. HELD."
+    },
+    {
+      "claim_id": "world-exploration/start-town-is-kasuta",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/NameGenerator.as:40 (namestarting, 78 entries) / :42 (nameending, 37 entries) / :162-166 getTownName2 + RNG.as:66-75 (rnd/rand) - and I re-ran the LCG myself",
+      "reason": "I re-implemented the generator from the artifacts, not from the claim: RNG(1397077*2=2794154), constructor primes with rnd() (RNG.as:18), then rand(78)=75 -> 'Ka' and rand(37)=0 -> 'suta' => 'Kasuta'. EXACT match to the quoted arithmetic. Routing also checks out: 1397077 >> 12 & 0xFFF = 341, & 0xFFF = 341, 341 % 137 = 67 >= 26, so getPlaceName falls to getTownName2. getNodeCompassDir at :485-511 uses `if(terrSector.x <= 1) dir2 = getString(401)` and strings.json 401='W', 1003='Forest'. The corroborating video-study line is off by ten: the banner text 'W KASUTA FOREST' is at A-00-boot-login.md:51, and :61-62 is the TERRITORY (21,51) / SECTOR 0,3->1,3->2,3 line. The claim itself flags that source as a LEAD and rests on the A2 reproduction, which I reproduced independently. HELD."
+    },
+    {
+      "claim_id": "world-exploration/the-twelve-hour-crop-never-rots",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI_crops.as:55 `internal var gracePeriod:int = 900;` + the switch at :110-170: case 1 body :116-128, case 2 :131-143, case 3 :146-158 all end in `this.vegState = this.ROTTED;`, case 4 at :160-169 has only PLANTED/READYFORHARVEST",
+      "reason": "This is the most precisely cited finding in the packet - every line number it gives is exact against my own read of the file. gracePeriod=900 at :55. The three lower tiers each carry `else if(getServerTime() - plantTime < timePeriod + gracePeriod)` then `else vegState = ROTTED`; case 4 (12*60*60) has no grace term and no ROTTED arm. Only nit: the `case 4:` label sits at :160, so the quoted ':161-169' starts one line inside the block it quotes. HELD."
+    },
+    {
+      "claim_id": "world-exploration/tired-idle-not-death",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:1229-1233 - `case IDLE_STATE:` / `if(!GameEngine.isAdventureMode() && !StageManager.isRedFreeze() && getHP() <= maxhp / 4 || GameEngine.isAdventureMode() && this.controlledBy == 0 && StatsManager.getStat(StatsManager.STAT_AP) == 0)` / `startAnim(TIRED);` at :1232",
+      "reason": "Quote is verbatim; the cited 1228-1232 range covers it (1228 is the switch's opening brace). `grep -n TIRED MCSPlayer.as` returns exactly two hits, :1232 and :4319, and :4319 is a sheathed-pose test inside the FLINCH branch - so 'idle pose, not a state transition' is correct. I also tested the negative myself: `grep -rn 'STAT_AP) == 0' reference/decompiled/shs3_android/scripts/` returns this line and nothing else, so there is no competing AP==0 death/retreat branch in the android class set. HELD."
+    },
+    {
+      "claim_id": "world-exploration/twelve-hour-crop-never-rots",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/Obj_VegePatch.as:135-144 (case 4, 12*60*60, PLANTED else READYFORHARVEST; ROTTED arms for cases 1/2/3 at :102, :117, :132; `var gracePeriod:int = 15 * 60;` at :80) AND the WEB mirror reference/decompiled/shs3_payload/scripts/§1t8621s0§.as:138 `_loc7_ = 12 * 60 * 60;` with no ROTTED arm",
+      "reason": "The quoted case-4 block is verbatim in Obj_VegePatch.as, though it actually begins at :135 rather than the cited :131-140 - a ~4-line drift that still overlaps the quoted code, so the cite resolves and is not a mis-cite of substance. The far more valuable part of this finding is its alternate cite, which I checked and which is EXACT: §1t8621s0§.as:138 is the web v0.717 twin and carries the same two-arm case 4. That closes the S0-3 parity hole on this rule - the 12-hour crop cannot rot in EITHER build. HELD."
+    },
+    {
+      "claim_id": "world-exploration/twelve-hour-crops-never-rot",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/Obj_VegePatch.as:135-144 - `case 4:` / `timePeriod = 12 * 60 * 60;` / if < timePeriod -> PLANTED / else -> READYFORHARVEST, no ROTTED",
+      "reason": "Verbatim, though the block runs :135-144 not the cited :134-143 (one line early). Cases 1/2/3 at :90/:105/:120 each carry `else { vegState = ROTTED; }` at :102/:117/:132 with `var gracePeriod:int = 15 * 60;` at :80 - so '900 s grace, else ROTTED' for three tiers and none for the fourth is exactly right. Third near-duplicate of the same true fact. HELD."
+    },
+    {
+      "claim_id": "world-exploration/web-payload-carries-world-constants",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/extracted/payload.xml:104820 `<item>49297</item>`, :104821 `<item>233280</item>`, :104823-104834 the twelve ids in the quoted order; and my own `grep -c \">8382465<\" reference/extracted/payload.xml` = 1",
+      "reason": "I read the 329 MB payload at that offset myself. Every line number in the quote is EXACT: 104820=49297, 104821=233280, and 104823..104834 = 1466699, 1503572, 1368424, 1540387, 1397077, 1397078, 1401173, 1405270, 1413461, 1409366, 1401176, 1397081 in precisely that order. The grep for the spawn node returns 1. The set is exactly the twelve ids of android getNoChangeTownLevel. Precision nit: the pool order is NOT getNoChangeTownLevel's internal order - it is isNoChangeTown's four ids first (NodeGenerator.as:395) then getNoChangeTownLevel's, i.e. class emission order; 'in the same clustered order' overstates by a hair. The claim correctly self-labels this as constant-pool evidence rather than byte-proof. HELD."
+    },
+    {
+      "claim_id": "world-exploration/web-third-placename-hardcode",
+      "refuted": false,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t136s0§.as:148-151 `if(param1 == 1519945) { return \"Iwakuni\"; }` - the web-side NameGenerator this finding says the repo does not hold",
+      "reason": "I am NOT refuting an honest STILL_UNHELD whose hypothesis turns out to be exactly right - but it must be recorded as CLOSED, not banked as an open lead. Every piece of evidence it cites checks out under my own hands: NameGenerator.as:137/:141 are the only two android overrides; 98_1t4653s0.bin splits to 677 entries with 'Iwakuni' at index 660 in the run Hofu/Iwakuni/Kudamatsu/Mine/Nagato and with NEITHER 'Ibamaya' NOR 'Gokura' present; `grep -rl Iwakuni` over the android scripts returns 0 files. ONE assertion in it is flatly wrong: 'Closing this needs a web-side NameGenerator decompile, which the repo does not hold.' The repo DOES hold it - reference/decompiled/shs3_payload/scripts/§1t136s0§.as, 178 lines, the obfuscated web twin - and it confirms the hypothesis outright. Two other nits: the three adjacent pool names are at payload.xml:119265-119267, not the cited 119264-119266 (:119264 is the 'replace' token), and the android script count is 553 .as files, not 559. Verdict: not refuted, but SUPERSEDED by world/third-placename-override-is-web-only and world/third-hardcoded-placename-override-web-only in this same packet; it must enter as HELD, never as an open lead."
+    },
+    {
+      "claim_id": "world/map-bitmap-is-in-the-repo-735-land-pixels",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/extracted/android/110_Mobile_MapBitmapData.bin (272 bytes, GIF89a 63x72 - I decoded it with PIL) + reference/decompiled/shs3_android_payload/scripts/QuestEngine.as:522-526 (processMapBitmapData's `if(mapBitmapData.getPixel(i,j) != 0)` / `terrX = i - WorldMapUI.TERRSHIFTX + WorldMapUI.WARMARKERSHIFTX;` / `terrY = j - WorldMapUI.TERRSHIFTY;` / `warMarkerList.push(terrX + 341 << 12 | terrY + 341);`)",
+      "reason": "citelint's QUOTE_UNVERIFIED is OVERTURNED - the 'quote' is a decode report, and I reproduced it end to end. I opened WorldMapUI.as:15/17/19 for TERRSHIFTX=21, TERRSHIFTY=51, WARMARKERSHIFTX=8, then ran the QuestEngine transform over every pixel. My independent numbers: land px 735, i range 1..61, j range 1..70, territoryx 329..389, territoryy 291..360, mapid 1347935..1593647, Ibamaya 1405272 -> (15,54), Gokura 1524045 -> (44,43), Iwakuni 1519945 -> (43,39). EVERY figure matches to the digit. The cited QuestEngine lines 522-526 are exact. The '735 territories' figure is genuinely MEASURED. Only nit: build is labelled 'both' but both artifacts are android-side; the transform's web twin was not checked here. HELD."
+    },
+    {
+      "claim_id": "world/nodegenerator-web-parity-closed",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t70s0§.as:399 `var _loc3_:int = Math.abs(_loc2_.x - 341) + Math.abs(_loc2_.y - 341) + this.§1t1138s0§;` vs reference/decompiled/shs3_android/scripts/NodeGenerator.as:385 `var lvl:int = Math.abs(territory.x - 341) + Math.abs(territory.y - 341) + this.LEVELSTART;`",
+      "reason": "Both lines are verbatim at the cited numbers - I opened each file. I went one step further than the claim and checked the obfuscated symbol: §1t70s0§.as:146 is `internal var §1t1138s0§:int = 3;` against android NodeGenerator.as:144 `internal var LEVELSTART:int = 3;`, so the formula is not merely structurally identical, it is numerically identical. The clamp at `if(_loc3_ > 200)` also mirrors. Web parity on the node-level formula is genuinely closed. HELD."
+    },
+    {
+      "claim_id": "world/the-hud-prints-territory-21-51-on-film",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/zFt_combat/zFtCaTO0_1M_t0330s.png - I cropped full-res (1500,130)-(1880,580) [= x 750-940, y 65-290 at 960x540, matching the claim's stated box] and upscaled 3x with LANCZOS",
+      "reason": "I opened the frame and looked. In the upscaled crop the minimap panel reads, in gold-trimmed caps beneath a 6x6 grid with N/E/S/W edge letters, a white player arrow and a crossed-swords marker: 'TERRITORY (21,51)' and 'SECTOR (4,3)'. Both strings are legible and exactly as quoted. In the 960x540 downscale of the same frame the red nameplate over the NPC reads 'GUESTDIT (3)', also as quoted. WorldMapUI.as:17/:19 give TERRSHIFTX=21 / TERRSHIFTY=51, and the spawn territory 1397077 decodes to (341,341) which displays as (341-341+21, 341-341+51) = (21,51) - so the frame and the constants agree. HELD, and this is a rare A1 that survives its own crop test."
+    },
+    {
+      "claim_id": "world/third-hardcoded-placename-override-web-only",
+      "refuted": false,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t136s0§.as:140/:142/:144/:146/:148/:150 vs reference/decompiled/shs3_android/scripts/NameGenerator.as:137/:141/:145",
+      "reason": "citelint's QUOTE_UNVERIFIED is OVERTURNED (the § characters defeat the linter). I opened §1t136s0§.as and counted lines: :138 is the getPlaceName twin's signature, :140 `if(param1 == 1405272)`, :142 `return \"Ibamaya\";`, :144 `if(param1 == 1524045)`, :146 `return \"Gokura\";`, :148 `if(param1 == 1519945)`, :150 `return \"Iwakuni\";`. EVERY line number in the quote is exact. On the android side NameGenerator.as:137 is `if(territoryID == 1405272)`, :141 `if(territoryID == 1524045)` and :145 is `var territoryx:int = territoryID >> 12 & 0x0FFF;` - the split, with no third override. This is a genuine web/android divergence and a real porting hazard. HELD."
+    },
+    {
+      "claim_id": "world/third-placename-override-is-web-only",
+      "refuted": false,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t136s0§.as:148-151 `if(param1 == 1519945)` / `{` / `return \"Iwakuni\";` / `}` - counted line by line from my own read of the file",
+      "reason": "citelint QUOTE_UNVERIFIED OVERTURNED: the four quoted lines are verbatim at :148, :149, :150, :151. Its supporting reproduction also survives independent check - I re-ran the generator myself from the artifacts and got Chikada / Kakuchi / Kasuta for 1405270 / 1409366 / 1397077, matching exactly; reference/extracted/bindata/98_1t4653s0.bin splits to 677 entries and is BYTE-IDENTICAL to reference/extracted/android/89_NameGenerator_PlaceNames.bin (cmp clean); namestarting is 78 and nameending 37; RNG.as:18 is the constructor's priming rnd(). I also checked the one thing the claim did not: the web RNG §1t58s0§ is pool-allocated (§1t8804s0§ -> setSeed -> destroy) rather than `new RNG`, but §1t779s0§ at :67-74 primes with rnd() identically and rnd() at :84 is the same 9301/49297/233280 LCG, so the pooling changes nothing and my reproduction is valid for v0.717 as well. HELD."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "world/nochange-town-rule-is-cross-build",
+      "text": "The 'no-change town' rule is NOT android-only. The web v0.717 twin of NodeGenerator carries the identical guard: §1t70s0§.as:414 `return _loc2_ < this.§1t1138s0§ + 5;` with `internal var §1t1138s0§:int = 3;` at :146 - i.e. level < 8, the same as android isNoChangeTown at NodeGenerator.as:400 with LEVELSTART=3 at :144. Every territory below level 8 has a permanently fixed town level in the FILMED build too.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t70s0§.as:146,414 vs reference/decompiled/shs3_android/scripts/NodeGenerator.as:144,400",
+      "quote": "§1t70s0§.as:414  return _loc2_ < this.§1t1138s0§ + 5;   ||   §1t70s0§.as:146  internal var §1t1138s0§:int = 3;",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L1 world-exploration: world-exploration/nochange-town-covers-all-level-under-8 can be banked as CONTRACT against the filmed build rather than carried with an S0-3 parity caveat. Found while judging that claim; nobody in the packet cited the web twin of isNoChangeTown."
+    },
+    {
+      "id": "world/kasuta-is-on-film-in-the-web-build",
+      "text": "The name-generator output is confirmed in the WEB v0.717 build on film, not just reproduced from android code. The same frame the packet cites for TERRITORY (21,51) also prints, top-left in the location banner, 'E KASUTA FIELD' with a travel row reading 'E KASUTA MOUNTAIN PATH (N)'. Territory (21,51) is the spawn territory 1397077 (341,341), whose android LCG name I independently reproduced as 'Kasuta'. So the generated syllable name, the compass prefix and the terrain suffix all survive into v0.717.",
+      "artifact_class": "A1",
+      "build": "web v0.717",
+      "cite": "reference/frames/zFt_combat/zFtCaTO0_1M_t0330s.png - full 1920x1080 downscaled to 960x540; location banner occupies roughly x 40-295, y 80-165",
+      "quote": "on-screen banner: 'E KASUTA FIELD'; travel row below it: '(footprint icon) E KASUTA MOUNTAIN PATH (N)'; minimap below-right: 'TERRITORY (21,51)' / 'SECTOR (4,3)'",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L1 world-exploration: closes the build-parity half of world-exploration/start-town-is-kasuta and world-exploration/start-node-name-confirms-rng, both of which rest entirely on android artifacts. The web build names the spawn territory Kasuta on film."
+    },
+    {
+      "id": "save-schema/dataslots-20-does-not-count-the-written-ids",
+      "text": "DATASLOTS=20 is NOT a count of the twenty written data ids. QueryManagerBase.as:41 uses it as `new Vector.<Boolean>(DATASLOTS)` and :66/:74/:1875 (plus QueryManagerPIO.as:1033) as the bound of `for(i = 0; i < DATASLOTS; i++)` - so it indexes slots 0..19, which INCLUDES the never-written slot 13 and EXCLUDES slot 103 entirely. The arithmetic agreement with '0-12, 14-19, 103 = 20' is a coincidence and must not be cited as corroboration of it.",
+      "artifact_class": "A2",
+      "build": "android v0.682",
+      "cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:15,41,66,74,1875",
+      "quote": "QueryManagerBase.as:41  internal var dataModified:Vector.<Boolean> = new Vector.<Boolean>(DATASLOTS);\nQueryManagerBase.as:66  for(var i:int = 0; i < DATASLOTS; i++)",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L1 / §6 persistence: keeps the 23-slot arithmetic (which is independently sound from the enumeration) but strips a false supporting inference out of world-exploration/save-schema-has-three-timers before it reaches config."
+    },
+    {
+      "id": "save-schema/is-android-only-evidence",
+      "text": "The recovered save schema has an undischarged S0-3 web-parity hole that none of the three save-schema findings names. `grep -rn saveUpdate reference/decompiled/` returns hits in exactly four files - shs3_android/{NetworkManager,QueryManagerPIO}.as and shs3_android_payload/{NetworkManager,QueryManagerPIO}.as - and ZERO under shs3_payload. Every slot id, including the three timers, is android v0.682 only.",
+      "artifact_class": "A3",
+      "build": "android v0.682",
+      "cite": "reference/decompiled/shs3_android/scripts/QueryManagerPIO.as:1047-1187 and reference/decompiled/shs3_android/scripts/NetworkManager.as:1870 - the only saveUpdate sites in the repo besides their shs3_android_payload duplicates",
+      "quote": "$ grep -rn 'saveUpdate' reference/decompiled/ | awk -F: '{print $1}' | sort | uniq -c\n   1 reference/decompiled/shs3_android/scripts/NetworkManager.as\n  23 reference/decompiled/shs3_android/scripts/QueryManagerPIO.as\n   1 reference/decompiled/shs3_android_payload/scripts/NetworkManager.as\n  23 reference/decompiled/shs3_android_payload/scripts/QueryManagerPIO.as",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L1 / §6 persistence: the 23-slot schema must be labelled v0.682 when it is transcribed, not CONTRACT against the filmed build. Also confirms `saveUpdate(13` appears nowhere in the repo."
+    },
+    {
+      "id": "world/web-rng-is-pooled-but-numerically-identical",
+      "text": "The web v0.717 RNG is pool-allocated rather than constructed - §1t136s0§.as:171 calls `§1t58s0§.§1t8804s0§(param1 * 2)` and then `.destroy()` - which looks like a divergence from android's `new RNG(territoryID * 2)`. It is not. §1t58s0§.as:23-27 gets a pooled instance and immediately calls setSeed (§1t779s0§), and §1t779s0§ at :67-74 sets the seed, takes its absolute value and primes with `this.rnd()` exactly as the android constructor does at RNG.as:10-19; rnd() at :84 is the same `(randomSeed * 9301 + 49297) % 233280`. Output is bit-identical, so any name-generator reproduction done against the android RNG is valid for v0.717.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t58s0§.as:23-27,67-74,84 vs reference/decompiled/shs3_android/scripts/RNG.as:10-19,51-59,66-70",
+      "quote": "§1t58s0§.as:67  public function §1t779s0§(param1:Number) : *\n:69     this.randomSeed = param1;\n:74     this.rnd();\n§1t58s0§.as:84  this.randomSeed = (this.randomSeed * 9301 + 49297) % 233280;",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L8 world-exploration: removes a plausible-looking porting trap. A reader diffing the two name generators would see a pool factory on the web side and suspect a different priming sequence; there is none. Combined with the byte-identical place-names blob, the ONLY web/android divergence in the whole name generator is the third Iwakuni override."
+    },
+    {
+      "id": "world/placenames-blob-is-byte-identical-across-builds",
+      "text": "The 677-entry place-name table is byte-identical between builds: `cmp reference/extracted/bindata/98_1t4653s0.bin reference/extracted/android/89_NameGenerator_PlaceNames.bin` exits clean. This is a rare case where an S0-3 parity question is settled by a real byte-check rather than by the circular android-vs-android diff C2 warns about, because 98_1t4653s0.bin comes from the WEB bindata set and 89_* from the ANDROID extract.",
+      "artifact_class": "A3",
+      "build": "both",
+      "cite": "reference/extracted/bindata/98_1t4653s0.bin vs reference/extracted/android/89_NameGenerator_PlaceNames.bin - cmp returns no output (identical); 677 entries when split on \\n, no trailing newline",
+      "quote": "$ cmp reference/extracted/bindata/98_1t4653s0.bin reference/extracted/android/89_NameGenerator_PlaceNames.bin -> IDENTICAL\npython split('\\n') -> 677 entries; index 660 = 'Iwakuni', neighbours Hofu / Iwakuni / Kudamatsu / Mine / Nagato; 'Ibamaya' and 'Gokura' both ABSENT from the table",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L8 world-exploration: getTownName1's lookup table needs no build qualifier, and it confirms why Ibamaya/Gokura/Iwakuni must be hardcoded overrides in code - the first two are not in the table at all, and Iwakuni's presence in it is innocent (it is an ordinary Japanese-city row, not the override)."
+    }
+  ]
+}

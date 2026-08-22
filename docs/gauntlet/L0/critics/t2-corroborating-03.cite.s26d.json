@@ -1,0 +1,351 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "meta-social/web-new-player-starts-with-3-gold",
+   "refuted": false,
+   "reason": "CITE RESOLVES AND SAYS IT. I opened the web StatsManager alias myself: :1023 '§1t7357s0§(§1t9412s0§,100);' :1024 '(§1t9413s0§,3);' :1025 '(§1t9414s0§,30);' :1026 '(§1t9415s0§,30);' :1027 '(§1t9416s0§,20);' :1028 '(§1t9417s0§,20);' — verbatim. The id decode is pinned in the same file: :226 §1t9412s0§=11, :228 §1t9413s0§=12, matching android STAT_GOLD=11 (:192) / STAT_HGOLD=12 (:194). Android side at :705 'setPlayerStats(STAT_GOLD,100);' :706 'setPlayerStats(STAT_HGOLD,0);' — exact. So web starts at 3 premium Gold, android at 0. citelint's QUOTE_UNVERIFIED is a false alarm caused by the § glyphs.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1023-1028, :226, :228 + reference/decompiled/shs3_android/scripts/StatsManager.as:705-706, :192, :194"
+  },
+  {
+   "claim_id": "meta-social/web-payload-decompile-is-the-authority",
+   "refuted": false,
+   "reason": "PRIMARY CITE EXACT AND ALL SIX LISTED DIVERGENCES REPRODUCED BY ME. Web §1t1523s0§.as:36 'public static var §1t9323s0§:Number = 0.717;' · android StatsManager.as:30 'public static var clientVersion:Number = 0.682;'. Divergences I re-measured first-hand: rebirth web :2644-2651 +100/+25 HGOLD vs android :2201-2207 +20/+5; MAXDUELTOKENS web :200 =40 vs android :166 =30; daily base roll web §1t401s0§.as:1218 '37 + this.§1t5864s0§.getLevel()' vs android InteractUI.as:1247 'dice = Math.random() * 36;'; 10-streak bonus web :1588 'Math.random() * 8' vs android InteractUI.as:1217 'Math.random() * 6'; barricade gate web §1t7785s0§.as:2123 carries '&& this.§1t7807s0§.owner != this.§1t7812s0§' where android WarHexUI.as:2285 (getTerrainModifier) has no owner test; starting HGOLD 3 vs 0. TWO COSMETIC ERRORS, not refutation-grade: the text says '652 files' (that is the FLAT entry count of scripts/; the recursive .as count is 1,079, as its own sibling claim says) and it says 'five' numbers change while listing six.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:36, :200, :2644-2651 · §1t401s0§.as:1218, :1588 · §1t7785s0§.as:2123 · reference/decompiled/shs3_android/scripts/StatsManager.as:30, :166, :2201-2207 · InteractUI.as:1217, :1247 · WarHexUI.as:2285",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "meta-social/web-payload-decompile-is-the-reference",
+   "refuted": false,
+   "reason": "COUNTED IT MYSELF. `find reference/decompiled/shs3_payload/scripts -name '*.as' | wc -l` = 1079; the android tree = 970 (shs3_android and shs3_android_payload are byte-identical, `diff -rq` returns nothing). The quoted stat-id block is verbatim: §1t1523s0§.as:222 'internal static const §1t8755s0§:int = 9;' :228 '§1t9413s0§:int = 12;' :254 '§1t9426s0§:int = 25;', against android STAT_XP 9 (:188) / STAT_HGOLD 12 (:194) / STAT_DAN 25. Every alias it names exists: §1t7790s0§.as 221 lines vs WarHexUIBuildMenu.as 218, §1t5865s0§.as 114 vs InteractUI_chikako.as 110, §1t7924s0§.as 130 vs WarRules.as 124 (I matched that one line-for-line). Its 'the build the two longplays show' leg is independently true: the shop frame's HUD reads DUEL TOKENS 40/40, the WEB constant.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:222, :228, :254 + `find ... -name '*.as' | wc -l` = 1079 vs 970 + reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg (top-bar crop (0,0)-(1024,120) x3 LANCZOS)"
+  },
+  {
+   "claim_id": "meta-social/web-string-table-is-an-external-dead-file",
+   "refuted": false,
+   "reason": "OPENED §1t1521s0§.as MYSELF. :81-84 and again :92-95 carry the quoted lines verbatim — 'Locale.addXMLPath(§1t9271s0§,_loc2_ + \"shs3_en.xml\");' / fr / es / 'Locale.loadLanguageXML(param1,§1t9286s0§);' — with 'var _loc2_:String = \"./data/\";' at :63 and :91 and the server branch at :72 '_loc2_ = §1t3317s0§.instance.server + \"strings/\";'. My own repo-wide `find . -iname 'shs3_*.xml'` returns nothing. The web string table really is an external runtime download that is not on disk.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1521s0§.as:63, :72, :81-84, :91-95 + `find . -iname 'shs3_*.xml'` → empty"
+  },
+  {
+   "claim_id": "meta-social/web-troop-cap-50000",
+   "refuted": false,
+   "reason": "VERBATIM. §1t7785s0§.as:2181 '_loc3_ = this.§1t7807s0§.§1t7776s0§(this.§1t7812s0§) + param2;' :2182 'if(_loc3_ > 50000)' :2184 '_loc3_ = 50000;' :2186 'this.§1t7807s0§.§1t7774s0§(this.§1t7812s0§,_loc3_);' — all four lines exactly as quoted. My own `grep -n 50000 reference/decompiled/shs3_android/scripts/WarHexUI.as` exits 1 with no output, so the android negative holds too.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t7785s0§.as:2179-2186 + `grep -n 50000 reference/decompiled/shs3_android/scripts/WarHexUI.as` → no match"
+  },
+  {
+   "claim_id": "meta-social/web-warrules-7-pages",
+   "refuted": false,
+   "reason": "citelint's QUOTE_UNVERIFIED IS A FALSE ALARM — I found every quoted line. §1t7924s0§.as:23 'internal var max:int = 7;' · :121 'case 7:' · :122 'this.warrulestitle.text = §1t1521s0§.getString(11016);' · :123 'this.warruleswords.text = §1t1521s0§.getString(11017);'. Android WarRules.as:23 'internal var max:int = 6;' and its switch stops at 'case 6:' (:115-119). The web code states the seven-page book outright, so the frame and the code agree and no frame-vs-doc adjudication is needed.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t7924s0§.as:23, :121-123 vs reference/decompiled/shs3_android/scripts/WarRules.as:23, :115-119"
+  },
+  {
+   "claim_id": "meta-social/web-warrules-max-7",
+   "refuted": false,
+   "reason": "SAME ARTIFACT, ALSO EXACT, AND ITS EXTRA LEG CHECKS OUT: web pages 1-6 use string ids 369/370, 371/372, 373/374, 375/376, 377/378, 379/380 at §1t7924s0§.as:96-119, and android WarRules.as:93-119 uses the identical ids in the identical order. The LangManager network-load leg is real too — §1t1521s0§.as:63 './data/' and :72 server+'strings/' — so the page-7 body genuinely cannot be recovered from the payload.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t7924s0§.as:23, :96-123 · §1t1521s0§.as:63, :72 vs reference/decompiled/shs3_android/scripts/WarRules.as:23, :93-119"
+  },
+  {
+   "claim_id": "meta-social/web-wave-roster-differs-from-android",
+   "refuted": false,
+   "reason": "I RE-RAN THE BYTE-DIFF AND GOT THE SAME NUMBERS TO THE ROW. sha256 709d94cb28c0… (11,721 B) vs b56f8c6a0283… (11,553 B) — both prefixes match the claim. Parsed both with ElementTree: 39 <wave> and 87 enemy rows in each, sum(qty)=351 in each, and exactly 14 differing rows at indices 73-86. Rows 73-76 web id '449|454|449|454|443' vs android '449|454'; 77-80 web '450|455|450|455|443' vs '450|455'; 81-84 web '451|456|451|456|443' vs '451|456'. The desktop bind is real too: §1t7785s0§.as:13 'internal static const §1t12534s0§:Class = §1t4646s0§;' consumed at :1860 'var _loc2_:XML = XML(new §1t12534s0§());'.",
+   "own_cite": "reference/extracted/bindata/119_1t4646s0.bin vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (own sha256 + own ElementTree row parse) + reference/decompiled/shs3_payload/scripts/§1t7785s0§.as:13, :1860"
+  },
+  {
+   "claim_id": "newfind/1071-is-the-behead-flag-and-it-moved-1p5-to-1p3",
+   "refuted": false,
+   "reason": "EVERY LINE VERBATIM, INCLUDING THE ORDERING CLAIM. Web §1t99s0§.as:3738-3740 are the three 'case mcs.§1t6231s0§[§1t75s0§.§1t12394s0§/§1t12393s0§/§1t12389s0§]:' labels, :3741 '§1t1071s0§ = true;', :3745 'default: §1t1071s0§ = false;'; the multiplier lands at :3805-3807 'if(§1t1071s0§) { _loc5_ *= 1.3; }' — AFTER the defence subtraction (:3800) and the min-damage floor (:3801-3803). Web §1t4904s0§.as:406-408 is the same three-case switch, but :409 '_loc3_ *= 1.3;' fires BEFORE the defence subtraction at :431. Android MCSPlayer.as:3689-3691 names the same three slots 'PART_hat / PART_head / PART_neck', :3692 'behead = true;', :3714-3716 'if(behead) { damage *= 1.5; }'. So §1t1071s0§ = behead, 1.5 → 1.3, and the two web paths really do disagree on order.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3736-3747, :3800-3807 · §1t4904s0§.as:404-415, :431 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3687-3697, :3709-3717"
+  },
+  {
+   "claim_id": "newfind/cannot-change-stance-is-getstring-960",
+   "refuted": false,
+   "reason": "BOTH HALVES CONFIRMED FIRST-HAND. §1t113s0§.as:110 builds the label from getString(175) and :111 from getString(960) — sibling lines, exactly as quoted — and :336-342 assigns §1t5204s0§ to the bar label when the computed fill (_loc3_ at :328) is exactly 0. I then loaded docs/gauntlet/L0/index/strings.json myself: ['175'] = 'Critical Hit' is present, key '960' is ABSENT, and the largest numeric key below 1000 is 880 with '1000' = 'Dojo' the next present entry. The claim understates its own negative (the table skips 881-999, not just 940-999), which is not an over-claim.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111, :328, :336-342 + docs/gauntlet/L0/index/strings.json (own load: keys '175' and '1000' present, '960' absent, max numeric key below 1000 = 880)"
+  },
+  {
+   "claim_id": "newfind/heavy-defence-penalty-is-in-the-string-table",
+   "refuted": false,
+   "reason": "ALL THREE STRINGS AND THE AS3 LINE ARE VERBATIM. I loaded strings.json myself: ['6005'] = 'Slow but powerful stance. Damage inflicted is increased but slash range is shorter.\\nEffective against Balanced Stance.\\nDefense -20%'; ['IDS_Q50S3NODE2'] = 'Balanced is effective against Light. Heavy is effective against Balanced. Light is effective against Heavy.'; ['IDS_Q50S3NODE1'] = 'Your stance is indicated by the color of the circle around your portrait: Light stance - blue, Balanced stance - brown, Heavy stance - red.' — character-for-character. §1t99s0§.as:3286-3288 is 'if(this.stance == §1t12222s0§) { return defense * 0.8; }', and §1t12222s0§ is pinned = 2 = HEAVY at :31. setStanceColor emits 1/2/3 for LIGHT/BALANCED/HEAVY (android MCSPlayer.as:3037/:3048/:3063), so the ring-colour leg holds too. The build hedge in the finding is correct and explicit.",
+   "own_cite": "docs/gauntlet/L0/index/strings.json entries ['6005'], ['IDS_Q50S3NODE1'], ['IDS_Q50S3NODE2'] (own load) + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3284-3290, :31 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3037, :3048, :3063"
+  },
+  {
+   "claim_id": "newfind/per-stat-caps-diverge-between-builds",
+   "refuted": false,
+   "reason": "THE CAP FORMULAS ARE VERBATIM AND THE HEADLINE HOLDS, BUT TWO SECONDARY NUMBERS IN THE PROSE ARE WRONG. Verbatim: web §1t5957s0§.as:3341 '< 10 + (_loc2_ + 10) * 10', :3342 '< 10 + (_loc2_ + 10) * 5', :3343 '< 30 + (_loc2_ + 10) * 5', :3344-3346 '< 1 + (_loc2_ + 10) * 3'; android InventoryUI.as:2407/:2408 '< 10 + (charlevel + 10) * 5', :2409 '< 20 + (charlevel + 10)', :2410-2412 '< charlevel + 10'. Web L8 SPD cap = 1+18*3 = 55 and android = 18 ✓, and the reach ceiling 120+floor(90*55/75) = 186 ✓ against §1t1523s0§.as:2346-2347 'var _loc2_:int = 90 + §1t7356s0§(§1t9426s0§) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));'. ERRORS: (a) 'four of six rows' — five of the six handlers differ (only MAXCHI is identical); it is four only if ATK/DEF/SPD is counted as one row. (b) 'the ~130 an android-capped reading gives' is arithmetically wrong: android uses the IDENTICAL base formula (StatsManager.as:1915-1918), so at SPD 18 it gives 120+floor(90*18/38) = 162, not ~130. Neither error touches the divergence itself, and its two sibling claims carry the same fact without them.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3340-3346 · §1t1523s0§.as:2344-2347 vs reference/decompiled/shs3_android/scripts/InventoryUI.as:2406-2412 · StatsManager.as:1915-1918",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "newfind/stance-enum-pinned-by-declared-value",
+   "refuted": false,
+   "reason": "THE STRONGEST CLAIM IN THE PACKET AND IT IS EXACT. Web §1t99s0§.as:27/29/31/33/35 declare §1t12220s0§=0, §1t12221s0§=1, §1t12222s0§=2, §1t12223s0§=3, §1t12224s0§=4; android MCSPlayer.as:27/29/31/33/35 declare LIGHT_STANCE=0, BALANCED_STANCE=1, HEAVY_STANCE=2, DUAL_STANCE=3, REVERSED_STANCE=4 — same line numbers, same values, same order. The under-determination argument is also true as stated: I read setStance and android emits setStanceColor(2) for BOTH BALANCED (:3048) and REVERSED (:3074), and setStanceColor(3) for BOTH HEAVY (:3063) and DUAL (:3089), so colour alone cannot separate them. The value proof is strictly stronger, as claimed.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:27-35 vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:27-35, :3037, :3048, :3063, :3074, :3089"
+  },
+  {
+   "claim_id": "npcdata-category11-grant-census-corrected",
+   "refuted": false,
+   "reason": "I RE-RAN THE CENSUS AND GOT ITS EXACT NUMBERS AND EXACT LINE NUMBERS. Regexing '<skill><id>(\\d+)</id><lvl>(\\d+)</lvl></skill>' over npcdata.xml: 1500 → 5 rows at 3662, 3683, 3898, 4290, 4349, all lvl 3; 1501 → 2 rows at 3934, 3956, both lvl 3; 1064 → 4 rows (3898, 3934, 3956, 4290); 1065 → 4 rows (same four); 1066 → 1 row (3879); 1067 → 1 row (3879); 1068 → 2 rows, 3934 at lvl 1 and 4349 at lvl 2. Every figure matches. The :3934 quote is verbatim on that line, and :4349 does carry '<skill><id>1068</id><lvl>2</lvl></skill>' (the '</skills>' close is on the next line, which is why a naive grep -o missed it — that is what tripped citelint). skilldata category 11 holds exactly the seven ids named, and SkillManager.as:96 is 'public static var SKILL_UNDYING:int = 1068;' verbatim.",
+   "own_cite": "reference/extracted/npcdata.xml:3662, :3683, :3879, :3898, :3934, :3956, :4290, :4349 (own regex census) + reference/extracted/skilldata.xml (own category-11 parse → 1064,1065,1066,1067,1068,1500,1501) + reference/decompiled/shs3_android/scripts/SkillManager.as:96"
+  },
+  {
+   "claim_id": "npcdata/kill-xp-formula",
+   "refuted": false,
+   "reason": "THE CITED LINE SAYS EXACTLY THIS: NPC.as:252 'this.xp = lvl * 2 + 20;' inside 'public function setLevel(lvl:int)' which opens at :239 and closes at :260. The 'not authored in the data' leg holds — my own `grep -c '<exp>'` and `grep -c '<xp>'` over npcdata.xml both return 0. SCOPE FLAG, NOT A REFUTATION: the lane_impact 'closes the question — XP per kill = 2*level + 20' over-generalises. Fifteen named enemy subclasses override it with 'level * 5 + 45' (EnemyWolf.as:32, EnemyFox.as:26, §1t4902s0§.as:26 web, and 12 more), which is precisely what this packet's own progression/enemy-base-xp-is-lvl5plus45 establishes. Read the two together; do not port 2L+20 as a game-wide rule.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/NPC.as:239-260 (esp. :252) + `grep -c '<exp>' reference/extracted/npcdata.xml` → 0",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "npcdata/setlevel-pins-everything-to-1-below-11",
+   "refuted": false,
+   "reason": "THE BLOCK IS VERBATIM. NPC.as:241 'var factor:Number = lvl / this.level;' :242-245 'if(lvl <= 20) { factor *= 0.9; }' :246-250 level/damage/defense/maxhp/setHP, :252 xp, :253-259 'if(lvl <= 10) { this.damage = 1; this.defense = 1; maxhp = 1; setHP(maxhp); }'. The only difference from the quoted block is that the quote elides ':251 this.updateHealthBar();', an irrelevant render call — the arithmetic is untouched. The sub-11 hard pin is real and it does corroborate the measured 'mobs die in ONE hit'.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/NPC.as:239-260"
+  },
+  {
+   "claim_id": "parity/animation-layer-is-not-byte-parity-five-blobs-differ",
+   "refuted": false,
+   "reason": "I RAN THE CENSUS MYSELF AND GOT 14/19 AND THE SAME FIVE MISSES. md5 over reference/extracted/bindata/*.bin joined against reference/extracted/android/*.bin: of the 19 web animdata blobs numbered 100-118, exactly 14 have a byte-identical android twin; the 5 without are 100_1t4627s0.bin (ogre_*), 102_1t4629s0.bin (51 children incl. chargedshot/flurry/deathtouch/shunpo/spartakick), 111_1t4638s0.bin (guardian_*), 113_1t4640s0.bin (spear_*), 114_1t4641s0.bin (spider_*). Every size pair it quotes is right to the byte: 184,193/184,120 · 333,768/338,096 (delta 4,328) · 117,638/117,596 · 153,258/132,270 (delta 20,988). Android carries exactly 18 MCSCharacter_*AnimationData blobs.",
+   "own_cite": "own md5+size census over reference/extracted/bindata/*.bin vs reference/extracted/android/*.bin, joined to docs/gauntlet/L0/index/bindata.json (child_ids for 100/102/111/113/114)"
+  },
+  {
+   "claim_id": "parity/meter-constants-diverge-and-frames-pick-the-web-one",
+   "refuted": false,
+   "reason": "CODE EXACT, AND I RE-MEASURED THE FRAMES MYSELF AND GOT ITS NUMBERS. Code: web §1t99s0§.as:249 'this.§1t4415s0§ = 8 * 24;' · §1t113s0§.as:328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);' · android MCSPlayer.as:239 'this.maxreload = 5 * 24;' :1168 'updateReload(this.tempreload / (this.maxreload - 24));'; refill is '++' per frame unconditionally in both (web :1205, android :1160). Frames: I opened reference/frames/session11/crit-focus/t1081.100.png and t1082.100.png (1920x1080), cropped the bottom-left HUD (180,920)-(600,1070) at 4x LANCZOS to locate the third bar, then scanned row y=1039 numerically — the white fill's right edge is x=258 at t1081.100 and x=303-304 at t1082.100, exactly the claim's 258 → 303, i.e. 45 px in 1.000 s. The track measures x 245 → 513 = 269 px (claim said 268), so a full traverse is 269/45 = 5.98 s. That matches the WEB 144-tick/6.000 s prediction and rules out the android 96-tick/4.000 s one by two seconds. THE FRAME AND THE WEB CODE AGREE.",
+   "own_cite": "reference/frames/session11/crit-focus/t1081.100.png and t1082.100.png (own crop (180,920)-(600,1070) x4 LANCZOS + own numeric row scan at y=1039) + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249, :1205 · §1t113s0§.as:328 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:239, :1160, :1168"
+  },
+  {
+   "claim_id": "parity/stance-tables-diverge-web-vs-android",
+   "refuted": false,
+   "reason": "BOTH TABLES VERBATIM ON BOTH SIDES. REACH — web §1t99s0§.as:3094 '* 1.4' (LIGHT), :3105 '* (1 + 0.2 * this.§1t4422s0§ * 0.1)', :3116 '* (0.5 + 0.4 * this.§1t4423s0§ * 0.1)' with the floor-100 at :3117-3120, :3131 '* 1.4' under 'case §1t12224s0§' (=4=REVERSED), :3142 base with floor 100 under 'case §1t12223s0§' (=3=DUAL); android MCSPlayer.as:3030 '* 1.5', :3041 '* (1 + 0.5 * balancedMastery * 0.01)', :3052 '* (0.5 + 0.5 * heavyMastery * 0.01)' floor 100, :3067 '* 1.5' REVERSED, :3078 base floor 100 DUAL. DAMAGE — web :3262 '(0.5 + 0.4 * M * 0.1)', :3265 '(1 + 0.2 * M * 0.1)', :3270 '* 1.4' for HEAVY/DUAL/REVERSED; android :3205 '(0.5 + 0.5 * M * 0.01)', :3208 '(1 + 0.5 * M * 0.01)', :3213 '* 1.5'. Its arithmetic checks: at M=10 web gives 0.9 / 1.2 / 1.4 and android gives 0.55 / 1.05 / 1.5.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3091-3155, :3255-3277 vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:3027-3091, :3198-3214"
+  },
+  {
+   "claim_id": "parity/web-build-ships-a-spider-animation-set-android-lacks",
+   "refuted": false,
+   "reason": "CONFIRMED THREE WAYS BY ME. bindata.json's entry for 114_1t4641s0.bin reads root 'animdata', child_count 10, child_ids ['spider_idle','spider_walk','spider_attackstart','spider_attackend','spider_lunge','spider_death','spider_flinch','spider_descend','spider_dig','spider_death2'] — the quote is verbatim; the file is 90,473 B on disk as stated; `grep -rl spider_idle reference/extracted/android/` exits 1 with no files; and reference/extracted/android/ carries exactly 18 MCSCharacter_*AnimationData.bin blobs, none named Spider, against the web set's 19 animdata blobs. The web build ships a creature the android blobs do not.",
+   "own_cite": "docs/gauntlet/L0/index/bindata.json entry 114_1t4641s0.bin + `ls -la reference/extracted/bindata/114_1t4641s0.bin` (90,473 B) + `grep -rl spider_idle reference/extracted/android/` → none + own count of MCSCharacter_*AnimationData.bin = 18"
+  },
+  {
+   "claim_id": "parity/writ-of-release-is-25g-in-web-and-5g-in-android",
+   "refuted": false,
+   "reason": "I OPENED THE FRAME AND LOOKED. reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg is 1024x576; I cropped the detail panel (330,95)-(1000,230) at 3x LANCZOS and the grid (330,55)-(620,300) at 5x. ON SCREEN: 'WRIT OF RELEASE' in purple, 'OWNED: 0', a '25' badge on the tile icon, and two more scroll tiles in the grid both badged '25'. The android data is verbatim at itemdata.xml:2328-2333 '<id>2203</id><type>10</type><name>4156</name><unique>1</unique><baseprice>0</baseprice><heavenlyprice>5</heavenlyprice>', and strings.json['4156'] = 'Writ of Release'. 2200/2207/2212 are all heavenlyprice 5 as claimed. REBUILD_READINESS.md:216 does say 'Writ of Release 25g now double-confirmed', so it confirms rather than overturns. THE FRAME WINS, and the finding says so. ONE PRECISION NOTE: I zoomed the badge (600,190)-(720,230) at 10x and the top bar at 3x — the HUD labels the grey-ingot glyph 'COINS' (630) and the yellow-oval glyph 'GOLD' (2), and the Writ badge carries the YELLOW-OVAL GOLD glyph. So this is 25 premium Gold vs 5 premium Gold, a 5x re-tune of the SAME currency, not coins-vs-heavenly. The 5x gap the finding rests on is unaffected.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg (own crops: detail (330,95)-(1000,230) x3 LANCZOS; badge (600,190)-(720,230) x10; top bar (0,0)-(1024,120) x3) + reference/extracted/itemdata.xml:2328-2333 + docs/gauntlet/L0/index/strings.json['4156'] + docs/research/REBUILD_READINESS.md:216",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "persistence/offline-save-schema-is-fourteen-fields-already-written",
+   "refuted": false,
+   "reason": "CITE EXACT. QueryManagerBase.as:2903 is verbatim 'var sharedObject:SharedObject = SharedObject.getLocal(StatsManager.cookieName + \"_\" + StatsManager.charname);', and :2912-2925 writes exactly the fourteen fields listed, in the listed order, inside the else-branch of 'if(!this.offlineMode)' at :2905. The parse* twins exist: StatsManager.as:4383 parsePlayerStatsString, :4435 parseEquipmentString, :4465 parseSkillStatsString, :4507 parseSkillSlotsString, :4541 parseInventoryString, :4583 parseStashString, :4778 parseQuestItemsString, :4825 parseIntStatsString, :4864 parseBooleanStatsString, :4903 parseAchievementStatsString. UNDERCOUNT FLAG (incompleteness, not over-claim): the branch does not stop at :2925 — it runs to :2930 and also writes activeQuestList, completedQuestList, playerlocation, taunt and friends. The schema is NINETEEN fields, so 'the ENTIRE player record: fourteen fields' should be transcribed from :2912-2930, not :2912-2925.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2903, :2905-2931 + reference/decompiled/shs3_android/scripts/StatsManager.as:4383, :4435, :4465, :4507, :4541, :4583, :4778, :4825, :4864, :4903",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "progression/a02-second-frame-corroboration",
+   "refuted": false,
+   "reason": "THE LEDGER LINES ARE VERBATIM AND THE BUDGET CLOSES. A-02…md:24 reads 'Three resource bars with `+` allocate buttons: `HP 20/20`, `CHI 10/10`, `AP 30/30`' and :25 reads 'Observed progression: ATK 4→7, DEF 4+2→7+2 (i.e., DEF base 4→7 too), SPD 1→4 … treat exact point-to-stat ratio as INFERRED, needs frame-by-frame combat-panel replay to confirm' — both exact. I then checked the arithmetic against code I opened: web start is MAXHP 10 / ATK 1 / DEF 1 / SPD 1 (§1t1523s0§.as:1015-1020), per-level grant is +3 stat points (§1t1523s0§.as:2075 '§1t9713s0§(§1t9419s0§,3);' with §1t9419s0§=18=STAT_STATPOINTS), and per-point magnitudes are +10 HP (§1t5957s0§.as:3394) / +3 ATK (:3422) / +3 DEF (:3434). At L3 that is grant 6 = 3 spent (HP, ATK, DEF) + 3 available. Android magnitudes (+5 HP at InventoryUI.as:2417, +1 ATK at :2439) would need 8 spent, giving 11 — impossible. MINOR MIS-ATTRIBUTION: the fragment 'AVAILABLE STAT POINTS: 3 (ticks down to 1, then 0)' is spliced into the :25 quote but actually lives on line 23, one line outside the cited 24-25 range.",
+   "own_cite": "docs/research/video-study/segments/A-02-dojo-tutorial-3-stances-chi-punch-on-dum.md:23, :24, :25 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1015-1020, :2075 · §1t5957s0§.as:3394, :3422, :3434 + reference/decompiled/shs3_android/scripts/InventoryUI.as:2417, :2439",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "progression/android-caps-also-drifted",
+   "refuted": false,
+   "reason": "VERBATIM. android InventoryUI.as:2407 'this.statsPanel.HPadd.visible = StatsManager.getStat(StatsManager.STAT_MAXHP) < 10 + (charlevel + 10) * 5;' … :2409 '< 20 + (charlevel + 10);' :2410 '< charlevel + 10;' against web §1t5957s0§.as:3341-3346 '< 10 + (_loc2_ + 10) * 10 / * 5 / 30 + …*5 / 1 + …*3'. Its arithmetic is right: at android L80 the ATK ceiling is 90, at web L80 it is 1+90*3 = 271. The 'drifted in lockstep with the per-point magnitudes' leg is also verifiable — android's own add-handlers are +5 HP (:2417), +5 CHI (:2424), +1 ATK/DEF/SPD (:2439/:2446/:2453) against web's +10/+5/+3/+3/+3.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:2406-2412, :2417, :2424, :2439, :2446, :2453 vs reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3340-3346, :3394, :3406, :3422, :3434, :3444"
+  },
+  {
+   "claim_id": "progression/android-stat-caps-are-a-different-formula",
+   "refuted": false,
+   "reason": "SAME PAIR OF ARTIFACTS, QUOTED VERBATIM ON BOTH SIDES, AND ITS FOUR-LINE ANDROID BLOCK MATCHES :2407/:2408/:2409/:2410 EXACTLY. 271 = 1+(80+10)*3 is web-only; android tops ATK at 90. The lane rule it proposes ('ANDROID SUPPLIES SYMBOL NAMES, WEB SUPPLIES NUMBERS') is the correct reading of the S0-3 caveat, and this packet supplies at least eight independent instances of it.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:2407-2412 vs reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3341-3346"
+  },
+  {
+   "claim_id": "progression/autoassign-android-only",
+   "refuted": false,
+   "reason": "THE NEGATIVE HOLDS. Web levelUp is §1t9577s0§ at §1t1523s0§.as:2072-2082 and I read the whole body: changeStat(SKILLPOINTS,1); changeStat(STATPOINTS,3); setStat(LEVEL,getLevel()); §1t9578s0§(); setStat(AP,getStat(MAXAP)); setStat(DUELTOKENS,§1t9400s0§); reportDataModified; updateUI. No autoAssign branch, no statBucket. My own `grep -c 'new Array(§1t9403s0§' §1t1523s0§.as` returns 0. Android carries the feature end to end: StatsManager.as:322 'public static var autoAssignStats:Boolean = false;', the branch at :1655-1688 with the bucket at :1657 and +5 MAXHP (:1671) / +5 MAXCHI (:1675) / +1 else (:1679/:1683), the toggle at :586, the checkbox at InventoryUI.as:313, the persistence at QueryManagerBase.as:3171. COSMETIC ERROR: it says 'six statements' — the body has eight; it dropped the two housekeeping calls at :2080-2081.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2072-2082 + `grep -c 'new Array(§1t9403s0§'` → 0 + reference/decompiled/shs3_android/scripts/StatsManager.as:322, :586, :1655-1688 · InventoryUI.as:313 · QueryManagerBase.as:3171",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "progression/autoassign-is-android-only",
+   "refuted": false,
+   "reason": "THE MORE ACCURATE OF THE TWO DUPLICATES — ITS 'EIGHT STATEMENTS' QUOTE IS THE COMPLETE §1t9577s0§ BODY, LINE FOR LINE (§1t1523s0§.as:2074-2081), AND IT IS RIGHT THAT THERE IS NO statBucket AND NO BRANCH. I confirmed the android bucket at StatsManager.as:1657 'statBucket = new Array(STAT_MAXHP,STAT_MAXCHI,STAT_ATTACK,STAT_DEFENSE,STAT_SPEED,STAT_MAXAP);' granting +5/+5/+1 at :1671/:1675/:1679-1683, plus the flag at :322 and the toggle at :586. Porting it would import the android magnitudes this packet's frame evidence refutes.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2072-2082 vs reference/decompiled/shs3_android/scripts/StatsManager.as:322, :586, :1655-1688"
+  },
+  {
+   "claim_id": "progression/duel-token-refill-mismatch",
+   "refuted": false,
+   "reason": "ALL FOUR LINES VERBATIM AND THE MISMATCH IS REAL. StatsManager.as:166 'internal static var MAXDUELTOKENS:int = 30;' · :202 'internal static var STAT_MAXDUELTOKENS:int = 16;' (so the two symbols are genuinely different things) · :709 'setPlayerStats(STAT_DUELTOKENS,20);' :710 'setPlayerStats(STAT_MAXDUELTOKENS,20);' · :1691 'setStat(STAT_DUELTOKENS,MAXDUELTOKENS);' sitting inside levelUp (:1689-1693). A new character therefore starts at 20/20 and the first level-up refills to the constant 30. BUILD NOTE the finding does not make: on WEB the same slot is 40 (§1t1523s0§.as:200 '§1t9400s0§:int = 40;' consumed at :2079), and the longplay HUD shows 40/40, so the number to port for v0.717 is 40, not 30.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:166, :202, :709-710, :1689-1693 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:200, :2079"
+  },
+  {
+   "claim_id": "progression/enemy-base-xp-is-lvl5plus45",
+   "refuted": false,
+   "reason": "I RE-RAN BOTH GREPS AND GOT ITS EXACT FILE LISTS. `grep -rl '* 5 + 45' reference/decompiled/shs3_android/scripts/` → 17 files: ConnectionPIO, EnemyBear, EnemyBoar, EnemyCivilian, EnemyDeer, EnemyElite, EnemyFox, EnemyHorse, EnemyKanjiGuardian, EnemyNianMonster, EnemyOgre, EnemyPlayer, EnemySpearElite, EnemyStag, EnemyWolf, EnemyWolfAlpha, NetworkManager — 15 of them enemy classes, exactly as claimed. `grep -rl '* 2 + 20'` → 6 files: EnemyPlayer, EnemySorcererBoss, EnemySpearElite, EnemyStag, NPC, EnemyZombie. Spot-checked lines are verbatim: NPC.as:218 'this.xp = this.level * 2 + 20;', EnemyWolf.as:32 and EnemyFox.as:26 'xp = level * 5 + 45;', EnemySpearElite.as:62 and :78 'xp = lvl * 5 + 45;', and the WEB parity at §1t4902s0§.as:26 'xp = level * 5 + 45;'. The per-class split, and the classes carrying both on level-dependent branches, are both real.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NPC.as:218 · EnemyWolf.as:32 · EnemyFox.as:26 · EnemyNianMonster.as:41 · EnemySpearElite.as:62, :78 + reference/decompiled/shs3_payload/scripts/§1t4902s0§.as:26 + own `grep -rl` over both formulas"
+  },
+  {
+   "claim_id": "progression/expArray-levelcap-clamp",
+   "refuted": false,
+   "reason": "CLAMP AND SCOPE LIMIT BOTH VERIFIED. §1t29s0§.as:353 'var _loc3_:int = int(§1t5923s0§[§1t1523s0§.§1t9470s0§]);' with :354-357 clamping, and §1t9470s0§ = 80 (§1t1523s0§.as:362). I parsed the expArray literal at §1t1523s0§.as:364 myself: 99 entries, a[80] = 4,285,800 — the claim's number exactly. The second variant is in the cited :361-372 window. The SCOPE LIMIT it volunteers is the honest part and it checks out: §1t29s0§.as:8 is '[Embed(source=\"/_assets/assets.swf\", symbol=\"symbol2123\")]' and §1t24s0§.as:30 is '§1t8755s0§:int = 0;', a bar slot, not STAT_XP=9. Corroborators are real too (StatsManager.as:1619 'if(!consoleEnabled && newlevel > levelCap)'). MICRO-SLIP: the prose says the variant if-block is ':363-366'; it is actually :364-367 — still inside the cited :361-372 range.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t29s0§.as:8, :350-372 · §1t1523s0§.as:362, :364 (own array parse: len 99, a[80]=4285800) · §1t24s0§.as:30 + reference/decompiled/shs3_android/scripts/StatsManager.as:1619",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "progression/getlevel-pins-cumulative-cap-semantics",
+   "refuted": false,
+   "reason": "VERBATIM AND THE WORKED EXAMPLE IS RIGHT. §1t1523s0§.as:2007-2020 is getLevel() exactly as quoted, with the strictly-greater test at :2013 'if(§1t5923s0§[_loc2_] > _loc1_)'. From the array at :364, expArray[1]=550 is not > 550, so xp=550 falls through to expArray[2]=1450 and returns 2 — the claim's example reproduces. And the test it names really does assert this: tests/xp.test.ts:71 is titled 'crosses to the next level exactly AT each cap (bar full = level done)' with :72 expect(levelForXp(550)).toBe(2). This is a genuine payload witness for a rule the config previously justified from frames.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2007-2020, :364 + tests/xp.test.ts:65-79"
+  },
+  {
+   "claim_id": "progression/kill-xp-never-validated-on-screen",
+   "refuted": false,
+   "reason": "AN HONEST STILL_UNHELD, AND I CHECKED ITS ARITHMETIC RATHER THAN ITS CONCLUSION. NPC.as:166-189 is calcXP; :168 zeroes below getGreyLevel(), :172-175 zeroes above +3, :183 'finalXP = xp * (1 - (playerLevel - mobLevel) / getZeroDifference());', :185-188 doubles for elite. At player level 10, NPC.as:103 gives greyLevel = 10 - floor(10/10) - 5 = 4 and :123-126 gives zeroDifference = 7 — exactly the parameters the note assumes. Its four worked values then reproduce: regular L6 int(32*3/7)=13, elite 27 (int(13.71)*2 on the pre-truncation value), duellist L6 int(75*3/7)=32, elite 64, duellist L8 elite 120. None is 52. Declaring this UNRECONCILED is the correct answer under §0, and refusing to invent a parameterisation is the behaviour the law asks for. Not refuted.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/NPC.as:94-104, :112-126, :166-189",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "progression/l3-budget-second-confirmation",
+   "refuted": false,
+   "reason": "I EXTRACTED THE FRAME MYSELF AND IT SHOWS WHAT THE CLAIM SAYS. `ffmpeg -ss 653 -i reference/videos/zFtCaTO0_1M.mp4 -frames:v 1` then crop (691,108)-(1881,702) at 1.4x LANCZOS: level badge 3, '2098 / 2950 EXPERIENCE POINTS', 'AVAILABLE STAT POINTS: 0', HP 20/20, CHI 10/10, AP 30/30, ATK 7, DEF 7 +2, SPD 4, 'WEIGHT: 38 / 100', GOLD 3. The ledger lines are verbatim too — A-04…md:29 'Player Stats panel (t=10:55): HP 20/20, CHI 10/10, AP 30/30, ATK 7, DEF 7 (+2 from equipment), SPD 4, \"AVAILABLE STAT POINTS: 0\".' and :32 'XP bar unmoved at 2098/2950 (level 3)'. Budget: web magnitudes cost HP 1 + ATK 2 + DEF 2 + SPD 1 = 6 = (3-1)*3 exactly; android magnitudes cost 2+6+6+3 = 17. Confirmed.",
+   "own_cite": "own ffmpeg extract of reference/videos/zFtCaTO0_1M.mp4 at -ss 653 (crop (691,108)-(1881,702) x1.4 LANCZOS) + docs/research/video-study/segments/A-04-mines-takahasi-coal-mining-quest.md:29, :31, :32"
+  },
+  {
+   "claim_id": "progression/level-10-scroll-xp-item",
+   "refuted": false,
+   "reason": "EVERY FRAGMENT IS ON THE CITED LINES. itemdata.xml:2285 '<id>2201</id>' :2286 '<type>10</type>' :2287 '<name>4131</name>' :2288 '<baseprice>0</baseprice>' :2289 '<heavenlyprice>2</heavenlyprice>' :2291 '<desc>4137</desc>' :2293-2294 modifier id 9 value -1000000, :2297-2298 modifier id 9 value 25900, :2301 id 78, :2304 id 79 — all inside the cited 2284-2305. strings.json['4131'] = 'Level 10 Scroll' and ['4137'] = 'Use this to become level 10'. InventoryUI.as:904-906 'if(modid == 9) { StatsManager.changeXP(item.modifierXML[i].value); }'. §1t1523s0§.as:222 '§1t8755s0§:int = 9;'. And 25,900 IS expArray[9] — I parsed the array. The 'floors XP to zero' leg is real: StatsManager.as:1613-1617 clamps a negative total back to 0.",
+   "own_cite": "reference/extracted/itemdata.xml:2284-2305 + docs/gauntlet/L0/index/strings.json['4131'], ['4137'] + reference/decompiled/shs3_android/scripts/InventoryUI.as:904-906 · StatsManager.as:1613-1617 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:222, :364 (a[9]=25900)"
+  },
+  {
+   "claim_id": "progression/level-3-to-4-on-film-buys-plus3-atk-plus3-def-plus5-chi",
+   "refuted": false,
+   "reason": "I PULLED BOTH FRAMES MYSELF AND READ THEM. -ss 653.0: badge 3, XP 2098/2950, AVAILABLE STAT POINTS: 0, HP 20/20, CHI 10/10, AP 30/30, ATK 7, DEF 7 +2, SPD 4, WEIGHT 23→38/100. -ss 1600: badge 4, XP 5110/5150, AVAILABLE STAT POINTS: 0, HP 20/20, CHI 9/15, AP 15/30, ATK 10, DEF 10 +13, SPD 4, WEIGHT 73/100. Every value in the quote is on screen. The delta across exactly one level is ATK +3, DEF +3, CHI max +5, AP max unchanged — three points, and precisely the web handler magnitudes at §1t5957s0§.as:3422 (ATK +3), :3434 (DEF +3), :3406 (MAXCHI +5), not android's InventoryUI.as:2439/:2446 (+1) and :2424 (+5). It also independently confirms the +3 stat points per level at §1t1523s0§.as:2075. citelint's QUOTE_UNVERIFIED is unavoidable here — the artifact is a video, not a text file.",
+   "own_cite": "own ffmpeg extracts of reference/videos/zFtCaTO0_1M.mp4 at -ss 653 and -ss 1600 (crop (691,108)-(1881,702) x1.4 LANCZOS) + reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3406, :3422, :3434 · §1t1523s0§.as:2075"
+  },
+  {
+   "claim_id": "progression/level10-scroll-validates-xp-table",
+   "refuted": false,
+   "reason": "SAME ITEM, TIGHTER CITE, ALL VERBATIM. itemdata.xml:2285-2298 carries id 2201 / name 4131 / desc 4137 / heavenlyprice 2 and both STAT_XP modifiers (-1,000,000 then 25,900) inside the cited 2284-2302. StatsManager.as:188 'internal static var STAT_XP:int = 9;' and InventoryUI.as:904-906 route modifier 9 to changeXP. strings.json 4131/4137 resolve as claimed. I parsed the web expArray at §1t1523s0§.as:364 and a[9] = 25,900 exactly, so the scroll validates the L1-L10 table and the cumulative-threshold rule from inside the payload with no frame needed.",
+   "own_cite": "reference/extracted/itemdata.xml:2284-2302 + reference/decompiled/shs3_android/scripts/StatsManager.as:188, :1609-1617 · InventoryUI.as:904-906 + docs/gauntlet/L0/index/strings.json['4131'], ['4137'] + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:364"
+  },
+  {
+   "claim_id": "progression/levelcap-const-vs-var",
+   "refuted": false,
+   "reason": "TWO-LINE CLAIM, BOTH LINES EXACT. §1t1523s0§.as:362 'public static const §1t9470s0§:int = 80;' vs StatsManager.as:76 'public static var levelCap:int = 80;'. const vs var is a real structural difference, and since the android levelCap is writable at runtime the 81-99 tail genuinely cannot be closed as dead data from the android side alone.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:362 vs reference/decompiled/shs3_android/scripts/StatsManager.as:76"
+  },
+  {
+   "claim_id": "progression/new-character-start-table",
+   "refuted": false,
+   "reason": "THE WHOLE TABLE IS ON THE CITED LINES, IN ORDER. StatsManager.as:695 STAT_MAXHP 10, :696 STAT_HPREGEN 1, :697 STAT_CHI 10, :698 STAT_MAXCHI 10, :699 STAT_CHIREGEN 1, :700-702 ATTACK/DEFENSE/SPEED 1, :703 XP 0, :704 LEVEL 1, :705 GOLD 100, :706 HGOLD 0, :707 AP 30, :708 MAXAP 30, :709 DUELTOKENS 20, :710 MAXDUELTOKENS 20, :711 SKILLPOINTS 0, :712 STATPOINTS 0, :713 LOCATION 8382465, :714 WINS 0. And :2230 really is 'OverworldHUD.getInstance().screenTransition.setTeleportTarget(8382465,0,200);' inside doRebirth() — the same node id, exactly as claimed. Correctly labelled android v0.682; the web twin at §1t1523s0§.as:1014-1032 matches it row for row except HGOLD 3 instead of 0.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:693-714, :2195-2230 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1014-1032"
+  },
+  {
+   "claim_id": "progression/paid-level-skip-item",
+   "refuted": false,
+   "reason": "VERBATIM ACROSS ALL THREE ARTIFACTS. itemdata.xml:2284-2305 holds item 2201 with baseprice 0 / heavenlyprice 2 and the two STAT_XP modifiers; strings.json 4131 = 'Level 10 Scroll' and 4137 = 'Use this to become level 10'; InventoryUI.as:904-906 is the consumer. 25,900 = expArray[9] (own parse of §1t1523s0§.as:364), so the item does independently confirm the cumulative-threshold semantics the config encodes.",
+   "own_cite": "reference/extracted/itemdata.xml:2284-2305 + docs/gauntlet/L0/index/strings.json['4131'], ['4137'] + reference/decompiled/shs3_android/scripts/InventoryUI.as:904-906 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:364"
+  },
+  {
+   "claim_id": "progression/per-point-plus3-direct-frame-proof",
+   "refuted": false,
+   "reason": "I REPRODUCED THE SINGLE-CLICK DELTA FROM THE VIDEO MYSELF — THIS IS THE CLEANEST A1 IN THE PACKET. Own ffmpeg extracts of zFtCaTO0_1M.mp4, crop (691,108)-(1881,702) x1.4 LANCZOS. t=456: badge 3, 'EXPERIENCE POINTS 1502 / 2950', 'AVAILABLE STAT POINTS: 3', HP 20/20, CHI 10/10, AP 30/30, ATK 4, DEF 4 +2, SPD 1, WEIGHT 23/100. t=459: 'AVAILABLE STAT POINTS: 2', SPD 1 → 4, everything else unchanged — ONE point bought exactly +3 SPD. t=462: 'AVAILABLE STAT POINTS: 0', ATK 7, DEF 7 +2, SPD 4 — the remaining two points bought +3 ATK and +3 DEF. Matches web §1t5957s0§.as:3422/:3434/:3444 (+3 each, each decrementing STATPOINTS by 1) and refutes android's +1 (InventoryUI.as:2439/:2446/:2453).",
+   "own_cite": "own ffmpeg extracts of reference/videos/zFtCaTO0_1M.mp4 at -ss 456, 459, 462 (crop (691,108)-(1881,702) x1.4 LANCZOS) + reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3422, :3434, :3444 vs reference/decompiled/shs3_android/scripts/InventoryUI.as:2439, :2446, :2453"
+  },
+  {
+   "claim_id": "progression/player-stance-cycle-is-three",
+   "refuted": false,
+   "reason": "THE CITED ANDROID CODE SAYS EXACTLY THIS. MCSPlayer.as:2975 'public function nextStance()', :2981 'if(StatsManager.consoleEnabled)' with the five-cycle at :2983-3002 (Light→Balanced→Heavy→Dual→Reversed→Light), and the shipped path at :3004-3014 'else if(this.stance == LIGHT_STANCE) { setStance(BALANCED_STANCE); } else if(BALANCED) { HEAVY } else if(HEAVY) { LIGHT }' — the quote is verbatim. Five stance ids at :27-35 and five stance animation blobs in reference/extracted/android/ (LightStance, BalancedStance, HeavyStance, DualStance, ReversedStance). BUILD FLAG the finding does not raise: it says 'the shipped game' from an android-only cite, and the web twin differs — §1t99s0§.as:3058-3081 has NO consoleEnabled branch at all and gates on a hard reload of 48 rather than maxreload/6. The three-state player cycle is nonetheless TRUE on web as well, which I checked, so the conclusion survives.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:2975-3016, :27-35 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3058-3081 (own read)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "progression/rebirth-pays-heavenly-gold",
+   "refuted": false,
+   "reason": "VERBATIM ON ALL THREE LINES. StatsManager.as:192 'internal static var STAT_GOLD:int = 11;' :194 'internal static var STAT_HGOLD:int = 12;' and doRebirth() at :2195 with :2201 'if(getPlayerStats(STAT_DAN) == 8)' :2203 'changeStat(STAT_HGOLD,20);' :2207 'changeStat(STAT_HGOLD,5);'. It is HGOLD (id 12), the currency itemdata's <heavenlyprice> is denominated in, not GOLD (id 11). Correct. BUILD NOTE: the web payout is larger — §1t1523s0§.as:2646 grants 100 and :2651 grants 25 to the same stat id 12.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:192, :194, :2195-2208 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2644-2651, :228"
+  },
+  {
+   "claim_id": "progression/respec-costs-premium-gold",
+   "refuted": false,
+   "reason": "EXACT. itemdata.xml:2268-2281 is item 2200 with <type>10</type>, <name>4130</name>, <unique>1</unique>, <baseprice>0</baseprice>, <heavenlyprice>5</heavenlyprice>, <weight>0</weight>, <desc>4136</desc> and modifiers 78 (:2277) and 79 (:2280) — the whole quote is inside the cited 2267-2281. InventoryUI.as:985-990 'if(modid == 78) { StatsManager.unAssignStatPoints(); } else if(modid == 79) { StatsManager.unAssignSkillPoints(); }'. strings.json 4130 = 'Amnesia Scroll', 4136 = 'Use this to unassign your stat and skill points.' baseprice 0 with heavenlyprice 5 does mean coin-unbuyable.",
+   "own_cite": "reference/extracted/itemdata.xml:2267-2282 + reference/decompiled/shs3_android/scripts/InventoryUI.as:985-990 + docs/gauntlet/L0/index/strings.json['4130'], ['4136']"
+  },
+  {
+   "claim_id": "progression/respec-is-premium-gated",
+   "refuted": false,
+   "reason": "THE NEAR-DUPLICATE OF THE PRECEDING CLAIM AND EQUALLY EXACT — id 2200, type 10, name 4130, unique 1, baseprice 0, heavenlyprice 5, modifiers 78/79 all land inside the cited itemdata.xml:2267-2280, InventoryUI.as:984-991 is the handler, and strings 4130/4136 resolve. No over-claim: it says only that the respec is delivered by a premium-only item, which is what the data says.",
+   "own_cite": "reference/extracted/itemdata.xml:2267-2280 + reference/decompiled/shs3_android/scripts/InventoryUI.as:984-991 + docs/gauntlet/L0/index/strings.json['4130'], ['4136']"
+  },
+  {
+   "claim_id": "progression/second-xp-curve",
+   "refuted": false,
+   "reason": "THE ARRAY AND EVERY CONSUMER ARE VERBATIM. §1t29s0§.as:30 'public static const §1t12498s0§:Array = [0,300,900,2100,4800,10200,21000,42600,85800,172200,345000];' — eleven entries, exactly as quoted — with :20 '§1t12495s0§:int = 10;', :299 'if(§1t12498s0§[_loc4_] >= _loc3_)', :328 the next-level delta, :347 the bar fraction, :402 the clamp inside :394-407. It sits two lines below the character expArray reference and is a genuinely separate track. My own `grep -rn '0,300,900,2100,4800' reference/decompiled/shs3_android/scripts/` exits 1 — no android counterpart, as claimed. The self-assessed PARTIAL is the right posture: the array is proven, what the five tracks ARE is not.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t29s0§.as:20, :30, :299, :328, :347, :394-407 + own grep over reference/decompiled/shs3_android/scripts/ → no match"
+  },
+  {
+   "claim_id": "progression/second-xp-curve-web-only",
+   "refuted": false,
+   "reason": "SAME ARRAY, SAME VERBATIM MATCH, AND ITS EXTRA LEGS CHECK OUT. §1t29s0§.as:335-347 is the branch exactly as quoted, including 'if(_loc2_ == 5) { return 1; }' at :343-346. §1t24s0§.as:28 is 'public static const §1t8754s0§:int = 7;' (seven bar slots) and :30 is '§1t8755s0§:int = 0;' (slot 0 = the XP bar), with five §1t12498s0§ lookups at :1124-1128 feeding slots 1-5, and further use at :1824-1844. `grep -rn '300,900,2100' reference/decompiled/shs3_android/scripts/` exits 1. NOTE, not a defect: this claim says 'capped at level 5' where its sibling says 'capped at level 10'; both are real — 10 is the array/§1t12495s0§ ceiling used at :297 and :398-400, 5 is the bar-fraction early return at :343.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t29s0§.as:30, :297, :331-347, :398-402 · §1t24s0§.as:28, :30, :1124-1128, :1824-1844 + own grep over android → no match"
+  },
+  {
+   "claim_id": "progression/setlevel-console-confirms-xp-indexing",
+   "refuted": false,
+   "reason": "VERBATIM. OverworldHUD.as:2132 'if(strArray[0] == \"/setlevel\")' :2134 'if(strArray.length == 2)' :2136 'StatsManager.setStat(9,StatsManager.expArray[int(strArray[1]) - 1] - 1);' :2137 'StatsManager.changeXP(1);'. The inference is sound and self-checking: setting stat 9 to expArray[L-1]-1 and nudging +1 lands XP exactly on expArray[L-1], which under getLevel()'s strictly-greater test returns L. That pins stat 9 as the raw cumulative total AND pins expArray's indexing to character level.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:2132-2140 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2007-2020"
+  },
+  {
+   "claim_id": "progression/setlevel-debug-command-is-a-14th-xp-write-site",
+   "refuted": false,
+   "reason": "citelint's QUOTE_UNVERIFIED IS A FALSE ALARM — ALL FOUR QUOTED LINES ARE ON THE CITED LINES. :2132, :2134, :2136, :2137 verbatim, and the two siblings it names are real: :2115 'if(strArray[0] == \"/giverandomlegendaryitem\")' and :2142 'if(strArray[0] == \"/changestat\")'. It is a write site that an addLootXP-only enumeration misses, and it honestly labels itself a GM cheat rather than a faucet, so it does not weaken the no-gather-XP negative. I did not independently audit the ordinal 'fourteenth', which depends on another claim's enumeration; nothing rests on it.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:2115, :2132-2140, :2142"
+  }
+ ],
+ "judged_count": 48,
+ "packet_size": 48,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "newfind/web-nextstance-drops-the-console-five-cycle-and-gates-on-48",
+   "text": "The WEB v0.717 stance-change entry point is a different function from android's, in two ways nobody has claimed. Web §1t99s0§.as:3058-3081 (§1t4472s0§) gates on a HARD reload threshold — ':3060 if(this.§1t4414s0§ < 48) { return; }' — and then cycles only '-1 → Light', Light → Balanced, Balanced → Heavy, Heavy → Light. There is NO StatsManager.consoleEnabled branch anywhere in it, so the five-stance dev cycle (Dual and Reversed) that android MCSPlayer.as:2981-3002 exposes does not exist in the shipped web build at all. Android also gates differently: ':2977 if(this.reload < this.maxreload / 6) { return; }', which at android maxreload = 120 is 20 ticks, versus web's fixed 48 — and 48 is the same constant the web HUD subtracts in §1t113s0§.as:328, so on web the stance lock releases exactly when the focus bar starts moving.",
+   "artifact_class": "A2",
+   "build": "both — web v0.717 vs android v0.682",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3058-3081 and :3060 vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:2975-3016 and :2977; web HUD constant at §1t113s0§.as:328",
+   "quote": "web §1t99s0§.as:3060 'if(this.§1t4414s0§ < 48)' :3064 'if(this.stance == -1)' :3068 'else if(this.stance == §1t12220s0§)' :3072 'else if(this.stance == §1t12221s0§)' :3076 'else if(this.stance == §1t12222s0§)' — no consoleEnabled test in the function  ||  android MCSPlayer.as:2977 'if(this.reload < this.maxreload / 6)' :2981 'if(StatsManager.consoleEnabled)' :2993 'this.setStance(DUAL_STANCE);' :2997 'this.setStance(REVERSED_STANCE);'",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L5 combat-core + L8: a seventh counted web-vs-android combat divergence. It hardens progression/player-stance-cycle-is-three for the TARGET build (three is right on web too, but for a different reason than that claim gives), and it supplies the stance-change gate a port needs: 48 reload ticks on web, not maxreload/6."
+  },
+  {
+   "id": "newfind/frame-confirms-web-maxdueltokens-40",
+   "text": "The MAXDUELTOKENS divergence is not code-only — it is visible in the footage, which makes it the second cross-build parity datum in the repo that the frames decide. reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg is a shop screen whose top bar reads '40/40' beside the skull glyph labelled 'DUEL TOKENS'. Web §1t1523s0§.as:200 declares '§1t9400s0§:int = 40;' and levelUp consumes it at :2079; android StatsManager.as:166 declares 'MAXDUELTOKENS:int = 30;' and levelUp consumes it at :1691. 40 is on screen, so the longplay is the web build and 40 is the number to port. The same frame's top bar also settles the currency taxonomy: a grey-ingot glyph labelled COINS (630) and a yellow-oval glyph labelled GOLD (2) are two separate counters, and GOLD is the premium currency itemdata denominates in <heavenlyprice>.",
+   "artifact_class": "A1",
+   "build": "web v0.717 (contrasted with android v0.682)",
+   "cite": "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg (1024x576; top-bar crop (0,0)-(1024,120) x3 LANCZOS) vs reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:200, :2079 and reference/decompiled/shs3_android/scripts/StatsManager.as:166, :1691",
+   "quote": "ON SCREEN: 'BUY' title, then 'COINS 630' (grey-ingot glyph in a green diamond), 'GOLD 2' (yellow-oval glyph), 'GET GOLD' button, 'REFRESH SHOP' with a yellow-oval cost glyph, and at the right '40/40' over 'DUEL TOKENS'. CODE: web §1t1523s0§.as:200 'internal static const §1t9400s0§:int = 40;' consumed :2079 '§1t9712s0§(§1t9416s0§,§1t9400s0§);' — android StatsManager.as:166 'internal static var MAXDUELTOKENS:int = 30;' consumed :1691 'setStat(STAT_DUELTOKENS,MAXDUELTOKENS);'. THE FRAME PICKS THE WEB CONSTANT.",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L4 progression + L0 meta-social/economy: upgrades progression/duel-token-refill-mismatch from an android-only observation to a build-decided one — port 40, not 30 — and gives the economy lane a frame-anchored proof that the two on-screen currencies are COINS and GOLD (premium), which is the currency <heavenlyprice> is in."
+  },
+  {
+   "id": "newfind/offline-save-branch-writes-nineteen-fields-not-fourteen",
+   "text": "The offline SharedObject schema is bigger than the packet's persistence claim states. QueryManagerBase.as's offlineMode branch does not end at :2925 — it continues to :2930 and writes five more fields: activeQuestList (:2926), completedQuestList (:2927), playerlocation (:2928), taunt (:2929) and friends (:2930). Counting the fourteen at :2912-2925 plus these, the branch serialises NINETEEN fields to SharedObject.getLocal(cookieName + '_' + charname). A single-player persistence schema transcribed from :2912-2925 alone would silently drop the entire quest state, the player's world location, the taunt and the friend list — i.e. a reload would put the character back with no active or completed quests and no saved position.",
+   "artifact_class": "A2",
+   "build": "android v0.682 (web parity not checked)",
+   "cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2905-2931, esp. :2926-2930",
+   "quote": ":2926 'sharedObject.data.activeQuestList = StatsManager.getActiveQuestString();' :2927 'sharedObject.data.completedQuestList = StatsManager.getCompletedQuestString();' :2928 'sharedObject.data.playerlocation = StatsManager.getLocationString();' :2929 'sharedObject.data.taunt = StatsManager.getTaunt();' :2930 'sharedObject.data.friends = StatsManager.getFriendListString();' :2932 'sharedObject.flush();'",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L10 persistence: the transcribe-don't-invent conclusion stands, but the range to transcribe is :2912-2930 (nineteen fields), not :2912-2925 (fourteen). Quest state and world location are in the shipped save format."
+  },
+  {
+   "id": "newfind/writ-badge-glyph-is-premium-gold-not-coins",
+   "text": "The Writ-of-Release price divergence is a 5x re-tune of ONE currency, not a switch between two. I zoomed the badge on the shop tile in reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg (crop (600,190)-(720,230) at 10x) and the glyph beside the '25' is the YELLOW-OVAL glyph, which the same frame's top bar labels 'GOLD' (value 2) — not the grey-ingot glyph labelled 'COINS' (value 630). Since <heavenlyprice> is the premium currency and the android row for item 2203 is baseprice 0 / heavenlyprice 5, the correct statement of the divergence is 25 premium Gold on web against 5 premium Gold in the android data. That also removes an apparent contradiction: a coin price of 25 would be impossible against baseprice 0, so nothing here requires the web itemdata to have changed <baseprice>.",
+   "artifact_class": "A1",
+   "build": "web v0.717 frame vs android v0.682 data",
+   "cite": "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg (badge crop (600,190)-(720,230) x10 LANCZOS; top-bar crop (0,0)-(1024,120) x3 LANCZOS) vs reference/extracted/itemdata.xml:2328-2333",
+   "quote": "ON SCREEN: badge reads '25' followed by a yellow-oval coin glyph identical to the top bar's 'GOLD' counter glyph; the top bar's other counter is a grey ingot in a green diamond labelled 'COINS'. DATA: itemdata.xml:2328 '<id>2203</id>' :2332 '<baseprice>0</baseprice>' :2333 '<heavenlyprice>5</heavenlyprice>'. THE FRAME WINS on the amount; the currency is the same on both sides.",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "L4/L0 economy: keeps parity/writ-of-release-is-25g-in-web-and-5g-in-android's 5x gap intact while correcting its currency framing, so the config row reads heavenlyPrice 25 for v0.717 rather than a coin price of 25 against a baseprice of 0."
+  }
+ ]
+}

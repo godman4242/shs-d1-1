@@ -207,6 +207,23 @@
  },
  {
   "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:175-176, :206-207, :231-232, :239, :253-254",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s26d/war-room-battlefield-board-is-a-hardcoded-6x6-grid",
+  "lane_impact": "L-meta-social: the battlefield board can be specified today - 6x6, 55 px pitch, origin (90, 92). Only the per-hex state feed is server-side.",
+  "ledger_text": "\u2461 War-Room **map topology** (board/adjacency)",
+  "overturns_ledger": true,
+  "quote": "WarHexUI.as:175 'this.ht = 6;' :176 'this.wt = 6;' (the only two wt/ht assignments in the file) \u00b7 :229 'this.hexArray.push(new Array(this.ht));' \u00b7 :253 'hex.x = 90 + xpos * 55;' :254 'hex.y = 92 + ypos * 55;' \u00b7 :206 'warTerrain.x = 90 + i * 55;' :207 'warTerrain.y = 92 + j * 55;' \u00b7 :239 'if(strArray.length == 7)'",
+  "text": "The War-Room battlefield board's dimensions are NOT server-supplied and ARE recoverable from the shipped code. WarHexUI.as:175-176 set 'this.ht = 6;' and 'this.wt = 6;' as plain literals, and grep over the whole file shows these are the ONLY two assignments to wt or ht anywhere in it. The hex layout is hardcoded at the same pitch: :253 'hex.x = 90 + xpos * 55;' :254 'hex.y = 92 + ypos * 55;', with the terrain layer using the identical transform at :206-207. The pipe-delimited server string parsed at :231-252 carries per-hex STATE only - a 7-field record of xpos, ypos, owner, side and strength. This overturns hunter-s26a/war-room-battlefield-board-is-server-dimensioned and partially closes REBUILD_READINESS \u2461 'War-Room map topology (board/adjacency)': the board is a 6x6 grid at 55 px pitch with origin (90, 92), and its adjacency follows from that.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "build": "web v0.717",
   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3121 and :3255-3271",
   "citelint": {

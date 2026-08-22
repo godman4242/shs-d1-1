@@ -1,0 +1,433 @@
+{
+  "packet_size": 48,
+  "judged_count": 48,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "skills-meters/web-only-skills-1074-1077",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t120s0§.as:108,110,112,114 read directly (= 1074/1075/1076/1077); my own regex census of that file = 54 ids vs reference/decompiled/shs3_android/scripts/SkillManager.as = 50 ids, set difference exactly [1074,1075,1076,1077]; my own parse of reference/extracted/skilldata.xml <id> = 127 rows, max game-skill id 1073 (plus 1500,1501), none of the four present",
+      "reason": "Every element reproduced exactly. Lines 108/110/112/114 carry 1074-1077 verbatim. Web SkillManager declares 54 ids, Android 50, difference precisely the four. skilldata.xml stops at 1073. Stronger than the claim states: 1077 is not merely declared, it has a live runtime case at §1t120s0§.as:344-351 deducting 8 units of stat 2501, so 'runtime behaviour but no data row' is code-confirmed for at least that one."
+    },
+    {
+      "claim_id": "skills/traps-cost-one-kunai-ammo",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t120s0§.as:503-507 (five case labels), :510 (getStat(2501)==0), :514 (changeStat(2501,-1)); reference/decompiled/shs3_android/scripts/SkillManager.as:467-471,474,479 identical; constant table SkillManager.as:30-38 SKILL_TRAP..SKILL_TRAPEARTH = 1024..1028 and :78 SKILL_WINDMILL = 1051; SkillManager.as:308,313 windmill checks <4 and changeStat(2501,-4)",
+      "reason": "Exact on every line number in both builds. I also enumerated all four ammo-spend sites in the web file: §1t120s0§.as:270 (-1), :323 (-4), :351 (-8), :514 (-1). The trap block is -1, windmill -4, skill 1077 -8, confirming the claim's flat-at-1 curve and its two named exceptions."
+    },
+    {
+      "claim_id": "stage/web-payload-has-its-own-800-480-690-resize-handler",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:269 (function head), :271 = 800, :272 = 480, :273 = 690, :277 (aspect test), :280-281 (swap to 690 + friend-bar flag), :295/:297 (fit-width branch), :304 (fit-height branch)",
+      "reason": "Every quoted line number is exact in the WEB bundle. The three constants 800/480/690 and the whole branch structure are present in shs3_payload independently of the Android GameEngine, which closes the build-parity hole the claim says it closes. This is the strongest cite in the packet."
+    },
+    {
+      "claim_id": "stage0/android-lang-table-cannot-serve-web-ui",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t7144s0§.as:80 getString(11005), :82 notournamenttext.text = getString(11018), :84 getString(11006); §1t113s0§.as:111 getString(960); my own load of docs/gauntlet/L0/index/strings.json = 2533 entries, 1893 numeric keys, max 9010, zero values containing 'tournament'",
+      "reason": "All four line numbers exact, and my independent parse reproduces 1893 numeric ids / max 9010 / zero 'tournament' hits digit for digit. The web build genuinely calls ids beyond the held table's ceiling."
+    },
+    {
+      "claim_id": "stage0/anim-blobs-are-utf8-bom-not-utf16le",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/extracted/android/94_MCSCharacter_Human2AnimationData.bin and 99_MCSCharacter_HumanAnimationData.bin - I read the first bytes myself: both EF BB BF; utf-8-sig decode yields 25 and 158 '<anim ' matches, utf-16-le decode yields 0 and 0; 99's head decodes to '<?xml version=\"1.0\"?>\\r\\n<animdata>\\r\\n<anim i=\"idle\" d=\"1\">'",
+      "reason": "Byte-for-byte reproduction, including the mojibake the utf-16-le path produces. Consistent with standing correction C1 and with S0-4's 158 figure for 99_HumanAnimationData. The false-negative trap is real."
+    },
+    {
+      "claim_id": "string-table/balanced-ring-is-khaki-on-film-not-ochre",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/session11/stance-reach/B_t851.933_BALANCED_ring_tan_one-tick-after-click.png, B_t851.867_LIGHT..., B_t855.800_HEAVY... - I ran my own scanline at y=1007, x=78..100 on all three 1920x1080 frames and viewed crops (0,860)-(700,1080) at x2 LANCZOS; src/config/palette.ts:51 ringRed: 0x950d00",
+      "reason": "My scanline reproduces the claim's ramps character for character: BALANCED 0c1711/343a30/787161/978c6e/aea874/PEAK b3ae76/a8a072/8f8167; LIGHT peak 8d92f8; HEAVY peak 8e0807. #b3ae76 computes to hue 55.1 deg, sat 34.1% - exactly as stated, against #996600 at hue 40 deg, sat 100%. palette.ts:51 is ringRed 0x950d00 as cited. Looking at the upscaled crop, the balanced annulus reads pale khaki, not ochre. THE FRAME WINS and the claim says so. PARTIAL is the right self-assessment: separating a compositing rule from codec loss needs the sprite export, which the claim honestly declines to open."
+    },
+    {
+      "claim_id": "string-table/global-effect-titles-a-different-dialog",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/GlobalVarDialog.as:47 titleText.text = getString(288), :80 getString(293) in #6666FF; InteractUI_crops.as:69 maxItem:int = 6, :260 titleText.text = getString(282) + \" (\" + int(count/maxItem*100) + \"%)\"; InteractUI.as:1552-1553 updateGlobalVar(50000+house,count) then globalVarDialog.show(); my own resname lookup in reference/extracted/android/118_Mobile_Lang_EN.bin: 288='Global Effect', 282='Rare Crops Collection', 293='Berries Collected'",
+      "reason": "Every line number exact and every string resolves by resname to exactly what the claim says. 288 titles GlobalVarDialog, 282 titles the six-slot crops screen. The structural separation is real."
+    },
+    {
+      "claim_id": "string-table/hell-is-a-first-class-room-type",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/XMLRoomData.as:6-16 (DEFAULT 0, DOJO 3, HELL 8 at :10, PVP 9, PVPDOJO 10, PVPCLAN 11); OverworldHUD.as:1168-1170 else-if on ROOMTYPE_HELL showing getString(860); :1274 second test; my grep -rl ROOMTYPE_HELL over reference/decompiled/shs3_android/scripts returns exactly InventoryUI, NetworkManager, OverworldHUD, PlayerPanel, QuestLogUI, XMLRoomData; resname 860 = 'Not allowed in hell.'",
+      "reason": "The QUOTE_UNVERIFIED flag is a false alarm caused by the composite backtick formatting. Every constant, every line number and the six-class reference list reproduce exactly. One nuance: XMLRoomData is the declaring class, so the guard is tested by five classes plus the declaration - the claim's own quote lists it that way, so no over-claim."
+    },
+    {
+      "claim_id": "string-table/inn-rest-is-a-floor-not-a-faucet",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/ScreenTransition.as:293 case ACTION_REST, :294 if(AP < MAXAP/3), :296 setStat(AP, MAXAP/3), :298 fullHealth(); InteractUI.as:791 case \"innrest\", :798 changeGold(-getNodeLevel(currentNode)*2), :800 startClose(ScreenTransition.ACTION_REST)",
+      "reason": "Exact on every line. The guard really is a floor-raise, not an addition: a player at or above maxAP/3 gets no AP at all, and AP can never exceed maxAP/3 from resting. The price line at :798 is also exactly as cited."
+    },
+    {
+      "claim_id": "string-table/stance-tint-covers-the-whole-medallion",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/session11/stance-reach/{B_t851.867_LIGHT...,B_t851.933_BALANCED...,B_t855.800_HEAVY...}.png - I sampled the same two pixels myself: ring (90,1022) = LIGHT (98,100,183) / BALANCED (141,134,105) / HEAVY (91,7,5); disc (93,959) = LIGHT (37,36,153) / BALANCED (75,74,43) / HEAVY (69,6,1); plus my own (0,860)-(700,1080) x2 LANCZOS crops of all three",
+      "reason": "All six sampled RGB triples reproduce EXACTLY. Looking at the three crops, the disc behind the bust is unmistakably navy / olive-brown / dark maroon respectively - the tint is not confined to the annulus. The captions the claim reports are all visible: 'LIGHT STANCE' + 'CHANGE STANCE' tooltip, 'HEAVY STANCE', HP 20/20 green and CHI 31/31 blue. (The balanced frame also carries 'BALANCED STANCE' and the same tooltip, which the claim did not need to mention.)"
+    },
+    {
+      "claim_id": "string-table/target-mode-strings-161-166-are-dead",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "my own grep -rho 'getString(N)' over ALL of reference/decompiled/: 161-166 = 0 hits each, against 126/158/159/160 = 2 each, 167 = 8, 647 = 12; grep -c '<target>' reference/extracted/skilldata.xml = 0 and reference/extracted/android/117_Mobile_SkillData.bin contains zero b'<target>'; XMLSkill.as:119 getString(167) chi cost, :123 getString(647)+cooldown.toFixed(2)+getString(648); resnames 161-166 in 118_Mobile_Lang_EN.bin = 'Target: Self/Enemy/Ally/Enemy Area Effect/Ally Area Effect/All'",
+      "reason": "Zero call sites confirmed at the widest possible scope, not just the two bundles the claim named. The six strings ARE the Target: ladder and they are dead. XMLSkill's composer renders chi cost and cooldown-in-seconds and no targeting row. One scope wobble: the claim's '(647)->12' counts all of reference/decompiled (4 in each of three bundles) while its '0 hits' figure was scoped to two bundles - harmless, since 161-166 are zero at every scope."
+    },
+    {
+      "claim_id": "string-table/the-CANNOT-CHANGE-STANCE-string-id-960-is-absent-from-the-parsed-table",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110 getString(175) in #000000 and :111 getString(960) in #BBBBBB; my own load of docs/gauntlet/L0/index/strings.json: ['175'] = 'Critical Hit', ['960'] raises KeyError, ['125'] = 'Stance Restriction'; my resname scan of reference/extracted/android/118_Mobile_Lang_EN.bin confirms resname 960 does not exist; grep for 'BBBBBB' across reference/decompiled/shs3_android/scripts returns 0 hits, so this grey-caption pair is web-only",
+      "reason": "Both line numbers exact, both lookups reproduce. The Android build has no counterpart to the #BBBBBB caption at all, which independently supports the build-parity reading. PARTIAL is correct: that 960 IS the CANNOT CHANGE STANCE wording is an inference resting on the frame, and the claim says so."
+    },
+    {
+      "claim_id": "string-table/ui-hud-md-still-carries-the-refuted-id-drift-table",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "docs/gauntlet/L0/systems/ui-hud.md:502 (autoslash 619/620 row, red X) and :503 (AP-bar 223 row, red X), :505-506 ('The true strings ... 600 \"Auto Slash Off\", 601 \"Auto Slash On\"'), :508 (the ~400 rule); reference/decompiled/shs3_android/scripts/LangManager.as:78 Locale.loadStringEx(num.toString(),language); OverworldHUD.as:211 apbaricon.text = getString(223); my own line scan of reference/extracted/android/118_Mobile_Lang_EN.bin puts <trans-unit id=\"600\" resname=\"619\"> at line 1807 exactly; my resname map gives 619='Auto Slash Off', 223='AP', 4000='Small Soldier Pill' while max id = 2554",
+      "reason": "Every single number in this claim is exact, including the bin line 1807 and the first-divergence point (id 211 -> resname 211, id 212 -> resname 222). The decisive itemdata argument holds: resname 4000 resolves to 'Small Soldier Pill' and id 4000 does not exist because ids stop at 2554. The journal's rule really is inverted and really is still standing."
+    },
+    {
+      "claim_id": "string-table/war-room-gate-has-a-dan-escape-hatch",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1259-1262 (charname prefix guard), :1264 if(getLevel() < 10 && getPlayerStats(STAT_DAN) == 0), :1269-1272 offlineMode guard, :1172 else if(getLevel() < 2) for the duel gate; resname 320 = 'You must be level 10 or higher to access the war room'",
+      "reason": "Line numbers exact and the compound guard is verbatim. The level-10 copy really is only half the rule; any Dan >= 1 bypasses it. The duel gate at :1172 really is flat. One small mischaracterisation: the 'per-character War-Room disable flag' is not a flag but a charname prefix test, StatsManager.charname.slice(0,6) == \"player\" at :1259 - the effect is as described, the mechanism is not a flag."
+    },
+    {
+      "claim_id": "string-table/war-turn-expiry-resets-moves-to-max",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/WarUI.as:533 maxmoves = getMaxWarMoves(), :534 warmoves = getPlayerStats(STAT_WARMOVES), :535 if(warmoves != maxmoves), :537 setStat(STAT_WARMOVES,maxmoves), :546 readytomovelabel.text = getString(309) + getTimeString(-timediff); resname 309 = 'Next turn in '",
+      "reason": "All five line numbers exact. It is a set-to-max, not an increment, so unspent moves genuinely do not accumulate. The claim is also honest that the turn PERIOD is a server delta and stays unheld."
+    },
+    {
+      "claim_id": "string-table/weight-gate-is-a-travel-guard-in-code",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/Obj_TownSign.as:42 interact() head, :44 the guard, :46 showDialogBig(getString(138),getString(5)); BankUI.as:641 storageWeight + getWeight()/getQuantity() > storageMaxWeight; my own grep -rn 'findWeight() > StatsManager.getCarryingWeight()' returns 16 sites across 11 files; resname 138 = 'You are carrying too many things to travel.'",
+      "reason": "The guard, the string and the separate bank cap all check out, and each of the eight cited line numbers lands on the showDialogBig line inside the corresponding guard (Obj_DirectionSign:161 guard at :159, Obj_Hut:72 guard at :70, Obj_PathBush:112 guard at :110, Obj_HiddenTemple:189 guard at :187, Obj_DragonDancePath:277 guard at :275, NodeUI:381 guard at :379, InteractUI:1732 guard at :1730) - consistent, not broken. CORRECTION: the PvP exemption is NOT universal. Only 5 of the 8 cited sites carry !GameEngine.isPvPRoomMode() (TownSign, DirectionSign, PathBush, HiddenTemple, DragonDancePath). Obj_Hut.as:70, NodeUI.as:379 and InteractUI.as:1730 enforce carry weight regardless of PvP room mode, as do InventoryUI.as:440, CraftingUI.as:233 and BankUI.as:348."
+    },
+    {
+      "claim_id": "strings/the-android-lang-table-skips-ids-881-999-entirely",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "my own parse of reference/extracted/android/118_Mobile_Lang_EN.bin: 2555 <trans-unit> elements; the id attribute is CONTIGUOUS 0..2554 with ZERO gaps (set equality tested); the resname attribute has 1905 distinct numeric values with gaps (211,222)(356,366)(865,867)(880,1000)(1044,2000)(2014,3000)(3018,4000)(4427,5000)(5122,6000)(6146,7000)(7095,8000)(8159,9000); docs/gauntlet/L0/index/strings.json numeric keys reproduce the claim's stated 20-gap list exactly",
+      "reason": "The conclusion is CORRECT and important: getString resolves by resname, resname 960 does not exist, the resname key space skips 881-999, and 'absent from strings.json' therefore does not imply 'v0.717 addition'. But the claim's stated evidence mislabels the column. The `id` attribute is contiguous 0..2554 and DOES include 881-999, so 'the whole block 881-999 is missing ... 119 consecutive ids' is false of the id attribute and true only of the resname/lookup key. Its 20-gap list is strings.json's key space, not the raw file's (the raw resname set has 12 gaps); strings.json is additionally missing 12 resnames the bin carries: 665, 820, 5002, 5017, 5022-5025, 5034, 7003, 7041, 9000. Not refuted - incomplete and mislabelled, not wrong in substance - but the ledger text must say 'resname / lookup ids', never 'trans-unit ids'."
+    },
+    {
+      "claim_id": "tooling/source-constants-mined-the-0682-decompile",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "docs/research/fidelity/SOURCE_CONSTANTS.md:3-5 ('CRACKED AND MINED (2026-07-25)', 'Build identified as v0.717 - the same build our video measurements came from', '189 constants extracted'); my own grep -c '§1t' on that file = 0; reference/decompiled/shs3_android_payload/scripts/StatsManager.as:30 clientVersion:Number = 0.682; reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:36 §1t9323s0§:Number = 0.717; my own diff -q of the two StatsManager.as copies is silent",
+      "reason": "Every element reproduces. I also spot-checked one named divergence to make sure the list is not decorative: android MCSPlayer.as:239 maxreload = 5*24 = 120, web §1t99s0§.as:249 = 8*24 = 192. The build audit the claim demands is genuinely owed."
+    },
+    {
+      "claim_id": "ui-hud/150-percent-damage-is-a-buff",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1402-1404 else if(bufftype == StatsManager.BUFF_ATTACK) { buffstr = \"150% DAMAGE\"; }; docs/gauntlet/L0/index/strings.json['4132'] = 'Eat this potato to get the 150% Damage buff.\\n\\nNote: Only one buff may be active at a time.'; my own crop (0,820)-(640,1080) x3 LANCZOS of reference/frames/duel_dense/Nr4fQstqHDM_432.0.png",
+      "reason": "The literal is at the exact cited lines, the string 4132 reproduces character for character, and in my own crop the two rows are visually distinct: a brown pill 'CANNOT CHANGE STANCE' and a separate gold line '150% DAMAGE' below it. The item shape backing it is at reference/extracted/itemdata.xml:237-249 (id 2115, type 10, desc 4132, modifier id 38)."
+    },
+    {
+      "claim_id": "ui-hud/24fps-from-swf-headers",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "my own SWF header parse (zlib inflate + RECT bit-unpack) of reference/decrypted/shs3_payload_decoded.swf = CWS v17, rect 16000x13800 twips = 800x690 px, frameRate 24.000, frameCount 6; reference/decrypted/shs3_android_payload_decoded.swf = CWS v26, rect 16000x9600 twips = 800x480 px, frameRate 24.000, frameCount 6; reference/decompiled/shs3_android/scripts/Mobile.as:113 if(getStageMC().frameRate == 0) and :117 frameRate = 24",
+      "reason": "Signature, version, rect, frame rate and frame count all reproduce exactly from my own parse. The Mobile.as wake-from-sleep framing is correct - that path only fires when frameRate reads 0. Minor over-generalisation: it is not the ONLY frameRate reference in the AS3 (playerio/utils/SWFReader.as:19,136,182,210,231 also mention it) but those parse other SWFs and never set the stage rate, so the argument stands."
+    },
+    {
+      "claim_id": "ui-hud/800x690-is-the-embed-stage-800x480-is-the-viewport",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "my own SWF header parses: reference/preservation/shs3.swf = CWS v10, RECT 0,16000,0,13800 twips = 800.0 x 690.0, fps 24.000, frameCount 2; reference/decrypted/shs3_payload_decoded.swf = CWS v17, same RECT, 24.000 fps, 6 frames; PIL size of reference/extracted/sprites/DefineSprite_3607_shs3_fla.hurtred_32/1.png = (800, 480); reference/decompiled/shs3_payload/scripts/§1t113s0§.as:170-171 x = 760 - i*60; y = 450; my own pillarbox measure on reference/frames/duel_dense/Nr4fQstqHDM_428.0.png = cols 52..1867 (1816 px), rows 0..1079",
+      "reason": "The reconciliation is right and every load-bearing measurement reproduces: both stage RECTs are 800x690, the hurt vignette really is exactly 800x480, the slot row really is y=450, the filmed content region really is 1816x1080. CORRECTION: the quote states 'shs3.swf header: CWS v17' - it is CWS v10. Claim ui-hud/framerate-and-stage-rects-bytechecked in this same packet has it right. The version byte is incidental to the conclusion, so this is a transcription slip, not a wrong claim."
+    },
+    {
+      "claim_id": "ui-hud/NEW-hud-buff-line-is-a-hardcoded-string-table",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1388 updateBuff(bufftype,duration), :1391 clear condition, :1400 '150% XP', :1404 '150% DAMAGE', :1408 '150% DEFENSE', :1412 '150% SPEED', :1416 '200% AP REGEN', :1420 '200% DUEL TOKEN REGEN', :1424 coins, :1428 rare loot, :1432 'Anti-Spam Muting', :1436 'Anti-Spam Full Muting', :1440 'Hell Imprisonment' - every one of these twelve line numbers verified individually",
+      "reason": "This is the most precisely cited claim in the packet: all twelve line references land exactly. The mechanism (hard-coded ladder, not a computed percentage) and the clear condition are both verbatim. CORRECTION: the ladder has THIRTEEN literals, not eleven - StatsManager declares 13 BUFF_ constants and the chain continues past the claim's cite window with 'Injured' at :1444 and 'Moderator' at :1448. The rendered line also appends a countdown: :1451 bufftext.htmlText = buffstr + \" <font color='#FFFFFF'>\" + getTimeString(duration) + \"</font>\". Incomplete within a self-declared range, not wrong."
+    },
+    {
+      "claim_id": "ui-hud/blackopen-shutter-is-16-frames",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/ScreenTransition.as:77 ++this.counter, :93-107 the TRANSITION_BLACKOPEN branch (no counter test anywhere in it), :87 the close branch's if(this.counter >= 17), :159-162 startOpen setting blackup.y = 0 / blackMovtSpeed = 0 / counter = 0",
+      "reason": "The asymmetry is exactly as described: the close branch is counter-gated at 17, the open branch fires doAction() the instant blackup.y <= -240 with no gate. Since speed is applied before it increments, displacement after n frames is n(n-1), which is 240 at n=16, so the open path completes at frame 16. The claim's correction of the derivation from (n-2)(n-1) to n(n-1) is right."
+    },
+    {
+      "claim_id": "ui-hud/buff-row-is-frame-confirmed-A1",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "my own crop (x 0-640, y 820-1080) of reference/frames/duel_dense/Nr4fQstqHDM_432.0.png upscaled 3x LANCZOS - exactly the crop the claim states; cross-checked against reference/decompiled/shs3_android/scripts/BattleUI.as:16 chibar and :24 hpbar",
+      "reason": "I opened the frame at the stated crop and every visual element is there: red-ringed kasa-wearing portrait, green bar 20/20, blue bar 26/26, brown/tan 'CANNOT CHANGE STANCE' strip, and a separate GOLD '150% DAMAGE' line below it. The two rows being different colours and different rows is genuine independent visual proof of the buff-vs-stance separation. CORRECTION: the blue bar is the CHI bar, not an AP bar. BattleUI declares only hpbar (:24) and chibar (:16) - there is no AP bar in duel mode - and the sibling frames at reference/frames/session11/stance-reach label the same bar 'CHI 31/31'. One label in the enumeration is wrong; the headline is confirmed."
+    },
+    {
+      "claim_id": "ui-hud/combat-keeps-the-player-nameplate",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg (1024x576) read whole at x2 LANCZOS - my own read",
+      "reason": "Confirmed by looking. The player's gold 'GUEST' plate is drawn above the fighter mid-fight, the enemies carry green health bars and no plates, and 'AUTO SLASH OFF', HP 16/20, CHI 15/15 and 'CANNOT CHANGE STANCE' are all present as stated. The frame also independently corroborates the three-slot bar (empty/unnumbered, 2 with a claw icon, 3 with a gold up-arrow)."
+    },
+    {
+      "claim_id": "ui-hud/frame-to-stage-mapping-is-anisotropic",
+      "refuted": false,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_android/scripts/GameEngine.as - I read 265-312 myself: :283-290 hold the friend-bar else-block and the newScale/offsetX declarations, while the quoted fit code is at :302-305; reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - my own pillarbox measure cols 52..1867 (w 1816), rows 0..1079; ls reference/frames/broad_survey/*.jpg = 240",
+      "reason": "TWO defects, neither individually fatal. (1) MIS-CITE: the quoted fit-branch statements are NOT at GameEngine.as:283-290 - they are at :302-305. Lines 283-290 contain the friend-bar else-block and two variable declarations. Right file, wrong 17 lines. (2) CONTESTED MODEL: 'y divides by 2.250' assumes the frame contains the full 480 px game height, which is unproven. On my own measurement the pillarbox is exactly 52 px on BOTH sides, so content = 1816 = 800 x 2.270; a true 2.250 fit needs 60 px pillarboxes, which is not what the frame shows. The isotropic alternative in this same packet (scale 2.2689, y0 = -5.0) puts the slot centre at game (640, 450) exactly and makes the slot box exactly 48 x 48 game px, against 451.8 and 48.4 x 48.0 under this claim's rule. Not refuted, because the frame half of the cite (cols 52->1867 w 1816, rows 0->1079, 240 broad_survey jpgs) reproduced digit for digit and the code is real and in the cited file - but the ledger must carry the corrected line numbers and must not adopt the 2.250 vertical as the lane convention."
+    },
+    {
+      "claim_id": "ui-hud/frame-to-stage-transform",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - my own border scan (max-channel > 150, >= 5 px per row/col) gives the empty box at cols 1448-1559 centre 1503.5; my own digit-centroid pass over rows 930-975 gives '2' at 1641.4 and '3' at 1778.1 (claim: 1640.5 / 1776.5, within 1.6 px); reference/decompiled/shs3_android/scripts/BattleUI.as:133 skillSlotButton.x = 760 - i * 60",
+      "reason": "The measurement reproduces and the least-squares arithmetic checks out: with x0 = 52 and scale 2.2689, game x 640/700/760 predict 1504.1/1640.2/1776.4 against the claim's measured 1503.75/1640.5/1776.5 - residuals -0.35/+0.30/+0.10 exactly as stated. The uniform-scale reading is also the better-supported one: 480 x 2.2689 = 1089 > 1080 forces the ~5 px top/bottom crop the claim posits, and the pillarbox I measured (52 px each side, content 1816 = 800 x 2.270) is what a uniform fit predicts. Note this directly contradicts ui-hud/slot-strip-matches-all-three-constants in the same packet; see my new finding."
+    },
+    {
+      "claim_id": "ui-hud/framerate-and-stage-rects-bytechecked",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "my own zlib+RECT header parse of all four named files: shs3_payload_decoded.swf CWS v17 rect [0,800,0,690] fps 24.000 frames 6; shs3_android_payload_decoded.swf CWS v26 rect [0,800,0,480] fps 24.000 frames 6; reference/preservation/shs3.swf CWS v10 rect 800x690 fps 24.000; reference/preservation/shs3preloader.swf CWS v10 rect 800x690 fps 24.000",
+      "reason": "Every field in the quote reproduces exactly, including the two v10 loader versions that the sibling claim ui-hud/800x690-is-the-embed-stage got wrong. 24.000 fps is now byte-held for both builds, and the 800x690 vs 800x480 authored-stage split is real."
+    },
+    {
+      "claim_id": "ui-hud/friend-bar-gated-by-resizehandler",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:267 resizeHandler head, :269-271 the three constants, :273 originalWithBarAspectRatio, :275 the aspect test, :279 stageShowingFriendBar = true, :302-305 the pillarbox else-branch; my own SWF header parses giving web 800x690 and android 800x480 at 24.000 fps",
+      "reason": "The gate is exactly as quoted and 800/690 = 1.1594 is the threshold. The else-branch really is the pillarbox both videos show. The build divergence (web authors 690, android authors 480) is byte-confirmed from the headers by my own parse."
+    },
+    {
+      "claim_id": "ui-hud/friend-bar-is-structurally-unfilmable",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:269-282 (web equivalent reference/decompiled/shs3_payload/scripts/§1t1540s0§.as:271-273 verified = 800/480/690); my own random 120-frame scan across reference/frames/**: of 63 full 1920x1080 frames, ZERO have content aspect below 1.45 (minimum over full frames well above 1.45); the only sub-1.45 items sampled were derived contact sheets (1920x1440) and a 480x700 crop, not captures",
+      "reason": "The code gate is verbatim (my cite range starts two lines earlier than the claim's, at the originalWidth declaration; the claim's :271-279 covers the rest). My independent frame scan reproduces the finding: no full capture frame comes anywhere near the 1.1594 threshold, so the bar's absence is structural. Minor: the claim says '45 directories under reference/frames/' - I count 20 top-level directories, 113 directories carrying files per docs/gauntlet/L0/index/frames.json, and 185 directories in total. That figure matches none of them; it is a sampling description, not the finding."
+    },
+    {
+      "claim_id": "ui-hud/friend-bar-is-the-shipped-default",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "my own SWF header parse: reference/decrypted/shs3_payload_decoded.swf stage 800 x 690 @ 24.000 fps vs shs3_android_payload_decoded.swf 800 x 480 @ 24.000 fps; reference/decompiled/shs3_android/scripts/GameEngine.as:269-282; OverworldHUD.as:388 friendpanel = new FriendPanel(), :389 addChild, :390 friendpanel.y = 480",
+      "reason": "All three cites exact. The inference holds arithmetically: at the SWF's own authored embed size the aspect is exactly 800/690 = 1.1594, and the gate is `newAspectRatio <= originalWithBarAspectRatio`, so at the authored size the bar is ON. Combined with the friendpanel being constructed unconditionally and parked at y = 480, 'authored default' is fair rather than over-claimed. It sits without contradiction alongside friend-bar-is-structurally-unfilmable: authored default 800x690, captured in the widened non-default mode."
+    },
+    {
+      "claim_id": "ui-hud/hotkey-numbering-rule",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:133 x = 760 - i*60, :134 y = 450, :501 visible = i < slotCount, :504 initKeyPressText(this.slotCount - i), :505 initSkill(StatsManager.skillSlots[i]), :510 initEmpty(); SkillSlotButton.as:123 initEmpty head and :128 this.keypressText.text = \"\"; my own crop (1380,920)-(1880,1080) x3 LANCZOS of reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
+      "reason": "The QUOTE_UNVERIFIED flag is a false alarm - every line number lands exactly, including the :128 keypressText clear. Looking at my own crop: three boxes, leftmost bright-bordered EMPTY and UNNUMBERED, middle labelled 2 with a pale claw/fang icon, right labelled 3 with a gold up-arrow, nothing further left. That is precisely what slotCount - i with a null skillSlots[0] predicts. Frame and code agree at every point."
+    },
+    {
+      "claim_id": "ui-hud/interact-icon-manifest-found",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/GenericActionButton.as:262 setInteractIcon head - within :262-345 I counted 25 'case NodeUI.ACTION_' labels and 22 distinct 'new *()' icon classes; NodeUI.as:15 ACTION_SHOP = 1 and :75 ACTION_MEDAL = 31; my own parse of reference/extracted/android/90_InteractUI_UIData.bin: 139 <icon> refs, 20 distinct ids [1,2,4,7,11,12,14,15,16,18,19,21,23,24,25,26,27,29,30,31], top five 15x42 / 14x22 / 23x19 / 12x10 / 16x8, and NodeUI resolves 12=ACTION_USE, 14=ACTION_LEAVE, 15=ACTION_BUY, 16=ACTION_SELL, 23=ACTION_BACK",
+      "reason": "Every number in this claim reproduces exactly - 25 cases, 22 classes, 139 refs, the full 20-id list, and all five frequency counts. I also verified the coverage assertion mechanically: mapping the 25 case labels through NodeUI's constants covers all 20 ids that actually appear, with zero uncovered. The id->class mapping is genuinely complete."
+    },
+    {
+      "claim_id": "ui-hud/interactui-has-six-buttons",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/extracted/payload.xml:626602 name=\"button6\" depth=\"106\", :626603 matrix translateX=\"200\" translateY=\"6100\", :626605 name=\"npcname\" characterId=\"1666\", :626606 matrix translateX=\"220\" translateY=\"6514\"; reference/decompiled/shs3_payload/scripts/§1t401s0§.as:67 public var button6 and :133-135 the x/y/push block; reference/decompiled/shs3_android/scripts/InteractUI.as:57 public var button6:GenericActionButton and :131-133",
+      "reason": "All six line numbers exact, in a 329 MB file. The twips convert as stated: 200/20 = 10 px, 6100/20 = 305 px, 220/20 = 11 px, 6514/20 = 325.7 px. I also checked the pitch from the neighbours - button4 at translateY 4520 (226 px) and button5 at 5300 (265 px) - giving the claimed 39 px row pitch, so the six-row ladder 109/148/187/226/265/305 is consistent. Confirmed in BOTH builds as claimed."
+    },
+    {
+      "claim_id": "ui-hud/interactui-icon-ids-resolve",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/GenericActionButton.as:262-345 - my own extraction of the distinct icon classes gives 22: Add, Attack, Back, EarthElement, FireElement, Gift, Item, Leave, Look, Medal, Mine, Minus, Rest, Search, Shop, Steal, Storage, Talk, Travel, Use, WaterElement, WindElement; NodeUI.as declares 32 ACTION_* constants",
+      "reason": "Every class the quote names exists - ShopActionIcon, LeaveActionIcon, BackActionIcon, UseActionIcon, ItemActionIcon, TravelActionIcon, and exactly four *ElementActionIcon variants (Earth, Fire, Water, Wind). The claim's PARTIAL is honest self-limitation: it read the switch without enumerating the blob. Its stronger sibling ui-hud/interact-icon-manifest-found does that enumeration and it holds, so this claim is right and simply weaker."
+    },
+    {
+      "claim_id": "ui-hud/keypress-index-is-reversed",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:504 initKeyPressText(this.slotCount - i), :505 initSkill(StatsManager.skillSlots[i]), :501 visible = i < slotCount, :133 x = 760 - i * 60",
+      "reason": "Exact. With slotCount = 3, i=0 gets label 3, skillSlots[0] and game x 760 (rightmost); i=2 gets label 1, skillSlots[2] and x 640 (leftmost). Key 3 really does fire skillSlots[0]. My own crop of Nr4fQstqHDM_428.0.png shows the 2 and 3 labels on the middle and right boxes, which only slotCount - i produces."
+    },
+    {
+      "claim_id": "ui-hud/paperdoll-9-box-to-eq-slot-map",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:163-179 (SLOT_HAT 0 / MASK 1 / ARMOR 2 / GLOVES 3 / PANTS 4 / WEAPON 5 / RING1 6 / SHOES 7 / RING2 8), :261-269 the equippedSlots binding block, :461 for(i = 0; i < 9; i++), :521-527 case 7 EQ_ACCESSORY1 -> SLOT_RING1, :528-535 case 8 EQ_ACCESSORY2 -> SLOT_RING2; StatsManager.as:262-286 the 13 EQ_ constants",
+      "reason": "The nine SLOT_ constants are in exactly the claimed order at exactly the claimed lines, and the accessory1/accessory2 binding is verbatim. The negative claims hold too: EQ_NECK (6) never appears in the nine-box loop, and the four model slots with no UI box are exactly EQ_HAIR (2), EQ_HEAD (4), EQ_NECK (6) and EQ_SCABBARD (10). Trivial slip: the 'for(i < 9)' loop is at :461, not the cited :459 (:459 is a declaration two lines earlier in the same function)."
+    },
+    {
+      "claim_id": "ui-hud/pass1-fabricated-transunit-quote",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "docs/gauntlet/L0/systems/ui-hud.md:465 reads <trans-unit id=\"388\" resname=\"388\"><source>Game Paused</source></trans-unit>; my own substring test on the utf-16-le decode of reference/extracted/android/118_Mobile_Lang_EN.bin: '<trans-unit id=\"388\" resname=\"388\">' -> False, while '<trans-unit id=\"369\" resname=\"388\">\\r\\n<source>Condition: Poor</source>' -> True and '<trans-unit id=\"388\" resname=\"407\">\\r\\n<source>Game Paused</source>' -> True",
+      "reason": "I ran the exact test myself and got the exact results. The journal line at :465 is a verbatim-looking XML quote that does not exist in the artifact it cites, and both replacement rows the claim names are present character for character including the \\r\\n. This is a real fabricated cite sitting in a banked journal."
+    },
+    {
+      "claim_id": "ui-hud/pass1-stale-string-rules-still-live",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "docs/gauntlet/L0/systems/ui-hud.md:472 ('The honest limit. This closes UI/HUD strings and nothing more:'), :475 ('every lookup returns None. Item/skill/npc display names remain STILL_UNHELD.'), :491 ('The extracted table is from a different build revision than the decompiled BattleUI.'), :508 ('Rule for downstream lanes: ids below ~400 resolve directly; above that, resolve by string search')",
+      "reason": "All four line numbers exact and all four quotes verbatim. Both statements are dead: S0-3 measures itemdata 804/0, skilldata 73/0, npcdata 484/6 resolved, and I confirmed myself that itemdata's <name>4000</name> resolves by resname to 'Small Soldier Pill', so 'every lookup returns None' is false; and the divergence is the resname/id column split, first appearing at id 212 / resname 222, not a build revision and not a ~400 threshold. Minor: the lane_impact says 'resnames reach 7011' - the maximum resname is 9010."
+    },
+    {
+      "claim_id": "ui-hud/pass1-xliff-quote-is-misquoted",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "docs/gauntlet/L0/systems/ui-hud.md:465-467 print resname=\"388\"/\"600\"/\"609\"; my own id->resname map from reference/extracted/android/118_Mobile_Lang_EN.bin gives id 388 -> resname 407 'Game Paused', id 600 -> resname 619 'Auto Slash Off', id 609 -> resname 628 'Draw a line to slash'; substring tests for '<trans-unit id=\"600\" resname=\"600\">' and '<trans-unit id=\"609\" resname=\"609\">' both return False; id 211 -> resname 211 and id 212 -> resname 222",
+      "reason": "Verified in full. The journal's fenced 'verbatim' block silently rewrites resname on every row above the divergence point, and the rows at ids 45/104/175/208 really are correct precisely because they sit below id 212. The single attribute the whole Pass-1 thesis turns on was altered inside a block presented as the raw file."
+    },
+    {
+      "claim_id": "ui-hud/reload-crit-meter-code-live-frame-absent",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:48 public var crittext:TextField, :60 public var reloadbar:MovieClip, :102 crittext.text = LangManager.getString(175), :259-262 updateReload with crittext.visible = percentage >= 1 && reloadbar.visible; MCSPlayer.as:241 updateReload(0), :1168 updateReload(tempreload/(maxreload-24)), :3112 updateReload(reload/maxreload), :3272 updateReload((reload-24)/(maxreload-24)); my own grep for 'reloadbar.visible' across shs3_android/scripts returns exactly ONE hit, the read at BattleUI.as:262; my own crop (0,900)-(700,1080) x2 of reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
+      "reason": "All nine line references land exactly, including the four MCSPlayer drive sites and the -24 offset. The never-assigned observation is confirmed mechanically. And in my own crop I see two bars only - green HP and blue CHI - with no third meter, so THE FRAME WINS and the standing 'OG has NO Critical meter' line survives. PARTIAL, treated as a lead not a bank, is exactly the right call."
+    },
+    {
+      "claim_id": "ui-hud/resname-600-proves-pass1-read-the-id-column",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "my own reverse resname map over reference/extracted/android/118_Mobile_Lang_EN.bin: resname 600 -> (id 581) 'Special Control Point'; resname 601 -> (id 582) 'Villages may be converted into towns that can function as a Command HQ if the territory comes under attack'; id 600 -> resname 619 'Auto Slash Off'; id 601 -> resname 620 'Auto Slash On'; adjudicating docs/gauntlet/L0/systems/ui-hud.md:505-508",
+      "reason": "The QUOTE_UNVERIFIED flag is a false alarm - I located all four strings and they match the quote word for word, including the long Command HQ sentence. This is decisive: Pass 1 read the id column, there is no build drift, and the journal's surviving rule at :508 is wrong. Corroborated by LangManager.as:78 Locale.loadStringEx(num.toString(),language), which keys XLIFF by resname."
+    },
+    {
+      "claim_id": "ui-hud/respawn-costs-one-heavenly-gold",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/LoseUI.as:94-107 - StatsManager.spendHeavenlyGold(1, function(){ QueryManager.instance.reportPremiumBuy(3,\"respawn\",1); ... }, function(){ getgoldpromptdialog.show(1); OverworldHUD.instance.questDialogueUI.hideOnly(); })",
+      "reason": "Verbatim at the cited lines, including the telemetry tag reportPremiumBuy(3,\"respawn\",1) and the insufficient-funds callback opening getgoldpromptdialog.show(1). The price is exactly 1 Heavenly Gold. The claim correctly labels itself android v0.682."
+    },
+    {
+      "claim_id": "ui-hud/shutter-frame-counts-corrected",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/ScreenTransition.as:77 ++counter, :80-82 close motion (speed applied before increment), :87 if(counter >= 17), :95-97 open motion, :98 if(blackup.y <= -240), :106 doAction, :143 startClose blackup.y = -240, :159 startOpen blackup.y = 0, :289-292 case ACTION_REFRESHROOMONOPEN re-arming transitioning = true; my grep for startOpenWhite returns exactly one caller, Overworld.as:377 passing ACTION_REFRESHROOMONOPEN; web equivalent reference/decompiled/shs3_payload/scripts/§1t6497s0§.as:79-109 carries the identical counter >= 17 on close and no gate on open",
+      "reason": "The QUOTE_UNVERIFIED flag is a false alarm - it is a simulation transcript, not a file quote, and I reproduced its arithmetic. Displacement after n frames is n(n-1) because speed is applied before it increments, so 240 is reached at n = 16 in both directions; only the close path holds the extra gated frame. The white-fade coupling is exact: one caller at Overworld.as:377, and the case at :289-292 does re-arm transitioning. I also confirmed the asymmetry is identical in the WEB build, which the claim asserts and which nothing else in the packet checks."
+    },
+    {
+      "claim_id": "ui-hud/shutter-is-asymmetric",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/ScreenTransition.as:83-89 (close: if(blackup.y >= 0){ ... if(counter >= 17){ doAction(); } }) versus :98-106 (open: if(blackup.y <= -240){ ... doAction(); } with no counter test), :80-82 speed applied before increment; 24.000 fps from my own SWF header parse of both payloads",
+      "reason": "Both line ranges exact and the quoted code verbatim. 17/24 = 708 ms and 16/24 = 667 ms both check. Consistent with its sibling ui-hud/shutter-frame-counts-corrected, which states the same fact more precisely (16 frames of motion for both, close holds one gated frame before firing)."
+    },
+    {
+      "claim_id": "ui-hud/skill-slot-widget-geometry-measured",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - my own bright-border scan (max-channel > 150, >= 5 px per row/col) over the empty box region returns cols 1448-1559 and rows 961-1072, i.e. 112 x 112 video px centred (1503.5, 1016.5); my own digit-centroid pass over rows 930-975 gives '2' at 1641.4 and '3' at 1778.1; reference/decompiled/shs3_android/scripts/BattleUI.as:339 if(mousey > 420 * StatsManager.stageScale + StatsManager.stageOffsetY) and web reference/decompiled/shs3_payload/scripts/§1t113s0§.as:451 the identical guard",
+      "reason": "The QUOTE_UNVERIFIED flag is a false alarm - this is the author's own measurement. My scan reproduces cols 1448-1559 and rows 961-1072 EXACTLY, and the digit centroids to within 0.6 px. Both code cites land exactly, including the web-side :451 which nothing else in the packet checks. 112 / 2.27 = 49.3 game px, so the 49-50 px box on a 60 px pitch is right, and a 50 px box centred on y = 450 spanning 425-475 does explain why the hit band opens at 420. PARTIAL is honest - the rest of the panel chrome genuinely stays symbol-locked."
+    },
+    {
+      "claim_id": "ui-hud/slot-box-measurement-corrected",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - my own max-channel scan at threshold 190 returns empty-box cols 1449/1558 and rows 963/1071 (claim: 1449/1558 and 962/1071, one row apart at the top); at threshold 150 the same scan returns 1448/1559 and 961/1072; centre 1503.5 / 1016.5 under every threshold I tried; reference/decompiled/shs3_android/scripts/BattleUI.as:133 skillSlotButton.x = 760 - i * 60",
+      "reason": "The measurement reproduces to within 1 px and the centres reproduce exactly. The internal arithmetic is sound and self-consistent: with c = -5.0 and scale 2.270, game rows 426 and 474 map to frame 962.0 and 1071.0 and the centre 450 maps to 1016.5 exactly - so 'c = -5.0 from each border independently' is genuinely what the data gives, and it implies a clean 48 game px box centred on the code's y = 450. That integer fit is a real point in its favour over the 2.25 vertical model."
+    },
+    {
+      "claim_id": "ui-hud/slot-strip-matches-all-three-constants",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - my own scans give empty-box cols 1447-1560 / 1448-1559 depending on threshold (centre 1503.5, claim says 1504.0), rows 960-1073 / 961-1072 (centre 1016.5, exactly as claimed), digit '2' centroid 1641.4 and '3' 1778.1, and pillarbox cols 52..1867 = 1816 px; reference/decompiled/shs3_android/scripts/GameEngine.as:302-305 the fit-height else-branch (newScale = stageHeight/originalHeight, offsetX centred, offsetY = 0)",
+      "reason": "The measurement reproduces within ~1 px and the claim's literal text is true: converting with offsetY = 0 and 2.25 vertical does give 451.8 against the code's 450, which is under 2 px and better than the 4 px error it replaces. Not refuted. But its PRESCRIPTION - 'offsetY = 0 with vertical scale 2.25, NOT a single uniform 2.270 - which every future A1 measurement in ui-hud and combat-core should use' - is the weaker of the two models in this packet. Under 2.25 the box measures 48.4 x 48.0 game px (non-square, non-integer) and the centre lands at 451.8; under uniform 2.2689 with y0 = -5.0 it is exactly 48 x 48 centred at exactly (640, 450). My own pillarbox measurement also favours uniform: 52 px of black on BOTH sides gives content 1816 = 800 x 2.270, whereas a 2.25 fit would need 60 px pillarboxes. The lane should not adopt this rule without resolving that."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "cite-audit/frame-to-stage-vertical-transform-is-contested-and-uniform-wins",
+      "text": "This packet publishes TWO incompatible frame-to-stage vertical transforms for video B and both are marked HELD. Model A (ui-hud/frame-to-stage-mapping-is-anisotropic, ui-hud/slot-strip-matches-all-three-constants): offsetY = 0, vertical scale 1080/480 = 2.250, horizontal 2.270, the 0.9% difference blamed on a re-encode stretch. Model B (ui-hud/frame-to-stage-transform, ui-hud/slot-box-measurement-corrected): a single uniform scale ~2.269 with origin (52, -5.0), i.e. ~5 px cropped off the top and bottom because 480 x 2.269 = 1089 > 1080. On my own measurement of the cited frame, Model B is the better-supported one and Model A should not be adopted as the lane convention. Evidence: (1) the pillarbox is exactly 52 px of black on BOTH sides, so content = 1816 px = 800 x 2.270 - a genuine 2.250 fit would leave 60 px pillarboxes, which the frame does not show; (2) under Model B the empty slot box is exactly 48 x 48 game px centred at exactly game (640, 450), matching BattleUI.as:133-134 to the integer, while under Model A it is 48.4 x 48.0 (non-square) centred at 451.8; (3) the frame box measures square (112 x 112 at threshold 150), which an anisotropic mapping would not produce. Model A is not disproved - the ~1 px thresholds leave room - but it carries an unreconciled 1.8 game-px residual against a code-known constant and Model B carries 0.2.",
+      "artifact_class": "A1",
+      "build": "web v0.717",
+      "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png - my own full-frame content-extent scan (max-channel > 25) giving cols 52..1867 (1816 px) and rows 0..1079, plus max-channel border scans of the empty skill-slot box at thresholds 150/170/190 giving cols 1448-1559 / 1449-1558 and rows 961-1072 / 963-1071, centre (1503.5, 1016.5); against reference/decompiled/shs3_android/scripts/BattleUI.as:133-134 skillSlotButton.x = 760 - i * 60 and .y = 450",
+      "quote": "my scan: content cols 52 1867 width 1816 / content rows 0 1079 ; thr 150 emptybox cols 1448 1559 rows 961 1072 ; thr 190 emptybox cols 1449 1558 rows 963 1071. Model B check: 450 * 2.270 - 5.0 = 1016.5 (measured 1016.5); 426 * 2.270 - 5.0 = 962.0 and 474 * 2.270 - 5.0 = 1071.0 (measured 962/963 and 1071) -> a 48.0 game-px box. Model A check: 1016.5 / 2.25 = 451.78 and box height 109 / 2.25 = 48.4 vs width 109 / 2.270 = 48.0.",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "Cross-lane measuring convention (ui-hud, combat-core, art-anim, world-exploration). Two conflicting rules are about to enter the ledger from the same packet; only one can be the lane's transform. Adopt frame_x = 52 + 2.2689 * game_x and frame_y = -5.0 + 2.2689 * game_y for video B until a second code-known y constant is found to break the tie - BattleUI carries only one (y = 450), which is why one measurement cannot separate scale from offset."
+    },
+    {
+      "id": "cite-audit/lang-bin-id-column-is-contiguous-every-gap-is-in-resname",
+      "text": "Every 'gap' this lane has discussed in the Android language table is in the resname column, never the id column. Measured directly: reference/extracted/android/118_Mobile_Lang_EN.bin holds 2,555 <trans-unit> elements whose id attribute is CONTIGUOUS 0..2554 with ZERO gaps (set equality tested), while the numeric resname attribute has only 1,905 distinct values with 12 gaps, the largest being 1044 -> 2000. Because LangManager.getString resolves through fl.lang.Locale by resname (LangManager.as:78), the resname column is the lookup key space and the id column is inert. Any ledger sentence that says 'the table skips ids N..M' is checkable-false against the raw file and must say 'skips resnames'. Separately, docs/gauntlet/L0/index/strings.json is missing TWELVE numeric resnames the raw blob carries - 665, 820, 5002, 5017, 5022, 5023, 5024, 5025, 5034, 7003, 7041, 9000 - so 'absent from strings.json' is weaker still than 'absent from the table'.",
+      "artifact_class": "A2",
+      "build": "android v0.682",
+      "cite": "reference/extracted/android/118_Mobile_Lang_EN.bin (my own utf-16-le parse: 2555 trans-unit ids, set(ids) == set(range(2555)) -> True; 1905 distinct numeric resnames; resname gaps (211,222)(356,366)(865,867)(880,1000)(1044,2000)(2014,3000)(3018,4000)(4427,5000)(5122,6000)(6146,7000)(7095,8000)(8159,9000)) versus docs/gauntlet/L0/index/strings.json (1893 numeric keys); reference/decompiled/shs3_android/scripts/LangManager.as:78",
+      "quote": "id contiguous 0..2554? True | resname gaps: [(211,222),(356,366),(865,867),(880,1000),(1044,2000),(2014,3000),(3018,4000),(4427,5000),(5122,6000),(6146,7000),(7095,8000),(8159,9000)] | in bin not in strings.json: [665, 820, 5002, 5017, 5022, 5023, 5024, 5025, 5034, 7003, 7041, 9000]",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "string-table lane and every lane resolving a name. Sharpens strings/the-android-lang-table-skips-ids-881-999-entirely, whose conclusion is right but whose stated evidence names the wrong column. Also flags a real index defect: strings.json is not a complete image of the blob, so a resname lookup that misses in strings.json must be re-checked against the raw bin before anyone calls it web-only."
+    },
+    {
+      "id": "cite-audit/duel-hud-second-bar-is-chi-not-ap",
+      "text": "The blue bar in the duel HUD is the CHI bar, not an AP bar. BattleUI declares exactly two meters - hpbar and chibar - and drives them at :249 and :256; there is no AP bar in battle mode (AP lives on the overworld HUD, OverworldHUD.as:211 apbaricon). The reference frames label it directly: reference/frames/session11/stance-reach shows 'CHI 31/31' under the same widget and reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg shows 'CHI 15/15'. Claim ui-hud/buff-row-is-frame-confirmed-A1 enumerates it as 'a blue AP bar reading 26/26'; the reading 26/26 is right, the label is not.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:16 public var chibar:MovieClip, :24 public var hpbar:MovieClip, :249 hpbar.bar.scaleX = hp / maxhp, :256 chibar.bar.scaleX = chi / maxchi; corroborated visually in my own crop (0,860)-(700,1080) x2 LANCZOS of reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png",
+      "quote": "BattleUI.as:16 `public var chibar:MovieClip;` | :24 `public var hpbar:MovieClip;` | :249 `this.hpbar.bar.scaleX = hp / maxhp;` | :256 `this.chibar.bar.scaleX = chi / maxchi;` - no apbar field exists in the class.",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "ui-hud. A rebuild that wires the duel HUD's second bar to AP will drain it on world actions instead of on skills. The overworld HUD is the build with an AP bar; the battle HUD is HP + Chi."
+    },
+    {
+      "id": "cite-audit/updatebuff-ladder-is-thirteen-not-eleven-and-appends-a-timer",
+      "text": "OverworldHUD.updateBuff's hard-coded ladder has THIRTEEN literals, not eleven, and the rendered line appends a live countdown. StatsManager declares 13 BUFF_* constants and the else-if chain covers all of them: the eleven the packet reports (150% XP / DAMAGE / DEFENSE / SPEED, 200% AP REGEN, 200% DUEL TOKEN REGEN, more coins, rare loot, Anti-Spam Muting, Anti-Spam Full Muting, Hell Imprisonment) plus 'Injured' at :1444 and 'Moderator' at :1448, both past the cite window ui-hud/NEW-hud-buff-line-is-a-hardcoded-string-table used. The HUD text is not the bare label either: :1451 renders buffstr + \" <font color='#FFFFFF'>\" + getTimeString(duration) + \"</font>\", so every buff row carries an h:mm:ss remaining-time suffix in white.",
+      "artifact_class": "A2",
+      "build": "android v0.682",
+      "cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1444 buffstr = \"Injured\", :1448 buffstr = \"Moderator\", :1450-1451 bufftext.visible = true and bufftext.htmlText = buffstr + \" <font color='#FFFFFF'>\" + this.getTimeString(duration) + \"</font>\"; StatsManager.as declares 13 BUFF_*:int constants (my own grep -c)",
+      "quote": ":1442 `else if(bufftype == StatsManager.BUFF_INJURED)` :1444 `buffstr = \"Injured\";` :1446 `else if(bufftype == StatsManager.BUFF_MODERATOR)` :1448 `buffstr = \"Moderator\";` :1451 `this.bufftext.htmlText = buffstr + \" <font color='#FFFFFF'>\" + this.getTimeString(duration) + \"</font>\";`",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "ui-hud + meta-social. Two more buff states nobody holds (an Injured status and a Moderator badge), and the buff row's real shape is label + white countdown, not label alone - which matches the '150% DAMAGE 21m23s timer' filename at reference/frames/session11/stance-reach/B_t852.000_BALANCED_150pct-DAMAGE-21m23s-timer.png."
+    },
+    {
+      "id": "cite-audit/carry-weight-pvp-exemption-covers-only-five-of-eight-sites",
+      "text": "The carry-weight travel guard is NOT uniformly exempted inside PvP rooms. Of the sixteen findWeight() > getCarryingWeight() guards in the Android build, only eight carry the !GameEngine.isPvPRoomMode() prefix. Among the eight sites cited by string-table/weight-gate-is-a-travel-guard-in-code, five have the exemption (Obj_TownSign:44, Obj_DirectionSign:159, Obj_PathBush:110, Obj_HiddenTemple:187, Obj_DragonDancePath:275) and three do NOT (Obj_Hut:70, NodeUI:379, InteractUI:1730). Three further unexempted sites exist that the claim does not cite: InventoryUI:440, CraftingUI:233 and BankUI:348. So a rebuild that globally disables weight checks in duel rooms will let players hut-travel, node-explore, open the interact menu, equip, craft and bank over the cap.",
+      "artifact_class": "A2",
+      "build": "android v0.682",
+      "cite": "reference/decompiled/shs3_android/scripts/Obj_Hut.as:70, NodeUI.as:379, InteractUI.as:1730 (bare guards) versus Obj_TownSign.as:44, Obj_DirectionSign.as:159, Obj_PathBush.as:110, Obj_HiddenTemple.as:187, Obj_DragonDancePath.as:275 (PvP-exempt); my own grep -rn 'findWeight() > StatsManager.getCarryingWeight()' over reference/decompiled/shs3_android/scripts returns 16 hits across 11 files",
+      "quote": "Obj_Hut.as:68-70 `override public function interact() : * { if(StatsManager.findWeight() > StatsManager.getCarryingWeight())` - no isPvPRoomMode test. Obj_TownSign.as:42-44 `override public function interact() : * { if(!GameEngine.isPvPRoomMode() && StatsManager.findWeight() > StatsManager.getCarryingWeight())` - exempt.",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "items-equipment + world-exploration. Corrects the blanket 'weight is not enforced inside duel rooms' half of string-table/weight-gate-is-a-travel-guard-in-code. The exemption is per-call-site and covers the outdoor movement objects only."
+    },
+    {
+      "id": "cite-audit/gameengine-283-290-does-not-hold-the-fit-branch",
+      "text": "The fit-branch quoted by ui-hud/frame-to-stage-mapping-is-anisotropic is not at reference/decompiled/shs3_android/scripts/GameEngine.as:283-290. Lines 283-290 hold the tail of the friend-bar if-block, its else clause setting stageShowingFriendBar = false, and the newScale/offsetX declarations. The quoted assignments (newScale = stageMC.stageHeight / originalHeight; offsetX = (stageMC.stageWidth - originalWidth * newScale) / 2; offsetY = 0; fitWidth = false) are at :302-305, inside the else of the if(originalAspectRatio >= newAspectRatio) test at :293. Recorded so the ledger carries the right lines: resizeHandler head :267, constants :269-271, aspect gate :275, fit-width branch :295-298, fit-height/pillarbox branch :302-305, StatsManager writes :306-311.",
+      "artifact_class": "A2",
+      "build": "android v0.682",
+      "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:283-290 (read directly: `}` `}` `else` `{` `StatsManager.stageShowingFriendBar = false;` `}` `var newScale:Number = 1;` `var offsetX:Number = 0;`) versus :302-305 (the quoted fit code)",
+      "quote": "GameEngine.as:302-305 `newScale = stageMC.stageHeight / originalHeight;` `offsetX = (stageMC.stageWidth - originalWidth * newScale) / 2;` `offsetY = 0;` `fitWidth = false;` - preceded at :293 by `if(originalAspectRatio >= newAspectRatio)`.",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "Cite hygiene for every lane quoting the resize handler. Three claims in this packet cite this function at three different ranges (:267-280, :271-279, :283-290) and only the first two overlap the code they quote."
+    },
+    {
+      "id": "cite-audit/web-skill-1077-has-a-live-runtime-case",
+      "text": "The four web-only skill ids are not inert declarations: at least 1077 has a full runtime implementation in the web SkillManager. §1t120s0§.as:344 opens `case §1t10176s0§:` (= 1077) and :347-351 gate it on getStat(2501) < 8 then changeStat(2501,-8) - an eight-kunai ammo cost, double Windmill Shuriken's four and eight times a trap's one. Nothing in reference/extracted/skilldata.xml (max game-skill id 1073) or the Android SkillManager (50 ids, stopping at 1073) holds it, so this is a v0.717 skill with executable behaviour, no data row and no name string.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t120s0§.as:114 (§1t10176s0§ = 1077), :344 (case), :347 (< 8 guard), :351 (changeStat(2501,-8)); against my own parse of reference/extracted/skilldata.xml (127 <id> rows, none above 1073 except 1500/1501) and reference/decompiled/shs3_android/scripts/SkillManager.as (50 ids, max 1073)",
+      "quote": "§1t120s0§.as:344 `case §1t10176s0§:` :347 `if(§1t1523s0§.§1t9714s0§(2501) < 8)` :351 `§1t1523s0§.§1t9713s0§(2501,-8);` - the complete web ammo ladder is :270 (-1), :323 (-4), :351 (-8), :514 (-1).",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "skills-meters + economy. Strengthens skills-meters/web-only-skills-1074-1077 from 'declared' to 'implemented' for 1077 and puts a fourth rung on the kunai-ammo cost curve (1 / 4 / 8). The remaining question is whether 1074-1076 also carry runtime cases; only 1077 is settled here."
+    },
+    {
+      "id": "cite-audit/shs3-swf-loader-is-cws-v10",
+      "text": "reference/preservation/shs3.swf is CWS version 10, not version 17. Claim ui-hud/800x690-is-the-embed-stage-800x480-is-the-viewport reports 'shs3.swf header: CWS v17' inside a block presented as its own byte parse; every other field in that quote is exact (RECT 0,16000,0,13800 twips = 800.0 x 690.0, frameRate 0x1800 = 24.0, frameCount 2) but the version byte is the payload's, not the loader's. The sibling claim ui-hud/framerate-and-stage-rects-bytechecked reports v10 correctly. Recorded so no ledger row carries a wrong byte inside a byte-check: shs3.swf CWS v10, shs3preloader.swf CWS v10, shs3_payload_decoded.swf CWS v17, shs3_android_payload_decoded.swf CWS v26 - all four at 24.000 fps.",
+      "artifact_class": "A3",
+      "build": "both",
+      "cite": "my own SWF header parse (signature bytes, version byte, zlib inflate, RECT bit-unpack, frameRate fixed8, frameCount uint16) of reference/preservation/shs3.swf, reference/preservation/shs3preloader.swf, reference/decrypted/shs3_payload_decoded.swf, reference/decrypted/shs3_android_payload_decoded.swf",
+      "quote": "shs3_payload_decoded.swf CWS v17 rect twips [0, 16000, 0, 13800] -> px [0.0, 800.0, 0.0, 690.0] fps 24.000 frames 6 | shs3_android_payload_decoded.swf CWS v26 rect twips [0, 16000, 0, 9600] -> px [0.0, 800.0, 0.0, 480.0] fps 24.000 frames 6 | shs3.swf CWS v10 rect [0.0, 800.0, 0.0, 690.0] fps 24.000 frames 2 | shs3preloader.swf CWS v10 rect [0.0, 800.0, 0.0, 690.0] fps 24.000 frames 2",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "ui-hud cite hygiene. The conclusion (both loader and payload declare an 800x690 stage at 24 fps) is unaffected; only the version byte was mis-transcribed."
+    }
+  ]
+}

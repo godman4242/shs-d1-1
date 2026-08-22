@@ -1,0 +1,372 @@
+{
+  "packet_size": 48,
+  "judged_count": 48,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "rebirth/dan1-has-no-kanji-title",
+      "refuted": false,
+      "reason": "Opened InventoryUI.as myself. Line 2276 is 'case 0:', 2277 'this.danfield.text = \"\";', 2278 'break;', 2279 'case 1:', 2280 'this.danfield.text = LangManager.getString(456);'. The quote is verbatim. strings.json['455']='(初段)', ['456']='(弐段)' … ['464']='(十段)', so STAT_DAN n -> 455+n for n>=1 only, blank at 0 -- exactly as claimed. The lane_impact's shogo bands also check out line-for-line: case 3/4/5 append getString(465)='Renshi', case 6/7 append 466='Kyoshi', case 8/9/default append 467='Hanshi'.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2316 + docs/gauntlet/L0/index/strings.json[\"455\"..\"467\"]"
+    },
+    {
+      "claim_id": "rebirth/dan1-renders-blank",
+      "refuted": false,
+      "reason": "Both halves verified first-hand. Android InventoryUI.as:2276-2278 is the blank case-0. The desktop twin reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3063-3065 is 'case 0:' / 'this.danfield.text = \"\";' / 'break;' -- the cite resolves to the exact three lines. I ran grep -rn 'getString(455)' over BOTH decompiled trees (shs3_android_payload, shs3_android, shs3_payload): zero hits, while getString(456) returns exactly two hits (InventoryUI.as:2280 and §1t5957s0§.as:3067). The claim's grep assertion reproduces.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3063-3065 (own grep: getString(455) = 0 hits in both trees)"
+    },
+    {
+      "claim_id": "rebirth/dan1-shows-no-kanji",
+      "refuted": false,
+      "reason": "PlayerPanel.as:384-386 is 'case 0:' / 'dantext = \"\";' / 'break;' -- the second display path agrees with InventoryUI.as:2276-2278. The lane_impact's romaji ladder is exact: :388 '(nidan)', :391 '(sandan)', :394 '(yondan) '+465, :397 '(godan) '+465, :400 '(rokudan) '+465, :403 '(nanadan) '+466, :406 '(hachidan) '+466, :409 '(kyudan) '+467, :412 '(judan) '+467 for STAT_DAN 1..9.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/PlayerPanel.as:384-412"
+    },
+    {
+      "claim_id": "rebirth/dragon-dance-tier-ids",
+      "refuted": false,
+      "reason": "Re-parsed skilldata.xml myself and resolved displaynames through strings.json. 1056-1059 'Dragon Dance Step: Fire/Water/Wind/Earth' each carry <has><id>28|30|29|31</id><qty>30</qty>; 1060-1063 are the '… II' skills at qty 60 and are the ONLY four whose desc contains '(Later Heaven)'. The lane_impact census also reproduces exactly: per element 3 skills at qty10 (Breath/Stomp/Combo/Punch, Element Trap, Element Kunai), 2 at qty30 (Dragon Dance Step + AoE ultimate 1070-1073), 1 at qty60 = 6 x 4 = 24 elemental-gated skills, and my script counted exactly 24.",
+      "own_cite": "reference/extracted/skilldata.xml (own parse: ids 1056-1063 req qty 30/60; 24 skills gated on stats 28-31)"
+    },
+    {
+      "claim_id": "rebirth/dragon-dance-v0717-parity",
+      "refuted": false,
+      "reason": "Opened both. Web §1t5495s0§.as:70-71 = [\"sky\",\"wind\",\"water\",\"mountain\",\"earth\",\"thunder\",\"fire\",\"lake\"] / [\"fire\",\"earth\",\"lake\",\"sky\",\"water\",\"mountain\",\"thunder\",\"wind\"]; android DragonDanceUI.as:70-71 carries the identical two arrays in the identical order. Web :382 is the quoted {1,2,4,6} Later-Heaven trigger verbatim; android :367 is the same expression with unobfuscated names. Parity of the Dragon Dance input holds. CAVEAT I flag but do not refute on: 'byte-identical' is loose (the web symbols are obfuscated, files are 670 vs 650 lines) and 'at the same line numbers' is true only of the label arrays, not of the trigger (382 vs 367) -- the finding's own cite states both numbers honestly.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5495s0§.as:70-71,:382 vs reference/decompiled/shs3_android_payload/scripts/DragonDanceUI.as:70-71,:367"
+    },
+    {
+      "claim_id": "rebirth/elemental-aoe-is-a-horizontal-band",
+      "refuted": true,
+      "severity": "material",
+      "reason": "Half right, and the load-bearing half is wrong. VERIFIED: NPCManager.as:1422 checkHitObject, :1429 'var distsq:int = dist * dist;', :1441 'enemydist = enemy.getMCS().x - thing.x;', :1444 'if(enemydist * enemydist < distsq && enemy.checkHitObject(thing,damage,checkByAttacker))'. So dist IS a horizontal half-width, not a radius -- that part survives, and the numbers reproduce (BigFireBreathProjectile.as:32 =600, BigWaveProjectile.as:34 =400, BigTornadoProjectile.as:33 =200, BigEarthquakeProjectile.as:68 =50). REFUTED ON: 'the hit test compares x-distance only' and 'a band +/-N px wide with unbounded y'. The very line the finding quotes ends with '&& enemy.checkHitObject(...)', and that function is NPC.as:323-341, which loops the MCS part list and requires 'mc.hitTestObject(thing)' -- a full 2D bounding-box overlap. The x-band is a broad-phase gate; the narrow phase is 2D. The lane_impact conclusion ('a circular-radius implementation would let an airborne or elevated target dodge an ultimate that in the original always connects') is therefore backwards: the original does NOT always connect vertically. The cite does not say what the claim says it says.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/NPC.as:323-341 (mc.hitTestObject(thing) per part) vs NPCManager.as:1422-1449"
+    },
+    {
+      "claim_id": "rebirth/entry-is-scroll-of-rebirth-item-2202",
+      "refuted": false,
+      "reason": "Every element opened and confirmed. itemdata.xml:2311-2325 is item 2202: <type>10</type>, <name>4154</name>, <baseprice>1000</baseprice>, <desc>4155</desc>, <modifier><id>25</id></modifier>, <modifier><id>12</id><value>5</value></modifier>. strings.json['4154']='Scroll of Rebirth', ['4155']='New Game +\\nProgress on to the next Dan Rank and specialize in an element. \\nLevel 80 required.' -- both verbatim. InventoryUI.as:912 is the '> levelCap || didRebirth -> reportHack(\"multiple rebirth\")' guard and :917 is 'if(StatsManager.getLevel() == StatsManager.levelCap)' -> UIMODE_REBIRTH; the web twin §1t5957s0§.as:1261-1276 mirrors it. levelCap: §1t1523s0§.as:362 'public static const §1t9470s0§:int = 80;'. The 'dead data' sub-claim also holds: every branch of the modid==25 block returns (912-916, 917-922, 923-924), so the modifier loop never reaches the id-12 entry, in both builds.",
+      "own_cite": "reference/extracted/itemdata.xml:2311-2325 + reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:911-924 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:362"
+    },
+    {
+      "claim_id": "rebirth/gear-affixes-do-not-unlock",
+      "refuted": false,
+      "reason": "Traced the whole path myself. StatsManager.as:226-232 fixes STAT_FIREATK=28, STAT_WINDATK=29, STAT_WATERATK=30, STAT_EARTHATK=31. checkCondition at :4216 routes 'else if(id >= 28 && id <= 31) { output = getStat(id); }' at :4229-4231 -- no findBonusStat. getStat -> getStatType(:2926-2930) 'if(id < 50) return PLAYERSTAT' -> :3937-3952 'case PLAYERSTAT: … return getPlayerStats(id);'. No bonus term anywhere on that path. Contrast :1835 initAttackStats, which passes 'getPlayerStats(STAT_FIREATK) + findBonusStat(STAT_FIREATK)' explicitly. Desktop twin §1t1523s0§.as:4906 carries the same 'else if(param1 >= 28 && param1 <= 31)' branch. One-way link confirmed.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:4229-4231 vs :1835, via :2926-2930 and :3937-3952"
+    },
+    {
+      "claim_id": "rebirth/gold-is-premium-hgold",
+      "refuted": false,
+      "reason": "All five cites resolve exactly. StatsManager.as:192 'internal static var STAT_GOLD:int = 11;', :194 'internal static var STAT_HGOLD:int = 12;', :705 'setPlayerStats(STAT_GOLD,100);', :706 'setPlayerStats(STAT_HGOLD,0);', :2203 'changeStat(STAT_HGOLD,20);' and :2207 'changeStat(STAT_HGOLD,5);' inside the rebirth routine. Web §1t1523s0§.as:228 'internal static const §1t9413s0§:int = 12;'. strings.json['100']='You are out of AP.\\nWould you like to get 10 more AP for 1 Gold?' verbatim. I additionally opened the web rebirth routine and it writes to that same const: §1t1523s0§.as:2646 '§1t9713s0§(§1t9413s0§,100);' and :2651 '§1t9713s0§(§1t9413s0§,25);'. The payout is unambiguously HGOLD=12, not GOLD=11.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:228,:2646,:2651 + reference/decompiled/shs3_android_payload/scripts/StatsManager.as:192,:194,:2203,:2207"
+    },
+    {
+      "claim_id": "rebirth/no-elemental-buff-channel",
+      "refuted": false,
+      "reason": "citelint flagged QUOTE_UNVERIFIED only because the quote is a one-line compression of a declaration block. The cite is exact: StatsManager.as:288 BUFF_XP=0, 290 BUFF_ATTACK, 292 BUFF_DEFENSE, 294 BUFF_SPEED, 296 BUFF_AP, 298 BUFF_DUELTOKENS, 300 BUFF_COINS, 302 BUFF_RARELOOT, 304 BUFF_MUTE, 306 BUFF_FULLMUTE, 308 BUFF_HELL, 310 BUFF_INJURED, 312 BUFF_MODERATOR -- thirteen entries ending exactly at :312, and not one is burn, slow, root, freeze or DoT. The claim is narrowly about the BUFF system and it is true. Its self-verdict PARTIAL is honest. NOTE for the lane: the lane_impact's 'the only remaining place a burn/slow could live is an ad-hoc per-projectile effect' turns out to be RIGHT and demonstrable -- FlashbangProjectile.as:26-27 does exactly that via launchType, see my new finding.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/StatsManager.as:288-312"
+    },
+    {
+      "claim_id": "rebirth/payout-is-the-premium-gold-purse",
+      "refuted": false,
+      "reason": "Held, including the visual half, which I opened rather than took on trust. StatsManager.as:192/:194 give the two ids; :2669-2675 is 'public static function getHeavenlyGold()' adding QueryManagerPIO.getPayVaultCoins() (the IAP link) when usePlayerIO; OverworldHUD.as:1567-1569 is 'updateHGoldText(gold:int)' writing 'this.info.goldtext.text'. I rendered both PNGs: DefineSprite_1671/1.png is a green coin stack captioned 100000 / MONEDAS, DefineSprite_1674/1.png is a gold nugget captioned 100000 / GOLD -- two visibly distinct purses. The +25/+100 numbers are the WEB values and are not in this finding's own cite chain, but I verified them independently at §1t1523s0§.as:2646/:2651, so the claim is true as written (android is +5/+20 at StatsManager.as:2203/:2207). Flagged, not refuted: 'MONEDAS = STAT_GOLD' is an inference from the sprite pair rather than a code cite.",
+      "own_cite": "reference/extracted/sprites/DefineSprite_1671/1.png and DefineSprite_1674/1.png (opened and viewed) + reference/decompiled/shs3_android_payload/scripts/OverworldHUD.as:1567-1569"
+    },
+    {
+      "claim_id": "rebirth/romaji-dan-ladder-is-cross-build-not-desktop-only",
+      "refuted": false,
+      "reason": "Verified on both sides at the exact line numbers cited. shs3_android/scripts/PlayerPanel.as:388 'dantext = \"(nidan)\";', :406 '(hachidan) '+getString(466), :409 '(kyudan) '+getString(467), :412 '(judan) '+getString(467), :415 default '(judan) '+467. Web §1t408s0§.as:538 '(nidan)', :556 '(hachidan) '+465-family 466, :559 '(kyudan) '+467, :562 '(judan) '+467, :565 default. Identical switch, identical string ids, identical romaji. I also diffed shs3_android/scripts/PlayerPanel.as against shs3_android_payload/scripts/PlayerPanel.as -- byte-identical, so the cite choice is safe. §1t408s0§ being the web PlayerPanel is confirmed by the structural match.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t408s0§.as:534-565 vs reference/decompiled/shs3_android/scripts/PlayerPanel.as:384-415 (own diff: the two android copies are identical)"
+    },
+    {
+      "claim_id": "rebirth/shogo-threshold-off-by-one",
+      "refuted": false,
+      "reason": "Parsed 114_Mobile_AchievementData.bin myself (61 <achievement> blocks). The four stat-25 rows are id 48 'Rebirth' val 1 desc 'Reach Dan 2.', id 49 'Renshi' val 2 desc 'Reach Dan 3.', id 50 'Kyoshi' val 5 desc 'Reach Dan 6.', id 51 'Ultimate Warrior' val 9 desc 'Reach Dan 10.' -- verbatim as quoted. Against InventoryUI.as:2285/:2288 case 3 -> getString(465)='Renshi' and case 6 -> 466='Kyoshi'. So the achievement fires at STAT_DAN 2/5 and the nameplate suffix appears from STAT_DAN 3/6: a genuine one-Dan disagreement between two shipped tables, stated with no overreach. Self-verdict PARTIAL is honest. Also verified the desktop side has the same nameplate rule (§1t5957s0§.as:3073), so only the achievement table is android-only.",
+      "own_cite": "reference/extracted/android/114_Mobile_AchievementData.bin (own parse: achievements 48-51, stat 25, vals 1/2/5/9) + InventoryUI.as:2285-2316"
+    },
+    {
+      "claim_id": "rebirth/statue-rng-only-later-heaven",
+      "refuted": false,
+      "reason": "Opened Obj_DragonDanceStatue.as. :37 'this.num = int(props);', :38 'if(this.num >= 8)', :40 'this.num -= 8;', :41 'this.earlierHeaven = false;', :42 'rng = new RNG(StageManager.getCurrentNode());', :43 'dice = rng.rand(5);' then five hard-coded orderings 1246/4216/1642/1426/6241 + this.num at :46-62; :65 'else', :67 'sequence = props;'. Two modes, exactly as claimed, and the RNG branch is gated on props>=8. One blemish I do NOT refute on: the quote labels the 'if(this.num >= 8)' line as 37 when it is 38 (37 is 'this.num = int(props);') -- the cited RANGE :37-42 still contains everything quoted, and :65-68 is verbatim. BONUS: I found the web twin (§1t8703s0§.as:37 / :65) carries the identical two-mode logic, so this holds for v0.717 too.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/Obj_DragonDanceStatue.as:37-68"
+    },
+    {
+      "claim_id": "rebirth/statue-sequence-v0717-diverges",
+      "refuted": true,
+      "severity": "fatal",
+      "reason": "MIS-CITED CLASS, and the divergence does not exist. The class-identification argument is invalid: getAPUse()->2 and abs(x-param1.x)<100 are shared by the whole Obj_ family -- Obj_DragonDanceStatue.as has them too (:224 and :240). The real discriminator is the method the finding actually quotes. reference/decompiled/shs3_payload/scripts/§1t8702s0§.as:150 is 'internal function generateSequence() : String' -- an UNOBFUSCATED name -- and it matches reference/decompiled/shs3_android_payload/scripts/Obj_DragonDancePath.as:150 line for line: seed 'getCurrentNode() * getCurrentRoom() + 21' (web :155 vs android :155), nodelevel lookup, [0,1,2,3,4,5,6,7], <20 -> three draws, <60 -> 1246-family + rand(8), else -> 1246-family + two draws. So §1t8702s0§ is the web Obj_DragonDancePath, NOT the statue. The web statue is §1t8703s0§.as -- I found it by grepping the unique '\"4216\" + this.num' pattern -- and at :37 'if(this.num >= 8)' / :65 'else' / :65 '§1t5518s0§ = param1;' it is IDENTICAL to android Obj_DragonDanceStatue. Consequence: (a) the three regimes belong to the dance PATH object, not the Kanji statue; (b) they are present verbatim in the ANDROID build, so there is no v0.717 divergence to report. Both the object and the build-split are wrong.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/Obj_DragonDancePath.as:150-224 (identical to §1t8702s0§.as:150-229) and reference/decompiled/shs3_payload/scripts/§1t8703s0§.as:37-66 (the real web statue)"
+    },
+    {
+      "claim_id": "rebirth/statue-two-sequence-modes",
+      "refuted": false,
+      "reason": "Same artifact as rebirth/statue-rng-only-later-heaven and it holds. Obj_DragonDanceStatue.as:37-43 sets up the props>=8 Later-Heaven branch with 'rng = new RNG(StageManager.getCurrentNode()); dice = rng.rand(5);' selecting one of five 1246-family orderings with this.num appended; :65-68 is the Earlier-Heaven 'else { sequence = props; }'. The quote is verbatim including the trailing brace. Cite :65-66 is two lines short of the quoted block (which runs to :68) -- noted, not refuted, since the range resolves and contains the branch. STRENGTHENED: the web twin §1t8703s0§.as:37-66 carries both modes identically, so the 'implement both branches' instruction is build-agnostic, better than the finding claims.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/Obj_DragonDanceStatue.as:37-68 + reference/decompiled/shs3_payload/scripts/§1t8703s0§.as:37-66"
+    },
+    {
+      "claim_id": "rebirth/status-not-on-damage-packet",
+      "refuted": true,
+      "severity": "material",
+      "reason": "The cite resolves but does not say what the claim says it says, and the same file refutes it. Damage.as:50 is verbatim the eight-parameter constructor as quoted. But parameter 3 IS the status channel: Damage.as:98-100 'isStun() { return this.launchType == STUN; }', :103-105 isDeathTouch, plus isKnockDown/isFly/isFlyAway/isKneeGroin/isBackThrow, and :137-140 'setStunTime(num:int, stunPosX:int = 0)' is a DURATION setter on the same object. Damage.as:18 'public static var STUN:int = 6;'. Decisive counter-example in the shipped data: FlashbangProjectile.as:26-27 'damageObj = new Damage(0,0,Damage.STUN); damageObj.setStunTime(24 * 2);' -- a status with a 48-frame duration riding the packet, for skill 1052 whose tooltip is 'Stuns and blinds nearby enemies.' So 'none of them is a status, buff, duration or DoT field' is false, and the lane_impact's 'a status would have to be applied by the projectile or inside NPCManager.checkHitObject' is backwards: the projectile applies it ON the damage packet. What would survive is only the much weaker 'no ELEMENT-typed status field' -- which is not what was written.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/Damage.as:18,:98-100,:137-140 + FlashbangProjectile.as:26-27"
+    },
+    {
+      "claim_id": "rebirth/string-455-never-displayed",
+      "refuted": false,
+      "reason": "citelint's QUOTE_UNVERIFIED is a formatting artifact -- the quote carries 'InventoryUI.as:2276  ' line prefixes. Stripped, it is verbatim: :2276 'case 0:', :2277 'this.danfield.text = \"\";', :2278 'break;'. I ran the grep myself over reference/decompiled/shs3_android_payload/scripts/: getString(455) returns zero hits, while getString(456) returns InventoryUI.as:2280. strings.json['455']='(初段)'. Shipped-but-dead confirmed.",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2276-2278 (own grep: getString(455) = 0 hits, getString(456) = 1 hit at :2280)"
+    },
+    {
+      "claim_id": "rebirth/unlock-gate-ignores-gear-affixes",
+      "refuted": false,
+      "reason": "Full chain opened. XMLSkill.as:321 'return StatsManager.getStat(this.id) == 0 && … StatsManager.checkConditions(this.req) && …' inside canLearn(), and XMLSkill.as:133 'if(!StatsManager.checkConditions(this.req))'. checkConditions at StatsManager.as:4152 iterates conditionList.has and calls checkCondition. checkCondition at :4216, branch :4229-4231 'else if(id >= 28 && id <= 31) { output = getStat(id); }' -- base stat only. :1835 initAttackStats adds findBonusStat explicitly for the same four stats, so the asymmetry is deliberate. Every cited line number is exact. The 10/30/60 gate values reproduce from skilldata.xml (qty 10 / 30 / 60 on ids 28-31).",
+      "own_cite": "reference/decompiled/shs3_android_payload/scripts/XMLSkill.as:133,:321 -> StatsManager.as:4152-4183 -> :4216,:4229-4231 vs :1835"
+    },
+    {
+      "claim_id": "rebirth/v717-stance-multipliers",
+      "refuted": false,
+      "reason": "Opened §1t99s0§.as and the whole thing reproduces. Symbol binding: :183 is the 15-param init, :191 'this.§1t4419s0§ = param7;', :194 'this.§1t4420s0§ = param10;', :195 'this.slashUsage = param11;' (unobfuscated, as claimed), :196-198 params 12/13/14 -> §1t4421s0§/§1t4422s0§/§1t4423s0§, and the android twin MCSPlayer.as:182 names them baseReload / baseSlashLength / slashUsage / lightMastery / balancedMastery / heavyMastery in that exact order. setStance is :3083-3155: :3094 Light *1.4, :3105 Balanced *(1 + 0.2*§1t4422s0§*0.1), :3116 Heavy *(0.5 + 0.4*§1t4423s0§*0.1) with the <100 floor at :3117-3119, :3131 Reversed *1.4, :3142 Dual *1.0. The quote is verbatim. Mastery 0-10 domain and Heavy 0.5->0.9 follow arithmetically. I also verified the lane_impact's base formula independently: §1t1523s0§.as:2344-2347 is 'int(120 + Math.floor((90 + STAT_DAN*5) * param1 / (20 + param1)))'. Flagged, not refuted: 294/357 px are ASYMPTOTIC ceilings as speed -> infinity, not values 'at Dan 0' / 'at Dan 9' for a given SPD.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:183-198,:3083-3155 + §1t1523s0§.as:2344-2347 + android MCSPlayer.as:182"
+    },
+    {
+      "claim_id": "s26c/survival-mode-id-sets-are-IDENTICAL-across-builds",
+      "refuted": false,
+      "reason": "I re-ran the parse from scratch on both blobs and every number reproduces exactly. Distinct <id> tokens (splitting on '|'): web 62, android 62; web-only set EMPTY, android-only set EMPTY; ranges {400-429, 435-451, 453-456, 700-710} in both. 443 present in BOTH files. 87 <enemy> rows each; normalised comparison gives differing indices [73..86] inclusive -- 14 rows, and rows 85-86 are indeed '451|456|451|456|443' at qty 6, the pair the earlier enumeration dropped. The web rows append '|449|454|443'-style alternation to the android pools; the roster is unchanged. This is the cleanest reproduction in the packet.",
+      "own_cite": "reference/extracted/bindata/119_1t4646s0.bin vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (own parse: 62/62 ids, empty set differences, differing rows 73-86)"
+    },
+    {
+      "claim_id": "skilldata/skill-1077-missing-from-extract",
+      "refuted": false,
+      "reason": "Both halves verified. §1t120s0§.as:114 'public static var §1t10176s0§:int = 1077;'. The cast branch: :344 'case §1t10176s0§:', :347 'if(§1t1523s0§.§1t9714s0§(2501) < 8)', :351 '§1t1523s0§.§1t9713s0§(2501,-8);' -- verbatim. I enumerated every <skill><id> in skilldata.xml: 75 blocks, ids run 1000-1022, 1024-1073, then 1500 and 1501. No 1077 (and no 1023, 1074, 1075, 1076). The caveat is real and correctly stated as 'either short a row or dead code'.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t120s0§.as:114,:344-351 + own enumeration of all 75 skill ids in reference/extracted/skilldata.xml"
+    },
+    {
+      "claim_id": "skills-meters/baseReload-is-a-dead-stat",
+      "refuted": false,
+      "reason": "I ran the greps myself in both bundles. Web: 'grep -rn §1t4419s0§ reference/decompiled/shs3_payload/scripts/' returns EXACTLY three lines -- §1t99s0§.as:103 'internal var §1t4419s0§:int = 48;', §1t99s0§.as:191 'this.§1t4419s0§ = param7;', §1t4904s0§.as:49 (copy constructor). No read site. Android: 'grep -rn baseReload' returns only the declaration (MCSPlayer.as:105), the initPlayer parameter and assignment (:182, :190), EnemyClone.as:49's copy, and the local 'var baseReload:int = 48 + xml.speed * 6' computations in EnemyPlayer/EnemyElite/FriendlyElite. Never read. Fill is flat: web §1t99s0§.as:1203 'if(this.§1t4414s0§ < this.§1t4415s0§)' / :1205 '++this.§1t4414s0§;' and android MCSPlayer.as:1158/:1160 the same. android StatsManager.as:1841 'return 48 + (getPlayerStats(STAT_SPEED) + findBonusStat(STAT_SPEED)) * 6;' verbatim. Dead-stat claim holds in BOTH bundles as stated.",
+      "own_cite": "own grep over reference/decompiled/shs3_payload/scripts/ (3 hits for §1t4419s0§) and reference/decompiled/shs3_android_payload/scripts/ (no read site for baseReload); §1t99s0§.as:103,:191,:1203-1205"
+    },
+    {
+      "claim_id": "skills-meters/basereload-is-48-plus-spd6",
+      "refuted": false,
+      "reason": "Exact on every line. §1t1523s0§.as:2274 'internal static function §1t9588s0§() : int', :2276 'return 48 + (§1t7356s0§(§1t9410s0§) + §1t7358s0§(§1t9410s0§)) * 6;' and §1t9410s0§ is declared at :220 as 8 = STAT_SPEED. §1t99s0§.as:183 is the 15-param init, :191 assigns param7. android StatsManager.as:1839-1841 is getBaseReload() with the identical body; MCSPlayer.as:182 is the fully-named initPlayer signature that pins param7 = baseReload and param10 = baseSlashLength. The 'three distinct reload-family numbers' framing is right: baseReload (dead), maxreload (§1t99s0§.as:249 = 8*24 = 192), and slashUsage with its own 48 floor at §1t1523s0§.as:2353-2355.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:220,:2274-2276 + §1t99s0§.as:183,:191,:249 + android MCSPlayer.as:182"
+    },
+    {
+      "claim_id": "skills-meters/blank-cells-are-passives-plus-two-npc-rows",
+      "refuted": false,
+      "reason": "citelint could not locate the quote because it is a computed census, so I recomputed it. My own parse of reference/extracted/skilldata.xml: 182 <level> rows, 182 <chi> tags of which 101 are empty, 182 <cooldown> tags of which 84 are empty. Skills carrying at least one empty <cooldown>: 28. Of those, 26 have <passive>1</passive>; the two that do not are ids 1500 and 1501, each with no <displayname> and exactly one level row. Every figure in the quote reproduces to the digit. Short-circuit confirmed at §1t105s0§.as:300-302 'if(this.passive) { return 0; }' inside the cooldown getter declared at :297, and the chi getter at :276-284 has the parallel empty-string guard at :280.",
+      "own_cite": "own parse of reference/extracted/skilldata.xml (chi 101/182 empty, cooldown 84/182 empty, 28 skills = 26 passive + ids 1500/1501) + §1t105s0§.as:297-303"
+    },
+    {
+      "claim_id": "skills-meters/cooldowns-are-not-all-integers",
+      "refuted": false,
+      "reason": "Opened the index and it reads verbatim: 'skilldata/skill/level/cooldown': {'count': 182, 'distinct_values': 14, 'numeric_count': 98, 'numeric_range': [2.0, 70.0], 'sample_values': ['10','15','2','20','3','3.5','30','4','5','6','60','70']}. I then re-derived the domain straight from the XML rather than trusting the index: the 14 distinct non-empty values are 2, 3, 3.5, 4, 5, 6, 8, 9, 10, 15, 20, 30, 60, 70 -- exactly one non-integer, 3.5. The int-truncation caveat also checks out: §1t105s0§.as:297 declares the cooldown getter ': int'.",
+      "own_cite": "docs/gauntlet/L0/index/skilldata.json + own re-derivation from reference/extracted/skilldata.xml (14 distinct values, 3.5 the only float)"
+    },
+    {
+      "claim_id": "skills-meters/damage-roll-still-uses-rng",
+      "refuted": false,
+      "reason": "Both lines verbatim. §1t99s0§.as:3258 'var _loc1_:int = this.minDamage + Math.random() * this.damageRange;' inside the stance-multiplied damage function §1t4475s0§ (:3255), and :3281 'return this.minDamage + Math.random() * this.damageRange;' in the raw getter §1t4476s0§ (:3279). The crit half is deterministic as the survey said -- :3272 'if(this.§1t4414s0§ == this.§1t4415s0§)' -> :3274 '_loc2_ * 1.3 + this.§1t1243s0§' -- so 'only the crit trigger is deterministic' is precisely right, and 'no roll, no seed, no variance' would indeed be wrong.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3255-3281"
+    },
+    {
+      "claim_id": "skills-meters/dual-reversed-are-swapped",
+      "refuted": false,
+      "reason": "Confirmed three ways inside the web bundle exactly as the finding says. §1t1544s0§.as:824 'internal static var §1t11073s0§:String = \"dual_stance\";' and :866 '§1t11115s0§:String = \"reversed_stance\";' -- verbatim. §1t99s0§.as:3130 'case §1t12224s0§:' -> :3131 reach *1.4 -> :3134 plays §1t11115s0§ (reversed). :3141 'case §1t12223s0§:' -> :3142 reach *1.0 -> :3145 floor 100 -> :3149 plays §1t11073s0§ (dual). Stance ints at :33/:35 are 3 and 4, matching android MCSPlayer.as:33 DUAL_STANCE=3 / :35 REVERSED_STANCE=4, and android :3067 gives REVERSED baseSlashLength*1.5 while :3078 gives DUAL the bare base with the 100 floor. The meter-cost grouping at :3299-3311 is also exactly as stated: Light -> slashUsage/2; Balanced + §1t12224s0§(Reversed) -> slashUsage; Heavy + §1t12223s0§(Dual) -> slashUsage*1.5.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1544s0§.as:824,:866 + §1t99s0§.as:3130-3149,:3299-3311"
+    },
+    {
+      "claim_id": "skills-meters/dual-reversed-swapped",
+      "refuted": false,
+      "reason": "Same evidence, independently opened, and the duplicate is consistent with its twin. §1t99s0§.as:27-35 declares the five stance consts 0..4 in the same order and with the same values as android MCSPlayer.as:27-35 (LIGHT 0, BALANCED 1, HEAVY 2, DUAL 3, REVERSED 4), so the Android names are a safe decoder ring here. android :3066-3067 REVERSED -> baseSlashLength*1.5; :3077-3081 DUAL -> baseSlashLength floored at 100. Web :3130-3131 case 4 -> *1.4; :3141-3145 case 3 -> *1.0 floored 100. The damage claim also holds: §1t99s0§.as:3267-3270 groups HEAVY, DUAL and REVERSED all at *1.4. The slash-cost inversion at :3305/:3309 is verbatim.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:27-35,:3130-3145,:3267-3270,:3299-3311 vs android MCSPlayer.as:27-35,:3066-3081"
+    },
+    {
+      "claim_id": "skills-meters/elemental-per-level-numbers-are-blank",
+      "refuted": false,
+      "reason": "citelint could not locate a computed quote, so I recomputed it per skill. Of the 24 elemental skills, exactly four carry per-level numbers, and they are the four the quote names: 1013 Fire Breath (cat 7), 1035 Water Stomp (cat 8), 1034 Wind Combo (cat 9), 1033 Ground Punch (cat 10) -- each 5 levels, descs resolving to 'X Damage: 80/90/100/110/120% X ATK' verbatim. The other 20 (8 traps+kunai, 8 Dragon Dance Steps, 4 AoE ultimates) each have exactly ONE <level> whose <desc> is empty. The {10,10,10,30,30,60} gate set also reproduces. Self-verdict PARTIAL is honest. Flagged, not refuted: the lane_impact's '20 of 24 effect magnitudes still live in projectile classes' overstates by four -- the ultimates 1070-1073 carry their magnitude in the SKILL-level desc ('Area of Effect Fire Attack / Fire Damage: 150% Fire ATK'), just not in a level row. The claim TEXT is about level rows and is exactly right.",
+      "own_cite": "own per-skill parse of reference/extracted/skilldata.xml ids 1013/1025-1035/1056-1063/1070-1073 joined to docs/gauntlet/L0/index/strings.json"
+    },
+    {
+      "claim_id": "skills-meters/full-focus-negates-a-hit",
+      "refuted": false,
+      "reason": "The mechanic is real and the cite is verbatim. §1t99s0§.as:3383 is the full conditional as quoted, :3385 '§1t3246s0§ = 12;', :3386 plays \"Snd_jump\", :3387 'return true;' -- inside the take-damage override §1t3274s0§ declared at :3328. Skill consts at §1t120s0§.as:108/:110/:112 = 1074/1075/1076. The PARTIAL hedge is correct: I enumerated skilldata.xml and 1074/1075/1076 are genuinely absent. CORRECTION the lane must carry: the lane_impact's parenthetical '(real ids stop at 1068, then 1500/1501)' is FALSE -- ids 1069 Chi Charge, 1070 Inferno, 1071 Tsunami, 1072 Tornado and 1073 Earthquake all exist. The ids stop at 1073. That is an error in the reasoning, not in the claim sentence, so the claim survives with that parenthetical struck.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3328,:3383-3388 + §1t120s0§.as:108-112 + own id enumeration of reference/extracted/skilldata.xml"
+    },
+    {
+      "claim_id": "skills-meters/full-meter-buys-evasion-web-only",
+      "refuted": false,
+      "reason": "Verbatim at :3383-3388, inside the override declared at :3328, and duplicated at :3707-3711 exactly as claimed; I also found the same branch twice more in the clone class at §1t4909s0§.as:74 and :311. The 'web-only' half I checked myself: grep for 'reload == this.maxreload' across reference/decompiled/shs3_android_payload/scripts/ returns only MCSPlayer.as:3215 and :3242, both inside damage getters (crit paths), and neither is a damage-negation branch in the take-damage path. So no Android equivalent. The 'five consequences' framing is consistent with what I read (crit at :3272-3274 is x1.3 in web).",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3383-3388,:3707-3711 + §1t4909s0§.as:74,:311; own grep of android MCSPlayer.as (only :3215/:3242, both crit)"
+    },
+    {
+      "claim_id": "skills-meters/heavy-defense-penalty-is-web-true",
+      "refuted": false,
+      "reason": "citelint's QUOTE_UNVERIFIED is the '3286:' line-prefix formatting again. Stripped, it is exact: §1t99s0§.as:3284 'internal function §1t4477s0§() : int', :3286 'if(this.stance == §1t12222s0§)', :3288 'return defense * 0.8;', :3290 'return defense;'. §1t12222s0§ is declared 2 at :31, i.e. HEAVY. The lane_impact's sharpening is also correct and checkable: the branch tests equality with stance 2 only, so Dual (3) and Reversed (4) keep full defence even though :3267-3270 gives all three the same x1.4 damage. The ledger's previously-uncited 'Heavy def x0.8' now has a web cite.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:31,:3284-3290"
+    },
+    {
+      "claim_id": "skills-meters/kunai-ammo-is-web-and-tiered",
+      "refuted": false,
+      "reason": "Every line exact. Web §1t120s0§.as:266 'if(§1t1523s0§.§1t9714s0§(2501) == 0)' / :270 change(2501,-1); :319 '< 4' / :323 '-4'; :347 '< 8' / :351 '-8'. Hotbar §1t5184s0§.as:113 'this.§1t6959s0§.text = String(Math.floor(§1t1523s0§.§1t9714s0§(2501) / 4));' with the raw-ammo alternative at :109. Android SkillManager.as:254/:259 (==0, -1), :308/:313 (<4, -4), :474/:479 (==0, -1) -- and I grepped every occurrence of 2501 in that file: exactly those six lines, so there is genuinely NO 8-cost case in Android. The claim's strongest assertion is the one that verifies hardest.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t120s0§.as:266-270,:319-323,:347-351 + §1t5184s0§.as:109-113; own grep of android SkillManager.as (2501 appears only at 254/259/308/313/474/479)"
+    },
+    {
+      "claim_id": "skills-meters/mastery-scale-differs-between-builds",
+      "refuted": false,
+      "reason": "Opened both files at the cited lines. Web §1t99s0§.as:3094 '* 1.4', :3105 '* (1 + 0.2 * this.§1t4422s0§ * 0.1)', :3116 '* (0.5 + 0.4 * this.§1t4423s0§ * 0.1)' with the 100 clamp at :3117-3119. Android shs3_android/scripts/MCSPlayer.as:3030 '* 1.5', :3041 '* (1 + 0.5 * this.balancedMastery * 0.01)', :3052 '* (0.5 + 0.5 * this.heavyMastery * 0.01)'. Verbatim on all six. The 0.1 vs 0.01 scale split and the Light 1.4 vs 1.5 difference are both real. The maxreload half of the lane_impact also verifies: web §1t99s0§.as:249 '8 * 24' vs android MCSPlayer.as:239 '5 * 24'; and the stance gate at android MCSPlayer.as:2977 'if(this.reload < this.maxreload / 6)'. The standing rule it proposes is sound.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3094,:3105,:3116-3119 vs reference/decompiled/shs3_android/scripts/MCSPlayer.as:3030,:3041,:3052"
+    },
+    {
+      "claim_id": "skills-meters/only-83-level-rows-carry-a-number",
+      "refuted": false,
+      "reason": "Recomputed from the XML and strings table myself: 182 <level> rows, 47 with an empty <desc>, 135 resolving to a string, 83 of those containing a digit, 52 digit-free. Exactly the claimed split. The mastery rows check out too: strings 7000/7001/7002 are 'Increased damage', 'Increased damage and slash range', 'Increased slash range', each repeated for all 10 levels of its stance-mastery skill -- 30 rows, no digits, so the 0.9/1.2/1.4 and reach ceilings genuinely have no card-text corroboration and rest solely on §1t99s0§.as. 7067 'Reduced cooldown' and 7039 'Increases your chances of harvesting rare crops' are verbatim.",
+      "own_cite": "own parse of reference/extracted/skilldata.xml level <desc> joined to docs/gauntlet/L0/index/strings.json (182 / 47 blank / 135 resolved / 83 digit / 52 digit-free)"
+    },
+    {
+      "claim_id": "skills-meters/only-83-numeric-level-rows",
+      "refuted": false,
+      "reason": "Duplicate of the finding above and it reproduces identically under my own parse: 182 levels, 47 blank, 135 resolved, 83 containing a digit, 52 digit-free. The '7000 x10 / 7001 x10 / 7002 x10' breakdown is right -- the three stance-mastery skills have ten levels each, all pointing at the same qualitative string. Text is accurate as written.",
+      "own_cite": "own parse of reference/extracted/skilldata.xml + docs/gauntlet/L0/index/strings.json[\"7000\",\"7001\",\"7002\",\"7067\"]"
+    },
+    {
+      "claim_id": "skills-meters/roll-cooldown-is-a-float",
+      "refuted": false,
+      "reason": "Line-exact. reference/extracted/skilldata.xml:255 '<id>1004</id>', :264 '<cooldown>4</cooldown>', :271 '<cooldown>3.5</cooldown>', :278 '<cooldown>3</cooldown>' -- three level blocks at :260-266, :267-273, :274-280. Skill 1004 is Roll: its level descs are 7004/7005/7006, which resolve to the 'chance to dodge enemy attacks when rolling' strings. So level 2 really is 3.5 s and an int config field would truncate it.",
+      "own_cite": "reference/extracted/skilldata.xml:255-280"
+    },
+    {
+      "claim_id": "skills-meters/roll-cooldown-is-fractional",
+      "refuted": false,
+      "reason": "Same three lines, verified directly: :264 '4', :271 '3.5', :278 '3' inside skill 1004. Cross-check against docs/gauntlet/L0/index/skilldata.json holds too -- distinct_values 14 with '3.5' among the sample values, and my own re-derivation from the XML found 3.5 to be the only non-integer in the column. The 3.5 x 24 = 84 frames note is arithmetically sound.",
+      "own_cite": "reference/extracted/skilldata.xml:264,:271,:278 + docs/gauntlet/L0/index/skilldata.json"
+    },
+    {
+      "claim_id": "skills-meters/roll-dodge-is-75-85-95-in-web",
+      "refuted": false,
+      "reason": "The strongest three-way contradiction in the packet, and all three sources check out. Web §1t99s0§.as:3361 'if(actionState == §1t11161s0§)', :3363 '_loc15_ = this.§1t4491s0§(§1t120s0§.§1t10127s0§);' with §1t10127s0§ = 1004 at §1t120s0§.as:16, then :3366 '= 75', :3370 '= 85', :3374 '= 95', rolled at :3376 'if(int(Math.random() * 100) < _loc16_)'. Android MCSPlayer.as:3304 '= 80', :3308 '= 85', :3312 '= 90'. strings.json 7004/7005/7006 = '60% / 80% / 100% chance to dodge enemy attacks when rolling'. Three shipped sources, three different ladders. The board-wide rule it proposes -- the Android string table is not web-true either -- is earned. Minor, not refuted: Android also has an unreachable level-4 branch at :3314-3316 ('= 95') that skilldata.xml's 3-level Roll can never reach; the finding's '80/85/90' is right for the levels that exist.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3361-3381 + §1t120s0§.as:16 + android MCSPlayer.as:3302-3316 + docs/gauntlet/L0/index/strings.json[\"7004\"-\"7006\"]"
+    },
+    {
+      "claim_id": "skills-meters/shunpo-damage-ignores-stance-and-crit-in-web",
+      "refuted": false,
+      "reason": "The divergence is real and cleanly cited. Web §1t99s0§.as:1811 passes 'this.§1t4476s0§() * this.§1t4492s0§() / 2' into the projectile, and §1t4476s0§ is :3279-3282 'return this.minDamage + Math.random() * this.damageRange;' -- raw, no stance switch, no crit test. Android MCSPlayer.as:1752 passes 'this.getDamage() * this.getChargingTime() / 2', and getDamage() is :3198-3223, which applies the per-stance multiplier AND the reload==maxreload crit (x1.2 / x1.5 + STAT_CRITICALDMG); its raw sibling getBaseDamage() at :3226 is the one Android did NOT use here. The projectile details also hold: §1t8380s0§.as:19 'ttl = 3;', :25 builds the Damage tagged §1t99s0§.§1t12220s0§ (LIGHT_STANCE), :42 calls the hit test with radius 250.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1811,:3279-3282 + §1t8380s0§.as:19,:25,:42 vs android MCSPlayer.as:1752,:3198-3228"
+    },
+    {
+      "claim_id": "skills-meters/skill-slot-base-is-web-sourced",
+      "refuted": false,
+      "reason": "citelint's QUOTE_UNVERIFIED is the line-prefix formatting once more. Verbatim: web §1t1523s0§.as:2740 'public static function §1t9602s0§() : int' / :2742 'return 3 + §1t9714s0§(1008);'; android StatsManager.as:2293 'public static function getSkillSlotCount() : int' / :2295 'return 3 + getStat(1008);'. Identical constant in both builds, so no Android caveat. I also resolved skill 1008 'Skill Slots+' level descs through strings.json and they read '4 skill slots', '5 skill slots', '6 skill slots', '7 skill slots', '8 skill slots' -- five levels, 3-base to 8 fully invested, exactly as claimed.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2740-2742 + android StatsManager.as:2293-2295 + own resolve of skilldata.xml skill 1008 levels"
+    },
+    {
+      "claim_id": "skills-meters/spd-dead-in-web-meter",
+      "refuted": false,
+      "reason": "Verified by my own exhaustive grep, which is what this claim rests on. §1t1523s0§.as:2276 'return 48 + (§1t7356s0§(§1t9410s0§) + §1t7358s0§(§1t9410s0§)) * 6;' (§1t9410s0§ = 8 = STAT_SPEED at :220). §1t99s0§.as:103 declares §1t4419s0§ = 48, :191 assigns param7, and 'grep -rn §1t4419s0§ reference/decompiled/shs3_payload/scripts/' returns ONLY those two plus §1t4904s0§.as:49 -- no read. The rest of the sentence checks too: fill is '++' at :1205 against a constant 8*24 ceiling at :249, and SPD's surviving uses are the cooldown modifier (§1t1523s0§.as:2289-2295, capped at 600) and the reach base (:2344-2347).",
+      "own_cite": "own grep of reference/decompiled/shs3_payload/scripts/ for §1t4419s0§ (3 hits, zero reads) + §1t1523s0§.as:220,:2276,:2289-2295"
+    },
+    {
+      "claim_id": "skills-meters/spd-does-not-touch-the-meter-in-web",
+      "refuted": false,
+      "reason": "Same evidence, independently reproduced. §1t1523s0§.as:2274-2276 is the producer; §1t99s0§.as:103/:191 store it; §1t99s0§.as:1203-1205 is 'if(this.§1t4414s0§ < this.§1t4415s0§) { ++this.§1t4414s0§;' -- a flat +1 per tick with no stat term. My grep confirms the parenthetical exactly: only those three sites plus the copy constructor §1t4904s0§.as:49. Ceiling is constant at 192 (§1t99s0§.as:249 '8 * 24', and the clone copy §1t4904s0§.as:77 the same). The 'closes the fill third of blocker 3' framing is warranted.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:103,:191,:249,:1203-1205 + §1t4904s0§.as:49,:77"
+    },
+    {
+      "claim_id": "skills-meters/spd-inputs-are-buffable",
+      "refuted": false,
+      "reason": "Both paths verbatim. §1t1523s0§.as:2279 '§1t9589s0§() : Number', :2281 'var _loc1_:int = §1t7356s0§(§1t9410s0§) + §1t7358s0§(§1t9410s0§);', :2282 'if(§1t9725s0§(§1t9455s0§))', :2284 '_loc1_ *= 1.5;', :2286 'return §1t9590s0§(_loc1_);'. Reach path §1t1523s0§.as:2334-2341 is the same shape, ending 'return §1t9593s0§(_loc1_);'. I resolved both symbols: :220 §1t9410s0§ = 8 (STAT_SPEED, matching android STAT_SPEED:int = 8) and :332 §1t9455s0§ = 3 (matching android BUFF_SPEED:int = 3). The 'before the 600 cap' point is right -- §1t9590s0§ at :2289-2295 clamps its argument to 600 AFTER the x1.5. Flagged, not refuted: the claim text writes the obfuscated symbols as bare numbers ('getStat(9410)', 'buff 9455'); the real ids are 8 and 3, and a coder copying the sentence literally would be wrong. The quote block does show the true tokens.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:220,:332,:2279-2286,:2334-2341,:2289-2295"
+    },
+    {
+      "claim_id": "skills-meters/speed-buff-premultiplies-spd",
+      "refuted": false,
+      "reason": "Same two functions, opened directly, and this version's line labels are the more accurate of the pair (:2339 for the reach-path '*= 1.5', which is where it actually sits). The consequence claims check out arithmetically and structurally: §1t9590s0§ at :2291-2295 is 'if(param1 > 600) param1 = 600; return 1 - param1 / 600 * 0.5;', so under a x1.5 buff the cap bites at SPD 400; §1t9593s0§ at :2346-2347 is 'int(120 + Math.floor((90 + STAT_DAN*5) * param1 / (20 + param1)))', so the same inflated term lengthens reach. The else-if chain is real: §1t99s0§.as:211/:215/:219 are 'if / else if / else if' over three buff consts, so exactly one applies.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2279-2287,:2289-2295,:2334-2347 + §1t99s0§.as:209-224"
+    },
+    {
+      "claim_id": "skills-meters/web-kunai-ammo-gate-1-4-8",
+      "refuted": false,
+      "reason": "Duplicate of the kunai finding and equally exact. §1t120s0§.as:266/:270 (==0, -1), :319/:323 (<4, -4), :347/:351 (<8, -8) all verbatim; hotbar §1t5184s0§.as:113 'Math.floor(… / 4)'. Android SkillManager.as:254/:259, :308/:313, :474/:479 -- and my grep of every '2501' in that file returns exactly those six lines, so 'android has only two tiers' is provable rather than merely observed. Note the 8-cost case is skill const §1t10176s0§ = 1077, which itself has no row in skilldata.xml.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t120s0§.as:266-270,:319-323,:344-351 + own grep of android SkillManager.as for 2501"
+    },
+    {
+      "claim_id": "skills-meters/web-maxreload-is-192",
+      "refuted": false,
+      "reason": "citelint's QUOTE_UNVERIFIED is the 'web 249:' prefix formatting. Stripped, all three lines are verbatim: §1t99s0§.as:249 'this.§1t4415s0§ = 8 * 24;', §1t4904s0§.as:77 '§1t4415s0§ = 8 * 24;', android MCSPlayer.as:239 'this.maxreload = 5 * 24;'. 8 x 24 = 192 web, 5 x 24 = 120 android -- the split is real. The derived figures hold: the fill is '++' per tick at §1t99s0§.as:1203-1205, so cold-to-full is 192 ticks; and §1t4415s0§ is the same field the crit test reads at :3272 and the evasion branch at :3383.",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249,:1203-1205,:3272 + §1t4904s0§.as:77 + android MCSPlayer.as:239"
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "s26d/web-statue-is-1t8703s0-and-has-full-parity",
+      "text": "The WEB v0.717 twin of Obj_DragonDanceStatue is reference/decompiled/shs3_payload/scripts/§1t8703s0§.as, and it carries the SAME two sequence modes as android: props>=8 subtracts 8, clears earlierHeaven and picks one of five hard-coded orderings (1246/4216/1642/1426/6241) seeded on the current node with the node digit appended; otherwise the sequence is taken verbatim from the room prop. The Kanji-statue rule is therefore build-agnostic, not android-only.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t8703s0§.as:36-66 vs reference/decompiled/shs3_android_payload/scripts/Obj_DragonDanceStatue.as:37-68",
+      "quote": "§1t8703s0§.as:36  this.num = int(param1);\n§1t8703s0§.as:37  if(this.num >= 8)\n§1t8703s0§.as:39     this.num -= 8;\n§1t8703s0§.as:41     _loc4_ = §1t58s0§.random(5,§1t1525s0§.§1t9935s0§());\n§1t8703s0§.as:48        §1t5518s0§ = \"4216\" + this.num;\n§1t8703s0§.as:63  else\n§1t8703s0§.as:65     §1t5518s0§ = param1;",
+      "lane_impact": "rebirth-elements blocker 4, statue half: the two-mode statue rule can be promoted from android-caveated to build-agnostic CONTRACT. Found by grepping the unique string literal \"4216\" across both trees, which returns exactly three web classes and three android classes.",
+      "overturns_ledger": false,
+      "ledger_text": "4 Dragon Dance input + Kanji-statue bonus.",
+      "verdict": "HELD"
+    },
+    {
+      "id": "s26d/1t8702s0-is-the-dance-PATH-not-the-statue",
+      "text": "reference/decompiled/shs3_payload/scripts/§1t8702s0§.as is the web twin of Obj_DragonDancePath, NOT of Obj_DragonDanceStatue. Its three-regime generateSequence (3 / 5 / 6 clicks, seeded node*room+21) is present verbatim in the ANDROID build at Obj_DragonDancePath.as:150-224, so it is not a v0.717 change. getAPUse()->2 and abs(x - other.x) < 100 are shared by the whole Obj_ family and cannot identify a class.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_android_payload/scripts/Obj_DragonDancePath.as:150-224 vs reference/decompiled/shs3_payload/scripts/§1t8702s0§.as:150-229; family traits at Obj_DragonDanceStatue.as:224,:240",
+      "quote": "Obj_DragonDancePath.as:150  internal function generateSequence() : String\nObj_DragonDancePath.as:155     var rng:RNG = new RNG(StageManager.getCurrentNode() * StageManager.getCurrentRoom() + 21);\nObj_DragonDancePath.as:156     var nodelevel:int = NodeGenerator.instance.getNodeLevel(StageManager.getCurrentNode());\n§1t8702s0§.as:150  internal function generateSequence() : String\n§1t8702s0§.as:155     var _loc1_:§1t58s0§ = §1t58s0§.§1t8804s0§(§1t1525s0§.§1t9935s0§() * §1t1525s0§.§1t7341s0§() + 21);",
+      "lane_impact": "Cross-cutting method rule for this lane: an obfuscated web class must be pinned by a method NAME or a unique literal, never by a virtual override that every sibling shares. generateSequence survived obfuscation and pins §1t8702s0§ exactly. The unresolved '<20 / <60' gating value is also now named: NodeGenerator.getNodeLevel(currentNode), and the seed's second term is StageManager.getCurrentRoom().",
+      "overturns_ledger": false,
+      "ledger_text": "4 Dragon Dance input + Kanji-statue bonus.",
+      "verdict": "HELD"
+    },
+    {
+      "id": "s26d/status-and-duration-DO-ride-the-damage-packet",
+      "text": "A status effect and its duration ARE carried on the Damage object. launchType (constructor parameter 3) is the status channel -- Damage.STUN = 6, with isStun()/isDeathTouch()/isKnockDown()/isFly() reading it -- and setStunTime(num, stunPosX) writes a frame duration onto the same object. Flashbang builds exactly that: new Damage(0,0,Damage.STUN) followed by setStunTime(24 * 2), i.e. a 48-frame stun with zero damage.",
+      "artifact_class": "A2",
+      "build": "android v0.682",
+      "cite": "reference/decompiled/shs3_android_payload/scripts/Damage.as:18,:98-100,:137-140 + FlashbangProjectile.as:26-27",
+      "quote": "Damage.as:18       public static var STUN:int = 6;\nDamage.as:98       public function isStun() : Boolean\nDamage.as:100         return this.launchType == STUN;\nDamage.as:137      public function setStunTime(num:int, stunPosX:int = 0) : *\nFlashbangProjectile.as:26         damageObj = new Damage(0,0,Damage.STUN);\nFlashbangProjectile.as:27         damageObj.setStunTime(24 * 2);",
+      "lane_impact": "rebirth-elements blocker 1 + combat-core: the status channel for the whole game is launchType + setStunTime, not the BUFF_* enum and not a bespoke per-projectile field. A rebuild should model status as a launchType tag on the damage packet with a frame duration. This is the artifact that refutes rebirth/status-not-on-damage-packet, and it also tells the lane exactly where to look for a per-element burn/slow: at each elemental projectile's 'new Damage(...)' call.",
+      "overturns_ledger": false,
+      "ledger_text": "1 what each element does (24 skills' damage/cost/AoE/status - names only).",
+      "verdict": "HELD"
+    },
+    {
+      "id": "s26d/aoe-narrow-phase-is-2d-hittest",
+      "text": "The AoE dist parameter is a broad-phase HORIZONTAL gate only; the actual hit requires a 2D bounding-box overlap. NPCManager.checkHitObject filters on |dx| < dist and then calls NPC.checkHitObject, which walks the MCS part list and requires mc.hitTestObject(thing). So an elemental ultimate does NOT have unbounded vertical reach -- an airborne or elevated target whose parts do not overlap the projectile clip is missed.",
+      "artifact_class": "A2",
+      "build": "android v0.682",
+      "cite": "reference/decompiled/shs3_android_payload/scripts/NPC.as:323-341 reached from NPCManager.as:1444",
+      "quote": "NPCManager.as:1444   if(enemydist * enemydist < distsq && enemy.checkHitObject(thing,damage,checkByAttacker))\nNPC.as:323   public function checkHitObject(thing:MovieClip, damage:Damage, checkByAttacker:Boolean = false) : Boolean\nNPC.as:326      var max:int = mcs.getPartListLength();\nNPC.as:332      if(mc.hitTestObject(thing))\nNPC.as:334         if(this.gotHit(mc,damage))",
+      "lane_impact": "combat-core + rebirth-elements: model the hit test as (horizontal broad-phase band of half-width dist) AND (per-part 2D overlap with the projectile clip). Implementing only the band makes every AoE hit airborne targets it should miss; implementing only a circle makes it miss grounded targets at range. The measured half-widths stand: Inferno 600 (BigFireBreathProjectile.as:32), Tsunami 400 (BigWaveProjectile.as:34), Tornado 200 (BigTornadoProjectile.as:33), Earthquake 50 (BigEarthquakeProjectile.as:68).",
+      "overturns_ledger": false,
+      "ledger_text": "1 what each element does (24 skills' damage/cost/AoE/status - names only).",
+      "verdict": "HELD"
+    },
+    {
+      "id": "s26d/web-crit-is-1.3-flat-android-is-1.2-1.5-split",
+      "text": "The crit multiplier is a web-vs-android tuning split nobody in this packet claimed. Web v0.717 applies a single flat x1.3 plus the crit-damage stat regardless of stance; android v0.682 applies x1.5 in Light stance and x1.2 in every other stance. Both fire on the same deterministic trigger, reload == maxreload.",
+      "artifact_class": "A2",
+      "build": "web v0.717 vs android v0.682",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3272-3276 vs reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3215-3223",
+      "quote": "web 3272:         if(this.§1t4414s0§ == this.§1t4415s0§)\nweb 3274:            return _loc2_ * 1.3 + this.§1t1243s0§;\nweb 3276:         return _loc2_;\nandroid 3215:         if(this.reload == this.maxreload)\nandroid 3217:            if(this.stance != LIGHT_STANCE)\nandroid 3219:               return maxDamage * 1.2 + this.STAT_CRITICALDMG;\nandroid 3221:            return maxDamage * 1.5 + this.STAT_CRITICALDMG;",
+      "lane_impact": "combat-core + skills-meters: the ledger's 'crit 1.3x' is CONFIRMED for the web build and must be labelled web-specific -- a config seeded from the android decompile would ship a stance-dependent 1.2/1.5 crit instead. Combined with maxreload 192 vs 120 and the mastery 0-10 vs 0-100 scale, this is the fourth confirmed tuning split between the two builds in this packet.",
+      "overturns_ledger": false,
+      "ledger_text": "5 crit proc rule (chance vs deterministic) - entirely absent.",
+      "verdict": "HELD"
+    },
+    {
+      "id": "s26d/web-reach-and-cooldown-formulas-recovered",
+      "text": "Both surviving SPD consumers in v0.717 are recovered in full. Skill-cooldown modifier: clamp SPD to 600, then return 1 - SPD/600*0.5 (so a floor of x0.5 at SPD>=600). Base slash length: int(120 + floor((90 + STAT_DAN*5) * SPD / (20 + SPD))) -- a Dan-scaled asymptote rising from 210 px at Dan 0 to 255 px at Dan 9 before the per-stance multiplier. Slash usage has its own floor of 48.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2289-2295, :2344-2347, :2350-2357",
+      "quote": "2289:      internal static function §1t9590s0§(param1:int) : Number\n2291:         if(param1 > 600)\n2293:            param1 = 600;\n2295:         return 1 - param1 / 600 * 0.5;\n2344:      internal static function §1t9593s0§(param1:int) : int\n2346:         var _loc2_:int = 90 + §1t7356s0§(§1t9426s0§) * 5;\n2347:         return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));\n2353:         if(_loc1_ == null || _loc1_.slashusage < 48)\n2355:            return 48;",
+      "lane_impact": "L2/L5 blocker 4 (SPD->cooldown formula) is CLOSED with a web cite, and the reach base is closed with it. Note the shape: reach is asymptotic in SPD, so 294 px (Light, Dan 0) and 357 px (Light, Dan 9) are ceilings approached as SPD grows, not values at a particular SPD - any ledger row quoting them must say so. §1t9426s0§ is STAT_DAN (same const the rebirth routine tests at :2644).",
+      "overturns_ledger": false,
+      "ledger_text": "4 SPD->cooldown formula.",
+      "verdict": "HELD"
+    }
+  ]
+}

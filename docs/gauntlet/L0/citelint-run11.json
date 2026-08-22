@@ -1,0 +1,537 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A2",
+   "id": "s26d/web-statue-is-1t8703s0-and-has-full-parity",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t8703s0\u00a7.as",
+    "reference/decompiled/shs3_android_payload/scripts/Obj_DragonDanceStatue.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26d/1t8702s0-is-the-dance-PATH-not-the-statue",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/Obj_DragonDancePath.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t8702s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26d/status-and-duration-DO-ride-the-damage-packet",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/Damage.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26d/aoe-narrow-phase-is-2d-hittest",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26d/web-crit-is-1.3-flat-android-is-1.2-1.5-split",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26d/web-reach-and-cooldown-formulas-recovered",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "provenance/web-projectilemanager-is-1t1712s0-not-1t112s0",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1712s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t112s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/GameStage.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/two-dan-title-renderers-romaji-and-kanji",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t408s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/PlayerPanel.as",
+    "reference/decompiled/shs3_android_payload/scripts/InventoryUI.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "housekeeping/questdata-text-word-count-is-40119",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/questdata.xml"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "progression/android-never-reassigns-levelcap-either",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_android/scripts/",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "newfind/web-nextstance-drops-the-console-five-cycle-and-gates-on-48",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "newfind/frame-confirms-web-maxdueltokens-40",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "newfind/offline-save-branch-writes-nineteen-fields-not-fourteen",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/QueryManagerBase.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "newfind/writ-badge-glyph-is-premium-gold-not-coins",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg",
+    "reference/extracted/itemdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/payload-xml-static-textfields-are-authoring-placeholders",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7924s0\u00a7.as",
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/web-item-weight-modifier-is-id-208",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/Item.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/slashusage-48-floor-is-duplicated-on-the-npc-path",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/XMLNpc.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/four-classes-run-the-12-frame-ai-cadence",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android_payload/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/web-has-a-second-getsellamt-call-site",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t6172s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/ShopUI.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "nf/war-turn-timer-bracketed-on-film",
+   "notes": [],
+   "paths": [
+    "reference/frames/Nr4fQstqHDM/seg-29/frames/frame_0019.jpg",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/territory-and-hex-clan-palettes-differ-on-only-two-sides",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/TerritoryData.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/web-only-survival-enemy-443-is-named",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "docs/gauntlet/L0/index/resolved_names.json",
+    "reference/extracted/bindata/119_1t4646s0.bin"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "cite-audit/frame-to-stage-vertical-transform-is-contested-and-uniform-wins",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-audit/lang-bin-id-column-is-contiguous-every-gap-is-in-resname",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/extracted/android/118_Mobile_Lang_EN.bin",
+    "docs/gauntlet/L0/index/strings.json",
+    "reference/decompiled/shs3_android/scripts/LangManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-audit/duel-hud-second-bar-is-chi-not-ap",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-audit/updatebuff-ladder-is-thirteen-not-eleven-and-appends-a-timer",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/OverworldHUD.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-audit/carry-weight-pvp-exemption-covers-only-five-of-eight-sites",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/Obj_Hut.as",
+    "reference/decompiled/shs3_android/scripts"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-audit/gameengine-283-290-does-not-hold-the-fit-branch",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/GameEngine.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-audit/web-skill-1077-has-a-live-runtime-case",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as",
+    "reference/extracted/skilldata.xml",
+    "reference/decompiled/shs3_android/scripts/SkillManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "cite-audit/shs3-swf-loader-is-cws-v10",
+   "notes": [],
+   "paths": [
+    "reference/preservation/shs3.swf",
+    "reference/preservation/shs3preloader.swf",
+    "reference/decrypted/shs3_payload_decoded.swf",
+    "reference/decrypted/shs3_android_payload_decoded.swf"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26d/web-npcmanager-ai-switch-has-39-cases-not-38",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1543s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/NPCManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26d/war-room-battlefield-board-is-a-hardcoded-6x6-grid",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/WarHexUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "s26d/seg10-frame0020-carries-four-hostiles-not-three",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0020.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26d/acc3007-has-no-symbol-in-the-shs3resource-export",
+   "notes": [],
+   "paths": [
+    "reference/extracted/android/115_Mobile_SHS3Resource.bin",
+    "reference/decompiled/shs3_android/scripts/ResourceManager.as",
+    "reference/decompiled/shs3_android/scripts/MCSItem.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s26d/focus-bar-reads-empty-one-tick-before-the-stance-gate-closes",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "world/nochange-town-rule-is-cross-build",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t70s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/NodeGenerator.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "world/kasuta-is-on-film-in-the-web-build",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFt_combat/zFtCaTO0_1M_t0330s.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "save-schema/dataslots-20-does-not-count-the-written-ids",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/QueryManagerBase.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "save-schema/is-android-only-evidence",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/QueryManagerPIO.as",
+    "reference/decompiled/shs3_android/scripts/NetworkManager.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "world/web-rng-is-pooled-but-numerically-identical",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t58s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/RNG.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "world/placenames-blob-is-byte-identical-across-builds",
+   "notes": [],
+   "paths": [
+    "reference/extracted/bindata/98_1t4653s0.bin",
+    "reference/extracted/android/89_NameGenerator_PlaceNames.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "uistrings-payload/web-build-ships-zh-cn-branching-without-a-zh-cn-table",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1521s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/shs3_fla/PauseScreen_51.as",
+    "reference/extracted/payload.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "world-exploration/farm-guaranteed-yield-is-the-FIRST-harvest",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/InteractUI_crops.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "world-exploration/frozen-ring-is-19-territories-recomputed",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NodeGenerator.as",
+    "reference/extracted/android/110_Mobile_MapBitmapData.bin"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "warroom/next-turn-in-is-string-309-not-307",
+   "notes": [],
+   "paths": [
+    "docs/gauntlet/L0/index/strings.json[\"307\"]",
+    "reference/decompiled/shs3_android/scripts/WarUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/web-battleui-status-selector-has-nine-branches",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 12,
+  "resolves": 34,
+  "total": 46,
+  "uncheckable": 0
+ }
+}
