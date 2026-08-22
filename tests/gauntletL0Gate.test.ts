@@ -230,6 +230,28 @@ describe('gateL0 — the binary gate for lane L0', () => {
     expect(gate(report, 'L0-F').detail).toContain('ui-hud');
   });
 
+  /**
+   * L0-F PICKED THE WRONG ROW, and it was live in the real ledger.
+   *
+   * The gate found a system's row by searching every §2 line for the system's NAME —
+   * but a row's blocker text names other systems. In the shipped ledger, progression's
+   * blocker reads "post-rebirth SP economy", so the check for **economy** read
+   * **progression**'s row and passed on a cite economy never carried. A score with no
+   * evidence behind it is exactly what L0-F exists to catch, so a false green here is
+   * the worst kind. The row is now identified by its FIRST CELL, which is the only cell
+   * that names the row.
+   */
+  it('L0-F reads a system\'s OWN row, not an earlier row that merely mentions it', () => {
+    const led = join(dir, 'docs/research/REBUILD_READINESS.md');
+    writeFileSync(led, readFileSync(led, 'utf8')
+      .replace('| progression | 70 | [[progression/anchor]] |',
+               '| progression | 70 | [[progression/anchor]] — post-rebirth SP economy |')
+      .replace('| economy | 70 | [[economy/anchor]] |', '| economy | 70 | looks about right |'));
+    const { report } = run();
+    expect(gate(report, 'L0-F').green).toBe(false);
+    expect(gate(report, 'L0-F').detail).toContain('economy');
+  });
+
   it('L0-F accepts an explicit STILL_UNHELD in place of a cite', () => {
     const led = join(dir, 'docs/research/REBUILD_READINESS.md');
     writeFileSync(led, readFileSync(led, 'utf8').replace(

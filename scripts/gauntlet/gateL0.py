@@ -93,6 +93,26 @@ def section(text: str, number: str) -> str:
     return rest[: nxt.start()] if nxt else rest
 
 
+def scorecard_row(scorecard: str, unit: str) -> str | None:
+    """The scorecard row for `unit`, identified by its FIRST CELL.
+
+    Searching the whole line for the system's name reads the wrong row, and it did so
+    live: the shipped ledger's `progression` row lists "post-rebirth SP economy" among
+    its blockers, so the check for `economy` found `progression`'s row and passed on a
+    cite `economy` never carried. A score with no evidence behind it is precisely what
+    this gate exists to catch, which makes a false green here the worst kind. Only the
+    first cell names the row, so only the first cell is consulted.
+    """
+    for line in scorecard.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [c.strip() for c in stripped.strip("|").split("|")]
+        if cells and re.search(rf"\b{re.escape(unit)}\b", cells[0]):
+            return line
+    return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -202,8 +222,7 @@ def main() -> int:
     scorecard = section(ledger, "2")
     missing = []
     for unit in SYSTEMS:
-        row = next((ln for ln in scorecard.splitlines()
-                    if ln.strip().startswith("|") and re.search(rf"\b{re.escape(unit)}\b", ln)), None)
+        row = scorecard_row(scorecard, unit)
         if row is None:
             missing.append(f"{unit}: no scorecard row")
         elif not CLAIM_REF_RE.search(row) and "STILL_UNHELD" not in row:
