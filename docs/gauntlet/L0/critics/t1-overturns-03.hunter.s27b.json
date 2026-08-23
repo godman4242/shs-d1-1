@@ -1,0 +1,145 @@
+{
+  "packet_size": 7,
+  "judged_count": 7,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "skills-meters/stance-mastery-domain-is-1-to-10-in-skilldata",
+      "refuted": false,
+      "severity": "material",
+      "own_cite": "reference/extracted/skilldata.xml:3-79 (skill id 1000, displayname 6000, <passive>1</passive>, ten <level> blocks with <value> 1..10 and <required> 1,1,2,3,4,5,6,7,8,9) + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262 and :3265 + reference/decompiled/shs3_android/scripts/StatsManager.as:740-742 and :1834 + docs/gauntlet/L0/index/strings.json[\"6000\"]='Light Stance Mastery'",
+      "overturn_upheld": true,
+      "reason": "I opened all four artifacts myself and every element checks out. skilldata.xml skill 1000 is <passive>1</passive> with exactly ten <level> blocks, <value> running 1..10 (the finding's 'required 1..9' is loose - the required column is 1,1,2,3,4,5,6,7,8,9 - and XMLSkill.as:253-263 shows <required> is the SKILL-POINT cost, not the level, so <value> is the mastery number). §1t99s0§.as:3262 is `_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1)` and :3265 is `_loc2_ = _loc1_ * (1 + 0.2 * this.§1t4422s0§ * 0.1)`, i.e. 0.5+0.04m and 1+0.02m: m=1 -> 0.54/1.02, m=10 -> 0.90/1.20, exactly as claimed. I closed the off-by-one question the finding asserts rather than proves: StatsManager.as:1834 passes getStat(1000)/getStat(1001)/getStat(1002) as args 12/13/14 of initPlayer, and the web ctor §1t99s0§.as:196-198 assigns param12/13/14 straight to §1t4421s0§/§1t4422s0§/§1t4423s0§ - the raw skill stat, no offset - and StatsManager.as:740-742 seeds all three at 1. So the domain really is [1,10] and §1t4421s0§ really is Light Stance Mastery. OVERTURN: the ledger sentence names 'MASTERY-9 CEILING values'; mastery 9 yields 0.86/1.18, not 0.9/1.2, so the label is wrong by one and the follow-on 'A level-1 Shugyosha does Light x0.5 / Balanced x1.0' is wrong too (x0.5/x1.0 require m=0, which StatsManager forbids). WHAT SURVIVES: the bolded substance - these ARE ceiling values, not base - stands, and 'Heavy is fixed' stands (§1t99s0§.as:3270 is a flat *1.4). Only the index and the base row fall."
+    },
+    {
+      "claim_id": "ui-hud/battleui-carries-its-own-change-stance-button-in-both-builds",
+      "refuted": false,
+      "severity": "fatal",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:22,:44,:64,:146,:148-149,:379-381,:468-480 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3048-3051 (`return this.§1t4469s0§() && this.§1t4414s0§ >= 48;`) and :3058-3080 + reference/decompiled/shs3_android/scripts/BattleUI.as:36,:48,:60,:101-102,:109-110,:275-277,:360-364",
+      "overturn_upheld": true,
+      "reason": "Verified line by line in both builds. Web §1t113s0§.as:22 declares §1t5158s0§:MovieClip; :146 sets §1t5161s0§.text = getString(208); :148-149 hide its highlight and set buttonMode; :379-381 hit-test §1t5158s0§ and call §1t5207s0§(); :468-480 is exactly the quoted body (Snd_smallClick + §1t4472s0§() on pass, Snd_error on fail). strings.json[\"208\"]='Change Stance' and [\"175\"]='Critical Hit' both resolve. The obfuscation map holds: web :44 TextField <-> BattleUI.as:48 crittext (both set to getString(175) at :120-121 / :101-102); web :64 MovieClip <-> BattleUI.as:60 reloadbar; §1t5161s0§ <-> BattleUI.as:36 changestancelabel. I went past the finding and opened the gate it only names: §1t4470s0§ (:3048-3051) is `§1t4469s0§() && §1t4414s0§ >= 48` and §1t4472s0§ (:3058-3080) cycles Light->Balanced->Heavy->Light, returning early below 48. §1t4469s0§ tests actionState, so this is an IN-COMBAT gate. OVERTURN UPHELD DECISIVELY: v0.717's own BattleUI ships a clickable stance-cycle affordance that works mid-duel whenever the meter is at or above 48, so 'In-combat stance is HARD-LOCKED in v0.717' is false. WHAT SURVIVES: the sentence's second half - the recreation's FOCUS-gated switch is still a divergence, because the real gate is the reload/crit meter (>=48 of a max of 8*24=192, §1t99s0§.as:249-250), not Focus. ONE CORRECTION to the finding's lane_impact: the button is not 'next to the portrait', it IS the portrait - BattleUI.as:275-277 hit-tests battlemodebust itself into stanceButtonClick(), and web §1t5208s0§ (:482-485) drives §1t5158s0§.§1t15895s0§ exactly as setStanceColor drives battlemodebust.stancecolor1 (:374)."
+    },
+    {
+      "claim_id": "ui-hud/frame-proof-the-stance-label-hides-when-the-third-bar-fills",
+      "refuted": false,
+      "severity": "fatal",
+      "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png, _432.5.png, _432.9.png - my own crop (200,940)-(700,1080) of the 1920x1080 frame, upscaled 3x LANCZOS (wider than the finding's strip, same content) + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:326-347",
+      "overturn_upheld": true,
+      "reason": "I cropped and looked at all three frames myself. Nr4fQstqHDM_428.0.png: bottom-left cluster is a red-ringed portrait plus THREE stacked bars - green 20/20, blue 26/26, and a third bar whose track is entirely brown/empty with CANNOT CHANGE STANCE lettered across it; yellow '150% DAMAGE' sits below the cluster, outside the bars. Nr4fQstqHDM_432.5.png, same duel 4.5 s later: green 20/20 and blue 26/26 unchanged, third bar now carries a thin white fill block at its LEFT edge and the label is GONE. Nr4fQstqHDM_432.9.png: the same white block is visibly wider and there is still no label. The finding's description is frame-accurate. It matches §1t113s0§.as:326-347 exactly, and I counted those lines: :328 `var _loc3_:Number = (param1 - 48) / (param2 - 48);`, :333 sets bar.scaleX, :336-342 show the label at ratio 0, :344-347 hide it while 0<ratio<1 - the cited :336-342/:344-347 are byte-exact. OVERTURN UPHELD: a hard lock does not un-post its own notice 4.5 s into the duel while the fighters keep swinging. The label is bound to a meter ratio, and §1t99s0§.as:3050 shows the same meter at >=48 is precisely what unlocks the switch - the two artifacts corroborate rather than merely coexist. 'In-combat stance is HARD-LOCKED in v0.717 (CANNOT CHANGE STANCE)' is false, and its sole quoted evidence is the readout of an empty meter."
+    },
+    {
+      "claim_id": "ui-hud/string-960-is-cannot-change-stance-frame-resolved",
+      "refuted": false,
+      "severity": "fatal",
+      "own_cite": "reference/frames/session11/crit-focus/t1003.000.png and t1082.100.png - my own crop (0,820)-(660,1080), 3x LANCZOS + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110,:111,:326-359 + docs/gauntlet/L0/index/strings.json[\"960\"] returns None",
+      "overturn_upheld": true,
+      "reason": "Both frames opened at the stated crop. t1003.000.png: portrait with red ring, green HP 14/20, blue Chi 31/31, third bar EMPTY with CANNOT CHANGE STANCE centred on the bare track, yellow 150% DAMAGE on the line below - exactly as described. t1082.100.png: green 11/20, blue 31/47, third bar carrying a white fill block over roughly the left quarter of the track and NO text on it - the finding says '~28% filled', which is a fair eyeball read of what I see. Code checks out: :111 is `this.§1t5204s0§ = \"<font color='#BBBBBB'>\" + getString(960) + \"</font>\"` and :110 is the black getString(175) twin, and I re-derived the ratio expression (reload-48)/(max-48). The finding's :343-346 is one line adrift of the real hide-branch (:344-347) - a bracket-boundary slip, not a mis-cite, and the block it names is the right one. I confirmed independently that strings.json[\"960\"] really is absent from the android v0.682 table, so 'web-only, unresolvable from android' is true rather than assumed. OVERTURN UPHELD on the same grounds as the sibling frame finding: the getString(960) label is a state of a meter that moves during the duel, not a battle-state lock, so the ledger sentence is false. WHAT SURVIVES: nothing of 'HARD-LOCKED'; the Focus-gating half of the ledger paragraph survives as a still-valid divergence note."
+    },
+    {
+      "claim_id": "ui-hud/the-video-study-notes-misread-the-cannot-change-stance-slot",
+      "refuted": false,
+      "severity": "material",
+      "own_cite": "reference/frames/session11/crit-focus/t1003.000.png, crop (0,820)-(660,1080) 3x LANCZOS PLUS a pixel census I ran on the original frame: the CANNOT CHANGE STANCE glyph band (y 1030-1046, x 250-510) peaks at RGB (196,187,180)/(190,184,174), the 150% DAMAGE band (y 1050-1075) peaks at (255,194,0), the HP numerals at (255,255,255) + docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7,:45,:71 + docs/research/video-study/segments/A-16-beach-fights-named-enemy-jinbei-archer.md:23 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:111,:319-324,:326-333",
+      "overturn_upheld": true,
+      "reason": "THE FRAME WINS, and I proved it with numbers rather than adjectives. The four segment-note lines are quoted accurately: B-11:7 really does say 'Yellow text under the bars: CANNOT CHANGE STANCE and 150% DAMAGE'; B-11:45 and :71 really do read the slot as 'the small green X/20 bar (stance-lock resource...)' fluctuating 4/20 -> 2/20 -> 3/20; A-16:23 really does call it a 'blue bar ... 20/20' and concludes 'confirms stance-switching is locked once a duel starts'. The frame refutes all of it: the label glyphs measure (196,187,180) - a desaturated near-grey within a few points of the code's #BBBBBB=(187,187,187) - while 150% DAMAGE measures (255,194,0), saturated gold. Two different colours, and the note merged them. The label's bar carries no numerals; the numeric bars are the two above it, set by §1t5202s0§/§1t5201s0§ (:314-324) which write text AND scaleX, whereas §1t5205s0§ (:333) writes only bar.scaleX. And the HP/Chi assignment in the notes is backwards: the web ctor maps param3=MAXHP and param5=MAXCHI (§1t99s0§.as:226-227 feeds §1t5201s0§ the HP pair and §1t5202s0§ the Chi pair), against android initPlayer(hp,maxhp,chi,maxchi,defense,...) at StatsManager.as:1834 - so the X/20 bar is HP, not a 'stance-lock resource', and the ledger's own §3 crux read at line 178 already calls it 'player HP 20/20'. OVERTURN: I nearly marked this false, because the finding's distinctive content (label colour, absent numerals, which bar is HP) overturns the SEGMENT NOTES, not the ledger sentence it names. It survives only because the finding also carries §1t113s0§.as:326-346 in its own cite, and that state machine is what makes the sentence false. Upheld, but narrowly and on borrowed weight - its real, valuable target is B-11:71 and A-16:23, which should be struck."
+    },
+    {
+      "claim_id": "world/the-war-map-mask-and-pitch-are-web-side-too-parity-closed",
+      "refuted": false,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t7934s0§.as:15,:17,:19,:168,:232,:299-300,:591,:618 + reference/decompiled/shs3_payload/scripts/§1t6481s0§.as:17,:19,:21,:263 + reference/decompiled/shs3_payload/scripts/§1t4648s0§.as:5 + reference/decompiled/shs3_payload/scripts/§1t1524s0§.as:87,:701",
+      "overturn_upheld": true,
+      "reason": "Every cited line opened and read verbatim. §1t7934s0§.as:15/:17/:19 are `public static var ...:int = 8; = 21; = 51;`; :232 is `return this.§1t7958s0§.getPixel(param1 + §1t12536s0§ - §1t12535s0§, param2 + §1t12537s0§) != 0;`; :299-300 are `(_loc8_ + §1t12536s0§) * 10 + 4.5` / `(_loc9_ + §1t12537s0§) * 10 + 8.8`. §1t6481s0§.as:17/:19/:21/:263 repeat all four. I also verified the two lane_impact items the finding states without citing: the mapid packing really is (x+341)<<12 | (y+341), at §1t7934s0§.as:591 and :618 (and the inverse at :296-297), and the mask really is reached from the web side - §1t7934s0§.as:168 assigns §1t7958s0§ = §1t1524s0§.§1t9892s0§(), §1t1524s0§.as:87 binds that class to §1t4648s0§, :701 loadBytes(new §1t9847s0§()), and §1t4648s0§.as:5 embeds '/_assets/92_1t4648s0.bin'. So the whole chain is web v0.717, and C2's circularity caveat genuinely does not reach it. OVERTURN UPHELD: blocker (1) prescribes 'mine Fandom Category:Territories via API; trace the map image' - both close-paths are now unnecessary, because the offsets, the land predicate, the flag pitch and the id packing are all readable in the payload. WHAT SURVIVES: the parenthetical 'sparse Japan-outline' survives as a fair description of the land set, but 'not a WxH grid' is now wrong in letter - the storage IS a 63x72 raster, with land sparse inside it. The world-exploration Surface line ('ZERO world numbers in config yet') is untouched."
+    },
+    {
+      "claim_id": "world/the-war-map-mask-is-byte-identical-across-web-and-android",
+      "refuted": false,
+      "severity": "material",
+      "own_cite": "`md5 -q reference/extracted/bindata/92_1t4648s0.bin reference/extracted/android/110_Mobile_MapBitmapData.bin` -> 13068dfa1a5cc5628720a25782f93fed twice; `file` -> 'GIF image data, version 89a, 63 x 72' for both; my own PIL census -> 2 distinct colours, (255,255,255) x 735 and (0,0,0) x 3801, total 4536 + reference/decompiled/shs3_android/scripts/WarSelectUI.as:153 + reference/decompiled/shs3_android/scripts/Mobile_MapBitmapData.as:5 + reference/decompiled/shs3_payload/scripts/§1t4648s0§.as:5",
+      "overturn_upheld": true,
+      "reason": "Every number in this finding is exactly right and I re-measured all of them. Both files are 272 bytes, md5 13068dfa1a5cc5628720a25782f93fed, GIF89a 63x72, two-colour, 735 white and 3801 black summing to 63*72=4536. WarSelectUI.as:153 is `this.mapBitmapData = QuestEngine.getMapBitmapData();` and Mobile_MapBitmapData.as:5 is the [Embed] of /_assets/110_Mobile_MapBitmapData.bin, both verbatim. The non-circularity argument is the part I checked hardest and it holds: §1t4648s0§.as:5 embeds '/_assets/92_1t4648s0.bin' inside the WEB payload and §1t1524s0§.as:87/:701 load it, so 92 is genuinely web-side and 110 genuinely android-side. Under C2 this is a rare discharged parity datum, not a file diffed against itself. OVERTURN UPHELD for the same reason as its sibling: 'trace the map image' is moot when the shipped 1-bit mask is in hand in both builds, byte-identical. WHAT SURVIVES: 'sparse Japan-outline' survives (735 of 4536 cells are land, 16.2%); 'not a WxH grid' does not. This also closes S0-1's dangling '92 a GIF' - file 92 now has a named role."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "combat-core/the-in-combat-stance-gate-is-reload-48-of-a-192-max",
+      "text": "The packet names §1t4470s0§ but never opens it, so the actual numbers stayed unclaimed. §1t99s0§.as:3048-3051 is `public function §1t4470s0§() : Boolean { return this.§1t4469s0§() && this.§1t4414s0§ >= 48; }` and :3058-3080 is the cycle body, which returns early `if(this.§1t4414s0§ < 48)` and otherwise steps stance -1->Light, Light->Balanced, Balanced->Heavy, Heavy->Light before pushing the value to §1t251s0§. The meter's max is set at :249 as `this.§1t4415s0§ = 8 * 24;` = 192, initialised to 0 at :250. §1t4469s0§ (:3043-3045) is an actionState test, i.e. the gate is 'idle-ish AND meter >= 48'. So the in-combat stance switch costs no Focus and no Chi: it needs the reload meter at 48/192 = 25%. That is the number the recreation should be gating on, and it is the single missing quantity behind the whole CANNOT CHANGE STANCE cluster.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249-250,:3043-3045,:3048-3051,:3058-3080",
+      "quote": "§1t99s0§.as:3050 `return this.§1t4469s0§() && this.§1t4414s0§ >= 48;` · :249 `this.§1t4415s0§ = 8 * 24;` · :3060 `if(this.§1t4414s0§ < 48)`",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\"). The recreation's Focus-gated in-combat switch models **removed 2014 behavior**.",
+      "lane_impact": "L5 combat-core + L8 ui-hud: replace the Focus gate with RELOAD_STANCE_THRESHOLD=48 on a RELOAD_MAX=192 meter (CONTRACT, web v0.717), and make the stance cycle order Light->Balanced->Heavy->Light."
+    },
+    {
+      "id": "combat-core/crit-1.3-is-sealed-in-the-web-payload-and-fires-at-full-reload",
+      "text": "The ledger holds CRIT_MULT=1.3 on wiki authority and explicitly asks to 'Read a real OG crit popup to fully seal it.' It is already sealed in code, on the web side. §1t99s0§.as:3272-3275, inside the damage roll §1t4475s0§, reads `if(this.§1t4414s0§ == this.§1t4415s0§) { return _loc2_ * 1.3 + this.§1t1243s0§; }` - the literal 1.3 multiplier, conditioned on the reload meter being exactly at max. §1t99s0§.as:3295-3297 zeroes the meter on the same condition. This is the SAME meter as the stance gate (48) and the same bar as the HUD's third track, so one 0..192 resource drives stance-unlock at 48 and a 1.3x crit at 192. No popup needs reading.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3272-3275,:3295-3297 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:348-359",
+      "quote": "§1t99s0§.as:3272 `if(this.§1t4414s0§ == this.§1t4415s0§)` · :3274 `return _loc2_ * 1.3 + this.§1t1243s0§;`",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "SHS:Duels' own wiki (2016 + 2025) states the formula \"Critical = **1.3x Physical**.\" Keep `CRIT_MULT=1.3`. ... (Read a real OG crit popup to fully seal it.)",
+      "lane_impact": "L5 combat-core: CRIT_MULT=1.3 is promotable from INFERRED/wiki to CONTRACT with a web-payload cite, and the crit CONDITION is meter==max, not a probability roll. Combat-core blocker (2) 'crit 1.3 vs 3 final - read one crit popup' is closed."
+    },
+    {
+      "id": "skills-meters/the-initplayer-argument-order-is-a-noncircular-web-android-bridge",
+      "text": "C2 says the four data XMLs are android-side, so diffing them proves nothing, and that combat tuning parity is NOT established. Here is a bridge that is not circular. Android StatsManager.as:1834 calls `player.initPlayer(0, HP, MAXHP, CHI, MAXCHI, DEFENSE, getBaseReload(), getMinDamage(), getDamageRange(), getBaseSlashLength(), getSlashUsage(), getStat(1000), getStat(1001), getStat(1002), getLevel())` - fifteen named arguments. The web fighter's ctor §1t99s0§.as:188-201 takes exactly fifteen ints and assigns them in exactly that order, including `this.defense = param6` at the DEFENSE slot, which pins the alignment independently. That decodes six obfuscated web fields at once (§1t3257s0§=MAXHP, §1t4413s0§=MAXCHI, §1t4421s0§/§1t4422s0§/§1t4423s0§ = skills 1000/1001/1002, §1t4420s0§=baseSlashLength) and it is what actually rules out an off-by-one in the mastery term.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1834 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:188-201",
+      "quote": "StatsManager.as:1834 `...,getSlashUsage(),getStat(1000),getStat(1001),getStat(1002),getLevel());` · §1t99s0§.as:196 `this.§1t4421s0§ = param12;`",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L2 skills-meters + L5 combat-core: an argument-order bridge that names six web fields from android symbols without diffing a file against itself - reusable wherever a web/android pair shares a call signature."
+    },
+    {
+      "id": "combat-core/stance-reach-is-asymmetric-with-damage-and-carries-a-hard-floor-of-100",
+      "text": "The ledger's item 3 treats damage and reach as one table scaling together. The web payload says they are mirror images. §1t99s0§.as:3091-3130 is the REACH switch: Light reach is `§1t4420s0§ * 1.4` FLAT with no mastery term (:3094); Balanced reach is `§1t4420s0§ * (1 + 0.2 * §1t4422s0§ * 0.1)` (:3105); Heavy reach is `§1t4420s0§ * (0.5 + 0.4 * §1t4423s0§ * 0.1)` (:3116) with a hard clamp `if(this.§1t4417s0§ < 100) this.§1t4417s0§ = 100;` (:3117-3120). The DAMAGE switch at :3259-3271 is the exact inverse: Light damage scales, Balanced damage scales with the same coefficient as its reach, Heavy damage is a flat *1.4 (:3270). So Light trades fixed long reach for scaling damage and Heavy trades fixed high damage for scaling reach - and Heavy's reach can never fall below 100 units. Two consequences for the ledger: 'Heavy's reach also scales x0.5->x0.9' has the wrong low endpoint (m=1 gives 0.54, and the 100 floor may bind first), and the quoted reach triple 300/200/100 cannot be a mastery-ceiling row off one base, because the ceiling multipliers are 1.4 / 1.20 / 0.90, which is not 3:2:1.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3091-3130,:3259-3271",
+      "quote": "§1t99s0§.as:3094 `this.§1t4417s0§ = this.§1t4420s0§ * 1.4;` · :3116 `this.§1t4417s0§ = this.§1t4420s0§ * (0.5 + 0.4 * this.§1t4423s0§ * 0.1);` · :3119 `this.§1t4417s0§ = 100;`",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "A level-1 Shugyosha does Light x0.5 / Balanced x1.0 / Heavy x1.4 (Heavy is fixed); Heavy's *reach* also scales x0.5->x0.9.",
+      "lane_impact": "L5 combat-core: reach is a per-stance function of BASE_SLASH_LENGTH, not a literal px triple - Light 1.4 flat, Balanced 1+0.02m, Heavy max(0.5+0.04m, floor 100). Combat-core blocker (1) 'reach cap in stage px per stance' becomes 'measure ONE base slash length', not three."
+    },
+    {
+      "id": "ui-hud/the-third-bar-is-a-three-state-meter-and-fires-snd-criticaldamage-at-full",
+      "text": "The packet stops at two of the third bar's three states. §1t113s0§.as:348-359 is the third: at ratio >= 1 the same TextField takes §1t5203s0§ = `\"<font color='#000000'>\" + getString(175) + \"</font>\"` (built at :110), i.e. BLACK 'Critical Hit', and :350-352 fire `§1t88s0§.instance.§1t1516s0§(\"Snd_criticalDamage\")` on the transition into that state - guarded so it plays once, not per frame. So the single track under HP and Chi is a three-state readout on one 0..192 resource: empty -> #BBBBBB getString(960); filling -> no text; full -> #000000 getString(175) plus a one-shot sound. Under correction C3 the audio is recovered, so Snd_criticalDamage is a nameable, shippable stem rather than a TODO.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110,:111,:326-359 + docs/gauntlet/L0/index/strings.json[\"175\"]='Critical Hit'",
+      "quote": "§1t113s0§.as:110 `this.§1t5203s0§ = \"<font color=\\'#000000\\'>\" + §1t1521s0§.getString(175) + \"</font>\";` · :352 `§1t88s0§.instance.§1t1516s0§(\"Snd_criticalDamage\");`",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L8 ui-hud: ship ONE meter widget with three text states and a transition sound, not two separate crit/stance indicators. Also names the exact colours: #BBBBBB empty-state, #000000 full-state."
+    },
+    {
+      "id": "ui-hud/string-960-is-absent-from-android-because-the-android-label-is-a-portrait-rollover",
+      "text": "The packet notes that string 960 is unresolvable from the android table but not why, and the mechanism is a genuine, first-hand v0.717-vs-v0.682 divergence - one of the very few that discharges part of the C2 caveat instead of restating it. Android BattleUI.as:262 is the ENTIRE reload-bar text logic: `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` - the android build shows the crit text at full and nothing at all otherwise. It has no empty-state label on the bar. Instead its 'Change Stance' string lives on a mouse rollover over the portrait: :192-193 add MOUSE_OVER/MOUSE_OUT listeners on battlemodebust bound to showChangeStanceLabel/hideChangeStanceLabel (:430-440), which toggle changestancelabel and the bust highlight together. The web build replaced that hover affordance with a persistent on-bar notice, which is why getString(960) exists in v0.717 and is missing from the v0.682 table (strings.json[\"960\"] returns None). Android also normalises the ratio itself before the call, while the web computes (reload-48)/(max-48) inside §1t5205s0§.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:192-193,:259-263,:430-440 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:326-347 + docs/gauntlet/L0/index/strings.json (no key \"960\")",
+      "quote": "BattleUI.as:262 `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` · :192 `this.battlemodebust.addEventListener(MouseEvent.MOUSE_OVER,this.showChangeStanceLabel);`",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L8 ui-hud: build the WEB behaviour (persistent on-bar empty-state label), not the android hover tooltip - and record this as a discharged C2 instance: the two builds' battle HUDs are NOT at parity on this element."
+    },
+    {
+      "id": "ui-hud/the-change-stance-button-is-the-portrait-bust-itself",
+      "text": "Correcting the packet's own lane_impact, which says the HUD 'needs a Change Stance button next to the portrait'. It is not next to the portrait; it IS the portrait. Android BattleUI.as:275-277 reads `if(this.battlemodebust.hitTestPoint(mousex,mousey)) { this.stanceButtonClick(); }`, and :112-113 set `battlemodebust.highlight.visible = false; battlemodebust.buttonMode = true;`. The web twin is identical in shape: §1t113s0§.as:148-149 set `§1t5158s0§.highlight.visible = false; §1t5158s0§.buttonMode = true;` and :379-381 hit-test §1t5158s0§ into §1t5207s0§. So §1t5158s0§ = battlemodebust. The stance COLOUR rides the same object: web §1t5208s0§ (:482-485) does `§1t5158s0§.§1t15895s0§.gotoAndStop(param1)` against android setStanceColor (:372-375) `battlemodebust.stancecolor1.gotoAndStop(num)`, called from the stance switch with 1=Light, 2=Balanced, 3=Heavy (§1t99s0§.as:3101, :3112, :3127). That means the stance-coloured portrait ring the ledger already records as item 10 and the stance button are ONE widget, and the ring index is an explicit 1/2/3 frame number rather than an inferred palette.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:26,:112-113,:275-277,:360-364,:372-375 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:148-149,:379-381,:482-485 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3101,:3112,:3127",
+      "quote": "BattleUI.as:275 `if(this.battlemodebust.hitTestPoint(mousex,mousey))` · :374 `this.battlemodebust.stancecolor1.gotoAndStop(num);` · §1t113s0§.as:484 `this.§1t5158s0§.§1t15895s0§.gotoAndStop(param1);`",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L8 ui-hud: one clickable portrait widget carrying bustcanvas + a stancecolor1 ring on frames 1/2/3 + a highlight child - not a portrait plus a separate button. Confirms ledger item 10 (ring is stance-coloured) and supplies the frame indices."
+    }
+  ]
+}

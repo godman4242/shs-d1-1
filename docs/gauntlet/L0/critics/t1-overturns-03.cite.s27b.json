@@ -1,0 +1,136 @@
+{
+  "packet_size": 7,
+  "judged_count": 7,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "skills-meters/stance-mastery-domain-is-1-to-10-in-skilldata",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "material",
+      "own_cite": "reference/extracted/skilldata.xml:3-79 (skill id 1000, displayname 6000, <passive>1</passive>, ten <level> blocks value 1..10 / required 1,1,2..9) + reference/decompiled/shs3_android/scripts/StatsManager.as:740-742 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262,:3265 + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2268,:2586-2588 + docs/gauntlet/L0/index/strings.json[\"6000\"]",
+      "reason": "Every cite resolves to the exact line with the exact text. skilldata.xml:3-79 is skill 1000 with displayname 6000, <passive>1</passive>, and exactly ten <level> blocks whose <value> runs 1..10 (<required> 1,1,2,3,4,5,6,7,8,9). strings.json[\"6000\"]='Light Stance Mastery'. StatsManager.as:740-742 is verbatim 'skillStats.push(new IntStat(1000,1));' /(1001,1)/(1002,1). §1t99s0§.as:3262 is '_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);' and :3265 is '_loc2_ = _loc1_ * (1 + 0.2 * this.§1t4422s0§ * 0.1);'. I closed the binding the claim did not: §1t1523s0§.as:2268 passes §1t9714s0§(1000)/(1001)/(1002) into §1t4443s0§ params 12/13/14, which §1t99s0§.as:196-197 assigns to §1t4421s0§/§1t4422s0§ — so those ARE the skill-1000/1001 mastery levels. Arithmetic: m=1 -> 0.54 / 1.02, m=10 -> exactly 0.90 / 1.20; m=9 gives 0.86 / 1.18, which are NOT the ledger's numbers. I also went beyond the claim and closed its own disclosed android-only parity hole: the WEB build v0.717 seeds the identical list at §1t1523s0§.as:2586-2588, so floor=1 is attested web-side and does not rest on StatsManager.as alone. Ledger line 155's label 'MASTERY-9 CEILING' is off by one and its 'A level-1 Shugyosha does Light x0.5 / Balanced x1.0' is the m=0 value the game never issues. The ledger's underlying insight (these are ceilings, not base) survives; the number 9 and the x0.5/x1.0 floor fall, and line 320's action item 'relabel mastery-9' would encode the wrong number."
+    },
+    {
+      "claim_id": "ui-hud/battleui-carries-its-own-change-stance-button-in-both-builds",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "fatal",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:22,:44,:64,:120-121,:146,:148-149,:379,:381,:468-480 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3043-3051,:3058-3080 + reference/decompiled/shs3_android/scripts/BattleUI.as:60,:101-102,:109-113,:192-193,:261-262",
+      "reason": "citelint flagged QUOTE_UNVERIFIED only because the claim's quote is a hand-compressed paraphrase with '//' separators; every line it names is real and says what is claimed. Verified line by line: :22 'public var §1t5158s0§:MovieClip;'; :44 '§1t5169s0§:TextField;'; :64 '§1t5182s0§:MovieClip;'; :121 'this.§1t5169s0§.text = §1t1521s0§.getString(175);'; :146 'this.§1t5161s0§.text = §1t1521s0§.getString(208);'; :148-149 '.highlight.visible = false;' / '.buttonMode = true;'; :379 is the hitTestPoint on §1t5158s0§ and :381 'this.§1t5207s0§();'; :468-480 is 'internal function §1t5207s0§()' whose body is 'if(§1t9586s0§().§1t4470s0§()){ Snd_smallClick; §1t4472s0§(); stance = §1t4473s0§(); } else { Snd_error; }'. I then followed the call the claim only asserted: §1t99s0§.as:3058-3080 §1t4472s0§ IS a stance cycle (-1 -> §1t12220s0§ -> §1t12221s0§ -> §1t12222s0§ -> §1t12220s0§) guarded by 'if(this.§1t4414s0§ < 48) return;', and :3048-3051 §1t4470s0§ = §1t4469s0§() && §1t4414s0§ >= 48. That is a meter gate inside the in-combat HUD class, not a lock. The obfuscation map is confirmed by structural twinning against android BattleUI.as (:101-102 crittext/getString(175) == web :120-121; :109-110 changestancelabel/getString(208) with the same second arg 'true' == web :145-146; :60 reloadbar + :261-262 '.bar.scaleX' / 'crittext.visible = percentage >= 1' == web §1t5182s0§ at :64,:333-334). Ledger line 158 'In-combat stance is HARD-LOCKED in v0.717' is false as written: v0.717's own BattleUI ships the affordance and the cycle. Only caveat, disclosed by the claim's own build field: the ID->English text ('Change Stance') is read off the android v0.682 table, so the STRING is S0-3-caveated — but the overturn rests on the web code path, which needs no string at all."
+    },
+    {
+      "claim_id": "ui-hud/frame-proof-the-stance-label-hides-when-the-third-bar-fills",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "material",
+      "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png crop (0,900)-(700,1080) upscaled 3x LANCZOS, and (240,1018)-(540,1052) upscaled 4x; same 4x crop of _432.5.png and _432.9.png + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:326-347",
+      "reason": "I opened the frames and looked, at both the claim's crop and a wider one. Nr4fQstqHDM_428.0.png shows exactly what is claimed: red-ringed portrait, then THREE stacked bars — green '20/20', blue '26/26', and a third brown/olive bar with an EMPTY track carrying 'CANNOT CHANGE STANCE' in pale lettering, with yellow '150% DAMAGE' on the line below. Nr4fQstqHDM_432.5.png and _432.9.png, same duel, same crop: that third bar now carries a white fill block at its LEFT END and the label is GONE. The numbers 20/20 and 26/26 are exactly as claimed. The code cite is exact: §1t113s0§.as:326-347 is §1t5205s0§, '_loc3_ = (param1 - 48) / (param2 - 48)', clamped at 0, '.bar.scaleX = _loc3_', then :336-342 shows the label when _loc3_ == 0 and :344-347 hides it while '_loc3_ > 0 && _loc3_ < 1'. The claim's line ranges are correct to the line. This is a meter-state readout on film, not a battle-state lock notice."
+    },
+    {
+      "claim_id": "ui-hud/string-960-is-cannot-change-stance-frame-resolved",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "material",
+      "own_cite": "reference/frames/session11/crit-focus/t1003.000.png and t1082.100.png, crop (0,820)-(660,1080) upscaled 3x LANCZOS + per-pixel scan at y=1035 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111,:326-359 + reference/decompiled/shs3_android/scripts/BattleUI.as:259-263 + docs/gauntlet/L0/index/strings.json (no key '960')",
+      "reason": "citelint's QUOTE_NOT_LOCATED is expected — the quote describes frames, not file text. I cropped both frames myself. t1003.000.png: green 14/20, blue 31/31, third bar track EMPTY with 'CANNOT CHANGE STANCE' centred on it in pale grey, yellow '150% DAMAGE' beneath — exactly as claimed. t1082.100.png: green 11/20, blue 31/47, third bar filled from the left with NO text on it — exactly as claimed. The code cite is exact: :111 is 'this.§1t5204s0§ = \"<font color=\\'#BBBBBB\\'>\" + §1t1521s0§.getString(960) + \"</font>\";' and :110 is the '#000000' + getString(175) twin, both written into the SAME TextField §1t5169s0§ — so the empty-track grey label and the full-meter 'Critical Hit' label share one field, which is precisely why the frame resolves 960. :348-353 confirms the lane_impact's 'full -> black Critical Hit + Snd_criticalDamage' verbatim. Two independent corroborations I added: strings.json has no key '960' at all (the android v0.682 table genuinely lacks it), and android BattleUI.as:259-263 updateReload sets only reloadbar.bar.scaleX and 'crittext.visible = percentage >= 1' with NO grey-label branch — so 960 really is web-only, and the claim's premise is not just unfalsified but explained. One minor imprecision that does not touch the verdict: I measured the t1082 fill at ~23% of track (white run x=245..304, track x=245..~514), not the claimed ~28%; and the hide-branch is :344-347, not the claimed :343-346 (one line early at each end). Neither number is load-bearing — the lane_impact ships threshold 48 from code, not from the fill fraction."
+    },
+    {
+      "claim_id": "ui-hud/the-video-study-notes-misread-the-cannot-change-stance-slot",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "material",
+      "own_cite": "reference/frames/session11/crit-focus/t1003.000.png crop (0,820)-(660,1080) 3x LANCZOS + bright-pixel colour census (label row y=1028-1044 vs banner row y=1050-1074) + docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7,:45,:71 + docs/research/video-study/segments/A-16-beach-fights-named-enemy-jinbei-archer.md:23 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:111,:319-324,:326-347",
+      "reason": "THE FRAME WINS OVER THE MEASUREMENT DOC, and I am saying so out loud. All four doc lines resolve and say what the claim says. B-11:7 verbatim 'Yellow text under the bars: \"CANNOT CHANGE STANCE\" and \"150% DAMAGE\"'. B-11:45 'Green bar under HP fluctuated 4/20 -> 2/20 -> 3/20 ... while label reads \"CANNOT CHANGE STANCE\" - reads as a stance-lock/special resource'. B-11:71 carries the finding's quote word for word: 'the small green \"X/20\" bar (stance-lock resource, label \"CANNOT CHANGE STANCE\")'. A-16:23 'Stance meter (blue bar) is a separate 20/20 resource ... confirms stance-switching is locked once a duel starts'. The frame refutes them: I ran a bright-pixel census on t1003.000.png and the label row's dominant colour is (176,176,160) — near-neutral pale grey, the compression-shifted #BBBBBB of :111 — while the '150% DAMAGE' row's is (240,192,0), saturated gold with B=0. Not the same colour, measured, not eyeballed. And the label's bar carries no numerals: the two numeric updaters (§1t5201s0§ :312-317 and §1t5202s0§ :319-324) both write '.text', while §1t5205s0§ :326-347 writes only 'bar.scaleX' on §1t5182s0§. Two small looseness notes that do not reach refutation: the claim says '§1t5205s0§ sets only bar.scaleX with no text' when it does set htmlText on the shared crittext field (the intended, and true, point is 'no numerals on that bar'); and it cites §1t5202s0§ as 'the numeric bars' when that is only the Chi one, the HP twin being §1t5201s0§ at :312-317. The overturn stands: ledger line 158's sole cited evidence is this label, and the label is a meter readout."
+    },
+    {
+      "claim_id": "world/the-war-map-mask-and-pitch-are-web-side-too-parity-closed",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t7934s0§.as:15,:17,:19,:168,:232,:296-297,:299-300,:320-321 + reference/decompiled/shs3_payload/scripts/§1t6481s0§.as:17,:19,:21,:263 + reference/decompiled/shs3_payload/scripts/§1t4648s0§.as:5 + reference/decompiled/shs3_payload/scripts/§1t1524s0§.as:87,:1456-1463 + reference/decompiled/shs3_android/scripts/WarSelectUI.as:15,:17,:19,:173,:233-234,:253-254",
+      "reason": "Every cited line resolves verbatim. §1t7934s0§.as:15 'public static var §1t12535s0§:int = 8;', :17 '= 21;', :19 '= 51;'; :232 'return this.§1t7958s0§.getPixel(param1 + §1t12536s0§ - §1t12535s0§,param2 + §1t12537s0§) != 0;' — the finding's quote, word for word; :299 '_loc11_.x = (_loc8_ + §1t12536s0§) * 10 + 4.5;' and :300 '... * 10 + 8.8;' — again verbatim. §1t6481s0§.as:17/:19/:21 repeat 8/21/51 and :263 repeats the identical land test. The mapid rule in lane_impact is confirmed at :296-297 '(_loc10_ >> 12 & 0x0FFF) - 341' / '(_loc10_ & 0x0FFF) - 341'. I then verified the identification the claim assumed: android WarSelectUI.as:15/:17/:19 are WARMARKERSHIFTX=8 / TERRSHIFTX=21 / TERRSHIFTY=51, :173 is the same getPixel expression, :233-234 the same 4.5/8.8 flag pitch and :253-254 the same 5/8.5 marker pitch — so §1t7934s0§ IS the web WarSelectUI and §1t12535/6/7s0§ map to WARMARKERSHIFTX/TERRSHIFTX/TERRSHIFTY. I also closed the wiring the claim only asserted: §1t4648s0§.as:5 '[Embed(source=\"/_assets/92_1t4648s0.bin\", mimeType=\"application/octet-stream\")]', §1t1524s0§.as:87 'internal static const §1t9847s0§:Class = §1t4648s0§;', and §1t7934s0§.as:168 'this.§1t7958s0§ = §1t1524s0§.§1t9892s0§();' where :1456-1458 returns the BitmapData — the exact web twin of android QuestEngine.getMapBitmapData(). The C2 circularity caveat genuinely does not bite here: this is web decompiled source, not one of the four android-sourced data XMLs. Ledger blocker (1)'s prescribed work — 'mine Fandom Category:Territories via API; trace the map image' — is unnecessary. Only rhetorical overstatement: 'byte-identical to WarSelectUI.as' is loose (identifiers are obfuscated); the VALUES and expressions are identical, which is what the claim needs."
+    },
+    {
+      "claim_id": "world/the-war-map-mask-is-byte-identical-across-web-and-android",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "material",
+      "own_cite": "md5 of reference/extracted/bindata/92_1t4648s0.bin and reference/extracted/android/110_Mobile_MapBitmapData.bin (both 13068dfa1a5cc5628720a25782f93fed, both 272 bytes) + hexdump magic 'GIF89a 3f00 4800' + PIL pixel census + reference/decompiled/shs3_android/scripts/Mobile_MapBitmapData.as:5 + reference/decompiled/shs3_android/scripts/WarSelectUI.as:153 + reference/decompiled/shs3_payload/scripts/§1t4648s0§.as:5",
+      "reason": "Measured first-hand and exact on every number. Both files are 272 bytes and both md5 to 13068dfa1a5cc5628720a25782f93fed. Header bytes are '4749 4638 3961 3f00 4800' = GIF89a, width 0x003f = 63, height 0x0048 = 72. Pixel census: Counter over the converted image returns exactly {(0,0,0): 3801, (255,255,255): 735}, total 4536 = 63*72 — the claim's 735/3801 to the pixel. Mobile_MapBitmapData.as:5 is verbatim '[Embed(source=\"/_assets/110_Mobile_MapBitmapData.bin\", mimeType=\"application/octet-stream\")]' and WarSelectUI.as:153 is verbatim 'this.mapBitmapData = QuestEngine.getMapBitmapData();'. The non-circularity argument is the important part and it holds under C2: 92 is a WEB payload bindata file (S0-1 already lists it as 'a GIF'), 110 is an ANDROID blob, and I confirmed the web side independently embeds and consumes 92 (§1t4648s0§.as:5 -> §1t1524s0§.as:87 -> §1t7934s0§.as:168 -> :232 getPixel), so this is not a file diffed against itself. Ledger blocker (1) falls: the geography is a shipped 63x72 mask with 735 land cells, identical in both builds and named by the game's own embed."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "ui-hud/the-change-stance-affordance-IS-the-portrait-bust-not-a-separate-button",
+      "text": "Correction to the lane_impact of the surviving BattleUI finding, which says the HUD needs 'a Change Stance button NEXT TO the portrait'. It is not next to the portrait — it IS the portrait. Android names the clickable §1t5158s0§ 'battlemodebust' (BattleUI.as:26), the same object that receives the player bust at :148 ('battlemodebust.bustcanvas.addChild(this.playerBust)') and carries the stance ring at :374 ('battlemodebust.stancecolor1.gotoAndStop(num)'). The 'Change Stance' label is a HOVER TOOLTIP, not a persistent button caption: android :192-193 adds MOUSE_OVER/MOUSE_OUT -> showChangeStanceLabel/hideChangeStanceLabel, and the web twin does the identical thing at §1t113s0§.as:241-242 (MOUSE_OVER/MOUSE_OUT -> §1t5215s0§/§1t5216s0§) with :542 '§1t5161s0§.visible = true;' / :548 '... = false;' and :200 hiding it at init. A porter following the lane_impact literally would ship a spurious second HUD widget.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:200,:241-242,:542,:548 + reference/decompiled/shs3_android/scripts/BattleUI.as:26,:148,:192-193,:374,:433,:439",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L8 ui-hud: the stance control is the portrait bust itself (buttonMode, highlight child, stancecolor1 ring); the getString(208) label renders only on hover. Do not author a standalone Change Stance button."
+    },
+    {
+      "id": "skills-meters/the-web-build-seeds-stance-mastery-at-1-too-parity-hole-closed",
+      "text": "The stance-mastery finding disclosed its own parity hole in its build field ('android v0.682 data XML + web v0.717 formula') because the floor=1 evidence was StatsManager.as, an android file. That hole is now closed from the web side: §1t1523s0§.as:2583-2593 is the web v0.717 new-character seed and it pushes the identical seven skill stats at value 1 — '§1t9367s0§.push(new §1t100s0§(1000,1));' / (1001,1) / (1002,1) / (1003,1) / (1042,1) / (1049,1) / (1050,1) — a line-for-line twin of StatsManager.as:740-746. So mastery floor 1 (Light x0.54, Balanced x1.02) is attested in v0.717 itself and does not depend on the android build.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2586-2588 + reference/decompiled/shs3_android/scripts/StatsManager.as:740-742",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L2 skills-meters: the [1,10] mastery domain no longer carries an S0-3/C2 build-parity caveat."
+    },
+    {
+      "id": "ui-hud/the-grey-cannot-change-stance-label-is-a-v0717-web-only-addition",
+      "text": "String 960 and its grey label are not merely missing from the android string table — the android build has no code path that would use them. Android BattleUI.as:259-263 updateReload is two lines: 'this.reloadbar.bar.scaleX = percentage;' and 'this.crittext.visible = percentage >= 1 && this.reloadbar.visible;'. There is no ratio==0 branch and no second htmlText. The web v0.717 twin §1t113s0§.as:326-359 adds all three states (grey getString(960) at ratio 0, hidden at 0<r<1, black getString(175) + Snd_criticalDamage at r>=1) and rescales the input to '(param1 - 48) / (param2 - 48)' where android passes a pre-computed percentage. This explains why strings.json has no key '960' without needing a table-coverage argument, and it is a real, dated v0.682 -> v0.717 HUD change.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:259-263 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111,:326-359 + docs/gauntlet/L0/index/strings.json (no key \"960\")",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L8 ui-hud: ship the three-state meter label from the WEB contract; do not port android's two-line updateReload. Also: the 48 offset lives in the UI rescale, mirroring §1t99s0§.as:3050's gate."
+    },
+    {
+      "id": "combat-core/the-real-in-combat-stance-rule-is-actionstate-gate-AND-meter-48",
+      "text": "The replacement for the ledger's dead 'HARD-LOCKED' line, stated positively so it can be ported. In-combat stance change in v0.717 requires BOTH conditions of §1t99s0§.as:3048-3051: '§1t4470s0§() { return this.§1t4469s0§() && this.§1t4414s0§ >= 48; }', where §1t4469s0§ (:3043-3046) is an actionState whitelist (§1t11141s0§, §1t11150s0§, §1t11142s0§, §1t11143s0§, §1t11198s0§, or §1t11169s0§ with a matching previous state §1t3251s0§). On success §1t4472s0§ (:3058-3080) cycles -1 -> §1t12220s0§ -> §1t12221s0§ -> §1t12222s0§ -> §1t12220s0§ and re-guards with its own 'if(this.§1t4414s0§ < 48) return;'; on failure BattleUI plays Snd_error (§1t113s0§.as:478). Note the cycle is THREE stances wide even though §1t99s0§.as:3266-3268 gives §1t12222s0§/§1t12223s0§/§1t12224s0§ the same fixed x1.4 damage.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3043-3051,:3058-3080,:3266-3270 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:468-480",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\"). The recreation's Focus-gated in-combat switch models **removed 2014 behavior**.",
+      "lane_impact": "L5 combat-core: replace the hard-lock with gate = (actionState in whitelist) && reloadMeter >= 48, cycling Light->Balanced->Heavy->Light, Snd_smallClick on success / Snd_error on refusal."
+    },
+    {
+      "id": "ui-hud/which-hud-bar-is-hp-and-which-is-chi-is-still-unheld-by-colour",
+      "text": "Nobody has established, from an artifact that ties COLOUR to STAT, that the green bar is HP and the blue bar is Chi. The code proves only that there are exactly two numeric updaters and one numeral-free one: android BattleUI.as:245-249 updateHp (hptext/hptextshadow/hpbar) and :252-256 updateChi (chitext/chitextshadow/chibar), whose web twins are §1t113s0§.as:312-317 (§1t5171s0§/§1t5172s0§/§1t5170s0§ = hptext/hptextshadow/hpbar) and :319-324 (§1t5165s0§/§1t5166s0§/§1t5164s0§ = chitext/chitextshadow/chibar), matched by call-order against the empty setReloadMax (:241-243) / §1t5200s0§ and updateReload/§1t5205s0§ that bracket them. Nothing in AS3 names a colour — the fills live in SWF art. The surviving 'video-study notes misread' finding asserts green=HP / blue=Chi, and B-11:7 asserts the exact opposite ('a thin green bar ... reads as a resource/stamina-type meter, NOT the blue HP bar ... a thick blue bar ... (this is HP)'). Circumstantial support for green=HP: REBUILD_READINESS.md:178 is Kheshav's own-eyes verdict on Nr4fQstqHDM_428.0 and reads 'player HP 20/20', and in that frame green is 20/20 while blue is 26/26; and across my three frames the green denominator is pinned at 20 (20/20, 14/20, 11/20) with its numerator falling during combat, while the blue denominator varies 26/31/47. That is inference plus one A5 line, not a colour-to-stat artifact. Flagging it because it would silently corrupt palette.ts and the config bar names, and because two committed docs currently disagree.",
+      "artifact_class": "STILL_UNHELD",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:245-256 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:308-324 + docs/research/REBUILD_READINESS.md:178 + docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7 + reference/frames/session11/crit-focus/t1003.000.png, t1082.100.png",
+      "verdict": "STILL_UNHELD",
+      "overturns_ledger": false,
+      "lane_impact": "L8 ui-hud: before writing bar colours to config, find an artifact that binds colour to stat (a low-HP/death frame, or the SWF shape for hpbar). Do not inherit green=HP from prose on either side."
+    },
+    {
+      "id": "ui-hud/battleui-obfuscation-map-extension-eight-more-fields",
+      "text": "Byproduct of judging this packet: the web-to-android field map for §1t113s0§ (BattleUI) now covers eight more members beyond the three the packet claimed, all fixed by matching call order and body shape against the android twin. §1t5158s0§ = battlemodebust (:148-149 highlight/buttonMode == android :112-113); §1t5170s0§/§1t5171s0§/§1t5172s0§ = hpbar/hptext/hptextshadow (:312-317 == android :244-249); §1t5164s0§/§1t5165s0§/§1t5166s0§ = chibar/chitext/chitextshadow (:319-324 == android :251-256); §1t5200s0§ = setReloadMax (both empty bodies, :308-310 == android :241-243); §1t5205s0§ = updateReload (:326 == android :259); §1t5215s0§/§1t5216s0§ = showChangeStanceLabel/hideChangeStanceLabel (:241-242,:542,:548 == android :192-193,:433,:439). Together with the packet's §1t5169s0§=crittext, §1t5161s0§=changestancelabel, §1t5182s0§=reloadbar, that is the whole player-status cluster of the combat HUD decoded.",
+      "artifact_class": "A2",
+      "build": "both",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:148-149,:241-242,:308-324,:326,:542,:548 + reference/decompiled/shs3_android/scripts/BattleUI.as:112-113,:192-193,:241-256,:259,:433,:439",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "L8 ui-hud: unblocks the rest of the BattleUI port without further guessing at obfuscated field names."
+    },
+    {
+      "id": "ui-hud/measured-third-bar-fill-in-t1082-is-23-percent-not-28",
+      "text": "Minor numeric correction to the surviving string-960 finding, which describes the third bar in t1082.100.png as 'about 28% filled'. Per-pixel scan at y=1035 across x=235..560: the white fill run is x=245..304 (60 px) and the brown track runs from x=245 to about x=514 (samples read (46,29,0) through x=510 and (1,1,1) at x=520), giving 60/270 = 22.6%. Not load-bearing — the finding's shipped number is the threshold 48, which comes from §1t113s0§.as:328, not from the fill fraction — but the 28% figure should not be transcribed into any doc as a measurement.",
+      "artifact_class": "A1",
+      "build": "web v0.717",
+      "cite": "reference/frames/session11/crit-focus/t1082.100.png, per-pixel row scan at y=1035, x=235..560 (no crop needed; bar is HUD-scale)",
+      "verdict": "PARTIAL",
+      "overturns_ledger": false,
+      "lane_impact": "L8 ui-hud: no config consequence; a bookkeeping fix so a soft estimate is not promoted to a measured row."
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "packet_size": 7,
+  "judged_count": 7,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "combat-core/in-combat-stance-cycling-is-live-code-in-v0717",
+      "refuted": false,
+      "overturn_upheld": true,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3048-3051,:3058-3081 · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:117,:326-361,:468-479 · reference/frames/duel_dense/Nr4fQstqHDM_429.0.png (crop 0,920-620,1080 of 1920x1080, upscaled 3x)",
+      "reason": "Every line and quote resolves verbatim. :3050 is exactly 'return this.§1t4469s0§() && this.§1t4414s0§ >= 48;'. :3058-3081 is a four-branch stance cycler (-1->§1t12220s0§, 12220->12221, 12221->12222, 12222->12220) with the early-out 'if(this.§1t4414s0§ < 48){return;}' at :3060-3063 and the push to §1t251s0§ at :3080. §1t113s0§.as:468-479 is the HUD handler with Snd_smallClick on pass / Snd_error on refusal, and :117 is 'this.§1t5168s0§.§1t15885s0§.text = §1t1521s0§.getString(45);' with strings.json[\"45\"]='Hit Combo', confirming §1t113s0§ is the battle HUD. I went further than the claim and closed the loop the ledger opened. §1t4415s0§ is set to 8*24=192 at :249 and §1t4414s0§ is the meter; the stance switch DEBITS 48 at :3162 ('this.§1t4414s0§ -= 48;'). Decisively, §1t113s0§.as:326-361 is the meter widget: '_loc3_ = (param1 - 48) / (param2 - 48)', and when _loc3_==0 it displays §1t5204s0§ = grey getString(960), when _loc3_>=1 it displays §1t5203s0§ = black getString(175)='Critical Hit'. I opened the frame RR:178 leans on and cropped/upscaled the bottom-left HUD: the third bar reads 'CANNOT CHANGE STANCE' in grey on a dark bar sitting in the meter slot under HP 20/20 and the blue 26/26 bar. That is getString(960) - the meter's LOW-END label, shown while the meter is at or below 48 - not a hard lock. The frame and the code do NOT disagree; the ledger MISREAD the frame. RR:158, SHSD_MASTER_REFERENCE.md:388 and :2099 all fall, and the recreation's Focus-gated switch is the original, at the original threshold.",
+      "severity": "minor"
+    },
+    {
+      "claim_id": "combat-core/the-game-ships-a-loading-tip-telling-you-to-change-stance-in-battle",
+      "refuted": false,
+      "overturn_upheld": true,
+      "own_cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:584 · reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:605-611,:182-217 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3048-3051",
+      "reason": "GameEngine.as:584 is verbatim 'str = \"Tip: In battle, you can use spacebar to change stance.\";' inside the dice==12 arm of the loading-tip picker (dice==11 stables at :580, dice==13 number-key skills at :588). §1t1541s0§.as:605-611 is verbatim 'case Keyboard.SPACE:' -> '_loc2_ = §1t1523s0§.§1t9586s0§();' -> 'if(!§1t10074s0§ && _loc2_.§1t4470s0§())' -> '_loc2_.§1t4472s0§();' + Snd_smallClick, else Snd_error at :614. I specifically hunted the one thing that could sink this: the extra flag §1t10074s0§ in the SPACE gate. It is NOT a battle-state flag - §1t1541s0§.as:23 declares it false, :191 sets it true inside the MouseDown handler §1t10103s0§ (which seeds the gesture canvas and §1t10075s0§ point list), and :217 clears it in the MouseUp handler. It means 'a slash gesture is mid-drag'. So the claim's 'no battle-state flag anywhere' survives. The build labelling is honest on its face - the finding itself says the tip is android v0.682 while the handler and gate are web v0.717 - so the S0-3 parity caveat is disclosed, not hidden, and the web-side half stands alone without the tip.",
+      "severity": "minor"
+    },
+    {
+      "claim_id": "hunter-s26c/deathnohead-is-31-frames-of-bone-transforms-not-a-name",
+      "refuted": false,
+      "overturn_upheld": true,
+      "own_cite": "reference/extracted/bindata/108_1t4635s0.bin (own decode: UTF-8 BOM XML, <animdata> root; grep -c '<anim ' = 158; md5 bcfd658e79fafb41f52431afb7d10622 == reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin) · docs/research/REBUILD_READINESS.md:240",
+      "reason": "citelint said QUOTE_UNVERIFIED; I found the quote. The literal string '<anim i=\"deathnohead\" d=\"31\">' is present. My own walk: the deathnohead block is 16,531 chars, contains exactly 31 <f> elements numbered 0..30, and frame 0 opens with EXACTLY the two quoted node records in the quoted order - '<n i=\"16\" x=\"-18\" y=\"-88\" r=\"-83\"></n>' then '<n i=\"20\" x=\"-18\" y=\"-61\" r=\"-104\"></n>'. All eight named death anims exist with durations: death 38, deathenemy 23, deathnohand 25, deathnohead 31, deathwitharrow 23, deathbyarrow 21, deathdowned 7, deathinhalf 28. The md5 identity claim also holds - both files hash bcfd658e79fafb41f52431afb7d10622 - and this is NOT the C2 circularity trap, because 108_1t4635s0.bin is a genuine WEB bindata file (S0-1: 100-118 are the web <animdata> blobs), so the match is a real cross-build parity result. ONE IMPRECISION, not fatal: 'about seventeen node records' per frame is true for frames 0-22 (exactly 17 each) but frames 23-30 carry exactly ONE node, i='16'. So 'per-frame x/y/rotation for every bone' is literally false for the last eight frames. That detail actually supports the substance - after the body settles, only node 16 keeps animating, which is the severed head's own trajectory. RR:240 blocker (5) closes at the animation level; the detached-limb ARTWORK is a separate question the blob does not answer, so I uphold the overturn as written but it should land in the ledger as 'keyframes recovered', not 'nothing left to catalogue'.",
+      "severity": "minor"
+    },
+    {
+      "claim_id": "hunter-s26c/tenthgold-100-is-contract-and-the-dan-ladder-is-hard-capped",
+      "refuted": false,
+      "overturn_upheld": true,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2638-2659,:228,:254 · reference/decompiled/shs3_android/scripts/StatsManager.as:194,:220,:2195-2214 · docs/gauntlet/L0/index/strings.json[\"455\"]-[\"464\"] · docs/research/REBUILD_READINESS.md:164-165",
+      "reason": "Every quoted line is verbatim. Web §1t9600s0§ at :2638; :2644 'if(§1t7356s0§(§1t9426s0§) == 8)'; :2646 '§1t9713s0§(§1t9413s0§,100);'; :2651 '§1t9713s0§(§1t9413s0§,25);'; :2653 'if(§1t7356s0§(§1t9426s0§) < 9)' with :2655 '§1t9713s0§(§1t9426s0§,1);'. Android doRebirth at :2195 with 20/5 and the identical shape. I verified BOTH constant mappings rather than taking them: §1t1523s0§.as:228 '§1t9413s0§:int = 12' vs StatsManager.as:194 'STAT_HGOLD:int = 12', and §1t1523s0§.as:254 '§1t9426s0§:int = 25' vs StatsManager.as:220 'STAT_DAN:int = 25'. So the web build pays 25 hard gold per rebirth, 100 on the rebirth that promotes DAN 8->9, and caps DAN at 9 - ten rungs. RR:165's clause 'film shows a flat +25 gold every rebirth, no 10th-rebirth tier' is falsified in its second half by executable web code, and MAX_DAN_RANK=10 + tenthGold=100 both promote to CONTRACT. ONE OFF-BY-ONE in the finding: the ten rungs are strings.json[\"455\"]='(初段)' through [\"464\"]='(十段)', not '456-464' - 456-464 is only nine IDs. The cited entry [\"464\"] itself resolves and does say 十段, so this is a range typo, not a mis-cite.",
+      "severity": "minor"
+    },
+    {
+      "claim_id": "hunter-s26c/the-271-cap-is-the-web-per-stat-cap-at-level-80",
+      "refuted": false,
+      "overturn_upheld": true,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3340-3352 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:206,:212,:216,:224,:232 · reference/decompiled/shs3_android/scripts/InventoryUI.as:2406-2412 · reference/decompiled/shs3_android/scripts/StatsManager.as:172,:178,:182,:190,:198 · docs/research/REBUILD_READINESS.md:201",
+      "reason": "Both quoted lines are byte-exact. :3340 'var _loc2_:int = §1t1523s0§.§1t9714s0§(§1t1523s0§.§1t9411s0§);' and :3344 'var _loc6_:Boolean = §1t1523s0§.§1t9714s0§(§1t1523s0§.§1t9408s0§) < 1 + (_loc2_ + 10) * 3;'. I did not accept the symbol mapping on assertion - I matched the constant tables index-for-index: web §1t9403s0§=1 / §1t9406s0§=4 / §1t9408s0§=6 / §1t9411s0§=10 / §1t9415s0§=14 against android STAT_MAXHP=1 / STAT_MAXCHI=4 / STAT_ATTACK=6 / STAT_LEVEL=10 / STAT_MAXAP=14. Perfect alignment, and web :3347 'this.statsPanel.HPadd.visible = _loc3_;' keeps the un-obfuscated HPadd anchor. Arithmetic checks: L80 -> ATK/DEF/SPD < 1+90*3 = 271, MAXHP < 10+90*10 = 910, MAXCHI < 10+90*5 = 460, MAXAP < 30+90*5 = 480. Android's coefficients really are different (HP *5, CHI *5, AP 20+(lvl+10), ATK/DEF/SPD lvl+10 = 90 at L80), so 271 is specifically a v0.717 web datum. RR:201's 'gear/rebirth-inclusive ... 237-point first-run budget' explanation is simply the wrong story: 271 is a hard-coded point-buy ceiling on the base stat, and it is not an arithmetic exercise. Overturn upheld.",
+      "severity": "minor"
+    },
+    {
+      "claim_id": "hunter-s26c/web-19-field-save-schema-is-a-positional-twin",
+      "refuted": false,
+      "overturn_upheld": true,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1832s0§.as:2811-2836 · reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2936-2960 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2660-2662 · docs/research/REBUILD_READINESS.md:351",
+      "reason": "I counted both lists myself rather than trusting the claim. Web §1t2002s0§ (:2811) clears 'saved' at :2814 then exactly 19 named fields at :2815-2833; android deleteCharCookieData (:2936) clears 'saved' at :2940 then exactly 19 at :2941-2959. Position by position the survivors pin it: playerLevel slot 4 (web :2818 / android :2944), equipment slot 6 (:2820 / :2946), inventory slot 9 (:2823 / :2949), stash slot 10 (:2824 / :2950), and playerlocation/taunt/friends as slots 17/18/19 (:2831-2833 / :2957-2959). All twelve obfuscated names the finding resolves are correct by position, and one of them has independent corroboration: §1t6928s0§ = skillSlots is confirmed at §1t1523s0§.as:2660-2662, 'new Vector.<§1t57s0§>(8); §1t6928s0§[0] = new §1t57s0§(1003,1);' - eight skill slots. RR:351 is a compound sentence and only half of it falls; the finding says so itself and asks for the split rather than a deletion, which is the honest call. ONE OVER-REACH worth flagging in the rewrite: this is the DELETE routine, so it recovers field NAMES and ORDER, not the per-field value encoding. 'Something to transcribe' is true of the schema's shape, not yet of its serialization.",
+      "severity": "minor"
+    },
+    {
+      "claim_id": "hunter-s26c/web-crit-is-flat-1p3-and-the-proc-rule-is-deterministic",
+      "refuted": false,
+      "overturn_upheld": true,
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3255-3277,:249,:1203-1205,:3293-3316 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3198-3224 · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:326-361 · docs/research/REBUILD_READINESS.md:190,:195",
+      "reason": "All five quoted lines are verbatim. Web §1t4475s0§ at :3255: :3258 'var _loc1_:int = this.minDamage + Math.random() * this.damageRange;' is the ONLY RNG in the function; :3272 'if(this.§1t4414s0§ == this.§1t4415s0§)'; :3274 'return _loc2_ * 1.3 + this.§1t1243s0§;'; :3276 'return _loc2_;'. Android getDamage at :3198 with :3215 'if(this.reload == this.maxreload)', :3219 '* 1.2', :3221 '* 1.5'. Positional twin confirms §1t4414s0§=reload, §1t4415s0§=maxreload, §1t1243s0§=STAT_CRITICALDMG. I then verified the crit gate is genuinely a full-meter check and not a disguised roll: §1t99s0§.as:249 sets maxreload = 8*24 = 192, :1203-1205 fills it +1 per tick, and :3293-3297 zeroes it the instant a slash is thrown at full. Independent HUD corroboration I found on my own: §1t113s0§.as:348-358 fires 'Snd_criticalDamage' and prints getString(175)='Critical Hit' exactly when the normalized meter hits 1. So RR:190 blocker (2) resolves at 1.3 and RR:195 blocker (5) resolves DETERMINISTIC, both from primary web source, and the android 1.2/1.5 pair must not be ported. ONE GENEROUS PHRASING: RR:153 hypothesised the 3x folklore as 1.3x COMPOUNDED with a per-stance crit-damage stat; the code is 1.3x plus an ADDITIVE stat. 'Exactly the mechanism' overstates it slightly - additive, not multiplicative.",
+      "severity": "minor"
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "cite-s27b/focus-meter-numerics-are-fully-recovered-in-web-v0717",
+      "text": "RR:195 blocker (3) 'Focus numerics (max/fill/switch-cost)' is not a blocker - the whole meter is hard-coded in §1t99s0§.as and readable end to end. max = 8*24 = 192 (:249) and it starts at 0 (:250). It fills +1 per sim tick while below max (:1203-1205, 'if(this.§1t4414s0§ < this.§1t4415s0§){++this.§1t4414s0§;'), so 0 -> full is 192 ticks. The stance switch costs exactly 48 (:3162 'this.§1t4414s0§ -= 48;'), which is why the gate at :3050 and :3060 tests >= 48 - one quarter of the bar per switch, four switches from full. A slash at full meter zeroes it outright (:3295-3297); otherwise it debits by stance - Light slashUsage/2, Balanced/Dual slashUsage, Heavy/Reversed slashUsage*1.5 (:3299-3311), clamped at 0. §1t4479s0§ (:3318-3325) adds a flat +6, clamped to max. The HUD normalizes as (v-48)/(max-48), i.e. the DISPLAYED bar is empty at v<=48 and full at 192 (§1t113s0§.as:328). Nothing here is INFERRED.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249-250,:1203-1205,:3162,:3295-3316,:3318-3325 · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:328",
+      "quote": "§1t99s0§.as:249 'this.§1t4415s0§ = 8 * 24;' · :1205 '++this.§1t4414s0§;' · :3162 'this.§1t4414s0§ -= 48;' · :3302 'this.§1t4414s0§ -= this.slashUsage / 2;' · :3320 'this.§1t4414s0§ += 6;' · §1t113s0§.as:328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);'",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "(3) Focus numerics (max/fill/switch-cost).",
+      "lane_impact": "L2 skills-meters: delete blocker (3) from RR:195 and write FOCUS_MAX=192, FOCUS_FILL_PER_TICK=1, FOCUS_SWITCH_COST=48, FOCUS_CRIT_AT_FULL, slash debit x0.5/x1.0/x1.5 by stance, and the (v-48)/(max-48) HUD normalization into src/config as CONTRACT."
+    },
+    {
+      "id": "cite-s27b/cannot-change-stance-is-the-focus-bar-low-end-label-not-a-lock",
+      "text": "The ledger's entire hard-lock case is a misread of one on-screen string, and the code names the widget that prints it. §1t113s0§.as:326-361 is the Focus-bar updater. It scales the bar as (v-48)/(max-48), then: if the result is 0 it shows §1t5204s0§ - grey getString(960) - and forces the label visible; if the result is >= 1 it shows §1t5203s0§ - black getString(175) = 'Critical Hit' - and plays Snd_criticalDamage; in between it HIDES the label entirely. I cropped reference/frames/duel_dense/Nr4fQstqHDM_429.0.png at (0,920)-(620,1080) of the 1920x1080 frame and upscaled 3x: under the green 20/20 HP bar and the blue 26/26 bar sits a third bar, dark and unfilled, printing 'CANNOT CHANGE STANCE' in grey caps, with the yellow '150% DAMAGE' buff BELOW the bar stack rather than in it. That grey-on-empty-bar label is getString(960) in the _loc3_==0 branch. strings.json has no entry 960 because it is the ANDROID table (2,533 entries, no 960), which is exactly why nobody matched the frame text to the code before. THE FRAME AND THE CODE DO NOT DISAGREE: the frame shows a Focus meter parked at or below 48 telling the player they cannot afford a switch RIGHT NOW. The ledger read a transient affordability message as a permanent state.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111,:326-361 · reference/frames/duel_dense/Nr4fQstqHDM_429.0.png (crop 0,920-620,1080, 3x) · docs/gauntlet/L0/index/strings.json[\"175\"]",
+      "quote": "§1t113s0§.as:111 'this.§1t5204s0§ = \"<font color=\\'#BBBBBB\\'>\" + §1t1521s0§.getString(960) + \"</font>\";' · :328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);' · :336 'if(_loc3_ == 0)' -> :340 'this.§1t5169s0§.htmlText = this.§1t5204s0§;' · :346 'this.§1t5169s0§.visible = false;'",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\" appears the instant a fight starts)",
+      "lane_impact": "Kills the LAST defence of RR:158 / SHSD_MASTER_REFERENCE.md:388 and :2099 - the frame evidence they cite is re-read as SUPPORTING the Focus gate. Also gives the HUD lane a spec: third bar under HP and Chi, empty below 48, grey 'cannot change stance' caption at 0, black 'Critical Hit' caption + Snd_criticalDamage at full, caption hidden in between."
+    },
+    {
+      "id": "cite-s27b/stance-damage-ceiling-is-mastery-10-not-mastery-9",
+      "text": "RR:155-156's stance table is CORRECT but its label is off by one rung, and the web build gives the formula outright. §1t99s0§.as:3259-3271: Light = base * (0.5 + 0.4 * lightMastery * 0.1), Balanced = base * (1 + 0.2 * balancedMastery * 0.1), Heavy/Dual/Reversed = base * 1.4 flat. Solve them: mastery 0 gives Light 0.5 / Balanced 1.0 / Heavy 1.4 - exactly RR:156's level-1 Shugyosha row. Mastery 10 gives Light 0.9 / Balanced 1.2 / Heavy 1.4 - exactly RR:155's ceiling table. Mastery 9 gives 0.86 / 1.18, which matches NEITHER. The string table settles the cap independently: strings.json[\"8131\"] = 'Light Stance Mastery Level 10.' (and 8132/8133 for Balanced/Heavy). So the ceiling is MASTERY-10, and the standing 'mastery-9' label in RR:155 and in the project memory is wrong by one. Android diverges and must not be ported: MCSPlayer.as:3205-3213 uses 0.5 + 0.5*m*0.01, 1 + 0.5*m*0.01 and a HEAVY of 1.5, on a 0-100 mastery scale.",
+      "artifact_class": "A2",
+      "build": "web v0.717 (android v0.682 contrasted)",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3259-3271 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3202-3213 · docs/gauntlet/L0/index/strings.json[\"8131\"] · docs/research/REBUILD_READINESS.md:155-156",
+      "quote": "§1t99s0§.as:3262 '_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);' · :3265 '_loc2_ = _loc1_ * (1 + 0.2 * this.§1t4422s0§ * 0.1);' · :3270 '_loc2_ = _loc1_ * 1.4;' · strings.json[\"8131\"] 'Light Stance Mastery Level 10.'",
+      "verdict": "PARTIAL",
+      "overturns_ledger": true,
+      "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+      "lane_impact": "L5 combat-core: the damage half of RR:155 stops being an INFERRED table and becomes a formula - dmgMult(stance, mastery) with mastery 0..10 - so the 'model the curve or decide-and-flag mastery-9' fork at RR:157 dissolves. Correct 'MASTERY-9' to 'MASTERY-10' in RR:155-156 and in the session memory. The REACH half (300/200/100) is untouched by this function and stays a blocker."
+    }
+  ]
+}

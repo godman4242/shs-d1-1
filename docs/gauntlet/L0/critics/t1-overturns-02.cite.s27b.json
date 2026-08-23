@@ -1,0 +1,100 @@
+{
+  "packet_size": 7,
+  "judged_count": 7,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "hunter-s26c/web-parity-for-the-per-kill-xp-formula",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:237 and :258-279 (opened, 1323 lines) · reference/decompiled/shs3_android/scripts/NPC.as:239-260 (opened, 1238 lines)",
+      "overturn_upheld": true,
+      "reason": "CITE HOLDS VERBATIM. I opened both files. §1t68s0§.as:237 is exactly 'this.xp = this.level * 2 + 20;' inside init (:230 'public function init(param1:§1t76s0§) : *'), and :271 is exactly 'this.xp = param1 * 2 + 20;' inside :258 'public function setLevel(param1:int) : *'. The claimed structural twin is real line for line: web :260 'var _loc2_:Number = param1 / this.level;' = android :241 'var factor:Number = lvl / this.level;'; web :261-264 'if(param1 <= 20){ _loc2_ *= 0.9; }' = android :242-245; web :271 = android :252 'this.xp = lvl * 2 + 20;'; web :272-278 'if(param1 <= 10){ damage=1; defense=1; §1t3257s0§=1; ... }' = android :253-259 with maxhp in the 3257 slot. Nothing here is inference dressed as citation. ONE DEFECT, non-fatal: the prose says 'Six further web classes repeat the literal' and then lists FIVE files. My own grep -rn '* 2 + 20' over reference/decompiled/shs3_payload/scripts/ returns 7 sites in 6 files, i.e. five files BEYOND §1t68s0§. The five it names are all correct and all exist; the word 'six' is an off-by-one in prose that changes no conclusion. OVERTURN UPHELD: RR:215 ① reads verbatim '20+ samples show no XP formula either' — the target build ships one, so that clause falls. The claim scopes itself honestly to that clause and leaves the coins-per-kill half standing."
+    },
+    {
+      "claim_id": "hunter-s26c/web-parity-for-the-three-tier-reinforce",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t401s0§.as:660-689 (opened, 2019 lines) · reference/decompiled/shs3_android/scripts/InteractUI.as:645-676 (opened, 1847 lines) · docs/gauntlet/L0/index/strings.json[\"848\"]-[\"852\"] · reference/extracted/bindata/ (27-file listing) · reference/extracted/payload.xml:2634709",
+      "overturn_upheld": true,
+      "reason": "CITE HOLDS VERBATIM ON THE STRUCTURE. Every quoted web line is exact: :662 getString(848,[_loc1_ * 10]), :667 'if(_loc3_ == null || _loc3_.§1t483s0§() == 0 || _loc3_.§1t483s0§() == 13000)', :672 '_loc4_ = _loc3_.getLevel();', :673-676 forcing 59 for itemID 13022, :677 'if(_loc4_ < 30)' -> getString(850), :681 'else if(_loc4_ < 60)' -> (851), :685 else -> (852). Android InteractUI.as:649-673 is the same code with plain names (weaponlevel, StatsManager.EQ_WEAPON). strings.json[\"851\"] matches the quote character for character. THE BUILD-PARITY CAVEAT IS ONLY HALF DISCHARGED, and I am saying so out loud: the three-TIER BRANCH is web v0.717 code and is fully held, but the CONTENT of those tiers (5000 coins, Silver Ore / Titanium Ore / Uncut Diamond) comes only from the string table, and find over reference/ shows the table exists ONLY as reference/extracted/android/118_Mobile_Lang_EN.bin — there is no web-side lang bin among the 27 files in reference/extracted/bindata/, and the sole 'unbreakable' string inside the 329 MB web payload.xml (line 2634709) is an unrelated DefineEditTextTag reading 'would you like to make it unbreakable for 5 gold?'. So 'a flat 5000c in the target build' inherits the undischarged S0-3 caveat; 'three tiers keyed on weapon level, with 13022 pinned to level 59, in v0.717' does not. The claim does disclose strings.json as the source in its cite field, so this is scope creep in the lane_impact wording, not a mis-cite. OVERTURN UPHELD: RR:80 reads 'Reinforce 5000c+1 silver ore' as a single flat economy static; the web code proves it is one of three level-keyed branches, so the ledger line must change either way."
+    },
+    {
+      "claim_id": "s26c/the-271-cap-IS-the-shipped-level-80-base-stat-cap",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3332-3352 (opened, 3498 lines) · reference/decompiled/shs3_android/scripts/InventoryUI.as:2398-2412 · docs/research/REBUILD_READINESS.md:199, :201",
+      "overturn_upheld": true,
+      "reason": "CITE HOLDS VERBATIM AND I INDEPENDENTLY CLOSED ITS ONE SOFT SPOT. §1t5957s0§.as:3344 is exactly 'var _loc6_:Boolean = §1t1523s0§.§1t9714s0§(§1t1523s0§.§1t9408s0§) < 1 + (_loc2_ + 10) * 3;', with :3345 and :3346 the identical formula on §1t9409s0§ and §1t9410s0§, and :3350-3352 wiring all three to the ATK/DEF/SPD add-button .visible flags. The claim's weakest link was asserting '_loc2_ = the level': I did not take that on trust. The android twin function InventoryUI.as:2398 'public function showStatUpButtons(points:int)' has the identical six addEventListener lines followed by :2406 'var charlevel:int = StatsManager.getStat(StatsManager.STAT_LEVEL);' in exactly the position web :3340 occupies. _loc2_ IS the character level. Arithmetic checks: 1 + (80 + 10) * 3 = 271 exactly, and RR:199 already carries 'cap 80' as Ready. The companion ceilings are verbatim at :3341 (10 + (lvl+10)*10 = 910), :3342 (10 + (lvl+10)*5 = 460), :3343 (30 + (lvl+10)*5 = 480). Only nuance: this gates the ADD BUTTON, so it is an allocation ceiling; whether gear can push a stat past 271 is untouched. The claim's word 'hard ceiling' overreaches by a hair, but its own text says the real mechanism is 'the panel stops granting', which is exactly right. OVERTURN UPHELD: RR:201's 'The \"271 cap\" is gear/rebirth-inclusive (237-point first-run budget makes it impossible in one stat)' is verbatim in the ledger and is a wrong explanation of a number the target build derives in one line."
+    },
+    {
+      "claim_id": "s26c/web-offline-save-reset-enumerates-the-same-nineteen-fields",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1832s0§.as:2811-2833 (opened, 3183 lines) · reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2912-2930 AND :2936-2959 (opened, 3279 lines) · docs/research/REBUILD_READINESS.md:351",
+      "overturn_upheld": true,
+      "reason": "CITE HOLDS VERBATIM AND THE COUNT IS RIGHT. §1t1832s0§.as:2811 'internal function §1t2002s0§(param1:String) : *', :2813 SharedObject.getLocal(...) exactly as quoted, then :2814 'saved = false' followed by blanked members at :2815 through :2833 — 2833-2815+1 = NINETEEN, as claimed. :2818 playerLevel, :2820 equipment, :2823 inventory, :2824 stash, :2831 playerlocation, :2832 taunt, :2833 friends all read exactly as stated. I went further than the cite: the true android twin is not the save block it names but deleteCharCookieData at QueryManagerBase.as:2936, which blanks :2941-2959 — also nineteen — and the alignment is 19-for-19 IN ORDER: nextAPUpdate/nextDTUpdate/lastUpdate/playerLevel/playerStats/equipment/skillStats/skillSlots/inventory/stash/questItems/intStats/achievementStats/booleanStats/activeQuestList/completedQuestList/playerlocation/taunt/friends against web :2815-:2833 slot for slot, with all seven plain-named web members landing on their android namesakes. The cited save block :2912-2930 enumerates the same nineteen in the same order, so the cite still supports the claim; it is just not the tightest twin available. ONE ARITHMETIC SLIP, non-fatal: 'the remaining thirteen web members are obfuscated' — there are TWELVE obfuscated members, since seven of the nineteen are plain-named. 7 + 12 = 19. OVERTURN UPHELD: RR:351 reads verbatim 'Server-sim topology & save format — nothing to copy'. There is a schema to copy, and it is web-side. The claim explicitly leaves the server-sim-topology half standing, which is the honest scoping."
+    },
+    {
+      "claim_id": "s26c/web-payload-carries-the-same-xp-lvl-times-2-plus-20-setLevel",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:258-279 (opened) · reference/decompiled/shs3_android/scripts/NPC.as:239-260 (opened) · grep -rn '* 2 + 20' over reference/decompiled/shs3_payload/scripts/",
+      "overturn_upheld": true,
+      "reason": "CITE HOLDS VERBATIM AND THE ENUMERATION IS EXACT. :271 'this.xp = param1 * 2 + 20;' and :272-276 'if(param1 <= 10){ this.damage = 1; this.defense = 1; this.§1t3257s0§ = 1;' both read exactly as quoted; android NPC.as:252 'this.xp = lvl * 2 + 20;' likewise. I ran the claim's own grep and it is precisely right where the sibling claim was off by one: '* 2 + 20' returns exactly SEVEN web sites and they are exactly the seven named — §1t68s0§.as:237, §1t68s0§.as:271, §1t122s0§.as:103, §1t4523s0§.as:66, §1t4555s0§.as:62, §1t4570s0§.as:34, §1t4574s0§.as:39. No extras, no phantoms. The lane_impact's two extra reads are also on the page I opened: the level->stat factor is :260 '_loc2_ = param1 / this.level' with the :261-264 x0.9 pre-scale below level 21, and the sub-level-11 clamp sets damage, defense and the maxhp slot §1t3257s0§ to 1, which is android's maxhp at NPC.as:257. This claim and hunter-s26c/web-parity-for-the-per-kill-xp-formula are near-duplicates on the same artifact; both hold, and this one is the cleaner of the two. OVERTURN UPHELD on the same RR:215 ① clause."
+    },
+    {
+      "claim_id": "s26d/war-room-battlefield-board-is-a-hardcoded-6x6-grid",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:175-176, :195-197, :206-207, :218, :227-229, :239-254 (opened, 2524 lines) · reference/decompiled/shs3_payload/scripts/§1t7785s0§.as:162, :196-197, :208-209 · reference/decompiled/shs3_payload/scripts/§1t6483s0§.as:588 · docs/research/REBUILD_READINESS.md:245",
+      "overturn_upheld": true,
+      "reason": "EVERY QUOTED LINE IS EXACT and the exclusivity sub-claim survives my own grep. WarHexUI.as:175 'this.ht = 6;' :176 'this.wt = 6;' · :206-207 'warTerrain.x = 90 + i * 55; warTerrain.y = 92 + j * 55;' · :229 'this.hexArray.push(new Array(this.ht));' · :239 'if(strArray.length == 7)' · :253-254 'hex.x = 90 + xpos * 55; hex.y = 92 + ypos * 55;'. My grep for wt/ht in that file returns 22 mentions of which exactly TWO are assignments (:175, :176); the other twenty are loop bounds and the :507 bounds check 'xpos < 0 || xpos >= this.wt || ypos < 0 || ypos >= this.ht'. Two independent internal corroborations the claim did not use: :218 'else if(i == 5 && ...)' hard-codes the last column index, and :195-196 derive the node origin as sector * 6 on both axes. I THEN CHECKED WEB PARITY THE CLAIM DID NOT CLAIM, and it comes out better than advertised: §1t7785s0§.as:162 'public function §1t7835s0§(param1:String, param2:Array, param3:int, param4:int = 6, param5:int = 6) : *' — v0.717 refactored the dimensions into DEFAULT PARAMETERS of 6 and 6, the same 55 px pitch and (90, 92) origin sit at :208-209, and the only caller in the whole payload (§1t6483s0§.as:588) passes three arguments, so both defaults apply and the board is 6x6 at the target build too. The one loose bit of prose is calling the pipe record 'a 7-field record of xpos, ypos, owner, side and strength' — five names for seven fields ([3], [4], [5] go unnamed into the WarHex constructor at :243) — incomplete, not wrong. OVERTURN UPHELD: RR:245 ② 'War-Room map topology (board/adjacency)' is listed as a blocker; the board half is recoverable from shipped code and is no longer a blocker."
+    },
+    {
+      "claim_id": "skills-meters/heavy-stance-damage-is-flat-and-only-heavy-reach-scales",
+      "refuted": false,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3083-3129 and :3255-3277 (opened, 5162 lines) · reference/decompiled/shs3_payload/scripts/§1t4904s0§.as:419, :427 · docs/research/REBUILD_READINESS.md:155-156",
+      "overturn_upheld": true,
+      "reason": "THE CODE FACTS ARE EXACT; ONE RHETORICAL CHARGE INSIDE THE CLAIM IS FALSE, AND THE CLAIM ITSELF RETRACTS IT. Verified verbatim: DAMAGE at :3255 'internal function §1t4475s0§() : int' switches at :3261 light -> '_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);', :3264 balanced -> '(1 + 0.2 * this.§1t4422s0§ * 0.1)', and :3267-3270 falls THREE cases through to '_loc2_ = _loc1_ * 1.4;' with no mastery term. REACH at :3091 is the mirror: :3094 'this.§1t4417s0§ = this.§1t4420s0§ * 1.4;' flat, :3105 balanced scales on §1t4422s0§, :3116-3119 heavy scales on §1t4423s0§ and is floored 'if(this.§1t4417s0§ < 100){ this.§1t4417s0§ = 100; }'. Stance identity is corroborated by the rock-paper-scissors triangle at §1t4904s0§.as:419/:427 cycling 12220->12221->12222->12220. So 'exactly one of the three stances is mastery-flat in each table, and it is a different stance in each' is TRUE. WHAT FAILS: the opening charge that RR:155-156 'gets the pairing backwards'. I read :155-156 verbatim — '(Heavy is fixed)' attaches to the damage triple and 'Heavy's reach also scales x0.5->x0.9' attaches to reach, and BOTH are exactly what the code does. The pairing is right; the ledger is merely silent on light-reach and balanced-reach. The claim's own final sentence concedes this. What genuinely survives as an overturn is the reach half: I checked the arithmetic and 300/200/100 is not reproducible from x1.4 / x(1.0-1.2) / x(0.5-0.9) at any single base — a base of 214.3 gives light 300 but balanced 214.3, not 200 — and heavy's 100 is a hard clamp, not a table entry. Refuting this for the one bad sentence would destroy four correct measured formulas, so: HELD with the 'backwards pairing' charge struck. OVERTURN UPHELD narrowly: the 'reach 300/200/100 are MASTERY-9 CEILING values' clause of RR:155 falls; the damage clause of the same sentence stands."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "s27b/stance-ceilings-are-mastery-10-not-mastery-9",
+      "text": "RR:155 labels the stance triple 'dmg 0.9/1.2/1.4' as MASTERY-9 CEILING values. The web formulas do not reach those numbers at mastery 9. §1t99s0§.as:3262 computes light damage as (0.5 + 0.4 * mastery * 0.1), i.e. 0.5 + 0.04m: at m=9 that is 0.86, and 0.9 arrives only at m=10. :3265 computes balanced as (1 + 0.2 * mastery * 0.1) = 1 + 0.02m: at m=9 that is 1.18, and 1.20 arrives only at m=10. Heavy is the flat 1.4 at :3270 and so is unaffected. The reach table has the same shape: :3116 heavy reach is (0.5 + 0.4 * mastery * 0.1), so the ledger's 'x0.5 -> x0.9' likewise needs m=10. Either the mastery scale runs 0-10 and the ledger's '-9' label is off by one, or the scale stops at 9 and the 0.9/1.2 ceilings printed in RR:155 are unreachable. Both readings force a ledger edit, and neither can be settled from this file alone — the mastery cap itself is STILL_UNHELD here.",
+      "artifact_class": "A2",
+      "build": "web v0.717",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262, :3265, :3270, :3116",
+      "quote": "§1t99s0§.as:3262 '_loc2_ = _loc1_ * (0.5 + 0.4 * this.§1t4421s0§ * 0.1);' · :3265 '_loc2_ = _loc1_ * (1 + 0.2 * this.§1t4422s0§ * 0.1);'",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+      "lane_impact": "L2 skills-meters. Whichever way the mastery cap resolves, RR:155's '-9' label cannot stand beside these two multipliers. Ship the formulas, not the ceiling triple."
+    },
+    {
+      "id": "s27b/v0717-rebalanced-the-manual-stat-caps-upward-vs-v0682",
+      "text": "A hard, measured counterexample to build parity, found while checking the 271-cap claim. The stat-panel add-button gates are the same function in both builds but carry DIFFERENT formulas. ATK/DEF/SPD: android InventoryUI.as:2410-2412 gate on 'charlevel + 10' (90 at level 80); web §1t5957s0§.as:3344-3346 gate on '1 + (level + 10) * 3' (271 at level 80) — a 3x lift. MAXHP: android :2407 '10 + (charlevel + 10) * 5' (460); web :3341 '10 + (_loc2_ + 10) * 10' (910) — doubled. MAXAP: android :2409 '20 + (charlevel + 10)' (110); web :3343 '30 + (_loc2_ + 10) * 5' (480) — more than 4x. MAXCHI is the only one identical: android :2408 and web :3342 are both '10 + (lvl + 10) * 5' = 460. This is exactly the shape of divergence the S0-3 caveat warns about, now with numbers: the data XMLs match row for row, but progression tuning does NOT. Any INFERRED progression number ported from an android artifact must be re-derived web-side before it is called CONTRACT.",
+      "artifact_class": "A2",
+      "build": "both — the point IS the difference",
+      "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:2406-2412 · reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3340-3346",
+      "quote": "android InventoryUI.as:2410 'this.statsPanel.ATKadd.visible = StatsManager.getStat(StatsManager.STAT_ATTACK) < charlevel + 10;' ‖ web §1t5957s0§.as:3344 'var _loc6_:Boolean = §1t1523s0§.§1t9714s0§(§1t1523s0§.§1t9408s0§) < 1 + (_loc2_ + 10) * 3;'",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "lane_impact": "Cross-lane, and it hardens ⚠ S0-3 from a hedge into a proven hazard: web and android combat/progression tuning demonstrably diverge on four of six stat caps."
+    },
+    {
+      "id": "s27b/a-territory-is-six-rooms-by-six-rooms-in-both-builds",
+      "text": "The same WarHexUI code that fixes the war board at 6x6 also fixes the sector-to-room mapping, which the ledger lists as an open world-exploration blocker. WarHexUI.as:195-196 derive the territory's zero-node as 'zeronodex = (this.mapid >> 12 & 0x0FFF) * 6' and 'zeronodey = (this.mapid & 0x0FFF) * 6', then :197 packs them back as 'zeronodex << 12 | zeronodey' and :208 walks the 6x6 loop with getShiftedNodeId(zeronodeid, i, j). The multiplier 6 is what makes each territory occupy a 6-by-6 block of node ids, so the war hex grid IS the room grid, one hex per room. The web build carries the identical transform at §1t7785s0§.as:196-197. This bears on RR:225 ⑤ 'sector<->room mapping rule', and it means the war board and the exploration room graph are the same coordinate space, not two systems to reconcile.",
+      "artifact_class": "A2",
+      "build": "both — android v0.682 and web v0.717 agree",
+      "cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:195-197, :208 · reference/decompiled/shs3_payload/scripts/§1t7785s0§.as:196-197",
+      "quote": "WarHexUI.as:195 'var zeronodex:int = (this.mapid >> 12 & 0x0FFF) * 6;' :196 'var zeronodey:int = (this.mapid & 0x0FFF) * 6;' :208 'nodeid = NodeGenerator.instance.getShiftedNodeId(zeronodeid,i,j);'",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "⑤ sector↔room mapping rule (town=fixed sector vs wilderness=one-screen-per-sector).",
+      "lane_impact": "L-world-exploration: the sector<->room rule is 6x6 rooms per sector, with node id = (sectorX*6 + i) << 12 | (sectorY*6 + j). Same coordinate space as the war board."
+    }
+  ]
+}

@@ -1,0 +1,542 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A2",
+   "id": "s27b/stance-ceilings-are-mastery-10-not-mastery-9",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27b/v0717-rebalanced-the-manual-stat-caps-upward-vs-v0682",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27b/a-territory-is-six-rooms-by-six-rooms-in-both-builds",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/WarHexUI.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27b/focus-meter-numerics-are-fully-recovered-in-web-v0717",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27b/cannot-change-stance-is-the-focus-bar-low-end-label-not-a-lock",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/frames/duel_dense/Nr4fQstqHDM_429.0.png",
+    "docs/gauntlet/L0/index/strings.json[\"175\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27b/stance-damage-ceiling-is-mastery-10-not-mastery-9",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/gauntlet/L0/index/strings.json[\"8131\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/forge-cost-is-a-node-level-formula-with-three-material-tiers",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InteractUI.as",
+    "docs/gauntlet/L0/index/strings.json[\"845\"]",
+    "docs/gauntlet/L0/index/resolved_names.json"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/repair-weapon-cost-is-node-level-times-ten",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InteractUI.as",
+    "docs/gauntlet/L0/index/strings.json[\"848\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/web-and-android-per-stat-ceilings-diverge-by-3x",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/crit-1.3-and-heavy-defence-0.8-are-in-web-source-not-just-wiki",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/heavy-reach-has-a-hard-100px-floor-so-reach-cap-is-half-closed",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3/reinforce-tiers-are-web-code-not-a-string-table-inference",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as",
+    "reference/extracted/itemdata.xml",
+    "docs/gauntlet/L0/index/strings.json[\"4241\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3/coins-per-kill-half-of-RR215-is-also-dead-at-the-web-build",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3/271-is-reachable-in-one-stat-the-budget-is-237-and-the-cost-is-90",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3/the-fourteen-field-save-finding-is-a-truncated-read-and-is-still-upheld",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/QueryManagerBase.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3/the-offline-save-record-is-nineteen-fields-plus-a-saved-sentinel",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/QueryManagerBase.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3/web-parity-for-the-6x6-war-board-defaults-not-literals",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t6483s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/WarHexUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3/offline-save-write-branch-is-nineteen-not-fourteen",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/QueryManagerBase.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "lens3/severed-limb-blob-build-label-is-web-v0717-not-android",
+   "notes": [],
+   "paths": [
+    "reference/extracted/bindata/108_1t4635s0.bin",
+    "reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3/human-anim-node-count-is-per-anim-not-a-fixed-rig",
+   "notes": [],
+   "paths": [
+    "reference/extracted/bindata/108_1t4635s0.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "hunter-s27b/cannot-change-stance-is-the-focus-bars-low-end-label-and-the-frame-proves-it-is-conditional",
+   "notes": [],
+   "paths": [
+    "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
+    "reference/frames/duel_frames/Nr4fQstqHDM_t435.0s.png",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "docs/gauntlet/L0/index/strings.json[\"175\"]"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/the-focus-meter-contract-is-fully-recovered-in-web-v0717",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/the-reach-cap-in-stage-px-the-one-value-the-whole-model-needs-is-in-the-web-payload",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_android/scripts/InputManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/the-per-stance-mastery-curve-is-linear-and-closes-the-ledgers-mastery-fork",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/spd-to-cooldown-is-a-web-formula-and-it-diverges-from-android",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27b/dan-rank-is-mechanical-not-cosmetic-it-buys-reach",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "docs/gauntlet/L0/index/strings.json[\"455\"]-[\"464\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/the-change-stance-affordance-IS-the-portrait-bust-not-a-separate-button",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "skills-meters/the-web-build-seeds-stance-mastery-at-1-too-parity-hole-closed",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/the-grey-cannot-change-stance-label-is-a-v0717-web-only-addition",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/the-real-in-combat-stance-rule-is-actionstate-gate-AND-meter-48",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "STILL_UNHELD",
+   "id": "ui-hud/which-hud-bar-is-hp-and-which-is-chi-is-still-unheld-by-colour",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "docs/research/REBUILD_READINESS.md",
+    "docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md",
+    "reference/frames/session11/crit-focus/t1003.000.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/battleui-obfuscation-map-extension-eight-more-fields",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/measured-third-bar-fill-in-t1082-is-23-percent-not-28",
+   "notes": [],
+   "paths": [
+    "reference/frames/session11/crit-focus/t1082.100.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/the-in-combat-stance-gate-is-reload-48-of-a-192-max",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/crit-1.3-is-sealed-in-the-web-payload-and-fires-at-full-reload",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "skills-meters/the-initplayer-argument-order-is-a-noncircular-web-android-bridge",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "combat-core/stance-reach-is-asymmetric-with-damage-and-carries-a-hard-floor-of-100",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/the-third-bar-is-a-three-state-meter-and-fires-snd-criticaldamage-at-full",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json[\"175\"]="
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/string-960-is-absent-from-android-because-the-android-label-is-a-portrait-rollover",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "ui-hud/the-change-stance-button-is-the-portrait-bust-itself",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27B-1/stance-mastery-floor-is-zero-not-one",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_android/scripts/XMLNpc.as",
+    "reference/decompiled/shs3_android/scripts/EnemyElite.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27B-2/cannot-change-stance-caption-and-the-gate-are-one-predicate",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27B-3/the-three-state-focus-caption-is-web-only",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27B-4/the-change-stance-label-is-a-hover-tooltip-on-the-portrait",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "reference/frames/session11/crit-focus/t1003.000.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27B-5/the-web-war-map-twin-is-1t7934s0-not-1t1524s0",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7934s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t6481s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/WarSelectUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 5,
+  "resolves": 40,
+  "total": 45,
+  "uncheckable": 0
+ }
+}

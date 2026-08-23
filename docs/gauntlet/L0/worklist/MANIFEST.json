@@ -1,5 +1,5 @@
 {
- "batch_size": 7,
+ "batch_size": 24,
  "deferred": [
   {
    "reason": "every claim judged and 2 critic lenses on disk",
@@ -44,43 +44,19 @@
  ],
  "packets": [
   {
-   "claims": 7,
+   "claims": 21,
    "file": "t1-overturns-01.json",
    "lenses": [
     "cite",
     "hunter",
     "contradiction"
    ],
-   "overturns": 7,
+   "overturns": 21,
    "stage": "WF-3a",
    "unit": "t1-overturns-01"
   },
   {
-   "claims": 7,
-   "file": "t1-overturns-02.json",
-   "lenses": [
-    "cite",
-    "hunter",
-    "contradiction"
-   ],
-   "overturns": 7,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-02"
-  },
-  {
-   "claims": 7,
-   "file": "t1-overturns-03.json",
-   "lenses": [
-    "cite",
-    "hunter",
-    "contradiction"
-   ],
-   "overturns": 7,
-   "stage": "WF-3a",
-   "unit": "t1-overturns-03"
-  },
-  {
-   "claims": 6,
+   "claims": 30,
    "file": "t2-corroborating-01.json",
    "lenses": [
     "cite"
@@ -91,11 +67,11 @@
   }
  ],
  "totals": {
-  "already_judged": 1600,
-  "claim_rows": 1666,
+  "already_judged": 1621,
+  "claim_rows": 1711,
   "critic_findings_claiming_overturn": 21,
-  "critic_findings_unjudged": 27,
-  "distinct_ids": 1627,
+  "critic_findings_unjudged": 51,
+  "distinct_ids": 1672,
   "duplicate_rows_merged": 39,
   "source_sweep_unjudged": 0
  }

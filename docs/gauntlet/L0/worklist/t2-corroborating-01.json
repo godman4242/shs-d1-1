@@ -1,6 +1,219 @@
 [
  {
   "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:689,:740-742 + reference/decompiled/shs3_android/scripts/XMLNpc.as:671-686 + reference/decompiled/shs3_android/scripts/EnemyElite.as:89,:103-106 + reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:107,:109,:111,:3262,:3265 + census of reference/extracted/npcdata.xml (9625 lines, 495 <npc>)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NF-S27B-1/stance-mastery-floor-is-zero-not-one",
+  "lane_impact": "L5 combat-core + L2 skills-meters: encode MASTERY domain [0,10], floor 0, player fresh-save default 1, npc default 0 via absent-skill-row. This is the premise the already-upheld mastery-0 reach findings need, and it is what makes the packet claim's '[1,10]' the defective side of that contradiction.",
+  "overturns_ledger": false,
+  "quote": "public static function initNewPlayer(cname:String = \"\", hairid:int = 0, headid:int = 1, armorid:int = 4017, pantsid:int = 11017, hatid:int = 0, shoesid:int = 12017, isFemale:Boolean = false) : *",
+  "text": "CONTRADICTION SETTLED: the stance-mastery domain is [0,10], not [1,10]. The 1 in StatsManager.as:740-742 (IntStat(1000,1)/(1001,1)/(1002,1)) is a NEW-PLAYER DEFAULT, not an index base - the enclosing function is initNewPlayer at StatsManager.as:689. For NPCs the value comes from XMLNpc.getMastery, which ends 'return 0;' at :685 when the npc carries no matching <skill> row, and a census of reference/extracted/npcdata.xml shows only 76 of 495 <npc> rows carry skill 1000 (77 carry 1001, 79 carry 1002; of those that do, 74 each are at <lvl>10</lvl> and the rest at 2-3). So 419 of 495 npcs evaluate the stance curve at mastery 0. EnemyElite.as:89 declares 'var balancedMastery:int = 0;' before its getMastery reads at :103-105, and the web fighter class declares all three fields '= 0' at \u00a71t99s0\u00a7.as:107/:109/:111. This is NOT a build-parity split: web v0.717 and android v0.682 agree the field is a plain int defaulting to 0. Consequence for the rewrite: a config that clamps mastery to >= 1 mis-prices every generic mob's stance damage AND reach - Light damage would floor at 0.54 instead of 0.50 and Heavy reach at 0.54x instead of 0.50x of base. The mastery-10 CEILING is unaffected and stands.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:328-332,:336-347 + reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3048-3050,:3058-3061",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NF-S27B-2/cannot-change-stance-caption-and-the-gate-are-one-predicate",
+  "lane_impact": "L8 ui-hud + L5 combat-core: one number, 48, drives both the bar's zero point and the stance gate. Ship them from a single config constant so the caption cannot drift out of sync with the refusal - and reproduce the reload==48 boundary rather than 'fixing' it.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t113s0\u00a7.as:328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);' \u00b7 \u00a71t99s0\u00a7.as:3050 'return this.\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48;' \u00b7 \u00a71t99s0\u00a7.as:3060 'if(this.\u00a71t4414s0\u00a7 < 48)'",
+  "text": "CONTRADICTION SETTLED between two findings that both already survive: LEDGER_EVIDENCE.md:1630 banks 'CANNOT CHANGE STANCE is NOT a lock notice, it is the reload/crit meter's own low-end label' while :160 banks it is 'a literally true refusal'. Both are true, because they are the same constant written in two files. The caption's display rule is \u00a71t113s0\u00a7.as:328 ratio = (reload-48)/(maxreload-48), negatives clamped to 0 at :329-332, shown at :336 iff ratio == 0, i.e. iff reload <= 48. The switch gate is \u00a71t99s0\u00a7.as:3048-3050 '\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48', reinforced by the early return at :3058-3061 'if(this.\u00a71t4414s0\u00a7 < 48) return;'. The two predicates are complements except on ONE value: at reload == 48 exactly, the bar renders 0% and the caption is on screen while the switch is legal. That single-value overlap is a shipped cosmetic off-by-one, not a disagreement between the findings. Neither reading should be dropped in the rewrite; write the caption as a meter-state readout whose threshold IS the gate.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 vs android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:259-263 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3272 + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:256,:326-361 + docs/gauntlet/L0/index/strings.json (no key '960')",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NF-S27B-3/the-three-state-focus-caption-is-web-only",
+  "lane_impact": "L8 ui-hud: build the Focus bar from the WEB shape - UI-side normalisation, dead zone 48, three states (grey 960 / hidden / black 175 + Snd_criticalDamage). The android two-state version is the wrong build's widget.",
+  "overturns_ledger": false,
+  "quote": "BattleUI.as:262 'this.crittext.visible = percentage >= 1 && this.reloadbar.visible;' \u00b7 MCSPlayer.as:3272 'StageManager.getBattleUI().updateReload((this.reload - 24) / (this.maxreload - 24));'",
+  "text": "BUILD PARITY, LABELLED: the three-state caption on the Focus/crit bar exists only in web v0.717. Android v0.682's BattleUI.updateReload (BattleUI.as:259-263) is two lines - 'this.reloadbar.bar.scaleX = percentage;' and 'this.crittext.visible = percentage >= 1 && this.reloadbar.visible;'. There is no ratio==0 branch, no grey label, and no Snd_criticalDamage call; string 960 has no row in the android table at all. The web twin \u00a71t5205s0\u00a7 (\u00a71t113s0\u00a7.as:326-361) instead takes the RAW (reload, maxreload) pair, normalises it in the UI at :328 with a 48 dead zone, and drives three states plus the crit sound. Android normalises player-side with a 24 dead zone before the call - MCSPlayer.as:3272 'StageManager.getBattleUI().updateReload((this.reload - 24) / (this.maxreload - 24));'. So the widget is architecturally different, not just differently tuned: any port that reads the android reload bar as the same component will ship a two-state meter with the wrong dead zone and no stance caption.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:145-149,:200,:241-242,:379-381,:542-543,:548-549 + reference/decompiled/shs3_android/scripts/BattleUI.as:109-113,:160,:192-193,:275,:432-433,:438-439 + reference/frames/session11/crit-focus/t1003.000.png crop (0,820)-(660,1080) 3x LANCZOS (portrait present, no CHANGE STANCE text)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NF-S27B-4/the-change-stance-label-is-a-hover-tooltip-on-the-portrait",
+  "lane_impact": "L8 ui-hud: do not draw a standing 'Change Stance' button beside the portrait. Make the portrait bust the hit target, add a highlight + 'Change Stance' caption on hover only, and keep the caption hidden otherwise - otherwise the HUD will not match any reference frame.",
+  "overturns_ledger": false,
+  "quote": "BattleUI.as:192 'this.battlemodebust.addEventListener(MouseEvent.MOUSE_OVER,this.showChangeStanceLabel);' \u00b7 \u00a71t113s0\u00a7.as:241 'this.\u00a71t5158s0\u00a7.addEventListener(MouseEvent.MOUSE_OVER,this.\u00a71t5215s0\u00a7);'",
+  "text": "REFINEMENT to the BattleUI stance-button finding: the 'Change Stance' text is not a persistent HUD button label, and the clickable is the portrait bust itself. \u00a71t113s0\u00a7.as:200 sets '\u00a71t5161s0\u00a7.visible = false' at construction; :241-242 registers MOUSE_OVER -> \u00a71t5215s0\u00a7 and MOUSE_OUT -> \u00a71t5216s0\u00a7 on \u00a71t5158s0\u00a7; :542-543 (\u00a71t5215s0\u00a7) sets '\u00a71t5161s0\u00a7.visible = true' together with '\u00a71t5158s0\u00a7.highlight.visible = true', and :548-549 (\u00a71t5216s0\u00a7) hides both. The android twin is line-for-line: BattleUI.as:160 hides changestancelabel, :192-193 wires showChangeStanceLabel/hideChangeStanceLabel onto battlemodebust, :432-433 and :438-439 are the bodies. Obfuscation map extended: \u00a71t5158s0\u00a7 = battlemodebust, \u00a71t5215s0\u00a7 = showChangeStanceLabel, \u00a71t5216s0\u00a7 = hideChangeStanceLabel. This is why the words 'CHANGE STANCE' appear in NO combat frame I opened - the tooltip only paints on hover, and the mouse is not over the bust in any sampled still.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7934s0\u00a7.as:15,:17,:19,:232,:299-300,:320-321 + reference/decompiled/shs3_payload/scripts/\u00a71t6481s0\u00a7.as:17,:19,:21,:263 + reference/decompiled/shs3_android/scripts/WarSelectUI.as:15,:17,:19,:173",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "NF-S27B-5/the-web-war-map-twin-is-1t7934s0-not-1t1524s0",
+  "lane_impact": "L10 world-exploration: write the war board from \u00a71t7934s0\u00a7 and the world map from \u00a71t6481s0\u00a7, both WEB v0.717 - 10 px per territory, flag at (x+21)*10+4.5 / (y+51)*10+8.8, marker at +5 / +8.5, land test getPixel(x+13, y+51) != 0. Re-tag the banked 10px-pitch finding from android-with-caveat to both-builds-attested.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t7934s0\u00a7.as:299 '_loc11_.x = (_loc8_ + \u00a71t12536s0\u00a7) * 10 + 4.5;' \u00b7 WarSelectUI.as:17 'public static var TERRSHIFTX:int = 21;'",
+  "text": "MIS-NAMED TWIN in an already-banked finding. LEDGER_EVIDENCE.md:3207 banks [[world/war-map-renders-at-10px-per-territory]] with the build note 'android v0.682 (the web twin is \u00a71t1524s0\u00a7; the shift constants are identical)'. \u00a71t1524s0\u00a7 is the QuestEngine twin - the same corpus at :420 places the mask load and territory enumeration there ('loaded at \u00a71t1524s0\u00a7.as:697-702, enumerated ... at :716-739'). The class that actually twins WarSelectUI is \u00a71t7934s0\u00a7: it declares the same three shifts at :15/:17/:19 (8/21/51), carries the same land test at :232, and places the war flag at :299-300 with the identical '*10 + 4.5' / '*10 + 8.8' pitch that the banked finding quotes from WarSelectUI.as:233-234, plus the player marker at :320-321 with '+5' / '+8.5' matching WarSelectUI.as:253-254. \u00a71t6481s0\u00a7 is the WorldMapUI twin, repeating the three shifts at :17/:19/:21 and the land test at :263. Correcting the twin name is what actually discharges that finding's android-only caveat - the pitch is attested WEB-side, so C2 does not apply to the war board's rendering constants either.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3121 (key lines :3094, :3105, :3116, :3117-3119)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/heavy-reach-has-a-hard-100px-floor-so-reach-cap-is-half-closed",
+  "lane_impact": "L5 combat-core / L2 skills-meters: reach becomes a base x per-stance-multiplier model with a 100 px heavy floor. Do NOT ship 300/200/100 as px \u2014 that triple is not reproducible from these multipliers at any single base. The remaining measurement is one number, the base reach, not three.",
+  "ledger_text": "- **Combat numbers:** reach cap in **px** per stance; crit x1.3 vs x3 final read; early-mob HP + starter weapon DMG + hits-to-kill; the Focus/crit **gating rule** (fill trigger/amount/consumption); AUTO SLASH cadence.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:3116-3119 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1); if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }'",
+  "text": "PARTIAL, stated as partial. RR:88 lists 'reach cap in px per stance' as a KNOWN-UNKNOWN. Three of the four unknowns in it are now closed and one is not. Closed: the per-stance reach MULTIPLIERS (\u00a71t99s0\u00a7.as:3094 light = base * 1.4 flat; :3105 balanced = base * (1 + 0.2*m*0.1); :3116 heavy = base * (0.5 + 0.4*m*0.1)), the mastery curve on each, and an absolute PX quantity \u2014 :3117-3119 clamp heavy reach to a hard floor of 100, which is the first reach number in actual pixels this lane has from source rather than from a video measurement. Still open: the base value \u00a71t4420s0\u00a7 that all three multiply, which is set elsewhere and which I did not resolve. So the ledger sentence survives in reduced form: the px CAP is still unmeasured, but the SHAPE of the cap and one exact px constant are now sourced. I am recording this as PARTIAL rather than HELD precisely because the base is missing \u2014 without it the multipliers cannot be turned into pixels for light or balanced.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (android v0.682 contrasted)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255-3277, :3094-3120 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3198-3224 \u00b7 docs/research/REBUILD_READINESS.md:161-163",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/the-per-stance-mastery-curve-is-linear-and-closes-the-ledgers-mastery-fork",
+  "lane_impact": "L5 combat-core. Item 3 is upheld and upgraded: the curve is dmgMult(Light)=0.5+0.04m, dmgMult(Balanced)=1+0.02m, dmgMult(Heavy)=1.4, m in 0..10 \u2014 CONTRACT from web source. The decide-and-flag branch can be deleted.",
+  "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.** ... \u2192 Either model the mastery curve or **decide-and-flag \"the build targets mastery-9\"** and label accordingly.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:3262 '_loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);' :3265 '_loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);' :3270 '_loc2_ = _loc1_ * 1.4;' \u2016 android MCSPlayer.as:3205 'maxDamage = baseDamage * (0.5 + 0.5 * this.lightMastery * 0.01);' :3213 'maxDamage = baseDamage * 1.5;'",
+  "text": "RR:161-163 item 3 tells the next build session to 'either model the mastery curve or decide-and-flag \"the build targets mastery-9\"'. The curve is in the payload, it is linear, and it reproduces BOTH ends of the ledger's own table. \u00a71t99s0\u00a7.as:3258-3271: base = minDamage + Math.random() * damageRange; Light = base * (0.5 + 0.4 * lightMastery * 0.1); Balanced = base * (1 + 0.2 * balancedMastery * 0.1); Heavy, Dual and Reversed all = base * 1.4 flat. At mastery 0 that is exactly the ledger's level-1 Shugyosha row 0.5 / 1.0 / 1.4; at mastery 10 it is exactly the ledger's ceiling row 0.9 / 1.2 / 1.4. The identical shape governs reach (0.5 + 0.04m for Heavy, 1 + 0.02m for Balanced, flat 1.4 for Light), so one linear rule covers both tables. This CONFIRMS the ledger's item 3 rather than overturning it, but it removes the fork: model the curve, do not flag a mastery-9 target. Build divergence to respect: android MCSPlayer.as:3205-3213 uses 0.5 + 0.5*m*0.01 and 1 + 0.5*m*0.01 on a 0-100 mastery scale with Heavy at 1.5, so the android coefficients must not be ported.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both \u2014 the finding IS the difference between them",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3340-3346 \u00b7 reference/decompiled/shs3_android/scripts/InventoryUI.as:2406-2412",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/web-and-android-per-stat-ceilings-diverge-by-3x",
+  "lane_impact": "Cross-lane. Gives the S0-3 build-parity caveat its first measured instance: the builds are demonstrably retuned, so 'android says X' is never by itself evidence about v0.717 for a tuning number. Also supplies the web-side per-point growth ceilings for L4 progression.",
+  "ledger_text": "n/a \u2014 this is a lane-methodology finding, not an overturn of a specific REBUILD_READINESS sentence; it hardens the S0-3 CAVEAT in the brief.",
+  "overturns_ledger": false,
+  "quote": "web \u00a71t5957s0\u00a7.as:3346 '... < 1 + (_loc2_ + 10) * 3;' \u2016 android InventoryUI.as:2412 'this.statsPanel.SPDadd.visible = StatsManager.getStat(StatsManager.STAT_SPEED) < charlevel + 10;'",
+  "text": "A MEASURED INSTANCE OF THE S0-3 PARITY HOLE, and the strongest one this lane has. The per-stat add-button ceilings are NOT the same in the two builds. Web v0.717 \u00a71t5957s0\u00a7.as:3341-3346: HP < 10 + (lvl+10)*10, CHI < 10 + (lvl+10)*5, AP < 30 + (lvl+10)*5, ATK/DEF/SPD < 1 + (lvl+10)*3. Android v0.682 InventoryUI.as:2407-2412: HP < 10 + (lvl+10)*5, CHI < 10 + (lvl+10)*5, AP < 20 + (lvl+10), ATK/DEF/SPD < lvl + 10. At level 80 that is web 271 versus android 90 for ATK/DEF/SPD \u2014 a 3x divergence \u2014 plus 910 vs 460 HP and 480 vs 90 AP. The two blocks are otherwise line-for-line twins (same six buttons, same order, same 'more than two capped' nag), so this is deliberate retuning between v0.682 and v0.717, not a decompiler artifact. CONSEQUENCE FOR THE LANE: the S0-3 caveat's warning that 'combat tuning parity is NOT established' now has a concrete counterexample. Any progression or combat number ported from an android-only artifact must be treated as v0.682 until a web line says otherwise. Only CHI's formula survives the version change unchanged.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both - web v0.717 blob 108, md5-identical to android 99",
+  "cite": "reference/extracted/bindata/108_1t4635s0.bin (own utf-8 decode; per-frame <n> census over all 158 <anim> rows)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3/human-anim-node-count-is-per-anim-not-a-fixed-rig",
+  "lane_impact": "L6 art-anim. Corrects art-anim-audio-feel/rig-is-19-nodes' '20 in the human set' (true of 2 of 158) and, more importantly, establishes that per-frame node counts are not constant - the renderer contract is carry-forward-last-transform, not reset-per-frame. Also corrects the packet claim hunter-s26c/deathnohead-is-31-frames-of-bone-transforms-not-a-name, whose '17 node records per frame' is true of only 23 of its 31 frames.",
+  "overturns_ledger": false,
+  "quote": "deathnohead frame 23 in full: '<f i=\"23\">\\r\\n<n i=\"16\" x=\"-188\" y=\"-7\" r=\"168\"></n>\\r\\n</f>' - one node, against 17 in frame 22",
+  "text": "art-anim-audio-feel/rig-is-19-nodes (UPHELD) says the rig 'keys 19 nodes per pose in the stance sets (20 in the human set)'. The human set does not key 20 per pose. Census over all 158 <anim> rows in the human blob reference/extracted/bindata/108_1t4635s0.bin, counting <n> records per <f> frame: the per-anim maximum is 20 in only 2 anims, 19 in 130, 18 in 10, 17 in 13 and 13 in 3. Worse for a fixed-rig renderer, 44 of the 158 anims have a per-frame node count that VARIES within the clip, and some frames carry ZERO <n> records at all (heavyhorizontalslash_partc, balancedhorizontalslash_partc, balancedjumpslash_parta, sheathesword, backstep, forwardstep, katanajump all bottom out at 0). The two severance deaths are the sharpest case: deathnohead is 23 frames of 17 nodes then 8 frames of exactly ONE node (i=16), deathnohand is 23 frames of 17 then 2 frames of 3, while deathinhalf holds 17 across all 28. So a node record is a PER-FRAME DELTA LIST, not a full skeleton pose, and a renderer that resets unlisted joints each frame will tear the corpse apart on the tail of every dismemberment clip.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 (write + delete branches) with the web v0.717 positional twin",
+  "cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2912-2930 and :2941-2959 + reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as:2815-2833",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3/offline-save-write-branch-is-nineteen-not-fourteen",
+  "lane_impact": "L10 persistence. The rewrite packets carry both counts; without this the writer picks one arbitrarily. The answer is NINETEEN. persistence/offline-save-schema-is-fourteen-fields-already-written should be struck or corrected, and hunter-s26a/full-offline-save-schema-is-19-fields-in-both-builds plus the packet's web-19-field-save-schema-is-a-positional-twin kept.",
+  "overturns_ledger": false,
+  "quote": "QueryManagerBase.as:2926 'sharedObject.data.activeQuestList = StatsManager.getActiveQuestString();' :2927 'completedQuestList' :2928 'playerlocation' :2929 'taunt' :2930 'friends' - the five fields that fall outside the range :2910-2925 the fourteen-field finding cites",
+  "text": "Two surviving findings give different sizes for the SAME offline SharedObject save, and the smaller one is a truncated read. persistence/offline-save-schema-is-fourteen-fields-already-written cites reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2910-2925 and reports FOURTEEN fields. That range ends at booleanStats. The else-branch actually runs :2912 through :2930 and writes NINETEEN: nextAPUpdate, nextDTUpdate, lastUpdate, playerlevel, playerStats, equipment, skillStats, skillSlots, inventory, stash, questItems, intStats, achievementStats, booleanStats, activeQuestList, completedQuestList, playerlocation, taunt, friends. The five the fourteen-count drops (activeQuestList, completedQuestList, playerlocation, taunt, friends) are the entire quest-progress and world-position half of the save -- a recreation built to the fourteen would silently lose quest state and respawn position on every load. Confirmed twice over: the delete twin at :2941-2959 clears the same nineteen, and the web v0.717 twin at reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as:2815-2833 clears nineteen in the identical order.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "build": "both - web v0.717 and android v0.682, byte-identical",
+  "cite": "reference/extracted/bindata/108_1t4635s0.bin vs reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3/severed-limb-blob-build-label-is-web-v0717-not-android",
+  "lane_impact": "L6 art-anim: RR:240 blocker 5 closes at the TARGET build, not at v0.682. Also a standing rule for the rewrite - when two findings on one asset disagree only about build label and an md5 join exists, the join wins and the conservative label is struck.",
+  "overturns_ledger": false,
+  "quote": "$ md5 -q reference/extracted/bindata/108_1t4635s0.bin -> bcfd658e79fafb41f52431afb7d10622 ; $ md5 -q reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin -> bcfd658e79fafb41f52431afb7d10622 ; both 977277 bytes",
+  "text": "Three surviving findings describe the same 977,277 bytes and disagree about which build they belong to. art-anim/severed-limb-death-variant-is-held (3 critics) is labelled build 'android v0.682 blob (asset, not tuning)'; NF-F/two-animation-blobs-are-md5-identical-web-to-android and NF-E/bindata-parity-map-21-of-27-identical say the same bytes are in the WEB payload. I recomputed both hashes: md5(reference/extracted/bindata/108_1t4635s0.bin) = md5(reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin) = bcfd658e79fafb41f52431afb7d10622, 977,277 bytes each. Because bindata/ is extracted from the WEB payload (Stage-0 S0-1: all 27 web bindata files identified), the match is genuine cross-build parity and not the circular diff C2 forbids. The correct label is BOTH BUILDS, and for the target build's purposes web v0.717. The 'android v0.682 blob' label is the defective one and must not be the label the ledger inherits, because it would leave RR:240 blocker 5 nominally open on a parity technicality that has already been discharged by hash.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both \u2014 android v0.682 branch, web v0.717 twin",
+  "cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2905-2931 (esp. :2926-2930) and :2940-2959 + reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as:2815-2833",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3/the-fourteen-field-save-finding-is-a-truncated-read-and-is-still-upheld",
+  "lane_impact": "L10 persistence: bank nineteen, not fourteen. Mark persistence/offline-save-schema-is-fourteen-fields-already-written superseded so it cannot be cited alongside its own correction.",
+  "ledger_text": "n/a \u2014 corrects a corpus contradiction between two UPHELD findings, not a ledger sentence",
+  "overturns_ledger": false,
+  "quote": "QueryManagerBase.as:2926 'sharedObject.data.activeQuestList = StatsManager.getActiveQuestString();' \u00b7 :2930 'sharedObject.data.friends = StatsManager.getFriendListString();' \u00b7 :2931 '}'",
+  "text": "Two contradictory field counts for the SAME offline save branch are both marked UPHELD in LEDGER_EVIDENCE, so a rewriter picks one at random. Settled on the file: android QueryManagerBase.as's offlineMode branch does not end at :2925. It runs to :2930 and writes five further fields \u2014 activeQuestList (:2926), completedQuestList (:2927), playerlocation (:2928), taunt (:2929), friends (:2930) \u2014 before the closing brace at :2931, for NINETEEN. deleteCharCookieData at :2940-2959 blanks the same nineteen, and the WEB twin \u00a71t1832s0\u00a7.as:2815-2833 blanks nineteen in the identical order. UPHELD persistence/offline-save-schema-is-fourteen-fields-already-written is a truncated window, not a rival measurement; the nineteen-field findings win. A 14-field persistence port drops all quest state, world location, taunt and friend list on reload.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (android v0.682 twin)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as:2789, :2798, :2814, :2850, :2865, :2881, :2938, :2956 + reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2940, :2967",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3/the-offline-save-record-is-nineteen-fields-plus-a-saved-sentinel",
+  "lane_impact": "L10 persistence: the schema is 19 data fields + saved:Boolean, and the load path is gated on the sentinel, not on field presence.",
+  "ledger_text": "n/a \u2014 completes the save-format field set the rewrite will ship",
+  "overturns_ledger": false,
+  "quote": "\u00a71t1832s0\u00a7.as:2881 'if(_loc1_.data.saved != true)' \u2016 QueryManagerBase.as:2967 'if(sharedObject.data.saved != true)' followed by :2969 'return;'",
+  "text": "Every finding in this corpus counts the offline save as nineteen fields and none of them names the twentieth member, which is the one that decides whether the other nineteen are ever read. The record carries a Boolean 'saved' flag: web \u00a71t1832s0\u00a7.as:2814 sets 'data.saved = false' on reset while :2789/:2798/:2850/:2865 set it true on write, and EVERY load path gates on it \u2014 :2881, :2938 and :2956 all open with 'if(_loc1_.data.saved != true) { return; }', exactly as android QueryManagerBase.as:2967 does in loadCharCookieData. A rebuild that ports the nineteen named fields and omits the sentinel writes a save it will never load.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
   "build": "android v0.682",
   "cite": "reference/decompiled/shs3_android/scripts/Obj_Hut.as:48,70; Obj_DragonDancePath.as:275,295; Obj_PathBush.as:62,110; Obj_HiddenTemple.as:187,207; Obj_DirectionSign.as:124,159; Obj_TownSign.as:44; InteractUI.as:1730; NodeUI.as:379; InventoryUI.as:440; CraftingUI.as:233; BankUI.as:348",
   "citelint": {
@@ -102,5 +315,181 @@
   "quote": "web \u00a71t113s0\u00a7.as:170 `_loc1_.x = 760 - _loc2_ * 60;` :171 `_loc1_.y = 450;`  ||  android BattleUI.as:133 `skillSlotButton.x = 760 - i * 60;` :134 `skillSlotButton.y = 450;`",
   "text": "The skill-slot constants used as the code anchor for the frame-to-stage transform are NOT android-only, which removes the build-parity objection to testing them against a web-build frame. The WEB BattleUI, reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as, builds its slot strip with the identical arithmetic at :170-171: x = 760 - i*60 and y = 450, matching android BattleUI.as:133-134 exactly. Slot i=2 therefore sits at game (640,450) in v0.717 as well as v0.682.",
   "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both \u2014 the point IS the difference",
+  "cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:2406-2412 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3340-3346",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27b/v0717-rebalanced-the-manual-stat-caps-upward-vs-v0682",
+  "lane_impact": "Cross-lane, and it hardens \u26a0 S0-3 from a hedge into a proven hazard: web and android combat/progression tuning demonstrably diverge on four of six stat caps.",
+  "overturns_ledger": false,
+  "quote": "android InventoryUI.as:2410 'this.statsPanel.ATKadd.visible = StatsManager.getStat(StatsManager.STAT_ATTACK) < charlevel + 10;' \u2016 web \u00a71t5957s0\u00a7.as:3344 'var _loc6_:Boolean = \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9408s0\u00a7) < 1 + (_loc2_ + 10) * 3;'",
+  "text": "A hard, measured counterexample to build parity, found while checking the 271-cap claim. The stat-panel add-button gates are the same function in both builds but carry DIFFERENT formulas. ATK/DEF/SPD: android InventoryUI.as:2410-2412 gate on 'charlevel + 10' (90 at level 80); web \u00a71t5957s0\u00a7.as:3344-3346 gate on '1 + (level + 10) * 3' (271 at level 80) \u2014 a 3x lift. MAXHP: android :2407 '10 + (charlevel + 10) * 5' (460); web :3341 '10 + (_loc2_ + 10) * 10' (910) \u2014 doubled. MAXAP: android :2409 '20 + (charlevel + 10)' (110); web :3343 '30 + (_loc2_ + 10) * 5' (480) \u2014 more than 4x. MAXCHI is the only one identical: android :2408 and web :3342 are both '10 + (lvl + 10) * 5' = 460. This is exactly the shape of divergence the S0-3 caveat warns about, now with numbers: the data XMLs match row for row, but progression tuning does NOT. Any INFERRED progression number ported from an android artifact must be re-derived web-side before it is called CONTRACT.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1834 + reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:188-201",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "skills-meters/the-initplayer-argument-order-is-a-noncircular-web-android-bridge",
+  "lane_impact": "L2 skills-meters + L5 combat-core: an argument-order bridge that names six web fields from android symbols without diffing a file against itself - reusable wherever a web/android pair shares a call signature.",
+  "overturns_ledger": false,
+  "quote": "StatsManager.as:1834 `...,getSlashUsage(),getStat(1000),getStat(1001),getStat(1002),getLevel());` \u00b7 \u00a71t99s0\u00a7.as:196 `this.\u00a71t4421s0\u00a7 = param12;`",
+  "text": "C2 says the four data XMLs are android-side, so diffing them proves nothing, and that combat tuning parity is NOT established. Here is a bridge that is not circular. Android StatsManager.as:1834 calls `player.initPlayer(0, HP, MAXHP, CHI, MAXCHI, DEFENSE, getBaseReload(), getMinDamage(), getDamageRange(), getBaseSlashLength(), getSlashUsage(), getStat(1000), getStat(1001), getStat(1002), getLevel())` - fifteen named arguments. The web fighter's ctor \u00a71t99s0\u00a7.as:188-201 takes exactly fifteen ints and assigns them in exactly that order, including `this.defense = param6` at the DEFENSE slot, which pins the alignment independently. That decodes six obfuscated web fields at once (\u00a71t3257s0\u00a7=MAXHP, \u00a71t4413s0\u00a7=MAXCHI, \u00a71t4421s0\u00a7/\u00a71t4422s0\u00a7/\u00a71t4423s0\u00a7 = skills 1000/1001/1002, \u00a71t4420s0\u00a7=baseSlashLength) and it is what actually rules out an off-by-one in the mastery term.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2586-2588 + reference/decompiled/shs3_android/scripts/StatsManager.as:740-742",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skills-meters/the-web-build-seeds-stance-mastery-at-1-too-parity-hole-closed",
+  "lane_impact": "L2 skills-meters: the [1,10] mastery domain no longer carries an S0-3/C2 build-parity caveat.",
+  "overturns_ledger": false,
+  "text": "The stance-mastery finding disclosed its own parity hole in its build field ('android v0.682 data XML + web v0.717 formula') because the floor=1 evidence was StatsManager.as, an android file. That hole is now closed from the web side: \u00a71t1523s0\u00a7.as:2583-2593 is the web v0.717 new-character seed and it pushes the identical seven skill stats at value 1 \u2014 '\u00a71t9367s0\u00a7.push(new \u00a71t100s0\u00a7(1000,1));' / (1001,1) / (1002,1) / (1003,1) / (1042,1) / (1049,1) / (1050,1) \u2014 a line-for-line twin of StatsManager.as:740-746. So mastery floor 1 (Light x0.54, Balanced x1.02) is attested in v0.717 itself and does not depend on the android build.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:148-149,:241-242,:308-324,:326,:542,:548 + reference/decompiled/shs3_android/scripts/BattleUI.as:112-113,:192-193,:241-256,:259,:433,:439",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/battleui-obfuscation-map-extension-eight-more-fields",
+  "lane_impact": "L8 ui-hud: unblocks the rest of the BattleUI port without further guessing at obfuscated field names.",
+  "overturns_ledger": false,
+  "text": "Byproduct of judging this packet: the web-to-android field map for \u00a71t113s0\u00a7 (BattleUI) now covers eight more members beyond the three the packet claimed, all fixed by matching call order and body shape against the android twin. \u00a71t5158s0\u00a7 = battlemodebust (:148-149 highlight/buttonMode == android :112-113); \u00a71t5170s0\u00a7/\u00a71t5171s0\u00a7/\u00a71t5172s0\u00a7 = hpbar/hptext/hptextshadow (:312-317 == android :245-249); \u00a71t5164s0\u00a7/\u00a71t5165s0\u00a7/\u00a71t5166s0\u00a7 = chibar/chitext/chitextshadow (:319-324 == android :252-256); \u00a71t5200s0\u00a7 = setReloadMax (both empty bodies, :308-310 == android :241-243); \u00a71t5205s0\u00a7 = updateReload (:326 == android :259); \u00a71t5215s0\u00a7/\u00a71t5216s0\u00a7 = showChangeStanceLabel/hideChangeStanceLabel (:241-242,:542,:548 == android :192-193,:433,:439). Together with the packet's \u00a71t5169s0\u00a7=crittext, \u00a71t5161s0\u00a7=changestancelabel, \u00a71t5182s0\u00a7=reloadbar, that is the whole player-status cluster of the combat HUD decoded.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/session11/crit-focus/t1082.100.png, per-pixel row scan at y=1035, x=235..560 (no crop needed; bar is HUD-scale)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/measured-third-bar-fill-in-t1082-is-23-percent-not-28",
+  "lane_impact": "L8 ui-hud: no config consequence; a bookkeeping fix so a soft estimate is not promoted to a measured row.",
+  "overturns_ledger": false,
+  "text": "Minor numeric correction to the surviving string-960 finding, which describes the third bar in t1082.100.png as 'about 28% filled'. Per-pixel scan at y=1035 across x=235..560: the white fill run is x=245..304 (60 px) and the brown track runs from x=245 to about x=514 (samples read (46,29,0) through x=510 and (1,1,1) at x=520), giving 60/270 = 22.6%. Not load-bearing \u2014 the finding's shipped number is the threshold 48, which comes from \u00a71t113s0\u00a7.as:328, not from the fill fraction \u2014 but the 28% figure should not be transcribed into any doc as a measurement.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:192-193,:259-263,:430-440 + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:326-347 + docs/gauntlet/L0/index/strings.json (no key \"960\")",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/string-960-is-absent-from-android-because-the-android-label-is-a-portrait-rollover",
+  "lane_impact": "L8 ui-hud: build the WEB behaviour (persistent on-bar empty-state label), not the android hover tooltip - and record this as a discharged C2 instance: the two builds' battle HUDs are NOT at parity on this element.",
+  "overturns_ledger": false,
+  "quote": "BattleUI.as:262 `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` \u00b7 :192 `this.battlemodebust.addEventListener(MouseEvent.MOUSE_OVER,this.showChangeStanceLabel);`",
+  "text": "The packet notes that string 960 is unresolvable from the android table but not why, and the mechanism is a genuine, first-hand v0.717-vs-v0.682 divergence - one of the very few that discharges part of the C2 caveat instead of restating it. Android BattleUI.as:262 is the ENTIRE reload-bar text logic: `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` - the android build shows the crit text at full and nothing at all otherwise. It has no empty-state label on the bar. Instead its 'Change Stance' string lives on a mouse rollover over the portrait: :192-193 add MOUSE_OVER/MOUSE_OUT listeners on battlemodebust bound to showChangeStanceLabel/hideChangeStanceLabel (:430-440), which toggle changestancelabel and the bust highlight together. The web build replaced that hover affordance with a persistent on-bar notice, which is why getString(960) exists in v0.717 and is missing from the v0.682 table (strings.json[\"960\"] returns None). Android also normalises the ratio itself before the call, while the web computes (reload-48)/(max-48) inside \u00a71t5205s0\u00a7.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:200,:241-242,:542,:548 + reference/decompiled/shs3_android/scripts/BattleUI.as:26,:148,:192-193,:374,:433,:439",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/the-change-stance-affordance-IS-the-portrait-bust-not-a-separate-button",
+  "lane_impact": "L8 ui-hud: the stance control is the portrait bust itself (buttonMode, highlight child, stancecolor1 ring); the getString(208) label renders only on hover. Do not author a standalone Change Stance button.",
+  "overturns_ledger": false,
+  "text": "Correction to the lane_impact of the surviving BattleUI finding, which says the HUD needs 'a Change Stance button NEXT TO the portrait'. It is not next to the portrait \u2014 it IS the portrait. Android names the clickable \u00a71t5158s0\u00a7 'battlemodebust' (BattleUI.as:26), the same object that receives the player bust at :148 ('battlemodebust.bustcanvas.addChild(this.playerBust)') and carries the stance ring at :374 ('battlemodebust.stancecolor1.gotoAndStop(num)'). The 'Change Stance' label is a HOVER TOOLTIP, not a persistent button caption: android :192-193 adds MOUSE_OVER/MOUSE_OUT -> showChangeStanceLabel/hideChangeStanceLabel, and the web twin does the identical thing at \u00a71t113s0\u00a7.as:241-242 (MOUSE_OVER/MOUSE_OUT -> \u00a71t5215s0\u00a7/\u00a71t5216s0\u00a7) with :542 '\u00a71t5161s0\u00a7.visible = true;' / :548 '... = false;' and :200 hiding it at init. A porter following the lane_impact literally would ship a spurious second HUD widget.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:26,:112-113,:275-277,:360-364,:372-375 + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:148-149,:379-381,:482-485 + reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3101,:3112,:3127",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/the-change-stance-button-is-the-portrait-bust-itself",
+  "lane_impact": "L8 ui-hud: one clickable portrait widget carrying bustcanvas + a stancecolor1 ring on frames 1/2/3 + a highlight child - not a portrait plus a separate button. Confirms ledger item 10 (ring is stance-coloured) and supplies the frame indices.",
+  "overturns_ledger": false,
+  "quote": "BattleUI.as:275 `if(this.battlemodebust.hitTestPoint(mousex,mousey))` \u00b7 :374 `this.battlemodebust.stancecolor1.gotoAndStop(num);` \u00b7 \u00a71t113s0\u00a7.as:484 `this.\u00a71t5158s0\u00a7.\u00a71t15895s0\u00a7.gotoAndStop(param1);`",
+  "text": "Correcting the packet's own lane_impact, which says the HUD 'needs a Change Stance button next to the portrait'. It is not next to the portrait; it IS the portrait. Android BattleUI.as:275-277 reads `if(this.battlemodebust.hitTestPoint(mousex,mousey)) { this.stanceButtonClick(); }`, and :112-113 set `battlemodebust.highlight.visible = false; battlemodebust.buttonMode = true;`. The web twin is identical in shape: \u00a71t113s0\u00a7.as:148-149 set `\u00a71t5158s0\u00a7.highlight.visible = false; \u00a71t5158s0\u00a7.buttonMode = true;` and :379-381 hit-test \u00a71t5158s0\u00a7 into \u00a71t5207s0\u00a7. So \u00a71t5158s0\u00a7 = battlemodebust. The stance COLOUR rides the same object: web \u00a71t5208s0\u00a7 (:482-485) does `\u00a71t5158s0\u00a7.\u00a71t15895s0\u00a7.gotoAndStop(param1)` against android setStanceColor (:372-375) `battlemodebust.stancecolor1.gotoAndStop(num)`, called from the stance switch with 1=Light, 2=Balanced, 3=Heavy (\u00a71t99s0\u00a7.as:3101, :3112, :3127). That means the stance-coloured portrait ring the ledger already records as item 10 and the stance button are ONE widget, and the ring index is an explicit 1/2/3 frame number rather than an inferred palette.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:259-263 + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:110-111,:326-359 + docs/gauntlet/L0/index/strings.json (no key \"960\")",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/the-grey-cannot-change-stance-label-is-a-v0717-web-only-addition",
+  "lane_impact": "L8 ui-hud: ship the three-state meter label from the WEB contract; do not port android's two-line updateReload. Also: the 48 offset lives in the UI rescale, mirroring \u00a71t99s0\u00a7.as:3050's gate.",
+  "overturns_ledger": false,
+  "text": "String 960 and its grey label are not merely missing from the android string table \u2014 the android build has no code path that would use them. Android BattleUI.as:259-263 updateReload is two lines: 'this.reloadbar.bar.scaleX = percentage;' and 'this.crittext.visible = percentage >= 1 && this.reloadbar.visible;'. There is no ratio==0 branch and no second htmlText. The web v0.717 twin \u00a71t113s0\u00a7.as:326-359 adds all three states (grey getString(960) at ratio 0, hidden at 0<r<1, black getString(175) + Snd_criticalDamage at r>=1) and rescales the input to '(param1 - 48) / (param2 - 48)' where android passes a pre-computed percentage. This explains why strings.json has no key '960' without needing a table-coverage argument, and it is a real, dated v0.682 -> v0.717 HUD change.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:110,:111,:326-359 + docs/gauntlet/L0/index/strings.json[\"175\"]='Critical Hit'",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/the-third-bar-is-a-three-state-meter-and-fires-snd-criticaldamage-at-full",
+  "lane_impact": "L8 ui-hud: ship ONE meter widget with three text states and a transition sound, not two separate crit/stance indicators. Also names the exact colours: #BBBBBB empty-state, #000000 full-state.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t113s0\u00a7.as:110 `this.\u00a71t5203s0\u00a7 = \"<font color=\\'#000000\\'>\" + \u00a71t1521s0\u00a7.getString(175) + \"</font>\";` \u00b7 :352 `\u00a71t88s0\u00a7.instance.\u00a71t1516s0\u00a7(\"Snd_criticalDamage\");`",
+  "text": "The packet stops at two of the third bar's three states. \u00a71t113s0\u00a7.as:348-359 is the third: at ratio >= 1 the same TextField takes \u00a71t5203s0\u00a7 = `\"<font color='#000000'>\" + getString(175) + \"</font>\"` (built at :110), i.e. BLACK 'Critical Hit', and :350-352 fire `\u00a71t88s0\u00a7.instance.\u00a71t1516s0\u00a7(\"Snd_criticalDamage\")` on the transition into that state - guarded so it plays once, not per frame. So the single track under HP and Chi is a three-state readout on one 0..192 resource: empty -> #BBBBBB getString(960); filling -> no text; full -> #000000 getString(175) plus a one-shot sound. Under correction C3 the audio is recovered, so Snd_criticalDamage is a nameable, shippable stem rather than a TODO.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "STILL_UNHELD",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:245-256 + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:308-324 + docs/research/REBUILD_READINESS.md:178 + docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7 + reference/frames/session11/crit-focus/t1003.000.png, t1082.100.png",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/which-hud-bar-is-hp-and-which-is-chi-is-still-unheld-by-colour",
+  "lane_impact": "L8 ui-hud: before writing bar colours to config, find an artifact that binds colour to stat (a low-HP/death frame, or the SWF shape for hpbar). Do not inherit green=HP from prose on either side.",
+  "overturns_ledger": false,
+  "text": "Nobody has established, from an artifact that ties COLOUR to STAT, that the green bar is HP and the blue bar is Chi. The code proves only that there are exactly two numeric updaters and one numeral-free one: android BattleUI.as:245-249 updateHp (hptext/hptextshadow/hpbar) and :252-256 updateChi (chitext/chitextshadow/chibar), whose web twins are \u00a71t113s0\u00a7.as:312-317 (\u00a71t5171s0\u00a7/\u00a71t5172s0\u00a7/\u00a71t5170s0\u00a7 = hptext/hptextshadow/hpbar) and :319-324 (\u00a71t5165s0\u00a7/\u00a71t5166s0\u00a7/\u00a71t5164s0\u00a7 = chitext/chitextshadow/chibar), matched by call-order against the empty setReloadMax (:241-243) / \u00a71t5200s0\u00a7 and updateReload/\u00a71t5205s0\u00a7 that bracket them. Nothing in AS3 names a colour \u2014 the fills live in SWF art. The surviving 'video-study notes misread' finding asserts green=HP / blue=Chi, and B-11:7 asserts the exact opposite ('a thin green bar ... reads as a resource/stamina-type meter, NOT the blue HP bar ... a thick blue bar ... (this is HP)'). Circumstantial support for green=HP: REBUILD_READINESS.md:178 is Kheshav's own-eyes verdict on Nr4fQstqHDM_428.0 and reads 'player HP 20/20', and in that frame green is 20/20 while blue is 26/26; and across my three frames the green denominator is pinned at 20 (20/20, 14/20, 11/20) with its numerator falling during combat, while the blue denominator varies 26/31/47. That is inference plus one A5 line, not a colour-to-stat artifact. Flagging it because it would silently corrupt palette.ts and the config bar names, and because two committed docs currently disagree.",
+  "verdict": "STILL_UNHELD"
  }
 ]
