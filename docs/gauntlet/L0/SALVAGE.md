@@ -50,6 +50,46 @@ predicted, and it is now MEASURED. If a ratio ever sits above 1 for two consecut
 that is a real result and it goes to the owner for a ruling — the gate is not softened
 (§3.6).
 
+### ⛔ OWNER RULING 2026-08-23 — JUDGING STOPS AFTER WAVE E
+
+**Asked and answered, because §3.6 says a gate is never softened to fit a result.** The
+t1 tier does not converge, and splitting emissions BY TIER is what made it legible:
+
+| wave | judged | new t1 | new t2 | tier ratio |
+|---|---:|---:|---:|---:|
+| A | 45 t2 | 0 | 6 | t2→t2 **0.13** |
+| B | 21 t1 | 21 | 24 | t1→t1 **1.00** |
+| C | 30 t2 | 0 | 11 | t2→t2 **0.37** |
+| D | 21 t1 | 24 | 24 | t1→t1 **1.14** |
+
+t2 decays fast and emits **no overturn-claimers at all**. t1 is a **fixed point** at
+~1.0–1.14: every overturn-claimer judged spawns roughly one more. It will never go dry, so
+"loop until dry" is not available on this tier at any budget.
+
+**RULING: bank wave E, then STOP judging.** Whatever remains unjudged stays **KILLED** —
+which is the EXISTING fail-closed rule (§0: a lead may not enter the ledger), not a new
+concession. No gate item moved, no threshold was relaxed. ~60 late-generation leads of
+~1,780 are excluded; they are refinements of refinements, and every one of them is still
+on disk under `run*/claims.json` if a later lane wants them.
+
+Rejected alternatives, recorded so nobody re-litigates them:
+- *Keep judging until t1 empties* — it is a fixed point; it does not empty.
+- *Drop the contradiction lens to force convergence* — that trades away the ONLY check on
+  whether two surviving findings disagree, immediately before 1,309 of them are written
+  into the ledger by writers who would otherwise pick between them arbitrarily.
+
+### ⚑ A CRITIC CAUGHT A FALSE NEGATIVE IN citeLint — SAFE DIRECTION, NOT FIXED YET
+
+`combat-core/crit-1.3-is-sealed-…` was flagged QUOTE_UNVERIFIED in `citelint-run13.json`.
+Byte-checked by the lead against `§1t99s0§.as`: `:3272 if(this.§1t4414s0§ ==
+this.§1t4415s0§)` and `:3274 return _loc2_ * 1.3 + this.§1t1243s0§;` are both present and
+exact. **The flag is wrong.**
+
+It fails SAFE — a good cite marked suspect, never a bad cite passed — and gate L0-A goes
+RED on `BROKEN`, not on `QUOTE_UNVERIFIED`, so no gate reads it. **Deliberately NOT fixed
+during L0:** changing a gate input while that gate is being driven is what §3.6 warns
+against. Counts are small (5 in run13, 2 in run14, 0 in run15). Queued for after L0.
+
 ### ⚑ THE WORKFLOW SCRIPTS HAD NEVER BEEN CHECKED BY ANYTHING
 
 ~1,100 lines that spawn 40+ agents each, and no test, lint or typecheck ever read them:
