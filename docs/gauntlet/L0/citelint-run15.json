@@ -1,0 +1,593 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A2",
+   "id": "s27d/stance-constant-dictionary-12223-is-DUAL-and-12224-is-REVERSED",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27d/the-focus-bar-IS-the-internal-reload-meter-and-replenish-focus-stops-one-tick-short",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/SkillManager.as",
+    "reference/extracted/skilldata.xml",
+    "docs/gauntlet/L0/index/strings.json[\"6008\"]",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27d/the-in-combat-stance-switch-COSTS-48-so-the-recreations-focus-gated-switch-was-right",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/research/SHSD_MASTER_REFERENCE.md",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27d/obfuscated-symbol-dictionary-for-the-web-combat-core",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "s27d/citelint-QUOTE_UNVERIFIED-is-a-false-negative-on-backtick-delimited-quotes",
+   "notes": [],
+   "paths": [
+    "scripts/gauntlet/citeLint.py",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/rr245-is-the-wrong-anchor-for-the-dan-rank-blocker",
+   "notes": [],
+   "paths": [
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/maxreload-192-has-two-web-assignments-not-one",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t4904s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/EnemyClone.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/48-plus-spd6-is-baseReload-and-it-is-dead-in-both-builds",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/the-plus6-is-a-kill-bonus-in-the-web-bundle-too",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1543s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/NPCManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/the-crit-proc-rule-is-closed-not-open",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/reach-cap-in-stage-px-per-stance-is-fully-recovered-the-biggest-combat-core-blocker-closes",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/focus-regen-is-on-kill-not-per-tick",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NPCManager.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/the-crit-proc-rule-is-deterministic-full-meter-not-a-chance-roll",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/reinforce-carries-three-material-tiers-keyed-on-weapon-level-not-node-level",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/InteractUI.as",
+    "docs/gauntlet/L0/index/strings.json[\"850\"]",
+    "docs/gauntlet/L0/index/resolved_names.json",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/max-dan-rank-10-is-contract-not-inferred-the-web-build-caps-it",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "docs/gauntlet/L0/index/strings.json[\"455\"]-[\"465\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/four-web-vs-android-combat-divergences-measured-the-s0-3-caveat-now-bites-on-tuning",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27d/stance-switch-in-battle-costs-48-focus-flat-in-web-v0717",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27d/focus-fill-is-plus-1-per-tick-plus-6-per-kill-batch-and-replenish-sets-max-minus-1",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1543s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_android/scripts/NPCManager.as",
+    "reference/decompiled/shs3_android/scripts/SkillManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27d/crit-proc-is-deterministic-on-a-full-meter-and-the-multiplier-is-web-only",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27d/dan-titles-are-nine-strings-456-464-and-455-is-never-used",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "docs/gauntlet/L0/index/strings.json[\"455\"]-[\"467\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27d/the-hud-reload-normalisation-constant-diverges-48-web-vs-24-android",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t4904s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/android-initplayer-is-an-unobfuscated-decoder-key-for-the-web-payload",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/base-slash-length-is-a-closed-formula-combat-core-blocker-1-falls",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/rr-159-is-inverted-out-of-combat-is-the-free-switch",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t406s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1525s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json[\"643\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/web-doubled-the-focus-meter-vs-android-a-measured-parity-divergence",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/crit-is-deterministic-at-full-focus-not-a-proc",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json[\"175\"]",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27d/spacebar-is-the-stance-cycle-key-and-it-is-gated-even-out-of-combat",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t406s0\u00a7.as",
+    "docs/research/SHSD_MASTER_REFERENCE.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "NF-S27D-1/cannot-change-stance-is-proven-transient-on-film-and-the-focus-bar-is-battle-only",
+   "notes": [],
+   "paths": [
+    "reference/frames/combat_frames/Nr4fQstqHDM_t0435s.png",
+    "reference/frames/duel_dense/Nr4fQstqHDM_429.0.png",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "NF-S27D-2/the-third-bar-is-named-focus-bar-in-game-so-focus-and-reload-are-one-meter",
+   "notes": [],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0013.jpg",
+    "docs/gauntlet/L0/index/strings.json[\"6008\"]",
+    "reference/extracted/skilldata.xml",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27D-3/RR159-is-inverted-the-out-of-combat-stance-switch-is-the-free-one",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27D-4/the-full-focus-evade-passive-is-in-the-web-code-not-only-on-a-skill-card",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0013.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27D-5/the-opaque-web-stance-ids-decode-to-0-4-via-the-android-twin",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "t1-overturns-03-cite-s27d/mastery-runs-1-to-10-so-RR155s-level-1-floor-is-wrong-too",
+   "notes": [],
+   "paths": [
+    "reference/extracted/skilldata.xml",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "t1-overturns-03-cite-s27d/the-injured-debuff-halves-reach-and-no-reach-finding-carries-it",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/v0717-stance-table-carries-a-mastery-9-reconciliation-that-fights-five-upheld-siblings",
+   "notes": [],
+   "paths": [
+    "reference/extracted/skilldata.xml",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/the-271-gate-is-a-strict-less-than-so-the-panel-lands-on-271-not-short-of-it",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/the-web-input-manager-keeps-the-clear-name-maxdistance-so-reach-needs-no-android-cite",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/base-slash-length-is-halved-by-a-timed-debuff-nobody-has-claimed",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/the-reinforce-materials-are-spent-by-item-id-the-banked-web-cite-only-proves-what-is-printed",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as",
+    "reference/extracted/itemdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27d/735-territories-times-36-nodes-is-exactly-the-banked-26460-node-world",
+   "notes": [],
+   "paths": [
+    "reference/extracted/android/110_Mobile_MapBitmapData.bin",
+    "reference/decompiled/shs3_android/scripts/WarHexUI.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf1-the-stance-mastery-cap-is-10-and-it-is-in-the-skill-tree",
+   "notes": [],
+   "paths": [
+    "reference/extracted/skilldata.xml",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf2-mastery-floors-at-1-so-a-fresh-character-is-not-light-x0-5",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf3-the-slash-budget-is-spent-in-literal-stage-pixels-web-side",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf4-the-per-kill-xp-formula-is-in-the-web-build-too",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/NPC.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf5-nodegenerator-carries-the-general-territory-to-room-transform",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NodeGenerator.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf6-war-board-adjacency-is-in-code-not-just-the-board-dimensions",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/WarHexUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf7-271-cap-is-neither-gear-nor-rebirth-inclusive",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InteractUI.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf8-coins-per-kill-is-a-per-npc-loot-table-with-type-qty-and-chance",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as",
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 0,
+  "resolves": 48,
+  "total": 48,
+  "uncheckable": 0
+ }
+}

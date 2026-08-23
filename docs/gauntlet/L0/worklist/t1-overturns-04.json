@@ -1,0 +1,53 @@
+[
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 for the roll, android v0.682 for the rows (C2)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:820-828, :861-867 \u00b7 reference/extracted/npcdata.xml:39-42",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "nf8-coins-per-kill-is-a-per-npc-loot-table-with-type-qty-and-chance",
+  "lane_impact": "L4 economy: coins per kill = sum over the NPC's loot rows of (type 0 -> 1 * qty, type 1 -> 5 * qty), each gated by its own chance. There is no scalar to seed, so INFERRED `COINS_PER_KILL = 8` should be deleted, not re-labelled.",
+  "ledger_text": "\u2460 coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either).",
+  "overturns_ledger": true,
+  "quote": "\u00a71t68s0\u00a7.as:827 '_loc6_ = _loc5_.chance * 100;' \u00b7 :828 'if(_loc6_ == 100 || Math.random() * 100 < _loc6_)' \u2016 npcdata.xml:40-42 '<id>0</id><qty>2</qty><chance>0.5</chance>'",
+  "text": "The coins finding proves what the payout multipliers are (1x for loot type 0, 5x for type 1) but not where the type, quantity and probability come from, which is what 'coins-per-kill reality' actually asks. The roll is at \u00a71t68s0\u00a7.as:820-828: it walks 'this.reward.loot', taking the type from \u00a71t760s0\u00a7(), the count from getQty() and the probability from 'chance * 100', firing when '_loc6_ == 100 || Math.random() * 100 < _loc6_'. The rows themselves are in the NPC data \u2014 reference/extracted/npcdata.xml:39-42 is a real one, '<loot><id>0</id><qty>2</qty><chance>0.5</chance>', i.e. 2 coins on a coin-flip, and the file carries 131 <loot> blocks across its 495 npc rows. So per-kill coin income is fully tabulated, per enemy, not a constant awaiting measurement. Build caveat, stated plainly: the payout CODE is web v0.717, but npcdata.xml is android-sourced under C2, so the per-NPC rows are v0.682 until a web-side artifact says otherwise.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3156-3171 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3096-3114 \u00b7 docs/research/SHSD_MASTER_REFERENCE.md:388,:390,:2099 \u00b7 docs/research/REBUILD_READINESS.md:158-160",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27d/the-in-combat-stance-switch-COSTS-48-so-the-recreations-focus-gated-switch-was-right",
+  "lane_impact": "L5 combat-core + L8 ui-hud: delete the three hard-lock rows, keep the recreation's Focus-gated switch, and set FOCUS_SWITCH_GATE=48 and FOCUS_SWITCH_COST=48 on FOCUS_MAX=192 as CONTRACT (web v0.717). Removes a standing [CONTRACT/CONTRADICTION] rather than adding one.",
+  "ledger_text": "| **Focus-gated switching** (recreation only) | The codebase implements Focus-meter-gated mid-combat switching; video study shows the original hard-locks | [CONTRACT/CONTRADICTION] |",
+  "overturns_ledger": true,
+  "quote": "\u00a71t99s0\u00a7.as:3160-3162 'if(\u00a71t1525s0\u00a7.\u00a71t9948s0\u00a7()) { this.\u00a71t4414s0\u00a7 -= 48;' \u00b7 MCSPlayer.as:3096-3104 'if(StageManager.isBattle()) { if(this.reload > this.maxreload / 2) { this.reload = this.maxreload / 3; } else { this.reload -= this.maxreload / 6; }' \u00b7 SHSD_MASTER_REFERENCE.md:390 '| **Focus-gated switching** (recreation only) | The codebase implements Focus-meter-gated mid-combat switching; video study shows the original hard-locks | [CONTRACT/CONTRADICTION] |'",
+  "text": "Three ledger rows call the recreation's Focus-gated in-combat stance switch a DIVERGENCE from the original. It is not a divergence - it is very nearly the original. The web setStance body debits the Focus/reload meter by 48 whenever \u00a71t9948s0\u00a7() is true, and that guard is StageManager.isBattle() by exact structural correspondence with the android twin, which debits its own reload meter inside 'if(StageManager.isBattle())' at the same position in the same function. So v0.717's rule is: an in-combat switch REQUIRES 48 on the Focus bar (\u00a71t99s0\u00a7.as:3050) and SPENDS 48 (\u00a71t99s0\u00a7.as:3162) - gate and toll, one quarter of a 192 bar, four switches from full. MASTER_REFERENCE:388 ('Hard lock', [CONTRACT]), :390 ('recreation only ... the original hard-locks', [CONTRACT/CONTRADICTION]) and :2099 (same, [CONTRACT]) all fall together with RR:158-160, and they fall in the recreation's FAVOUR. The android build is not identical and must not be ported: its threshold is maxreload/6 = 20 of 120 and its debit is a two-branch rule (halve to maxreload/3 if above half, else subtract maxreload/6), against the web's flat 48-and-48.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (skilldata.xml row counts are android-sourced per C2; the formulas and the seed value are web)",
+  "cite": "reference/extracted/skilldata.xml:4, :83, :162 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:1058-1060 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3262, :3265, :3116",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "t1-overturns-03-cite-s27d/mastery-runs-1-to-10-so-RR155s-level-1-floor-is-wrong-too",
+  "lane_impact": "L2 skills-meters: RR:155-156 needs both numbers replaced, not just the '-9' label. STANCE_DMG_LIGHT(m) = 0.5 + 0.04m, STANCE_DMG_BALANCED(m) = 1 + 0.02m, STANCE_DMG_HEAVY = 1.4 flat, STANCE_REACH_HEAVY(m) = 0.5 + 0.04m, m in [1,10] seeded at 1. Kills the 'decide-and-flag: the build targets mastery-9' escape hatch \u2014 there is a curve and it is two lines of code.",
+  "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.** A level-1 Shugyosha does Light \u00d70.5 / Balanced \u00d71.0 / Heavy \u00d71.4 (Heavy is fixed); Heavy's *reach* also scales \u00d70.5\u2192\u00d70.9.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:1058 '\u00a71t9367s0\u00a7.push(new \u00a71t100s0\u00a7(1000,1));' :1059 '...(1001,1));' :1060 '...(1002,1));' \u2016 skilldata.xml skill id 1000 at :4 carries ten <level> blocks whose <value> runs 1,2,3,4,5,6,7,8,9,10",
+  "text": "Resolves the fork that s27b/stance-ceilings-are-mastery-10-not-mastery-9 correctly left open, and adds a second error in the same ledger sentence. (a) THE CAP IS 10: skilldata.xml skills 1000/1001/1002 (:4, :83, :162 \u2014 the three passive stance masteries fed to initPlayer as getStat(1000/1001/1002)) each have exactly ten <level> rows valued 1..10. So the web formulas 0.5+0.04m and 1+0.02m do reach 0.90 and 1.20, at m=10, and RR:155's 'MASTERY-9' label is an off-by-one rather than an unreachable ceiling. (b) THE FLOOR IS 1, NOT 0: the web build seeds all three masteries at value 1 (\u00a71t1523s0\u00a7.as:1058-1060, mirrored at :2586-2588 for the second init path), so a fresh character is at m=1, not m=0. RR:155-156's 'A level-1 Shugyosha does Light x0.5 / Balanced x1.0 ... Heavy's reach also scales x0.5' is therefore wrong at both ends: the real floors are Light x0.54, Balanced x1.02 and heavy reach x0.54, and the real ceilings are x0.9 / x1.2 / x0.9 at m=10. Ship the two formulas with the domain m in [1,10]; do not ship the triple.",
+  "verdict": "HELD"
+ }
+]

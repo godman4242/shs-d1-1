@@ -1,124 +1,118 @@
 [
  {
-  "artifact_class": "A2",
+  "artifact_class": "A1",
   "build": "web v0.717",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:110-111,:326-361 \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_429.0.png (crop 0,920-620,1080, 3x) \u00b7 docs/gauntlet/L0/index/strings.json[\"175\"]",
+  "cite": "reference/frames/combat_frames/Nr4fQstqHDM_t0435s.png, _t0430s.png, _t0425s.png (crop (150,930)-(620,1080) of 1920x1080, 3x LANCZOS) \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_429.0.png (crop (0,920)-(620,1080), 3x LANCZOS) \u00b7 read against reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:336-347",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "cite-s27b/cannot-change-stance-is-the-focus-bar-low-end-label-not-a-lock",
-  "lane_impact": "Kills the LAST defence of RR:158 / SHSD_MASTER_REFERENCE.md:388 and :2099 - the frame evidence they cite is re-read as SUPPORTING the Focus gate. Also gives the HUD lane a spec: third bar under HP and Chi, empty below 48, grey 'cannot change stance' caption at 0, black 'Critical Hit' caption + Snd_criticalDamage at full, caption hidden in between.",
+  "id": "NF-S27D-1/cannot-change-stance-is-proven-transient-on-film-and-the-focus-bar-is-battle-only",
+  "lane_impact": "L5 combat-core + L8 ui-hud: RR:158 and SHSD_MASTER_REFERENCE.md:388 / :2099 (both graded [CONTRACT]) are struck on FRAME evidence alone, independent of the AS3 argument. Also a HUD spec the ui-hud lane does not have: three bars in battle (HP green / Chi blue / Focus brown-track with a white fill), two bars plus a stance-name line in the overworld, buff banners below the stack.",
   "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\" appears the instant a fight starts)",
   "overturns_ledger": true,
-  "quote": "\u00a71t113s0\u00a7.as:111 'this.\u00a71t5204s0\u00a7 = \"<font color=\\'#BBBBBB\\'>\" + \u00a71t1521s0\u00a7.getString(960) + \"</font>\";' \u00b7 :328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);' \u00b7 :336 'if(_loc3_ == 0)' -> :340 'this.\u00a71t5169s0\u00a7.htmlText = this.\u00a71t5204s0\u00a7;' \u00b7 :346 'this.\u00a71t5169s0\u00a7.visible = false;'",
-  "text": "The ledger's entire hard-lock case is a misread of one on-screen string, and the code names the widget that prints it. \u00a71t113s0\u00a7.as:326-361 is the Focus-bar updater. It scales the bar as (v-48)/(max-48), then: if the result is 0 it shows \u00a71t5204s0\u00a7 - grey getString(960) - and forces the label visible; if the result is >= 1 it shows \u00a71t5203s0\u00a7 - black getString(175) = 'Critical Hit' - and plays Snd_criticalDamage; in between it HIDES the label entirely. I cropped reference/frames/duel_dense/Nr4fQstqHDM_429.0.png at (0,920)-(620,1080) of the 1920x1080 frame and upscaled 3x: under the green 20/20 HP bar and the blue 26/26 bar sits a third bar, dark and unfilled, printing 'CANNOT CHANGE STANCE' in grey caps, with the yellow '150% DAMAGE' buff BELOW the bar stack rather than in it. That grey-on-empty-bar label is getString(960) in the _loc3_==0 branch. strings.json has no entry 960 because it is the ANDROID table (2,533 entries, no 960), which is exactly why nobody matched the frame text to the code before. THE FRAME AND THE CODE DO NOT DISAGREE: the frame shows a Focus meter parked at or below 48 telling the player they cannot afford a switch RIGHT NOW. The ledger read a transient affordability message as a permanent state.",
+  "text": "THE FRAME WINS, TWICE, ON FRAMES NO FINDING IN THE CORPUS HAS CITED. Three stills from the same longplay settle REBUILD_READINESS.md:158 without any code. (1) reference/frames/combat_frames/Nr4fQstqHDM_t0435s.png, crop (150,930)-(620,1080) of 1920x1080 at 3x LANCZOS: green HP 19/20, blue Chi 26/26, and the third bar roughly 42% filled with a WHITE block - with NO 'CANNOT CHANGE STANCE' caption anywhere, the yellow '150% DAMAGE' buff still below the stack, screen flashed red from a hit just taken. (2) _t0430s.png, same crop: HP 20/20, Chi 26/26, a thin white sliver at the left end of the third bar, caption again ABSENT. (3) reference/frames/duel_dense/Nr4fQstqHDM_429.0.png, crop (0,920)-(620,1080) at 3x: same fight, third bar EMPTY, caption ON. That is \u00a71t113s0\u00a7.as:336-343 (show at ratio==0) and :344-347 (hide while 0<ratio<1) rendered on film, and a caption that comes and goes inside one battle cannot be 'appears the instant a fight starts'. SECOND, UNCLAIMED RESULT: _t0425s.png, same crop, is the OVERWORLD HUD and has NO third bar at all - the slot under HP and Chi prints the words 'HEAVY STANCE' instead, and the 150% DAMAGE banner is absent. So the Focus/reload bar is a BATTLE-ONLY HUD element and the overworld reuses that slot as a stance-name readout. Every banked frame finding on this cluster cites duel_dense 428.0/432.5/432.9 or session11/crit-focus; 'combat_frames' appears exactly once in LEDGER_EVIDENCE.md and not for this, and 't0435' and 'HEAVY STANCE' appear zero times.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
   "build": "web v0.717",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249-250,:1203-1205,:3162,:3295-3316,:3318-3325 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:328",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3160-3166 (with :3086 and :3095 showing the same guard) \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3019-3105 \u00b7 docs/research/REBUILD_READINESS.md:158-160",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "cite-s27b/focus-meter-numerics-are-fully-recovered-in-web-v0717",
-  "lane_impact": "L2 skills-meters: delete blocker (3) from RR:195 and write FOCUS_MAX=192, FOCUS_FILL_PER_TICK=1, FOCUS_SWITCH_COST=48, FOCUS_CRIT_AT_FULL, slash debit x0.5/x1.0/x1.5 by stance, and the (v-48)/(max-48) HUD normalization into src/config as CONTRACT.",
-  "ledger_text": "(3) Focus numerics (max/fill/switch-cost).",
+  "id": "NF-S27D-3/RR159-is-inverted-the-out-of-combat-stance-switch-is-the-free-one",
+  "lane_impact": "L5 combat-core + L2: RR:158-160 must be rewritten as a unit, not just line 158. Ship: out-of-combat stance change free and unrestricted; in-combat gated on actionState AND focus >= 48 and charged a flat 48. The 'label it, don't present it as original' instruction is exactly backwards and removes an entry from the labelled-deviation list.",
+  "ledger_text": "The *out-of-combat* switch costing Focus IS real; the *in-combat* switch is a recreation divergence \u2014 label it, don't present it as original.",
   "overturns_ledger": true,
-  "quote": "\u00a71t99s0\u00a7.as:249 'this.\u00a71t4415s0\u00a7 = 8 * 24;' \u00b7 :1205 '++this.\u00a71t4414s0\u00a7;' \u00b7 :3162 'this.\u00a71t4414s0\u00a7 -= 48;' \u00b7 :3302 'this.\u00a71t4414s0\u00a7 -= this.slashUsage / 2;' \u00b7 :3320 'this.\u00a71t4414s0\u00a7 += 6;' \u00b7 \u00a71t113s0\u00a7.as:328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);'",
-  "text": "RR:195 blocker (3) 'Focus numerics (max/fill/switch-cost)' is not a blocker - the whole meter is hard-coded in \u00a71t99s0\u00a7.as and readable end to end. max = 8*24 = 192 (:249) and it starts at 0 (:250). It fills +1 per sim tick while below max (:1203-1205, 'if(this.\u00a71t4414s0\u00a7 < this.\u00a71t4415s0\u00a7){++this.\u00a71t4414s0\u00a7;'), so 0 -> full is 192 ticks. The stance switch costs exactly 48 (:3162 'this.\u00a71t4414s0\u00a7 -= 48;'), which is why the gate at :3050 and :3060 tests >= 48 - one quarter of the bar per switch, four switches from full. A slash at full meter zeroes it outright (:3295-3297); otherwise it debits by stance - Light slashUsage/2, Balanced/Dual slashUsage, Heavy/Reversed slashUsage*1.5 (:3299-3311), clamped at 0. \u00a71t4479s0\u00a7 (:3318-3325) adds a flat +6, clamped to max. The HUD normalizes as (v-48)/(max-48), i.e. the DISPLAYED bar is empty at v<=48 and full at 192 (\u00a71t113s0\u00a7.as:328). Nothing here is INFERRED.",
+  "text": "REBUILD_READINESS.md:159 says 'The *out-of-combat* switch costing Focus IS real; the *in-combat* switch is a recreation divergence'. The web payload says the exact opposite on both halves. \u00a71t99s0\u00a7.as:3160-3166 puts the ONLY charge - 'this.\u00a71t4414s0\u00a7 -= 48;' - inside 'if(\u00a71t1525s0\u00a7.\u00a71t9948s0\u00a7())', the battle predicate (the android twin setStance at MCSPlayer.as:3019-3105 carries the same three guards, each spelled 'StageManager.isBattle()'). I enumerated every occurrence of \u00a71t4414s0\u00a7 in \u00a71t99s0\u00a7.as - :93, :250, :256, :1203, :1205, :1208, :3050, :3060, :3162-:3169, :3272, :3295-:3297, :3302-:3314, :3320-:3325, :3383, :3707, :4890, :4897 - and :3162 is the sole stance-switch debit and the sole one under a battle guard. So OUT of combat a stance switch is FREE, and IN combat it costs 48 Focus. The ledger has the two cases swapped. The isBattle guard itself is banked (LEDGER_EVIDENCE.md:279, :644, :3241) but no finding in the corpus names RR:159 or states the out-of-combat half as free - 'RR:159' returns zero hits.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "web v0.717 (android v0.682 contrasted)",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3259-3271 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3202-3213 \u00b7 docs/gauntlet/L0/index/strings.json[\"8131\"] \u00b7 docs/research/REBUILD_READINESS.md:155-156",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3383-3388 and :3707, read against :3272-3276 and reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0013.jpg (crop (20,190)-(400,400), 5x LANCZOS)",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "cite-s27b/stance-damage-ceiling-is-mastery-10-not-mastery-9",
-  "lane_impact": "L5 combat-core: the damage half of RR:155 stops being an INFERRED table and becomes a formula - dmgMult(stance, mastery) with mastery 0..10 - so the 'model the curve or decide-and-flag mastery-9' fork at RR:157 dissolves. Correct 'MASTERY-9' to 'MASTERY-10' in RR:155-156 and in the session memory. The REACH half (300/200/100) is untouched by this function and stays a blocker.",
-  "ledger_text": "**The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "id": "NF-S27D-4/the-full-focus-evade-passive-is-in-the-web-code-not-only-on-a-skill-card",
+  "lane_impact": "L5 combat-core blocker (5) closes with a fuller rule than 'crit at full': a full Focus bar is a two-effect state - x1.3 on your own damage roll unconditionally, PLUS total evasion of an incoming hit if you own that stance's passive (three separate skills, Light/Balanced/Heavy). Also strike the 'an evade gate, NOT a crit meter' clause from LEDGER_EVIDENCE.md:660: the code carries both, so that clause is the only false part of an otherwise correct finding.",
+  "ledger_text": "\u2464 Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
   "overturns_ledger": true,
-  "quote": "\u00a71t99s0\u00a7.as:3262 '_loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);' \u00b7 :3265 '_loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);' \u00b7 :3270 '_loc2_ = _loc1_ * 1.4;' \u00b7 strings.json[\"8131\"] 'Light Stance Mastery Level 10.'",
-  "text": "RR:155-156's stance table is CORRECT but its label is off by one rung, and the web build gives the formula outright. \u00a71t99s0\u00a7.as:3259-3271: Light = base * (0.5 + 0.4 * lightMastery * 0.1), Balanced = base * (1 + 0.2 * balancedMastery * 0.1), Heavy/Dual/Reversed = base * 1.4 flat. Solve them: mastery 0 gives Light 0.5 / Balanced 1.0 / Heavy 1.4 - exactly RR:156's level-1 Shugyosha row. Mastery 10 gives Light 0.9 / Balanced 1.2 / Heavy 1.4 - exactly RR:155's ceiling table. Mastery 9 gives 0.86 / 1.18, which matches NEITHER. The string table settles the cap independently: strings.json[\"8131\"] = 'Light Stance Mastery Level 10.' (and 8132/8133 for Balanced/Heavy). So the ceiling is MASTERY-10, and the standing 'mastery-9' label in RR:155 and in the project memory is wrong by one. Android diverges and must not be ported: MCSPlayer.as:3205-3213 uses 0.5 + 0.5*m*0.01, 1 + 0.5*m*0.01 and a HEAVY of 1.5, on a 0-100 mastery scale.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A2",
-  "build": "web v0.717",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3275,:3295-3297 + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:348-359",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "combat-core/crit-1.3-is-sealed-in-the-web-payload-and-fires-at-full-reload",
-  "lane_impact": "L5 combat-core: CRIT_MULT=1.3 is promotable from INFERRED/wiki to CONTRACT with a web-payload cite, and the crit CONDITION is meter==max, not a probability roll. Combat-core blocker (2) 'crit 1.3 vs 3 final - read one crit popup' is closed.",
-  "ledger_text": "SHS:Duels' own wiki (2016 + 2025) states the formula \"Critical = **1.3x Physical**.\" Keep `CRIT_MULT=1.3`. ... (Read a real OG crit popup to fully seal it.)",
-  "overturns_ledger": true,
-  "quote": "\u00a71t99s0\u00a7.as:3272 `if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)` \u00b7 :3274 `return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;`",
-  "text": "The ledger holds CRIT_MULT=1.3 on wiki authority and explicitly asks to 'Read a real OG crit popup to fully seal it.' It is already sealed in code, on the web side. \u00a71t99s0\u00a7.as:3272-3275, inside the damage roll \u00a71t4475s0\u00a7, reads `if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7; }` - the literal 1.3 multiplier, conditioned on the reload meter being exactly at max. \u00a71t99s0\u00a7.as:3295-3297 zeroes the meter on the same condition. This is the SAME meter as the stance gate (48) and the same bar as the HUD's third track, so one 0..192 resource drives stance-unlock at 48 and a 1.3x crit at 192. No popup needs reading.",
+  "text": "The 'Critical Evade' skill card that a banked A1 finding read off film has a web-side code twin nobody has cited, and it shows the full-Focus state gating evasion and crit SIMULTANEOUSLY - so the card and the crit multiplier were never in conflict. \u00a71t99s0\u00a7.as:3383-3388, inside the hit-resolution override \u00a71t3274s0\u00a7 (opens :3328), reads: 'if(this.\u00a71t4465s0\u00a7() && this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7 && (this.stance == \u00a71t12220s0\u00a7 && this.\u00a71t4491s0\u00a7(\u00a71t120s0\u00a7.\u00a71t10173s0\u00a7) > 0 || this.stance == \u00a71t12221s0\u00a7 && ...\u00a71t10174s0\u00a7 > 0 || this.stance == \u00a71t12222s0\u00a7 && ...\u00a71t10175s0\u00a7 > 0))' then sets \u00a71t3246s0\u00a7 = 12, plays 'Snd_jump' and RETURNS TRUE - i.e. the incoming hit is consumed with no damage applied. A second identical branch sits at :3707. Three separate passives, one per core stance, each a skill the player must own (\u00a71t4491s0\u00a7(...) > 0 is a skill-level lookup), all keyed on reload == maxreload. Meanwhile :3272-3274 applies the x1.3 crit on the same predicate. LEDGER_EVIDENCE.md contains zero hits for '3383', '10173' or '4491s0'.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "web v0.717",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3130,:3259-3271",
+  "build": "web v0.717 (android v0.682 uses 1.2 / 1.5 \u2014 do not port)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3255, :3272-3274, :3295-3297 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3198, :3215-3221",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "combat-core/stance-reach-is-asymmetric-with-damage-and-carries-a-hard-floor-of-100",
-  "lane_impact": "L5 combat-core: reach is a per-stance function of BASE_SLASH_LENGTH, not a literal px triple - Light 1.4 flat, Balanced 1+0.02m, Heavy max(0.5+0.04m, floor 100). Combat-core blocker (1) 'reach cap in stage px per stance' becomes 'measure ONE base slash length', not three.",
-  "ledger_text": "A level-1 Shugyosha does Light x0.5 / Balanced x1.0 / Heavy x1.4 (Heavy is fixed); Heavy's *reach* also scales x0.5->x0.9.",
+  "id": "cite-s27d/crit-proc-is-deterministic-on-a-full-meter-and-the-multiplier-is-web-only",
+  "lane_impact": "L2 skills-meters blocker (5) closes as CONTRACT: crit is deterministic on a full Focus meter, consumed by the swing that lands it. And CRIT_MULT = 1.3 must be labelled WEB v0.717 \u2014 an android-sourced port would ship 1.2/1.5.",
+  "ledger_text": "\u2464 crit **proc** rule (chance vs deterministic) \u2014 entirely absent.",
   "overturns_ledger": true,
-  "quote": "\u00a71t99s0\u00a7.as:3094 `this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;` \u00b7 :3116 `this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);` \u00b7 :3119 `this.\u00a71t4417s0\u00a7 = 100;`",
-  "text": "The ledger's item 3 treats damage and reach as one table scaling together. The web payload says they are mirror images. \u00a71t99s0\u00a7.as:3091-3130 is the REACH switch: Light reach is `\u00a71t4420s0\u00a7 * 1.4` FLAT with no mastery term (:3094); Balanced reach is `\u00a71t4420s0\u00a7 * (1 + 0.2 * \u00a71t4422s0\u00a7 * 0.1)` (:3105); Heavy reach is `\u00a71t4420s0\u00a7 * (0.5 + 0.4 * \u00a71t4423s0\u00a7 * 0.1)` (:3116) with a hard clamp `if(this.\u00a71t4417s0\u00a7 < 100) this.\u00a71t4417s0\u00a7 = 100;` (:3117-3120). The DAMAGE switch at :3259-3271 is the exact inverse: Light damage scales, Balanced damage scales with the same coefficient as its reach, Heavy damage is a flat *1.4 (:3270). So Light trades fixed long reach for scaling damage and Heavy trades fixed high damage for scaling reach - and Heavy's reach can never fall below 100 units. Two consequences for the ledger: 'Heavy's reach also scales x0.5->x0.9' has the wrong low endpoint (m=1 gives 0.54, and the 100 floor may bind first), and the quoted reach triple 300/200/100 cannot be a mastery-ceiling row off one base, because the ceiling multipliers are 1.4 / 1.20 / 0.90, which is not 3:2:1.",
+  "quote": "\u00a71t99s0\u00a7.as:3272 'if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)' \u2016 android MCSPlayer.as:3215 'if(this.reload == this.maxreload)' \u00b7 :3219 'return maxDamage * 1.2 + this.STAT_CRITICALDMG;' \u00b7 :3221 'return maxDamage * 1.5 + this.STAT_CRITICALDMG;'",
+  "text": "RR:195 blocker (5) files the crit PROC rule as 'chance vs deterministic \u2014 entirely absent'. It is deterministic, and there is no dice roll anywhere near it. Web \u00a71t99s0\u00a7.as:3272, inside the damage roll \u00a71t4475s0\u00a7 (:3255), is 'if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)' -> ':3274 return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;'. Those two members are reload and maxreload: the android twin getDamage (MCSPlayer.as:3198) has the same test in plain English at :3215 'if(this.reload == this.maxreload)'. Crit fires exactly when the Focus meter is FULL, every time, and \u00a71t99s0\u00a7.as:3295-3297 zeroes the meter on the next swing, so a full bar buys exactly one crit. SEPARATE HAZARD, and it is a build-parity trap: the MULTIPLIER is web-only. Android MCSPlayer.as:3219 returns 'maxDamage * 1.2 + this.STAT_CRITICALDMG' for non-Light stances and :3221 'maxDamage * 1.5 + ...' for Light. Anyone reading crit out of the android blobs gets 1.2/1.5, not 1.3 \u2014 and the wiki's 1.3 happens to match the WEB build only.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "web v0.717",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249-250,:3043-3045,:3048-3051,:3058-3080",
-  "citelint": {
-   "notes": [
-    "QUOTE_NOT_LOCATED"
-   ],
-   "problems": [],
-   "status": "QUOTE_UNVERIFIED"
-  },
-  "id": "combat-core/the-in-combat-stance-gate-is-reload-48-of-a-192-max",
-  "lane_impact": "L5 combat-core + L8 ui-hud: replace the Focus gate with RELOAD_STANCE_THRESHOLD=48 on a RELOAD_MAX=192 meter (CONTRACT, web v0.717), and make the stance cycle order Light->Balanced->Heavy->Light.",
-  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\"). The recreation's Focus-gated in-combat switch models **removed 2014 behavior**.",
-  "overturns_ledger": true,
-  "quote": "\u00a71t99s0\u00a7.as:3050 `return this.\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48;` \u00b7 :249 `this.\u00a71t4415s0\u00a7 = 8 * 24;` \u00b7 :3060 `if(this.\u00a71t4414s0\u00a7 < 48)`",
-  "text": "The packet names \u00a71t4470s0\u00a7 but never opens it, so the actual numbers stayed unclaimed. \u00a71t99s0\u00a7.as:3048-3051 is `public function \u00a71t4470s0\u00a7() : Boolean { return this.\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48; }` and :3058-3080 is the cycle body, which returns early `if(this.\u00a71t4414s0\u00a7 < 48)` and otherwise steps stance -1->Light, Light->Balanced, Balanced->Heavy, Heavy->Light before pushing the value to \u00a71t251s0\u00a7. The meter's max is set at :249 as `this.\u00a71t4415s0\u00a7 = 8 * 24;` = 192, initialised to 0 at :250. \u00a71t4469s0\u00a7 (:3043-3045) is an actionState test, i.e. the gate is 'idle-ish AND meter >= 48'. So the in-combat stance switch costs no Focus and no Chi: it needs the reload meter at 48/192 = 25%. That is the number the recreation should be gating on, and it is the single missing quantity behind the whole CANNOT CHANGE STANCE cluster.",
-  "verdict": "HELD"
- },
- {
-  "artifact_class": "A2",
-  "build": "web v0.717",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3043-3051,:3058-3080,:3266-3270 + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:468-480",
+  "build": "both \u2014 web v0.717 and android v0.682 carry the identical switch; title TEXT is read from the v0.682 table (S0-3 UI-copy caveat)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3064-3102 \u00b7 reference/decompiled/shs3_android/scripts/InventoryUI.as:2274-2315 \u00b7 reference/decompiled/shs3_android/scripts/StatsManager.as:2209-2211 \u00b7 docs/gauntlet/L0/index/strings.json[\"455\"]-[\"467\"] \u00b7 docs/research/REBUILD_READINESS.md:205",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "combat-core/the-real-in-combat-stance-rule-is-actionstate-gate-AND-meter-48",
-  "lane_impact": "L5 combat-core: replace the hard-lock with gate = (actionState in whitelist) && reloadMeter >= 48, cycling Light->Balanced->Heavy->Light, Snd_smallClick on success / Snd_error on refusal.",
-  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\"). The recreation's Focus-gated in-combat switch models **removed 2014 behavior**.",
+  "id": "cite-s27d/dan-titles-are-nine-strings-456-464-and-455-is-never-used",
+  "lane_impact": "L8 rebirth-elements blocker (3) at RR:205 closes: ten dan states, nine displayed titles at string ids 456-464, dan 0 blank, plus a Renshi/Kyoshi/Hanshi shogo overlay at 465/466/467. Also settles RR:164-165 by arithmetic \u2014 the '< 9' cap means MAX_DAN_RANK is 9 rebirths, not 10.",
+  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
   "overturns_ledger": true,
-  "text": "The replacement for the ledger's dead 'HARD-LOCKED' line, stated positively so it can be ported. In-combat stance change in v0.717 requires BOTH conditions of \u00a71t99s0\u00a7.as:3048-3051: '\u00a71t4470s0\u00a7() { return this.\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48; }', where \u00a71t4469s0\u00a7 (:3043-3046) is an actionState whitelist (\u00a71t11141s0\u00a7, \u00a71t11150s0\u00a7, \u00a71t11142s0\u00a7, \u00a71t11143s0\u00a7, \u00a71t11198s0\u00a7, or \u00a71t11169s0\u00a7 with a matching previous state \u00a71t3251s0\u00a7). On success \u00a71t4472s0\u00a7 (:3058-3080) cycles -1 -> \u00a71t12220s0\u00a7 -> \u00a71t12221s0\u00a7 -> \u00a71t12222s0\u00a7 -> \u00a71t12220s0\u00a7 and re-guards with its own 'if(this.\u00a71t4414s0\u00a7 < 48) return;'; on failure BattleUI plays Snd_error (\u00a71t113s0\u00a7.as:478). Note the cycle is THREE stances wide even though \u00a71t99s0\u00a7.as:3266-3268 gives \u00a71t12222s0\u00a7/\u00a71t12223s0\u00a7/\u00a71t12224s0\u00a7 the same fixed x1.4 damage.",
+  "quote": "android InventoryUI.as:2280 'this.danfield.text = LangManager.getString(456);' \u2016 \u00a71t5957s0\u00a7.as:3102 'this.danfield.text = \u00a71t1521s0\u00a7.getString(464);' \u2016 android StatsManager.as:2209 'if(getPlayerStats(STAT_DAN) < 9)'",
+  "text": "The dan-rank titles resolve completely, but not the way this packet's dan finding states. Both builds switch on STAT_DAN and render: dan 0 -> empty field; dan 1..9 -> getString(456)..getString(464). Web \u00a71t5957s0\u00a7.as:3064-3102 and android InventoryUI.as:2274-2315 are the same switch, and grep for getString(455) returns ZERO hits across both decompiled trees \u2014 strings.json['455'] '(\u521d\u6bb5)' exists in the table but the game never displays it for a dan rank. So the display set is NINE titles: (\u5f10\u6bb5)(\u53c2\u6bb5)(\u56db\u6bb5)(\u4e94\u6bb5)(\u516d\u6bb5)(\u4e03\u6bb5)(\u516b\u6bb5)(\u4e5d\u6bb5)(\u5341\u6bb5) over ten dan states 0-9, the cap being android StatsManager.as:2209 'if(getPlayerStats(STAT_DAN) < 9)' -> :2211 'changeStat(STAT_DAN,1);'. There is also a SECOND, uncatalogued honorific layer the ledger has nowhere: the same switch appends a shogo title in #7D5500 to the character name \u2014 getString(465) 'Renshi' at dan 3-5, getString(466) 'Kyoshi' at dan 6-7, getString(467) 'Hanshi' at dan 8+.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both \u2014 web v0.717 primary, android v0.682 supplies the plain names",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:1203-1208, :3318-3326 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1543s0\u00a7.as:2047-2049 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as:231 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:1158-1160 \u00b7 reference/decompiled/shs3_android/scripts/NPCManager.as:1709-1711 \u00b7 reference/decompiled/shs3_android/scripts/SkillManager.as:218-219",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "cite-s27d/focus-fill-is-plus-1-per-tick-plus-6-per-kill-batch-and-replenish-sets-max-minus-1",
+  "lane_impact": "L5 combat-core blocker (5) and the fill third of L2 skills-meters blocker (3) close as CONTRACT: FOCUS_REGEN_PER_TICK = 1, FOCUS_PER_KILL = 6, REPLENISH_FOCUS sets focus = maxFocus - 1. No Ruffle session needed, and no 'watch the bar' pass.",
+  "ledger_text": "\u2464 Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
+  "overturns_ledger": true,
+  "quote": "\u00a71t99s0\u00a7.as:1205 '++this.\u00a71t4414s0\u00a7;' \u2016 \u00a71t1543s0\u00a7.as:2047 'if(_loc4_ > 0)' \u2016 android NPCManager.as:1711 'StatsManager.getPlayer().bonusReload();' \u2016 android SkillManager.as:219 'owner.reload = owner.maxreload - 1;'",
+  "text": "The Focus/reload FILL TRIGGER \u2014 the thing RR:190 blocker (5) asks a human to watch the bar for \u2014 is in source, and it is three paths, not one. (a) PASSIVE: \u00a71t99s0\u00a7.as:1203-1208, inside the per-tick update right after \u00a71t3270s0\u00a7(), 'if(this.\u00a71t4414s0\u00a7 < this.\u00a71t4415s0\u00a7) { ++this.\u00a71t4414s0\u00a7; ... \u00a71t5205s0\u00a7(reload, maxreload); }' \u2014 plus ONE per tick, and it repaints the third HUD bar every tick. Android MCSPlayer.as:1158-1160 is identical. (b) ON KILL: the +6 at \u00a71t99s0\u00a7.as:3320 is not a regen tick at all \u2014 its sole caller is \u00a71t1543s0\u00a7.as:2047-2049 'if(_loc4_ > 0) { ...\u00a71t4479s0\u00a7(); }' where _loc4_ is that pass's death count; the android twin is named bonusReload and is called from NPCManager.as:1709-1711 under 'if(deathCount > 0)'. So a kill (or a batch of them) is worth a flat +6. (c) SKILL: \u00a71t120s0\u00a7.as:231 'param3.\u00a71t4414s0\u00a7 = param3.\u00a71t4415s0\u00a7 - 1;' (android SkillManager.as:218-219, 'case SKILL_FOCUS: owner.reload = owner.maxreload - 1;') \u2014 Replenish Focus fills the bar to maxreload MINUS ONE, i.e. it deliberately stops one point short of triggering the crit.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (android v0.682 charges proportionally instead \u2014 a real divergence)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3083, :3058-3060, :3160-3170 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3096-3105",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "cite-s27d/stance-switch-in-battle-costs-48-focus-flat-in-web-v0717",
+  "lane_impact": "L5 combat-core + L2 skills-meters. RR:159-160 is deleted, not softened; RR:195 blocker (3) gets its switch-cost: STANCE_SWITCH_FOCUS_COST = 48, gated on focus >= 48, charged only in battle.",
+  "ledger_text": "The *out-of-combat* switch costing Focus IS real; the *in-combat* switch is a recreation divergence \u2014 label it, don't present it as original.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t99s0\u00a7.as:3162 'this.\u00a71t4414s0\u00a7 -= 48;' \u2016 \u00a71t99s0\u00a7.as:3160 'if(\u00a71t1525s0\u00a7.\u00a71t9948s0\u00a7())' \u2016 android MCSPlayer.as:3096 'if(StageManager.isBattle())' \u00b7 :3100 'this.reload = this.maxreload / 3;' \u00b7 :3104 'this.reload -= this.maxreload / 6;'",
+  "text": "The in-combat stance switch is neither free nor forbidden: it COSTS 48 Focus, flat, in web v0.717. The stance setter \u00a71t3489s0\u00a7 (\u00a71t99s0\u00a7.as:3083) ends with 'if(\u00a71t1525s0\u00a7.\u00a71t9948s0\u00a7()) { this.\u00a71t4414s0\u00a7 -= 48; if(this.\u00a71t4414s0\u00a7 < 0) { this.\u00a71t4414s0\u00a7 = 0; } ... \u00a71t5205s0\u00a7(reload, maxreload); }' at :3160-3170. The android twin names the guard \u2014 MCSPlayer.as:3096 'if(StageManager.isBattle())' \u2014 and charges a DIFFERENT price: :3098-3105 'if(this.reload > this.maxreload / 2) { this.reload = this.maxreload / 3; } else { this.reload -= this.maxreload / 6; }'. Combined with the entry gate at \u00a71t99s0\u00a7.as:3060 'if(this.\u00a71t4414s0\u00a7 < 48) { return; }', the v0.717 rule is: you may cycle stance in combat iff Focus >= 48, and doing so spends exactly 48. This closes the 'switch-cost' third of RR:195 blocker (3) with a number, and it is the second, independent kill on RR:158-160 \u2014 the ledger has the in-combat switch as removed 2014 behaviour and a recreation divergence, when it is in the target build's own source with a price tag.",
   "verdict": "HELD"
  }
 ]

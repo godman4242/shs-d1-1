@@ -1,0 +1,116 @@
+[
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 mapped through android v0.682",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:105,:107-111,:194-198,:249-250,:3043-3051,:3058-3081,:3083-3177,:3179-3182,:3272-3276 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:93,:109-113,:182,:195-198,:239-240,:2965-2967,:2975-3017,:3019-3120,:3122-3125,:3215-3221 \u00b7 reference/decompiled/shs3_android/scripts/BattleUI.as:48,:60,:101-102,:259-263",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27d/obfuscated-symbol-dictionary-for-the-web-combat-core",
+  "lane_impact": "Method-level: every remaining combat-core and skills-meters blocker that is a NUMBER should now be attempted against reference/decompiled/shs3_payload/ with this key before being called unmeasurable.",
+  "overturns_ledger": false,
+  "quote": "MCSPlayer.as:182 'public function initPlayer(controlledBy:int, hp:int, maxhp:int, chi:int, maxchi:int, defense:int, baseReload:int, minDamage:int, damageRange:int, baseSlashLength:int, slashUsage:int, lightMastery:int, balancedMastery:int, heavyMastery:int, level:int) : *' \u00b7 \u00a71t99s0\u00a7.as:194-198 'this.\u00a71t4420s0\u00a7 = param10; ... this.\u00a71t4421s0\u00a7 = param12; this.\u00a71t4422s0\u00a7 = param13; this.\u00a71t4423s0\u00a7 = param14;'",
+  "text": "The android decompile is an un-obfuscated twin of the web payload's combat class, and aligning the two initPlayer signatures and function bodies names the web symbols outright. Established here and used by every verdict above: \u00a71t99s0\u00a7=MCSPlayer, \u00a71t113s0\u00a7=BattleUI, \u00a71t1525s0\u00a7=StageManager, \u00a71t9948s0\u00a7=isBattle, \u00a71t4414s0\u00a7=reload, \u00a71t4415s0\u00a7=maxreload, \u00a71t4417s0\u00a7=slashLength, \u00a71t4420s0\u00a7=baseSlashLength, \u00a71t4421s0\u00a7/\u00a71t4422s0\u00a7/\u00a71t4423s0\u00a7=light/balanced/heavyMastery (all ':int = 0'), \u00a71t1243s0\u00a7=STAT_CRITICALDMG, \u00a71t4469s0\u00a7=canChangeStance's actionState test, \u00a71t4470s0\u00a7=canChangeStance, \u00a71t4472s0\u00a7=nextStance, \u00a71t3489s0\u00a7=setStance, \u00a71t4473s0\u00a7=getStance, \u00a71t4474s0\u00a7=initSpecialSkills, \u00a71t4475s0\u00a7=getDamage, \u00a71t4476s0\u00a7=getBaseDamage, \u00a71t4477s0\u00a7=getDefense, \u00a71t4478s0\u00a7=deductReloadBar, \u00a71t4479s0\u00a7=bonusReload, \u00a71t5205s0\u00a7=updateReload, \u00a71t5182s0\u00a7=reloadbar, \u00a71t5169s0\u00a7=crittext, \u00a71t5208s0\u00a7=setStanceColor. This is a REUSABLE KEY: it converts the web payload from an opaque blob into a readable source for any future combat-core question, and it is the correct way to discharge the S0-3 build-parity caveat - not by diffing android XML against itself (C2), but by reading the WEB code with android as the dictionary and reporting the web's own literals.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (mapped through android v0.682)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3155,:3299-3311 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3019-3091,:3246-3258",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27d/stance-constant-dictionary-12223-is-DUAL-and-12224-is-REVERSED",
+  "lane_impact": "L5 combat-core: names all five stance constants in the web payload, so per-stance tables can be written to src/config with correct labels instead of opaque IDs.",
+  "overturns_ledger": false,
+  "quote": "MCSPlayer.as:3067 'this.slashLength = this.baseSlashLength * 1.5;' (case REVERSED_STANCE) \u00b7 :3074 'BattleUI.instance.setStanceColor(2);' \u00b7 :3078 'this.slashLength = this.baseSlashLength;' (case DUAL_STANCE) \u00b7 :3089 'BattleUI.instance.setStanceColor(3);' \u00b7 \u00a71t99s0\u00a7.as:3131 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;' (case \u00a71t12224s0\u00a7) \u00b7 :3138 '\u00a71t113s0\u00a7.instance.\u00a71t5208s0\u00a7(2);' \u00b7 :3142 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7;' (case \u00a71t12223s0\u00a7) \u00b7 :3153 '\u00a71t113s0\u00a7.instance.\u00a71t5208s0\u00a7(3);'",
+  "text": "The web payload's five stance constants can be named exactly by aligning the two builds' setStance bodies, and the packet's one guess got the last two backwards. Three independent signals agree: (a) reach formula - android REVERSED = base*1.5 flat / web \u00a71t12224s0\u00a7 = base*1.4 flat; android DUAL = base*1.0 with a 100 floor / web \u00a71t12223s0\u00a7 = base*1.0 with a 100 floor; (b) HUD index - android setStanceColor(2) for REVERSED and (3) for DUAL / web \u00a71t5208s0\u00a7(2) for 12224 and (3) for 12223; (c) reload debit grouping - android pairs BALANCED+REVERSED at slashUsage and HEAVY+DUAL at slashUsage*1.5, and the web pairs 12221+12224 and 12222+12223 identically. So: \u00a71t12220s0\u00a7=LIGHT, \u00a71t12221s0\u00a7=BALANCED, \u00a71t12222s0\u00a7=HEAVY, \u00a71t12223s0\u00a7=DUAL, \u00a71t12224s0\u00a7=REVERSED. Anything porting the per-stance slash debit must use Balanced/Reversed = slashUsage and Heavy/Dual = slashUsage*1.5.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 (naming) applied to web v0.717 (structure)",
+  "cite": "reference/decompiled/shs3_android/scripts/SkillManager.as:218-219 \u00b7 reference/extracted/skilldata.xml:283-297 \u00b7 docs/gauntlet/L0/index/strings.json[\"6008\"],[\"6011\"] \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:239-240 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249-250",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27d/the-focus-bar-IS-the-internal-reload-meter-and-replenish-focus-stops-one-tick-short",
+  "lane_impact": "L2 skills-meters: RR:195 blocker (3) is answered under its own name; Replenish Focus should be implemented as focus = FOCUS_MAX - 1, not FOCUS_MAX.",
+  "overturns_ledger": false,
+  "quote": "SkillManager.as:218-219 'case SKILL_FOCUS: owner.reload = owner.maxreload - 1;' \u00b7 skilldata.xml:284-287 '<id>1005</id> <displayname>6008</displayname> <lvlreq>5</lvlreq> <desc>6011</desc>' \u00b7 strings.json[\"6008\"]='Focus', [\"6011\"]='Instantly recharges your focus bar.'",
+  "text": "The ledger's 'Focus bar' and the code's 'reload' meter are the same object, and this closes the naming question that made RR:190 blocker (5) and RR:195 blocker (3) look like separate unknowns. Skill 1005 is displayname 6008 'Focus', desc 6011 'Instantly recharges your focus bar', chi 5, cooldown 10 (skilldata.xml:283-297) - which is RR:194's 'Replenish Focus (cost 5, cd 9.92s)'. Its effect in SkillManager.as:219 is literally 'owner.reload = owner.maxreload - 1'. So \u00a71t4414s0\u00a7/\u00a71t4415s0\u00a7 ARE the Focus bar, and the web numerics (max 192 at \u00a71t99s0\u00a7.as:249 vs android's 120 at MCSPlayer.as:239) are Focus numerics. NOTE THE MINUS ONE: the skill deliberately stops one tick below max, so Replenish Focus grants a full stance budget but NOT the meter==max crit. That is a design detail no ledger row carries, and a recreation that sets the meter to max would hand the player a free critical hit.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (android v0.682 identical)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:219-224 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:218-223",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "t1-overturns-03-cite-s27d/the-injured-debuff-halves-reach-and-no-reach-finding-carries-it",
+  "lane_impact": "L5 combat-core: whatever REACH config const comes out of blocker (1) must carry an INJURED x0.5 modifier on baseSlashLength, not on the per-stance multiplier. Same lines also give free CONTRACT values for the injured DMG and DEF penalties (both x0.5), which the combat-core and enemies-ai rows do not have.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:221 'this.minDamage *= 0.5;' :222 'this.defense *= 0.5;' :223 'this.\u00a71t4420s0\u00a7 *= 0.5;' \u2016 MCSPlayer.as:220-222 'this.minDamage *= 0.5; this.defense *= 0.5; this.baseSlashLength *= 0.5;'",
+  "text": "Found while auditing the reach-cap finding, which builds the whole stage-px model out of baseSlashLength and never mentions that one status effect halves it. Immediately after the buff chain at \u00a71t99s0\u00a7.as:215-218, the web build's player init runs 'else if(\u00a71t1523s0\u00a7.\u00a71t9725s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9463s0\u00a7))' and applies THREE halvings at :221-223 \u2014 minDamage, defense and baseSlashLength. The android twin at MCSPlayer.as:218-223 names the branch 'StatsManager.hasBuff(StatsManager.BUFF_INJURED)', which is what identifies the obfuscated \u00a71t9463s0\u00a7. Consequence for the ledger row being written from the reach finding: INJURED is a x0.5 multiplier on baseSlashLength, so it scales every stance's reach at once \u2014 Light drops to 84-147 px, Balanced to 60-126, Heavy to the 100 floor for its whole range. It is applied at init, before the stance branch at :3094/:3105/:3116 reads the field, so it composes multiplicatively and the Heavy floor of 100 still clamps last. Also note it is exclusive with the speed buff branch (else-if), which is the same field the SPD x1.5 feeds through.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/session11/crit-focus/t1082.100.png (crop x0-640,y760-1080 of 1920x1080, 3x LANCZOS - blue bar reads '31/47') \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (same crop - green '20/20', blue '26/26') \u00b7 docs/research/REBUILD_READINESS.md:178 \u00b7 docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/b11s-blue-is-hp-rests-on-an-inference-a-frame-breaks",
+  "lane_impact": "L8 ui-hud: keep the bar-to-stat binding OPEN, but stop treating B-11:7 as symmetric counter-evidence - its supporting inference is refuted by a frame. The cheapest closing artifact is a death/near-death frame: whichever bar hits 0 immediately before the 'YOU WERE DEFEATED' screen is HP. A-22-death-you-were-defeated-screen is the segment to pull frames from.",
+  "overturns_ledger": false,
+  "quote": "B-11:7 `a thick blue bar below it labelled \"47/47\" (this is HP \u2014 stayed pinned at 47/47 the whole segment, i.e. player took no damage)` \u00b7 REBUILD_READINESS.md:178 `Also visible: player HP **20/20**, **\"150% DAMAGE\"** buff (Potato Dog), **\"CANNOT CHANGE STANCE\"**, a`",
+  "text": "B-11:7's stated REASON for calling the blue bar HP is broken by a frame, though its observation is not. B-11:7 argues the thick blue bar 'is HP \u2014 stayed pinned at 47/47 the whole segment, i.e. player took no damage'. reference/frames/session11/crit-focus/t1082.100.png shows a blue bar with the SAME maximum, 47, reading 31/47 - so the max-47 blue bar demonstrably depletes. B-11's within-segment observation survives (blue may well have been pinned across 25:01-27:00); the inference from it does not. Pushing the other way in the same direction: reference/frames/duel_dense/Nr4fQstqHDM_428.0.png reads green 20/20 and blue 26/26, and REBUILD_READINESS.md:178 - Kheshav's own-eyes A5 verdict on that exact frame range - records 'player HP **20/20**'. In that frame the ONLY bar reading 20/20 is the green one, so his HP read lands on GREEN. STANDING INVARIANT, said out loud: B-11 is a measurement doc and Nr4fQstqHDM_428.0 is a frame, and THE FRAME WINS. Filed PARTIAL, not HELD, because this is still a two-artifact join (A5 log line + A1 frame) rather than one artifact naming both a colour and a stat, and because it depends on Kheshav not having transcribed the wrong row. It does not close 'which bar is which'; it does say which side of the contradiction is currently carrying weight.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "both",
+  "cite": "reference/frames/session11/crit-focus/t1082.100.png (crop x0-640,y760-1080 of 1920x1080, 3x LANCZOS; pixel row y=1038 sampled x=240..540) \u00b7 reference/frames/session11/crit-focus/t1003.000.png (same crop; row y=1037) \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (same crop; row y=1037) \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:334 \u00b7 reference/decompiled/shs3_android/scripts/BattleUI.as:262",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/third-hud-row-is-shared-reload-bar-or-cannot-change-stance-banner",
+  "lane_impact": "L8 ui-hud: do not lay out a fourth row for the stance-lock banner. It is the same 260x16-ish slot as the reload bar, swapped by one visibility flag. Getting this wrong shifts every element below it (the '150% DAMAGE' buff line sits directly under this row in all three frames).",
+  "overturns_ledger": false,
+  "quote": "BattleUI.as:262 `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;`",
+  "text": "The player HUD's THIRD row is a single slot that shows EITHER the reload/crit bar OR the 'CANNOT CHANGE STANCE' banner, never both. Measured at native 1920x1080 on three frames: the row occupies y~1031-1046, x~250-510 in ALL of them. In t1082.100.png that slot is a bar - white fill (~#EBEBEB) from x~250 to x~315 on the same brown empty track (~#311F00) the green and blue bars use - and there is NO 'CANNOT CHANGE STANCE' text anywhere. In t1003.000.png and Nr4fQstqHDM_428.0.png the identical slot is solid brown track with pale glyphs spelling 'CANNOT CHANGE STANCE', and there is no bar fill. This is the visual half of a mechanic the code already states: \u00a71t113s0\u00a7.as:334 guards the whole three-state block on `this.\u00a71t5182s0\u00a7.visible`, and BattleUI.as:262 reads `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` - the widget has an explicit visibility flag, and the frames show what fills the gap when it is off.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/session11/crit-focus/t1082.100.png (native 1920x1080, no crop needed for pixel sampling; verified visually at crop x0-640,y760-1080 upscaled 3x LANCZOS) \u00b7 docs/research/REBUILD_READINESS.md:171",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/three-hud-bar-fill-and-track-colours-measured-from-a-frame",
+  "lane_impact": "L8 ui-hud / palette.ts: three fill tokens and ONE shared track token, not three tracks. Label all four INFERRED-from-video, not CONTRACT, until a SWF shape is named.",
+  "overturns_ledger": false,
+  "quote": "REBUILD_READINESS.md:171 `12. **Native resolution is 800\u00d7480 (5:3)**, not 16:9 \u2014 HUD x-fractions measured off 1920\u00d71080 video may be pillarbox-compressed. Verify before trusting horizontal coords.`",
+  "text": "The three player-HUD bar fills and their shared empty track are MEASURED, not inferred, from one 1080p frame at native resolution. Sampling t1082.100.png at x=255..275 straight down: bar 1 core y=983 = RGB(0,154,5) ~ #009A05 green; bar 2 core y=1010 = RGB(51,78,227) ~ #334EE3 blue; bar 3 core y=1038 = RGB(236,236,236) ~ #ECECEC near-white. All three ride the SAME empty track, sampled to the right of each fill at y=983/1010/1038, x=440..500: RGB(~49,31,0) ~ #311F00 dark brown. CAVEAT stated up front: this is a lossy 1080p re-encode of an 800x480 native game (REBUILD_READINESS.md:171), so these are within-a-few-units approximations of the OG hues, not the SWF's authored fill values - the SWF shapes under reference/extracted/shapes/ are 1,822 unnamed numbered SVGs with no SymbolClass map, so the authored value is not currently recoverable. Explicitly does NOT bind colour to STAT: it binds colour to POSITION (1st/2nd/3rd track).",
+  "verdict": "HELD"
+ }
+]
