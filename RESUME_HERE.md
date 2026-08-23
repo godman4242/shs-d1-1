@@ -1,5 +1,96 @@
 # RESUME HERE
 
+## ⏸ SESSION 27 (2026-08-23) — L0 STILL MID-FLIGHT. **DO NOT RESTART IT.**
+
+**No wall hit this session.** Every wave returned `INTEGRITY: CLEAN` — 22+ agents,
+**zero deaths, zero VOID verdicts**. Salvaged mid-flight on a usage warning, nothing lost.
+👉 `docs/gauntlet/L0/SALVAGE.md` has the full wave table and both owner rulings.
+
+### State: judged **1,686 of 1,764** · **547 overturns on 268 sentences** · gate L0-D GREEN
+
+| | session start | now |
+|---|---:|---:|
+| judged | 1,555 | **1,686** |
+| UPHELD | 1,248 | **1,375** |
+| NOT-UPHELD (true, wrong target) | 61 | **62** |
+| surviving overturns | 494 on 254 | **547 on 268** |
+| suite | 62 files / 983 | **63 / 1001** |
+
+### ⛔ DO THESE TWO THINGS FIRST, IN THIS ORDER
+
+**1. Wave E was salvaged WHILE STILL RUNNING, so the worklist was deliberately NOT rebuilt.**
+Batches 03 and 04 had not written their side-files yet. Re-salvage (safe and deduped — it
+is designed to be re-run), THEN rebuild:
+
+```bash
+bash scripts/gauntlet/checkpointL0.sh run16 s27e <transcript-dir-of-wf_15548a04-494>
+python3 scripts/gauntlet/buildWorklist.py --root docs/gauntlet/L0
+```
+
+If that transcript dir is gone, the side-files in `docs/gauntlet/L0/critics/*.s27e.json`
+are enough on their own — `salvageJournal.py --critic-json` works with no journal at all.
+**Never re-judge a batch that already wrote its JSON**: §3.2 bars a blind re-judge from
+reading another agent's prose, so a lost verdict is re-earned from nothing or not at all.
+
+**2. ⛔ OWNER RULING 2026-08-23 — JUDGING IS OVER. Do not run another `l0-finish-wf3`.**
+The t1 tier is a **fixed point**, not a backlog: split by tier, t2 decays (0.13, 0.37) and
+emits **zero** overturn-claimers, while every t1 wave spawns ~one new overturn-claimer per
+one judged (**1.00**, then **1.14**). It never goes dry at any budget. Owner ruled: bank
+wave E, stop. Unjudged stays **KILLED** — the existing fail-closed rule (§0), not a
+concession. ~60 leads excluded, all still on disk under `run*/claims.json`.
+
+### What is left, in order
+
+1. **WF-4 dry-loop** — `l0-finish-wf4.workflow.js`, now **6 hunt targets** (13–25 agents).
+   Write `docs/gauntlet/L0/convergence.json` YOURSELF from the returned object; the
+   workflow does NOT write it. Gate L0-C reads it. All 16 input paths pre-flighted present.
+   ⚠ Caps at 4 rounds. If it does not converge, that is a REAL result — report each round's
+   count and **take a ruling. Do not soften the gate.**
+2. **Rebuild packets** — `python3 scripts/gauntlet/buildLedgerPackets.py --root docs/gauntlet/L0`
+3. **Rewrite the ledger** — `l0-rewrite.workflow.js`, 14 slices × (writer + **2** lensed
+   verifiers) = **42 agents**. The 15th packet, `frame` (91 findings), has **no writer by
+   design** — §0/§1/§5/§7 are assembled by the LEAD.
+4. **Drive L0-A…F green** with pasted `gateL0.py` output.
+5. **Correct `docs/GAUNTLET.md`** + re-arm per §3.7 **in the same commit** (see below).
+
+### ⚑ WHAT THIS SESSION BUILT
+
+- **The workflow scripts had ZERO test coverage** — ~1,100 lines spawning 40+ agents each,
+  and `node --check` **rejects every one of them** (top-level `return`). A broken script was
+  only ever found by launching it. `scripts/gauntlet/wfcheck.mjs` compiles them the way the
+  runtime does and **executes** them against stubs on both branches (all-dead, all-alive);
+  `tests/workflowScripts.test.ts` — 18 tests, every guard chaos-planted and watched RED.
+- **The fan-outs were too narrow and §3.8 never said they had to be** (owner: *"my own rule
+  was one workflow at a time, not one agent"*). t1 judging 2 → **9** (a third
+  `contradiction` lens), wf4 → **13–25**, rewrite 28 → **42**. Each confirmed by EXECUTING
+  the script. `BATCH_SIZE` 24 → **7** as a **default, not a flag** — `checkpointL0.sh`
+  rebuilds with no flags, so a width living in a command line silently reverts.
+- **`citeLint` has a FALSE NEGATIVE** — flagged a byte-exact quote as `QUOTE_UNVERIFIED`
+  (`combat-core/crit-1.3-is-sealed-…`, verified at `§1t99s0§.as:3272,:3274`). Fails SAFE
+  and no gate reads that status (L0-A fails on `BROKEN`). **Queued for after L0** — fixing
+  a gate input mid-drive is what §3.6 warns against.
+
+### ⚑ C4 — A NEW STAGE-0 CORRECTION: "STANCE IS HARD-LOCKED IN COMBAT" IS FALSE
+
+Verified line-by-line by the lead, not taken from a critic:
+
+```
+§1t99s0§.as:3050  return this.§1t4469s0§() && this.§1t4414s0§ >= 48;
+§1t99s0§.as:3060  if(this.§1t4414s0§ < 48) { return; }   <- early-out, then a 4-branch cycler
+§1t99s0§.as:3162  this.§1t4414s0§ -= 48;                 <- and it DEBITS the meter
+```
+
+A hard lock needs no cycler, no threshold and no debit. **The Stage-2 landmine below marks
+the in-combat stance switch INFERRED; it is CONTRACT, at threshold 48.** The frame's grey
+`CANNOT CHANGE STANCE` is the meter's low-end caption (web `§1t113s0§.as:111`,
+`getString(960)`), **web-only** — android `BattleUI.as:102` has one fixed string and no
+low-end branch, which is why 960 is absent from `118_Mobile_Lang_EN.bin`. Focus numerics
+recovered: **max 192 · +1 per tick · switch costs 48**.
+**LEDGER CORRECTION ONLY — `Sim.ts` and the duel-baseline move in L5 and nowhere else (§4).**
+
+---
+
+
 ## ⏸ L0 IS MID-FLIGHT — FINISH IT, DO NOT RESTART IT (updated 2026-08-23)
 
 **TEN usage walls, eleven landed runs, zero data lost.** Everything is extracted and
