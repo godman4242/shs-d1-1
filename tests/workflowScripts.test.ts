@@ -131,6 +131,30 @@ describe('the widened fan-outs stay widened', () => {
     expect(s).toContain('partial.length === 0');
   });
 
+  it('t1 — the tier that REWRITES the ledger — carries three lenses', () => {
+    const s = src('l0-finish-wf3.workflow.js');
+    expect(s).toContain("lenses: ['cite', 'hunter', 'contradiction']");
+    // 3 packets x 3 lenses = 9, counted by executing it.
+    const r = execFileSync('node', [CHECK, join(DIR, 'l0-finish-wf3.workflow.js'), 'run',
+      JSON.stringify({ tier: 't1', batches: 3 })], { encoding: 'utf8' });
+    expect(r).toContain('[all agents ALIVE]  9 agents');
+  });
+
+  it('buildWorklist advertises the SAME lenses the workflow actually spawns', () => {
+    // A manifest that promises two lenses while the run spawns three is a manifest that
+    // lies to the next session — and this lane already lost work to a stale manifest.
+    const wf = src('l0-finish-wf3.workflow.js');
+    const py = readFileSync(join(process.cwd(), 'scripts/gauntlet/buildWorklist.py'), 'utf8');
+    const inWorkflow = /lenses: \[([^\]]+)\],\n\s+what: 'CLAIMS A LEDGER OVERTURN/.exec(wf);
+    const inScript = /emit\(tier1, "t1-overturns", args\.batch_size, "WF-3a", \[([^\]]+)\]\)/.exec(py);
+    const wfLenses = inWorkflow?.[1];
+    const pyLenses = inScript?.[1];
+    expect(wfLenses, 'TIERS.t1.lenses not found in l0-finish-wf3.workflow.js').toBeTypeOf('string');
+    expect(pyLenses, 'the t1 emit() lens list not found in buildWorklist.py').toBeTypeOf('string');
+    const norm = (x: string): string[] => x.split(',').map((t) => t.trim().replace(/['"]/g, '')).sort();
+    expect(norm(pyLenses ?? '')).toEqual(norm(wfLenses ?? ''));
+  });
+
   it('l0-finish-wf4 splits the 7,381-frame corpus across three hunters', () => {
     const s = src('l0-finish-wf4.workflow.js');
     expect(s).toContain('const FRAME_HUNTS');

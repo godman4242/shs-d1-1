@@ -19,7 +19,7 @@ const TIERS = {
   t1: {
     prefix: 't1-overturns',
     batches: 9,
-    lenses: ['cite', 'hunter'],
+    lenses: ['cite', 'hunter', 'contradiction'],
     what: 'CLAIMS A LEDGER OVERTURN — surviving, it REWRITES REBUILD_READINESS.md',
   },
   t2: {
@@ -234,6 +234,40 @@ START WITH THE MACHINE AUDIT — every claim carries a "citelint" field:
                     quote (and it survives) or you have caught a real one.
   RESOLVES          mechanically clean. Your job is the part a script cannot do: does
                     the artifact SAY what the claim says it says?`,
+
+  contradiction: `LENS 3 — THE CONTRADICTION LENS. You hunt findings that FIGHT EACH OTHER.
+
+This is the one gap the other two lenses structurally cannot close. Every one of the
+1,600 banked findings was judged ALONE: "is this true, and does it overturn what it
+names?" NOBODY has ever asked whether two findings that both survived can both be true.
+That question only becomes expensive later — the rewrite packets carry 1,309 usable
+findings, and where two of them disagree a writer picks one ARBITRARILY and the ledger
+inherits a coin flip presented as evidence.
+
+Your corpus is docs/gauntlet/L0/LEDGER_EVIDENCE.md (every surviving finding, grouped) and
+docs/gauntlet/L0/SEEN_CLAIM_IDS.txt. For every finding in YOUR packet:
+
+(a) FIND ITS NEIGHBOURS. Which already-UPHELD findings speak to the same number, file,
+    symbol, frame or ledger sentence? Search by the artifact it cites, not by its words —
+    two findings can contradict while sharing no vocabulary at all.
+
+(b) CAN BOTH BE TRUE? If not, ONE OF THEM IS WRONG and you must say which, with your own
+    artifact. Do not split the difference and do not report "these are in tension" — that
+    is a lead, and §0 does not admit leads. Open the artifact and settle it.
+
+(c) THE BUILD-PARITY TRAP is the most likely source of a false contradiction, so check it
+    before declaring one: C2 is UNDISCHARGED. A value measured in the ANDROID v0.682 blobs
+    and a different value measured in the WEB v0.717 payload DO NOT contradict — they are
+    two builds, and the finding that fails to LABEL its build is the defective one. Say so
+    and name the build each side belongs to.
+
+(d) AND CHECK IT AGAINST THE STAGE-0 CORRECTIONS ABOVE. A finding that assumes a
+    universal XOR key of 109, or that all 42 blobs are UTF-16LE, or that the audio is
+    unrecoverable, contradicts C1/C3 and is REFUTED on that ground alone.
+
+A finding that survives your lens with no live contradiction is a finding the rewrite can
+build on. Record what you compared it against — an empty result is only credible if that
+list is full.`,
 
   hunter: `LENS 2 — THE HUNTER LENS. You hunt UNDER-CLAIMING and OVERSTATED IMPACT.
 Two distinct jobs, both mandatory:

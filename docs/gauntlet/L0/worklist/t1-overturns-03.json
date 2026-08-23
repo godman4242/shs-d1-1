@@ -1,0 +1,125 @@
+[
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 data XML + web v0.717 formula",
+  "cite": "reference/extracted/skilldata.xml:3-79 + docs/gauntlet/L0/index/strings.json[\"6000\"] + reference/decompiled/shs3_android/scripts/StatsManager.as:740-742 + reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3262,:3265",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "skills-meters/stance-mastery-domain-is-1-to-10-in-skilldata",
+  "lane_impact": "L2 skills-meters: MASTERY domain is [1,10]; the stance curve's endpoints are m=1 (Light 0.54, Balanced 1.02) and m=10 (0.90 / 1.20).",
+  "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "overturns_ledger": true,
+  "quote": "skilldata.xml: <id>1000</id><displayname>6000</displayname><passive>1</passive> ... <level><value>10</value><required>9</required>",
+  "text": "The mastery ceiling question is closed by data, not arithmetic alone. skilldata.xml skill id 1000 has displayname 6000, which strings.json resolves to 'Light Stance Mastery', is marked <passive>1</passive>, and carries exactly ten <level> blocks with <value> 1 through 10 (required 1..9). StatsManager.as:740-742 seeds skillStats with IntStat(1000,1)/(1001,1)/(1002,1), so mastery is 1-indexed with floor 1 and cap 10. Feeding 10 into \u00a71t99s0\u00a7.as:3262 gives exactly 0.90 and into :3265 exactly 1.20 \u2014 the ledger's own ceiling numbers. There is no off-by-one here, unlike the DAN stat which really is stored 0-indexed.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:22,:44,:64,:120-121,:146,:148-149,:379-381,:468-480 + reference/decompiled/shs3_android/scripts/BattleUI.as:60,:101-102,:109-110 + docs/gauntlet/L0/index/strings.json[\"208\"]='Change Stance', [\"175\"]='Critical Hit'",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/battleui-carries-its-own-change-stance-button-in-both-builds",
+  "lane_impact": "L8 ui-hud: the combat HUD needs a Change Stance button next to the portrait, and the obfuscated-to-readable map (crittext / changestancelabel / reloadbar) unblocks the rest of the BattleUI port.",
+  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\")",
+  "overturns_ledger": true,
+  "quote": "\u00a71t113s0\u00a7.as:381  this.\u00a71t5207s0\u00a7();   //  :470-479  if(...\u00a71t4470s0\u00a7()) { Snd_smallClick; ...\u00a71t4472s0\u00a7(); } else { Snd_error; }",
+  "text": "The in-battle stance switch is a first-class UI affordance, not just a hotkey. Web \u00a71t113s0\u00a7 (BattleUI) declares the button \u00a71t5158s0\u00a7 at :22, gives it buttonMode at :149, labels it \u00a71t5161s0\u00a7.text = getString(208) = 'Change Stance' at :146, and hit-tests it at :379-381 into \u00a71t5207s0\u00a7 (:468-480), which cycles the stance when \u00a71t4470s0\u00a7() passes and plays Snd_error when it does not. Android BattleUI.as:109-110 carries the same `changestancelabel.text = LangManager.getString(208)`, so the button is in BOTH builds \u2014 this is not a v0.717 addition. The android twin also decodes three obfuscated web fields: BattleUI.as:101-102 `crittext.text = getString(175)` == \u00a71t113s0\u00a7.as:120-121 (field declared :44), so \u00a71t5169s0\u00a7 = crittext, \u00a71t5161s0\u00a7 = changestancelabel, and \u00a71t5182s0\u00a7 = reloadbar (declared BattleUI.as:60).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png, _432.5.png, _432.9.png \u2014 crop (240,1018)-(540,1052) of the 1920x1080 frame, upscaled 3x LANCZOS",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/frame-proof-the-stance-label-hides-when-the-third-bar-fills",
+  "lane_impact": "L8 ui-hud + L5 combat-core: ship one reload/crit meter with threshold 48 for the stance switch and max for the crit, a grey label ON the empty bar, no label while filling.",
+  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\")",
+  "overturns_ledger": true,
+  "quote": "t=428.0 third bar empty + 'CANNOT CHANGE STANCE'; t=432.5 and t=432.9 third bar has left-edge fill and NO label",
+  "text": "First-hand frame proof for the reload-meter reading of 'CANNOT CHANGE STANCE'. In reference/frames/duel_dense/Nr4fQstqHDM_428.0.png the bottom-left cluster is THREE bars \u2014 green HP 20/20, blue Chi 26/26, and a third EMPTY brown bar with 'CANNOT CHANGE STANCE' lettered across it. In Nr4fQstqHDM_432.5.png and Nr4fQstqHDM_432.9.png, same duel, that third bar carries a fill block at its left end and the label is ABSENT. That is \u00a71t113s0\u00a7.as:336-342 (show the grey label at ratio==0) and :344-347 (hide it while 0<ratio<1) rendered on film. The label is a meter-state readout, not a battle-state lock notice.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717 code; frames are from the reference longplays",
+  "cite": "reference/frames/session11/crit-focus/t1003.000.png + reference/frames/session11/crit-focus/t1082.100.png, crop (0,820)-(660,1080) of 1920x1080, 3x LANCZOS; read against reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:111,:328,:336-346",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/string-960-is-cannot-change-stance-frame-resolved",
+  "lane_impact": "L8 ui-hud + L5 combat. Ship the label as a third bar under HP/Chi: empty track -> grey 'CANNOT CHANGE STANCE'; partially filled -> no label; full -> black 'Critical Hit' + Snd_criticalDamage.",
+  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\")",
+  "overturns_ledger": true,
+  "quote": "t1003.000.png: third bar track empty, pale-grey 'CANNOT CHANGE STANCE' centred on it, yellow '150% DAMAGE' on the line below. t1082.100.png: third bar ~28% filled, no text on it.",
+  "text": "The web-only string 960, unresolvable from the android v0.682 table, is resolved by film. Crop (0,820)-(660,1080) of reference/frames/session11/crit-focus/t1003.000.png upscaled 3x shows the combat HUD as portrait + THREE stacked bars: green HP 14/20, blue Chi 31/31, and a third bar whose track is EMPTY, with the words CANNOT CHANGE STANCE centred on that empty track in pale grey. The same crop of t1082.100.png shows HP 11/20, Chi 31/47, and the third bar about 28% filled with NO text on it. That is exactly \u00a71t113s0\u00a7.as:336-342 (show the #BBBBBB getString(960) label when (reload-48)/(max-48) == 0) and :343-346 (hide it while 0 < ratio < 1). getString(960) = 'CANNOT CHANGE STANCE'. The label is a meter readout, not a battle-state lock.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/session11/crit-focus/t1003.000.png, crop (0,820)-(660,1080), 3x LANCZOS; against docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7,:45,:71 and reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:111,:319-324,:326-346",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/the-video-study-notes-misread-the-cannot-change-stance-slot",
+  "lane_impact": "L8 ui-hud. Do not port the 'green X/20 stance-lock resource' from the segment notes into config - it does not exist. There are three bars: HP (numeric), Chi (numeric), crit/reload (no numerals).",
+  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\")",
+  "overturns_ledger": true,
+  "quote": "B-11:71 'the small green \"X/20\" bar (stance-lock resource, label \"CANNOT CHANGE STANCE\")' - the frame shows the label sits on a SEPARATE, numeral-free third bar, grey, below the green 14/20 HP bar and the blue 31/31 Chi bar.",
+  "text": "THE FRAME WINS, AND IT OVERTURNS A MEASUREMENT DOC. Three video-study segment notes describe this HUD element wrongly and the ledger inherited the error. docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7 calls the label 'Yellow text'; :45 and :71 read the slot as 'a green X/20 bar (stance-lock resource, label CANNOT CHANGE STANCE)' fluctuating 4/20 -> 2/20 -> 3/20; docs/research/video-study/segments/A-16-beach-fights-named-enemy-jinbei-archer.md:23 calls it a 'blue bar ... 20/20'. The frame shows otherwise: in t1003.000.png the CANNOT CHANGE STANCE label is PALE GREY, distinctly not the saturated yellow of the '150% DAMAGE' line directly beneath it, and its bar carries NO numerals at all - the numeric bars are the green HP (14/20) and blue Chi (31/31) ABOVE it. The notes conflated the third bar with the HP bar and the label colour with the buff banner's. The code agrees with the frame: \u00a71t113s0\u00a7.as:111 builds the label at '#BBBBBB', and \u00a71t5205s0\u00a7 sets only bar.scaleX with no text, while the numeric bars are set by \u00a71t5202s0\u00a7 at :319-324.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7934s0\u00a7.as:15,:17,:19,:232,:299-300,:320-321 + reference/decompiled/shs3_payload/scripts/\u00a71t6481s0\u00a7.as:17,:19,:21,:263 + reference/extracted/bindata/92_1t4648s0.bin",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world/the-war-map-mask-and-pitch-are-web-side-too-parity-closed",
+  "lane_impact": "L10 world-exploration: world.ts can be written from the payload alone \u2014 63x72 cell space, land = mask non-black, mapid = (x+341)<<12 | (y+341), flag at (x+21)*10+4.5 / (y+51)*10+8.8.",
+  "ledger_text": "(1) **world bounds + geography** (sparse Japan-outline, not a WxH grid) \u2014 *mine Fandom Category:Territories via API; trace the map image.*",
+  "overturns_ledger": true,
+  "quote": "\u00a71t7934s0\u00a7.as:15 public static var \u00a71t12535s0\u00a7:int = 8;  :17 \u00a71t12536s0\u00a7:int = 21;  :19 \u00a71t12537s0\u00a7:int = 51;  ///  :299 _loc11_.x = (_loc8_ + \u00a71t12536s0\u00a7) * 10 + 4.5;",
+  "text": "The war-map board specification is NOT android-only, which was the one real hole in the packet's world finding. Web v0.717 \u00a71t7934s0\u00a7.as:15/:17/:19 declare 8 / 21 / 51 \u2014 byte-identical to WarSelectUI.as \u2014 :232 is the land test `getPixel(param1 + \u00a71t12536s0\u00a7 - \u00a71t12535s0\u00a7, param2 + \u00a71t12537s0\u00a7) != 0`, and :299-300 place the war flag at `(x + 21) * 10 + 4.5` / `(y + 51) * 10 + 8.8`. \u00a71t6481s0\u00a7.as:17/:19/:21 repeats the same three constants for the world map. The 63x72 mask itself is web bindata 92 (reference/extracted/bindata/92_1t4648s0.bin), not an android blob. So the C2 build-parity caveat does not apply to the war map: geography, bounds, offsets and pitch are all attested on the WEB side.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/extracted/bindata/92_1t4648s0.bin + reference/extracted/android/110_Mobile_MapBitmapData.bin (both md5 13068dfa1a5cc5628720a25782f93fed) + reference/decompiled/shs3_android/scripts/WarSelectUI.as:153 + reference/decompiled/shs3_android/scripts/Mobile_MapBitmapData.as:5",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "world/the-war-map-mask-is-byte-identical-across-web-and-android",
+  "lane_impact": "L10 world-exploration. The world geography is a shipped 63x72 bitmap with 735 land cells, identical in both builds. No Fandom mining and no tracing. Also: bindata file 92 now has a role, closing part of S0-1's '92 a GIF'.",
+  "ledger_text": "(1) **world bounds + geography** (sparse Japan-outline, not a W\u00d7H grid) - *mine Fandom Category:Territories via API; trace the map image.*",
+  "overturns_ledger": true,
+  "quote": "Mobile_MapBitmapData.as:5 '[Embed(source=\"/_assets/110_Mobile_MapBitmapData.bin\", mimeType=\"application/octet-stream\")]' \u00b7 WarSelectUI.as:153 'this.mapBitmapData = QuestEngine.getMapBitmapData();'",
+  "text": "A genuine, non-circular web/android parity datum - rare in this corpus, and it survives correction C2. reference/extracted/bindata/92_1t4648s0.bin (a WEB payload bindata file) and reference/extracted/android/110_Mobile_MapBitmapData.bin (the ANDROID blob) have the identical md5 13068dfa1a5cc5628720a25782f93fed. Both are a GIF89a 63x72 with exactly 735 white and 3801 black pixels. C2's circularity warning does not apply here, because 92 is a web-side artifact and 110 is android-side - this is not a file diffed against itself. Android WarSelectUI.as:153 wires it to the war board via QuestEngine.getMapBitmapData(), and Mobile_MapBitmapData.as:5 embeds 110 by name, so the file's role is named by the game, not inferred.",
+  "verdict": "HELD"
+ }
+]

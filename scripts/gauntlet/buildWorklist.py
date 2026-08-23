@@ -234,7 +234,12 @@ def main() -> int:
                 "stage": stage, "lenses": lenses,
             })
 
-    emit(tier1, "t1-overturns", args.batch_size, "WF-3a", ["cite", "hunter"])
+    # THREE lenses on the tier that REWRITES THE LEDGER (§3.3: a heavy lane gives a
+    # finding 3-5). `contradiction` is the one the other two cannot cover: every
+    # finding here was judged ALONE, so nobody has asked whether two survivors can
+    # both be true. Kept in step with TIERS.t1.lenses in l0-finish-wf3.workflow.js —
+    # tests/workflowScripts.test.ts fails if the two ever drift.
+    emit(tier1, "t1-overturns", args.batch_size, "WF-3a", ["cite", "hunter", "contradiction"])
     emit(tier2, "t2-corroborating", args.batch_size * 2, "WF-3b", ["cite"])
     overturns = len(tier1)
 
@@ -282,7 +287,7 @@ def main() -> int:
     print(f"  already judged           {t['already_judged']}")
     print(f"  WF-2 source-sweep claims {t['source_sweep_unjudged']} across "
           f"{sum(1 for p in manifest['packets'] if p['stage'] == 'WF-2')} packets")
-    for stage, lenses in (("WF-3a", "cite+hunter"), ("WF-3b", "cite")):
+    for stage, lenses in (("WF-3a", "cite+hunter+contradiction"), ("WF-3b", "cite")):
         packs = [p for p in manifest["packets"] if p["stage"] == stage]
         print(f"  {stage} critic findings   {sum(p['claims'] for p in packs)} across "
               f"{len(packs)} batches x {lenses} = {len(packs) * len(lenses.split('+'))} agents")
