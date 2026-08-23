@@ -1,0 +1,33 @@
+[
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:110,:111,:326-359 + docs/gauntlet/L0/index/strings.json[\"175\"]='Critical Hit'",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/the-third-bar-is-a-three-state-meter-and-fires-snd-criticaldamage-at-full",
+  "lane_impact": "L8 ui-hud: ship ONE meter widget with three text states and a transition sound, not two separate crit/stance indicators. Also names the exact colours: #BBBBBB empty-state, #000000 full-state.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t113s0\u00a7.as:110 `this.\u00a71t5203s0\u00a7 = \"<font color=\\'#000000\\'>\" + \u00a71t1521s0\u00a7.getString(175) + \"</font>\";` \u00b7 :352 `\u00a71t88s0\u00a7.instance.\u00a71t1516s0\u00a7(\"Snd_criticalDamage\");`",
+  "text": "The packet stops at two of the third bar's three states. \u00a71t113s0\u00a7.as:348-359 is the third: at ratio >= 1 the same TextField takes \u00a71t5203s0\u00a7 = `\"<font color='#000000'>\" + getString(175) + \"</font>\"` (built at :110), i.e. BLACK 'Critical Hit', and :350-352 fire `\u00a71t88s0\u00a7.instance.\u00a71t1516s0\u00a7(\"Snd_criticalDamage\")` on the transition into that state - guarded so it plays once, not per frame. So the single track under HP and Chi is a three-state readout on one 0..192 resource: empty -> #BBBBBB getString(960); filling -> no text; full -> #000000 getString(175) plus a one-shot sound. Under correction C3 the audio is recovered, so Snd_criticalDamage is a nameable, shippable stem rather than a TODO.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "STILL_UNHELD",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:245-256 + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:308-324 + docs/research/REBUILD_READINESS.md:178 + docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7 + reference/frames/session11/crit-focus/t1003.000.png, t1082.100.png",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/which-hud-bar-is-hp-and-which-is-chi-is-still-unheld-by-colour",
+  "lane_impact": "L8 ui-hud: before writing bar colours to config, find an artifact that binds colour to stat (a low-HP/death frame, or the SWF shape for hpbar). Do not inherit green=HP from prose on either side.",
+  "overturns_ledger": false,
+  "text": "Nobody has established, from an artifact that ties COLOUR to STAT, that the green bar is HP and the blue bar is Chi. The code proves only that there are exactly two numeric updaters and one numeral-free one: android BattleUI.as:245-249 updateHp (hptext/hptextshadow/hpbar) and :252-256 updateChi (chitext/chitextshadow/chibar), whose web twins are \u00a71t113s0\u00a7.as:312-317 (\u00a71t5171s0\u00a7/\u00a71t5172s0\u00a7/\u00a71t5170s0\u00a7 = hptext/hptextshadow/hpbar) and :319-324 (\u00a71t5165s0\u00a7/\u00a71t5166s0\u00a7/\u00a71t5164s0\u00a7 = chitext/chitextshadow/chibar), matched by call-order against the empty setReloadMax (:241-243) / \u00a71t5200s0\u00a7 and updateReload/\u00a71t5205s0\u00a7 that bracket them. Nothing in AS3 names a colour \u2014 the fills live in SWF art. The surviving 'video-study notes misread' finding asserts green=HP / blue=Chi, and B-11:7 asserts the exact opposite ('a thin green bar ... reads as a resource/stamina-type meter, NOT the blue HP bar ... a thick blue bar ... (this is HP)'). Circumstantial support for green=HP: REBUILD_READINESS.md:178 is Kheshav's own-eyes verdict on Nr4fQstqHDM_428.0 and reads 'player HP 20/20', and in that frame green is 20/20 while blue is 26/26; and across my three frames the green denominator is pinned at 20 (20/20, 14/20, 11/20) with its numerator falling during combat, while the blue denominator varies 26/31/47. That is inference plus one A5 line, not a colour-to-stat artifact. Flagging it because it would silently corrupt palette.ts and the config bar names, and because two committed docs currently disagree.",
+  "verdict": "STILL_UNHELD"
+ }
+]

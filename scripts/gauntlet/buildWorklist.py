@@ -58,10 +58,18 @@ ALL_SOURCES = ["questdata", "skilldata", "npcdata", "itemdata", "bindata", "acti
 BLIND_FIELDS = ("id", "text", "artifact_class", "cite", "quote", "verdict",
                 "overturns_ledger", "ledger_text", "lane_impact", "unit", "build")
 
-# One batch per critic pair. ~24 keeps a batch judgeable at real depth; bigger
-# batches buy throughput by making each verdict shallower, which is the failure
-# this lane exists to prevent.
-BATCH_SIZE = 24
+# One batch per critic pair. Bigger batches buy throughput by making each verdict
+# shallower, which is the failure this lane exists to prevent — and on 2026-08-23 the
+# number stopped following its own comment. At 24 (t2 doubles it to 48) the last t2
+# packet was FORTY-FIVE findings for ONE agent, each needing a frame cropped or an AS3
+# file opened. It judged all 45, but that is the shape that thins out, and §2 routes
+# this lane to Opus at UNLIMITED agents: there was never a reason to ration.
+#
+# 7 is chosen so a critic can hold its whole packet at real depth. It is a DEFAULT, not
+# a flag, deliberately: checkpointL0.sh rebuilds the worklist on every bank without
+# passing one, so a width that lives only in a command line silently reverts the next
+# time a wave lands. --batch-size still overrides.
+BATCH_SIZE = 7
 
 # §3.3: a heavy lane's finding faces 3-5 lenses, a bounded one 1-2. Two is the floor
 # for a source sweep, and it is a SEPARATE question from whether the claims got judged:

@@ -155,6 +155,18 @@ describe('the widened fan-outs stay widened', () => {
     expect(norm(pyLenses ?? '')).toEqual(norm(wfLenses ?? ''));
   });
 
+  it('buildWorklist DEFAULTS to a depth-sized batch, not a throughput-sized one', () => {
+    // checkpointL0.sh rebuilds the worklist on every bank and passes no --batch-size, so
+    // a width that lives only in a command line reverts the next time a wave lands.
+    const py = readFileSync(join(process.cwd(), 'scripts/gauntlet/buildWorklist.py'), 'utf8');
+    const m = /^BATCH_SIZE = (\d+)$/m.exec(py);
+    expect(m, 'BATCH_SIZE not found in buildWorklist.py').not.toBeNull();
+    expect(Number(m?.[1] ?? 0)).toBeLessThanOrEqual(8);
+    const sh = readFileSync(join(process.cwd(), 'scripts/gauntlet/checkpointL0.sh'), 'utf8');
+    expect(sh).toContain('buildWorklist.py');
+    expect(sh).not.toContain('--batch-size');   // if this ever appears, keep the two in step
+  });
+
   it('l0-finish-wf4 splits the 7,381-frame corpus across three hunters', () => {
     const s = src('l0-finish-wf4.workflow.js');
     expect(s).toContain('const FRAME_HUNTS');

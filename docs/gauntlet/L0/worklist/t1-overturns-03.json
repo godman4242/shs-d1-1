@@ -1,0 +1,121 @@
+[
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (android v0.682 contrasted: Light x1.5, mastery on a 0-100 scale)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116-3119, :3158, :105 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2336-2348 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:97, :107, :182, :3030, :3041, :3052-3055, :3094 \u00b7 reference/decompiled/shs3_android/scripts/InputManager.as:51, :106-109, :198, :360",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/the-reach-cap-in-stage-px-the-one-value-the-whole-model-needs-is-in-the-web-payload",
+  "lane_impact": "L5 combat-core blocker (1) closes as CONTRACT and the close-path instruction ('measure it from footage') should be struck. Also re-reads the ledger's 300/200/100 stance-reach row: those are Light-at-max, Balanced-at-base and the Heavy FLOOR of 100, not three ceilings.",
+  "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) \u2014 *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
+  "overturns_ledger": true,
+  "quote": "\u00a71t99s0\u00a7.as:3094 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;' \u00b7 :3116 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);' :3117 'if(this.\u00a71t4417s0\u00a7 < 100)' \u2016 \u00a71t1523s0\u00a7.as:2347 'return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' \u2016 android InputManager.as:51 'internal static var maxDistance:int = 200;'",
+  "text": "RR:190 blocker (1) calls the per-stance reach cap in stage px 'the one value the whole model needs' and prescribes measuring blade-FX span off footage. It does not need measuring: it is computed, in the web build. \u00a71t99s0\u00a7.as:3094 sets \u00a71t4417s0\u00a7 = \u00a71t4420s0\u00a7 * 1.4 for Light, :3105 = \u00a71t4420s0\u00a7 * (1 + 0.2 * \u00a71t4422s0\u00a7 * 0.1) for Balanced, :3116-3119 = \u00a71t4420s0\u00a7 * (0.5 + 0.4 * \u00a71t4423s0\u00a7 * 0.1) for Heavy with a hard floor of 100. The android twin names the two fields: MCSPlayer.as:97 'slashLength', :107 'baseSlashLength', same three branches at :3030/:3041/:3052-3055. baseSlashLength comes from \u00a71t1523s0\u00a7.as:2344-2348, 'var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' with param1 = SPD (x1.5 under the speed buff, :2336-2341) and \u00a71t9426s0\u00a7 = STAT_DAN. And slashLength is spent as a LENGTH BUDGET on the drawn blade path, not a hitbox radius: android InputManager.as:51 'maxDistance:int = 200', :106-109 setMaxDistance, :198 'distanceLeft = maxDistance', :360 tapers the stroke as (maxDistance - distanceLeft)/maxDistance. So at dan 0 the base runs 120 px (SPD 0) asymptotically to 210 px, giving Light 168-294 px, Balanced 120-252 px, Heavy max(100, 60-189) px, and every rebirth raises the asymptote by 5 px.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3340-3346, :3422, :3454-3461",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3/271-is-reachable-in-one-stat-the-budget-is-237-and-the-cost-is-90",
+  "lane_impact": "L4 progression: RR:201's whole surface note goes. Ship STAT_CAP_{ATK,DEF,SPD} = 1 + (level+10)*3, base 1 step 3, budget (level-1)*3 \u2014 and the same block gives the anti-cheat spend audit (:3454-3465) that fires when spent points exceed the budget.",
+  "ledger_text": "The \"271 cap\" is gear/rebirth-inclusive (237-point first-run budget makes it impossible in one stat) \u2014 resolvable by arithmetic now.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t5957s0\u00a7.as:3457 '_loc1_ += (\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9408s0\u00a7) - 1) / 3;' \u00b7 :3461 '_loc2_ = (\u00a71t1523s0\u00a7.getLevel() - 1) * 3;' \u00b7 :3422 '\u00a71t1523s0\u00a7.\u00a71t9713s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9408s0\u00a7,3);' \u00b7 :3344 '... < 1 + (_loc2_ + 10) * 3;'",
+  "text": "Settles a contradiction between two findings that both claim RR:201. s26c/the-271-cap-IS-the-shipped-level-80-base-stat-cap says 271 'is unreachable in one stat ... the panel stops granting'; UPHELD progression/271-cap-explained says it 'IS reachable in one stat on a first run'. The arithmetic is entirely inside one function and settles it for the second: \u00a71t5957s0\u00a7.as:3457 computes the ATK points already spent as (ATK - 1) / 3, which pins base ATK = 1 and the step = 3; :3422 confirms the step ('\u00a71t9713s0\u00a7(...\u00a71t9408s0\u00a7,3)'); :3461 sets the entire first-run budget to (level - 1) * 3, i.e. 237 at the level cap of 80; :3344 caps ATK at 1 + (level + 10) * 3 = 271. Lifting ATK from 1 to 271 costs (271 - 1) / 3 = 90 of 237 points, and the gate is a strict '<', so the last grant fires at 268 and lands exactly on 271. 271 is reachable in ONE stat with 147 points to spare. The ledger's parenthetical ('a 237-point first-run budget makes it impossible in one stat') is dead, and so is the same claim where the overturning finding repeats it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (confirms android v0.682)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:861-875 + reference/decompiled/shs3_android/scripts/NPC.as:837-855",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3/coins-per-kill-half-of-RR215-is-also-dead-at-the-web-build",
+  "lane_impact": "L4 economy: delete RR:215 blocker (1) entirely rather than half of it, and strip the surviving rider from the XP finding before it is absorbed.",
+  "ledger_text": "\u2460 coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either).",
+  "overturns_ledger": true,
+  "quote": "\u00a71t68s0\u00a7.as:863 '\u00a71t406s0\u00a7.instance.\u00a71t6488s0\u00a7.\u00a71t5846s0\u00a7(1 * _loc8_);' \u00b7 :867 '...\u00a71t5846s0\u00a7(5 * _loc8_);' \u2016 NPC.as:839 'OverworldHUD.instance.lootDialog.addLootCoins(1 * qty);' \u00b7 :843 'addLootCoins(5 * qty);'",
+  "text": "Recorded so the rewrite does not re-freeze a dead blocker. hunter-s26c/web-parity-for-the-per-kill-xp-formula ships a lane_impact rider saying 'The coins-per-kill half of the same sentence still stands'. It does not stand, and the refutation is in the same web file the finding itself opened, forty lines further down: \u00a71t68s0\u00a7.as:861-867 pays 1 coin x qty for loot type 0 and 5 coins x qty for loot type 1, the twin of android NPC.as:839/:843 addLootCoins(1 * qty) / addLootCoins(5 * qty), with types 2/3/else at :869-875 handing off to quest item, level-scaled random item and literal item id. Coins per kill is a rolled loot table in v0.717, not an 'unconfirmed INFERRED seed' of 8 \u2014 which is what UPHELD economy/coins-per-kill-and-xp and enemies-ai/kill-rewards-close-two-economy-blockers already say. BOTH halves of RR:215 blocker (1) fall together.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1087, :1110-1120, :1122-1132, :1134-1147 + reference/extracted/itemdata.xml:10418-10442 + docs/gauntlet/L0/index/strings.json[\"4241\"],[\"4242\"],[\"4243\"]",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3/reinforce-tiers-are-web-code-not-a-string-table-inference",
+  "lane_impact": "L7 economy / items-equipment: ship Reinforce as flat 5000c + one of items 20064/20065/20066 selected by weapon level (<30 / <60 / else), with itemID 13022 forced to level 59. No android caveat needed.",
+  "ledger_text": "- **Economy statics:** ... Forge 700c+2 ore, Reinforce 5000c+1 silver ore;",
+  "overturns_ledger": true,
+  "quote": "\u00a71t401s0\u00a7.as:1087 'cost = 5000;' \u00b7 :1112 'if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(20064) == 0)' \u00b7 :1124 'if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(20065) == 0)' \u00b7 :1136 'if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(20066) == 0)' \u00b7 :1147 'weapon.uses = 0;' \u2016 itemdata.xml:10420 '<id>20064</id>' with :10421 '<name>4241</name>' \u2192 strings.json[\"4241\"] = 'Silver Ore'",
+  "text": "The three-tier Reinforce is a v0.717 CODE fact, and the two UPHELD findings that call the material '1 Silver Ore' are wrong. The web build's own reinforce action carries the price and all three reagents as literals: \u00a71t401s0\u00a7.as:1087 'cost = 5000;', then it demands and spends stat 20064 when weaponlevel < 30 (:1112, :1120), 20065 when < 60 (:1124, :1132) and 20066 otherwise (:1136, :1144), before charging -cost at :1146 and setting weapon.uses = 0 at :1147. itemdata.xml:10420/10429/10438 give those ids names 4241/4242/4243 = Silver Ore / Titanium Ore / Uncut Diamond. This matters twice: it discharges the S0-3 build-parity hedge that every reinforce finding so far has carried (they all read the tiers out of the ANDROID string table), and it refutes UPHELD economy/reinforce-weapon-cost-is-a-held-constant-5000 ('5000 coins plus 1 Silver Ore') and the two-tier clause of UPHELD payload/repair-cost-formula-is-node-level-times-10 ('1 Silver Ore under weapon level 30, 1 Titanium Ore at 30+'). There are three tiers, in the target build, in code.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (confirms android v0.682)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as:162, :176-177, :196-198, :208-209 + reference/decompiled/shs3_payload/scripts/\u00a71t6483s0\u00a7.as:588 + reference/decompiled/shs3_android/scripts/WarHexUI.as:175-176, :206-207",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3/web-parity-for-the-6x6-war-board-defaults-not-literals",
+  "lane_impact": "L-meta-social: the battlefield board is specifiable at the TARGET build \u2014 6x6, 55 px pitch, origin (90, 92) \u2014 with no C2 hedge left. Only the per-hex state feed is server-side.",
+  "ledger_text": "\u2461 War-Room **map topology** (board/adjacency)",
+  "overturns_ledger": true,
+  "quote": "\u00a71t7785s0\u00a7.as:162 'public function \u00a71t7835s0\u00a7(param1:String, param2:Array, param3:int, param4:int = 6, param5:int = 6) : *' \u00b7 :176 'this.ht = param4;' :177 'this.wt = param5;' \u00b7 \u00a71t6483s0\u00a7.as:588 'this.\u00a71t8003s0\u00a7.\u00a71t7835s0\u00a7(param1,param3,param4);' (three arguments \u2014 both dimensions default)",
+  "text": "The war board's android-only build label can be discharged, and the web build gets there by a different mechanism nobody has recorded. Android WarHexUI.as hardcodes 'this.ht = 6;' / 'this.wt = 6;' at :175-176 (the only two assignments in the file). The web v0.717 twin \u00a71t7785s0\u00a7.as \u2014 same class by every structural marker: msgBoard, leftRoad/rightRoad, hexarrow, the mapid >> 12 sector math at :196-198, the \u00a71t4646s0\u00a7 survivalmodedata embed \u2014 does NOT hardcode them: :162 declares 'param4:int = 6, param5:int = 6' and :176-177 assigns those parameters to ht/wt. The values survive anyway, because grep finds exactly one call site in the whole payload, \u00a71t6483s0\u00a7.as:588, and it passes three arguments and takes both defaults. Same 55 px pitch and same (90, 92) origin on both sides (\u00a71t7785s0\u00a7.as:208-209 vs WarHexUI.as:206-207). So the battlefield board is 6x6 in the TARGET build too \u2014 by default parameter rather than by literal, which is a distinction a citation audit will otherwise trip over.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both \u2014 android v0.682 and web v0.717 agree",
+  "cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:195-197, :208 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as:196-197",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27b/a-territory-is-six-rooms-by-six-rooms-in-both-builds",
+  "lane_impact": "L-world-exploration: the sector<->room rule is 6x6 rooms per sector, with node id = (sectorX*6 + i) << 12 | (sectorY*6 + j). Same coordinate space as the war board.",
+  "ledger_text": "\u2464 sector\u2194room mapping rule (town=fixed sector vs wilderness=one-screen-per-sector).",
+  "overturns_ledger": true,
+  "quote": "WarHexUI.as:195 'var zeronodex:int = (this.mapid >> 12 & 0x0FFF) * 6;' :196 'var zeronodey:int = (this.mapid & 0x0FFF) * 6;' :208 'nodeid = NodeGenerator.instance.getShiftedNodeId(zeronodeid,i,j);'",
+  "text": "The same WarHexUI code that fixes the war board at 6x6 also fixes the sector-to-room mapping, which the ledger lists as an open world-exploration blocker. WarHexUI.as:195-196 derive the territory's zero-node as 'zeronodex = (this.mapid >> 12 & 0x0FFF) * 6' and 'zeronodey = (this.mapid & 0x0FFF) * 6', then :197 packs them back as 'zeronodex << 12 | zeronodey' and :208 walks the 6x6 loop with getShiftedNodeId(zeronodeid, i, j). The multiplier 6 is what makes each territory occupy a 6-by-6 block of node ids, so the war hex grid IS the room grid, one hex per room. The web build carries the identical transform at \u00a71t7785s0\u00a7.as:196-197. This bears on RR:225 \u2464 'sector<->room mapping rule', and it means the war board and the exploration room graph are the same coordinate space, not two systems to reconcile.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3262, :3265, :3270, :3116",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27b/stance-ceilings-are-mastery-10-not-mastery-9",
+  "lane_impact": "L2 skills-meters. Whichever way the mastery cap resolves, RR:155's '-9' label cannot stand beside these two multipliers. Ship the formulas, not the ceiling triple.",
+  "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "overturns_ledger": true,
+  "quote": "\u00a71t99s0\u00a7.as:3262 '_loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);' \u00b7 :3265 '_loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);'",
+  "text": "RR:155 labels the stance triple 'dmg 0.9/1.2/1.4' as MASTERY-9 CEILING values. The web formulas do not reach those numbers at mastery 9. \u00a71t99s0\u00a7.as:3262 computes light damage as (0.5 + 0.4 * mastery * 0.1), i.e. 0.5 + 0.04m: at m=9 that is 0.86, and 0.9 arrives only at m=10. :3265 computes balanced as (1 + 0.2 * mastery * 0.1) = 1 + 0.02m: at m=9 that is 1.18, and 1.20 arrives only at m=10. Heavy is the flat 1.4 at :3270 and so is unaffected. The reach table has the same shape: :3116 heavy reach is (0.5 + 0.4 * mastery * 0.1), so the ledger's 'x0.5 -> x0.9' likewise needs m=10. Either the mastery scale runs 0-10 and the ledger's '-9' label is off by one, or the scale stops at 9 and the 0.9/1.2 ceilings printed in RR:155 are unreachable. Both readings force a ledger edit, and neither can be settled from this file alone \u2014 the mastery cap itself is STILL_UNHELD here.",
+  "verdict": "HELD"
+ }
+]

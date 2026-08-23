@@ -1,0 +1,121 @@
+[
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png and reference/frames/duel_frames/Nr4fQstqHDM_t435.0s.png (crop x40-760,y920-1080, 2x LANCZOS) \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:326-359, :110-111 \u00b7 reference/decompiled/shs3_android/scripts/BattleUI.as:258-263 \u00b7 docs/gauntlet/L0/index/strings.json[\"175\"], [\"4132\"]",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/cannot-change-stance-is-the-focus-bars-low-end-label-and-the-frame-proves-it-is-conditional",
+  "lane_impact": "L5 combat-core + L7 ui-hud. RR:158 and the 'CANNOT CHANGE STANCE' clause of RR:178 must both be rewritten, and the battle HUD gains a specified third bar: fill = (reload-48)/(maxreload-48) clamped to 0, low-end grey label at fill 0, no label mid-range, black 'Critical Hit' + Snd_criticalDamage at full.",
+  "ledger_text": "**In-combat stance is HARD-LOCKED in v0.717** (\"CANNOT CHANGE STANCE\"). ... Also visible: player HP **20/20**, **\"150% DAMAGE\"** buff (Potato Dog), **\"CANNOT CHANGE STANCE\"**",
+  "overturns_ledger": true,
+  "quote": "\u00a71t113s0\u00a7.as:328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);' \u00b7 :336 'if(_loc3_ == 0)' -> :340 'this.\u00a71t5169s0\u00a7.htmlText = this.\u00a71t5204s0\u00a7;' \u00b7 :344 'else if(_loc3_ > 0 && _loc3_ < 1 && this.\u00a71t5169s0\u00a7.visible)' -> :346 'this.\u00a71t5169s0\u00a7.visible = false;' \u00b7 :111 'this.\u00a71t5204s0\u00a7 = \"<font color='#BBBBBB'>\" + \u00a71t1521s0\u00a7.getString(960) + \"</font>\";'",
+  "text": "The ledger's own primary evidence for the stance hard-lock now argues against it, and this is decided by frames, not by code. \u00a71t113s0\u00a7.as:326-359 is the battle HUD's third-bar updater: :328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);' clamped to 0 at :329-332, :333 sets bar.scaleX, then :336-343 show a GREY getString(960) label when and only when _loc3_ == 0, :344-347 HIDE that label while 0 < _loc3_ < 1, and :348-359 swap to a BLACK getString(175) = 'Critical Hit' plus Snd_criticalDamage at _loc3_ >= 1. getString(960) is absent from the v0.682 string table (docs/gauntlet/L0/index/strings.json has no '960'), i.e. it is a web-only string. I then opened two 1080p frames and cropped x40-760, y920-1080 at 2x. reference/frames/duel_dense/Nr4fQstqHDM_428.0.png: HP 20/20 green, 26/26 blue, and a THIRD bar that is an empty brown track carrying grey text 'CANNOT CHANGE STANCE', with '150% DAMAGE' (the Potato Dog buff, strings.json['4132']) below it. reference/frames/duel_frames/Nr4fQstqHDM_t435.0s.png: same player, same run, HP 19/20, and that third bar is now roughly 40% filled WHITE with NO stance text on it at all. So 'CANNOT CHANGE STANCE' is the Focus meter's zero-fill readout, displayed exactly while reload <= 48 \u2014 the same threshold \u00a71t99s0\u00a7.as:3050 gates the stance cycler on \u2014 and it disappears seven seconds later in the same fight. RR:158's 'HARD-LOCKED' and RR:178's LOOK verdict describe a transient low-Focus state, not a lock. THE FRAME AND THE CODE AGREE HERE; what fails is the inference drawn from the frame.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3274 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:2727, :2736, :2745, :2746",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/crit-1.3-and-heavy-defence-0.8-are-in-web-source-not-just-wiki",
+  "lane_impact": "L5 combat-core: CRIT_MULT = 1.3 and HEAVY_DEFENDER_DEF_MULT = 0.8 are promoted from wiki-sourced to CONTRACT on target-build source, and RR:88's 'crit x1.3 vs x3 final read' leaves the KNOWN-UNKNOWNS list. The crit PROC rule stays open.",
+  "ledger_text": "SHS:Duels' own wiki (2016 + 2025) states the formula \"Critical = **1.3x Physical**.\" Keep `CRIT_MULT=1.3`. ... (Read a real OG crit popup to fully seal it.)",
+  "overturns_ledger": true,
+  "quote": "\u00a71t99s0\u00a7.as:3274 'return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;' \u00b7 \u00a71t5957s0\u00a7.as:2745 '_loc42_ = 1.3;' \u00b7 \u00a71t5957s0\u00a7.as:2746 '_loc47_ = 0.8;'",
+  "text": "RR:153-154 keeps CRIT_MULT = 1.3 on WIKI authority and asks for one more artifact: '(Read a real OG crit popup to fully seal it.)' The seal is in the target build's source, so no popup read is needed. \u00a71t99s0\u00a7.as:3274 is the return path of the stance damage roll: 'return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;', taken when \u00a71t4414s0\u00a7 == \u00a71t4415s0\u00a7 at :3272. The stats-panel readout carries the same constant explicitly for ALL THREE stances \u2014 \u00a71t5957s0\u00a7.as:2727, :2736, :2745 each set '_loc42_ = 1.3;' and :2751-2752 apply it as '_loc43_ = _loc1_ * _loc42_ + _loc12_'. The SAME block also seals RR:74's other clause: :2746 '_loc47_ = 0.8;' is set only in the heavy-stance branch, which is 'Heavy defender Defense x0.8 (one way)' in code. Note what this does NOT settle: the crit PROC rule (RR:159 blocker \u2464) is still open \u2014 :3272 tests an equality between two obfuscated members, not a probability.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (title strings are android v0.682)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2344-2348, :254 \u00b7 reference/decompiled/shs3_android/scripts/StatsManager.as:220, :1915-1919 \u00b7 docs/gauntlet/L0/index/strings.json[\"455\"]-[\"464\"] \u00b7 docs/research/REBUILD_READINESS.md:245",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/dan-rank-is-mechanical-not-cosmetic-it-buys-reach",
+  "lane_impact": "L8 rebirth-elements blocker (3) closes at ten rungs with named titles, AND gains a mechanic the ledger has nowhere: rebirth is a permanent +5 px reach asymptote per dan. Any rewrite must cite ids 455-464, not 456-464.",
+  "ledger_text": "\u2462 Dan-rank count/titles (garbled source).",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:2346 'var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5;' \u2016 android StatsManager.as:1917 'var maxincrement:int = 90 + getPlayerStats(STAT_DAN) * 5;' \u2016 strings.json[\"455\"] '(\u521d\u6bb5)' ... strings.json[\"464\"] '(\u5341\u6bb5)'",
+  "text": "RR:245 blocker (3) files 'Dan-rank count/titles (garbled source)' as a naming problem. It is also a BALANCE problem the ledger never noticed: dan rank feeds the reach formula. \u00a71t1523s0\u00a7.as:2346 computes the reach asymptote as 'var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5;' with \u00a71t9426s0\u00a7 = 25 = STAT_DAN (android StatsManager.as:220), so every rebirth adds 5 px to the maximum blade-path length \u2014 90 at dan 0 rising to 135 at the dan-9 cap, i.e. a base reach asymptote of 210 px climbing to 255 px. The titles themselves are also fully resolved and there are TEN of them, ids 455 through 464 in the string table: (\u521d\u6bb5)(\u5f10\u6bb5)(\u53c2\u6bb5)(\u56db\u6bb5)(\u4e94\u6bb5)(\u516d\u6bb5)(\u4e03\u6bb5)(\u516b\u6bb5)(\u4e5d\u6bb5)(\u5341\u6bb5), which matches the '< 9' hard cap in the rebirth routine exactly. Parity note: the titles are read from the v0.682 table, so they carry the S0-3 UI-copy caveat; the 90 + DAN*5 formula does not, it is web source.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both \u2014 web v0.717 primary, android v0.682 supplies the plain names",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1954-1959, :1968, :1980, :1993 \u00b7 reference/decompiled/shs3_android/scripts/InteractUI.as:1003-1008, :1015-1046 \u00b7 docs/gauntlet/L0/index/strings.json[\"845\"], [\"846\"], [\"847\"] \u00b7 docs/gauntlet/L0/index/resolved_names.json itemdata.xml.resolved 20060/20061/20062/20063/20065",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/forge-cost-is-a-node-level-formula-with-three-material-tiers",
+  "lane_impact": "L7 economy. Forge is not an economy static; ship FORGE_COST = min(nodeLevel, 80) * 100 with a three-entry material table keyed on node level, and stop listing 700c as a constant. Pairs with the reinforce finding already in this packet \u2014 RR:80 carries the lowest tier of BOTH smith services and presents each as the whole rule.",
+  "ledger_text": "- **Economy statics:** 100c/3g guest start; inn 8c, toll 7c, stable 14c+5AP, fast-travel 5g, rebirth scroll 1000c (+25g), Forge 700c+2 ore, Reinforce 5000c+1 silver ore; War Room structures 10k/10k/5k.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t401s0\u00a7.as:1954 'var _loc3_:int = \u00a71t1525s0\u00a7.\u00a71t9936s0\u00a7();' :1959 'param1 = _loc3_ * 100;' :1968 'if(_loc3_ < 30)' :1970 'if(\u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(20061) < 2)' \u2016 android InteractUI.as:1003 'level = StageManager.getCurrentNodeLevel();' :1008 'cost = level * 100;'",
+  "text": "RR:80 ships 'Forge 700c+2 ore' as an ECONOMY STATIC. It is not a static \u2014 it is one instance of a formula, and the tier it names is only the lowest of three. Web v0.717 \u00a71t401s0\u00a7.as:1954-1959 reads the CURRENT NODE level, clamps it to 80, and sets the price to nodeLevel * 100 coins; the sword you get is a random sword OF THAT LEVEL. Materials then branch on the same node level at :1968 / :1980 / :1993 \u2014 below 30: 2x item 20061; below 60: 1x 20062 + 2x 20063; otherwise 2x 20061 + 2x 20060 + 1x 20065. resolved_names.json resolves those to Iron Ore, Tin Ore, Copper Ore, Coal, Titanium Ore, and they match display strings 845/846/847 exactly ('2 Iron Ore' / '1 Tin Ore, 2 Copper Ore' / '2 Iron Ore, 2 Coal, 1 Titanium Ore'). The android twin is InteractUI.as:1003-1046 with the plain-named 'cost = level * 100' at :1008 and 'level = StageManager.getCurrentNodeLevel()' at :1003, which is what identifies the obfuscated web accessor. So the ledger's 700c is a node-level-7 blacksmith forging an iron sword, and it is the ONLY tier the ledger carries.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both \u2014 web v0.717 confirms android v0.682",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:1058, :662 \u00b7 reference/decompiled/shs3_android/scripts/InteractUI.as:1058, :1064-1075, :647 \u00b7 docs/gauntlet/L0/index/strings.json[\"848\"]",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/repair-weapon-cost-is-node-level-times-ten",
+  "lane_impact": "L7 economy: blocker \u2462 is CLOSED. Ship REPAIR_COST = nodeLevel * 10 and model repair as 'weapon.uses -> 1', gated on a real equipped weapon. Economy's score moves on one of its four named blockers.",
+  "ledger_text": "- **Blockers:** \u2460 coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either). \u2461 sell-price + prosperity-daily-sim formulas. \u2462 Repair-Weapon cost (never captured). \u2463 token/tournament economy numbers.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t401s0\u00a7.as:1058 'cost = \u00a71t1525s0\u00a7.\u00a71t9936s0\u00a7() * 10;' \u2016 android InteractUI.as:1058 'cost = StageManager.getCurrentNodeLevel() * 10;' :1075 'weapon.uses = 1;'",
+  "text": "RR:215 blocker \u2462 is 'Repair-Weapon cost (never captured)'. It is captured, in the target build, in one line. Web v0.717 \u00a71t401s0\u00a7.as:1058 'cost = \u00a71t1525s0\u00a7.\u00a71t9936s0\u00a7() * 10;' \u2014 the same node-level accessor the forge block uses at :1954 \u2014 and the matching menu copy at :662 formats getString(848) with [_loc1_ * 10], where _loc1_ is the same clamped node level. strings.json[\"848\"] is 'Repair your currently equipped weapon?\\nCost: [0] coins'. The android twin is unobfuscated and settles the semantics outright: InteractUI.as:1058 'cost = StageManager.getCurrentNodeLevel() * 10;'. The repair itself is a durability reset, not a stat restore \u2014 android :1073-1075 'if(weapon.uses > 1) { weapon.uses = 1; }' \u2014 and it refuses on a null weapon or itemID 0 or 13000. This blocker can be struck from the ledger; no Ruffle session is needed for it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (android v0.682 caps at 300)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2279-2296, :220 \u00b7 reference/decompiled/shs3_android/scripts/StatsManager.as:1854-1860 \u00b7 docs/research/REBUILD_READINESS.md:195, :200",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/spd-to-cooldown-is-a-web-formula-and-it-diverges-from-android",
+  "lane_impact": "L2 skills-meters blocker (4) closes as CONTRACT; L4 progression blocker (1) loses its cooldown half (the DEF-mitigation half survives). Config: SKILL_CD_MULT = 1 - min(SPD,600)/600*0.5.",
+  "ledger_text": "\u2463 SPD\u2192cooldown formula. ... \u2460 DEF mitigation curve + SPD range/cooldown scaling (wiki gives only direction) \u2014 *measure per-point deltas in a build.*",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:2291 'if(param1 > 600)' :2293 'param1 = 600;' :2295 'return 1 - param1 / 600 * 0.5;' \u2016 android StatsManager.as:1856 'if(speed > 300) { speed = 300; }' :1860 'return 1 - speed / 300 * 0.5;'",
+  "text": "RR:195 blocker (4) 'SPD->cooldown formula' and the cooldown half of RR:200 blocker (1) 'SPD range/cooldown scaling (wiki gives only direction)' both close from the web payload. \u00a71t1523s0\u00a7.as:2289-2296 is 'internal static function \u00a71t9590s0\u00a7(param1:int) : Number { if(param1 > 600) { param1 = 600; } return 1 - param1 / 600 * 0.5; }', fed by :2279-2287 which reads STAT_SPEED plus gear bonus and multiplies by 1.5 while the speed buff is active. So the cooldown multiplier is 1 - min(SPD_effective, 600)/600 * 0.5, i.e. a linear ramp from 1.0x down to a hard floor of 0.5x at SPD 600. THIS IS A BUILD DIVERGENCE AND IT MATTERS: android StatsManager.as:1854-1860 caps at 300, not 600, so the mobile build halves cooldowns at half the stat. A recreation targeting v0.717 must take 600.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (android v0.682 agrees on shape)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2274-2277, :220 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3293-3316, :3318-3326 \u00b7 reference/decompiled/shs3_android/scripts/StatsManager.as:1839-1841, :1921-1927 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3245-3260",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "hunter-s27b/the-focus-meter-contract-is-fully-recovered-in-web-v0717",
+  "lane_impact": "L2 skills-meters blocker (3) and L5 combat-core blocker (5) both close as CONTRACT: maxFocus = 48 + SPD*6, regen +6/tick, spend = slashUsage x {0.5, 1, 1.5} by stance, full meter is consumed by the crit it grants, stance switch is free above 48.",
+  "ledger_text": "\u2462 Focus numerics (max/fill/switch-cost). ... \u2464 Focus/crit gating rule \u2014 *watch the Focus bar fill/consume.*",
+  "overturns_ledger": true,
+  "quote": "\u00a71t1523s0\u00a7.as:2276 'return 48 + (\u00a71t7356s0\u00a7(\u00a71t9410s0\u00a7) + \u00a71t7358s0\u00a7(\u00a71t9410s0\u00a7)) * 6;' \u2016 android StatsManager.as:1841 'return 48 + (getPlayerStats(STAT_SPEED) + findBonusStat(STAT_SPEED)) * 6;' \u2016 \u00a71t99s0\u00a7.as:3320 'this.\u00a71t4414s0\u00a7 += 6;' \u2016 \u00a71t99s0\u00a7.as:3295-3297 'if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7) { this.\u00a71t4414s0\u00a7 = 0; }'",
+  "text": "RR:195 blocker (3) 'Focus numerics (max/fill/switch-cost)' and RR:190 blocker (5) 'Focus/crit gating rule \u2014 watch the Focus bar fill/consume' both close from web source, and nobody in this packet aimed at either. CAPACITY: \u00a71t1523s0\u00a7.as:2274-2277 is 'return 48 + (\u00a71t7356s0\u00a7(\u00a71t9410s0\u00a7) + \u00a71t7358s0\u00a7(\u00a71t9410s0\u00a7)) * 6;' with \u00a71t9410s0\u00a7 = 8 = STAT_SPEED, i.e. maxreload = 48 + (SPD + gear SPD) * 6 \u2014 so 48 is the meter's FLOOR, which is why the stance gate and the HUD's zero point are both literally 48. REGEN: \u00a71t99s0\u00a7.as:3318-3326 adds +6 per call, clamps to maxreload, and pushes the pair straight to the HUD updater. CONSUMPTION: \u00a71t99s0\u00a7.as:3293-3316 zeroes the meter first if it was full (the crit spends the whole bar), then subtracts slashUsage/2 in Light, slashUsage in Balanced, slashUsage*1.5 in Heavy, clamped at 0. slashUsage is a per-weapon field with a floor of 48 (android StatsManager.as:1921-1927). That is the complete fill/consume/gate contract in one place, and it also explains the 'switch-cost' the ledger was looking for: changing stance costs nothing, it merely requires reload >= 48.",
+  "verdict": "HELD"
+ }
+]
