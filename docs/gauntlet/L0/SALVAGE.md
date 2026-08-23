@@ -4,6 +4,104 @@
 > that usage was about to run out. Everything below is on disk and committed.
 > **No completed research needs to be redone.**
 
+## ▶ SESSION 27 (2026-08-23) — THE FINISH RUN, WIDENED. Live progress at the top.
+
+**No wall yet. Every wave CLEAN, zero agents dead, zero VOID verdicts.**
+
+| Wave | Work | Agents | State |
+|---|---|---:|---|
+| **A** | `l0-finish-wf3` `{tier:'t2', batches:1, tag:'s27a'}` — 45 corroborating | 1 | ✅ **CLEAN** — `wf_5278be09-5a8` → `run12` · judged 1,555 → **1,600** |
+| **A′** | `wfcheck.mjs` + `workflowScripts.test.ts` — the workflow scripts had ZERO coverage | 0 | ✅ **LANDED** — suite 62 files/983 → **63/1001** |
+| **B** | `{tier:'t1', batches:3, tag:'s27b'}` — 21 overturn-claimers, **3 lenses** | 9 | ✅ **CLEAN** — `wf_a61d14b7-fe6` → `run13` · judged → **1,621** |
+| **B′** | `BATCH_SIZE` 24 → **7** as a DEFAULT, not a flag | 0 | ✅ **LANDED** |
+| **C** | `{tier:'t2', batches:3, tag:'s27c'}` — 30 corroborating | 3 | ✅ **CLEAN** — `wf_b0ff4d6a-fe6` → `run14` · judged → **1,651** |
+| **D** | `{tier:'t1', batches:3, tag:'s27d'}` — 21 overturn-claimers | 9 | ⏳ **IN FLIGHT** — `wf_f1c7e8a2-a03` → `run15` |
+| **E** | t2 mop-up of whatever D emits | ~1–3 | ⏳ |
+| **F** | `l0-finish-wf4` — dry-loop + completeness, **6 hunt targets** | 13–25 | ⏳ |
+| **G** | `l0-rewrite` — 14 slices × (writer + **2** blind verifiers) | **42** | ⏳ |
+| **H** | gates green · `GAUNTLET.md` corrections · §3.7 re-arm | 0 | ⏳ |
+
+### ⚑ THE FAN-OUT WAS TOO NARROW AND THE RULE NEVER SAID IT HAD TO BE
+
+Owner, this session: *"my own rule was one workflow at a time, not one agent."* Correct —
+§3.8 says *"a stage may fan out to as many agents as the lane needs."* Wave A ran ONE agent
+over 45 findings because the batch count was read out of the MANIFEST instead of judged.
+§2 routes L0 to Opus at **UNLIMITED** agents and §3.3 gives a heavy lane **3–5 lenses**;
+`buildWorklist`'s t2 setting (48-wide packets, one lens) is the *bounded-lane* config.
+
+Widened, each **confirmed by executing the script**, not by arithmetic:
+
+| | was | now |
+|---|---:|---:|
+| t1 judging | 2 | **9** — 3 packets × cite+hunter+**contradiction** |
+| `l0-finish-wf4` | 9–17 | **13–25** — the 7,381-frame corpus split 3 ways |
+| `l0-rewrite` | 28 | **42** — a *second* lensed verifier per slice |
+
+### ⚑ THE EMISSION RATIO — the number that says whether judging converges
+
+| wave | judged | new | ratio |
+|---|---:|---:|---:|
+| A | 45 (t2, 1 lens) | 6 | 0.13 |
+| B | 21 (t1, **3** lenses) | 45 | **2.14** ← the widening's one-time cost |
+| C | 30 (t2, 1 lens) | 11 | 0.37 |
+
+The tail went 27 → **51** → 32. The contradiction lens's backlog was a one-off, as
+predicted, and it is now MEASURED. If a ratio ever sits above 1 for two consecutive waves,
+that is a real result and it goes to the owner for a ruling — the gate is not softened
+(§3.6).
+
+### ⚑ THE WORKFLOW SCRIPTS HAD NEVER BEEN CHECKED BY ANYTHING
+
+~1,100 lines that spawn 40+ agents each, and no test, lint or typecheck ever read them:
+they are `.js`, they live outside `src/`, and **`node --check` rejects every one of them**
+(top-level `return` is legal only inside a function body, which is how the runtime
+evaluates them). A broken script was only ever discovered by launching it.
+
+`scripts/gauntlet/wfcheck.mjs` compiles each the way the runtime does, then **executes** it
+against stubs on BOTH branches — every agent dead, and every agent alive. `pipeline()`
+really runs its stages; the first version stubbed them away and reported a confident pass
+on a verify stage it never executed.
+
+```bash
+node scripts/gauntlet/wfcheck.mjs scripts/gauntlet/l0-rewrite.workflow.js run
+#   SYNTAX OK · RUN OK [all agents DEAD] 14 · RUN OK [all agents ALIVE] 42
+```
+
+`tests/workflowScripts.test.ts`, 18 tests, every guard chaos-planted and watched RED:
+a syntax error · **a `const` spread into an array declared ABOVE it** (parses clean, throws
+at evaluation — this bug was written into `wf4` this session) · a script broken only on the
+ALIVE branch · a pipeline stage that throws · `buildWorklist` advertising different lenses
+than the workflow spawns · `BATCH_SIZE` drifting back above 8.
+
+### ⚑ THE LEDGER MISREAD A FRAME: "STANCE IS HARD-LOCKED IN COMBAT" FALLS
+
+Verified line-by-line by the lead, not taken from the critic:
+
+```
+§1t99s0§.as:3050  return this.§1t4469s0§() && this.§1t4414s0§ >= 48;
+§1t99s0§.as:3060  if(this.§1t4414s0§ < 48) { return; }   <- early-out, then a 4-branch cycler
+§1t99s0§.as:3162  this.§1t4414s0§ -= 48;                 <- and it DEBITS the meter
+```
+
+A hard lock needs no cycler, no threshold and no debit. `RESUME_HERE.md`'s Stage-2 landmine
+has the in-combat switch as **INFERRED**; it is **CONTRACT**, at threshold 48. RR:178 and
+`SHSD_MASTER_REFERENCE.md`:388/:2099 fall with it. **Ledger correction only — `Sim.ts` and
+the duel-baseline move in L5 and nowhere else (§4).**
+
+And the grey caption is **WEB-ONLY**, which is why its string id looked broken:
+
+```
+web     §1t113s0§.as:110   "<font color='#000000'>" + getString(175) + "</font>"   Critical Hit
+web     §1t113s0§.as:111   "<font color='#BBBBBB'>" + getString(960) + "</font>"   the grey caption
+android BattleUI.as:102    crittext.text = LangManager.getString(175)   <- ONE fixed string
+android updateReload()     three lines, no ratio==0 branch, no second label
+```
+
+`getString(960)` is absent from `118_Mobile_Lang_EN.bin` because v0.682 never had it. The
+absence IS the finding.
+
+---
+
 ## ▶ SESSION 26 (2026-08-22) — THE FINISH RUN. Live progress at the top.
 
 | Wave | Work | Agents | State |
