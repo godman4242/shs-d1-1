@@ -39,10 +39,10 @@
  ],
  "green": false,
  "pooled": {
-  "claims": 1711,
-  "judged_ids": 1621,
+  "claims": 1722,
+  "judged_ids": 1651,
   "ledger_refs": 0,
-  "live_verdicts": 3946,
-  "verdicts": 3946
+  "live_verdicts": 3993,
+  "verdicts": 3993
  }
 }

@@ -1030,11 +1030,11 @@
    "id": "nf-judge/carry-weight-exemption-split-is-nine-seven-and-obj-hut-48-is-a-seventh-unexempt-site",
    "lane_impact": "items-equipment + world-exploration: the exempt/unexempt tally that goes into the ledger is 9/7, and the unexempt list must include Obj_Hut.as:48.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "The android carry-weight guard split is NINE exempt / SEVEN unexempt, not eight/eight. My own grep -rn 'findWeight() > StatsManager.getCarryingWeight()' over reference/decompiled/shs3_android/scripts returns 16 hits in 11 files. Nine carry the !GameEngine.isPvPRoomMode() prefix: Obj_DragonDancePath.as:275 and :295, Obj_PathBush.as:62 and :110, Obj_HiddenTemple.as:187 and :207, Obj_DirectionSign.as:124 and :159, Obj_TownSign.as:44. Seven do not: Obj_Hut.as:48 and :70, InteractUI.as:1730, NodeUI.as:379, InventoryUI.as:440, CraftingUI.as:233, BankUI.as:348. Obj_Hut.as:48 is a seventh unexempted site that no finding in this packet names - a second hut call site, gated 'findWeight() > getCarryingWeight() || getStat(STAT_AP) <= 0'.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1044,11 +1044,11 @@
    "id": "nf-judge/web-battleui-carries-the-same-slot-constants-760-minus-60i-and-450",
    "lane_impact": "ui-hud: y = 450 is a web-build constant, so the frame-to-stage transform measured on a v0.717 frame against it is not a cross-build import.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "The skill-slot constants used as the code anchor for the frame-to-stage transform are NOT android-only, which removes the build-parity objection to testing them against a web-build frame. The WEB BattleUI, reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as, builds its slot strip with the identical arithmetic at :170-171: x = 760 - i*60 and y = 450, matching android BattleUI.as:133-134 exactly. Slot i=2 therefore sits at game (640,450) in v0.717 as well as v0.682.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1058,11 +1058,11 @@
    "id": "nf-judge/resizehandler-statsmanager-writes-are-307-312",
    "lane_impact": "ui-hud cite hygiene: six writes at :307-312.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "GameEngine.resizeHandler's StatsManager writes run :307-312, not :306-311, and there are SIX of them. :306 is the closing brace of the fit branch; :307 stageScale, :308 stageOffsetX, :309 stageOffsetY, :310 stageFitWidth, :311 stageBaseWidth, :312 stageBaseHeight. Any ledger row transcribing the resize handler's output surface from ':306-311' drops stageBaseHeight.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A1",
@@ -1072,11 +1072,11 @@
    "id": "nf-judge/duel-hud-never-prints-the-word-CHI",
    "lane_impact": "ui-hud: a rebuild must NOT draw 'CHI'/'HP' text on the duel bars; the identification of the blue bar as Chi rests on the class fields and on the stats screen, not on an in-duel label.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "The duel HUD prints NO textual bar labels at all - the 'CHI' label seen in this lane's frames comes from the PLAYER STATS screen, a different widget. BattleUI.updateChi writes only the numeral pair ('chitext.text = chi + \"/\" + maxchi') and updateHp the same for HP; there is no label TextField in the pair. Confirmed on film: reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg, my crop (0,380)-(560,576) x3 LANCZOS, shows the duel HUD as a green bar reading '16/20' over a blue bar reading '15/15' with 'CANNOT CHANGE STANCE' beneath - and no word CHI anywhere. The labelled ladder (HP / CHI / AP diamonds) appears only on the stats screen, e.g. reference/frames/session11/stance-reach/B_t850.600_PLAYER-screen_HP20-CHI31-AP32of35_ATK22_DEF19_SPD13.png.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1086,11 +1086,11 @@
    "id": "nf-judge/resource-decrypt-key-is-filename-charcode-1-per-resource",
    "lane_impact": "Cross-lane extraction rule (art, audio, items): keys are 104/117/111/109/103 by resource, derived not guessed - anyone opening the remaining blobs can stop brute-forcing.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "The XOR key for the five obfuscated Android resource blobs is NOT one constant - it is the SECOND CHARACTER of the resource's filename, so every blob has its own key. ResourceManager.as:186 passes 'resourceFileNameArray[num].charCodeAt(1)' into decryptByteArray, and :41 lists the five filenames. That yields shs3resource.swf -> 'h' = 104, musicresource.swf -> 'u' = 117, soundresource.swf -> 'o' = 111, imageresource.swf -> 'm' = 109, bgresource.swf -> 'g' = 103. This reconciles the two keys the Stage-0 brief already carries (C1's 109 from Mobile.as:352 and C3's 111 for the sound blob) and predicts the other three. Also note decryptByteArray only touches bytes 3..255 (swapping every i%11==0 byte with i+256), which is why the files still begin with a readable 'CWS' magic.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1100,11 +1100,11 @@
    "id": "nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence",
    "lane_impact": "Gauntlet-wide method rule: 'ZERO hits under shs3_payload' may be quoted as the state of the evidence, never as a finding that the web build lacks the thing.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "A zero-hit grep for a SOURCE-LEVEL identifier over reference/decompiled/shs3_payload is not evidence that the web build lacks the feature, because the web payload's class, method and field names are obfuscated to \u00a71tNNNNs0\u00a7 forms. Proven in this packet twice over: android's getSellAmt is \u00a71t546s0\u00a7 in the web build, android Item.as's modifier constants are \u00a71t8734s0\u00a7..\u00a71t8741s0\u00a7, and android NodeGenerator.isNoChangeTown is \u00a71t70s0\u00a7.\u00a71t1140s0\u00a7. Web-side absence must be argued from a structural signature (imports + literal constants + call shape), the method actually used to pin \u00a71t1712s0\u00a7 and \u00a71t8702s0\u00a7 in this same packet - never from a name grep.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1128,11 +1128,11 @@
    "id": "s27b/v0717-rebalanced-the-manual-stat-caps-upward-vs-v0682",
    "lane_impact": "Cross-lane, and it hardens \u26a0 S0-3 from a hedge into a proven hazard: web and android combat/progression tuning demonstrably diverge on four of six stat caps.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "A hard, measured counterexample to build parity, found while checking the 271-cap claim. The stat-panel add-button gates are the same function in both builds but carry DIFFERENT formulas. ATK/DEF/SPD: android InventoryUI.as:2410-2412 gate on 'charlevel + 10' (90 at level 80); web \u00a71t5957s0\u00a7.as:3344-3346 gate on '1 + (level + 10) * 3' (271 at level 80) \u2014 a 3x lift. MAXHP: android :2407 '10 + (charlevel + 10) * 5' (460); web :3341 '10 + (_loc2_ + 10) * 10' (910) \u2014 doubled. MAXAP: android :2409 '20 + (charlevel + 10)' (110); web :3343 '30 + (_loc2_ + 10) * 5' (480) \u2014 more than 4x. MAXCHI is the only one identical: android :2408 and web :3342 are both '10 + (lvl + 10) * 5' = 460. This is exactly the shape of divergence the S0-3 caveat warns about, now with numbers: the data XMLs match row for row, but progression tuning does NOT. Any INFERRED progression number ported from an android artifact must be re-derived web-side before it is called CONTRACT.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1226,11 +1226,11 @@
    "id": "hunter-s27b/web-and-android-per-stat-ceilings-diverge-by-3x",
    "lane_impact": "Cross-lane. Gives the S0-3 build-parity caveat its first measured instance: the builds are demonstrably retuned, so 'android says X' is never by itself evidence about v0.717 for a tuning number. Also supplies the web-side per-point growth ceilings for L4 progression.",
    "ledger_text": "n/a \u2014 this is a lane-methodology finding, not an overturn of a specific REBUILD_READINESS sentence; it hardens the S0-3 CAVEAT in the brief.",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "A MEASURED INSTANCE OF THE S0-3 PARITY HOLE, and the strongest one this lane has. The per-stat add-button ceilings are NOT the same in the two builds. Web v0.717 \u00a71t5957s0\u00a7.as:3341-3346: HP < 10 + (lvl+10)*10, CHI < 10 + (lvl+10)*5, AP < 30 + (lvl+10)*5, ATK/DEF/SPD < 1 + (lvl+10)*3. Android v0.682 InventoryUI.as:2407-2412: HP < 10 + (lvl+10)*5, CHI < 10 + (lvl+10)*5, AP < 20 + (lvl+10), ATK/DEF/SPD < lvl + 10. At level 80 that is web 271 versus android 90 for ATK/DEF/SPD \u2014 a 3x divergence \u2014 plus 910 vs 460 HP and 480 vs 90 AP. The two blocks are otherwise line-for-line twins (same six buttons, same order, same 'more than two capped' nag), so this is deliberate retuning between v0.682 and v0.717, not a decompiler artifact. CONSEQUENCE FOR THE LANE: the S0-3 caveat's warning that 'combat tuning parity is NOT established' now has a concrete counterexample. Any progression or combat number ported from an android-only artifact must be treated as v0.682 until a web line says otherwise. Only CHI's formula survives the version change unchanged.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1254,11 +1254,11 @@
    "id": "hunter-s27b/heavy-reach-has-a-hard-100px-floor-so-reach-cap-is-half-closed",
    "lane_impact": "L5 combat-core / L2 skills-meters: reach becomes a base x per-stance-multiplier model with a 100 px heavy floor. Do NOT ship 300/200/100 as px \u2014 that triple is not reproducible from these multipliers at any single base. The remaining measurement is one number, the base reach, not three.",
    "ledger_text": "- **Combat numbers:** reach cap in **px** per stance; crit x1.3 vs x3 final read; early-mob HP + starter weapon DMG + hits-to-kill; the Focus/crit **gating rule** (fill trigger/amount/consumption); AUTO SLASH cadence.",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "PARTIAL, stated as partial. RR:88 lists 'reach cap in px per stance' as a KNOWN-UNKNOWN. Three of the four unknowns in it are now closed and one is not. Closed: the per-stance reach MULTIPLIERS (\u00a71t99s0\u00a7.as:3094 light = base * 1.4 flat; :3105 balanced = base * (1 + 0.2*m*0.1); :3116 heavy = base * (0.5 + 0.4*m*0.1)), the mastery curve on each, and an absolute PX quantity \u2014 :3117-3119 clamp heavy reach to a hard floor of 100, which is the first reach number in actual pixels this lane has from source rather than from a video measurement. Still open: the base value \u00a71t4420s0\u00a7 that all three multiply, which is set elsewhere and which I did not resolve. So the ledger sentence survives in reduced form: the px CAP is still unmeasured, but the SHAPE of the cap and one exact px constant are now sourced. I am recording this as PARTIAL rather than HELD precisely because the base is missing \u2014 without it the multipliers cannot be turned into pixels for light or balanced.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1310,11 +1310,11 @@
    "id": "lens3/the-fourteen-field-save-finding-is-a-truncated-read-and-is-still-upheld",
    "lane_impact": "L10 persistence: bank nineteen, not fourteen. Mark persistence/offline-save-schema-is-fourteen-fields-already-written superseded so it cannot be cited alongside its own correction.",
    "ledger_text": "n/a \u2014 corrects a corpus contradiction between two UPHELD findings, not a ledger sentence",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "Two contradictory field counts for the SAME offline save branch are both marked UPHELD in LEDGER_EVIDENCE, so a rewriter picks one at random. Settled on the file: android QueryManagerBase.as's offlineMode branch does not end at :2925. It runs to :2930 and writes five further fields \u2014 activeQuestList (:2926), completedQuestList (:2927), playerlocation (:2928), taunt (:2929), friends (:2930) \u2014 before the closing brace at :2931, for NINETEEN. deleteCharCookieData at :2940-2959 blanks the same nineteen, and the WEB twin \u00a71t1832s0\u00a7.as:2815-2833 blanks nineteen in the identical order. UPHELD persistence/offline-save-schema-is-fourteen-fields-already-written is a truncated window, not a rival measurement; the nineteen-field findings win. A 14-field persistence port drops all quest state, world location, taunt and friend list on reload.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1324,11 +1324,11 @@
    "id": "lens3/the-offline-save-record-is-nineteen-fields-plus-a-saved-sentinel",
    "lane_impact": "L10 persistence: the schema is 19 data fields + saved:Boolean, and the load path is gated on the sentinel, not on field presence.",
    "ledger_text": "n/a \u2014 completes the save-format field set the rewrite will ship",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "Every finding in this corpus counts the offline save as nineteen fields and none of them names the twentieth member, which is the one that decides whether the other nineteen are ever read. The record carries a Boolean 'saved' flag: web \u00a71t1832s0\u00a7.as:2814 sets 'data.saved = false' on reset while :2789/:2798/:2850/:2865 set it true on write, and EVERY load path gates on it \u2014 :2881, :2938 and :2956 all open with 'if(_loc1_.data.saved != true) { return; }', exactly as android QueryManagerBase.as:2967 does in loadCharCookieData. A rebuild that ports the nineteen named fields and omits the sentinel writes a save it will never load.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1352,11 +1352,11 @@
    "id": "lens3/offline-save-write-branch-is-nineteen-not-fourteen",
    "lane_impact": "L10 persistence. The rewrite packets carry both counts; without this the writer picks one arbitrarily. The answer is NINETEEN. persistence/offline-save-schema-is-fourteen-fields-already-written should be struck or corrected, and hunter-s26a/full-offline-save-schema-is-19-fields-in-both-builds plus the packet's web-19-field-save-schema-is-a-positional-twin kept.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "Two surviving findings give different sizes for the SAME offline SharedObject save, and the smaller one is a truncated read. persistence/offline-save-schema-is-fourteen-fields-already-written cites reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2910-2925 and reports FOURTEEN fields. That range ends at booleanStats. The else-branch actually runs :2912 through :2930 and writes NINETEEN: nextAPUpdate, nextDTUpdate, lastUpdate, playerlevel, playerStats, equipment, skillStats, skillSlots, inventory, stash, questItems, intStats, achievementStats, booleanStats, activeQuestList, completedQuestList, playerlocation, taunt, friends. The five the fourteen-count drops (activeQuestList, completedQuestList, playerlocation, taunt, friends) are the entire quest-progress and world-position half of the save -- a recreation built to the fourteen would silently lose quest state and respawn position on every load. Confirmed twice over: the delete twin at :2941-2959 clears the same nineteen, and the web v0.717 twin at reference/decompiled/shs3_payload/scripts/\u00a71t1832s0\u00a7.as:2815-2833 clears nineteen in the identical order.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A3",
@@ -1366,11 +1366,11 @@
    "id": "lens3/severed-limb-blob-build-label-is-web-v0717-not-android",
    "lane_impact": "L6 art-anim: RR:240 blocker 5 closes at the TARGET build, not at v0.682. Also a standing rule for the rewrite - when two findings on one asset disagree only about build label and an md5 join exists, the join wins and the conservative label is struck.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "Three surviving findings describe the same 977,277 bytes and disagree about which build they belong to. art-anim/severed-limb-death-variant-is-held (3 critics) is labelled build 'android v0.682 blob (asset, not tuning)'; NF-F/two-animation-blobs-are-md5-identical-web-to-android and NF-E/bindata-parity-map-21-of-27-identical say the same bytes are in the WEB payload. I recomputed both hashes: md5(reference/extracted/bindata/108_1t4635s0.bin) = md5(reference/extracted/android/99_MCSCharacter_HumanAnimationData.bin) = bcfd658e79fafb41f52431afb7d10622, 977,277 bytes each. Because bindata/ is extracted from the WEB payload (Stage-0 S0-1: all 27 web bindata files identified), the match is genuine cross-build parity and not the circular diff C2 forbids. The correct label is BOTH BUILDS, and for the target build's purposes web v0.717. The 'android v0.682 blob' label is the defective one and must not be the label the ledger inherits, because it would leave RR:240 blocker 5 nominally open on a parity technicality that has already been discharged by hash.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1380,11 +1380,11 @@
    "id": "lens3/human-anim-node-count-is-per-anim-not-a-fixed-rig",
    "lane_impact": "L6 art-anim. Corrects art-anim-audio-feel/rig-is-19-nodes' '20 in the human set' (true of 2 of 158) and, more importantly, establishes that per-frame node counts are not constant - the renderer contract is carry-forward-last-transform, not reset-per-frame. Also corrects the packet claim hunter-s26c/deathnohead-is-31-frames-of-bone-transforms-not-a-name, whose '17 node records per frame' is true of only 23 of its 31 frames.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "art-anim-audio-feel/rig-is-19-nodes (UPHELD) says the rig 'keys 19 nodes per pose in the stance sets (20 in the human set)'. The human set does not key 20 per pose. Census over all 158 <anim> rows in the human blob reference/extracted/bindata/108_1t4635s0.bin, counting <n> records per <f> frame: the per-anim maximum is 20 in only 2 anims, 19 in 130, 18 in 10, 17 in 13 and 13 in 3. Worse for a fixed-rig renderer, 44 of the 158 anims have a per-frame node count that VARIES within the clip, and some frames carry ZERO <n> records at all (heavyhorizontalslash_partc, balancedhorizontalslash_partc, balancedjumpslash_parta, sheathesword, backstep, forwardstep, katanajump all bottom out at 0). The two severance deaths are the sharpest case: deathnohead is 23 frames of 17 nodes then 8 frames of exactly ONE node (i=16), deathnohand is 23 frames of 17 then 2 frames of 3, while deathinhalf holds 17 across all 28. So a node record is a PER-FRAME DELTA LIST, not a full skeleton pose, and a renderer that resets unlisted joints each frame will tear the corpse apart on the tail of every dismemberment clip.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A1",
@@ -1436,11 +1436,11 @@
    "id": "hunter-s27b/the-per-stance-mastery-curve-is-linear-and-closes-the-ledgers-mastery-fork",
    "lane_impact": "L5 combat-core. Item 3 is upheld and upgraded: the curve is dmgMult(Light)=0.5+0.04m, dmgMult(Balanced)=1+0.02m, dmgMult(Heavy)=1.4, m in 0..10 \u2014 CONTRACT from web source. The decide-and-flag branch can be deleted.",
    "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.** ... \u2192 Either model the mastery curve or **decide-and-flag \"the build targets mastery-9\"** and label accordingly.",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "RR:161-163 item 3 tells the next build session to 'either model the mastery curve or decide-and-flag \"the build targets mastery-9\"'. The curve is in the payload, it is linear, and it reproduces BOTH ends of the ledger's own table. \u00a71t99s0\u00a7.as:3258-3271: base = minDamage + Math.random() * damageRange; Light = base * (0.5 + 0.4 * lightMastery * 0.1); Balanced = base * (1 + 0.2 * balancedMastery * 0.1); Heavy, Dual and Reversed all = base * 1.4 flat. At mastery 0 that is exactly the ledger's level-1 Shugyosha row 0.5 / 1.0 / 1.4; at mastery 10 it is exactly the ledger's ceiling row 0.9 / 1.2 / 1.4. The identical shape governs reach (0.5 + 0.04m for Heavy, 1 + 0.02m for Balanced, flat 1.4 for Light), so one linear rule covers both tables. This CONFIRMS the ledger's item 3 rather than overturning it, but it removes the fork: model the curve, do not flag a mastery-9 target. Build divergence to respect: android MCSPlayer.as:3205-3213 uses 0.5 + 0.5*m*0.01 and 1 + 0.5*m*0.01 on a 0-100 mastery scale with Heavy at 1.5, so the android coefficients must not be ported.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1478,11 +1478,11 @@
    "id": "ui-hud/the-change-stance-affordance-IS-the-portrait-bust-not-a-separate-button",
    "lane_impact": "L8 ui-hud: the stance control is the portrait bust itself (buttonMode, highlight child, stancecolor1 ring); the getString(208) label renders only on hover. Do not author a standalone Change Stance button.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "Correction to the lane_impact of the surviving BattleUI finding, which says the HUD needs 'a Change Stance button NEXT TO the portrait'. It is not next to the portrait \u2014 it IS the portrait. Android names the clickable \u00a71t5158s0\u00a7 'battlemodebust' (BattleUI.as:26), the same object that receives the player bust at :148 ('battlemodebust.bustcanvas.addChild(this.playerBust)') and carries the stance ring at :374 ('battlemodebust.stancecolor1.gotoAndStop(num)'). The 'Change Stance' label is a HOVER TOOLTIP, not a persistent button caption: android :192-193 adds MOUSE_OVER/MOUSE_OUT -> showChangeStanceLabel/hideChangeStanceLabel, and the web twin does the identical thing at \u00a71t113s0\u00a7.as:241-242 (MOUSE_OVER/MOUSE_OUT -> \u00a71t5215s0\u00a7/\u00a71t5216s0\u00a7) with :542 '\u00a71t5161s0\u00a7.visible = true;' / :548 '... = false;' and :200 hiding it at init. A porter following the lane_impact literally would ship a spurious second HUD widget.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1492,11 +1492,11 @@
    "id": "skills-meters/the-web-build-seeds-stance-mastery-at-1-too-parity-hole-closed",
    "lane_impact": "L2 skills-meters: the [1,10] mastery domain no longer carries an S0-3/C2 build-parity caveat.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "The stance-mastery finding disclosed its own parity hole in its build field ('android v0.682 data XML + web v0.717 formula') because the floor=1 evidence was StatsManager.as, an android file. That hole is now closed from the web side: \u00a71t1523s0\u00a7.as:2583-2593 is the web v0.717 new-character seed and it pushes the identical seven skill stats at value 1 \u2014 '\u00a71t9367s0\u00a7.push(new \u00a71t100s0\u00a7(1000,1));' / (1001,1) / (1002,1) / (1003,1) / (1042,1) / (1049,1) / (1050,1) \u2014 a line-for-line twin of StatsManager.as:740-746. So mastery floor 1 (Light x0.54, Balanced x1.02) is attested in v0.717 itself and does not depend on the android build.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1506,11 +1506,11 @@
    "id": "ui-hud/the-grey-cannot-change-stance-label-is-a-v0717-web-only-addition",
    "lane_impact": "L8 ui-hud: ship the three-state meter label from the WEB contract; do not port android's two-line updateReload. Also: the 48 offset lives in the UI rescale, mirroring \u00a71t99s0\u00a7.as:3050's gate.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "String 960 and its grey label are not merely missing from the android string table \u2014 the android build has no code path that would use them. Android BattleUI.as:259-263 updateReload is two lines: 'this.reloadbar.bar.scaleX = percentage;' and 'this.crittext.visible = percentage >= 1 && this.reloadbar.visible;'. There is no ratio==0 branch and no second htmlText. The web v0.717 twin \u00a71t113s0\u00a7.as:326-359 adds all three states (grey getString(960) at ratio 0, hidden at 0<r<1, black getString(175) + Snd_criticalDamage at r>=1) and rescales the input to '(param1 - 48) / (param2 - 48)' where android passes a pre-computed percentage. This explains why strings.json has no key '960' without needing a table-coverage argument, and it is a real, dated v0.682 -> v0.717 HUD change.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1534,11 +1534,11 @@
    "id": "ui-hud/which-hud-bar-is-hp-and-which-is-chi-is-still-unheld-by-colour",
    "lane_impact": "L8 ui-hud: before writing bar colours to config, find an artifact that binds colour to stat (a low-HP/death frame, or the SWF shape for hpbar). Do not inherit green=HP from prose on either side.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "Nobody has established, from an artifact that ties COLOUR to STAT, that the green bar is HP and the blue bar is Chi. The code proves only that there are exactly two numeric updaters and one numeral-free one: android BattleUI.as:245-249 updateHp (hptext/hptextshadow/hpbar) and :252-256 updateChi (chitext/chitextshadow/chibar), whose web twins are \u00a71t113s0\u00a7.as:312-317 (\u00a71t5171s0\u00a7/\u00a71t5172s0\u00a7/\u00a71t5170s0\u00a7 = hptext/hptextshadow/hpbar) and :319-324 (\u00a71t5165s0\u00a7/\u00a71t5166s0\u00a7/\u00a71t5164s0\u00a7 = chitext/chitextshadow/chibar), matched by call-order against the empty setReloadMax (:241-243) / \u00a71t5200s0\u00a7 and updateReload/\u00a71t5205s0\u00a7 that bracket them. Nothing in AS3 names a colour \u2014 the fills live in SWF art. The surviving 'video-study notes misread' finding asserts green=HP / blue=Chi, and B-11:7 asserts the exact opposite ('a thin green bar ... reads as a resource/stamina-type meter, NOT the blue HP bar ... a thick blue bar ... (this is HP)'). Circumstantial support for green=HP: REBUILD_READINESS.md:178 is Kheshav's own-eyes verdict on Nr4fQstqHDM_428.0 and reads 'player HP 20/20', and in that frame green is 20/20 while blue is 26/26; and across my three frames the green denominator is pinned at 20 (20/20, 14/20, 11/20) with its numerator falling during combat, while the blue denominator varies 26/31/47. That is inference plus one A5 line, not a colour-to-stat artifact. Flagging it because it would silently corrupt palette.ts and the config bar names, and because two committed docs currently disagree.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1548,11 +1548,11 @@
    "id": "ui-hud/battleui-obfuscation-map-extension-eight-more-fields",
    "lane_impact": "L8 ui-hud: unblocks the rest of the BattleUI port without further guessing at obfuscated field names.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "Byproduct of judging this packet: the web-to-android field map for \u00a71t113s0\u00a7 (BattleUI) now covers eight more members beyond the three the packet claimed, all fixed by matching call order and body shape against the android twin. \u00a71t5158s0\u00a7 = battlemodebust (:148-149 highlight/buttonMode == android :112-113); \u00a71t5170s0\u00a7/\u00a71t5171s0\u00a7/\u00a71t5172s0\u00a7 = hpbar/hptext/hptextshadow (:312-317 == android :245-249); \u00a71t5164s0\u00a7/\u00a71t5165s0\u00a7/\u00a71t5166s0\u00a7 = chibar/chitext/chitextshadow (:319-324 == android :252-256); \u00a71t5200s0\u00a7 = setReloadMax (both empty bodies, :308-310 == android :241-243); \u00a71t5205s0\u00a7 = updateReload (:326 == android :259); \u00a71t5215s0\u00a7/\u00a71t5216s0\u00a7 = showChangeStanceLabel/hideChangeStanceLabel (:241-242,:542,:548 == android :192-193,:433,:439). Together with the packet's \u00a71t5169s0\u00a7=crittext, \u00a71t5161s0\u00a7=changestancelabel, \u00a71t5182s0\u00a7=reloadbar, that is the whole player-status cluster of the combat HUD decoded.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A1",
@@ -1562,11 +1562,11 @@
    "id": "ui-hud/measured-third-bar-fill-in-t1082-is-23-percent-not-28",
    "lane_impact": "L8 ui-hud: no config consequence; a bookkeeping fix so a soft estimate is not promoted to a measured row.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "Minor numeric correction to the surviving string-960 finding, which describes the third bar in t1082.100.png as 'about 28% filled'. Per-pixel scan at y=1035 across x=235..560: the white fill run is x=245..304 (60 px) and the brown track runs from x=245 to about x=514 (samples read (46,29,0) through x=510 and (1,1,1) at x=520), giving 60/270 = 22.6%. Not load-bearing \u2014 the finding's shipped number is the threshold 48, which comes from \u00a71t113s0\u00a7.as:328, not from the fill fraction \u2014 but the 28% figure should not be transcribed into any doc as a measurement.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1604,11 +1604,11 @@
    "id": "skills-meters/the-initplayer-argument-order-is-a-noncircular-web-android-bridge",
    "lane_impact": "L2 skills-meters + L5 combat-core: an argument-order bridge that names six web fields from android symbols without diffing a file against itself - reusable wherever a web/android pair shares a call signature.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "C2 says the four data XMLs are android-side, so diffing them proves nothing, and that combat tuning parity is NOT established. Here is a bridge that is not circular. Android StatsManager.as:1834 calls `player.initPlayer(0, HP, MAXHP, CHI, MAXCHI, DEFENSE, getBaseReload(), getMinDamage(), getDamageRange(), getBaseSlashLength(), getSlashUsage(), getStat(1000), getStat(1001), getStat(1002), getLevel())` - fifteen named arguments. The web fighter's ctor \u00a71t99s0\u00a7.as:188-201 takes exactly fifteen ints and assigns them in exactly that order, including `this.defense = param6` at the DEFENSE slot, which pins the alignment independently. That decodes six obfuscated web fields at once (\u00a71t3257s0\u00a7=MAXHP, \u00a71t4413s0\u00a7=MAXCHI, \u00a71t4421s0\u00a7/\u00a71t4422s0\u00a7/\u00a71t4423s0\u00a7 = skills 1000/1001/1002, \u00a71t4420s0\u00a7=baseSlashLength) and it is what actually rules out an off-by-one in the mastery term.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1632,11 +1632,11 @@
    "id": "ui-hud/the-third-bar-is-a-three-state-meter-and-fires-snd-criticaldamage-at-full",
    "lane_impact": "L8 ui-hud: ship ONE meter widget with three text states and a transition sound, not two separate crit/stance indicators. Also names the exact colours: #BBBBBB empty-state, #000000 full-state.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "The packet stops at two of the third bar's three states. \u00a71t113s0\u00a7.as:348-359 is the third: at ratio >= 1 the same TextField takes \u00a71t5203s0\u00a7 = `\"<font color='#000000'>\" + getString(175) + \"</font>\"` (built at :110), i.e. BLACK 'Critical Hit', and :350-352 fire `\u00a71t88s0\u00a7.instance.\u00a71t1516s0\u00a7(\"Snd_criticalDamage\")` on the transition into that state - guarded so it plays once, not per frame. So the single track under HP and Chi is a three-state readout on one 0..192 resource: empty -> #BBBBBB getString(960); filling -> no text; full -> #000000 getString(175) plus a one-shot sound. Under correction C3 the audio is recovered, so Snd_criticalDamage is a nameable, shippable stem rather than a TODO.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1646,11 +1646,11 @@
    "id": "ui-hud/string-960-is-absent-from-android-because-the-android-label-is-a-portrait-rollover",
    "lane_impact": "L8 ui-hud: build the WEB behaviour (persistent on-bar empty-state label), not the android hover tooltip - and record this as a discharged C2 instance: the two builds' battle HUDs are NOT at parity on this element.",
    "ledger_text": "",
-   "live_critics": 0,
+   "live_critics": 2,
    "status": "KILLED",
    "text": "The packet notes that string 960 is unresolvable from the android table but not why, and the mechanism is a genuine, first-hand v0.717-vs-v0.682 divergence - one of the very few that discharges part of the C2 caveat instead of restating it. Android BattleUI.as:262 is the ENTIRE reload-bar text logic: `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` - the android build shows the crit text at full and nothing at all otherwise. It has no empty-state label on the bar. Instead its 'Change Stance' string lives on a mouse rollover over the portrait: :192-193 add MOUSE_OVER/MOUSE_OUT listeners on battlemodebust bound to showChangeStanceLabel/hideChangeStanceLabel (:430-440), which toggle changestancelabel and the bust highlight together. The web build replaced that hover affordance with a persistent on-bar notice, which is why getString(960) exists in v0.717 and is missing from the v0.682 table (strings.json[\"960\"] returns None). Android also normalises the ratio itself before the call, while the web computes (reload-48)/(max-48) inside \u00a71t5205s0\u00a7.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "REFUTED by 2 of 2 live critics"
   },
   {
    "artifact_class": "A2",
@@ -1660,11 +1660,11 @@
    "id": "ui-hud/the-change-stance-button-is-the-portrait-bust-itself",
    "lane_impact": "L8 ui-hud: one clickable portrait widget carrying bustcanvas + a stancecolor1 ring on frames 1/2/3 + a highlight child - not a portrait plus a separate button. Confirms ledger item 10 (ring is stance-coloured) and supplies the frame indices.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "Correcting the packet's own lane_impact, which says the HUD 'needs a Change Stance button next to the portrait'. It is not next to the portrait; it IS the portrait. Android BattleUI.as:275-277 reads `if(this.battlemodebust.hitTestPoint(mousex,mousey)) { this.stanceButtonClick(); }`, and :112-113 set `battlemodebust.highlight.visible = false; battlemodebust.buttonMode = true;`. The web twin is identical in shape: \u00a71t113s0\u00a7.as:148-149 set `\u00a71t5158s0\u00a7.highlight.visible = false; \u00a71t5158s0\u00a7.buttonMode = true;` and :379-381 hit-test \u00a71t5158s0\u00a7 into \u00a71t5207s0\u00a7. So \u00a71t5158s0\u00a7 = battlemodebust. The stance COLOUR rides the same object: web \u00a71t5208s0\u00a7 (:482-485) does `\u00a71t5158s0\u00a7.\u00a71t15895s0\u00a7.gotoAndStop(param1)` against android setStanceColor (:372-375) `battlemodebust.stancecolor1.gotoAndStop(num)`, called from the stance switch with 1=Light, 2=Balanced, 3=Heavy (\u00a71t99s0\u00a7.as:3101, :3112, :3127). That means the stance-coloured portrait ring the ledger already records as item 10 and the stance button are ONE widget, and the ring index is an explicit 1/2/3 frame number rather than an inferred palette.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1674,11 +1674,11 @@
    "id": "NF-S27B-1/stance-mastery-floor-is-zero-not-one",
    "lane_impact": "L5 combat-core + L2 skills-meters: encode MASTERY domain [0,10], floor 0, player fresh-save default 1, npc default 0 via absent-skill-row. This is the premise the already-upheld mastery-0 reach findings need, and it is what makes the packet claim's '[1,10]' the defective side of that contradiction.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "CONTRADICTION SETTLED: the stance-mastery domain is [0,10], not [1,10]. The 1 in StatsManager.as:740-742 (IntStat(1000,1)/(1001,1)/(1002,1)) is a NEW-PLAYER DEFAULT, not an index base - the enclosing function is initNewPlayer at StatsManager.as:689. For NPCs the value comes from XMLNpc.getMastery, which ends 'return 0;' at :685 when the npc carries no matching <skill> row, and a census of reference/extracted/npcdata.xml shows only 76 of 495 <npc> rows carry skill 1000 (77 carry 1001, 79 carry 1002; of those that do, 74 each are at <lvl>10</lvl> and the rest at 2-3). So 419 of 495 npcs evaluate the stance curve at mastery 0. EnemyElite.as:89 declares 'var balancedMastery:int = 0;' before its getMastery reads at :103-105, and the web fighter class declares all three fields '= 0' at \u00a71t99s0\u00a7.as:107/:109/:111. This is NOT a build-parity split: web v0.717 and android v0.682 agree the field is a plain int defaulting to 0. Consequence for the rewrite: a config that clamps mastery to >= 1 mis-prices every generic mob's stance damage AND reach - Light damage would floor at 0.54 instead of 0.50 and Heavy reach at 0.54x instead of 0.50x of base. The mastery-10 CEILING is unaffected and stands.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1688,11 +1688,11 @@
    "id": "NF-S27B-2/cannot-change-stance-caption-and-the-gate-are-one-predicate",
    "lane_impact": "L8 ui-hud + L5 combat-core: one number, 48, drives both the bar's zero point and the stance gate. Ship them from a single config constant so the caption cannot drift out of sync with the refusal - and reproduce the reload==48 boundary rather than 'fixing' it.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "CONTRADICTION SETTLED between two findings that both already survive: LEDGER_EVIDENCE.md:1630 banks 'CANNOT CHANGE STANCE is NOT a lock notice, it is the reload/crit meter's own low-end label' while :160 banks it is 'a literally true refusal'. Both are true, because they are the same constant written in two files. The caption's display rule is \u00a71t113s0\u00a7.as:328 ratio = (reload-48)/(maxreload-48), negatives clamped to 0 at :329-332, shown at :336 iff ratio == 0, i.e. iff reload <= 48. The switch gate is \u00a71t99s0\u00a7.as:3048-3050 '\u00a71t4469s0\u00a7() && this.\u00a71t4414s0\u00a7 >= 48', reinforced by the early return at :3058-3061 'if(this.\u00a71t4414s0\u00a7 < 48) return;'. The two predicates are complements except on ONE value: at reload == 48 exactly, the bar renders 0% and the caption is on screen while the switch is legal. That single-value overlap is a shipped cosmetic off-by-one, not a disagreement between the findings. Neither reading should be dropped in the rewrite; write the caption as a meter-state readout whose threshold IS the gate.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1702,11 +1702,11 @@
    "id": "NF-S27B-3/the-three-state-focus-caption-is-web-only",
    "lane_impact": "L8 ui-hud: build the Focus bar from the WEB shape - UI-side normalisation, dead zone 48, three states (grey 960 / hidden / black 175 + Snd_criticalDamage). The android two-state version is the wrong build's widget.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "BUILD PARITY, LABELLED: the three-state caption on the Focus/crit bar exists only in web v0.717. Android v0.682's BattleUI.updateReload (BattleUI.as:259-263) is two lines - 'this.reloadbar.bar.scaleX = percentage;' and 'this.crittext.visible = percentage >= 1 && this.reloadbar.visible;'. There is no ratio==0 branch, no grey label, and no Snd_criticalDamage call; string 960 has no row in the android table at all. The web twin \u00a71t5205s0\u00a7 (\u00a71t113s0\u00a7.as:326-361) instead takes the RAW (reload, maxreload) pair, normalises it in the UI at :328 with a 48 dead zone, and drives three states plus the crit sound. Android normalises player-side with a 24 dead zone before the call - MCSPlayer.as:3272 'StageManager.getBattleUI().updateReload((this.reload - 24) / (this.maxreload - 24));'. So the widget is architecturally different, not just differently tuned: any port that reads the android reload bar as the same component will ship a two-state meter with the wrong dead zone and no stance caption.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1716,11 +1716,11 @@
    "id": "NF-S27B-4/the-change-stance-label-is-a-hover-tooltip-on-the-portrait",
    "lane_impact": "L8 ui-hud: do not draw a standing 'Change Stance' button beside the portrait. Make the portrait bust the hit target, add a highlight + 'Change Stance' caption on hover only, and keep the caption hidden otherwise - otherwise the HUD will not match any reference frame.",
    "ledger_text": "",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 2,
+   "status": "UPHELD",
    "text": "REFINEMENT to the BattleUI stance-button finding: the 'Change Stance' text is not a persistent HUD button label, and the clickable is the portrait bust itself. \u00a71t113s0\u00a7.as:200 sets '\u00a71t5161s0\u00a7.visible = false' at construction; :241-242 registers MOUSE_OVER -> \u00a71t5215s0\u00a7 and MOUSE_OUT -> \u00a71t5216s0\u00a7 on \u00a71t5158s0\u00a7; :542-543 (\u00a71t5215s0\u00a7) sets '\u00a71t5161s0\u00a7.visible = true' together with '\u00a71t5158s0\u00a7.highlight.visible = true', and :548-549 (\u00a71t5216s0\u00a7) hides both. The android twin is line-for-line: BattleUI.as:160 hides changestancelabel, :192-193 wires showChangeStanceLabel/hideChangeStanceLabel onto battlemodebust, :432-433 and :438-439 are the bodies. Obfuscation map extended: \u00a71t5158s0\u00a7 = battlemodebust, \u00a71t5215s0\u00a7 = showChangeStanceLabel, \u00a71t5216s0\u00a7 = hideChangeStanceLabel. This is why the words 'CHANGE STANCE' appear in NO combat frame I opened - the tooltip only paints on hover, and the mouse is not over the bust in any sampled still.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
   },
   {
    "artifact_class": "A2",
@@ -1730,9 +1730,163 @@
    "id": "NF-S27B-5/the-web-war-map-twin-is-1t7934s0-not-1t1524s0",
    "lane_impact": "L10 world-exploration: write the war board from \u00a71t7934s0\u00a7 and the world map from \u00a71t6481s0\u00a7, both WEB v0.717 - 10 px per territory, flag at (x+21)*10+4.5 / (y+51)*10+8.8, marker at +5 / +8.5, land test getPixel(x+13, y+51) != 0. Re-tag the banked 10px-pitch finding from android-with-caveat to both-builds-attested.",
    "ledger_text": "",
+   "live_critics": 2,
+   "status": "UPHELD",
+   "text": "MIS-NAMED TWIN in an already-banked finding. LEDGER_EVIDENCE.md:3207 banks [[world/war-map-renders-at-10px-per-territory]] with the build note 'android v0.682 (the web twin is \u00a71t1524s0\u00a7; the shift constants are identical)'. \u00a71t1524s0\u00a7 is the QuestEngine twin - the same corpus at :420 places the mask load and territory enumeration there ('loaded at \u00a71t1524s0\u00a7.as:697-702, enumerated ... at :716-739'). The class that actually twins WarSelectUI is \u00a71t7934s0\u00a7: it declares the same three shifts at :15/:17/:19 (8/21/51), carries the same land test at :232, and places the war flag at :299-300 with the identical '*10 + 4.5' / '*10 + 8.8' pitch that the banked finding quotes from WarSelectUI.as:233-234, plus the player marker at :320-321 with '+5' / '+8.5' matching WarSelectUI.as:253-254. \u00a71t6481s0\u00a7 is the WorldMapUI twin, repeating the three shifts at :17/:19/:21 and the land test at :263. Correcting the twin name is what actually discharges that finding's android-only caveat - the pitch is attested WEB-side, so C2 does not apply to the war board's rendering constants either.",
+   "unit": "critic-new_finding",
+   "why": "survived 2 live critic(s); overturn not separately ruled on"
+  },
+  {
+   "artifact_class": "A1",
+   "build": "both",
+   "cite": "reference/frames/session11/crit-focus/t1082.100.png (crop x0-640,y760-1080 of 1920x1080, 3x LANCZOS; pixel row y=1038 sampled x=240..540) \u00b7 reference/frames/session11/crit-focus/t1003.000.png (same crop; row y=1037) \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (same crop; row y=1037) \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:334 \u00b7 reference/decompiled/shs3_android/scripts/BattleUI.as:262",
+   "claims_overturn": false,
+   "id": "ui-hud/third-hud-row-is-shared-reload-bar-or-cannot-change-stance-banner",
+   "lane_impact": "L8 ui-hud: do not lay out a fourth row for the stance-lock banner. It is the same 260x16-ish slot as the reload bar, swapped by one visibility flag. Getting this wrong shifts every element below it (the '150% DAMAGE' buff line sits directly under this row in all three frames).",
+   "ledger_text": "",
    "live_critics": 0,
    "status": "KILLED",
-   "text": "MIS-NAMED TWIN in an already-banked finding. LEDGER_EVIDENCE.md:3207 banks [[world/war-map-renders-at-10px-per-territory]] with the build note 'android v0.682 (the web twin is \u00a71t1524s0\u00a7; the shift constants are identical)'. \u00a71t1524s0\u00a7 is the QuestEngine twin - the same corpus at :420 places the mask load and territory enumeration there ('loaded at \u00a71t1524s0\u00a7.as:697-702, enumerated ... at :716-739'). The class that actually twins WarSelectUI is \u00a71t7934s0\u00a7: it declares the same three shifts at :15/:17/:19 (8/21/51), carries the same land test at :232, and places the war flag at :299-300 with the identical '*10 + 4.5' / '*10 + 8.8' pitch that the banked finding quotes from WarSelectUI.as:233-234, plus the player marker at :320-321 with '+5' / '+8.5' matching WarSelectUI.as:253-254. \u00a71t6481s0\u00a7 is the WorldMapUI twin, repeating the three shifts at :17/:19/:21 and the land test at :263. Correcting the twin name is what actually discharges that finding's android-only caveat - the pitch is attested WEB-side, so C2 does not apply to the war board's rendering constants either.",
+   "text": "The player HUD's THIRD row is a single slot that shows EITHER the reload/crit bar OR the 'CANNOT CHANGE STANCE' banner, never both. Measured at native 1920x1080 on three frames: the row occupies y~1031-1046, x~250-510 in ALL of them. In t1082.100.png that slot is a bar - white fill (~#EBEBEB) from x~250 to x~315 on the same brown empty track (~#311F00) the green and blue bars use - and there is NO 'CANNOT CHANGE STANCE' text anywhere. In t1003.000.png and Nr4fQstqHDM_428.0.png the identical slot is solid brown track with pale glyphs spelling 'CANNOT CHANGE STANCE', and there is no bar fill. This is the visual half of a mechanic the code already states: \u00a71t113s0\u00a7.as:334 guards the whole three-state block on `this.\u00a71t5182s0\u00a7.visible`, and BattleUI.as:262 reads `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` - the widget has an explicit visibility flag, and the frames show what fills the gap when it is off.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "reference/frames/session11/crit-focus/t1082.100.png (native 1920x1080, no crop needed for pixel sampling; verified visually at crop x0-640,y760-1080 upscaled 3x LANCZOS) \u00b7 docs/research/REBUILD_READINESS.md:171",
+   "claims_overturn": false,
+   "id": "ui-hud/three-hud-bar-fill-and-track-colours-measured-from-a-frame",
+   "lane_impact": "L8 ui-hud / palette.ts: three fill tokens and ONE shared track token, not three tracks. Label all four INFERRED-from-video, not CONTRACT, until a SWF shape is named.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "The three player-HUD bar fills and their shared empty track are MEASURED, not inferred, from one 1080p frame at native resolution. Sampling t1082.100.png at x=255..275 straight down: bar 1 core y=983 = RGB(0,154,5) ~ #009A05 green; bar 2 core y=1010 = RGB(51,78,227) ~ #334EE3 blue; bar 3 core y=1038 = RGB(236,236,236) ~ #ECECEC near-white. All three ride the SAME empty track, sampled to the right of each fill at y=983/1010/1038, x=440..500: RGB(~49,31,0) ~ #311F00 dark brown. CAVEAT stated up front: this is a lossy 1080p re-encode of an 800x480 native game (REBUILD_READINESS.md:171), so these are within-a-few-units approximations of the OG hues, not the SWF's authored fill values - the SWF shapes under reference/extracted/shapes/ are 1,822 unnamed numbered SVGs with no SymbolClass map, so the authored value is not currently recoverable. Explicitly does NOT bind colour to STAT: it binds colour to POSITION (1st/2nd/3rd track).",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "reference/frames/session11/crit-focus/t1082.100.png (crop x0-640,y760-1080 of 1920x1080, 3x LANCZOS - blue bar reads '31/47') \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (same crop - green '20/20', blue '26/26') \u00b7 docs/research/REBUILD_READINESS.md:178 \u00b7 docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7",
+   "claims_overturn": false,
+   "id": "ui-hud/b11s-blue-is-hp-rests-on-an-inference-a-frame-breaks",
+   "lane_impact": "L8 ui-hud: keep the bar-to-stat binding OPEN, but stop treating B-11:7 as symmetric counter-evidence - its supporting inference is refuted by a frame. The cheapest closing artifact is a death/near-death frame: whichever bar hits 0 immediately before the 'YOU WERE DEFEATED' screen is HP. A-22-death-you-were-defeated-screen is the segment to pull frames from.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "B-11:7's stated REASON for calling the blue bar HP is broken by a frame, though its observation is not. B-11:7 argues the thick blue bar 'is HP \u2014 stayed pinned at 47/47 the whole segment, i.e. player took no damage'. reference/frames/session11/crit-focus/t1082.100.png shows a blue bar with the SAME maximum, 47, reading 31/47 - so the max-47 blue bar demonstrably depletes. B-11's within-segment observation survives (blue may well have been pinned across 25:01-27:00); the inference from it does not. Pushing the other way in the same direction: reference/frames/duel_dense/Nr4fQstqHDM_428.0.png reads green 20/20 and blue 26/26, and REBUILD_READINESS.md:178 - Kheshav's own-eyes A5 verdict on that exact frame range - records 'player HP **20/20**'. In that frame the ONLY bar reading 20/20 is the green one, so his HP read lands on GREEN. STANDING INVARIANT, said out loud: B-11 is a measurement doc and Nr4fQstqHDM_428.0 is a frame, and THE FRAME WINS. Filed PARTIAL, not HELD, because this is still a two-artifact join (A5 log line + A1 frame) rather than one artifact naming both a colour and a stat, and because it depends on Kheshav not having transcribed the wrong row. It does not close 'which bar is which'; it does say which side of the contradiction is currently carrying weight.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3131 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3027-3067,:182",
+   "claims_overturn": false,
+   "id": "nf/web-stance-slash-length-formulas-and-the-light-mislabel",
+   "lane_impact": "L2 skills-meters + L5 combat-core: any stance reach number must be taken from the WEB formulas, and 'Light x0.54' must be relabelled HEAVY x0.54 wherever it appears - web Light carries no mastery scaling whatsoever, so mastery buys reach only in Balanced and Heavy. Another dated C2 divergence with numbers.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "Found while judging skills-meters/the-web-build-seeds-stance-mastery-at-1. The stance slash-length formulas DIVERGE between builds, and the 'Light x0.54' figure in circulation is mislabelled - 0.54 is HEAVY. Web v0.717 (\u00a71t99s0\u00a7.as, switch at :3091): Light case \u00a71t12220s0\u00a7 :3094 is a FLAT 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4' with NO mastery term at all; Balanced \u00a71t12221s0\u00a7 :3105 is '\u00a71t4420s0\u00a7 * (1 + 0.2 * \u00a71t4422s0\u00a7 * 0.1)' = x1.02 at mastery 1; Heavy \u00a71t12222s0\u00a7 :3116 is '\u00a71t4420s0\u00a7 * (0.5 + 0.4 * \u00a71t4423s0\u00a7 * 0.1)' = x0.54 at mastery 1, floored at 100 px by :3117-3120. Android v0.682 (MCSPlayer.as setStance :3027): LIGHT :3030 'baseSlashLength * 1.5'; BALANCED :3041 '(1 + 0.5 * balancedMastery * 0.01)'; HEAVY :3052 '(0.5 + 0.5 * heavyMastery * 0.01)' floored at 100 by :3053-3056. So THREE things differ: the Light constant (1.4 web vs 1.5 android), the Balanced mastery coefficient (0.2*0.1=0.02 vs 0.5*0.01=0.005), and the Heavy coefficient (0.04 vs 0.005) - a 4x-8x difference in how much mastery buys. \u00a71t4422s0\u00a7/\u00a71t4423s0\u00a7 are pinned to balancedMastery/heavyMastery by MCSPlayer.as:182's named signature via the initPlayer argument bridge. There is also a fourth web case \u00a71t12224s0\u00a7 at :3130-3131 with a flat *1.4 (android's REVERSED_STANCE, :3067, is *1.5).",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:8-22 + reference/decompiled/shs3_android/scripts/Item.as:6-20",
+   "claims_overturn": false,
+   "id": "nf/web-item-carries-three-modifier-constants-android-lacks",
+   "lane_impact": "Items lane: three modifier ids (206, 207, 208) exist only in v0.717. Do not treat an android-derived modifier list as complete, and re-check the 412 <modifier> rows in itemdata.xml (an ANDROID artifact per C2) for whether 206/207/208 appear at all.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "Found while checking the mis-ranged third example in nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence. The web v0.717 Item class carries EIGHT modifier constants where android v0.682 carries five. Web \u00a71t17s0\u00a7.as:8-16 maps one-for-one onto android Item.as:8-16 (80/81/82/89/125 = PCOLORMODID/SCOLORMODID/USESMODID/NAMEMODID/CREATORMODID), but web :18-22 adds \u00a71t8739s0\u00a7=206, \u00a71t8740s0\u00a7=207, \u00a71t8741s0\u00a7=208 with no android counterpart - android's constant block ends at :18 'USEPROCGENNAME' and :20 begins the instance fields. Confirmed by grep: 'grep -nE \"= *20[678];\" reference/decompiled/shs3_android/scripts/Item.as' returns zero hits. So item modifier ids 206/207/208 are a web-side addition, and any item-modifier table ported from the android build is missing three modifier kinds.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3029-3090",
+   "claims_overturn": false,
+   "id": "nf/stance-ring-frame-index-is-not-a-bijection",
+   "lane_impact": "L8 ui-hud: ship the ring as a 3-frame display driven by setStanceColor, not as a stance readout; and never infer stance from ring colour in a frame study - blue/tan/red cannot separate Balanced from Reversed or Heavy from Dual.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "Qualifies ui-hud/the-change-stance-button-is-the-portrait-bust-itself without refuting it. The stancecolor1 frame index is 1/2/3 as that finding says, but it is NOT one-to-one with stance: android MCSPlayer.as's setStance switch calls setStanceColor(2) from BOTH BALANCED_STANCE (:3048) and REVERSED_STANCE (:3074), and setStanceColor(3) from BOTH HEAVY_STANCE (:3063) and DUAL_STANCE (:3089). Five stances, three ring frames. Web \u00a71t99s0\u00a7.as's switch has the same shape with a fourth case \u00a71t12224s0\u00a7 at :3130. So a rebuild that infers the player's stance from the ring colour will be wrong in Reversed and Dual, and the ring is a three-value display, not a stance readout.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg (own crop (0,380)-(560,576) x3 LANCZOS) + reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png (own crop (0,756)-(1056,1080) x2 LANCZOS) + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:110-111",
+   "claims_overturn": false,
+   "id": "nf/third-hud-row-carries-an-unmapped-stance-name-textfield",
+   "lane_impact": "L8 ui-hud: do not model the third HUD row as a two-state crit/empty label. There is a stance-name caption ('LIGHT STANCE') on that row that the current BattleUI field map does not cover - find its field in \u00a71t113s0\u00a7 before authoring the row.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "Found by opening two v0.717 frames while judging the string-960 pair. The third HUD row under the HP/Chi bars renders at least THREE different captions in the web build, and one of them cannot come from \u00a71t5169s0\u00a7. My crop of reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg at (0,380)-(560,576) x3 shows a GREY 'CANNOT CHANGE STANCE' on a brown track - the getString(960) empty-state branch at \u00a71t113s0\u00a7.as:111/:340. My crop of reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png at (0,756)-(1056,1080) x2 shows, on the same row, a WHITE 'LIGHT STANCE' with no visible track - while 'CHANGE STANCE' (getString(208), field \u00a71t5161s0\u00a7) is simultaneously drawn beneath the bust. \u00a71t113s0\u00a7 can write only two htmlText values into \u00a71t5169s0\u00a7 (:110 getString(175) black, :111 getString(960) grey), and \u00a71t5161s0\u00a7 is already accounted for in the same frame, so 'LIGHT STANCE' is a FOURTH, currently unmapped TextField occupying that row. The BattleUI obfuscation map is therefore not yet complete for the player-status cluster.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "reference/frames/session11/crit-focus/t1003.000.png, crop (0,820)-(660,1080) upscaled 3x LANCZOS (and a second read at (150,900)-(900,1080) 2x)",
+   "claims_overturn": false,
+   "id": "s27c-cite/cannot-change-stance-caption-is-confirmed-ON-A-FRAME-not-just-in-source",
+   "lane_impact": "L8 ui-hud: the Focus/reload bar is the THIRD bar in the stack (HP green, Chi blue, Focus brown), full-width, with its caption drawn inside the bar rather than beside it, and the empty state is a dark brown trough - not a hidden widget. Ship string 960 as 'CANNOT CHANGE STANCE' in caps, grey #BBBBBB, gated on ratio == 0 exactly as 1t113s0.as:336 does.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "NF-S27B-2 and NF-S27B-3 are both pure A2 source readings. Neither has ever been confirmed against the primary reference. It is confirmed now, and it lands exactly where the source predicts. 1t113s0.as:328 computes ratio = (reload-48)/(maxreload-48), clamps negatives to 0 at :329-332, writes bar.scaleX = ratio at :333, and at :336 shows 1t5204s0 iff ratio == 0; :111 defines 1t5204s0 = \"<font color='#BBBBBB'>\" + getString(960) + \"</font>\". The frame shows precisely that state: third bar at zero fill, grey caption on it, reading CANNOT CHANGE STANCE. So (a) web string 960 = 'Cannot Change Stance' is now attested from the frame even though the android table has no key 960 at all, (b) the grey #BBBBBB render is confirmed against a real still, and (c) the three-state web widget is the one the videos show - the android two-state crittext-only widget is not what shipped in the reference footage. This also fixes NF-S27B-4: the words CHANGE STANCE DO appear in a combat frame, as part of this caption, which is a different field (1t5169s0, the meter readout) from the hover tooltip (1t5161s0 = changestancelabel = string 208 'Change Stance'). Stated per the standing invariant: the frame beats the prose that said no frame carried those words.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "web v0.717 (shape) + android v0.682 (formula)",
+   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:105,:194,:223 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:107,:182,:193,:222 + reference/decompiled/shs3_android/scripts/EnemyElite.as:99-106",
+   "claims_overturn": false,
+   "id": "s27c-cite/the-reach-base-is-a-speed-derived-slash-length-not-a-constant",
+   "lane_impact": "L5 combat-core: model reach as baseSlashLength(speed) x stanceMult(mastery), floor 100 on Heavy only. The player's baseSlashLength comes from the equivalent web caller and is still unread - that is now the ONLY missing number for reach, and it is one lookup, not a measurement.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "hunter-s27b/heavy-reach-has-a-hard-100px-floor records its one remaining unknown as 'the base value 1t4420s0 ... which is set elsewhere and which I did not resolve'. It resolves. Web: 1t99s0.as:105 initialises 1t4420s0 to 10, :194 assigns it from the tenth initPlayer parameter, and :223 halves it ('*= 0.5') in one branch. The android twin is positionally identical - MCSPlayer.as:107 'internal var baseSlashLength:int = 10;', :182 declares initPlayer with baseSlashLength as its tenth parameter, :193 assigns it, :222 halves it - which names 1t4420s0 = baseSlashLength. The value fed in, for NPCs, is computed by the caller: EnemyElite.as:102 baseSlashLength = 120 + floor(90 * speed / (20 + speed)), i.e. a saturating curve from 120 px at speed 0 toward 210 px, 165 px at speed 20. So reach = baseSlashLength x per-stance multiplier, and at the low end the 100 px heavy floor genuinely bites: base 120 at mastery 0 gives 60, clamped up to 100. CAVEAT, stated plainly: the formula line is android v0.682, so under S0-3/C2 it is v0.682 until a web caller is read; what IS web-attested is that the base is an injected per-fighter slash length with a halving branch, not a global constant. Two further web stance cases the original finding did not list: 1t99s0.as:3131 (Dual) = base * 1.4 and :3142 (Reversed) = base * 1.0.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A1",
+   "build": "unresolved - the frame is web-footage, the number matches android",
+   "cite": "reference/frames/session11/crit-focus/t1003.000.png, crop (150,900)-(900,1080) upscaled 2x LANCZOS - yellow text '150% DAMAGE' directly under the CANNOT CHANGE STANCE bar",
+   "claims_overturn": false,
+   "id": "s27c-cite/the-150-percent-damage-readout-matches-no-web-multiplier",
+   "lane_impact": "L5 combat-core: one grep away from either confirming the web stance table or exposing that the sampled footage is not v0.717. Resolve the field before the mastery curve is written into config.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "STILL_UNHELD, filed as a lead against a claim I upheld, because it is the kind of thing that should be caught before a number becomes CONTRACT. hunter-s27b/the-per-stance-mastery-curve-is-linear makes web damage multipliers 0.5+0.04m (Light) / 1+0.02m (Balanced) / 1.4 flat (Heavy, Dual, Reversed) with crit x1.3 - the maximum any of those reaches is 1.4, and no combination yields 1.5. The android build is the one whose Heavy is exactly 1.5 (MCSPlayer.as:3213) and whose Balanced tops out at 1.5 on a 0-100 mastery scale (:3208). A reference still shows '150% DAMAGE' on the HUD. I did NOT resolve which field paints it: 1t113s0.1t5208s0 is only 'this.1t5158s0.1t15895s0.gotoAndStop(param1);' (a stance icon frame), grep for a '%'-composed damage string in 1t113s0.as and android BattleUI.as returns nothing, and the string table's percentage rows (e.g. '175' 'Critical Hit', '7019' 'Damage: 200% ATK', '7058' 'Damage: 110% ATK') are skill descriptions. So this may be a skill/buff popup with nothing to do with stance damage. It is a lead, not a refutation - but until someone names the field, the web stance table should be banked as CONTRACT-pending, not CONTRACT.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "both - blob 108 is md5-identical web to android",
+   "cite": "reference/extracted/bindata/108_1t4635s0.bin (own python parse of all 158 <anim> blocks, counting <n> per <f>)",
+   "claims_overturn": false,
+   "id": "s27c-cite/twenty-six-human-anims-carry-empty-frames-not-seven",
+   "lane_impact": "L6 art-anim: the animation player MUST hold the last written transform for every joint not listed in the current frame, and an empty <f> is a legal hold-frame (a timing beat), not a corrupt row to skip. Do not 'repair' empty frames in the importer.",
+   "ledger_text": "",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "lens3/human-anim-node-count-is-per-anim-not-a-fixed-rig names seven anims that 'bottom out at 0'. The real count is TWENTY-SIX of 158, and the seven named are simply the first seven in document order. The full list: heavyhorizontalslash_partc (4 empty of 7 frames), balancedhorizontalslash_partc (2/7), balancedjumpslash_parta (2/7), sheathesword (2/7), backstep (2/16), forwardstep (10/16), katanajump (2/4), spearbowjump (2/4), downedup (2/4), downstab_up (7/10), downedup2 (2/25), gangnam (44/88), jutsu_ground_parta (6/9), jutsu_punch_parta (4/5), jutsu_blow_parta (4/8), jutsu_blow_partb (15/18), stomp_parta (5/10), punchcombo_parta (3/5), punchcombo_partb (4/6), punchcombo_partc (3/7), punchcombo_partd (8/12), narutorun (6/12), sheathesword3 (22/33), jutsu_air (5/10), punchground_parta (4/7), punchground_partb (13/16). This enlarges the renderer risk rather than changing its direction: 16% of the human clips contain frames that key NOTHING, and in gangnam and sheathesword3 the empty frames are the majority. A renderer that resets unlisted joints per frame does not merely tear the corpse apart on dismemberment tails - it blanks the character outright for half of two long clips. Carry-forward-last-transform is mandatory, not an optimisation.",
    "unit": "critic-new_finding",
    "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
   },
@@ -23410,13 +23564,13 @@
   }
  ],
  "summary": {
-  "claims_total": 1672,
-  "killed": 298,
+  "claims_total": 1683,
+  "killed": 280,
   "ledger_sentences_hit": 259,
   "not_upheld": 61,
   "overturns_claimed_but_not_upheld": 60,
   "surviving_overturns": 514,
-  "upheld": 1313,
-  "usable_findings": 1374
+  "upheld": 1342,
+  "usable_findings": 1403
  }
 }

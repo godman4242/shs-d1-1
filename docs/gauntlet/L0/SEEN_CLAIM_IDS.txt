@@ -1,8 +1,8 @@
 # SEEN CLAIM IDS — every claim banked across every run of L0 so far.
 # A finding matching one of these is NOT new. Report it ONLY if you can
 # materially STRENGTHEN or CONTRADICT it — and say which, explicitly.
-# 1711 rows, 1672 unique ids, pooled from: run10, run11, run12, run13, run2, run3, run4, run5, run6, run7, run8, run9.
-# 1621 of them carry at least one artifact-citing verdict;
+# 1722 rows, 1683 unique ids, pooled from: run10, run11, run12, run13, run14, run2, run3, run4, run5, run6, run7, run8, run9.
+# 1651 of them carry at least one artifact-citing verdict;
 # the rest are LEADS and may not enter the ledger (§0).
 
 ## actionscript  (45 unique, 45 judged)
@@ -149,7 +149,7 @@
   * combat-core/slash-type-map
   * combat-core/stance-triangle
 
-## critic-new_findings  (1162 unique, 1111 judged)
+## critic-new_findings  (1173 unique, 1141 judged)
   * NEW-1-web-crit-is-flat-1.3
   * NEW-10-obfuscated-bundle-grep-method
   * NEW-2-web-per-stance-damage-and-mastery-10-ceiling
@@ -217,11 +217,11 @@
   * NF-G/43-web-sfx-cues-refiled-without-the-dead-s0-5-clause
   * NF-G/web-side-cite-for-800x480-and-a-second-800x690-layout
   * NF-I/def-subtraction-is-floored-by-the-attackers-min-damage
-    NF-S27B-1/stance-mastery-floor-is-zero-not-one
-    NF-S27B-2/cannot-change-stance-caption-and-the-gate-are-one-predicate
-    NF-S27B-3/the-three-state-focus-caption-is-web-only
-    NF-S27B-4/the-change-stance-label-is-a-hover-tooltip-on-the-portrait
-    NF-S27B-5/the-web-war-map-twin-is-1t7934s0-not-1t1524s0
+  * NF-S27B-1/stance-mastery-floor-is-zero-not-one
+  * NF-S27B-2/cannot-change-stance-caption-and-the-gate-are-one-predicate
+  * NF-S27B-3/the-three-state-focus-caption-is-web-only
+  * NF-S27B-4/the-change-stance-label-is-a-hover-tooltip-on-the-portrait
+  * NF-S27B-5/the-web-war-map-twin-is-1t7934s0-not-1t1524s0
   * NF-ai0-duel-opponent-absent
   * NF-boss-hp-derivation
   * NF-category-11-decoded
@@ -633,13 +633,13 @@
     hunter-s27b/crit-1.3-and-heavy-defence-0.8-are-in-web-source-not-just-wiki
     hunter-s27b/dan-rank-is-mechanical-not-cosmetic-it-buys-reach
     hunter-s27b/forge-cost-is-a-node-level-formula-with-three-material-tiers
-    hunter-s27b/heavy-reach-has-a-hard-100px-floor-so-reach-cap-is-half-closed
+  * hunter-s27b/heavy-reach-has-a-hard-100px-floor-so-reach-cap-is-half-closed
     hunter-s27b/repair-weapon-cost-is-node-level-times-ten
     hunter-s27b/spd-to-cooldown-is-a-web-formula-and-it-diverges-from-android
     hunter-s27b/the-focus-meter-contract-is-fully-recovered-in-web-v0717
-    hunter-s27b/the-per-stance-mastery-curve-is-linear-and-closes-the-ledgers-mastery-fork
+  * hunter-s27b/the-per-stance-mastery-curve-is-linear-and-closes-the-ledgers-mastery-fork
     hunter-s27b/the-reach-cap-in-stage-px-the-one-value-the-whole-model-needs-is-in-the-web-payload
-    hunter-s27b/web-and-android-per-stat-ceilings-diverge-by-3x
+  * hunter-s27b/web-and-android-per-stat-ceilings-diverge-by-3x
   * hunter/all-24-elemental-skills-fully-specced
   * hunter/android-rebirth-pays-20-5-hgold-vs-web-100-25
   * hunter/audio-blocker-is-the-right-target-for-the-sfx-names
@@ -789,12 +789,12 @@
   * ledger/film-shows-rebirth-is-unsourced
     lens3/271-is-reachable-in-one-stat-the-budget-is-237-and-the-cost-is-90
     lens3/coins-per-kill-half-of-RR215-is-also-dead-at-the-web-build
-    lens3/human-anim-node-count-is-per-anim-not-a-fixed-rig
-    lens3/offline-save-write-branch-is-nineteen-not-fourteen
+  * lens3/human-anim-node-count-is-per-anim-not-a-fixed-rig
+  * lens3/offline-save-write-branch-is-nineteen-not-fourteen
     lens3/reinforce-tiers-are-web-code-not-a-string-table-inference
-    lens3/severed-limb-blob-build-label-is-web-v0717-not-android
-    lens3/the-fourteen-field-save-finding-is-a-truncated-read-and-is-still-upheld
-    lens3/the-offline-save-record-is-nineteen-fields-plus-a-saved-sentinel
+  * lens3/severed-limb-blob-build-label-is-web-v0717-not-android
+  * lens3/the-fourteen-field-save-finding-is-a-truncated-read-and-is-still-upheld
+  * lens3/the-offline-save-record-is-nineteen-fields-plus-a-saved-sentinel
     lens3/web-parity-for-the-6x6-war-board-defaults-not-literals
   * measurement/stage-scale-is-2p25-not-1p875
   * meta-social/700-block-is-live-players
@@ -868,20 +868,24 @@
   * newfind/stance-enum-pinned-by-declared-value
   * newfind/web-nextstance-drops-the-console-five-cycle-and-gates-on-48
   * newfind/writ-badge-glyph-is-premium-gold-not-coins
-    nf-judge/carry-weight-exemption-split-is-nine-seven-and-obj-hut-48-is-a-seventh-unexempt-site
-    nf-judge/duel-hud-never-prints-the-word-CHI
-    nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence
-    nf-judge/resizehandler-statsmanager-writes-are-307-312
-    nf-judge/resource-decrypt-key-is-filename-charcode-1-per-resource
-    nf-judge/web-battleui-carries-the-same-slot-constants-760-minus-60i-and-450
+  * nf-judge/carry-weight-exemption-split-is-nine-seven-and-obj-hut-48-is-a-seventh-unexempt-site
+  * nf-judge/duel-hud-never-prints-the-word-CHI
+  * nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence
+  * nf-judge/resizehandler-statsmanager-writes-are-307-312
+  * nf-judge/resource-decrypt-key-is-filename-charcode-1-per-resource
+  * nf-judge/web-battleui-carries-the-same-slot-constants-760-minus-60i-and-450
   * nf/four-classes-run-the-12-frame-ai-cadence
   * nf/payload-xml-static-textfields-are-authoring-placeholders
   * nf/slashusage-48-floor-is-duplicated-on-the-npc-path
+    nf/stance-ring-frame-index-is-not-a-bijection
   * nf/territory-and-hex-clan-palettes-differ-on-only-two-sides
+    nf/third-hud-row-carries-an-unmapped-stance-name-textfield
   * nf/war-turn-timer-bracketed-on-film
   * nf/web-has-a-second-getsellamt-call-site
+    nf/web-item-carries-three-modifier-constants-android-lacks
   * nf/web-item-weight-modifier-is-id-208
   * nf/web-only-survival-enemy-443-is-named
+    nf/web-stance-slash-length-formulas-and-the-light-mislabel
   * npcdata-category11-grant-census-corrected
   * npcdata/five-stances-are-in-the-web-build-too
   * npcdata/five-stances-reversed-and-dual
@@ -1070,7 +1074,11 @@
   * s26d/web-statue-is-1t8703s0-and-has-full-parity
     s27b/a-territory-is-six-rooms-by-six-rooms-in-both-builds
     s27b/stance-ceilings-are-mastery-10-not-mastery-9
-    s27b/v0717-rebalanced-the-manual-stat-caps-upward-vs-v0682
+  * s27b/v0717-rebalanced-the-manual-stat-caps-upward-vs-v0682
+    s27c-cite/cannot-change-stance-caption-is-confirmed-ON-A-FRAME-not-just-in-source
+    s27c-cite/the-150-percent-damage-readout-matches-no-web-multiplier
+    s27c-cite/the-reach-base-is-a-speed-derived-slash-length-not-a-constant
+    s27c-cite/twenty-six-human-anims-carry-empty-frames-not-seven
   * save-schema/dataslots-20-does-not-count-the-written-ids
   * save-schema/is-android-only-evidence
   * skilldata/skill-1077-missing-from-extract
@@ -1122,8 +1130,8 @@
   * skills-meters/stance-switch-gate-is-48
   * skills-meters/stance-switch-gate-is-reload-48
   * skills-meters/stance-switch-hard-gate-48
-    skills-meters/the-initplayer-argument-order-is-a-noncircular-web-android-bridge
-    skills-meters/the-web-build-seeds-stance-mastery-at-1-too-parity-hole-closed
+  * skills-meters/the-initplayer-argument-order-is-a-noncircular-web-android-bridge
+  * skills-meters/the-web-build-seeds-stance-mastery-at-1-too-parity-hole-closed
   * skills-meters/web-kunai-ammo-gate-1-4-8
   * skills-meters/web-maxreload-is-192
   * skills-meters/web-only-skills-1074-1077
@@ -1154,9 +1162,10 @@
   * ui-hud/NEW-hud-buff-line-is-a-hardcoded-string-table
   * ui-hud/NEW-web-and-android-payloads-ship-different-stage-rects
   * ui-hud/aspect-ratio-truth-closed-from-source
+    ui-hud/b11s-blue-is-hp-rests-on-an-inference-a-frame-breaks
   * ui-hud/bars-are-untweened-continuous-scalex
   * ui-hud/battleui-carries-its-own-change-stance-button-in-both-builds
-    ui-hud/battleui-obfuscation-map-extension-eight-more-fields
+  * ui-hud/battleui-obfuscation-map-extension-eight-more-fields
   * ui-hud/blackopen-shutter-is-16-frames
   * ui-hud/blocker-2-falls-entirely-no-pop-no-ramp
   * ui-hud/blocker-4-is-wrong-2-abilities-plus-empty-slot
@@ -1188,7 +1197,7 @@
   * ui-hud/jpexs-export-already-on-disk
   * ui-hud/keypress-index-is-reversed
   * ui-hud/longplay-frames-are-pillarboxed
-    ui-hud/measured-third-bar-fill-in-t1082-is-23-percent-not-28
+  * ui-hud/measured-third-bar-fill-in-t1082-is-23-percent-not-28
   * ui-hud/nameplate-level-suffix-is-gated-on-level-greater-than-zero-web-only
   * ui-hud/paperdoll-9-box-to-eq-slot-map
   * ui-hud/pass1-fabricated-transunit-quote
@@ -1206,18 +1215,20 @@
   * ui-hud/slot-box-measurement-corrected
   * ui-hud/slot-strip-matches-all-three-constants
   * ui-hud/stance-ring-colours-exact
-    ui-hud/string-960-is-absent-from-android-because-the-android-label-is-a-portrait-rollover
+  * ui-hud/string-960-is-absent-from-android-because-the-android-label-is-a-portrait-rollover
   * ui-hud/string-960-is-cannot-change-stance-frame-resolved
   * ui-hud/swf-header-24fps-and-stage-rects
   * ui-hud/swf-headers-24fps-and-stage-rects
   * ui-hud/tan-reload-bar-is-static-across-427-432
   * ui-hud/the-cannot-change-stance-label-is-the-focus-gate-readout
-    ui-hud/the-change-stance-affordance-IS-the-portrait-bust-not-a-separate-button
-    ui-hud/the-change-stance-button-is-the-portrait-bust-itself
-    ui-hud/the-grey-cannot-change-stance-label-is-a-v0717-web-only-addition
+  * ui-hud/the-change-stance-affordance-IS-the-portrait-bust-not-a-separate-button
+  * ui-hud/the-change-stance-button-is-the-portrait-bust-itself
+  * ui-hud/the-grey-cannot-change-stance-label-is-a-v0717-web-only-addition
   * ui-hud/the-stance-label-is-grey-not-yellow-the-frame-wins
-    ui-hud/the-third-bar-is-a-three-state-meter-and-fires-snd-criticaldamage-at-full
+  * ui-hud/the-third-bar-is-a-three-state-meter-and-fires-snd-criticaldamage-at-full
   * ui-hud/the-video-study-notes-misread-the-cannot-change-stance-slot
+    ui-hud/third-hud-row-is-shared-reload-bar-or-cannot-change-stance-banner
+    ui-hud/three-hud-bar-fill-and-track-colours-measured-from-a-frame
   * ui-hud/two-dan-title-renderers-romaji-and-kanji
   * ui-hud/up-arrow-is-a-skill-not-a-stance-control
   * ui-hud/up-arrow-is-a-skill-not-the-stance-control
@@ -1237,7 +1248,7 @@
   * ui-hud/web-resize-handler-names-800x480-and-690-is-the-friend-bar-variant
   * ui-hud/web-symbol-ids-differ
   * ui-hud/web-vs-android-cooldown-rounding
-    ui-hud/which-hud-bar-is-hp-and-which-is-chi-is-still-unheld-by-colour
+  * ui-hud/which-hud-bar-is-hp-and-which-is-chi-is-still-unheld-by-colour
   * uistrings-payload/chat-surface-is-31-commands-including-three-debug
   * uistrings-payload/fight-wordmark-is-the-live-duel-intro-field
   * uistrings-payload/rake-branch-tests-the-pool-not-a-nan

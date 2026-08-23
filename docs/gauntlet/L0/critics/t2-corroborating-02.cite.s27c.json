@@ -1,0 +1,151 @@
+{
+ "packet_size": 14,
+ "judged_count": 14,
+ "skipped": [],
+ "verdicts": [
+  {
+   "claim_id": "nf-judge/duel-hud-never-prints-the-word-CHI",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg, my own crop (0,380)-(560,576) x3 LANCZOS (frame is 1024x576, not 1080p) + reference/frames/session11/stance-reach/B_t850.600_PLAYER-screen_HP20-CHI31-AP32of35_ATK22_DEF19_SPD13.png, my own crop (192,216)-(1056,810) x1.8 + reference/decompiled/shs3_android/scripts/BattleUI.as:254-256",
+   "reason": "I opened and looked at both frames. frame_0020 crop shows exactly what the finding says: green bar '16/20', blue bar '15/15', a grey caption 'CANNOT CHANGE STANCE' on a third track beneath, and NO word 'CHI' or 'HP' anywhere on the duel HUD. The stats-screen crop shows the labelled ladder as coloured diamonds HP (green) / CHI (blue) / AP (cyan) beside three bars - a different widget, as claimed. Code half verified verbatim: BattleUI.as:254 'this.chitext.text = chi + \"/\" + maxchi;' :255 chitextshadow :256 'this.chibar.bar.scaleX = chi / maxchi;' - numeral pair only, no label TextField in updateChi or updateHp (:247-249). citelint's QUOTE_NOT_LOCATED was a false alarm: the quote spans a frame description plus three code lines, and all three code lines are verbatim at the stated numbers."
+  },
+  {
+   "claim_id": "nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t17s0§.as:1977-1982 vs reference/decompiled/shs3_android/scripts/Item.as:1582-1586; reference/decompiled/shs3_payload/scripts/§1t70s0§.as:407-415 vs reference/decompiled/shs3_android/scripts/NodeGenerator.as:393-401; §1t17s0§.as:6-22 vs Item.as:6-18",
+   "reason": "Both quoted lines are verbatim at the stated numbers: web §1t17s0§.as:1977 'public function §1t546s0§() : int' and android Item.as:1582 'public function getSellAmt() : int', and the bodies confirm they are the same function (web :1979 'if(this.§1t467s0§.§1t697s0§() < 3000)' / :1981 'return 1;' == android :1584 'if(this.itemID < 3000)' / :1586 'return 1;'). The isNoChangeTown pair is even stronger: web §1t70s0§.as:407 'public function §1t1140s0§(param1:int) : Boolean' carries the identical four literals 1466699/1503572/1368424/1540387 at :409 as android NodeGenerator.as:395, same structure through :414/:400. The method rule follows and is correct. ONE MINOR MIS-CITE, not fatal: the cite pairs '§1t17s0§.as:18-22' with 'android Item.as:8-16', but web :18-22 holds §1t8739s0§=206 / §1t8740s0§=207 / §1t8741s0§=208, which have no android twin at all; the true twin block is web :8-16 (80/81/82/89/125) == android :8-16 (PCOLORMODID/SCOLORMODID/USESMODID/NAMEMODID/CREATORMODID). The finding's TEXT is right ('§1t8734s0§..§1t8741s0§'); only the paired line range is ten lines off. Not enough to sink a method rule proven twice over by two exact pairs. See new finding nf/web-item-carries-three-modifier-constants-android-lacks."
+  },
+  {
+   "claim_id": "nf-judge/resizehandler-statsmanager-writes-are-307-312",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:306-312",
+   "reason": "Exact. I printed the file with line numbers: :306 is '}' (close of the fit branch), :307 'StatsManager.stageScale = newScale;', :308 stageOffsetX, :309 stageOffsetY, :310 stageFitWidth, :311 stageBaseWidth, :312 stageBaseHeight. Six writes at :307-312, confirmed independently by grep -n over the whole file (the only other stageScale writes are :191 and :263, in different handlers). A ':306-311' transcription would indeed drop stageBaseHeight. citelint's QUOTE_NOT_LOCATED is a false alarm - all six quoted lines are verbatim."
+  },
+  {
+   "claim_id": "nf-judge/resource-decrypt-key-is-filename-charcode-1-per-resource",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_android/scripts/ResourceManager.as:41,:186,:205,:207,:213 + my own decrypt of all five blobs under reference/extracted/android/",
+   "reason": "Every quoted line is verbatim at the stated number, and I reproduced the result myself rather than taking it on trust. ResourceManager.as:41 lists the five filenames; :186 'ba = decryptByteArray(ba,resourceFileNameArray[num].charCodeAt(1));' - so the key IS the second character, per resource. I ran the algorithm from :205-213 (i=3..255, swap ba[i]<->ba[i+256] when i%11==0, then ba[i]^=key) on all five blobs with the derived keys and every one inflated to a valid SWF: 115_Mobile_SHS3Resource.bin key 104 -> CWS ver 17, 1,040,849 inflated bytes, 1,912 SymbolClass entries (the finding's exact numbers); 113_MusicResource key 117 -> ver 17, 1,402,677 B, 13 symbols; 122_SoundResource key 111 -> ver 17, 29,623 B, 13 symbols (matches C3); 124_ImageResource key 109 -> ver 17, 1,908,229 B, 85 symbols (matches C1's 109); 120_BGResource key 103 -> ver 17, 4,412,340 B, 67 symbols. The 'CWS magic survives' explanation also checks out: bytes 0-2 are untouched by the loop, and byte 3 of 115 is 0x79 which XORs with 104 to exactly 17, the SWF version. Strongest finding in the packet."
+  },
+  {
+   "claim_id": "nf-judge/web-battleui-carries-the-same-slot-constants-760-minus-60i-and-450",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:169-171 + reference/decompiled/shs3_android/scripts/BattleUI.as:132-134",
+   "reason": "Verbatim on both sides. Web §1t113s0§.as:169 '_loc1_ = new §1t5184s0§();' :170 '_loc1_.x = 760 - _loc2_ * 60;' :171 '_loc1_.y = 450;'; android BattleUI.as:132 'skillSlotButton = new SkillSlotButton();' :133 'skillSlotButton.x = 760 - i * 60;' :134 'skillSlotButton.y = 450;'. Both sit inside an 8-iteration loop (web :167-175 while-form, android :130-135 for-form), so slot i=2 is game (640,450) in both builds and the build-parity objection to anchoring a v0.717 frame transform on these constants is genuinely removed. citelint's QUOTE_NOT_LOCATED is a false alarm caused by the '||' joiner in the quote field; each half is exact."
+  },
+  {
+   "claim_id": "s27b/v0717-rebalanced-the-manual-stat-caps-upward-vs-v0682",
+   "refuted": false,
+   "severity": "material",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:2406-2412 + reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3340-3352 + constant blocks reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:206,212,216,218,220,224,232 vs reference/decompiled/shs3_android/scripts/StatsManager.as:172,178,182,184,186,190,198",
+   "reason": "Every number checks out and I closed the one gap the finding left open. Both quoted lines are verbatim (android :2410, web :3344). Formulas: MAXHP android :2407 '10 + (charlevel + 10) * 5' vs web :3341 '10 + (_loc2_ + 10) * 10' (460 -> 910, doubled); MAXCHI android :2408 vs web :3342 both '10 + (lvl + 10) * 5' (identical, as claimed); MAXAP android :2409 '20 + (charlevel + 10)' vs web :3343 '30 + (_loc2_ + 10) * 5' (110 -> 480); ATK/DEF/SPD android :2410-2412 'charlevel + 10' vs web :3344-3346 '1 + (_loc2_ + 10) * 3' (90 -> 271). The finding relies on the obfuscated web stat ids lining up with the android STAT_* names, which it argues only from order - so I checked the constants directly: §1t9403s0§=1 / §1t9406s0§=4 / §1t9408s0§=6 / §1t9409s0§=7 / §1t9410s0§=8 / §1t9411s0§=10 / §1t9415s0§=14 are numerically identical to STAT_MAXHP=1 / STAT_MAXCHI=4 / STAT_ATTACK=6 / STAT_DEFENSE=7 / STAT_SPEED=8 / STAT_LEVEL=10 / STAT_MAXAP=14. Independently pinned again by web :3347 'this.statsPanel.HPadd.visible = _loc3_;' - HPadd survived obfuscation. This is a hard, measured C2 counterexample and it holds."
+  },
+  {
+   "claim_id": "skills-meters/the-initplayer-argument-order-is-a-noncircular-web-android-bridge",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:1834 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:182 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:183-199",
+   "reason": "Both quotes are verbatim ('...,getSlashUsage(),getStat(1000),getStat(1001),getStat(1002),getLevel());' ends StatsManager.as:1834; '§1t99s0§.as:196 this.§1t4421s0§ = param12;' exact) and the bridge is genuinely non-circular. Web §1t99s0§.as:183 declares 'function §1t4443s0§(param1:int, ... param15:int)' - exactly fifteen ints - and :185-199 assign them in the android call's order, with FOUR unobfuscated anchors, not one: :190 'this.defense = param6', :192 'this.minDamage = param8', :193 'this.damageRange = param9', :195 'this.slashUsage = param11', :199 'this.level = param15'. I also found a better android anchor than the finding used: MCSPlayer.as:182 declares the parameters BY NAME - 'initPlayer(controlledBy, hp, maxhp, chi, maxchi, defense, baseReload, minDamage, damageRange, baseSlashLength, slashUsage, lightMastery, balancedMastery, heavyMastery, level)' - which names param12/13/14 as light/balanced/heavy mastery outright. All six decoded fields are correct. §1t4420s0§=baseSlashLength is corroborated a third time at §1t99s0§.as:3094/:3105/:3116 where it is multiplied by the stance factor. MINOR: the cite range ':188-201' is wrong at both ends - the assignments run :185-199 and the signature is at :183; :200-201 are unrelated. Sloppy, not wrong, and the specific quoted line resolves exactly."
+  },
+  {
+   "claim_id": "skills-meters/the-web-build-seeds-stance-mastery-at-1-too-parity-hole-closed",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2582-2593 + reference/decompiled/shs3_android/scripts/StatsManager.as:739-747",
+   "reason": "The load-bearing claim is exactly right and closes the parity hole. Web §1t1523s0§.as:2586-2592 pushes seven skill stats at value 1 - 'new §1t100s0§(1000,1)' / (1001,1) / (1002,1) / (1003,1) / (1042,1) / (1049,1) / (1050,1) - bracketed by :2584-2585 'fixed = false; length = 0;' and :2593 'fixed = true;'. Android StatsManager.as:740-746 is a line-for-line twin with IntStat and the same seven ids in the same order, bracketed by :739 and :747. So the mastery floor of 1 is attested inside v0.717 and no longer depends on an android artifact. FLAGGED BUT NOT REFUTED: the finding's parenthetical '(Light x0.54, Balanced x1.02)' mislabels a stance. Balanced x1.02 is right (§1t99s0§.as:3105, 1 + 0.2*m*0.1 at m=1). x0.54 is HEAVY, not Light (§1t99s0§.as:3116, 0.5 + 0.4*m*0.1 at m=1); web Light has no mastery term at all - §1t99s0§.as:3094 is a flat 'baseSlashLength * 1.4'. The parenthetical restates a prior finding's numbers rather than asserting this one's claim, so I do not sink the finding for it - I raise it as new finding nf/web-stance-slash-length-formulas-and-the-light-mislabel."
+  },
+  {
+   "claim_id": "ui-hud/battleui-obfuscation-map-extension-eight-more-fields",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:148-149,:241-242,:308-324,:326,:542,:548 + reference/decompiled/shs3_android/scripts/BattleUI.as:112-113,:192-193,:241-243,:245-249,:252-256,:259,:433,:439",
+   "reason": "I checked all eight mappings against both files and every one holds by call order and body shape. §1t5158s0§: web :148-149 'highlight.visible = false; buttonMode = true;' == android :112-113 on battlemodebust. hp cluster: web §1t5201s0§ at :312-317 writes §1t5171s0§.text, §1t5172s0§.text, §1t5170s0§.bar.scaleX in that order == android updateHp :245-249 hptext/hptextshadow/hpbar, so hpbar/hptext/hptextshadow = §1t5170s0§/§1t5171s0§/§1t5172s0§ as claimed. chi cluster: web §1t5202s0§ at :319-324 == android updateChi :252-256, giving chibar/chitext/chitextshadow = §1t5164s0§/§1t5165s0§/§1t5166s0§. setReloadMax: web :308-310 and android :241-243 are both a declaration with an empty body - a distinctive signature. updateReload: web :326 == android :259. Hover pair: web :241-242 add MOUSE_OVER/MOUSE_OUT -> §1t5215s0§/§1t5216s0§, whose bodies at :540-544 and :546-550 toggle §1t5161s0§.visible and §1t5158s0§.highlight.visible exactly as android :430-434/:436-440 do. The three carried-over mappings also check: §1t5161s0§ is pinned by web :146 '§1t5161s0§.text = getString(208)' == android :110 'changestancelabel.text = LangManager.getString(208)'; §1t5182s0§ is the bar written at :333; §1t5169s0§ is the htmlText field at :338-358."
+  },
+  {
+   "claim_id": "ui-hud/measured-third-bar-fill-in-t1082-is-23-percent-not-28",
+   "refuted": false,
+   "severity": "minor",
+   "own_cite": "reference/frames/session11/crit-focus/t1082.100.png, my own per-pixel run-length scan at y=1035, x=230..569 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:328",
+   "reason": "I re-ran the measurement myself rather than accepting it. At y=1035 the runs are: brown from the bar's left edge, an anti-aliased boundary at x=245 (201,203,200), a saturated white fill run x=246..303, an anti-aliased edge at x=304 (213,207,195), then brown track x=306..513 falling off to (19,12,7) at x=514 and (1,1,1) at x=520. That reproduces the finding's own samples closely (it reports (46,29,0) through x=510; I read (46,28,3) at x=505 and (44,28,3) at x=510, and (1,1,1) at x=520 exactly). Fill 245..304 = 60 px over a 245..514 = 269 px track = 22.3%. So 'about 28% filled' is wrong and '23 percent' is right. TRIVIAL ARITHMETIC SLIP the finding carries: it writes '60/270 = 22.6%'; 60/270 is 22.2%. Does not touch the headline. The finding is also correct that the load-bearing number is elsewhere: §1t113s0§.as:328 is 'var _loc3_:Number = (param1 - 48) / (param2 - 48);', so the 48 threshold does not come from this fill fraction."
+  },
+  {
+   "claim_id": "ui-hud/string-960-is-absent-from-android-because-the-android-label-is-a-portrait-rollover",
+   "refuted": true,
+   "severity": "material",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:241-242,:540-550 + docs/gauntlet/L0/index/strings.json[\"208\"] + reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png, my own crop (0,756)-(1056,1080) x2 LANCZOS",
+   "reason": "REFUTED on its central causal claim and on its lane_impact, both of which I falsified first-hand. (1) 'The web build REPLACED that hover affordance with a persistent on-bar notice' is false. The web build KEEPS the hover affordance verbatim: §1t113s0§.as:241-242 add MOUSE_OVER/MOUSE_OUT on §1t5158s0§ bound to §1t5215s0§/§1t5216s0§, whose bodies at :542-543 and :548-549 set '§1t5161s0§.visible = true/false' plus the bust highlight - the exact android shape. The packet's own sibling finding ui-hud/the-change-stance-affordance-IS-the-portrait-bust-not-a-separate-button states this correctly, so the two contradict each other and this one is the wrong half. (2) THE FRAME WINS, and it agrees: I cropped B_t851.867 and looked - a v0.717 duel HUD showing the bust with a BLUE stance ring and the words 'CHANGE STANCE' rendered right under it. The hover tooltip is live in the web build. (3) The 'because' is a conflation of two different strings. The rollover label is getString(208), and strings.json[\"208\"] resolves to 'Change Stance' - it is PRESENT in the v0.682 table. String 960 is a different string on a different widget. So 960's absence cannot be 'because the android label is a portrait rollover'; the real reason is the one the packet's other finding gives correctly - android's updateReload (BattleUI.as:259-263) has no ratio==0 branch, so no code path would ever request 960. (4) The lane_impact is actively harmful: 'build the WEB behaviour ... not the android hover tooltip' would delete a widget the web build demonstrably ships and a v0.717 frame demonstrably shows. WHAT SURVIVES, and is already carried by the sibling findings: android :262 is the entire reload-bar text logic; android has no empty-state bar label; strings.json has no key '960'; and the web rescales (reload-48)/(max-48) inside §1t5205s0§ while android passes a pre-normalised percentage."
+  },
+  {
+   "claim_id": "ui-hud/the-change-stance-affordance-IS-the-portrait-bust-not-a-separate-button",
+   "refuted": false,
+   "severity": "material",
+   "own_cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:26,:148,:192-193,:374,:433,:439 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:200,:241-242,:542,:548 + reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg and reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png, my own crops",
+   "reason": "Every cite resolves verbatim and the correction is right. Android :26 'public var battlemodebust:MovieClip;' :148 'this.battlemodebust.bustcanvas.addChild(this.playerBust);' :374 'this.battlemodebust.stancecolor1.gotoAndStop(num);' :433/:439 'this.battlemodebust.highlight.visible = true/false;' inside showChangeStanceLabel/hideChangeStanceLabel (:430-434/:436-440), reached from :192-193. Web twin exact: :241-242 MOUSE_OVER/MOUSE_OUT -> §1t5215s0§/§1t5216s0§, :542 'this.§1t5161s0§.visible = true;' :548 'this.§1t5161s0§.visible = false;' and :200 'this.§1t5161s0§.visible = false;' at init. §1t5161s0§ is pinned to changestancelabel independently by :146 'text = getString(208)' == android :110. And I confirmed it on film rather than second-hand: my crop of B_t851.867 shows one circular portrait widget with a blue stance ring and 'CHANGE STANCE' appearing at it, while my crop of frame_0020 shows the same widget with a RED ring and no such label - a hover state, not a persistent caption, and no separate button anywhere on either HUD. A porter following the old lane_impact would ship a spurious second widget."
+  },
+  {
+   "claim_id": "ui-hud/the-change-stance-button-is-the-portrait-bust-itself",
+   "refuted": false,
+   "severity": "material",
+   "own_cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:112-113,:275-277,:372-375 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3029-3063 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:148-149,:379-381,:482-485 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3093-3127",
+   "reason": "All three quoted lines are verbatim and the frame-index claim - the part a script cannot check - holds. Android :275 'if(this.battlemodebust.hitTestPoint(mousex,mousey))' :276 '{' :277 'this.stanceButtonClick();'; :112-113 highlight.visible=false / buttonMode=true; :372-375 setStanceColor -> :374 'this.battlemodebust.stancecolor1.gotoAndStop(num);'. Web twin: :148-149 identical pair on §1t5158s0§, :379 hit-tests §1t5158s0§ and :381 calls §1t5207s0§, :482-485 '§1t5208s0§(param1)' -> :484 'this.§1t5158s0§.§1t15895s0§.gotoAndStop(param1);'. On 1=Light / 2=Balanced / 3=Heavy: the web sites §1t99s0§.as:3101/:3112/:3127 call §1t5208s0§(1)/(2)/(3) from cases §1t12220s0§/§1t12221s0§/§1t12222s0§, and the android twin MCSPlayer.as:3029/:3040/:3051 names those same three cases LIGHT_STANCE/BALANCED_STANCE/HEAVY_STANCE calling setStanceColor(1)/(2)/(3). Cross-checked against film: the LIGHT frame B_t851.867 shows a blue ring, frame_0020 (CANNOT CHANGE STANCE, heavy) shows a red ring, and the session11 filenames record blue/tan/red for light/balanced/heavy. So the ring index is an explicit frame number, as claimed. One incompleteness worth recording but not a refutation - see new finding nf/stance-ring-frame-index-is-not-a-bijection."
+  },
+  {
+   "claim_id": "ui-hud/the-grey-cannot-change-stance-label-is-a-v0717-web-only-addition",
+   "refuted": false,
+   "severity": "material",
+   "own_cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:259-263 + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111,:326-359 + reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3050 + docs/gauntlet/L0/index/strings.json + reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg (own crop (0,380)-(560,576) x3 LANCZOS)",
+   "reason": "Verified line by line, and this is the CORRECT explanation of string 960 - the one its sibling finding gets wrong. Android BattleUI.as:259-263 updateReload is exactly two statements: :261 'this.reloadbar.bar.scaleX = percentage;' :262 'this.crittext.visible = percentage >= 1 && this.reloadbar.visible;'. No ratio==0 branch, no second htmlText, so no android code path could ever request 960 - which is why strings.json (2,533 entries, the v0.682 table) returns None for '960' while returning 'Change Stance' for '208' and 'Critical Hit' for '175'. The web twin §1t113s0§.as:326-359 is a full three-state machine: :328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);' clamped at :329-332, :336-343 grey §1t5204s0§ at _loc3_==0, :344-347 hidden for 0<r<1, :348-358 black §1t5203s0§ plus '§1t1516s0§(\"Snd_criticalDamage\")' at r>=1. The two htmlText constants are built at :110-111 with getString(175) at '#000000' and getString(960) at '#BBBBBB'. The lane_impact's cross-reference also checks: §1t99s0§.as:3050 'return this.§1t4469s0§() && this.§1t4414s0§ >= 48;'. And I saw the label render: my frame_0020 crop shows a GREY 'CANNOT CHANGE STANCE' sitting on the third track, matching the #BBBBBB empty-state branch. Minor incompleteness only: the finding omits that the whole three-state block is gated at :334 on '!§1t1540s0§.§1t9550s0§() && this.§1t5182s0§.visible'."
+  }
+ ],
+ "new_findings": [
+  {
+   "id": "nf/web-stance-slash-length-formulas-and-the-light-mislabel",
+   "text": "Found while judging skills-meters/the-web-build-seeds-stance-mastery-at-1. The stance slash-length formulas DIVERGE between builds, and the 'Light x0.54' figure in circulation is mislabelled - 0.54 is HEAVY. Web v0.717 (§1t99s0§.as, switch at :3091): Light case §1t12220s0§ :3094 is a FLAT 'this.§1t4417s0§ = this.§1t4420s0§ * 1.4' with NO mastery term at all; Balanced §1t12221s0§ :3105 is '§1t4420s0§ * (1 + 0.2 * §1t4422s0§ * 0.1)' = x1.02 at mastery 1; Heavy §1t12222s0§ :3116 is '§1t4420s0§ * (0.5 + 0.4 * §1t4423s0§ * 0.1)' = x0.54 at mastery 1, floored at 100 px by :3117-3120. Android v0.682 (MCSPlayer.as setStance :3027): LIGHT :3030 'baseSlashLength * 1.5'; BALANCED :3041 '(1 + 0.5 * balancedMastery * 0.01)'; HEAVY :3052 '(0.5 + 0.5 * heavyMastery * 0.01)' floored at 100 by :3053-3056. So THREE things differ: the Light constant (1.4 web vs 1.5 android), the Balanced mastery coefficient (0.2*0.1=0.02 vs 0.5*0.01=0.005), and the Heavy coefficient (0.04 vs 0.005) - a 4x-8x difference in how much mastery buys. §1t4422s0§/§1t4423s0§ are pinned to balancedMastery/heavyMastery by MCSPlayer.as:182's named signature via the initPlayer argument bridge. There is also a fourth web case §1t12224s0§ at :3130-3131 with a flat *1.4 (android's REVERSED_STANCE, :3067, is *1.5).",
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3091-3131 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3027-3067,:182",
+   "quote": "web §1t99s0§.as:3094 'this.§1t4417s0§ = this.§1t4420s0§ * 1.4;' vs android MCSPlayer.as:3030 'this.slashLength = this.baseSlashLength * 1.5;' · web :3116 'this.§1t4417s0§ = this.§1t4420s0§ * (0.5 + 0.4 * this.§1t4423s0§ * 0.1);' vs android :3052 'this.slashLength = this.baseSlashLength * (0.5 + 0.5 * this.heavyMastery * 0.01);'",
+   "lane_impact": "L2 skills-meters + L5 combat-core: any stance reach number must be taken from the WEB formulas, and 'Light x0.54' must be relabelled HEAVY x0.54 wherever it appears - web Light carries no mastery scaling whatsoever, so mastery buys reach only in Balanced and Heavy. Another dated C2 divergence with numbers.",
+   "overturns_ledger": false,
+   "verdict": "HELD"
+  },
+  {
+   "id": "nf/web-item-carries-three-modifier-constants-android-lacks",
+   "text": "Found while checking the mis-ranged third example in nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence. The web v0.717 Item class carries EIGHT modifier constants where android v0.682 carries five. Web §1t17s0§.as:8-16 maps one-for-one onto android Item.as:8-16 (80/81/82/89/125 = PCOLORMODID/SCOLORMODID/USESMODID/NAMEMODID/CREATORMODID), but web :18-22 adds §1t8739s0§=206, §1t8740s0§=207, §1t8741s0§=208 with no android counterpart - android's constant block ends at :18 'USEPROCGENNAME' and :20 begins the instance fields. Confirmed by grep: 'grep -nE \"= *20[678];\" reference/decompiled/shs3_android/scripts/Item.as' returns zero hits. So itemdata modifier ids 206/207/208 are a web-side addition, and any item-modifier table ported from the android build is missing three modifier kinds.",
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t17s0§.as:8-22 + reference/decompiled/shs3_android/scripts/Item.as:6-20",
+   "quote": "web §1t17s0§.as:18 'public static var §1t8739s0§:int = 206;' :20 '...§1t8740s0§:int = 207;' :22 '...§1t8741s0§:int = 208;' · android Item.as:18 'public static var USEPROCGENNAME:String = \"0\";' :20 'public var itemID:int;'",
+   "lane_impact": "L?/items: three modifier ids (206, 207, 208) exist only in v0.717. Do not treat an android-derived modifier list as complete, and re-check the 412 <modifier> rows in itemdata.xml (an ANDROID artifact per C2) for whether 206/207/208 appear at all.",
+   "overturns_ledger": false,
+   "verdict": "HELD"
+  },
+  {
+   "id": "nf/stance-ring-frame-index-is-not-a-bijection",
+   "text": "Qualifies ui-hud/the-change-stance-button-is-the-portrait-bust-itself without refuting it. The stancecolor1 frame index is 1/2/3 as that finding says, but it is NOT one-to-one with stance: android MCSPlayer.as's setStance switch calls setStanceColor(2) from BOTH BALANCED_STANCE (:3048) and REVERSED_STANCE (:3074), and setStanceColor(3) from BOTH HEAVY_STANCE (:3063) and DUAL_STANCE (:3089). Five stances, three ring frames. Web §1t99s0§.as's switch has the same shape with a fourth case §1t12224s0§ at :3130. So a rebuild that infers the player's stance from the ring colour will be wrong in Reversed and Dual, and the ring is a three-value display, not a stance readout.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3029-3090",
+   "quote": "MCSPlayer.as:3066 'case REVERSED_STANCE:' :3074 'BattleUI.instance.setStanceColor(2);' · :3077 'case DUAL_STANCE:' :3089 'BattleUI.instance.setStanceColor(3);'",
+   "lane_impact": "L8 ui-hud: ship the ring as a 3-frame display driven by setStanceColor, not as a stance readout; and never infer stance from ring colour in a frame study - blue/tan/red cannot separate Balanced from Reversed or Heavy from Dual.",
+   "overturns_ledger": false,
+   "verdict": "HELD"
+  },
+  {
+   "id": "nf/third-hud-row-carries-an-unmapped-stance-name-textfield",
+   "text": "Found by opening two v0.717 frames while judging the string-960 pair. The third HUD row under the HP/Chi bars renders at least THREE different captions in the web build, and one of them cannot come from §1t5169s0§. My crop of reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg at (0,380)-(560,576) x3 shows a GREY 'CANNOT CHANGE STANCE' on a brown track - the getString(960) empty-state branch at §1t113s0§.as:111/:340. My crop of reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png at (0,756)-(1056,1080) x2 shows, on the same row, a WHITE 'LIGHT STANCE' with no visible track - while 'CHANGE STANCE' (getString(208), field §1t5161s0§) is simultaneously drawn beneath the bust. §1t113s0§ can write only two htmlText values into §1t5169s0§ (:110 getString(175) black, :111 getString(960) grey), and §1t5161s0§ is already accounted for in the same frame, so 'LIGHT STANCE' is a FOURTH, currently unmapped TextField occupying that row. The BattleUI obfuscation map is therefore not yet complete for the player-status cluster.",
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg (own crop (0,380)-(560,576) x3 LANCZOS) + reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png (own crop (0,756)-(1056,1080) x2 LANCZOS) + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111",
+   "quote": "ON SCREEN, frame_0020: green '16/20', blue '15/15', grey 'CANNOT CHANGE STANCE' on a brown track. ON SCREEN, B_t851.867: blue-ringed bust, green '20 / 20', blue '31 / 31', white 'LIGHT STANCE' on the same row, and 'CHANGE STANCE' rendered below the bust. CODE: §1t113s0§.as:110 'this.§1t5203s0§ = \"<font color='#000000'>\" + §1t1521s0§.getString(175) + \"</font>\";' :111 the same with getString(960) at '#BBBBBB'.",
+   "lane_impact": "L8 ui-hud: do not model the third HUD row as a two-state crit/empty label. There is a stance-name caption ('LIGHT STANCE') on that row that the current BattleUI field map does not cover - find its field in §1t113s0§ before authoring the row.",
+   "overturns_ledger": false,
+   "verdict": "HELD"
+  }
+ ]
+}

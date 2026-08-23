@@ -80,7 +80,7 @@
    "unit": "t1-overturns-03"
   },
   {
-   "claims": 14,
+   "claims": 11,
    "file": "t2-corroborating-01.json",
    "lenses": [
     "cite"
@@ -88,34 +88,14 @@
    "overturns": 0,
    "stage": "WF-3b",
    "unit": "t2-corroborating-01"
-  },
-  {
-   "claims": 14,
-   "file": "t2-corroborating-02.json",
-   "lenses": [
-    "cite"
-   ],
-   "overturns": 0,
-   "stage": "WF-3b",
-   "unit": "t2-corroborating-02"
-  },
-  {
-   "claims": 2,
-   "file": "t2-corroborating-03.json",
-   "lenses": [
-    "cite"
-   ],
-   "overturns": 0,
-   "stage": "WF-3b",
-   "unit": "t2-corroborating-03"
   }
  ],
  "totals": {
-  "already_judged": 1621,
-  "claim_rows": 1711,
+  "already_judged": 1651,
+  "claim_rows": 1722,
   "critic_findings_claiming_overturn": 21,
-  "critic_findings_unjudged": 51,
-  "distinct_ids": 1672,
+  "critic_findings_unjudged": 32,
+  "distinct_ids": 1683,
   "duplicate_rows_merged": 39,
   "source_sweep_unjudged": 0
  }

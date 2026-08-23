@@ -1,0 +1,140 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/third-hud-row-is-shared-reload-bar-or-cannot-change-stance-banner",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/frames/session11/crit-focus/t1082.100.png",
+    "reference/frames/session11/crit-focus/t1003.000.png",
+    "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/three-hud-bar-fill-and-track-colours-measured-from-a-frame",
+   "notes": [],
+   "paths": [
+    "reference/frames/session11/crit-focus/t1082.100.png",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "ui-hud/b11s-blue-is-hp-rests-on-an-inference-a-frame-breaks",
+   "notes": [],
+   "paths": [
+    "reference/frames/session11/crit-focus/t1082.100.png",
+    "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
+    "docs/research/REBUILD_READINESS.md",
+    "docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/web-stance-slash-length-formulas-and-the-light-mislabel",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/web-item-carries-three-modifier-constants-android-lacks",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/Item.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf/stance-ring-frame-index-is-not-a-bijection",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "nf/third-hud-row-carries-an-unmapped-stance-name-textfield",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg",
+    "reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "s27c-cite/cannot-change-stance-caption-is-confirmed-ON-A-FRAME-not-just-in-source",
+   "notes": [],
+   "paths": [
+    "reference/frames/session11/crit-focus/t1003.000.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27c-cite/the-reach-base-is-a-speed-derived-slash-length-not-a-constant",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_android/scripts/EnemyElite.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "s27c-cite/the-150-percent-damage-readout-matches-no-web-multiplier",
+   "notes": [],
+   "paths": [
+    "reference/frames/session11/crit-focus/t1003.000.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27c-cite/twenty-six-human-anims-carry-empty-frames-not-seven",
+   "notes": [],
+   "paths": [
+    "reference/extracted/bindata/108_1t4635s0.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 2,
+  "resolves": 9,
+  "total": 11,
+  "uncheckable": 0
+ }
+}

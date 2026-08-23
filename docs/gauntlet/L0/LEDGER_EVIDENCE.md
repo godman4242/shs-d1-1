@@ -4,9 +4,9 @@
 > to the `REBUILD_READINESS.md` rewrite: claims that were JUDGED and SURVIVED (§0).
 > Gate **L0-B** independently re-checks every `[[claim-id]]` the rewrite ends up citing.
 
-- **UPHELD** 1313 — survived, and where a critic ruled on the overturn, it holds.
+- **UPHELD** 1342 — survived, and where a critic ruled on the overturn, it holds.
 - **NOT-UPHELD** 61 — TRUE, but the ledger sentence it names does not fall.
-- **KILLED** 298 — refuted by its critics, or never judged at all (a LEAD, §0).
+- **KILLED** 280 — refuted by its critics, or never judged at all (a LEAD, §0).
 
 **514 surviving overturns land on 259 distinct ledger sentences.**
 **60 claimed overturns were rejected** — the finding is
@@ -3571,4 +3571,4 @@ gets rewritten by findings that never actually contradicted it.
 | ui-hud | 6 | 0 | 7 |
 | art-anim-audio-feel | 12 | 0 | 6 |
 | meta-social | 15 | 0 | 7 |
-| critic-new_finding | 968 | 61 | 133 |
+| critic-new_finding | 997 | 61 | 115 |
