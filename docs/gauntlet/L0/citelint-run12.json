@@ -1,0 +1,83 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A2",
+   "id": "nf-judge/carry-weight-exemption-split-is-nine-seven-and-obj-hut-48-is-a-seventh-unexempt-site",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/Obj_Hut.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf-judge/web-battleui-carries-the-same-slot-constants-760-minus-60i-and-450",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf-judge/resizehandler-statsmanager-writes-are-307-312",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/GameEngine.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "nf-judge/duel-hud-never-prints-the-word-CHI",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf-judge/resource-decrypt-key-is-filename-charcode-1-per-resource",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/ResourceManager.as",
+    "reference/extracted/android/115_Mobile_SHS3Resource.bin"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 4,
+  "resolves": 2,
+  "total": 6,
+  "uncheckable": 0
+ }
+}

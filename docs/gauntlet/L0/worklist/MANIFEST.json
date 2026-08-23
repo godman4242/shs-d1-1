@@ -55,7 +55,7 @@
    "unit": "t1-overturns-01"
   },
   {
-   "claims": 45,
+   "claims": 6,
    "file": "t2-corroborating-01.json",
    "lenses": [
     "cite"
@@ -66,11 +66,11 @@
   }
  ],
  "totals": {
-  "already_judged": 1555,
-  "claim_rows": 1660,
+  "already_judged": 1600,
+  "claim_rows": 1666,
   "critic_findings_claiming_overturn": 21,
-  "critic_findings_unjudged": 66,
-  "distinct_ids": 1621,
+  "critic_findings_unjudged": 27,
+  "distinct_ids": 1627,
   "duplicate_rows_merged": 39,
   "source_sweep_unjudged": 0
  }

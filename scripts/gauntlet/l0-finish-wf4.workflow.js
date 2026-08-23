@@ -150,6 +150,57 @@ const HUNT_SCHEMA = {
   },
 }
 
+// ⚠ THE FRAMES ARE 7,381 IMAGES ACROSS 113 DIRECTORIES (measured from index/frames.json,
+// 2026-08-23). ONE hunter cannot go dry against that corpus — it is the target this lane
+// flagged as "may never converge", and a hunter that samples it shallowly reports
+// "nothing new" for the wrong reason: it ran out of attention, not out of findings.
+// Split by corpus region so each hunter owns a bounded, NAMEABLE slice and its empty
+// result actually means something. The split is measured, not invented:
+//     session24    3,525  |  zFtCaTO0_1M + zFt_combat  1,387
+//     Nr4fQstqHDM  1,302  |  every curated study set    1,167
+//
+// ⛔ DECLARED BEFORE HUNTS ON PURPOSE. `const` is in the temporal dead zone until its
+// own line runs, so spreading FRAME_HUNTS into an array declared above it throws
+// ReferenceError at evaluation — caught by scripts/gauntlet/wfcheck.mjs `run` mode.
+const FRAMES_LAW = `THE FRAMES, AGAINST THE DOCS. §0's standing invariant is THE FRAME
+WINS, and only one surveyor in this whole lane worked in A1. Go find contradictions: a
+number some doc asserts that the pixels disagree with, and a question the ledger calls
+open that a frame settles outright. Use ${IDX}/frames.json to locate candidates, then
+ACTUALLY OPEN THE IMAGE, crop, and upscale — the fighter is ~270 px tall in a 1080p
+frame. State the crop you used. Say THE FRAME WINS out loud whenever a doc loses.
+
+⛔ YOUR SLICE IS BOUNDED AND NAMED BELOW. Do not wander outside it — three hunters are
+splitting this corpus in parallel and overlap wastes a whole agent. Report in "searched"
+how many frames you actually opened and from which directories, so that an empty result
+is credible. Sampling is allowed; SILENT sampling is not (§3: no silent caps) — say what
+you sampled and what you skipped.`
+
+const FRAME_HUNTS = [
+  `${FRAMES_LAW}
+
+=== YOUR SLICE: reference/frames/session24/ — 3,525 frames, 48% of the whole corpus ===
+The largest single group in the index and the newest. Prioritise anything bearing on a
+ledger sentence §4 still calls open: HUD geometry and text, the combat read (reach,
+stance, telegraph, hitstop), and equipment/clothing the extracted payload cannot show.`,
+
+  `${FRAMES_LAW}
+
+=== YOUR SLICE: the TWO 1080p LONGPLAYS — zFtCaTO0_1M (1,373) + Nr4fQstqHDM (1,302)
+    + zFt_combat (14) = 2,689 frames, segmented as <id>/seg-NN/frames ===
+CLAUDE.md calls these "THE PRIMARY 1:1 REFERENCE": equipment art, clothing, VFX and feel
+survive ONLY here, not in the extracted payload. Prefer a contradiction that no payload
+row could settle either way — that is the class of finding only this slice can produce.`,
+
+  `${FRAMES_LAW}
+
+=== YOUR SLICE: every CURATED study set — 1,167 frames ===
+session11 (362), broad_survey (240), s19_trace (124), wide_survey (100), survey (60),
+s19_dojo (52), duel_candidates (45), duel_dense (42), s21_weapon (41), map_analysis (20),
+duel_seq (18), combat_frames (16), duel_frames (16), combat_analysis+2 (11), duel_crops (4).
+Earlier sessions hand-picked these for a REASON, and the measurement docs built on them
+are exactly where a doc-vs-frame contradiction is most likely to be load-bearing.`,
+]
+
 // Distinct targets, so the rounds are not three copies of one search. Each is a place
 // four runs could plausibly have missed something, not a re-tread of what they covered.
 const HUNTS = [
@@ -177,12 +228,7 @@ against the corresponding Android strings. Report each surface as PARITY PROVEN 
 diff, or PARITY BROKEN with the specific divergence. A proven parity is worth as much as
 a divergence — it de-risks L2 and L3 outright.`,
 
-  `THE FRAMES, AGAINST THE DOCS. §0's standing invariant is THE FRAME WINS, and only one
-surveyor in this whole lane worked in A1. Go find contradictions: a number some doc
-asserts that the pixels disagree with, and a question the ledger calls open that a frame
-settles outright. Use ${IDX}/frames.json to locate candidates, then ACTUALLY OPEN THE
-IMAGE, crop, and upscale — the fighter is ~270 px tall in a 1080p frame. State the crop.
-Say THE FRAME WINS out loud whenever a doc loses.`,
+  ...FRAME_HUNTS,
 ]
 
 function huntPrompt(hunt, round, idx) {

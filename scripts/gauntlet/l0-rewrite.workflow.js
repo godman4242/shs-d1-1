@@ -283,11 +283,42 @@ to the right place. Write it for that reader.
 ${writeBack(`${OUT}/rewrite/${slice}${TAG}`)}`
 }
 
-function verifierPrompt(slice, draft) {
+// TWO INDEPENDENT VERIFIERS PER SLICE, with DISTINCT lenses (widened 2026-08-23).
+// With one verifier, "majority refute" is not a thing: a single miss goes into the ledger
+// and gate L0-A/B catch it only AFTER the whole run, costing a full re-write. Two
+// identical refuters would be redundant, so each owns the half of the check list it is
+// best placed to run to the bottom. Both still run FABRICATION — it is fatal and cheap.
+const VERIFY_LENSES = [
+  {
+    key: 'evidence',
+    name: 'EVIDENCE — does the packet actually say this?',
+    brief: `Checks 1, 2 and 3. Open EVERY cited finding in the packet and read it against the
+sentence built on it. Your specialism is the gap between what a finding establishes and what
+the rewrite claims it establishes — an ANDROID v0.682 value asserted for WEB v0.717 (C2 is
+UNDISCHARGED), a PARTIAL finding closing a blocker, a NOT-UPHELD finding used to delete a
+line. Check 3 is the single most likely way this rewrite is wrong: 60 of 554 claimed
+overturns were TRUE but did not overturn their target. Walk every deleted line back to an
+UPHELD overturn in section ① of the packet, or call it a fatal false deletion.`,
+  },
+  {
+    key: 'calibration',
+    name: 'CALIBRATION — is the confidence and the score earned?',
+    brief: `Checks 4 and 5, plus the opposite failure. Your specialism is TONE AND DEGREE, in
+both directions. Hunt every factual sentence carrying neither a [[cite]] nor STILL_UNHELD,
+and every blocker quietly dropped. Then hunt the mirror image: a rewrite that hedges to
+STILL_UNHELD while its own packet holds the answer has ALSO failed, and nobody else is
+looking for that. On the score, say what YOU would have scored from the cited evidence
+alone and why — a score that moved further than its evidence supports is a fatal issue,
+and so is one that did not move when the evidence clearly closed a blocker.`,
+  },
+]
+
+function verifierPrompt(slice, draft, lens) {
   return `${LAW}
 
 === YOU ARE A BLIND VERIFIER. YOUR JOB IS TO REFUTE THIS REWRITE. ===
 Slice: ${slice}
+Your lens: ${lens.name}
 Packet (the ONLY evidence the writer was allowed to cite): ${PACKETS}/${slice}.md
 
 ⛔ You see the writer's OUTPUT and the ARTIFACTS. You do NOT see and must not seek out
@@ -326,7 +357,13 @@ the rewrite left open.
 
 You MUST supply own_cite: an artifact YOU opened. Without it your review is VOID under §0.
 
-${writeBack(`${OUT}/rewrite/${slice}.verify${TAG}`)}`
+=== ⚑ WHERE *YOU* SPEND YOUR DEPTH — ${lens.name} ===
+TWO verifiers are reading this slice independently and neither sees the other. Run all
+five checks, but the checks below are YOURS to run to the bottom: if you have time for
+one thing only, it is these. Do not assume the other verifier caught anything.
+${lens.brief}
+
+${writeBack(`${OUT}/rewrite/${slice}.verify.${lens.key}${TAG}`)}`
 }
 
 // ---------------------------------------------------------------------------
@@ -349,30 +386,49 @@ const results = await pipeline(
   (draft, slice) => {
     // A slice whose writer died has nothing to verify. Fail closed: it is UNWRITTEN,
     // never "written and clean" (§0 — zero live critics means unjudged, never confirmed).
-    if (!draft) return { slice, draft: null, verify: null }
-    return agent(verifierPrompt(slice, draft.section_markdown), {
-      label: `verify:${slice}`, phase: 'Verify', schema: VERIFIER_SCHEMA,
-    }).then((v) => {
-      if (!v) dead.push(`verify:${slice}`)
-      return { slice, draft, verify: v }
-    })
+    if (!draft) return { slice, draft: null, verifiers: [] }
+    return parallel(VERIFY_LENSES.map((lens) => () =>
+      agent(verifierPrompt(slice, draft.section_markdown, lens), {
+        label: `verify:${slice}:${lens.key}`, phase: 'Verify', schema: VERIFIER_SCHEMA,
+      }).then((v) => {
+        if (!v) dead.push(`verify:${slice}:${lens.key}`)
+        return v ? { lens: lens.key, ...v } : null
+      }),
+    )).then((vs) => ({ slice, draft, verifiers: vs.filter(Boolean) }))
   },
 )
 
 const landed = results.filter(Boolean).filter((r) => r.draft)
 const unwritten = SLICES.filter((s) => !landed.some((r) => r.slice === s))
-const unverified = landed.filter((r) => !r.verify).map((r) => r.slice)
-const rejected = landed.filter((r) => r.verify && !r.verify.approve).map((r) => r.slice)
-const fabricated = landed.flatMap((r) => (r.verify?.fabricated_ids || []).map((id) => `${r.slice}:${id}`))
-const fatal = landed.flatMap((r) =>
-  (r.verify?.issues || []).filter((i) => i.severity === 'fatal')
-    .map((i) => ({ slice: r.slice, ...i })))
+
+// ⛔ FAIL CLOSED, TWICE OVER — and this block is why the singular `r.verify` had to go.
+// A slice with NO live verifier is UNVERIFIED. A slice that got only ONE of its two
+// lenses is PARTIALLY verified: the other lens's checks were never run by anyone, so it
+// is not clean either. §0 — zero live critics means unjudged, never confirmed.
+const unverified = landed.filter((r) => r.verifiers.length === 0).map((r) => r.slice)
+const partial = landed
+  .filter((r) => r.verifiers.length > 0 && r.verifiers.length < VERIFY_LENSES.length)
+  .map((r) => `${r.slice}(${r.verifiers.map((v) => v.lens).join('+')} only)`)
+
+// APPROVAL IS UNANIMOUS, NOT MAJORITY. With two verifiers a "majority" is either
+// unanimity or a tie, so majority is not a rule here — one refusal is a refusal.
+const rejected = landed
+  .filter((r) => r.verifiers.length > 0 && !r.verifiers.every((v) => v.approve))
+  .map((r) => `${r.slice}(${r.verifiers.filter((v) => !v.approve).map((v) => v.lens).join(',')})`)
+
+// Deduped: both lenses run the fabrication check, so both may name the same id.
+const fabricated = [...new Set(landed.flatMap((r) =>
+  r.verifiers.flatMap((v) => (v.fabricated_ids || []).map((id) => `${r.slice}:${id}`))))]
+const fatal = landed.flatMap((r) => r.verifiers.flatMap((v) =>
+  (v.issues || []).filter((i) => i.severity === 'fatal')
+    .map((i) => ({ slice: r.slice, lens: v.lens, ...i }))))
 
 const clean = dead.length === 0 && unwritten.length === 0 && unverified.length === 0 &&
-              rejected.length === 0 && fabricated.length === 0
+              partial.length === 0 && rejected.length === 0 && fabricated.length === 0
 
 log(`L0 rewrite done: ${landed.length}/${SLICES.length} slices written · ` +
-    `${landed.length - unverified.length} verified · ${rejected.length} rejected · ` +
+    `${landed.length - unverified.length - partial.length} fully verified (both lenses) · ` +
+    `${partial.length} one lens only · ${rejected.length} rejected · ` +
     `${fabricated.length} fabricated ids · ${dead.length} agents died.`)
 
 return {
@@ -380,18 +436,22 @@ return {
   slices_written: landed.length,
   unwritten,
   unverified,
+  partially_verified: partial,
   rejected,
   fabricated_ids: fabricated,
   fatal_issues: fatal,
   dead_agents: dead,
   INTEGRITY: clean
-    ? `CLEAN — all ${SLICES.length} slices written and verified, 0 rejected, 0 fabricated ids, 0 agents died`
+    ? `CLEAN — all ${SLICES.length} slices written and verified by BOTH lenses ` +
+      `(${VERIFY_LENSES.map((l) => l.key).join(' + ')}), 0 rejected, 0 fabricated ids, 0 agents died`
     : `INCOMPLETE — slices never written: [${unwritten.join(', ') || 'none'}] · written but ` +
-      `NEVER VERIFIED: [${unverified.join(', ') || 'none'}] · verifier REJECTED: ` +
-      `[${rejected.join(', ') || 'none'}] · FABRICATED ids: [${fabricated.join(', ') || 'none'}] · ` +
+      `NEVER VERIFIED: [${unverified.join(', ') || 'none'}] · only ONE lens ran: ` +
+      `[${partial.join(', ') || 'none'}] · verifier REJECTED: [${rejected.join(', ') || 'none'}] · ` +
+      `FABRICATED ids: [${fabricated.join(', ') || 'none'}] · ` +
       `${dead.length} agents DIED (${dead.join(', ') || 'none'}). An unverified slice is NOT a ` +
-      `clean slice (§0), and a slice whose writer died is UNWRITTEN — do not paste it into the ` +
-      `ledger and do not count it toward the gate.`,
+      `clean slice (§0); a slice only ONE lens read is NOT verified, because the other lens's ` +
+      `checks were run by nobody; and a slice whose writer died is UNWRITTEN — do not paste it ` +
+      `into the ledger and do not count it toward the gate.`,
   slices: landed.map((r) => ({
     slice: r.slice,
     section_markdown: r.draft.section_markdown,
@@ -404,8 +464,10 @@ return {
     deleted_lines: r.draft.deleted_lines || [],
     survived_attack: r.draft.survived_attack || [],
     notes_for_lead: r.draft.notes_for_lead ?? null,
-    approved: r.verify ? r.verify.approve : null,
-    verifier_issues: r.verify?.issues || [],
-    score_verdict: r.verify?.score_verdict ?? null,
+    // null (not false) when NO lens ran: "nobody checked" is not "checked and rejected".
+    approved: r.verifiers.length ? r.verifiers.every((v) => v.approve) : null,
+    lenses_run: r.verifiers.map((v) => v.lens),
+    verifier_issues: r.verifiers.flatMap((v) => (v.issues || []).map((i) => ({ lens: v.lens, ...i }))),
+    score_verdict: r.verifiers.map((v) => ({ lens: v.lens, verdict: v.score_verdict ?? null })),
   })),
 }

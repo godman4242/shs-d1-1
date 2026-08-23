@@ -1,0 +1,390 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "cite-audit/carry-weight-pvp-exemption-covers-only-five-of-eight-sites",
+   "refuted": false,
+   "reason": "Per-site claims all HELD on my own grep. The five named exempt sites (Obj_TownSign.as:44, Obj_DirectionSign.as:159, Obj_PathBush.as:110, Obj_HiddenTemple.as:187, Obj_DragonDancePath.as:275) each carry the !GameEngine.isPvPRoomMode() prefix; the three named unexempt sites (Obj_Hut.as:70, NodeUI.as:379, InteractUI.as:1730) do not; the three extra unexempt sites (InventoryUI.as:440, CraftingUI.as:233, BankUI.as:348) exist as stated; total hits 16 across 11 files exactly as cited. DEFECT (material, not fatal): the aggregate tally is wrong. My grep shows NINE guards carry the prefix, not eight, and SEVEN do not - the finding misses Obj_Hut.as:48 ('if(StatsManager.findWeight() > StatsManager.getCarryingWeight() || StatsManager.getStat(StatsManager.STAT_AP) <= 0)'), a seventh unexempted site inside the same hut object. The operational conclusion is unaffected and in fact strengthened.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/Obj_Hut.as:48 and :70; Obj_TownSign.as:44; Obj_DirectionSign.as:159; Obj_PathBush.as:110; Obj_HiddenTemple.as:187; Obj_DragonDancePath.as:275; NodeUI.as:379; InteractUI.as:1730; InventoryUI.as:440; CraftingUI.as:233; BankUI.as:348 (own grep -rn 'findWeight() > StatsManager.getCarryingWeight()' = 16 hits / 11 files)",
+   "severity": "material"
+  },
+  {
+   "claim_id": "cite-audit/duel-hud-second-bar-is-chi-not-ap",
+   "refuted": false,
+   "reason": "Core claim HELD on code and frame. BattleUI.as:16 'public var chibar:MovieClip;' and :24 'public var hpbar:MovieClip;' resolve exactly; :249 'this.hpbar.bar.scaleX = hp / maxhp;' and :256 'this.chibar.bar.scaleX = chi / maxchi;' resolve exactly; grep -i 'apbar' over BattleUI.as returns ZERO, and OverworldHUD.as:211 is 'this.overworldHUD_ap.apbaricon.text = ...' as cited. My own crop (0,860)-(700,1080) x2 LANCZOS of the cited frame shows green 20/20 over blue 31/31; the sibling frame B_t850.600 (crop (500,200)-(1500,800) x2) prints HP 20/20, CHI 31/31 (dark blue) and AP 32/35 (teal) as three separate labelled bars - the duel HUD's blue bar carries 31/31, i.e. CHI, not the 32/35 AP value. DEFECT (material, not fatal): 'The reference frames label it directly ... shows CHI 15/15' over-claims. I opened zFtCaTO0_1M/seg-11/frames/frame_0020.jpg (crop (0,380)-(560,576) x3) - the duel HUD prints bare '16/20' and '15/15' with NO word CHI; the literal CHI label appears only on the PLAYER stats screen, a different widget.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/BattleUI.as:16,24,249,256 (own grep -n) + reference/frames/session11/stance-reach/B_t850.600_PLAYER-screen_HP20-CHI31-AP32of35_ATK22_DEF19_SPD13.png, crop (500,200)-(1500,800) x2 LANCZOS: HP 20/20, CHI 31/31, AP 32/35",
+   "severity": "material"
+  },
+  {
+   "claim_id": "cite-audit/frame-to-stage-vertical-transform-is-contested-and-uniform-wins",
+   "refuted": false,
+   "reason": "Reproduced its measurement independently. My own max-channel>25 content scan of the cited frame gives cols 52..1867 (width 1816) and rows 0..1079 - identical to the finding; 1816/800 = 2.270 and the pillarbox is 52 px on both sides. My own threshold scan of the empty slot box gives cols 1448-1559 / rows 961-1072 at thr 150 and 170 (112x112, square) and 1448-1558 / 961-1071 at thr 190, centre (1503.5, 1016.5) - the finding's centre exactly. Model B ((1016.5+5.0)/2.2689 = 450.2) beats Model A (1016.5/2.25 = 451.78) against the code constant y = 450. I ALSO closed the build-parity hole the finding flags: the WEB BattleUI carries the same constants, §1t113s0§.as:170 '_loc1_.x = 760 - _loc2_ * 60;' :171 '_loc1_.y = 450;', so y=450 is not an android-only number imported into a web frame. Recorded caveat: evidence (1) (pillarbox width) does not actually cut against Model A, which also uses 2.270 horizontally; the y-residual is the only real discriminator, and the finding correctly says Model A is not disproved.",
+   "own_cite": "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (own numpy scan: content cols 52-1867, rows 0-1079; slot box thr150 cols 1448-1559 rows 961-1072, centre 1503.5/1016.5) + reference/decompiled/shs3_payload/scripts/§1t113s0§.as:170-171",
+   "severity": "material"
+  },
+  {
+   "claim_id": "cite-audit/gameengine-283-290-does-not-hold-the-fit-branch",
+   "refuted": false,
+   "reason": "HELD. I read GameEngine.as:265-315 directly. :283-290 is exactly '}' '}' 'else' '{' 'StatsManager.stageShowingFriendBar = false;' '}' 'var newScale:Number = 1;' 'var offsetX:Number = 0;' - it does NOT hold the fit branch. The quoted assignments are at :302-305 verbatim, inside the else of 'if(originalAspectRatio >= newAspectRatio)' at :293. Sub-ranges also confirmed: head :267, constants :269-271, aspect gate :275, fit-width branch :295-298, fit-height/pillarbox :302-305. DEFECT (minor, in a cite-hygiene claim): 'StatsManager writes :306-311' is off by one and one field short - :306 is '}' and the six writes run :307 stageScale, :308 stageOffsetX, :309 stageOffsetY, :310 stageFitWidth, :311 stageBaseWidth, :312 stageBaseHeight.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:283-290, :293, :302-305, :307-312 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "cite-audit/lang-bin-id-column-is-contiguous-every-gap-is-in-resname",
+   "refuted": false,
+   "reason": "HELD, reproduced number for number by my own utf-16-le parse. 2,555 <trans-unit> elements; numeric id set == set(range(2555)) -> True (contiguous 0..2554, zero gaps); 1,905 distinct numeric resnames; resname gaps exactly [(211,222),(356,366),(865,867),(880,1000),(1044,2000),(2014,3000),(3018,4000),(4427,5000),(5122,6000),(6146,7000),(7095,8000),(8159,9000)]. strings.json has 2,533 keys of which 1,893 are numeric, and the set difference against the raw blob is exactly the twelve claimed: 665, 820, 5002, 5017, 5022, 5023, 5024, 5025, 5034, 7003, 7041, 9000 (and nothing in strings.json is absent from the bin). LangManager.as:78 is 'var output:String = Locale.loadStringEx(num.toString(),language);' - lookup is by resource NAME, so the resname column is the key space and the id column is inert, exactly as claimed.",
+   "own_cite": "reference/extracted/android/118_Mobile_Lang_EN.bin (own utf-16-le regex parse: 2555 trans-units, ids contiguous 0..2554, 1905 numeric resnames, 12 gaps) + docs/gauntlet/L0/index/strings.json (1893 numeric keys, 12 missing) + reference/decompiled/shs3_android/scripts/LangManager.as:78",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "cite-audit/shs3-swf-loader-is-cws-v10",
+   "refuted": false,
+   "reason": "HELD. I ran my own SWF header parse (signature, version byte, zlib inflate, RECT bit-unpack, frameRate fixed8, frameCount uint16) on all four files and every field in the quote reproduces exactly: shs3.swf CWS v10 rect [0,16000,0,13800] twips = 800.0x690.0 px, 24.000 fps, 2 frames; shs3preloader.swf CWS v10 same rect, 24.000 fps, 2 frames; shs3_payload_decoded.swf CWS v17, 800.0x690.0, 24.000 fps, 6 frames; shs3_android_payload_decoded.swf CWS v26, 800.0x480.0, 24.000 fps, 6 frames. The loader is v10 and the 'CWS v17' attributed to it is the payload's version byte.",
+   "own_cite": "reference/preservation/shs3.swf, reference/preservation/shs3preloader.swf, reference/decrypted/shs3_payload_decoded.swf, reference/decrypted/shs3_android_payload_decoded.swf (own header parse)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "cite-audit/updatebuff-ladder-is-thirteen-not-eleven-and-appends-a-timer",
+   "refuted": false,
+   "reason": "HELD, every line exact. StatsManager.as declares thirteen BUFF_* int constants at :288-:312 (BUFF_XP 0 .. BUFF_MODERATOR 12) - my own grep -c returns 13. OverworldHUD.as:1442 'else if(bufftype == StatsManager.BUFF_INJURED)', :1444 'buffstr = \"Injured\";', :1446 'else if(bufftype == StatsManager.BUFF_MODERATOR)', :1448 'buffstr = \"Moderator\";', :1450 'this.bufftext.visible = true;', :1451 'this.bufftext.htmlText = buffstr + \" <font color=\\'#FFFFFF\\'>\" + this.getTimeString(duration) + \"</font>\";'. The eleven earlier literals run :1400-:1440 exactly as the packet reports them. The white countdown suffix is real and getTimeString is defined at :1455.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/OverworldHUD.as:1400-1451 and StatsManager.as:288-312 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "cite-audit/web-skill-1077-has-a-live-runtime-case",
+   "refuted": false,
+   "reason": "HELD, all lines exact. §1t120s0§.as:114 'public static var §1t10176s0§:int = 1077;'; :344 'case §1t10176s0§:'; :347 'if(§1t1523s0§.§1t9714s0§(2501) < 8)' with :349 'return false;'; :351 '§1t1523s0§.§1t9713s0§(2501,-8);'. The ammo ladder is confirmed at :270 (-1), :323 (-4), :351 (-8), :514 (-1). My own parse of reference/extracted/skilldata.xml gives 127 <id> rows, max 1501, and NO id in 1074-1077 (top ids 1068-1073 then 1500/1501), exactly as cited; grep for 1074/1075/1076/1077 over the android SkillManager.as returns zero. So 1077 has executable web behaviour with no data row.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t120s0§.as:114,344,347,351,270,323,514 + own regex parse of reference/extracted/skilldata.xml (127 ids, max 1501, none 1074-1077)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "housekeeping/questdata-text-word-count-is-40119",
+   "refuted": false,
+   "reason": "HELD, reproduced exactly. ElementTree itertext over root.iter('text') gives 3,307 nodes and 40,119 words; the raw regex re.findall(r'<text>(.*?)</text>', raw, re.S) gives the same 3,307 blocks and 40,135 words. The 16-word delta is fully accounted for: the file contains 14 '<br/>' tokens and 2 '<font ...>'/'</font>' pairs, i.e. exactly the markup the regex count swallows. 40,135 is the worse measurement of the same quantity, as claimed.",
+   "own_cite": "reference/extracted/questdata.xml (own ElementTree + regex counts: 3307 nodes, 40119 vs 40135 words, 14 <br/>, 2 <font> pairs)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "newfind/frame-confirms-web-maxdueltokens-40",
+   "refuted": false,
+   "reason": "HELD on both halves. My own top-bar crop (0,0)-(1024,120) x3 LANCZOS of the cited frame reads: 'BUY' title, a grey-ingot glyph in a green diamond over 'COINS' with value 630, a yellow-oval glyph over 'GOLD' with value 2, a 'GET GOLD' button, 'REFRESH SHOP' with a yellow-oval cost glyph, and at the right a skull glyph with '40/40' over 'DUEL TOKENS'. Code side exact: web §1t1523s0§.as:200 'internal static const §1t9400s0§:int = 40;' consumed at :2079 '§1t9712s0§(§1t9416s0§,§1t9400s0§);'; android StatsManager.as:166 'internal static var MAXDUELTOKENS:int = 30;' consumed at :1691 'setStat(STAT_DUELTOKENS,MAXDUELTOKENS);'. 40 is on screen, so the frame picks the web constant.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg (own crop (0,0)-(1024,120) x3 LANCZOS: COINS 630 / GOLD 2 / 40-40 DUEL TOKENS) + §1t1523s0§.as:200,2079 + StatsManager.as:166,1691",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "newfind/offline-save-branch-writes-nineteen-fields-not-fourteen",
+   "refuted": false,
+   "reason": "HELD, read directly. QueryManagerBase.as:2905 'if(!this.offlineMode)' opens the split; the else branch runs :2912-:2930 and every one of those nineteen lines is a 'sharedObject.data.X = StatsManager.getY()' write. The five quoted tail fields are verbatim: :2926 activeQuestList, :2927 completedQuestList, :2928 playerlocation, :2929 taunt, :2930 friends, with :2931 '}' and :2932 'sharedObject.flush();'. The target is SharedObject.getLocal(StatsManager.cookieName + '_' + StatsManager.charname) at :2903, as stated. Transcribing only :2912-2925 would indeed drop quest state, location, taunt and friends.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:2903-2932 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "newfind/web-nextstance-drops-the-console-five-cycle-and-gates-on-48",
+   "refuted": false,
+   "reason": "HELD, both sides exact. Web §1t99s0§.as:3058 opens '§1t4472s0§()', :3060 'if(this.§1t4414s0§ < 48)' with :3062 'return;', then :3064 '-1', :3068/:3072/:3076 the three-stance cycle, closing at :3081 - and there is NO consoleEnabled test anywhere in the function. Android MCSPlayer.as:2975 'nextStance()', :2977 'if(this.reload < this.maxreload / 6)', :2981 'if(StatsManager.consoleEnabled)', :2993 'this.setStance(DUAL_STANCE);', :2997 'this.setStance(REVERSED_STANCE);', with the shipped three-cycle in the else at :3004-3014. android maxreload is 5*24 = 120 at MCSPlayer.as:239, so /6 = 20 ticks against web's fixed 48; and 48 is the same constant the web HUD subtracts at §1t113s0§.as:328.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3058-3081 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:2975-3017, :239 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "newfind/writ-badge-glyph-is-premium-gold-not-coins",
+   "refuted": false,
+   "reason": "HELD, and stronger than claimed. My own badge crop (600,190)-(720,230) x10 LANCZOS shows '25' followed by the YELLOW-OVAL glyph; my wider tile crop (580,150)-(1024,280) x4 shows the tile is titled 'WRIT OF RELEASE', 'OWNED: 0', 'USE THIS ITEM TO LEAVE YOUR CLAN.' - which matches resolved_names.json itemdata id 2203 name 'Writ of Release' / desc 'Use this item to leave your Clan.' exactly. The same frame's top bar labels the yellow-oval counter GOLD (2) and the grey-ingot-in-green-diamond counter COINS (630), so the badge currency is premium Gold. itemdata.xml:2328 '<id>2203</id>', :2332 '<baseprice>0</baseprice>', :2333 '<heavenlyprice>5</heavenlyprice>' resolve exactly. 25 premium Gold on web vs 5 in the android data; no <baseprice> change is required.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-17/frames/frame_0005.jpg (own crops (600,190)-(720,230) x10 and (580,150)-(1024,280) x4 LANCZOS) + reference/extracted/itemdata.xml:2328-2333 + docs/gauntlet/L0/index/resolved_names.json itemdata.xml.resolved['2203']",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "nf/four-classes-run-the-12-frame-ai-cadence",
+   "refuted": false,
+   "reason": "HELD. My own grep -rn 'aiCounterMax' over reference/decompiled/shs3_android_payload/scripts returns exactly five lines: NPC.as:22 'internal var aiCounterMax:int = 24;' and four assignments of 12 - MCSPlayer.as:165, EnemyPlayer.as:52, EnemyElite.as:18, FriendlyElite.as:18. Inheritance confirmed: EnemyPlayer.as:5 'extends MCSPlayer', MCSPlayer.as 'extends NPC', EnemyElite.as:3 'extends EnemyPlayer', FriendlyElite.as:3 'extends EnemyPlayer', EnemyKnife.as:3 'extends NPC'. Spot-checked the inherit-24 roster: EnemyArcher, EnemyKatana, EnemyNinja, EnemySpear, EnemySpearElite, EnemyOgre, EnemyShield, EnemyZombie, EnemyGoblin, EnemyJiangSi all read 'extends NPC'. Note for the ledger: EnemyClone.as:6 and EnemyPlayerGiant.as:3 also extend EnemyPlayer, so they inherit 12 without setting it - which the finding's wording ('set by four classes') already handles correctly.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/NPC.as:22, MCSPlayer.as:165, EnemyPlayer.as:5,52, EnemyElite.as:3,18, FriendlyElite.as:3,18, EnemyKnife.as:3 (own grep + class-decl scan)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "nf/payload-xml-static-textfields-are-authoring-placeholders",
+   "refuted": false,
+   "reason": "HELD, every cite resolves. §1t7924s0§.as:7 '[Embed(source=\"/_assets/assets.swf\", symbol=\"symbol756\")]', :23 'internal var max:int = 7;', the page switch at :93-126 overwriting warrulestitle.text / warruleswords.text from getString on every case (:96 getString(369) ... :121-123 'case 7:' / getString(11016) / getString(11017)). payload.xml:528040 is a DefineEditTextTag characterID='744' whose initialText decodes to 'War room rules 1/6 &nbsp;(joining a battle)'; the six title/body pairs run characterIDs 744-755 at :528040-:528087; :528088 is '<item type=\"DefineSpriteTag\" forceWriteAsLong=\"true\" frameCount=\"6\" hasEndTag=\"true\" spriteId=\"756\">' - the exact symbol the class embeds. payload.xml:113188 and :2653462 are both '<item>1t7924s0</item>' constant-pool rows. The rule is correctly hedged ('unless no code writes that field').",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t7924s0§.as:7,23,93-126 + reference/extracted/payload.xml:528040 (initialText 'War room rules 1/6'), :528088 (DefineSpriteTag spriteId 756), :113188, :2653462",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "nf/slashusage-48-floor-is-duplicated-on-the-npc-path",
+   "refuted": false,
+   "reason": "HELD. XMLNpc.as:360-364 is verbatim 'this.slashUsage = itemdata.slashusage;' / 'if(this.slashUsage < 48)' / '{' / 'this.slashUsage = 48;' / '}', and it sits inside initDuelist(), declared at XMLNpc.as:290 - so it runs for every AI duelist. The player-path twin is StatsManager.getSlashUsage() at :1921-1930, whose :1924 'if(itemdata == null || itemdata.slashusage < 48)' returns 48. My own count over reference/extracted/itemdata.xml: exactly ONE '<slashusage>24</slashusage>' row against 70 of 72 and 35 of 96 - so the lone 24 is unreachable on both paths. Minor scope note: the web NPC path was not checked, though the web player path floors identically at §1t1523s0§.as:2353-2355.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/XMLNpc.as:290,360-364 + StatsManager.as:1921-1930 + own grep over reference/extracted/itemdata.xml (1x slashusage 24)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "nf/territory-and-hex-clan-palettes-differ-on-only-two-sides",
+   "refuted": false,
+   "reason": "HELD, all eight values exact. TerritoryData.as:696 '#FF0000', :700 '#00FF00', :704 '#00FFFF', :708 '#FFFF00' (townSide 1..4). WarHexUI.as:1077 'this.numbertext.textColor = 16711680;' (0xFF0000), :1081 '39168;' (0x009900), :1085 '26367;' (0x0066FF), :1089 '16776960;' (0xFFFF00) (playerside 1..4). Sides 1 and 4 match across both UIs; only sides 2 (green) and 3 (cyan/blue) diverge, exactly as claimed. Both ladders fall through to StatsManager.isCustomClan / getCustomClanColor for custom clans.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/TerritoryData.as:696,700,704,708 + WarHexUI.as:1077,1081,1085,1089 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "nf/war-turn-timer-bracketed-on-film",
+   "refuted": false,
+   "reason": "HELD on my own crops. I cropped both frames at (0.60,0.84)-(0.99,0.96) x4 LANCZOS: frame_0019 reads '2 MOVE(S) LEFT' over 'NEXT TURN IN 1:00:00'; frame_0020 reads '2 MOVE(S) LEFT' over 'NEXT TURN IN 59:58'. StatsManager.as:162 is 'internal static var WARMOVEINTERVAL:int = 60 * 60;' verbatim. Two consecutive frames do bracket the countdown as starting at exactly 1:00:00, which no single frame establishes.",
+   "own_cite": "reference/frames/Nr4fQstqHDM/seg-29/frames/frame_0019.jpg and frame_0020.jpg (own crops (0.60,0.84)-(0.99,0.96) x4 LANCZOS) + reference/decompiled/shs3_android/scripts/StatsManager.as:162",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "nf/web-has-a-second-getsellamt-call-site",
+   "refuted": false,
+   "reason": "HELD. My own grep -rn 'getSellAmt' over reference/decompiled/shs3_android/scripts returns exactly two lines - the declaration Item.as:1582 and the single call site ShopUI.as:401 'slot.setCost(slot.getItem().getSellAmt(),0);'. My own grep for the web twin §1t546s0§ over reference/decompiled/shs3_payload/scripts returns three lines: the declaration §1t17s0§.as:1977 'public function §1t546s0§() : int' and TWO call sites - §1t6519s0§.as:474 '_loc4_.§1t6868s0§(_loc4_.§1t2217s0§().§1t546s0§(),0);' (the shop slot, structurally identical to android ShopUI.as:401) and §1t6172s0§.as:417 '_loc2_ += _loc5_.§1t546s0§();' (an accumulator). Both quoted lines are verbatim. The 'sole call site' statement is android-only, as claimed.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t6172s0§.as:417, §1t6519s0§.as:474, §1t17s0§.as:1977 + reference/decompiled/shs3_android/scripts/ShopUI.as:401, Item.as:1582 (own greps)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "nf/web-item-weight-modifier-is-id-208",
+   "refuted": false,
+   "reason": "HELD, and the parallel structure makes it airtight. Web §1t17s0§.as:6-24 mirrors android Item.as:6-18 declaration for declaration (1, 80, 81, 82, 89, 125, then '0') and inserts exactly three ids android lacks: :18 '§1t8739s0§:int = 206;', :20 '§1t8740s0§:int = 207;', :22 '§1t8741s0§:int = 208;'. android Item.as:6-16 has NOCOLOR/PCOLORMODID 80/SCOLORMODID 81/USESMODID 82/NAMEMODID 89/CREATORMODID 125 and nothing in the 200s. :60 'internal var §1t478s0§:int = 0;'; :298-300 'if(this.§1t478s0§ != 0) { _loc2_ += §1t8741s0§ + \"@\" + this.§1t478s0§ + \"#\"; }' pairs 208 with §1t478s0§, and :302-304 pairs 206 with xp - confirming the '206 (xp)' reading. :1407 renders getString(139) + ': ' + (_loc2_.weight + this.§1t478s0§), and :1963/:1974 both return '(this.weight + this.§1t478s0§) * this.§1t484s0§()'.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t17s0§.as:6-24,60,296-304,1407,1963,1974 + reference/decompiled/shs3_android/scripts/Item.as:6-18 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "nf/web-only-survival-enemy-443-is-named",
+   "refuted": false,
+   "reason": "HELD on both halves, verified first-hand. docs/gauntlet/L0/index/resolved_names.json npcdata.xml.resolved['443'] = {'name': 'Soldier'}. The WEB survival table reference/extracted/bindata/119_1t4646s0.bin (root <survivalmodedata>) carries '<id>449|454|449|454|443</id>' x4, '<id>450|455|450|455|443</id>' x4 and '<id>451|456|451|456|443</id>' x6 - fourteen rows - where the ANDROID twin reference/extracted/android/109_WarHexUI_SurvivalModeData.bin carries the bare '<id>449|454</id>' / '<id>450|455</id>' / '<id>451|456</id>' at the same positions (confirmed by my own unified diff of the two decoded files). So the web-only late-wave addition is npc 443 = Soldier, fully named.",
+   "own_cite": "reference/extracted/bindata/119_1t4646s0.bin vs reference/extracted/android/109_WarHexUI_SurvivalModeData.bin (own difflib diff) + docs/gauntlet/L0/index/resolved_names.json npcdata.xml.resolved['443']",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "progression/android-never-reassigns-levelcap-either",
+   "refuted": false,
+   "reason": "HELD. StatsManager.as:76 is 'public static var levelCap:int = 80;'. My own grep -rn 'levelCap' over reference/decompiled/shs3_android/scripts returns 33 lines and every single one other than :76 is a READ - comparisons in DungeonGenerator (:78,:329,:456,:725), Item.as:295 (with :297 assigning TO lvl), LootDialog.as:644, ItemGenerator.as:381/:383, OverworldHUD.as:1328/:1528/:1537, QuestGenerator (16 sites incl. :840), InventoryUI.as:912/:917/:2319/:2341, StatsManager.as:1619 and :2156. A targeted grep for 'levelCap =' outside the declaration returns nothing. The three quoted representative reads are verbatim. Web guard §1t1523s0§.as:2043 'if(!_loc5_ && _loc4_ > §1t9470s0§)' with ':2046 return false;' resolves exactly.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/StatsManager.as:76 (own grep -rn 'levelCap': zero assignments) + reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2043-2046",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "provenance/web-projectilemanager-is-1t1712s0-not-1t112s0",
+   "refuted": false,
+   "reason": "HELD, identification is decisive. §1t1712s0§.as:3-5 imports DisplayObject + MovieClip + geom.Point, :10 and :12 are the two leading Vectors, :14 is enum value 0 and :108 'public static var §1t11319s0§:int = 47;' - matching android ProjectileManager.as:3-5/:10/:12/:14 (PROJ_KUNAI 0) and running one further than android's last enum, PROJ_EARTHQUAKE 46 at :106. §1t112s0§.as:5 is 'public class §1t112s0§ extends MovieClip', :8 'internal static var §1t12546s0§:int = 400;', :130 'public static var screenWidth:int = 800;', and its :112-:130 run 51,52,53,54,55,46,47,49,50,800 - value for value identical to android GameStage.as:112-:130 (BG_DUNGEON_FOG 51 ... BG_DOJO5 50, screenWidth 800). So §1t112s0§ is GameStage, the 0..55 run is BG_*, and the projectile delta is +1 (48 vs 47), not +9.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1712s0§.as:3-14,108 and §1t112s0§.as:5,8,112-130 + reference/decompiled/shs3_android/scripts/ProjectileManager.as:3-14,106 and GameStage.as:112-130",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/1t8702s0-is-the-dance-PATH-not-the-statue",
+   "refuted": false,
+   "reason": "HELD. The web class §1t8702s0§.as:150 declares 'internal function generateSequence() : String' - the method name survived obfuscation - and :155 '_loc1_ = §1t58s0§.§1t8804s0§(§1t1525s0§.§1t9935s0§() * §1t1525s0§.§1t7341s0§() + 21);' is the node*room+21 seed, with :156 the node-level fetch and :159 '<20' / :170 '<60' regimes. Android Obj_DragonDancePath.as:150-156 is the same function verbatim, including 'var rng:RNG = new RNG(StageManager.getCurrentNode() * StageManager.getCurrentRoom() + 21);' at :155 and 'NodeGenerator.instance.getNodeLevel(StageManager.getCurrentNode())' at :156. The family-trait warning also checks out: Obj_DragonDanceStatue.as:224-226 is 'override public function getAPUse() : int { return 2; }' and :238-240 'override public function isInInteractRange(mc:MovieClip) : Boolean { return abs(x - mc.x) < 100; }' - shared overrides that cannot identify a class.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t8702s0§.as:150-170 + reference/decompiled/shs3_android_payload/scripts/Obj_DragonDancePath.as:150-170 and Obj_DragonDanceStatue.as:224,240",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/acc3007-has-no-symbol-in-the-shs3resource-export",
+   "refuted": false,
+   "reason": "HELD, reproduced end to end by my own decode. ResourceManager.as:200-214 decryptByteArray XORs bytes 3..255 with a key and swaps every i%11==0 byte with i+256; ResourceManager.as:186 supplies the key as resourceFileNameArray[num].charCodeAt(1), and :41 names shs3resource.swf first - so 'h' = 104 is exactly right. Decrypting 115_Mobile_SHS3Resource.bin at key 104 yields a valid CWS v17 SWF (1,040,849 bytes inflated); parsing its SymbolClass tags gives 1,912 entries, of which the acc family is exactly acc3000, acc3001, acc3002, acc3003, acc3004, acc3005, acc3006, acc3008 - eight symbols, acc3007 absent. My own scan of reference/extracted/itemdata.xml finds nine ids in the 3000-3999 band: 3000..3008. MCSItem.as:229 'this.displayItem = this.getMCSComponent(\"acc\",id);' with :230-232 falling back to 'new AccessoryDummyIcon();' resolves exactly.",
+   "own_cite": "reference/extracted/android/115_Mobile_SHS3Resource.bin (own XOR key-104 decrypt + SymbolClass parse: 8 acc symbols, acc3007 absent) + reference/decompiled/shs3_android/scripts/ResourceManager.as:41,186,200-214 + MCSItem.as:229,232 + own id scan of reference/extracted/itemdata.xml (3000-3008)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/aoe-narrow-phase-is-2d-hittest",
+   "refuted": false,
+   "reason": "HELD on substance. NPCManager.as:1444 is verbatim 'if(enemydist * enemydist < distsq && enemy.checkHitObject(thing,damage,checkByAttacker))', preceded at :1438/:1442 by enemydist = enemy.getMCS().x - (objectToCheckDist|thing).x - a purely HORIZONTAL broad phase. NPC.as:323 'public function checkHitObject(thing:MovieClip, damage:Damage, checkByAttacker:Boolean = false) : Boolean', :326 'var max:int = mcs.getPartListLength();', :328 the part-list loop, :331 'if(mc.hitTestObject(thing))' - a 2D bounding-box test - and :333 'if(this.gotHit(mc,damage))'. The four half-widths are exact: BigFireBreathProjectile.as:32 'NPCManager.checkHitObject(this,damageObj,600);', BigWaveProjectile.as:34 400, BigTornadoProjectile.as:33 200, BigEarthquakeProjectile.as:68 50. DEFECT (minor): two quote line labels are off by one - hitTestObject is at :331 not :332, gotHit at :333 not :334; the cited RANGE :323-341 does contain them.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/NPC.as:323-341 (hitTestObject at :331, gotHit at :333) + NPCManager.as:1438-1444 + BigFireBreathProjectile.as:32, BigWaveProjectile.as:34, BigTornadoProjectile.as:33, BigEarthquakeProjectile.as:68",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/focus-bar-reads-empty-one-tick-before-the-stance-gate-closes",
+   "refuted": false,
+   "reason": "HELD, all six lines exact. §1t113s0§.as:326 opens '§1t5205s0§(param1:int, param2:int)', :328 'var _loc3_:Number = (param1 - 48) / (param2 - 48);', :329 'if(_loc3_ < 0)', :331 '_loc3_ = 0;', :333 sets the bar scaleX, and :336 'if(_loc3_ == 0)' drives the label at :338-342. §1t99s0§.as:3050 'return this.§1t4469s0§() && this.§1t4414s0§ >= 48;', :3060 'if(this.§1t4414s0§ < 48)', :3162 'this.§1t4414s0§ -= 48;'. At raw == 48 the fill is exactly 0 so the label fires, while both gates (>= 48 and !(< 48)) admit the switch - the one-tick discrepancy is real and comes from the clamp, not the offset. Corroborating frame seen while judging a sibling claim: zFtCaTO0_1M/seg-11/frames/frame_0020.jpg prints 'CANNOT CHANGE STANCE' in that slot.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:326-343 + §1t99s0§.as:3050,3060,3162 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/seg10-frame0020-carries-four-hostiles-not-three",
+   "refuted": false,
+   "reason": "HELD - I opened the frame and counted. My own crop (150,250)-(1024,500) x2 LANCZOS of frame_0020.jpg shows FOUR green HP bars over four distinct hostiles: a blue-clad figure at far left partly behind the tree, a brown-shirted crouching figure, a bare-chested crouching figure, and a fully AIRBORNE straw-hatted figure at right whose bar is already drawn above it. A fifth actor at the right carries the yellow 'GUEST' label and no green bar - the player. The same crop of frame_0019.jpg shows none of the four: only the GUEST player, a red slash trail and debris in the grass. THE FRAME WINS over the head-count of three; the drop-in witness and the 'bar attached before landing' reading survive.",
+   "own_cite": "reference/frames/zFtCaTO0_1M/seg-10/frames/frame_0020.jpg and frame_0019.jpg (own crop (150,250)-(1024,500) x2 LANCZOS: 4 green bars + GUEST in 0020, none in 0019)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/status-and-duration-DO-ride-the-damage-packet",
+   "refuted": false,
+   "reason": "HELD, every line exact. Damage.as:18 'public static var STUN:int = 6;' sits in a launchType constant block (:14 LAUNCH_FLYAWAY 4, :16 KNEEGROIN 5, :20 DEATHTOUCH 7, :22 SUBSTITUTIONLOG 8). :98 'public function isStun() : Boolean' / :100 'return this.launchType == STUN;', with isDeathTouch at :103-105. :137 'public function setStunTime(num:int, stunPosX:int = 0) : *' writes :139 flyVelX = num and :140 flyVelY = stunPosX onto the same object. FlashbangProjectile.as:26 'damageObj = new Damage(0,0,Damage.STUN);' and :27 'damageObj.setStunTime(24 * 2);' - a 48-frame zero-damage stun, exactly as claimed.",
+   "own_cite": "reference/decompiled/shs3_android_payload/scripts/Damage.as:14-22,98-105,137-141 + FlashbangProjectile.as:26-27 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/web-crit-is-1.3-flat-android-is-1.2-1.5-split",
+   "refuted": false,
+   "reason": "HELD, both quotes verbatim. Web §1t99s0§.as:3272 'if(this.§1t4414s0§ == this.§1t4415s0§)', :3274 'return _loc2_ * 1.3 + this.§1t1243s0§;', :3276 'return _loc2_;' - one flat multiplier, no stance test. Android shs3_android_payload/MCSPlayer.as:3215 'if(this.reload == this.maxreload)', :3217 'if(this.stance != LIGHT_STANCE)', :3219 'return maxDamage * 1.2 + this.STAT_CRITICALDMG;', :3221 'return maxDamage * 1.5 + this.STAT_CRITICALDMG;', :3223 'return maxDamage;'. Same deterministic trigger (reload == maxreload) on both sides; the multiplier is a genuine build split.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3272-3276 + reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:3215-3223 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/web-npcmanager-ai-switch-has-39-cases-not-38",
+   "refuted": false,
+   "reason": "HELD, counted mechanically. In §1t1543s0§.as the switch opens at :615 'switch(_loc6_.ai)' and my own regex count over the file returns exactly 39 numeric 'case N:' labels, first 'case 0:' at :617 and last 'case 38:' at :731, with :732 '_loc5_ = new §1t4551s0§();' and :733 '}' - no break on the final arm and NO 'default:' anywhere in :600-740. Android NPCManager.as opens at :516 'switch(xml.ai)', runs 'case 0:' at :518 through 'case 37:' at :629 with :630 'actor = new EnemySpearElite(MCSPool.getMCS(),true);', and closes :632 'default:' / :633 'trace(\"createNPC error: \" + xml.ai);'. Case-order name mapping is therefore valid only for ai 0..37.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1543s0§.as:615-733 (own regex: 39 numeric cases, no default) + reference/decompiled/shs3_android/scripts/NPCManager.as:516-633",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/web-reach-and-cooldown-formulas-recovered",
+   "refuted": false,
+   "reason": "HELD, all three functions verbatim. §1t1523s0§.as:2289 'internal static function §1t9590s0§(param1:int) : Number', :2291 'if(param1 > 600)', :2293 'param1 = 600;', :2295 'return 1 - param1 / 600 * 0.5;' - clamp then a x0.5 floor at SPD>=600. :2344 '§1t9593s0§(param1:int) : int', :2346 'var _loc2_:int = 90 + §1t7356s0§(§1t9426s0§) * 5;', :2347 'return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));'. §1t9426s0§ is confirmed as STAT_DAN by the android twin StatsManager.as:1915-1918 getBaseSlashLengthVal, which is line-for-line the same with 'var maxincrement:int = 90 + getPlayerStats(STAT_DAN) * 5;'. The stated asymptotes check out arithmetically: Dan 0 -> 120+90 = 210 px, Dan 9 -> 120+135 = 255 px. :2350-2357 slash-usage floor with :2353 'if(_loc1_ == null || _loc1_.slashusage < 48)' / :2355 'return 48;'.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2289-2295,2344-2347,2350-2357 + reference/decompiled/shs3_android/scripts/StatsManager.as:1915-1918 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "s26d/web-statue-is-1t8703s0-and-has-full-parity",
+   "refuted": false,
+   "reason": "HELD, line for line. §1t8703s0§.as:35 '§1t1524s0§.§1t9883s0§(801)' matches android Obj_DragonDanceStatue.as:36 'QuestEngine.getNPCMCS(801)'; :36 'this.num = int(param1);' = android :37; :37 '>= 8' = :38; :39 '-= 8' = :40; :40 clears §1t5519s0§ (earlierHeaven) = :41; :41 '§1t58s0§.random(5,§1t1525s0§.§1t9935s0§())' collapses android :42-43 (new RNG(getCurrentNode()) + rand(5)); the five orderings are identical and in the same dice order - 1246 (:44/:46), 4216 (:48/:50), 1642 (:52/:54), 1426 (:56/:58), 6241 (:60/:62); else :65 '§1t5518s0§ = param1;' = android :67 'sequence = props;'. Minor wording note: the appended digit is this.num (props-8), not a 'node digit'.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t8703s0§.as:35-66 + reference/decompiled/shs3_android_payload/scripts/Obj_DragonDanceStatue.as:36-68 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "save-schema/dataslots-20-does-not-count-the-written-ids",
+   "refuted": false,
+   "reason": "HELD. QueryManagerBase.as:15 'internal static var DATASLOTS:int = 20;'. My own grep -rn 'DATASLOTS' over reference/decompiled/shs3_android/scripts returns exactly six lines and every use is an array size or a loop bound: :41 'new Vector.<Boolean>(DATASLOTS)', :66 and :74 'for(var i:int = 0; i < DATASLOTS; i++)', :1875 'for(i = 0; i < DATASLOTS; i++)', plus QueryManagerPIO.as:1033 with the same form. It therefore indexes 0..19, which necessarily includes 13 and excludes 103 - and slot 103 is real (QueryManagerPIO.as:1057 'NetworkManager.instance.saveUpdate(103,StatsManager.getBattleStatsString());'). The arithmetic agreement with a '0-12, 14-19, 103' list is a coincidence, as claimed.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/QueryManagerBase.as:15,41,66,74,1875 + QueryManagerPIO.as:1033,1057 (own grep -rn DATASLOTS)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "save-schema/is-android-only-evidence",
+   "refuted": false,
+   "reason": "HELD on the conclusion. I ran the exact command: grep -rn 'saveUpdate' reference/decompiled/ | awk -F: '{print $1}' | sort | uniq -c reproduces the quoted table byte for byte - 1 shs3_android/NetworkManager.as, 23 shs3_android/QueryManagerPIO.as, 1 shs3_android_payload/NetworkManager.as, 23 shs3_android_payload/QueryManagerPIO.as, and ZERO under shs3_payload. Cites resolve: QueryManagerPIO.as:1047 'NetworkManager.instance.saveUpdate(0,StatsManager.getPlayerLevelString());', :1187 'saveUpdate(102,StatsManager.nextWarTurn.toString());', NetworkManager.as:1870 'public function saveUpdate(saveIndex:int, savedata:String) : *'. The parity flag is correct and conservative. Caveat worth carrying: the web tree is name-obfuscated (getSellAmt -> §1t546s0§), so a zero-hit grep for a source-level name there is expected regardless and is not by itself evidence of absence - which if anything widens the hole the finding is flagging.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/QueryManagerPIO.as:1047,1187 + NetworkManager.as:1870 (own grep -rn saveUpdate over reference/decompiled/: 4 files, zero under shs3_payload)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "ui-hud/two-dan-title-renderers-romaji-and-kanji",
+   "refuted": false,
+   "reason": "HELD, both renderers confirmed in both builds. Web §1t408s0§.as:532 'switch(dan)' runs a HARDCODED ASCII ladder: :535 '\"\"', :538 '\"(nidan)\"', :541 '\"(sandan)\"', :544 '\"(yondan) \" + getString(465)' ... :562 '\"(judan) \" + getString(467)' with a default at :564-565; android PlayerPanel.as:382-395 is the same ladder with :388 'dantext = \"(nidan)\";' verbatim. The kanji renderer: android InventoryUI.as:2274 switches on STAT_DAN with :2277 '\"\"', :2280 'this.danfield.text = LangManager.getString(456);' ... :2311 getString(464), and the web twin §1t5957s0§.as:3061-3067 is the same switch. strings.json['456'] = '(弐段)' and ['464'] = '(十段)' confirm the kanji ladder over 456..464 for dan 1..9 with ['455'] = '(初段)' unreferenced; the shogo suffix is 465 Renshi / 466 Kyoshi / 467 Hanshi. Both renderers blank at dan 0. DEFECT (minor): the quote labels the web default as ':563' - :563 is 'break;' and 'default:' is at :564.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t408s0§.as:532-565 and §1t5957s0§.as:3061-3067 + reference/decompiled/shs3_android/scripts/PlayerPanel.as:382-395 + reference/decompiled/shs3_android_payload/scripts/InventoryUI.as:2274-2315 + docs/gauntlet/L0/index/strings.json['455','456','464','465','466','467']",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "ui-hud/web-battleui-status-selector-has-nine-branches",
+   "refuted": false,
+   "reason": "HELD, counted in the file. §1t113s0§.as:1271 sets _loc4_ = \"\", then eight plain branches: :1272/:1274 getString(11119), :1276/:1278 11120, :1280/:1282 11121, :1284/:1286 11122, :1288/:1290 11123, :1292/:1294 11124, :1296/:1298 11125, :1300/:1302 11126. The ninth is :1304 'else if(_loc1_ == §1t1523s0§.§1t9463s0§)' with :1306 'if(§1t1523s0§.§1t7356s0§(§1t1523s0§.§1t9414s0§) <= 1)' choosing :1308 '\"<font color=\\'#FF0000\\'>\" + getString(11130) + \"</font>\"' or :1312 the same wrapper around getString(11131). :1315 'this.§1t5159s0§.visible = true;', :1316 'this.§1t5159s0§.htmlText = _loc4_;', :1320 hides the field when _loc1_ == -1. Nine branches, exactly as claimed.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:1269-1321 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "uistrings-payload/web-build-ships-zh-cn-branching-without-a-zh-cn-table",
+   "refuted": false,
+   "reason": "HELD, every cite exact. §1t1521s0§.as:15 'public static var CHINESE:String = \"zh-CN\";' (the identifier survived obfuscation), and :185 'if(language == CHINESE || language == §1t9275s0§)' branches on it to disable embedded fonts at :187. shs3_fla/PauseScreen_51.as:27-28 hides both titles, :29 'if(§1t1521s0§.getLanguage() == §1t1521s0§.§1t9271s0§)' shows title_english, :33 'else if(§1t1521s0§.getLanguage() == §1t1521s0§.CHINESE)' / :35 'this.title_chinese.visible = true;'. The pool names exactly six language files: payload.xml:118534 'strings/', :118535-118537 shs3_en/fr/es.xml, :118543-118545 tower_en/fr/es.xml. So zh-CN code and title art ship without a zh-CN table.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1521s0§.as:15,185 + shs3_fla/PauseScreen_51.as:27-36 + reference/extracted/payload.xml:118534-118545 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "warroom/next-turn-in-is-string-309-not-307",
+   "refuted": false,
+   "reason": "HELD. docs/gauntlet/L0/index/strings.json gives ['306'] 'View', ['307'] 'Select territory', ['308'] ' Move(s) Left', ['309'] 'Next turn in ', ['310'] 'Select a sector', ['311'] 'Deploy Troops' - exactly as the finding states. WarUI.as:539 is verbatim 'this.movesleftlabel.text = warmoves + LangManager.getString(308);', and I additionally found the timer's own call site at WarUI.as:546 'this.readytomovelabel.text = LangManager.getString(309) + this.getTimeString(-timediff);', which nails 309 as the countdown label in code as well as in the table.",
+   "own_cite": "docs/gauntlet/L0/index/strings.json['306'-'311'] + reference/decompiled/shs3_android/scripts/WarUI.as:539,546 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "world-exploration/farm-guaranteed-yield-is-the-FIRST-harvest",
+   "refuted": false,
+   "reason": "HELD, ordering proven. InteractUI_crops.as:586 'internal function harvest() : *'; :592 'StatsManager.changeStat(this.startingIndex + 2,1);' runs BEFORE :607 'if(StatsManager.getStat(this.startingIndex + 2) == 1 || int(Math.random() * (10 - StatsManager.getStat(1020))) == 0)'. My own grep for 'startingIndex + 2' across the android script tree returns six hits, and :592 is the ONLY write - the rest are reads (Obj_VegePatch.as:78, InteractUI_crops.as:104, :346, :607, :609). changeStat's PLAYERSTAT arm is StatsManager.as:3773 'setPlayerStats(id,getPlayerStats(id) + val);' - it adds. So a virgin patch reads 0, becomes 1 at :592, and satisfies '== 1' on that same first harvest.",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InteractUI_crops.as:586,592,607 + StatsManager.as:3773 (own grep 'startingIndex + 2': one writer)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "world-exploration/frozen-ring-is-19-territories-recomputed",
+   "refuted": false,
+   "reason": "HELD - I recomputed it independently and got the identical distribution. Cites resolve: NodeGenerator.as:144 'internal var LEVELSTART:int = 3;', :385 'var lvl:int = Math.abs(territory.x - 341) + Math.abs(territory.y - 341) + this.LEVELSTART;', :400 'return lvl < this.LEVELSTART + 5;' (the freeze test, reached via getTerritoryLevel, which carries the same formula). WorldMapUI.as:15 WARMARKERSHIFTX 8, :17 TERRSHIFTX 21, :19 TERRSHIFTY 51, :208 'getPixel(territoryx + TERRSHIFTX - WARMARKERSHIFTX,territoryy + TERRSHIFTY)'. I confirmed the coordinates fed to hasTerritory are RELATIVE - WorldMapUI.as:433-435 computes terrX/terrY then 'territoryid = terrX + 341 << 12 | terrY + 341' - so absolute (341,341) really is mask cell (13,51). Decoding 110_Mobile_MapBitmapData.bin myself: GIF89a, 63x72, 735 non-black cells; counting land inside the Manhattan<=4 diamond around (13,51) gives 19, distributed {3:1, 4:2, 5:4, 6:5, 7:7} - the finding's numbers exactly.",
+   "own_cite": "reference/extracted/android/110_Mobile_MapBitmapData.bin (own PIL decode: 63x72, 735 land cells, 19 in the diamond, {3:1,4:2,5:4,6:5,7:7}) + reference/decompiled/shs3_android/scripts/NodeGenerator.as:144,385,400 + WorldMapUI.as:15,17,19,208,433-435",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "world/kasuta-is-on-film-in-the-web-build",
+   "refuted": false,
+   "reason": "HELD, and I closed the arithmetic myself. My own crop (60,140)-(620,340) x3 LANCZOS of the cited 1920x1080 frame reads 'E KASUTA FIELD' in the location banner with a footprint-icon travel row 'E KASUTA MOUNTAIN PATH (N)'; my crop (1350,400)-(1920,620) x3 reads 'TERRITORY (21,51)' over 'SECTOR (4,3)'. The territory identity checks out in code: WorldMapUI.as:440 displays '(terrX + DTERRSHIFTX) + \",\" + (terrY + DTERRSHIFTY)' = (terrX+21, terrY+51), so the displayed (21,51) is terrX=terrY=0, and :435 'territoryid = terrX + 341 << 12 | terrY + 341' gives 341*4096 + 341 = 1397077 exactly. 'Kasuta' is NOT one of the 677 rows in the place-name table (I checked), so it is generator output, not a table lookup - the syllable name, compass prefix and terrain suffix all survive into the filmed v0.717 build.",
+   "own_cite": "reference/frames/zFt_combat/zFtCaTO0_1M_t0330s.png (own crops (60,140)-(620,340) and (1350,400)-(1920,620) x3 LANCZOS) + reference/decompiled/shs3_android/scripts/WorldMapUI.as:435,440 + reference/extracted/bindata/98_1t4653s0.bin (Kasuta absent)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "world/nochange-town-rule-is-cross-build",
+   "refuted": false,
+   "reason": "HELD, and the twin is closer than claimed. Web §1t70s0§.as:146 'internal var §1t1138s0§:int = 3;' and :407-415 is the isNoChangeTown twin: :409 'if(param1 == 1466699 || param1 == 1503572 || param1 == 1368424 || param1 == 1540387)' - the same four hard-coded territory IDs as android NodeGenerator.as:395 - then :413 the level fetch and :414 'return _loc2_ < this.§1t1138s0§ + 5;', identical to android :400 with LEVELSTART = 3 at :144. Level < 8 is the frozen-town rule in the FILMED build too.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t70s0§.as:146,407-415 + reference/decompiled/shs3_android/scripts/NodeGenerator.as:144,393-400 (read directly)",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "world/placenames-blob-is-byte-identical-across-builds",
+   "refuted": false,
+   "reason": "HELD, and this really is a non-circular cross-build byte-check. cmp reference/extracted/bindata/98_1t4653s0.bin reference/extracted/android/89_NameGenerator_PlaceNames.bin exits clean with no output, and a python byte comparison returns True at 5,698 bytes each. Splitting on '\\n' gives 677 entries with no trailing newline; index 660 is 'Iwakuni' with neighbours 658 Hikari, 659 Hofu, 661 Kudamatsu, 662 Mine, 663 Nagato - the finding's list exactly. 'Ibamaya' and 'Gokura' are both absent (I tested with the CR stripped). Because 98_* comes from the WEB bindata set and 89_* from the ANDROID extract, this escapes the C2 circularity trap, as claimed.",
+   "own_cite": "reference/extracted/bindata/98_1t4653s0.bin vs reference/extracted/android/89_NameGenerator_PlaceNames.bin (own cmp + byte compare: identical, 5698 bytes, 677 entries, index 660 'Iwakuni')",
+   "severity": "minor"
+  },
+  {
+   "claim_id": "world/web-rng-is-pooled-but-numerically-identical",
+   "refuted": false,
+   "reason": "HELD, numerically identical confirmed. Web §1t58s0§.as:23-27 'public static function §1t8804s0§(param1:int) : §1t58s0§ { var _loc2_ = §1t8803s0§.§1t866s0§(); _loc2_.§1t779s0§(param1); return _loc2_; }' - pool fetch then setSeed. :67-74 '§1t779s0§(param1:Number)' sets randomSeed, negates if < 0, then calls this.rnd() - byte-for-byte the same body as android RNG.as:51-59 setSeed AND android's constructor RNG.as:10-19. :82-86 'rnd()' is 'this.randomSeed = (this.randomSeed * 9301 + 49297) % 233280;' / 'return this.randomSeed / 233280;' - identical to android RNG.as:66-70. Call-site cite exact: §1t136s0§.as:171 'var _loc2_:§1t58s0§ = §1t58s0§.§1t8804s0§(param1 * 2);' with :173 '_loc2_.destroy();'. Pooling changes allocation, not the stream.",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t58s0§.as:18-27,67-74,82-86 and §1t136s0§.as:171-173 + reference/decompiled/shs3_android/scripts/RNG.as:10-19,51-59,66-70",
+   "severity": "minor"
+  }
+ ],
+ "judged_count": 45,
+ "packet_size": 45,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "nf-judge/carry-weight-exemption-split-is-nine-seven-and-obj-hut-48-is-a-seventh-unexempt-site",
+   "text": "The android carry-weight guard split is NINE exempt / SEVEN unexempt, not eight/eight. My own grep -rn 'findWeight() > StatsManager.getCarryingWeight()' over reference/decompiled/shs3_android/scripts returns 16 hits in 11 files. Nine carry the !GameEngine.isPvPRoomMode() prefix: Obj_DragonDancePath.as:275 and :295, Obj_PathBush.as:62 and :110, Obj_HiddenTemple.as:187 and :207, Obj_DirectionSign.as:124 and :159, Obj_TownSign.as:44. Seven do not: Obj_Hut.as:48 and :70, InteractUI.as:1730, NodeUI.as:379, InventoryUI.as:440, CraftingUI.as:233, BankUI.as:348. Obj_Hut.as:48 is a seventh unexempted site that no finding in this packet names - a second hut call site, gated 'findWeight() > getCarryingWeight() || getStat(STAT_AP) <= 0'.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/Obj_Hut.as:48,70; Obj_DragonDancePath.as:275,295; Obj_PathBush.as:62,110; Obj_HiddenTemple.as:187,207; Obj_DirectionSign.as:124,159; Obj_TownSign.as:44; InteractUI.as:1730; NodeUI.as:379; InventoryUI.as:440; CraftingUI.as:233; BankUI.as:348",
+   "quote": "Obj_Hut.as:48 `if(StatsManager.findWeight() > StatsManager.getCarryingWeight() || StatsManager.getStat(StatsManager.STAT_AP) <= 0)` - no isPvPRoomMode test, and not cited by any finding in this packet.",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "items-equipment + world-exploration: the exempt/unexempt tally that goes into the ledger is 9/7, and the unexempt list must include Obj_Hut.as:48."
+  },
+  {
+   "id": "nf-judge/web-battleui-carries-the-same-slot-constants-760-minus-60i-and-450",
+   "text": "The skill-slot constants used as the code anchor for the frame-to-stage transform are NOT android-only, which removes the build-parity objection to testing them against a web-build frame. The WEB BattleUI, reference/decompiled/shs3_payload/scripts/§1t113s0§.as, builds its slot strip with the identical arithmetic at :170-171: x = 760 - i*60 and y = 450, matching android BattleUI.as:133-134 exactly. Slot i=2 therefore sits at game (640,450) in v0.717 as well as v0.682.",
+   "artifact_class": "A2",
+   "build": "both",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t113s0§.as:170-171 vs reference/decompiled/shs3_android/scripts/BattleUI.as:133-134",
+   "quote": "web §1t113s0§.as:170 `_loc1_.x = 760 - _loc2_ * 60;` :171 `_loc1_.y = 450;`  ||  android BattleUI.as:133 `skillSlotButton.x = 760 - i * 60;` :134 `skillSlotButton.y = 450;`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "ui-hud: y = 450 is a web-build constant, so the frame-to-stage transform measured on a v0.717 frame against it is not a cross-build import."
+  },
+  {
+   "id": "nf-judge/resizehandler-statsmanager-writes-are-307-312",
+   "text": "GameEngine.resizeHandler's StatsManager writes run :307-312, not :306-311, and there are SIX of them. :306 is the closing brace of the fit branch; :307 stageScale, :308 stageOffsetX, :309 stageOffsetY, :310 stageFitWidth, :311 stageBaseWidth, :312 stageBaseHeight. Any ledger row transcribing the resize handler's output surface from ':306-311' drops stageBaseHeight.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/GameEngine.as:306-312",
+   "quote": ":307 `StatsManager.stageScale = newScale;` :308 `StatsManager.stageOffsetX = offsetX;` :309 `StatsManager.stageOffsetY = offsetY;` :310 `StatsManager.stageFitWidth = fitWidth;` :311 `StatsManager.stageBaseWidth = originalWidth;` :312 `StatsManager.stageBaseHeight = originalHeight;`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "ui-hud cite hygiene: six writes at :307-312."
+  },
+  {
+   "id": "nf-judge/duel-hud-never-prints-the-word-CHI",
+   "text": "The duel HUD prints NO textual bar labels at all - the 'CHI' label seen in this lane's frames comes from the PLAYER STATS screen, a different widget. BattleUI.updateChi writes only the numeral pair ('chitext.text = chi + \"/\" + maxchi') and updateHp the same for HP; there is no label TextField in the pair. Confirmed on film: reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg, my crop (0,380)-(560,576) x3 LANCZOS, shows the duel HUD as a green bar reading '16/20' over a blue bar reading '15/15' with 'CANNOT CHANGE STANCE' beneath - and no word CHI anywhere. The labelled ladder (HP / CHI / AP diamonds) appears only on the stats screen, e.g. reference/frames/session11/stance-reach/B_t850.600_PLAYER-screen_*.png.",
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg (own crop (0,380)-(560,576) x3 LANCZOS) + reference/decompiled/shs3_android/scripts/BattleUI.as:252-257",
+   "quote": "ON SCREEN: green bar '16/20', blue bar '15/15', caption 'CANNOT CHANGE STANCE' - no 'CHI' text. CODE: BattleUI.as:254 `this.chitext.text = chi + \"/\" + maxchi;` :255 `this.chitextshadow.text = chi + \"/\" + maxchi;` :256 `this.chibar.bar.scaleX = chi / maxchi;`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "ui-hud: a rebuild must NOT draw 'CHI'/'HP' text on the duel bars; the identification of the blue bar as Chi rests on the class fields and on the stats screen, not on an in-duel label."
+  },
+  {
+   "id": "nf-judge/resource-decrypt-key-is-filename-charcode-1-per-resource",
+   "text": "The XOR key for the five obfuscated Android resource blobs is NOT one constant - it is the SECOND CHARACTER of the resource's filename, so every blob has its own key. ResourceManager.as:186 passes 'resourceFileNameArray[num].charCodeAt(1)' into decryptByteArray, and :41 lists the five filenames. That yields shs3resource.swf -> 'h' = 104, musicresource.swf -> 'u' = 117, soundresource.swf -> 'o' = 111, imageresource.swf -> 'm' = 109, bgresource.swf -> 'g' = 103. This reconciles the two keys the Stage-0 brief already carries (C1's 109 from Mobile.as:352 and C3's 111 for the sound blob) and predicts the other three. Also note decryptByteArray only touches bytes 3..255 (swapping every i%11==0 byte with i+256), which is why the files still begin with a readable 'CWS' magic.",
+   "artifact_class": "A2",
+   "build": "android v0.682",
+   "cite": "reference/decompiled/shs3_android/scripts/ResourceManager.as:41,186,200-214; verified by decrypting reference/extracted/android/115_Mobile_SHS3Resource.bin at key 104 -> valid CWS v17 SWF, 1,040,849 bytes inflated, 1,912 SymbolClass entries",
+   "quote": "ResourceManager.as:41 `internal static var resourceFileNameArray:Array = [\"shs3resource.swf\",\"musicresource.swf\",\"soundresource.swf\",\"imageresource.swf\",\"bgresource.swf\"];` :186 `ba = decryptByteArray(ba,resourceFileNameArray[num].charCodeAt(1));` :205 `for(var i:int = 3; i < 256; i++)` :207 `if(i % 11 == 0)` :213 `ba[i] ^= key;`",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "Cross-lane extraction rule (art, audio, items): keys are 104/117/111/109/103 by resource, derived not guessed - anyone opening the remaining blobs can stop brute-forcing."
+  },
+  {
+   "id": "nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence",
+   "text": "A zero-hit grep for a SOURCE-LEVEL identifier over reference/decompiled/shs3_payload is not evidence that the web build lacks the feature, because the web payload's class, method and field names are obfuscated to §1tNNNNs0§ forms. Proven in this packet twice over: android's getSellAmt is §1t546s0§ in the web build, android Item.as's modifier constants are §1t8734s0§..§1t8741s0§, and android NodeGenerator.isNoChangeTown is §1t70s0§.§1t1140s0§. Web-side absence must be argued from a structural signature (imports + literal constants + call shape), the method actually used to pin §1t1712s0§ and §1t8702s0§ in this same packet - never from a name grep.",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t17s0§.as:1977 (= android Item.as:1582 getSellAmt); §1t70s0§.as:407-415 (= android NodeGenerator.as:393-400 isNoChangeTown); §1t17s0§.as:18-22 (= android Item.as:8-16 modifier ids)",
+   "quote": "web §1t17s0§.as:1977 `public function §1t546s0§() : int`  ||  android Item.as:1582 `public function getSellAmt() : int` - same function, no shared token to grep for.",
+   "verdict": "HELD",
+   "overturns_ledger": false,
+   "lane_impact": "Gauntlet-wide method rule: 'ZERO hits under shs3_payload' may be quoted as the state of the evidence, never as a finding that the web build lacks the thing."
+  }
+ ]
+}

@@ -1,8 +1,8 @@
 # SEEN CLAIM IDS — every claim banked across every run of L0 so far.
 # A finding matching one of these is NOT new. Report it ONLY if you can
 # materially STRENGTHEN or CONTRADICT it — and say which, explicitly.
-# 1660 rows, 1621 unique ids, pooled from: run10, run11, run2, run3, run4, run5, run6, run7, run8, run9.
-# 1555 of them carry at least one artifact-citing verdict;
+# 1666 rows, 1627 unique ids, pooled from: run10, run11, run12, run2, run3, run4, run5, run6, run7, run8, run9.
+# 1600 of them carry at least one artifact-citing verdict;
 # the rest are LEADS and may not enter the ledger (§0).
 
 ## actionscript  (45 unique, 45 judged)
@@ -149,7 +149,7 @@
   * combat-core/slash-type-map
   * combat-core/stance-triangle
 
-## critic-new_findings  (1111 unique, 1045 judged)
+## critic-new_findings  (1117 unique, 1090 judged)
   * NEW-1-web-crit-is-flat-1.3
   * NEW-10-obfuscated-bundle-grep-method
   * NEW-2-web-per-stance-damage-and-mastery-10-ceiling
@@ -349,14 +349,14 @@
   * bindata/warhex-14-states-not-7
   * bindata/web-build-owns-the-bindata-map
   * bindata/web-has-third-hardcoded-town
-    cite-audit/carry-weight-pvp-exemption-covers-only-five-of-eight-sites
-    cite-audit/duel-hud-second-bar-is-chi-not-ap
-    cite-audit/frame-to-stage-vertical-transform-is-contested-and-uniform-wins
-    cite-audit/gameengine-283-290-does-not-hold-the-fit-branch
-    cite-audit/lang-bin-id-column-is-contiguous-every-gap-is-in-resname
-    cite-audit/shs3-swf-loader-is-cws-v10
-    cite-audit/updatebuff-ladder-is-thirteen-not-eleven-and-appends-a-timer
-    cite-audit/web-skill-1077-has-a-live-runtime-case
+  * cite-audit/carry-weight-pvp-exemption-covers-only-five-of-eight-sites
+  * cite-audit/duel-hud-second-bar-is-chi-not-ap
+  * cite-audit/frame-to-stage-vertical-transform-is-contested-and-uniform-wins
+  * cite-audit/gameengine-283-290-does-not-hold-the-fit-branch
+  * cite-audit/lang-bin-id-column-is-contiguous-every-gap-is-in-resname
+  * cite-audit/shs3-swf-loader-is-cws-v10
+  * cite-audit/updatebuff-ladder-is-thirteen-not-eleven-and-appends-a-timer
+  * cite-audit/web-skill-1077-has-a-live-runtime-case
   * cite-lens-s26b/five-resource-blobs-all-decrypt
   * cite-lens-s26b/green-border-tip-completes-the-ladder
   * cite-lens-s26b/mcswolf-partlist-is-49-not-26
@@ -598,7 +598,7 @@
   * gauntlet/android-string-table-has-gaps
   * gauntlet/index-firstlines-are-leafname-scoped
   * gauntlet/no-web-gameplay-code-or-string-table
-    housekeeping/questdata-text-word-count-is-40119
+  * housekeeping/questdata-text-word-count-is-40119
   * hunter-s26a/five-web-animdata-blobs-have-no-android-twin
   * hunter-s26a/full-offline-save-schema-is-19-fields-in-both-builds
   * hunter-s26a/per-enemy-xp-formula-is-lvl-times-2-plus-20
@@ -828,22 +828,28 @@
   * meta/interactui-uidata-blob-is-utf8-not-utf16le
   * newfind/1071-is-the-behead-flag-and-it-moved-1p5-to-1p3
   * newfind/cannot-change-stance-is-getstring-960
-    newfind/frame-confirms-web-maxdueltokens-40
+  * newfind/frame-confirms-web-maxdueltokens-40
   * newfind/heavy-defence-penalty-is-in-the-string-table
   * newfind/mastery-ceiling-is-10-not-9
-    newfind/offline-save-branch-writes-nineteen-fields-not-fourteen
+  * newfind/offline-save-branch-writes-nineteen-fields-not-fourteen
   * newfind/per-stat-caps-diverge-between-builds
   * newfind/stance-enum-pinned-by-declared-value
-    newfind/web-nextstance-drops-the-console-five-cycle-and-gates-on-48
-    newfind/writ-badge-glyph-is-premium-gold-not-coins
-    nf/four-classes-run-the-12-frame-ai-cadence
-    nf/payload-xml-static-textfields-are-authoring-placeholders
-    nf/slashusage-48-floor-is-duplicated-on-the-npc-path
-    nf/territory-and-hex-clan-palettes-differ-on-only-two-sides
-    nf/war-turn-timer-bracketed-on-film
-    nf/web-has-a-second-getsellamt-call-site
-    nf/web-item-weight-modifier-is-id-208
-    nf/web-only-survival-enemy-443-is-named
+  * newfind/web-nextstance-drops-the-console-five-cycle-and-gates-on-48
+  * newfind/writ-badge-glyph-is-premium-gold-not-coins
+    nf-judge/carry-weight-exemption-split-is-nine-seven-and-obj-hut-48-is-a-seventh-unexempt-site
+    nf-judge/duel-hud-never-prints-the-word-CHI
+    nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence
+    nf-judge/resizehandler-statsmanager-writes-are-307-312
+    nf-judge/resource-decrypt-key-is-filename-charcode-1-per-resource
+    nf-judge/web-battleui-carries-the-same-slot-constants-760-minus-60i-and-450
+  * nf/four-classes-run-the-12-frame-ai-cadence
+  * nf/payload-xml-static-textfields-are-authoring-placeholders
+  * nf/slashusage-48-floor-is-duplicated-on-the-npc-path
+  * nf/territory-and-hex-clan-palettes-differ-on-only-two-sides
+  * nf/war-turn-timer-bracketed-on-film
+  * nf/web-has-a-second-getsellamt-call-site
+  * nf/web-item-weight-modifier-is-id-208
+  * nf/web-only-survival-enemy-443-is-named
   * npcdata-category11-grant-census-corrected
   * npcdata/five-stances-are-in-the-web-build-too
   * npcdata/five-stances-reversed-and-dual
@@ -863,7 +869,7 @@
   * persistence/offline-save-schema-is-fourteen-fields-already-written
   * progression/a02-second-frame-corroboration
   * progression/android-caps-also-drifted
-    progression/android-never-reassigns-levelcap-either
+  * progression/android-never-reassigns-levelcap-either
   * progression/android-stat-caps-are-a-different-formula
   * progression/autoassign-android-only
   * progression/autoassign-is-android-only
@@ -922,7 +928,7 @@
   * progression/xp-curve-kills-three-more-docs
   * progression/xp-income-web-parity
   * provenance/extracted-sprites-and-shapes-are-web-v0717
-    provenance/web-projectilemanager-is-1t1712s0-not-1t112s0
+  * provenance/web-projectilemanager-is-1t1712s0-not-1t112s0
   * questdata-critic/namegen-table-sizes-corrected
   * questdata-critic/overworld-is-generated
   * questdata-critic/placename-generator-held
@@ -1019,19 +1025,19 @@
     s26c/the-271-cap-IS-the-shipped-level-80-base-stat-cap
     s26c/web-offline-save-reset-enumerates-the-same-nineteen-fields
     s26c/web-payload-carries-the-same-xp-lvl-times-2-plus-20-setLevel
-    s26d/1t8702s0-is-the-dance-PATH-not-the-statue
-    s26d/acc3007-has-no-symbol-in-the-shs3resource-export
-    s26d/aoe-narrow-phase-is-2d-hittest
-    s26d/focus-bar-reads-empty-one-tick-before-the-stance-gate-closes
-    s26d/seg10-frame0020-carries-four-hostiles-not-three
-    s26d/status-and-duration-DO-ride-the-damage-packet
+  * s26d/1t8702s0-is-the-dance-PATH-not-the-statue
+  * s26d/acc3007-has-no-symbol-in-the-shs3resource-export
+  * s26d/aoe-narrow-phase-is-2d-hittest
+  * s26d/focus-bar-reads-empty-one-tick-before-the-stance-gate-closes
+  * s26d/seg10-frame0020-carries-four-hostiles-not-three
+  * s26d/status-and-duration-DO-ride-the-damage-packet
     s26d/war-room-battlefield-board-is-a-hardcoded-6x6-grid
-    s26d/web-crit-is-1.3-flat-android-is-1.2-1.5-split
-    s26d/web-npcmanager-ai-switch-has-39-cases-not-38
-    s26d/web-reach-and-cooldown-formulas-recovered
-    s26d/web-statue-is-1t8703s0-and-has-full-parity
-    save-schema/dataslots-20-does-not-count-the-written-ids
-    save-schema/is-android-only-evidence
+  * s26d/web-crit-is-1.3-flat-android-is-1.2-1.5-split
+  * s26d/web-npcmanager-ai-switch-has-39-cases-not-38
+  * s26d/web-reach-and-cooldown-formulas-recovered
+  * s26d/web-statue-is-1t8703s0-and-has-full-parity
+  * save-schema/dataslots-20-does-not-count-the-written-ids
+  * save-schema/is-android-only-evidence
   * skilldata/skill-1077-missing-from-extract
   * skilldata/web-cooldown-modifier-caps-spd-at-600
   * skills-meters/43-sfx-event-names-in-web-bundle
@@ -1168,7 +1174,7 @@
   * ui-hud/the-cannot-change-stance-label-is-the-focus-gate-readout
   * ui-hud/the-stance-label-is-grey-not-yellow-the-frame-wins
     ui-hud/the-video-study-notes-misread-the-cannot-change-stance-slot
-    ui-hud/two-dan-title-renderers-romaji-and-kanji
+  * ui-hud/two-dan-title-renderers-romaji-and-kanji
   * ui-hud/up-arrow-is-a-skill-not-a-stance-control
   * ui-hud/up-arrow-is-a-skill-not-the-stance-control
   * ui-hud/v0717-duel-nameplate-has-no-level
@@ -1176,7 +1182,7 @@
   * ui-hud/web-battleui-diverges-from-android
   * ui-hud/web-battleui-is-1t113s0-and-owns-the-in-combat-stance-switch
   * ui-hud/web-battleui-stance-button-plays-an-error-sound-when-the-gate-refuses
-    ui-hud/web-battleui-status-selector-has-nine-branches
+  * ui-hud/web-battleui-status-selector-has-nine-branches
   * ui-hud/web-build-confirms-resname
   * ui-hud/web-cooldown-uses-ceil
   * ui-hud/web-hud-copy-absent-from-android-table
@@ -1193,9 +1199,9 @@
   * uistrings-payload/tower-is-the-name-of-the-thirteenth-system
   * uistrings-payload/warroom-web-has-a-seventh-rules-page
   * uistrings-payload/web-and-android-font-sets-diverge
-    uistrings-payload/web-build-ships-zh-cn-branching-without-a-zh-cn-table
+  * uistrings-payload/web-build-ships-zh-cn-branching-without-a-zh-cn-table
   * uistrings-payload/web-lang-files-are-en-fr-es-only
-    warroom/next-turn-in-is-string-309-not-307
+  * warroom/next-turn-in-is-string-309-not-307
   * warroom/troop-advance-is-24-hours
   * warroom/web-warhex-has-fifteen-states
   * web-charsheet-heavy-defence-0.8-is-web-side
@@ -1212,12 +1218,12 @@
   * world-exploration/depleted-ore-is-redrawn-not-suppressed
   * world-exploration/duel-token-clock
   * world-exploration/farm-guaranteed-yield-is-harvest-two
-    world-exploration/farm-guaranteed-yield-is-the-FIRST-harvest
+  * world-exploration/farm-guaranteed-yield-is-the-FIRST-harvest
   * world-exploration/farm-timers-and-patch-ladder
   * world-exploration/farm-yield-and-whiff-are-on-disk-too
   * world-exploration/fifth-clock-duel-tokens
   * world-exploration/fourth-clock-dtinterval
-    world-exploration/frozen-ring-is-19-territories-recomputed
+  * world-exploration/frozen-ring-is-19-territories-recomputed
   * world-exploration/frozen-town-levels-are-19-not-12
   * world-exploration/kakuchi-is-cross-build-parity-proof
   * world-exploration/map-art-is-held-web-shape-188
@@ -1247,12 +1253,12 @@
   * world-exploration/web-payload-carries-world-constants
   * world-exploration/web-third-placename-hardcode
   * world-exploration/world-map-art-recovered
-    world/kasuta-is-on-film-in-the-web-build
+  * world/kasuta-is-on-film-in-the-web-build
   * world/map-bitmap-is-held-byte-exact
   * world/map-bitmap-is-in-the-repo-735-land-pixels
-    world/nochange-town-rule-is-cross-build
+  * world/nochange-town-rule-is-cross-build
   * world/nodegenerator-web-parity-closed
-    world/placenames-blob-is-byte-identical-across-builds
+  * world/placenames-blob-is-byte-identical-across-builds
   * world/the-hud-prints-territory-21-51-on-film
     world/the-war-map-mask-and-pitch-are-web-side-too-parity-closed
     world/the-war-map-mask-is-byte-identical-across-web-and-android
@@ -1260,7 +1266,7 @@
   * world/third-placename-override-is-web-only
   * world/war-map-is-already-on-film
   * world/war-map-renders-at-10px-per-territory
-    world/web-rng-is-pooled-but-numerically-identical
+  * world/web-rng-is-pooled-but-numerically-identical
 
 ## economy  (20 unique, 20 judged)
   * economy/cho-han-is-ev-neutral
