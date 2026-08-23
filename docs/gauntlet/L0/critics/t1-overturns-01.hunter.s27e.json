@@ -1,0 +1,91 @@
+{
+ "verdicts": [
+  {
+   "claim_id": "NF-S27D-1/cannot-change-stance-is-proven-transient-on-film-and-the-focus-bar-is-battle-only",
+   "refuted": false,
+   "overturn_upheld": true,
+   "severity": "minor",
+   "own_cite": "reference/frames/combat_frames/Nr4fQstqHDM_t0435s.png, _t0430s.png, _t0425s.png (crop (150,930)-(620,1080) of 1920x1080, 3x LANCZOS, plus each full frame at 960x540) · reference/frames/duel_dense/Nr4fQstqHDM_429.0.png (crop (0,920)-(620,1080), 3x LANCZOS) · reference/frames/combat_frames/Nr4fQstqHDM_t0425s.png crop (1520,920)-(1860,970) 4x LANCZOS · reference/decompiled/shs3_payload/scripts/§1t113s0§.as:326-347",
+   "reason": "I opened all four frames myself at the stated crops and also viewed each full 1920x1080 frame downscaled to 960x540, so the caption could not be hiding outside the crop. t0435: green HP 19/20, blue Chi 26/26, third bar a brown track with a WHITE fill ending ~42% along, yellow '150% DAMAGE' below the stack, screen flashed red, AUTO SLASH OFF top-left, enemy nameplate SOUND360TM with enemy HP bars - unambiguously mid-battle - and NO 'CANNOT CHANGE STANCE' anywhere in the frame. t0430: 20/20, 26/26, a thin white sliver at the left end of the third bar, '3 HIT COMBO' top-right, caption again absent. duel_dense 429.0 is the SAME fight (same 3 HIT COMBO, same scene, same nameplate) with the third bar EMPTY and 'CANNOT CHANGE STANCE' printed across it. Caption ON at 429.0 s, OFF at 430 s and 435 s inside one battle: that is not a hard lock, and THE FRAME WINS over RR:158 on frame evidence alone, before any code is read. §1t113s0§.as:326-347, which I opened separately, is the same behaviour in source - ratio=(reload-48)/(maxreload-48), caption shown at ratio==0 (:336-343), hidden at 0<ratio<1 (:344-347), 'Critical Hit' + Snd_criticalDamage at ratio>=1 (:348-359). t0425 is confirmed overworld (coins/gold/XP bar, minimap, quest banner, icon action bar): two bars and the words 'HEAVY STANCE' where the third bar sits in battle. ONE CORRECTION: the finding says the 150% DAMAGE banner is absent from t0425. It is absent from the HUD stack, but it is ON SCREEN bottom-right as '150% DAMAGE 28:28' in yellow with a white mm:ss countdown (crop (1520,920)-(1860,970)). Overworld buffs move to a timed bottom-right readout; they are not dropped. That error does not touch the overturn."
+  },
+  {
+   "claim_id": "NF-S27D-3/RR159-is-inverted-the-out-of-combat-stance-switch-is-the-free-one",
+   "refuted": false,
+   "overturn_upheld": true,
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3058-3060, :3083-3086, :3160-3171 · reference/decompiled/shs3_payload/scripts/§1t1525s0§.as:1073-1076, :1152-1155 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3019-3105 · reference/decompiled/shs3_android/scripts/StageManager.as:1025-1028",
+   "reason": "Verified first-hand. §1t99s0§.as:3160 'if(§1t1525s0§.§1t9948s0§())' wraps :3162 'this.§1t4414s0§ -= 48;'. I opened §1t1525s0§.as: :1152-1155 is 'public static function §1t9948s0§() : Boolean { return actionState == §1t9903s0§; }', structurally identical to android StageManager.as:1025-1028 'isBattle(){ return actionState == STATE_BATTLE; }', and its sibling :1073-1076 §1t9941s0§() returns a §1t113s0§ exactly as android getBattleUI() returns a BattleUI. Android MCSPlayer.as:3019-3105 is the plain-named twin with StageManager.isBattle() at :3022, :3031 and :3096. I re-ran the enumeration: grep of §1t4414s0§ in §1t99s0§.as returns exactly the 28 lines the finding lists, and the assignment/debit subset is {250, 3162, 3165, 3297, 3302, 3306, 3310, 3314, 3323} - :3162 is the only stance-switch debit and the only one under a battle guard; the four other web files that touch §1t4414s0§ (§1t122s0§, §1t120s0§, §1t4904s0§, §1t4909s0§) carry no stance debit. Both halves of RR:159 are inverted, so the sentence and its 'label it as a divergence' instruction both fall. PRECISION NOTE, not a refutation: the lane_impact word 'unrestricted' overstates it - the cycle entry gate §1t4472s0§ at :3060 ('if(this.§1t4414s0§ < 48) return;') is NOT battle-gated, so out of combat the switch is free of charge but still needs focus >= 48. In practice focus regenerates +1/tick to 192 with nothing spending it outside battle, so the gate is near-always satisfied there."
+  },
+  {
+   "claim_id": "NF-S27D-4/the-full-focus-evade-passive-is-in-the-web-code-not-only-on-a-skill-card",
+   "refuted": false,
+   "overturn_upheld": true,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2963-2966, :3272-3276, :3328, :3383-3389, :3707-3711, :4673-4676 · reference/decompiled/shs3_payload/scripts/§1t120s0§.as:108-112 · reference/decompiled/shs3_payload/scripts/§1t4909s0§.as:74, :311 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:2885-2888",
+   "reason": "The predicate is there verbatim at :3383 and again at :3707, inside the override §1t3274s0§ that opens at :3328, and it returns TRUE at :3387/:3710 before :3389 ever reads param2.damage - so the incoming hit is consumed with no damage math. §1t120s0§.as:108/110/112 give 1074/1075/1076, and §1t4491s0§ at :4673-4676 is a skill-level lookup, so each branch does require owning that stance's passive. The crit at :3272-3274 hangs off the identical reload==maxreload test, so the skill card and the crit multiplier were never in conflict: one state, two effects. TWO CORRECTIONS. (a) The branch also requires §1t4465s0§(), which I resolved by structural twin - §1t99s0§.as:2963-2966 'internal function §1t4465s0§():Boolean { return actionState == §1t11149s0§; }' immediately preceding 'internal function movement(param1:int)', matching android MCSPlayer.as:2885-2888 'internal function isSlashing():Boolean { return actionState == SLASH_STATE; }' immediately preceding 'internal function movement(speed:int)'. So this is evade WHILE SLASHING, not blanket immunity on a full bar; the finding quotes the condition but its lane_impact drops it. (b) the :3707 copy is not identical - it sets §1t3246s0§=12 and returns true but plays no Snd_jump - and there are FOUR copies, not two: §1t4909s0§.as:74 and :311 carry the same predicate. Neither correction touches the overturn: RR:190 blocker (5) asks a human to watch the bar for the gating rule, and the gating rule is in the target build's own source."
+  },
+  {
+   "claim_id": "cite-s27d/crit-proc-is-deterministic-on-a-full-meter-and-the-multiplier-is-web-only",
+   "refuted": false,
+   "overturn_upheld": true,
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3255-3276, :3293-3298 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:3198-3223, :3240-3245",
+   "reason": "Opened both. Web §1t4475s0§ (:3255) rolls minDamage + Math.random()*damageRange at :3258, applies the stance multiplier, then the ONLY conditional in the function is :3272 'if(this.§1t4414s0§ == this.§1t4415s0§)' -> :3274 'return _loc2_ * 1.3 + this.§1t1243s0§;'. No chance roll gates the crit. Android getDamage at :3198 carries the same test in plain English at :3215 and returns maxDamage*1.2 + STAT_CRITICALDMG at :3219 for non-Light and maxDamage*1.5 + STAT_CRITICALDMG at :3221 for Light, so the multiplier really is a build-parity trap and CRIT_MULT=1.3 must be labelled WEB v0.717. :3293-3298 (android deductReloadBar :3240-3245) zeroes the meter when it is full before the per-stance slash cost, so a full bar buys exactly one crit. RR:195 blocker (5) says the proc rule is 'entirely absent'; it is in the target build's own source, so the blocker falls. One loose phrase in the finding: 'no dice roll anywhere near it' - there IS a Math.random at :3258, but it is the min/max damage spread, not a crit proc, so the substantive claim stands."
+  },
+  {
+   "claim_id": "cite-s27d/dan-titles-are-nine-strings-456-464-and-455-is-never-used",
+   "refuted": false,
+   "overturn_upheld": true,
+   "severity": "minor",
+   "own_cite": "reference/decompiled/shs3_android/scripts/InventoryUI.as:2274-2316 · reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3061-3103 · reference/decompiled/shs3_android/scripts/StatsManager.as:2195-2212 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2638-2659 · docs/gauntlet/L0/index/strings.json[\"455\"]-[\"467\"]",
+   "reason": "Read both switches line by line and they are the same switch: dan 0 -> danfield.text = \"\"; dan 1..9 -> getString(456)..getString(464); and a shogo overlay appended to the character name in #7D5500 - getString(465) at dan 3/4/5, getString(466) at dan 6/7, getString(467) at dan 8, 9 and the default branch. 'grep -rn \"getString(455)\"' over both decompiled trees returns 0 hits, so 455 '(初段)' is in the table and never displayed as a dan title. strings.json resolves 456-464 as (弐段)(参段)(四段)(五段)(六段)(七段)(八段)(九段)(十段) and 465/466/467 as Renshi/Kyoshi/Hanshi. The cap is android StatsManager.as:2209 'if(getPlayerStats(STAT_DAN) < 9)' -> :2211 'changeStat(STAT_DAN,1);', twinned at web §1t1523s0§.as:2653-2655. RR:205 blocker (3) 'Dan-rank count/titles (garbled source)' is fully closed, and the shogo layer is a second honorific system the ledger has nowhere. CORRECTION to the finding's side-claim: 'the < 9 cap means MAX_DAN_RANK is 9 rebirths, not 10' does not follow and does not touch RR:164. The build displays the rank as dan+1 - web §1t1523s0§.as:2644-2647 fires only at dan==8 and announces getString(864,[name,\"10\"]) with the literal 10, and :2659 announces (dan+1) generally. Ten ranks, 初段 through 十段, with the 1st-dan title suppressed as a blank field; nine DISPLAYED titles is right, 'MAX_DAN_RANK is 9' is not."
+  },
+  {
+   "claim_id": "cite-s27d/focus-fill-is-plus-1-per-tick-plus-6-per-kill-batch-and-replenish-sets-max-minus-1",
+   "refuted": false,
+   "overturn_upheld": true,
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1202-1210, :3318-3325 · reference/decompiled/shs3_payload/scripts/§1t1543s0§.as:2037-2050 · reference/decompiled/shs3_payload/scripts/§1t120s0§.as:18, :230-231 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:1157-1170, :3265-3272 · reference/decompiled/shs3_android/scripts/NPCManager.as:1695-1712 · reference/decompiled/shs3_android/scripts/SkillManager.as:218-219",
+   "reason": "All three paths verified. (a) :1202 is §1t3270s0§() (android :1157 doAction()) and :1203-1210 is 'if(reload < maxreload){ ++reload; if(controlledBy==0) BattleUI.updateReload(reload,maxreload); }' - +1 per tick with a HUD repaint every tick; android MCSPlayer.as:1158-1160 identical. (b) 'grep -rn §1t4479s0§' over the whole web script tree returns exactly two lines: the definition at §1t99s0§.as:3318 ('reload += 6', clamped to maxreload, then repaint) and the single call at §1t1543s0§.as:2049, which sits under :2047 'if(_loc4_ > 0)' where _loc4_ is the death counter incremented at :2041 inside the death sweep. Android NPCManager.as:1709-1711 is 'if(deathCount > 0) StatsManager.getPlayer().bonusReload();' and bonusReload at MCSPlayer.as:3265-3272 is also +6. So it is a flat +6 per death-sweep, not +6 per kill, which is what the finding says. (c) §1t120s0§.as:230-231 'case §1t10128s0§: param3.§1t4414s0§ = param3.§1t4415s0§ - 1;' with §1t10128s0§ = 1005 at :18, and skill 1005 resolves in the index as 'Focus - Instantly recharges your focus bar'; android SkillManager.as:218-219 'case SKILL_FOCUS: owner.reload = owner.maxreload - 1;'. The -1 does land one point short of the crit predicate (reload == maxreload), so the skill deliberately does not hand you a crit. RR:190 blocker (5) asked for a human to watch the bar; the fill rule is in source."
+  },
+  {
+   "claim_id": "cite-s27d/stance-switch-in-battle-costs-48-focus-flat-in-web-v0717",
+   "refuted": false,
+   "overturn_upheld": true,
+   "own_cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249, :3058-3060, :3083-3086, :3160-3171 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:239, :2975-2980, :3096-3109",
+   "reason": "Verified line by line. §1t4472s0§ (:3058) opens with :3060 'if(this.§1t4414s0§ < 48){ return; }' and then cycles Light->Balanced->Heavy->Light through the setter §1t3489s0§ (:3083); the setter ends at :3160-3171 with 'if(§1t1525s0§.§1t9948s0§()){ this.§1t4414s0§ -= 48; if(<0) =0; if(controlledBy==0) BattleUI.updateReload(...); }'. So in web v0.717 you may cycle stance in combat iff focus >= 48, and it spends exactly 48 - the ledger's 'removed 2014 behaviour / recreation divergence' is false against the target build's own source. Android is a real divergence and I read it: MCSPlayer.as:2977 gates on 'reload < maxreload/6' and :3098-3105 charges maxreload/3 if reload > maxreload/2 else -= maxreload/6, so an android-sourced port ships the wrong rule. Worth carrying with the number: web maxreload = 8*24 = 192 (:249) vs android 5*24 = 120 (:239), so the flat 48 is maxreload/4 on web while the android GATE is maxreload/6 - the two builds do not even share the focus scale, and 48 must be labelled WEB v0.717. RR:159-160 is deleted, not softened."
+  }
+ ],
+ "judged_count": 7,
+ "packet_size": 7,
+ "skipped": [],
+ "new_findings": [
+  {
+   "id": "NF-S27E-1/web-v0717-carries-four-skills-absent-from-the-ported-skilldata",
+   "artifact_class": "A2",
+   "build": "web v0.717 (skilldata.xml is android v0.682)",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t120s0§.as:108-114, :344-352 · reference/extracted/skilldata.xml · reference/decompiled/shs3_android/scripts/SkillManager.as:106 · docs/gauntlet/L0/index/resolved_names.json",
+   "text": "C2's parity hole now has a measured size on the skill table. I extracted all 54 skill-id constants from the web SkillManager (§1t120s0§.as) and diffed them against every <id> in reference/extracted/skilldata.xml: exactly four web constants have NO row there - 1074, 1075, 1076, 1077 (§1t120s0§.as:108, :110, :112, :114). skilldata.xml's highest skill id is 1073 across its 75 <skill> rows, and the android SkillManager's last constant is SKILL_EARTHQUAKE = 1073 (SkillManager.as:106). Three of the four are the per-stance full-Focus evade passives (§1t99s0§.as:3383, :3707, §1t4909s0§.as:74, :311). The fourth, 1077, is handled at §1t120s0§.as:344-352: it requires 8 of item 2501 - resolved as 'Kunai' in resolved_names.json - refuses at fewer, spends 8, and spawns two §1t11304s0§ projectiles at +/-20 px, i.e. a web-only 8-kunai skill (Windmill Shuriken, id 1051, costs 4). Consequence: every skill count, name, chi cost and cooldown the lane holds describes the ANDROID build, and v0.717 has at least four skills for which we hold no name, no cost and no cooldown in any artifact.",
+   "lane_impact": "L2 skills-meters. RR:194's 'full 6-category tree structure + per-stance unlock levels' and RR:195 blocker (1) are both scoped to a v0.682 table that is provably short of the target build; '75 skills' must be labelled ANDROID v0.682.",
+   "overturns_ledger": false,
+   "verdict": "HELD"
+  },
+  {
+   "id": "NF-S27E-2/the-full-focus-evade-only-fires-while-slashing",
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2963-2966, :3383, :3707 · reference/decompiled/shs3_payload/scripts/§1t4909s0§.as:74, :311 · reference/decompiled/shs3_android/scripts/MCSPlayer.as:2885-2888",
+   "text": "The full-Focus evade is not a passive damage immunity on a full bar: its first term is §1t4465s0§(), defined at §1t99s0§.as:2963-2966 as 'return actionState == §1t11149s0§;'. Structural twin fixes the name - in both files that function is the fourth 'return actionState == X' member and is immediately followed by 'internal function movement(...)': android MCSPlayer.as:2885-2888 is 'internal function isSlashing() : Boolean { return actionState == SLASH_STATE; }' followed by 'internal function movement(speed:int)'. So the rule is: while you are in SLASH_STATE, with reload == maxreload, and you own that stance's passive, an incoming hit is consumed for zero damage. A port that models it as 'full bar = untouchable' will be wrong in every non-slashing frame. The predicate appears four times, not twice: §1t99s0§.as:3383 and :3707 plus §1t4909s0§.as:74 and :311, and only the :3383 copy plays Snd_jump.",
+   "lane_impact": "L5 combat-core: the Focus-full state is (i) x1.3 on your own damage roll, unconditional, and (ii) hit-negation ONLY during SLASH_STATE with the stance passive owned.",
+   "overturns_ledger": false,
+   "verdict": "HELD"
+  },
+  {
+   "id": "NF-S27E-3/overworld-buffs-are-a-timed-bottom-right-readout-not-a-hud-stack-banner",
+   "artifact_class": "A1",
+   "build": "web v0.717",
+   "cite": "reference/frames/combat_frames/Nr4fQstqHDM_t0425s.png, crop (1520,920)-(1860,970) of 1920x1080 at 4x LANCZOS (buff readout) and crop (150,930)-(620,1080) at 3x LANCZOS (HUD stack); compare reference/frames/combat_frames/Nr4fQstqHDM_t0435s.png same HUD crop",
+   "text": "The same buff renders in two different places depending on scene, which no banked finding states. In the OVERWORLD frame t0425 the HUD stack under the portrait is exactly three rows - green HP 20/20, blue Chi 26/26, and the words 'HEAVY STANCE' - with no third bar and no banner; the active buff instead sits bottom-right of the screen as '150% DAMAGE' in yellow followed by '28:28' in white, a mm:ss countdown. In the BATTLE frame t0435, ten seconds later in the same longplay, the identical buff is a yellow '150% DAMAGE' banner directly under the three-bar stack with NO timer, and the third (Focus) bar has replaced the stance-name row. So: overworld = 2 bars + stance name + timed bottom-right buff list; battle = 3 bars + untimed buff banner below the stack. A ui-hud port that renders buffs in one place is wrong in one of the two scenes, and the buff TIMER exists only in the overworld readout.",
+   "lane_impact": "L8 ui-hud: two distinct buff presentations plus the confirmed slot swap (stance-name row in overworld <-> Focus bar in battle). Also supplies the buff-duration format (mm:ss, counting down from at least 28:28).",
+   "overturns_ledger": false,
+   "verdict": "HELD"
+  }
+ ]
+}

@@ -1,0 +1,431 @@
+{
+ "claims": [
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27e/web-rebirth-does-carry-a-tenth-dan-gold-tier-rr165-half-falls",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27e/focus-meter-numerics-are-fully-recovered-and-web-diverges-from-android-192-vs-120",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27e/crit-multiplier-is-1-3-in-web-source-rr190-blocker-2-needs-no-popup",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27e/the-stance-tables-are-a-mastery-TEN-ceiling-not-mastery-nine",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json[\"8131\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "cite-s27e/heavy-stance-defence-penalty-is-in-code-and-matches-the-tooltip",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/gauntlet/L0/index/strings.json[\"6001\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27E-1/focus-max-is-192-in-web-and-120-in-android-and-the-hud-bar-zero-point-is-48",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27E-2/the-focus-bar-caption-is-a-three-state-readout-and-its-full-state-is-labelled-critical-hit",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json[\"175\"]",
+    "reference/frames/duel_dense/Nr4fQstqHDM_429.0.png",
+    "reference/frames/combat_frames/Nr4fQstqHDM_t0430s.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27E-3/web-v0717-carries-three-skills-1074-1076-that-do-not-exist-in-the-skilldata-table",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/extracted/skilldata.xml",
+    "docs/gauntlet/L0/index/resolved_names.json",
+    "reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0013.jpg"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27E-4/android-combat-tuning-diverges-from-web-on-far-more-than-the-crit-multiplier",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27E-5/the-dan-ladder-has-a-second-web-side-rendering-in-ascii-that-discharges-the-s0-3-caveat",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t408s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json[\"456\"]-[\"467\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "NF-S27E-6/ledger-evidence-1510-mislabels-RR195-blocker-5-as-RR159",
+   "notes": [],
+   "paths": [
+    "docs/gauntlet/L0/LEDGER_EVIDENCE.md",
+    "docs/research/REBUILD_READINESS.md",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27E-7/rebirth-hgold-is-plus-20-at-dan-8-and-plus-5-otherwise-which-is-not-the-ledger-flat-25",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27e/an-upheld-finding-says-the-in-combat-stance-switch-is-free-and-it-is-not",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1525s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StageManager.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/gauntlet/L0/LEDGER_EVIDENCE.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27e/the-wiki-reach-triple-reproduces-exactly-only-under-android-arithmetic",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_android/scripts/InputManager.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27e/rr155-bundles-two-tables-and-the-two-upheld-fixes-destroy-each-other-unless-it-is-split",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "docs/gauntlet/L0/index/strings.json[\"8131\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27e/the-stats-panel-omits-the-100px-floor-so-the-displayed-reach-is-not-the-engine-reach",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "lens3-s27e/800x480-cannot-carry-one-uniform-2.4x-into-a-1080p-frame",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_android/scripts/InputManager.as",
+    "docs/gauntlet/L0/LEDGER_EVIDENCE.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27E-1/web-v0717-carries-four-skills-absent-from-the-ported-skilldata",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as",
+    "reference/extracted/skilldata.xml",
+    "reference/decompiled/shs3_android/scripts/SkillManager.as",
+    "docs/gauntlet/L0/index/resolved_names.json"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-S27E-2/the-full-focus-evade-only-fires-while-slashing",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t4909s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "NF-S27E-3/overworld-buffs-are-a-timed-bottom-right-readout-not-a-hud-stack-banner",
+   "notes": [],
+   "paths": [
+    "reference/frames/combat_frames/Nr4fQstqHDM_t0425s.png",
+    "reference/frames/combat_frames/Nr4fQstqHDM_t0435s.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27e/tenthgold-100-is-contract-in-the-web-build",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "docs/gauntlet/L0/index/strings.json[\"864\"]",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27e/reinforce-web-parity-discharged",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InteractUI.as",
+    "docs/gauntlet/L0/index/resolved_names.json",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27e/slash-length-units-are-native-800x480-stage-px",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/InputManager.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A1",
+   "id": "hunter-s27e/cannot-change-stance-is-the-focus-bar-zero-caption",
+   "notes": [],
+   "paths": [
+    "reference/frames/combat_frames/Nr4fQstqHDM_t0505s.png",
+    "reference/frames/zFt_combat/zFtCaTO0_1M_t0320s.png",
+    "reference/frames/duel_dense/Nr4fQstqHDM_428.0.png",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/BattleUI.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27e/spd-to-cooldown-formula-is-closed-in-web-source",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as",
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27e/focus-meter-numerics-are-fully-recovered",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "hunter-s27e/crit-multiplier-1-3-is-web-source-contract-not-a-popup-to-read",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-L3-1/banked-finding-943-says-the-stance-switch-costs-no-focus-and-it-is-false",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "docs/gauntlet/L0/LEDGER_EVIDENCE.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-L3-2/the-out-of-combat-stance-switch-is-free-but-not-ungated",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/frames/combat_frames/Nr4fQstqHDM_t0425s.png"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-L3-3/max-dan-rank-is-10-displayed-and-the-web-carries-the-same-cap",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-L3-4/the-three-bar-hud-finding-carries-the-android-threshold-into-a-web-description",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as",
+    "docs/gauntlet/L0/LEDGER_EVIDENCE.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A3",
+   "id": "NF-L3-5/two-frame-directories-hold-byte-identical-copies-so-path-novelty-tests-are-unsound",
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "paths": [
+    "reference/frames/duel_frames/Nr4fQstqHDM_t435.0s.png",
+    "reference/frames/combat_frames/Nr4fQstqHDM_t0435s.png",
+    "docs/gauntlet/L0/LEDGER_EVIDENCE.md"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "NF-L3-6/the-three-evade-passive-skill-ids-do-not-exist-in-the-android-skilldata",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t120s0\u00a7.as",
+    "reference/extracted/skilldata.xml",
+    "docs/gauntlet/L0/index/resolved_names.json"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  }
+ ],
+ "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
+ "summary": {
+  "broken": 0,
+  "quote_unverified": 1,
+  "resolves": 32,
+  "total": 33,
+  "uncheckable": 0
+ }
+}
