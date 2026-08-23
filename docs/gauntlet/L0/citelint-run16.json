@@ -418,14 +418,91 @@
    ],
    "problems": [],
    "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nfx1-web-payload-seeds-all-three-stance-masteries-at-1",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nfx2-web-payload-carries-the-war-hex-adjacency-verbatim",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/WarHexUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nfx3-a-sector-owns-a-room-vector-so-rr225-blocker-5-stays-open",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NodeGenerator.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nfx4-getstat-playerstat-branch-is-base-only-direct-web-proof",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nfx5-native-stage-is-declared-800x480-inside-the-web-payload",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as",
+    "docs/research/REBUILD_READINESS.md"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nfx6-base-slash-length-formula-is-web-confirmed",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "nfx7-reach-multipliers-invert-the-damage-multipliers-light-reaches-furthest",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
   }
  ],
  "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
  "summary": {
   "broken": 0,
   "quote_unverified": 1,
-  "resolves": 32,
-  "total": 33,
+  "resolves": 39,
+  "total": 40,
   "uncheckable": 0
  }
 }

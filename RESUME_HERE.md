@@ -6,14 +6,14 @@
 **zero deaths, zero VOID verdicts**. Salvaged mid-flight on a usage warning, nothing lost.
 👉 `docs/gauntlet/L0/SALVAGE.md` has the full wave table and both owner rulings.
 
-### State: judged **1,686 of 1,764** · **547 overturns on 268 sentences** · gate L0-D GREEN
+### State: judged **1,693 of 1,771** · **553 overturns on 269 sentences** · gate L0-D GREEN
 
 | | session start | now |
 |---|---:|---:|
-| judged | 1,555 | **1,686** |
-| UPHELD | 1,248 | **1,375** |
+| judged | 1,555 | **1,693** |
+| UPHELD | 1,248 | **1,381** |
 | NOT-UPHELD (true, wrong target) | 61 | **62** |
-| surviving overturns | 494 on 254 | **547 on 268** |
+| surviving overturns | 494 on 254 | **553 on 269** |
 | suite | 62 files / 983 | **63 / 1001** |
 
 ### ⛔ DO THESE TWO THINGS FIRST, IN THIS ORDER
@@ -269,8 +269,8 @@ DO THESE TWO FIRST, IN THIS ORDER:
    any budget. Unjudged stays KILLED - the existing §0 rule, not a concession.
 
 ALREADY BANKED - do NOT re-derive:
-- 1,686 of 1,764 claims JUDGED. 1,375 UPHELD, 62 NOT-UPHELD, rest KILLED, 0 VOID.
-- 547 surviving overturns on 268 distinct ledger sentences.
+- 1,693 of 1,771 claims JUDGED. 1,381 UPHELD, 62 NOT-UPHELD, rest KILLED, 0 VOID.
+- 553 surviving overturns on 269 distinct ledger sentences.
 - ALL 12 systems and ALL 10 source sweeps judged. Gate L0-D is GREEN.
 - Packets built and CONSERVED under docs/gauntlet/L0/packets/, 0 quarantined. Rebuild
   after step 1 with buildLedgerPackets.py, but the shape is proven.

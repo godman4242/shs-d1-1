@@ -2,7 +2,7 @@
 
 > **UNVERIFIED.** These are surveyor claims. A claim is only CONFIRMED
 > once blind artifact-citing critics have judged it (GAUNTLET.md §0/§3.3).
-> Banked: 0 surveys · 11 critic reviews · 33 claims · 50 verdicts.
+> Banked: 0 surveys · 13 critic reviews · 40 claims · 57 verdicts.
 
 ## unassigned — re-scored ?
 
@@ -150,6 +150,60 @@ RR:155 IS ONE SENTENCE CARRYING TWO TABLES THAT NEED OPPOSITE CORRECTIONS, AND T
 - **Overturns:** "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**"
 - **Lane impact:** L5 combat-core: split RR:155 into a damage sentence ('dmg 0.9/1.2/1.4 is the MASTERY-10 ceiling; mastery 0 is 0.5/1.0/1.4') and a reach sentence ('reach 300/200/100 is the MASTERY-0 row; the mastery-10 reach ceiling is 1.4/1.2/0.9 of base'). Damage and reach scale in OPPOSITE directions with mastery and must never share a sentence again.
 
+### `nfx1-web-payload-seeds-all-three-stance-masteries-at-1` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+nf2 books an android-only (C2) hedge for the mastery floor. It is dischargeable. The WEB payload seeds the identical three stance masteries at level 1 in two places: §1t1523s0§.as:1058-1060 pushes new §1t100s0§(1000,1)/(1001,1)/(1002,1) in the character-creation path (immediately after the 13-slot equipment fill at :1040-1056), and :2586-2588 repeats it in the respec path. So m>=1 for every live character is a WEB v0.717 fact, and the stance floor is Light ×0.54 / Balanced ×1.02 / Heavy ×1.4 with no build-parity hole. The android twin is StatsManager.as:740-742 (creation) and :2144-2146 (respec).
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1058-1060, :2586-2588 · reference/decompiled/shs3_android/scripts/StatsManager.as:740-742, :2144-2146`
+- **Quote:** §1t1523s0§.as:1058 '§1t9367s0§.push(new §1t100s0§(1000,1));' ‖ :2586 '§1t9367s0§.push(new §1t100s0§(1000,1));'
+- **Overturns:** "A level-1 Shugyosha does Light ×0.5 / Balanced ×1.0 / Heavy ×1.4 (Heavy is fixed); Heavy's *reach* also scales ×0.5→×0.9."
+- **Lane impact:** L2 skills-meters: removes the C2 caveat from the stance-floor row. Ship MASTERY_FLOOR = 1 as a WEB CONTRACT value.
+
+### `nfx2-web-payload-carries-the-war-hex-adjacency-verbatim` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+nf6 says its web twin's getExitOwner body 'was not separately line-cited web-side' and keeps a C2 hedge. The hedge is unnecessary: §1t7785s0§.as:478-499 is the same function in the WEB payload — :480-481 derive the territory's war-map coords with the same '- 341' origin, and :482-497 dispatch xpos 0 → (tx-1,ty), xpos 5 → (tx+1,ty), ypos 0 → (tx,ty-1), ypos 5 → (tx,ty+1), with :498 returning 0 for interior cells. War-board adjacency is a v0.717 fact, not an android inference.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t7785s0§.as:478-499, :190, :196-198 · reference/decompiled/shs3_android/scripts/WarHexUI.as:443-464`
+- **Quote:** §1t7785s0§.as:480 'var _loc3_:int = (this.mapid >> 12 & 0x0FFF) - 341;' ‖ :484 'return §1t406s0§.instance.§1t6482s0§.§1t7764s0§(_loc3_ - 1,_loc4_);'
+- **Overturns:** "② War-Room **map topology** (board/adjacency)"
+- **Lane impact:** L-meta-social: RR:245 ② closes at the TARGET build with no android hedge at all.
+
+### `nfx4-getstat-playerstat-branch-is-base-only-direct-web-proof` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+nf7 proves §1t9714s0§ = getStat through an android reinforce twin. The shorter proof is in the web payload itself: §1t9714s0§ is defined at §1t1523s0§.as:4593 and its PLAYERSTAT branch (:4605-4618) special-cases id 10 (level) and 91/92, then ends 'return §1t7356s0§(param1);' — the base-stat accessor at :958-961 — with no §1t7358s0§/findBonusStat term anywhere in the branch. Gear is added only at the point of use (:2336). The 271 cap gate at §1t5957s0§.as:3344-3346 is therefore unambiguously a BASE-stat ceiling, provable without leaving v0.717.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:4593, :4605-4618, :958-961, :2336 · reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3344-3346`
+- **Quote:** §1t1523s0§.as:4618 'return §1t7356s0§(param1);' ‖ :960 'return §1t7315s0§[param1].§1t697s0§();' ‖ §1t5957s0§.as:3344 'var _loc6_:Boolean = §1t1523s0§.§1t9714s0§(§1t1523s0§.§1t9408s0§) < 1 + (_loc2_ + 10) * 3;'
+- **Overturns:** "The "271 cap" is gear/rebirth-inclusive (237-point first-run budget makes it impossible in one stat) — resolvable by arithmetic now."
+- **Lane impact:** L4 progression: same RR:201 strike as nf7, but with a pure-web chain — no C2 exposure at all.
+
+### `nfx5-native-stage-is-declared-800x480-inside-the-web-payload` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+RR:235 ①'s close-path is 'read stage.stageWidth in a build' — which the lane treats as needing a running game that does not exist. It does not: the web payload declares the stage as source constants. §1t1523s0§.as:104 'public static var stageWidth:int = 800;' and :106 'public static var stageHeight:int = 480;', and §1t1541s0§.as:349 bounds-tests the de-scaled pointer against exactly those two fields. Native 800×480 (5:3) is a v0.717 CONTRACT value, so any HUD x-fraction measured off a 1920×1080 capture must be checked for pillarboxing rather than trusted.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:104, :106 · reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:343-344, :349 · docs/research/REBUILD_READINESS.md:171, :235`
+- **Quote:** §1t1523s0§.as:104 'public static var stageWidth:int = 800;' ‖ :106 'public static var stageHeight:int = 480;'
+- **Overturns:** "① **aspect-ratio truth** (5:3 native → are x-fractions pillarbox-wrong?) — *inspect `unt.png` for side-bars; read `stage.stageWidth` in a build.*"
+- **Lane impact:** L-ui-hud: the 'read it in a build' half of RR:235 ① is already satisfied from source. Only the pillarbox re-measure of existing HUD fractions remains.
+
+### `nfx6-base-slash-length-formula-is-web-confirmed` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+nf3 closes the UNIT question in RR:190 ① but not the VALUE. The value is web-side too. §1t1523s0§.as:2346-2347 computes base slash length as 'var _loc2_:int = 90 + §1t7356s0§(§1t9426s0§) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' — identical to android getBaseSlashLengthVal at StatsManager.as:1915-1919 — where param1 is SPEED (×1.5 under the speed buff) and §1t9426s0§ is the Dan/rebirth stat. At Dan 0 the base runs 120 stage px (speed 0) asymptotically to 210. Combined with the per-stance multipliers, the whole reach model is computable with no footage measurement.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2346-2347, :2256 · reference/decompiled/shs3_android/scripts/StatsManager.as:1905-1919`
+- **Quote:** §1t1523s0§.as:2347 'return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' ‖ StatsManager.as:1918 'return int(120 + Math.floor(maxincrement * speed / (20 + speed)));'
+- **Overturns:** "① reach cap in **stage px** per stance (the one value the whole model needs; wiki gives "units" of unknown scale) — *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*"
+- **Lane impact:** L5 combat-core: RR:190 ① closes on VALUE as well as unit. BASE_SLASH_LEN = 120 + floor((90 + dan*5) * spd / (20 + spd)) stage px.
+
+### `nfx7-reach-multipliers-invert-the-damage-multipliers-light-reaches-furthest` — HELD [A2] ⚑ OVERTURNS LEDGER
+
+Found while checking nf1/nf2/nf3 in the same switch. The per-stance REACH table in §1t99s0§.as:3091-3155 is the mirror of the DAMAGE table at :3259-3271, and the ledger's 300/200/100 ordering is explained by it. Light (§1t12220s0§): damage ×(0.5+0.04·mLight) but reach ×1.4 FIXED (:3094). Balanced (§1t12221s0§): damage and reach BOTH ×(1+0.02·mBal) (:3105, :3265). Heavy (§1t12222s0§): damage ×1.4 fixed but reach ×(0.5+0.04·mHeavy) with a hard 100 px floor (:3116-3120). Two further stance ids exist: §1t12223s0§ reach = base with the same 100 floor (:3142-3146) and §1t12224s0§ reach ×1.4 (:3131). So the stance that hits hardest reaches shortest, and each stance's reach is governed by its OWN mastery, not a shared one.
+
+- **Cite:** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3091-3155, :3094, :3105, :3116-3120, :3131, :3142-3146, :3259-3271`
+- **Quote:** §1t99s0§.as:3094 'this.§1t4417s0§ = this.§1t4420s0§ * 1.4;' ‖ :3116 'this.§1t4417s0§ = this.§1t4420s0§ * (0.5 + 0.4 * this.§1t4423s0§ * 0.1);' ‖ :3117-3119 'if(this.§1t4417s0§ < 100){ this.§1t4417s0§ = 100; }'
+- **Overturns:** "① reach cap in **stage px** per stance (the one value the whole model needs; wiki gives "units" of unknown scale) — *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*"
+- **Lane impact:** L5 combat-core: ship STANCE_REACH_MULT = {light: 1.4 fixed, balanced: 1 + 0.02*m, heavy: max(100 px, base * (0.5 + 0.04*m))} against BASE_SLASH_LEN, and drop the 'measure from footage' close-path.
+
 ### `NF-L3-1/banked-finding-943-says-the-stance-switch-costs-no-focus-and-it-is-false` — HELD [A2]
 
 A SURVIVING BANKED FINDING WITH FOUR CRITICS IS WRONG, AND NOBODY HAS CLAIMED IT. LEDGER_EVIDENCE.md:942-945, [[combat-core/the-in-combat-stance-gate-is-reload-48-of-a-192-max]], ends: 'So the in-combat stance switch costs no Focus and no Chi: it needs the reload meter at 48/192 = 25%.' I read §1t3489s0§ in full, :3083 to :3177: the setter's tail is :3160 'if(§1t1525s0§.§1t9948s0§())' -> :3162 'this.§1t4414s0§ -= 48;' -> :3163-3166 clamp at 0 -> :3169 repaint the bar. It costs 48. The failure is legible in the finding's own Cite line, LEDGER_EVIDENCE.md:944, '§1t99s0§.as:249-250,:3043-3045,:3048-3051,:3058-3080' — the read window ends at :3080 and the debit is at :3162, so the charge was never in view. Three banked findings contradict it (:935, :710, :724) and one packet claim does; all four are right and it is wrong. This matters because its lane_impact at :945 is a SHIP instruction — 'replace the Focus gate with RELOAD_STANCE_THRESHOLD=48 on a RELOAD_MAX=192 meter' — and a writer who took the gate from :943 and no cost would build a meter that is spent by slashing but never by switching, which can never reproduce the CANNOT CHANGE STANCE frame at reference/frames/duel_dense/Nr4fQstqHDM_429.0.png. Strike the 'costs no Focus and no Chi' sentence; keep its gate and cycle-order numbers, which are correct.
@@ -292,3 +346,12 @@ THE 300/200/100 CROSS-CHECK IS A BUILD-PARITY TRAP AND THREE UPHELD FINDINGS EAC
 - **Quote:** §1t99s0§.as:3094 'this.§1t4417s0§ = this.§1t4420s0§ * 1.4;' vs android MCSPlayer.as:3030 'this.slashLength = this.baseSlashLength * 1.5;' · InputManager.as:51 'internal static var maxDistance:int = 200;'
 - **Overturns:** "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**"
 - **Lane impact:** L5 combat-core: keep the mastery-0 relabel of the reach triple, but drop the triple as a validation target for a v0.717 build and stop presenting the 214 px base as reproducing it. The web ratio is 2.8 : 2 : 1 (mastery 0) and 1.4 : 1.2 : 0.9 (mastery 10); neither is 3 : 2 : 1.
+
+### `nfx3-a-sector-owns-a-room-vector-so-rr225-blocker-5-stays-open` — HELD [A2]
+
+Found while refuting nf5. One node/sector does NOT map to one room. NodeGenerator.as:1434-1436 pushes the outer room as roomid 0 into roomDataVector and then, when hasMoreRooms && generateInnerRooms, keeps generating inner rooms into the same vector; :1464-1480 hand that vector to createDungeon / createTempleDungeon / createCave / createMine / createRuins; :1710 indexes 'QuestEngine.getNodeData(nodeid).getRoomData()[roomid]'; and rooms carry their own 8-bit id space at :1791-1795, distinct from the nodeid's 12-bit packing. Separately, the true disproof of 'one-screen-per-sector' is :1777, 'return 800 + RNG.getRandAfterXTimes(nodeid,3,800);' — a room is 800 to 1600 px wide, i.e. one to two 800 px screens (§1t1523s0§.as:104). RR:225 ① asks a real, still-open question, and RR:224 already lists territory/sector under Ready — so no vocabulary fix is warranted.
+
+- **Cite:** `reference/decompiled/shs3_android/scripts/NodeGenerator.as:1434-1436, :1464, :1704-1710, :1775-1778, :1791-1795 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:104`
+- **Quote:** NodeGenerator.as:1435 'roomDataVector.push(roomData);' ‖ :1436 'if(hasMoreRooms && generateInnerRooms)' ‖ :1777 'return 800 + RNG.getRandAfterXTimes(nodeid,3,800);' ‖ :1710 'room = QuestEngine.getNodeData(nodeid).getRoomData()[roomid];'
+- **Overturns:** "⑤ sector↔room mapping rule (town=fixed sector vs wilderness=one-screen-per-sector)."
+- **Lane impact:** L-world-exploration: RR:225 ⑤ STAYS OPEN. Do not apply nf5's edit. What IS now known: sector → room[] with room 0 outer and optional inner/dungeon rooms, and room width 800-1600 px.

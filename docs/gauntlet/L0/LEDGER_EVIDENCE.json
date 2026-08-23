@@ -2458,11 +2458,11 @@
    "id": "nf1-the-stance-mastery-cap-is-10-and-it-is-in-the-skill-tree",
    "lane_impact": "L2 skills-meters: RR:155's '-9' is off by one. MASTERY_CAP = 10 is a CONTRACT value; the mastery curve is now fully modelable rather than a decide-and-flag.",
    "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "The mastery cap that s27b/stance-ceilings-are-mastery-10-not-mastery-9 explicitly leaves STILL_UNHELD is recoverable, and it is 10. The three stance masteries are skill ids 1000/1001/1002 (passive, category 1/2/3) and each carries exactly ten <level> rows, values 1 through 10 \u2014 skill 1000 occupies skilldata.xml:3-80, with the per-level 'required' column running 1,1,2,3,4,5,6,7,8,9 (character level), so mastery 10 needs only character level 9. It is corroborated by the tree's own gating: skilldata.xml:1238 '<req><has><id>1000</id><qty>10</qty></has></req>' for skill 1039, and skills 1040/1041 gate identically on 1001/1002 at qty 10. This resolves the fork the finding could not settle from \u00a71t99s0\u00a7.as alone, in favour of the first branch: the web formulas 0.5+0.04m and 1+0.02m reach the ledger's printed 0.9 and 1.2 exactly at m=10, so RR:155's ceilings are the right NUMBERS with the wrong LABEL. Ship the formulas plus MASTERY_CAP = 10; do not ship '-9'.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 critic(s); overturn upheld by 1"
   },
   {
    "artifact_class": "A2",
@@ -2472,11 +2472,11 @@
    "id": "nf2-mastery-floors-at-1-so-a-fresh-character-is-not-light-x0-5",
    "lane_impact": "L2 skills-meters: the stance floor is x0.54 / x1.02 / x1.4, not x0.5 / x1.0 / x1.4. Heavy's reach floor is likewise 0.54 * base, then clamped by the hard 100 px floor at \u00a71t99s0\u00a7.as:3117-3119.",
    "ledger_text": "A level-1 Shugyosha does Light \u00d70.5 / Balanced \u00d71.0 / Heavy \u00d71.4 (Heavy is fixed); Heavy's *reach* also scales \u00d70.5\u2192\u00d70.9.",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "RR:156, the sentence immediately after the one s27b targets, is also off. It says 'A level-1 Shugyosha does Light x0.5 / Balanced x1.0 / Heavy x1.4 (Heavy is fixed)'. Those are the m=0 values, but mastery never sits at 0 for a live character: StatsManager.as:2144-2146 seeds the skill tree with 'skillStats.push(new IntStat(1000,1));' / '(1001,1)' / '(1002,1)', i.e. all three stance masteries start at level 1, and StatsManager.as:1834 passes getStat(1000)/getStat(1001)/getStat(1002) straight into initPlayer's lightMastery/balancedMastery/heavyMastery slots. Substituting m=1 into the web formulas (\u00a71t99s0\u00a7.as:3262 '0.5 + 0.4 * m * 0.1' and :3265 '1 + 0.2 * m * 0.1') gives Light x0.54 and Balanced x1.02, not x0.5 and x1.0. Heavy is genuinely fixed at 1.4 (:3270) so that third of the sentence stands. Small numbers, but this is the floor of the stance model and RR:156 is the row a config file would be built from.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 critic(s); overturn upheld by 1"
   },
   {
    "artifact_class": "A2",
@@ -2486,11 +2486,11 @@
    "id": "nf3-the-slash-budget-is-spent-in-literal-stage-pixels-web-side",
    "lane_impact": "L5 combat-core: the unit question in RR:190 is closed at the TARGET build with no android hedge. Ship reach as a stage-px stroke budget consumed by the drawn path, not as a hitbox radius.",
    "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) \u2014 *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "The reach finding proves slashLength is a stroke-length budget only from the ANDROID InputManager, which leaves a live C2/S0-3 hole under a claim about WEB units. It closes web-side. \u00a71t99s0\u00a7.as:3158 pushes the per-stance slashLength into \u00a71t1541s0\u00a7.\u00a71t10094s0\u00a7(), and \u00a71t1541s0\u00a7.as:51 declares 'internal static var maxDistance:int = 200;' in the web payload. Critically, the coordinate space is not the raw mouse canvas: \u00a71t1541s0\u00a7.as:343-344 converts the pointer to stage space ('_loc1_ = (mouseX - \u00a71t9359s0\u00a7) / \u00a71t9358s0\u00a7', same for y) and :349 rejects anything outside '\u00a71t1523s0\u00a7.stageWidth' / 'stageHeight' before a single unit of budget is spent at :361-367. So the budget is denominated in literal STAGE PIXELS \u2014 exactly the unit RR:190 calls 'of unknown scale'. Pair this with RR:169's note that native resolution is 800x480, and the 100 px Heavy floor is one eighth of the stage width, not a figure needing a footage measurement.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 critic(s); overturn upheld by 1"
   },
   {
    "artifact_class": "A2",
@@ -2500,11 +2500,11 @@
    "id": "nf4-the-per-kill-xp-formula-is-in-the-web-build-too",
    "lane_impact": "L4 economy / L4 progression: delete RR:215 blocker (1) whole. Per-kill XP is base <xp> from the NPC row, level-differenced, x2 for elite, zeroed beyond a 3-level gap.",
    "ledger_text": "\u2460 coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either).",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "RR:215 blocker (1) ends '20+ samples show no XP formula either'. The web build has one. \u00a71t68s0\u00a7.as:184-207 is the calcXP twin: it returns 0 when the mob is at or below a floor level (:186-189) or when 'param2 - param1 > 3' (:190-193), then scales base XP by '(1 + 0.05 * (mobLevel - playerLevel))' when the mob out-levels the player (:197) and by '(1 - (playerLevel - mobLevel) / \u00a71t12069s0\u00a7())' when the player out-levels the mob (:201), doubling for elites at :203-206. It is called on death at \u00a71t68s0\u00a7.as:888 with (StatsManager.getLevel(), this.level, this.xp, false). The android twin is NPC.as:166-189 calcXP. I record this separately because the coins finding asserts the XP half falls but sources that to another agent's finding rather than to an artifact; this is the artifact.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 critic(s); overturn upheld by 1"
   },
   {
    "artifact_class": "A2",
@@ -2514,11 +2514,11 @@
    "id": "nf5-nodegenerator-carries-the-general-territory-to-room-transform",
    "lane_impact": "L-world-exploration: RR:225 (5) closes for the whole world, not just contested territories, and the 'one-screen-per-sector' hypothesis is refuted \u2014 36 rooms per territory. Fix the ledger's sector/room vocabulary in the same edit.",
    "ledger_text": "\u2464 sector\u2194room mapping rule (town=fixed sector vs wilderness=one-screen-per-sector).",
-   "live_critics": 0,
+   "live_critics": 1,
    "status": "KILLED",
    "text": "The 6x6 territory rule is not a war-board special case, which is what the war-hex cite alone would support. NodeGenerator carries the general bidirectional transform, keyed on nothing but a raw nodeid, so it applies to town and wilderness alike: NodeGenerator.as:296-303 getTerritory and :305-312 getTerritoryId compute 'territoryx = Math.floor(sectorx / 6); territoryy = Math.floor(sectory / 6);' from the packed nodeid, and :314-320 getTerritorySector returns the within-territory offset as 'sectorx % 6' / 'sectory % 6'. Note the code's own vocabulary, which the ledger inverts: the packed nodeid fields are named sectorx/sectory \u2014 A SECTOR IS A ROOM, ONE TO ONE \u2014 and the 6x6 container is the TERRITORY. RR:225 blocker (5) is therefore named after the wrong two levels; the rule it asks for is territory<->room, and it is floor/modulo 6.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "REFUTED by 1 of 1 live critics"
   },
   {
    "artifact_class": "A2",
@@ -2528,11 +2528,11 @@
    "id": "nf6-war-board-adjacency-is-in-code-not-just-the-board-dimensions",
    "lane_impact": "L-meta-social: delete RR:245 blocker (2) rather than half of it. What remains open is only the live per-hex ownership feed, already covered by RR:245 blocker (1).",
    "ledger_text": "\u2461 War-Room **map topology** (board/adjacency)",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "RR:245 blocker (2) is 'War-Room map topology (board/adjacency)' \u2014 two halves \u2014 and the 6x6 finding argues only the board half, so the adjacency half would otherwise survive the rewrite. It does not. WarHexUI.as:443-463 getExitOwner IS the adjacency rule: it derives the territory's own war-map coordinates as 'territoryx = (this.mapid >> 12 & 0x0FFF) - 341' and 'territoryy = (this.mapid & 0x0FFF) - 341', then resolves each edge column and row to the neighbouring territory \u2014 xpos 0 to (territoryx - 1, territoryy), xpos 5 to (territoryx + 1, territoryy), ypos 0 to (territoryx, territoryy - 1), ypos 5 to (territoryx, territoryy + 1) \u2014 and returns 0 for interior cells. That is four-neighbour orthogonal territory adjacency with an explicit 341 coordinate origin, and it is what drives the frontline logic at :213-218 and :259-307. Both halves of RR:245 (2) fall together.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 critic(s); overturn upheld by 1"
   },
   {
    "artifact_class": "A2",
@@ -2542,11 +2542,11 @@
    "id": "nf7-271-cap-is-neither-gear-nor-rebirth-inclusive",
    "lane_impact": "L4 progression: strike the whole RR:201 sentence, not just its parenthetical. Ship STAT_CAP = 1 + (level + 10) * 3 as a BASE-stat cap, STAT_BASE = 1, STAT_STEP = 3, STAT_BUDGET = (level - 1) * 3, gear applied above the cap at the point of use.",
    "ledger_text": "The \"271 cap\" is gear/rebirth-inclusive (237-point first-run budget makes it impossible in one stat) \u2014 resolvable by arithmetic now.",
-   "live_critics": 0,
-   "status": "KILLED",
+   "live_critics": 1,
+   "status": "UPHELD",
    "text": "The 271-cap finding kills RR:201's parenthetical but leaves its headline \u2014 'The \"271 cap\" is gear/rebirth-inclusive' \u2014 standing. Both adjectives are false. GEAR: the panel's cap gate and the anti-cheat audit both read \u00a71t9714s0\u00a7 (\u00a71t5957s0\u00a7.as:3344, :3457), and \u00a71t9714s0\u00a7 is getStat, proven by the android reinforce twin where \u00a71t401s0\u00a7.as:1112 '\u00a71t9714s0\u00a7(20064)' lines up with InteractUI.as:1104 'StatsManager.getStat(20064)'. Gear bonuses ride a SEPARATE accessor, \u00a71t7358s0\u00a7 / findBonusStat, which is added on at the point of use \u2014 \u00a71t1523s0\u00a7.as:2336 '\u00a71t7356s0\u00a7(\u00a71t9410s0\u00a7) + \u00a71t7358s0\u00a7(\u00a71t9410s0\u00a7)' \u2014 and never enters the cap comparison. REBIRTH: StatsManager.as:2135 sets the stat budget to '(getLevel() - 1) * 3' with no STAT_DAN term, in pointed contrast to the skill budget twenty lines later at :2156, 'getLevel() - 1 + getPlayerStats(STAT_DAN) * (levelCap - 1)', which does carry one. Rebirth multiplies SKILL points, not STAT points. 271 is a plain base-stat ceiling: 1 + (level + 10) * 3.",
    "unit": "critic-new_finding",
-   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+   "why": "survived 1 critic(s); overturn upheld by 1"
   },
   {
    "artifact_class": "A2",
@@ -3021,6 +3021,104 @@
    "live_critics": 0,
    "status": "KILLED",
    "text": "A SECOND, INDEPENDENT INSTANCE OF THE S0-3 PARITY HOLE, IN THE SKILL TABLE RATHER THAN THE STRING TABLE. \u00a71t120s0\u00a7.as:108, :110 and :112 declare '\u00a71t10173s0\u00a7:int = 1074', '\u00a71t10174s0\u00a7:int = 1075', '\u00a71t10175s0\u00a7:int = 1076' \u2014 the three per-stance full-Focus evade passives the web hit-resolver tests at \u00a71t99s0\u00a7.as:3383 and :3707. Those ids DO NOT EXIST in reference/extracted/skilldata.xml: its id sequence ends '... 1070 28 1071 30 1072 29 1073 31 1500 1501', i.e. it stops at 1073 and jumps to the two category-11 rows. Per correction C2 that XML came from the ANDROID build, so the three passives are a v0.717 addition with no v0.682 row to read \u2014 the same shape as the string-960 gap already banked at LEDGER_EVIDENCE.md:1883, but in a different table, which makes it a second independent proof rather than a restatement. Practical consequence: the chi cost, cooldown, level ladder and display name of the evade passives CANNOT be resolved from skilldata.xml or from resolved_names.json (both return null for 1074-1076); only the web ActionScript and the on-film skill card at reference/frames/zFtCaTO0_1M/seg-03/frames/frame_0013.jpg carry them.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:1058-1060, :2586-2588 \u00b7 reference/decompiled/shs3_android/scripts/StatsManager.as:740-742, :2144-2146",
+   "claims_overturn": true,
+   "id": "nfx1-web-payload-seeds-all-three-stance-masteries-at-1",
+   "lane_impact": "L2 skills-meters: removes the C2 caveat from the stance-floor row. Ship MASTERY_FLOOR = 1 as a WEB CONTRACT value.",
+   "ledger_text": "A level-1 Shugyosha does Light \u00d70.5 / Balanced \u00d71.0 / Heavy \u00d71.4 (Heavy is fixed); Heavy's *reach* also scales \u00d70.5\u2192\u00d70.9.",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "nf2 books an android-only (C2) hedge for the mastery floor. It is dischargeable. The WEB payload seeds the identical three stance masteries at level 1 in two places: \u00a71t1523s0\u00a7.as:1058-1060 pushes new \u00a71t100s0\u00a7(1000,1)/(1001,1)/(1002,1) in the character-creation path (immediately after the 13-slot equipment fill at :1040-1056), and :2586-2588 repeats it in the respec path. So m>=1 for every live character is a WEB v0.717 fact, and the stance floor is Light \u00d70.54 / Balanced \u00d71.02 / Heavy \u00d71.4 with no build-parity hole. The android twin is StatsManager.as:740-742 (creation) and :2144-2146 (respec).",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as:478-499, :190, :196-198 \u00b7 reference/decompiled/shs3_android/scripts/WarHexUI.as:443-464",
+   "claims_overturn": true,
+   "id": "nfx2-web-payload-carries-the-war-hex-adjacency-verbatim",
+   "lane_impact": "L-meta-social: RR:245 \u2461 closes at the TARGET build with no android hedge at all.",
+   "ledger_text": "\u2461 War-Room **map topology** (board/adjacency)",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "nf6 says its web twin's getExitOwner body 'was not separately line-cited web-side' and keeps a C2 hedge. The hedge is unnecessary: \u00a71t7785s0\u00a7.as:478-499 is the same function in the WEB payload \u2014 :480-481 derive the territory's war-map coords with the same '- 341' origin, and :482-497 dispatch xpos 0 \u2192 (tx-1,ty), xpos 5 \u2192 (tx+1,ty), ypos 0 \u2192 (tx,ty-1), ypos 5 \u2192 (tx,ty+1), with :498 returning 0 for interior cells. War-board adjacency is a v0.717 fact, not an android inference.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "android v0.682 for NodeGenerator (C2 hedge live); the 800 px stage is web v0.717",
+   "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:1434-1436, :1464, :1704-1710, :1775-1778, :1791-1795 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:104",
+   "claims_overturn": false,
+   "id": "nfx3-a-sector-owns-a-room-vector-so-rr225-blocker-5-stays-open",
+   "lane_impact": "L-world-exploration: RR:225 \u2464 STAYS OPEN. Do not apply nf5's edit. What IS now known: sector \u2192 room[] with room 0 outer and optional inner/dungeon rooms, and room width 800-1600 px.",
+   "ledger_text": "\u2464 sector\u2194room mapping rule (town=fixed sector vs wilderness=one-screen-per-sector).",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "Found while refuting nf5. One node/sector does NOT map to one room. NodeGenerator.as:1434-1436 pushes the outer room as roomid 0 into roomDataVector and then, when hasMoreRooms && generateInnerRooms, keeps generating inner rooms into the same vector; :1464-1480 hand that vector to createDungeon / createTempleDungeon / createCave / createMine / createRuins; :1710 indexes 'QuestEngine.getNodeData(nodeid).getRoomData()[roomid]'; and rooms carry their own 8-bit id space at :1791-1795, distinct from the nodeid's 12-bit packing. Separately, the true disproof of 'one-screen-per-sector' is :1777, 'return 800 + RNG.getRandAfterXTimes(nodeid,3,800);' \u2014 a room is 800 to 1600 px wide, i.e. one to two 800 px screens (\u00a71t1523s0\u00a7.as:104). RR:225 \u2460 asks a real, still-open question, and RR:224 already lists territory/sector under Ready \u2014 so no vocabulary fix is warranted.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:4593, :4605-4618, :958-961, :2336 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3344-3346",
+   "claims_overturn": true,
+   "id": "nfx4-getstat-playerstat-branch-is-base-only-direct-web-proof",
+   "lane_impact": "L4 progression: same RR:201 strike as nf7, but with a pure-web chain \u2014 no C2 exposure at all.",
+   "ledger_text": "The \"271 cap\" is gear/rebirth-inclusive (237-point first-run budget makes it impossible in one stat) \u2014 resolvable by arithmetic now.",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "nf7 proves \u00a71t9714s0\u00a7 = getStat through an android reinforce twin. The shorter proof is in the web payload itself: \u00a71t9714s0\u00a7 is defined at \u00a71t1523s0\u00a7.as:4593 and its PLAYERSTAT branch (:4605-4618) special-cases id 10 (level) and 91/92, then ends 'return \u00a71t7356s0\u00a7(param1);' \u2014 the base-stat accessor at :958-961 \u2014 with no \u00a71t7358s0\u00a7/findBonusStat term anywhere in the branch. Gear is added only at the point of use (:2336). The 271 cap gate at \u00a71t5957s0\u00a7.as:3344-3346 is therefore unambiguously a BASE-stat ceiling, provable without leaving v0.717.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:104, :106 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as:343-344, :349 \u00b7 docs/research/REBUILD_READINESS.md:171, :235",
+   "claims_overturn": true,
+   "id": "nfx5-native-stage-is-declared-800x480-inside-the-web-payload",
+   "lane_impact": "L-ui-hud: the 'read it in a build' half of RR:235 \u2460 is already satisfied from source. Only the pillarbox re-measure of existing HUD fractions remains.",
+   "ledger_text": "\u2460 **aspect-ratio truth** (5:3 native \u2192 are x-fractions pillarbox-wrong?) \u2014 *inspect `unt.png` for side-bars; read `stage.stageWidth` in a build.*",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "RR:235 \u2460's close-path is 'read stage.stageWidth in a build' \u2014 which the lane treats as needing a running game that does not exist. It does not: the web payload declares the stage as source constants. \u00a71t1523s0\u00a7.as:104 'public static var stageWidth:int = 800;' and :106 'public static var stageHeight:int = 480;', and \u00a71t1541s0\u00a7.as:349 bounds-tests the de-scaled pointer against exactly those two fields. Native 800\u00d7480 (5:3) is a v0.717 CONTRACT value, so any HUD x-fraction measured off a 1920\u00d71080 capture must be checked for pillarboxing rather than trusted.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "web v0.717 (android twin identical)",
+   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2346-2347, :2256 \u00b7 reference/decompiled/shs3_android/scripts/StatsManager.as:1905-1919",
+   "claims_overturn": true,
+   "id": "nfx6-base-slash-length-formula-is-web-confirmed",
+   "lane_impact": "L5 combat-core: RR:190 \u2460 closes on VALUE as well as unit. BASE_SLASH_LEN = 120 + floor((90 + dan*5) * spd / (20 + spd)) stage px.",
+   "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) \u2014 *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "nf3 closes the UNIT question in RR:190 \u2460 but not the VALUE. The value is web-side too. \u00a71t1523s0\u00a7.as:2346-2347 computes base slash length as 'var _loc2_:int = 90 + \u00a71t7356s0\u00a7(\u00a71t9426s0\u00a7) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' \u2014 identical to android getBaseSlashLengthVal at StatsManager.as:1915-1919 \u2014 where param1 is SPEED (\u00d71.5 under the speed buff) and \u00a71t9426s0\u00a7 is the Dan/rebirth stat. At Dan 0 the base runs 120 stage px (speed 0) asymptotically to 210. Combined with the per-stance multipliers, the whole reach model is computable with no footage measurement.",
+   "unit": "critic-new_finding",
+   "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
+  },
+  {
+   "artifact_class": "A2",
+   "build": "web v0.717",
+   "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3155, :3094, :3105, :3116-3120, :3131, :3142-3146, :3259-3271",
+   "claims_overturn": true,
+   "id": "nfx7-reach-multipliers-invert-the-damage-multipliers-light-reaches-furthest",
+   "lane_impact": "L5 combat-core: ship STANCE_REACH_MULT = {light: 1.4 fixed, balanced: 1 + 0.02*m, heavy: max(100 px, base * (0.5 + 0.04*m))} against BASE_SLASH_LEN, and drop the 'measure from footage' close-path.",
+   "ledger_text": "\u2460 reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) \u2014 *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
+   "live_critics": 0,
+   "status": "KILLED",
+   "text": "Found while checking nf1/nf2/nf3 in the same switch. The per-stance REACH table in \u00a71t99s0\u00a7.as:3091-3155 is the mirror of the DAMAGE table at :3259-3271, and the ledger's 300/200/100 ordering is explained by it. Light (\u00a71t12220s0\u00a7): damage \u00d7(0.5+0.04\u00b7mLight) but reach \u00d71.4 FIXED (:3094). Balanced (\u00a71t12221s0\u00a7): damage and reach BOTH \u00d7(1+0.02\u00b7mBal) (:3105, :3265). Heavy (\u00a71t12222s0\u00a7): damage \u00d71.4 fixed but reach \u00d7(0.5+0.04\u00b7mHeavy) with a hard 100 px floor (:3116-3120). Two further stance ids exist: \u00a71t12223s0\u00a7 reach = base with the same 100 floor (:3142-3146) and \u00a71t12224s0\u00a7 reach \u00d71.4 (:3131). So the stance that hits hardest reaches shortest, and each stance's reach is governed by its OWN mastery, not a shared one.",
    "unit": "critic-new_finding",
    "why": "UNJUDGED \u2014 no artifact-citing critic ever ruled on it (\u00a70: a lead, not a finding)"
   },
@@ -24698,13 +24796,13 @@
   }
  ],
  "summary": {
-  "claims_total": 1764,
-  "killed": 327,
-  "ledger_sentences_hit": 268,
+  "claims_total": 1771,
+  "killed": 328,
+  "ledger_sentences_hit": 269,
   "not_upheld": 62,
   "overturns_claimed_but_not_upheld": 61,
-  "surviving_overturns": 547,
-  "upheld": 1375,
-  "usable_findings": 1437
+  "surviving_overturns": 553,
+  "upheld": 1381,
+  "usable_findings": 1443
  }
 }
