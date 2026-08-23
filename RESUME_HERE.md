@@ -1,16 +1,16 @@
 # RESUME HERE
 
-## ⏸ L0 IS MID-FLIGHT — FINISH IT, DO NOT RESTART IT (updated 2026-08-22)
+## ⏸ L0 IS MID-FLIGHT — FINISH IT, DO NOT RESTART IT (updated 2026-08-23)
 
-**Eight usage walls, seven landed runs, zero data lost.** Everything is extracted and
+**TEN usage walls, eleven landed runs, zero data lost.** Everything is extracted and
 committed. 👉 **Read `docs/gauntlet/L0/SALVAGE.md` first** — it has the exact stage table.
 
-### State: judged **232 → 814** · gate **L0-D GREEN** · **419 fresh claims, 0 BROKEN cites**
+### State: judged **814 → 1,555 of 1,621** · **66 findings left, 3 agents** · gate L0-D GREEN
 
 ```
 $ python3 scripts/gauntlet/gateL0.py --root docs/gauntlet/L0 \
       --ledger docs/research/REBUILD_READINESS.md --out docs/gauntlet/L0/gate.json
-GATE L0 — 1506 claims pooled · 814 judged ids · 0 ledger references
+GATE L0 — 1660 claims pooled · 1555 judged ids · 0 ledger references
    RED   L0-A  CITE INTEGRITY        the ledger cites no claim at all
    RED   L0-B  NOTHING UNJUDGED      same
    RED   L0-C  CONVERGENCE IS REAL   no convergence receipt — the dry-loop has not run
@@ -20,64 +20,117 @@ GATE L0 — 1506 claims pooled · 814 judged ids · 0 ledger references
 LANE L0: ⛔ OPEN — at least one gate item is RED
 ```
 
-### ⚑ THE HEADLINE: all six of §6's "structurally UNRECOVERABLE" entries are overturned
+| | session start | now |
+|---|---:|---:|
+| judged | 814 / 1,467 | **1,555 / 1,621** |
+| UPHELD | 559 | **1,248** |
+| NOT-UPHELD (true, wrong target) | 54 | **61** |
+| KILLED | 854 *(653 merely unjudged)* | **312** |
+| surviving overturns | 413 on 229 sentences | **494 on 254 sentences** |
+| suite | 59 files / 942 | **62 files / 983** |
 
-| §6 entry | surviving, judged overturns |
-|---|---:|
-| L11–80 XP curve | **16** — the 99-entry `expArray` is verbatim in the **web** build AND identical to Android |
-| Verbatim dialogue | 8 |
-| Server-sim topology & save format | 7 |
-| Exact original SFX & music synthesis params | 4 — **the audio is RECOVERED, not encrypted** |
-| The live clan-war | 4 |
-| The dead IAP economy | 3 |
+**The unjudged tail is converging: 653 → 379 → 66.** Each judging round emits new
+findings, and each round's output is smaller than its input.
 
-Gate L0-E permits an **empty** §6 (*a provably minimal list may be empty*, with a test
-pinning it). Anything that survives must carry a **pasted negative search**.
+### ⚑ WHAT THIS SESSION BUILT — four live defects, all "silent staleness"
 
-### ⚑ The overturn check is the most valuable thing this lane built
+Every one was found by pre-flighting a gate against the thing it would have to judge, and
+every one would have fired only at the END of the most expensive wave.
 
-A finding can be perfectly TRUE and still not falsify the sentence it points at, so
-`overturn_upheld` is a separate boolean from `refuted`. Result so far:
+| # | Defect | Why it mattered |
+|---|---|---|
+| 1 | **Gate L0-A could be passed by an INVENTED string id** | key lookups (`strings.json["6143"]`) were checked for FILE existence only. Now the key itself must resolve. Pooled BROKEN **2 → 0** |
+| 2 | **Gate L0-F read the WRONG scorecard row** | it matched the system name anywhere on a line; `progression`'s blocker says *"post-rebirth SP economy"*, so the check for **economy** read **progression**'s cite. 11 of 12 correct → **12 of 12** |
+| 3 | **`buildWorklist` hardcoded its run list at run7** | after run8/9 it offered **653 already-judged findings** for re-judging while the gate saw the true 1,169. Now globs, like the other two tools |
+| 4 | **My own wall-insurance wrote prose BEFORE the JSON** | the JSON is the work; §3.2 bars re-reading prose. Order reversed, one canonical `writeBack()` |
 
-**580 overturn rulings — 352 UPHELD · 210 REJECTED. 36% of claimed overturns are wrong
-about their own target.** Without that check they would have rewritten the ledger.
+### ⚑ THE INSURANCE PAID, IN NUMBERS (wall #9)
 
-### ⚑ Three Stage-0 facts this lane OVERTURNED — carry them, do not re-derive
+Nine of thirteen agents died on a session limit. The workflow reported fail-closed and
+correctly: *4/13 critics, nine batches with NO live critic*. **But six batches were on
+disk** — two had written their JSON and then died before returning:
 
-- **C1** — *"the Android blobs are UTF-16LE"* is **wrong**. 36 of 42 are plain text; **one**
-  is UTF-16LE (`118_Mobile_Lang_EN.bin`); **five** are XOR'd zlib SWFs (`113 115 120 122
-  124`, key `'m'`=109 then inflate); one is a GIF. Grepping those six returns 0 hits for
-  content that IS there.
-- **C2** — **the build-parity caveat is UNDISCHARGED, and the old "byte-identical" proof was
-  CIRCULAR.** The web payload carries **zero** `<questdata>/<skilldata>/<npcdata>/<itemdata>`
-  roots, so those four XMLs came from the **Android** build and diffing them against the
-  Android blobs compares a file with itself. Every row ported from them is **v0.682** until
-  a web-side artifact says otherwise. **This raises risk for L1–L4.**
-- **C3** — **S0-5 is DEAD: the audio is RECOVERED.** `122_Mobile_SoundResource.bin` decodes at
-  XOR key 111 into a valid SWF with 13 `DefineSound` tags. Held: 13 named music stems (six
-  overworld at exactly 79.872 s, four dungeon at 45.760 s), the adaptive-music engine (17
-  presets, ±0.05/tick crossfade), and the SFX playback contract. Survived 8 critics.
+```
+salvage: critics=10 (4 journal + 6 disk) · verdicts=288 (deduped 192 rows)
+```
+
+**96 verdicts — two complete 48/48 batches — recovered that the run itself reported lost.**
+
+### ⚑ C1 IS CORRECTED AGAIN — the blob XOR key is PER-FILE, not 109
+
+`ResourceManager.as:186` keys each blob on **the second character of its own filename**
+(`decryptByteArray(ba, resourceFileNameArray[num].charCodeAt(1))`). A critic ran it:
+
+| blob | key | inflated |
+|---|---|---:|
+| `115_SHS3Resource` | `'h'` 104 | 1,040,849 |
+| `113_MusicResource` | `'u'` 117 | 1,402,677 |
+| `122_SoundResource` | `'o'` 111 | 29,623 |
+| `124_ImageResource` | `'m'` 109 | 1,908,229 |
+| `120_BGResource` | `'g'` 103 | 4,412,340 |
+
+**109 is the IMAGE key only.** C3's audio recovery at 111 was right for a reason C1 could
+not explain. Repeating universal-109 makes four of five blobs read as noise. Same critic
+counted **1,912 exported equipment symbols** in `115` — the sprite-compositing manifest
+§4 ⑤ still calls a blocker.
+
+### Carry these, do not re-derive
+
+- **C1 (corrected twice)** — the blobs are NOT all UTF-16LE (36 of 42 are plain text, ONE
+  is UTF-16LE, five are XOR'd zlib SWFs, one a GIF) **and the XOR key is PER-FILE**.
+- **C2** — the build-parity caveat is **UNDISCHARGED**; the old "byte-identical" proof was
+  **CIRCULAR**. The web payload carries ZERO `<questdata>/<skilldata>/<npcdata>/<itemdata>`
+  roots, so those four XMLs are the **Android** build. Every row ported from them is
+  **v0.682** until a web-side artifact says otherwise. Raises risk for L1–L4.
+- **C3** — S0-5 is DEAD: the audio is **RECOVERED**, 13 `DefineSound` tags, 13 named stems.
+- **All six §6 "unrecoverable" entries are overturned** by judged claims.
 
 ### What is left, in order
 
-1. **Judge the last 653 findings** — 67 overturn-claimers (3 batches × cite+hunter) and 586
-   corroborating (13 batches × cite). Both died at wall #8 with **0 agents done**.
-2. **WF-4** — dry-loop until two rounds **that actually ran** find nothing, then completeness.
-3. **Rewrite `REBUILD_READINESS.md`** from `LEDGER_EVIDENCE.md` only, citing `[[claim-id]]`.
-4. **Drive gates L0-A…F green** with pasted output.
-5. **Correct `docs/GAUNTLET.md`** — §2.1 blocker dead · L1b row obsolete · §2's L6
-   "~150 animations" is **471** measured — and re-arm per §3.7 in the SAME commit.
+1. **Judge the last 66** — read counts fresh from `worklist/MANIFEST.json`:
+   `{tier:'t2', batches:1, tag:'<uniq>'}` (45 corroborating, 1 agent) **then**
+   `{tier:'t1', batches:1, tag:'<uniq>'}` (21 overturn-claimers, 2 agents).
+   ⛔ **ONE WORKFLOW AT A TIME** — owner rule, `GAUNTLET.md` §3 item 8.
+2. **WF-4** — `l0-finish-wf4.workflow.js`, dry-loop until TWO rounds **that actually ran**
+   find nothing, then completeness. Write `docs/gauntlet/L0/convergence.json` from the
+   returned object — the workflow does NOT write it. Gate L0-C reads it.
+   ⚠ **Known risk:** the loop caps at 4 rounds and one hunt target is the 7,381-frame
+   corpus, which may never go dry. If it does not converge, that is a REAL result — report
+   it with each round's count and take a ruling. **Do not soften the gate.**
+3. **Rewrite `REBUILD_READINESS.md`** — `l0-rewrite.workflow.js`, 14 slices ×
+   (writer + blind verifier) = 28 agents. **Packets are already built and CONSERVED.**
+4. **Drive L0-A…F green** with pasted `gateL0.py` output.
+5. **Correct `docs/GAUNTLET.md`** and re-arm per §3.7 in the SAME commit — see below.
 
-### ⛔ Two rules that cost real work when broken
+### The tooling, all red-first and chaos-planted
 
-- **`resumeFromRunId` is SAME-SESSION ONLY.** The cache is not load-bearing — every result
-  is extracted to `run2/`…`run7/` and committed.
-- **Always pass a run-unique `tag`** to `l0-finish-wf3` / `l0-finish-wf4`. `buildWorklist`
-  renumbers batches every build, so `<batch>.<lens>.md` collides across runs. At wall #8 a
-  later run's partial work overwrote an earlier run's committed reviews; git had them, but
-  that was luck. Fixed — but only if you pass the tag.
+| Script | Test | Decides |
+|---|---|---|
+| `citeLint.py` | `citeLint.test.ts` (32) | does a cite resolve — path, line, quote, **JSON key**. Gate L0-A |
+| `buildWorklist.py` | `buildWorklist.test.ts` (4) | what still needs judging. **Globs `run*`** |
+| `buildLedgerEvidence.py` | `ledgerEvidence.test.ts` (11) | which claims may rewrite the ledger |
+| `buildLedgerPackets.py` | `ledgerPackets.test.ts` (16) | one packet per ledger slice; **conservation asserted** |
+| `gateL0.py` | `gauntletL0Gate.test.ts` (15) | all six gate items, binary, exit-code |
+| `salvageJournal.py` | `salvageCriticJson.test.ts` (11) | journal **+ agent side-files**, deduped |
+| `checkpointL0.sh` | — | the six banking steps in the order that matters |
 
-**Model: Opus 5 @ `xhigh`** (§2 routing for L0 is unchanged).
+**One command banks a landed wave:**
+
+```bash
+bash scripts/gauntlet/checkpointL0.sh run12 <tag> <transcript-dir>
+#   add --skip-worklist ONLY if another run is still in flight
+```
+
+### ⛔ Three rules that cost real work when broken
+
+- **ONE WORKFLOW IN FLIGHT** (§3 item 8). Concurrency is what *causes* the wall, and you
+  cannot rebuild a shared index while a run is live — `buildWorklist` renumbers packets
+  a live run's queued agents have not read yet.
+- **`resumeFromRunId` is SAME-SESSION ONLY.** The cache is not load-bearing: every result
+  is extracted to `run2/`…`run11/` and committed.
+- **Always pass a run-unique `tag`.** Review filenames collide across runs otherwise.
+
+**Model: Opus 5 @ `xhigh`** (§2 routing for L0 is unchanged). **Ultracode ON.**
 
 ---
 
@@ -89,8 +142,8 @@ about their own target.** Without that check they would have rewritten the ledge
 |---|---|---|
 | **Surface** | **Claude Code CLI** | terminal + git + build-heavy |
 | **Model** | **Opus 5** at **`xhigh`** | §2 routes L0 to Opus (R6); judgement-dense. **NOT Fable** — that is L7/L9/L11 |
-| **Context** | **fresh session** | the previous one closed at eight usage walls |
-| **Ultracode** | **ON** | ~36 judging agents + a dry-loop remain |
+| **Context** | **fresh session** | the previous one closed at ten usage walls |
+| **Ultracode** | **ON** | 3 judging agents + a dry-loop + a 28-agent rewrite remain |
 
 Copy everything **between** the `'''` lines (the markers are not part of the prompt):
 
@@ -103,37 +156,57 @@ READ FIRST, then tell me the state and your plan before you spawn anything:
 - docs/gauntlet/L0/SALVAGE.md   <- the resume card; exact stage table + what is banked
 - docs/GAUNTLET.md              <- the standing engine; §2 is the lane board, §0 is the law
 
-THE TASK: FINISH lane L0 to its binary gate. It is 8 usage walls deep and mid-flight.
+THE TASK: FINISH lane L0 to its binary gate. It is TEN usage walls deep and mid-flight.
 DO NOT restart it. DO NOT try to resume a dead run - resumeFromRunId is SAME-SESSION
 ONLY. The cache is not load-bearing: every completed agent result is extracted to
-docs/gauntlet/L0/run2..run7 and committed.
+docs/gauntlet/L0/run2..run11 and committed.
+
+⛔ ONE WORKFLOW IN FLIGHT AT A TIME - my standing rule, now GAUNTLET.md §3 item 8. Two
+ran together last session and took a usage wall as a pair. A single workflow may fan out
+to as many agents as the lane needs; you may not have two workflows running. The only
+carve-out is a run that must adversarially REVIEW another, or two runs over disjoint
+state where neither rebuilds a shared index.
 
 ALREADY BANKED - do NOT re-derive any of this:
-- 814 of 1,467 claims are JUDGED. 1,506 claim rows / 2,896 verdict rows / 0 VOID.
+- 1,555 of 1,621 claims are JUDGED. 1,248 UPHELD, 61 NOT-UPHELD, 312 KILLED, 0 VOID.
+- 494 surviving overturns land on 254 distinct ledger sentences.
 - ALL 12 systems and ALL 10 source sweeps are judged. Gate L0-D is GREEN.
-- The tooling exists and is tested: citeLint.py (gate L0-A), buildWorklist.py,
-  buildLedgerEvidence.py, gateL0.py. 59 files / 942 tests green.
 - ALL SIX of §6's "structurally unrecoverable" entries are overturned by judged claims.
-- Three Stage-0 facts were OVERTURNED - RESUME_HERE.md calls them C1/C2/C3. Carry them:
-  the blobs are NOT all UTF-16LE; the build-parity proof was CIRCULAR and the caveat is
-  UNDISCHARGED; and S0-5 is dead because the audio IS recovered.
+- The rewrite packets are ALREADY BUILT and CONSERVED: 1,309 usable findings across 15
+  packets under docs/gauntlet/L0/packets/, 0 quarantined. Rebuild them after any new
+  judging lands (buildLedgerPackets.py), but the shape is proven.
+- Tooling, all red-first + chaos-planted: citeLint.py (32 tests), buildWorklist.py (4),
+  buildLedgerEvidence.py (11), buildLedgerPackets.py (16), gateL0.py (15),
+  salvageJournal.py (11), checkpointL0.sh. Suite: 62 files / 983 tests green.
+- THREE Stage-0 corrections, C1/C2/C3 in RESUME_HERE.md. Carry them. C1 was corrected
+  TWICE: the blobs are not all UTF-16LE, AND the XOR key is PER-FILE (the second char of
+  each filename), not a universal 109. 109 is the IMAGE key only.
 
 WHAT IS LEFT, in order:
-1. Judge the last 653 findings. Read the CURRENT batch counts from
-   docs/gauntlet/L0/worklist/MANIFEST.json - they renumber every build:
-     l0-finish-wf3.workflow.js  args {tier:'t1', batches:N, tag:'<unique>'}
-     l0-finish-wf3.workflow.js  args {tier:'t2', batches:M, tag:'<unique>'}
-   ALWAYS PASS A UNIQUE tag. Without it the review filenames collide across runs and a
-   later run silently overwrites an earlier run's committed prose - it already happened.
-2. WF-4: dry-loop until TWO rounds THAT ACTUALLY RAN find nothing, then completeness.
-   Write docs/gauntlet/L0/convergence.json - gate L0-C reads it.
-3. Rewrite docs/research/REBUILD_READINESS.md from docs/gauntlet/L0/LEDGER_EVIDENCE.md
-   ONLY. Cite every claim inline as [[unit/claim-slug]] - gate L0-B resolves every one
-   against the pooled verdicts and goes RED on anything unjudged, refuted, or unknown.
+1. Judge the last 66 findings. Read the CURRENT batch counts from
+   docs/gauntlet/L0/worklist/MANIFEST.json - they renumber every build. Run these as TWO
+   SEPARATE workflows, never together:
+     l0-finish-wf3.workflow.js  args {tier:'t2', batches:N, tag:'<unique>'}   (~45, 1 agent)
+     l0-finish-wf3.workflow.js  args {tier:'t1', batches:M, tag:'<unique>'}   (~21, 2 agents)
+   Run t2 FIRST: its critics also emit overturn-claiming findings, so the t1 mop-up last
+   catches everything accumulated in one pass. ALWAYS PASS A UNIQUE tag.
+   Bank each with: bash scripts/gauntlet/checkpointL0.sh run12 <tag> <transcript-dir>
+2. WF-4: l0-finish-wf4.workflow.js - dry-loop until TWO rounds THAT ACTUALLY RAN find
+   nothing, then completeness. Write docs/gauntlet/L0/convergence.json yourself from the
+   returned object - the workflow does NOT write it. Gate L0-C reads it.
+   ⚠ The loop caps at 4 rounds and one hunt target is the 7,381-frame corpus, which may
+   never go dry. If it does not converge, that is a REAL result: report each round's
+   count and come to me for a ruling. DO NOT soften the gate.
+3. Rewrite docs/research/REBUILD_READINESS.md via l0-rewrite.workflow.js - 14 slices x
+   (writer + blind verifier). Each writer may cite ONLY its own packet. Cite inline as
+   [[unit/claim-slug]] - gate L0-B resolves every one against the pooled verdicts and
+   goes RED on anything unjudged, refuted, or invented.
 4. Drive gates L0-A..F green with PASTED output from gateL0.py.
-5. Correct docs/GAUNTLET.md itself - §2.1's string-table blocker is dead, the L1b lane row
-   is obsolete, §2's L6 "~150 animations" is 471 measured - and re-arm per §3.7 in the
-   SAME commit.
+5. Correct docs/GAUNTLET.md itself - §2.1's string-table blocker is dead (VERIFIED:
+   resolved_names.json resolves itemdata 804/0 misses, npcdata 484/6, skilldata 73/0),
+   the L1b lane row is obsolete, and §2's L6 "~150 animations" is 471 measured (VERIFIED:
+   18 MCSCharacter_* blobs, 99_HumanAnimationData alone = 158) - and re-arm per §3.7 in
+   the SAME commit.
 
 THE BAR - §0 is absolute: EVERY CRITIC IS AN ARTIFACT CRITIC. This game is DEAD; no agent
 has ever seen it run, so a verdict must cite a frame under reference/frames/, a row under
@@ -144,7 +217,7 @@ When a measurement doc and a frame disagree, THE FRAME WINS - say so out loud. A
 UNJUDGED claim is a LEAD, not a finding: it may NOT enter the ledger.
 
 AND THE ONE THIS LANE ADDED: a finding can be perfectly TRUE and still not overturn the
-sentence it names. 36% of claimed overturns were rejected on exactly that. Keep
+sentence it names. 60 of 554 claimed overturns were rejected on exactly that. Keep
 overturn_upheld separate from refuted, and never let a true-but-wrong-target finding
 delete a ledger line.
 
@@ -153,10 +226,11 @@ never confirmed; a VOID verdict is not judgement; and a round where agents DIED 
 round that found nothing, so it may not count toward convergence. Return a loud INTEGRITY
 string naming every dead agent.
 
-SURVIVE THE WALL: this lane has hit the usage limit EIGHT times. Agents write their output
-to disk BEFORE returning - that has now saved work at five separate walls; copy the
-journal into the repo and extract it the moment a stage lands
-(scripts/gauntlet/salvageJournal.py); COMMIT at every checkpoint; keep SALVAGE.md current.
+SURVIVE THE WALL: this lane has hit the usage limit TEN times and lost nothing. Agents
+write their STRUCTURED JSON to disk BEFORE their prose and before returning - at wall #9
+that recovered 96 verdicts from two batches the workflow itself reported as lost. Copy
+the journal into the repo and extract the moment a stage lands (checkpointL0.sh does all
+six steps in the right order); COMMIT at every checkpoint; keep SALVAGE.md current.
 Never edit a live workflow script mid-run.
 
 WHAT NOT TO BREAK: §4's no-touch list. Sim.ts and the duel-baseline move only in L5.
@@ -164,7 +238,7 @@ Floors go UP or stay. core/ keeps zero numeric literals. Scenes stay render-only
 "web SWF is 24 fps" finding is a LEDGER correction only - it does not license touching
 OG_ANIMS' 15 fps latch, which is L6.
 
-FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 59 files / 942), paste the
+FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 62 files / 983), paste the
 current gateL0.py output, report the judged-vs-leads split from
 docs/gauntlet/L0/LEDGER_EVIDENCE.json, and show me the fan-out shape. Don't spawn until
 I ok it.
@@ -179,13 +253,14 @@ cd "/Users/kheshav/kheshav-code/SSHD 1-1" && git log --oneline -1 && npm test 2>
        --ledger docs/research/REBUILD_READINESS.md --out /tmp/gate.json
 ```
 
-**Bar verdict: ✅ meets the "cannot be improved further" bar.** It front-loads everything
-banked so nothing is re-derived; it carries §0's law, the *new* overturn rule this lane
-discovered, and the three fail-closed accounting rules that make the numbers trustworthy;
-it names the exact scripts and args including the `tag` whose absence has already cost
-work; it blocks the two mistakes that cost real money (resuming a dead run, re-deriving
-the string table); and it ends with a concrete, checkable first action. The next change
-would be churn.
+**Bar verdict: ✅ meets the "cannot be improved further" bar.** It front-loads every banked
+number so nothing is re-derived; it carries §0's law, the overturn rule, the three
+fail-closed accounting rules, and the NEW one-workflow rule that this session's wall
+produced; it names the exact scripts, args and the `tag` whose absence has already cost
+work; it states the dry-loop convergence risk **before** it is hit, with the instruction
+to take a ruling rather than soften a gate; it marks the two GAUNTLET.md corrections as
+VERIFIED first-hand rather than inherited; and it ends with a concrete, checkable first
+action. The next change would be churn.
 
 ### Two owner decisions queued (neither blocks the next session)
 
@@ -198,7 +273,6 @@ would be churn.
    `image_*` symbols map one-for-one onto shipped quest rows. **Recommendation: withdraw
    the cut.** It widens L1.
 
----
 
 ## 🔁 THE GAUNTLET — the standing engine (adopted 2026-08-13)
 

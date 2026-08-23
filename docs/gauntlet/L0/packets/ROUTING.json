@@ -1,0 +1,7886 @@
+{
+ "conserved": true,
+ "destinations": {
+  "art-anim-audio-feel": 95,
+  "combat-core": 143,
+  "corrections": 73,
+  "economy": 87,
+  "enemies-ai": 99,
+  "frame": 91,
+  "items-equipment": 135,
+  "meta-social": 89,
+  "progression": 85,
+  "quests-story": 44,
+  "rebirth-elements": 69,
+  "six": 32,
+  "skills-meters": 77,
+  "ui-hud": 94,
+  "world-exploration": 96
+ },
+ "lint_reports": 10,
+ "placed": 1309,
+ "quarantined": 0,
+ "routed": [
+  {
+   "dest": "frame",
+   "id": "strings/the-android-lang-table-skips-ids-881-999-entirely",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/the-stance-label-is-grey-not-yellow-the-frame-wins",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world/the-hud-prints-territory-21-51-on-film",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/crit-multiplier-1-3-is-in-the-web-damage-function",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "s26c/survival-mode-id-sets-are-IDENTICAL-across-builds",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "hunter-s26c/survival-mode-enemy-id-sets-are-equal-not-unequal",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "meta-social",
+   "id": "hunter-s26c/war-room-10px-territory-pitch-is-web-side-too",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/sell-price-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "items-equipment/sell-price-corrects-section3-item9",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/condition-has-no-damage-multiplier",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/condition-tier-thresholds",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/affix-suffix-pool-and-counts",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/stat-vs-level-curve",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/soul-infusion-is-code",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/paperdoll-is-13-slots-not-9",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/weight-cap-is-a-base-not-a-cap",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/eq-comparison-frame-payload-identity",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/slashusage-stancerestriction-omitted",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/string-table-resolved",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/dan-achievements-prove-ten",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/element-picker-uidata",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/elemental-skill-tooltips",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dragon-dance-teachable",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/tenth-gold-is-100",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/dan-scaled-slash-length",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/post-rebirth-sp-economy",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/elemental-damage-ladder",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/aoe-radii-per-element",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dragon-dance-bagua-input",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/element-counter-wheel",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/mitigation-flat-min1",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/reach-cap",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/reach-is-arclength",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/crit-meter-exists-in-web-build",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "combat-core/multi-target-full-damage",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "combat-core/hit-registration-instant-at-endslash",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "combat-core/pass-through-dash",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/gesture-classifier",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/slash-type-map",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/heavy-def-0.8",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/stance-triangle",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/early-ttk",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/launch-unlock-levels",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/150pct-damage-is-a-buff",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/xp-curve-l11-80",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/inferred-extrapolation-error",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/l1-l10-caps-confirmed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/frame-confirms-xp-caps",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/per-point-magnitudes",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/per-stat-hard-caps",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/271-cap-explained",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/post-rebirth-sp",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/sp-first-run-off-by-one",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/levelup-refill-and-cap",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/def-mitigation-is-flat",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/spd-scaling",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/quest-xp-tabled",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/unlock-cadence-to-l80",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/campaign-level-band",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "progression/ap-regen",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/kunai-chi-is-a-phantom",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/crit-is-deterministic",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/spd-cooldown-cap-600",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/ledger-decimals-are-display-artefacts",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/crit-mult-is-1.3-ledger-vindicated",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/stance-damage-ceiling-is-mastery-10",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/in-combat-stance-switch-is-real",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/string-table-resolves-all-73",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/skilldata-byte-identical-across-builds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/frame-crit-appears-at-exactly-full",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/frame-cracks-web-string-960",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/150pct-damage-is-a-food-buff",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/chi-costs-are-not-single-digit",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/stab-is-a-passive-tree-node",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/shunpo-effect",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/ultimates-and-elemental-projectile-constants",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/skill-vfx-anim-audio",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "six",
+   "id": "economy/premium-exchange-rate-200",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "economy/iap-tiers-held-both-builds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "economy/premiumdata-blob-is-extracted",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/rebirth-payout-config-is-right",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/guest-start-3-gold-confirmed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/duel-token-cap-40",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/sell-price-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/repair-weapon-cost",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/coins-per-kill-and-xp",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/coin-purse-cap-ladder",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/trade-goods-arbitrage-loop",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/crop-price-is-supply-oscillator",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/war-room-structure-costs",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/cho-han-is-ev-neutral",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/per-enemy-hp",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/one-statline-six-movesets",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/spawn-geometry",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/undead-rule-is-not-reflect",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/shipped-config-hp150-is-stale",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/boss-names-are-procgen",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/tengu-is-not-in-the-payload",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/no-squad-coordination",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/no-per-enemy-chi-or-speed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "enemies-ai/kill-rewards-close-two-economy-blockers",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "quests-story/ep4-12-epilogue-shipped",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "quests-story/frame-beats-payload-dialogue-rewritten",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/player-name-satoshi-resolved",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/reward-and-roster-undercount",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/ally-waves-unlisted-system",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/cutscene-director-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/two-yasukas-confirmed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/world-bounds-land-mask",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/land-mask-version-parity",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/coordinate-law",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/start-coords-derived",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/frame-confirms-6x6-grid",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/place-name-reproduced-from-payload",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/level-gradient",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/ap-regen-and-cap",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/ap-cost-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/gather-yield-whiff-tables",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/farming-tables",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/day-length-is-three-clocks",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/sector-room-mapping",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/room-object-enum-and-node-graph",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/world-is-procedural",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/prosperity-thresholds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "world-exploration/save-schema-recovered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "world-exploration/is-a-wxh-grid",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/config-still-empty",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/mapdata-blob-empty",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/search-chance-semantics",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/audio-recovered-not-encrypted",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "art-anim-audio-feel/music-13-stems-measured",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/adaptive-music-engine",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/sfx-playback-contract",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/font-identified",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/no-blend-modes",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/screen-shake-catalogued",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/no-hitstop",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "art-anim-audio-feel/blood-vfx-exact",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/android-web-byte-identity",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/kill-beat-timings",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/web-audio-parity-unheld",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/langmanager-uses-resname-not-id",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/pause-is-click-anywhere",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/result-cards-exact",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/interactui-menu-system",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "ui-hud/typography-edo-sz",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/690-friend-bar-never-filmed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/flag-120-is-mislabelled-terrain-row",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/world-board-63x72-byte-identical",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/frame-prints-coordinate-system",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/four-clans-named-led-located",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/kisensu-domain-typo-in-shipped-data",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/ninja-services-priced-catalogue",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/chikako-affinity-meter",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/rank-ladder-thresholds-and-moves",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/achievements-61-resolved",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/structure-costs-and-donation-rate",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/survivalmode-is-the-warroom-wave-table",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "six",
+   "id": "meta-social/section6-live-clan-war-overbroad",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "meta-social/xp-curve-l11-80-recovered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/war-rules-page-7-content",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/rival-clan-ai",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/chi-cooldown-table-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "combat-core/five-stances-not-three",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth-elements/24-elemental-skills-with-numbers",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth-elements/element-gate-is-a-stat-threshold",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth-elements/dragon-dance-is-eight-and-teachable",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/three-slots-on-screen",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/skill-icons-are-gestural",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "art-anim/engine-tick-is-24fps",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "progression/required-is-skill-points",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "economy/coin-cap-weight-cap-mining-tiers",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "world-exploration/secret-areas-behind-bushes",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/pvp-rooms-and-a-cut-steal-skill",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/npcs-run-on-skilldata",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/level-stat-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/one-hp-field-trash",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/ai-profile-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "npcdata/loot-drop-tables",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/enemy-skill-loadouts",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "npcdata/five-clan-armies",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "npcdata/paperdoll-12-slots",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "npcdata/wardrobe-randomiser",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/enemy-render-scale",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "npcdata/shipped-data-defects",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "npcdata/stance-mastery-rank-10",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "npcdata/heavy-stance-def-penalty",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "frames/pillarbox-52px",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "bindata/world-map-bitmap",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "bindata/aspect-frame-beats-swf-header",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "bindata/anim-duration-holds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "bindata/sprite-compositing-contract",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "bindata/survival-is-warroom-content",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "bindata/spawn-geometry",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "bindata/boss-telegraph-triads",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/paired-grab-throw-victim-anims",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "bindata/51-skill-animations",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "bindata/procedural-name-generator",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "bindata/487-anims-held-4-ported",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "bindata/per-stance-idle-poses",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "itemdata/frame-validates-the-payload",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/stat-vs-level-is-a-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/condition-has-no-damage-multiplier",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "itemdata/sell-price-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/affix-count-per-rarity",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/sprite-compositing-contract",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "itemdata/five-stances-and-stance-locked-weapons",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "itemdata/consumable-effect-table",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/web-android-schema-parity",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "itemdata/baseprice-dot-data-bug",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/no-items-config-still-true",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "actionscript/web-payload-obfuscated",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "six",
+   "id": "actionscript/xp-curve-l11-80",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "actionscript/save-schema",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "actionscript/build-divergence",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "corrections",
+   "id": "actionscript/stance-damage-is-mastery-10",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "actionscript/reach-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "actionscript/reach-300-200-100-refuted",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "actionscript/in-combat-stance-not-hard-locked",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "actionscript/multi-target-full-damage",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "actionscript/hit-registration-window",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "actionscript/sell-price-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "actionscript/anim-format",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "actionscript/screenshake-and-killbeat",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "actionscript/ap-and-war-clocks",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "actionscript/auto-slash-is-the-enemy-ai",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "actionscript/damage-is-a-random-roll",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "actionscript/native-resolution",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "skilldata/android-web-parity",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "skilldata/element-stat-is-one-system",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "skilldata/elemental-values-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "skilldata/24fps-tick",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skilldata/shunpo-effect",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skilldata/chi-costs-not-single-digit",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "skilldata/skill-slots-3-to-8",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skilldata/category-to-tree-names",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "skilldata/enemy-range-bands",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "skilldata/51-skill-animations",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "skilldata/orphan-buff-animations",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "skilldata/orphan-steal-and-smithing",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "skilldata/coin-cap-carry-weight-gold-trap",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "skilldata/unlock-cadence-and-stance-sp-cost",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/high-band-coefficients",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/friendly-npcs",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "npcdata/elemental-wheel",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "npcdata/elemental-roster-empty",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "npcdata/loot-enum-and-coins-per-kill",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "npcdata/no-kill-xp",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "npcdata/paperdoll-13-slots",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "npcdata/compositing-contract",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/random-appearance-weighting",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "npcdata/shipped-bugs",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "npcdata/procgen-town",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "npcdata/boss-movesets",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "npcdata/damage-is-a-range",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "frames/pillarbox-confirmed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/no-speed-no-chi",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "six",
+   "id": "bindata/war-boss-ids-are-rival-players",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "bindata/original-rng-is-a-specific-lcg",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "bindata/territory-12bit-packing-and-6x6-nodes",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "bindata/trap-room-placement-and-level-gate",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/veryhard-rooms-rotate-daily",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "bindata/launcher-downed-ground-finisher-verbset",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "bindata/mounted-shield-archer-poses-eggs",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "bindata/clan-band-tail-holds-seasonal-event-enemies",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "bindata/RETRACTION-gif92-is-the-world-map",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "bindata/pillarbox-independently-reverified",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "bindata/audio-not-in-this-source",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "itemdata/xp-curve-l1-l98-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "itemdata/xp-per-kill-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "itemdata/coins-per-kill-is-1-or-5",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "itemdata/loot-tables-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/affix-suffix-pool",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/item-name-template",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/affix-magnitude-curve",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "itemdata/rebirth-gold-25-and-100",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "itemdata/android-vs-web-constants-diverge",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "progression",
+   "id": "itemdata/guest-start-state",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "itemdata/dragon-dance-input",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "itemdata/duel-token-economy",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "itemdata/buff-system-30min",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/android-string-table-matches-v0717-ui",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/procedural-item-colour",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/v0717-affix-words",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "questdata/five-stances",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "questdata/knockdown-grapple-aerial",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "questdata/severed-limb-deaths",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "questdata/generated-npc-names",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "questdata/frame-corroborates-objective",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "questdata/portrait-count-correction",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "six",
+   "id": "questdata/epilogue-verbatim-script",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "actionscript/affix-generator-complete",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "actionscript/no-condition-damage-multiplier",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "actionscript/enemy-level-scaling-and-1hp-trash",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "actionscript/xp-income-model",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "actionscript/coins-per-kill-is-data",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "actionscript/loot-tables-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "actionscript/defense-is-flat-subtraction",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "actionscript/behead-and-weapon-parry",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "actionscript/damage-popup-colors",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "actionscript/adaptive-music-system",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "actionscript/slash-frames-ordering-conflict",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "actionscript/shunpo-is-teleport-double-damage",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "actionscript/dan-cap-and-post-rebirth-sp",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "actionscript/farming-and-prosperity-numbers",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "actionscript/territory-daily-sim-vocabulary",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/generic-defense-floor-is-attackerlvl",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/humanoid-stack-is-23-layers",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/web-build-has-fifth-name-colour",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/two-ring-slots-are-accessory1-and-2",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/modifier-rows-are-mostly-set-ids",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/sell-price-reads-stack-weight",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/elemental-def-affix-wheel-is-deliberate",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/ui-slot-map-resolved",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "combat-core/generic-post-defense-damage-floor",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/border-is-four-tier-16-frames",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/full-modifier-id-table",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/web-soul-infusion-superset",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/affix-eligibility-matrix",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/stancerestriction-is-dead-data",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/placeholder-icon-art-set",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/sell-price-edge-cases",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/paperdoll-ui-slot-mapping-resolved",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/border-is-the-four-tier-ladder",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/mcs-human-partlist-is-23-not-27",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/setarmor-drives-8-parts",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/getweight-diverges-between-builds",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/web-only-xp-item-colour",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/item-panel-level-row-unexplained",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/removeparts-leaks-prop3",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/mastery-is-small-integer",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/reach-table-is-mastery-zero",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dan-1-has-no-kanji",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "economy/rebirth-pays-premium-currency",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/injured-buff-halves-reach",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/crit-is-full-reload-1p3",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/elemental-gate-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/border-is-the-rarity-ladder",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/ring-slots-are-accessory1-and-2",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/web-build-has-a-fifth-name-colour-band",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/getweight-is-stack-weight-and-diverges",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/frame-equipped-item-also-resolves",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/build-parity-caveat-proven-live",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/prog-spike-and-dead-slashusage",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/27-parts-but-23-human-layers",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/uses-zero-is-a-never-wears-sentinel",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/v0717-stance-slash-multipliers",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/mastery-caps-at-ten",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/reach-table-is-mastery-zero-not-a-ceiling",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/full-reload-crit-is-1p3-in-v0717",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/element-circle-art-is-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dragon-dance-ui-art-is-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/no-elemental-status-effects-exist",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/unlock-gate-ignores-gear-affixes",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/payout-is-the-premium-gold-purse",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/every-checked-combat-number-moved-between-builds",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dan-zero-shows-no-title",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/v0717-stance-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dan1-renders-blank",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/no-elemental-buff-channel",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/statue-two-sequence-modes",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-build-as3-is-readable",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-crit-is-1.3-flat",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "combat-core/web-reach-and-damage-curves-match-repo",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-maxreload-192-and-48-offset",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-behead-is-1.3",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/parity-established-for-ten-quantities",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-as3-is-readable",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-maxreload-192",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/payload-swf-framerate-24",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/basereload-is-dead-code",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/raw-frames-show-full-crit-meter",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/reach-and-crit-configs-already-correct",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-heavy-damage-1.4",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "combat-core/v0717-stance-curves-are-already-in-config",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/v0717-crit-is-flat-1.3",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/focus-6s-is-the-source-not-a-parity-break",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-payload-is-cross-readable",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/hud-track-is-269px",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/heavy-launch-unlock-is-3-on-target-build",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/popup-colour-is-a-semantic",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/crit-track-268px-six-seconds",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/stroke-render-frame-confirmed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/36-was-not-a-crit",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/cannot-change-stance-not-in-android-strings",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/per-point-plus3-direct-frame-proof",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/respec-is-premium-gated",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/rebirth-pays-heavenly-gold",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/level10-scroll-validates-xp-table",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/web-calcxp-parity",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/quest-xp-sum-kills-blocker2-rationale",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/web-stance-triangle-has-a-penalty-branch",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/elemental-damage-bypasses-def",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/autoassign-is-android-only",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/web-anticheat-and-console-differ",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/spent-points-audit-second-witness",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/getlevel-pins-cumulative-cap-semantics",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/second-frame-confirms-plus3-per-point",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/stance-reach-modifiers",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/procgen-quest-xp-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/respec-costs-premium-gold",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/no-gather-xp-path-exists",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/web-level-cap-is-const",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/paid-level-skip-item",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/kill-xp-never-validated-on-screen",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/maxreload-is-192-not-120",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "skills-meters/dual-reversed-are-swapped",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/only-83-level-rows-carry-a-number",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/kunai-ammo-is-web-and-tiered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/stance-switch-gate-and-cycle",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/spd-does-not-touch-the-meter-in-web",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "skills-meters/elemental-per-level-numbers-are-blank",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/skill-slot-base-is-web-sourced",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/roll-cooldown-is-fractional",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/maxreload-is-192-frames",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/canchangestance-is-a-named-gate",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/roll-dodge-is-75-85-95-in-web",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/full-focus-negates-a-hit",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/slashusage-is-weapon-derived",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/basereload-is-48-plus-spd6",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/focus-skill-web-effect",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/speed-buff-premultiplies-spd",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/dual-reversed-swapped",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/stance-switch-gate-is-48",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/baseReload-is-a-dead-stat",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/slashusage-is-a-weapon-stat",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "skills-meters/heavy-defense-penalty-is-web-true",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/cooldowns-are-not-all-integers",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/web-maxreload-is-192",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/only-83-numeric-level-rows",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/web-kunai-ammo-gate-1-4-8",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/stance-switch-hard-gate-48",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/spd-dead-in-web-meter",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/roll-cooldown-is-a-float",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/damage-roll-still-uses-rng",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-payload-is-readable",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-reach-stance-mults",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-crit-is-flat-1.3",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-focus-economy",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-stance-switch-rule",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-damage-stance-curves",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/parity-confirmed-set",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-payload-as3-is-readable",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/footage-runs-at-nominal-24fps",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/stance-triangle-damage-magnitudes",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/sim-dash-hz-unit-bug",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/duel-path-damage-terms-unsurveyed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-v0717-ast-is-readable",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/focus-fill-remeasured-on-frames",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/xp-income-web-parity",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "gauntlet/index-firstlines-are-leafname-scoped",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/android-caps-also-drifted",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/levelcap-const-vs-var",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "combat-core/reach-ts-was-right",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/crit-meter-is-6-seconds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/stance-label-is-a-frame-clock",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/player-unlocks-are-skills-not-mastery",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/early-mob-hp-distribution",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/two-builds-differ-in-stage-height",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/popup-animation-and-black-variant",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/level-10-scroll-xp-item",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/second-xp-curve-web-only",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/a02-second-frame-corroboration",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/web-payload-is-v0717",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/stance-damage-mastery10-ceiling",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/crit-is-1.3-gated-on-full-slash-meter",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/stance-change-costs-48-meter",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/hgold-is-premium-currency",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dan1-shows-no-kanji",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/android-stance-numbers-are-a-rebalance",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/element-circle-art-recovered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dragon-dance-ui-art-recovered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/gold-is-premium-hgold",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dan1-has-no-kanji-title",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "ui-hud/interactui-panel-geometry",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dragon-dance-v0717-parity",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/autoassign-android-only",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/per-point-two-frame-delta",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/xp-curve-kills-three-more-docs",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/start-pools-third-frame",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/slash-length-settles-balanced-reach",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "progression/unlock-rule-ends-in-0-or-5-false",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/desktop-stance-multipliers",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/stance-reach-is-mastery-zero-base",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "economy/rebirth-pays-heavenly-gold",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/string-455-never-displayed",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "six",
+   "id": "items-equipment/equipment-save-format-is-13-field",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/condition-blocker-dead-in-both-builds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/web-build-has-fifth-item-colour",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/23-render-slots-not-27",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/pickaxe-frame-payload-identity",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/eleven-modifier-ids-unnamed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/roster-art-absent-from-both-exports",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/ui-slot-mapping-resolved",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/human-part-stack-is-23-not-27",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/two-icon-only-art-namespaces",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/durability-is-the-uses-tag-115-items",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/sell-weight-is-stack-weight-and-builds-diverge",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/item-panel-level-caption-unsourced",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/web-build-has-fifth-item-colour-tier",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/web-save-format-has-modifier-id-206",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/elemental-def-pools-are-opposition-not-bug",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/nine-ui-boxes-are-the-nine-stat-bearing-slots",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/second-icon-art-family-item-and-acc",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/generic-min-damage-floor-is-attacker-keyed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/part-stack-is-23-not-27",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/weapon-ladder-minlvl-coverage-and-prog-spike",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/sell-weight-test-is-stack-weight",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/no-multiplier-in-web-shop-chain",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/2208-is-the-gold-to-coin-sku",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/itemdata-line-identical-across-builds",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/web-build-has-unresolvable-content",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/coin-faucet-set-now-cited",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/prosperity-tier-thresholds-recoverable",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/web-payload-has-no-itemdata-table",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/premium-price-exception-set",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/web-v0717-gameplay-code-is-on-disk",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/web-archer-halves-gravity-on-knockdown",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/part-specific-death-animations",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/endless-wave-flag-is-the-survival-engine",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/allies-scale-to-player-level-enemies-do-not",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/web-build-ships-no-game-data",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/quest-coins-are-the-biggest-early-faucet",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/ap-cap-is-40-not-30",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/tournament-is-web-only",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/tradegoods-web-seed-drops-node",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/flinch-state-exists",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/setlevel-is-eleven-formulas",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/web-payload-is-obfuscated-not-absent",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/roster-display-names-differ-from-class-names",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/setlevel-is-twelve-formulas",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/nameplate-is-cosmetic-override",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/readout-split-is-two-spawn-paths",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/drop-in-spawn-is-on-film",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/part-decomposition-is-variable",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/gothitcounter-is-iframes",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/zombie-weapon-parry",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/tengu-absent-from-resolved-strings",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/ap-zero-is-a-pose-not-a-death",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/rock-deposit-never-clears",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/frozen-town-levels-are-19-not-12",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/start-node-name-confirms-rng",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/twelve-hour-crop-never-rots",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/save-schema-has-three-timers",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/choices-are-consequential",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/nested-roomobj-waves",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/pipe-delimited-enemy-pools",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/condition-grammar-closed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/ending-track-unclaimed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/loot-count-19",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/choices-are-consequential-positionally",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/step-action-is-gameengine-action-enum",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/outcome-id-is-statsmanager-namespace",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/world-map-art-recovered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/map-art-validates-projection",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "six",
+   "id": "world-exploration/web-decompile-holds-full-logic",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/minimap-x-is-quest-target",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/save-schema-is-23-slots",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/21-of-27-blobs-are-cross-build-identical",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/ap-cap-formula-is-frame-confirmed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/stables-is-the-5ap-object",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/web-third-placename-hardcode",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/web-payload-has-no-quest-data",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/maxquests-cap-is-real",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/dialogue-divergence-is-build-divergence",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/ledger-banner-already-banks-two-overturns",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-battleui-diverges-from-android",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-hud-status-lines-absent-from-android",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/bars-are-untweened-continuous-scalex",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/swf-headers-24fps-and-stage-rects",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/reload-crit-meter-code-live-frame-absent",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-payload-logic-is-on-disk",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/hud-art-already-exported",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/blackopen-shutter-is-16-frames",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/pass1-fabricated-transunit-quote",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/24fps-from-swf-headers",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/slot-strip-matches-all-three-constants",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/up-arrow-is-a-skill-not-the-stance-control",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-build-confirms-resname",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/jpexs-export-already-on-disk",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/frame-refutes-stance-up-arrow",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/shutter-is-asymmetric",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/frame-to-stage-mapping-is-anisotropic",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/pausescreen-sprite-confirms-play-field",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-payload-is-directly-citable",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-vs-android-cooldown-rounding",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/swf-header-24fps-and-stage-rects",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/resname-600-proves-pass1-read-the-id-column",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/blocker4-uparrow-is-an-equipped-skill",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/skill-slot-widget-geometry-measured",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/interact-icon-manifest-found",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/friend-bar-is-structurally-unfilmable",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/hud-150-is-a-potato-buff",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/gothit-is-a-ladder-not-a-constant",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/gore-is-humanoid-only",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "art-anim-audio-feel/second-layout-mode-800x690",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/animdata-loop-flag-parsing-trap",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/rig-is-19-nodes",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "ui-hud/friend-bar-690",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/24hz-proven-on-web-build",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/150-percent-damage-is-a-buff",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/stance-triangle-is-1p2",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/predecessor-swfs-hold-sfx",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/no-blendmode-in-authored-data",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/three-missed-shake-triggers",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/no-hold-frames-verified-exhaustively",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/zero-blendmode-byte-proof",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/glow-is-part-of-the-vocabulary",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/rig-is-23-parts-27-slots",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/150-percent-damage-is-a-potato-buff",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/690-is-a-friend-panel",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/animdata-loop-and-reorder-attrs",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/three-uncatalogued-shake-triggers",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-barricade-guard-stricter",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "six",
+   "id": "meta-social/xp-curve-is-in-the-web-build",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/war-mechanics-are-in-the-web-build",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/war-boss-npcs-unresolvable",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/survivalmode-web-android-diverge",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/achievement-58-pins-340",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/side-to-clan-is-direct-not-inferred",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/desktop-v0717-decompile-was-on-disk-unopened",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/six-by-six-sector-board-is-pictured",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/survivalmode-web-vs-android-differ",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/premium-catalogue-is-143-skus",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/clan-pays-five-coins-per-move",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-rebirth-faucet-25-100-300",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/warroom-board-is-on-screen",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/achievements-in-web-payload",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-warrules-max-7",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/rank-ladder-a1-confirmed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-barricade-bonus-owner-gated",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-troop-cap-50000",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "six",
+   "id": "meta-social/xp-curve-in-web-build",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/clan-crops-resource",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/world-map-tiers-and-level-gating",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/warrules-page3-frame",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/enemy-remap-second-witness",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/videos-are-60fps-frames-do-arbitrate",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/killbeat-6000ms-pins-24hz-tick",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "art-anim-audio-feel/690-is-the-friend-panel",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/hit-reaction-ladder-not-uniform",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/150pct-damage-is-a-buff-not-the-stance-modifier",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/no-blendmode-holds-for-timeline-tags-too",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/killbeat-looks-like-red-field-black-silhouettes",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/gore-has-no-frame-corroboration",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/preservation-shs3swf-is-the-loader",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/maxreload-is-192",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/focus-fill-rate-plus-one-per-frame",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/reach-triple-is-a-floor-not-a-ceiling",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/spd-inputs-are-buffable",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/dan-caps-at-9-and-the-100-gold-tier-is-real",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/blank-cells-are-passives-plus-two-npc-rows",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/mastery-is-ten-level-skill",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/300-200-100-is-base-not-ceiling",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/romaji-dan-ladder-in-v0717",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dan-zero-has-no-title",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/slash-units-are-800x480-stage",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/full-xp-table-recovered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "economy/rebirth-pays-premium-gold",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/elemental-gate-roster",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/statue-rng-only-later-heaven",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/damage-packet-has-no-status-field",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/second-xp-curve-mastery-ranks",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "progression/mining-pipeline-zero-xp",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/enemy-base-xp-is-lvl5plus45",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/setlevel-console-confirms-xp-indexing",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "progression/web-rebirth-gold-25-not-5",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/web-only-maxdueltokens-40",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "combat-core/stance-modifier-table-in-payload",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/android-stat-caps-are-a-different-formula",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/dual-reversed-reach-inverted",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/web-only-skills-1074-1077",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/full-meter-buys-evasion-web-only",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/skill-animation-data-is-plain-xml",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/43-sfx-event-names-in-web-bundle",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/stance-switch-gate-is-reload-48",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/shunpo-damage-ignores-stance-and-crit-in-web",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "progression/elemental-def-crosswheel",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/second-xp-curve",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/new-character-start-table",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/duel-token-refill-mismatch",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/l3-budget-second-confirmation",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/expArray-levelcap-clamp",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/v717-stance-multipliers",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/element-atk-budget-is-100",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/ledger-film-phantom-source",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/gear-affixes-do-not-unlock",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dragon-dance-tier-ids",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/shogo-threshold-off-by-one",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/damage-has-no-status-field",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/ui-slot-table-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/icon-namespaces-item-and-acc",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/icon-dispatch-id-band-table",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/art-override-rows-are-only-146",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/getweight-is-stack-weight",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/paperdoll-9-box-to-eq-slot-map",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/icon-only-symbol-families-still-open",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "combat-core/min-damage-floor-is-generic-and-attacker-keyed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/humanoid-partlist-is-23-not-27",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/elemental-def-affix-rotation-is-deliberate",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/consumable-and-accessory-icon-families",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/human-render-stack-is-23",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/generic-defense-floor-is-attacker-keyed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/sell-price-input-diverges-across-builds",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "items-equipment/section3-item9-rarity-half-survives",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/web-condition-string-11496-unresolved",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/copymodifiers-excludes-85-88",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/slashusage-24-is-dead",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/prog-spike-and-minlvl-coverage",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/frame-level-label-unsourced",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/element-circle-art-FOUND",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/crit-is-flat-1.3",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dan-romaji-ladder",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/entry-is-scroll-of-rebirth-item-2202",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/no-elemental-status-effects",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/dan0-renders-no-kanji",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "gauntlet/android-string-table-has-gaps",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/slash-distance-is-player-visible",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/bank-weight-v0717-has-200-base",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "meta-social/four-dan-achievement-rows",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/icon-renderer-band-table",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "combat-core/attacker-level-min-damage-floor",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/nine-slot-ui-mapping-resolved",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/durability-is-uses-and-mostly-absent",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "items-equipment/sell-weight-branch-is-stack-weight",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/no-web-itemdata-exists",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/five-x-is-a-direction-not-a-multiplier",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/web-trade-goods-seed-resolved",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/chest-coin-formula-missing-from-faucet-set",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/calcxp-hard-cutoffs",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/quests-move-prosperity",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/quests-do-pay-coins",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/5x-redenomination-is-a-code-fact",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/minus-70-is-repair-not-artifact",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/fast-travel-costs-5-gold",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/flinch-is-8-frames",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/nameplate-is-a-spawner-split-with-hex-colours",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/setlevel-has-11-overrides",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/light-stance-has-no-telegraph",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/web-gameplay-code-is-obfuscated-not-absent",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/boss-rubber-band-hits-to-kill",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/flinch-is-a-real-8-frame-state",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/web-arrow-dual-gravity",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/allies-level-match-the-player",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/zombie-weapon-hit-deals-zero",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/quest-coin-reward-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/quest-prosperity-plus5-is-client-side",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/heavenlyprice-has-no-multiplier",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/cash-tier-redenomination-is-not-clean-5x",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/nameplate-colour-is-five-valued",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/setlevel-is-plural",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/floating-damage-numeral-measures-the-clamp",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/nameplate-colour-system-is-five-colours",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/nameplate-healthbar-coupling-and-60px-bar",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/elite-boss-second-level-formula-rubber-band",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/eight-death-animations-by-killing-blow",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/map-art-is-held-web-shape-188",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/kakuchi-is-cross-build-parity-proof",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/nochange-town-covers-all-level-under-8",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/twelve-hour-crops-never-rot",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/fourth-clock-dtinterval",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "quests-story/payload-provenance-is-android",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/questitem-archetype-templates",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/step-action-enum-closed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/outcome-id-is-stat-namespace",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/loot-count-correction",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/web-payload-carries-world-constants",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/name-tables-in-web-payload",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/fifth-clock-duel-tokens",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/minimap-x-marker-column",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/authored-start-node-name-confirms-derivation",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/duel-token-clock",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/12h-crop-never-rots",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/tired-idle-not-death",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/ap-ceiling-plus-gear",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/minimap-x-at-3-2",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/compass-prefix-is-two-axis",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/start-town-is-kasuta",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/dead-exit-branch",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/nochange-ring",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/save-slot-count-23",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/maxquests-7-is-real",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "quests-story/questdata-is-live-updated",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/outcome-id-is-a-22-opcode-director",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "quests-story/portraits-held-but-encrypted",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/wave-enemy-count-correction",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-hud-copy-absent-from-android-table",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/blocker-4-is-wrong-2-abilities-plus-empty-slot",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/respawn-costs-one-heavenly-gold",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "six",
+   "id": "quests-story/web-build-fetches-questdata",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/goto-index-semantics",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/choices-are-consequential-via-goto",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/step-action-is-gameengine-action",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/outcome-id-is-statsmanager",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/img-tokens-are-two-asset-classes",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/npc-name-collisions-and-typo",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "quests-story",
+   "id": "quests-story/blank-choice-rows",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/pass1-xliff-quote-is-misquoted",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-cooldown-uses-ceil",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-symbol-ids-differ",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/slot-box-measurement-corrected",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/friend-bar-is-the-shipped-default",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-payload-confirms-android-claims",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/pass1-stale-string-rules-still-live",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/frame-to-stage-transform",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/hp-chi-bar-geometry-measured",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/shade-wipe-is-vertical",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/up-arrow-is-a-skill-not-a-stance-control",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/friend-bar-gated-by-resizehandler",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/keypress-index-is-reversed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/hud-sprite-art-on-disk",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/hurtred-vignette-catalogued",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/framerate-and-stage-rects-bytechecked",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-android-cooldown-divergence",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/shutter-frame-counts-corrected",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/stance-ring-colours-exact",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/hotkey-numbering-rule",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/interactui-icon-ids-resolve",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/npc-death-dice-is-seven-way",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/hud-150-damage-is-a-buff",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/stance-triangle-is-1.2",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "art-anim-audio-feel/800x690-is-the-friend-bar-layout",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/rig-is-23-slots-26-for-wolves",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/no-blendmode-in-swf-tags-either",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/screen-shake-amplitude-is-inert",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/no-hold-frames-across-all-487",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/anim-loop-flag",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/rig-is-27-parts",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/hit-reaction-is-a-ladder",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/hud-150-is-potato-buff",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/blend-modes-none-at-byte-level-web",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "art-anim-audio-feel/690-is-the-friend-bar",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "art-anim-audio-feel/predecessor-sfx-lineage",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/sfx-contract-ten-routines",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "meta-social/v0717-rebirth-gold-25-100-300",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-payload-decompile-is-the-authority",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/android-string-table-is-not-v0717s-copy",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-wave-roster-differs-from-android",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "six",
+   "id": "meta-social/xp-curve-has-a-web-cite",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/clan-pays-5-coins-per-move-and-war-hero-grants-clan-deed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/second-longplay-never-swept",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/glow-filters-are-the-real-fx-answer",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/16pct-of-frames-are-authored-holds",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/gore-roll-is-per-class",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-rebirth-25-100",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-duel-token-cap-40",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/700-block-is-live-players",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-warrules-7-pages",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-lang-is-network-loaded",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/clan-pays-5-coins-per-move",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/side-to-clan-bound-in-code",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "six",
+   "id": "meta-social/xp-curve-is-web-native",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/690-is-the-friend-bar-layout",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/blue-object-is-persistent-not-a-trail",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/definesound-samplecount-is-authoritative",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/stance-triangle-1p2-before-behead",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-payload-decompile-is-the-reference",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-rebirth-grants-25-and-100-gold",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-daily-prize-rolls-differ",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-chikako-ladder-differs",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/frame-shows-6x6-sector-board",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/frame-shows-world-territory-board",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-string-table-is-an-external-dead-file",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-barricade-bonus-has-owner-clause",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-bindata-119-class-name-match",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/side-to-clan-direct-binding",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-new-player-starts-with-3-gold",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/web-survival-table-differs-in-composition",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "string-table/jigoku-is-a-timed-penalty-jail",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "string-table/inn-restores-one-third-of-max-ap",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "string-table/no-chi-cost-or-cooldown-numbers-in-prose",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "string-table/no-condition-damage-multiplier-in-prose",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "uistrings-payload/web-ui-string-ids-outrun-android-table",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "meta-social",
+   "id": "uistrings-payload/warroom-earlier-design-preserved-in-payload",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "uistrings-payload/duel-betting-book-is-web-only-with-full-odds-math",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "uistrings-payload/bets-are-tokens-paid-out-in-gold",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "meta-social",
+   "id": "uistrings-payload/golden-tokens-are-spendable-in-v0717",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "uistrings-payload/tournament-field-set-and-create-form",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "uistrings-payload/pvp-transport-is-rtmfp-p2p",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "uistrings-payload/warroom-build-menu-is-ladder-in-web-copy",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "uistrings-payload/duel-replay-is-a-first-class-feature",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "uistrings-payload/clan-hq-rooms-staff-missions-absent-from-all-12-systems",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "uistrings-payload/weapon-unbreakable-price-differs-between-builds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "uistrings-payload/war-sector-panel-format",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "uistrings-payload/payload-tag-families-unswept",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "quests-story",
+   "id": "android-blobs/web-payload-holds-zero-data-roots",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "android-blobs/data-xml-parity-proofs-are-circular",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "android-blobs/spider-is-web-only-enemy",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "android-blobs/web-is-an-animation-superset",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "android-blobs/boss-timings-recut-across-builds",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "android-blobs/bgdata-is-a-parallax-spec",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "android-blobs/parallax-and-dof-contract",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "quests-story",
+   "id": "android-blobs/portraits-decrypted-and-one-dead-reference",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "android-blobs/all-thirteen-episode-cards-shipped",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "android-blobs/mapdata-has-no-web-counterpart",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "android-blobs/comp-rand-is-the-encounter-roll",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "frames/v0717-is-a-string-superset-not-identity",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "frames/death-card-offers-free-respawn",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "six",
+   "id": "frames/pvp-duel-screen-fully-filmed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "frames/war-room-territory-board-frame-exists",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "frames/recruit-gets-three-moves-a-turn",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "frames/achievements-daily-and-tokens-all-on-film",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "frames/clan-identity-bound-on-screen",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "quests-story",
+   "id": "frames/choice-text-diverges-from-payload",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "frames/jinbei-greeting-diverges-too",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "frames/critical-evade-states-the-focus-gate",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "frames/forge-cost-is-level-parameterised",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "frames/repair-weapon-cost-still-unheld",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "frames/quest-card-expiry-prosperity-and-coords",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "frames/private-pvp-room-door",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "frames/consumable-buffs-run-a-30-minute-real-clock",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "six",
+   "id": "frames/save-policy-is-checkpoint-at-towns-and-dungeons",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "frames/levelup-card-corroborates-banked-numbers",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "frames/rebirth-element-picker-still-unfilmed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "string-table/piercing-and-crit-are-web-v0717-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "string-table/balanced-ring-is-khaki-on-film-not-ochre",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "android-blobs/item-art-ids-are-shared-not-identity",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "quests-story",
+   "id": "android-blobs/dead-portrait-throws-it-does-not-fall-back",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "android-blobs/ground-blur-applies-to-two-layers-only",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "quests-story",
+   "id": "android-blobs/parallax-z-order-is-authored-not-code",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "android-blobs/four-shipped-bg-id-collisions",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "android-blobs/bgdata-override-census-corrected",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "android-blobs/android-blob-encoding-census",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "meta-social",
+   "id": "uistrings-payload/warroom-web-has-a-seventh-rules-page",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "uistrings-payload/tower-is-the-name-of-the-thirteenth-system",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "uistrings-payload/rake-branch-tests-the-pool-not-a-nan",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "uistrings-payload/fight-wordmark-is-the-live-duel-intro-field",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "uistrings-payload/web-and-android-font-sets-diverge",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "uistrings-payload/chat-surface-is-31-commands-including-three-debug",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "string-table/inn-rest-is-a-floor-not-a-faucet",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "progression",
+   "id": "string-table/war-room-gate-has-a-dan-escape-hatch",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "string-table/target-mode-strings-161-166-are-dead",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "string-table/weight-gate-is-a-travel-guard-in-code",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "string-table/hell-is-a-first-class-room-type",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "string-table/war-turn-expiry-resets-moves-to-max",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "string-table/global-effect-titles-a-different-dialog",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "string-table/stance-tint-covers-the-whole-medallion",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "string-table/ui-hud-md-still-carries-the-refuted-id-drift-table",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "progression",
+   "id": "questdata-critic/xp-curve-held-web",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "questdata-critic/territory-sector-mapping-closed",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "questdata-critic/namegen-table-sizes-corrected",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "questdata/node-name-pipeline-END-TO-END",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "questdata/archer-ai-firing-rule-and-gravity",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "quests-story",
+   "id": "questdata/dialogue-is-a-branching-VM",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "questdata/wave-encounter-table-and-pipe-grammar",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "quests-story",
+   "id": "questdata/cutscene-say-lines-are-string-ids",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "quests-story",
+   "id": "questdata/dialogue-carries-inline-html-markup",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "questdata/count-corrections-to-packet",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/five-stances-reversed-and-dual",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "progression",
+   "id": "npcdata/kill-xp-formula",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "npcdata/setlevel-pins-everything-to-1-below-11",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/hp-less-combat-rows-default-to-1",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "NF-2-crittext-gated-on-full-reload-bar",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-3-inventory-preview-contradicts-sim-on-crit",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-4-mastery-domain-is-1-to-10",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-6-heavy-stance-takes-80pc-defense",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-7-focus-drain-is-stance-scaled-and-crit-empties-bar",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "NF-8-focus-bar-displayed-zero-is-24-not-0",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "NF-9-dragon-dance-input-recovered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "NF-10-category-tab-mapping-declared-in-code",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "NF-12-web-swf-header-declares-24fps",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "meta-social",
+   "id": "NF-13-steal-was-a-node-action-not-a-skill",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-14-canchangestance-is-a-state-whitelist",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "NF-15-consumable-buff-enum-and-150pc-damage-potato",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-16-heavenly-sword-numbers-unclaimed",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "progression",
+   "id": "NF-17-four-actives-cost-zero-skill-points",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "NF-18-full-skill-prerequisite-dag-unenumerated",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/crit-is-deterministic-at-full-reload-bar",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-stance-damage-and-reach-are-inverse",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/mastery-domain-is-1-to-10-resolved",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "skilldata/web-cooldown-modifier-caps-spd-at-600",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/category-11-skills-are-in-npcdata",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/in-combat-hud-is-three-bars",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "NF-stage-800x480",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "NF-kill-xp-formula",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "NF-boss-hp-derivation",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "NF-level10-clamp",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "NF-ai0-duel-opponent-absent",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "NF-melee-ai-geometry",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "NF-string-5017-empty-by-design",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "quests-story",
+   "id": "NF-shira-tancho-is-player-clan",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "NF-procgen-surnames",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "NF-four-faction-spawn-model",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "NF-38-cases-35-classes",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "NF-category-11-decoded",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "NF-npcdata-silences",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "actionscript/repair-weapon-cost-formula",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "actionscript/unbreakable-and-reinforce-prices",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "actionscript/build-divergence-7-cooldown-cap",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "meta-social",
+   "id": "actionscript/war-board-is-a-6x6-square-grid",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "actionscript/slash-line-colour-is-0x990000",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "actionscript/web-weapon-parry-lives-in-the-npc-class",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "actionscript/stance-triangle-second-android-site",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/NEW-web-payload-is-decompiled-parity-is-checkable",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/NEW-swf-690-is-480-plus-bar",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/NEW-warhex-has-14-states-not-7",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/NEW-70th-trap-room-is-commented-out",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/NEW-trap-name-suffix-is-the-trigger-wiring",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/NEW-web-android-survival-data-differ-in-14-lines",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "bindata/NEW-place-name-table-has-one-dead-row",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/NEW-setvisible-partmax-22-leaves-5-slots-unhidden",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "combat-core",
+   "id": "itemdata-hunter/reach-is-per-stance",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "itemdata-hunter/reload-bar-max-is-flat-not-speed",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "itemdata-hunter/full-bar-is-the-crit",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata-hunter/itemdata-ships-an-empty-item-row",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata-hunter/modifier-dispatch-numeric-fallback",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata-hunter/v0717-strings-are-loaded-over-the-network",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "itemdata-hunter/sellpercentage-is-dead-data",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata-hunter/damage-table-is-non-monotonic",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "itemdata-hunter/npc-loot-ids-are-not-only-an-enum",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "itemdata-hunter/stance-gate-threshold-differs-by-build",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "itemdata/reload-bar-max-is-a-hard-constant-and-diverges",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "itemdata/nine-paperdoll-slots-are-fully-named",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "itemdata/two-gold-items-are-coin-buyable",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "itemdata/sellpercentage-is-dead",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "itemdata/dot-baseprice-bug-is-inert",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "bindata/territory-to-bitmap-transform",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "bindata/place-name-table-is-dead-data",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "bindata/web-has-third-hardcoded-town",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/trap-duty-cycle-domain-measured",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "bindata/six-ledger-names-decompose",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/web-build-owns-the-bindata-map",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/matrix-nodes-and-reorder-frames",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/default-block-overrides-all-traps",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/two-more-trap-placement-rules",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "quests-story",
+   "id": "bindata/item-colour-palette-11",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "bindata/stage-letterbox-algorithm",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "economy",
+   "id": "hunter/repair-cost-formula-found",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "hunter/interactui-service-cost-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "hunter/elemental-rebirth-reward-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "hunter/web-focus-bar-dead-zone-is-48",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "hunter/web-speed-cooldown-cap-is-600",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "hunter/paperdoll-is-23-slots-plus-quadruped-extension",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "hunter/focus-plus6-is-a-kill-bonus",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "hunter/crit-spent-on-release-not-on-hit",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "hunter/two-drawn-line-colours-and-the-real-red",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "hunter/skillui-gesture-input-mode",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "hunter/blade-impact-vfx-contract",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "hunter/hp-chi-regen-is-per-battle",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "hunter/web-weapon-parry-and-part-index-parity",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "frames/v0717-rewords-the-daily-streak-ladder",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "meta-social",
+   "id": "frames/two-clans-share-the-north-east-domain",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "frames/world-map-has-a-fifth-banner-colour",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "payload/repair-weapon-cost-is-a-template-not-a-constant",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "frames/world-map-zoom-in-is-a-viewport-not-the-board",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "frames/HUNT-combat-corpus-never-opened",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "frames/HUNT-39-hardcoded-tips-in-GameEngine",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "frames/HUNT-item-rarity-colour-on-film",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "frames/HUNT-duel-combat-hud-widgets",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "frames/HUNT-stance-triangle-and-ring-colours",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "frames/HUNT-rebirth-picker-recoverable-from-strings",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "frames/HUNT-repair-cost-is-runtime-parameterised",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "frames/HUNT-ui-strings-txt-is-unmined",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "frames/HUNT-war-tick-is-24-hours",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "frames/HUNT-gold-to-resource-exchange-rate",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "frames/HUNT-six-buff-potatoes",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "meta-social",
+   "id": "frames/HUNT-fourth-clan-and-domain-collision",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "frames/HUNT-death-card-header-and-warroom-death",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "frames/HUNT-duel-refresh-token-delta",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "NEW-1-web-crit-is-flat-1.3",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "NEW-2-web-per-stance-damage-and-mastery-10-ceiling",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "NEW-3-full-xp-curve-is-shipped-in-both-builds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "NEW-4-paperdoll-is-13-slots-not-9",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "NEW-5-skill-1500-reversed-1501-dual",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "NEW-6-shunpo-effect-recovered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "NEW-7-web-friend-bar-resize-parity",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "NEW-8-dragon-dance-web-parity",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NEW-9-heavy-defense-0.8-double-confirmed",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "NEW-10-obfuscated-bundle-grep-method",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "six",
+   "id": "bindata/NEW-audio-waveforms-are-recovered-not-encrypted",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "bindata/NEW-music-is-layered-stems-not-tracks",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/NEW-hold-tail-table-is-the-animdata-constructor-switch",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "enemies-ai/NEW-npc-die-override-count-is-18-not-3",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "ui-hud/NEW-web-and-android-payloads-ship-different-stage-rects",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/NEW-24hz-killbeat-is-web-parity-closed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/NEW-hud-buff-line-is-a-hardcoded-string-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "audio/RECOVERED-not-encrypted-resourcemanager-decrypt",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "art-anim-audio-feel/web-swf-header-is-24fps-and-800x690",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/animdata-code-injected-hold-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/music-is-13-stems-and-18-layer-presets",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/eighteen-of-34-enemy-classes-override-die",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/buff-row-is-frame-confirmed-A1",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "kh-web-getdamage-twin-crit-is-1.3",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "kh-1500-1501-are-reversed-and-dual-stance",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "kh-boss-scaling-build-divergence",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "kh-dragondance-is-in-the-web-build-too",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "kh-greenline-and-redline-are-named-in-both-builds",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "kh-base-aicountermax-is-24-not-12",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "parity/stance-tables-diverge-web-vs-android",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "parity/meter-constants-diverge-and-frames-pick-the-web-one",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world/map-bitmap-is-in-the-repo-735-land-pixels",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/inputmanager-200-is-not-a-gameplay-base",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "frames/damage-ttk-crit-window-is-not-empty-on-two-frames",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "measurement/stage-scale-is-2p25-not-1p875",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "meta-social",
+   "id": "warroom/web-warhex-has-fifteen-states",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "android-blobs-hunter/audio-decrypts-26-named-mp3-streams",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "android-blobs-hunter/uidata-is-the-whole-town-interaction-spec",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "android-blobs-hunter/traproomdata-70-rooms-four-difficulty-tiers",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "android-blobs-hunter/item-icon-coverage-corrected",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "android-blobs-hunter/foreground-plane-is-the-most-blurred-element",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "android-blobs-hunter/shipped-vector-art-yields-solid-fill-palettes",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "android-blobs-hunter/bgdata-override-vocabulary-is-22-tags",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "android-blobs-hunter/groundy-400-is-a-global-not-a-default",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "android-blobs-hunter/condition-comparison-enum-is-seven-operators",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "progression",
+   "id": "android-blobs-hunter/survival-achievement-premium-namegen-blobs-unread",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-calcxp-is-verbatim-in-v0717",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/boss-rubber-band-is-in-the-web-build",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "stage0/android-lang-table-cannot-serve-web-ui",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/web-android-combat-tuning-diverges-on-four-constants",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/stance-gate-is-a-flat-48-tick-toll",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "stage0/anim-blobs-are-utf8-bom-not-utf16le",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "combat-core/mastery-caps-at-10-per-the-string-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "ui-hud/v0717-duel-nameplate-has-no-level",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "combat-core/flinch-is-nested-inside-the-iframe-window",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "ui-hud/combat-keeps-the-player-nameplate",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "meta-social/only-3-of-7-war-room-pages-were-ever-filmed",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "NF-1-web-gameplay-canvas-really-is-800x480",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "NF-2-recovered-audio-is-android-only-web-audio-still-unheld",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-3-obfuscated-web-payload-is-symbol-mappable-by-call-signature",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-4-live-bug-launch-unlock-level-heavy",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-5-v0717-crit-is-flat-do-not-port-android-crit-column",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "progression",
+   "id": "NF-6-xp-array-runs-past-the-level-cap",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/tournament-payout-formula-is-client-side",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/tenth-dan-tier-is-real",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/calcxp-has-a-web-v0717-twin",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim/severed-limb-death-variant-is-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "tooling/source-constants-mined-the-0682-decompile",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/repair-weapon-cost-was-captured-on-film",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/stance-constant-identity-is-pinned-by-hud-colour",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/flinch-is-build-parity-confirmed-in-web-v0717",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/flinch-duration-is-per-family-not-8",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/shielder-prop-block-is-a-second-block-mechanic",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "frames/v0717-war-room-rules-are-seven-pages",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "frames/ui-strings-txt-is-placeholder-not-runtime-copy",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "combat-core",
+   "id": "frames/39-tip-ladder-is-android-only",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/android-ai-dispatch-is-38-cases-35-classes",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world/war-map-is-already-on-film",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/npc77-resolves-to-oni-and-never-scales",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/hitstokillplayer-has-three-bands",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "NF-1-layered-music-is-both-builds",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "NF-2-animdata-hold-table-is-both-builds",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "progression",
+   "id": "NF-3-def-mitigation-is-flat-subtraction-both-builds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "NF-4-spd-to-cooldown-formula-recovered",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-5-v0682-charsheet-contradicts-its-own-crit",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "NF-6-web-payload-carries-no-data-xml",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "NF-7-800x690-is-the-friend-bar-layout",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-9-345-and-200-are-already-ruled-placeholders",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "NF-10-no-web-audio-is-held",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-11-negative-grep-in-v0717-stance-slash-multipliers-is-false",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "NF-12-shape-fill-histogram-is-slot-frequency-not-area",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "corrections",
+   "id": "cite04/web-rebirth-pays-25-and-100-heavenly-gold",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "cite04/longplay-frames-are-pillarboxed-scale-is-2.27",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "cite04/buff-attack-scales-mindamage-only",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "meta-social",
+   "id": "cite04/three-war-room-decks-disagree",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "cite04/web-crit-label-and-sfx-symbol",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "cite04/bar-equals-stance-gate-is-web-only",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "cite04/android-string-table-has-no-900-block",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/web-ap-per-point-is-5-not-1",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/five-stances-are-in-the-web-build-too",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "meta-social/world-board-is-a-coordinate-grid-not-a-japan-outline",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/reinforce-weapon-cost-is-a-held-constant-5000",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/setlevel-debug-command-is-a-14th-xp-write-site",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "progression",
+   "id": "hunter04/full-xp-table-l1-to-l80-is-in-both-builds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "hunter04/web-v0717-crit-is-flat-1_3-vindicating-the-ledger",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "hunter04/v0717-stance-switch-is-focus-gated-at-48-not-hard-locked",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "hunter04/rebirth-payout-is-25-and-100-hgold-in-v0717",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "hunter04/blade-stroke-tapers-8px-to-zero-across-the-reach-cap",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "hunter04/web-v0717-per-stance-reach-coefficients-differ",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "hunter04/territory-owners-are-open-ended-not-four",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "hunter04/buff-attack-scales-minDamage-only",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "hunter05/repair-and-reinforce-are-priced-in-coins",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "hunter05/third-baseprice-exception-item-11037",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "hunter05/wear-gates-damage-as-a-binary-cliff",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "six",
+   "id": "hunter05/offline-sharedobject-save-path-exists",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "hunter05/premium-ladder-is-1-2-3-5-12",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "meta-social",
+   "id": "hunter05/war-wave-table-is-340-plus-11-equals-351",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "hunter05/web-references-item-2218-that-no-held-table-contains",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "hunter05/seg05-frame0025-is-a-you-win-card",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "NF-1/ledger-rebirth-25-is-code-sourced-not-film",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "NF-3/web-twin-of-repair-and-reinforce",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "NF-4/premium-ladder-has-a-2-gold-tier",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "NF-5/stance-mastery-caps-at-10-not-9",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat/web-stance-reach-multipliers-diverge-from-android",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world/third-hardcoded-placename-override-web-only",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat/projectile-gravity-has-web-parity",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "quests-story",
+   "id": "questdata/extracted-xml-is-verbatim-the-android-embed",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "questdata/fatal-tag-census-correction",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/achievements-list-is-on-disk",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/world-map-topology-is-a-bitmap-mask",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/kill-cap-is-351-not-350",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "payload/repair-cost-formula-is-node-level-times-10",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/per-point-ap-is-plus-5-not-plus-1",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/player-stance-cycle-is-three",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "npcdata/spawn-level-comes-from-the-quest-wave",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/ore-node-respawn-rule",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/farm-timers-and-patch-ladder",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "progression/expArray-validated-on-camera",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "stage/web-payload-has-its-own-800-480-690-resize-handler",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/filmed-session-scale-is-2.27-not-2.25-THE-FRAME-WINS",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/web-stance-damage-ladder-and-crit-are-fully-transcribable",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills-meters/mastery-scale-differs-between-builds",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "ui-hud/web-battleui-stance-button-plays-an-error-sound-when-the-gate-refuses",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "string-table/the-CANNOT-CHANGE-STANCE-string-id-960-is-absent-from-the-parsed-table",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "hunter/web-only-skills-1074-1077",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "hunter/traps-cost-one-kunai-not-four",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "hunter/elemental-atk-vs-def-formula-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "hunter/dragon-dance-input-rule-held",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "hunter/all-24-elemental-skills-fully-specced",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "hunter/ten-kanji-dan-ranks-in-string-table",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "hunter/android-rebirth-pays-20-5-hgold-vs-web-100-25",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "hunter/web-stance-refusal-is-flat-48",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world/map-bitmap-is-held-byte-exact",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "progression/unlock-rule-breaks-inside-ninja-and-chi",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "world/third-placename-override-is-web-only",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat/slashlength-is-arc-length-not-radius",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "world/nodegenerator-web-parity-closed",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/xp-array-outruns-level-cap",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skills/traps-cost-one-kunai-ammo",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "ui-hud/web-battleui-is-1t113s0-and-owns-the-in-combat-stance-switch",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "skilldata/skill-1077-missing-from-extract",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "meta/interactui-uidata-blob-is-utf8-not-utf16le",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "rebirth/romaji-dan-ladder-is-cross-build-not-desktop-only",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "stance/in-combat-switch-is-live-in-web-battleui",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/blocker-2-falls-entirely-no-pop-no-ramp",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "provenance/extracted-sprites-and-shapes-are-web-v0717",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/damage-triple-crit-1p3-and-heavy-def-confirmed-in-web-source",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/interactui-has-six-buttons",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "warroom/troop-advance-is-24-hours",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/tan-reload-bar-is-static-across-427-432",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "parity/writ-of-release-is-25g-in-web-and-5g-in-android",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "parity/animation-layer-is-not-byte-parity-five-blobs-differ",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "parity/web-build-ships-a-spider-animation-set-android-lacks",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/max-focus-differs-192-web-vs-120-android",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "audio/all-43-sfx-names-are-on-one-line-in-the-web-soundmanager",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "persistence/offline-save-schema-is-fourteen-fields-already-written",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "frame",
+   "id": "NF-A/web-stance-triangle-has-a-second-0p9-arm",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "NF-B/web-focus-numerics-diverge-from-android-on-four-constants",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "NF-C/focus-fills-plus-one-per-tick-plus-six-per-kill",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "NF-D/web-spd-to-cooldown-saturates-at-600-not-300",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "NF-E/survival-mode-content-diverges-14-of-87-rows",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "NF-F/two-animation-blobs-are-md5-identical-web-to-android",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "NF-G/43-web-sfx-cues-refiled-without-the-dead-s0-5-clause",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/web-resize-handler-names-800x480-and-690-is-the-friend-bar-variant",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "ui-hud/cannot-change-stance-is-the-reload-meter-low-end-readout",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/farm-yield-and-whiff-are-on-disk-too",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "ui-hud/nameplate-level-suffix-is-gated-on-level-greater-than-zero-web-only",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "progression/mastery-ceiling-is-10-not-9",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "rebirth/reach-dan-10-is-a-shipped-achievement-string",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/level-3-to-4-on-film-buys-plus3-atk-plus3-def-plus5-chi",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/war-room-frame-carries-rank-moves-and-clan-numbers",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world/war-map-renders-at-10px-per-territory",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/plus1ap-is-androids-manual-panel-not-a-typo",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/per-stat-caps-are-a-level-formula-and-they-prove-the-build-split",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "progression/web-per-point-table-is-confirmed-on-camera-L3-to-L4",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "ui-hud/the-cannot-change-stance-label-is-the-focus-gate-readout",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/the-twelve-hour-crop-never-rots",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "world-exploration",
+   "id": "world-exploration/depleted-ore-is-redrawn-not-suppressed",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "meta-social",
+   "id": "meta-social/war-room-frame-says-moves-a-turn-not-per-hour",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "ui-hud/800x690-is-the-embed-stage-800x480-is-the-viewport",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "corrections",
+   "id": "skills-meters/stance-mastery-ceiling-is-10-not-9",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "payload/reinforce-has-three-material-tiers-not-two",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "NF-A/web-focus-meter-constants-diverge-and-the-recharge-is-plus-one",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "NF-B/stance-triangle-is-defender-keyed-and-web-adds-a-losing-side",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "NF-C/web-spd-to-cooldown-saturates-at-600-not-300",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "NF-D/survival-mode-is-in-the-web-build-but-its-last-seven-waves-differ",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "NF-E/bindata-parity-map-21-of-27-identical-and-a-spider-only-in-web",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "NF-F/audio-recovered-13-waveforms-against-43-web-cue-names",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "NF-G/web-side-cite-for-800x480-and-a-second-800x690-layout",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "progression",
+   "id": "NF-I/def-subtraction-is-floored-by-the-attackers-min-damage",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "hunter-s26a/web-sound-resource-decrypts-to-13-mp3-sfx",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "six",
+   "id": "hunter-s26a/full-offline-save-schema-is-19-fields-in-both-builds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "economy",
+   "id": "hunter-s26a/per-enemy-xp-formula-is-lvl-times-2-plus-20",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "hunter-s26a/web-twins-of-the-four-elemental-ultimate-projectiles",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "rebirth-elements",
+   "id": "hunter-s26a/web-elemental-def-pipeline-confirms-both-builds",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "corrections",
+   "id": "hunter-s26a/web-kanji-dan-display-path",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "hunter-s26a/five-web-animdata-blobs-have-no-android-twin",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "corrections",
+   "id": "hunter-s26a/web-stance-ceilings-are-mastery-10-not-9",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "combat-core",
+   "id": "gauntlet-s26b/behead-multiplier-diverges-1p5-to-1p3",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "gauntlet-s26b/web-npcmanager-switch-is-the-name-mapping-anchor",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "gauntlet-s26b/createnpc-switch-is-35-distinct-classes",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "gauntlet-s26b/weapon-part-parry-is-universal-not-undead",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "gauntlet-s26b/itemdata-ships-nineteen-empty-item-rows",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "newfind/mastery-ceiling-is-10-not-9",
+   "quarantined": false,
+   "rule": "ledger_text"
+  },
+  {
+   "dest": "frame",
+   "id": "newfind/stance-enum-pinned-by-declared-value",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "combat-core",
+   "id": "newfind/1071-is-the-behead-flag-and-it-moved-1p5-to-1p3",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "newfind/cannot-change-stance-is-getstring-960",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "newfind/per-stat-caps-diverge-between-builds",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "frame",
+   "id": "newfind/heavy-defence-penalty-is-in-the-string-table",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "web-parity/web-payload-carries-the-same-resizehandler",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "android-blobs/shs3resource-decrypts-1912-equipment-symbols",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "android-blobs/blob-xor-key-is-per-file-not-109",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "art-anim-audio-feel/startshake-first-arg-is-duration-not-amplitude",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "frame",
+   "id": "android-blobs/farthest-plane-also-has-a-blur-cutoff",
+   "quarantined": false,
+   "rule": "frame_fallback"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/npc-die-has-four-paths-before-the-seven-way-dice",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/premium-15g-apparel-tiles-are-training-gear-with-no-0682-row",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "combat-core",
+   "id": "combat-core/cannot-change-stance-string-is-driven-by-the-48-offset",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "enemies-ai",
+   "id": "enemies-ai/seg10-wave-spawn-is-witnessed-across-three-frames",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/web-build-does-embed-27-xml-data-blobs",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/web-iap-usd-tiers-are-identical-to-android",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "economy",
+   "id": "economy/duel-token-badge-identity-is-still-unheld",
+   "quarantined": false,
+   "rule": "id_prefix"
+  },
+  {
+   "dest": "skills-meters",
+   "id": "npcdata-category11-grant-census-corrected",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "economy",
+   "id": "coins-gold-hud-strip-correct-frame",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "web-charsheet-heavy-defence-0.8-is-web-side",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "web-charsheet-per-stance-slash-reach-ladder",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "cite-lens-s26b/five-resource-blobs-all-decrypt",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "items-equipment",
+   "id": "cite-lens-s26b/green-border-tip-completes-the-ladder",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "ui-hud",
+   "id": "cite-lens-s26b/rarity-colour-key-has-two-palettes",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "art-anim-audio-feel",
+   "id": "cite-lens-s26b/mcswolf-partlist-is-49-not-26",
+   "quarantined": false,
+   "rule": "lane_impact"
+  },
+  {
+   "dest": "combat-core",
+   "id": "cite-lens-s26b/web-stance-gate-is-artifact-backed",
+   "quarantined": false,
+   "rule": "lane_impact"
+  }
+ ],
+ "rules": {
+  "frame_fallback": 42,
+  "id_prefix": 409,
+  "lane_impact": 253,
+  "ledger_text": 605
+ },
+ "usable": 1309
+}

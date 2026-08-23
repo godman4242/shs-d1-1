@@ -13,8 +13,23 @@
 | **2** | `l0-finish-wf3` `{tier:'t2', batches:13, tag:'s26b'}` — 586 corroborating | 13 | ⚠ **WALL #9** — 4 returned, 9 died; **6 batches banked** → `run9` |
 | **2b** | t1 `{batches:2, tag:'s26c'}` — the 31 remaining overturn-claimers | 4 | ✅ **CLEAN** — `wf_26e01058-359` → `run10` |
 | **2c** | t2 `{batches:8, tag:'s26d'}` — 355 corroborating | 8 | ✅ **CLEAN** — `wf_0504102f-f7a` → `run11` |
-| **2d** | t2 `{batches:1, tag:'s26e'}` — the 45 second-generation corroborating | 1 | ⏳ |
-| **2e** | final t1 mop-up over every accumulated overturn-claimer | ~2 | ⏳ |
+| **2d** | t2 `{batches:1, tag:'s26e'}` — the 45 second-generation corroborating | 1 | ⛔ **WALL #10** — 1 agent died at 1 tool use, **nothing on disk, nothing lost** |
+| **2e** | ↻ re-run 2d, then the final t1 mop-up | 1 + 2 | ⏳ **NEXT SESSION** |
+
+**WALL #10 (2026-08-23, `resets 6:40pm`).** The single agent died 4.4 s in, having made
+one tool call. No side-file, no journal result, nothing to salvage — and nothing lost,
+because it had produced nothing. The workflow reported it exactly right:
+
+```
+INTEGRITY: INCOMPLETE — 0/1 critics returned · batches with NO live critic:
+  [t2-corroborating-01] · 1 agents DIED. Zero live critics means UNJUDGED,
+  never confirmed (§0).
+```
+
+That is the fail-closed accounting behaving as designed on the smallest possible case:
+a batch nobody judged is UNJUDGED, and `buildWorklist` still lists it. Handoff re-armed
+for a fresh session — the remaining work is a 28-agent synthesis and it degrades behind
+ten walls of history.
 
 > ⛔ **ONE WORKFLOW IN FLIGHT** (owner rule 2026-08-22, `GAUNTLET.md` §3 item 8). Waves 1
 > and 2 ran together and took wall #9 as a pair. Every wave from 2b on runs alone.
