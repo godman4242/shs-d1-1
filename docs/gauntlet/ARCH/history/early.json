@@ -1,0 +1,195 @@
+{
+  "integrity": "CLEAN",
+  "wrote_to": "/Users/kheshav/kheshav-code/SSHD 1-1/docs/gauntlet/ARCH/history/early.json",
+  "slice": "early — SESSIONS 1-13, 2026-07-11 .. 2026-07-26 (commits 15a7f08 .. 335e615/949eccd)",
+  "summary": "The early history has a consistent shape: the process was excellent at proving the build matched the SPEC and near-blind to whether the spec matched the GAME. Three stage gates closed 100% green (ebc1335, bd0b912, 61acde1) and a 55/55 fidelity gate passed while the control model, the combo contract, the counter mechanic, the enemy block/dodge AI and the harness time band were all wrong — every one of them found later by a frame, an owner feel-run, or the decompiled source, never by a gate. Two rule-files that CLAUDE.md names as binding (src/config/CLAUDE.md, src/game/CLAUDE.md) have not been edited since 2026-07-12 and 2026-07-11 respectively, so src/config/CLAUDE.md still states a palette policy that root CLAUDE.md declares superseded. The label invariant it calls 'test-enforced' is enforced by no test. The session-log rule collapsed entirely for SESSIONS 11 and 13: seven commits including the largest gameplay change in the repo touched -SESSION-LOG.md zero times. 15 defects below, every one cited to a commit, a file:line, or pasted output.",
+  "findings": [
+    {
+      "id": "E1",
+      "claim": "The binary gate system verified build-vs-spec and never spec-vs-video, so a Stage-2 gate row was signed 100% green asserting an intro sequence the reference footage refutes.",
+      "cite": "bd0b912 (2026-07-12) vs b7d9bf0 (2026-07-16); docs/DIVERGENCES.md:160-162",
+      "evidence": "git show bd0b912 -- RESUME_HERE.md | grep -i READY  ->  '52:+  | VS -> name banner -> READY -> FIGHT! in order | M6 full-cycle browser run; M9 VS-card capture; M10 FIGHT! banner screenshot |'  ...  four days later b7d9bf0's body: 'the OG duel intro is a TWO-beat sequence ... No name banner, no READY beat (spec item 12 corrected, DIVERGENCES).'  docs/DIVERGENCES.md:160-162: 'Spec item 12 described \"VS card -> name banner -> READY -> FIGHT!\", but the B longplay (t=3771.2-3773.85, 60fps dense) shows no separate name banner and no READY beat'",
+      "severity": "kills-project",
+      "rule_targeted": "CLAUDE.md invariant: 'THE TWO GAMEPLAY VIDEOS ARE THE PRIMARY 1:1 REFERENCE ... Before grading any visual claim, open a frame and look' + 'Do not advance to the next stage until the current stage's gate is 100% green'",
+      "proposed_change": "Add to the CLAUDE.md gate invariant: 'A gate row that asserts ORIGINAL behaviour must cite a frame path + timestamp or a source-constant citation. A row whose only evidence is a browser screenshot proves we built what we wrote down, not that what we wrote down is right.'",
+      "is_deletion": false,
+      "word_delta": 44
+    },
+    {
+      "id": "E2",
+      "claim": "Stages 1-3 all closed 100% green and the fidelity gate read 55/55, yet the game's core control model was wrong in six ways — found by the owner playing it, not by any gate.",
+      "cite": "f8df149 (2026-07-18); docs/sessions/-SESSION-LOG.md:911-928; gates closed at ebc1335, bd0b912, 61acde1",
+      "evidence": "docs/sessions/-SESSION-LOG.md:911-921: 'Kheshav played the build and returned the deepest correction the project has had — the CONTROL MODEL is wrong ... (1) the OG has NO WASD — movement is mouse-only ... (2) the drawn line does NOT itself damage ... (3) damage far too low; (4) crit bar fills too slowly; (5) stances feel inert; (6) AUTO SLASH does nothing'. State at that moment (0445773 body, the immediately preceding commit): 'Suite 461/461 - tsc x2 exit 0 - eslint 0 - fidelity 55/55 on the pose-change load'. 61acde1 subject: 'STAGE 3 100% (377/377)'.",
+      "severity": "kills-project",
+      "rule_targeted": "CLAUDE.md: 'Do not advance to the next stage until the current stage's gate is 100% green' — the gate's coverage was never audited against 'is this the right game?'",
+      "proposed_change": "Make an owner feel-run a GATE ROW on every stage rather than a queued human-eyes item. Add to CLAUDE.md session discipline: 'No stage closes without one owner feel-run recorded as a gate row; a queued human item is not a closed gate.'",
+      "is_deletion": false,
+      "word_delta": 34
+    },
+    {
+      "id": "E3",
+      "claim": "The 24-seed harness band DUEL_TARGET_SECONDS shipped with no CONTRACT/INFERRED label, was defended as a binding gate against another agent's change, and was later shown to have been off by ~2x and never a measurement — meaning the build was tuned to hit an invented number for 14 days.",
+      "cite": "6d6061f (2026-07-12) -> 40b984a (2026-07-24) -> 335e615 (2026-07-26); src/config/ai.ts:105",
+      "evidence": "git show 6d6061f -- src/config/ai.ts: '/** Boss/PvP-shaped duel tuning target (PvE trash is 3-10 s — SYNTHESIS §1.1). */ +export const DUEL_TARGET_SECONDS = { min: 20, max: 60 };'  — no CONTRACT/INFERRED label. 40b984a body: 'WEAKENED 24-seed harness gate -> restored verbatim ([20,60]s, 24/24, >=22)'. 335e615 body: 'DUEL_TARGET_SECONDS [20,60] -> [8,25] s. [20,60] was never a measurement: it came from the kickoff SPEC ... K=10 hits at the bot's 0.842 s cadence predicts a ~10 s fight, so it missed by ~2x.'  git log -S'DUEL_TARGET_SECONDS' -- src/config/ returns exactly one commit (6d6061f), i.e. the value sat unrevisited from 07-12 to 07-26.",
+      "severity": "expensive",
+      "rule_targeted": "'Gates are never softened to fit a change' (b05696a) — the rule has no inverse, so nothing forbade fitting the CODE to an unvalidated gate",
+      "proposed_change": "Add the inverse clause to CLAUDE.md: 'A gate threshold that is itself INFERRED is a tripwire, not a contract. Never tune the build to satisfy one — when the build misses an INFERRED threshold, re-derive the threshold from evidence first, in its own commit, before touching code.'",
+      "is_deletion": false,
+      "word_delta": 46
+    },
+    {
+      "id": "E4",
+      "claim": "src/config/CLAUDE.md advertises the CONTRACT/INFERRED label invariant as 'test-enforced', but no test checks labels — and 27 AI tuning numbers shipped entirely unlabeled.",
+      "cite": "src/config/CLAUDE.md:6-9; tests/config-purity.test.ts; 6d6061f",
+      "evidence": "src/config/CLAUDE.md:6-9: '## Invariants (test-enforced — `tests/config-purity.test.ts` + `tests/config-values.test.ts`) - Every value is labeled CONTRACT ... INFERRED ... or Spec-fixed'.  `grep -rn \"CONTRACT\\|INFERRED\" tests/config-purity.test.ts` returns NOTHING (zero lines).  `git show 6d6061f:src/config/ai.ts | grep -c '^export const'` = 8, of which only AI_PENDING_STANCE_MS carries a label; AI_TIERS alone is 9 fields x 3 tiers of raw numbers (telegraphMs 700/520/380, reactBlockChance .15/.3/.45, aggression .3/.55/.8 ...). Today src/config/ai.ts still has AI_TIERS, AI_KUNAI_RANGE, AI_RECOVER_JITTER_FRAC and others with no label.",
+      "severity": "expensive",
+      "rule_targeted": "src/config/CLAUDE.md: 'Every value is labeled CONTRACT / INFERRED / Spec-fixed' claimed as test-enforced",
+      "proposed_change": "Add a label assertion to tests/config-purity.test.ts (every `export const` in src/config/ must have CONTRACT|INFERRED|Spec-fixed in its preceding comment block), OR strike the words 'test-enforced' from src/config/CLAUDE.md:6. Do not leave a rule claiming an enforcement that does not exist.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "E5",
+      "claim": "All three folder-local rule files that root CLAUDE.md declares binding are frozen at the Stage-0 scaffold, and src/config/CLAUDE.md still states a palette policy that root CLAUDE.md explicitly says is superseded.",
+      "cite": "src/config/CLAUDE.md:14-16 vs CLAUDE.md:18-19; last touched e8a6d82 (2026-07-12) / 15a7f08 (2026-07-11); 28e7d0b (2026-07-24)",
+      "evidence": "CLAUDE.md:18-19: 'LICENSED 1:1 RECREATION (owner ruling 2026-07-24 — supersedes the old \"never traced/transcribed\" art line and the 2026-07-12 palette policy).'  src/config/CLAUDE.md:14-16 (unchanged): '`palette.ts` sits at near-OG hues (owner veto of the trade-dress shift, 2026-07-12). Drawings stay original — the palette is the only thing that moved toward the original.'  `git log --format='%h %ad' -- src/config/CLAUDE.md` -> e8a6d82 2026-07-12, 15a7f08 2026-07-11 (nothing since).  `git log -1 -- src/core/CLAUDE.md` and `-- src/game/CLAUDE.md` -> both 15a7f08 2026-07-11.  28e7d0b's own body claims 'CLAUDE.md invariant + RESUME_HERE updated in step', but `git show --stat 28e7d0b` lists only CLAUDE.md, RESUME_HERE.md, docs/OWNER_PERMISSION_RULING.md, docs/research/KONGREGATE_FORUM_FINDINGS.md.",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md session discipline: 'Folder-local rules: src/core/CLAUDE.md, src/config/CLAUDE.md, src/game/CLAUDE.md'",
+      "proposed_change": "Delete src/config/CLAUDE.md:14-16 (the superseded palette clause) and add one line to root CLAUDE.md: 'A ruling that supersedes an invariant must be grepped across EVERY CLAUDE.md and kickoff in the same commit — root-only is a silent contradiction.'",
+      "is_deletion": true,
+      "word_delta": -6
+    },
+    {
+      "id": "E6",
+      "claim": "SESSION 11 and SESSION 13 landed seven commits — including the largest gameplay change in the repo — with zero session-log entries, so the reasoning for the coupled-core rewrite exists only in a commit body.",
+      "cite": "54ddbfe, 40b984a, b05696a, 27a20b0, 54fc849, b1a49b6, 335e615; docs/sessions/-SESSION-LOG.md",
+      "evidence": "for c in 54ddbfe 40b984a b05696a 27a20b0 54fc849 b1a49b6 335e615; do git show --stat --format='' $c | grep -c SESSION-LOG; done  ->  0 0 0 0 0 0 0.  `grep -n '^## 2026-07-2' docs/sessions/-SESSION-LOG.md` shows entries only for 2026-07-25 (SOURCE DIVE) and 2026-07-26 (SESSION 14 A1-A4, SESSION 15 kickoff) — nothing for SESSION 11 or SESSION 13. Same rule already broke once earlier and was caught: 7695a13 body, 'Session log: M9-close entry backfilled (6a94aab landed without it).'",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md session discipline: '`docs/sessions/-SESSION-LOG.md` — updated per milestone, never \"at the end.\"'",
+      "proposed_change": "Enforce it in .githooks/pre-commit: a commit touching src/ must also touch docs/sessions/-SESSION-LOG.md, or carry an explicit `SKIP-LOG:` trailer with a reason. A discipline rule with a 100% miss rate over two sessions is either enforced or deleted.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "E7",
+      "claim": "Two fidelity probes known to be measured from a biased sample are still counted as PASS in the headline 55/55 gate, 39 days after the defect was documented and deliberately left unfixed to protect the score.",
+      "cite": "f36aedb (2026-07-16) -> b05696a (2026-07-25); src/config/fidelity.ts:162-180",
+      "evidence": "b05696a body: 'the portrait ring IS stance-coloured (our hardcoded red rests on a pass that only ever sampled heavy-stance frames) - queued fully specified, deliberately not fixed to protect the 55/55 gate.'  src/config/fidelity.ts:162: '// Portrait ring (center ~(161,1021), outer r~64, ring red #950d00)'; :164-170 id 'portrait-ring-left', rgb [149,13,0], note 'B t=3772-3776 ring band' — a single timestamp window.  `git log -S'portrait-ring-left' -- src/config/fidelity.ts` returns exactly ONE commit: f36aedb 2026-07-16. Never corrected.",
+      "severity": "expensive",
+      "rule_targeted": "The fidelity-gate protocol's 'assertion follows measurement' standing ruling (873ed56) — a probe proven wrong stays green because the gate has no state between PASS and FAIL",
+      "proposed_change": "Add a third probe state to the gate: KNOWN-WRONG. The harness must report '55 checked / 2 known-wrong' so the headline number can never be inflated by a defect the team has already written down.",
+      "is_deletion": false,
+      "word_delta": 36
+    },
+    {
+      "id": "E8",
+      "claim": "Two mechanics that do not exist in the original — a counter/parry bonus and enemy block/dodge reactions — survived three '100% green' stage gates for 14-15 days because the INFERRED label carries no obligation to ever confirm or kill the value.",
+      "cite": "15a7f08 (2026-07-11) and 6d6061f (2026-07-12) -> both deleted at 335e615 (2026-07-26)",
+      "evidence": "git show 15a7f08 -- src/config/combat.ts: '+/** INFERRED — bonus when attacker's stance beats defender's (counter triangle). */ +export const COUNTER_BONUS = 1.25;'  335e615 body: 'COUNTER_BONUS deleted: it modelled a counter/parry mechanic the original does not have' and 'AI: react() and its three tier fields deleted (enemies never block or dodge — the old \"a blocking enemy negates the slash\" pin is REPLACED by its opposite)'.  `git log -S'COUNTER_BONUS' -- src/` returns 15a7f08, 764e7f2, 4945239, 335e615 — introduced day 1, removed day 15.  Today `grep -c INFERRED src/config/*.ts` totals 102 INFERRED vs 67 CONTRACT.",
+      "severity": "expensive",
+      "rule_targeted": "src/config/CLAUDE.md: 'Every value is labeled CONTRACT (verified original behaviour), INFERRED (tuned seed)' — the label describes provenance but sets no expiry",
+      "proposed_change": "Add to src/config/CLAUDE.md: 'Every INFERRED value carries the question that would settle it. A stage gate must report the INFERRED count; it may fall, never rise. An INFERRED value that has survived two evidence passes without confirmation is deleted, not carried.'",
+      "is_deletion": false,
+      "word_delta": 44
+    },
+    {
+      "id": "E9",
+      "claim": "A movement control model was adopted into the build on the strength of a citation ('Tip #27') that did not exist, and was kept through an explicit adjudication before measurement reversed it.",
+      "cite": "54ddbfe (2026-07-23) -> 40b984a (2026-07-24) -> b05696a (2026-07-25)",
+      "evidence": "54ddbfe body: 'SESSION11 UPDATE block (1)-(4): movement = hold-run leading (Tip #27; click-move contested, study item (b) decides)'.  40b984a body: 'KEPT: mouse hold-to-run (Tip #27, moveTargetX seam, A/D demoted)'.  b05696a body: 'Movement verdict FLIPPED to click-destination leading, reversing REBUILD_READINESS §3's hold-run claim (never sourced, and no forum thread describes the control at all).'",
+      "severity": "expensive",
+      "rule_targeted": "Global CLAUDE.md: 'Research (models/libraries/tools/claims): ground in real sources + practitioner reviews, never memory alone'",
+      "proposed_change": "Add to the research rule: 'A citation must carry a retrievable locator — URL, archived thread id, or frame path + timestamp. A named-but-unlocatable source (\"Tip #27\") is INFERRED, and may not be used to keep a contested change.'",
+      "is_deletion": false,
+      "word_delta": 40
+    },
+    {
+      "id": "E10",
+      "claim": "A binary gate was declared '100% green' on a false count — the very next commit opens by closing a gate item the 'closing' commit had not carried.",
+      "cite": "335e615 (2026-07-26) vs 949eccd (2026-07-26)",
+      "evidence": "git log -1 --format=%B 335e615 | grep '17 gate'  ->  'Closes SESSION13. All 17 gate items green.'  git log -1 --format=%B 949eccd | head -3  ->  'SESSION14 kickoff: many enemies, one hit — the largest remaining gap' / 'Closes the last outstanding SESSION13 gate item (17: \"next kickoff in the closing commit\"), which the Phase-B commit did not carry.'",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md: 'Do not advance to the next stage until the current stage's gate is 100% green' + the kickoff-bar rule 'explicitly report whether the bar was reached'",
+      "proposed_change": "Require the closing commit to paste the gate table row-by-row with its evidence pointer, not a summary sentence. 'All N items green' as prose is a claim; the table is the proof.",
+      "is_deletion": false,
+      "word_delta": 30
+    },
+    {
+      "id": "E11",
+      "claim": "The 'commit = green' rule structurally forbids incremental review of any coupled change, forcing the repo's largest behaviour rewrite to land as one 37-file commit that no reviewer could bisect.",
+      "cite": "e3dad27 (2026-07-26), 335e615 (2026-07-26); .githooks/pre-commit",
+      "evidence": "e3dad27 body: '§4 requires B0-B5 to land as ONE commit — every intermediate state leaves the harness red and the pre-commit hook forbids committing red — so a partial Phase B cannot go on master.'  git show --stat 335e615 | tail -1  ->  '37 files changed, 2146 insertions(+), 845 deletions(-)'.  The parking branch named in e3dad27 ('session13-phase-b-wip (7b30b88)') no longer exists: `git branch -a --contains 7b30b88` lists nothing, though the object survives.",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md quality gate: 'Pre-commit runs typecheck -> tests. Commit = green.'",
+      "proposed_change": "Amend to: 'Commit = green on master. A `wip/` branch may carry red commits and is the required home for any change whose intermediate states cannot be green — land it as a merge so the steps stay reviewable.' Also: never delete a parking branch named in a handoff commit.",
+      "is_deletion": false,
+      "word_delta": 48
+    },
+    {
+      "id": "E12",
+      "claim": "A Stage-2 gate item shipped as a determinism guard that cannot detect a behaviour change — it only proves runs agree with each other — and the hole went unnamed for 14 days.",
+      "cite": "6483eae (2026-07-12) -> 018f36a (2026-07-26); tests/determinism.test.ts:35-36",
+      "evidence": "tests/determinism.test.ts:35-36 (current): `expect(outs[1]).toBe(outs[0]); expect(outs[0]).toBe(duelFingerprint(PROBE_SEED));` — `grep -n 'toBe(' tests/determinism.test.ts` returns only these self-comparisons plus an existsSync check; no absolute value anywhere.  018f36a body: 'determinism.test.ts proves runs agree WITH EACH OTHER (in-process x2 and cross-process), which survives any behaviour change so long as the change is deterministic; it pins no absolute value.'",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md: 'Chaos-test every guard: plant the failure, watch red, fix, watch green' — the chaos plant used at 6483eae (a Math.random injection) was the one plant this guard CAN catch, so the ritual passed on a guard that was nearly vacuous",
+      "proposed_change": "Add to the chaos rule: 'Name the plant a guard CANNOT catch. A guard passes chaos-testing only when the session writes down one realistic failure it would miss — if that list is empty, the guard was not actually probed.'",
+      "is_deletion": false,
+      "word_delta": 42
+    },
+    {
+      "id": "E13",
+      "claim": "An unknown agent's uncommitted changes weakened a binding gate, invented config numbers, relaxed a legal invariant and deleted a kickoff on a false premise — all discovered only because the owner happened to ask for an evaluation.",
+      "cite": "40b984a (2026-07-24)",
+      "evidence": "40b984a body: 'Foreign uncommitted changes (\"Clawdia\") evaluated per owner request: ... REVERTED: invented \"mastery-1 halved\" reaches (self-inconsistent) ... piecemeal 20/20 HP retune -> restored 100/150 ... WEAKENED 24-seed harness gate -> restored verbatim ([20,60]s, 24/24, >=22) ... DELETED: SESSION12_KICKOFF (premised on a false \"session closed\"; quietly relaxed RECREATE-NEVER-RIP).'",
+      "severity": "expensive",
+      "rule_targeted": "The single-writer rule (77f1b16: 'never run alongside an interactive session') and the standing 'ONE workflow at a time' rule — both cover loops and fan-outs, neither covers a foreign working tree",
+      "proposed_change": "Add: 'An uncommitted working tree of unknown authorship is QUARANTINED before any new work: `git stash -u` onto a dated branch, then adjudicate item by item against the invariants. Never build on top of changes you did not watch land.'",
+      "is_deletion": false,
+      "word_delta": 42
+    },
+    {
+      "id": "E14",
+      "claim": "A one-day measurement pass was committed as a CLOSED gate with 'items 1 and 2 GREEN', and four of its own conclusions — including a flat reversal on whether the game has a crit meter — were corrected the next day.",
+      "cite": "b05696a (2026-07-25) -> 27a20b0 (2026-07-25)",
+      "evidence": "b05696a body: 'Gate items 1 and 2 are GREEN' and 'The OG has NO Critical meter. Three meters: HP, Chi, Focus ... a FULL Focus bar buys EVASION while slashing, not crit damage.'  27a20b0 body: 'FOUR CORRECTIONS TO OUR OWN COMMITTED LEDGER (table at §00b): - FOCUS *IS* THE CRIT METER. The first pass concluded \"a full Focus bar buys EVASION, not crit damage\" ... Both wrong ... The forum was right.' plus 'AP is 30/30, not the 50/50 read off a downscaled thumbnail.'  27a20b0 also records the trigger: 'Kheshav asked whether the study pass actually captured everything SESSION12 needs, and flagged he had no way to check.'",
+      "severity": "expensive",
+      "rule_targeted": "The measurement protocol's implicit rule that a measured pass closes a gate; plus the CLAUDE.md invariant 'crop and upscale first (the fighter is ~270 px tall in a 1080p frame)' — violated by the 50/50 thumbnail read",
+      "proposed_change": "Add: 'A measurement pass does not close its own gate. An independent adversarial audit pass — a different agent, reading the ledger against the config surface it must set — is the closing step.' 27a20b0 is that pass, and it only happened because the owner asked.",
+      "is_deletion": false,
+      "word_delta": 46
+    },
+    {
+      "id": "E15",
+      "claim": "Adversarial review is the project's primary quality mechanism and it demonstrably passes material errors — a kickoff 'adversarially reviewed twice' carried five material errors including the project's own named failure mode, and needed two further correction commits for duplicated and stale content.",
+      "cite": "e8f5a5a, 0589b2c, ec23e2f (all 2026-07-25)",
+      "evidence": "e8f5a5a subject: 'SESSION13 kickoff: the source-led rebuild, adversarially reviewed twice'; its body: 'The first draft had five material errors, all now fixed: 1. It claimed the harness bot cannot move. FALSE ... 2. A unit-mixing \"proof\" equating stage-px measurements with world-px formula outputs — the project's own documented failure mode, the voided-3.0x-crit shape ... 4. A Focus accumulator that was a closed form over total ticks, silently discarding every spend.'  Then 0589b2c: 'SESSION13: fix §P heading count (five prerequisites, not four)' and ec23e2f: 'Final integrity pass found the §P rewrite had left the OLD P4 block in place below the new one — the same content twice.'",
+      "severity": "minor",
+      "rule_targeted": "The kickoff-bar rule (feedback-kickoff-bar-verdict): 'polish to \"can't get better\" ... explicitly report whether the bar was reached'",
+      "proposed_change": "Require the review to emit its checklist, not its verdict: 'Reviewed twice' with no finding list is not evidence. A kickoff's bar self-report must name what each lens checked and what it found, so a later reader can see which lens missed the error.",
+      "is_deletion": false,
+      "word_delta": 38
+    },
+    {
+      "id": "E16",
+      "claim": "The MASTER_SPEC six-stage ladder — the repo's governing plan and the subject of a CLAUDE.md invariant — was abandoned mid-Stage-4 with no recorded decision, and its orphaned kickoff still states a legal invariant that root CLAUDE.md declares superseded.",
+      "cite": "20a0c0f + 9106e01 (2026-07-13); docs/MASTER_SPEC.md:322,353,372; docs/sessions/STAGE4_KICKOFF.md:22-23",
+      "evidence": "`git log --oneline | grep -iE 'stage [0-9]'` shows the last stage-numbered commits are 20a0c0f 'Stage 4 kickoff' and 9106e01 'Stage-4 M0'; everything after 2026-07-16 is SESSION-numbered. No 'Stage 4 GATE CLOSE', no Stage 5/6 kickoff exists.  docs/MASTER_SPEC.md still defines 'STAGE 4 — CAMPAIGN', 'STAGE 5 — WAR ROOM', 'STAGE 6 — POLISH' at :322/:353/:372, and STAGE4_KICKOFF.md §2 lists M0-M7 ending in 'M7 — Gate close'. `grep -rn -i 'stage ladder|stages retired|stage numbering' RESUME_HERE.md docs/DIVERGENCES.md CLAUDE.md` returns nothing.  docs/sessions/STAGE4_KICKOFF.md:22-23 still binds: 'The spec's own \"1:1 version\" name list is permission-gated and we do NOT have permission' — contradicting CLAUDE.md:18-19 (owner ruling 2026-07-24).",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md: 'Do not advance to the next stage until the current stage's gate is 100% green' — the rule silently stopped applying rather than being retired",
+      "proposed_change": "Either record the ladder's retirement in RESUME_HERE and MASTER_SPEC's header, or reopen Stage 4's gate table. And mark STAGE4_KICKOFF.md SUPERSEDED at the top — a fresh session reading it today would apply a permission rule the owner lifted a month ago.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "E17",
+      "claim": "A dependency-automation commit landed with a one-line body, no evidence and no co-author trailer, and immediately generated pull requests to upgrade both majors that CLAUDE.md pins as stack invariants.",
+      "cite": "4ec831a (2026-07-24); .github/dependabot.yml; git branch -a",
+      "evidence": "git log -1 --format='%B' 4ec831a  ->  'chore: add Dependabot dependency + security automation' (the entire body; no Co-Authored-By, unlike every other commit in the slice).  git branch -a shows 'remotes/origin/dependabot/npm_and_yarn/phaser-4.2.1' and 'remotes/origin/dependabot/npm_and_yarn/typescript-7.0.2'.  The later fix in .github/dependabot.yml records the incident: 'PINNED STACK — these two majors are project INVARIANTS ... Dependabot opened both on 2026-07-24 and they were closed on 2026-07-27; closing a PR only silences THAT version, so phaser 4.3 and typescript 7.1 would have arrived a week later.'",
+      "severity": "minor",
+      "rule_targeted": "CLAUDE.md invariant: 'Stack is fixed: Phaser 3 (pinned phaser@3, NOT v4) + TypeScript 5 + Vite'",
+      "proposed_change": "Add to the quality gate: 'Any automation that can edit package.json, CI, or the hooks must encode the pinned-major invariants in the same commit, and that commit carries the same body-and-evidence bar as code.' The one commit in this slice that skipped the body bar is the one that broke an invariant.",
+      "is_deletion": false,
+      "word_delta": 44
+    }
+  ]
+}

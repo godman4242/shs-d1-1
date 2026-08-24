@@ -1,0 +1,161 @@
+{
+  "integrity": "CLEAN",
+  "wrote_to": "/Users/kheshav/kheshav-code/SSHD 1-1/docs/gauntlet/ARCH/adversary/do-nothing.json",
+  "summary": "POSITION: the correct output of this review is 3 corrections-of-fact and ZERO changes to any obligation. The case rests on five verified measurements. (1) The mechanism that actually froze src/ is NOT in any rule file: 6 of the gauntlet workflow SCRIPTS carry 'This lane touches no source code', a prohibition strictly wider than GAUNTLET.md:236 whose NO-TOUCH list names only two files. No edit to CLAUDE.md or GAUNTLET.md unblocks it; arming a chopping lane does, and needs zero edits. (2) The review's own lenses agree: 33 of the 102 findings (32.4%) carry word_delta 0, and ~25 of those explicitly say NO RULE CHANGE - including C78, C88, C90, C100 and C102, the five that price the highest-value work available. The rules are not the constraint. (3) The finding set does not converge and therefore cannot be applied as authored: GAUNTLET.md:193-196 (33 words) has FOUR mutually exclusive rewrites (C52 pool-shrink / C58 delete outright / C63 budget clause / C79 gain proof); CLAUDE.md:36 has C24 saying DELETE while C1/C2/C18/C19 add clauses to it; CLAUDE.md:49 has C48 DELETE against C6/C26/C35 KEEP-AND-ENFORCE; src/config/CLAUDE.md:14-16 has C5/C96 DELETE against C45 REPLACE. Picking among them is arbitration, not evidence. (4) C62 (git rm 26 kickoffs, -64,329 words) destroys the cited evidence base of C16, C20, C21, C92 and C93 - I verified STAGE2_KICKOFF.md:73-74 and STAGE4_KICKOFF.md:22-23 exist and carry exactly the text those findings quote. It also single-handedly satisfies ARCH-E, making every one of the +985 words of additions free; passing the anti-bloat gate would prove nothing. (5) The one standing-rule edit of the entire gauntlet era (7476add, the ONLY edit to GAUNTLET.md in 50 commits) is now itself accused of carrying a falsehood by L3/C33 - and that accusation is against a strawman: the text says serial spend 'MAY NEVER hit the limit at all', explicitly probabilistic, and the doc already subordinates that bullet in its own next clause ('the second is the one that actually forces it'). Base rate of rule edits in this era producing a later complaint: 1 for 1. AGAINST THE LEAD SPECIFICALLY: L2's harm claim is counterfactually void (GAUNTLET.md:139-141 queues L2/L3 behind L0 regardless of §2.1, so no session could have armed them anyway); L3 attacks a bullet the doc already labels non-binding, written by the owner; L6's 6th artifact tier is redundant - src/config/combat.ts:106 already quotes the decompiled line inline (an A2 cite) and config values are pinned by tests/config-values.test.ts (an A3 cite), so the taxonomy had the slot and nobody grepped; worse, the tier would gate evidence on a CONTRACT label that I verified NO test parses. HONEST CONCESSIONS - THREE, all corrections of FACT, none changing an obligation: src/config/CLAUDE.md:14-16 states the reverse of a live owner ruling; src/config/CLAUDE.md:6 advertises 'test-enforced' for a label invariant no test enforces; GAUNTLET.md §2.1's factual claim that the string table is missing is false (correct it in place per C34, do not delete the rule per L2/C60/C98). Net -31 words. HONEST LIMIT ON MY OWN CASE: C40 is right - I grepped, and only walls #5,#6,#8,#9,#10,#11 have any written record. 'Eleven walls, zero data lost' is auditable for six. That weakens the shield around the process rules, and I say so rather than lean on it.",
+  "findings": [
+    {
+      "id": "DN-1",
+      "claim": "The single change that would end the src/ drought requires ZERO standing-rule edits: the prohibition that froze the territory lives in 6 workflow SCRIPTS, not in any rule document, and is strictly wider than the NO-TOUCH list GAUNTLET.md actually authorises.",
+      "cite": "scripts/gauntlet/l0-resurvey.workflow.js:43-44 vs docs/GAUNTLET.md:236",
+      "evidence": "$ sed -n '40,46p' scripts/gauntlet/l0-resurvey.workflow.js\nDO NOT MODIFY ANY FILE outside your assigned journal path. This lane touches no\nsource code. src/core/Sim.ts and tests/duel-baseline.test.ts are NO-TOUCH (§4).\n\n$ sed -n '234,236p' docs/GAUNTLET.md\n## §4 THE NO-TOUCH LIST — a lane that touches these without the protocol has failed\n- **`src/core/Sim.ts` and `tests/duel-baseline.test.ts`** — gameplay state and the\n  recorded baseline.\n\n$ grep -rl 'touches no' scripts/gauntlet/*.workflow.js | wc -l\n       6\n\nThe rule authorises TWO files as no-touch. Six scripts prohibit ALL of src/. No word in CLAUDE.md or GAUNTLET.md caused the freeze, so no word removed from them ends it.",
+      "severity": "kills-project",
+      "rule_targeted": "NONE — this is the argument that the rule system is not the defect",
+      "proposed_change": "NONE to any standing rule. The next run arms a lane whose deliverable is a file under src/. That requires no edit anywhere: §2's lane board already lists L1-L4, §2's 'A SCRIPT BEATS A SWARM' already mandates the transform-script form, and C78/C88/C90/C102 have already priced skilldata.xml -> src/config/ as one commit in the proven shape of scripts/anim/transcribeAnims.py. If any edit is made at all, it is deleting one redundant sentence from the 6 workflow prompts — a script change, not a rule change.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-2",
+      "claim": "The review's own lenses have already returned the do-nothing verdict: 33 of the 102 findings (32.4%) change zero standing-rule words, and every finding that prices the highest-value work available concludes NO RULE CHANGE.",
+      "cite": "findings C21, C23, C29, C32, C40, C65, C78, C82, C83, C84, C86, C88, C90, C100, C101, C102 (word_delta 0, rule_targeted NONE or code-only)",
+      "evidence": "Findings with word_delta == 0: C4, C6, C16, C21, C23, C29, C30, C32, C36, C37, C38, C39, C40, C42, C43, C44, C46, C49, C53, C55, C65, C72, C78, C80, C82, C83, C84, C86, C88, C90, C100, C101, C102 = 33 of 102.\n\nC78: 'NO RULE CHANGE. Write scripts/port/skilldata.py + a tests/skillData.test.ts byte-pin...'\nC88: 'The rule is already correct and already written.'\nC90: 'Ratio ruling ... Named next chop ... (1) skilldata.xml -> src/config/skills.ts'\nC102: 'NEXT CHOP: write scripts/skills/transcribeSkills.py in the exact shape of scripts/anim/transcribeAnims.py (159 lines)'\nC49: 'Do not add prose. Add one script.'\n\nFive independent lenses converged on the same conclusion — the work is blocked on execution, not on wording.",
+      "severity": "expensive",
+      "rule_targeted": "NONE",
+      "proposed_change": "NONE. Adopt the 33 zero-delta findings as the review's output — they are code, script and hook changes, not rule changes — and adopt none of the 69 that spend words. The ratio ruling ARCH-D demands is satisfiable entirely from C90/C100/C102 without touching a rule file.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-3",
+      "claim": "The finding set is internally inconsistent and cannot be applied as authored: four lenses propose four mutually exclusive rewrites of the same 33 words, and on four further rules one lens says DELETE while another says AMEND.",
+      "cite": "docs/GAUNTLET.md:193-196 (§3.5, 33 words) targeted by C52, C58, C63, C79",
+      "evidence": "$ sed -n '193,196p' docs/GAUNTLET.md\n5. **LOOP UNTIL DRY.** Keep spawning finders until **two consecutive rounds\n   surface nothing new**. Dedup against everything *seen*, not everything\n   *confirmed* — otherwise critic-rejected findings reappear each round and the\n   loop never converges.\n\nFOUR incompatible proposals for those four lines:\n  C52 -> 'LOOP WHILE THE POOL SHRINKS' (+5)\n  C58 -> 'DELETE lines 193-196 entirely; put NOTHING in its place' (-33)\n  C63 -> 'LOOP UNTIL DRY OR SPENT' + round budget (+16)\n  C79 -> 'LOOP UNTIL DRY — OR PROVE THE GAIN' + emission/judged ratio (+5)\n\nDelete-vs-amend collisions elsewhere:\n  CLAUDE.md:36  — C24 'DELETE the line' vs C1/C2/C18/C19 each appending a clause to it\n  CLAUDE.md:49  — C48 'DELETE it' vs C6/C26/C35 'KEEP and enforce'\n  src/config/CLAUDE.md:14-16 — C5/C96 DELETE vs C45 REPLACE\n  GAUNTLET §2.1 — C34 'KEEP the rule, correct the fact' vs L2/C60/C98 'DELETE'\n\nChoosing among these is arbitration between lenses, not a reading of evidence.",
+      "severity": "kills-project",
+      "rule_targeted": "NONE — this is a defect in the review, not in the rules",
+      "proposed_change": "NONE. A rule with four incompatible proposed replacements has not been shown to be wrong; it has been shown to be contested. §3.6's own standing instruction for a contested gate applies to a contested rule: 're-author, or take a ruling' — and no ruling was taken. Leave GAUNTLET.md:193-196 exactly as written and let the owner's 71b612d stop-ruling stand as the operative precedent, which is what actually stopped the loop.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-4",
+      "claim": "C62's mass deletion of 26 kickoff files destroys the cited evidence base of at least five other findings in this same review, including two that quote line numbers inside a file C62 would git rm.",
+      "cite": "docs/sessions/STAGE2_KICKOFF.md:73-74 and docs/sessions/STAGE4_KICKOFF.md:22-23 vs finding C62",
+      "evidence": "$ sed -n '72,74p' docs/sessions/STAGE2_KICKOFF.md\n- **Skills (§7, CONTRACT):** Chi Punch 10 dmg L1 / 2 Chi / 4.96 s CD —\n  cooldowns are frame-quantized (.92/.96 endings); keep that pattern for any\n  INFERRED cooldown values.\n\n$ sed -n '22,23p' docs/sessions/STAGE4_KICKOFF.md\nspec's own \"1:1 version\" name list is permission-gated and we do NOT have\npermission. The root invariant (RECREATE, NEVER RIP) therefore binds:\n\n$ ls docs/sessions/*KICKOFF*.md | wc -l\n      27\n\nC92's whole change is 'delete the clause at STAGE2_KICKOFF.md:73-74'. C93's evidence is STAGE2_KICKOFF.md:72. C16's change is 'mark STAGE4_KICKOFF.md SUPERSEDED at the top'. C20 and C21 both reason from the SESSION 18 kickoff. C62 deletes all of them. The two proposals cannot both be applied, and applying C62 first makes C92/C93/C16 unverifiable by any future reader.",
+      "severity": "kills-project",
+      "rule_targeted": "the standing ritual of committing a kickoff document per session (C62's target)",
+      "proposed_change": "NONE. Keep all 26. This review is itself the proof of their value: five of its findings are only knowable because the kickoffs are grep-reachable on disk, and C62's own second-order note concedes 'the archive is genuine forensic material for exactly this kind of review'. The stated harm — an agent reading SESSION4_KICKOFF.md:23 as live policy — is hypothetical (C96 says of the same class of defect, honestly, 'no measured incident — this is a latent one'), while the loss is the evidence base of the next review.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-5",
+      "claim": "L2/C60/C98's headline harm — 'eleven walls ran while the doc said the cheap lanes were blocked' — is counterfactually void: GAUNTLET.md's ordering rule queued L2/L3 behind L0 regardless of §2.1, so no session could have armed them whatever §2.1 said.",
+      "cite": "docs/GAUNTLET.md:139-141",
+      "evidence": "$ sed -n '139,141p' docs/GAUNTLET.md\n**Ordering rule:** L0 first, always. Then **highest (leverage ÷ risk)** — which\nafter L0 is L1 → L1b → L2/L3/L4, because their information is already held and\ntheir gates are byte-checks rather than judgement calls.\n\nL2/L3 sit behind L0 AND behind L1 in the ordering. §2.1's staleness could only have caused harm to a session that reached the point of arming L2 — and none did, because L0 never closed. The measured cost of §2.1 being stale is therefore zero, not eleven walls.",
+      "severity": "expensive",
+      "rule_targeted": "GAUNTLET.md §2.1 STRING-TABLE BLOCKER + the L1b lane row (L2, C60, C98)",
+      "proposed_change": "Do not DELETE §2.1. Correct its one false factual sentence in place, per C34's form: the rule ('do not let L2/L3 claim completeness while shipping nameless items') is still correct and still unfired; only its blocker status is stale. Deleting a correct, never-yet-applied rule because its blocking condition resolved is precisely the churn ARCH-§1 warns against. Rollback of a fact correction is one line; rollback of a deleted rule is a rediscovery.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-6",
+      "claim": "L3/C33's falsification of §3.8's first justification is against a strawman: the text is explicitly probabilistic ('may never'), the doc already labels that bullet non-binding in its own next clause, and it is the owner's own stated reason recorded verbatim at his request.",
+      "cite": "docs/GAUNTLET.md:204-210 and commit 7476add's body",
+      "evidence": "$ sed -n '204,210p' docs/GAUNTLET.md\n8. **ONE WORKFLOW IN FLIGHT.** (Owner rule, 2026-08-22.) ... Two reasons,\n   and the second is the one that actually forces it:\n   - **Concurrency is what CAUSES the wall.** Session limits are rate-based. ... The same work run\n     serially spreads the spend over a longer window and **may never hit the limit at all.**\n\n$ git log -1 7476add\n    GAUNTLET §3.8: one workflow in flight — owner rule, with the reason that actually forces it\n    Kheshav's standing rule after watching waves 1 and 2 of L0 run together (19 agents) and\n    take wall #9 as a pair. Agreed, and recorded here rather than only in memory so a fresh\n    session inherits it.\n\n'May never hit the limit at all' is not falsified by a serial session hitting the limit. The doc pre-emptively subordinates the bullet ('the second is the one that actually forces it') and its own commit body already carries the self-correction protocol: 'A rule defended by a reason that has since been fixed is a rule that gets dropped the next time someone checks.' Operational effect of L3's -62 words: zero. Nothing routes on the bullet the doc already marks non-binding.",
+      "severity": "minor",
+      "rule_targeted": "GAUNTLET.md §3.8 first justification (L3, C33)",
+      "proposed_change": "NONE. This is a 62-word edit to an owner-authored rule, whose only effect is to change a rationale the document already marks as non-binding. Additionally: GAUNTLET.md has been edited exactly THREE times in its life (c2e5df9, e97f91f, 7476add) and 7476add is the only edit in the 50 commits since — so the era's sole rule edit is also the era's sole rule complaint. That base rate is the argument for the no-change default, not against it. If the owner wants his own reason struck, that is his ruling to make, not this review's.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-7",
+      "claim": "L6's proposed 6th artifact tier is redundant with tiers A2 and A3 that §0 already has, and would gate evidence on a CONTRACT label that no test in the suite parses.",
+      "cite": "docs/GAUNTLET.md:47-49 (A2/A3) vs src/config/combat.ts:105-109 and src/config/CLAUDE.md:6",
+      "evidence": "$ sed -n '47,49p' docs/GAUNTLET.md\n| **A2** | A **payload row** under `reference/extracted/` or `reference/decompiled/` | file + the XML/AS3 line, quoted |\n| **A3** | A **byte-check / test** in the suite | the test name + pasted output |\n\n$ sed -n '105,109p' src/config/combat.ts\n/**\n * CONTRACT-SRC — in-combat stance switching costs 48 Focus and is GATED on\n * affording it (`if (focus < 48) return;`). Was an INFERRED 34 scaled by a\n * `WEAPON_WEIGHT` table that has no source basis; both are deleted (D9).\n */\nexport const FOCUS_SWITCH_COST = 48;\n\nThe file ALREADY quotes the decompiled AS3 line inline — that is a complete A2 cite sitting in src/config since 335e615 (2026-07-26). Config values are additionally double-entered in tests/config-values.test.ts — an A3 cite. The taxonomy had two slots for this and the gauntlet used neither, because nobody grepped src/config/.\n\nAnd the proposed gate is unenforced:\n$ grep -n 'describe(\\|it(' tests/config-purity.test.ts\n...contains ZERO numeric literals... imports only from... scanner self-test...\n(no test parses a CONTRACT/INFERRED label anywhere in the suite)",
+      "severity": "expensive",
+      "rule_targeted": "GAUNTLET.md §0 artifact law (L6's proposed 6th tier)",
+      "proposed_change": "NONE. Adding a tier does not make anyone read src/config/; a grep would have. Worse, the tier's guard is the CONTRACT label, which I verified no test enforces — so it would make an unenforced honour-system label into citable evidence, creating exactly the laundering C78 and C102 warn about ('the port launders a caveat into a CONTRACT'). Note also that combat.ts uses the label CONTRACT-SRC, which appears nowhere in src/config/CLAUDE.md:7-9's three-label list: the config folder invented a fourth, sharper label with no rule change and got the right answer. That is evidence the taxonomy is not the constraint.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-8",
+      "claim": "The review proposes 22 separate edits to a 466-word CLAUDE.md, roughly 15 of them additions of a new clause — to the one document loaded into every session and every agent brief, whose entire value is that it is short enough to be read in full.",
+      "cite": "wc -w CLAUDE.md; findings C1,C2,C3,C5,C11,C12,C13,C17,C18,C19,C20,C22,C24,C26,C27,C28,C41,C47,C48,C54,C64,C74,C94",
+      "evidence": "$ wc -w CLAUDE.md\n     466 CLAUDE.md\n$ wc -l CLAUDE.md\n      51 CLAUDE.md\n\nAdditions targeting it: C1 +44, C2 +34, C3 +46, C11 +48, C12 +42, C13 +42, C17 +44, C18 +26, C19 +26, C20 +19, C22 +18, C27 +4, C28 +16, C41 +16, C47 +4, C54 +3, C64 +43, C74 +38, C94 +16 = ~529 words of additions to a 466-word file. Deletions targeting it: C24 -15, C26 -2, C48 -12, C5 -6 = -35.\n\nApplied as authored, root CLAUDE.md more than doubles in length and gains ~15 new obligations. Every one is individually defensible; the aggregate is a rule file nobody finishes reading, which is the failure mode that produced C5/C45/C96 (three folder rules frozen at the Stage-0 scaffold and now contradicting root).",
+      "severity": "kills-project",
+      "rule_targeted": "root CLAUDE.md as a whole",
+      "proposed_change": "NONE. Reject all 19 additions to CLAUDE.md. ARCH-E's word budget nominally guards against this, but see DN-9: it is defeated by a single mass-delete elsewhere, so it does not actually bind here. The honest guard is a rule COUNT budget on CLAUDE.md specifically (C56 argues this), and under any count budget the correct number of new CLAUDE.md rules this review may add is zero, because not one of the 19 is enforced by anything — they would join the 23 PROSE-ONLY rules C49 already counted.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-9",
+      "claim": "ARCH-E, the review's anti-bloat gate, is defeated by one finding: C62's -64,329 words makes every one of the ~985 words of proposed additions free, so passing ARCH-E would prove nothing about restraint.",
+      "cite": "docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md:187 vs finding C62 (word_delta -64329)",
+      "evidence": "$ sed -n '186,188p' docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md\n- **ARCH-E** Total net change to standing-rule word count is **≤ 0**. The rules may be\n  sharper; they may not be longer. *(This is the anti-bloat gate. It is deliberately harsh.)*\n\nSum of positive word_deltas across all 102 findings: ~ +985.\nSum of negative deltas excluding C62: ~ -2,232 — but that figure is inflated 3-4x by double-counting: GAUNTLET §7 (226 words) is claimed at -226 by THREE findings (C61, C68, C75) plus lead L1; §5 by C59 (-524) and again by C69 (-5) and C76 (-5); §2.1/L1b by C60 (-300), C98 (-242), L2 (-231) and C34 (-80) for the same block; src/config/CLAUDE.md:14-16 by C5 (-6), C45 (-8) and C96 (-29).\nDeduplicated, the genuinely distinct deletions are roughly -1,430, against +985 of genuinely distinct additions.\nWith C62 included the total is about -65,576, i.e. ARCH-E passes by a factor of 60 on the strength of deleting 26 archive documents that are not standing rules at all.",
+      "severity": "expensive",
+      "rule_targeted": "ARCH-E (docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md:187)",
+      "proposed_change": "NONE to ARCH-E — it is one commit old (2df2f87) and has never been applied, so amending it now is churn on a rule with no incident record, which is the exact error this review is meant to avoid. Instead: apply ARCH-E to STANDING RULE FILES ONLY (CLAUDE.md, GAUNTLET.md, .claude/ship-bar.md, the three folder CLAUDE.mds) and exclude the docs/sessions/ archive from the count. Under that reading, the do-nothing output of -31 words passes ARCH-E honestly and every alternative fails it.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-10",
+      "claim": "The review has already breached its own charter budget by roughly 5x in finding count, which is itself the kickoff's stated test that the process is the problem — but the honest reading is the opposite of the kickoff's: 102 findings against a 466-word rule file means the lenses were pointed at the wrong object.",
+      "cite": "docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md:191-192",
+      "evidence": "$ sed -n '191,192p' docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md\n**Budget: ≤ 20 agents, one session.** If it needs more than that to review a process, the\nprocess is the problem.\n\nFindings returned: 102 (C1..C102) plus 7 lead proposals (L1..L7) = 109.\nStanding-rule corpus under review: CLAUDE.md 466 words + GAUNTLET.md 4,201 + ship-bar 188 = 4,855 words.\nThat is one finding per 45 words of rule text.\n\n$ git rev-list --count 0719673..HEAD\n60\n$ git rev-list --count 0719673..HEAD -- src/\n0\n\nA finding density of 1-per-45-words against a corpus that produced ZERO src/ commits in 60 tries is not a measurement of the rules. It is 109 lenses each obliged to return something, applied to the only artifact class the session was permitted to touch (§6: 'src/. This is a review of process, not a refactor. No game code moves.').",
+      "severity": "expensive",
+      "rule_targeted": "NONE — argument about the review itself",
+      "proposed_change": "NONE. The correct response to a 109-finding return on a 4,855-word rule corpus is to notice that the yield says more about the instrument than the subject, and to ship the review as a report with three fact corrections and one arming decision. C72 reached the same place from the other side: 'every one of its six gate items can be passed with document edits alone' — which is the reason to distrust document edits as this review's output, not the reason to make more of them.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "DN-11",
+      "claim": "HONEST LIMIT ON MY OWN CASE — C40 is correct and I verified it: the 'eleven walls, zero data lost' record that shields the process rules from relitigation is auditable for six walls, not eleven.",
+      "cite": "docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md:50; grep -rhoiE 'wall ?#[0-9]+' --include='*.md' .",
+      "evidence": "$ grep -rhoiE 'wall ?#[0-9]+' --include='*.md' . | sort -u\nWALL #10\nWALL #6\nWALL #8\nWALL #9\nWall #11\nWall #8\nwall #11\nwall #5\nwall #6\nwall #8\nwall #9\n\nOnly walls #5, #6, #8, #9, #10 and #11 appear anywhere in the tracked repo. Walls #1-#4 and #7 have no written record.\n\nI am the advocate for no change and this is the measurement that weakens my own strongest shield, so I am reporting it rather than leaning on the eleven. What survives intact is the MECHANISM, which the kickoff cites with pasted specifics: 'Paid three times in one session: 96 verdicts at wall #9, 50 during a mid-flight salvage, 10 at wall #11.' Disk-before-return is proven on named evidence; the count 'eleven' is not.",
+      "severity": "minor",
+      "rule_targeted": "the §1 protection around the disk-before-return / commit-at-checkpoint rules",
+      "proposed_change": "Adopt C40's scope correction verbatim and nothing more: say 'six walls with a written record, zero data lost at all six' in place of 'eleven walls, zero data lost'. That is a factual correction to a session document, not a standing rule, and costs zero standing-rule words. Do NOT weaken the rules it shields — the mechanism's evidence (96 + 50 + 10 recovered verdicts) is independent of the wall count.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "CONC-1",
+      "claim": "CONCEDED (1 of 3). src/config/CLAUDE.md — a folder rule file loaded as binding on every session in that directory — states the exact policy the owner reversed on 2026-07-24, and root CLAUDE.md names that reversal explicitly.",
+      "cite": "src/config/CLAUDE.md:14-16 vs CLAUDE.md:18-21",
+      "evidence": "$ sed -n '14,16p' src/config/CLAUDE.md\n- `palette.ts` sits at near-OG hues (owner veto of the trade-dress shift,\n  2026-07-12). Drawings stay original — the palette is the only thing that\n  moved toward the original.\n\n$ sed -n '18,21p' CLAUDE.md\n- **LICENSED 1:1 RECREATION (owner ruling 2026-07-24 — supersedes the old\n  \"never traced/transcribed\" art line and the 2026-07-12 palette policy).**\n  ... Tracing/matching Lut's art and exact OG hues is now permitted.\n\n$ git log -1 --format='%h %ad' --date=short -- src/config/CLAUDE.md\ne8a6d82 2026-07-12\n\nRoot names the superseded policy by its date; the folder file still asserts it, and has not been touched since the day the policy it states was written.",
+      "severity": "expensive",
+      "rule_targeted": "src/config/CLAUDE.md invariant 4 (the palette/'drawings stay original' bullet)",
+      "proposed_change": "DELETE src/config/CLAUDE.md:14-16 (-29 words). This is not churn and not a judgement call: two loaded rule files state opposite obligations about what an agent may legally draw, and the owner has already ruled. C96's form (delete outright) is preferable to C45's (replace with a longer clause) because root CLAUDE.md:18-22 and docs/OWNER_PERMISSION_RULING.md already carry the live ruling in full — the folder file adds only the contradiction. Keep the separate double-entry bullet at :17-19, which the ruling does not touch. Rollback: restore the three lines.",
+      "is_deletion": true,
+      "word_delta": -29
+    },
+    {
+      "id": "CONC-2",
+      "claim": "CONCEDED (2 of 3). src/config/CLAUDE.md advertises its invariants as 'test-enforced' and names the two tests; I read both and neither parses a CONTRACT / INFERRED / Spec-fixed label. A rule that lies about its own enforcement is worse than no rule.",
+      "cite": "src/config/CLAUDE.md:6 vs tests/config-purity.test.ts",
+      "evidence": "$ sed -n '6,9p' src/config/CLAUDE.md\n## Invariants (test-enforced — `tests/config-purity.test.ts` + `tests/config-values.test.ts`)\n- Every value is labeled **CONTRACT** (verified original behaviour), **INFERRED**\n  (tuned seed), or **Spec-fixed** ...\n\n$ grep -n 'describe(\\|it(' tests/config-purity.test.ts\n50:describe('config-purity: src/core/'\n51:  it('contains ZERO numeric literals ...')\n58:  it('imports only from src/core/ or src/config/ ...')\n62:  it('contains no unscannable payload files ...')\n67:describe('config-purity: src/config/'\n68:  it('imports only from within src/config/ ...')\n72:  it('contains no unscannable payload files')\n77:describe('config-purity: scanner self-test ...')\n110:  it('sees through every static import form ...')\n147:  it('listTsFiles covers .ts/.tsx/.mts/.cts ...')\n153:  it('the .mts fixture literal is caught ...')\n\nNo test reads a label. The first invariant under a header claiming test enforcement is enforced by nothing.",
+      "severity": "expensive",
+      "rule_targeted": "src/config/CLAUDE.md:6 — the words 'test-enforced — '",
+      "proposed_change": "STRIKE 'test-enforced — ' from src/config/CLAUDE.md:6 (-2 words). Take C95's deletion, not C4's alternative of building a label test: a presence-check would not have caught either failure this review found (C4's 27 unlabeled AI numbers were a presence failure, but C87/C92's CONTRACT-graded display artifact was a HONESTY failure a presence check cannot see), so the test would restore the false assurance in machine form. Admitting the invariant is an honour system is the accurate state, and the standing 'if you check it by eye twice, build the gate' rule can schedule a real gate later on its own merits. Rollback: restore the two words.",
+      "is_deletion": true,
+      "word_delta": -2
+    },
+    {
+      "id": "CONC-3",
+      "claim": "CONCEDED (3 of 3), but as a CORRECTION OF FACT, not a rule change. GAUNTLET.md §2.1 asserts a blocker that this repo's own commit log resolved on 2026-08-14; the string table it says is missing is on disk and indexed.",
+      "cite": "docs/GAUNTLET.md §2.1 vs docs/gauntlet/L0/index/resolved_names.json (commit 6ff47f1)",
+      "evidence": "$ python3 -c \"import json,os; p='docs/gauntlet/L0/index/resolved_names.json'; print(os.path.exists(p), os.path.getsize(p)); print(list(json.load(open(p))))\"\nTrue 73581\n['itemdata.xml', 'npcdata.xml', 'skilldata.xml']\n\n$ git log -1 --format='%h %ad %s' --date=short 6ff47f1\n6ff47f1 2026-08-14 gauntlet L0: THE STRING TABLE IS FOUND — §2.1's blocker is dead; 2 orchestration bugs fixed\n\nThe file exists, is 73,581 bytes, and resolves all three tables. §2.1's factual sentence is false.",
+      "severity": "minor",
+      "rule_targeted": "GAUNTLET.md §2.1 — its factual blocker statement ONLY, not the rule it carries",
+      "proposed_change": "Correct the FACT in place, per C34's form, and do NOT delete the section per L2 / C60 / C98. Replace §2.1's blocker sentences with one line: 'Item/skill/NPC names resolve through docs/gauntlet/L0/index/resolved_names.json (string table recovered 2026-08-14, 6ff47f1; android clientVersion 0.682 — carry that caveat on every name use). Nothing blocks L2/L3.' The RULE §2.1 encodes — do not let a lane claim completeness while shipping nameless rows — has never fired and is not shown to be wrong; only its precondition changed. Deleting it also deletes the written record of the android-vs-web version caveat, which C98's own second-order note concedes. Net effect on this file is a fact correction, and I count it as 0 standing-rule words because no obligation changes.",
+      "is_deletion": false,
+      "word_delta": 0
+    }
+  ]
+}

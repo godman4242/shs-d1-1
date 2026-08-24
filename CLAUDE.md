@@ -45,7 +45,8 @@ state and next step live in `RESUME_HERE.md`.
 - Per-turn ship-bar contract auto-injects from `.claude/ship-bar.md`.
 
 ## Session discipline
-- `RESUME_HERE.md` (repo root) — refreshed in the SAME commit as the change it describes.
+- `RESUME_HERE.md` (repo root) — **rewritten, never appended to**, in the SAME commit as
+  the change it describes. Delete the block you supersede; "refreshed" let stale blocks pile up.
 - `docs/sessions/-SESSION-LOG.md` — updated per milestone, never "at the end."
 - Folder-local rules: `src/core/CLAUDE.md`, `src/config/CLAUDE.md`, `src/game/CLAUDE.md`.
 - Cite symbols, not line numbers.

@@ -1,9 +1,46 @@
 # RESUME HERE
 
+## ▶ SESSION 28 (2026-08-24) — ARCHITECTURE REVIEW DONE. **NEXT LANE IS L2, NOT L0.**
+
+**The chop is armed. Ratio ruled 10/90 (`GAUNTLET.md` R7); R2 amended so L0 no longer gates
+L2/L3/L4.** 👉 `docs/gauntlet/ARCH/REVIEW.md` is the verdict; 17 agents, all evidence under
+`docs/gauntlet/ARCH/`.
+
+**What the review found, and it was not what I expected.** `src/` was frozen 27 days
+(`0719673`, 2026-07-28) and **no standing rule caused it**. Six L0 workflow scripts carry
+*"This lane touches no source code"* — correct for a survey lane, wider than §4's two-file
+no-touch list — and R2 made L0 always-first while L0's gate is markdown integrity. **Arming
+a different lane needs ZERO rule edits.**
+
+### ⛔ DO THIS FIRST: run L2, a script — not a swarm
+
+`skilldata.xml` holds **75 skills × 182 rows** with exact `<chi>`/`<cooldown>`, unread for
+30 days, while `src/config/skills.ts` ships **three** skills with **two cooldowns
+hand-guessed**. Deterministic transform → generator + byte-check (§2's script rule).
+`741fd31` is the proven shape: 710 nodes to CONTRACT in ONE commit, 159-line script +
+177-line byte-pin test.
+
+⚠️ **Carry the C2 caveat** onto the generated config header: all four data XMLs are the
+**Android** build, so every ported row is **v0.682** until a web-side artifact says
+otherwise (`GAUNTLET.md` §2.1).
+
+### ✅ Backups — closed this session, was the single biggest exposure
+
+58 commits had been unpushed since 2026-07-28 and `reference/` (8.2 GB, gitignored) had one
+copy. Now: repo pushed; the irreplaceable 592 MB seed is at
+`github.com/godman4242/shs-d1-1-reference` release `seed-2026-08-24` (185,103,357 B,
+**private**, `zstd -t` verified). 7.6 GB is derived and regenerable — recipe in
+`docs/RECOVERY.md`. The three custom crackers now have a tracked mirror in
+`scripts/payload/` (copied, **not** moved — L0's banked evidence cites `reference/tools/`).
+**Synology is NOT reachable** from this Mac; that rsync is still owed.
+
+---
+
 ## ⏸ SESSION 27 (2026-08-23) — L0 STILL MID-FLIGHT. **DO NOT RESTART IT.**
 
-**No wall hit this session.** Every wave returned `INTEGRITY: CLEAN` — 22+ agents,
-**zero deaths, zero VOID verdicts**. Salvaged mid-flight on a usage warning, nothing lost.
+**Wall #11 landed (`0d8aa6d`)** — the line that used to say "no wall hit this session" was
+written before it and never corrected. Every wave still returned `INTEGRITY: CLEAN` — 22+
+agents, **zero deaths, zero VOID verdicts**; two "dead" batches were recovered off disk.
 👉 `docs/gauntlet/L0/SALVAGE.md` has the full wave table and both owner rulings.
 
 ### State: judged **1,693 of 1,771** · **553 overturns on 269 sentences** · gate L0-D GREEN
@@ -230,7 +267,12 @@ bash scripts/gauntlet/checkpointL0.sh run12 <tag> <transcript-dir>
 
 ---
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — CLOSE LANE L0
+## 🅿️ PARKED — the L0 close-out kickoff (was "next"; R2 amended 2026-08-24)
+
+> **No longer the next session.** R7 rules the ratio **10/90** and names **L2 — skills**
+> as the chop; R2 no longer lets L0 gate L2/L3/L4. L0's remaining work (WF-4, the ledger
+> rewrite) is real and still accurate below — it is now **parallel, not prior**. Run it
+> after a lane a player can see has landed.
 
 **Activate first** — a fresh session will not do this for you:
 
@@ -373,24 +415,6 @@ already shipped a bug into a live wave. It states the dry-loop convergence risk 
 is hit, with "take a ruling" rather than "soften the gate". It marks the two GAUNTLET.md
 corrections VERIFIED first-hand rather than inherited, and it discloses a known tooling
 defect instead of leaving it to be rediscovered. The next change would be churn.
-```
-
-**Start command** (from the repo root):
-
-```bash
-cd "/Users/kheshav/kheshav-code/SSHD 1-1" && git log --oneline -1 && npm test 2>&1 | tail -5 \
-  && python3 scripts/gauntlet/gateL0.py --root docs/gauntlet/L0 \
-       --ledger docs/research/REBUILD_READINESS.md --out /tmp/gate.json
-```
-
-**Bar verdict: ✅ meets the "cannot be improved further" bar.** It front-loads every banked
-number so nothing is re-derived; it carries §0's law, the overturn rule, the three
-fail-closed accounting rules, and the NEW one-workflow rule that this session's wall
-produced; it names the exact scripts, args and the `tag` whose absence has already cost
-work; it states the dry-loop convergence risk **before** it is hit, with the instruction
-to take a ruling rather than soften a gate; it marks the two GAUNTLET.md corrections as
-VERIFIED first-hand rather than inherited; and it ends with a concrete, checkable first
-action. The next change would be churn.
 
 ### Two owner decisions queued (neither blocks the next session)
 

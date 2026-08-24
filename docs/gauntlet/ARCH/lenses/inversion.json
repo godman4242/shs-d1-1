@@ -1,0 +1,104 @@
+{
+  "lens": "inversion",
+  "note": "~/learning/Notes/Inversion — solving problems backwards.md",
+  "question": "What would GUARANTEE SSHD 1:1 never ships? Enumerate the mechanisms, then check how many are already present.",
+  "method": "Enumerated seven mechanisms that reliably produce a never-shipped software project, then tested each against this repo with a command. Ranked by how present each already is, not by how bad it would be.",
+  "integrity": "CLEAN",
+  "mechanisms_enumerated": [
+    "M1 the only stopping rule is emergent, not budgeted -> loops that cannot terminate",
+    "M2 done is defined only at the leaf, never at the root -> 'are we finished?' is not a computable question",
+    "M3 the legal/external precondition for shipping is never discharged",
+    "M4 the highest-information feedback loop (a human playing it) is starved while a low-yield one runs at full rate",
+    "M5 scope motion is monotone upward: mandatory lanes, ratcheting floors, no cut mechanism",
+    "M6 the process certifies itself as unimprovable, so it stops being improved",
+    "M7 the start ritual carries a false alarm, so every run begins by discounting its own gate"
+  ],
+  "verdict": "All seven are present. Five are present at full strength and three of those are individually sufficient to guarantee non-shipment.",
+  "summary": "Inverted, this repo is close to an optimal never-ship machine, and the evidence is arithmetic rather than opinion. 51 commits since the gauntlet was adopted on 2026-08-13, ZERO touching src/; src/ is byte-identical to 0719673 (2026-07-28); docs/ now holds 1,478,216 words against 12,217 lines of game code, and docs/gauntlet alone is 30M against src/'s 752K. The three deepest mechanisms: (1) the engine's ONE termination rule, GAUNTLET.md:193 'loop until two consecutive rounds surface nothing new', was measured on the very first lane to have a fixed point (RESUME_HERE.md:36-38, spawn rate 1.00 then 1.14) and required owner ruling 71b612d to stop -- and that rule governs all 13 lanes; (2) no file in the repo defines what shipped means: grep for descope|minimum shippable|MVP|release criteria across GAUNTLET.md, MASTER_SPEC.md, CLAUDE.md, RESUME_HERE.md and ship-bar.md returns ZERO hits, and two non-isomorphic roadmaps (MASTER_SPEC STAGE 0-6 vs GAUNTLET L0-L11, 13 rows) both exist with neither marked superseded; (3) the ship gate at GAUNTLET.md:320 requires re-reading a licence grant that has never been archived -- 31 days after commit 28e7d0b adopted the ruling, reference/permission/ still contains only the README asking for it. Supporting: the owner has PLAYED the build exactly once in 27 sessions (SESSION-LOG.md:911-912, 2026-07-18, 37 days ago) and that single play produced 'the deepest correction the project has had'; GAUNTLET.md:125 scoped L0 at '~8' agents and 189 critic JSONs are on disk (23x); and GAUNTLET.md:379-381 grades the engine 'cannot be improved further' in the same document whose scale estimate was off 23x and whose termination rule was disproved. Net word delta of my proposed edits: -125, so ARCH-E holds, and INV-6 and INV-7 are DELETIONS, so ARCH-C holds.",
+  "wrote_to": "/Users/kheshav/kheshav-code/SSHD 1-1/docs/gauntlet/ARCH/lenses/inversion.json",
+  "findings": [
+    {
+      "id": "INV-1",
+      "claim": "The engine's only termination rule was measured to be non-terminating on the first lane it was applied to, it took a human override to stop, and it still governs all 13 lanes unchanged.",
+      "cite": "docs/GAUNTLET.md:193 + RESUME_HERE.md:36-38 + commit 71b612d",
+      "evidence": "$ sed -n '193,196p' docs/GAUNTLET.md\n5. **LOOP UNTIL DRY.** Keep spawning finders until **two consecutive rounds\n   surface nothing new**. Dedup against everything *seen*, not everything\n   *confirmed* -- otherwise critic-rejected findings reappear each round and the\n   loop never converges.\n\n$ sed -n '36,38p' RESUME_HERE.md\nThe t1 tier is a **fixed point**, not a backlog: split by tier, t2 decays (0.13, 0.37) and\nemits **zero** overturn-claimers, while every t1 wave spawns ~one new overturn-claimer per\none judged (**1.00**, then **1.14**). It never goes dry at any budget. Owner ruled: bank\n\n$ git log --format='%h %s' | grep 71b612d\n71b612d gauntlet L0: owner ruling -- judging STOPS after wave E, and the citeLint false negative is logged",
+      "severity": "kills-project",
+      "rule_targeted": "GAUNTLET.md §3 item 5 — LOOP UNTIL DRY",
+      "proposed_change": "Replace §3.5 with: '5. **LOOP UNTIL DRY OR SPENT.** Declare the round budget BEFORE spawning. Stop at two consecutive rounds that RAN and surfaced nothing, or at the budget — whichever comes first. Non-convergence at budget is a RESULT: bank it, never soften the gate. Dedup against everything *seen*, not everything *confirmed*.' Rollback: revert the four lines. Second-order cost: a lane can now close with a known-incomplete sweep, so the banked non-convergence number becomes load-bearing and must be written into the gate receipt.",
+      "is_deletion": false,
+      "word_delta": 16
+    },
+    {
+      "id": "INV-2",
+      "claim": "Nothing in the repo defines what 'shipped' means, and two non-isomorphic roadmaps both claim authority, so the ordering rule cannot tell that a markdown-rewrite lane sits on the critical path ahead of every playable milestone.",
+      "cite": "docs/GAUNTLET.md:139 + docs/MASTER_SPEC.md:70-372 + pasted grep",
+      "evidence": "$ grep -rniE \"descope|de-scope|scope cut|cut the scope|minimum shippable|MVP|ship date|release criteria\" docs/GAUNTLET.md docs/MASTER_SPEC.md CLAUDE.md RESUME_HERE.md .claude/ship-bar.md; echo \"EXIT=$?\"\nEXIT=1        <- zero hits in all five governing files\n\n$ grep -n \"STAGE\" docs/MASTER_SPEC.md\n70:STAGE 0 -- SCAFFOLD ... 132:STAGE 1 ... 192:STAGE 2 ... 297:STAGE 3 ... 322:STAGE 4 ... 353:STAGE 5 ... 372:STAGE 6 -- POLISH\n$ grep -cE '^\\| \\*\\*L[0-9]+' docs/GAUNTLET.md\n13            <- a second, 13-row roadmap; neither doc marks the other superseded\n\n$ grep -n \"Ordering rule\" docs/GAUNTLET.md\n139:**Ordering rule:** L0 first, always. Then **highest (leverage / risk)**\n\nL0's own gate (GAUNTLET.md:125) is 'rewrite REBUILD_READINESS.md' -- a lane whose entire output is a markdown file is ordered ahead of all 12 others, and no rule in the repo could have flagged that as wrong-ordered because no rule says where the project is going.",
+      "severity": "kills-project",
+      "rule_targeted": "CLAUDE.md — the project has no root-level done criterion; GAUNTLET.md §2 ordering rule",
+      "proposed_change": "Add to CLAUDE.md, above Invariants: '**THE SHIPPABLE BUILD.** CLAUDE.md names it in one sentence — the smallest build a stranger could play start to finish. No lane is planned before that sentence exists, and a lane that does not move that build is fidelity work, queued behind it.' Rollback: delete the paragraph. Second-order cost: naming it forces an owner decision he has so far never had to make, and will retire lanes he wants; that is the point, but it is a real loss. Incident it would have prevented: L0 taking the whole 2026-08-13 -> 2026-08-24 window (commits c2e5df9 .. 0d8aa6d) at position 1 of 13.",
+      "is_deletion": false,
+      "word_delta": 43
+    },
+    {
+      "id": "INV-3",
+      "claim": "The gate that blocks any public ship requires re-reading a licence grant whose evidence has never been archived; 31 days after the ruling landed, reference/permission/ contains only the README asking for it.",
+      "cite": "docs/OWNER_PERMISSION_RULING.md:15 + docs/GAUNTLET.md:320 + commit 28e7d0b (2026-07-24)",
+      "evidence": "$ grep -n \"evidence not yet archived\" docs/OWNER_PERMISSION_RULING.md\n15:Status: **owner-attested; evidence not yet archived in this workspace.**\n\n$ ls -la reference/permission/\ntotal 8\ndrwxr-xr-x@  3 kheshav  staff   96 Jul 24 00:25 .\n-rw-r--r--@  1 kheshav  staff  270 Jul 24 00:25 README.md    <- the only file; 270 bytes; it is the request, not the evidence\n\n$ git log --format='%h %ad %s' --date=short -- docs/OWNER_PERMISSION_RULING.md | tail -1\n28e7d0b 2026-07-24 Forum harvest COMPLETE ... + Lut Games permission ruling adopted\n\n$ sed -n '319,321p' docs/GAUNTLET.md\n+ a ruling amendment as its first commit, and adds a gate that **blocks any\npublic/ship build until the grant's wording is re-checked for text and for\ncommercial scope.**",
+      "severity": "kills-project",
+      "rule_targeted": "NONE — this is an undischarged owner action, not a bad rule",
+      "proposed_change": "No rule edit. Owner action, 5 minutes, blocking: save the Kongregate PM screenshot and the email .eml into reference/permission/, then flip OWNER_PERMISSION_RULING.md:15 to EVIDENCE ON FILE. Until then every art-tracing, hue-matching and verbatim-dialogue decision made since 2026-07-24 rests on an attestation that cannot be re-read, and the ship gate at GAUNTLET.md:320 is undischargeable by construction. Rollback: n/a. Second-order cost: none — archiving evidence removes no option.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "INV-4",
+      "claim": "The single highest-yield feedback loop in the project's history — the owner playing the build — has run exactly once in 27 sessions, 37 days ago, and the build he would play today has not changed in 27 days.",
+      "cite": "docs/sessions/-SESSION-LOG.md:911-912 + commit 0719673 (2026-07-28)",
+      "evidence": "$ grep -rn \"played the build|feel-run\" docs/sessions/-SESSION-LOG.md\n743:  visual eyeball QUEUED for the owner's feel-run\n813:  ... owner feel-run stays queued\n907:  ... item 1 (owner feel-run) stays OPEN\n911:## 2026-07-18 -- OWNER FEEL-RUN VERDICT (gate item 1 CLOSED) -> control-model correction\n912:- **Kheshav played the build and returned the deepest correction the\n913:  project has had -- the CONTROL MODEL is wrong.**\n<- exactly ONE feel-run ever, and by the log's own words it was the most valuable single event in the project\n\n$ git log -1 --format='%h %ad %s' --date=short -- src/\n0719673 2026-07-28 SESSION23 A11.4 fix: distance-driven stride\n$ git log --oneline --since=2026-08-13 -- src/ | wc -l\n0\n$ git diff --stat 0719673 HEAD -- src/\n(empty -- src/ is byte-identical to 27 days ago)\n\nMeanwhile the low-yield loop ran 1,693 times (RESUME_HERE.md:22, judged claims about a markdown ledger).",
+      "severity": "expensive",
+      "rule_targeted": "GAUNTLET.md §3 item 7 — RE-ARM",
+      "proposed_change": "Append to §3.7: 'A lane closes only after the owner has RUN the build it changed, or the lane states in one line that it changed nothing a player can see.' Incident it would have prevented: sessions 24-27 (commits c2e5df9 .. 0d8aa6d) closing four consecutive sessions with no player-visible change and no line saying so. Rollback: delete the sentence. Second-order cost: it puts the owner on the critical path of every lane close, which is a real throughput tax and will sometimes stall a lane overnight — accept it, because the one time it ran it repaid more than 1,693 judged claims did.",
+      "is_deletion": false,
+      "word_delta": 28
+    },
+    {
+      "id": "INV-5",
+      "claim": "Scope motion is monotone upward by construction — 13 mandatory lanes, floors that may only rise, and no mechanism anywhere to cut anything — so the plan cannot converge on a release even in principle.",
+      "cite": "docs/GAUNTLET.md:125-142 + docs/GAUNTLET.md:243-244 + pasted grep",
+      "evidence": "$ sed -n '243,244p' docs/GAUNTLET.md\n- **The floors** -- tracing >= 0.9005 . held-out >= 0.8490 (spent, **UP only**) .\n  height <= 140.5. A lane raises a floor or leaves it; it never lowers one.\n\n$ grep -cE '^\\| \\*\\*L[0-9]+' docs/GAUNTLET.md\n13            <- 13 lane rows, not one marked optional, deferrable or cuttable\n\n$ grep -rniE \"descope|de-scope|scope cut|cut the scope|optional lane|may be skipped\" docs/GAUNTLET.md CLAUDE.md RESUME_HERE.md; echo \"EXIT=$?\"\nEXIT=1        <- zero hits\n\nAnd the target is unfalsifiable in the direction of done: the reference game is dead (GAUNTLET.md §0), so '1:1' has a floor that ratchets up and no ceiling that ever says stop.",
+      "severity": "expensive",
+      "rule_targeted": "GAUNTLET.md §2 — the lane board",
+      "proposed_change": "Add one line under the lane table: '**Any lane may be CUT to a DIVERGENCES entry by owner ruling; a lane not cut is committed to.**' Incident it would have prevented: R4 (GAUNTLET.md:349) already parks L7 indefinitely on 'Kheshav's ears' with no cut path, so the audio lane is neither scheduled nor dropped — it just sits. Rollback: delete the line. Second-order cost: a cut lane is a permanent, honest hole in the 1:1 claim, and DIVERGENCES.md is already 3,594 lines — this makes it longer, and it should.",
+      "is_deletion": false,
+      "word_delta": 19
+    },
+    {
+      "id": "INV-6",
+      "claim": "The standing engine grades itself 'cannot be improved further' inside the same document whose agent-scale estimate proved 23x low and whose termination rule was disproved on its first lane — a self-certification that is the mechanism preventing the engine from being fixed.",
+      "cite": "docs/GAUNTLET.md:379-381 + docs/GAUNTLET.md:125 + pasted ls",
+      "evidence": "$ sed -n '379,382p' docs/GAUNTLET.md\n## §7 BAR SELF-REPORT\n\n**Does this reach the \"cannot be improved further\" bar? YES -- the next change\nwould be churn.**\n\n$ sed -n '125p' docs/GAUNTLET.md | grep -o 'Opus . small (~8)'\nOpus . small (~8)\n$ ls docs/gauntlet/L0/critics/ | wc -l\n189           <- 189 critic JSONs against a '~8' estimate: 23x\n$ ls -d docs/gauntlet/L0/run* | wc -l\n15\n$ git log --format='%s' | grep -ci wall\n8             <- and the kickoff records 11 walls total on this one lane\n\nThe same session that produced this review lists SEVEN defects (D1-D7) in the document that calls itself unimprovable (docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md:44-100).",
+      "severity": "expensive",
+      "rule_targeted": "GAUNTLET.md §7 — BAR SELF-REPORT",
+      "proposed_change": "DELETE §7 entirely (226 words). A standing engine does not get to certify itself; its incident record does that, and its incident record now contains 11 walls, a 23x scale miss, a disproved termination rule and a doc/code drift bug (D1). Rollback: git revert the hunk. Second-order cost: the bar self-report is a genuine standing habit (feedback-kickoff-bar-verdict) and deleting it here could read as licence to skip it on kickoffs — so the deletion is scoped to STANDING engine files only; per-session kickoffs keep theirs, because a kickoff is judged once and a standing engine is judged forever.",
+      "is_deletion": true,
+      "word_delta": -226
+    },
+    {
+      "id": "INV-7",
+      "claim": "The paste-ready start prompt that begins every gauntlet run hard-codes a suite baseline that is now false, so every run opens by seeing its own baseline check fail and learning to discount it.",
+      "cite": "docs/GAUNTLET.md:298 + pasted npm test",
+      "evidence": "$ sed -n '298p' docs/GAUNTLET.md\nFIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 56 files / 894),\n\n$ npm test 2>&1 | tail -4\n Test Files  63 passed (63)\n      Tests  1001 passed (1001)\n\n56/894 vs 63/1001 -- the engine's own first instruction is a false alarm, and it has been one since at least 2026-08-22 (commit 8f332e9 landed tests/workflowScripts.test.ts without touching line 298). This is the same class as kickoff D1: a number lives in prose with nothing binding it to the thing it describes.",
+      "severity": "minor",
+      "rule_targeted": "GAUNTLET.md §5 — the paste-ready prompt",
+      "proposed_change": "DELETE the hard-coded counts: '(git log -1 + npm test -> 56 files / 894)' becomes '(git log -1 + npm test, all green)'. A number that must be hand-maintained in prose will always drift; the only durable form is 'green'. Rollback: restore the five words. Second-order cost: the run loses a cheap tripwire for an accidentally-deleted test file — acceptable, because the pre-commit hook already refuses a red suite (.githooks/pre-commit).",
+      "is_deletion": true,
+      "word_delta": -5
+    }
+  ],
+  "net_word_delta": -125,
+  "gate_self_check": {
+    "ARCH-A": "PASS — every finding cites a commit hash, a file:line, or pasted command output, each re-run by this agent",
+    "ARCH-C": "PASS — INV-6 and INV-7 are deletions",
+    "ARCH-E": "PASS — net -125 words"
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "integrity": "CLEAN",
+  "wrote_to": "/Users/kheshav/kheshav-code/SSHD 1-1/docs/gauntlet/ARCH/history/mid.json",
+  "slice": "mid — SESSIONS 14-23, 2026-07-26 .. 2026-07-28, 61 commits",
+  "summary": "The art/anim era ran the SAME ratio failure the ARCH kickoff treats as new. Between SESSION18 A4.4 (24c56ef) and SESSION23 A11.1 (3bd5814) — four sessions, 29 commits, 25 hours — src/game/DuelScene.ts was never touched; the only src/game/ files that moved were IdleFighterScene.ts (the ?art= debug route) and art/fighterShapes.ts. The kickoff written at SESSION20's close was titled 'PUT THE OG FIGHTER IN THE GAME' and pinned gate A7-F specifically 'so a wiring session cannot quietly become an art session'; it was rewritten into an art session 7 minutes later (757438c 00:19 -> a415411 00:26) and the wiring slipped twice more. Second structural finding: the gate apparatus grew 742 -> 894 tests plus inkShare, colourRuler, scorePose, held-out frames and a tuning loop, and in this window 9 separate commits attribute their originating finding to the owner LOOKING at the render — every one of them on a fully green suite. The gates confirmed defects after the owner named them (37801fe: 'he named the COUNT exactly - it is two'); they did not originate them. Third: the gate that everything hung on was graded against a contaminated target for ten days — reference/combat_idle_measurements.md called rows 616-638 'Kasa (hat)' when those rows are the health bar and the SOUND360 watermark, and SESSION18's kickoff labelled that table '✅ WHAT WE *CAN* GRADE AGAINST, AND IT IS REAL' and 'the strongest scale evidence in the repo'. That contamination drove an owner ruling (44ef334). Two standing rules are inverted or unenforced in practice: -SESSION-LOG.md ('updated per milestone, never at the end') received 723 lines covering SESSIONS 18-22 in one wrap commit and was untouched across all of SESSIONS 16/17/19/20/21, while RESUME_HERE.md ('refreshed in the SAME commit') is checked by nothing, sails through a docs-only fast-path in the pre-commit hook, and silently carried the wrong kickoff in 4601761 while that commit's subject asserted 'SESSION 24 kickoff committed and graded'. Kickoff self-grades have zero predictive value: 5 of 9 kickoffs in this slice were repaired or rewritten within 34 minutes of being graded 'bar: met'.",
+  "findings": [
+    {
+      "id": "MID-1",
+      "claim": "SESSIONS 19-22 shipped four consecutive sessions of art work behind a `?art=` debug query param while the game the player loads still rendered the old hand-authored fighter — the exact precedent for the ratio failure the ARCH kickoff measures for August, and no rule stopped it.",
+      "cite": "3bd5814 / 24c56ef / 757438c / a415411",
+      "evidence": "$ git log --oneline --format='%h %ad %s' --date=format:'%m-%d %H:%M' 24c56ef..3bd5814 -- src/game/DuelScene.ts\n3bd5814 07-28 20:39 SESSION23 A11.1: the duel draws the composed OG fighter - drawSamurai out\n(the ONLY hit — DuelScene.ts untouched across SESSIONS 19,20,21,22)\n\n$ git log --format='%h' 44ef334..585c393 | while read c; do git show --stat --format='' $c -- src/game/; done | grep -oE 'src/game/[a-zA-Z/]*\\.ts' | sort -u\nsrc/game/IdleFighterScene.ts\nsrc/game/art/fighterShapes.ts\n\n$ git log --oneline 44ef334..585c393 | wc -l\n      29\n\nsrc/main.ts:36  const wantsIdleArt = params.get('art') === 'idle';\nsrc/main.ts:43  const wantsDressedArt = params.get('art') === 'dressed';\n\n757438c (07-28 00:19) body: \"SESSION 21 kickoff: PUT THE OG FIGHTER IN THE GAME. Two sessions have gone into a fighter DuelScene does not draw ... and pins the fighter's appearance as UNCHANGED (A7-F) so a wiring session cannot quietly become an art session.\"\n\na415411 (07-28 00:26, SEVEN MINUTES LATER) body: \"'Put the OG fighter in the game' moves to SESSION 22 with its gates already drafted (SESSION21_KICKOFF SS7). DuelScene.ts:691 still calls drawSamurai.\"\n\ndocs/sessions/SESSION22_KICKOFF.md:206 (NOT-DONE list): \"`DuelScene.ts` still calls `drawSamurai`) · the other 157 animations · all audio ·\"",
+      "severity": "kills-project",
+      "rule_targeted": "CLAUDE.md — \"Do not advance to the next stage until the current stage's gate is 100% green.\" (it has no clause about WHERE the work is reachable, so four sessions of green gates graded a debug route)",
+      "proposed_change": "Add one invariant line to CLAUDE.md: \"**Ship to the default route.** No more than one consecutive session may land behind a debug flag; the second wires it into what the player loads.\"",
+      "is_deletion": false,
+      "word_delta": 26
+    },
+    {
+      "id": "MID-2",
+      "claim": "In this entire slice not one visual defect was originated by a gate — 9 commits attribute their finding to the owner looking at the render, every one of them on a fully green suite; the instruments only confirmed defects after the owner had already named them, sometimes down to the count.",
+      "cite": "37801fe / c824bd5 / 290ebec / 0719673",
+      "evidence": "$ git log --since=2026-07-26 --until=2026-07-29 --format='%h|%s|%b' | grep -iE \"owner (feedback|looked|verdict|ruling|LOOK|correction|asked|design)\"\n0719673|SESSION23 A11.4 fix ... (owner LOOK)|Owner verdict on the moving duel: feet cycled slower than the character\ndf521c3|SESSION23 kickoff v2 ...|The owner asked (2026-07-28): \"look for what we are lacking...\"\ned25c20|SESSION22 A9.4 by OWNER RULING ...|The owner ruled in-chat 2026-07-28: \"not perfect, but i will accept it\"\n37801fe|SESSION21 A8.3 ...|The owner looked at the render: \"the garments made have too much black outline\"\nc824bd5|SESSION21 kickoff ...|The owner looked at the whole-figure comparison and said: \"if you did you\"\na415411|SESSION21 kickoff rewritten ...|The owner looked at the render and ruled it not good enough yet\n60b12a7|SESSION20 kickoff ...|The owner asked for this session in these words\n290ebec|SESSION19 A5.4 ...|Owner feedback (\"I see some empty spots, add the sleeves if the source says\")\n44ef334|SESSION18 A4.5 CLOSED ...|NEW STANDING INVARIANT, from owner correction\n6a12932|SESSION15 kickoff §2 ...|Owner feedback: \"i cannot find whether it is 90%\"\n\n37801fe body: \"He was right, and he named the COUNT exactly - it is two. Nothing in the repo could say which two, so this builds the gate.\"\n\nc824bd5 body: \"And why the score missed all of it: we are 25-28% too NARROW through the mid-body ... and 5.59x too WIDE at the ankles. The two errors partly cancel in a whole-figure width profile, which is exactly how 0.9006 was reached with the picture visibly wrong.\"\n\n7ee71d1 (A11.4, feet skating) shipped: \"Suite 56 files / 892 green - tsc x2 0 - eslint 0 - fidelity 55/55 autonomous\" — every gate green, caught by 0719673 \"owner LOOK\".",
+      "severity": "kills-project",
+      "rule_targeted": "CLAUDE.md gate invariant + .claude/ship-bar.md item 3 (\"verified before claiming done/fixed/passing — build + tests + lint green with the output PASTED\") — both define green as machine-green only",
+      "proposed_change": "Promote the per-session gate row that SESSION 22 already invented into CLAUDE.md: \"**A gate is not green until a human LOOK is recorded in the wrap commit body.** A queued look is a RED item, not a queued one.\"",
+      "is_deletion": false,
+      "word_delta": 26
+    },
+    {
+      "id": "MID-3",
+      "claim": "GATE A4-F was declared PASS and gate A4-D was escalated to an owner ruling, both graded against reference/combat_idle_measurements.md whose landmark table mistook the HUD health bar and watermark for the fighter's hat — the SESSION 18 kickoff labelled that table '✅ ... AND IT IS REAL' and 'the strongest scale evidence in the repo'.",
+      "cite": "24c56ef / 44ef334 / docs/DIVERGENCES.md:2040",
+      "evidence": "docs/DIVERGENCES.md:2040 — \"### ⛔ D-A5.1b — `reference/combat_idle_measurements.md` IS HUD-CONTAMINATED\"\n  GREEN health-bar rows in x860..1080 :  y 626 .. 634\n  YELLOW watermark rows in same band  :  y 617 .. 699\n  measured fighter topmost pixel      :  y 641\n\"Its landmark table calls rows 616-638 'Kasa (hat), 22px tall'. That is the health bar and the watermark. Every landmark below inherits the shift ... A4-F's '2.8 % low against 131.8' was graded against an inflated target; corrected, the sign flips and the error shrinks.\"\n\ndocs/sessions/SESSION18_KICKOFF.md:187-189 — \"**P9 — ✅ WHAT WE *CAN* GRADE AGAINST, AND IT IS REAL.** `reference/combat_idle_measurements.md` (2026-07-17) measured the idle fighter from three 1080p frames\" ... \"That is the strongest scale evidence in the repo\"\n\n24c56ef body: \"GATE A4-F PASS — 128.164 stage px against §P9's kasa-less 131.8, 2.8% low, inside ±5%.\"\n\n7b6190a body: \"This does NOT dissolve A4-D ... the upper-body miss was substantially a measuring error.\"\n\n44ef334 body: the owner ruling that MOVED the four width targets into gate A5-C was issued on that same contaminated diagnosis — \"OWNER RULING on the escalated width gate: it is not deleted, it MOVES.\"",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md — \"When a measurement doc and a frame disagree, **the frame wins**\" (added BY this incident at 44ef334; it says nothing about validating a gate's TARGET before grading against it)",
+      "proposed_change": "Append to that invariant: \"— and a gate's target numbers must be re-derived from the frame in the commit that first grades against them.\"",
+      "is_deletion": false,
+      "word_delta": 19
+    },
+    {
+      "id": "MID-4",
+      "claim": "The kickoff commit that CREATED the 'open a frame before grading' invariant had itself not opened the frames: four of its own prerequisites, including the ⛔ prohibition it self-graded as its best feature, were killed 75 minutes later by the first step that looked.",
+      "cite": "44ef334 / 7b6190a",
+      "evidence": "44ef334 (07-27 13:09) wrote BOTH the CLAUDE.md invariant AND SESSION19_KICKOFF.md. Its own body: \"⭐ It kills two thirds of its own source material on the first page ... the overworld camera is unusable at ANY resolution. Saying so in §P3 is worth more than the frames were.\"\n\ngit show 44ef334:docs/sessions/SESSION19_KICKOFF.md §P3 — \"⛔ **THE OVERWORLD CAMERA IS ZOOMED OUT AND THE FIGHTER IS ~35 px TALL** even at full 1080p ... Verified by pulling t=350 s from `zFtCaTO0_1M.mp4` ... **Do not try to trace from an overworld frame.**\"\n\n7b6190a (07-27 14:24, 75 min later) body: \"Chose the frames to trace the outfit from, by opening them. Four of the kickoff's own prerequisites did not survive the look. Frames: trace from reference/frames/s19_trace/zFt_0061.png (t=590.0s, zFtCaTO0_1M)\" — i.e. the whole outfit was traced from the video the kickoff had banned.\n\ndocs/DIVERGENCES.md — \"**§P3's 'the overworld is unusable at ANY resolution' is over-general.** True at t=350 s (~35 px fighter), false at t=590 s (**233 px**, crisp, and the only place the whole outfit is unoccluded). The primary tracing frame *is* an overworld frame.\" Also killed: §P7's palette (it sampled the ENEMY, so the garment list lost an item), the obi's size (~44x55 px, not ~15), and the 'blue diagonal is a slash VFX' claim (it is the weapon).",
+      "severity": "expensive",
+      "rule_targeted": "The kickoff-authoring bar (\"polish to 'can't get better' ... explicitly report whether the bar was reached\") — a kickoff that generalises one sample into a ⛔ universal ban still self-graded ⭐",
+      "proposed_change": "None. Report only — this is an instance of the already-proven \"open a frame and look\" rule, and adding a second rule about single-sample ⛔ bans would be churn. The value here is the counter-example to §1's claim that the frame-wins rule has a clean record: it was violated by its own authoring commit.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "MID-5",
+      "claim": "SESSION 19 A5.3 declared 'GATE A5-A MET' while pinning a misdiagnosis as a deliberate design state with a test literally named 'a KNOWN gap, not an oversight' — the region it called the gi body was the near sleeve, and the test was deleted 12 minutes later on owner feedback.",
+      "cite": "08537df / 290ebec",
+      "evidence": "08537df (07-27 16:28) subject: \"SESSION19 A5.3: the rest of the outfit — GATE A5-A MET, 5 traced garments\"\nbody: \"THE ONE DOMINANT DEFECT LEFT, declared rather than hidden: bare arms paint OVER the gi ... pinned by a test named 'leaves the arm slots bare -- a KNOWN gap, not an oversight'.\"\n\n$ git show 290ebec -- tests/composePose.test.ts\n-   * ⚠️ THE ARMS ARE NOT DRESSED AND THEY DRAW IN FRONT OF THE GI. Pinned as a\n-   * KNOWN state rather than left implicit ... so no sleeve could be cut\n-   * from the tracing frame, and a bare near arm still paints over slot 15.\n-  it('leaves the arm slots bare — a KNOWN gap, not an oversight', () => {\n-    for (const slot of [1, 2, 19, 20]) {\n+  it('sleeves the upper arms and leaves the forearms and hands bare', () => {\n+    expect(OG_DRESSED_SLOT_SHAPES[19]).toEqual([9019]);\n\n290ebec (07-27 16:40, TWELVE MINUTES LATER) body: \"Owner feedback ('I see some empty spots, add the sleeves if the source says so') sent me back to the frame at three ink thresholds, and the region A5.3 called 'gi body' and assigned to slot 15 is THE NEAR SLEEVE ... That single mis-read is why the arm rendered bare over a vest-sized gi.\"",
+      "severity": "expensive",
+      "rule_targeted": "NONE — the 'declare rather than hide' divergence norm (docs/DIVERGENCES.md) has no standing rule text, and its incident record is that it converts an undiagnosed defect into a test-pinned invariant",
+      "proposed_change": "Add to CLAUDE.md session discipline: \"A declared divergence may not be pinned by a test in the same commit that first diagnoses it.\"",
+      "is_deletion": false,
+      "word_delta": 18
+    },
+    {
+      "id": "MID-6",
+      "claim": "The score floor built as GATE A6-C 'may only move UP' was lowered by owner override 15 hours after it was created, using an escape hatch the same kickoff pre-wrote next to the words 'A9-G forbids lowering the floor' — and 27 days later it has still never moved back up.",
+      "cite": "9aa9cb7 / ed25c20 / tests/a6Score.test.ts:109",
+      "evidence": "$ git log --oneline --format='%h %ad %s' --date=format:'%m-%d %H:%M' -- tests/a6Score.test.ts\ned25c20 07-28 14:52 SESSION22 A9.4 by OWNER RULING: the gi lands, GATE A9-A met in full\n2112b84 07-28 14:18 SESSION22 A9.6: the branch is on screen at the measured facing - all floors ROSE\n57dd541 07-28 00:14 SESSION20 A6.4: the loop ran - one winner of twelve\n10f1d88 07-27 23:52 SESSION20 A6.5 (gi)\n9aa9cb7 07-27 23:44 SESSION20 A6.3: the score becomes a committed floor - GATE A6-C MET\n\n$ git show ed25c20 -- tests/a6Score.test.ts\n-const FLOOR_HELDOUT = 0.8618;\n+/** ⛔ RE-BASED DOWN 0.8618 → 0.8490 BY THE OWNER'S RULING ... From here the floor may only move UP again. */\n+const FLOOR_HELDOUT = 0.8490;\n\n$ grep -n 'FLOOR_HELDOUT' tests/a6Score.test.ts\n109:const FLOOR_HELDOUT = 0.8490;      <- unchanged since 2026-07-28, i.e. 27 days\n\ndocs/sessions/SESSION22_KICKOFF.md:258 (§5 gate item 8) — \"Held-out ≥ 0.8618, height ≤ 140.5 — floors NOT lowered\"\ndocs/sessions/SESSION22_KICKOFF.md §6 Risk 1 — \"Mitigation: A9-G forbids lowering the floor. If the trade is real, both numbers go in the commit and the owner rules.\" — the prohibition and its own override in one sentence.",
+      "severity": "expensive",
+      "rule_targeted": "NONE — the floor/ratchet pattern is written per-kickoff, never in CLAUDE.md, so nothing standing governs when a ratchet may be re-based",
+      "proposed_change": "None for the standing rules. Report only: a ratchet whose mitigation sentence contains its own override is a LOG, not a gate — stop counting such rows as gate items in the wrap regrade.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "MID-7",
+      "claim": "SESSION 22's wrap fired before the session was done: it declared 'regrade green ... Bar self-report: met' with gate §5 item 13 sitting in the handoff's 'Awaiting human/browser verification' list, then the very next commit landed the skipped step A9.4 and lowered a floor the wrap had just certified as 'held and ROSE'.",
+      "cite": "585c393 / ed25c20",
+      "evidence": "$ git log --format='%h %ad %s' --date=format:'%m-%d %H:%M' -1 585c393\n585c393 07-28 14:25 SESSION22 A9.7 wrap: regrade green, SESSION 23 kickoff, handoff compacted\n$ git log --format='%h %ad %s' --date=format:'%m-%d %H:%M' -1 ed25c20\ned25c20 07-28 14:52 SESSION22 A9.4 by OWNER RULING: the gi lands, GATE A9-A met in full - all seven\n\n585c393 body: \"scorePose: tracing 0.9106 / held-out 0.8671 / height 140.48 - every committed floor held and ROSE; tests/a6Score.test.ts diff vs dc9bea6 is the 2641 import only (floors untouched, proven)\" ... \"Bar self-report: met.\"\n\n$ git show 585c393:RESUME_HERE.md | grep -n -i 'human\\|band crop'\n107:## Awaiting human/browser verification\n113:3. **§5 item 13 — look at the three band crops** (`renders/band_A/B/C.png`,\n\ndocs/sessions/SESSION22_KICKOFF.md:247 — \"## §5 GATE (binary — do not advance on a partial)\"\ndocs/sessions/SESSION22_KICKOFF.md item 13 — \"**A human looked at ALL THREE band crops and said what closed** | the verdict, in the commit\"\n\nStep order actually committed: A9.1a, A9.1, A9.2, A9.3+A9.5, A9.6, A9.7 WRAP, then A9.4. The kickoff order was A9.1..A9.7.",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md — \"Do not advance to the next stage until the current stage's gate is 100% green.\" Its incident record in this slice is zero saves and one clean bypass that stood unnoticed for 27 days.",
+      "proposed_change": "DELETE the line — it is superseded by MID-2's bound replacement, not abandoned. It delegates its own definition (\"the gate\" is whatever the current kickoff says), has zero recorded saves in this slice, and was cleanly bypassed once without notice for 27 days. MID-2's \"a gate is not green until a human LOOK is recorded in the wrap commit body\" names a checkable location; this one does not.",
+      "is_deletion": true,
+      "word_delta": -15
+    },
+    {
+      "id": "MID-8",
+      "claim": "The kickoff self-grade has zero predictive value: 5 of the 9 kickoffs in this slice were repaired or rewritten within 34 minutes of being committed and graded, including one whose repair commit says the wrap's scripted edit silently failed and 'the commit landed anyway'.",
+      "cite": "199fa68 / a01ab8d / 6a12932 / c824bd5 / df521c3",
+      "evidence": "$ git log --format='%h %ad %s' --date=format:'%m-%d %H:%M' -1 <each>\n40988d9 07-26 16:16 SESSION15 kickoff ...        -> 6a12932 07-26 16:34 \"§2: make the bar scannable — the owner could not find it\"   (18 min)\nb18386d 07-27 01:08 SESSION17 kickoff ...        -> a01ab8d 07-27 01:09 \"fix two mislabelled gate letters and a stale decision\"       (1 min)\na415411 07-28 00:26 SESSION21 kickoff rewritten  -> c824bd5 07-28 00:44 \"five differences became ELEVEN, found band by band\"          (18 min)\n585c393 07-28 14:25 SESSION23 kickoff (at wrap)  -> df521c3 07-28 14:54 \"SESSION23 kickoff v2: gap triage executed\"                   (29 min)\n4601761 07-28 21:40 SESSION24 kickoff (at wrap)  -> 199fa68 07-28 21:41 \"wrap fix: RESUME actually carries the SESSION 24 kickoff\"    (1 min)\n\n4601761 subject asserts: \"SESSION 24 kickoff committed and graded\" — body: \"Bar self-report in the kickoff: reached\".\n$ git show 4601761:RESUME_HERE.md | head -13\n| **Ultracode** | ON helps A11.3 | ...      <- SESSION 23's kickoff, not SESSION 24's\n$ git show 199fa68:RESUME_HERE.md | head -13\n| **Ultracode** | ON helps A12.1 + A12.3 | ... <- the real SESSION 24 kickoff\n\n199fa68 body: \"The wrap commit's python splice died on quote nesting and left the old SESSION 23 kickoff on top; the commit landed anyway.\"",
+      "severity": "expensive",
+      "rule_targeted": "The kickoff bar rule (\"polish to 'can't get better', commit it, and explicitly report whether the bar was reached\") — the self-report was 'met'/'reached' in every one of those five cases",
+      "proposed_change": "Delete the self-grade clause \"and explicitly report whether the bar was reached\". Replace nothing: the next session's §0 baseline step already reads the kickoff and is the only grader with evidence.",
+      "is_deletion": true,
+      "word_delta": -8
+    },
+    {
+      "id": "MID-9",
+      "claim": "The two session-discipline rules are inverted in practice: -SESSION-LOG.md ('updated per milestone, never at the end') took 723 lines covering SESSIONS 18-22 in a single wrap commit and was untouched across all of SESSIONS 16/17/19/20/21, while RESUME_HERE.md — the file actually written per step, 47 of 61 commits — is enforced by nothing and sails through a docs-only fast-path in the pre-commit hook.",
+      "cite": "585c393 / .githooks/pre-commit",
+      "evidence": "$ git log --oneline --format='%h %ad %s' --date=format:'%m-%d %H:%M' --since=2026-07-26 --until=2026-07-29 -- docs/sessions/-SESSION-LOG.md\n4601761 07-28 21:40 / 0719673 07-28 21:37 / 7ee71d1 07-28 21:26 / 741fd31 07-28 21:08 / 68cef9c 07-28 20:57 / 3bd5814 07-28 20:39\n585c393 07-28 14:25 SESSION22 A9.7 wrap\n8257518 07-27 13:49 / 40988d9 07-26 16:16 / f33bf8a 07-26 15:44\n(NOTHING between 07-27 13:49 and 07-28 14:25 — i.e. all of SESSION 19 A5.2-A5.5, all of SESSION 20, all of SESSION 21)\n\n$ git show 585c393 --stat -- docs/sessions/-SESSION-LOG.md RESUME_HERE.md\n RESUME_HERE.md                | 812 ++++--------------------------------\n docs/sessions/-SESSION-LOG.md | 723 +++++++++++++++++++++++++++++++++++++\n585c393 body: \"SESSION 22's interim blocks and the SESSION 18-21 records moved VERBATIM to docs/sessions/-SESSION-LOG.md\"\n\n$ git log --oneline --since=2026-07-26 --until=2026-07-29 -- RESUME_HERE.md | wc -l\n      47      (of 61 commits in the window)\n\n$ grep -rln 'RESUME_HERE' tests/ .githooks/\n(no matches — nothing enforces the same-commit rule)\n\n.githooks/pre-commit:\n  NON_DOC=$(printf '%s\\n' \"$STAGED\" | grep -vE '\\.md$')\n  if [ -n \"$STAGED\" ] && [ -z \"$NON_DOC\" ]; then\n    printf '\\n[gate] Docs-only (markdown) change — skipping build/test/lint.\\n\\n'\n    exit 0",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md session discipline — \"`docs/sessions/-SESSION-LOG.md` — updated per milestone, never \\\"at the end.\\\"\" and \"`RESUME_HERE.md` — refreshed in the SAME commit as the change it describes.\"",
+      "proposed_change": "Delete the false half and keep the true one: replace \"updated per milestone, never \\\"at the end.\\\"\" with \"the compaction destination for `RESUME_HERE`.\" — the log has never been a per-milestone artifact and pretending otherwise costs a rule slot.",
+      "is_deletion": true,
+      "word_delta": -2
+    },
+    {
+      "id": "MID-10",
+      "claim": "A chaos plant that never landed was read as a passed chaos test — the harness silently no-opped (BSD sed) and returned green, inside the commit that declared GATE A8-A MET.",
+      "cite": "0e749a4",
+      "evidence": "0e749a4 (07-28 01:15) subject: \"SESSION21 A8.1: the colour ruler - GATE A8-A MET, measured before anything moved\"\nbody: \"3 chaos plants watched RED then reverted; a 4th 'green' was the HARNESS (BSD sed no-op) - check the plant landed before believing it.\"\n\nCLAUDE.md invariant as written: \"Chaos-test every guard: plant the failure, watch red, fix, watch green.\" — a no-op plant satisfies every word of it.",
+      "severity": "minor",
+      "rule_targeted": "CLAUDE.md — \"Chaos-test every guard: plant the failure, watch red, fix, watch green.\"",
+      "proposed_change": "Four words: \"plant the failure, **confirm the plant landed**, watch red, fix, watch green.\"",
+      "is_deletion": false,
+      "word_delta": 4
+    },
+    {
+      "id": "MID-11",
+      "claim": "Three sessions planned to TRACE a weapon from a 233-px-tall compressed video frame when the exact vector art was already in the repo and already documented by id — because nothing had ever rendered 1,806 of the 1,822 extracted shapes, and SESSION 18 had explicitly written 'neither is in the fighter'.",
+      "cite": "20310b9 / docs/research/fidelity/FIGHTER_ART_IDS.md:99 / docs/DIVERGENCES.md:1680",
+      "evidence": "$ ls reference/extracted/shapes/ | wc -l\n    1822\n\n$ git show c73a7a2:docs/research/fidelity/FIGHTER_ART_IDS.md | grep -n 2641\n99:| `weapon13002` | 2642 | **2641** | 70.3×15.5 | 3/3 solid | the wooden branch / training weapon |\n(present as of the SESSION 18 kickoff commit — the id was documented before the tracing plan was written)\n\ndocs/sessions/SESSION18_KICKOFF.md:123 — \"2641    12    1  FFFSS       2662    39   11  SFFFFFFFFS   ← neither is in the fighter\"\ndocs/DIVERGENCES.md:1680 — \"`2641` (training branch) and `2662` (alt head) are **deliberately NOT committed**\"\n\n20310b9 (07-28 08:49) body: \"A8.2 was going to TRACE a saya and a tsuka out of a 233-px-tall JPEG-compressed video figure. It does not need to. Nothing had ever rendered the 1822 shapes in reference/extracted/shapes/ - only the 16 the fighter uses. ... SESSION 18 already had it and skipped it on purpose ('2641 ... not in the fighter') - true of the bare doll, wrong for the dressed one. Tracing a blurry raster of art we already hold exactly is not a 1:1 recreation, it is a worse copy.\"\n\nSame class, repeated: df521c3 body — \"P2 1 of 158 recorded animations transcribed - the bindata is IN the repo\", eight sessions after SESSION15_KICKOFF.md:65 recorded \"**P2 — ✅ THE ANIMATION COMES OUT TOO, AS VECTOR TRANSFORMS. This was the risk.**\"",
+      "severity": "expensive",
+      "rule_targeted": "CLAUDE.md — \"THE TWO GAMEPLAY VIDEOS ARE THE PRIMARY 1:1 REFERENCE ... Copy what is in them, directly. The extracted payload is the skeleton\" — the wording demotes the payload and, read as written, sent three sessions to the video for art the payload already held exactly",
+      "proposed_change": "Add the precedence clause the rule is missing: \"**The payload beats the video where the payload has the asset** — check `reference/extracted/` before tracing anything.\"",
+      "is_deletion": false,
+      "word_delta": 16
+    },
+    {
+      "id": "MID-12",
+      "claim": "The single largest review commit of the era — SESSION 16's whole adversarial converter review, 1,038 insertions across 10 files, '8 findings fixed red-first' — shipped with a one-line commit message, no body and no Co-Authored-By trailer, so none of the 8 findings is named in history.",
+      "cite": "04352a9",
+      "evidence": "$ git cat-file -p 04352a9\ntree c5b7ead2882fa96acf5a5c61675faaaa052039c2\nparent 9badd06cfacb3733cb6841077f5f9b4999b63d08\nauthor godman4242 <97730680+godman4242@users.noreply.github.com> 1785085024 +0800\ncommitter godman4242 <97730680+godman4242@users.noreply.github.com> 1785085024 +0800\n\nSESSION16 R1+R2: adversarial review of the converter, 8 findings fixed red-first\n(end of object — no body, no trailer)\n\n$ git show 04352a9 --stat | tail -3\n tests/svgShape.test.ts              | 435 +++++++++++++++++++++++++++++++++---\n 10 files changed, 1038 insertions(+), 134 deletions(-)\n\nEvery other commit in the slice carries a multi-paragraph body and the Co-Authored-By trailer. The findings survive only in docs/DIVERGENCES.md (+151 lines in the same commit), so nothing was lost — but the commit-message convention broke precisely on the commit a future reviewer would search first.",
+      "severity": "minor",
+      "rule_targeted": "NONE — the commit-message convention is enforced by the harness instruction, not by a repo rule or hook",
+      "proposed_change": "None to the standing rules. Report only.",
+      "is_deletion": false,
+      "word_delta": 0
+    }
+  ]
+}

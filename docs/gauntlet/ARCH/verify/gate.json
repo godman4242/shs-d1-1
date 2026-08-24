@@ -1,0 +1,73 @@
+{
+  "integrity": "CLEAN",
+  "wrote_to": "/Users/kheshav/kheshav-code/SSHD 1-1/docs/gauntlet/ARCH/verify/gate.json",
+  "summary": "Four RED, two GREEN. Every one of the 82 commit hashes I tested resolves to a real commit - the review invented nothing, and its strongest findings (C31 652/1384, C80 701/1696, C47 31.6%, C102's 159-line precedent) reproduce EXACTLY when I re-measure them. It did not ratify: it names 21 deletions including three real ones in GAUNTLET.md worth 1,028 measured words. But it fails its own charter in two ways that matter. ARCH-B: 45 of ~104 proposed changes carry no second-order consequence and no rollback - including ALL SEVEN of the lead's own L1-L7 - and those 45 supply 705 of the 909 added words (78%), which is how root CLAUDE.md ends up at 466 -> 1,072 words, 2.30x, while ARCH-E still reads green because a DIFFERENT file was chopped. ARCH-A: 13 findings plus L7 carry no commit hash at all, and L7's grep claim is false (questdata IS referenced at tests/gauntletL0Gate.test.ts:27). ARCH-D: the ratio number is consistent (100/0) but three mutually exclusive next chops are named - L7 questdata, C90/C102 skilldata, C100 a commit quota - so no session can act on it. PADDING, BY ID: pure report-only rows that change nothing - C21, C23, C29, C32, C40, C101. ADD-ONLY rows - C1,2,3,7,8,9,10,11,12,13,14,15,17,18,19,20,22,27,28,41,47,50,51,63,64,66,67,70,73,74,79,85,91,93,94. DUPLICATE CREDIT counted 2-4x - GAUNTLET SS7 by L1/C61/C68/C75, SS2.1+L1b by L2/C60/C98, SS5 by C59/C69/C76, SS3.8 by L3/C33, palette by C5/C45/C96, CLAUDE.md:49 by C6/C26/C35/C48, CLAUDE.md:48 by C30/C41/C47/C54, ordering+R2 by C57/C71/C77/C99, SS3.5 by C52/C58/C63/C79 (all four mutually exclusive). DIRECT CONTRADICTIONS the review never resolves: C24 DELETES the stage-gate line that C1/C2/C18/C19/C20 append to; C31 says re-judge ~30 banked claims while C80 says do NOT reopen L0's banked t2; C4 adds a label test while C95 deletes the words claiming one.",
+  "findings": [
+    {
+      "id": "ARCH-A",
+      "claim": "RED - no hash is invented (all 82 I tested resolve), but 13 findings plus the lead's own L7 cite no commit at all, and L7's cite is factually false.",
+      "cite": "L7; C31, C37, C40, C47, C49, C51, C78, C80, C82, C86, C87, C89, C95; verified against docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md:181",
+      "evidence": "$ for h in bd0b912 ... 3bd5814; do git cat-file -t $h; done  ->  '---hash check done---'  (82 hashes, zero BAD lines: nothing invented).  ARCH-A as written: 'Every finding cites a real incident by commit hash, or it is cut.'  C31/C37/C40/C47/C49/C51/C78/C80/C82/C86/C87/C89/C95 carry file:line or an unpasted measurement and no hash. L7 carries no hash and its claim is false: $ grep -rn questdata src/ tests/  ->  tests/gauntletL0Gate.test.ts:27:  'questdata', 'skilldata', 'npcdata', 'itemdata', 'bindata', 'actionscript',  -- i.e. NOT 'zero references in src/ or tests/'. Note the substance of the hashless rows checks out when I measure it myself: C47's asserted 31.6% reproduces exactly ($ 76 commits touch src/, 24 without RESUME_HERE.md -> 31.6%), C80's 701 and C31's 652 reproduce exactly (see ARCH-E evidence).",
+      "severity": "expensive",
+      "rule_targeted": "ARCH-A (ARCHITECTURE_REVIEW_KICKOFF.md:181)",
+      "proposed_change": "Do not cut the 13 - they are the best-measured rows in the review. Attach the hash that already exists (C51 -> e8a6d82; C86 -> the commit that added l0-resurvey.workflow.js; C31/C80/C37 -> the bank commit 7a9a7d9 and ruling 71b612d) or paste the command output as the cite, and amend ARCH-A once to 'a commit hash OR pasted command output'. DELETE L7's 'zero references in src/ or tests/' clause outright - it is falsified above and it is the evidence line under the lead's own ratio ruling.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "ARCH-B",
+      "claim": "RED - 45 of ~104 proposed changes carry neither a second-order consequence nor a rollback, and all seven of the lead's own L1-L7 are among them.",
+      "cite": "L1, L2, L3, L4, L5, L6, L7; C1-C20, C22, C24, C25, C26, C27, C28, C40, C41-C51; charter at docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md:163-171",
+      "evidence": "Kickoff SS3 Phase 3: 'A proposed change survives only if it carries: 1. a real incident ... 2. a named second-order consequence, honestly stated, 3. a one-line rollback. Anything without all three is a suggestion, not a change.'  C1's entire change field: \"Add to the CLAUDE.md gate invariant: 'A gate row that asserts ORIGINAL behaviour must cite a frame path + timestamp...'\" - no 2nd-order, no rollback. Same shape for C2-C20, C22, C24-C28, C41-C51 and for every L-row (L1: 'DELETE GAUNTLET.md SS7 ... -226 words.' and nothing else). C30-C39 and C52-C102 mostly DO carry all three, which proves the bar was reachable and simply not applied to the front half. Cost, measured: $ python3 - (summing the 45) -> 'ARCH-B-noncompliant, additions: 705 / deletions: -51' against in-scope additions of 909 - i.e. 78% of every word this review would ADD to the standing rules comes from a change its own charter says is not a change.",
+      "severity": "kills-project",
+      "rule_targeted": "ARCH-B (ARCHITECTURE_REVIEW_KICKOFF.md:182) / SS3 Phase 3",
+      "proposed_change": "CUT all 45 now and re-admit individually only with the two missing lines. That single act removes 705 of the 909 added words, drops root CLAUDE.md back from 1,072 to ~470, and takes the review's honest net from -465 to about -1,170. Apply the same knife to the lead's L1-L7 first - a lead exempting his own seven changes from the gate he is grading everyone else against is the failure mode this whole review exists to name.",
+      "is_deletion": true,
+      "word_delta": 0
+    },
+    {
+      "id": "ARCH-C",
+      "claim": "GREEN - 21 findings are deletions and the three largest are real, measured, and land in a standing-rule file.",
+      "cite": "docs/GAUNTLET.md:379-399 (SS7), :251-310 (SS5), :144-171 (SS2.1), :127 (L1b row)",
+      "evidence": "$ sed -n '379,399p' docs/GAUNTLET.md | wc -w -> 226   (C61/C68/C75/L1's claimed -226: EXACT)\n$ sed -n '251,310p' docs/GAUNTLET.md | wc -w -> 524   (C59's claimed -524: EXACT)\n$ sed -n '144,171p' docs/GAUNTLET.md | wc -w -> 222 ; $ sed -n '127p' ... | wc -w -> 48   (C60/C98/L2's 300/242/231: bracketed by the real 270)\n$ sed -n '193,196p' -> 33 (C58 exact) ; $ sed -n '338,341p' -> 50 (C57/C77 exact).\nThe deletions are not cosmetic either: SS5's deleted text is measurably stale - $ sed -n '298p' docs/GAUNTLET.md -> 'confirm the baseline (git log -1 + npm test -> 56 files / 894)' vs $ sed -n '350p' RESUME_HERE.md -> '63 files / 1001'.",
+      "severity": "minor",
+      "rule_targeted": "ARCH-C (ARCHITECTURE_REVIEW_KICKOFF.md:183-184)",
+      "proposed_change": "NONE - the gate is met. One caution when applying: SS2.1's deletion also deletes the only written record of the android v0.682 vs web v0.717 caveat, which C98 flags and C60 does not; carry that caveat onto the replacement line or C91's build-label fix becomes load-bearing and unpaid.",
+      "is_deletion": true,
+      "word_delta": 0
+    },
+    {
+      "id": "ARCH-D",
+      "claim": "RED - the ratio is stated in numbers three times and consistently (100/0, target 10/90), but three mutually exclusive 'next chops' are named, so no session can act on it.",
+      "cite": "L7 vs C90 vs C100 vs C102; git log --oneline 0719673..HEAD -- src/",
+      "evidence": "$ git log --oneline 0719673..HEAD -- src/ | wc -l -> 0   and   $ git rev-list --count 0719673..HEAD -> 60. The 100/0 measurement is TRUE and reproduces. The chop does not: L7 names 'L1's campaign port (questdata.xml, 796,383 bytes, zero references in src/ or tests/)' - size correct ($ ls -l -> 796383) but the reference claim is false (tests/gauntletL0Gate.test.ts:27). C90 and C102 name the OPPOSITE file and give a reason L7 does not answer - skilldata.xml is 39 KB, is the smallest, and kills the only two INFERRED values in src/config/skills.ts. C100 names neither and instead sets a commit quota (45 of the next 50 must touch src/). Three answers to 'which file next' is zero answers.",
+      "severity": "expensive",
+      "rule_targeted": "ARCH-D (ARCHITECTURE_REVIEW_KICKOFF.md:185)",
+      "proposed_change": "Adopt C102 and DELETE L7's chop. C102 is the only one of the three whose precedent I could verify end to end: $ wc -l scripts/anim/transcribeAnims.py -> 159 ; tests/a11AnimData.test.ts -> 177 ; $ git show --stat 741fd31 -> '5 files changed, 1218 insertions(+)' ; $ grep -n INFERRED src/config/skills.ts -> :15 '.96 pattern' and :17 '.92 pattern' - exactly the two guesses the port deletes. State the ruling once, in one place: '100/0 measured over 60 commits; rule 10/90; next chop = scripts/skills/transcribeSkills.py -> src/config/ogSkills.ts, byte-pinned, in the shape of 741fd31.'",
+      "is_deletion": true,
+      "word_delta": 0
+    },
+    {
+      "id": "ARCH-E",
+      "claim": "GREEN on arithmetic (-465 in-scope after dedup) but the review's own stated net is wrong by 97%, and the gate passes only because a different file was chopped: root CLAUDE.md goes 466 -> 1,072 words, 2.30x.",
+      "cite": "docs/gauntlet/ARCH/WORDCOUNT_BASELINE.txt; C62; C56; the L1/C61/C68/C75 and L2/C60/C98 and C59/C69/C76 clusters",
+      "evidence": "$ wc -w CLAUDE.md docs/GAUNTLET.md .claude/ship-bar.md src/{core,config,game}/CLAUDE.md -> 5405 total (baseline confirmed).\nSTATED NET, summing every word_delta as written: -66,234. Of that, -64,329 is C62 alone, and C62's target is docs/sessions/*_KICKOFF*.md - NOT one of the six baseline files ($ wc -w docs/sessions/*KICKOFF*.md -> 66,496 across 27 files). Six more rows spend deltas outside the baseline set too (C25 -8 memory file, C56 -1 kickoff, C87 -34 skills.ts, C89 -60 REBUILD_READINESS, C92 -22 SHSD_MASTER_REFERENCE, and C7/C9 +72 on files outside it).\nIN-SCOPE, no dedup: -1,717. But roughly 1,296 words of deletion credit are counted 2-4x: SS7's 226 words are claimed by L1, C61, C68 AND C75 (-904 booked for a -226 edit); SS2.1+L1b by L2, C60 and C98 (-773 booked for ~-270); SS5 by C59 plus C69 and C76 which delete words INSIDE it.\nHONEST DEDUPED IN-SCOPE NET: -465. Still <= 0, so GREEN - but it is carried entirely by three GAUNTLET.md deletions. Kill C59, C61 and C60 in adversary review and the net flips to +563.\nAND THE GATE MISSES THE REAL BLOAT: the CLAUDE.md-only rows sum to +635 added, -29 deleted -> 466 becomes 1,072 words (2.30x) in the one file every session loads. C56 predicted exactly this ('the cheapest words to delete are rationale') and its proposed fix - count RULES, not words - is the only row in the review that would have caught it.",
+      "severity": "expensive",
+      "rule_targeted": "ARCH-E (ARCHITECTURE_REVIEW_KICKOFF.md:186-187)",
+      "proposed_change": "Publish the corrected accounting before applying anything: stated -66,234 / in-scope -1,717 / deduped in-scope -465. Then add a per-file floor to ARCH-E so the aggregate cannot launder it: 'no single standing-rule file may grow by more than 10%'. Under that floor CLAUDE.md may take +47 words, not +606, which forces exactly the triage ARCH-B already demands.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "ARCH-F",
+      "claim": "RED - nothing has been applied. No standing-rule file is modified in the working tree and HEAD is still the kickoff commit.",
+      "cite": "git status --porcelain; git log -1",
+      "evidence": "$ git status --porcelain\n?? PROBLEMS.md\n?? docs/gauntlet/ARCH/\n$ git log -1 --format='%H %s'\n2df2f8711af24a0e6909da34c432cac9e709c2d2 docs: the ARCHITECTURE REVIEW kickoff - the axe-sharpening session turned on the axe\nNot one byte of CLAUDE.md, docs/GAUNTLET.md, .claude/ship-bar.md or the three src/*/CLAUDE.md files has moved. ARCH-F requires 'applied diffs in the same commit as the rationale, per SS3.7'; the kickoff's own SS4 Phase 4 says 'A report nobody applies is the most expensive possible output.'",
+      "severity": "expensive",
+      "rule_targeted": "ARCH-F (ARCHITECTURE_REVIEW_KICKOFF.md:188)",
+      "proposed_change": "Land the surviving set as ONE commit that carries the diffs and the rationale together, and refresh RESUME_HERE.md in that same commit (SS3.7). Apply in this order so a usage wall truncates the tail, not the head: (1) the three verified GAUNTLET deletions - SS7 226 w, SS5 524 w, SS2.1+L1b ~270 w - which are pure subtraction and need no adjudication; (2) the ARCH-D chop ruling, one chop, C102's; (3) only then the ARCH-B-compliant additions. The 45 non-compliant rows do not enter this commit at all.",
+      "is_deletion": true,
+      "word_delta": 0
+    }
+  ]
+}

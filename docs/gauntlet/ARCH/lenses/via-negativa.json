@@ -1,0 +1,76 @@
+{
+  "lens": "via-negativa",
+  "note_applied": "~/learning/Notes/Via Negativa — improvement by subtraction.md",
+  "integrity": "CLEAN",
+  "wrote_to": "/Users/kheshav/kheshav-code/SSHD 1-1/docs/gauntlet/ARCH/lenses/via-negativa.json",
+  "summary": "Five deletions, all verified first-hand. GAUNTLET.md is 4,201 words; 1,083 of them (25.8%) are a non-terminating loop rule, a stale duplicate of a prompt that lives elsewhere, a lane whose blocker was killed ten days ago, and a section that certifies the document as unimprovable. A sixth candidate (the config-values double-entry ratchet) was DROPPED under ARCH-A because I could not cite an incident where it caught anything. The sculptor's block here is GAUNTLET.md itself: nothing in the four sections below is the statue.",
+  "dropped_for_lack_of_cite": [
+    "src/config/CLAUDE.md's double-entry ratchet (tests/config-values.test.ts) — suspected pure change-detection friction with no correctness content, and about to be paid 982+13,650 times by L3/L2's generators. `git log -- tests/config-values.test.ts` shows 20 commits, none of which cite it catching a defect. NO INCIDENT CITE ⇒ DROPPED as an opinion."
+  ],
+  "findings": [
+    {
+      "id": "VN-1",
+      "claim": "GAUNTLET §3.5's \"LOOP UNTIL DRY\" is a termination rule that provably cannot terminate, and it is the default stopping rule for all eleven remaining lanes; §3.6's binary gate already terminates a lane, so deleting §3.5 leaves a working terminator and removes an unbounded one.",
+      "cite": "docs/GAUNTLET.md:193 · commits ab93692, 71b612d",
+      "evidence": "docs/GAUNTLET.md:193 — \"5. **LOOP UNTIL DRY.** Keep spawning finders until **two consecutive rounds surface nothing new**.\"\n\n`git log -1 --format=%B ab93692`:\n  wave A   45 t2 judged  ->  0 new t1 +  6 new t2     t2->t2  0.13\n  wave B   21 t1 judged  -> 21 new t1 + 24 new t2     t1->t1  1.00\n  wave C   30 t2 judged  ->  0 new t1 + 11 new t2     t2->t2  0.37\n  wave D   21 t1 judged  -> 24 new t1 + 24 new t2     t1->t1  1.14\n  \"t2 decays fast... t1 sustains itself at ~1.0-1.14: every overturn-claimer judged spawns roughly one more. The tail went 66 -> 51 -> 32 -> 59 and is now UP on where the session started.\"\n\n`git log -1 --format=%B 71b612d`: \"'Loop until dry' is unavailable on that tier at ANY budget, so it went to the owner rather than being absorbed quietly. RULING: bank wave E, then stop judging.\"\n\nThe engine could not stop itself. A human override stopped it. §3.6 immediately below already reads: \"6. **GATE.** Binary. Every item green with pasted output, or the lane is open.\"",
+      "severity": "kills-project",
+      "rule_targeted": "docs/GAUNTLET.md §3.5 LOOP UNTIL DRY (lines 193-196)",
+      "proposed_change": "DELETE lines 193-196 entirely. Renumber §3.6-§3.8 to §3.5-§3.7. Keep NOTHING in its place: the binary gate at (new) §3.5 is the terminator, and the dedup clause it carried (\"dedup against everything seen, not everything confirmed\") is already enforced in code by buildWorklist.py, not by prose. Second-order consequence, stated honestly: lanes will close with leads outstanding — which is already the ruled behaviour (71b612d: \"Unjudged stays KILLED — the EXISTING fail-closed rule (§0), not a concession\"), so this deletion makes the doc agree with the ruling instead of contradicting it. Rollback: `git revert` the deletion commit; the clause is 33 words and restores in one edit.",
+      "is_deletion": true,
+      "word_delta": -33
+    },
+    {
+      "id": "VN-2",
+      "claim": "GAUNTLET §5 (\"THE GAUNTLET PROMPT — paste-ready\", 524 words) is an unmaintained duplicate of the live prompt in RESUME_HERE.md, and the duplicate is already wrong: it instructs the next lead to confirm a baseline of 56 files / 894 tests when the suite is 63 files / 1001.",
+      "cite": "docs/GAUNTLET.md:298 vs RESUME_HERE.md:350 · commit c2e5df9",
+      "evidence": "docs/GAUNTLET.md:298 — \"FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 56 files / 894),\"\nRESUME_HERE.md:350 — \"FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 63 files / 1001), do the two\"\n\n`npm test 2>&1 | tail -5` run just now in the repo root:\n   Test Files  63 passed (63)\n        Tests  1001 passed (1001)\n     Duration  16.54s\n\n`git log -S\"56 files / 894\" --oneline -- docs/GAUNTLET.md` -> c2e5df9 (2026-08-13, the adoption commit). Two commits touched GAUNTLET.md afterwards (e97f91f, 7476add); neither updated it. Meanwhile RESUME_HERE.md:17 reads \"| suite | 62 files / 983 | **63 / 1001** |\" and RESUME_HERE.md:443 still carries a THIRD number, \"57 files / 894 tests green\".\n\nThat this exact failure class is live is not hypothetical — `git log --all --format=\"%h %s%n%b\" | grep -E \"1,00[0-9]\"` returns the lead's own correction: \"⚑ CORRECTION TO MY OWN TWO PREVIOUS COMMIT MESSAGES. They report the suite at 1,002 and 1,003 tests. Both were INFERRED by adding test counts to a remembered total, not read off\" (commit c38b660). A doc-carried number the operator is told to \"confirm\" is the same defect with a longer fuse.",
+      "severity": "expensive",
+      "rule_targeted": "docs/GAUNTLET.md §5 THE GAUNTLET PROMPT (lines 251-310)",
+      "proposed_change": "DELETE §5 entirely (lines 251-310) and replace the whole section with one line: \"**The paste-ready prompt for the current lane lives in `RESUME_HERE.md`, and only there.**\" RESUME_HERE.md already carries a lane-specific, current, superset version of it (§0's law, §3.8's reading, §4's no-touch list, the fail-closed rules, the wall-survival protocol) and is rewritten every session by §3.7's re-arm step, so it cannot go stale the way a template can. Second-order consequence: a brand-new lane with no RESUME_HERE entry loses its generic starting template — acceptable, because §3.1 already requires reading RESUME_HERE + GAUNTLET before arming, and a template that is 107 tests out of date is worse than no template. Rollback: `git show c2e5df9:docs/GAUNTLET.md` restores the section verbatim.",
+      "is_deletion": true,
+      "word_delta": -524
+    },
+    {
+      "id": "VN-3",
+      "claim": "GAUNTLET §2.1 (\"THE STRING-TABLE BLOCKER\", 222 words) and lane L1b (48 words, plus ~30 in cross-references) describe a blocker that was killed on 2026-08-14; the doc still queues an Opus lane to hunt a table that is already resolved and committed in this repo.",
+      "cite": "docs/GAUNTLET.md:144-171 and :127 · commit 6ff47f1 · docs/gauntlet/L0/index/resolved_names.json",
+      "evidence": "docs/GAUNTLET.md (§2.1) — \"They index a **string table that has not been located.**\" and \"**So L2/L3 can port every NUMBER today and no NAME.** L1b hunts the table before either lane claims completeness\".\n\n`git log --diff-filter=A --oneline -- docs/gauntlet/L0/index/resolved_names.json` -> 6ff47f1 \"gauntlet L0: THE STRING TABLE IS FOUND — §2.1's blocker is dead\".\n\nPython read of that file, run just now:\n  itemdata.xml resolved= 804 misses= 0\n  npcdata.xml resolved= 484 misses= 6\n  skilldata.xml resolved= 73 misses= 0\n\nThe doc nevertheless still routes to it in three more places: :140 \"after L0 is L1 → L1b → L2/L3/L4\"; :128 and :129 \"· *needs L1b for names*\"; :368 (ruling R6) \"After L0 the queue is **L1's campaign runtime** and **L1b's string-table hunt**\". RESUME_HERE.md:301-305 has carried \"§2.1's string-table blocker is DEAD ... the L1b lane row is obsolete\" as a queued TODO since 374abb1 and the board still has not changed.",
+      "severity": "expensive",
+      "rule_targeted": "docs/GAUNTLET.md §2.1 (lines 144-171), lane row L1b (line 127), and the L1b references at lines 128, 129, 140, 332, 368",
+      "proposed_change": "DELETE §2.1 and the L1b row. Strike \"L1b → \" from the ordering rule at :140, strike \"· *needs L1b for names*\" from the L2 and L3 rows, change §6/R1's table row at :332 from \"IDs only — **blocked on L1b** (§2.1)\" to \"✅ decided — resolved via `docs/gauntlet/L0/index/resolved_names.json`\", and strike the L1b clause from R6 at :368. Do NOT replace §2.1 with a paragraph explaining that it used to be a blocker — that is addition; the commit message 6ff47f1 is the history. Keep exactly one new sentence in the L2/L3 rows: \"names resolve through `docs/gauntlet/L0/index/resolved_names.json` (itemdata 804/0, skilldata 73/0, npcdata 484/6).\" Second-order consequence: the six npcdata misses lose their named home — state them in the L4 gate line instead of keeping a whole lane alive for them. Rollback: one revert; the L1b row restores from `git show 7476add:docs/GAUNTLET.md`.",
+      "is_deletion": true,
+      "word_delta": -300
+    },
+    {
+      "id": "VN-4",
+      "claim": "GAUNTLET §7 \"BAR SELF-REPORT\" (226 words) certifies the standing engine as unimprovable, was falsified within 24 hours, and by the document's own definition does not even fall under the owner's kickoff-bar rule — GAUNTLET.md states in its own header that it is not a session kickoff.",
+      "cite": "docs/GAUNTLET.md:379-399 · commits c2e5df9, 6ff47f1, e97f91f, 7476add",
+      "evidence": "docs/GAUNTLET.md:381 — \"**Does this reach the \\\"cannot be improved further\\\" bar? ✅ Yes — the next change would be churn.**\" Authored in c2e5df9 (2026-08-13).\n\nWhat happened next: 6ff47f1 (2026-08-14) killed §2.1's central blocker — the same section §7 praises as \"The blocker that would have made L2/L3 *claim* completeness while shipping 982 nameless items is caught **before** those lanes run (§2.1)\". e97f91f added owner rulings R1/R5/R6 and the \"a script beats a swarm\" rule. 7476add added §3.8, the one-workflow rule. Three substantive changes, none of them churn.\n\ndocs/GAUNTLET.md:6-9 (its own header) — \"It is not a session kickoff. Sessions come and go; this file is the engine they run.\" So the memory rule at ~/.claude/projects/-Users-kheshav-kheshav-code-SSHD-1-1/memory/feedback-kickoff-bar-verdict.md:11-13 (\"when writing a session kickoff ... tell me if the bar was reached\") does not reach this file at all.\n\nFLAGGED, NOT PROPOSED (it is the owner's own twice-restated request, so it is his call, not mine): `grep -rhiE \"Bar (verdict|self-report)|Does this .*reach\" --include=\"*.md\" docs/ RESUME_HERE.md` returns 16 shipped verdicts. Sixteen say Yes. Zero say no. (One — SESSION17 — says \"The first draft did not reach the bar\", then reports the shipped draft as reaching it.) A gate with a 16/16 pass rate is measuring the author's willingness to keep editing until it passes, not the artifact.",
+      "severity": "expensive",
+      "rule_targeted": "docs/GAUNTLET.md §7 BAR SELF-REPORT (lines 379-399)",
+      "proposed_change": "DELETE §7 entirely. It is a self-grade on a document that is explicitly not a kickoff, so no owner rule is being overridden. Do NOT replace it with a weaker self-assessment. The six bullets under it that carry real content (\"what it deliberately does not promise\") are already stated where they bind — L7's ears gate is R4, L11's authored deviations are the L11 gate row — so nothing load-bearing is lost. Second-order consequence: the doc stops carrying a pre-registered rebuttal to its own review, which is exactly what this review had to argue past. Separately, put the 16/16 statistic in front of Kheshav and let HIM decide whether the kickoff self-grade stays; do not delete his rule for him. Rollback: `git show c2e5df9:docs/GAUNTLET.md` restores §7.",
+      "is_deletion": true,
+      "word_delta": -226
+    },
+    {
+      "id": "VN-5",
+      "claim": "The 26 superseded session-kickoff documents (64,329 words) are grep-reachable rule sources that state reversed rulings as accepted scope — SESSION4_KICKOFF.md still asserts the no-tracing, no-verbatim art policy that CLAUDE.md and GAUNTLET §6/R1 both overturned.",
+      "cite": "docs/sessions/SESSION4_KICKOFF.md:23 · CLAUDE.md (Invariants, LICENSED 1:1 RECREATION) · docs/GAUNTLET.md:315-321",
+      "evidence": "docs/sessions/SESSION4_KICKOFF.md:23 — \"drawings and dialogue are ALWAYS original work — no tracing, no verbatim script. Kheshav accepted this scope explicitly.\"\n\nCLAUDE.md — \"**LICENSED 1:1 RECREATION (owner ruling 2026-07-24 — supersedes the old \\\"never traced/transcribed\\\" art line...)** ... Tracing/matching Lut's art and exact OG hues is now permitted.\"\ndocs/GAUNTLET.md §6/R1 — \"✅ **OWNER-CONFIRMED 2026-08-13: verbatim character dialogue is COMMITTED to `src/`**\".\n\nBoth halves of that sentence are now false, and it is the half attributed to Kheshav's explicit acceptance that makes it dangerous to an agent that greps.\n\nScale, measured: `ls docs/sessions/*KICKOFF*.md | grep -v ARCHITECTURE | wc -l` -> 26; `cat` of those files | wc -w -> 64,329 words. For comparison the entire standing rule set is 4,201 (GAUNTLET) + 466 (CLAUDE.md) + 188 (ship-bar) + 550 (three folder CLAUDE.mds) = 5,405 words. The superseded archive outweighs the live rules 11.9 to 1. This is D4's \"nine places, no single source of truth\" measured — and the cheapest mechanism that makes a contradiction fail is to delete the contradicting copy, not to add a reconciliation test.",
+      "severity": "expensive",
+      "rule_targeted": "docs/sessions/*_KICKOFF*.md (26 files) — and, standing, the ritual of committing a new kickoff document per session, which GAUNTLET.md:6-9 already superseded (\"It is not a session kickoff... this file is the engine they run\") and which RESUME_HERE.md has absorbed in practice: since adoption, the only kickoff written into RESUME_HERE rather than a new file is commit 26aa826, which touched RESUME_HERE.md and nothing else.",
+      "proposed_change": "`git rm docs/sessions/*_KICKOFF*.md` for the 26 superseded files (keep ARCHITECTURE_REVIEW_KICKOFF.md — it is the live one). Git history retains every byte; `git show <hash>:docs/sessions/SESSION13_KICKOFF.md` recovers any of them. Then delete the ritual: stop writing a new kickoff FILE per session and let RESUME_HERE.md's paste-ready block be the kickoff, which is already what happens (26aa826). Second-order consequence, honestly stated: the archive is genuine forensic material for exactly this kind of review, and deleting it makes a future 'mine the history' phase reach for `git log -p` instead of `ls`. That cost is real and I judge it smaller than an agent finding an overturned owner ruling stated as accepted scope. If Kheshav will not accept the delete, the minimum acceptable subtraction is a one-line banner at the top of each: \"SUPERSEDED — not a rule source.\" That is +9 words × 26 = +234 and I do not recommend it over the delete. Rollback: `git revert` restores all 26 files in one commit.",
+      "is_deletion": true,
+      "word_delta": -64329
+    }
+  ],
+  "arch_e_contribution": {
+    "standing_rule_docs_before": 5405,
+    "gauntlet_md_before": 4201,
+    "gauntlet_md_words_deleted": 1083,
+    "gauntlet_md_after": 3118,
+    "pct_of_engine_deleted": "25.8%",
+    "words_added_by_this_lens": 0,
+    "note": "VN-1..VN-4 alone bring the standing-rule word count to -1,083 before any other lens spends a single word. ARCH-E (net ≤ 0) is satisfiable with 1,083 words of budget left over for the other eight lenses. VN-5's -64,329 is documents, not standing rules, and is reported separately so it cannot be used to inflate the ARCH-E ledger."
+  }
+}

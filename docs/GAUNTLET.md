@@ -124,9 +124,8 @@ expressed as a loop over rows, the lane writes the loop.**
 |---|---|---|---|
 | **L0** | **RE-SURVEY** — re-score all 12 systems against the payload; rewrite `REBUILD_READINESS.md` §4/§6; delete every "unrecoverable" that the payload disproves | **Opus · small (~8)** | every system's score carries an A2 cite or an explicit "still unheld"; §6's unrecoverable list is provably minimal |
 | **L1** | **CAMPAIGN** — port `questdata.xml` → config; build the dialogue box, cutscene director, quest state machine, choice graph | **Fable · bounded** (runtime is from-scratch) · **Opus critic** on every LOOK | Prologue→Ep12→Epilogue playable end-to-end; all 3,307 lines present byte-exact; 471 choices branch; a cutscene beat matches its A1 frame |
-| **L1b** | **STRING TABLE** — resolve the ID indirection that blocks L2 + L3 (§2.1) | **Opus · small** — reverse-engineering, not bulk | every `<name>`/`<desc>`/`<displayname>` ID resolves to text with an A2 cite, or the lane reports the table as genuinely absent and says so |
-| **L2** | **SKILLS + METERS** — `skilldata.xml` → config; Chi/Focus/AP meters real | **generator script** + Opus schema/grade · *needs L1b for names* | all 75 skills × 182 rows byte-exact from A2; zero INFERRED cooldowns remain; meters on-screen match A1 |
-| **L3** | **ITEMS + PAPERDOLL** — `itemdata.xml` → config; 9-slot compositing contract | **generator script** + **Opus** owns the compositing/z-order grade · *needs L1b for names* | 982 items byte-exact; a dressed fighter composites in the OG's layer order against A1 |
+| **L2** | **SKILLS + METERS** — `skilldata.xml` → config; Chi/Focus/AP meters real | **generator script** + Opus schema/grade | all 75 skills × 182 rows byte-exact from A2; zero INFERRED cooldowns remain; meters on-screen match A1 |
+| **L3** | **ITEMS + PAPERDOLL** — `itemdata.xml` → config; 9-slot compositing contract | **generator script** + **Opus** owns the compositing/z-order grade | 982 items byte-exact; a dressed fighter composites in the OG's layer order against A1 |
 | **L4** | **ENEMIES + AI** — `npcdata.xml` → config; AI behaviours from `<ai>` | **generator script** for the rows · **Fable** builds the AI · **Opus** grades the fight feel | 495 NPCs byte-exact; each `<ai>` value maps to observed behaviour with an A1 cite |
 | **L5** | **COMBAT CORE** — reach cap, slash-vs-move, crit read, Focus gating, TTK | **Opus · heavy** | SESSION 24 §2 A12-A…F green; duel-baseline re-recorded ONCE, atomically |
 | **L6** | **ART + ANIM** — the live `r="1"` z-order defect, then the remaining ~150 animations | **Opus · heavy** for the defect + every LOOK · **Fable · bounded** for bulk transcription | `r="1"` honoured (A3); each anim transcribed + byte-checked + pins extended deliberately; floors ≥ 0.9005 / ≥ 0.8490 / ≤ 140.5 hold |
@@ -137,36 +136,23 @@ expressed as a loop over rows, the lane writes the loop.**
 | **L11** | **META + REBIRTH** — clans, War Room, elements; the server sim is gone → authored offline sim | **Fable · bounded** | every authored-not-original piece labelled in DIVERGENCES; nothing presented as OG fidelity that isn't |
 
 **Ordering rule:** L0 first, always. Then **highest (leverage ÷ risk)** — which
-after L0 is L1 → L1b → L2/L3/L4, because their information is already held and
+after L0 is **L2 → L3 → L4 → L1**, cheapest-first: their rows are already held and
 their gates are byte-checks rather than judgement calls. L5 and L6 interleave
 whenever the owner's LOOK queue has an open verdict. L7 waits for his ears.
 
-### §2.1 THE STRING-TABLE BLOCKER — found 2026-08-13, gates L2 + L3
+### §2.1 THE STRING TABLE IS RESOLVED — 2026-08-14, `6ff47f1`
 
-The payload's text comes in **two forms**, and only one is readable today:
+`docs/gauntlet/L0/index/resolved_names.json` resolves every name/desc id:
+**itemdata 804 rows / 0 misses · npcdata 484 / 6 · skilldata 73 / 0.** L2 and L3 are
+UNBLOCKED and L1b is closed before it ran.
 
-- ✅ **Character dialogue is PLAIN TEXT, verbatim, in `questdata.xml`.** All
-  3,307 `<text>` lines. Verified by eye — *"I say how about I hand over half the
-  length of this sword -- sharp end first. Will that suffice as payment?"* —
-  Jinbei the Bandit King, Prologue. **Nothing blocks L1.**
-- ⛔ **Item names, item descriptions, skill names and skill descriptions are
-  numeric IDs**, not text: `<name>4058</name>`, `<desc>4172</desc>`,
-  `<displayname>6000</displayname>`. Cutscene `say` beats are also IDs
-  (`<param>9006</param>`). They index a **string table that has not been
-  located.** `ui_strings.txt` is **not** it — it is an alphabetised dump of the
-  SWF's static UI fields (471 lines, no item names; a `Katana` search returns
-  nothing).
+> ⚠ **The caveat that outlives the blocker (C2).** All four data XMLs are the **Android**
+> build: the web payload carries zero `<questdata>/<skilldata>/<npcdata>/<itemdata>` roots.
+> Every row ported from them is **v0.682** until a web-side artifact says otherwise, and
+> that caps achievable 1:1 on L1–L4. Carry this on every generated config header.
 
-**So L2/L3 can port every NUMBER today and no NAME.** L1b hunts the table before
-either lane claims completeness; candidate homes are the remaining `bindata/*.bin`
-(the largest is animation XML, so the others are unsurveyed), `payload.xml`, and
-the decompiled AS3 under `reference/decompiled/shs3_payload/scripts/`.
-
-> **Free win found in the same pass:** `ui_strings.txt` embeds
-> `<font face="Edo SZ">` (and `Calibri` for secondary text) — that **identifies
-> the game's font**, which `REBUILD_READINESS.md` §2 lists as an open art-anim
-> blocker (*"font (unidentified)"*). L0 confirms and closes it.
-
+Same pass identified the game's font — `<font face="Edo SZ">` in `ui_strings.txt`
+(`Calibri` for secondary text) — closing the art-anim "font (unidentified)" blocker.
 ---
 
 ## §3 THE ENGINE — how one run works
@@ -190,10 +176,12 @@ the decompiled AS3 under `reference/decompiled/shs3_payload/scripts/`.
    frames, transcripts, journal and script all survive, and only the dead agents
    re-run, on a cheaper model. *(Validated 4×, latest 2026-08-13. Credit
    exhaustion killed a verify pass on 2026-07-29; this is the insurance.)*
-5. **LOOP UNTIL DRY.** Keep spawning finders until **two consecutive rounds
-   surface nothing new**. Dedup against everything *seen*, not everything
-   *confirmed* — otherwise critic-rejected findings reappear each round and the
-   loop never converges.
+5. **DECLARE A TERMINATION ARGUMENT.** Every loop states, before it runs, what
+   makes it stop — a proof, a budget, or both. "Loop until dry" is not one:
+   measured on L0, t2 decays (0.13, 0.37) but **t1 is a fixed point** — every
+   overturn-claimer judged spawns ~1.0–1.14 more, so it never goes dry at any
+   budget, and it took an owner ruling to stop. Dedup against everything *seen*,
+   not everything *confirmed*.
 6. **GATE.** Binary. Every item green with pasted output, or the lane is open.
    **Never soften a gate to fit a result** — re-author, or take a ruling.
 7. **RE-ARM.** Update `RESUME_HERE.md` + `docs/sessions/-SESSION-LOG.md` +
@@ -204,10 +192,10 @@ the decompiled AS3 under `reference/decompiled/shs3_payload/scripts/`.
 8. **ONE WORKFLOW IN FLIGHT.** (Owner rule, 2026-08-22.) A stage may fan out to as
    many agents as the lane needs, but **only one workflow runs at a time.** Two reasons,
    and the second is the one that actually forces it:
-   - **Concurrency is what CAUSES the wall.** Session limits are rate-based. Waves 1 and
-     2 of L0 ran together — 19 agents — and took wall #9 as a pair. The same work run
-     serially spreads the spend over a longer window and may never hit the limit at all.
-     **Avoiding the wall beats surviving it**, however good the journal insurance is.
+   - **Serial is NOT safe** — corrected 2026-08-24. Waves 1 and 2 ran together, 19 agents,
+     and took wall #9 as a pair, which read as *concurrency causes the wall*. It does not:
+     SESSION 27 ran **strictly serially** and still took wall #11 (`0d8aa6d`). Usage is
+     total tokens; serialising only spreads the same spend. **Budget the total.**
    - **You cannot rebuild shared state while a run is live.** `buildWorklist.py`
      renumbers the judging packets on every build, and a live run's queued agents have
      not read theirs yet — rebuilding mid-flight hands them a packet nobody assigned
@@ -248,65 +236,11 @@ it must say what was dropped. Silent truncation reads as "covered everything."
 
 ---
 
-## §5 THE GAUNTLET PROMPT — paste-ready
+## §5 THE PASTE-READY PROMPT
 
-Copy everything **between** the `'''` markers (the markers are not part of it).
-
-```
-'''
-You're the lead engineer on SSHD 1:1. Follow the repo's CLAUDE.md and my ship-bar.
-
-READ FIRST, then tell me the lane you're taking and why before you spawn anything:
-- RESUME_HERE.md
-- docs/GAUNTLET.md   <- the standing engine; §2 is the lane board, §0 is the law
-
-THE TASK: run ONE gauntlet lane to its binary gate. Pick it by §2's ordering rule
-(L0 first if it hasn't run). One lane per run — never two.
-
-THE BUILD METHOD: fan out sub-agents across the lane's independent sub-tasks. Pair
-every worker with a BLIND CRITIC that sees only the output and the artifacts, and
-is prompted to REFUTE — default to refuted when uncertain. Heavy lanes: 3-5 critics
-with distinct lenses. Bounded lanes: 1-2. Journal every stage to disk the moment it
-lands, so a dead run is salvageable. Loop until two consecutive rounds surface
-nothing new, deduping against everything SEEN, not everything confirmed.
-
-THE BAR — §0 is absolute: EVERY CRITIC IS AN ARTIFACT CRITIC. This game is DEAD;
-no agent here has ever seen it run, so "compare it to the real game" means cite a
-frame under reference/frames/, a row under reference/extracted/, a byte-check in
-the suite, a ledger number carrying its own frame cite, or my own logged LOOK. A
-verdict citing memory, another agent's summary, or "it looks right" is VOID and its
-finding goes back in the pool unjudged. Crop and upscale before grading any frame.
-When a measurement doc and a frame disagree, THE FRAME WINS — say so out loud.
-
-Do not stop until every gate item in §2 for that lane is green with PASTED output.
-Never soften a gate to fit a result: re-author, or come to me for a ruling.
-
-WHAT NOT TO BREAK: §4's no-touch list. Sim.ts and the duel-baseline move only in
-L5, only by the atomic protocol. Floors go UP or stay. core/ keeps zero numeric
-literals. Scenes stay render-only. Red-first, chaos-plant every guard.
-
-BEFORE YOU FAN OUT, TWO CHECKS:
-(a) A SCRIPT BEATS A SWARM. If any part of the lane is a deterministic transform
-    — copying rows from payload XML into config — WRITE THE GENERATOR AND A
-    BYTE-CHECK. Do not spend agents copying rows; they introduce errors a script
-    cannot make. Agents are for schema decisions, ambiguous fields, and grading
-    the result on screen.
-(b) ROUTING: Opus 5 at xhigh runs unlimited on its lanes; Fable 5 at high stays
-    bounded at 12-16. If I've started you on the wrong model for your lane, say so
-    and stop rather than running a heavy lane on a bounded budget.
-
-FIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 56 files / 894),
-name your lane + model + scale + the exact gate you're driving to, and show me the
-fan-out shape. Don't spawn until I ok it.
-'''
-```
-
-**Start command** (from the repo root):
-
-```bash
-cd "/Users/kheshav/kheshav-code/SSHD 1-1" && git log --oneline -1 && npm test 2>&1 | tail -5
-```
-
+It lives in `RESUME_HERE.md`, and only there — lane-specific and current. A second copy
+here goes stale silently: this one still told the next lead to confirm a baseline of
+56 files / 894 tests, which has been wrong since 2026-08-20.
 ---
 
 ## §6 RULINGS MADE FOR YOU — each with a one-line veto
@@ -329,16 +263,21 @@ confirmed the first; the rest are decided here on the identical rights logic
 | **Character dialogue** — 3,307 `<text>` lines + 471 choice options | `questdata.xml` | ✅ **owner-confirmed** |
 | **Quest + step titles** — *"Look for a man named Hiroshi"* | `questdata.xml` | ✅ decided — same file, same authorship, reads as story |
 | **UI copy** — *"action points"*, War Room rules, betting-odds text | `ui_strings.txt` | ✅ decided — interface text; a paraphrased HUD is not 1:1 |
-| **Item + skill names/descriptions** | IDs only — **blocked on L1b** (§2.1) | same policy once the string table is found |
+| **Item + skill names/descriptions** | resolved 2026-08-14 (§2.1) | ✅ decided — same rights logic as the rows they name |
 
 > **Veto (any row):** paraphrase that row into `src/`, keep verbatim in
 > gitignored `reference/`. Costs the 1:1 on that surface and makes every line a
 > judgement call an agent can drift on.
 
-**R2 — L0 runs before any other lane.** The readiness ledger is stale on four of
-the five systems the payload just closed (§1); planning lanes off it would send
-agents to frame-count numbers we already hold.
-> **Veto:** start at L1 and re-survey later — you'd re-derive known values.
+**R2 — AMENDED 2026-08-24: L0 no longer gates L2/L3/L4.** R2 originally read *"L0 runs
+before any other lane"* — to stop lanes being planned off a stale ledger. **That premise
+is spent.** L2/L3/L4 are byte-checked transforms that read `reference/extracted/*.xml`
+**directly**; they never consult the ledger, so a stale ledger cannot misdirect them. The
+cost of the original reading is measured: **27 days, 58 commits, 0 touching `src/`** —
+`0719673` (2026-07-28) is still the last change a player could see. L0's remaining work is
+the ledger rewrite; it is now **parallel**, not prior.
+> **Veto:** restore *"L0 runs before any other lane"* — costs another L0-length lane before
+> any code moves, and L0's own gate is markdown integrity, which no player can see.
 
 **R3 — Combat (L5) and the campaign lanes coexist; §4 keeps them apart.**
 SESSION 24's A12.2 is mid-flight with an atomic baseline protocol. L1–L4 touch
@@ -365,7 +304,7 @@ work is *read the evidence and overturn a stale document's conclusions across 12
 systems*: judgement-dense, small (~8 agents), and squarely the
 "interactive/surgical" category the standing rule already assigns to Opus. Scale
 is irrelevant there; being right is everything. After L0 the queue is **L1's
-campaign runtime** and **L1b's string-table hunt** — reverse-engineering and
+skills port** and **L3's item port** — deterministic transforms, and
 subsystem debugging, still Opus-shaped.
 **Switch to Fable 5 @ `high` when the queue reaches L7 / L9 / L11** — genuine
 from-scratch subsystem construction, its named strength — and its 12–16 cap
@@ -374,26 +313,27 @@ costs nothing there, because those lanes are depth-bound, not width-bound.
 > long-horizon strength for a short judgement task and taking a bounded agent
 > ceiling you have no use for.
 
----
+**R7 — THE RATIO RULING (2026-08-24). The axe is sharp. CHOP.**
+Measured, not felt: `0719673` (2026-07-28) is the last commit a player could see. Since
+then, **58 commits, +326,094 doc lines, 0 lines of `src/`** — a ratio near **100/0**. The
+Axe-Sharpening note prescribes 60/40 early and **10/90 late**, and its ROI argument is that
+sharpening compounds *across future subjects*; process docs for one dead game do not. **Rule:
+10/90 from now, and the 10 is spent only on a rule an incident has already broken.**
 
-## §7 BAR SELF-REPORT
+**The next chop is L2 — skills — and nothing else until it lands.** `skilldata.xml` holds
+**75 skills × 182 rows** with exact `<chi>`/`<cooldown>`, unread for 30 days, while
+`src/config/skills.ts` ships **three** skills with **two cooldowns hand-guessed**. It is a
+deterministic transform with a byte-check gate — no judgement call, no owner LOOK, no legal
+gate — and this repo has already proven the exact shape: `741fd31` promoted **710 nodes to
+CONTRACT in ONE commit** with a 159-line script plus a byte-pin test.
 
-**Does this reach the "cannot be improved further" bar? ✅ Yes — the next change
-would be churn.**
+**Not L1.** L1's gate is the whole campaign playable end-to-end plus four from-scratch
+runtimes, and R1 gates its text on a permission re-check. It is the largest lane on the board.
 
-- The technique's one fatal assumption for a dead game — *critics compare against
-  the real thing* — is identified and replaced with a rule that has teeth (§0),
-  grounded in the specific failure it already caused here (SESSION 18 A4-D).
-- The lane board covers **all 12 systems**, each with a model, a scale, and a
-  **binary** gate — no lane is "improve X."
-- Model routing is decided once, by which model is actually better at the work,
-  so no session re-litigates it — **and the script rule stops the engine burning
-  an unlimited budget on work a `for` loop does better and more accurately.**
-- The blocker that would have made L2/L3 *claim* completeness while shipping 982
-  nameless items is caught **before** those lanes run (§2.1), not after.
-- The engine is **crash-survivable** (journal-first) and **self-re-arming**, which
-  is what makes it standing rather than a one-shot prompt.
-- **What it deliberately does not promise:** it does not finish the game in one
-  run, it does not gate audio on anything but your ears, and it does not claim
-  the server-side systems (live clan war, L11–80 curve, IAP economy) are
-  recoverable — those are named as authored deviations in L11, not hidden.
+> ⚠ **What actually froze `src/` was never a rule.** Six workflow scripts carry *"DO NOT
+> MODIFY ANY FILE outside your assigned journal path. This lane touches no source code"* —
+> correct for a survey lane, and strictly wider than §4's no-touch list, which names two
+> files. **Arming L2 requires zero rule edits.** No document was the constraint; the lane
+> selection was.
+> **Veto:** keep grinding L0 to a closed gate first — costs the ratio another lane, and L0's
+> gate is markdown integrity, which no player can see.

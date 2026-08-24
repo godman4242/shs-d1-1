@@ -1,0 +1,97 @@
+{
+  "lens": "premortem",
+  "note_applied": "~/learning/Notes/Premortem — imagine failure before it happens.md",
+  "written": "2026-08-24",
+  "integrity": "CLEAN",
+  "wrote_to": "/Users/kheshav/kheshav-code/SSHD 1-1/docs/gauntlet/ARCH/lenses/premortem.json",
+  "summary": "THE POST-MORTEM, 2027. SSHD 1:1 did not die of a technical wall — the payload was cracked, the string table was found, the suite is 1001-green, and 3,307 verbatim dialogue lines have been sitting readable on disk since 2026-07-25. It died because it stopped being a game and became a literature about a game. The proximate cause of death, and the one ALREADY FURTHEST ALONG (it is not a risk, it is in progress): 58 commits landed between 2026-07-29 and 2026-08-24 and ZERO of them touched src/ — the last change a player could see is 0719673 (2026-07-28), 27 days before this review. In that window the repo grew to 276,618 tracked doc lines against 12,286 of game code (22.5:1), and the ONLY files in the whole repo that so much as name questdata/skilldata/npcdata/itemdata are the gauntlet's own meta-tooling (10 scripts + 1 gate test) — never src/. The machinery built to judge claims about the campaign content outlived any attempt to put that content in the game. Ranked by probability: (1) meta-drift / momentum death — already 27 days in; (2) lane arithmetic — L0, the SMALLEST lane, cost 11 days, 51 commits, 15 runs and 6 named usage walls and is still RED on 5 of 6 gate items, with 11 lanes to go and §3.8 forbidding parallelism, so throughput cannot be bought; (3) the intervention is charter-blocked — ARCHITECTURE_REVIEW_KICKOFF.md:201 forbids this very session from touching src/, and ARCH-A..F can all be passed with document edits; (4) the owner is the only gate for L6/L7/L8 and for every loop's stopping rule, while agents are declared UNLIMITED — the plan budgets the abundant resource and not the scarce one; (5) 8.2 GB of irreplaceable evidence lives on one gitignored disk with zero backup policy anywhere in the tracked repo, and losing it makes all 1,696 banked verdicts unauditable; (6) the 'cannot be improved further' self-report has never once returned no, and was falsified by the project's own edit nine days later; (7) the standing engine's paste-ready prompt hands the next session a baseline 107 tests stale. Be unkind about it: this project has an excellent immune system and no metabolism.",
+  "findings": [
+    {
+      "id": "PM-1",
+      "claim": "IT IS ALREADY DYING OF THIS ONE. The project stopped shipping game code on 2026-07-28 and has not resumed: 58 commits since then, zero touching src/, while 3,307 verbatim dialogue lines sit readable on disk and the ONLY code that names them is the gauntlet's own meta-tooling.",
+      "cite": "0719673 (last src/ commit, 2026-07-28) · docs/GAUNTLET.md §1",
+      "evidence": "$ git log --date=format:'%Y-%m' --format='%ad' -- src/ | sort | uniq -c\n  76 2026-07\n(no 2026-08 row at all)\n$ git log --oneline --since=2026-07-29 | wc -l\n      58\n$ git log -1 --format='%h %ad %s' --date=short -- src/\n0719673 2026-07-28 SESSION23 A11.4 fix: distance-driven stride - the feet match the travel (owner LOOK)\n$ git ls-files docs | xargs wc -l | tail -1\n  276618 total     (501 files)\n$ git ls-files src | xargs wc -l | tail -1\n   12286 total     (102 files)     -> 22.5 : 1 docs-to-code\n$ grep -rlE 'questdata|skilldata|npcdata|itemdata|ui_strings' src/ tests/ scripts/\ntests/gauntletL0Gate.test.ts\nscripts/gauntlet/gateL0.py\nscripts/gauntlet/androidIndex.py\nscripts/gauntlet/l0-finish-wf2.workflow.js\nscripts/gauntlet/l0-resurvey.workflow.js\nscripts/gauntlet/l0-finish-wf3.workflow.js\nscripts/gauntlet/l0-finish-wf4.workflow.js\nscripts/gauntlet/l0-rewrite.workflow.js\nscripts/gauntlet/payloadIndex.py\nscripts/gauntlet/l0-finish-wf1.workflow.js\nscripts/gauntlet/buildWorklist.py\nscripts/gauntlet/l0-finish-source-critics.workflow.js\n(ZERO hits under src/)\n$ ls -la reference/extracted/questdata.xml ; grep -c '<text>' reference/extracted/questdata.xml\n-rw-r--r--@ 1 kheshav staff 796383 Jul 25 18:27 reference/extracted/questdata.xml\n3307\n$ cat src/main.ts | grep -n 'scene:' -A6\n  scene: ... [DuelScene, DuelIntro, DuelResult, EncounterScene]\n(no title scene, no town scene, no dialogue box, 42 days after STAGE4_KICKOFF.md was written)",
+      "severity": "kills-project",
+      "rule_targeted": "docs/GAUNTLET.md §3.1 ARM — a run may pick any lane, and nothing anywhere requires src/ to move",
+      "proposed_change": "Add ONE precondition sentence to GAUNTLET.md §3.1 (ARM): 'THE CHOP CLOCK — if `git log --since=\"14 days\" --oneline -- src/` is empty, the next run is a src/ run. No lane arms, no document is rewritten, until something a player can see has changed.' Enforce it with an existing-style test that shells the same git command. Second-order consequence, stated honestly: it will interrupt a lane mid-flight and cost a re-arm; that is the price, and RESUME_HERE.md already proves mid-flight salvage is cheap. Rollback: delete the sentence and the test.",
+      "is_deletion": false,
+      "word_delta": 34
+    },
+    {
+      "id": "PM-2",
+      "claim": "The lane arithmetic never closed. L0 — the lane §2 itself sizes as 'Opus · small (~8)', whose entire deliverable is one rewritten markdown file — burned 11 days, 51 commits, 15 numbered runs and 6 named usage walls, and is still RED on five of six gate items. Eleven lanes remain, several tagged heavy/UNLIMITED, and §3.8 bans running two at once, so throughput cannot be bought.",
+      "cite": "docs/GAUNTLET.md:118 (L0 = 'Opus · small (~8)') · 6ff47f1 (L0 opens 2026-08-14) · 0d8aa6d (wall #11, 2026-08-24) · pasted gateL0.py output below",
+      "evidence": "$ python3 scripts/gauntlet/gateL0.py --root docs/gauntlet/L0 --ledger docs/research/REBUILD_READINESS.md --out /tmp/gate.json\nGATE L0 — 1824 claims pooled · 1696 judged ids · 0 ledger references\n   RED   L0-A  CITE INTEGRITY\n   RED   L0-B  NOTHING UNJUDGED IN THE LEDGER\n   RED   L0-C  CONVERGENCE IS REAL\n  GREEN  L0-D  EVERY SOURCE OPENED\n   RED   L0-E  §6 IS PROVABLY MINIMAL\n   RED   L0-F  SCORECARD CARRIES ITS EVIDENCE\nLANE L0: ⛔ OPEN — at least one gate item is RED\n$ git log --oneline --since=2026-08-13 | wc -l\n      51\n$ ls docs/gauntlet/L0 | grep -c '^run'\n      15        (run2 … run16)\n$ git grep -ohiE 'wall #[0-9]+' -- '*.md' | tr 'A-Z' 'a-z' | sort -u\nwall #10\nwall #11\nwall #5\nwall #6\nwall #8\nwall #9\n$ du -sh docs/gauntlet ; find docs/gauntlet -type f | wc -l\n 30M    docs/gauntlet\n     348",
+      "severity": "kills-project",
+      "rule_targeted": "docs/GAUNTLET.md §2 'Ordering rule: L0 first, always' and §6 R2",
+      "proposed_change": "DELETE the L0-blocks-everything premise. The re-survey L0 was chartered to do is DONE — 1,696 claims judged, 553 overturns on 269 sentences, banked on disk. What is still RED is the WRITE-UP. Replace §2's 'Ordering rule: L0 first, always' and R2 with: 'L0's 553 banked overturns ship as an appendix to REBUILD_READINESS.md; the prose rewrite is not a prerequisite for any lane. Next lane is L1.' Second-order consequence: the readiness ledger stays internally inconsistent until someone rewrites it — acceptable, because L1's inputs are questdata.xml rows, not ledger prose. Rollback: restore the two paragraphs from 7476add.",
+      "is_deletion": true,
+      "word_delta": -40
+    },
+    {
+      "id": "PM-3",
+      "claim": "The session convened to cure the src/ drought is forbidden by its own charter from touching src/, and every one of its six gate items can be passed with document edits alone — ARCH-D asks only that the next chop be NAMED.",
+      "cite": "docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md:201 and :182-189 (commit 2df2f87, 2026-08-24)",
+      "evidence": "$ grep -n 'src/' docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md | tail -1\n201:- **`src/`.** This is a review of process, not a refactor. No game code moves.\n$ grep -n 'ARCH-' docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md\n182:- **ARCH-A** Every finding cites a real incident by commit hash, or it is cut.\n183:- **ARCH-B** Every proposed change carries incident + 2nd-order consequence + rollback.\n184:- **ARCH-C** At least one recommendation is a **DELETION** (Via Negativa)...\n186:- **ARCH-D** The **ratio ruling** is stated explicitly, in numbers, with the next chop named.\n187:- **ARCH-E** Total net change to standing-rule word count is **≤ 0**...\n189:- **ARCH-F** The review ships as applied diffs in the same commit as the rationale...\n$ git log -1 --format='%h %ad %s' --date=short docs/sessions/ARCHITECTURE_REVIEW_KICKOFF.md\n2df2f87 2026-08-24 docs: the ARCHITECTURE REVIEW kickoff — the axe-sharpening session turned on the axe\n(A 202-line document, the 30th file in docs/sessions/, produced on day 27 of the src/ drought. Its own §2 header measures the drought and its own §6 forbids ending it.)",
+      "severity": "expensive",
+      "rule_targeted": "ARCH-D and ARCHITECTURE_REVIEW_KICKOFF.md §6's src/ no-touch",
+      "proposed_change": "Amend ARCH-D from '...with the next chop named' to '...and the next chop's FIRST COMMIT HAS LANDED IN src/, pasted.' Leave §6's no-touch for the review PHASE and lift it for the closing commit. Second-order consequence: the review session runs longer than one session, breaking its own ≤20-agent/one-session budget — take that trade, because a review that ends in prose is the exact failure it was called to diagnose. Rollback: revert ARCH-D's wording.",
+      "is_deletion": false,
+      "word_delta": 0
+    },
+    {
+      "id": "PM-4",
+      "claim": "The plan budgets the abundant resource and leaves the scarce one uncounted: agents are ruled UNLIMITED while the owner's eyes, ears and rulings are the terminal gate on L6, L7, L8 and on every loop's stopping rule — and appear in no budget line anywhere in GAUNTLET.md.",
+      "cite": "docs/GAUNTLET.md:95, :133, :142, :52, :353 · RESUME_HERE.md:29",
+      "evidence": "$ grep -n 'UNLIMITED' docs/GAUNTLET.md\n95:**Opus 5 @ `xhigh`, UNLIMITED agents (owner ruling 2026-08-13)** — surgical,\n353:**R5 — ✅ OWNER RULING 2026-08-13: Opus lanes are UNLIMITED, Fable lanes stay\n$ grep -n \"KHESHAV\\|Kheshav's own LOOK\\|his ears\" docs/GAUNTLET.md\n52:| **A5** | **Kheshav's own LOOK verdict**, logged verbatim | the log line |\n133:| **L7** | **AUDIO** ... ⚠ **gate is KHESHAV'S EARS** — no model can hear | ...\n142:whenever the owner's LOOK queue has an open verdict. L7 waits for his ears.\n$ sed -n '29p' RESUME_HERE.md\n**2. ⛔ OWNER RULING 2026-08-23 — JUDGING IS OVER. Do not run another `l0-finish-wf3`.**\n(The engine's own termination event was a human decision, not a gate. Three of twelve lanes cannot close without him personally, and nothing in the plan prices his attention.)",
+      "severity": "expensive",
+      "rule_targeted": "docs/GAUNTLET.md §2 model-routing block and §6 R5",
+      "proposed_change": "Strike the word 'UNLIMITED' at :95 and add one clause: 'Agents are cheap and the owner is not — each lane declares up-front how many LOOK/ear verdicts it will demand of him, and a lane that needs more than five is re-scoped before it arms.' Second-order consequence: L6 (~150 animations, each needing an independent visual grade) fails this test immediately and must be re-scoped — that is the finding, not a bug in the rule. Rollback: restore 'UNLIMITED' and delete the clause.",
+      "is_deletion": false,
+      "word_delta": 22
+    },
+    {
+      "id": "PM-5",
+      "claim": "8.2 GB of irreplaceable evidence lives in exactly one place, git-invisible, with no backup policy stated anywhere in the tracked repo — and because §0 makes an unopenable artifact void, losing that disk does not merely cost the corpus, it retroactively makes all 1,696 banked verdicts unauditable.",
+      "cite": ".gitignore:9 · docs/GAUNTLET.md §0 (A2 artifact class) · RESUME_HERE.md:38",
+      "evidence": "$ sed -n '8,9p' .gitignore\n# Study-only reference material — NEVER distributed (RECREATE, NEVER RIP)\nreference/\n$ git ls-files reference | wc -l\n       0\n$ du -sh reference/ reference/extracted reference/decompiled reference/decrypted\n8.2G    reference/\n504M    reference/extracted\n 28M    reference/decompiled\n 21M    reference/decrypted\n$ find reference/extracted -type f | wc -l ; find reference/frames -type f | wc -l\n    6240\n    7381\n$ git grep -niE 'back(-| )?up' -- '*.md' | wc -l\n       2\n(both hits unrelated: a localStorage backup/restore note in IMPROVEMENTS_RESEARCH.md, and 'topped back up' about HP in a video-study segment. There is no backup policy in this repo.)\n$ sed -n '38p' RESUME_HERE.md\n**Never re-judge a batch that already wrote its JSON**: §3.2 bars a blind re-judge from\n(so a verdict whose artifact is gone cannot be re-earned either)\nNote in mitigation, honestly: reference/videos/ is 2 files named by YouTube ID (Nr4fQstqHDM.mp4, zFtCaTO0_1M.mp4) and reference/frames/ is derived from them — both re-acquirable IF those uploads survive. reference/extracted + decompiled + decrypted (~553 MB) came off a Flashpoint proxy against a dead backend and are NOT.",
+      "severity": "kills-project",
+      "rule_targeted": "CLAUDE.md 'Invariants' — reference/ is named as the primary 1:1 source and never as a thing that needs protecting",
+      "proposed_change": "One line in CLAUDE.md's Invariants: 'reference/ is gitignored and single-copy. Keep an off-machine copy of reference/extracted/, decompiled/, decrypted/ and permission/ (~553 MB); frames and videos are re-derivable, the payload is not.' Second-order consequence: it puts Lut's payload on a second device, which the permission ruling's non-distribution caveat covers only for private study — say so in the same line. Rollback: delete the line.",
+      "is_deletion": false,
+      "word_delta": 38
+    },
+    {
+      "id": "PM-6",
+      "claim": "The 'cannot be improved further' self-report is a ritual that has never once returned no. GAUNTLET.md §7 certified on 2026-08-13 that 'the next change would be churn' — and nine days later the project added 25 lines to that same file, including §3.8, which it defends as 'a correctness argument, so it holds even when tokens are free.' That is not churn; the self-certification was simply wrong, and nothing noticed.",
+      "cite": "e97f91f (2026-08-13, §7 written) · 7476add (2026-08-22, §3.8 added)",
+      "evidence": "$ git show e97f91f:docs/GAUNTLET.md | grep -n 'cannot be improved further'\n356:**Does this reach the \"cannot be improved further\" bar? ✅ Yes — the next change\n$ git diff --stat e97f91f HEAD -- docs/GAUNTLET.md\n docs/GAUNTLET.md | 25 +++++++++++++++++++++++++\n 1 file changed, 25 insertions(+)\n$ git log -1 --format='%h %ad %s' --date=short 7476add\n7476add 2026-08-22 GAUNTLET §3.8: one workflow in flight — owner rule, with the reason that actually forces it\n$ grep -n 'cannot be improved further' docs/GAUNTLET.md\n381:**Does this reach the \"cannot be improved further\" bar? ✅ Yes — the next change\n(the ✅ is still there, unamended, at HEAD)\n$ awk '/^## §7 BAR SELF-REPORT/,0' docs/GAUNTLET.md | wc -w\n     226",
+      "severity": "expensive",
+      "rule_targeted": "the standing kickoff-bar rule (memory: feedback-kickoff-bar-verdict) as instantiated in docs/GAUNTLET.md §7",
+      "proposed_change": "DELETE §7 BAR SELF-REPORT (lines 379-399, 226 words) and stop requiring a self-graded bar verdict inside the artifact being graded. Keep the standing rule that Kheshav is TOLD whether the bar was reached — that belongs in the reply, where he can veto it, not in the document, where it is a signature on your own work. Second-order consequence: loses a genuinely useful summary of what the engine does and does not promise; move that paragraph's four honest 'what it deliberately does not promise' clauses into §2 as a bounded note if wanted. Rollback: git show e97f91f:docs/GAUNTLET.md.",
+      "is_deletion": true,
+      "word_delta": -226
+    },
+    {
+      "id": "PM-7",
+      "claim": "The standing engine's own paste-ready prompt hands the next session a baseline that is 107 tests and 7 files stale, and has been wrong since the day it was written — training the operator to ignore the engine's numbers, which is the one thing a binary-gate culture cannot survive.",
+      "cite": "docs/GAUNTLET.md:298 · RESUME_HERE.md:17 · pasted npm test",
+      "evidence": "$ sed -n '298p' docs/GAUNTLET.md\nFIRST, DO THIS: confirm the baseline (git log -1 + npm test -> 56 files / 894),\n$ sed -n '17p' RESUME_HERE.md\n| suite | 62 files / 983 | **63 / 1001** |\n$ npm test 2>&1 | tail -6\n Test Files  63 passed (63)\n      Tests  1001 passed (1001)\n   Start at  15:30:25\n   Duration  5.03s\n(GAUNTLET.md:298 is inside the §5 block the engine says to 'Copy everything between the ''' markers'. It is the FIRST instruction the next session executes and it is off by 107 tests.)",
+      "severity": "minor",
+      "rule_targeted": "docs/GAUNTLET.md §5 THE GAUNTLET PROMPT",
+      "proposed_change": "DELETE the number: 'confirm the baseline (git log -1 + npm test -> 56 files / 894)' becomes 'confirm the baseline (git log -1 + npm test) and reconcile the count against RESUME_HERE'. A figure maintained in two files gets maintained in zero. Second-order consequence: the prompt no longer catches a suite that silently SHRANK — accept it; the pre-commit hook and CI already do. Rollback: put the digits back.",
+      "is_deletion": true,
+      "word_delta": -5
+    }
+  ],
+  "ranking_by_probability": [
+    "PM-1 meta-drift / momentum death — ALREADY FURTHEST ALONG, 27 days in, not a risk but an in-progress death",
+    "PM-2 lane arithmetic never closes — measurable today from L0's cost against 11 remaining lanes",
+    "PM-3 the intervention is charter-blocked from being an intervention",
+    "PM-4 the owner is the uncounted bottleneck on 3 of 12 lanes and on every stopping rule",
+    "PM-5 single-copy evidence — lower annual probability, but the only cause with zero recovery path",
+    "PM-6 self-certification theatre erodes the gates that are the project's actual immune system",
+    "PM-7 stale baseline in the paste prompt — the canary, not the disease"
+  ],
+  "net_word_delta_if_all_applied": -177
+}
