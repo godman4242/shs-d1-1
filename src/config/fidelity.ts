@@ -682,6 +682,54 @@ export const FIDELITY_SCANS: readonly FidelityScan[] = [
  * position (rows: hp 518-526, chi 535-542, focus 549-557 @1024×576) — the
  * best-possible downsample, so row probes match by construction.
  */
+/**
+ * THE FOCUS BAR'S CAPTION — geometry MEASURED off A1, colours read from source.
+ *
+ * Frame: `reference/frames/combat_analysis/Nr4fQstqHDM_t428.5.png`, cropped and
+ * upscaled before measuring. Stage scale is 1920/1024 = 1.875:
+ *   - caption cap height  18 px @1920 -> 9.6 stage px  (font 12 at DuelScene's
+ *     0.8 cap-to-fontSize ratio, the same ratio the HP/Chi labels use)
+ *   - caption box width  237 px @1920 -> 126.4 stage px, centred on the bar
+ *   - the bar stack corroborates the committed geometry: the Chi bar measures
+ *     264 px @1920 -> 140.8 stage px against a committed `barLen` of 142 (<1%)
+ *
+ * Colours are NOT measured — they are stated outright by the web build, which
+ * wraps each caption in its own font tag
+ * (`reference/decompiled/shs3_payload/scripts/§1t113s0§.as:110-111`):
+ *   "<font color='#000000'>" + getString(175)  -> the FULL-meter caption
+ *   "<font color='#BBBBBB'>" + getString(960)  -> the EMPTY-meter caption
+ */
+export const FOCUS_CAPTION = {
+  /** Centred on the bar stack, like the two labels above it. */
+  x: 202,
+  y: 553,
+  /** Cap height 17 px @1920 = 9.07 stage px; at this HUD's 0.78 cap ratio -> 12. */
+  fontPx: 12,
+  /**
+   * The original's face is CONDENSED and our fallback is not, so matching the cap
+   * height alone overflows the bar. Measured in the same frame: the caption is
+   * 235 px @1920 = 125.33 stage px for 20 characters (6.27/char), while our font
+   * 12 renders the identical string at 175 stage px (8.75/char) — 1.38x too wide,
+   * spilling past the 142 px bar the original keeps it inside. 125.33/175 = 0.716
+   * reproduces BOTH measurements instead of splitting the difference.
+   * Veto = drop to font ~8.6 and match width alone, at 27% too short.
+   */
+  scaleX: 0.716,
+  /** Source-exact #BBBBBB — shown while the meter is empty (stance is locked). */
+  lockColor: '#bbbbbb',
+  /** Source-exact #000000 — shown while the meter is full. */
+  critColor: '#000000',
+  /**
+   * Outline width, PER STATE. The dark outline is our own convention, inherited
+   * from the HP/Chi labels where white-on-colour needs it. The source gives these
+   * captions only a font colour — and a black outline on the BLACK caption renders
+   * it invisible against the full (near-white) bar. Caught on screen, not by a
+   * test. Outline the grey caption; never the black one.
+   */
+  lockStrokePx: 3,
+  critStrokePx: 0,
+} as const;
+
 export const BAR_GRADIENTS = {
   hp: [0x3ab55f, 0x3ab55f, 0x31ad58, 0x26a641, 0x129827, 0x079913, 0x02990b, 0x05960c, 0x009a03],
   chi: [0x5272ea, 0x4d6ee6, 0x4362e2, 0x3a56e4, 0x2e49e2, 0x253fe6, 0x1930ef, 0x1b24cf],

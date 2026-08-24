@@ -119,6 +119,7 @@ import {
   PLAYER_STATS,
 } from '../src/config/stats';
 import { REACH } from '../src/config/reach';
+import { FOCUS_CAPTION } from '../src/config/fidelity';
 import { SKILL_COOLDOWN_MS } from '../src/config/skills';
 import { BLOOD_FX, FINISHER_FLASH, SLASH_ARC } from '../src/config/fx';
 import { GESTURE_DIAG_DEG, LAUNCH_FLICK_MAX_LEN } from '../src/config/gesture';
@@ -570,6 +571,23 @@ describe('xp.ts — Stage 3 M2, the frame-backed XP curve', () => {
 
 describe('skills.ts — cooldowns (frame-quantized .92/.96 pattern)', () => {
   it('SKILL_COOLDOWN_MS', () => {
+    // FOCUS_CAPTION is double-entered here on purpose, like every other
+    // spec-pinned value: changing a measured number means updating BOTH files in
+    // the same commit. Measured off A1 (Nr4fQstqHDM_t428.5.png) at stage scale
+    // 1920/1024 = 1.875; colours are stated by §1t113s0§.as:110-111.
+    expect(FOCUS_CAPTION).toEqual({
+      x: 202,
+      y: 553,
+      fontPx: 12, // cap 17 px @1920 = 9.07 stage px at this HUD's 0.78 ratio
+      scaleX: 0.716, // 125.33 stage px measured / 175 rendered — the OG face is condensed
+      lockColor: '#bbbbbb', // source-exact <font color='#BBBBBB'> + getString(960)
+      critColor: '#000000', // source-exact <font color='#000000'> + getString(175)
+      lockStrokePx: 3, // our outline convention — grey caption needs it
+      critStrokePx: 0, // …and the BLACK caption must NOT have it, or it vanishes
+    });
+  });
+
+  it('SKILL_COOLDOWN_MS — the duel\'s three hotbar verbs', () => {
     expect(SKILL_COOLDOWN_MS).toEqual({
       chiPunch: 5000, // CONTRACT-SRC — skill 1042 <cooldown>5</cooldown> (was 4960, frame-read)
       smokeBomb: 6000, // CONTRACT-SRC — skill 1010 L1 <cooldown>6</cooldown> (was INFERRED 7960)

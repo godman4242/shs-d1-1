@@ -124,7 +124,7 @@ expressed as a loop over rows, the lane writes the loop.**
 |---|---|---|---|
 | **L0** | **RE-SURVEY** — re-score all 12 systems against the payload; rewrite `REBUILD_READINESS.md` §4/§6; delete every "unrecoverable" that the payload disproves | **Opus · small (~8)** | every system's score carries an A2 cite or an explicit "still unheld"; §6's unrecoverable list is provably minimal |
 | **L1** | **CAMPAIGN** — port `questdata.xml` → config; build the dialogue box, cutscene director, quest state machine, choice graph | **Fable · bounded** (runtime is from-scratch) · **Opus critic** on every LOOK | Prologue→Ep12→Epilogue playable end-to-end; all 3,307 lines present byte-exact; 471 choices branch; a cutscene beat matches its A1 frame |
-| **L2** | **SKILLS + METERS** — `skilldata.xml` → config; Chi/Focus/AP meters real · **DATA HALF LANDED 2026-08-24** | **generator script** + Opus schema/grade | ✅ all 75 skills × 182 rows byte-exact from A2 · ✅ zero INFERRED cooldowns remain · ⛔ **meters on-screen match A1 — STILL OPEN, the lane is NOT closed** |
+| ~~**L2**~~ | ~~**SKILLS + METERS**~~ — **CLOSED 2026-08-24** | **generator script** + Opus grade | ✅ 75 skills × 182 rows byte-exact from A2 · ✅ zero INFERRED cooldowns remain · ✅ meters match A1: the three bars `BattleUI.as` declares (`hpbar`/`chibar`/`reloadbar`), the Focus caption's 3 source-stated states, fidelity gate **41 points + 14 scans, 0 failures**. ⚠️ **"AP meter" was not built ON PURPOSE** — `BattleUI.as` declares no AP bar; AP is a Player-sheet stat, never a duel meter (DIVERGENCES). |
 | **L3** | **ITEMS + PAPERDOLL** — `itemdata.xml` → config; 9-slot compositing contract | **generator script** + **Opus** owns the compositing/z-order grade | 982 items byte-exact; a dressed fighter composites in the OG's layer order against A1 |
 | **L4** | **ENEMIES + AI** — `npcdata.xml` → config; AI behaviours from `<ai>` | **generator script** for the rows · **Fable** builds the AI · **Opus** grades the fight feel | 495 NPCs byte-exact; each `<ai>` value maps to observed behaviour with an A1 cite |
 | **L5** | **COMBAT CORE** — reach cap, slash-vs-move, crit read, Focus gating, TTK | **Opus · heavy** | SESSION 24 §2 A12-A…F green; duel-baseline re-recorded ONCE, atomically |
@@ -136,7 +136,7 @@ expressed as a loop over rows, the lane writes the loop.**
 | **L11** | **META + REBIRTH** — clans, War Room, elements; the server sim is gone → authored offline sim | **Fable · bounded** | every authored-not-original piece labelled in DIVERGENCES; nothing presented as OG fidelity that isn't |
 
 **Ordering rule:** L0 first, always. Then **highest (leverage ÷ risk)** — which
-after L0 is **L2 → L3 → L4 → L1**, cheapest-first: their rows are already held and
+after L0 is **~~L2~~ → L3 → L4 → L1**, cheapest-first: their rows are already held and
 their gates are byte-checks rather than judgement calls. L5 and L6 interleave
 whenever the owner's LOOK queue has an open verdict. L7 waits for his ears.
 

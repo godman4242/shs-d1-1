@@ -3642,3 +3642,62 @@ follow from it.
 - **⚠️ C2 applies to every row here.** `skilldata.xml` is the **Android** build;
   the web payload carries no `<skilldata>` root. All 182 rows are **v0.682** until
   a web-side artifact corroborates them (GAUNTLET.md §2.1).
+
+## LANE L2 (meters half) — THE THIRD BAR GETS ITS CAPTION. AP IS NOT A BATTLE METER.
+
+- **The original's battle HUD has exactly THREE bars, and AP is not one of them.**
+  Stated outright by the source, not inferred from a frame:
+  `reference/decompiled/shs3_android/scripts/BattleUI.as` declares `hpbar`,
+  `chibar` and `reloadbar` — and nothing else. `updateHp` / `updateChi` /
+  `updateReload` are the only bar writers. **The lane gate's phrase
+  "Chi/Focus/AP meters real" names a meter the battle HUD does not have.** AP is
+  real as a *stat* (Player-sheet pool, `SYNTHESIS.md:120-122`); it is never
+  rendered in a duel. Rendering one would have been an invented HUD element.
+  **Veto** = add an AP bar anyway, and diverge from `BattleUI.as` on purpose.
+
+- **The Focus bar's caption — three states, transcribed not guessed.** From the
+  web build's own update function
+  (`reference/decompiled/shs3_payload/scripts/§1t113s0§.as:325-359`):
+
+  ```as3
+  var pct:Number = (param1 - 48) / (param2 - 48);   // clamped at 0
+  if(pct == 0)                -> "<font color='#BBBBBB'>" + getString(960)
+  else if(pct > 0 && pct < 1) -> visible = false
+  else if(pct >= 1)           -> Snd_criticalDamage; "<font color='#000000'>" + getString(175)
+  ```
+
+  `getString(175)` = **'Critical Hit'**. `getString(960)` resolves to **nothing** —
+  it is **absent from the android string table**, exactly as C4 predicted, so its
+  text comes from A1: the frame prints **CANNOT CHANGE STANCE** on that bar
+  (`reference/frames/combat_analysis/Nr4fQstqHDM_t428.5.png`).
+  The middle state is the non-obvious one: a partly-charged meter **hides** the
+  field rather than blanking it. Decided in `core/focusCaption.ts`, red-proofed.
+
+- **`(focus - 48) / (max - 48)` is now corroborated by the WEB build.** Our
+  `FOCUS_DISPLAY_OFFSET = 48` / `FOCUS_DISPLAY_SPAN = 144` were CONTRACT-SRC on
+  C4's evidence; the same arithmetic appears verbatim in the web HUD. The stale
+  `DuelScene` comment calling the Focus meter "our INFERRED meter" is corrected.
+  ⚠️ The **android** build uses **24**, not 48, in the same expression
+  (`MCSPlayer.as:1168, :3272`) — a live web-vs-android divergence (C2). We follow
+  the **web** build, which is what v0.717 and both longplays are.
+
+- **Caption geometry is MEASURED, and the original's face is CONDENSED.** In A1 at
+  stage scale 1920/1024 = 1.875: cap **17 px @1920 = 9.07 stage px**, caption box
+  **235 px = 125.33 stage px** for 20 characters. Our font at the cap-matching
+  size 12 renders the same string **175 stage px** wide — 1.38× too wide, spilling
+  past the 142 px bar the original keeps it inside. `scaleX = 125.33/175 = 0.716`
+  reproduces BOTH measurements. **Veto** = font ~8.6 to match width alone, 27% short.
+  Corroboration found in the same pass: the Chi bar measures **264 px = 140.8
+  stage px** against our committed `barLen` of **142** — under 1% apart.
+
+- **A defect only the screen could find: black caption + black outline = invisible.**
+  Our dark outline is a convention inherited from the HP/Chi labels, where
+  white-on-colour needs it. The source gives these captions only a font colour, and
+  the FULL-meter caption is `#000000` on a near-white bar. Outlining it rendered it
+  unreadable. Stroke is now per-state (`lockStrokePx: 3`, `critStrokePx: 0`).
+  No test would have caught this; it took a zoom on a running build.
+
+- **Known remaining mismatch, NOT fixed here and NOT in this gate.** A1 shows
+  **`150% DAMAGE`** in gold beneath the bars; we render **`BALANCED STANCE`**. That
+  is a stance/damage readout, not a meter, so it belongs to **L8 (UI + screens)**.
+  Recorded rather than silently changed.

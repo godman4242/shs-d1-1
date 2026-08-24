@@ -15,7 +15,8 @@ import {
 import { SKILL_VERB } from '../config/combat-sim';
 import { DUEL_ENEMY, DUEL_SPAWNS } from '../config/duel';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/display';
-import { BAR_GRADIENTS } from '../config/fidelity';
+import { BAR_GRADIENTS, FOCUS_CAPTION } from '../config/fidelity';
+import { focusCaption } from '../core/focusCaption';
 import { FINISHER_FLASH, SLASH_ARC } from '../config/fx';
 import { COL } from '../config/palette';
 import { SKILL_COOLDOWN_MS } from '../config/skills';
@@ -104,6 +105,7 @@ export class DuelScene extends Phaser.Scene {
     playerName: Phaser.GameObjects.Text;
     hpLabel: Phaser.GameObjects.Text;
     chiLabel: Phaser.GameObjects.Text;
+    focusLabel: Phaser.GameObjects.Text;
     stance: Phaser.GameObjects.Text;
     autoSlash: Phaser.GameObjects.Text;
     slots: Phaser.GameObjects.Text[];
@@ -409,6 +411,19 @@ export class DuelScene extends Phaser.Scene {
         .setDepth(21),
       chiLabel: this.add.text(202, 539, '', { ...style(15, '#fafafa'), strokeThickness: 3 })
         .setOrigin(0.5)
+        .setDepth(21),
+      // The THIRD bar carries its own caption, and the original prints it ON the
+      // bar (A1: reference/frames/combat_analysis/Nr4fQstqHDM_t428.5.png). Measured
+      // there: cap height 18 px @1920 = 9.6 stage px (font 12 at this file's 0.8
+      // cap ratio), caption box 237 px @1920 = 126 stage px, centred on the bar
+      // like the two labels above it. Colour is set per state — see drawHud.
+      focusLabel: this.add
+        .text(FOCUS_CAPTION.x, FOCUS_CAPTION.y, '', {
+          ...style(FOCUS_CAPTION.fontPx, FOCUS_CAPTION.lockColor),
+          strokeThickness: 3,
+        })
+        .setOrigin(0.5)
+        .setScale(FOCUS_CAPTION.scaleX, 1)
         .setDepth(21),
       stance: this.add.text(131, GAME_HEIGHT - 17, '', style(13)).setDepth(21),
       // Text sits ~62% down the plate like the OG's; the fill rows above it
@@ -817,9 +832,10 @@ export class DuelScene extends Phaser.Scene {
         g.fillRect(bx, 535 + i, chiW, 1);
       });
     }
-    // Focus pill (drains on stance swaps — our INFERRED meter in the
-    // original's strip position).
-    // D4: the bar shows `(units − 48) / 144` — the first 48 units are INVISIBLE.
+    // The Focus bar. CONTRACT-SRC, not INFERRED (C4 + this lane): the source's own
+    // update is `pct = (focus - 48) / (max - 48)`, clamped at 0
+    // (§1t113s0§.as:327-332) — exactly FOCUS_DISPLAY_OFFSET / FOCUS_DISPLAY_SPAN.
+    // The first 48 units are INVISIBLE, and 48 is also the stance-switch cost.
     const focusW = barLen * player.focusDisplay;
     BAR_GRADIENTS.focus.forEach((c, i) => {
       g.fillStyle(c, 1);
@@ -828,6 +844,32 @@ export class DuelScene extends Phaser.Scene {
     // Bar fraction labels track the live sim pools (render-only reads).
     this.texts.hpLabel.setText(`${Math.round(player.hp)}/${player.maxHp}`);
     this.texts.chiLabel.setText(`${Math.round(player.chi)}/${player.maxChi}`);
+    // The Focus bar's caption — three states, transcribed from the source's own
+    // branch (§1t113s0§.as:335-358) and decided in core/focusCaption.ts. Note the
+    // middle state HIDES the field rather than blanking it: a partly-charged
+    // meter shows bare colour, which is why the bar reads empty of text in play.
+    const caption = focusCaption(player.focusDisplay);
+    if (caption === 'hidden') {
+      this.texts.focusLabel.setVisible(false);
+    } else {
+      const lock = caption === 'cannotChangeStance';
+      this.texts.focusLabel
+        .setVisible(true)
+        // The dark outline is OUR convention, inherited from the HP/Chi labels
+        // (white-on-colour needs it). The source gives this caption only a font
+        // colour, and a black outline on black text renders it INVISIBLE on the
+        // full bar — caught on screen, not in a test. Outline the grey caption,
+        // never the black one. Veto = outline both and lose the crit caption.
+        .setStroke(FOCUS_CAPTION.critColor, lock ? FOCUS_CAPTION.lockStrokePx : FOCUS_CAPTION.critStrokePx)
+        // Source-exact: "<font color='#BBBBBB'>" for the lock caption,
+        // "<font color='#000000'>" for the crit one.
+        .setColor(lock ? FOCUS_CAPTION.lockColor : FOCUS_CAPTION.critColor)
+        // getString(960) is WEB-ONLY — absent from the android table, so its text
+        // comes from A1 (the frame), where it reads in caps like the rest of this
+        // HUD. getString(175) is 'Critical Hit' in the table; uppercased here to
+        // match the HUD's uniform casing. Veto = render 175 as stored, mixed-case.
+        .setText(lock ? 'CANNOT CHANGE STANCE' : 'CRITICAL HIT');
+    }
 
     // Shunpo sliver (INFERRED placement right of the strip).
     // Shunpo sliver only — the gold "Critical" sliver is DELETED (D4): the
