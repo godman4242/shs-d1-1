@@ -571,9 +571,9 @@ describe('xp.ts — Stage 3 M2, the frame-backed XP curve', () => {
 describe('skills.ts — cooldowns (frame-quantized .92/.96 pattern)', () => {
   it('SKILL_COOLDOWN_MS', () => {
     expect(SKILL_COOLDOWN_MS).toEqual({
-      chiPunch: 4960, // CONTRACT (A-02 on-screen)
-      smokeBomb: 7960, // INFERRED
-      stab: 920, // INFERRED
+      chiPunch: 5000, // CONTRACT-SRC — skill 1042 <cooldown>5</cooldown> (was 4960, frame-read)
+      smokeBomb: 6000, // CONTRACT-SRC — skill 1010 L1 <cooldown>6</cooldown> (was INFERRED 7960)
+      stab: 920, // DIVERGENCE (authored) — OG Stab 1018 is a PASSIVE with no cooldown
     });
   });
 });

@@ -18,6 +18,7 @@ import { CHI_COST, CHI_FILL_PER_S, CHI_MAX } from '../src/config/chi';
 import { DASH_SPEED_PX_PER_FRAME, MAX_FRAME_MS, MOVE_WALK_PX_S, SMOKE_BOMB_DISTANCE } from '../src/config/combat-sim';
 import { WORLD_WIDTH } from '../src/config/display';
 import { JUMP_DURATION_FRAMES } from '../src/config/duel';
+import { SKILL_COOLDOWN_MS } from '../src/config/skills';
 import { ENEMY_STATS, PLAYER_STATS } from '../src/config/stats';
 import { FIXED_HZ, MS_PER_S, SLASH_FRAMES } from '../src/config/timing';
 import { AI_MELEE_RANGE, AI_TIERS, ENEMY_SPEED } from '../src/config/ai';
@@ -649,9 +650,15 @@ describe('Sim — skills via queueSkill (M3: SKILL_VERB hotbar)', () => {
     expect(sim.cooldownRemainingS('chiPunch')).toBe(0);
     sim.queueSkill('chiPunch');
     sim.tick();
-    expect(sim.cooldownRemainingS('chiPunch')).toBeGreaterThan(4.8);
+    // EXACT, and derived from the config — the old assertions were a loose
+    // bracket (>4.8, <4) sized around an off-screen 4.96 s read. Lane L2 sourced
+    // the real value from the payload (skill 1042 <cooldown>5</cooldown>), which
+    // lands the countdown precisely on the bracket's edge. Pin the arithmetic
+    // instead, so re-sourcing a cooldown can never quietly pass a stale bracket.
+    const fullS = SKILL_COOLDOWN_MS.chiPunch / 1000;
+    expect(sim.cooldownRemainingS('chiPunch')).toBe(fullS);
     tickN(sim, 60);
-    expect(sim.cooldownRemainingS('chiPunch')).toBeLessThan(4);
+    expect(sim.cooldownRemainingS('chiPunch')).toBe(fullS - 1);
   });
   it('smokeBomb dashes AWAY from the enemy by SMOKE_BOMB_DISTANCE (clamped to the arena)', () => {
     const sim = makeSim({ pos: v(350, 200) });
