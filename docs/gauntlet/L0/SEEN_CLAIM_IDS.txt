@@ -1,8 +1,8 @@
 # SEEN CLAIM IDS — every claim banked across every run of L0 so far.
 # A finding matching one of these is NOT new. Report it ONLY if you can
 # materially STRENGTHEN or CONTRADICT it — and say which, explicitly.
-# 1770 rows, 1731 unique ids, pooled from: run10, run11, run12, run13, run14, run15, run2, run3, run4, run5, run6, run7, run8, run9.
-# 1672 of them carry at least one artifact-citing verdict;
+# 1824 rows, 1785 unique ids, pooled from: run10, run11, run12, run13, run14, run15, run16, run2, run3, run4, run5, run6, run7, run8, run9.
+# 1696 of them carry at least one artifact-citing verdict;
 # the rest are LEADS and may not enter the ledger (§0).
 
 ## actionscript  (45 unique, 45 judged)
@@ -149,7 +149,7 @@
   * combat-core/slash-type-map
   * combat-core/stance-triangle
 
-## critic-new_findings  (1221 unique, 1162 judged)
+## critic-new_findings  (1275 unique, 1186 judged)
   * NEW-1-web-crit-is-flat-1.3
   * NEW-10-obfuscated-bundle-grep-method
   * NEW-2-web-per-stance-damage-and-mastery-10-ceiling
@@ -217,16 +217,32 @@
   * NF-G/43-web-sfx-cues-refiled-without-the-dead-s0-5-clause
   * NF-G/web-side-cite-for-800x480-and-a-second-800x690-layout
   * NF-I/def-subtraction-is-floored-by-the-attackers-min-damage
+    NF-L3-1/banked-finding-943-says-the-stance-switch-costs-no-focus-and-it-is-false
+    NF-L3-2/the-out-of-combat-stance-switch-is-free-but-not-ungated
+    NF-L3-3/max-dan-rank-is-10-displayed-and-the-web-carries-the-same-cap
+    NF-L3-4/the-three-bar-hud-finding-carries-the-android-threshold-into-a-web-description
+    NF-L3-5/two-frame-directories-hold-byte-identical-copies-so-path-novelty-tests-are-unsound
+    NF-L3-6/the-three-evade-passive-skill-ids-do-not-exist-in-the-android-skilldata
   * NF-S27B-1/stance-mastery-floor-is-zero-not-one
   * NF-S27B-2/cannot-change-stance-caption-and-the-gate-are-one-predicate
   * NF-S27B-3/the-three-state-focus-caption-is-web-only
   * NF-S27B-4/the-change-stance-label-is-a-hover-tooltip-on-the-portrait
   * NF-S27B-5/the-web-war-map-twin-is-1t7934s0-not-1t1524s0
-    NF-S27D-1/cannot-change-stance-is-proven-transient-on-film-and-the-focus-bar-is-battle-only
+  * NF-S27D-1/cannot-change-stance-is-proven-transient-on-film-and-the-focus-bar-is-battle-only
     NF-S27D-2/the-third-bar-is-named-focus-bar-in-game-so-focus-and-reload-are-one-meter
-    NF-S27D-3/RR159-is-inverted-the-out-of-combat-stance-switch-is-the-free-one
-    NF-S27D-4/the-full-focus-evade-passive-is-in-the-web-code-not-only-on-a-skill-card
+  * NF-S27D-3/RR159-is-inverted-the-out-of-combat-stance-switch-is-the-free-one
+  * NF-S27D-4/the-full-focus-evade-passive-is-in-the-web-code-not-only-on-a-skill-card
     NF-S27D-5/the-opaque-web-stance-ids-decode-to-0-4-via-the-android-twin
+    NF-S27E-1/focus-max-is-192-in-web-and-120-in-android-and-the-hud-bar-zero-point-is-48
+    NF-S27E-1/web-v0717-carries-four-skills-absent-from-the-ported-skilldata
+    NF-S27E-2/the-focus-bar-caption-is-a-three-state-readout-and-its-full-state-is-labelled-critical-hit
+    NF-S27E-2/the-full-focus-evade-only-fires-while-slashing
+    NF-S27E-3/overworld-buffs-are-a-timed-bottom-right-readout-not-a-hud-stack-banner
+    NF-S27E-3/web-v0717-carries-three-skills-1074-1076-that-do-not-exist-in-the-skilldata-table
+    NF-S27E-4/android-combat-tuning-diverges-from-web-on-far-more-than-the-crit-multiplier
+    NF-S27E-5/the-dan-ladder-has-a-second-web-side-rendering-in-ascii-that-discharges-the-s0-3-caveat
+    NF-S27E-6/ledger-evidence-1510-mislabels-RR195-blocker-5-as-RR159
+    NF-S27E-7/rebirth-hgold-is-plus-20-at-dan-8-and-plus-5-otherwise-which-is-not-the-ledger-flat-25
   * NF-ai0-duel-opponent-absent
   * NF-boss-hp-derivation
   * NF-category-11-decoded
@@ -375,11 +391,16 @@
   * cite-s27b/cannot-change-stance-is-the-focus-bar-low-end-label-not-a-lock
   * cite-s27b/focus-meter-numerics-are-fully-recovered-in-web-v0717
   * cite-s27b/stance-damage-ceiling-is-mastery-10-not-mastery-9
-    cite-s27d/crit-proc-is-deterministic-on-a-full-meter-and-the-multiplier-is-web-only
-    cite-s27d/dan-titles-are-nine-strings-456-464-and-455-is-never-used
-    cite-s27d/focus-fill-is-plus-1-per-tick-plus-6-per-kill-batch-and-replenish-sets-max-minus-1
-    cite-s27d/stance-switch-in-battle-costs-48-focus-flat-in-web-v0717
+  * cite-s27d/crit-proc-is-deterministic-on-a-full-meter-and-the-multiplier-is-web-only
+  * cite-s27d/dan-titles-are-nine-strings-456-464-and-455-is-never-used
+  * cite-s27d/focus-fill-is-plus-1-per-tick-plus-6-per-kill-batch-and-replenish-sets-max-minus-1
+  * cite-s27d/stance-switch-in-battle-costs-48-focus-flat-in-web-v0717
     cite-s27d/the-hud-reload-normalisation-constant-diverges-48-web-vs-24-android
+    cite-s27e/crit-multiplier-is-1-3-in-web-source-rr190-blocker-2-needs-no-popup
+    cite-s27e/focus-meter-numerics-are-fully-recovered-and-web-diverges-from-android-192-vs-120
+    cite-s27e/heavy-stance-defence-penalty-is-in-code-and-matches-the-tooltip
+    cite-s27e/the-stance-tables-are-a-mastery-TEN-ceiling-not-mastery-nine
+    cite-s27e/web-rebirth-does-carry-a-tenth-dan-gold-tier-rr165-half-falls
   * cite04/android-string-table-has-no-900-block
   * cite04/bar-equals-stance-gate-is-web-only
   * cite04/buff-attack-scales-mindamage-only
@@ -651,17 +672,24 @@
   * hunter-s27b/the-reach-cap-in-stage-px-the-one-value-the-whole-model-needs-is-in-the-web-payload
   * hunter-s27b/web-and-android-per-stat-ceilings-diverge-by-3x
     hunter-s27d/android-initplayer-is-an-unobfuscated-decoder-key-for-the-web-payload
-    hunter-s27d/base-slash-length-is-a-closed-formula-combat-core-blocker-1-falls
-    hunter-s27d/crit-is-deterministic-at-full-focus-not-a-proc
+  * hunter-s27d/base-slash-length-is-a-closed-formula-combat-core-blocker-1-falls
+  * hunter-s27d/crit-is-deterministic-at-full-focus-not-a-proc
     hunter-s27d/focus-regen-is-on-kill-not-per-tick
     hunter-s27d/four-web-vs-android-combat-divergences-measured-the-s0-3-caveat-now-bites-on-tuning
-    hunter-s27d/max-dan-rank-10-is-contract-not-inferred-the-web-build-caps-it
-    hunter-s27d/reach-cap-in-stage-px-per-stance-is-fully-recovered-the-biggest-combat-core-blocker-closes
-    hunter-s27d/reinforce-carries-three-material-tiers-keyed-on-weapon-level-not-node-level
-    hunter-s27d/rr-159-is-inverted-out-of-combat-is-the-free-switch
+  * hunter-s27d/max-dan-rank-10-is-contract-not-inferred-the-web-build-caps-it
+  * hunter-s27d/reach-cap-in-stage-px-per-stance-is-fully-recovered-the-biggest-combat-core-blocker-closes
+  * hunter-s27d/reinforce-carries-three-material-tiers-keyed-on-weapon-level-not-node-level
+  * hunter-s27d/rr-159-is-inverted-out-of-combat-is-the-free-switch
     hunter-s27d/spacebar-is-the-stance-cycle-key-and-it-is-gated-even-out-of-combat
-    hunter-s27d/the-crit-proc-rule-is-deterministic-full-meter-not-a-chance-roll
+  * hunter-s27d/the-crit-proc-rule-is-deterministic-full-meter-not-a-chance-roll
     hunter-s27d/web-doubled-the-focus-meter-vs-android-a-measured-parity-divergence
+    hunter-s27e/cannot-change-stance-is-the-focus-bar-zero-caption
+    hunter-s27e/crit-multiplier-1-3-is-web-source-contract-not-a-popup-to-read
+    hunter-s27e/focus-meter-numerics-are-fully-recovered
+    hunter-s27e/reinforce-web-parity-discharged
+    hunter-s27e/slash-length-units-are-native-800x480-stage-px
+    hunter-s27e/spd-to-cooldown-formula-is-closed-in-web-source
+    hunter-s27e/tenthgold-100-is-contract-in-the-web-build
   * hunter/all-24-elemental-skills-fully-specced
   * hunter/android-rebirth-pays-20-5-hgold-vs-web-100-25
   * hunter/audio-blocker-is-the-right-target-for-the-sfx-names
@@ -820,6 +848,11 @@
     lens3-s27d/the-reinforce-materials-are-spent-by-item-id-the-banked-web-cite-only-proves-what-is-printed
     lens3-s27d/the-web-input-manager-keeps-the-clear-name-maxdistance-so-reach-needs-no-android-cite
     lens3-s27d/v0717-stance-table-carries-a-mastery-9-reconciliation-that-fights-five-upheld-siblings
+    lens3-s27e/800x480-cannot-carry-one-uniform-2.4x-into-a-1080p-frame
+    lens3-s27e/an-upheld-finding-says-the-in-combat-stance-switch-is-free-and-it-is-not
+    lens3-s27e/rr155-bundles-two-tables-and-the-two-upheld-fixes-destroy-each-other-unless-it-is-split
+    lens3-s27e/the-stats-panel-omits-the-100px-floor-so-the-displayed-reach-is-not-the-engine-reach
+    lens3-s27e/the-wiki-reach-triple-reproduces-exactly-only-under-android-arithmetic
   * lens3/271-is-reachable-in-one-stat-the-budget-is-237-and-the-cost-is-90
   * lens3/coins-per-kill-half-of-RR215-is-also-dead-at-the-web-build
   * lens3/human-anim-node-count-is-per-anim-not-a-fixed-rig
@@ -919,14 +952,21 @@
   * nf/web-item-weight-modifier-is-id-208
   * nf/web-only-survival-enemy-443-is-named
     nf/web-stance-slash-length-formulas-and-the-light-mislabel
-    nf1-the-stance-mastery-cap-is-10-and-it-is-in-the-skill-tree
-    nf2-mastery-floors-at-1-so-a-fresh-character-is-not-light-x0-5
-    nf3-the-slash-budget-is-spent-in-literal-stage-pixels-web-side
-    nf4-the-per-kill-xp-formula-is-in-the-web-build-too
-    nf5-nodegenerator-carries-the-general-territory-to-room-transform
-    nf6-war-board-adjacency-is-in-code-not-just-the-board-dimensions
-    nf7-271-cap-is-neither-gear-nor-rebirth-inclusive
-    nf8-coins-per-kill-is-a-per-npc-loot-table-with-type-qty-and-chance
+  * nf1-the-stance-mastery-cap-is-10-and-it-is-in-the-skill-tree
+  * nf2-mastery-floors-at-1-so-a-fresh-character-is-not-light-x0-5
+  * nf3-the-slash-budget-is-spent-in-literal-stage-pixels-web-side
+  * nf4-the-per-kill-xp-formula-is-in-the-web-build-too
+  * nf5-nodegenerator-carries-the-general-territory-to-room-transform
+  * nf6-war-board-adjacency-is-in-code-not-just-the-board-dimensions
+  * nf7-271-cap-is-neither-gear-nor-rebirth-inclusive
+  * nf8-coins-per-kill-is-a-per-npc-loot-table-with-type-qty-and-chance
+    nfx1-web-payload-seeds-all-three-stance-masteries-at-1
+    nfx2-web-payload-carries-the-war-hex-adjacency-verbatim
+    nfx3-a-sector-owns-a-room-vector-so-rr225-blocker-5-stays-open
+    nfx4-getstat-playerstat-branch-is-base-only-direct-web-proof
+    nfx5-native-stage-is-declared-800x480-inside-the-web-payload
+    nfx6-base-slash-length-formula-is-web-confirmed
+    nfx7-reach-multipliers-invert-the-damage-multipliers-light-reaches-furthest
   * npcdata-category11-grant-census-corrected
   * npcdata/five-stances-are-in-the-web-build-too
   * npcdata/five-stances-reversed-and-dual
@@ -1124,7 +1164,21 @@
     s27d/obfuscated-symbol-dictionary-for-the-web-combat-core
     s27d/stance-constant-dictionary-12223-is-DUAL-and-12224-is-REVERSED
     s27d/the-focus-bar-IS-the-internal-reload-meter-and-replenish-focus-stops-one-tick-short
-    s27d/the-in-combat-stance-switch-COSTS-48-so-the-recreations-focus-gated-switch-was-right
+  * s27d/the-in-combat-stance-switch-COSTS-48-so-the-recreations-focus-gated-switch-was-right
+    s27e-nf-a-mastery-floor-of-1-is-web-confirmed-drop-the-c2-hedge
+    s27e-nf-a/the-xp-award-formula-is-fully-present-in-web-v0717
+    s27e-nf-b-the-reach-cap-value-is-closed-form-not-just-the-unit
+    s27e-nf-b/coin-credit-carries-a-1p5x-timed-boost-multiplier
+    s27e-nf-c-per-kill-base-xp-is-level-x2-plus-20-there-is-no-npc-xp-row
+    s27e-nf-c/only-66-of-495-npcs-drop-anything-and-loot-ids-above-3-are-item-drops
+    s27e-nf-d-the-stat-caps-differ-between-web-v0717-and-android-v0682
+    s27e-nf-d/CANNOT-CHANGE-STANCE-is-the-gate-failure-display-not-a-hard-lock
+    s27e-nf-e-a-sector-is-a-node-and-a-node-holds-an-array-of-rooms
+    s27e-nf-e/focus-max-is-192-on-web-and-120-on-android
+    s27e-nf-f-the-war-board-is-a-literal-6x6-and-the-341-origin-has-an-inverse
+    s27e-nf-f/balanced-reach-also-scales-with-mastery-and-reach-has-a-hard-floor-of-100
+    s27e-nf-g/the-1p3x-damage-bonus-fires-on-a-FULL-focus-bar-not-a-random-crit-roll
+    s27e-nf-h/master-reference-2098-coins-per-kill-plus-8-verified-falls-with-the-loot-table
   * save-schema/dataslots-20-does-not-count-the-written-ids
   * save-schema/is-android-only-evidence
   * skilldata/skill-1077-missing-from-extract
@@ -1201,7 +1255,7 @@
   * string-table/war-turn-expiry-resets-moves-to-max
   * string-table/weight-gate-is-a-travel-guard-in-code
   * strings/the-android-lang-table-skips-ids-881-999-entirely
-    t1-overturns-03-cite-s27d/mastery-runs-1-to-10-so-RR155s-level-1-floor-is-wrong-too
+  * t1-overturns-03-cite-s27d/mastery-runs-1-to-10-so-RR155s-level-1-floor-is-wrong-too
     t1-overturns-03-cite-s27d/the-injured-debuff-halves-reach-and-no-reach-finding-carries-it
   * tooling/source-constants-mined-the-0682-decompile
   * ui-hud/150-percent-damage-is-a-buff

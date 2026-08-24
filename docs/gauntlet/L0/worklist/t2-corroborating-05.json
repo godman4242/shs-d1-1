@@ -1,0 +1,52 @@
+[
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/session11/crit-focus/t1082.100.png (crop x0-640,y760-1080 of 1920x1080, 3x LANCZOS - blue bar reads '31/47') \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (same crop - green '20/20', blue '26/26') \u00b7 docs/research/REBUILD_READINESS.md:178 \u00b7 docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/b11s-blue-is-hp-rests-on-an-inference-a-frame-breaks",
+  "lane_impact": "L8 ui-hud: keep the bar-to-stat binding OPEN, but stop treating B-11:7 as symmetric counter-evidence - its supporting inference is refuted by a frame. The cheapest closing artifact is a death/near-death frame: whichever bar hits 0 immediately before the 'YOU WERE DEFEATED' screen is HP. A-22-death-you-were-defeated-screen is the segment to pull frames from.",
+  "overturns_ledger": false,
+  "quote": "B-11:7 `a thick blue bar below it labelled \"47/47\" (this is HP \u2014 stayed pinned at 47/47 the whole segment, i.e. player took no damage)` \u00b7 REBUILD_READINESS.md:178 `Also visible: player HP **20/20**, **\"150% DAMAGE\"** buff (Potato Dog), **\"CANNOT CHANGE STANCE\"**, a`",
+  "text": "B-11:7's stated REASON for calling the blue bar HP is broken by a frame, though its observation is not. B-11:7 argues the thick blue bar 'is HP \u2014 stayed pinned at 47/47 the whole segment, i.e. player took no damage'. reference/frames/session11/crit-focus/t1082.100.png shows a blue bar with the SAME maximum, 47, reading 31/47 - so the max-47 blue bar demonstrably depletes. B-11's within-segment observation survives (blue may well have been pinned across 25:01-27:00); the inference from it does not. Pushing the other way in the same direction: reference/frames/duel_dense/Nr4fQstqHDM_428.0.png reads green 20/20 and blue 26/26, and REBUILD_READINESS.md:178 - Kheshav's own-eyes A5 verdict on that exact frame range - records 'player HP **20/20**'. In that frame the ONLY bar reading 20/20 is the green one, so his HP read lands on GREEN. STANDING INVARIANT, said out loud: B-11 is a measurement doc and Nr4fQstqHDM_428.0 is a frame, and THE FRAME WINS. Filed PARTIAL, not HELD, because this is still a two-artifact join (A5 log line + A1 frame) rather than one artifact naming both a colour and a stat, and because it depends on Kheshav not having transcribed the wrong row. It does not close 'which bar is which'; it does say which side of the contradiction is currently carrying weight.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "both",
+  "cite": "reference/frames/session11/crit-focus/t1082.100.png (crop x0-640,y760-1080 of 1920x1080, 3x LANCZOS; pixel row y=1038 sampled x=240..540) \u00b7 reference/frames/session11/crit-focus/t1003.000.png (same crop; row y=1037) \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (same crop; row y=1037) \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:334 \u00b7 reference/decompiled/shs3_android/scripts/BattleUI.as:262",
+  "citelint": {
+   "notes": [
+    "QUOTE_NOT_LOCATED"
+   ],
+   "problems": [],
+   "status": "QUOTE_UNVERIFIED"
+  },
+  "id": "ui-hud/third-hud-row-is-shared-reload-bar-or-cannot-change-stance-banner",
+  "lane_impact": "L8 ui-hud: do not lay out a fourth row for the stance-lock banner. It is the same 260x16-ish slot as the reload bar, swapped by one visibility flag. Getting this wrong shifts every element below it (the '150% DAMAGE' buff line sits directly under this row in all three frames).",
+  "overturns_ledger": false,
+  "quote": "BattleUI.as:262 `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;`",
+  "text": "The player HUD's THIRD row is a single slot that shows EITHER the reload/crit bar OR the 'CANNOT CHANGE STANCE' banner, never both. Measured at native 1920x1080 on three frames: the row occupies y~1031-1046, x~250-510 in ALL of them. In t1082.100.png that slot is a bar - white fill (~#EBEBEB) from x~250 to x~315 on the same brown empty track (~#311F00) the green and blue bars use - and there is NO 'CANNOT CHANGE STANCE' text anywhere. In t1003.000.png and Nr4fQstqHDM_428.0.png the identical slot is solid brown track with pale glyphs spelling 'CANNOT CHANGE STANCE', and there is no bar fill. This is the visual half of a mechanic the code already states: \u00a71t113s0\u00a7.as:334 guards the whole three-state block on `this.\u00a71t5182s0\u00a7.visible`, and BattleUI.as:262 reads `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` - the widget has an explicit visibility flag, and the frames show what fills the gap when it is off.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/session11/crit-focus/t1082.100.png (native 1920x1080, no crop needed for pixel sampling; verified visually at crop x0-640,y760-1080 upscaled 3x LANCZOS) \u00b7 docs/research/REBUILD_READINESS.md:171",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "ui-hud/three-hud-bar-fill-and-track-colours-measured-from-a-frame",
+  "lane_impact": "L8 ui-hud / palette.ts: three fill tokens and ONE shared track token, not three tracks. Label all four INFERRED-from-video, not CONTRACT, until a SWF shape is named.",
+  "overturns_ledger": false,
+  "quote": "REBUILD_READINESS.md:171 `12. **Native resolution is 800\u00d7480 (5:3)**, not 16:9 \u2014 HUD x-fractions measured off 1920\u00d71080 video may be pillarbox-compressed. Verify before trusting horizontal coords.`",
+  "text": "The three player-HUD bar fills and their shared empty track are MEASURED, not inferred, from one 1080p frame at native resolution. Sampling t1082.100.png at x=255..275 straight down: bar 1 core y=983 = RGB(0,154,5) ~ #009A05 green; bar 2 core y=1010 = RGB(51,78,227) ~ #334EE3 blue; bar 3 core y=1038 = RGB(236,236,236) ~ #ECECEC near-white. All three ride the SAME empty track, sampled to the right of each fill at y=983/1010/1038, x=440..500: RGB(~49,31,0) ~ #311F00 dark brown. CAVEAT stated up front: this is a lossy 1080p re-encode of an 800x480 native game (REBUILD_READINESS.md:171), so these are within-a-few-units approximations of the OG hues, not the SWF's authored fill values - the SWF shapes under reference/extracted/shapes/ are 1,822 unnamed numbered SVGs with no SymbolClass map, so the authored value is not currently recoverable. Explicitly does NOT bind colour to STAT: it binds colour to POSITION (1st/2nd/3rd track).",
+  "verdict": "HELD"
+ }
+]

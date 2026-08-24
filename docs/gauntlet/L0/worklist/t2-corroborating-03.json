@@ -1,88 +1,153 @@
 [
  {
   "artifact_class": "A2",
-  "build": "web v0.717 mapped through android v0.682",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:105,:107-111,:194-198,:249-250,:3043-3051,:3058-3081,:3083-3177,:3179-3182,:3272-3276 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:93,:109-113,:182,:195-198,:239-240,:2965-2967,:2975-3017,:3019-3120,:3122-3125,:3215-3221 \u00b7 reference/decompiled/shs3_android/scripts/BattleUI.as:48,:60,:101-102,:259-263",
+  "build": "web v0.717 (identified by its android v0.682 twin)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1543s0\u00a7.as:2047-2051 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:1203-1208, :3318-3326 \u00b7 reference/decompiled/shs3_android/scripts/NPCManager.as:1708-1711",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "s27d/obfuscated-symbol-dictionary-for-the-web-combat-core",
-  "lane_impact": "Method-level: every remaining combat-core and skills-meters blocker that is a NUMBER should now be attempted against reference/decompiled/shs3_payload/ with this key before being called unmeasurable.",
+  "id": "lens3-s27d/the-plus6-is-a-kill-bonus-in-the-web-bundle-too",
+  "lane_impact": "L2 skills-meters + L5 combat-core: FOCUS_REGEN_PER_TICK = 1 and FOCUS_KILL_BONUS = 6, on WEB source rather than an android read - so the android-caveat on [[hunter/focus-plus6-is-a-kill-bonus]] discharges. Tempo consequence the ledger should carry: a single-target duel drains Focus monotonically because nothing refunds on a landed hit; only a kill pays the 6. Also banks the obfuscation map \u00a71t1543s0\u00a7 = NPCManager, \u00a71t4479s0\u00a7 = bonusReload, \u00a71t10181s0\u00a7 = totalKilled.",
   "overturns_ledger": false,
-  "quote": "MCSPlayer.as:182 'public function initPlayer(controlledBy:int, hp:int, maxhp:int, chi:int, maxchi:int, defense:int, baseReload:int, minDamage:int, damageRange:int, baseSlashLength:int, slashUsage:int, lightMastery:int, balancedMastery:int, heavyMastery:int, level:int) : *' \u00b7 \u00a71t99s0\u00a7.as:194-198 'this.\u00a71t4420s0\u00a7 = param10; ... this.\u00a71t4421s0\u00a7 = param12; this.\u00a71t4422s0\u00a7 = param13; this.\u00a71t4423s0\u00a7 = param14;'",
-  "text": "The android decompile is an un-obfuscated twin of the web payload's combat class, and aligning the two initPlayer signatures and function bodies names the web symbols outright. Established here and used by every verdict above: \u00a71t99s0\u00a7=MCSPlayer, \u00a71t113s0\u00a7=BattleUI, \u00a71t1525s0\u00a7=StageManager, \u00a71t9948s0\u00a7=isBattle, \u00a71t4414s0\u00a7=reload, \u00a71t4415s0\u00a7=maxreload, \u00a71t4417s0\u00a7=slashLength, \u00a71t4420s0\u00a7=baseSlashLength, \u00a71t4421s0\u00a7/\u00a71t4422s0\u00a7/\u00a71t4423s0\u00a7=light/balanced/heavyMastery (all ':int = 0'), \u00a71t1243s0\u00a7=STAT_CRITICALDMG, \u00a71t4469s0\u00a7=canChangeStance's actionState test, \u00a71t4470s0\u00a7=canChangeStance, \u00a71t4472s0\u00a7=nextStance, \u00a71t3489s0\u00a7=setStance, \u00a71t4473s0\u00a7=getStance, \u00a71t4474s0\u00a7=initSpecialSkills, \u00a71t4475s0\u00a7=getDamage, \u00a71t4476s0\u00a7=getBaseDamage, \u00a71t4477s0\u00a7=getDefense, \u00a71t4478s0\u00a7=deductReloadBar, \u00a71t4479s0\u00a7=bonusReload, \u00a71t5205s0\u00a7=updateReload, \u00a71t5182s0\u00a7=reloadbar, \u00a71t5169s0\u00a7=crittext, \u00a71t5208s0\u00a7=setStanceColor. This is a REUSABLE KEY: it converts the web payload from an opaque blob into a readable source for any future combat-core question, and it is the correct way to discharge the S0-3 build-parity caveat - not by diffing android XML against itself (C2), but by reading the WEB code with android as the dictionary and reporting the web's own literals.",
+  "quote": "\u00a71t1543s0\u00a7.as:2047 'if(_loc4_ > 0)' :2049 '\u00a71t1523s0\u00a7.\u00a71t9586s0\u00a7().\u00a71t4479s0\u00a7();' :2051 '\u00a71t10181s0\u00a7 += _loc4_;' \u2016 NPCManager.as:1708 'if(deathCount > 0)' :1711 'StatsManager.getPlayer().bonusReload();' :1713 'totalKilled += deathCount;'",
+  "text": "[[hunter/focus-plus6-is-a-kill-bonus]] holds on the android side; I closed the web half, which nobody had cited. \u00a71t4479s0\u00a7 (\u00a71t99s0\u00a7.as:3318-3326, the '+= 6' function) has exactly ONE caller in the entire web bundle: \u00a71t1543s0\u00a7.as:2049. Its context is the verbatim twin of android NPCManager.as:1708-1711 - web ':2047 if(_loc4_ > 0) / :2049 \u00a71t1523s0\u00a7.\u00a71t9586s0\u00a7().\u00a71t4479s0\u00a7(); / :2051 \u00a71t10181s0\u00a7 += _loc4_;' against android 'if(deathCount > 0) { StatsManager.getPlayer().bonusReload(); } totalKilled += deathCount;'. That identifies _loc4_ as deathCount, \u00a71t4479s0\u00a7 as bonusReload, \u00a71t1543s0\u00a7 as NPCManager and \u00a71t10181s0\u00a7 as totalKilled. Meanwhile the per-tick regen is \u00a71t99s0\u00a7.as:1203-1205 'if(this.\u00a71t4414s0\u00a7 < this.\u00a71t4415s0\u00a7) { ++this.\u00a71t4414s0\u00a7;' - plus one - pushing to the same HUD updater \u00a71t5205s0\u00a7 at :1208 that the bonus uses at :3325, which is exactly why the two get confused.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "web v0.717 (mapped through android v0.682)",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3155,:3299-3311 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3019-3091,:3246-3258",
+  "build": "web v0.717 for cost/ids/branching; android v0.682 for the id->name mapping",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t401s0\u00a7.as:664-688 (display) vs :1087, :1106-1108, :1110-1147 (action) \u00b7 reference/extracted/itemdata.xml:10419-10444",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "s27d/stance-constant-dictionary-12223-is-DUAL-and-12224-is-REVERSED",
-  "lane_impact": "L5 combat-core: names all five stance constants in the web payload, so per-stance tables can be written to src/config with correct labels instead of opaque IDs.",
+  "id": "lens3-s27d/the-reinforce-materials-are-spent-by-item-id-the-banked-web-cite-only-proves-what-is-printed",
+  "lane_impact": "L7 economy / L6 items-equipment: port the ACTION block. Re-cite hunter-s26c/web-parity-for-the-three-tier-reinforce and payload/reinforce-has-three-material-tiers-not-two onto :1087-1147.",
   "overturns_ledger": false,
-  "quote": "MCSPlayer.as:3067 'this.slashLength = this.baseSlashLength * 1.5;' (case REVERSED_STANCE) \u00b7 :3074 'BattleUI.instance.setStanceColor(2);' \u00b7 :3078 'this.slashLength = this.baseSlashLength;' (case DUAL_STANCE) \u00b7 :3089 'BattleUI.instance.setStanceColor(3);' \u00b7 \u00a71t99s0\u00a7.as:3131 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;' (case \u00a71t12224s0\u00a7) \u00b7 :3138 '\u00a71t113s0\u00a7.instance.\u00a71t5208s0\u00a7(2);' \u00b7 :3142 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7;' (case \u00a71t12223s0\u00a7) \u00b7 :3153 '\u00a71t113s0\u00a7.instance.\u00a71t5208s0\u00a7(3);'",
-  "text": "The web payload's five stance constants can be named exactly by aligning the two builds' setStance bodies, and the packet's one guess got the last two backwards. Three independent signals agree: (a) reach formula - android REVERSED = base*1.5 flat / web \u00a71t12224s0\u00a7 = base*1.4 flat; android DUAL = base*1.0 with a 100 floor / web \u00a71t12223s0\u00a7 = base*1.0 with a 100 floor; (b) HUD index - android setStanceColor(2) for REVERSED and (3) for DUAL / web \u00a71t5208s0\u00a7(2) for 12224 and (3) for 12223; (c) reload debit grouping - android pairs BALANCED+REVERSED at slashUsage and HEAVY+DUAL at slashUsage*1.5, and the web pairs 12221+12224 and 12222+12223 identically. So: \u00a71t12220s0\u00a7=LIGHT, \u00a71t12221s0\u00a7=BALANCED, \u00a71t12222s0\u00a7=HEAVY, \u00a71t12223s0\u00a7=DUAL, \u00a71t12224s0\u00a7=REVERSED. Anything porting the per-stance slash debit must use Balanced/Reversed = slashUsage and Heavy/Dual = slashUsage*1.5.",
+  "quote": "\u00a71t401s0\u00a7.as:679 'this.detailstext.text = \u00a71t1521s0\u00a7.getString(850);' (display) \u2016 :1120 '\u00a71t1523s0\u00a7.\u00a71t9713s0\u00a7(20064,-1);' :1132 '\u00a71t1523s0\u00a7.\u00a71t9713s0\u00a7(20065,-1);' :1144 '\u00a71t1523s0\u00a7.\u00a71t9713s0\u00a7(20066,-1);' (action)",
+  "text": "Both banked web-side reinforce findings cite \u00a71t401s0\u00a7.as:664-688, which is the DISPLAY block \u2014 it selects getString(850)/(851)/(852) by weapon level and prints them. That proves what the menu SAYS, not what the transaction TAKES, and a rebuild written from it ships string ids. The ACTION block is 440 lines further down and is the one to port: \u00a71t401s0\u00a7.as:1110-1144 requires and spends stat ids 20064 / 20065 / 20066 on the same <30 / <60 / else key, :1087 charges a flat 'cost = 5000;' debited at :1146, :1106-1108 forces weaponlevel 59 for itemID 13022, and :1147 resets 'weapon.uses = 0;'. Recording the distinction because a citation audit that treats :664-688 and :1110-1147 as the same fact will not notice that only one of them carries the item IDs. Names still resolve through android-sourced data (itemdata.xml:10420/10429/10438 -> strings.json['4241']/['4242']/['4243'] = Silver Ore / Titanium Ore / Uncut Diamond), so the C2 hedge is discharged for the mechanic and the ids, NOT for the display names.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "android v0.682 (naming) applied to web v0.717 (structure)",
-  "cite": "reference/decompiled/shs3_android/scripts/SkillManager.as:218-219 \u00b7 reference/extracted/skilldata.xml:283-297 \u00b7 docs/gauntlet/L0/index/strings.json[\"6008\"],[\"6011\"] \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:239-240 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249-250",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as:106-108 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3158 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3094",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "s27d/the-focus-bar-IS-the-internal-reload-meter-and-replenish-focus-stops-one-tick-short",
-  "lane_impact": "L2 skills-meters: RR:195 blocker (3) is answered under its own name; Replenish Focus should be implemented as focus = FOCUS_MAX - 1, not FOCUS_MAX.",
+  "id": "lens3-s27d/the-web-input-manager-keeps-the-clear-name-maxdistance-so-reach-needs-no-android-cite",
+  "lane_impact": "L5 combat-core: drop the android C2 hedge from every reach finding \u2014 cite \u00a71t1541s0\u00a7.as:106-108 instead of android InputManager.as:106-109.",
   "overturns_ledger": false,
-  "quote": "SkillManager.as:218-219 'case SKILL_FOCUS: owner.reload = owner.maxreload - 1;' \u00b7 skilldata.xml:284-287 '<id>1005</id> <displayname>6008</displayname> <lvlreq>5</lvlreq> <desc>6011</desc>' \u00b7 strings.json[\"6008\"]='Focus', [\"6011\"]='Instantly recharges your focus bar.'",
-  "text": "The ledger's 'Focus bar' and the code's 'reload' meter are the same object, and this closes the naming question that made RR:190 blocker (5) and RR:195 blocker (3) look like separate unknowns. Skill 1005 is displayname 6008 'Focus', desc 6011 'Instantly recharges your focus bar', chi 5, cooldown 10 (skilldata.xml:283-297) - which is RR:194's 'Replenish Focus (cost 5, cd 9.92s)'. Its effect in SkillManager.as:219 is literally 'owner.reload = owner.maxreload - 1'. So \u00a71t4414s0\u00a7/\u00a71t4415s0\u00a7 ARE the Focus bar, and the web numerics (max 192 at \u00a71t99s0\u00a7.as:249 vs android's 120 at MCSPlayer.as:239) are Focus numerics. NOTE THE MINUS ONE: the skill deliberately stops one tick below max, so Replenish Focus grants a full stance budget but NOT the meter==max crit. That is a design detail no ledger row carries, and a recreation that sets the meter to max would hand the player a free critical hit.",
+  "quote": "\u00a71t1541s0\u00a7.as:106 'public static function \u00a71t10094s0\u00a7(param1:int) : *' :108 'maxDistance = param1;' \u2016 \u00a71t99s0\u00a7.as:3158 '\u00a71t1541s0\u00a7.\u00a71t10094s0\u00a7(this.\u00a71t4417s0\u00a7);'",
+  "text": "Every reach finding in the corpus reaches for android InputManager.as to establish that slashLength is a stroke LENGTH BUDGET rather than a hitbox radius, and carries a C2 hedge for doing so. It does not have to. The web v0.717 payload ships the same class and the obfuscator left the field name intact: \u00a71t1541s0\u00a7.as:106-108 'public static function \u00a71t10094s0\u00a7(param1:int) : * { maxDistance = param1; }', and \u00a71t99s0\u00a7.as:3158 pushes the just-computed per-stance reach into it \u2014 the exact twin of android MCSPlayer.as:3094 'InputManager.setMaxDistance(this.slashLength)'. So the whole chain SPD -> baseSlashLength -> per-stance slashLength -> InputManager.maxDistance is web-side end to end, and the units question ('is this stage px?') is answered in the target build rather than inferred across a build boundary. Nobody has recorded this: grepping the corpus for the reach chain returns android InputManager cites only.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A2",
-  "build": "web v0.717 (android v0.682 identical)",
-  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:219-224 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:218-223",
+  "build": "web v0.717 for the multipliers; the ten-level scale is android-sourced skilldata.xml, C2 undischarged",
+  "cite": "reference/extracted/skilldata.xml:10-79 (skill 1000, ten <level> blocks; :74 and :75 the tenth) \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3262, :3265",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "t1-overturns-03-cite-s27d/the-injured-debuff-halves-reach-and-no-reach-finding-carries-it",
-  "lane_impact": "L5 combat-core: whatever REACH config const comes out of blocker (1) must carry an INJURED x0.5 modifier on baseSlashLength, not on the per-stance multiplier. Same lines also give free CONTRACT values for the injured DMG and DEF penalties (both x0.5), which the combat-core and enemies-ai rows do not have.",
+  "id": "lens3-s27d/v0717-stance-table-carries-a-mastery-9-reconciliation-that-fights-five-upheld-siblings",
+  "lane_impact": "L5 combat-core / L2 skills-meters: strike the mastery-9 reconciliation sentence from combat-core/v0717-stance-table before the rewrite. Keep the rest of that finding.",
   "overturns_ledger": false,
-  "quote": "\u00a71t99s0\u00a7.as:221 'this.minDamage *= 0.5;' :222 'this.defense *= 0.5;' :223 'this.\u00a71t4420s0\u00a7 *= 0.5;' \u2016 MCSPlayer.as:220-222 'this.minDamage *= 0.5; this.defense *= 0.5; this.baseSlashLength *= 0.5;'",
-  "text": "Found while auditing the reach-cap finding, which builds the whole stage-px model out of baseSlashLength and never mentions that one status effect halves it. Immediately after the buff chain at \u00a71t99s0\u00a7.as:215-218, the web build's player init runs 'else if(\u00a71t1523s0\u00a7.\u00a71t9725s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9463s0\u00a7))' and applies THREE halvings at :221-223 \u2014 minDamage, defense and baseSlashLength. The android twin at MCSPlayer.as:218-223 names the branch 'StatsManager.hasBuff(StatsManager.BUFF_INJURED)', which is what identifies the obfuscated \u00a71t9463s0\u00a7. Consequence for the ledger row being written from the reach finding: INJURED is a x0.5 multiplier on baseSlashLength, so it scales every stance's reach at once \u2014 Light drops to 84-147 px, Balanced to 60-126, Heavy to the 100 floor for its whole range. It is applied at init, before the stance branch at :3094/:3105/:3116 reads the field, so it composes multiplicatively and the Heavy floor of 100 still clamps last. Also note it is exclusive with the speed buff branch (else-if), which is the same field the SPD x1.5 feeds through.",
+  "quote": "skilldata.xml:74 '<value>10</value>' \u00b7 :75 '<required>9</required>' \u2016 \u00a71t99s0\u00a7.as:3262 '_loc2_ = _loc1_ * (0.5 + 0.4 * this.\u00a71t4421s0\u00a7 * 0.1);' \u00b7 :3265 '_loc2_ = _loc1_ * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);'",
+  "text": "A live finding-vs-finding contradiction that no single-claim lens could see, settled here from the artifact. combat-core/v0717-stance-table (UPHELD) closes with 'At mastery 9 the damage row is 0.86/1.18/1.4, i.e. the wiki's 0.9/1.2/1.4 rounded, which CONFIRMS the ledger's mastery-9 reading rather than overturning it.' Five other UPHELD findings say the opposite. Both cannot be true, and the deciding artifact is skilldata.xml: skill 1000 (stance mastery) spans lines 10-79 with exactly ten <level> blocks, and the tenth block is ':74 <value>10</value>' paired with ':75 <required>9</required>'. The scale is the <value> column, which runs 1..10; <required> is the skill-point prerequisite and runs 1..9. So 'mastery-9' is a misread of the prerequisite column, and the web multipliers \u00a71t99s0\u00a7.as:3262 (0.5+0.04m) and :3265 (1+0.02m) hit the ledger's 0.9 and 1.2 EXACTLY at m=10 while missing them at m=9 (0.86, 1.18). An exact hit beats a rounded one. The reconciliation clause in combat-core/v0717-stance-table must be struck before the rewrite absorbs it, or a writer picking between two surviving findings inherits a coin flip. Note the rest of that finding (the complete v0.717 stance table, Heavy defence x0.8) is unaffected \u2014 only its mastery-9 reconciliation falls.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (android v0.682 carries the same two constants)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:104, :106 \u00b7 reference/decompiled/shs3_android/scripts/StatsManager.as:80, :82 \u00b7 reference/decompiled/shs3_android/scripts/InputManager.as:223-224, :348 \u00b7 docs/gauntlet/L0/LEDGER_EVIDENCE.md:3084, :3370",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3-s27e/800x480-cannot-carry-one-uniform-2.4x-into-a-1080p-frame",
+  "lane_impact": "L5 combat-core + L-art-anim-feel: do NOT bank 'x2.4 screen px per stage px' as a conversion. Bank the stage as 800 x 480 with a runtime stageScale + stageOffsetX/Y, and open ONE frame to settle whether the longplays are width-fit (2.40, cropped vertically) or height-fit (2.25, pillarboxed) before any reach number is graded against footage.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t1523s0\u00a7.as:104 'public static var stageWidth:int = 800;' \u00b7 :106 'public static var stageHeight:int = 480;' \u00b7 InputManager.as:223 'mouseX = (args.stageX - StatsManager.stageOffsetX) / StatsManager.stageScale;'",
+  "text": "THE STAGE-PX-TO-FRAME-PX CONVERSION THE CORPUS USES IS RIGHT ON ONE AXIS ONLY. Two upheld findings convert the recovered reach into screen pixels at 'x2.4 screen px per stage px in a 1080p capture' (LEDGER_EVIDENCE.md:3084 and :3370), from the stage width. I opened the constants on the WEB side, not just the android side: \u00a71t1523s0\u00a7.as:104 'public static var stageWidth:int = 800;' and :106 'public static var stageHeight:int = 480;' (android StatsManager.as:80, :82 identical). 800 x 480 is 5:3. A 1920 x 1080 capture is 16:9. 1920/800 = 2.40 but 1080/480 = 2.25, so no single uniform scale maps the game stage onto a 1080p frame - the capture is either width-fit and vertically cropped or overflowed, or height-fit at 2.25 and pillarboxed. InputManager.as:223-224 confirms a runtime scale exists and is applied as '(args.stageX - StatsManager.stageOffsetX) / StatsManager.stageScale', with an offset on both axes, i.e. the game explicitly supports letterboxing. WHY IT MATTERS HERE: RR:190 blocker (1) asked for the reach 'in stage px' precisely so it could be checked against footage. The formula is recovered, but the last step - stage px to frame px - is being done with a factor that cannot be right for both axes, and a blade path is drawn diagonally, so it uses both. WHAT IS NOT CLOSED: which fit the two longplays used. That needs one frame (A1) measuring a known-width stage element, and I did not open one - STILL_UNHELD is the honest answer for that half.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249, :3050, :3058-3080, :3083, :3160-3166 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1525s0\u00a7.as:53, :1152-1155 \u00b7 reference/decompiled/shs3_android/scripts/StageManager.as:1027 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3096-3105 \u00b7 docs/gauntlet/L0/LEDGER_EVIDENCE.md:943",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3-s27e/an-upheld-finding-says-the-in-combat-stance-switch-is-free-and-it-is-not",
+  "lane_impact": "L5 combat-core + L2 skills-meters: the stance rule is gate >= 48 AND spend 48 on RELOAD_MAX = 192. Strike the 'costs no Focus and no Chi' clause from [[combat-core/the-in-combat-stance-gate-is-reload-48-of-a-192-max]] before the rewrite reads it; keep its 48/192 gate. Without this the rewrite picks one of two upheld findings at random and ships a stance system that is either free or priced.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:3162 'this.\u00a71t4414s0\u00a7 -= 48;' guarded at :3160 by 'if(\u00a71t1525s0\u00a7.\u00a71t9948s0\u00a7())' \u00b7 LEDGER_EVIDENCE.md:943 'So the in-combat stance switch costs no Focus and no Chi'",
+  "text": "TWO UPHELD FINDINGS CANNOT BOTH BE TRUE, AND THE FREE-SWITCH ONE IS WRONG. LEDGER_EVIDENCE.md:943, [[combat-core/the-in-combat-stance-gate-is-reload-48-of-a-192-max]] (UPHELD, 4 critics, web v0.717), asserts 'the in-combat stance switch costs no Focus and no Chi: it needs the reload meter at 48/192 = 25%.' At least five other UPHELD findings assert the opposite flat -48 cost (LEDGER_EVIDENCE.md:285, :606, :710-712, :718-724, :1993-1995). I opened the code. The cycle body \u00a71t99s0\u00a7.as:3058-3080 - the only range that finding cites - indeed contains no debit: it gates at :3060 'if(this.\u00a71t4414s0\u00a7 < 48) return;' and then calls this.\u00a71t3489s0\u00a7(...) at :3070 / :3074 / :3078. The debit is one function further down, inside \u00a71t3489s0\u00a7 (setStance) at :3160-3166: 'if(\u00a71t1525s0\u00a7.\u00a71t9948s0\u00a7()) { this.\u00a71t4414s0\u00a7 -= 48; if(this.\u00a71t4414s0\u00a7 < 0) { this.\u00a71t4414s0\u00a7 = 0; } }', where \u00a71t9948s0\u00a7 is isBattle (\u00a71t1525s0\u00a7.as:1152-1155, \u00a71t9903s0\u00a7 = 2 at :53, matched to android StageManager.as:1027 STATE_BATTLE). The android twin makes the same debit at MCSPlayer.as:3096-3105 with different constants. So the in-battle switch BOTH requires 48 and spends 48 on a 192 meter (\u00a71t99s0\u00a7.as:249 'this.\u00a71t4415s0\u00a7 = 8 * 24;'): four switches from full, not unlimited switching above 25 percent. The defect is a truncated read, not a build-parity artefact - both builds charge. The rewrite must delete the 'costs no Focus and no Chi' clause from that banked finding while keeping its gate number, which is correct.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717, confirmed by the android twin",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3116-3119, :3142-3145 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:2719, :2729, :2738, :2747, :3013 \u00b7 reference/decompiled/shs3_android/scripts/InventoryUI.as:2232 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3052-3055 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2344-2348",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3-s27e/the-stats-panel-omits-the-100px-floor-so-the-displayed-reach-is-not-the-engine-reach",
+  "lane_impact": "L5 combat-core + L8 ui-hud: config takes reach = max(base * stanceMult, 100) for Heavy and Dual, but the stats panel must render the UNFLOORED product to be 1:1. Two constants, not one. Any lane that tries to validate the reach formula against a filmed stats panel will read the wrong number below base 200 in Heavy.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:3117-3119 'if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }' \u00b7 \u00a71t5957s0\u00a7.as:3013 '... + int(_loc21_ * _loc48_).toString() + ...'",
+  "text": "THE GAME'S OWN 'slash distance' READOUT AND THE ENGINE'S LIVE REACH DISAGREE AT LOW SPEED, AND THE UPHELD CORPUS TREATS THEM AS THE SAME NUMBER. The engine clamps: \u00a71t99s0\u00a7.as:3116-3119 sets Heavy reach to base*(0.5 + 0.04m) then 'if(this.\u00a71t4417s0\u00a7 < 100) { this.\u00a71t4417s0\u00a7 = 100; }', and :3142-3145 does the same for \u00a71t12223s0\u00a7. The stats panel does not: \u00a71t5957s0\u00a7.as:3013 prints 'int(_loc21_ * _loc48_)' where _loc21_ is \u00a71t9593s0\u00a7(...) (:2719) and _loc48_ is the raw stance multiplier (:2729 / :2738 / :2747) - no floor anywhere in that block. Android is identical: InventoryUI.as:2232 'str += \"slash distance: \" + ... int(baseSlashLength * slashModifier) ...' against the floored MCSPlayer.as:3052-3055. Concretely, a fresh v0.717 character (DAN 0, SPD 1) has base = 120 + floor(90*1/21) = 124, so in Heavy at mastery 0 the panel reads 62 while the engine actually gives 100 - a 61 percent understatement, and the panel only stops lying once base*(0.5+0.04m) clears 100. This matters because the 'slash distance' readout is the artifact the reach-close leans on to prove the unit; it proves the unit, but it is NOT a safe source for the value.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both (web v0.717 formula, android v0.682 arithmetic)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3094, :3105, :3116-3119 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:2344-2348 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3030, :3041, :3052-3055 \u00b7 reference/decompiled/shs3_android/scripts/InputManager.as:51, :106-108 \u00b7 docs/research/REBUILD_READINESS.md:155",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "lens3-s27e/the-wiki-reach-triple-reproduces-exactly-only-under-android-arithmetic",
+  "lane_impact": "L5 combat-core: keep the mastery-0 relabel of the reach triple, but drop the triple as a validation target for a v0.717 build and stop presenting the 214 px base as reproducing it. The web ratio is 2.8 : 2 : 1 (mastery 0) and 1.4 : 1.2 : 0.9 (mastery 10); neither is 3 : 2 : 1.",
+  "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.**",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:3094 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;' vs android MCSPlayer.as:3030 'this.slashLength = this.baseSlashLength * 1.5;' \u00b7 InputManager.as:51 'internal static var maxDistance:int = 200;'",
+  "text": "THE 300/200/100 CROSS-CHECK IS A BUILD-PARITY TRAP AND THREE UPHELD FINDINGS EACH GET A DIFFERENT ANSWER FROM IT. All of them agree the triple is a MASTERY-ZERO row rather than RR:155's 'MASTERY-9 CEILING', and that conclusion is safe. What they disagree on is the base. [[combat-core/300-200-100-is-base-not-ceiling]] gets it EXACTLY, from android arithmetic: InputManager.as:51 'internal static var maxDistance:int = 200;' times the android mastery-0 multipliers 1.5 / 1.0 / 0.5 (MCSPlayer.as:3030, :3041, :3052) = 300 / 200 / 100 to the digit. The two web-side findings in my packet cannot reach it, because web Light is 1.4 not 1.5 (\u00a71t99s0\u00a7.as:3094): one takes a 210 px base and reports 294 / 210 / 105, the other takes a 214 px base and reports 300 / 214 / 107 and calls the 214-vs-200 gap 'rounding' - it is a 7 percent miss. The base cannot be moved to make all three terms land, because the web ratio is fixed at 2.8 : 2 : 1 while the wiki triple is 3 : 2 : 1. CONCLUSION: the wiki triple is reproducible only under v0.682 coefficients against the InputManager DEFAULT (a static initialiser overwritten by setMaxDistance on every setStance, so a fallback, not a player value). A v0.717 target must take the formula (base = 120 + floor((90 + DAN*5) * SPD_eff / (20 + SPD_eff)), stance x1.4 / x(1+0.02m) / xmax(0.5+0.04m, 100/base)) and must NOT use 300/200/100 to validate it.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682",
+  "cite": "reference/decompiled/shs3_android/scripts/MCSPlayer.as:3029-3090",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "nf/stance-ring-frame-index-is-not-a-bijection",
+  "lane_impact": "L8 ui-hud: ship the ring as a 3-frame display driven by setStanceColor, not as a stance readout; and never infer stance from ring colour in a frame study - blue/tan/red cannot separate Balanced from Reversed or Heavy from Dual.",
+  "overturns_ledger": false,
+  "quote": "MCSPlayer.as:3066 'case REVERSED_STANCE:' :3074 'BattleUI.instance.setStanceColor(2);' \u00b7 :3077 'case DUAL_STANCE:' :3089 'BattleUI.instance.setStanceColor(3);'",
+  "text": "Qualifies ui-hud/the-change-stance-button-is-the-portrait-bust-itself without refuting it. The stancecolor1 frame index is 1/2/3 as that finding says, but it is NOT one-to-one with stance: android MCSPlayer.as's setStance switch calls setStanceColor(2) from BOTH BALANCED_STANCE (:3048) and REVERSED_STANCE (:3074), and setStanceColor(3) from BOTH HEAVY_STANCE (:3063) and DUAL_STANCE (:3089). Five stances, three ring frames. Web \u00a71t99s0\u00a7.as's switch has the same shape with a fourth case \u00a71t12224s0\u00a7 at :3130. So a rebuild that infers the player's stance from the ring colour will be wrong in Reversed and Dual, and the ring is a three-value display, not a stance readout.",
   "verdict": "HELD"
  },
  {
   "artifact_class": "A1",
   "build": "web v0.717",
-  "cite": "reference/frames/session11/crit-focus/t1082.100.png (crop x0-640,y760-1080 of 1920x1080, 3x LANCZOS - blue bar reads '31/47') \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (same crop - green '20/20', blue '26/26') \u00b7 docs/research/REBUILD_READINESS.md:178 \u00b7 docs/research/video-study/segments/B-11-castle-gate-lever-puzzle.md:7",
-  "citelint": {
-   "notes": [],
-   "problems": [],
-   "status": "RESOLVES"
-  },
-  "id": "ui-hud/b11s-blue-is-hp-rests-on-an-inference-a-frame-breaks",
-  "lane_impact": "L8 ui-hud: keep the bar-to-stat binding OPEN, but stop treating B-11:7 as symmetric counter-evidence - its supporting inference is refuted by a frame. The cheapest closing artifact is a death/near-death frame: whichever bar hits 0 immediately before the 'YOU WERE DEFEATED' screen is HP. A-22-death-you-were-defeated-screen is the segment to pull frames from.",
-  "overturns_ledger": false,
-  "quote": "B-11:7 `a thick blue bar below it labelled \"47/47\" (this is HP \u2014 stayed pinned at 47/47 the whole segment, i.e. player took no damage)` \u00b7 REBUILD_READINESS.md:178 `Also visible: player HP **20/20**, **\"150% DAMAGE\"** buff (Potato Dog), **\"CANNOT CHANGE STANCE\"**, a`",
-  "text": "B-11:7's stated REASON for calling the blue bar HP is broken by a frame, though its observation is not. B-11:7 argues the thick blue bar 'is HP \u2014 stayed pinned at 47/47 the whole segment, i.e. player took no damage'. reference/frames/session11/crit-focus/t1082.100.png shows a blue bar with the SAME maximum, 47, reading 31/47 - so the max-47 blue bar demonstrably depletes. B-11's within-segment observation survives (blue may well have been pinned across 25:01-27:00); the inference from it does not. Pushing the other way in the same direction: reference/frames/duel_dense/Nr4fQstqHDM_428.0.png reads green 20/20 and blue 26/26, and REBUILD_READINESS.md:178 - Kheshav's own-eyes A5 verdict on that exact frame range - records 'player HP **20/20**'. In that frame the ONLY bar reading 20/20 is the green one, so his HP read lands on GREEN. STANDING INVARIANT, said out loud: B-11 is a measurement doc and Nr4fQstqHDM_428.0 is a frame, and THE FRAME WINS. Filed PARTIAL, not HELD, because this is still a two-artifact join (A5 log line + A1 frame) rather than one artifact naming both a colour and a stat, and because it depends on Kheshav not having transcribed the wrong row. It does not close 'which bar is which'; it does say which side of the contradiction is currently carrying weight.",
-  "verdict": "PARTIAL"
- },
- {
-  "artifact_class": "A1",
-  "build": "both",
-  "cite": "reference/frames/session11/crit-focus/t1082.100.png (crop x0-640,y760-1080 of 1920x1080, 3x LANCZOS; pixel row y=1038 sampled x=240..540) \u00b7 reference/frames/session11/crit-focus/t1003.000.png (same crop; row y=1037) \u00b7 reference/frames/duel_dense/Nr4fQstqHDM_428.0.png (same crop; row y=1037) \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:334 \u00b7 reference/decompiled/shs3_android/scripts/BattleUI.as:262",
+  "cite": "reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg (own crop (0,380)-(560,576) x3 LANCZOS) + reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png (own crop (0,756)-(1056,1080) x2 LANCZOS) + reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as:110-111",
   "citelint": {
    "notes": [
     "QUOTE_NOT_LOCATED"
@@ -90,27 +155,76 @@
    "problems": [],
    "status": "QUOTE_UNVERIFIED"
   },
-  "id": "ui-hud/third-hud-row-is-shared-reload-bar-or-cannot-change-stance-banner",
-  "lane_impact": "L8 ui-hud: do not lay out a fourth row for the stance-lock banner. It is the same 260x16-ish slot as the reload bar, swapped by one visibility flag. Getting this wrong shifts every element below it (the '150% DAMAGE' buff line sits directly under this row in all three frames).",
+  "id": "nf/third-hud-row-carries-an-unmapped-stance-name-textfield",
+  "lane_impact": "L8 ui-hud: do not model the third HUD row as a two-state crit/empty label. There is a stance-name caption ('LIGHT STANCE') on that row that the current BattleUI field map does not cover - find its field in \u00a71t113s0\u00a7 before authoring the row.",
   "overturns_ledger": false,
-  "quote": "BattleUI.as:262 `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;`",
-  "text": "The player HUD's THIRD row is a single slot that shows EITHER the reload/crit bar OR the 'CANNOT CHANGE STANCE' banner, never both. Measured at native 1920x1080 on three frames: the row occupies y~1031-1046, x~250-510 in ALL of them. In t1082.100.png that slot is a bar - white fill (~#EBEBEB) from x~250 to x~315 on the same brown empty track (~#311F00) the green and blue bars use - and there is NO 'CANNOT CHANGE STANCE' text anywhere. In t1003.000.png and Nr4fQstqHDM_428.0.png the identical slot is solid brown track with pale glyphs spelling 'CANNOT CHANGE STANCE', and there is no bar fill. This is the visual half of a mechanic the code already states: \u00a71t113s0\u00a7.as:334 guards the whole three-state block on `this.\u00a71t5182s0\u00a7.visible`, and BattleUI.as:262 reads `this.crittext.visible = percentage >= 1 && this.reloadbar.visible;` - the widget has an explicit visibility flag, and the frames show what fills the gap when it is off.",
+  "quote": "ON SCREEN, frame_0020: green '16/20', blue '15/15', grey 'CANNOT CHANGE STANCE' on a brown track. ON SCREEN, B_t851.867: blue-ringed bust, green '20 / 20', blue '31 / 31', white 'LIGHT STANCE' on the same row, and 'CHANGE STANCE' rendered below the bust. CODE: \u00a71t113s0\u00a7.as:110 sets \u00a71t5203s0\u00a7 to a '#000000' font wrapper around getString(175); :111 sets \u00a71t5204s0\u00a7 to a '#BBBBBB' wrapper around getString(960).",
+  "text": "Found by opening two v0.717 frames while judging the string-960 pair. The third HUD row under the HP/Chi bars renders at least THREE different captions in the web build, and one of them cannot come from \u00a71t5169s0\u00a7. My crop of reference/frames/zFtCaTO0_1M/seg-11/frames/frame_0020.jpg at (0,380)-(560,576) x3 shows a GREY 'CANNOT CHANGE STANCE' on a brown track - the getString(960) empty-state branch at \u00a71t113s0\u00a7.as:111/:340. My crop of reference/frames/session11/stance-reach/B_t851.867_LIGHT_ring_blue_CHANGE-STANCE_tooltip.png at (0,756)-(1056,1080) x2 shows, on the same row, a WHITE 'LIGHT STANCE' with no visible track - while 'CHANGE STANCE' (getString(208), field \u00a71t5161s0\u00a7) is simultaneously drawn beneath the bust. \u00a71t113s0\u00a7 can write only two htmlText values into \u00a71t5169s0\u00a7 (:110 getString(175) black, :111 getString(960) grey), and \u00a71t5161s0\u00a7 is already accounted for in the same frame, so 'LIGHT STANCE' is a FOURTH, currently unmapped TextField occupying that row. The BattleUI obfuscation map is therefore not yet complete for the player-status cluster.",
   "verdict": "HELD"
  },
  {
-  "artifact_class": "A1",
-  "build": "web v0.717",
-  "cite": "reference/frames/session11/crit-focus/t1082.100.png (native 1920x1080, no crop needed for pixel sampling; verified visually at crop x0-640,y760-1080 upscaled 3x LANCZOS) \u00b7 docs/research/REBUILD_READINESS.md:171",
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t17s0\u00a7.as:8-22 + reference/decompiled/shs3_android/scripts/Item.as:6-20",
   "citelint": {
    "notes": [],
    "problems": [],
    "status": "RESOLVES"
   },
-  "id": "ui-hud/three-hud-bar-fill-and-track-colours-measured-from-a-frame",
-  "lane_impact": "L8 ui-hud / palette.ts: three fill tokens and ONE shared track token, not three tracks. Label all four INFERRED-from-video, not CONTRACT, until a SWF shape is named.",
+  "id": "nf/web-item-carries-three-modifier-constants-android-lacks",
+  "lane_impact": "Items lane: three modifier ids (206, 207, 208) exist only in v0.717. Do not treat an android-derived modifier list as complete, and re-check the 412 <modifier> rows in itemdata.xml (an ANDROID artifact per C2) for whether 206/207/208 appear at all.",
   "overturns_ledger": false,
-  "quote": "REBUILD_READINESS.md:171 `12. **Native resolution is 800\u00d7480 (5:3)**, not 16:9 \u2014 HUD x-fractions measured off 1920\u00d71080 video may be pillarbox-compressed. Verify before trusting horizontal coords.`",
-  "text": "The three player-HUD bar fills and their shared empty track are MEASURED, not inferred, from one 1080p frame at native resolution. Sampling t1082.100.png at x=255..275 straight down: bar 1 core y=983 = RGB(0,154,5) ~ #009A05 green; bar 2 core y=1010 = RGB(51,78,227) ~ #334EE3 blue; bar 3 core y=1038 = RGB(236,236,236) ~ #ECECEC near-white. All three ride the SAME empty track, sampled to the right of each fill at y=983/1010/1038, x=440..500: RGB(~49,31,0) ~ #311F00 dark brown. CAVEAT stated up front: this is a lossy 1080p re-encode of an 800x480 native game (REBUILD_READINESS.md:171), so these are within-a-few-units approximations of the OG hues, not the SWF's authored fill values - the SWF shapes under reference/extracted/shapes/ are 1,822 unnamed numbered SVGs with no SymbolClass map, so the authored value is not currently recoverable. Explicitly does NOT bind colour to STAT: it binds colour to POSITION (1st/2nd/3rd track).",
+  "quote": "web \u00a71t17s0\u00a7.as:18 'public static var \u00a71t8739s0\u00a7:int = 206;' :20 'public static var \u00a71t8740s0\u00a7:int = 207;' :22 'public static var \u00a71t8741s0\u00a7:int = 208;' \u00b7 android Item.as:18 'public static var USEPROCGENNAME:String = \"0\";' :20 'public var itemID:int;'",
+  "text": "Found while checking the mis-ranged third example in nf-judge/name-greps-over-the-web-payload-are-not-evidence-of-absence. The web v0.717 Item class carries EIGHT modifier constants where android v0.682 carries five. Web \u00a71t17s0\u00a7.as:8-16 maps one-for-one onto android Item.as:8-16 (80/81/82/89/125 = PCOLORMODID/SCOLORMODID/USESMODID/NAMEMODID/CREATORMODID), but web :18-22 adds \u00a71t8739s0\u00a7=206, \u00a71t8740s0\u00a7=207, \u00a71t8741s0\u00a7=208 with no android counterpart - android's constant block ends at :18 'USEPROCGENNAME' and :20 begins the instance fields. Confirmed by grep: 'grep -nE \"= *20[678];\" reference/decompiled/shs3_android/scripts/Item.as' returns zero hits. So item modifier ids 206/207/208 are a web-side addition, and any item-modifier table ported from the android build is missing three modifier kinds.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3131 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:3027-3067,:182",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "nf/web-stance-slash-length-formulas-and-the-light-mislabel",
+  "lane_impact": "L2 skills-meters + L5 combat-core: any stance reach number must be taken from the WEB formulas, and 'Light x0.54' must be relabelled HEAVY x0.54 wherever it appears - web Light carries no mastery scaling whatsoever, so mastery buys reach only in Balanced and Heavy. Another dated C2 divergence with numbers.",
+  "overturns_ledger": false,
+  "quote": "web \u00a71t99s0\u00a7.as:3094 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;' vs android MCSPlayer.as:3030 'this.slashLength = this.baseSlashLength * 1.5;' \u00b7 web :3116 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);' vs android :3052 'this.slashLength = this.baseSlashLength * (0.5 + 0.5 * this.heavyMastery * 0.01);'",
+  "text": "Found while judging skills-meters/the-web-build-seeds-stance-mastery-at-1. The stance slash-length formulas DIVERGE between builds, and the 'Light x0.54' figure in circulation is mislabelled - 0.54 is HEAVY. Web v0.717 (\u00a71t99s0\u00a7.as, switch at :3091): Light case \u00a71t12220s0\u00a7 :3094 is a FLAT 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4' with NO mastery term at all; Balanced \u00a71t12221s0\u00a7 :3105 is '\u00a71t4420s0\u00a7 * (1 + 0.2 * \u00a71t4422s0\u00a7 * 0.1)' = x1.02 at mastery 1; Heavy \u00a71t12222s0\u00a7 :3116 is '\u00a71t4420s0\u00a7 * (0.5 + 0.4 * \u00a71t4423s0\u00a7 * 0.1)' = x0.54 at mastery 1, floored at 100 px by :3117-3120. Android v0.682 (MCSPlayer.as setStance :3027): LIGHT :3030 'baseSlashLength * 1.5'; BALANCED :3041 '(1 + 0.5 * balancedMastery * 0.01)'; HEAVY :3052 '(0.5 + 0.5 * heavyMastery * 0.01)' floored at 100 by :3053-3056. So THREE things differ: the Light constant (1.4 web vs 1.5 android), the Balanced mastery coefficient (0.2*0.1=0.02 vs 0.5*0.01=0.005), and the Heavy coefficient (0.04 vs 0.005) - a 4x-8x difference in how much mastery buys. \u00a71t4422s0\u00a7/\u00a71t4423s0\u00a7 are pinned to balancedMastery/heavyMastery by MCSPlayer.as:182's named signature via the initPlayer argument bridge. There is also a fourth web case \u00a71t12224s0\u00a7 at :3130-3131 with a flat *1.4 (android's REVERSED_STANCE, :3067, is *1.5).",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 for NodeGenerator (C2 hedge live); the 800 px stage is web v0.717",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:1434-1436, :1464, :1704-1710, :1775-1778, :1791-1795 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:104",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "nfx3-a-sector-owns-a-room-vector-so-rr225-blocker-5-stays-open",
+  "lane_impact": "L-world-exploration: RR:225 \u2464 STAYS OPEN. Do not apply nf5's edit. What IS now known: sector \u2192 room[] with room 0 outer and optional inner/dungeon rooms, and room width 800-1600 px.",
+  "ledger_text": "\u2464 sector\u2194room mapping rule (town=fixed sector vs wilderness=one-screen-per-sector).",
+  "overturns_ledger": false,
+  "quote": "NodeGenerator.as:1435 'roomDataVector.push(roomData);' \u2016 :1436 'if(hasMoreRooms && generateInnerRooms)' \u2016 :1777 'return 800 + RNG.getRandAfterXTimes(nodeid,3,800);' \u2016 :1710 'room = QuestEngine.getNodeData(nodeid).getRoomData()[roomid];'",
+  "text": "Found while refuting nf5. One node/sector does NOT map to one room. NodeGenerator.as:1434-1436 pushes the outer room as roomid 0 into roomDataVector and then, when hasMoreRooms && generateInnerRooms, keeps generating inner rooms into the same vector; :1464-1480 hand that vector to createDungeon / createTempleDungeon / createCave / createMine / createRuins; :1710 indexes 'QuestEngine.getNodeData(nodeid).getRoomData()[roomid]'; and rooms carry their own 8-bit id space at :1791-1795, distinct from the nodeid's 12-bit packing. Separately, the true disproof of 'one-screen-per-sector' is :1777, 'return 800 + RNG.getRandAfterXTimes(nodeid,3,800);' \u2014 a room is 800 to 1600 px wide, i.e. one to two 800 px screens (\u00a71t1523s0\u00a7.as:104). RR:225 \u2464 asks a real, still-open question, and RR:224 already lists territory/sector under Ready \u2014 so no vocabulary fix is warranted.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A1",
+  "build": "web v0.717",
+  "cite": "reference/frames/session11/crit-focus/t1003.000.png, crop (0,820)-(660,1080) upscaled 3x LANCZOS (and a second read at (150,900)-(900,1080) 2x)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27c-cite/cannot-change-stance-caption-is-confirmed-ON-A-FRAME-not-just-in-source",
+  "lane_impact": "L8 ui-hud: the Focus/reload bar is the THIRD bar in the stack (HP green, Chi blue, Focus brown), full-width, with its caption drawn inside the bar rather than beside it, and the empty state is a dark brown trough - not a hidden widget. Ship string 960 as 'CANNOT CHANGE STANCE' in caps, grey #BBBBBB, gated on ratio == 0 exactly as 1t113s0.as:336 does.",
+  "overturns_ledger": false,
+  "quote": "visible in the crop: a green HP bar reading 14/20, a blue bar reading 31/31, and directly beneath them a third bar drawn EMPTY (dark brown, zero fill) carrying the grey caption 'CANNOT CHANGE STANCE'; a yellow '150% DAMAGE' line sits below that",
+  "text": "NF-S27B-2 and NF-S27B-3 are both pure A2 source readings. Neither has ever been confirmed against the primary reference. It is confirmed now, and it lands exactly where the source predicts. 1t113s0.as:328 computes ratio = (reload-48)/(maxreload-48), clamps negatives to 0 at :329-332, writes bar.scaleX = ratio at :333, and at :336 shows 1t5204s0 iff ratio == 0; :111 defines 1t5204s0 = \"<font color='#BBBBBB'>\" + getString(960) + \"</font>\". The frame shows precisely that state: third bar at zero fill, grey caption on it, reading CANNOT CHANGE STANCE. So (a) web string 960 = 'Cannot Change Stance' is now attested from the frame even though the android table has no key 960 at all, (b) the grey #BBBBBB render is confirmed against a real still, and (c) the three-state web widget is the one the videos show - the android two-state crittext-only widget is not what shipped in the reference footage. This also fixes NF-S27B-4: the words CHANGE STANCE DO appear in a combat frame, as part of this caption, which is a different field (1t5169s0, the meter readout) from the hover tooltip (1t5161s0 = changestancelabel = string 208 'Change Stance'). Stated per the standing invariant: the frame beats the prose that said no frame carried those words.",
   "verdict": "HELD"
  }
 ]

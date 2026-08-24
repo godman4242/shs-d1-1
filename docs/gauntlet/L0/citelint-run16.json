@@ -495,14 +495,171 @@
    ],
    "problems": [],
    "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-a-mastery-floor-of-1-is-web-confirmed-drop-the-c2-hedge",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-b-the-reach-cap-value-is-closed-form-not-just-the-unit",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/StatsManager.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-c-per-kill-base-xp-is-level-x2-plus-20-there-is-no-npc-xp-row",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as",
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-d-the-stat-caps-differ-between-web-v0717-and-android-v0682",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/InventoryUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-e-a-sector-is-a-node-and-a-node-holds-an-array-of-rooms",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/NodeGenerator.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-f-the-war-board-is-a-literal-6x6-and-the-341-origin-has-an-inverse",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_android/scripts/WarHexUI.as",
+    "reference/decompiled/shs3_android/scripts/WarSelectUI.as",
+    "reference/decompiled/shs3_android/scripts/WarUI.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-a/the-xp-award-formula-is-fully-present-in-web-v0717",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-b/coin-credit-carries-a-1p5x-timed-boost-multiplier",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t6172s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-c/only-66-of-495-npcs-drop-anything-and-loot-ids-above-3-are-item-drops",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as",
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-d/CANNOT-CHANGE-STANCE-is-the-gate-failure-display-not-a-hard-lock",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t113s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t1541s0\u00a7.as",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/GameEngine.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-e/focus-max-is-192-on-web-and-120-on-android",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as",
+    "reference/decompiled/shs3_android/scripts/MCSPlayer.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-f/balanced-reach-also-scales-with-mastery-and-reach-has-a-hard-floor-of-100",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-g/the-1p3x-damage-bonus-fires-on-a-FULL-focus-bar-not-a-random-crit-roll",
+   "notes": [],
+   "paths": [
+    "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  {
+   "artifact_class": "A2",
+   "id": "s27e-nf-h/master-reference-2098-coins-per-kill-plus-8-verified-falls-with-the-loot-table",
+   "notes": [],
+   "paths": [
+    "docs/research/SHSD_MASTER_REFERENCE.md",
+    "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as",
+    "reference/extracted/npcdata.xml"
+   ],
+   "problems": [],
+   "status": "RESOLVES"
   }
  ],
  "repo": "/Users/kheshav/kheshav-code/SSHD 1-1",
  "summary": {
   "broken": 0,
   "quote_unverified": 1,
-  "resolves": 39,
-  "total": 40,
+  "resolves": 53,
+  "total": 54,
   "uncheckable": 0
  }
 }

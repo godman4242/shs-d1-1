@@ -1,0 +1,228 @@
+[
+ {
+  "artifact_class": "A1",
+  "build": "unresolved - the frame is web-footage, the number matches android",
+  "cite": "reference/frames/session11/crit-focus/t1003.000.png, crop (150,900)-(900,1080) upscaled 2x LANCZOS - yellow text '150% DAMAGE' directly under the CANNOT CHANGE STANCE bar",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27c-cite/the-150-percent-damage-readout-matches-no-web-multiplier",
+  "lane_impact": "L5 combat-core: one grep away from either confirming the web stance table or exposing that the sampled footage is not v0.717. Resolve the field before the mastery curve is written into config.",
+  "overturns_ledger": false,
+  "quote": "rendered in the frame, yellow, centred under the bar stack: '150% DAMAGE'",
+  "text": "STILL_UNHELD, filed as a lead against a claim I upheld, because it is the kind of thing that should be caught before a number becomes CONTRACT. hunter-s27b/the-per-stance-mastery-curve-is-linear makes web damage multipliers 0.5+0.04m (Light) / 1+0.02m (Balanced) / 1.4 flat (Heavy, Dual, Reversed) with crit x1.3 - the maximum any of those reaches is 1.4, and no combination yields 1.5. The android build is the one whose Heavy is exactly 1.5 (MCSPlayer.as:3213) and whose Balanced tops out at 1.5 on a 0-100 mastery scale (:3208). A reference still shows '150% DAMAGE' on the HUD. I did NOT resolve which field paints it: 1t113s0.1t5208s0 is only 'this.1t5158s0.1t15895s0.gotoAndStop(param1);' (a stance icon frame), grep for a '%'-composed damage string in 1t113s0.as and android BattleUI.as returns nothing, and the string table's percentage rows (e.g. '175' 'Critical Hit', '7019' 'Damage: 200% ATK', '7058' 'Damage: 110% ATK') are skill descriptions. So this may be a skill/buff popup with nothing to do with stance damage. It is a lead, not a refutation - but until someone names the field, the web stance table should be banked as CONTRACT-pending, not CONTRACT.",
+  "verdict": "STILL_UNHELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (shape) + android v0.682 (formula)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:105,:194,:223 + reference/decompiled/shs3_android/scripts/MCSPlayer.as:107,:182,:193,:222 + reference/decompiled/shs3_android/scripts/EnemyElite.as:99-106",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27c-cite/the-reach-base-is-a-speed-derived-slash-length-not-a-constant",
+  "lane_impact": "L5 combat-core: model reach as baseSlashLength(speed) x stanceMult(mastery), floor 100 on Heavy only. The player's baseSlashLength comes from the equivalent web caller and is still unread - that is now the ONLY missing number for reach, and it is one lookup, not a measurement.",
+  "overturns_ledger": false,
+  "quote": "EnemyElite.as:102 'var baseSlashLength:int = 120 + Math.floor(maxincrement * val / (20 + val));' with :101 'var maxincrement:int = 90;' and :100 'var val:int = xml.speed;' \u00b7 web \u00a71t99s0\u00a7.as:194 'this.\u00a71t4420s0\u00a7 = param10;'",
+  "text": "hunter-s27b/heavy-reach-has-a-hard-100px-floor records its one remaining unknown as 'the base value 1t4420s0 ... which is set elsewhere and which I did not resolve'. It resolves. Web: 1t99s0.as:105 initialises 1t4420s0 to 10, :194 assigns it from the tenth initPlayer parameter, and :223 halves it ('*= 0.5') in one branch. The android twin is positionally identical - MCSPlayer.as:107 'internal var baseSlashLength:int = 10;', :182 declares initPlayer with baseSlashLength as its tenth parameter, :193 assigns it, :222 halves it - which names 1t4420s0 = baseSlashLength. The value fed in, for NPCs, is computed by the caller: EnemyElite.as:102 baseSlashLength = 120 + floor(90 * speed / (20 + speed)), i.e. a saturating curve from 120 px at speed 0 toward 210 px, 165 px at speed 20. So reach = baseSlashLength x per-stance multiplier, and at the low end the 100 px heavy floor genuinely bites: base 120 at mastery 0 gives 60, clamped up to 100. CAVEAT, stated plainly: the formula line is android v0.682, so under S0-3/C2 it is v0.682 until a web caller is read; what IS web-attested is that the base is an injected per-fighter slash length with a halving branch, not a global constant. Two further web stance cases the original finding did not list: 1t99s0.as:3131 (Dual) = base * 1.4 and :3142 (Reversed) = base * 1.0.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both - blob 108 is md5-identical web to android",
+  "cite": "reference/extracted/bindata/108_1t4635s0.bin (own python parse of all 158 <anim> blocks, counting <n> per <f>)",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27c-cite/twenty-six-human-anims-carry-empty-frames-not-seven",
+  "lane_impact": "L6 art-anim: the animation player MUST hold the last written transform for every joint not listed in the current frame, and an empty <f> is a legal hold-frame (a timing beat), not a corrupt row to skip. Do not 'repair' empty frames in the importer.",
+  "overturns_ledger": false,
+  "quote": "gangnam: 44 of its 88 frames carry zero <n> records; sheathesword3: 22 of 33; punchground_partb: 13 of 16; jutsu_blow_partb: 15 of 18; forwardstep: 10 of 16",
+  "text": "lens3/human-anim-node-count-is-per-anim-not-a-fixed-rig names seven anims that 'bottom out at 0'. The real count is TWENTY-SIX of 158, and the seven named are simply the first seven in document order. The full list: heavyhorizontalslash_partc (4 empty of 7 frames), balancedhorizontalslash_partc (2/7), balancedjumpslash_parta (2/7), sheathesword (2/7), backstep (2/16), forwardstep (10/16), katanajump (2/4), spearbowjump (2/4), downedup (2/4), downstab_up (7/10), downedup2 (2/25), gangnam (44/88), jutsu_ground_parta (6/9), jutsu_punch_parta (4/5), jutsu_blow_parta (4/8), jutsu_blow_partb (15/18), stomp_parta (5/10), punchcombo_parta (3/5), punchcombo_partb (4/6), punchcombo_partc (3/7), punchcombo_partd (8/12), narutorun (6/12), sheathesword3 (22/33), jutsu_air (5/10), punchground_parta (4/7), punchground_partb (13/16). This enlarges the renderer risk rather than changing its direction: 16% of the human clips contain frames that key NOTHING, and in gangnam and sheathesword3 the empty frames are the majority. A renderer that resets unlisted joints per frame does not merely tear the corpse apart on dismemberment tails - it blanks the character outright for half of two long clips. Carry-forward-last-transform is mandatory, not an optimisation.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A3",
+  "build": "both",
+  "cite": "scripts/gauntlet/citeLint.py:104,:156-177 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249,:3050,:3060,:3272,:3274",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27d/citelint-QUOTE_UNVERIFIED-is-a-false-negative-on-backtick-delimited-quotes",
+  "lane_impact": "Gauntlet tooling: reduces false QUOTE_UNVERIFIED flags across every remaining packet. NOT applied - this lane is forbidden to modify files outside its journal.",
+  "overturns_ledger": false,
+  "quote": "citeLint.py:104 QUOTED_SPAN_RE = re.compile(r'\"([^\"]{15,})\"|\u201c([^\u201d]{15,})\u201d|\\'([^\\']{15,})\\'')",
+  "text": "Both QUOTE_UNVERIFIED claims in this packet had byte-exact quotes, and they are the only two claims in the packet that delimited their quotes with BACKTICKS instead of straight or curly quotes. citeLint's QUOTED_SPAN_RE recognises only double quotes, curly quotes and single quotes - a backticked span never becomes a candidate, so the check falls back to 6-word shingles and long tokens, which in this corpus straddle the ' \u00b7 ' separators and the 'file.as:NNNN' prefixes and land nowhere. I re-ran the five affected lines as exact string comparisons after strip(): \u00a71t99s0\u00a7.as:249, :3050, :3060, :3272 and :3274 all match their quoted text character for character. This is worth fixing because the packet's instruction makes QUOTE_UNVERIFIED the top-priority refute target, so a purely cosmetic delimiter choice is currently steering critics toward refuting sound claims - the exact over-refutation failure mode \u00a70 warns about. Adding a backtick alternative to QUOTED_SPAN_RE is a one-token fix.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 mapped through android v0.682",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:105,:107-111,:194-198,:249-250,:3043-3051,:3058-3081,:3083-3177,:3179-3182,:3272-3276 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:93,:109-113,:182,:195-198,:239-240,:2965-2967,:2975-3017,:3019-3120,:3122-3125,:3215-3221 \u00b7 reference/decompiled/shs3_android/scripts/BattleUI.as:48,:60,:101-102,:259-263",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27d/obfuscated-symbol-dictionary-for-the-web-combat-core",
+  "lane_impact": "Method-level: every remaining combat-core and skills-meters blocker that is a NUMBER should now be attempted against reference/decompiled/shs3_payload/ with this key before being called unmeasurable.",
+  "overturns_ledger": false,
+  "quote": "MCSPlayer.as:182 'public function initPlayer(controlledBy:int, hp:int, maxhp:int, chi:int, maxchi:int, defense:int, baseReload:int, minDamage:int, damageRange:int, baseSlashLength:int, slashUsage:int, lightMastery:int, balancedMastery:int, heavyMastery:int, level:int) : *' \u00b7 \u00a71t99s0\u00a7.as:194-198 'this.\u00a71t4420s0\u00a7 = param10; ... this.\u00a71t4421s0\u00a7 = param12; this.\u00a71t4422s0\u00a7 = param13; this.\u00a71t4423s0\u00a7 = param14;'",
+  "text": "The android decompile is an un-obfuscated twin of the web payload's combat class, and aligning the two initPlayer signatures and function bodies names the web symbols outright. Established here and used by every verdict above: \u00a71t99s0\u00a7=MCSPlayer, \u00a71t113s0\u00a7=BattleUI, \u00a71t1525s0\u00a7=StageManager, \u00a71t9948s0\u00a7=isBattle, \u00a71t4414s0\u00a7=reload, \u00a71t4415s0\u00a7=maxreload, \u00a71t4417s0\u00a7=slashLength, \u00a71t4420s0\u00a7=baseSlashLength, \u00a71t4421s0\u00a7/\u00a71t4422s0\u00a7/\u00a71t4423s0\u00a7=light/balanced/heavyMastery (all ':int = 0'), \u00a71t1243s0\u00a7=STAT_CRITICALDMG, \u00a71t4469s0\u00a7=canChangeStance's actionState test, \u00a71t4470s0\u00a7=canChangeStance, \u00a71t4472s0\u00a7=nextStance, \u00a71t3489s0\u00a7=setStance, \u00a71t4473s0\u00a7=getStance, \u00a71t4474s0\u00a7=initSpecialSkills, \u00a71t4475s0\u00a7=getDamage, \u00a71t4476s0\u00a7=getBaseDamage, \u00a71t4477s0\u00a7=getDefense, \u00a71t4478s0\u00a7=deductReloadBar, \u00a71t4479s0\u00a7=bonusReload, \u00a71t5205s0\u00a7=updateReload, \u00a71t5182s0\u00a7=reloadbar, \u00a71t5169s0\u00a7=crittext, \u00a71t5208s0\u00a7=setStanceColor. This is a REUSABLE KEY: it converts the web payload from an opaque blob into a readable source for any future combat-core question, and it is the correct way to discharge the S0-3 build-parity caveat - not by diffing android XML against itself (C2), but by reading the WEB code with android as the dictionary and reporting the web's own literals.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (mapped through android v0.682)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3091-3155,:3299-3311 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:3019-3091,:3246-3258",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27d/stance-constant-dictionary-12223-is-DUAL-and-12224-is-REVERSED",
+  "lane_impact": "L5 combat-core: names all five stance constants in the web payload, so per-stance tables can be written to src/config with correct labels instead of opaque IDs.",
+  "overturns_ledger": false,
+  "quote": "MCSPlayer.as:3067 'this.slashLength = this.baseSlashLength * 1.5;' (case REVERSED_STANCE) \u00b7 :3074 'BattleUI.instance.setStanceColor(2);' \u00b7 :3078 'this.slashLength = this.baseSlashLength;' (case DUAL_STANCE) \u00b7 :3089 'BattleUI.instance.setStanceColor(3);' \u00b7 \u00a71t99s0\u00a7.as:3131 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * 1.4;' (case \u00a71t12224s0\u00a7) \u00b7 :3138 '\u00a71t113s0\u00a7.instance.\u00a71t5208s0\u00a7(2);' \u00b7 :3142 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7;' (case \u00a71t12223s0\u00a7) \u00b7 :3153 '\u00a71t113s0\u00a7.instance.\u00a71t5208s0\u00a7(3);'",
+  "text": "The web payload's five stance constants can be named exactly by aligning the two builds' setStance bodies, and the packet's one guess got the last two backwards. Three independent signals agree: (a) reach formula - android REVERSED = base*1.5 flat / web \u00a71t12224s0\u00a7 = base*1.4 flat; android DUAL = base*1.0 with a 100 floor / web \u00a71t12223s0\u00a7 = base*1.0 with a 100 floor; (b) HUD index - android setStanceColor(2) for REVERSED and (3) for DUAL / web \u00a71t5208s0\u00a7(2) for 12224 and (3) for 12223; (c) reload debit grouping - android pairs BALANCED+REVERSED at slashUsage and HEAVY+DUAL at slashUsage*1.5, and the web pairs 12221+12224 and 12222+12223 identically. So: \u00a71t12220s0\u00a7=LIGHT, \u00a71t12221s0\u00a7=BALANCED, \u00a71t12222s0\u00a7=HEAVY, \u00a71t12223s0\u00a7=DUAL, \u00a71t12224s0\u00a7=REVERSED. Anything porting the per-stance slash debit must use Balanced/Reversed = slashUsage and Heavy/Dual = slashUsage*1.5.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 (naming) applied to web v0.717 (structure)",
+  "cite": "reference/decompiled/shs3_android/scripts/SkillManager.as:218-219 \u00b7 reference/extracted/skilldata.xml:283-297 \u00b7 docs/gauntlet/L0/index/strings.json[\"6008\"],[\"6011\"] \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:239-240 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249-250",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27d/the-focus-bar-IS-the-internal-reload-meter-and-replenish-focus-stops-one-tick-short",
+  "lane_impact": "L2 skills-meters: RR:195 blocker (3) is answered under its own name; Replenish Focus should be implemented as focus = FOCUS_MAX - 1, not FOCUS_MAX.",
+  "overturns_ledger": false,
+  "quote": "SkillManager.as:218-219 'case SKILL_FOCUS: owner.reload = owner.maxreload - 1;' \u00b7 skilldata.xml:284-287 '<id>1005</id> <displayname>6008</displayname> <lvlreq>5</lvlreq> <desc>6011</desc>' \u00b7 strings.json[\"6008\"]='Focus', [\"6011\"]='Instantly recharges your focus bar.'",
+  "text": "The ledger's 'Focus bar' and the code's 'reload' meter are the same object, and this closes the naming question that made RR:190 blocker (5) and RR:195 blocker (3) look like separate unknowns. Skill 1005 is displayname 6008 'Focus', desc 6011 'Instantly recharges your focus bar', chi 5, cooldown 10 (skilldata.xml:283-297) - which is RR:194's 'Replenish Focus (cost 5, cd 9.92s)'. Its effect in SkillManager.as:219 is literally 'owner.reload = owner.maxreload - 1'. So \u00a71t4414s0\u00a7/\u00a71t4415s0\u00a7 ARE the Focus bar, and the web numerics (max 192 at \u00a71t99s0\u00a7.as:249 vs android's 120 at MCSPlayer.as:239) are Focus numerics. NOTE THE MINUS ONE: the skill deliberately stops one tick below max, so Replenish Focus grants a full stance budget but NOT the meter==max crit. That is a design detail no ledger row carries, and a recreation that sets the meter to max would hand the player a free critical hit.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t6172s0\u00a7.as:847-854 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t1523s0\u00a7.as:5011-5016, :338",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27e-nf-b/coin-credit-carries-a-1p5x-timed-boost-multiplier",
+  "lane_impact": "L4 economy: COIN_BOOST_MULT = 1.5, boost id 6, timed. Applies to the credit, so it multiplies the loot-table sum, not each row.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t6172s0\u00a7.as:849 'if(\u00a71t1523s0\u00a7.\u00a71t9725s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9458s0\u00a7))' \u00b7 :851 'param1 *= 1.5;' \u00b7 \u00a71t1523s0\u00a7.as:338 'internal static const \u00a71t9458s0\u00a7:int = 6;'",
+  "text": "Coins-per-kill is a BASE that a buff scales, so the loot-table sum is not the whole payout. The credit function \u00a71t6172s0\u00a7.as:847-854 \u2014 the \u00a71t5846s0\u00a7 called at \u00a71t68s0\u00a7.as:863 and :867 \u2014 opens with a boost check and multiplies the incoming amount by 1.5 before crediting. The check \u00a71t1523s0\u00a7.\u00a71t9725s0\u00a7 (\u00a71t1523s0\u00a7.as:5011-5016) compares a stored expiry against a clock, i.e. it is a TIMED purchasable boost, and the constant passed is \u00a71t9458s0\u00a7 = 6 (\u00a71t1523s0\u00a7.as:338). This does not weaken the coins-per-kill overturn \u2014 it adds the multiplier layer that any faithful economy needs.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 for the branch \u00b7 android v0.682 for the rows (C2)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:861-880 \u00b7 reference/extracted/npcdata.xml:38-43",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27e-nf-c/only-66-of-495-npcs-drop-anything-and-loot-ids-above-3-are-item-drops",
+  "lane_impact": "L4 economy: do not give every mob a drop. 429/495 drop nothing; the loot id is a UNION (0-3 are currency/special, anything else is an item code), so the seeded table needs a fallthrough, not a 4-way enum.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t68s0\u00a7.as:877 'else' :879 '\u00a71t406s0\u00a7.instance.\u00a71t6488s0\u00a7.\u00a71t6186s0\u00a7(_loc7_,_loc8_);' \u00b7 npcdata.xml:38 '<reward>' :39 '<loot>' :40 '<id>0</id>'",
+  "text": "Two hard shapes of the drop system that the coins finding did not state. FIRST: only 66 of the 495 <npc> rows carry a <reward> block at all \u2014 429 enemies drop NOTHING. Measured by streaming every <reward>...</reward> block and histogramming its children: 66 <reward>, 131 <loot>, 131 <id>, 131 <qty>, 131 <chance>, no other tag. SECOND: the roll's switch is not closed at 3. \u00a71t68s0\u00a7.as:877-879 is an ELSE branch calling \u00a71t6186s0\u00a7(_loc7_, _loc8_) \u2014 loot id passed straight through as an ITEM CODE with a quantity \u2014 and npcdata does use it: the 131 rows break down as id 0 x77 (1 coin each), id 1 x10 (5 coins each), id 2 x10 (\u00a71t6183s0\u00a7, no args), id 3 x28 (\u00a71t6194s0\u00a7(this.level,false,true), level-scaled), plus ids 2112 x2, 2113 x2, 2114 x1 and 20028 x1, which fall to the item branch.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both \u2014 this finding IS the divergence (web v0.717 vs android v0.682)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t5957s0\u00a7.as:3340-3346 \u00b7 reference/decompiled/shs3_android/scripts/InventoryUI.as:2406-2412, :2416-2419",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27e-nf-d-the-stat-caps-differ-between-web-v0717-and-android-v0682",
+  "lane_impact": "L4 progression: label the stat-cap and per-point-grant rows WEB v0.717 explicitly. It does not overturn RR:199 (the web build is the target and RR:199's numbers are the web ones), but it is a concrete counter-example to any future 'the two builds are the same' shortcut, and it removes the temptation to corroborate web tuning from android UI code.",
+  "ledger_text": "- **Ready:** +3 stat/+1 skill/full refill per level; +10HP/+5Chi/+1AP/+3-stat per point; L1\u2013L10 XP caps; cap 80; 80 SP first run; unlock cadence; start pools (HP10/Chi10/AP30).",
+  "overturns_ledger": false,
+  "quote": "\u00a71t5957s0\u00a7.as:3344 'var _loc6_:Boolean = \u00a71t1523s0\u00a7.\u00a71t9714s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9408s0\u00a7) < 1 + (_loc2_ + 10) * 3;' vs InventoryUI.as:2410 'this.statsPanel.ATKadd.visible = StatsManager.getStat(StatsManager.STAT_ATTACK) < charlevel + 10;'",
+  "text": "A live S0-3 / C2 parity datum nobody has claimed, and it is the reason the '271 cap' number is safe to ship for the WEB build only. The two builds carry DIFFERENT stat ceilings and different per-point grants. Web v0.717 \u00a71t5957s0\u00a7.as:3340-3346: level into _loc2_, then HP < 10 + (lvl+10)*10, Chi < 10 + (lvl+10)*5, AP < 30 + (lvl+10)*5, ATK/DEF/SPD < 1 + (lvl+10)*3 \u2014 giving 271 for ATK at level 80. Android v0.682 InventoryUI.as:2406-2412: charlevel from getStat(STAT_LEVEL), then HP < 10 + (charlevel+10)*5, Chi < 10 + (charlevel+10)*5, AP < 20 + (charlevel+10), ATK/DEF/SPD < charlevel + 10 \u2014 giving 90 for ATK at level 80, and the android HP ceiling is HALF the web one. The android add-handler at :2416-2419 grants +5 MAXHP per point against the web build's implied +10. So RR:199's 'Ready: ... +10HP ... per point' and the whole 271 figure are v0.717 values that the android data XMLs cannot be used to corroborate.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "android v0.682 (web \u00a71t7785s0\u00a7.as:196-198 confirms the *6 forward transform only \u2014 C2 hedge stands on the room half)",
+  "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:296-303, :305-312, :314-321, :323-328, :566, :1704-1717, :1775-1778, :1780-1789, :1791-1796 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t7785s0\u00a7.as:196-198",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27e-nf-e-a-sector-is-a-node-and-a-node-holds-an-array-of-rooms",
+  "lane_impact": "L-world-exploration: ADD the territory<->sector rule (floor/mod 6, 36 sectors per territory) to RR:224 Ready. Do NOT delete RR:225 blocker \u2464 and do NOT rewrite the sector/room vocabulary \u2014 sector==node, node holds an array of rooms, and the room-emission rule is still unread. Its close-path is now precise: read NodeGenerator.generateRooms.",
+  "ledger_text": "\u2464 sector\u2194room mapping rule (town=fixed sector vs wilderness=one-screen-per-sector).",
+  "overturns_ledger": false,
+  "quote": "NodeGenerator.as:300 'var territoryx:int = Math.floor(sectorx / 6);' \u00b7 :318 'var territoryx:int = sectorx % 6;' \u00b7 :566 'public function generateRooms(nodeid:int, generateInnerRooms:Boolean = true, locationType:int = -1, theme:int = -1, overwriteType:int = 0) : Array' \u00b7 :1793 'var xpart:int = (currentRoomID >> 8 & 0xFF) + shiftX;'",
+  "text": "The correct vocabulary, replacing the false one in nf5, with the true half of nf5 preserved. THE TRUE HALF: the 6x6 territory<->sector transform is general and keyed on nothing but a raw nodeid \u2014 NodeGenerator.as:296-303 getTerritory and :305-312 getTerritoryId compute 'Math.floor(sectorx / 6)' / 'Math.floor(sectory / 6)', :314-321 getTerritorySector returns 'sectorx % 6' / 'sectory % 6', and the WEB build carries the forward half at \u00a71t7785s0\u00a7.as:196-198 '(this.mapid >> 12 & 0x0FFF) * 6'. So 36 SECTORS (= nodes) per territory, town and wilderness alike. THE FALSE HALF: a sector is NOT a room. :323-328 getSector returns the node's own packed coords, so sector == node one-to-one; but :566 generateRooms(nodeid, generateInnerRooms:Boolean = true, ...) returns an ARRAY of XMLRoomData for a single nodeid, :1704-1717 indexes 'getNodeData(nodeid).getRoomData()[roomid]', and :1791-1796 getShiftedRoomId packs roomids in a separate 8-bit space against the node's 12-bit packing at :1780-1789. :1775-1778 getRoomWidth returns '800 + RNG.getRandAfterXTimes(nodeid,3,800)' \u2014 800-1600 px against the 800 px stage, so one room is already one to two screens. RR:225 blocker \u2464 named two real, distinct levels; its answer is generateRooms, and it stays OPEN until someone reads that function's room-emission rules.",
+  "verdict": "PARTIAL"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "both",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:249-250 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:239-241",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27e-nf-e/focus-max-is-192-on-web-and-120-on-android",
+  "lane_impact": "L5 combat-core: FOCUS_MAX = 192 CONTRACT (web v0.717). Concrete evidence for the C2 caveat \u2014 the builds differ on tuning constants even where the code shape is identical.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:249 'this.\u00a71t4415s0\u00a7 = 8 * 24;' \u00b7 MCSPlayer.as:239 'this.maxreload = 5 * 24;'",
+  "text": "A measured, first-hand web-vs-android divergence in the SAME meter, which is the cleanest counterexample I found to treating the android decompile as a stand-in for v0.717. The web player initialises its focus maximum to 8 * 24 = 192 with the current value at 0; the android twin initialises maxreload to 5 * 24 = 120 with reload at 0. Same function position, same init sequence (both immediately followed by the HUD update call), different constant. Every ratio-based port between the two builds must be rescaled by 192/120, and the web's stance toll of 48 is 25% of the bar while the android's threshold of maxreload/6 = 20 is 16.7% of its own.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3272-3275, :3383, :3707",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27e-nf-g/the-1p3x-damage-bonus-fires-on-a-FULL-focus-bar-not-a-random-crit-roll",
+  "lane_impact": "L5 combat-core: CRIT_MULT = 1.3 is CONDITIONAL on a full 192/192 Focus bar, not probabilistic. Also explains why 20+ video samples never yielded a crit RATE \u2014 there isn't one.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:3272 'if(this.\u00a71t4414s0\u00a7 == this.\u00a71t4415s0\u00a7)' :3274 'return _loc2_ * 1.3 + this.\u00a71t1243s0\u00a7;'",
+  "text": "The 1.3x multiplier that the ledger discusses as a crit is not rolled \u2014 it is a full-meter condition, deterministic. The damage function's tail at \u00a71t99s0\u00a7.as:3272-3274 tests focus == maxfocus and returns the stanced damage times 1.3 plus a flat bonus term. No Math.random anywhere in that branch. Combined with the 48-per-switch toll (:3162) and the slash costs (:3302-3310) this makes Focus a single resource with a sharp cliff at the top: the bonus exists ONLY at exactly 192/192, so any spend at all removes it, and the same full-bar condition gates two other abilities (:3383, :3707). That is a very different feel from a percentage crit chance and would be trivially wrong to seed as one.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 (android v0.682 identical)",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:219-224 \u00b7 reference/decompiled/shs3_android/scripts/MCSPlayer.as:218-223",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "t1-overturns-03-cite-s27d/the-injured-debuff-halves-reach-and-no-reach-finding-carries-it",
+  "lane_impact": "L5 combat-core: whatever REACH config const comes out of blocker (1) must carry an INJURED x0.5 modifier on baseSlashLength, not on the per-stance multiplier. Same lines also give free CONTRACT values for the injured DMG and DEF penalties (both x0.5), which the combat-core and enemies-ai rows do not have.",
+  "overturns_ledger": false,
+  "quote": "\u00a71t99s0\u00a7.as:221 'this.minDamage *= 0.5;' :222 'this.defense *= 0.5;' :223 'this.\u00a71t4420s0\u00a7 *= 0.5;' \u2016 MCSPlayer.as:220-222 'this.minDamage *= 0.5; this.defense *= 0.5; this.baseSlashLength *= 0.5;'",
+  "text": "Found while auditing the reach-cap finding, which builds the whole stage-px model out of baseSlashLength and never mentions that one status effect halves it. Immediately after the buff chain at \u00a71t99s0\u00a7.as:215-218, the web build's player init runs 'else if(\u00a71t1523s0\u00a7.\u00a71t9725s0\u00a7(\u00a71t1523s0\u00a7.\u00a71t9463s0\u00a7))' and applies THREE halvings at :221-223 \u2014 minDamage, defense and baseSlashLength. The android twin at MCSPlayer.as:218-223 names the branch 'StatsManager.hasBuff(StatsManager.BUFF_INJURED)', which is what identifies the obfuscated \u00a71t9463s0\u00a7. Consequence for the ledger row being written from the reach finding: INJURED is a x0.5 multiplier on baseSlashLength, so it scales every stance's reach at once \u2014 Light drops to 84-147 px, Balanced to 60-126, Heavy to the 100 floor for its whole range. It is applied at init, before the stance branch at :3094/:3105/:3116 reads the field, so it composes multiplicatively and the Heavy floor of 100 still clamps last. Also note it is exclusive with the speed buff branch (else-if), which is the same field the SPD x1.5 feeds through.",
+  "verdict": "HELD"
+ }
+]

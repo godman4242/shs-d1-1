@@ -1,0 +1,137 @@
+{
+  "packet_size": 7,
+  "judged_count": 7,
+  "skipped": [],
+  "verdicts": [
+    {
+      "claim_id": "nf1-the-stance-mastery-cap-is-10-and-it-is-in-the-skill-tree",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "minor",
+      "own_cite": "reference/extracted/skilldata.xml:3-80, :1238, :1254, :1270 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262, :3265",
+      "reason": "Opened all four cites; every one resolves EXACTLY. skilldata.xml:3-80 is skill 1000 (<passive>1</passive>, <category>1</category>) with exactly ten <level> rows, <value> running 1..10 and <required> running 1,1,2,3,4,5,6,7,8,9. Parsed the whole file: ids 1000/1001/1002 are the ONLY three skills carrying 10 level rows in categories 1/2/3 (only 4 skills in the file have 10 rows at all). :1238 is verbatim '<req><has><id>1000</id><qty>10</qty></has></req>' on skill 1039; :1254 and :1270 are the identical gates on 1001/1002. Independent web-side arithmetic seals the cap: §1t99s0§.as:3262 is '0.5 + 0.4 * m * 0.1' = 0.5+0.04m, which hits the ledger's printed 0.9 at m=10 and gives 0.86 at m=9; :3265 '1 + 0.2 * m * 0.1' hits 1.2 at m=10 and 1.18 at m=9. So RR:155's own printed ceilings only reconcile at m=10. OVERTURN: RR:155 reads 'are MASTERY-9 CEILING values, not base' — the '-9' is false and the decide-and-flag at RR:157 ('the build targets mastery-9') is built on it. The 'ceiling, not base' half survives, which the finding itself concedes. Caveat kept: skilldata.xml is android v0.682 (C2), but the web formulas landing on round numbers only at m=10 is web-side corroboration that does not depend on it."
+    },
+    {
+      "claim_id": "nf2-mastery-floors-at-1-so-a-fresh-character-is-not-light-x0-5",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1058-1060, :2586-2588 · reference/decompiled/shs3_android/scripts/StatsManager.as:740-742, :2144-2146, :1834 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3262, :3265, :3270, :196-198",
+      "reason": "Every cite resolves exactly. StatsManager.as:2144-2146 is verbatim 'skillStats.push(new IntStat(1000,1));' / '(1001,1)' / '(1002,1)'; :1834 is initPlayer passing getStat(1000),getStat(1001),getStat(1002) as the 12th/13th/14th args, and §1t99s0§.as:196-198 receives param12/13/14 into §1t4421s0§/§1t4422s0§/§1t4423s0§ — the same three fields the damage switch reads at :3262/:3265 and the reach switch reads at :3116. Arithmetic checks: 0.5+0.04*1 = 0.54, 1+0.02*1 = 1.02, heavy fixed 1.4 at :3270. The finding's own C2 hedge ('the seeding is android-side') is UNNECESSARY and I struck it: I found the WEB twins at §1t1523s0§.as:1058-1060 (new-character init, immediately after the starting-equipment pushes at :1053-1055) and :2586-2588 (the respec twin), both 'new §1t100s0§(1000,1)' / '(1001,1)' / '(1002,1)'. There are exactly two seeding sites per build and both seed 1. OVERTURN: RR:156's 'Light ×0.5 / Balanced ×1.0' is false for every live character in both builds. What survives: 'Heavy ×1.4 (Heavy is fixed)' (:3270 has no mastery term) and 'Heavy's reach also scales ×0.5→×0.9' — and note 0.5+0.04m reaches exactly 0.9 at m=10, so RR:156's own reach range independently corroborates nf1's cap of 10, not 9."
+    },
+    {
+      "claim_id": "nf3-the-slash-budget-is-spent-in-literal-stage-pixels-web-side",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:51, :106-108, :202, :343-344, :349, :361-367 · reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:104, :106 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3158",
+      "reason": "Every cite resolves exactly and the mechanism is stronger than the finding states. §1t1541s0§.as:51 is verbatim 'internal static var maxDistance:int = 200;'. :106-108 is 'public static function §1t10094s0§(param1:int) { maxDistance = param1; }' — so the per-stance reach pushed at §1t99s0§.as:3158 literally BECOMES maxDistance. :202 refills the live budget '§1t10078s0§ = maxDistance' on mouse-down; :343-344 converts the pointer to stage space; :349 rejects anything outside stageWidth/stageHeight; :362-367 takes the euclidean segment length and decrements the budget by it ('§1t10078s0§ -= _loc4_'). I then closed the unit question harder than the finding did: I opened §1t1523s0§.as and found :104 'public static var stageWidth:int = 800;' and :106 'public static var stageHeight:int = 480;' — 800×480 is a literal in the WEB payload, so 'stage px' is not an inference and the 100 px Heavy floor really is one eighth of stage width. OVERTURN: RR:190 blocker ① says the wiki gives 'units of unknown scale' and prescribes measuring blade-FX span from footage; both halves of that premise are dead. One defect, flagged not fatal: the finding attributes the 800×480 note to 'RR:169' — RR:169 is the portrait-ring line, the native-resolution line is RR:171. That is a ledger mis-numbering, not an artifact mis-cite, and I replaced it with a first-party code cite anyway."
+    },
+    {
+      "claim_id": "nf4-the-per-kill-xp-formula-is-in-the-web-build-too",
+      "refuted": false,
+      "overturn_upheld": false,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:185-209, :237, :271, :888 · reference/extracted/npcdata.xml · reference/decompiled/shs3_android/scripts/NPC.as:166-189",
+      "reason": "The claim itself HOLDS — I opened §1t68s0§.as and the calcXP twin is there, and the android NPC.as:166-189 cite is line-exact. But three things are wrong with how it is filed. (1) OVERTURN NOT UPHELD. RR:215 blocker ① reads 'coins-per-kill reality (=8 is an unconfirmed INFERRED seed; 20+ samples show no XP formula either)'. Its SUBJECT is coins, and calcXP returns XP, not coins. Only the trailing 'no XP formula either' clause falls; the headline — coins-per-kill unresolved, =8 unconfirmed — survives untouched, and I grepped for a coin-drop twin in §1t68s0§.as / NPC.as / StatsManager.as and found none. 'Delete RR:215 blocker (1) whole' is overstated by the whole coin half. (2) FACTUALLY WRONG BASE TERM. lane_impact says 'Per-kill XP is base <xp> from the NPC row'. There is no such row: reference/extracted/npcdata.xml contains ZERO '<xp>' tags (grep -c '<xp>' = 0; the tag histogram over the file has none), and §1t68s0§.as:237 sets 'this.xp = this.level * 2 + 20;' in init, with :271 repeating 'this.xp = param1 * 2 + 20;' in setLevel. Writing 'base <xp> from the NPC row' into the ledger would send the port to a field that does not exist. (3) OFF-BY-ONE LINE CITES. The two quoted lines are verbatim correct but the numbers are one low: '(1 + 0.05 * (param2 - param1))' is at :198 not :197, '(1 - (param1 - param2) / §1t12069s0§())' is at :202 not :201, the function spans :185-209 not :184-207, and the elite block is :204-207 not :203-206. citeLint passed it because it only range-checks against file length. :888 is exact."
+    },
+    {
+      "claim_id": "nf5-nodegenerator-carries-the-general-territory-to-room-transform",
+      "refuted": true,
+      "overturn_upheld": false,
+      "severity": "material",
+      "own_cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:323-328, :566, :1704-1717, :1775-1778, :1791-1796 · reference/decompiled/shs3_payload/scripts/§1t7785s0§.as:196-198",
+      "reason": "REFUTED on its load-bearing sentence, by the very file it cites. The finding asserts in capitals 'A SECTOR IS A ROOM, ONE TO ONE'. NodeGenerator says otherwise. :323-328 getSector(nodeid) returns (nodeid>>12 & 0xFFF, nodeid & 0xFFF) named sectorx/sectory — so sector == NODE, one to one. But a node holds an ARRAY of rooms: :566 'public function generateRooms(nodeid:int, generateInnerRooms:Boolean = true, ...) : Array' builds a roomDataVector of XMLRoomData per nodeid; :1704-1717 getQuestLogDescriptiveNodeName(nodeid, roomid) indexes 'QuestEngine.getNodeData(nodeid).getRoomData()[roomid]' and appends the room name to the node name; and rooms live in a SEPARATE id space — :1791-1796 getShiftedRoomId packs '(currentRoomID >> 8 & 0xFF)' 8-bit x/y, against getShiftedNodeId's 12-bit node packing at :1780-1789. :1775-1778 getRoomWidth returns '800 + RNG.getRandAfterXTimes(nodeid,3,800)', i.e. 800-1600 px against an 800 px stage, so a single room is already one to two screens. Therefore 'one-screen-per-sector is refuted — 36 rooms per territory' is false: it is 36 SECTORS/NODES per territory, each carrying one or more rooms plus inner rooms. Following this finding's lane_impact would write a false vocabulary into the ledger. OVERTURN NOT UPHELD for a second, independent reason: RR:225 blocker ⑤ asks for the sector↔ROOM rule, and that rule lives in generateRooms, which this finding never opened; it supplies the territory↔sector rule instead and then declares the ledger 'named after the wrong two levels'. The ledger named two levels that both genuinely exist in this code. WHAT SURVIVES AND MUST NOT BE LOST: the 6×6 territory↔sector transform is real, general and keyed on nothing but a raw nodeid (:296-303, :305-312, :314-321, quotes verbatim at :300 and :318), and I confirmed the forward half WEB-side at §1t7785s0§.as:196-198 ('(this.mapid >> 12 & 0x0FFF) * 6'). I have re-filed that half correctly in new_findings so refuting this record does not destroy it."
+    },
+    {
+      "claim_id": "nf6-war-board-adjacency-is-in-code-not-just-the-board-dimensions",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:175-176, :443-464, :213, :218, :259 · reference/decompiled/shs3_android/scripts/WarSelectUI.as:512-526 · reference/decompiled/shs3_android/scripts/WarUI.as:637-640",
+      "reason": "Every cite is line-exact and verbatim. WarHexUI.as:445 '(this.mapid >> 12 & 0x0FFF) - 341', :449 'getOwner(territoryx - 1,territoryy)', :453 'getOwner(territoryx + 1,territoryy)', :457/:461 the y pair, :463 'return 0' for interior cells — four-neighbour orthogonal territory adjacency with a 341 origin, consumed by the frontline logic at :213/:218 and :259. I found a BETTER cite for the board half than the finding gave: :175-176 are literals 'this.ht = 6;' 'this.wt = 6;', and the loops at :199-202 build terrainArray 6×6 at 'x = 90 + i * 55' / 'y = 92 + j * 55'. I also closed the 341 origin from the other side: WarSelectUI.as:518 is the exact inverse, 'var mapid:int = territoryx + 341 << 12 | territoryy + 341;'. OVERTURN UPHELD: RR:245 blocker ② 'War-Room map topology (board/adjacency)' is listed as a must-measure and it is not — both halves are literals in code. ONE RESIDUAL the ledger edit must keep, which the finding under-states: WarSelectUI.as:512-526 gates every neighbour lookup on 'hasTerritory(territoryx,territoryy)' (returns -1 when absent) and resolves ownership by scanning 'warMarkerList' into a server-fed 'worldState' string. So the ROSTER of territories on the war map, not just the live ownership feed, is server data. That residual is already tracked at RR:245 ① and RR:225 ①; it does not resurrect blocker ②."
+    },
+    {
+      "claim_id": "nf7-271-cap-is-neither-gear-nor-rebirth-inclusive",
+      "refuted": false,
+      "overturn_upheld": true,
+      "severity": "minor",
+      "own_cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:4593, :4618, :2336, :958, :2360 · reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3344, :3457, :3461 · reference/decompiled/shs3_payload/scripts/§1t401s0§.as:1112 · reference/decompiled/shs3_android/scripts/StatsManager.as:3927, :3952, :2135, :2156 · reference/decompiled/shs3_android/scripts/InteractUI.as:1104",
+      "reason": "Strongest record in the packet; every one of the nine cites is line-exact, and I closed the one step the finding argued only by analogy. GEAR: the finding infers §1t9714s0§ == getStat from the reinforce twin (§1t401s0§.as:1112 '§1t1523s0§.§1t9714s0§(20064)' vs InteractUI.as:1104 'StatsManager.getStat(20064)' — both verified verbatim). I went further and read the BODIES. Android StatsManager.as:3927 getStat, PLAYERSTAT branch, ends :3952 'return getPlayerStats(id);' — base only, findBonusStat never touched. The web twin §1t1523s0§.as:4593 has the identical local-variable shape and its PLAYERSTAT branch ends :4618 'return §1t7356s0§(param1);'. And the gear accessor is separately pinned by signature: android 'findBonusStat(StatID:int, skipWeapon:Boolean = false) : int' vs web §1t1523s0§.as:2360 '§1t7358s0§(param1:int, param2:Boolean = false) : int' — exact match, with §1t7356s0§ at :958 matching 'getPlayerStats(index:int) : *'. :2336 shows the two summed only at the point of use. So the cap gate at §1t5957s0§.as:3344 ('< 1 + (_loc2_ + 10) * 3') and the anti-cheat audit at :3457 read a BASE stat. REBIRTH: §1t5957s0§.as:3461 is verbatim '_loc2_ = (§1t1523s0§.getLevel() - 1) * 3;' with no Dan term — so the budget grant is corroborated in the WEB build, not only android :2135 — against the skill budget at :2156 which does carry 'getPlayerStats(STAT_DAN) * (levelCap - 1)'. OVERTURN UPHELD: RR:201's 'The \"271 cap\" is gear/rebirth-inclusive' is false on both adjectives. Note for the edit: the parenthetical '(237-point first-run budget makes it impossible in one stat)' is arithmetically CORRECT ((80-1)*3 = 237, base 1 + 237 = 238 < 271) and should be kept as the observation — it is the INFERENCE drawn from it that dies. 1 + (level+10)*3 is simply a slack anti-cheat ceiling that exceeds the lifetime budget by exactly 33."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "s27e-nf-a-mastery-floor-of-1-is-web-confirmed-drop-the-c2-hedge",
+      "text": "nf2 hedges that the mastery-floors-at-1 seeding is android-side only (C2). It is not — the web v0.717 payload seeds it twice. §1t1523s0§.as:1058-1060 pushes 'new §1t100s0§(1000,1)' / '(1001,1)' / '(1002,1)' in new-character init, immediately after the starting-equipment pushes at :1053-1055, and §1t1523s0§.as:2586-2588 repeats it in the respec function §1t6950s0§. Those are the only two seeding sites in the web build, exactly mirroring android StatsManager.as:740-742 and :2144-2146. So Light ×0.54 / Balanced ×1.02 / Heavy ×1.4 is a WEB v0.717 fact and RR:156 falls with no build-parity hole at all.",
+      "artifact_class": "A2",
+      "build": "web v0.717 (android v0.682 twin agrees)",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1058-1060, :2586-2588 · reference/decompiled/shs3_android/scripts/StatsManager.as:740-742, :2144-2146",
+      "quote": "§1t1523s0§.as:1058 '§1t9367s0§.push(new §1t100s0§(1000,1));' ‖ :2586 '§1t9367s0§.push(new §1t100s0§(1000,1));'",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "A level-1 Shugyosha does Light ×0.5 / Balanced ×1.0 / Heavy ×1.4 (Heavy is fixed); Heavy's *reach* also scales ×0.5→×0.9.",
+      "lane_impact": "L2 skills-meters: RR:156 is overturned at the TARGET build. Ship MASTERY_FLOOR = 1 as a CONTRACT value with no android hedge."
+    },
+    {
+      "id": "s27e-nf-b-the-reach-cap-value-is-closed-form-not-just-the-unit",
+      "text": "nf3 closes only the UNIT question in RR:190 blocker ①. The VALUE is closed too, web-side, and nobody has claimed it. Base slash length is a closed-form function of SPD and Dan rank: §1t1523s0§.as:2344-2348 is 'var _loc2_:int = 90 + §1t7356s0§(§1t9426s0§) * 5; return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));', whose android twin is StatsManager.as:1915-1919 getBaseSlashLengthVal, so base = 120 + floor((90 + 5*dan) * spd / (20 + spd)) — 124 stage px at SPD 1 / Dan 0, asymptotically 210 at Dan 0. The per-stance multipliers are the reach switch in §1t99s0§.as: :3094 Light 'this.§1t4417s0§ = this.§1t4420s0§ * 1.4' (FIXED — no mastery term), :3105 Balanced '* (1 + 0.2 * m * 0.1)', :3116 Heavy '* (0.5 + 0.4 * m * 0.1)' with a hard floor at :3117-3119 'if(... < 100) ... = 100'. The result is pushed into §1t1541s0§.maxDistance at :3158 / §1t1541s0§.as:106-108. At Dan 0 and mastery 10 the ceilings are Light 294, Balanced 252, Heavy 189 stage px — which is why the ledger's wiki-sourced 300/200/100 reads as Light-ceiling / Balanced-nominal / Heavy-floor. No footage measurement is needed for any of it.",
+      "artifact_class": "A2",
+      "build": "web v0.717 (android v0.682 twin agrees)",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2344-2348 · reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3094, :3105, :3116-3119, :3158 · reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:106-108, :202 · reference/decompiled/shs3_android/scripts/StatsManager.as:1915-1919",
+      "quote": "§1t1523s0§.as:2347 'return int(120 + Math.floor(_loc2_ * param1 / (20 + param1)));' ‖ StatsManager.as:1918 'return int(120 + Math.floor(maxincrement * speed / (20 + speed)));' ‖ §1t99s0§.as:3094 'this.§1t4417s0§ = this.§1t4420s0§ * 1.4;'",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "① reach cap in **stage px** per stance (the one value the whole model needs; wiki gives \"units\" of unknown scale) — *measure blade-FX tip-to-body span in Light/Bal/Heavy from footage, or slash a dummy in a preserved build.*",
+      "lane_impact": "L5 combat-core: RR:190 blocker ① deletes entirely, value and unit both. Ship SLASH_BASE(spd,dan) = 120 + floor((90+5*dan)*spd/(20+spd)), stance multipliers 1.4 / 1+0.02m / 0.5+0.04m, HEAVY_REACH_FLOOR_PX = 100. Also corrects RR:156: Light reach carries NO mastery term."
+    },
+    {
+      "id": "s27e-nf-c-per-kill-base-xp-is-level-x2-plus-20-there-is-no-npc-xp-row",
+      "text": "Correction to nf4, and it makes the XP model STRONGER than nf4 claims. Per-kill base XP is not read from a data file at all: §1t68s0§.as:237 sets 'this.xp = this.level * 2 + 20;' inside init(), and :271 repeats 'this.xp = param1 * 2 + 20;' inside setLevel(), and that same this.xp is what :888 hands to the XP function. Confirming from the data side: reference/extracted/npcdata.xml contains ZERO '<xp>' elements (grep -c '<xp>' returns 0; the file's tag census runs <id> 1273, <lvl> 1049, <skill> 647, <npc> 495, <attack> 406, <hp> 403, <defense> 394 — no xp tag anywhere). So the whole per-kill XP model is a closed-form function of two integers, mob level and player level, with no data dependency: xp = 0 if mobLevel <= greyLevel(playerLevel) or mobLevel - playerLevel > 3; else (2*mobLevel + 20) scaled by (1 + 0.05*(mobLevel-playerLevel)) or (1 - (playerLevel-mobLevel)/zeroDifference(playerLevel)), doubled for elites. Both helper curves are also in code: §1t68s0§.as:113-129 greyLevel is a piecewise ladder ('lvl - floor(lvl/10) - 5' below 40, 'lvl - floor(lvl/5) - 1' below 60, 'lvl - 9' above) and :131+ zeroDifference is a level-banded step table.",
+      "artifact_class": "A2",
+      "build": "web v0.717 (android NPC.as:166-189 twin agrees on the scaling half)",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t68s0§.as:113-129, :185-209, :237, :271, :888 · reference/extracted/npcdata.xml",
+      "quote": "§1t68s0§.as:237 'this.xp = this.level * 2 + 20;' · :271 'this.xp = param1 * 2 + 20;' · :198 '_loc5_ = param3 * (1 + 0.05 * (param2 - param1));' · :202 '_loc5_ = param3 * (1 - (param1 - param2) / §1t12069s0§());'",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "① coins-per-kill reality (`=8` is an **unconfirmed INFERRED seed**; 20+ samples show no XP formula either).",
+      "lane_impact": "L4 economy: strike ONLY the clause '20+ samples show no XP formula either' from RR:215 blocker ①. The coins-per-kill half stays open — I grepped §1t68s0§.as, NPC.as and StatsManager.as for a coin-drop twin and there is none. Do NOT write 'base <xp> from the NPC row' into the config; there is no such row."
+    },
+    {
+      "id": "s27e-nf-d-the-stat-caps-differ-between-web-v0717-and-android-v0682",
+      "text": "A live S0-3 / C2 parity datum nobody has claimed, and it is the reason the '271 cap' number is safe to ship for the WEB build only. The two builds carry DIFFERENT stat ceilings and different per-point grants. Web v0.717 §1t5957s0§.as:3340-3346: level into _loc2_, then HP < 10 + (lvl+10)*10, Chi < 10 + (lvl+10)*5, AP < 30 + (lvl+10)*5, ATK/DEF/SPD < 1 + (lvl+10)*3 — giving 271 for ATK at level 80. Android v0.682 InventoryUI.as:2406-2412: charlevel from getStat(STAT_LEVEL), then HP < 10 + (charlevel+10)*5, Chi < 10 + (charlevel+10)*5, AP < 20 + (charlevel+10), ATK/DEF/SPD < charlevel + 10 — giving 90 for ATK at level 80, and the android HP ceiling is HALF the web one. The android add-handler at :2416-2419 grants +5 MAXHP per point against the web build's implied +10. So RR:199's 'Ready: ... +10HP ... per point' and the whole 271 figure are v0.717 values that the android data XMLs cannot be used to corroborate.",
+      "artifact_class": "A2",
+      "build": "both — this finding IS the divergence (web v0.717 vs android v0.682)",
+      "cite": "reference/decompiled/shs3_payload/scripts/§1t5957s0§.as:3340-3346 · reference/decompiled/shs3_android/scripts/InventoryUI.as:2406-2412, :2416-2419",
+      "quote": "§1t5957s0§.as:3344 'var _loc6_:Boolean = §1t1523s0§.§1t9714s0§(§1t1523s0§.§1t9408s0§) < 1 + (_loc2_ + 10) * 3;' vs InventoryUI.as:2410 'this.statsPanel.ATKadd.visible = StatsManager.getStat(StatsManager.STAT_ATTACK) < charlevel + 10;'",
+      "verdict": "HELD",
+      "overturns_ledger": false,
+      "ledger_text": "- **Ready:** +3 stat/+1 skill/full refill per level; +10HP/+5Chi/+1AP/+3-stat per point; L1–L10 XP caps; cap 80; 80 SP first run; unlock cadence; start pools (HP10/Chi10/AP30).",
+      "lane_impact": "L4 progression: label the stat-cap and per-point-grant rows WEB v0.717 explicitly. It does not overturn RR:199 (the web build is the target and RR:199's numbers are the web ones), but it is a concrete counter-example to any future 'the two builds are the same' shortcut, and it removes the temptation to corroborate web tuning from android UI code."
+    },
+    {
+      "id": "s27e-nf-e-a-sector-is-a-node-and-a-node-holds-an-array-of-rooms",
+      "text": "The correct vocabulary, replacing the false one in nf5, with the true half of nf5 preserved. THE TRUE HALF: the 6x6 territory<->sector transform is general and keyed on nothing but a raw nodeid — NodeGenerator.as:296-303 getTerritory and :305-312 getTerritoryId compute 'Math.floor(sectorx / 6)' / 'Math.floor(sectory / 6)', :314-321 getTerritorySector returns 'sectorx % 6' / 'sectory % 6', and the WEB build carries the forward half at §1t7785s0§.as:196-198 '(this.mapid >> 12 & 0x0FFF) * 6'. So 36 SECTORS (= nodes) per territory, town and wilderness alike. THE FALSE HALF: a sector is NOT a room. :323-328 getSector returns the node's own packed coords, so sector == node one-to-one; but :566 generateRooms(nodeid, generateInnerRooms:Boolean = true, ...) returns an ARRAY of XMLRoomData for a single nodeid, :1704-1717 indexes 'getNodeData(nodeid).getRoomData()[roomid]', and :1791-1796 getShiftedRoomId packs roomids in a separate 8-bit space against the node's 12-bit packing at :1780-1789. :1775-1778 getRoomWidth returns '800 + RNG.getRandAfterXTimes(nodeid,3,800)' — 800-1600 px against the 800 px stage, so one room is already one to two screens. RR:225 blocker ⑤ named two real, distinct levels; its answer is generateRooms, and it stays OPEN until someone reads that function's room-emission rules.",
+      "artifact_class": "A2",
+      "build": "android v0.682 (web §1t7785s0§.as:196-198 confirms the *6 forward transform only — C2 hedge stands on the room half)",
+      "cite": "reference/decompiled/shs3_android/scripts/NodeGenerator.as:296-303, :305-312, :314-321, :323-328, :566, :1704-1717, :1775-1778, :1780-1789, :1791-1796 · reference/decompiled/shs3_payload/scripts/§1t7785s0§.as:196-198",
+      "quote": "NodeGenerator.as:300 'var territoryx:int = Math.floor(sectorx / 6);' · :318 'var territoryx:int = sectorx % 6;' · :566 'public function generateRooms(nodeid:int, generateInnerRooms:Boolean = true, locationType:int = -1, theme:int = -1, overwriteType:int = 0) : Array' · :1793 'var xpart:int = (currentRoomID >> 8 & 0xFF) + shiftX;'",
+      "verdict": "PARTIAL",
+      "overturns_ledger": false,
+      "ledger_text": "⑤ sector↔room mapping rule (town=fixed sector vs wilderness=one-screen-per-sector).",
+      "lane_impact": "L-world-exploration: ADD the territory<->sector rule (floor/mod 6, 36 sectors per territory) to RR:224 Ready. Do NOT delete RR:225 blocker ⑤ and do NOT rewrite the sector/room vocabulary — sector==node, node holds an array of rooms, and the room-emission rule is still unread. Its close-path is now precise: read NodeGenerator.generateRooms."
+    },
+    {
+      "id": "s27e-nf-f-the-war-board-is-a-literal-6x6-and-the-341-origin-has-an-inverse",
+      "text": "Two cites stronger than nf6's for the same overturn, plus the residual nf6 under-states. BOARD: WarHexUI.as:175-176 are literals 'this.ht = 6;' and 'this.wt = 6;', and :199-207 lays the terrainArray out as a 6x6 grid at 'warTerrain.x = 90 + i * 55' / 'warTerrain.y = 92 + j * 55' over nodeids from getShiftedNodeId(zeronodeid,i,j) where :194-196 sets 'zeronodex = (this.mapid >> 12 & 0x0FFF) * 6'. So the war board IS the territory's 36 sectors, which ties it to the same *6 transform as the overworld. ORIGIN: the 341 offset has an exact inverse — WarSelectUI.as:518 'var mapid:int = territoryx + 341 << 12 | territoryy + 341;' against WarHexUI.as:445 '(this.mapid >> 12 & 0x0FFF) - 341'. RESIDUAL: WarSelectUI.as:514-517 gates every neighbour lookup on 'hasTerritory(territoryx,territoryy)' returning -1, and :519-526 resolves the owner by scanning 'warMarkerList' for the packed mapid and reading a character out of a server-fed 'worldState' string. So the ROSTER of war territories, not merely the live ownership feed, is server data — the rule is recovered, the world instance is not.",
+      "artifact_class": "A2",
+      "build": "android v0.682 (C2 hedge stands — no web-side line was located for getExitOwner or the 6x6 literals)",
+      "cite": "reference/decompiled/shs3_android/scripts/WarHexUI.as:175-176, :194-196, :199-207, :443-464 · reference/decompiled/shs3_android/scripts/WarSelectUI.as:512-526 · reference/decompiled/shs3_android/scripts/WarUI.as:637-640",
+      "quote": "WarHexUI.as:175 'this.ht = 6;' · :176 'this.wt = 6;' · WarSelectUI.as:518 'var mapid:int = territoryx + 341 << 12 | territoryy + 341;' · :516 'return -1;'",
+      "verdict": "HELD",
+      "overturns_ledger": true,
+      "ledger_text": "② War-Room **map topology** (board/adjacency)",
+      "lane_impact": "L-meta-social: RR:245 blocker ② deletes, but the replacement Ready line must read 'board 6x6 = the territory's 36 sectors; adjacency = 4-neighbour orthogonal in territory space, origin +341' AND must carry the note that warMarkerList/worldState (which territories exist on the war map, and who holds them) is server-fed — which keeps it inside RR:245 ① and RR:225 ①."
+    }
+  ]
+}

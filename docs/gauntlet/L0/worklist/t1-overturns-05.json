@@ -1,0 +1,36 @@
+[
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717",
+  "cite": "reference/decompiled/shs3_payload/scripts/\u00a71t99s0\u00a7.as:3093-3094, :3105, :3116-3119, :3142-3146, :3262-3270",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27e-nf-f/balanced-reach-also-scales-with-mastery-and-reach-has-a-hard-floor-of-100",
+  "lane_impact": "L5 combat-core: ship FOUR reach rules, not one \u2014 STANCE_REACH_LIGHT = 1.4 flat, STANCE_REACH_BALANCED(m) = 1 + 0.02m, STANCE_REACH_HEAVY(m) = 0.5 + 0.04m, STANCE_REACH_DUAL = 1.0 \u2014 all applied to the weapon base and then clamped up to REACH_FLOOR = 100.",
+  "ledger_text": "3. **The stance tables (dmg 0.9/1.2/1.4, reach 300/200/100) are MASTERY-9 CEILING values, not base.** A level-1 Shugyosha does Light \u00d70.5 / Balanced \u00d71.0 / Heavy \u00d71.4 (Heavy is fixed); Heavy's *reach* also scales \u00d70.5\u2192\u00d70.9.",
+  "overturns_ledger": true,
+  "quote": "\u00a71t99s0\u00a7.as:3105 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (1 + 0.2 * this.\u00a71t4422s0\u00a7 * 0.1);' \u00b7 :3116 'this.\u00a71t4417s0\u00a7 = this.\u00a71t4420s0\u00a7 * (0.5 + 0.4 * this.\u00a71t4423s0\u00a7 * 0.1);' \u00b7 :3117 'if(this.\u00a71t4417s0\u00a7 < 100)'",
+  "text": "RR:155-156 says only 'Heavy's reach also scales', and the mastery finding repeats that framing. The reach switch says otherwise. \u00a71t99s0\u00a7.as:3093-3094 gives Light a FLAT 1.4x reach; :3105 gives Balanced (1 + 0.2 * \u00a71t4422s0\u00a7 * 0.1) = 1 + 0.02m, i.e. Balanced reach scales exactly like Balanced damage; :3116 gives Heavy (0.5 + 0.04m); :3142 gives Dual the unscaled base. Note the reach mapping is the MIRROR of the damage mapping \u2014 the stance that takes 0.5+0.04m on damage (:3262) takes 1.4 flat on reach, and vice versa \u2014 which is what makes Light long-and-weak and Heavy short-and-strong, consistent with the ledger's own 300/200/100 reach ordering. And every branch is clamped: :3117-3119 and the identical guards at :3143-3146 force the result up to 100 if it lands below, so a low-mastery Heavy does not reach below the floor.",
+  "verdict": "HELD"
+ },
+ {
+  "artifact_class": "A2",
+  "build": "web v0.717 for the credit \u00b7 android v0.682 for the rows (C2)",
+  "cite": "docs/research/SHSD_MASTER_REFERENCE.md:2098 \u00b7 reference/decompiled/shs3_payload/scripts/\u00a71t68s0\u00a7.as:861-867 \u00b7 reference/extracted/npcdata.xml:38-43",
+  "citelint": {
+   "notes": [],
+   "problems": [],
+   "status": "RESOLVES"
+  },
+  "id": "s27e-nf-h/master-reference-2098-coins-per-kill-plus-8-verified-falls-with-the-loot-table",
+  "lane_impact": "L4 economy: delete this row too when the RR blocker is rewritten, and strip its [CONTRACT] grade \u2014 '(verified)' was never true of any artifact in this repo.",
+  "ledger_text": "| Coins per kill: +5 vs +8 | **+8** (verified) | [CONTRACT] |",
+  "overturns_ledger": true,
+  "quote": "SHSD_MASTER_REFERENCE.md:2098 '| Coins per kill: +5 vs +8 | **+8** (verified) | [CONTRACT] |' \u00b7 \u00a71t68s0\u00a7.as:863 '\u00a71t406s0\u00a7.instance.\u00a71t6488s0\u00a7.\u00a71t5846s0\u00a7(1 * _loc8_);'",
+  "text": "The coins finding names REBUILD_READINESS.md:215 but not the OTHER ledger row asserting the same thing, which is graded [CONTRACT] and marked '(verified)' \u2014 a stronger claim than the RR blocker and equally dead. SHSD_MASTER_REFERENCE.md:2098 resolves the '+5 vs +8' dispute in favour of +8 and calls it verified. There is no per-kill coin constant in the build: the credit is the loot-table sum (\u00a71t68s0\u00a7.as:861-867, 1x per qty on id 0 and 5x per qty on id 1), the rows live per-NPC in npcdata's <reward> blocks, and 429 of 495 npcs have no <reward> at all so their coin yield is ZERO, not 8. The '+5' half of the dispute is very likely the 5x id-1 multiplier seen in isolation.",
+  "verdict": "HELD"
+ }
+]
