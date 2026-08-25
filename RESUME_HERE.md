@@ -46,9 +46,18 @@ $ fidelity gate     ->  pass: true, points: 41, scans: 14, failed: 0   (the 55/5
 
 ### ⛔ Next: L3 — ITEMS + PAPERDOLL
 
-982 item rows, same generator shape, and the `<req>`-style nesting trap is now known —
-grep the tag vocabulary FIRST. ⚠️ **C2 applies to L3/L4 too**: the data XMLs are the
-**Android** build (v0.682); the web payload has no `<itemdata>` root.
+👉 **The kickoff is written and committed: `docs/sessions/L3_KICKOFF.md`.** Paste its
+`text` block as the first message of a fresh session; it carries the forks, the traps and
+the gate.
+
+982 item rows, same generator shape — and the nesting trap is **worse** than L2's:
+`<modifier>` has children AND **repeats up to 10× per item** (412 total; 319 with
+`<id>`+`<value>`, 93 with `<id>` only), so `findtext()` returns nothing and `find()`
+returns 1 of 10. **Dump the full recursive tag vocabulary and assert it closed BEFORE
+writing the generator** — that assertion is the only thing that caught the same class in
+skilldata, where all 52 prerequisites would have shipped as "present but empty".
+⚠️ **C2 applies to L3/L4 too**: the data XMLs are the **Android** build (v0.682); the web
+payload has no `<itemdata>` root.
 
 ### 🅿️ Still owed
 
