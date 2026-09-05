@@ -3763,7 +3763,7 @@ vs ElementTree in the generator). Six entries follow from it.
   payload carries no `<itemdata>` root. All 982 rows are **v0.682** until a web-side
   artifact corroborates them (GAUNTLET.md §2.1).
 
-## LANE L3 (compositing half) — OPEN. THE SLOT VOCABULARY IS 12 TAGS, NOT 9, AND THE SOURCE SAYS SO.
+## LANE L3 (compositing half) — THE SLOT VOCABULARY. ⚠️ THIS HEADING SAID "12 TAGS, NOT 9" AND WAS SUPERSEDED THE SAME DAY: IT IS 13 / 12 / 9 AND ALL THREE ARE RIGHT (see the self-correction inside).
 
 **Recorded now, built later — this half's gate is a frame grade and Kheshav's LOOK.**
 
