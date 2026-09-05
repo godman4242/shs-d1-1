@@ -167,8 +167,15 @@ conflict, prefer the video.
 
 ### 1.3 Items & equipment (→ Stage 3)
 
-- **Paperdoll: 9 slots** — Hat, Mask, Garment, Gloves, Pants, Weapon, Ring L,
+- **EQUIP SCREEN: 9 slots** — Hat, Mask, Garment, Gloves, Pants, Weapon, Ring L,
   Ring R, Sandals; center sprite live-updates on equip, instant swap (A-13).
+  ⚠️ **Relabelled 2026-09-05 (was "Paperdoll: 9 slots") — the measurement is
+  UNCHANGED and still correct.** These are the slots a *player equips*. The
+  **render** paperdoll is **12 layers** (`npcdata.xml` `<mcs>`: armor, gloves,
+  hair, hat, head, mask, neck, pants, shoes, weapon, prop1, prop2). 7 overlap;
+  the two **rings are equippable but never drawn** (item `<type>` 11 has no
+  `<mcs>` tag); hair/head/neck/prop1/prop2 are render-only. Calling this list a
+  "paperdoll" is what put a 9 into L3's *compositing* gate — GAUNTLET.md §2.2.
 - **Canonical ItemStats shape** (union of observed stat lines): DMG range,
   DEFENSE, per-element ATK (Water/Wind/Earth in B-14/B-09; Fire in A-17, A-27,
   B-28), per-element DEF, MAX HP, HP REGEN, MAX CHI, CHI REGEN, CRITICAL DAMAGE,

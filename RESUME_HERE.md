@@ -42,10 +42,21 @@ $ fidelity gate     ->  pass: true, points: 41, scans: 14, failed: 0   (unchange
 
 ### ⛔ The compositing half — what is ALREADY known, so do not re-derive it
 
-- **The slot vocabulary is 12 tags, not the 9 §2's lane text names.** `npcdata.xml` `<mcs>`
-  declares `armor · pants · shoes · weapon · hair · hat · prop1 · mask · head · gloves ·
-  neck · prop2`. Under §0 the payload outranks the lane text, so **the gate text is what is
-  wrong** — flagged for an owner ruling, deliberately NOT silently changed and NOT softened.
+- **✅ RULED AND APPLIED 2026-09-05 — the paperdoll is 12 LAYERS, and the old "9" was
+  never wrong.** Both numbers are measured; they count different things. **9 = the EQUIP
+  SCREEN** (A1, `SYNTHESIS.md` §1.3 cite A-13: Hat, Mask, Garment, Gloves, Pants, Weapon,
+  **Ring L, Ring R**, Sandals). **12 = the RENDER LAYERS** (A2, `npcdata.xml` `<mcs>`:
+  `armor · gloves · hair · hat · head · mask · neck · pants · shoes · weapon · prop1 ·
+  prop2`). 7 overlap; the **rings are equippable but never drawn** (item `<type>` 11 has no
+  `<mcs>` tag); hair/head/neck/prop1/prop2 are render-only. A *compositing* contract is the
+  render list → §2's L3 row now reads **12-layer**, §1's "10-slot" corrected to 12, and
+  `SYNTHESIS.md` is **relabelled** (its measurement untouched — the frame still wins on what
+  the frame measured). Full reconciliation: **GAUNTLET.md §2.2**.
+- **⛔ THE TRAP THE COMPOSITING HALF WILL WALK INTO: `<mcs>` child order is NOT the z-order.**
+  It is **alphabetical**, and all **490** NPCs obey that one sequence with **ZERO**
+  violations — perfect consistency that reads as intent and is a serialiser artifact.
+  Reading layer order out of the XML gives a confident, wrong z-order that **no test here
+  would catch**. Get the order from the AS3 or from an A1 frame.
 - **`<type>` IS the slot** (gloves→1 · hair→2 · hat→3 · head→4 · mask→5 · neck→6 · pants→7 ·
   shoes→8 · weapon/prop1/prop2→9, id bands matching one-for-one) — **except armor, whose
   items carry no `<type>` at all**. That is why 153 items are typeless (152 in the 4k band
@@ -70,9 +81,9 @@ $ fidelity gate     ->  pass: true, points: 41, scans: 14, failed: 0   (unchange
   erroring, no Synology on `192.168.68.0/24`). GitHub holds everything irreplaceable: repo
   pushed, and the 592 MB seed at `github.com/godman4242/shs-d1-1-reference` release
   `seed-2026-08-24` (185,103,357 B, private, `zstd -t` verified). Recipe: `docs/RECOVERY.md`.
-- **Three owner rulings queued:** the bar self-report (9-for-9), the 26 superseded kickoff
-  docs (64,329 words, stating reversed rulings), and **§2's "9-slot" L3 gate text vs the
-  payload's 12 slots**.
+- **Two owner rulings queued:** the bar self-report (9-for-9), and the 26 superseded
+  kickoff docs (64,329 words, stating reversed rulings). *(The "9-slot vs 12" ruling was
+  taken and applied 2026-09-05 — GAUNTLET.md §2.2.)*
 - **`150% DAMAGE`** — A1 shows it under the bars where we render `BALANCED STANCE`. Not a
   meter; belongs to **L8**. Recorded, not silently changed.
 

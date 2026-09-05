@@ -3767,13 +3767,39 @@ vs ElementTree in the generator). Six entries follow from it.
 
 **Recorded now, built later — this half's gate is a frame grade and Kheshav's LOOK.**
 
-- **§2's L3 lane text says "9-slot compositing contract"; the payload says 12 slot tags.**
-  `reference/extracted/npcdata.xml` `<mcs>` declares, across 495 NPCs / 3,210 elements:
-  `armor` (479) · `pants` (489) · `shoes` (472) · `weapon` (470) · `hair` (462) ·
-  `hat` (287) · `prop1` (217) · `mask` (131) · `head` (115) · `gloves` (58) ·
-  `neck` (29) · `prop2` (1). Under §0 the payload (A2) outranks the lane text, so the
-  **gate text is what is wrong**, not the source. Flagged for an owner ruling at the
-  time it becomes load-bearing; **not silently changed**, and the gate is **not softened**.
+- **⚠️ SELF-CORRECTION, same day, owner-ruled: "the gate text is wrong" was an OVERSTATEMENT.**
+  This entry first said §2's *"9-slot compositing contract"* contradicted the payload's 12
+  and that the lane text was simply wrong. **It is not.** Both numbers are measured and
+  both are right — they count different things, and the first draft of this entry cited
+  only the payload without opening the doc the 9 came from.
+  - **9 is the EQUIP SCREEN** (A1, `SYNTHESIS.md` §1.3, cite A-13): Hat, Mask, Garment,
+    Gloves, Pants, Weapon, **Ring L, Ring R**, Sandals — what a player can equip.
+  - **12 is the RENDER LAYER LIST** (A2, `npcdata.xml` `<mcs>`, 3,210 elements / 495
+    NPCs): `armor` (479) · `pants` (489) · `shoes` (472) · `weapon` (470) · `hair` (462) ·
+    `hat` (287) · `prop1` (217) · `mask` (131) · `head` (115) · `gloves` (58) · `neck` (29)
+    · `prop2` (1).
+  - **7 shared** · **2 equip-only:** the rings — item `<type>` **11** (ids 3000–3008:
+    *Ring, Diamond Ring, War Hero Ring, Amulet*) has **no `<mcs>` tag**, so a ring is
+    equipped and never drawn · **3 render-only body parts** (`hair` type 2 *"Hair"*,
+    `head` type 4 *"Face"*, `neck` type 6, all 14 unnamed) plus `prop1`/`prop2`.
+  - **A *compositing* contract is the render list, so §2's L3 row now reads 12-layer**
+    (GAUNTLET.md §2.2, and §1's "10-slot paperdoll" corrected to 12 in the same pass).
+    `SYNTHESIS.md` is **relabelled** *"EQUIP SCREEN: 9 slots"* — its measurement is
+    untouched, because the frame still wins on what the frame measured. Calling that list
+    a "paperdoll" is the whole root cause.
+  **Veto** = keep 9 in the L3 gate, and composite a fighter with no hair, face or neck.
+
+- **⚠️ THE `<mcs>` CHILD ORDER IS NOT THE Z-ORDER, and it looks exactly like it is.**
+  It is **alphabetical** — armor, gloves, hair, hat, head, mask, neck, pants, shoes,
+  weapon, then prop1/prop2 — and all **490** NPCs carrying an `<mcs>` obey that one
+  sequence with **ZERO** violations. Perfect consistency reads as intent; it is a
+  serialiser artifact. Reading layer order out of the XML yields a confident, wrong
+  z-order that **no test in this repo would catch**. The real order must come from the
+  AS3 or from an A1 frame. Recorded before the compositing half starts, on purpose.
+  ⚠️ Related, and a HYPOTHESIS not a finding: **741 of 3,210 slot values are
+  comma-separated lists** (hair 355, weapon 176, mask 72, hat 43, armor 39, pants 30,
+  shoes 15, head 11) with `0` meaning empty — they look like a per-NPC randomisation
+  pool. **L4 owns proving that**; this lane does not assert it.
 
 - **`<type>` IS the paperdoll slot, and the id band proves it** — every `<mcs>` slot
   resolves to exactly one item `<type>`: gloves→1 · hair→2 · hat→3 · head→4 · mask→5 ·

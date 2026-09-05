@@ -3174,3 +3174,39 @@ lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed 
   gate text being quietly edited. Also banked for **L4**: `<mcs>` is the `<req>` trap a
   third time (3,210 entries would ship empty) and its values are sometimes
   comma-separated lists.
+
+## 2026-09-05 — Session 29 (cont.): the "9-slot" ruling — BOTH numbers were right
+
+- **02:00** Owner ruled *"correct everything"* on the queued 9-vs-12 slot question.
+  **Verified before editing, and the verification reversed the conclusion.** The "9"
+  traces to `docs/research/video-study/SYNTHESIS.md` §1.3 — a **video-study measurement**
+  (A1, cite A-13) of the **equip screen**, not a doc someone guessed. It is correct.
+  The 12 is `npcdata.xml` `<mcs>` — the **render layer list**. Different things.
+- **02:10** Reconciled: **7 shared** (hat · mask · armor=Garment · gloves · pants ·
+  weapon · shoes=Sandals) · **2 equip-only** — the rings, item `<type>` **11**
+  (ids 3000–3008: *Ring, Diamond Ring, War Hero Ring, Amulet*), which have **no `<mcs>`
+  tag at all**, so a ring is equipped and never drawn · **3 render-only body parts**
+  (`hair` type 2 *"Hair"*, `head` type 4 *"Face"*, `neck` type 6, all 14 unnamed) plus
+  `prop1`/`prop2`, which hold weapon-type items.
+- **02:15** Applied: `GAUNTLET.md` §2's L3 row → **12-layer** · §1's *"10-slot paperdoll"*
+  → 12 · new **§2.2** carries the full reconciliation and its evidence ·
+  `SYNTHESIS.md` **relabelled** *"EQUIP SCREEN: 9 slots"* with its measurement
+  **untouched** (the frame wins on what the frame measured; only the label was wrong, and
+  calling that list a "paperdoll" is the entire root cause).
+- **02:20** ⚠️ **SELF-CORRECTION landed in `DIVERGENCES.md`.** Last commit's L3 entry said
+  *"the gate text is what is wrong"*. That was an overstatement written from the payload
+  alone without opening the doc the 9 came from. Corrected in place rather than quietly
+  reworded.
+- **02:25** ⛔ **New finding, banked before the compositing half starts: `<mcs>` child
+  order is NOT the z-order.** It is **alphabetical** (armor, gloves, hair, hat, head,
+  mask, neck, pants, shoes, weapon, then prop1/prop2) and all **490** NPCs with an
+  `<mcs>` obey that one sequence with **ZERO** violations — perfect consistency that
+  reads as intent and is a serialiser artifact. Reading layer order out of the XML gives
+  a confident, wrong z-order **no test here would catch**.
+  Also recorded as a HYPOTHESIS, not a finding: **741 of 3,210 slot values are
+  comma-separated lists** (hair 355, weapon 176, …) with `0` = empty — a likely per-NPC
+  randomisation pool. **L4 owns proving it.**
+- **02:30** **No test added, deliberately.** A guard on `<mcs>` would need the npcdata
+  parsing infrastructure **L4** builds; adding it now starts a second lane. The finding
+  carries its evidence in three places instead. *Veto: ask for the test and it comes with
+  L4's transcriber.*
