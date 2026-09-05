@@ -3280,3 +3280,43 @@ lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed 
 - **04:10** Gate: typecheck 0 · eslint 0 · vitest **67 files / 1059 tests** · fidelity gate
   `pass: true, points: 41, scans: 14, failed: 0` (unchanged) · comparator tracing **0.9185**
   (floor 0.9005) · held-out **0.8597** (floor 0.8490).
+
+## 2026-09-05 — Session 29 (cont. 4): the LOOK rejected it, and the aggregates never saw it coming
+
+- **04:20** ⭐ **OWNER LOOK, verbatim (A5):** *"to be fair it ddint lok liek the video i
+  sent, can we do it in a new session make the kicoff so we can continue with improvement"*
+  **L3 does not close.** §0 makes the LOOK an artifact and it outranks my grade.
+- **04:25** ⚠️ **The finding is bigger than the verdict: every aggregate PASSED.** Silhouette
+  0.9185 (floor 0.9005) · aspect 0.521 vs 0.530 · white coverage 31.0% vs 31.8% · dark ink
+  32.2% vs 31.6%. `compareToSource.py`'s own docstring had predicted exactly this —
+  *"a silhouette score is blind to colour, to paint order, and to a garment on the wrong
+  slot… the loop is a net, not a judge"*. The net caught nothing.
+- **04:30** **Looked properly — and my first crop was WRONG.** `figure_of_frame` slices rows
+  `FRAME_BAND` (560..900) before segmenting, so its bbox is band-local; applying it to the
+  full frame cropped a patch of blurred background with subtitles on it. Lifted to absolute
+  coords (rows 650..882, cols 777..900) the fighter appears. That trap is now handled inside
+  `scripts/art/rebuildZoomCompare.py` with a comment naming it.
+- **04:40** **Measured the gaps instead of describing them.** At matched height, per band:
+  ```
+  band          OURS rgb        w        OG rgb         w     width Δ
+  kasa        ( 91, 60, 40)   59.5   (105, 82, 43)    61.6     -3.5%
+  obi/waist   ( 89, 69, 74)   63.6   (100, 95, 95)    61.0     +4.3%
+  hem/feet    (149,132,136)   85.3   (155,153,149)    69.0    +23.6%   <- THE defect
+  ```
+  Everything else within ±5.4%. The hem is the single standout: two splayed bulbous legs and
+  visible sandals where the OG has ONE tapering column to the ground and no feet showing.
+  Also unmeasured but plain at 4×: no white juban panel, no obi, no chest crests, no straw
+  texture, no fringed brim, hair mass too small.
+- **04:45** ⚠️ **TWO CORRECTIONS TO MY OWN GRADE IN `1b9b479`**, both from working off too
+  small an image — the exact failure this repo's §0 exists to stop. (1) The **scabbard is
+  NOT missing**; it is drawn, thinner and shorter. (2) *"The layer order is correct"* was
+  true and **did not settle the visual question**; the gap is shape, colour blocking and
+  detail. Logged in DIVERGENCES rather than quietly dropped.
+- **04:55** **Built the tooling** (standing authorisation): `scripts/art/rebuildZoomCompare.py`
+  writes the matched-height LOOK image AND prints the per-band table, so the next session
+  never re-derives any of this by hand. ⚠️ It is deliberately **NOT a gate** — it has no
+  pass/fail, because designing a gate that CAN see these defects is L3B's own first decision.
+- **05:00** **`docs/sessions/L3B_KICKOFF.md` written and committed.** Carries the verbatim
+  verdict, the passing-aggregates finding, the ranked measured gap list, my two wrong calls,
+  the floor risk, and four design decisions. Baseline in it verified against a real run
+  (67 / 1059) rather than predicted — §5's own named failure mode.

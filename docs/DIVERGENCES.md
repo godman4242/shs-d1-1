@@ -3899,3 +3899,55 @@ scanning there, whole-file regex in the generator).
   says so. Remaining silhouette differences: our hakama flares wider at the lower
   left, our gi shoulder is bulkier. **Owner LOOK verdict pending; this half of the
   lane stays OPEN until it is logged.**
+
+## LANE L3 — ⛔ OWNER LOOK VERDICT: **REJECTED.** THE GATE THAT PASSED IS NOT THE GATE THAT MATTERS.
+
+**⭐ THE RULING (owner, in-chat, 2026-09-05), logged verbatim as A5:**
+> *"to be fair it ddint lok liek the video i sent, can we do it in a new session make the
+> kicoff so we can continue with improvement"*
+
+**L3 does not close.** The lane's own gate says *"a dressed fighter composites in the OG's
+layer order **against A1**"*, §0 makes the owner's LOOK an artifact (A5), and the LOOK says
+no. The compositing CONTRACT half stands (`1b9b479`); the **fidelity** half is reopened.
+
+- **⚠️ EVERY AGGREGATE MEASURE AGREED, AND THE EYE STILL DISAGREED. That is the finding.**
+  Measured this session against `zFt_0061.png`, figure-normalised:
+  ```
+                        OURS        OG          delta
+    silhouette score    0.9185    (floor 0.9005)  PASSES
+    aspect w/h          0.521       0.530         0.009
+    white coverage      31.0%       31.8%         0.8 pp
+    dark-ink coverage   32.2%       31.6%         0.6 pp
+  ```
+  `compareToSource.py`'s own docstring predicted exactly this — *"a silhouette score is
+  blind to colour, to paint order, and to a garment on the wrong slot… the loop is a net,
+  not a judge — look at the overlay."* It was right, and the net caught nothing.
+  **A gate that four independent aggregates pass while the owner rejects the render is not
+  measuring the thing the lane is for.**
+
+- **The defects the aggregates cannot see, measured in the same pass** (band = fraction of
+  figure height; width = mean filled px at the OG's own scale):
+  | band | ours | OG | what it is |
+  |---|---|---|---|
+  | hem/feet (0.88–1.00) | width **85.3** | **69.0** | ours **24% too wide** — two splayed bulbous legs where the OG has ONE tapering column, and our sandals are visible where the OG's are covered |
+  | obi/waist (0.52–0.62) | rgb (89,69,74) | (100,95,95) | the OG's **white obi + white juban panel down the front**; ours renders that block grey |
+  | kasa (0.00–0.18) | rgb (91,60,40) | (105,82,43) | ours too **red-dark**; the OG's straw is **golden** |
+  Plus, visible at 4× and carried by no measure at all: **two black chest crests**, **straw
+  texture lines radiating from the kasa apex**, a **fringed/serrated brim underside**, a
+  **two-tone gi** (lighter front panel), and a **larger black hair mass** behind the neck.
+
+- **⚠️ TWO CORRECTIONS TO MY OWN GRADE IN `1b9b479`, both from working off too small an
+  image.** (1) I reported the **scabbard as missing entirely**; at matched scale it **is
+  drawn** — thinner and shorter than the OG's, but present at both the upper-left butt and
+  the lower-right tip. (2) I reported *"the layer order is correct"* as if that closed the
+  visual question; **it does not** — the order is right and the render still reads wrong,
+  because the gap is garment SHAPE, COLOUR BLOCKING and DETAIL, not z-order. The z-order
+  correction in `1b9b479` stands on its own AS3 evidence and is unaffected.
+  **Veto** = treat `1b9b479`'s A1 grade as the closing verdict; it was superseded by A5
+  the same day.
+
+- **What this does NOT reopen.** The data half (`652eebb`, 982 items byte-exact) and the
+  compositing CONTRACT (`1b9b479`, equipment→part map + within-part z-order from
+  `MCSCharacter.as`) are both evidence-backed and untouched by this verdict. The reopened
+  work is the traced ART and the gate that grades it — continued in
+  `docs/sessions/L3B_KICKOFF.md`.
