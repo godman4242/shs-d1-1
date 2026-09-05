@@ -3210,3 +3210,40 @@ lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed 
   parsing infrastructure **L4** builds; adding it now starts a second lane. The finding
   carries its evidence in three places instead. *Veto: ask for the test and it comes with
   L4's transcriber.*
+
+## 2026-09-05 — Session 29 (cont. 2): the correction needed correcting — it is 13 / 12 / 9
+
+- **02:45** ⚠️ **SECOND SELF-CORRECTION, and the bigger one.** The "12 layers" ruling
+  committed at `1b80287` was written from `npcdata.xml` **alone**. Grepping the repo for
+  every slot claim surfaced `docs/gauntlet/L0/` — **the L0 lane had already read the AS3
+  and found 13.** §0 bars citing another agent's summary, so the AS3 was opened
+  first-hand rather than taken on trust.
+- **02:50** **Three numbers, all right, reconciling exactly (9 + 4 = 13):**
+  - **13 = the equipment MODEL** — `StatsManager.as:262-286`, `EQ_ARMOR 0 · EQ_GLOVES 1 ·
+    EQ_HAIR 2 · EQ_HAT 3 · EQ_HEAD 4 · EQ_MASK 5 · EQ_NECK 6 · EQ_PANTS 7 · EQ_SHOES 8 ·
+    EQ_WEAPON 9 · EQ_SCABBARD 10 · EQ_ACCESSORY1 11 · EQ_ACCESSORY2 12`.
+  - **12 = what the RENDERER takes** — `MCSCharacter.as:300`, `initMCS(...)`.
+  - **9 = the EQUIP UI boxes** — the stat-granting slots. HAIR/HEAD/NECK/SCABBARD have no
+    box; the two rings are the reverse — equipped, stat-granting, **never drawn**.
+  - **`prop1` IS the scabbard** (`XMLNpc.as:398`), not a generic prop.
+- **02:55** ⚠️ **The "serialiser artifact" call was ALSO wrong.** `<mcs>` order **is**
+  meaningful — it is the EQ index order, mirroring `initMCS`'s `mcsString`
+  (`armor|gloves|hair|hat|head|mask|neck|pants|shoes|weapon|prop|prop2`,
+  `MCSCharacter.as:349`); it only *looks* alphabetical because indices 0–9 were assigned
+  that way. The **conclusion survives for a different reason**: the draw order is a
+  different sequence — `setHead → setMask → setHatHair → setHair → setHat → setNeck →
+  setArmor → setShoes → setPants → setGloves → setWeapon → setProp` — and **neither order
+  is proven to be draw depth**. That call sequence is the compositing half's lead.
+- **03:00** ✅ **The AS3 corroborates the data half:** `initMCS`'s naked fallbacks name the
+  base body art (armor 4000, gloves 5000, hair 6000/6001, hat 7000, mask 9000, neck 10000,
+  pants 11000, shoes 12000, weapon/prop 13000). **8 of 10 are unnamed rows in `OG_ITEMS`.**
+  ⚠️ 6000/6001 DO carry a name (*"Hair"*) and a desc — so **"unnamed" is not a safe test
+  for "is base art"; the id band is.** Third overstatement caught in own writing today.
+- **03:05** Applied to `GAUNTLET.md` §2.2 (rewritten from the AS3, every row cited),
+  §2's L3 row (**names all three numbers**, not one), §1's npcdata row, `SYNTHESIS.md`,
+  `DIVERGENCES.md` and `RESUME_HERE.md`.
+  ⚑ **LESSON, and it cost two commits: `grep` the repo for a claim BEFORE ruling on it.**
+  L0 exists precisely to have done this survey; not reading its output first produced a
+  confident, half-right ruling that then needed public correcting. The three overstatements
+  this session (`Ninja Pants`, "the gate text is wrong", "10 of 10 naked defaults") all
+  share one cause: **writing from the first artifact opened instead of the best one.**

@@ -71,7 +71,7 @@ reconciled. Verified first-hand, this date:
 | `questdata.xml` (780 K) | **61 quests · 2,771 `<dialogue>` blocks · 3,307 verbatim `<text>` lines · 471 `<choice>` · 196 `<option>` · full `<cutscene>` direction (time/actor/action/param) · per-step `<wave>` enemy spawns with x-coords** | *"verbatim dialogue — captured NOWHERE"* (§4) and *"structurally unrecoverable"* (§6) |
 | same | Campaign is **COMPLETE: Prologue → Episodes 1–12 → Epilogue → Season 2 hook** | *"Ep4–12 were likely never shipped… faithful campaign = Prologue–Ep3"* (§3.8) |
 | `skilldata.xml` (40 K) | **75 skills × 182 level rows**, each with exact `<chi>`, `<cooldown>`, `<value>`, `<required>`, `<desc>` | skills-meters scored **33/100**, blocker ① *"every other skill's Chi cost + cooldown"* |
-| `npcdata.xml` (224 K) | **495 NPCs** — full **12-layer** paperdoll (§2.2), `<lvl>`, `<ai>` (425), `<skill>` (647) | enemies-ai **34/100**, blocker ① *"enemy level→stat formula… absent"* |
+| `npcdata.xml` (224 K) | **495 NPCs** — full paperdoll, **12 rendered of a 13-slot model** (§2.2), `<lvl>`, `<ai>` (425), `<skill>` (647) | enemies-ai **34/100**, blocker ① *"enemy level→stat formula… absent"* |
 | `itemdata.xml` (180 K) | **982 items** — type, name, baseprice, weight, modifiers, defense, unique, heavenlyprice | items-equipment **42/100**, blocker ① *"stat-magnitude vs level curve"* |
 | `ui_strings.txt` | UI copy verbatim — War Room rules, betting-odds text, HUD strings | ui-hud blocker ⑤ *"pause/options/dialogue-box exact metrics"* |
 
@@ -125,7 +125,7 @@ expressed as a loop over rows, the lane writes the loop.**
 | **L0** | **RE-SURVEY** — re-score all 12 systems against the payload; rewrite `REBUILD_READINESS.md` §4/§6; delete every "unrecoverable" that the payload disproves | **Opus · small (~8)** | every system's score carries an A2 cite or an explicit "still unheld"; §6's unrecoverable list is provably minimal |
 | **L1** | **CAMPAIGN** — port `questdata.xml` → config; build the dialogue box, cutscene director, quest state machine, choice graph | **Fable · bounded** (runtime is from-scratch) · **Opus critic** on every LOOK | Prologue→Ep12→Epilogue playable end-to-end; all 3,307 lines present byte-exact; 471 choices branch; a cutscene beat matches its A1 frame |
 | ~~**L2**~~ | ~~**SKILLS + METERS**~~ — **CLOSED 2026-08-24** | **generator script** + Opus grade | ✅ 75 skills × 182 rows byte-exact from A2 · ✅ zero INFERRED cooldowns remain · ✅ meters match A1: the three bars `BattleUI.as` declares (`hpbar`/`chibar`/`reloadbar`), the Focus caption's 3 source-stated states, fidelity gate **41 points + 14 scans, 0 failures**. ⚠️ **"AP meter" was not built ON PURPOSE** — `BattleUI.as` declares no AP bar; AP is a Player-sheet stat, never a duel meter (DIVERGENCES). |
-| **L3** | **ITEMS + PAPERDOLL** — `itemdata.xml` → config; **12-layer** compositing contract (corrected 2026-09-05, see §2.2) | **generator script** + **Opus** owns the compositing/z-order grade | ✅ 982 items + 412 modifier rows byte-exact (`652eebb`) · ⛔ OPEN: a dressed fighter composites in the OG's layer order against A1 |
+| **L3** | **ITEMS + PAPERDOLL** — `itemdata.xml` → config; compositing contract = **13-slot model / 12 rendered / 9 equip boxes** (§2.2) | **generator script** + **Opus** owns the compositing/z-order grade | ✅ 982 items + 412 modifier rows byte-exact (`652eebb`) · ⛔ OPEN: a dressed fighter composites in the OG's layer order against A1 |
 | **L4** | **ENEMIES + AI** — `npcdata.xml` → config; AI behaviours from `<ai>` | **generator script** for the rows · **Fable** builds the AI · **Opus** grades the fight feel | 495 NPCs byte-exact; each `<ai>` value maps to observed behaviour with an A1 cite |
 | **L5** | **COMBAT CORE** — reach cap, slash-vs-move, crit read, Focus gating, TTK | **Opus · heavy** | SESSION 24 §2 A12-A…F green; duel-baseline re-recorded ONCE, atomically |
 | **L6** | **ART + ANIM** — the live `r="1"` z-order defect, then the remaining ~150 animations | **Opus · heavy** for the defect + every LOOK · **Fable · bounded** for bulk transcription | `r="1"` honoured (A3); each anim transcribed + byte-checked + pins extended deliberately; floors ≥ 0.9005 / ≥ 0.8490 / ≤ 140.5 hold |
@@ -154,42 +154,56 @@ UNBLOCKED and L1b is closed before it ran.
 Same pass identified the game's font — `<font face="Edo SZ">` in `ui_strings.txt`
 (`Calibri` for secondary text) — closing the art-anim "font (unidentified)" blocker.
 
-### §2.2 THE PAPERDOLL IS 12 LAYERS, AND THE "9 SLOTS" WAS NEVER WRONG — 2026-09-05, `652eebb`
+### §2.2 THE PAPERDOLL IS 13 / 12 / 9 — ALL THREE NUMBERS ARE RIGHT — 2026-09-05, `652eebb`
 
-**Both numbers are measured and both are right; they count different things.** L3's lane
-text said *"9-slot compositing contract"* and §1 said *"full 10-slot paperdoll"*. The
-payload says **12**. Reconciled rather than overruled:
+**Superseded the same day it was written.** The first cut of this section said "12 layers"
+and called the `<mcs>` tag order a serialiser artifact. **Both were wrong**, and they were
+wrong because this section was written from `npcdata.xml` alone without opening the AS3 —
+which `docs/gauntlet/L0/` had already read. Corrected here from the source, first-hand.
 
-- **9 is the EQUIP SCREEN** (A1, video study `SYNTHESIS.md` §1.3, cite A-13): Hat, Mask,
-  Garment, Gloves, Pants, Weapon, **Ring L, Ring R**, Sandals — what a *player* can equip.
-- **12 is the RENDER LAYER LIST** (A2, `npcdata.xml` `<mcs>`, 3,210 elements / 495 NPCs):
-  `armor · gloves · hair · hat · head · mask · neck · pants · shoes · weapon · prop1 · prop2`.
+**There are three numbers because there are three different things**, and they reconcile
+exactly (**9 + 4 = 13**):
 
-**7 are shared** (hat · mask · armor=Garment · gloves · pants · weapon · shoes=Sandals).
-**2 are equip-only:** the rings — item `<type>` **11** (ids 3000–3008: *Ring, Diamond Ring,
-War Hero Ring, Amulet*; all 9 carry a `<defense>`) has **no `<mcs>` tag at all**, so a ring
-is equippable and simply never drawn.
-**3 are render-only body parts** — `hair` (type 2, *"Hair"*), `head` (type 4, *"Face"*),
-`neck` (type 6, all 14 unnamed) — plus **`prop1`/`prop2`**, which hold weapon-type items.
+| # | What it is | Artifact |
+|---:|---|---|
+| **13** | the equipment **MODEL** — `EQ_ARMOR 0 · EQ_GLOVES 1 · EQ_HAIR 2 · EQ_HAT 3 · EQ_HEAD 4 · EQ_MASK 5 · EQ_NECK 6 · EQ_PANTS 7 · EQ_SHOES 8 · EQ_WEAPON 9 · EQ_SCABBARD 10 · EQ_ACCESSORY1 11 · EQ_ACCESSORY2 12` | A2 `StatsManager.as:262-286` |
+| **12** | what the **RENDERER** takes — `MCSCharacter.initMCS(armor, gloves, hair, hat, head, mask, neck, pants, shoes, weapon, propid, prop2id)` | A2 `MCSCharacter.as:300` |
+| **9** | the **EQUIP UI** boxes — the 9 stat-granting slots. `EQ_HAIR`, `EQ_HEAD`, `EQ_NECK`, `EQ_SCABBARD` have no box | A1 `SYNTHESIS.md` §1.3 (A-13) |
 
-> *Pre-empting a false gotcha:* **"Signet Ring" 20017 is `<type>` 12**, and carries
-> `id`/`type`/`name` and nothing else — no price, no defense, no weight. It is a quest item
-> that happens to be called a ring, **not a tenth equip slot**.
+- **`prop1` IS the scabbard, not a generic prop** — `XMLNpc.as:398` writes
+  `"<prop1>" + equipment[StatsManager.EQ_SCABBARD].getItemID() + "</prop1>"`.
+- **The two ring boxes are `EQ_ACCESSORY1`/`EQ_ACCESSORY2`** — equippable, stat-granting,
+  and **never drawn**: they are the two model slots the renderer does not receive. Item
+  `<type>` **11** (ids 3000–3008: *Ring, Diamond Ring, War Hero Ring, Amulet*, all carrying
+  a `<defense>`) has no `<mcs>` tag at all.
+- **`<mcs>`'s tag order is the EQ INDEX ORDER, not a serialiser artifact.** `initMCS` builds
+  `mcsString = armor|gloves|hair|hat|head|mask|neck|pants|shoes|weapon|prop|prop2`
+  (`MCSCharacter.as:349`) and the XML mirrors it field for field. It *looks* alphabetical
+  because the developer assigned indices 0–9 alphabetically. **The order is meaningful.**
 
-**A *compositing* contract is the render list, so the lane text takes 12.** The equip
-screen keeps its 9; `SYNTHESIS.md` is relabelled at the source of the conflation, not
-edited in its measurement. The frame still wins on what the frame measured.
+> ⚠️ **IT IS STILL NOT THE Z-ORDER, and that is the trap.** `initMCS` calls its setters in a
+> **different** sequence from the vector order:
+> `setHead → setMask → setHatHair → setHair → setHat → setNeck → setArmor → setShoes →
+> setPants → setGloves → setWeapon → setProp`.
+> That call sequence is **the lead** for L3's compositing half; whether it equals draw depth
+> needs the FLA child depths or an A1 frame. **Compositing in `<mcs>` order would be
+> confidently wrong, and no test in this repo would catch it.**
+> **Veto:** treat either order as z-order without a frame grade.
 
-> ⚠️ **THE `<mcs>` CHILD ORDER IS NOT THE Z-ORDER.** It is **alphabetical** — armor,
-> gloves, hair, hat, head, mask, neck, pants, shoes, weapon (then prop1, prop2) — and all
-> 490 NPCs that carry an `<mcs>` obey that one sequence with **zero** violations. That is a
-> serialiser artifact. **Reading layer order out of the XML would produce a confident,
-> wrong z-order**; the real order must come from the AS3 or from an A1 frame.
-> **Veto:** treat XML order as z-order — cheap, and wrong in a way no test would catch.
+> ✅ **Corroborates L3's data half from CODE.** `initMCS`'s naked fallbacks name the base
+> body art outright — armor **4000**, gloves **5000**, hair **6000/6001**, hat **7000**,
+> mask **9000**, neck **10000**, pants **11000**, shoes **12000**, weapon/prop **13000**.
+> **8 of those 10 are unnamed rows in `OG_ITEMS`**, carrying only `id` (+`type`, and 4000
+> also `defense`/`weight`) — which is why the 178 unnamed items have no desc, no art and no
+> modifier: they are the naked paperdoll. ⚠️ **The two hair defaults are the exception:**
+> 6000 and 6001 DO carry a `<name>` (the generic *"Hair"*) and a `<desc>`, so "unnamed" is
+> not a safe test for "is base art" — the id band is.
 
-> ⚠️ **741 of the 3,210 slot values are COMMA-SEPARATED LISTS** (hair 355, weapon 176,
-> mask 72, hat 43, armor 39, pants 30, shoes 15, head 11), and `0` means empty. They look
-> like a per-NPC randomisation pool; **that is a hypothesis, not a finding** — L4 owns it.
+> ⚠️ **741 of the 3,210 `<mcs>` slot values are COMMA-SEPARATED LISTS** (hair 355, weapon
+> 176, mask 72, hat 43, armor 39, pants 30, shoes 15, head 11), and `0` means empty. They
+> look like a per-NPC randomisation pool; **that is a hypothesis, not a finding** — L4 owns
+> it. ⚠️ `<mcs>` also carries per-slot colour overrides (`<armorpcolor>`, `<armorscolor>`,
+> …, `XMLNpc.as:367-374`) that L4's transcriber must not drop.
 
 ---
 

@@ -42,21 +42,24 @@ $ fidelity gate     ->  pass: true, points: 41, scans: 14, failed: 0   (unchange
 
 ### ⛔ The compositing half — what is ALREADY known, so do not re-derive it
 
-- **✅ RULED AND APPLIED 2026-09-05 — the paperdoll is 12 LAYERS, and the old "9" was
-  never wrong.** Both numbers are measured; they count different things. **9 = the EQUIP
-  SCREEN** (A1, `SYNTHESIS.md` §1.3 cite A-13: Hat, Mask, Garment, Gloves, Pants, Weapon,
-  **Ring L, Ring R**, Sandals). **12 = the RENDER LAYERS** (A2, `npcdata.xml` `<mcs>`:
-  `armor · gloves · hair · hat · head · mask · neck · pants · shoes · weapon · prop1 ·
-  prop2`). 7 overlap; the **rings are equippable but never drawn** (item `<type>` 11 has no
-  `<mcs>` tag); hair/head/neck/prop1/prop2 are render-only. A *compositing* contract is the
-  render list → §2's L3 row now reads **12-layer**, §1's "10-slot" corrected to 12, and
-  `SYNTHESIS.md` is **relabelled** (its measurement untouched — the frame still wins on what
-  the frame measured). Full reconciliation: **GAUNTLET.md §2.2**.
-- **⛔ THE TRAP THE COMPOSITING HALF WILL WALK INTO: `<mcs>` child order is NOT the z-order.**
-  It is **alphabetical**, and all **490** NPCs obey that one sequence with **ZERO**
-  violations — perfect consistency that reads as intent and is a serialiser artifact.
-  Reading layer order out of the XML gives a confident, wrong z-order that **no test here
-  would catch**. Get the order from the AS3 or from an A1 frame.
+- **✅ RULED AND APPLIED 2026-09-05 — it is 13 / 12 / 9, and ALL THREE are right.** They
+  reconcile exactly (**9 + 4 = 13**). **13** = the equipment MODEL (`StatsManager.as:262-286`,
+  `EQ_ARMOR 0 … EQ_ACCESSORY2 12`). **12** = what the RENDERER takes
+  (`MCSCharacter.initMCS`). **9** = the EQUIP UI boxes, the stat-granting slots (A1
+  `SYNTHESIS.md` §1.3, cite A-13) — `EQ_HAIR/HEAD/NECK/SCABBARD` have no box, and the two
+  rings (`EQ_ACCESSORY1/2`) are the reverse: equipped, stat-granting, **never drawn**.
+  `prop1` **is the scabbard** (`XMLNpc.as:398`). §2's L3 row now names all three; §1's
+  "10-slot" is corrected; `SYNTHESIS.md` is relabelled with its measurement untouched.
+  Full reconciliation with cites: **GAUNTLET.md §2.2**.
+- **⛔ THE TRAP THE COMPOSITING HALF WILL WALK INTO: `<mcs>` order is NOT the z-order.**
+  It **is** meaningful — it is the EQ index order, mirroring `initMCS`'s `mcsString`
+  (`armor|gloves|hair|hat|head|mask|neck|pants|shoes|weapon|prop|prop2`), and it only
+  *looks* alphabetical because indices 0–9 were assigned that way. But `initMCS` calls its
+  setters in a **different** sequence — `setHead → setMask → setHatHair → setHair → setHat
+  → setNeck → setArmor → setShoes → setPants → setGloves → setWeapon → setProp`. **That
+  sequence is the lead; neither order is proven to be draw depth.** Compositing in `<mcs>`
+  order would be confidently wrong and **no test here would catch it**. Settle it with the
+  FLA child depths or an A1 frame.
 - **`<type>` IS the slot** (gloves→1 · hair→2 · hat→3 · head→4 · mask→5 · neck→6 · pants→7 ·
   shoes→8 · weapon/prop1/prop2→9, id bands matching one-for-one) — **except armor, whose
   items carry no `<type>` at all**. That is why 153 items are typeless (152 in the 4k band
