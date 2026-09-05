@@ -168,11 +168,13 @@ payload says **12**. Reconciled rather than overruled:
 **7 are shared** (hat · mask · armor=Garment · gloves · pants · weapon · shoes=Sandals).
 **2 are equip-only:** the rings — item `<type>` **11** (ids 3000–3008: *Ring, Diamond Ring,
 War Hero Ring, Amulet*; all 9 carry a `<defense>`) has **no `<mcs>` tag at all**, so a ring
-is equippable and simply never drawn. *(Pre-empting a false gotcha: **"Signet Ring" 20017 is
-`<type>` 12**, and carries `id`/`type`/`name` and nothing else — no price, defense or weight.
-It is a quest item that happens to be called a ring, not a tenth equip slot.)* **3 are render-only body parts** — `hair` (type 2, *"Hair"*), `head` (type 4,
-*"Face"*), `neck` (type 6, all 14 unnamed) — plus **`prop1`/`prop2`**, which hold
-weapon-type items.
+is equippable and simply never drawn.
+**3 are render-only body parts** — `hair` (type 2, *"Hair"*), `head` (type 4, *"Face"*),
+`neck` (type 6, all 14 unnamed) — plus **`prop1`/`prop2`**, which hold weapon-type items.
+
+> *Pre-empting a false gotcha:* **"Signet Ring" 20017 is `<type>` 12**, and carries
+> `id`/`type`/`name` and nothing else — no price, no defense, no weight. It is a quest item
+> that happens to be called a ring, **not a tenth equip slot**.
 
 **A *compositing* contract is the render list, so the lane text takes 12.** The equip
 screen keeps its 9; `SYNTHESIS.md` is relabelled at the source of the conflation, not
