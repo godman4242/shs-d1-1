@@ -19,9 +19,31 @@ $ fidelity gate     ->  pass: true, points: 41, scans: 14, failed: 0   (unchange
    `scripts/payload/transcribeItems.py`, byte-checked by `tests/ogItemData.test.ts` against
    an **independent** parser (raw regex vs the generator's ElementTree). Vocabulary asserted
    CLOSED (22 tags); the generator dies on an unknown tag.
-2. ⛔ **OPEN — "a dressed fighter composites in the OG's layer order against A1".** Needs a
-   frame grade and Kheshav's LOOK, so it is a separate commit by design. **The lane is open
-   until it lands — do not tick L3 in GAUNTLET.md §2.**
+2. 🟡 **The compositing CONTRACT is transcribed and the layer order is GRADED — but the
+   gate needs Kheshav's LOOK, so L3 is still OPEN.** `src/config/ogCompositing.ts` (from
+   `MCSCharacter.as` + `StatsManager.as`) carries the equipment→part map, the component
+   prefixes, the naked fallback ids and the explicit within-part z-order.
+   **Do not tick L3 in GAUNTLET.md §2 until the LOOK verdict is logged.**
+
+### 👁 THE LOOK THAT CLOSES L3 — one question, two images
+
+`renders/L3_side_by_side.png` (ours | the OG frame) and `renders/L3_overlay.png`
+(theirs **RED** · ours **CYAN** · agreement **WHITE**), against
+`reference/frames/s19_trace/zFt_0061.png` (t=590.0 s).
+Regenerate any time:
+```bash
+npx vite-node scripts/art/renderPose.ts -- dressed --out renders/L3_dressed.png \
+    --json renders/L3_dressed.json --supersample 4
+python3 scripts/art/compareToSource.py renders/L3_dressed.json \
+    --frame reference/frames/s19_trace/zFt_0061.png \
+    --overlay renders/L3_overlay.png --side renders/L3_side_by_side.png
+```
+**My grade, for him to overrule:** the **layer ORDER is correct** — hat over head over
+hair, gi over torso, near sleeve over gi body, hakama over legs. **The OG carries a
+SCABBARD we do not draw at all** — part **4** (`prop`), fed by `EQ_SCABBARD`, and
+`OG_SLOT_SHAPES[4]` is empty because `prop13000` holds zero shapes. That is **missing
+art, not a layering defect** (CDN-dead), and the new contract is what proves it.
+Remaining: our hakama flares wider at the lower left, our gi shoulder is bulkier.
 
 ### ⚠️ Four things a future session must not "fix"
 
@@ -51,7 +73,13 @@ $ fidelity gate     ->  pass: true, points: 41, scans: 14, failed: 0   (unchange
   `prop1` **is the scabbard** (`XMLNpc.as:398`). §2's L3 row now names all three; §1's
   "10-slot" is corrected; `SYNTHESIS.md` is relabelled with its measurement untouched.
   Full reconciliation with cites: **GAUNTLET.md §2.2**.
-- **⛔ THE TRAP THE COMPOSITING HALF WILL WALK INTO: `<mcs>` order is NOT the z-order.**
+- **✅ THE Z-ORDER IS SETTLED, and it did NOT come from `<mcs>`.** It is
+  `MCSCharacter`'s own explicit `setChildIndex` calls, now transcribed into
+  `src/config/ogCompositing.ts`. The old inference in `ogPose.ts` was **half wrong**:
+  *head before hair* ✅ confirmed, *calf before foottop* ⛔ reversed (`setShoes` pins the
+  foottop to index 0 = BACK). Slots 7 and 11 corrected; `GOLDEN_IDLE` re-baselined once,
+  deliberately; `GOLDEN_DRESSED` unchanged, which is the proof the floors did not move.
+- **⛔ THE TRAP THAT REMAINS FOR L4: `<mcs>` order is NOT the z-order.**
   It **is** meaningful — it is the EQ index order, mirroring `initMCS`'s `mcsString`
   (`armor|gloves|hair|hat|head|mask|neck|pants|shoes|weapon|prop|prop2`), and it only
   *looks* alphabetical because indices 0–9 were assigned that way. But `initMCS` calls its

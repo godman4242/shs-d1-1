@@ -90,9 +90,17 @@ describe('composePose: the aliased slots (GATE A4-B)', () => {
 });
 
 describe('composePose: the two-part slots (GATE A4-B)', () => {
-  it('draws TWO parts in slots 7, 11 and 16 — calf+foottop, calf+foottop, head+hair', () => {
-    expect(partsAt(7).map((p) => p.shapeId)).toEqual([2678, 2672]);
-    expect(partsAt(11).map((p) => p.shapeId)).toEqual([2678, 2672]);
+  /**
+   * ⚠️ ORDER CORRECTED IN LANE L3 (was `[2678, 2672]` = calf, foottop). The
+   * source pins the SHOES' foottop to child index 0 — the BACK — with an
+   * explicit `setChildIndex`, and the PANTS' calf is a plain `addChild`, so it
+   * lands in FRONT (`MCSCharacter.as` setShoes/setPants; transcribed into
+   * `src/config/ogCompositing.ts`, cross-checked by `tests/ogCompositing.test.ts`).
+   * `ogPose.ts` had declared this its only INFERRED value; the payload states it.
+   */
+  it('draws TWO parts in slots 7, 11 and 16 — foottop+calf, foottop+calf, head+hair', () => {
+    expect(partsAt(7).map((p) => p.shapeId)).toEqual([2672, 2678]);
+    expect(partsAt(11).map((p) => p.shapeId)).toEqual([2672, 2678]);
     expect(partsAt(16).map((p) => p.shapeId)).toEqual([2664, 2670]);
   });
 

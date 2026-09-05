@@ -221,4 +221,13 @@ describe('the render is anchored where the scene anchors it', () => {
 // Idle is untouched — the bare fighter draws no traced art.
 // …A9.6 (the branch), then A9.4 by the owner's ruling (the gi pair, balloon cut).
 const GOLDEN_DRESSED = 'ebf871c58429021ab8bdd42b846708e68a1feec9d05f79256a69d8a4131ca186';
-const GOLDEN_IDLE = '6dae62d12576cc22e2b62f92dc7481c5634f6e6c88279d3b5d6be4e97638ca97';
+/**
+ * ⚠️ RE-BASELINED ONCE, DELIBERATELY, IN LANE L3 — the render changed ON PURPOSE
+ * (was `6dae62d1…`). Slots 7 and 11 drew `[calf, foottop]`; the payload pins the
+ * foottop to the BACK, so they now draw `[foottop, calf]`
+ * (`src/config/ogCompositing.ts` ← `MCSCharacter.as`). This is the BARE doll, so
+ * only this digest moved: `GOLDEN_DRESSED` is UNCHANGED because the traced
+ * hakama (9011) replaces both shapes on those slots, which is itself the
+ * evidence that the correction is scoped to the parts it should touch.
+ */
+const GOLDEN_IDLE = 'aedc52d179760fe6cd981a7ca2b778480353a650d90f21246a57ec6a43bc3bd1';

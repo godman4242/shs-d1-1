@@ -3247,3 +3247,36 @@ lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed 
   confident, half-right ruling that then needed public correcting. The three overstatements
   this session (`Ninja Pants`, "the gate text is wrong", "10 of 10 naked defaults") all
   share one cause: **writing from the first artifact opened instead of the best one.**
+
+## 2026-09-05 — Session 29 (cont. 3): L3 compositing half — the contract, and a half-wrong INFERRED
+
+- **03:15** **Surveyed before building** (the lesson from two hours earlier). The repo has
+  composited a DRESSED fighter since SESSION 19 — `composePose` + `OG_DRESSED_SLOT_SHAPES`
+  + `TRACED` — so L3's compositing half is not "build a compositor". It is: transcribe the
+  equipment→part contract the item table just unlocked, and grade the order against A1.
+- **03:25** `MCSCharacter.as` gives the contract outright. **One equipment slot dresses MANY
+  parts** — `setArmor` writes eight. Art resolves as `getMCSComponent(prefix, itemId)` with
+  a naked fallback (`new torso4000()`); ⚠️ those symbols are CDN-dead, which is exactly why
+  982 item ROWS can ship while only the hand-traced outfit renders.
+- **03:35** ⛔ **The INFERRED within-slot z-order was HALF WRONG.** `ogPose.ts` called it the
+  only inferred thing in the file. `setShoes` pins the **foottop to child index 0 (BACK)**
+  explicitly and `setPants` plain-`addChild`s the calf (FRONT) — so *head before hair* ✅
+  confirmed, *calf before foottop* ⛔ reversed. **Red-proofed:** the cross-check went RED on
+  the committed order (`expected [calf, foottop] to equal [foottop, calf]`) before the fix.
+- **03:45** Blast radius MEASURED, not assumed: `GOLDEN_DRESSED` unchanged (the traced
+  hakama replaces both shapes on 7/11), so the dressed raster is bit-identical and **the
+  floors provably did not move**. Only `GOLDEN_IDLE` moved — re-baselined ONCE, deliberately,
+  with its reason in-file, as that test's own comment demands. `composePose.test.ts`'s order
+  pin corrected with its cite.
+- **03:55** Chaos-planted three ways, each RED then restored: flip the pin in a COPY of the
+  AS3 (contract tracks it) · drop a part from `setArmor` in the config (2 red) · flip a
+  pinned index in the config (2 red). Regenerates byte-identically.
+- **04:05** **A1 GRADE.** `renders/L3_side_by_side.png` + `L3_overlay.png` vs `zFt_0061.png`.
+  **The layer order is CORRECT.** The OG carries a **SCABBARD we do not draw** — part 4
+  (`prop`) ← `EQ_SCABBARD`, and `OG_SLOT_SHAPES[4]` is empty because `prop13000` holds zero
+  shapes: **missing art, not a layering defect**, and the new contract is what proves it.
+  Ours flares wider at the lower-left hakama; gi shoulder bulkier.
+  ⛔ **Owner LOOK verdict PENDING — L3 stays OPEN and §2 is NOT ticked.**
+- **04:10** Gate: typecheck 0 · eslint 0 · vitest **67 files / 1059 tests** · fidelity gate
+  `pass: true, points: 41, scans: 14, failed: 0` (unchanged) · comparator tracing **0.9185**
+  (floor 0.9005) · held-out **0.8597** (floor 0.8490).

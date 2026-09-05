@@ -78,10 +78,20 @@ export const OG_IDLE_NODES: readonly OgPoseNode[] = [
  * `hat7000` are the game's own "none" placeholders and contain zero shapes. The
  * idle fighter is correctly bald and unarmed; equipment art died with the CDN.
  *
- * ⚠️ INFERRED, and the only inferred thing in this file: the ORDER WITHIN a
- * two-part slot (calf before foottop, head before hair). It follows the order
- * the parts are constructed in §2's table, which is the best evidence we have,
- * but no frame proves it. Veto = a frame showing hair behind the head.
+ * ✅ CONTRACT since LANE L3 — the ORDER WITHIN a two-part slot is no longer
+ * inferred. It was inferred here as "calf before foottop, head before hair"
+ * from §2's construction order; the payload states it outright and the
+ * inference was HALF WRONG (`src/config/ogCompositing.ts`, transcribed from
+ * `MCSCharacter.as`; cross-checked by `tests/ogCompositing.test.ts`):
+ *   - head before hair ✅ CONFIRMED — the head stack is pinned four deep,
+ *     `head 0 · headMask 1 · hatHair 2 · hair 3`, back to front.
+ *   - calf before foottop ⛔ REVERSED — `setShoes` pins the foottop to child
+ *     index 0 (the BACK) with an explicit `setChildIndex`, and `setPants`
+ *     plain-`addChild`s the calf, which lands in FRONT. Slots 7 and 11 below
+ *     are corrected accordingly. Because the index is PINNED, the order does
+ *     not depend on which setter runs first.
+ * Veto = restore [calf, foottop] and record that a construction-order guess
+ * outranks the source's own explicit setChildIndex.
  */
 export const OG_SLOT_SHAPES: ReadonlyArray<readonly number[]> = [
   [2667], //  0 hand (far)
@@ -91,11 +101,11 @@ export const OG_SLOT_SHAPES: ReadonlyArray<readonly number[]> = [
   [], //  4 prop — EMPTY BY DESIGN
   [2674], //  5 foot (far)
   [2648], //  6 thigh (far)
-  [2678, 2672], //  7 calf (far) + foottop (far)
+  [2672, 2678], //  7 foottop (far, BACK) + calf (far, FRONT) — L3, see above
   [2676], //  8 crotch — no node of its own; aliased from 14
   [2674], //  9 foot (near)
   [2648], // 10 thigh (near)
-  [2678, 2672], // 11 calf (near) + foottop (near)
+  [2672, 2678], // 11 foottop (near, BACK) + calf (near, FRONT) — L3, see above
   [2655], // 12 neck
   [2650], // 13 stomach
   [2653], // 14 pelvic
