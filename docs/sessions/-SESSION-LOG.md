@@ -3120,3 +3120,57 @@ tells forward — see the kickoff §2 amendment; build FROM the study frames.
   gameplay moves only behind measured values + the duel-baseline's own atomic
   re-record protocol, audio scheduled as SESSION 25. RESUME collapsed to one
   closed banner; per-step banners live here.
+
+## 2026-09-05 — Session 29: LANE L3 (data half) — 982 items byte-checked
+
+⚠️ **Log gap, recorded not backfilled:** the entry above this one is Session 23
+(2026-07-28). Sessions 24–28 never got entries — they were the L0/architecture doc
+lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed on
+2026-08-24. Backfilling them from memory would invent detail; `RESUME_HERE.md` and
+`docs/gauntlet/ARCH/REVIEW.md` carry what actually happened.
+
+- **00:00** Baseline confirmed `8f9f4d4`, 65 files / 1023 tests, tree clean but for
+  untracked `PROBLEMS.md`. Read `RESUME_HERE.md`, `GAUNTLET.md` §0/§2/§4/R7, and the
+  two LANE L2 sections of `DIVERGENCES.md` as the template.
+- **00:10** **Vocabulary dumped FIRST, before a line of generator** (the L2 `<req>`
+  lesson). Own recursive probe of `itemdata.xml`: 982 items · 21 field positions
+  (19 under `<item>` + 2 under `<modifier>`) · 22 distinct tag names · 23 path-qualified
+  positions · max depth 3 · nesting only under `<item>` and `<modifier>` ·
+  ZERO attributes · ZERO empty leaves · CRLF throughout · zero non-ASCII. All 19 of the
+  kickoff's counts confirmed exactly.
+- **00:20** **Five findings the kickoff did not carry**, each of which breaks a naive
+  port: `<baseprice>.</baseprice>` on item 11037 (the only non-numeric value in 184,002
+  bytes) · `<unique>` is 1 **or 2**, not boolean · 13 negative `<minlvl>` · two
+  coincidence traps (the 93s and the 178s, both disjoint) · **`<art>` is an ITEM → ITEM
+  pointer**, not a sprite id — which reversed fork #4 from "defer" to "land it here".
+- **00:35** Forks decided with vetoes and OK'd by the owner: modifiers VERBATIM ·
+  unnamed rows omit `name` (no marker) · data half commits alone · `art` lands here ·
+  and a fifth, forced: the `.` baseprice is preserved in `OG_ITEM_SOURCE_ANOMALIES`,
+  never coerced.
+- **00:50** `scripts/payload/transcribeItems.py` → `src/config/ogItems.ts` (982 items,
+  412 modifiers, 804 named, 1 anomaly). Closed-vocabulary check runs FIRST and the
+  generator dies on any unknown tag or any attribute. `<art>` referential integrity
+  (all targets exist, no alias chains) asserted at generation.
+- **01:05** `tests/ogItemData.test.ts` — 21 tests, structural pins + a byte-check with a
+  raw-regex parser deliberately independent of the generator's ElementTree.
+  **The byte-check immediately caught the lead's own error:** an item name asserted from
+  memory (`Ninja Pants`) vs the source's `Santa Pants`. Corrected to the payload.
+- **01:20** **Five chaos-plants, each watched RED then restored:** (1) corrupt a value →
+  1 red; (2) drop a modifier → **5** red; (3) fabricate an anomaly → 2 red (the
+  fail-closed direction: you cannot invent an anomaly to hide a dropped field);
+  (4) inject `<scaling><pct>` into a **copy** of the payload → generator exits 1,
+  `reference/` md5 unchanged; (5) swap two modifiers → 1 red (order is load-bearing).
+  Regeneration from source reproduces byte-identical output (md5 `0183d759…`).
+  ⚠️ Learned: Python's `read_text()` silently translates this file's CRLFs, so plant (4)
+  reported a false "planted" on the first attempt — `read_bytes()` is mandatory here.
+- **01:35** Gate: typecheck exit 0 · eslint exit 0 · vitest **66 files / 1044 tests** ·
+  fidelity gate `pass: true, points: 41, scans: 14, failed: 0` (driven in Brave via
+  `?fidelity=auto`, unchanged from SESSION 28). The `src/game/` numeric-literal ratchet
+  did **not** fire — it scans `src/game/` only, and this lane adds to `src/config/`.
+- **01:45** **The lane is HALF OPEN and says so.** L3's second gate item — a dressed
+  fighter compositing in the OG's layer order against A1 — is untouched; `GAUNTLET.md`
+  §2 is deliberately NOT ticked. Banked for it: the slot vocabulary is **12 tags**
+  (`npcdata.xml` `<mcs>`), not §2's "9-slot" — an owner ruling is queued rather than the
+  gate text being quietly edited. Also banked for **L4**: `<mcs>` is the `<req>` trap a
+  third time (3,210 entries would ship empty) and its values are sometimes
+  comma-separated lists.
