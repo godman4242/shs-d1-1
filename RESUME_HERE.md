@@ -1,77 +1,88 @@
 # RESUME HERE
 
-## ⛔ SESSION 29 (2026-09-05) — **L3's DATA + CONTRACT ARE CLOSED. THE ART IS REJECTED.**
+## ⛔ SESSION 30 (2026-09-06) — **L3B: THE GATE IS BUILT AND TWO DEFECTS ARE GONE. THE ART IS STILL OPEN.**
 
-**⭐ OWNER LOOK, 2026-09-05, verbatim (A5 — it outranks every score below):**
+**⭐ THE STANDING VERDICT (owner, 2026-09-05, A5) — it outranks every score below:**
 > *"to be fair it ddint lok liek the video i sent, can we do it in a new session make the
 > kicoff so we can continue with improvement"*
 
-👉 **The kickoff is written and committed: `docs/sessions/L3B_KICKOFF.md`.** Paste its
-`text` block as the first message of a fresh session.
-
-```
-$ npx vitest run    ->  Test Files  67 passed (67)
-                        Tests  1059 passed (1059)      (was 65 / 1023 at session start)
-$ npm run typecheck -> exit 0        $ npm run lint -> exit 0
-$ fidelity gate     ->  pass: true, points: 41, scans: 14, failed: 0   (unchanged, the 55/55)
-```
-
-### ⚠️ THE FINDING THAT MATTERS MORE THAN THE VERDICT
-
-**Every aggregate measure passed, and the eye still said no.**
-
-```
-                    OURS        OG          verdict
-silhouette score    0.9185    (floor 0.9005)  PASSES
-aspect w/h          0.521       0.530         within 0.009
-white coverage      31.0%       31.8%         within 0.8 pp
-dark-ink coverage   32.2%       31.6%         within 0.6 pp
-```
-
-`compareToSource.py`'s own docstring predicted it — *"a silhouette score is blind to colour,
-to paint order, and to a garment on the wrong slot… the loop is a net, not a judge."*
-**A gate four aggregates pass while the owner rejects the render is not measuring the thing
-the lane is for.** Building one that can see what the eye sees is half of L3B.
-
-**Where the defects actually show — `python3 scripts/art/rebuildZoomCompare.py`:**
-```
-band          OURS rgb        w        OG rgb         w     width Δ
-kasa        ( 91, 60, 40)   59.5   (105, 82, 43)    61.6     -3.5%   <- ours red-dark, OG golden
-obi/waist   ( 89, 69, 74)   63.6   (100, 95, 95)    61.0     +4.3%   <- OG's WHITE obi/juban; ours grey
-hem/feet    (149,132,136)   85.3   (155,153,149)    69.0    +23.6%   <- THE defect: two splayed
-                                                                        legs vs one tapering column
-```
-Everything else sits within ±5.4%. The hem is the single standout.
-
-### L3's three parts: two closed on evidence, one REOPENED by the LOOK
-
-1. ✅ **CLOSED — 982 items × 412 modifier rows byte-exact** (`652eebb`).
-   `src/config/ogItems.ts` from `scripts/payload/transcribeItems.py`, byte-checked by
-   `tests/ogItemData.test.ts` against an **independent** parser. Vocabulary asserted CLOSED
-   (22 tags); the generator dies on an unknown tag.
-2. ✅ **CLOSED — the compositing CONTRACT** (`1b9b479`). `src/config/ogCompositing.ts` from
-   `MCSCharacter.as` + `StatsManager.as`: the equipment→part map (one slot dresses many —
-   `setArmor` writes eight), the component prefixes, the naked fallback ids, and the
-   explicit within-part z-order. It caught `ogPose.ts`'s self-declared INFERRED order being
-   **half wrong** — *head before hair* ✅, *calf before foottop* ⛔ (slots 7/11 corrected).
-3. ⛔ **REOPENED — THE ART.** The owner's LOOK rejected the render. This is L3B.
-
-### 👁 WHAT THE NEXT SESSION MUST LOOK AT FIRST
-
+👉 **HE HAS NOT LOOKED AT THE POST-CHANGE RENDER. Nothing below claims the lane is closed.**
+Rebuild the image and put it in front of him — that, and only that, closes L3B:
 ```bash
 npx vite-node scripts/art/renderPose.ts -- dressed --out renders/L3_dressed.png \
     --json renders/L3_dressed.json --supersample 4
-python3 scripts/art/rebuildZoomCompare.py      # image + the per-band table
+python3 scripts/art/rebuildZoomCompare.py      # renders/ is GITIGNORED — always rebuild
+npx vite-node scripts/art/bandCompare.ts       # GATE A13-A, cell by cell
 ```
-`renders/` is **gitignored**, so the image will not be in a fresh checkout — rebuild it,
-and rebuild it after every change, because **it is the gate**.
 
-**⚠️ TWO CORRECTIONS TO MY OWN L3 GRADE — do not inherit them.** (1) I reported the
-**scabbard as missing**; at matched scale it **is drawn**, thinner and shorter than the
-OG's, at both the upper-left butt and the lower-right tip. (2) I reported *"the layer order
-is correct"* as though it settled the visual question. **It does not** — the order is right
-and the render still reads wrong. The gap is garment **shape, colour blocking and detail**.
-Do not re-litigate z-order looking for the cause.
+```
+$ npx vitest run    ->  Test Files  68 passed (68)
+                        Tests  1073 passed (1073)     (was 67 / 1059 at session start)
+$ npm run typecheck -> exit 0        $ npm run lint -> exit 0
+```
+
+### ✅ WHAT LANDED
+
+**1. GATE A13-A — a gate that can see colour blocking, which no aggregate could.**
+`tests/a13Bands.test.ts` · `scripts/art/bandLedger.ts` · `scripts/art/sourceBands.ts` (emitted
+by `scripts/art/bandRuler.py --emit`). Six bands × five paint classes; tolerance is
+`max(5 pp, 2 x the source's own frame-to-frame spread)`, so **the bar is measured, not
+chosen**. Red-proofed as an *executable* artifact — the rejected render's ledger is committed
+and the same rule still rejects it — and chaos-planted twice. Its blind spots are declared
+in `sourceBands.ts`'s header. **A green A13-A is necessary and not sufficient.**
+
+**2. The dressed fighter has no bare feet — and every floor moved the right way.**
+`zFt_0061.png` shows none; `setShoes` dresses those parts with shoe art the CDN took.
+```
+sealed tracing   0.9005469 -> 0.9123479    floor RAISED to 0.9123
+sealed held-out  0.8490331 -> 0.8566378    floor RAISED to 0.8566
+height           140.48 -> 138.26 stage px ceiling LOWERED to 138.3
+aspect w/h       0.521 -> 0.533            (source 0.530)
+A13-A worst cell 23.169 -> 12.778 pp       ratchet committed at 12.78
+```
+⚠️ **THE OLD FLOORS HAD ZERO HEADROOM.** The render sat at 0.9005469 against a 0.9005 bar.
+`RESUME_HERE` had been quoting **0.9185** beside it — that is `compareToSource.py`'s
+DIAGNOSTIC score, and its own header says the two *"must never be quoted as each other."*
+
+**3. A guard where the danger is.** `reauthorGarment.py` now REFUSES to write an SVG with
+fewer paths than the one it replaces.
+
+### ⛔ THE BLOCKER THAT OWNS THE REST OF THE LANE
+
+**Three of the seven traced garments do not regenerate, though every file says they do.**
+9001/9011/9012/9014 reproduce path for path. **9017** loses its 6 weave ribs + 13 fringe
+ticks, **9019** loses its detail paths, and **9015 loses the SESSION 22 balloon repair AND
+moves its outer ring — GATE A9-E 0.44 -> 3.50 local px.** That happened this session and only
+A9-E caught it.
+
+⇒ **The white column (the biggest remaining read gap) is blocked on 9015.** The juban and obi
+ARE painted, in the measured whites, and 9015's silhouette covers them — 9014's bbox sits
+entirely inside 9015's and 9015 draws in front. Both widenings were measured and rejected
+(crop+window: held-out **0.8385, under its floor**; window alone: 0.8634 for +0.0015 tracing).
+
+### 📋 NEXT SESSION, IN ORDER
+
+1. **Get the owner's LOOK on `renders/L3_zoom_compare.png`.** Log it verbatim.
+2. **Make 9015 reproducible** — recover the A9.4 balloon-repair parameters (the carve is
+   described in `tests/a9GiProbe.test.ts`'s header; `subtractSeed` in `garment_masks` is the
+   mechanism, the seed is not recorded). Then ship the `tones: 4` gi, which is already
+   measured: tracing 0.9249, held-out 0.8649, `gi body/ink` green, and its middle tone lands
+   on **`#9e9a97`, the SWF's own palette colour, byte-exact**.
+3. **Then the eight open cells**, named in `tests/a13Bands.test.ts` — that list may only shrink.
+4. Full reasoning, all measurements: `docs/DIVERGENCES.md` "LANE L3B".
+
+### ⛔ TWO ITEMS OF THE L3B KICKOFF'S GAP LIST ARE REFUTED — do not re-inherit them
+
+- **"The kasa is the wrong colour" is FALSE.** Its fills are byte-exact to `sourceColour.ts`'s
+  p75/p25. So are 9012's, 9014's and 9015's. **No garment has a wrong hue**; the band means
+  differ because the AREAS do.
+- **"The white juban/obi is missing" is an OCCLUSION bug**, not a missing garment.
+
+### ⏮ L3's data + contract halves stay CLOSED
+
+**982 items x 412 modifier rows byte-exact** (`652eebb`) and **the compositing CONTRACT**
+(`1b9b479`) are untouched by all of this. It is **13 / 12 / 9 and all three are right**
+(9 + 4 = 13) — `GAUNTLET.md` §2.2.
 
 ### ⚠️ Four things a future session must not "fix"
 

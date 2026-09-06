@@ -3320,3 +3320,56 @@ lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed 
   verdict, the passing-aggregates finding, the ranked measured gap list, my two wrong calls,
   the floor risk, and four design decisions. Baseline in it verified against a real run
   (67 / 1059) rather than predicted — §5's own named failure mode.
+
+## 2026-09-06 — Session 30: LANE L3B — the gate that can see colour, and the art that still can't be regenerated
+
+- **00:00** Baseline verified against a real run, not predicted: `e2218a8`, 67 files / 1059
+  tests. Kickoff read; `renders/L3_zoom_compare.png` rebuilt and LOOKED AT, plus
+  `zFt_0061.png` cropped 6x. Design put to the owner as four decisions with veto notes; he
+  answered "go".
+- **00:40** **The mechanism behind "four aggregates passed a rejected render" is MEASURED:
+  the defects cancel.** No white above the hip (juban + obi painted then covered by the gi)
+  and too much below it (one leg drawn twice). Whole-figure max |delta| **2.5 pp**; worst
+  per-band cell **28.2 pp**. That 11x is the whole design.
+- **01:10** ⛔ **Two gap-list items REFUTED, both from the shipped bytes.** Every traced
+  garment's fills are byte-exact to `sourceColour.ts`'s measured p25/p75 — **no garment has
+  a wrong hue**, so "the kasa is the wrong colour" is false. And 9014's bbox sits *entirely
+  inside* 9015's while 9015 draws in front ⇒ "the white juban/obi is missing" is an
+  **occlusion** bug, and the fix belongs on 9015.
+- **01:40** **GATE A13-A built.** `bandRuler.py --emit` → `sourceBands.ts` (30 cells + the
+  held-out ledger + near-tie classifier witnesses); `bandLedger.ts` measures our raster with
+  the magenta backdrop divided back out; `bandCompare.ts` reports it. **Tolerance =
+  max(5 pp, 2 x the source's own frame-to-frame spread)** — the `FRAME_TO_FRAME_CEILING`
+  argument, so the bar is measured rather than chosen, and the grass-contaminated hem cells
+  self-neutralise (spreads 34.8 / 21.1 / 12.2 pp).
+- **02:00** RED, on 8 cells, naming every defect the eye found. **Red-proof made EXECUTABLE**:
+  the rejected render's ledger is committed and the same rule still rejects it, so softening
+  `GATE_A13A` turns that test red. Chaos-planted twice — tolerance 5→30 pp (red), squared→
+  Manhattan distance (red, caught by a witness pixel: `56,41,26 -> straw` instead of `ink`).
+- **02:40** **The feet fix.** `zFt_0061.png` shows no foot; `setShoes` dresses parts 5/7/9/11
+  with art the CDN took. Slots 5 and 9 draw nothing dressed; the bare doll is untouched.
+  **tracing 0.9005469 → 0.9123479 · held-out 0.8490331 → 0.8566378 · height 140.48 → 138.26 ·
+  aspect 0.521 → 0.533 (source 0.530) · A13-A worst 23.169 → 12.778 pp.**
+- **02:45** ⚠️ **The old floors had ZERO headroom and nobody had noticed** — 0.9005469 against
+  0.9005. `RESUME_HERE` had been quoting **0.9185** beside it, which is `compareToSource.py`'s
+  DIAGNOSTIC score; that file's own header says the two "must never be quoted as each other".
+- **03:30** `reauthorGarment.py` gained opt-in **`tones: N`** (deterministic 1-D k-means over
+  the interior's luma, outline excluded by `INK_MAX`, merged at `D4_TOLERANCE`). On the gi it
+  finds three tones and **the middle one lands on `#9e9a97` — the SWF's own palette colour,
+  byte-exact**. Measured: tracing 0.9249, held-out 0.8649, `gi body/ink` green.
+- **04:00** ⛔ **AND IT COULD NOT SHIP.** Regenerating 9015 moves its outer ring and puts back
+  the SESSION 22 balloon — **GATE A9-E 0.44 → 3.50 local px**, the defect that took an owner
+  ruling to close. Audit: **9001/9011/9012/9014 reproduce path for path; 9017 loses 6 weave
+  ribs + 13 fringe ticks; 9019 loses its detail paths; 9015 loses the repair.** Every one of
+  those files says "GENERATED — regenerate with the command below". Reverted 9015 and 9017.
+- **04:15** **Guard shipped where the danger is:** `reauthorGarment.py` refuses to write an
+  SVG with fewer paths than the one it replaces, naming what would be lost. Chaos-checked —
+  it now refuses 9015/9017/9019 and still passes 9011/9012.
+- **04:40** Pins moved deliberately, each with its reason in-file: `GOLDEN_DRESSED`
+  (`ebf871c5…` → `baa2c8d6…`), dressed parts 21 → 19, ops 103 → 99, ink maxY 431.4 → 429.1,
+  crop height 190 → 188, the dressed slot list, and the ground-line test renamed with its
+  floor widened 1 px (the hem sits 0.87 px high — inside the ±1 px `inkBox` already concedes;
+  the alternative, re-growing the figure to 139.1, was rejected for the tighter ceiling).
+- **05:00** GREEN with pasted output: **68 files / 1073 tests · typecheck 0 · lint 0**.
+  Compare image rebuilt. **L3B stays OPEN** — eight named cells, the white column blocked on
+  9015, and the owner has not looked at the post-change render.

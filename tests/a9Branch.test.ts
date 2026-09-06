@@ -90,9 +90,10 @@ describe('A9-F — the branch is wired at the measured facing', () => {
     }
   });
 
-  it('the dressed fighter composes 21 parts — the 20 dressed ones plus the branch', () => {
+  it('the dressed fighter composes 19 parts — the 18 dressed ones plus the branch', () => {
     const dressed = composePose(OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES);
-    expect(dressed).toHaveLength(21);
+    // 21 → 19 at LANE L3B: slots 5 and 9 (the bare feet) draw nothing dressed.
+    expect(dressed).toHaveLength(19);
     expect(dressed.filter((p) => p.shapeId === BRANCH)).toHaveLength(1);
     const idle = composePose(OG_IDLE_NODES, OG_SLOT_SHAPES, OG_SLOT_ALIASES);
     expect(idle.some((p) => p.shapeId === BRANCH)).toBe(false);

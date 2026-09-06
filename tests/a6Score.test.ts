@@ -97,7 +97,17 @@ const scoreAgainst = (variant: 'idle' | 'dressed', source: readonly number[]): n
  * ⛔ THESE MAY ONLY EVER MOVE UP, in a commit that says why. Read
  * `docs/DIVERGENCES.md` "SESSION 20 — A6.3"/"A6.4"/"A6.5" before touching either.
  */
-const FLOOR_TRACING = 0.9005;
+/**
+ * ⬆️ RAISED 0.9005 -> 0.9123 BY LANE L3B (2026-09-06). The dressed fighter no
+ * longer draws two bare feet below the hakama — `zFt_0061.png` shows none, and
+ * `setShoes` dresses those parts with shoe art that died with the CDN
+ * (`ogPose.ts` carries the full reasoning). Measured 0.9123479…, truncated.
+ * ⚠️ THE OLD FLOOR HAD NO HEADROOM AT ALL: the render sat at 0.9005469 against
+ * a 0.9005 bar. `RESUME_HERE` reported "silhouette 0.9185" beside it, which is
+ * the DIAGNOSTIC score from `compareToSource.py` — this file's header says the
+ * two "must never be quoted as each other", and they had been.
+ */
+const FLOOR_TRACING = 0.9123;
 /**
  * ⛔ RE-BASED DOWN 0.8618 → 0.8490 BY THE OWNER'S RULING, 2026-07-28 — the ONE
  * edit of its kind. The gi balloon was a proven trace defect whose accidental
@@ -106,7 +116,8 @@ const FLOOR_TRACING = 0.9005;
  * back-edge overhang 4.8 → 0.5 stage px) shipped in this same commit. Measured
  * 0.8490330…, truncated. From here the floor may only move UP again.
  */
-const FLOOR_HELDOUT = 0.8490;
+/** ⬆️ RAISED 0.8490 -> 0.8566 by the same change. Measured 0.8566377…, truncated. */
+const FLOOR_HELDOUT = 0.8566;
 
 describe('GATE A6-C — the dressed fighter agrees with the source, and may not get worse', () => {
   it('holds its FLOOR against the frame the outfit was traced from', () => {
@@ -153,8 +164,13 @@ describe('GATE A6-C — the dressed fighter agrees with the source, and may not 
  * this protects, and it was invisible to A6-C alone.
  */
 describe('GATE A6-C companion — the fighter may not get TALLER', () => {
-  /** Stage px, dressed, at the SESSION 20 A6.5 commit. May only ever go DOWN. */
-  const HEIGHT_CEILING_STAGE = 140.5;
+  /**
+   * Stage px, dressed. May only ever go DOWN — and it did: 140.5 -> 138.3 when
+   * LANE L3B stopped drawing the bare feet, because the sandals WERE the
+   * figure's lowest ink and the hakama's hem is now the ground line, exactly as
+   * the source frame shows.
+   */
+  const HEIGHT_CEILING_STAGE = 138.3;
   /** `src/core/viewport.ts` — one world px is 1.2 stage px; a video px is 1/1.875. */
   const STAGE_TO_VIDEO = 1.875;
   /** 13 lone standing frames, HUD suppressed (SESSION 19 A5.5). */
@@ -175,8 +191,13 @@ describe('GATE A6-C companion — the fighter may not get TALLER', () => {
     // cannot silently grow. §P7 suspects the SKELETON — our BARE fighter is
     // 240.3 video px with NO hat while the source's measure 236.7 WITH one — and
     // no garment placement can fix that.
-    expect(overshoot).toBeGreaterThan(0.10);
-    expect(overshoot).toBeLessThan(0.12);
+    // ⬇️ 0.10-0.12 -> 0.09-0.10 (LANE L3B): 11.4 % -> 9.5 % too tall. Still a
+    // real, unfixed miss — §P7 suspects the SKELETON, and no garment change can
+    // reach that — but a smaller one, so the window follows it down. It is a
+    // WINDOW and not a ceiling on purpose: silently "fixing" this by growing the
+    // figure would be caught by the lower bound.
+    expect(overshoot).toBeGreaterThan(0.09);
+    expect(overshoot).toBeLessThan(0.10);
   });
 });
 

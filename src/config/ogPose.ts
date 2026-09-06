@@ -139,9 +139,39 @@ export const OG_SLOT_SHAPES: ReadonlyArray<readonly number[]> = [
  * traced: the far leg is not bounded by ink on its right (the outline there is
  * the scabbard), so its region leaks into the background. Drawing one leg shape
  * at both slots is what the OG itself does — 2678 at 7 and 11, 2648 at 6 and 10.
+ *
+ * ⭐ LANE L3B — SLOTS 5 AND 9 DRAW NOTHING, AND THAT IS A FRAME VERDICT, NOT A
+ * DELETION TO PASS A GATE.
+ *
+ * The owner rejected the SESSION 29 render on sight, and two bare sandals under
+ * the hakama were the loudest thing in it. **`zFt_0061.png` shows no feet at
+ * all** — the white column runs into the grass and stops. §0's standing rule is
+ * that when a model and a frame disagree, the frame wins, and it is the frame
+ * that says a fighter wearing this outfit has no visible foot.
+ *
+ * The compositing CONTRACT agrees rather than objecting. `setShoes` dresses
+ * parts 5, 7, 9 and 11 (`ogCompositing.ts`, from `MCSCharacter.as`), so a
+ * DRESSED fighter's feet wear SHOE art — and the shoe art died with the CDN,
+ * leaving only the naked base `12000`. Painting the naked foot on a dressed
+ * fighter is therefore the divergence; hiding it is the correction. 2674 stays
+ * exactly where it is on the BARE doll, which is a real game state.
+ *
+ * MEASURED, all four ways, in this same commit:
+ *   sealed tracing   0.9005 -> 0.9123      (its floor, cleared by 0.0000 before)
+ *   sealed held-out  0.8490 -> 0.8566
+ *   height           140.48 -> 138.26 stage px  (the ceiling only ever goes DOWN)
+ *   GATE A13-A       hem/feet ink 31.5% -> 21.1% against the source's 3.3%
+ * ⚠️ THE REMAINING 17.8 pp IS STILL OPEN and is the hakama's own hem, not the
+ * feet — measured per row, our figure is clean (5-10 % ink) down to 0.949 of its
+ * height and then the last six rows run 43-60 % ink, because both traced panels
+ * close with a hard stroked hem while the source's is lost in grass.
+ * **Veto** = restore 2674 at slots 5/9, and put back two sandals the reference
+ * frame does not show, at the cost of both floors and 10 pp of hem ink.
  */
 const TRACED: Readonly<Record<number, readonly number[]>> = {
   1: [9001], //  gi sleeve, far arm
+  5: [], //  far foot — DRESSED fighters have no bare feet, see below
+  9: [], //  near foot — the same
   7: [9011], //  hakama, far leg — the SAME shape as 11, see above
   11: [9011], // hakama, near leg
   12: [9012], // collar / juban

@@ -297,13 +297,15 @@ describe('OG_DRESSED_SLOT_SHAPES: the traced outfit (SESSION19 A5.2)', () => {
    * The exact dressed set, pinned. Adding a garment must be a deliberate act
    * that edits this list, never a drift that nobody notices.
    */
-  it('dresses EXACTLY slots 1, 3, 7, 11, 12, 14, 15, 17, 19 and leaves the rest bare (D3)', () => {
+  it('dresses EXACTLY slots 1, 3, 5, 7, 9, 11, 12, 14, 15, 17, 19 and leaves the rest bare (D3)', () => {
     // Slot 3 joined at SESSION22 A9.6: the training branch (OG_EQUIPMENT),
     // the starting weapon — OG art at the weapon slot, not a traced garment.
     const differing = OG_DRESSED_SLOT_SHAPES.flatMap((shapes, slot) =>
       JSON.stringify(shapes) === JSON.stringify(OG_SLOT_SHAPES[slot]) ? [] : [slot],
     );
-    expect(differing).toEqual([1, 3, 7, 11, 12, 14, 15, 17, 19]);
+    // Slots 5 and 9 joined at LANE L3B and they SUBTRACT rather than add: the
+    // dressed fighter draws no bare foot, because `zFt_0061.png` shows none.
+    expect(differing).toEqual([1, 3, 5, 7, 9, 11, 12, 14, 15, 17, 19]);
   });
 
   /**
@@ -337,14 +339,16 @@ describe('OG_DRESSED_SLOT_SHAPES: the traced outfit (SESSION19 A5.2)', () => {
    * 20; the weapon slot's branch brings it back to 21. Derived here from the
    * maps rather than transcribed, so it cannot inherit a slip.
    */
-  it('draws one part per entry across both maps — 21 bare, 21 dressed (with the branch)', () => {
+  it('draws one part per entry across both maps — 21 bare, 19 dressed (with the branch)', () => {
     // Slot 8 (crotch) carries art and is aliased from 14, so it is already in
     // the map — the sum of entries IS the drawn-part count, with no fudge.
     const count = (m: ReadonlyArray<readonly number[]>): number => m.reduce((n, s) => n + s.length, 0);
+    // ⬇️ dressed 21 → 19 in LANE L3B: the two foot slots draw nothing. The BARE
+    // doll stays at 21, which is the proof the change is scoped to the outfit.
     expect(compose()).toHaveLength(21);
-    expect(dressed()).toHaveLength(21);
+    expect(dressed()).toHaveLength(19);
     expect(count(OG_SLOT_SHAPES)).toBe(21);
-    expect(count(OG_DRESSED_SLOT_SHAPES)).toBe(21);
+    expect(count(OG_DRESSED_SLOT_SHAPES)).toBe(19);
   });
 
   /** The alias, against real art rather than a fixture id. */

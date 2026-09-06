@@ -106,16 +106,20 @@ describe('cropRegion — the frame the fighter is rendered into', () => {
 });
 
 describe('the REAL composed fighter, rasterised', () => {
-  it('dressed: 21 parts, 103 draw ops, with all 54 of its strokes', () => {
+  it('dressed: 19 parts, 99 draw ops, with all 52 of its strokes', () => {
     const r = render('dressed');
     // 96 → 103 ops when the gi pair landed by the OWNER'S RULING (SESSION22
     // A9.4): 9015 trades its blob ring for base + measured panel shadow +
     // contour + chest crease; 9019 for base + 3-ring shadow + contour + two
     // creases + the crest ring. On top of A9.6's 81 → 96 (the branch) and
     // A9.3/A9.5's 57 → 81 (kasa detail, hakama inset contours, obi shadow).
-    expect(r.parts).toHaveLength(21);
-    expect(r.plan).toHaveLength(103);
-    expect(census(r.plan)).toEqual({ fill: 46, stroke: 54, holedFill: 3 });
+    // ⬇️ 21 → 19 parts and 103 → 99 ops in LANE L3B: slots 5 and 9 (the bare
+    // feet) draw nothing on the DRESSED fighter, because the reference frame
+    // shows none and `setShoes` dresses those parts with art the CDN took. The
+    // BARE doll below is untouched and still draws 21. See `ogPose.ts`.
+    expect(r.parts).toHaveLength(19);
+    expect(r.plan).toHaveLength(99);
+    expect(census(r.plan)).toEqual({ fill: 44, stroke: 52, holedFill: 3 });
   });
 
   it('idle: 21 parts, 90 draw ops, with all 41 of its strokes', () => {
@@ -130,9 +134,13 @@ describe('the REAL composed fighter, rasterised', () => {
     // ⚠️ minX moved 474.9 -> 472.1 in SESSION20 A6.4 (hakama waistband). maxX
     // moved 538.9 -> 545.7 at SESSION22 A9.6: the branch's fork tip emerging
     // aft-low behind the hakama is now the fighter's widest point — exactly
-    // what the source frames show. Height edges deliberately unchanged.
+    // what the source frames show.
+    // ⬆️ maxY moved 431.4 -> 429.1 at LANE L3B. The bottom edge had been the
+    // SANDALS; with the bare feet no longer drawn on a dressed fighter it is now
+    // the hakama's own hem, which is what `zFt_0061.png` shows as the ground
+    // line. minY (the kasa) is untouched, so the figure shortened from BELOW.
     expect([dressed.minX, dressed.maxX, dressed.minY, dressed.maxY].map((n) => Number(n.toFixed(1)))).toEqual([
-      472.1, 545.7, 290.9, 431.4,
+      472.1, 545.7, 290.9, 429.1,
     ]);
     // SESSION 18 A4-F recorded the bare plan as 52.661 x 128.164 stage px.
     const idle = render('idle').ink;
@@ -142,7 +150,8 @@ describe('the REAL composed fighter, rasterised', () => {
 
   it('crops to the frames the CLI reports', () => {
     // Width 115 → 122 at SESSION22 A9.6: the branch's fork tip widened the ink.
-    expect(render('dressed').region).toEqual({ x: 448, y: 266, width: 122, height: 190 });
+    // Height 190 → 188 at LANE L3B: two fewer stage px of figure, no feet.
+    expect(render('dressed').region).toEqual({ x: 448, y: 266, width: 122, height: 188 });
     expect(render('idle').region).toEqual({ x: 456, y: 279, width: 102, height: 177 });
   });
 
@@ -220,7 +229,15 @@ describe('the render is anchored where the scene anchors it', () => {
 // measured-flat #dcd9d4 with a clean hem and inset w1.5 contour, obi two-tone.
 // Idle is untouched — the bare fighter draws no traced art.
 // …A9.6 (the branch), then A9.4 by the owner's ruling (the gi pair, balloon cut).
-const GOLDEN_DRESSED = 'ebf871c58429021ab8bdd42b846708e68a1feec9d05f79256a69d8a4131ca186';
+/**
+ * ⚠️ RE-BASELINED DELIBERATELY IN LANE L3B (was `ebf871c5…`) — the DRESSED
+ * fighter stopped drawing its two bare feet, which the reference frame does not
+ * show and which were the loudest thing in the render the owner rejected. Both
+ * sealed floors ROSE in the same commit (0.9005 → 0.9123, 0.8490 → 0.8566) and
+ * the height ceiling FELL (140.5 → 138.3), which is what makes this a repair
+ * rather than a re-baseline of convenience. `ogPose.ts` carries the evidence.
+ */
+const GOLDEN_DRESSED = 'baa2c8d69323319283110d3aab419f30a89c45f6d8a47016db6f594225813b34';
 /**
  * ⚠️ RE-BASELINED ONCE, DELIBERATELY, IN LANE L3 — the render changed ON PURPOSE
  * (was `6dae62d1…`). Slots 7 and 11 drew `[calf, foottop]`; the payload pins the

@@ -74,6 +74,23 @@ GARMENTS = [
     # 0.6617. The outer silhouette is correct and deliberate: the near sleeve
     # hides the body, so slot 15 wears the whole outline and slot 19 draws over
     # it. What was actually wrong was `anchor="centre"` — see PLACEMENT below.
+    # ⛔ LANE L3B — `tones=4` IS MEASURED AND DELIBERATELY NOT SET HERE. The gi is
+    # `sourceColour.ts`'s own warned-about case: iqr (2,1,1) says "flat", and the
+    # frame says the interior is a MID grey body, a LIGHTER front panel and the
+    # WHITE juban beside it. `reauthorGarment.py`'s tone split finds exactly that,
+    # and its middle tone lands on **#9e9a97 — the SWF's OWN palette colour**,
+    # byte-exact. Rendered, it measured tracing 0.9249 / held-out 0.8649 and turned
+    # GATE A13-A's `gi body/ink` cell green.
+    # ⇒ IT CANNOT SHIP UNTIL 9015 REGENERATES. Re-running the tool over this entry
+    # MOVES THE OUTER RING and reinstates the SESSION 22 balloon — GATE A9-E goes
+    # 0.44 -> 3.50 local px — because the A9.4 carve that repaired it is in no
+    # script. Setting `tones` here would silently take that trade.
+    # ⛔ AND THE WINDOW STAYS (75, 165) — MEASURED, twice. Widening it to 232 pulls
+    # the white juban inside the silhouette, which is the faithful-sounding change
+    # and it is WORSE: with the crop also widened, held-out 0.8649 -> 0.8385, BELOW
+    # its floor; with the window alone, 0.8649 -> 0.8634 for +0.0015 tracing. A6.5
+    # reached the same verdict from the opposite direction (carving the gi back
+    # scored 0.8597 -> 0.8010). Veto = widen it and lose the held-out grade.
     dict(id=9015, slot=15, name="gi body (outer silhouette)",
          crop=(806, 700, 886, 796), seed=(851, 759), mode="outer", grey=(75, 165),
          part=(-9.600, 9.816, -21.550, 2.150), anchor="top"),

@@ -3951,3 +3951,135 @@ no. The compositing CONTRACT half stands (`1b9b479`); the **fidelity** half is r
   `MCSCharacter.as`) are both evidence-backed and untouched by this verdict. The reopened
   work is the traced ART and the gate that grades it — continued in
   `docs/sessions/L3B_KICKOFF.md`.
+
+---
+
+## LANE L3B — THE GATE THAT CAN SEE COLOUR BLOCKING, AND THREE GARMENTS THAT CANNOT BE REGENERATED
+
+**The lane the owner's REJECT opened (A5, 2026-09-05). It is NOT closed.** The dressed
+fighter still does not read as the video's fighter; what changed is that the repo can now
+*measure* the difference, the two loudest defects are gone, and every remaining one is named,
+numbered and attached to a cause.
+
+### ⭐ Why four aggregates passed a rejected render — MEASURED, not theorised
+
+`compareToSource.py` predicted the failure mode; this lane found the mechanism. **The
+defects cancel.** Our render carried NO white above the hip — the juban and obi are painted,
+in `sourceColour.ts`'s own measured whites, and then *covered* by the gi's silhouette — and
+too much below it, one traced leg drawn twice. Summed over the figure they annihilate:
+
+```
+                       whole figure        worst BAND cell
+white share            31.0% vs 31.8%      obi/waist  3.9% vs 20.9%
+max |delta|, any class      2.5 pp                 28.2 pp
+```
+
+⇒ **GATE A13-A** (`tests/a13Bands.test.ts`, `scripts/art/bandLedger.ts`,
+`scripts/art/sourceBands.ts`): six bands × five paint classes = 30 cells, our side from the
+raster with the magenta backdrop divided back out, the source side committed as derived data
+so it runs with no `reference/`.
+
+- **The tolerance is not a judgement call.** Both source frames are measured; their
+  per-cell disagreement IS the noise floor, and the bar is `max(5 pp, 2 × that spread)` —
+  the argument `sourceProfile.ts` makes with `FRAME_TO_FRAME_CEILING`. The grass-contaminated
+  hem cells self-neutralise (spread 34.8 / 21.1 / 12.2 pp) without anyone widening anything.
+- **The classifier is the repo's own evidence.** Nearest of nine anchors, every one a colour
+  a committed shape actually paints. An earlier ad-hoc brightness/saturation cut sorted the
+  source's bright straw into SKIN; that is the drift this avoids.
+- **RED-PROOFED AS AN EXECUTABLE ARTIFACT.** The pre-change ledger is recorded in the test and
+  the same rule is pointed back at it: 8 named cells fail, worst overshoot 23.169 pp. Soften
+  `GATE_A13A`'s constants and that test goes red, because the rule would start accepting the
+  render the owner rejected. Chaos-planted twice (tolerance 5→30 pp; squared→Manhattan
+  distance) and watched red both times.
+- **⛔ ITS BLIND SPOTS, DECLARED — the last gate's were not.** A band integrates across the
+  row, so left-right arrangement is invisible; it grades an ink BUDGET, so a crest and a
+  smear of equal area are one number; the source's own mask includes grass; one frame, one
+  pose. **A green A13-A is necessary and not sufficient. The gate is still the owner's LOOK.**
+
+### ⭐ THE FIX THAT LANDED: a dressed fighter has no bare feet
+
+`zFt_0061.png` shows **no foot at all** — the white column runs into the grass. The
+compositing CONTRACT agrees rather than objecting: `setShoes` dresses parts 5/7/9/11
+(`ogCompositing.ts` ← `MCSCharacter.as`), so a dressed fighter's feet wear SHOE art, and that
+art died with the CDN. Painting the naked foot on a dressed fighter was the divergence.
+`OG_SLOT_SHAPES` (the bare doll, a real game state) is untouched.
+
+```
+sealed tracing   0.9005469 -> 0.9123479     floor RAISED 0.9005 -> 0.9123
+sealed held-out  0.8490331 -> 0.8566378     floor RAISED 0.8490 -> 0.8566
+height           140.48 -> 138.26 stage px  ceiling LOWERED 140.5 -> 138.3
+aspect w/h       0.521 -> 0.533             (source 0.530)
+A13-A worst      23.169 -> 12.778 pp        ratchet committed at 12.78
+```
+
+⚠️ **THE OLD FLOORS HAD ZERO HEADROOM AND NOBODY HAD NOTICED.** The render sat at
+**0.9005469** against a 0.9005 bar and **0.8490331** against 0.8490. `RESUME_HERE` reported
+*"silhouette 0.9185 (floor 0.9005)"* beside them — 0.9185 is the DIAGNOSTIC score from
+`compareToSource.py`, whose own header says the two *"must never be quoted as each other."*
+They had been, and it read as headroom that did not exist.
+
+### ⛔ TWO ITEMS OF THE KICKOFF'S GAP LIST ARE REFUTED
+
+1. **"The kasa is the wrong colour" is FALSE as a palette claim.** Its fills are `0x9a7739`
+   and `0x745421` — **byte-exact** to `sourceColour.ts`'s p75 (154,119,57) and p25
+   (116,84,33). So are 9012's, 9014's and 9015's. **Not one garment has a wrong hue.** The
+   band mean differs because the AREAS differ: ours is 36.7 % ink in the kasa band against
+   25.8 %, and carries 0.1 % of the source's 9.9 % bright-straw class.
+2. **"The white juban / obi is missing" is an OCCLUSION bug, not a missing garment.** Both are
+   drawn in the right white and then painted over: at the committed nodes 9014's bbox
+   (x −8.83…2.73, y −61.24…−50.57) sits **entirely inside** 9015's (x −17.00…13.66,
+   y −89.55…−47.77), and 9015 is slot 15 — in front of 14. The fix belongs on **9015**.
+
+### ⛔ THE BLOCKER, AND IT IS THE FINDING WITH THE LONGEST REACH
+
+Every `shape90NN.ts` says *"GENERATED — DO NOT EDIT. Regenerate with the command below."*
+**AUDITED 2026-09-06 — for three of the seven that promise is FALSE:**
+
+| shape | regenerates? | what a rerun destroys |
+|---|---|---|
+| 9001 · 9011 · 9012 · 9014 | ✅ path for path | — |
+| **9017** kasa | ⛔ 6 paths → 3 | the 6 radial weave ribs and 13 fringe ticks (A9.3) |
+| **9019** near sleeve | ⛔ 6 paths → 3 | its own detail paths |
+| **9015** gi | ⛔ 4 → 3 **and the outer ring moves** | the SESSION 22 balloon repair — **GATE A9-E 0.44 → 3.50 local px**, the defect that took an owner ruling to close |
+
+**This happened, to this lane, and only A9-E caught it.** So the guard now lives where the
+danger is: `reauthorGarment.py` **refuses to write an SVG with fewer paths than the one it
+would replace**, naming what would be lost. Losing detail is now a deliberate act.
+
+⇒ **The white-column fix is BLOCKED on that.** It needs 9015 re-authored, and 9015 cannot be
+re-authored without reintroducing the balloon. Two widenings were measured and both rejected:
+crop + window → held-out 0.8649 → **0.8385, below its floor**; window alone → held-out
+0.8649 → 0.8634 for +0.0015 tracing. A6.5 reached the same verdict from the opposite side.
+
+### 🔧 What the lane built for the blocked work
+
+`reauthorGarment.py` gained **`tones: N`** — the 2-tone grammar generalised to the tones a
+garment actually has, found by deterministic 1-D k-means over the interior's own luma with
+the outline excluded by `INK_MAX`, merged at `D4_TOLERANCE`. **Opt-in**, so every garment that
+does not declare it keeps its committed bytes (verified: 9011 still reproduces byte-exact).
+
+Run against the gi it finds three tones, and **the middle one lands on `#9e9a97` — the SWF's
+OWN palette colour, byte-exact.** That is the confirmation that the "two-tone gi" in the gap
+list is real and not a clustering artefact. It measured, on a regenerated 9015: tracing
+0.9249, held-out 0.8649, `gi body/ink` green. **Not shipped** — it rides on the ballooned
+outline. It ships the day 9015's repair is reproducible.
+
+### 📋 THE EIGHT CELLS STILL OPEN — named in `tests/a13Bands.test.ts`, which may only shrink
+
+| cell | ours | source | cause |
+|---|---:|---:|---|
+| `obi/waist/white` | 3.2 % | 20.9 % | the obi is painted, then covered by 9015 |
+| `hem/feet/ink` | 21.1 % | 3.3 % | both traced panels close with a hard stroked hem |
+| `obi/waist/ink` | 43.3 % | 32.0 % | five outlines cross the waist where the source has two |
+| `gi body/grey` | 64.0 % | 52.4 % | one flat grey where the source has three tones |
+| `kasa/skin` | 0.1 % | 9.9 % | the bright straw band is not painted |
+| `head/collar/white` | 1.0 % | 9.3 % | the juban collar is behind 9015 |
+| `obi/waist/skin` | 14.7 % | 8.0 % | the hand reads larger against a narrower figure |
+| `gi body/ink` | 24.9 % | 30.7 % | the two black crest marks are not drawn |
+
+Measured per row, our hakama is clean (5–10 % ink) down to 0.949 of its height and then the
+last six rows run 43–60 % ink — the hem, not the feet. The source is clean white to 0.893 and
+grass-swallowed below.
+
+**⚠️ THE OWNER HAS NOT LOOKED AT THE POST-CHANGE RENDER. Until he does, L3B stays OPEN and
+nothing here claims otherwise.**

@@ -134,7 +134,7 @@ describe('A11-B — planPose mirror math: exact x-reflection about the anchor ax
     const mir = composePose(OG_DRESSED_NODES, OG_DRESSED_SLOT_SHAPES, OG_SLOT_ALIASES, true);
     const basePlan = planPose(base, SHAPES, ORIGIN, VIEW);
     const mirPlan = planPose(mir, SHAPES, ORIGIN, VIEW);
-    expect(basePlan.length).toBe(103); // the committed dressed plan size (a11DuelFighter probe)
+    expect(basePlan.length).toBe(99); // 103 → 99 at LANE L3B (no bare feet); the committed dressed plan size (a11DuelFighter probe)
     assertOpsMirrored(basePlan, mirPlan, ORIGIN.x);
   });
 });
