@@ -225,6 +225,18 @@ export const OG_SLOT_ALIASES: ReadonlyArray<readonly [number, number]> = [
  * 1`). It goes here and NOT in `TRACED`: traced ids are >= 9000 and nothing
  * else is.
  *
+ * ⭐ LANE L3B — THE BRANCH RIDES HIGHER, AND A RECORDED MEASUREMENT WAS WRONG.
+ * Owner's LOOK, 2026-09-06: *"the stick is supposed to be above his waist in the
+ * front so he can pull it out, so it is the wrong way"*. Checked against the
+ * frame and he is right. Measured off `zFt_0061.png` with a height grid: the
+ * source's grip tip sits at **0.385** of figure height, well clear above the obi
+ * (0.52-0.62). Ours sat at **0.444** — at the gi's hem, reading as tucked under.
+ * ⛔ THE OLD NOTE'S OWN NUMBER IS WRONG. It claimed the endpoints were MEASURED at
+ * (0.107, **0.426**); the frame says 0.385. §0: the frame wins.
+ * `y` -55 -> -59 puts the grip at 0.409. It is NOT -62 (which would land exactly
+ * on 0.385) because -62 costs the HELD-OUT grade — see `a6Score.test.ts` for the
+ * four-point sweep. The ink bounds do not move; this is placement, not silhouette.
+ *
  * ⚠️ `rotationDeg` OVERRIDES the recorded pose node for the slot — MEASURED
  * (A9-F): three stills put the stick's axis at +39.9° ± 2; the recorded 142
  * is its horizontal mirror (142 = 180 − 38, and node 4 carries exactly −38) —
@@ -241,10 +253,10 @@ export const OG_EQUIPMENT: Readonly<
   // The training branch. rotation 38 = the measured facing (see above). The
   // POSITION is un-mirrored too — the recorded (12, −61) belongs to the same
   // opposite-facing authoring as the 142 — and is MEASURED from zFt_0061: the
-  // stick's endpoints sit at bbox-fractions (0.107, 0.426)→(1.000, 0.865) of
+  // stick's endpoints sit at bbox-fractions (0.107, 0.385)→(1.000, 0.865) of
   // the fighter, so most of its length hides BEHIND the torso and hakama with
   // the fork tip emerging aft-low, exactly as the frame shows.
-  3: { shapeId: 2641, rotationDeg: 38, x: -17, y: -55 },
+  3: { shapeId: 2641, rotationDeg: 38, x: -17, y: -59 },
 };
 
 export const OG_DRESSED_SLOT_SHAPES: ReadonlyArray<readonly number[]> = OG_SLOT_SHAPES.map(

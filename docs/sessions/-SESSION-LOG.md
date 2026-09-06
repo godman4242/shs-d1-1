@@ -3373,3 +3373,38 @@ lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed 
 - **05:00** GREEN with pasted output: **68 files / 1073 tests · typecheck 0 · lint 0**.
   Compare image rebuilt. **L3B stays OPEN** — eight named cells, the white column blocked on
   9015, and the owner has not looked at the post-change render.
+
+## 2026-09-06 — Session 30 (cont.): the owner named three defects; I should have found them myself
+
+- **05:10** ⚠️ **Correction to my own conduct.** I asked the owner which defect to rank first.
+  He answered *"cant you find what is worng youself"* and named three. He was right to: the
+  LOOK is his verdict, but FINDING defects is the lead's job. All three checked against
+  `zFt_0061.png` first-hand; **all three are real.**
+- **05:30** **THE STICK — fixed, and a recorded measurement was wrong.** Measured with a height
+  grid: the source's grip tip is at **0.385** of figure height, well above the obi (0.52-0.62);
+  ours was at **0.444**, at the gi's hem. `ogPose.ts` claimed the endpoints were MEASURED at
+  (0.107, **0.426**) — the frame says 0.385, and §0 says the frame wins. Corrected.
+- **05:40** `OG_EQUIPMENT[3].y` -55 → **-59** on a four-point sweep, chosen on the HELD-OUT
+  grade rather than the traced frame: -62 lands the grip exactly on 0.385 and costs 0.0145 of
+  held-out (fitting to its own source). **tracing 0.9123 → 0.9179, held-out 0.8566 → 0.8654**,
+  both floors raised; ink bounds unchanged. Owner ruled the weapon: **"branch"** — so the
+  20 % length shortfall vs the source's sword is the weapon, not a defect.
+- **06:10** **THE PANTS — confirmed, located, and the old excuse disproved.** Holes at
+  y 0.64-0.67, 0.80-0.83, 0.97; the source has ZERO enclosed background below the waist.
+  `traceGarment.py`'s note that the far leg "cannot be traced (the outline there IS the
+  scabbard)" is **FALSE** — `reject_occluder` closes it (4430 → 4106 px), four seeds agree.
+  Traced, re-authored, wired, measured.
+- **06:40** ⛔ **AND REMOVED, on the numbers.** Every two-panel arrangement breaks a gate
+  committed the same day: `[9011]/[9021]` 0.9106 (under the tracing floor); `[9011]/[9011,9021]`
+  0.9147 but A13-A worst 12.78 → 16.89; `[9021,9011]/[9021]` 15.00. The cause is structural —
+  **every extra panel is an extra closed black contour** and `hakama/ink` is already over the
+  source. The OG draws ONE column with ONE outline. The whole-mass trace (the actual fix)
+  floods to the crop edges because the grass joins cloth to background: real work, filed.
+  Reverted in full; the repo's own guards (`svgShape` byte-for-byte, the roster pin,
+  `a9Grammar`) refused every attempt to park it half-wired, which was correct.
+- **07:00** **THE BAGGY SHIRT — confirmed, same blocker.** The source's jacket has a straight
+  front edge and a clean horizontal hem; ours bells outward. That is 9015, which cannot be
+  regenerated without reinstating the A9-E balloon.
+- **07:20** GREEN with pasted output: **68 files / 1073 tests · typecheck 0 · lint 0**. Compare
+  image rebuilt. **L3B stays OPEN** — one of three named defects fixed, two blocked with the
+  next step named for each.

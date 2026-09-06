@@ -106,15 +106,29 @@ GARMENTS = [
     dict(id=9011, slot=11, name="hakama leg (drawn at slots 11 AND 7)",
          crop=(789, 778, 860, 894), seed=(825, 848), dropSaya=True,
          part=(-7.150, 4.080, 0.050, 26.600), anchor="hakama"),
-    # ⛔ NO FAR-LEG TRACE. The far leg's region is NOT bounded by ink on its
-    # right: the outline there IS the scabbard, so `fill_holes` leaks into the
-    # background and the silhouette comes back wider than the hakama. Two
-    # attempts at excluding the saya by hue both failed the same way, so the far
-    # calf REUSES 9011 instead — which is what the OG itself does, drawing shape
-    # 2678 at slots 7 and 11 and 2648 at 6 and 10. A frame where the scabbard
-    # hangs clear would let this be traced properly; see A5.3 in DIVERGENCES.
+    # ⛔ NO SECOND PANEL — AND THE OLD REASON FOR THAT IS WRONG. This slot used to
+    # carry a note saying the far leg "is not bounded by ink on its right, the
+    # outline there IS the scabbard, so the region leaks". RE-TESTED 2026-09-06 and
+    # that is FALSE: `reject_occluder` cuts the saya by hue and the back panel
+    # closes cleanly (4430 px -> 4106, bbox (842,784)-(901,892), 60 x 109 video px),
+    # with four different seeds returning the identical region.
+    #
+    # It was built, wired and MEASURED, and then removed, because every way of
+    # drawing two panels costs more than the gap it closes:
+    #     7:[9011] 11:[9011]  (ships)   tracing 0.9180  held-out 0.8654  A13-A 12.78
+    #     7:[9011] 11:[9021]            tracing 0.9106  held-out 0.8579  A13-A 15.74
+    #     7:[9011] 11:[9011,9021]       tracing 0.9147  held-out 0.8624  A13-A 16.89
+    #     7:[9021,9011] 11:[9021]       tracing 0.9148  held-out 0.8566  A13-A 15.00
+    # The reason is structural, not tuning: EVERY extra panel is an extra closed
+    # black contour, and `hakama/ink` is already over the source. The OG draws ONE
+    # column with ONE outline and a thin internal seam.
+    #
+    # ⇒ THE REAL FIX IS ONE SHAPE FOR THE WHOLE HAKAMA, not two. Attempted here and
+    # NOT viable yet: `outer_silhouette` over a white window floods to the crop
+    # edges (12,377 px of a 16,128 px crop) because the dark grass at the hem joins
+    # the cloth to the background. It needs a hem-aware boundary, which is real work
+    # and not a variant sweep. See DIVERGENCES "LANE L3B".
 ]
-
 # ── scale: video px -> stage px is /1.875, stage -> world is /1.2 ────────────
 VIDEO_TO_WORLD = 1.875 * 1.2          # = 2.25
 

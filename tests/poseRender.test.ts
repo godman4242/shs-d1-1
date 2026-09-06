@@ -236,8 +236,12 @@ describe('the render is anchored where the scene anchors it', () => {
  * sealed floors ROSE in the same commit (0.9005 → 0.9123, 0.8490 → 0.8566) and
  * the height ceiling FELL (140.5 → 138.3), which is what makes this a repair
  * rather than a re-baseline of convenience. `ogPose.ts` carries the evidence.
+ * ⚠️ MOVED AGAIN in the same lane (was `baa2c8d6…`) — the branch rides 4 world px
+ * higher so its grip clears the sash, on the owner's LOOK. Both floors rose again
+ * (0.9123 → 0.9180, 0.8566 → 0.8654) and the ink bounds did NOT move, because the
+ * stick stayed inside the figure: this changes colour placement, not silhouette.
  */
-const GOLDEN_DRESSED = 'baa2c8d69323319283110d3aab419f30a89c45f6d8a47016db6f594225813b34';
+const GOLDEN_DRESSED = '05fbe5b96fd00cd54b94063c207564466e883c41c656a915cb1dc154a87ef6a6';
 /**
  * ⚠️ RE-BASELINED ONCE, DELIBERATELY, IN LANE L3 — the render changed ON PURPOSE
  * (was `6dae62d1…`). Slots 7 and 11 drew `[calf, foottop]`; the payload pins the

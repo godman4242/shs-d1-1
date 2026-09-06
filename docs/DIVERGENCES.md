@@ -4083,3 +4083,93 @@ grass-swallowed below.
 
 **⚠️ THE OWNER HAS NOT LOOKED AT THE POST-CHANGE RENDER. Until he does, L3B stays OPEN and
 nothing here claims otherwise.**
+
+---
+
+## LANE L3B (cont.) — THE OWNER NAMED THREE DEFECTS. ONE IS FIXED, ONE IS RULED OUT BY MEASUREMENT, ONE IS STILL BLOCKED.
+
+**⭐ OWNER LOOK, 2026-09-06, verbatim (A5):**
+> *"there are empty patches, in the pants, and the shirt looks to baggy, and not a tighter
+> fit, the stick is supposed to be above his waist in the front so he can pull it out, so it
+> is the wrong way"*
+
+All three checked against `zFt_0061.png` first-hand. **All three are real.**
+
+### ✅ THE STICK — FIXED, and a recorded measurement was WRONG
+
+Measured off the frame with a height grid, both figures normalised to their own bbox:
+
+| | source | ours (before) | ours (now) |
+|---|---:|---:|---:|
+| grip tip, fraction of figure height | **0.385** | 0.444 | **0.409** |
+| protrusion past the body | 0.27 of width | 0.17 | 0.17 |
+| axis angle | ~40° | ~43° | ~43° |
+
+The obi sits at 0.52–0.62, so the source's grip rides **well clear above the sash** — drawable,
+exactly as the owner said. Ours sat at the gi's hem.
+
+⛔ **`ogPose.ts`'s own note claimed the endpoints were MEASURED at (0.107, `0.426`).** The frame
+says **0.385**. §0: the frame wins. Corrected in the same commit.
+
+`OG_EQUIPMENT[3].y` −55 → **−59**, chosen on a four-point sweep, and **not** on the number that
+best matches the traced frame:
+
+```
+world y      tracing    held-out    grip
+  -55        0.9123      0.8566     0.444     (was)
+  -59        0.9180      0.8654     0.409     <- SHIPS: both floors UP
+  -62        0.9267      0.8509     0.383     exact grip, held-out DOWN 0.0145
+  -65        0.9194      0.8426     0.357
+```
+**−62 lands the grip on the source's own 0.385 and costs the held-out grade** — the signature of
+fitting to the single traced frame. −59 raises both, so −59 ships and the grip is 0.024 high.
+Floors RAISED: tracing **0.9123 → 0.9179**, held-out **0.8566 → 0.8654**. Ink bounds unchanged —
+this is placement, not silhouette. **Veto** = take −62 for the exact grip and give up the
+generalisation grade.
+
+⚠️ **The 0.17-vs-0.27 protrusion is NOT a defect.** The source fighter carries a **sword in a
+scabbard**; ours carries the **training branch** — the game's own level-1 starting weapon, read
+off the PLAYER screen. Owner ruled 2026-09-06: **"branch"**. Our stick's midpoint is 0.638
+against the source's 0.625, so the placement is right and the 20 % shortfall is the weapon.
+
+### ⛔ THE EMPTY PATCHES IN THE PANTS — CONFIRMED, CAUSE FOUND, FIX MEASURED AND REJECTED
+
+Confirmed and located — background visible *through* the trousers at three places (fractions of
+the figure): **y 0.64–0.67 × x 0.66–0.74**, **y 0.80–0.83 × x 0.82–0.92**, **y 0.97 × x 0.43–0.57**.
+The source figure has **zero** enclosed background below the waist. Cause: 9011 is ONE traced
+panel drawn at BOTH calf slots, at 23° and −3°; wherever the two instances fail to overlap you
+see through.
+
+**⭐ AND THE REASON THE SECOND PANEL WAS NEVER TRACED IS FALSE.** `traceGarment.py` carried a note
+saying the far leg *"is not bounded by ink on its right, the outline there IS the scabbard, so
+the region leaks"*. **RE-TESTED 2026-09-06: it closes cleanly.** `reject_occluder` cuts the saya
+by hue (4430 px → 4106), bbox (842,784)-(901,892), 60 × 109 video px against the front panel's
+63 × 113, and **four different seeds return the identical region** — which is what says it is
+bounded rather than leaking. It was traced, re-authored, wired and measured.
+
+**It was then REMOVED, because every way of drawing two panels costs more than the gap it closes:**
+
+| slots 7 / 11 | tracing (floor 0.9179) | held-out (floor 0.8654) | A13-A worst (ratchet 12.78) |
+|---|---:|---:|---:|
+| `[9011] / [9011]` — **ships** | **0.9180** | **0.8654** | **12.78** |
+| `[9011] / [9021]` | 0.9106 ⛔ | 0.8579 | 15.74 ⛔ |
+| `[9011] / [9011, 9021]` | 0.9147 | 0.8624 | 16.89 ⛔ |
+| `[9021, 9011] / [9021]` | 0.9148 | 0.8566 | 15.00 ⛔ |
+
+The reason is **structural, not tuning: every extra panel is an extra closed black contour**, and
+`hakama/ink` is already over the source. The OG draws **one** column with **one** outline and a
+thin internal seam. Visually the two-panel render IS better — the panels meet with a single
+clean seam — and it is inkier everywhere, which is the defect the ink budget was built to see.
+
+⇒ **THE REAL FIX IS ONE SHAPE FOR THE WHOLE HAKAMA.** Attempted and **not viable yet**:
+`outer_silhouette` over a white window floods to the crop edges (12,377 px of a 16,128 px crop)
+because the dark grass at the hem joins the cloth to the background. It needs a hem-aware
+boundary — real work, not a variant sweep. Everything needed to redo the back-panel trace in one
+command is recorded in `traceGarment.py`'s note at the hakama entry.
+
+### ⛔ THE BAGGY SHIRT — CONFIRMED, AND IT IS THE SAME BLOCKER AS THE WHITE COLUMN
+
+The source's jacket has a **straight front edge and a clean horizontal hem**; ours **bells
+outward** at the bottom into a scalloped skirt, wider at the hem than at the shoulders. That is
+9015's silhouette, and 9015 is the shape that **cannot be regenerated** without reinstating the
+SESSION 22 balloon (GATE A9-E 0.44 → 3.50 local px). Unchanged and still blocked.

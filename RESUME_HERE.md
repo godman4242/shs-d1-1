@@ -25,51 +25,73 @@ $ npm run typecheck -> exit 0        $ npm run lint -> exit 0
 
 **1. GATE A13-A — a gate that can see colour blocking, which no aggregate could.**
 `tests/a13Bands.test.ts` · `scripts/art/bandLedger.ts` · `scripts/art/sourceBands.ts` (emitted
-by `scripts/art/bandRuler.py --emit`). Six bands × five paint classes; tolerance is
+by `scripts/art/bandRuler.py --emit`). Six bands x five paint classes; tolerance is
 `max(5 pp, 2 x the source's own frame-to-frame spread)`, so **the bar is measured, not
-chosen**. Red-proofed as an *executable* artifact — the rejected render's ledger is committed
-and the same rule still rejects it — and chaos-planted twice. Its blind spots are declared
-in `sourceBands.ts`'s header. **A green A13-A is necessary and not sufficient.**
+chosen**. Red-proofed as an *executable* artifact and chaos-planted twice. Blind spots
+declared in `sourceBands.ts`'s header. **A green A13-A is necessary and not sufficient.**
 
-**2. The dressed fighter has no bare feet — and every floor moved the right way.**
-`zFt_0061.png` shows none; `setShoes` dresses those parts with shoe art the CDN took.
-```
-sealed tracing   0.9005469 -> 0.9123479    floor RAISED to 0.9123
-sealed held-out  0.8490331 -> 0.8566378    floor RAISED to 0.8566
-height           140.48 -> 138.26 stage px ceiling LOWERED to 138.3
-aspect w/h       0.521 -> 0.533            (source 0.530)
-A13-A worst cell 23.169 -> 12.778 pp       ratchet committed at 12.78
-```
-⚠️ **THE OLD FLOORS HAD ZERO HEADROOM.** The render sat at 0.9005469 against a 0.9005 bar.
-`RESUME_HERE` had been quoting **0.9185** beside it — that is `compareToSource.py`'s
-DIAGNOSTIC score, and its own header says the two *"must never be quoted as each other."*
+**2. No bare feet on a dressed fighter.** `zFt_0061.png` shows none; `setShoes` dresses those
+parts with shoe art the CDN took.
 
-**3. A guard where the danger is.** `reauthorGarment.py` now REFUSES to write an SVG with
-fewer paths than the one it replaces.
+**3. The branch rides higher, on the owner's LOOK** — *"the stick is supposed to be above his
+waist in the front so he can pull it out"*. Checked against the frame: **he is right**, and
+`ogPose.ts`'s own recorded grip height (0.426) was WRONG — the frame says **0.385**. `y` -55
+-> **-59** (grip 0.444 -> 0.409), chosen on the HELD-OUT sweep, not on the traced frame:
+-62 lands the grip exactly on 0.385 and costs 0.0145 of held-out.
+
+```
+                    start of L3B      now
+sealed tracing      0.9005469      0.9179540    floor RAISED twice
+sealed held-out     0.8490331      0.8654201    floor RAISED twice
+height              140.48         138.26 px    ceiling LOWERED to 138.3
+aspect w/h          0.521          0.533        (source 0.530)
+A13-A worst cell    23.169         12.778 pp    ratchet at 12.78
+```
+⚠️ **The old floors had ZERO headroom.** The render sat at 0.9005469 against a 0.9005 bar, and
+`RESUME_HERE` was quoting **0.9185** beside it — that is `compareToSource.py`'s DIAGNOSTIC
+score, which its own header says must never be quoted as the sealed one.
+
+### ⛔ THE OWNER'S OTHER TWO DEFECTS — both confirmed, both blocked
+
+**"empty patches in the pants"** — REAL, located at y 0.64-0.67, y 0.80-0.83, y 0.97. Cause:
+9011 is one panel drawn at BOTH calf slots (23 deg and -3 deg) and the instances do not meet.
+**The old claim that the far leg "cannot be traced" is FALSE** — re-tested, it closes cleanly
+(4430 px -> 4106 with the saya dropped, four seeds agree). It was built, wired, measured and
+then REMOVED: every two-panel arrangement is an extra black contour and `hakama/ink` is
+already over the source. **The real fix is ONE shape for the whole hakama**; the whole-mass
+trace currently floods to the crop edges because the grass joins cloth to background. The full
+table and the recipe are in `traceGarment.py`'s hakama note and DIVERGENCES.
+
+**"the shirt looks too baggy"** — REAL. The source's jacket has a straight front edge and a
+clean horizontal hem; ours bells outward. That is 9015, and 9015 is the shape that **cannot be
+regenerated** without reinstating the SESSION 22 balloon (A9-E 0.44 -> 3.50 local px).
 
 ### ⛔ THE BLOCKER THAT OWNS THE REST OF THE LANE
 
 **Three of the seven traced garments do not regenerate, though every file says they do.**
 9001/9011/9012/9014 reproduce path for path. **9017** loses its 6 weave ribs + 13 fringe
 ticks, **9019** loses its detail paths, and **9015 loses the SESSION 22 balloon repair AND
-moves its outer ring — GATE A9-E 0.44 -> 3.50 local px.** That happened this session and only
-A9-E caught it.
+moves its outer ring.** `reauthorGarment.py` now REFUSES to write an SVG with fewer paths than
+the one it replaces.
 
-⇒ **The white column (the biggest remaining read gap) is blocked on 9015.** The juban and obi
-ARE painted, in the measured whites, and 9015's silhouette covers them — 9014's bbox sits
-entirely inside 9015's and 9015 draws in front. Both widenings were measured and rejected
-(crop+window: held-out **0.8385, under its floor**; window alone: 0.8634 for +0.0015 tracing).
+⇒ **The white column and the baggy shirt are both blocked on 9015.** The juban and obi ARE
+painted, in the measured whites, and 9015's silhouette covers them. Both widenings were
+measured and rejected (crop+window: held-out **0.8385, under its floor**; window alone: 0.8634
+for +0.0015 tracing).
 
 ### 📋 NEXT SESSION, IN ORDER
 
 1. **Get the owner's LOOK on `renders/L3_zoom_compare.png`.** Log it verbatim.
-2. **Make 9015 reproducible** — recover the A9.4 balloon-repair parameters (the carve is
+2. **The trousers: ONE shape for the whole hakama.** The two-panel route is measured and
+   closed (DIVERGENCES has the four-row table). The blocker is a hem-aware boundary so the
+   whole-mass trace stops flooding into the grass.
+3. **Make 9015 reproducible** — recover the A9.4 balloon-repair parameters (the carve is
    described in `tests/a9GiProbe.test.ts`'s header; `subtractSeed` in `garment_masks` is the
    mechanism, the seed is not recorded). Then ship the `tones: 4` gi, which is already
    measured: tracing 0.9249, held-out 0.8649, `gi body/ink` green, and its middle tone lands
    on **`#9e9a97`, the SWF's own palette colour, byte-exact**.
-3. **Then the eight open cells**, named in `tests/a13Bands.test.ts` — that list may only shrink.
-4. Full reasoning, all measurements: `docs/DIVERGENCES.md` "LANE L3B".
+4. **Then the eight open cells**, named in `tests/a13Bands.test.ts` — that list may only shrink.
+5. Full reasoning, all measurements: `docs/DIVERGENCES.md` "LANE L3B".
 
 ### ⛔ TWO ITEMS OF THE L3B KICKOFF'S GAP LIST ARE REFUTED — do not re-inherit them
 

@@ -216,13 +216,14 @@ export const TRACED_SOURCES: Readonly<Record<number, TracedSource>> = {
       'is occluded ankle-length cloth, which the held-out width profile ' +
       'demands.',
     inferred:
-      'PLACEMENT, and it is DRAWN TWICE. Only the NEAR leg could be traced: ' +
-      'the far leg is not bounded by ink on its right, because the outline ' +
-      'there IS the scabbard, so the region leaks into the background. This ' +
-      'shape is therefore drawn at slot 7 as well - which is what the OG does, ' +
-      'drawing 2678 at slots 7 and 11 and 2648 at 6 and 10. It covers the ' +
-      'whole leg and sits on the CALF, not the thigh, because the calf draws ' +
-      'in front of the thigh and the foot.',
+      'PLACEMENT, and it is DRAWN TWICE. It covers the whole leg and sits on ' +
+      'the CALF, not the thigh, because the calf draws in front of the thigh ' +
+      'and the foot, and it is drawn at slot 7 as well - which is what the OG ' +
+      'does, drawing 2678 at slots 7 and 11 and 2648 at 6 and 10. ' +
+      'LANE L3B: the second draw leaves visible GAPS where the two instances ' +
+      '(23 deg and -3 deg) fail to overlap. A separately traced back panel was ' +
+      'built and measured and made things WORSE - every extra panel is an ' +
+      'extra black contour and hakama/ink is already over. See traceGarment.py.',
   },
   9017: {
     slot: 17,
