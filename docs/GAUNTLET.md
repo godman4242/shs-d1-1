@@ -199,10 +199,16 @@ exactly (**9 + 4 = 13**):
 > 6000 and 6001 DO carry a `<name>` (the generic *"Hair"*) and a `<desc>`, so "unnamed" is
 > not a safe test for "is base art" — the id band is.
 
-> ⚠️ **741 of the 3,210 `<mcs>` slot values are COMMA-SEPARATED LISTS** (hair 355, weapon
-> 176, mask 72, hat 43, armor 39, pants 30, shoes 15, head 11), and `0` means empty. They
-> look like a per-NPC randomisation pool; **that is a hypothesis, not a finding** — L4 owns
-> it. ⚠️ `<mcs>` also carries per-slot colour overrides (`<armorpcolor>`, `<armorscolor>`,
+> ✅ **741 of the 3,210 `<mcs>` slot values are COMMA-SEPARATED LISTS** (hair 355, weapon
+> 176, mask 72, hat 43, armor 39, pants 30, shoes 15, head 11), and `0` means empty. **They
+> ARE a per-NPC randomisation pool — SETTLED 2026-09-06 from the source, and this line used
+> to say "a hypothesis, not a finding".** `MCSCharacter.as:573-578`:
+> `processString(xmlstring) { selectArray = xmlstring.split(","); return
+> selectArray[int(Math.random() * selectArray.length)]; }` — a uniform pick, once, at spawn.
+> `XMLNpc.as:561` does the same for its generated `hairlist`.
+> ⚠️ **Two different randomness sources for the same kind of choice:** `processString` uses
+> **`Math.random()`**, `XMLNpc.as:561` uses the **seeded `rng.rand()`**. That matters the
+> day a paperdoll has to be reproducible; `src/core/` bans `Math.random` outright. ⚠️ `<mcs>` also carries per-slot colour overrides (`<armorpcolor>`, `<armorscolor>`,
 > …, `XMLNpc.as:367-374`) that L4's transcriber must not drop.
 
 ---

@@ -79,19 +79,20 @@ painted, in the measured whites, and 9015's silhouette covers them. Both widenin
 measured and rejected (crop+window: held-out **0.8385, under its floor**; window alone: 0.8634
 for +0.0015 tracing).
 
-### 📋 NEXT SESSION, IN ORDER
+### ⛔ THE ART LANE IS PARKED — OWNER'S CALL, 2026-09-06
 
-1. **Get the owner's LOOK on `renders/L3_zoom_compare.png`.** Log it verbatim.
-2. **The trousers: ONE shape for the whole hakama.** The two-panel route is measured and
-   closed (DIVERGENCES has the four-row table). The blocker is a hem-aware boundary so the
-   whole-mass trace stops flooding into the grass.
-3. **Make 9015 reproducible** — recover the A9.4 balloon-repair parameters (the carve is
-   described in `tests/a9GiProbe.test.ts`'s header; `subtractSeed` in `garment_masks` is the
-   mechanism, the seed is not recorded). Then ship the `tones: 4` gi, which is already
-   measured: tracing 0.9249, held-out 0.8649, `gi body/ink` green, and its middle tone lands
-   on **`#9e9a97`, the SWF's own palette colour, byte-exact**.
-4. **Then the eight open cells**, named in `tests/a13Bands.test.ts` — that list may only shrink.
-5. Full reasoning, all measurements: `docs/DIVERGENCES.md` "LANE L3B".
+> *"nevermind the game logic is wht is imoprtant for now"*
+
+L3B does NOT close and nothing above claims it does. It is parked with every remaining
+defect named, measured and attributed. **The next lane is L4a — the enemy roster and the
+AI dispatch table — and its kickoff is written and committed:**
+
+👉 **`docs/sessions/L4A_KICKOFF.md`.** Paste its `text` block as the first message of a
+fresh session. 495 NPCs unread in `npcdata.xml` (zero references in `src/`), against
+three hand-authored AI tiers in `src/config/ai.ts` while `NPCManager.as:516` carries a
+38-case `switch(xml.ai)`. Ten traps are measured and written down in it.
+
+### 📋 WHEN THE ART LANE RESUMES, IN ORDER
 
 ### ⛔ TWO ITEMS OF THE L3B KICKOFF'S GAP LIST ARE REFUTED — do not re-inherit them
 

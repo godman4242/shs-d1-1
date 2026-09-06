@@ -3408,3 +3408,36 @@ lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed 
 - **07:20** GREEN with pasted output: **68 files / 1073 tests · typecheck 0 · lint 0**. Compare
   image rebuilt. **L3B stays OPEN** — one of three named defects fixed, two blocked with the
   next step named for each.
+
+## 2026-09-06 — Session 30 (cont. 2): art parked by the owner; L4a kicked off
+
+- **07:40** **OWNER'S CALL — the art lane is parked.** *"nevermind the game logic is wht is
+  imoprtant for now"*, after looking at the post-stick render and saying *"nothing has
+  changed"* (true: the branch moved 4 world px, which is ~6 px on a 138 px figure). L3B is
+  left OPEN with every remaining defect named, measured and attributed; no gate softened.
+- **08:00** **Surveyed for the next lane rather than guessing one.** `npcdata.xml` is
+  228,413 bytes / **495 `<npc>` rows** (490 name · 425 ai · 414 lvl · 406 attack · 403 hp ·
+  394 defense · 96 skills · 66 loot tables) and **`grep` finds ZERO references in `src/`**,
+  while `src/config/ai.ts` ships **three hand-authored tiers**. Same shape L2 and L3 found.
+- **08:20** ⭐ **`NPCManager.as:516` is a 38-case `switch(xml.ai)`**, each case naming a
+  distinct actor class — so the AI table is TRANSCRIPTION, not research. 34 `Enemy*.as`
+  and 3 `Friendly*.as` classes are on disk; every class the switch names was spot-checked
+  present. `EnemyKatana.as` alone is 220 lines of behaviour.
+- **08:40** **Ten traps measured first-hand** for the kickoff, every one able to ship a
+  plausible wrong answer: `<lvl>` at TWO depths (402 the NPC's own, 647 inside
+  `<skills><skill>`); `ai` DEFAULTS to 1 (`XMLNpc.as:135-141`) so the 70 rows without it
+  are EnemyKnife; **`6015.6017` — a period where a comma belongs — is in the SHIPPED
+  GAME'S OWN AS3** (`XMLNpc.as:460`), 356 occurrences in the XML; 92 rows with no `<hp>`;
+  `scalex/scaley` FLOATS on 16 rows including a 2× giant; the XML's `ai` overridden in code
+  at `:479`/`:523`; and `enemyModel.ts`'s K/D derivation means `<hp>` is a BASE value.
+- **09:00** ⭐ **`GAUNTLET.md` §2.2's open hypothesis SETTLED while writing the kickoff.**
+  The `<mcs>` comma lists ARE a per-NPC randomisation pool — `MCSCharacter.as:573-578`:
+  `selectArray = xmlstring.split(","); return selectArray[int(Math.random() *
+  selectArray.length)]`. A uniform pick, once, at spawn. ⚠️ And it uses **`Math.random()`**
+  where `XMLNpc.as:561` uses the **seeded `rng.rand()`** — two sources for one kind of
+  choice, which matters the day a paperdoll must be reproducible. §2.2 corrected in the
+  same commit; the line used to read "that is a hypothesis, not a finding".
+- **09:15** `docs/sessions/L4A_KICKOFF.md` written, self-reviewed against reality (every
+  count, cite, line number and class name re-run), and committed. Two claims were WRONG in
+  the first draft and fixed: the `<mcs>` question was listed as work when it was already
+  answerable, and the Friendly class count. Suite unchanged and green: **68 / 1073**.
