@@ -3441,3 +3441,51 @@ lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed 
   count, cite, line number and class name re-run), and committed. Two claims were WRONG in
   the first draft and fixed: the `<mcs>` question was listed as work when it was already
   answerable, and the Friendly class count. Suite unchanged and green: **68 / 1073**.
+
+## 2026-09-07 — Session 31: L4a recon banked; the kickoff's own trap count was wrong
+
+- **09:30** Baseline confirmed with real runs, not prediction. HEAD had moved to `7b504af`,
+  one past the hash the kickoff named — `git show --stat` proved it **docs-only** (a single
+  file, correcting the kickoff's own stale baseline). Suite matched the binding number:
+  **68 files / 1073 tests**, typecheck 0, lint 0.
+- **23:00** ⭐ **The vocabulary dump the kickoff demanded was run, and it paid for itself
+  three times.** `npcdata.xml` is **32 tag names · 35 path-qualified positions · 29 leaf
+  positions · nesting 4 deep · zero attributes · 9,621 CRLF _and 4 bare LF_ · 5 empty
+  leaves**. Ten of the eleven traps reproduced to the row.
+- **23:05** ⛔ **TRAP 3's COUNT WAS WRONG, and the error was concealing a second anomaly.**
+  `grep -o "6015\.6017" | wc -l` → **355**, not 356. There are 356 dot-bearing `<hair>`
+  values because the 356th is a *different* one: **`6.5006501650265E+47` on npc 55**.
+  Whoever measured 356 counted dot-bearing hair values and folded a separate anomaly into
+  the first one's count. `OG_NPC_SOURCE_ANOMALIES` needs **two** entries, not one. This is
+  the second time in three lanes that dumping the vocabulary first caught a silent shipper
+  (L2's `<req>` tree, now this).
+- **23:10** **Nine shapes the eleven traps do not cover**, all measured and banked in the
+  kickoff's new § SESSION 31 RECON: `<chance>` is a FLOAT on **119 of 131** loot rows
+  (`XMLLoot.as` types it `Number`) · `<id>` is at **three** depths (495/131/647), not two,
+  and it is the primary key · the 5 empty leaves are all `<mcs></mcs>` on ids
+  64/158/192/193/194 and `transcribeItems.py`'s `text()` would **die** on them · npc ids are
+  neither sorted nor contiguous (**807 sits between 197 and 201**), so index ≠ id · two
+  serialisation styles in one file (`<mcs>` pretty-printed, `<skills>` inline, all 4 bare
+  LFs inside the latter) · the `<mcs>` lists are **weighted pools** — 28 of 741 repeat an
+  element and npc 55's hat list is **eleven `0`s of 22 entries**, so de-duplicating changes
+  the odds · there are **three** `ai` dispatches (`createNPC:516`, `createRoomNPC:671` with
+  `RoomGoblin`/`RoomOgre`/`RoomZombie` + `doChase` and ai 11|16 merged, and
+  `createRoomNPCProcGen:749`) · **four** code-side `ai` overrides, not two (`:315`, `:479`,
+  `:523`, `:586`) · and **"34" is two different 34s** (34 distinct `<ai>` values used, with
+  cases 0/10/15/16 never appearing; 34 `Enemy*.as` classes on disk) — pinned disjoint.
+- **23:15** **Two rulings settled first-hand.** Loot ids **0–3 are a sentinel space**, not
+  item ids (`NPC.as:837-855`: 1 coin / 5 coins / quest item / random item at level; anything
+  else → `addLootItemBasic`) — which explains why they fail to resolve against `OG_ITEMS`
+  while 2112/2113/2114/20028 succeed. And `<prop1>=1|2` plus `<armor|head|pants>=2|10` on
+  npcs 75/78 are **not item ids**; `MCSCharacter.as:1229-1249` falls back to `prop13000`,
+  so they degrade gracefully. Recorded verbatim, no meaning attached.
+- **23:20** ⛔ **`GAUNTLET.md` §2.2 CORRECTED.** It warned L4's transcriber not to drop
+  `<mcs>`'s per-slot colour overrides (`<armorpcolor>`, `<armorscolor>`). **They are not in
+  this file** — `grep -c color reference/extracted/npcdata.xml` → **0**, and the vocabulary
+  is closed at 32 tags with no `*color` among them. They are emitted by `XMLNpc.as:367-374`
+  into the XML the game *generates at runtime* for a player/procgen NPC. The old wording
+  would have sent a lane hunting for data that never existed.
+- **23:25** Handoff committed. `src/` untouched, so the suite is unchanged and green:
+  **68 files / 1073 tests**, typecheck 0, lint 0. The kickoff's closing instruction now
+  says the design turn is DONE — the next session spot-checks three RECON numbers and goes
+  straight to `transcribeNpcs.py`.

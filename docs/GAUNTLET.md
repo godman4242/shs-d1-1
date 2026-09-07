@@ -208,8 +208,15 @@ exactly (**9 + 4 = 13**):
 > `XMLNpc.as:561` does the same for its generated `hairlist`.
 > ⚠️ **Two different randomness sources for the same kind of choice:** `processString` uses
 > **`Math.random()`**, `XMLNpc.as:561` uses the **seeded `rng.rand()`**. That matters the
-> day a paperdoll has to be reproducible; `src/core/` bans `Math.random` outright. ⚠️ `<mcs>` also carries per-slot colour overrides (`<armorpcolor>`, `<armorscolor>`,
-> …, `XMLNpc.as:367-374`) that L4's transcriber must not drop.
+> day a paperdoll has to be reproducible; `src/core/` bans `Math.random` outright.
+>
+> ⛔ **CORRECTED 2026-09-07 — this line used to say `<mcs>` "also carries per-slot colour
+> overrides (`<armorpcolor>`, `<armorscolor>`, …, `XMLNpc.as:367-374`) that L4's transcriber
+> must not drop". IT DOES NOT.** `grep -c color reference/extracted/npcdata.xml` → **0**, and
+> the file's vocabulary is closed at **32 tag names** with no `*color` among them. Those tags
+> are emitted by `XMLNpc.as:367-374` into the XML the game *generates at runtime* for a player
+> or procgen NPC — they were never in the payload. There is nothing for L4 to drop, and the
+> old wording would have sent a lane hunting for data that does not exist.
 
 ---
 

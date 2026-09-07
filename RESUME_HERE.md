@@ -1,5 +1,96 @@
 # RESUME HERE
 
+## ▶ SESSION 31 (2026-09-07) — **L4a RECON IS BANKED. THE TRANSCRIBER IS THE NEXT KEYSTROKE.**
+
+**Nothing in `src/` moved. This session bought the next one 45 minutes and killed a
+documentation error that would have shipped.**
+
+```
+$ git log -1 --oneline   ->  (this commit)
+$ npm run -s typecheck   ->  exit 0
+$ npm run -s lint        ->  exit 0
+$ npx vitest run         ->  Test Files  68 passed (68)
+                             Tests  1073 passed (1073)      (unchanged — no source touched)
+```
+
+### ✅ WHAT LANDED
+
+**1. `npcdata.xml`'s full vocabulary dump, measured and banked** in
+`docs/sessions/L4A_KICKOFF.md` → **§ SESSION 31 RECON**. 32 tag names · 35 path-qualified
+positions · 29 leaf positions · nesting 4 deep · zero attributes · 9,621 CRLF **and 4 bare
+LF** · **5 empty leaves**. Ten of the kickoff's eleven traps reproduced exactly.
+
+**2. Trap 3's count was WRONG, and the error was hiding a second anomaly.**
+`grep -o "6015\.6017" | wc -l` → **355**, not the 356 the kickoff claimed. The 356th
+dot-bearing `<hair>` value is a *different* anomaly: `6.5006501650265E+47` on **npc 55**.
+`OG_NPC_SOURCE_ANOMALIES` must hold **two** entries. Corrected in the kickoff.
+
+**3. Nine shapes the eleven traps do not cover** — all in the RECON section, all measured:
+`<chance>` is a FLOAT on 119 of 131 · `<id>` is at **three** depths not two · the 5 empty
+leaves are all `<mcs></mcs>` (ids 64/158/192/193/194) and `transcribeItems.py` would **die**
+on them · ids are neither sorted nor contiguous (807 sits between 197 and 201) · two
+serialisation styles in one file · the `<mcs>` lists are **weighted pools** (npc 55's hat
+list is eleven `0`s of 22) · **three** `ai` dispatches not one · **four** code-side `ai`
+overrides not two · and "34" is two different 34s.
+
+**4. `GAUNTLET.md` §2.2's colour-override warning is CORRECTED.** It told L4 not to drop
+`<armorpcolor>`/`<armorscolor>` from `<mcs>`. `grep -c color npcdata.xml` → **0**. Those
+tags are emitted by `XMLNpc.as:367-374` into the XML the game *generates at runtime*; they
+were never in the payload. The old wording would have sent a lane hunting for nothing.
+
+**5. Two rulings settled first-hand, not guessed.** Loot ids **0–3 are a sentinel space**
+(`NPC.as:837-855`: coins / 5 coins / quest item / random item; anything else is an item id) —
+which is why they do not resolve against `OG_ITEMS`. And `<prop1>=1|2` plus `<armor|head|
+pants>=2|10` on npcs 75/78 are **not item ids**; `MCSCharacter.as:1229-1249` falls back to
+`prop13000`, so they degrade gracefully. Recorded verbatim, no meaning attached.
+
+### 📋 WHAT IS LEFT — L4a, in order
+
+The design turn is **done**; the kickoff's closing instruction now says so. Next session
+spot-checks three RECON numbers and goes straight to code.
+
+1. `scripts/payload/transcribeNpcs.py` → `src/config/ogNpcs.ts` — shape copied from
+   `transcribeItems.py`, with the four deliberate deviations the RECON names (empty `<mcs>`
+   allowed · lists stay verbatim strings · floats not `int()` · **two** anomalies).
+2. `tests/ogNpcData.test.ts` — independent raw-regex parser, stripping **both** `<skills>`
+   and `<reward>` before any scalar read; match by source order, never by id.
+3. `scripts/payload/transcribeAi.py` → `src/config/ogAi.ts` — **all three** dispatches.
+4. Docs in the same commit: this file, `-SESSION-LOG.md`, `DIVERGENCES.md`, §2's L4 row.
+
+```bash
+npx vitest run && npm run -s typecheck && npm run -s lint
+```
+
+### ⛔ WHAT A FUTURE SESSION MUST NOT "FIX"
+
+- **Neither anomaly may be coerced.** `6015.6017` is in the shipped game's own AS3
+  (`XMLNpc.as:460`), and `6.5006501650265E+47` is a real `<hair>` value. Both are preserved,
+  never `float()`-ed, never "repaired".
+- **`<mcs>` comma-lists keep their DUPLICATES and their ORDER.** `processString`
+  (`MCSCharacter.as:574-579`) picks uniformly *by index*, so de-duplicating changes the odds.
+- **70 rows with no `<ai>` mean `ai = 1` (EnemyKnife)**, not "no AI" — `XMLNpc.as:135-141`.
+- **`<hp>`/`<attack>`/`<defense>` are BASE values.** `src/core/enemyModel.ts` recomputes a
+  named duellist's HP at spawn from the *player's* stats. Porting them is not a licence to
+  start using raw `<hp>`. **Do not touch `enemyModel.ts`.**
+- **`AI_TIERS` in `src/config/ai.ts` is a hand-authored 3-tier stand-in** wired into
+  `DuelScene.ts:195` and `EncounterScene.ts:77`. It maps to **no** OG `ai` value. L4a records
+  that in DIVERGENCES; it does not rewire it.
+
+### ⛔ NOT L4a — say it up front, not at the gate
+
+Building the 34 enemy behaviours is **L4b** (§2 routes it to Fable 5 @ `high`). Wiring NPCs
+into the duel moves `Sim.ts` + `tests/duel-baseline.test.ts` — §4's no-touch list, **L5 only**.
+The fight-feel grade needs A1 frame cites and the owner's LOOK.
+
+### 🅿️ Housekeeping noticed, not acted on
+
+`PROBLEMS.md` (untracked, repo root) is a Clawdia report from **2026-08-09** asserting
+`894/894 passed (56 test files)` — the exact stale baseline `GAUNTLET.md` §5 already calls
+out as wrong since 2026-08-20. It is not in git. Delete it or regenerate it; do not read a
+baseline out of it.
+
+---
+
 ## ⛔ SESSION 30 (2026-09-06) — **L3B: THE GATE IS BUILT AND TWO DEFECTS ARE GONE. THE ART IS STILL OPEN.**
 
 **⭐ THE STANDING VERDICT (owner, 2026-09-05, A5) — it outranks every score below:**
@@ -87,10 +178,12 @@ L3B does NOT close and nothing above claims it does. It is parked with every rem
 defect named, measured and attributed. **The next lane is L4a — the enemy roster and the
 AI dispatch table — and its kickoff is written and committed:**
 
-👉 **`docs/sessions/L4A_KICKOFF.md`.** Paste its `text` block as the first message of a
-fresh session. 495 NPCs unread in `npcdata.xml` (zero references in `src/`), against
-three hand-authored AI tiers in `src/config/ai.ts` while `NPCManager.as:516` carries a
-38-case `switch(xml.ai)`. Ten traps are measured and written down in it.
+👉 **`docs/sessions/L4A_KICKOFF.md`** — and its **§ SESSION 31 RECON** block, which banks the
+measured vocabulary dump so no session re-derives it. 495 NPCs unread in `npcdata.xml` (zero
+references in `src/`), against three hand-authored AI tiers in `src/config/ai.ts` while
+`NPCManager.as:516` carries a 38-case `switch(xml.ai)` — one of **three** dispatches.
+**Eleven traps were written down; a twelfth through twentieth were measured on 2026-09-07,
+and trap 3's count was wrong.** See the SESSION 31 block at the top of this file.
 
 ### 📋 WHEN THE ART LANE RESUMES, IN ORDER
 

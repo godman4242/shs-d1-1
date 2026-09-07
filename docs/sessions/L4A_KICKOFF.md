@@ -91,7 +91,9 @@ Every one of these will silently produce a plausible wrong answer.
    Not just the XML: `XMLNpc.as:460` literally reads
    `hairlist = [6000,...,6014,6015.6017,6018,6019]`. In ActionScript that is a valid
    `Number`, so the array silently has **one fewer element** and a float where an int
-   belongs. **356 occurrences** across `npcdata.xml`. Preserve it in an
+   belongs. **355 occurrences** across `npcdata.xml` — *not* 356; the 356th
+   dot-bearing `<hair>` value is a SECOND, DIFFERENT anomaly, `6.5006501650265E+47`
+   on npc 55 (measured 2026-09-07, see the RECON section). Preserve BOTH in an
    `OG_NPC_SOURCE_ANOMALIES` export exactly as L3 preserved `baseprice: '.'` on item
    11037. **Never coerce it, never "fix" it, never `float()` a list.**
 
@@ -134,6 +136,123 @@ Every one of these will silently produce a plausible wrong answer.
 
 ---
 
+## ⭐ SESSION 31 RECON — MEASURED AND BANKED 2026-09-07. **DO NOT RE-DERIVE THIS.**
+
+The vocabulary dump the closing instruction asked for was run and is recorded here.
+**Ten of the eleven traps above reproduced exactly; trap 3's count is wrong, and nine
+more shapes the eleven do not cover were found.** Every number below came out of a
+probe against `reference/extracted/npcdata.xml`
+(sha256 `e9835f3be51e5f91227b425bf654cc71a85cf3310ba026f018cc19d9eb930126`, 228,413 B),
+not out of a document.
+
+### The grammar, closed
+
+**32 tag names · 35 path-qualified positions · 29 leaf positions · nesting 4 deep**
+(itemdata went 3) · **zero attributes** · zero non-ASCII · zero comments/CDATA/PI ·
+**9,621 CRLF _and 4 bare LF_** · **5 empty leaves** (itemdata had zero).
+
+```
+<npcdata>                             1
+ <npc>                              495   ids 0..819 — distinct, NOT sorted, NOT contiguous
+  <id>                              495
+  <name>                            490   string-table id 5000..5122 (5 rows carry none)
+  <lvl>                             402   1..80          <- the NPC's own
+  <hp>                              403   1..1000        (92 absent)
+  <ai>                              425   1..37          (70 absent -> means 1, not "none")
+  <attack>                          406   1..7092
+  <defense>                         394   0..200
+  <scalex> <scaley>             16 / 16   FLOAT 0.95 · 0.99 · 1 · 1.1 · 1.3 · 2
+  <earth> <fire>                  3 / 1   both value 10
+  <mcs>                             495   the paperdoll — 5 of them EMPTY
+    armor gloves hair hat head mask neck pants prop1 prop2 shoes weapon
+                                  3,210 slot values · 741 comma-lists · 193 exactly "0"
+  <skills>                           96
+    <skill>                         647
+      <id>                          647   1000..1501  (all 39 distinct resolve in ogSkills.ts)
+      <lvl>                         647   1..10       <- NOT the NPC's
+  <reward>                           66
+    <loot>                          131
+      <id>                          131   0..3 = SENTINEL, else an item id
+      <qty>                         131   1..5
+      <chance>                      131   FLOAT — 119 of 131
+```
+
+### ⛔ TRAP 3's COUNT IS WRONG, and the error is a second anomaly hiding inside it
+
+```
+$ grep -o "6015\.6017" reference/extracted/npcdata.xml | wc -l
+     355
+```
+Trap 3 says **356**. There are 356 `<hair>` values containing a period because the
+356th is a **different value**: `<hair>6.5006501650265E+47</hair>` on **npc id 55**.
+Whoever measured 356 counted dot-bearing hair values and folded a separate anomaly
+into the first one's count. `OG_NPC_SOURCE_ANOMALIES` must hold **two** entries.
+
+### NINE SHAPES THE ELEVEN TRAPS DO NOT COVER
+
+1. **A SECOND SOURCE ANOMALY** — `6.5006501650265E+47`, `<hair>`, npc 55 (also one of
+   the six unresolved `5017` names and one of the 92 with no `<hp>` — the same broken row).
+2. **`<chance>` IS A FLOAT: 119 of 131.** `0.05 · 0.1 · 0.3 · 0.4 · 0.5 · 1`. Trap 5 names
+   only scalex/scaley. `XMLLoot.as` declares `public var chance:Number` and defaults it
+   to `1` when absent. An `int()` here zeroes 119 of 131 drop rates.
+3. **`<id>` IS AT THREE DEPTHS, not two** — `npc/id` 495 · `reward/loot/id` 131 ·
+   `skills/skill/id` 647. It is the primary key. The independent raw-regex parser must
+   strip **both** `<skills>` and `<reward>` before any scalar read, the way
+   `ogItemData.test.ts` strips `<modifier>` once.
+4. **5 EMPTY LEAVES, all `<mcs></mcs>`** — npc ids **64, 158, 192, 193, 194**.
+   `transcribeItems.py`'s `text()` **deliberately dies** on an empty tag. Copying that
+   rule verbatim kills the run on legitimate data. *Present-but-empty ≠ absent*: all 495
+   rows have `<mcs>`; 5 are empty paperdolls.
+5. **IDS ARE NEITHER CONTIGUOUS NOR SORTED** — 495 distinct spanning 0..819, and **807
+   sits between 197 and 201**. Index ≠ id. Pair committed row *i* with source block *i*.
+6. **TWO SERIALISATION STYLES IN ONE FILE** — `<mcs>` is pretty-printed CRLF+tabs;
+   `<skills>` blocks are written **inline on one line**, and all 4 bare LFs live inside
+   them. A block regex tuned on itemdata's uniform CRLF mis-slices.
+7. **THE `<mcs>` LISTS ARE WEIGHTED POOLS, NOT SETS.** 28 of the 741 repeat an element.
+   Npc 55's hat list is `0,0,0,0,0,0,0,0,0,0,0,7003,7008,…` — **eleven zeros of 22
+   entries**, i.e. "no hat" is exactly 50%. `processString` picks uniformly *by index*
+   (`MCSCharacter.as:574-579`), so de-duplicating changes the odds. Keep duplicates AND order.
+8. **THERE ARE THREE `ai` DISPATCHES, NOT ONE.** The 38-case switch is `createNPC`
+   (`NPCManager.as:516`, cases 518-630, `default:` at 632 → `trace()` and `actor` stays
+   **null**). But `createRoomNPC` (`NPCManager.as:671`) is a **different** if/else chain
+   over the same values → `RoomGoblin` / `RoomOgre` / `RoomZombie` instead of
+   `EnemyGoblin`/`EnemyOgre`/`EnemyZombie`, all carrying `doChase`, and it **merges ai 11
+   and 16** into one `EnemyWolfAlpha` branch. `createRoomNPCProcGen` (`NPCManager.as:749`)
+   is a third: 32 → `EnemyCivilianOld`, 33 → `EnemyCivilianFemale`, else `EnemyCivilian`.
+   Transcribing only the switch records **one third of the map**.
+   ⚠️ Trap 7 names `XMLNpc.as:479` (=32) and `:523` (=33). There are **two more**:
+   `:315` (`this.ai = 0`, the duellist) and `:586` (`this.ai = bossxml.ai`, the bounty
+   target inheriting NPC 18).
+9. **"34" IS TWO DIFFERENT 34s.** The data uses **34 distinct `<ai>` values**, and cases
+   **0, 10, 15, 16 never appear** in `npcdata.xml`. Separately there are **34 `Enemy*.as`**
+   classes on disk (plus 3 `Friendly*` and 3 `Room*` — `RoomGenNode.as` is not an actor).
+   Same number, different sets — the coincidence-trap shape `transcribeItems.py` already
+   pins as disjoint (its 93s, its 178s). **Pin them disjoint** or a future reader
+   "verifies" one with the other.
+
+### TWO RULINGS SETTLED FIRST-HAND — do not re-open
+
+- **Loot ids 0–3 are a SENTINEL space, not item ids** (`NPC.as:837-855`, read directly):
+  `0` → 1 coin ×qty · `1` → 5 coins ×qty · `2` → the quest loot item · `3` → a random item
+  at the NPC's level · **else** → `addLootItemBasic(lootType, qty)`, the item id. That is
+  why `0,1,2,3` do not resolve against `OG_ITEMS` while `2112/2113/2114/20028` do.
+  `XMLLoot.as` even types `id` as **String**.
+- **GAUNTLET §2.2's closing colour-override warning DOES NOT APPLY to this file.** It says
+  `<mcs>` carries `<armorpcolor>`/`<armorscolor>` "that L4's transcriber must not drop".
+  `grep -c color npcdata.xml` → **0**. Those tags are emitted by `XMLNpc.as:367-374` into
+  the XML the game *generates* for a player/procgen NPC. **Nothing to drop.** §2.2 is
+  corrected in the same commit as this section.
+
+### One open item, deliberately not guessed
+
+`<prop1>` is `1` or `2` on ~50 rows, and `<armor>/<head>/<pants>` are `2` on npc 78 and
+`10` on npc 75 — **none are item ids** (checked against the committed 982 `OG_ITEMS`
+top-level rows). `MCSCharacter.as:1229-1249` shows `setProp` falls back to `prop13000`
+(the default scabbard art) when an id has no symbol, so it degrades gracefully rather
+than crashing. **Ruling: record them verbatim as a cited fact, attach no meaning.**
+
+---
+
 ## THE AI TABLE IS ALREADY LEGIBLE — this is not research, it is transcription
 
 `NPCManager.as:516-635`, read first-hand:
@@ -173,9 +292,16 @@ the arguments, not only the name, or three distinct enemies collapse into one ro
   applied to all **70** rows that lack it.
 - **L4a-D** all **38** `ai` cases present in `ogAi.ts`, each carrying its `NPCManager.as`
   line, with the constructor flags captured for 0/9/14 and 28/37.
-- **L4a-E** `OG_NPC_SOURCE_ANOMALIES` holds the `6015.6017` case, cited to **both**
-  `npcdata.xml` and `XMLNpc.as:460`; nothing coerced. The **6 unresolved `<name>` ids** are
-  explicit rows, not empty strings.
+- **L4a-E** `OG_NPC_SOURCE_ANOMALIES` holds **BOTH** anomalies — `6015.6017` (355x,
+  cited to `npcdata.xml` AND `XMLNpc.as:460`) and `6.5006501650265E+47` (npc 55); nothing
+  coerced. The **6 unresolved `<name>` ids** are explicit rows, not empty strings, and are
+  kept distinct from the **5 rows carrying no `<name>` tag at all** (ids 0, 47, 160, 801, 819).
+- **L4a-I** the RECON section's nine shapes are each pinned: the 5 empty `<mcs>` rows survive
+  transcription, `<chance>` stays FLOAT on all 119, ids are matched BY SOURCE ORDER (not id),
+  `<mcs>` lists keep duplicates and order, and the two 34s are asserted **disjoint**.
+- **L4a-J** `ogAi.ts` carries **all three** dispatches — `createNPC` (38 cases),
+  `createRoomNPC` (`NPCManager.as:671`) and `createRoomNPCProcGen` (`:749`) — plus the four
+  code-side `ai` assignments (`XMLNpc.as:315/479/523/586`) and the `default:` behaviour.
 - **L4a-F** the `<mcs>` comma lists kept VERBATIM as lists (never collapsed to one id),
   with `MCSCharacter.as:573-578`'s pick-one-at-random rule carried in the file header.
 - **L4a-G** `npm run typecheck` 0 · `npm run lint` 0 · `npx vitest run` green, pasted.
@@ -255,7 +381,9 @@ moves Sim.ts and the duel baseline — L5 only), and the fight-feel grade.
 DONE = the kickoff's gate L4a-A..H, every item green with PASTED output.
 Never soften a gate to fit a result — re-author, or come to me for a ruling.
 
-FIRST, DO THIS: confirm the baseline, dump npcdata.xml's tag vocabulary and its
-path-qualified positions, and tell me in your own words what the schema is and which
-of the eleven traps you can already see in the dump. Don't write code until I ok it.
+FIRST, DO THIS: confirm the baseline, then read the RECON section — the vocabulary
+dump, the corrected trap-3 count, the nine extra shapes and the two settled rulings are
+ALREADY MEASURED AND BANKED there (2026-09-07). Do NOT re-derive them. Spot-check three
+of its numbers against the file with your own command, say which three and paste the
+output, then go straight to writing transcribeNpcs.py. No further design turn is needed.
 ```
