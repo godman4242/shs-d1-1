@@ -201,11 +201,16 @@ the arguments, not only the name, or three distinct enemies collapse into one ro
 ## THE BASELINE TO CONFIRM FIRST
 
 ```bash
-git log -1 --oneline          # a68bf51 LANE L3B: the branch rides above the sash…
+git log -1 --oneline          # 863f9e4 docs: park the art lane, kick off L4a…
 npx vitest run                # Test Files 68 passed (68) · Tests 1073 passed (1073)
 ```
 Confirm it against a real run, not against this document. §5's own named failure mode is a
 kickoff that predicts a baseline instead of measuring it.
+
+**The commit hash goes stale the moment anything else lands; the TEST COUNT is the
+baseline that actually binds.** This document was written at `a68bf51` and then committed
+as `863f9e4`, so its own first draft named a hash that was already one behind by the time
+anyone could paste it — measured and corrected 2026-09-07.
 
 ---
 
@@ -225,8 +230,10 @@ READ FIRST, then tell me your plan before you write anything:
 - scripts/payload/transcribeItems.py + tests/ogItemData.test.ts  <- the shape to copy
 
 CONFIRM THE BASELINE FIRST, with a real run and not a prediction:
-  git log -1 --oneline   ->  a68bf51
+  git log -1 --oneline   ->  863f9e4  (the commit that added this kickoff)
   npx vitest run         ->  68 files / 1073 tests
+If HEAD has moved past 863f9e4, say so and tell me what landed since — do not
+assume it is harmless. The test count is the baseline that actually matters.
 
 THE TASK. reference/extracted/npcdata.xml holds 495 NPCs — full paperdoll, <lvl>, 425
 <ai>, 647 <skill>, 66 loot tables — and grep finds ZERO references to it in src/.
@@ -250,5 +257,5 @@ Never soften a gate to fit a result — re-author, or come to me for a ruling.
 
 FIRST, DO THIS: confirm the baseline, dump npcdata.xml's tag vocabulary and its
 path-qualified positions, and tell me in your own words what the schema is and which
-of the ten traps you can already see in the dump. Don't write code until I ok it.
+of the eleven traps you can already see in the dump. Don't write code until I ok it.
 ```
