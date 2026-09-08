@@ -3489,3 +3489,72 @@ lanes, and `0719673` (2026-07-28) stayed the last `src/` change until L2 closed 
   **68 files / 1073 tests**, typecheck 0, lint 0. The kickoff's closing instruction now
   says the design turn is DONE — the next session spot-checks three RECON numbers and goes
   straight to `transcribeNpcs.py`.
+
+---
+
+## SESSION 32 (2026-09-08) — **LANE L4a: THE ENEMY ROSTER AND THE AI DISPATCH TABLE. CLOSED.**
+
+Opus 5 @ `xhigh`, **no fan-out** — a deterministic transform gets a generator plus a
+byte-check (`GAUNTLET.md` §2, "a script beats a swarm"). Baseline confirmed by a real run,
+not a prediction: HEAD had already moved past the kickoff's `863f9e4` to `995bb52`, and
+all four intervening commits were **docs/config only** (`git diff --stat 863f9e4..HEAD`
+touches zero files under `src/` or `tests/`), so the test count — **68 files / 1073
+tests** — was unchanged and binding.
+
+- **21:40** Three RECON numbers spot-checked against the file, per the kickoff's closing
+  instruction. `grep -o "6015\.6017" | wc -l` → **355** (and the only other dot-bearing
+  `<hair>` is `6.5006501650265E+47`, on npc **55**) · the `<lvl>` depth split → **402**
+  own / **647** skill / **414** rows containing one · the 5 empty leaves → ids
+  **64, 158, 192, 193, 194**, all `<mcs>`, and no other tag is ever empty. All three
+  reproduced exactly. File sha256 `e9835f3b…30126`, 228,413 B.
+- **21:45** `scripts/payload/transcribeNpcs.py` → `src/config/ogNpcs.ts`. **495 NPCs ·
+  3,210 slot values (741 comma-pools, 193 exactly `0`) · 647 skills · 131 loot · 484
+  resolved names · 356 anomaly rows over 2 distinct values.** Four deliberate deviations
+  from `transcribeItems.py`, each one a measured trap: an empty **container** is legal
+  while an empty **leaf** still dies · `<mcs>` slots stay **verbatim strings** because
+  `processString` (`MCSCharacter.as:573-578`) re-rolls the pool at every spawn · floats
+  stay floats (`scalex`/`scaley`, and `<chance>` on 119 of 131) · **two** source anomalies,
+  both preserved in-place because slots are strings.
+- **21:50** `scripts/payload/transcribeAi.py` → `src/config/ogAi.ts`, parsed out of the
+  AS3 rather than retyped: `createNPC` **38** cases, `createRoomNPC` **13** values over 12
+  conditions (ai **11 and 16 share one branch**), `createRoomNPCProcGen` **2** — every
+  branch carrying its **constructor arguments** (`EnemyPlayer` is at ai 0, 9 AND 14 with
+  three different flag pairs; `EnemySpearElite` at 28 and 37) and its `NPCManager.as` line.
+  Plus the four `XMLNpc.as` in-code overrides (`:315/:479/:523/:586`), `isAnimal()`
+  (`:645-647`), and the `default:` asymmetry — `createNPC`'s only `trace()`s and leaves
+  `actor` **null** for the next statement to dereference, while both room dispatches
+  construct a real `EnemyCivilian`.
+- **21:51** ⭐ **A FOURTH `ai` SITE THE RECON DID NOT HAVE, found by a test that failed.**
+  A pin asserted 15 flat `xml.ai == N` comparisons in `NPCManager.as`; there are **16**.
+  The extra one is `:643`, inside `createNPC` and *after* the switch: in duel mode `ai == 0`
+  sets the duellist's spawn **x 650 facing left** when `rightPos`, **x 150 facing right**
+  otherwise, then `startAnim(MCSActor.BOW2)` — the opening bow. Committed as
+  `OG_AI_DUEL_PLACEMENT`, **recorded and not wired**: using those numbers moves `Sim.ts`,
+  §4's no-touch list, which is **L5's alone**.
+- **21:52** ⛔ **ONE RECON NUMBER CORRECTED — the source wins.** RECON shape 5 illustrated
+  "ids are not sorted" with *"807 sits between 197 and 201"*. Measured: there is exactly
+  **one** descent in the sequence, at source index 209→210, where the block **800..819** is
+  spliced between id **199** and id **200** (`…817, 818, 819, 200, 201, 202…`). The claim
+  it illustrated — **index is not id** — is right, and is now pinned with the real
+  neighbours instead of the wrong ones.
+- **21:52** **A second guess of mine died to its own test.** I pinned the 92 hp-less rows
+  and the 96 skilled rows as disjoint. They overlap on **12**, and those 12 are *exactly*
+  the 12 rows that carry skills and no level of their own (ids 161, 164, 181, 182, 187,
+  188, 190, 191, 197, 809, 810, 811). The better fact replaced the guess.
+- **21:53** **Both guards chaos-planted and watched RED**, against mutated **copies** in
+  the scratchpad so the gitignored payload was never written to. `transcribeNpcs.py`: 5/5
+  plants exit 1 — unknown tag · attribute · empty non-`<mcs>` leaf · duplicate id · `<ai>`
+  outside 0..37; control exits 0. `transcribeAi.py` exits 1 when a `case` is deleted.
+  The byte-checks were red-proofed **7 ways** by corrupting the committed table, including
+  the two "fixes" the kickoff explicitly forbids — coercing `6015.6017` to `6015,6017`, and
+  `int()`-ing a `<chance>` float. ⚠️ One plant reported a false pass first: BSD `sed`
+  rejects GNU's `0,/re/` address form, so the mutation never applied. Re-run through Python
+  it went red on both the structural pin and the byte-check. A plant that does not mutate
+  is a plant that proves nothing.
+- **21:54** Suite: **70 files / 1113 tests** (was 68/1073 — **+2 files, +40 tests**),
+  typecheck 0, lint 0. Both tables regenerate byte-identically from a clean run.
+
+**⛔ NOT DONE, said up front rather than at the gate.** The 34 enemy behaviours are **L4b**
+(§2 routes them to Fable 5 @ `high`). Wiring NPCs into the duel moves `Sim.ts` +
+`tests/duel-baseline.test.ts` — **L5 only**. The fight-feel grade needs A1 frame cites and
+the owner's LOOK. None was attempted, and none is claimed.

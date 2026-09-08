@@ -4173,3 +4173,66 @@ The source's jacket has a **straight front edge and a clean horizontal hem**; ou
 outward** at the bottom into a scalloped skirt, wider at the hem than at the shoulders. That is
 9015's silhouette, and 9015 is the shape that **cannot be regenerated** without reinstating the
 SESSION 22 balloon (GATE A9-E 0.44 → 3.50 local px). Unchanged and still blocked.
+
+---
+
+## SESSION 32 — LANE L4a: the NPC roster and the AI dispatch table (2026-09-08)
+
+### ⛔ `AI_TIERS` IS A HAND-AUTHORED STAND-IN, AND NOW THE REAL TABLE EXISTS BESIDE IT
+
+`src/config/ai.ts` ships **three** tiers — `easy` / `normal` / `hard` — wired into
+`DuelScene` and `EncounterScene`. `src/config/ogAi.ts` now records what the original
+actually dispatches: **38** cases in `createNPC`, **13** values in `createRoomNPC`, **2** in
+`createRoomNPCProcGen`, over a value space the data uses **34** distinct members of.
+
+**`AI_TIERS` maps to NO OG `ai` value.** It is not a coarsening of the 38, not a subset, and
+not a renaming: it is an authored difficulty curve with no counterpart in the payload. It
+stands in for **none** of the 38 — the honest statement is that the original has no
+difficulty tiers at all, it has one actor class per `ai` value and scales the fight through
+`enemyModel.ts` instead.
+
+**L4a does not rewire it, deliberately.** Replacing `AI_TIERS` with a real dispatch moves
+`Sim.ts` and `tests/duel-baseline.test.ts`, which are `GAUNTLET.md` §4's no-touch list and
+belong to **L5** by its atomic protocol (DIVERGENCES entry first, then the sim change, then
+ONE re-record, all in one commit). Recording the divergence is L4a's job; closing it is not.
+
+**Veto path:** none needed — nothing changed. When L5 does rewire it, this entry is the
+"before".
+
+### CONTRACT VALUES NOW HELD THAT WERE PREVIOUSLY UNHELD
+
+- **495 NPC rows**, base `hp` / `attack` / `defense` / `lvl`, full 12-slot paperdoll, 647
+  skill assignments, 131 loot rows with float drop chances. `OG_NPCS`, A2-cited to
+  `npcdata.xml`, byte-checked by `tests/ogNpcData.test.ts`.
+- **The `<ai>` → actor-class map**, all three dispatches, with constructor arguments.
+  `OG_AI_*`, A2-cited to `NPCManager.as` and `XMLNpc.as`, byte-checked by
+  `tests/ogAiData.test.ts`.
+- **`OG_AI_DUEL_PLACEMENT`** (`NPCManager.as:643`) — the duellist's spawn geometry: x **650**
+  facing left when `rightPos`, x **150** facing right otherwise, then `MCSActor.BOW2`.
+  ⚠️ **RECORDED, NOT WIRED.** These are the first OG duel *coordinates* the repo holds, and
+  using them moves `Sim.ts`. L5's, not L4a's.
+
+### ⛔ A MEASUREMENT DOC CORRECTED BY THE SOURCE
+
+`docs/sessions/L4A_KICKOFF.md` § SESSION 31 RECON, shape 5, illustrated "npc ids are neither
+sorted nor contiguous" with *"807 sits between 197 and 201"*. Measured 2026-09-08 against
+`npcdata.xml`: there is exactly **one** descent in the id sequence, at source index 209→210,
+where the block **800..819** sits between id **199** and id **200**
+(`…817, 818, 819, 200, 201, 202…`). The **claim** the illustration served — INDEX IS NOT ID —
+is correct and unchanged; only its example was wrong. Corrected in the kickoff and pinned
+with the measured neighbours in `tests/ogNpcData.test.ts`. Standing rule applied: when a
+measurement doc and the source disagree, the source wins, and it is said out loud.
+
+### WHAT IS DELIBERATELY NOT MODELLED
+
+- **The 34 enemy behaviours.** `ogAi.ts` names the classes; it does not implement them. L4b.
+- **`<earth>` (3 rows) and `<fire>` (1 row), both value 10.** Recorded on the row, no
+  meaning attached — the elements belong to L11.
+- **`<prop1>` = 1 or 2 on ~50 rows, and `<armor|head|pants>` = 2 or 10 on npcs 75 and 78.**
+  None is an item id (checked against the committed 982 `OG_ITEMS`). `MCSCharacter.as:1229-1249`
+  falls back to `prop13000` (the default scabbard art) when an id has no symbol, so they
+  degrade gracefully rather than crashing. Recorded verbatim, no meaning attached.
+- **Which randomness picks a paperdoll.** `processString` (`MCSCharacter.as:573-578`) uses
+  **`Math.random()`**; `XMLNpc.as:561` uses the **seeded `rng.rand()`** for the same kind of
+  choice. Two different sources for one decision. It matters the day paperdolls have to be
+  reproducible under our injected mulberry32 RNG — recorded now so that day is not a surprise.

@@ -203,8 +203,14 @@ into the first one's count. `OG_NPC_SOURCE_ANOMALIES` must hold **two** entries.
    `transcribeItems.py`'s `text()` **deliberately dies** on an empty tag. Copying that
    rule verbatim kills the run on legitimate data. *Present-but-empty ≠ absent*: all 495
    rows have `<mcs>`; 5 are empty paperdolls.
-5. **IDS ARE NEITHER CONTIGUOUS NOR SORTED** — 495 distinct spanning 0..819, and **807
-   sits between 197 and 201**. Index ≠ id. Pair committed row *i* with source block *i*.
+5. **IDS ARE NEITHER CONTIGUOUS NOR SORTED** — 495 distinct spanning 0..819. Index ≠ id.
+   Pair committed row *i* with source block *i*.
+   ⛔ **THIS SHAPE'S ILLUSTRATION WAS WRONG AND IS CORRECTED (2026-09-08, the source
+   wins).** It read *"807 sits between 197 and 201"*. Measured: there is exactly **ONE**
+   descent in the sequence, at source index 209→210, where the block **800..819** is
+   spliced between id **199** and id **200** — `…817, 818, 819, 200, 201, 202…`. The claim
+   is unchanged and correct; only the example was. Pinned with the real neighbours in
+   `tests/ogNpcData.test.ts`.
 6. **TWO SERIALISATION STYLES IN ONE FILE** — `<mcs>` is pretty-printed CRLF+tabs;
    `<skills>` blocks are written **inline on one line**, and all 4 bare LFs live inside
    them. A block regex tuned on itemdata's uniform CRLF mis-slices.
@@ -220,6 +226,13 @@ into the first one's count. `OG_NPC_SOURCE_ANOMALIES` must hold **two** entries.
    and 16** into one `EnemyWolfAlpha` branch. `createRoomNPCProcGen` (`NPCManager.as:749`)
    is a third: 32 → `EnemyCivilianOld`, 33 → `EnemyCivilianFemale`, else `EnemyCivilian`.
    Transcribing only the switch records **one third of the map**.
+   ⭐ **AND THERE IS A FOURTH `ai` SITE THAT IS NOT A DISPATCH AT ALL (found 2026-09-08 by
+   a pin that failed).** `NPCManager.as` carries **16** `xml.ai == N` comparisons, not 15:
+   `:643`, inside `createNPC` and *after* the switch, conditions the duellist's **spawn
+   placement** on `ai == 0` — x **650** facing left when `xml.rightPos`, x **150** facing
+   right otherwise, then `startAnim(MCSActor.BOW2)`, the opening bow. Committed as
+   `OG_AI_DUEL_PLACEMENT`; **recorded, not wired** — those coordinates move `Sim.ts`, so
+   they are L5's.
    ⚠️ Trap 7 names `XMLNpc.as:479` (=32) and `:523` (=33). There are **two more**:
    `:315` (`this.ai = 0`, the duellist) and `:586` (`this.ai = bossxml.ai`, the bounty
    target inheriting NPC 18).
@@ -309,6 +322,27 @@ the arguments, not only the name, or three distinct enemies collapse into one ro
   `GAUNTLET.md` §2's L4 row updated **in the same commit as the change**.
 
 **Never soften a gate to fit a result — re-author, or take a ruling.**
+
+---
+
+## ✅ THE GATE IS MET — LANE L4a CLOSED 2026-09-08 (commit: this one)
+
+| Gate | Verdict | Evidence |
+|---|---|---|
+| **L4a-A** | ✅ | 495 rows byte-exact vs an independent raw-regex parser; source counts reproduced 495 / 490 / 425 / 414 / 406 / 403 / 394 / 96 / 66 |
+| **L4a-B** | ✅ | vocabulary CLOSED at 32 tags; generator chaos-planted **5/5 red** (unknown tag · attribute · empty non-`<mcs>` leaf · duplicate id · `<ai>` outside 0..37), control green |
+| **L4a-C** | ✅ | `<lvl>` split pinned 402 / 647 (+ the 414 depth-blind count and the 12 rows that explain it); `ai`-defaults-to-1 applied to all **70** silent rows as `aiEffective`, with `ai` still absent where the source is |
+| **L4a-D** | ✅ | all **38** `createNPC` cases, each with its `NPCManager.as` line AND its constructor args; 0/9/14 and 28/37 pinned distinct |
+| **L4a-E** | ✅ | `OG_NPC_SOURCE_ANOMALIES` = 356 rows over **2** distinct values (`6015.6017` ×355, `6.5006501650265E+47` ×1 on npc 55), nothing coerced; the **6** unresolved `5017` rows (ids 50-55) kept distinct from the **5** rows with no `<name>` tag (0, 47, 160, 801, 819) |
+| **L4a-I** | ✅ | 5 empty `<mcs>` survive · `<chance>` FLOAT on all 119 · matched BY SOURCE ORDER · pools keep duplicates and order (28 repeats; npc 55's hat = 11 zeros of 22) · the two 34s asserted **disjoint** |
+| **L4a-J** | ✅ | all three dispatches (38 + 13 + 2) **plus a fourth `ai` site the RECON did not have**, the four `XMLNpc.as` overrides, `isAnimal()`, and both `default:` behaviours incl. `createNPC`'s null |
+| **L4a-F** | ✅ | `<mcs>` kept VERBATIM as strings, never collapsed; `processString`'s pick-one rule carried in the generated header |
+| **L4a-G** | ✅ | typecheck 0 · lint 0 · **70 files / 1113 tests** (was 68 / 1073) |
+| **L4a-H** | ✅ | `RESUME_HERE.md`, `-SESSION-LOG.md`, `DIVERGENCES.md` and §2's L4 row all updated in this commit |
+
+**No gate was softened.** Two pins the author wrote were *wrong and the tests caught them* —
+the id-ordering example and a claimed-disjoint overlap — and both were re-authored to the
+measured fact rather than relaxed.
 
 ---
 
