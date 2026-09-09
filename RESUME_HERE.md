@@ -55,15 +55,15 @@ each re-planted red. A plant that stays green is a missing test, not a passing g
 
 ### 📋 WHAT IS LEFT — slices 2–6, cheapest-first, one at a time
 
-**SLICE 2 next:** `EnemyWolf2` (103, extends EnemyWolf — so **EnemyWolf (489) must be
-built in slice 2 too**, or slice 2 is reordered after slice 3's wolf), `EnemyFox` (240,
-extends EnemyWolf), `EnemyCivilianFemale` (200) and `EnemyCivilianOld` (258) (both
-extend EnemyCivilian, 355 — same dependency), `FriendlyArcher` (86, extends EnemyArcher,
-311), `FriendlySpearElite` (60, extends EnemySpearElite, 584). ⚠️ **Every slice-2 class
-extends a class from slice 3 or 4.** Decide-and-flag for the next session: take each
-parent with its child (wolf + wolf2 + fox · civilian + female + old · archer + friendly ·
-spear-elite + friendly), which keeps the "cheapest first" spirit and never builds a
-child before its parent. Veto = run slices 3 and 4 first.
+**SLICE 2 next — kicked off: `docs/sessions/L4B_SLICE2_KICKOFF.md` (paste its `text`
+block into a fresh session).** ⚠️ Every one of the lane doc's slice-2 classes extends a
+slice-3/4 parent, so slice 2 is REGROUPED as parent + children: **2a** wolves (`EnemyWolf`
+→ `EnemyWolf2`, `EnemyFox`) + civilians (`EnemyCivilian` → `EnemyCivilianFemale`,
+`EnemyCivilianOld`), 6 classes / 1,645 lines; **2b** archers (`EnemyArcher` →
+`FriendlyArcher`) + spear elites (`EnemySpearElite` → `FriendlySpearElite`), 4 classes /
+1,041 lines. Two gates, two commits. The kickoff lists the SEVEN new ports those ten need
+(player stats at 0.75 for the friendlies, adventure mode, the external red-freeze check,
+the archer's arrow…), measured 2026-09-09. Veto = run slices 3 and 4 first.
 
 **How a class ships (the pattern slices 0–1 fixed):**
 1. `src/core/npc/<Name>.ts` — `export class <Name> extends <Parent>`, `override` on
