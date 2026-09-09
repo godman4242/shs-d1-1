@@ -1,79 +1,82 @@
 # RESUME HERE
 
-## ▶ SESSION 33 (2026-09-09) — **L4b SLICE 0 IS CLOSED. THE NPC BASE IS PORTED, BEHIND THE SEAM. 34 DESCENDANTS TO GO.**
+## ▶ SESSION 33 (2026-09-09) — **L4b SLICES 0 AND 1 ARE CLOSED. THE NPC BASE AND ITS FIVE PATTERN-SETTERS ARE PORTED, BEHIND THE SEAM. 29 DESCENDANTS TO GO.**
 
-**The shared base every enemy actor — and the player — inherits from now exists in
-TypeScript.** `NPC.as` (1,238 lines, 51 functions) is `src/core/npc/Npc.ts`, under its
-parent `MCSActor.ts`, with `Damage.as` beside it and an adapter that fills the EXISTING
-`OpponentController` seam without moving it.
+**The shared base every enemy actor — and the player — inherits from exists in
+TypeScript, and the first five descendants prove the pattern.** `NPC.as` (1,238 lines,
+51 functions) is `src/core/npc/Npc.ts` under `MCSActor.ts`, with `Damage.as` beside it
+and an adapter filling the EXISTING `OpponentController` seam. `EnemyKatana`,
+`EnemyKnife`, `EnemySpear`, `RoomGoblin` and `RoomOgre` sit on it, each overriding
+exactly `update` / `startAction` / `doAction`.
 
 ```
 $ git log -1 --oneline   ->  (this commit)
-$ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts | wc -c   ->  0   (gate L4b-A)
-$ git diff 42a62e2 --stat -- src/core/OpponentController.ts               ->  (empty, gate L4b-B)
+$ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c   ->  0   (gates L4b-A, L4b-B)
 $ npm run -s typecheck   ->  exit 0
 $ npm run -s lint        ->  exit 0
-$ npx vitest run         ->  Test Files  74 passed (74)      (was 70 — +4)
-                             Tests  1208 passed (1208)       (was 1113 — +95)
+$ npx vitest run         ->  Test Files  75 passed (75)      (was 70 — +5)
+                             Tests  1243 passed (1243)       (was 1113 — +130)
 ```
 
-### ✅ WHAT LANDED
+### ✅ WHAT LANDED (slice 0 at `3a34efc`, slice 1 in this commit)
 
-**1. `src/core/npc/` — the base, ported function-for-function.** `Npc.ts` carries all 51
-of `NPC.as`'s functions by the source's names, in source order, each under its
-`NPC.as:<line>` cite (`tests/npcTree.test.ts` checks the name set against the AS3).
-`MCSActor.ts` is the parent minus its two tables. `NpcDamage.ts` is `Damage.as`.
-`types.ts` holds the four ports every Flash singleton became: `NpcWorld` (ground Y,
-stage width, red-freeze, player level…), `HitGeometry` (which paperdoll part is at a
-point — the core has no limb hitboxes), `NpcTarget`, and the `NpcEvent` list the render
-layer drains (floating numbers, loot, XP, the death clip, sounds).
+**1. The base, function for function.** `Npc.ts` carries all 51 of `NPC.as`'s functions
+by the source's names, in source order, each under its cite (`tests/npcTree.test.ts`
+checks the set against the AS3). `types.ts` holds the ports every Flash singleton became:
+`NpcWorld` (ground, stage width, red-freeze, player level, the three aggro guards, room
+furniture), `HitGeometry`, `NpcTarget` (position, dead, downed, swing-at-me), and the
+`NpcEvent` list the render layer drains.
 
-**2. `NpcController.ts` — the seam, filled.** The original runs at **24 fps** (SWF header
-of all seven reference builds; `Mobile.as:117`); the Sim at 60. The actor is not rescaled
-— it is STEPPED, 24 `update()`s per 60 ticks on an integer clock, so every constant stays
-verbatim. The Sim owns x (re-synced from the view each tick); `moveX` is the sign of the
-actor's own step, held between steps; a `target.checkHitObject` swing becomes `strike`;
-entering `ATTACK_STATE` becomes a `telegraph`. `OpponentController.ts` is byte-unchanged.
+**2. The seam, filled.** The original runs at **24 fps** (SWF header of all seven
+reference builds; `Mobile.as:117`); `NpcController.ts` STEPS the actor 24 times per 60
+ticks on an integer clock, so every constant stays verbatim. The Sim owns x; `moveX` is
+the sign of the actor's own step, held between steps; a swing is `strike`; entering
+ATTACK is a `telegraph`. The player proxy carries the receiver's twelve-frame hit guard,
+because the katana swings on every attack frame and the source rate-limits on the receiver.
 
-**3. Two generated + one hand-cited config.** `ogActor.ts` (429 anim keys / 64 state ids /
-22 part ids / 10 launch types, `transcribeActorConsts.py`, byte-checked by walking backward
-from every line cite) · `ogNpcBase.ts` (every `NPC.as` number, CONTRACT) · `OG_FPS = 24`.
+**3. Five descendants, written out in full** — the kickoff forbids flattening, and the
+per-class gaps are behaviour (`RoomGoblin` has no FLY case: hit by a fly it never moves
+again). Numbers in one config file per class plus `ogNpcHumanoid.ts` for the six the
+humanoid `update()` switch repeats, each twin line named.
 
-**4. ⛔ TWO KICKOFF NUMBERS CORRECTED BY THE SOURCE.** `class MCSPlayer extends NPC`
-(`MCSPlayer.as:3`) — the player is a DESCENDANT of this base, not a sibling root, so L5
-inherits it. And the override vocabulary is **22** over the 34 in-scope classes, **31**
-over all 39 — the kickoff's "31" was the wrong set. Both pinned; kickoff annotated.
+**4. ⛔ CORRECTED BY THE SOURCE.** `class MCSPlayer extends NPC` (the kickoff drew it as a
+sibling root — L5 inherits this base); the override vocabulary is **22** over the 34
+in-scope classes, **31** over all 39. Both pinned; kickoff annotated.
 
-**5. Red-first and chaos-planted.** The base test (66) was written from the AS3 and watched
-red before `Npc.ts` existed, then went green on the first run. Six plants: a launch
-velocity, the min-damage floor, the `!isDowned()` launch guard, a part id in the generated
-table, the transcriber on a mutated copy (exit 1), and a clean-copy regeneration
-(byte-identical). Everything restored and re-verified green.
+**5. Quirks ported as they read, all pinned**: the katana's melee tolerance is 10 px
+facing left and 50 facing right; `RoomGoblin`'s fidget roll fires only on an exact 0.5;
+a finished attack clip re-enters ATTACK in the same frame (a 3-frame clip swings twice);
+`gotLaunched`'s downed guard is dead code. DIVERGENCES "L4b (slice 0)" and "(slice 1)".
 
-**6. The seam's limits are a LIST now, not a feeling** — DIVERGENCES "L4b (slice 0)", seven
-items for L5: inbound hits never reach `gotHit`; the actor's y and reaction states are
-invisible to the Sim; `moveX` is a direction, not a speed; hit frames need geometry;
-presentation events are a scene-side read; no stance/kunai on this tree; blood dice not
-rolled. None widened the seam.
+**6. Chaos-planted, and one plant that stayed green.** Twelve plants across the two
+slices went red and came back. The katana's range 100→90 did NOT — nothing pinned the
+boundary exactly. Exact-boundary pins now exist for katana 100 / knife 50 / spear 400,
+each re-planted red. A plant that stays green is a missing test, not a passing guard.
 
-### 📋 WHAT IS LEFT — slices 1–6, cheapest-first, one at a time
+### 📋 WHAT IS LEFT — slices 2–6, cheapest-first, one at a time
 
-**SLICE 1 next:** `EnemyKatana` (220) · `EnemyKnife` (247) · `EnemySpear` (276) ·
-`RoomGoblin` (306) · `RoomOgre` (336) — the pattern-setters, each overriding exactly
-`update` / `startAction` / `doAction`. Then 2 (the cheap children), 3 (animals),
-4 (humanoids), 5 (the odd ones — `EnemyVegePatch` has NO action state machine),
-6 (bosses). The full order and each class's line count: `docs/sessions/L4B_KICKOFF.md`.
+**SLICE 2 next:** `EnemyWolf2` (103, extends EnemyWolf — so **EnemyWolf (489) must be
+built in slice 2 too**, or slice 2 is reordered after slice 3's wolf), `EnemyFox` (240,
+extends EnemyWolf), `EnemyCivilianFemale` (200) and `EnemyCivilianOld` (258) (both
+extend EnemyCivilian, 355 — same dependency), `FriendlyArcher` (86, extends EnemyArcher,
+311), `FriendlySpearElite` (60, extends EnemySpearElite, 584). ⚠️ **Every slice-2 class
+extends a class from slice 3 or 4.** Decide-and-flag for the next session: take each
+parent with its child (wolf + wolf2 + fox · civilian + female + old · archer + friendly ·
+spear-elite + friendly), which keeps the "cheapest first" spirit and never builds a
+child before its parent. Veto = run slices 3 and 4 first.
 
-**How a class ships (the pattern the base fixed):**
-1. `src/core/npc/<Name>.ts` — `export class <Name> extends <Parent>`, using the TS
-   `override` keyword on EXACTLY the methods the AS3 overrides (`noImplicitOverride`
-   makes it mandatory; `tests/npcTree.test.ts` compares the two sets).
-2. Every number → `src/config/ogNpc<Name>.ts` (or a shared per-slice file), CONTRACT,
-   `<File>.as:<line>`. Anim keys are already in `OG_ANIM`; states in `OG_STATE`.
-3. Add the class to `SHIPPED` in `tests/npcTree.test.ts` and write its behaviour test
-   from the AS3 (red first). `mcs.updateAnimation()` in the source is `stepAnimation()`
-   here; `mcs.x/y/scaleX` are `x`/`y`/`facingRight`; `mcs == null` is `disposed`.
-4. Anything the seam cannot express → DIVERGENCES, not a seam change.
+**How a class ships (the pattern slices 0–1 fixed):**
+1. `src/core/npc/<Name>.ts` — `export class <Name> extends <Parent>`, `override` on
+   EXACTLY the AS3's override set (`tests/npcTree.test.ts` compares the two).
+2. Numbers → `src/config/og<Name>.ts`, CONTRACT, `<File>.as:<line>`; shared repeats →
+   `ogNpcHumanoid.ts` with the twin lines named. Anim keys are in `OG_ANIM`.
+3. Add the class to `SHIPPED` in `tests/npcTree.test.ts`; write its test FROM the AS3,
+   red first. Harness rule learned in slice 1: `world.nearestEnemy` must answer with the
+   target — the source ASSIGNS what it gets, null included.
+4. `mcs.updateAnimation()` → `stepAnimation()`; `mcs.x/y/scaleX == 1` → `x` / `y` /
+   `facingRight && scale === ONE`; `mcs == null` → `disposed`; `target.mcs.x` → `target.x`.
+5. A new world read → a field on `NpcWorld`; anything the seam cannot express →
+   DIVERGENCES, never a seam change.
 
 ```bash
 npx vitest run && npm run -s typecheck && npm run -s lint
@@ -82,26 +85,23 @@ python3 scripts/payload/transcribeActorConsts.py && git diff --stat src/config/o
 
 ### ⛔ WHAT A FUTURE SESSION MUST NOT "FIX"
 
-- **`gotLaunched()`'s guard is ported as it BEHAVES** (`NPC.as:538` is dead code — see
-  `Npc.ts` header). Do not "restore" the downed check there; `gotHit`'s own `!isDowned()`
-  is the real guard and has its own test.
-- **The 24 Hz clock is an integer accumulator.** Do not replace it with a float or with
-  `msToFrames`; the 2,3,2,3 step pattern is pinned.
-- **`OG_NPCS`'s `hp`/`attack`/`defense` go into `Npc.init()` RAW.** That IS the NPC
-  class's behaviour (`NPC.as:211-218`). The K/D derivation in `core/enemyModel.ts` belongs
-  to `EnemyPlayer` (`EnemyPlayer.as:82`), the duellist — do not route NPCs through it.
-- **`src/config/ogActor.ts` is CLOSED evidence** — re-run the transcriber; never hand-edit.
-  Same rule as `ogNpcs.ts` / `ogAi.ts` / `ogItems.ts` / `ogSkills.ts` / `ogCompositing.ts`.
-- **Neither roster anomaly may be coerced** (`6015.6017`, `6.5006501650265E+47`);
-  **`<mcs>` pools keep duplicates and order**; **70 rows with no `<ai>` mean `ai = 1`**
-  (`aiEffective`); **`AI_TIERS` stays wired** until L5 — all carried from SESSION 32.
+- **In-frame re-entry is the source's** (clip-end switch BEFORE `doAction`). Reordering
+  changes every swing rate. Pinned in `tests/npcSlice1.test.ts`.
+- **`gotLaunched()`'s guard is ported as it BEHAVES** (`NPC.as:538` is dead code); the
+  real guard is `gotHit`'s `!isDowned()`, which has its own test.
+- **The 24 Hz clock is an integer accumulator**; the 2,3,2,3 pattern is pinned.
+- **`OG_NPCS`'s `hp`/`attack`/`defense` go into `Npc.init()` RAW** — that IS the NPC
+  class's behaviour. `core/enemyModel.ts` is `EnemyPlayer`'s; do not route NPCs through it.
+- **`src/config/ogActor.ts` is CLOSED evidence** — re-run the transcriber, never hand-edit.
+- **The roster anomalies, the `<mcs>` pool order, `aiEffective`, `AI_TIERS` staying wired
+  until L5** — all carried from SESSION 32.
 
 ### ⛔ NOT DONE, and said here rather than at a gate
 
-Slices 1–6 (the 34 descendants). `EnemyPlayer` + `EnemyElite` + `EnemyPlayerGiant` +
-`FriendlyElite` (they extend `MCSPlayer`, the player — **L5**). `CutsceneActor` (**L1**).
-Rewiring `AI_TIERS` out of `DuelScene`/`EncounterScene` (moves `Sim.ts` — **L5**). The
-fight-feel grade (needs A1 cites and the owner's LOOK). None attempted, none claimed.
+Slices 2–6 (29 descendants). `EnemyPlayer` + `EnemyElite` + `EnemyPlayerGiant` +
+`FriendlyElite` (they extend `MCSPlayer` — **L5**). `CutsceneActor` (**L1**). Rewiring
+`AI_TIERS` (moves `Sim.ts` — **L5**). The fight-feel grade (A1 cites + the owner's LOOK).
+None attempted, none claimed.
 
 ## ⛔ SESSION 30 (2026-09-06) — **L3B: THE GATE IS BUILT AND TWO DEFECTS ARE GONE. THE ART IS STILL OPEN.**
 

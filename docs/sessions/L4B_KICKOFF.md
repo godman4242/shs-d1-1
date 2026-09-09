@@ -23,7 +23,7 @@ the figures do not. Both are pinned in `tests/npcTree.test.ts`.
    `gotDeathTouch` · `gotInput` · `gotNetworkDamage` · `rewardXP`) all belong to the
    `EnemyPlayer` branch. `EnemyVegePatch` 10 and `EnemyWolf2` 1 are correct as written.
 
-**Slice 0 is closed** (`RESUME_HERE.md`, DIVERGENCES "L4b (slice 0)"). Slices 1–6 open.
+**Slices 0 and 1 are closed** (`RESUME_HERE.md`, DIVERGENCES "L4b (slice 0)" and "(slice 1)"). Slices 2–6 open. ⚠️ **Slice 2's six classes ALL extend a slice-3/4 parent** (`EnemyWolf`, `EnemyCivilian`, `EnemyArcher`, `EnemySpearElite`) — the "cheapest first" order below cannot build a child before its parent; take each parent with its children.
 
 ---
 

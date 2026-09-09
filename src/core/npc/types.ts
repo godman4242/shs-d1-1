@@ -52,6 +52,14 @@ export interface NpcWorld {
   playback: boolean;
   /** `NPCManager.getNearestEnemy(x, isEnemy)` — who to fight next. */
   nearestEnemy(fromMapX: number, isEnemy: boolean): NpcTarget | null;
+  /** `CutsceneManager.isShowing()` — room actors do not wander or aggro under a cutscene. */
+  cutsceneShowing: boolean;
+  /** `OverworldHUD.screenTransition.isTransitioning()` — no aggro mid-fade. */
+  transitioning: boolean;
+  /** `OverworldHUD.duelmodeUI.noAggro` — the room's aggro switch. */
+  noAggro: boolean;
+  /** `GameStage.isNPCBlocked(x, facingRight)` — room furniture within 50 px in the walk direction. */
+  npcBlocked(screenX: number, facingRight: boolean): boolean;
 }
 
 /**
@@ -83,6 +91,8 @@ export interface NpcTarget {
   readonly y: number;
   getMapPosition(): number;
   isDead(): boolean;
+  /** `NPC.isDowned()` — knife, spear, goblin and ogre stab a downed target for double. */
+  isDowned(): boolean;
   /** The attacker asks its target to test one of the ATTACKER's parts against the target's body. */
   checkHitObject(thing: HitShape, damage: NpcDamage, checkByAttacker?: boolean): boolean;
 }

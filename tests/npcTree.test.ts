@@ -79,6 +79,12 @@ const TREE: Readonly<Record<string, string>> = {
 const SHIPPED: Readonly<Record<string, string>> = {
   MCSActor: 'MCSActor.ts',
   NPC: 'Npc.ts',
+  // slice 1
+  EnemyKatana: 'EnemyKatana.ts',
+  EnemyKnife: 'EnemyKnife.ts',
+  EnemySpear: 'EnemySpear.ts',
+  RoomGoblin: 'RoomGoblin.ts',
+  RoomOgre: 'RoomOgre.ts',
 };
 
 /** AS3 name → TS class name, where they differ. */

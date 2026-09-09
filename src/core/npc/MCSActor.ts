@@ -55,6 +55,8 @@ export class MCSActor {
   healthBarVisible = false;
   healthBarFraction = ONE;
   healthBarX = ZERO;
+  /** `mcs.healthBar.y` — room actors raise it (`RoomGoblin.as:26`, `RoomOgre.as:26`). */
+  healthBarY = ZERO;
   /** `mcs.progressBar` — the skill-charge bar; a subclass fills it. */
   readonly progressBar = { visible: false, fraction: ZERO };
   /** `MCSCharacter.as:126` — the current clip's KEY (an `OG_ANIM` value). */

@@ -25,6 +25,7 @@
  * the original frame rate.
  */
 import { OG_STATE } from '../../config/ogActor';
+import { OG_NPC_HIT_IFRAMES } from '../../config/ogNpcBase';
 import { ONE, ZERO } from '../../config/nums';
 import { FIXED_HZ, MS_PER_S, OG_FPS } from '../../config/timing';
 import type { Npc } from './Npc';
@@ -32,11 +33,20 @@ import type { NpcDamage } from './NpcDamage';
 import type { OpponentController, OpponentIntent, OpponentView } from '../OpponentController';
 import type { HitShape, NpcTarget } from './types';
 
-/** The player, as the actor sees it: a position that can be swung at. */
+/**
+ * The player, as the actor sees it: a position that can be swung at.
+ *
+ * It carries the PLAYER's own reception guard: `NPC.gotHit` refuses a hit while
+ * `gotHitCounter > 0` (`NPC.as:387`, twelve frames, `:462`). `EnemyKatana`
+ * calls `checkHitObject` on EVERY attack frame (`EnemyKatana.as:196`) and the
+ * source rate-limits that on the receiver, so the proxy does the same — one
+ * strike per twelve steps — rather than flooding the Sim.
+ */
 class PlayerProxy implements NpcTarget {
   x = ZERO;
   y = ZERO;
-  struck = false;
+  private struck = false;
+  private hitCounter = ZERO;
   getMapPosition(): number {
     return this.x;
   }
@@ -44,13 +54,23 @@ class PlayerProxy implements NpcTarget {
   isDead(): boolean {
     return false;
   }
+  /** The seam has no downed state for the player (DIVERGENCES, L4b finding 2). */
+  isDowned(): boolean {
+    return false;
+  }
   checkHitObject(thing: HitShape, damage: NpcDamage): boolean {
     void thing;
     void damage;
+    if (this.hitCounter > ZERO) return false;
+    this.hitCounter = OG_NPC_HIT_IFRAMES;
     this.struck = true;
     return true;
   }
-  /** Did the actor swing since the last take? Clears the flag. */
+  /** One actor step passed: count the guard down (`EnemyKatana.as:110-113` on the receiver). */
+  step(): void {
+    if (this.hitCounter > ZERO) this.hitCounter -= ONE;
+  }
+  /** Did the actor land a swing since the last take? Clears the flag. */
   takeStrike(): boolean {
     const s = this.struck;
     this.struck = false;
@@ -85,6 +105,7 @@ export class NpcController implements OpponentController {
       stepped = true;
       const before = npc.posX;
       const stateBefore = npc.actionState;
+      this.proxy.step();
       npc.update();
       moved += npc.posX - before;
       if (this.proxy.takeStrike()) struck = true;

@@ -46,6 +46,10 @@ const world = (over: Partial<NpcWorld> = {}): NpcWorld => ({
   censored: false,
   playback: false,
   nearestEnemy: () => null,
+  cutsceneShowing: false,
+  transitioning: false,
+  noAggro: false,
+  npcBlocked: () => false,
   ...over,
 });
 
@@ -72,6 +76,7 @@ const targetAt = (x: number, y = GROUND): NpcTarget => ({
   y,
   getMapPosition: () => x,
   isDead: () => false,
+  isDowned: () => false,
   checkHitObject: () => false,
 });
 

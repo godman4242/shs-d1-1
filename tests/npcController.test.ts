@@ -37,6 +37,10 @@ const world = (): NpcWorld => ({
   censored: false,
   playback: false,
   nearestEnemy: () => null,
+  cutsceneShowing: false,
+  transitioning: false,
+  noAggro: false,
+  npcBlocked: () => false,
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: ATTACK_FRAMES, loop: false }) };
 const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0 };
@@ -141,9 +145,19 @@ describe('NpcController — position authority and the intent it emits', () => {
     }
     // step ticks: 2, 4, 7, 9, 12, 14, 17, 19, 22, 24, 27, 29
     // step 1 (tick 2): enter ATTACK → telegraph. step 2 (tick 4): swing → strike. step 3: attack again …
+    // The swings on steps 4, 6, 8, 10, 12 are REFUSED by the proxy's twelve-step guard —
+    // the player's own gotHitCounter (NPC.as:387/:462) — exactly as the source refuses them.
     expect(telegraphs).toEqual([2, 7, 12, 17, 22, 27]);
-    expect(strikes).toEqual([4, 9, 14, 19, 24, 29]);
+    expect(strikes).toEqual([4]);
     expect(npc.actionState).toBe(OG_STATE.WALK);
+  });
+
+  it('the proxy refuses a second swing for twelve actor steps, like the player\'s own i-frames', () => {
+    const { ai } = make();
+    const strikes: number[] = [];
+    for (let f = 0; f < 60; f++) if (ai.next(f, view(150)).strike === true) strikes.push(f);
+    // swings land on steps 2 and 14 (step 14 is tick 34); steps 4..12 are inside the guard
+    expect(strikes).toEqual([4, 34]);
   });
 
   it('the telegraph carries the attack clip\'s length in ms at the ORIGINAL frame rate', () => {

@@ -3594,3 +3594,24 @@ the owner's LOOK. None was attempted, and none is claimed.
 
 **⛔ NOT DONE, said up front.** Slices 1–6 (the 34 descendants). `EnemyPlayer`'s branch
 (L5), `CutsceneActor` (L1), the `AI_TIERS` rewire (L5), the fight-feel grade. None attempted.
+
+## SESSION 33 (cont.) — **L4b SLICE 1: THE FIVE PATTERN-SETTERS.**
+
+- **19:05** Owner delegated both open items ("you decide"). Finding 1 ruled: L5 routes the
+  resolved hit into `Npc.gotHit`; the actor's hp is authoritative for NPC-class actors;
+  `enemyModel.ts` stays the duellist's. Logged in DIVERGENCES with the veto line.
+- **19:10** Baseline re-run: `3a34efc`, 74 / 1208. Read `EnemyKnife`, `EnemySpear`,
+  `RoomGoblin`, `RoomOgre` in full and diffed each `update()` against `EnemyKatana`'s.
+- **19:25** Four port facts added (three aggro guards + furniture blocking on `NpcWorld`,
+  `isDowned()` on `NpcTarget`); the player proxy gained the receiver's twelve-frame guard,
+  because the katana swings every attack frame and the source rate-limits on the receiver.
+- **19:40** Five config files, CONTRACT, line-cited; `ogNpcHumanoid.ts` names every twin line.
+- **19:55** `tests/npcSlice1.test.ts` written from the AS3 and watched RED (modules missing).
+  Five classes written out in full. First green run needed seven expectation fixes, ALL in
+  the test: my harness answered the re-target with null (the source assigns what it gets),
+  and five were in-frame re-entries the source really does (clip-end runs before doAction).
+- **20:15** Chaos plants: knife DOWNSTAB re-check RED · goblin sight 300→200 RED · an extra
+  `override` on RoomOgre RED (gate C) · **katana range 100→90 stayed GREEN** — a missing
+  pin, not a passing guard. Exact-boundary pins added for katana 100 / knife 50 / spear
+  400; all three re-planted RED. Everything restored, green again.
+- **20:25** Gate: A/B 0 bytes · **75 files / 1243 tests** (+1 / +35) · typecheck 0 · lint 0.

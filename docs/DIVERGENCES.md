@@ -4293,6 +4293,16 @@ licence to widen the seam in L4b** — it is the list L5 rules on.
    built and tested but unreachable from a fight. L5 must either route the slash into
    `gotHit` (needs a real `HitGeometry` off the skeleton) or rule that the Sim's model
    stays and the actor's hp is display-only. A ruling, not a default.
+   **RULING (decide-and-flag, owner delegated 2026-09-09): L5 routes the resolved hit
+   INTO `Npc.gotHit(part, NpcDamage)` and the actor's hp is authoritative for NPC-class
+   actors.** Why: the reception rules — defence subtract, attacker-level floor, behead
+   ×1.5, elements, the seven reactions — ARE the 34 behaviours; keeping a second damage
+   model for them is the `AI_TIERS` mistake again. `enemyModel.ts` stays the DUELLIST's
+   (`EnemyPlayer.as:82`), untouched. Red-team: it commits L5 to a coarse part geometry
+   (head band / body / weapon zone off the fighter's box) before the skeleton gives a real
+   one, and it changes nothing in the 1v1 duel, whose enemy is `EnemyPlayer`. Veto = keep
+   the Sim's model; the actor's hp becomes display-only and `gotHit` is called with its
+   result ignored.
 2. **The actor's y and its reaction states are invisible to the Sim.** The Sim only ever
    moves an enemy's x; `GOTLAUNCHED`/`FLY`/`DOWNED`/`KNOCKDOWNED`/`STUN`/`VICTIM` and the
    arc physics happen inside the actor. The seam would need an outbound position/state,
@@ -4328,3 +4338,59 @@ licence to widen the seam in L4b** — it is the list L5 rules on.
 Slices 1–6 (the 34 descendants) are open; the base is frozen and green, so they may now
 proceed cheapest-first. `EnemyPlayer`'s branch, `CutsceneActor`, the `AI_TIERS` rewire,
 the fight-feel grade: not built, not attempted, not claimed.
+
+## LANE L4b (slice 1) — THE FIVE PATTERN-SETTERS ARE PORTED. THREE SOURCE QUIRKS PORTED AS THEY READ, AND ONE FINDING ADDED (2026-09-09)
+
+**What landed.** `EnemyKatana` (ai 3), `EnemyKnife` (ai 1 and the absent-`<ai>` default),
+`EnemySpear` (ai 4), `RoomGoblin` (room ai 22), `RoomOgre` (room ai 23) — each overriding
+exactly `update` / `startAction` / `doAction`, each written out in full from its `.as`
+file (the kickoff forbids flattening; the per-class gaps are behaviour). Numbers in
+`config/ogEnemyKatana.ts`, `ogEnemyKnife.ts`, `ogEnemySpear.ts`, `ogRoomNpc.ts`, and
+`ogNpcHumanoid.ts` for the six numbers the humanoid `update()` switch repeats verbatim
+(each twin's line named). **+35 tests** (1208 → 1243); six guards chaos-planted, and one
+plant that stayed GREEN (the katana's 100 px range) exposed a missing exact-boundary pin,
+now added for all three ranges.
+
+### THE PORTS GREW BY FOUR FACTS — read-only, no seam change
+
+`NpcWorld` gained `cutsceneShowing`, `transitioning`, `noAggro` (the three aggro guards of
+`spotPlayer`, `RoomGoblin.as:276-280`) and `npcBlocked(x, facingRight)`
+(`GameStage.isNPCBlocked`, room furniture within 50 px in the walk direction). `NpcTarget`
+gained `isDowned()` — knife, spear, goblin and ogre stab a downed target for double.
+
+### ⚠️ THREE THINGS PORTED AS THEY READ
+
+- **The katana's vertical melee tolerance is 10 px facing LEFT and 50 px facing RIGHT**
+  (`EnemyKatana.as:176` / `:185`); the spear's charge trigger has the same asymmetry
+  (`EnemySpear.as:192` / `:204`). Ported and pinned, not "fixed".
+- **`RoomGoblin`'s fidget roll is `int(Math.random() * 2 == 1)`** (`:168`): the product is
+  compared with 1 BEFORE the int, so the branch fires only when `random()` returns exactly
+  0.5 — never, in practice. Ported as it reads; pinned both ways (0.5 fires, 0.49 does not).
+- **In-frame re-entry.** `update()` runs the clip-end switch BEFORE `doAction()`, so a
+  finished attack clip ends into WALK and, still in range, WALK re-enters ATTACK (or STAB)
+  in the SAME frame; IDLE after a get-up lasts zero frames. A 3-frame attack clip therefore
+  swings on 2 frames. Pinned, because a "cleaner" ordering would change the swing rate.
+
+### ⚠️ ONE QUIRK DROPPED AS DEAD CODE
+
+`spotPlayer` re-checks `isTransitioning()` after already returning on it two lines
+earlier (`RoomGoblin.as:296`, `RoomOgre.as:326`). Same frame, same value: the second check
+is unreachable and is not ported. Lint would have flagged it; the behaviour is identical.
+
+### THE SEAM FINDINGS — one added
+
+**8. The player's downed state is invisible to the actor.** `OpponentView` has
+`playerJumping` but nothing for downed/knocked-down, so the proxy answers `isDowned()`
+with `false` and no actor will ever DOWNSTAB the player through the seam. The player's
+own actor (L5) has the state; the seam needs a `playerDowned` for the knife/spear/goblin/
+ogre stab to exist in a fight.
+
+**Finding 4, made concrete.** `EnemyKatana` tests its weapon on EVERY attack frame
+(`:196`); the source rate-limits that on the RECEIVER (`NPC.gotHit` refuses inside the
+twelve-frame `gotHitCounter`, `:387`/`:462`). The proxy now carries that same guard, so
+one strike reaches the Sim per twelve actor steps — the source's own rate, not a flood.
+
+### ⛔ NOT DONE — L4b-I at slice level
+
+Slices 2–6 (29 descendants). `EnemyPlayer`'s branch, `CutsceneActor`, the `AI_TIERS`
+rewire, the fight-feel grade: not built, not attempted, not claimed.
