@@ -55,9 +55,24 @@ two "fixes" the kickoff forbids (coercing `6015.6017`, `int()`-ing a `<chance>` 
 
 ### 📋 WHAT IS LEFT
 
-**L4a is closed. L4b is the next lane, and §2 routes it to Fable 5 @ `high`** — building
-the 34 enemy behaviours from the classes `ogAi.ts` now names (`EnemyKatana.as` alone is 220
-lines). It needs its own kickoff.
+**L4a is closed. The L4b kickoff is WRITTEN and committed — `docs/sessions/L4B_KICKOFF.md`
+(2026-09-09).** Every number in it was measured off disk, and measuring changed the lane's
+shape twice:
+
+- **It is TWO trees, not one flat 34.** `NPC.as` (1,238 lines, 51 functions) with **34**
+  descendants = **12,980 lines** IN SCOPE; and `MCSPlayer.as` (4,775) with `EnemyPlayer`
+  (1,647) + 3 children — **OUT of scope**, because that branch is the *player*, not an
+  enemy. Building it means building `MCSPlayer`, which is **L5's**.
+- **The seam already exists.** `OpponentController.ts` (45 lines) defines the contract and
+  `AISeamController.ts` (154) is the 3-tier stand-in filling it. L4b fills it **34 times**;
+  it does **not** move the seam and does **not** touch `Sim.ts`.
+- **⚠️ A THIRD 34, and a third different set.** L4a pins two as disjoint (34 distinct
+  `<ai>` values, 34 `Enemy*.as` files). The in-scope tree is *also* 34 — five of it are not
+  `Enemy*` at all, and five `Enemy*` are not in it. The kickoff's gate pins all three apart.
+- **⛔ SEQUENCED SLICES, NOT A FAN-OUT** — a deliberate amendment to §2's bounded-fan-out
+  routing, argued in the kickoff. 34 subclasses share ONE base, so fanning out before the
+  base exists produces 34 divergent bases: **state-schema drift**, the first killer the
+  root `CLAUDE.md` names. Model routing (Fable 5 @ `high`) is unchanged and correct.
 
 ```bash
 npx vitest run && npm run -s typecheck && npm run -s lint
