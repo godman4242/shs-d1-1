@@ -3558,3 +3558,39 @@ tests** — was unchanged and binding.
 (§2 routes them to Fable 5 @ `high`). Wiring NPCs into the duel moves `Sim.ts` +
 `tests/duel-baseline.test.ts` — **L5 only**. The fight-feel grade needs A1 frame cites and
 the owner's LOOK. None was attempted, and none is claimed.
+
+## SESSION 33 (2026-09-09) — **LANE L4b, SLICE 0: THE NPC BASE, BEHIND THE SEAM.**
+
+- **16:49** Baseline confirmed by a real run: `300afcb` (one docs commit past the kickoff's
+  `42a62e2` — the kickoff itself), **70 files / 1113 tests**, typecheck 0, lint 0.
+- **16:55** Read `NPC.as` (1,238), `MCSActor.as` (1,118), `Damage.as` (246), `EnemyKatana.as`,
+  `EnemyVegePatch.as`, `EnemyWolf2.as`, the seam and its stand-in. **Source vs kickoff, first
+  correction:** `class MCSPlayer extends NPC` (`MCSPlayer.as:3`) — the player is a
+  DESCENDANT of the base, not a sibling root. Scope cut unchanged; L5 inherits the base.
+- **17:05** Frame rate settled by measurement, not memory: the SWF header of all seven
+  reference builds reads **24.0 fps**; `Mobile.as:117` re-asserts 24. `OG_FPS` in `timing.ts`.
+  Decision: step the actor at 24 Hz inside the 60 Hz tick rather than rescale 60 constants.
+- **17:20** `scripts/payload/transcribeActorConsts.py` → `src/config/ogActor.ts`: 429 anim
+  keys / 64 states / 22 parts / 10 launch types, each cited. Byte-check test written with an
+  independent backward-walking grammar.
+- **17:40** `src/config/ogNpcBase.ts`: every `NPC.as` number, CONTRACT, line-cited. Blood
+  emitter parameters deliberately excluded (render).
+- **18:10** `tests/npcBase.test.ts` written FROM THE SOURCE (66 tests) and watched RED
+  (module missing). Then `MCSActor.ts`, `NpcDamage.ts`, `types.ts`, `Npc.ts` → **GREEN first
+  run**, 97/97 with the purity gate.
+- **18:25** **Six chaos plants, all behaved:** `velYGround −25 → −24` RED (2) · min-damage
+  floor removed RED (1) · `!isDowned()` launch guard removed RED (1) · `OG_PART.neck 12 → 13`
+  RED (3) · transcriber on a mutated copy → `exit 1` ("parsed 63 rows, expected 64") ·
+  control copy regenerates **byte-identically**. All restored, base green again.
+- **18:35** `tests/npcController.test.ts` RED (module missing) → `NpcController.ts` →
+  green after two probe fixes (the probe forgot to start its attack clip, and one case put
+  the target inside attack range). `tests/npcTree.test.ts` (gates C/D) written.
+- **18:45** **Source vs kickoff, second correction:** the override vocabulary is **22** over
+  the 34 in-scope classes and **31** over all 39 — trap 3's "31" was measured over the wrong
+  set; the nine extra names are all `EnemyPlayer`'s branch. Both pinned.
+- **18:55** Gate: `Sim.ts` + `duel-baseline.test.ts` byte-identical to `42a62e2` (A) ·
+  `OpponentController.ts` untouched (B) · **74 files / 1208 tests** (+4 / +95) · typecheck 0 ·
+  lint 0. DIVERGENCES carries the seven seam findings for L5 (F).
+
+**⛔ NOT DONE, said up front.** Slices 1–6 (the 34 descendants). `EnemyPlayer`'s branch
+(L5), `CutsceneActor` (L1), the `AI_TIERS` rewire (L5), the fight-feel grade. None attempted.

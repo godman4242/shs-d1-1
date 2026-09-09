@@ -8,6 +8,25 @@ Paste the `text` block at the bottom as the first message of a fresh session.
 
 ---
 
+## ⛔ CORRECTED BY THE SOURCE — slice 0, 2026-09-09 (the frame wins; said here, not buried)
+
+Two numbers below were measured over the wrong set. The traps they illustrate stand;
+the figures do not. Both are pinned in `tests/npcTree.test.ts`.
+
+1. **The tree drawing shows `MCSPlayer.as` as a SIBLING ROOT. It is not.**
+   `class MCSPlayer extends NPC` (`MCSPlayer.as:3`). The player is a descendant of the
+   base this lane builds. The scope cut is unchanged — `EnemyPlayer`'s branch is still
+   L5's — but L5 inherits `src/core/npc/Npc.ts` rather than building a second base.
+2. **Trap 3's "31 distinct methods across the tree" is the 39-class figure.** Over the
+   34 in-scope descendants the override vocabulary is **22**; the nine extra names
+   (`AI` · `createLoot` · `getDamage` · `getSkillLevel` · `getTargetPosition` ·
+   `gotDeathTouch` · `gotInput` · `gotNetworkDamage` · `rewardXP`) all belong to the
+   `EnemyPlayer` branch. `EnemyVegePatch` 10 and `EnemyWolf2` 1 are correct as written.
+
+**Slice 0 is closed** (`RESUME_HERE.md`, DIVERGENCES "L4b (slice 0)"). Slices 1–6 open.
+
+---
+
 ## Why this lane, and why now
 
 **L4a closed on 2026-09-08 (`6d78657`) and handed this lane its inputs.** The roster is

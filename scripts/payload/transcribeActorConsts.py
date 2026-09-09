@@ -1,0 +1,205 @@
+#!/usr/bin/env python3
+"""THE ACTOR-CONSTANT TRANSCRIBER (lane L4b, slice 0) — MCSActor.as + MCSCharacter.as
++ Damage.as -> config.
+
+Emits `src/config/ogActor.ts`: the four symbol tables every NPC class switches on —
+
+  OG_ANIM    the 429 animation-key strings `MCSActor.as` declares
+             (`internal static var KATANAWALK:String = "katanawalk";`)
+  OG_STATE   the 64 action-state ids, dense 0..63 (`IDLE_STATE:int = 0` …)
+  OG_PART    the 22 paperdoll part indices `MCSCharacter.as` declares (`PART_hat` …)
+  OG_LAUNCH  the 10 `Damage.as` launch types (`LAUNCH_AIR`, `KNEEGROIN`, `DEATHTOUCH` …)
+
+GAUNTLET.md §2 — "a script beats a swarm": a static-var table is a deterministic
+transform, so it gets a parser and a byte-check (`tests/ogActorConsts.test.ts`,
+independent flat regex), never a hand-keyed copy. `src/core/` has ZERO numeric
+literals, so `Npc.ts` cannot say `12` for `PART_neck` — it says `OG_PART.neck`, and
+that value has to come from HERE, cited.
+
+WHY ALL 429 ANIM KEYS AT ONCE: the 34 descendants switch on ~150 distinct keys
+between them. Transcribing "just the ones this slice needs" means every later
+slice hand-adds keys to a config file, which is exactly the drift the transcriber
+pattern exists to stop. One generated file, one byte-check, extended by re-running.
+
+FAIL-LOUD RULES (any surprise exits 1 rather than emitting a shorter table):
+  - a table's count must match the pinned EXPECTED count
+  - no duplicate names; no duplicate values inside an int table
+  - the action-state ids must be DENSE 0..N-1 (the source numbers them by hand and
+    a gap would mean a state the parser skipped)
+  - a string-table value must be a bare `"..."` literal (no concatenation)
+
+⚠️ C2 — the decompiled scripts are the ANDROID build (v0.682), same caveat as every
+other generated config (GAUNTLET.md §2.1). The generated header repeats it.
+
+Usage:  python3 scripts/payload/transcribeActorConsts.py [SCRIPTS_DIR] [OUT_TS]
+Writes: src/config/ogActor.ts
+
+The two optional paths exist so the CHAOS-PLANT can point this at a mutated COPY of
+the decompiled scripts and watch it die, without writing to the gitignored reference
+material. Normal runs take no arguments.
+"""
+
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[2]
+SCRIPTS = (
+    Path(sys.argv[1])
+    if len(sys.argv) > 1
+    else REPO / "reference" / "decompiled" / "shs3_android_payload" / "scripts"
+)
+OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else REPO / "src" / "config" / "ogActor.ts"
+
+STR_VAR = re.compile(r'^\s*(?:public |internal )static var ([A-Z_0-9]+):String = "([^"]*)";\s*$')
+STATE_VAR = re.compile(r"^\s*(?:public |internal )static var ([A-Z_0-9]+_STATE):int = (\d+);\s*$")
+PART_VAR = re.compile(r"^\s*(?:public |internal )static var PART_(\w+):int = (\d+);\s*$")
+LAUNCH_VAR = re.compile(r"^\s*(?:public |internal )static var ([A-Z_]+):int = (\d+);\s*$")
+
+# Pinned widths, measured 2026-09-09. A different count means the source moved.
+EXPECTED = {"anim": 429, "state": 64, "part": 22, "launch": 10}
+
+
+def die(msg: str) -> None:
+    sys.exit(f"transcribeActorConsts: {msg}")
+
+
+def read(name: str) -> list[str]:
+    p = SCRIPTS / name
+    if not p.exists():
+        die(f"{p} not found — decompiled payload missing")
+    return p.read_text(encoding="utf-8").split("\n")
+
+
+def collect(lines: list[str], rx: re.Pattern[str], table: str) -> list[tuple[str, str, int]]:
+    """[(name, value, 1-based line)] for every line the regex matches."""
+    rows: list[tuple[str, str, int]] = []
+    for i, line in enumerate(lines, start=1):
+        m = rx.match(line)
+        if m:
+            rows.append((m.group(1), m.group(2), i))
+    if len(rows) != EXPECTED[table]:
+        die(f"{table}: parsed {len(rows)} rows, expected {EXPECTED[table]} — the source moved")
+    names = [r[0] for r in rows]
+    if len(set(names)) != len(names):
+        dupes = sorted({n for n in names if names.count(n) > 1})
+        die(f"{table}: duplicate names {dupes}")
+    return rows
+
+
+def check_int_table(rows: list[tuple[str, str, int]], table: str, dense: bool) -> None:
+    values = [int(v) for _, v, _ in rows]
+    if len(set(values)) != len(values):
+        die(f"{table}: duplicate values")
+    if dense and sorted(values) != list(range(len(values))):
+        die(f"{table}: ids are not dense 0..{len(values) - 1}")
+
+
+def ts_str(s: str) -> str:
+    return "'" + s.replace("\\", "\\\\").replace("'", "\\'") + "'"
+
+
+def emit_table(name: str, doc: str, rows: list[tuple[str, str, int]], src: str, string: bool) -> str:
+    out = [f"/** {doc} */", f"export const {name} = {{"]
+    for key, value, line in rows:
+        v = ts_str(value) if string else value
+        out.append(f"  {key}: {v}, // {src}:{line}")
+    out.append("} as const;")
+    return "\n".join(out)
+
+
+HEADER = """/**
+ * OG_ANIM / OG_STATE / OG_PART / OG_LAUNCH — the actor symbol tables, TRANSCRIBED
+ * (lane L4b, slice 0). Generated by `scripts/payload/transcribeActorConsts.py` from
+ * `MCSActor.as`, `MCSCharacter.as` and `Damage.as` under
+ * `reference/decompiled/shs3_android_payload/scripts/`; NEVER hand-keyed.
+ * Byte-checked against those sources by `tests/ogActorConsts.test.ts` with an
+ * INDEPENDENT flat regex.
+ *
+ * Every entry is CONTRACT — the source's own literal, verbatim, cited to its line.
+ *
+ * WHY THIS FILE EXISTS: `src/core/` has ZERO numeric literals (test-enforced), and
+ * `NPC.as` switches on `MCSCharacter.PART_neck` (12), `DYING_STATE` (12),
+ * `Damage.LAUNCH_FLY` (3) and ~30 animation keys. The core must NAME those, and the
+ * names must come from the source, not from memory.
+ *
+ * ⚠️ C2 — the decompiled scripts are the ANDROID build (v0.682); no web-side
+ * artifact corroborates them yet (GAUNTLET.md §2.1).
+ *
+ * DO NOT EDIT BY HAND — re-run the transcriber.
+ */
+
+"""
+
+
+def main() -> None:
+    actor = read("MCSActor.as")
+    character = read("MCSCharacter.as")
+    damage = read("Damage.as")
+
+    anim = collect(actor, STR_VAR, "anim")
+    state = collect(actor, STATE_VAR, "state")
+    check_int_table(state, "state", dense=True)
+    part = collect(character, PART_VAR, "part")
+    check_int_table(part, "part", dense=True)
+    launch = collect(damage, LAUNCH_VAR, "launch")
+    check_int_table(launch, "launch", dense=True)
+
+    values = [v for _, v, _ in anim]
+    if len(set(values)) != len(values):
+        die("anim: duplicate key strings")
+
+    body = "\n\n".join(
+        [
+            emit_table(
+                "OG_ANIM",
+                "`MCSActor.as` — the animation-key strings, 429 of them, in source order.",
+                anim,
+                "MCSActor.as",
+                string=True,
+            ),
+            emit_table(
+                "OG_STATE",
+                "`MCSActor.as` — the action-state ids, dense 0..63, in source order.",
+                [(k.removesuffix("_STATE"), v, ln) for k, v, ln in state],
+                "MCSActor.as",
+                string=False,
+            ),
+            emit_table(
+                "OG_PART",
+                "`MCSCharacter.as` — the paperdoll part indices `partList` is ordered by, dense 0..21.",
+                part,
+                "MCSCharacter.as",
+                string=False,
+            ),
+            emit_table(
+                "OG_LAUNCH",
+                "`Damage.as` — the launch types a `Damage` carries, dense 0..9.",
+                launch,
+                "Damage.as",
+                string=False,
+            ),
+        ]
+    )
+    types = """
+
+/** A key of `OG_ANIM` — the only animation names the core may start. */
+export type OgAnimKey = keyof typeof OG_ANIM;
+/** An `OG_STATE` value — what `actionState` holds. */
+export type OgState = (typeof OG_STATE)[keyof typeof OG_STATE];
+/** An `OG_PART` value — which paperdoll part a hit landed on. */
+export type OgPart = (typeof OG_PART)[keyof typeof OG_PART];
+/** An `OG_LAUNCH` value — the reaction a `Damage` asks for. */
+export type OgLaunch = (typeof OG_LAUNCH)[keyof typeof OG_LAUNCH];
+"""
+    OUT.write_text(HEADER + body + types, encoding="utf-8")
+    print(
+        f"wrote {OUT.relative_to(REPO) if OUT.is_relative_to(REPO) else OUT}: "
+        f"{len(anim)} anims / {len(state)} states / {len(part)} parts / {len(launch)} launch types"
+    )
+
+
+if __name__ == "__main__":
+    main()

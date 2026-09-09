@@ -11,6 +11,20 @@ export const FIXED_HZ = 60;
 export const MS_PER_S = 1000;
 
 /**
+ * CONTRACT — the ORIGINAL's frame rate. Every counter in `NPC.as` and its 34
+ * descendants (`aiCounterMax = 24`, `gotHitCounter = 12`, `TTLMAX = 96`, every
+ * `velY += 3`) is a per-FRAME number at THIS rate. Measured 2026-09-09 two ways:
+ * the SWF header of all seven reference builds (`reference/decrypted/*.swf`,
+ * `reference/preservation/shs3.swf`, both predecessors) reads 24.0, and
+ * `Mobile.as:117` re-asserts `frameRate = 24` when the stage reports 0.
+ *
+ * The Sim is `FIXED_HZ` = 60. The NPC family is NOT rescaled to 60: it is
+ * stepped at this rate inside the 60 Hz tick (`core/npc/NpcController.ts`), so
+ * every ported constant stays the source's own literal.
+ */
+export const OG_FPS = 24;
+
+/**
  * Spec-fixed (pure math, not tuning) — 1-ulp guard for Sim.advance's
  * owed-frames floor: elapsedMs × FIXED_HZ / MS_PER_S lands a hair above OR
  * below the true integer (e.g. one exact step computes to 1.0000000000000002,
