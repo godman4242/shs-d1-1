@@ -88,12 +88,27 @@ Building the 34 enemy behaviours is **L4b**. Wiring NPCs into the duel moves `Si
 `tests/duel-baseline.test.ts` — §4's no-touch list, **L5 only**. The fight-feel grade needs
 A1 frame cites and the owner's LOOK. None of the three was attempted.
 
-### 🅿️ Housekeeping still not acted on
+### 🅿️ Housekeeping — DONE 2026-09-09
 
-`PROBLEMS.md` (untracked, repo root) is a Clawdia report from **2026-08-09** asserting
-`894/894 passed (56 test files)` — a baseline that has been wrong since 2026-08-20 and is
-now wrong by 219 tests. It is not in git. Delete it or regenerate it; never read a baseline
-out of it.
+`PROBLEMS.md` (untracked, repo root) is **deleted**. It was a Clawdia report from
+2026-08-09 whose test baseline — `894/894 passed (56 test files)` — had been wrong since
+2026-08-20 and was wrong by 219 tests by the time it went.
+
+**It was read before it was deleted, and it was not purely stale.** Its one open finding —
+the >500 kB bundle warning — is **still live** (`npm run build` 2026-09-09:
+`index-COki9_qw.js 1,360.68 kB │ gzip: 367.17 kB`, up 0.6 kB from its 1,360.08 kB). It was
+deleted anyway because that finding is **already adjudicated and better recorded**, twice:
+this file's Stage-6 backlog line (*"Phaser bundle 1.2 MB → code-split at Stage 6"*, with the
+optional cosmetic now-fix `chunkSizeWarningLimit: 1500`) and
+`docs/research/IMPROVEMENTS_RESEARCH.md` §vite-build.1/2/3, which carry the verified
+vite@8.1.5 Rolldown snippet, its measured output (phaser 1,198 kB + index 161 kB) and the
+reason **not** to split before Stage 6 — Phaser is a static top-level import, so both chunks
+load at startup and splitting buys only HTTP-cache reuse, at the cost of a new
+side-effect-ordering failure surface. Nothing unique was lost.
+
+The `PROBLEMS.md` mention in `docs/gauntlet/ARCH/verify/gate.json` is a pasted `git status`
+transcript from an old session — historical evidence, not a dependency. Nothing reads the
+file. **Never read a baseline out of a Clawdia report; run the suite.**
 
 ---
 
