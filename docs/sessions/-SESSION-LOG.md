@@ -3665,3 +3665,31 @@ the owner's LOOK. None was attempted, and none is claimed.
   a launch. `L4B_SLICE3_KICKOFF.md` written (3a bear/deer/horse/stag, 3b boar/alpha). Step 3
   ruled: the pounce telegraph fires on CHARGING entry with the pounce-start clip's length.
   Standing rule saved (memory + global CLAUDE.md): execute my own next steps, not just list them.
+
+## SESSION 34 (cont.) — **SLICE 3 KICKOFF TESTED AGAINST THE SOURCE BEFORE HANDOVER.**
+
+- **22:4x** Owner: "the kickoff to continue the sshd project /handoff, make the bar high and
+  test it as usual." The slice 3 kickoff already existed (`4f88780`); testing it — not
+  rewriting it — was the work. Re-measured **34 claims** against
+  `reference/decompiled/shs3_android_payload/scripts/`.
+- **EXACT (30):** all six line counts (bear 279 · deer 261 · horse 269 · stag 339 · boar 364 ·
+  alpha 584 = 1,148 + 948); all six `extends NPC`; **zero subclasses** (no regrouping);
+  all six `override` sets verbatim; the five "appears nowhere" patterns
+  (`externalRedFreezeCheck` / `isPeaceful` / `isDuelMode` / `LangManager` / `setSpeechText`)
+  all 0 files; `createEnemy(65,…)` at `:291`/`:295` (±50 px, coin-picked side);
+  `changeScale(2,2)` at `:34`; the alpha's `setLevel` `:52-127` = 76 lines; the boar's
+  `gotLaunched` `:293` guard `:295`, `gotKnockDown` `:353`, `gotFly` `:358`, `canGotFly` `:28`;
+  the stag's `setLevel` `:48` vs `NPC.as:239`; six `ai` ids (17/18/19/12/21/11); four
+  constructor signatures; clip keys BEAR 7 · BOAR 8 · DEER 8 · HORSE 7 · STAG_CHARGE;
+  `getNearestEnemy` in bear/stag/boar/alpha only.
+- **WRONG (2), fixed:** `isAdventureMode` was `2/4/3/3/4/4` — actually
+  `bear 2 · deer 3 · horse 3 · stag 4 · boar 4 · alpha 4` (deer and stag swapped).
+  `isShowing` "all six, 1 each" — **the alpha has NONE**; it is five of six.
+- **AMBIGUOUS (1), fixed:** gate C's "(21 total)" — 21 ported classes but 23 `SHIPPED`
+  entries (`MCSActor` and `NPC` are not ports). Both numbers now stated.
+- **STALE (1), fixed:** baseline `b09b211` → `4f88780`.
+- **ADDED — a trap nobody had:** `ai 16` is `EnemyNianMonster` in `NPCManager.as:565`'s switch
+  but `EnemyWolfAlpha` in the room dispatch at `:688` (`ai == 11 || ai == 16`). Written into
+  both the trap list and the paste block.
+- Paste block **472 words** (R7 ceiling ~1,000). Gate re-run at handover:
+  **77 files / 1339 tests**, typecheck 0, lint 0, tree clean.

@@ -1,5 +1,15 @@
 # L4b SLICE 3 KICKOFF — THE ANIMALS
 
+> **TESTED against the AS3 on 2026-09-10** (SESSION 34, after `4f88780`). **34 claims checked
+> against `reference/decompiled/shs3_android_payload/scripts/` — 30 exact, 2 wrong, 1 ambiguous,
+> 1 stale; all four fixed below and marked inline.** Exact: all six line counts, all six
+> `extends NPC`, zero subclasses, all six `override` sets verbatim, the five "appears nowhere"
+> patterns, `createEnemy(65,…)` at `:291`/`:295`, `changeScale(2,2)` at `:34`, the alpha's
+> 76-line `setLevel` (`:52-127`), the boar at `:293`/`:295`/`:353`/`:358`, `canGotFly` at `:28`,
+> six `ai` ids, four constructor signatures, and the clip-key counts (BEAR 7 · BOAR 8 · DEER 8 ·
+> HORSE 7 · STAG_CHARGE). **This is the second kickoff in a row whose per-file counts were wrong
+> on first write — re-measure, never carry a number forward.**
+
 **Written 2026-09-10 at `b09b211` (slice 2 closed, 15 of 34 ported). Model: Fable 5 @
 `high`. One agent loop, one slice, plan first.** The lane doc is still
 `docs/sessions/L4B_KICKOFF.md`; this file is only what a fresh session needs to run
@@ -42,8 +52,8 @@ and boar — their constructors take `(mcs, doChase)` like the civilian's.
 
 | Source call | Where | Port it as |
 |---|---|---|
-| `GameEngine.isAdventureMode()` | all six (2 / 4 / 3 / 3 / 4 / 4) | `NpcWorld.adventureMode` — EXISTS (slice 2a) |
-| `CutsceneManager.getInstance().isShowing()` | all six, 1 each | `NpcWorld.cutsceneShowing` — EXISTS (slice 1) |
+| `GameEngine.isAdventureMode()` | all six — bear 2 · deer 3 · horse 3 · stag 4 · boar 4 · alpha 4 (re-measured 2026-09-10; the first draft said 2/4/3/3/4/4 — deer and stag were swapped) | `NpcWorld.adventureMode` — EXISTS (slice 2a) |
+| `CutsceneManager.getInstance().isShowing()` | **FIVE of six**, 1 each — **`EnemyWolfAlpha` has NONE** (re-measured 2026-09-10; the first draft said all six) | `NpcWorld.cutsceneShowing` — EXISTS (slice 1) |
 | `NPCManager.getNearestEnemy` | bear, boar, stag, alpha | `NpcWorld.nearestEnemy` — EXISTS |
 | `StatsManager.getPlayerStats / findBonusStat / getMinDamage / getDamageRange / getLevel` | alpha `setLevel` (76 lines) | `NpcWorld.playerStats` + `playerLevel` — EXIST (slice 2b); the alpha's balance block is the spear boss's shape, re-read it against `EnemySpearElite.as:79-123` and DIFF, do not assume it is a copy |
 | **`NPCManager.createEnemy(65, x, groundY, true)`** | alpha `startAction(POSE_STATE)` `:291` / `:295` — the howl calls a wolf (roster id 65) 50 px off either edge, a coin picks the side, room only | **NEW: `NpcEvent { type: 'spawn', npcId, x, y, fatal }`** — and **DIVERGENCES finding 12**: the seam has no way to add an actor mid-fight |
@@ -80,6 +90,11 @@ count hid a sub-slice split once already.
   before a clip-end test); count the rng calls a `startAction` makes before choosing a
   `seq`; the wolf family's `checkPlayer`-before-bite ordering; a cooldown armed in
   `doAction` is ticked by the same `update`.
+- **⚠️ `ai 16` MEANS TWO DIFFERENT CLASSES.** Verified 2026-09-10: the main `switch`
+  (`NPCManager.as:565`) maps **case 16 → `EnemyNianMonster`**, while the room dispatch
+  (`NPCManager.as:688`) maps **`ai == 11 || ai == 16` → `EnemyWolfAlpha`**. The kickoff's
+  "alpha 11 AND 16" is true *only* of the room path. Port the two dispatches separately or
+  the alpha will swallow the Nian monster's id.
 - **Pin every range at its exact boundary.** A plant that stays green is a missing test.
 
 ---
@@ -104,7 +119,9 @@ count hid a sub-slice split once already.
 ## THE GATE — slice level, every item pasted
 
 - **A** `git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c` → **0**
-- **C/D** `tests/npcTree.test.ts` green with the six classes in `SHIPPED` (21 total)
+- **C/D** `tests/npcTree.test.ts` green with the six classes in `SHIPPED` — **21 ported NPC
+  classes**, i.e. **23 `SHIPPED` entries** (the map also holds `MCSActor` and `NPC`, which are
+  not ports). Assert on whichever you mean; do not assert 21 entries.
 - **E** `tests/config-purity.test.ts` green; every number cited
 - **G** `npx vitest run` green with the count stated against **1339**; typecheck 0; lint 0
 - **H** `RESUME_HERE.md` rewritten (top block, never appended), `docs/sessions/-SESSION-LOG.md`,
@@ -117,7 +134,7 @@ count hid a sub-slice split once already.
 ## THE BASELINE TO CONFIRM FIRST
 
 ```bash
-git log -1 --oneline          # b09b211 or later — say what landed since
+git log -1 --oneline          # 4f88780 or later — say what landed since
 npx vitest run                # Test Files 77 passed (77) · Tests 1339 passed (1339)
 npm run -s typecheck && npm run -s lint      # both exit 0
 ```
@@ -141,7 +158,7 @@ READ FIRST, in this order:
   4. DIVERGENCES.md "L4b (slice 2a)" and "(slice 2b)" — findings 9-11; number from 12.
 
 CONFIRM THE BASELINE with a real run:
-  git log -1 --oneline   ->  b09b211
+  git log -1 --oneline   ->  4f88780
   npx vitest run         ->  77 files / 1339 tests
 If HEAD has moved, say what landed since. The test count binds.
 
@@ -164,6 +181,10 @@ THE TRAPS, measured:
     first, then EnemyBoar.as:293, port as full bodies.
   - The stag's setLevel is a hand copy of NPC.as:239 — diff it before deciding.
   - The alpha is changeScale(2,2): any `mcs.scaleX == 1` test in its switch is FALSE.
+  - ai 16 means TWO classes: EnemyNianMonster in the main switch (NPCManager.as:565) but
+    EnemyWolfAlpha in the room dispatch (NPCManager.as:688, `ai == 11 || ai == 16`).
+    Port the two dispatches separately.
+  - The alpha has NO CutsceneManager.isShowing() call; the other five have one each.
   - Harness: world({...}) is a COPY; idleCounter starts at 0; count startAction's
     rng calls; a cooldown armed in doAction ticks in the same update.
   - Pin every range at its exact boundary. A plant that stays green is a missing test.

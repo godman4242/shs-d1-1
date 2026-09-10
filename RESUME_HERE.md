@@ -65,9 +65,18 @@ duellist's); a FRIENDLY through `NpcController` would be handed the PLAYER as it
 
 ### 📋 WHAT IS LEFT — slices 3–6, cheapest-first, one at a time
 
-**SLICE 3 next — kicked off: `docs/sessions/L4B_SLICE3_KICKOFF.md` (paste its `text`
-block into a fresh session).** The six remaining animals, all `extends NPC`, measured per
-file 2026-09-10: **3a** `EnemyBear` / `EnemyDeer` / `EnemyHorse` / `EnemyStag` (1,148 lines,
+**SLICE 3 next — kicked off AND TESTED: `docs/sessions/L4B_SLICE3_KICKOFF.md` (paste its
+`text` block into a fresh session).** Re-measured against the AS3 on 2026-09-10 before
+handover: **34 claims checked, 30 exact, 2 wrong, 1 ambiguous, 1 stale — all four fixed and
+marked inline.** What was wrong: `isAdventureMode` per file was `2/4/3/3/4/4`, actually
+`bear 2 · deer 3 · horse 3 · stag 4 · boar 4 · alpha 4`; `isShowing` was "all six", actually
+**five — the alpha has none**; "(21 total)" in gate C conflated 21 ported classes with 23
+`SHIPPED` entries; the baseline hash `b09b211` was stale (now `4f88780`). One trap ADDED:
+**`ai 16` maps to `EnemyNianMonster` in the main switch (`NPCManager.as:565`) but to
+`EnemyWolfAlpha` in the room dispatch (`:688`)** — port the two dispatches separately.
+**This is the second kickoff running whose per-file counts were wrong on first write
+(slice 2's was corrected mid-session); re-measure, never carry a number forward.**
+The six remaining animals, all `extends NPC`, measured per file 2026-09-10: **3a** `EnemyBear` / `EnemyDeer` / `EnemyHorse` / `EnemyStag` (1,148 lines,
 the wolf's shape on other paperdolls, one `setLevel`); **3b** `EnemyBoar` (the first
 REACTION overrides: knock-down and fly both become a launch) + `EnemyWolfAlpha` (spawns
 wolves through `NPCManager.createEnemy` — a new `spawn` event and finding 12; scale 2;
