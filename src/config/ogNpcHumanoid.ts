@@ -10,18 +10,18 @@
  * per-class gaps (RoomGoblin has no FLY case at all) are behaviour.
  */
 
-/** `EnemyKatana.as:60` / `:64` (twins: `EnemyKnife.as:64/68`, `EnemySpear.as:64/68`) — after GETUP_FRONT the body steps back 40 px. */
+/** `EnemyKatana.as:60` / `:64` (twins: `EnemyKnife.as:64/68`, `EnemySpear.as:64/68`, `EnemyCivilian.as:71/75`, `EnemyCivilianOld.as:50/54`) — after GETUP_FRONT the body steps back 40 px. */
 export const OG_HUMANOID_GETUP_STEP = 40;
 
-/** `EnemyKatana.as:82` (twins: Knife `:86`, Spear `:86`, RoomGoblin `:69`, RoomOgre `:69`) — the bar slides 100 px left while downed… */
+/** `EnemyKatana.as:82` (twins: Knife `:86`, Spear `:86`, RoomGoblin `:69`, RoomOgre `:69`, Civilian `:93`, CivilianOld `:72`) — the bar slides 100 px left while downed… */
 export const OG_HUMANOID_DOWNED_BAR_X = -100;
-/** `EnemyKatana.as:97` (twins: Knife `:101`, Spear `:101`, RoomGoblin `:77`, RoomOgre `:77`) — …and back on getting up. */
+/** `EnemyKatana.as:97` (twins: Knife `:101`, Spear `:101`, RoomGoblin `:77`, RoomOgre `:77`, Civilian `:108`, CivilianOld `:87`) — …and back on getting up. */
 export const OG_HUMANOID_BAR_X_RESET = 0;
 
-/** `EnemyKatana.as:100` / `:104` (twins: Knife `:104/108`, Spear `:104/108`, RoomGoblin `:80/84`, RoomOgre `:80/84`) — DOWNEDUP steps the body 100 px back. */
+/** `EnemyKatana.as:100` / `:104` (twins: Knife `:104/108`, Spear `:104/108`, RoomGoblin `:80/84`, RoomOgre `:80/84`, Civilian `:111/115`, CivilianOld `:90/94`) — DOWNEDUP steps the body 100 px back. */
 export const OG_HUMANOID_DOWNEDUP_STEP = 100;
 
-/** `EnemyKatana.as:213` (twins: Knife `:232`, Spear `:261`, RoomGoblin `:262`, RoomOgre `:280`) — FALL_STATE gravity per frame. */
+/** `EnemyKatana.as:213` (twins: Knife `:232`, Spear `:261`, RoomGoblin `:262`, RoomOgre `:280`, Civilian `:292`, CivilianFemale `:185`, CivilianOld `:243`) — FALL_STATE gravity per frame. */
 export const OG_HUMANOID_FALL_GRAVITY = 3;
 
 /** `EnemyKnife.as:115` (twins: Spear `:119`, RoomGoblin `:91`, RoomOgre `:91`) — a DOWNSTAB on a downed target does double. */

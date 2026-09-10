@@ -50,6 +50,8 @@ export interface NpcWorld {
   censored: boolean;
   /** `GameEngine.isPlayback()` — replays pay no loot or XP. */
   playback: boolean;
+  /** `GameEngine.isAdventureMode()` — the overworld: animals wander and do not bite (`EnemyWolf.as:294`). */
+  adventureMode: boolean;
   /** `NPCManager.getNearestEnemy(x, isEnemy)` — who to fight next. */
   nearestEnemy(fromMapX: number, isEnemy: boolean): NpcTarget | null;
   /** `CutsceneManager.isShowing()` — room actors do not wander or aggro under a cutscene. */
@@ -132,6 +134,19 @@ export type NpcEvent =
       readonly downed: boolean;
       readonly dice: number;
     }
+  | {
+      /**
+       * `mcs.setSpeechText(str)` — a speech bubble. `lang` is a `LangManager.getString(id)`
+       * id (`EnemyCivilian.as:332-348`); `fox` is the index of one of `EnemyFox.as:59-95`'s
+       * nine literal lines, which are third-party lyrics and stay OUT of core — the render
+       * layer owns the text (DIVERGENCES, L4b slice 2).
+       */
+      readonly type: 'speech';
+      readonly table: 'lang' | 'fox';
+      readonly id: number;
+    }
+  /** `mcs.setSpeechText("")` — the bubble goes away. */
+  | { readonly type: 'speechClear' }
   | { readonly type: 'flyingWeapon' }
   | { readonly type: 'flyingHat' }
   | { readonly type: 'dispose' };

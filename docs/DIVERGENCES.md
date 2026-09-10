@@ -4394,3 +4394,103 @@ one strike reaches the Sim per twelve actor steps — the source's own rate, not
 
 Slices 2–6 (29 descendants). `EnemyPlayer`'s branch, `CutsceneActor`, the `AI_TIERS`
 rewire, the fight-feel grade: not built, not attempted, not claimed.
+
+## LANE L4b (slice 2a) — THE WOLVES AND THE CIVILIANS: THE FIRST RECEPTION-SIDE OVERRIDES, PORTED AS FULL BODIES. ONE FINDING ADDED, ONE KICKOFF COUNT MOVED TO 2b (2026-09-10)
+
+**What landed.** `EnemyWolf` (ai 8) → `EnemyWolf2` (ai 10), `EnemyFox` (ai 24);
+`EnemyCivilian` (ai 7, the room dispatches' fallback) → `EnemyCivilianFemale` (ai 33),
+`EnemyCivilianOld` (ai 32) — six classes, 1,645 AS3 lines, each written out in full under
+its cites with `override` on exactly the AS3's set. Numbers in `config/ogEnemyWolf.ts`,
+`ogEnemyFox.ts`, `ogEnemyCivilian.ts`, `ogEnemyCivilianFemale.ts`, `ogEnemyCivilianOld.ts`;
+the civilian twin lines added to `ogNpcHumanoid.ts`; `EnemyWolf2` has no number of its own
+and imports the wolf's (twins named). **+56 tests** (1243 → 1299); eight guards
+chaos-planted red and restored `cmp`-identical.
+
+### THE PORTS GREW BY ONE READ AND TWO EVENTS — no seam change
+
+`NpcWorld.adventureMode` (`GameEngine.isAdventureMode()`, ten uses: the wolf and fox do
+not bite or land pounce hits in the overworld, run at 12 not 15, and the fox flees and
+sings there). `NpcEvent` gained `speech { table: 'lang' | 'fox', id }` — the civilian's
+alert is a `LangManager` id (410–414), the fox's line is an INDEX — and `speechClear`
+(`mcs.setSpeechText("")`). `Npc.emitDeath` became `protected` and `NO_DICE` is exported,
+so a descendant that owns its `die()` reports the death clip through the same event.
+No adapter builds an `NpcWorld` yet (three test harnesses do), so `adventureMode`'s
+answer in a fight is L5's to give; the duel is a room, so `false`.
+
+### ⛔ A KICKOFF COUNT MOVED — measured per file
+
+`L4B_SLICE2_KICKOFF.md` lists `NPCManager.externalRedFreezeCheck()` (9) and
+`StageManager.isPeaceful()` (1) among "the ports these ten will need". Grepped per file:
+the nine are `EnemySpearElite.as` (8) + `FriendlyArcher.as` (1); the one is
+`EnemySpearElite.as`. **Neither touches 2a.** The kickoff is annotated; 2b ports both.
+
+### ⚠️ PORTED AS THEY READ — the wolf against the base
+
+`EnemyWolf.as` overrides `gotHit` (`:343`), `doLaunched` (`:429`), `die` (`:447`) and
+`redFreeze` (`:471`), and each is its own body. Pinned in `tests/npcSlice2a.test.ts`:
+
+- **A WEAPON hit doubles and beheads** (`:373-378`) where `NPC.as:410` deflects it — the
+  wolf has no weapon to parry with; `PART_weapon` is a body part on `MCSWolf`.
+- **Elements are clamped at zero and never defended** (`:355-370`); the base subtracts
+  `STAT_*DEF` with a floor of 1.
+- **Defence and the floor apply BEFORE the alive check** (`:383-387`); invisible in play,
+  kept in the order the source has it.
+- **Only launch and knock-down react** (`:395-402`): no fly, groin, back-throw or stun
+  branch, and `behead` / `stunCounter` are never reset — a wolf that survives a head hit
+  stays `behead = true` until `reset()`.
+- **`die()` pays loot and XP even in playback** (`:450-451` has no `isPlayback` /
+  `dontGiveLoot` guard) and rolls no dice: one clip, `WOLF_DEATH`, no face flip.
+- **`doLaunched` has no peak clip and no `velY > 0` landing guard** (`:435`), and does
+  not hide the bar; **`redFreeze` spares CHARGING and freezes FLY** (`:482`) — the base
+  spares FLY.
+
+### ⚠️ PORTED AS THEY READ — the rest
+
+- **The fox flees before it bites.** In WALK, `checkPlayer()` (`EnemyFox.as:115`) runs
+  BEFORE the bite band (`:116-127`); at 75 px in the overworld it runs, in a room it runs
+  AND bites in the same frame (RUN then ATTACK). Pinned both ways.
+- **Civilians end ENEMYLAND into DOWNED** (`EnemyCivilian.as:61-63`); every fighter so
+  far ends it into WALK.
+- **`EnemyCivilian.spotPlayer` sets `onAlert` BEFORE the transition check** (`:312-327`),
+  unlike `RoomGoblin`'s up-front guards: the alert sticks, the run and the line wait for
+  the fade, and from IDLE it is never re-checked (`!onAlert && doChase`). No `noAggro`
+  or cutscene guard exists here.
+- **`EnemyCivilianOld.update()` is byte-identical to its parent's** (`:20-104` ↔
+  `EnemyCivilian.as:41-125`): an override that changes nothing, written out because the
+  tree test demands the override set and the source has it.
+- **`walkSpeed` is an AS3 `int`** (`NPC.as:12`): the wolf's "half speed backwards"
+  (`:153`) truncates (5 → 2), and the edge bounce's `velX *= 2` is an int product.
+
+### ⚠️ DEAD CODE DROPPED
+
+`EnemyWolf.update`'s finished-clip switch lists `WOLF_LAUNCHEDEND` twice (`:67`, `:114`)
+and `WOLF_DOWNEDTOIDLE` twice in one case group (`:91`, `:94`). The first match wins;
+the repeats are unreachable and not ported.
+
+### WHAT IS DELIBERATELY NOT MODELLED
+
+- **The fox's nine speech lines** (`EnemyFox.as:62-94`) are quoted lyrics from a
+  third-party song. The permission ruling (`docs/OWNER_PERMISSION_RULING.md`) covers
+  Lut's art and code, not that; the strings stay OUT of the repo. Core emits the d9
+  index (`speech`, table `fox`); the render layer owns the text. Veto = put the strings
+  in the render layer, never in `src/core/` or `src/config/`.
+- **`MCSWolf`** (`:15`) — a different display class with four legs; the paperdoll stays
+  the roster's and the clips are `OG_ANIM.WOLF_*`. **`changeScale(1.2, 1.2)`** (`:27`)
+  keeps the facing sign; the port keeps facing and scale apart, so `setScale(1.2)`.
+
+### THE SEAM FINDINGS — one added
+
+**9. The pounce strikes untelegraphed.** `NpcController` emits a `telegraph` on entering
+`ATTACK_STATE` only. The wolf's pounce lands its hits from `CHARGING_STATE`
+(`EnemyWolf.as:299-316`, head and right hand on every airborne frame), so through the
+seam a pounce is a `strike` with no warning. L5 needs the telegraph to fire for CHARGING
+too (or on `WOLF_POUNCE_START`), with the clip's length. Findings 2 and 3 made concrete:
+the pounce moves the body 15 px per frame (the Sim will move it at `ENEMY_SPEED`), and
+the fox parks itself in `REDFREEZE_STATE` off-stage (`EnemyFox.as:149`) — a state the Sim
+cannot see.
+
+### ⛔ NOT DONE — L4b-I at slice level
+
+Slice 2b (`EnemyArcher` → `FriendlyArcher`, `EnemySpearElite` → `FriendlySpearElite`) and
+slices 3–6 (19 more descendants). `EnemyPlayer`'s branch, `CutsceneActor`, the `AI_TIERS`
+rewire, the fight-feel grade: not built, not attempted, not claimed.

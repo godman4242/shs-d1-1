@@ -61,8 +61,8 @@ import { MCSActor, asInt } from './MCSActor';
 import type { NpcDamage } from './NpcDamage';
 import type { AnimLibrary, HitGeometry, HitShape, NpcTarget, NpcWorld } from './types';
 
-/** "No dice were rolled" in a `death` event. */
-const NO_DICE = -ONE;
+/** "No dice were rolled" in a `death` event. Descendants that own their death (`EnemyWolf`) reuse it. */
+export const NO_DICE = -ONE;
 
 export class Npc extends MCSActor implements NpcTarget {
   /** `NPC.as:8` */
@@ -658,7 +658,8 @@ export class Npc extends MCSActor implements NpcTarget {
     this.fatal = flag;
   }
 
-  private emitDeath(dice: number, downed: boolean): void {
+  /** The `death` event, shared with descendants that own their death (`EnemyWolf.as:447`). */
+  protected emitDeath(dice: number, downed: boolean): void {
     this.emit({ type: 'death', anim: this.animation, behead: this.behead, downed, dice });
   }
 

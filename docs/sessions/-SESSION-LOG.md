@@ -3615,3 +3615,25 @@ the owner's LOOK. None was attempted, and none is claimed.
   pin, not a passing guard. Exact-boundary pins added for katana 100 / knife 50 / spear
   400; all three re-planted RED. Everything restored, green again.
 - **20:25** Gate: A/B 0 bytes · **75 files / 1243 tests** (+1 / +35) · typecheck 0 · lint 0.
+
+## SESSION 34 (2026-09-10) — **L4b SLICE 2a: PARENTS WITH THEIR CHILDREN (wolves + civilians).**
+
+- **13:00** Baseline: HEAD `9e663bd` (= `923c445` + the slice-2 kickoff, docs only);
+  75 / 1243, typecheck 0, lint 0. Read the six `.as` files in full and grepped the ten
+  slice-2 files per manager call: **neither `externalRedFreezeCheck` (9) nor `isPeaceful`
+  (1) is in 2a** — all in `EnemySpearElite` / `FriendlyArcher`. 2a's only new read is
+  `adventureMode`; speech bubbles become two events. Plan posted, then go.
+- **13:05** RED: six rows in `SHIPPED` (tree test fails on the missing files); ports
+  added (`adventureMode`, `speech` / `speechClear`, `emitDeath` protected).
+- **13:10** Five config files, CONTRACT, line-cited; `EnemyWolf2` has no number of its own.
+  `tests/npcSlice2a.test.ts` written FROM the AS3, 56 tests, watched RED (module missing).
+- **13:15** Six classes written out in full. First green run needed seven fixes, ALL in the
+  test: the wolf faces its target so the launch goes the other way; the fox's `checkPlayer`
+  runs before its bite band; DYING ticks `ttl` during the clip; `world({...})` spreads a
+  COPY; a fresh actor's `idleCounter` is 0; the female's WALK rolls only `destX`.
+- **13:18** Eight chaos plants RED and restored `cmp`-identical (bite 50→40, flee 200→150,
+  sight 300→200, weapon no longer doubles, bites in the overworld, extra `override` on
+  `EnemyWolf2`, ENEMYLAND→WALK, redFreeze spares FLY). DIVERGENCES finding 9: the pounce
+  strikes untelegraphed (CHARGING_STATE, not ATTACK_STATE).
+- **13:25** Gate: A/B 0 bytes · **76 files / 1299 tests** (+1 / +56) · typecheck 0 · lint 0.
+  The fox's nine lines (third-party lyrics) stay out of the repo — index only.

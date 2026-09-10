@@ -1,82 +1,80 @@
 # RESUME HERE
 
-## ▶ SESSION 33 (2026-09-09) — **L4b SLICES 0 AND 1 ARE CLOSED. THE NPC BASE AND ITS FIVE PATTERN-SETTERS ARE PORTED, BEHIND THE SEAM. 29 DESCENDANTS TO GO.**
+## ▶ SESSION 34 (2026-09-10) — **L4b SLICE 2a IS CLOSED: THE WOLVES AND THE CIVILIANS, PARENTS WITH THEIR CHILDREN. 2b (ARCHERS + SPEAR ELITES) IS NEXT. 23 DESCENDANTS TO GO.**
 
-**The shared base every enemy actor — and the player — inherits from exists in
-TypeScript, and the first five descendants prove the pattern.** `NPC.as` (1,238 lines,
-51 functions) is `src/core/npc/Npc.ts` under `MCSActor.ts`, with `Damage.as` beside it
-and an adapter filling the EXISTING `OpponentController` seam. `EnemyKatana`,
-`EnemyKnife`, `EnemySpear`, `RoomGoblin` and `RoomOgre` sit on it, each overriding
-exactly `update` / `startAction` / `doAction`.
+**Six more actors sit on the base, and the first RECEPTION-side overrides are ported
+as full bodies.** `EnemyWolf` → `EnemyWolf2`, `EnemyFox`; `EnemyCivilian` →
+`EnemyCivilianFemale`, `EnemyCivilianOld` — 1,645 AS3 lines, each class written out
+in full under its cites, `override` on exactly the AS3's set (11 classes in `SHIPPED`).
 
 ```
 $ git log -1 --oneline   ->  (this commit)
 $ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c   ->  0   (gates L4b-A, L4b-B)
 $ npm run -s typecheck   ->  exit 0
 $ npm run -s lint        ->  exit 0
-$ npx vitest run         ->  Test Files  75 passed (75)      (was 70 — +5)
-                             Tests  1243 passed (1243)       (was 1113 — +130)
+$ npx vitest run         ->  Test Files  76 passed (76)      (was 75 — +1)
+                             Tests  1299 passed (1299)       (was 1243 — +56)
 ```
 
-### ✅ WHAT LANDED (slice 0 at `3a34efc`, slice 1 in this commit)
+### ✅ WHAT LANDED (slice 2a, this commit)
 
-**1. The base, function for function.** `Npc.ts` carries all 51 of `NPC.as`'s functions
-by the source's names, in source order, each under its cite (`tests/npcTree.test.ts`
-checks the set against the AS3). `types.ts` holds the ports every Flash singleton became:
-`NpcWorld` (ground, stage width, red-freeze, player level, the three aggro guards, room
-furniture), `HitGeometry`, `NpcTarget` (position, dead, downed, swing-at-me), and the
-`NpcEvent` list the render layer drains.
+**1. The wolf's reception side is its OWN body, pinned against the base six ways**
+(`tests/npcSlice2a.test.ts`): a WEAPON hit doubles damage and beheads instead of
+deflecting; elements are clamped at zero but never defended; defence and the floor
+apply before the alive check; only launch and knock-down react; `behead` is never
+cleared; `die()` pays loot and XP even in playback and rolls no dice. `doLaunched` has
+no peak clip and no landing guard; `redFreeze` spares CHARGING, not FLY.
 
-**2. The seam, filled.** The original runs at **24 fps** (SWF header of all seven
-reference builds; `Mobile.as:117`); `NpcController.ts` STEPS the actor 24 times per 60
-ticks on an integer clock, so every constant stays verbatim. The Sim owns x; `moveX` is
-the sign of the actor's own step, held between steps; a swing is `strike`; entering
-ATTACK is a `telegraph`. The player proxy carries the receiver's twelve-frame hit guard,
-because the katana swings on every attack frame and the source rate-limits on the receiver.
+**2. Two ports, no seam change.** `NpcWorld.adventureMode` (`GameEngine.isAdventureMode`,
+ten uses across wolf/fox: no bite, no pounce hits, run at 12 not 15, the fox flees and
+sings). `NpcEvent` `speech { table: 'lang' | 'fox', id }` and `speechClear` — the
+civilian's five alert lines by `LangManager` id, the fox's nine lines by INDEX only.
+`Npc.emitDeath` is `protected` and `NO_DICE` is exported, so the wolf's death reports
+like the base's.
 
-**3. Five descendants, written out in full** — the kickoff forbids flattening, and the
-per-class gaps are behaviour (`RoomGoblin` has no FLY case: hit by a fly it never moves
-again). Numbers in one config file per class plus `ogNpcHumanoid.ts` for the six the
-humanoid `update()` switch repeats, each twin line named.
+**3. ⛔ KICKOFF CORRECTED BY THE SOURCE (measured per file):** the nine uses of
+`NPCManager.externalRedFreezeCheck()` are `FriendlySpearElite`'s parent (8) and
+`FriendlyArcher` (1); `StageManager.isPeaceful()` is `EnemySpearElite`'s. **Neither
+is 2a's** — slice 2b adds them, with `playerStats`. The kickoff is annotated.
 
-**4. ⛔ CORRECTED BY THE SOURCE.** `class MCSPlayer extends NPC` (the kickoff drew it as a
-sibling root — L5 inherits this base); the override vocabulary is **22** over the 34
-in-scope classes, **31** over all 39. Both pinned; kickoff annotated.
+**4. Ported as they read, all pinned:** the fox's `checkPlayer` runs BEFORE its bite
+band, so at 75 px in the overworld it flees instead of biting; civilians end ENEMYLAND
+into DOWNED (fighters go to WALK); `EnemyCivilian.spotPlayer` sets `onAlert` BEFORE the
+transition check, so the alert sticks and the run waits for the fade; `EnemyCivilianOld.
+update()` is byte-identical to its parent's — an override that changes nothing, written
+out because the tree test demands the set. The two duplicate case labels in
+`EnemyWolf.update` (`:94`, `:114`) are unreachable and dropped.
 
-**5. Quirks ported as they read, all pinned**: the katana's melee tolerance is 10 px
-facing left and 50 facing right; `RoomGoblin`'s fidget roll fires only on an exact 0.5;
-a finished attack clip re-enters ATTACK in the same frame (a 3-frame clip swings twice);
-`gotLaunched`'s downed guard is dead code. DIVERGENCES "L4b (slice 0)" and "(slice 1)".
+**5. ⚠️ THE FOX'S LINES ARE NOT IN THE REPO.** `EnemyFox.as:62-94` quote lyrics from a
+third-party song; the permission ruling covers Lut's art, not that. Core carries the
+d9 index; the render layer owns the text. Veto = add the strings to the RENDER layer.
 
-**6. Chaos-planted, and one plant that stayed green.** Twelve plants across the two
-slices went red and came back. The katana's range 100→90 did NOT — nothing pinned the
-boundary exactly. Exact-boundary pins now exist for katana 100 / knife 50 / spear 400,
-each re-planted red. A plant that stays green is a missing test, not a passing guard.
+**6. Eight chaos plants, all red, all restored `cmp`-identical:** wolf bite 50→40 ·
+fox flee 200→150 · civilian sight 300→200 · weapon hit no longer doubles · wolf bites
+in the overworld · extra `override` on `EnemyWolf2` (gate C) · ENEMYLAND→WALK ·
+redFreeze spares FLY. The seven first-run failures were ALL test-side (facing, rng
+order, the harness's world spread, IDLE firing on a zero counter) — the ports stood.
 
-### 📋 WHAT IS LEFT — slices 2–6, cheapest-first, one at a time
+### 📋 WHAT IS LEFT — slice 2b now, then 3–6
 
-**SLICE 2 next — kicked off: `docs/sessions/L4B_SLICE2_KICKOFF.md` (paste its `text`
-block into a fresh session).** ⚠️ Every one of the lane doc's slice-2 classes extends a
-slice-3/4 parent, so slice 2 is REGROUPED as parent + children: **2a** wolves (`EnemyWolf`
-→ `EnemyWolf2`, `EnemyFox`) + civilians (`EnemyCivilian` → `EnemyCivilianFemale`,
-`EnemyCivilianOld`), 6 classes / 1,645 lines; **2b** archers (`EnemyArcher` →
-`FriendlyArcher`) + spear elites (`EnemySpearElite` → `FriendlySpearElite`), 4 classes /
-1,041 lines. Two gates, two commits. The kickoff lists the SEVEN new ports those ten need
-(player stats at 0.75 for the friendlies, adventure mode, the external red-freeze check,
-the archer's arrow…), measured 2026-09-09. Veto = run slices 3 and 4 first.
+**SLICE 2b next: `EnemyArcher` (311) → `FriendlyArcher` (86); `EnemySpearElite`
+(584) → `FriendlySpearElite` (60).** Same kickoff (`docs/sessions/L4B_SLICE2_KICKOFF.md`),
+same pattern, same gate. The ports 2b needs and 2a did not: `NpcWorld.playerStats`
+(`FriendlyArcher.setLevel` = 0.75 × the player's live maxhp/defense/damage, xp 0),
+`NpcWorld.externalRedFreezeCheck()` (9 uses), `NpcWorld.peaceful` (1), and an `arrow`
+event — the seam has only `throwKunai`, so the arrow is DIVERGENCES finding 10 (9 is
+the untelegraphed pounce, this commit). Override sets to match: archer `update
+startAction doAction die`; friendly archer `setLevel init checkHitObject`; spear elite
+`setLevel update startAction doAction checkHitObject`; friendly spear elite `setLevel init`.
 
-**How a class ships (the pattern slices 0–1 fixed):**
-1. `src/core/npc/<Name>.ts` — `export class <Name> extends <Parent>`, `override` on
-   EXACTLY the AS3's override set (`tests/npcTree.test.ts` compares the two).
-2. Numbers → `src/config/og<Name>.ts`, CONTRACT, `<File>.as:<line>`; shared repeats →
-   `ogNpcHumanoid.ts` with the twin lines named. Anim keys are in `OG_ANIM`.
-3. Add the class to `SHIPPED` in `tests/npcTree.test.ts`; write its test FROM the AS3,
-   red first. Harness rule learned in slice 1: `world.nearestEnemy` must answer with the
-   target — the source ASSIGNS what it gets, null included.
-4. `mcs.updateAnimation()` → `stepAnimation()`; `mcs.x/y/scaleX == 1` → `x` / `y` /
-   `facingRight && scale === ONE`; `mcs == null` → `disposed`; `target.mcs.x` → `target.x`.
-5. A new world read → a field on `NpcWorld`; anything the seam cannot express →
-   DIVERGENCES, never a seam change.
+**How a class ships (unchanged from slices 0–1):** `src/core/npc/<Name>.ts` with
+`override` on EXACTLY the AS3's set → numbers in `src/config/og<Name>.ts`, CONTRACT,
+line-cited, twins named → add to `SHIPPED` in `tests/npcTree.test.ts` → test FROM the
+AS3, red first → chaos-plant → DIVERGENCES for anything the seam cannot express.
+Harness rules that bit this slice: a class's world is a COPY (`world({...})` spreads) —
+mutate `npc.world`, not your literal; a fresh actor's `idleCounter` is 0, so put it in
+a state whose `doAction` is inert (VICTIM, DOWNED) before testing a clip-end case; count
+the rng calls a `startAction` makes before choosing a `seq`.
 
 ```bash
 npx vitest run && npm run -s typecheck && npm run -s lint
@@ -85,23 +83,24 @@ python3 scripts/payload/transcribeActorConsts.py && git diff --stat src/config/o
 
 ### ⛔ WHAT A FUTURE SESSION MUST NOT "FIX"
 
-- **In-frame re-entry is the source's** (clip-end switch BEFORE `doAction`). Reordering
-  changes every swing rate. Pinned in `tests/npcSlice1.test.ts`.
-- **`gotLaunched()`'s guard is ported as it BEHAVES** (`NPC.as:538` is dead code); the
-  real guard is `gotHit`'s `!isDowned()`, which has its own test.
+- **In-frame re-entry is the source's** (clip-end switch BEFORE `doAction`). Pinned in
+  `tests/npcSlice1.test.ts` and again for the wolf's bite.
+- **The wolf's `gotHit` / `doLaunched` / `die` / `redFreeze` are NOT deltas over the
+  base.** Six differences are pinned; "sharing" them with `Npc` changes the wolf.
+- **The fox flees before it bites** and **civilians land into DOWNED** — both the source's.
+- **`gotLaunched()`'s guard is ported as it BEHAVES** (`NPC.as:538` is dead code).
 - **The 24 Hz clock is an integer accumulator**; the 2,3,2,3 pattern is pinned.
-- **`OG_NPCS`'s `hp`/`attack`/`defense` go into `Npc.init()` RAW** — that IS the NPC
-  class's behaviour. `core/enemyModel.ts` is `EnemyPlayer`'s; do not route NPCs through it.
+- **`OG_NPCS`'s `hp`/`attack`/`defense` go into `init()` RAW**; civilians force level 1.
 - **`src/config/ogActor.ts` is CLOSED evidence** — re-run the transcriber, never hand-edit.
 - **The roster anomalies, the `<mcs>` pool order, `aiEffective`, `AI_TIERS` staying wired
   until L5** — all carried from SESSION 32.
 
 ### ⛔ NOT DONE, and said here rather than at a gate
 
-Slices 2–6 (29 descendants). `EnemyPlayer` + `EnemyElite` + `EnemyPlayerGiant` +
-`FriendlyElite` (they extend `MCSPlayer` — **L5**). `CutsceneActor` (**L1**). Rewiring
-`AI_TIERS` (moves `Sim.ts` — **L5**). The fight-feel grade (A1 cites + the owner's LOOK).
-None attempted, none claimed.
+Slice 2b (4 classes) and slices 3–6 (19 more descendants). `EnemyPlayer` + `EnemyElite`
++ `EnemyPlayerGiant` + `FriendlyElite` (they extend `MCSPlayer` — **L5**). `CutsceneActor`
+(**L1**). Rewiring `AI_TIERS` (moves `Sim.ts` — **L5**). The fight-feel grade (A1 cites +
+the owner's LOOK). None attempted, none claimed.
 
 ## ⛔ SESSION 30 (2026-09-06) — **L3B: THE GATE IS BUILT AND TWO DEFECTS ARE GONE. THE ART IS STILL OPEN.**
 

@@ -33,6 +33,7 @@ const world = (over: Partial<NpcWorld> = {}): NpcWorld => ({
   playerLevel: 20,
   censored: false,
   playback: false,
+  adventureMode: false,
   nearestEnemy: () => null,
   cutsceneShowing: false,
   transitioning: false,

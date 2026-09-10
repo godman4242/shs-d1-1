@@ -49,8 +49,8 @@ Grep of the ten files for manager calls, 2026-09-09. Each becomes a field on `Np
 |---|---|---|---|
 | `StatsManager.getPlayerStats(STAT_MAXHP / STAT_DEFENSE) + findBonusStat(...)`, `getMinDamage()`, `getDamageRange()` | 6 / 6 / 3 / 3 | the PLAYER's live stats — `FriendlyArcher.setLevel` sets `damage / defense / maxhp` to **0.75 ×** the player's (`FriendlyArcher.as:21-34`); `xp = 0` | `NpcWorld.playerStats: { maxHp, defense, minDamage, damageRange }` (bonus already summed) |
 | `GameEngine.isAdventureMode()` | 10 (wolf 4, fox 6) | overworld-adventure vs room | `NpcWorld.adventureMode: boolean` |
-| `NPCManager.externalRedFreezeCheck()` | 9 | after an actor lands a hit, the manager checks whether the kill-cam should fire and whether anything died (`NPCManager.as:1651`) | `NpcWorld.externalRedFreezeCheck(): void` — a callback; the Sim/scene decides |
-| `StageManager.isPeaceful()` | 1 | the stage's peaceful flag | `NpcWorld.peaceful: boolean` |
+| `NPCManager.externalRedFreezeCheck()` | 9 — **⛔ measured per file 2026-09-10: `EnemySpearElite.as` 8 + `FriendlyArcher.as` 1; NONE in 2a** | after an actor lands a hit, the manager checks whether the kill-cam should fire and whether anything died (`NPCManager.as:1651`) | `NpcWorld.externalRedFreezeCheck(): void` — a callback; the Sim/scene decides |
+| `StageManager.isPeaceful()` | 1 — **⛔ `EnemySpearElite.as` only; 2b's** | the stage's peaceful flag | `NpcWorld.peaceful: boolean` |
 | `ProjectileManager.createArrow(x, y, vx, vy, damage, canLaunch, owner)` | 1 (`EnemyArcher.as:300`) | the archer's shot | an `NpcEvent { type: 'arrow', … }` **and a DIVERGENCES finding**: the seam has only `throwKunai`, so an arrow cannot reach the Sim as itself |
 | `LangManager.getString(id)` | 5 | civilian speech text ids | an `NpcEvent { type: 'speech', stringId }` — never the string |
 | `new MCSWolf()` | 3 | a different display class (four legs) | `paperdoll` stays the roster's; the anim keys are `WOLF_*` in `OG_ANIM` already |
@@ -158,6 +158,7 @@ THE TRAPS THIS SLICE, measured:
     stats (FriendlyArcher.as:21-34) — a new NpcWorld.playerStats port, not a number.
   - Ten uses of GameEngine.isAdventureMode() in wolf/fox; nine of
     NPCManager.externalRedFreezeCheck() — both new ports, listed in the kickoff.
+    (⛔ annotated 2026-09-10: the nine are ALL in 2b's classes — see the table.)
   - Harness: world.nearestEnemy must answer with the target; the source assigns null.
   - Pin every range at its exact boundary. A plant that stays green is a missing test.
 
