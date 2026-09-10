@@ -3637,3 +3637,24 @@ the owner's LOOK. None was attempted, and none is claimed.
   strikes untelegraphed (CHARGING_STATE, not ATTACK_STATE).
 - **13:25** Gate: A/B 0 bytes · **76 files / 1299 tests** (+1 / +56) · typecheck 0 · lint 0.
   The fox's nine lines (third-party lyrics) stay out of the repo — index only.
+
+## SESSION 34 (cont.) — **L4b SLICE 2b: THE ARCHERS AND THE SPEAR ELITES.**
+
+- **13:20** 2a committed at `ff59d99`. Read the four `.as` files in full. Two ports the
+  kickoff did not list: `GameEngine.isDuelMode()` (the elite's bow) and
+  `target.isAirborne()` (the elite waits out a jump) — `NpcTarget` grows, the proxy
+  answers `playerJumping`. The boss floor chain (`:95-110`) FALLS THROUGH to `lvl/4`;
+  computed by hand before pinning.
+- **13:26** RED: four rows in `SHIPPED`; five world reads + one callback, `breakable`, three
+  events; four harnesses patched. Three config files. `tests/npcSlice2b.test.ts`, 40 tests
+  from the AS3, watched RED.
+- **13:31** Four classes written out in full. Seven first-run fixes, ALL test-side (IDLE's own
+  frame does not step; a WALK whose destX is where it stands reloads at once; the elite's
+  cooldown ticks in the same update; a friendly is only friendly after `setIsFriendly()`).
+  Typecheck caught an inline stub, lint caught four empty callbacks and one optional chain.
+- **13:35** Seven chaos plants RED and restored `cmp`-identical (melee 100→90, scale
+  0.75→0.8, ranged 200→150, the floor chain flattened to a max, jitter dropped, an enemy
+  elite red-freeze-checking, an extra `override` on `FriendlySpearElite`). DIVERGENCES 10
+  (the arrow) and 11 (a friendly through the seam targets the player).
+- **13:38** Gate: A/B 0 bytes · **77 files / 1339 tests** (+2 / +96 over 1243) · typecheck 0
+  · lint 0 · transcriber diff empty. Slice 2 closed; 19 descendants remain, none with children.

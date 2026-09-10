@@ -42,6 +42,10 @@ const world = (over: Partial<NpcWorld> = {}): NpcWorld => ({
   transitioning: false,
   noAggro: false,
   npcBlocked: () => false,
+  playerStats: { maxHp: 200, defense: 40, minDamage: 30, damageRange: 21 },
+  peaceful: false,
+  duelMode: false,
+  externalRedFreezeCheck: () => undefined,
   ...over,
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: CLIP, loop: false }) };
@@ -75,6 +79,9 @@ class Dummy implements NpcTarget {
     return this.dead;
   }
   isDowned(): boolean {
+    return false;
+  }
+  isAirborne(): boolean {
     return false;
   }
   checkHitObject(thing: HitShape, damage: NpcDamage): boolean {

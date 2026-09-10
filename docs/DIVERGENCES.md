@@ -4494,3 +4494,88 @@ cannot see.
 Slice 2b (`EnemyArcher` → `FriendlyArcher`, `EnemySpearElite` → `FriendlySpearElite`) and
 slices 3–6 (19 more descendants). `EnemyPlayer`'s branch, `CutsceneActor`, the `AI_TIERS`
 rewire, the fight-feel grade: not built, not attempted, not claimed.
+
+## LANE L4b (slice 2b) — THE ARCHERS AND THE SPEAR ELITES: THE FIRST FRIENDLIES, THE FIRST BOSS BALANCE, THE ARROW. TWO FINDINGS ADDED (2026-09-10)
+
+**What landed.** `EnemyArcher` (ai 2) → `FriendlyArcher` (ai 34); `EnemySpearElite` (ai 28,
+and ai 37 as the boss) → `FriendlySpearElite` (ai 31) — four classes, 1,041 AS3 lines,
+each written out in full with `override` on exactly the AS3's set. Numbers in
+`config/ogEnemyArcher.ts`, `ogEnemySpearElite.ts` and `ogNpcFriendly.ts` (what the two
+friendlies share, byte-identical bodies); the archer / elite twin lines added to
+`ogNpcHumanoid.ts`. **+40 tests** (1299 → 1339); seven guards chaos-planted red and
+restored `cmp`-identical.
+
+### THE PORTS GREW BY FOUR READS, ONE TARGET QUESTION, ONE SHAPE FLAG AND THREE EVENTS — no seam change
+
+`NpcWorld`: `playerStats { maxHp, defense, minDamage, damageRange }` (the PLAYER's live
+stats, bonuses summed — `StatsManager.getPlayerStats + findBonusStat`, `getMinDamage`,
+`getDamageRange`), `peaceful` (`StageManager.isPeaceful`), `duelMode`
+(`GameEngine.isDuelMode`), `externalRedFreezeCheck()` (`NPCManager.as:1651`, a callback).
+`NpcTarget.isAirborne()` — the proxy answers `OpponentView.playerJumping`, the one
+reaction state the seam does carry. `HitShape.breakable?` (`Projectile.canBreak`).
+`NpcEvent`: `arrow { x, y, velX, velY, damage, canLaunch }`, `setProp { itemId }`,
+`breakProjectile`. **No adapter builds an `NpcWorld` yet**; the five reads and the
+callback are L5's to wire.
+
+### ⚠️ PORTED AS THEY READ
+
+- **The friendlies are built from the PLAYER** (`FriendlyArcher.as:21-34`,
+  `FriendlySpearElite.as:19-32`): damage / defense / maxhp = 0.75 × the player's, xp 0,
+  `level = StatsManager.getLevel()` on `init` — the roster row supplies only the paperdoll,
+  the elements and the loot. Every stat is an AS3 `int`: `playerATK = minDamage +
+  damageRange / 2` truncates once, then each `× 0.75` truncates again.
+- **The boss balance** (`EnemySpearElite.as:51-129`): scaled like the base, `xp = lvl·5+45`,
+  then hp raised to survive `10 + lvldiff` player hits (floor 3) and damage raised to kill
+  in `18 − lvldiff` (floor 1). **The player's-hit floor is an if / else-if chain that FALLS
+  THROUGH** (`:95-110`): a hit that clears its own tier's `lvl/8` or `lvl/6` is still
+  tested against `lvl/4`. At player level 20 a hit of 3 becomes 5, not 3. A plant that
+  flattened it to `max(hit, ladder)` went red. The second scaling block (`:71-78`) runs
+  with `factor = 1` and is kept — it costs the int products.
+- **`AI()` arms `spearSpinCoolDown` for all three specials** (`:541`, `:547`, `:553`);
+  `spearFlurryCoolDown` and `spearLaunchCoolDown` are declared, decremented (`:277-284`)
+  and never set. Pinned: flurry and launch leave their own cooldowns at 0.
+- **The elite never returns early on a missing target** (`:139-142`): `AI()` runs every
+  frame while there is none (`:331`), and WALK with none idles (`:344-348`).
+- **The archer's knife lands ONCE, when its clip ends** (`EnemyArcher.as:119-121`), then
+  WALK — whose fresh `destX` may be where it stands, so it reloads in the same frame.
+  `update()` has no re-target trigger; only AIM re-targets (`:212-214`).
+- **A shot at a target straight above leaves at (0, 0)**: `fireArrow` divides `|dx|` by
+  `velXa`, both 0 → NaN through the whole solve, and `createArrow`'s `int` parameters read
+  NaN as 0 (`:277-281`, `:300`). Ported as it reads, through `asInt`.
+- **`FriendlyArcher.checkHitObject` continues past a refused part** (`:66-80` has no
+  `return false`), where `NPC.as:323` and the elite stop. `HitGeometry.partHitBy` answers
+  ONE part, so a refused bow hit ends the scan here too. The only case that differs — a
+  slash overlapping the bow AND the body — needs the multi-part geometry L5 will build.
+
+### ⚠️ DEAD CODE DROPPED
+
+`EnemySpearElite.setLevel`: `namecolor` (`:63`, written, never read) and the `else` at
+`:65-68` (`xp = lvl * 2 + 20`, unreachable inside `isBoss`).
+
+### WHAT IS DELIBERATELY NOT MODELLED
+
+- **`mcs.setDisplayName(name, 0xFFCC00)`** (`FriendlyArcher.as:57`, `FriendlySpearElite.as:55`)
+  — the gold nameplate of a friendly; render-side, as every `setDisplayName` is.
+- **`mcs.setProp(13000)`** on the archer's death (`:307`) is a `setProp` event; which clip
+  item 13000 is (`ogItems.ts`: type 9, a prop) is the render layer's.
+
+### THE SEAM FINDINGS — two added
+
+**10. The arrow has no seam channel.** `ProjectileManager.createArrow(x, y, vx, vy,
+damage, canLaunch, owner)` (`EnemyArcher.as:300`) is an `arrow` event on `npc.events`.
+`OpponentIntent` has `throwKunai` — the DUELLIST's straight throw at the player's current
+position — and nothing for a ballistic shot with its own velocity, gravity (`Projectile.as:8`
+= 3) and launch flag. L5 needs a projectile intent or a scene-side drain of the event; until
+then an archer through the seam only ever knifes.
+
+**11. A friendly through the seam would attack the player.** `NpcController` hands every
+actor the PLAYER proxy as its target and answers `nearestEnemy` with it. `FriendlyArcher`
+and `FriendlySpearElite` hunt with `isEnemy = false` (`NPC.as:262`, `EnemyArcher.as:29`)
+— they need an ENEMY actor, and the seam has one enemy slot per controller and no way to
+hand an actor another actor. The friendlies are ported and tested; they cannot be fielded
+until L5 gives the world a real `nearestEnemy`.
+
+### ⛔ NOT DONE — L4b-I at slice level
+
+Slices 3–6 (19 descendants, none with children). `EnemyPlayer`'s branch, `CutsceneActor`,
+the `AI_TIERS` rewire, the fight-feel grade: not built, not attempted, not claimed.

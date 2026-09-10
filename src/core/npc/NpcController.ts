@@ -58,6 +58,11 @@ class PlayerProxy implements NpcTarget {
   isDowned(): boolean {
     return false;
   }
+  /** `OpponentView.playerJumping` — the one reaction state the seam does carry. */
+  airborne = false;
+  isAirborne(): boolean {
+    return this.airborne;
+  }
   checkHitObject(thing: HitShape, damage: NpcDamage): boolean {
     void thing;
     void damage;
@@ -94,6 +99,7 @@ export class NpcController implements OpponentController {
     npc.setPosition(view.enemyPos.x, npc.y);
     this.proxy.x = view.playerPos.x;
     this.proxy.y = view.playerPos.y;
+    this.proxy.airborne = view.playerJumping;
 
     let struck = false;
     let telegraphMs: number | null = null;

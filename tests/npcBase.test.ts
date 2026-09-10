@@ -51,6 +51,10 @@ const world = (over: Partial<NpcWorld> = {}): NpcWorld => ({
   transitioning: false,
   noAggro: false,
   npcBlocked: () => false,
+  playerStats: { maxHp: 200, defense: 40, minDamage: 30, damageRange: 21 },
+  peaceful: false,
+  duelMode: false,
+  externalRedFreezeCheck: () => undefined,
   ...over,
 });
 
@@ -78,6 +82,7 @@ const targetAt = (x: number, y = GROUND): NpcTarget => ({
   getMapPosition: () => x,
   isDead: () => false,
   isDowned: () => false,
+  isAirborne: () => false,
   checkHitObject: () => false,
 });
 

@@ -62,6 +62,23 @@ export interface NpcWorld {
   noAggro: boolean;
   /** `GameStage.isNPCBlocked(x, facingRight)` — room furniture within 50 px in the walk direction. */
   npcBlocked(screenX: number, facingRight: boolean): boolean;
+  /**
+   * The PLAYER's live stats, bonuses already summed — `StatsManager.getPlayerStats(STAT_MAXHP)
+   * + findBonusStat(STAT_MAXHP)`, the same for `STAT_DEFENSE`, `getMinDamage()`,
+   * `getDamageRange()`. The friendlies scale themselves to 0.75 of these
+   * (`FriendlyArcher.as:24-29`); the spear boss balances against them (`EnemySpearElite.as:79-123`).
+   */
+  playerStats: { maxHp: number; defense: number; minDamage: number; damageRange: number };
+  /** `StageManager.isPeaceful()` — no fighting; the spear elite bows instead (`EnemySpearElite.as:509`). */
+  peaceful: boolean;
+  /** `GameEngine.isDuelMode()` — the bow is a duel courtesy (`EnemySpearElite.as:511`). */
+  duelMode: boolean;
+  /**
+   * `NPCManager.externalRedFreezeCheck()` (`NPCManager.as:1651`) — after a FRIENDLY lands a
+   * hit, or an elite takes a killing one: the manager decides whether the kill-cam fires
+   * and who died. A callback; the Sim or scene decides.
+   */
+  externalRedFreezeCheck(): void;
 }
 
 /**
@@ -73,6 +90,8 @@ export interface HitShape {
   readonly kind: 'part' | 'other';
   readonly part: OgPart | null;
   readonly owner: MCSActor | null;
+  /** `Projectile.canBreak()` — a projectile the spear elite's weapon can snap (`EnemySpearElite.as:467-474`). */
+  readonly breakable?: boolean;
 }
 
 /**
@@ -95,6 +114,8 @@ export interface NpcTarget {
   isDead(): boolean;
   /** `NPC.isDowned()` — knife, spear, goblin and ogre stab a downed target for double. */
   isDowned(): boolean;
+  /** `NPC.isAirborne()` — the spear elite waits out a jumping target (`EnemySpearElite.as:338`). */
+  isAirborne(): boolean;
   /** The attacker asks its target to test one of the ATTACKER's parts against the target's body. */
   checkHitObject(thing: HitShape, damage: NpcDamage, checkByAttacker?: boolean): boolean;
 }
@@ -147,6 +168,20 @@ export type NpcEvent =
     }
   /** `mcs.setSpeechText("")` — the bubble goes away. */
   | { readonly type: 'speechClear' }
+  | {
+      /** `ProjectileManager.createArrow(x, y, vx, vy, damage, canLaunch, owner)` — the archer's shot (`EnemyArcher.as:300`). Ints, as the call takes them. */
+      readonly type: 'arrow';
+      readonly x: number;
+      readonly y: number;
+      readonly velX: number;
+      readonly velY: number;
+      readonly damage: number;
+      readonly canLaunch: boolean;
+    }
+  /** `mcs.setProp(itemId)` — the paperdoll's prop slot changes (`EnemyArcher.as:307`: the bow is dropped on death). */
+  | { readonly type: 'setProp'; readonly itemId: number }
+  /** `Projectile.doBreak()` — the thing that just hit this actor's weapon snaps (`EnemySpearElite.as:472`). */
+  | { readonly type: 'breakProjectile' }
   | { readonly type: 'flyingWeapon' }
   | { readonly type: 'flyingHat' }
   | { readonly type: 'dispose' };

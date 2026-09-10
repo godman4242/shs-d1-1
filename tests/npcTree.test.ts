@@ -92,6 +92,11 @@ const SHIPPED: Readonly<Record<string, string>> = {
   EnemyCivilian: 'EnemyCivilian.ts',
   EnemyCivilianFemale: 'EnemyCivilianFemale.ts',
   EnemyCivilianOld: 'EnemyCivilianOld.ts',
+  // slice 2b — the archers and the spear elites
+  EnemyArcher: 'EnemyArcher.ts',
+  FriendlyArcher: 'FriendlyArcher.ts',
+  EnemySpearElite: 'EnemySpearElite.ts',
+  FriendlySpearElite: 'FriendlySpearElite.ts',
 };
 
 /** AS3 name → TS class name, where they differ. */
