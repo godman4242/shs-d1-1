@@ -3658,3 +3658,10 @@ the owner's LOOK. None was attempted, and none is claimed.
   (the arrow) and 11 (a friendly through the seam targets the player).
 - **13:38** Gate: A/B 0 bytes · **77 files / 1339 tests** (+2 / +96 over 1243) · typecheck 0
   · lint 0 · transcriber diff empty. Slice 2 closed; 19 descendants remain, none with children.
+- **13:50** Owner: "do the next steps yourself, now and in every session." Step 1 verified
+  (top block SESSION 34, 15 of 34). Step 2 run and taken further: the six animals measured
+  per file — all `extends NPC`; the alpha SPAWNS wolves (`createEnemy`, a new event +
+  finding 12) and its `gotHit` is not the wolf's; the boar's knock-down and fly both become
+  a launch. `L4B_SLICE3_KICKOFF.md` written (3a bear/deer/horse/stag, 3b boar/alpha). Step 3
+  ruled: the pounce telegraph fires on CHARGING entry with the pounce-start clip's length.
+  Standing rule saved (memory + global CLAUDE.md): execute my own next steps, not just list them.

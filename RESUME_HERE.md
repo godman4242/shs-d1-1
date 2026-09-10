@@ -65,14 +65,16 @@ duellist's); a FRIENDLY through `NpcController` would be handed the PLAYER as it
 
 ### 📋 WHAT IS LEFT — slices 3–6, cheapest-first, one at a time
 
-**19 descendants remain**, none with children, so the lane doc's cheapest-first order
-holds from here (`docs/sessions/L4B_KICKOFF.md`): animals (`EnemyBear`, `EnemyBoar`,
-`EnemyDeer`, `EnemyHorse`, `EnemyStag`, `EnemyWolfAlpha`), the goblins and ogre, the
-ninja / shield / zombie / room zombie, the props (`EnemyTrainingDummy`, `EnemyVegePatch`
-— TEN overrides and neither spine method, pinned), the bosses (`EnemyJiangSi`,
-`EnemyKanjiGuardian`, `EnemyNianMonster`, `EnemySorcererBoss`). Write the next slice's
-kickoff the way `L4B_SLICE2_KICKOFF.md` was written: measure the override sets and the
-manager calls PER FILE first.
+**SLICE 3 next — kicked off: `docs/sessions/L4B_SLICE3_KICKOFF.md` (paste its `text`
+block into a fresh session).** The six remaining animals, all `extends NPC`, measured per
+file 2026-09-10: **3a** `EnemyBear` / `EnemyDeer` / `EnemyHorse` / `EnemyStag` (1,148 lines,
+the wolf's shape on other paperdolls, one `setLevel`); **3b** `EnemyBoar` (the first
+REACTION overrides: knock-down and fly both become a launch) + `EnemyWolfAlpha` (spawns
+wolves through `NPCManager.createEnemy` — a new `spawn` event and finding 12; scale 2;
+player-stat balance; a `gotHit` that is NOT the wolf's). Every port it needs already
+exists except the spawn event. After that: the goblins and ogre, ninja / shield / zombies,
+the props (`EnemyVegePatch` — TEN overrides and neither spine method, pinned), the bosses
+— 13 more, `docs/sessions/L4B_KICKOFF.md`'s order.
 
 **How a class ships (unchanged):** `src/core/npc/<Name>.ts` with `override` on EXACTLY the
 AS3's set → numbers in `src/config/og<Name>.ts`, CONTRACT, line-cited, twins named → add to

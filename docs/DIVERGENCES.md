@@ -4484,7 +4484,15 @@ the repeats are unreachable and not ported.
 `ATTACK_STATE` only. The wolf's pounce lands its hits from `CHARGING_STATE`
 (`EnemyWolf.as:299-316`, head and right hand on every airborne frame), so through the
 seam a pounce is a `strike` with no warning. L5 needs the telegraph to fire for CHARGING
-too (or on `WOLF_POUNCE_START`), with the clip's length. Findings 2 and 3 made concrete:
+too (or on `WOLF_POUNCE_START`), with the clip's length.
+**RULING (decide-and-flag, 2026-09-10): the telegraph fires on ENTERING `CHARGING_STATE`,
+its length = the `WOLF_POUNCE_START` clip's, because that wind-up is the warning the
+player actually sees — the hits come from the mid clips that follow it.** Red-team: the
+rejected option (telegraph on the mid clip) warns later and shorter; my pick breaks if
+the pounce-start clip is only a frame or two at 24 fps (an 80 ms warning, shorter than
+the katana's), and it secretly depends on L5 reading the clip table for a CHARGING entry
+the way `NpcController` reads it for ATTACK today. Veto = telegraph on `WOLF_POUNCE_MID`
+/ `MIDHIGH` start instead; one line in the adapter either way. Findings 2 and 3 made concrete:
 the pounce moves the body 15 px per frame (the Sim will move it at `ENEMY_SPEED`), and
 the fox parks itself in `REDFREEZE_STATE` off-stage (`EnemyFox.as:149`) — a state the Sim
 cannot see.
