@@ -80,8 +80,9 @@ real test gaps. The WRITING stayed one loop throughout, because the classes shar
 - **The alpha's defence-order is unobservable and is NOT chaos-planted** — that is
   deliberate and recorded, not a missing test.
 - **`init` enters IDLE twice** (once via `reset()`) for all four wanderers — two rng rolls.
-- **`EnemySpearElite.ts:92-95` duplicates `scaleTo`/`xp`** (slice 2b, behaviourally a
-  no-op). FLAGGED in DIVERGENCES, deliberately NOT fixed here.
+- **`EnemySpearElite.ts`'s duplicated `scaleTo`/`xp` is GONE** (owner ruling 2026-09-12,
+  its own commit). Proven a no-op by a 680-row sweep, byte-identical before and after;
+  slice 2b is 40 tests either side. Do not re-introduce it.
 - Everything SESSION 34 listed is still in force: in-frame re-entry, the wolf's four
   reception overrides, the boss floor chain falling through, the elite's single cooldown,
   the fox fleeing before it bites, civilians landing into DOWNED, the archer's knife on the

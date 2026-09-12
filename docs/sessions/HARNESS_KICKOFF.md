@@ -42,7 +42,7 @@ repo has actually made, a gate that goes red.**
 | First-run test failures that were **TEST bugs, not port bugs** | **3 of 3** (cooldown tick-order; an actor parked in FALL on the ground landing on frame 1; an rng of 0.9 failing the walk roll it needed to pass) | A test can set up a state the actor leaves immediately, and nothing says so |
 | **A kickoff trap that could never fire** | **1 of 7** (`mcs.scaleX == 1` has no target anywhere — not in `EnemyWolfAlpha.as`, `NPC.as` or `MCSCharacter.as`) | A kickoff's claims are prose. Nothing resolves them against the source — and this one survived a pass explicitly labelled "TESTED against the AS3" |
 | Config **twins** with no rule | 3 judgement calls (wolf twins → test-pin; stag idle → import; alpha floor chain → test-pin) | No written rule, so each is re-litigated |
-| **State-schema drift that actually shipped** | 1 (`EnemySpearElite.ts:92-95` duplicates `scaleTo`/`xp`; the source does neither) | Benign, but nothing detected it for two slices |
+| **State-schema drift that actually shipped** | 1 (`EnemySpearElite.ts` duplicated `scaleTo`/`xp`; the source does neither). Removed 2026-09-12 on the owner's ruling, proven a no-op by a 680-row sweep | Benign, but **nothing detected it for two slices** — it surfaced only because a later class was diffed against it by hand |
 
 **The pattern:** the PORTS have been right. The **tests, the kickoffs and the config
 bookkeeping** are where the defects live — and those are exactly the three things
@@ -120,10 +120,13 @@ equality by test*, with no rule. Write the rule, then enforce it:
 - **DONE =** a test enumerates every declared twin pair in the repo and asserts
   equality, so a future edit to either side goes red. Seed it with the pairs slice 3
   already pins.
-- **DONE =** `EnemySpearElite.ts:92-95`'s duplicated `scaleTo`/`xp` is removed **in
-  its own commit with its own gate** — it is flagged in DIVERGENCES and is the one
-  piece of known drift already in the tree. Removing it is a behavioural no-op; prove
-  that by running slice 2b's tests before and after.
+- ✅ **ALREADY DONE (2026-09-12, owner ruling, its own commit).**
+  `EnemySpearElite.ts`'s duplicated `scaleTo`/`xp` is removed, proven a no-op by a
+  680-row sweep that was byte-identical before and after (5 player profiles × 4 start
+  states × 17 target levels × boss/elite, edges included), with slice 2b at 40 tests
+  either side. T4 therefore only owes the RULE and the twin-pair test. **The method
+  that found it is the point: it surfaced from diffing one class against another, not
+  from any gate — which is what T2 is for.**
 
 ### T5 — the test-harness preflight
 

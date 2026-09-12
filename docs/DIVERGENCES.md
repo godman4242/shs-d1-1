@@ -4860,15 +4860,31 @@ there. Ported verbatim and pinned; "fixing" it to `BOAR_IDLE` is a chaos plant t
    boss balances first and stomps damage/defense afterwards. The alpha also KEEPS the
    animal xp curve (`:73`, ×5 + 45) where the stag's `setLevel` overwrites it with the base's.
 
-### ⛔ AN OBSERVATION ON SHIPPED CODE — FLAGGED, NOT FIXED
+### ✅ STATE-SCHEMA DRIFT ON SHIPPED CODE — FOUND HERE, REMOVED ON THE OWNER'S RULING
 
-`src/core/npc/EnemySpearElite.ts` (slice 2b) calls `this.scaleTo(lvl)` and assigns
+`src/core/npc/EnemySpearElite.ts` (slice 2b) called `this.scaleTo(lvl)` and assigned
 `this.xp` **twice in a row** (`:92-95`). The source does neither
-(`EnemySpearElite.as:74-77` has one `factor`/`level` pair). It is behaviourally a no-op —
-the second `scaleTo` computes `factor = lvl / lvl = 1` — so nothing is wrong with the
-shipped behaviour, and slice 2b's tests are green. **Not touched**: it is out of this
-slice's scope and the handoff rule is that a later session does not "fix" what an earlier
-one left. Recorded here so a deliberate cleanup can remove it with its own gate.
+(`EnemySpearElite.as:74-77` has one `factor`/`level` pair). Found while diffing the
+alpha's `setLevel` against the boss's.
+
+It was flagged and NOT touched in the slice-3b commit, because the handoff rule is that a
+later session does not "fix" what an earlier one left. **Kheshav ruled to remove it
+(2026-09-12), and it is removed in its own commit** — the one that carries this paragraph.
+
+**Proven a no-op before removal, not argued.** A 680-row sweep recorded every observable
+field a boss exposes after `setLevel` — `level`, `damage`, `defense`, `maxhp`, `hp`, `xp`,
+`healthBarVisible`, `healthBarFraction`, the progress bar and the event count — over
+5 player profiles × 4 start states × 17 target levels × boss/elite, deliberately including
+the edges: target 0 (where the SECOND call's `factor` is `0 / 0` = NaN), target 1, the
+trivial floor (≤ 5), the soft cap (20) and all three floor tiers. **Before and after are
+byte-identical across all 680 rows**, and slice 2b's suite is 40 tests either side.
+Two reasons it is safe: `asInt` maps non-finite to 0 (`MCSActor.ts:35-37`), so the NaN
+factor cannot poison a stat; and `updateHealthBar` only writes state (`healthBarVisible` /
+`healthBarFraction`), it emits nothing, so calling it twice with the same values is inert.
+
+No new test was added, deliberately: the change introduces no behaviour to red-proof, and
+a call-count spy would pin the implementation rather than the behaviour. The sweep plus
+slice 2b's 40 existing tests are the proof.
 
 ### THE SEAM FINDINGS — one added
 

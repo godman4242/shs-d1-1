@@ -91,8 +91,6 @@ export class EnemySpearElite extends Npc {
     const B = OG_SPEAR_ELITE.boss;
     this.scaleTo(lvl);
     this.xp = lvl * B.xp.perLevel + B.xp.base;
-    this.scaleTo(lvl);
-    this.xp = lvl * B.xp.perLevel + B.xp.base;
     const P = this.world.playerStats;
     const playerHP = P.maxHp;
     const playerDEF = P.defense;

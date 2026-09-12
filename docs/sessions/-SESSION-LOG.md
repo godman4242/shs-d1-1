@@ -3812,3 +3812,17 @@ the owner's LOOK. None was attempted, and none is claimed.
        guardian…), so the boar's `gotKnockDown` → `gotLaunched` is a path ordinary play
        drives constantly, not a theoretical one. Added to DIVERGENCES.
   Re-gated after the corrections: 79 files / 1438 tests, typecheck 0, lint 0, gate A 0 bytes.
+- **03:10** OWNER RULING (Kheshav, 2026-09-12): remove slice 2b's duplicated
+  `scaleTo`/`xp` from `EnemySpearElite.setLevel`, in its own commit with 2b's tests run
+  either side. Done — and proven a no-op EMPIRICALLY rather than by argument, because
+  "the tests still pass" is weak evidence for an equivalence claim. A 680-row sweep
+  recorded every observable field a boss exposes after `setLevel` (level, damage,
+  defense, maxhp, hp, xp, healthBarVisible, healthBarFraction, progress bar, event
+  count) over 5 player profiles × 4 start states × 17 target levels × boss/elite,
+  including the edges — target 0, where the SECOND call's factor is `0 / 0` = NaN.
+  **BEFORE and AFTER are byte-identical across all 680 rows**; slice 2b is 40 tests
+  either side; full suite 79 files / 1438 tests; typecheck 0; lint 0; gate A 0 bytes.
+  Two things checked first that could have made it NOT a no-op: `updateHealthBar` only
+  writes state and emits nothing, and `asInt` maps non-finite to 0 so the NaN factor
+  cannot poison a stat. No new test added, deliberately — the change introduces no
+  behaviour to red-proof and a call-count spy would pin implementation, not behaviour.
