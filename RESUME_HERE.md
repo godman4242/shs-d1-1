@@ -1,115 +1,116 @@
 # RESUME HERE
 
-## ▶ SESSION 35 (2026-09-12) — **L4b SLICE 3a IS CLOSED: THE FOUR WANDERERS. FOUR ANIMALS THAT LOOK LIKE ONE AND ARE NOT. 15 DESCENDANTS TO GO.**
+## ▶ SESSION 35 (2026-09-12) — **L4b SLICE 3 IS CLOSED (3a + 3b): SIX ANIMALS, THE FIRST REACTION OVERRIDES, AND AN ACTOR THAT CALLS FOR HELP. 21 OF 34 PORTED, 13 TO GO.**
 
-**`EnemyBear` (ai 17) · `EnemyDeer` (ai 19) · `EnemyHorse` (ai 12) · `EnemyStag` (ai 21)** —
-1,148 AS3 lines, none with children, each written out in full under its cites with
-`override` on exactly the AS3's set. **19 ported NPC classes, i.e. 21 `SHIPPED` entries**
-(the map also holds `MCSActor` and `NPC`, which are not ports). **No seam change at all:**
-`types.ts` is untouched and every port these four needed already existed.
+**3a — the four wanderers:** `EnemyBear` (17), `EnemyDeer` (19), `EnemyHorse` (12),
+`EnemyStag` (21), 1,148 AS3 lines (commit `aa4f345`). **3b — the fighters:**
+`EnemyBoar` (18) and `EnemyWolfAlpha` (11, and 16 in the ROOM dispatch only), 948 lines
+(this commit). Each written out in full under its cites with `override` on exactly the
+AS3's set. **21 ported NPC classes, i.e. 23 `SHIPPED` entries** (the map also holds
+`MCSActor` and `NPC`, which are not ports). The seam grew by ONE event across the whole
+slice: `NpcEvent.spawn`.
 
 ```
 $ git log -1 --oneline   ->  (this commit)
 $ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c   ->  0   (gates L4b-A, L4b-B)
 $ npm run -s typecheck   ->  exit 0
 $ npm run -s lint        ->  exit 0
-$ npx vitest run         ->  Test Files  78 passed (78)      (was 77 — +1)
-                             Tests  1396 passed (1396)       (was 1339 — +57)
+$ npx vitest run         ->  Test Files  79 passed (79)      (was 77 — +2)
+                             Tests  1438 passed (1438)       (was 1339 — +99: 3a +57, 3b +42)
 $ python3 scripts/payload/transcribeActorConsts.py && git diff --stat src/config/ogActor.ts   ->  EMPTY
 ```
 
 ### ✅ WHAT LANDED
 
-**1. Four animals that share a skeleton and agree on almost nothing inside it.** Every
-difference is pinned in `tests/npcSlice3a.test.ts` because copying one onto another ships
-a bug: only the bear fights, and only the bear's `idleCounter` ticks OUTSIDE idle (it
-doubles as the attack cooldown and must run down mid-gallop) — and it is ticked BEFORE it
-is checked, so a cooldown of 1 is already spent that frame. Only the deer has a
-behind-the-back flee band (200 facing / 50 behind) and never re-acquires a dead target.
-Only the horse refuses to move without `doChase`. Only the stag charges, and its charge
-does not step down in the overworld where its RUN does.
+**1. Four wanderers that share a skeleton and agree on almost nothing inside it.** Only the
+bear fights, and only ITS `idleCounter` ticks outside IDLE (it doubles as the attack
+cooldown) — and it is ticked BEFORE it is checked, so a cooldown of 1 is already spent.
+Only the deer has a behind-the-back flee band (200 facing / 50 behind) and never
+re-acquires a dead target. Only the horse refuses to move without `doChase`. Only the stag
+charges, and its charge does not step down in the overworld where its RUN does.
 
-**2. ⚠️ A SOURCE BUG PORTED AS IT READS — and why it never bit.** `EnemyStag`'s
-constructor takes `doChase` and **never assigns it** (`:12-28`); the bear (`:21`) and horse
-(`:21`) both do. It never bit because **no dispatch ever passes it one**: the main switch
-builds `new EnemyStag()` (`NPCManager.as:582`) and the ROOM dispatch has arms for ai 12,
-17, 18, 19 and **none for ai 21** (`:688-710`). `config/ogAi.ts` already encodes exactly
-that, from L4a. Discarded with `void` the way `MCSActor.setPose` discards `animName`.
+**2. The boar is the first REACTION override, and its three collapse into one.**
+`gotKnockDown()` and `gotFly()` are ONE LINE each and both call its OWN `gotLaunched()` —
+a boar cannot be knocked down or thrown, and the fly velocities are discarded. Its
+`gotLaunched` INVERTS the base's guard: a REAL `DOWNED` test where the base's is the AS3
+precedence bug (`!actionState == FLY_STATE`, always false), and NO `canGotLaunched` check.
+Its `doLaunched` lands into **WALK**, never DOWNED. Its RUN hits EVERY frame with no range
+test and no overworld fence, carrying `LAUNCH_KNOCKDOWN` iff one d4 rolled 0 at charge start.
 
-**3. ⚠️ THE BEAR MUST NOT REUSE `faceTarget()`.** Its ATTACK faces with its own comparison
-(`:148-155`), which disagrees with the base's (`NPC.as:1205`) at exactly equal x — the
-bear faces LEFT there, `faceTarget()` faces RIGHT. Planting the swap goes red.
+**3. The alpha calls for help — and finding 14.** `POSE_STATE` emits
+`NpcEvent.spawn { npcId: 65, x: ±50 OUTSIDE the stage, fatal: true }`. Nothing can drain
+it; L5 needs a spawn sink that owns actor lifetime. ⚠️ **Its CONSTRUCTOR calls
+`startAction(IDLE)`, whose IDLE case can escape into the howl — so an alpha can emit a
+spawn BEFORE `init()` has ever run.**
 
-**4. ⚠️ AN ANIMAL HAS NO ELEMENTAL DEFENCE, EVER.** None of the four `init` bodies assigns
-the eight `STAT_*` fields the base assigns from `<fire>`/`<earth>` (`NPC.as:229-236`), and
-none overrides `gotHit` — so they run the base's, which subtracts permanent zeroes.
+**4. ⚠️ The alpha's `gotHit` is not the wolf's:** defence INSIDE the alive check, and **no
+`!isDowned()` guard on the launch** — a DOWNED alpha hit with launch-air launches again,
+where a downed wolf does not.
 
-**5. `EnemyStag.setLevel` is a no-op override** — a hand copy of `NPC.as:239-260` differing
-only in decompiler artifacts, written out because the tree gate demands the source's
-override set (like `EnemyCivilianOld.update()`). What it DOES change is reward: `init` sets
-the animal curve (×5 + 45) and `setLevel` overwrites it with the base curve (×2 + 20), so
-**a levelled stag pays LESS xp than an unlevelled one**.
+**5. Source quirks ported as they read, all pinned:** `EnemyStag`'s constructor takes
+`doChase` and NEVER assigns it (harmless — the room dispatch has no ai-21 arm at all);
+`EnemyStag.setLevel` is a no-op hand copy of `NPC.as:239` that nonetheless swaps the animal
+xp curve for the base's, so a levelled stag pays LESS; `EnemyBoar.as:219` red-freezes with
+a **DEER** clip; the alpha's `KNOCKDOWNED` falls through into `DOWNED` and lies there 48
+frames, EIGHT times the wolf's 6.
 
-**6. Eighteen chaos plants, all red, all restored `cmp`-identical.** **Two stayed GREEN on
-the first pass and were NOT argued away** — the deer's target re-acquire (the test only
-used a LIVE target) and the stag's charge speed (only one direction branch was driven).
-Both tests were re-authored to cover the uncovered branch; both plants then went red.
+**6. No animal ever loads the roster's elemental columns** — none of the six `init` bodies
+assigns the eight `STAT_*` fields the base assigns, and none overrides `gotHit` except the
+alpha, so they all defend with permanent zeroes.
 
-**7. The measurement was fanned out and adversarially verified.** Four read-only measure
-agents over the four `.as` files, then two lens-diverse refuters each (override/cite
-exactness · numeric + world-read completeness): **12/12 agents returned, 8/8 verdicts,
-1 FATAL — and that FATAL refuted the MEASUREMENT's prose, not the port.** It surfaced two
-real test gaps (the constructors do not act where the wolf's does; the elemental columns).
-The writing stayed ONE loop — the four classes share `ogNpcAnimal.ts`, `SHIPPED` and one
-test-count contract, so parallel writes would be the parallel-overwrite killer.
+**7. 40 chaos plants red** (18 in 3a, 22 in 3b), all restored `cmp`-identical. **Two 3a
+plants STAYED GREEN on the first pass and were re-authored, not argued away** (the deer
+test used only a LIVE target; the stag charge test drove one direction branch).
 
-**8. Two seam findings (12, 13)** — and the kickoff's reserved number is annotated.
+**8. The measurement was fanned out and adversarially refuted.** 3a: 12/12 agents, 8/8
+verdicts, 1 FATAL — and it refuted the MEASUREMENT's prose, not the port; it surfaced two
+real test gaps. The WRITING stayed one loop throughout, because the classes share
+`ogNpcAnimal.ts`, `SHIPPED` and one test-count contract.
 
 ### ⛔ WHAT A FUTURE SESSION MUST NOT "FIX"
 
-- **The stag's constructor drops `doChase`** — the source does, and no dispatch passes one.
-- **The bear's ATTACK faces with its own comparison**, not `faceTarget()`.
-- **Only the bear ticks `idleCounter` outside IDLE**, and only the bear's tick is `> 0`-guarded.
-- **The bear swings with no `isAdventureMode()` fence**; the wolf's bite has one.
-- **The deer keeps a dead target forever**; it has no re-acquire and no `checkAITrigger()`.
-- **The horse's `init` neither grounds the body nor flips `doChase`.**
-- **The stag's off-stage red-freeze has an extra `!doChase`**; the other three do not.
-- **All four `die()` bodies play NO death sound** and have no launch/downed branch.
-- **`init` enters IDLE twice** (once in `reset()`, once on its own line) — two rng rolls.
-- Everything SESSION 34 listed here is still in force: in-frame re-entry, the wolf's four
-  reception overrides, the boss floor chain, the elite's single cooldown, the fox fleeing
-  before it bites, civilians landing into DOWNED, the archer's knife on the clip's END,
-  `gotLaunched()`'s guard ported as it BEHAVES, the 24 Hz integer accumulator, `OG_NPCS`
-  raw into `init()`, **`src/config/ogActor.ts` is CLOSED evidence** (re-run the
-  transcriber, never hand-edit), and the roster/`AI_TIERS` carries from SESSION 32.
+- **The stag's constructor drops `doChase`**; **the boar red-freezes with a DEER clip**;
+  **the alpha has no `!isDowned()` guard** and **no cutscene read at all**.
+- **The bear's ATTACK faces with its own comparison**, not `faceTarget()` (they disagree at
+  exactly equal x). **Only the bear ticks `idleCounter` outside IDLE.**
+- **The boar's `gotLaunched` has no `canGotLaunched` check** and omits `FLY` from its
+  airborne set; **its `doLaunched` lands into WALK.**
+- **The alpha's `KNOCKDOWNED` falls through** to DOWNED's 48 frames; its RUN re-rolls
+  `destX` and is flat 15; its pounce hits THREE parts.
+- **The alpha's defence-order is unobservable and is NOT chaos-planted** — that is
+  deliberate and recorded, not a missing test.
+- **`init` enters IDLE twice** (once via `reset()`) for all four wanderers — two rng rolls.
+- **`EnemySpearElite.ts:92-95` duplicates `scaleTo`/`xp`** (slice 2b, behaviourally a
+  no-op). FLAGGED in DIVERGENCES, deliberately NOT fixed here.
+- Everything SESSION 34 listed is still in force: in-frame re-entry, the wolf's four
+  reception overrides, the boss floor chain falling through, the elite's single cooldown,
+  the fox fleeing before it bites, civilians landing into DOWNED, the archer's knife on the
+  clip's END, `gotLaunched()`'s guard ported as it BEHAVES, the 24 Hz integer accumulator,
+  `OG_NPCS` raw into `init()`, **`src/config/ogActor.ts` is CLOSED evidence** (re-run the
+  transcriber, never hand-edit), and the roster / `AI_TIERS` carry from SESSION 32.
 
-### 📋 WHAT IS LEFT — slice 3b next, then 4–6
+### 📋 WHAT IS LEFT — slices 4–6, 13 descendants
 
-**SLICE 3b is the rest of `docs/sessions/L4B_SLICE3_KICKOFF.md`:** `EnemyBoar` (364 lines,
-ai 18 — the first REACTION overrides: `gotKnockDown` and `gotFly` both call its own
-`gotLaunched`; `canGotFly = true` unlike the wolf, so `gotHit`'s fly branch reaches it;
-read `NPC.as:536` first, then `EnemyBoar.as:293`) and `EnemyWolfAlpha` (584 lines, ai 11
-— and ai 16 ONLY in the room dispatch, where the main switch sends 16 to
-`EnemyNianMonster`: port the two dispatches separately). The alpha's traps, still unspent:
-its `gotHit` is NOT the wolf's (defence INSIDE the alive check, and no `!isDowned()` guard
-on the launch); it is `changeScale(2,2)` so any `mcs.scaleX == 1` test in its switch reads
-FALSE; it has NO `CutsceneManager.isShowing()` call where the other five have one each;
-and it SPAWNS wolves through `NPCManager.createEnemy(65, …)` (`:291`/`:295`), which needs a
-new `spawn` event and is **DIVERGENCES finding 14, not 12** — 3a took 12 and 13, and the
-kickoff is annotated accordingly. After 3b: the goblins and ogre, ninja / shield / zombies,
-the props (`EnemyVegePatch` — TEN overrides and neither spine method, pinned), the bosses —
-13 more, in `docs/sessions/L4B_KICKOFF.md`'s order.
+`docs/sessions/L4B_KICKOFF.md`'s order: the goblins and ogre, ninja / shield / zombies, the
+props (**`EnemyVegePatch` — TEN overrides and NEITHER `startAction` NOR `doAction`**,
+already pinned in `tests/npcTree.test.ts`), then the bosses. **There is no slice 4 kickoff
+yet** — write one the way `L4B_SLICE3_KICKOFF.md` was written (measure per file, never
+carry a number forward) before starting.
 
 **How a class ships (unchanged):** `src/core/npc/<Name>.ts` with `override` on EXACTLY the
-AS3's set → numbers in `src/config/og<Name>.ts`, CONTRACT, line-cited, twins named →
-add to `SHIPPED` in `tests/npcTree.test.ts` → test FROM the AS3, red first → chaos-plant
-EVERY guard → DIVERGENCES for anything the seam cannot express (number from **14**).
+AS3's set → numbers in `src/config/og<Name>.ts`, CONTRACT, line-cited, twins named → add to
+`SHIPPED` in `tests/npcTree.test.ts` → test FROM the AS3, red first → chaos-plant EVERY
+guard → DIVERGENCES for anything the seam cannot express (number from **15**).
 
-**Harness rules 3a added to the list:** `init` enters IDLE TWICE (`reset()` then its own
-line) so count TWO rng rolls before choosing a `seq`; a fresh animal has NO animation and
-`idleCounter == 0` (the wolf is already snarling); `world({...})` spreads a COPY, so mutate
-`npc.world` to flip `adventureMode` mid-test; a guard that reads a value the SOURCE writes
-twice (per-direction speed) needs BOTH branches driven or a plant sails through it.
+**Harness rules slice 3 added:** `init` enters IDLE TWICE (`reset()` then its own line), so
+count TWO rng rolls before choosing a `seq`; a fresh wanderer has NO animation and
+`idleCounter == 0`, but the ALPHA and the wolf are already snarling from their
+constructors; `world({...})` spreads a COPY, so mutate `npc.world` to flip `adventureMode`
+mid-test; a guard reading a value the SOURCE writes twice (per-direction speed) needs BOTH
+branches driven or a plant sails through it; a roll that is gated by `isAdventureMode()`
+changes the rng CALL COUNT per frame, so a room test and an overworld test need different
+`seq`s; and an actor parked in FALL on the ground LANDS on the first frame, masking
+whatever clip you were testing.
 
 ```bash
 npx vitest run && npm run -s typecheck && npm run -s lint
@@ -118,12 +119,12 @@ python3 scripts/payload/transcribeActorConsts.py && git diff --stat src/config/o
 
 ### ⛔ NOT DONE, and said here rather than at a gate
 
-Slice 3b (2 classes) and slices 4–6 (13 more). `EnemyPlayer` + `EnemyElite` +
-`EnemyPlayerGiant` + `FriendlyElite` (they extend `MCSPlayer` — **L5**). `CutsceneActor`
-(**L1**). Rewiring `AI_TIERS` (moves `Sim.ts` — **L5**). **No adapter builds an `NpcWorld`
-yet** — `playerStats`, `adventureMode`, `peaceful`, `duelMode`, the kill-cam callback AND
-`doChase` (finding 13) are L5's to wire. The fight-feel grade (A1 cites + the owner's
-LOOK). None attempted, none claimed.
+Slices 4–6 (13 descendants). `EnemyPlayer` + `EnemyElite` + `EnemyPlayerGiant` +
+`FriendlyElite` (they extend `MCSPlayer` — **L5**). `CutsceneActor` (**L1**). Rewiring
+`AI_TIERS` (moves `Sim.ts` — **L5**). **No adapter builds an `NpcWorld`** — `playerStats`,
+`adventureMode`, `peaceful`, `duelMode`, the kill-cam callback, `doChase` (finding 13) and
+the `spawn` sink (finding 14) are all L5's to wire. The fight-feel grade (A1 cites + the
+owner's LOOK). None attempted, none claimed.
 
 
 ## ⛔ SESSION 30 (2026-09-06) — **L3B: THE GATE IS BUILT AND TWO DEFECTS ARE GONE. THE ART IS STILL OPEN.**

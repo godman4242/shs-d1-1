@@ -4741,3 +4741,138 @@ becomes finding 14.** Veto = renumber. Nothing else about the alpha's port chang
 Slice 3b (`EnemyBoar`, `EnemyWolfAlpha`) and slices 4–6 (15 more descendants).
 `EnemyPlayer`'s branch, `CutsceneActor`, the `AI_TIERS` rewire, the fight-feel grade: not
 built, not attempted, not claimed. No adapter builds an `NpcWorld`.
+
+## LANE L4b (slice 3b) — THE BOAR AND THE ALPHA: THE FIRST REACTION OVERRIDES, AND AN ACTOR THAT CALLS FOR HELP. ONE FINDING ADDED, TWO KICKOFF CLAIMS CORRECTED BY THE SOURCE (2026-09-12)
+
+**What landed.** `EnemyBoar` (ai 18) and `EnemyWolfAlpha` (ai 11, and ai 16 in the ROOM
+dispatch only) — two classes, 948 AS3 lines, neither with children, each written out in
+full under its cites with `override` on exactly the AS3's set (nine each). **Slice 3 is
+now closed: 21 ported NPC classes, i.e. 23 `SHIPPED` entries** (the map also holds
+`MCSActor` and `NPC`, which are not ports) — 13 of the 34 remain. Numbers in
+`config/ogEnemyBoar.ts` and `ogEnemyWolfAlpha.ts`. **+42 tests** (1396 → 1438);
+**22 guards chaos-planted red on the first pass**, all restored `cmp`-identical.
+The seam grew by ONE event and nothing else.
+
+### THE SEAM GREW BY ONE EVENT — `NpcEvent` gained `spawn`
+
+`{ type: 'spawn', npcId, x, y, fatal }` — `NPCManager.createEnemy(npcID, x, y, fatal)`
+(`NPCManager.as:869`). `NpcWorld`, `NpcTarget`, `HitShape` and `HitGeometry` are untouched.
+The boar needed nothing new at all: its launch arc is the base's, number for number, and
+only its GUARDS differ.
+
+### ⚠️ PORTED AS THEY READ — the boar
+
+- **Its three reaction overrides collapse to one body.** `gotKnockDown()` (`:353`) and
+  `gotFly(flyVelX, flyVelY)` (`:358`) are ONE LINE each and both call its OWN
+  `gotLaunched()`. A boar cannot be knocked down and cannot be thrown; the fly velocities
+  are accepted and discarded.
+- **`canGotFly = true`** (`:28`), unlike the wolf and all four wanderers — so
+  `NPC.gotHit`'s fly branch actually reaches `gotFly()` on this actor and becomes a launch.
+- **Its `gotLaunched` INVERTS the base's guard** (`:295` vs `NPC.as:538`). The base guards
+  `!canGotLaunched || (isDowned() && !actionState == FLY_STATE) || DYING`, whose middle
+  clause is the AS3 precedence bug — `!actionState` is a Boolean, so `== 32` is ALWAYS
+  FALSE — which kills the whole downed test (ported as it BEHAVES in slice 0). The boar
+  has a REAL `actionState == DOWNED_STATE` guard and **no `canGotLaunched` check at all**,
+  and its airborne set omits `FLY_STATE`.
+- **`doLaunched` lands into WALK** (`:340`), not DOWNED: a boar is never on the floor, it
+  bounces up and keeps going. A DEAD boar landing mid-launch goes DYING and calls `die()`.
+- **RUN hits on EVERY frame, unconditionally** (`:195-201`): no range test and no
+  `isAdventureMode()` fence, unlike every other animal in the lane. Entering RUN rolls
+  `knocker` ONCE (`:141`, a d4), and that single roll decides whether the whole charge
+  carries `LAUNCH_KNOCKDOWN`.
+- **The arrival coin is rolled only in the OVERWORLD** (`:208`): in a room the boar always
+  goes back to WALK, and the `int(random() * 2)` is never drawn. This changes the rng call
+  count per frame, which is how a test picks the wrong `seq` and silently passes.
+- **An un-chased OVERWORLD boar never enters ATTACK** however close it gets — the gate is
+  `(this.doChase || !isAdventureMode())` (`:202`).
+- **It charges at 10** (`:133`/`:138`) — slower than every wanderer's 12 and the wolf's 15.
+
+### ⚠️ A SOURCE BUG, PORTED AS IT READS
+
+**`EnemyBoar.as:219` plays `DEER_IDLE` on a BOAR.** The off-stage red-freeze branch
+red-freezes the actor and then starts a DEER clip; every sibling starts its own idle clip
+there. Ported verbatim and pinned; "fixing" it to `BOAR_IDLE` is a chaos plant that goes red.
+
+### ⚠️ PORTED AS THEY READ — the alpha
+
+- **Its `gotHit` is not the wolf's** (`:438`) in two ways. Defence and the minimum-damage
+  floor are subtracted **INSIDE** the `getHP() > 0` block (`:480-484`) where the wolf
+  subtracts them before it; and **the launch branch has NO `!isDowned()` guard** (`:489`).
+  A DOWNED alpha hit with launch-air launches AGAIN, off the floor — a downed wolf does not.
+  ⚠️ The defence ORDER is deliberately NOT chaos-planted: it is unobservable. When
+  `getHP() <= 0` neither version applies anything, and when `getHP() > 0` both compute the
+  same number, so no test can distinguish them. Kept in the source's order for fidelity
+  only — the same call slice 2a made for the wolf's mirror-image ordering.
+- **`POSE_STATE` spawns a real wolf** (`:289-296`): a coin picks an edge and
+  `createEnemy(65, ±50 OUTSIDE it, groundY, true)`. Room only. The fifth parameter `lvl`
+  defaults to 0 and the alpha does not pass it, so the called wolf is never `setLevel`'d.
+- **Its CONSTRUCTOR calls `startAction(IDLE_STATE)`** (`:23`) like the wolf's and unlike
+  all four wanderers — and the IDLE case has a one-in-three howl escape in a room (`:216`)
+  that `return`s before the snarl. **So an alpha can emit a spawn before `init()` has run.**
+- **`KNOCKDOWNED` falls through into `DOWNED`** (`:271-276`, no `break`), so a knocked-down
+  alpha lies there for 48 frames — EIGHT TIMES the wolf's 6 (`EnemyWolf.as:198-202`, which
+  does have a `break`).
+- **The arrival roll is a d4 whose outcome 2 HOWLS** (`:332`/`:365`); the wolf's is a d3
+  with no such outcome. RUN **re-rolls `destX`** (`:248`), which the wolf does not, and is
+  a **flat 15 in both modes** where the wolf splits 15 room / 12 overworld.
+- **Its bands are wider**: bite `100 < dist < 150`, pounce `150 <= dist < 300`, against the
+  wolf's `50..100` and `100..250`. **The pounce hits THREE parts** — head, right hand AND
+  torso (`:400-404`) — where the wolf hits two.
+- **FALL plays `WOLF_LAUNCHED` and LAND plays `WOLF_LAUNCHEDEND`** (`:278`/`:281`), where
+  the wolf plays the pounce clips; and **the pounce-mid clip ending has NO
+  `actionState != FALL` guard** (`:190-192`), which the wolf's does.
+- **It reads no cutscene at all** — `grep -c CutsceneManager EnemyWolfAlpha.as` → **0**,
+  against exactly one each for the other five animals. An alpha wanders mid-cutscene.
+- **`doLaunched`, `die` and `redFreeze` ARE byte-equivalent to the wolf's** (`:524`,
+  `:542`, `:566`). Written out because the source has the overrides.
+
+### ⚠️ TWO KICKOFF CLAIMS CORRECTED BY THE SOURCE
+
+1. **The `mcs.scaleX == 1` trap has no target.** `L4B_SLICE3_KICKOFF.md` warns that under
+   `changeScale(2, 2)` "any `scaleX == 1` test in its switch is FALSE". Grepped
+   2026-09-12: there is **no such comparison anywhere** — not in `EnemyWolfAlpha.as`, not
+   in `NPC.as`, not in `MCSCharacter.as`. Every `scaleX` use is sign-based
+   (`NPC.as:790` `> 0`; `MCSCharacter.as:1462` `return scaleX > 0`) or an assignment, so
+   the doubled scale breaks no facing test. The port keeps facing and scale apart anyway,
+   as the wolf's does. The warning was sound; it simply has nothing to fire on.
+2. **`setLevel` is NOT the spear boss's copy.** The kickoff says to diff it against
+   `EnemySpearElite.as:79-123` rather than assume — correctly. Diffed: the four-tier floor
+   chain IS the boss's verbatim (and it FALLS THROUGH, so `max(hit, ladder)` is wrong —
+   pinned), but **`hitsToKillPlayer` is `15 − lvldiff` here and `18 − lvldiff` for the
+   boss**, the boss floors `hitsToKillBoss` at `<= 3 → 3` where the alpha floors at
+   `<= 0 → 1`, and the structure is INVERTED: the alpha's `lvl <= 5` is the `if` and the
+   whole balance is the `else` (so a level-5 alpha is never balanced at all), where the
+   boss balances first and stomps damage/defense afterwards. The alpha also KEEPS the
+   animal xp curve (`:73`, ×5 + 45) where the stag's `setLevel` overwrites it with the base's.
+
+### ⛔ AN OBSERVATION ON SHIPPED CODE — FLAGGED, NOT FIXED
+
+`src/core/npc/EnemySpearElite.ts` (slice 2b) calls `this.scaleTo(lvl)` and assigns
+`this.xp` **twice in a row** (`:92-95`). The source does neither
+(`EnemySpearElite.as:74-77` has one `factor`/`level` pair). It is behaviourally a no-op —
+the second `scaleTo` computes `factor = lvl / lvl = 1` — so nothing is wrong with the
+shipped behaviour, and slice 2b's tests are green. **Not touched**: it is out of this
+slice's scope and the handoff rule is that a later session does not "fix" what an earlier
+one left. Recorded here so a deliberate cleanup can remove it with its own gate.
+
+### THE SEAM FINDINGS — one added
+
+**14. The seam cannot add an actor mid-fight.** `EnemyWolfAlpha.startAction(POSE_STATE)`
+calls `NPCManager.createEnemy(65, x, groundY, true)` (`:291`/`:295`) — the howl calls a
+WOLF into the room. Core emits `NpcEvent { type: 'spawn', npcId, x, y, fatal }` and
+**nothing can drain it**: `NpcController` owns exactly one actor, `Sim` has one enemy slot,
+and neither has a way to construct a new `Npc`, give it an `NpcWorld`, `init()` it from
+the roster and add it to whatever answers `nearestEnemy`. L5 needs a spawn sink that owns
+actor lifetime. Two sharp edges for whoever builds it: the spawn lands 50 px OUTSIDE the
+stage, so the sink must accept off-stage positions; and **the alpha's constructor can emit
+a spawn before `init()` has ever run** (`:23` → `:216` → `:289`), so a sink that assumes
+every actor is initialised before it hears from it will be wrong on the first frame.
+⛔ **NUMBERING:** the kickoff reserved "finding 12" for this. Slice 3a shipped first and
+took 12 and 13, so the spawn is **14**; the kickoff is annotated.
+
+### ⛔ NOT DONE — L4b-I at slice level
+
+Slices 4–6 (13 more descendants: the goblins and ogre, ninja / shield / zombies, the props
+including `EnemyVegePatch`, the bosses). `EnemyPlayer`'s branch, `CutsceneActor`, the
+`AI_TIERS` rewire, the fight-feel grade: not built, not attempted, not claimed. **No
+adapter builds an `NpcWorld`**, and nothing drains `spawn`.

@@ -182,6 +182,22 @@ export type NpcEvent =
   | { readonly type: 'setProp'; readonly itemId: number }
   /** `Projectile.doBreak()` — the thing that just hit this actor's weapon snaps (`EnemySpearElite.as:472`). */
   | { readonly type: 'breakProjectile' }
+  | {
+      /**
+       * `NPCManager.createEnemy(npcID, x, y, fatal)` (`NPCManager.as:869`) — the alpha's
+       * howl calls a WOLF (roster id 65) 50 px outside one edge, a coin picking the side
+       * (`EnemyWolfAlpha.as:291`/`:295`). The fifth parameter `lvl` defaults to 0 and the
+       * alpha does not pass it, so the spawned wolf is never `setLevel`'d.
+       *
+       * ⚠️ Nothing drains this yet and no adapter can: the seam has no way to ADD an
+       * actor mid-fight. DIVERGENCES "L4b (slice 3b)", finding 14.
+       */
+      readonly type: 'spawn';
+      readonly npcId: number;
+      readonly x: number;
+      readonly y: number;
+      readonly fatal: boolean;
+    }
   | { readonly type: 'flyingWeapon' }
   | { readonly type: 'flyingHat' }
   | { readonly type: 'dispose' };

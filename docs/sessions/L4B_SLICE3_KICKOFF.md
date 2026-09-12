@@ -42,6 +42,22 @@ Ship 3a to green and commit, then 3b. Two commits, one session if it holds.
 > IDLE; `init` enters IDLE TWICE (once via `reset()`); and no animal ever loads the
 > roster's elemental columns. The stag's `setLevel` IS byte-equivalent to `NPC.as:239` —
 > written out, recorded. Read `docs/DIVERGENCES.md` "L4b (slice 3a)" before touching 3b.
+>
+> ✅ **3b SHIPPED 2026-09-12** (`EnemyBoar` / `EnemyWolfAlpha`): 1396 → **1438 tests**,
+> 22 chaos plants red on the first pass, gate C met exactly (**21 ported classes / 23
+> `SHIPPED` entries**). **SLICE 3 IS CLOSED — DO NOT RE-PORT ANY OF IT.** Two of this
+> kickoff's traps were CORRECTED by the source: (1) the `mcs.scaleX == 1` warning has **no
+> target anywhere** — not in `EnemyWolfAlpha.as`, `NPC.as` or `MCSCharacter.as`; every
+> `scaleX` use is sign-based (`> 0`) or an assignment, so `changeScale(2,2)` breaks no
+> facing test; (2) `setLevel` is **NOT** the spear boss's copy — the floor chain is, but
+> `hitsToKillPlayer` is `15 - lvldiff` here against the boss's `18`, the boss floors
+> `hitsToKillBoss` at `<= 3 -> 3` where the alpha floors at `<= 0 -> 1`, and the `lvl <= 5`
+> branch is INVERTED (a level-5 alpha is never balanced at all). Everything else this
+> kickoff claimed about 3b held exactly, including the `ai 16` two-dispatch trap, the zero
+> cutscene reads, and both reaction traps. What it did not know: the boar red-freezes with
+> a **DEER** clip (`:219`); the boar's `gotLaunched` has NO `canGotLaunched` check and omits
+> `FLY`; its `doLaunched` lands into WALK; the alpha's `KNOCKDOWNED` FALLS THROUGH to
+> DOWNED's 48 frames; and the alpha's constructor can emit a spawn before `init()` runs.
 
 The exact override set of each (measured, and what `tests/npcTree.test.ts` will demand):
 

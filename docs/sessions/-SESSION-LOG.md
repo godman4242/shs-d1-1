@@ -3751,3 +3751,45 @@ the owner's LOOK. None was attempted, and none is claimed.
   §2's L4 row; and the kickoff ANNOTATED twice — 3a marked SHIPPED with what it did not
   know, and its reserved "finding 12" for the alpha's spawn corrected to **finding 14**,
   because findings are numbered in the order they are FOUND and 3a shipped first.
+
+## 2026-09-12 — Session 35 (cont.): L4b slice 3b, the boar and the alpha — SLICE 3 CLOSED
+
+- **01:20** 3a committed as `aa4f345` (pre-commit gate green: 78 files / 1396 tests / lint).
+  3b measurement fanned out (`wf_516ce81b-b94`, 2 measure → 3 lenses each, the third lens
+  being the RECEPTION side diffed statement-by-statement against `NPC.as` and
+  `EnemyWolf.as`). First launch failed to parse — backticks nested inside a template
+  literal — fixed and relaunched.
+- **01:30** Both `.as` files read first-hand. `NPC.as:536` read BEFORE the boar's, as the
+  kickoff instructs: the base's downed guard is the AS3 precedence bug
+  (`!actionState == FLY_STATE`, always false), so the base has NO working downed test while
+  the boar has a real one — an inversion, not a delta.
+- **01:40** Two kickoff traps CORRECTED by the source, both re-measured rather than carried
+  forward: the `mcs.scaleX == 1` warning has **no target anywhere** (every `scaleX` use in
+  the alpha, `NPC.as` and `MCSCharacter.as` is sign-based or an assignment), and `setLevel`
+  is **not** the spear boss's copy (`15 − lvldiff` vs `18`, floor `<=0→1` vs `<=3→3`, and
+  the trivial-level branch inverted). The kickoff was RIGHT to say "diff it, do not assume".
+- **01:45** Found while diffing: `EnemyBoar.as:219` red-freezes with a **DEER** clip — a
+  source bug, ported verbatim and pinned. And the alpha's CONSTRUCTOR calls
+  `startAction(IDLE)`, whose IDLE case can escape into the howl, so **an alpha can emit a
+  spawn before `init()` has ever run** — a sharp edge for whoever builds the spawn sink.
+- **01:50** `NpcEvent` gained `spawn`; no other seam change in the whole slice. Both classes
+  written; typecheck 0; tree + purity green (the tree gate reads the AS3 itself, so both
+  nine-method override sets are the source's exactly).
+- **02:00** `tests/npcSlice3b.test.ts`: 42 tests, 40 green on first run. Both failures were
+  TEST bugs, not port bugs — an alpha parked in FALL on the ground lands on frame 1 and the
+  LAND clip masked what was under test, and an rng of 0.9 failed the walk roll the cutscene
+  test needed to pass. Both re-authored.
+- **02:10** **22/22 chaos plants RED on the first pass**, every file restored
+  `cmp`-identical. One plant deliberately NOT written and the reason recorded: the alpha's
+  defence-before-vs-inside ordering is unobservable (when HP ≤ 0 neither version applies
+  anything; when HP > 0 both compute the same), so no test can distinguish it. Kept in the
+  source's order for fidelity, exactly as slice 2a did for the wolf's mirror image.
+- **02:15** Flagged but NOT fixed: `EnemySpearElite.ts:92-95` (slice 2b) calls `scaleTo` and
+  assigns `xp` twice; the source does neither. Behaviourally a no-op (the second call's
+  factor is 1). Out of this slice's scope — recorded in DIVERGENCES for a deliberate cleanup.
+- **02:20** Final gates: `npx vitest run` → 79 files / **1438 tests** (1339 → 1438 over the
+  slice, +99); typecheck 0; lint 0; gate A → **0** bytes; transcriber → no diff on
+  `ogActor.ts`. **Gate C met exactly as specified: 21 ported classes / 23 `SHIPPED`
+  entries**, 13 of 34 remaining. Docs in the same commit: DIVERGENCES "L4b (slice 3b)" with
+  finding 14, RESUME_HERE top block REWRITTEN, GAUNTLET §2's L4 row, and the kickoff
+  annotated a third time — 3b marked SHIPPED with the two traps the source corrected.
