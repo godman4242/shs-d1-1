@@ -4587,3 +4587,157 @@ until L5 gives the world a real `nearestEnemy`.
 
 Slices 3–6 (19 descendants, none with children). `EnemyPlayer`'s branch, `CutsceneActor`,
 the `AI_TIERS` rewire, the fight-feel grade: not built, not attempted, not claimed.
+
+## LANE L4b (slice 3a) — THE FOUR WANDERERS: FOUR ANIMALS THAT LOOK LIKE ONE AND ARE NOT. TWO FINDINGS ADDED, ONE SOURCE BUG PORTED AS IT READS (2026-09-12)
+
+**What landed.** `EnemyBear` (ai 17), `EnemyDeer` (ai 19), `EnemyHorse` (ai 12),
+`EnemyStag` (ai 21) — four classes, 1,148 AS3 lines, none with children, each written
+out in full under its cites with `override` on exactly the AS3's set — **19 ported NPC
+classes, i.e. 21 `SHIPPED` entries** (the map also holds `MCSActor` and `NPC`, which are
+not ports). Numbers in `config/ogEnemyBear.ts`, `ogEnemyDeer.ts`, `ogEnemyHorse.ts`,
+`ogEnemyStag.ts` and a new `ogNpcAnimal.ts` for what all four share, every twin line
+named. **+57 tests** (1339 → 1396); **eighteen guards chaos-planted red** and restored
+`cmp`-identical. **No seam change at all** — `types.ts` is untouched, every port these
+four need already existed.
+
+**Two of the eighteen plants STAYED GREEN on the first pass and were not argued away:**
+the deer's missing target re-acquire (the test only ever used a LIVE target, so a planted
+re-acquire never fired) and the stag's charge speed (the test drove only one of the two
+direction branches). Both tests were re-authored to cover the uncovered branch, and both
+plants then went red. A third gap — nothing pinned that these constructors do NOT act,
+where the wolf's does — came out of the adversarial measurement pass, as did the elemental
+column finding below.
+
+### ⚠️ PORTED AS THEY READ — the four against each other
+
+They share a skeleton and agree on almost nothing inside it. Each of these is pinned in
+`tests/npcSlice3a.test.ts` because a porter copying one onto another would ship a bug:
+
+- **Only the bear's `idleCounter` ticks outside IDLE** (`EnemyBear.as:163-166`, at the TOP
+  of `doAction`, guarded `> 0`). It has to: the counter doubles as the attack cooldown
+  (`:200`, `5 * 24`) and has to run down while the bear is GALLOPING. The deer, horse and
+  stag tick it inside the IDLE case only (`:135` / `:149` / `:209`) and unguarded, so
+  theirs pass through zero where the bear's floors at it.
+- **The cooldown is TICKED BEFORE IT IS CHECKED.** A bear entering `doAction` with
+  `idleCounter == 1` ticks to 0 and then passes `idleCounter <= 0` on the SAME frame.
+- **The bear swings with no `isAdventureMode()` fence** (`:212-214`) where the wolf's bite
+  and pounce both have one (`EnemyWolf.as:294`). A bear mauls in the overworld.
+- **The bear's ATTACK faces with its own comparison** (`:148-155`, `mcs.x < target.mcs.x`
+  → faceRight) which DISAGREES with the base's `faceTarget()` (`NPC.as:1205`,
+  `target.x < this.x` → faceLeft) at exactly equal x. Reusing `faceTarget()` there is a
+  chaos plant that goes red.
+- **Only the deer never re-acquires.** Its `update()` (`:42-69`) has neither the
+  `target == null || target.isDead()` block nor `checkAITrigger()`; it keeps a dead target
+  forever. The bear (`:53-58`, `:83-86`) and stag (`:78-83`, `:112-115`) have both; the
+  horse has neither either, but the horse also never reads its target unless chasing.
+- **Only the deer has a behind-the-back band** (`:219`/`:234`): 200 px when it is LOOKING
+  at the player, 50 px when its back is turned (`&&` binds before `||`). And where a
+  fleeing bear always aims off-stage, a fleeing deer only does so in the OVERWORLD — in a
+  room it bolts to a random x (`:227`/`:242`).
+- **An un-chased horse does nothing at all.** Its idle act-roll is fenced
+  `!isShowing() && this.doChase` with an `else` that re-enters IDLE (`:154`, `:169-172`),
+  and its `checkPlayer()` returns on its first line unless chasing (`:232-235`) — the only
+  one of the four with that guard. The stag's same act-roll has NO `doChase` fence and no
+  `else` (`:214`), so an un-chased stag still wanders.
+- **The horse's `init` neither grounds the body nor flips `doChase`** (`:31-45`); the bear
+  (`:41-46`) and stag (`:39-44`) do both.
+- **The stag's off-stage red-freeze carries an extra `!this.doChase`** (`:256`) that the
+  other three lack — a chasing stag runs off the edge and keeps going.
+- **The stag's charge does not step down in the overworld.** RUN reads `isAdventureMode()`
+  per direction (15 in a room, 12 outside — `:162`/`:174`); CHARGING is a flat 15 both
+  ways (`:190`/`:195`), and it gores with `PART_head` at `LAUNCH_KNOCKDOWN` on EVERY frame
+  (`:265-272`), with no adventure fence.
+- **None of the four acts in its constructor.** The wolf's calls `startAction(IDLE_STATE)`
+  (`EnemyWolf.as:16`) and is already snarling on a 24-frame timer; all four of these set
+  only their `canGot*` flags, so a fresh one has no animation and `idleCounter == 0`.
+- **`init()` therefore enters IDLE TWICE and rolls the idle die twice** — once inside
+  `reset()` (`NPC.as:204`) and once on its own line (`EnemyBear.as:40`, `EnemyDeer.as:37`,
+  `EnemyHorse.as:41`, `EnemyStag.as:38`). Pinned as an exact rng call count, because a
+  test that mis-counts the rolls picks the wrong `seq` and silently tests the wrong branch.
+- **None of the four loads the roster's elemental columns.** `NPC.init` assigns all eight
+  `STAT_*` fields from `<fire>` / `<earth>` (`NPC.as:229-236`); not one of these four
+  `init` bodies assigns any of them, and none of the four overrides `gotHit` — so they all
+  run the BASE's, which subtracts `STAT_*DEF` values that are permanently zero. **An
+  animal has no elemental defence and no elemental attack, ever**, however the roster row
+  is filled in. Pinned on a row that really does carry `fire` and `earth`.
+- **All four `die()` bodies are the same and none of them is the wolf's or the base's**:
+  loot, XP, ground the body, DYING, the death clip, `dead`, hide the bar — **no
+  `SoundManager.playDie()`**, no `isPlayback` / `dontGiveLoot` guard, and no launch or
+  downed branch at all, so a bear killed mid-launch still plays its full death.
+
+### ⚠️ A SOURCE BUG, PORTED AS IT READS — and why it never bit
+
+**`EnemyStag`'s constructor takes `doChase` and never assigns it** (`EnemyStag.as:12-28`).
+The bear (`:21`) and horse (`:21`) both have `this.doChase = doChase`; the stag's line is
+simply absent, and the field is declared with no initialiser (`:9`). Ported as `_doChase`,
+discarded with `void` the way `MCSActor.setPose` discards `animName`, and pinned.
+
+**It never bit because no dispatch ever passes it one.** `NPCManager.as`'s main switch
+builds `new EnemyStag()` at `:582` with no arguments, and the ROOM dispatch (`:688-710`)
+has arms for ai 12, 17, 18 and 19 — horse, bear, boar, deer — and **no arm for ai 21 at
+all**. `config/ogAi.ts` already encodes exactly that (`:107` main, nothing in the room
+table), from L4a. So the dropped argument is unreachable, not merely harmless: the stag's
+chase flag can only ever be set by `init()`'s `!isAdventureMode()` branch.
+
+**`EnemyStag.setLevel` (`:48-70`) is a hand copy of `NPC.as:239-260`** that differs in
+NOTHING but decompiler artifacts — a split `var factor:Number = NaN;` declaration and
+`this.` prefixes on fields. Written out because the tree gate demands the source's
+override set, exactly like `EnemyCivilianOld.update()`. It needs no number of its own.
+What it DOES change is reward: `init` sets the animal curve (`:37`, `lvl * 5 + 45`) and
+`setLevel` overwrites it with the base curve (`:62`, `lvl * 2 + 20`), so **a levelled stag
+pays less XP than an unlevelled one**. Pinned.
+
+### ⚠️ DEAD CODE DROPPED
+
+`EnemyHorse.as:33-35` is an empty `if` on `xml.mcs.prop.toString` — no call parens, so a
+Function object compared against `""`, and the body is empty either way. Not ported;
+recorded in the class header.
+
+### WHAT IS DELIBERATELY NOT MODELLED
+
+- **`MCSBear` / `MCSDeer` / `MCSHorse`** (`:17` / `:15` / `:17`) — display classes with
+  four legs. The paperdoll stays the roster's and the clips are `OG_ANIM.BEAR_*` (7),
+  `DEER_*` (8), `HORSE_*` (7) and `STAG_CHARGE`, all already in `ogActor.ts`. The stag
+  rides `MCSHorse` and uses the horse's clips throughout — which is why `OG_STAG.idle`
+  IMPORTS `OG_HORSE.idle` rather than copying it.
+
+### THE SEAM FINDINGS — two added
+
+**12. The stag would be telegraphed TWICE under finding 9's ruling.** Finding 9 rules that
+the telegraph fires on entering `CHARGING_STATE` (the wolf's pounce lands its hits from
+there, so ATTACK-only telegraphing warns nobody). The stag reaches the same state by a
+different road: `checkPlayer` → `ATTACK_STATE` + `HORSE_REARING` (`:305`/`:319`), the rear
+clip ending → `CHARGING_STATE` (`:98-108`), then the gore. `NpcController` already
+telegraphs on entering ATTACK, so under finding 9 the stag emits a telegraph for the rear
+AND a second one for the charge — one attack, two warnings. L5 must either suppress the
+CHARGING telegraph when the actor entered it FROM `ATTACK_STATE`, or telegraph CHARGING
+only for actors that reach it without passing through ATTACK. **RULING (decide-and-flag):
+suppress the second — the rear IS the warning the player sees, and it is already the
+longer of the two clips.** Red-team: the rejected option (telegraph only CHARGING, never
+ATTACK) is simpler and fixes wolf and stag with one rule, but it silently shortens the
+stag's warning to the gore's own wind-up and breaks every ATTACK-telegraphed actor already
+shipped; my pick breaks if some future actor enters CHARGING from ATTACK *without* the
+rear clip's length being a fair warning, and it secretly depends on L5 tracking the
+PREVIOUS actionState, which `NpcController` does not do today. Veto = one rule for both.
+
+**13. `doChase` has no source on the seam side.** Three of the four wanderers read a
+constructor flag that decides whether they exist as scenery or as a threat — and the horse
+does NOTHING AT ALL without it (`:154`, `:232`). In the source it comes from the ROOM
+dispatch's own `doChase` argument (`NPCManager.as:694`/`:698`), i.e. from the room that
+spawned the actor. `init()` then force-sets it outside the overworld (`EnemyBear.as:41-44`,
+`EnemyStag.as:39-42`), which is the only path a stag has. `NpcWorld` has `adventureMode`,
+so the `init` path already works; what the seam has no channel for is the ROOM's own
+answer. No adapter builds an `NpcWorld` yet, so nothing is broken today — but an adapter
+that builds a horse and forgets `doChase` will field a horse that grazes through the whole
+fight and reads as a bug in the port, not in the wiring.
+
+**⛔ THE KICKOFF'S FINDING NUMBER IS ANNOTATED.** `L4B_SLICE3_KICKOFF.md` reserves
+**finding 12** for the alpha's `NPCManager.createEnemy` spawn. Findings are numbered in
+the order they are FOUND and 3a ships before 3b, so 3a took 12 and 13; **the alpha's spawn
+becomes finding 14.** Veto = renumber. Nothing else about the alpha's port changes.
+
+### ⛔ NOT DONE — L4b-I at slice level
+
+Slice 3b (`EnemyBoar`, `EnemyWolfAlpha`) and slices 4–6 (15 more descendants).
+`EnemyPlayer`'s branch, `CutsceneActor`, the `AI_TIERS` rewire, the fight-feel grade: not
+built, not attempted, not claimed. No adapter builds an `NpcWorld`.

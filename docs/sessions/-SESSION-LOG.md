@@ -3693,3 +3693,61 @@ the owner's LOOK. None was attempted, and none is claimed.
   both the trap list and the paste block.
 - Paste block **472 words** (R7 ceiling ~1,000). Gate re-run at handover:
   **77 files / 1339 tests**, typecheck 0, lint 0, tree clean.
+
+## 2026-09-12 — Session 35: L4b slice 3a, the four wanderers
+
+- **00:00** Session start from `docs/sessions/L4B_SLICE3_KICKOFF.md` (Opus 5, ultracode).
+  Baseline confirmed by real run: HEAD was `dee2ded`, ONE commit past the kickoff's
+  `4f88780` — verified docs-only (`git diff --name-only 4f88780..dee2ded -- src/ tests/`
+  → 0 files), so the 1339 contract held. `npx vitest run` → 77 files / 1339 tests;
+  typecheck 0; lint 0.
+- **00:05** Plan declared and the one structural departure flagged BEFORE any code: the
+  kickoff's "ONE agent loop, no fan-out" is correct for the PORTING (the four classes
+  share `ogNpcAnimal.ts`, `SHIPPED` and one test-count contract — parallel writes are the
+  documented parallel-overwrite killer), but MEASURING the AS3 is read-only with zero
+  shared state and an isolated failure boundary. So: fan out the measurement + an
+  adversarial verify, keep every WRITE in one loop.
+- **00:06** Workflow `wf_f23d76dc-ae9` launched — 4 measure agents (one per `.as`, each
+  reading its target + `EnemyWolf.as` + `NPC.as` in full) pipelined into 2 lens-diverse
+  refuters each (override/cite exactness · numeric + world-read completeness).
+- **00:10** All four `.as` files read first-hand in parallel with the fan-out (the
+  subagents verify inputs, they do not replace reading the source being ported). Traps
+  found that the kickoff does NOT list: the stag's constructor DISCARDS `doChase`; the
+  bear's ATTACK facing disagrees with `faceTarget()` at exactly equal x; only the bear
+  ticks `idleCounter` outside IDLE (it doubles as the attack cooldown); the horse's `init`
+  neither grounds nor flips `doChase`; the stag's red-freeze has an extra `!doChase`.
+  The stag's `setLevel` diffed against `NPC.as:239-260`: behaviourally IDENTICAL, the only
+  differences being decompiler artifacts — the `EnemyCivilianOld.update()` case.
+- **00:20** Config landed: `ogNpcAnimal.ts` (shared, every twin line named incl. the
+  wolf's) + `ogEnemyBear/Deer/Horse/Stag.ts`. `OG_STAG.idle` IMPORTS `OG_HORSE.idle`
+  (byte-identical, and the stag rides `MCSHorse`) rather than copying it — structure
+  prevents drift instead of detecting it. The wolf's twins are pinned equal by test
+  instead, because `ogEnemyWolf.ts` shipped and is not churned.
+- **00:30** Four classes written. Typecheck 0; `npcTree` + `config-purity` green — the
+  tree gate reads the AS3 itself, so the override sets are the source's exactly.
+- **00:40** `tests/npcSlice3a.test.ts`: 54 tests, 53 green on first run. The one failure
+  was the TEST being wrong, not the port — the bear's cooldown is TICKED BEFORE it is
+  CHECKED, so a cooldown of 1 is already spent that frame. Re-authored as a two-sided
+  boundary (2 → no swing, 1 → swings).
+- **00:50** Chaos harness (`scratchpad/chaos3a.py`): plant → run → require RED → restore →
+  `cmp`-verify. First pass **13/15 red, 2 STAYED GREEN** — both real gaps in MY tests (the
+  deer test only used a LIVE target so a planted re-acquire never fired; the stag charge
+  test drove only one direction branch). Tests re-authored to cover the uncovered branch;
+  both plants then red. Gate not softened.
+- **01:00** Workflow returned: **12/12 agents, 0 errors, 0 empty results, 8/8 verdicts.**
+  Exactly ONE FATAL across all eight lenses, and it refuted the MEASUREMENT's prose (it
+  claimed the deer's empty ATTACK case was shared with the wolf's, which has a body), not
+  the port — the deer already had the empty case and a test pinning it. It surfaced two
+  genuine test gaps: nothing pinned that these constructors do NOT act where the wolf's
+  does, and nothing pinned that no animal loads the roster's elemental columns. Both
+  added, both planted red.
+- **01:10** **18/18 plants red, every file restored `cmp`-identical.** Final gates:
+  `npx vitest run` → 78 files / **1396 tests** (1339 → 1396, +57); typecheck 0; lint 0;
+  gate A `git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts
+  src/core/OpponentController.ts | wc -c` → **0**; `transcribeActorConsts.py` → no diff on
+  `ogActor.ts` (closed evidence intact).
+- **01:15** Docs in the same commit: DIVERGENCES "L4b (slice 3a)" with findings 12 and 13;
+  RESUME_HERE top block REWRITTEN (SESSION 34's block deleted, not appended to); GAUNTLET
+  §2's L4 row; and the kickoff ANNOTATED twice — 3a marked SHIPPED with what it did not
+  know, and its reserved "finding 12" for the alpha's spawn corrected to **finding 14**,
+  because findings are numbered in the order they are FOUND and 3a shipped first.

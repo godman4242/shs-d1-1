@@ -31,6 +31,18 @@ what is NEW to the lane, not by size:
 
 Ship 3a to green and commit, then 3b. Two commits, one session if it holds.
 
+> ✅ **3a SHIPPED 2026-09-12** (`EnemyBear` / `EnemyDeer` / `EnemyHorse` / `EnemyStag`):
+> 1339 → **1396 tests**, 18 chaos plants red, gates A/C/D/E/G/H/I green, no seam change.
+> **DO NOT RE-PORT IT.** What this kickoff got WRONG about 3a, corrected by the source:
+> nothing in its counts — all four line counts, override sets, `isAdventureMode` per-file
+> counts (bear 2 · deer 3 · horse 3 · stag 4) and clip-key counts were EXACT. What it did
+> not know: the stag's constructor DISCARDS its `doChase` (and no dispatch ever passes one
+> — there is no ai-21 arm in the room dispatch at all); the bear must NOT reuse
+> `faceTarget()` (the two disagree at equal x); only the bear ticks `idleCounter` outside
+> IDLE; `init` enters IDLE TWICE (once via `reset()`); and no animal ever loads the
+> roster's elemental columns. The stag's `setLevel` IS byte-equivalent to `NPC.as:239` —
+> written out, recorded. Read `docs/DIVERGENCES.md` "L4b (slice 3a)" before touching 3b.
+
 The exact override set of each (measured, and what `tests/npcTree.test.ts` will demand):
 
 ```
@@ -56,7 +68,7 @@ and boar — their constructors take `(mcs, doChase)` like the civilian's.
 | `CutsceneManager.getInstance().isShowing()` | **FIVE of six**, 1 each — **`EnemyWolfAlpha` has NONE** (re-measured 2026-09-10; the first draft said all six) | `NpcWorld.cutsceneShowing` — EXISTS (slice 1) |
 | `NPCManager.getNearestEnemy` | bear, boar, stag, alpha | `NpcWorld.nearestEnemy` — EXISTS |
 | `StatsManager.getPlayerStats / findBonusStat / getMinDamage / getDamageRange / getLevel` | alpha `setLevel` (76 lines) | `NpcWorld.playerStats` + `playerLevel` — EXIST (slice 2b); the alpha's balance block is the spear boss's shape, re-read it against `EnemySpearElite.as:79-123` and DIFF, do not assume it is a copy |
-| **`NPCManager.createEnemy(65, x, groundY, true)`** | alpha `startAction(POSE_STATE)` `:291` / `:295` — the howl calls a wolf (roster id 65) 50 px off either edge, a coin picks the side, room only | **NEW: `NpcEvent { type: 'spawn', npcId, x, y, fatal }`** — and **DIVERGENCES finding 12**: the seam has no way to add an actor mid-fight |
+| **`NPCManager.createEnemy(65, x, groundY, true)`** | alpha `startAction(POSE_STATE)` `:291` / `:295` — the howl calls a wolf (roster id 65) 50 px off either edge, a coin picks the side, room only | **NEW: `NpcEvent { type: 'spawn', npcId, x, y, fatal }`** — and **DIVERGENCES finding 14** (⛔ **ANNOTATED 2026-09-12:** this said finding **12**; slice 3a shipped first and took 12 and 13, so the alpha's spawn is **14**. Findings are numbered in the order they are FOUND): the seam has no way to add an actor mid-fight |
 | `mcs.changeScale(2, 2)` | alpha `:34` | `setScale(2)` — the wolf did 1.2 the same way |
 | `new MCSBear / MCSBoar / MCSDeer / MCSHorse / MCSWolf` | all six (the stag rides `MCSHorse`) | `paperdoll` stays the roster's; the clips are `BEAR_*` (7 keys), `BOAR_*` (8), `DEER_*` (8), `HORSE_*` (7) + `STAG_CHARGE` in `OG_ANIM` — all present, checked 2026-09-10 |
 | `SoundManager.instance.playHit / playDie`, `createFloatingText` | alpha `gotHit` / `die` | `sound` / `floatingText` events — EXIST |
