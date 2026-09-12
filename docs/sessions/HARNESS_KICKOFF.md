@@ -31,7 +31,7 @@ repo has actually made, a gate that goes red.**
 
 | Lever | Measured result | Why it mattered |
 |---|---|---|
-| Fan-out measure + adversarial verify (read-only), one loop for every WRITE | 3a: **12/12 agents, 0 errors, 8/8 verdicts**. 3b: both measures returned; its six verifiers were still in flight when this was written — so 3b is UNVERIFIED by that pass, not clean | Surfaced **2 real test gaps** my own tests missed, and 1 FATAL that refuted the *measurement*, not the port |
+| Fan-out measure + adversarial verify (read-only), one loop for every WRITE | **20/20 agents over two workflows, 0 errors, 14/14 verdicts, 4 FATAL — and all four refuted a MEASUREMENT, none refuted a port** | Surfaced **2 real test gaps** my own tests missed and **1 wrong doc claim I had already committed** (the boar's `canGotFly` framing). The alpha's override lens returned the session's only CLEAN |
 | Chaos plants | **40 plants, 38 red on the first pass, 2 stayed GREEN** | Those 2 green plants WERE 2 missing tests. Nothing else in the toolchain would have found them |
 | `tests/npcTree.test.ts` reading the `.as` itself | caught nothing this session — because it already binds | The only gate that compares the PORT to the SOURCE rather than to itself |
 
@@ -241,6 +241,10 @@ THE EVIDENCE THIS IS BUILT ON, so you do not re-derive it:
   - 1 of the slice 3 kickoff's 7 traps could never fire (`scaleX == 1` has no target
     anywhere), and it survived a pass labelled "TESTED against the AS3". Its setLevel
     warning ("diff it, do not assume it is a copy") was CORRECT and paid off.
+  - the adversarial pass caught a WRONG CLAIM IN A COMMITTED DOC that every test was
+    green around: the boar's `canGotFly = true` restates the base default
+    (`NPC.as:70-78` declares all five true) rather than diverging from it. No gate
+    could have caught it, because no gate reads prose — which is T2's whole point.
   - 40 chaos plants ran; 2 stayed GREEN and those 2 were real missing tests.
   - EnemySpearElite.ts:92-95 duplicates scaleTo/xp; the source does neither.
 
