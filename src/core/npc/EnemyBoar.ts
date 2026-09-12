@@ -7,8 +7,11 @@
  * `gotLaunched()` — the fly velocities are accepted and thrown away. A boar cannot
  * be knocked down and cannot be thrown; everything becomes a launch.
  *
- * ⚠️ **`canGotFly = true`** (`:28`), unlike the wolf and unlike all four of slice
- * 3a — so `NPC.gotHit`'s fly branch actually reaches `gotFly()` on this actor.
+ * ⚠️ **`canGotFly = true`** (`:28`) — which RESTATES the base default. All five
+ * `canGot*` flags are declared `true` on `NPC.as:70-78`; the divergent classes are
+ * the ones that write `false`, and the wolf (`EnemyWolf.as:19`) and all four slice-3a
+ * wanderers do. The boar simply never opts out, so `NPC.gotHit`'s fly branch reaches
+ * `gotFly()` here and becomes a launch.
  *
  * ⚠️ **Its `gotLaunched` (`:293`) is NOT the base's** (`NPC.as:536`), and the
  * difference is an inversion, not a delta:

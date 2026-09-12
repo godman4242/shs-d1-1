@@ -3793,3 +3793,22 @@ the owner's LOOK. None was attempted, and none is claimed.
   entries**, 13 of 34 remaining. Docs in the same commit: DIVERGENCES "L4b (slice 3b)" with
   finding 14, RESUME_HERE top block REWRITTEN, GAUNTLET §2's L4 row, and the kickoff
   annotated a third time — 3b marked SHIPPED with the two traps the source corrected.
+- **02:45** 3b's adversarial pass landed (`wf_516ce81b-b94`): **8/8 agents, 0 errors,
+  6/6 verdicts, 3 FATAL**. The alpha's OVERRIDE+CITE lens came back **CLEAN** — the first
+  clean verdict of the session, on the hardest class's override set. **All three FATALs
+  refuted a MEASUREMENT, none refuted the port** — so across both slices, 14 verdicts and
+  4 FATALs, zero FATALs against shipped code. Each verified against the source myself
+  before acting, per the rule about not taking agents at face value:
+    1. `NPC.as:70-78` declares ALL FIVE `canGot*` flags `true`, so the boar's
+       `canGotFly = true` RESTATES the default — the wolf and the four wanderers are the
+       classes that opt out. The port was already right; my DOC framing ("unlike the wolf
+       and all four wanderers") implied the boar was repo-wide unusual. Corrected in the
+       class header, in DIVERGENCES, and in the test's name and body, then chaos-planted
+       twice (opt out of the fly → red; flip kneeGroin → red).
+    2. `MCSCharacter.as:1282-1285` — `startAnim` bails on a REPEATED name before the
+       null check. `MCSActor.startAnim` already carries that guard (slice 0). No change.
+    3. `grep -rl Damage.LAUNCH_KNOCKDOWN` → **25 files** (the player's own charge at
+       `MCSPlayer.as:2031`, arrows, six `Trap_*Auto`, the stag, the ogre, the Kanji
+       guardian…), so the boar's `gotKnockDown` → `gotLaunched` is a path ordinary play
+       drives constantly, not a theoretical one. Added to DIVERGENCES.
+  Re-gated after the corrections: 79 files / 1438 tests, typecheck 0, lint 0, gate A 0 bytes.

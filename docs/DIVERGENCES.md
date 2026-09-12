@@ -4766,8 +4766,23 @@ only its GUARDS differ.
   `gotFly(flyVelX, flyVelY)` (`:358`) are ONE LINE each and both call its OWN
   `gotLaunched()`. A boar cannot be knocked down and cannot be thrown; the fly velocities
   are accepted and discarded.
-- **`canGotFly = true`** (`:28`), unlike the wolf and all four wanderers — so
-  `NPC.gotHit`'s fly branch actually reaches `gotFly()` on this actor and becomes a launch.
+- **`canGotFly = true`** (`:28`) — which RESTATES the base default rather than
+  diverging from it. All five `canGot*` flags are declared `true` on `NPC.as:70-78`;
+  the divergent classes are the ones that write `false`, and the wolf
+  (`EnemyWolf.as:19`) and all four slice-3a wanderers do. The boar never opts out, so
+  `NPC.gotHit`'s fly branch reaches `gotFly()` here and becomes a launch.
+  ⚠️ Corrected by the adversarial pass: the first measurement called the boar "the
+  only animal with `canGotFly = true`" from a grep that only covered classes which
+  ASSIGN the flag and never read `NPC.as`. The port was already right; the framing
+  was not.
+- **Its `gotKnockDown` is a LIVE path, not a theoretical one.** `grep -rl
+  Damage.LAUNCH_KNOCKDOWN` over the payload returns **25 files**: the player's own
+  charge attack (`MCSPlayer.as:2031`/`:2043`), `ArrowProjectile`, `ChiPunchProjectile`,
+  `WindmillProjectile`, `HeavenlySwordProjectile`, `BigRockProjectile`,
+  `BoulderProjectile`, `BigWaveProjectile`, `BigFireBreathProjectile`,
+  `BigEarthquakeProjectile`, `ChargedShotProjectile`, six `Trap_*Auto` classes,
+  `EnemySpearElite`, `EnemyStag`, `EnemyOgre`, `EnemyKanjiGuardian` and more. A boar
+  is knocked down by ordinary play constantly, and every one of those becomes a launch.
 - **Its `gotLaunched` INVERTS the base's guard** (`:295` vs `NPC.as:538`). The base guards
   `!canGotLaunched || (isDowned() && !actionState == FLY_STATE) || DYING`, whose middle
   clause is the AS3 precedence bug — `!actionState` is a Boolean, so `== 32` is ALWAYS

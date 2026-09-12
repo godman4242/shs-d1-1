@@ -161,9 +161,18 @@ describe('EnemyBoar — the first reaction-side overrides, and they collapse to 
     expect(Math.abs(b.velX)).toBe(OG_NPC_LAUNCH.velXAbs); // not 99
   });
 
-  it('`canGotFly` is TRUE, unlike the wolf and all four wanderers (`:28`)', () => {
-    expect(boar().npc.canGotFly).toBe(true);
-    expect(wolf().npc.canGotFly).toBe(false);
+  it('`canGotFly` RESTATES the base default — the wolf is the one that opts out (`:28` vs `NPC.as:74`)', () => {
+    // All five canGot* flags are declared true on NPC.as:70-78. The boar never
+    // writes false, so it inherits exposure; the wolf and the four wanderers do.
+    // (The first measurement called the boar "the only animal with canGotFly = true"
+    // from a grep that only saw classes which ASSIGN the flag — hence this pin.)
+    const b = boar().npc;
+    expect(b.canGotFly).toBe(true);
+    expect(wolf().npc.canGotFly).toBe(false); // the wolf writes false
+    expect(alpha().npc.canGotFly).toBe(false); // so does the alpha
+    // The boar's `true` is not accidental permissiveness: the same constructor
+    // DOES opt out of two flags, so it is choosing to stay exposed to the fly.
+    expect([b.canGotKneeGroin, b.canGotStun]).toEqual([false, false]);
   });
 
   it('its `gotLaunched` has a REAL downed guard where the base\'s is dead code (`:295`)', () => {
