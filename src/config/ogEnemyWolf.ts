@@ -9,8 +9,12 @@
  *   - floating text y −100 and the five colours  `:405-421` → `OG_NPC_FLOATING_TEXT` (`NPC.as:497-513`)
  *
  * `EnemyWolf2` has no number of its own: every value it uses is a twin of one below
- * (`EnemyWolf2.as:24` ↔ `:227`, `:39` ↔ `:237`, `:41` ↔ `:239`, `:53` ↔ `:259`,
- * `:66/:70` ↔ `:304/:308`, `:88` ↔ `:329`), so it imports this file.
+ * (`EnemyWolf2.as:24` ↔ `EnemyWolf.as:227`, `EnemyWolf2.as:39` ↔ `EnemyWolf.as:237`,
+ * `EnemyWolf2.as:41` ↔ `EnemyWolf.as:239`, `EnemyWolf2.as:53` ↔ `EnemyWolf.as:259`,
+ * `EnemyWolf2.as:66/70` ↔ `EnemyWolf.as:304/308`, `EnemyWolf2.as:88` ↔ `EnemyWolf.as:329`),
+ * so it imports this file. Both sides named: the bare right-hand cites resolved against
+ * `EnemyWolf2.as` (103 lines) and four were out of range, while `:66`, `:70` and `:88`
+ * silently PASSED against the wrong file.
  */
 export const OG_WOLF = {
   /** `EnemyWolf.as:27` — `mcs.changeScale(1.2, 1.2)`: a fifth bigger than the paperdoll. */

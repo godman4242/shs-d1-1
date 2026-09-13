@@ -1,9 +1,13 @@
 /**
  * OG_FOX — `EnemyFox.as` (240 lines), ai 24, `extends EnemyWolf`. Lane L4b, slice 2a.
  * All CONTRACT. Only what the fox ADDS to the wolf is here; the rest are twins of
- * `OG_WOLF` (`EnemyFox.as:50` ↔ `EnemyWolf.as:227`, `:52` ↔ `:229`, `:103` ↔ `:237`,
- * `:119` ↔ `:255`, `:123` ↔ `:259`, `:133` ↔ `:268`, `:177/:181` ↔ `:304/:308`,
- * `:202` ↔ `:329`).
+ * `OG_WOLF`. Both sides of every ↔ name their file: a bare cite cannot say which side of
+ * an arrow it sits on, and `scripts/gates/claimcheck.ts` resolved the right-hand ones
+ * against `EnemyFox.as` (241 lines) and reported six as out of range.
+ * (`EnemyFox.as:50` ↔ `EnemyWolf.as:227`, `EnemyFox.as:52` ↔ `EnemyWolf.as:229`,
+ * `EnemyFox.as:103` ↔ `EnemyWolf.as:237`, `EnemyFox.as:119` ↔ `EnemyWolf.as:255`,
+ * `EnemyFox.as:123` ↔ `EnemyWolf.as:259`, `EnemyFox.as:133` ↔ `EnemyWolf.as:268`,
+ * `EnemyFox.as:177/181` ↔ `EnemyWolf.as:304/308`, `EnemyFox.as:202` ↔ `EnemyWolf.as:329`).
  */
 export const OG_FOX = {
   /** `EnemyFox.as:57` — in the overworld, a d5 of 0 on each idle re-roll says something… */

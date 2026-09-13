@@ -18,10 +18,23 @@ export const OG_HUMANOID_DOWNED_BAR_X = -100;
 /** `EnemyKatana.as:97` (twins: Knife `:101`, Spear `:101`, RoomGoblin `:77`, RoomOgre `:77`, Civilian `:108`, CivilianOld `:87`, Archer `:99`, SpearElite `:215`) — …and back on getting up. */
 export const OG_HUMANOID_BAR_X_RESET = 0;
 
-/** `EnemyKatana.as:100` / `:104` (twins: Knife `:104/108`, Spear `:104/108`, RoomGoblin `:80/84`, RoomOgre `:80/84`, Civilian `:111/115`, CivilianOld `:90/94`, Archer `:102/106`, SpearElite `:218/222`) — DOWNEDUP steps the body 100 px back. */
+/**
+ * `EnemyKatana.as:100/104` — DOWNEDUP steps the body 100 px back, `movePositionX(∓100)`.
+ * Twins, every one verified to hold the same pair and each naming its own file (an
+ * abbreviation like "Knife" is prose no gate can resolve): `EnemyKnife.as:104/108`,
+ * `EnemySpear.as:104/108`, `RoomGoblin.as:80/84`, `RoomOgre.as:80/84`,
+ * `EnemyCivilian.as:111/115`, `EnemyCivilianOld.as:90/94`, `EnemyArcher.as:102/106`,
+ * `EnemySpearElite.as:218/222`.
+ */
 export const OG_HUMANOID_DOWNEDUP_STEP = 100;
 
-/** `EnemyKatana.as:213` (twins: Knife `:232`, Spear `:261`, RoomGoblin `:262`, RoomOgre `:280`, Civilian `:292`, CivilianFemale `:185`, CivilianOld `:243`, Archer `:257`, SpearElite `:375`) — FALL_STATE gravity per frame. */
+/**
+ * `EnemyKatana.as:213` — FALL_STATE gravity per frame, `velY += 3`.
+ * Twins, each naming its file and each verified to read `velY += 3;` verbatim:
+ * `EnemyKnife.as:232`, `EnemySpear.as:261`, `RoomGoblin.as:262`, `RoomOgre.as:280`,
+ * `EnemyCivilian.as:292`, `EnemyCivilianFemale.as:185`, `EnemyCivilianOld.as:243`,
+ * `EnemyArcher.as:257`, `EnemySpearElite.as:375`.
+ */
 export const OG_HUMANOID_FALL_GRAVITY = 3;
 
 /** `EnemyKnife.as:115` (twins: Spear `:119`, RoomGoblin `:91`, RoomOgre `:91`, SpearElite `:239`) — a DOWNSTAB on a downed target does double. */

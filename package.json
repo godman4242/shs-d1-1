@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "chaos": "node scripts/gates/chaos.ts",
+    "claimcheck": "node scripts/gates/claimcheck.ts",
     "lint": "eslint ."
   },
   "dependencies": {

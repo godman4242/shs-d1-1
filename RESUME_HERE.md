@@ -17,9 +17,9 @@ gains no new class · `src/core/Sim.ts`, `OpponentController.ts` and the seam ar
 
 | | tool | state |
 |---|---|---|
-| **T1** | `scripts/gates/chaos.ts` + `tests/*.plants.ts` — the plant harness, committed | ✅ **LANDED** (this commit) |
-| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ⏳ next |
-| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | ⏳ |
+| **T1** | `scripts/gates/chaos.ts` + `tests/*.plants.ts` — the plant harness, committed | ✅ LANDED (`cdb2519`, corrected by `b4e361b`) |
+| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ✅ **LANDED** (this commit) |
+| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | ⏳ next |
 | **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ⏳ (its source half already shipped as `abb484e`) |
 | **T5** | test-harness preflight — `parked(npc, state)`, `rollsFor(npc, fn)` | ⏳ |
 
@@ -64,6 +64,64 @@ start. Tree verified clean after every probe.
 
 ⛔ **`npm run chaos` is NOT in pre-commit and must never be** — it rewrites shipped source.
 It is a slice gate. The pre-commit half is `tests/chaosGate.test.ts`, which applies nothing.
+
+### ✅ T2 — `npm run claimcheck`
+
+```
+$ npm run claimcheck     ->  cites resolved       1703
+                             cited values checked 401   (±1)
+                             ✅ every cite resolves and every cited value is where it says it is
+                             real time 0.446s   (first version: 2m02s — see below)
+$ npx vitest run         ->  Test Files  81 passed (81)      (was 80 — +1: tests/claimcheck.test.ts)
+                             Tests  1546 passed (1546)       (was 1517 — +29)
+$ npm run -s typecheck   ->  exit 0        $ npm run -s lint  ->  exit 0
+```
+
+**IT FOUND THREE REAL BUGS, and all three were IN RANGE** — an existence-only gate passes
+them clean, which is the whole argument for the numeric half. In `src/config/ogEnemyKatana.ts`:
+`:140` for `walkSpeed = random() * 3 + 4` should be **`:129`** (line 140 is
+`startAnim(GOTLAUNCHEDDOWNED)`); `:175-176` for the left-facing melee test should be
+**`:167`**; `:185` for the right-facing one should be **`:179`**. Five config values sat
+under those three cites. All fixed, each verified against the source by hand.
+
+**27 more cites were unresolvable and are now fixed in the doc, not special-cased in the
+gate.** They were bare `:N` cites whose target file was set by ENGLISH PROSE — "(ogre
+`:317`)", "(Female `:28`)", `` `EnemyWolf2.as:24` ↔ `:227` ``. Every one now names its file.
+Three of them (`:66`, `:70`, `:88` in `ogEnemyWolf.ts`) had been silently PASSING against
+the wrong file. Two `EnemySpearElite` dice cites were widened to ranges, because the branch
+values live 13 and 11 lines below the cited line.
+
+**The resolution rules are measured, and two obvious ones are FALSIFIED** — written up in
+`scripts/gates/claimcheckLib.ts`'s header. "Inherit the last named cite above" mis-resolves
+~30 values in `ogEnemyWolfAlpha.ts`, which names `EnemySpearElite.as` mid-file as a
+CONTRAST; "the header always wins" mis-resolves bare cites that genuinely follow a
+mid-clause name. The rule is: same comment line first, header default second, nothing else.
+
+**±1, not the kickoff's ±2, and that is a TIGHTENING.** Measured both: ±2 also passes with
+zero failures, so ±1 loses no coverage while roughly halving the false-PASS surface
+(decompiled AS is one-statement-per-line, so a ±2 window admits four to six unrelated small
+integers — `midDiv: 10` would pass against any of 40 / 10 / 5 / 60). `npm run claimcheck --
+--window 2` re-measures the looser one.
+
+**TWO FILES ARE EXEMPT FROM THE NUMERIC HALF, each with a reason and each already gated
+elsewhere:** `ogAi.ts` transcribes `NPCManager.as`'s dispatch switch as DATA (its numbers
+are ai ordinals, XML placement attributes and source LINE NUMBERS — a ±N window over those
+is a category error; `tests/ogAiData.test.ts` byte-checks it with an INDEPENDENT parser),
+and `fidelity.ts` holds values MEASURED OFF 1080p STUDY FRAMES, not transcribed from the
+AS3 at all.
+
+**It was 2m02s and is now 0.446s** (275×). The first version re-parsed the whole file for
+every numeric field, and `src/config` holds ~17,000 of them. Two minutes fails the one
+thing a pre-commit gate must be.
+
+**Chaos-proofed five ways, each exit 1, tree clean after every probe:** shift a cite by 3
+lines → `LITERAL-ABSENT` · name a file that does not exist → `MISSING-FILE` · cite past
+end-of-file → `LINE-OOR` · corrupt a value its cite no longer supports → `LITERAL-ABSENT` ·
+plant an allow-list entry that is no longer needed → `STALE-DERIVED`.
+
+⚠️ **It needs `reference/`**, which is gitignored study-only material. Without it the run
+exits 0 saying it checked NOTHING, and the corpus half of the test skips with that reason
+asserted. That is the gate's one deliberate fail-open; the hermetic unit tests always run.
 
 ### THE LANE STATE — unchanged since session 35 (`abb484e`), and still in force
 

@@ -30,9 +30,9 @@ export const OG_ROOM = {
    */
   fidgetDice: 2,
   fidgetOn: 1,
-  /** `RoomGoblin.as:225` (ogre `:243`) — a charging room actor swings inside 50 px. */
+  /** `RoomGoblin.as:225` / `RoomOgre.as:243` — a charging room actor swings inside 50 px. */
   attackX: 50,
-  /** `RoomGoblin.as` spotPlayer `:285` / `:291` (ogre `:317` / `:322`) — charge speed `random() * 3 + 5`, signed. */
+  /** spotPlayer `RoomGoblin.as:285/291` / `RoomOgre.as:317/322` — charge speed `random() * 3 + 5`, signed. */
   chase: { range: 3, base: 5 },
   /** `RoomGoblin.as:283` / `:289` — the goblin notices the player within 300 px in front… */
   goblinSightX: 300,

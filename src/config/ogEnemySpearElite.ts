@@ -16,9 +16,9 @@ export const OG_SPEAR_ELITE = {
   bowApproachX: 100,
   /** `EnemySpearElite.as:530` — a DOWNED target inside 50 px gets the downstab… */
   stabX: 50,
-  /** `EnemySpearElite.as:534` / `:536` — …inside 100 a d4: 1 spin, 2 flurry, 3 launch, else the plain stab… */
+  /** `EnemySpearElite.as:534-549` — …inside 100 a d4: 1 spin (`:537`), 2 flurry (`:543`), 3 launch (`:549`), else the plain stab… */
   melee: { x: 100, dice: 4, spinOn: 1, flurryOn: 2, launchOn: 3 },
-  /** `EnemySpearElite.as:561` / `:563` — …inside 200 a d5: 0 lunge, 1 swing, 2 kick, else nothing. */
+  /** `EnemySpearElite.as:561-574` — …inside 200 a d5: 0 lunge (`:564`), 1 swing (`:569`), 2 kick (`:574`), else nothing. */
   ranged: { x: 200, dice: 5, lungeOn: 0, swingOn: 1, kickOn: 2 },
   /** `EnemySpearElite.as:541` / `:547` / `:553` — `5 * 24` frames: five seconds between specials. */
   cooldown: { sec: 5, fps: OG_FPS },

@@ -47,6 +47,14 @@ state and next step live in `RESUME_HERE.md`.
   before claiming a slice closed. `tests/chaosGate.test.ts` is the half that *is* in
   pre-commit: it resolves every plant's anchor without applying any of them, so anchor
   drift goes red on the commit that causes it.
+- **Claimcheck: `npm run claimcheck`** (`scripts/gates/claimcheck.ts`) — resolves every
+  `<File>.as:<line>` in `src/config/**` and `src/core/npc/**` against the real decompiled
+  source, and cross-checks every CITED numeric config value against the line it claims to
+  come from (±1). Read-only and ~0.5 s, so it is in the pre-commit gate via
+  `tests/claimcheck.test.ts`. It needs `reference/` (gitignored, study-only); without it
+  the run says loudly that it checked NOTHING and the corpus half of the test skips.
+  It found three genuinely wrong cites on its first run, all of them IN RANGE — so
+  existence checking alone would have passed them.
 - The gate scripts are run by **Node directly** (native TypeScript, hence
   `engines.node >= 22.18`) — no runner, no new dependency.
 
