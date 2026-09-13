@@ -39,6 +39,16 @@ state and next step live in `RESUME_HERE.md`.
 ## Stack & commands
 - Dev: `npm run dev` · Build: `npm run build` · Typecheck: `npm run typecheck`
 - Test: `npm test` (vitest run) · Watch: `npm run test:watch`
+- **Chaos: `npm run chaos`** — the plant harness (`scripts/gates/chaos.ts`). Applies every
+  declared plant in `tests/*.plants.ts` one at a time, requires the named tests to go RED,
+  restores byte-identically, and fails on anything else. `-- --list` prints the plants
+  without touching a file; `-- <substring>` filters (a debugging aid, **not** the gate).
+  ⛔ **Never in pre-commit — it rewrites shipped source.** It is a SLICE GATE: run it
+  before claiming a slice closed. `tests/chaosGate.test.ts` is the half that *is* in
+  pre-commit: it resolves every plant's anchor without applying any of them, so anchor
+  drift goes red on the commit that causes it.
+- The gate scripts are run by **Node directly** (native TypeScript, hence
+  `engines.node >= 22.18`) — no runner, no new dependency.
 
 ## Quality gate
 - Pre-commit runs typecheck → tests (see `.githooks/pre-commit`). Commit = green.

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": ">=22.12"
+    "node": ">=22.18"
   },
   "scripts": {
     "dev": "vite",
@@ -13,6 +13,7 @@
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json",
     "test": "vitest run",
     "test:watch": "vitest",
+    "chaos": "node scripts/gates/chaos.ts",
     "lint": "eslint ."
   },
   "dependencies": {

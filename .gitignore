@@ -24,3 +24,8 @@ __pycache__/
 
 # Headless renders from scripts/art/renderPose.ts — build-time artifacts, never committed
 renders/
+
+# `npm run chaos` keeps originals here only while a plant is applied. A surviving
+# directory means a run died mid-plant, and the next run REFUSES to start until it is
+# dealt with by hand — never committed.
+.chaos-backup/

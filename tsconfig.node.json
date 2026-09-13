@@ -16,7 +16,11 @@
     "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    // `scripts/gates/*.ts` are run by Node DIRECTLY (native type-stripping), and
+    // native ESM will not resolve an extensionless specifier. So the gate modules
+    // import each other as "./chaosLib.ts". Legal only under noEmit, which is set.
+    "allowImportingTsExtensions": true
   },
   "include": ["tests", "scripts", "vite.config.ts"],
   "exclude": ["tests/fixtures"]

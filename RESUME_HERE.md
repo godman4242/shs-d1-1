@@ -1,71 +1,76 @@
 # RESUME HERE
 
-## ▶ SESSION 35 (2026-09-12) — **L4b SLICE 3 IS CLOSED (3a + 3b): SIX ANIMALS, THE FIRST REACTION OVERRIDES, AND AN ACTOR THAT CALLS FOR HELP. 21 OF 34 PORTED, 13 TO GO.**
+## ▶ SESSION 36 (2026-09-13) — **THE HARNESS SESSION: THE GATES THAT MAKE THE MODEL MATTER LESS. T1 IS IN. NO LANE WORK.**
 
-**3a — the four wanderers:** `EnemyBear` (17), `EnemyDeer` (19), `EnemyHorse` (12),
-`EnemyStag` (21), 1,148 AS3 lines (commit `aa4f345`). **3b — the fighters:**
-`EnemyBoar` (18) and `EnemyWolfAlpha` (11, and 16 in the ROOM dispatch only), 948 lines
-(this commit). Each written out in full under its cites with `override` on exactly the
-AS3's set. **21 ported NPC classes, i.e. 23 `SHIPPED` entries** (the map also holds
-`MCSActor` and `NPC`, which are not ports). The seam grew by ONE event across the whole
-slice: `NpcEvent.spawn`.
+Thesis (`docs/sessions/HARNESS_KICKOFF.md`): every defect this lane has shipped came from
+**hard noticing, not hard reasoning** — a claim that looked true, was never checked against
+the source, and nothing in the toolchain could tell. A bigger model closes that by noticing
+more; a harness closes it by **making the un-noticed thing fail a gate**. Five tools, each
+independently gated and committed.
+
+**SCOPE CUTS, restated and held:** no lane work — slice 4 is NOT started and `src/core/npc/`
+gains no new class · `src/core/Sim.ts`, `OpponentController.ts` and the seam are untouched
+(gate L4b-A still reads **0 bytes**) · `src/config/ogActor.ts` stays CLOSED evidence
+(transcriber re-run, no diff) · no new runtime dependency.
+
+### THE FIVE TOOLS
+
+| | tool | state |
+|---|---|---|
+| **T1** | `scripts/gates/chaos.ts` + `tests/*.plants.ts` — the plant harness, committed | ✅ **LANDED** (this commit) |
+| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ⏳ next |
+| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | ⏳ |
+| **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ⏳ (its source half already shipped as `abb484e`) |
+| **T5** | test-harness preflight — `parked(npc, state)`, `rollsFor(npc, fn)` | ⏳ |
+
+### ✅ T1 — `npm run chaos`
 
 ```
-$ git log -1 --oneline   ->  (this commit)
-$ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c   ->  0   (gates L4b-A, L4b-B)
+$ npm run chaos          ->  40/40 plants went RED
+                             40/40 files restored byte-identical; git says the tree is clean
+$ npx vitest run         ->  Test Files  80 passed (80)      (was 79 — +1: tests/chaosGate.test.ts)
+                             Tests  1517 passed (1517)       (was 1438 — +79)
 $ npm run -s typecheck   ->  exit 0
 $ npm run -s lint        ->  exit 0
-$ npx vitest run         ->  Test Files  79 passed (79)      (was 77 — +2)
-                             Tests  1438 passed (1438)       (was 1339 — +99: 3a +57, 3b +42)
+$ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c   ->  0
 $ python3 scripts/payload/transcribeActorConsts.py && git diff --stat src/config/ogActor.ts   ->  EMPTY
 ```
 
-### ✅ WHAT LANDED
+**The 40 are not all the same 40, and the file says so.** Session 35's throwaway harness
+survives only in its FIRST-PASS form (15 of slice 3a's 18; all 22 of 3b), because the three
+plants it added mid-session after the adversarial pass were never written back. So **37 are
+transcribed byte-for-byte by an AST extractor** (`recovered:`) and **3 are re-authored here**
+from the guards the session log and DIVERGENCES record (`reauthored:`). The runner prints the
+provenance on every line. 37 was not rounded up to 40 and the criterion was not softened to
+37/37.
 
-**1. Four wanderers that share a skeleton and agree on almost nothing inside it.** Only the
-bear fights, and only ITS `idleCounter` ticks outside IDLE (it doubles as the attack
-cooldown) — and it is ticked BEFORE it is checked, so a cooldown of 1 is already spent.
-Only the deer has a behind-the-back flee band (200 facing / 50 behind) and never
-re-acquires a dead target. Only the horse refuses to move without `doChase`. Only the stag
-charges, and its charge does not step down in the overworld where its RUN does.
+**One recovered anchor had already drifted to ZERO matches** — `EnemyStag.ts` gained a
+comment block between `super(...)` and `this.canGotLaunched` after the plant ran. The runner
+treats that as a LOUD failure, never a skip, which is how it was found; it is re-anchored to
+the same intent. `tests/chaosGate.test.ts` now resolves all 40 anchors **in pre-commit**, so
+the next drift goes red on the commit that causes it.
 
-**2. The boar is the first REACTION override, and its three collapse into one.**
-`gotKnockDown()` and `gotFly()` are ONE LINE each and both call its OWN `gotLaunched()` —
-a boar cannot be knocked down or thrown, and the fly velocities are discarded. Its
-`gotLaunched` INVERTS the base's guard: a REAL `DOWNED` test where the base's is the AS3
-precedence bug (`!actionState == FLY_STATE`, always false), and NO `canGotLaunched` check.
-Its `doLaunched` lands into **WALK**, never DOWNED. Its RUN hits EVERY frame with no range
-test and no overworld fence, carrying `LAUNCH_KNOCKDOWN` iff one d4 rolled 0 at charge start.
+**Two fail-open holes in the scratchpad version are closed** (both would have let a broken
+plant look like a caught one): it never proved the baseline was GREEN, so a test file that was
+already red handed a free pass to every plant aimed at it; and it scored **any** non-zero exit
+as red, so a plant that broke the *compile* counted as caught. A plant is now RED only if
+vitest reports ≥1 FAILED TEST — anything else non-zero is `INCONCLUSIVE`, which fails.
 
-**3. The alpha calls for help — and finding 14.** `POSE_STATE` emits
-`NpcEvent.spawn { npcId: 65, x: ±50 OUTSIDE the stage, fatal: true }`. Nothing can drain
-it; L5 needs a spawn sink that owns actor lifetime. ⚠️ **Its CONSTRUCTOR calls
-`startAction(IDLE)`, whose IDLE case can escape into the howl — so an alpha can emit a
-spawn BEFORE `init()` has ever run.**
+**All six process-level guards chaos-proofed, each exit 1:** unmatchable anchor →
+`PLANT-FAILED` · a guard no test covers → `STAYED-GREEN ⚠️ MISSING TEST` · a plant that
+breaks the parse → `INCONCLUSIVE` · a dirty target file → refuses to start · a backup
+directory left by a crashed run → refuses to start · the plant count shrinking → refuses to
+start. Tree verified clean after every probe.
 
-**4. ⚠️ The alpha's `gotHit` is not the wolf's:** defence INSIDE the alive check, and **no
-`!isDowned()` guard on the launch** — a DOWNED alpha hit with launch-air launches again,
-where a downed wolf does not.
+⛔ **`npm run chaos` is NOT in pre-commit and must never be** — it rewrites shipped source.
+It is a slice gate. The pre-commit half is `tests/chaosGate.test.ts`, which applies nothing.
 
-**5. Source quirks ported as they read, all pinned:** `EnemyStag`'s constructor takes
-`doChase` and NEVER assigns it (harmless — the room dispatch has no ai-21 arm at all);
-`EnemyStag.setLevel` is a no-op hand copy of `NPC.as:239` that nonetheless swaps the animal
-xp curve for the base's, so a levelled stag pays LESS; `EnemyBoar.as:219` red-freezes with
-a **DEER** clip; the alpha's `KNOCKDOWNED` falls through into `DOWNED` and lies there 48
-frames, EIGHT times the wolf's 6.
+### THE LANE STATE — unchanged since session 35 (`abb484e`), and still in force
 
-**6. No animal ever loads the roster's elemental columns** — none of the six `init` bodies
-assigns the eight `STAT_*` fields the base assigns, and none overrides `gotHit` except the
-alpha, so they all defend with permanent zeroes.
-
-**7. 40 chaos plants red** (18 in 3a, 22 in 3b), all restored `cmp`-identical. **Two 3a
-plants STAYED GREEN on the first pass and were re-authored, not argued away** (the deer
-test used only a LIVE target; the stag charge test drove one direction branch).
-
-**8. The measurement was fanned out and adversarially refuted.** 3a: 12/12 agents, 8/8
-verdicts, 1 FATAL — and it refuted the MEASUREMENT's prose, not the port; it surfaced two
-real test gaps. The WRITING stayed one loop throughout, because the classes share
-`ogNpcAnimal.ts`, `SHIPPED` and one test-count contract.
+Slice 3 closed at **21 ported NPC classes / 23 `SHIPPED` entries**, 13 of 34 to go. The full
+narrative is in `docs/DIVERGENCES.md` "L4b (slice 3a)" and "(slice 3b)" (findings 12–14) and
+`docs/sessions/-SESSION-LOG.md` (2026-09-12); it is not repeated here. What a future session
+needs is below, verbatim.
 
 ### ⛔ WHAT A FUTURE SESSION MUST NOT "FIX"
 
@@ -126,6 +131,7 @@ Slices 4–6 (13 descendants). `EnemyPlayer` + `EnemyElite` + `EnemyPlayerGiant`
 `adventureMode`, `peaceful`, `duelMode`, the kill-cam callback, `doChase` (finding 13) and
 the `spawn` sink (finding 14) are all L5's to wire. The fight-feel grade (A1 cites + the
 owner's LOOK). None attempted, none claimed.
+
 
 
 ## ⛔ SESSION 30 (2026-09-06) — **L3B: THE GATE IS BUILT AND TWO DEFECTS ARE GONE. THE ART IS STILL OPEN.**
