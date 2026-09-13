@@ -227,8 +227,29 @@ export const PLANTS: ChaosPlant[] = [
     tests: [SLICE],
     note: "reauthored:2026-09-13 — session 35 added this plant after its adversarial pass surfaced the gap (\"nothing pinned that no animal loads the roster's elemental columns\"); its text was never written back to chaos3a.py",
   },
+  /**
+   * THE THIRD RE-AUTHORED PLANT, and the one that rests on the least authority.
+   *
+   * Session 35 ran EIGHTEEN plants for slice 3a and its log names the guard of only
+   * seventeen, so this one stands in for the eighteenth rather than reproducing it.
+   *
+   * ⚠️ IT BREAKS ONE OF TWO BRANCHES, and the name says so. The anchor is the
+   * LEFT-facing flee (`EnemyHorse.ts:213-218`); the mirror branch at `:219-224` still
+   * enters POSE with `HORSE_REARING`, so `update()`'s `case OG_ANIM.HORSE_REARING`
+   * (`:89`) stays reachable and a right-facing horse still telegraphs. That is
+   * deliberate, not a shortfall: a single-branch plant proves the test covers THAT
+   * branch, and "the test drove only one of the two direction branches" is exactly how
+   * slice 3a's stag charge plant was caught STAYING GREEN on its first pass.
+   *
+   * ⚠️ ITS DIVERGENCE IS NOT IN `docs/DIVERGENCES.md`. The horse rearing where the bear
+   * and deer bolt is written down in exactly one place — `src/core/npc/EnemyHorse.ts:18-19`
+   * — so unlike the other two re-authored plants (DIVERGENCES' 3a section names both the
+   * constructors-do-not-act and elemental-columns gaps), this one rests on this session's
+   * reading of the port. Said plainly because an earlier draft of this entry claimed
+   * DIVERGENCES backed it, and an adversarial pass refuted that.
+   */
   {
-    name: "horse: bolt straight into RUN instead of rearing (the bear's shape)",
+    name: 'horse: bolt into RUN on the LEFT-facing flee instead of rearing',
     file: 'src/core/npc/EnemyHorse.ts',
     find: [
       '        this.destX = this.world.stageWidth + OG_ANIMAL.offStage.dest;',
@@ -240,6 +261,6 @@ export const PLANTS: ChaosPlant[] = [
       '        this.startAction(OG_STATE.RUN);',
     ].join('\n'),
     tests: [SLICE],
-    note: 'reauthored:2026-09-13 — the 18th plant of session 35, whose guard the log never names; re-chosen here as the largest uncovered loss in tests/npcSlice3a.test.ts',
+    note: 'reauthored:2026-09-13 — stands in for session 35’s unnamed 18th plant',
   },
 ];
