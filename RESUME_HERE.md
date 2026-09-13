@@ -20,7 +20,7 @@ gains no new class · `src/core/Sim.ts`, `OpponentController.ts` and the seam ar
 | **T1** | `scripts/gates/chaos.ts` + `tests/*.plants.ts` — the plant harness, committed | ✅ LANDED (`cdb2519`, corrected by `b4e361b`) |
 | **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ✅ **LANDED** (this commit) |
 | **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | ⏳ next |
-| **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ⏳ (its source half already shipped as `abb484e`) |
+| **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ✅ **LANDED** (this commit; its source half shipped as `abb484e`) |
 | **T5** | test-harness preflight — `parked(npc, state)`, `rollsFor(npc, fn)` | ⏳ |
 
 ### ✅ T1 — `npm run chaos`
@@ -122,6 +122,38 @@ plant an allow-list entry that is no longer needed → `STALE-DERIVED`.
 ⚠️ **It needs `reference/`**, which is gitignored study-only material. Without it the run
 exits 0 saying it checked NOTHING, and the corpus half of the test skips with that reason
 asserted. That is the gate's one deliberate fail-open; the hermetic unit tests always run.
+
+### ✅ T4 — the twin rule, and the table that enforces it
+
+```
+$ npx vitest run tests/configTwins.test.ts  ->  47 passed (47)
+$ npx vitest run                            ->  Test Files 82 passed (82) · Tests 1601 passed (1601)
+$ npm run -s typecheck / lint               ->  exit 0 / exit 0
+```
+
+The rule is in **`src/config/CLAUDE.md`**: IMPORT when both sides ship in the same slice
+(zero blast radius, and an imported value cannot drift at all); TEST-PIN when one side
+already SHIPPED (never churn a green file); DENY-LIST when two values hold the same number
+for DIFFERENT rules. Enforced by **`tests/configTwins.test.ts`** — 36 field-level twin
+pairs asserted equal, 2 import-resolved pairs asserted IDENTICAL (`toBe`, so tidying an
+import into a copy goes red), and 7 deny-listed pairs that assert what makes them differ.
+
+**13 of 31 declared twin relationships had no assertion anywhere.** The whole of slice 2a's
+civilian config appeared in ZERO tests, and `chaseDist: 400` had three config homes and no
+pin at all. Every one of the 36 pairs passed on the first run, so nothing had drifted yet —
+which is the only time to write a pin.
+
+**⚠️ THE DENY-LIST IS THE HARD HALF, and a generated twin-finder would have got it wrong.**
+Four coincidences must never be pinned: `OG_STAG.chargeSpeed` 15 vs `OG_ANIMAL.runSpeedRoom`
+15 (a charge is not a run — and the charge deliberately does not step down in the overworld
+where RUN does); `OG_ALPHA.runSpeed` 15 vs the wolf's room/overworld PAIR; `OG_BEAR.idle.dice`
+3 vs `OG_HORSE.idle.dice` 3 (different clip sets). And the WORD "twin" does not settle it:
+`OG_SPEAR_ELITE.boss.trivialLevel` is documented as a twin of `OG_NPC_SET_LEVEL.trivialLevel`
+and the numbers are **5 and 10** — a twin RULE, not a twin VALUE.
+
+**Chaos-proofed three ways, each red then green:** drift the civilian xp from the wolf's →
+red · drift the boar's `chaseDist` → red · turn the stag's `idle` IMPORT into a spread copy →
+the identity assertion goes red.
 
 ### THE LANE STATE — unchanged since session 35 (`abb484e`), and still in force
 
