@@ -28,6 +28,15 @@ const DIR = join(process.cwd(), 'scripts/gauntlet');
 
 const SCRIPTS = readdirSync(DIR).filter((f) => f.endsWith('.workflow.js')).sort();
 
+/**
+ * SAVED WORKFLOWS get the same treatment. `.claude/workflows/*.js` are invocable by name
+ * (`Workflow({ name: 'measure-verify' })`), which makes them MORE dangerous than the
+ * gauntlet scripts, not less: a saved one is launched from a single line with no chance
+ * to reread it. They are checked by the same `wfcheck.mjs`, on the same two branches.
+ */
+const SAVED_DIR = join(process.cwd(), '.claude/workflows');
+const SAVED = readdirSync(SAVED_DIR).filter((f) => f.endsWith('.js')).sort();
+
 function check(file: string): { ok: boolean; out: string } {
   try {
     return { ok: true, out: execFileSync('node', [CHECK, file, 'run'], { encoding: 'utf8' }) };
@@ -64,6 +73,63 @@ describe('the workflow scripts are checked at all', () => {
     expect(r.out).toContain('RUN OK  [all agents DEAD]');
     expect(r.out).toContain('RUN OK  [all agents ALIVE]');
     expect(r.ok).toBe(true);
+  });
+
+  it('finds every SAVED workflow in .claude/workflows/', () => {
+    expect(SAVED).toContain('measure-verify.js');
+  });
+
+  it.each(SAVED)('%s (saved) compiles AND runs on both branches', (name) => {
+    const r = check(join(SAVED_DIR, name));
+    expect(r.out).toContain('SYNTAX OK');
+    expect(r.out).toContain('RUN OK  [all agents DEAD]');
+    expect(r.out).toContain('RUN OK  [all agents ALIVE]');
+    expect(r.ok).toBe(true);
+  });
+});
+
+/**
+ * MEASURE-VERIFY'S FAIL-CLOSED ACCOUNTING.
+ *
+ * A DEAD agent and an agent that FOUND NOTHING return the same thing. Two fan-outs
+ * shipped from this account ignored that difference and reported a clean pass over work
+ * that never ran; both were caught only because a run happened to die. These assertions
+ * are the executable version of that lesson, and they are checkable precisely because the
+ * accounting is plain code rather than a prompt.
+ */
+describe('measure-verify keeps its fail-closed accounting', () => {
+  const FILE = join(SAVED_DIR, 'measure-verify.js');
+  const src = readFileSync(FILE, 'utf8');
+
+  it('spawns one measure per unit and one verify per lens per unit', () => {
+    // 4 units x (1 measure + 2 lenses) = 12 agents / 8 verdicts — the shape session 35
+    // ran by hand for slice 3a.
+    expect(check(FILE).out).toContain('[all agents ALIVE]  12 agents');
+  });
+
+  it('spawns NO verifier when the measurement died — and does not drop the unit', () => {
+    // Dead measure => UNMEASURED, so its lenses are never asked. 4 agents, not 12.
+    expect(check(FILE).out).toContain('[all agents DEAD]  4 agents');
+    expect(src).toContain("status: 'UNMEASURED'");
+    expect(src).toContain("verdict: 'UNVERIFIED'");
+  });
+
+  it('treats zero live verifiers as UNVERIFIED, never CLEAN', () => {
+    expect(src).toContain("live.length === 0 ? 'UNVERIFIED' : 'VERIFIED'");
+  });
+
+  it('never lets a unit vanish from the result — a missing unit reads as a clean one', () => {
+    expect(src).toContain('results[i] ?? { unit: u.name');
+  });
+
+  it('returns a loud integrity line stating live-vs-expected for both phases', () => {
+    expect(src).toContain('live verdicts');
+    expect(src).toContain('DIED — it was not clean');
+  });
+
+  it('tells every agent it is READ-ONLY, and says why', () => {
+    expect(src).toContain('READ-ONLY');
+    expect(src).toContain('parallel-overwrite');
   });
 });
 

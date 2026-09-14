@@ -86,6 +86,13 @@ Parse every `` `Something.as:123` `` (and `:123-456`) out of `src/config/**` and
 half: for cites attached to a numeric config value, assert the **literal appears on
 or within ±2 lines of the cited line**.
 
+> ⚠️ **ANNOTATED 2026-09-13 (T2 shipped): it ships at ±1, which is STRICTER.** Both were
+> measured over the real corpus and both pass with zero failures, so ±1 loses no coverage
+> while roughly halving the false-PASS surface — decompiled AS is one statement per line
+> and brace-padded, so a ±2 window admits four to six unrelated small integers and
+> `midDiv: 10` would pass against any of 40 / 10 / 5 / 60. `npm run claimcheck --
+> --window 2` re-measures the looser one.
+
 - **DONE =** it runs over the whole repo and reports **0 unresolvable cites**, with
   every genuine miss either fixed or explicitly allow-listed with a reason.
 - **DONE =** it is in the pre-commit gate (it is read-only and fast).
@@ -99,6 +106,14 @@ lens set as `args`.
 
 - **DONE =** re-running slice 3a's measurement from the saved workflow reproduces
   **8/8 verdicts** and re-raises the same single FATAL.
+  > ⚠️ **ANNOTATED 2026-09-13 (T3 shipped): "the same single FATAL" IS NOT A REPRODUCIBLE
+  > GATE and was a mistake to write as one.** An adversarial pass is not deterministic;
+  > two runs over identical inputs can surface different TRUE findings, and a run that
+  > raises a different FATAL has not failed — it has found something else. What IS
+  > reproducible, and what `tests/workflowScripts.test.ts` now pins: the agent and verdict
+  > COUNTS for a given `units × lenses`, that a dead agent yields `UNMEASURED` /
+  > `UNVERIFIED` and never `CLEAN`, and that no unit can vanish from the result. The
+  > FATALs a run raises are REPORTED, not gated. See `docs/research/HARNESS.md`.
 - **DONE =** it keeps the fail-closed accounting already proven here: zero live
   verifiers ⇒ `UNVERIFIED`, never `CLEAN`; a dead measure agent ⇒ `UNMEASURED`.
 - **DONE =** `docs/research/HARNESS.md` states the rule the session validated:
@@ -129,6 +144,17 @@ equality by test*, with no rule. Write the rule, then enforce it:
   from any gate — which is what T2 is for.**
 
 ### T5 — the test-harness preflight
+
+> ⚠️ **ANNOTATED 2026-09-13 (T5 shipped): THIS PREMISE IS WRONG, and the DONE criterion
+> below is not satisfiable by two helpers.** Measured against the source, "an actor parked
+> in a state its own `doAction` left at once" is true of exactly **1 of the 3** failures.
+> The bear's cooldown is a counter the test WROTE that `doAction` TICKED before the branch
+> READ it — nothing left a state, no rng rolled, and a `parked()` there would restate the
+> assertion under test in the very next test in that file. The rng-0.9 failure is the
+> INVERSE: the actor FAILED to leave IDLE. The root all three DO share is
+> **"the test's setup silently did not hold at the moment of the assertion"** — the state
+> it parked, the counter it wrote, or the rng value it supplied. That yields THREE checks,
+> and `tests/utils/npcHarness.ts` ships three: `parked`, `readsWhatYouWrote`, `rollsFor`.
 
 All 3 first-run failures this session shared one root: **the test parked an actor in
 a state whose own `doAction` left it before the assertion ran.**
@@ -239,8 +265,10 @@ class. The seam and Sim.ts are not touched (gate L4b-A must still read 0 bytes).
 ogActor.ts stays CLOSED evidence. No new runtime dependency.
 
 THE EVIDENCE THIS IS BUILT ON, so you do not re-derive it:
-  - 3 of 3 first-run test failures in session 35 were TEST bugs, not port bugs; all
-    three shared one root — an actor parked in a state its own doAction left at once.
+  - 3 of 3 first-run test failures in session 35 were TEST bugs, not port bugs. (⚠️ the
+    "one shared root" this line used to claim is WRONG — see the annotation at T5. The
+    root they share is that the test's SETUP did not hold at the assertion: the state it
+    parked, the counter it wrote, or the rng value it supplied. Three checks, not two.)
   - 1 of the slice 3 kickoff's 7 traps could never fire (`scaleX == 1` has no target
     anywhere), and it survived a pass labelled "TESTED against the AS3". Its setLevel
     warning ("diff it, do not assume it is a copy") was CORRECT and paid off.

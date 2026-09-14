@@ -11,7 +11,7 @@ export default defineConfig(
     // *.workflow.js are GAUNTLET fan-out scripts. The harness evaluates them
     // inside its own async wrapper, so their top-level `await`/`return` is
     // legal there and unparseable here. They are orchestration, never shipped.
-    ignores: ['dist/**', 'tests/fixtures/**', '**/*.workflow.js'],
+    ignores: ['dist/**', 'tests/fixtures/**', '**/*.workflow.js', '.claude/workflows/**'],
   },
   {
     files: ['**/*.ts'],

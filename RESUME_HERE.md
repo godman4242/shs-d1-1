@@ -1,6 +1,6 @@
 # RESUME HERE
 
-## ▶ SESSION 36 (2026-09-13) — **THE HARNESS SESSION: THE GATES THAT MAKE THE MODEL MATTER LESS. T1 IS IN. NO LANE WORK.**
+## ▶ SESSION 36 (2026-09-13/14) — **THE HARNESS SESSION: T1, T2, T4 LANDED · T3 + T5 CHECKPOINTED, NOT CLOSED · CONTINUE IN A NEW SESSION. NO LANE WORK.**
 
 Thesis (`docs/sessions/HARNESS_KICKOFF.md`): every defect this lane has shipped came from
 **hard noticing, not hard reasoning** — a claim that looked true, was never checked against
@@ -18,10 +18,10 @@ gains no new class · `src/core/Sim.ts`, `OpponentController.ts` and the seam ar
 | | tool | state |
 |---|---|---|
 | **T1** | `scripts/gates/chaos.ts` + `tests/*.plants.ts` — the plant harness, committed | ✅ LANDED (`cdb2519`, corrected by `b4e361b`) |
-| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ✅ **LANDED** (this commit) |
-| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | ⏳ next |
-| **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ✅ **LANDED** (this commit; its source half shipped as `abb484e`) |
-| **T5** | test-harness preflight — `parked(npc, state)`, `rollsFor(npc, fn)` | ⏳ |
+| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ✅ LANDED (`38fe93c`) |
+| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | 🟡 **CHECKPOINTED** — script + tests + `HARNESS.md` committed; evidence run resumed; one flaw open (`fatalCount`) |
+| **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ✅ LANDED (`3f41c9d`; source half `abb484e`) |
+| **T5** | test-harness preflight — `parked`, `rollsFor`, **and a third check the kickoff missed** | 🟡 **CHECKPOINTED** — helpers + proof committed; NOT yet adopted by the slice 3a/3b suites |
 
 ### ✅ T1 — `npm run chaos`
 
@@ -154,6 +154,61 @@ and the numbers are **5 and 10** — a twin RULE, not a twin VALUE.
 **Chaos-proofed three ways, each red then green:** drift the civilian xp from the wolf's →
 red · drift the boar's `chaseDist` → red · turn the stag's `idle` IMPORT into a spread copy →
 the identity assertion goes red.
+
+### 🟡 T3 + T5 — CHECKPOINTED, NOT CLOSED (this commit). The next session finishes them.
+
+```
+$ npx vitest run         ->  Test Files  83 passed (83)      (82 at T4 — +1: tests/npcHarness.test.ts)
+                             Tests  1619 passed (1619)       (1601 at T4 — +18)
+$ npm run -s typecheck   ->  exit 0        $ npm run -s lint  ->  exit 0
+$ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c   ->  0
+```
+
+**T3 — `.claude/workflows/measure-verify.js`.** Saved, parameterised by `args`
+(`units`, `lenses`, `slice`, `sourceDir`, `tests`), executed by `wfcheck.mjs` on both
+branches and pinned in `tests/workflowScripts.test.ts`: 4 units × 2 lenses = **12 agents /
+8 verdicts** alive, **4 agents** dead (a dead measurement is never handed to a verifier).
+`docs/research/HARNESS.md` carries the three rules the fan-out earned (fan out READS never
+WRITES · a dead agent must not look like a clean one · a script beats a swarm).
+
+**Its first real run died, and the accounting HELD.** `wf_99c74d25-624`: 4/4 measure agents
+returned; **8/8 verify agents died on the account session limit** ("You've hit your session
+limit · resets 6:30pm"). The workflow returned `0/8 live verdicts … 8 UNVERIFIED … A unit or
+lens missing from the counts DIED — it was not clean`, and every unit read `UNVERIFIED`.
+That is the fail-closed design proven by a real death, not a stub. Raw journal committed:
+`docs/research/runs/wf-journal-measure-verify-3a-DEAD-wf_99c74d25-624.jsonl`. **Resumed**
+the same day with the script byte-unchanged, so the 4 measurements replay from cache.
+
+⚠️ **ONE FLAW THE DEAD RUN EXPOSED, deliberately NOT fixed before the resume** (editing the
+script burns the resume cache): the result carries `fatalCount: 0` beside `0/8 live
+verdicts`. Anything that checks `fatalCount === 0` reads a dead run as clean. Fix =
+`fatalCount: null` (and a top-level `status: 'UNVERIFIED'`) whenever live < expected, plus a
+test. ⚠️ **AND A STALE LINE IN `HARNESS.md`:** it says `Workflow({ name: 'measure-verify' })`
+did not resolve. That was true in the session that wrote the file; after a reload the
+registry lists `measure-verify`. Re-test from the fresh session and correct the line.
+
+**T5 — `tests/utils/npcHarness.ts` + `tests/npcHarness.test.ts`.** ⚠️ **The kickoff's premise
+was WRONG**: "all 3 failures shared one root — an actor parked in a state its own
+`doAction` left" is true of **1 of 3** (annotated in `HARNESS_KICKOFF.md`). The real shared
+root is *the test's setup silently did not hold at the assertion* — so it ships THREE checks:
+
+| session 35 failure | what went wrong | check |
+|---|---|---|
+| the bear's cooldown | test WROTE `idleCounter = 1`; `doAction` TICKED it before the branch READ it | `readsWhatYouWrote` |
+| the alpha parked in FALL | first `update()` landed it; the LAND clip masked the clip under test | `parked` (placed at the ASSERTION, not the setup) |
+| rng 0.9 | one clamped `seq` value served two rolls with different bands | `rollsFor` (returns the VALUES, not just the count) |
+
+All three historical broken setups reproduce as one readable line; each check chaos-planted
+(disarm it → red → restored green). Two first-draft bugs caught by the proof itself:
+`readsWhatYouWrote` checked the FIRST read (always matches setup — green on the very bug)
+and the demo alpha had no target (so its clip never advanced).
+**NOT DONE:** the slice 3a/3b suites still carry their own `seq`/`counting` copies and do
+not yet call the preflight — T5's "used by at least the slice 3a/3b suites" is OPEN.
+
+**Also not done this session:** the global rollout Kheshav asked for (make this harness
+architecture apply to every project), and `docs/sessions/-SESSION-LOG.md` entries were
+missed until this checkpoint. **The kickoff for the next session is written in the NEXT
+commit, once the resumed verify run has landed** — its result decides T3's evidence line.
 
 ### THE LANE STATE — unchanged since session 35 (`abb484e`), and still in force
 

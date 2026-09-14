@@ -3826,3 +3826,34 @@ the owner's LOOK. None was attempted, and none is claimed.
   writes state and emits nothing, and `asInt` maps non-finite to 0 so the NaN factor
   cannot poison a stat. No new test added, deliberately — the change introduces no
   behaviour to red-proof and a call-count spy would pin implementation, not behaviour.
+
+## 2026-09-13/14 — Session 36: THE HARNESS SESSION — T1, T2, T4 landed; T3 + T5 checkpointed
+
+(Written at the checkpoint, not per milestone — the per-milestone entries were missed and
+this is the catch-up. Every number below is the one pasted at its commit.)
+
+- **Baseline** `abb484e` (not the kickoff's `e3bf924` — 4 commits landed since, one of them
+  T4's source half). 79 files / 1438 tests · typecheck 0 · lint 0 · gate A 0 bytes.
+- **Read-only fan-out** `wf_5ee50687-984`: 8/8 agents, 0 errors. 2 FATAL + 2 CORRECTED.
+  The T2 verdict FALSIFIED the measurer's bare-cite rule and a 9× count; the T1 verdict
+  refuted a claim inside a plant that was then already committed. Journal committed under
+  `docs/research/runs/`.
+- **T1** `cdb2519` — `npm run chaos`: 40/40 red, 40/40 restored byte-identical. Only 37 of
+  the 40 plants were recoverable from session 35's scratchpad (it kept the first-pass 15 of
+  3a's 18); 3 re-authored and labelled. One recovered anchor had drifted to ZERO matches.
+  Two fail-open holes in the old harness closed (no green baseline; any non-zero exit
+  counted as red). 1438 → 1517.
+- **fix** `b4e361b` — the third re-authored plant's NAME overstated what it breaks (it
+  breaks one of two flee branches); caught by the adversarial pass while tests were green.
+- **T2** `38fe93c` — `npm run claimcheck`: 1,703 cites, 401 cited values at ±1, 0 failures.
+  **Three genuinely wrong cites in `ogEnemyKatana.ts`, all IN RANGE.** 27 prose-retargeted
+  bare cites rewritten to name their file. 2m02s → 0.446 s. 1517 → 1546.
+- **T4** `3f41c9d` — the twin rule + `tests/configTwins.test.ts`: 36 pairs + 2 identities +
+  7 deny-listed; 13 of 31 declared twins had no pin anywhere. 1546 → 1601.
+- **T3/T5 checkpoint** (this commit) — see RESUME_HERE. The T3 evidence run
+  `wf_99c74d25-624` died: 4/4 measure, **8/8 verify killed by the session limit**; the
+  fail-closed accounting reported `0/8 live … not clean`. Resumed with the script unchanged.
+  T5 shipped THREE checks because the kickoff's one-root premise was true of 1 of 3.
+  1601 → 1619.
+- **Owner call (Kheshav):** continue in a new session; salvage the dead agents first.
+
