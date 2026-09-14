@@ -3906,3 +3906,22 @@ Opus 5 @ xhigh. Entries written PER MILESTONE, at each commit — session 36 mis
   the flee mirrors `:256` / `:315`) — I had found the stag one before its chunk returned.
   Listing the 12 coincidences as CONTEXT made `OG_BEAR.idle.walkOn` go LITERAL-ABSENT at once:
   its only support was the SIT index `1`; cited to `:173`. 29 → 41 context. Journal committed.
+- **F1 follow-up committed** `1637466` (83 / 1624; claimcheck 1701 / 421 / 41 / 0).
+- **F3 adjudication** `wf_6826589c-ae0`: 9/9 live, 68/68 adjudicated. A script re-executed all
+  534 cited commands under `sandbox-exec` (writes under /Users denied): 534 MATCH. Its first
+  version refused anything containing `>` and so refused 50 harmless awk reads — read-only is
+  now enforced by the OS, not parsed. Two chunks proposed different fixes for the same lines,
+  both partly wrong; every site re-read against the source. My own DIVERGENCES draft claimed an
+  animal death draws no rng — `createLoot` does; caught before commit.
+- **F3 (A) committed** `f4e4ec2`: 74 proposed sites addressed (comments, docs, test titles —
+  zero non-comment lines in src/core/npc), +2 tests, +3 plants, EXPECTED_TOTAL 40 → 43 in both
+  places. 1624 → 1629. Chaos refused to run on dirty targets (its own guard) — so it ran on the
+  committed tree: **43/43 RED, 43/43 restored byte-identical, tree clean, 32 s.**
+- **Slip, recorded:** generating the ledger with an UNQUOTED heredoc let zsh execute every
+  backticked token in the Python source as a command. Nothing destructive ran (tree verified
+  clean); the generator was rewritten as a file.
+- **F5 in progress, outside the repo (measured):** a user-level `~/.claude/workflows/*.js`
+  registers in every project, symlinks register and execute, the registry is read at session
+  start (all from fresh headless sessions, raw tool_result). `measure-refute` written in
+  `claude-shipping-kit` (6 tests, 5 plants, 2 missing tests found by the plants), symlinked in,
+  run by name from an unrelated repo. Global CLAUDE.md backed up and +2,052 b (≈513 tok/turn).

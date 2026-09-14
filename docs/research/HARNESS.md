@@ -202,6 +202,48 @@ passed).
 
 ---
 
+## ADJUDICATING A RUN — the swarm proposes, a script re-executes, a human reads the source (harness finish, F3)
+
+`wf_99c74d25-624` raised **68 refutations** across its 8 verdicts. Every one is an agent
+claim, and many land on committed text, so acting on them needed three layers, each doing
+only what it is good at:
+
+1. **A read-only fan-out re-derives each claim by command** (`wf_6826589c-ae0`, 9/9 live,
+   68/68 adjudicated), returning per item a status, a category (measurement-only / committed
+   text / test gap / behaviour / already fixed), the command, and its verbatim output.
+2. **A script re-executes EVERY cited command** — 534 of them — under `sandbox-exec` with all
+   writes under `/Users` denied, and diffs the quoted output against the real one: **534
+   MATCH.** Read-only is enforced by the OS, not guessed from the command text: the first
+   version refused commands containing `>`, and so refused 50 harmless `awk 'NR>=…'` reads.
+3. **A human re-reads the source for every line that changes.** This layer earned its place
+   at once: two chunks proposed DIFFERENT fixes for the same lines, and both were partly
+   wrong (the horse's `else` is `:166-169`, not `:169-172`; the flip-and-ground blocks are
+   bear `:42-46` / stag `:41-45`). **Two independent proposals disagreeing is the signal to go
+   to the source, not to pick one.** It also caught this loop's own draft claiming "an
+   animal's death draws NO rng" — `createLoot` draws.
+
+| status / category | n |
+|---|---|
+| CONFIRMED / measurement-only | 31 |
+| CONFIRMED / committed text | 15 |
+| CONFIRMED / already fixed (by F1) | 2 |
+| CONFIRMED / test gap | 1 |
+| PARTIAL / measurement-only | 9 |
+| PARTIAL / committed text | 8 |
+| PARTIAL / test gap | 1 |
+| REFUTED (the measurement was right) | 1 |
+
+**What changed:** 74 proposed sites, all addressed from the source — the deer's false
+"only one that never re-targets" (the horse doesn't either), `EnemyBear.ts` stating the tick
+guard backwards, "a levelled stag pays less" being true of every animal, the wolf's
+uncited pounce fence, off-by-one field cites in all four ports, and more. **+2 tests and +3
+chaos plants** for the two confirmed gaps (the bear's `canGot*` immunity; all four `die()`
+bodies under playback and `dontGiveLoot` — `EnemyHorse.die()` had no test at all).
+`npm run chaos`: **43/43 RED, 43/43 restored byte-identical.** Every row, with its command
+and output: `docs/research/runs/wf_99c74d25-624-LEDGER.md`.
+
+---
+
 ## WHAT IS NOT A BINARY GATE, AND MUST NOT BE CLAIMED AS ONE
 
 "Re-running slice 3a re-raises the same single FATAL" is **not reproducible**, and writing
