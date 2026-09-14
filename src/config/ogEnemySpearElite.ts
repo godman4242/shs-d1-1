@@ -24,8 +24,9 @@ export const OG_SPEAR_ELITE = {
   cooldown: { sec: 5, fps: OG_FPS },
   /** `EnemySpearElite.as:406` / `:410` — the lunge carries the body 20 px per mid-frame… */
   lungeStep: 20,
-  /** `EnemySpearElite.as:430` / `:434` — …the kick 20 on its first mid-clip, `:445` / `:449` — 10 on its second. */
+  /** `EnemySpearElite.as:430` / `:434` — …the kick 20 on its first mid-clip… */
   kickStep: 20,
+  /** `EnemySpearElite.as:445` / `:449` — …and 10 on its second. */
   kickStep2: 10,
   boss: {
     /** `EnemySpearElite.as:62` / `:78` — a boss is worth `lvl * 5 + 45` (twin of `EnemyWolf.as:32`). */

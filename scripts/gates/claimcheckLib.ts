@@ -10,11 +10,19 @@
  * "TESTED against the AS3". Nothing in the toolchain reads prose — that is this gate's
  * whole point.
  *
- * IT ALREADY PAID. Three cites in `src/config/ogEnemyKatana.ts` were WRONG, all three
- * in range (so an existence-only check passes them) and all three found by the ±N
- * literal half: `:140` for `walkSpeed = random() * 3 + 4` should be `:129`; `:175-176`
- * for the left-facing melee test should be `:167`; `:185` for the right-facing one
- * should be `:179`. Five config values sat under them.
+ * IT PAID ON ITS FIRST RUN. Three cites in `src/config/ogEnemyKatana.ts` were WRONG, all
+ * three in range (so an existence-only check passes them): `:140` for
+ * `walkSpeed = random() * 3 + 4` should be `:129`; `:175-176` should be `:167`; `:185`
+ * should be `:179`.
+ *
+ * AND THEN IT WAS CAUGHT FALSE-PASSING (harness finish, F1). An adversarial fan-out found
+ * four cites this gate reported clean — `EnemyKatana.as:213` is a `break;`, cited in three
+ * files; three `+ 100` cites sat one line off — through three holes, each now pinned in
+ * `tests/claimcheck.test.ts`: a bare `export const NAME = 3` was never a field; a value
+ * passed if ANY of its cites held it, so good cites covered a bad sibling; and ±1 passed
+ * any off-by-one by construction. Closing them raised 82 failures on the tree that had
+ * read "0": 10 cites on the wrong line, 41 whose file was set by prose the gate could not
+ * read, 5 governing the wrong value, and 26 correct context cites, now named in CONTEXT.
  *
  * ─────────────────────────────────────────────────────────────────────────────────
  * THE RESOLUTION RULES, each one earned by a measurement rather than assumed.
@@ -52,6 +60,9 @@
  *   parser, which is strictly stronger than a ±N window.
  * · COMMENTS ARE STRIPPED before numeric fields are extracted. A field regex run over
  *   raw text matches prose inside the comments and invents fields that do not exist.
+ * · PER CITE as well as per value: every governing cite must hold at least one value it
+ *   governs, at ±0. See `checkValues` for why neither a per-file nor a per-run rule was
+ *   enough, and `ContextCite` for the named exception.
  * · A value's governing cites are the UNION of its own line, the contiguous comment
  *   block directly above it, and the docblock above EVERY enclosing object literal at
  *   any depth. Stopping the walk at the nearest comment gives false failures (a value
@@ -226,7 +237,8 @@ export function citesOnLine(comment: string, line: number, headerFile: string | 
 /**
  * Numeric fields, read from the CODE side only.
  *
- * Skips two key names and every non-numeric value:
+ * Two spellings: `key: value` inside an object literal, and a bare top-level
+ * `export const NAME = value;`. Skips two key names and every non-numeric value:
  * · `line` — `ogAi.ts` records where in `NPCManager.as` each dispatch case sits, so the
  *   value IS a line number and checking it against a window is a category error;
  * · `ai` — likewise the dispatch ordinal.
@@ -236,6 +248,10 @@ export function numericFields(mod: Module): NumericField[] {
   const SKIP = new Set(['line', 'ai']);
   const out: NumericField[] = [];
   for (const { line, code } of mod.lines) {
+    // A bare `export const NAME = 3;` is a field too. Reading only `key: value` left
+    // `OG_HUMANOID_FALL_GRAVITY = 3` unchecked under a cite that points at a `break;`.
+    const bare = /^\s*(?:export\s+)?const\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?::[^=]+)?=\s*(-?\d+(?:\.\d+)?)\s*;?\s*$/.exec(code);
+    if (bare !== null) out.push({ key: bare[1] ?? '', value: Number(bare[2]), line });
     for (const m of code.matchAll(/([A-Za-z_][A-Za-z0-9_]*)\s*:\s*(-?\d+(?:\.\d+)?)\s*(?=[,;}\]]|$)/g)) {
       const key = m[1] ?? '';
       if (SKIP.has(key)) continue;
@@ -341,4 +357,154 @@ export function literalNear(
     if (re.test(sourceLines[n - 1] ?? '')) return true;
   }
   return false;
+}
+
+/**
+ * ±0 — a cite names the line its literal is on. MEASURED, not chosen.
+ *
+ * T2 shipped ±1 (tighter than the kickoff's ±2) and that window was itself the third
+ * false-pass hole: `EnemyDeer.as:224`, `EnemyHorse.as:242` and `EnemyStag.as:302` are each
+ * exactly one line past their `+ 100`, and ±1 passed all three by construction. Measured
+ * over the whole corpus, ±1 → ±0 raised ZERO new value failures and FOUR new per-cite ones:
+ * those three real drifts and one correct cross-reference (`EnemyDeer.as:79`, now a CONTEXT
+ * entry). Ranges were measured separately at ±1 and raised the same set, so one window
+ * serves both — a range's span IS its claim. `--window N` re-measures a wider one.
+ */
+export const DEFAULT_WINDOW = 0;
+
+/** A value the literal genuinely is not in the source for, with the derivation written out. */
+export interface Derived {
+  readonly file: string;
+  readonly key: string;
+  readonly value: number;
+  readonly why: string;
+}
+
+/**
+ * A cite that is CORRECT but does not state a value it governs — a contrast ("NOT the
+ * base's `* 2 + 20` (`NPC.as:218`)"), a cross-reference to a value that lives in another
+ * file, a twin map, the line of a guard. Named per citing file and cite, with the reason.
+ */
+export interface ContextCite {
+  /** The citing file, repo-relative. */
+  readonly file: string;
+  /** The cite as `citeKey` spells it: `NPC.as:218` or `EnemyBear.as:42-45`. */
+  readonly cite: string;
+  readonly why: string;
+}
+
+export interface ValueFailure {
+  readonly kind: 'LITERAL-ABSENT' | 'NO-VALUE-AT-CITE' | 'STALE-DERIVED' | 'STALE-CONTEXT';
+  readonly line: number;
+  readonly detail: string;
+}
+
+export interface ValueReport {
+  readonly checked: number;
+  readonly uncited: number;
+  readonly failures: ValueFailure[];
+  /** Every PASS, for `--all`. */
+  readonly passes: NumericField[];
+}
+
+/** A cite as it is written in a failure message and keyed in an allow-list: `F.as:12` or `F.as:12-14`. */
+export function citeKey(c: Cite): string {
+  return `${c.file}:${c.start}${c.end === c.start ? '' : `-${c.end}`}`;
+}
+
+/**
+ * THE NUMERIC HALF for one module, in two directions. `lookup` returns a cited file's
+ * lines, or null when the file does not exist (the existence half reports that; here such
+ * a cite simply governs nothing).
+ *
+ * 1. PER VALUE — the value's literal appears at one of its governing cites.
+ * 2. PER CITE — every cite holds at least one of the values it governs.
+ *
+ * The second direction is the fix for the second false-pass hole. Checked only per value,
+ * `fallGravity: 3` passed on the strength of five good cites while the sixth,
+ * `EnemyKatana.as:213`, pointed at a `break;`. A per-FILE rule would not have been enough
+ * either, and that was measured too: `EnemyDeer.as:224`/`:238` is one run naming one file,
+ * and `:238` holds the `100` — so only judging each cite on its own catches `:224`.
+ *
+ * A CONTEXT cite is exempt from (2) and REMOVED from (1): declaring a cite to be context is
+ * declaring it does not state the value, so it must never be the cite that makes one pass.
+ * An entry whose cite no longer governs any value in its file is STALE. Deliberately NOT
+ * "an entry whose cite now holds a value": a contrast that happens to share a literal with
+ * a value it sits beside is still a contrast, and deleting its entry would hand it back the
+ * power to vouch for that value — the exact hole the entry closes.
+ */
+export function checkValues(
+  mod: Module,
+  rel: string,
+  lookup: (c: Cite) => readonly string[] | null,
+  window: number,
+  derived: readonly Derived[],
+  context: readonly ContextCite[],
+): ValueReport {
+  const failures: ValueFailure[] = [];
+  const passes: NumericField[] = [];
+  const mine = context.filter((e) => e.file === rel);
+  const isContext = (c: Cite): boolean => mine.some((e) => e.cite === citeKey(c));
+  const governs = new Map<string, { cite: Cite; values: NumericField[] }>();
+  let checked = 0;
+  let uncited = 0;
+  for (const field of numericFields(mod)) {
+    const scoped = scopeFor(mod, field.line).filter((c) => lookup(c) !== null);
+    if (scoped.length === 0) {
+      uncited += 1;
+      continue;
+    }
+    checked += 1;
+    for (const c of scoped) {
+      const k = `${c.line}|${citeKey(c)}`;
+      const entry = governs.get(k) ?? { cite: c, values: [] };
+      entry.values.push(field);
+      governs.set(k, entry);
+    }
+    const cites = scoped.filter((c) => !isContext(c));
+    const found = cites.some((c) => literalNear(lookup(c) ?? [], c, field.value, window));
+    const isDerived = derived.some((d) => d.file === rel && d.key === field.key && d.value === field.value);
+    if (found && isDerived) {
+      failures.push({
+        kind: 'STALE-DERIVED',
+        line: field.line,
+        detail: `${field.key} = ${field.value} now PASSES the plain check — delete its DERIVED entry in scripts/gates/claimcheck.ts`,
+      });
+    }
+    if (!found && !isDerived) {
+      const named = cites.length === 0 ? 'no cite that is not CONTEXT' : cites.map(citeKey).join(', ');
+      failures.push({
+        kind: 'LITERAL-ABSENT',
+        line: field.line,
+        detail: `${field.key} = ${field.value} appears nowhere within ±${window} of ${named}`,
+      });
+    } else {
+      passes.push(field);
+    }
+  }
+  const needed = new Set<string>();
+  for (const { cite, values } of governs.values()) {
+    if (isContext(cite)) {
+      needed.add(citeKey(cite));
+      continue;
+    }
+    if (values.some((v) => literalNear(lookup(cite) ?? [], cite, v.value, window))) continue;
+    const shown = [...new Set(values.map((v) => `${v.key}=${v.value}`))];
+    failures.push({
+      kind: 'NO-VALUE-AT-CITE',
+      line: cite.line,
+      detail:
+        `\`${citeKey(cite)}\` (via ${cite.via}) holds none of the ${shown.length} value(s) it governs within ±${window}: ` +
+        `${shown.slice(0, 6).join(', ')}${shown.length > 6 ? ', …' : ''}`,
+    });
+  }
+  for (const e of mine) {
+    if (needed.has(e.cite)) continue;
+    failures.push({
+      kind: 'STALE-CONTEXT',
+      line: 0,
+      detail: `CONTEXT entry \`${e.cite}\` governs no value in this file any more — the cite is gone or moved. Delete it from scripts/gates/claimcheck.ts`,
+    });
+  }
+  return { checked, uncited, failures, passes };
 }

@@ -47,10 +47,10 @@ export const OG_ALPHA = {
 
   /**
    * `:230`/`:234` — `random() * 4 + 8`, signed toward `destX`; an int, so 8–11.
-   * The wolf's is `* 2 + 4` (4–5). `:239` — walking AWAY halves it (int division),
-   * same as the wolf.
+   * The wolf's is `* 2 + 4` (4–5).
    */
   walk: { range: 4, base: 8 },
+  /** `:239` — walking AWAY halves it (int division), same as the wolf. */
   walkBackwardsDiv: 2,
 
   /**
@@ -65,10 +65,10 @@ export const OG_ALPHA = {
 
   /**
    * `:323`/`:356` — on arrival a d4, where the wolf rolls a d3: 0 idles, 1 walks,
-   * **2 HOWLS** (`:332`/`:365` — the wolf has no such outcome), else a fresh destX
-   * and RUN.
+   * 2 HOWLS, else a fresh destX and RUN.
    */
   arriveDice: 4,
+  /** `:332`/`:365` — **2 HOWLS**; the wolf has no such outcome. */
   poseOn: 2,
 
   /** `:343`/`:376` — bite when `100 < dist < 150`. The wolf's band is `50 < dist < 100`. */
@@ -80,7 +80,7 @@ export const OG_ALPHA = {
   /** `:182` — POUNCE_START ends into a coin: 0 → MIDHIGH, 1 → MID. Twin of `OG_WOLF.pounceHighDice`. */
   pounceHighDice: 2,
 
-  /** `:392`/`:396` — the pounce carries the body 15 px per airborne frame. Twin of `OG_WOLF.pounceStep`. */
+  /** `:396`/`:400` — the pounce carries the body 15 px per airborne frame. Twin of `OG_WOLF.pounceStep`. */
   pounceStep: 15,
 
   /**

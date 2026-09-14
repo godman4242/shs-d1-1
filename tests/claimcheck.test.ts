@@ -24,6 +24,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Cite } from '../scripts/gates/claimcheckLib.ts';
 import {
+  DEFAULT_WINDOW,
+  checkValues,
   citesOnLine,
   headerDefault,
   literalNear,
@@ -243,6 +245,62 @@ describe('claimcheckLib.literalNear', () => {
   it('honours the window in both directions and nothing beyond it', () => {
     expect(literalNear(lines, cite(3), 3, 1)).toBe(true);
     expect(literalNear(lines, cite(1), 120, 1)).toBe(false);
+  });
+});
+
+/**
+ * THE THREE FALSE-PASS HOLES (harness finish, F1). The gate reported "0 failures" over four
+ * cites VERIFIED wrong by hand — `EnemyKatana.as:213` is `break;` (the gravity is `:205`),
+ * and `EnemyDeer.as:224` / `EnemyHorse.as:242` / `EnemyStag.as:302` each sit one line past
+ * their `+ 100`. Each mechanism that let them through is pinned here, in miniature, so a
+ * later "simplification" that re-opens one goes red without needing `reference/`.
+ */
+describe('claimcheckLib — the three false-pass holes', () => {
+  /** A fake source tree: file → lines. A cite naming a file not here does not exist. */
+  const tree = (files: Record<string, string[]>) => (c: Cite) => files[c.file] ?? null;
+  const kinds = (r: ReturnType<typeof checkValues>): string[] => r.failures.map((f) => `${f.kind} ${f.detail}`);
+
+  it('HOLE 1 — a bare `export const NAME = 3` is a numeric field', () => {
+    // `OG_HUMANOID_FALL_GRAVITY = 3` sat under the wrong cite and was never literal-checked
+    // AT ALL: `numericFields` read only `key: value`.
+    expect(numericFields(prepare('/** `A.as:1` */\nexport const OG_X_GRAVITY = 3;\nconst Y = -100;'))).toEqual([
+      { key: 'OG_X_GRAVITY', value: 3, line: 2 },
+      { key: 'Y', value: -100, line: 3 },
+    ]);
+  });
+
+  it('HOLE 2 — a good cite does not cover a bad sibling: every cite must hold a value it governs', () => {
+    // `fallGravity: 3` was governed by six cites and passed if ANY held a 3, so the sixth —
+    // `EnemyKatana.as:213`, a `break;` — was never judged on its own.
+    const mod = prepare(['export const X = {', '  /** `Good.as:1` · `Bad.as:2` — gravity. */', '  fallGravity: 3,', '};'].join('\n'));
+    const r = checkValues(mod, 'x.ts', tree({ 'Good.as': ['velY += 3;'], 'Bad.as': ['a', 'break;'] }), 0, [], []);
+    expect(kinds(r).filter((k) => k.includes('Bad.as:2'))).toHaveLength(1);
+    expect(kinds(r).some((k) => k.includes('Good.as:1'))).toBe(false);
+  });
+
+  it('HOLE 3 — the default window is ±0: a cite one line off its literal is wrong', () => {
+    // The three `+ 100` cites were each exactly one line off — the old ±1 window's width —
+    // and the gate reported 0 failures over them. Measured over the whole corpus, ±0 raised
+    // four new failures: three real drifts and one context cite (allow-listed with a reason).
+    const mod = prepare(['export const X = {', '  /** `Deer.as:3` — flee 100 px past the edge. */', '  dest: 100,', '};'].join('\n'));
+    const r = checkValues(mod, 'x.ts', tree({ 'Deer.as': ['if (a)', '  this.destX = w + 100;', '}'] }), DEFAULT_WINDOW, [], []);
+    expect(r.failures.map((f) => f.kind)).toContain('LITERAL-ABSENT');
+    expect(DEFAULT_WINDOW).toBe(0);
+  });
+
+  it('a CONTEXT cite is not judged per-cite, and it cannot vouch for a value either', () => {
+    // A contrast — "NOT the base's `* 2 + 20` (`NPC.as:218`)" — is a correct cite that states
+    // a different number. It is allow-listed by name, and being allow-listed REMOVES it from
+    // the union: a cite declared as context must never be the one that makes a value pass.
+    const mod = prepare(['export const X = {', '  /** `Own.as:1` — flat, NOT the base (`Base.as:1`). */', '  walkSpeed: 3,', '};'].join('\n'));
+    const context = [{ file: 'x.ts', cite: 'Base.as:1', why: 'a contrast' }];
+    const holdsBoth = tree({ 'Own.as': ['walkSpeed = 3;'], 'Base.as': ['walkSpeed = 4;'] });
+    expect(checkValues(mod, 'x.ts', holdsBoth, 0, [], context).failures).toEqual([]);
+    const onlyContextHolds = tree({ 'Own.as': ['walkSpeed = 9;'], 'Base.as': ['walkSpeed = 3;'] });
+    expect(kinds(checkValues(mod, 'x.ts', onlyContextHolds, 0, [], context))).toEqual([
+      expect.stringContaining('LITERAL-ABSENT'),
+      expect.stringContaining('Own.as:1'),
+    ]);
   });
 });
 

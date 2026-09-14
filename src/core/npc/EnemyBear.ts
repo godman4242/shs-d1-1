@@ -16,7 +16,7 @@
  *     `faceTarget` faces RIGHT there, the bear faces LEFT.
  *   - **the swing has NO `isAdventureMode()` guard** (`:212-214`) where the wolf's
  *     bite and pounce both have one (`EnemyWolf.as:294`). A bear mauls in the overworld.
- *   - **`init` flips `doChase` on outside the overworld** (`:41-44`), so the
+ *   - **`init` flips `doChase` on outside the overworld** (`:42-45`), so the
  *     constructor's argument only decides an OVERWORLD bear's behaviour.
  *
  * `int(random() * 3) == 1` walks (ONE in three, `:173`) where the wolf's twin

@@ -1,5 +1,16 @@
 # RESUME HERE
 
+## ▶ SESSION 37 (2026-09-14) — **THE HARNESS FINISH, IN PROGRESS** (`docs/sessions/HARNESS_FINISH_KICKOFF.md`)
+
+| F | what | state |
+|---|---|---|
+| **F1** | close claimcheck's three false-pass holes | ✅ **CLOSED** — per-cite at ±0 + bare consts; 82 failures raised on the old tree, all classified; 0 after (`docs/research/HARNESS.md`) |
+| F2 | close T3 (`fatalCount: null` on a dead run; the name-resolution line) | open |
+| F3 | adjudicate the 8 verdicts of `wf_99c74d25-624` | open — `EnemyBear.as:41-44` → `:42-45` already CONFIRMED and fixed in F1 |
+| F4 | close T5 (slice 3a/3b adopt the preflight) | open |
+| F5 | global rollout | open |
+| F6 | wrap | open |
+
 ## ▶ SESSION 36 (2026-09-13/14) — **THE HARNESS SESSION: T1 + T4 CLOSED · T2 RE-OPENED (false-passes found) · T3 + T5 CHECKPOINTED · NEXT: `docs/sessions/HARNESS_FINISH_KICKOFF.md`. NO LANE WORK.**
 
 Thesis (`docs/sessions/HARNESS_KICKOFF.md`): every defect this lane has shipped came from
@@ -18,7 +29,7 @@ gains no new class · `src/core/Sim.ts`, `OpponentController.ts` and the seam ar
 | | tool | state |
 |---|---|---|
 | **T1** | `scripts/gates/chaos.ts` + `tests/*.plants.ts` — the plant harness, committed | ✅ LANDED (`cdb2519`, corrected by `b4e361b`) |
-| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ⚠️ **RE-OPENED** — landed `38fe93c`, but its "0 failures" hides at least 4 VERIFIED wrong cites (kickoff F1) |
+| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ✅ **RE-CLOSED in session 37 (F1)** — landed `38fe93c`; its "0 failures" hid 4 VERIFIED wrong cites through three holes, now closed |
 | **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | 🟡 **EVIDENCE IN** — resumed run 8/8 live verdicts, 1 FATAL; one flaw open (`fatalCount`, kickoff F2) |
 | **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ✅ LANDED (`3f41c9d`; source half `abb484e`) |
 | **T5** | test-harness preflight — `parked`, `rollsFor`, **and a third check the kickoff missed** | 🟡 **CHECKPOINTED** — helpers + proof committed; NOT yet adopted by the slice 3a/3b suites |

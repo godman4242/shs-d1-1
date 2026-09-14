@@ -110,6 +110,51 @@ resolves, note it here.
 
 ---
 
+## CLAIMCHECK FALSE-PASSED — AND WHAT CLOSING IT RAISED (harness finish, F1)
+
+T2 shipped `npm run claimcheck` reading **"0 failures"**. The resumed fan-out
+(`wf_99c74d25-624`) then named cites the gate passed, and four were VERIFIED wrong by hand:
+`EnemyKatana.as:213` is `break;` (the gravity is `:205`), cited in three config files — one
+of them rewritten by T2 itself with the base cite carried forward unchecked — and
+`EnemyDeer.as:224` / `EnemyHorse.as:242` / `EnemyStag.as:302` each sit one line past their
+`+ 100`. **A script beat a swarm at resolving cites; a swarm beat the script at noticing the
+script was wrong.** Both halves of Rule 3 hold.
+
+| hole | probe on the old lib | fix | hermetic test, red first |
+|---|---|---|---|
+| a bare `export const NAME = 3` is not a field | 0 fields named `*GRAVITY*` in `ogNpcHumanoid.ts` | read that spelling too (+16 values) | `HOLE 1` |
+| a value passes if ANY of its cites holds it | `fallGravity: 3` had six cites; the sixth was never judged | every cite must hold a value it governs | `HOLE 2` |
+| ±1 passes an off-by-one by construction | the three `+ 100` cites | ±0 | `HOLE 3` |
+
+**Why per CITE, measured rather than argued:** a per-FILE rule misses `EnemyDeer.as:224`,
+because the same run's `:238` holds the `100`. Only judging each cite on its own catches all
+four.
+
+**±0, measured over the whole corpus:** 0 new per-value failures; 4 new per-cite ones — the
+three real drifts and one correct cross-reference (`EnemyDeer.as:79`). Ranges measured at
+±0 and ±1 raised the same set.
+
+**The fixed gate on the unfixed tree: 82 failures.** Every one classified by opening the
+cited line:
+
+| class | n | what it was | fixed by |
+|---|---|---|---|
+| wrong line | 10 | the 4 verified (6 sites) + `NPC.as:410` (a waterDamage `{`; the deflect is `:437-440`), `EnemyWolf.as:168` (`else`; the 15 is `:166`/`:178`), `EnemyWolfAlpha.as:392` (the `if`; the steps are `:396`/`:400`), `EnemyBear.as:41-44` (→ `:42-45`) | correcting the cite |
+| wrong FILE, set by prose | 41 | "(twins: Knife `:86` …)", "(ogre `:120`)", "(F `:111`, O `:169`)" — a human reads them right, the gate resolved them to the header's file | naming the file; all 41 then held their value at ±0 |
+| wrong VALUE | 5 | a docblock over two consecutive fields cites the second, which the gate cannot see (`kickStep2`, `walkBackwardsDiv`, `poseOn`, `arriveDice`) | giving the second field its own docblock (+4 values) |
+| correct context | 26 | a contrast, a cross-reference, a guard, a twin map | a named `CONTEXT` entry with the reason (29 after three of the fixed cites turned out to be context too) |
+
+After: **1,701 cites · 421 values at ±0 · 29 context · 0 failures · 0.21 s.** Chaos-proofed
+three ways, each gate exit 1 and `tests/claimcheck.test.ts` red, restored byte-identical:
+re-plant `:213` · re-plant `:224` · a stale `CONTEXT` entry.
+
+**The known residual, stated so nobody reads 0 as more than it is:** a CONTEXT cite that
+happens to hold a governed literal is only listed if it failed, so an unlisted one can still
+vouch for a value in the union; and a numeric field on the line after a cited field is
+out of scope (uncited, not passed).
+
+---
+
 ## WHAT IS NOT A BINARY GATE, AND MUST NOT BE CLAIMED AS ONE
 
 "Re-running slice 3a re-raises the same single FATAL" is **not reproducible**, and writing

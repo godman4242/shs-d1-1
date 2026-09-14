@@ -13,8 +13,8 @@
  * `EnemyWolf2.as:41` ↔ `EnemyWolf.as:239`, `EnemyWolf2.as:53` ↔ `EnemyWolf.as:259`,
  * `EnemyWolf2.as:66/70` ↔ `EnemyWolf.as:304/308`, `EnemyWolf2.as:88` ↔ `EnemyWolf.as:329`),
  * so it imports this file. Both sides named: the bare right-hand cites resolved against
- * `EnemyWolf2.as` (103 lines) and four were out of range, while `:66`, `:70` and `:88`
- * silently PASSED against the wrong file.
+ * `EnemyWolf2.as` (103 lines) and four were out of range, while the three at lines 66,
+ * 70 and 88 silently PASSED against the wrong file.
  */
 export const OG_WOLF = {
   /** `EnemyWolf.as:27` — `mcs.changeScale(1.2, 1.2)`: a fifth bigger than the paperdoll. */
@@ -46,11 +46,11 @@ export const OG_WOLF = {
   pounceStep: 15,
   /** `EnemyWolf.as:201` — knocked down: 6 frames on the ground; `:205` — launched: 48. */
   downed: { knockdownFrames: 6, launchedFrames: 48 },
-  /** `EnemyWolf.as:329` — FALL gravity per frame (twin of `EnemyKatana.as:213`). */
+  /** `EnemyWolf.as:329` — FALL gravity per frame (twin of `EnemyKatana.as:205`). */
   fallGravity: 3,
   /**
    * `EnemyWolf.as:376` — a head, neck OR WEAPON hit does double and beheads. The
-   * base DEFLECTS a weapon hit (`NPC.as:410`); the wolf has no weapon to parry with.
+   * base DEFLECTS a weapon hit (`NPC.as:437-440`); the wolf has no weapon to parry with.
    */
   partMult: 2,
   /**

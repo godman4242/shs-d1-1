@@ -368,7 +368,7 @@ describe('EnemyWolf.as — bite, pounce, fall', () => {
 });
 
 describe('EnemyWolf.as — the reception side, pinned against the base', () => {
-  it('gotHit: head, neck AND WEAPON double the damage and behead — the weapon does not deflect as NPC.as:410 does (:371-382)', () => {
+  it('gotHit: head, neck AND WEAPON double the damage and behead — the weapon does not deflect as NPC.as:437-440 does (:371-382)', () => {
     for (const [part, hp] of [
       [OG_PART.head, 33],
       [OG_PART.neck, 33],

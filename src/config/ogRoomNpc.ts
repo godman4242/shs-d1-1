@@ -12,15 +12,15 @@
 import { OG_FPS } from './timing';
 
 export const OG_ROOM = {
-  /** `RoomGoblin.as:113` / `:163` (ogre `:120` / `:181`) — two seconds of idle. */
+  /** `RoomGoblin.as:113` / `:163` (`RoomOgre.as:120` / `:181`) — two seconds of idle. */
   idleFrames: 48,
-  /** `RoomGoblin.as:120` / `:125` (ogre `:127` / `:132`) — `random() * 2 + 4`, signed toward `destX`. */
+  /** `RoomGoblin.as:120` / `:125` (`RoomOgre.as:127` / `:132`) — `random() * 2 + 4`, signed toward `destX`. */
   walk: { range: 2, base: 4 },
-  /** `RoomGoblin.as:203` (ogre `:221`) — arrived when within 10 px of `destX`. */
+  /** `RoomGoblin.as:203` (`RoomOgre.as:221`) — arrived when within 10 px of `destX`. */
   arriveX: 10,
-  /** `RoomGoblin.as:205` (ogre `:223`) — on arrival, a coin: 0 idles, 1 walks again. */
+  /** `RoomGoblin.as:205` (`RoomOgre.as:223`) — on arrival, a coin: 0 idles, 1 walks again. */
   arriveDice: 2,
-  /** `RoomGoblin.as:164` (ogre `:182`) — idle timeout: `int(random() * 3) == 1` walks. */
+  /** `RoomGoblin.as:164` (`RoomOgre.as:182`) — idle timeout: `int(random() * 3) == 1` walks. */
   walkDice: 3,
   walkOn: 1,
   /**

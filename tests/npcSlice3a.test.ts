@@ -182,7 +182,7 @@ describe('slice 3a config — the shared animal numbers, and the twins that must
     expect(OG_ANIMAL.fallGravity).toBe(OG_WOLF.fallGravity);
     // `EnemyWolf.as:182` ↔ horse `:122`/`:134`, stag `:166`/`:178`
     expect(OG_ANIMAL.runSpeed).toBe(OG_WOLF.run.adventure);
-    // `EnemyWolf.as:168` ↔ horse `:118`/`:130`, stag `:162`/`:174`
+    // `EnemyWolf.as:166`/`:178` ↔ horse `:118`/`:130`, stag `:162`/`:174`
     expect(OG_ANIMAL.runSpeedRoom).toBe(OG_WOLF.run.room);
     // `EnemyWolf.as:237` ↔ all four
     expect(OG_ANIMAL.arriveX).toBe(OG_WOLF.arriveX);
@@ -395,7 +395,7 @@ describe('EnemyBear — the only fighter of the four', () => {
     expect(b.isFacingRight()).toBe(true);
   });
 
-  it('`init` turns chasing ON outside the overworld and leaves it alone inside (`:41-44`)', () => {
+  it('`init` turns chasing ON outside the overworld and leaves it alone inside (`:42-45`)', () => {
     const row = rowFor(17);
     const a = bear({ doChase: false }).npc;
     a.init(row);

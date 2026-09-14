@@ -3869,3 +3869,22 @@ this is the catch-up. Every number below is the one pasted at its commit.)
   call): F1 claimcheck holes → F2 close T3 → F3 adjudicate the 8 verdicts → F4 close T5 → F5
   global rollout → F6 wrap.
 
+
+## 2026-09-14 — Session 37: THE HARNESS FINISH — F1–F6 (`docs/sessions/HARNESS_FINISH_KICKOFF.md`)
+
+Opus 5 @ xhigh. Entries written PER MILESTONE, at each commit — session 36 missed that.
+
+- **Baseline confirmed** at `5505a83` (the kickoff commit): 83 files / 1619 tests · typecheck 0
+  · lint 0 · claimcheck 1703 / 401 / "0 failures" · gate L4b-A 0 bytes.
+- **F1 — claimcheck's three false-pass holes closed.** All three mechanisms reproduced on the
+  real lib before anything changed. Candidate rules MEASURED over the corpus first: ±0 on the
+  old union raised 0 new failures (so ±0 alone could not catch the `+ 100` cites); a per-FILE
+  rule misses `EnemyDeer.as:224` (its run's `:238` holds the 100); only a per-CITE rule catches
+  all four. Four hermetic tests red on semantics, not a missing export (the numeric half was
+  first moved into the lib byte-for-byte — 1703/401/16437/0 identical). **Fixed gate on the
+  unfixed tree: 82 failures, the four verified among them** — classified by opening every
+  cited line: 10 wrong line (4 beyond the kickoff's), 41 wrong file set by prose, 5 wrong
+  value (a docblock over two fields), 26 correct context. One first-draft rule was wrong and
+  caught by its own test: STALE-CONTEXT keyed on "now holds a value" would have handed a
+  coincidental context cite its vouching power back. After: 1701 cites · 421 values at ±0 ·
+  29 context · 0 failures · 0.21 s. Chaos-proofed 3 ways. 1619 → 1623.

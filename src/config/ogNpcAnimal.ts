@@ -22,7 +22,7 @@ export const OG_ANIMAL = {
    * — `xp = level * 5 + 45`, NOT the base's `* 2 + 20` (`NPC.as:218`). Twins:
    * `EnemyWolf.as:32`, `EnemyFox.as:26`, `EnemyCivilian.as:35`.
    *
-   * ⚠️ The stag's `setLevel` OVERWRITES this with the BASE curve (`:62`), so a
+   * ⚠️ The stag's `setLevel` OVERWRITES this with the BASE curve (`EnemyStag.as:62`), so a
    * levelled stag is worth less than an unlevelled one. The source's, pinned.
    */
   xp: { perLevel: 5, base: 45 },
@@ -45,7 +45,7 @@ export const OG_ANIMAL = {
   /**
    * `EnemyHorse.as:118`/`:130` · `EnemyStag.as:162`/`:174` — the horse and the stag
    * gallop FASTER in a room than in the overworld. The bear and the deer have no
-   * such split. Twin of `OG_WOLF.run.room` (`EnemyWolf.as:168`).
+   * such split. Twin of `OG_WOLF.run.room` (`EnemyWolf.as:166`/`:178`).
    */
   runSpeedRoom: 15,
 
@@ -79,7 +79,7 @@ export const OG_ANIMAL = {
   /**
    * `EnemyBear.as:222` · `EnemyDeer.as:200` · `EnemyHorse.as:216` · `EnemyStag.as:280`
    * — FALL gravity per frame. Twin of `OG_WOLF.fallGravity` (`EnemyWolf.as:329`)
-   * and of `EnemyKatana.as:213`.
+   * and of `EnemyKatana.as:205`.
    */
   fallGravity: 3,
 
@@ -94,8 +94,8 @@ export const OG_ANIMAL = {
    *   - `margin` `EnemyBear.as:205` · `EnemyDeer.as:184` · `EnemyHorse.as:200`
    *     · `EnemyStag.as:256` — `posX <= -50 || posX > stageWidth + 50` is OFF-STAGE,
    *     and an off-stage animal parks itself in `REDFREEZE_STATE`.
-   *   - `dest` `EnemyBear.as:243`/`:248` · `EnemyDeer.as:224`/`:238`
-   *     · `EnemyHorse.as:242`/`:250` · `EnemyStag.as:302`/`:307` — fleeing aims 100 px
+   *   - `dest` `EnemyBear.as:243`/`:248` · `EnemyDeer.as:223`/`:238`
+   *     · `EnemyHorse.as:241`/`:250` · `EnemyStag.as:301`/`:307` — fleeing aims 100 px
    *     PAST the edge, so the bolt does not stop at it.
    */
   offStage: { margin: 50, dest: 100 },

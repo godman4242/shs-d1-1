@@ -40,7 +40,7 @@ export const OG_BEAR = {
 
   /**
    * `:246`/`:259` — a CHASING bear (the room dispatch's `doChase`, or any bear
-   * outside the overworld — `:41-44`) charges a player it can see within 400 px,
+   * outside the overworld — `:42-45`) charges a player it can see within 400 px,
    * where a non-chasing one bolts at `OG_ANIMAL.fleeDist`.
    */
   chaseDist: 400,

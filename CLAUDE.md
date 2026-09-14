@@ -49,12 +49,16 @@ state and next step live in `RESUME_HERE.md`.
   drift goes red on the commit that causes it.
 - **Claimcheck: `npm run claimcheck`** (`scripts/gates/claimcheck.ts`) — resolves every
   `<File>.as:<line>` in `src/config/**` and `src/core/npc/**` against the real decompiled
-  source, and cross-checks every CITED numeric config value against the line it claims to
-  come from (±1). Read-only and ~0.5 s, so it is in the pre-commit gate via
+  source, and cross-checks cited numeric config values in BOTH directions at ±0: every
+  value is on a line its cites name, and every cite names a line holding a value it
+  governs. Read-only and ~0.2 s, so it is in the pre-commit gate via
   `tests/claimcheck.test.ts`. It needs `reference/` (gitignored, study-only); without it
   the run says loudly that it checked NOTHING and the corpus half of the test skips.
-  It found three genuinely wrong cites on its first run, all of them IN RANGE — so
-  existence checking alone would have passed them.
+  ⚠️ Its first version reported "0 failures" over four VERIFIED wrong cites (one value
+  checked against the union of its cites, at ±1, and bare `export const`s not read at
+  all) — closing those raised 82. A correct cite that states no governed value (a
+  contrast, a cross-reference) goes in its `CONTEXT` list with the cited line read and the
+  reason written; never widen the window.
 - The gate scripts are run by **Node directly** (native TypeScript, hence
   `engines.node >= 22.18`) — no runner, no new dependency.
 

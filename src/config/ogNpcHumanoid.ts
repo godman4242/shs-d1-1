@@ -13,9 +13,19 @@
 /** `EnemyKatana.as:60` / `:64` (twins: `EnemyKnife.as:64/68`, `EnemySpear.as:64/68`, `EnemyCivilian.as:71/75`, `EnemyCivilianOld.as:50/54`, `EnemyArcher.as:62/66`, `EnemySpearElite.as:178/182`) — after GETUP_FRONT the body steps back 40 px. */
 export const OG_HUMANOID_GETUP_STEP = 40;
 
-/** `EnemyKatana.as:82` (twins: Knife `:86`, Spear `:86`, RoomGoblin `:69`, RoomOgre `:69`, Civilian `:93`, CivilianOld `:72`, Archer `:84`, SpearElite `:200`) — the bar slides 100 px left while downed… */
+/**
+ * `EnemyKatana.as:82` — the bar slides 100 px left while downed…
+ * Twins, each naming its file: `EnemyKnife.as:86`, `EnemySpear.as:86`, `RoomGoblin.as:69`,
+ * `RoomOgre.as:69`, `EnemyCivilian.as:93`, `EnemyCivilianOld.as:72`, `EnemyArcher.as:84`,
+ * `EnemySpearElite.as:200`.
+ */
 export const OG_HUMANOID_DOWNED_BAR_X = -100;
-/** `EnemyKatana.as:97` (twins: Knife `:101`, Spear `:101`, RoomGoblin `:77`, RoomOgre `:77`, Civilian `:108`, CivilianOld `:87`, Archer `:99`, SpearElite `:215`) — …and back on getting up. */
+/**
+ * `EnemyKatana.as:97` — …and back on getting up.
+ * Twins, each naming its file: `EnemyKnife.as:101`, `EnemySpear.as:101`, `RoomGoblin.as:77`,
+ * `RoomOgre.as:77`, `EnemyCivilian.as:108`, `EnemyCivilianOld.as:87`, `EnemyArcher.as:99`,
+ * `EnemySpearElite.as:215`.
+ */
 export const OG_HUMANOID_BAR_X_RESET = 0;
 
 /**
@@ -29,7 +39,7 @@ export const OG_HUMANOID_BAR_X_RESET = 0;
 export const OG_HUMANOID_DOWNEDUP_STEP = 100;
 
 /**
- * `EnemyKatana.as:213` — FALL_STATE gravity per frame, `velY += 3`.
+ * `EnemyKatana.as:205` — FALL_STATE gravity per frame, `velY += 3`.
  * Twins, each naming its file and each verified to read `velY += 3;` verbatim:
  * `EnemyKnife.as:232`, `EnemySpear.as:261`, `RoomGoblin.as:262`, `RoomOgre.as:280`,
  * `EnemyCivilian.as:292`, `EnemyCivilianFemale.as:185`, `EnemyCivilianOld.as:243`,
@@ -37,5 +47,8 @@ export const OG_HUMANOID_DOWNEDUP_STEP = 100;
  */
 export const OG_HUMANOID_FALL_GRAVITY = 3;
 
-/** `EnemyKnife.as:115` (twins: Spear `:119`, RoomGoblin `:91`, RoomOgre `:91`, SpearElite `:239`) — a DOWNSTAB on a downed target does double. */
+/**
+ * `EnemyKnife.as:115` — a DOWNSTAB on a downed target does double. Twins, each naming its
+ * file: `EnemySpear.as:119`, `RoomGoblin.as:91`, `RoomOgre.as:91`, `EnemySpearElite.as:239`.
+ */
 export const OG_HUMANOID_DOWNSTAB_MULT = 2;
