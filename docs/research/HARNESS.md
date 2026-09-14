@@ -88,7 +88,9 @@ phases read-only. Parameterised by `args`: `{ slice, sourceDir, tests, units, le
 with no args it runs L4b slice 3a, the run it was measured against.
 
 ```js
-// the reliable invocation
+// by name — resolves from a session started after the file was saved
+Workflow({ name: 'measure-verify' })
+// by path — always works, including in the session that wrote the file
 Workflow({ scriptPath: '.claude/workflows/measure-verify.js' })
 
 // parameterised for a later slice
@@ -99,14 +101,36 @@ Workflow({ scriptPath: '.claude/workflows/measure-verify.js', args: {
 } })
 ```
 
-⚠️ **`Workflow({ name: 'measure-verify' })` did NOT resolve in the session that wrote the
-file** — the registry answered `not found. Available: deep-research`. Measured, not
-assumed. Use `scriptPath`, which works; try `name` again from a fresh session and if it
-resolves, note it here.
+**Name resolution, measured twice.** In the session that SAVED the file, `name` did not
+resolve (`not found. Available: deep-research`) — the registry is read at session start. From
+a fresh session (harness finish, 2026-09-14) a deliberately bogus name lists what is
+registered, which probes resolution without launching anything:
+`Workflow({ name: 'zz-probe-nonexistent-name' })` → `not found. Available: deep-research,
+measure-verify`. So `name` works from the next session on; `scriptPath` works always.
 
 **Shape, executed rather than asserted:** 4 units × (1 measure + 2 lenses) = **12 agents,
 8 verdicts** — the same shape session 35 ran by hand. With every agent dead it spawns
 **4**, because a unit whose measurement died is never handed to a verifier.
+
+**The result carries `status`, and `fatalCount` is `null` unless every verdict is live.**
+`status: 'VERIFIED'` only when live verdicts == expected; otherwise `'UNVERIFIED'`, and
+`fatalCount: null` — never a `0` a consumer can read as clean. Pinned on the EXECUTED dead
+branch in `tests/workflowScripts.test.ts` (red first; chaos-planted back to `fatal.length`
+→ red → restored).
+
+### ITS FIRST REAL RUN — `wf_99c74d25-624`, slice 3a (journals in `docs/research/runs/`)
+
+| launch | agents | verdicts | what the result said |
+|---|---|---|---|
+| first | 4/4 measure returned; **8/8 verify KILLED** by the account session limit | 0/8 live | `0/8 live verdicts … 8 UNVERIFIED … it was not clean`, every unit `UNVERIFIED` — **the accounting HELD** — but beside it `fatalCount: 0`, the flaw fixed above |
+| resumed, script byte-unchanged | 12/12, 0 errors (the 4 measures replayed from cache) | **8/8 live** | **1 FATAL, 7 CORRECTED, 0 CLEAN**, 68 refutations |
+
+**It was a DIFFERENT FATAL from session 35's, and that is not a failure.** Session 35's
+refuted the DEER measurement (its claim that the deer's empty ATTACK case was shared with
+the wolf's); this one refuted the BEAR measurement, with 8 refutations — each an AGENT CLAIM
+until the F3 ledger below adjudicates it. The one already VERIFIED by hand is the drifted
+cites it named (`EnemyKatana.as:213`, the three `+ 100`), which re-opened claimcheck. The
+verdict COUNT reproduced; the finding did not, exactly as the section below predicts.
 
 ---
 

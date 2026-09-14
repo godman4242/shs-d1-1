@@ -66,8 +66,14 @@ async function smoke(label, alive) {
     const out = await fn(agentStub, parallelStub, pipelineStub, () => {}, () => {},
                          async () => ({}), JSON.parse(process.argv[4] || '{}'),
                          { total: null, spent: () => 0, remaining: () => Infinity })
+    // The result's SCALAR fields, so a test can pin what a consumer would read off a dead
+    // run — `fatalCount: 0` beside `0/8 live verdicts` is exactly the shape that lies.
+    const scalars = out && typeof out === 'object'
+      ? Object.fromEntries(Object.entries(out).filter(([k, v]) => k !== 'INTEGRITY' && (v === null || typeof v !== 'object')))
+      : {}
     console.log(`  RUN OK  [${label}]  ${agents} agents spawned` +
-                (out?.INTEGRITY ? `\n    INTEGRITY: ${String(out.INTEGRITY)}` : ''))
+                (out?.INTEGRITY ? `\n    INTEGRITY: ${String(out.INTEGRITY)}` : '') +
+                (Object.keys(scalars).length ? `\n    RESULT: ${JSON.stringify(scalars)}` : ''))
     return true
   } catch (e) {
     console.error(`  RUN FAIL [${label}]\n    ${e.constructor.name}: ${e.message}`)

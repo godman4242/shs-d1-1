@@ -235,11 +235,18 @@ const expected = UNITS.length * LENSES.length
 log(`units: ${byUnit.filter((u) => u.status !== 'UNMEASURED').length}/${UNITS.length} measured`)
 log(`verdicts: ${live.length}/${expected} live · FATAL ${fatal.length} · UNVERIFIED ${verdicts.length - live.length}`)
 
+// A run with ANY dead verifier has no fatal count to report. The first real run of this
+// script (`wf_99c74d25-624`) lost 8/8 verifiers and still returned `fatalCount: 0`, which is
+// exactly what a clean run returns — so a consumer checking `fatalCount === 0` read a dead
+// run as clean. Null cannot be mistaken for zero, and `status` says why it is null.
+const complete = live.length === expected
+
 return {
   slice: cfg.slice,
+  status: complete ? 'VERIFIED' : 'UNVERIFIED',
   // Read the accounting off this line rather than inferring it. If live < expected, the
   // difference is agents that DIED, not units that were clean.
   integrity: `${byUnit.filter((u) => u.status !== 'UNMEASURED').length}/${UNITS.length} units measured; ${live.length}/${expected} live verdicts (${LENSES.length} lenses × ${UNITS.length} units); ${fatal.length} FATAL; ${verdicts.length - live.length} UNVERIFIED. A unit or lens missing from the counts DIED — it was not clean.`,
-  fatalCount: fatal.length,
+  fatalCount: complete ? fatal.length : null,
   units: byUnit,
 }

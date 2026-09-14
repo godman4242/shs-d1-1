@@ -122,6 +122,23 @@ describe('measure-verify keeps its fail-closed accounting', () => {
     expect(src).toContain('results[i] ?? { unit: u.name');
   });
 
+  /**
+   * THE FLAW THE FIRST REAL RUN EXPOSED (`wf_99c74d25-624`): all 8 verifiers died on the
+   * session limit, the integrity line said `0/8 live verdicts`, and beside it the result
+   * carried `fatalCount: 0`. Anything reading `fatalCount === 0` read a dead run as clean.
+   * Pinned on the EXECUTED dead branch, not on the source text.
+   */
+  it('a run with dead verifiers carries fatalCount: null and status UNVERIFIED — never a 0 that reads as clean', () => {
+    const out = check(FILE).out;
+    const result = (label: string): unknown => {
+      const line = new RegExp(`\\[all agents ${label}\\][^\\n]*\\n(?:\\s+INTEGRITY:[^\\n]*\\n)?\\s+RESULT: ([^\\n]*)`).exec(out)?.[1];
+      expect(line, `no RESULT line for the ${label} branch`).toBeTypeOf('string');
+      return JSON.parse(line ?? '{}');
+    };
+    expect(result('DEAD')).toMatchObject({ status: 'UNVERIFIED', fatalCount: null });
+    expect(result('ALIVE')).toMatchObject({ status: 'VERIFIED', fatalCount: 0 });
+  });
+
   it('returns a loud integrity line stating live-vs-expected for both phases', () => {
     expect(src).toContain('live verdicts');
     expect(src).toContain('DIED — it was not clean');

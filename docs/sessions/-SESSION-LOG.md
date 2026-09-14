@@ -3888,3 +3888,14 @@ Opus 5 @ xhigh. Entries written PER MILESTONE, at each commit — session 36 mis
   caught by its own test: STALE-CONTEXT keyed on "now holds a value" would have handed a
   coincidental context cite its vouching power back. After: 1701 cites · 421 values at ±0 ·
   29 context · 0 failures · 0.21 s. Chaos-proofed 3 ways. 1619 → 1623.
+- **F1 committed** `d733f88` through the pre-commit gate (83 / 1623).
+- **Read-only fan-out** `wf_1b4b7826-c2e` launched over F1's residual: the 172 cites that
+  pass per-cite while governing 2+ values (476 of 648 passing cites govern exactly one and
+  are strong). 6 chunks × 2 lenses, packets pre-built by script; judges write to disk first.
+- **F2 — T3 closed.** Probed name resolution WITHOUT launching a run — a bogus name lists the
+  registry: `not found. Available: deep-research, measure-verify`, so `name` resolves from a
+  fresh session; the HARNESS.md line corrected. `wfcheck.mjs` now prints each branch's result
+  scalars; the new dead-branch test went red on the real flaw (`0/8 live … fatalCount: 0`),
+  then `status` + `fatalCount: null` unless all verdicts are live → green; planted back → red
+  → restored. Checked, not inherited: the resumed run's FATAL (bear) differs from session 35's
+  (deer). 1623 → 1624.

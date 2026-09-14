@@ -5,7 +5,7 @@
 | F | what | state |
 |---|---|---|
 | **F1** | close claimcheck's three false-pass holes | ✅ **CLOSED** — per-cite at ±0 + bare consts; 82 failures raised on the old tree, all classified; 0 after (`docs/research/HARNESS.md`) |
-| F2 | close T3 (`fatalCount: null` on a dead run; the name-resolution line) | open |
+| **F2** | close T3 (`fatalCount: null` on a dead run; the name-resolution line) | ✅ **CLOSED** — `status` + `fatalCount: null` unless every verdict is live, pinned on the executed dead branch; `name` resolves from a fresh session (probed with a bogus name) |
 | F3 | adjudicate the 8 verdicts of `wf_99c74d25-624` | open — `EnemyBear.as:41-44` → `:42-45` already CONFIRMED and fixed in F1 |
 | F4 | close T5 (slice 3a/3b adopt the preflight) | open |
 | F5 | global rollout | open |
@@ -30,7 +30,7 @@ gains no new class · `src/core/Sim.ts`, `OpponentController.ts` and the seam ar
 |---|---|---|
 | **T1** | `scripts/gates/chaos.ts` + `tests/*.plants.ts` — the plant harness, committed | ✅ LANDED (`cdb2519`, corrected by `b4e361b`) |
 | **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ✅ **RE-CLOSED in session 37 (F1)** — landed `38fe93c`; its "0 failures" hid 4 VERIFIED wrong cites through three holes, now closed |
-| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | 🟡 **EVIDENCE IN** — resumed run 8/8 live verdicts, 1 FATAL; one flaw open (`fatalCount`, kickoff F2) |
+| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | ✅ **CLOSED in session 37 (F2)** — resumed run 8/8 live verdicts, 1 FATAL; the `fatalCount: 0`-on-a-dead-run flaw fixed and pinned |
 | **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ✅ LANDED (`3f41c9d`; source half `abb484e`) |
 | **T5** | test-harness preflight — `parked`, `rollsFor`, **and a third check the kickoff missed** | 🟡 **CHECKPOINTED** — helpers + proof committed; NOT yet adopted by the slice 3a/3b suites |
 
