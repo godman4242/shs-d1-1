@@ -1,259 +1,96 @@
 # RESUME HERE
 
-## ▶ SESSION 37 (2026-09-14) — **THE HARNESS FINISH, IN PROGRESS** (`docs/sessions/HARNESS_FINISH_KICKOFF.md`)
+## ▶ SESSION 37 (2026-09-14) — **THE HARNESS IS FINISHED: T1–T5 ALL CLOSED · ROLLED OUT GLOBALLY · NO LANE WORK · NEXT: write the slice 4 kickoff**
 
-| F | what | state |
-|---|---|---|
-| **F1** | close claimcheck's three false-pass holes | ✅ **CLOSED** — per-cite at ±0 + bare consts; 82 failures raised on the old tree, all classified; then a 12-agent read-only pass over the 172 weak cites found 2 wrong-branch cites + 12 coincidences (41 context); 0 after (`docs/research/HARNESS.md`) |
-| **F2** | close T3 (`fatalCount: null` on a dead run; the name-resolution line) | ✅ **CLOSED** — `status` + `fatalCount: null` unless every verdict is live, pinned on the executed dead branch; `name` resolves from a fresh session (probed with a bogus name) |
-| **F3** | adjudicate the 8 verdicts of `wf_99c74d25-624` | ✅ **CLOSED** — 68 refutations adjudicated, 534 commands re-executed (all MATCH), 74 sites corrected from the source, +2 tests / +3 plants, chaos 43/43 (`docs/research/runs/wf_99c74d25-624-LEDGER.md`) |
-| **F4** | close T5 (slice 3a/3b adopt the preflight) | ✅ **CLOSED** — 0 local `seq` copies; the three preflights at their trap sites, each red-proven by re-planting session 35's broken setup; counts unchanged |
-| F5 | global rollout | open |
-| F6 | wrap | open |
+Sessions 36–37's thesis (`docs/sessions/HARNESS_KICKOFF.md`, `HARNESS_FINISH_KICKOFF.md`): every
+defect this lane shipped came from **hard noticing, not hard reasoning** — a claim that looked
+true and that nothing in the toolchain could check. A harness makes the un-noticed thing fail a
+gate. The rules it earned, with evidence, are in **`docs/research/HARNESS.md`**.
 
-## ▶ SESSION 36 (2026-09-13/14) — **THE HARNESS SESSION: T1 + T4 CLOSED · T2 RE-OPENED (false-passes found) · T3 + T5 CHECKPOINTED · NEXT: `docs/sessions/HARNESS_FINISH_KICKOFF.md`. NO LANE WORK.**
+**SCOPE CUTS, restated and held:** no lane work — slice 4 NOT started, `src/core/npc/` gained no
+class, and F3's `src/core/npc` diff has **zero non-comment lines** · `Sim.ts`,
+`OpponentController.ts` and the seam untouched — gate L4b-A **0 bytes** · `src/config/ogActor.ts`
+CLOSED (transcriber re-run, no diff) · no new runtime dependency · ONE workflow in flight at a
+time, never while this loop wrote files the agents read.
 
-Thesis (`docs/sessions/HARNESS_KICKOFF.md`): every defect this lane has shipped came from
-**hard noticing, not hard reasoning** — a claim that looked true, was never checked against
-the source, and nothing in the toolchain could tell. A bigger model closes that by noticing
-more; a harness closes it by **making the un-noticed thing fail a gate**. Five tools, each
-independently gated and committed.
+### THE GATES, AS THEY STAND — run these first
 
-**SCOPE CUTS, restated and held:** no lane work — slice 4 is NOT started and `src/core/npc/`
-gains no new class · `src/core/Sim.ts`, `OpponentController.ts` and the seam are untouched
-(gate L4b-A still reads **0 bytes**) · `src/config/ogActor.ts` stays CLOSED evidence
-(transcriber re-run, no diff) · no new runtime dependency.
+```
+$ npx vitest run            ->  Test Files 83 passed (83) · Tests 1629 passed (1629)
+$ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
+$ npm run claimcheck        ->  1716 cites · 421 values at ±0 · 44 context · 0 failures · ~0.2 s
+$ npm run chaos             ->  43/43 plants RED · 43/43 restored byte-identical · ~32 s   (slice gate, NOT pre-commit)
+$ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c   ->  0
+```
 
-### THE FIVE TOOLS
+### THE FIVE TOOLS — all closed
 
 | | tool | state |
 |---|---|---|
-| **T1** | `scripts/gates/chaos.ts` + `tests/*.plants.ts` — the plant harness, committed | ✅ LANDED (`cdb2519`, corrected by `b4e361b`) |
-| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ✅ **RE-CLOSED in session 37 (F1)** — landed `38fe93c`; its "0 failures" hid 4 VERIFIED wrong cites through three holes, now closed |
-| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | ✅ **CLOSED in session 37 (F2)** — resumed run 8/8 live verdicts, 1 FATAL; the `fatalCount: 0`-on-a-dead-run flaw fixed and pinned |
-| **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ✅ LANDED (`3f41c9d`; source half `abb484e`) |
-| **T5** | test-harness preflight — `parked`, `rollsFor`, **and a third check the kickoff missed** | ✅ **CLOSED in session 37 (F4)** — adopted by slice 3a/3b at the three historical trap sites |
+| **T1** | `npm run chaos` + `tests/*.plants.ts` | ✅ 43 plants (40 → 43 this session; `EXPECTED_TOTAL` pinned in `scripts/gates/chaos.ts` AND `tests/chaosGate.test.ts`) |
+| **T2** | `npm run claimcheck` | ✅ **RE-CLOSED** — it had false-passed; now per-cite at ±0 + bare consts (F1) |
+| **T3** | `.claude/workflows/measure-verify.js` | ✅ a dead run returns `status: 'UNVERIFIED'`, `fatalCount: null` (F2) |
+| **T4** | twin rule + `tests/configTwins.test.ts` | ✅ (session 36) |
+| **T5** | `tests/utils/npcHarness.ts` — `seq` · `counting` · `parked` · `rollsFor` · `readsWhatYouWrote` | ✅ adopted by slice 3a/3b at the three historical trap sites (F4) |
 
-### ✅ T1 — `npm run chaos`
+### WHAT SESSION 37 DID — one line each; the story is in `docs/sessions/-SESSION-LOG.md`
 
-```
-$ npm run chaos          ->  40/40 plants went RED
-                             40/40 files restored byte-identical; git says the tree is clean
-$ npx vitest run         ->  Test Files  80 passed (80)      (was 79 — +1: tests/chaosGate.test.ts)
-                             Tests  1517 passed (1517)       (was 1438 — +79)
-$ npm run -s typecheck   ->  exit 0
-$ npm run -s lint        ->  exit 0
-$ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c   ->  0
-$ python3 scripts/payload/transcribeActorConsts.py && git diff --stat src/config/ogActor.ts   ->  EMPTY
-```
-
-**The 40 are not all the same 40, and the file says so.** Session 35's throwaway harness
-survives only in its FIRST-PASS form (15 of slice 3a's 18; all 22 of 3b), because the three
-plants it added mid-session after the adversarial pass were never written back. So **37 are
-transcribed byte-for-byte by an AST extractor** (`recovered:`) and **3 are re-authored here**
-from the guards the session log and DIVERGENCES record (`reauthored:`). The runner prints the
-provenance on every line. 37 was not rounded up to 40 and the criterion was not softened to
-37/37.
-
-**One recovered anchor had already drifted to ZERO matches** — `EnemyStag.ts` gained a
-comment block between `super(...)` and `this.canGotLaunched` after the plant ran. The runner
-treats that as a LOUD failure, never a skip, which is how it was found; it is re-anchored to
-the same intent. `tests/chaosGate.test.ts` now resolves all 40 anchors **in pre-commit**, so
-the next drift goes red on the commit that causes it.
-
-**Two fail-open holes in the scratchpad version are closed** (both would have let a broken
-plant look like a caught one): it never proved the baseline was GREEN, so a test file that was
-already red handed a free pass to every plant aimed at it; and it scored **any** non-zero exit
-as red, so a plant that broke the *compile* counted as caught. A plant is now RED only if
-vitest reports ≥1 FAILED TEST — anything else non-zero is `INCONCLUSIVE`, which fails.
-
-**All six process-level guards chaos-proofed, each exit 1:** unmatchable anchor →
-`PLANT-FAILED` · a guard no test covers → `STAYED-GREEN ⚠️ MISSING TEST` · a plant that
-breaks the parse → `INCONCLUSIVE` · a dirty target file → refuses to start · a backup
-directory left by a crashed run → refuses to start · the plant count shrinking → refuses to
-start. Tree verified clean after every probe.
-
-⛔ **`npm run chaos` is NOT in pre-commit and must never be** — it rewrites shipped source.
-It is a slice gate. The pre-commit half is `tests/chaosGate.test.ts`, which applies nothing.
-
-### ✅ T2 — `npm run claimcheck`
-
-```
-$ npm run claimcheck     ->  cites resolved       1703
-                             cited values checked 401   (±1)
-                             ✅ every cite resolves and every cited value is where it says it is
-                             real time 0.446s   (first version: 2m02s — see below)
-$ npx vitest run         ->  Test Files  81 passed (81)      (was 80 — +1: tests/claimcheck.test.ts)
-                             Tests  1546 passed (1546)       (was 1517 — +29)
-$ npm run -s typecheck   ->  exit 0        $ npm run -s lint  ->  exit 0
-```
-
-**IT FOUND THREE REAL BUGS, and all three were IN RANGE** — an existence-only gate passes
-them clean, which is the whole argument for the numeric half. In `src/config/ogEnemyKatana.ts`:
-`:140` for `walkSpeed = random() * 3 + 4` should be **`:129`** (line 140 is
-`startAnim(GOTLAUNCHEDDOWNED)`); `:175-176` for the left-facing melee test should be
-**`:167`**; `:185` for the right-facing one should be **`:179`**. Five config values sat
-under those three cites. All fixed, each verified against the source by hand.
-
-**27 more cites were unresolvable and are now fixed in the doc, not special-cased in the
-gate.** They were bare `:N` cites whose target file was set by ENGLISH PROSE — "(ogre
-`:317`)", "(Female `:28`)", `` `EnemyWolf2.as:24` ↔ `:227` ``. Every one now names its file.
-Three of them (`:66`, `:70`, `:88` in `ogEnemyWolf.ts`) had been silently PASSING against
-the wrong file. Two `EnemySpearElite` dice cites were widened to ranges, because the branch
-values live 13 and 11 lines below the cited line.
-
-**The resolution rules are measured, and two obvious ones are FALSIFIED** — written up in
-`scripts/gates/claimcheckLib.ts`'s header. "Inherit the last named cite above" mis-resolves
-~30 values in `ogEnemyWolfAlpha.ts`, which names `EnemySpearElite.as` mid-file as a
-CONTRAST; "the header always wins" mis-resolves bare cites that genuinely follow a
-mid-clause name. The rule is: same comment line first, header default second, nothing else.
-
-**±1, not the kickoff's ±2, and that is a TIGHTENING.** Measured both: ±2 also passes with
-zero failures, so ±1 loses no coverage while roughly halving the false-PASS surface
-(decompiled AS is one-statement-per-line, so a ±2 window admits four to six unrelated small
-integers — `midDiv: 10` would pass against any of 40 / 10 / 5 / 60). `npm run claimcheck --
---window 2` re-measures the looser one.
-
-**TWO FILES ARE EXEMPT FROM THE NUMERIC HALF, each with a reason and each already gated
-elsewhere:** `ogAi.ts` transcribes `NPCManager.as`'s dispatch switch as DATA (its numbers
-are ai ordinals, XML placement attributes and source LINE NUMBERS — a ±N window over those
-is a category error; `tests/ogAiData.test.ts` byte-checks it with an INDEPENDENT parser),
-and `fidelity.ts` holds values MEASURED OFF 1080p STUDY FRAMES, not transcribed from the
-AS3 at all.
-
-**It was 2m02s and is now 0.446s** (275×). The first version re-parsed the whole file for
-every numeric field, and `src/config` holds ~17,000 of them. Two minutes fails the one
-thing a pre-commit gate must be.
-
-**Chaos-proofed five ways, each exit 1, tree clean after every probe:** shift a cite by 3
-lines → `LITERAL-ABSENT` · name a file that does not exist → `MISSING-FILE` · cite past
-end-of-file → `LINE-OOR` · corrupt a value its cite no longer supports → `LITERAL-ABSENT` ·
-plant an allow-list entry that is no longer needed → `STALE-DERIVED`.
-
-⚠️ **It needs `reference/`**, which is gitignored study-only material. Without it the run
-exits 0 saying it checked NOTHING, and the corpus half of the test skips with that reason
-asserted. That is the gate's one deliberate fail-open; the hermetic unit tests always run.
-
-### ✅ T4 — the twin rule, and the table that enforces it
-
-```
-$ npx vitest run tests/configTwins.test.ts  ->  47 passed (47)
-$ npx vitest run                            ->  Test Files 82 passed (82) · Tests 1601 passed (1601)
-$ npm run -s typecheck / lint               ->  exit 0 / exit 0
-```
-
-The rule is in **`src/config/CLAUDE.md`**: IMPORT when both sides ship in the same slice
-(zero blast radius, and an imported value cannot drift at all); TEST-PIN when one side
-already SHIPPED (never churn a green file); DENY-LIST when two values hold the same number
-for DIFFERENT rules. Enforced by **`tests/configTwins.test.ts`** — 36 field-level twin
-pairs asserted equal, 2 import-resolved pairs asserted IDENTICAL (`toBe`, so tidying an
-import into a copy goes red), and 7 deny-listed pairs that assert what makes them differ.
-
-**13 of 31 declared twin relationships had no assertion anywhere.** The whole of slice 2a's
-civilian config appeared in ZERO tests, and `chaseDist: 400` had three config homes and no
-pin at all. Every one of the 36 pairs passed on the first run, so nothing had drifted yet —
-which is the only time to write a pin.
-
-**⚠️ THE DENY-LIST IS THE HARD HALF, and a generated twin-finder would have got it wrong.**
-Four coincidences must never be pinned: `OG_STAG.chargeSpeed` 15 vs `OG_ANIMAL.runSpeedRoom`
-15 (a charge is not a run — and the charge deliberately does not step down in the overworld
-where RUN does); `OG_ALPHA.runSpeed` 15 vs the wolf's room/overworld PAIR; `OG_BEAR.idle.dice`
-3 vs `OG_HORSE.idle.dice` 3 (different clip sets). And the WORD "twin" does not settle it:
-`OG_SPEAR_ELITE.boss.trivialLevel` is documented as a twin of `OG_NPC_SET_LEVEL.trivialLevel`
-and the numbers are **5 and 10** — a twin RULE, not a twin VALUE.
-
-**Chaos-proofed three ways, each red then green:** drift the civilian xp from the wolf's →
-red · drift the boar's `chaseDist` → red · turn the stag's `idle` IMPORT into a spread copy →
-the identity assertion goes red.
-
-### 🟡 T3 + T5 — CHECKPOINTED, NOT CLOSED (this commit). The next session finishes them.
-
-```
-$ npx vitest run         ->  Test Files  83 passed (83)      (82 at T4 — +1: tests/npcHarness.test.ts)
-                             Tests  1619 passed (1619)       (1601 at T4 — +18)
-$ npm run -s typecheck   ->  exit 0        $ npm run -s lint  ->  exit 0
-$ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/OpponentController.ts | wc -c   ->  0
-```
-
-**T3 — `.claude/workflows/measure-verify.js`.** Saved, parameterised by `args`
-(`units`, `lenses`, `slice`, `sourceDir`, `tests`), executed by `wfcheck.mjs` on both
-branches and pinned in `tests/workflowScripts.test.ts`: 4 units × 2 lenses = **12 agents /
-8 verdicts** alive, **4 agents** dead (a dead measurement is never handed to a verifier).
-`docs/research/HARNESS.md` carries the three rules the fan-out earned (fan out READS never
-WRITES · a dead agent must not look like a clean one · a script beats a swarm).
-
-**Its first real run died, and the accounting HELD.** `wf_99c74d25-624`: 4/4 measure agents
-returned; **8/8 verify agents died on the account session limit** ("You've hit your session
-limit · resets 6:30pm"). The workflow returned `0/8 live verdicts … 8 UNVERIFIED … A unit or
-lens missing from the counts DIED — it was not clean`, and every unit read `UNVERIFIED`.
-That is the fail-closed design proven by a real death, not a stub. Raw journal committed:
-`docs/research/runs/wf-journal-measure-verify-3a-DEAD-wf_99c74d25-624.jsonl`. **Resumed**
-the same day with the script byte-unchanged, so the 4 measurements replay from cache.
-
-⚠️ **ONE FLAW THE DEAD RUN EXPOSED, deliberately NOT fixed before the resume** (editing the
-script burns the resume cache): the result carries `fatalCount: 0` beside `0/8 live
-verdicts`. Anything that checks `fatalCount === 0` reads a dead run as clean. Fix =
-`fatalCount: null` (and a top-level `status: 'UNVERIFIED'`) whenever live < expected, plus a
-test. ⚠️ **AND A STALE LINE IN `HARNESS.md`:** it says `Workflow({ name: 'measure-verify' })`
-did not resolve. That was true in the session that wrote the file; after a reload the
-registry lists `measure-verify`. Re-test from the fresh session and correct the line.
-
-**T5 — `tests/utils/npcHarness.ts` + `tests/npcHarness.test.ts`.** ⚠️ **The kickoff's premise
-was WRONG**: "all 3 failures shared one root — an actor parked in a state its own
-`doAction` left" is true of **1 of 3** (annotated in `HARNESS_KICKOFF.md`). The real shared
-root is *the test's setup silently did not hold at the assertion* — so it ships THREE checks:
-
-| session 35 failure | what went wrong | check |
+| F | commit | outcome |
 |---|---|---|
-| the bear's cooldown | test WROTE `idleCounter = 1`; `doAction` TICKED it before the branch READ it | `readsWhatYouWrote` |
-| the alpha parked in FALL | first `update()` landed it; the LAND clip masked the clip under test | `parked` (placed at the ASSERTION, not the setup) |
-| rng 0.9 | one clamped `seq` value served two rolls with different bands | `rollsFor` (returns the VALUES, not just the count) |
+| F1 | `d733f88` | claimcheck's three false-pass holes closed (a bare `export const` was never a field · a value passed if ANY cite held it · ±1 passed off-by-ones). The fixed gate on the old tree raised **82**: 10 wrong line, 41 wrong file (prose), 5 wrong value, 26 context. **`EnemyKatana.as:213` was session 36's own defect.** |
+| F1+ | `1637466` | a 12-agent read-only pass over the 172 WEAK (multi-value) cites: 2 right-literal-wrong-BRANCH cites (`EnemyBear.as:248`, `EnemyStag.as:307` are the chase, not the flee), 12 coincidences → CONTEXT, and `OG_BEAR.idle.walkOn` turned out unsupported |
+| F2 | `a84d0d9` | T3 closed; `Workflow({ name: 'measure-verify' })` resolves from a fresh session (probed with a bogus name — launches nothing) |
+| F3 | `f4e4ec2` · `2d9f705` | 68 refutations adjudicated; 534 cited commands re-executed under `sandbox-exec`, all MATCH; 74 committed sites corrected **from the source** (the deer is not the only non-re-targeter; `EnemyBear.ts` had its tick guard backwards; ANY levelled animal pays less XP); +2 tests, +3 plants. Ledger: `docs/research/runs/wf_99c74d25-624-LEDGER.md` |
+| F4 | `efcdc27` | T5 closed; each preflight red-proven by re-planting session 35's broken setup |
+| F5 | outside this repo | see below |
 
-All three historical broken setups reproduce as one readable line; each check chaos-planted
-(disarm it → red → restored green). Two first-draft bugs caught by the proof itself:
-`readsWhatYouWrote` checked the FIRST read (always matches setup — green on the very bug)
-and the demo alpha had no target (so its clip never advanced).
-**NOT DONE:** the slice 3a/3b suites still carry their own `seq`/`counting` copies and do
-not yet call the preflight — T5's "used by at least the slice 3a/3b suites" is OPEN.
+### ⚠️ WHAT CLAIMCHECK STILL CANNOT SEE — measured, not hoped away (`docs/research/HARNESS.md`)
 
-**Also not done this session:** the global rollout Kheshav asked for (make this harness
-architecture apply to every project), and `docs/sessions/-SESSION-LOG.md` entries were
-missed until this checkpoint.
+A literal gate cannot tell a coincidental literal from a real one: an UNLISTED context cite can
+still vouch for a value, and a right-number-wrong-branch cite passes. The adversarial pass measured
+that residual on this corpus at **14 of 172** multi-value cites, all now fixed or listed. A numeric
+field on the line after a cited field, with no enclosing cite, is out of scope (uncited, not
+passed). `src/core/npc/**` cites get the existence + range half only.
 
-### ⚠️ THE RESUMED RUN LANDED — AND RE-OPENED T2
+### 🌐 F5 — THE HARNESS, EVERYWHERE (outside this repo; all measured)
 
-`wf_99c74d25-624`, resumed with the script byte-unchanged: **12/12 agents, 0 errors, 8/8 live
-verdicts, 1 FATAL, 7 CORRECTED, 0 CLEAN** (the 4 measurements replayed from cache; only the 8
-verifiers re-ran). Journal: `docs/research/runs/wf-journal-measure-verify-3a-RESUMED-wf_99c74d25-624.jsonl`.
-The verdict COUNT matches session 35's (8/8, 1 FATAL); the FATAL itself is a different one —
-exactly as the annotation in `HARNESS_KICKOFF.md` predicted, which is why it was never a gate.
-
-**It found cites `npm run claimcheck` passes and should not. VERIFIED by hand:**
-`EnemyKatana.as:213` is `break;` — the gravity line is `:205` — and it is cited in
-`ogNpcAnimal.ts`, `ogEnemyWolf.ts` and `ogNpcHumanoid.ts` (the last one REWRITTEN by T2 itself,
-with the base cite carried forward unchecked). And `EnemyDeer.as:224` / `EnemyHorse.as:242` /
-`EnemyStag.as:302` are each one line past their `+ 100` line. Probed mechanisms: a bare
-`export const NAME = 3` is never a numeric field; a value's union of cites passes if ANY one
-holds the literal; ±1 hides off-by-one drift by construction.
-
-The rest of its findings (false "ONLY one of the four" claims in committed deer headers and test
-titles, `EnemyHorse.die()` untested, the bear's `canGot*` flags unpinned, more drifted cites)
-are AGENT CLAIMS, unverified. **All of it is scoped in `docs/sessions/HARNESS_FINISH_KICKOFF.md`
-(F1 claimcheck holes · F2 close T3 · F3 adjudicate · F4 close T5 · F5 global rollout · F6 wrap).**
+- **`~/.claude/CLAUDE.md` gained "Harness engineering"** — only rules not already in its graph
+  section. Backup `~/.claude/CLAUDE.md.bak-20260914`. Cost **+2,052 b ≈ 513 tok/turn** (bytes ÷ 4,
+  the method memory used), +7.7% on SSHD's recorded 6,700-token overhead. The memory index grew
+  +980 b ≈ 245 tok (four new lessons, one corrected entry).
+- **Global workflow `measure-refute`** — project-agnostic measure → adversarial refute, fail-closed.
+  Canonical in `~/kheshav-code/claude-shipping-kit/workflows/` (`d68c438`, 6 tests, 5 plants — the
+  plants found 2 missing tests), symlinked as `~/.claude/workflows/measure-refute.js`. MEASURED from
+  fresh headless sessions: user-level workflows register in every project, symlinks register AND
+  execute, the registry is read at session start. Named `measure-refute`, not `measure-verify`,
+  because same-name precedence between user and project levels is undocumented.
+- **A `new-project.sh` throwaway project listed `measure-refute`** (then deleted) — no copy needed.
+- **Per repo:** SSHD is the harness's origin (nothing new) · the shipping kit holds the canonical
+  workflow · the other five get the global section + workflow and NOTHING in-repo: none has a
+  single `.as:N` cite for claimcheck, and a chaos runner with zero plants is an empty gate.
+- ⚠️ **OPEN FINDING, awaiting the owner:** the global ship-bar hook is UNGUARDED, so every project
+  `new-project.sh` makes injects TWO ship-bars per turn (~+500 tok), and its copy is an OLDER text
+  than `~/.claude/ship-bar.md`. The memory that said the hook was guarded was wrong and is corrected.
 
 ### THE LANE STATE — unchanged since session 35 (`abb484e`), and still in force
 
 Slice 3 closed at **21 ported NPC classes / 23 `SHIPPED` entries**, 13 of 34 to go. The full
 narrative is in `docs/DIVERGENCES.md` "L4b (slice 3a)" and "(slice 3b)" (findings 12–14) and
-`docs/sessions/-SESSION-LOG.md` (2026-09-12); it is not repeated here. What a future session
-needs is below, verbatim.
+`docs/sessions/-SESSION-LOG.md` (2026-09-12).
 
 ### ⛔ WHAT A FUTURE SESSION MUST NOT "FIX"
 
 - **The stag's constructor drops `doChase`**; **the boar red-freezes with a DEER clip**;
   **the alpha has no `!isDowned()` guard** and **no cutscene read at all**.
 - **The bear's ATTACK faces with its own comparison**, not `faceTarget()` (they disagree at
-  exactly equal x). **Only the bear ticks `idleCounter` outside IDLE.**
+  exactly equal x). **Only the bear ticks `idleCounter` outside IDLE** — and it is the bear's
+  tick that is guarded `> 0`; the other three re-arm theirs at 24 on reaching `<= 0`.
+- **The deer AND the horse never re-target** (no dead-target block, no `checkAITrigger`);
+  the bear and the stag do both. (Corrected in F3 — it used to say "only the deer".)
+- **Every levelled animal pays less XP than an unlevelled one** — the base `setLevel`
+  (`NPC.as:252`) for the bear, deer and horse, the stag's hand copy for the stag.
+- **All four animal `die()` bodies pay out in playback and under `dontGiveLoot`, play no sound,
+  and roll nothing beyond `createLoot`** — pinned for all four in F3.
 - **The boar's `gotLaunched` has no `canGotLaunched` check** and omits `FLY` from its
   airborne set; **its `doLaunched` lands into WALK.**
 - **The alpha's `KNOCKDOWNED` falls through** to DOWNED's 48 frames; its RUN re-rolls
@@ -270,8 +107,11 @@ needs is below, verbatim.
   clip's END, `gotLaunched()`'s guard ported as it BEHAVES, the 24 Hz integer accumulator,
   `OG_NPCS` raw into `init()`, **`src/config/ogActor.ts` is CLOSED evidence** (re-run the
   transcriber, never hand-edit), and the roster / `AI_TIERS` carry from SESSION 32.
+- **claimcheck's CONTEXT list (44)** — every entry was read against its cited line. Do not
+  widen `DEFAULT_WINDOW` to make a run pass; a new correct contrast cite gets an entry with
+  its reason.
 
-### 📋 WHAT IS LEFT — slices 4–6, 13 descendants
+### 📋 WHAT IS NEXT — slices 4–6, 13 descendants
 
 `docs/sessions/L4B_KICKOFF.md`'s order: the goblins and ogre, ninja / shield / zombies, the
 props (**`EnemyVegePatch` — TEN overrides and NEITHER `startAction` NOR `doAction`**,
@@ -279,10 +119,14 @@ already pinned in `tests/npcTree.test.ts`), then the bosses. **There is no slice
 yet** — write one the way `L4B_SLICE3_KICKOFF.md` was written (measure per file, never
 carry a number forward) before starting.
 
-**How a class ships (unchanged):** `src/core/npc/<Name>.ts` with `override` on EXACTLY the
-AS3's set → numbers in `src/config/og<Name>.ts`, CONTRACT, line-cited, twins named → add to
-`SHIPPED` in `tests/npcTree.test.ts` → test FROM the AS3, red first → chaos-plant EVERY
-guard → DIVERGENCES for anything the seam cannot express (number from **15**).
+**How a class ships (the harness is now part of it):** `src/core/npc/<Name>.ts` with `override`
+on EXACTLY the AS3's set → numbers in `src/config/og<Name>.ts`, CONTRACT, line-cited, twins named
+(and pinned or imported — `src/config/CLAUDE.md`) → add to `SHIPPED` in `tests/npcTree.test.ts` →
+test FROM the AS3, red first, with `seq` / `counting` / the preflights from `tests/utils/npcHarness.ts`
+→ declare a plant for EVERY guard in `tests/<slice>.plants.ts` and raise `EXPECTED_TOTAL` in both
+places → `npm run claimcheck` and `npm run chaos` green → `Workflow({ name: 'measure-verify', args })`
+over the slice, its findings adjudicated the F3 way (re-execute the commands, read the source) →
+DIVERGENCES for anything the seam cannot express (number from **15**).
 
 **Harness rules slice 3 added:** `init` enters IDLE TWICE (`reset()` then its own line), so
 count TWO rng rolls before choosing a `seq`; a fresh wanderer has NO animation and
@@ -291,11 +135,12 @@ constructors; `world({...})` spreads a COPY, so mutate `npc.world` to flip `adve
 mid-test; a guard reading a value the SOURCE writes twice (per-direction speed) needs BOTH
 branches driven or a plant sails through it; a roll that is gated by `isAdventureMode()`
 changes the rng CALL COUNT per frame, so a room test and an overworld test need different
-`seq`s; and an actor parked in FALL on the ground LANDS on the first frame, masking
-whatever clip you were testing.
+`seq`s; an actor parked in FALL on the ground LANDS on the first frame, masking whatever clip
+you were testing; and **count the rolls with `rollsFor` rather than reasoning about them** —
+the alpha's passing cutscene path draws FOUR (howl, walk, WALK's destX and speed), not two.
 
 ```bash
-npx vitest run && npm run -s typecheck && npm run -s lint
+npx vitest run && npm run -s typecheck && npm run -s lint && npm run claimcheck
 python3 scripts/payload/transcribeActorConsts.py && git diff --stat src/config/ogActor.ts   # must be EMPTY
 ```
 
@@ -306,7 +151,8 @@ Slices 4–6 (13 descendants). `EnemyPlayer` + `EnemyElite` + `EnemyPlayerGiant`
 `AI_TIERS` (moves `Sim.ts` — **L5**). **No adapter builds an `NpcWorld`** — `playerStats`,
 `adventureMode`, `peaceful`, `duelMode`, the kill-cam callback, `doChase` (finding 13) and
 the `spawn` sink (finding 14) are all L5's to wire. The fight-feel grade (A1 cites + the
-owner's LOOK). None attempted, none claimed.
+owner's LOOK). The ship-bar double-injection in new projects (owner's call). None attempted,
+none claimed.
 
 
 

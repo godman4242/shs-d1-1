@@ -244,6 +244,19 @@ and output: `docs/research/runs/wf_99c74d25-624-LEDGER.md`.
 
 ---
 
+## WHERE THIS LIVES OUTSIDE THE REPO (harness finish, F5)
+
+The rules above that are not SSHD-specific are in `~/.claude/CLAUDE.md` ("Harness engineering"),
+so every project loads them. The fan-out generalises as the user-level workflow
+**`measure-refute`** (`~/kheshav-code/claude-shipping-kit/workflows/`, symlinked into
+`~/.claude/workflows/`): the same fail-closed accounting as `measure-verify`, no SSHD defaults, and
+zero agents without `units` + `lenses`. This repo keeps `measure-verify` — the two names differ
+because precedence between a user-level and a project-level workflow of the same name is
+undocumented. The chaos runner and claimcheck stay here: no other repo under `~/kheshav-code`
+has a single `.as:N` cite, and a runner with zero plants is an empty gate.
+
+---
+
 ## WHAT IS NOT A BINARY GATE, AND MUST NOT BE CLAIMED AS ONE
 
 "Re-running slice 3a re-raises the same single FATAL" is **not reproducible**, and writing

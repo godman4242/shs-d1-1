@@ -3936,3 +3936,14 @@ Opus 5 @ xhigh. Entries written PER MILESTONE, at each commit — session 36 mis
   `expected [0.9, 0.9] to deeply equal [0.5, 0.5, 0.5, 0.5]`. **My first comment there said
   "TWO rolls" — carried from the harness's own proof test; measured, the passing path draws
   FOUR** (howl, walk, then WALK's destX and speed; the stuck path draws two). Pinned as measured.
+- **F4 committed** `efcdc27`; chaos re-run on the committed tree: 43/43 RED, 43/43 restored.
+- **F5 — closed.** Global `~/.claude/CLAUDE.md` "Harness engineering" (backup `.bak-20260914`,
+  +2,052 b ≈ 513 tok/turn); `measure-refute` canonical in the shipping kit (`d68c438`) and
+  symlinked into `~/.claude/workflows/`; a `new-project.sh` throwaway project listed it (then
+  deleted). Per repo: nothing stack-specific copied — measured 0 `.as:N` cites in all five other
+  code repos. **Finding for the owner:** the global ship-bar hook is unguarded, so new-project.sh
+  projects double-inject an older ship-bar; the memory claiming a guard was corrected.
+- **F6 — wrap.** RESUME_HERE rewritten (the session 36 + in-progress session 37 blocks replaced
+  by one current block) in this commit. Memory under `~/.claude`: workflow registry (measured),
+  probe parsers must match, re-execute agent evidence, quote heredocs, and the ship-bar hook
+  correction. Final gates in the commit message.
