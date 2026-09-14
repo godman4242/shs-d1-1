@@ -10,8 +10,8 @@
  *
  * ⚠️ TWO source quirks carried, both pinned in `tests/npcSlice3a.test.ts`:
  *   - **the constructor takes `doChase` and never assigns it** (`:12-28`) — the
- *     bear (`:21`) and horse (`:21`) both do. A stag's `doChase` can therefore
- *     only ever be set by `init()`'s `!isAdventureMode()` branch (`:39-42`).
+ *     bear (`EnemyBear.as:23`) and horse (`EnemyHorse.as:23`) both do. A stag's `doChase`
+ *     can therefore only ever be set by `init()`'s `!isAdventureMode()` branch (`EnemyStag.as:41-44`).
  *   - **`setLevel` (`:48-70`) is a hand copy of `NPC.as:239-260`** and differs
  *     from it in nothing but decompiler artifacts (a split `var factor:Number =
  *     NaN;` declaration and `this.` prefixes). It needs no number of its own —
@@ -21,7 +21,7 @@
 import { OG_HORSE } from './ogEnemyHorse';
 
 export const OG_STAG = {
-  /** `:127-140` ↔ `EnemyHorse.as:83-96`, `:215-220` ↔ `EnemyHorse.as:155-160` — byte-identical. */
+  /** `EnemyStag.as:127-140` ↔ `EnemyHorse.as:83-96`, `EnemyStag.as:215-220` ↔ `EnemyHorse.as:155-160` — byte-identical. */
   idle: OG_HORSE.idle,
 
   /**

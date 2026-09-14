@@ -263,4 +263,38 @@ export const PLANTS: ChaosPlant[] = [
     tests: [SLICE],
     note: 'reauthored:2026-09-13 — stands in for session 35’s unnamed 18th plant',
   },
+  /**
+   * HARNESS FINISH, F3 — three plants for the two test gaps the adjudicated run confirmed
+   * (`docs/research/runs/wf_99c74d25-624-LEDGER.md`). Each was run against its new test
+   * before being committed; none of the three had a test to turn red before this session.
+   */
+  {
+    name: 'bear: accept knock-downs (drop one of its five canGot* refusals)',
+    file: 'src/core/npc/EnemyBear.ts',
+    find: '    this.canGotKnockDown = false;',
+    replace: '    this.canGotKnockDown = true;',
+    tests: [SLICE],
+    note: 'reauthored:2026-09-14 harness finish F3 — the bear’s immunity was asserted nowhere',
+  },
+  {
+    name: "horse: guard die()'s payout like the base (playback / dontGiveLoot)",
+    file: 'src/core/npc/EnemyHorse.ts',
+    find: ['    this.createLoot();', '    this.rewardXP();'].join('\n'),
+    replace: [
+      '    if (!this.world.playback && !this.dontGiveLoot) {',
+      '      this.createLoot();',
+      '      this.rewardXP();',
+      '    }',
+    ].join('\n'),
+    tests: [SLICE],
+    note: 'reauthored:2026-09-14 harness finish F3 — no test ever called EnemyHorse.die()',
+  },
+  {
+    name: "stag: draw the base's facing coin in die()",
+    file: 'src/core/npc/EnemyStag.ts',
+    find: '    this.startAnim(OG_ANIM.HORSE_DEATH);',
+    replace: ['    void this.rng();', '    this.startAnim(OG_ANIM.HORSE_DEATH);'].join('\n'),
+    tests: [SLICE],
+    note: 'reauthored:2026-09-14 harness finish F3 — an animal death rolling nothing was unpinned',
+  },
 ];

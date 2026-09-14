@@ -3,21 +3,22 @@
  * All CONTRACT. The shared wanderer numbers are in `ogNpcAnimal.ts`.
  *
  * The deer is pure prey: it has no ATTACK body (`:191-192` is an empty case) and
- * it is the ONLY one of the four whose `update()` neither re-acquires a dead
- * target nor calls `checkAITrigger()` (`:42-69`) — so the target it was handed is
- * the target it keeps, and `checkPlayer()` reads that target every frame.
+ * — like the horse, unlike the bear and the stag — its `update()` neither re-acquires a
+ * dead target nor calls `checkAITrigger()` (`:42-69`), so the target it was handed is
+ * the target it keeps, and `checkPlayer()` reads that target on every IDLE and WALK
+ * frame (`:155` / `:170`).
  */
 
 export const OG_DEER = {
   /**
-   * `:78` — entering IDLE rolls a d4 for the clip, and two of the four hold four
-   * times as long: `:80` 0 → DEER_IDLE, `:84` 1 → DEER_GRAZING, `:89` 2 →
+   * `:78` — entering IDLE rolls a d4 for the clip, and two of the four set a timer 2.5×
+   * as long (120 against 48): `:80` 0 → DEER_IDLE, `:84` 1 → DEER_GRAZING, `:89` 2 →
    * DEER_FIDGET, `:93` 3 → DEER_SIT. There is NO `else`, so the duration set at
    * `:79` (`OG_ANIMAL.idleFrames`) stands for rolls 0 and 2.
    */
   idle: {
     dice: 4,
-    /** `:87`/`:96` — GRAZING and SIT hold for five seconds. */
+    /** `:87`/`:96` — a five-second timer. SIT waits it out; the 62-frame GRAZING clip ends first and re-rolls IDLE (`:56-58`). */
     longFrames: 120,
     /** `:84` */ grazeOn: 1,
     /** `:89` */ fidgetOn: 2,

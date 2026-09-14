@@ -9,13 +9,13 @@
  * each pinned in `tests/npcSlice3a.test.ts`:
  *   - **`idleCounter` ticks at the TOP of `doAction`, in EVERY state** (`:163-166`),
  *     because the attack cooldown has to run down while the bear is GALLOPING.
- *     The other three tick it only inside IDLE, and the tick is guarded `> 0`,
- *     so the bear's counter never goes negative where the deer's does.
+ *     The other three tick it only inside IDLE, unguarded, and re-arm it at 24 on
+ *     reaching `<= 0`; the bear's own `> 0` guard is what parks ITS counter at zero.
  *   - **ATTACK faces with its OWN comparison** (`:148-155`), not the base's
  *     `faceTarget()` (`NPC.as:1205`): the two disagree at exactly equal x —
  *     `faceTarget` faces RIGHT there, the bear faces LEFT.
  *   - **the swing has NO `isAdventureMode()` guard** (`:212-214`) where the wolf's
- *     bite and pounce both have one (`EnemyWolf.as:294`). A bear mauls in the overworld.
+ *     bite (`EnemyWolf.as:294`) and pounce (`EnemyWolf.as:310`) each have one. A bear mauls in the overworld.
  *   - **`init` flips `doChase` on outside the overworld** (`:42-45`), so the
  *     constructor's argument only decides an OVERWORLD bear's behaviour.
  *
@@ -23,7 +23,7 @@
  * band is `< 2` (two in three). Numbers: `config/ogEnemyBear.ts` + the shared
  * `config/ogNpcAnimal.ts`.
  *
- * The source dereferences `target` with no null check (`:212`, `:238`); update()
+ * The source dereferences `target` with no null check (`:147`, `:197`, `:213`, `:238`); update()
  * guarantees it, and the port passes the narrowed target where the source reads it.
  */
 import { OG_ANIM, OG_PART, OG_STATE, type OgState } from '../../config/ogActor';
@@ -38,11 +38,11 @@ import { NpcDamage } from './NpcDamage';
 import type { AnimLibrary, HitGeometry, NpcTarget, NpcWorld } from './types';
 
 export class EnemyBear extends Npc {
-  /** `EnemyBear.as:5` — where the current wander is heading. */
+  /** `EnemyBear.as:6` — where the current wander is heading. */
   destX = ZERO;
-  /** `EnemyBear.as:7` — frames of idle left, AND the attack cooldown (`:200`). */
+  /** `EnemyBear.as:8` — frames of idle left, AND the attack cooldown (`:200`). */
   idleCounter = ZERO;
-  /** `EnemyBear.as:9` — set by the room dispatch, and by `init` outside the overworld. */
+  /** `EnemyBear.as:10` — set by the room dispatch, and by `init` outside the overworld. */
   doChase = false;
 
   /** `EnemyBear.as:12` — NO `startAction` here; `init` opens in IDLE (`:39`). */

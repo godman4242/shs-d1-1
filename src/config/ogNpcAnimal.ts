@@ -22,8 +22,9 @@ export const OG_ANIMAL = {
    * — `xp = level * 5 + 45`, NOT the base's `* 2 + 20` (`NPC.as:218`). Twins:
    * `EnemyWolf.as:32`, `EnemyFox.as:26`, `EnemyCivilian.as:35`.
    *
-   * ⚠️ The stag's `setLevel` OVERWRITES this with the BASE curve (`EnemyStag.as:62`), so a
-   * levelled stag is worth less than an unlevelled one. The source's, pinned.
+   * ⚠️ `setLevel` OVERWRITES this with the BASE curve — the inherited base's (`NPC.as:252`)
+   * for the bear, deer and horse, the stag's hand copy of it (`EnemyStag.as:62`) — so ANY
+   * levelled animal is worth less than an unlevelled one. The source's, pinned.
    */
   xp: { perLevel: 5, base: 45 },
 
@@ -65,7 +66,7 @@ export const OG_ANIMAL = {
 
   /**
    * `EnemyBear.as:172` · `EnemyDeer.as:138` · `EnemyHorse.as:152` · `EnemyStag.as:212`
-   * — when an idle times out, the next re-roll is half a second away.
+   * — when an idle times out, the next re-roll is one second away (24 frames at `OG_FPS`).
    */
   idleRetryFrames: 24,
 

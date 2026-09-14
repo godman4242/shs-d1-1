@@ -34,7 +34,7 @@ export const OG_BEAR = {
    * swing; `:200` — the swing then arms `5 * 24` frames of cooldown.
    *
    * ⚠️ `:212-214` swings at `PART_r_hand` with NO `isAdventureMode()` guard — the
-   * wolf's bite and pounce are both fenced by one (`EnemyWolf.as:294`). A bear
+   * wolf's bite (`EnemyWolf.as:294`) and pounce (`EnemyWolf.as:310`) are each fenced by one. A bear
    * mauls in the overworld; a wolf does not.
    */
   attack: { rangeX: 100, cooldownFrames: 120 },

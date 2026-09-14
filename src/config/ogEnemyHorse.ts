@@ -4,17 +4,18 @@
  *
  * The horse is the only one of the four that will not move on its own without
  * `doChase`: its IDLE re-roll is fenced by `!isShowing() && this.doChase`, and the
- * `else` (`:169-172`) re-enters IDLE, so an un-chased horse grazes forever. Its
+ * `else` (`:166-169`) re-enters IDLE, so an un-chased horse grazes forever. Its
  * `checkPlayer()` returns immediately on `!doChase` (`:232-235`) — the only one of
  * the four with that guard.
  *
  * ⚠️ `init()` does NOT set `mcs.y = getGroundY()` and has no `doChase = true`
- * adventure branch — the bear (`:41-46`) and the stag (`:39-44`) have both. `:33-35`
+ * adventure branch — the bear (`EnemyBear.as:42-46`) and the stag (`EnemyStag.as:41-45`) have both. `EnemyHorse.as:34-36`
  * is an EMPTY `if` on `xml.mcs.prop.toString` (no call parens, so a Function object
  * against `""`): decompiled dead code, carried as a comment only.
  *
- * `EnemyStag` imports `idle` from here — its block is byte-identical (`:127-140`
- * ↔ `:83-96`, `:215-220` ↔ `:155-160`) and both ride `MCSHorse` with `HORSE_*` clips.
+ * `EnemyStag` imports `idle` from here — its block is byte-identical (`EnemyStag.as:127-140`
+ * ↔ `EnemyHorse.as:83-96`, `EnemyStag.as:215-220` ↔ `EnemyHorse.as:155-160`) and both ride
+ * `MCSHorse` with `HORSE_*` clips.
  */
 
 export const OG_HORSE = {

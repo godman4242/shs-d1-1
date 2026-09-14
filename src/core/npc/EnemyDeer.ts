@@ -2,16 +2,18 @@
  * `EnemyDeer.as` (261 lines), ported — ai 19, no children. Lane L4b, slice 3a.
  *
  * Pure prey. It has no ATTACK body at all (`:191-192` is an empty case that only
- * stops the switch falling through), and it is the ONLY one of the four whose
- * `update()` (`:42-69`) neither re-acquires a dead target nor calls
- * `checkAITrigger()` — the target it is handed is the target it keeps forever.
+ * stops the switch falling through), and — like the horse, unlike the bear and the
+ * stag — its `update()` (`:42-69`) neither re-acquires a dead target nor calls
+ * `checkAITrigger()`: the target it is handed is the target it keeps forever.
  *
  * THREE differences from its siblings, each pinned in `tests/npcSlice3a.test.ts`:
  *   - **it takes no `doChase`** (`:10`): the constructor has one argument, and
  *     nothing in the file reads a chase flag. A deer only ever flees.
- *   - **`idleCounter` ticks UNGUARDED, inside IDLE only** (`:135`), so it runs
- *     negative where the bear's `> 0` guard floors it at zero.
- *   - **two of its four idle clips hold five seconds** (`:87`/`:96`), and rising
+ *   - **`idleCounter` ticks UNGUARDED, inside IDLE only** (`:135`), and is re-armed at
+ *     24 on the frame it reaches `<= 0` (`:136-138`) — the horse and stag do the same;
+ *     the BEAR ticks it in every state, guarded `> 0`.
+ *   - **two of its four idle clips set a five-second timer** (`:87`/`:96`) — SIT waits
+ *     it out, but the 62-frame GRAZING clip ends first and re-rolls IDLE (`:56-58`) — and rising
  *     from SIT costs a whole extra clip (`:141-144` → DEER_GETUP → `:60-62` WALK).
  *
  * Its flee band is the only one with a BEHIND-THE-BACK range: 200 px when the
@@ -32,9 +34,9 @@ import { NO_DICE, Npc } from './Npc';
 import type { AnimLibrary, HitGeometry, NpcTarget, NpcWorld } from './types';
 
 export class EnemyDeer extends Npc {
-  /** `EnemyDeer.as:5` */
+  /** `EnemyDeer.as:6` */
   destX = ZERO;
-  /** `EnemyDeer.as:7` */
+  /** `EnemyDeer.as:8` */
   idleCounter = ZERO;
 
   /** `EnemyDeer.as:10` — one argument in the source; no chase flag exists. */
@@ -91,7 +93,7 @@ export class EnemyDeer extends Npc {
     if (this.gotHitCounter > ZERO) this.gotHitCounter -= ONE;
   }
 
-  /** `EnemyDeer.as:71` — the duration is set BEFORE the roll (`:79`) and two rolls raise it. */
+  /** `EnemyDeer.as:71` — the duration is set right AFTER the roll (`:78` → `:79`) and two rolls raise it. */
   override startAction(actionState: OgState): void {
     this.actionState = actionState;
     switch (actionState) {
@@ -139,7 +141,7 @@ export class EnemyDeer extends Npc {
     }
   }
 
-  /** `EnemyDeer.as:130` — the counter ticks only in IDLE, and is not floored at zero. */
+  /** `EnemyDeer.as:130` — the counter ticks only in IDLE, unguarded, and is re-armed at 24 once it reaches `<= 0` (`:136-138`). */
   override doAction(): void {
     const target = this.target;
     switch (this.actionState) {

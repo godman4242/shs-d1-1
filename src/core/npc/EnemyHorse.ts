@@ -2,18 +2,18 @@
  * `EnemyHorse.as` (269 lines), ported — ai 12, no children. Lane L4b, slice 3a.
  *
  * A horse that is not chasing does NOTHING: its idle re-roll is fenced by
- * `!isShowing() && this.doChase` and the `else` re-enters IDLE (`:169-172`), and
+ * `!isShowing() && this.doChase` and the `else` re-enters IDLE (`:166-169`), and
  * its `checkPlayer()` returns on the first line unless `doChase` (`:232-235`).
  * It is the only one of the four with that early return.
  *
  * FOUR differences from its siblings, each pinned in `tests/npcSlice3a.test.ts`:
  *   - **`init` neither grounds the body nor flips `doChase`** (`:31-45`): the bear
- *     (`:41-46`) and the stag (`:39-44`) both do `mcs.y = getGroundY()` and
+ *     (`EnemyBear.as:42-46`) and the stag (`EnemyStag.as:41-45`) both do `mcs.y = getGroundY()` and
  *     `if(!isAdventureMode()) doChase = true`. A horse's chase flag is whatever
  *     the dispatch passed, in the overworld and in a room alike.
  *   - **the idle duration is set AFTER the clip branch** (`:96`), so all three
  *     clips hold the same two seconds — the bear's SIT roll changes its duration.
- *   - **RUN reads `isAdventureMode()` TWICE**, once per direction (`:118`/`:130`):
+ *   - **RUN reads `isAdventureMode()` TWICE**, once per direction (`:116`/`:128`):
  *     15 px per frame in a room, 12 in the overworld, like the wolf's pair.
  *   - **it REARS instead of bolting** (`:241`/`:250`): the flee enters POSE with
  *     HORSE_REARING, and the rear clip ending is what starts the gallop (`:65-67`).
@@ -35,11 +35,11 @@ import { NO_DICE, Npc } from './Npc';
 import type { AnimLibrary, HitGeometry, NpcTarget, NpcWorld } from './types';
 
 export class EnemyHorse extends Npc {
-  /** `EnemyHorse.as:5` */
+  /** `EnemyHorse.as:6` */
   destX = ZERO;
-  /** `EnemyHorse.as:7` */
+  /** `EnemyHorse.as:8` */
   idleCounter = ZERO;
-  /** `EnemyHorse.as:9` — the ONLY gate on this actor doing anything at all. */
+  /** `EnemyHorse.as:10` — the ONLY gate on this actor doing anything at all. */
   doChase = false;
 
   /** `EnemyHorse.as:12` */
@@ -137,7 +137,7 @@ export class EnemyHorse extends Npc {
     }
   }
 
-  /** `EnemyHorse.as:143` — an un-chased horse re-enters IDLE forever (`:169-172`). */
+  /** `EnemyHorse.as:143` — an un-chased horse re-enters IDLE forever (`:166-169`). */
   override doAction(): void {
     const target = this.target;
     switch (this.actionState) {

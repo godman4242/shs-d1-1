@@ -101,12 +101,13 @@ const CONTEXT: ContextCite[] = [
   ...ctx('src/config/ogEnemyBear.ts', 'the d3 clip roll read twice — the `dice == 1` there is the SIT index, not `walkOn`', 'EnemyBear.as:98-108', 'EnemyBear.as:110'),
   ...ctx('src/config/ogEnemyBear.ts', 'holds `5 * 24`, the derivation of `cooldownFrames` (see DERIVED)', 'EnemyBear.as:200'),
   ...ctx('src/config/ogEnemyBear.ts', 'the maul itself, cited for the guard it LACKS', 'EnemyBear.as:212-214'),
-  ...ctx('src/config/ogEnemyBear.ts', "the wolf's `isAdventureMode()` fence — a contrast", 'EnemyWolf.as:294'),
+  ...ctx('src/config/ogEnemyBear.ts', "the wolf's `isAdventureMode()` fences on its bite and its pounce — a contrast", 'EnemyWolf.as:294', 'EnemyWolf.as:310'),
   ...ctx('src/config/ogEnemyBear.ts', '`init` setting `doChase` outside the overworld — the condition, not the 400', 'EnemyBear.as:42-45'),
   ...ctx('src/config/ogEnemyBoar.ts', '`idleCounter = 48` — a cross-reference to `OG_ANIMAL.idleFrames`, which lives in ogNpcAnimal.ts', 'EnemyBoar.as:113'),
   ...ctx('src/config/ogEnemyDeer.ts', 'the `dice == 0` branch — roll 0 keeps the default clip and has no field of its own', 'EnemyDeer.as:80'),
   ...ctx('src/config/ogEnemyDeer.ts', '`idleCounter = 48` — a cross-reference to `OG_ANIMAL.idleFrames`', 'EnemyDeer.as:79'),
   ...ctx('src/config/ogEnemyDeer.ts', 'the `else` that re-enters IDLE — control flow, not a value', 'EnemyDeer.as:149-152'),
+  ...ctx('src/config/ogEnemyDeer.ts', 'the finished-clip arm that re-rolls GRAZING / FIDGET before their timers expire — behaviour, not the 120', 'EnemyDeer.as:56-58'),
   ...ctx(
     'src/config/ogEnemyFox.ts',
     "the header's fox ↔ wolf twin map: each pair holds a WOLF value the fox imports from OG_WOLF, not one of OG_FOX's own",
@@ -125,6 +126,7 @@ const CONTEXT: ContextCite[] = [
   ...ctx('src/config/ogEnemyWolfAlpha.ts', "the constructor's `startAction(IDLE_STATE)` — a call site, not a value", 'EnemyWolfAlpha.as:23'),
   ...ctx('src/config/ogEnemyWolfAlpha.ts', 'the `destX` re-roll inside `startAction(RUN)` — a behaviour, not the 15', 'EnemyWolfAlpha.as:248'),
   ...ctx('src/config/ogNpcAnimal.ts', "the base's `* 2 + 20` xp curve — a contrast", 'NPC.as:218'),
+  ...ctx('src/config/ogNpcAnimal.ts', "the base `setLevel`'s `* 2 + 20` overwrite, inherited by the bear, deer and horse — a contrast", 'NPC.as:252'),
   ...ctx('src/config/ogNpcAnimal.ts', "the stag's `setLevel` overwriting xp with the base curve — a contrast", 'EnemyStag.as:62'),
   ...ctx('src/config/ogNpcAnimal.ts', "the wolf's `random() * 2 + 4` walk — a contrast", 'EnemyWolf.as:144'),
 ];

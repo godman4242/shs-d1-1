@@ -4616,31 +4616,34 @@ They share a skeleton and agree on almost nothing inside it. Each of these is pi
 - **Only the bear's `idleCounter` ticks outside IDLE** (`EnemyBear.as:163-166`, at the TOP
   of `doAction`, guarded `> 0`). It has to: the counter doubles as the attack cooldown
   (`:200`, `5 * 24`) and has to run down while the bear is GALLOPING. The deer, horse and
-  stag tick it inside the IDLE case only (`:135` / `:149` / `:209`) and unguarded, so
-  theirs pass through zero where the bear's floors at it.
+  stag tick it inside the IDLE case only (`:135` / `:149` / `:209`) and unguarded, but
+  re-arm it at 24 on the same frame it reaches `<= 0` (`EnemyDeer.as:136-138`,
+  `EnemyHorse.as:150-152`, `EnemyStag.as:210-212`), so none of the four ever holds a
+  negative count — the bear's `> 0` guard is what parks ITS counter at zero outside IDLE.
 - **The cooldown is TICKED BEFORE IT IS CHECKED.** A bear entering `doAction` with
   `idleCounter == 1` ticks to 0 and then passes `idleCounter <= 0` on the SAME frame.
 - **The bear swings with no `isAdventureMode()` fence** (`:212-214`) where the wolf's bite
-  and pounce both have one (`EnemyWolf.as:294`). A bear mauls in the overworld.
+  (`EnemyWolf.as:294`) and pounce (`EnemyWolf.as:310`) each have one. A bear mauls in the overworld.
 - **The bear's ATTACK faces with its own comparison** (`:148-155`, `mcs.x < target.mcs.x`
   → faceRight) which DISAGREES with the base's `faceTarget()` (`NPC.as:1205`,
   `target.x < this.x` → faceLeft) at exactly equal x. Reusing `faceTarget()` there is a
   chaos plant that goes red.
-- **Only the deer never re-acquires.** Its `update()` (`:42-69`) has neither the
-  `target == null || target.isDead()` block nor `checkAITrigger()`; it keeps a dead target
-  forever. The bear (`:53-58`, `:83-86`) and stag (`:78-83`, `:112-115`) have both; the
-  horse has neither either, but the horse also never reads its target unless chasing.
+- **The deer never re-acquires — and neither does the horse.** The deer's `update()`
+  (`:42-69`) has neither the `target == null || target.isDead()` block nor
+  `checkAITrigger()`; it keeps a dead target forever. The bear (`EnemyBear.as:55-62`,
+  `:84-87`) and stag (`EnemyStag.as:78-85`, `:114-117`) have both; the horse's `update()`
+  (`EnemyHorse.as:47-74`) has neither, but the horse never reads its target unless chasing.
 - **Only the deer has a behind-the-back band** (`:219`/`:234`): 200 px when it is LOOKING
   at the player, 50 px when its back is turned (`&&` binds before `||`). And where a
   fleeing bear always aims off-stage, a fleeing deer only does so in the OVERWORLD — in a
   room it bolts to a random x (`:227`/`:242`).
 - **An un-chased horse does nothing at all.** Its idle act-roll is fenced
-  `!isShowing() && this.doChase` with an `else` that re-enters IDLE (`:154`, `:169-172`),
+  `!isShowing() && this.doChase` with an `else` that re-enters IDLE (`EnemyHorse.as:153`, `:166-169`),
   and its `checkPlayer()` returns on its first line unless chasing (`:232-235`) — the only
   one of the four with that guard. The stag's same act-roll has NO `doChase` fence and no
-  `else` (`:214`), so an un-chased stag still wanders.
-- **The horse's `init` neither grounds the body nor flips `doChase`** (`:31-45`); the bear
-  (`:41-46`) and stag (`:39-44`) do both.
+  `else` (`EnemyStag.as:213`), so an un-chased stag still wanders.
+- **The horse's `init` neither grounds the body nor flips `doChase`** (`EnemyHorse.as:31-45`);
+  the bear (`EnemyBear.as:42-46`) and stag (`EnemyStag.as:41-45`) do both.
 - **The stag's off-stage red-freeze carries an extra `!this.doChase`** (`:256`) that the
   other three lack — a chasing stag runs off the edge and keeps going.
 - **The stag's charge does not step down in the overworld.** RUN reads `isAdventureMode()`
@@ -4652,7 +4655,7 @@ They share a skeleton and agree on almost nothing inside it. Each of these is pi
   only their `canGot*` flags, so a fresh one has no animation and `idleCounter == 0`.
 - **`init()` therefore enters IDLE TWICE and rolls the idle die twice** — once inside
   `reset()` (`NPC.as:204`) and once on its own line (`EnemyBear.as:40`, `EnemyDeer.as:37`,
-  `EnemyHorse.as:41`, `EnemyStag.as:38`). Pinned as an exact rng call count, because a
+  `EnemyHorse.as:43`, `EnemyStag.as:39`). Pinned as an exact rng call count, because a
   test that mis-counts the rolls picks the wrong `seq` and silently tests the wrong branch.
 - **None of the four loads the roster's elemental columns.** `NPC.init` assigns all eight
   `STAT_*` fields from `<fire>` / `<earth>` (`NPC.as:229-236`); not one of these four
@@ -4662,34 +4665,44 @@ They share a skeleton and agree on almost nothing inside it. Each of these is pi
   is filled in. Pinned on a row that really does carry `fire` and `earth`.
 - **All four `die()` bodies are the same and none of them is the wolf's or the base's**:
   loot, XP, ground the body, DYING, the death clip, `dead`, hide the bar — **no
-  `SoundManager.playDie()`**, no `isPlayback` / `dontGiveLoot` guard, and no launch or
-  downed branch at all, so a bear killed mid-launch still plays its full death.
+  `SoundManager.playDie()`** (`NPC.as:903`), no `isPlayback` / `dontGiveLoot` guard
+  (`:904`), no facing coin (`:966`) and no death-clip roll (`:1005` / `:1096`), so the
+  only rng an animal's death draws is `createLoot`'s — none at all with an empty reward
+  list. They also drop the base's launch and downed branches, which
+  cannot matter: all four set every `canGot*` flag false, so none is ever launched or
+  downed. In-game only the PLAYBACK half of the missing guard is observable — `dontGiveLoot`
+  is only ever set by `CutsceneActor`, `EnemyClone`, `EnemyPlayer` and `MCSPlayer`, each on
+  itself.
 
 ### ⚠️ A SOURCE BUG, PORTED AS IT READS — and why it never bit
 
 **`EnemyStag`'s constructor takes `doChase` and never assigns it** (`EnemyStag.as:12-28`).
-The bear (`:21`) and horse (`:21`) both have `this.doChase = doChase`; the stag's line is
-simply absent, and the field is declared with no initialiser (`:9`). Ported as `_doChase`,
+The bear (`EnemyBear.as:23`) and horse (`EnemyHorse.as:23`) both have `this.doChase = doChase`;
+the stag's line is simply absent, and the field is declared with no initialiser
+(`EnemyStag.as:10`). Ported as `_doChase`,
 discarded with `void` the way `MCSActor.setPose` discards `animName`, and pinned.
 
 **It never bit because no dispatch ever passes it one.** `NPCManager.as`'s main switch
-builds `new EnemyStag()` at `:582` with no arguments, and the ROOM dispatch (`:688-710`)
-has arms for ai 12, 17, 18 and 19 — horse, bear, boar, deer — and **no arm for ai 21 at
-all**. `config/ogAi.ts` already encodes exactly that (`:107` main, nothing in the room
-table), from L4a. So the dropped argument is unreachable, not merely harmless: the stag's
+builds `new EnemyStag()` at `:582` with no arguments, and the ROOM dispatch (`:684-735`,
+twelve `xml.ai` arms and an `else`) has animal arms for ai 12, 17, 18 and 19 — horse, bear,
+boar, deer — and **no arm for ai 21 at all**: an ai-21 row there falls to the `else` and
+builds an `EnemyCivilian` (`:734`). `config/ogAi.ts` already encodes exactly that (`:107`
+main; no ai-21 room row, and the room fallback is the civilian, `:147`), from L4a. So the dropped argument is unreachable, not merely harmless: the stag's
 chase flag can only ever be set by `init()`'s `!isAdventureMode()` branch.
 
 **`EnemyStag.setLevel` (`:48-70`) is a hand copy of `NPC.as:239-260`** that differs in
 NOTHING but decompiler artifacts — a split `var factor:Number = NaN;` declaration and
 `this.` prefixes on fields. Written out because the tree gate demands the source's
 override set, exactly like `EnemyCivilianOld.update()`. It needs no number of its own.
-What it DOES change is reward: `init` sets the animal curve (`:37`, `lvl * 5 + 45`) and
-`setLevel` overwrites it with the base curve (`:62`, `lvl * 2 + 20`), so **a levelled stag
-pays less XP than an unlevelled one**. Pinned.
+Reward included: `init` sets the animal curve (`:37`, `lvl * 5 + 45`) and `setLevel`
+overwrites it with the base curve (`:62`, `lvl * 2 + 20`) — but the bear, deer and horse
+override no `setLevel` and inherit the base's (`NPC.as:252`), which does exactly the same.
+So **ANY levelled animal pays less XP than an unlevelled one**; the stag is not special.
+Pinned (the stag's `setLevel` against the deer's inherited one).
 
 ### ⚠️ DEAD CODE DROPPED
 
-`EnemyHorse.as:33-35` is an empty `if` on `xml.mcs.prop.toString` — no call parens, so a
+`EnemyHorse.as:34-36` is an empty `if` on `xml.mcs.prop.toString` — no call parens, so a
 Function object compared against `""`, and the body is empty either way. Not ported;
 recorded in the class header.
 
@@ -4722,10 +4735,10 @@ PREVIOUS actionState, which `NpcController` does not do today. Veto = one rule f
 
 **13. `doChase` has no source on the seam side.** Three of the four wanderers read a
 constructor flag that decides whether they exist as scenery or as a threat — and the horse
-does NOTHING AT ALL without it (`:154`, `:232`). In the source it comes from the ROOM
+does NOTHING AT ALL without it (`EnemyHorse.as:153`, `:232`). In the source it comes from the ROOM
 dispatch's own `doChase` argument (`NPCManager.as:694`/`:698`), i.e. from the room that
-spawned the actor. `init()` then force-sets it outside the overworld (`EnemyBear.as:41-44`,
-`EnemyStag.as:39-42`), which is the only path a stag has. `NpcWorld` has `adventureMode`,
+spawned the actor. `init()` then force-sets it outside the overworld (`EnemyBear.as:42-45`,
+`EnemyStag.as:41-44`), which is the only path a stag has. `NpcWorld` has `adventureMode`,
 so the `init` path already works; what the seam has no channel for is the ROOM's own
 answer. No adapter builds an `NpcWorld` yet, so nothing is broken today — but an adapter
 that builds a horse and forgets `doChase` will field a horse that grazes through the whole

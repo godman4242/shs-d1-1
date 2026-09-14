@@ -262,6 +262,37 @@ describe('slice 3a config — the shared animal numbers, and the twins that must
 
 // ──────────────────────────────────────────────────────────────── the bear ──
 
+/**
+ * Harness finish, F3 — CONFIRMED TEST GAP: no test called `EnemyHorse.die()`, and none of the four
+ * `die()` bodies was ever run with playback on or `dontGiveLoot` set, so DIVERGENCES' "each of
+ * these is pinned" was false for the missing guard. The base guards the payout
+ * (`NPC.as:903-908`: `playDie()`, then `!isPlayback() && !dontGiveLoot`) and rolls a facing coin
+ * (`:966`) and a death clip (`:1005`/`:1096`); all four animal bodies do none of it.
+ */
+describe('slice 3a — the four `die()` bodies against the base', () => {
+  it('pays XP in PLAYBACK and under `dontGiveLoot`, plays no sound and rolls nothing — all four (`EnemyHorse.as:257-266`)', () => {
+    const rolls = { bear: counting(), deer: counting(), horse: counting(), stag: counting() };
+    const w = { playback: true };
+    const four: Array<[keyof typeof rolls, Npc, string]> = [
+      ['bear', bear({ rng: rolls.bear, world: w }).npc, OG_ANIM.BEAR_DEATH],
+      ['deer', deer({ rng: rolls.deer, world: w }).npc, OG_ANIM.DEER_DEATH],
+      ['horse', horse({ rng: rolls.horse, world: w }).npc, OG_ANIM.HORSE_DEATH],
+      ['stag', stag({ rng: rolls.stag, world: w }).npc, OG_ANIM.HORSE_DEATH],
+    ];
+    for (const [name, npc, clip] of four) {
+      npc.dontGiveLoot = true;
+      npc.setPosition(400, 100);
+      const drawn = rolls[name].calls;
+      npc.die();
+      expect(ofType(npc, 'xp'), name).toHaveLength(1);
+      expect(ofType(npc, 'sound'), name).toHaveLength(0);
+      expect(rolls[name].calls - drawn, `${name}: an empty reward list, so any draw is the base's coin or clip roll`).toBe(0);
+      expect([npc.actionState, npc.getAnim(), npc.y, npc.dead], name).toEqual([OG_STATE.DYING, clip, GROUND, true]);
+      expect(ofType(npc, 'death')[0]?.downed, name).toBe(false);
+    }
+  });
+});
+
 describe('EnemyBear — the only fighter of the four', () => {
   it('ONE idle roll picks both the clip and the duration (`:97-118`)', () => {
     const a = bear({ rng: seq(0) }).npc;
@@ -481,7 +512,35 @@ describe('EnemyBear — the only fighter of the four', () => {
     expect(a.dead).toBe(true);
   });
 
-  it('re-acquires a dead target and re-targets on the AI clock (`:53-58`, `:83-86`)', () => {
+  /**
+   * Harness finish, F3 — CONFIRMED TEST GAP: the bear's five `canGot* = false`
+   * (`EnemyBear.as:24-28`) were asserted nowhere, so deleting one had nothing to turn red.
+   * Every base reaction returns on its flag (`NPC.as:538`/`:572`/`:587`/`:613`/`:641`/`:660`/
+   * `:680`); driven here through all seven, so a single dropped refusal changes the state.
+   */
+  it('refuses launch, knock-down, fly, fly-away, knee-groin, back-throw AND stun — all seven no-op (`:24-28`)', () => {
+    const a = bear().npc;
+    a.startAction(OG_STATE.WALK);
+    const snap = (): unknown => ({ state: a.actionState, anim: a.getAnim(), x: a.x, y: a.y, right: a.isFacingRight() });
+    const before = snap();
+    a.gotLaunched();
+    a.gotKnockDown();
+    a.gotFly(10, -10);
+    a.gotFlyAway(0, 0);
+    a.gotKneeGroin(0, GROUND, 0);
+    a.gotBackThrow(0, GROUND);
+    a.gotStun(24, 0);
+    expect(snap()).toEqual(before);
+    expect([a.canGotLaunched, a.canGotKnockDown, a.canGotFly, a.canGotKneeGroin, a.canGotStun]).toEqual([
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
+  });
+
+  it('re-acquires a dead target and re-targets on the AI clock (`:55-62`, `:84-87`)', () => {
     let asked = 0;
     const t = new Dummy(100);
     const a = new EnemyBear(
@@ -504,7 +563,7 @@ describe('EnemyBear — the only fighter of the four', () => {
 
 // ──────────────────────────────────────────────────────────────── the deer ──
 
-describe('EnemyDeer — pure prey, and the only one that never re-targets', () => {
+describe('EnemyDeer — pure prey, and (like the horse) never re-targets', () => {
   it('`update()` NEVER asks for a nearest enemy — not even when its target DIES (`:42-69`)', () => {
     const make = (): { npc: EnemyDeer; t: Dummy; asked: () => number } => {
       let asked = 0;
@@ -674,7 +733,7 @@ describe('EnemyDeer — pure prey, and the only one that never re-targets', () =
 // ─────────────────────────────────────────────────────────────── the horse ──
 
 describe('EnemyHorse — does nothing at all without doChase', () => {
-  it('an un-chased horse never leaves IDLE (`:154`, `:169-172`)', () => {
+  it('an un-chased horse never leaves IDLE (`:153`, `:166-169`)', () => {
     const a = horse({ doChase: false, rng: seq(0) }).npc;
     a.startAction(OG_STATE.IDLE);
     run(a, 300);
@@ -734,7 +793,7 @@ describe('EnemyHorse — does nothing at all without doChase', () => {
     }
   });
 
-  it('gallops 15 in a room and 12 in the overworld — read twice, once per direction (`:118`/`:130`)', () => {
+  it('gallops 15 in a room and 12 in the overworld — read twice, once per direction (`:116`/`:128`)', () => {
     const a = horse().npc;
     a.destX = 9999;
     a.startAction(OG_STATE.RUN);
@@ -781,7 +840,7 @@ describe('EnemyStag — the charger, and the constructor that drops its argument
     expect(h.doChase).toBe(true);
   });
 
-  it('`init` is the ONLY thing that can ever set it (`:39-42`)', () => {
+  it('`init` is the ONLY thing that can ever set it (`:41-44`)', () => {
     const room = stag({ doChase: true }).npc;
     expect(room.doChase).toBe(false);
     room.init(rowFor(21));
@@ -934,7 +993,7 @@ describe('EnemyStag — the charger, and the constructor that drops its argument
     expect(offStage(b)).toBe(OG_STATE.REDFREEZE);
   });
 
-  it('its idle act-roll is NOT fenced by doChase, where the horse\'s is (`:214` vs `:154`)', () => {
+  it('its idle act-roll is NOT fenced by doChase, where the horse\'s is (`:213` vs `EnemyHorse.as:153`)', () => {
     const s = stag({ rng: seq(0) }).npc;
     s.doChase = false;
     s.startAction(OG_STATE.IDLE);

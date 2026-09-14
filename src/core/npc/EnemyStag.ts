@@ -7,10 +7,10 @@
  * `PART_head` at `LAUNCH_KNOCKDOWN` on EVERY frame until it reaches `destX`.
  *
  * ⚠️ **THE CONSTRUCTOR TAKES `doChase` AND NEVER ASSIGNS IT** (`:12-28`). The bear
- * (`:21`) and the horse (`:21`) both do `this.doChase = doChase`; the stag's line
- * is simply absent, and `doChase` is declared with no initialiser (`:9`). So a
- * stag's chase flag can ONLY be set by `init()`'s `!isAdventureMode()` branch
- * (`:39-42`) — the dispatch's argument is dropped on the floor. Ported as it
+ * (`EnemyBear.as:23`) and the horse (`EnemyHorse.as:23`) both do `this.doChase = doChase`;
+ * the stag's line is simply absent, and `doChase` is declared with no initialiser
+ * (`EnemyStag.as:10`). So a stag's chase flag can ONLY be set by `init()`'s
+ * `!isAdventureMode()` branch (`:41-44`) — the dispatch's argument is dropped on the floor. Ported as it
  * reads (`_doChase`), pinned in `tests/npcSlice3a.test.ts`, recorded in DIVERGENCES.
  *
  * ⚠️ **`setLevel` (`:48-70`) is a hand copy of `NPC.as:239-260`** that differs in
@@ -19,11 +19,12 @@
  * demands the source's override set, exactly like `EnemyCivilianOld.update()`.
  * Note what it does to reward: `init` sets the ANIMAL xp curve (`:37`, ×5 + 45)
  * and `setLevel` overwrites it with the BASE curve (`:62`, ×2 + 20), so a levelled
- * stag pays LESS than an unlevelled one.
+ * stag pays LESS than an unlevelled one — exactly as the inherited base `setLevel`
+ * (`NPC.as:252`) does to the bear, deer and horse. The stag is not special.
  *
  * Two more differences from the horse, both pinned:
- *   - **its idle act-roll is NOT fenced by `doChase`** (`:214`) where the horse's
- *     is (`:154`), and it has no `else` re-entering IDLE — an un-chased stag
+ *   - **its idle act-roll is NOT fenced by `doChase`** (`:213`) where the horse's
+ *     is (`EnemyHorse.as:153`), and it has no `else` re-entering IDLE — an un-chased stag
  *     still wanders, an un-chased horse does not.
  *   - **its off-stage red-freeze carries an extra `!this.doChase` guard** (`:256`);
  *     the bear, deer and horse red-freeze off-stage whatever their chase flag.
@@ -44,17 +45,19 @@ import { NpcDamage } from './NpcDamage';
 import type { AnimLibrary, HitGeometry, NpcTarget, NpcWorld } from './types';
 
 export class EnemyStag extends Npc {
-  /** `EnemyStag.as:5` */
+  /** `EnemyStag.as:6` */
   destX = ZERO;
-  /** `EnemyStag.as:7` */
+  /** `EnemyStag.as:8` */
   idleCounter = ZERO;
-  /** `EnemyStag.as:9` — no initialiser in the source, and the constructor never writes it. */
+  /** `EnemyStag.as:10` — no initialiser in the source, and the constructor never writes it. */
   doChase = false;
 
   /**
    * `EnemyStag.as:12` — `_doChase` is the source's second argument, which the
-   * source ACCEPTS AND DISCARDS. Kept in the signature so the dispatch still
-   * type-checks; never assigned, because the source never assigns it.
+   * source ACCEPTS AND DISCARDS. Kept in the signature so a caller can still pass it —
+   * the tests do, to pin that it is discarded, and a chaos plant anchors on the `void`
+   * below; never assigned, because the source never assigns it. (No dispatch passes it:
+   * `NPCManager.as:582` builds `new EnemyStag()` with no arguments.)
    */
   constructor(
     world: NpcWorld,

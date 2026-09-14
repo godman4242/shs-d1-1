@@ -70,14 +70,15 @@ const BACKUP_DIR = join(ROOT, '.chaos-backup');
  * THE PLANT COUNT BINDS, exactly as the test count does.
  *
  * Without it, deleting a plant file quietly shrinks the gate and the run still says
- * "all green". L4b slice 3 ran 40 plants; that is the floor this repo has already paid
+ * "all green". L4b slice 3 ran 40 plants and the harness finish added 3 for the gaps its
+ * adjudicated run confirmed; that is the floor this repo has already paid
  * for. Raise it when a slice adds plants; never lower it to make a run pass. A filtered
  * run skips this check and says so, loudly, in its output.
  *
  * `tests/chaosGate.test.ts` pins the same number from the other side, so the two cannot
  * drift apart silently.
  */
-const EXPECTED_TOTAL = 40;
+const EXPECTED_TOTAL = 43;
 
 type Status = 'RED' | 'STAYED-GREEN' | 'PLANT-FAILED' | 'NO-OP' | 'INCONCLUSIVE' | 'RESTORE-FAILED';
 

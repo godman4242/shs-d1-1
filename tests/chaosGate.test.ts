@@ -38,7 +38,7 @@ const ROOT = join(HERE, '..');
  * does by reading that file. Two copies of one rule that can drift apart silently is a
  * documented failure mode of this account's tooling; this is the cheap cure.
  */
-const EXPECTED_PLANTS = 40;
+const EXPECTED_PLANTS = 43;
 
 const MODULES: Array<{ file: string; plants: readonly ChaosPlant[] }> = [
   { file: 'npcSlice3a.plants.ts', plants: PLANTS_3A },
@@ -63,7 +63,7 @@ describe('chaos gate — the plant corpus', () => {
     expect(onDisk).toEqual(MODULES.map((m) => m.file).sort());
   });
 
-  it(`holds exactly ${EXPECTED_PLANTS} plants — the count L4b slice 3 paid for`, () => {
+  it(`holds exactly ${EXPECTED_PLANTS} plants — the count L4b slice 3 and the harness finish paid for`, () => {
     expect(ALL).toHaveLength(EXPECTED_PLANTS);
   });
 
