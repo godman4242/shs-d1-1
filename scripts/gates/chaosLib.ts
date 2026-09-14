@@ -77,9 +77,11 @@ export function baselineIsGreen(code: number, out: string): boolean {
   return code === 0 && failed === null && passed !== null && passed > 0;
 }
 
-/** Non-overlapping occurrences of `needle` in `haystack`. */
+/** Every occurrence of `needle` in `haystack`, OVERLAPPING ones included — `}\n}` occurs twice in `}\n}\n}`. */
 export function countOccurrences(haystack: string, needle: string): number {
-  return haystack.split(needle).length - 1;
+  let n = 0;
+  for (let i = haystack.indexOf(needle); i !== -1; i = haystack.indexOf(needle, i + 1)) n++;
+  return n;
 }
 
 /**
@@ -100,7 +102,9 @@ export function applyPlant(text: string, plant: ChaosPlant): string {
       `anchor occurs ${occurrences}× in ${plant.file}, expected exactly 1 — re-anchor the plant`,
     );
   }
-  const mutated = text.replace(plant.find, plant.replace);
+  // A replacer FUNCTION, so `$&` / `$1` / `$$` in a plant are inserted literally — as a plain
+  // string they are String.replace patterns, and a plant would mutate into text nobody wrote.
+  const mutated = text.replace(plant.find, () => plant.replace);
   if (mutated === text) throw new Error(`the substitution left ${plant.file} unchanged`);
   return mutated;
 }

@@ -16,7 +16,7 @@ time, never while this loop wrote files the agents read.
 ### THE GATES, AS THEY STAND — run these first
 
 ```
-$ npx vitest run            ->  Test Files 83 passed (83) · Tests 1629 passed (1629)
+$ npx vitest run            ->  Test Files 83 passed (83) · Tests 1631 passed (1631)   (1629 at F6 + 2 chaosLib pins)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
 $ npm run claimcheck        ->  1716 cites · 421 values at ±0 · 44 context · 0 failures · ~0.2 s
 $ npm run chaos             ->  43/43 plants RED · 43/43 restored byte-identical · ~32 s   (slice gate, NOT pre-commit)
@@ -43,6 +43,7 @@ $ git diff 42a62e2 -- src/core/Sim.ts tests/duel-baseline.test.ts src/core/Oppon
 | F3 | `f4e4ec2` · `2d9f705` | 68 refutations adjudicated; 534 cited commands re-executed under `sandbox-exec`, all MATCH; 74 committed sites corrected **from the source** (the deer is not the only non-re-targeter; `EnemyBear.ts` had its tick guard backwards; ANY levelled animal pays less XP); +2 tests, +3 plants. Ledger: `docs/research/runs/wf_99c74d25-624-LEDGER.md` |
 | F4 | `efcdc27` | T5 closed; each preflight red-proven by re-planting session 35's broken setup |
 | F5 | outside this repo | see below |
+| F5+ | this commit | two latent `chaosLib.ts` holes found while porting it: a plant's `replace` was a String.replace pattern (`$&` inserted the anchor) and overlapping anchors counted once (`}\n}` in `}\n}\n}` read as unique). Both red-first; all 43 anchors still resolve exactly once |
 
 ### ⚠️ WHAT CLAIMCHECK STILL CANNOT SEE — measured, not hoped away (`docs/research/HARNESS.md`)
 
@@ -59,18 +60,32 @@ passed). `src/core/npc/**` cites get the existence + range half only.
   the method memory used), +7.7% on SSHD's recorded 6,700-token overhead. The memory index grew
   +980 b ≈ 245 tok (four new lessons, one corrected entry).
 - **Global workflow `measure-refute`** — project-agnostic measure → adversarial refute, fail-closed.
-  Canonical in `~/kheshav-code/claude-shipping-kit/workflows/` (`d68c438`, 6 tests, 5 plants — the
-  plants found 2 missing tests), symlinked as `~/.claude/workflows/measure-refute.js`. MEASURED from
+  Canonical in the PUBLIC repo **`~/kheshav-code/agent-harness`** (github.com/godman4242/agent-harness —
+  `agent-work-ethic` renamed; the old URL 301-redirects), `harness/workflows/`, symlinked as
+  `~/.claude/workflows/measure-refute.js`. It moved there from the shipping kit (`3ae94c5` removes the
+  kit copy) beside a vendorable, zero-dependency port of this repo's chaos runner as Level 6. A
+  3-reviewer adversarial pass found 41 findings (11 major) BEFORE it went public — e.g. plain-string
+  `units` returned VERIFIED with `fatalCount: 0`; all reproduced, pinned red-first, fixed;
+  33 committed self-plants, 33/33 RED; 43 tests on Node 22/24/26. MEASURED from
   fresh headless sessions: user-level workflows register in every project, symlinks register AND
   execute, the registry is read at session start. Named `measure-refute`, not `measure-verify`,
   because same-name precedence between user and project levels is undocumented.
 - **A `new-project.sh` throwaway project listed `measure-refute`** (then deleted) — no copy needed.
-- **Per repo:** SSHD is the harness's origin (nothing new) · the shipping kit holds the canonical
+- **Per repo:** SSHD is the harness's origin (nothing new) · agent-harness holds the canonical
   workflow · the other five get the global section + workflow and NOTHING in-repo: none has a
   single `.as:N` cite for claimcheck, and a chaos runner with zero plants is an empty gate.
-- ⚠️ **OPEN FINDING, awaiting the owner:** the global ship-bar hook is UNGUARDED, so every project
-  `new-project.sh` makes injects TWO ship-bars per turn (~+500 tok), and its copy is an OLDER text
-  than `~/.claude/ship-bar.md`. The memory that said the hook was guarded was wrong and is corrected.
+- ✅ **Ship-bar finding — FIXED, and my first report of it was WRONG.** `~/.claude/new-project.sh` now
+  skips the project ship-bar when the global hook exists (`FORCE_PROJECT_SHIPBAR=1` adds one; backup
+  `.bak-20260914`; 6-case matrix, exactly 1 injection each). Measuring it showed the project
+  `settings.json` it used to write was **invalid JSON**, so those projects never loaded the hook and
+  never double-injected — the claim was inferred from reading the script. Only the shipping kit
+  double-injects, by design (its `.claude/` is the template for machines without the global hook).
+- ⚠️ **This repo's chaos runner shares holes the agent-harness port closed** (measured by reading
+  `scripts/gates/chaos.ts`): `execFileSync` blocks signals (Ctrl-C mid-run scores INCONCLUSIVE and
+  carries on), no lock against overlapping runs, unknown flags ignored, only target files checked
+  for drift. Low risk here — `npm run chaos` is manual and pre-commit only runs `chaosGate.test.ts` —
+  so NOT ported this session. The overlapping-anchor count WAS fixed (see the table). Port the rest
+  from `~/kheshav-code/agent-harness/harness/chaos/chaos.mjs` in the next harness session.
 
 ### THE LANE STATE — unchanged since session 35 (`abb484e`), and still in force
 
@@ -151,7 +166,7 @@ Slices 4–6 (13 descendants). `EnemyPlayer` + `EnemyElite` + `EnemyPlayerGiant`
 `AI_TIERS` (moves `Sim.ts` — **L5**). **No adapter builds an `NpcWorld`** — `playerStats`,
 `adventureMode`, `peaceful`, `duelMode`, the kill-cam callback, `doChase` (finding 13) and
 the `spawn` sink (finding 14) are all L5's to wire. The fight-feel grade (A1 cites + the
-owner's LOOK). The ship-bar double-injection in new projects (owner's call). None attempted,
+owner's LOOK). None attempted,
 none claimed.
 
 

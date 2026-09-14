@@ -3947,3 +3947,25 @@ Opus 5 @ xhigh. Entries written PER MILESTONE, at each commit — session 36 mis
   by one current block) in this commit. Memory under `~/.claude`: workflow registry (measured),
   probe parsers must match, re-execute agent evidence, quote heredocs, and the ship-bar hook
   correction. Final gates in the commit message.
+- **F5+ (turn 2) — the harness gets a public home.** Owner: "add this to agent work ethic and
+  rename it / finish and do what you need to do". Level 6 built in `agent-work-ethic` (a
+  zero-dependency port of the chaos runner + `measure-refute`), then a 3-reviewer adversarial
+  workflow run over it BEFORE pushing: 3/3 live, **41 findings, 11 major**. Reproduced before
+  fixing, each against the old code: a test that logs `# fail 1` scored RED at exit 0 (first-match
+  parser); Ctrl-C mid-run was ignored (`execFileSync`); `--check` passed a still-planted tree;
+  a green Jest 30.5.0 suite was refused (summary on stderr, measured: stdout 0 lines); string
+  `units` returned `VERIFIED`, `fatalCount: 0`, prompting agents to "MEASURE `undefined`". All
+  pinned by tests that failed on the old code, then fixed (`9755c3b`); the harness's own 33 plants
+  went 33/33 RED, each caught by the test aimed at it (`d941f4e`). Measuring "Node 22+" on a
+  fetched Node 22.23.2 failed 2/43 — assertions hard-coded Node 26's reporter glyphs; fixed, 43/43
+  on 22.23.2, 24.20.0, 26.8.1. GitHub repo renamed `agent-harness` (old URL → HTTP 301);
+  folder moved; `~/.claude/workflows/measure-refute.js` re-pointed; the shipping kit's copy
+  removed (`3ae94c5`).
+- **Porting found two latent holes in THIS repo's `chaosLib.ts`**, both red-first: `$&` in a
+  plant's `replace` was a String.replace pattern (Received "const a = `const a = 1;${b}$`;"), and
+  overlapping anchors counted once (`expected 1 to be 2`). Fixed; all 43 SSHD anchors still
+  resolve exactly once. The rest of the hardening (async runs, lock, flag allow-list, whole-tree
+  drift) is NOT ported — flagged in RESUME_HERE.
+- **Correction to the F5 finding:** `new-project.sh` wrote INVALID JSON for a fresh project's
+  settings.json, so its projects never double-injected the ship-bar — the claim was inferred from
+  the script, not measured. Script fixed anyway (global-hook check + JSON escaping, 6-case matrix).

@@ -248,12 +248,15 @@ and output: `docs/research/runs/wf_99c74d25-624-LEDGER.md`.
 
 The rules above that are not SSHD-specific are in `~/.claude/CLAUDE.md` ("Harness engineering"),
 so every project loads them. The fan-out generalises as the user-level workflow
-**`measure-refute`** (`~/kheshav-code/claude-shipping-kit/workflows/`, symlinked into
-`~/.claude/workflows/`): the same fail-closed accounting as `measure-verify`, no SSHD defaults, and
+**`measure-refute`** (`~/kheshav-code/agent-harness/harness/workflows/` — the public agent-harness
+repo, Level 6 — symlinked into `~/.claude/workflows/`): the same fail-closed accounting as `measure-verify`, no SSHD defaults, and
 zero agents without `units` + `lenses`. This repo keeps `measure-verify` — the two names differ
 because precedence between a user-level and a project-level workflow of the same name is
 undocumented. The chaos runner and claimcheck stay here: no other repo under `~/kheshav-code`
-has a single `.as:N` cite, and a runner with zero plants is an empty gate.
+has a single `.as:N` cite, and a runner with zero plants is an empty gate. A generic, zero-dependency
+port of the chaos runner is public in agent-harness (`harness/chaos/`) — hardened past this copy by
+an adversarial review (async test runs so signals restore, a lock in `.git/`, whole-tree drift
+checks); see RESUME_HERE for the port still owed back.
 
 ---
 

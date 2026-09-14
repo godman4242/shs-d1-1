@@ -215,8 +215,22 @@ describe('chaosLib.applyPlant — fail-closed application', () => {
     note: 'reauthored:unit-probe',
   };
 
+  it('counts OVERLAPPING anchors — `}\\n}` occurs twice in `}\\n}\\n}`, so it is ambiguous, not unique', () => {
+    expect(countOccurrences('aaa', 'aa')).toBe(2);
+    expect(countOccurrences('  }\n}\n}\n', '}\n}')).toBe(2);
+    expect(() => applyPlant('aaa', { ...base, find: 'aa', replace: 'b' })).toThrow(/occurs 2×/);
+  });
+
   it('applies a unique anchor', () => {
     expect(applyPlant('x\nconst a = 1;\ny', base)).toBe('x\nconst a = 2;\ny');
+  });
+
+  it('inserts the replacement LITERALLY — `$&`, `$1` and `$$` are String.replace patterns, not plant text', () => {
+    // Latent until a plant writes a template literal or a regex: `'$&'` in a replace string
+    // makes String.replace re-insert the matched anchor, so the "plant" would mutate into
+    // something nobody wrote. Found porting this runner for reuse; no shipped plant had a `$`.
+    const dollar = { ...base, replace: 'const a = `$&${b}$$`;' };
+    expect(applyPlant('const a = 1;', dollar)).toBe('const a = `$&${b}$$`;');
   });
 
   it('refuses an anchor that matches nothing — the source moved under the plant', () => {
