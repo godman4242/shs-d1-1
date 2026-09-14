@@ -3925,3 +3925,14 @@ Opus 5 @ xhigh. Entries written PER MILESTONE, at each commit — session 36 mis
   start (all from fresh headless sessions, raw tool_result). `measure-refute` written in
   `claude-shipping-kit` (6 tests, 5 plants, 2 missing tests found by the plants), symlinked in,
   run by name from an unrelated repo. Global CLAUDE.md backed up and +2,052 b (≈513 tok/turn).
+- **F3 (B) committed** `2d9f705` — the 68-row ledger.
+- **F4 — T5 closed.** Slice 3a/3b import `seq` / `counting` from `tests/utils/npcHarness.ts`
+  (0 local copies in both); counts unchanged (3a 59, 3b 42). The three preflights sit at their
+  historical trap sites and each was RED-PROVEN by re-planting the session-35 setup:
+  `readsWhatYouWrote` at the bear cooldown is asserted TO FIRE (that test exists because the
+  branch never sees the written number) — a deer-shaped tick makes it stop firing → red;
+  `parked` after the alpha's frames — the grounded setup now fails as `left FALL for LAND …
+  "wolf_launchedend"`; `rollsFor` at the alpha cutscene — seq(0.9) now fails as
+  `expected [0.9, 0.9] to deeply equal [0.5, 0.5, 0.5, 0.5]`. **My first comment there said
+  "TWO rolls" — carried from the harness's own proof test; measured, the passing path draws
+  FOUR** (howl, walk, then WALK's destX and speed; the stuck path draws two). Pinned as measured.

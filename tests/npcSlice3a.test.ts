@@ -33,6 +33,7 @@ import type { Npc } from '../src/core/npc/Npc';
 import { NpcDamage } from '../src/core/npc/NpcDamage';
 import type { AnimLibrary, HitGeometry, HitShape, NpcEvent, NpcTarget, NpcWorld } from '../src/core/npc/types';
 import type { Rng } from '../src/core/Sim';
+import { counting, readsWhatYouWrote, seq } from './utils/npcHarness';
 
 const GROUND = 358;
 const WIDTH = 800;
@@ -60,19 +61,6 @@ const world = (over: Partial<NpcWorld> = {}): NpcWorld => ({
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: CLIP, loop: false }) };
 const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0 };
-const seq = (...vals: number[]): Rng => {
-  let i = 0;
-  return () => vals[Math.min(i++, vals.length - 1)] ?? 0;
-};
-/** An rng that counts its calls — for pinning how many rolls a body makes. */
-const counting = (val = 0.5): Rng & { calls: number } => {
-  const f = (() => {
-    f.calls++;
-    return val;
-  }) as Rng & { calls: number };
-  f.calls = 0;
-  return f;
-};
 
 class Dummy implements NpcTarget {
   hits: Array<{ part: unknown; damage: number; launchType: number }> = [];
@@ -373,7 +361,14 @@ describe('EnemyBear — the only fighter of the four', () => {
       a.destX = 9999;
       a.startAction(OG_STATE.RUN);
       a.idleCounter = cooldown;
-      a.doAction();
+      // THE HISTORICAL TRAP, stated by the harness preflight: session 35 wrote a cooldown and
+      // expected the branch to see it. It never does — the tick at `:163` runs first — so the
+      // preflight FIRES here, naming both numbers, and that is what this test pins.
+      expect(() => {
+        readsWhatYouWrote(a, 'idleCounter', () => {
+          a.doAction();
+        });
+      }).toThrow(`setup wrote idleCounter = ${cooldown}, but the body CONSULTED ${cooldown - 1}`);
       return a.actionState;
     };
     // 2 → ticked to 1 → `1 <= 0` is false → no swing.

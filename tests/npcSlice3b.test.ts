@@ -27,6 +27,7 @@ import type { Npc } from '../src/core/npc/Npc';
 import { NpcDamage } from '../src/core/npc/NpcDamage';
 import type { AnimLibrary, HitGeometry, HitShape, NpcEvent, NpcTarget, NpcWorld } from '../src/core/npc/types';
 import type { Rng } from '../src/core/Sim';
+import { counting, parked, rollsFor, seq } from './utils/npcHarness';
 
 const GROUND = 358;
 const WIDTH = 800;
@@ -54,18 +55,6 @@ const world = (over: Partial<NpcWorld> = {}): NpcWorld => ({
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: CLIP, loop: false }) };
 const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0 };
-const seq = (...vals: number[]): Rng => {
-  let i = 0;
-  return () => vals[Math.min(i++, vals.length - 1)] ?? 0;
-};
-const counting = (val = 0.5): Rng & { calls: number } => {
-  const f = (() => {
-    f.calls++;
-    return val;
-  }) as Rng & { calls: number };
-  f.calls = 0;
-  return f;
-};
 
 class Dummy implements NpcTarget {
   hits: Array<{ part: unknown; damage: number; launchType: number }> = [];
@@ -535,6 +524,9 @@ describe('EnemyWolfAlpha — a wolf at double scale that calls for help', () => 
     a.startAction(OG_STATE.FALL);
     a.startAnim(OG_ANIM.WOLF_POUNCE_MID);
     for (let i = 0; i < CLIP; i++) a.update();
+    // Preflight at the ASSERTION, not the setup: session 35 parked this alpha in FALL on the
+    // ground, the first update landed it, and the LAND clip masked the clip under test.
+    parked(a, OG_STATE.FALL, 'airborne, so FALL does not land before the clip is read');
     expect(a.getAnim()).toBe(OG_ANIM.WOLF_POUNCE_END);
 
     const w = wolf().npc;
@@ -542,6 +534,7 @@ describe('EnemyWolfAlpha — a wolf at double scale that calls for help', () => 
     w.startAction(OG_STATE.FALL);
     w.startAnim(OG_ANIM.WOLF_POUNCE_MID);
     for (let i = 0; i < CLIP; i++) w.update();
+    parked(w, OG_STATE.FALL, 'airborne, so FALL does not land before the clip is read');
     expect(w.getAnim()).toBe(OG_ANIM.WOLF_POUNCE_MID); // its guard refuses to advance
   });
 
@@ -616,9 +609,16 @@ describe('EnemyWolfAlpha — a wolf at double scale that calls for help', () => 
     // rng 0.5 → int(1.5) === 1: not 0, so no howl; and 1 < 2, so the walk roll passes.
     // Every other animal's idle re-roll is fenced by `!isShowing()`; the alpha's is not.
     const a = alpha({ rng: seq(0.5), world: { cutsceneShowing: true } }).npc;
-    a.startAction(OG_STATE.IDLE);
-    a.idleCounter = 1;
-    a.doAction();
+    const rolls = rollsFor(a, () => {
+      a.startAction(OG_STATE.IDLE);
+      a.idleCounter = 1;
+      a.doAction();
+    });
+    // Preflight — every value the body consumed, MEASURED: the howl escape (`startAction`),
+    // the walk escape (`doAction`), then WALK's `destX` and speed. The first two are the two
+    // BANDS session 35's clamped seq(0.9) fed one value, and that run consumed only TWO — it
+    // never escaped IDLE — so the values AND the count are pinned, not just the count.
+    expect(rolls.values).toEqual([0.5, 0.5, 0.5, 0.5]);
     expect(a.actionState).toBe(OG_STATE.WALK); // it walked anyway, mid-cutscene
   });
 
