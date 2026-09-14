@@ -1,6 +1,6 @@
 # RESUME HERE
 
-## ▶ SESSION 36 (2026-09-13/14) — **THE HARNESS SESSION: T1, T2, T4 LANDED · T3 + T5 CHECKPOINTED, NOT CLOSED · CONTINUE IN A NEW SESSION. NO LANE WORK.**
+## ▶ SESSION 36 (2026-09-13/14) — **THE HARNESS SESSION: T1 + T4 CLOSED · T2 RE-OPENED (false-passes found) · T3 + T5 CHECKPOINTED · NEXT: `docs/sessions/HARNESS_FINISH_KICKOFF.md`. NO LANE WORK.**
 
 Thesis (`docs/sessions/HARNESS_KICKOFF.md`): every defect this lane has shipped came from
 **hard noticing, not hard reasoning** — a claim that looked true, was never checked against
@@ -18,8 +18,8 @@ gains no new class · `src/core/Sim.ts`, `OpponentController.ts` and the seam ar
 | | tool | state |
 |---|---|---|
 | **T1** | `scripts/gates/chaos.ts` + `tests/*.plants.ts` — the plant harness, committed | ✅ LANDED (`cdb2519`, corrected by `b4e361b`) |
-| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ✅ LANDED (`38fe93c`) |
-| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | 🟡 **CHECKPOINTED** — script + tests + `HARNESS.md` committed; evidence run resumed; one flaw open (`fatalCount`) |
+| **T2** | `scripts/gates/claimcheck.ts` — every `<File>.as:<line>` resolved against the real source | ⚠️ **RE-OPENED** — landed `38fe93c`, but its "0 failures" hides at least 4 VERIFIED wrong cites (kickoff F1) |
+| **T3** | `.claude/workflows/measure-verify.js` — the fan-out, saved and parameterised | 🟡 **EVIDENCE IN** — resumed run 8/8 live verdicts, 1 FATAL; one flaw open (`fatalCount`, kickoff F2) |
 | **T4** | the twin rule in `src/config/CLAUDE.md` + a test enumerating every twin pair | ✅ LANDED (`3f41c9d`; source half `abb484e`) |
 | **T5** | test-harness preflight — `parked`, `rollsFor`, **and a third check the kickoff missed** | 🟡 **CHECKPOINTED** — helpers + proof committed; NOT yet adopted by the slice 3a/3b suites |
 
@@ -207,8 +207,28 @@ not yet call the preflight — T5's "used by at least the slice 3a/3b suites" is
 
 **Also not done this session:** the global rollout Kheshav asked for (make this harness
 architecture apply to every project), and `docs/sessions/-SESSION-LOG.md` entries were
-missed until this checkpoint. **The kickoff for the next session is written in the NEXT
-commit, once the resumed verify run has landed** — its result decides T3's evidence line.
+missed until this checkpoint.
+
+### ⚠️ THE RESUMED RUN LANDED — AND RE-OPENED T2
+
+`wf_99c74d25-624`, resumed with the script byte-unchanged: **12/12 agents, 0 errors, 8/8 live
+verdicts, 1 FATAL, 7 CORRECTED, 0 CLEAN** (the 4 measurements replayed from cache; only the 8
+verifiers re-ran). Journal: `docs/research/runs/wf-journal-measure-verify-3a-RESUMED-wf_99c74d25-624.jsonl`.
+The verdict COUNT matches session 35's (8/8, 1 FATAL); the FATAL itself is a different one —
+exactly as the annotation in `HARNESS_KICKOFF.md` predicted, which is why it was never a gate.
+
+**It found cites `npm run claimcheck` passes and should not. VERIFIED by hand:**
+`EnemyKatana.as:213` is `break;` — the gravity line is `:205` — and it is cited in
+`ogNpcAnimal.ts`, `ogEnemyWolf.ts` and `ogNpcHumanoid.ts` (the last one REWRITTEN by T2 itself,
+with the base cite carried forward unchecked). And `EnemyDeer.as:224` / `EnemyHorse.as:242` /
+`EnemyStag.as:302` are each one line past their `+ 100` line. Probed mechanisms: a bare
+`export const NAME = 3` is never a numeric field; a value's union of cites passes if ANY one
+holds the literal; ±1 hides off-by-one drift by construction.
+
+The rest of its findings (false "ONLY one of the four" claims in committed deer headers and test
+titles, `EnemyHorse.die()` untested, the bear's `canGot*` flags unpinned, more drifted cites)
+are AGENT CLAIMS, unverified. **All of it is scoped in `docs/sessions/HARNESS_FINISH_KICKOFF.md`
+(F1 claimcheck holes · F2 close T3 · F3 adjudicate · F4 close T5 · F5 global rollout · F6 wrap).**
 
 ### THE LANE STATE — unchanged since session 35 (`abb484e`), and still in force
 

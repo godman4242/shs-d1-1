@@ -3856,4 +3856,16 @@ this is the catch-up. Every number below is the one pasted at its commit.)
   T5 shipped THREE checks because the kickoff's one-root premise was true of 1 of 3.
   1601 → 1619.
 - **Owner call (Kheshav):** continue in a new session; salvage the dead agents first.
+- **Checkpoint** `a790c82` — T3 + T5 committed as they stood, both workflow journals committed
+  byte-identical, pre-commit gate green (83 files / 1619 tests).
+- **Resume** of `wf_99c74d25-624` with the script unchanged: 12/12 agents, 0 errors, **8/8 live
+  verdicts, 1 FATAL, 7 CORRECTED, 0 CLEAN**; only the 8 verifiers re-ran. Resumed journal
+  committed.
+- **T2 re-opened.** Verified by hand: `EnemyKatana.as:213` is `break;` (gravity at `:205`),
+  cited in three config files — one rewritten by T2 itself with the base cite unchecked; three
+  `+ 100` cites one line off. Probed: bare `export const` values are never numeric fields; a
+  union of cites passes if any one holds the literal; ±1 hides off-by-one drift.
+- **Kickoff** `docs/sessions/HARNESS_FINISH_KICKOFF.md` written for the fresh session (owner's
+  call): F1 claimcheck holes → F2 close T3 → F3 adjudicate the 8 verdicts → F4 close T5 → F5
+  global rollout → F6 wrap.
 
