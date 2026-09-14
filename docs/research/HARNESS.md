@@ -168,14 +168,37 @@ cited line:
 | wrong VALUE | 5 | a docblock over two consecutive fields cites the second, which the gate cannot see (`kickStep2`, `walkBackwardsDiv`, `poseOn`, `arriveDice`) | giving the second field its own docblock (+4 values) |
 | correct context | 26 | a contrast, a cross-reference, a guard, a twin map | a named `CONTEXT` entry with the reason (29 after three of the fixed cites turned out to be context too) |
 
-After: **1,701 cites · 421 values at ±0 · 29 context · 0 failures · 0.21 s.** Chaos-proofed
+After F1: **1,701 cites · 421 values at ±0 · 29 context · 0 failures · 0.21 s.** Chaos-proofed
 three ways, each gate exit 1 and `tests/claimcheck.test.ts` red, restored byte-identical:
 re-plant `:213` · re-plant `:224` · a stale `CONTEXT` entry.
 
-**The known residual, stated so nobody reads 0 as more than it is:** a CONTEXT cite that
-happens to hold a governed literal is only listed if it failed, so an unlisted one can still
-vouch for a value in the union; and a numeric field on the line after a cited field is
-out of scope (uncited, not passed).
+### THEN THE SWARM CHECKED THE SCRIPT — `wf_1b4b7826-c2e`
+
+The per-cite rule is strong for a cite that governs ONE value (476 of the 648 passing) and
+weak for one that governs several: any of their literals on the line passes it. So the 172
+multi-value cites went to a read-only fan-out — packets pre-built by script (docblock,
+governed values, which literal matched, the cited lines ±3), 6 chunks × 2 independent
+lenses (prose → line; value → line), judges writing to disk before returning.
+**12/12 live, 172/172 judged by BOTH lenses, and the lenses agreed on every one:**
+158 RIGHT · 12 COINCIDENCE · 2 WRONG. Every flag re-read by hand before acting.
+
+- **2 WRONG, a class no literal gate can see — the right number on the wrong BRANCH.** The
+  flee `dest` list cited `EnemyBear.as:248` and `EnemyStag.as:307`; both are
+  `this.destX = -100;` under `doChase && … < 400` — the CHASE. The flee mirrors are `:256`
+  and `:315`. Fixed.
+- **12 COINCIDENCE → CONTEXT** (bear clip roll `:98-108`/`:110`, six more fox↔wolf twin-map
+  cites, the wolf header's four reused-base-constant cites). Listing them paid immediately:
+  **`OG_BEAR.idle.walkOn = 1` went LITERAL-ABSENT** — its only support had been the `1` in
+  `if(dice == 1)`, the SIT index. Its real line, `:173`, sat in the docblock of the field
+  above it; it now has its own cite. Probed both ways: drop that cite → red; drop the
+  context entry → the coincidence passes silently again.
+
+**The residual, measured rather than hoped away:** the gate cannot tell a coincidental
+literal from a real one, so an UNLISTED context cite can still vouch for a value, and a
+right-literal-wrong-branch cite passes. Both are adversarial-read work (Rule 3's last row),
+and this run is the measurement of their size on this corpus: 14 of 172. A numeric field
+on the line after a cited field, with no enclosing cite, is out of scope (uncited, not
+passed).
 
 ---
 

@@ -4,7 +4,7 @@
 
 | F | what | state |
 |---|---|---|
-| **F1** | close claimcheck's three false-pass holes | ✅ **CLOSED** — per-cite at ±0 + bare consts; 82 failures raised on the old tree, all classified; 0 after (`docs/research/HARNESS.md`) |
+| **F1** | close claimcheck's three false-pass holes | ✅ **CLOSED** — per-cite at ±0 + bare consts; 82 failures raised on the old tree, all classified; then a 12-agent read-only pass over the 172 weak cites found 2 wrong-branch cites + 12 coincidences (41 context); 0 after (`docs/research/HARNESS.md`) |
 | **F2** | close T3 (`fatalCount: null` on a dead run; the name-resolution line) | ✅ **CLOSED** — `status` + `fatalCount: null` unless every verdict is live, pinned on the executed dead branch; `name` resolves from a fresh session (probed with a bogus name) |
 | F3 | adjudicate the 8 verdicts of `wf_99c74d25-624` | open — `EnemyBear.as:41-44` → `:42-45` already CONFIRMED and fixed in F1 |
 | F4 | close T5 (slice 3a/3b adopt the preflight) | open |

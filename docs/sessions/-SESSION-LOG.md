@@ -3899,3 +3899,10 @@ Opus 5 @ xhigh. Entries written PER MILESTONE, at each commit — session 36 mis
   then `status` + `fatalCount: null` unless all verdicts are live → green; planted back → red
   → restored. Checked, not inherited: the resumed run's FATAL (bear) differs from session 35's
   (deer). 1623 → 1624.
+- **F2 committed** `a84d0d9` (83 / 1624).
+- **`wf_1b4b7826-c2e` returned: 12/12 live, 172/172 judged by both lenses, perfect agreement —
+  158 RIGHT · 12 COINCIDENCE · 2 WRONG.** Every flag re-read by hand first. The 2 WRONG are
+  the right literal on the wrong branch (`EnemyBear.as:248`, `EnemyStag.as:307` are the CHASE,
+  the flee mirrors `:256` / `:315`) — I had found the stag one before its chunk returned.
+  Listing the 12 coincidences as CONTEXT made `OG_BEAR.idle.walkOn` go LITERAL-ABSENT at once:
+  its only support was the SIT index `1`; cited to `:173`. 29 → 41 context. Journal committed.

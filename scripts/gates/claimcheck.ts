@@ -86,8 +86,10 @@ const DERIVED: Derived[] = [
 /**
  * CONTEXT CITES — correct cites that do not state a value they govern (`ContextCite`).
  *
- * Every entry was classified BY HAND against the cited line when the per-cite rule first
- * ran (82 failures: 29 context, the rest real — see `docs/research/HARNESS.md`). An entry
+ * Every entry was classified BY HAND against the cited line: 29 when the per-cite rule first
+ * ran (82 failures, the rest real), and 12 more that PASSED only because an unrelated
+ * governed literal sat on the line — found by a read-only fan-out over the 172 multi-value
+ * cites (`wf_1b4b7826-c2e`) and each re-read before listing (`docs/research/HARNESS.md`). An entry
  * is removed from its values' union as well as exempted per cite, so declaring a cite
  * context can never be what makes a value pass. An entry whose cite governs no value any
  * more is STALE and fails the run. Adding one needs the same thing these have: the cited
@@ -96,6 +98,7 @@ const DERIVED: Derived[] = [
 const ctx = (file: string, why: string, ...cites: string[]): ContextCite[] => cites.map((cite) => ({ file, cite, why }));
 const CONTEXT: ContextCite[] = [
   ...ctx('src/config/ogEnemyArcher.ts', 'the `if(isFriendly)` branch a friendly archer takes instead of the coin — a guard, not a value', 'EnemyArcher.as:233'),
+  ...ctx('src/config/ogEnemyBear.ts', 'the d3 clip roll read twice — the `dice == 1` there is the SIT index, not `walkOn`', 'EnemyBear.as:98-108', 'EnemyBear.as:110'),
   ...ctx('src/config/ogEnemyBear.ts', 'holds `5 * 24`, the derivation of `cooldownFrames` (see DERIVED)', 'EnemyBear.as:200'),
   ...ctx('src/config/ogEnemyBear.ts', 'the maul itself, cited for the guard it LACKS', 'EnemyBear.as:212-214'),
   ...ctx('src/config/ogEnemyBear.ts', "the wolf's `isAdventureMode()` fence — a contrast", 'EnemyWolf.as:294'),
@@ -107,12 +110,18 @@ const CONTEXT: ContextCite[] = [
   ...ctx(
     'src/config/ogEnemyFox.ts',
     "the header's fox ↔ wolf twin map: each pair holds a WOLF value the fox imports from OG_WOLF, not one of OG_FOX's own",
-    'EnemyFox.as:50', 'EnemyWolf.as:227', 'EnemyFox.as:103', 'EnemyWolf.as:237', 'EnemyFox.as:133', 'EnemyWolf.as:268',
+    'EnemyFox.as:50', 'EnemyWolf.as:227', 'EnemyFox.as:52', 'EnemyWolf.as:229', 'EnemyFox.as:103', 'EnemyWolf.as:237',
+    'EnemyFox.as:119', 'EnemyWolf.as:255', 'EnemyFox.as:123', 'EnemyWolf.as:259', 'EnemyFox.as:133', 'EnemyWolf.as:268',
     'EnemyFox.as:177', 'EnemyFox.as:181', 'EnemyWolf.as:304', 'EnemyWolf.as:308', 'EnemyFox.as:202', 'EnemyWolf.as:329',
   ),
   ...ctx('src/config/ogEnemyHorse.ts', '`idleCounter = 48` — a cross-reference to `OG_ANIMAL.idleFrames`', 'EnemyHorse.as:96'),
   ...ctx('src/config/ogEnemySpearElite.ts', "the base's trivial-level rule at 10 — a twin RULE with a different number (see configTwins' deny-list)", 'NPC.as:253-257'),
   ...ctx('src/config/ogEnemyWolf.ts', "the base's weapon DEFLECT the wolf does not have — a contrast", 'NPC.as:437-440'),
+  ...ctx(
+    'src/config/ogEnemyWolf.ts',
+    "the header's reused-base-constant map: the 12 and the −100 there are OG_NPC_HIT_IFRAMES / OG_NPC_FLOATING_TEXT (ogNpcBase.ts), not OG_WOLF's",
+    'EnemyWolf.as:392', 'NPC.as:462', 'EnemyWolf.as:405-421', 'NPC.as:497-513',
+  ),
   ...ctx('src/config/ogEnemyWolfAlpha.ts', "the constructor's `startAction(IDLE_STATE)` — a call site, not a value", 'EnemyWolfAlpha.as:23'),
   ...ctx('src/config/ogEnemyWolfAlpha.ts', 'the `destX` re-roll inside `startAction(RUN)` — a behaviour, not the 15', 'EnemyWolfAlpha.as:248'),
   ...ctx('src/config/ogNpcAnimal.ts', "the base's `* 2 + 20` xp curve — a contrast", 'NPC.as:218'),

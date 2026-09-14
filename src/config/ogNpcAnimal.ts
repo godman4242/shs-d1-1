@@ -94,8 +94,8 @@ export const OG_ANIMAL = {
    *   - `margin` `EnemyBear.as:205` · `EnemyDeer.as:184` · `EnemyHorse.as:200`
    *     · `EnemyStag.as:256` — `posX <= -50 || posX > stageWidth + 50` is OFF-STAGE,
    *     and an off-stage animal parks itself in `REDFREEZE_STATE`.
-   *   - `dest` `EnemyBear.as:243`/`:248` · `EnemyDeer.as:223`/`:238`
-   *     · `EnemyHorse.as:241`/`:250` · `EnemyStag.as:301`/`:307` — fleeing aims 100 px
+   *   - `dest` `EnemyBear.as:243`/`:256` · `EnemyDeer.as:223`/`:238`
+   *     · `EnemyHorse.as:241`/`:250` · `EnemyStag.as:301`/`:315` — fleeing aims 100 px
    *     PAST the edge, so the bolt does not stop at it.
    */
   offStage: { margin: 50, dest: 100 },

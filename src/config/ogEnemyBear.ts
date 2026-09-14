@@ -25,6 +25,7 @@ export const OG_BEAR = {
      * is `< 2` (two in three, `OG_WOLF.idle.walkBelow`), so this is NOT its twin.
      */
     walkDice: 3,
+    /** `:173` — the `== 1`. */
     walkOn: 1,
   },
 
