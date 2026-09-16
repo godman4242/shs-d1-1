@@ -2,11 +2,22 @@
 
 **Written 2026-09-16 · for a fresh session · Opus 5 at `xhigh`, ultracode OFF.**
 
+## WHY THIS SESSION EXISTS — read this before the plan
+
+**To make OUR architecture stronger and OUR outputs more correct.** JClaw is a means, not the
+subject: nobody needs a catalogue of what another project does. A finding earns its place only
+by killing a defect class that can reach our work — wrong claims, a gate that can be switched
+off, an agent that dies and reads as clean, a number nothing pins.
+
+So: **lead every item with the defect it kills, not the source it came from**, rank by *has this
+already bitten us* before *is this interesting*, drop the rest loudly, and close the session on
+**defects the new gates would have caught** — not on lessons enumerated, agents run, or tokens
+spent.
+
 ## THE GOAL, in one line
 
-Finish the JClaw → our-harness study, land the lessons that survive an adversarial check as
-**real gates**, and settle *"ultracode fan-out or one `xhigh` loop?"* with a measured number
-instead of a feeling.
+Turn the surviving JClaw findings into gates that catch real defects in this repo, and settle
+*"ultracode fan-out or one `xhigh` loop?"* with a measured number instead of a feeling.
 
 ## DONE-CRITERIA — all five, or the session is not closed
 
@@ -24,8 +35,12 @@ instead of a feeling.
    go RED, fix, watch GREEN; a chaos plant for every new guard; `npx vitest run` ·
    `npm run -s typecheck` · `npm run -s lint` · `npm run claimcheck` · `npm run chaos` all
    green with the output **pasted**, and `RESUME_HERE.md` rewritten in the same commit.
-5. **The A/B number is recorded** (table below) and the verdict written into
-   `docs/research/HARNESS.md` + the memory file — including the case where the loop LOSES.
+   **Each new gate is shown going RED on a defect we actually had** — one of claimcheck's 82,
+   a session-log defect, a DIVERGENCES entry — or on a plant that reproduces one. A gate nobody
+   has seen go red on a real defect is ceremony: say so and drop it.
+5. **Two numbers are recorded** and written into `docs/research/HARNESS.md` + memory: the
+   **defects-caught** count from criterion 4 (the one that says whether the architecture got
+   stronger), and the A/B routing number below — including the case where the loop LOSES.
 
 **Estimate:** P0–P3 ≈ 75 min. P4 depends on how many lessons survive (budget ~30 min per
 adopted gate). Nothing here needs Kheshav except the LOOK at the end.

@@ -9,8 +9,11 @@ saved **5 of 8 studies** (the run's own report said 2 — a returned value is a 
 survived). Salvage + measurements: `docs/research/runs/jclaw-2026-09-14/SALVAGE.md`;
 **36 candidates** (9 ADOPT · 17 ADAPT · 10 SKIP) + 15 unread areas, **all unrefuted leads**.
 
-Round 2 finishes the 3 dead areas in ONE loop, merges + ranks, refutes the top 5 with ≤10 agents,
-ships what survives as gates, and rules on **tokens per verified lesson** — the A/B that decides
+**The point is not JClaw** (owner, 2026-09-16): it is to make OUR architecture stronger and our
+outputs more correct — so a finding counts only once a gate built from it has been seen going RED
+on a defect we actually had. Round 2 finishes the 3 dead areas in ONE loop, merges + ranks,
+refutes the top 5 with ≤10 agents, ships what survives as gates, and rules on
+**tokens per verified lesson** — the A/B that decides
 whether ultracode fan-outs get a hard cap over repos we do not already know. **The lane
 (slice 4) stays parked.**
 
