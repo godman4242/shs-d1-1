@@ -1,5 +1,19 @@
 # RESUME HERE
 
+## ▶ NEXT SESSION — **JCLAW LESSONS ROUND 2: `docs/sessions/JCLAW_LESSONS_KICKOFF.md`** (Opus 5 `xhigh`, ultracode OFF, ≤10 agents)
+
+2026-09-14 ran a 28-agent Fable fan-out comparing **JClaw**'s harness (github.com/tsukhani/jclaw,
+pinned `366459cd` = v0.18.60) with ours. It hit the **session limit in 10.3 minutes** after
+**1,369,556 tokens**; 25 agents were killed and **0 lessons were verified**. The disk-write rule
+saved **5 of 8 studies** (the run's own report said 2 — a returned value is a lower bound on what
+survived). Salvage + measurements: `docs/research/runs/jclaw-2026-09-14/SALVAGE.md`;
+**36 candidates** (9 ADOPT · 17 ADAPT · 10 SKIP) + 15 unread areas, **all unrefuted leads**.
+
+Round 2 finishes the 3 dead areas in ONE loop, merges + ranks, refutes the top 5 with ≤10 agents,
+ships what survives as gates, and rules on **tokens per verified lesson** — the A/B that decides
+whether ultracode fan-outs get a hard cap over repos we do not already know. **The lane
+(slice 4) stays parked.**
+
 ## ▶ SESSION 37 (2026-09-14) — **THE HARNESS IS FINISHED: T1–T5 ALL CLOSED · ROLLED OUT GLOBALLY · NO LANE WORK · NEXT: write the slice 4 kickoff**
 
 Sessions 36–37's thesis (`docs/sessions/HARNESS_KICKOFF.md`, `HARNESS_FINISH_KICKOFF.md`): every
