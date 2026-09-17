@@ -172,7 +172,8 @@ describe.skipIf(!HAVE_SOURCE)('L2-A byte-check — OG_SKILLS is a faithful trans
     return trimmed === '' ? undefined : trimmed;
   };
 
-  const raw = readFileSync(SKILLDATA, 'utf8');
+  // `describe.skipIf` skips the tests but RUNS this body — guard the read.
+  const raw = HAVE_SOURCE ? readFileSync(SKILLDATA, 'utf8') : '';
   const blocks = [...raw.matchAll(/<skill>([\s\S]*?)<\/skill>/g)].map((m) => m[1] ?? '');
 
   it('the source itself holds 75 <skill> blocks and 182 <level> blocks', () => {

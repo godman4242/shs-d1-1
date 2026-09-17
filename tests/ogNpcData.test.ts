@@ -349,7 +349,8 @@ describe.skipIf(!HAVE_SOURCE)('L4a-A byte-check — OG_NPCS is a faithful transc
     return trimmed === '' ? undefined : trimmed;
   };
 
-  const raw = readFileSync(NPCDATA, 'utf8');
+  // `describe.skipIf` skips the tests but RUNS this body — guard the read.
+  const raw = HAVE_SOURCE ? readFileSync(NPCDATA, 'utf8') : '';
   const blocks = [...raw.matchAll(/<npc>([\s\S]*?)<\/npc>/g)].map((m) => m[1] ?? '');
 
   it('the source itself holds 495 <npc>, 647 <skill>, 131 <loot> and 3,210 slots', () => {

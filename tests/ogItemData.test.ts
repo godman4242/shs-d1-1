@@ -261,7 +261,8 @@ describe.skipIf(!HAVE_SOURCE)('L3-A byte-check — OG_ITEMS is a faithful transc
     return trimmed === '' ? undefined : trimmed;
   };
 
-  const raw = readFileSync(ITEMDATA, 'utf8');
+  // `describe.skipIf` skips the tests but RUNS this body — guard the read.
+  const raw = HAVE_SOURCE ? readFileSync(ITEMDATA, 'utf8') : '';
   const blocks = [...raw.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => m[1] ?? '');
 
   it('the source itself holds 982 <item> blocks and 412 <modifier> blocks', () => {

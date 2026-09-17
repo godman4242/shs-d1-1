@@ -154,8 +154,10 @@ const SCRIPTS = path.join(
 const HAVE_SOURCE = existsSync(path.join(SCRIPTS, 'NPCManager.as'));
 
 describe.skipIf(!HAVE_SOURCE)('L4a-D byte-check — the table is a faithful transcription', () => {
-  const mgr = readFileSync(path.join(SCRIPTS, 'NPCManager.as'), 'utf8').split('\n');
-  const xmlnpc = readFileSync(path.join(SCRIPTS, 'XMLNpc.as'), 'utf8').split('\n');
+  // `describe.skipIf` skips the tests but RUNS this body — guard every read or a clean
+  // clone fails collection instead of skipping.
+  const mgr = HAVE_SOURCE ? readFileSync(path.join(SCRIPTS, 'NPCManager.as'), 'utf8').split('\n') : [];
+  const xmlnpc = HAVE_SOURCE ? readFileSync(path.join(SCRIPTS, 'XMLNpc.as'), 'utf8').split('\n') : [];
 
   /**
    * INDEPENDENT grammar: for every committed branch, go to the line it CITES and

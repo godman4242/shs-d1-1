@@ -112,7 +112,11 @@ const HAVE_SOURCE = existsSync(path.join(SCRIPTS, 'MCSActor.as'));
 describe.skipIf(!HAVE_SOURCE)('L4b-E byte-check — every entry is the declaration on the line it cites', () => {
   const ROOT = fileURLToPath(new URL('..', import.meta.url));
   const ts = readFileSync(path.join(ROOT, 'src', 'config', 'ogActor.ts'), 'utf8').split('\n');
-  const src = (f: string): string[] => readFileSync(path.join(SCRIPTS, f), 'utf8').split('\n');
+  // Read only when the payload is here. `describe.skipIf` skips the TESTS but still RUNS
+  // this body, so an unguarded read here is a collection error that reds the whole file —
+  // which is what kept CI red for 24 days (see CLAUDE.md, 'Study-only reference/').
+  const src = (f: string): string[] =>
+    HAVE_SOURCE ? readFileSync(path.join(SCRIPTS, f), 'utf8').split('\n') : [];
   const actor = src('MCSActor.as');
   const character = src('MCSCharacter.as');
   const damage = src('Damage.as');

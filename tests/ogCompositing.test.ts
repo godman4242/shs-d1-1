@@ -169,8 +169,9 @@ describe('L3-B cross-check — the committed draw order OBEYS the contract', () 
 
 describe.skipIf(!HAVE_SOURCE)('L3-B byte-check — the contract matches the AS3', () => {
   /** Line-oriented scan, deliberately NOT the generator's whole-file regex. */
-  const mcs = readFileSync(path.join(AS3_DIR, 'MCSCharacter.as'), 'utf8').split('\n');
-  const stats = readFileSync(path.join(AS3_DIR, 'StatsManager.as'), 'utf8').split('\n');
+  // `describe.skipIf` skips the tests but RUNS this body — guard every read.
+  const mcs = HAVE_SOURCE ? readFileSync(path.join(AS3_DIR, 'MCSCharacter.as'), 'utf8').split('\n') : [];
+  const stats = HAVE_SOURCE ? readFileSync(path.join(AS3_DIR, 'StatsManager.as'), 'utf8').split('\n') : [];
 
   const constants = (lines: readonly string[], prefix: string): Map<string, number> => {
     const out = new Map<string, number>();
