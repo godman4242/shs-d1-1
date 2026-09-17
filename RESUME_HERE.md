@@ -1,27 +1,66 @@
 # RESUME HERE
 
-## ▶ NEXT SESSION — **THE SEAM SPIKE: `docs/sessions/SEAM_SPIKE_KICKOFF.md`** (Opus 5 `xhigh`, ≤2 agents, 60–90 min)
+## ▶ NEXT SESSION — **WRITE SLICE 4'S KICKOFF, AND IT MUST ANSWER FINDINGS 15–18 FIRST**
 
-**21 enemy classes are ported and ZERO are in the game** (measured `1febe4d`:
-`ls src/core/npc/ | grep -cE '^(Enemy|Friendly|Room)'` → 21; `grep -rn "core/npc" src/game
-src/core/Sim.ts src/core/OpponentController.ts` → empty). The duel still fights the
-hand-authored stand-in at `src/game/DuelScene.ts:195`. Before slices 4–6 add 13 more
-classes nothing consumes — and with four DIVERGENCES findings (5, 10, 13, 14) already
-saying the seam cannot carry things — put **one** `EnemyKatana` in the duel and answer
-**SEAM HOLDS** or **SEAM NEEDS WORK**.
+The seam spike is DONE and its answer is **SEAM NEEDS WORK** (not "no" — see below).
+Slice 4's kickoff was deliberately withheld until this answer existed, because the
+answer changes what it must say. It now has to say this: **13 more ported classes
+inherit all four defects below**, so at least finding 15 (units) and finding 18
+(the windup) are cheaper to close BEFORE porting than after.
 
-The adapter already exists (`NpcController.ts:86`). The measured gap is two inputs with no
-implementation anywhere in `src/`: `AnimLibrary` and `HitGeometry` — only test stubs at
-`tests/npcSlice1.test.ts:48-49`, while the data sits committed in `src/config/ogAnims.ts`.
+Read `docs/DIVERGENCES.md`, last section ("THE SEAM SPIKE"), for the full ledger.
 
-⛔ **Slice 4's kickoff is deliberately NOT written**: this spike's answer changes what it
-must say. `docs/sessions/L4B_KICKOFF.md` carries a corrected note that real slice 4 is FIVE
-classes, not the eight its stale table lists.
+### WHAT THE SPIKE ANSWERED (2026-09-17, one `EnemyKatana` in the shipped duel)
 
-**SESSION 38 (2026-09-17) CLOSED THE JCLAW LANE.** Round 2 ran end to end: the 3 areas round 1
-never reached are measured, all 52 candidates are adjudicated, 10 read-only agents refuted the
-top 5 clusters (10/10 returned), and 4 gates shipped. Ledger: `docs/research/JCLAW_LESSONS.md`.
-Verdicts: `docs/research/runs/jclaw-2026-09-14/refute/`. **The lane (slice 4) is still parked.**
+**It runs.** A ported actor walks itself at the player, commits, swings, and kills the
+player in ~16.6 s — headless in `tests/duelSeam.test.ts`, and confirmed live in the
+browser at `?npc=katana` (enemy x 557 → 285, player 100 → 0 HP). The seam is not a dead
+end. It needs four channels:
+
+| # | finding | cost |
+|---|---|---|
+| **15** | actor ranges are OG screen px, Sim positions are world px, **nothing converts** — it strikes at 95.4 px vs the shipped AI's 48.2 px (**1.98×**), and `executeStrike` range-gates nothing | small, load-bearing — one conversion + a unit audit of every `og*.ts` distance |
+| **16** | the seam is **one-way**: the actor never learns it was hit, so `NPC.gotHit` and all seven reaction states are dead code in a duel | **the big one** — moves `OpponentView`, so it is L5, not slice 4 |
+| **17** | the actor **never dies** — the Sim stops polling at 0 HP, so `NPC.die()`, loot, XP and the death clip are unreachable | same channel as 16 |
+| **18** | **the windup is drawn once**: `NpcController` edge-detects ATTACK across a whole `update()`, but the re-attack cycle completes inside one — measured **1 telegraph for 24 swings** | small, and entirely inside `NpcController` |
+
+⚠️ **And one thing no single finding names: it stands still.** The katana closes once,
+stops at 95.4 px and never moves again (traced live, 900 frames, gap 95.4 at every
+sample). Re-measure this after fixing 15 — it may be 15 in a costume, and it may not.
+
+### WHAT THE SPIKE BUILT (all shipped, all green)
+
+- `src/config/ogAnimClips.ts` — **GENERATED**, 158 clips' `durationFrames`/`loop`,
+  transcribed from the payload by `scripts/anim/transcribeAnimClips.py`, byte-checked
+  in BOTH directions by `tests/ogAnimClips.test.ts`.
+  ⚠️ **The kickoff was wrong** that `OG_ANIMS` held this data: `OG_ANIMS` has **four**
+  clips and neither katana clip is among them. `OG_ANIM` lists 429 names; the payload
+  defines 158. A name with no clip is the source's own `trace("missing animation")`.
+- `src/core/npc/duelSeam.ts` — `OgAnimLibrary`, `DuelHitGeometry` (degenerate on
+  purpose, and it COUNTS every question so `consulted === 0` is proven, not claimed),
+  `createDuelWorld()` (**seventeen** members, not the ten the kickoff claimed, each
+  with the reason it holds its value), and `createDuelKatana()`.
+  ⚠️ **The wiring trap:** `world.nearestEnemy` MUST return the controller's proxy.
+  `checkAITrigger` reassigns the target every 24 steps, so a world answering `null` —
+  the obvious first version — freezes the actor after one second. Red-proofed: that
+  one plant turns 7 tests red.
+- `?npc=katana` — declared in `src/main.ts`, handed to `DuelScene` via the registry.
+  **Defaults OFF**; verified live that no query string still gives `AISeamController`
+  closing to 48.2 px exactly as before.
+- 21 new tests (84→86 files, 1643→1664), **10 plants red-proofed** and each restored
+  byte-identical.
+
+⛔ **NOT started:** slice 4, its kickoff, the `AI_TIERS` rewire, any fight-feel grade.
+
+### ⚠️ THE ONE THING ONLY KHESHAV CAN DO
+
+`npm run dev`, then open **`http://localhost:5173/?npc=katana`** and say whether that
+enemy fights like the videos. A model cannot grade fight feel. Expect: it closes, then
+stands at ~2 sword-lengths and swings with no windup after the first.
+
+---
+
+## PREVIOUS SESSION (38) — the JClaw lane, closed
 
 ### THE FOUR DEFECTS THAT WERE ACTUALLY IN OUR TREE
 

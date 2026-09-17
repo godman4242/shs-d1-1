@@ -42,6 +42,18 @@ const wantsIdleArt = params.get('art') === 'idle';
  */
 const wantsDressedArt = params.get('art') === 'dressed';
 
+/**
+ * SEAM SPIKE (2026-09-17): `?npc=katana` drives the duel's opponent with a
+ * PORTED `EnemyKatana` (`core/npc/duelSeam.ts`) instead of `AISeamController`.
+ *
+ * ⛔ A SPIKE, NOT A FEATURE — it must never become the default. `AISeamController`
+ * stays the shipped opponent; the flag is the only way in, and the verdict on
+ * what it does is in `docs/DIVERGENCES.md` findings 15-18. The scene reads it
+ * off the registry rather than re-parsing the query string, so this file stays
+ * the one place a route flag is declared.
+ */
+const wantsNpcKatana = params.get('npc') === 'katana';
+
 const game = new Phaser.Game({
   // WEBGL explicitly (not AUTO): the art direction relies on WebGL-only
   // features (e.g. Graphics gradients). Failing loudly beats degrading silently.
@@ -66,6 +78,10 @@ const game = new Phaser.Game({
         ? [EncounterScene, DuelScene, DuelIntro, DuelResult]
         : [DuelScene, DuelIntro, DuelResult, EncounterScene],
 });
+
+// The spike's one input, handed to DuelScene before any scene's create() runs
+// (Phaser builds the registry in its constructor and boots scenes afterwards).
+game.registry.set('npcKatana', wantsNpcKatana);
 
 // Dev-only verification seams: __game lets automated browser checks step the
 // loop manually when Chrome occlusion-throttles rAF; __fidelity runs the

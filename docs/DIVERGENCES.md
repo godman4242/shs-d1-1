@@ -4920,3 +4920,111 @@ Slices 4–6 (13 more descendants: the goblins and ogre, ninja / shield / zombie
 including `EnemyVegePatch`, the bosses). `EnemyPlayer`'s branch, `CutsceneActor`, the
 `AI_TIERS` rewire, the fight-feel grade: not built, not attempted, not claimed. **No
 adapter builds an `NpcWorld`**, and nothing drains `spawn`.
+
+---
+
+## THE SEAM SPIKE — ONE PORTED ENEMY PUT INTO THE REAL DUEL. **SEAM NEEDS WORK**: FOUR FINDINGS ADDED (2026-09-17)
+
+21 classes were ported and none were in the game. This spike put exactly one —
+`EnemyKatana`, the cheapest real fighter — behind the existing `OpponentController`
+seam in the shipped duel, behind `?npc=katana`, and measured what happened.
+`Sim.ts`, `OpponentController.ts` and `NpcController.ts` were not touched.
+
+**It runs.** The actor walks itself at the player, commits, swings, and kills the
+player in ~16.6 s — measured headless in `tests/duelSeam.test.ts` and confirmed live
+in the browser (enemy x 557 → 285, player 100 → 0 HP). So the answer is not "the seam
+is a dead end". It is **SEAM NEEDS WORK**, with four specific channels named below.
+
+### WHAT WAS ACTUALLY MISSING — and the kickoff was wrong about it
+
+The kickoff said the `AnimLibrary` connector was the spike's real work, because
+"the DATA is already in the repo: `src/config/ogAnims.ts` (854 lines, `OG_ANIMS`)".
+**`OG_ANIMS` holds FOUR clips** — `walk` and the three `balancedhorizontalslash`
+parts — and neither `walkwithkatana` nor `katanaattack` is among them. 854 lines is
+four animations' worth of per-frame nodes, not a clip table.
+
+The real table was never transcribed. `OG_ANIM` (`ogActor.ts`) is the AS3 list of
+**429 animation KEYS**; the payload defines **158 clips**, of which 122 have an
+`OG_ANIM` name. So `scripts/anim/transcribeAnimClips.py` now emits
+`src/config/ogAnimClips.ts` — all 158 clips' `d=` and `l=`, verbatim, byte-checked
+in both directions by `tests/ogAnimClips.test.ts`. Of the 20 clips `EnemyKatana`
+names, **17 are defined**; the 3 that are not (`fly_end`, `getup_front`,
+`kneegroin_victim`) are reaction clips no duel path reaches, and a missing clip is
+the source's own `trace("missing animation")` no-op — faithful, not a gap.
+
+Two other kickoff numbers moved: `NpcWorld` has **seventeen** members, not ten; and
+the adapter did not need `NpcController` changed at all.
+
+### THE `HitGeometry` DECISION — degenerate, deliberately, and MEASURED
+
+`DuelHitGeometry` answers "no part" to every question. That is correct **here** and
+wrong anywhere a body can be struck part-by-part: in a duel `Sim.executeStrike`
+resolves damage against its own `FighterState` and never calls into the actor, so no
+per-part question is ever asked. This is not asserted — the class counts every call,
+and the probe pins `consulted === 0` across a whole fight, so the day a duel path
+does ask a geometric question the test goes red instead of silently getting `null`.
+
+### THE SEAM FINDINGS — four added
+
+**15. The actor's ranges are OG SCREEN px; the Sim's positions are WORLD px, and
+nothing converts.** `OG_KATANA.melee.x` is 100 (`EnemyKatana.as:167`), and the seam
+hands the actor `view.enemyPos.x` in world px, where the repo's own conversion is
+`/1.2` (100 OG px ≈ 83 world px). Worse, `Sim.executeStrike` range-gates **nothing** —
+it trusts the intent — so the katana lands hits at its raw 100. Measured: it commits
+and strikes at a **95.4 px** gap, against the shipped `AISeamController`'s **48.2 px**
+on the same duel — **1.98×**. That is precisely the `AI_STRIKE_RANGE` regression
+SESSION13 D8 removed ("2× too generous"), reintroduced through the actor's own
+constants. ⇒ Every one of the 34 actors' distance constants needs a declared unit and
+one conversion at the seam. **Cost: small but load-bearing** — one conversion in the
+adapter, plus an audit of every distance constant in `src/config/og*.ts` for which
+space it is in. It cannot be skipped: the whole family's ranges are wrong without it.
+
+**16. The seam is ONE-WAY: the actor never learns it was hit.** `OpponentView` carries
+position, stance, focus and `playerJumping`. It carries no enemy HP and no "you were
+struck". So the Sim's `FighterState` takes the damage and the actor does not: measured,
+`actor.getHP()` and `gotHitCounter` are unchanged after twelve landed player slashes.
+`NPC.gotHit` — defence, the element floors, behead, and all seven reaction states with
+their per-frame physics — is **dead code in a duel**. The hit reaction is a large part
+of what the fighter looks like in the videos. ⇒ Needs a damage channel from Sim to
+controller. **Cost: the big one** — it moves `OpponentView`/`OpponentController`, which
+this spike was forbidden to touch, so it is an L5 decision, not a slice-4 one.
+
+**17. The actor never dies.** When `enemy.hp` reaches 0 the Sim simply stops polling
+(`if (enemy.hp <= ZERO) continue`), so `NPC.die()` — the death clip, the loot roll, the
+XP award, the four-second fade — is unreachable. Measured: the Sim's enemy is at 0 HP
+and the fight has ended while `actor.dead === false`, `actionState !== DYING`, and the
+actor has emitted **zero** events. The corpse on screen is the Sim's `corpseAlpha`, not
+the actor's death animation. ⇒ Same channel as 16, opposite direction, and it is what
+finding 5 ("presentation events have no seam channel") costs in practice: with no hits
+and no death, nothing ever *generates* an `NpcEvent`, so the undrained event list is
+not yet a bug — it is a channel that has never carried anything.
+
+**18. THE WINDUP IS DRAWN ONCE, THEN NEVER AGAIN.** `NpcController` derives `telegraph`
+by edge-detecting ATTACK_STATE across a whole `update()`. But the re-attack cycle
+completes *inside* one `update()`: `stepAnimation` finishes `katanaattack` →
+`startAction(WALK)` → `doAction()` sees the target still in range → `startAction(ATTACK)`.
+Before and after are both ATTACK, so there is no edge. Measured: **one telegraph for
+twenty-four landed swings**, and the trace shows `actionState` reading ATTACK on every
+single step while `frameCounter` cycles 0→9→0. The windup is how a player reads an
+attack — `AI_TELEGRAPH_MS` is CONTRACT for that reason — so twenty-three unannounced
+swings is not the game in the videos. ⇒ The controller must detect the clip RESTART,
+not the state edge. **Cost: small, and it is inside `NpcController`** — no seam move.
+
+### ⚠️ AND THE THING NO GATE CAUGHT — it stands still
+
+Findings 15–18 are each a channel. Together they produce a fight that is measurably
+wrong in a way none of them names on its own: **the katana closes once, stops at 95.4 px
+and never moves again.** Traced live over 900 frames, the gap is 95.4 at every sample.
+It is not a bug in any single port — `doAction()`'s ATTACK branch legitimately does not
+move, and the original re-attacks in range too — but combined with a Sim that only moves
+an enemy on a non-zero `moveX`, the result is a statue that machine-guns from two
+sword-lengths away. **Whoever fixes 15 must re-measure this**; it may simply be 15
+wearing a costume, and it may not.
+
+### ⛔ WHAT THIS SPIKE DID NOT DO
+
+Slices 4–6 are NOT started, and their kickoff is not written — it was always due after
+this answer, because this answer changes what it must say. No fight-feel grade is
+claimed: that is a LOOK, and only Kheshav can give it. `AI_TIERS` is not rewired. The
+flag defaults OFF and `AISeamController` remains the shipped opponent (verified live:
+no query string → `npcKatana === false`, and the duel closes to 48.2 px exactly as before).

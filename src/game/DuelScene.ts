@@ -27,6 +27,8 @@ import { closestPointOnPolyline } from '../core/geometry';
 import { mulberry32 } from '../core/rng';
 import { nextStance } from '../core/stance';
 import { duelSetup } from '../core/duelSetup';
+import { createDuelKatana } from '../core/npc/duelSeam';
+import type { OpponentController } from '../core/OpponentController';
 import { Sim, type ActorId } from '../core/Sim';
 import { stageToWorld, VIEW, worldToStage } from '../core/viewport';
 import type { Vec } from '../core/vec';
@@ -192,7 +194,16 @@ export class DuelScene extends Phaser.Scene {
     // Seeded mulberry32 at the boundary (Math.random is banned in core/).
     // Sim and AI share one stream — call order is deterministic.
     const rng = mulberry32(Date.now());
-    const opponent = new AISeamController(rng, AI_TIERS.normal);
+    /**
+     * SEAM SPIKE (2026-09-17) — `?npc=katana` swaps in a PORTED `EnemyKatana`
+     * behind the SAME `OpponentController` seam. Default is unchanged: no flag,
+     * no NPC, `AISeamController` exactly as before. See findings 15-18 in
+     * `docs/DIVERGENCES.md` for what this actually does on screen.
+     */
+    const opponent: OpponentController =
+      this.registry.get('npcKatana') === true
+        ? createDuelKatana(rng).controller
+        : new AISeamController(rng, AI_TIERS.normal);
     // AUTO SLASH (D7) hands the PLAYER to the same routine — but its OWN
     // instance: the controllers carry telegraph/mode state, and one shared
     // instance would interleave the two fighters' decisions.
