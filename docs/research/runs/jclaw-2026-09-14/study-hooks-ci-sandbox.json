@@ -1,0 +1,103 @@
+{
+ "unit": "hooks-ci-sandbox",
+ "summary": "JClaw splits the gate in two \u2014 a pre-commit that must stay under 5 s and runs lint-staged on staged files only, and a pre-push that runs wildcard-import grep, spotlessCheck, compileJava and the 5\u20138 min suite, caching the tested SHA in $GIT_DIR so the two-remote deploy pays once. The transferable content is not the split (our whole suite is 7.3 s, so a split buys nothing) but four hard-won shell facts, each written into the hook as the reason it is shaped that way: read the STAGED blob with `git show :path` so a partial commit cannot pass on untested content; never `grep -q` inside a pipeline under `set -o pipefail` (SIGPIPE makes the SUCCESS path report failure and blocks every commit); classify a tool's non-zero exit before naming its cause; and declare a fail-open with its reason on the line. MEASURED ON OUR SIDE: our pre-commit is `#!/bin/sh` with no `set -e` and no pipefail, so the SIGPIPE trap cannot bite us; but it does gate the WORKING TREE while committing the INDEX, and it has one silent fail-open (`|| true` on the test-totals grep). Sandboxing: JClaw's docs/spikes/ verdict is FEASIBLE-but-opt-in via sandbox-exec, which is the same tool our feedback-reexecute-agent-evidence memory already uses to re-run agent evidence \u2014 nothing new to adopt, one honest limitation worth recording.",
+ "candidates": [
+  {
+   "id": "hooks-ci-sandbox-1",
+   "pattern": "Gate the staged tree, not the working tree \u2014 read staged blobs with `git show :<path>`",
+   "failurePrevented": "A partial commit (`git add -p`, or staging one of several edited files) is validated against the working tree, which contains content the commit does not. The gate passes on code that is not what lands, so HEAD can be broken while every gate was green.",
+   "jclawEvidence": ".githooks/pre-commit:33-35 `Reads staged blobs via `git show :` \u2014 for a path that is not staged that returns the index copy, i.e. HEAD's content, so a package.json-only commit is still checked against the lockfile that will be in the tree.` and :37 `staged_pin=$(git show ':frontend/package.json' | sed -n 's/.*\"packageManager\": *\"\\([^\"]*\\)\".*/\\1/p' | head -1)`.",
+   "builtAndExercised": "Built and live in the shipped hook. Exercised by the guard it powers (the pnpm lockfile integrity check, added in f22acb6a 2026-04-27 `pnpm pin: separate setup migration from start validation, add hook guard`). Scope honesty: JClaw applies the staged-blob read only to this one guard \u2014 lint-staged handles the general case by operating on staged files, and the pre-push suite runs on the checked-out tree.",
+   "ourState": "GAP",
+   "ourEvidence": ".githooks/pre-commit:21 `STAGED=$(git diff --cached --name-only)` reads staged NAMES only; :50-52 then run `npm run -s typecheck`, `npx vitest run`, `npm run -s lint` \u2014 all of which read the working tree. Nothing in the hook reads `git show :`. So index != working tree is ungated.",
+   "proposal": "Not the general form (running the whole suite against a temporary checkout of the index costs a stash-or-worktree per commit, which is the opposite of 'simplest change wins'). Smallest useful form: detect the divergence and refuse \u2014 if any tracked file differs between the index and the working tree, fail with the list, since in this single-developer repo a partial commit is always accidental.",
+   "doneCriterion": "Stage a file, edit it further in the working tree, commit \u2192 hook exits non-zero naming the file; `git add` it \u2192 green.",
+   "cost": "~6 lines; one `git diff --name-only` per commit (milliseconds).",
+   "verdict": "ADAPT",
+   "why": "The defect is real and unguarded here, but the JClaw form does not transfer; the divergence refusal gets the same safety for a fraction of the cost."
+  },
+  {
+   "id": "hooks-ci-sandbox-2",
+   "pattern": "Never `grep -q` inside a pipeline under `set -o pipefail` \u2014 SIGPIPE makes the success path report failure",
+   "failurePrevented": "grep -q closes the pipe on its FIRST match, the upstream process dies of SIGPIPE, pipefail reports the pipeline as failed, and the hook blocks every commit that reaches the check \u2014 a gate that fails exactly when it should pass.",
+   "jclawEvidence": ".githooks/pre-commit:40-43 `# grep -c, not grep -q: this file runs under `set -o pipefail`, and # `grep -q` closes the pipe on its first match, so `git show` dies of # SIGPIPE and the pipeline reports failure on the SUCCESS path \u2014 which # would block every commit that touches frontend/package.json.`",
+   "builtAndExercised": "The fix is in the shipped hook (`grep -c ... || true` at :44-45). The comment records it as a bug that was hit, not a hypothetical.",
+   "ourState": "HAVE",
+   "ourEvidence": "Scoped, and the scope matters. THE HOOK is immune by construction: .githooks/pre-commit:1 is `#!/bin/sh` and `grep -n 'set -' .githooks/pre-commit` \u2192 no output, so neither `set -e` nor `pipefail` is in force; its one pipeline, :22 `NON_DOC=$(printf '%s\\n' \"$STAGED\" | grep -vE '\\.md$')`, uses grep -v, not -q. CORRECTION to an earlier draft of this file, which claimed build-loop.sh was our only other shell: `git ls-files | grep -E '\\.sh$|^\\.githooks/'` returns THREE files, and scripts/gauntlet/checkpointL0.sh:33 IS `set -euo pipefail`. It contains no `grep -q` today (grepped), so the trap is not sprung \u2014 but it is one edit away in a script that already carries the precondition.",
+   "proposal": "None. Recording the fact so a future `set -euo pipefail` added to our hook does not reintroduce it.",
+   "doneCriterion": "n/a",
+   "cost": "n/a",
+   "verdict": "SKIP",
+   "why": "A real and vicious bug class. Our hook cannot hit it, and the one script that carries `set -euo pipefail` does not use `grep -q` today \u2014 so there is nothing to make red now. A shellcheck rule would be the general answer; three shell files do not pay for a new dependency."
+  },
+  {
+   "id": "hooks-ci-sandbox-3",
+   "pattern": "Classify a tool's non-zero exit before the hook names a cause",
+   "failurePrevented": "A hook prints the cause it expects rather than the cause that happened, and sends the next person fixing the wrong thing.",
+   "jclawEvidence": ".githooks/pre-push:98-103 `# Capture rather than stream so the failure can be classified before this hook # names a cause. spotlessCheck exits non-zero for anything that stops the build, # including failures during Gradle *configuration* that run no Spotless task at # all ... # This hook used to report every such exit as \"Import order drift\", which sent # the v0.17.8 release chasing a spotlessApply that could not have fixed it.` Fix at :107-112: grep the captured output for `format violations` and print the generic message otherwise.",
+   "builtAndExercised": "Yes \u2014 commit 4a9208e3 2026-07-27 `fix(hooks): stop pre-push blaming import order for every spotlessCheck failure`, i.e. shipped in response to a real misdiagnosed release.",
+   "ourState": "HAVE",
+   "ourEvidence": ".githooks/pre-commit:31-33 `if ! sh -c \"$2\" >\"$log\" 2>&1; then printf '\\n\u274c %s FAILED \u2014 commit aborted. Last lines:\\n' \"$1\"; tail -20 \"$log\"` \u2014 our run_step names only the STEP that failed (build/tests/lint) and then shows the tool's own last 20 lines. It never asserts a cause, so it cannot assert a wrong one.",
+   "proposal": "None.",
+   "doneCriterion": "n/a",
+   "cost": "n/a",
+   "verdict": "SKIP",
+   "why": "We already have the safer shape \u2014 say which step failed, then hand over the tool's own output."
+  },
+  {
+   "id": "hooks-ci-sandbox-4",
+   "pattern": "A fail-open branch carries its reason on the line, and never hides a measurement",
+   "failurePrevented": "A gate silently switches itself off \u2014 the run looks identical to a clean pass, which is the fail-open-accounting killer applied to a hook.",
+   "jclawEvidence": ".githooks/pre-commit:103-108 `# Skip when lint-staged isn't installed (e.g. a fresh clone before # `pnpm install` runs in frontend/). Fail open rather than blocking commits.` \u2014 and it PRINTS on the way out: `[jclaw pre-commit] lint-staged not installed yet \u2014 skipping.` Same shape at :136-139 for pnpm. The contrast is app/services/scanners/Scanner.java, whose javadoc makes fail-open a written contract ('Implementations MUST fail open: network errors, timeouts, quota exhaustion ... MUST return Verdict.clean()') against test/ShellExecSandboxTest.java's 'an unavailable mechanism fails closed'.",
+   "builtAndExercised": "Yes \u2014 9cd7059a 2026-09-08 `fix(hooks): find pnpm before exec'ing lint-staged; fail open when absent`. The Scanner contrast is critic.json #11, whose paths and quotes I re-read.",
+   "ourState": "PARTIAL",
+   "ourEvidence": "Our two fail-opens differ in quality. REASONED AND HARMLESS: .githooks/pre-commit:11-12 `# Skip inside CI (CI runs its own checks).` + `[ -n \"$CI\" ] && exit 0`. CORRECTION to an earlier draft, which asserted SSHD has no CI: .github/workflows/ci.yml exists and its header reads `# Push-time verification \u2014 mirrors the local .githooks/pre-commit gate, plus the full vite build`, running `npm run lint`, `npm test`, `npm run build` on push to master and on pull_request. The skip is therefore correct rather than dead \u2014 and moot besides, since GitHub Actions does not execute git hooks. SILENT AND WRONG: .githooks/pre-commit:40 `grep -E '^ *(Test Files|Tests) +[0-9]' \"$log\" | sed 's/^ */      /' || true` \u2014 if the reporter format moves, no totals print and the commit proceeds, while lines 36-38 of that same file record two commit messages (3adac1b, 8f332e9) that asserted 1002/1003 tests when the hook had measured 1001.",
+   "proposal": "Same fix as agent-instructions-4: make the totals grep fail the step when it matches nothing. Leave the CI skip alone but print one line when it fires.",
+   "doneCriterion": "See agent-instructions-4.",
+   "cost": "~4 lines.",
+   "verdict": "ADOPT",
+   "why": "Merges with agent-instructions-4 \u2014 same file, same line, same defect class arriving from two directions, which is itself the argument that it is the right fix."
+  },
+  {
+   "id": "hooks-ci-sandbox-5",
+   "pattern": "Detect that the hook path is not wired, and say so",
+   "failurePrevented": "A fresh clone or a new worktree has `core.hooksPath` unset, so every gate is silently absent and every commit is ungated.",
+   "jclawEvidence": "jclaw.sh:1295-1299 `hooks_path=$(/usr/bin/git -C \"$SCRIPT_DIR\" config --local core.hooksPath 2>/dev/null || true)` / `if [[ \"$hooks_path\" != \".githooks\" ]]; then` / `echo \"...Setup hasn't run on this clone yet. Run ${INVOKE} setup...\"`, and jclaw.sh:2472 `/usr/bin/git config --local core.hooksPath .githooks` in setup. A post-checkout hook (.githooks/post-checkout:39-40) re-runs init-worktree on `git worktree add`.",
+   "builtAndExercised": "Built and live, but as a HINT in the CLI's help footer, not a gate \u2014 the comment at jclaw.sh:1288-1292 calls it a 'First-run hint footer'. Nothing fails. Honest reading: JClaw does not solve this either; it nudges.",
+   "ourState": "GAP",
+   "ourEvidence": "`git config --get core.hooksPath` \u2192 `.githooks` on this clone, so we are wired today. `grep -rn hooksPath tests/ scripts/ package.json` \u2192 empty: nothing asserts it, and .githooks/ holds only pre-commit (no post-checkout).",
+   "proposal": "A one-line assertion in an existing test that `core.hooksPath` is `.githooks`.",
+   "doneCriterion": "`git config --unset core.hooksPath` \u2192 the test goes RED; restore \u2192 GREEN.",
+   "cost": "~5 lines, one `git config` exec per suite run.",
+   "verdict": "ADAPT",
+   "why": "Cheap and real \u2014 but the honest weakness is that the test only runs if a gate runs, and the failure it guards is 'no gate runs'. It catches the case where the suite is invoked by hand or by CI, not the fresh-clone case, and the proposal must say so rather than overclaim."
+  },
+  {
+   "id": "hooks-ci-sandbox-6",
+   "pattern": "OS-level sandboxing of harness subprocesses via a generated sandbox-exec profile, shipped opt-in with its limitations enumerated",
+   "failurePrevented": "A coding agent spawned by the harness writes outside its session directory or reads unrelated secrets (~/.ssh, other apps' tokens).",
+   "jclawEvidence": "docs/spikes/jclaw-671-harness-sandboxing.md:3 `**Verdict: FEASIBLE on macOS via `sandbox-exec`, recommended as an opt-in config, ~1\u20132 day story.**` with a five-row measured table (`Write anywhere else (e.g. ~/pwned.txt) \u2705 blocked`, `Read ~/.ssh \u2705 blocked`) and `## Honest limitations` item 1: `**The harness's own credentials cannot be hidden from it** \u2014 a full run requires reading its own config.`",
+   "builtAndExercised": "PROTOTYPE ONLY at this pin \u2014 the doc says 'Implement as opt-in config (subagent.acp.sandbox=true)' in the future tense, and app/tools/HarnessSandbox.java + test/HarnessSandboxTest.java exist in the tree as the implementation surface. The spike itself is the measured artifact.",
+   "ourState": "HAVE",
+   "ourEvidence": "Memory feedback-reexecute-agent-evidence records re-running every command a fan-out cites under `sandbox-exec` (534/534 matched). Our subagents run inside Claude Code's own permission model, not a self-spawned harness, so there is no argv for us to wrap.",
+   "proposal": "None. One fact worth carrying: the limitation that a harness cannot be denied its own credentials, so a sandbox protects OTHER secrets \u2014 relevant if we ever sandbox a spawned agent.",
+   "doneCriterion": "n/a",
+   "cost": "n/a",
+   "verdict": "SKIP",
+   "why": "We do not spawn our own harness processes, so the wrap point does not exist here; the spike's value to us is the honest-limitations format, already captured in agent-instructions-3."
+  }
+ ],
+ "antiPatterns": [
+  {
+   "what": "Copying the fast/slow pre-commit/pre-push split.",
+   "evidence": "JClaw's pre-commit:3-4 `Keeps the full test suites (backend + frontend) in pre-push \u2014 this hook must stay fast (< 5 s typical)`; its suite is '5\u20138 min' (AGENTS.md:30). Our full gate MEASURED this session: typecheck + 1631 tests + lint + claimcheck, with vitest reporting `Duration 7.31s`.",
+   "whyNotForUs": "The split exists to hide a 5\u20138 minute suite. Ours already fits inside the budget the split is designed to protect, and adding a pre-push hook would create a second place for the same rule \u2014 state-schema drift for no gain."
+  },
+  {
+   "what": "Adding a docs-only / path-aware skip because JClaw has one.",
+   "evidence": "JClaw pre-push:52-79 `should_skip_for_docs`, tolerating a version-only bump in conf/application.conf.",
+   "whyNotForUs": "We already have the equivalent at .githooks/pre-commit:20-26, and ours is the stricter form (EVERY staged file must be .md). Note the hazard it shares with JClaw's: a docs-only commit skips the gate that would have caught a prose defect \u2014 which is exactly what agent-instructions-1's new test would check. That test must therefore run on the docs-only path too, or it can never fire on the commit that breaks it."
+  }
+ ],
+ "integrity": "VERIFIED BY COMMAND at /tmp/jclaw pinned 366459cd: .githooks/{pre-commit,pre-push,post-checkout} read in full with cat -n (141 + 138 + 40 lines); jclaw.sh:1275-1320 plus greps for hooksPath/init-worktree (hits at 1289-1295, 2472-2473); docs/spikes/jclaw-671-harness-sandboxing.md read in full; `ls` on app/tools/{HarnessSandbox,SubagentHarnessPermissions}.java and test/HarnessSandboxTest.java (present, NOT read \u2014 declared); `git log --date=short -- .githooks/` (16 commits), with 4a9208e3, 9cd7059a, f22acb6a and f402c2f6 taken from their subject lines only. OURS: .githooks/pre-commit read in full with cat -n; `ls .githooks/` \u2192 pre-commit only; `git config --get core.hooksPath` \u2192 .githooks; `grep -rn hooksPath tests/ scripts/ package.json` \u2192 empty; `git ls-files | grep -E '\\.sh$|^\\.githooks/'` \u2192 3 files; `grep -n 'set -'` on all three; `ls .github/workflows/` \u2192 ci.yml, read in full; the 7.31s duration and 83/1631 totals taken from this session's own `npx vitest run`. TWO CLAIMS IN THE FIRST DRAFT OF THIS FILE WERE WRONG AND ARE CORRECTED IN PLACE (no CI workflow; build-loop.sh the only other shell). Both were assertions I had not run \u2014 the same defect class this whole study is about, arriving inside the study of it."
+}

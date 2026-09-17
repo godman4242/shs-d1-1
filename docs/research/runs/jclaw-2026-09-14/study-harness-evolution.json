@@ -1,0 +1,89 @@
+{
+ "unit": "harness-evolution",
+ "summary": "Reading JClaw's harness history rather than its harness, three defect classes recur, each closed only after it shipped: (1) an instruction file drifts away from the code it describes \u2014 0dfcd451 corrected SIX contradicted claims in AGENTS.md at once, found by review, with the drift having propagated into build.gradle.kts and the pre-push comments; (2) a detector is written in a dialect its engine does not speak, so it reports CLEAN forever \u2014 f588bc44, where `git grep -nE` silently treats \\b \\d \\s as literals and the credential battery measured 0 of 9 planted secrets against -P's 9 of 9; (3) a gate-guard that matches raw substrings of a config file passes when the line it guards is commented out or moved \u2014 88b142ee. All three are false-PASS classes, which is the only kind that costs nothing to ignore and everything to have. MEASURED ON OUR SIDE: class (2) reproduces on this machine (`git grep -E '\\d'` matched `abcd`, `git grep -P '\\d'` matched `abc 123`) but we use `git grep -E` nowhere, so it is a hazard with no live site; class (3) DOES have a live site \u2014 tests/chaosGate.test.ts:73 reads the runner's plant count with an unanchored regex that a comment satisfies; class (1) has a live, dated, 9-day-old instance (see study-agent-instructions.json).",
+ "candidates": [
+  {
+   "id": "harness-evolution-1",
+   "pattern": "Instruction-file rot is a recurring defect with a measurable cost, not a tidiness issue",
+   "failurePrevented": "Rules that every agent reads quietly stop being true; the drift then propagates into code comments and build scripts, so three places agree on something false.",
+   "jclawEvidence": "Commit 0dfcd451 2026-09-06 `docs(agents): correct six claims the epic review found the code contradicts (JCLAW-1148)`, body: `Nullness: ... The text said the opposite, and the build-script and pre-push comments repeated it.` \u00b7 `Frozen stores: with allowStoreUpdate pinned off, a fixed site fails the build until its store line is deleted; the text said the store prunes itself.` Diffstat: AGENTS.md +96/-43 lines across three files.",
+   "builtAndExercised": "Closed by REVIEW, not by a gate \u2014 there is no test in JClaw that checks AGENTS.md against the code. The stamp at AGENTS.md:6 did not prevent it; the six false claims lived inside the stamped block.",
+   "ourState": "GAP",
+   "ourEvidence": "See study-agent-instructions.json / agent-instructions-1: CLAUDE.md:67 has named a deleted file since 995bb52 (2026-09-08).",
+   "proposal": "Merged into agent-instructions-1 \u2014 this candidate is the evidence that the class recurs, not a second gate.",
+   "doneCriterion": "See agent-instructions-1.",
+   "cost": "n/a (merged)",
+   "verdict": "ADOPT",
+   "why": "It converts agent-instructions-1 from 'we found one' into 'this class recurs in a repo that reviews harder than we do' \u2014 which is the difference between a tidy-up and a gate."
+  },
+  {
+   "id": "harness-evolution-2",
+   "pattern": "A detector must be shown capable of matching before a zero from it is reported",
+   "failurePrevented": "A scan written in a regex dialect its engine does not implement matches nothing, and the resulting CLEAN is believed precisely because it looks like health.",
+   "jclawEvidence": "Commit f588bc44 2026-08-15 `fix(secret-scan): the documented invocation could not match anything`: `On macOS git (Apple Git 2.50.1) the ERE engine silently ignores \\b, \\d and \\s \u2014 no error, no warning, just zero matches. Fifteen of the sixteen CRITICAL patterns are \\b-anchored ... The lone exception was the PEM pattern ... which is exactly why the failure looked like a clean repo rather than a broken tool.` Measured in the body: `-E detected 0 of 9 / -P detected 9 of 9`. The durable fix is the control, .claude/commands/secret-scan.md:40 `**Prove the harness before trusting a zero.** ... A pass that has not been shown capable of matching is not evidence of absence`.",
+   "builtAndExercised": "Yes \u2014 the control is a mandatory documented step whose result the report template must state, added in the same commit as the fix. Honest limit: it is enforced by instruction, not by a test.",
+   "ourState": "PARTIAL",
+   "ourEvidence": "The dialect hazard REPRODUCES on this machine but has no live site: in a scratch repo containing `abcd` and `abc 123`, `git grep -nE '\\d'` returned `f.txt:1:abcd` (literal d) while `git grep -nP '\\d'` returned `f.txt:2:abc 123`; and `grep -rn 'git grep -E'` over our *.sh, *.ts, *.mjs and *.md \u2192 empty. The control DISCIPLINE we mostly have: tests/claimcheck.test.ts:334-335 floors the corpus at >1600 cites / >350 values, tests/chaosGate.test.ts:73 reads the runner's own constant. One unguarded zero-reporter remains \u2014 .githooks/pre-commit:40's `|| true` totals grep (agent-instructions-4).",
+   "proposal": "None beyond agent-instructions-4. Record the `git grep -E` hazard as a pitfall line rather than a gate, since we have nothing to guard.",
+   "doneCriterion": "n/a",
+   "cost": "n/a",
+   "verdict": "ADAPT",
+   "why": "The discipline is already ours and already applied; the specific macOS trap has zero live sites here. Adopting the fix we do need (the `|| true`) and dropping the rest loudly is the honest split."
+  },
+  {
+   "id": "harness-evolution-3",
+   "pattern": "A gate that reads a config or source file by raw substring passes when the line it guards is commented out",
+   "failurePrevented": "The guard on a guard silently stops guarding: the value it reads comes from a comment, so the live value can be anything.",
+   "jclawEvidence": "Commit 88b142ee 2026-09-06 `test(gates): close the silent switch-offs the conformance tests could not see`: `Both gate conformance tests matched raw substrings of build.gradle.kts, so enabled.set(false), disable(\"NullAway\"), an excludedPaths option, or a required line moved into a comment all passed. They now strip comments first, assert the ERROR line inside the compileJava block rather than anywhere in the file, and fail on each of the known switch-offs.` Same commit: `The Lucene scan accepted a release anywhere in the file, including at the end of a test body where a failing assertion skips it`.",
+   "builtAndExercised": "Yes \u2014 the fix ships the negative cases as assertions ('fail on each of the known switch-offs'), i.e. the gate's own false-pass modes became tests.",
+   "ourState": "PARTIAL",
+   "ourEvidence": "LIVE SITE: tests/chaosGate.test.ts:73 `const found = /const EXPECTED_TOTAL = (\\d+);/.exec(src)?.[1];` \u2014 no `^` anchor, no `m` flag, and `.exec` takes the FIRST match. scripts/gates/chaos.ts:81 is `const EXPECTED_TOTAL = 43;`. A stale commented copy left above it (`// const EXPECTED_TOTAL = 43;`) while the live line became a computed expression would satisfy the regex from the comment and the test would pass while the runner's real number came from somewhere else \u2014 defeating the test's own stated purpose, the comment at :70 `One rule, one number: read the runner's constant rather than trusting a copy.` The opposite direction is already safe: rename or delete the constant and `.exec` returns null, so `expect(undefined).toBe('43')` fails closed (reasoned from the code, not executed). Our other source-reading gates are stronger: claimcheck parses rather than substring-matches, and tests/configTwins.test.ts pins 36 with a deny-list.",
+   "proposal": "Anchor the regex to a line start with no leading comment marker and assert exactly one match: `/^const EXPECTED_TOTAL = (\\d+);$/m` plus a check that the file contains no second occurrence of the identifier in an assignment position.",
+   "doneCriterion": "Insert `// const EXPECTED_TOTAL = 43;` above scripts/gates/chaos.ts:81 and change the live line to a computed value \u2192 the test goes RED; restore \u2192 GREEN with 1631 tests unchanged.",
+   "cost": "~3 lines in one existing test; 0 runtime cost.",
+   "verdict": "ADOPT",
+   "why": "The one candidate in this unit with a live false-pass site in our own gate-guard, and the fix is three lines in a test that already exists."
+  },
+  {
+   "id": "harness-evolution-4",
+   "pattern": "A hook that names a cause must classify the failure first",
+   "failurePrevented": "A release chases a fix that could not have worked, because the hook reported the failure it expected instead of the one that happened.",
+   "jclawEvidence": "Commit 4a9208e3 2026-07-27 `fix(hooks): stop pre-push blaming import order for every spotlessCheck failure`; the resulting comment at .githooks/pre-push:100-103 `This hook used to report every such exit as \"Import order drift\", which sent the v0.17.8 release chasing a spotlessApply that could not have fixed it.`",
+   "builtAndExercised": "Yes, shipped in response to a real misdiagnosed release.",
+   "ourState": "HAVE",
+   "ourEvidence": "See hooks-ci-sandbox-3: our run_step names only the failing STEP and then prints the tool's own last 20 lines, so it cannot assert a wrong cause.",
+   "proposal": "None.",
+   "doneCriterion": "n/a",
+   "cost": "n/a",
+   "verdict": "SKIP",
+   "why": "Already the shape we have; nothing to build."
+  },
+  {
+   "id": "harness-evolution-5",
+   "pattern": "The bounded-scope habit: each harness fix ships with the measurement that proves it, in the commit body",
+   "failurePrevented": "A fix is believed because it is plausible; six months later nobody can tell whether it was ever measured.",
+   "jclawEvidence": "f588bc44 body: `Measured, not assumed. Nine synthetic provider credentials ... were planted in a scratch file outside the repo and both engines run over it: -E detected 0 of 9 / -P detected 9 of 9`. 88b142ee body: `Verified: NullnessGateConformanceTest, ResourceLeakGateConformanceTest, PropertyBasedTest, TaskScopeTest and EvalRunnerTest pass.` 0dfcd451 body: six numbered claim-by-claim corrections.",
+   "builtAndExercised": "It is a convention visible across the sampled commits, not a mechanism.",
+   "ourState": "HAVE",
+   "ourEvidence": "The per-turn ship-bar contract (rule 3, 'VERIFIED, NOT ASSERTED ... with the output PASTED') and the repo's own commit history enforce this already; .githooks/pre-commit:36-38 even records the one time a commit message asserted a test total the hook had not measured.",
+   "proposal": "None.",
+   "doneCriterion": "n/a",
+   "cost": "n/a",
+   "verdict": "SKIP",
+   "why": "Identical to a standing rule we already run under; naming it again buys nothing."
+  }
+ ],
+ "antiPatterns": [
+  {
+   "what": "Reading the volume of JClaw's harness history as a target to match.",
+   "evidence": "`git log -- .githooks/` alone is 16 commits; the conformance/arch/store/commands surface is 35+ in three months, across eight gate-guard test classes.",
+   "whyNotForUs": "That cadence is affordable for a repo with CI, a team and a ticket system. Here every gate is paid for in per-commit seconds and in the attention of one developer. The transferable unit is the DEFECT CLASS, not the count of guards."
+  },
+  {
+   "what": "Concluding from f588bc44 that we should audit every regex in the repo for dialect traps.",
+   "evidence": "`grep -rn 'git grep -E'` over our shell, TS, MJS and markdown \u2192 empty; and /usr/bin/grep -E '\\d' behaves correctly on this machine (matched `abc 123`, not `abcd`) \u2014 only *git's own* ERE engine is the trap.",
+   "whyNotForUs": "The lesson is the control, not the audit. An audit with no live site is the 'interesting' that the kickoff says to rank below 'has already bitten us'."
+  }
+ ],
+ "integrity": "VERIFIED BY COMMAND at /tmp/jclaw pinned 366459cd: `git log --format='%h %ad %s' --date=short` over .githooks/ (16 commits) and over test/*Conformance*.java, test/ArchitectureTest.java, archunit_store/, .claude/commands/ (35 shown); full bodies read with `git show --format=%B --no-patch` for 0dfcd451, f588bc44 and 88b142ee, plus `git show f588bc44 -- .claude/commands/secret-scan.md` for the diff hunk; 4a9208e3 taken from its subject line and from the resulting comment at .githooks/pre-push:98-113, which was read in full. OURS: the `git grep -E` vs `-P` dialect test run in a throwaway repo at /tmp/gtest against a two-line fixture (result pasted in the ourEvidence field); `grep -rn 'git grep -E'` over our tree \u2192 empty; tests/chaosGate.test.ts:60-95 read; scripts/gates/chaos.ts greps for EXPECTED_TOTAL (:81 literal, :165-169 the runner's own drift check). NOTE: the chaosGate false-pass in harness-evolution-3 is reasoned from the source and NOT yet executed \u2014 it is stated as a proposal with a done-criterion, and P4 must watch it go red before it is believed."
+}

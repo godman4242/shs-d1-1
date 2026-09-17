@@ -1,0 +1,89 @@
+{
+ "unit": "agent-instructions",
+ "summary": "JClaw's agent instructions are one harness-agnostic AGENTS.md (CLAUDE.md is a 5-line pointer with @AGENTS.md), whose generated policy block carries a staleness stamp \u2014 'Verified 2026-09-09 against f32b0cbc' \u2014 and whose 'Where things are' section routes a re-proposal at docs/spikes/ before any new work. The behavioural half is mechanical rather than adjectival: a comment 'delete test', a rule that a green you did not scope is not evidence, and a rule to validate a measuring harness against a known-zero before believing its number. MEASURED ON OUR SIDE: the stamp is the load-bearing idea and we have nothing like it \u2014 a probe over our own instruction files found SSHD/CLAUDE.md:67 pointing at `.claude/ship-bar.md`, a file deliberately deleted in 995bb52 (2026-09-08) and never re-created. That line has been false for 9 days inside the file every session loads. JClaw proves this defect class recurs and that review, not a gate, is what caught it there (0dfcd451 corrected SIX contradicted claims at once) \u2014 so the transferable win is a gate they do not have, not a port. The 887-line size of AGENTS.md is NOT transferable: our measured per-turn injection is already ~6.7k tokens on SSHD and the one-developer-with-ADD constraint prices every added line.",
+ "candidates": [
+  {
+   "id": "agent-instructions-1",
+   "pattern": "Mechanically resolve every repo path an always-loaded instruction file names; fail when one does not exist",
+   "failurePrevented": "An instruction file that every session reads keeps naming a file that was renamed or deleted. The agent follows it, finds nothing, and either improvises or reports a wrong cause. Nothing goes red, because prose is not compiled.",
+   "jclawEvidence": "AGENTS.md:6 `<!-- Verified 2026-09-09 against f32b0cbc. Managed by bmad-project-context; edits inside this block are replaced on refresh. -->` \u2014 the staleness stamp. AGENTS.md:23 `Rules with their reasons: the sections below. Settled verdicts before re-proposing work: `docs/spikes/`.`",
+   "builtAndExercised": "The STAMP is generated and refreshed (the marker block names its generator). The CHECK is not automated in JClaw: commit 0dfcd451 2026-09-06 `docs(agents): correct six claims the epic review found the code contradicts (JCLAW-1148)` found them by review, and its body records the drift spreading to three files: 'the build-script and pre-push comments repeated it'. So JClaw proves the defect class and the cost, not the gate.",
+   "ourState": "GAP",
+   "ourEvidence": "MEASURED with a throwaway node probe over CLAUDE.md, RESUME_HERE.md, src/{core,config,game}/CLAUDE.md, ~/.claude/CLAUDE.md, docs/research/HARNESS.md: 148 backticked path tokens, 16 unresolved, of which ONE is a hard defect after triage \u2014 CLAUDE.md:67 `- Per-turn ship-bar contract auto-injects from `.claude/ship-bar.md`.` while `ls .claude/` shows only commands/, workflows/, settings.local.json. `git log --all -- .claude/ship-bar.md` \u2192 15a7f08 (created, Stage 0, 2026-07-11), 00f28c7, 995bb52 2026-09-08 `ship-bar: stop shadowing the global contract \u2014 delete the copy, inherit it`. The deletion commit removed the file and left the pointer. The truth is ~/.claude/settings.json:23 `cat /Users/kheshav/.claude/ship-bar.md 2>/dev/null || true`. The other 15 are probe artifacts (bare relative fragments `core/`, `config/`, `game/` meaning src/*; `harness/chaos/` and `harness/workflows/` which DO exist under ~/kheshav-code/agent-harness/) plus two parked-lane inputs (docs/gauntlet/L0/convergence.json, worklist/MANIFEST.json) that RESUME_HERE tells a future session to CREATE.",
+   "proposal": "tests/instructionPaths.test.ts \u2014 read the tracked instruction files, extract backticked tokens that contain a slash and end in a known extension or a slash, resolve each against a declared base (repo root, $HOME for ~, and a named-sibling-repo map for agent-harness), and fail on any that does not exist. Carry a count floor so an extractor that stops matching cannot pass, and an explicit WILL-CREATE allowlist whose entries must each still be referenced.",
+   "doneCriterion": "Restore CLAUDE.md:67's claim as written \u2192 the test goes RED naming `.claude/ship-bar.md`; correct the line to the real global path \u2192 GREEN with the token count unchanged.",
+   "cost": "~80 lines of test + a small extractor; runs in well under a second on 8 files; 0 tokens per turn; 0 dependencies.",
+   "verdict": "ADOPT",
+   "why": "The only candidate in this unit that already has a dated, provable red on a defect we actually shipped, and it closes the exact class JClaw paid for twice."
+  },
+  {
+   "id": "agent-instructions-2",
+   "pattern": "Stamp a generated instruction block with the date and commit it was verified against",
+   "failurePrevented": "A reader cannot tell whether a rule is current or three refactors old, so a stale rule is obeyed with the same confidence as a fresh one.",
+   "jclawEvidence": "AGENTS.md:6 `Verified 2026-09-09 against f32b0cbc. Managed by bmad-project-context; edits inside this block are replaced on refresh. Keep anything you want preserved outside the markers.`",
+   "builtAndExercised": "Built: the marker block and its generator are in the tree and the stamp advances with refreshes. Exercised as a GATE: no \u2014 nothing fails when the stamp goes stale. 0dfcd451 shows the stamp alone did not stop six claims rotting.",
+   "ourState": "GAP",
+   "ourEvidence": "No SSHD or global instruction file carries a verified-against stamp; `grep -rn 'Verified .* against' CLAUDE.md RESUME_HERE.md ~/.claude/CLAUDE.md` \u2192 empty.",
+   "proposal": "Do not adopt the stamp on its own. If agent-instructions-1 ships, the test IS the stamp and it is machine-checked.",
+   "doneCriterion": "n/a \u2014 superseded by agent-instructions-1.",
+   "cost": "1 line per file, plus a maintenance ritual nobody enforces.",
+   "verdict": "SKIP",
+   "why": "A date in a comment that nothing verifies is ceremony \u2014 JClaw's own history is the counter-evidence, since the stamped block is exactly the one that carried six false claims."
+  },
+  {
+   "id": "agent-instructions-3",
+   "pattern": "A settled-verdicts folder consulted before re-proposing work, each verdict written as date + one-line verdict + honest limitations + alternatives considered",
+   "failurePrevented": "A question already answered by an experiment gets re-opened and re-run, burning a session to reach the same conclusion.",
+   "jclawEvidence": "AGENTS.md:23 `Settled verdicts before re-proposing work: `docs/spikes/``. docs/spikes/jclaw-671-harness-sandboxing.md:3 `**Date**: 2026-07-08 \u00b7 **Verdict: FEASIBLE on macOS via `sandbox-exec`, recommended as an opt-in config, ~1\u20132 day story.**` with a measured five-check table and an '## Honest limitations' section naming that the harness's own credentials cannot be hidden from it.",
+   "builtAndExercised": "Built: 5 spike docs in the tree, all carrying Date + Verdict headers. Exercised: the routing line in AGENTS.md is the enforcement, which is instruction-level, not mechanical.",
+   "ourState": "PARTIAL",
+   "ourEvidence": "We have settled rulings (docs/OWNER_PERMISSION_RULING.md, docs/research/REBUILD_READINESS.md, memory project-rebuild-readiness.md recording the P0 experiment that ruled out an offline playable build) and CLAUDE.md carries an explicit 'Invariants (don't propose work that violates these)' section \u2014 the same intent. What is missing is one folder and one routing line, so a verdict is currently findable only if you already know it exists.",
+   "proposal": "None this session. The invariants block plus memory already carry the routing; a new folder would be a third place for the same facts (state-schema drift).",
+   "doneCriterion": "n/a",
+   "cost": "n/a",
+   "verdict": "SKIP",
+   "why": "We already hold the verdicts and the routing rule; adding a folder duplicates them, and duplication is one of the five killers in our own global rules."
+  },
+  {
+   "id": "agent-instructions-4",
+   "pattern": "Validate a measuring harness against a known-zero before believing a number it produces",
+   "failurePrevented": "A harness reports a plausible zero because it measured nothing, and the zero gets believed precisely because it looks clean.",
+   "jclawEvidence": "AGENTS.md:825 `**Validate a measurement harness against a known-zero case** before trusting a number it produces. Time a no-op; assert on an empty input. A harness that reports plausible nonsense is worse than no measurement, because it gets believed.` Operationalised in .claude/commands/secret-scan.md:40 `**Prove the harness before trusting a zero.** Before reporting anything, run a known-positive control \u2014 `git grep -cP 'looksLikeSecret' -- test` must be non-zero ... A pass that has not been shown capable of matching is not evidence of absence`.",
+   "builtAndExercised": "Yes, and it was retrofitted after a real false-CLEAN: commit f588bc44 2026-08-15 `fix(secret-scan): the documented invocation could not match anything` measured `-E detected 0 of 9` vs `-P detected 9 of 9` over nine planted synthetic credentials.",
+   "ourState": "PARTIAL",
+   "ourEvidence": "HAVE for the two big gates: tests/claimcheck.test.ts:334-335 `expect(cites).toBeGreaterThan(1600); expect(values).toBeGreaterThan(350);` and tests/chaosGate.test.ts:73 reads `const EXPECTED_TOTAL = (\\d+);` out of scripts/gates/chaos.ts rather than restating it. GAP in one place: .githooks/pre-commit:40 `grep -E '^ *(Test Files|Tests) +[0-9]' \"$log\" | sed 's/^ */      /' || true` \u2014 the hook's own comment (lines 36-38) says two commit messages asserted the wrong test totals and 'A number on screen cannot be inferred from memory', yet if vitest's reporter format changes the grep matches nothing, prints nothing, and `|| true` keeps the commit green with no number on screen at all. Our memory feedback-probe-parser-must-match records exactly this happening once already (Node 26 spec reporter hid 3 chaos results).",
+   "proposal": "In .githooks/pre-commit's run_step, capture the grep output and fail the step when the tests log yields no totals line, instead of `|| true`.",
+   "doneCriterion": "Point the hook at a log whose totals line does not match the pattern \u2192 the hook exits non-zero saying the totals could not be read; restore \u2192 green printing `Tests 1631 passed (1631)`.",
+   "cost": "~4 lines in an existing function; 0 tokens per turn.",
+   "verdict": "ADOPT",
+   "why": "It is the one unguarded zero-reporter left in our gate chain, in the same file whose comment records the defect it fails to prevent."
+  },
+  {
+   "id": "agent-instructions-5",
+   "pattern": "The comment delete test \u2014 delete the comment, re-read the code; it stays deleted unless it carries a reason, constraint, measurement or bug",
+   "failurePrevented": "Agent-written code accretes comments that restate the next line, which age into noise and bury the comments that record a real bug.",
+   "jclawEvidence": "AGENTS.md:842 `**The delete test \u2014 run it on every comment you write.** Delete the comment and re-read the code. If the code still conveys everything the comment did, it stays deleted. A comment survives only by carrying what the code cannot: a reason, a constraint, a measurement, or a bug.` AGENTS.md \u00a78 opens by naming the cause: 'Redundant commenting is the most common defect in agent-written code, and the pull toward it is strong enough to survive a general instruction to stop.'",
+   "builtAndExercised": "Instruction only \u2014 no test enforces it. JClaw's own mitigation is that a violating diff 'will be sent back' (AGENTS.md \u00a78), i.e. review.",
+   "ourState": "GAP",
+   "ourEvidence": "No comment-density rule in SSHD CLAUDE.md, src/*/CLAUDE.md or the global file; the nearest is the global 'Simplest change wins'. Our harness sections are comment-dense by design (scripts/gates/*.ts comments carry measured numbers and defect history \u2014 the kind \u00a78 explicitly protects).",
+   "proposal": "None. Not mechanizable, and the rule would cost per-turn tokens in the file that already costs ~6.7k/turn.",
+   "doneCriterion": "n/a",
+   "cost": "~6 lines of always-injected instruction.",
+   "verdict": "SKIP",
+   "why": "A judgement rule no gate can check, priced per turn forever \u2014 and our actual comment problem is the opposite one (the gate scripts' comments are load-bearing history)."
+  }
+ ],
+ "antiPatterns": [
+  {
+   "what": "Copying AGENTS.md's size. It is 887 lines of always-loaded instruction.",
+   "evidence": "wc -l /tmp/jclaw/AGENTS.md \u2192 887; CLAUDE.md is 5 lines and only does `@AGENTS.md`.",
+   "whyNotForUs": "Our measured per-turn injection is already ~6.7k tokens on SSHD (memory reference-ship-bar-drift), against a one-developer-with-ADD constraint. JClaw's density is affordable for a team repo with a generator maintaining it; here every line is paid on every turn of every session."
+  },
+  {
+   "what": "Treating the `Verified <date> against <sha>` stamp as the fix for instruction rot.",
+   "evidence": "AGENTS.md:6 carries the stamp; commit 0dfcd451 2026-09-06 corrected six claims inside that same stamped block.",
+   "whyNotForUs": "The stamp is a claim about freshness that nothing verifies \u2014 precisely the shape our own rules call ceremony. Adopt the mechanical resolver instead."
+  }
+ ],
+ "integrity": "VERIFIED BY COMMAND at /tmp/jclaw pinned 366459cd (v0.18.60): AGENTS.md read in full at lines 1-68 and 819-887 plus targeted greps for every quoted line number (6, 23, 46, 825, 842); CLAUDE.md read in full (5 lines); docs/spikes/jclaw-671-harness-sandboxing.md read in full; .claude/commands/secret-scan.md:40 grepped; git show 0dfcd451 and f588bc44 (message + stat + the secret-scan hunk). OURS: .githooks/pre-commit read in full; CLAUDE.md:67 grepped; `ls .claude/`; `git log --all -- .claude/ship-bar.md`; `git log -1 -S'ship-bar contract auto-injects' -- CLAUDE.md`; `ls -la ~/.claude/ship-bar.md`; `grep -n ship-bar ~/.claude/settings.json`; tests/claimcheck.test.ts:334-335 and tests/chaosGate.test.ts:73 grepped; the 148-token/16-miss path probe run and every miss triaged by hand. _bmad/custom/config.toml read in full (680 B \u2014 it redirects bmad's generated docs to docs/architecture/ so the generator cannot 'write a competing second doc set to the docs/ root', i.e. the same one-home-per-fact discipline as agent-instructions-3's verdict). CORRECTION: an earlier draft of this integrity line claimed that file was absent from the pinned tree; it exists and has now been read. NOT READ: .claude/commands/{quality,deploy,docs}.md (the round-1 brief listed them; budget spent on the measured defect instead \u2014 declared, not silently dropped)."
+}
