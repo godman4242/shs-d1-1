@@ -27,6 +27,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { ChaosPlant } from '../scripts/gates/chaosPlant.ts';
 import { applyPlant, baselineIsGreen, classify, countOccurrences, testCounts, validatePlant } from '../scripts/gates/chaosLib.ts';
+import { splitLines } from '../scripts/gates/claimcheckLib.ts';
 import { PLANTS as PLANTS_3A } from './npcSlice3a.plants';
 import { PLANTS as PLANTS_3B } from './npcSlice3b.plants';
 
@@ -67,11 +68,28 @@ describe('chaos gate — the plant corpus', () => {
     expect(ALL).toHaveLength(EXPECTED_PLANTS);
   });
 
-  /** One rule, one number: read the runner's constant rather than trusting a copy. */
+  /**
+   * One rule, one number: read the runner's constant rather than trusting a copy.
+   *
+   * ⚠️ READ THE COMMENT-STRIPPED CODE, NOT THE RAW FILE. The first version of this test
+   * ran `/const EXPECTED_TOTAL = (\d+);/.exec(src)` over the raw text — unanchored, first
+   * match wins — and a stale `// const EXPECTED_TOTAL = 43;` left above a live
+   * `= Number(process.env.CHAOS_TOTAL ?? 43)` made it read 43 out of the COMMENT and pass,
+   * defeating the one thing it exists to do. Measured, on file copies. Anchoring alone is
+   * not enough either: `^` matches a line start, and a line inside a `/* … *\/` block is
+   * at a line start too. JClaw shipped and closed this exact bug in 88b142ee — "a required
+   * line moved into a comment all passed ... They now strip comments first".
+   *
+   * Exactly one match is required, so a second declaration cannot shadow the first.
+   */
   it('agrees with scripts/gates/chaos.ts on the expected plant count', () => {
     const src = readFileSync(join(ROOT, 'scripts/gates/chaos.ts'), 'utf8');
-    const found = /const EXPECTED_TOTAL = (\d+);/.exec(src)?.[1];
-    expect(found).toBe(String(EXPECTED_PLANTS));
+    const code = splitLines(src)
+      .map((l) => l.code)
+      .join('\n');
+    const found = [...code.matchAll(/^const EXPECTED_TOTAL = (\d+);\s*$/gm)];
+    expect(found, 'chaos.ts must declare EXPECTED_TOTAL exactly once, in code, at line start').toHaveLength(1);
+    expect(found[0]?.[1]).toBe(String(EXPECTED_PLANTS));
   });
 
   it('gives every plant a unique name — the report addresses plants by name', () => {

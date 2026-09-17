@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "chaos": "node scripts/gates/chaos.ts",
     "claimcheck": "node scripts/gates/claimcheck.ts",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "instructionpaths": "node scripts/gates/instructionPaths.ts"
   },
   "dependencies": {
     "phaser": "^3.90.0"

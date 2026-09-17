@@ -21,7 +21,14 @@ LINT_CMD="npm run -s lint"  # ESLint flat config (strict type-checked) — adopt
 STAGED=$(git diff --cached --name-only)
 NON_DOC=$(printf '%s\n' "$STAGED" | grep -vE '\.md$')
 if [ -n "$STAGED" ] && [ -z "$NON_DOC" ]; then
-  printf '\n[gate] Docs-only (markdown) change — skipping build/test/lint.\n\n'
+  printf '\n[gate] Docs-only (markdown) change — skipping build/test/lint.\n'
+  # ...but NOT the prose gate. 87 of the last 266 commits took this path, and 61 of those
+  # touched a CLAUDE.md or RESUME_HERE.md — so this is the path on which prose drift is
+  # introduced. A gate on prose that the prose-only commit skips can only ever go red on
+  # somebody else's commit, and a blocking gate with broken attribution is how --no-verify
+  # gets learned. ~0.1 s, node directly, no vitest boot.
+  printf '[gate] Checking instruction paths...\n\n'
+  node scripts/gates/instructionPaths.ts || exit 1
   exit 0
 fi
 
@@ -37,7 +44,20 @@ run_step() {  # $1 = label, $2 = command
   # asserted 1002/1003 tests while this hook had just measured 1001 and printed only a
   # tick; c38b660 caught it by hand. A number on screen cannot be inferred from memory.
   if [ "$1" = tests ]; then
-    grep -E '^ *(Test Files|Tests) +[0-9]' "$log" | sed 's/^ */      /' || true
+    # Capture, then require. The old form piped straight to sed and ended in `|| true`,
+    # which was decorative three times over: a pipeline returns SED's status (always 0),
+    # this file sets no `-e`, and run_step's return value is ignored at every call site.
+    # So a reporter whose format moved printed nothing and the commit went green anyway —
+    # the exact silent zero the comment above is about. `exit`, not `return`, for the
+    # same reason the failure branch above uses it.
+    totals=$(grep -E '^ *(Test Files|Tests) +[0-9]' "$log")
+    if [ -z "$totals" ]; then
+      printf '\n❌ tests passed but NO suite totals could be read from %s.\n' "$log"
+      printf '   The reporter format moved. A green with no number on screen is not a\n'
+      printf '   measurement — fix the grep before trusting it.\n\n'
+      exit 1
+    fi
+    printf '%s\n' "$totals" | sed 's/^ */      /'
   fi
   return 0
 }

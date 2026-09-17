@@ -1,0 +1,62 @@
+{
+ "cluster": "C2",
+ "title": "A written claim that quietly stopped being true",
+ "candidates": [
+  {
+   "id": "agent-instructions-1",
+   "pattern": "Mechanically resolve every repo path an always-loaded instruction file names; fail when one does not exist",
+   "failurePrevented": "An instruction file that every session reads keeps naming a file that was renamed or deleted. The agent follows it, finds nothing, and either improvises or reports a wrong cause. Nothing goes red, because prose is not compiled.",
+   "jclawEvidence": "AGENTS.md:6 `<!-- Verified 2026-09-09 against f32b0cbc. Managed by bmad-project-context; edits inside this block are replaced on refresh. -->` \u2014 the staleness stamp. AGENTS.md:23 `Rules with their reasons: the sections below. Settled verdicts before re-proposing work: `docs/spikes/`.`",
+   "builtAndExercised": "The STAMP is generated and refreshed (the marker block names its generator). The CHECK is not automated in JClaw: commit 0dfcd451 2026-09-06 `docs(agents): correct six claims the epic review found the code contradicts (JCLAW-1148)` found them by review, and its body records the drift spreading to three files: 'the build-script and pre-push comments repeated it'. So JClaw proves the defect class and the cost, not the gate.",
+   "ourState": "GAP",
+   "ourEvidence": "MEASURED with a throwaway node probe over CLAUDE.md, RESUME_HERE.md, src/{core,config,game}/CLAUDE.md, ~/.claude/CLAUDE.md, docs/research/HARNESS.md: 148 backticked path tokens, 16 unresolved, of which ONE is a hard defect after triage \u2014 CLAUDE.md:67 `- Per-turn ship-bar contract auto-injects from `.claude/ship-bar.md`.` while `ls .claude/` shows only commands/, workflows/, settings.local.json. `git log --all -- .claude/ship-bar.md` \u2192 15a7f08 (created, Stage 0, 2026-07-11), 00f28c7, 995bb52 2026-09-08 `ship-bar: stop shadowing the global contract \u2014 delete the copy, inherit it`. The deletion commit removed the file and left the pointer. The truth is ~/.claude/settings.json:23 `cat /Users/kheshav/.claude/ship-bar.md 2>/dev/null || true`. The other 15 are probe artifacts (bare relative fragments `core/`, `config/`, `game/` meaning src/*; `harness/chaos/` and `harness/workflows/` which DO exist under ~/kheshav-code/agent-harness/) plus two parked-lane inputs (docs/gauntlet/L0/convergence.json, worklist/MANIFEST.json) that RESUME_HERE tells a future session to CREATE.",
+   "proposal": "tests/instructionPaths.test.ts \u2014 read the tracked instruction files, extract backticked tokens that contain a slash and end in a known extension or a slash, resolve each against a declared base (repo root, $HOME for ~, and a named-sibling-repo map for agent-harness), and fail on any that does not exist. Carry a count floor so an extractor that stops matching cannot pass, and an explicit WILL-CREATE allowlist whose entries must each still be referenced.",
+   "doneCriterion": "Restore CLAUDE.md:67's claim as written \u2192 the test goes RED naming `.claude/ship-bar.md`; correct the line to the real global path \u2192 GREEN with the token count unchanged.",
+   "cost": "~80 lines of test + a small extractor; runs in well under a second on 8 files; 0 tokens per turn; 0 dependencies.",
+   "verdict": "ADOPT",
+   "why": "The only candidate in this unit that already has a dated, provable red on a defect we actually shipped, and it closes the exact class JClaw paid for twice."
+  },
+  {
+   "id": "agent-instructions-2",
+   "pattern": "Stamp a generated instruction block with the date and commit it was verified against",
+   "failurePrevented": "A reader cannot tell whether a rule is current or three refactors old, so a stale rule is obeyed with the same confidence as a fresh one.",
+   "jclawEvidence": "AGENTS.md:6 `Verified 2026-09-09 against f32b0cbc. Managed by bmad-project-context; edits inside this block are replaced on refresh. Keep anything you want preserved outside the markers.`",
+   "builtAndExercised": "Built: the marker block and its generator are in the tree and the stamp advances with refreshes. Exercised as a GATE: no \u2014 nothing fails when the stamp goes stale. 0dfcd451 shows the stamp alone did not stop six claims rotting.",
+   "ourState": "GAP",
+   "ourEvidence": "No SSHD or global instruction file carries a verified-against stamp; `grep -rn 'Verified .* against' CLAUDE.md RESUME_HERE.md ~/.claude/CLAUDE.md` \u2192 empty.",
+   "proposal": "Do not adopt the stamp on its own. If agent-instructions-1 ships, the test IS the stamp and it is machine-checked.",
+   "doneCriterion": "n/a \u2014 superseded by agent-instructions-1.",
+   "cost": "1 line per file, plus a maintenance ritual nobody enforces.",
+   "verdict": "SKIP",
+   "why": "A date in a comment that nothing verifies is ceremony \u2014 JClaw's own history is the counter-evidence, since the stamped block is exactly the one that carried six false claims."
+  },
+  {
+   "id": "architecture-rules-6",
+   "pattern": "A rule the docs admit is review-only becomes a test with a named, reasoned, stale-checked exception list \u2014 the FreezingArchRule move applied to our config-label rule.",
+   "failurePrevented": "A new src/config file or value shipped with no CONTRACT/INFERRED/Spec-fixed label, later read as verified fact (the label is what the twin rule, claimcheck and DIVERGENCES all lean on).",
+   "jclawEvidence": "test/CapabilityRulesTest.java:109-118 \u2014 the filesystem rule is frozen over \"the sites predating that seam\" with the reason written per holder in the rule's Javadoc; stored.rules:5 keys the store on the rule's description so the exception list is named and reasoned. AGENTS.md:339-341 \"deleting an entry is how the list shrinks; editing a rule is not.\"",
+   "builtAndExercised": "BUILT: archunit_store/filesystem-tool-paths holds 6 entries (wc -l), floor FROZEN_DIRECT_PATH_FILES=5 (CapabilityRulesTest.java:98).",
+   "ourState": "PARTIAL",
+   "ourEvidence": "src/config/CLAUDE.md:8-10 \"\u26a0\ufe0f **Labels are REVIEW-enforced, not test-enforced** (corrected 2026-08-24). No test parses them: `grep -c 'CONTRACT\\|INFERRED' tests/config-purity.test.ts` \u2192 0 ... `ai.ts` still ships `AI_TIERS` unlabeled.\" Measured per file (grep -c of CONTRACT|INFERRED|Spec-fixed vs `^export (const|let)`): every src/config/*.ts carries \u22651 label except ogAi.ts (7 exports, 0 labels), whose header (:1-6) says it is TRANSCRIBED and \"Byte-checked against those sources by `tests/ogAiData.test.ts` using an INDEPENDENT parser\" \u2014 a fourth provenance class, not an omission. Per-export counts overstate the gap because most files label in the header once (e.g. ogNpcBase.ts 23 exports / 1 label).",
+   "proposal": "tests/config-labels.test.ts (~20 lines): every src/config/*.ts must contain CONTRACT|INFERRED|Spec-fixed|TRANSCRIBED (the fourth word added to src/config/CLAUDE.md as the label for generated, byte-checked tables), with `const EXEMPT: Record<string,string> = {}` kept for the future and stale-checked: an exempt file that now carries a label fails until its entry is deleted. Per-file granularity, stated in the test header as the honest limit.",
+   "doneCriterion": "Plant: strip the label word from src/config/xp.ts \u2192 RED naming the file; restore. New config file without a label \u2192 RED. src/config/CLAUDE.md line 8-10 rewritten from 'REVIEW-enforced' to name the test.",
+   "cost": "~20 lines + 2 doc lines; zero dependencies.",
+   "verdict": "ADAPT",
+   "why": "Small, and it retires an admitted gap the doc has carried since 2026-08-24; but it is per-file, so it catches a forgotten file, not a forgotten value \u2014 say so, and do it after -3 and -4, which catch more."
+  },
+  {
+   "id": "harness-evolution-1",
+   "pattern": "Instruction-file rot is a recurring defect with a measurable cost, not a tidiness issue",
+   "failurePrevented": "Rules that every agent reads quietly stop being true; the drift then propagates into code comments and build scripts, so three places agree on something false.",
+   "jclawEvidence": "Commit 0dfcd451 2026-09-06 `docs(agents): correct six claims the epic review found the code contradicts (JCLAW-1148)`, body: `Nullness: ... The text said the opposite, and the build-script and pre-push comments repeated it.` \u00b7 `Frozen stores: with allowStoreUpdate pinned off, a fixed site fails the build until its store line is deleted; the text said the store prunes itself.` Diffstat: AGENTS.md +96/-43 lines across three files.",
+   "builtAndExercised": "Closed by REVIEW, not by a gate \u2014 there is no test in JClaw that checks AGENTS.md against the code. The stamp at AGENTS.md:6 did not prevent it; the six false claims lived inside the stamped block.",
+   "ourState": "GAP",
+   "ourEvidence": "See study-agent-instructions.json / agent-instructions-1: CLAUDE.md:67 has named a deleted file since 995bb52 (2026-09-08).",
+   "proposal": "Merged into agent-instructions-1 \u2014 this candidate is the evidence that the class recurs, not a second gate.",
+   "doneCriterion": "See agent-instructions-1.",
+   "cost": "n/a (merged)",
+   "verdict": "ADOPT",
+   "why": "It converts agent-instructions-1 from 'we found one' into 'this class recurs in a repo that reviews harder than we do' \u2014 which is the difference between a tidy-up and a gate."
+  }
+ ]
+}

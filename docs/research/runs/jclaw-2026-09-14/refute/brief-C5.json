@@ -1,0 +1,34 @@
+{
+ "cluster": "C5",
+ "title": "The gate measures a different artifact than the one that ships",
+ "candidates": [
+  {
+   "id": "gate-guards-6",
+   "pattern": "The gate's input must be the artifact being committed: refuse a partially staged commit rather than test the working tree and stamp the index",
+   "failurePrevented": "`git add -p`, or editing a file after `git add`, then `git commit`: the hook runs `npx vitest run` over the WORKING tree, goes green, and git records the INDEX \u2014 content nobody tested. A build input the gate never looked at, JCLAW-1178's shape (\"an edit ships nothing while the gate reports up to date\").",
+   "jclawEvidence": "test/SpaBuildInputsConformanceTest.java:19-23 \"A build input outside those roots is invisible to it, so an edit ships nothing while the gate reports 'up to date': the guide's markdown was exactly that until JCLAW-1178.\"; AGENTS.md:83 the pre-commit uses `lint-staged` (staged-file scoped) for the frontend.",
+   "builtAndExercised": "JClaw: commits 47c9529c and 4ae46865 2026-09-09 (JCLAW-1178/1179), the conformance test reads the gate's roots FROM the script (`GATE_ROOTS_LINE` over jclaw.sh:2936 `ls-files -z -- frontend docs/user-guide`). The staged-vs-tree analogue on our side is INFERENCE \u2014 no incident in our logs; I did not find evidence it has bitten.",
+   "ourState": "GAP",
+   "ourEvidence": ".githooks/pre-commit:21 `STAGED=$(git diff --cached --name-only)` is used only for the docs-only decision; :28-43 `run_step` runs `sh -c \"$2\"` against the tree with no `git stash` and no staged-vs-unstaged comparison. The docs-only path itself is SAFE: `grep -rnE 'readFileSync\\([^)]*\\.(md)' tests scripts .claude` \u2192 only tests/ledgerEvidence.test.ts:125 (a temp-dir fixture), so no `.md` under git is a gate input (330 tracked .md files, none read by a test or gate).",
+   "proposal": ".githooks/pre-commit, after STAGED (4 lines): `PARTIAL=$(git diff --name-only | grep -Fxf <(printf '%s\\n' \"$STAGED\"))`; `if [ -n \"$PARTIAL\" ]; then printf '\u274c partially staged \u2014 the gate would test a tree you are not committing:\\n%s\\n' \"$PARTIAL\"; exit 1; fi`. Refuse, never auto-stash (a stash inside a hook is the non-idempotent-replay killer in miniature).",
+   "doneCriterion": "Edit a .ts file, `git add` it, edit it again, `git commit` \u2192 refused naming the file; `git add` again \u2192 the gate runs.",
+   "cost": "4 lines of sh; ~10 min. Note: `<(...)` needs bash, and the hook is `#!/bin/sh` \u2014 use a temp file or `grep -Fx -f` on a here-string alternative; keep it POSIX.",
+   "verdict": "ADAPT",
+   "why": "Cheap and fail-closed, but ranked last: solo workflow is mostly `git add -A`, and there is no evidence it has bitten. Take it only if gate-guards-5 is being written anyway; skip otherwise under 'simplest change wins'."
+  },
+  {
+   "id": "hooks-ci-sandbox-1",
+   "pattern": "Gate the staged tree, not the working tree \u2014 read staged blobs with `git show :<path>`",
+   "failurePrevented": "A partial commit (`git add -p`, or staging one of several edited files) is validated against the working tree, which contains content the commit does not. The gate passes on code that is not what lands, so HEAD can be broken while every gate was green.",
+   "jclawEvidence": ".githooks/pre-commit:33-35 `Reads staged blobs via `git show :` \u2014 for a path that is not staged that returns the index copy, i.e. HEAD's content, so a package.json-only commit is still checked against the lockfile that will be in the tree.` and :37 `staged_pin=$(git show ':frontend/package.json' | sed -n 's/.*\"packageManager\": *\"\\([^\"]*\\)\".*/\\1/p' | head -1)`.",
+   "builtAndExercised": "Built and live in the shipped hook. Exercised by the guard it powers (the pnpm lockfile integrity check, added in f22acb6a 2026-04-27 `pnpm pin: separate setup migration from start validation, add hook guard`). Scope honesty: JClaw applies the staged-blob read only to this one guard \u2014 lint-staged handles the general case by operating on staged files, and the pre-push suite runs on the checked-out tree.",
+   "ourState": "GAP",
+   "ourEvidence": ".githooks/pre-commit:21 `STAGED=$(git diff --cached --name-only)` reads staged NAMES only; :50-52 then run `npm run -s typecheck`, `npx vitest run`, `npm run -s lint` \u2014 all of which read the working tree. Nothing in the hook reads `git show :`. So index != working tree is ungated.",
+   "proposal": "Not the general form (running the whole suite against a temporary checkout of the index costs a stash-or-worktree per commit, which is the opposite of 'simplest change wins'). Smallest useful form: detect the divergence and refuse \u2014 if any tracked file differs between the index and the working tree, fail with the list, since in this single-developer repo a partial commit is always accidental.",
+   "doneCriterion": "Stage a file, edit it further in the working tree, commit \u2192 hook exits non-zero naming the file; `git add` it \u2192 green.",
+   "cost": "~6 lines; one `git diff --name-only` per commit (milliseconds).",
+   "verdict": "ADAPT",
+   "why": "The defect is real and unguarded here, but the JClaw form does not transfer; the divergence refusal gets the same safety for a fraction of the cost."
+  }
+ ]
+}

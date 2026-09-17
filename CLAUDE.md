@@ -26,8 +26,8 @@ state and next step live in `RESUME_HERE.md`.
   scope until the grant's wording is re-checked.
 - **Stack is fixed:** Phaser 3 (pinned `phaser@3`, NOT v4) + TypeScript 5 + Vite,
   Vitest, WebAudio-synthesized SFX only, procedural vector art only (no image files).
-- **Dependency direction:** `game/` may import `core/` + `config/`; `core/` may import
-  `config/` only; `config/` imports nothing outside itself. Never reverse.
+- **Dependency direction:** `src/game/` may import `src/core/` + `src/config/`; `src/core/`
+  may import `src/config/` only; `src/config/` imports nothing outside itself. Never reverse.
 - **`src/core/` has ZERO numeric literals** and no package imports (enforced by
   `tests/config-purity.test.ts`). Every gameplay number lives in `src/config/`,
   labeled CONTRACT or INFERRED.
@@ -63,8 +63,13 @@ state and next step live in `RESUME_HERE.md`.
   `engines.node >= 22.18`) — no runner, no new dependency.
 
 ## Quality gate
-- Pre-commit runs typecheck → tests (see `.githooks/pre-commit`). Commit = green.
-- Per-turn ship-bar contract auto-injects from `.claude/ship-bar.md`.
+- Pre-commit runs typecheck → tests → lint (see `.githooks/pre-commit`). Commit = green.
+  A markdown-only commit takes the fast path, which still runs `npm run instructionpaths`
+  — the gate on prose has to run on the commits that are pure prose.
+- Per-turn ship-bar contract auto-injects from a global `UserPromptSubmit` hook in
+  `~/.claude/settings.json`. It is NOT in this repo: 995bb52 deleted the local copy so the
+  global one could not be shadowed, and this line went on naming the deleted file for nine
+  days — which is why `npm run instructionpaths` now exists.
 
 ## Session discipline
 - `RESUME_HERE.md` (repo root) — **rewritten, never appended to**, in the SAME commit as
