@@ -354,3 +354,27 @@ state *rules* (not the session scratchpad), it needs **zero** exemptions.
 > idiom, so the gate would report 0 over a live defect. That is the claimcheck false-pass this
 > repo already paid 82 corrections for. Prefer fixing the prose to widening the rule: `core/`
 > became `src/core/`, which is also simply more accurate.
+
+### MEASURED AND NOT BUILT — `pass^k` over the chaos gate (2026-09-17)
+
+Two third-party Claude Code repos were audited this day (`affaan-m/ECC`, 292 skills;
+`WorldFlowAI/everything-claude-code`, 52 files). **Verdict on both: adopt nothing** — full
+adoption costs ~34k and ~3.8k tokens *per turn* respectively, against gates that are weaker
+than ours and in several places fail open. The single idea worth taking was `pass^k`: "all k
+trials succeed", as distinct from `pass@k`, "at least one does".
+
+It names a real blind spot. `npm run chaos` applies each plant ONCE, so a plant that goes red
+2 times in 3 is indistinguishable from one that goes red 3 in 3 — order-dependence and
+shared-state leakage between plants would both read as a clean pass.
+
+**So it was measured before being built, and there is nothing to fix:**
+
+    run 1: 43/43 plants went RED. 43/43 files restored byte-identical; git says the tree is clean.
+    run 2: 43/43 plants went RED. 43/43 files restored byte-identical; git says the tree is clean.
+    run 3: 43/43 plants went RED. 43/43 files restored byte-identical; git says the tree is clean.
+
+129 of 129 plant-runs red, 129 of 129 restores byte-identical. **Not built** — a `k`-loop would
+triple a ~32 s slice gate to catch a flake that does not exist, and RULE 4's own standard is
+that a gate nobody has seen go red on a real defect is ceremony. Re-run the three-pass by hand
+if a plant is ever re-authored or the runner's ordering changes; that is the moment the blind
+spot could open, not now.
