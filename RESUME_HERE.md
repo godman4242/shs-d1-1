@@ -1,14 +1,27 @@
 # RESUME HERE
 
-## ▶ NEXT SESSION — **WRITE SLICE 4'S KICKOFF, AND IT MUST ANSWER FINDINGS 15–18 FIRST**
+## ▶ NEXT SESSION — **`docs/sessions/UNITS_AND_WINDUP_KICKOFF.md`** (Opus 5 `xhigh`, ≤2 agents, 60–90 min)
 
 The seam spike is DONE and its answer is **SEAM NEEDS WORK** (not "no" — see below).
-Slice 4's kickoff was deliberately withheld until this answer existed, because the
-answer changes what it must say. It now has to say this: **13 more ported classes
-inherit all four defects below**, so at least finding 15 (units) and finding 18
-(the windup) are cheaper to close BEFORE porting than after.
+The kickoff is written and committed: **close findings 15 (units) and 18 (the windup)
+before slice 4 ports 13 more classes that would inherit both.**
 
-Read `docs/DIVERGENCES.md`, last section ("THE SEAM SPIKE"), for the full ledger.
+Measured for that kickoff at `a81e4c3`: **all 21** ported actors read a world-space
+field, and **13 of 21** can re-enter ATTACK. Findings 16 and 17 are NOT in scope — they
+move `OpponentView`, so they are L5's call.
+
+⛔ **Slice 4's kickoff is still unwritten, deliberately.** Read `docs/DIVERGENCES.md`,
+last section ("THE SEAM SPIKE"), for the full ledger.
+
+### ⚠️ THE TRAP THAT KICKOFF EXISTS TO STOP
+
+`MCSPlayer extends NPC` (4,775 lines) and `EnemyPlayer extends MCSPlayer` (1,647) are
+**both unported**, and `EnemyPlayer` is fetched via `NPCManager.getNetworkEnemyPlayer()`
+(`ConnectionPIO.as:551`) — the dead Player.IO path. **The original's duel opponent is
+another player's loadout, not an `EnemyKatana`.** So `AI_MELEE_RANGE` (50 world px, our
+single-player duel) and `OG_KATANA.melee.x` (100 OG px, an overworld mob) describe
+different fighters and are not required to agree. After the unit fix the katana should
+commit at ~83 world px — correct, and not a bug that it differs from 48.2.
 
 ### WHAT THE SPIKE ANSWERED (2026-09-17, one `EnemyKatana` in the shipped duel)
 
