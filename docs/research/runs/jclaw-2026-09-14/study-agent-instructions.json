@@ -76,8 +76,8 @@
  "antiPatterns": [
   {
    "what": "Copying AGENTS.md's size. It is 887 lines of always-loaded instruction.",
-   "evidence": "wc -l /tmp/jclaw/AGENTS.md \u2192 887; CLAUDE.md is 5 lines and only does `@AGENTS.md`.",
-   "whyNotForUs": "Our measured per-turn injection is already ~6.7k tokens on SSHD (memory reference-ship-bar-drift), against a one-developer-with-ADD constraint. JClaw's density is affordable for a team repo with a generator maintaining it; here every line is paid on every turn of every session."
+   "evidence": "wc -l /tmp/jclaw/AGENTS.md \u2192 887; CLAUDE.md is 5 lines and only does `@AGENTS.md`. MEASURED 2026-09-17: the repo is 4,153 commits in 5 months by ONE human (git shortlog: 4,083 Tarun Sukhani, 150 Renovate Bot), and 3,514 of those commits \u2014 85% \u2014 carry a `Co-Authored-By: Claude` trailer.",
+   "whyNotForUs": "CORRECTION to this file's first draft, which said the density is 'affordable for a team repo with a generator maintaining it; here every line is paid on every turn'. THE PREMISE WAS WRONG: JClaw is not a team, it is one developer working with Claude at ~800 commits/month, so they pay the same per-turn tax we do and have chosen to. The real caution is narrower and better evidenced: 887 always-loaded lines ROT \u2014 0dfcd451 corrected six claims the code contradicted, inside the block already stamped 'Verified 2026-09-09'. Volume is not the objection; unverifiable volume is. Add lines only where something can check them (agent-instructions-1), and weigh any addition against our measured ~6.7k tokens/turn."
   },
   {
    "what": "Treating the `Verified <date> against <sha>` stamp as the fix for instruction rot.",
