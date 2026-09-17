@@ -306,6 +306,21 @@ whole gate rather than one agent. So:
 - **Reproduce a CI failure locally before fixing it**, and use the RIGHT reproduction:
 
       git clone -q --no-hardlinks . <scratch> && ln -sfn "$PWD/node_modules" <scratch>/node_modules
+      mkdir -p <scratch>/fakehome && cd <scratch> && HOME=<scratch>/fakehome npx vitest run
+
+  **`HOME=` is not optional, and leaving it off cost a red CI run.** A clone controls the
+  repo TREE. It does not control the environment around it, and a runner's `$HOME` is empty.
+  The very first test shipped with `instructionPaths` asserted that `~/.claude/ship-bar.md`
+  EXISTS — to show that a `$HOME` fallback would have hidden the founding defect. It passed
+  under a clone-only stand-in and failed on the runner, where that file does not exist. A gate
+  written to prove "we never touch $HOME" depended on $HOME to prove it. Its replacement asserts
+  the property on the SOURCE (`expect(gate).not.toMatch(/process\.env\.HOME|homedir\(/)`),
+  which is environment-independent and strictly stronger.
+
+  The harness's own known-positive control, run before believing it:
+
+      old stand-in (clone only)          -> Tests 12 passed (12)     <- FALSE GREEN
+      new stand-in (clone + neutral HOME) -> Tests 1 failed | 11 passed  <- catches it
 
   ⚠️ **NOT `git archive HEAD | tar -x`.** That was the first method used here and it is subtly
   wrong: it produces the tracked files but NO `.git`, so every test that shells out to git

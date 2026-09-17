@@ -15,7 +15,7 @@
  * to report a clean zero over a live defect. Do not "simplify" them away.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { FILES, ROOTS, check, extract, problems } from '../scripts/gates/instructionPaths.ts';
@@ -50,12 +50,20 @@ describe('the three false-pass controls', () => {
    * exist at ~/.claude/ship-bar.md, so resolving bare tokens against $HOME would have made
    * this gate green over the exact defect it was built for. Measured, not reasoned.
    */
-  it('never resolves a bare relative token against $HOME', () => {
-    const home = process.env.HOME ?? '';
+  it('never resolves anything against $HOME — asserted on the SOURCE, not the environment', () => {
+    // The first version of this control asserted that ~/.claude/ship-bar.md EXISTS, to show
+    // that a $HOME fallback would have hidden the founding defect. That made the test depend
+    // on a file outside the repo — the exact thing this gate's own header forbids — and it
+    // passed locally and FAILED IN CI, where $HOME holds no such file. Assert the property
+    // statically instead: the gate may not reach for $HOME at all. Environment-independent,
+    // and strictly stronger than the behavioural check it replaces.
+    const gate = readFileSync(join(ROOT, 'scripts/gates/instructionPaths.ts'), 'utf8');
+    expect(gate).not.toMatch(/process\.env\.HOME|homedir\(/);
+    // And the other half of the same hazard: a `~`-rooted token never becomes a lookup.
+    expect(extract('see `~/.claude/ship-bar.md`')).toEqual([]);
+    // The founding defect still resolves to nothing under the repo root.
     expect(existsSync(join(ROOT, '.claude/ship-bar.md'))).toBe(false);
-    expect(existsSync(join(home, '.claude/ship-bar.md'))).toBe(true);
-    const planted = extract('auto-injects from `.claude/ship-bar.md`.');
-    expect(planted.map((t) => existsSync(join(ROOT, t)))).toEqual([false]);
+    expect(extract('auto-injects from `.claude/ship-bar.md`.')).toEqual(['.claude/ship-bar.md']);
   });
 
   /** CONTROL 2 — extensionless paths stay in scope. "extension or trailing slash" alone
