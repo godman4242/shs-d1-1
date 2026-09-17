@@ -180,6 +180,23 @@ SLICE 6  the bosses             EnemyNianMonster(521) EnemySorcererBoss(380)
 
 **A slice is done when its gate is green. Do not start the next slice before then.**
 
+> ⚠️ **THE TABLE ABOVE IS THE ORIGINAL PLAN AND SLICE 4's ROW IS NOW STALE — verified
+> 2026-09-17.** Execution resequenced: slices 2a/2b pulled the PARENTS forward
+> (`EnemyWolf`, `EnemyCivilian`, `EnemyArcher`, `EnemySpearElite`), so three of the eight
+> names on the SLICE 4 line — `EnemyArcher`, `EnemyCivilian`, `EnemySpearElite` — are
+> already in `src/core/npc/`. **Real slice 4 is FIVE classes, not eight:**
+> `EnemyNinja(359)` · `EnemyShield(417)` · `EnemyGoblin(572)` · `EnemyGoblinThrower(586)`
+> · `EnemyOgre(386)`. Note `RoomGoblin`/`RoomOgre` shipped in slice 1 and are DIFFERENT
+> classes from `EnemyGoblin`/`EnemyOgre`.
+>
+> The arithmetic only closes once that correction is made:
+> `ls src/core/npc/ | grep -cE '^(Enemy|Friendly|Room)'` → **21**, and
+> 21 + 5 (slice 4) + 5 (slice 5) + 3 (slice 6) = **34**, the number this lane is scoped to.
+> With the stale row it reads 8 + 5 + 3 = 16 to go against 13 actually remaining.
+>
+> This is exactly what `RESUME_HERE.md` means by *"measure per file, never carry a number
+> forward"*. Any slice 4 kickoff must re-measure from `src/core/npc/`, not from this table.
+
 ## ⛔ NOT in scope — say so up front rather than at the gate
 
 - **`EnemyPlayer` and its three children** (`EnemyElite`, `EnemyPlayerGiant`,
