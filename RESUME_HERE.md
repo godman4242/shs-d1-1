@@ -1,6 +1,22 @@
 # RESUME HERE
 
-## ▶ NEXT SESSION — **no kickoff is queued. Pick from "WHAT IS STILL OPEN" below.**
+## ▶ NEXT SESSION — **THE SEAM SPIKE: `docs/sessions/SEAM_SPIKE_KICKOFF.md`** (Opus 5 `xhigh`, ≤2 agents, 60–90 min)
+
+**21 enemy classes are ported and ZERO are in the game** (measured `1febe4d`:
+`ls src/core/npc/ | grep -cE '^(Enemy|Friendly|Room)'` → 21; `grep -rn "core/npc" src/game
+src/core/Sim.ts src/core/OpponentController.ts` → empty). The duel still fights the
+hand-authored stand-in at `src/game/DuelScene.ts:195`. Before slices 4–6 add 13 more
+classes nothing consumes — and with four DIVERGENCES findings (5, 10, 13, 14) already
+saying the seam cannot carry things — put **one** `EnemyKatana` in the duel and answer
+**SEAM HOLDS** or **SEAM NEEDS WORK**.
+
+The adapter already exists (`NpcController.ts:86`). The measured gap is two inputs with no
+implementation anywhere in `src/`: `AnimLibrary` and `HitGeometry` — only test stubs at
+`tests/npcSlice1.test.ts:48-49`, while the data sits committed in `src/config/ogAnims.ts`.
+
+⛔ **Slice 4's kickoff is deliberately NOT written**: this spike's answer changes what it
+must say. `docs/sessions/L4B_KICKOFF.md` carries a corrected note that real slice 4 is FIVE
+classes, not the eight its stale table lists.
 
 **SESSION 38 (2026-09-17) CLOSED THE JCLAW LANE.** Round 2 ran end to end: the 3 areas round 1
 never reached are measured, all 52 candidates are adjudicated, 10 read-only agents refuted the
