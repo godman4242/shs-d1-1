@@ -69,7 +69,7 @@ export function extract(text: string): string[] {
   const out: string[] = [];
   for (const m of text.matchAll(TOKEN)) {
     const t = (m[1] ?? '').trim().replace(/:\d+(-\d+)?$/, '');
-    if (!t.includes('/') || !PATHY.test(t)) continue;
+    if (!t.includes('/') || !PATHY.test(t) || !/[A-Za-z0-9]/.test(t)) continue;
     if (t.startsWith('~') || /^(https?|git@)/.test(t)) continue;
     const first = t.split('/')[0] ?? '';
     if (!EXT.test(t) && !t.endsWith('/') && !(ROOTS as readonly string[]).includes(first)) continue;
@@ -87,27 +87,38 @@ export interface Report {
   readonly ignoredSkipped: readonly string[];
   readonly missingRoots: readonly string[];
   readonly emptyFiles: readonly string[];
+  /** Non-null when `git check-ignore` could not run — the gate then fails closed. */
+  readonly gitError: string | null;
 }
 
-/** Batched `git check-ignore --stdin`. Exit 1 means "none matched" and still carries the
- *  partial list on stdout, so it is a result, not an error. */
-function gitIgnored(root: string, tokens: readonly string[]): Set<string> {
+/**
+ * Batched `git check-ignore --stdin`. Exit 1 means "none matched" and still carries the
+ * partial list on stdout, so it is a result, not an error.
+ *
+ * Anything else is reported, never swallowed and never thrown raw. Measured while abusing
+ * this gate: outside a git work tree it died with `fatal: not a git repository`, and a file
+ * carrying thousands of backticked tokens died with `spawnSync git EPIPE` when git closed
+ * stdin early. Both must FAIL CLOSED with a legible reason — if we cannot tell what is
+ * gitignored, we cannot tell a study-only path from a dead one, and guessing either way is
+ * the silent-zero this gate exists to prevent.
+ */
+function gitIgnored(root: string, tokens: readonly string[]): { ignored: Set<string>; error: string | null } {
   const uniq = [...new Set(tokens)];
-  if (uniq.length === 0) return new Set();
+  if (uniq.length === 0) return { ignored: new Set(), error: null };
   try {
     const out = execFileSync('git', ['-C', root, 'check-ignore', '--stdin'], { input: uniq.join('\n'), encoding: 'utf8' });
-    return new Set(out.split('\n').filter(Boolean));
+    return { ignored: new Set(out.split('\n').filter(Boolean)), error: null };
   } catch (e: unknown) {
-    const err = e as { status?: number; stdout?: string };
-    if (err.status === 1) return new Set((err.stdout ?? '').split('\n').filter(Boolean));
-    throw e;
+    const err = e as { status?: number; stdout?: string; message?: string };
+    if (err.status === 1) return { ignored: new Set((err.stdout ?? '').split('\n').filter(Boolean)), error: null };
+    return { ignored: new Set(), error: (err.message ?? String(e)).split('\n')[0] ?? 'unknown' };
   }
 }
 
 export function check(root: string = ROOT): Report {
   const all = FILES.flatMap((file) =>
     extract(readFileSync(join(root, file), 'utf8')).map((token) => ({ file, token })));
-  const ignored = gitIgnored(root, all.map((t) => t.token));
+  const { ignored, error: gitError } = gitIgnored(root, all.map((t) => t.token));
   const ignoredSkipped = all.filter((t) => ignored.has(t.token)).map((t) => t.token);
   const tokens = all.filter((t) => !ignored.has(t.token));
   const dead = tokens
@@ -119,11 +130,14 @@ export function check(root: string = ROOT): Report {
    *  second copy of a number that every prose edit can drift, which is this repo's own
    *  documented killer. "Each file yields at least one" needs no number at all. */
   const emptyFiles = FILES.filter((f) => !tokens.some((t) => t.file === f));
-  return { tokens, dead, ignoredSkipped, missingRoots, emptyFiles };
+  return { tokens, dead, ignoredSkipped, missingRoots, emptyFiles, gitError };
 }
 
 export function problems(r: Report): string[] {
   const out: string[] = [];
+  // First, because it explains every other line: without check-ignore we cannot tell a
+  // study-only path from a dead one, so the dead list below is not trustworthy.
+  if (r.gitError !== null) out.push(`git check-ignore could not run (${r.gitError}) — cannot tell a study-only path from a dead one`);
   for (const d of r.dead) out.push(`names a path that does not exist: ${d}`);
   for (const f of r.emptyFiles) out.push(`${f} yielded no path tokens — the extractor is broken, or the file moved`);
   for (const m of r.missingRoots) out.push(`ROOTS entry \`${m}\` does not exist — a top-level directory was renamed`);
