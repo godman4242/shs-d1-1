@@ -275,3 +275,59 @@ What IS reproducible, and what the tests pin:
 
 Report the FATALs a run actually raises, and say whether they match a previous run.
 Do not gate on it.
+
+## RULE 4 — A GATE THAT IS ALWAYS RED CARRIES NO INFORMATION (session 38, 2026-09-17)
+
+CI had failed on **every push to master for 24 days** — six consecutive runs, last green
+`32707925686` on 2026-08-24 — and it was found only because a refuter was pricing an unrelated
+candidate and checked whether "CI catches it anyway" was a fair fallback. It was not: CI could
+not pass.
+
+The cause is one measured vitest fact:
+
+> `describe.skipIf(cond)` skips the TESTS in the block. It still **executes the block body**
+> to collect them.
+
+Six `og*` suites each computed `HAVE_SOURCE = existsSync(<path under reference/>)` and then read
+that same path inside `describe.skipIf(!HAVE_SOURCE)`. `reference/` is gitignored by invariant,
+so on a fresh checkout the read threw ENOENT at collection time and the guard written to prevent
+exactly that had no effect. Probe: a `describe.skipIf(true)` block whose body reads a nonexistent
+path gives `Test Files 1 failed (1) / Tests no tests` — the sibling test outside the block does
+not run either.
+
+**The rule this earns is not about vitest.** It is that the failure was invisible *because* the
+signal was saturated: a real regression pushed on day 25 would have been the seventh red run and
+indistinguishable from the other six. That is fail-open accounting (RULE 2) at the level of a
+whole gate rather than one agent. So:
+
+- **A gate nobody can distinguish from broken is worse than no gate**, because it is still
+  believed to be watching. Check that your always-green gate is capable of red (RULE 2's
+  known-positive control) — and check that your always-RED gate is capable of green.
+- **Reproduce a CI failure locally before fixing it.** `git archive HEAD | tar -x -C <scratch>`
+  with `node_modules` symlinked is the same tracked-files-only tree CI checks out, and it turned
+  a log-reading exercise into a red-first fix: `6 failed | 77 passed (83)` → `83 passed (83)`.
+- **A skip must be loud and counted.** The fixed suites report `1576 passed | 55 skipped (1631)`
+  on a clean clone. 55 is a number an operator can challenge; a silent skip is not.
+
+### THE COROLLARY FOR PROSE GATES — run them on the commits that are pure prose
+
+`scripts/gates/instructionPaths.ts` (session 38) resolves every repo path the four standing
+instruction files name. Measured: **87 of the last 266 commits (32.7%) were markdown-only** and
+took the pre-commit docs-only fast path, and **61 of those 87 touched a `CLAUDE.md` or
+`RESUME_HERE.md`** — the exact files such a gate reads. A gate on prose that the prose-only
+commit skips can only ever go red on a later commit that did not cause the break, and a blocking
+gate with broken attribution is how `--no-verify` gets learned. The fast path therefore runs the
+prose gate (node directly, ~0.1 s, no vitest boot) and only skips build/test/lint.
+
+### AND THE SCOPE RULE THE FIT LENS EARNED
+
+The first version of that gate read six files including `RESUME_HERE.md`: **24 unresolved tokens,
+exactly 1 of them a real defect** — 4% precision, six classes of suppression on day one, and 19
+of the false reds in the one file that produced zero true ones. Scoped to the four files that
+state *rules* (not the session scratchpad), it needs **zero** exemptions.
+
+> **An exemption list is a hiding place.** Here "bare relative fragment" would have had to
+> swallow `core/` and `run2/` — and a genuinely deleted `docs/loop/` is byte-identical to that
+> idiom, so the gate would report 0 over a live defect. That is the claimcheck false-pass this
+> repo already paid 82 corrections for. Prefer fixing the prose to widening the rule: `core/`
+> became `src/core/`, which is also simply more accurate.

@@ -1,21 +1,64 @@
 # RESUME HERE
 
-## ▶ NEXT SESSION — **JCLAW LESSONS ROUND 2: `docs/sessions/JCLAW_LESSONS_KICKOFF.md`** (Opus 5 `xhigh`, ultracode OFF, ≤10 agents)
+## ▶ NEXT SESSION — **no kickoff is queued. Pick from "WHAT IS STILL OPEN" below.**
 
-2026-09-14 ran a 28-agent Fable fan-out comparing **JClaw**'s harness (github.com/tsukhani/jclaw,
-pinned `366459cd` = v0.18.60) with ours. It hit the **session limit in 10.3 minutes** after
-**1,369,556 tokens**; 25 agents were killed and **0 lessons were verified**. The disk-write rule
-saved **5 of 8 studies** (the run's own report said 2 — a returned value is a lower bound on what
-survived). Salvage + measurements: `docs/research/runs/jclaw-2026-09-14/SALVAGE.md`;
-**36 candidates** (9 ADOPT · 17 ADAPT · 10 SKIP) + 15 unread areas, **all unrefuted leads**.
+**SESSION 38 (2026-09-17) CLOSED THE JCLAW LANE.** Round 2 ran end to end: the 3 areas round 1
+never reached are measured, all 52 candidates are adjudicated, 10 read-only agents refuted the
+top 5 clusters (10/10 returned), and 4 gates shipped. Ledger: `docs/research/JCLAW_LESSONS.md`.
+Verdicts: `docs/research/runs/jclaw-2026-09-14/refute/`. **The lane (slice 4) is still parked.**
 
-**The point is not JClaw** (owner, 2026-09-16): it is to make OUR architecture stronger and our
-outputs more correct — so a finding counts only once a gate built from it has been seen going RED
-on a defect we actually had. Round 2 finishes the 3 dead areas in ONE loop, merges + ranks,
-refutes the top 5 with ≤10 agents, ships what survives as gates, and rules on
-**tokens per verified lesson** — the A/B that decides
-whether ultracode fan-outs get a hard cap over repos we do not already know. **The lane
-(slice 4) stays parked.**
+### THE FOUR DEFECTS THAT WERE ACTUALLY IN OUR TREE
+
+1. **CI had been red for 24 days and nobody knew** — six consecutive push failures since
+   2026-08-24. Cause: `describe.skipIf(cond)` skips the TESTS but still EXECUTES the block
+   body, so six `og*` suites read gitignored `reference/` at collection time and threw ENOENT
+   on every fresh checkout. **A gate that is always red carries no information** — a real
+   regression would have been the seventh red and indistinguishable. Fixed (commit 5367599);
+   a clean clone now runs `83 passed (83) · 1576 passed | 55 skipped`.
+2. **`CLAUDE.md:67` named `.claude/ship-bar.md`**, deleted by 995bb52 on 2026-09-08 — false for
+   nine days in the file every session loads. Now gated by `npm run instructionpaths`.
+3. **`tests/chaosGate.test.ts` read the chaos runner's plant count out of a COMMENT.** Proved on
+   the real file: the old unanchored regex returns 43 from a stale `//` line above a computed
+   live value, and passes.
+4. **`.githooks/pre-commit` could print no test totals and still commit.** Now asserts them.
+
+### WHAT THE REFUTERS CHANGED — read this before trusting any future "we lack X"
+
+Every JClaw quote checked out. **All the errors were on our side**, and three were in proposals
+already written and about to ship broken: a `$HOME` fallback that would have made the new gate
+GREEN over its own founding defect; an extractor that silently dropped `.githooks/pre-commit`;
+and a `reference/` scan that would have been RED BY CONSTRUCTION on CI. The fit lens then cut
+the gate from 6 files to 4 and from ten exemptions to **zero**. A lead I wrote as a gap —
+"claimcheck's CONTEXT list is unpinned" — was refuted by reading the source: it is pinned
+harder than JClaw's frozen store.
+
+### THE A/B RULING — ONE LOOP READS THE REPO, THE FAN-OUT JUDGES SMALL INPUTS
+
+| | round 1 · Fable fan-out | round 2 · Opus 5 `xhigh` loop |
+|---|---|---|
+| agents spawned / returned | 28 / 3 (**11%**) | **10 / 10 (100%)** |
+| subagent tokens | 1,369,556 | **1,079,721** |
+| wall time | 10.3 min, to the session limit | 23.1 min of fan-out, no wall |
+| areas measured | 5 of 8 | **3 of 3 remaining** |
+| lessons VERIFIED | **0** | **10 live verdicts** |
+| tokens per verified lesson | **undefined — no denominator** | **107,972** |
+
+**Ruled:** the loop wins, but not because fan-out is wrong — round 2 used a fan-out too. What
+changed is WHAT the agents were given. Round 1 sent 8 agents to read a 250k-line foreign repo
+and they re-read overlapping context until the session died. Round 2 had the loop do the repo
+reading and handed each agent a small JSON brief plus an explicit file list. Per agent that
+cost **2.2× more** (107,972 vs 48,913) — each one ran real experiments instead of dying — and
+every one came back. **Standing rule, already in `~/.claude/CLAUDE.md`: a fan-out over a repo we
+do not already know gets ≤6 agents with explicit file lists.** No code cap was added, on purpose:
+the incident was 28 agents and any plausible constant sits above 28.
+
+### WHAT IS STILL OPEN
+
+- **`master` is 3 commits ahead of `origin/master`.** Nothing is pushed. CI will run on push and
+  should now be GREEN for the first time since 2026-08-24 — that is the verification.
+- Slice 4 (`docs/sessions/L4B_KICKOFF.md`) — parked, by standing decision.
+- Port `instructionPaths` to `~/kheshav-code/agent-harness` so all 7 sibling repos get it. Its
+  scoped shape is exactly what ports; the file list is the only project-specific part.
 
 ## ▶ SESSION 37 (2026-09-14) — **THE HARNESS IS FINISHED: T1–T5 ALL CLOSED · ROLLED OUT GLOBALLY · NO LANE WORK · NEXT: write the slice 4 kickoff**
 
