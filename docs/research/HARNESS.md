@@ -303,9 +303,17 @@ whole gate rather than one agent. So:
 - **A gate nobody can distinguish from broken is worse than no gate**, because it is still
   believed to be watching. Check that your always-green gate is capable of red (RULE 2's
   known-positive control) — and check that your always-RED gate is capable of green.
-- **Reproduce a CI failure locally before fixing it.** `git archive HEAD | tar -x -C <scratch>`
-  with `node_modules` symlinked is the same tracked-files-only tree CI checks out, and it turned
-  a log-reading exercise into a red-first fix: `6 failed | 77 passed (83)` → `83 passed (83)`.
+- **Reproduce a CI failure locally before fixing it**, and use the RIGHT reproduction:
+
+      git clone -q --no-hardlinks . <scratch> && ln -sfn "$PWD/node_modules" <scratch>/node_modules
+
+  ⚠️ **NOT `git archive HEAD | tar -x`.** That was the first method used here and it is subtly
+  wrong: it produces the tracked files but NO `.git`, so every test that shells out to git
+  (`check-ignore`, `ls-files`) fails for a reason CI would never hit. It reported **4 phantom
+  failures** against a tree that is in fact green — a false RED, which costs a session chasing
+  nothing and trains you to distrust the harness. `actions/checkout` makes a real repository, so
+  the local stand-in must too. Caught only because the run was checked rather than assumed.
+  With the right method: `6 failed | 77 passed (83)` → `1588 passed | 55 skipped (1643)`.
 - **A skip must be loud and counted.** The fixed suites report `1576 passed | 55 skipped (1631)`
   on a clean clone. 55 is a number an operator can challenge; a silent skip is not.
 

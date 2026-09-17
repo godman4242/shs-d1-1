@@ -13,8 +13,10 @@ Verdicts: `docs/research/runs/jclaw-2026-09-14/refute/`. **The lane (slice 4) is
    2026-08-24. Cause: `describe.skipIf(cond)` skips the TESTS but still EXECUTES the block
    body, so six `og*` suites read gitignored `reference/` at collection time and threw ENOENT
    on every fresh checkout. **A gate that is always red carries no information** — a real
-   regression would have been the seventh red and indistinguishable. Fixed (commit 5367599);
-   a clean clone now runs `83 passed (83) · 1576 passed | 55 skipped`.
+   regression would have been the seventh red and indistinguishable. Fixed (commit 5367599).
+   Verified against a faithful stand-in — `git clone --no-hardlinks .`, NOT `git archive`, which
+   has no `.git` and reports phantom failures for any test that shells out to git:
+   **`1588 passed | 55 skipped (1643)`, 0 failed.**
 2. **`CLAUDE.md:67` named `.claude/ship-bar.md`**, deleted by 995bb52 on 2026-09-08 — false for
    nine days in the file every session loads. Now gated by `npm run instructionpaths`.
 3. **`tests/chaosGate.test.ts` read the chaos runner's plant count out of a COMMENT.** Proved on
