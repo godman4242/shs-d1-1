@@ -20,11 +20,21 @@
  * THE SWING. A descendant attacks by calling `target.checkHitObject(part, dmg)`
  * (`EnemyKatana.as:196`). The target the controller hands the actor is a PROXY
  * of the player: it mirrors the view's position and turns that call into a
- * `strike` intent for the Sim to resolve with its own damage model. Entering
- * `ATTACK_STATE` becomes a `telegraph` whose length is the attack clip's, at
+ * `strike` intent for the Sim to resolve with its own damage model. Every attack
+ * the actor STARTS becomes a `telegraph` whose length is the attack clip's, at
  * the original frame rate.
+ *
+ * THE WINDUP (finding 18, closed 2026-09-23). A telegraph is the actor's own
+ * DECISION to attack — a call to `startAction(ATTACK)` — never the ATTACK_STATE
+ * edge. The katana re-attacks INSIDE one `update()` (clip finishes → WALK → still
+ * in range → ATTACK), so the state is ATTACK before and after and an edge
+ * detector drew 1 windup for 35 swings. Nor can the clip carry it: 10 of the 13
+ * attacking classes name an attack clip the payload does not define (so
+ * `startAnim` no-ops and nothing restarts), and the spear's swing is two clips.
+ * `startAction(ATTACK)` is the one call all 13 funnel through — pinned in
+ * `tests/npcController.test.ts` — and a looping walk's wrap never makes it.
  */
-import { OG_STATE } from '../../config/ogActor';
+import { OG_STATE, type OgState } from '../../config/ogActor';
 import { OG_NPC_HIT_IFRAMES } from '../../config/ogNpcBase';
 import { ONE, ZERO } from '../../config/nums';
 import { FIXED_HZ, MS_PER_S, OG_FPS } from '../../config/timing';
@@ -87,9 +97,18 @@ export class NpcController implements OpponentController {
   private readonly proxy = new PlayerProxy();
   private clock = ZERO;
   private heldMoveX = ZERO;
+  /** How many times the actor has called `startAction(ATTACK)`. */
+  private attacksStarted = ZERO;
 
   constructor(private readonly npc: Npc) {
     npc.changeTarget(this.proxy);
+    // Listen on the actor's own attack decision (see THE WINDUP above). The
+    // ported class is untouched; this instance's calls pass straight through.
+    const startAction = npc.startAction.bind(npc);
+    npc.startAction = (actionState: OgState): void => {
+      if (actionState === OG_STATE.ATTACK) this.attacksStarted += ONE;
+      startAction(actionState);
+    };
   }
 
   next(frame: number, view: OpponentView): OpponentIntent {
@@ -110,12 +129,12 @@ export class NpcController implements OpponentController {
       this.clock -= FIXED_HZ;
       stepped = true;
       const before = npc.posX;
-      const stateBefore = npc.actionState;
+      const attacksBefore = this.attacksStarted;
       this.proxy.step();
       npc.update();
       moved += npc.posX - before;
       if (this.proxy.takeStrike()) struck = true;
-      if (npc.actionState === OG_STATE.ATTACK && stateBefore !== OG_STATE.ATTACK) {
+      if (this.attacksStarted !== attacksBefore) {
         const clip = npc.animation === '' ? null : npc.clipOf(npc.animation);
         telegraphMs = clip === null ? ZERO : (clip.durationFrames * MS_PER_S) / OG_FPS;
       }

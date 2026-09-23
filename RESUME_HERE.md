@@ -1,75 +1,74 @@
 # RESUME HERE
 
-## ▶ NEXT SESSION — **`docs/sessions/UNITS_AND_WINDUP_KICKOFF.md`** (Opus 5 `xhigh`, ≤2 agents, 60–90 min)
+## ▶ NEXT SESSION — **write the slice 4 kickoff, and open it with finding 19** (Opus 5.5 `high`, 1 loop, ~45–60 min)
 
-The seam spike is DONE and its answer is **SEAM NEEDS WORK** (not "no" — see below).
-The kickoff is written and committed: **close findings 15 (units) and 18 (the windup)
-before slice 4 ports 13 more classes that would inherit both.**
+Findings 15 and 18 are resolved and the statue is measured, so slice 4's kickoff is now due. It is
+**not written** — deliberately. It must open with **finding 19** (below), because 10 of the classes
+it would wire cannot currently play their attack.
 
-Measured for that kickoff at `a81e4c3`: **all 21** ported actors read a world-space
-field, and **13 of 21** can re-enter ATTACK. Findings 16 and 17 are NOT in scope — they
-move `OpponentView`, so they are L5's call.
+### ⚠️ FINDING 19 — WHAT SLICE 4'S KICKOFF MUST SETTLE FIRST
 
-⛔ **Slice 4's kickoff is still unwritten, deliberately.** Read `docs/DIVERGENCES.md`,
-last section ("THE SEAM SPIKE"), for the full ledger.
+**10 of the 13 attacking classes name an attack clip that `OG_ANIM_CLIPS` (158 clips) does not
+define** — boar, bear, stag, spear, wolf, alpha, fox, goblin, ogre, and the spear elite (0 of 6).
+Only the katana, knife and archer have theirs. `startAnim` no-ops on a missing clip, so those
+classes' telegraph length would read a stale clip, and (**INFERRED, not measured**) a class that
+leaves ATTACK only when its attack clip finishes may never leave it. **Not checked:** whether the
+clips live in another asset of the payload. First job: search for them, or rule on their absence.
 
-### ⚠️ THE TRAP THAT KICKOFF EXISTS TO STOP
+### ⚠️ THE TRAP — still in force for slice 4
 
-`MCSPlayer extends NPC` (4,775 lines) and `EnemyPlayer extends MCSPlayer` (1,647) are
-**both unported**, and `EnemyPlayer` is fetched via `NPCManager.getNetworkEnemyPlayer()`
-(`ConnectionPIO.as:551`) — the dead Player.IO path. **The original's duel opponent is
-another player's loadout, not an `EnemyKatana`.** So `AI_MELEE_RANGE` (50 world px, our
-single-player duel) and `OG_KATANA.melee.x` (100 OG px, an overworld mob) describe
-different fighters and are not required to agree. After the unit fix the katana should
-commit at ~83 world px — correct, and not a bug that it differs from 48.2.
+`MCSPlayer extends NPC` (4,775 lines) and `EnemyPlayer extends MCSPlayer` (1,647) are **unported**,
+and `EnemyPlayer` comes from `NPCManager.getNetworkEnemyPlayer()` (`ConnectionPIO.as:551`), the
+dead Player.IO path. **The original's duel opponent is another player's loadout, not an
+`EnemyKatana`.** The katana is in the duel because it was the cheapest way to exercise the seam.
+Nothing in slice 4 should assume it is the duel's opponent.
 
-### WHAT THE SPIKE ANSWERED (2026-09-17, one `EnemyKatana` in the shipped duel)
+---
 
-**It runs.** A ported actor walks itself at the player, commits, swings, and kills the
-player in ~16.6 s — headless in `tests/duelSeam.test.ts`, and confirmed live in the
-browser at `?npc=katana` (enemy x 557 → 285, player 100 → 0 HP). The seam is not a dead
-end. It needs four channels:
+## ✅ LAST SESSION (2026-09-23) — THE UNITS AND THE WINDUP (`UNITS_AND_WINDUP_KICKOFF.md`, now carrying an ERRATUM)
 
-| # | finding | cost |
+| | verdict | measured |
 |---|---|---|
-| **15** | actor ranges are OG screen px, Sim positions are world px, **nothing converts** — it strikes at 95.4 px vs the shipped AI's 48.2 px (**1.98×**), and `executeStrike` range-gates nothing | small, load-bearing — one conversion + a unit audit of every `og*.ts` distance |
-| **16** | the seam is **one-way**: the actor never learns it was hit, so `NPC.gotHit` and all seven reaction states are dead code in a duel | **the big one** — moves `OpponentView`, so it is L5, not slice 4 |
-| **17** | the actor **never dies** — the Sim stops polling at 0 HP, so `NPC.die()`, loot, XP and the death clip are unreachable | same channel as 16 |
-| **18** | **the windup is drawn once**: `NpcController` edge-detects ATTACK across a whole `update()`, but the re-attack cycle completes inside one — measured **1 telegraph for 24 swings** | small, and entirely inside `NpcController` |
+| **15** units | ⛔ **FALSIFIED — not a defect** | the original scales its whole `GameStage` and parents every NPC inside it (`GameStage.as:1246`, `NPCManager.as:95`, `MCSActor.as:1029`), so the actor's `100` is logical px = **world px**. Commit gap **95.41 px before and after** — correct. The kickoff's "convert at the seam" would have moved it to ~83. |
+| **18** windup | ✅ **CLOSED** | **1 → 35 telegraphs for 35 swings**, each 416.67 ms. `NpcController` listens on `startAction(ATTACK)` — NOT the kickoff's "clip restart", which cannot see 10 of 13 classes and fires on a looping walk. |
+| the statue | **not a defect** | the source's own behaviour against a still player: backed off to 101.66 px, the katana walks 4.7 px, re-closes to 96.94 and swings again. |
+| **19** | 🆕 **added** | see above. |
 
-⚠️ **And one thing no single finding names: it stands still.** The katana closes once,
-stops at 95.4 px and never moves again (traced live, 900 frames, gap 95.4 at every
-sample). Re-measure this after fixing 15 — it may be 15 in a costume, and it may not.
+Every number, the source evidence and the gates: `docs/DIVERGENCES.md`, "THE UNITS AND THE WINDUP".
+Still open and NOT slice 4: **16** (the actor never learns it was hit) and **17** (it never dies) —
+both move `OpponentView`, so both are L5's call.
 
-### WHAT THE SPIKE BUILT (all shipped, all green)
+### THE GATES, AS THEY STAND — measured at this commit
 
-- `src/config/ogAnimClips.ts` — **GENERATED**, 158 clips' `durationFrames`/`loop`,
-  transcribed from the payload by `scripts/anim/transcribeAnimClips.py`, byte-checked
-  in BOTH directions by `tests/ogAnimClips.test.ts`.
-  ⚠️ **The kickoff was wrong** that `OG_ANIMS` held this data: `OG_ANIMS` has **four**
-  clips and neither katana clip is among them. `OG_ANIM` lists 429 names; the payload
-  defines 158. A name with no clip is the source's own `trace("missing animation")`.
-- `src/core/npc/duelSeam.ts` — `OgAnimLibrary`, `DuelHitGeometry` (degenerate on
-  purpose, and it COUNTS every question so `consulted === 0` is proven, not claimed),
-  `createDuelWorld()` (**seventeen** members, not the ten the kickoff claimed, each
-  with the reason it holds its value), and `createDuelKatana()`.
-  ⚠️ **The wiring trap:** `world.nearestEnemy` MUST return the controller's proxy.
-  `checkAITrigger` reassigns the target every 24 steps, so a world answering `null` —
-  the obvious first version — freezes the actor after one second. Red-proofed: that
-  one plant turns 7 tests red.
-- `?npc=katana` — declared in `src/main.ts`, handed to `DuelScene` via the registry.
-  **Defaults OFF**; verified live that no query string still gives `AISeamController`
-  closing to 48.2 px exactly as before.
-- 21 new tests (84→86 files, 1643→1664), **10 plants red-proofed** and each restored
-  byte-identical.
+```
+$ npx vitest run            ->  Test Files 86 passed (86) · Tests 1673 passed (1673)   (1664 + 9)
+$ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
+$ npm run claimcheck        ->  1716 cites · 421 values at ±0 · 44 context · 0 failures
+$ npm run instructionpaths  ->  38 path tokens, all resolve
+$ npm run chaos             ->  CHAOS_RESULT_PENDING
+```
+(The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
+feeding broken scripts to `wfcheck.mjs` on purpose — they print on the baseline too.)
 
-⛔ **NOT started:** slice 4, its kickoff, the `AI_TIERS` rewire, any fight-feel grade.
+### WHAT CHANGED
+
+- `src/core/npc/NpcController.ts` — the telegraph is the actor's decision to attack. The ONLY
+  source change; `Sim.ts`, `OpponentController.ts` and every `src/config/og*.ts` value untouched.
+- `tests/duelSeam.test.ts` — 15 rewritten as a units band, 18 as telegraphs = swings, plus the
+  loop-wrap test and the statue test. `tests/npcController.test.ts` — the bypass scan.
+- `tests/duelSeam.plants.ts` — **6 new chaos plants** (43 → 49, pinned in `scripts/gates/chaos.ts`
+  AND `tests/chaosGate.test.ts`); two are the kickoff's own two wrong fixes.
+- `duelSeam.ts` and `config/duel.ts` comments — a units warning where the wrong fix would go, and a
+  header that still said the spawns were canvas px (stale since SESSION13 D1).
+
+`?npc=katana` still defaults **OFF**; `AISeamController` remains the shipped opponent.
 
 ### ⚠️ THE ONE THING ONLY KHESHAV CAN DO
 
-`npm run dev`, then open **`http://localhost:5173/?npc=katana`** and say whether that
-enemy fights like the videos. A model cannot grade fight feel. Expect: it closes, then
-stands at ~2 sword-lengths and swings with no windup after the first.
+`npm run dev`, then open **`http://localhost:5173/?npc=katana`**. **Expect:** a windup before
+**every** swing (not just the first); while you stand still it stands and swings in place (the
+original's behaviour); walk away and it follows. A model cannot grade whether that READS like
+the videos.
 
 ---
 

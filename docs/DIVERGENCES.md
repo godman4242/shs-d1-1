@@ -4966,8 +4966,10 @@ does ask a geometric question the test goes red instead of silently getting `nul
 
 ### THE SEAM FINDINGS — four added
 
-**15. The actor's ranges are OG SCREEN px; the Sim's positions are WORLD px, and
-nothing converts.** `OG_KATANA.melee.x` is 100 (`EnemyKatana.as:167`), and the seam
+**15. [⛔ FALSIFIED 2026-09-23 — NOT A DEFECT; see "THE UNITS AND THE WINDUP" below.
+The actor's `x` and ranges are LOGICAL px, which ARE world px — no conversion is
+missing, and adding one would break the katana.]** ~~The actor's ranges are OG SCREEN
+px; the Sim's positions are WORLD px, and nothing converts.~~ `OG_KATANA.melee.x` is 100 (`EnemyKatana.as:167`), and the seam
 hands the actor `view.enemyPos.x` in world px, where the repo's own conversion is
 `/1.2` (100 OG px ≈ 83 world px). Worse, `Sim.executeStrike` range-gates **nothing** —
 it trusts the intent — so the katana lands hits at its raw 100. Measured: it commits
@@ -4999,7 +5001,8 @@ finding 5 ("presentation events have no seam channel") costs in practice: with n
 and no death, nothing ever *generates* an `NpcEvent`, so the undrained event list is
 not yet a bug — it is a channel that has never carried anything.
 
-**18. THE WINDUP IS DRAWN ONCE, THEN NEVER AGAIN.** `NpcController` derives `telegraph`
+**18. [✅ CLOSED 2026-09-23 — 1 → 35 telegraphs for 35 swings; see "THE UNITS AND THE
+WINDUP" below.] THE WINDUP IS DRAWN ONCE, THEN NEVER AGAIN.** `NpcController` derives `telegraph`
 by edge-detecting ATTACK_STATE across a whole `update()`. But the re-attack cycle
 completes *inside* one `update()`: `stepAnimation` finishes `katanaattack` →
 `startAction(WALK)` → `doAction()` sees the target still in range → `startAction(ATTACK)`.
@@ -5019,7 +5022,9 @@ It is not a bug in any single port — `doAction()`'s ATTACK branch legitimately
 move, and the original re-attacks in range too — but combined with a Sim that only moves
 an enemy on a non-zero `moveX`, the result is a statue that machine-guns from two
 sword-lengths away. **Whoever fixes 15 must re-measure this**; it may simply be 15
-wearing a costume, and it may not.
+wearing a costume, and it may not. **[MEASURED 2026-09-23: neither — it is the source's
+own behaviour against a player who stands still, and the katana re-closes the moment the
+gap opens. See below.]**
 
 ### ⛔ WHAT THIS SPIKE DID NOT DO
 
@@ -5028,3 +5033,103 @@ this answer, because this answer changes what it must say. No fight-feel grade i
 claimed: that is a LOOK, and only Kheshav can give it. `AI_TIERS` is not rewired. The
 flag defaults OFF and `AISeamController` remains the shipped opponent (verified live:
 no query string → `npcKatana === false`, and the duel closes to 48.2 px exactly as before).
+
+## THE UNITS AND THE WINDUP — 15 FALSIFIED, 18 CLOSED, THE STATUE MEASURED, ONE FINDING ADDED (2026-09-23)
+
+Run from `docs/sessions/UNITS_AND_WINDUP_KICKOFF.md`, whose first task turned out to rest
+on a wrong premise. `Sim.ts`, `OpponentController.ts` and every `src/config/og*.ts` value
+are untouched; `NpcController.ts` changed in one place.
+
+### 15 — FALSIFIED. The actor's units ARE the Sim's units. No conversion was missing.
+
+The spike read `OG_KATANA.melee.x` (100) as OG **screen** px and expected ~83 world px at
+the ×1.2. The source says the actor never sees screen px at all:
+
+- `GameEngine.resizeHandler` calls `gameStage.doResize()` (`GameEngine.as:345`), and
+  `GameStage.doResize()` scales **the whole `GameStage` itself** by the window factor
+  (`GameStage.as:1244-1246`); `setFullScreen` does the same to it (`GameEngine.as:187`).
+- Every NPC is a child of that stage's canvas: `NPCManager` takes
+  `StageManager.getGameStageCanvas()` (`NPCManager.as:95`) and `MCSActor.addToCanvas`
+  does `canvas.addChild(this.mcs)` (`MCSActor.as:1029`). The player goes into
+  `getGameStage().getPlayerCanvas()` (`GameEngine.as:1042`).
+- So `mcs.x`, `target.x` and the `100` they are compared against are all **logical
+  800×480 px** — which is exactly the Sim's WORLD (`config/display.ts`: "source values drop
+  in with no conversion at all"). The ×1.2 happens *outside* the game, to the whole stage.
+
+**Before / after: the commit gap is 95.41 px, unchanged, and that is correct.** Applying the
+kickoff's conversion would have made the katana commit at ~83 — a bug introduced by a fix.
+The comparison with `AISeamController`'s 48.2 px was never a units comparison: they are two
+different fighters (the kickoff's own ⛔ block already said so).
+
+**Pinned** (`tests/duelSeam.test.ts`, "FINDING 15 (closed, not a defect)"): the first strike
+lands in `[100 − 7.09, 100)` — 7.09 being the most the Sim can close between two actor
+decisions (`ceil(60/24)` = 3 ticks × `ENEMY_SPEED` × 16.67 ms). A scale at the seam either way
+leaves the band; chaos plant "units: scale the distance the actor sees at the seam".
+
+⚠️ **What IS true in the old 15, and belongs to a different finding:** `Sim.executeStrike`
+range-gates nothing, and the seam's `PlayerProxy.checkHitObject` answers yes to every swing its
+guard allows. The source tests the weapon PART against the body; ours lets the decision range
+alone decide reach. That is the `DuelHitGeometry` decision (degenerate on purpose, see above),
+not a unit error — and it matters only once a swing could plausibly miss.
+
+### 18 — CLOSED. One telegraph per swing: 1 → 35, for 35 swings.
+
+Measured on the real duel: **before, 1 telegraph for 35 swings** (the spike's "24" counted
+*landed* swings — 11 more are refused by the player's twelve-step guard). **After, 35
+telegraphs for 35 swings, every one 416.67 ms** (`katanaattack`, 10 frames at 24 fps). Swings
+are counted independently of the controller, as starts of the attack CLIP.
+
+**The fix is not the one the kickoff suggested, and why is measured.** The kickoff said "detect
+the clip restart". A clip cannot carry it for the family:
+- **10 of the 13 attacking classes name an attack clip that `OG_ANIM_CLIPS` does not define**
+  (finding 19, below), so their `startAnim` is a no-op and nothing restarts;
+- `EnemySpear`'s swing is two clips (`spear_stab_parta` → `_partb`), so "the clip changed while
+  in ATTACK" fires twice per swing;
+- and a looping clip's wrap is a restart too — `walkwithkatana` wraps every 20 frames.
+
+Instead `NpcController` listens on the actor's own **decision**: every `startAction(ATTACK)`.
+Measured: 22 such calls across all 13 attacking classes, each in a non-attacking branch or
+starting a fresh attack, and **zero** classes that assign `actionState = OG_STATE.ATTACK`
+directly — pinned by a source scan in `tests/npcController.test.ts`, so a class that bypasses the
+call would go red rather than swing with no windup. The ported classes are untouched; the
+controller wraps the one instance's method.
+
+**Gates** (all red-proofed by `tests/duelSeam.plants.ts`): telegraphs = swings across a whole
+fight (fails too few AND too many — a controller firing on every ATTACK step passes any
+"more telegraphs" check); and three walk cycles out of range emit **zero** telegraphs while the
+walk clip is proven to have wrapped (fails the kickoff's clip-restart detector).
+
+Identical on seeds 1, 2, 3, 7 and 42 — which is NOT five times the evidence: the Sim owns the
+katana's x, and the actor's only rng draw (`walkSpeed`) never reaches the Sim.
+
+### THE STATUE — MEASURED: NOT A DEFECT, THE SOURCE'S OWN BEHAVIOUR. No finding 19 for it.
+
+With 15 falsified it could not be "15 in a costume", so it was measured on its own. The
+decisive question is whether the katana FOLLOWS when the gap opens. It does: backing the player
+off to a **101.66 px** gap, the katana leaves ATTACK, walks **4.7 px**, re-closes to **96.94 px**
+and swings again. `EnemyKatana.doAction`'s ATTACK branch never moves and a finished swing
+re-enters ATTACK while the target is in range — so against a player who stands still, standing
+still IS the katana. Pinned: "THE STATUE — stands only while the player does"; chaos plant "seam:
+stop relaying the actor's walk once it has attacked (a real statue)".
+
+### 19 — NEW: TEN OF THE THIRTEEN ATTACKING CLASSES NAME AN ATTACK CLIP WE DO NOT HAVE
+
+Measured against `OG_ANIM_CLIPS` (the 158 clips transcribed from the payload):
+
+| has its attack clip | missing its attack clip |
+|---|---|
+| `EnemyKatana` (`katanaattack`), `EnemyKnife` and `EnemyArcher` (`stabattack`) | `EnemyBoar`, `EnemyBear`, `EnemyStag`, `EnemySpear`, `EnemyWolf`, `EnemyWolfAlpha`, `EnemyFox` (inherits `wolf_bite`), `RoomGoblin`, `RoomOgre`, `EnemySpearElite` (0 of its 6) |
+
+What follows is code, not measurement: `startAnim` returns early on a missing clip, so
+`animation` keeps the PREVIOUS clip. Then (a) the telegraph's length reads that stale clip, and
+(b) a class that leaves ATTACK only when its attack clip finishes would never leave it if the
+previous clip loops. **(b) is INFERRED — not measured per class.** Whether these clips live in
+another asset of the payload was **not checked**. ⇒ **Slice 4's kickoff must open with this:**
+find the clips or rule on their absence before wiring any of the ten into a duel. **Cost:
+unknown until that search is done.**
+
+### ⛔ WHAT THIS SESSION DID NOT DO
+
+Slice 4 is not started and its kickoff is not written. Findings 16 and 17 are untouched (L5).
+No fight-feel grade is claimed — the telegraph on every swing is measured headless; whether it
+READS like the videos is Kheshav's look at `?npc=katana`.

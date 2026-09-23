@@ -1,7 +1,8 @@
 /**
  * DUEL ARENA CONFIG — pure data, no logic. ALL values INFERRED.
  *
- * Stage-2 duel layout: fighter positions/hitboxes on the 1024×576 stage.
+ * Stage-2 duel layout: fighter positions/hitboxes in WORLD px (the original's
+ * logical 800×480 stage, `display.ts`) — `DuelScene` maps them to the canvas.
  * Stats come from combat-sim.ts (PLAYER_BASE / ENEMY_BASE) — this file only
  * places bodies in the arena. Stage-1's DUMMY_SPAWN/DUEL_ATTACKER test-dummy
  * setup was superseded here in Stage 2 M2 (pins moved in the same commit).

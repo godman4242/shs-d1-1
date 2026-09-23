@@ -3969,3 +3969,35 @@ Opus 5 @ xhigh. Entries written PER MILESTONE, at each commit — session 36 mis
 - **Correction to the F5 finding:** `new-project.sh` wrote INVALID JSON for a fresh project's
   settings.json, so its projects never double-injected the ship-bar — the claim was inferred from
   the script, not measured. Script fixed anyway (global-hook check + JSON escaping, 6-case matrix).
+
+## 2026-09-23 — THE UNITS AND THE WINDUP: 15 FALSIFIED, 18 CLOSED, THE STATUE MEASURED, 19 ADDED
+
+⚠️ **Log gap, flagged not backfilled:** session 38 (the JClaw lane) and the seam spike
+(2026-09-17, `a81e4c3`) were never logged here; `RESUME_HERE.md` and `docs/DIVERGENCES.md`
+carry them.
+
+Kickoff: `docs/sessions/UNITS_AND_WINDUP_KICKOFF.md`, run on Opus 5.5. Baseline confirmed first:
+86 files / 1664 tests, typecheck 0, lint 0, 1716 cites, 38 path tokens.
+
+- **15 — the kickoff's first task was wrong, and running it would have shipped a bug.** Before
+  converting, read the source: `GameStage.doResize()` scales the whole game stage
+  (`GameStage.as:1246`, called from `GameEngine.resizeHandler` at `:345`) and every NPC is a child
+  of its canvas (`NPCManager.as:95` → `MCSActor.as:1029`). So the actor's `100` is logical px =
+  world px — the rule `config/display.ts` already stated. Closed as NOT A DEFECT; pinned by a band
+  test (`[92.91, 100)`) that a seam scale in either direction leaves.
+- **18 — closed: 1 → 35 telegraphs for 35 swings** (the spike's "24" was LANDED swings; 11 are
+  refused by the player's guard). Not by the kickoff's "clip restart": measured 10 of 13 attacking
+  classes name an attack clip `OG_ANIM_CLIPS` lacks, the spear's swing is two clips, and a looping
+  walk restarts too. `NpcController` now listens on `startAction(ATTACK)` — 22 calls across the 13
+  classes, 0 direct `actionState = ATTACK` assignments (pinned by a source scan). First version
+  failed lint (`no-unnecessary-condition`: TS cannot see the hook flip a boolean inside
+  `update()`); a counter compared across the step replaced it.
+- **The statue — not a defect.** Backing the player off to a 101.66 px gap, the katana walks 4.7 px,
+  re-closes to 96.94 and swings again. Standing still against a still player IS `EnemyKatana`.
+- **19 — new:** the 10 classes above cannot telegraph a clip they do not have, and may never leave
+  ATTACK (INFERRED, not measured). Slice 4's kickoff must open with it.
+- Tests red-first: the new 18 test failed `expected 1 to be 35` before the fix. 6 new chaos plants
+  (`tests/duelSeam.plants.ts`, count 43 → 49 in both pins) — two of them are the two wrong fixes
+  the kickoff proposed.
+- Also: `config/duel.ts`'s header still said the spawns were on the 1024×576 stage (stale since
+  SESSION13 D1 — `DuelScene` maps them with `worldToStage`); fixed. The kickoff carries an ERRATUM.

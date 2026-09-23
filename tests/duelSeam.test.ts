@@ -11,14 +11,15 @@
  * `duelSetup` — not a synthetic spawn — so what it reports is what the shipped
  * duel does, and each finding it pins is a numbered row in `docs/DIVERGENCES.md`.
  */
-import { describe, expect, it } from 'vitest';
-import { AI_MELEE_RANGE } from '../src/config/ai';
+import { describe, expect, it, vi } from 'vitest';
+import { ENEMY_SPEED } from '../src/config/ai';
 import { DUEL_SPAWNS } from '../src/config/duel';
 import { OG_ANIM } from '../src/config/ogActor';
 import { OG_ANIMS } from '../src/config/ogAnims';
 import { OG_ANIM_CLIPS } from '../src/config/ogAnimClips';
 import { OG_KATANA } from '../src/config/ogEnemyKatana';
 import { OG_STATE } from '../src/config/ogActor';
+import { FIXED_HZ, MS_PER_S, OG_FPS } from '../src/config/timing';
 import { duelSetup } from '../src/core/duelSetup';
 import { mulberry32 } from '../src/core/rng';
 import { Sim } from '../src/core/Sim';
@@ -83,6 +84,20 @@ describe('createDuelWorld — seventeen members, each fixed for a stated reason'
   });
 });
 
+/**
+ * Both fighters frozen at their spawns, 367 px apart — far outside the katana's
+ * 100. The controller re-syncs the actor's x from this every tick, so the actor
+ * walks forever and never closes: a pure walk, with no attack in it.
+ */
+const spawnView = {
+  playerPos: { x: DUEL_SPAWNS.player.pos.x, y: DUEL_SPAWNS.player.pos.y },
+  enemyPos: { x: DUEL_SPAWNS.enemy.pos.x, y: DUEL_SPAWNS.enemy.pos.y },
+  playerStance: 'balanced' as const,
+  enemyStance: 'balanced' as const,
+  enemyFocus: 0,
+  playerJumping: false,
+};
+
 describe('createDuelKatana — the wiring trap the obvious version falls into', () => {
   it('points nearestEnemy at the controller\'s own proxy', () => {
     const { actor, world } = createDuelKatana(mulberry32(1));
@@ -96,17 +111,36 @@ describe('createDuelKatana — the wiring trap the obvious version falls into', 
     // null — the first thing anyone writes — freezes the actor after one
     // second. Stepping past 24 is what proves this wiring survives it.
     const { actor, controller } = createDuelKatana(mulberry32(1));
-    const view = {
-      playerPos: { x: DUEL_SPAWNS.player.pos.x, y: DUEL_SPAWNS.player.pos.y },
-      enemyPos: { x: DUEL_SPAWNS.enemy.pos.x, y: DUEL_SPAWNS.enemy.pos.y },
-      playerStance: 'balanced' as const,
-      enemyStance: 'balanced' as const,
-      enemyFocus: 0,
-      playerJumping: false,
-    };
     // 90 sim ticks = 36 actor steps: past the 24-step trigger, twice over.
-    for (let i = 0; i < 90; i++) controller.next(i, view);
+    for (let i = 0; i < 90; i++) controller.next(i, spawnView);
     expect(actor.target).not.toBeNull();
+  });
+});
+
+describe('the windup — a looping clip\'s wrap is NOT a swing', () => {
+  /**
+   * The false-positive half of finding 18's gate. A gate that only proves
+   * "more telegraphs" passes a controller that fires on every frame, or on every
+   * clip that restarts — and `walkwithkatana` restarts every 20 frames, because
+   * it LOOPS. A walk cycle ending is not a new swing.
+   */
+  it('walking out of range through three walk cycles emits no telegraph at all', () => {
+    const { actor, controller } = createDuelKatana(mulberry32(1));
+    expect(OG_ANIM_CLIPS[OG_ANIM.KATANAWALK]?.loop).toBe(true);
+    let telegraphs = 0;
+    let wraps = 0;
+    let lastFrame = actor.frameCounter;
+    // 150 ticks = 60 actor steps = three 20-frame walk cycles.
+    for (let f = 0; f < 150; f++) {
+      if (controller.next(f, spawnView).telegraph !== undefined) telegraphs += 1;
+      if (actor.animation === OG_ANIM.KATANAWALK && actor.frameCounter < lastFrame) wraps += 1;
+      lastFrame = actor.frameCounter;
+    }
+    // Without these two, "no telegraph" would prove nothing: the clip really did
+    // wrap, and the actor really was walking the whole time.
+    expect(wraps).toBeGreaterThanOrEqual(2);
+    expect(actor.actionState).toBe(OG_STATE.WALK);
+    expect(telegraphs).toBe(0);
   });
 });
 
@@ -131,10 +165,15 @@ describe('SPIKE: an EnemyKatana in the real duel', () => {
   const runDuel = (seed: number, maxTicks = 20000) => {
     const rng = mulberry32(seed);
     const npc = createDuelKatana(rng);
+    // SWINGS, counted independently of the controller: every start of the
+    // attack CLIP. The controller never looks at `startAnim`, so a telegraph
+    // count that matches this is a match, not a tautology.
+    const clipStarts = vi.spyOn(npc.actor, 'startAnim');
     const sim = new Sim(rng, duelSetup(npc.controller));
     sim.beginCombat();
     const startX = sim.enemy.pos.x;
     let telegraphs = 0;
+    const telegraphMs: number[] = [];
     let firstTelegraphMs: number | null = null;
     let playerDamageEvents = 0;
     let firstStrikeGapX: number | null = null;
@@ -149,6 +188,7 @@ describe('SPIKE: an EnemyKatana in the real duel', () => {
       for (const ev of sim.drainEvents()) {
         if (ev.type === 'enemyTelegraph') {
           telegraphs += 1;
+          telegraphMs.push(ev.durationMs);
           firstTelegraphMs ??= ev.durationMs;
         }
         if (ev.type === 'damage' && ev.target === 'player') {
@@ -157,8 +197,9 @@ describe('SPIKE: an EnemyKatana in the real duel', () => {
         }
       }
     }
+    const swings = clipStarts.mock.calls.filter(([name]) => name === OG_ANIM.KATANAATTACK).length;
     return {
-      sim, npc, ticks, telegraphs, firstTelegraphMs, playerDamageEvents,
+      sim, npc, ticks, telegraphs, telegraphMs, swings, firstTelegraphMs, playerDamageEvents,
       firstStrikeGapX, closestGapX, states,
       movedX: sim.enemy.pos.x - startX,
     };
@@ -195,39 +236,86 @@ describe('SPIKE: an EnemyKatana in the real duel', () => {
   });
 
   /**
-   * FINDING 15 — the actor commits at ITS OWN 100, in the Sim's WORLD px.
-   * `OG_KATANA.melee.x` is 100 OG SCREEN px (~83 world px at the repo's ×1.2),
-   * and the Sim range-gates nothing: `executeStrike` trusts the intent. So the
-   * katana lands hits from 2× the Sim's own 50-px melee gate — exactly the
-   * `AI_STRIKE_RANGE` regression SESSION13 D8 removed for killing emergent
-   * turn-taking.
+   * FINDING 15 — CLOSED 2026-09-23: NOT A DEFECT. ONE UNIT SPACE, BY THE SOURCE.
+   *
+   * The spike read `OG_KATANA.melee.x` (100) as OG SCREEN px and expected ~83
+   * world px. The source says otherwise: `GameStage.doResize()` scales the whole
+   * game stage, and every NPC is a child of that stage's canvas
+   * (`NPCManager` → `StageManager.getGameStageCanvas()` → `MCSActor.addToCanvas`).
+   * So an actor's `x`, and every range it compares against it, is LOGICAL
+   * 800×480 px — which IS the Sim's world (`config/display.ts`). The katana
+   * committing at ~95 px is the katana being itself.
+   *
+   * THE BAND. The Sim closes at most `ceil(60/24)` = 3 ticks of `ENEMY_SPEED`
+   * between two actor decisions, so the commit gap lands in
+   * `[100 − 7.09, 100)`. A conversion either way leaves it: ÷1.2 → ~83, ×1.2 → ~120.
    */
-  it('FINDING 15 — commits at its OG-pixel range, not the Sim\'s world-px gate', () => {
+  it('FINDING 15 (closed, not a defect) — commits just inside its own 100, in world px', () => {
     const r = runDuel(7);
-    expect(r.firstStrikeGapX).not.toBeNull();
-    const gap = r.firstStrikeGapX ?? 0;
-    expect(gap).toBeGreaterThan(AI_MELEE_RANGE.x);
-    expect(gap).toBeLessThanOrEqual(OG_KATANA.melee.x);
+    const gap = r.firstStrikeGapX ?? Number.NaN;
+    const maxCloseBetweenSteps = Math.ceil(FIXED_HZ / OG_FPS) * ENEMY_SPEED * (MS_PER_S / FIXED_HZ);
+    expect(gap).toBeLessThan(OG_KATANA.melee.x);
+    expect(gap).toBeGreaterThanOrEqual(OG_KATANA.melee.x - maxCloseBetweenSteps);
   });
 
   /**
-   * FINDING 18 — THE WINDUP IS DRAWN ONCE, THEN NEVER AGAIN.
+   * FINDING 18 — CLOSED 2026-09-23: ONE TELEGRAPH PER SWING.
    *
-   * `NpcController` derives `telegraph` by edge-detecting ATTACK_STATE across a
-   * whole `update()`. But the actor's re-attack cycle completes INSIDE one
-   * `update()`: `stepAnimation` finishes `katanaattack` -> `startAction(WALK)`
-   * -> `doAction()` sees the target still in range -> `startAction(ATTACK)`.
-   * Before and after are both ATTACK, so there is no edge to detect. Measured:
-   * ONE telegraph for TWENTY-FOUR landed swings.
+   * It was: `NpcController` edge-detected ATTACK_STATE across a whole
+   * `update()`, but the re-attack cycle completes INSIDE one: `stepAnimation`
+   * finishes `katanaattack` -> `startAction(WALK)` -> `doAction()` sees the target
+   * still in range -> `startAction(ATTACK)`. Before and after were both ATTACK,
+   * so there was no edge — measured ONE telegraph for TWENTY-FOUR landed swings.
    *
-   * This is the readability of the fight. `AI_TELEGRAPH_MS` is CONTRACT
-   * precisely because the windup is how a player reads an attack; twenty-three
-   * unannounced swings is not the game in the videos.
+   * Now the controller reports the actor's own DECISION to attack (every
+   * `startAction(ATTACK)`). Swings are counted independently above, as starts of
+   * the attack CLIP. Both halves of the gate live here and beside it: this one
+   * fails a controller that fires too rarely or too often; the loop-wrap test
+   * fails one that mistakes a walk cycle for a swing.
    */
-  it('FINDING 18 — one telegraph for every swing but the first', () => {
+  it('FINDING 18 (closed) — one telegraph per swing, every swing, at the payload\'s length', () => {
     const r = runDuel(7);
     expect(r.playerDamageEvents).toBeGreaterThan(10);
-    expect(r.telegraphs).toBe(1);
+    expect(r.swings).toBeGreaterThan(10);
+    expect(r.telegraphs).toBe(r.swings);
+    const clipMs = ((OG_ANIM_CLIPS[OG_ANIM.KATANAATTACK]?.durationFrames ?? Number.NaN) * MS_PER_S) / OG_FPS;
+    expect(new Set(r.telegraphMs)).toEqual(new Set([clipMs]));
+  });
+
+  /**
+   * THE STATUE — MEASURED 2026-09-23: NOT A DEFECT, THE SOURCE'S OWN BEHAVIOUR.
+   *
+   * The spike saw the katana stop at 95.4 px and never move again, and asked
+   * whether that was finding 15 in a costume. It is not (15 is not a defect).
+   * `EnemyKatana.doAction`'s ATTACK branch never moves, and a finished swing
+   * re-enters ATTACK while the target is in range — so against a player who
+   * stands still, standing still IS the katana. What decides it is whether the
+   * katana FOLLOWS when the gap opens past its 100. It does.
+   */
+  it('THE STATUE — stands only while the player does: it re-closes when the gap opens', () => {
+    const rng = mulberry32(7);
+    const npc = createDuelKatana(rng);
+    const sim = new Sim(rng, duelSetup(npc.controller));
+    sim.beginCombat();
+    const gap = (): number => sim.enemy.pos.x - sim.player.pos.x;
+    // Let it close and start swinging in place.
+    for (let t = 0; t < 240 && sim.phase === 'fighting'; t++) sim.tick();
+    expect(npc.actor.actionState).toBe(OG_STATE.ATTACK);
+    // Back the player off until the gap is past the katana's reach.
+    sim.setPlayerIntent({ moveX: -1, shunpoHeld: false });
+    for (let t = 0; t < 600 && gap() < OG_KATANA.melee.x; t++) sim.tick();
+    sim.setPlayerIntent({ moveX: 0, shunpoHeld: false });
+    expect(gap()).toBeGreaterThanOrEqual(OG_KATANA.melee.x);
+    const statesAfter = new Set<number>();
+    const enemyXBefore = sim.enemy.pos.x;
+    for (let t = 0; t < 300 && sim.phase === 'fighting'; t++) {
+      sim.tick();
+      statesAfter.add(npc.actor.actionState);
+    }
+    expect(statesAfter.has(OG_STATE.WALK)).toBe(true); // it walked...
+    expect(sim.enemy.pos.x).toBeLessThan(enemyXBefore); // ...toward the player...
+    expect(gap()).toBeLessThan(OG_KATANA.melee.x); // ...back inside its reach
+    expect(npc.actor.actionState).toBe(OG_STATE.ATTACK); // ...and swings again.
   });
 
   /**

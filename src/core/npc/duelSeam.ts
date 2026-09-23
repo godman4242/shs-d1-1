@@ -8,9 +8,9 @@
  * had no implementation anywhere outside a test stub. This file is those two,
  * plus the duel's `NpcWorld`, plus the one factory that assembles them.
  *
- * ⛔ IT MOVES NOTHING. `Sim.ts`, `OpponentController.ts` and `NpcController.ts`
- * are untouched; this only supplies inputs. What it also does is MEASURE — see
- * `DuelHitGeometry`, whose whole point is to prove a claim rather than assert it.
+ * ⛔ IT MOVES NOTHING. `Sim.ts` and `OpponentController.ts` are untouched; this
+ * only supplies inputs. What it also does is MEASURE — see `DuelHitGeometry`,
+ * whose whole point is to prove a claim rather than assert it.
  */
 import { DUEL_ENEMY, DUEL_SPAWNS } from '../../config/duel';
 import { WORLD_WIDTH } from '../../config/display';
@@ -96,6 +96,13 @@ export class DuelHitGeometry implements HitGeometry {
  *
  * `nearestEnemy` is left for the factory to fill, because the only opponent in
  * a duel is the controller's `PlayerProxy`, which does not exist yet here.
+ *
+ * ⛔ UNITS: NOTHING HERE CONVERTS, AND NOTHING SHOULD. The original scales its
+ * whole `GameStage` and parents every NPC inside it, so an actor's `x` and every
+ * range it compares against are LOGICAL 800×480 px — the Sim's world, as-is.
+ * Finding 15 said otherwise and was falsified at the source (`DIVERGENCES.md`,
+ * "THE UNITS AND THE WINDUP"); a ×1.2 here would move the katana's reach off
+ * its own 100, and `tests/duelSeam.test.ts` pins the band it must land in.
  */
 export function createDuelWorld(): NpcWorld {
   return {

@@ -13,9 +13,11 @@
  *      The actor's y is its own: the Sim never moves an enemy's y.
  *
  * What the seam can express is `moveX`, `strike` (the actor's own
- * `target.checkHitObject` swing) and a `telegraph` on entering ATTACK_STATE.
+ * `target.checkHitObject` swing) and a `telegraph` on every attack the actor
+ * STARTS — each `startAction(ATTACK)`, not the ATTACK_STATE edge (finding 18).
  * What it cannot carry is a FINDING for L5, listed in DIVERGENCES, not widened here.
  */
+import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { OG_STATE, type OgState } from '../src/config/ogActor';
 import { FIXED_HZ, MS_PER_S, OG_FPS } from '../src/config/timing';
@@ -197,5 +199,22 @@ describe('NpcController — position authority and the intent it emits', () => {
     expect(npc.target?.y).toBe(GROUND - 7);
     expect(npc.target?.getMapPosition()).toBe(123);
     expect(npc.target?.isDead()).toBe(false);
+  });
+});
+
+describe('NpcController — the one call every attacking class funnels through', () => {
+  /**
+   * The telegraph hangs on `startAction(ATTACK)`, so it sees every attack only
+   * if no class reaches ATTACK_STATE any other way. Measured at the fix: 22 calls
+   * across 13 classes, and ZERO direct assignments. A class that assigns
+   * `actionState = OG_STATE.ATTACK` itself would swing with no windup at all —
+   * this makes that a red test instead of a quiet one.
+   */
+  it('no ported class enters ATTACK_STATE except through startAction', () => {
+    const dir = 'src/core/npc';
+    const bypass = readdirSync(dir)
+      .filter((f) => f.endsWith('.ts'))
+      .filter((f) => /actionState\s*=\s*OG_STATE\.ATTACK\b/.test(readFileSync(`${dir}/${f}`, 'utf8')));
+    expect(bypass).toEqual([]);
   });
 });

@@ -3,6 +3,16 @@
 **Written 2026-09-17 at `a81e4c3`. Model: Opus 5 @ `xhigh`, ultracode OFF, ≤2 agents.**
 **Estimate: 60–90 min. Deliverable: two findings closed, each proven by a red-proofed gate.**
 
+> ## ⛔ ERRATUM — RUN 2026-09-23 (Opus 5.5). **DO NOT RE-RUN TASK 1.**
+> **Finding 15's premise is FALSE.** The original scales its whole `GameStage` and parents
+> every NPC inside it, so the actor's `100` is LOGICAL px — which ARE world px. "Convert at the
+> seam" would have moved the katana's reach from 100 to ~83: a bug introduced by a fix. 15 is
+> closed as not-a-defect and pinned. **18 is closed**, but NOT by "detect the clip restart": 10
+> of the 13 attacking classes name an attack clip we do not have, and a looping walk restarts
+> too — the controller listens on `startAction(ATTACK)` instead. The statue is the source's own
+> behaviour (it follows when the gap opens). One new finding, **19**. Everything, measured:
+> `docs/DIVERGENCES.md`, "THE UNITS AND THE WINDUP". The kickoff below is kept as written.
+
 ## WHY THIS AND NOT SLICE 4
 
 The seam spike answered **SEAM NEEDS WORK** with four findings (`docs/DIVERGENCES.md`,
