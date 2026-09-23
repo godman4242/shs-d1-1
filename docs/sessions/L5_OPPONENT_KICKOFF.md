@@ -204,7 +204,10 @@ remaining L4b mobs (slice 0 unblocks them; it does not port them) · the overwor
 - **R5 could be wrong for the videos.** If a frame ever shows a web-only clip (the spider,
   `spear_flourish`), R5 is revisited, not patched.
 
-## §7 THE BASELINE TO CONFIRM FIRST (at `36314d9`)
+## §7 THE BASELINE TO CONFIRM FIRST (at `36314d9`, before slice 0)
+
+> ⚠️ Each landed slice moves these numbers; the CURRENT baseline is the "THE GATES, AS THEY
+> STAND" block in `RESUME_HERE.md`. After slice 0: 87 files / 1681 tests, chaos 52/52.
 
 ```
 $ npx vitest run            ->  Test Files 86 passed (86) · Tests 1673 passed (1673)
