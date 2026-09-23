@@ -5,7 +5,7 @@
  * ONE guard over the clip table, now that it carries all 18 files the source loads;
  * the named suites must go red.
  *
- * PROVENANCE. All three are written here, at the fix, and were watched going red on
+ * PROVENANCE. All four are written here, at the fix, and were watched going red on
  * the session that wrote them — marked `reauthored:`. Each targets a clip from a file
  * OTHER than the one the table used to read, because that is exactly the coverage the
  * old table lacked and the old byte-check could not see.
@@ -31,6 +31,14 @@ export const PLANTS: ChaosPlant[] = [
     replace: '  boar_attack: { durationFrames: 16, loop: true },',
     tests: [CLIPS, ATTACKERS],
     note: 'reauthored:2026-09-23 — a looping attack clip reproduces the freeze with every clip DEFINED',
+  },
+  {
+    name: 'animList: drop AnimData\'s hold from the katana\'s attack (the bare d= this table carried until the gauntlet)',
+    file: 'src/config/ogAnimClips.ts',
+    find: '  katanaattack: { durationFrames: 18, loop: false },',
+    replace: '  katanaattack: { durationFrames: 10, loop: false },',
+    tests: [CLIPS, 'tests/duelSeam.test.ts'],
+    note: 'reauthored:2026-09-23 — the gauntlet\'s finding: the byte-check, the structural pin and the 750 ms telegraph all see it',
   },
   {
     name: 'animList: shift one stance-file duration by a frame (the balanced stance idle)',

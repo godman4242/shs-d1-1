@@ -6,7 +6,19 @@
  * any other file got `null` and `startAnim` no-op'd. Finding 19 guessed the cost
  * ("may never leave ATTACK"). This suite measures it on the REAL `OgAnimLibrary`,
  * in the REAL duel world, behind the REAL `NpcController`, against a still player:
- * seven classes swung once and never changed state again for thirty seconds.
+ * TEN classes — exactly the ten finding 19 named — swung once and never changed
+ * state again for thirty seconds.
+ *
+ * Each is built as the variant that FIGHTS, because three of them only fight
+ * sometimes, and a test that builds the other variant measures nothing:
+ *   - `EnemySpear` rolls `isStabber` at construction (`EnemySpear.as:19`); only a
+ *     stabber enters ATTACK (`:233-235`). The non-stabber charges by RUN instead.
+ *   - `RoomGoblin` / `RoomOgre` come from the ROOM dispatch with a `doChase` flag the
+ *     room data sets (`Obj_NPCAggro.as:58-63` → `NPCManager.as:710-716`); without it
+ *     they wander and nap. (The MAIN dispatch's ai 22/23 are the unported
+ *     `EnemyGoblin` / `EnemyOgre`, `NPCManager.as:584-588`.)
+ * A first version of this file built all three as the non-fighting variant and
+ * called them "not this finding"; the gauntlet review of 2026-09-23 caught it.
  *
  * Construction follows the source's order — `NPCManager.createNPC` calls
  * `setPosition` BEFORE `init` (`NPCManager.as:636-637`) — because the reverse
@@ -38,27 +50,37 @@ import type { AnimLibrary, HitGeometry, NpcTarget, NpcWorld } from '../src/core/
 import { mulberry32 } from '../src/core/rng';
 import type { Rng } from '../src/core/Sim';
 
-type ActorClass = new (world: NpcWorld, anims: AnimLibrary, geometry: HitGeometry, rng: Rng) => Npc;
+type Build = (world: NpcWorld, anims: AnimLibrary, geometry: HitGeometry, rng: Rng) => Npc;
 
-/** The 13 attacking classes, each with the roster `ai` whose first row spawns it. */
-const ATTACKERS: ReadonlyArray<readonly [string, ActorClass, number]> = [
-  ['EnemyKatana', EnemyKatana, 3],
-  ['EnemyKnife', EnemyKnife, 1],
-  ['EnemyArcher', EnemyArcher, 2],
-  ['EnemyBear', EnemyBear, 17],
-  ['EnemyBoar', EnemyBoar, 18],
-  ['EnemyStag', EnemyStag, 21],
-  ['EnemySpear', EnemySpear, 4],
-  ['EnemyWolf', EnemyWolf, 8],
-  ['EnemyWolfAlpha', EnemyWolfAlpha, 11],
-  ['EnemyFox', EnemyFox, 24],
-  ['RoomGoblin', RoomGoblin, 22],
-  ['RoomOgre', RoomOgre, 23],
-  ['EnemySpearElite', EnemySpearElite, 28],
+/**
+ * The 13 attacking classes: how the source builds each (as the variant that fights)
+ * and the roster `ai` of the row it is initialised from.
+ */
+const ATTACKERS: ReadonlyArray<readonly [string, Build, number]> = [
+  ['EnemyKatana', (w, a, g, r) => new EnemyKatana(w, a, g, r), 3],
+  ['EnemyKnife', (w, a, g, r) => new EnemyKnife(w, a, g, r), 1],
+  ['EnemyArcher', (w, a, g, r) => new EnemyArcher(w, a, g, r), 2],
+  ['EnemyBear', (w, a, g, r) => new EnemyBear(w, a, g, r), 17],
+  ['EnemyBoar', (w, a, g, r) => new EnemyBoar(w, a, g, r), 18],
+  ['EnemyStag', (w, a, g, r) => new EnemyStag(w, a, g, r), 21],
+  ['EnemySpear', (w, a, g, r) => {
+    const spear = new EnemySpear(w, a, g, r);
+    spear.isStabber = true;
+    return spear;
+  }, 4],
+  ['EnemyWolf', (w, a, g, r) => new EnemyWolf(w, a, g, r), 8],
+  ['EnemyWolfAlpha', (w, a, g, r) => new EnemyWolfAlpha(w, a, g, r), 11],
+  ['EnemyFox', (w, a, g, r) => new EnemyFox(w, a, g, r), 24],
+  ['RoomGoblin', (w, a, g, r) => new RoomGoblin(w, a, g, r, null, true), 22],
+  ['RoomOgre', (w, a, g, r) => new RoomOgre(w, a, g, r, null, true), 23],
+  ['EnemySpearElite', (w, a, g, r) => new EnemySpearElite(w, a, g, r), 28],
 ];
 
-/** The seven that swung once and froze on the one-file table (2026-09-23). */
-const FROZE = ['EnemyBear', 'EnemyBoar', 'EnemyStag', 'EnemyWolf', 'EnemyWolfAlpha', 'EnemyFox', 'EnemySpearElite'];
+/** Finding 19's ten: on the one-file table each swung once and froze (2026-09-23). */
+const FROZE = [
+  'EnemyBear', 'EnemyBoar', 'EnemyStag', 'EnemySpear', 'EnemyWolf',
+  'EnemyWolfAlpha', 'EnemyFox', 'RoomGoblin', 'RoomOgre', 'EnemySpearElite',
+];
 
 const SECONDS = 30;
 const SPAWN_X = 500;
@@ -71,9 +93,9 @@ interface Fight {
 }
 
 /** One actor, spawned in the source's order, against a still player for 30 s. */
-function fight(cls: ActorClass, ai: number): Fight {
+function fight(build: Build, ai: number): Fight {
   const world = createDuelWorld();
-  const actor = new cls(world, new OgAnimLibrary(), new DuelHitGeometry(), mulberry32(7));
+  const actor = build(world, new OgAnimLibrary(), new DuelHitGeometry(), mulberry32(7));
   const row = OG_NPCS.find((r) => r.aiEffective === ai);
   if (row === undefined) throw new Error(`no roster row with ai ${String(ai)}`);
   actor.setPosition(SPAWN_X, world.groundY);
@@ -115,7 +137,7 @@ function fight(cls: ActorClass, ai: number): Fight {
 }
 
 describe('finding 19 — the attackers on the source\'s full animList', () => {
-  const results = new Map(ATTACKERS.map(([name, cls, ai]) => [name, fight(cls, ai)]));
+  const results = new Map(ATTACKERS.map(([name, build, ai]) => [name, fight(build, ai)]));
 
   it('no attacker asks for a clip the table does not define, in 30 s of a duel', () => {
     for (const [name, r] of results) {
@@ -123,21 +145,11 @@ describe('finding 19 — the attackers on the source\'s full animList', () => {
     }
   });
 
-  it('the seven that froze after one swing now leave ATTACK and swing again', () => {
+  it('the ten that froze after one swing now leave ATTACK and swing again', () => {
     for (const name of FROZE) {
       const r = results.get(name);
       expect(r?.startsAfterFirstAttack, `${name} never left its first ATTACK`).toBeGreaterThan(0);
       expect(r?.attacksStarted, `${name} swung only once`).toBeGreaterThan(1);
-    }
-  });
-
-  it('the three that never enter ATTACK against a still player do so on either table — not this finding', () => {
-    // Measured identical on the one-file and the full table: the spear attacks by
-    // its charging RUN (WALK <-> RUN, and it passes the player); the goblin and the
-    // ogre are room NPCs that wander, idle and nap. Pinned so a later change that
-    // makes them swing is SEEN, not assumed to be this fix.
-    for (const name of ['EnemySpear', 'RoomGoblin', 'RoomOgre']) {
-      expect(results.get(name)?.attacksStarted, name).toBe(0);
     }
   });
 });

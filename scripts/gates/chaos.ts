@@ -72,14 +72,15 @@ const BACKUP_DIR = join(ROOT, '.chaos-backup');
  * Without it, deleting a plant file quietly shrinks the gate and the run still says
  * "all green". L4b slice 3 ran 40 plants and the harness finish added 3 for the gaps its
  * adjudicated run confirmed; the units-and-windup session added 6 (`tests/duelSeam.plants.ts`);
- * L5-OPP slice 0 (the animList) added 3 (`tests/animList.plants.ts`).
+ * L5-OPP slice 0 (the animList) added 4 (`tests/animList.plants.ts`), one of them
+ * for the hold table its gauntlet review found missing.
  * That is the floor this repo has already paid for. Raise it when a slice adds plants; never lower it to make a run pass. A filtered
  * run skips this check and says so, loudly, in its output.
  *
  * `tests/chaosGate.test.ts` pins the same number from the other side, so the two cannot
  * drift apart silently.
  */
-const EXPECTED_TOTAL = 52;
+const EXPECTED_TOTAL = 53;
 
 type Status = 'RED' | 'STAYED-GREEN' | 'PLANT-FAILED' | 'NO-OP' | 'INCONCLUSIVE' | 'RESTORE-FAILED';
 

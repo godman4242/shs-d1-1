@@ -15,8 +15,12 @@ the load order FROM THE SOURCE (never restated here), reads each file, and
 applies the same last-write-wins rule. Until 2026-09-23 it read one file of the
 18 — 158 clips of 466 — and that gap was all of finding 19.
 
-It emits `src/config/ogAnimClips.ts` VERBATIM — the payload's own `d=` and `l=`
-for every `<anim>`, no interpretation, no hand-keying. It does NOT read frames
+THEN the holds: `AnimData`'s constructor adds a per-name hold to `d=` (58 names,
++2 to +50 frames, the last pose held), and the source's clock plays that total.
+Until 2026-09-23 this table carried the bare `d=` (the katana swung in 10, not 18).
+
+It emits `src/config/ogAnimClips.ts` from the source alone: each file's own `d=`
+and `l=`, plus `AnimData`'s own holds, no hand-keying. It does NOT read frames
 beyond counting them to prove `d=` is honest; frames stay the sibling's job.
 
 Usage:  python3 scripts/anim/transcribeAnimClips.py
@@ -29,7 +33,10 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-MCS_CHARACTER = REPO / "reference" / "decompiled" / "shs3_android_payload" / "scripts" / "MCSCharacter.as"
+SCRIPTS = REPO / "reference" / "decompiled" / "shs3_android_payload" / "scripts"
+MCS_CHARACTER = SCRIPTS / "MCSCharacter.as"
+ANIM_DATA = SCRIPTS / "AnimData.as"
+MCS_ACTOR = SCRIPTS / "MCSActor.as"
 ANDROID = REPO / "reference" / "extracted" / "android"
 OUT = REPO / "src" / "config" / "ogAnimClips.ts"
 
@@ -48,6 +55,34 @@ def load_order() -> list[str]:
     if not order or len(set(order)) != len(order):
         sys.exit(f"FATAL: load order empty or repeating: {order}")
     return order
+
+
+def holds() -> dict[str, int]:
+    """`AnimData`'s constructor: after `duration = xml.@d`, a switch on the clip name
+    adds a hold (`duration += N`) and the last pose is held for it. Every `case` label
+    takes the `+= N` its group ends in; a label is a string literal or an `MCSActor`
+    constant, resolved through `MCSActor.as`."""
+    consts = dict(re.findall(r'static (?:const|var) (\w+):String = "([^"]*)"',
+                             MCS_ACTOR.read_text(encoding="utf-8", errors="replace")))
+    src = ANIM_DATA.read_text(encoding="utf-8", errors="replace")
+    out: dict[str, int] = {}
+    labels: list[str] = []
+    for line in src[src.index("switch("):].split("\n"):
+        labels += [m.strip() for m in re.findall(r"case\s+(.+?):", line)]
+        add = re.search(r"duration \+= (\d+);", line)
+        if add is None:
+            continue
+        for label in labels:
+            name = label[1:-1] if label.startswith('"') else consts.get(label.removeprefix("MCSActor."))
+            if name is None:
+                sys.exit(f"FATAL: AnimData hold label {label} does not resolve")
+            if name in out:
+                sys.exit(f"FATAL: AnimData holds {name} twice")
+            out[name] = int(add.group(1))
+        labels = []
+    if not out:
+        sys.exit("FATAL: no AnimData holds found — the source moved")
+    return out
 
 
 def data_file(stem: str) -> Path:
@@ -82,7 +117,7 @@ def parse(path: Path) -> dict[str, tuple[int, bool]]:
 
 
 def main() -> None:
-    for need in (MCS_CHARACTER, ANDROID):
+    for need in (MCS_CHARACTER, ANIM_DATA, MCS_ACTOR, ANDROID):
         if not need.exists():
             sys.exit(f"FATAL: {need} is missing — reference/ is study-only and gitignored")
     order = load_order()
@@ -106,6 +141,13 @@ def main() -> None:
                 repeats.append(name)
             clips[name] = clip
 
+    held = holds()
+    for name, hold in held.items():
+        if name not in clips:
+            sys.exit(f"FATAL: AnimData holds {name}, which no loaded file defines")
+        duration, loop = clips[name]
+        clips[name] = (duration + hold, loop)
+
     lines: list[str] = []
     lines.append("/**")
     lines.append(" * OG ANIMATION CLIP FACTS — GENERATED, DO NOT HAND-EDIT.")
@@ -114,8 +156,10 @@ def main() -> None:
     lines.append(" * `MCSCharacter.initAnimationData` loads, in its order, a later file")
     lines.append(" * overwriting an earlier one — via `scripts/anim/transcribeAnimClips.py`;")
     lines.append(" * byte-checked by the skipIf suite in `tests/ogAnimClips.test.ts`. Every")
-    lines.append(" * number is CONTRACT — the payload's own `d=` integer, verbatim, and `loop`")
-    lines.append(" * is its own `l=\"1\"` flag.")
+    lines.append(" * number is CONTRACT: `durationFrames` is the file's own `d=` PLUS the hold")
+    lines.append(" * `AnimData`'s constructor adds by clip name (the last pose held), which is")
+    lines.append(" * the length the source's clock plays; `loop` is the file's own `l=\"1\"`.")
+    lines.append(f" * {len(held)} clips carry a hold (+{min(held.values())} to +{max(held.values())} frames).")
     lines.append(" *")
     lines.append(" * This is the DURATION table, not the frame table. `OG_ANIMS` (its sibling)")
     lines.append(" * holds the per-frame node transforms for the four clips the duel DRAWS;")
@@ -126,15 +170,18 @@ def main() -> None:
     lines.append(f" * {len(order)} files, {blocks} `<anim>` blocks, {len(clips)} clips: {len(repeats)} names")
     lines.append(" * appear in two files, each time with identical facts, so the load order")
     lines.append(" * changes no value. ⚠️ Until 2026-09-23 this table read ONE file (158 clips)")
-    lines.append(" * and called that the payload — which is all finding 19 ever was.")
+    lines.append(" * and called that the payload — which is all finding 19 ever was — and it")
+    lines.append(" * carried the bare `d=` without the holds (the katana swung in 10, not 18).")
     lines.append(" *")
     lines.append(" * ⚠️ ONE `OG_ANIM` NAME IS NOT HERE: `flurry_parte`. `MCSActor.as` names it")
     lines.append(" * and no file defines it — the source's own `trace(\"missing animation\")`,")
     lines.append(" * on which `startAnim` no-ops, faithfully. Not a gap to fill in.")
     lines.append(" *")
     lines.append(" * ⚠️ ANDROID build (v0.682), the decompile every port reads. The web payload")
-    lines.append(" * carries the same 18 plus a web-only spider file, and differs on the ogre")
-    lines.append(" * (6 clips), the guardian (1) and the spearman (3 web-only clips).")
+    lines.append(" * carries the same 18 plus a web-only spider file; it differs on the ogre (6")
+    lines.append(" * durations + 2 web-only clips), the guardian (1 + 1), the spearman (3 web-only")
+    lines.append(" * clips + 4 pose-only edits) and 3 Skills poses; and its hold table differs by")
+    lines.append(" * two names (web adds `downedup` +12, drops `light_afterslashpose` +10).")
     lines.append(" */")
     lines.append("")
     lines.append("/** One clip's playback facts — structurally `AnimClip`; config may not import core. */")
@@ -154,7 +201,7 @@ def main() -> None:
     OUT.write_text("\n".join(lines), encoding="utf-8")
     looping = sum(1 for _, loop in clips.values() if loop)
     print(f"wrote {OUT.relative_to(REPO)}: {len(order)} files, {blocks} blocks, "
-          f"{len(clips)} clips ({looping} looping), {len(repeats)} agreeing repeats")
+          f"{len(clips)} clips ({looping} looping), {len(repeats)} agreeing repeats, {len(held)} held")
 
 
 if __name__ == "__main__":

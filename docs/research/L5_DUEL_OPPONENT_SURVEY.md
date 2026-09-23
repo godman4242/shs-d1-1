@@ -5,6 +5,20 @@
 > claimcheck corpus) and `reference/extracted/`; the scripts that measured them are
 > described inline so the next reader can re-run them. No source was changed.
 
+> **⛔ CORRECTIONS — the gauntlet review, 2026-09-23.** Four read-only reviewers checked this
+> survey against the source (every AS3 fact below held; eight statements did not). The
+> corrections live in ONE place, `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 2, so they
+> cannot drift. In this file these are wrong as written:
+> §1 "never a roster row" is Duel-Mode-MENU only (item 2) · §2 fact 1's cite is the function
+> header; the two `if`s are `EnemyPlayer.as:1389` / `:1393`, and 5 skills are unreachable (item
+> 6) · §2 fact 2: D8 DID cover dodges, and `makeSlash` is not a counter (item 3) · §2 fact 3: a
+> boss's skills are re-rolled by `setLevel` (item 6) · §2 "109 lines … network-only": 73 are the
+> local human (item 5) · §4: clip durations include `AnimData`'s holds (item 1), and the
+> web/Android clip diff is larger (`DIVERGENCES.md`, slice 0) · §5: the Sim DOES have a
+> `slashLength` twin (item 7). **And the
+> survey missed that the two builds differ in combat NUMBERS** (reach, damage, crit, scaling),
+> which is ruling R6 (item 8).
+
 ## 1. THE QUESTION THE SESSION HAD TO SETTLE FIRST — does single-player Duels use `EnemyPlayer`?
 
 **YES, on every duel path. Measured.**

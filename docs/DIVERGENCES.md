@@ -5002,7 +5002,8 @@ and no death, nothing ever *generates* an `NpcEvent`, so the undrained event lis
 not yet a bug — it is a channel that has never carried anything.
 
 **18. [✅ CLOSED 2026-09-23 — 1 → 35 telegraphs for 35 swings; see "THE UNITS AND THE
-WINDUP" below.] THE WINDUP IS DRAWN ONCE, THEN NEVER AGAIN.** `NpcController` derives `telegraph`
+WINDUP" below. ⚠️ Numbers superseded the same day: with `AnimData`'s holds, 20 for 20, each
+750 ms — "L5-OPP SLICE 0 … THE GAUNTLET REVIEW".] THE WINDUP IS DRAWN ONCE, THEN NEVER AGAIN.** `NpcController` derives `telegraph`
 by edge-detecting ATTACK_STATE across a whole `update()`. But the re-attack cycle
 completes *inside* one `update()`: `stepAnimation` finishes `katanaattack` →
 `startAction(WALK)` → `doAction()` sees the target still in range → `startAction(ATTACK)`.
@@ -5078,6 +5079,10 @@ Measured on the real duel: **before, 1 telegraph for 35 swings** (the spike's "2
 *landed* swings — 11 more are refused by the player's twelve-step guard). **After, 35
 telegraphs for 35 swings, every one 416.67 ms** (`katanaattack`, 10 frames at 24 fps). Swings
 are counted independently of the controller, as starts of the attack CLIP.
+⚠️ **Superseded 2026-09-23:** those 10 frames were the file's bare `d=`; `AnimData` adds an
+8-frame hold (`AnimData.as:77-78`), so the swing is **18 frames = 750 ms**, and the same duel now
+measures **20 telegraphs for 20 swings**. The fix itself (one telegraph per `startAction(ATTACK)`)
+stands. See "L5-OPP SLICE 0 … THE GAUNTLET REVIEW".
 
 **The fix is not the one the kickoff suggested, and why is measured.** The kickoff said "detect
 the clip restart". A clip cannot carry it for the family:
@@ -5104,6 +5109,8 @@ katana's x, and the actor's only rng draw (`walkSpeed`) never reaches the Sim.
 
 ### ⚠️ WHAT 18'S FIX LOOKS LIKE ON SCREEN — measured, and not graded
 
+(⚠️ Re-measured 2026-09-23 with `AnimData`'s holds: every **45 ticks = 750 ms**, each aura
+750 ms, still zero gap — the paragraph's conclusion stands; its numbers were the bare `d=`.)
 While the katana swings in place, a telegraph arrives every **25 ticks = 416.67 ms** — exactly
 the length of the aura each one arms (`DuelScene` sets `telegraphUntil = now + durationMs`). Zero
 gap: the red windup aura is **on continuously** from the first swing to the end of the fight, and
@@ -5173,26 +5180,30 @@ pinned so nobody invents it. `fly_end`, `getup_front` and `kneegroin_victim`, pi
 
 Each of the 13 attacking classes on the real `OgAnimLibrary`, `createDuelWorld()` and
 `NpcController`, spawned in the source's order (`setPosition` then `init`,
-`NPCManager.as:636-637`), against a still player 60 px away, for 30 s:
+`NPCManager.as:636-637`), built as the variant that FIGHTS, against a still player 60 px away,
+for 30 s, `mulberry32(7)` — exactly `tests/animList.test.ts`. `startAction(ATTACK)` counts:
 
-| | one-file table | the source's animList |
+| | one-file table | the source's animList, holds included |
 |---|---|---|
-| `EnemyKatana` / `EnemyKnife` / `EnemyArcher` — `startAction(ATTACK)` | 72 / 52 / 42 | 72 / 52 / 42 (unchanged) |
-| `EnemyBear` / `EnemyBoar` / `EnemyStag` / `EnemyWolf` / `EnemyWolfAlpha` / `EnemyFox` / `EnemySpearElite` | **1 each, then ZERO further state changes** | **3 / 24 / 6 / 37 / 24 / 45 / 37** |
-| `EnemySpear` / `RoomGoblin` / `RoomOgre` | 0 | 0 (unchanged) |
+| `EnemyKatana` / `EnemyKnife` / `EnemyArcher` | 72 / 52 / 46 | **40** / 52 / 46 (the katana's hold — see THE GAUNTLET REVIEW) |
+| `EnemyBear` / `EnemyBoar` / `EnemyStag` / `EnemySpear` (stabber) / `EnemyWolf` | **1 each, then ZERO further state changes** | 4 / 32 / 6 / 17 / 33 |
+| `EnemyWolfAlpha` / `EnemyFox` / `RoomGoblin` (chasing) / `RoomOgre` (chasing) / `EnemySpearElite` | **1 each, then ZERO** | 25 / 45 / 19 / 36 / 38 |
 
-So finding 19's INFERRED "(b) may never leave ATTACK" was **true, and for seven classes, not
-ten**. The other three never enter ATTACK against a still player on EITHER table, which is
-their own behaviour, not a missing clip: the spear attacks by its charging RUN (WALK ↔ RUN,
-passing the player), and the goblin and ogre are room NPCs that wander, idle and nap.
+So finding 19's INFERRED "(b) may never leave ATTACK" was **true for all ten classes it named.**
+Three of them only fight as one variant, and the test builds that one: `EnemySpear` rolls
+`isStabber` at construction (`EnemySpear.as:19`; only a stabber enters ATTACK, `:233-235`), and
+`RoomGoblin`/`RoomOgre` chase only with the `doChase` flag the room data sets
+(`Obj_NPCAggro.as:58-63` → `NPCManager.as:710-716`). The exact counts depend on the seed (a
+300-seed sweep put the boar at 9–39); the test pins `> 1`, and these are the seed-7 values.
 
-**An erratum to the kickoff, found while measuring.** Kickoff §3's slice-0 table said "4
-frozen in ATTACK, 6 never attack". Three of those six (wolf, alpha, fox) were an artefact of
-the probe calling `init` BEFORE `setPosition`. The reverse of the source's order spawns an
-animal mid-air, and a fallen alpha goes FALL → LAND → `WOLF_LAUNCHEDEND` → a looping
-`WOLF_DOWNED` that LAND never leaves (`EnemyWolfAlpha.as:151-163`, `:429`). That is a real
-source trait worth knowing, and it is not finding 19. The test builds actors in the source's
-order.
+**Two errata, both caught by measuring rather than by reading.** (1) Kickoff §3's slice-0 table
+said "4 frozen, 6 never attack". Three of those six (wolf, alpha, fox) were an artefact of the
+probe calling `init` BEFORE `setPosition`: the reverse of the source's order spawns an animal
+mid-air, and a fallen alpha goes FALL → LAND → `WOLF_LAUNCHEDEND` → a looping `WOLF_DOWNED` that
+LAND never leaves (`EnemyWolfAlpha.as:151-163`, `:429`), a real source trait, not finding 19.
+(2) This section's first version said "seven, not ten": it built the spear, goblin and ogre as
+their non-fighting variants, and quoted counts from a scratch probe with a different rng. The
+gauntlet review caught both.
 
 ### THE GATES
 
@@ -5200,19 +5211,54 @@ order.
   one gap; the byte-check now reads the load order from `MCSCharacter.as` (one source, no
   second copy), refuses unlisted and missing files, pins the 5 agreeing repeats and the 471
   blocks, and checks both directions.
-- `tests/animList.test.ts` — **new**, red on the one-file table (`EnemyBear asked for
-  undefined clips: [bear_walk, bear_run, …]`, `EnemyBear never left its first ATTACK`),
-  green on the new one.
+- `tests/animList.test.ts` — **new**, red on the one-file table for all ten (each: 1 attack, 0
+  state changes after; first failure `EnemyBear asked for undefined clips: [bear_walk,
+  bear_run, …]`), green on the new one.
 - `tests/duelSeam.test.ts` — the "null for a missing clip" pin moved from `fly_end` to
   `flurry_parte`, and asserts `fly_end` now resolves.
-- `tests/animList.plants.ts` — **3 new chaos plants** (49 → 52 in both pins), each on a clip
-  from a file the old table never read.
+- `tests/animList.plants.ts` — **4 new chaos plants** (49 → 53 in both pins): three on a clip
+  from a file the old table never read, one that strips the katana's hold.
 
 ### WHAT THIS SLICE DID NOT DO
 
 It ported no class. It changed no `src/core/` code except one comment (`duelSeam.ts`'s
 `OgAnimLibrary`), and `Sim.ts`, `OpponentController.ts` and `NpcController.ts` are
-untouched. `?npc=katana` fights exactly as before: the katana's 3 clips that were missing
-(`fly_end`, `getup_front`, `kneegroin_victim`) are reaction clips no duel path reaches (the
-seam spike's own note), and every `tests/duelSeam.test.ts` probe is unchanged and green. The web payload's 19th file (a spider) and its three version differences (ogre 6
-clips, guardian 1, spearman 3) are NOT in the table, by ruling R5.
+untouched. `?npc=katana` fights as before EXCEPT its swing length: its 3 clips that were
+missing (`fly_end`, `getup_front`, `kneegroin_victim`) are reaction clips no duel path reaches,
+but its attack is now 18 frames, not 10 (the hold; see below). The web payload's 19th file (a
+spider) and its version differences (ogre 6 durations + 2 web-only clips, guardian 1 + 1,
+spearman 3 web-only + 4 pose edits, 3 Skills poses; hold table: web adds `downedup` +12 and
+drops `light_afterslashpose` +10) are NOT in the table, by ruling R5.
+
+### THE GAUNTLET REVIEW (2026-09-23) — four read-only reviewers, 4 of 4 returned
+
+Two correctness reviewers on the slice-0 code and gates, two refuters on the survey and the
+kickoff against the source. Every finding below was re-verified in the parent loop against the
+source before anything changed.
+
+**1. THE HOLDS — the table carried the bare `d=`, not the length the source plays.** (Found
+independently by both code reviewers.) `AnimData`'s constructor sets `duration = xml.@d`, then a
+switch on the clip name adds a hold (`AnimData.as:12-135`: 30 groups, 58 names, +2 to +50, no
+fall-through), and the clock ends a clip only at that total (`MCSCharacter.as:1311`). So
+`katanaattack` is **10 + 8 = 18 frames = 750 ms**, not 417 ms. It was already written up in the
+L0 ledger (`docs/gauntlet/L0/run5/CLAIMS.md`, "animdata-code-injected-hold-table") and never
+applied. It predates today (the seam spike's 158 clips carried it); slice 0 spread it to 466.
+The web build's hold table (`§1t783s0§.as`) agrees on 56 of 58 names, the katana's +8 included.
+**Fixed:** the transcriber reads `AnimData.as` (labels resolved through `MCSActor.as`) and adds
+each hold; the byte-check re-derives the holds independently; 58 clips changed. **Measured
+consequence in the real duel (`?npc=katana`):** 35 → **20** swings and telegraphs, each 750 ms,
+still one every 45 ticks with zero gap; the player still dies at **16.55 s** with **24** damage
+events either way — damage events outnumber swings, so the Sim's side paces the damage. Why the
+damage count does not move with the swing rate is NOT investigated (finding 16's one-way seam is
+the suspect).
+
+**2. TEN, NOT SEVEN** — see the corrected table above.
+
+**3. Not fixed, with the reason.** (a) On CI the byte-check skips (`reference/` is local-only by
+the licence ruling), so CI pins only a handful of clip values; the local pre-commit runs the
+byte-check on every commit. (b) The test's `<anim>` regex is the generator's, so they share
+blind spots (an XML comment, `d=` before `i=`); a real XML parser agrees on all 471 blocks today,
+and the data is not re-extracted. Both are recorded, not patched.
+
+**4. The survey and the kickoff** carried seven wrong claims against the source; each is
+corrected in place (the survey's "CORRECTIONS" block, the kickoff's ERRATUM and ruling R6).

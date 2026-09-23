@@ -4025,3 +4025,12 @@ Survey: `docs/research/L5_DUEL_OPPONENT_SURVEY.md` (read-only, Opus 5.5 `high`, 
   froze after one swing; now 3–45 attacks each in 30 s. Kickoff ERRATUM: its "4 frozen, 6 never
   attack" came from a probe that called `init` before `setPosition`. +8 tests (1681), +3 plants
   (52). First lint run failed on 2 style errors in the new tests; fixed.
+- **Gauntlet review (4 read-only reviewers, 4 of 4 returned, each finding re-verified at the
+  source):** (1) the clip table carried the bare `d=` without `AnimData`'s per-name holds (58
+  clips, +2..+50): the katana's attack is 18 frames = 750 ms, not 10 = 417 (a gap since the seam
+  spike; the L0 ledger had it and nobody applied it). Fixed in the transcriber; the byte-check
+  re-derives the holds; `?npc=katana` now swings 20×, not 35×, per fight. (2) finding 19 froze all
+  TEN classes it named: my test had built the spear, goblin and ogre as non-fighting variants.
+  (3) my doc counts came from a scratch probe with a different rng; re-quoted from the test.
+  (4) the Android and web builds differ in combat NUMBERS, and the Sim uses the web ones → kickoff
+  ruling R6. +2 tests (1683: one new hold test net of a deleted coin-flip pin, one per new plant), +1 plant (53).

@@ -36,7 +36,8 @@ describe('OgAnimLibrary — the AnimLibrary the actor family never had', () => {
 
   it('serves the two clips the duel actually needs, with the payload\'s own facts', () => {
     expect(anims.clip(OG_ANIM.KATANAWALK)).toEqual({ durationFrames: 20, loop: true });
-    expect(anims.clip(OG_ANIM.KATANAATTACK)).toEqual({ durationFrames: 10, loop: false });
+    // 10 frames in the file + AnimData's 8-frame hold (`AnimData.as:77-78`).
+    expect(anims.clip(OG_ANIM.KATANAATTACK)).toEqual({ durationFrames: 18, loop: false });
   });
 
   it('returns null for a name the source does not define — the source\'s own miss', () => {
@@ -220,11 +221,13 @@ describe('SPIKE: an EnemyKatana in the real duel', () => {
     expect(r.telegraphs).toBeGreaterThan(0);
     expect(r.states.has(OG_STATE.ATTACK)).toBe(true);
     expect(r.states.has(OG_STATE.WALK)).toBe(true);
-    // ⚠️ AND ITS LENGTH IS THE PAYLOAD'S, not a number anyone chose: the
-    // `katanaattack` clip is 10 frames at the original's 24 fps. Without this,
-    // an AnimLibrary that answers `null` to everything still passes every other
-    // probe here — the duel leans on the clip TABLE for exactly this one value.
-    expect(r.firstTelegraphMs).toBeCloseTo((10 * 1000) / 24, 5);
+    // ⚠️ AND ITS LENGTH IS THE SOURCE'S, not a number anyone chose: the
+    // `katanaattack` clip is 10 frames in the file plus the 8-frame hold
+    // `AnimData` adds by name (`AnimData.as:77-78`), at the original's 24 fps =
+    // 750 ms. (Until 2026-09-23 this pinned 416.67 ms — the bare `d=`, found by
+    // the gauntlet review.) Without this, an AnimLibrary that answers `null` to
+    // everything still passes every other probe here.
+    expect(r.firstTelegraphMs).toBeCloseTo(((10 + 8) * 1000) / 24, 5);
   });
 
   it('SWINGS: the actor\'s own checkHitObject lands real damage on the player', () => {

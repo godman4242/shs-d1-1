@@ -31,8 +31,10 @@ import type { AnimClip, AnimLibrary, HitGeometry, HitShape, NpcTarget, NpcWorld 
  * adapter: it is the source's own `trace("missing animation")` case, and
  * `startAnim` no-ops on it (`MCSActor.startAnim`). Exactly one `OG_ANIM` name is
  * such a case (`flurry_parte`). ⚠️ Until 2026-09-23 the table read ONE file of the
- * 18, and seven ported attackers froze after their first swing on the clips it
- * lacked — finding 19, measured and closed in `tests/animList.test.ts`.
+ * 18, and ten ported attackers froze after their first swing on the clips it
+ * lacked — finding 19, measured and closed in `tests/animList.test.ts`. Each
+ * duration includes the hold `AnimData` adds by name (the katana's attack is
+ * 10 + 8 = 18 frames, 750 ms).
  */
 export class OgAnimLibrary implements AnimLibrary {
   clip(name: string): AnimClip | null {

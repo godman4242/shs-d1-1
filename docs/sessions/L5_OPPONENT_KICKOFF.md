@@ -22,6 +22,67 @@
 > not a clip. The kickoff's probe called `init` before `setPosition`, the reverse of
 > `NPCManager.as:636-637`, and spawned three animals mid-air. Numbers and the source trait
 > this exposed: `docs/DIVERGENCES.md`, "L5-OPP SLICE 0 — THE ANIMLIST".
+> **⛔ Second correction, from the gauntlet review below:** it was **10**, not 7. The spear,
+> goblin and ogre froze too, once built as the variants that fight (a stabber spear, a chasing
+> goblin and ogre).
+
+> **⛔ ERRATUM 2 — THE GAUNTLET REVIEW (2026-09-23, four read-only reviewers vs the source;
+> reports verified in the parent loop). Where this block and the text below disagree, THIS
+> BLOCK WINS.**
+> 1. **Clip durations include `AnimData`'s holds** (`AnimData.as:12-135`: +2 to +50 on 58
+>    names). The katana's attack is 18 frames = 750 ms, not 10. Fixed in slice 0's table.
+> 2. **§1 "never a roster row" is true for the Duel Mode MENU only.** Overworld and quest
+>    duels (`Obj_NPCAggro.as:191`, quest steps with action 6) clone a roster row and keep its
+>    `ai`, and the source expects it (`NPCManager.as:643` tests `isDuelMode() && xml.ai == 0`).
+>    `proceedWithAI` also runs when `!useCirrus`, `lastPing >= 300`, the local player is level
+>    ≤ 1 or `stratusID` is empty (`DuelModeUI.as:332-349`), not only on offline or timeout.
+> 3. **R3 misquoted D8.** D8's measured negative is "zero blocks, parries **or dodges**"
+>    (`DIVERGENCES.md:492`, `COMBAT_MEASUREMENTS.md:157`), and two tests pin it:
+>    `tests/AISeamController.test.ts` ("the enemy never blocks or dodges in the original") and
+>    `tests/Sim.test.ts` ("A PLANTED BLOCK/DODGE CHANGES NOTHING"). The distinction that holds:
+>    D8's corpus was ~30 MOBS, and mobs have no `doEvade`. Slice 7 must re-scope both tests to
+>    mobs before porting it. And `doEvade`'s fallback `makeSlash` is not a counter: it starts
+>    at its own body, a random 60° up-diagonal or horizontal AWAY from the target
+>    (`EnemyPlayer.as:1250-1278`).
+> 4. **Slice 3 is missing `MCSPlayer.initSpecialSkills`** (71 lines, `MCSPlayer.as:3127`,
+>    called by `setStance` at `:3115`). It sets `canLaunch` / `canAirCombo` / `canStab`, so
+>    without it slice 3 throws `unported()` on the duellist's first `setStance`. Also
+>    unslotted: `lineArrayDeepCopy` (slice 4), `useChi`, `setChi`/`getChi`, `cancelStealth`,
+>    `cancelLogSub`, `setAutoSlash`, `cleanUpPlayer`, `redFreeze`, `setIsFriendly`,
+>    `disposeMCS`. And the Sim's INFERRED `LAUNCH_UNLOCK_LEVEL.heavy = 5` contradicts the
+>    source's AI branch, heavy launch at **3** (`MCSPlayer.as:3182`).
+> 5. **"Out of the lane: the 109 network lines" is the wrong cut.** 73 of the 109 are
+>    `controlledBy == 0`, the LOCAL HUMAN (not network), and some the AI itself runs (its own
+>    dispatch at `MCSPlayer.as:1149-1151`, `:1230`, `:3129`). Out of the lane are the
+>    BRANCHES the opponent never enters, not the lines a regex matches.
+> 6. **OPP-D "boss has no skills" is half true:** `init` empties them, `setLevel` re-rolls
+>    them through `generateSkillList` with no boss guard whenever the wave carries a `<lvl>`
+>    (e.g. npc 46 at lvl 15). Duel Mode is unaffected. Pin both halves. Also pin: the
+>    duellist's ChiPunch/ChiKick projectile reads the HUMAN's skill level
+>    (`MCSPlayer.as:1783`, `:1795`), and 5 skills can never be picked through
+>    `getUsableSkills` (BACKTHROW, CHIKICK, CHIPUNCH, DEATHTOUCH, SPIRITTHIEF).
+> 7. **R2 overstated its evidence by one field:** the Sim DOES have a `slashLength` twin
+>    (`reachFor`, `src/core/mastery.ts`; `synthesizeStrokePoints` reproduces `makeSlash`'s
+>    `slashLength / 20`). The other nine fields have none, so R2 stands.
+> 8. **NEW RULING R6 (it replaces R5's premise): the ANDROID code is the structure; the WEB
+>    build's numbers win.** R5 assumed the builds differ only in clips. They also differ in
+>    the combat numbers slices 1, 3, 4 and 7 port: reach (Android ×1.5 / 0.005m / 0.005m vs
+>    web ×1.4 / 0.02m / 0.04m), damage and crit (Android heavy ×1.5, crit ×1.2/×1.5 vs web ×1.4,
+>    crit ×1.3 flat), the duellist's low-level scaling (×0.8 vs ×0.9), the AI's wander margins
+>    (50 vs 100). **The Sim already runs on the web numbers** (`src/config/reach.ts`,
+>    `CRIT_MULT = 1.3`) and the videos ARE the web build. So: port the Android code (readable,
+>    the claimcheck corpus) for STRUCTURE and names; diff every numeric literal of each
+>    ported function against its web twin (web `MCSPlayer` = `§1t99s0§.as`, web
+>    `EnemyPlayer` = `§1t122s0§.as`, in `reference/decompiled/shs3_payload/scripts/`); on a
+>    mismatch the WEB value ships, as one DIVERGENCES row with both cites; a branch that
+>    exists in only one build is flagged and ruled per case, never merged silently. Clips
+>    stay Android (they must match the code that names them). **Slice 1's first job:**
+>    measure whether claimcheck can check a web cite (it honours a cite carrying its own
+>    `reference/…` path, but the obfuscated `§…§` names are untested); if not, extend it
+>    before the first web number lands. *Red-team:* the steelman for Android-only is one
+>    internally consistent build that claimcheck already guards; mixing risks shipping a
+>    combination neither build had. Mitigation: structure is never mixed, only literals, each
+>    one recorded. **Veto:** Android numbers throughout, every web difference a DIVERGENCES row.
 
 ---
 
@@ -80,7 +141,8 @@ the PLAYER's combat feel (reach cap, slash-vs-move, gait, impacts). It does not 
 an opponent. A12-F's regression items carry over as OPP-F. **Veto:** grade this lane
 against A12.
 
-**R5 — animation clips come from the ANDROID files, in the source's load order.** The
+**R5 — animation clips come from the ANDROID files, in the source's load order.** (⚠️ Its
+premise that the builds differ only in clips is wrong: see ERRATUM 2 item 8, ruling R6.) The
 code we port is the Android decompile (`shs3_android_payload`, the claimcheck corpus). It
 loads 18 files (`MCSCharacter.as:190-207`). The web payload has the same 18 plus a
 web-only spider file, and differs on Ogre (6 clips), Guardian (1) and HumanSpear (+3).
@@ -180,7 +242,7 @@ each lost one).
 | **OPP-A** | every clip `MCSPlayer` + `EnemyPlayer` name resolves (166/166, 4/4) | slice 0's pin |
 | **OPP-B** | the profile parse reproduces the source's derived stats for every fixture, at ±0 | slice 1 byte-style suite |
 | **OPP-C** | every in-scope AS3 function has a TS twin named in a tree test; `unported` count = 0 | tree test |
-| **OPP-D** | the AI port's source quirks pinned (the dead very-close list; boss has no skills; the level-≤3 skip-1-in-5) | slice 7 |
+| **OPP-D** | the AI port's source quirks pinned (the dead very-close list and its 5 unreachable skills; a boss's skills emptied by `init` and re-rolled by `setLevel`; the level-≤3 skip-1-in-5; ChiPunch/ChiKick reading the human's level) | slice 7 |
 | **OPP-E** | behind `?npc=duellist`: the duellist strikes by STROKES, takes hits (16), dies (17); `duel-baseline` untouched while the flag defaults OFF | slice 8 probe |
 | **OPP-F** | nothing regressed: suite ≥ baseline · claimcheck 0 · chaos all red/restored · typecheck/lint 0 · floors untouched | the existing gates |
 | **OPP-G** | a LOOK: Kheshav plays `?npc=duellist` beside a video frame of a Duel Mode fight | owner |
@@ -207,7 +269,7 @@ remaining L4b mobs (slice 0 unblocks them; it does not port them) · the overwor
 ## §7 THE BASELINE TO CONFIRM FIRST (at `36314d9`, before slice 0)
 
 > ⚠️ Each landed slice moves these numbers; the CURRENT baseline is the "THE GATES, AS THEY
-> STAND" block in `RESUME_HERE.md`. After slice 0: 87 files / 1681 tests, chaos 52/52.
+> STAND" block in `RESUME_HERE.md`. After slice 0 and its review: 87 files / 1683 tests, chaos 53/53.
 
 ```
 $ npx vitest run            ->  Test Files 86 passed (86) · Tests 1673 passed (1673)

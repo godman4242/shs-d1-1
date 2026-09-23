@@ -20,7 +20,7 @@ Copy everything BETWEEN the `'''` lines:
 ```
 '''
 Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md, and run slice 1 (THE DUELLIST PROFILE) end to end under its §4 gate.
-Before any code: confirm the baseline at HEAD (87 files / 1681 tests, typecheck 0, lint 0, claimcheck 0 failures, chaos 52/52), and list every AS3 function in the slice with its measured line range.
+Before any code: confirm the baseline at HEAD (87 files / 1683 tests, typecheck 0, lint 0, claimcheck 0 failures, chaos 53/53), read the kickoff's ERRATUM 2 and ruling R6 first (the web build's numbers win), and list every AS3 function in the slice with its measured line range.
 Done = the profile parse plus EnemyPlayer.init's derived stats reproduce the source for every fixture profile at ±0 (bar OPP-B): red-first, plants declared, claimcheck cites on every new config value, RESUME_HERE rewritten in the same commit.
 '''
 ```
@@ -35,24 +35,25 @@ above and a list of the functions it will port, with line numbers.
 | phase | verdict | measured |
 |---|---|---|
 | **1 survey** | ✅ `docs/research/L5_DUEL_OPPONENT_SURVEY.md` | **Duel Mode uses `EnemyPlayer` on every path**: `DuelModeUI.proceedWithAI` → `initDuelist` sets `ai = 0` (`XMLNpc.as:315`) → `new EnemyPlayer(mcs, true, false)`. Its opponent is a server-fetched player profile, **never a roster row**. `MCSPlayer` is the player's own class (90 functions); the AI drives it with the mouse's stroke calls. |
-| **2 kickoff** | ✅ `docs/sessions/L5_OPPONENT_KICKOFF.md` | 9 slices; R2 = port `MCSPlayer` as ONE faithful body (opponent first); R5 = clips from the Android files. Bar reached for slice 0, honestly not for 2–8 (§8). Carries an ERRATUM from slice 0. |
-| **3 slice 0** | ✅ **finding 19 CLOSED**, a transcription gap, not missing art | the source loads **18** animation files into one `animList` (`MCSCharacter.as:178-219`); the transcriber read 1. **158 → 466 clips**, the old 158 byte-unchanged; 428 of 429 names resolve (only `flurry_parte` is truly absent). **7 attackers froze after one swing** (bear, boar, stag, wolf, alpha, fox, spear elite) → now **3 / 24 / 6 / 37 / 24 / 45 / 37** attacks in 30 s. |
+| **2 kickoff** | ✅ `docs/sessions/L5_OPPONENT_KICKOFF.md` | 9 slices; R2 = port `MCSPlayer` as ONE faithful body (opponent first); R5 = clips from the Android files; **R6 (added by the review) = Android code for structure, the WEB build's numbers win**. Bar reached for slice 0, honestly not for 2–8 (§8). Carries two errata. |
+| **3 slice 0** | ✅ **finding 19 CLOSED**, a transcription gap, not missing art | the source loads **18** animation files into one `animList` (`MCSCharacter.as:178-219`); the transcriber read 1. **158 → 466 clips**, the old 158 byte-unchanged; 428 of 429 names resolve (only `flurry_parte` is truly absent). **All 10 attackers finding 19 named froze after one swing** → each now cycles (4–45 attacks in 30 s, seed 7). **Plus the holds:** each duration now includes the hold `AnimData` adds by name (58 clips); the katana's attack is 18 frames = **750 ms, not 417**. |
+| **4 gauntlet review** | ✅ 4 of 4 reviewers returned; every finding re-verified at the source | the holds (found by both code reviewers); "seven" was really **ten** (my test built the spear, goblin and ogre as non-fighting variants); my doc counts came from a scratch probe, not the test; and 7 kickoff/survey claims were wrong, the big one being that **the Android and web builds differ in combat numbers** (ruling R6). All fixed or recorded: `docs/DIVERGENCES.md`, "THE GAUNTLET REVIEW". |
 
 Three premises in the last RESUME_HERE were wrong, and the source corrected each: the "88 of
 495 roster rows" reason (Duel Mode never draws a roster row); "finding 19 does not block the
 duel opponent" (127 of `MCSPlayer`'s 166 clips were missing); and "the L5 bar in SESSION24 §2"
-(that is the player's combat feel). One of my own numbers was also wrong and is now an
-erratum: the kickoff's "4 frozen, 6 never attack" came from a probe that spawned animals
-mid-air.
+(that is the player's combat feel). My own work carried errors too, caught by measuring and by
+the review: the kickoff's "4 frozen, 6 never attack" (a probe that spawned animals mid-air), my
+"seven, not ten" (the wrong variants), and the missing holds (a gap since the seam spike).
 
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 87 passed (87) · Tests 1681 passed (1681)   (1673 + 8)
+$ npx vitest run            ->  Test Files 87 passed (87) · Tests 1683 passed (1683)   (1673 + 10)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
 $ npm run claimcheck        ->  1716 cites · 421 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  38 path tokens, all resolve
-$ npm run chaos             ->  52/52 plants RED · 52/52 restored byte-identical · exit 0 · ~36 s   (slice gate, NOT pre-commit)
+$ npm run chaos             ->  53/53 plants RED · 53/53 restored byte-identical · exit 0 · ~40 s   (slice gate, NOT pre-commit)
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
@@ -60,14 +61,16 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
 ### WHAT CHANGED
 
 - `scripts/anim/transcribeAnimClips.py` reads the load order from `MCSCharacter.as` and all 18
-  Android files, last-write-wins, and fails loudly on a missing, unlisted or disagreeing file.
-- `src/config/ogAnimClips.ts` regenerated: +308 clips, 0 changed.
+  Android files, last-write-wins, then adds `AnimData`'s holds; fails loudly on a missing,
+  unlisted or disagreeing file, or an unresolvable hold.
+- `src/config/ogAnimClips.ts` regenerated: +308 clips; 58 carry their hold.
 - `tests/ogAnimClips.test.ts` rewritten (byte-check over the 18 files, order read from the
   source); `tests/animList.test.ts` **new** (red on the old table, green now);
   `tests/duelSeam.test.ts`'s missing-clip pin moved to `flurry_parte`.
-- `tests/animList.plants.ts`: **3 new chaos plants**, 49 → 52 in both pins.
-- `src/core/npc/duelSeam.ts`: one comment. No `src/core/` behaviour changed; `Sim.ts`,
-  `OpponentController.ts` and `NpcController.ts` untouched; `?npc=katana` fights as before.
+- `tests/animList.plants.ts`: **4 new chaos plants**, 49 → 53 in both pins.
+- `src/core/npc/duelSeam.ts`: one comment. `Sim.ts`, `OpponentController.ts` and
+  `NpcController.ts` untouched. **`?npc=katana` changed in one way:** it swings 20 times per
+  fight, not 35, each swing 750 ms (the hold); it still kills a still player in 16.55 s.
 
 ### ⚠️ STILL OPEN
 
@@ -118,8 +121,9 @@ feeding broken scripts to `wfcheck.mjs` on purpose — they print on the baselin
 ### ⚠️ THE ONE THING ONLY KHESHAV CAN DO
 
 `npm run dev`, then open **`http://localhost:5173/?npc=katana`**. **Expect:** the red windup
-aura now stays on **continuously** while it swings in place — measured, a telegraph every 416.67 ms
-and each aura lasts 416.67 ms, so there is no gap (before: one flash, then nothing). While you
+aura now stays on **continuously** while it swings in place — measured (re-measured with the
+holds), a telegraph every 750 ms and each aura lasts 750 ms, so there is no gap (before: one
+flash, then nothing). While you
 stand still it stands and swings (the original's behaviour); walk away and it follows. **Your
 call:** is a steady glow acceptable, or do you want a visible beat per swing? (Cheapest beat:
 phase the aura's pulse from each telegraph — `docs/DIVERGENCES.md`, "WHAT 18'S FIX LOOKS LIKE".)

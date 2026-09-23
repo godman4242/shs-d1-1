@@ -34,9 +34,21 @@ describe('clip-table structural pins — run everywhere, no reference payload ne
     }
   });
 
-  it('serves the katana pair the duel needs: walk 20 looping, attack 10 one-shot', () => {
+  it('serves the katana pair the duel needs: walk 20 looping, attack 18 one-shot (10 + an 8-frame hold)', () => {
     expect(OG_ANIM_CLIPS[OG_ANIM.KATANAWALK]).toEqual({ durationFrames: 20, loop: true });
-    expect(OG_ANIM_CLIPS[OG_ANIM.KATANAATTACK]).toEqual({ durationFrames: 10, loop: false });
+    expect(OG_ANIM_CLIPS[OG_ANIM.KATANAATTACK]).toEqual({ durationFrames: 18, loop: false });
+  });
+
+  it('a duration is the file\'s d= PLUS the hold AnimData adds by name — the length the source plays', () => {
+    // `AnimData.as:15` sets `duration = xml.@d`, then a switch on the clip name adds
+    // a hold (`:23-135`): 58 names, +2 to +50 frames, the last pose held. The clock
+    // ends a clip only at that total (`MCSCharacter.as:1311`). Until 2026-09-23 this
+    // table carried the bare `d=`, so the katana swung in 10 frames, not 18.
+    expect(OG_ANIM_CLIPS.katanaattack?.durationFrames).toBe(10 + 8);
+    expect(OG_ANIM_CLIPS.ogre_nap1_mid?.durationFrames).toBe(21 + 48);
+    expect(OG_ANIM_CLIPS.deathtouch_parta?.durationFrames).toBe(1 + 50);
+    expect(OG_ANIM_CLIPS.balanced_horslash_partd?.durationFrames).toBe(1 + 10);
+    expect(OG_ANIM_CLIPS.death?.durationFrames).toBe(38 + 6);
   });
 
   it('defines 428 of the 429 OG_ANIM names — the three "missing" reaction clips included', () => {
@@ -59,6 +71,7 @@ const MCS_CHARACTER = path.join(
   ROOT, 'reference', 'decompiled', 'shs3_android_payload', 'scripts', 'MCSCharacter.as',
 );
 const ANDROID = path.join(ROOT, 'reference', 'extracted', 'android');
+const SCRIPTS = path.dirname(MCS_CHARACTER);
 const HAVE_SOURCE = existsSync(MCS_CHARACTER) && existsSync(ANDROID);
 
 interface Clip {
@@ -109,6 +122,40 @@ describe.skipIf(!HAVE_SOURCE)('byte-check — OG_ANIM_CLIPS is the source\'s own
     return out;
   };
 
+  /**
+   * `AnimData`'s hold table, read from the SOURCE: every `case` label of the
+   * constructor's switch gets the `+= N` its group ends in. A label is either a
+   * string literal or an `MCSActor` constant, resolved through `MCSActor.as`.
+   */
+  const holds = (): Map<string, number> => {
+    const consts = new Map<string, string>();
+    for (const m of readFileSync(path.join(SCRIPTS, 'MCSActor.as'), 'utf8').matchAll(/static (?:const|var) (\w+):String = "([^"]*)"/g)) {
+      if (m[1] !== undefined && m[2] !== undefined) consts.set(m[1], m[2]);
+    }
+    const src = readFileSync(path.join(SCRIPTS, 'AnimData.as'), 'utf8');
+    const out = new Map<string, number>();
+    let labels: string[] = [];
+    for (const line of src.slice(src.indexOf('switch(')).split('\n')) {
+      for (const m of line.matchAll(/case\s+(.+?):/g)) labels.push((m[1] ?? '').trim());
+      const add = /duration \+= (\d+);/.exec(line)?.[1];
+      if (add === undefined) continue;
+      for (const label of labels) {
+        const name = label.startsWith('"') ? label.slice(1, -1) : consts.get(label.replace(/^MCSActor\./, ''));
+        if (name === undefined) throw new Error(`hold label ${label} does not resolve`);
+        expect(out.has(name), `${name} held twice`).toBe(false);
+        out.set(name, Number(add));
+      }
+      labels = [];
+    }
+    return out;
+  };
+
+  it('reads AnimData\'s 58 holds, every one naming a clip the source loads', () => {
+    const h = holds();
+    expect(h.size).toBe(58);
+    for (const name of h.keys()) expect(OG_ANIM_CLIPS[name], `${name} is held but not a clip`).toBeDefined();
+  });
+
   it('loads the 18 files the source lists, and no data file the source does not list', () => {
     const order = loadOrder();
     expect(order).toHaveLength(18);
@@ -119,7 +166,7 @@ describe.skipIf(!HAVE_SOURCE)('byte-check — OG_ANIM_CLIPS is the source\'s own
     expect([...onDisk].sort()).toEqual([...order].sort());
   });
 
-  it('matches the source\'s animList clip for clip, in both directions', () => {
+  it('matches the source\'s animList clip for clip, holds included, in both directions', () => {
     const animList = new Map<string, Clip>();
     const repeats: string[] = [];
     let blocks = 0;
@@ -136,13 +183,18 @@ describe.skipIf(!HAVE_SOURCE)('byte-check — OG_ANIM_CLIPS is the source\'s own
         animList.set(name, clip);
       }
     }
+    // What `AnimData` does after reading `d=`: add the hold by name.
+    for (const [name, hold] of holds()) {
+      const clip = animList.get(name);
+      if (clip !== undefined) animList.set(name, { ...clip, durationFrames: clip.durationFrames + hold });
+    }
     expect(blocks).toBe(471);
     expect(repeats.sort()).toEqual(
       ['chargewithspear', 'mining', 'spearbowdropdown', 'spearbowjump', 'walkwithspear'],
     );
     // Every committed clip is the source's...
     for (const [name, clip] of Object.entries(OG_ANIM_CLIPS)) {
-      expect(animList.get(name), `${name} is not in the source's animList at all`).toEqual(clip);
+      expect(animList.get(name), `${name} differs from, or is missing in, the source's animList`).toEqual(clip);
     }
     // ...and every source clip is committed. (One direction alone would let a
     // dropped clip pass silently — the half that the claimcheck gate learned.)
