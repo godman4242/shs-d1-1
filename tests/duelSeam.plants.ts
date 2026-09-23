@@ -68,7 +68,7 @@ export const PLANTS: ChaosPlant[] = [
     name: 'seam: stop relaying the actor\'s walk once it has attacked (a real statue)',
     file: 'src/core/npc/NpcController.ts',
     find: '    if (stepped) this.heldMoveX = Math.sign(moved);',
-    replace: '    if (stepped && this.attacksStarted === ZERO) this.heldMoveX = Math.sign(moved);',
+    replace: '    if (stepped) this.heldMoveX = this.attacksStarted === ZERO ? Math.sign(moved) : ZERO;',
     tests: [SEAM],
     note: 'reauthored:2026-09-23 — the statue test is the guard that the katana re-closes when the gap opens',
   },

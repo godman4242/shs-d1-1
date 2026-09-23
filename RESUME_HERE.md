@@ -45,7 +45,7 @@ $ npx vitest run            ->  Test Files 86 passed (86) · Tests 1673 passed (
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
 $ npm run claimcheck        ->  1716 cites · 421 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  38 path tokens, all resolve
-$ npm run chaos             ->  CHAOS_RESULT_PENDING
+$ npm run chaos             ->  49/49 plants RED · 49/49 restored byte-identical · exit 0 · ~35 s   (slice gate, NOT pre-commit)
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose — they print on the baseline too.)
