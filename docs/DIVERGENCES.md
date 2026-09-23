@@ -5102,6 +5102,18 @@ walk clip is proven to have wrapped (fails the kickoff's clip-restart detector).
 Identical on seeds 1, 2, 3, 7 and 42 — which is NOT five times the evidence: the Sim owns the
 katana's x, and the actor's only rng draw (`walkSpeed`) never reaches the Sim.
 
+### ⚠️ WHAT 18'S FIX LOOKS LIKE ON SCREEN — measured, and not graded
+
+While the katana swings in place, a telegraph arrives every **25 ticks = 416.67 ms** — exactly
+the length of the aura each one arms (`DuelScene` sets `telegraphUntil = now + durationMs`). Zero
+gap: the red windup aura is **on continuously** from the first swing to the end of the fight, and
+its pulse runs on its own clock (`sin(fxNow / 90)`), not per swing. Before the fix it flashed
+once. That is truthful — the katana never stops attacking, which is the source's own cycle — but
+a duration-based aura cannot show a beat between back-to-back attacks. **Not changed here:** how
+the cue should look is a LOOK against the videos, and the OG has no aura at all (its windup is the
+swing animation). The cheapest option if the owner wants a visible beat: phase the pulse from the
+latest telegraph's start instead of the free clock (render-only, `DuelScene`).
+
 ### THE STATUE — MEASURED: NOT A DEFECT, THE SOURCE'S OWN BEHAVIOUR. No finding 19 for it.
 
 With 15 falsified it could not be "15 in a costume", so it was measured on its own. The

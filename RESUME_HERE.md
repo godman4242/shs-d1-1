@@ -65,10 +65,12 @@ feeding broken scripts to `wfcheck.mjs` on purpose — they print on the baselin
 
 ### ⚠️ THE ONE THING ONLY KHESHAV CAN DO
 
-`npm run dev`, then open **`http://localhost:5173/?npc=katana`**. **Expect:** a windup before
-**every** swing (not just the first); while you stand still it stands and swings in place (the
-original's behaviour); walk away and it follows. A model cannot grade whether that READS like
-the videos.
+`npm run dev`, then open **`http://localhost:5173/?npc=katana`**. **Expect:** the red windup
+aura now stays on **continuously** while it swings in place — measured, a telegraph every 416.67 ms
+and each aura lasts 416.67 ms, so there is no gap (before: one flash, then nothing). While you
+stand still it stands and swings (the original's behaviour); walk away and it follows. **Your
+call:** is a steady glow acceptable, or do you want a visible beat per swing? (Cheapest beat:
+phase the aura's pulse from each telegraph — `docs/DIVERGENCES.md`, "WHAT 18'S FIX LOOKS LIKE".)
 
 ---
 
