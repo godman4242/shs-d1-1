@@ -39,11 +39,14 @@ describe('OgAnimLibrary — the AnimLibrary the actor family never had', () => {
     expect(anims.clip(OG_ANIM.KATANAATTACK)).toEqual({ durationFrames: 10, loop: false });
   });
 
-  it('returns null for a name the payload does not define — the source\'s own miss', () => {
-    // `fly_end` is in the AS3 `OG_ANIM` table but not in this payload; the
-    // source traces "missing animation" and startAnim no-ops. Faithful, not a gap.
-    expect(OG_ANIM.FLY_END in OG_ANIM_CLIPS).toBe(false);
-    expect(anims.clip(OG_ANIM.FLY_END)).toBeNull();
+  it('returns null for a name the source does not define — the source\'s own miss', () => {
+    // `flurry_parte` is in the AS3 `OG_ANIM` table but in none of the 18 files the
+    // source loads; it traces "missing animation" and startAnim no-ops. It is the
+    // ONE such name (`tests/ogAnimClips.test.ts`). `fly_end` used to stand here,
+    // and was only "missing" because the clip table read one file of 18.
+    expect(OG_ANIM.FLURRY_PARTE in OG_ANIM_CLIPS).toBe(false);
+    expect(anims.clip(OG_ANIM.FLURRY_PARTE)).toBeNull();
+    expect(anims.clip(OG_ANIM.FLY_END)).not.toBeNull();
   });
 
   it('agrees with OG_ANIMS on every clip the two tables share', () => {

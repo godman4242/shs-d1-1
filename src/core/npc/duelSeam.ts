@@ -26,12 +26,13 @@ import type { AnimClip, AnimLibrary, HitGeometry, HitShape, NpcTarget, NpcWorld 
  * `MCSCharacter.animList`, served from the payload's own clip table.
  *
  * `AnimLibrary` wants exactly `{durationFrames, loop}`, which is exactly what
- * `OG_ANIM_CLIPS` transcribes for all 158 clips the payload defines. A name the
- * payload does not define returns `null`, which is NOT a hole in this adapter:
- * it is the source's own `trace("missing animation")` case, and `startAnim`
- * no-ops on it (`MCSActor.startAnim`). Of the 20 clips `EnemyKatana` names, 17
- * are defined; the 3 that are not (`fly_end`, `getup_front`, `kneegroin_victim`)
- * are reaction clips no duel path reaches.
+ * `OG_ANIM_CLIPS` transcribes for all 466 clips of the 18 files the source
+ * loads. A name no file defines returns `null`, which is NOT a hole in this
+ * adapter: it is the source's own `trace("missing animation")` case, and
+ * `startAnim` no-ops on it (`MCSActor.startAnim`). Exactly one `OG_ANIM` name is
+ * such a case (`flurry_parte`). ⚠️ Until 2026-09-23 the table read ONE file of the
+ * 18, and seven ported attackers froze after their first swing on the clips it
+ * lacked — finding 19, measured and closed in `tests/animList.test.ts`.
  */
 export class OgAnimLibrary implements AnimLibrary {
   clip(name: string): AnimClip | null {

@@ -11,7 +11,7 @@
  * clean clone. The structural suite above it runs everywhere — and it must,
  * because an always-skipping gate carries no information.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -19,8 +19,11 @@ import { OG_ANIM } from '../src/config/ogActor';
 import { OG_ANIM_CLIPS } from '../src/config/ogAnimClips';
 
 describe('clip-table structural pins — run everywhere, no reference payload needed', () => {
-  it('carries the 158 clips this payload defines', () => {
-    expect(Object.keys(OG_ANIM_CLIPS).length).toBe(158);
+  it('carries the 466 clips the source loads — all 18 animation files, not one', () => {
+    // `MCSCharacter.initAnimationData` (`MCSCharacter.as:178-219`) loads 18 files
+    // into ONE `animList`: 471 `<anim>` blocks, 5 names in two files. Until
+    // 2026-09-23 this table held one file's 158, and finding 19 was that gap.
+    expect(Object.keys(OG_ANIM_CLIPS).length).toBe(466);
   });
 
   it('every entry is a positive integer duration and a real boolean loop flag', () => {
@@ -36,27 +39,60 @@ describe('clip-table structural pins — run everywhere, no reference payload ne
     expect(OG_ANIM_CLIPS[OG_ANIM.KATANAATTACK]).toEqual({ durationFrames: 10, loop: false });
   });
 
-  it('does NOT claim every OG_ANIM name — 429 keys, 158 clips, and that is the source', () => {
-    // A name with no clip is the source's own `trace("missing animation")`.
-    // Pinned so nobody later "fixes" the gap by inventing durations.
-    expect(OG_ANIM.FLY_END in OG_ANIM_CLIPS).toBe(false);
-    expect(OG_ANIM.GETUP_FRONT in OG_ANIM_CLIPS).toBe(false);
-    expect(OG_ANIM.KNEEGROIN_VICTIM in OG_ANIM_CLIPS).toBe(false);
+  it('defines 428 of the 429 OG_ANIM names — the three "missing" reaction clips included', () => {
+    expect(OG_ANIM.FLY_END in OG_ANIM_CLIPS).toBe(true);
+    expect(OG_ANIM.GETUP_FRONT in OG_ANIM_CLIPS).toBe(true);
+    expect(OG_ANIM.KNEEGROIN_VICTIM in OG_ANIM_CLIPS).toBe(true);
+    const undefinedNames = Object.values(OG_ANIM).filter((name) => !(name in OG_ANIM_CLIPS));
+    expect(undefinedNames).toEqual([OG_ANIM.FLURRY_PARTE]);
+  });
+
+  it('flurry_parte is the ONE genuine source-side gap — pinned so nobody invents it', () => {
+    // `MCSActor.as` names it; none of the 18 files defines it. `startAnim` no-ops
+    // on it (`trace("missing animation")`), faithfully.
+    expect(OG_ANIM.FLURRY_PARTE in OG_ANIM_CLIPS).toBe(false);
   });
 });
 
-const BINDATA = path.join(
-  fileURLToPath(new URL('..', import.meta.url)),
-  'reference', 'extracted', 'bindata', '108_1t4635s0.bin',
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const MCS_CHARACTER = path.join(
+  ROOT, 'reference', 'decompiled', 'shs3_android_payload', 'scripts', 'MCSCharacter.as',
 );
-const HAVE_BINDATA = existsSync(BINDATA);
+const ANDROID = path.join(ROOT, 'reference', 'extracted', 'android');
+const HAVE_SOURCE = existsSync(MCS_CHARACTER) && existsSync(ANDROID);
 
-describe.skipIf(!HAVE_BINDATA)('byte-check — OG_ANIM_CLIPS is a faithful transcription', () => {
+interface Clip {
+  durationFrames: number;
+  loop: boolean;
+}
+
+describe.skipIf(!HAVE_SOURCE)('byte-check — OG_ANIM_CLIPS is the source\'s own animList', () => {
+  /**
+   * The load order, read from the SOURCE, never restated here: the
+   * `xmlArray.push(XML(new <X>AnimationData()))` lines of `initAnimationData`.
+   * Order matters because the source's `animList[name] = ...` lets a later file
+   * overwrite an earlier one.
+   */
+  const loadOrder = (): string[] => {
+    const src = readFileSync(MCS_CHARACTER, 'utf8');
+    const body = /function initAnimationData\(\)[\s\S]*?\n {6}\}/.exec(src)?.[0];
+    if (body === undefined) throw new Error('initAnimationData not found — the source moved');
+    return [...body.matchAll(/xmlArray\.push\(XML\(new (\w+)AnimationData\(\)\)\)/g)].map((m) => {
+      if (m[1] === undefined) throw new Error('load-order regex group missing');
+      return m[1];
+    });
+  };
+
+  const fileFor = (stem: string): string => {
+    const hits = readdirSync(ANDROID).filter((f) => f.endsWith(`_MCSCharacter_${stem}AnimationData.bin`));
+    expect(hits, `${stem}: exactly one data file`).toHaveLength(1);
+    return path.join(ANDROID, hits[0] ?? '');
+  };
+
   /** Independent grammar: this suite never imports the generator. */
-  const fromPayload = (): Map<string, { durationFrames: number; loop: boolean }> => {
-    const raw = readFileSync(BINDATA, 'latin1');
-    const out = new Map<string, { durationFrames: number; loop: boolean }>();
-    for (const m of raw.matchAll(/<anim i="([^"]+)"([^>]*)>([\s\S]*?)<\/anim>/g)) {
+  const parseFile = (file: string): Map<string, Clip> => {
+    const out = new Map<string, Clip>();
+    for (const m of readFileSync(file, 'latin1').matchAll(/<anim i="([^"]+)"([^>]*)>([\s\S]*?)<\/anim>/g)) {
       const [, name, attrs, body] = m;
       if (name === undefined || attrs === undefined || body === undefined) {
         throw new Error('anim regex groups missing');
@@ -67,22 +103,51 @@ describe.skipIf(!HAVE_BINDATA)('byte-check — OG_ANIM_CLIPS is a faithful trans
       // truncated payload cannot pass a wrong duration off as the source's.
       const frames = [...body.matchAll(/<f i="\d+"/g)].length;
       expect(frames, `anim ${name}: d=${d} but ${String(frames)} <f> blocks`).toBe(Number(d));
+      expect(out.has(name), `anim ${name} defined twice inside one file`).toBe(false);
       out.set(name, { durationFrames: Number(d), loop: attrs.includes('l="1"') });
     }
     return out;
   };
 
-  it('matches the payload clip for clip, in both directions', () => {
-    const src = fromPayload();
-    expect(src.size).toBeGreaterThan(0);
-    // Every committed clip is the payload's...
-    for (const [name, clip] of Object.entries(OG_ANIM_CLIPS)) {
-      expect(src.get(name), `${name} is not in the payload at all`).toEqual(clip);
+  it('loads the 18 files the source lists, and no data file the source does not list', () => {
+    const order = loadOrder();
+    expect(order).toHaveLength(18);
+    expect(new Set(order).size).toBe(18);
+    const onDisk = readdirSync(ANDROID)
+      .filter((f) => f.includes('_MCSCharacter_') && f.endsWith('AnimationData.bin'))
+      .map((f) => f.replace(/^\d+_MCSCharacter_/, '').replace(/AnimationData\.bin$/, ''));
+    expect([...onDisk].sort()).toEqual([...order].sort());
+  });
+
+  it('matches the source\'s animList clip for clip, in both directions', () => {
+    const animList = new Map<string, Clip>();
+    const repeats: string[] = [];
+    let blocks = 0;
+    for (const stem of loadOrder()) {
+      for (const [name, clip] of parseFile(fileFor(stem))) {
+        blocks += 1;
+        const earlier = animList.get(name);
+        if (earlier !== undefined) {
+          repeats.push(name);
+          // Last-write-wins is the source's rule; a repeat that DISAGREED would
+          // make the load order load-bearing, so it must be seen, not absorbed.
+          expect(clip, `${name}: a later file disagrees with an earlier one`).toEqual(earlier);
+        }
+        animList.set(name, clip);
+      }
     }
-    // ...and every payload clip is committed. (One direction alone would let a
+    expect(blocks).toBe(471);
+    expect(repeats.sort()).toEqual(
+      ['chargewithspear', 'mining', 'spearbowdropdown', 'spearbowjump', 'walkwithspear'],
+    );
+    // Every committed clip is the source's...
+    for (const [name, clip] of Object.entries(OG_ANIM_CLIPS)) {
+      expect(animList.get(name), `${name} is not in the source's animList at all`).toEqual(clip);
+    }
+    // ...and every source clip is committed. (One direction alone would let a
     // dropped clip pass silently — the half that the claimcheck gate learned.)
-    for (const [name, clip] of src) {
-      expect(OG_ANIM_CLIPS[name], `${name} is in the payload but not committed`).toEqual(clip);
+    for (const [name, clip] of animList) {
+      expect(OG_ANIM_CLIPS[name], `${name} is in the source's animList but not committed`).toEqual(clip);
     }
   });
 });

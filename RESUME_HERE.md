@@ -1,38 +1,83 @@
 # RESUME HERE
 
-## ▶ IN FLIGHT (2026-09-23) — the double session on **THE REAL DUEL OPPONENT**: phases 1–2 of 3 DONE
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 1, THE DUELLIST PROFILE
 
-If this session was cut off, resume at the first unchecked phase. Each phase is its own
-commit, so nothing before the last green one needs redoing.
+**Activate first:**
 
-- [x] **1. Survey (read-only).** Done: `docs/research/L5_DUEL_OPPONENT_SURVEY.md`.
-- [x] **2. The kickoff.** Done: `docs/sessions/L5_OPPONENT_KICKOFF.md`: 9 slices (0–8),
-      rulings R1–R5, lane bar OPP-A…G. Bar: reached for slice 0, honestly not for 2–8 (§8).
-- [ ] **3. Execute slice 0, THE ANIMLIST** (kickoff §3 "Slice 0 in detail"): the clip
-      table from 1 file to the 18 the source loads (158 → 466). Measured cost today: bear,
-      boar, stag and spear elite freeze in ATTACK after one swing; spear, wolf, alpha, fox,
-      goblin and ogre never attack at all.
+| | setting | status |
+|---|---|---|
+| surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
+| model / effort | **Opus 5.5 at `high`**: slice 1 is precision parsing against the source, not a long port | set with `/model` |
+| `/fast` | ON if you'll watch it, OFF if you walk away (2× token price) | your call |
+| context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
+| MCP / skills | nothing extra; `measure-verify` exists if you want a read-only refute pass | already on |
 
-**What phase 1 measured, in five lines:**
-- **Single-player Duels uses `EnemyPlayer` on every path.** Duel Mode's AI fallback
-  (`DuelModeUI.proceedWithAI`) builds the opponent with `ai = 0` (`XMLNpc.as:315`) →
-  `new EnemyPlayer(mcs, true, false)`. But the opponent is **another player's profile from
-  the dead server, never a roster row**, so the old "88 of 495 rows" reason was the wrong
-  measure. New input problem: where does an offline duellist's profile come from?
-- **`MCSPlayer` is the player's own class** (90 functions, 4,623 lines); `EnemyPlayer` (25,
-  1,608) drives it with the same stroke calls the mouse feeds. One body, two drivers.
-- **Finding 19 is FALSIFIED as "missing art". It is a transcription gap.** The source
-  loads 18 animation files into one `animList` (`MCSCharacter.as:178-219`);
-  `transcribeAnimClips.py` read one. 466 clips exist; 158 are in `OG_ANIM_CLIPS`.
-  428 of 429 `OG_ANIM` names are defined (only `flurry_parte` is truly absent). All 13
-  remaining mobs: 0 missing. `MCSPlayer`: 127 of its 166 clips missing today, so **19
-  DOES block the opponent**.
-- The L5 bar RESUME_HERE pointed at (SESSION24 §2) is the PLAYER's combat feel, not the
-  opponent's. The kickoff writes its own.
+⚠️ Your Claude subscription ends **2026-10-09** (16 days). Slices 3–6 (the body, ~2,900 AS3
+lines) are the Fable-sized ones; slices 1–2 fit comfortably before then.
+
+Copy everything BETWEEN the `'''` lines:
+
+```
+'''
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md, and run slice 1 (THE DUELLIST PROFILE) end to end under its §4 gate.
+Before any code: confirm the baseline at HEAD (87 files / 1681 tests, typecheck 0, lint 0, claimcheck 0 failures, chaos 52/52), and list every AS3 function in the slice with its measured line range.
+Done = the profile parse plus EnemyPlayer.init's derived stats reproduce the source for every fixture profile at ±0 (bar OPP-B): red-first, plants declared, claimcheck cites on every new config value, RESUME_HERE rewritten in the same commit.
+'''
+```
+
+**VERIFY (plain English):** before it writes any code, the session prints the baseline numbers
+above and a list of the functions it will port, with line numbers.
 
 ---
 
-## ✅ LAST SESSION (2026-09-23) — THE UNITS AND THE WINDUP (`UNITS_AND_WINDUP_KICKOFF.md`, now carrying an ERRATUM)
+## ✅ LAST SESSION (2026-09-23) — THE REAL DUEL OPPONENT: survey, kickoff and slice 0 (the animList)
+
+| phase | verdict | measured |
+|---|---|---|
+| **1 survey** | ✅ `docs/research/L5_DUEL_OPPONENT_SURVEY.md` | **Duel Mode uses `EnemyPlayer` on every path**: `DuelModeUI.proceedWithAI` → `initDuelist` sets `ai = 0` (`XMLNpc.as:315`) → `new EnemyPlayer(mcs, true, false)`. Its opponent is a server-fetched player profile, **never a roster row**. `MCSPlayer` is the player's own class (90 functions); the AI drives it with the mouse's stroke calls. |
+| **2 kickoff** | ✅ `docs/sessions/L5_OPPONENT_KICKOFF.md` | 9 slices; R2 = port `MCSPlayer` as ONE faithful body (opponent first); R5 = clips from the Android files. Bar reached for slice 0, honestly not for 2–8 (§8). Carries an ERRATUM from slice 0. |
+| **3 slice 0** | ✅ **finding 19 CLOSED**, a transcription gap, not missing art | the source loads **18** animation files into one `animList` (`MCSCharacter.as:178-219`); the transcriber read 1. **158 → 466 clips**, the old 158 byte-unchanged; 428 of 429 names resolve (only `flurry_parte` is truly absent). **7 attackers froze after one swing** (bear, boar, stag, wolf, alpha, fox, spear elite) → now **3 / 24 / 6 / 37 / 24 / 45 / 37** attacks in 30 s. |
+
+Three premises in the last RESUME_HERE were wrong, and the source corrected each: the "88 of
+495 roster rows" reason (Duel Mode never draws a roster row); "finding 19 does not block the
+duel opponent" (127 of `MCSPlayer`'s 166 clips were missing); and "the L5 bar in SESSION24 §2"
+(that is the player's combat feel). One of my own numbers was also wrong and is now an
+erratum: the kickoff's "4 frozen, 6 never attack" came from a probe that spawned animals
+mid-air.
+
+### THE GATES, AS THEY STAND — measured at this commit
+
+```
+$ npx vitest run            ->  Test Files 87 passed (87) · Tests 1681 passed (1681)   (1673 + 8)
+$ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
+$ npm run claimcheck        ->  1716 cites · 421 values at ±0 · 44 context · 0 failures
+$ npm run instructionpaths  ->  38 path tokens, all resolve
+$ npm run chaos             ->  52/52 plants RED · 52/52 restored byte-identical · exit 0 · ~36 s   (slice gate, NOT pre-commit)
+```
+(The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
+feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
+
+### WHAT CHANGED
+
+- `scripts/anim/transcribeAnimClips.py` reads the load order from `MCSCharacter.as` and all 18
+  Android files, last-write-wins, and fails loudly on a missing, unlisted or disagreeing file.
+- `src/config/ogAnimClips.ts` regenerated: +308 clips, 0 changed.
+- `tests/ogAnimClips.test.ts` rewritten (byte-check over the 18 files, order read from the
+  source); `tests/animList.test.ts` **new** (red on the old table, green now);
+  `tests/duelSeam.test.ts`'s missing-clip pin moved to `flurry_parte`.
+- `tests/animList.plants.ts`: **3 new chaos plants**, 49 → 52 in both pins.
+- `src/core/npc/duelSeam.ts`: one comment. No `src/core/` behaviour changed; `Sim.ts`,
+  `OpponentController.ts` and `NpcController.ts` untouched; `?npc=katana` fights as before.
+
+### ⚠️ STILL OPEN
+
+- **Your LOOK at `?npc=katana`** from the previous session (below) is still unanswered.
+- L4b's 13 remaining mobs are now UNBLOCKED (0 missing clips each) but not ported: the plan
+  is L5-OPP first, by decision.
+
+---
+
+## PREVIOUS SESSION (2026-09-23) — THE UNITS AND THE WINDUP (`UNITS_AND_WINDUP_KICKOFF.md`, now carrying an ERRATUM)
 
 | | verdict | measured |
 |---|---|---|
@@ -132,7 +177,7 @@ the incident was 28 agents and any plausible constant sits above 28.
 
 ### WHAT IS STILL OPEN
 
-- **`master` is 3 commits ahead of `origin/master`.** Nothing is pushed. CI will run on push and
+- ~~**`master` is 3 commits ahead of `origin/master`.** Nothing is pushed.~~ Pushed since; CI green on every push through 2026-09-23. CI will run on push and
   should now be GREEN for the first time since 2026-08-24 — that is the verification.
 - Slice 4 (`docs/sessions/L4B_KICKOFF.md`) — parked, by standing decision.
 - Port `instructionPaths` to `~/kheshav-code/agent-harness` so all 7 sibling repos get it. Its

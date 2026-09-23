@@ -5124,7 +5124,7 @@ re-enters ATTACK while the target is in range — so against a player who stands
 still IS the katana. Pinned: "THE STATUE — stands only while the player does"; chaos plant "seam:
 stop relaying the actor's walk once it has attacked (a real statue)".
 
-### 19 — NEW: TEN OF THE THIRTEEN ATTACKING CLASSES NAME AN ATTACK CLIP WE DO NOT HAVE
+### 19 — [✅ CLOSED 2026-09-23 — a transcription gap, not missing art: the table read 1 of the 18 files the source loads; see "L5-OPP SLICE 0 — THE ANIMLIST" below.] ~~NEW: TEN OF THE THIRTEEN ATTACKING CLASSES NAME AN ATTACK CLIP WE DO NOT HAVE~~
 
 Measured against `OG_ANIM_CLIPS` (the 158 clips transcribed from the payload):
 
@@ -5145,3 +5145,74 @@ unknown until that search is done.**
 Slice 4 is not started and its kickoff is not written. Findings 16 and 17 are untouched (L5).
 No fight-feel grade is claimed — the telegraph on every swing is measured headless; whether it
 READS like the videos is Kheshav's look at `?npc=katana`.
+
+## L5-OPP SLICE 0 — THE ANIMLIST: FINDING 19 CLOSED. THE CLIPS WERE ALWAYS IN THE PAYLOAD (2026-09-23)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` §3 (slice 0). Survey:
+`docs/research/L5_DUEL_OPPONENT_SURVEY.md` §4.
+
+**The defect was the transcriber, not the payload.** `MCSCharacter.initAnimationData`
+(`MCSCharacter.as:178-219`) pushes **18 animation files** into one list and indexes them into
+ONE global `animList` by clip name, a later file overwriting an earlier one.
+`scripts/anim/transcribeAnimClips.py` read exactly one of them, the human file (158 clips),
+and its header called that "all 158 clips the payload defines". Every clip finding 19 listed
+as missing is in one of the other 17.
+
+**Now:** the transcriber reads the load order FROM `MCSCharacter.as`, reads the 18 Android
+files, applies last-write-wins, and refuses a listed file that is missing, a data file the
+list does not name, a repeat that disagrees, or a `d=` that is not its frame count.
+**471 blocks → 466 clips**; 5 names appear in two files (`mining`, `walkwithspear`,
+`spearbowjump`, `spearbowdropdown`, `chargewithspear`), each time identical, so the order
+changes no value. **The 158 old entries are byte-unchanged; 308 were added.** **428 of
+`OG_ANIM`'s 429 names now resolve**; the one that does not, `flurry_parte`, is named in
+`MCSActor.as` and defined in no file — the source's own `trace("missing animation")`,
+pinned so nobody invents it. `fly_end`, `getup_front` and `kneegroin_victim`, pinned as
+"not in this payload" since the seam spike, are defined.
+
+### WHAT IT COST — MEASURED, NOT INFERRED
+
+Each of the 13 attacking classes on the real `OgAnimLibrary`, `createDuelWorld()` and
+`NpcController`, spawned in the source's order (`setPosition` then `init`,
+`NPCManager.as:636-637`), against a still player 60 px away, for 30 s:
+
+| | one-file table | the source's animList |
+|---|---|---|
+| `EnemyKatana` / `EnemyKnife` / `EnemyArcher` — `startAction(ATTACK)` | 72 / 52 / 42 | 72 / 52 / 42 (unchanged) |
+| `EnemyBear` / `EnemyBoar` / `EnemyStag` / `EnemyWolf` / `EnemyWolfAlpha` / `EnemyFox` / `EnemySpearElite` | **1 each, then ZERO further state changes** | **3 / 24 / 6 / 37 / 24 / 45 / 37** |
+| `EnemySpear` / `RoomGoblin` / `RoomOgre` | 0 | 0 (unchanged) |
+
+So finding 19's INFERRED "(b) may never leave ATTACK" was **true, and for seven classes, not
+ten**. The other three never enter ATTACK against a still player on EITHER table, which is
+their own behaviour, not a missing clip: the spear attacks by its charging RUN (WALK ↔ RUN,
+passing the player), and the goblin and ogre are room NPCs that wander, idle and nap.
+
+**An erratum to the kickoff, found while measuring.** Kickoff §3's slice-0 table said "4
+frozen in ATTACK, 6 never attack". Three of those six (wolf, alpha, fox) were an artefact of
+the probe calling `init` BEFORE `setPosition`. The reverse of the source's order spawns an
+animal mid-air, and a fallen alpha goes FALL → LAND → `WOLF_LAUNCHEDEND` → a looping
+`WOLF_DOWNED` that LAND never leaves (`EnemyWolfAlpha.as:151-163`, `:429`). That is a real
+source trait worth knowing, and it is not finding 19. The test builds actors in the source's
+order.
+
+### THE GATES
+
+- `tests/ogAnimClips.test.ts` — rewritten: 466 clips; 428 of 429 names; `flurry_parte` the
+  one gap; the byte-check now reads the load order from `MCSCharacter.as` (one source, no
+  second copy), refuses unlisted and missing files, pins the 5 agreeing repeats and the 471
+  blocks, and checks both directions.
+- `tests/animList.test.ts` — **new**, red on the one-file table (`EnemyBear asked for
+  undefined clips: [bear_walk, bear_run, …]`, `EnemyBear never left its first ATTACK`),
+  green on the new one.
+- `tests/duelSeam.test.ts` — the "null for a missing clip" pin moved from `fly_end` to
+  `flurry_parte`, and asserts `fly_end` now resolves.
+- `tests/animList.plants.ts` — **3 new chaos plants** (49 → 52 in both pins), each on a clip
+  from a file the old table never read.
+
+### WHAT THIS SLICE DID NOT DO
+
+It ported no class. It changed no `src/core/` code except one comment (`duelSeam.ts`'s
+`OgAnimLibrary`), and `Sim.ts`, `OpponentController.ts` and `NpcController.ts` are
+untouched. `?npc=katana` fights exactly as before: the katana's 3 clips that were missing
+(`fly_end`, `getup_front`, `kneegroin_victim`) are reaction clips no duel path reaches (the
+seam spike's own note), and every `tests/duelSeam.test.ts` probe is unchanged and green. The web payload's 19th file (a spider) and its three version differences (ogre 6
+clips, guardian 1, spearman 3) are NOT in the table, by ruling R5.

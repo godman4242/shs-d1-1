@@ -4018,3 +4018,10 @@ Survey: `docs/research/L5_DUEL_OPPONENT_SURVEY.md` (read-only, Opus 5.5 `high`, 
   faithful body (opponent first, the player later); R5 = clips from the Android files in load
   order. Finding 19's INFERRED consequence measured on the real clip table: 4 classes freeze in
   ATTACK after one swing, 6 never attack. Baseline re-run live: 86/1673, chaos 49/49.
+- **Phase 3 — slice 0, the animList: finding 19 CLOSED.** The transcriber now reads the 18 files
+  `MCSCharacter.initAnimationData` loads (order read from the source): 158 → 466 clips, the old
+  158 byte-unchanged. Red first: `tests/ogAnimClips.test.ts` (`expected 158 to be 466`) and the
+  new `tests/animList.test.ts` (`EnemyBear never left its first ATTACK`). Measured: 7 attackers
+  froze after one swing; now 3–45 attacks each in 30 s. Kickoff ERRATUM: its "4 frozen, 6 never
+  attack" came from a probe that called `init` before `setPosition`. +8 tests (1681), +3 plants
+  (52). First lint run failed on 2 style errors in the new tests; fixed.

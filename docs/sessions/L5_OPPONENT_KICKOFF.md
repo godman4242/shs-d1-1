@@ -15,6 +15,14 @@
 > literals · render-only scenes · red-first TDD · chaos-plant every guard · generated
 > data is never hand-keyed · binary gates, never softened to fit a result.
 
+> **⛔ ERRATUM (slice 0, 2026-09-23 — the source wins, said here, not buried).** §3's
+> slice-0 table said "4 frozen in ATTACK, 6 never attack". **Measured correctly, 7 froze**
+> (bear, boar, stag, wolf, alpha, fox, spear elite: 1 swing, then no state change for 30 s)
+> and **3 never attack on either table** (spear, goblin, ogre), which is their own behaviour,
+> not a clip. The kickoff's probe called `init` before `setPosition`, the reverse of
+> `NPCManager.as:636-637`, and spawned three animals mid-air. Numbers and the source trait
+> this exposed: `docs/DIVERGENCES.md`, "L5-OPP SLICE 0 — THE ANIMLIST".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -84,7 +92,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 
 | # | slice | source in scope (lines) | touches Sim? |
 |---|---|---|---|
-| **0** | **THE ANIMLIST** — `OG_ANIM_CLIPS` from 1 file to the 18 the source loads | `MCSCharacter.initAnimationData` (42) + 18 data files | no |
+| **0** | **THE ANIMLIST** — `OG_ANIM_CLIPS` from 1 file to the 18 the source loads · ✅ **LANDED 2026-09-23** (DIVERGENCES "L5-OPP SLICE 0") | `MCSCharacter.initAnimationData` (42) + 18 data files | no |
 | 1 | THE DUELLIST PROFILE — parse + derived stats as a pure record | `XMLNpc` parsers + `initDuelist`; `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86); `StatsManager.findBonusStatFrom` | no |
 | 2 | THE PROFILE SOURCE (R1) | measured at the slice | no |
 | 3 | BODY i — stance + movement | `setStance` 103, `nextStance` 44, `canChangeStance`, `initMove` 29, `walkTo`, `stopMoving` 25, `movePlayer` 44, `movement` 21, `moveTo`, `faceScreenCenter`, the reload/damage getters (≈400) | no |
