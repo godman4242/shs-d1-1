@@ -1,53 +1,31 @@
 # RESUME HERE
 
-## ▶ NEXT SESSION — a DOUBLE session: survey, kickoff AND first slice of **THE REAL DUEL OPPONENT** (Opus 5.5 `high`, one loop, ~2.5–3.5 h, a commit at every checkpoint)
+## ▶ IN FLIGHT (2026-09-23) — the double session on **THE REAL DUEL OPPONENT**: phase 1 of 3 DONE
 
-The owner asked (2026-09-23) for bigger sessions that cover more ground. **Decided — veto below:**
-spend the extra scope on the opponent the original duel actually uses, not on the 13 remaining mobs.
+If this session was cut off, resume at the first unchecked phase. Each phase is its own
+commit, so nothing before the last green one needs redoing.
 
-**Why — measured 2026-09-23:**
-- The original's duel opponent is `EnemyPlayer` (extends `MCSPlayer` extends `NPC`): **6,422 AS3
-  lines, unported**, and it carries its OWN AI — `EnemyPlayer.AI()` (`EnemyPlayer.as:990`) with
-  `doEvade`, `getUsableSkills` and `doSkill`. Our shipped `AISeamController` is a hand-authored
-  stand-in (`AI_TIERS` maps to no OG value — GAUNTLET L4 row).
-- It is also the **most common enemy in the roster**: `ai` 9 → 73 rows and `ai` 14 (boss) → 15 rows,
-  **88 of 495**; the katana (`ai` 3) has 52. (`ai` 0, the network duelist, has 0 roster rows.)
-- The 13 remaining mobs (5,575 AS3 lines) cannot fight properly until findings 16/17 are built
-  either way, and 10 of the attackers lack their attack clip (finding 19).
-- ⚠️ **Not yet measured:** which roster rows the single-player Duels mode actually draws. Phase 1
-  settles it; if Duels never draws an `EnemyPlayer`, stop and take the alternative.
+- [x] **1. Survey (read-only).** Done: `docs/research/L5_DUEL_OPPONENT_SURVEY.md`.
+- [ ] **2. Write the L5 kickoff** from that survey (`docs/sessions/L5_OPPONENT_KICKOFF.md`),
+      sliced like L4b, every number measured per file, with a bar verdict.
+- [ ] **3. Execute its first slice** with the full harness.
 
-**The session, in order — every phase ends in a commit and a RESUME_HERE rewrite, so a usage
-cutoff loses nothing; a phase whose gate is not green ends the session at the last green commit:**
-1. **Survey, read-only (~60 min).** `MCSPlayer.as` + `EnemyPlayer.as` function inventory; what they
-   need that already exists (skills — L2 closed; items — L3 data; `OG_NPCS`) and what does not; the
-   overlap with what the Sim already does for the player; clip coverage of every animation they
-   name (finding 19's check, for these classes); the L5 bar in `docs/sessions/SESSION24_KICKOFF.md`
-   §2; and the Duels-mode question above.
-2. **Write the L5 kickoff** from that survey — sliced like L4b, every number measured per file,
-   and say whether it reached the kickoff bar.
-3. **Execute its first slice (~60–120 min)** with the full harness: red-first tests, declared
-   plants, claimcheck, chaos.
-
-**Veto → the plan on record:** finish L4b instead — finding 19's clip search, then one kickoff for
-all 13 remaining mobs and as many sub-slices as the session holds.
-
-### ⚠️ FINDING 19 — WHAT SLICES 4–6 MUST SETTLE FIRST (it does not block the duel opponent)
-
-**10 of the 13 attacking classes name an attack clip that `OG_ANIM_CLIPS` (158 clips) does not
-define** — boar, bear, stag, spear, wolf, alpha, fox, goblin, ogre, and the spear elite (0 of 6).
-Only the katana, knife and archer have theirs. `startAnim` no-ops on a missing clip, so those
-classes' telegraph length would read a stale clip, and (**INFERRED, not measured**) a class that
-leaves ATTACK only when its attack clip finishes may never leave it. **Not checked:** whether the
-clips live in another asset of the payload. First job: search for them, or rule on their absence.
-
-### ⚠️ THE TRAP — and the reason the next session goes where it goes
-
-`MCSPlayer extends NPC` (4,775 lines) and `EnemyPlayer extends MCSPlayer` (1,647) are **unported**,
-and `EnemyPlayer` comes from `NPCManager.getNetworkEnemyPlayer()` (`ConnectionPIO.as:551`), the
-dead Player.IO path. **The original's duel opponent is another player's loadout, not an
-`EnemyKatana`.** The katana is in the duel because it was the cheapest way to exercise the seam.
-Nothing in slice 4 should assume it is the duel's opponent.
+**What phase 1 measured, in five lines:**
+- **Single-player Duels uses `EnemyPlayer` on every path.** Duel Mode's AI fallback
+  (`DuelModeUI.proceedWithAI`) builds the opponent with `ai = 0` (`XMLNpc.as:315`) →
+  `new EnemyPlayer(mcs, true, false)`. But the opponent is **another player's profile from
+  the dead server, never a roster row**, so the old "88 of 495 rows" reason was the wrong
+  measure. New input problem: where does an offline duellist's profile come from?
+- **`MCSPlayer` is the player's own class** (90 functions, 4,623 lines); `EnemyPlayer` (25,
+  1,608) drives it with the same stroke calls the mouse feeds. One body, two drivers.
+- **Finding 19 is FALSIFIED as "missing art". It is a transcription gap.** The source
+  loads 18 animation files into one `animList` (`MCSCharacter.as:178-219`);
+  `transcribeAnimClips.py` read one. 466 clips exist; 158 are in `OG_ANIM_CLIPS`.
+  428 of 429 `OG_ANIM` names are defined (only `flurry_parte` is truly absent). All 13
+  remaining mobs: 0 missing. `MCSPlayer`: 127 of its 166 clips missing today, so **19
+  DOES block the opponent**.
+- The L5 bar RESUME_HERE pointed at (SESSION24 §2) is the PLAYER's combat feel, not the
+  opponent's. The kickoff writes its own.
 
 ---
 

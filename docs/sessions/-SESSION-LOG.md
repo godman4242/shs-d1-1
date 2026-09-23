@@ -4001,3 +4001,16 @@ Kickoff: `docs/sessions/UNITS_AND_WINDUP_KICKOFF.md`, run on Opus 5.5. Baseline 
   the kickoff proposed.
 - Also: `config/duel.ts`'s header still said the spawns were on the 1024×576 stage (stale since
   SESSION13 D1 — `DuelScene` maps them with `worldToStage`); fixed. The kickoff carries an ERRATUM.
+
+## 2026-09-23 — THE REAL DUEL OPPONENT (double session) — phase 1: the survey
+
+Survey: `docs/research/L5_DUEL_OPPONENT_SURVEY.md` (read-only, Opus 5.5 `high`, one loop).
+
+- **Duel Mode uses `EnemyPlayer`, measured before any code:** `DuelModeUI.proceedWithAI` →
+  `XMLNpc.initDuelist` sets `ai = 0` (`XMLNpc.as:315`) → `NPCManager.createNPC` case 0 →
+  `new EnemyPlayer(mcs, true, false)`. The opponent is a server-fetched player profile, never
+  a roster row, so the kickoff's "88 of 495" was the wrong measure for the right conclusion.
+- **Finding 19 falsified as "missing art":** 18 animation files load into one `animList`
+  (`MCSCharacter.as:178-219`); the clip transcriber read one. 466 clips, 428 of 429 names
+  defined; 0 missing for all 13 remaining mobs; 127 of `MCSPlayer`'s 166 missing today.
+- A source bug to port as it reads: `getUsableSkills`' very-close list is dead (missing `else`).
