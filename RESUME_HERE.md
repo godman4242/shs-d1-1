@@ -1,14 +1,17 @@
 # RESUME HERE
 
-## ▶ IN FLIGHT (2026-09-23) — the double session on **THE REAL DUEL OPPONENT**: phase 1 of 3 DONE
+## ▶ IN FLIGHT (2026-09-23) — the double session on **THE REAL DUEL OPPONENT**: phases 1–2 of 3 DONE
 
 If this session was cut off, resume at the first unchecked phase. Each phase is its own
 commit, so nothing before the last green one needs redoing.
 
 - [x] **1. Survey (read-only).** Done: `docs/research/L5_DUEL_OPPONENT_SURVEY.md`.
-- [ ] **2. Write the L5 kickoff** from that survey (`docs/sessions/L5_OPPONENT_KICKOFF.md`),
-      sliced like L4b, every number measured per file, with a bar verdict.
-- [ ] **3. Execute its first slice** with the full harness.
+- [x] **2. The kickoff.** Done: `docs/sessions/L5_OPPONENT_KICKOFF.md`: 9 slices (0–8),
+      rulings R1–R5, lane bar OPP-A…G. Bar: reached for slice 0, honestly not for 2–8 (§8).
+- [ ] **3. Execute slice 0, THE ANIMLIST** (kickoff §3 "Slice 0 in detail"): the clip
+      table from 1 file to the 18 the source loads (158 → 466). Measured cost today: bear,
+      boar, stag and spear elite freeze in ATTACK after one swing; spear, wolf, alpha, fox,
+      goblin and ogre never attack at all.
 
 **What phase 1 measured, in five lines:**
 - **Single-player Duels uses `EnemyPlayer` on every path.** Duel Mode's AI fallback

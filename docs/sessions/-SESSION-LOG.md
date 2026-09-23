@@ -4014,3 +4014,7 @@ Survey: `docs/research/L5_DUEL_OPPONENT_SURVEY.md` (read-only, Opus 5.5 `high`, 
   (`MCSCharacter.as:178-219`); the clip transcriber read one. 466 clips, 428 of 429 names
   defined; 0 missing for all 13 remaining mobs; 127 of `MCSPlayer`'s 166 missing today.
 - A source bug to port as it reads: `getUsableSkills`' very-close list is dead (missing `else`).
+- **Phase 2 — kickoff:** `docs/sessions/L5_OPPONENT_KICKOFF.md`. R2 = port `MCSPlayer` as ONE
+  faithful body (opponent first, the player later); R5 = clips from the Android files in load
+  order. Finding 19's INFERRED consequence measured on the real clip table: 4 classes freeze in
+  ATTACK after one swing, 6 never attack. Baseline re-run live: 86/1673, chaos 49/49.
