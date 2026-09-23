@@ -1,12 +1,38 @@
 # RESUME HERE
 
-## ▶ NEXT SESSION — **write the slice 4 kickoff, and open it with finding 19** (Opus 5.5 `high`, 1 loop, ~45–60 min)
+## ▶ NEXT SESSION — a DOUBLE session: survey, kickoff AND first slice of **THE REAL DUEL OPPONENT** (Opus 5.5 `high`, one loop, ~2.5–3.5 h, a commit at every checkpoint)
 
-Findings 15 and 18 are resolved and the statue is measured, so slice 4's kickoff is now due. It is
-**not written** — deliberately. It must open with **finding 19** (below), because 10 of the classes
-it would wire cannot currently play their attack.
+The owner asked (2026-09-23) for bigger sessions that cover more ground. **Decided — veto below:**
+spend the extra scope on the opponent the original duel actually uses, not on the 13 remaining mobs.
 
-### ⚠️ FINDING 19 — WHAT SLICE 4'S KICKOFF MUST SETTLE FIRST
+**Why — measured 2026-09-23:**
+- The original's duel opponent is `EnemyPlayer` (extends `MCSPlayer` extends `NPC`): **6,422 AS3
+  lines, unported**, and it carries its OWN AI — `EnemyPlayer.AI()` (`EnemyPlayer.as:990`) with
+  `doEvade`, `getUsableSkills` and `doSkill`. Our shipped `AISeamController` is a hand-authored
+  stand-in (`AI_TIERS` maps to no OG value — GAUNTLET L4 row).
+- It is also the **most common enemy in the roster**: `ai` 9 → 73 rows and `ai` 14 (boss) → 15 rows,
+  **88 of 495**; the katana (`ai` 3) has 52. (`ai` 0, the network duelist, has 0 roster rows.)
+- The 13 remaining mobs (5,575 AS3 lines) cannot fight properly until findings 16/17 are built
+  either way, and 10 of the attackers lack their attack clip (finding 19).
+- ⚠️ **Not yet measured:** which roster rows the single-player Duels mode actually draws. Phase 1
+  settles it; if Duels never draws an `EnemyPlayer`, stop and take the alternative.
+
+**The session, in order — every phase ends in a commit and a RESUME_HERE rewrite, so a usage
+cutoff loses nothing; a phase whose gate is not green ends the session at the last green commit:**
+1. **Survey, read-only (~60 min).** `MCSPlayer.as` + `EnemyPlayer.as` function inventory; what they
+   need that already exists (skills — L2 closed; items — L3 data; `OG_NPCS`) and what does not; the
+   overlap with what the Sim already does for the player; clip coverage of every animation they
+   name (finding 19's check, for these classes); the L5 bar in `docs/sessions/SESSION24_KICKOFF.md`
+   §2; and the Duels-mode question above.
+2. **Write the L5 kickoff** from that survey — sliced like L4b, every number measured per file,
+   and say whether it reached the kickoff bar.
+3. **Execute its first slice (~60–120 min)** with the full harness: red-first tests, declared
+   plants, claimcheck, chaos.
+
+**Veto → the plan on record:** finish L4b instead — finding 19's clip search, then one kickoff for
+all 13 remaining mobs and as many sub-slices as the session holds.
+
+### ⚠️ FINDING 19 — WHAT SLICES 4–6 MUST SETTLE FIRST (it does not block the duel opponent)
 
 **10 of the 13 attacking classes name an attack clip that `OG_ANIM_CLIPS` (158 clips) does not
 define** — boar, bear, stag, spear, wolf, alpha, fox, goblin, ogre, and the spear elite (0 of 6).
@@ -15,7 +41,7 @@ classes' telegraph length would read a stale clip, and (**INFERRED, not measured
 leaves ATTACK only when its attack clip finishes may never leave it. **Not checked:** whether the
 clips live in another asset of the payload. First job: search for them, or rule on their absence.
 
-### ⚠️ THE TRAP — still in force for slice 4
+### ⚠️ THE TRAP — and the reason the next session goes where it goes
 
 `MCSPlayer extends NPC` (4,775 lines) and `EnemyPlayer extends MCSPlayer` (1,647) are **unported**,
 and `EnemyPlayer` comes from `NPCManager.getNetworkEnemyPlayer()` (`ConnectionPIO.as:551`), the
