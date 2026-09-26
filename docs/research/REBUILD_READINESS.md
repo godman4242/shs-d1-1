@@ -32,6 +32,15 @@
 > | §2 enemies-ai **34/100**, blocker ① *"enemy level→stat formula… absent"* | `npcdata.xml` — **495 NPCs**, full paperdoll + `<lvl>` + `<ai>` + `<skill>` |
 > | §2 items-equipment **42/100** | `itemdata.xml` — **982 items** with type/price/weight/modifiers/defense |
 >
+> **Qualifier on row 1 (measured 2026-09-26): that dialogue is the ANDROID build's wording.**
+> `questdata.xml` is the Android `116_Mobile_QuestData.bin` (identical bar a trailing newline);
+> the web payload the videos show carries no quest data at all (0 `<quest`, 0 `jinbei` in the
+> inflated `shs3_payload_decoded.swf`, vs 62 / 21 in the Android one). The web wording survives
+> only as OCR of the two longplays, in `reference/web-dialogue/` (347 events; 169 share no
+> 4-word phrase with the Android text — part OCR noise, part rewritten lines, e.g. the opening
+> bandit scene). Under R6 (`docs/sessions/L5_OPPONENT_KICKOFF.md`: web numbers win) a story lane
+> must rule which wording ships before transcribing either.
+>
 > **The scores in §2 are therefore stale, not merely conservative.** `docs/GAUNTLET.md`
 > **lane L0 owns the re-survey** and will rewrite §2/§4/§6 with A2 (payload) cites.
 > Until L0 lands, treat §2's numbers as a floor and §6's "unrecoverable" list as
