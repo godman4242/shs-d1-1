@@ -132,13 +132,22 @@ export class NpcDamage {
 
   /**
    * WEB `reference/decompiled/shs3_payload/scripts/§1t67s0§.as:163` (Android `Damage.as:131`): the web also turns the packet into a FLY, and
-   * its one caller hands it the victim's velocity, not a point (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3603`). Android's
-   * caller hands it the thing's position, and leaves the launch as it was.
+   * its two callers hand it the victim's velocity, not a point (`checkHitObject` and `gotHit`,
+   * `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3603`, `:3887`). Android's callers hand it the thing's position, and leave
+   * the launch as it was.
    */
   setFlyAwayPos(posx: number, posy: number): void {
     this.launchType = OG_LAUNCH.LAUNCH_FLY;
     this.flyVelX = posx;
     this.flyVelY = posy;
+  }
+
+  /**
+   * WEB only (`reference/decompiled/shs3_payload/scripts/§1t67s0§.as:97-104`): an AIR launch becomes NONE, any other is kept. The duellist's
+   * `gotHit` calls it on a downed body and at the juggle cap (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3856`, `:3862`, `:3866`).
+   */
+  cancelLaunch(): void {
+    if (this.launchType === OG_LAUNCH.LAUNCH_AIR) this.launchType = OG_LAUNCH.LAUNCH_NONE;
   }
 
   /** `Damage.as:137` — stun DURATION in `flyVelX`, forced x in `flyVelY`. */

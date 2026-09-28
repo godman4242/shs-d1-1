@@ -7016,3 +7016,128 @@ test gaps, each proved by applying the break and watching the suite stay green:
 - **GOTLAUNCHEDDOWNED in adventure mode** (no flip-up) and **the exact landing** (`y == ground`,
   web `:4008`, `>=`) had no test. Both have one now.
 +4 plants, all red.
+
+## L5-OPP SLICE 6c — THE BLOW, THE DEATH AND THE REWARD: `gotHit` WHOLE, `die`, AND `EnemyPlayer`'S DEATH TOUCH, LOOT AND XP (2026-09-29)
+
+Kickoff: `RESUME_HERE.md` (6c), `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 17. A build-loop
+cycle, one commit. Ported in `src/core/npc/MCSPlayer.ts`: `gotHit` (web `§1t99s0§.as:3661-3941` /
+Android `MCSPlayer.as:3580-3837`), `die` (`:4057` / `:3952`), `EnemyPlayer`'s `gotDeathTouch`
+(`§1t122s0§.as:1730` / `EnemyPlayer.as:1634`), `createLoot` (`:1342` / `:1281`) and `rewardXP`
+(`:1372` / `:1307`), the clip-end death group (`:544-561` / `:524-541`, ten labels) and `doAction`
+DYING (`:2064` / `:2002`); the web `Damage` cancel-launch (`§1t67s0§.as:97-104`) as
+`NpcDamage.cancelLaunch`. The constructor now carries the body's `xp`. Numbers: `OG_BLOW` and
+`OG_DUELLIST_REWARD` in `src/config/ogMcsPlayer.ts`; the roll and the juggle cap gained `gotHit`'s
+own lines as second cites.
+
+### What differs between the builds, and the ruling (all WEB, R6)
+
+| where | web | Android | plant |
+|---|---|---|---|
+| the stance triangle | × 1.2 from the stance a body loses to, **× 0.9 from the one it beats** (`:3788-3799`) | × 1.2 only | red (no × 0.9) |
+| a head, hat or neck hit | × 1.3 after the defence and the floor (`:3807`) | × 1.5 | red |
+| the part switch | inside `getHP() > 0`; `default` CLEARS `behead` (`:3745`) | before it; `default` leaves `behead` | red |
+| a downed body's AIR packet | turned into NONE (`:3854-3857`) | left AIR | red |
+| the juggle cap | a launch at `juggleCount` 3 (5 for a LIGHT packet) cancels the packet's launch (`:3860-3867`) | no cap in `gotHit` | red (every attacker at 3; the body's stance) |
+| the fly-away | `gotFlyAway(part.x, …)`, THEN the web `setFlyAwayPos(velX, velY)` (`:3886-3887`) | the other order, the part's position | red (the packet left as it was) |
+| a death clip's end | the helper returns (`:560`); `update` goes on into `doAction` DYING, so that frame counts the ttl down twice | `return` leaves `update` (`:540`) | red (the Android return) |
+| `createLoot` | a friendly body drops nothing (`§1t122s0§.as:1348`) | no such test | red |
+
+Everything else is the same shape in both builds on the AI's path. `EnemyPlayer.gotDeathTouch`
+differs only in the web's `controlledBy == 2 → 0` (the network's). `die`, `rewardXP` and
+`deathAnimEnd` are the same. The web `NPC.die` (`§1t68s0§.as:923`) is Android's plus ONE guard,
+`mcs == null → return` (`:928`): the AI never meets it (a disposed body is dead, and every caller on
+its path skips the dead), so it is not carried and `Npc.die` is untouched. Read by structural diff
+this cycle: every other hunk of the two `die` bodies is a rename; `deathAnimEnd` and `doDying` too.
+
+### Decisions made here (decide-and-flag)
+
+- **`EnemyPlayer.deathAnimEnd` is not carried**: it is `NPC.deathAnimEnd` line for line but for the
+  disposal guard `controlledBy == 2 && isPvPRoomMode()`, never true on the AI. The duellist runs
+  `Npc.deathAnimEnd` (its countdown), 6b's rule for `super`-only overrides. A test pins that the
+  class has no own `deathAnimEnd`. **Veto:** add it back if OPP-C's tree test cannot name an
+  inherited method.
+- **The roll and the full-Focus evade are shared helpers** (`rollDodges`, `focusEvades`): the web
+  writes both twice, word for word, in `checkHitObject` and `gotHit`; only the END differs (the
+  sound and the guard in `checkHitObject`'s `evade`, a silent guard in `gotHit`). Three 6a plants
+  were re-anchored onto the helpers, so each now breaks both paths. *Red-team:* the steelman for
+  two copies is one AS3 function per TS function. But two copies of one rule drift, which is the
+  account's first known killer. **Veto:** inline them again.
+- **`gotHit`'s `target` may be `null`, the whole body**: `gotDeathTouch` strikes `getMCS()`, the
+  character itself, which is no part (`default`: no beheading). A fly-away reads the part's x
+  through `geometry.partX`, the whole body's as `this.x`, truncated (`param1.x` into `xpos:int`).
+- **The death touch's 500 is its own constant (`OG_BLOW.deathTouchDamage`), not `NPC`'s**
+  (`OG_NPC_DEATHTOUCH_DAMAGE`): `NPC.gotHit` overrides the damage with it; `EnemyPlayer` sends it as a
+  level-0 packet through `gotHit`. The same number, a different rule; neither class reads the other.
+- **A new loot kind, `randomItemChance`**: the duellist calls `addRandomLootItem(level)`
+  (`alwaysGive` false: the dialog then rolls 1 in 2, `LootDialog.as:448-459`); a mob's row calls it
+  with `alwaysGive` true (`NPC.as:851`, the existing `randomItem`). The dialog's own rolls are the
+  consumer's, as for the mobs. Nothing reads the loot events yet.
+- **The duellist's branch alone** (`isDuelist`): `NPCManager.as:519` builds the Duel Mode opponent
+  with `isDuelist` true; the boss and roster branches (`super.createLoot()`, `isBoss` xp) are other
+  bodies, and the war-mode test is out of the lane.
+
+### The harness rule: 15 → 12, not 9
+
+The six shadows are gone. The kickoff expected 9 "plus one if `die`'s charge-FX removal takes its
+own site". It takes one, and the web `gotHit` makes two more calls into slice 7's code that the
+kickoff did not count: its own charge-FX removal (`:3725-3733`) and the log substitution
+(`:3712-3723`, `doSubstitutionLog` on the AI, now a named stub beside `cancelLogSub`). So 12: the
+switches' three catch-alls, `EnemyPlayer.AI`, `cancelLogSub`, `doSubstitutionLog`,
+`clearInteractTarget`, `checkPlayerHit` and four `Projectile.removeProjectile` (`startAction`,
+`checkHitObject`, `gotHit`, `die`). Every one waits on slice 7 (the AI, the skills, the FX) or 8
+(the seam). The catch-alls shrank: clip end 70 → 60 labels, `doAction` 17 → 16.
+
+### The two end-to-end runs (through `checkHitObject`, the seam's `checkDie` and the real `update`, ±0)
+
+Each worked by hand from the source before the run; the runs matched.
+
+- **A killing hit** (fixture 2 at HP 40, a 100 packet; the player at level 44): HP 0, the target
+  cleared, alive. `checkDie`: the `die` sound, a random item (level 45), coins 22 (the dice 0.2 → 0,
+  then `int(0.5 × 45)`), xp 566 (`calcXP(44, 45, 270)` = 283, elite × 2), the death `deathenemy`
+  (the flip die 0.9 keeps the facing; the fatal die 0.1 → 0). Then one tick of the ttl a frame
+  (`doDying`), two on frame 29 when the 29-frame clip ends (`deathAnimEnd`, then the web's `update`
+  goes on into DYING): ttl `95 − k` from there, alpha from ttl 11 (k 84), gone at k 95. The AI never
+  runs after the kill.
+- **A killing blow in the air** (HP 50: an AIR hit at frame 1, 44; a second at frame 13, 44, kills):
+  the second is not a relaunch (a kill returns before the reaction); `die` on GOTLAUNCHED only loots,
+  rewards and marks it dead. The body flies 6b's arc on, lands DOWNED at 19, and GOTLAUNCHEDDOWNED's
+  end (frame 37) is `deathAnimEnd`, once: ttl 95.
+
+### MEASURED ON THE WAY
+
+- **SOURCE QUIRK (both builds): a body killed in the air never fades.** A clip ends once
+  (`MCSCharacter.updateAnimation`), and DOWNED has no `doAction`, so after GOTLAUNCHEDDOWNED's one
+  `deathAnimEnd` it lies at ttl 95, visible, forever (run to frame 200). In a duel the kill ends the
+  round (the red freeze), so the corpse is never seen to linger. Pinned as it is.
+- **The death touch is a flat 500, not 500 − defence.** My hand-worked first draft said 444 (500 −
+  56); the run said 500. The source wins: `Damage.getMinDamage` returns the whole damage when
+  `attackerlvl == 0` (`Damage.as:156-159`, web `§1t67s0§.as:193-196`), and the packet is
+  `new Damage(500, 0, 0)`. So the floor lifts it back to 500 whatever the defence. The kickoff's "a
+  flat 500" was right; a plant (the packet given a level) goes red.
+- **`gotHit` has no knee groin and no back throw** (both builds): those packets flinch there, at no
+  chi cost. They are `checkHitObject`'s alone. My first test assumed otherwise; the source said no.
+- **For the seam (slice 8): a killing death touch with a fly velocity dies TWICE.** Inside the hit,
+  `gotDeathTouch` → `NPC.gotFly` → `getHP() <= 0` → `die()` (the only `die` on the AI's reception
+  path); then `NPCManager`'s per-hit `enemy.checkDie()` (`NPCManager.as:1525`, `:1546`) runs after
+  `checkHitObject` with no dead test (`NPC.checkDie`, `NPC.as:521`), so `die` runs again: the loot
+  and the xp twice, the death clip restarted. The loop's `!isDead()` filter comes BEFORE the hit.
+  Queued for slice 8.
+- **A kill in `gotHit` keeps the target** (the web's `param1 = null` is the parameter); a kill in
+  `checkHitObject` clears it (`target` there is the field). Both pinned.
+
+### The review
+
+One fresh-context reviewer traced the diff against the web source line by line (the guards, the
+draw order, the part and stance constants decoded, the element pairing and text order, the cap,
+the reaction chain, the ten clip labels resolved through `§1t1544s0§.as`) and re-derived every
+hand-worked test value and every new cite: **no behaviour bug**. It found two comments (the
+`gotDeathTouch` doc and `OG_BLOW.deathTouchDamage`'s) still saying the defence reduces the death
+touch, my first draft's error. Both were fixed. Its one edge case needs no code: `doDying` running
+after the death clip's own tick hit 0 would read a null `mcs` in the source, but a clip ends once
+and the longest death clip is 44 frames of the 96.
+
+### Gates
+
+92 files / 2482 tests (+34, and 51 net per-plant anchor cases) · typecheck 0 · lint 0 · claimcheck
+2349 cites / 635 values / 44 context / 0 failures · instructionpaths 0 · chaos 443 pinned, all 443
+red and restored byte-identical (run in a throwaway worktree before the commit) · 12 unported sites.

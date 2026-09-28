@@ -83,14 +83,15 @@ const BACKUP_DIR = join(ROOT, '.chaos-backup');
  * 1 (the `startAction` stub it replaced), for 260; slice 5b (the air and the downstab) added 34,
  * for 294; slice 6a (the hit and the flinch) added 54 (8 from its review), for 348; slice 6b (the
  * launch and the getup) added 45 (4 from its review) and retired 1 (the `gotLaunched` shadow it
- * replaced), for 392.
+ * replaced), for 392; slice 6c (the blow, the death and the reward) added 52 and retired 1 (the
+ * `gotHit` shadow it replaced), for 443.
  * That is the floor this repo has already paid for. Raise it when a slice adds plants; never lower it to make a run pass. A filtered
  * run skips this check and says so, loudly, in its output.
  *
  * `tests/chaosGate.test.ts` pins the same number from the other side, so the two cannot
  * drift apart silently.
  */
-const EXPECTED_TOTAL = 392;
+const EXPECTED_TOTAL = 443;
 
 type Status = 'RED' | 'STAYED-GREEN' | 'PLANT-FAILED' | 'NO-OP' | 'INCONCLUSIVE' | 'RESTORE-FAILED';
 

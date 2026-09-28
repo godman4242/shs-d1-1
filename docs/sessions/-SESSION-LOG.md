@@ -4492,3 +4492,35 @@ duellist set red, restored byte-identical) · 24 unported sites.
 
 After: 92 files / 2397 tests · typecheck 0 · lint 0 · claimcheck 2309 / 627 / 44 / 0 ·
 instructionpaths 0 · chaos 392 pinned · 15 unported sites.
+
+## 2026-09-29 — build loop: L5-OPP slice 6c, THE BLOW, THE DEATH AND THE REWARD
+
+- **Baseline at HEAD `c583546`, as RESUME_HERE stated:** 92 files / 2397 tests · typecheck 0 ·
+  lint 0 · claimcheck 2309 / 627 / 44 / 0 · chaos 392 pinned · 15 unported sites.
+- **Red first:** 39 failing tests in `tests/mcsPlayer.test.ts` (the new 6c blocks, and 6a's and
+  6b's shadow tests re-asserted as ports), each on its `unported` throw, the missing
+  `NpcDamage.cancelLaunch`, the uncarried `xp` or the old pin.
+- **Ported (web form, R6):** `gotHit` whole (× 0.9, × 1.3, the beheading cleared on any other part,
+  the cancel-launch on a downed or capped body, the evades silent), `die`, `EnemyPlayer`'s
+  `gotDeathTouch`, `createLoot` (web: nothing from a friendly body) and `rewardXP`, the ten death
+  clip ends, `doAction` DYING, `NpcDamage.cancelLaunch`; the constructor carries `xp`.
+  `EnemyPlayer.deathAnimEnd` not carried (`NPC`'s, line for line on the AI). The roll and the
+  full-Focus evade became shared helpers (the web writes each twice); three 6a plants re-anchored.
+  `OG_BLOW` and `OG_DUELLIST_REWARD` in config, cited at ±0 (claimcheck caught my first draft citing
+  Android's × 1.5 line as a governing cite; the contrast stays in prose).
+- **My hand-work was wrong twice, and the source won both times:** the death touch is a flat 500,
+  not 500 − defence (a level-0 packet's floor is its whole damage, `Damage.getMinDamage`); and
+  `gotHit` has no knee groin or back throw (both builds). Tests fixed to the source, each re-read.
+- **Two end-to-end runs, hand-worked first, matched at ±0:** a kill, `checkDie`, the reward, the
+  29-frame clip, ttl `95 − k` (two ticks on the clip's last frame: the web's `update` goes on into
+  DYING), gone at 95; a kill in the air flies 6b's arc on and lies at ttl 95 (a source quirk).
+- **Unported 15 → 12, not the kickoff's 9:** `gotHit` and `die` make three calls into slice 7.
+- **Chaos:** 52 new plants, 52/52 red, restored byte-identical (a throwaway worktree: the harness
+  refuses a dirty tree); 1 retired (the `gotHit` shadow). Then every plant, 443/443 red and restored, before the commit.
+- **Review (one fresh-context reviewer):** no behaviour bug; it re-derived every hand-worked value and cite. It caught two comments still claiming the defence reduces the death touch (my first draft's error): fixed.
+- **Queued for slice 8:** a killing death touch with a fly velocity dies twice (`gotFly`, then the
+  seam's `checkDie`).
+
+### THE GATES
+
+After: 92 files / 2482 tests · typecheck 0 · lint 0 · claimcheck 2349 / 635 / 44 / 0 · instructionpaths 0 · chaos 443 pinned (443/443 red) · 12 unported sites.

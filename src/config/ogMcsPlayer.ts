@@ -269,19 +269,19 @@ export const OG_STATE_MACHINE = {
 export const OG_RECEPTION = {
   /** `SkillManager.as:16` · `reference/decompiled/shs3_payload/scripts/§1t120s0§.as:16` — SKILL_ROLL, the forward roll's dodge */
   rollSkill: 1004,
-  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3364` — a roll at this skill level… */
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3364` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3689` (`gotHit`) — a roll at this skill level… */
   rollLevelLow: 1,
-  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3366` — …dodges 75 in 100 (Android: 80) */
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3366` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3691` — …dodges 75 in 100 (Android: 80) */
   rollChanceLow: 75,
-  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3368` */
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3368` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3693` */
   rollLevelMid: 2,
-  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3370` — the same in both builds */
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3370` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3695` — the same in both builds */
   rollChanceMid: 85,
-  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3372` — this level and up… */
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3372` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3697` — this level and up… */
   rollLevelTop: 3,
-  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3374` — …dodge 95 in 100 (Android: 90, 95, 100 for levels 3, 4, 5) */
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3374` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3699` — …dodge 95 in 100 (Android: 90, 95, 100 for levels 3, 4, 5) */
   rollChanceTop: 95,
-  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3376` — `int(Math.random() * 100) < chance` */
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3376` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3701` — `int(Math.random() * 100) < chance` */
   rollDice: 100,
   /**
    * WEB only: the full-Focus evade's passives, one per stance, which `checkHitObject` reads.
@@ -297,10 +297,41 @@ export const OG_RECEPTION = {
   },
   /** `MCSPlayer.as:3235` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3288` — heavy takes hits at `defense * 0.8`, truncated (`getDefense` is `:int`) */
   heavyDefenseMult: 0.8,
-  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3581` — a launch is skipped once `juggleCount` reaches 3, unless the attacker's stance is light (Android: 3, for stance −1 only) */
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3581` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3860` (`gotHit`) — a launch is skipped once `juggleCount` reaches 3, unless the attacker's stance is light (Android: 3, for stance −1 only) */
   juggleCap: 3,
-  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3583` — a light attacker juggles to 5 */
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3583` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3864` — a light attacker juggles to 5 */
   juggleCapLight: 5,
+} as const;
+
+/**
+ * THE BLOW (slice 6c): the web `gotHit`'s multipliers, and `EnemyPlayer`'s death touch. CONTRACT.
+ * The roll, the juggle cap, the hit guard and the texts are `OG_RECEPTION`'s and `NPC`'s numbers
+ * on `gotHit`'s own lines. AS3 stores each product into an `int`: truncated.
+ */
+export const OG_BLOW = {
+  /** `MCSPlayer.as:3703` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3790` — the body struck by the stance it loses to takes × 1.2 */
+  stanceAdvantageMult: 1.2,
+  /** WEB only, `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3798` — struck by the stance it beats, × 0.9 */
+  stanceDisadvantageMult: 0.9,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3807` — a head, hat or neck hit, after the defence (Android × 1.5; `NPC`'s is its own, `OG_NPC_BEHEAD_MULT`) */
+  headMult: 1.3,
+  /** `EnemyPlayer.as:1636` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1732` — the death touch's packet, at attacker level 0 through `gotHit`, whose floor keeps it whole (`NPC`'s own is a direct override, `OG_NPC_DEATHTOUCH_DAMAGE`) */
+  deathTouchDamage: 500,
+} as const;
+
+/**
+ * THE REWARD (slice 6c): `EnemyPlayer.createLoot` and `rewardXP`, the duellist's branch
+ * (`isDuelist`), the same in both builds. CONTRACT.
+ */
+export const OG_DUELLIST_REWARD = {
+  /** `EnemyPlayer.as:1296` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1361` — at this level and under the coins always drop… */
+  coinLevelMax: 10,
+  /** `EnemyPlayer.as:1296` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1361` — …above it, 1 in 3 (`int(Math.random() * 3) == 0`) */
+  coinDice: 3,
+  /** `EnemyPlayer.as:1316` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1381` — a player under this level… */
+  xpLowLevelBelow: 10,
+  /** `EnemyPlayer.as:1318` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1383` — …gets the plain `calcXP` × 3; from it up, `calcXP` as elite */
+  xpLowLevelMult: 3,
 } as const;
 
 /**

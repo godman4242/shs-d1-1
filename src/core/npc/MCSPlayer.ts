@@ -9,8 +9,10 @@
  * SLASH END (`doSlash`, `endSlash`, `endDownStab`, `deductReloadBar`), slice 5a, THE GROUND
  * STROKE (`update` whole, and the three switches' IDLE, RUN, WALK, SLASH and POSE), slice 5b, THE
  * AIR AND THE DOWNSTAB, slice 6a, THE HIT AND THE FLINCH (`checkHitObject`, `doFlinch`,
- * `endFlinch` and their helpers; the body's HP, chi and defences), and slice 6b, THE LAUNCH AND
- * THE GETUP (`gotLaunched`, `gotKneeGroin`, `doLaunched` and the switches' reception groups).
+ * `endFlinch` and their helpers; the body's HP, chi and defences), slice 6b, THE LAUNCH AND
+ * THE GETUP (`gotLaunched`, `gotKneeGroin`, `doLaunched` and the switches' reception groups), and
+ * slice 6c, THE BLOW, THE DEATH AND THE REWARD (`gotHit`, `die`, `EnemyPlayer`'s `gotDeathTouch`,
+ * `createLoot` and `rewardXP`, the death's clip ends and DYING).
  *
  * Android structure, web numbers (ruling R6). Where the builds differ in STRUCTURE the web
  * side is ported, and `docs/DIVERGENCES.md` "L5-OPP SLICE 3a" rules each:
@@ -31,6 +33,9 @@
  *     (DIVERGENCES "L5-OPP SLICE 6 — THE MAP", "6a").
  *   - `gotLaunched` counts every launch, before `NPC`'s guard; a fly-away hands the packet the
  *     body's velocity as a FLY (DIVERGENCES "L5-OPP SLICE 6b").
+ *   - `gotHit` takes × 0.9 from the stance a body beats and × 1.3 on a beheading, clears the
+ *     beheading on any other part, and turns a downed or capped body's AIR packet into NONE; a
+ *     death clip's end goes on into `doAction`; a friendly body drops nothing (DIVERGENCES "6c").
  *
  * Only the opponent's path is ported: `controlledBy == 1` (`DuelModeUI.as:381`). The human's
  * branches (`controlledBy` 0 or 2: the UI calls, the network, `initSpecialSkills`' skill-id
@@ -42,19 +47,21 @@
  * The count of those sites is pinned in `tests/mcsPlayer.test.ts` and only goes down, once a
  * switch is dispatched: each of the three switches sends the labels not ported yet through ONE
  * site that names the label (`OG_CLIP_END_LABELS` & co.), and a value with no label is the
- * source's no-op. An `Npc` method the source overrides and the port has not reached yet is
- * SHADOWED by one too (6a), so the duellist can never fall into the mobs' reception. An override
- * whose AI path is its `super` call alone (`gotKnockDown`, `gotFly`, `gotFlyAway`, `doFly`, and
- * `gotBackThrow`, whose own guard repeats `NPC`'s) is not carried: the duellist runs `NPC`'s,
- * the same shape in both builds (6b).
+ * source's no-op. 6a SHADOWED each reception override not ported yet with one, so the duellist
+ * could never fall into the mobs' reception; 6c replaced the last. An override whose AI path is
+ * its `super` call alone (`gotKnockDown`, `gotFly`, `gotFlyAway`, `doFly`, and `gotBackThrow`,
+ * whose own guard repeats `NPC`'s) or `NPC`'s lines again (`EnemyPlayer.deathAnimEnd`) is not
+ * carried: the duellist runs `NPC`'s, the same shape in both builds (6b, 6c).
  *
  * AS3 stores every one of these into an `int`, so each result is truncated (`asInt`).
  */
 import { OG_ANIM, OG_LAUNCH, OG_PART, OG_STATE, type OgPart, type OgState } from '../../config/ogActor';
 import { OG_NO_STANCE, OG_STANCE } from '../../config/ogDuellistProfile';
 import {
+  OG_BLOW,
   OG_CLIP_END_LABELS,
   OG_DO_ACTION_LABELS,
+  OG_DUELLIST_REWARD,
   OG_GETUP,
   OG_MOVE_DIST_SQ,
   OG_RECEPTION,
@@ -426,6 +433,8 @@ export class MCSPlayer extends Npc {
     this.STAT_WINDDEF = body.windDef;
     this.STAT_WATERDEF = body.waterDef;
     this.STAT_EARTHDEF = body.earthDef;
+    // `EnemyPlayer.init` (`EnemyPlayer.as:82`): the duellist's xp, which `rewardXP` reads.
+    this.xp = body.xp;
     // `EnemyPlayer`'s constructor (`EnemyPlayer.as:51-52`) starts FALL, then this. FALL is ported
     // (5b) but its call is not carried: every body would start falling, which is the spawn's
     // question (slice 8; DIVERGENCES "L5-OPP SLICE 5b").
@@ -533,6 +542,22 @@ export class MCSPlayer extends Npc {
       case OG_ANIM.FLINCH:
         // `MCSPlayer.as:739` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:759`, the same.
         this.endFlinch();
+        return true;
+      // The death's ten clips (`MCSPlayer.as:524-541`, web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:544-561`). Android's `return`
+      // leaves `update` there; the web returns from the helper, and `update` goes on into
+      // `doAction` DYING, so the frame a death clip ends counts the ttl down twice. The
+      // `controlledBy == 0` freeze is the human's.
+      case OG_ANIM.DEFEATED1:
+      case OG_ANIM.ENEMYDEATH:
+      case OG_ANIM.DEATH_FORWARD:
+      case OG_ANIM.DEFEATED2:
+      case OG_ANIM.ENEMYDEATHNOHEAD:
+      case OG_ANIM.ENEMYDEATHNOHAND:
+      case OG_ANIM.DEATHDOWNED:
+      case OG_ANIM.DEATHINHALF:
+      case OG_ANIM.SEPPUKU_END:
+      case OG_ANIM.SEPPUKU_NOHEAD:
+        this.deathAnimEnd();
         return true;
       // The reception's getups (`MCSPlayer.as:542-682`, web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:562-702`), the same.
       // The `controlledBy == 0` display-name calls are the human's.
@@ -710,6 +735,9 @@ export class MCSPlayer extends Npc {
         break;
       case S.DOWNED:
         break;
+      case S.DYING:
+        this.doDying();
+        break;
       case S.SLASH:
         this.doSlash();
         break;
@@ -741,6 +769,11 @@ export class MCSPlayer extends Npc {
   /** `MCSPlayer.as:4369` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4738`: the log substitution's end, slice 7 (ERRATUM 15). */
   cancelLogSub(): void {
     unported('MCSPlayer.cancelLogSub');
+  }
+
+  /** `MCSPlayer.as:4184` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4561`: the log substitution itself, slice 7 (ERRATUM 15). */
+  doSubstitutionLog(): void {
+    unported('MCSPlayer.doSubstitutionLog');
   }
 
   /** `MCSPlayer.as:2965` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3043`, the same. */
@@ -1316,24 +1349,7 @@ export class MCSPlayer extends Npc {
     const S = OG_STATE;
     if (this.gotHitCounter > ZERO || this.world.transitioning || this.actionState === S.SKILL_UNDYING) return false;
     if (damage.attacker === this) return false;
-    if (this.actionState === S.FORWARDROLL) {
-      const rolllvl = this.getSkillLevel(R.rollSkill);
-      let dodgechance = ZERO;
-      if (rolllvl === R.rollLevelLow) dodgechance = R.rollChanceLow;
-      else if (rolllvl === R.rollLevelMid) dodgechance = R.rollChanceMid;
-      else if (rolllvl >= R.rollLevelTop) dodgechance = R.rollChanceTop;
-      if (asInt(this.rng() * R.rollDice) < dodgechance) return this.evade();
-    }
-    const F = R.focusEvadeSkill;
-    const st = this.stance;
-    if (
-      this.isSlashing() && this.reload === this.maxreload &&
-      ((st === OG_STANCE.light && this.getSkillLevel(F.light) > ZERO) ||
-        (st === OG_STANCE.balanced && this.getSkillLevel(F.balanced) > ZERO) ||
-        (st === OG_STANCE.heavy && this.getSkillLevel(F.heavy) > ZERO))
-    ) {
-      return this.evade();
-    }
+    if (this.rollDodges() || this.focusEvades()) return this.evade();
     let physical = damage.damage;
     const fireDamage = Npc.elemental(damage.fireDamage, this.STAT_FIREDEF);
     const waterDamage = Npc.elemental(damage.waterDamage, this.STAT_WATERDEF);
@@ -1417,7 +1433,38 @@ export class MCSPlayer extends Npc {
     return false;
   }
 
-  /** The two evades' shared end (web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3378-3380`, `:3385-3387`): guard 12 frames, `Snd_jump`, "hit". */
+  /**
+   * The forward roll's dodge, written twice in the web (`checkHitObject`
+   * `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3361-3376`, `gotHit` `:3686-3701`, the same lines): a
+   * FORWARDROLL hit draws one die, whatever the skill's level.
+   */
+  private rollDodges(): boolean {
+    if (this.actionState !== OG_STATE.FORWARDROLL) return false;
+    const R = OG_RECEPTION;
+    const rolllvl = this.getSkillLevel(R.rollSkill);
+    let dodgechance = ZERO;
+    if (rolllvl === R.rollLevelLow) dodgechance = R.rollChanceLow;
+    else if (rolllvl === R.rollLevelMid) dodgechance = R.rollChanceMid;
+    else if (rolllvl >= R.rollLevelTop) dodgechance = R.rollChanceTop;
+    return asInt(this.rng() * R.rollDice) < dodgechance;
+  }
+
+  /**
+   * WEB only, written twice (`checkHitObject` `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3383`, `gotHit` `:3707`): slashing on
+   * a full bar with the stance's full-Focus passive (1074 / 1075 / 1076) evades.
+   */
+  private focusEvades(): boolean {
+    const F = OG_RECEPTION.focusEvadeSkill;
+    const st = this.stance;
+    return (
+      this.isSlashing() && this.reload === this.maxreload &&
+      ((st === OG_STANCE.light && this.getSkillLevel(F.light) > ZERO) ||
+        (st === OG_STANCE.balanced && this.getSkillLevel(F.balanced) > ZERO) ||
+        (st === OG_STANCE.heavy && this.getSkillLevel(F.heavy) > ZERO))
+    );
+  }
+
+  /** `checkHitObject`'s evades' shared end (web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3378-3380`, `:3385-3387`): guard 12 frames, `Snd_jump`, "hit". */
   private evade(): boolean {
     this.gotHitCounter = OG_NPC_HIT_IFRAMES;
     this.emit({ type: 'sound', name: 'jump' });
@@ -1537,41 +1584,160 @@ export class MCSPlayer extends Npc {
   }
 
   /*
-   * THE SHADOWS (6a): each overrides a reception method the source overrides too, so a hit can
-   * never fall into the mobs' `Npc` code. 6c replaces them.
+   * THE BLOW, THE DEATH AND THE REWARD (6c). `deathAnimEnd` is `NPC`'s: `EnemyPlayer`'s
+   * (`EnemyPlayer.as:1604`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1700`) repeats it line for line but for one
+   * guard on disposal, `controlledBy == 2 && isPvPRoomMode()`, never true on the AI.
    */
 
-  /** `MCSPlayer.as:3580` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3661`: 6c. */
-  override gotHit(target: OgPart, damageObj: NpcDamage): boolean {
-    void target;
-    void damageObj;
-    return unported('MCSPlayer.gotHit');
+  /**
+   * WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3661` (Android `MCSPlayer.as:3580`): the blow. `checkHitObject`'s guard and both
+   * evades, but SILENT, and without its self-hit and transition tests; the stun cleared and the
+   * charge FX removed on every call past them. Then, on a live body: a head, hat or neck hit is a
+   * beheading and any other part clears it (web, `:3745`); the stance triangle on the ATTACKER's
+   * stance, × 1.2 and the web's × 0.9; the defence and the floor; a beheading × 1.3 (web; Android
+   * × 1.5). A downed body, or one at the juggle cap, turns an AIR packet into NONE (web,
+   * `NpcDamage.cancelLaunch`). `target` null is the whole body (`getMCS()`, `gotDeathTouch`'s).
+   * At 0 HP neither build kills the AI here, and the web's `param1 = null` is the parameter: the
+   * body keeps its target, where `checkHitObject` clears it. Every `controlledBy` 0 / 2 / 3 line
+   * is out of the lane; so is the web's white text colour, which only the human's text reads.
+   */
+  override gotHit(target: OgPart | null, damageObj: NpcDamage): boolean {
+    const S = OG_STATE;
+    if (this.gotHitCounter > ZERO || this.actionState === S.SKILL_UNDYING) return false;
+    if (this.rollDodges() || this.focusEvades()) {
+      this.gotHitCounter = OG_NPC_HIT_IFRAMES;
+      return true;
+    }
+    if (this.logsubCounter > ZERO) {
+      // The web `setSubstitutionLog` on the packet follows: slice 7's, whole (ERRATUM 15).
+      this.doSubstitutionLog();
+    }
+    this.stunCounter = ZERO;
+    if (this.chargingFx !== null && !(this.actionState === S.SKILL_CHICHARGE && damageObj.launchType === OG_LAUNCH.LAUNCH_NONE)) {
+      unported('Projectile.removeProjectile');
+    }
+    if (this.getHP() <= ZERO) return false;
+    this.behead = target === OG_PART.hat || target === OG_PART.head || target === OG_PART.neck;
+    this.gotHitFlag = true;
+    const B = OG_BLOW;
+    const fireDamage = Npc.elemental(damageObj.fireDamage, this.STAT_FIREDEF);
+    const waterDamage = Npc.elemental(damageObj.waterDamage, this.STAT_WATERDEF);
+    const windDamage = Npc.elemental(damageObj.windDamage, this.STAT_WINDDEF);
+    const earthDamage = Npc.elemental(damageObj.earthDamage, this.STAT_EARTHDEF);
+    const L = OG_STANCE.light;
+    const M = OG_STANCE.balanced;
+    const H = OG_STANCE.heavy;
+    const me = this.stance;
+    const foe = damageObj.stance;
+    let damage = damageObj.damage;
+    if ((me === L && foe === M) || (me === M && foe === H) || (me === H && foe === L)) {
+      damage = asInt(damage * B.stanceAdvantageMult);
+    } else if ((me === L && foe === H) || (me === M && foe === L) || (me === H && foe === M)) {
+      damage = asInt(damage * B.stanceDisadvantageMult);
+    }
+    damage -= this.getDefense();
+    if (damage < damageObj.getMinDamage()) damage = damageObj.getMinDamage();
+    if (this.behead) damage = asInt(damage * B.headMult);
+    this.setHP(this.getHP() - (damage + fireDamage + windDamage + waterDamage + earthDamage));
+    this.gotHitCounter = OG_NPC_HIT_IFRAMES;
+    this.cancelStealth();
+    this.setHealthBarFraction(this.getHP() / this.maxhp);
+    this.emit({ type: 'sound', name: 'hit' });
+    if (this.getHP() <= ZERO) {
+      this.setHP(ZERO);
+      return true;
+    }
+    this.behead = false;
+    damageObj.setVictimPosX(asInt(this.getMapPosition()));
+    if (this.isDowned()) damageObj.cancelLaunch();
+    const s = this.actionState;
+    if ((damageObj.isLaunchAir() || s === S.GOTLAUNCHED || s === S.FALL || s === S.JUMP) && !this.isDowned() && !damageObj.isSubstitutionLog()) {
+      const cap = foe === L ? OG_RECEPTION.juggleCapLight : OG_RECEPTION.juggleCap;
+      if (this.juggleCount >= cap) {
+        damageObj.cancelLaunch();
+      } else {
+        damageObj.setLaunchDir(this.isFacingRight());
+        this.gotLaunched();
+      }
+    } else if (damageObj.isKnockDown()) {
+      damageObj.setLaunchDir(this.isFacingRight());
+      this.gotKnockDown();
+    } else if (damageObj.isFly()) {
+      this.gotFly(damageObj.flyVelX, damageObj.flyVelY);
+    } else if (damageObj.isFlyAway()) {
+      // `param1.x`, an `int` parameter: the struck part's x (the whole body's for `getMCS()`).
+      this.gotFlyAway(asInt(target === null ? this.x : this.geometry.partX(target)), this.y);
+      damageObj.setFlyAwayPos(this.velX, this.velY);
+    } else if (damageObj.isStun()) {
+      this.gotStun(damageObj.flyVelX, damageObj.flyVelY);
+    } else if (!this.isDowned()) {
+      this.doFlinch();
+    }
+    if (damageObj.isDeathTouch()) this.gotDeathTouch(damageObj.flyVelX, damageObj.flyVelY);
+    const T = OG_NPC_FLOATING_TEXT;
+    const text = (amount: number, colour: number): void => {
+      if (amount > ZERO) this.emit({ type: 'floatingText', x: this.x, y: this.y + T.yOffset, text: String(amount), colour });
+    };
+    text(damage, T.colour.physical);
+    text(fireDamage, T.colour.fire);
+    text(windDamage, T.colour.wind);
+    text(waterDamage, T.colour.water);
+    text(earthDamage, T.colour.earth);
+    return true;
   }
 
-  /** `MCSPlayer.as:3952` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4057`: 6c. */
+  /**
+   * `MCSPlayer.as:3952` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4057`, the same: the charge FX goes, then `NPC.die`
+   * (the `controlledBy == 0` block is the human's). The web `NPC.die` adds one guard, `mcs ==
+   * null` → return (`reference/decompiled/shs3_payload/scripts/§1t68s0§.as:928`), which the AI never meets: a disposed body is dead,
+   * and every caller on its path skips the dead.
+   */
   override die(): void {
-    unported('MCSPlayer.die');
+    if (this.chargingFx !== null) unported('Projectile.removeProjectile');
+    super.die();
   }
 
-  /** `EnemyPlayer.as:1634` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1730`, which overrides `MCSPlayer`'s: 6c. */
+  /**
+   * `EnemyPlayer.as:1634` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1730`, which overrides `MCSPlayer`'s: the guard
+   * cleared, a 500 packet at attacker level 0 through `gotHit` on the whole body: a level-0
+   * packet's floor is its whole damage (`Damage.getMinDamage`), so the defence cannot reduce it,
+   * but the blow still runs `gotHit`'s guard, bar and reaction. Then a fly if the packet carried
+   * a velocity, then no chi. The web's `controlledBy == 2 → 0` is the network's.
+   */
   gotDeathTouch(flyVelX: number, flyVelY: number): void {
-    void flyVelX;
-    void flyVelY;
-    unported('EnemyPlayer.gotDeathTouch');
+    this.gotHitCounter = ZERO;
+    this.gotHit(null, new NpcDamage(OG_BLOW.deathTouchDamage, ZERO, OG_LAUNCH.LAUNCH_NONE));
+    if (flyVelX !== ZERO) this.gotFly(flyVelX, flyVelY);
+    this.setChi(ZERO);
   }
 
-  /** `EnemyPlayer.as:1604` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1700`: 6c. */
-  override deathAnimEnd(): void {
-    unported('EnemyPlayer.deathAnimEnd');
-  }
-
-  /** `EnemyPlayer.as:1281` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1342`: 6c. */
+  /**
+   * `EnemyPlayer.as:1281` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1342`, the duellist's branch (`isDuelist`): a random
+   * item at the body's level, then coins, always at level 10 and under, else 1 in 3, worth
+   * `int(random × level)`. The item's own rolls are the loot dialog's (`LootDialog.as:448`:
+   * `alwaysGive` false, so 1 in 2), hence its own kind. WEB: a friendly body drops nothing. The
+   * network and war-mode branches are out of the lane.
+   */
   override createLoot(): void {
-    unported('EnemyPlayer.createLoot');
+    if (this.isFriendly) return;
+    const R = OG_DUELLIST_REWARD;
+    const level = this.level;
+    this.emit({ type: 'loot', kind: 'randomItemChance', amount: ONE, itemId: null, level });
+    if (level <= R.coinLevelMax || asInt(this.rng() * R.coinDice) === ZERO) {
+      this.emit({ type: 'loot', kind: 'coins', amount: asInt(this.rng() * level), itemId: null, level });
+    }
   }
 
-  /** `EnemyPlayer.as:1307` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1372`: 6c. */
+  /**
+   * `EnemyPlayer.as:1307` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1372`, the same, the duellist's branch: a player
+   * under level 10 gets `calcXP` × 3, from 10 up `calcXP` as elite.
+   */
   override rewardXP(): void {
-    unported('EnemyPlayer.rewardXP');
+    const R = OG_DUELLIST_REWARD;
+    const playerLevel = this.world.playerLevel;
+    const amount = playerLevel < R.xpLowLevelBelow
+      ? Npc.calcXP(playerLevel, this.level, this.xp, false) * R.xpLowLevelMult
+      : Npc.calcXP(playerLevel, this.level, this.xp, true);
+    this.emit({ type: 'xp', amount });
   }
 }

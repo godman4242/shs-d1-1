@@ -180,7 +180,11 @@ export type NpcEvent =
     }
   | {
       readonly type: 'loot';
-      readonly kind: 'coins' | 'questItem' | 'randomItem' | 'itemBasic';
+      /**
+       * `randomItem` is `addRandomLootItem(level, false, true)` (a mob's row: always given);
+       * `randomItemChance` is `addRandomLootItem(level)` (the duellist's: the dialog rolls 1 in 2).
+       */
+      readonly kind: 'coins' | 'questItem' | 'randomItem' | 'randomItemChance' | 'itemBasic';
       readonly amount: number;
       readonly itemId: number | null;
       readonly level: number;

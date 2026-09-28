@@ -1702,9 +1702,12 @@ describe('slice 5a: the clip-end switch — the four ground-stroke bands (the sa
       // 6b: the fall and the getups.
       ...['FLY_END', 'KNEEGROIN_VICTIM', 'BACKTHROW_VICTIM', 'GETUP_FRONT', 'GOTLAUNCHED_PEAK', 'GOTLAUNCHEDDOWNED',
         'GOTLAUNCHEDDOWNEDEND', 'DOWNEDUP', 'DOWNEDUP2', 'FLIPUP'].map(anim),
+      // 6c: the death's ten.
+      ...['DEFEATED1', 'ENEMYDEATH', 'DEATH_FORWARD', 'DEFEATED2', 'ENEMYDEATHNOHEAD', 'ENEMYDEATHNOHAND', 'DEATHDOWNED',
+        'DEATHINHALF', 'SEPPUKU_END', 'SEPPUKU_NOHEAD'].map(anim),
     ]);
     const others = OG_CLIP_END_LABELS.filter((n) => !ported.has(n));
-    expect([ported.size, others.length]).toEqual([76, 70]);
+    expect([ported.size, others.length]).toEqual([86, 60]);
     for (const name of others) {
       expect(() => idleBody().clipEnded(name)).toThrow(`unported: MCSPlayer.update clip end (${name})`);
     }
@@ -1925,9 +1928,10 @@ describe('slice 5a: doAction — IDLE, RUN, WALK, SLASH, POSE (WEB: POSE ends in
     const ported: OgState[] = [
       OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.FALL, OG_STATE.SLASH, OG_STATE.POSE,
       OG_STATE.GOTLAUNCHED, OG_STATE.FLY, OG_STATE.STUN, OG_STATE.DOWNED, // 6b
+      OG_STATE.DYING, // 6c
     ];
     const others = OG_DO_ACTION_LABELS.filter((s) => !ported.includes(s));
-    expect(others).toHaveLength(17);
+    expect(others).toHaveLength(16);
     for (const s of others) {
       expect(() => acting(s)).toThrow(`unported: MCSPlayer.doAction (${stateName(s)})`);
     }
@@ -2415,31 +2419,24 @@ describe('slice 6a: the constructor carries initPlayer\'s HP, chi and defense, a
   });
 });
 
-describe('slice 6a: the mob fall-through is closed — every reception override not ported yet is UNPORTED', () => {
-  it('a 20-damage hit no longer falls into Npc\'s mob gotHit (it took HP 1 to −18 and returned true)', () => {
+describe('slice 6c: the mob fall-through stays closed — the duellist answers with its own reception', () => {
+  it('a 20-damage hit is the duellist\'s gotHit (the mob code took HP 1 to −18): 20 − 1 = 19 floors fixture 1 at 0', () => {
     const p = player(body1());
-    expect(() => p.gotHit(OG_PART.torso, new NpcDamage(20, 45))).toThrow('unported: MCSPlayer.gotHit');
-    expect(p.getHP()).toBe(9);
+    expect([p.gotHit(OG_PART.torso, new NpcDamage(20, 45)), p.getHP(), p.dead]).toEqual([true, 0, false]);
   });
 
-  it('each of the six shadows left (6c\'s) throws, naming the AS3 function', () => {
-    const p = player(body2());
-    const shadows: Array<[string, () => void]> = [
-      ['MCSPlayer.gotHit', () => { p.gotHit(OG_PART.torso, new NpcDamage(20, 45)); }],
-      ['MCSPlayer.die', () => { p.die(); }],
-      ['EnemyPlayer.gotDeathTouch', () => { p.gotDeathTouch(0, 0); }],
-      ['EnemyPlayer.deathAnimEnd', () => { p.deathAnimEnd(); }],
-      ['EnemyPlayer.createLoot', () => { p.createLoot(); }],
-      ['EnemyPlayer.rewardXP', () => { p.rewardXP(); }],
-    ];
-    for (const [name, call] of shadows) expect(call, name).toThrow(`unported: ${name}`);
-    expect([p.getHP(), p.events]).toEqual([590, []]);
+  it('the source\'s overrides are the class\'s own; deathAnimEnd is NPC\'s (EnemyPlayer\'s differs only on the network)', () => {
+    const own = (m: string) => Object.prototype.hasOwnProperty.call(MCSPlayer.prototype, m);
+    expect(['gotHit', 'die', 'gotDeathTouch', 'createLoot', 'rewardXP'].filter(own)).toEqual([
+      'gotHit', 'die', 'gotDeathTouch', 'createLoot', 'rewardXP',
+    ]);
+    expect(own('deathAnimEnd')).toBe(false);
   });
 
-  it('checkDie on a body at 0 HP reaches die, and die is unported (6c)', () => {
-    const p = player(body2());
+  it('checkDie on a body at 0 HP dies: DYING, dead', () => {
+    const p = struck([OG_PART.torso], body2(), () => 0.9);
     p.setHP(0);
-    expect(() => p.checkDie()).toThrow('unported: MCSPlayer.die');
+    expect([p.checkDie(), p.dead, p.actionState]).toEqual([true, true, OG_STATE.DYING]);
   });
 });
 
@@ -2701,8 +2698,9 @@ describe('slice 6a: checkHitObject — the reaction (WEB: the juggle cap per att
     expect([down.got(), down.p.actionState]).toEqual([true, OG_STATE.DOWNED]);
   });
 
-  it('the death touch is 6c\'s: loud', () => {
-    expect(reacting(OG_LAUNCH.DEATHTOUCH).got).toThrow('unported: EnemyPlayer.gotDeathTouch');
+  it('the death touch (6c): 44, then a flat 500 through gotHit; chi 0', () => {
+    const { p, got } = reacting(OG_LAUNCH.DEATHTOUCH);
+    expect([got(), p.getHP(), p.getChi(), p.actionState]).toEqual([true, 46, 0, OG_STATE.FLINCH]);
   });
 
   it('the launch and the knockdown write the body\'s facing into the packet (1 right, 0 left) before they react', () => {
@@ -3100,7 +3098,8 @@ describe('slice 6b: the clip ends — the fall and the getups (the same in both 
     expect(ended('gotlauncheddowned', (p) => { p.world.redFreeze = true; }).healthBarVisible).toBe(false);
     const p = struck();
     p.dead = true;
-    expect(() => p.clipEnded('gotlauncheddowned')).toThrow('unported: EnemyPlayer.deathAnimEnd');
+    p.actionState = OG_STATE.DOWNED;
+    expect([p.clipEnded('gotlauncheddowned'), p.ttl, p.actionState, p.animation]).toEqual([true, 95, OG_STATE.DOWNED, 'idle']);
   });
 
   it('GOTLAUNCHEDDOWNEDEND: DOWNEDUP2; DOWNEDUP and DOWNEDUP2: the bar back at x 0 and shown, 120 px back, IDLE', () => {
@@ -3200,22 +3199,486 @@ describe('slice 6b: the launch and the getup, through checkHitObject and the rea
   });
 });
 
+/*
+ * L5-OPP SLICE 6c — THE BLOW, THE DEATH AND THE REWARD. `gotHit` whole (web `§1t99s0§.as:3661-3941`,
+ * Android `MCSPlayer.as:3580-3837`), the web `Damage` cancel-launch (`§1t67s0§.as:97-104`), `die`
+ * (`:4057` / `:3952`), `EnemyPlayer`'s `gotDeathTouch`, `createLoot` and `rewardXP`, the clip-end
+ * death group and `doAction` DYING. Every expected number was worked by hand from the web source.
+ */
+
+/** A scripted `Math.random`: throws past its last draw, so a test names every draw it expects. */
+function drawn(values: readonly number[]): Rng {
+  let i = 0;
+  return () => {
+    const v = values[i];
+    if (v === undefined) throw new Error(`drew a random number past the script (${values.length})`);
+    i += 1;
+    return v;
+  };
+}
+
+describe('slice 6c: the web Damage cancel-launch (`§1t67s0§.as:97-104`)', () => {
+  it('an AIR packet becomes NONE; every other launch type is left as it is', () => {
+    const after = Object.values(OG_LAUNCH).map((l) => {
+      const d = new NpcDamage(10, 1, l);
+      d.cancelLaunch();
+      return [l, d.launchType];
+    });
+    expect(after).toEqual(Object.values(OG_LAUNCH).map((l) => [l, l === OG_LAUNCH.LAUNCH_AIR ? OG_LAUNCH.LAUNCH_NONE : l]));
+  });
+});
+
+describe('slice 6c: gotHit — the guards and the evades (WEB: 75 / 85 / 95, the Focus evade, both SILENT here)', () => {
+  it('the hit guard and SKILL_UNDYING refuse: false, nothing changes', () => {
+    const guarded = struck();
+    guarded.gotHitCounter = 3;
+    const undying = struck();
+    undying.actionState = OG_STATE.SKILL_UNDYING;
+    for (const p of [guarded, undying]) {
+      expect([p.gotHit(OG_PART.torso, blow(100)), p.getHP(), p.events]).toEqual([false, 590, []]);
+    }
+  });
+
+  it('no self-hit guard and no transition test here (both are checkHitObject\'s): the body\'s own packet lands', () => {
+    const p = struck();
+    p.world.transitioning = true;
+    const d = new NpcDamage(100, 45);
+    d.setAttacker(p);
+    expect([p.gotHit(OG_PART.torso, d), p.getHP()]).toEqual([true, 546]);
+  });
+
+  it('the roll: 75 / 85 / 95 at levels 1 / 2 / 3+, guard 12, NO sound (checkHitObject\'s plays Snd_jump)', () => {
+    const rolled = (level: number, draw: number) => {
+      const p = struck([OG_PART.torso], body2(), () => draw);
+      p.actionState = OG_STATE.FORWARDROLL;
+      p.skillList = [{ id: 1004, value: level }];
+      return [p.gotHit(OG_PART.torso, blow(100)), p.getHP(), p.gotHitCounter, p.events];
+    };
+    expect(rolled(1, 0.74)).toEqual([true, 590, 12, []]);
+    expect(rolled(1, 0.75)[1]).toBe(546);
+    expect(rolled(2, 0.84)[1]).toBe(590);
+    expect(rolled(2, 0.85)[1]).toBe(546);
+    expect(rolled(3, 0.94)[1]).toBe(590);
+    expect(rolled(5, 0.94)[1]).toBe(590);
+    expect(rolled(5, 0.95)[1]).toBe(546);
+  });
+
+  it('the full-Focus evade: slashing on a full bar with the stance\'s 1076 (heavy): guard 12, no sound, no damage', () => {
+    const p = struck();
+    p.actionState = OG_STATE.SLASH;
+    p.reload = p.maxreload;
+    p.skillList = [{ id: 1076, value: 1 }];
+    expect([p.gotHit(OG_PART.torso, blow(100)), p.getHP(), p.gotHitCounter, p.events]).toEqual([true, 590, 12, []]);
+  });
+
+  it('the log substitution goes through doSubstitutionLog on the AI (slice 7): loud', () => {
+    const p = struck();
+    p.logsubCounter = 3;
+    expect(() => p.gotHit(OG_PART.torso, blow(100))).toThrow('unported: MCSPlayer.doSubstitutionLog');
+  });
+
+  it('the stun clears on every call past the evades, even on a body already at 0 HP (which then returns false)', () => {
+    const p = struck();
+    p.setHP(0);
+    p.stunCounter = 7;
+    expect([p.gotHit(OG_PART.torso, blow(100)), p.stunCounter, p.getHP(), p.events]).toEqual([false, 0, 0, []]);
+  });
+
+  it('a charging FX is removed BEFORE the damage unless the body charges chi and the hit does not launch', () => {
+    const fx = {};
+    const charging = struck();
+    charging.chargingFx = fx;
+    charging.actionState = OG_STATE.SKILL_CHICHARGE;
+    expect([charging.gotHit(OG_PART.torso, blow(100)), charging.getHP()]).toEqual([true, 546]);
+    const q = struck();
+    q.chargingFx = fx;
+    expect(() => q.gotHit(OG_PART.torso, blow(100))).toThrow('unported: Projectile.removeProjectile');
+    expect(q.getHP()).toBe(590);
+    const launched = struck();
+    launched.chargingFx = fx;
+    launched.actionState = OG_STATE.SKILL_CHICHARGE;
+    expect(() => launched.gotHit(OG_PART.torso, blow(100, OG_LAUNCH.LAUNCH_AIR))).toThrow('unported: Projectile.removeProjectile');
+    expect(launched.getHP()).toBe(590);
+  });
+});
+
+describe('slice 6c: gotHit — the blow (WEB: the triangle\'s × 0.9, the head × 1.3)', () => {
+  it('fixture 2 (heavy): 100 − 56 = 44; the elements as checkHitObject\'s; the texts in the source\'s order', () => {
+    const p = struck();
+    const d = new NpcDamage(100, 45, OG_LAUNCH.LAUNCH_NONE, -1, 15, 3, 12, 20);
+    expect(p.gotHit(OG_PART.torso, d)).toBe(true);
+    expect([p.getHP(), p.gotHitCounter, p.healthBarFraction, d.victimPosX, p.behead, p.gotHitFlag])
+      .toEqual([521, 12, 521 / 590, 400, false, true]);
+    expect(p.events).toEqual([
+      { type: 'sound', name: 'hit' },
+      { type: 'floatingText', x: 400, y: 258, text: '44', colour: 10027008 },
+      { type: 'floatingText', x: 400, y: 258, text: '5', colour: 16737792 },
+      { type: 'floatingText', x: 400, y: 258, text: '4', colour: 13421772 },
+      { type: 'floatingText', x: 400, y: 258, text: '1', colour: 26367 },
+      { type: 'floatingText', x: 400, y: 258, text: '15', colour: 6697728 },
+    ]);
+  });
+
+  it('the stance triangle on the ATTACKER\'s stance: heavy struck by light × 1.2 (120 − 56), by balanced × 0.9 (90 − 56)', () => {
+    const took = (stance: number, bodyStance = HEAVY) => {
+      const p = struck();
+      p.stance = bodyStance;
+      p.gotHit(OG_PART.torso, blow(100, OG_LAUNCH.LAUNCH_NONE, stance));
+      return 590 - p.getHP();
+    };
+    expect([took(LIGHT), took(BALANCED), took(HEAVY), took(-1)]).toEqual([64, 34, 44, 44]);
+    // balanced beats light, heavy beats balanced, light beats heavy: × 1.2 from the stance a body
+    // loses to, × 0.9 from the one it beats; dual and reversed are outside the triangle
+    expect([took(BALANCED, LIGHT), took(HEAVY, LIGHT), took(HEAVY, BALANCED), took(LIGHT, BALANCED)])
+      .toEqual([120 - 71, 90 - 71, 120 - 71, 90 - 71]);
+    expect([took(LIGHT, DUAL), took(BALANCED, REVERSED)]).toEqual([100 - 71, 100 - 71]);
+  });
+
+  it('a head, hat or neck hit × 1.3 after the defence (Android × 1.5): int(44 × 1.3) = 57; the weapon is an ordinary part here', () => {
+    for (const part of [OG_PART.head, OG_PART.hat, OG_PART.neck]) {
+      const p = struck();
+      p.gotHit(part, blow(100));
+      expect([part, p.getHP(), p.behead]).toEqual([part, 590 - 57, false]);
+    }
+    const w = struck();
+    expect([w.gotHit(OG_PART.weapon, blow(100)), w.getHP()]).toEqual([true, 546]);
+    const both = struck();
+    both.gotHit(OG_PART.head, blow(100, OG_LAUNCH.LAUNCH_NONE, LIGHT));
+    expect(both.getHP()).toBe(590 - 83);
+  });
+
+  it('the floor is the attacker\'s: 20 − 56 → int(45 / 4) = 11; × 1.3 on a head hit comes after it (14)', () => {
+    const p = struck();
+    p.gotHit(OG_PART.torso, blow(20));
+    const h = struck();
+    h.gotHit(OG_PART.head, blow(20));
+    expect([590 - p.getHP(), 590 - h.getHP()]).toEqual([11, 14]);
+  });
+
+  it('a killing blow: HP 0, true, no reaction, no text, no death here; a head kill keeps behead, any other part clears it (WEB)', () => {
+    const p = struck();
+    p.setHP(40);
+    expect([p.gotHit(OG_PART.head, blow(100)), p.getHP(), p.behead, p.actionState, p.dead, p.target === null])
+      .toEqual([true, 0, true, OG_STATE.IDLE, false, false]);
+    expect(p.events).toEqual([{ type: 'sound', name: 'hit' }]);
+    const q = struck();
+    q.setHP(40);
+    q.behead = true;
+    q.gotHit(OG_PART.torso, blow(100));
+    expect([q.getHP(), q.behead]).toEqual([0, false]);
+  });
+});
+
+describe('slice 6c: gotHit — the reaction (WEB: a downed or capped body turns the AIR packet into NONE)', () => {
+  const reacting = (launch: number, setUp: (p: MCSPlayer) => void = () => undefined, stance = -1) => {
+    const p = struck();
+    setUp(p);
+    const d = blow(100, launch, stance);
+    return { p, d, got: () => p.gotHit(OG_PART.torso, d) };
+  };
+
+  it('a plain hit flinches; a downed body is not flinched, and its AIR packet leaves as NONE', () => {
+    const plain = reacting(OG_LAUNCH.LAUNCH_NONE);
+    expect([plain.got(), plain.p.actionState]).toEqual([true, OG_STATE.FLINCH]);
+    const down = reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.actionState = OG_STATE.KNOCKDOWNED; });
+    expect([down.got(), down.p.actionState, down.d.launchType, down.p.getHP()])
+      .toEqual([true, OG_STATE.KNOCKDOWNED, OG_LAUNCH.LAUNCH_NONE, 546]);
+  });
+
+  it('the juggle cap: a non-LIGHT packet at 3, a LIGHT one at 5, cancels the launch (the packet leaves as NONE), no flinch', () => {
+    const capped = reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.juggleCount = 3; }, HEAVY);
+    expect([capped.got(), capped.p.actionState, capped.p.juggleCount, capped.d.launchType, capped.p.getHP()])
+      .toEqual([true, OG_STATE.IDLE, 3, OG_LAUNCH.LAUNCH_NONE, 546]);
+    const light = reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.juggleCount = 5; }, LIGHT);
+    expect([light.got(), light.p.actionState, light.d.launchType]).toEqual([true, OG_STATE.IDLE, OG_LAUNCH.LAUNCH_NONE]);
+    const under = (n: number, stance: number) => {
+      const r = reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.juggleCount = n; }, stance);
+      r.got();
+      return [r.p.actionState, r.p.juggleCount, r.d.launchType];
+    };
+    expect(under(2, HEAVY)).toEqual([OG_STATE.GOTLAUNCHED, 3, OG_LAUNCH.LAUNCH_AIR]);
+    expect(under(4, LIGHT)).toEqual([OG_STATE.GOTLAUNCHED, 5, OG_LAUNCH.LAUNCH_AIR]);
+  });
+
+  it('a body in the air (GOTLAUNCHED, FALL, JUMP) is launched again by a plain hit; the launch writes the facing first', () => {
+    for (const s of [OG_STATE.GOTLAUNCHED, OG_STATE.FALL, OG_STATE.JUMP]) {
+      const r = reacting(OG_LAUNCH.LAUNCH_NONE, (q) => { q.actionState = s; });
+      expect([r.got(), r.p.actionState, r.p.velY, r.p.juggleCount, r.d.flyVelX]).toEqual([true, OG_STATE.GOTLAUNCHED, -20, 1, 1]);
+    }
+    const left = reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.faceLeft(); });
+    left.got();
+    expect([left.p.actionState, left.d.flyVelX]).toEqual([OG_STATE.GOTLAUNCHED, 0]);
+  });
+
+  it('the knockdown writes the facing and knocks down; fly and stun go to their reactions', () => {
+    const kd = reacting(OG_LAUNCH.LAUNCH_KNOCKDOWN);
+    expect([kd.got(), kd.p.actionState, kd.d.flyVelX]).toEqual([true, OG_STATE.KNOCKDOWNED, 1]);
+    const fly = reacting(OG_LAUNCH.LAUNCH_FLY, (q) => { q.faceLeft(); });
+    fly.d.setFlyVel(-30, -12);
+    expect([fly.got(), fly.p.actionState, fly.p.velX, fly.p.velY]).toEqual([true, OG_STATE.FLY, -30, -12]);
+    const stun = reacting(OG_LAUNCH.STUN);
+    stun.d.setStunTime(30);
+    expect([stun.got(), stun.p.actionState, stun.p.stunCounter]).toEqual([true, OG_STATE.STUN, 30]);
+  });
+
+  it('gotHit has no knee groin or back throw (both builds; checkHitObject\'s own): those packets flinch, and cost no chi', () => {
+    for (const launch of [OG_LAUNCH.KNEEGROIN, OG_LAUNCH.BACKTHROW]) {
+      const r = reacting(launch);
+      const groin = vi.spyOn(r.p, 'gotKneeGroin');
+      const back = vi.spyOn(r.p, 'gotBackThrow');
+      r.d.setFlyVel(310, 350);
+      expect([r.got(), r.p.actionState, r.p.getChi(), groin.mock.calls.length, back.mock.calls.length])
+        .toEqual([true, OG_STATE.FLINCH, 40, 0, 0]);
+    }
+  });
+
+  it('a fly-away goes away from the struck PART\'s x (an int), then hands the packet the body\'s velocity as a FLY', () => {
+    const p = new MCSPlayer(world(false), anims, { ...touching([OG_PART.torso]), partX: () => 400.9 }, NO_DRAW, body2());
+    p.setStance(HEAVY);
+    p.world.peaceful = false;
+    p.setPosition(400.2, GROUND);
+    p.startAction(OG_STATE.IDLE);
+    const away = vi.spyOn(p, 'gotFlyAway');
+    const d = blow(100, OG_LAUNCH.LAUNCH_FLYAWAY);
+    p.gotHit(OG_PART.torso, d);
+    expect(away.mock.calls).toEqual([[400, GROUND]]);
+    expect([d.launchType, d.flyVelX, d.flyVelY]).toEqual([OG_LAUNCH.LAUNCH_FLY, p.velX, p.velY]);
+  });
+
+  it('a death touch lands AFTER the reaction chain, with the packet\'s fly velocity', () => {
+    const r = reacting(OG_LAUNCH.DEATHTOUCH);
+    const states: Array<[string, number, number]> = [];
+    vi.spyOn(r.p, 'gotDeathTouch').mockImplementation((x: number, y: number) => {
+      states.push([stateName(r.p.actionState) ?? '', x, y]);
+    });
+    r.d.setFlyVel(7, -9);
+    r.got();
+    expect(states).toEqual([['FLINCH', 7, -9]]);
+  });
+});
+
+describe('slice 6c: EnemyPlayer.gotDeathTouch — a 500 packet through gotHit, then the fly, then chi 0 (the same on the AI)', () => {
+  it('the guard is cleared first, so it lands inside a hit: a flat 500 (a level-0 packet\'s floor is its damage), chi 0, guard 12', () => {
+    const p = struck();
+    p.gotHitCounter = 12;
+    p.gotDeathTouch(0, 0);
+    expect([p.getHP(), p.getChi(), p.gotHitCounter, p.actionState]).toEqual([90, 0, 12, OG_STATE.FLINCH]);
+    expect(p.events).toEqual([
+      { type: 'sound', name: 'hit' },
+      { type: 'floatingText', x: 400, y: 258, text: '500', colour: 10027008 },
+    ]);
+  });
+
+  it('a fly velocity flies the body after the blow; none, no fly', () => {
+    const p = struck();
+    p.gotDeathTouch(30, -12);
+    expect([p.actionState, p.animation, p.velX, p.velY, p.isFacingRight()]).toEqual([OG_STATE.FLY, 'fly_start', 30, -12, false]);
+  });
+
+  it('a killing touch with a fly velocity dies inside gotFly (NPC.gotFly\'s HP test): the only die on the AI\'s reception path', () => {
+    const p = struck([OG_PART.torso], body2(), drawn([0.5, 0.9, 0.5]));
+    p.setHP(400);
+    p.gotDeathTouch(30, -12);
+    expect([p.getHP(), p.dead, p.actionState, p.animation, p.getChi()]).toEqual([0, true, OG_STATE.DYING, 'defeatedanimationv2', 0]);
+    const still = struck();
+    still.setHP(400);
+    still.gotDeathTouch(0, 0);
+    expect([still.getHP(), still.dead, still.actionState]).toEqual([0, false, OG_STATE.IDLE]);
+  });
+
+  it('through checkHitObject: 44, then the touch\'s 500 (its own text first), chi 0', () => {
+    const p = struck();
+    expect(p.checkHitObject(WEAPON, blow(100, OG_LAUNCH.DEATHTOUCH))).toBe(true);
+    expect([p.getHP(), p.getChi()]).toEqual([46, 0]);
+    expect(p.events.flatMap((e) => (e.type === 'floatingText' ? [e.text] : [e.type]))).toEqual(['sound', 'sound', '500', '44']);
+  });
+});
+
+describe('slice 6c: die, createLoot, rewardXP (EnemyPlayer\'s, the duellist\'s branch)', () => {
+  it('the constructor carries the body\'s xp (EnemyPlayer.init: level × 5 + 45)', () => {
+    expect([player(body1()).xp, player(body2()).xp]).toEqual([50, 270]);
+  });
+
+  it('die removes a charging FX first (slice 7\'s, loud), before anything else', () => {
+    const p = struck();
+    p.chargingFx = {};
+    p.setHP(0);
+    expect(() => { p.die(); }).toThrow('unported: Projectile.removeProjectile');
+    expect([p.dead, p.events]).toEqual([false, []]);
+  });
+
+  it('createLoot: a random item at the body\'s level (the dialog rolls its own 1 in 2), then coins: at level ≤ 10 always', () => {
+    const p = player(body1(), false, drawn([0.99]));
+    p.createLoot();
+    expect(p.events).toEqual([
+      { type: 'loot', kind: 'randomItemChance', amount: 1, itemId: null, level: 1 },
+      { type: 'loot', kind: 'coins', amount: 0, itemId: null, level: 1 },
+    ]);
+  });
+
+  it('createLoot above level 10: coins 1 in 3 (int(random × 3) == 0), then int(random × level)', () => {
+    const lucky = player(body2(), false, drawn([0.33, 0.5]));
+    lucky.createLoot();
+    expect(lucky.events).toEqual([
+      { type: 'loot', kind: 'randomItemChance', amount: 1, itemId: null, level: 45 },
+      { type: 'loot', kind: 'coins', amount: 22, itemId: null, level: 45 },
+    ]);
+    const not = player(body2(), false, drawn([0.34]));
+    not.createLoot();
+    expect(not.events).toEqual([{ type: 'loot', kind: 'randomItemChance', amount: 1, itemId: null, level: 45 }]);
+    const coins = (level: number) => {
+      const p = player(body2(), false, drawn([0.5]));
+      p.level = level;
+      p.createLoot();
+      return p.events.flatMap((e) => (e.type === 'loot' && e.kind === 'coins' ? [e.amount] : []));
+    };
+    expect([coins(10), coins(11)]).toEqual([[5], []]);
+  });
+
+  it('createLoot: a friendly body drops nothing (WEB), and draws nothing', () => {
+    const p = player(body2());
+    p.isFriendly = true;
+    p.createLoot();
+    expect(p.events).toEqual([]);
+  });
+
+  it('rewardXP: a player under level 10 gets calcXP × 3, from 10 up calcXP as elite (× 2)', () => {
+    const xp = (playerLevel: number) => {
+      const p = player(body2());
+      p.level = 11;
+      p.xp = 100;
+      p.world.playerLevel = playerLevel;
+      p.rewardXP();
+      return p.events;
+    };
+    expect(xp(9)).toEqual([{ type: 'xp', amount: 330 }]);
+    expect(xp(10)).toEqual([{ type: 'xp', amount: 210 }]);
+    const low = player(body1());
+    low.world.playerLevel = 1;
+    low.rewardXP();
+    expect(low.events).toEqual([{ type: 'xp', amount: 150 }]);
+  });
+});
+
+describe('slice 6c: the death\'s clip ends and doAction DYING (the same in both builds but the web\'s return)', () => {
+  const DEATH_CLIPS = [
+    'defeatedanimationv1', 'deathenemy', 'death', 'defeatedanimationv2', 'deathnohead',
+    'deathnohand', 'deathdowned', 'deathinhalf', 'seppuku_end', 'seppuku_nohead',
+  ];
+
+  it('each of the ten death clips ends in deathAnimEnd: the ttl counts down one (NPC\'s, the duellist\'s own on the AI)', () => {
+    for (const clip of DEATH_CLIPS) {
+      const p = struck();
+      p.actionState = OG_STATE.DYING;
+      expect([clip, p.clipEnded(clip), p.ttl, p.actionState]).toEqual([clip, true, 95, OG_STATE.DYING]);
+    }
+  });
+
+  it('doAction DYING is doDying: one off the ttl a frame, none in the red freeze', () => {
+    const p = struck();
+    p.actionState = OG_STATE.DYING;
+    p.doAction();
+    p.doAction();
+    const frozen = struck();
+    frozen.actionState = OG_STATE.DYING;
+    frozen.world.redFreeze = true;
+    frozen.doAction();
+    expect([p.ttl, frozen.ttl]).toEqual([94, 96]);
+  });
+});
+
+describe('slice 6c: the blow, the death and the reward, through checkHitObject, checkDie and the real update', () => {
+  it('a killing hit, then checkDie (the seam\'s): the reward, DYING, the 29-frame death clip, the fade over 12, gone at 95', () => {
+    const p = struck([OG_PART.torso], body2(), drawn([0.2, 0.5, 0.9, 0.1]), new OgAnimLibrary());
+    p.world.playerLevel = 44;
+    const f = framed(p);
+    f.run(1);
+    p.setHP(40);
+    expect([p.checkHitObject(WEAPON, blow(100)), p.getHP(), p.target, p.dead]).toEqual([true, 0, null, false]);
+    const before = p.events.length;
+    expect(p.checkDie()).toBe(true);
+    expect(p.events.slice(before)).toEqual([
+      { type: 'sound', name: 'die' },
+      { type: 'loot', kind: 'randomItemChance', amount: 1, itemId: null, level: 45 },
+      { type: 'loot', kind: 'coins', amount: 22, itemId: null, level: 45 },
+      { type: 'xp', amount: 566 },
+      { type: 'death', anim: 'deathenemy', behead: false, downed: false, dice: 0 },
+    ]);
+    expect([p.dead, p.actionState, p.animation, p.healthBarVisible, p.ttl]).toEqual([true, OG_STATE.DYING, 'deathenemy', false, 96]);
+    const ttl: number[] = [];
+    const seen: string[] = [];
+    f.run(100, (k) => {
+      ttl.push(p.ttl);
+      const row = `${stateName(p.actionState)} ${p.animation} ${p.alpha.toFixed(3)} ${p.visible} ${p.disposed}`;
+      if (seen.at(-1)?.split(': ')[1] !== row) seen.push(`${k}: ${row}`);
+    });
+    // One a frame from DYING (doDying), two on the frame the clip ends (29: deathAnimEnd, then the
+    // web's update goes on into doAction), so 95 − k from there; alpha from ttl 11 (frame 84).
+    expect([ttl[27], ttl[28], ttl[82], ttl[83], ttl[93], ttl[94], ttl[99]]).toEqual([68, 66, 12, 11, 1, 0, 0]);
+    expect(seen).toEqual([
+      '2: DYING deathenemy 1.000 true false',
+      '85: DYING deathenemy 0.917 true false', '86: DYING deathenemy 0.833 true false',
+      '87: DYING deathenemy 0.750 true false', '88: DYING deathenemy 0.667 true false',
+      '89: DYING deathenemy 0.583 true false', '90: DYING deathenemy 0.500 true false',
+      '91: DYING deathenemy 0.417 true false', '92: DYING deathenemy 0.333 true false',
+      '93: DYING deathenemy 0.250 true false', '94: DYING deathenemy 0.167 true false',
+      '95: DYING deathenemy 0.083 true false', '96: DYING deathenemy 0.000 false true',
+    ]);
+    expect(f.ai).toEqual([1]);
+  });
+
+  it('a killing blow in the air: die only marks it dead; it flies on, lands, and GOTLAUNCHEDDOWNED\'s end is its one tick', () => {
+    const p = struck([OG_PART.torso], body2(), () => 0.5, new OgAnimLibrary());
+    p.setHP(50);
+    const f = framed(p);
+    f.run(1);
+    expect(p.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_AIR))).toBe(true);
+    const rows: string[] = [];
+    let last = '';
+    const watch = (k: number) => {
+      const now = `${stateName(p.actionState)} ${p.animation}`;
+      if (now !== last) rows.push(`${k} ${now} ${p.y}`);
+      last = now;
+    };
+    f.run(12, watch);
+    expect([p.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_AIR)), p.getHP(), p.juggleCount]).toEqual([true, 0, 1]);
+    const before = p.events.length;
+    expect(p.checkDie()).toBe(true);
+    expect(p.events.slice(before)).toEqual([
+      { type: 'sound', name: 'die' },
+      { type: 'loot', kind: 'randomItemChance', amount: 1, itemId: null, level: 45 },
+      { type: 'xp', amount: 0 },
+    ]);
+    expect([p.dead, p.actionState]).toEqual([true, OG_STATE.GOTLAUNCHED]);
+    rows.length = 0;
+    const ttl: number[] = [];
+    f.run(187, (k) => {
+      watch(k);
+      ttl.push(p.ttl);
+    });
+    expect(rows).toEqual(['18 GOTLAUNCHED gotlaunchedupwards_partc 341', '19 DOWNED gotlauncheddowned 358']);
+    // SOURCE QUIRK (both builds): a clip ends once, and DOWNED has no doAction, so the body the
+    // blow killed in the air lies where it fell, 95, never fading (the duel's red freeze ends it).
+    expect([ttl[22], ttl[23], ttl.at(-1), p.alpha, p.visible, p.disposed]).toEqual([96, 95, 95, 1, true, false]);
+    expect(f.ai).toEqual([1, 13]);
+  });
+});
+
 describe('the harness rule — unported calls throw, and their count only goes down', () => {
-  it('MCSPlayer.ts names exactly 15 unported sites: the switches\' catch-alls, calls out of 5a and 6a, and 6c\'s 6 shadows', () => {
+  it('MCSPlayer.ts names exactly 12 unported sites: the switches\' catch-alls and the calls out of 5a, 6a and 6c', () => {
     // 5a replaced the ONE startAction stub with three dispatchers. A dispatcher that ports some of
     // its labels needs its own site for the rest, so the count ROSE from 3 (see DIVERGENCES
     // "L5-OPP SLICE 5a"); the AI, cancelLogSub and the FX removal are calls 5a's code makes. 6a
     // raised it again, 8 → 24, by design: `checkHitObject`'s FX removal and fly-away, and one
     // shadow per reception override not ported yet, so no hit falls into the mobs' code
     // (DIVERGENCES "L5-OPP SLICE 6a"). 6b took out 9: eight shadows and the fly-away (DIVERGENCES
-    // "L5-OPP SLICE 6b"); 6c takes the last six.
+    // "L5-OPP SLICE 6b"); 6c took out the last six and added three calls the web `gotHit` and `die`
+    // make into slice 7's code: the log substitution and two more FX removals (DIVERGENCES "6c").
     const src = readFileSync(new URL('../src/core/npc/MCSPlayer.ts', import.meta.url), 'utf8');
     expect([...src.matchAll(/unported\('([^']*)'/g)].map((m) => m[1])).toEqual([
       'MCSPlayer.update clip end', 'Projectile.removeProjectile', 'MCSPlayer.startAction', 'MCSPlayer.doAction',
-      'EnemyPlayer.AI', 'MCSPlayer.cancelLogSub', 'StageManager.clearInteractTarget', 'NPCManager.checkPlayerHit',
-      'Projectile.removeProjectile',
-      'MCSPlayer.gotHit', 'MCSPlayer.die',
-      'EnemyPlayer.gotDeathTouch', 'EnemyPlayer.deathAnimEnd', 'EnemyPlayer.createLoot', 'EnemyPlayer.rewardXP',
+      'EnemyPlayer.AI', 'MCSPlayer.cancelLogSub', 'MCSPlayer.doSubstitutionLog', 'StageManager.clearInteractTarget',
+      'NPCManager.checkPlayerHit', 'Projectile.removeProjectile', 'Projectile.removeProjectile', 'Projectile.removeProjectile',
     ]);
   });
 });

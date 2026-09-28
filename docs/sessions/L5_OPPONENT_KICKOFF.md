@@ -381,6 +381,24 @@
 >    shadow). 6b blunted one 6a test (its red was a shadow's throw): run EVERY plant of the class.
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 6b".
 
+> **⛔ ERRATUM 18 — SLICE 6c (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **6c landed, and slice 6 with it:** `gotHit` whole (web: × 0.9, × 1.3, the beheading cleared,
+>    the cancel-launch on a downed or capped body), `die`, `EnemyPlayer`'s `gotDeathTouch`,
+>    `createLoot` (web: a friendly body drops nothing) and `rewardXP`, the ten death clip ends and
+>    `doAction` DYING; `NpcDamage.cancelLaunch`; the constructor carries `xp`. No reception override
+>    is shadowed any more.
+> 2. **Unported 15 → 12, not 9:** the web `gotHit` makes two calls into slice 7 the kickoff did not
+>    count (its own charge-FX removal and `doSubstitutionLog`), and `die` a third (its FX removal).
+> 3. **`EnemyPlayer.deathAnimEnd` is not carried:** `NPC.deathAnimEnd` line for line on the AI.
+> 4. **The death touch is a flat 500:** a level-0 packet's floor is its whole damage
+>    (`Damage.getMinDamage`), so the defence cannot reduce it.
+> 5. **For slice 8:** a killing death touch with a fly velocity dies inside `NPC.gotFly`, then again
+>    in the seam's `checkDie` (no dead test): the loot and the xp twice. And a body killed in the air
+>    never fades (a source quirk, pinned).
+> 6. **Chaos 392 → 443** (52 plants; 1 retired: the `gotHit` shadow).
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 6c".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -460,7 +478,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **3b** | **BODY i — THE MOVEMENT** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3b") | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
 | **4** | **BODY ii — the stroke** · ✅ **LANDED 2026-09-29** in three commits (4a ERRATUM 9, 4b ERRATUM 10, 4c ERRATUM 11) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) ✅ **LANDED 2026-09-29** (ERRATUM 13) · **5b** the air and the downstab (179 / 182) ✅ **LANDED 2026-09-29** (ERRATUM 14) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
-| 6 | BODY iv — reception · **MAPPED 2026-09-29** (ERRATUM 15): **6a** the hit and the flinch (386 / 415) ✅ **LANDED 2026-09-29** (ERRATUM 16) · **6b** the launch and the getup (263 / 277) ✅ **LANDED 2026-09-29** (ERRATUM 17) · **6c** the blow, the death and the reward (389 / 429) | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
+| 6 | BODY iv — reception · **MAPPED 2026-09-29** (ERRATUM 15): **6a** the hit and the flinch (386 / 415) ✅ **LANDED 2026-09-29** (ERRATUM 16) · **6b** the launch and the getup (263 / 277) ✅ **LANDED 2026-09-29** (ERRATUM 17) · **6c** the blow, the death and the reward (389 / 429) ✅ **LANDED 2026-09-29** (ERRATUM 18) | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
 | 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
 | 8 | THE SEAM — into the duel behind `?npc=duellist` | findings 16 + 17, a stroke channel; `Sim.ts` + `duel-baseline` by the atomic protocol | **YES** |
 
