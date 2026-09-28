@@ -76,14 +76,14 @@ const BACKUP_DIR = join(ROOT, '.chaos-backup');
  * for the hold table its gauntlet review found missing; slice 1a (the profile strings)
  * added 8 (`tests/duellistProfile.plants.ts`), one of which found a missing test; slice 1b-i
  * (the derived stats) added 10 (`tests/duellistStats.plants.ts`); slice 1b-ii (the body) added 13
- * (`tests/duellistBody.plants.ts`).
+ * (`tests/duellistBody.plants.ts`); slice 2 (the profile writers) added 8 (`tests/duellistWriter.plants.ts`).
  * That is the floor this repo has already paid for. Raise it when a slice adds plants; never lower it to make a run pass. A filtered
  * run skips this check and says so, loudly, in its output.
  *
  * `tests/chaosGate.test.ts` pins the same number from the other side, so the two cannot
  * drift apart silently.
  */
-const EXPECTED_TOTAL = 84;
+const EXPECTED_TOTAL = 92;
 
 type Status = 'RED' | 'STAYED-GREEN' | 'PLANT-FAILED' | 'NO-OP' | 'INCONCLUSIVE' | 'RESTORE-FAILED';
 

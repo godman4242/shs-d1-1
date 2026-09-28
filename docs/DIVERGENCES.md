@@ -5589,3 +5589,145 @@ kickoff §6 already rules ("the sequence is not the source's to preserve").
 claimcheck 1869 cites / 492 values / 44 context / 0 failures · chaos: the 13 new plants 13/13 RED and
 restored byte-identical (a scratch clone, the gate refuses a dirty tree); the full 84 run is the
 shell's post-ship step.
+
+---
+
+## L5-OPP SLICE 2 — THE PROFILE SOURCE (R1): THE WRITERS, AND WHAT STATE FEEDS THEM (2026-09-29)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` §3 slice 2 (ERRATUM 5 item 4). A build-loop
+cycle, one commit.
+
+**What landed:** `src/core/npc/duellistWriter.ts`. `writeBattleStats` / `writeEquipment` /
+`writeSkillStats` / `writeProfileItem` are `StatsManager.getBattleStatsString` /
+`getEquipmentString` / `getSkillStatsString` and `Item.toStringNoQty`: the three strings a
+player SAVES (`QueryManagerBase.as:1900-1908`, web `§1t1832s0§.as:1882-1890`) and another
+player's Duel Mode reads as its opponent. `newPlayerState()` is `StatsManager.initNewPlayer`.
+Nothing calls them yet. For three player states, write → `duellistProfile` parse →
+`deriveDuellist` → `initDuellistBody` gives back every carried field at ±0
+(`tests/duellistWriter.test.ts`, 18 tests; 16 of the first 17 red on a stub, the 17th pins the
+parse's `^` cut). 31 new config values, each cited in both builds where it exists in both;
+claimcheck 1869 → 1901 cites, 492 → 523 values.
+
+### THE R6 DIFF — the writers, both builds, line by line
+
+| | Android | web | ruled |
+|---|---|---|---|
+| battle string | the 14 carried stats in slot order, `\|` between, none after the last (`StatsManager.as:4396-4415`) | each of the 14 followed by `\|`, then **four more**: the weapon row's `mindamage`, `maxdamage - mindamage`, `slashusage` (default 48, floored at 48), then `DEFENSE + findBonusStat(DEFENSE)` (`§1t1523s0§.as:5117-5154`) | **web**: 18 fields |
+| eq string | `toStringNoQty` per slot, `\|`-joined (`:4417-4432`) | the same, then `^` + checksum when the argument is true, its default (`:5172-5197`) | **web** |
+| skill string | `id,level`, `\|`-joined (`:4447-4463`) | the same through `getString(0)`, then `^` + checksum (`:5231-5256`) | **web** |
+| the checksum | none | char-code sum as an `int`, mod 54321 (`:5156-5170`, `:568`) | web |
+| item: the comma | modifiers, a colour, `uses > 0` or `named` (`Item.as:232`) | also `xp != null` and **`creator != ""`** (`§1t17s0§.as:330`) | **web** |
+| item: fields | modifiers, colours, uses, name, creator (`Item.as:236-259`) | adds xp (206) and xp-level (207) after the colours, field 208 after the uses (`§1t17s0§.as:348-362`) | not ported (below) |
+| `initNewPlayer` | `StatsManager.as:689-754` | `§1t1523s0§.as:1007-1072` | same on every carried field |
+
+Which call a saved profile went through: the web save uses the default (checksummed) eq and
+skill writers and the 18-field battle writer (`§1t1832s0§.as:1882-1890`), and so do the duel
+calls (`§1t251s0§.as:2961-2969`). The web parse cuts the checksum off (`OG_PROFILE_SUFFIX_SEP`,
+slice 1a) and never checks it; only the local player's own load does.
+
+**The four trailing fields are written and never read by a duellist.** The web parse drops
+every battle field past the 14th (`OG_BATTLE_STATS_WEB_LAST_FIELD`, slice 1a). Written anyway,
+because that is the string a real profile carries. (Under the Android parse, which has no
+guard, field 17, the total defense, would overwrite `buff2Expiry`.)
+
+**Red-teams:**
+- **The 18-field battle string, web.** *Steelman for Android:* the four fields change nothing
+  the duellist fights with, so porting them is dead weight. *Why web:* R1 promises profiles in
+  the exact format, and a 14-field string is not what the web game saved. *Where it breaks:*
+  nowhere in a fight. It costs one `findBonusStat` call per write. **Veto:** 14 fields (plant 2).
+- **The checksum, web.** Same steelman, same answer: the parse drops it. **Veto:** no checksum
+  (plant 3).
+- **The creator comma, web.** *Steelman for Android:* none that survives measurement. Android
+  writes a creator-only item as `"4017125@bob#"`, which parses back as **item 0**: a crafted
+  armour whose procedural name is `"0"` (`Item.setCreator` clears `named`) would lose its row's
+  defense and modifiers on every save. **Veto:** Android's test (plant 1).
+
+**Not ported, recorded (corrected by the review):** the web item's fields 206–208. The web parse
+reads them into their own fields (`§1t17s0§.as:111-125`); slice 1a's parse keeps them as ordinary
+modifiers, so this writer emits them in the modifier run. For a save the game makes, the parsed
+item is the same. It is NOT the same for every input the type allows: the web writes 207 only
+beside a 206 and skips it at 0 (`:348-354`), and 208 is outside its comma test (`:330`, `:360`), so
+an item whose ONLY extra is 208 writes `4017208@5#` and parses back as item 0 on the web, while
+this port writes `4017,208@5#`. The one game path that sets 208 (`§1t5374s0§.as:707`) first
+pushes or updates a modifier 7 (`:693-700`), so the comma is always there.
+
+### ⚖️ THE R1 RULING — WHAT STATE FEEDS THE WRITERS IN THE SIM
+
+**Measured first:**
+- **The original's opponents are other players' saves, from the player's own level up.**
+  `QueryManagerPIO.getOpponents` (`QueryManagerPIO.as:1498-1531`) loads `PlayerData` by
+  `ByLevelRandomA|B|C` (one of the three at random) starting at `StatsManager.getLevel()`, 20 rows,
+  drops the player's own name and four staff names, and shows 6 at random.
+- **Offline, there is no duellist at all:** `if(offlineMode) setDuelList("")`
+  (`:1503-1506`). So every Sim duellist is itself a divergence from the source.
+- **The only profile the source fully specifies is `initNewPlayer`'s**: stats 10 / 10 / 10 / 10
+  / 1 / 1 / 1, 13 slots (torn garment 4017, head 1, torn pants 11017, worn sandals 12017,
+  iron sword 13100 in the scabbard), seven skills at level 1. Both builds agree on every field
+  the writers carry (web `HGOLD` is 3, Android 0; not carried).
+- **The Sim's player cannot feed the writers yet:** `Progression` (`src/core/progression.ts`)
+  holds level, points, pools and currencies, with no attack, defense, speed, equipment or skill
+  list.
+
+**Ruling: `newPlayerState()`, the source's new character, is the Sim's duellist state until the
+human carries `StatsManager`'s fields; from then on, the MIRROR, the human's own state through
+the same writers.** The source picks opponents at or above the player's own level, and the
+mirror is the one profile at the player's level the Sim can produce without inventing a number.
+Every other rung (a level above 1, a stat spread, gear) is **INFERRED**, and is labelled per value
+if it is ever built. Slice 8 ships the new character at level 1 (the body: max-HP 9, attack 1,
+unarmed, `tests/duellistWriter.test.ts` fixture 1).
+
+*Red-team.* **Steelman for the rejected option (a video-measured profile):** the new character
+is trivially weak and wears rags, and the videos' duellists are geared. The duel list itself
+shows `name$level$equipment` (`:1563`), and the paperdoll shows the gear, so a duellist's level
+and equipment could be measured off frames (CONTRACT-from-frames), leaving only the stat spread
+INFERRED. **Where my pick breaks:** OPP-G (Kheshav's LOOK beside a video frame of a Duel Mode
+fight) will fail on both look and strength if the frame's opponent is geared. **What it secretly
+depends on:** the player migrating onto `StatsManager`'s fields, which is OUT of this lane (R2),
+so inside L5-OPP only level 1 exists. **Is it downstream of what I deprioritised?** Yes: the
+offline branch. The source has no offline duellist, so the real question for slice 8 is which
+divergence to pick, and this ruling picks the one with no invented numbers. **Veto:** a
+video-measured profile (eq + level read off frames, stats INFERRED) as slice 8's default; the
+writers are unchanged either way, since it would be one more `ProfileState`.
+
+### ⚠️ A GATE BLIND SPOT, MEASURED THIS CYCLE — claimcheck never reads a bare array
+
+`numericFields` (`scripts/gates/claimcheckLib.ts`) reads `key: value` and a bare
+`export const X = n`. A number inside a bare array literal is neither, so it is never checked:
+`OG_NEW_PLAYER.equipment` first written as `[4017, 0, …]` stayed GREEN with 4018 planted in it.
+It was rewritten as keyed objects (`{ armor: 4017, … }`) and went RED on the same plant. **Five
+older arrays in `src/config/ogDuellistProfile.ts` are still unchecked:** `OG_BATTLE_STATS_LENGTHS`
+`[14, 18]`, `OG_CLAN_INVITATION_IDS` `[2213, 2214]`, `OG_MOD_TO_HP.defenseOnTypes` `[11]` /
+`attackOnTypes` `[0, 3]`, `OG_MOD_NEVER_MERGED` `[103, 106]`, plus any in other config files.
+Not fixed here (a gate change is its own milestone); queued in RESUME_HERE.
+
+### THE PORT'S QUIRKS — PINNED, NOT FIXED (both builds)
+
+- **A crafted item's procedural name is lost on save:** it is written only when `named`, and
+  `"0"` clears `named`. It comes back as `""`, which no stat reads.
+- **A clan invitation writes its name with no comma** (`named || isClanInvitation(id)` writes
+  the name; the comma test reads `named` alone), so `2213` named `Clan` saves as `221389@Clan#`
+  and parses back as item 0.
+- **The level, gold and every other uncarried slot do not survive:** the duellist's level
+  travels separately (`playerlevel`, `initDuelist`'s second argument).
+
+### THE REVIEW
+
+One fresh-context reviewer: **no bug in the writers for any profile the game produces.** It
+re-derived every fixture by hand, recomputed all six checksums and checked every plant cite. It
+found ONE WRONG CLAIM, mine: this section and the port's header said the 206–208 difference was
+"only the string's order". Re-verified at the source (`§1t17s0§.as:117`, `:348-362`) and reworded
+above. Nits fixed: a test title that overstated `newPlayerState` (it carries only the 7 stats a
+battle string writes, not level, gold or AP), and the plants header. Nits recorded, not fixed:
+three `writeProfileItem` mutants no test pins (`uses !== 0` → `> 0`, a null creator, a
+secondary colour alone making the comma); and `writeBattleStats` inherits 1b-i's `UNMEASURED`
+refusal even when the merge is not on defense (the parse side refuses the same profile anyway).
+
+### THE GATES
+
+```
+$ npx vitest run            ->  Test Files 91 passed (91) · Tests 1812 passed (1812)   (1786 + 18 writer + 8 plant pins)
+$ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
+$ npm run claimcheck        ->  1901 cites · 523 values at ±0 · 44 context · 0 failures
+$ npm run instructionpaths  ->  every path resolves
+$ npm run chaos             ->  92 plants pinned; the 8 new ones 8/8 RED + restored (the full run is the shell's post-ship step)
+```

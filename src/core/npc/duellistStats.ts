@@ -45,7 +45,7 @@ import {
 } from './duellistProfile';
 
 /** `QuestEngine.getItemData`: the first row with the id (ids are unique), else none. */
-const ITEM_ROWS = new Map<number, OgItem>(OG_ITEMS.map((row) => [row.id, row]));
+export const ITEM_ROWS = new Map<number, OgItem>(OG_ITEMS.map((row) => [row.id, row]));
 
 /** `initDuelist`'s fields, as the fight reads them. */
 export interface DuellistStats {

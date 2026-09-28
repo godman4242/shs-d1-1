@@ -4130,3 +4130,36 @@ Baseline at `09c2b2f`, re-measured: 88 files / 1718 tests · typecheck 0 · lint
 
 After: 90 files / 1786 tests · typecheck 0 · lint 0 · claimcheck 1869 / 492 / 44 / 0 · the new
 plants 13/13 RED. The full 84-plant chaos run is the shell's post-ship step.
+
+## 2026-09-29 — build loop: L5-OPP slice 2, THE PROFILE SOURCE (R1)
+
+- **Grounded:** RESUME_HERE's kickoff → `L5_OPPONENT_KICKOFF.md` ERRATUM 5, §2 R1, §3. Baseline at
+  `29ed49c` re-measured and matched RESUME_HERE: 90 files / 1786 tests · typecheck 0 · lint 0 ·
+  claimcheck 1869 cites / 492 values / 0 failures.
+- **The diff first.** Read the three writers + `Item.toStringNoQty` in both builds. Web differs
+  three ways, all ruled web: the battle string is 18 fields (weapon damage, range, slash cost,
+  total defense appended; the web parse drops them again), eq and skills end in `^` + a
+  char-code checksum mod 54321, and a creator-only item keeps its comma (Android's parses back
+  as item 0). The kickoff's three starting points held.
+- **R1 measured, then ruled:** opponents are other players' saves from the player's own level up
+  (`QueryManagerPIO.getOpponents`); offline the original has NO duellist; the only profile the
+  source fully specifies is `initNewPlayer`'s, identical in both builds on every carried field;
+  the Sim's `Progression` cannot feed the writers. Ruling: `newPlayerState()` until the human
+  carries the fields, then the mirror. Veto: a video-measured profile.
+- **Red → green.** Stub: 16 of 17 red on assertions. Port: 17/17, then an 18th (the clan
+  invitation's comma-less name) proved by its plant.
+- **A gate false-pass, probed and half closed:** claimcheck counted 11 new values where 31 were
+  written. A 4018 planted in the `[4017, …]` array stayed GREEN: `numericFields` never reads a
+  bare array, and a doc-comment cite does not reach lines under a `[`. Rewritten as keyed objects,
+  the same plant went RED. Five older arrays remain unchecked; queued in RESUME_HERE.
+- **Chaos:** 8 plants, pinned 84 → 92 in both places; 8/8 red, restored byte-identical (scratch
+  clone, since the gate rightly refuses a dirty tree).
+- **Review:** one fresh-context reviewer, no bug in the writers; it re-derived every fixture and
+  checksum. It caught one wrong claim of mine (the 206–208 xp fields: "only the order differs" is
+  false for three edge inputs), re-verified at `§1t17s0§.as:117`, `:348-362` and reworded.
+- **Next:** slice 3 (stance + movement); the kickoff is at the top of RESUME_HERE.
+
+### THE GATES
+
+After: 91 files / 1812 tests · typecheck 0 · lint 0 · claimcheck 1901 / 523 / 44 / 0 · the new
+plants 8/8 RED. The full 92-plant chaos run is the shell's post-ship step.

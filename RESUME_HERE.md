@@ -1,92 +1,107 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 2, THE PROFILE SOURCE (R1)
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 3, BODY i: STANCE + MOVEMENT
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: three small serializers ported against two builds, plus one ruling | set with `/model` |
-| `/fast` | ON if you'll watch it, OFF if you walk away (2× token price) | your call |
+| model / effort | **Fable 5 at `high`**: the first slice of the ~3,900-line body, where functions call across groups | set with `/model` |
+| `/fast` | not available on Fable | — |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
 | MCP / skills | nothing extra | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. Slice 2 fits before then; slices 3–6 (the body,
-~3,900 AS3 lines) are the Fable-sized ones.
+⚠️ Your Claude subscription ends **2026-10-09**. Slice 3 fits before then; plan slices 4–6 for
+the JClaw + Ollama successor.
 
 Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 5 first, then §2 R1 and the §3 slice-2 row), and run slice 2 under its §4 gate.
-Before any code: confirm the baseline at HEAD (90 files / 1786 tests, typecheck 0, lint 0, claimcheck 1869 cites / 492 values / 0 failures, chaos 84/84). Then read StatsManager.getBattleStatsString / getEquipmentString / getSkillStatsString (Android StatsManager.as:4396, :4417, :4447), find their web twins in reference/decompiled/shs3_payload/scripts/§1t1523s0§.as by structure, and write every difference as a DIVERGENCES row citing both builds before porting it.
-Done = (a) the three writers ported to src/core/npc/, and for at least 3 player states the round trip write → duellistProfile parse → deriveDuellist → initDuellistBody reproduces the state at ±0: red first, plants declared and pinned, every new config value cited in both builds; (b) ONE DIVERGENCES ruling, with red-team and veto, on what STATE feeds the writers in the Sim (R1's veto stands: never a hand-authored ladder unless labelled INFERRED); RESUME_HERE rewritten in the same commit.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 2 item 4 and ERRATUM 6 first, then the §3 slice-3 row and its harness rule), and run slice 3 under its §4 gate.
+Before any code: confirm the baseline at HEAD (91 files / 1812 tests, typecheck 0, lint 0, claimcheck 1901 cites / 523 values / 0 failures, chaos 92/92). Then read MCSPlayer's stance + movement group line by line in reference/decompiled/shs3_android/scripts/MCSPlayer.as (canChangeStance :2965, nextStance :2975, setStance :3019, initSpecialSkills :3127, initMove :2318, walkTo :2347, stopMoving :2363, movement :2890, movePlayer :2921, faceScreenCenter :3917, moveTo :4565, getDamage :3198, getBaseDamage :3226), find each web twin in reference/decompiled/shs3_payload/scripts/§1t99s0§.as by structure, and write every difference as a DIVERGENCES row citing both builds before porting it. Count the group's real lines first: over ~500, split it (3a stance, 3b movement) and say so.
+Done = (a) the group ported IN FULL to src/core/npc/ on top of 1b-ii's body, every call into a not-yet-ported group through ONE named unported('<AS function>') that throws, with the unported count pinned by a test; (b) for newPlayerState() at level 1 and duellistBody fixture 2 at level 45, setStance / nextStance / movement reproduce the source's field changes at ±0: red first, plants declared and pinned, every new config value cited in both builds as `key: value` (claimcheck cannot read a bare array); (c) ERRATUM 2 item 4's heavy-launch level (the Sim's INFERRED 5 vs the source's AI branch 3) recorded as a DIVERGENCES row; RESUME_HERE rewritten in the same commit.
 '''
 ```
 
 **VERIFY (plain English):** before it writes any code, the session prints the baseline numbers
-above and a table of every difference between the two builds' versions of the three writers.
+above, the group's real line count, and a table of every difference between the two builds.
 
 **Three measured starting points (2026-09-29), so the session does not rediscover them:**
-1. **The payload holds NO saved duellist profile.** Every `initDuelist` caller takes its strings
-   from Player.IO objects or from the local player (`DuelModeUI.as:410`, `WarHexUI.as:1412`,
-   `:1522`); the `bot_` names are server keys too (`QueryManagerPIO.as:2458`).
-2. **The writers exist in the source,** beside their parsers: `getBattleStatsString` (`:4396`),
-   `getEquipmentString` (`:4417`, `parseEquipmentString` at `:4435`), `getSkillStatsString`
-   (`:4447`). The local player's save goes through them, and another player's duel reads what they
-   wrote, so a string they produce is a real profile by construction.
-3. **What 1b left for later:** the skill cooldown table is slice 7 (it reads the LOCAL player's
-   speed, capped 300 Android / 600 web); critical and piercing never reach the body in either build.
+1. **The line numbers above were grepped this cycle** (`function <name>(` in `MCSPlayer.as`).
+   `initSpecialSkills` is the one §3 left out (ERRATUM 2 item 4): `setStance` calls it, and it
+   sets `canLaunch` / `canAirCombo` / `canStab`.
+2. **A CONTRACT test profile exists now:** `newPlayerState()` through the slice-2 writers is the
+   source's own level-1 character (`StatsManager.initNewPlayer`). Prefer it to hand-typed strings.
+3. **Claimcheck never reads a number inside a bare array literal** (measured: a planted 4018 stayed
+   green). Write config as `key: value`, or the ±0 check silently skips it.
 
-**Bar self-report:** reached for the scope, the done-criterion and the three starting points
-(each line opened this cycle). NOT reached for the writers' bodies and their web twins: this
-cycle located them and did not read them line by line. That is slice 2's own first step.
+**Bar self-report:** reached for the scope, the baseline and the three starting points (each
+measured this cycle). NOT reached for the group's true size and its web twins: this cycle
+located the functions and did not read them. That is slice 3's own first step, and the split
+rule covers the case where the size is wrong.
 
 ---
 
-## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 1b-ii, THE BODY'S STATS
+## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 2, THE PROFILE SOURCE (R1)
 
 | | verdict | measured |
 |---|---|---|
-| **the port** | ✅ `src/core/npc/duellistBody.ts` | `initDuellistBody(record, level, stance, rng)` = `EnemyPlayer.init` + `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` on 1b-i's record, AI path only (`isDuelist`, `controlledBy == 1`). **20 tests, red first** (16 of the first 19 failed on a stub; the other 3 are the record check, the crit "stays 0" and a twin pin, which the plants prove). |
-| **OPP-B** | ✅ **holds**, one deferral | 3 fixture profiles at ±0 (defaults at level 1; the mid-level duellist at 45; the web-only branches). The skill cooldown table → slice 7 (reads the human's speed; builds cap it 300 vs 600). |
-| **web won** | ✅ 3 rulings | level scaling (×1.1 only for levels 31–79, ×0.9 below 10; Android ×1.1 above 30, ×0.8), `maxreload` 8 s (Android 5 s), the `stance` argument used as given. |
-| **quirks pinned** | ✅ | crit/piercing never reach the body (both builds); the AI starts at FULL HP but the SAVED chi; a light = heavy tie goes to heavy; `random` drawn only on a three-way tie; speed -20 → slash length 0. |
-| **claimcheck** | ✅ 1823 → 1869 cites, 466 → 492 values | and seen RED on the two Android values planted in place of the web ones. |
-| **chaos** | ✅ 13 plants, 71 → 84 | 13/13 red, restored byte-identical (scratch clone). One plant came back INCONCLUSIVE first: fixture 2 built its body at collection time, so the throwing rng crashed the file instead of failing a test. Test fixed, not the plant. |
-| **review** | ✅ 1 fresh-context reviewer: **no bug** | re-worked every expected value by hand and every plant note's cite. |
+| **the port** | ✅ `src/core/npc/duellistWriter.ts` | `writeBattleStats` / `writeEquipment` / `writeSkillStats` / `writeProfileItem` = `StatsManager.getBattleStatsString` / `getEquipmentString` / `getSkillStatsString` + `Item.toStringNoQty`; `newPlayerState()` = `initNewPlayer`. **18 tests, red first** (16 of the first 17 failed on a stub; the 17th pins the parse's `^` cut; the 18th, the clan-invitation pin, was proved by its plant). |
+| **round trip** | ✅ 3 states at ±0 | the new character at level 1 (body worked by hand: max-HP 9, reload 54, slash 124), duellistBody fixture 2 at 45 (its pinned body), and a web-branch state at 20 (a live attack buff, a crafted item, colours, uses, a name). |
+| **web won** | ✅ 3 rulings | the 18-field battle string, the `^` checksum, the creator comma (Android saves a creator-only item as item 0). |
+| **R1 ruled** | ✅ | the Sim's duellist = `newPlayerState()` (CONTRACT) until the human carries `StatsManager`'s fields, then the mirror. Measured: opponents are other players' saves from your own level up; offline the original has NO duellist. Veto: a video-measured profile for slice 8. |
+| **gate blind spot** | ⚠️ found, half closed | claimcheck never reads a bare array: `[4017, …]` stayed green with 4018 planted. This slice's values are keyed and went RED on it; five older arrays are still unchecked (queued below). |
+| **claimcheck** | ✅ 1869 → 1901 cites, 492 → 523 values | 0 failures. |
+| **chaos** | ✅ 8 plants, 84 → 92 | 8/8 red, restored byte-identical (scratch clone). |
+| **review** | ✅ 1 fresh-context reviewer: **no bug** | one WRONG CLAIM of mine (the 206–208 note said "only the order differs"; false for three edge inputs), reworded after re-reading the source; 2 nits fixed, 2 recorded (DIVERGENCES "THE REVIEW"). |
 
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 90 passed (90) · Tests 1786 passed (1786)   (1753 + 20 body + 13 plant pins)
+$ npx vitest run            ->  Test Files 91 passed (91) · Tests 1812 passed (1812)   (1786 + 18 writer + 8 plant pins)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
-$ npm run claimcheck        ->  1869 cites · 492 values at ±0 · 44 context · 0 failures
+$ npm run claimcheck        ->  1901 cites · 523 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  every path resolves
-$ npm run chaos             ->  84 plants pinned; the 13 new ones 13/13 RED + restored (the full run is the shell's post-ship step)
+$ npm run chaos             ->  92 plants pinned; the 8 new ones 8/8 RED + restored (the full run is the shell's post-ship step)
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
 
 ### WHAT CHANGED
 
-- `src/core/npc/duellistBody.ts` **new**; nothing calls it yet. `Sim.ts` and every existing
-  `src/core` file untouched.
-- `src/config/ogDuellistProfile.ts`: the speed formulas' numbers, the stance skills and ids, the
-  random-stance count, the no-stance -1, the web level scaling, `walkSpeed`, `maxreload`, xp.
-- `tests/duellistBody.test.ts` + `tests/duellistBody.plants.ts` **new**; `scripts/gates/chaos.ts`
-  and `tests/chaosGate.test.ts`: the plant pin, 71 → 84.
-- `docs/DIVERGENCES.md` "L5-OPP SLICE 1b-ii"; `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 5
-  (and the slice table: 1b-ii landed, the cooldown table added to slice 7).
+- `src/core/npc/duellistWriter.ts` **new**; nothing calls it yet. `Sim.ts` untouched.
+  `duellistStats.ts`: `ITEM_ROWS` exported (the writer's weapon lookup), nothing else.
+- `src/config/ogDuellistProfile.ts`: `OG_BATTLE_WRITE_WEAPON`, `OG_PROFILE_CHECKSUM_MOD`,
+  `OG_NEW_PLAYER`.
+- `tests/duellistWriter.test.ts` + `tests/duellistWriter.plants.ts` **new**; `scripts/gates/chaos.ts`
+  and `tests/chaosGate.test.ts`: the plant pin, 84 → 92.
+- `docs/DIVERGENCES.md` "L5-OPP SLICE 2"; `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 6 and
+  the slice table (slice 2 landed).
 
-### ⚠️ STILL OPEN — Awaiting human/browser verification
+### ⚠️ STILL OPEN — Awaiting human/browser verification, and queued
 
 - **Your LOOK at `?npc=katana`** (the windup aura, in "THE UNITS AND THE WINDUP" below) is still
   unanswered.
 - **The `UNMEASURED` merge** from 1b-i (DIVERGENCES "L5-OPP SLICE 1b-i"). Closing it needs a 5-line
   SWF run in Ruffle, or a forum report of an item's HP jumping to hundreds.
+- **QUEUED (harness): claimcheck reads no bare array.** Five arrays in `ogDuellistProfile.ts`
+  (`[14, 18]`, `[2213, 2214]`, `[11]`, `[0, 3]`, `[103, 106]`) and any in other config files are
+  unchecked. Fix = teach `numericFields` (`scripts/gates/claimcheckLib.ts`) to read array elements,
+  then triage whatever it raises. Its own milestone; a gate that grows usually raises failures.
+- **For slice 8 (R1's veto):** a video-measured duellist (level + gear off a Duel Mode frame) may
+  beat the new character for OPP-G. Look before slice 8 ships.
 - L4b's 13 remaining mobs are unblocked but not ported: L5-OPP first, by decision.
+
+---
+
+## PREVIOUS CYCLE (2026-09-29) — L5-OPP slice 1b-ii, THE BODY'S STATS
+
+`src/core/npc/duellistBody.ts`: `initDuellistBody` = `EnemyPlayer.init` + `MCSPlayer.initPlayer/
+initAttackStats/initElementDefenseStats` on 1b-i's record, AI path only. OPP-B holds for three
+fixtures; the skill cooldown table went to slice 7. Web won three (the level scaling, `maxreload`
+8 s, the `stance` argument). Full record: `docs/DIVERGENCES.md`, "L5-OPP SLICE 1b-ii".
 
 ---
 

@@ -140,6 +140,26 @@
 >    construction; what slice 2 must decide is what STATE feeds those writers.
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 1b-ii".
 
+> **⛔ ERRATUM 6 — SLICE 2 (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **Slice 2 landed:** `core/npc/duellistWriter.ts` ports the three writers and
+>    `Item.toStringNoQty`, web structure where it differs: the battle string is **18 fields**
+>    (the web writer appends the weapon row's damage and slash cost and the total defense), the
+>    eq and skill strings end in `^` + a checksum, and a creator-only item keeps its comma
+>    (Android's parses back as item 0). For three states the round trip reaches the body at ±0.
+> 2. **R1 is ruled:** the Sim's duellist state is `StatsManager.initNewPlayer`'s
+>    (`newPlayerState()`, CONTRACT, the same in both builds on every carried field) until the
+>    human carries `StatsManager`'s fields; then the MIRROR. Anything else is INFERRED per value.
+>    Measured behind it: the original's opponents are other players' saves from the player's own
+>    level up (`QueryManagerPIO.as:1498-1531`), and offline there is NO duellist (`:1503-1506`).
+>    Veto on record: a video-measured profile (level + gear off frames) for slice 8.
+> 3. **Slices 3–7 have a CONTRACT fixture now:** `newPlayerState()` through the writers is a real
+>    level-1 profile. Use it before hand-typing strings.
+> 4. **A gate blind spot:** claimcheck never reads a number inside a bare array literal. Five
+>    arrays in `ogDuellistProfile.ts` are unchecked (DIVERGENCES "L5-OPP SLICE 2"). Write new
+>    config numbers as `key: value`.
+> Evidence and red-teams: `docs/DIVERGENCES.md`, "L5-OPP SLICE 2".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -214,7 +234,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **1a** | **THE PROFILE STRINGS** — the parse · ✅ **LANDED 2026-09-28** (DIVERGENCES "L5-OPP SLICE 1a") | `XMLNpc` parsers + `getMastery`, `Item.parseNoQty`, `IntStat.parse` | no |
 | **1b-i** | THE DERIVED STATS i — the rulings, `initDuelist`'s record, `findBonusStatFrom` · ✅ **LANDED 2026-09-28** (DIVERGENCES "L5-OPP SLICE 1b-i") | `initDuelist`'s arithmetic (`XMLNpc.as:290-401`); `StatsManager.findBonusStatFrom` (41); web `Item.getModifiers` (89) | no |
 | **1b-ii** | THE DERIVED STATS ii — the body on the record · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 1b-ii"; the cooldown table deferred to slice 7) | `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86) | no |
-| 2 | THE PROFILE SOURCE (R1) | measured at the slice | no |
+| **2** | **THE PROFILE SOURCE (R1)** — the writers + the ruling · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 2") | `StatsManager.getBattleStatsString/getEquipmentString/getSkillStatsString`, `Item.toStringNoQty`, `initNewPlayer` | no |
 | 3 | BODY i — stance + movement | `setStance` 103, `nextStance` 44, `canChangeStance`, `initMove` 29, `walkTo`, `stopMoving` 25, `movePlayer` 44, `movement` 21, `moveTo`, `faceScreenCenter`, the reload/damage getters (≈400) | no |
 | 4 | BODY ii — the stroke | `gotInput` 70, `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine (sub-sliced by state) | `update` 931, `startAction` 671, `doAction` 360 | no |

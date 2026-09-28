@@ -350,3 +350,73 @@ export const OG_BODY_INIT = {
 
 /** `EnemyPlayer.as:816` — `xp = level * 5 + 45`. Web: `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:836`. */
 export const OG_DUELLIST_XP = { perLevel: 5, base: 45 } as const;
+
+// ─── L5-OPP slice 2: THE WRITERS (`StatsManager.getBattleStatsString` & co.) ───
+
+/**
+ * WEB ONLY — the web battle writer (`§1t1523s0§`'s `§1t7366s0§`) appends four fields
+ * after the 14 stats: the weapon row's `mindamage`, `maxdamage - mindamage`, `slashusage`,
+ * then defense + its equipment bonus. No weapon, or one the table lacks, writes 0 / 0 /
+ * the default below. Android's `getBattleStatsString` writes the 14 alone. Ruled WEB
+ * (DIVERGENCES "L5-OPP SLICE 2"); the web parse drops the four (`OG_BATTLE_STATS_WEB_LAST_FIELD`).
+ */
+export const OG_BATTLE_WRITE_WEAPON = {
+  /** `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:5140` — `_loc6_ = 48` */
+  unarmedSlashUsage: 48,
+  /** `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:5147` — `if(_loc6_ < 48)` */
+  slashUsageFloor: 48,
+} as const;
+
+/**
+ * WEB ONLY — `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:568`: the `^` checksum
+ * the web eq and skill writers append is the string's char-code sum mod 54321
+ * (`§1t9731s0§`). Android writes no checksum.
+ */
+export const OG_PROFILE_CHECKSUM_MOD = 54321;
+
+/**
+ * `StatsManager.initNewPlayer` with its default arguments: the source's own brand-new
+ * character, and the ONLY profile the source fully specifies (DIVERGENCES "L5-OPP SLICE 2",
+ * the R1 ruling). Every value the writers carry is the same in both builds.
+ */
+export const OG_NEW_PLAYER = {
+  /** The stat slots it sets that a battle string carries (`OG_STAT` ids). */
+  stats: {
+    /** `StatsManager.as:694` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1012` */
+    hp: 10,
+    /** `StatsManager.as:695` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1013` */
+    maxHp: 10,
+    /** `StatsManager.as:697` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1015` */
+    chi: 10,
+    /** `StatsManager.as:698` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1016` */
+    maxChi: 10,
+    /** `StatsManager.as:700` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1018` */
+    attack: 1,
+    /** `StatsManager.as:701` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1019` */
+    defense: 1,
+    /** `StatsManager.as:702` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1020` */
+    speed: 1,
+  },
+  /**
+   * The 13 slots, keyed in `EQ_` order (the writer reads them in key order): the default
+   * arguments, then the literals. Keyed, not a bare array: claimcheck reads `key: value`
+   * and never a bare array literal (measured 2026-09-29: a planted 4018 stayed green).
+   * `StatsManager.as:689` · `StatsManager.as:725-737` ·
+   * `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1007` ·
+   * `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1043-1055`
+   */
+  equipment: {
+    armor: 4017, gloves: 0, hair: 0, hat: 0, head: 1, mask: 0, neck: 0,
+    pants: 11017, shoes: 12017, weapon: 0, scabbard: 13100, accessory1: 0, accessory2: 0,
+  },
+  /**
+   * The seven skills it pushes, in push order, named as `SkillManager.SKILL_*`.
+   * `StatsManager.as:740-746` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1058-1064`
+   */
+  skills: {
+    lightStance: 1000, balancedStance: 1001, heavyStance: 1002, jump: 1003,
+    chiPunch: 1042, dashRight: 1049, dashLeft: 1050,
+  },
+  /** `StatsManager.as:740` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:1058` — every skill at level 1 */
+  skillLevel: 1,
+} as const;
