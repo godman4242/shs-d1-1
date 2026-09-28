@@ -354,7 +354,9 @@ export function literalNear(
   const to = Math.min(sourceLines.length, cite.end + window);
   const re = new RegExp(`(?<![0-9.])${needle.replace('.', '\\.')}(?![0-9.])`);
   for (let n = from; n <= to; n += 1) {
-    if (re.test(sourceLines[n - 1] ?? '')) return true;
+    // A web name (`§1t4414s0§`) is an identifier, not a literal: its free-standing 1 and 0
+    // vouched for every value of 0 or 1 on any web line until 2026-09-29.
+    if (re.test((sourceLines[n - 1] ?? '').replace(/§[^§]*§/g, ' '))) return true;
   }
   return false;
 }

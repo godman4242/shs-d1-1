@@ -81,6 +81,16 @@ export interface NpcWorld {
   externalRedFreezeCheck(): void;
 }
 
+/** What `MCSPlayer` reads from the static managers beyond `NpcWorld` (L5-OPP slice 3 on). */
+export interface PlayerWorld extends NpcWorld {
+  /**
+   * `StageManager.isBattle()` — false through a duel's intro: `initDuel` sets
+   * `STATE_PEACEFUL` (`StageManager.as:231`) and only the third second of the clock, with a
+   * latency, flips it to `STATE_BATTLE` (`StageManager.as:865-873`).
+   */
+  battle: boolean;
+}
+
 /**
  * A thing that may be touching this actor — an attacker's paperdoll part
  * (`mcs.partList[PART_weapon]`), a trap clip, a projectile. The core never

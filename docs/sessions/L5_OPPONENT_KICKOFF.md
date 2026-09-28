@@ -160,6 +160,26 @@
 >    config numbers as `key: value`.
 > Evidence and red-teams: `docs/DIVERGENCES.md`, "L5-OPP SLICE 2".
 
+> **⛔ ERRATUM 7 — SLICE 3a (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **Slice 3 is split: 3a (the stance) landed; 3b is the movement.** Not for size (~410 lines),
+>    but because every function differs between the builds in structure, and four of §3's
+>    names are never reached by the opponent.
+> 2. **Out of the lane, by caller:** `nextStance` (only the human's UI calls it: `BattleUI.as:364`,
+>    `InputManager.as:601`), the web-only `canChangeStance && reload >= 48`, `walkTo` (network
+>    players and the human only: `NPCManager.as:1025`, `StageManager.as:593`) and
+>    `faceScreenCenter` (the human only: `GameEngine.as:1049`). Done criterion (b)'s "nextStance"
+>    is void.
+> 3. **3b's real list:** `initMove` (`EnemyPlayer.gotInput`, `:985`), `movement` (`update`),
+>    `movePlayer` (whose AI branch is one `movePositionX`), `moveTo` (the AI's six calls; it
+>    calls `gotInput`, slice 4, so it goes through `unported`).
+> 4. **`StageManager.isBattle()` is NOT always true in a duel:** `initDuel` sets `STATE_PEACEFUL`
+>    (`StageManager.as:231`) and only the third second, with a latency, flips it
+>    (`:865-873`). The body reads it through `PlayerWorld.battle`.
+> 5. **Claimcheck had a fourth false-pass hole:** the digits inside an obfuscated web name
+>    (`§1t4414s0§`) vouched for any value of 0 or 1. Closed; 0 new failures when closed.
+> Evidence and red-teams: `docs/DIVERGENCES.md`, "L5-OPP SLICE 3a".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -235,7 +255,8 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **1b-i** | THE DERIVED STATS i — the rulings, `initDuelist`'s record, `findBonusStatFrom` · ✅ **LANDED 2026-09-28** (DIVERGENCES "L5-OPP SLICE 1b-i") | `initDuelist`'s arithmetic (`XMLNpc.as:290-401`); `StatsManager.findBonusStatFrom` (41); web `Item.getModifiers` (89) | no |
 | **1b-ii** | THE DERIVED STATS ii — the body on the record · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 1b-ii"; the cooldown table deferred to slice 7) | `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86) | no |
 | **2** | **THE PROFILE SOURCE (R1)** — the writers + the ruling · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 2") | `StatsManager.getBattleStatsString/getEquipmentString/getSkillStatsString`, `Item.toStringNoQty`, `initNewPlayer` | no |
-| 3 | BODY i — stance + movement | `setStance` 103, `nextStance` 44, `canChangeStance`, `initMove` 29, `walkTo`, `stopMoving` 25, `movePlayer` 44, `movement` 21, `moveTo`, `faceScreenCenter`, the reload/damage getters (≈400) | no |
+| **3a** | **BODY i — THE STANCE** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3a"; `nextStance`, `walkTo`, `faceScreenCenter` ruled out of the lane, ERRATUM 7) | `setStance` 103, `initSpecialSkills` 71 (AI branch), `canChangeStance`, `stopMoving` 25, `getDamage` 28, `getBaseDamage` | no |
+| 3b | BODY i — the movement | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
 | 4 | BODY ii — the stroke | `gotInput` 70, `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine (sub-sliced by state) | `update` 931, `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |

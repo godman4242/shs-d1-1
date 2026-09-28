@@ -4163,3 +4163,32 @@ plants 13/13 RED. The full 84-plant chaos run is the shell's post-ship step.
 
 After: 91 files / 1812 tests · typecheck 0 · lint 0 · claimcheck 1901 / 523 / 44 / 0 · the new
 plants 8/8 RED. The full 92-plant chaos run is the shell's post-ship step.
+
+## 2026-09-29 — build loop: L5-OPP slice 3a, THE STANCE
+
+- **Grounded:** RESUME_HERE's kickoff → `L5_OPPONENT_KICKOFF.md` ERRATUM 2 item 4, ERRATUM 6, §3.
+  Baseline at `97c1afb` re-measured and matched: 91 files / 1812 tests · typecheck 0 · lint 0 ·
+  claimcheck 1901 / 523 / 0 · the last post-ship chaos 92/92.
+- **Sized, then split:** the group is ~410 Android lines (under the 500 split line), but every
+  function differs between the builds in structure, and by CALLER four of §3's names are never
+  reached by the opponent (`nextStance`, `walkTo`, `faceScreenCenter`, the web
+  `canChangeStance && reload >= 48`). Shipped 3a (the stance); 3b is the movement. ERRATUM 7.
+- **Measured on the way:** `isBattle()` is false through a duel's intro (`initDuel` sets
+  `STATE_PEACEFUL`; the 3rd second with a latency flips it). For `init`'s one `setStance` the two
+  branches differ only in the idle clip, pinned.
+- **Red → green.** Stub: 20 of 24 red on assertions (the 4 green: 2 fixture pins, 2 "nothing
+  changes" tests later proved by plants). Port: 25/25, web structure, 28 config values cited.
+- **A gate false-pass, found and closed:** my `floor: 0`, cited to a line with no zero, passed
+  claimcheck. The digits inside obfuscated web names (`§1t4414s0§`) vouched for any 0 or 1.
+  Fixed red-first in `literalNear`; 0 new failures over the corpus.
+- **Chaos:** 12 plants, pinned 92 → 104 in both places; 12/12 red, restored byte-identical
+  (scratch clone). **Twins:** 36 → 40, plus one deny-listed pair (the Sim's heavy launch 5 vs
+  the duellist's mastery 3).
+- **Review:** one fresh-context reviewer, no bug; one wrong comment of mine (the `getDamage`
+  override) re-verified and fixed.
+- **Next:** slice 3b (the movement); the kickoff is at the top of RESUME_HERE.
+
+### THE GATES
+
+After: 92 files / 1855 tests · typecheck 0 · lint 0 · claimcheck 1968 / 551 / 44 / 0 · the new
+plants 12/12 RED. The full 104-plant chaos run is the shell's post-ship step.

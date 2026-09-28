@@ -5731,3 +5731,129 @@ $ npm run claimcheck        ->  1901 cites · 523 values at ±0 · 44 context ·
 $ npm run instructionpaths  ->  every path resolves
 $ npm run chaos             ->  92 plants pinned; the 8 new ones 8/8 RED + restored (the full run is the shell's post-ship step)
 ```
+
+## L5-OPP SLICE 3a — THE STANCE: `setStance` AND ITS NEIGHBOURS ON THE DUELLIST'S BODY (2026-09-29)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` §3 slice 3 (ERRATUM 2 item 4, ERRATUM 6). A
+build-loop cycle, one commit.
+
+**What landed:** `src/core/npc/MCSPlayer.ts`, the first slice of the body class (R2):
+`class MCSPlayer extends Npc`, built from 1b-ii's `DuellistBody`, with `canChangeStance`,
+`setStance`, `getStance`, `initSpecialSkills` (the AI's branch), `stopMoving`, `getDamage`,
+`getBaseDamage`. `PlayerWorld` (`types.ts`) adds `battle` = `StageManager.isBattle()`. Every call
+into a group not ported yet goes through `unported()`, which throws; 2 sites
+(`MCSPlayer.startAction`, `StageManager.clearInteractTarget`), pinned. `tests/mcsPlayer.test.ts`:
+25 tests, 20 of the first 24 red on a stub (the other four: the two fixture pins, and two
+"nothing changes" tests a do-nothing stub passes, each since proved by a plant). 28 new config
+values in `src/config/ogMcsPlayer.ts`; claimcheck 1901 → 1968 cites, 523 → 551 values.
+
+**Why 3a, not all of slice 3:** the group is ~410 lines (under the kickoff's 500 split line),
+but every function in it differs between the builds in STRUCTURE, and half of §3's list is
+never reached by the opponent (below). The stance half ships here; **3b is the movement half.**
+
+### IN THE LANE OR NOT — measured by caller, both builds
+
+| function | who calls it | verdict |
+|---|---|---|
+| `setStance` | `EnemyPlayer.init` (`EnemyPlayer.as:838-859`; web `§1t122s0§.as:860-885`), once | **3a** |
+| `initSpecialSkills` | `setStance` | **3a**, the AI branch only (the skill-id branch is `controlledBy` 0 / 2) |
+| `canChangeStance` | web `stopMoving`'s guard; the human's UI | **3a** |
+| `stopMoving` | `setStance` in battle; `EnemyPlayer.as:1340` (slice 7's) | **3a** |
+| `getDamage` / `getBaseDamage` | the hit path (slice 6); `EnemyPlayer` overrides them for a boss: `getDamage` in both builds (`EnemyPlayer.as:1199`, web `§1t122s0§.as:1249`), `getBaseDamage` in the web (`:1258`) | **3a**, the base class (the overrides are slice 7's) |
+| `nextStance` | **only the human's UI** (`BattleUI.as:364`, `InputManager.as:601`) | **out** (ERRATUM 7) |
+| web `§1t4470s0§` (`canChangeStance && reload >= 48`) | only `BattleUI` / `InputManager` (web) | **out** |
+| `walkTo` | only `NPCManager.createNetworkPlayer` (`NPCManager.as:1025`, `:1029`) and the human (`StageManager.as:593`) | **out** |
+| `faceScreenCenter` | only the human (`GameEngine.as:1049`) | **out** |
+| `initMove`, `movement`, `movePlayer`, `moveTo` | `EnemyPlayer.gotInput` (`:985`), `update`, `AI` (`moveTo` ×6) | **3b** |
+
+### THE R6 DIFF — both builds, line by line
+
+| | Android (`MCSPlayer.as`) | web (`§1t99s0§.as`) | ruled |
+|---|---|---|---|
+| reach, light / reversed | `base * 1.5` (`:3030`) | `base * 1.4` (`:3094`, `:3131`) | **web** |
+| reach, balanced | `base * (1 + 0.5 * m * 0.01)` | `base * (1 + 0.2 * m * 0.1)` (`:3105`) | **web** |
+| reach, heavy | `base * (0.5 + 0.5 * m * 0.01)`, floor 100 (`:3053`) | `base * (0.5 + 0.4 * m * 0.1)`, floor 100 (`:3116-3119`) | **web** |
+| reach, dual | `base`, floor 100 | the same (`:3142-3145`) | same |
+| the change's reload cost (battle) | above `maxreload / 2` → `maxreload / 3`, else `-= maxreload / 6`, floor 0 | `-= 48`, floor 0 (`:3162-3165`) | **web** |
+| `stopMoving`'s guard | `actionState == IDLE` (`:2366`) | also `\|\| !canChangeStance()` (`:2442`) | **web** |
+| `stopMoving`'s `destY` | `mcs.y` | `StageManager.§1t4467s0§()` = `gameStage.§1t2184s0§`, the ground by structure (`§1t1525s0§.as:1097`) | web |
+| `stopMoving`'s inventory clip | `IDLE_SHEATHED` when `InventoryUI` is open | gone | web |
+| `initSpecialSkills`, AI branch | light 3 / 4 / 5, balanced 3 / 4 / 5, heavy 3 / 4 / 5 (`:3164-3194`) | the same (`:3221-3251`) | same |
+| damage, light | `× (0.5 + 0.5 * m * 0.01)` | `× (0.5 + 0.4 * m * 0.1)` (`:3262`) | **web** |
+| damage, balanced | `× (1 + 0.5 * m * 0.01)` | `× (1 + 0.2 * m * 0.1)` (`:3265`) | **web** |
+| damage, heavy / dual / reversed | `× 1.5` | `× 1.4` (`:3270`) | **web** |
+| full-reload damage | light `× 1.5`, else `× 1.2`, `+ STAT_CRITICALDMG` (`:3215-3221`) | `× 1.3` every stance, `+ STAT_CRITICALDMG` (`:3274`) | **web** |
+| `stance`'s start value | 0 (no initialiser) | -1 (`:81`) | web |
+| `canChangeStance` | `:2967` | `:3045` | same |
+
+The web values are kept in the source's own factors (`0.2 * m * 0.1`, not `0.02 * m`): the two
+round apart as doubles (`0.2 * 3 * 0.1` is `0.06000000000000001`), and the result is truncated.
+The Sim's `REACH` (`reach.ts`) and `CRIT_MULT` (`combat.ts`) hold the same web numbers; the four
+exact ones are declared twins in `tests/configTwins.test.ts` (36 → 40), the two factored ones
+pinned close in `tests/mcsPlayer.test.ts`.
+
+**Red-teams:**
+- **The flat 48-frame cost, web.** *Steelman for Android:* its rule scales with `maxreload`, so a
+  duellist's stance change costs the same share of its reload whatever its speed. *Why web:* R6,
+  and the videos are the web build. *Where it breaks:* nowhere yet: the opponent changes stance
+  once, in `init`, with its reload at 0, where both rules give 0. **Veto:** Android's rule.
+- **`stopMoving`'s stance guard, web.** *Steelman for Android:* a stance change that does not
+  stop a slashing body leaves it slashing in the new stance. *Why web:* that is what the web game
+  does. *Where it breaks:* only on a mid-fight stance change, which the opponent never makes.
+  **Veto:** Android's guard (plant 5).
+- **The ×1.3 crit, web.** *Steelman for Android:* the light stance's ×1.5 made it the crit
+  stance. *Why web:* the Sim's player already runs ×1.3 (`CRIT_MULT`), so web keeps the two
+  bodies on one rule (R2's asymmetry). **Veto:** Android's split (plant 9).
+
+### ⚖️ ERRATUM 2 ITEM 4 — THE HEAVY LAUNCH, RECORDED (not changed)
+
+The Sim's player unlocks the launch at `LAUNCH_UNLOCK_LEVEL` (`stances.ts`, INFERRED): light 3,
+balanced 5, **heavy 5**. The duellist's AI branch launches in heavy at **mastery 3**
+(`MCSPlayer.as:3182`, web `§1t99s0§.as:3239`); `tests/mcsPlayer.test.ts` pins it. They are not
+the same rule, which is why the pair is DENY-listed in `tests/configTwins.test.ts` and not
+twinned: the source's HUMAN unlocks by skill ownership (1014 light, 1017 balanced, 1019 heavy,
+`MCSPlayer.as:3133-3151`), not by mastery; two of the Sim's three numbers coincide with the AI's.
+Changing the Sim's heavy 5 is a player-feel ruling for an attended session, not this slice's.
+
+### ⚠️ A GATE FALSE-PASS, FOUND AND CLOSED THIS CYCLE — the digits in a web name
+
+Probing this slice's own values: `OG_STANCE_CHANGE_RELOAD.floor: 0`, first cited to
+`§1t99s0§.as:3162` (`this.§1t4414s0§ -= 48;`, no zero on it), PASSED at ±0. Every obfuscated
+web name carries a free-standing `1` (after the `§`) and `0` (after the `s`), and `literalNear`'s
+digit boundary does not treat a letter or `§` as part of a number, so **any web cite vouched for
+any value of 0 or 1.** Fixed in `scripts/gates/claimcheckLib.ts` (`literalNear` blanks every
+`§…§` name before matching), red-first in `tests/claimcheck.test.ts`, with its own plant.
+**Measured when closed: 0 new failures over the whole corpus**, so no earlier cite was leaning
+on it. The floor now cites `:3163` (`if(reload < 0)`).
+
+### THE PORT'S QUIRKS — PINNED, NOT FIXED
+
+- **Battle or intro, `init`'s call leaves the same fields** (`tests/mcsPlayer.test.ts`): the
+  body is IDLE, so `stopMoving` returns, and the reload is 0, so the 48 floors back to 0. Only
+  the idle clip differs (started in battle only). Which one the original runs depends on whether
+  the opponent is built before `initDuel` sets `STATE_PEACEFUL` (`StageManager.as:231`), not
+  measured; nothing a fight reads depends on it.
+- **A moving body's `stopMoving` reaches `startAction`**, which is slice 5's: it throws
+  `unported`. Before it throws, `destX`, `destY`, `hasSlash` and `hasSlashBuffer` are set, as the
+  source sets them first.
+
+### THE REVIEW
+
+One fresh-context reviewer: **no bug.** It re-derived every hand-worked number (reach, specials,
+damage, crit), re-mapped every web field by declaration order, checked the stance constants, the
+`&&`/`||` binding in `canChangeStance`, the truncation order, all 12 plant anchors, and argued
+that the claimcheck change can only REMOVE matches (a space satisfies the digit lookarounds as
+the `§` did), so it cannot create a false pass. It found ONE WRONG COMMENT, mine: `getDamage` said
+`EnemyPlayer` overrides only `getBaseDamage`. Re-verified: it overrides `getDamage` in both builds
+(`EnemyPlayer.as:1199`, web `§1t122s0§.as:1249`) and `getBaseDamage` in the web (`:1258`), each
+returning `minDamage` for a boss. Comment and the table above corrected; the overrides are slice 7's.
+
+### THE GATES
+
+```
+$ npx vitest run            ->  Test Files 92 passed (92) · Tests 1855 passed (1855)   (1812 + 25 stance + 1 claimcheck + 5 twin table + 12 plant pins)
+$ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
+$ npm run claimcheck        ->  1968 cites · 551 values at ±0 · 44 context · 0 failures
+$ npm run instructionpaths  ->  every path resolves
+$ npm run chaos             ->  104 plants pinned; the 12 new ones 12/12 RED + restored (scratch clone; the full run is the shell's post-ship step)
+```

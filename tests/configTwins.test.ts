@@ -33,7 +33,7 @@
  * it was written.
  */
 import { describe, expect, it } from 'vitest';
-import { DAMAGE_FLOOR, MIN_DAMAGE_TIERS } from '../src/config/combat';
+import { CRIT_MULT, DAMAGE_FLOOR, MIN_DAMAGE_TIERS } from '../src/config/combat';
 import { OG_BEAR } from '../src/config/ogEnemyBear';
 import { OG_BOAR } from '../src/config/ogEnemyBoar';
 import { OG_CIVILIAN } from '../src/config/ogEnemyCivilian';
@@ -48,6 +48,9 @@ import { OG_ANIMAL } from '../src/config/ogNpcAnimal';
 import { OG_NPC_FLOATING_TEXT, OG_NPC_FLY, OG_NPC_LAUNCH, OG_NPC_SET_LEVEL } from '../src/config/ogNpcBase';
 import { OG_FRIENDLY } from '../src/config/ogNpcFriendly';
 import { OG_HUMANOID_FALL_GRAVITY } from '../src/config/ogNpcHumanoid';
+import { OG_SPECIAL_SKILL_MASTERY, OG_STANCE_DAMAGE, OG_STANCE_REACH } from '../src/config/ogMcsPlayer';
+import { REACH } from '../src/config/reach';
+import { LAUNCH_UNLOCK_LEVEL } from '../src/config/stances';
 
 /** A declared twin: two config paths the original reaches by two routes. */
 interface Twin {
@@ -126,6 +129,14 @@ const TWINS: Twin[] = [
   { name: 'OG_SPEAR_ELITE.boss.floor.tier3Div ↔ MIN_DAMAGE_TIERS.tier3Divisor', left: OG_SPEAR_ELITE.boss.floor.tier3Div, right: MIN_DAMAGE_TIERS.tier3Divisor, declaredIn: 'ogEnemySpearElite.ts' },
   { name: 'OG_SPEAR_ELITE.boss.floor.tier4Div ↔ MIN_DAMAGE_TIERS.tier4Divisor', left: OG_SPEAR_ELITE.boss.floor.tier4Div, right: MIN_DAMAGE_TIERS.tier4Divisor, declaredIn: 'ogEnemySpearElite.ts' },
   { name: 'OG_SPEAR_ELITE.boss.floor.tier1Min ↔ DAMAGE_FLOOR', left: OG_SPEAR_ELITE.boss.floor.tier1Min, right: DAMAGE_FLOOR, declaredIn: 'ogEnemySpearElite.ts' },
+
+  // ── L5-OPP slice 3a: the duellist's setStance / getDamage against the Sim player's copies ──
+  // (The factored per-mastery terms, `0.2 * m * 0.1` vs REACH's `0.02`, are not equal as
+  // doubles; `tests/mcsPlayer.test.ts` pins them close.)
+  { name: 'OG_STANCE_REACH.lightMult ↔ REACH.lightMult', left: OG_STANCE_REACH.lightMult, right: REACH.lightMult, declaredIn: 'ogMcsPlayer.ts + reach.ts (both read web setStance)' },
+  { name: 'OG_STANCE_REACH.heavy.base ↔ REACH.heavyBase', left: OG_STANCE_REACH.heavy.base, right: REACH.heavyBase, declaredIn: 'ogMcsPlayer.ts + reach.ts' },
+  { name: 'OG_STANCE_REACH.floor ↔ REACH.heavyFloor', left: OG_STANCE_REACH.floor, right: REACH.heavyFloor, declaredIn: 'ogMcsPlayer.ts + reach.ts' },
+  { name: 'OG_STANCE_DAMAGE.critMult ↔ CRIT_MULT', left: OG_STANCE_DAMAGE.critMult, right: CRIT_MULT, declaredIn: 'ogMcsPlayer.ts + combat.ts (ERRATUM 2 item 8: the Sim runs the web ×1.3)' },
 ];
 
 /**
@@ -153,7 +164,7 @@ describe('the twin table — declared twins do not drift', () => {
    * without anything going red — the same failure mode the chaos plant count guards.
    */
   it('holds every twin relationship the enumeration found', () => {
-    expect(TWINS).toHaveLength(36);
+    expect(TWINS).toHaveLength(40);
     expect(IMPORTED).toHaveLength(2);
   });
 
@@ -221,6 +232,18 @@ describe('the deny-list — equal numbers that are NOT twins', () => {
     // not read the coincidence as a twin.
     expect(OG_FOX.arriveDice).not.toBe(OG_WOLF.arriveDice);
     expect(OG_FOX.arriveDice).toBe(OG_ANIMAL.arriveDice);
+  });
+
+  /**
+   * The Sim player's INFERRED launch unlock (light 3, balanced 5, heavy 5) against the
+   * duellist's AI-branch mastery (3 / 5 / 3). Two of three coincide, but the rules differ:
+   * the source's HUMAN unlocks by skill ownership (1014 / 1017 / 1019), not mastery, and the
+   * heavy value disagrees (ERRATUM 2 item 4, DIVERGENCES "L5-OPP SLICE 3a").
+   */
+  it('LAUNCH_UNLOCK_LEVEL is NOT the duellist\'s launch mastery: heavy differs, 5 against 3', () => {
+    expect(LAUNCH_UNLOCK_LEVEL.heavy).toBe(5);
+    expect(OG_SPECIAL_SKILL_MASTERY.heavy.launch).toBe(3);
+    expect(LAUNCH_UNLOCK_LEVEL.heavy).not.toBe(OG_SPECIAL_SKILL_MASTERY.heavy.launch);
   });
 
   it('OG_BOAR.runSpeed is slower than every wanderer, deliberately', () => {

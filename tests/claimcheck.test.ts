@@ -246,6 +246,22 @@ describe('claimcheckLib.literalNear', () => {
     expect(literalNear(lines, cite(3), 3, 1)).toBe(true);
     expect(literalNear(lines, cite(1), 120, 1)).toBe(false);
   });
+
+  /**
+   * The fourth false-pass hole (L5-OPP slice 3a, 2026-09-29). Every obfuscated web name
+   * carries a free-standing 1 and 0 (`§1t4414s0§`: the `1` after `§`, the `0` after `s`), so
+   * ANY web cite vouched for a value of 0 or 1. It passed `floor: 0` cited to
+   * `this.§1t4414s0§ -= 48;`, a line with no zero on it. Measured when closed: 0 new
+   * failures over the whole corpus.
+   */
+  it('reads no digit inside a §-quoted web name', () => {
+    const web = ['this.§1t4414s0§ -= 48;', 'if(this.§1t4414s0§ < 0)'];
+    expect(literalNear(web, cite(1), 0, 0)).toBe(false);
+    expect(literalNear(web, cite(1), 1, 0)).toBe(false);
+    expect(literalNear(web, cite(1), 4414, 0)).toBe(false);
+    expect(literalNear(web, cite(1), 48, 0)).toBe(true);
+    expect(literalNear(web, cite(2), 0, 0)).toBe(true);
+  });
 });
 
 /**
