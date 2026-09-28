@@ -251,6 +251,36 @@
 >    (34 state cases), `doAction` 360 / 375 (27).
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 4c".
 
+> **⛔ ERRATUM 12 — SLICE 5, THE MAP (2026-09-29, a build-loop cycle; measured against both builds;
+> no code). Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **ERRATUM 11 item 4 missed the helper that matters.** Of Android `update`'s 931 lines, 853
+>    are ONE block: the clip-end `switch` on `mcs.updateAnimation()` (`MCSPlayer.as:296-1148`,
+>    146 labels in 97 groups). The web moved it, whole, into `§1t4448s0§(name)`
+>    (`§1t99s0§.as:305-1177`, 873 lines, returns `Boolean`: `default: return false`). The helpers
+>    ERRATUM 11 named are small: `§1t4501s0§` = `AI` (`EnemyPlayer` overrides it), `§1t4498s0§`
+>    = `playbackAI`, `§1t4494s0§` = `cancelStealth`, `§1t4495s0§` = `cancelLogSub`. The other 78
+>    lines of `update` map onto the web's 79 block by block (the web drops the locals, hands the
+>    human's reload bar raw values, and adds the ruled-out `§1t4440s0§` timer).
+> 2. **The kickoff's 5a (six states) is 651 Android / 677 web lines, over the 500 cap. Re-cut:**
+>    **5a — THE GROUND STROKE** (IDLE, WALK, RUN, SLASH, POSE; `update` whole; the clip-end bands
+>    sheathe, ground `_START`, ground `_END`, pose → sheathe) = **472 / 495**.
+>    **5b — THE AIR AND THE DOWNSTAB** (FALL in both switches; the clip-end bands jump `_START`,
+>    fall `_START`, downstab) = **179 / 182**. The ground stroke never falls (4c: it ends
+>    48–50 px up, under the 100 threshold), so the end-to-end test fits 5a.
+> 3. **5a's end-to-end stroke cannot have ONLY `checkPlayerHit` spied.** The AI runs inside
+>    `update`: `aiCounterMax` 12 (`EnemyPlayer.as:52`), `aiCounter` 0, so `checkAITrigger` is
+>    true on the first `update` and every 12th after, and `EnemyPlayer.AI` is slice 7. The test
+>    spies `checkPlayerHit` AND the AI call site (`unported('EnemyPlayer.AI')`), and asserts the
+>    AI spy's call frames (1, 13, …), so the count is pinned, never silently skipped.
+> 4. **One R6 difference inside 5a:** `doAction` POSE. Android has no `break` and FALLS THROUGH
+>    into `SKILL_BULLCHARGE` (`MCSPlayer.as:2128-2129`; its body is guarded by
+>    `mcs.animation == BULLCHARGE_RUN`); the web ends it with a `break` (`§1t99s0§.as:2195`) and
+>    adds the attacker (`:2184`). Web wins: no fall-through. Everything else in 5a has the same
+>    shape in both builds, and 264 constant-bearing line pairs decode to equal values.
+> 5. **5b carries two web-only lines:** FALL's attacker (`§1t99s0§.as:1991`) and its reset of
+>    `§1t4438s0§` (`:2001`), a web-only juggle counter that the reception reads (slice 6).
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 5 — THE MAP".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -329,7 +359,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **3a** | **BODY i — THE STANCE** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3a"; `nextStance`, `walkTo`, `faceScreenCenter` ruled out of the lane, ERRATUM 7) | `setStance` 103, `initSpecialSkills` 71 (AI branch), `canChangeStance`, `stopMoving` 25, `getDamage` 28, `getBaseDamage` | no |
 | **3b** | **BODY i — THE MOVEMENT** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3b") | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
 | **4** | **BODY ii — the stroke** · ✅ **LANDED 2026-09-29** in three commits (4a ERRATUM 9, 4b ERRATUM 10, 4c ERRATUM 11) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
-| 5 | BODY iii — the state machine (sub-sliced by state) | `update` 931, `startAction` 671, `doAction` 360 | no |
+| 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) · **5b** the air and the downstab (179 / 182) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
 | 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
 | 8 | THE SEAM — into the duel behind `?npc=duellist` | findings 16 + 17, a stroke channel; `Sim.ts` + `duel-baseline` by the atomic protocol | **YES** |

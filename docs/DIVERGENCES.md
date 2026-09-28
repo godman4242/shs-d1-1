@@ -6255,3 +6255,175 @@ could replace the stroke. +1 test that replaces it inside the hit. Its first ver
 fail (both reads agreed on its numbers); rewritten, then watched red. The fix also removed a silent
 `?? last` fallback: an out-of-range read now throws, as the AS3 `Vector` read does. Kept as a
 note: Flash snaps a clip's y to 1/20 px and the port does not (the repo's convention, not this diff).
+
+## L5-OPP SLICE 5 — THE MAP: `update`, `startAction`, `doAction` IN BOTH BUILDS, AND THE CUT (2026-09-29)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 11 item 4, §3 slice 5. A build-loop
+cycle, one commit, **no code**: the kickoff's step (a). **5a as the kickoff defined it (the six
+states) is 651 Android / 677 web source lines, over its 500-line cap, so by its own rule the
+cycle stops after the map** and re-cuts 5a (ERRATUM 12).
+
+**How it was measured** (scratch scripts, not committed): every `case` group in the three
+switches split by indentation, paired in order across the builds (the groups match in order and,
+all but 15, in length); every line of a pair compared by SHAPE (identifiers blanked, numbers and
+keywords kept); every static constant on a same-shape line decoded to its declared value in its
+own build (web `§1t1544s0§.as` etc., Android `MCSCharacter.as` etc.) and compared. **571
+constant-bearing line pairs across all three switches: 7 mismatches, all in
+`JUTSU_GROUND_PARTA` (outside 5a/5b); inside the 5a/5b ranges, 264 pairs and 0 mismatches.** The
+"0" was probed: the same check on a deliberately off-by-one pairing
+(`HEAVYSLASHDOWN_START` against `HEAVYSLASHUP_START`) gives 16 mismatches out of 16, so it can
+go red.
+
+### `update`: the Android blocks, and the web function that holds each
+
+Android `update` is `MCSPlayer.as:275-1205` (931 lines); web `update` is
+`§1t99s0§.as:1179-1257` (79). The web moved ONE block out: the clip-end switch.
+
+| Android block | Android lines | web | web lines | lane |
+|---|---|---|---|---|
+| locals, `mcs == null` return, the frozen-dead return (`controlledBy != 0`, true for the AI) | 275-294 | `update` | 1179-1188 | 5a |
+| `finishedAnimation = mcs.updateAnimation()` (295) + the clip-end `switch` (146 labels, 97 groups) | 296-1148 (853) | `update` calls **`§1t4448s0§(name)`** | call 1189-1193; helper **305-1177** (873) | by case, below |
+| AI / `playbackAI` choice | 1149-1156 | `update` → `§1t4501s0§` (AI; `EnemyPlayer` overrides it, `§1t122s0§.as:1040`) / `§1t4498s0§` (playbackAI, `:4782`) | 1194-1201 | AI = slice 7 (see ERRATUM 12 item 3); playbackAI = out (`controlledBy == 0`) |
+| `doAction()` | 1157 | `§1t3270s0§()` (`:1936`) | 1202 | by state, below |
+| reload tick (+ the human's bar, `controlledBy == 0`) | 1158-1170 | `update` | 1203-1210 | tick 5a; the bar out. The web passes `reload`/`maxreload` to the UI where Android computes `tempreload` (human only) |
+| `gotHitCounter` tick | 1171-1174 | `update` | 1211-1214 | 5a |
+| `speechCounter` tick | 1175-1183 | `update` | 1215-1223 | 5a |
+| progress bar (`controlledBy == 0`) | 1184-1187 | `update` | 1224-1227 | out |
+| `invisCounter` → `cancelStealth` | 1188-1195 | `update` → `§1t4494s0§` (`:4728`, ported 4b) | 1228-1235 | 5a |
+| `logsubCounter` → `cancelLogSub` | 1196-1203 | `update` → `§1t4495s0§` (`:4738`) | 1236-1243 | tick 5a; `cancelLogSub` slice 6 (`doSubstitutionLog`'s pair) |
+| — (web only) the `§1t4440s0§` timer → `§1t1561s0§` / `§1t1562s0§` | — | `update` | 1244-1255 | out: never set on the AI duellist (ERRATUM 11 item 2) |
+
+**The web helper's shape differs:** `§1t4448s0§` returns `Boolean` (`default: return false`,
+then `return true`, `:1173-1176`). Its other two callers are `§1t4921s0§.as:126` and
+`§1t4914s0§.as:121`, both children (out of the lane); the duellist's `update` ignores the value.
+
+### The clip-end switch, by band (Android `MCSPlayer.as:296-1148` · web `§1t99s0§.as:317-1177`)
+
+| band | groups (labels) | Android | web | lines A / W | lane |
+|---|---|---|---|---|---|
+| sheathe | `SHEATHESWORDCHIBURI`+`SHEATHESWORD`, `SHEATHETOIDLE` | 300-316 | 319-335 | 17 / 17 | **5a** (the `controlledBy == 0` → `SHEATHETOIDLE` branch is out) |
+| ground `_START` → `_MID` | the 13 `*SLASH*_START` | 317-355 | 336-374 | 39 / 39 | **5a** |
+| jump `_START` | the 5 `*JUMPSLASH_START` (FALL / RISE on `slashType`) | 356-410 | 375-429 | 55 / 55 | 5b |
+| fall `_START` | the 5 `*FALLSLASH_START` | 411-425 | 430-444 | 15 / 15 | 5b |
+| ground `_END` → `_POSE` | the 13 `*SLASH*_END` | 426-464 | 445-483 | 39 / 39 | **5a** |
+| pose → sheathe | ONE group: 13 `*_POSE` + 5 `*JUMPSLASH_LAND` + 5 `*FALLSLASH_END` | 465-496 | 484-515 | 32 / 32 | **5a** |
+| downstab | `DOWNSTAB`, `DOWNSTAB_UP` | 497-523 | 516-543 | 27 / 28 | 5b (web: the attacker line; `controlledBy == 1 \|\| 3` where Android has `== 1`, the same on the AI) |
+| everything else | 68 groups: deaths, getups, launches, backthrow, skills, dash, focus, … | 524-1148 | 544-1172 | 625 / 629 | later slices |
+
+Groups whose SHAPE differs between the builds (all outside 5a): `DOWNSTAB`, the death group,
+`GOTLAUNCHEDDOWNED`, `NINJASMOKEBOMB`, `JUTSU_GROUND_PARTA` (+ the 7 decoded-constant
+mismatches), `DEATHTOUCH_PARTC`, `AIRSTAB_MID`, `CHICHARGE_START`.
+
+### `startAction`: the 34 state cases (Android `MCSPlayer.as:1206-1876` · web `§1t99s0§.as:1258-1935`)
+
+Wrapper (locals, `prevActionState`, the `chargingFx` removal): Android 1206-1228 + 1874-1876, web
+1258-1280 + 1933-1935, 26 / 26 lines, same shape. `this.chargingFx` is web `§1t4433s0§`.
+
+| state | Android | web | lines | shape | lane |
+|---|---|---|---|---|---|
+| IDLE | 1229-1239 | 1281-1291 | 11 | same | **5a** (the adventure-mode `controlledBy == 0` half of its test is out) |
+| RUN | 1240-1272 | 1292-1324 | 33 | same | **5a** (its airborne → FALL call: `unported` until 5b) |
+| WALK | 1273-1279 | 1325-1331 | 7 | same | **5a** (same) |
+| FALL | 1280-1336 | 1332-1388 | 57 | same | 5b |
+| SLASH | 1337-1339 | 1389-1391 | 3 | same | **5a** |
+| POSE | 1340-1453 | 1392-1505 | 114 | same | **5a** |
+| REDFREEZE | 1454-1467 | 1506-1519 | 14 | same | later (`controlledBy == 0` branch out) |
+| GOTLAUNCHED | 1468-1470 | 1520-1522 | 3 | same | later |
+| KNOCKDOWNED + DOWNED | 1471-1474 | 1523-1526 | 4 | same | later |
+| FORWARDROLL | 1475-1477 | 1527-1529 | 3 | same | later |
+| JUMP | 1478-1481 | 1530-1533 | 4 | same | later |
+| LAND | 1482-1485 | 1534-1537 | 4 | same | later |
+| SMOKEBOMB | 1486-1488 | 1538-1540 | 3 | same | later |
+| SMOKEBOMB2 | 1489-1542 | 1541-1597 | 54 / 57 | **differs** | later |
+| LOGSUBSTITUTION | 1543-1575 | 1598-1632 | 33 / 35 | **differs** | later |
+| WINDKICK | 1576-1585 | 1633-1642 | 10 | same | later |
+| SKILL_SPIRITTHIEF | 1586-1645 | 1643-1703 | 60 / 61 | **differs** | later (`controlledBy 0 / 1\|\|3` branches) |
+| SKILL_BACKTHROW | 1646-1679 | 1704-1738 | 34 / 35 | **differs** | later (`controlledBy != 0`, `0`, `1\|\|3`) |
+| SKILL_DEATHTOUCH | 1680-1692 | 1739-1751 | 13 | **differs** | later |
+| CHARGING | 1693-1704 | 1752-1763 | 12 | same | later |
+| SKILL_SHUNPO | 1705-1716 | 1764-1775 | 12 | same | later |
+| SKILL_THOUSANDSTABS | 1717-1728 | 1776-1787 | 12 | same | later |
+| SKILL_DEADLYCLEAVE | 1729-1740 | 1788-1799 | 12 | same | later |
+| DOSKILL | 1741-1798 | 1800-1857 | 58 | same | later |
+| DASH | 1799-1811 | 1858-1870 | 13 | same | later |
+| BACKSTEP | 1812-1825 | 1871-1884 | 14 | same | later |
+| SKILL_FLASHBANG | 1826-1828 | 1885-1887 | 3 | same | later |
+| SKILL_STEALTH | 1829-1831 | 1888-1890 | 3 | same | later |
+| SKILL_SHADOWCLONE | 1832-1835 | 1891-1894 | 4 | same | later |
+| SKILL_MASSCLONE | 1836-1839 | 1895-1898 | 4 | same | later |
+| SKILL_SUBSTITUTIONLOG | 1840-1861 | 1899-1920 | 22 | same | later (`controlledBy == 0` icon out) |
+| SKILL_BULLCHARGE | 1862-1865 | 1921-1924 | 4 | same | later |
+| SKILL_UNDYING | 1866-1871 | 1925-1930 | 6 | same | later |
+| SKILL_CHICHARGE | 1872-1874 | 1931-1933 | 3 | same | later |
+
+33 groups, 34 labels (KNOCKDOWNED + DOWNED share one). The web state constants decode to the
+same values: IDLE `§1t11141s0§`, RUN `§1t11142s0§`, WALK `§1t11143s0§`, FALL `§1t11145s0§`,
+SLASH `§1t11149s0§`, POSE `§1t11150s0§`, REDFREEZE `§1t11154s0§`.
+
+### `doAction`: the 27 state labels (Android `MCSPlayer.as:1877-2236` · web `§1t99s0§.as:1936-2310`)
+
+Wrapper: Android 1877-1886 + 2234-2236 (13), web 1936-1946 + 2308-2310 (14; one more local).
+
+| state | Android | web | lines | shape | lane |
+|---|---|---|---|---|---|
+| IDLE | 1887-1888 | 1947-1948 | 2 | same | **5a** |
+| RUN | 1889-1902 | 1949-1962 | 14 | same | **5a** |
+| WALK | 1903-1916 | 1963-1976 | 14 | same | **5a** |
+| FALL | 1917-1941 | 1977-2003 | 25 / 27 | **differs** | 5b: web adds the attacker (`:1991`) and resets `§1t4438s0§` (`:2001`), a web-only juggle counter the reception reads (`:3581`, `:3860`, `:4198`); `controlledBy == 0` hit out |
+| GOTLAUNCHED | 1942-1944 | 2004-2006 | 3 | same | later |
+| FLY | 1945-1947 | 2007-2009 | 3 | same | later |
+| STUN | 1948-1950 | 2010-2012 | 3 | same | later |
+| DOWNED | 1951-1952 | 2013-2014 | 2 | same | later |
+| SLASH | 1953-1955 | 2015-2017 | 3 | same | **5a** (`doSlash`, ported 4c) |
+| REDFREEZE | 1956-1969 | 2018-2031 | 14 | same | later |
+| FORWARDROLL | 1970-1982 | 2032-2044 | 13 | same | later |
+| JUMP | 1983-1999 | 2045-2061 | 17 | same | later |
+| LAND | 2000-2001 | 2062-2063 | 2 | same | later |
+| DYING | 2002-2004 | 2064-2066 | 3 | same | later |
+| WINDKICK | 2005-2007 | 2067-2069 | 3 | same | later |
+| SKILL_DEATHTOUCH | 2008-2013 | 2070-2075 | 6 | same | later |
+| CHARGING + SHUNPO + THOUSANDSTABS + DEADLYCLEAVE | 2014-2019 | 2076-2081 | 6 | same | later |
+| DOSKILL | 2020-2097 | 2082-2162 | 78 / 81 | **differs** | later |
+| DASH + BACKSTEP | 2098-2101 | 2163-2166 | 4 | same | later |
+| POSE | 2102-2128 | 2167-2195 | 27 / 29 | **differs** | **5a**: web adds the attacker (`:2184`) and **a `break` (`:2195`); Android has none and FALLS THROUGH into `SKILL_BULLCHARGE`** (guarded by `mcs.animation == BULLCHARGE_RUN`). R6: web, no fall-through |
+| SKILL_BULLCHARGE | 2129-2162 | 2196-2230 | 34 / 35 | **differs** | later |
+| SKILL_UNDYING | 2163-2188 | 2231-2262 | 26 / 32 | **differs** | later |
+| SKILL_CHICHARGE | 2189-2234 | 2263-2308 | 46 | same | later |
+
+### Every `controlledBy` branch in the three switches (Android lines)
+
+In 5a: `update` 291 (`!= 0`: live on the AI), 1149 (`1 || 3 || autoSlash` → AI), 1153 (`0` →
+playbackAI, out), 1161 (`0`, out), 1184 (`0`, out); clip-end sheathe 304 (`0`, out);
+`startAction` IDLE 1230 (the `controlledBy == 0` half, out); `doAction` POSE 2120 (`0`, out) /
+2124 (`1`, in: `target.checkHitObject`, the seam). In 5b: FALL 1932 (`0`) / 1936 (`1`); DOWNSTAB
+502 (`0`) / 506 (`1`). Later: the death group 534; `GOTLAUNCHEDDOWNED` 585, 592, 603; `DOWNEDUP`
+623; `BACKTHROW` 659; `FLIPUP` 673; `SEPPUKU_START` 705, 721; `NINJASMOKEBOMB` 758;
+`DEATHTOUCH_PARTC` 1007, 1011, 1015; `FOCUS_START` 1051; `AIRSTAB_MID` 1094, 1098; `startAction`
+REDFREEZE 1459, SMOKEBOMB2 1529, SPIRITTHIEF 1602, 1640, BACKTHROW 1647, 1657, 1674,
+SUBSTITUTIONLOG 1854; `doAction` DOSKILL 2032, 2036, 2044, 2048, 2077, 2081, BULLCHARGE 2145,
+2149, CHICHARGE 2210, 2229.
+
+### THE CUT (≤ 500 source lines each, measured)
+
+| sub-slice | content | Android | web |
+|---|---|---|---|
+| **5a — THE GROUND STROKE** | `update` whole (79 web) with the web's clip-end helper (its wrapper; the 5a bands ported; every other label → `unported`; `default` → false); `startAction` wrapper + IDLE, RUN, WALK, SLASH, POSE; `doAction` wrapper + IDLE, RUN, WALK, SLASH, POSE; clip-end bands sheathe, ground `_START`, ground `_END`, pose → sheathe | 78 + 127 + 26 + 168 + 13 + 60 = **472** | 98 + 127 + 26 + 168 + 14 + 62 = **495** |
+| **5b — THE AIR AND THE DOWNSTAB** | `startAction` FALL; `doAction` FALL; clip-end bands jump `_START`, fall `_START`, downstab | 57 + 25 + 55 + 15 + 27 = **179** | 57 + 27 + 55 + 15 + 28 = **182** |
+| the rest | 28 `startAction` groups, 17 `doAction` groups, 68 clip-end groups | cut by owner in their own slices (6: reception, 7: the AI's skills) once each state's callers are measured | |
+
+The kickoff's six-state 5a = 5a + 5b = 651 / 677.
+
+### MEASURED ON THE WAY
+
+- **The ground stroke never needs FALL.** 4c measured `slashTarget`'s strokes ending 48–50 px
+  above the ground, under `jumpThreshhold` (100), so `endSlash` goes straight to POSE. The
+  kickoff's end-to-end test (c) fits inside the new 5a.
+- **The AI runs inside `update`.** `EnemyPlayer.aiCounterMax = 12` (`EnemyPlayer.as:52`) and
+  `aiCounter` starts at 0, so `checkAITrigger` (`NPC.as:285`) is true on the FIRST `update` and
+  every 12th after. With `EnemyPlayer.AI` in slice 7 (throwing through `unported`), a stroke run
+  through the real `update` needs `AI` spied as well. "ONLY `checkPlayerHit` spied" cannot hold
+  until slice 7 (ERRATUM 12 item 3).
+- **The stroke's clip chain, in the source:** SLASH (`startSlash` starts `X_START`) → clip end
+  `X_START` → `X_MID` → `endSlash` → `startAction(POSE)` starts `X_END` → clip end `X_END` →
+  `X_POSE` → clip end `X_POSE` → `SHEATHESWORD` (state stays POSE) → clip end `SHEATHESWORD` →
+  `startAction(IDLE)` (on `controlledBy != 0`). All inside the new 5a.

@@ -4307,3 +4307,22 @@ plants 34/34 RED. The full 174-plant chaos run is the shell's post-ship step.
 
 After: 92 files / 2081 tests · typecheck 0 · lint 0 · claimcheck 2135 / 600 / 44 / 0 · the new
 plants 37/37 RED. The full 211-plant chaos run is the shell's post-ship step.
+
+## 2026-09-29 — build loop: L5-OPP slice 5, THE MAP (no code)
+
+- **Baseline at HEAD `a0fb3d8`, as RESUME_HERE stated:** 92 files / 2081 tests · typecheck 0 ·
+  lint 0 · claimcheck 2135 / 600 / 0 · chaos 211 pinned.
+- **Mapped, both builds, by script:** Android `update` (931) = 78 lines + ONE 853-line clip-end
+  switch, which the web moved whole into `§1t4448s0§` (873, returns `Boolean`). ERRATUM 11 had
+  named only the small helpers. `startAction` 33 groups, `doAction` 23, the clip-end switch 97,
+  every group paired and line-spanned in both builds. 571 constant-bearing line pairs decoded by
+  value: 7 mismatches, all outside 5a/5b; 0 of 264 inside. The check was probed red (an
+  off-by-one pairing: 16/16).
+- **Stopped after (a), by the kickoff's rule:** its six-state 5a is 651 / 677 lines, over 500.
+  Re-cut (ERRATUM 12): **5a the ground stroke 472 / 495**, **5b the air and the downstab
+  179 / 182**.
+- **Found:** the AI runs inside `update` (frame 1, then every 12th), so 5a's end-to-end test must
+  spy it too. Android's `doAction` POSE falls through into BULLCHARGE; the web's breaks (web wins).
+  The web FALL resets a web-only juggle counter (slice 6's).
+- **Review:** my own hostile pass (docs only); two of my own numbers were wrong and fixed.
+- **Next:** slice 5a; the kickoff is at the top of RESUME_HERE.
