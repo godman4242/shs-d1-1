@@ -90,3 +90,14 @@ export const OG_STANCE_DAMAGE = {
    */
   critMult: 1.3,
 } as const;
+
+/**
+ * `initMove`'s two distance tests, on `dist * dist` (the source never takes a root). The same
+ * in both builds.
+ */
+export const OG_MOVE_DIST_SQ = {
+  /** `MCSPlayer.as:2322` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2397` — in adventure mode, a move under 25 px is refused */
+  adventureMin: 625,
+  /** `MCSPlayer.as:2337` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2413` — up to 100 px walks, beyond it runs */
+  walkMax: 10000,
+} as const;

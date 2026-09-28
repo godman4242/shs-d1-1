@@ -1,11 +1,12 @@
 /**
- * CHAOS PLANTS — THE DUELLIST'S STANCE (L5-OPP slice 3a, 2026-09-29).
+ * CHAOS PLANTS — THE DUELLIST'S STANCE AND MOVEMENT (L5-OPP slices 3a and 3b, 2026-09-29).
  *
  * Applied and judged by `npm run chaos` (`scripts/gates/chaos.ts`). Each entry breaks ONE
  * guard in `core/npc/MCSPlayer.ts`, its config, or the claimcheck fix this slice needed; the
- * named suite must go red. Four re-plant the Android rule this slice ruled against (×1.5
- * reach, the stop without the stance guard, the light crit, heavy launch at the Sim's 5);
- * the rest break the web rule's own arithmetic or the harness rule.
+ * named suite must go red. Six re-plant an Android rule a slice ruled against (3a: ×1.5
+ * reach, the stop without the stance guard, the light crit, heavy launch at the Sim's 5;
+ * 3b: `initMove`'s order and its distance); the rest break the web rule's own arithmetic,
+ * a boundary, or the harness rule.
  *
  * PROVENANCE. All written here, at the port, and watched going red on the cycle that
  * wrote them — marked `reauthored:`.
@@ -112,5 +113,133 @@ export const PLANTS: ChaosPlant[] = [
     replace: "    if (re.test(sourceLines[n - 1] ?? '')) return true;\n",
     tests: ['tests/claimcheck.test.ts'],
     note: 'reauthored:2026-09-29 — the fourth false-pass hole: `§1t4414s0§` vouched for 0 and 1 on any web line',
+  },
+  {
+    name: 'duellist movement: the Android initMove order (destX set before the adventure guard)',
+    file: PORT,
+    find: '    const s = this.actionState;\n    const dist = asInt(this.posX - dest.x);\n',
+    replace: '    const s = this.actionState;\n    this.destX = asInt(dest.x);\n    const dist = asInt(this.posX - dest.x);\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — Android `MCSPlayer.as:2320` sets destX first; web `§1t99s0§.as:2401` after the guard; ruled WEB. The stub passed the "refused" test; this plant proves it',
+  },
+  {
+    name: 'duellist movement: the Android distance (posX minus the truncated dest)',
+    file: PORT,
+    find: '    const dist = asInt(this.posX - dest.x);\n',
+    replace: '    const dist = this.posX - asInt(dest.x);\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — Android `MCSPlayer.as:2321` `posX - this.destX` (an int); web `§1t99s0§.as:2396` `int(posX - param1.x)`; ruled WEB',
+  },
+  {
+    name: 'duellist movement: exactly 100 px runs (<= became <)',
+    file: PORT,
+    find: '    this.startAction(dist * dist <= OG_MOVE_DIST_SQ.walkMax ? OG_STATE.WALK : OG_STATE.RUN);\n',
+    replace: '    this.startAction(dist * dist < OG_MOVE_DIST_SQ.walkMax ? OG_STATE.WALK : OG_STATE.RUN);\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds `<= 10000` (web `:2413`, Android `:2337`)',
+  },
+  {
+    name: 'duellist movement: the adventure 25 px floor off by one (625 → 626)',
+    file: CONFIG,
+    find: '  adventureMin: 625,\n',
+    replace: '  adventureMin: 626,\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds `< 625` (web `:2397`, Android `:2322`)',
+  },
+  {
+    name: 'duellist movement: the adventure guard ignores an airborne body',
+    file: PORT,
+    find: '        this.isDowned() || this.isAirborne() || s === OG_STATE.GOTLAUNCHED)\n',
+    replace: '        this.isDowned() || s === OG_STATE.GOTLAUNCHED)\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds test isAirborne() (web `:2397`)',
+  },
+  {
+    name: 'duellist movement: the adventure guard applied in the duel too',
+    file: PORT,
+    find: '      this.world.adventureMode &&\n',
+    replace: '      true &&\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `GameEngine.isAdventureMode()` gates the whole refusal (web `:2397`)',
+  },
+  {
+    name: 'duellist movement: destX not clamped at the stage width',
+    file: PORT,
+    find: '    else if (this.destX > this.world.stageWidth) this.destX = this.world.stageWidth;\n',
+    replace: '',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds clamp to getGameStageWidth() (web `:2406-2409`)',
+  },
+  {
+    name: 'duellist movement: initMove keeps the slash buffer',
+    file: PORT,
+    find: '    this.hasSlash = false;\n    this.hasSlashBuffer = false;\n    this.startAction(dist',
+    replace: '    this.hasSlash = false;\n    this.startAction(dist',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds clear it (web `:2412`)',
+  },
+  {
+    name: 'duellist movement: one step away steps instead of arriving (<= became <)',
+    file: PORT,
+    find: '      if (this.posX - this.destX <= speed) {\n',
+    replace: '      if (this.posX - this.destX < speed) {\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds `<= speed` (web `:2977`, Android `:2899`)',
+  },
+  {
+    name: 'duellist movement: stepping right never turns the body',
+    file: PORT,
+    find: '      this.faceRight();\n      this.velX = speed;\n',
+    replace: '      this.velX = speed;\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — web `:2972` `§1t5493s0§` is faceRight (`§1t75s0§.as:1652`)',
+  },
+  {
+    name: 'duellist movement: movePlayer runs past the stage width',
+    file: PORT,
+    find: '    else if (this.posX + d > this.world.stageWidth) d -= this.posX + d - this.world.stageWidth;\n',
+    replace: '',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds clamp (web `:3005-3008`, Android `:2927-2930`)',
+  },
+  {
+    name: 'duellist movement: moveTo keeps the AI\'s fractional point',
+    file: PORT,
+    find: '    this.inputArray.push({ x: asInt(posX), y: asInt(posY) });\n',
+    replace: '    this.inputArray.push({ x: posX, y: posY });\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `moveTo(param1:int, param2:int)` (web `:4934`) truncates `Math.random() * width`',
+  },
+  {
+    name: 'duellist movement: destX not clamped at 0',
+    file: PORT,
+    find: '    if (this.destX < ZERO) this.destX = ZERO;\n    else if (this.destX > this.world.stageWidth)',
+    replace: '    if (this.destX > this.world.stageWidth)',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds clamp at 0 (web `:2402-2405`); found unplanted by the 3b review',
+  },
+  {
+    name: 'duellist movement: the adventure guard ignores a jumping body',
+    file: PORT,
+    find: '(dist * dist < OG_MOVE_DIST_SQ.adventureMin || s === OG_STATE.JUMP || s === OG_STATE.FALL ||',
+    replace: '(dist * dist < OG_MOVE_DIST_SQ.adventureMin || s === OG_STATE.FALL ||',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds test JUMP (web `:2397`); found unplanted by the 3b review',
+  },
+  {
+    name: 'duellist movement: stepping left never turns the body',
+    file: PORT,
+    find: '      this.faceLeft();\n      this.velX = -speed;\n',
+    replace: '      this.velX = -speed;\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — web `:2982` `§1t5492s0§` is faceLeft (`§1t75s0§.as:1638`); found unplanted by the 3b review',
+  },
+  {
+    name: 'duellist movement: movePlayer runs past 0',
+    file: PORT,
+    find: '    if (this.posX + d < ZERO) d -= this.posX + d;\n    else if',
+    replace: '    if',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds clamp at 0 (web `:3001-3004`); found unplanted by the 3b review',
   },
 ];

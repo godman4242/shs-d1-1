@@ -1,9 +1,10 @@
 /**
  * `MCSPlayer.as` (4,775 lines), the body the Duel Mode opponent fights with: `EnemyPlayer`
  * extends it, and the AI drives it with the same calls the human's mouse feeds (L5-OPP,
- * ruling R2: one body). Ported slice by slice; this is slice 3a, THE STANCE:
- * `canChangeStance`, `setStance`, `getStance`, `initSpecialSkills`, `stopMoving`,
- * `getDamage`, `getBaseDamage`, on the fields 1b-ii's `DuellistBody` carries.
+ * ruling R2: one body). Ported slice by slice, on the fields 1b-ii's `DuellistBody` carries:
+ * slice 3a, THE STANCE (`canChangeStance`, `setStance`, `getStance`, `initSpecialSkills`,
+ * `stopMoving`, `getDamage`, `getBaseDamage`) and slice 3b, THE MOVEMENT (`initMove`,
+ * `movement`, `movePlayer`, `moveTo`).
  *
  * Android structure, web numbers (ruling R6). Where the builds differ in STRUCTURE the web
  * side is ported, and `docs/DIVERGENCES.md` "L5-OPP SLICE 3a" rules each:
@@ -11,6 +12,8 @@
  *     above half of `maxreload`, else a sixth off);
  *   - `stopMoving` returns early for a body that cannot change stance (Android stops it);
  *   - `getDamage`'s full-reload bonus is ×1.3 in every stance (Android ×1.5 light, ×1.2 else).
+ *   - `initMove` measures before it sets `destX`, from the untruncated point (DIVERGENCES
+ *     "L5-OPP SLICE 3b"; the other three movement functions are the same in both builds).
  *
  * Only the opponent's path is ported: `controlledBy == 1` (`DuelModeUI.as:381`). The human's
  * branches (`controlledBy` 0 or 2: the UI calls, the network, `initSpecialSkills`' skill-id
@@ -26,6 +29,7 @@
 import { OG_ANIM, OG_STATE, type OgState } from '../../config/ogActor';
 import { OG_NO_STANCE, OG_STANCE } from '../../config/ogDuellistProfile';
 import {
+  OG_MOVE_DIST_SQ,
   OG_SPECIAL_SKILL_MASTERY,
   OG_STANCE_CHANGE_RELOAD,
   OG_STANCE_DAMAGE,
@@ -41,6 +45,12 @@ import type { AnimLibrary, HitGeometry, PlayerWorld } from './types';
 /** A call into an `MCSPlayer` group not ported yet: throws, naming the AS3 function. */
 export function unported(fn: string): never {
   throw new Error(`unported: ${fn}`);
+}
+
+/** A `flash.geom.Point`: one point of a stroke or a move. */
+export interface MovePoint {
+  readonly x: number;
+  readonly y: number;
 }
 
 /** `setStance`'s idle clip per stance (`MCSPlayer.as:3033-3085`). */
@@ -86,6 +96,7 @@ export class MCSPlayer extends Npc {
   destY = ZERO;
   hasSlash = false;
   hasSlashBuffer = false;
+  inputArray: MovePoint[] = [];
 
   /** `EnemyPlayer.init`'s body (slice 1b-ii); `init`'s closing `setStance` is the caller's. */
   constructor(world: PlayerWorld, anims: AnimLibrary, geometry: HitGeometry, rng: Rng, body: DuellistBody) {
@@ -232,5 +243,73 @@ export class MCSPlayer extends Npc {
   /** `MCSPlayer.as:3226` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3279`, the same. */
   getBaseDamage(): number {
     return asInt(this.minDamage + this.rng() * this.damageRange);
+  }
+
+  /**
+   * The opponent's `gotInput` is `EnemyPlayer`'s override (`EnemyPlayer.as:958`, web
+   * `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1008`), which calls no `super`: slice 4. `MCSPlayer`'s own is the human's
+   * (`InputManager.as:280`), out of the lane.
+   */
+  gotInput(lineArray: MovePoint[], isLine: boolean): void {
+    void lineArray;
+    void isLine;
+    unported('EnemyPlayer.gotInput');
+  }
+
+  /**
+   * WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2394` (Android `MCSPlayer.as:2318`). The web
+   * measures `int(posX - dest.x)` and only then sets `destX`; Android sets `destX` first, so a
+   * move refused in adventure mode still moves it, and measures from the truncated `destX`.
+   */
+  initMove(dest: MovePoint): void {
+    const s = this.actionState;
+    const dist = asInt(this.posX - dest.x);
+    if (
+      this.world.adventureMode &&
+      (dist * dist < OG_MOVE_DIST_SQ.adventureMin || s === OG_STATE.JUMP || s === OG_STATE.FALL ||
+        this.isDowned() || this.isAirborne() || s === OG_STATE.GOTLAUNCHED)
+    ) return;
+    this.destX = asInt(dest.x);
+    if (this.destX < ZERO) this.destX = ZERO;
+    else if (this.destX > this.world.stageWidth) this.destX = this.world.stageWidth;
+    this.destY = asInt(dest.y);
+    this.hasSlash = false;
+    this.hasSlashBuffer = false;
+    this.startAction(dist * dist <= OG_MOVE_DIST_SQ.walkMax ? OG_STATE.WALK : OG_STATE.RUN);
+  }
+
+  /** `MCSPlayer.as:2890` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2968`, the same. False once it arrives. */
+  movement(speed: number): boolean {
+    if (this.posX - this.destX < -speed) {
+      this.faceRight();
+      this.velX = speed;
+    } else {
+      if (this.posX - this.destX <= speed) {
+        this.movePlayer(this.destX - this.posX);
+        return false;
+      }
+      this.faceLeft();
+      this.velX = -speed;
+    }
+    this.movePlayer(this.velX);
+    return true;
+  }
+
+  /**
+   * `MCSPlayer.as:2921` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2999`, the same: clamp to the stage,
+   * then the `controlledBy != 0` branch. The rest (the stage scroll, the minimap) is the human's.
+   */
+  movePlayer(dist: number): void {
+    let d = dist;
+    if (this.posX + d < ZERO) d -= this.posX + d;
+    else if (this.posX + d > this.world.stageWidth) d -= this.posX + d - this.world.stageWidth;
+    this.movePositionX(d);
+  }
+
+  /** `MCSPlayer.as:4565` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4934`, the same. The parameters are `int`s. */
+  moveTo(posX: number, posY: number): void {
+    this.inputArray.length = ZERO;
+    this.inputArray.push({ x: asInt(posX), y: asInt(posY) });
+    this.gotInput(this.inputArray, false);
   }
 }

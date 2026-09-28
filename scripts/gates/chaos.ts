@@ -84,7 +84,7 @@ const BACKUP_DIR = join(ROOT, '.chaos-backup');
  * `tests/chaosGate.test.ts` pins the same number from the other side, so the two cannot
  * drift apart silently.
  */
-const EXPECTED_TOTAL = 104;
+const EXPECTED_TOTAL = 120;
 
 type Status = 'RED' | 'STAYED-GREEN' | 'PLANT-FAILED' | 'NO-OP' | 'INCONCLUSIVE' | 'RESTORE-FAILED';
 

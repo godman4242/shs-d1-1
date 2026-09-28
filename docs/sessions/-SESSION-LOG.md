@@ -4192,3 +4192,26 @@ plants 8/8 RED. The full 92-plant chaos run is the shell's post-ship step.
 
 After: 92 files / 1855 tests · typecheck 0 · lint 0 · claimcheck 1968 / 551 / 44 / 0 · the new
 plants 12/12 RED. The full 104-plant chaos run is the shell's post-ship step.
+
+## 2026-09-29 — build loop: L5-OPP slice 3b, THE MOVEMENT
+
+- **Grounded:** RESUME_HERE's kickoff → `L5_OPPONENT_KICKOFF.md` ERRATUM 7, §3 slice 3b.
+  Baseline at `fc09c47` re-measured and matched: 92 files / 1855 tests · typecheck 0 · lint 0 ·
+  claimcheck 1968 / 551 / 44 / 0 · chaos 104 pinned.
+- **Both builds read line by line:** `movement`, `movePlayer` and `moveTo` are identical; only
+  `initMove` differs (web measures `int(posX - dest.x)` before it sets `destX`). Web ported.
+- **Red → green.** Stub: 30 of 32 red on assertions (the 2 green: one "refused move changes
+  nothing" test, on both fixtures, proved by plant 1). Port: 56/56 in the suite, both fixtures.
+- **Found:** the opponent's `gotInput` is `EnemyPlayer`'s (no `super`, both builds), so
+  `MCSPlayer.gotInput` is out of the lane; slice 4 is 700 lines → 4a / 4b / 4c. ERRATUM 8.
+- **Chaos:** 16 plants, pinned 104 → 120 in both places; 16/16 red, restored byte-identical
+  (scratch clone).
+- **Review:** one fresh-context reviewer, no bug. It found the web `NPC.isAirborne` also counts
+  FALL (re-verified, `§1t68s0§.as:795`; queued for a ruling, `Npc` is the base of 20 mobs) and
+  four unplanted guards (planted, red).
+- **Next:** slice 4a (the stroke makers); the kickoff is at the top of RESUME_HERE.
+
+### THE GATES
+
+After: 92 files / 1902 tests · typecheck 0 · lint 0 · claimcheck 1983 / 553 / 44 / 0 · the new
+plants 16/16 RED. The full 120-plant chaos run is the shell's post-ship step.

@@ -180,6 +180,23 @@
 >    (`§1t4414s0§`) vouched for any value of 0 or 1. Closed; 0 new failures when closed.
 > Evidence and red-teams: `docs/DIVERGENCES.md`, "L5-OPP SLICE 3a".
 
+> **⛔ ERRATUM 8 — SLICE 3b (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **3b landed** (the movement). Only `initMove` differs between the builds (web: measure
+>    `int(posX - dest.x)`, then set `destX`); web ported.
+> 2. **Slice 4's `gotInput` is `EnemyPlayer`'s, not `MCSPlayer`'s.** `EnemyPlayer.gotInput`
+>    (`EnemyPlayer.as:958-988`, web `§1t122s0§.as:1008-1038`, 31 lines) calls no `super` in
+>    either build; only the human's `InputManager.as:280` reaches `MCSPlayer.gotInput` (70), so
+>    that one is out of the lane. `moveTo`'s `unported` names `EnemyPlayer.gotInput`.
+> 3. **Slice 4 is 700 Android lines, over the 500 split line.** Measured by function start:
+>    `initSlash` 100, `checkNextSlash` 13, `startSlash` 192, `doSlash` 59, `endSlash` 95,
+>    `endDownStab` 13, and the AI's stroke makers `makeSlash` + the six `*Target` /
+>    `slashDiagonal*` (`MCSPlayer.as:4577-4734`, 158). Proposed cut, for the session to confirm
+>    by reading them: **4a** = the stroke makers + `EnemyPlayer.gotInput` (~190; they end in
+>    `initSlash`, which goes through `unported`); **4b** = `initSlash` + `checkNextSlash` +
+>    `startSlash` (305); **4c** = `doSlash` + `endSlash` + `endDownStab` (167).
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 3b".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -256,8 +273,8 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **1b-ii** | THE DERIVED STATS ii — the body on the record · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 1b-ii"; the cooldown table deferred to slice 7) | `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86) | no |
 | **2** | **THE PROFILE SOURCE (R1)** — the writers + the ruling · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 2") | `StatsManager.getBattleStatsString/getEquipmentString/getSkillStatsString`, `Item.toStringNoQty`, `initNewPlayer` | no |
 | **3a** | **BODY i — THE STANCE** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3a"; `nextStance`, `walkTo`, `faceScreenCenter` ruled out of the lane, ERRATUM 7) | `setStance` 103, `initSpecialSkills` 71 (AI branch), `canChangeStance`, `stopMoving` 25, `getDamage` 28, `getBaseDamage` | no |
-| 3b | BODY i — the movement | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
-| 4 | BODY ii — the stroke | `gotInput` 70, `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
+| **3b** | **BODY i — THE MOVEMENT** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3b") | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
+| 4 | BODY ii — the stroke (split 4a / 4b / 4c: ERRATUM 8) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine (sub-sliced by state) | `update` 931, `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
 | 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |

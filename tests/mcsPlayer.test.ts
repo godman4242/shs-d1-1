@@ -10,7 +10,7 @@
  * `tests/duellistWriter.test.ts` pin. AS3 stores into `int` fields, so every product truncates.
  */
 import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { OG_STATE, type OgState } from '../src/config/ogActor';
 import { OG_STANCE_REACH } from '../src/config/ogMcsPlayer';
 import { REACH } from '../src/config/reach';
@@ -292,10 +292,188 @@ describe('getDamage / getBaseDamage (WEB), fixture 2, one draw of 0.5 → base i
   });
 });
 
+/*
+ * SLICE 3b — THE MOVEMENT. `initMove` (web `§1t99s0§.as:2394`, Android `MCSPlayer.as:2318`),
+ * `movement` (`:2968` / `:2890`), `movePlayer`'s opponent branch (`:2999` / `:2921`) and
+ * `moveTo` (`:4934` / `:4565`). Only `initMove` differs between the builds; each test that
+ * tells them apart says what Android would give. The stage is 800 wide (`world`).
+ */
+/** `MCSPlayer.as:13` `runSpeed = 12` and `:207` `walkSpeed = 4`; the web's are the same (`§1t99s0§.as:13`, `:208`). */
+const RUN_SPEED = 12;
+const WALK_SPEED = 4;
+const STAGE = 800;
+
+/** A body at `posX` whose `startAction` records the state it was asked for instead of throwing. */
+function mover(b: DuellistBody, posX: number, adventure = false) {
+  const p = player(b);
+  p.world.adventureMode = adventure;
+  p.setPosition(posX, GROUND);
+  const started: OgState[] = [];
+  vi.spyOn(p, 'startAction').mockImplementation((s: OgState) => {
+    started.push(s);
+  });
+  return { p, started };
+}
+
+describe.each([
+  ['fixture 1', body1],
+  ['fixture 2', body2],
+])('slice 3b, %s: initMove', (_name, body) => {
+  it('a move within 100 px walks: dest set, the slash and its buffer cleared, then WALK', () => {
+    const { p, started } = mover(body(), 400);
+    p.hasSlash = true;
+    p.hasSlashBuffer = true;
+    p.initMove({ x: 330, y: GROUND });
+    expect([p.destX, p.destY, p.hasSlash, p.hasSlashBuffer, started]).toEqual([330, GROUND, false, false, [OG_STATE.WALK]]);
+  });
+
+  it('exactly 100 px still walks (dist² = 10000 is <=); 101 px runs', () => {
+    const walk = mover(body(), 200);
+    walk.p.initMove({ x: 100, y: GROUND });
+    const run = mover(body(), 200);
+    run.p.initMove({ x: 99, y: GROUND });
+    expect([walk.started, run.started]).toEqual([[OG_STATE.WALK], [OG_STATE.RUN]]);
+  });
+
+  it('WEB: the distance is int(posX − dest.x), so 200 → 99.5 is 100 px and walks (Android: 200 − 99 = 101, runs)', () => {
+    const { p, started } = mover(body(), 200);
+    p.initMove({ x: 99.5, y: 300.7 });
+    expect([p.destX, p.destY, started]).toEqual([99, 300, [OG_STATE.WALK]]);
+  });
+
+  it('dest is clamped to the stage, but the walk/run choice reads the UNCLAMPED point', () => {
+    const left = mover(body(), 50);
+    left.p.initMove({ x: -30, y: GROUND }); // 80 px to the point, 50 to the edge: walks
+    const right = mover(body(), 700);
+    right.p.initMove({ x: 950, y: GROUND }); // 250 px to the point, 100 to the edge: runs
+    expect([left.p.destX, left.started, right.p.destX, right.started]).toEqual([0, [OG_STATE.WALK], STAGE, [OG_STATE.RUN]]);
+  });
+
+  it('WEB: in adventure mode a move under 25 px is refused and dest does NOT move (Android sets destX first)', () => {
+    const { p, started } = mover(body(), 100, true);
+    p.destX = 100;
+    p.initMove({ x: 80, y: GROUND });
+    expect([p.destX, started]).toEqual([100, []]);
+  });
+
+  it('in adventure mode exactly 25 px is allowed (dist² = 625 is not < 625)', () => {
+    const { p, started } = mover(body(), 100, true);
+    p.initMove({ x: 75, y: GROUND });
+    expect([p.destX, started]).toEqual([75, [OG_STATE.WALK]]);
+  });
+
+  it('in adventure mode a far move is refused while jumping, falling, launched, downed or airborne', () => {
+    const refused = (setUp: (p: MCSPlayer) => void) => {
+      const { p, started } = mover(body(), 100, true);
+      setUp(p);
+      p.initMove({ x: 500, y: GROUND });
+      return started.length;
+    };
+    const cases = [
+      (p: MCSPlayer) => { p.actionState = OG_STATE.JUMP; },
+      (p: MCSPlayer) => { p.actionState = OG_STATE.FALL; },
+      (p: MCSPlayer) => { p.actionState = OG_STATE.GOTLAUNCHED; },
+      (p: MCSPlayer) => { p.actionState = OG_STATE.DOWNED; },
+      (p: MCSPlayer) => { p.y = GROUND - 51; },
+    ];
+    expect(cases.map(refused)).toEqual([0, 0, 0, 0, 0]);
+    expect(refused(() => undefined)).toBe(1);
+  });
+
+  it('outside adventure mode (the duel) none of those refuse: a jumping body is sent RUN', () => {
+    const { p, started } = mover(body(), 100);
+    p.actionState = OG_STATE.JUMP;
+    p.y = GROUND - 51;
+    p.initMove({ x: 500, y: GROUND });
+    expect(started).toEqual([OG_STATE.RUN]);
+  });
+
+  it('unstubbed, the fields are set BEFORE startAction — UNPORTED, and loud', () => {
+    const p = player(body());
+    p.setPosition(400, GROUND);
+    p.hasSlash = true;
+    expect(() => {
+      p.initMove({ x: 600, y: GROUND });
+    }).toThrow('unported: MCSPlayer.startAction');
+    expect([p.destX, p.hasSlash]).toEqual([600, false]);
+  });
+});
+
+describe.each([
+  ['fixture 1', body1],
+  ['fixture 2', body2],
+])('slice 3b, %s: movement(speed) — posX / velX / facing at ±0 (the same in both builds)', (_name, body) => {
+  /** One `movement` call from `posX` toward `destX`: [returned, posX, x, velX, facingRight]. */
+  const step = (posX: number, destX: number, speed: number, facingRight: boolean, velX = 7) => {
+    const p = player(body());
+    p.setPosition(posX, GROUND);
+    p.destX = destX;
+    p.velX = velX;
+    p.facingRight = facingRight;
+    const moving = p.movement(speed);
+    return [moving, p.posX, p.x, p.velX, p.isFacingRight()];
+  };
+
+  it('approach from the left: one run step right, facing right', () => {
+    expect(step(100, 300, RUN_SPEED, false)).toEqual([true, 112, 112, RUN_SPEED, true]);
+  });
+
+  it('approach from the right: one walk step left, facing left', () => {
+    expect(step(300, 100, WALK_SPEED, true)).toEqual([true, 296, 296, -WALK_SPEED, false]);
+  });
+
+  it('arriving inside one step snaps to dest, returns false, and leaves velX and facing alone', () => {
+    expect(step(100, 108, RUN_SPEED, false)).toEqual([false, 108, 108, 7, false]);
+    expect(step(108, 100, RUN_SPEED, true)).toEqual([false, 100, 100, 7, true]);
+  });
+
+  it('exactly one step away is an arrival on both sides (−speed is not < −speed; speed is <= speed)', () => {
+    expect(step(100, 112, RUN_SPEED, false)).toEqual([false, 112, 112, 7, false]);
+    expect(step(112, 100, RUN_SPEED, true)).toEqual([false, 100, 100, 7, true]);
+    expect(step(100, 113, RUN_SPEED, false)).toEqual([true, 112, 112, RUN_SPEED, true]);
+  });
+
+  it('the stage edges: arriving at 0 and at the stage width', () => {
+    expect(step(10, 0, RUN_SPEED, true)).toEqual([false, 0, 0, 7, true]);
+    expect(step(30, 0, RUN_SPEED, true)).toEqual([true, 18, 18, -RUN_SPEED, false]);
+    expect(step(STAGE - 5, STAGE, RUN_SPEED, false)).toEqual([false, STAGE, STAGE, 7, false]);
+  });
+});
+
+describe('slice 3b: movePlayer — the opponent\'s branch clamps to the stage, then movePositionX', () => {
+  const moved = (posX: number, dist: number, stagePosition = 0) => {
+    const p = player(body2());
+    p.world.stagePosition = stagePosition;
+    p.setPosition(posX, GROUND);
+    p.movePlayer(dist);
+    return [p.posX, p.x];
+  };
+
+  it('inside the stage it moves the full distance, map and screen x together', () => {
+    expect(moved(400, -120, 150)).toEqual([280, 130]);
+  });
+
+  it('past either edge it stops ON the edge (the knockback callers pass ±400)', () => {
+    expect([moved(780, 400), moved(20, -400), moved(0, -1), moved(STAGE, 1)]).toEqual([[STAGE, STAGE], [0, 0], [0, 0], [STAGE, STAGE]]);
+  });
+});
+
+describe('slice 3b: moveTo — the AI\'s six calls (`EnemyPlayer.as:1023-1168`)', () => {
+  it('replaces inputArray with ONE int point, then calls gotInput — UNPORTED, and loud', () => {
+    const p = player(body2());
+    p.inputArray.push({ x: 1, y: 2 }, { x: 3, y: 4 });
+    // The AI passes `Math.random() * getGameStageWidth()`; the int parameters truncate it.
+    expect(() => {
+      p.moveTo(523.97, 358.4);
+    }).toThrow('unported: EnemyPlayer.gotInput');
+    expect(p.inputArray).toEqual([{ x: 523, y: 358 }]);
+  });
+});
+
 describe('the harness rule — unported calls throw, and their count only goes down', () => {
-  it('MCSPlayer.ts names exactly 2 unported sites (startAction, clearInteractTarget)', () => {
+  it('MCSPlayer.ts names exactly 3 unported sites (startAction, clearInteractTarget, EnemyPlayer.gotInput)', () => {
     const src = readFileSync(new URL('../src/core/npc/MCSPlayer.ts', import.meta.url), 'utf8');
-    expect(src.match(/unported\('/g)).toHaveLength(2);
+    expect(src.match(/unported\('/g)).toHaveLength(3);
   });
 });
 

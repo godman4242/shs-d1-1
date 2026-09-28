@@ -5857,3 +5857,89 @@ $ npm run claimcheck        ->  1968 cites · 551 values at ±0 · 44 context ·
 $ npm run instructionpaths  ->  every path resolves
 $ npm run chaos             ->  104 plants pinned; the 12 new ones 12/12 RED + restored (scratch clone; the full run is the shell's post-ship step)
 ```
+
+## L5-OPP SLICE 3b — THE MOVEMENT: `initMove`, `movement`, `movePlayer`, `moveTo` ON THE DUELLIST'S BODY (2026-09-29)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 7 item 3, §3 slice 3b. A build-loop
+cycle, one commit.
+
+**What landed:** the four functions in `src/core/npc/MCSPlayer.ts` on 3a's class, the
+opponent's branch only (`controlledBy` 1). `movePlayer` keeps only its `controlledBy != 0`
+branch (clamp to the stage, then `movePositionX`); the stage scroll, the canvas and the minimap
+after it are the human's. `initMove` ends in `startAction(WALK|RUN)` (slice 5, already
+`unported`); `moveTo` calls `gotInput`, a new `unported` site (2 → 3). One config object,
+`OG_MOVE_DIST_SQ` (`adventureMin: 625`, `walkMax: 10000`), cited in both builds.
+16 chaos plants (104 → 120). `tests/mcsPlayer.test.ts`: +31 tests, run on BOTH of 3a's fixture bodies, **30 of the first 32
+red on a stub** (the two green were the "refused move changes nothing" test, which a do-nothing
+stub passes; plant 1 proves it). Claimcheck 1968 → 1983 cites, 551 → 553 values.
+
+### THE R6 DIFF — both builds, line by line
+
+| | Android (`MCSPlayer.as`) | web (`§1t99s0§.as`) | ruled |
+|---|---|---|---|
+| `initMove`: when `destX` is set | FIRST (`:2320`), before the adventure guard, so a refused move still moves `destX`, unclamped | after the guard (`:2401`) | **web** |
+| `initMove`: the distance | `posX - this.destX` (`:2321`): `destX` is an `int`, so the point is truncated first | `var _loc2_:int = posX - param1.x` (`:2396`): the difference is truncated | **web** |
+| `initMove`: the guard, clamp, `destY`, slash flags, walk/run | `:2322-2345` | `:2397-2421`, the same | same |
+| `movement` | `:2890-2909` | `:2968-2987`, the same (`§1t5493s0§` = faceRight, `§1t5492s0§` = faceLeft: `§1t75s0§.as:1638`, `:1652`) | same |
+| `movePlayer` | `:2921-2963` | `:2999-3041`, the same, the human's branch included | same |
+| `moveTo` | `:4565-4570` | `:4934-4939`, the same | same |
+
+The two `initMove` differences agree on every point the opponent sends (`moveTo`'s parameters
+are `int`s, so its point is whole), and on every non-adventure call. They part only on a
+fractional point (the web walks 200 → 99.5 as 100 px; Android runs it as 101) and on a move
+refused in adventure mode (Android's `destX` moves). Both are pinned, and both re-planted as the
+Android rule (plants 1 and 2 of 16).
+
+**Red-team (web `initMove`).** *Steelman for Android:* it is the code R5 transcribes, and the
+difference is unreachable from the AI in a duel, so porting it costs nothing. *Why web:* R6, the
+videos are the web build, and "unreachable today" is exactly when a divergence is cheapest to
+get right. *Where it breaks:* nowhere a duel reaches. **Veto:** Android's order.
+
+### MEASURED ON THE WAY
+
+- **`adventureMode` is the whole refusal's switch.** In a duel it is false, so a jumping,
+  falling, launched, downed or airborne duellist is still sent WALK or RUN. The caller filters
+  instead: `EnemyPlayer.gotInput` calls `initMove` only outside FALL, GOTLAUNCHED, DOWNED, JUMP
+  and FORWARDROLL (`EnemyPlayer.as:983`), and it is slice 4's.
+- **`movement` can never reach `movePlayer`'s clamp** with a `destX` that `initMove` clamped: it
+  steps only while `destX - posX > speed`. The clamp bites for the knockback callers
+  (`movePlayer(±400)`, `MCSPlayer.as:752`), so it is tested directly.
+- **⛔ The opponent never reaches `MCSPlayer.gotInput`.** `EnemyPlayer` overrides it
+  (`EnemyPlayer.as:958`, web `§1t122s0§.as:1008`) and calls no `super` in either build; only the
+  human's `InputManager.as:280` reaches the base one. So `moveTo`'s `unported` names
+  `EnemyPlayer.gotInput`, and **slice 4's list loses `MCSPlayer.gotInput` (70 lines) and gains
+  `EnemyPlayer.gotInput` (~30).** Kickoff ERRATUM 8.
+- **Slice 4 is 700 Android lines** (`initSlash` 100, `checkNextSlash` 13, `startSlash` 192,
+  `doSlash` 59, `endSlash` 95, `endDownStab` 13, `makeSlash` 16, `launchTarget` 13,
+  `slashDiagonalLeft`/`Right` 16 each, `stabTarget` 22, `slashTarget` 43, `slashDownedTarget` 32,
+  measured by function start), over the kickoff's 500 split line.
+
+### ⚠️ FOUND BY THE REVIEW — the web `NPC.isAirborne` also counts FALL (queued, NOT changed)
+
+Web `§1t68s0§.as:793-796` (NPC): `actionState == FALL || mcs.y < groundY - 50`. Android
+`NPC.as:772-775`, and the ported `Npc.isAirborne`, test the height alone. **No effect on 3b:**
+`initMove` tests FALL itself in the same guard. But `Npc` is the base of all 20 ported mobs, and
+every `isAirborne()` caller there (the spear elite's `target.isAirborne()`, `EnemySpearElite.ts`)
+reads the Android rule. Whether R6 reaches the L4b mobs is a ruling for an attended session;
+queued in RESUME_HERE.
+
+### THE REVIEW
+
+One fresh-context reviewer: **no bug.** It recomputed every expected value by hand, re-mapped the
+web fields and state constants by declaration, and checked every line cite in the config, the
+comments and the plant notes. Its notes, each re-verified at the source: (1) the `isAirborne`
+difference above; (2) five guards had tests but no plant (the two 0-edge clamps, `faceLeft`, the
+JUMP term): **four plants added** (12 → 16), all red; (3) `movement` and `movePlayer` do not
+truncate their `int` parameters, which only matters for a fractional caller, and every source
+caller passes an `int` (`runSpeed`, the slash speeds, `velX`). `moveTo`, whose AI caller passes
+`Math.random() * width`, does truncate, pinned.
+
+### THE GATES
+
+```
+$ npx vitest run            ->  Test Files 92 passed (92) · Tests 1902 passed (1902)   (1855 + 31 movement + 16 plant pins)
+$ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
+$ npm run claimcheck        ->  1983 cites · 553 values at ±0 · 44 context · 0 failures
+$ npm run instructionpaths  ->  every path resolves
+$ npm run chaos             ->  120 plants pinned; the 16 new ones 16/16 RED + restored (scratch clone; the full run is the shell's post-ship step)
+```
