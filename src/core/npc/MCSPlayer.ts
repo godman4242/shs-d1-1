@@ -5,8 +5,9 @@
  * slice 3a, THE STANCE (`canChangeStance`, `setStance`, `getStance`, `initSpecialSkills`,
  * `stopMoving`, `getDamage`, `getBaseDamage`), slice 3b, THE MOVEMENT (`initMove`,
  * `movement`, `movePlayer`, `moveTo`), slice 4a, THE STROKE MAKERS, slice 4b, THE SLASH
- * START (`initSlash`, `checkNextSlash`, `startSlash`, `cancelStealth`), and slice 4c, THE
- * SLASH END (`doSlash`, `endSlash`, `endDownStab`, `deductReloadBar`).
+ * START (`initSlash`, `checkNextSlash`, `startSlash`, `cancelStealth`), slice 4c, THE
+ * SLASH END (`doSlash`, `endSlash`, `endDownStab`, `deductReloadBar`), and slice 5a, THE GROUND
+ * STROKE (`update` whole, and the three switches' IDLE, RUN, WALK, SLASH and POSE).
  *
  * Android structure, web numbers (ruling R6). Where the builds differ in STRUCTURE the web
  * side is ported, and `docs/DIVERGENCES.md` "L5-OPP SLICE 3a" rules each:
@@ -19,6 +20,8 @@
  *   - `initSlash` puts a downstab on the body's side by `posX` (Android: `mcs.x`, the screen
  *     x), and the web `isAirborne` counts FALL (DIVERGENCES "L5-OPP SLICE 4b").
  *   - `endSlash` names itself the hit's attacker (DIVERGENCES "L5-OPP SLICE 4c").
+ *   - `doAction` POSE names the attacker too, and ends in a `break` where Android falls through
+ *     into SKILL_BULLCHARGE (DIVERGENCES "L5-OPP SLICE 5a").
  *
  * Only the opponent's path is ported: `controlledBy == 1` (`DuelModeUI.as:381`). The human's
  * branches (`controlledBy` 0 or 2: the UI calls, the network, `initSpecialSkills`' skill-id
@@ -27,13 +30,18 @@
  *
  * THE HARNESS RULE (L5_OPPONENT_KICKOFF §3): a call into a group not ported yet goes through
  * `unported()`, which THROWS, so a test that reaches it fails loudly rather than no-oping.
- * The count of those sites is pinned in `tests/mcsPlayer.test.ts` and only goes down.
+ * The count of those sites is pinned in `tests/mcsPlayer.test.ts` and only goes down, once a
+ * switch is dispatched: each of the three switches sends the labels not ported yet through ONE
+ * site that names the label (`OG_CLIP_END_LABELS` & co.), and a value with no label is the
+ * source's no-op.
  *
  * AS3 stores every one of these into an `int`, so each result is truncated (`asInt`).
  */
-import { OG_ANIM, OG_LAUNCH, OG_STATE, type OgState } from '../../config/ogActor';
+import { OG_ANIM, OG_LAUNCH, OG_PART, OG_STATE, type OgState } from '../../config/ogActor';
 import { OG_NO_STANCE, OG_STANCE } from '../../config/ogDuellistProfile';
 import {
+  OG_CLIP_END_LABELS,
+  OG_DO_ACTION_LABELS,
   OG_MOVE_DIST_SQ,
   OG_SLASH,
   OG_SLASH_END,
@@ -42,6 +50,8 @@ import {
   OG_STANCE_CHANGE_RELOAD,
   OG_STANCE_DAMAGE,
   OG_STANCE_REACH,
+  OG_START_ACTION_LABELS,
+  OG_STATE_MACHINE,
   OG_STROKE,
 } from '../../config/ogMcsPlayer';
 import { ONE, ZERO } from '../../config/nums';
@@ -52,9 +62,14 @@ import { Npc } from './Npc';
 import { NpcDamage } from './NpcDamage';
 import type { AnimLibrary, HitGeometry, NpcTarget, PlayerWorld } from './types';
 
-/** A call into an `MCSPlayer` group not ported yet: throws, naming the AS3 function. */
-export function unported(fn: string): never {
-  throw new Error(`unported: ${fn}`);
+/** A call into an `MCSPlayer` group not ported yet: throws, naming the AS3 function (and the label a switch was handed). */
+export function unported(fn: string, label?: string): never {
+  throw new Error(label === undefined ? `unported: ${fn}` : `unported: ${fn} (${label})`);
+}
+
+/** `OG_STATE`'s key for a state, for a switch's `unported` message. */
+function stateName(s: OgState): string {
+  return Object.keys(OG_STATE).find((k) => OG_STATE[k as keyof typeof OG_STATE] === s) ?? String(s);
 }
 
 /** A `flash.geom.Point`: one point of a stroke or a move. */
@@ -153,6 +168,92 @@ const SLASH_SPEED: Readonly<Record<number, number>> = {
   [OG_STANCE.reversed]: OG_SLASH.balancedSpeed,
 };
 
+/** `startAction` RUN's clip per stance, with a slash to run to (`MCSPlayer.as:1241-1262`). No stance, no clip. */
+const RUN_CLIP: Readonly<Record<number, string>> = {
+  [OG_STANCE.light]: OG_ANIM.RUN_LIGHT,
+  [OG_STANCE.balanced]: OG_ANIM.RUN_BALANCED,
+  [OG_STANCE.heavy]: OG_ANIM.RUN_HEAVY,
+  [OG_STANCE.dual]: OG_ANIM.RUN_DUAL,
+  [OG_STANCE.reversed]: OG_ANIM.RUN_REVERSED,
+};
+
+/**
+ * `startAction` POSE's clip per stance (`MCSPlayer.as:1341-1451`): a jump or drop slash ends in
+ * the fall slash's end, an up slash in the jump slash's landing, the two tilts in their own ends
+ * (reversed has none: its flat end), and every other type in the flat end.
+ */
+const POSE_CLIP: Readonly<Record<number, { fall: string; land: string; down: string; up: string; flat: string }>> = {
+  [OG_STANCE.light]: {
+    fall: OG_ANIM.LIGHTFALLSLASH_END, land: OG_ANIM.LIGHTJUMPSLASH_LAND,
+    down: OG_ANIM.LIGHTSLASHDOWN_END, up: OG_ANIM.LIGHTSLASHUP_END, flat: OG_ANIM.LIGHTSLASH_END,
+  },
+  [OG_STANCE.balanced]: {
+    fall: OG_ANIM.BALANCEDFALLSLASH_END, land: OG_ANIM.BALANCEDJUMPSLASH_LAND,
+    down: OG_ANIM.BALANCEDSLASHDOWN_END, up: OG_ANIM.BALANCEDSLASHUP_END, flat: OG_ANIM.BALANCEDSLASH_END,
+  },
+  [OG_STANCE.heavy]: {
+    fall: OG_ANIM.HEAVYFALLSLASH_END, land: OG_ANIM.HEAVYJUMPSLASH_LAND,
+    down: OG_ANIM.HEAVYSLASHDOWN_END, up: OG_ANIM.HEAVYSLASHUP_END, flat: OG_ANIM.HEAVYSLASH_END,
+  },
+  [OG_STANCE.dual]: {
+    fall: OG_ANIM.DUALFALLSLASH_END, land: OG_ANIM.DUALJUMPSLASH_LAND,
+    down: OG_ANIM.DUALSLASHDOWN_END, up: OG_ANIM.DUALSLASHUP_END, flat: OG_ANIM.DUALSLASH_END,
+  },
+  [OG_STANCE.reversed]: {
+    fall: OG_ANIM.REVERSEDFALLSLASH_END, land: OG_ANIM.REVERSEDJUMPSLASH_LAND,
+    down: OG_ANIM.REVERSEDSLASH_END, up: OG_ANIM.REVERSEDSLASH_END, flat: OG_ANIM.REVERSEDSLASH_END,
+  },
+};
+
+/**
+ * The clip-end switch's two ground bands, one clip to the next (`MCSPlayer.as:317-355` and
+ * `:426-464`, web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:336-374` and `:445-483`): each of the 13 ground slashes' START
+ * opens its MID, and each END its POSE. The 13 ENDs are also the clips `doAction` POSE hits on.
+ */
+const SLASH_START_MID: Readonly<Record<string, string>> = {
+  [OG_ANIM.LIGHTSLASH_START]: OG_ANIM.LIGHTSLASH_MID,
+  [OG_ANIM.LIGHTSLASHDOWN_START]: OG_ANIM.LIGHTSLASHDOWN_MID,
+  [OG_ANIM.LIGHTSLASHUP_START]: OG_ANIM.LIGHTSLASHUP_MID,
+  [OG_ANIM.BALANCEDSLASH_START]: OG_ANIM.BALANCEDSLASH_MID,
+  [OG_ANIM.BALANCEDSLASHDOWN_START]: OG_ANIM.BALANCEDSLASHDOWN_MID,
+  [OG_ANIM.BALANCEDSLASHUP_START]: OG_ANIM.BALANCEDSLASHUP_MID,
+  [OG_ANIM.HEAVYSLASH_START]: OG_ANIM.HEAVYSLASH_MID,
+  [OG_ANIM.HEAVYSLASHDOWN_START]: OG_ANIM.HEAVYSLASHDOWN_MID,
+  [OG_ANIM.HEAVYSLASHUP_START]: OG_ANIM.HEAVYSLASHUP_MID,
+  [OG_ANIM.DUALSLASH_START]: OG_ANIM.DUALSLASH_MID,
+  [OG_ANIM.DUALSLASHDOWN_START]: OG_ANIM.DUALSLASHDOWN_MID,
+  [OG_ANIM.DUALSLASHUP_START]: OG_ANIM.DUALSLASHUP_MID,
+  [OG_ANIM.REVERSEDSLASH_START]: OG_ANIM.REVERSEDSLASH_MID,
+};
+const SLASH_END_POSE: Readonly<Record<string, string>> = {
+  [OG_ANIM.LIGHTSLASH_END]: OG_ANIM.LIGHTSLASH_POSE,
+  [OG_ANIM.LIGHTSLASHDOWN_END]: OG_ANIM.LIGHTSLASHDOWN_POSE,
+  [OG_ANIM.LIGHTSLASHUP_END]: OG_ANIM.LIGHTSLASHUP_POSE,
+  [OG_ANIM.BALANCEDSLASH_END]: OG_ANIM.BALANCEDSLASH_POSE,
+  [OG_ANIM.BALANCEDSLASHDOWN_END]: OG_ANIM.BALANCEDSLASHDOWN_POSE,
+  [OG_ANIM.BALANCEDSLASHUP_END]: OG_ANIM.BALANCEDSLASHUP_POSE,
+  [OG_ANIM.HEAVYSLASH_END]: OG_ANIM.HEAVYSLASH_POSE,
+  [OG_ANIM.HEAVYSLASHDOWN_END]: OG_ANIM.HEAVYSLASHDOWN_POSE,
+  [OG_ANIM.HEAVYSLASHUP_END]: OG_ANIM.HEAVYSLASHUP_POSE,
+  [OG_ANIM.DUALSLASH_END]: OG_ANIM.DUALSLASH_POSE,
+  [OG_ANIM.DUALSLASHDOWN_END]: OG_ANIM.DUALSLASHDOWN_POSE,
+  [OG_ANIM.DUALSLASHUP_END]: OG_ANIM.DUALSLASHUP_POSE,
+  [OG_ANIM.REVERSEDSLASH_END]: OG_ANIM.REVERSEDSLASH_POSE,
+};
+
+/**
+ * The pose → sheathe group, ONE `case` group in the source (`MCSPlayer.as:465-496`, web
+ * `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:484-515`): the 13 ground POSEs, the 5 jump slashes' landings and the 5 fall
+ * slashes' ends.
+ */
+const POSE_ENDS: readonly string[] = [
+  ...Object.values(SLASH_END_POSE),
+  OG_ANIM.LIGHTJUMPSLASH_LAND, OG_ANIM.BALANCEDJUMPSLASH_LAND, OG_ANIM.HEAVYJUMPSLASH_LAND,
+  OG_ANIM.DUALJUMPSLASH_LAND, OG_ANIM.REVERSEDJUMPSLASH_LAND,
+  OG_ANIM.LIGHTFALLSLASH_END, OG_ANIM.BALANCEDFALLSLASH_END, OG_ANIM.HEAVYFALLSLASH_END,
+  OG_ANIM.DUALFALLSLASH_END, OG_ANIM.REVERSEDFALLSLASH_END,
+];
+
 export class MCSPlayer extends Npc {
   declare readonly world: PlayerWorld;
 
@@ -199,6 +300,16 @@ export class MCSPlayer extends Npc {
   inputArray: MovePoint[] = [];
   slashArray: MovePoint[] = [];
   slashArrayBuffer: MovePoint[] = [];
+  /** `MCSPlayer.as:103` — frames the speech bubble stays up; the AI's taunts set it (slice 7). */
+  speechCounter: number = OG_STATE_MACHINE.speechOff;
+  /** `MCSPlayer.as:137-139` — frames left in the stealth and the log substitution (their skills are later slices). */
+  invisCounter = ZERO;
+  logsubCounter = ZERO;
+  /**
+   * `MCSPlayer.as:135` — the charge's FX clip. Only clip ends behind the clip-end catch-all write
+   * it (DASH, BULLCHARGE, CHICHARGE: `MCSPlayer.as:918`, `:1112`, `:1145`), so it stays null here.
+   */
+  chargingFx: object | null = null;
 
   /** `EnemyPlayer.init`'s body (slice 1b-ii); `init`'s closing `setStance` is the caller's. */
   constructor(world: PlayerWorld, anims: AnimLibrary, geometry: HitGeometry, rng: Rng, body: DuellistBody) {
@@ -215,12 +326,192 @@ export class MCSPlayer extends Npc {
     this.lightMastery = body.lightMastery;
     this.balancedMastery = body.balancedMastery;
     this.heavyMastery = body.heavyMastery;
+    this.walkSpeed = body.walkSpeed;
+    // `EnemyPlayer`'s constructor (`EnemyPlayer.as:51-52`) starts FALL (slice 5b), then this.
+    this.aiCounterMax = OG_STATE_MACHINE.aiCounterMax;
   }
 
-  /** `MCSPlayer.startAction` (671 lines) is slice 5. */
+  /**
+   * `EnemyPlayer.update` (`EnemyPlayer.as:908`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:956`, the same): a body
+   * alive and unfrozen whose target is gone or dead re-aims at the nearest enemy, and with none
+   * left goes IDLE, BEFORE the frame; then `MCSPlayer.update`. Its closing skill-cooldown tick
+   * runs only when `skillList != null`: slice 7 carries both (§3's slice-7 row).
+   */
+  override update(): void {
+    if (!this.dead && !this.animFrozen && (this.target === null || this.target.isDead())) {
+      this.target = this.world.nearestEnemy(asInt(this.getMapPosition()), !this.isFriendly);
+      if (this.target === null) this.startAction(OG_STATE.IDLE);
+    }
+    this.playerUpdate();
+  }
+
+  /**
+   * `MCSPlayer.update`: WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1179` (Android `MCSPlayer.as:275`, the same blocks): one frame. The clip
+   * clock steps and a finished clip is ended; the AI runs once every `aiCounterMax` frames; the
+   * state acts; then the reload, the hit guard, the speech bubble, the stealth and the log
+   * substitution count down. The body is the AI's (`controlledBy == 1`), so the source's human
+   * branches (`playbackAI`, the reload bar, the progress bar) and the web's `§1t4440s0§` timer
+   * (never set on it, DIVERGENCES "L5-OPP SLICE 4c") are not carried; `autoSlash` is OR'd with
+   * `controlledBy == 1`, so it is not either.
+   */
+  private playerUpdate(): void {
+    if (this.disposed) return;
+    if (this.animFrozen && this.getHP() <= ZERO) return;
+    const finished = this.stepAnimation();
+    if (finished !== '') this.clipEnded(finished);
+    const w = this.world;
+    if (!this.dead && this.checkAITrigger() && !w.adventureMode && !w.networkPlayBack) this.AI();
+    this.doAction();
+    if (this.reload < this.maxreload) this.reload += ONE;
+    if (this.gotHitCounter > ZERO) this.gotHitCounter -= ONE;
+    if (this.speechCounter > ZERO) {
+      this.speechCounter -= ONE;
+    } else if (this.speechCounter === ZERO) {
+      this.speechCounter = OG_STATE_MACHINE.speechOff;
+      this.emit({ type: 'speechClear' });
+    }
+    if (this.invisCounter > ZERO) {
+      this.invisCounter -= ONE;
+      if (this.invisCounter === ZERO) this.cancelStealth();
+    }
+    if (this.logsubCounter > ZERO) {
+      this.logsubCounter -= ONE;
+      if (this.logsubCounter === ZERO) this.cancelLogSub();
+    }
+  }
+
+  /**
+   * The clip-end switch: Android's is inline in `update` (`MCSPlayer.as:298-1147`), the web moved
+   * it whole into a helper that returns `false` on `default` (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:305-1177`); `update`
+   * ignores the value. 5a's four bands are ported; the other 94 of its 146 labels are unported.
+   */
+  clipEnded(name: string): boolean {
+    const S = OG_STATE;
+    const next = SLASH_START_MID[name] ?? SLASH_END_POSE[name];
+    if (next !== undefined) {
+      this.startAnim(next);
+      return true;
+    }
+    switch (name) {
+      case OG_ANIM.SHEATHESWORDCHIBURI:
+      case OG_ANIM.SHEATHESWORD:
+        // `controlledBy == 0` plays SHEATHETOIDLE instead: the human's.
+        if (!this.world.redFreeze) this.startAction(S.IDLE);
+        return true;
+      case OG_ANIM.SHEATHETOIDLE:
+        this.startAction(S.IDLE);
+        return true;
+    }
+    if (POSE_ENDS.includes(name)) {
+      if (this.actionState !== S.REDFREEZE && this.world.redFreeze) this.startAction(S.REDFREEZE);
+      else if (this.actionState !== S.REDFREEZE) this.startAnim(OG_ANIM.SHEATHESWORD);
+      return true;
+    }
+    if (OG_CLIP_END_LABELS.includes(name)) unported('MCSPlayer.update clip end', name);
+    return false;
+  }
+
+  /**
+   * WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1258` (Android `MCSPlayer.as:1206`, the same). Records the state and,
+   * on a change, removes the charge FX; then the state's entry. `prev` is the source's local, not
+   * `Npc.prevActionState` (the flinch's).
+   */
   override startAction(actionState: OgState): void {
-    void actionState;
-    unported('MCSPlayer.startAction');
+    const S = OG_STATE;
+    const prev = this.actionState;
+    this.actionState = actionState;
+    if (actionState !== prev && this.chargingFx !== null) {
+      unported('Projectile.removeProjectile');
+    }
+    switch (actionState) {
+      case S.IDLE: {
+        // The adventure-mode half of the test is `controlledBy == 0`'s: never the AI's.
+        const w = this.world;
+        const tired = !w.adventureMode && !w.redFreeze && this.getHP() <= this.maxhp / OG_STATE_MACHINE.tiredHpDiv;
+        this.startAnim(tired ? OG_ANIM.TIRED : OG_ANIM.IDLE_SHEATHED);
+        this.checkNextSlash();
+        break;
+      }
+      case S.RUN: {
+        const run = this.hasSlash ? RUN_CLIP[this.stance] : OG_ANIM.RUN_SHEATHED;
+        if (run !== undefined) this.startAnim(run);
+        if (this.y < this.world.groundY) this.startAction(S.FALL);
+        break;
+      }
+      case S.WALK:
+        this.startAnim(OG_ANIM.WALK_SHEATHED);
+        if (this.y < this.world.groundY) this.startAction(S.FALL);
+        break;
+      case S.SLASH:
+        this.startSlash();
+        break;
+      case S.POSE: {
+        const t = this.slashType;
+        const c = POSE_CLIP[this.stance];
+        if (t === T.downstab) this.startAnim(OG_ANIM.SHEATHESWORD);
+        else if (c !== undefined) {
+          if (t === T.jump || t === T.drop) this.startAnim(c.fall);
+          else if (t === T.up) this.startAnim(c.land);
+          else if (t === T.horDown) this.startAnim(c.down);
+          else if (t === T.horUp) this.startAnim(c.up);
+          else this.startAnim(c.flat);
+        }
+        this.checkNextSlash();
+        break;
+      }
+      default:
+        if (OG_START_ACTION_LABELS.includes(actionState)) unported('MCSPlayer.startAction', stateName(actionState));
+    }
+  }
+
+  /**
+   * WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1936` (Android `MCSPlayer.as:1877`): one frame of the state. RUN and
+   * WALK travel to `destX` and then slash or idle; SLASH is `doSlash`; POSE hits with the weapon
+   * while a ground slash's END plays. WEB: POSE names the attacker (`:2184`) and ends in a
+   * `break` (`:2195`); Android's falls through into SKILL_BULLCHARGE (DIVERGENCES "L5-OPP SLICE 5a").
+   */
+  override doAction(): void {
+    const S = OG_STATE;
+    switch (this.actionState) {
+      case S.IDLE:
+        break;
+      case S.RUN:
+        if (!this.movement(OG_STATE_MACHINE.runSpeed)) this.arrive();
+        break;
+      case S.WALK:
+        if (!this.movement(this.walkSpeed)) this.arrive();
+        break;
+      case S.SLASH:
+        this.doSlash();
+        break;
+      case S.POSE:
+        if (SLASH_END_POSE[this.animation] !== undefined) {
+          const damage = new NpcDamage(this.slashDamage, this.level, OG_LAUNCH.LAUNCH_NONE, this.stance);
+          damage.setAttacker(this);
+          damage.setPiercingDamage(this.STAT_PIERCINGDMG);
+          // `controlledBy == 0` asks NPCManager instead: the human's.
+          this.aim().checkHitObject({ kind: 'part', part: OG_PART.weapon, owner: this }, damage);
+        }
+        break;
+      default:
+        if (OG_DO_ACTION_LABELS.includes(this.actionState)) unported('MCSPlayer.doAction', stateName(this.actionState));
+    }
+  }
+
+  /** RUN's and WALK's arrival, written twice in the source: stop, then the slash if one waits, else IDLE. */
+  private arrive(): void {
+    this.velX = ZERO;
+    this.startAction(this.hasSlash ? OG_STATE.SLASH : OG_STATE.IDLE);
+  }
+
+  /** `EnemyPlayer.AI` (`EnemyPlayer.as:990`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1040`), which overrides `MCSPlayer.AI`: slice 7. */
+  AI(): void {
+    unported('EnemyPlayer.AI');
+  }
+
+  /** `MCSPlayer.as:4369` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4738`: the log substitution's end, slice 6. */
+  cancelLogSub(): void {
+    unported('MCSPlayer.cancelLogSub');
   }
 
   /** `MCSPlayer.as:2965` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3043`, the same. */
@@ -671,11 +962,11 @@ export class MCSPlayer extends Npc {
   }
 
   /**
-   * The target the stroke makers aim at. The source reads `target.…` unguarded (only
-   * `slashTarget` checks), so a null target is a TypeError there (#1009), and here.
+   * The target the stroke makers and `doAction` POSE read. The source reads `target.…` unguarded
+   * (only `slashTarget` checks), so a null target is a TypeError there (#1009), and here.
    */
   private aim(): NpcTarget {
-    if (this.target === null) throw new TypeError('the stroke makers read a null target');
+    if (this.target === null) throw new TypeError('read a null target');
     return this.target;
   }
 

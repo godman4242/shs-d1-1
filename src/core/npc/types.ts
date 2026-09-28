@@ -97,6 +97,12 @@ export interface PlayerWorld extends NpcWorld {
   playerCanSeeSlash: boolean;
   /** `GameEngine.isPlaybackClientShowSlash()` — a replay page's `showslash` flashvar (`GameEngine.as:1364-1366`). */
   playbackShowSlash: boolean;
+  /**
+   * `NetworkManager.instance.playBack` — a recorded duel or cutscene is replaying
+   * (`NetworkManager.as:903`, `:931`); `update` runs no AI under it (`MCSPlayer.as:1149`). Not
+   * `playback` above, which is `GameEngine.isPlayback()`, the game's action mode.
+   */
+  networkPlayBack: boolean;
 }
 
 /**

@@ -6427,3 +6427,106 @@ The kickoff's six-state 5a = 5a + 5b = 651 / 677.
   `X_START` → `X_MID` → `endSlash` → `startAction(POSE)` starts `X_END` → clip end `X_END` →
   `X_POSE` → clip end `X_POSE` → `SHEATHESWORD` (state stays POSE) → clip end `SHEATHESWORD` →
   `startAction(IDLE)` (on `controlledBy != 0`). All inside the new 5a.
+
+## L5-OPP SLICE 5a — THE GROUND STROKE: `update` WHOLE, AND IDLE, RUN, WALK, SLASH, POSE (2026-09-29)
+
+Kickoff: `RESUME_HERE.md` (5a), `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 12. A build-loop
+cycle, one commit. Ported in `src/core/npc/MCSPlayer.ts`: `update` whole (web `§1t99s0§.as:1179`,
+Android `MCSPlayer.as:275`); the clip-end switch as `clipEnded(name)` (web helper `:305-1177`,
+Android inline `:298-1147`) with its four ground-stroke bands; `startAction` (web `:1258`, Android
+`:1206`) and `doAction` (web `:1936`, Android `:1877`) with IDLE, RUN, WALK, SLASH and POSE; and
+`EnemyPlayer.update`'s wrapper around it (`EnemyPlayer.as:908`, web `§1t122s0§.as:956`), which the
+slice-5 map missed and the review found.
+
+### What differs between the builds, and the ruling
+
+| where | web | Android | ported |
+|---|---|---|---|
+| `doAction` POSE | names the attacker (`:2184`) and ends in `break` (`:2195`) | no attacker; no `break`: falls through into SKILL_BULLCHARGE, whose body runs only on `bullcharge_run` (`MCSPlayer.as:2128-2129`) | **web** (R6). Plant: re-adding the fall-through goes red on 5 tests |
+| the clip-end switch | a helper returning `false` on `default` | inline in `update` | the helper's shape (`clipEnded` returns the Boolean; `update` ignores it, as the web's does) |
+| `update`'s reload tick | hands the human's bar the raw values | computes `tempreload` for it | neither: both are `controlledBy == 0` |
+| the web timer `§1t4440s0§` | a block at the end of `update` | none | ruled out (never set on the AI duellist, 4c) |
+
+Everything else in 5a has the same shape in both builds (the slice-5 map's decode: 0 of 264
+constant-bearing line pairs differ inside 5a/5b).
+
+### What is NOT carried, and why
+
+- Every `controlledBy == 0` branch (the human's): `playbackAI`, the reload and progress bars, the
+  sheathe → SHEATHETOIDLE branch, IDLE's adventure-mode AP test, POSE's `NPCManager.checkHitObject`.
+- `autoSlash` in the AI test: it is OR'd with `controlledBy == 1`, which holds on the duellist.
+- `EnemyPlayer`'s constructor calls `startAction(FALL)` before setting `aiCounterMax`: FALL is 5b,
+  so the constructor sets only the counter max; the tests place the body in IDLE themselves.
+
+### The harness rule, re-measured: the unported count ROSE, 3 → 8
+
+5a replaced ONE stub (`startAction` threw for every state) with three dispatchers. A switch that
+ports some of its labels needs a site for the rest, so each switch has exactly one catch-all that
+names the label it was handed. The kickoff expected eight; the measured eight differ by one each way:
+
+| site | why |
+|---|---|
+| `MCSPlayer.update clip end` | the 94 of 146 clip-end labels outside 5a's bands |
+| `MCSPlayer.startAction` | the 30 of 35 labels outside 5a |
+| `MCSPlayer.doAction` | the 22 of 27 labels outside 5a |
+| `EnemyPlayer.AI` | slice 7; `update` calls it on frame 1 and every 12th |
+| `MCSPlayer.cancelLogSub` | slice 6 (`doSubstitutionLog`'s pair); `update` calls it when `logsubCounter` reaches 0 |
+| `Projectile.removeProjectile` | **not in the kickoff's list.** `startAction`'s wrapper removes `chargingFx` on a state change; only the DASH, BULLCHARGE and CHICHARGE clip ends write the field (`MCSPlayer.as:918`, `:1112`, `:1145`), all behind the clip-end catch-all, so it is null on every path that can run. Carried as a site so the slice that ports a writer cannot miss the removal |
+| `StageManager.clearInteractTarget` | unchanged (`stopMoving`) |
+| `NPCManager.checkPlayerHit` | unchanged (`endSlash`; slice 8) |
+
+**The target's `checkHitObject` is NOT a site** (the kickoff expected it). POSE calls
+`target.checkHitObject(weapon, damage)` through the `NpcTarget` port, exactly as the ported mobs
+already do (`EnemyWolf.ts`, `RoomGoblin.ts`); the target answers it, and in the duel that is the
+seam's proxy (slice 8). The end-to-end test spies it and pins every frame it fires.
+
+A value with NO label in a switch is the source's no-op, not a site: `startAction(FLY)` (from
+`Npc.gotFly`) records the state and does nothing, as in the source.
+
+### Found by the review: `EnemyPlayer` overrides `update` (the map had missed it)
+
+`EnemyPlayer.update` (`EnemyPlayer.as:908-932`, web `§1t122s0§.as:956-982`, the same shape) wraps
+`MCSPlayer.update`: BEFORE it, a body that is alive and unfrozen whose target is null or dead
+re-aims at `NPCManager.getNearestEnemy(getMapPosition(), !isFriendly)`, and with none left goes
+IDLE; AFTER it, each skill's cooldown ticks down (`skillList != null` only). The first draft
+ported `MCSPlayer.update` alone, so a POSE on an `_END` clip with its target gone read null (a
+TypeError) where the source goes IDLE first, and a dead target kept being swung at. **Ported** as
+`update` (the wrapper) over `playerUpdate` (the base); +3 tests (two red first for exactly those
+reasons), +7 plants. The cooldown tick is **not carried**: the port has no `skillList`, so the
+source's own guard skips it; §3's slice-7 row already owns "`update`'s cooldown tick". Every 5a
+test body now carries a live target, as a duellist in a duel does.
+
+### Measured on the way
+
+- **`startAction` has 35 labels in 34 groups**, not the map's "34 labels / 33 groups" (off by one,
+  both; KNOCKDOWNED + DOWNED share a group). `doAction` 27 and the clip-end switch 146 hold. The
+  three label tables (`OG_CLIP_END_LABELS` & co., `src/config/ogMcsPlayer.ts`) are pinned against
+  the source's own `case` lines in order.
+- **The body carried `walkSpeed` since 1b-ii and the constructor never copied it**, so a WALK would
+  have moved 0 px a frame. Copied now; `aiCounterMax` 12 (`EnemyPlayer.as:52`) set with it.
+- **`NetworkManager.instance.playBack` is its own flag** (a recorded duel or cutscene replaying),
+  not `world.playback` (`GameEngine.isPlayback()`): a new `PlayerWorld.networkPlayBack`.
+- **The first end-to-end stroke, with the source's clip lengths** (`OG_ANIM_CLIPS`). `slashTarget` on
+  a target 40 px to the right, then `update` a frame at a time:
+
+  | | fixture 1 (balanced, speed 40) | fixture 2 (heavy, speed 30) |
+  |---|---|---|
+  | SLASH (`parta`, 12 / 5 frames: never finishes) | frames 1–2: x 440, 480 | 1–2: 430, 460 |
+  | lands, pays the reload, `checkPlayerHit`, POSE | frame 3 at x 498 | frame 3 at x 482 |
+  | `partc` (4 / 7): the weapon hits the target | frames 3–6, hits on 4, 5, 6 | 3–9, hits on 4–9 |
+  | `partd` (11) | 7–17 | 10–20 |
+  | `sheathesword` (31) | 18–48 | 21–51 |
+  | IDLE | 49 | 52 |
+
+  Reload: 1, 2, then `2 − 48 → 0` (heavy `2 − 72 → 0`) at the landing and +1 a frame after, so
+  `k − 2` on frame `k ≥ 3`. The AI fires on frames 1, 13, 25, 37, 49. Every value at ±0 against a
+  hand-worked trace.
+- **The target is asked to take the hit on every frame of the `_END` clip** (3 times, balanced; 6,
+  heavy). Its own hit guard (`gotHitCounter`: 12 frames on a mob, `NPC.as:462`) is what makes that one hit: the
+  seam's proxy must keep one too (slice 8's list).
+
+### Gates
+
+Suite 92 files / 2174 tests (+44 `mcsPlayer`, +49 chaos anchors) · typecheck 0 · lint 0 ·
+claimcheck 2183 cites / 604 values / 0 failures · chaos 50 new plants (one retired, two
+re-anchored), pinned 211 → 260; the full run 260/260 red and restored.

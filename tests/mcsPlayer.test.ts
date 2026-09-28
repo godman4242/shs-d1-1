@@ -9,12 +9,19 @@
  * functions, on bodies whose own numbers `tests/duellistBody.test.ts` and
  * `tests/duellistWriter.test.ts` pin. AS3 stores into `int` fields, so every product truncates.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
-import { OG_STATE, type OgState } from '../src/config/ogActor';
-import { OG_SLASH_TYPE, OG_STANCE_REACH } from '../src/config/ogMcsPlayer';
+import { OG_ANIM, OG_LAUNCH, OG_PART, OG_STATE, type OgState } from '../src/config/ogActor';
+import {
+  OG_CLIP_END_LABELS,
+  OG_DO_ACTION_LABELS,
+  OG_SLASH_TYPE,
+  OG_STANCE_REACH,
+  OG_START_ACTION_LABELS,
+} from '../src/config/ogMcsPlayer';
 import { REACH } from '../src/config/reach';
 import { initDuellistBody, type DuellistBody } from '../src/core/npc/duellistBody';
+import { OgAnimLibrary } from '../src/core/npc/duelSeam';
 import { deriveDuellist } from '../src/core/npc/duellistStats';
 import { newPlayerState, writeBattleStats, writeEquipment, writeSkillStats } from '../src/core/npc/duellistWriter';
 import { MCSPlayer, type MovePoint } from '../src/core/npc/MCSPlayer';
@@ -51,6 +58,7 @@ const world = (battle: boolean): PlayerWorld => ({
   battle,
   playerCanSeeSlash: false,
   playbackShowSlash: false,
+  networkPlayBack: false,
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: 3, loop: false }) };
 const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0 };
@@ -228,7 +236,7 @@ describe('setStance in battle — the reload cost, the idle clip, stopMoving', (
     expect([p.destX, p.slashLength]).toEqual([0, 239]);
   });
 
-  it('a moving body is stopped: dest set, slash cleared, then startAction — UNPORTED, and loud', () => {
+  it('a moving body is stopped: dest set, slash cleared, IDLE (5a), then clearInteractTarget — UNPORTED, and loud', () => {
     const p = player(body2(), true);
     p.actionState = OG_STATE.WALK;
     p.posX = 300;
@@ -236,8 +244,9 @@ describe('setStance in battle — the reload cost, the idle clip, stopMoving', (
     p.hasSlashBuffer = true;
     expect(() => {
       p.setStance(LIGHT);
-    }).toThrow('unported: MCSPlayer.startAction');
-    expect([p.destX, p.destY, p.hasSlash, p.hasSlashBuffer]).toEqual([300, GROUND, false, false]);
+    }).toThrow('unported: StageManager.clearInteractTarget');
+    expect([p.destX, p.destY, p.hasSlash, p.hasSlashBuffer, p.actionState, p.animation])
+      .toEqual([300, GROUND, false, false, OG_STATE.IDLE, 'idle']);
   });
 });
 
@@ -392,14 +401,12 @@ describe.each([
     expect(started).toEqual([OG_STATE.RUN]);
   });
 
-  it('unstubbed, the fields are set BEFORE startAction — UNPORTED, and loud', () => {
+  it('unstubbed, the fields are set BEFORE startAction: the RUN (5a) reads hasSlash already cleared, so it runs sheathed', () => {
     const p = player(body());
     p.setPosition(400, GROUND);
     p.hasSlash = true;
-    expect(() => {
-      p.initMove({ x: 600, y: GROUND });
-    }).toThrow('unported: MCSPlayer.startAction');
-    expect([p.destX, p.hasSlash]).toEqual([600, false]);
+    p.initMove({ x: 600, y: GROUND });
+    expect([p.destX, p.hasSlash, p.actionState, p.animation]).toEqual([600, false, OG_STATE.RUN, 'run_sheathed']);
   });
 });
 
@@ -469,10 +476,8 @@ describe('slice 3b: moveTo — the AI\'s six calls (`EnemyPlayer.as:1023-1168`)'
     p.actionState = OG_STATE.IDLE;
     p.inputArray.push({ x: 1, y: 2 }, { x: 3, y: 4 });
     // The AI passes `Math.random() * getGameStageWidth()`; the int parameters truncate it.
-    expect(() => {
-      p.moveTo(523.97, 358.4);
-    }).toThrow('unported: MCSPlayer.startAction');
-    expect([p.inputArray, p.destX, p.destY]).toEqual([[{ x: 523, y: 358 }], 523, 358]);
+    p.moveTo(523.97, 358.4);
+    expect([p.inputArray, p.destX, p.destY, p.actionState]).toEqual([[{ x: 523, y: 358 }], 523, 358, OG_STATE.RUN]);
   });
 });
 
@@ -518,11 +523,14 @@ function striker(b: DuellistBody, t: NpcTarget | null): MCSPlayer {
 const line = (x: number, y: number, dx: number, dy: number, n: number) =>
   Array.from({ length: n }, (_, i) => ({ x: x + i * dx, y: y + i * dy }));
 
-/** Run one maker: the points it handed `gotInput`, after `initSlash`'s loud stop at `startAction` (slice 5). */
+/** Run one maker: the points it handed `gotInput`. `initSlash` asks `startAction` (5a) for ONE state, recorded, not run. */
 function stroke(p: MCSPlayer, make: (p: MCSPlayer) => void) {
-  expect(() => {
-    make(p);
-  }).toThrow('unported: MCSPlayer.startAction');
+  const started: OgState[] = [];
+  vi.spyOn(p, 'startAction').mockImplementation((s) => {
+    started.push(s);
+  });
+  make(p);
+  expect(started).toHaveLength(1);
   expect(p.slashArray).toEqual(p.inputArray);
   expect(p.slashArray).not.toBe(p.inputArray);
   return p.inputArray;
@@ -676,13 +684,11 @@ describe('slice 4a: EnemyPlayer.gotInput — the routing (the same in both build
     return { p, moves };
   }
 
-  it('a stroke in a free state is copied to slashArray, then initSlash takes its first point (to startAction: UNPORTED, loud)', () => {
+  it('a stroke in a free state is copied to slashArray, then initSlash takes its first point (100 px off: it RUNs, 5a)', () => {
     const { p, moves } = routed(OG_STATE.IDLE);
     const input = STROKE.map((q) => ({ ...q }));
-    expect(() => {
-      p.gotInput(input, true);
-    }).toThrow('unported: MCSPlayer.startAction');
-    expect(p.destX).toBe(STROKE[0]?.x);
+    p.gotInput(input, true);
+    expect([p.destX, p.actionState, p.animation]).toEqual([STROKE[0]?.x, OG_STATE.RUN, 'balanced_run']);
     expect([p.slashArray, p.hasSlashBuffer, moves]).toEqual([STROKE, false, []]);
     expect(p.slashArray[0]).not.toBe(input[0]);
   });
@@ -1403,11 +1409,618 @@ describe('slice 4c: endDownStab — the same in both builds', () => {
   });
 });
 
+/*
+ * L5-OPP SLICE 5a — THE GROUND STROKE. `update` whole (web `§1t99s0§.as:1179`, Android
+ * `MCSPlayer.as:275`), its clip-end switch (web helper `§1t99s0§.as:305`, Android `:298`) with the
+ * bands sheathe, ground `_START`, ground `_END` and pose → sheathe; `startAction` (web `:1258`,
+ * Android `:1206`) and `doAction` (web `:1936`, Android `:1877`) with IDLE, RUN, WALK, SLASH and
+ * POSE. Every other label of the three switches goes through one `unported` site per switch,
+ * naming what it was handed; a value with no label is the source's no-op. One difference between
+ * the builds: `doAction` POSE ends in a `break` in the web (`:2195`); Android falls through into
+ * SKILL_BULLCHARGE. Web ported. Every expected number was worked by hand from the source.
+ */
+const RUN_CLIP = ['light_run', 'balanced_run', 'heavy_run', 'dual_run', 'reversed_run'];
+const STANCE_PREFIX = ['LIGHT', 'BALANCED', 'HEAVY', 'DUAL', 'REVERSED'];
+const anim = (key: string): string => {
+  const name = (OG_ANIM as Record<string, string>)[key];
+  if (name === undefined) throw new Error(`no OG_ANIM.${key}`);
+  return name;
+};
+const stateName = (s: OgState) => Object.entries(OG_STATE).find(([, v]) => v === s)?.[0];
+
+/** A body out of any switch's reach: its init stance, on the ground at BODY_X, idle, no clip, a live target far off. */
+function idleBody(b: DuellistBody = body1(), rng: Rng = NO_DRAW, lib: AnimLibrary = anims): MCSPlayer {
+  const p = new MCSPlayer(world(false), lib, geometry, rng, b);
+  p.setStance(b.stance);
+  p.world.peaceful = false;
+  p.setPosition(BODY_X, GROUND);
+  p.actionState = OG_STATE.IDLE;
+  p.changeTarget(foe(700, GROUND, true));
+  return p;
+}
+
+/** `update` once a frame; the AI (slice 7) spied, the frames it ran on recorded. */
+function framed(p: MCSPlayer) {
+  let frame = 0;
+  const ai: number[] = [];
+  vi.spyOn(p, 'AI').mockImplementation(() => {
+    ai.push(frame);
+  });
+  const run = (n: number, each: (f: number) => void = () => undefined) => {
+    for (let i = 0; i < n; i += 1) {
+      frame += 1;
+      p.update();
+      each(frame);
+    }
+  };
+  return { ai, run, now: () => frame };
+}
+
+describe('slice 5a: update — one frame, in the source\'s order (the same in both builds)', () => {
+  it('the AI runs on the first frame and every 12th after (EnemyPlayer.as:52, aiCounterMax 12)', () => {
+    const p = idleBody();
+    const { ai, run } = framed(p);
+    run(49);
+    expect(ai).toEqual([1, 13, 25, 37, 49]);
+  });
+
+  it('unspied, the AI is slice 7 — UNPORTED, and loud', () => {
+    expect(() => {
+      idleBody().update();
+    }).toThrow('unported: EnemyPlayer.AI');
+  });
+
+  it('a dead body runs no AI, and its counter does not move (`!dead &&` comes first)', () => {
+    const p = idleBody();
+    const { ai, run } = framed(p);
+    p.dead = true;
+    run(3);
+    expect([ai, p.aiCounter]).toEqual([[], 0]);
+    p.dead = false;
+    run(1);
+    expect(ai).toEqual([4]);
+  });
+
+  it('no AI in adventure mode or under a network replay, yet the trigger was asked (the counter reset to 12)', () => {
+    for (const flag of ['adventureMode', 'networkPlayBack'] as const) {
+      const p = idleBody();
+      const { ai, run } = framed(p);
+      p.world[flag] = true;
+      run(1);
+      expect([flag, ai, p.aiCounter]).toEqual([flag, [], 12]);
+    }
+  });
+
+  it('the reload refills one a frame, never past maxreload (190 → 191 → 192 → 192)', () => {
+    const p = idleBody();
+    const { run } = framed(p);
+    p.reload = 190;
+    const seen: number[] = [];
+    run(3, () => seen.push(p.reload));
+    expect(seen).toEqual([191, 192, 192]);
+  });
+
+  it('gotHitCounter counts down to 0 and stops', () => {
+    const p = idleBody();
+    const { run } = framed(p);
+    p.gotHitCounter = 2;
+    const seen: number[] = [];
+    run(3, () => seen.push(p.gotHitCounter));
+    expect(seen).toEqual([1, 0, 0]);
+  });
+
+  it('speech: −1 (the start) stays; from 2 it counts 1, 0, then clears the bubble ONCE and parks at −1', () => {
+    const p = idleBody();
+    const { run } = framed(p);
+    expect(p.speechCounter).toBe(-1);
+    run(1);
+    expect(p.events.filter((e) => e.type === 'speechClear')).toEqual([]);
+    p.speechCounter = 2;
+    const seen: number[] = [];
+    run(4, () => seen.push(p.speechCounter));
+    expect(seen).toEqual([1, 0, -1, -1]);
+    expect(p.events.filter((e) => e.type === 'speechClear')).toHaveLength(1);
+  });
+
+  it('invisCounter: on reaching 0 it cancels the stealth (a hidden body puffs smoke and shows)', () => {
+    const p = idleBody();
+    const { run } = framed(p);
+    p.visible = false;
+    p.invisCounter = 2;
+    run(1);
+    expect([p.invisCounter, p.visible]).toEqual([1, false]);
+    run(1);
+    expect([p.invisCounter, p.visible, p.events.filter((e) => e.type === 'smoke')])
+      .toEqual([0, true, [{ type: 'smoke', x: BODY_X, y: GROUND }]]);
+  });
+
+  it('logsubCounter: on reaching 0 it calls cancelLogSub — UNPORTED (slice 6), loud', () => {
+    const p = idleBody();
+    const { run } = framed(p);
+    p.logsubCounter = 2;
+    run(1);
+    expect(p.logsubCounter).toBe(1);
+    expect(() => {
+      run(1);
+    }).toThrow('unported: MCSPlayer.cancelLogSub');
+  });
+
+  it('a disposed body does nothing; a frozen one does nothing at 0 HP, and runs above it', () => {
+    const gone = idleBody();
+    const g = framed(gone);
+    gone.disposed = true;
+    g.run(1);
+    expect([g.ai, gone.reload]).toEqual([[], 0]);
+    const frozen = idleBody();
+    const f = framed(frozen);
+    frozen.animFrozen = true;
+    frozen.setHP(0);
+    f.run(1);
+    expect([f.ai, frozen.reload]).toEqual([[], 0]);
+    frozen.setHP(1);
+    f.run(1);
+    expect([f.ai, frozen.reload]).toEqual([[2], 1]);
+  });
+
+  it('the clip clock steps first: a clip that finishes this frame is ended before the AI and doAction', () => {
+    const p = idleBody();
+    const order: string[] = [];
+    vi.spyOn(p, 'AI').mockImplementation(() => order.push('AI'));
+    vi.spyOn(p, 'doAction').mockImplementation(() => order.push('doAction'));
+    vi.spyOn(p, 'clipEnded').mockImplementation((name) => {
+      order.push(name);
+      return true;
+    });
+    p.startAnim(anim('BALANCEDSLASH_END'));
+    p.frameCounter = 2;
+    p.update();
+    expect(order).toEqual(['balanced_horslash_partc', 'AI', 'doAction']);
+  });
+});
+
+describe('slice 5a: EnemyPlayer.update — the target, before MCSPlayer.update (the same in both builds)', () => {
+  const dead = (): NpcTarget => ({ ...foe(300, GROUND, true), isDead: () => true });
+
+  it('a live target is kept; a null or dead one is re-aimed at the nearest enemy, from the int map x, isEnemy', () => {
+    const asked: Array<[number, boolean]> = [];
+    const next = foe(620, GROUND, false);
+    for (const t of [foe(500, GROUND, true), null, dead()]) {
+      const p = idleBody();
+      framed(p);
+      p.target = t;
+      p.setPosition(400.7, GROUND);
+      p.world.nearestEnemy = (x, isEnemy) => {
+        asked.push([x, isEnemy]);
+        return next;
+      };
+      p.update();
+      expect(p.target).toBe(t !== null && !t.isDead() ? t : next);
+    }
+    expect(asked).toEqual([[400, true], [400, true]]);
+  });
+
+  it('no enemy left: IDLE before the frame, so a POSE on an _END clip never reaches the null read', () => {
+    const p = idleBody();
+    framed(p);
+    p.target = null;
+    p.actionState = OG_STATE.POSE;
+    p.startAnim(anim('HEAVYSLASH_END'));
+    p.update();
+    expect([p.actionState, p.animation, p.target]).toEqual([OG_STATE.IDLE, 'idle', null]);
+  });
+
+  it('a dead or frozen body does not re-aim', () => {
+    for (const setUp of [(q: MCSPlayer) => { q.dead = true; }, (q: MCSPlayer) => { q.animFrozen = true; }]) {
+      const p = idleBody();
+      framed(p);
+      p.target = null;
+      const near = vi.fn(() => foe(620, GROUND, false));
+      p.world.nearestEnemy = near;
+      setUp(p);
+      p.update();
+      expect([near.mock.calls.length, p.target]).toEqual([0, null]);
+    }
+  });
+});
+
+describe('slice 5a: the clip-end switch — the four ground-stroke bands (the same in both builds)', () => {
+  const ended = (name: string, setUp: (p: MCSPlayer) => void = () => undefined) => {
+    const p = idleBody();
+    p.actionState = OG_STATE.POSE;
+    setUp(p);
+    const handled = p.clipEnded(name);
+    return { p, handled };
+  };
+
+  it('each of the 13 ground _START clips opens its _MID', () => {
+    for (const P of STANCE_PREFIX) {
+      const kinds = P === 'REVERSED' ? [''] : ['', 'DOWN', 'UP'];
+      for (const k of kinds) {
+        const { p, handled } = ended(anim(`${P}SLASH${k}_START`));
+        expect([handled, p.animation]).toEqual([true, anim(`${P}SLASH${k}_MID`)]);
+      }
+    }
+  });
+
+  it('each of the 13 ground _END clips opens its _POSE', () => {
+    for (const P of STANCE_PREFIX) {
+      const kinds = P === 'REVERSED' ? [''] : ['', 'DOWN', 'UP'];
+      for (const k of kinds) {
+        const { p, handled } = ended(anim(`${P}SLASH${k}_END`));
+        expect([handled, p.animation]).toEqual([true, anim(`${P}SLASH${k}_POSE`)]);
+      }
+    }
+  });
+
+  /** The 23 labels of the pose group: 13 _POSE, 5 JUMPSLASH_LAND, 5 FALLSLASH_END. */
+  const POSES = STANCE_PREFIX.flatMap((P) => [
+    ...(P === 'REVERSED' ? [''] : ['', 'DOWN', 'UP']).map((k) => `${P}SLASH${k}_POSE`),
+    `${P}JUMPSLASH_LAND`, `${P}FALLSLASH_END`,
+  ]);
+
+  it('each of the 23 pose-group clips sheathes the sword, the state left as it was', () => {
+    expect(POSES).toHaveLength(23);
+    for (const key of POSES) {
+      const { p, handled } = ended(anim(key));
+      expect([key, handled, p.animation, p.actionState]).toEqual([key, true, 'sheathesword', OG_STATE.POSE]);
+    }
+  });
+
+  it('under the kill-cam freeze the pose group asks for REDFREEZE (a later slice: loud); in REDFREEZE, nothing', () => {
+    expect(() => ended(anim('HEAVYSLASH_POSE'), (p) => { p.world.redFreeze = true; }))
+      .toThrow('unported: MCSPlayer.startAction (REDFREEZE)');
+    const { p, handled } = ended(anim('HEAVYSLASH_POSE'), (q) => {
+      q.world.redFreeze = true;
+      q.actionState = OG_STATE.REDFREEZE;
+    });
+    expect([handled, p.animation, p.actionState]).toEqual([true, '', OG_STATE.REDFREEZE]);
+    const calm = ended(anim('HEAVYSLASH_POSE'), (q) => { q.actionState = OG_STATE.REDFREEZE; });
+    expect(calm.p.animation).toBe('');
+  });
+
+  it('the sheathe (either clip) ends in IDLE, unless the freeze; sheathetoidle always does', () => {
+    for (const key of ['SHEATHESWORD', 'SHEATHESWORDCHIBURI', 'SHEATHETOIDLE']) {
+      const { p, handled } = ended(anim(key));
+      expect([key, handled, p.actionState, p.animation]).toEqual([key, true, OG_STATE.IDLE, 'idle']);
+    }
+    for (const [key, state] of [['SHEATHESWORD', OG_STATE.POSE], ['SHEATHETOIDLE', OG_STATE.IDLE]] as const) {
+      const { p } = ended(anim(key), (q) => { q.world.redFreeze = true; });
+      expect([key, p.actionState]).toEqual([key, state]);
+    }
+  });
+
+  it('every other of the 146 labels is UNPORTED and names its clip; a clip with no label is `default: return false`', () => {
+    const ported = new Set([
+      ...['SHEATHESWORDCHIBURI', 'SHEATHESWORD', 'SHEATHETOIDLE', ...POSES].map(anim),
+      ...STANCE_PREFIX.flatMap((P) => (P === 'REVERSED' ? [''] : ['', 'DOWN', 'UP'])
+        .flatMap((k) => [anim(`${P}SLASH${k}_START`), anim(`${P}SLASH${k}_END`)])),
+    ]);
+    const others = OG_CLIP_END_LABELS.filter((n) => !ported.has(n));
+    expect([ported.size, others.length]).toEqual([52, 94]);
+    for (const name of others) {
+      expect(() => idleBody().clipEnded(name)).toThrow(`unported: MCSPlayer.update clip end (${name})`);
+    }
+    expect([idleBody().clipEnded('idle'), idleBody().clipEnded('balanced_run')]).toEqual([false, false]);
+  });
+});
+
+describe('slice 5a: startAction — the wrapper and IDLE, RUN, WALK, SLASH, POSE (the same in both builds)', () => {
+  const started = (state: OgState, setUp: (p: MCSPlayer) => void = () => undefined) => {
+    const p = idleBody();
+    setUp(p);
+    p.startAction(state);
+    return p;
+  };
+
+  it('records the state; a change with a charging FX up removes it — UNPORTED (no ported path writes it)', () => {
+    const fx = {};
+    const same = started(OG_STATE.IDLE, (p) => { p.chargingFx = fx; });
+    expect([same.actionState, same.chargingFx]).toEqual([OG_STATE.IDLE, fx]);
+    expect(() => started(OG_STATE.WALK, (p) => { p.chargingFx = fx; })).toThrow('unported: Projectile.removeProjectile');
+    expect(started(OG_STATE.WALK).chargingFx).toBeNull();
+  });
+
+  it('IDLE: the sheathed idle, then checkNextSlash', () => {
+    const p = idleBody();
+    const next = vi.spyOn(p, 'checkNextSlash');
+    p.startAction(OG_STATE.IDLE);
+    expect([p.animation, next.mock.calls.length]).toEqual(['idle', 1]);
+  });
+
+  it('IDLE: tired at or under a quarter of max HP (25 of 100; 26 is not), never under the freeze or in adventure mode', () => {
+    const at = (hp: number, setUp: (p: MCSPlayer) => void = () => undefined) => started(OG_STATE.IDLE, (p) => {
+      p.maxhp = 100;
+      p.setHP(hp);
+      setUp(p);
+    }).animation;
+    expect([at(25), at(26), at(25, (p) => { p.world.redFreeze = true; }), at(25, (p) => { p.world.adventureMode = true; })])
+      .toEqual(['tired', 'idle', 'idle', 'idle']);
+  });
+
+  it('IDLE takes the buffered stroke: checkNextSlash → initSlash (a stroke 150 px off RUNs)', () => {
+    const p = started(OG_STATE.IDLE, (q) => {
+      q.slashArrayBuffer = [{ x: 250, y: 318 }, { x: 150, y: 318 }];
+      q.hasSlashBuffer = true;
+    });
+    expect([p.actionState, p.destX, p.hasSlash, p.hasSlashBuffer]).toEqual([OG_STATE.RUN, 250, true, false]);
+  });
+
+  it('RUN: with a slash, the stance\'s run; without, sheathed; no stance keeps the clip it had', () => {
+    const runs = [LIGHT, BALANCED, HEAVY, DUAL, REVERSED].map((st) => started(OG_STATE.RUN, (p) => {
+      p.stance = st;
+      p.hasSlash = true;
+    }).animation);
+    expect(runs).toEqual(RUN_CLIP);
+    expect(started(OG_STATE.RUN).animation).toBe('run_sheathed');
+    expect(started(OG_STATE.RUN, (p) => {
+      p.stance = -1;
+      p.hasSlash = true;
+    }).animation).toBe('');
+  });
+
+  it('WALK: the sheathed walk', () => {
+    expect([started(OG_STATE.WALK).animation, started(OG_STATE.WALK, (p) => { p.hasSlash = true; }).animation])
+      .toEqual(['walk', 'walk']);
+  });
+
+  it('RUN and WALK above the ground ask for FALL (slice 5b: loud); on it, not', () => {
+    for (const s of [OG_STATE.RUN, OG_STATE.WALK]) {
+      expect(() => started(s, (p) => { p.y = GROUND - 1; })).toThrow('unported: MCSPlayer.startAction (FALL)');
+      expect(started(s, (p) => { p.y = GROUND; }).actionState).toBe(s);
+    }
+  });
+
+  it('SLASH: startSlash', () => {
+    const p = idleBody();
+    const slash = vi.spyOn(p, 'startSlash').mockImplementation(() => undefined);
+    p.startAction(OG_STATE.SLASH);
+    expect([p.actionState, slash.mock.calls.length]).toEqual([OG_STATE.SLASH, 1]);
+  });
+
+  it('POSE: the stroke\'s end clip per stance and slash type; a downstab sheathes; then checkNextSlash', () => {
+    const expected = (P: string, t: number): string => {
+      if (t === T.downstab) return 'SHEATHESWORD';
+      if (t === T.jump || t === T.drop) return `${P}FALLSLASH_END`;
+      if (t === T.up) return `${P}JUMPSLASH_LAND`;
+      if (t === T.horDown && P !== 'REVERSED') return `${P}SLASHDOWN_END`;
+      if (t === T.horUp && P !== 'REVERSED') return `${P}SLASHUP_END`;
+      return `${P}SLASH_END`;
+    };
+    const types = [T.hor, T.jump, T.drop, T.up, T.air, T.downstab, T.horDown, T.horUp];
+    [LIGHT, BALANCED, HEAVY, DUAL, REVERSED].forEach((st, i) => {
+      const P = STANCE_PREFIX[i] ?? '';
+      for (const t of types) {
+        const p = idleBody();
+        const next = vi.spyOn(p, 'checkNextSlash');
+        p.stance = st;
+        p.slashType = t;
+        p.startAction(OG_STATE.POSE);
+        expect([P, t, p.animation, next.mock.calls.length]).toEqual([P, t, anim(expected(P, t)), 1]);
+      }
+    });
+    const none = (t: number) => started(OG_STATE.POSE, (p) => {
+      p.stance = -1;
+      p.slashType = t;
+    }).animation;
+    expect([none(T.hor), none(T.downstab)]).toEqual(['', 'sheathesword']);
+  });
+
+  it('every other of the 35 labels is UNPORTED and names its state; a state with no label is only recorded', () => {
+    const ported: OgState[] = [OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.SLASH, OG_STATE.POSE];
+    const others = OG_START_ACTION_LABELS.filter((s) => !ported.includes(s));
+    expect(others).toHaveLength(30);
+    for (const s of others) {
+      expect(() => started(s)).toThrow(`unported: MCSPlayer.startAction (${stateName(s)})`);
+    }
+    const unlabeled = Object.values(OG_STATE).filter((s) => !OG_START_ACTION_LABELS.includes(s));
+    expect(unlabeled.map(stateName)).toContain('FLINCH');
+    for (const s of unlabeled) {
+      const p = started(s);
+      expect([stateName(s), p.actionState, p.animation]).toEqual([stateName(s), s, '']);
+    }
+  });
+});
+
+describe('slice 5a: doAction — IDLE, RUN, WALK, SLASH, POSE (WEB: POSE ends in a break)', () => {
+  const acting = (state: OgState, setUp: (p: MCSPlayer) => void = () => undefined) => {
+    const p = idleBody(body2());
+    p.actionState = state;
+    const asked: OgState[] = [];
+    setUp(p);
+    vi.spyOn(p, 'startAction').mockImplementation((s) => {
+      asked.push(s);
+    });
+    p.doAction();
+    return { p, asked };
+  };
+
+  it('IDLE does nothing', () => {
+    const { p, asked } = acting(OG_STATE.IDLE, (q) => { q.destX = 600; });
+    expect([p.posX, asked]).toEqual([BODY_X, []]);
+  });
+
+  it('RUN: 12 px a frame toward destX; on arrival velX 0, then SLASH with a slash, else IDLE', () => {
+    const step = acting(OG_STATE.RUN, (q) => { q.destX = 500; });
+    expect([step.p.posX, step.p.velX, step.asked]).toEqual([412, 12, []]);
+    const home = acting(OG_STATE.RUN, (q) => { q.destX = 412; q.velX = 9; });
+    expect([home.p.posX, home.p.velX, home.asked]).toEqual([412, 0, [OG_STATE.IDLE]]);
+    const strike = acting(OG_STATE.RUN, (q) => { q.destX = 390; q.hasSlash = true; });
+    expect([strike.p.posX, strike.asked]).toEqual([390, [OG_STATE.SLASH]]);
+  });
+
+  it('WALK: the body\'s walkSpeed, 4 px a frame; on arrival the same choice', () => {
+    const step = acting(OG_STATE.WALK, (q) => { q.destX = 300; });
+    expect([step.p.walkSpeed, step.p.posX, step.p.velX, step.asked]).toEqual([4, 396, -4, []]);
+    const home = acting(OG_STATE.WALK, (q) => { q.destX = 403; q.hasSlash = true; });
+    expect([home.p.posX, home.p.velX, home.asked]).toEqual([403, 0, [OG_STATE.SLASH]]);
+  });
+
+  it('SLASH: doSlash', () => {
+    const p = idleBody();
+    p.actionState = OG_STATE.SLASH;
+    const slash = vi.spyOn(p, 'doSlash').mockImplementation(() => undefined);
+    p.doAction();
+    expect(slash.mock.calls.length).toBe(1);
+  });
+
+  it('POSE on each of the 13 ground _END clips hands the target the weapon and a packet (web: with the attacker)', () => {
+    for (const P of STANCE_PREFIX) {
+      for (const k of P === 'REVERSED' ? [''] : ['', 'DOWN', 'UP']) {
+        const hits: Array<[unknown, NpcDamage]> = [];
+        const t = foe(440, GROUND, true);
+        t.checkHitObject = (thing, damage) => {
+          hits.push([thing, damage]);
+          return false;
+        };
+        const { p } = acting(OG_STATE.POSE, (q) => {
+          q.changeTarget(t);
+          q.startAnim(anim(`${P}SLASH${k}_END`));
+          q.slashDamage = 86;
+          q.STAT_PIERCINGDMG = 7;
+        });
+        expect(hits.map(([thing]) => thing)).toEqual([{ kind: 'part', part: OG_PART.weapon, owner: p }]);
+        expect(packet(hits[0]?.[1])).toEqual([86, 45, OG_LAUNCH.LAUNCH_NONE, HEAVY, 7, p]);
+      }
+    }
+  });
+
+  it('POSE on any other clip hits nothing; with no target on an _END clip it is the source\'s null read', () => {
+    const t = foe(440, GROUND, true);
+    const hit = vi.fn(() => false);
+    t.checkHitObject = hit;
+    for (const key of ['HEAVYSLASH_POSE', 'SHEATHESWORD', 'HEAVYFALLSLASH_END', 'HEAVYSLASH_MID']) {
+      acting(OG_STATE.POSE, (q) => {
+        q.changeTarget(t);
+        q.startAnim(anim(key));
+      });
+    }
+    expect(hit).not.toHaveBeenCalled();
+    expect(() => acting(OG_STATE.POSE, (q) => {
+      q.target = null;
+      q.startAnim(anim('HEAVYSLASH_END'));
+    })).toThrow(TypeError);
+  });
+
+  it('WEB: POSE does not fall into SKILL_BULLCHARGE (Android does; its body runs on bullcharge_run)', () => {
+    const { p } = acting(OG_STATE.POSE, (q) => {
+      q.startAnim(anim('BULLCHARGE_RUN'));
+      q.destX = 600;
+    });
+    expect([p.posX, p.velX]).toEqual([BODY_X, 0]);
+  });
+
+  it('every other of the 27 labels is UNPORTED and names its state; a state with no label does nothing', () => {
+    const ported: OgState[] = [OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.SLASH, OG_STATE.POSE];
+    const others = OG_DO_ACTION_LABELS.filter((s) => !ported.includes(s));
+    expect(others).toHaveLength(22);
+    for (const s of others) {
+      expect(() => acting(s)).toThrow(`unported: MCSPlayer.doAction (${stateName(s)})`);
+    }
+    for (const s of Object.values(OG_STATE).filter((v) => !OG_DO_ACTION_LABELS.includes(v))) {
+      const { p, asked } = acting(s, (q) => { q.destX = 600; });
+      expect([stateName(s), p.posX, asked]).toEqual([stateName(s), BODY_X, []]);
+    }
+  });
+});
+
+describe('slice 5a: the body carries what the state machine reads (`EnemyPlayer`\'s constructor, `initPlayer`)', () => {
+  it('aiCounterMax 12, the body\'s walkSpeed 4, and the counters idle: speech −1, stealth and log 0, no FX', () => {
+    const p = player(body2());
+    expect([p.aiCounterMax, p.walkSpeed, p.speechCounter, p.invisCounter, p.logsubCounter, p.chargingFx])
+      .toEqual([12, 4, -1, 0, 0, null]);
+  });
+});
+
+describe('slice 5a: the three switches\' labels are the source\'s, in its order (Android names)', () => {
+  const AS = new URL('../reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as', import.meta.url);
+  const hasSource = existsSync(AS);
+  /** The `case` labels at one switch's own indentation, between two source lines. */
+  const labels = (from: number, to: number, indent: number) => readFileSync(AS, 'utf8').split(/\r?\n/)
+    .slice(from - 1, to)
+    .flatMap((l) => new RegExp(`^ {${indent}}case ([A-Z_0-9]+):$`).exec(l)?.[1] ?? []);
+
+  it('names why it would skip: the decompiled source is gitignored (study-only)', () => {
+    expect(hasSource || !existsSync(new URL('../reference/decompiled', import.meta.url))).toBe(true);
+  });
+
+  it.skipIf(!hasSource)('the clip-end switch: 146 labels (MCSPlayer.as:298-1147)', () => {
+    expect(OG_CLIP_END_LABELS).toEqual(labels(298, 1147, 15).map(anim));
+    expect(OG_CLIP_END_LABELS).toHaveLength(146);
+  });
+
+  it.skipIf(!hasSource)('startAction: 35 labels; doAction: 27 (MCSPlayer.as:1227-1874, 1885-2234)', () => {
+    const st = (n: string): OgState => {
+      const v = (OG_STATE as Record<string, OgState>)[n.replace(/_STATE$/, '')];
+      if (v === undefined) throw new Error(`no OG_STATE for ${n}`);
+      return v;
+    };
+    expect(OG_START_ACTION_LABELS).toEqual(labels(1227, 1874, 12).map(st));
+    expect(OG_DO_ACTION_LABELS).toEqual(labels(1885, 2234, 12).map(st));
+    expect([OG_START_ACTION_LABELS.length, OG_DO_ACTION_LABELS.length]).toEqual([35, 27]);
+  });
+});
+
+/*
+ * THE FIRST END-TO-END STROKE (ERRATUM 12 item 3). slashTarget's stroke, then `update` once a
+ * frame with the source's clip lengths (`OG_ANIM_CLIPS`), `checkPlayerHit` (slice 8) and the AI
+ * (slice 7) spied. Worked from the source by hand, frame by frame:
+ *   fixture 1 (balanced, speed 40): 400 → 498, arriving on frame 3 before `parta` (12) ends;
+ *     `endSlash` pays the reload (2 − 48 → 0), hits, POSEs: `partc` (4) frames 3–6, hitting the
+ *     target on 4, 5, 6; `partd` (11) 7–17; `sheathesword` (31) 18–48; IDLE on 49.
+ *   fixture 2 (heavy, speed 30): 400 → 482 on frame 3; `partc` (7) 3–9, hits 4–9; `partd` (11)
+ *     10–20; `sheathesword` 21–51; IDLE on 52.
+ *   Reload: +1 a frame after doAction; 1, 2, then 0 + 1 on frame 3, so k − 2 on frame k ≥ 3.
+ *   The AI: frames 1, 13, 25, 37, 49 (12 a cycle, the first on frame 1).
+ */
+describe.each([
+  ['fixture 1', body1, 'balanced', 498, [3, 7, 18, 49], 1, BALANCED, 0],
+  ['fixture 2', body2, 'heavy', 482, [3, 10, 21, 52], 45, HEAVY, 86],
+])('slice 5a, %s: slashTarget\'s stroke through the real update, frame by frame', (_n, body, clip, endX, at, level, stance, damage) => {
+  it('state, clip, x, y, facing and reload at every frame, the hit on the landing, the target hit on each _END frame', () => {
+    const p = idleBody(body(), () => 0.5, new OgAnimLibrary());
+    const { ai, run, now } = framed(p);
+    const t = foe(440, GROUND, true);
+    const weapon: number[] = [];
+    t.checkHitObject = () => {
+      weapon.push(now());
+      return false;
+    };
+    p.changeTarget(t);
+    const landed: number[] = [];
+    const hit = vi.spyOn(p, 'checkPlayerHit').mockImplementation(() => {
+      landed.push(now());
+    });
+    p.slashTarget();
+    const [poseAt, partdAt, sheatheAt, idleAt] = at as [number, number, number, number];
+    const trace: string[] = [];
+    const want: string[] = [];
+    run(idleAt + 2, (f) => {
+      trace.push([f, stateName(p.actionState), p.animation, p.posX, p.y, p.facingRight, p.reload].join(' '));
+      const [state, c] = f < poseAt ? ['SLASH', `${clip}_horslash_parta`]
+        : f < partdAt ? ['POSE', `${clip}_horslash_partc`]
+          : f < sheatheAt ? ['POSE', `${clip}_horslash_partd`]
+            : f < idleAt ? ['POSE', 'sheathesword'] : ['IDLE', 'idle'];
+      const x = f === 1 ? 400 + (stance === BALANCED ? 40 : 30) : f === 2 ? 400 + (stance === BALANCED ? 80 : 60) : endX;
+      want.push([f, state, c, x, GROUND, true, f < 3 ? f : f - 2].join(' '));
+    });
+    expect(trace).toEqual(want);
+    expect(landed).toEqual([poseAt]);
+    expect(weapon).toEqual(Array.from({ length: partdAt - poseAt - 1 }, (_, i) => poseAt + 1 + i));
+    expect(ai).toEqual([1, 13, 25, 37, 49]);
+    expect(packet(hit.mock.calls[0]?.[2])).toEqual([damage, level, 0, stance, 0, p]);
+    expect([p.slashCommitted, p.hasSlash, p.velX]).toEqual([false, false, 5]);
+  });
+});
+
 describe('the harness rule — unported calls throw, and their count only goes down', () => {
-  it('MCSPlayer.ts names exactly 3 unported sites (startAction, clearInteractTarget, checkPlayerHit)', () => {
+  it('MCSPlayer.ts names exactly 8 unported sites: the three switches\' catch-alls, and five calls out of 5a', () => {
+    // 5a replaced the ONE startAction stub with three dispatchers. A dispatcher that ports some of
+    // its labels needs its own site for the rest, so the count ROSE from 3 (see DIVERGENCES
+    // "L5-OPP SLICE 5a"); the AI, cancelLogSub and the FX removal are calls 5a's code makes.
     const src = readFileSync(new URL('../src/core/npc/MCSPlayer.ts', import.meta.url), 'utf8');
-    expect(src.match(/unported\('[^']*'\)/g)).toEqual([
-      "unported('MCSPlayer.startAction')", "unported('StageManager.clearInteractTarget')", "unported('NPCManager.checkPlayerHit')",
+    expect([...src.matchAll(/unported\('([^']*)'/g)].map((m) => m[1])).toEqual([
+      'MCSPlayer.update clip end', 'Projectile.removeProjectile', 'MCSPlayer.startAction', 'MCSPlayer.doAction',
+      'EnemyPlayer.AI', 'MCSPlayer.cancelLogSub', 'StageManager.clearInteractTarget', 'NPCManager.checkPlayerHit',
     ]);
   });
 });

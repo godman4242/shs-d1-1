@@ -281,6 +281,29 @@
 >    `§1t4438s0§` (`:2001`), a web-only juggle counter that the reception reads (slice 6).
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 5 — THE MAP".
 
+> **⛔ ERRATUM 13 — SLICE 5a (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **5a landed** (`update` whole; the clip-end bands sheathe, ground `_START`, ground `_END`,
+>    pose → sheathe; `startAction` and `doAction` IDLE, RUN, WALK, SLASH, POSE; web POSE: the
+>    attacker and the `break`). The first end-to-end stroke runs through the real `update` at ±0.
+> 2. **The unported count ROSE, 3 → 8, by design:** one catch-all per switch, naming its label.
+>    The §3 harness rule's "only goes down" now reads: **only goes down once a switch is
+>    dispatched.** ERRATUM 12's expected list was off by one each way: the target's
+>    `checkHitObject` is NOT a site (the mobs already call it through `NpcTarget`; the seam's proxy
+>    answers it), and `Projectile.removeProjectile` IS one (the wrapper's `chargingFx` removal,
+>    unreachable until a writer is ported).
+> 3. **`startAction` is 35 labels in 34 groups**, not 34 / 33 (the map's count, off by one).
+>    **And the map missed an override:** `EnemyPlayer.update` (`EnemyPlayer.as:908`) wraps
+>    `MCSPlayer.update` with a re-aim (null or dead target → the nearest enemy, else IDLE) before
+>    the frame and the cooldown tick after. Found by the review; the re-aim is ported, the tick is
+>    slice 7's (no `skillList` yet, so the source's own guard skips it).
+> 4. **For 5b:** the web `doAction` FALL adds the attacker (`§1t99s0§.as:1991`) and resets the
+>    web-only `§1t4438s0§` (`:2001`), already known (ERRATUM 12 item 5); new: `startAction` FALL in
+>    LIGHT stance plays **balanced's** fall clip for every type but UP (`MCSPlayer.as:1289`,
+>    `BALANCEDFALLSLASH_MID`), a source quirk to port as it is. FALL's physics read `gravity` 3
+>    (`MCSPlayer.as:25`) and `getGroundY()` (`:2911`, the stage's ground).
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 5a".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -359,7 +382,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **3a** | **BODY i — THE STANCE** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3a"; `nextStance`, `walkTo`, `faceScreenCenter` ruled out of the lane, ERRATUM 7) | `setStance` 103, `initSpecialSkills` 71 (AI branch), `canChangeStance`, `stopMoving` 25, `getDamage` 28, `getBaseDamage` | no |
 | **3b** | **BODY i — THE MOVEMENT** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3b") | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
 | **4** | **BODY ii — the stroke** · ✅ **LANDED 2026-09-29** in three commits (4a ERRATUM 9, 4b ERRATUM 10, 4c ERRATUM 11) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
-| 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) · **5b** the air and the downstab (179 / 182) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
+| 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) ✅ **LANDED 2026-09-29** (ERRATUM 13) · **5b** the air and the downstab (179 / 182) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
 | 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
 | 8 | THE SEAM — into the duel behind `?npc=duellist` | findings 16 + 17, a stroke channel; `Sim.ts` + `duel-baseline` by the atomic protocol | **YES** |

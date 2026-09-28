@@ -4326,3 +4326,37 @@ plants 37/37 RED. The full 211-plant chaos run is the shell's post-ship step.
   The web FALL resets a web-only juggle counter (slice 6's).
 - **Review:** my own hostile pass (docs only); two of my own numbers were wrong and fixed.
 - **Next:** slice 5a; the kickoff is at the top of RESUME_HERE.
+
+## 2026-09-29 — build loop: L5-OPP slice 5a, THE GROUND STROKE
+
+- **Baseline at HEAD `c346abf`, as RESUME_HERE stated:** 92 files / 2081 tests · typecheck 0 ·
+  lint 0 · claimcheck 2135 / 600 / 0 · chaos 211 pinned.
+- **Red first:** 41 new tests + 5 old ones moved (then +3 for the review's finding, 2 red first); 44 red for the stated reasons (the methods
+  missing, the old `startAction` stub). One of mine was red for the WRONG reason (the label pin
+  split CRLF source on LF, so it read 0 labels): fixed, then it passed against the config before
+  any port code existed.
+- **Ported:** `update` whole; the clip-end bands sheathe, ground `_START`, ground `_END`, pose →
+  sheathe; `startAction` / `doAction` IDLE, RUN, WALK, SLASH, POSE. Web wins once (`doAction`
+  POSE: the attacker and the `break`). The other labels: one catch-all per switch, naming the
+  label; a value with no label is the source's no-op.
+- **The first end-to-end stroke** runs through the real `update` with the source's clip lengths at
+  ±0: IDLE again on frame 49 (balanced) / 52 (heavy); the AI on 1, 13, 25, 37, 49.
+- **Found:** the unported count rose 3 → 8 by design (ERRATUM 13); the target's `checkHitObject` is
+  not a site, `Projectile.removeProjectile` is; the body never copied `walkSpeed`; `startAction`
+  is 35 labels / 34 groups (the map said 34 / 33); `NetworkManager.playBack` is its own flag. For
+  5b: two source quirks (light FALL plays balanced's clip; light's JUMP start skips to the fall MID).
+- **Caught in my own drafts before commit:** two cites (`EnemyPlayer.AI` given the web's line in
+  the Android file; `cancelLogSub` uncited on Android), three plant-note lines, the mob's hit guard
+  (12 frames, not 7), and the kickoff's JUMP threshold (298, not 217).
+- **Chaos:** 50 new plants, 50/50 red; one retired, two re-anchored; pinned 211 → 260. The full
+  run, in a scratch worktree of the diff: 260/260 red, restored byte-identical.
+- **Review:** one fresh-context reviewer, ONE real bug, verified at the source and fixed:
+  `EnemyPlayer` overrides `update` (the slice-5 map missed it) with a re-aim before the frame; the
+  port had run `MCSPlayer.update` alone, so a POSE whose target was gone read null. Ported, +3
+  tests, +7 plants; its cooldown tick is slice 7's.
+- **Next:** slice 5b (the air and the downstab); the kickoff is at the top of RESUME_HERE.
+
+### THE GATES
+
+After: 92 files / 2174 tests · typecheck 0 · lint 0 · claimcheck 2183 / 604 / 44 / 0 · chaos
+260/260 red, restored byte-identical.
