@@ -101,3 +101,68 @@ export const OG_MOVE_DIST_SQ = {
   /** `MCSPlayer.as:2337` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2413` — up to 100 px walks, beyond it runs */
   walkMax: 10000,
 } as const;
+
+/**
+ * The AI's stroke makers (`launchTarget`, `slashDiagonalLeft` / `Right`, `stabTarget`,
+ * `slashTarget`, `slashDownedTarget`) and the `makeSlash` they all end in: where a stroke
+ * starts and how far each of its points steps. The same in both builds. A stroke is
+ * `int(slashLength / pointGap)` points; the signs live in the port, as the source writes them.
+ */
+export const OG_STROKE = {
+  /** `MCSPlayer.as:4722` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5091` — `slashLength / 20` points */
+  pointGap: 20,
+  launch: {
+    /** `MCSPlayer.as:4586` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4955` */
+    changeX: 0,
+    /** `MCSPlayer.as:4585` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4954` — straight up */
+    changeY: -20,
+  },
+  diagonal: {
+    /** `MCSPlayer.as:4597` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4966` — radians off the angle to the target (10°) */
+    angleOffset: 0.1745,
+    /** `MCSPlayer.as:4600` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4969` — the stroke starts this far above the body */
+    rise: 80,
+    /** `MCSPlayer.as:4601` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4970` — `-20 * Math.sin(angle)`, both diagonals */
+    changeY: -20,
+    /** `MCSPlayer.as:4602` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4971` — the LEFT one's x is `-20 * Math.sin` too, not `cos` */
+    leftChangeX: -20,
+    /** `MCSPlayer.as:4618` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4987` — `20 * Math.cos(angle)` */
+    rightChangeX: 20,
+  },
+  stab: {
+    /** `MCSPlayer.as:4631` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5000` — behind the target, the way it faces */
+    behind: 100,
+    /** `MCSPlayer.as:4637` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5006` — the stroke ends this far below the target's y */
+    below: 50,
+    /** `MCSPlayer.as:4638` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5007` — it starts half a reach above that */
+    lengthDiv: 2,
+    /** `MCSPlayer.as:4640` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5009` */
+    changeX: 0,
+    /** `MCSPlayer.as:4639` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5008` — straight down */
+    changeY: 20,
+  },
+  slash: {
+    /** `MCSPlayer.as:4658` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5027` — the stroke runs this far above the target's y */
+    rise: 40,
+    /** `MCSPlayer.as:4673` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5042` — toward the target (negative when it is on the left) */
+    changeX: 20,
+    /** `MCSPlayer.as:4660` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5029` */
+    changeY: -2,
+    /** `MCSPlayer.as:4663` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5032` — `slashLength * 2 / 3` */
+    far: { num: 2, den: 3 },
+    /** `MCSPlayer.as:4667` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5036` — `slashLength / 3` */
+    nearDiv: 3,
+  },
+  downed: {
+    /** `MCSPlayer.as:4696` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5065` — behind the target, the way it faces */
+    behind: 100,
+    /** `MCSPlayer.as:4704` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5073` */
+    rise: 10,
+    /** `MCSPlayer.as:4712` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5081` */
+    changeX: 20,
+    /** `MCSPlayer.as:4706` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5075` — flat */
+    changeY: 0,
+    /** `MCSPlayer.as:4707` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5076` — the stroke is centred on the point */
+    lengthDiv: 2,
+  },
+} as const;

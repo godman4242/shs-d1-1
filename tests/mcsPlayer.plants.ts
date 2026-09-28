@@ -1,12 +1,16 @@
 /**
- * CHAOS PLANTS — THE DUELLIST'S STANCE AND MOVEMENT (L5-OPP slices 3a and 3b, 2026-09-29).
+ * CHAOS PLANTS — THE DUELLIST'S STANCE, MOVEMENT AND STROKES (L5-OPP slices 3a, 3b, 4a, 2026-09-29).
  *
  * Applied and judged by `npm run chaos` (`scripts/gates/chaos.ts`). Each entry breaks ONE
  * guard in `core/npc/MCSPlayer.ts`, its config, or the claimcheck fix this slice needed; the
  * named suite must go red. Six re-plant an Android rule a slice ruled against (3a: ×1.5
  * reach, the stop without the stance guard, the light crit, heavy launch at the Sim's 5;
  * 3b: `initMove`'s order and its distance); the rest break the web rule's own arithmetic,
- * a boundary, or the harness rule.
+ * a boundary, or the harness rule. 4a's twenty (the stroke makers and `gotInput`, the same
+ * in both builds) break one source rule each, including the quirk a tidy port would "fix": the
+ * left diagonal's `sin` x; the twentieth came from the review (the angle's int map position).
+ * One more, `slashLength * (2 / 3)` for `* 2 / 3`, stayed green and was DELETED: measured over every int reach 0–1000 and target x −200–1200, the two orders
+ * truncate identically, so it is an equivalent mutant, not a missing test.
  *
  * PROVENANCE. All written here, at the port, and watched going red on the cycle that
  * wrote them — marked `reauthored:`.
@@ -241,5 +245,165 @@ export const PLANTS: ChaosPlant[] = [
     replace: '    if',
     tests: [SUITE],
     note: 'reauthored:2026-09-29 — both builds clamp at 0 (web `:3001-3004`); found unplanted by the 3b review',
+  },
+  {
+    name: 'duellist stroke: a point every 25 px, not 20',
+    file: CONFIG,
+    find: '  pointGap: 20,\n',
+    replace: '  pointGap: 25,\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds `slashLength / 20` (`MCSPlayer.as:4722`, web `:5091`)',
+  },
+  {
+    name: 'duellist stroke: makeSlash\'s loop from 0 (the start point twice)',
+    file: PORT,
+    find: '    for (let i = ONE; i < pointsmax; i += ONE) {\n',
+    replace: '    for (let i = ZERO; i < pointsmax; i += ONE) {\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds loop from 1 after pushing the start (`MCSPlayer.as:4724-4727`)',
+  },
+  {
+    name: 'duellist stroke: the left diagonal "fixed" to cos',
+    file: PORT,
+    find: '      asInt(k.leftChangeX * Math.sin(angle)), asInt(k.changeY * Math.sin(angle)),\n',
+    replace: '      asInt(k.leftChangeX * Math.cos(angle)), asInt(k.changeY * Math.sin(angle)),\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — both builds write `-20 * Math.sin` for the LEFT x (`MCSPlayer.as:4602`, web `:4971`): a source quirk, kept',
+  },
+  {
+    name: 'duellist stroke: the diagonals\' 10° offset dropped',
+    file: CONFIG,
+    find: '    angleOffset: 0.1745,\n',
+    replace: '    angleOffset: 0,\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `MCSPlayer.as:4597`, web `:4966`',
+  },
+  {
+    name: 'duellist stroke: getTargetPosition is MCSPlayer\'s (minus the stage)',
+    file: PORT,
+    find: '    return asInt(this.aim().getMapPosition());\n',
+    replace: '    return asInt(this.aim().getMapPosition() - this.world.stagePosition);\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `EnemyPlayer.as:1194` overrides `MCSPlayer.as:4572`: no stage offset',
+  },
+  {
+    name: 'duellist stroke: stabTarget starts in FRONT of the target',
+    file: PORT,
+    find: '    const startX = t.isFacingRight() ? this.getTargetPosition() - k.behind : this.getTargetPosition() + k.behind;\n    const endY',
+    replace: '    const startX = t.isFacingRight() ? this.getTargetPosition() + k.behind : this.getTargetPosition() - k.behind;\n    const endY',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `MCSPlayer.as:4629-4636`: facing right → −100',
+  },
+  {
+    name: 'duellist stroke: stabTarget ends at the target\'s y, not 50 below',
+    file: PORT,
+    find: '    const endY = asInt(t.y + k.below);\n',
+    replace: '    const endY = asInt(t.y);\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `MCSPlayer.as:4637`, web `:5006`',
+  },
+  {
+    name: 'duellist stroke: slashTarget\'s thirds swapped on the left',
+    file: PORT,
+    find: '      const startX = asInt(this.getTargetPosition() + (t.isFacingRight() ? far : near));\n',
+    replace: '      const startX = asInt(this.getTargetPosition() + (t.isFacingRight() ? near : far));\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `MCSPlayer.as:4661-4668`: facing right → 2/3',
+  },
+  {
+    name: 'duellist stroke: slashTarget\'s null guard dropped',
+    file: PORT,
+    find: '    const t = this.target;\n    if (t === null) return;\n    const k = OG_STROKE.slash;\n',
+    replace: '    const t = this.aim();\n    const k = OG_STROKE.slash;\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `MCSPlayer.as:4652` returns on a null target; the only maker that checks',
+  },
+  {
+    name: 'duellist stroke: slashDownedTarget reads the TARGET\'s side, not the point\'s',
+    file: PORT,
+    find: '    if (targetX < this.posX) this.makeSlash(',
+    replace: '    if (t.getMapPosition() < this.posX) this.makeSlash(',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `MCSPlayer.as:4702` compares the point 100 px behind the target',
+  },
+  {
+    name: 'duellist input: peaceful no longer turns a stroke into a move',
+    file: PORT,
+    find: '    if (this.world.peaceful) line = false;\n',
+    replace: '',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `EnemyPlayer.as:964-967`, web `:1014-1017`',
+  },
+  {
+    name: 'duellist input: a light-stance fall buffers too',
+    file: PORT,
+    find: '(s === S.FALL && this.stance !== OG_STANCE.light)',
+    replace: 's === S.FALL',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `EnemyPlayer.as:968`: only a non-light fall buffers',
+  },
+  {
+    name: 'duellist input: a dead body still takes input',
+    file: PORT,
+    find: '    if (this.getHP() <= ZERO || this.dead) return;\n',
+    replace: '    if (this.getHP() <= ZERO) return;\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `EnemyPlayer.as:960`',
+  },
+  {
+    name: 'duellist input: 0 HP still takes input',
+    file: PORT,
+    find: '    if (this.getHP() <= ZERO || this.dead) return;\n',
+    replace: '    if (this.getHP() < ZERO || this.dead) return;\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `EnemyPlayer.as:960` `getHP() <= 0`',
+  },
+  {
+    name: 'duellist input: the buffer flag never set',
+    file: PORT,
+    find: '        this.slashArrayBuffer = this.lineArrayDeepCopy(lineArray);\n        this.hasSlashBuffer = true;\n',
+    replace: '        this.slashArrayBuffer = this.lineArrayDeepCopy(lineArray);\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `EnemyPlayer.as:973`',
+  },
+  {
+    name: 'duellist input: a move while falling is not dropped',
+    file: PORT,
+    find: '      } else if (s !== S.FALL) {\n',
+    replace: '      } else {\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `EnemyPlayer.as:983`: FALL is the one live exclusion (light stance)',
+  },
+  {
+    name: 'duellist input: the stroke shares its points with inputArray',
+    file: PORT,
+    find: '        this.slashArray = this.lineArrayDeepCopy(lineArray);\n',
+    replace: '        this.slashArray = [...lineArray];\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `EnemyPlayer.as:980` deep-copies (`lineArrayDeepCopy`, `MCSPlayer.as:2237`)',
+  },
+  {
+    name: 'duellist input: lineArrayDeepCopy drops its offset',
+    file: PORT,
+    find: '    return lineArray.map((pt) => ({ x: pt.x + offset, y: pt.y }));\n',
+    replace: '    return lineArray.map((pt) => ({ x: pt.x, y: pt.y }));\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `MCSPlayer.as:2243`, web `:2318`',
+  },
+  {
+    name: 'duellist stroke: slashDownedTarget 10 px above becomes 0',
+    file: CONFIG,
+    find: '    rise: 10,\n',
+    replace: '    rise: 0,\n',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `MCSPlayer.as:4704`, web `:5073`',
+  },
+  {
+    name: 'duellist stroke: the diagonal angle reads the raw (fractional) map position',
+    file: PORT,
+    find: 'Math.abs(asInt(this.getMapPosition()) - this.getTargetPosition())',
+    replace: 'Math.abs(this.getMapPosition() - this.getTargetPosition())',
+    tests: [SUITE],
+    note: 'reauthored:2026-09-29 — `getMapPosition():int` (`MCSActor.as:1053`); found by the 4a review, red first at posX 400.9',
   },
 ];

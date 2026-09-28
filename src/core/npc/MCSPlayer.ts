@@ -34,13 +34,14 @@ import {
   OG_STANCE_CHANGE_RELOAD,
   OG_STANCE_DAMAGE,
   OG_STANCE_REACH,
+  OG_STROKE,
 } from '../../config/ogMcsPlayer';
-import { ZERO } from '../../config/nums';
+import { ONE, ZERO } from '../../config/nums';
 import type { Rng } from '../Sim';
 import type { DuellistBody } from './duellistBody';
 import { asInt } from './MCSActor';
 import { Npc } from './Npc';
-import type { AnimLibrary, HitGeometry, PlayerWorld } from './types';
+import type { AnimLibrary, HitGeometry, NpcTarget, PlayerWorld } from './types';
 
 /** A call into an `MCSPlayer` group not ported yet: throws, naming the AS3 function. */
 export function unported(fn: string): never {
@@ -51,6 +52,13 @@ export function unported(fn: string): never {
 export interface MovePoint {
   readonly x: number;
   readonly y: number;
+}
+
+/** `lineArray[0]`: an AS3 `Vector` read past its end throws a RangeError, so this does too. */
+function firstPoint(points: readonly MovePoint[]): MovePoint {
+  const p = points[ZERO];
+  if (p === undefined) throw new RangeError('gotInput: an empty stroke');
+  return p;
 }
 
 /** `setStance`'s idle clip per stance (`MCSPlayer.as:3033-3085`). */
@@ -97,6 +105,8 @@ export class MCSPlayer extends Npc {
   hasSlash = false;
   hasSlashBuffer = false;
   inputArray: MovePoint[] = [];
+  slashArray: MovePoint[] = [];
+  slashArrayBuffer: MovePoint[] = [];
 
   /** `EnemyPlayer.init`'s body (slice 1b-ii); `init`'s closing `setStance` is the caller's. */
   constructor(world: PlayerWorld, anims: AnimLibrary, geometry: HitGeometry, rng: Rng, body: DuellistBody) {
@@ -245,15 +255,50 @@ export class MCSPlayer extends Npc {
     return asInt(this.minDamage + this.rng() * this.damageRange);
   }
 
+  /** `MCSPlayer.as:2237` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2311`, the same. The opponent passes no offset. */
+  lineArrayDeepCopy(lineArray: readonly MovePoint[], offset = ZERO): MovePoint[] {
+    return lineArray.map((pt) => ({ x: pt.x + offset, y: pt.y }));
+  }
+
   /**
-   * The opponent's `gotInput` is `EnemyPlayer`'s override (`EnemyPlayer.as:958`, web
-   * `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1008`), which calls no `super`: slice 4. `MCSPlayer`'s own is the human's
-   * (`InputManager.as:280`), out of the lane.
+   * `EnemyPlayer.gotInput` (`EnemyPlayer.as:958`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1008`), the
+   * same in both builds and with no `super`: `MCSPlayer`'s own is the human's (`InputManager.as:280`),
+   * out of the lane. A stroke while the body is busy is buffered; otherwise it slashes, and a move
+   * moves. The source's `mcs == null` clause never holds here (the actor is its own clip), and the
+   * unused `posX` parameter is not carried. The move branch also tests GOTLAUNCHED, DOWNED, JUMP
+   * and FORWARDROLL (`EnemyPlayer.as:983`); all four already went to the buffer (DOWNED through
+   * `isDowned()`), so only FALL (in light stance) is live there. TypeScript refuses three of them;
+   * the DOWNED one it accepts, and it is dropped as dead with them.
    */
-  gotInput(lineArray: MovePoint[], isLine: boolean): void {
-    void lineArray;
-    void isLine;
-    unported('EnemyPlayer.gotInput');
+  gotInput(lineArray: readonly MovePoint[], isLine: boolean): void {
+    if (this.getHP() <= ZERO || this.dead) return;
+    let line = isLine;
+    if (this.world.peaceful) line = false;
+    const S = OG_STATE;
+    const s = this.actionState;
+    if (
+      this.slashCommitted || (s === S.FALL && this.stance !== OG_STANCE.light) || s === S.GOTLAUNCHED ||
+      this.isDowned() || s === S.JUMP || s === S.FORWARDROLL
+    ) {
+      if (line) {
+        this.slashArrayBuffer = this.lineArrayDeepCopy(lineArray);
+        this.hasSlashBuffer = true;
+      }
+    } else {
+      // The source's `else if(!slashCommitted)`: always true here, the first test took it.
+      if (line) {
+        this.slashArray = this.lineArrayDeepCopy(lineArray);
+        this.initSlash(firstPoint(this.slashArray));
+      } else if (s !== S.FALL) {
+        this.initMove(firstPoint(lineArray));
+      }
+    }
+  }
+
+  /** `MCSPlayer.initSlash` (100 lines) is slice 4b. */
+  initSlash(start: MovePoint): void {
+    void start;
+    unported('MCSPlayer.initSlash');
   }
 
   /**
@@ -311,5 +356,115 @@ export class MCSPlayer extends Npc {
     this.inputArray.length = ZERO;
     this.inputArray.push({ x: asInt(posX), y: asInt(posY) });
     this.gotInput(this.inputArray, false);
+  }
+
+  /**
+   * The target the stroke makers aim at. The source reads `target.…` unguarded (only
+   * `slashTarget` checks), so a null target is a TypeError there (#1009), and here.
+   */
+  private aim(): NpcTarget {
+    if (this.target === null) throw new TypeError('the stroke makers read a null target');
+    return this.target;
+  }
+
+  /**
+   * `EnemyPlayer.getTargetPosition` (`EnemyPlayer.as:1194`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1244`):
+   * the target's MAP position. `MCSPlayer`'s own (`MCSPlayer.as:4572`) subtracts the stage
+   * position; the opponent never reaches it.
+   */
+  getTargetPosition(): number {
+    return asInt(this.aim().getMapPosition());
+  }
+
+  /** `MCSPlayer.as:4577` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4946`, the same: straight up from the target's feet. */
+  launchTarget(): void {
+    const k = OG_STROKE.launch;
+    this.makeSlash(this.getTargetPosition(), asInt(this.aim().y), k.changeX, k.changeY);
+  }
+
+  /**
+   * The two diagonals' angle: to the target, less 10°. NaN when the two stand on one point.
+   * `getMapPosition()` is `:int` in the source (`MCSActor.as:1053`), so it truncates here too.
+   */
+  private diagonalAngle(): number {
+    const t = this.aim();
+    return Math.atan(Math.abs(this.y - t.y) / Math.abs(asInt(this.getMapPosition()) - this.getTargetPosition())) -
+      OG_STROKE.diagonal.angleOffset;
+  }
+
+  /**
+   * `MCSPlayer.as:4590` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4959`, the same. The source's x step is
+   * `-20 * Math.sin` too, not `cos`: both steps come out equal. Its unused `slashDiag` local is
+   * not carried.
+   */
+  slashDiagonalLeft(): void {
+    const k = OG_STROKE.diagonal;
+    const angle = this.diagonalAngle();
+    this.makeSlash(
+      asInt(this.getMapPosition()), asInt(this.y - k.rise),
+      asInt(k.leftChangeX * Math.sin(angle)), asInt(k.changeY * Math.sin(angle)),
+    );
+  }
+
+  /** `MCSPlayer.as:4606` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4975`, the same. */
+  slashDiagonalRight(): void {
+    const k = OG_STROKE.diagonal;
+    const angle = this.diagonalAngle();
+    this.makeSlash(
+      asInt(this.getMapPosition()), asInt(this.y - k.rise),
+      asInt(k.rightChangeX * Math.cos(angle)), asInt(k.changeY * Math.sin(angle)),
+    );
+  }
+
+  /** `MCSPlayer.as:4622` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4991`, the same: down, from behind the target. */
+  stabTarget(): void {
+    const k = OG_STROKE.stab;
+    const t = this.aim();
+    const startX = t.isFacingRight() ? this.getTargetPosition() - k.behind : this.getTargetPosition() + k.behind;
+    const endY = asInt(t.y + k.below);
+    this.makeSlash(startX, asInt(endY - this.slashLength / k.lengthDiv), k.changeX, k.changeY);
+  }
+
+  /** `MCSPlayer.as:4644` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5013`, the same. */
+  slashTarget(): void {
+    const t = this.target;
+    if (t === null) return;
+    const k = OG_STROKE.slash;
+    const far = (this.slashLength * k.far.num) / k.far.den;
+    const near = this.slashLength / k.nearDiv;
+    const startY = asInt(t.y - k.rise);
+    if (t.x < this.x) {
+      const startX = asInt(this.getTargetPosition() + (t.isFacingRight() ? far : near));
+      this.makeSlash(startX, startY, -k.changeX, k.changeY);
+    } else {
+      const startX = asInt(this.getTargetPosition() - (t.isFacingRight() ? near : far));
+      this.makeSlash(startX, startY, k.changeX, k.changeY);
+    }
+  }
+
+  /** `MCSPlayer.as:4687` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5056`, the same: flat, through the point behind the target. */
+  slashDownedTarget(): void {
+    const k = OG_STROKE.downed;
+    const t = this.aim();
+    const targetX = t.isFacingRight() ? this.getTargetPosition() - k.behind : this.getTargetPosition() + k.behind;
+    const startY = asInt(t.y - k.rise);
+    const half = this.slashLength / k.lengthDiv;
+    if (targetX < this.posX) this.makeSlash(asInt(targetX + half), startY, -k.changeX, k.changeY);
+    else this.makeSlash(asInt(targetX - half), startY, k.changeX, k.changeY);
+  }
+
+  /**
+   * `MCSPlayer.as:4719` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:5088`, the same: `int(slashLength / 20)`
+   * points (the first always), handed to `gotInput` as a stroke. The `controlledBy == 0`
+   * `drawLine` is the human's.
+   */
+  makeSlash(startX: number, startY: number, changeX: number, changeY: number): void {
+    this.inputArray.length = ZERO;
+    const pointsmax = asInt(this.slashLength / OG_STROKE.pointGap);
+    this.inputArray.push({ x: startX, y: startY });
+    for (let i = ONE; i < pointsmax; i += ONE) {
+      this.inputArray.push({ x: startX + i * changeX, y: startY + i * changeY });
+    }
+    this.gotInput(this.inputArray, true);
   }
 }

@@ -4215,3 +4215,34 @@ plants 12/12 RED. The full 104-plant chaos run is the shell's post-ship step.
 
 After: 92 files / 1902 tests · typecheck 0 · lint 0 · claimcheck 1983 / 553 / 44 / 0 · the new
 plants 16/16 RED. The full 120-plant chaos run is the shell's post-ship step.
+
+## 2026-09-29 — build loop: L5-OPP slice 4a, THE STROKE MAKERS
+
+- **Grounded:** RESUME_HERE's kickoff → `L5_OPPONENT_KICKOFF.md` ERRATUM 8, §3 slice 4.
+  Baseline at `58e6067` re-measured and matched: 92 files / 1902 tests · typecheck 0 · lint 0 ·
+  claimcheck 1983 / 553 / 44 / 0 · chaos 120 pinned.
+- **Both builds read line by line:** the nine functions (`EnemyPlayer.gotInput`,
+  `getTargetPosition`, `lineArrayDeepCopy`, the six makers, `makeSlash`) are identical. ERRATUM
+  8's cut held.
+- **Red → green.** Stubs: 25 of the 29 new tests red on assertions (the 4 green: the reach check
+  and the no-target test, both fixtures; the null-guard plant proves the second). Port: 85/85 in
+  the file.
+- **Ruled:** `NpcTarget.isFacingRight()` added; the seam's proxy throws it until slice 8.
+- **Found:** the fixture world's `peaceful: !battle` turns strokes into moves (tests set it);
+  the duellist's HP is the actor default 1 (queued, slice 6); three of my comment cites were a
+  line early and claimcheck cannot see that class (queued, harness); for 4b, `initSlash` needs
+  `cancelStealth` and the web `isAirborne` ruling. ERRATUM 9.
+- **Chaos:** 20 plants written; one ("`* 2 / 3` order") stayed green and was an equivalent
+  mutant (0 diffs over reach 0–1000 × target −200–1200), deleted. 19 kept, +1 from the review:
+  pinned 120 → 140, 20/20 red, restored byte-identical (scratch clone).
+- **Review:** one fresh-context reviewer, no runtime bug. Two findings, re-verified: my comment
+  said TS refuses 4 dead tests (it refuses 3; fixed); the diagonal angle read the raw map position
+  where the source's `getMapPosition()` is `:int`. That one was red first at posX 400.9 on both
+  fixtures, then fixed and planted.
+- **Next:** slice 4b (`initSlash`, `checkNextSlash`, `startSlash`); the kickoff is at the top of
+  RESUME_HERE.
+
+### THE GATES
+
+After: 92 files / 1953 tests · typecheck 0 · lint 0 · claimcheck 2051 / 577 / 44 / 0 · the new
+plants 20/20 RED. The full 140-plant chaos run is the shell's post-ship step.

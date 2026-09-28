@@ -121,6 +121,8 @@ export interface NpcTarget {
   readonly x: number;
   readonly y: number;
   getMapPosition(): number;
+  /** `target.getMCS().isFacingRight()` — the duellist's stroke makers aim behind it (`MCSPlayer.as:4629`). */
+  isFacingRight(): boolean;
   isDead(): boolean;
   /** `NPC.isDowned()` — knife, spear, goblin and ogre stab a downed target for double. */
   isDowned(): boolean;

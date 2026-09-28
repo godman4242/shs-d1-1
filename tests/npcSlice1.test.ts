@@ -64,6 +64,10 @@ class Dummy implements NpcTarget {
   getMapPosition(): number {
     return this.x;
   }
+  /** No mob reads its target's facing; only the duellist's strokes do (`tests/mcsPlayer.test.ts`). */
+  isFacingRight(): boolean {
+    throw new Error('a mob read its target\'s facing');
+  }
   isDead(): boolean {
     return this.dead;
   }

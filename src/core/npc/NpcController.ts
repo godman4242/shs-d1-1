@@ -60,6 +60,13 @@ class PlayerProxy implements NpcTarget {
   getMapPosition(): number {
     return this.x;
   }
+  /**
+   * The seam carries no facing for the player, and no ported mob reads it: only the duellist's
+   * stroke makers do, and L5-OPP slice 8 wires them. Loud until then, never a guessed value.
+   */
+  isFacingRight(): boolean {
+    throw new Error('unported: the seam carries no player facing (L5-OPP slice 8)');
+  }
   /** The Sim decides when the fight is over; the actor never sees a dead player. */
   isDead(): boolean {
     return false;

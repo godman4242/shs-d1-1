@@ -80,6 +80,9 @@ const targetAt = (x: number, y = GROUND): NpcTarget => ({
   x,
   y,
   getMapPosition: () => x,
+  isFacingRight: () => {
+    throw new Error('a mob read its target\'s facing');
+  },
   isDead: () => false,
   isDowned: () => false,
   isAirborne: () => false,

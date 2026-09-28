@@ -18,7 +18,7 @@ import { initDuellistBody, type DuellistBody } from '../src/core/npc/duellistBod
 import { deriveDuellist } from '../src/core/npc/duellistStats';
 import { newPlayerState, writeBattleStats, writeEquipment, writeSkillStats } from '../src/core/npc/duellistWriter';
 import { MCSPlayer } from '../src/core/npc/MCSPlayer';
-import type { AnimLibrary, HitGeometry, PlayerWorld } from '../src/core/npc/types';
+import type { AnimLibrary, HitGeometry, NpcTarget, PlayerWorld } from '../src/core/npc/types';
 import type { Rng } from '../src/core/Sim';
 
 const GROUND = 358;
@@ -459,19 +459,297 @@ describe('slice 3b: movePlayer — the opponent\'s branch clamps to the stage, t
 });
 
 describe('slice 3b: moveTo — the AI\'s six calls (`EnemyPlayer.as:1023-1168`)', () => {
-  it('replaces inputArray with ONE int point, then calls gotInput — UNPORTED, and loud', () => {
+  it('replaces inputArray with ONE int point; gotInput (slice 4a) routes it to initMove, which starts a RUN', () => {
     const p = player(body2());
+    p.setPosition(100, GROUND);
+    p.actionState = OG_STATE.IDLE;
     p.inputArray.push({ x: 1, y: 2 }, { x: 3, y: 4 });
     // The AI passes `Math.random() * getGameStageWidth()`; the int parameters truncate it.
     expect(() => {
       p.moveTo(523.97, 358.4);
-    }).toThrow('unported: EnemyPlayer.gotInput');
-    expect(p.inputArray).toEqual([{ x: 523, y: 358 }]);
+    }).toThrow('unported: MCSPlayer.startAction');
+    expect([p.inputArray, p.destX, p.destY]).toEqual([[{ x: 523, y: 358 }], 523, 358]);
+  });
+});
+
+/*
+ * L5-OPP SLICE 4a — THE STROKE MAKERS. `getTargetPosition` (`EnemyPlayer.as:1194`), the six
+ * makers and `makeSlash` (`MCSPlayer.as:4577-4733`), `lineArrayDeepCopy` (`:2237`) and
+ * `EnemyPlayer.gotInput` (`EnemyPlayer.as:958`); web `§1t122s0§.as:1244`, `§1t99s0§.as:4946-5104`,
+ * `:2311`, `§1t122s0§.as:1008`. The same in both builds, function by function.
+ *
+ * The body stands at map x 400 on the ground (358), the stage unscrolled, so a map x is a
+ * screen x. Reach: fixture 1 balanced 126 (6 points), fixture 2 heavy 112 (5 points). Every
+ * stroke ends in `gotInput(inputArray, true)` → `initSlash`, which is slice 4b: the tests
+ * read the points it was handed, then see the throw.
+ */
+const BODY_X = 400;
+const LEFT_X = 250;
+const RIGHT_X = 560;
+
+/** A target at map x `mapX`, clip y `y`, facing right or left. */
+const foe = (mapX: number, y: number, facingRight: boolean): NpcTarget => ({
+  x: mapX,
+  y,
+  getMapPosition: () => mapX,
+  isFacingRight: () => facingRight,
+  isDead: () => false,
+  isDowned: () => false,
+  isAirborne: () => false,
+  checkHitObject: () => false,
+});
+
+/** A duellist in its init stance at BODY_X, idle, aimed at `t`. */
+function striker(b: DuellistBody, t: NpcTarget | null): MCSPlayer {
+  const p = player(b);
+  p.setStance(b.stance); // out of battle: a battle setStance reaches startAction (slice 5)
+  p.world.peaceful = false; // …but a duel is not peaceful, or every stroke is read as a move
+  p.setPosition(BODY_X, GROUND);
+  p.actionState = OG_STATE.IDLE;
+  if (t !== null) p.changeTarget(t);
+  return p;
+}
+
+/** `n` points from (x, y), stepping (dx, dy). `makeSlash`'s own test pins this shape by literal. */
+const line = (x: number, y: number, dx: number, dy: number, n: number) =>
+  Array.from({ length: n }, (_, i) => ({ x: x + i * dx, y: y + i * dy }));
+
+/** Run one maker: the points it handed `gotInput`, after the loud stop at `initSlash`. */
+function stroke(p: MCSPlayer, make: (p: MCSPlayer) => void) {
+  expect(() => {
+    make(p);
+  }).toThrow('unported: MCSPlayer.initSlash');
+  expect(p.slashArray).toEqual(p.inputArray);
+  expect(p.slashArray).not.toBe(p.inputArray);
+  return p.inputArray;
+}
+
+describe('slice 4a: makeSlash — int(slashLength / 20) points, the first at the start', () => {
+  it('reach 126: six points, each one step on', () => {
+    const p = striker(body1(), foe(LEFT_X, GROUND, true));
+    p.inputArray.push({ x: 1, y: 1 });
+    expect(stroke(p, (q) => {
+      q.makeSlash(10, 20, 3, -4);
+    })).toEqual([
+      { x: 10, y: 20 }, { x: 13, y: 16 }, { x: 16, y: 12 }, { x: 19, y: 8 }, { x: 22, y: 4 }, { x: 25, y: 0 },
+    ]);
+  });
+
+  it('reach 39 is int(1.95) = 1 point, and reach 0 still pushes the start (the loop just never runs)', () => {
+    const short = striker(body1(), null);
+    short.slashLength = 39;
+    const none = striker(body1(), null);
+    none.slashLength = 0;
+    const at = (p: MCSPlayer) => stroke(p, (q) => {
+      q.makeSlash(7, 8, 20, 0);
+    });
+    expect([at(short), at(none)]).toEqual([[{ x: 7, y: 8 }], [{ x: 7, y: 8 }]]);
+  });
+});
+
+describe.each([
+  ['fixture 1', body1, 126, 6],
+  ['fixture 2', body2, 112, 5],
+])('slice 4a, %s: the stroke makers (reach 126 → 6 points, 112 → 5)', (_name, body, reach, n) => {
+  const run = (t: NpcTarget, make: (p: MCSPlayer) => void) => stroke(striker(body(), t), make);
+
+  it('the fixture has the reach the table says', () => {
+    expect(striker(body(), null).slashLength).toBe(reach);
+  });
+
+  it('getTargetPosition is the target\'s MAP position, with no stage offset (EnemyPlayer\'s override)', () => {
+    const p = striker(body(), foe(RIGHT_X, GROUND, true));
+    p.world.stagePosition = 150;
+    expect(p.getTargetPosition()).toBe(RIGHT_X);
+  });
+
+  it('launchTarget: straight up from the target\'s feet, 20 px a point', () => {
+    expect(run(foe(LEFT_X, GROUND, true), (p) => {
+      p.launchTarget();
+    })).toEqual(line(LEFT_X, GROUND, 0, -20, n));
+    expect(run(foe(RIGHT_X, 300.7, false), (p) => {
+      p.launchTarget();
+    })).toEqual(line(RIGHT_X, 300, 0, -20, n));
+  });
+
+  it('slashDiagonalRight: from 80 px above the body, (20 cos a, −20 sin a), a = atan(dy / dx) − 0.1745', () => {
+    // Left target at y 258: atan(100 / 150) − 0.1745 = 0.4135 → int(18.31) = 18, int(−8.04) = −8.
+    expect(run(foe(LEFT_X, 258, true), (p) => {
+      p.slashDiagonalRight();
+    })).toEqual(line(BODY_X, 278, 18, -8, n));
+    // Right target at y 258: atan(100 / 160) − 0.1745 = 0.3841 → 18, int(−7.49) = −7.
+    expect(run(foe(RIGHT_X, 258, true), (p) => {
+      p.slashDiagonalRight();
+    })).toEqual(line(BODY_X, 278, 18, -7, n));
+    // A near-level target (y 350): atan(8 / 150) − 0.1745 < 0, so the stroke runs DOWN: int(2.42) = 2.
+    expect(run(foe(LEFT_X, 350, true), (p) => {
+      p.slashDiagonalRight();
+    })).toEqual(line(BODY_X, 278, 19, 2, n));
+  });
+
+  it('slashDiagonalLeft: the source\'s x is −20 sin a as well (not cos), so both steps are equal', () => {
+    expect(run(foe(LEFT_X, 258, true), (p) => {
+      p.slashDiagonalLeft();
+    })).toEqual(line(BODY_X, 278, -8, -8, n));
+    expect(run(foe(RIGHT_X, 300.7, false), (p) => {
+      p.slashDiagonalLeft();
+    })).toEqual(line(BODY_X, 278, -3, -3, n));
+  });
+
+  it('the diagonals at dx = 0: atan(∞) = π/2; and at dx = dy = 0 the angle is NaN and int(NaN) = 0', () => {
+    expect(run(foe(BODY_X, 258, true), (p) => {
+      p.slashDiagonalRight();
+    })).toEqual(line(BODY_X, 278, 3, -19, n));
+    expect(run(foe(BODY_X, GROUND, true), (p) => {
+      p.slashDiagonalLeft();
+    })).toEqual(line(BODY_X, 278, 0, 0, n));
+  });
+
+  it('the diagonals read getMapPosition() as the source\'s int, in the angle too: posX 400.9 aims from 400', () => {
+    // dx = 150, not 150.9: atan(100 / 150) − 0.1745 → int(−8.04) = −8; 150.9 gives −7 (measured, node).
+    const p = striker(body(), foe(LEFT_X, 258, true));
+    p.setPosition(BODY_X + 0.9, GROUND);
+    expect(stroke(p, (q) => {
+      q.slashDiagonalLeft();
+    })).toEqual(line(BODY_X, 278, -8, -8, n));
+  });
+
+  it('stabTarget: from 100 px behind the target, down to 50 below its y, starting half a reach above that', () => {
+    const top = 408 - reach / 2; // 345 or 352: int(408 − 63), int(408 − 56)
+    expect(run(foe(LEFT_X, GROUND, true), (p) => {
+      p.stabTarget();
+    })).toEqual(line(LEFT_X - 100, top, 0, 20, n));
+    expect(run(foe(RIGHT_X, GROUND, false), (p) => {
+      p.stabTarget();
+    })).toEqual(line(RIGHT_X + 100, top, 0, 20, n));
+  });
+
+  it('slashTarget: 40 px above the target, toward it, starting a third or two thirds of a reach off it', () => {
+    // Reach 126: 84 and 42 exactly. Reach 112: 74.67 and 37.33, truncated after the add.
+    const far = reach === 126 ? 84 : 74.67;
+    const near = reach === 126 ? 42 : 37.33;
+    const at = (t: NpcTarget) => run(t, (p) => {
+      p.slashTarget();
+    });
+    expect(at(foe(LEFT_X, GROUND, true))).toEqual(line(Math.trunc(LEFT_X + far), 318, -20, -2, n));
+    expect(at(foe(LEFT_X, GROUND, false))).toEqual(line(Math.trunc(LEFT_X + near), 318, -20, -2, n));
+    expect(at(foe(RIGHT_X, GROUND, true))).toEqual(line(Math.trunc(RIGHT_X - near), 318, 20, -2, n));
+    expect(at(foe(RIGHT_X, GROUND, false))).toEqual(line(Math.trunc(RIGHT_X - far), 318, 20, -2, n));
+  });
+
+  it('slashTarget with no target makes nothing and calls nothing', () => {
+    const p = striker(body(), null);
+    p.inputArray.push({ x: 9, y: 9 });
+    p.slashTarget();
+    expect([p.inputArray, p.slashArray]).toEqual([[{ x: 9, y: 9 }], []]);
+  });
+
+  it('slashDownedTarget: through the point 100 px behind the target, centred on it, 10 px above its y', () => {
+    const half = reach / 2;
+    const at = (t: NpcTarget) => run(t, (p) => {
+      p.slashDownedTarget();
+    });
+    expect(at(foe(LEFT_X, GROUND, true))).toEqual(line(150 + half, 348, -20, 0, n));
+    expect(at(foe(LEFT_X, GROUND, false))).toEqual(line(350 + half, 348, -20, 0, n));
+    expect(at(foe(RIGHT_X, GROUND, true))).toEqual(line(460 - half, 348, 20, 0, n));
+    expect(at(foe(RIGHT_X, GROUND, false))).toEqual(line(660 - half, 348, 20, 0, n));
+    // The side is the POINT's, not the target's: a target at 480 facing right puts it at 380.
+    expect(at(foe(480, GROUND, true))).toEqual(line(380 + half, 348, -20, 0, n));
+  });
+});
+
+describe('slice 4a: EnemyPlayer.gotInput — the routing (the same in both builds)', () => {
+  const STROKE = [{ x: 300, y: 318 }, { x: 280, y: 316 }];
+  /** A body in `state`, its move spied so the routing is visible without reaching startAction. */
+  function routed(state: OgState, setUp: (p: MCSPlayer) => void = () => undefined) {
+    const p = striker(body1(), null);
+    p.actionState = state;
+    setUp(p);
+    const moves: unknown[] = [];
+    vi.spyOn(p, 'initMove').mockImplementation((d) => {
+      moves.push(d);
+    });
+    return { p, moves };
+  }
+
+  it('a stroke in a free state is copied to slashArray, then initSlash takes its first point — UNPORTED, loud', () => {
+    const { p, moves } = routed(OG_STATE.IDLE);
+    const input = STROKE.map((q) => ({ ...q }));
+    expect(() => {
+      p.gotInput(input, true);
+    }).toThrow('unported: MCSPlayer.initSlash');
+    expect([p.slashArray, p.hasSlashBuffer, moves]).toEqual([STROKE, false, []]);
+    expect(p.slashArray[0]).not.toBe(input[0]);
+  });
+
+  it('a move in a free state goes to initMove with its first point', () => {
+    const { p, moves } = routed(OG_STATE.RUN);
+    p.gotInput(STROKE, false);
+    expect([moves, p.slashArray]).toEqual([[STROKE[0]], []]);
+  });
+
+  it('committed, falling (not light), launched, downed, jumping or rolling: a stroke is BUFFERED, a move dropped', () => {
+    const S = OG_STATE;
+    const busy: Array<[OgState, (p: MCSPlayer) => void]> = [
+      [S.IDLE, (p) => { p.slashCommitted = true; }],
+      [S.FALL, (p) => { p.stance = BALANCED; }],
+      [S.GOTLAUNCHED, () => undefined],
+      [S.DOWNED, () => undefined],
+      [S.KNOCKDOWNED, () => undefined],
+      [S.FLY, () => undefined],
+      [S.VICTIM, () => undefined],
+      [S.JUMP, () => undefined],
+      [S.FORWARDROLL, () => undefined],
+    ];
+    for (const [state, setUp] of busy) {
+      const line = routed(state, setUp);
+      line.p.gotInput(STROKE, true);
+      expect([line.p.slashArrayBuffer, line.p.hasSlashBuffer, line.p.slashArray]).toEqual([STROKE, true, []]);
+      expect(line.p.slashArrayBuffer).not.toBe(STROKE);
+      const move = routed(state, setUp);
+      move.p.gotInput(STROKE, false);
+      expect([move.moves, move.p.hasSlashBuffer]).toEqual([[], false]);
+    }
+  });
+
+  it('falling in LIGHT stance: a stroke is not buffered, it slashes; a move is still dropped', () => {
+    const light = (p: MCSPlayer) => { p.stance = LIGHT; };
+    const slash = routed(OG_STATE.FALL, light);
+    expect(() => {
+      slash.p.gotInput(STROKE, true);
+    }).toThrow('unported: MCSPlayer.initSlash');
+    const move = routed(OG_STATE.FALL, light);
+    move.p.gotInput(STROKE, false);
+    expect([slash.p.hasSlashBuffer, slash.p.slashArray, move.moves]).toEqual([false, STROKE, []]);
+  });
+
+  it('peaceful: a stroke is read as a move', () => {
+    const { p, moves } = routed(OG_STATE.IDLE, (q) => { q.world.peaceful = true; });
+    p.gotInput(STROKE, true);
+    expect([moves, p.slashArray]).toEqual([[STROKE[0]], []]);
+  });
+
+  it('dead, or at 0 HP: nothing at all', () => {
+    const dead = routed(OG_STATE.IDLE, (q) => { q.dead = true; });
+    dead.p.gotInput(STROKE, true);
+    dead.p.gotInput(STROKE, false);
+    const spent = routed(OG_STATE.IDLE, (q) => { q.setHP(0); });
+    spent.p.gotInput(STROKE, true);
+    spent.p.gotInput(STROKE, false);
+    expect([dead.moves, dead.p.slashArray, spent.moves, spent.p.slashArray]).toEqual([[], [], [], []]);
+  });
+
+  it('lineArrayDeepCopy: new points, x shifted by the offset (the human\'s argument), y untouched', () => {
+    const p = striker(body1(), null);
+    const copy = p.lineArrayDeepCopy(STROKE, -5);
+    expect(copy).toEqual([{ x: 295, y: 318 }, { x: 275, y: 316 }]);
+    expect(copy[0]).not.toBe(STROKE[0]);
+    expect(p.lineArrayDeepCopy(STROKE)).toEqual(STROKE);
   });
 });
 
 describe('the harness rule — unported calls throw, and their count only goes down', () => {
-  it('MCSPlayer.ts names exactly 3 unported sites (startAction, clearInteractTarget, EnemyPlayer.gotInput)', () => {
+  it('MCSPlayer.ts names exactly 3 unported sites (startAction, clearInteractTarget, initSlash)', () => {
     const src = readFileSync(new URL('../src/core/npc/MCSPlayer.ts', import.meta.url), 'utf8');
     expect(src.match(/unported\('/g)).toHaveLength(3);
   });

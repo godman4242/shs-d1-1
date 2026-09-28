@@ -5943,3 +5943,97 @@ $ npm run claimcheck        ->  1983 cites · 553 values at ±0 · 44 context ·
 $ npm run instructionpaths  ->  every path resolves
 $ npm run chaos             ->  120 plants pinned; the 16 new ones 16/16 RED + restored (scratch clone; the full run is the shell's post-ship step)
 ```
+
+## L5-OPP SLICE 4a — THE STROKE MAKERS: `EnemyPlayer.gotInput`, `getTargetPosition` AND THE SIX `*Target` / `slashDiagonal*` + `makeSlash` (2026-09-29)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 8 item 3, §3 slice 4 (4a). A build-loop
+cycle, one commit.
+
+**What landed:** in `src/core/npc/MCSPlayer.ts`, on 3a's class: `EnemyPlayer.gotInput` (the
+routing), `EnemyPlayer.getTargetPosition`, `lineArrayDeepCopy`, `launchTarget`,
+`slashDiagonalLeft`, `slashDiagonalRight`, `stabTarget`, `slashTarget`, `slashDownedTarget`,
+`makeSlash`, and the fields `slashArray` / `slashArrayBuffer`. `initSlash` is slice 4b and goes
+through `unported` (the `EnemyPlayer.gotInput` site is gone: 3 sites → 3). One config object,
+`OG_STROKE` (24 values), every one cited in both builds at ±0. `NpcTarget` gains
+`isFacingRight()` (the makers read `target.getMCS().isFacingRight()`, `MCSPlayer.as:4629`).
+`tests/mcsPlayer.test.ts` +31: **25 of the first 29 red on stubs** (plus 3b's rewritten `moveTo`
+test). The 4 green: the reach sanity check and the no-target `slashTarget` test, on both
+fixtures; a do-nothing stub passes the second, and the null-guard plant proves it. 19 chaos
+plants (120 → 139), then the review's 2 tests and 1 plant (→ 140). Claimcheck 1983 → 2051
+cites, 553 → 577 values.
+
+### THE R6 DIFF — both builds, line by line: NO DIFFERENCE
+
+| function | Android | web | ruled |
+|---|---|---|---|
+| `EnemyPlayer.gotInput` | `EnemyPlayer.as:958-988` | `§1t122s0§.as:1008-1038` | same |
+| `EnemyPlayer.getTargetPosition` | `EnemyPlayer.as:1194-1197` | `§1t122s0§.as:1244-1247` | same |
+| `lineArrayDeepCopy` | `MCSPlayer.as:2237-2246` | `§1t99s0§.as:2311-2322` | same |
+| `launchTarget` | `MCSPlayer.as:4577-4588` | `§1t99s0§.as:4946-4957` | same |
+| `slashDiagonalLeft` / `Right` | `:4590-4604` / `:4606-4620` | `:4959-4973` / `:4975-4989` | same |
+| `stabTarget` | `:4622-4642` | `:4991-5011` (locals renumbered, the same call) | same |
+| `slashTarget` | `:4644-4685` | `:5013-5054` | same |
+| `slashDownedTarget` | `:4687-4717` | `:5056-5086` | same |
+| `makeSlash` | `:4719-4733` | `:5088-5104` | same |
+
+Web state constants mapped by declaration (`§1t1544s0§.as`: JUMP 3, FALL 4, GOTLAUNCHED 6,
+DOWNED 11, FORWARDROLL 20; `§1t99s0§.as:27` LIGHT_STANCE 0), and the web `isDowned`
+(`§1t68s0§.as:788-791`) tests the same four states as Android's (`NPC.as:767-770`).
+
+### RULINGS (decide-and-flag)
+
+- **`NpcTarget.isFacingRight()` is required, and the seam's `PlayerProxy` THROWS it.** The seam
+  carries no player facing (`OpponentView` has none), and no ported mob reads it. *Steelman for
+  a default (say, facing the opponent):* the proxy stays total. *Why not:* a guessed facing puts
+  every stab and downed slash on the wrong side of the player, silently, the day slice 8 wires the
+  strokes. A throw is the harness rule's answer. **Veto:** an optional member, or a default.
+- **`EnemyPlayer`'s two overrides live on `MCSPlayer`** (as 3b's `gotInput` stub already did),
+  not in an `EnemyPlayer` subclass. The class is only ever the opponent's; `MCSPlayer`'s own
+  `gotInput` and `getTargetPosition` (minus the stage position, `MCSPlayer.as:4572`) are the
+  human's and out of the lane. *Where it breaks:* the day the player migrates onto this body
+  (R2's "later"), they split into a subclass. **Veto:** split now.
+
+### NOT CARRIED, AND WHY
+
+- `gotInput`'s `mcs == null` (the actor is its own clip) and its unused `posX` parameter.
+- The move branch's GOTLAUNCHED / DOWNED / JUMP / FORWARDROLL tests (`EnemyPlayer.as:983`): the
+  first branch already buffered all four (DOWNED through `isDowned()`), so they are dead in the
+  source. TypeScript refuses three; it accepts DOWNED, which is dropped as dead with them (the
+  reviewer's correction). FALL is the one live exclusion (a LIGHT-stance fall). The `else if(!slashCommitted)` is
+  always true where it stands; ported as `else`.
+- The diagonals' unused `slashDiag` local, and `makeSlash`'s `controlledBy == 0` `drawLine`.
+
+### MEASURED ON THE WAY
+
+- **The left diagonal's x step is `-20 * Math.sin`, not `cos`** (`MCSPlayer.as:4602`, web
+  `:4971`), so its two steps are always equal. A source quirk, kept, and planted as the "fix".
+- **`slashLength * 2 / 3` against `slashLength * (2 / 3)`:** I wrote a plant for the order and
+  called it "84 against 83.99". It stayed GREEN, and the claim was false: measured over every
+  int reach 0–1000 and target x −200–1200, both orders truncate identically (`node -e`, 0 diffs).
+  An equivalent mutant, so the plant was DELETED, not "fixed" with a test.
+- **The fixture world sets `peaceful: !battle`,** so an out-of-battle test body reads every
+  stroke as a move (`gotInput`'s peaceful clause). The stroke tests set `peaceful = false`.
+- **The body starts at the actor default HP 1, not the profile's HP.** The constructor copies
+  `EnemyPlayer.init`'s stats but no `setHP` / `maxhp`, so `gotInput`'s `getHP() <= 0` guard
+  passes only by that default. Queued for the slice that owns HP (6, reception).
+- **Three of my own doc-comment cites were one line early** (4686, web 4945, web 5055: blank
+  lines before the function). Claimcheck cannot see a function-start cite: it states no value.
+  Fixed by reading each cited line.
+- **For slice 4b:** `initSlash` opens with `cancelStealth()` (`MCSPlayer.as:4359`, 9 lines, not
+  ported) and tests `!isAirborne()` (`MCSPlayer.as:2441`), the function whose web version also
+  counts FALL (the ruling queued at 3b). Web spans: `initSlash` `§1t99s0§.as:2475-2574` (100),
+  `checkNextSlash` `:2575-2587` (13), `startSlash` `:2588-2779` (192), all the same length as
+  Android's; `endSlash` is 101 web lines against Android's 95, so 4c has a real difference.
+
+### THE REVIEW
+
+One fresh-context reviewer: **no runtime bug.** It recomputed every expected value, the
+`makeSlash` argument order through the web's renumbered locals, every sign, the
+`a || b && c || …` precedence, the equivalent-mutant claim (0 diffs again), and found the
+`PlayerProxy` throw unreachable from shipping code. Two findings, both re-verified at the source:
+(1) my comment said TypeScript refuses all four dead tests; `tsc --strict` on a replica refuses
+three (TS2367) and accepts DOWNED. Wording fixed. (2) `diagonalAngle` read the raw
+`getMapPosition()`, which is `:int` in the source (`MCSActor.as:1053`). The port's `posX` can
+be fractional (`setPosition` does not truncate, AS3's `int` parameters do; a pre-existing gap),
+and at posX 400.9 the raw read gives −7 where the source gives −8. **Red first** (2 tests, both
+fixtures), then `asInt` in the angle, green.

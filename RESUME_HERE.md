@@ -1,87 +1,88 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 4a, BODY ii: THE STROKE MAKERS
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 4b, BODY ii: THE SLASH START
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: ~190 surgical lines on a class that exists now | set with `/model` |
+| model / effort | **Opus 5.5 at `high`**: ~305 surgical lines on a class that exists now | set with `/model` |
 | `/fast` | ON if you watch it; OFF for the unattended build loop (2× price) | your call |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
 | MCP / skills | nothing extra | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. 4a fits well before then.
+⚠️ Your Claude subscription ends **2026-10-09**. 4b fits well before then.
 
 Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 8 first, then the §3 slice-4 row and its harness rule), and run slice 4a under its §4 gate.
-Before any code: confirm the baseline at HEAD (92 files / 1902 tests, typecheck 0, lint 0, claimcheck 1983 cites / 553 values / 0 failures, chaos 120 pinned). Then confirm or correct ERRATUM 8's cut by reading the AI's stroke makers line by line in BOTH builds: Android reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as :4577-4734 (launchTarget, slashDiagonalLeft, slashDiagonalRight, stabTarget, slashTarget, slashDownedTarget, makeSlash) and reference/decompiled/shs3_android_payload/scripts/EnemyPlayer.as gotInput :958-988 and getTargetPosition :1194; web: find each by its body in reference/decompiled/shs3_payload/scripts/§1t99s0§.as and §1t122s0§.as (gotInput is §1t122s0§.as:1008). Write every difference as a DIVERGENCES row citing both before porting it.
-Done = (a) the stroke makers + EnemyPlayer.gotInput ported IN FULL into src/core/npc/MCSPlayer.ts (or an EnemyPlayer subclass, your ruling, flagged), web structure where the builds differ, every call into a group not ported yet (initSlash is 4b) through unported('<AS function>'), and the pinned unported count in tests/mcsPlayer.test.ts moved to the new total; (b) for 3a's two fixture bodies and a target on each side of the body, every stroke maker reproduces the source's inputArray (every point, ±0) and gotInput's routing (slash buffer vs initSlash vs initMove, per state), red first, plants declared and the pin moved in scripts/gates/chaos.ts AND tests/chaosGate.test.ts, every new config value cited in both builds as `key: value`; (c) RESUME_HERE rewritten and DIVERGENCES "L5-OPP SLICE 4a" written in the same commit.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 9 first, then ERRATUM 8, the §3 slice-4 row and its harness rule), and run slice 4b under its §4 gate.
+Before any code: confirm the baseline at HEAD (92 files / 1953 tests, typecheck 0, lint 0, claimcheck 2051 cites / 577 values / 0 failures, chaos 140 pinned). Then read initSlash, checkNextSlash and startSlash line by line in BOTH builds: Android reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as :2403-2707; web reference/decompiled/shs3_payload/scripts/§1t99s0§.as :2475-2779 (initSlash is §1t4457s0§, checkNextSlash §1t4458s0§, startSlash §1t4459s0§). Write every difference as a DIVERGENCES row citing both before porting it.
+Done = (a) the three ported IN FULL into src/core/npc/MCSPlayer.ts, web structure where the builds differ, the opponent's branch only (controlledBy 1), every call into a group not ported yet (startAction is slice 5, endSlash is 4c) through unported('<AS function>'), and the pinned unported count in tests/mcsPlayer.test.ts moved to the new total; (b) the two rulings ERRATUM 9 item 3 names, decided and flagged with their red-team: cancelStealth (port its 9 lines or unported) and isAirborne (the web version counts FALL: an MCSPlayer override, or wait for the owner's Npc ruling); (c) for 3a's two fixture bodies, every field initSlash and startSlash write (destX/destY, the slash state, slashDamage, facing) reproduces the source at ±0 for strokes from 4a's makers, red first, plants declared and the pin moved in scripts/gates/chaos.ts AND tests/chaosGate.test.ts, every new config value cited in both builds as `key: value`; (d) RESUME_HERE rewritten and DIVERGENCES "L5-OPP SLICE 4b" written in the same commit.
 '''
 ```
 
 **VERIFY (plain English):** before it writes any code, the session prints the baseline numbers
-above and a table of every difference between the two builds' stroke makers.
+above and a table of every difference between the two builds' three functions.
 
-**Three measured starting points (2026-09-29), so the session does not rediscover them:**
-1. **The opponent's `gotInput` is `EnemyPlayer`'s** (31 lines, no `super` in either build).
-   `MCSPlayer.gotInput` (70) is reached only by the human (`InputManager.as:280`): out of the lane.
-   `moveTo` already calls `this.gotInput`, which throws `unported: EnemyPlayer.gotInput`.
-2. **The target needs one more member.** The stroke makers read `target.mcs.y` (8×),
-   `target.mcs.x`, `target.getMCS().isFacingRight()` (4×) and `getTargetPosition()`
-   (`EnemyPlayer.as:1194`: `target.getMapPosition()`). `NpcTarget` (`src/core/npc/types.ts`) has
-   `x`, `y`, `getMapPosition` but **no `isFacingRight`**.
-3. **Every stroke ends the same way:** `makeSlash(startX, startY, changeX, changeY)` fills
-   `inputArray` and calls `gotInput(inputArray, true)` (`MCSPlayer.as:4719-4734`); `gotInput`'s
-   line branch copies it and calls `initSlash` (4b: `unported`). Test the points BEFORE the throw,
-   as 3b's `moveTo` test does.
+**Four measured starting points (2026-09-29), so the session does not rediscover them:**
+1. **4a's makers feed 4b directly.** Every stroke ends `gotInput(inputArray, true)` →
+   `slashArray = copy` → `initSlash(slashArray[0])`, today `unported('MCSPlayer.initSlash')`.
+   So 4b's tests can drive `initSlash` through a real `launchTarget()` / `slashTarget()` call.
+2. **`initSlash` opens with `cancelStealth()`** (`MCSPlayer.as:4359`, 9 lines: a smoke puff if
+   the body was hidden, then `visible = true`, `alpha = 1`). Not ported.
+3. **`initSlash` tests `!isAirborne()`** (`MCSPlayer.as:2441`). The web `isAirborne` also counts
+   FALL (`§1t68s0§.as:793-796`); the ported `Npc` has Android's height-only test.
+4. **What leaves the slice:** `initSlash` ends in `startAction(SLASH_STATE | RUN_STATE)`
+   (slice 5, already `unported`); `startSlash` calls `endSlash` (4c) and `getDamage` (ported,
+   3a). `startSlash`'s `InputManager.clearCanvas` is under `controlledBy == 0`: the human's.
+   The three are the same LENGTH in both builds (100 / 13 / 192); only a line-by-line read says
+   whether they are the same code.
 
-**Bar self-report:** reached for the entry. Scope, callers, the target's missing member and the
-`gotInput` finding were measured this cycle, in both builds where named. The one unknown is
-ERRATUM 8's cut itself: it is by function size and call direction, not yet by a line-by-line
-read, and the kickoff's first step reads it.
+**Bar self-report:** reached for the entry. The spans, the two dependencies and what leaves the
+slice were measured this cycle in both builds. The one unknown is the line-by-line diff of the
+three functions, and the kickoff's first step reads it.
 
 ---
 
-## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 3b, THE MOVEMENT
+## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 4a, THE STROKE MAKERS
 
 | | verdict | measured |
 |---|---|---|
-| **the port** | ✅ `initMove` / `movement` / `movePlayer` (opponent branch) / `moveTo` on 3a's class | **31 tests on both fixture bodies, red first** (30 of the first 32 failed on a stub; the 2 that passed are one "refused move changes nothing" test, proved by plant 1). |
-| **web won** | ✅ 1 function | `initMove` measures `int(posX - dest.x)` and THEN sets `destX`; Android sets `destX` first (a refused adventure move still moves it) and measures from the truncated point. The other three are identical in both builds. |
-| **`movement`** | ✅ at ±0 | approach from left / right, arriving inside one step, exactly one step (an arrival on both sides), both stage edges; posX, screen x, velX and facing. |
-| **`gotInput`** | ⚠️ found | the opponent's is **`EnemyPlayer.gotInput`** (no `super`, both builds); `MCSPlayer.gotInput` is the human's. Slice 4's list corrected (ERRATUM 8). |
-| **slice 4** | ⚠️ sized | **700 Android lines**, over the 500 split line → 4a / 4b / 4c proposed (ERRATUM 8). |
-| **claimcheck** | ✅ 1968 → 1983 cites, 551 → 553 values | 0 failures. |
-| **chaos** | ✅ 16 plants, 104 → 120 | 16/16 red, restored byte-identical (scratch clone); 4 of them added after the review named unplanted guards. |
-| **review** | ✅ 1 fresh-context reviewer: **no bug** | it recomputed every expected value and cite. It found the web `NPC.isAirborne` also counts FALL (below, queued) and 4 unplanted guards (planted). |
+| **the port** | ✅ `EnemyPlayer.gotInput`, `getTargetPosition`, `lineArrayDeepCopy`, the six makers, `makeSlash` | **+31 tests on both fixture bodies; 25 of the first 29 red on stubs.** The 4 green: the reach check and the no-target test, both fixtures (a do-nothing stub passes the second; the null-guard plant proves it). The review's 2 were red first too. |
+| **R6 diff** | ✅ none | all nine functions identical in both builds, read line by line; web state constants mapped by declaration. |
+| **routing** | ✅ at ±0 | buffered when committed / non-light fall / launched / any downed state / jump / roll; a slash otherwise; a move except in FALL; peaceful makes a stroke a move; dead or 0 HP does nothing. |
+| **the target** | ⚠️ ruled | `NpcTarget.isFacingRight()` added. The seam's `PlayerProxy` THROWS it: the seam carries no player facing yet (slice 8). |
+| **a plant I got wrong** | ⚠️ deleted | "`* 2 / 3` vs `* (2/3)`" stayed green. Measured: over every int reach 0–1000 × target x −200–1200 the two never differ. An equivalent mutant, not a missing test. |
+| **claimcheck** | ✅ 1983 → 2051 cites, 553 → 577 values | 0 failures. It cannot see a function-start cite (no value): three of mine were a line early, fixed by reading each. |
+| **chaos** | ✅ 20 plants, 120 → 140 | 20/20 red, restored byte-identical (scratch clone). |
+| **review** | ✅ 1 fresh-context reviewer: **no runtime bug** | it recomputed every value, sign and argument order. Two findings, both re-verified: a comment overclaimed (TS refuses 3 dead tests, not 4: fixed), and the diagonal angle read the raw map position where the source's is `:int`. That one was red first at posX 400.9 (−7 vs −8), then fixed and planted. |
 
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 92 passed (92) · Tests 1902 passed (1902)   (1855 + 31 movement + 16 plant pins)
+$ npx vitest run            ->  Test Files 92 passed (92) · Tests 1953 passed (1953)   (1902 + 31 stroke/routing + 20 plant pins)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
-$ npm run claimcheck        ->  1983 cites · 553 values at ±0 · 44 context · 0 failures
+$ npm run claimcheck        ->  2051 cites · 577 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  every path resolves
-$ npm run chaos             ->  120 plants pinned; the 16 new ones 16/16 RED + restored (the full run is the shell's post-ship step)
+$ npm run chaos             ->  140 plants pinned; the 20 new ones 20/20 RED + restored (scratch clone; the full run is the shell's post-ship step)
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
 
 ### WHAT CHANGED
 
-- `src/core/npc/MCSPlayer.ts`: `initMove`, `movement`, `movePlayer`, `moveTo`, the `gotInput`
-  stub (unported sites 2 → 3), `inputArray`, `MovePoint`. `Sim.ts` untouched; nothing outside the
-  tests builds an `MCSPlayer` yet.
-- `src/config/ogMcsPlayer.ts`: `OG_MOVE_DIST_SQ` (`adventureMin: 625`, `walkMax: 10000`).
-- `tests/mcsPlayer.test.ts` (+31), `tests/mcsPlayer.plants.ts` (+16), and the plant pin 104 → 120
-  in `scripts/gates/chaos.ts` and `tests/chaosGate.test.ts`.
-- `docs/DIVERGENCES.md` "L5-OPP SLICE 3b"; `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 8 and
-  the slice table (3b landed, 4 split).
+- `src/core/npc/MCSPlayer.ts`: the nine functions, `initSlash` → `unported` (sites 3 → 3:
+  `EnemyPlayer.gotInput` out, `MCSPlayer.initSlash` in), `slashArray`, `slashArrayBuffer`.
+- `src/config/ogMcsPlayer.ts`: `OG_STROKE` (24 values, both builds cited).
+- `src/core/npc/types.ts`: `NpcTarget.isFacingRight()`; `src/core/npc/NpcController.ts`: the
+  proxy throws it; the 7 test fakes that implement `NpcTarget` throw it too.
+- `tests/mcsPlayer.test.ts` (+31, 3b's `moveTo` test now reaches `initMove`),
+  `tests/mcsPlayer.plants.ts` (+20), the pin 120 → 140 in `scripts/gates/chaos.ts` and
+  `tests/chaosGate.test.ts`.
+- `docs/DIVERGENCES.md` "L5-OPP SLICE 4a"; `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 9.
 
 ### ⚠️ STILL OPEN — Awaiting human/browser verification, and queued
 
@@ -92,17 +93,37 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
   Evidence: DIVERGENCES "L5-OPP SLICE 3a", "ERRATUM 2 ITEM 4".
 - **Your ruling, when you want it: does R6 (web wins) reach the L4b mobs?** The web
   `NPC.isAirborne` also counts the FALL state (`§1t68s0§.as:793-796`); the ported `Npc` (base of
-  all 20 mobs) has Android's height-only test. Keep Android for the mobs, or move `Npc` to web?
-  Evidence: DIVERGENCES "L5-OPP SLICE 3b". Nothing in the duellist's slices so far depends on it.
+  all 20 mobs) has Android's height-only test. **Now sharper:** slice 4b's `initSlash` calls
+  `isAirborne()`, so the duellist needs an answer; 4b may override it on `MCSPlayer` alone
+  (decide-and-flag) without touching the mobs. Evidence: DIVERGENCES "L5-OPP SLICE 3b", "4a".
 - **The `UNMEASURED` merge** from 1b-i (DIVERGENCES "L5-OPP SLICE 1b-i"). Closing it needs a 5-line
   SWF run in Ruffle, or a forum report of an item's HP jumping to hundreds.
+- **QUEUED (the body): `MCSActor.setPosition` / `movePositionX` never truncate,** where AS3's
+  take `int` parameters, so `posX` can go fractional. 4a truncates at its own read
+  (`getMapPosition()` is `:int`); a fix at the actor would touch all 20 mobs. Its own milestone.
+- **QUEUED (slice 6): the duellist's HP.** The `MCSPlayer` constructor never calls `setHP`, so the
+  body sits at the actor default 1, not the profile's HP. Nothing reads it before reception.
+- **QUEUED (slice 8): the seam must carry the player's facing** (`PlayerProxy.isFacingRight`
+  throws until then).
 - **QUEUED (harness): claimcheck reads no bare array.** Five arrays in `ogDuellistProfile.ts`
   (`[14, 18]`, `[2213, 2214]`, `[11]`, `[0, 3]`, `[103, 106]`) and any in other config files are
   unchecked. Fix = teach `numericFields` (`scripts/gates/claimcheckLib.ts`) to read array elements,
   then triage whatever it raises. Its own milestone.
+- **QUEUED (harness): claimcheck cannot check a function-start cite** (a cite whose line holds
+  no value). Three of mine were a line early this cycle, on blank lines. A cheap gate: a cite in
+  a doc comment directly above a TS method must land on a line holding `function`. Its own
+  milestone.
 - **For slice 8 (R1's veto):** a video-measured duellist (level + gear off a Duel Mode frame) may
   beat the new character for OPP-G. Look before slice 8 ships.
 - L4b's 13 remaining mobs are unblocked but not ported: L5-OPP first, by decision.
+
+---
+
+## PREVIOUS CYCLE (2026-09-29) — L5-OPP slice 3b, THE MOVEMENT
+
+`initMove` / `movement` / `movePlayer` / `moveTo` on 3a's class; web won `initMove` (measure
+`int(posX - dest.x)`, then set `destX`). Found the opponent's `gotInput` is `EnemyPlayer`'s and
+split slice 4 into 4a / 4b / 4c (ERRATUM 8). Full record: `docs/DIVERGENCES.md`, "L5-OPP SLICE 3b".
 
 ---
 
