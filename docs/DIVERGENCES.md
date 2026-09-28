@@ -7141,3 +7141,255 @@ and the longest death clip is 44 frames of the 96.
 92 files / 2482 tests (+34, and 51 net per-plant anchor cases) · typecheck 0 · lint 0 · claimcheck
 2349 cites / 635 values / 44 context / 0 failures · instructionpaths 0 · chaos 443 pinned, all 443
 red and restored byte-identical (run in a throwaway worktree before the commit) · 12 unported sites.
+
+## L5-OPP SLICE 7 — THE MAP: THE AI, THE SKILLS IT REACHES, AND THE CUT (2026-09-29)
+
+Kickoff: `RESUME_HERE.md` (slice 7, the map), `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 18. A
+build-loop cycle, one commit, **no code**. Slice 7 is over the 500-line cap before one skill is
+counted (the `EnemyPlayer` functions alone are 449 Android lines), so it is mapped first, as slices 5
+and 6 were (ERRATUM 19).
+
+**How it was measured** (scratch scripts, not committed; the slice-5 / 6 method): every function
+paired with its web twin, confirmed by content; `startSkill`'s `switch` and `MCSPlayer`'s three
+switches split into case groups by indentation and paired by their DECODED labels (arms 38 / 39,
+clip end 97 / 98 groups, `startAction` 34 / 34, `doAction` 23 / 23; every Android group has a
+twin); every line compared by SHAPE (identifiers blanked, `this.` dropped, numbers and keywords
+kept); every static constant on a same-shape line decoded in its own build through the qualifying
+class or the `extends` chain. **483 constant-bearing line pairs, 0 mismatches** (`EnemyPlayer` 30,
+the `startSkill` preamble 3 and arms 189, the 83 unported switch groups 261). The "0" was probed:
+five deliberately wrong pairings (the SHUNPO arm against the web's THOUSANDSTABS, FIREBREATH against
+GROUNDPUNCH, DASHRIGHT against DASHLEFT, clip end `JUTSU_BLOW_PARTA` against `GROUNDPUNCH_PARTA`,
+`DASH_START` against `BACKSTEP_START`) give 15 mismatches in 18 pairs, all five caught. The four
+range lists were decoded to skill ids in both builds separately: identical, entry for entry.
+
+**A blind spot of that method, closed here:** shape blanks every NAME, so a call replaced by a call
+to a different method of the same shape passes. It hid one real difference (`getDamage` →
+`getBaseDamage`, below), found by eye. So every call on a same-shape line was also compared by name:
+951 calls resolved through method pairs confirmed by order AND body content; with the two damage
+getters named from their definitions (`§1t99s0§.as:3255` is `getDamage`, its own formula, 3a;
+`:3279` is `getBaseDamage`, identical to Android's `:3226`) it reports exactly the 9 swapped lines
+and nothing else. The other 40 web names that pairing leaves ambiguous (529 calls) each stand
+opposite ONE Android name on every line, and each was checked against its own definition (six are
+class names, not methods; three bodies differ where a map records a web change: `canUseSkill`,
+`isUsingSkill`, `isAirborne`). The swap
+was seen by eye first; a CONSISTENT swap is invisible to any per-line test, so the definitions are
+the check, and they found no second one.
+
+### The functions, paired (Android `EnemyPlayer.as` · web `§1t122s0§.as`)
+
+| function | Android | web | lines A / W | shape | lane |
+|---|---|---|---|---|---|
+| `AI` | 990-1193 | `§1t4501s0§` 1040-1243 | 204 / 204 | **differs**: the no-target wander (below) | **7a** |
+| `isUnderSlash` | 1208-1224 | `§1t4541s0§` 1267-1285 | 17 / 19 | same (`for` → `while`) | **7a** |
+| `doEvade` | 1225-1280 | `§1t4883s0§` 1286-1341 | 56 / 56 | same | **7a** |
+| `hasSkill` | 1366-1378 | `§1t4885s0§` 1445-1459 | 13 / 15 | same (`for` → `while`) | **7a** |
+| `canUseSkill` | 1379-1383 | `§1t4886s0§` 1460-1474 | 5 / 15 | **differs**: the chi test (below) | **7a** |
+| `getUsableSkills` | 1384-1415 | `§1t4891s0§` 1475-1508 | 32 / 34 | same (`for` → `while`) | **7a** |
+| `doSkill` | 1416-1437 | `§1t4893s0§` 1509-1530 | 22 / 22 | same | **7a** |
+| `update`'s cooldown tick | 921-931 | 969-981 | 11 / 13 | same (`for` → `while`) | **7a** (the rest of `update` is 5a's) |
+| `init`'s cooldown table | 818-835 | 838-857 (in `§1t4880s0§`, which the web `init` calls) | 18 / 20 | same (`for` → `while`) | **7a** (deferred by 1b-ii, ERRATUM 5) |
+| `getDamage` (boss: `minDamage`) | 1199-1207 | `§1t4475s0§` 1249-1257 | 9 / 9 | same | **7a**: `isBoss` is false on the duellist, so it answers `super` |
+| `getBaseDamage` (boss: `minDamage`) | — | `§1t4476s0§` 1258-1266 | — / 9 | web only | **7a**, the same |
+| `getSkillLevel` | 1348-1365 | `§1t4491s0§` 1426-1444 | 18 / 19 | same | ported (6a) |
+| `setLevel` | 57-156 | 57-170 | 100 / 114 | differs | **out**: not on the duel's path (OPP-D item 2, below) |
+
+Helpers slice 7 needs that are not ported (Android `MCSPlayer.as` · web `§1t99s0§.as`, same shape
+each): `getChargingTime` 4344-4353 / `§1t4492s0§` 4713-4722 (`chargingTime / 24`, capped at 10),
+`cancelChargingTime` 4354-4358 / `§1t4493s0§` 4723-4727, `canSmokeAway` 2970-2974 / `§1t4471s0§`
+3053-3057, `hasLogSub` 4769-4772 / `§1t4512s0§` 4763-4767. Already ported: `isCharging`,
+`isUsingSkill` (web list), `canChangeStance`, `cancelStealth`, `faceTarget`, the stroke makers.
+
+`SkillManager.startSkill` (Android `SkillManager.as:123-707`, web `§1t120s0§.as` `§1t1542s0§`
+131-742): the preamble 39 / 43 lines, then a `switch` of **38 arms in both builds plus one web-only
+arm** (skill 1077, `:344-369`, which no AI list names). Every arm pairs; 35 are the same shape and
+three differ only by a `trace("no ammo")` the web drops (kunai, windmill, trap).
+
+### The skills the AI reaches (the four lists read as skill ids, both builds identical)
+
+`veryCloseRangeSkillList` (`:30`): 1041, 1048, 1044, 1006, 1013, 1033, 1035, 1034, 1039, 1040, 1042,
+1043, 1045, 1047, 1052, 1064 · `closeRangeSkillList` (`:32`): 1006, 1013, 1033, 1035, 1034, 1039, 1041,
+1045, 1047, 1052, 1051, 1066, 1067 · `midRangeSkillList` (`:34`): 1051, 1050, 1049, 1040, 1039, 1007,
+1024-1032, 1046, 1047, 1053, 1055, 1012, 1066, 1067 · `longRangeSkillList` (`:36`): 1007, 1024-1032,
+1046, 1047, 1053, 1055, 1012, 1066. The AI and `doEvade` also call nine ids directly: SMOKEBOMB 1010
+(downed, `:1006`; evade, `:1246`), HEAVENLYSWORDS 1047 (`:1077`), AIRSTAB 1065 (`:1082`), FOCUS 1005
+(`:1151`), STEALTH 1054 (`:1165`), ROLL 1004, JUMP 1003, DASHLEFT 1050, DASHRIGHT 1049
+(`:1230-1242`). **Reached: 36 ids** (30 from the lists, 6 more by direct call), through 28 arms and
+57 of the 83 unported switch groups. **Never reached: the very-close list's five (OPP-D item 1) and
+INFERNO 1070, EARTHQUAKE 1073, TORNADO 1072, TSUNAMI 1071, CHICHARGE 1069** (no list, no call).
+
+Each reached skill: its arm (Android · web), what it enters, and the FX and projectiles it creates.
+Every group below is named by its label; spans are in THE CUT.
+
+| skill (id) | arm A · W | enters | FX / projectiles | sub |
+|---|---|---|---|---|
+| JUMP 1003 | 164-170 · 176-182 | `startAction` JUMP (`SHEATHEDJUMP`) → `doAction` JUMP → LAND (`SHEATHEDLAND`) → clip end `SHEATHEDLAND` → IDLE | — | 7b |
+| ROLL 1004 | 171-177 · 183-189 | FORWARDROLL → `doAction` FORWARDROLL → clip ends `FORWARDROLL_START` → `FORWARDROLL_END` → IDLE | — (the roll dodge, 6a, reads this state) | 7b |
+| DASHRIGHT 1049, DASHLEFT 1050 | 178-217 · 190-229 | DASH or BACKSTEP (by facing) → `doAction` DASH+BACKSTEP → clip ends `DASH_START` / `BACKSTEP_START` → `_END` → IDLE | `DashFX` as `chargingFx` (created in `startAction`, removed at `_START`'s end) | 7b |
+| SMOKEBOMB 1010 | 334-351 · 370-387 | level 1: SMOKEBOMB; else SMOKEBOMB2 (54 / 57 lines: the escape) → clip end `NINJASMOKEBOMB` → LAND | `createSmoke`, `createSmoke2`, `createSmoke3` | 7b |
+| FLASHBANG 1052 | 352-358 · 388-394 | SKILL_FLASHBANG → clip end `NINJASMOKEBOMB` → IDLE | `PROJ_FLASHBANG` | 7b |
+| FOCUS 1005 | 218-226 · 230-238 | `reload = maxreload − 1`, DOSKILL + `FOCUS_START` → `FOCUS_END` → IDLE | — | 7c |
+| STEALTH 1054 | 359-365 · 395-401 | SKILL_STEALTH (`FOCUS_START`) → clip end `FOCUS_START`'s stealth branch: hidden, `invisCounter` 240 / 360 / 480 | `createSmoke3` | 7c |
+| SLASHWAVE 1006 | 227-246 · 239-258 | DOSKILL + `KATANAATTACK` → IDLE | `PROJ_SLASHWAVE` (2) | 7c |
+| KUNAITHROW 1007, KUNAIFIRE…EARTH 1029-1032 | 247-304 · 259-315 | DOSKILL + `KUNAITHROW` → IDLE (no ammo test off the human) | `PROJ_KUNAI` / `_FIRE` / `_WATER` / `_WIND` / `_EARTH` | 7c |
+| WINDMILL 1051 | 305-333 · 316-343 | DOSKILL + `KUNAITHROW` → IDLE | `PROJ_WINDMILL` | 7c |
+| TRAP 1024, TRAPFIRE…EARTH 1025-1028 | 467-525 · 503-560 | LAYTRAP (no group) + `PICKUP` → IDLE | `PROJ_TRAP*`, `setNPCMode()` | 7c |
+| CHARGEDSHOT 1046 | 626-659 · 661-694 | released at once (OPP-D item 6): DOSKILL + `CHARGEDSHOT_END` → IDLE | `PROJ_CHARGEDSHOT`, damage `getChargingTime()` = 2 | 7c |
+| SHUNPO 1039 | 566-585 · 601-620 | released at once: `SHUNPO_END` + DOSKILL (prev SHUNPO: `movePlayer(±250)`) → clip end `SHUNPO_END` → POSE | `PROJ_SHUNPOHIT` | 7d |
+| THOUSANDSTABS 1040 | 586-605 · 621-640 | released at once: DOSKILL (`gotHitCounter` 26) + `FLURRY_PARTB` → `_C` (the hit, `doAction`) → `_D` (hit) → `FLURRY_POSE` → the sheathe | `DashFX` at `_B`, removed at `_C` | 7d |
+| DEADLYCLEAVE 1041 | 606-625 · 641-660 | released at once, as THOUSANDSTABS's state (OPP-D item 5): DOSKILL (`gotHitCounter` 26) + `CLEAVE_END` → `CLEAVE_POSE` → the sheathe | `PROJ_CLEAVEHIT`, `startShake` | 7d |
+| AIRSTAB 1065 | 451-458 · 487-494 | DOSKILL + `AIRSTAB_START` → `_MID` (the downstab hit, `doAction` steps 10) → `_STAB` → `_END` → POSE | `PROJ_GROUNDPUNCH` | 7d |
+| PUNCHLUNGE 1067 | 697-703 · 732-738 | DOSKILL + `PUNCHLUNGE_START` → `_MID` (the hit) → `_END` → IDLE | `BullChargeFX` as `chargingFx` | 7d |
+| BULLCHARGE 1066 | 690-696 · 725-731 | SKILL_BULLCHARGE (`BULLCHARGE_START` → `BULLCHARGE_RUN`) → `doAction` SKILL_BULLCHARGE (34 / 35 lines, the hit) → IDLE | `BullChargeFX` | 7d |
+| FIREBREATH 1013 | 387-394 · 423-430 | SKILL_FIREBREATH (no group) + `JUTSU_BLOW_PARTA` → `_PARTB` → IDLE | `PROJ_FIREBREATH` | 7e |
+| GROUNDPUNCH 1033, CHIBURST 1045 | 395-402, 558-565 · 431-438, 593-600 | their states (no group) + `GROUNDPUNCH_PARTA` → `_PARTB` → IDLE | `PROJ_GROUNDPUNCH` / `PROJ_CHIBURST` | 7e |
+| WINDKICK 1034 | 403-410 · 439-446 | WINDKICK (+ `doAction`) + `PUNCHCOMBO_PARTA` → `_B` → `_C` → `_D` → IDLE | `PROJ_WINDKICK` ×3 | 7e |
+| WATERSPLASH 1035 | 411-418 · 447-454 | its state (no group) + `STOMP_PARTA` → `_PARTB` → IDLE | `PROJ_WATERSPLASH` | 7e |
+| HEAVENLYSWORDS 1047 | 660-681 · 695-716 | its state (no group) + `JUTSU_GROUND_PARTA` (only the group's tail runs: its three branches are the unreached jutsus) → `_PARTB` → IDLE | `PROJ_HEAVENLYSWORD` | 7e |
+| SUBSTITUTIONLOG 1012 | 380-386 · 416-422 | SKILL_SUBSTITUTIONLOG (arms `logsubCounter`, `FOCUS_START`) → IDLE; a hit then runs the log (below) | `LogIcon` on the clip | 7f |
+| SHADOWCLONE 1053, MASSCLONE 1055 | 366-379 · 402-415 | their states (`FOCUS_START`) → IDLE | `NPCManager.createClone` / `createMassClone` (the `EnemyClone` itself is out of the lane, §3) | 7f |
+
+**The projectiles are not slice 7's to port** (ruling below): 14 classes the reached skills create
+(`KunaiProjectile` 147, `TrapProjectile` 109, `ChargedShotProjectile` 106, `HeavenlySwordProjectile`
+101, `WindKickProjectile` 86, `WindmillProjectile` 84, `FireBreathProjectile` 83,
+`GroundPunchProjectile` 83, `WaterSplashProjectile` 83, `SlashWaveProjectile` 75, `ChiBurstProjectile`
+70, `CleaveHitProjectile` 63, `ShunpoHitProjectile` 60, `FlashbangProjectile` 58: 1,208 Android lines,
+on a 122-line `Projectile` base), and the FX `DashFX` 31, `BullChargeFX` 31, `LogIcon` 15.
+
+### The log substitution, placed (ERRATUM 15 item 4)
+
+`startAction` SKILL_SUBSTITUTIONLOG (`MCSPlayer.as:1840-1861`, web `:1899-1920`) is the one
+non-zero writer of `logsubCounter`. A hit then calls `doSubstitutionLog` (4184-4196 / `§1t4489s0§`
+4561-4573: from `checkHitObject`, `gotHit` and `update`, all behind `logsubCounter > 0`), which
+enters `startAction` LOGSUBSTITUTION (1543-1575 / 1598-1632; the web also zeroes `juggleCount` at
+`:1614`, `:1630`), which starts LAND: LAND's `startAction` and `doAction` groups and the clip end
+`SHEATHEDLAND` are **7b's**, so 7f follows 7b. `cancelLogSub` (4369-4379 / 4738-4748) runs when the
+counter runs out. The web `Damage.setSubstitutionLog` (`§1t67s0§.as:176-185`, `§1t1087s0§`; 11 lines with its blank) also
+zeroes the four element damages (Android `Damage.as:143-148`, 7, zeroes `damage` only; the port has
+Android's): **7f** carries the web's.
+
+### OPP-D, located (and three more quirks the map found)
+
+1. **The dead very-close list:** `getUsableSkills` tests `distsq < 40000`, then `if` (not
+   `else if`) `distsq < 90000`, so the close list overwrites it (`EnemyPlayer.as:1389-1396`, web
+   `:1480-1487`). Its five skills in no other list and never called: **DEATHTOUCH 1048,
+   SPIRITTHIEF 1044, CHIPUNCH 1042, CHIKICK 1043, BACKTHROW 1064**. Pinned in 7a.
+2. **A boss's skills emptied by `init` and re-rolled by `setLevel`** (`init` `:832-835`, `setLevel`
+   `:143-153`): **not on the duellist's path.** The duel's profile is `ai = 0`
+   (`XMLNpc.as:315`) → `new EnemyPlayer(mcs, true, false)`: a duellist, not a boss
+   (`NPCManager.as:519`); and the duel's wave row carries no level (`XMLQuestWave.as:69`), so
+   `createEnemy` never calls `setLevel` (`NPCManager.as:877-880`; `NPCHolder.getLvl` answers 0,
+   `:51-58`). 7a pins it by what it does not do: the body's list is the profile's, untouched.
+3. **The level ≤ 3 skip, 1 in 5:** `EnemyPlayer.as:1012-1015`, web `:1062-1065`. 7a.
+4. **ChiPunch / ChiKick read the HUMAN's level:** `StatsManager.getStat(SKILL_CHIPUNCH)`
+   (`MCSPlayer.as:1783`, `:1795`, web `:1842`, `:1854`), inside `startAction` DOSKILL. On a path the
+   AI never takes (both skills are only in the dead list): it goes with the unreached groups (the
+   ruling below), and its pin is that no AI path reaches it.
+5. **(new) The AI's deadly cleave wears the flurry's state.** It writes
+   `actionState = SKILL_THOUSANDSTABS_STATE` for DEADLYCLEAVE (`EnemyPlayer.as:1140`, web `:1190`),
+   so `startAction` DOSKILL takes the flurry's branch: `gotHitCounter` **26, not the cleave's 16**
+   (`MCSPlayer.as:1762-1769`). DOSKILL's cleave branch is unreachable on the AI. 7d pins it.
+6. **(new) The AI's charged skills never charge.** It writes the state and `chargingTime` (48, 96,
+   96, 120) and calls `doSkill` with `xpos = ypos = −1` (`:1124-1143`), so `startSkill` takes the
+   release branch at once (each arm tests `xpos == 0 && ypos == 0`): no CHARGING, SKILL_SHUNPO,
+   SKILL_THOUSANDSTABS or SKILL_DEADLYCLEAVE `startAction` (so no charge FX), no charge tick, and a
+   charged shot of damage `48 / 24` = 2. Those four `startAction` groups and the `doAction` charge
+   group are unreachable on the AI. 7c and 7d pin it.
+7. **(new) The duellist's cooldowns scale by the HUMAN's speed.** `XMLSkill.getCooldown` multiplies
+   by `StatsManager.getSkillCooldownModifier()` (`XMLSkill.as:310`), the local player's speed
+   (`StatsManager.as:1844-1861`): Android `1 − speed / 300 × 0.5` capped at 300, **web `/ 600`, capped
+   at 600** (`§1t1523s0§`, ERRATUM 5). 7a reads it through the player proxy.
+
+### What differs between the builds on the AI's path, and the ruling (R6: web wins)
+
+| web | Android | ruling |
+|---|---|---|
+| `canUseSkill` (`§1t122s0§.as:1463-1470`): a skill whose chi cost at its level is > 0 is refused while the body's chi is 0 | none | **web** (7a). The AI never pays chi (`startSkill` charges `isPlayer()` only, both builds: `SkillManager.as:157`, web `:169`), so only the human's effects empty it (the death touch's `setChi(0)`, the spirit thief) |
+| `getBaseDamage()` for the skills' damage, at 9 lines: the shunpo hit (`:1811`, `:1816`), the flurry (`:2093`, `:2106`), the punch lunge (`:2130`), the bull charge (`:2211`), the cleave (`:924`, `:928`), the air stab (`:1113`) | `getDamage()` (the stance-scaled, crit-on-full-reload one) at `:1752`, `:1757`, `:2031`, `:2043`, `:2066`, `:2144`, `:902`, `:906`, `:1092` | **web** (7d). Found by eye: shape cannot see it (above) |
+| `AI`'s no-target wander: at `< 100` or `> width − 100`, to `random × (width − 300) + 150` (`:1071-1073`) | `50`, `width − 100`, `+ 50` (`:1021-1023`) | **web** (7a). Only with no target at all |
+| `startSkill` preamble: a `controlledBy == 0` mode refusal (`:145`) and the clones also refused in a second `GameEngine` mode (`:165`, `§1t10048s0§`, undecoded) | the PvP-room test only (`:153`) | **web** (7a; the first is the human's, out). 7f decodes the second before porting the clones |
+| clip end `NINJASMOKEBOMB` plays `Snd_smokebomb` (`:769`) and resets `juggleCount` (`:785`); `startAction` SMOKEBOMB2 sets it 0 / 5 / 0 (`:1559`, `:1581`, `:1595`); LOGSUBSTITUTION 0 (`:1614`, `:1630`) | none | **web** (7b, 7f). The `juggleCount` writers were listed in slice 6's map |
+| the attacker on every skill packet (`§1t1089s0§(this)`: `:1023`, `:1114`, `:1658`, `:1714`, `:2094`, `:2107`, `:2131`, `:2212`) | none | **web** (their sub-slices), as 4c's strokes |
+| `Damage.setSubstitutionLog` zeroes the four elements | `damage` only | **web** (7f) |
+| `getSkillCooldownModifier`: `/ 600`, cap 600 | `/ 300`, cap 300 | **web** (7a) |
+| unreached only: the spirit thief's victim test (`:1674`), the undying heal (`:2232-2245`: `maxhp / 240` or `/ 480`, at least 1; Android `/ 144`, `/ 288`), a guard on the chi-charge FX (`:1167`), the death touch's hit (a human 4th argument; the network branch dropped) | — | with the unreached groups |
+
+### Rulings made here (decide-and-flag)
+
+- **R7 — slice 7 EMITS each projectile and FX; it does not port them.** Every
+  `ProjectileManager.createProjectile` / `createSmoke*` / `createClone` becomes an event carrying the
+  source's arguments, as L4b's archer emits `createArrow`. `chargingFx` becomes a handle: its
+  creation (`DashFX`, `BullChargeFX`) and its removal (the four `Projectile.removeProjectile` sites)
+  are events. The 14 projectile classes go to a new **slice 9, THE PROJECTILES** (≈1,330 lines,
+  mapped first), after the seam, because a projectile hits through `NPCManager` and draws through
+  `ProjectileManager`, neither of which exists in core before slice 8. *Red-team:* the steelman for
+  porting them inside 7 is that a skill with no projectile does nothing you can see: a LOOK after 7
+  shows a duellist throwing nothing. My pick breaks if OPP-G (the owner's LOOK) runs between slices 8
+  and 9, so **slice 9 lands before OPP-G**. It also depends on slice 8 giving projectiles a hit
+  path. **Veto:** fold each skill's projectile into its sub-slice (+1,330 lines, about three more
+  sub-slices).
+- **R8 — the groups no AI path reaches are ruled out loudly, not ported.** 35 arms and groups,
+  450 Android / 485 web lines: the unreached skills' (the very-close five and the four big jutsus,
+  CHICHARGE, the web's 1077), the four charge `startAction` groups and the `doAction` charge tick
+  (item 6), SKILL_UNDYING and `ZOM_GETUP` (only `EnemyElite` enters it, `EnemyElite.as:203`: out of
+  the lane, §3), and the seppuku chain (only the human's button starts it, `BattleUI.as:680`,
+  `OverworldHUD.as:2658`). The precedent is the lane's own: the `controlledBy` 0 / 2 branches were
+  never carried. So that a wrong reachability claim still fails LOUDLY, the last sub-slice moves
+  these labels from the catch-alls to ONE `unreachable('<label>')` site per switch, which throws,
+  pinned by a test listing exactly these labels. OPP-C then reads "`unported` = 0, and every
+  `unreachable` label pinned with its reason". *Red-team:* the steelman for porting them is OPP-C's
+  plain wording and a later player migrating onto this body; but that migration is on §5's
+  NOT-DONE list, and a test of dead code must poke a state the AI cannot enter (the slice-6 map's
+  objection to the log). My pick depends on the reachability argument above being right, which is
+  why it throws instead of no-opping. **Veto:** port them whole as **7g** (450 / 485, one sub-slice).
+- **REDFREEZE (`startAction` 1454-1467, `doAction` 1956-1969; 28 lines) goes to slice 8**, with
+  `StageManager.redFreeze`, as ruled in slice 6.
+- **`setLevel` is out** (OPP-D item 2).
+
+### The harness rule: the 12 unported sites, each assigned
+
+| site | today | goes to |
+|---|---|---|
+| `MCSPlayer.update clip end` catch-all | 60 labels | 7b 21 · 7c 2 · 7d 15 · 7e 11 · the R8 set 11 → `unreachable` |
+| `MCSPlayer.startAction` catch-all | 26 labels | 7b 8 · 7c 2 · 7d 1 · 7e 1 · 7f 4 · R8 9 · **slice 8** 1 (REDFREEZE) |
+| `MCSPlayer.doAction` catch-all | 16 labels | 7b 5 · 7d 2 · 7e 1 · R8 7 · **slice 8** 1 (REDFREEZE) |
+| `EnemyPlayer.AI` | — | **7a** |
+| `MCSPlayer.cancelLogSub`, `MCSPlayer.doSubstitutionLog` | — | **7f** |
+| `Projectile.removeProjectile` ×4 (`startAction`, `checkHitObject`, `gotHit`, `die`) | — | **7b** (the FX handle, R7) |
+| `StageManager.clearInteractTarget` (`stopMoving`) | — | **slice 8** |
+| `NPCManager.checkPlayerHit` | — | **slice 8** |
+
+7a adds one site for a while: `SkillManager.startSkill`'s arm catch-all (the arms not ported yet),
+emptied by 7b–7f, the rest to `unreachable` (R8). So 7a ends at 12 (−1 AI, +1 arms).
+
+### MEASURED ON THE WAY
+
+- **Two hit tests against a rendered clip:** the AI's "am I already hitting" test
+  (`target.mcs.hitTestPoint(pt.x, pt.y, true)`, `EnemyPlayer.as:1064`) and `isUnderSlash`
+  (`mcs.hitTestPoint(pt.x − offset, pt.y)`, `:1217`). The port's geometry answers PARTS, not a clip's
+  shape. 7a must give `DuelHitGeometry` (or the proxy) a clip test; the answer is the seam's.
+- **7a reads the human through the proxy:** `gotSlash()` and `getSlashArray()`
+  (`StageManager.getPlayer()`, `:1050`, `:1211`), `StageManager.getStagePosition()`, the stage
+  width, `isPeaceful()`, `isDuelMode()` (the bow, `:1030-1035`), and the target's clip `alpha` /
+  `visible` (`:1042`, the stealth test; note its precedence: `target != null && alpha < 1 ||
+  !visible`, ported as it reads).
+- **The AI's peaceful bow** (`startAnim(BOW2)`, `:1034`) ends in the shared clip-end group (15 labels,
+  `MCSPlayer.as:683-699`): 7b ports it whole, so the bow ends in IDLE only once 7b lands.
+
+### THE CUT (≤ 500 source lines each, measured by script from the spans above)
+
+| sub-slice | content | Android | web | its end-to-end test |
+|---|---|---|---|---|
+| **7a — THE BRAIN** | `AI`, `isUnderSlash`, `doEvade`, `hasSkill`, `canUseSkill` (web chi test), `getUsableSkills`, `doSkill`, `update`'s cooldown tick, `init`'s cooldown table, `EnemyPlayer.getDamage` / `getBaseDamage`, `startSkill`'s preamble and tail with an arm catch-all, `getChargingTime`, `cancelChargingTime`, `canSmokeAway` | **449** | **482** | a body with NO usable skill through the real `update` against a standing target, seeded: the level-≤3 skip, the wander while `reload < doReload`, the stroke at full reload (`launchTarget` on a 1-in-3, else `slashTarget`) and `doReload = 0`; the evade's `makeSlash` fallback under the human's slash; a one-skill profile's cooldown filled by `init`, scaled by the human's speed (web), ticked by `update` |
+| **7b — THE EVASION** | arms JUMP, ROLL, DASHRIGHT, DASHLEFT, SMOKEBOMB, FLASHBANG; `startAction` FORWARDROLL, JUMP, LAND, SMOKEBOMB, SMOKEBOMB2, DASH, BACKSTEP, SKILL_FLASHBANG; `doAction` FORWARDROLL, JUMP, LAND, DASH+BACKSTEP; clip ends `FORWARDROLL_START`, the shared IDLE group (15), `NINJASMOKEBOMB`, `DASH_START`, `BACKSTEP_START`, `DASH_END`+`BACKSTEP_END`; the FX handle (R7) and its four removal sites | **280** | **285** | the human's slash over the body through the real `update`: ROLL, `FORWARDROLL_START` → `_END` → IDLE; the roll on cooldown → JUMP → LAND → `SHEATHEDLAND` → IDLE; a dash with its FX created and removed; a downed body with SMOKEBOMB 2 → SMOKEBOMB2 → `NINJASMOKEBOMB` → LAND |
+| **7c — THE THROWS AND THE FOCUS** | arms FOCUS, STEALTH, SLASHWAVE, the five kunai, WINDMILL, the five traps, CHARGEDSHOT; `startAction` DOSKILL, SKILL_STEALTH; clip ends `FOCUS_START`, `FOCUS_END` | **308** | **305** | FOCUS while `reload < doReload`: `maxreload − 1`, `FOCUS_START` → `_END` → IDLE; a kunai at long range: the projectile event with the source's arguments; STEALTH at `reload < 24`; the charged shot released at once, damage 2 |
+| **7d — THE CLOSE STRIKES** | arms SHUNPO, THOUSANDSTABS, DEADLYCLEAVE, AIRSTAB, PUNCHLUNGE, BULLCHARGE; `startAction` SKILL_BULLCHARGE; `doAction` DOSKILL, SKILL_BULLCHARGE; clip ends `SHUNPO_END`, the flurry's four, the cleave's two, the air stab's four, `BULLCHARGE_START`, the punch lunge's three | **291** | **296** | the flurry at mid range: `gotHitCounter` 26, `FLURRY_PARTB` → `_C` (the FX, a hit for `getBaseDamage() × 4 / 2`) → `_D` → `FLURRY_POSE` → the sheathe; the cleave's 26 (item 5); the shunpo's 250 px; the air stab on a downed target |
+| **7e — THE JUTSUS** | arms FIREBREATH, GROUNDPUNCH, WINDKICK, WATERSPLASH, CHIBURST, HEAVENLYSWORDS; `startAction` / `doAction` WINDKICK; clip ends `JUTSU_BLOW_PARTA` / `_B`, `GROUNDPUNCH_PARTA` / `_B`, `STOMP_PARTA` / `_B`, `PUNCHCOMBO_PARTA`–`_D`, `JUTSU_GROUND_PARTA` | **250** | **252** | the windkick combo A → D: three `PROJ_WINDKICK` events, then IDLE; the heavenly swords on a downed target (only `JUTSU_GROUND_PARTA`'s tail) |
+| **7f — THE LOG AND THE CLONES** | arms SUBSTITUTIONLOG, SHADOWCLONE, MASSCLONE; `startAction` SKILL_SUBSTITUTIONLOG, LOGSUBSTITUTION, SKILL_SHADOWCLONE, SKILL_MASSCLONE; `doSubstitutionLog`, `cancelLogSub`, `hasLogSub`; the web `Damage.setSubstitutionLog` | **112** + 7 | **115** + 11 | the log armed, then a hit through `checkHitObject`: all five damages zeroed, `doSubstitutionLog`, LOGSUBSTITUTION → LAND → IDLE; `cancelLogSub` when the counter runs out; a clone event |
+| R8 — the unreached | the 35 arms and groups above, to `unreachable` (or 7g on the veto) | 450 | 485 | a test that lists them and the reason for each |
+| slice 8 | REDFREEZE ×2, `clearInteractTarget`, `checkPlayerHit` | 28 + … | 28 + … | the seam's |
+
+7a–7f = 1,697 Android / 1,746 web source lines. **Reconciled with §3's list** (`AI` 204, `doEvade` 56,
+`getUsableSkills` 32, `doSkill` 22, `isUnderSlash` 17, `hasSkill` 13, `canUseSkill` 5, the tick, the
+table, "the arms"): every named function is in 7a; `getSkillLevel` was 6a's. The arms were
+unmeasured; with their switch groups they are 7b–7f (1,248 Android lines). Every one of the 83 unported
+groups and all 38 arms (+ the web's one) is assigned; a script checked that none is missed.

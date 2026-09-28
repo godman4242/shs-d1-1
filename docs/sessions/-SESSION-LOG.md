@@ -4524,3 +4524,33 @@ instructionpaths 0 · chaos 392 pinned · 15 unported sites.
 ### THE GATES
 
 After: 92 files / 2482 tests · typecheck 0 · lint 0 · claimcheck 2349 / 635 / 44 / 0 · instructionpaths 0 · chaos 443 pinned (443/443 red) · 12 unported sites.
+
+## 2026-09-29 — build loop: L5-OPP slice 7, THE AI MAP (no code)
+
+- **Baseline at HEAD `f212866`, as RESUME_HERE stated:** 92 files / 2482 tests · typecheck 0 ·
+  lint 0 · claimcheck 2349 / 635 / 44 / 0 · chaos 443 pinned · 12 unported sites.
+- **Measured by scratch scripts (not committed), the slice-5 / 6 method:** `startSkill`'s switch and
+  `MCSPlayer`'s three split into case groups by decoded label (every Android group has a web twin);
+  every line compared by shape; 483 constant pairs decoded in both builds, 0 mismatches, probed red
+  (5 of 5 wrong pairings caught). The split reproduced the pinned catch-alls exactly (60 / 26 / 16).
+- **The AI reaches 36 skill ids** (30 from the lists, 6 by direct call) through 28 of 38 arms and 57
+  of the 83 unported groups. The very-close list is dead; the boss re-roll is not on the duel's
+  path (the duel wave has no level).
+- **A web difference the shape method cannot see:** the skills' damage is `getBaseDamage()` in the
+  web at 9 lines, where Android calls `getDamage()`. Seen by eye; then a call-name check over 951
+  calls (method pairs confirmed by order and body) reported those 9 and nothing else. My first
+  version of that check said "0" because the swapped name was one it could not resolve: probed,
+  it was blind to exactly this, so the names were checked against their definitions.
+- **Three new quirks:** the AI's cleave wears the flurry's state (`gotHitCounter` 26, not 16); its
+  charged skills release at once (no charge state or FX; a charged shot of damage 2); cooldowns
+  scale by the HUMAN's speed.
+- **Rulings (vetoable):** R7, projectiles are emitted in 7 and ported in a new slice 9 before OPP-G;
+  R8, the 35 unreached arms and groups go to a throwing `unreachable` site, not ported.
+- **The cut:** 7a 449 / 482 · 7b 280 / 285 · 7c 308 / 305 · 7d 291 / 296 · 7e 250 / 252 · 7f 119 / 126.
+- **My own miscounts, caught by re-running the numbers before the commit:** "30 ids through 38 arms
+  and 48 groups" (it is 36, 28, 57), a web total (1,751 → 1,746) and a 6-line span (7).
+
+### THE GATES
+
+No code changed: 92 files / 2482 tests · typecheck 0 · lint 0 · claimcheck 2349 / 635 / 44 / 0 ·
+instructionpaths 0 · chaos 443 pinned · 12 unported sites.

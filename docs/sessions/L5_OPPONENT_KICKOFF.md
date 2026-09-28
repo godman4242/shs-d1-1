@@ -399,6 +399,32 @@
 > 6. **Chaos 392 → 443** (52 plants; 1 retired: the `gotHit` shadow).
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 6c".
 
+> **⛔ ERRATUM 19 — SLICE 7, THE MAP (2026-09-29, a build-loop cycle; measured against both builds;
+> no code). Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **The AI reaches 36 skill ids** (30 from the three live range lists, 6 more by direct call),
+>    through 28 of `startSkill`'s 38 arms (the web adds a 39th, on no AI list) and 57 of the 83
+>    unported switch groups.
+>    The four range lists are identical in both builds.
+> 2. **The web wins four more times on the AI's path (R6):** `canUseSkill` refuses a chi-costing
+>    skill at chi 0; the skills' damage is `getBaseDamage()` at 9 lines, not `getDamage()`; the
+>    no-target wander's bounds; the cooldown modifier (`/ 600`, ERRATUM 5). Plus the known
+>    `juggleCount` writes and attackers on skill packets.
+> 3. **OPP-D located, and three more quirks:** the dead very-close list (`EnemyPlayer.as:1389-1396`);
+>    the boss re-roll is NOT on the duel's path (the duel wave has no level, the body is no boss);
+>    the level-≤3 skip (`:1012`); ChiPunch / ChiKick on an unreached path. New: the AI's deadly
+>    cleave wears the flurry's state (`gotHitCounter` 26, not 16); its charged skills release at once
+>    (no charge state, no charge FX, a charged shot of damage 2); cooldowns scale by the HUMAN's speed.
+> 4. **R7:** slice 7 emits projectiles and FX as events; the 14 projectile classes (≈1,330 lines with
+>    their base) become **slice 9, THE PROJECTILES**, which lands before OPP-G.
+> 5. **R8:** the 35 arms and groups no AI path reaches (450 / 485 lines) move to one throwing
+>    `unreachable` site per switch, pinned by a test; OPP-C reads "`unported` = 0 and every
+>    `unreachable` label pinned". Veto: port them as 7g.
+> 6. **The cut** (measured): **7a — THE BRAIN** 449 / 482 · **7b — THE EVASION** 280 / 285 ·
+>    **7c — THE THROWS AND THE FOCUS** 308 / 305 · **7d — THE CLOSE STRIKES** 291 / 296 ·
+>    **7e — THE JUTSUS** 250 / 252 · **7f — THE LOG AND THE CLONES** 119 / 126. REDFREEZE,
+>    `clearInteractTarget` and `checkPlayerHit` are slice 8's.
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 7 — THE MAP".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -479,8 +505,9 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **4** | **BODY ii — the stroke** · ✅ **LANDED 2026-09-29** in three commits (4a ERRATUM 9, 4b ERRATUM 10, 4c ERRATUM 11) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) ✅ **LANDED 2026-09-29** (ERRATUM 13) · **5b** the air and the downstab (179 / 182) ✅ **LANDED 2026-09-29** (ERRATUM 14) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception · **MAPPED 2026-09-29** (ERRATUM 15): **6a** the hit and the flinch (386 / 415) ✅ **LANDED 2026-09-29** (ERRATUM 16) · **6b** the launch and the getup (263 / 277) ✅ **LANDED 2026-09-29** (ERRATUM 17) · **6c** the blow, the death and the reward (389 / 429) ✅ **LANDED 2026-09-29** (ERRATUM 18) | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
-| 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
+| 7 | THE AI · **MAPPED 2026-09-29** (ERRATUM 19): **7a** the brain (449 / 482) · **7b** the evasion (280 / 285) · **7c** the throws and the focus (308 / 305) · **7d** the close strikes (291 / 296) · **7e** the jutsus (250 / 252) · **7f** the log and the clones (119 / 126); the unreached to `unreachable` (R8) | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
 | 8 | THE SEAM — into the duel behind `?npc=duellist` | findings 16 + 17, a stroke channel; `Sim.ts` + `duel-baseline` by the atomic protocol | **YES** |
+| 9 | THE PROJECTILES (R7, ERRATUM 19) — mapped first; lands before OPP-G | the 14 classes the AI's skills create (1,208) on `Projectile` (122); `DashFX`, `BullChargeFX`, `LogIcon` | behind the seam |
 
 **Out of the lane, named so nobody ports them by accident:** `generateSkillList` (583,
 the roster NPC's roll: overworld only) · every `controlledBy == 0|2` / `NetworkManager`

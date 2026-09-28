@@ -1,97 +1,99 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 7, THE AI MAP (no code)
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 7a, THE BRAIN
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: a two-build read of the AI (≈360 Android lines) and the skill arms it reaches, then a cut | set with `/model` |
+| model / effort | **Opus 5.5 at `high`**: a 449-line port in strict TDD with one hand-worked end-to-end run | set with `/model` |
 | `/fast` | ON if you watch it; OFF for the unattended build loop (2× price) | your call |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
-| MCP / skills | nothing extra | already on |
+| MCP / skills | `test-driven-development` (the session invokes it before code) | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. The map is one cycle; 7a can follow it before then.
+⚠️ Your Claude subscription ends **2026-10-09**. 7a is one cycle; 7b can follow it before then.
 
 Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 18, then 15 item 4 and ERRATUM 5, then its §3 slice-7 row, §5 OPP-D, the harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 6 — THE MAP" (the model for this one) and "L5-OPP SLICE 6c" (the harness rule's 12 sites). MAP slice 7 (the AI) in both builds. No port code this cycle.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 19, then ERRATUM 5 item 1, its §3 slice-7 row, §5 OPP-C and OPP-D, the harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 7 — THE MAP" (the functions table, OPP-D items 1-3, 6 and 7, the web-wins table, MEASURED ON THE WAY, and THE CUT's 7a row). Port slice 7a, THE BRAIN, in strict TDD (invoke the test-driven-development skill first).
 Before anything else: confirm the baseline at HEAD (92 files / 2482 tests, typecheck 0, lint 0, claimcheck 2349 cites / 635 values / 44 context / 0 failures, chaos 443 pinned, 12 unported sites in MCSPlayer.ts).
-Slice 7 is over the 500-line cap before its skills are counted (EnemyPlayer.AI 204, doEvade 56, getUsableSkills 32, doSkill 22, isUnderSlash 17, hasSkill 13, canUseSkill 5, plus update's cooldown tick and init's cooldown table), so it is mapped first, as slices 5 and 6 were.
-Done = (a) every slice-7 function paired with its web twin by content (Android span, web span, lines, same/differs), with every EnemyPlayer override of it grepped in BOTH EnemyPlayer.as and §1t122s0§.as; (b) the skills the AI can reach: the four range lists (EnemyPlayer.as:30, :32, :34, :36) read as skill ids, and for each skill its SkillManager.startSkill arm and every startAction / doAction / clip-end group it enters, in both builds, with the FX and projectiles each one needs; (c) the log substitution placed (doSubstitutionLog, cancelLogSub, startAction LOGSUBSTITUTION and its LAND chain, SKILL_SUBSTITUTIONLOG: ERRATUM 15 item 4); (d) OPP-D's four quirks located at their lines; (e) each of the 12 unported sites in MCSPlayer.ts assigned to a sub-slice or to slice 8; (f) a cut into sub-slices of at most 500 source lines each, measured by script, each with its end-to-end test named; (g) every constant on a same-shape line decoded in both builds, and the "0 mismatches" probed red on a deliberately wrong pairing; (h) ERRATUM 19, DIVERGENCES "L5-OPP SLICE 7 — THE MAP", RESUME_HERE rewritten with 7a's paste-ready kickoff at the top, the session log, one commit, no code.
+Scope (449 Android / 482 web source lines, measured): EnemyPlayer.AI, isUnderSlash, doEvade, hasSkill, canUseSkill (web: its chi test), getUsableSkills (the dead very-close list ported as it reads), doSkill, update's cooldown tick, init's cooldown table, EnemyPlayer.getDamage and the web getBaseDamage (boss-only; the duellist is no boss), SkillManager.startSkill's preamble and tail with ONE unported catch-all for the arms, getChargingTime, cancelChargingTime, canSmokeAway. Where the builds differ, the web wins (R6), per the map's table.
+Done = (a) every new test watched RED first, for its stated reason; (b) one end-to-end run through the real update, hand-worked BEFORE the code and matched at ±0: a body with no usable skill against a standing target on a seeded rng, showing the level-≤3 skip, the wander while reload < doReload, the stroke at full reload (launchTarget on the 1-in-3 when it can launch, else slashTarget) and doReload reset to 0, and doEvade's makeSlash fallback when the human's slash covers the body; (c) a one-skill profile: init fills the cooldown table scaled by the HUMAN's speed (web: / 600, capped at 600), update ticks it to 0, canUseSkill turns true, and the web chi test refuses a chi-costing skill at chi 0; (d) OPP-D items 1, 2 and 3 pinned by tests (a target at 150 px gets the CLOSE list; the body's list is the profile's, never re-rolled; the 1-in-5 skip at level ≤ 3 only); (e) the two clip hit tests (target.mcs.hitTestPoint at EnemyPlayer.as:1064, mcs.hitTestPoint at :1217) answered by ONE named geometry member the seam will supply, with its calls counted; (f) every new config number labelled CONTRACT or INFERRED and cited at ±0 (claimcheck 0 failures, cites up); (g) chaos: a plant for every new guard, each RED and restored byte-identical, the pin moved in both places, and every plant run before the commit; (h) unported sites 12 → 12 (−EnemyPlayer.AI, +the startSkill arm catch-all), pinned by the site test; (i) ERRATUM 20, DIVERGENCES "L5-OPP SLICE 7a", RESUME_HERE rewritten with 7b's paste-ready kickoff at the top, the session log, one commit.
 '''
 ```
 
 **VERIFY (plain English):** before it reads any source, the session prints the baseline numbers
-above; at the end, DIVERGENCES has a "SLICE 7 — THE MAP" section whose cut table adds up to the
-function spans, every row is under 500 lines, and no file under `src/` changed.
+above; at the end, `npx vitest run` shows more tests than 2482 and all pass, `grep -c "unported('"
+src/core/npc/MCSPlayer.ts` still says 12 (one site out, one in), and DIVERGENCES has a
+"L5-OPP SLICE 7a" section with the hand-worked run beside the test's numbers.
 
-**Measured starting points (2026-09-29), so the session does not rediscover them:**
-1. **Android spans** (`EnemyPlayer.as`, measured this cycle by function boundaries): `setLevel`
-   57-156, `init` 740-870, `update` 908-933, `AI` 990-1193, `isUnderSlash` 1208-1224, `doEvade`
-   1225-1280, `getSkillLevel` 1348-1365 (ported, 6a), `hasSkill` 1366-1378, `canUseSkill`
-   1379-1383, `getUsableSkills` 1384-1415, `doSkill` 1416-1437. `SkillManager.startSkill` starts at
-   `SkillManager.as:123` (a 710-line file).
-2. **Web names already known:** `EnemyPlayer.AI` = `§1t4501s0§` (`§1t122s0§.as:1040`);
-   `doSubstitutionLog` = `§1t4489s0§` (`§1t99s0§.as:4561`); `cancelLogSub` = `§1t4495s0§` (`:4738`).
-3. **What slice 7 switches on:** `skillList` is null on the body today, so `getSkillLevel` answers 0
-   and the roll dodge and the full-Focus evade are inert (6a); `init` fills it (1b-ii deferred the
-   cooldown table to here, ERRATUM 5). The AI is spied in every test (`framed`), and `endFlinch`
-   calls it through `unported`.
-4. **The 12 unported sites** (DIVERGENCES "6c", the harness rule): the three switches' catch-alls
-   (clip end 60 labels, `startAction` 26, `doAction` 16), `EnemyPlayer.AI`, `cancelLogSub`,
-   `doSubstitutionLog`, `clearInteractTarget`, `checkPlayerHit`, and four
-   `Projectile.removeProjectile` (the charge FX: `startAction`, `checkHitObject`, `gotHit`, `die`).
+**Measured starting points (2026-09-29, this cycle), so the session does not rediscover them:**
+1. **Spans** (Android `EnemyPlayer.as` · web `§1t122s0§.as`): `AI` 990-1193 · `§1t4501s0§`
+   1040-1243; `isUnderSlash` 1208-1224 · `§1t4541s0§` 1267-1285; `doEvade` 1225-1280 · `§1t4883s0§`
+   1286-1341; `hasSkill` 1366-1378 · `§1t4885s0§` 1445-1459; `canUseSkill` 1379-1383 · `§1t4886s0§`
+   1460-1474; `getUsableSkills` 1384-1415 · `§1t4891s0§` 1475-1508; `doSkill` 1416-1437 ·
+   `§1t4893s0§` 1509-1530; the tick 921-931 · 969-981; the table 818-835 · 838-857;
+   `getDamage` 1199-1207 · `§1t4475s0§` 1249-1257; web `getBaseDamage` `§1t4476s0§` 1258-1266.
+   `SkillManager.startSkill`: `SkillManager.as:123-161` + `:705-707` · `§1t120s0§.as` `§1t1542s0§`
+   131-173 + 740-742. `MCSPlayer.as` helpers: `getChargingTime` 4344 · `§1t4492s0§` 4713;
+   `cancelChargingTime` 4354 · `§1t4493s0§` 4723; `canSmokeAway` 2970 · `§1t4471s0§` 3053.
+2. **`XMLSkill`** (web `§1t105s0§`): `getChiCost` `:268` · `§1t1463s0§` `:276`; `getCooldown` `:289`
+   · `§1t1465s0§` `:297` (× 24, then × the modifier; a passive skill answers 0). The modifier:
+   `StatsManager.as:1844-1861` · `§1t1523s0§` `§1t9589s0§` / `§1t9590s0§`. The skill table is
+   already in the port: `src/config/ogSkills.ts` (Android v0.682 data, `cooldownS` in seconds).
+3. **What the AI already has:** `getSkillLevel` (6a), the stroke makers, `faceTarget`,
+   `cancelStealth`, `isCharging`, `isUsingSkill` (web), `canChangeStance`, `moveTo`. The AI is
+   spied in every test today (`framed`); `endFlinch` calls it through `unported`.
+4. **What it will need from the proxy** (MEASURED ON THE WAY): the human's `gotSlash()` and
+   `getSlashArray()`, the stage position and width, `isPeaceful()`, `isDuelMode()`, and the
+   target's clip `alpha` / `visible`.
 
-**Bar self-report:** reached for the entry. The spans were measured this cycle; the web names are
-6a's and the header's, re-read at their lines.
+**Bar self-report:** reached for the entry. Every span, name and count above was measured this
+cycle by script and re-read at its line; the scope is the map's 7a row verbatim.
 
 ---
 
-## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 6c, THE BLOW, THE DEATH AND THE REWARD
+## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 7, THE AI MAP (no code)
 
 | | verdict | measured |
 |---|---|---|
-| **the blow** | ✅ web | `gotHit` whole: × 1.2 and the web's × 0.9 on the attacker's stance, the beheading × 1.3 after the defence and cleared on any other part, a downed or capped body's AIR packet turned into NONE (`NpcDamage.cancelLaunch`), the evades silent |
-| **the death** | ✅ | `die` (the FX, then `NPC.die`), the ten death clip ends, `doAction` DYING; `EnemyPlayer.deathAnimEnd` is `NPC`'s (not carried) |
-| **the reward** | ✅ | `createLoot` (a random item, coins at level ≤ 10 or 1 in 3; web: none from a friendly body), `rewardXP` (× 3 under player level 10, else elite); the body's `xp` carried |
-| **the death touch** | ✅ | a flat 500 through `gotHit` (a level-0 packet's floor is its damage), a fly if it carries a velocity, chi 0 |
-| **end-to-end** | ✅ ±0, hand-worked first | a kill, `checkDie`, the reward, DYING, the 29-frame clip, ttl `95 − k`, alpha from k 84, gone at 95; a kill in the air flies on, lands at 19, one tick at 37, then lies at 95 (a source quirk) |
-| **unported** | ✅ 15 → 12 (not 9) | 6 shadows out; `gotHit` and `die` make 3 calls into slice 7 (DIVERGENCES "6c") |
-| **new tests** | ✅ +34 (+85 in all, with the 51 net per-plant anchor cases) | 39 red before the change, each on its `unported` throw, the missing `cancelLaunch`, the uncarried `xp` or the old pin |
-| **chaos** | ✅ 52 new plants, all red; 1 retired | then every plant (443) run in a throwaway worktree before the commit: 443/443 red, all restored byte-identical. Three 6a plants re-anchored onto the shared evade helpers |
-| **review** | ✅ no behaviour bug | one fresh-context reviewer traced every line against the web source and hand-checked every test value and cite; it found two comments still claiming the defence reduces the death touch (it cannot): fixed | |
+| **(a) the functions** | ✅ paired by content | 10 in slice 7 plus `setLevel` (out); the web differs in `AI` (the wander) and `canUseSkill` (the chi test) |
+| **(b) the skills** | ✅ | the AI reaches **36 skill ids** through **28 of 38 arms** (the web adds one, on no list) and **57 of the 83** unported switch groups; each skill's arm, groups, FX and projectiles in a table |
+| **(c) the log** | ✅ placed | 7f, after 7b (its LAND chain); the web `setSubstitutionLog` zeroes the elements too |
+| **(d) OPP-D** | ✅ located, +3 | the boss re-roll is not on the duel's path; new: the cleave wears the flurry's state (26, not 16), the charged skills release at once, cooldowns scale by the HUMAN's speed |
+| **(e) the 12 sites** | ✅ each assigned | 7a (the AI), 7b (the four FX removals), 7f (the log pair), slice 8 (REDFREEZE, `clearInteractTarget`, `checkPlayerHit`); the three catch-alls' 102 labels split by sub-slice |
+| **(f) the cut** | ✅ by script | 7a 449 / 482 · 7b 280 / 285 · 7c 308 / 305 · 7d 291 / 296 · 7e 250 / 252 · 7f 119 / 126 |
+| **(g) the constants** | ✅ | 483 same-shape constant pairs, 0 mismatches; probed red: 5 of 5 wrong pairings caught |
+| **a real web difference shape cannot see** | ✅ found, then closed | the skills' damage is `getBaseDamage()` in the web at 9 lines, `getDamage()` in Android. A call-name check was added over 951 calls: it reports those 9 and nothing else |
+| **(h) the docs** | ✅ | ERRATUM 19, DIVERGENCES "L5-OPP SLICE 7 — THE MAP", §3 rows 7 and 9, this file, the session log; no file under `src/` changed |
 
-### THE GATES, AS THEY STAND — measured at this commit
+### THE GATES, AS THEY STAND — measured at this commit (no code changed, so the baseline holds)
 
 ```
 $ npx vitest run            ->  Test Files 92 passed (92) · Tests 2482 passed (2482)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
 $ npm run claimcheck        ->  2349 cites · 635 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  exit 0, every path resolves
-$ npm run chaos             ->  443/443 plants RED, 443/443 restored byte-identical (a throwaway worktree, pre-commit)
+$ npm run chaos -- --list   ->  443 of 443 plants declared (the loop runs them all after the commit)
 $ grep -c "unported('" src/core/npc/MCSPlayer.ts  ->  12
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
 
-### WHAT CHANGED
+### DECIDED HERE — each vetoable in one line (DIVERGENCES "Rulings made here")
 
-- `src/core/npc/MCSPlayer.ts` (the port; the roll and the Focus evade now shared helpers),
-  `src/core/npc/NpcDamage.ts` (`cancelLaunch`), `src/core/npc/types.ts` (the `randomItemChance` loot
-  kind), `src/config/ogMcsPlayer.ts` (`OG_BLOW`, `OG_DUELLIST_REWARD`, `gotHit`'s cites on the roll
-  and the cap); `tests/mcsPlayer.test.ts` (the 6c blocks; 6a's and 6b's shadow tests now assert the
-  ports); `tests/mcsPlayer.plants.ts` (+52, −1, three re-anchored onto the helpers); the chaos pin
-  392 → 443 in both places; ERRATUM 18 and the §3 row; `docs/DIVERGENCES.md` "L5-OPP SLICE 6c";
-  this file; the session log.
+- **R7: slice 7 emits projectiles and FX as events; the 14 projectile classes become slice 9, THE
+  PROJECTILES, which must land before your LOOK (OPP-G).** Veto: fold each projectile into its
+  sub-slice (+1,330 lines, about three more sub-slices).
+- **R8: the 35 arms and groups no AI path reaches (450 lines) are not ported; they move to one
+  throwing `unreachable` site per switch, pinned with the reason for each.** Veto: port them as 7g.
 
 ### ⚠️ STILL OPEN — Awaiting human/browser verification, and queued
 
-- **Nothing new to LOOK at:** 6c is reception and death logic with no render path yet (the death
-  clips play only once the seam, slice 8, routes a hit to the duellist).
+- **Nothing new to LOOK at:** this cycle is a map (no code).
 - **Your LOOK at `?npc=katana`** (the windup aura, in "THE UNITS AND THE WINDUP" below) is still
   unanswered.
 - **Your ruling, when you want it: the Sim player's heavy launch.** The source's duellist launches
@@ -105,12 +107,13 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
   Evidence: DIVERGENCES "L5-OPP SLICE 3b", "4b", "6a".
 - **The `UNMEASURED` merge** from 1b-i (DIVERGENCES "L5-OPP SLICE 1b-i"). Closing it needs a 5-line
   SWF run in Ruffle, or a forum report of an item's HP jumping to hundreds.
-- **QUEUED (slice 7):** the map, the kickoff above. With it: the log substitution, whole
-  (`doSubstitutionLog`, `cancelLogSub`, the LOGSUBSTITUTION group and its LAND chain, with
-  SKILL_SUBSTITUTIONLOG; `update`, `checkHitObject` and now `gotHit` call it through `unported`; the
-  web `checkHitObject` then zeroes all five damages and calls the web `setSubstitutionLog`, which
-  zeroes the four elements too, where the port's Android one does not); `skillList`, which arms
-  the roll dodge and the Focus evade; and the charge FX (`chargingFx`, four removal sites).
+- **QUEUED (slice 7, mapped):** 7a → 7f in order; the kickoff above is 7a. `skillList` arrives in
+  7a (it arms 6a's roll dodge and Focus evade); the charge-FX handle (`chargingFx`, the four removal
+  sites) is 7b's; the log substitution is 7f's, after 7b, which owns its LAND chain (the web
+  `checkHitObject` zeroes all five damages and the web `setSubstitutionLog` the four elements too,
+  where the port's Android one does not).
+- **QUEUED (slice 9, R7): the projectiles.** 14 classes (1,208 lines) on `Projectile` (122), plus
+  `DashFX`, `BullChargeFX` and `LogIcon`; map first; lands before your LOOK (OPP-G).
 - **QUEUED (slice 8): a killing death touch with a fly velocity dies twice.** `NPC.gotFly` calls
   `die` inside the hit; the seam's per-hit `checkDie` (`NPCManager.as:1525`) has no dead test, so
   `die` runs again: the loot and the xp twice (DIVERGENCES "6c", MEASURED ON THE WAY). Port it as
@@ -157,6 +160,14 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
 - **For slice 8 (R1's veto):** a video-measured duellist (level + gear off a Duel Mode frame) may
   beat the new character for OPP-G. Look before slice 8 ships.
 - L4b's 13 remaining mobs are unblocked but not ported: L5-OPP first, by decision.
+
+---
+
+## PREVIOUS CYCLE (2026-09-29) — L5-OPP slice 6c, THE BLOW, THE DEATH AND THE REWARD
+
+`gotHit` whole (web: × 0.9, × 1.3, the cancel-launch), `die`, `EnemyPlayer`'s death touch (a flat
+500), loot and xp, the ten death clip ends; two end-to-end runs at ±0; unported 15 → 12. Full
+record: `docs/DIVERGENCES.md`, "L5-OPP SLICE 6c".
 
 ---
 
