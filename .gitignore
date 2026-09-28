@@ -11,12 +11,9 @@ reference/
 # Local env / editor scratch
 *.local
 
-# Loop-local files (never committed)
-docs/loop/PAUSE
-docs/loop/reports/
-docs/loop/loop.log
-docs/loop/STOP
-docs/loop/CYCLE_RUNNING
+# Loop-local files (never committed): every switch, lock and log; only the .md docs are tracked
+docs/loop/*
+!docs/loop/*.md
 
 # Python bytecode from the build-time art scripts
 __pycache__/

@@ -6,16 +6,13 @@ gate, in strict TDD, without ever violating the repo invariants.
 **Project framing (owner, 2026-07-16 — never lose this):** the repo is an
 EXPERIMENT — how far Fable 5 can push toward indistinguishable-in-motion
 fidelity with the original — not a game for players (that comes later). The
-metric is the MEASURED CEILING: every unprotectable property (color,
-geometry, proportion, TIMING/MOTION) matched exactly; drawings and dialogue
-stay original — the pixel-by-pixel-copy ask was held three times
-(`docs/sessions/FIDELITY_V2_KICKOFF.md` Standing Rulings §1; never
-relitigate it in a cycle).
+metric is the MEASURED CEILING. What may be copied is set by the owner's
+licensed-recreation ruling of 2026-07-24 in root `CLAUDE.md` (it superseded
+the older "drawings stay original" line); read it there, never from a copy.
 
-**Current front:** `docs/sessions/SESSION8_MOTION_KICKOFF.md` — motion
-(walk cycle, strike arcs, death collapse — the owner's sliding-sprite
-feedback) + measured proportions. Storyline is Stage-4 M1+ (ORIGINAL
-script), after motion.
+**Current front:** the paste-ready kickoff at the top of `RESUME_HERE.md`
+(every session rewrites it, so it is never stale here). The routine a cycle
+follows is `docs/loop/CYCLE.md`.
 
 ## Priority order (higher wins on conflict)
 
@@ -34,10 +31,9 @@ script), after motion.
 - Gate items needing a real browser or human judgment CANNOT be checked from
   a headless cycle: leave them unchecked, queue them at the top of
   RESUME_HERE.md under "Awaiting human/browser verification".
-- Invariants (root CLAUDE.md): RECREATE-NEVER-RIP (drawings/dialogue always
-  original) · palette sits at near-OG hues — owner veto 2026-07-12, NEVER
-  re-shift it · core/ zero literals · dependency direction · render-only
-  scenes · commit = pre-commit gate green.
+- Invariants: every one in root `CLAUDE.md` (it wins over this file) — incl.
+  the 2026-07-24 licensed-recreation ruling · core/ zero literals ·
+  dependency direction · render-only scenes · commit = pre-commit gate green.
 - Update RESUME_HERE.md + docs/sessions/-SESSION-LOG.md in the SAME commit.
 - END OF EVERY SESSION/CYCLE-RUN (owner standing rule, 2026-07-16): write
   the NEXT session's kickoff in `docs/sessions/` — copy-paste ready,
@@ -57,3 +53,6 @@ Edit this file; the next cycle obeys it.
   breaks (hand-editing, holidays).
 - Returning to interactive work: `touch docs/loop/PAUSE`, then wait until
   `docs/loop/CYCLE_RUNNING` disappears before editing.
+- The loop writes `docs/loop/STOP` itself when the post-ship chaos gate goes
+  red; its first line says why. `docs/loop/CUTOFF` (YYYYMMDDHHMM) changes the
+  stop time of a running loop. Log: `docs/loop/logs/loop-<date>.log`.
