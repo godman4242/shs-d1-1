@@ -1,99 +1,95 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 6b, THE LAUNCH AND THE GETUP
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 6c, THE BLOW, THE DEATH AND THE REWARD
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: a 263 / 277-line port, one end-to-end test | set with `/model` |
+| model / effort | **Opus 5.5 at `high`**: a 389 / 429-line port, two end-to-end tests | set with `/model` |
 | `/fast` | ON if you watch it; OFF for the unattended build loop (2× price) | your call |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
 | MCP / skills | nothing extra | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. 6b is one cycle; 6c is one more.
+⚠️ Your Claude subscription ends **2026-10-09**. 6c is one cycle; slice 7 (the AI) follows.
 
 Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 16, then 15, then its §3 harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 6 — THE MAP" (the cut's 6b row and the switch-group table) and "L5-OPP SLICE 6a" (the harness to copy, and MEASURED ON THE WAY).
-Before anything else: confirm the baseline at HEAD (92 files / 2324 tests, typecheck 0, lint 0, claimcheck 2288 cites / 622 values / 44 context / 0 failures, chaos 348 pinned, 24 unported sites in MCSPlayer.ts).
-Port 6b in src/core/npc/MCSPlayer.ts, web form (R6), red first. Done = (a) the eight 6b shadows replaced by their ports: gotLaunched (web ++juggleCount first, §1t99s0§.as:4499, outside the human branch, then super), gotKnockDown, gotKneeGroin (the guard, super, then chi less chiDamage floored at 0, MCSPlayer.as:4203-4208, with getChi / setChi), gotBackThrow, gotFly, gotFlyAway, doFly, and MCSPlayer's OWN doLaunched (MCSPlayer.as:3887, web :3991: gravity 3, the peak band, DOWNED on the ground, the bar hidden, juggleCount reset at web :4017; no edge bounce); (b) checkHitObject's fly-away branch ported: gotFlyAway(thing.x, thing.y), then the web setFlyAwayPos(velX, velY), which also sets the packet's launch to FLY (§1t67s0§.as:163-169); decide where the thing's position comes from (HitShape carries none) and flag it; (c) startAction GOTLAUNCHED and KNOCKDOWNED + DOWNED; doAction GOTLAUNCHED, FLY, STUN, DOWNED; the clip ends FLY_END, KNEEGROIN_VICTIM, BACKTHROW_VICTIM, GETUP_FRONT, GOTLAUNCHED_PEAK, GOTLAUNCHEDDOWNED (its dead branch stays unported until 6c), GOTLAUNCHEDDOWNEDEND, DOWNEDUP + DOWNEDUP2, FLIPUP; (d) end-to-end through checkHitObject and the real update at ±0: an AIR hit rises, peaks, falls at gravity 3, lands DOWNED, then gets up by FLIPUP or DOWNEDUP2 to IDLE; a second and third launch in the air, the fourth skipped for a non-LIGHT attacker; (e) the unported count 24 → 15 (stated), a chaos plant for every new guard, the pin moved in scripts/gates/chaos.ts and tests/chaosGate.test.ts; (f) gates green with output pasted, DIVERGENCES "L5-OPP SLICE 6b", RESUME_HERE rewritten with 6c's paste-ready kickoff at the top, the session log, one commit.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 17, then 16 and 15, then its §3 harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 6 — THE MAP" (gotHit's web lines, the EnemyPlayer overrides table, the cut's 6c row) and "L5-OPP SLICE 6b" (the harness to copy, and MEASURED ON THE WAY).
+Before anything else: confirm the baseline at HEAD (92 files / 2397 tests, typecheck 0, lint 0, claimcheck 2309 cites / 627 values / 44 context / 0 failures, chaos 392 pinned, 15 unported sites in MCSPlayer.ts).
+Port 6c in src/core/npc/MCSPlayer.ts, web form (R6), red first. Done = (a) the six shadows replaced by their ports: gotHit whole (web §1t99s0§.as:3661-3941: the head hit ×1.3, the stance triangle's ×0.9, the cancel-an-air-launch), die (MCSPlayer.as:3952, then NPC.die), and EnemyPlayer's gotDeathTouch (a flat 500 through gotHit, then gotFly, then setChi(0)), deathAnimEnd, createLoot, rewardXP; (b) the web Damage cancel-launch (§1t67s0§.as:97-104: LAUNCH_AIR becomes NONE) in NpcDamage, and its three callers in gotHit; (c) the clip-end death group (10 labels, MCSPlayer.as:524-541) and doAction DYING; (d) end-to-end at ±0: a killing hit through checkHitObject leaves HP 0, then checkDie (the seam's call) runs die, the loot and xp events, DYING, the death clip, and the ttl fade to disposal through the real update; a killing AIR hit flies on, lands through 6b's doLaunched and dies through GOTLAUNCHEDDOWNED's dead branch; a death touch deals 500 through gotHit and leaves chi 0; (e) the unported count 15 → 9 (plus one if die's charge-FX removal takes its own site: state which), a chaos plant for every new guard, the pin moved in scripts/gates/chaos.ts and tests/chaosGate.test.ts; (f) gates green with output pasted, DIVERGENCES "L5-OPP SLICE 6c", ERRATUM 18, RESUME_HERE rewritten with slice 7's paste-ready kickoff at the top, the session log, one commit.
 '''
 ```
 
 **VERIFY (plain English):** before touching code the session prints the baseline numbers above;
-at the end, the air-hit test is shown RED before the change and green after, the suite count is
-above 2324, and the unported pin reads 15.
+at the end, the killing-hit test is shown RED before the change and green after, the suite count
+is above 2397, and the unported pin reads 9 (or 10, with the reason).
 
 **Measured starting points (2026-09-29), so the session does not rediscover them:**
-1. **Every `super` call 6b makes lands in web-identical code.** The nine `NPC` functions
-   (`gotLaunched`, `gotKnockDown`, `gotFly`, `gotFlyAway`, `gotKneeGroin`, `gotBackThrow`,
-   `gotStun`, `doLaunched`, `doFly`) are the same shape in both builds (web `§1t68s0§.as:557-766`,
-   Android `NPC.as:536-745`), a check probed red on wrong pairings and a one-number change. So
-   `super.*` into the ported `Npc` is the web's.
-2. **`MCSPlayer.doLaunched` is NOT `NPC.doLaunched`:** it has its own gravity 3, no edge bounce,
-   and resets the juggle count on landing (web `:4017`). Port it; do not call `super`.
-3. **Nothing in `src` calls `NpcDamage.setFlyAwayPos`** (grepped), so it can take the web form
-   (it also sets `launchType` to FLY) without touching a mob.
-4. **The fly-away's `thing.x`** is the ATTACKER's clip (a weapon part or a projectile), not the
-   body's part, and `HitShape` has no position. `Npc.gotHit` meets the same question through
-   `geometry.partX`; decide-and-flag.
+1. **A killing launch reaches 6b's code.** `NPC.die` on a body in GOTLAUNCHED only sets `dead` and
+   returns (`NPC.as:909-913`), so the body flies on, lands through `MCSPlayer.doLaunched`, and
+   GOTLAUNCHEDDOWNED's dead branch (ported in 6b) calls `deathAnimEnd`, today a shadow.
+2. **A finished clip ends ONCE, in both the source and the port** (`MCSCharacter.updateAnimation`,
+   `MCSCharacter.as:1309-1330`; `MCSActor.stepAnimation`). So the death clip calls
+   `EnemyPlayer.deathAnimEnd` once (`ttl − 1`), and the fade after it runs through `doAction` DYING
+   → `NPC.doDying` every frame (ported: `Npc.doDying`, 96 frames, fading over the last 12).
+3. **`EnemyPlayer.deathAnimEnd` (`EnemyPlayer.as:1604-1633`) reads as `NPC.deathAnimEnd`
+   (`NPC.as:1119`: the emitters' teardown, then `doDying`'s fade) plus one guard on disposal,
+   `controlledBy == 2 && isPvPRoomMode()`, which is never true on the AI.** The port's
+   `Npc.deathAnimEnd` is `doDying` (blood is the render side's). Compare line by line: dropping
+   the shadow may be the whole port.
+4. **`MCSPlayer.die` removes `chargingFx`** (`MCSPlayer.as:3954-3958`), which is always null on
+   this body until slice 7; its `controlledBy == 0` block is the human's; then `super.die()`.
+5. **The web cancel-launch** (`§1t67s0§.as:97-104`) turns LAUNCH_AIR into LAUNCH_NONE only; the
+   port's `NpcDamage` has no such method (the map, "MEASURED ON THE WAY").
 
-**Bar self-report:** reached for the entry. Every line above was read from the source this
-cycle; the shape check was probed red before its "same" was used.
+**Bar self-report:** reached for the entry. Items 1–4 were read from the source this cycle;
+item 5 is the map's, re-read at its line.
 
 ---
 
-## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 6a, THE HIT AND THE FLINCH
+## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 6b, THE LAUNCH AND THE GETUP
 
 | | verdict | measured |
 |---|---|---|
-| **the mob fall-through** | ✅ closed | 14 reception methods shadowed with `unported`; the red test (the mob `gotHit` answering) went red, then green |
-| **the body's stats** | ✅ carried | fixture 1 HP 9 of 9 (was 1), chi 10, defense 1; fixture 2 HP 590, chi 40 / 50, defense 71, elements 10 / 8 / 6 / 5; 5a and 5b stay green |
-| **`checkHitObject`** | ✅ whole, web form | the self-hit guard, the roll (75 / 85 / 95), the full-Focus evade, parts 3 / 4 skipped with the scan going on, the stun cleared only on a landed hit, the juggle cap per attacker stance |
-| **the flinch** | ✅ | `doFlinch` (bare out of a sheathed or tired clip), `endFlinch` (the web `isUsingSkill` list), the FLINCH clip end; end-to-end through the real `update` at ±0 |
-| **new tests** | ✅ +43 | 37 red before the change; the stun test (it passed before: the old code never cleared it) and the review's 5 are red-proofed by their plants |
-| **chaos** | ✅ 54 new plants, 54 / 54 red | one stayed green first (wind / water order): a missing test, fixed, then red. The whole duellist set, 286 / 286 red, restored byte-identical |
-| **review** | ✅ no behaviour bug; 5 test gaps closed | one fresh-context reviewer on the diff |
+| **the reactions** | ✅ | `gotLaunched` (web: the count first, before `NPC`'s guard), `gotKneeGroin` (the guard, then chi less the damage, floored at 0), `MCSPlayer`'s own `doLaunched`; `gotKnockDown`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly` run `NPC`'s (AI path = the `super` call alone) |
+| **the fly-away** | ✅ web | away from `thing.x` (new, optional on `HitShape`; the seam supplies it), then the web `setFlyAwayPos` hands the packet the body's velocity as a FLY |
+| **the switches** | ✅ | `startAction` GOTLAUNCHED, KNOCKDOWNED + DOWNED; `doAction` GOTLAUNCHED, FLY, STUN, DOWNED; 10 clip ends (the fall and every getup) |
+| **end-to-end** | ✅ ±0, hand-worked first | an AIR hit: rise, peak at 9, fall, DOWNED at 19, IDLE at 87, 120 px back; a knockdown: DUAL flips (IDLE at 40), HEAVY takes DOWNEDUP2 (IDLE at 44); the juggle: launches 1, 2, 3, the fourth skipped, the count reset on landing |
+| **unported** | ✅ 24 → 15 | 8 shadows and the fly-away site out |
+| **new tests** | ✅ +29 (+73 in all, with the 44 per-plant anchor cases) | 29 red before the change, each on its `unported` throw or the missing `x`; the review's truncation test red too; its three gap tests red-proofed by their plants |
+| **chaos** | ✅ 45 new plants (4 from the review), all red | one stayed green first (`movePlayer`'s clamp): a missing test, fixed, then red. Every plant (388 at the time) then run: 6b had blunted one 6a test (DIVERGENCES "6b", MEASURED ON THE WAY), fixed, then all red; after the review, slice 6's 98 again, all red |
+| **review** | ✅ no behaviour bug in the logic; 1 divergence + 3 test gaps closed | one fresh-context reviewer: `thing.x` is an `int` (now truncated); GETUP_FRONT's IDLE, the adventure-mode flip-up and the exact landing were unpinned |
 
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 92 passed (92) · Tests 2324 passed (2324)
+$ npx vitest run            ->  Test Files 92 passed (92) · Tests 2397 passed (2397)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
-$ npm run claimcheck        ->  2288 cites · 622 values at ±0 · 44 context · 0 failures
+$ npm run claimcheck        ->  2309 cites · 627 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  exit 0, every path resolves
-$ npm run chaos -- --list   ->  348 of 348 plants (the shell runs them all post-ship)
-$ grep -c "unported('" src/core/npc/MCSPlayer.ts  ->  24
+$ npm run chaos -- --list   ->  392 of 392 plants (the shell runs them all post-ship)
+$ grep -c "unported('" src/core/npc/MCSPlayer.ts  ->  15
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
 
 ### WHAT CHANGED
 
-- `src/core/npc/MCSPlayer.ts` (the port), `src/config/ogMcsPlayer.ts` (`OG_RECEPTION`),
-  `src/core/npc/types.ts` (`HitGeometry.partsHitBy`; the `jump` and `deflect` sounds),
-  `src/core/npc/duelSeam.ts` (its geometry answers the new question, counted), `src/core/npc/Npc.ts`
-  (`elemental` is `protected`); 9 test files (the new geometry method on their fakes; the tests);
-  `tests/mcsPlayer.plants.ts` (+54); the chaos pin 294 → 348 in both places; ERRATUM 16 and the §3
-  row; `docs/DIVERGENCES.md` "L5-OPP SLICE 6a"; this file; the session log.
-
-### REVIEW
-
-One fresh-context reviewer traced the diff against the web source: **no behaviour difference on
-the AI's path.** It found five test gaps and proved each by applying the break and watching the
-suite stay green: the charge FX on a launching hit, a hit to exactly 0 HP, a 0 writing a text,
-the packet's direction / victim x / knee-groin level, and the death touch's place after the chain.
-All five closed: +5 tests, +8 plants, all red. Its one false lead (the web `EnemyPlayer.canHit`)
-is ruled out in DIVERGENCES "L5-OPP SLICE 6a".
+- `src/core/npc/MCSPlayer.ts` (the port), `src/config/ogMcsPlayer.ts` (`OG_GETUP`),
+  `src/core/npc/NpcDamage.ts` (the web `setFlyAwayPos`), `src/core/npc/types.ts` (`HitShape.x`);
+  `tests/mcsPlayer.test.ts` (the 6b blocks; 6a's placeholders now assert the launch);
+  `tests/configTwins.test.ts` (the getup deny-list entry); `tests/mcsPlayer.plants.ts` (+45, −1);
+  the chaos pin 348 → 392 in both places; ERRATUM 17 and the §3 row; `docs/DIVERGENCES.md`
+  "L5-OPP SLICE 6b"; this file; the session log.
 
 ### ⚠️ STILL OPEN — Awaiting human/browser verification, and queued
 
-- **Nothing new to LOOK at:** 6a is reception logic with no render path yet (the flinch clip plays
-  only once the seam, slice 8, routes a hit to the duellist).
+- **Nothing new to LOOK at:** 6b is reception logic with no render path yet (the launch and the
+  getup clips play only once the seam, slice 8, routes a hit to the duellist).
 - **Your LOOK at `?npc=katana`** (the windup aura, in "THE UNITS AND THE WINDUP" below) is still
   unanswered.
 - **Your ruling, when you want it: the Sim player's heavy launch.** The source's duellist launches
@@ -107,8 +103,7 @@ is ruled out in DIVERGENCES "L5-OPP SLICE 6a".
   Evidence: DIVERGENCES "L5-OPP SLICE 3b", "4b", "6a".
 - **The `UNMEASURED` merge** from 1b-i (DIVERGENCES "L5-OPP SLICE 1b-i"). Closing it needs a 5-line
   SWF run in Ruffle, or a forum report of an item's HP jumping to hundreds.
-- **QUEUED (6b, then 6c):** the kickoff above; 6c then ports `gotHit`, `die`, the four
-  `EnemyPlayer` shadows and the death group, and takes the unported count 15 → 9.
+- **QUEUED (6c):** the kickoff above.
 - **QUEUED (the body): `MCSActor.setPosition` / `movePositionX` never truncate,** where AS3's
   take `int` parameters, so `posX` can go fractional. 4a truncates at its own read
   (`getMapPosition()` is `:int`); a fix at the actor would touch all 20 mobs. Its own milestone.
@@ -132,7 +127,8 @@ is ruled out in DIVERGENCES "L5-OPP SLICE 6a".
   target on EVERY frame of the `_END` clip, 3–6 times a stroke), **call `checkDie` after a landed
   hit** (the source's death path for the AI: DIVERGENCES "SLICE 6 — THE MAP"), decide the 4th
   `checkHitObject` argument (NPCManager's), own `redFreeze` / `cleanUpPlayer`, and give the duel's
-  `DuelHitGeometry` a real `partsHitBy` (it answers "no part" on purpose today, and counts).
+  `DuelHitGeometry` a real `partsHitBy` (it answers "no part" on purpose today, and counts),
+  and **hand `checkHitObject` the thing's x** (`HitShape.x`, 6b): a fly-away without it throws.
 - **QUEUED (harness): claimcheck reads no bare array.** Five arrays in `ogDuellistProfile.ts`
   (`[14, 18]`, `[2213, 2214]`, `[11]`, `[0, 3]`, `[103, 106]`) and any in other config files are
   unchecked. Fix = teach `numericFields` (`scripts/gates/claimcheckLib.ts`) to read array elements,
@@ -143,6 +139,9 @@ is ruled out in DIVERGENCES "L5-OPP SLICE 6a".
   more (the bare-flinch test cited a line early), caught by reading the line. A cheap gate: a cite
   in a doc comment directly above a TS method must land on a line holding `function`. Its own
   milestone.
+- **QUEUED (the mobs): their fly-away x is not truncated.** `Npc.gotHit` hands `gotFlyAway` the
+  untruncated `geometry.partX(target)`; the source's `xpos` is an `int` (`NPC.as:611`). The duellist's
+  is truncated since 6b (the review). A fix in `Npc` touches every mob: its own milestone.
 - **QUEUED (the body, harmless today): `asInt` returns −0** for a small negative (`Math.trunc(-0.3)`);
   an AS3 `int` has no −0. Nothing divides by or `atan2`s a velocity yet, but a test's `toEqual(0)`
   fails on it. Fix = `Math.trunc(n) || 0` in `asInt`, which touches every mob: its own milestone.
@@ -151,6 +150,17 @@ is ruled out in DIVERGENCES "L5-OPP SLICE 6a".
 - **For slice 8 (R1's veto):** a video-measured duellist (level + gear off a Duel Mode frame) may
   beat the new character for OPP-G. Look before slice 8 ships.
 - L4b's 13 remaining mobs are unblocked but not ported: L5-OPP first, by decision.
+
+---
+
+---
+
+## PREVIOUS CYCLE (2026-09-29) — L5-OPP slice 6a, THE HIT AND THE FLINCH
+
+`checkHitObject` whole (web: the self-hit guard, the roll 75 / 85 / 95, the full-Focus evade, parts
+3 / 4 skipped, the stun cleared on a landed hit, the juggle cap per attacker stance); the flinch;
+the body's HP, chi and defences carried; 14 reception methods shadowed so no hit falls into the
+mobs' code (unported 8 → 24, by design). Full record: `docs/DIVERGENCES.md`, "L5-OPP SLICE 6a".
 
 ---
 

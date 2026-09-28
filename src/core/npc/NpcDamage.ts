@@ -130,8 +130,13 @@ export class NpcDamage {
     this.flyVelY = vely;
   }
 
-  /** `Damage.as:131` — the fly-away POINT rides in the velocity slots. */
+  /**
+   * WEB `reference/decompiled/shs3_payload/scripts/§1t67s0§.as:163` (Android `Damage.as:131`): the web also turns the packet into a FLY, and
+   * its one caller hands it the victim's velocity, not a point (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3603`). Android's
+   * caller hands it the thing's position, and leaves the launch as it was.
+   */
   setFlyAwayPos(posx: number, posy: number): void {
+    this.launchType = OG_LAUNCH.LAUNCH_FLY;
     this.flyVelX = posx;
     this.flyVelY = posy;
   }

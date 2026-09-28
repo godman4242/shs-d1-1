@@ -304,6 +304,26 @@ export const OG_RECEPTION = {
 } as const;
 
 /**
+ * THE GETUP (slice 6b): the reception's clip ends, the same in both builds. CONTRACT. The
+ * mobs' humanoid getups (`OG_HUMANOID_*`, `ogNpcHumanoid.ts`) are their own classes' and step
+ * 100 where this steps 120: not twins (`tests/configTwins.test.ts`, the deny-list).
+ * `doLaunched`'s gravity and peak band are `NPC`'s (`OG_NPC_LAUNCH`): the override repeats
+ * them on the same class chain.
+ */
+export const OG_GETUP = {
+  /** `MCSPlayer.as:560` · `MCSPlayer.as:564` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:580` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:584` — BACKTHROW_VICTIM moves the body this far the way it faces */
+  backThrowStep: 410,
+  /** `MCSPlayer.as:570` · `MCSPlayer.as:574` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:590` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:594` — GETUP_FRONT steps back from the facing */
+  frontStep: 40,
+  /** `MCSPlayer.as:598` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:618` — GOTLAUNCHEDDOWNED moves the health bar */
+  downedBarX: -100,
+  /** `MCSPlayer.as:625` · `MCSPlayer.as:679` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:645` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:699` — DOWNEDUP and FLIPUP put it back */
+  barXReset: 0,
+  /** `MCSPlayer.as:634` · `MCSPlayer.as:638` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:654` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:658` — DOWNEDUP steps back from the facing */
+  downedUpStep: 120,
+} as const;
+
+/**
  * The labels of the three switches, in source order, transcribed from the Android build's
  * names (`scripts/gates` has no decoder for the web's; the slice-5 map paired every group
  * across the builds). A label the port has not reached yet goes through ONE `unported` site

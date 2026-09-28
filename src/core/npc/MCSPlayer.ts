@@ -8,8 +8,9 @@
  * START (`initSlash`, `checkNextSlash`, `startSlash`, `cancelStealth`), slice 4c, THE
  * SLASH END (`doSlash`, `endSlash`, `endDownStab`, `deductReloadBar`), slice 5a, THE GROUND
  * STROKE (`update` whole, and the three switches' IDLE, RUN, WALK, SLASH and POSE), slice 5b, THE
- * AIR AND THE DOWNSTAB, and slice 6a, THE HIT AND THE FLINCH (`checkHitObject`, `doFlinch`,
- * `endFlinch` and their helpers; the body's HP, chi and defences).
+ * AIR AND THE DOWNSTAB, slice 6a, THE HIT AND THE FLINCH (`checkHitObject`, `doFlinch`,
+ * `endFlinch` and their helpers; the body's HP, chi and defences), and slice 6b, THE LAUNCH AND
+ * THE GETUP (`gotLaunched`, `gotKneeGroin`, `doLaunched` and the switches' reception groups).
  *
  * Android structure, web numbers (ruling R6). Where the builds differ in STRUCTURE the web
  * side is ported, and `docs/DIVERGENCES.md` "L5-OPP SLICE 3a" rules each:
@@ -28,6 +29,8 @@
  *     Focus bar, never lets the weapon or the prop take the hit, clears the stun only on a landed
  *     hit and caps the juggle per attacker stance; `isUsingSkill` names four more states
  *     (DIVERGENCES "L5-OPP SLICE 6 — THE MAP", "6a").
+ *   - `gotLaunched` counts every launch, before `NPC`'s guard; a fly-away hands the packet the
+ *     body's velocity as a FLY (DIVERGENCES "L5-OPP SLICE 6b").
  *
  * Only the opponent's path is ported: `controlledBy == 1` (`DuelModeUI.as:381`). The human's
  * branches (`controlledBy` 0 or 2: the UI calls, the network, `initSpecialSkills`' skill-id
@@ -40,7 +43,10 @@
  * switch is dispatched: each of the three switches sends the labels not ported yet through ONE
  * site that names the label (`OG_CLIP_END_LABELS` & co.), and a value with no label is the
  * source's no-op. An `Npc` method the source overrides and the port has not reached yet is
- * SHADOWED by one too (6a), so the duellist can never fall into the mobs' reception.
+ * SHADOWED by one too (6a), so the duellist can never fall into the mobs' reception. An override
+ * whose AI path is its `super` call alone (`gotKnockDown`, `gotFly`, `gotFlyAway`, `doFly`, and
+ * `gotBackThrow`, whose own guard repeats `NPC`'s) is not carried: the duellist runs `NPC`'s,
+ * the same shape in both builds (6b).
  *
  * AS3 stores every one of these into an `int`, so each result is truncated (`asInt`).
  */
@@ -49,6 +55,7 @@ import { OG_NO_STANCE, OG_STANCE } from '../../config/ogDuellistProfile';
 import {
   OG_CLIP_END_LABELS,
   OG_DO_ACTION_LABELS,
+  OG_GETUP,
   OG_MOVE_DIST_SQ,
   OG_RECEPTION,
   OG_SLASH,
@@ -62,7 +69,7 @@ import {
   OG_STATE_MACHINE,
   OG_STROKE,
 } from '../../config/ogMcsPlayer';
-import { OG_NPC_FLOATING_TEXT, OG_NPC_HIT_IFRAMES } from '../../config/ogNpcBase';
+import { OG_NPC_FLOATING_TEXT, OG_NPC_HIT_IFRAMES, OG_NPC_LAUNCH } from '../../config/ogNpcBase';
 import { ONE, ZERO } from '../../config/nums';
 import type { Rng } from '../Sim';
 import type { DuellistBody } from './duellistBody';
@@ -386,7 +393,7 @@ export class MCSPlayer extends Npc {
   /**
    * `MCSPlayer.as:87-89`. `setChi` stores chi × `StatsManager.multiplier` (a random 2–6, an
    * anti-tamper mask) and `getChi` divides it back out; the port keeps the value itself, as
-   * `MCSActor` does HP. `getChi` / `setChi` are 6b's.
+   * `MCSActor` does HP, and so do `getChi` / `setChi` (6b).
    */
   maxchi: number;
   chi: number;
@@ -477,8 +484,8 @@ export class MCSPlayer extends Npc {
   /**
    * The clip-end switch: Android's is inline in `update` (`MCSPlayer.as:298-1147`), the web moved
    * it whole into a helper that returns `false` on `default` (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:305-1177`); `update`
-   * ignores the value. 5a's four bands, 5b's three and 6a's FLINCH are ported; the other 80 of
-   * its 146 labels are unported.
+   * ignores the value. 5a's four bands, 5b's three, 6a's FLINCH and 6b's getups are ported; the
+   * other 70 of its 146 labels are unported.
    */
   clipEnded(name: string): boolean {
     const S = OG_STATE;
@@ -526,6 +533,57 @@ export class MCSPlayer extends Npc {
       case OG_ANIM.FLINCH:
         // `MCSPlayer.as:739` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:759`, the same.
         this.endFlinch();
+        return true;
+      // The reception's getups (`MCSPlayer.as:542-682`, web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:562-702`), the same.
+      // The `controlledBy == 0` display-name calls are the human's.
+      case OG_ANIM.FLY_END:
+        this.startAction(S.DOWNED);
+        return true;
+      case OG_ANIM.KNEEGROIN_VICTIM:
+        this.startAnim(OG_ANIM.GETUP_FRONT);
+        return true;
+      case OG_ANIM.BACKTHROW_VICTIM:
+        this.actionState = S.DOWNED;
+        this.startAnim(this.canFlipUp && !this.world.adventureMode ? OG_ANIM.FLIPUP : OG_ANIM.GOTLAUNCHEDDOWNEDEND);
+        this.movePlayer(this.isFacingRight() ? OG_GETUP.backThrowStep : -OG_GETUP.backThrowStep);
+        return true;
+      case OG_ANIM.GETUP_FRONT:
+        this.movePlayer(this.isFacingRight() ? -OG_GETUP.frontStep : OG_GETUP.frontStep);
+        this.startAction(S.IDLE);
+        return true;
+      case OG_ANIM.GOTLAUNCHED_PEAK:
+        this.startAnim(OG_ANIM.GOTLAUNCHED_FALL);
+        return true;
+      case OG_ANIM.GOTLAUNCHEDDOWNED:
+        if (this.dead) {
+          this.deathAnimEnd();
+          return true;
+        }
+        if (this.getHP() > ZERO && !this.world.redFreeze) this.showHealthBar();
+        this.moveHealthBarX(OG_GETUP.downedBarX);
+        if (this.canFlipUp && !this.world.adventureMode) {
+          this.startAnim(OG_ANIM.FLIPUP);
+          this.hideHealthBar();
+        } else if (this.actionState === S.KNOCKDOWNED) {
+          this.startAnim(OG_ANIM.DOWNEDUP2);
+        } else {
+          this.startAnim(OG_ANIM.GOTLAUNCHEDDOWNEDEND);
+        }
+        return true;
+      case OG_ANIM.GOTLAUNCHEDDOWNEDEND:
+        this.startAnim(OG_ANIM.DOWNEDUP2);
+        return true;
+      case OG_ANIM.DOWNEDUP:
+      case OG_ANIM.DOWNEDUP2:
+        this.moveHealthBarX(OG_GETUP.barXReset);
+        this.showHealthBar();
+        this.movePlayer(this.isFacingRight() ? -OG_GETUP.downedUpStep : OG_GETUP.downedUpStep);
+        this.startAction(S.IDLE);
+        return true;
+      case OG_ANIM.FLIPUP:
+        if (!this.world.redFreeze) this.showHealthBar();
+        this.moveHealthBarX(OG_GETUP.barXReset);
+        this.startAction(S.IDLE);
         return true;
     }
     if (POSE_ENDS.includes(name)) {
@@ -590,6 +648,13 @@ export class MCSPlayer extends Npc {
         this.checkNextSlash();
         break;
       }
+      case S.GOTLAUNCHED:
+        this.startAnim(OG_ANIM.GOTLAUNCHED_RISE);
+        break;
+      case S.KNOCKDOWNED:
+      case S.DOWNED:
+        this.startAnim(OG_ANIM.GOTLAUNCHEDDOWNED);
+        break;
       default:
         if (OG_START_ACTION_LABELS.includes(actionState)) unported('MCSPlayer.startAction', stateName(actionState));
     }
@@ -634,6 +699,17 @@ export class MCSPlayer extends Npc {
         }
         break;
       }
+      case S.GOTLAUNCHED:
+        this.doLaunched();
+        break;
+      case S.FLY:
+        this.doFly();
+        break;
+      case S.STUN:
+        this.doStun();
+        break;
+      case S.DOWNED:
+        break;
       case S.SLASH:
         this.doSlash();
         break;
@@ -1316,9 +1392,11 @@ export class MCSPlayer extends Npc {
       } else if (damage.isFly()) {
         this.gotFly(damage.flyVelX, damage.flyVelY);
       } else if (damage.isFlyAway()) {
-        // `gotFlyAway(thing.x, thing.y)`, then the web `setFlyAwayPos(velX, velY)`, which also
-        // sets the packet's launch to FLY (`reference/decompiled/shs3_payload/scripts/§1t67s0§.as:163-169`): 6b's, with the thing's position.
-        unported('MCSPlayer.gotFlyAway');
+        // WEB `:3602-3603`: away from `thing.x`, an `int` parameter (`NPC.gotFlyAway` never reads
+        // the y), then the web `setFlyAwayPos` hands the packet the body's new velocity, as a FLY.
+        if (thing.x === undefined) throw new TypeError('checkHitObject: a fly-away needs the thing\'s x');
+        this.gotFlyAway(asInt(thing.x), this.y);
+        damage.setFlyAwayPos(this.velX, this.velY);
       } else if (damage.isStun()) {
         this.gotStun(damage.flyVelX, damage.flyVelY);
       } else if (!this.isDowned()) {
@@ -1403,8 +1481,64 @@ export class MCSPlayer extends Npc {
   }
 
   /*
+   * THE LAUNCH (6b). `gotKnockDown`, `gotBackThrow`, `gotFly`, `gotFlyAway` and `doFly` are
+   * `NPC`'s: `MCSPlayer`'s add only the human's UI (the file header).
+   */
+
+  /**
+   * WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4497` (Android `MCSPlayer.as:4137`): the web counts every launch, first
+   * (`:4499`), outside the human's branch and before `NPC`'s guard; Android counts nothing here.
+   */
+  override gotLaunched(): void {
+    this.juggleCount += ONE;
+    super.gotLaunched();
+  }
+
+  /**
+   * `MCSPlayer.as:4197` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4574`, the same on the AI: `NPC`'s guard repeated, so
+   * a body `NPC`'s refuses keeps its chi; then the chi less `chiDamage`, floored at 0 (`:4203-4208`).
+   */
+  override gotKneeGroin(posx: number, posy: number, chiDamage: number): void {
+    if (!this.canGotKneeGroin || this.isDowned() || this.actionState === OG_STATE.DYING) return;
+    super.gotKneeGroin(posx, posy, chiDamage);
+    this.setChi(this.getChi() - chiDamage);
+    if (this.getChi() < ZERO) this.setChi(ZERO);
+  }
+
+  /** `MCSPlayer.as:168` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:169`, the same, less the × `StatsManager.multiplier` mask (see `chi`). */
+  getChi(): number {
+    return this.chi;
+  }
+
+  /** `MCSPlayer.as:173` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:174`, the same; the `controlledBy == 0` HUD call is the human's. */
+  setChi(val: number): void {
+    this.chi = val;
+  }
+
+  /**
+   * `MCSPlayer.as:3887` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3991`, the same: `MCSPlayer`'s OWN arc, not `NPC`'s. It
+   * lands on reaching the ground whatever `velY`'s sign, never bounces off the stage's edge, and
+   * resets the juggle count on landing (`:3913` / web `:4017`). The AI moves by `movePositionX`,
+   * unclamped (`movePlayer` is `controlledBy == 0`'s).
+   */
+  override doLaunched(): void {
+    const k = OG_NPC_LAUNCH;
+    this.y += this.velY;
+    this.movePositionX(this.velX);
+    this.velY += k.gravity;
+    if (this.velY < ZERO && this.velY > k.peakBandTop) this.startAnim(OG_ANIM.GOTLAUNCHED_PEAK);
+    const groundY = this.world.groundY;
+    if (this.y >= groundY) {
+      this.y = groundY;
+      this.startAction(OG_STATE.DOWNED);
+      this.hideHealthBar();
+      this.juggleCount = ZERO;
+    }
+  }
+
+  /*
    * THE SHADOWS (6a): each overrides a reception method the source overrides too, so a hit can
-   * never fall into the mobs' `Npc` code. 6b and 6c replace them.
+   * never fall into the mobs' `Npc` code. 6c replaces them.
    */
 
   /** `MCSPlayer.as:3580` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3661`: 6c. */
@@ -1417,55 +1551,6 @@ export class MCSPlayer extends Npc {
   /** `MCSPlayer.as:3952` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4057`: 6c. */
   override die(): void {
     unported('MCSPlayer.die');
-  }
-
-  /** `MCSPlayer.as:4137` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4497`: 6b. */
-  override gotLaunched(): void {
-    unported('MCSPlayer.gotLaunched');
-  }
-
-  /** `MCSPlayer.as:4149` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4510`: 6b. */
-  override gotKnockDown(): void {
-    unported('MCSPlayer.gotKnockDown');
-  }
-
-  /** `MCSPlayer.as:4197` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4574`: 6b. */
-  override gotKneeGroin(posx: number, posy: number, chiDamage: number): void {
-    void posx;
-    void posy;
-    void chiDamage;
-    unported('MCSPlayer.gotKneeGroin');
-  }
-
-  /** `MCSPlayer.as:4216` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4596`: 6b. */
-  override gotBackThrow(posx: number, posy: number): void {
-    void posx;
-    void posy;
-    unported('MCSPlayer.gotBackThrow');
-  }
-
-  /** `MCSPlayer.as:4230` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4613`: 6b. */
-  override gotFly(flyVelX: number, flyVelY: number): void {
-    void flyVelX;
-    void flyVelY;
-    unported('MCSPlayer.gotFly');
-  }
-
-  /** `MCSPlayer.as:4239` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4625`: 6b. */
-  override gotFlyAway(xpos: number, ypos: number): void {
-    void xpos;
-    void ypos;
-    unported('MCSPlayer.gotFlyAway');
-  }
-
-  /** `MCSPlayer.as:3887` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3991`: 6b. */
-  override doLaunched(): void {
-    unported('MCSPlayer.doLaunched');
-  }
-
-  /** `MCSPlayer.as:4248` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4637`: 6b. */
-  override doFly(): void {
-    unported('MCSPlayer.doFly');
   }
 
   /** `EnemyPlayer.as:1634` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1730`, which overrides `MCSPlayer`'s: 6c. */

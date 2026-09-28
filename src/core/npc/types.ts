@@ -116,6 +116,12 @@ export interface HitShape {
   readonly owner: MCSActor | null;
   /** `Projectile.canBreak()` — a projectile the spear elite's weapon can snap (`EnemySpearElite.as:467-474`). */
   readonly breakable?: boolean;
+  /**
+   * `thing.x`, the thing's own x: the duellist's fly-away is thrown away from it (web
+   * `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3602`). A weapon part's x is local to its owner's clip, a projectile's is on
+   * the stage, as the source reads them; the seam (slice 8) supplies it.
+   */
+  readonly x?: number;
 }
 
 /**

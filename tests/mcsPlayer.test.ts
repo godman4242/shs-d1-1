@@ -1699,9 +1699,12 @@ describe('slice 5a: the clip-end switch — the four ground-stroke bands (the sa
       anim('DOWNSTAB'), anim('DOWNSTAB_UP'),
       // 6a: the flinch.
       anim('FLINCH_WEAPON'), anim('FLINCH'),
+      // 6b: the fall and the getups.
+      ...['FLY_END', 'KNEEGROIN_VICTIM', 'BACKTHROW_VICTIM', 'GETUP_FRONT', 'GOTLAUNCHED_PEAK', 'GOTLAUNCHEDDOWNED',
+        'GOTLAUNCHEDDOWNEDEND', 'DOWNEDUP', 'DOWNEDUP2', 'FLIPUP'].map(anim),
     ]);
     const others = OG_CLIP_END_LABELS.filter((n) => !ported.has(n));
-    expect([ported.size, others.length]).toEqual([66, 80]);
+    expect([ported.size, others.length]).toEqual([76, 70]);
     for (const name of others) {
       expect(() => idleBody().clipEnded(name)).toThrow(`unported: MCSPlayer.update clip end (${name})`);
     }
@@ -1812,9 +1815,12 @@ describe('slice 5a: startAction — the wrapper and IDLE, RUN, WALK, SLASH, POSE
   });
 
   it('every other of the 35 labels is UNPORTED and names its state; a state with no label is only recorded', () => {
-    const ported: OgState[] = [OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.FALL, OG_STATE.SLASH, OG_STATE.POSE];
+    const ported: OgState[] = [
+      OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.FALL, OG_STATE.SLASH, OG_STATE.POSE,
+      OG_STATE.GOTLAUNCHED, OG_STATE.KNOCKDOWNED, OG_STATE.DOWNED, // 6b
+    ];
     const others = OG_START_ACTION_LABELS.filter((s) => !ported.includes(s));
-    expect(others).toHaveLength(29);
+    expect(others).toHaveLength(26);
     for (const s of others) {
       expect(() => started(s)).toThrow(`unported: MCSPlayer.startAction (${stateName(s)})`);
     }
@@ -1916,9 +1922,12 @@ describe('slice 5a: doAction — IDLE, RUN, WALK, SLASH, POSE (WEB: POSE ends in
   });
 
   it('every other of the 27 labels is UNPORTED and names its state; a state with no label does nothing', () => {
-    const ported: OgState[] = [OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.FALL, OG_STATE.SLASH, OG_STATE.POSE];
+    const ported: OgState[] = [
+      OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.FALL, OG_STATE.SLASH, OG_STATE.POSE,
+      OG_STATE.GOTLAUNCHED, OG_STATE.FLY, OG_STATE.STUN, OG_STATE.DOWNED, // 6b
+    ];
     const others = OG_DO_ACTION_LABELS.filter((s) => !ported.includes(s));
-    expect(others).toHaveLength(21);
+    expect(others).toHaveLength(17);
     for (const s of others) {
       expect(() => acting(s)).toThrow(`unported: MCSPlayer.doAction (${stateName(s)})`);
     }
@@ -2413,19 +2422,11 @@ describe('slice 6a: the mob fall-through is closed — every reception override 
     expect(p.getHP()).toBe(9);
   });
 
-  it('each of the fourteen shadows throws, naming the AS3 function', () => {
+  it('each of the six shadows left (6c\'s) throws, naming the AS3 function', () => {
     const p = player(body2());
     const shadows: Array<[string, () => void]> = [
       ['MCSPlayer.gotHit', () => { p.gotHit(OG_PART.torso, new NpcDamage(20, 45)); }],
       ['MCSPlayer.die', () => { p.die(); }],
-      ['MCSPlayer.gotLaunched', () => { p.gotLaunched(); }],
-      ['MCSPlayer.gotKnockDown', () => { p.gotKnockDown(); }],
-      ['MCSPlayer.gotKneeGroin', () => { p.gotKneeGroin(0, 0, 0); }],
-      ['MCSPlayer.gotBackThrow', () => { p.gotBackThrow(0, 0); }],
-      ['MCSPlayer.gotFly', () => { p.gotFly(0, 0); }],
-      ['MCSPlayer.gotFlyAway', () => { p.gotFlyAway(0, 0); }],
-      ['MCSPlayer.doLaunched', () => { p.doLaunched(); }],
-      ['MCSPlayer.doFly', () => { p.doFly(); }],
       ['EnemyPlayer.gotDeathTouch', () => { p.gotDeathTouch(0, 0); }],
       ['EnemyPlayer.deathAnimEnd', () => { p.deathAnimEnd(); }],
       ['EnemyPlayer.createLoot', () => { p.createLoot(); }],
@@ -2680,6 +2681,9 @@ describe('slice 6a: checkHitObject — the landed hit', () => {
     launched.chargingFx = fx;
     launched.actionState = OG_STATE.SKILL_CHICHARGE;
     expect(() => launched.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_AIR))).toThrow('unported: Projectile.removeProjectile');
+    // The removal comes BEFORE the damage (web `:3477`). Since 6b the launch's own `startAction`
+    // also removes it, with the same message, AFTER the damage: HP tells the two apart.
+    expect(launched.getHP()).toBe(590);
   });
 });
 
@@ -2697,15 +2701,8 @@ describe('slice 6a: checkHitObject — the reaction (WEB: the juggle cap per att
     expect([down.got(), down.p.actionState]).toEqual([true, OG_STATE.DOWNED]);
   });
 
-  it('the launch, knockdown, fly, fly-away, knee-groin, back-throw and death-touch reactions are 6b / 6c\'s: loud', () => {
-    const L = OG_LAUNCH;
-    const cases: Array<[number, string]> = [
-      [L.LAUNCH_AIR, 'MCSPlayer.gotLaunched'], [L.LAUNCH_KNOCKDOWN, 'MCSPlayer.gotKnockDown'],
-      [L.LAUNCH_FLY, 'MCSPlayer.gotFly'], [L.LAUNCH_FLYAWAY, 'MCSPlayer.gotFlyAway'],
-      [L.KNEEGROIN, 'MCSPlayer.gotKneeGroin'], [L.BACKTHROW, 'MCSPlayer.gotBackThrow'],
-      [L.DEATHTOUCH, 'EnemyPlayer.gotDeathTouch'],
-    ];
-    for (const [launch, name] of cases) expect(reacting(launch).got, name).toThrow(`unported: ${name}`);
+  it('the death touch is 6c\'s: loud', () => {
+    expect(reacting(OG_LAUNCH.DEATHTOUCH).got).toThrow('unported: EnemyPlayer.gotDeathTouch');
   });
 
   it('the launch and the knockdown write the body\'s facing into the packet (1 right, 0 left) before they react', () => {
@@ -2742,19 +2739,25 @@ describe('slice 6a: checkHitObject — the reaction (WEB: the juggle cap per att
     expect(states).toEqual(['FLINCH']);
   });
 
-  it('a body already in the air (GOTLAUNCHED, FALL, JUMP) is launched again by a plain hit', () => {
+  it('a body already in the air (GOTLAUNCHED, FALL, JUMP) is launched again by a plain hit: the airborne hop, -20', () => {
     for (const s of [OG_STATE.GOTLAUNCHED, OG_STATE.FALL, OG_STATE.JUMP]) {
-      expect(reacting(OG_LAUNCH.LAUNCH_NONE, (q) => { q.actionState = s; }).got).toThrow('unported: MCSPlayer.gotLaunched');
+      const { p, got } = reacting(OG_LAUNCH.LAUNCH_NONE, (q) => { q.actionState = s; });
+      expect([got(), p.actionState, p.velY, p.juggleCount]).toEqual([true, OG_STATE.GOTLAUNCHED, -20, 1]);
     }
   });
 
-  it('WEB juggle cap: a non-LIGHT attacker\'s launch is skipped at juggleCount 3, a LIGHT one\'s at 5; the damage lands, nothing throws', () => {
+  it('WEB juggle cap: a non-LIGHT attacker\'s launch is skipped at juggleCount 3, a LIGHT one\'s at 5; the damage lands', () => {
     const capped = reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.juggleCount = 3; }, HEAVY);
-    expect([capped.got(), capped.p.getHP(), capped.p.actionState]).toEqual([true, 546, OG_STATE.IDLE]);
+    expect([capped.got(), capped.p.getHP(), capped.p.actionState, capped.p.juggleCount]).toEqual([true, 546, OG_STATE.IDLE, 3]);
     const mob = reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.juggleCount = 3; });
-    expect(mob.got()).toBe(true);
-    expect(reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.juggleCount = 2; }, HEAVY).got).toThrow('unported: MCSPlayer.gotLaunched');
-    expect(reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.juggleCount = 4; }, LIGHT).got).toThrow('unported: MCSPlayer.gotLaunched');
+    expect([mob.got(), mob.p.actionState]).toEqual([true, OG_STATE.IDLE]);
+    const launched = (n: number, stance: number) => {
+      const r = reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.juggleCount = n; }, stance);
+      r.got();
+      return [r.p.actionState, r.p.juggleCount];
+    };
+    expect(launched(2, HEAVY)).toEqual([OG_STATE.GOTLAUNCHED, 3]);
+    expect(launched(4, LIGHT)).toEqual([OG_STATE.GOTLAUNCHED, 5]);
     const light = reacting(OG_LAUNCH.LAUNCH_AIR, (q) => { q.juggleCount = 5; }, LIGHT);
     expect([light.got(), light.p.actionState]).toEqual([true, OG_STATE.IDLE]);
   });
@@ -2857,21 +2860,361 @@ describe('slice 6a: a plain hit into the IDLE duellist, through the real update'
   });
 });
 
+/*
+ * L5-OPP SLICE 6b — THE LAUNCH AND THE GETUP. `gotLaunched` (web `§1t99s0§.as:4497`, Android
+ * `MCSPlayer.as:4137`), `gotKneeGroin` (`:4574` / `:4197`) and `MCSPlayer`'s own `doLaunched`
+ * (`:3991` / `:3887`); `gotKnockDown`, `gotBackThrow`, `gotFly`, `gotFlyAway` and `doFly` add only
+ * the human's UI to `NPC`'s, so the duellist runs `NPC`'s; `checkHitObject`'s fly-away; the three
+ * switches' reception groups. WEB where the builds differ (R6). Every expected number was worked
+ * by hand from the source.
+ */
+describe('slice 6b: the reactions — gotLaunched counts (WEB), gotKneeGroin costs chi, the rest are NPC\'s', () => {
+  it('WEB gotLaunched counts first, then NPC\'s: from the ground GOTLAUNCHED, the rise clip, velY −25, pushed against the facing', () => {
+    const p = struck();
+    p.gotLaunched();
+    expect([p.juggleCount, p.actionState, p.animation, p.velY, p.velX]).toEqual([1, OG_STATE.GOTLAUNCHED, 'gotlaunchedupwards_parta', -25, -3]);
+    const q = struck();
+    q.faceLeft();
+    q.gotLaunched();
+    expect(q.velX).toBe(3);
+  });
+
+  it('in the air: the hop is −20, the facing flips, the count goes on', () => {
+    const p = struck();
+    p.gotLaunched();
+    p.gotLaunched();
+    expect([p.juggleCount, p.velY, p.isFacingRight(), p.velX]).toEqual([2, -20, false, 3]);
+  });
+
+  it('WEB: the count rises BEFORE NPC\'s guard, so a dying body that is not launched still counts one', () => {
+    const p = struck();
+    p.actionState = OG_STATE.DYING;
+    p.gotLaunched();
+    expect([p.juggleCount, p.actionState, p.velY]).toEqual([1, OG_STATE.DYING, 0]);
+  });
+
+  it('gotKnockDown is NPC\'s: on the ground KNOCKDOWNED, the downed clip, the bar hidden', () => {
+    const p = struck();
+    p.showHealthBar();
+    p.gotKnockDown();
+    expect([p.actionState, p.animation, p.healthBarVisible]).toEqual([OG_STATE.KNOCKDOWNED, 'gotlauncheddowned', false]);
+  });
+
+  it('gotKneeGroin: VICTIM at the attacker\'s point, then chi 40 less 15 = 25; less 45 floors at 0 (MCSPlayer.as:4203-4208)', () => {
+    const p = struck();
+    p.gotKneeGroin(310, 350, 15);
+    expect([p.actionState, p.animation, p.posX, p.y, p.isFacingRight(), p.chi]).toEqual([OG_STATE.VICTIM, 'kneegroin_victim', 310, 350, false, 25]);
+    const q = struck();
+    q.gotKneeGroin(510, 358, 45);
+    expect([q.isFacingRight(), q.chi]).toEqual([true, 0]);
+  });
+
+  it('gotKneeGroin\'s own guard: a downed or dying body, or one that cannot be knee-groined, keeps its chi', () => {
+    for (const s of [OG_STATE.DOWNED, OG_STATE.DYING]) {
+      const p = struck();
+      p.actionState = s;
+      p.gotKneeGroin(310, 350, 15);
+      expect([stateName(p.actionState), p.chi, p.posX]).toEqual([stateName(s), 40, 400]);
+    }
+    const q = struck();
+    q.canGotKneeGroin = false;
+    q.gotKneeGroin(310, 350, 15);
+    expect([q.actionState, q.chi]).toEqual([OG_STATE.IDLE, 40]);
+  });
+
+  it('gotBackThrow and gotFly are NPC\'s: VICTIM on the back-throw clip; FLY on fly_start, facing against the flight, the bar hidden', () => {
+    const p = struck();
+    p.showHealthBar();
+    p.gotBackThrow(450, 358);
+    expect([p.actionState, p.animation, p.posX, p.isFacingRight(), p.healthBarVisible]).toEqual([OG_STATE.VICTIM, 'backthrow_victim', 450, true, false]);
+    const q = struck();
+    q.showHealthBar();
+    q.gotFly(12, -15);
+    expect([q.actionState, q.animation, q.velX, q.velY, q.isFacingRight(), q.healthBarVisible]).toEqual([OG_STATE.FLY, 'fly_start', 12, -15, false, false]);
+  });
+
+  it('WEB fly-away through checkHitObject: thrown away from the thing\'s x, then the packet carries the body\'s velocity as a FLY', () => {
+    const p = struck();
+    const d = blow(100, OG_LAUNCH.LAUNCH_FLYAWAY);
+    expect(p.checkHitObject({ ...WEAPON, x: 450 }, d)).toBe(true);
+    expect([p.actionState, p.animation, p.velX, p.velY, p.isFacingRight()]).toEqual([OG_STATE.FLY, 'fly_start', -20, -10, true]);
+    expect([d.launchType, d.flyVelX, d.flyVelY]).toEqual([OG_LAUNCH.LAUNCH_FLY, -20, -10]);
+    const q = struck();
+    const e = blow(100, OG_LAUNCH.LAUNCH_FLYAWAY);
+    q.checkHitObject({ ...WEAPON, x: 350 }, e);
+    expect([q.velX, q.isFacingRight(), e.launchType, e.flyVelX]).toEqual([20, false, OG_LAUNCH.LAUNCH_FLY, 20]);
+  });
+
+  it('the thing\'s x is an `int` parameter (`NPC.as:611`): 400.5 truncates to 400, not right of a body at 400.2', () => {
+    const p = struck();
+    p.setPosition(400.2, GROUND);
+    p.checkHitObject({ ...WEAPON, x: 400.5 }, blow(100, OG_LAUNCH.LAUNCH_FLYAWAY));
+    expect([p.velX, p.isFacingRight()]).toEqual([20, false]);
+  });
+
+  it('a fly-away from a shape that carries no x is loud (the seam gives it, slice 8)', () => {
+    expect(() => struck().checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_FLYAWAY))).toThrow('the thing\'s x');
+  });
+});
+
+describe('slice 6b: doLaunched — MCSPlayer\'s own, not NPC\'s (the same in both builds)', () => {
+  const airborne = (x: number, y: number, velX: number, velY: number) => {
+    const p = struck();
+    p.actionState = OG_STATE.GOTLAUNCHED;
+    p.setPosition(x, y);
+    p.velX = velX;
+    p.velY = velY;
+    p.doLaunched();
+    return p;
+  };
+
+  it('a frame: y by velY, x by velX UNCLAMPED (movePositionX: 1 − 3 = −2), then gravity 3; at the edge NO bounce (NPC\'s re-launches under 20)', () => {
+    const p = airborne(1, 300, -3, -10);
+    expect([p.posX, p.y, p.velX, p.velY, p.juggleCount, p.animation]).toEqual([-2, 290, -3, -7, 0, 'idle']);
+  });
+
+  it('the peak clip plays while −4 < velY < 0, after gravity', () => {
+    expect(airborne(400, 300, 0, -4).animation).toBe('gotlaunchedupwards_partb');
+    expect(airborne(400, 300, 0, -7).animation).toBe('idle');
+    expect(airborne(400, 300, 0, -3).animation).toBe('idle');
+  });
+
+  it('it lands at the ground: DOWNED on the downed clip, the bar hidden, the juggle count reset (WEB :4017)', () => {
+    const p = struck();
+    p.showHealthBar();
+    p.juggleCount = 3;
+    p.actionState = OG_STATE.GOTLAUNCHED;
+    p.setPosition(400, 350);
+    p.velY = 10;
+    p.doLaunched();
+    expect([p.y, p.actionState, p.animation, p.healthBarVisible, p.juggleCount]).toEqual([358, OG_STATE.DOWNED, 'gotlauncheddowned', false, 0]);
+  });
+
+  it('it lands ON the ground too: 348 + 10 = 358 is a landing (`>=`, web `:4008`)', () => {
+    const p = airborne(400, 348, 0, 10);
+    expect([p.y, p.actionState]).toEqual([358, OG_STATE.DOWNED]);
+  });
+
+  it('it lands whatever velY\'s sign (NPC\'s waits for velY > 0): below the ground and rising, it lands', () => {
+    expect(airborne(400, 370, 0, -5).actionState).toBe(OG_STATE.DOWNED);
+  });
+});
+
+describe('slice 6b: the three switches\' reception groups (the same in both builds)', () => {
+  it('startAction: GOTLAUNCHED plays the rise; KNOCKDOWNED and DOWNED the downed clip', () => {
+    const clip = (s: OgState) => {
+      const p = struck();
+      p.startAction(s);
+      return [stateName(p.actionState), p.animation];
+    };
+    expect(clip(OG_STATE.GOTLAUNCHED)).toEqual(['GOTLAUNCHED', 'gotlaunchedupwards_parta']);
+    expect(clip(OG_STATE.KNOCKDOWNED)).toEqual(['KNOCKDOWNED', 'gotlauncheddowned']);
+    expect(clip(OG_STATE.DOWNED)).toEqual(['DOWNED', 'gotlauncheddowned']);
+  });
+
+  it('doAction: GOTLAUNCHED is doLaunched, FLY doFly, STUN doStun; DOWNED does nothing', () => {
+    const p = struck();
+    const launched = vi.spyOn(p, 'doLaunched').mockImplementation(() => undefined);
+    const fly = vi.spyOn(p, 'doFly').mockImplementation(() => undefined);
+    p.actionState = OG_STATE.GOTLAUNCHED;
+    p.doAction();
+    p.actionState = OG_STATE.FLY;
+    p.doAction();
+    expect([launched.mock.calls.length, fly.mock.calls.length]).toEqual([1, 1]);
+    const q = struck();
+    q.actionState = OG_STATE.STUN;
+    q.stunCounter = 2;
+    q.doAction();
+    expect([q.actionState, q.stunCounter]).toEqual([OG_STATE.STUN, 1]);
+    q.doAction();
+    expect(q.actionState).toBe(OG_STATE.IDLE);
+    const r = struck();
+    r.actionState = OG_STATE.DOWNED;
+    r.velY = 5;
+    r.doAction();
+    expect([r.actionState, r.y, r.velY, r.animation]).toEqual([OG_STATE.DOWNED, 358, 5, 'idle']);
+  });
+
+  it('doFly is NPC\'s, reached through doAction: the arc at gravity 1, landing on FLY_END', () => {
+    const p = struck();
+    p.gotFly(12, -15);
+    p.doAction();
+    expect([p.posX, p.y, p.velY]).toEqual([412, 343, -14]);
+    p.setPosition(412, 345);
+    p.velY = 5;
+    p.doAction();
+    expect([p.y, p.animation]).toEqual([358, 'fly_end']);
+  });
+});
+
+describe('slice 6b: the clip ends — the fall and the getups (the same in both builds)', () => {
+  const ended = (clip: string, setUp: (p: MCSPlayer) => void = () => undefined) => {
+    const p = struck();
+    setUp(p);
+    expect(p.clipEnded(clip)).toBe(true);
+    return p;
+  };
+  const flipper = (p: MCSPlayer) => {
+    p.setStance(DUAL);
+  };
+
+  it('FLY_END: DOWNED on the downed clip; KNEEGROIN_VICTIM: the front getup; GOTLAUNCHED_PEAK: the fall', () => {
+    expect([ended('fly_end').actionState, ended('fly_end').animation]).toEqual([OG_STATE.DOWNED, 'gotlauncheddowned']);
+    expect(ended('kneegroin_victim').animation).toBe('getup_front');
+    expect(ended('gotlaunchedupwards_partb').animation).toBe('gotlaunchedupwards_partc');
+  });
+
+  it('BACKTHROW_VICTIM: DOWNED, the flip-up if it can (not in adventure mode), else the long getup; 410 px the way it faces, clamped', () => {
+    const right = ended('backthrow_victim', (p) => { p.setPosition(100, GROUND); });
+    expect([right.actionState, right.animation, right.posX]).toEqual([OG_STATE.DOWNED, 'gotlauncheddownedend', 510]);
+    const left = ended('backthrow_victim', (p) => { p.setPosition(500, GROUND); p.faceLeft(); });
+    expect(left.posX).toBe(90);
+    expect(ended('backthrow_victim', (p) => { p.setPosition(600, GROUND); }).posX).toBe(800);
+    expect(ended('backthrow_victim', flipper).animation).toBe('flipupfromdowned');
+    expect(ended('backthrow_victim', (p) => { flipper(p); p.world.adventureMode = true; }).animation).toBe('gotlauncheddownedend');
+  });
+
+  it('GETUP_FRONT: 40 px back from the facing, then IDLE', () => {
+    const victim = (p: MCSPlayer) => {
+      p.actionState = OG_STATE.VICTIM;
+      p.startAnim('getup_front');
+    };
+    const right = ended('getup_front', victim);
+    expect([right.posX, right.actionState, right.animation]).toEqual([360, OG_STATE.IDLE, 'idle']);
+    expect(ended('getup_front', (p) => { victim(p); p.faceLeft(); }).posX).toBe(440);
+  });
+
+  it('GOTLAUNCHEDDOWNED, alive: the bar shown at x −100; then the flip-up (bar hidden again), a knocked-down body\'s DOWNEDUP2, or the long getup', () => {
+    const down = ended('gotlauncheddowned', (p) => { p.actionState = OG_STATE.DOWNED; });
+    expect([down.animation, down.healthBarVisible, down.healthBarX]).toEqual(['gotlauncheddownedend', true, -100]);
+    const knocked = ended('gotlauncheddowned', (p) => { p.actionState = OG_STATE.KNOCKDOWNED; });
+    expect(knocked.animation).toBe('downedup2');
+    const flip = ended('gotlauncheddowned', (p) => { flipper(p); p.actionState = OG_STATE.KNOCKDOWNED; });
+    expect([flip.animation, flip.healthBarVisible, flip.healthBarX]).toEqual(['flipupfromdowned', false, -100]);
+    const adventure = ended('gotlauncheddowned', (p) => { flipper(p); p.actionState = OG_STATE.KNOCKDOWNED; p.world.adventureMode = true; });
+    expect([adventure.animation, adventure.healthBarVisible]).toEqual(['downedup2', true]);
+  });
+
+  it('GOTLAUNCHEDDOWNED keeps the bar hidden at 0 HP or in the red freeze; dead, it is the death\'s end (6c)', () => {
+    expect(ended('gotlauncheddowned', (p) => { p.setHP(0); }).healthBarVisible).toBe(false);
+    expect(ended('gotlauncheddowned', (p) => { p.world.redFreeze = true; }).healthBarVisible).toBe(false);
+    const p = struck();
+    p.dead = true;
+    expect(() => p.clipEnded('gotlauncheddowned')).toThrow('unported: EnemyPlayer.deathAnimEnd');
+  });
+
+  it('GOTLAUNCHEDDOWNEDEND: DOWNEDUP2; DOWNEDUP and DOWNEDUP2: the bar back at x 0 and shown, 120 px back, IDLE', () => {
+    expect(ended('gotlauncheddownedend').animation).toBe('downedup2');
+    for (const clip of ['downedup', 'downedup2']) {
+      const p = ended(clip, (q) => { q.moveHealthBarX(-100); q.actionState = OG_STATE.DOWNED; q.startAnim(clip); });
+      expect([p.healthBarX, p.healthBarVisible, p.posX, p.actionState, p.animation]).toEqual([0, true, 280, OG_STATE.IDLE, 'idle']);
+      expect(ended(clip, (q) => { q.faceLeft(); }).posX).toBe(520);
+    }
+  });
+
+  it('FLIPUP: the bar shown (not in the red freeze) at x 0, then IDLE', () => {
+    const p = ended('flipupfromdowned', (q) => { q.moveHealthBarX(-100); q.actionState = OG_STATE.KNOCKDOWNED; q.startAnim('flipupfromdowned'); });
+    expect([p.healthBarVisible, p.healthBarX, p.actionState, p.animation, p.posX]).toEqual([true, 0, OG_STATE.IDLE, 'idle', 400]);
+    expect(ended('flipupfromdowned', (q) => { q.world.redFreeze = true; }).healthBarVisible).toBe(false);
+  });
+});
+
+describe('slice 6b: the launch and the getup, through checkHitObject and the real update', () => {
+  const run = (p: MCSPlayer, f: ReturnType<typeof framed>, n: number, rows: string[], ys: number[] = []) => {
+    let last = `${stateName(p.actionState)} ${p.animation}`;
+    f.run(n, (k) => {
+      ys.push(p.y);
+      const now = `${stateName(p.actionState)} ${p.animation}`;
+      if (now !== last) rows.push(`${k} ${now} ${p.y}`);
+      last = now;
+    });
+  };
+
+  it('an AIR hit: rise, peak, fall at gravity 3, DOWNED, the long getup, DOWNEDUP2, IDLE 120 px back', () => {
+    const p = struck([OG_PART.torso], body2(), NO_DRAW, new OgAnimLibrary());
+    const f = framed(p);
+    f.run(1);
+    expect(p.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_AIR, HEAVY))).toBe(true);
+    const rows: string[] = [];
+    const ys: number[] = [];
+    run(p, f, 86, rows, ys);
+    expect(rows).toEqual([
+      '9 GOTLAUNCHED gotlaunchedupwards_partb 242', '18 GOTLAUNCHED gotlaunchedupwards_partc 341',
+      '19 DOWNED gotlauncheddowned 358', '37 DOWNED gotlauncheddownedend 358', '62 DOWNED downedup2 358',
+      '87 IDLE idle 358',
+    ]);
+    expect(ys.slice(0, 18)).toEqual([333, 311, 292, 276, 263, 253, 246, 242, 241, 243, 248, 256, 267, 281, 298, 318, 341, 358]);
+    expect([p.getHP(), p.posX, p.juggleCount, p.healthBarVisible, p.healthBarX]).toEqual([546, 226, 0, true, 0]);
+    expect(f.ai).toEqual([1, 13, 25, 37, 49, 61, 73, 85]);
+  });
+
+  it('a knockdown: a body that can flip up flips (DUAL), one that cannot takes DOWNEDUP2 (HEAVY)', () => {
+    const p = struck([OG_PART.torso], body2(), NO_DRAW, new OgAnimLibrary());
+    p.setStance(DUAL);
+    const f = framed(p);
+    f.run(1);
+    p.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_KNOCKDOWN));
+    const rows: string[] = [];
+    run(p, f, 39, rows);
+    expect(rows).toEqual(['19 KNOCKDOWNED flipupfromdowned 358', '40 IDLE idle 358']);
+    expect([p.getHP(), p.posX, p.healthBarVisible, p.healthBarX]).toEqual([561, 400, true, 0]);
+
+    const q = struck([OG_PART.torso], body2(), NO_DRAW, new OgAnimLibrary());
+    const g = framed(q);
+    g.run(1);
+    q.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_KNOCKDOWN));
+    const qrows: string[] = [];
+    run(q, g, 43, qrows);
+    expect(qrows).toEqual(['19 KNOCKDOWNED downedup2 358', '44 IDLE idle 358']);
+    expect(q.posX).toBe(280);
+  });
+
+  it('the juggle: a second and a third launch in the air, the fourth skipped for a HEAVY attacker; the landing resets the count', () => {
+    const p = struck([OG_PART.torso], body2(), NO_DRAW, new OgAnimLibrary());
+    const f = framed(p);
+    f.run(1);
+    const rows: string[] = [];
+    const air = () => p.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_AIR, HEAVY));
+    const hits: Array<[boolean, number, number, number]> = [];
+    const hit = () => {
+      hits.push([air(), p.juggleCount, p.velY, p.y]);
+      rows.push(`hit ${stateName(p.actionState)} ${p.animation} ${p.y}`);
+    };
+    hit();
+    run(p, f, 12, rows);
+    hit();
+    run(p, f, 12, rows);
+    hit();
+    run(p, f, 12, rows);
+    hit();
+    run(p, f, 8, rows);
+    expect(hits).toEqual([[true, 1, -25, 358], [true, 2, -20, 256], [true, 3, -20, 214], [true, 3, 16, 172]]);
+    expect(rows).toEqual([
+      'hit GOTLAUNCHED gotlaunchedupwards_parta 358', '9 GOTLAUNCHED gotlaunchedupwards_partb 242',
+      'hit GOTLAUNCHED gotlaunchedupwards_parta 256', '19 GOTLAUNCHED gotlaunchedupwards_partb 181',
+      'hit GOTLAUNCHED gotlaunchedupwards_parta 214', '31 GOTLAUNCHED gotlaunchedupwards_partb 139',
+      'hit GOTLAUNCHED gotlaunchedupwards_partb 172', '40 GOTLAUNCHED gotlaunchedupwards_partc 229',
+      '45 DOWNED gotlauncheddowned 358',
+    ]);
+    expect([p.getHP(), p.juggleCount, p.posX]).toEqual([414, 0, 340]);
+  });
+});
+
 describe('the harness rule — unported calls throw, and their count only goes down', () => {
-  it('MCSPlayer.ts names exactly 24 unported sites: the switches\' catch-alls, calls out of 5a and 6a, and 6a\'s 14 shadows', () => {
+  it('MCSPlayer.ts names exactly 15 unported sites: the switches\' catch-alls, calls out of 5a and 6a, and 6c\'s 6 shadows', () => {
     // 5a replaced the ONE startAction stub with three dispatchers. A dispatcher that ports some of
     // its labels needs its own site for the rest, so the count ROSE from 3 (see DIVERGENCES
     // "L5-OPP SLICE 5a"); the AI, cancelLogSub and the FX removal are calls 5a's code makes. 6a
     // raised it again, 8 → 24, by design: `checkHitObject`'s FX removal and fly-away, and one
     // shadow per reception override not ported yet, so no hit falls into the mobs' code
-    // (DIVERGENCES "L5-OPP SLICE 6a"). 6b and 6c take the shadows back out.
+    // (DIVERGENCES "L5-OPP SLICE 6a"). 6b took out 9: eight shadows and the fly-away (DIVERGENCES
+    // "L5-OPP SLICE 6b"); 6c takes the last six.
     const src = readFileSync(new URL('../src/core/npc/MCSPlayer.ts', import.meta.url), 'utf8');
     expect([...src.matchAll(/unported\('([^']*)'/g)].map((m) => m[1])).toEqual([
       'MCSPlayer.update clip end', 'Projectile.removeProjectile', 'MCSPlayer.startAction', 'MCSPlayer.doAction',
       'EnemyPlayer.AI', 'MCSPlayer.cancelLogSub', 'StageManager.clearInteractTarget', 'NPCManager.checkPlayerHit',
-      'Projectile.removeProjectile', 'MCSPlayer.gotFlyAway',
-      'MCSPlayer.gotHit', 'MCSPlayer.die', 'MCSPlayer.gotLaunched', 'MCSPlayer.gotKnockDown', 'MCSPlayer.gotKneeGroin',
-      'MCSPlayer.gotBackThrow', 'MCSPlayer.gotFly', 'MCSPlayer.gotFlyAway', 'MCSPlayer.doLaunched', 'MCSPlayer.doFly',
+      'Projectile.removeProjectile',
+      'MCSPlayer.gotHit', 'MCSPlayer.die',
       'EnemyPlayer.gotDeathTouch', 'EnemyPlayer.deathAnimEnd', 'EnemyPlayer.createLoot', 'EnemyPlayer.rewardXP',
     ]);
   });

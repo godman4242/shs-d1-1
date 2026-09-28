@@ -4459,3 +4459,36 @@ After: 92 files / 2227 tests · typecheck 0 · lint 0 · claimcheck 2211 / 608 /
 After: 92 files / 2324 tests (+43 in `mcsPlayer.test.ts`, +54 plant anchors) · typecheck 0 ·
 lint 0 · claimcheck 2288 / 622 / 44 / 0 · chaos 348 pinned (54 / 54 of 6a red, 286 / 286 of the
 duellist set red, restored byte-identical) · 24 unported sites.
+
+## 2026-09-29 — build loop: L5-OPP slice 6b, THE LAUNCH AND THE GETUP
+
+- **Baseline at HEAD `ee30a81`, as RESUME_HERE stated:** 92 files / 2324 tests · typecheck 0 ·
+  lint 0 · claimcheck 2288 / 622 / 44 / 0 · chaos 348 pinned · 24 unported sites.
+- **Red first:** 29 failing tests in `tests/mcsPlayer.test.ts` (new 6b blocks, and 6a's
+  placeholders re-asserted as real launches), each on its `unported` throw or the missing `x`.
+- **Ported (web form, R6):** `gotLaunched` (the count first, before `NPC`'s guard), `gotKneeGroin`
+  with `getChi` / `setChi`, `MCSPlayer`'s own `doLaunched`, the fly-away (web order; the web
+  `NpcDamage.setFlyAwayPos` sets FLY), `startAction` GOTLAUNCHED / KNOCKDOWNED / DOWNED, `doAction`
+  GOTLAUNCHED / FLY / STUN / DOWNED, 10 clip ends. `gotKnockDown`, `gotBackThrow`, `gotFly`,
+  `gotFlyAway`, `doFly` not overridden: their AI path is the `super` call alone. `OG_GETUP` in
+  config, cited at ±0, deny-listed against the humanoids' getups (120 against 100).
+- **Three end-to-end runs, hand-worked first, matched at ±0:** an AIR hit (IDLE at frame 87, 120 px
+  back), a knockdown (DUAL flips, HEAVY takes DOWNEDUP2), the juggle (launches 1–3, the fourth
+  skipped, the count reset on landing).
+- **Unported 24 → 15**, as planned.
+- **Chaos, in a throwaway worktree** (the runner refuses a dirty tree): 41 new plants, 40 / 41 red
+  at first (`movePlayer`'s clamp: the frame test started where the clamp never bites; fixed). Then
+  every plant: **one 6a plant stayed green** — 6b made `gotLaunched` real, so the launch's own
+  `startAction` removed the charge FX with the same message and 6a's `toThrow` passed either way.
+  The test now also asserts HP is untouched (the source removes the FX before the damage). Lesson:
+  making a shadow real can blunt an older test whose red was that shadow's throw.
+- **Review (one fresh-context reviewer):** no behaviour bug in the logic; it hand-checked the three
+  runs and every cite. One divergence (`thing.x` is an AS3 `int`: now truncated, a test red first)
+  and three test gaps (GETUP_FRONT's IDLE, the adventure-mode flip-up, the exact landing), each
+  proved by a break the suite missed. +4 plants; slice 6's 98 plants re-run, all red.
+- **Queued:** the mobs' fly-away x has the same untruncated read (every mob: its own milestone).
+
+### THE GATES
+
+After: 92 files / 2397 tests · typecheck 0 · lint 0 · claimcheck 2309 / 627 / 44 / 0 ·
+instructionpaths 0 · chaos 392 pinned · 15 unported sites.

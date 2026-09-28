@@ -367,6 +367,20 @@
 > 5. **Chaos 294 → 348** (54 plants; 8 of them from the review's five test gaps).
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 6a".
 
+> **⛔ ERRATUM 17 — SLICE 6b (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **6b landed:** `gotLaunched` (web: the count first), `gotKneeGroin` (+ `getChi` / `setChi`),
+>    `MCSPlayer`'s own `doLaunched`, the fly-away (web order, web `setFlyAwayPos`), and the three
+>    switches' reception groups (3 `startAction` labels, 4 `doAction`, 10 clip ends).
+> 2. **Five of the kickoff's eight "ports" are NOT overridden:** `gotKnockDown`, `gotBackThrow`,
+>    `gotFly`, `gotFlyAway`, `doFly` are their `super` call alone on the AI's path, so the duellist
+>    runs `NPC`'s. OPP-C (§5) must accept an inherited method as the TS twin.
+> 3. **Unported 24 → 15**, as planned; 6c takes it to 9.
+> 4. **`HitShape.x`** (optional) carries `thing.x` for the fly-away; the seam (slice 8) supplies it.
+> 5. **Chaos 348 → 392** (45 plants, 4 of them from the review; 1 retired: 6a's `gotLaunched`
+>    shadow). 6b blunted one 6a test (its red was a shadow's throw): run EVERY plant of the class.
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 6b".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -446,7 +460,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **3b** | **BODY i — THE MOVEMENT** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3b") | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
 | **4** | **BODY ii — the stroke** · ✅ **LANDED 2026-09-29** in three commits (4a ERRATUM 9, 4b ERRATUM 10, 4c ERRATUM 11) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) ✅ **LANDED 2026-09-29** (ERRATUM 13) · **5b** the air and the downstab (179 / 182) ✅ **LANDED 2026-09-29** (ERRATUM 14) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
-| 6 | BODY iv — reception · **MAPPED 2026-09-29** (ERRATUM 15): **6a** the hit and the flinch (386 / 415) ✅ **LANDED 2026-09-29** (ERRATUM 16) · **6b** the launch and the getup (263 / 277) · **6c** the blow, the death and the reward (389 / 429) | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
+| 6 | BODY iv — reception · **MAPPED 2026-09-29** (ERRATUM 15): **6a** the hit and the flinch (386 / 415) ✅ **LANDED 2026-09-29** (ERRATUM 16) · **6b** the launch and the getup (263 / 277) ✅ **LANDED 2026-09-29** (ERRATUM 17) · **6c** the blow, the death and the reward (389 / 429) | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
 | 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
 | 8 | THE SEAM — into the duel behind `?npc=duellist` | findings 16 + 17, a stroke channel; `Sim.ts` + `duel-baseline` by the atomic protocol | **YES** |
 

@@ -47,8 +47,13 @@ import { OG_ALPHA } from '../src/config/ogEnemyWolfAlpha';
 import { OG_ANIMAL } from '../src/config/ogNpcAnimal';
 import { OG_NPC_FLOATING_TEXT, OG_NPC_FLY, OG_NPC_LAUNCH, OG_NPC_SET_LEVEL } from '../src/config/ogNpcBase';
 import { OG_FRIENDLY } from '../src/config/ogNpcFriendly';
-import { OG_HUMANOID_FALL_GRAVITY } from '../src/config/ogNpcHumanoid';
-import { OG_SPECIAL_SKILL_MASTERY, OG_STANCE_DAMAGE, OG_STANCE_REACH } from '../src/config/ogMcsPlayer';
+import {
+  OG_HUMANOID_DOWNED_BAR_X,
+  OG_HUMANOID_DOWNEDUP_STEP,
+  OG_HUMANOID_FALL_GRAVITY,
+  OG_HUMANOID_GETUP_STEP,
+} from '../src/config/ogNpcHumanoid';
+import { OG_GETUP, OG_SPECIAL_SKILL_MASTERY, OG_STANCE_DAMAGE, OG_STANCE_REACH } from '../src/config/ogMcsPlayer';
 import { REACH } from '../src/config/reach';
 import { LAUNCH_UNLOCK_LEVEL } from '../src/config/stances';
 
@@ -244,6 +249,19 @@ describe('the deny-list — equal numbers that are NOT twins', () => {
     expect(LAUNCH_UNLOCK_LEVEL.heavy).toBe(5);
     expect(OG_SPECIAL_SKILL_MASTERY.heavy.launch).toBe(3);
     expect(LAUNCH_UNLOCK_LEVEL.heavy).not.toBe(OG_SPECIAL_SKILL_MASTERY.heavy.launch);
+  });
+
+  /**
+   * The duellist's getups (`OG_GETUP`, `MCSPlayer.as:542-682`) against the humanoid mobs'
+   * (`OG_HUMANOID_*`, `EnemyKatana.as` and its six twins): the same clips, separate classes.
+   * The front getup's 40 and the downed bar's −100 coincide; the DOWNEDUP step does not, 120
+   * against 100, which is the proof the two were tuned apart (L5-OPP slice 6b).
+   */
+  it('OG_GETUP is NOT the humanoids\' getup: the DOWNEDUP step is 120 against 100', () => {
+    expect(OG_GETUP.frontStep).toBe(OG_HUMANOID_GETUP_STEP);
+    expect(OG_GETUP.downedBarX).toBe(OG_HUMANOID_DOWNED_BAR_X);
+    expect(OG_GETUP.downedUpStep).toBe(120);
+    expect(OG_HUMANOID_DOWNEDUP_STEP).toBe(100);
   });
 
   it('OG_BOAR.runSpeed is slower than every wanderer, deliberately', () => {

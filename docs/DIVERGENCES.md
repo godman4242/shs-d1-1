@@ -6906,3 +6906,113 @@ branch is out, as the map ruled.
   `doLaunched`, `doFly`) **are the same shape in both builds** (web `§1t68s0§.as:557-766`,
   Android `NPC.as:536-745`; identifiers blanked, numbers kept). The check was probed: wrong
   pairings and a one-number change both differ. So the ported `Npc` is the web's there.
+
+## L5-OPP SLICE 6b — THE LAUNCH AND THE GETUP: THE REACTIONS, `doLaunched`, AND THE RECEPTION'S SWITCH GROUPS (2026-09-29)
+
+Kickoff: `RESUME_HERE.md` (6b), `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 16. A build-loop
+cycle, one commit. Ported in `src/core/npc/MCSPlayer.ts`: `gotLaunched` (web
+`§1t99s0§.as:4497` / Android `MCSPlayer.as:4137`), `gotKneeGroin` (`:4574` / `:4197`) with
+`getChi` / `setChi` (`:169-182` / `:168-181`), `MCSPlayer`'s own `doLaunched` (`:3991` / `:3887`),
+`checkHitObject`'s fly-away (`:3602-3603`), `startAction` GOTLAUNCHED, KNOCKDOWNED + DOWNED,
+`doAction` GOTLAUNCHED, FLY, STUN, DOWNED, and the clip ends FLY_END, KNEEGROIN_VICTIM,
+BACKTHROW_VICTIM, GETUP_FRONT, GOTLAUNCHED_PEAK, GOTLAUNCHEDDOWNED, GOTLAUNCHEDDOWNEDEND, DOWNEDUP
++ DOWNEDUP2 and FLIPUP (`:562-702` / `:542-682`). The web `Damage.setFlyAwayPos`
+(`§1t67s0§.as:163`) in `NpcDamage.ts`. Numbers: `OG_GETUP` in `src/config/ogMcsPlayer.ts`.
+
+### What differs between the builds, and the ruling (all WEB, R6)
+
+| where | web | Android | plant |
+|---|---|---|---|
+| `gotLaunched` | `++juggleCount` first (`:4499`), outside the human branch, BEFORE `NPC`'s guard: a DYING body that is not launched still counts one | counts nothing here | red (removal) |
+| the fly-away | `gotFlyAway(thing.x, thing.y)`, THEN `setFlyAwayPos(velX, velY)`: the packet leaves as a FLY carrying the body's new velocity | `setFlyAwayPos(thing.x, thing.y)` first, the launch unchanged | red (dropped, the Android order, the Android `setFlyAwayPos`) |
+
+Everything else 6b ports is the same in both builds (the map's shape check: 0 mismatches over the
+cut's 79 constant-bearing line pairs; the nine `NPC` functions reached through `super`, probed red
+in 6a).
+
+### Decisions made here (decide-and-flag)
+
+- **Five overrides are NOT carried: `gotKnockDown`, `gotBackThrow`, `gotFly`, `gotFlyAway`,
+  `doFly`.** On the AI's path each is its `super` call alone (every other line is inside
+  `controlledBy == 0`; `gotBackThrow`'s own guard repeats `NPC`'s word for word), so the duellist
+  runs the ported `Npc`'s. *Red-team:* the steelman for thin `super`-only overrides is a TS twin
+  per AS3 function, which OPP-C (§5) asks a tree test to name. But a pass-through adds five
+  methods that do nothing, and the tests pin the behaviour either way. **Veto:** add them back as
+  one-line overrides when OPP-C's tree test is written, if it cannot name an inherited method.
+- **`doLaunched` reuses `OG_NPC_LAUNCH.gravity` and `.peakBandTop`,** 6a's precedent (the hit
+  guard): the override repeats `NPC.doLaunched`'s arc lines, on the same class chain. What differs
+  is structure (no edge bounce, a landing that ignores `velY`'s sign, the juggle reset), not a
+  number, so no second copy and no twin row.
+- **`OG_GETUP` is deny-listed against the humanoids' getups** (`tests/configTwins.test.ts`): the
+  front step 40 and the downed bar's −100 coincide with `OG_HUMANOID_*`, but DOWNEDUP steps 120
+  here and 100 there, so the two classes were tuned apart.
+- **`HitShape` gains an optional `x`, the thing's own x.** The web reads `thing.x` (the ATTACKER's
+  clip: a weapon part, local to its owner, or a projectile, on the stage); `HitShape` had no
+  position. The seam (slice 8) supplies it; a fly-away with none THROWS. Nothing in `src` hands
+  the duellist a LAUNCH_FLYAWAY packet yet (grepped: no mob builds one). *Red-team:* the steelman
+  is a geometry question, as `Npc.gotHit` asks `geometry.partX` for the mobs' fly-away. But the mob's
+  question is about the VICTIM's part; this one is about the attacker's thing, which the geometry
+  does not own. **Veto:** move it into `HitGeometry` if the seam cannot know the thing's x.
+- **`gotFlyAway`'s `ypos` is passed `this.y`:** `NPC.gotFlyAway` never reads it (`NPC.as:611`),
+  so no `y` was added to `HitShape`.
+- **`getChi` / `setChi` carry no `StatsManager.multiplier` mask,** as 6a kept `chi` (and
+  `MCSActor` keeps HP). Chi only ever holds integers here, so the source's `int` coercion would
+  be an untestable truncation; not carried.
+- **`NpcDamage.setFlyAwayPos` is now the web's** (it sets LAUNCH_FLY too). No mob calls it
+  (grepped before the change), so no mob's behaviour moves.
+
+### The harness rule: 24 → 15
+
+Eight shadows out (`gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`,
+`gotFlyAway`, `doLaunched`, `doFly`) and `checkHitObject`'s fly-away site. Six shadows are left for
+6c (`gotHit`, `die`, `gotDeathTouch`, `deathAnimEnd`, `createLoot`, `rewardXP`). The catch-alls
+shrank: clip end 80 → 70 labels, `startAction` 29 → 26, `doAction` 21 → 17.
+
+### The three end-to-end runs (through `checkHitObject` and the real `update`, the source's clip lengths, ±0)
+
+Each worked by hand from the source before the run; the run matched.
+
+- **An AIR hit** (fixture 2, heavy, a heavy attacker, 100 damage): 590 → 546; velY −25; the rise,
+  the peak clip at frame 9 (y 242, velY −1), the fall clip at 18, the ground at 19 (y 367 → 358,
+  DOWNED, the count 0); GOTLAUNCHEDDOWNED 18 frames, then (heavy cannot flip) the long getup 25,
+  DOWNEDUP2 25, IDLE at frame 87, 120 px back (346 → 226).
+- **A knockdown:** a DUAL body (it can flip) flips at 19 and stands at 40, in place; a heavy one
+  takes DOWNEDUP2 at 19 and stands at 44, 120 px back.
+- **The juggle:** launches at frames 1, 13 and 25 (the guard is 12), counts 1, 2, 3; the fourth at
+  37 lands 44 damage but is skipped (a heavy attacker caps at 3; velY stays 16); the body lands at
+  45 and the count resets. HP 590 → 414.
+
+### MEASURED ON THE WAY
+
+- **A missing test, found by its plant.** `doLaunched` through the clamped `movePlayer` stayed
+  green: the frame test started at x 10, where the clamp never bites. It now starts at x 1
+  (`movePositionX`: −2; `movePlayer` would clamp to 0). Then red.
+- **For 6c, the killing launch is live now:** `NPC.die` on a body in GOTLAUNCHED only sets `dead`
+  and returns (`NPC.as:909-913`), so the body flies on, lands through 6b's `doLaunched`, and 6b's
+  GOTLAUNCHEDDOWNED hands it to `deathAnimEnd` (still a shadow).
+- **6b blunted one of 6a's tests, and only the full duellist chaos run saw it.** 6a's plant "a
+  launching hit keeps the chi charge's FX" stayed GREEN at 6b: with `gotLaunched` real, the
+  launch's own `startAction` removes the FX too, with the same `unported` message, so the test's
+  `toThrow` passed either way. The source removes it BEFORE the damage (web `:3477`), so the test
+  now also asserts HP is untouched when it throws. Then red. **A slice that makes a shadow real can
+  blunt an older test whose red was that shadow's throw:** run every plant of the class, not only
+  the new ones.
+- **Chaos:** 45 new plants (4 from the review), all red; 6a's `gotLaunched`-shadow plant retired
+  (the shadow is gone). Every plant was run in a throwaway worktree: the duellist's (333 of 334 at
+  first, the one above fixed) and every other group, all red, all restored byte-identical; after
+  the review, all 98 of slice 6's again. The pin is 392.
+
+### The review
+
+One fresh-context reviewer traced the diff against both builds: **no behaviour bug in the logic**,
+and it hand-checked all three end-to-end runs and every new cite. It found one divergence and three
+test gaps, each proved by applying the break and watching the suite stay green:
+- **`thing.x` is an `int` parameter** (`NPC.as:611`, web `§1t68s0§.as:632`): the source truncates
+  it before comparing with the body's x. Now `asInt(thing.x)`; a test (400.5 against a body at
+  400.2) went red first. The mobs' own fly-away (`Npc.gotHit` through `geometry.partX`) has the
+  same untruncated read: queued, it touches every mob.
+- **GETUP_FRONT's IDLE**: the unit test started in IDLE, so dropping `startAction(IDLE)` stayed
+  green. The getup tests now start in VICTIM / DOWNED / KNOCKDOWNED.
+- **GOTLAUNCHEDDOWNED in adventure mode** (no flip-up) and **the exact landing** (`y == ground`,
+  web `:4008`, `>=`) had no test. Both have one now.
++4 plants, all red.
