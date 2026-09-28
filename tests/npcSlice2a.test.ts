@@ -49,7 +49,7 @@ const world = (over: Partial<NpcWorld> = {}): NpcWorld => ({
   ...over,
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: CLIP, loop: false }) };
-const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0, partsHitBy: () => [] };
+const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0, partsHitBy: () => [], clipHitTestPoint: () => false };
 const seq = (...vals: number[]): Rng => {
   let i = 0;
   return () => vals[Math.min(i++, vals.length - 1)] ?? 0;
@@ -66,6 +66,8 @@ const counting = (): Rng & { calls: number } => {
 
 /** A target that records every swing made at it, with the attacker's part. */
 class Dummy implements NpcTarget {
+  alpha = 1;
+  visible = true;
   hits: Array<{ part: unknown; damage: number }> = [];
   dead = false;
   constructor(

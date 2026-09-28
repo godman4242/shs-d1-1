@@ -50,7 +50,7 @@ const world = (): NpcWorld => ({
   externalRedFreezeCheck: () => undefined,
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: ATTACK_FRAMES, loop: false }) };
-const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0, partsHitBy: () => [] };
+const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0, partsHitBy: () => [], clipHitTestPoint: () => false };
 
 /**
  * The smallest real descendant: walks toward its target at 5 px/frame, enters

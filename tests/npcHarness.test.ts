@@ -54,9 +54,11 @@ const world = (over: Partial<NpcWorld> = {}): NpcWorld => ({
 });
 
 const anims: AnimLibrary = { clip: () => ({ durationFrames: CLIP, loop: false }) };
-const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0, partsHitBy: () => [] };
+const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0, partsHitBy: () => [], clipHitTestPoint: () => false };
 
 class Dummy implements NpcTarget {
+  alpha = 1;
+  visible = true;
   dead = false;
   constructor(
     public x: number,

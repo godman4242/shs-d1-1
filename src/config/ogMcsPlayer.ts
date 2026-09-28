@@ -355,6 +355,197 @@ export const OG_GETUP = {
 } as const;
 
 /**
+ * THE SKILL IDS `SkillManager.startSkill`'s `switch` has an arm for (slice 7a): its 46 labels in
+ * 38 arms, and the web's one more (1077, an arm no AI list names). CONTRACT. The web
+ * `§1t120s0§.as` holds each Android constant on the same line, with the same value (the slice-7
+ * map decoded all of them). SKILL_UNDYING 1068 and the stances have no arm, so they are not here.
+ * Twins, pinned in `tests/configTwins.test.ts`: `OG_RECEPTION.rollSkill` is ROLL, and
+ * `OG_NEW_PLAYER.skills` names JUMP, CHIPUNCH, DASHRIGHT and DASHLEFT again.
+ */
+export const OG_SKILL = {
+  JUMP: 1003, // SkillManager.as:14
+  ROLL: 1004, // SkillManager.as:16
+  FOCUS: 1005, // SkillManager.as:18
+  SLASHWAVE: 1006, // SkillManager.as:20
+  KUNAITHROW: 1007, // SkillManager.as:22
+  SMOKEBOMB: 1010, // SkillManager.as:24
+  SUBSTITUTIONLOG: 1012, // SkillManager.as:26
+  FIREBREATH: 1013, // SkillManager.as:28
+  TRAP: 1024, // SkillManager.as:30
+  TRAPFIRE: 1025, // SkillManager.as:32
+  TRAPWATER: 1026, // SkillManager.as:34
+  TRAPWIND: 1027, // SkillManager.as:36
+  TRAPEARTH: 1028, // SkillManager.as:38
+  KUNAIFIRE: 1029, // SkillManager.as:40
+  KUNAIWATER: 1030, // SkillManager.as:42
+  KUNAIWIND: 1031, // SkillManager.as:44
+  KUNAIEARTH: 1032, // SkillManager.as:46
+  GROUNDPUNCH: 1033, // SkillManager.as:48
+  WINDKICK: 1034, // SkillManager.as:50
+  WATERSPLASH: 1035, // SkillManager.as:52
+  SHUNPO: 1039, // SkillManager.as:54
+  THOUSANDSTABS: 1040, // SkillManager.as:56
+  DEADLYCLEAVE: 1041, // SkillManager.as:58
+  CHIPUNCH: 1042, // SkillManager.as:60
+  CHIKICK: 1043, // SkillManager.as:62
+  SPIRITTHIEF: 1044, // SkillManager.as:64
+  CHIBURST: 1045, // SkillManager.as:66
+  CHARGEDSHOT: 1046, // SkillManager.as:68
+  HEAVENLYSWORDS: 1047, // SkillManager.as:70
+  DEATHTOUCH: 1048, // SkillManager.as:72
+  DASHRIGHT: 1049, // SkillManager.as:74
+  DASHLEFT: 1050, // SkillManager.as:76
+  WINDMILL: 1051, // SkillManager.as:78
+  FLASHBANG: 1052, // SkillManager.as:80
+  SHADOWCLONE: 1053, // SkillManager.as:82
+  STEALTH: 1054, // SkillManager.as:84
+  MASSCLONE: 1055, // SkillManager.as:86
+  BACKTHROW: 1064, // SkillManager.as:88
+  AIRSTAB: 1065, // SkillManager.as:90
+  BULLCHARGE: 1066, // SkillManager.as:92
+  PUNCHLUNGE: 1067, // SkillManager.as:94
+  CHICHARGE: 1069, // SkillManager.as:98
+  INFERNO: 1070, // SkillManager.as:100
+  TSUNAMI: 1071, // SkillManager.as:102
+  TORNADO: 1072, // SkillManager.as:104
+  EARTHQUAKE: 1073, // SkillManager.as:106
+  WEB_1077: 1077, // reference/decompiled/shs3_payload/scripts/§1t120s0§.as:114
+} as const;
+
+const K = OG_SKILL;
+
+/**
+ * `EnemyPlayer`'s four range lists, in the source's order (`EnemyPlayer.as:30-36`, the same in
+ * both builds). OPP-D item 1: `getUsableSkills` never returns `veryClose` (its test is an `if`,
+ * not an `else if`), so its five skills in no other list are dead on the AI.
+ */
+export const OG_AI_SKILL_LISTS = {
+  /** `EnemyPlayer.as:30` */
+  veryClose: [
+    K.DEADLYCLEAVE, K.DEATHTOUCH, K.SPIRITTHIEF, K.SLASHWAVE, K.FIREBREATH, K.GROUNDPUNCH, K.WATERSPLASH, K.WINDKICK,
+    K.SHUNPO, K.THOUSANDSTABS, K.CHIPUNCH, K.CHIKICK, K.CHIBURST, K.HEAVENLYSWORDS, K.FLASHBANG, K.BACKTHROW,
+  ],
+  /** `EnemyPlayer.as:32` */
+  close: [
+    K.SLASHWAVE, K.FIREBREATH, K.GROUNDPUNCH, K.WATERSPLASH, K.WINDKICK, K.SHUNPO, K.DEADLYCLEAVE, K.CHIBURST,
+    K.HEAVENLYSWORDS, K.FLASHBANG, K.WINDMILL, K.BULLCHARGE, K.PUNCHLUNGE,
+  ],
+  /** `EnemyPlayer.as:34` */
+  mid: [
+    K.WINDMILL, K.DASHLEFT, K.DASHRIGHT, K.THOUSANDSTABS, K.SHUNPO, K.KUNAITHROW, K.TRAP, K.TRAPFIRE, K.TRAPWATER,
+    K.TRAPWIND, K.TRAPEARTH, K.KUNAIFIRE, K.KUNAIWATER, K.KUNAIWIND, K.KUNAIEARTH, K.CHARGEDSHOT, K.HEAVENLYSWORDS,
+    K.SHADOWCLONE, K.MASSCLONE, K.SUBSTITUTIONLOG, K.BULLCHARGE, K.PUNCHLUNGE,
+  ],
+  /** `EnemyPlayer.as:36` */
+  long: [
+    K.KUNAITHROW, K.TRAP, K.TRAPFIRE, K.TRAPWATER, K.TRAPWIND, K.TRAPEARTH, K.KUNAIFIRE, K.KUNAIWATER, K.KUNAIWIND,
+    K.KUNAIEARTH, K.CHARGEDSHOT, K.HEAVENLYSWORDS, K.SHADOWCLONE, K.MASSCLONE, K.SUBSTITUTIONLOG, K.BULLCHARGE,
+  ],
+} as const;
+
+/**
+ * THE BRAIN (slice 7a): `EnemyPlayer.AI`, `getUsableSkills` and `doEvade`. CONTRACT. The same in
+ * both builds but the no-target wander, where the web wins (ruling R6) and Android's is in prose.
+ * Every `Math.random() * n` is a die of `n` faces; each product lands in an `int`.
+ */
+export const OG_AI = {
+  /** `EnemyPlayer.as:1006` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1056` · `SkillManager.as:137` · `SkillManager.as:141` · `reference/decompiled/shs3_payload/scripts/§1t120s0§.as:149` · `reference/decompiled/shs3_payload/scripts/§1t120s0§.as:153` — a SMOKEBOMB above this level is the smoke-away: the downed AI's only skill, and `startSkill` lets it through a busy body */
+  smokeAwayLevelAbove: 1,
+  /** `EnemyPlayer.as:1012` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1062` — at this level and under… */
+  skipLevelMax: 3,
+  /** `EnemyPlayer.as:1012` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1062` — …1 in 5 AI ticks do nothing (`Math.random() * 5 < 1`) */
+  skipDice: 5,
+  /** WEB `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1071` — with no target, a body this close to an edge wanders (Android: 50) */
+  wanderEdge: 100,
+  /** WEB `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1073` — to `random * (width - 300) + 150` (Android: `- 100`, `+ 50`) */
+  wanderSpan: 300,
+  /** WEB `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1073` */
+  wanderFrom: 150,
+  /** `EnemyPlayer.as:1036` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1086` — at peace, an IDLE body this close to its target walks away */
+  peacefulNear: 100,
+  /** `EnemyPlayer.as:1044` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1094` — a hidden target: 1 in 3 ticks wander */
+  hiddenDice: 3,
+  /** `EnemyPlayer.as:1050` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1100` — above this level the body evades the human's slash… */
+  evadeLevelAbove: 3,
+  /** `EnemyPlayer.as:1050` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1100` — …2 in 3 times (`int(Math.random() * 3) <= 1`) */
+  evadeDice: 3,
+  /** `EnemyPlayer.as:1050` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1100` */
+  evadeRollMax: 1,
+  /** `EnemyPlayer.as:1079` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1129` — the air stab on a downed target farther than this… */
+  airStabNear: 50,
+  /** `EnemyPlayer.as:1079` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1129` — …and nearer than this */
+  airStabFar: 200,
+  /** `EnemyPlayer.as:1088` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1138` — no stab: a coin between the downed slash and a wander */
+  downedDice: 2,
+  /** `EnemyPlayer.as:1099` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1149` — an airborne target this close takes a diagonal */
+  airComboRange: 120,
+  /** `EnemyPlayer.as:1116` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1166` — 1 in 4 ticks try a skill */
+  skillDice: 4,
+  /** `EnemyPlayer.as:1126` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1176` — the charge the AI writes before a skill it never charges (OPP-D item 6) */
+  chargedShotTime: 48,
+  /** `EnemyPlayer.as:1131` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1181` */
+  shunpoTime: 96,
+  /** `EnemyPlayer.as:1136` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1186` */
+  thousandStabsTime: 96,
+  /** `EnemyPlayer.as:1141` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1191` */
+  deadlyCleaveTime: 120,
+  /** `EnemyPlayer.as:1160` · `EnemyPlayer.as:1162` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1210` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1212` — under this reload the body re-rolls `doReload` in `[24, maxreload)` */
+  reloadFloor: 24,
+  /** `EnemyPlayer.as:1172` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1222` — 1 in 3 strokes launch, when the body can */
+  launchDice: 3,
+  /** `EnemyPlayer.as:1416` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1509` — `doSkill`'s default point: no drag target */
+  noPos: -1,
+  /** `MCSPlayer.as:151` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:151` — `doReload` before the first re-roll: any reload is at or above it */
+  doReloadStart: -1,
+} as const;
+
+/** `getUsableSkills`' three squared ranges (`EnemyPlayer.as:1389-1397` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1480-1488`). CONTRACT. */
+export const OG_AI_RANGE_SQ = {
+  /** `EnemyPlayer.as:1389` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1480` — the very-close list's test, overwritten by the next (OPP-D item 1) */
+  veryClose: 40000,
+  /** `EnemyPlayer.as:1393` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1484` */
+  close: 90000,
+  /** `EnemyPlayer.as:1397` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1488` */
+  mid: 160000,
+} as const;
+
+/** `doEvade`'s fallback stroke, when no evasive skill starts. CONTRACT, the same in both builds. */
+export const OG_EVADE = {
+  /** `EnemyPlayer.as:1253` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1314` — one of four strokes */
+  dice: 4,
+  /** `EnemyPlayer.as:1256` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1317` — the two diagonals start `random * 100 + 80` above the body */
+  riseDice: 100,
+  /** `EnemyPlayer.as:1256` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1317` */
+  rise: 80,
+  /** `EnemyPlayer.as:1257` · `EnemyPlayer.as:1258` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1318` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1319` — radians, 60° */
+  angle: 1.047,
+  /** `EnemyPlayer.as:1258` · `EnemyPlayer.as:1270` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1319` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1331` — the step, `20 * cos` / `-20 * sin` on the diagonals, flat 20 away from the target */
+  step: 20,
+  /** `EnemyPlayer.as:1267` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1328` — the flat stroke runs this far above the body */
+  flatRise: 50,
+} as const;
+
+/**
+ * The cooldown scale (`XMLSkill.getCooldown` × `StatsManager.getSkillCooldownModifier`): the
+ * HUMAN's speed, not the body's (OPP-D item 7). WEB (ruling R6, ERRATUM 5): `/ 600`, capped at 600;
+ * Android `/ 300`, capped at 300. CONTRACT.
+ */
+export const OG_COOLDOWN_SPEED = {
+  /** `StatsManager.as:1849` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2284` — a speed buff × 1.5, into an `int` */
+  buffMult: 1.5,
+  /** WEB `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2291` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2295` — the cap and the divisor (Android 300) */
+  cap: 600,
+  /** `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2295` — at the cap, half the cooldown */
+  scale: 0.5,
+} as const;
+
+/** `getChargingTime`: `chargingTime / 24` (the frame rate, `OG_FPS`), capped. CONTRACT, the same in both builds. */
+export const OG_CHARGING = {
+  /** `MCSPlayer.as:4347` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4716` */
+  cap: 10,
+} as const;
+
+/**
  * The labels of the three switches, in source order, transcribed from the Android build's
  * names (`scripts/gates` has no decoder for the web's; the slice-5 map paired every group
  * across the builds). A label the port has not reached yet goes through ONE `unported` site

@@ -18,10 +18,12 @@ import {
   OG_SLASH_TYPE,
   OG_STANCE_REACH,
   OG_START_ACTION_LABELS,
+  OG_AI_SKILL_LISTS,
+  OG_SKILL,
 } from '../src/config/ogMcsPlayer';
 import { REACH } from '../src/config/reach';
 import { initDuellistBody, type DuellistBody } from '../src/core/npc/duellistBody';
-import { OgAnimLibrary } from '../src/core/npc/duelSeam';
+import { DuelHitGeometry, OgAnimLibrary } from '../src/core/npc/duelSeam';
 import { deriveDuellist } from '../src/core/npc/duellistStats';
 import { newPlayerState, writeBattleStats, writeEquipment, writeSkillStats } from '../src/core/npc/duellistWriter';
 import { MCSPlayer, type MovePoint } from '../src/core/npc/MCSPlayer';
@@ -29,6 +31,7 @@ import { Npc } from '../src/core/npc/Npc';
 import { NpcDamage } from '../src/core/npc/NpcDamage';
 import type { AnimLibrary, HitGeometry, HitShape, NpcTarget, PlayerWorld } from '../src/core/npc/types';
 import type { Rng } from '../src/core/Sim';
+import { getChiCost, getCooldown, skillCooldownModifier, skillData } from '../src/core/npc/xmlSkill';
 
 const GROUND = 358;
 const LIGHT = 0;
@@ -59,9 +62,15 @@ const world = (battle: boolean): PlayerWorld => ({
   playerCanSeeSlash: false,
   playbackShowSlash: false,
   networkPlayBack: false,
+  playerSpeed: 0,
+  playerSpeedBuff: false,
+  playerHasSlash: false,
+  playerSlashArray: [],
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: 3, loop: false }) };
-const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0, partsHitBy: () => [] };
+const geometry: HitGeometry = {
+  partAtPoint: () => null, partHitBy: () => null, partX: () => 0, partsHitBy: () => [], clipHitTestPoint: () => false,
+};
 const NO_DRAW: Rng = () => {
   throw new Error('drew a random number');
 };
@@ -506,6 +515,8 @@ const foe = (mapX: number, y: number, facingRight: boolean): NpcTarget => ({
   isDowned: () => false,
   isAirborne: () => false,
   checkHitObject: () => false,
+  alpha: 1,
+  visible: true,
 });
 
 /** A duellist in its init stance at BODY_X, idle, aimed at `t`. */
@@ -1464,10 +1475,10 @@ describe('slice 5a: update — one frame, in the source\'s order (the same in bo
     expect(ai).toEqual([1, 13, 25, 37, 49]);
   });
 
-  it('unspied, the AI is slice 7 — UNPORTED, and loud', () => {
+  it('unspied, the REAL AI runs on frame 1 (7a): a level-1 body draws its skip die first', () => {
     expect(() => {
       idleBody().update();
-    }).toThrow('unported: EnemyPlayer.AI');
+    }).toThrow('drew a random number');
   });
 
   it('a dead body runs no AI, and its counter does not move (`!dead &&` comes first)', () => {
@@ -2485,7 +2496,8 @@ describe('slice 6a: the helpers — getDefense, isSlashing, isCharging, isUsingS
 
   it('EnemyPlayer.getSkillLevel: a null skillList is 0 (the source\'s guard); else the id\'s level, 0 when absent', () => {
     const p = player(body2());
-    expect([p.skillList, p.getSkillLevel(1004)]).toEqual([null, 0]);
+    p.skillList = null; // 7a: init fills it from the profile; the source's guard stays
+    expect(p.getSkillLevel(1004)).toBe(0);
     p.skillList = [{ id: 1003, value: 5 }, { id: 1004, value: 2 }, { id: 1004, value: 9 }];
     expect([p.getSkillLevel(1004), p.getSkillLevel(1074)]).toEqual([2, 0]);
   });
@@ -2808,7 +2820,7 @@ describe('slice 6a: doFlinch / endFlinch and the FLINCH clip end (the same in bo
     expect([p.actionState, p.animation, p.frameCounter, ai.mock.calls.length]).toEqual([OG_STATE.IDLE, 'heavy_stance', 2, 1]);
   });
 
-  it('endFlinch back into a skill or POSE goes IDLE instead; unspied, the AI is slice 7', () => {
+  it('endFlinch back into a skill or POSE goes IDLE instead; unspied, the REAL AI runs (7a)', () => {
     const back = (s: OgState) => {
       const p = struck();
       p.actionState = s;
@@ -2824,7 +2836,9 @@ describe('slice 6a: doFlinch / endFlinch and the FLINCH clip end (the same in bo
     expect(back(OG_STATE.WALK)).toEqual(['WALK', 'heavy_stance']);
     const q = struck();
     q.doFlinch();
-    expect(() => { q.endFlinch(); }).toThrow('unported: EnemyPlayer.AI');
+    // back to IDLE, then the AI: level 45 draws no skip die; its first is the skill die
+    expect(() => { q.endFlinch(); }).toThrow('drew a random number');
+    expect(q.actionState).toBe(OG_STATE.IDLE);
   });
 
   it('the clip-end switch: FLINCH_WEAPON and FLINCH both end the flinch', () => {
@@ -3664,6 +3678,581 @@ describe('slice 6c: the blow, the death and the reward, through checkHitObject, 
   });
 });
 
+/*
+ * L5-OPP SLICE 7a — THE BRAIN. `EnemyPlayer.AI` (Android `EnemyPlayer.as:990`, web
+ * `§1t122s0§.as:1040`), `isUnderSlash`, `doEvade`, `hasSkill`, `canUseSkill` (WEB: its chi test),
+ * `getUsableSkills`, `doSkill`, `update`'s cooldown tick, `init`'s cooldown table, `getDamage` /
+ * `getBaseDamage` (a boss's), `SkillManager.startSkill`'s preamble and tail with ONE unported
+ * catch-all for the arms, `getChargingTime`, `cancelChargingTime`, `canSmokeAway`. Where the
+ * builds differ the WEB wins (R6): the no-target wander, the chi test, the cooldown's `/ 600`.
+ *
+ * THE TWO END-TO-END RUNS, worked by hand from the source BEFORE the code (the AI runs on frames
+ * 1, 13, 25, 37, 49; `reload` reads k − 1 at frame k's AI and gains 1 after `doAction`).
+ *
+ * RUN 1 — fixture 1 with only its three passive stances (no usable skill), level 1, balanced,
+ * reach 126, at x 400 on the ground; the target stands at 500 facing right. Draws, in order:
+ *   F1  skip 0.1 (0.5 < 1): the level-≤3 skip, nothing else.                         [1 draw]
+ *   F13 skip 0.5; skill die int(0.5 × 4) = 2; reload 12 < 24 → doReload int(24 + 0.125 × 168)
+ *       = 45; no STEALTH → moveTo(int(0.53125 × 800) = 425): |400 − 425|² = 625 ≤ 10000, WALK
+ *       at 4: 404 … 424 (F18), F19 the last 1 px → 425, IDLE.                       [4 draws]
+ *   F25 skip 0.5; skill die int(0.1 × 4) = 0 → faceTarget (right), getUsableSkills(75) = [];
+ *       reload 24 < 45 → no FOCUS → IDLE → moveTo(0.5 × 800 = 400): WALK left, 421 … 405 (F29),
+ *       401 (F30), 400 IDLE (F31).                                                  [3 draws]
+ *   F37 skip 0.5; die 2; reload 36 < 45 → IDLE → moveTo(425): 404 … 424, 425 IDLE (F43). [3]
+ *   F49 skip 0.5; die 2; reload 48 ≥ 45 and ≥ 24 → the stroke: launch die int(0.5 × 3) = 1 →
+ *       slashTarget: the target is right and faces right, so the stroke starts `near` = 42 short:
+ *       (458, 318), 6 points of (+20, −2). |458 − 425| = 33 < 50 → SLASH where it stands,
+ *       facing right; startSlash draws getDamage's 0.5; doReload = 0. doSlash moves 40: 465.  [4]
+ *   15 draws in all; reload 49 at F49's end.
+ *
+ * RUN 2 — fixture 2 (level 45, heavy, reach 112) whose only active skill, SMOKEBOMB 1, is still on
+ * its init cooldown (6 s × 24 × 1 = 144, the human's speed 0), at x 400; the target at 700. The
+ * human's slash (100, 300), (410, 300), (420, 300) covers the body at its second point.
+ *   F1  no skip draw (level 45); the evade die int(0.5 × 3) = 1 ≤ 1; isUnderSlash asks the clip
+ *       twice (100, then 410: a hit) → doEvade: ROLL, JUMP, DASHLEFT, DASHRIGHT unowned,
+ *       SMOKEBOMB on cooldown → the fallback: die int(0.5 × 4) = 2 → the flat stroke from
+ *       (400, 358 − 50 = 308), away from the target (400 < 700: −20), 5 points. |400 − 400| < 50:
+ *       SLASH where it stands; the aim point (340, 308) is left → faces left; getDamage draws
+ *       0.5; doSlash moves 30 left: 370. The cooldown ticks 144 → 143.              [3 draws]
+ */
+const SMOKEBOMB = OG_SKILL.SMOKEBOMB;
+const stancesOnly = [{ id: 1000, value: 1 }, { id: 1001, value: 1 }, { id: 1002, value: 1 }];
+const SLASH_OVER_BODY: readonly MovePoint[] = [{ x: 100, y: 300 }, { x: 410, y: 300 }, { x: 420, y: 300 }];
+
+/** A body out of the switches' reach (as `idleBody`), with the given skills and world facts. */
+function brain(b: DuellistBody, rng: Rng, w: Partial<PlayerWorld> = {}, lib: AnimLibrary = anims, geo: HitGeometry = geometry): MCSPlayer {
+  const wo = { ...world(false), ...w, peaceful: false };
+  const p = new MCSPlayer(wo, lib, geo, rng, b);
+  p.setStance(b.stance);
+  p.setPosition(BODY_X, GROUND);
+  p.actionState = OG_STATE.IDLE;
+  p.changeTarget(foe(700, GROUND, true));
+  return p;
+}
+const allUsable = (p: MCSPlayer) => {
+  for (const id of p.cooldownArray.keys()) p.cooldownArray.set(id, 0);
+};
+/** Every skill id the four lists name, at level 1: a profile that owns them all. */
+const everySkill = () => [...new Set(Object.values(OG_AI_SKILL_LISTS).flat())].map((id) => ({ id, value: 1 }));
+
+describe('slice 7a: XMLSkill.getCooldown / getChiCost and the cooldown scale (WEB: / 600, capped at 600)', () => {
+  const skill = (id: number) => {
+    const s = skillData(id);
+    if (s === null) throw new Error(`no skill ${id}`);
+    return s;
+  };
+
+  it('seconds × 24 into an int, then × the scale into an int; past the last row, the last row', () => {
+    expect(getCooldown(skill(1003), 1, 1)).toBe(48); // jump: 2 s
+    expect(getCooldown(skill(1004), 2, 1)).toBe(84); // roll: 3.5 s → 84
+    expect(getCooldown(skill(1004), 5, 1)).toBe(72); // past its 3 rows: the last, 3 s
+    expect(getCooldown(skill(1003), 1, 0.75)).toBe(36);
+  });
+
+  it('the passive test comes first: a passive row WITH seconds still cools down in 0 (no shipped row has both)', () => {
+    const passive = { id: 1, category: 0, passive: true, levels: [{ value: 1, cooldownS: 5 }] };
+    expect([getCooldown(passive, 1, 1), getCooldown({ ...passive, passive: false }, 1, 1)]).toEqual([0, 120]);
+  });
+
+  it('a passive skill and level 0 cool down in 0; an absent id has no data (`getSkillData` → null)', () => {
+    expect([getCooldown(skill(1000), 1, 1), getCooldown(skill(1004), 0, 1)]).toEqual([0, 0]);
+    expect(skillData(1077)).toBeNull(); // the web's arm: no Android data row
+  });
+
+  it('getChiCost: the level\'s chi, 0 when the row has none; level 0 reads row −1 (a Vector RangeError)', () => {
+    expect([getChiCost(skill(1005), 1), getChiCost(skill(1003), 1), getChiCost(skill(1005), 9)]).toEqual([5, 0, 0]);
+    expect(() => getChiCost(skill(1005), 0)).toThrow(RangeError);
+  });
+
+  it('WEB: 1 − min(speed, 600) / 600 × 0.5 (Android: / 300, capped at 300); a buff is × 1.5 into an int', () => {
+    expect(skillCooldownModifier(0, false)).toBe(1);
+    expect(skillCooldownModifier(300, false)).toBe(0.75); // Android 0.5
+    expect(skillCooldownModifier(450, false)).toBe(0.625); // Android capped: 0.5
+    expect(skillCooldownModifier(900, false)).toBe(0.5);
+    expect(skillCooldownModifier(301, true)).toBe(1 - (451 / 600) * 0.5); // int(451.5) = 451
+  });
+});
+
+describe('slice 7a: init\'s cooldown table, update\'s tick, canUseSkill (WEB: the chi test)', () => {
+  it('the body\'s list IS the profile\'s, untouched (OPP-D item 2: the duellist is no boss, never re-rolled)', () => {
+    const skills = [{ id: 1003, value: 1 }, { id: 1005, value: 2 }];
+    const p = brain({ ...body1(), skills }, NO_DRAW);
+    expect([p.skillList, p.isBoss]).toEqual([skills, false]);
+  });
+
+  it('init fills each skill\'s FULL cooldown, scaled by the HUMAN\'s speed; a passive one 0; an unknown id nothing', () => {
+    const skills = [{ id: 1003, value: 1 }, { id: 1000, value: 1 }, { id: 1077, value: 1 }];
+    const p = brain({ ...body1(), skills }, NO_DRAW, { playerSpeed: 300 });
+    expect([...p.cooldownArray.entries()]).toEqual([[1003, 36], [1000, 0]]); // Android: 24
+  });
+
+  it('update ticks it down to 0, once per frame, and canUseSkill turns true on the frame it reaches 0', () => {
+    const p = brain({ ...body1(), skills: [{ id: 1003, value: 1 }] }, NO_DRAW, { playerSpeed: 300 });
+    const f = framed(p);
+    f.run(35);
+    expect([p.cooldownArray.get(1003), p.canUseSkill(1003)]).toEqual([1, false]);
+    f.run(1);
+    expect([p.cooldownArray.get(1003), p.canUseSkill(1003)]).toEqual([0, true]);
+    f.run(2);
+    expect(p.cooldownArray.get(1003)).toBe(0);
+  });
+
+  it('the tick walks the LIST, so an id listed twice ticks twice a frame (as the source loops)', () => {
+    const p = brain({ ...body1(), skills: [{ id: 1003, value: 1 }, { id: 1003, value: 1 }] }, NO_DRAW);
+    framed(p).run(1);
+    expect(p.cooldownArray.get(1003)).toBe(46);
+  });
+
+  it('canUseSkill: owned AND at 0 (an id with no entry is never 0); WEB: a chi-costing skill is refused at chi 0', () => {
+    const p = brain({ ...body1(), skills: [{ id: 1003, value: 1 }, { id: 1005, value: 1 }, { id: 1077, value: 1 }] }, NO_DRAW);
+    allUsable(p);
+    p.chi = 0;
+    expect([p.hasSkill(1005), p.canUseSkill(1003), p.canUseSkill(1005), p.canUseSkill(1077), p.canUseSkill(1004)])
+      .toEqual([true, true, false, false, false]); // Android: FOCUS true at chi 0
+    p.chi = 1;
+    expect(p.canUseSkill(1005)).toBe(true);
+  });
+});
+
+describe('slice 7a: getUsableSkills — OPP-D item 1, the dead very-close list', () => {
+  it('at 150 px the CLOSE list, in its order (the very-close test is overwritten), and the sign does not matter', () => {
+    const p = brain({ ...body1(), skills: everySkill() }, NO_DRAW);
+    allUsable(p);
+    p.chi = 100;
+    expect(p.getUsableSkills(150)).toEqual(OG_AI_SKILL_LISTS.close);
+    expect(p.getUsableSkills(-150)).toEqual(OG_AI_SKILL_LISTS.close);
+    expect(p.getUsableSkills(299)).toEqual(OG_AI_SKILL_LISTS.close);
+    expect(p.getUsableSkills(300)).toEqual(OG_AI_SKILL_LISTS.mid);
+    expect(p.getUsableSkills(400)).toEqual(OG_AI_SKILL_LISTS.long);
+  });
+
+  it('the very-close five in no other list (1048, 1044, 1042, 1043, 1064) are never returned at any range', () => {
+    const dead = [1048, 1044, 1042, 1043, 1064];
+    const p = brain({ ...body1(), skills: dead.map((id) => ({ id, value: 1 })) }, NO_DRAW);
+    allUsable(p);
+    p.chi = 100;
+    expect([0, 50, 199, 250, 350, 900].map((d) => p.getUsableSkills(d))).toEqual([[], [], [], [], [], []]);
+  });
+
+  it('only the usable: a skill on cooldown is left out', () => {
+    const p = brain({ ...body1(), skills: [{ id: 1006, value: 1 }, { id: 1013, value: 1 }] }, NO_DRAW);
+    allUsable(p);
+    p.chi = 100;
+    p.cooldownArray.set(1006, 5);
+    expect(p.getUsableSkills(100)).toEqual([1013]);
+  });
+});
+
+describe('slice 7a: startSkill — the preamble and the tail; every arm is ONE unported catch-all', () => {
+  const body = () => brain({ ...body1(), skills: [{ id: 1003, value: 1 }] }, NO_DRAW);
+
+  it('refuses at peace and when dead, before anything else (no stealth cancelled)', () => {
+    const p = body();
+    p.visible = false;
+    p.world.peaceful = true;
+    expect(p.startSkill(OG_SKILL.JUMP, 1, -1, -1)).toBe(false);
+    p.world.peaceful = false;
+    p.dead = true;
+    expect(p.startSkill(OG_SKILL.JUMP, 1, -1, -1)).toBe(false);
+    expect([p.visible, p.events]).toEqual([false, []]);
+  });
+
+  it('refuses a body that cannot change stance, but for the smoke-away and a charging body\'s four charged skills', () => {
+    const p = body();
+    p.actionState = OG_STATE.SLASH;
+    expect(p.startSkill(OG_SKILL.JUMP, 1, -1, -1)).toBe(false);
+    expect(p.startSkill(SMOKEBOMB, 1, -1, -1)).toBe(false);
+    p.actionState = OG_STATE.SKILL_SHUNPO;
+    expect(() => p.startSkill(OG_SKILL.SHUNPO, 1, -1, -1)).toThrow('unported: SkillManager.startSkill (SHUNPO)');
+    expect(p.startSkill(OG_SKILL.JUMP, 1, -1, -1)).toBe(false);
+  });
+
+  it('the smoke-away (level > 1) passes a busy body only when it can smoke away: downed, launched, falling, jumping', () => {
+    const p = body();
+    p.actionState = OG_STATE.SLASH;
+    expect(p.canSmokeAway()).toBe(false);
+    expect(p.startSkill(SMOKEBOMB, 2, -1, -1)).toBe(false);
+    for (const s of [OG_STATE.IDLE, OG_STATE.DOWNED, OG_STATE.GOTLAUNCHED, OG_STATE.FALL, OG_STATE.JUMP]) {
+      p.actionState = s;
+      expect(p.canSmokeAway()).toBe(true);
+      expect(() => p.startSkill(SMOKEBOMB, 2, -1, -1)).toThrow('unported: SkillManager.startSkill (SMOKEBOMB)');
+    }
+  });
+
+  it('a charged shot not dropped at (0, 0) needs a charge of a second or more', () => {
+    const p = body();
+    p.chargingTime = 23;
+    expect(p.startSkill(OG_SKILL.CHARGEDSHOT, 1, -1, -1)).toBe(false);
+    expect(() => p.startSkill(OG_SKILL.CHARGEDSHOT, 1, 0, 0)).toThrow('unported: SkillManager.startSkill (CHARGEDSHOT)');
+    p.chargingTime = 24;
+    expect(() => p.startSkill(OG_SKILL.CHARGEDSHOT, 1, -1, -1)).toThrow('unported: SkillManager.startSkill (CHARGEDSHOT)');
+  });
+
+  it('then the stealth is cancelled, and an id with an arm is unported; an id with none falls out, true', () => {
+    const p = body();
+    p.visible = false;
+    expect(() => p.startSkill(OG_SKILL.JUMP, 1, -1, -1)).toThrow('unported: SkillManager.startSkill (JUMP)');
+    expect([p.visible, p.events]).toEqual([true, [{ type: 'smoke', x: BODY_X, y: GROUND }]]);
+    expect(p.startSkill(1008, 1, -1, -1)).toBe(true);
+    expect(() => p.startSkill(1077, 1, -1, -1)).toThrow('unported: SkillManager.startSkill (WEB_1077)');
+  });
+
+  it('getChargingTime is chargingTime / 24 into an int, at most 10; cancelChargingTime zeroes it', () => {
+    const p = body();
+    expect([23, 48, 263, 264, 300].map((t) => { p.chargingTime = t; return p.getChargingTime(); })).toEqual([0, 2, 10, 10, 10]);
+    p.cancelChargingTime();
+    expect(p.chargingTime).toBe(0);
+  });
+});
+
+describe('slice 7a: doSkill — the level, startSkill, and the cooldown on a start', () => {
+  it('an unusable skill starts nothing; a started one takes its cooldown at the level, scaled now', () => {
+    const p = brain({ ...body1(), skills: [{ id: 1003, value: 1 }] }, NO_DRAW, { playerSpeed: 300 });
+    const start = vi.spyOn(p, 'startSkill').mockImplementation(() => true);
+    expect(p.doSkill(1003)).toBe(false);
+    expect(start).not.toHaveBeenCalled();
+    p.cooldownArray.set(1003, 0);
+    p.world.playerSpeed = 0;
+    expect(p.doSkill(1003, 120)).toBe(true);
+    expect(start.mock.calls).toEqual([[1003, 1, 120, -1]]);
+    expect(p.cooldownArray.get(1003)).toBe(48);
+  });
+
+  it('a refused start leaves the cooldown at 0', () => {
+    const p = brain({ ...body1(), skills: [{ id: 1003, value: 1 }] }, NO_DRAW);
+    p.cooldownArray.set(1003, 0);
+    p.world.peaceful = true;
+    expect([p.doSkill(1003), p.cooldownArray.get(1003)]).toEqual([false, 0]);
+  });
+});
+
+describe('slice 7a: getDamage / getBaseDamage — a boss\'s is its minDamage, no draw (the duellist is no boss)', () => {
+  it('isBoss answers minDamage from both getters without drawing', () => {
+    const p = brain(body2(), NO_DRAW);
+    p.isBoss = true;
+    expect([p.getDamage(), p.getBaseDamage()]).toEqual([57, 57]);
+  });
+});
+
+describe('slice 7a: AI — the guards, the smoke-away, the skip (OPP-D item 3)', () => {
+  it('returns at once, drawing nothing, while frozen, using a skill, flinching, stunned or undying', () => {
+    for (const s of [OG_STATE.DOSKILL, OG_STATE.FLINCH, OG_STATE.STUN, OG_STATE.SKILL_UNDYING, OG_STATE.SKILL_SHUNPO]) {
+      const p = brain(body1(), NO_DRAW);
+      p.actionState = s;
+      p.AI();
+    }
+    const q = brain(body1(), NO_DRAW);
+    q.animFrozen = true;
+    q.AI();
+  });
+
+  it('downed or launched: nothing, unless the smoke-away is usable above level 1 — then it smokes (7b\'s arm)', () => {
+    const p = brain({ ...body2(), skills: [{ id: SMOKEBOMB, value: 1 }] }, NO_DRAW);
+    allUsable(p);
+    p.chi = 100;
+    p.actionState = OG_STATE.DOWNED;
+    p.AI();
+    const q = brain({ ...body2(), skills: [{ id: SMOKEBOMB, value: 2 }] }, NO_DRAW);
+    allUsable(q);
+    q.chi = 100;
+    q.actionState = OG_STATE.GOTLAUNCHED;
+    expect(() => { q.AI(); }).toThrow('unported: SkillManager.startSkill (SMOKEBOMB)');
+  });
+
+  it('the 1-in-5 skip at level ≤ 3 only: level 3 returns on a 0.1; level 4 draws no skip die at all', () => {
+    const p = brain({ ...body1(), level: 3 }, drawn([0.1]));
+    p.AI(); // a second draw would throw
+    expect([p.actionState, p.destX]).toEqual([OG_STATE.IDLE, 0]);
+    const q = brain({ ...body1(), level: 4, skills: stancesOnly }, drawn([0.1, 0.5]));
+    q.doReload = 1000;
+    q.AI(); // 0.1 is the skill die (0: an empty pick), 0.5 the wander's x; a skip die would have returned on 0.1
+    expect([q.actionState, q.destX]).toEqual([OG_STATE.WALK, 400]);
+  });
+});
+
+describe('slice 7a: AI — no target, at peace, a hidden target (WEB: the wander\'s bounds)', () => {
+  it('with no enemy left, a body within 100 of an edge wanders to random × 500 + 150 (Android: 50, × 700 + 50)', () => {
+    const at = (x: number, draws: number[]) => {
+      const p = brain({ ...body2(), skills: stancesOnly }, drawn(draws));
+      p.target = null;
+      p.setPosition(x, GROUND);
+      p.AI();
+      return [p.actionState, p.destX];
+    };
+    expect(at(99, [0.5])).toEqual([OG_STATE.RUN, 400]);
+    expect(at(701, [0])).toEqual([OG_STATE.RUN, 150]);
+    expect(at(100, [])).toEqual([OG_STATE.IDLE, 0]);
+    expect(at(700, [])).toEqual([OG_STATE.IDLE, 0]);
+  });
+
+  it('at peace in a duel: the bow once (IDLE, then BOW2), then an IDLE body within 100 of its target wanders', () => {
+    const p = brain({ ...body2(), skills: stancesOnly }, NO_DRAW);
+    p.world.peaceful = true;
+    p.AI();
+    expect([p.hasBowed, p.animation, p.actionState]).toEqual([true, OG_ANIM.BOW2, OG_STATE.IDLE]);
+    p.startAnim('heavy_stance');
+    p.AI(); // bowed already: no second bow, and 300 px off, no wander
+    expect(p.animation).toBe('heavy_stance');
+    // SOURCE QUIRK: the bow's IDLE lets the same tick's wander run, so a body within 100 bows for no frame
+    const q = brain({ ...body2(), skills: stancesOnly }, drawn([0.625]));
+    q.world.peaceful = true;
+    q.changeTarget(foe(450, GROUND, true));
+    q.AI();
+    expect([q.hasBowed, q.actionState, q.destX]).toEqual([true, OG_STATE.WALK, 500]);
+    q.world.duelMode = false;
+    q.hasBowed = false;
+    q.actionState = OG_STATE.POSE;
+    q.AI(); // no bow outside a duel, and POSE is not IDLE: no wander, no draw
+    expect(q.hasBowed).toBe(false);
+  });
+
+  it('a hidden target (alpha < 1, or invisible): 1 in 3 ticks wander, and nothing else', () => {
+    const run = (t: Partial<NpcTarget>, draws: number[]) => {
+      const p = brain({ ...body2(), skills: stancesOnly }, drawn(draws));
+      p.changeTarget({ ...foe(700, GROUND, true), ...t });
+      p.AI();
+      return [p.actionState, p.destX];
+    };
+    expect(run({ alpha: 0.5 }, [0.2, 0.75])).toEqual([OG_STATE.RUN, 600]);
+    expect(run({ visible: false }, [0.4])).toEqual([OG_STATE.IDLE, 0]);
+  });
+});
+
+describe('slice 7a: AI — the stroke branch (the reload, the launch, the skill pick)', () => {
+  it('a full reload strokes: launchTarget on a 0 of the 1-in-3 when it can launch, else slashTarget; doReload = 0', () => {
+    const at = (canLaunch: boolean, die: number) => {
+      const p = brain({ ...body2(), skills: stancesOnly }, drawn([0.5, die, 0.5]));
+      p.canLaunch = canLaunch;
+      p.reload = p.maxreload;
+      const launch = vi.spyOn(p, 'launchTarget').mockImplementation(() => undefined);
+      const slash = vi.spyOn(p, 'slashTarget').mockImplementation(() => undefined);
+      p.AI();
+      return [launch.mock.calls.length, slash.mock.calls.length, p.doReload];
+    };
+    expect(at(true, 0.2)).toEqual([1, 0, 0]);
+    expect(at(false, 0.2)).toEqual([0, 1, 0]);
+    expect(at(true, 0.4)).toEqual([0, 1, 0]);
+  });
+
+  it('an airborne body cannot launch: the 0 of the die strokes flat instead (airborne is > 50 px up, NPC.as:772)', () => {
+    const at = (up: number) => {
+      const p = brain({ ...body2(), skills: stancesOnly }, drawn([0.5, 0.2]));
+      p.canLaunch = true;
+      p.reload = p.maxreload;
+      p.y = GROUND - up; // IDLE in the air: FALL is refused a stroke before this test
+      const launch = vi.spyOn(p, 'launchTarget').mockImplementation(() => undefined);
+      const slash = vi.spyOn(p, 'slashTarget').mockImplementation(() => undefined);
+      p.AI();
+      return [launch.mock.calls.length, slash.mock.calls.length];
+    };
+    expect(at(50)).toEqual([1, 0]);
+    expect(at(51)).toEqual([0, 1]);
+  });
+
+  it('a started STEALTH ends the tick: no wander after it', () => {
+    const p = brain({ ...body2(), skills: [{ id: OG_SKILL.STEALTH, value: 1 }] }, drawn([0.5, 0.5]));
+    allUsable(p);
+    p.chi = 100;
+    vi.spyOn(p, 'startSkill').mockImplementation(() => true);
+    p.AI(); // a wander would draw a third number and throw
+    expect([p.actionState, p.destX]).toEqual([OG_STATE.IDLE, 0]);
+  });
+
+  it('while reload < doReload, only an IDLE or POSE body wanders; a walking one keeps walking', () => {
+    const at = (state: OgState, draws: number[]) => {
+      const p = brain({ ...body2(), skills: stancesOnly }, drawn(draws));
+      p.actionState = state;
+      p.doReload = 100;
+      p.AI();
+      return p.destX;
+    };
+    expect(at(OG_STATE.WALK, [0.5])).toBe(0);
+    expect(at(OG_STATE.POSE, [0.5, 0.75])).toBe(600);
+  });
+
+  it('under 24 with STEALTH usable, it hides (7c\'s arm) instead of wandering', () => {
+    const p = brain({ ...body2(), skills: [{ id: OG_SKILL.STEALTH, value: 1 }] }, drawn([0.5, 0.5]));
+    allUsable(p);
+    p.chi = 100;
+    expect(() => { p.AI(); }).toThrow('unported: SkillManager.startSkill (STEALTH)');
+    expect(p.doReload).toBe(24 + 0.5 * (p.maxreload - 24));
+  });
+
+  it('the skill pick (1 in 4): the charged skills write their state and charge first, OPP-D items 5 and 6', () => {
+    const pick = (id: number, x = 700) => {
+      const p = brain({ ...body2(), skills: [{ id, value: 1 }] }, drawn([0.1, 0]));
+      allUsable(p);
+      p.chi = 100;
+      p.changeTarget(foe(x, GROUND, true)); // 300 px: the MID list; 200 px: the CLOSE
+      const start = vi.spyOn(p, 'startSkill').mockImplementation(() => true);
+      p.AI();
+      return [start.mock.calls[0], p.actionState, p.chargingTime, p.facingRight];
+    };
+    const S = OG_STATE;
+    expect(pick(OG_SKILL.CHARGEDSHOT)).toEqual([[OG_SKILL.CHARGEDSHOT, 1, -1, -1], S.IDLE, 48, true]);
+    expect(pick(OG_SKILL.SHUNPO)).toEqual([[OG_SKILL.SHUNPO, 1, -1, -1], S.SKILL_SHUNPO, 96, true]);
+    expect(pick(OG_SKILL.THOUSANDSTABS)).toEqual([[OG_SKILL.THOUSANDSTABS, 1, -1, -1], S.SKILL_THOUSANDSTABS, 96, true]);
+    // the cleave wears the FLURRY's state (item 5)
+    expect(pick(OG_SKILL.DEADLYCLEAVE, 600)).toEqual([[OG_SKILL.DEADLYCLEAVE, 1, -1, -1], S.SKILL_THOUSANDSTABS, 120, true]);
+  });
+
+  it('while reload < doReload: FOCUS first (7c\'s arm); an IDLE body with no FOCUS wanders', () => {
+    const p = brain({ ...body2(), skills: [{ id: OG_SKILL.FOCUS, value: 1 }] }, drawn([0.5]));
+    allUsable(p);
+    p.chi = 100;
+    p.doReload = 100;
+    expect(() => { p.AI(); }).toThrow('unported: SkillManager.startSkill (FOCUS)');
+  });
+});
+
+describe('slice 7a: AI — a downed or airborne target', () => {
+  const downed = (t: NpcTarget): NpcTarget => ({ ...t, isDowned: () => true });
+
+  it('a downed target: the heavenly swords at its x if usable (7e), then stab, else a coin: the downed slash or a wander', () => {
+    const p = brain({ ...body2(), skills: stancesOnly }, drawn([0.2]));
+    p.changeTarget(downed(foe(700, GROUND, true)));
+    const low = vi.spyOn(p, 'slashDownedTarget').mockImplementation(() => undefined);
+    p.AI();
+    expect(low).toHaveBeenCalledTimes(1);
+    const q = brain({ ...body2(), skills: stancesOnly }, drawn([0.7, 0.25]));
+    q.changeTarget(downed(foe(700, GROUND, true)));
+    q.AI();
+    expect(q.destX).toBe(200);
+    const r = brain({ ...body2(), skills: stancesOnly }, NO_DRAW);
+    r.changeTarget(downed(foe(700, GROUND, true)));
+    r.canStab = true;
+    const stab = vi.spyOn(r, 'stabTarget').mockImplementation(() => undefined);
+    r.AI();
+    expect(stab).toHaveBeenCalledTimes(1);
+  });
+
+  it('the heavenly swords are asked first, with the target\'s x as the drop point', () => {
+    const p = brain({ ...body2(), skills: [{ id: OG_SKILL.HEAVENLYSWORDS, value: 1 }] }, NO_DRAW);
+    allUsable(p);
+    p.chi = 100;
+    p.changeTarget(downed(foe(700, GROUND, true)));
+    expect(() => { p.AI(); }).toThrow('unported: SkillManager.startSkill (HEAVENLYSWORDS)');
+  });
+
+  it('the air stab between 50 and 200 px (exclusive), facing the target first (7d\'s arm)', () => {
+    const at = (x: number) => {
+      const p = brain({ ...body2(), skills: [{ id: OG_SKILL.AIRSTAB, value: 1 }] }, drawn([0.2]));
+      allUsable(p);
+      p.chi = 100;
+      p.changeTarget(downed(foe(x, GROUND, true)));
+      p.faceLeft();
+      const start = vi.spyOn(p, 'startSkill').mockImplementation(() => true);
+      vi.spyOn(p, 'slashDownedTarget').mockImplementation(() => undefined);
+      p.AI();
+      return [start.mock.calls.map((c) => c[0]), p.facingRight];
+    };
+    expect(at(500)).toEqual([[OG_SKILL.AIRSTAB], true]);
+    expect(at(450)).toEqual([[], false]);
+    expect(at(600)).toEqual([[], false]);
+  });
+
+  it('an airborne target within 120: a light or balanced body strokes the diagonal on its side; heavy does nothing', () => {
+    const air = (x: number, stance: number) => {
+      const p = brain({ ...body1(), level: 45, skills: stancesOnly, stance }, NO_DRAW);
+      p.canAirCombo = true;
+      p.changeTarget({ ...foe(x, GROUND - 100, true), isAirborne: () => true });
+      const left = vi.spyOn(p, 'slashDiagonalLeft').mockImplementation(() => undefined);
+      const right = vi.spyOn(p, 'slashDiagonalRight').mockImplementation(() => undefined);
+      p.AI();
+      return [left.mock.calls.length, right.mock.calls.length];
+    };
+    expect(air(300, LIGHT)).toEqual([1, 0]);
+    expect(air(519, BALANCED)).toEqual([0, 1]);
+    expect(air(520, BALANCED)).toEqual([0, 0]);
+    expect(air(450, HEAVY)).toEqual([0, 0]);
+  });
+});
+
+describe('slice 7a: the clip hit tests — ONE geometry member, `clipHitTestPoint`, its calls counted', () => {
+  it('a body with a stroke asks the TARGET\'s clip, shape-exact, point by point until one hits; none hit → re-aims', () => {
+    const calls: unknown[][] = [];
+    const geo: HitGeometry = { ...geometry, clipHitTestPoint: (c, x, y, shape) => { calls.push([c, x, y, shape]); return x === 478; } };
+    const p = brain({ ...body1(), level: 45, skills: stancesOnly }, NO_DRAW, {}, anims, geo);
+    const t = foe(500, GROUND, true);
+    p.changeTarget(t);
+    p.slashTarget(); // 6 points from (458, 318), 58 px off: the body RUNs to it
+    expect([p.actionState, p.hasSlash]).toEqual([OG_STATE.RUN, true]);
+    const again = vi.spyOn(p, 'slashTarget').mockImplementation(() => undefined);
+    p.AI();
+    expect([calls, again.mock.calls.length]).toEqual([[[t, 458, 318, true], [t, 478, 316, true]], 0]);
+    calls.length = 0;
+    p.inputArray = [{ x: 1, y: 2 }, { x: 3, y: 4 }];
+    p.AI();
+    expect([calls, again.mock.calls.length]).toEqual([[[t, 1, 2, true], [t, 3, 4, true]], 1]);
+  });
+
+  it('isUnderSlash asks the BODY\'s clip, bounding-box, at each point of the human\'s slash less the stage position', () => {
+    const calls: unknown[][] = [];
+    const geo: HitGeometry = { ...geometry, clipHitTestPoint: (c, x, y, shape) => { calls.push([c, x, y, shape]); return false; } };
+    const p = brain(body2(), NO_DRAW, { playerSlashArray: SLASH_OVER_BODY, stagePosition: 30 }, anims, geo);
+    expect(p.isUnderSlash()).toBe(false);
+    expect(calls).toEqual([[p, 70, 300, false], [p, 380, 300, false], [p, 390, 300, false]]);
+  });
+
+  it('DuelHitGeometry answers "no" and counts it, like its other four questions', () => {
+    const g = new DuelHitGeometry();
+    expect([g.clipHitTestPoint(foe(0, 0, true), 1, 2, true), g.consulted]).toEqual([false, 1]);
+  });
+});
+
+describe('slice 7a: the two end-to-end runs through the real update (hand-worked above, ±0)', () => {
+  it('RUN 1: the skip, the wander while reload < doReload, then the stroke and doReload = 0', () => {
+    const rng = drawn([0.1, 0.5, 0.5, 0.125, 0.53125, 0.5, 0.1, 0.5, 0.5, 0.5, 0.53125, 0.5, 0.5, 0.5, 0.5]);
+    const p = brain({ ...body1(), skills: stancesOnly }, rng, {}, new OgAnimLibrary());
+    p.changeTarget(foe(500, GROUND, true));
+    const ai: number[] = [];
+    let frame = 0;
+    const real = p.AI.bind(p);
+    vi.spyOn(p, 'AI').mockImplementation(() => { ai.push(frame); real(); });
+    const rows: string[] = [];
+    for (frame = 1; frame <= 49; frame += 1) {
+      p.update();
+      rows.push([frame, stateName(p.actionState), p.posX, p.facingRight, p.reload, p.doReload].join(' '));
+    }
+    const row = (f: number) => rows[f - 1];
+    expect(ai).toEqual([1, 13, 25, 37, 49]);
+    expect([row(1), row(12)]).toEqual(['1 IDLE 400 true 1 -1', '12 IDLE 400 true 12 -1']);
+    expect([row(13), row(18), row(19), row(24)]).toEqual(['13 WALK 404 true 13 45', '18 WALK 424 true 18 45', '19 IDLE 425 true 19 45', '24 IDLE 425 true 24 45']);
+    expect([row(25), row(29), row(30), row(31)]).toEqual(['25 WALK 421 false 25 45', '29 WALK 405 false 29 45', '30 WALK 401 false 30 45', '31 IDLE 400 false 31 45']);
+    expect([row(37), row(42), row(43), row(48)]).toEqual(['37 WALK 404 true 37 45', '42 WALK 424 true 42 45', '43 IDLE 425 true 43 45', '48 IDLE 425 true 48 45']);
+    expect(row(49)).toBe('49 SLASH 465 true 49 0');
+    expect([p.animation, p.slashArray.length, p.slashArray[0], p.slashArray[5]])
+      .toEqual(['balanced_horslash_parta', 6, { x: 458, y: 318 }, { x: 558, y: 308 }]);
+    expect(() => rng()).toThrow('past the script (15)');
+  });
+
+  it('RUN 2: the human\'s slash over the body, no evasive skill ready → doEvade\'s makeSlash fallback', () => {
+    const rng = drawn([0.5, 0.5, 0.5]);
+    const calls: number[][] = [];
+    const geo: HitGeometry = { ...geometry, clipHitTestPoint: (_c, x, y) => { calls.push([x, y]); return x === 410; } };
+    const p = brain(body2(), rng, { playerHasSlash: true, playerSlashArray: SLASH_OVER_BODY }, new OgAnimLibrary(), geo);
+    expect(p.cooldownArray.get(SMOKEBOMB)).toBe(144);
+    p.update();
+    expect(calls).toEqual([[100, 300], [410, 300]]);
+    expect([stateName(p.actionState), p.animation, p.posX, p.facingRight, p.cooldownArray.get(SMOKEBOMB)])
+      .toEqual(['SLASH', 'heavy_horslash_parta', 370, false, 143]);
+    expect(p.slashArray).toEqual([{ x: 400, y: 308 }, { x: 380, y: 308 }, { x: 360, y: 308 }, { x: 340, y: 308 }, { x: 320, y: 308 }]);
+    expect(() => rng()).toThrow('past the script (3)');
+  });
+
+  it('doEvade: the first evasive skill that starts wins (ROLL before JUMP), and the diagonals\' steps are 10 and −17', () => {
+    const p = brain({ ...body2(), skills: [{ id: OG_SKILL.JUMP, value: 1 }, { id: OG_SKILL.ROLL, value: 1 }] }, NO_DRAW);
+    allUsable(p);
+    const start = vi.spyOn(p, 'startSkill').mockImplementation(() => true);
+    p.doEvade();
+    expect(start.mock.calls.map((c) => c[0])).toEqual([OG_SKILL.ROLL]);
+    const q = brain({ ...body2(), skills: stancesOnly }, drawn([0.1, 0.5, 0.5]));
+    const made = vi.spyOn(q, 'makeSlash');
+    q.doEvade();
+    expect(made.mock.calls[0]).toEqual([400, 228, 10, -17]);
+  });
+});
+
 describe('the harness rule — unported calls throw, and their count only goes down', () => {
   it('MCSPlayer.ts names exactly 12 unported sites: the switches\' catch-alls and the calls out of 5a, 6a and 6c', () => {
     // 5a replaced the ONE startAction stub with three dispatchers. A dispatcher that ports some of
@@ -3677,7 +4266,7 @@ describe('the harness rule — unported calls throw, and their count only goes d
     const src = readFileSync(new URL('../src/core/npc/MCSPlayer.ts', import.meta.url), 'utf8');
     expect([...src.matchAll(/unported\('([^']*)'/g)].map((m) => m[1])).toEqual([
       'MCSPlayer.update clip end', 'Projectile.removeProjectile', 'MCSPlayer.startAction', 'MCSPlayer.doAction',
-      'EnemyPlayer.AI', 'MCSPlayer.cancelLogSub', 'MCSPlayer.doSubstitutionLog', 'StageManager.clearInteractTarget',
+      'SkillManager.startSkill', 'MCSPlayer.cancelLogSub', 'MCSPlayer.doSubstitutionLog', 'StageManager.clearInteractTarget',
       'NPCManager.checkPlayerHit', 'Projectile.removeProjectile', 'Projectile.removeProjectile', 'Projectile.removeProjectile',
     ]);
   });

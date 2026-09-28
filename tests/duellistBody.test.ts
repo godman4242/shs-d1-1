@@ -45,6 +45,7 @@ describe('OPP-B body fixture 1 — the defaults at level 1', () => {
       level: 1, walkSpeed: 4, reload: 0, maxReload: 192, statAtk: 0,
       fireAtk: 0, windAtk: 0, waterAtk: 0, earthAtk: 0, criticalDmg: 0, piercingDmg: 0,
       fireDef: 0, windDef: 0, waterDef: 0, earthDef: 0, xp: 50, stance: 1,
+      skills: [], // no skill string: none (7a carries the list for init's cooldown table)
     });
   });
 });

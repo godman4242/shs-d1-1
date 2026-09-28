@@ -80,6 +80,9 @@ class PlayerProxy implements NpcTarget {
   isAirborne(): boolean {
     return this.airborne;
   }
+  /** The Sim's player has no stealth, so the duellist's AI always sees it (`EnemyPlayer.as:1042`). */
+  readonly alpha = ONE;
+  readonly visible = true;
   checkHitObject(thing: HitShape, damage: NpcDamage): boolean {
     void thing;
     void damage;

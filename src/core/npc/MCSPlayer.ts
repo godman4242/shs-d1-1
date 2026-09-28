@@ -12,7 +12,9 @@
  * `endFlinch` and their helpers; the body's HP, chi and defences), slice 6b, THE LAUNCH AND
  * THE GETUP (`gotLaunched`, `gotKneeGroin`, `doLaunched` and the switches' reception groups), and
  * slice 6c, THE BLOW, THE DEATH AND THE REWARD (`gotHit`, `die`, `EnemyPlayer`'s `gotDeathTouch`,
- * `createLoot` and `rewardXP`, the death's clip ends and DYING).
+ * `createLoot` and `rewardXP`, the death's clip ends and DYING), and slice 7a, THE BRAIN
+ * (`EnemyPlayer.AI`, `isUnderSlash`, `doEvade`, the skill bookkeeping, `init`'s cooldown table and
+ * `update`'s tick, and `SkillManager.startSkill`'s preamble and tail).
  *
  * Android structure, web numbers (ruling R6). Where the builds differ in STRUCTURE the web
  * side is ported, and `docs/DIVERGENCES.md` "L5-OPP SLICE 3a" rules each:
@@ -36,6 +38,9 @@
  *   - `gotHit` takes × 0.9 from the stance a body beats and × 1.3 on a beheading, clears the
  *     beheading on any other part, and turns a downed or capped body's AIR packet into NONE; a
  *     death clip's end goes on into `doAction`; a friendly body drops nothing (DIVERGENCES "6c").
+ *   - the AI with no target wanders within 100 of the edges to `[150, width − 150)` (Android 50);
+ *     `canUseSkill` refuses a chi-costing skill at chi 0; a cooldown scales by the human's speed
+ *     `/ 600`, capped at 600 (Android `/ 300`) (DIVERGENCES "L5-OPP SLICE 7 — THE MAP", "7a").
  *
  * Only the opponent's path is ported: `controlledBy == 1` (`DuelModeUI.as:381`). The human's
  * branches (`controlledBy` 0 or 2: the UI calls, the network, `initSpecialSkills`' skill-id
@@ -58,15 +63,21 @@
 import { OG_ANIM, OG_LAUNCH, OG_PART, OG_STATE, type OgPart, type OgState } from '../../config/ogActor';
 import { OG_NO_STANCE, OG_STANCE } from '../../config/ogDuellistProfile';
 import {
+  OG_AI,
+  OG_AI_RANGE_SQ,
+  OG_AI_SKILL_LISTS,
   OG_BLOW,
+  OG_CHARGING,
   OG_CLIP_END_LABELS,
   OG_DO_ACTION_LABELS,
   OG_DUELLIST_REWARD,
+  OG_EVADE,
   OG_GETUP,
   OG_MOVE_DIST_SQ,
   OG_RECEPTION,
   OG_SLASH,
   OG_SLASH_END,
+  OG_SKILL,
   OG_SLASH_TYPE,
   OG_SPECIAL_SKILL_MASTERY,
   OG_STANCE_CHANGE_RELOAD,
@@ -78,6 +89,7 @@ import {
 } from '../../config/ogMcsPlayer';
 import { OG_NPC_FLOATING_TEXT, OG_NPC_HIT_IFRAMES, OG_NPC_LAUNCH } from '../../config/ogNpcBase';
 import { ONE, ZERO } from '../../config/nums';
+import { OG_FPS } from '../../config/timing';
 import type { Rng } from '../Sim';
 import type { DuellistBody } from './duellistBody';
 import { getMastery, type SkillStat } from './duellistProfile';
@@ -85,6 +97,7 @@ import { asInt } from './MCSActor';
 import { Npc } from './Npc';
 import { NpcDamage } from './NpcDamage';
 import type { AnimLibrary, HitGeometry, HitShape, NpcTarget, PlayerWorld } from './types';
+import { getChiCost, getCooldown, skillCooldownModifier, skillData } from './xmlSkill';
 
 /** A call into an `MCSPlayer` group not ported yet: throws, naming the AS3 function (and the label a switch was handed). */
 export function unported(fn: string, label?: string): never {
@@ -95,6 +108,16 @@ export function unported(fn: string, label?: string): never {
 function stateName(s: OgState): string {
   return Object.keys(OG_STATE).find((k) => OG_STATE[k as keyof typeof OG_STATE] === s) ?? String(s);
 }
+
+const K = OG_SKILL;
+
+/** `OG_SKILL`'s key for an id with an arm in `startSkill`'s `switch`, for its `unported` message; none, undefined. */
+function skillArm(id: number): string | undefined {
+  return Object.keys(K).find((k) => K[k as keyof typeof K] === id);
+}
+
+/** `startSkill` lets a charging body through for these four (`SkillManager.as:137`, web `reference/decompiled/shs3_payload/scripts/§1t120s0§.as:149`). */
+const CHARGED_SKILLS: readonly number[] = [K.CHARGEDSHOT, K.SHUNPO, K.THOUSANDSTABS, K.DEADLYCLEAVE];
 
 /** A `flash.geom.Point`: one point of a stroke or a move. */
 export interface MovePoint {
@@ -404,8 +427,23 @@ export class MCSPlayer extends Npc {
    */
   maxchi: number;
   chi: number;
-  /** `MCSPlayer.as:129` — the skills and their levels; `EnemyPlayer.init` fills it (slice 7), so it is null here. */
+  /** `MCSPlayer.as:129` — the skills and their levels; `EnemyPlayer.init` fills it from the profile (7a). */
   skillList: readonly SkillStat[] | null = null;
+  /** `EnemyPlayer.as:24` — frames left per skill id; an id with no entry is never usable (AS3's `undefined == 0` is false). */
+  readonly cooldownArray = new Map<number, number>();
+  /** `MCSPlayer.as:123` — the AI sees the human's slash; `EnemyPlayer.init` sets it (`EnemyPlayer.as:817`). */
+  canSeeSlash = true;
+  /**
+   * `EnemyPlayer.as:20` — a boss fights at its `minDamage`. Never true on the duellist (OPP-D item
+   * 2): the duel's profile builds `new EnemyPlayer(mcs, true, false)` (`NPCManager.as:519`).
+   */
+  isBoss = false;
+  /** `EnemyPlayer.as:28` — the peaceful duel's bow, once. */
+  hasBowed = false;
+  /** `MCSPlayer.as:151` — the reload the AI waits for before it strokes. */
+  doReload: number = OG_AI.doReloadStart;
+  /** `MCSPlayer.as:133` — a skill's charge, in frames. */
+  chargingTime = ZERO;
 
   /** `EnemyPlayer.init`'s body (slice 1b-ii); `init`'s closing `setStance` is the caller's. */
   constructor(world: PlayerWorld, anims: AnimLibrary, geometry: HitGeometry, rng: Rng, body: DuellistBody) {
@@ -435,6 +473,14 @@ export class MCSPlayer extends Npc {
     this.STAT_EARTHDEF = body.earthDef;
     // `EnemyPlayer.init` (`EnemyPlayer.as:82`): the duellist's xp, which `rewardXP` reads.
     this.xp = body.xp;
+    // `EnemyPlayer.init`'s skills (`EnemyPlayer.as:818-831`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:838-853`), the
+    // `!isBoss` branch: the profile's list, and each id's FULL cooldown at its level, scaled by the
+    // human's speed now. An id with no skill data gets no entry.
+    this.skillList = body.skills;
+    for (const sk of body.skills) {
+      const data = skillData(sk.id);
+      if (data !== null) this.cooldownArray.set(sk.id, getCooldown(data, sk.value, this.cooldownScale()));
+    }
     // `EnemyPlayer`'s constructor (`EnemyPlayer.as:51-52`) starts FALL, then this. FALL is ported
     // (5b) but its call is not carried: every body would start falling, which is the spawn's
     // question (slice 8; DIVERGENCES "L5-OPP SLICE 5b").
@@ -444,8 +490,9 @@ export class MCSPlayer extends Npc {
   /**
    * `EnemyPlayer.update` (`EnemyPlayer.as:908`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:956`, the same): a body
    * alive and unfrozen whose target is gone or dead re-aims at the nearest enemy, and with none
-   * left goes IDLE, BEFORE the frame; then `MCSPlayer.update`. Its closing skill-cooldown tick
-   * runs only when `skillList != null`: slice 7 carries both (§3's slice-7 row).
+   * left goes IDLE, BEFORE the frame; then `MCSPlayer.update`; then each listed skill's cooldown
+   * above 0 ticks down one (`EnemyPlayer.as:921-931`, web `:969-981`). The tick walks the LIST, so
+   * an id listed twice ticks twice, and it runs even when `MCSPlayer.update` returned early.
    */
   override update(): void {
     if (!this.dead && !this.animFrozen && (this.target === null || this.target.isDead())) {
@@ -453,6 +500,12 @@ export class MCSPlayer extends Npc {
       if (this.target === null) this.startAction(OG_STATE.IDLE);
     }
     this.playerUpdate();
+    if (this.skillList !== null) {
+      for (const sk of this.skillList) {
+        const left = this.cooldownArray.get(sk.id);
+        if (left !== undefined && left > ZERO) this.cooldownArray.set(sk.id, left - ONE);
+      }
+    }
   }
 
   /**
@@ -761,9 +814,272 @@ export class MCSPlayer extends Npc {
     this.startAction(this.hasSlash ? OG_STATE.SLASH : OG_STATE.IDLE);
   }
 
-  /** `EnemyPlayer.AI` (`EnemyPlayer.as:990`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1040`), which overrides `MCSPlayer.AI`: slice 7. */
+  /**
+   * `EnemyPlayer.AI` (Android `EnemyPlayer.as:990`; web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1040`, the same but the
+   * no-target wander, where the web wins), which overrides `MCSPlayer.AI`. Once every 12 frames:
+   * not while busy; a downed or launched body only smokes away; 1 in 5 ticks skipped at level 3
+   * and under; no target, the wander; at peace, the duel's bow; a hidden target, a wander 1 in 3;
+   * then the evade, or a stroke by the target's state: the stroke already made (re-aimed if it
+   * would miss), the downed target, the airborne one, and else the skill pick (1 in 4), FOCUS or a
+   * wander while `reload < doReload`, a re-roll of `doReload` under 24, and at last the stroke.
+   * `rng` stands in for `Math.random()`; every die lands in an `int`.
+   */
   AI(): void {
-    unported('EnemyPlayer.AI');
+    const S = OG_STATE;
+    const A = OG_AI;
+    const w = this.world;
+    const state = this.actionState;
+    if (this.animFrozen || this.isUsingSkill() || state === S.FLINCH || state === S.STUN || state === S.SKILL_UNDYING) return;
+    if (this.isDowned() || state === S.GOTLAUNCHED) {
+      if (!(this.canUseSkill(K.SMOKEBOMB) && this.getSkillLevel(K.SMOKEBOMB) > A.smokeAwayLevelAbove)) return;
+      this.doSkill(K.SMOKEBOMB);
+    }
+    if (this.level <= A.skipLevelMax && this.rng() * A.skipDice < ONE) return;
+    if (this.target === null || this.target.isDead()) {
+      this.target = w.nearestEnemy(asInt(this.getMapPosition()), !this.isFriendly);
+      if (this.target === null) {
+        const at = asInt(this.getMapPosition());
+        if (at < A.wanderEdge || at > w.stageWidth - A.wanderEdge) {
+          this.moveTo(this.rng() * (w.stageWidth - A.wanderSpan) + A.wanderFrom, w.groundY);
+        }
+        return;
+      }
+    }
+    const t = this.target;
+    if (w.peaceful) {
+      if (!this.hasBowed && w.duelMode) {
+        this.hasBowed = true;
+        this.startAction(S.IDLE);
+        this.startAnim(OG_ANIM.BOW2);
+      }
+      if (this.actionState === S.IDLE && Math.abs(this.getTargetPosition() - asInt(this.getMapPosition())) < A.peacefulNear) {
+        this.moveTo(this.rng() * w.stageWidth, w.groundY);
+      }
+      return;
+    }
+    // `target != null && alpha < 1 || !visible`: the target is never null here.
+    if (t.alpha < ONE || !t.visible) {
+      if (asInt(this.rng() * A.hiddenDice) === ZERO) this.moveTo(this.rng() * w.stageWidth, w.groundY);
+      return;
+    }
+    const now = this.actionState;
+    if (
+      !this.isFriendly && this.canSeeSlash && this.level > A.evadeLevelAbove && w.playerHasSlash &&
+      asInt(this.rng() * A.evadeDice) <= A.evadeRollMax && this.isUnderSlash()
+    ) {
+      this.doEvade();
+    } else if (!(now === S.SLASH || now === S.SLASH_START || now === S.FALL)) {
+      if (this.hasSlash || this.animation === OG_ANIM.DOWNSTAB || this.animation === OG_ANIM.DOWNSTAB_UP) {
+        // Does the stroke already made cross the target? Else aim it again.
+        let flag = false;
+        for (let i = ZERO; i < this.inputArray.length && !flag; i += ONE) {
+          const pt = this.inputArray[i];
+          if (pt !== undefined && this.geometry.clipHitTestPoint(t, pt.x, pt.y, true)) flag = true;
+        }
+        if (!flag) this.slashTarget();
+      } else if (t.isDowned()) {
+        this.doSkill(K.HEAVENLYSWORDS, this.getTargetPosition());
+        const downedDist = Math.abs(this.getTargetPosition() - asInt(this.getMapPosition()));
+        if (this.canUseSkill(K.AIRSTAB) && downedDist > A.airStabNear && downedDist < A.airStabFar) {
+          this.faceTarget();
+          this.doSkill(K.AIRSTAB);
+        } else if (this.canStab) {
+          this.stabTarget();
+        } else if (asInt(this.rng() * A.downedDice) === ZERO) {
+          this.slashDownedTarget();
+        } else {
+          this.moveTo(this.rng() * w.stageWidth, w.groundY);
+        }
+      } else if (this.canAirCombo && t.isAirborne()) {
+        if (
+          Math.abs(this.getTargetPosition() - asInt(this.getMapPosition())) < A.airComboRange &&
+          (this.stance === OG_STANCE.light || this.stance === OG_STANCE.balanced)
+        ) {
+          // `target.getMapPosition() < mcs.x`: the map x against the SCREEN x, as the source reads.
+          if (this.getTargetPosition() < this.x) this.slashDiagonalLeft();
+          else this.slashDiagonalRight();
+        }
+      } else {
+        if (asInt(this.rng() * A.skillDice) === ZERO) {
+          this.faceTarget();
+          const list = this.getUsableSkills(this.getTargetPosition() - asInt(this.getMapPosition()));
+          if (list.length > ZERO) {
+            const selected = list[asInt(this.rng() * list.length)];
+            if (selected === undefined) throw new RangeError('AI: a pick past the list');
+            // OPP-D items 5 and 6: the charged skills' state and charge, then released at once
+            // (`doSkill` passes no point); the cleave wears the FLURRY's state.
+            if (selected === K.CHARGEDSHOT && this.canUseSkill(selected)) {
+              this.chargingTime = A.chargedShotTime;
+            } else if (selected === K.SHUNPO && this.canUseSkill(selected)) {
+              this.actionState = S.SKILL_SHUNPO;
+              this.chargingTime = A.shunpoTime;
+            } else if (selected === K.THOUSANDSTABS && this.canUseSkill(selected)) {
+              this.actionState = S.SKILL_THOUSANDSTABS;
+              this.chargingTime = A.thousandStabsTime;
+            } else if (selected === K.DEADLYCLEAVE && this.canUseSkill(selected)) {
+              this.actionState = S.SKILL_THOUSANDSTABS;
+              this.chargingTime = A.deadlyCleaveTime;
+            }
+            if (this.doSkill(selected)) return;
+          }
+        }
+        if (this.reload < this.doReload) {
+          if (this.doSkill(K.FOCUS)) return;
+          if (this.actionState === S.IDLE || this.actionState === S.POSE) this.moveTo(this.rng() * w.stageWidth, w.groundY);
+        } else if (this.reload < A.reloadFloor) {
+          this.doReload = asInt(A.reloadFloor + this.rng() * (this.maxreload - A.reloadFloor));
+          if (this.canUseSkill(K.STEALTH)) {
+            this.doSkill(K.STEALTH);
+            return;
+          }
+          this.moveTo(this.rng() * w.stageWidth, w.groundY);
+        } else {
+          if (asInt(this.rng() * A.launchDice) === ZERO && this.canLaunch && !this.isAirborne()) this.launchTarget();
+          else this.slashTarget();
+          this.doReload = ZERO;
+        }
+      }
+    }
+  }
+
+  /**
+   * `EnemyPlayer.as:1208` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1267`: does the human's slash cross the body? Each
+   * point less the stage position, against the body's own clip's BOUNDING BOX (`hitTestPoint`'s
+   * `shapeFlag` defaults to false).
+   */
+  isUnderSlash(): boolean {
+    const offset = asInt(this.world.stagePosition);
+    for (const pt of this.world.playerSlashArray) {
+      if (this.geometry.clipHitTestPoint(this, pt.x - offset, pt.y, false)) return true;
+    }
+    return false;
+  }
+
+  /**
+   * `EnemyPlayer.as:1225` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1286`, the same: the first evasive skill that
+   * starts (ROLL, JUMP, DASHLEFT, DASHRIGHT, SMOKEBOMB), else a stroke of its own: one of two 60°
+   * diagonals from `random * 100 + 80` above, or (2 in 4) flat from 50 above, away from the target.
+   * The unused `newangle` and `slashDiag` locals are not carried.
+   */
+  doEvade(): void {
+    if (this.doSkill(K.ROLL)) return;
+    if (this.doSkill(K.JUMP)) return;
+    if (this.doSkill(K.DASHLEFT)) return;
+    if (this.doSkill(K.DASHRIGHT)) return;
+    if (this.doSkill(K.SMOKEBOMB)) return;
+    const E = OG_EVADE;
+    const startX = asInt(this.getMapPosition());
+    let startY: number;
+    let changeX: number;
+    let changeY: number;
+    const pick = asInt(this.rng() * E.dice);
+    if (pick === ZERO || pick === ONE) {
+      startY = asInt(this.y - this.rng() * E.riseDice - E.rise);
+      changeY = asInt(-E.step * Math.sin(E.angle));
+      changeX = asInt((pick === ZERO ? E.step : -E.step) * Math.cos(E.angle));
+    } else {
+      // `case 2: case 3:`, the only other faces of the die.
+      startY = asInt(this.y - E.flatRise);
+      changeX = this.x > this.aim().x ? E.step : -E.step;
+      changeY = ZERO;
+    }
+    this.makeSlash(startX, startY, changeX, changeY);
+  }
+
+  /** `EnemyPlayer.as:1366` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1445`, the same. A null list is a TypeError (#1009), as there. */
+  hasSkill(skillid: number): boolean {
+    if (this.skillList === null) throw new TypeError('hasSkill: a null skillList');
+    return this.skillList.some((sk) => sk.id === skillid);
+  }
+
+  /**
+   * WEB `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1460` (Android `EnemyPlayer.as:1379`): owned and cooled down, and
+   * (web only) not a skill that costs chi at its level while the body has none. The AI never pays
+   * chi (`startSkill` charges the human only), so only the human's effects empty it.
+   */
+  canUseSkill(skillid: number): boolean {
+    if (!(this.hasSkill(skillid) && this.cooldownArray.get(skillid) === ZERO)) return false;
+    const data = skillData(skillid);
+    if (data === null) throw new TypeError(`canUseSkill: no skill data for ${skillid}`);
+    return !(getChiCost(data, this.getSkillLevel(skillid)) > ZERO && this.getChi() === ZERO);
+  }
+
+  /**
+   * `EnemyPlayer.as:1384` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1475`, the same: the usable skills of the list for
+   * the range. SOURCE QUIRK (OPP-D item 1): the source first tests `distsq < 40000` and stores the
+   * very-close list, then an `if` (not an `else if`) below always overwrites it, so that store is
+   * dead and the list is never returned. The dead store is not written here (the lint gate's
+   * `no-useless-assignment` refuses it); what it leaves behind is pinned by test and plant.
+   */
+  getUsableSkills(dist: number): number[] {
+    const R = OG_AI_RANGE_SQ;
+    const L = OG_AI_SKILL_LISTS;
+    const distsq = asInt(dist * dist);
+    let list: readonly number[];
+    if (distsq < R.close) list = L.close;
+    else if (distsq < R.mid) list = L.mid;
+    else list = L.long;
+    return list.filter((id) => this.canUseSkill(id));
+  }
+
+  /**
+   * `EnemyPlayer.as:1416` · web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1509`, the same: a usable skill at its level
+   * through `startSkill`; a start takes its full cooldown, scaled by the human's speed NOW. The
+   * source's `skillDataCache` only saves a lookup, so it is not carried.
+   */
+  doSkill(skillid: number, xpos: number = OG_AI.noPos, ypos: number = OG_AI.noPos): boolean {
+    if (!this.canUseSkill(skillid)) return false;
+    const data = skillData(skillid);
+    if (data === null) throw new TypeError(`doSkill: no skill data for ${skillid}`);
+    const skilllevel = this.getSkillLevel(skillid);
+    if (!this.startSkill(skillid, skilllevel, xpos, ypos)) return false;
+    this.cooldownArray.set(skillid, getCooldown(data, skilllevel, this.cooldownScale()));
+    return true;
+  }
+
+  /** `XMLSkill.getCooldown`'s `StatsManager.getSkillCooldownModifier()`: the HUMAN's speed (OPP-D item 7). */
+  private cooldownScale(): number {
+    return skillCooldownModifier(this.world.playerSpeed, this.world.playerSpeedBuff);
+  }
+
+  /**
+   * `SkillManager.startSkill` with `owner` this body (Android `SkillManager.as:123-161` and
+   * `:705-707`; web `reference/decompiled/shs3_payload/scripts/§1t120s0§.as:131-173` and `:740-742`). The preamble: not at peace or dead;
+   * a busy body refused but for the smoke-away and a charging body's four charged skills; the
+   * smoke-away only when the body can; a charged shot not dropped at (0, 0) needs a second of
+   * charge. Then the stealth ends and the `switch` runs: EVERY arm is unported (7b–7f port them,
+   * R8 sends the unreached to `unreachable`), an id with no arm falls out, true. NOT carried: the
+   * web's `controlledBy == 0` mode refusal and `useChi` (the human's), the tail's
+   * `BattleUI.checkSkillDisabled` (the human's HUD), and the clones' refusal in two game modes,
+   * which goes with their arms in 7f (its second mode is undecoded: DIVERGENCES "SLICE 7 — THE MAP").
+   */
+  startSkill(skillid: number, skilllevel: number, xpos: number, ypos: number): boolean {
+    if (this.world.peaceful || this.dead) return false;
+    const smokeAway = skillid === K.SMOKEBOMB && skilllevel > OG_AI.smokeAwayLevelAbove;
+    if (!smokeAway && !this.canChangeStance() && !(this.isCharging() && CHARGED_SKILLS.includes(skillid))) return false;
+    if (smokeAway && !this.canSmokeAway()) return false;
+    if (skillid === K.CHARGEDSHOT && !(xpos === ZERO && ypos === ZERO) && this.getChargingTime() === ZERO) return false;
+    this.cancelStealth();
+    const arm = skillArm(skillid);
+    if (arm !== undefined) unported('SkillManager.startSkill', arm);
+    return true;
+  }
+
+  /** `MCSPlayer.as:4344` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4713`, the same: the charge in whole seconds, at most 10. */
+  getChargingTime(): number {
+    const num = asInt(this.chargingTime / OG_FPS);
+    return num > OG_CHARGING.cap ? OG_CHARGING.cap : num;
+  }
+
+  /** `MCSPlayer.as:4354` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4723`, the same. */
+  cancelChargingTime(): void {
+    this.chargingTime = ZERO;
+  }
+
+  /** `MCSPlayer.as:2970` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3053`, the same (GOTLAUNCHED is named twice there). */
+  canSmokeAway(): boolean {
+    const s = this.actionState;
+    return this.canChangeStance() || this.isDowned() || s === OG_STATE.GOTLAUNCHED || s === OG_STATE.FALL || s === OG_STATE.JUMP;
   }
 
   /** `MCSPlayer.as:4369` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:4738`: the log substitution's end, slice 7 (ERRATUM 15). */
@@ -875,11 +1191,12 @@ export class MCSPlayer extends Npc {
 
   /** WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3255` (Android `MCSPlayer.as:3198`); `rng` stands in for `Math.random()`. */
   getDamage(): number {
+    // `EnemyPlayer`'s override, first (`EnemyPlayer.as:1199`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1249`): a
+    // boss fights at `minDamage`. The duellist is none, so `super`'s formula below runs.
+    if (this.isBoss) return this.minDamage;
     const d = OG_STANCE_DAMAGE;
     let maxDamage = ZERO;
-    // Inlined as the source does. `EnemyPlayer` overrides BOTH getters for a boss (`minDamage`):
-    // `getDamage` in both builds (`EnemyPlayer.as:1199`, web `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1249`),
-    // `getBaseDamage` in the web only (`reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1258`). Slice 7 carries them.
+    // Inlined as the source does.
     const baseDamage = asInt(this.minDamage + this.rng() * this.damageRange);
     switch (this.stance) {
       case OG_STANCE.light:
@@ -898,8 +1215,12 @@ export class MCSPlayer extends Npc {
     return maxDamage;
   }
 
-  /** `MCSPlayer.as:3226` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3279`, the same. */
+  /**
+   * `MCSPlayer.as:3226` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3279`, the same, behind the WEB `EnemyPlayer`
+   * override (`reference/decompiled/shs3_payload/scripts/§1t122s0§.as:1258`; Android has none): a boss's is `minDamage`.
+   */
   getBaseDamage(): number {
+    if (this.isBoss) return this.minDamage;
     return asInt(this.minDamage + this.rng() * this.damageRange);
   }
 

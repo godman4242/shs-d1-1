@@ -48,7 +48,7 @@ export class OgAnimLibrary implements AnimLibrary {
  * ⚠️ READ THIS BEFORE REUSING IT. It answers "no part" to every question. That
  * is a DECISION, not a stub left unfinished:
  *
- *   - The three methods exist to serve the actor's own hit RECEPTION
+ *   - The first four exist to serve the actor's own hit RECEPTION
  *     (`Npc.checkHit`, `checkHitObject`, `checkHitTrap`, `testHit`) and the one
  *     `gotFlyAway` call that reads `partX`.
  *   - In a duel, none of those run. `Sim.executeStrike` resolves the player's
@@ -88,6 +88,15 @@ export class DuelHitGeometry implements HitGeometry {
     void thing;
     this.consulted += ONE;
     return [];
+  }
+
+  clipHitTestPoint(clip: NpcTarget, x: number, y: number, shapeFlag: boolean): boolean {
+    void clip;
+    void x;
+    void y;
+    void shapeFlag;
+    this.consulted += ONE;
+    return false;
   }
 }
 

@@ -424,6 +424,21 @@
 >    **7e — THE JUTSUS** 250 / 252 · **7f — THE LOG AND THE CLONES** 119 / 126. REDFREEZE,
 >    `clearInteractTarget` and `checkPlayerHit` are slice 8's.
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 7 — THE MAP".
+>
+> **⛔ ERRATUM 20 — SLICE 7a, THE BRAIN (2026-09-29, a build-loop cycle). Where this block and the
+> text below disagree, THIS BLOCK WINS.**
+> 1. **7a landed** with the map's scope: `AI`, `isUnderSlash`, `doEvade`, the skill bookkeeping,
+>    `init`'s table (it scales by the HUMAN's speed, read at construction) and `update`'s tick, the
+>    boss getters, `startSkill`'s preamble and tail; OPP-D items 1, 2 and 3 pinned, 5 and 6's AI half.
+>    Unported 12 → 12 (−`EnemyPlayer.AI`, +the arm catch-all `SkillManager.startSkill`).
+> 2. **New seams the slice-8 seam must fill:** `HitGeometry.clipHitTestPoint` (both clip hit tests),
+>    `PlayerWorld.playerSpeed` / `playerSpeedBuff` / `playerHasSlash` / `playerSlashArray`, and the
+>    target's `alpha` / `visible` on `NpcTarget`.
+> 3. **Carried to 7f:** the clones' mode refusal in `startSkill`'s preamble (its second mode is still
+>    undecoded); until then a clone id throws at the arm catch-all.
+> 4. **The dead very-close store is a comment** (the lint gate refuses a dead store); its effect is
+>    pinned by test and plant.
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 7a".
 
 ---
 
@@ -505,7 +520,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **4** | **BODY ii — the stroke** · ✅ **LANDED 2026-09-29** in three commits (4a ERRATUM 9, 4b ERRATUM 10, 4c ERRATUM 11) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) ✅ **LANDED 2026-09-29** (ERRATUM 13) · **5b** the air and the downstab (179 / 182) ✅ **LANDED 2026-09-29** (ERRATUM 14) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception · **MAPPED 2026-09-29** (ERRATUM 15): **6a** the hit and the flinch (386 / 415) ✅ **LANDED 2026-09-29** (ERRATUM 16) · **6b** the launch and the getup (263 / 277) ✅ **LANDED 2026-09-29** (ERRATUM 17) · **6c** the blow, the death and the reward (389 / 429) ✅ **LANDED 2026-09-29** (ERRATUM 18) | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
-| 7 | THE AI · **MAPPED 2026-09-29** (ERRATUM 19): **7a** the brain (449 / 482) · **7b** the evasion (280 / 285) · **7c** the throws and the focus (308 / 305) · **7d** the close strikes (291 / 296) · **7e** the jutsus (250 / 252) · **7f** the log and the clones (119 / 126); the unreached to `unreachable` (R8) | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
+| 7 | THE AI · **MAPPED 2026-09-29** (ERRATUM 19): **7a** the brain (449 / 482) ✅ **LANDED 2026-09-29** (ERRATUM 20) · **7b** the evasion (280 / 285) · **7c** the throws and the focus (308 / 305) · **7d** the close strikes (291 / 296) · **7e** the jutsus (250 / 252) · **7f** the log and the clones (119 / 126); the unreached to `unreachable` (R8) | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
 | 8 | THE SEAM — into the duel behind `?npc=duellist` | findings 16 + 17, a stroke channel; `Sim.ts` + `duel-baseline` by the atomic protocol | **YES** |
 | 9 | THE PROJECTILES (R7, ERRATUM 19) — mapped first; lands before OPP-G | the 14 classes the AI's skills create (1,208) on `Projectile` (122); `DashFX`, `BullChargeFX`, `LogIcon` | behind the seam |
 

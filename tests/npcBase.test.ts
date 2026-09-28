@@ -69,6 +69,7 @@ const geometry = (part: OgPart | null = OG_PART.torso, partX = 0): HitGeometry =
   partHitBy: () => part,
   partX: () => partX,
   partsHitBy: () => [],
+  clipHitTestPoint: () => false,
 });
 
 /** A fixed-value rng, or a sequence that holds its last value. */
@@ -88,6 +89,8 @@ const targetAt = (x: number, y = GROUND): NpcTarget => ({
   isDowned: () => false,
   isAirborne: () => false,
   checkHitObject: () => false,
+  alpha: 1,
+  visible: true,
 });
 
 /** The one-line subclass every real descendant is: it records the state. */

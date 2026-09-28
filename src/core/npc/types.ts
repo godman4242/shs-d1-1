@@ -103,6 +103,20 @@ export interface PlayerWorld extends NpcWorld {
    * `playback` above, which is `GameEngine.isPlayback()`, the game's action mode.
    */
   networkPlayBack: boolean;
+  /**
+   * The HUMAN's speed, `StatsManager.getPlayerStats(STAT_SPEED) + findBonusStat(STAT_SPEED)`, and
+   * whether a speed buff is on (`hasBuff(BUFF_SPEED)`): the duellist's skill cooldowns scale by
+   * them, not by its own speed (`XMLSkill.getCooldown`, OPP-D item 7; slice 7a).
+   */
+  playerSpeed: number;
+  playerSpeedBuff: boolean;
+  /**
+   * `StageManager.getPlayer().gotSlash()` and `.getSlashArray()` — the HUMAN's stroke, which the
+   * AI evades when it covers the body (`EnemyPlayer.as:1050`, `isUnderSlash` `:1211`). Map points,
+   * as the human's `slashArray` holds them; `isUnderSlash` subtracts the stage position.
+   */
+  playerHasSlash: boolean;
+  playerSlashArray: ReadonlyArray<{ readonly x: number; readonly y: number }>;
 }
 
 /**
@@ -139,6 +153,13 @@ export interface HitGeometry {
    * and scans on (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3445`), where the 20 mobs stop at the first (`partHitBy`).
    */
   partsHitBy(thing: HitShape): readonly OgPart[];
+  /**
+   * `clip.mcs.hitTestPoint(x, y, shapeFlag)` — a point against a WHOLE rendered clip, not a part:
+   * shape-exact when `shapeFlag`, its bounding box when not. The duellist's AI asks it twice, of
+   * its target's clip (`EnemyPlayer.as:1064`, shape-exact) and of its own (`isUnderSlash`, `:1217`,
+   * the box). The seam answers it (slice 8).
+   */
+  clipHitTestPoint(clip: NpcTarget, x: number, y: number, shapeFlag: boolean): boolean;
 }
 
 /** What an actor needs from whatever it is fighting. `Npc` satisfies it itself. */
@@ -154,6 +175,9 @@ export interface NpcTarget {
   isDowned(): boolean;
   /** `NPC.isAirborne()` — the spear elite waits out a jumping target (`EnemySpearElite.as:338`). */
   isAirborne(): boolean;
+  /** `target.getMCS().alpha` / `.visible` — the duellist's AI waits out a hidden target (`EnemyPlayer.as:1042`). */
+  readonly alpha: number;
+  readonly visible: boolean;
   /** The attacker asks its target to test one of the ATTACKER's parts against the target's body. */
   checkHitObject(thing: HitShape, damage: NpcDamage, checkByAttacker?: boolean): boolean;
 }

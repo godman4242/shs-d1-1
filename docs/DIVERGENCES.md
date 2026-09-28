@@ -7393,3 +7393,134 @@ emptied by 7b–7f, the rest to `unreachable` (R8). So 7a ends at 12 (−1 AI, +
 table, "the arms"): every named function is in 7a; `getSkillLevel` was 6a's. The arms were
 unmeasured; with their switch groups they are 7b–7f (1,248 Android lines). Every one of the 83 unported
 groups and all 38 arms (+ the web's one) is assigned; a script checked that none is missed.
+
+## L5-OPP SLICE 7a — THE BRAIN: `EnemyPlayer.AI`, THE SKILL BOOKKEEPING, AND `startSkill`'S PREAMBLE (2026-09-29)
+
+Kickoff: `RESUME_HERE.md` (7a), `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 19. A build-loop
+cycle, one commit. Ported in `src/core/npc/MCSPlayer.ts`: `EnemyPlayer.AI` (web `§1t122s0§.as:1040-1243`
+/ Android `EnemyPlayer.as:990-1193`), `isUnderSlash` (`:1267` / `:1208`), `doEvade` (`:1286` / `:1225`),
+`hasSkill` (`:1445` / `:1366`), `canUseSkill` (`:1460` / `:1379`), `getUsableSkills` (`:1475` /
+`:1384`), `doSkill` (`:1509` / `:1416`), `update`'s cooldown tick (`:969-981` / `:921-931`), `init`'s
+cooldown table (`:838-853` / `:818-831`, in the constructor), the boss branch of `getDamage` (`:1249` /
+`:1199`) and the web-only `getBaseDamage` override (`:1258`); `SkillManager.startSkill`'s preamble and
+tail (`§1t120s0§.as:131-173`, `:740-742` / `SkillManager.as:123-161`, `:705-707`) as a method on the
+body; `getChargingTime`, `cancelChargingTime` and `canSmokeAway` (`MCSPlayer.as:4344`, `:4354`,
+`:2970`). New `src/core/npc/xmlSkill.ts`: `QuestEngine.getSkillData`, `XMLSkill.getChiCost` /
+`getCooldown` (`XMLSkill.as:268`, `:289`) and the web `StatsManager.getSkillCooldownModifier`
+(`§1t1523s0§.as:2279-2296`). Numbers: `OG_SKILL` (47 arm ids), `OG_AI_SKILL_LISTS`, `OG_AI`,
+`OG_AI_RANGE_SQ`, `OG_EVADE`, `OG_COOLDOWN_SPEED`, `OG_CHARGING` in `src/config/ogMcsPlayer.ts`.
+
+### What differs between the builds, and the ruling (all WEB, R6, as the map ruled)
+
+| where | web | Android | plant |
+|---|---|---|---|
+| the no-target wander | within 100 of an edge, to `random × (width − 300) + 150` (`:1071-1073`) | 50, `× (width − 100) + 50` | red (both halves) |
+| `canUseSkill` | a skill costing chi at its level is refused at chi 0 (`:1466`) | no chi test | red |
+| the cooldown scale | the human's speed `/ 600`, capped at 600 (`§1t1523s0§.as:2291-2295`) | `/ 300`, capped at 300 | red |
+| `getBaseDamage` | `EnemyPlayer` overrides it for a boss (`:1258`) | no override | red |
+
+### Decisions made here (decide-and-flag)
+
+- **ONE geometry member answers both clip tests: `HitGeometry.clipHitTestPoint(clip, x, y,
+  shapeFlag)`.** The AI asks it of its TARGET's clip, shape-exact (`EnemyPlayer.as:1064`), and
+  `isUnderSlash` of its OWN clip's bounding box (`:1217`). The port's geometry answers parts, not a
+  whole clip, so this is a new question; `DuelHitGeometry` answers "no" and counts it with its other
+  four. Its calls are counted in the tests: 2 in RUN 2, 2 or `inputArray.length` in the stroke check.
+  *Red-team:* the steelman for putting the target's test on `NpcTarget` is that it is the target's
+  clip; but the answer is the SEAM's (slice 8 owns both renderings), and one member keeps one count.
+  **Veto:** split it, `NpcTarget.hitTestPoint` + `HitGeometry.bodyHitTestPoint`.
+- **The human reaches the AI through the world:** `PlayerWorld.playerSpeed`, `playerSpeedBuff`
+  (the cooldown scale), `playerHasSlash`, `playerSlashArray` (the evade). `NpcTarget` gains the
+  clip's `alpha` / `visible` (the hidden-target test); the seam's `PlayerProxy` answers 1 / true (the
+  Sim's player has no stealth). **Veto:** a `PlayerProxy`-only interface.
+- **`DuellistBody` carries the profile's `skills`,** and the constructor (it IS `EnemyPlayer.init`)
+  sets `skillList` and fills the table: each id's FULL cooldown at its level, scaled by the human's
+  speed at construction; an id with no skill data gets no entry, so it is never usable (AS3's
+  `undefined == 0` is false). The table is a `Map`. `isBoss` is a field, false (OPP-D item 2).
+- **`startSkill`'s arms are ONE `unported('SkillManager.startSkill', <arm>)` site**, for the 47 ids
+  with an arm (`OG_SKILL`: 46 Android labels in 38 arms, and the web's 1077); an id with none falls
+  out of the `switch` and returns true, as the source's has no `default`. NOT carried: the web's
+  `controlledBy == 0` refusal and `useChi` (the human's), `BattleUI.checkSkillDisabled` (the
+  human's HUD), and **the clones' refusal in two game modes**, which goes with the clone arms in 7f
+  (its second mode, `§1t1540s0§.§1t10048s0§` = `action == §1t10005s0§`, is still undecoded). Until
+  then a clone id reaches the catch-all and throws, so nothing passes silently.
+- **The dead very-close store is a comment, not code.** The source stores the very-close list
+  (`distsq < 40000`) and an `if` below always overwrites it (OPP-D item 1). Written as code it is a
+  dead store, and the lint gate's `no-useless-assignment` refuses it; this repo has no
+  `eslint-disable` anywhere, and this is not the place for the first. What the quirk leaves behind is
+  pinned: the test that the five very-close-only skills are never returned at any range, and a plant
+  that "fixes" the `if` into an `else if` (red). **Veto:** write it with the repo's first disable.
+- **The skill rows are Android's** (`OG_SKILLS`, v0.682): the web payload has no skill table, so the
+  web's 1077 (and 1074–1076) have no data and can never be used by the AI. As `ogSkills.ts` says, treat
+  the rows as Android's until a web artifact corroborates them.
+
+### OPP-D, pinned (items 1, 2, 3; 5 and 6's AI half)
+
+1. **The dead very-close list:** at 150 px (and −150, and 299) the CLOSE list, in its order; 300 the
+   mid, 400 the long; DEATHTOUCH, SPIRITTHIEF, CHIPUNCH, CHIKICK and BACKTHROW never returned.
+2. **The body's list is the profile's**, the same array, and `isBoss` false: nothing re-rolls it.
+3. **The skip:** level 3 returns on a 0.1; level 4 draws no skip die at all (the level test first).
+5. **The cleave wears the flurry's state:** a picked DEADLYCLEAVE writes SKILL_THOUSANDSTABS and a
+   charge of 120 (a plant writing its own state goes red). The `gotHitCounter` 26 is 7d's.
+6. **The charged skills:** CHARGEDSHOT 48 (no state), SHUNPO SKILL_SHUNPO 96, THOUSANDSTABS 96, each
+   through `doSkill` with no point (−1, −1). The release at once is 7c's and 7d's.
+
+### The harness rule: 12 → 12
+
+Out: `EnemyPlayer.AI`. In: `SkillManager.startSkill` (the arm catch-all). The site test pins the
+list in order. Two old tests that pinned "the AI is unported" now pin that the REAL AI runs (it
+draws its first die: the skip at level 1, the skill die at level 45 after `endFlinch`).
+
+### The two end-to-end runs (through the real `update`, the source's clip lengths, ±0)
+
+Worked by hand from the source before the code (the test's header block has every draw):
+
+- **RUN 1** (fixture 1 with only its passive stances, level 1, the target standing at 500): F1 the
+  skip (0.1); F13 the reload 12 < 24 → `doReload` 45, the wander to 425 (WALK 404 … 424, IDLE 425 on
+  F19); F25 the skill die 0 → `faceTarget`, an empty pick; 24 < 45 → the wander back to 400 (IDLE on
+  F31); F37 to 425; F49 48 ≥ 45 → the stroke (launch die 1 → `slashTarget`, 6 points from (458, 318),
+  33 px off → SLASH where it stands, 465 after the frame), `doReload` 0. 15 draws, exactly. Matched
+  at every frame asserted on the first run of the code.
+- **RUN 2** (fixture 2, level 45, SMOKEBOMB 1 on its init cooldown of 144): the human's slash covers
+  the body at its second point → the evade die 1 ≤ 1, two clip questions, no evasive skill ready →
+  the flat fallback from (400, 308) away from the target, 5 points, SLASH facing left, 370 after the
+  frame, the cooldown 143. 3 draws, exactly. Matched on the first run.
+
+### MEASURED ON THE WAY
+
+- **The bow is lost on the tick it is made** when the target is within 100 px: the bow's
+  `startAction(IDLE)` lets the same tick's peaceful wander run, which starts a WALK. The same in
+  both builds; pinned as a quirk.
+- **`XMLSkill` compares `levelList[lvl].chi.toString == ""`, the method, never called:** always
+  false, so an absent chi or cooldown tag reads as `int("")`, 0. No shipped passive row carries a
+  cooldown, so `getCooldown`'s passive test is invisible on today's data; a synthetic row pins it.
+- **A level-0 skill throws in `canUseSkill`** (web): `getChiCost(0)` reads `levelList[-1]`, a Vector
+  RangeError. `getCooldown(0)` answers 0, so such a skill is "cooled down" at once. Only a profile
+  string can say level 0 (the writers never do); ported as it reads.
+- **The init table reads the human's speed at CONSTRUCTION:** slice 8 must set the world's
+  `playerSpeed` before it builds the body, or every first cooldown is at speed 0 (the longest).
+- **An airborne body cannot launch, where airborne is MORE than 50 px up** (`NPC.as:772`): a body
+  exactly 50 px up launches. The chaos run found no test covered the airborne half; one does now.
+- **The gates caught ten wrong cites of mine before the commit:** claimcheck three (a bare web range
+  inheriting the Android file; two web names in core without their `reference/…` path, and
+  `xmlSkill.ts`'s); a line-by-line read seven more in prose and plant notes (a brace, the line
+  before a `while`, a function start one line off). Evidence for the queued function-start gate.
+- **Chaos found four missing tests** on its first run (49 of 53 red): the wander only from IDLE or
+  POSE, STEALTH ending the tick, the airborne launch, the passive cooldown. Each got a test; all 53
+  red since.
+
+### The review
+
+One fresh-context reviewer (normal risk: no stage gate, invariant or owner ruling), read-only over
+the diff and both builds: **no bug found.** It resolved the web's obfuscated names (the fields, the
+stroke makers, the 47 arm labels) and re-derived by hand both runs' draws, every boundary the tests
+assert (the wander's 100 / 700, the air stab's 50 / 200, the air combo's 119 / 120, the ranges'
+299 / 300, airborne's strict `< groundY − 50`) and the cooldowns 48 / 84 / 72 / 36 / buffed 451. Its one
+note is already ruled: a boss would keep its profile list here where AS3 empties it, and no duellist
+is a boss (OPP-D item 2).
+
+### Gates
+
+92 files / 2585 tests (2482 + 45 in `mcsPlayer.test.ts`, + 5 twins, + 53 plant anchors) · typecheck 0 ·
+lint 0 · claimcheck 2537 cites / 719 values / 44 context / 0 failures · instructionpaths 0 · chaos:
+the 53 new plants RED and restored byte-identical before the commit; the pin is 496 in both places.

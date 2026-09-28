@@ -53,7 +53,8 @@ import {
   OG_HUMANOID_FALL_GRAVITY,
   OG_HUMANOID_GETUP_STEP,
 } from '../src/config/ogNpcHumanoid';
-import { OG_GETUP, OG_SPECIAL_SKILL_MASTERY, OG_STANCE_DAMAGE, OG_STANCE_REACH } from '../src/config/ogMcsPlayer';
+import { OG_GETUP, OG_RECEPTION, OG_SKILL, OG_SPECIAL_SKILL_MASTERY, OG_STANCE_DAMAGE, OG_STANCE_REACH } from '../src/config/ogMcsPlayer';
+import { OG_NEW_PLAYER } from '../src/config/ogDuellistProfile';
 import { REACH } from '../src/config/reach';
 import { LAUNCH_UNLOCK_LEVEL } from '../src/config/stances';
 
@@ -142,6 +143,14 @@ const TWINS: Twin[] = [
   { name: 'OG_STANCE_REACH.heavy.base ↔ REACH.heavyBase', left: OG_STANCE_REACH.heavy.base, right: REACH.heavyBase, declaredIn: 'ogMcsPlayer.ts + reach.ts' },
   { name: 'OG_STANCE_REACH.floor ↔ REACH.heavyFloor', left: OG_STANCE_REACH.floor, right: REACH.heavyFloor, declaredIn: 'ogMcsPlayer.ts + reach.ts' },
   { name: 'OG_STANCE_DAMAGE.critMult ↔ CRIT_MULT', left: OG_STANCE_DAMAGE.critMult, right: CRIT_MULT, declaredIn: 'ogMcsPlayer.ts + combat.ts (ERRATUM 2 item 8: the Sim runs the web ×1.3)' },
+
+  // ── L5-OPP slice 7a: a skill id the source names twice (a `SkillManager` constant, and a
+  // literal elsewhere). One skill, one id: the shipped side is pinned, never edited.
+  { name: 'OG_RECEPTION.rollSkill ↔ OG_SKILL.ROLL', left: OG_RECEPTION.rollSkill, right: OG_SKILL.ROLL, declaredIn: 'ogMcsPlayer.ts OG_SKILL header (both `SkillManager.as:16`)' },
+  { name: 'OG_NEW_PLAYER.skills.jump ↔ OG_SKILL.JUMP', left: OG_NEW_PLAYER.skills.jump, right: OG_SKILL.JUMP, declaredIn: 'ogDuellistProfile.ts (`StatsManager.as:743`) + ogMcsPlayer.ts (`SkillManager.as:14`)' },
+  { name: 'OG_NEW_PLAYER.skills.chiPunch ↔ OG_SKILL.CHIPUNCH', left: OG_NEW_PLAYER.skills.chiPunch, right: OG_SKILL.CHIPUNCH, declaredIn: 'ogDuellistProfile.ts (`StatsManager.as:744`) + ogMcsPlayer.ts (`SkillManager.as:60`)' },
+  { name: 'OG_NEW_PLAYER.skills.dashRight ↔ OG_SKILL.DASHRIGHT', left: OG_NEW_PLAYER.skills.dashRight, right: OG_SKILL.DASHRIGHT, declaredIn: 'ogDuellistProfile.ts (`StatsManager.as:745`) + ogMcsPlayer.ts (`SkillManager.as:74`)' },
+  { name: 'OG_NEW_PLAYER.skills.dashLeft ↔ OG_SKILL.DASHLEFT', left: OG_NEW_PLAYER.skills.dashLeft, right: OG_SKILL.DASHLEFT, declaredIn: 'ogDuellistProfile.ts (`StatsManager.as:746`) + ogMcsPlayer.ts (`SkillManager.as:76`)' },
 ];
 
 /**
@@ -169,7 +178,7 @@ describe('the twin table — declared twins do not drift', () => {
    * without anything going red — the same failure mode the chaos plant count guards.
    */
   it('holds every twin relationship the enumeration found', () => {
-    expect(TWINS).toHaveLength(40);
+    expect(TWINS).toHaveLength(45);
     expect(IMPORTED).toHaveLength(2);
   });
 

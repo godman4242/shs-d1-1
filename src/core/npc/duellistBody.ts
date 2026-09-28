@@ -11,8 +11,9 @@
  *   - the level scaling: web scales above 30 only below 80, and below 10 by ×0.9;
  *   - `maxreload` is 8 s (Android 5 s);
  *   - the web `stance` argument, used as given when it is not -1.
- * NOT ported here: the skill cooldown table (slice 7: the AI reads it, and it scales by the
- * LOCAL player's speed), the display name, the reward, and every flag `initPlayer` resets.
+ * NOT ported here: the skill cooldown table (`MCSPlayer`'s constructor fills it, slice 7a: it
+ * scales by the LOCAL player's speed, a world read), the display name, the reward, and every flag
+ * `initPlayer` resets.
  *
  * AS3 stores every one of these into an `int`, so each result is ToInt32'd (`| ZERO`).
  */
@@ -29,7 +30,7 @@ import {
 } from '../../config/ogDuellistProfile';
 import { OG_FPS } from '../../config/timing';
 import type { Rng } from '../Sim';
-import { getMastery } from './duellistProfile';
+import { getMastery, type SkillStat } from './duellistProfile';
 import type { DuellistStats } from './duellistStats';
 
 /** `MCSPlayer`'s fields after `EnemyPlayer.init`, as the fight reads them. */
@@ -67,6 +68,8 @@ export interface DuellistBody {
   readonly xp: number;
   /** The argument `setStance` receives (`OG_STANCE`). */
   readonly stance: number;
+  /** `skillList = xml.skillList` (`EnemyPlayer.as:820`): the profile's skills, as parsed (slice 7a). */
+  readonly skills: readonly SkillStat[];
 }
 
 /**
@@ -140,5 +143,6 @@ export function initDuellistBody(d: DuellistStats, level: number, stance: number
     earthDef: d.earthDef,
     xp: (level * OG_DUELLIST_XP.perLevel + OG_DUELLIST_XP.base) | ZERO,
     stance: pickStance(d, stance, light, balanced, heavy, rng),
+    skills: d.skills,
   };
 }

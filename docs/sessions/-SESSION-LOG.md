@@ -4554,3 +4554,27 @@ After: 92 files / 2482 tests · typecheck 0 · lint 0 · claimcheck 2349 / 635 /
 
 No code changed: 92 files / 2482 tests · typecheck 0 · lint 0 · claimcheck 2349 / 635 / 44 / 0 ·
 instructionpaths 0 · chaos 443 pinned · 12 unported sites.
+
+## 2026-09-29 — build loop: L5-OPP slice 7a, THE BRAIN
+
+- **Baseline confirmed at `c2a9165`** before any code: 92 / 2482, typecheck 0, lint 0, claimcheck
+  2349 / 635 / 44 / 0, chaos 443, 12 unported.
+- **Hand-worked first:** two end-to-end runs through the real `update` (a level-1 body with no usable
+  skill: the skip, two wanders while `reload < doReload`, the stroke at F49; a level-45 body under the
+  human's slash: the evade's flat fallback). Both matched at ±0 on the first run of the code.
+- **Red first:** 42 failed on a stubbed run (41 new tests + the site pin), each for a missing feature.
+- **Ported:** `EnemyPlayer.AI`, `isUnderSlash`, `doEvade`, `hasSkill`, `canUseSkill` (web chi test),
+  `getUsableSkills`, `doSkill`, the init table and the tick, the boss getters, `startSkill`'s
+  preamble with one arm catch-all, the charge helpers, `canSmokeAway`; `xmlSkill.ts` (web cooldown
+  scale `/ 600`). New seams: `HitGeometry.clipHitTestPoint`, four `PlayerWorld` human facts, the
+  target's `alpha` / `visible`. Unported 12 → 12.
+- **Caught before the commit:** the lint gate refused the source's dead very-close store (now a
+  comment, its effect pinned); claimcheck 3 bad cites of mine, a line-by-line read 7 more; chaos
+  4 missing tests (49 / 53 red → 53 / 53 after four tests); my own test boundary (airborne is > 50 px
+  up, not ≥).
+- **Twins:** five skill ids pinned (`OG_RECEPTION.rollSkill`, four of `OG_NEW_PLAYER.skills`).
+
+### THE GATES
+
+92 files / 2585 tests · typecheck 0 · lint 0 · claimcheck 2537 / 719 / 44 / 0 · instructionpaths 0 ·
+chaos 53 / 53 new plants red (pin 496) · 12 unported sites.

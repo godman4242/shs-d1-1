@@ -100,6 +100,8 @@ describe('fixture 1 — StatsManager.initNewPlayer, the source\'s own new charac
       level: 1, walkSpeed: 4, reload: 0, maxReload: 192, statAtk: 1,
       fireAtk: 0, windAtk: 0, waterAtk: 0, earthAtk: 0, criticalDmg: 0, piercingDmg: 0,
       fireDef: 0, windDef: 0, waterDef: 0, earthDef: 0, xp: 50, stance: 1,
+      // the new character's seven skills at level 1, as written and parsed back (7a)
+      skills: [1000, 1001, 1002, 1003, 1042, 1049, 1050].map((id) => ({ id, value: 1 })),
     });
   });
 
