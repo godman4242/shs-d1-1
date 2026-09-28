@@ -68,6 +68,7 @@ const geometry = (part: OgPart | null = OG_PART.torso, partX = 0): HitGeometry =
   partAtPoint: () => part,
   partHitBy: () => part,
   partX: () => partX,
+  partsHitBy: () => [],
 });
 
 /** A fixed-value rng, or a sequence that holds its last value. */

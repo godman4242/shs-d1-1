@@ -65,6 +65,7 @@ const geometry = (part: OgPart | null = null): HitGeometry => ({
   partAtPoint: () => part,
   partHitBy: () => part,
   partX: () => 0,
+  partsHitBy: () => [],
 });
 const seq = (...vals: number[]): Rng => {
   let i = 0;
@@ -640,7 +641,7 @@ describe('EnemySpearElite.as — the duellist\'s spear master, and the boss bala
     expect(body.npc.checkHitObject({ kind: 'other', part: null, owner: null }, hit(100))).toBe(true);
     expect([body.npc.isGoingToDie(), body.w.redFreezeChecks]).toEqual([true, 1]);
     let scans = 0;
-    const flagged = new EnemySpearElite(w, anims, { partAtPoint: () => null, partHitBy: () => (scans++, OG_PART.torso), partX: () => 0 }, seq(0.5));
+    const flagged = new EnemySpearElite(w, anims, { partAtPoint: () => null, partHitBy: () => (scans++, OG_PART.torso), partX: () => 0, partsHitBy: () => [] }, seq(0.5));
     flagged.gotHitFlag = true;
     expect(flagged.checkHitObject({ kind: 'other', part: null, owner: null }, hit(10))).toBe(false);
     expect([scans, flagged.gotHitFlag]).toEqual([0, false]);

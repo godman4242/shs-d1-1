@@ -83,6 +83,12 @@ export class DuelHitGeometry implements HitGeometry {
     this.consulted += ONE;
     return ZERO;
   }
+
+  partsHitBy(thing: HitShape): readonly OgPart[] {
+    void thing;
+    this.consulted += ONE;
+    return [];
+  }
 }
 
 /**

@@ -1,81 +1,99 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 6a, THE HIT AND THE FLINCH
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 6b, THE LAUNCH AND THE GETUP
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: a 386 / 415-line port, one end-to-end test | set with `/model` |
+| model / effort | **Opus 5.5 at `high`**: a 263 / 277-line port, one end-to-end test | set with `/model` |
 | `/fast` | ON if you watch it; OFF for the unattended build loop (2× price) | your call |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
 | MCP / skills | nothing extra | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. 6a is one cycle; 6b and 6c are one each.
+⚠️ Your Claude subscription ends **2026-10-09**. 6b is one cycle; 6c is one more.
 
 Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 15 first, then its §3 harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 6 — THE MAP" (the cut's 6a row, the checkHitObject web-only table, MEASURED ON THE WAY) and "L5-OPP SLICE 5a" (the end-to-end harness to copy).
-Before anything else: confirm the baseline at HEAD (92 files / 2227 tests, typecheck 0, lint 0, claimcheck 2211 cites / 608 values / 44 context / 0 failures, chaos 294 pinned).
-Port 6a in src/core/npc/MCSPlayer.ts, web form (R6), red first. Done = (a) the constructor carries initPlayer's HP, max HP, chi, max chi and defense (MCSPlayer.as:182) and initElementDefenseStats' four elemental defences (:260) from DuellistBody; red first: a fixture-1 body's getHP() is 1 today, 9 after; (b) every reception override not ported in 6a is shadowed with unported(...), so a hit can no longer fall into Npc's mob code: gotHit, die, gotLaunched, gotKnockDown, gotKneeGroin, gotBackThrow, gotFly, gotFlyAway, doLaunched, doFly, and EnemyPlayer's gotDeathTouch, deathAnimEnd, createLoot, rewardXP (doSubstitutionLog and cancelLogSub stay behind logsubCounter > 0); red first: today a 20-damage checkHitObject returns true and takes HP 1 to -18; (c) checkHitObject ported whole (web :3328-3660) with getDefense, isSlashing, EnemyPlayer.getSkillLevel (skillList null gives 0), doFlinch, endFlinch, isUsingSkill (the web list, 4 more states), isCharging and the clip-end FLINCH group; the part scan runs 21 to 0 and skips parts 3 and 4, added to HitGeometry as a NEW method (the 20 mobs use partHitBy: do not change it); (d) end-to-end through the real update at ±0: a plain hit on the IDLE body takes HP down by damage minus defense, sets gotHitCounter 12 and plays FLINCH_WEAPON (FLINCH if the prior clip was a sheathed or TIRED one: doFlinch picks); its clip end runs endFlinch (AI spied) and restores the prior clip; a hit only on the weapon or the prop lands nothing; a self-hit (attacker = the body) returns false; an air hit at juggleCount 3 from a non-LIGHT attacker lands damage and does not throw; (e) a chaos plant for every web-only line in (c), the pin moved in scripts/gates/chaos.ts and tests/chaosGate.test.ts, the unported count stated; (f) gates green with output pasted, DIVERGENCES "L5-OPP SLICE 6a", RESUME_HERE rewritten with 6b's paste-ready kickoff at the top, the session log, one commit.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 16, then 15, then its §3 harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 6 — THE MAP" (the cut's 6b row and the switch-group table) and "L5-OPP SLICE 6a" (the harness to copy, and MEASURED ON THE WAY).
+Before anything else: confirm the baseline at HEAD (92 files / 2324 tests, typecheck 0, lint 0, claimcheck 2288 cites / 622 values / 44 context / 0 failures, chaos 348 pinned, 24 unported sites in MCSPlayer.ts).
+Port 6b in src/core/npc/MCSPlayer.ts, web form (R6), red first. Done = (a) the eight 6b shadows replaced by their ports: gotLaunched (web ++juggleCount first, §1t99s0§.as:4499, outside the human branch, then super), gotKnockDown, gotKneeGroin (the guard, super, then chi less chiDamage floored at 0, MCSPlayer.as:4203-4208, with getChi / setChi), gotBackThrow, gotFly, gotFlyAway, doFly, and MCSPlayer's OWN doLaunched (MCSPlayer.as:3887, web :3991: gravity 3, the peak band, DOWNED on the ground, the bar hidden, juggleCount reset at web :4017; no edge bounce); (b) checkHitObject's fly-away branch ported: gotFlyAway(thing.x, thing.y), then the web setFlyAwayPos(velX, velY), which also sets the packet's launch to FLY (§1t67s0§.as:163-169); decide where the thing's position comes from (HitShape carries none) and flag it; (c) startAction GOTLAUNCHED and KNOCKDOWNED + DOWNED; doAction GOTLAUNCHED, FLY, STUN, DOWNED; the clip ends FLY_END, KNEEGROIN_VICTIM, BACKTHROW_VICTIM, GETUP_FRONT, GOTLAUNCHED_PEAK, GOTLAUNCHEDDOWNED (its dead branch stays unported until 6c), GOTLAUNCHEDDOWNEDEND, DOWNEDUP + DOWNEDUP2, FLIPUP; (d) end-to-end through checkHitObject and the real update at ±0: an AIR hit rises, peaks, falls at gravity 3, lands DOWNED, then gets up by FLIPUP or DOWNEDUP2 to IDLE; a second and third launch in the air, the fourth skipped for a non-LIGHT attacker; (e) the unported count 24 → 15 (stated), a chaos plant for every new guard, the pin moved in scripts/gates/chaos.ts and tests/chaosGate.test.ts; (f) gates green with output pasted, DIVERGENCES "L5-OPP SLICE 6b", RESUME_HERE rewritten with 6c's paste-ready kickoff at the top, the session log, one commit.
 '''
 ```
 
 **VERIFY (plain English):** before touching code the session prints the baseline numbers above;
-at the end, a test named for the mob fall-through is shown RED before the change and green after,
-and the suite count is above 2227.
+at the end, the air-hit test is shown RED before the change and green after, the suite count is
+above 2324, and the unported pin reads 15.
 
 **Measured starting points (2026-09-29), so the session does not rediscover them:**
-1. **The web wins (R6) on the AI's path in `checkHitObject`:** the self-hit guard (`§1t99s0§.as:3357`);
-   the roll dodge 75 / 85 / 95 plus `Snd_jump` (`:3361-3382`; Android 80–100, silent); the full-Focus
-   evade (`:3383-3388`, skills 1074–1076, inert on the new character); parts 3 / 4 skipped (`:3445`);
-   `stunCounter = 0` only on a landed hit (`:3468`); the juggle cap per attacker stance (`:3581-3589`);
-   fly-away's packet set AFTER (`:3602-3603`). The log substitution (`:3447-3467`) stays behind
-   `logsubCounter > 0` (slice 7's).
-2. **The AI is not killed here:** at HP 0 the source only zeroes it and clears `target`
-   (`:3525-3566`); the attacker's `checkDie` kills it, which is 6c's test.
-3. **Watch 5a's IDLE:** it reads HP for `tired` (`hp <= maxhp / 4`). Carrying the real HP keeps
-   the fixtures untired (9 of 9), but re-run 5a's and 5b's tests after (a).
+1. **Every `super` call 6b makes lands in web-identical code.** The nine `NPC` functions
+   (`gotLaunched`, `gotKnockDown`, `gotFly`, `gotFlyAway`, `gotKneeGroin`, `gotBackThrow`,
+   `gotStun`, `doLaunched`, `doFly`) are the same shape in both builds (web `§1t68s0§.as:557-766`,
+   Android `NPC.as:536-745`), a check probed red on wrong pairings and a one-number change. So
+   `super.*` into the ported `Npc` is the web's.
+2. **`MCSPlayer.doLaunched` is NOT `NPC.doLaunched`:** it has its own gravity 3, no edge bounce,
+   and resets the juggle count on landing (web `:4017`). Port it; do not call `super`.
+3. **Nothing in `src` calls `NpcDamage.setFlyAwayPos`** (grepped), so it can take the web form
+   (it also sets `launchType` to FLY) without touching a mob.
+4. **The fly-away's `thing.x`** is the ATTACKER's clip (a weapon part or a projectile), not the
+   body's part, and `HitShape` has no position. `Npc.gotHit` meets the same question through
+   `geometry.partX`; decide-and-flag.
 
-**Bar self-report:** reached for the entry. Every line number above was read from the source
-this cycle, the cut was summed by script, and the two traps (the mob fall-through, the missing HP)
-were measured with a probe, not inferred.
+**Bar self-report:** reached for the entry. Every line above was read from the source this
+cycle; the shape check was probed red before its "same" was used.
 
 ---
 
-## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 6, THE RECEPTION MAP (no code)
+## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 6a, THE HIT AND THE FLINCH
 
 | | verdict | measured |
 |---|---|---|
-| **the pairing** | ✅ the kickoff's 17 functions, the helpers they call and 7 `EnemyPlayer` overrides, each confirmed by content | web names in DIVERGENCES "L5-OPP SLICE 6 — THE MAP"; switch groups pair 97 / 97, 34 / 34, 23 / 23 |
-| **the constants** | ✅ 79 constant-bearing line pairs in the cut, 0 mismatches | probed: 5 / 5 red on wrong pairings, 24 / 27 on a one-group shift. The decoder's first version gave 3 false mismatches (web names are not globally unique) until fixed |
-| **the web-only lines** | ✅ every one ruled | the largest: a self-hit guard, a full-Focus evade (skills 1074–1076), parts 3 / 4 skipped, roll 75 / 85 / 95, the juggle cap per stance, head hit × 1.3 (Android 1.5), the stance triangle's × 0.9 |
-| **found** | ⚠️ 4 | `juggleCount` IS Android's `launchCount` (ERRATUM 12 item 5 wrong); three overrides §3 did not name (`getSkillLevel`, `createLoot`, `rewardXP`); **the duellist answers hits with the MOB's code today** (probe: HP 1 → −18, no throw); the constructor carries none of the body's HP / chi / defences |
-| **ruled** | ✅ | out: `doPose` (the human's taunt button), `MCSPlayer.gotDeathTouch` (overridden). Slice 8: `redFreeze` / `cleanUpPlayer`. Slice 7: the log substitution, whole |
-| **the cut** | ✅ each under 500 | **6a** 386 / 415 · **6b** 263 / 277 · **6c** 389 / 429; reconciled with the kickoff's 827 line by line |
+| **the mob fall-through** | ✅ closed | 14 reception methods shadowed with `unported`; the red test (the mob `gotHit` answering) went red, then green |
+| **the body's stats** | ✅ carried | fixture 1 HP 9 of 9 (was 1), chi 10, defense 1; fixture 2 HP 590, chi 40 / 50, defense 71, elements 10 / 8 / 6 / 5; 5a and 5b stay green |
+| **`checkHitObject`** | ✅ whole, web form | the self-hit guard, the roll (75 / 85 / 95), the full-Focus evade, parts 3 / 4 skipped with the scan going on, the stun cleared only on a landed hit, the juggle cap per attacker stance |
+| **the flinch** | ✅ | `doFlinch` (bare out of a sheathed or tired clip), `endFlinch` (the web `isUsingSkill` list), the FLINCH clip end; end-to-end through the real `update` at ±0 |
+| **new tests** | ✅ +43 | 37 red before the change; the stun test (it passed before: the old code never cleared it) and the review's 5 are red-proofed by their plants |
+| **chaos** | ✅ 54 new plants, 54 / 54 red | one stayed green first (wind / water order): a missing test, fixed, then red. The whole duellist set, 286 / 286 red, restored byte-identical |
+| **review** | ✅ no behaviour bug; 5 test gaps closed | one fresh-context reviewer on the diff |
 
-### THE GATES, AS THEY STAND — measured at this commit (no code changed)
+### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 92 passed (92) · Tests 2227 passed (2227)
+$ npx vitest run            ->  Test Files 92 passed (92) · Tests 2324 passed (2324)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
-$ npm run claimcheck        ->  2211 cites · 608 values at ±0 · 44 context · 0 failures
-$ npm run instructionpaths  ->  every path resolves
-$ npm run chaos -- --list   ->  294 of 294 plants (the shell runs them all post-ship)
+$ npm run claimcheck        ->  2288 cites · 622 values at ±0 · 44 context · 0 failures
+$ npm run instructionpaths  ->  exit 0, every path resolves
+$ npm run chaos -- --list   ->  348 of 348 plants (the shell runs them all post-ship)
+$ grep -c "unported('" src/core/npc/MCSPlayer.ts  ->  24
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
 
 ### WHAT CHANGED
 
-- `docs/DIVERGENCES.md` "L5-OPP SLICE 6 — THE MAP" (new); `docs/sessions/L5_OPPONENT_KICKOFF.md`
-  ERRATUM 15 and its §3 slice-6 row; this file; the session log. No source, test or config file.
+- `src/core/npc/MCSPlayer.ts` (the port), `src/config/ogMcsPlayer.ts` (`OG_RECEPTION`),
+  `src/core/npc/types.ts` (`HitGeometry.partsHitBy`; the `jump` and `deflect` sounds),
+  `src/core/npc/duelSeam.ts` (its geometry answers the new question, counted), `src/core/npc/Npc.ts`
+  (`elemental` is `protected`); 9 test files (the new geometry method on their fakes; the tests);
+  `tests/mcsPlayer.plants.ts` (+54); the chaos pin 294 → 348 in both places; ERRATUM 16 and the §3
+  row; `docs/DIVERGENCES.md` "L5-OPP SLICE 6a"; this file; the session log.
+
+### REVIEW
+
+One fresh-context reviewer traced the diff against the web source: **no behaviour difference on
+the AI's path.** It found five test gaps and proved each by applying the break and watching the
+suite stay green: the charge FX on a launching hit, a hit to exactly 0 HP, a 0 writing a text,
+the packet's direction / victim x / knee-groin level, and the death touch's place after the chain.
+All five closed: +5 tests, +8 plants, all red. Its one false lead (the web `EnemyPlayer.canHit`)
+is ruled out in DIVERGENCES "L5-OPP SLICE 6a".
 
 ### ⚠️ STILL OPEN — Awaiting human/browser verification, and queued
 
+- **Nothing new to LOOK at:** 6a is reception logic with no render path yet (the flinch clip plays
+  only once the seam, slice 8, routes a hit to the duellist).
 - **Your LOOK at `?npc=katana`** (the windup aura, in "THE UNITS AND THE WINDUP" below) is still
   unanswered.
 - **Your ruling, when you want it: the Sim player's heavy launch.** The source's duellist launches
@@ -84,18 +102,23 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
 - **Your ruling, when you want it: does R6 (web wins) reach the L4b mobs?** The web
   `NPC.isAirborne` also counts the FALL state (`§1t68s0§.as:793-796`); the ported `Npc` (base of
   all 20 mobs) has Android's height-only test. **The duellist is decided** (4b: an `MCSPlayer`
-  override, web). "Yes" moves the override into `Npc` and deletes it from `MCSPlayer`.
-  Evidence: DIVERGENCES "L5-OPP SLICE 3b", "4b".
+  override, web). "Yes" moves the override into `Npc` and deletes it from `MCSPlayer`. (6a adds a
+  second place the web differs for the mobs if you say yes: the web scan skips parts 3 / 4.)
+  Evidence: DIVERGENCES "L5-OPP SLICE 3b", "4b", "6a".
 - **The `UNMEASURED` merge** from 1b-i (DIVERGENCES "L5-OPP SLICE 1b-i"). Closing it needs a 5-line
   SWF run in Ruffle, or a forum report of an item's HP jumping to hundreds.
-- **QUEUED (6a): the mob fall-through and the body's stats.** Both in 6a's kickoff above. (The HP
-  item the last cycle queued is part of it: chi, max HP and the defences were missing too.)
+- **QUEUED (6b, then 6c):** the kickoff above; 6c then ports `gotHit`, `die`, the four
+  `EnemyPlayer` shadows and the death group, and takes the unported count 15 → 9.
 - **QUEUED (the body): `MCSActor.setPosition` / `movePositionX` never truncate,** where AS3's
   take `int` parameters, so `posX` can go fractional. 4a truncates at its own read
   (`getMapPosition()` is `:int`); a fix at the actor would touch all 20 mobs. Its own milestone.
 - **QUEUED (slice 7): the log substitution, whole** (`doSubstitutionLog`, `cancelLogSub`, the
   LOGSUBSTITUTION group and its LAND chain, with SKILL_SUBSTITUTIONLOG; DIVERGENCES "SLICE 6 — THE
-  MAP", rulings). `update` still calls `cancelLogSub` through `unported`.
+  MAP", rulings). `update` and now `checkHitObject` call `cancelLogSub` through `unported`; the
+  web `checkHitObject` then zeroes all five damages and calls the web `setSubstitutionLog` (it
+  zeroes the four elements too, where the port's Android one does not): both go in with it.
+  Slice 7 also fills `skillList`, which arms the roll dodge and the Focus evade (both inert
+  until then: `getSkillLevel` is 0 on a null list).
 - **QUEUED (slice 8, the spawn): `EnemyPlayer`'s constructor starts FALL** (`EnemyPlayer.as:51`).
   Not carried (DIVERGENCES "L5-OPP SLICE 5b"): every body would start falling, and 4 of 3b's tests
   assume it does not. In the source a body placed above the ground drops, lands in POSE and hands its
@@ -108,15 +131,18 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
   and `enemyLine` events, answer `checkHitObject` with a hit guard of its own (5a's POSE asks the
   target on EVERY frame of the `_END` clip, 3–6 times a stroke), **call `checkDie` after a landed
   hit** (the source's death path for the AI: DIVERGENCES "SLICE 6 — THE MAP"), decide the 4th
-  `checkHitObject` argument (NPCManager's), and own `redFreeze` / `cleanUpPlayer`.
+  `checkHitObject` argument (NPCManager's), own `redFreeze` / `cleanUpPlayer`, and give the duel's
+  `DuelHitGeometry` a real `partsHitBy` (it answers "no part" on purpose today, and counts).
 - **QUEUED (harness): claimcheck reads no bare array.** Five arrays in `ogDuellistProfile.ts`
   (`[14, 18]`, `[2213, 2214]`, `[11]`, `[0, 3]`, `[103, 106]`) and any in other config files are
   unchecked. Fix = teach `numericFields` (`scripts/gates/claimcheckLib.ts`) to read array elements,
   then triage whatever it raises. Its own milestone.
 - **QUEUED (harness): claimcheck cannot check a function-start cite** (a cite whose line holds
   no value). It bit again in 4b (a range cite 2 lines early), and in 5a my own draft cited
-  `EnemyPlayer.AI` at the web's line in the Android file; caught by hand. A cheap gate: a cite in a
-  doc comment directly above a TS method must land on a line holding `function`. Its own milestone.
+  `EnemyPlayer.AI` at the web's line in the Android file; caught by hand. 6a's first draft had one
+  more (the bare-flinch test cited a line early), caught by reading the line. A cheap gate: a cite
+  in a doc comment directly above a TS method must land on a line holding `function`. Its own
+  milestone.
 - **QUEUED (the body, harmless today): `asInt` returns −0** for a small negative (`Math.trunc(-0.3)`);
   an AS3 `int` has no −0. Nothing divides by or `atan2`s a velocity yet, but a test's `toEqual(0)`
   fails on it. Fix = `Math.trunc(n) || 0` in `asInt`, which touches every mob: its own milestone.
@@ -125,6 +151,15 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
 - **For slice 8 (R1's veto):** a video-measured duellist (level + gear off a Duel Mode frame) may
   beat the new character for OPP-G. Look before slice 8 ships.
 - L4b's 13 remaining mobs are unblocked but not ported: L5-OPP first, by decision.
+
+---
+
+## PREVIOUS CYCLE (2026-09-29) — L5-OPP slice 6, THE RECEPTION MAP (no code)
+
+The reception paired in both builds (79 constant-bearing line pairs, 0 mismatches, probed red);
+the web's lines on the AI's path ruled (R6); the mob fall-through and the missing HP measured with
+a probe; cut into 6a 386 / 415, 6b 263 / 277, 6c 389 / 429. Full record: `docs/DIVERGENCES.md`,
+"L5-OPP SLICE 6 — THE MAP".
 
 ---
 

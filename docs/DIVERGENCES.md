@@ -6820,3 +6820,89 @@ count: the helpers 44 (`getDefense` 9, `isSlashing` 5, `isUsingSkill` 5, `isChar
 / `setChi` 14, `setFlyAwayPos` 6), the `EnemyPlayer` overrides 109 (`getSkillLevel` 18,
 `gotDeathTouch` 11, `deathAnimEnd` 30, `createLoot` 26, `rewardXP` 24) and the switch groups 154
 (6a 4, 6b 129, 6c 21).
+
+## L5-OPP SLICE 6a — THE HIT AND THE FLINCH: `checkHitObject` WHOLE, THE FLINCH, THE BODY'S STATS (2026-09-29)
+
+Kickoff: `RESUME_HERE.md` (6a), `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 15. A build-loop
+cycle, one commit. Ported in `src/core/npc/MCSPlayer.ts`: `checkHitObject` (web
+`§1t99s0§.as:3328-3660`, Android `MCSPlayer.as:3275-3579`), `getDefense` (`:3284` / `:3231`),
+`isSlashing` (`:2963` / `:2885`), `isUsingSkill` and `isCharging` (`:2465-2474` / `:2393-2402`),
+`EnemyPlayer.getSkillLevel` (`§1t122s0§.as:1426` / `EnemyPlayer.as:1348`), `doFlinch` and
+`endFlinch` (`:4678-4712` / `:4309-4343`) and the FLINCH clip end (`:759-762` / `:739-742`), as the
+map cut them (386 / 415 lines). Numbers: `OG_RECEPTION` in `src/config/ogMcsPlayer.ts`.
+
+### The two traps the map measured, closed
+
+- **The mob fall-through.** 14 reception methods are SHADOWED with `unported`: `gotHit`, `die`,
+  `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`,
+  `doLaunched`, `doFly`, and `EnemyPlayer`'s `gotDeathTouch`, `deathAnimEnd`, `createLoot`,
+  `rewardXP`. The map's probe (a 20-damage hit on fixture 1: HP 1 → −18, returned true) is now a
+  test: that `gotHit` throws `unported: MCSPlayer.gotHit`, shown red before the change. Plant:
+  removing the shadow goes red.
+- **The body's stats.** The constructor carries `initPlayer`'s HP, max HP, chi, max chi and
+  defense (`MCSPlayer.as:182`) and `initElementDefenseStats`' four (`:260`). Fixture 1: HP 9 of 9
+  (was the actor default, 1), chi 10 of 10, defense 1. Fixture 2: HP 590, chi 40 of 50, defense 71,
+  fire 10, wind 8, water 6, earth 5. `chi` is kept as its value: `setChi` stores it ×
+  `StatsManager.multiplier` (a random 2–6, an anti-tamper mask) and `getChi` divides it back out,
+  as `MCSActor` already treats HP. 5a's and 5b's tests stay green on the carried HP (IDLE's tired
+  test reads it: both fixtures untired).
+
+### What differs between the builds, and the ruling (all WEB, R6)
+
+| where | web | Android | plant |
+|---|---|---|---|
+| self-hit | refused (`:3357`) | none | red (1 test) |
+| roll dodge | 75 / 85 / 95 (3 and up) (`:3364-3374`), `Snd_jump` | 80 / 85 / 90 / 95 / 100, silent | the 80 and the 90 red; the silent evade red |
+| full-Focus evade | slashing on a full bar with the stance's 1074 / 1075 / 1076 (`:3383`) | none | red (removal, and "any bar") |
+| parts 3 and 4 | skipped, the scan goes on (`:3445`) | take the hit | red (removal, prop only, stop-at-weapon) |
+| the log substitution | inside the loop, after the part test | before the loop | not reached: `logsubCounter` is 0 on this body until slice 7 (ERRATUM 15), so the branch calls `cancelLogSub`, which throws |
+| `stunCounter = 0` | only on a landed hit (`:3468`) | on every call past the dodges (`:3344`) | red |
+| the juggle cap | the ATTACKER's stance: light 5, else 3 (`:3581-3583`) | stance −1 only, at 3 | red (Android cap, body's stance, light at 3) |
+| fly-away | `gotFlyAway`, then the web `setFlyAwayPos` (sets FLY) | the other order | not reached: the branch is `unported` (6b), with the thing's position |
+| `isUsingSkill` | + SMOKEBOMB, SMOKEBOMB2, FIREBREATH, WATERSPLASH | 20 states | red |
+
+The web's 4th parameter (only parts 14 / 15 or a point test) is `NPCManager`'s, default false:
+not carried, slice 8 decides it. Every human (`controlledBy` 0), network (2) and friendly (3)
+branch is out, as the map ruled.
+
+### Decisions made here (decide-and-flag)
+
+- **A new geometry question, `HitGeometry.partsHitBy`** (every part touched, in the source's order,
+  21 → 0), not a change to `partHitBy`. The web skips parts 3 / 4 and scans on, and the deflect
+  test runs on the first part touched, weapon included, so one answer is not enough. The 20 mobs
+  keep `partHitBy`. *Red-team:* the steelman for widening `partHitBy` is one question instead of
+  two. But it would change what 20 green mobs are asked. **Veto:** fold the two once the mobs are
+  measured against the web's scan.
+- **The hit guard (12) and the floating text reuse `NPC`'s constants** (`OG_NPC_HIT_IFRAMES`,
+  `OG_NPC_FLOATING_TEXT`): the web `checkHitObject` holds the same numbers on its own lines
+  (`:3378`, `:3385`, `:3491`, `:3625-3642`), for the same rule on the same class chain. No second
+  copy, so no twin to pin.
+- **`Npc.elemental` went from `private` to `protected`**, so the duellist uses the same floor
+  (`raw − def`, at least 1 if `raw > 0`, else at least 0). The two source blocks are the same.
+- **A deflected projectile is `breakProjectile` plus a `deflect` sound**; the evades are a `jump`
+  sound (`Snd_jump`). The sound union gained both; nothing in `src/game` reads it yet.
+- **The unported count rose 8 → 24, by design:** the 14 shadows and two call sites inside
+  `checkHitObject` (the charging-FX removal, the fly-away). 6b takes out 9 (8 shadows and the
+  fly-away site), 6c 6 more.
+
+### MEASURED ON THE WAY
+
+- **A missing test, found by its plant.** The landed-hit test had no wind damage, so swapping the
+  wind and water texts stayed green; the test now carries all four elements (wind 12 − 8 = 4).
+- **Five more test gaps, found by the review** (one fresh-context reviewer; it found NO behaviour
+  difference from the web source, and proved each gap by applying the break and watching the suite
+  stay green): the charge FX on a LAUNCHING hit, a hit to exactly 0 HP, a 0 writing a text, the
+  packet's launch direction and victim x (truncated), the knee groin's attacker level, and the death
+  touch coming AFTER the reaction chain. Each now has a test and a plant (8), all red.
+- **Checked by the review and ruled out:** the web `EnemyPlayer`'s own `canHit`
+  (`gotHitCounter == 0 && §1t4440s0§ <= 0`) is not ported: its timer is set only for network
+  players, so on the AI it answers as `Npc.canHit`.
+- **Chaos:** 54 new plants (46 + the review's 8), 54 / 54 red; the whole duellist set (286 at the
+  time) red and restored byte-identical. The pin is 348.
+- **One new test passed before the change:** "stun clears only on a landed hit" (the old code
+  never cleared it at all). Its plant (the Android clear, before the loop) goes red.
+- **For 6b: the nine `NPC` functions 6b's overrides call through `super`** (`gotLaunched`,
+  `gotKnockDown`, `gotFly`, `gotFlyAway`, `gotKneeGroin`, `gotBackThrow`, `gotStun`,
+  `doLaunched`, `doFly`) **are the same shape in both builds** (web `§1t68s0§.as:557-766`,
+  Android `NPC.as:536-745`; identifiers blanked, numbers kept). The check was probed: wrong
+  pairings and a one-number change both differ. So the ported `Npc` is the web's there.

@@ -46,7 +46,7 @@ const world = (over: Partial<NpcWorld> = {}): NpcWorld => ({
   ...over,
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: CLIP, loop: false }) };
-const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0 };
+const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0, partsHitBy: () => [] };
 const seq = (...vals: number[]): Rng => {
   let i = 0;
   return () => vals[Math.min(i++, vals.length - 1)] ?? 0;

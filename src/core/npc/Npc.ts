@@ -311,8 +311,8 @@ export class Npc extends MCSActor implements NpcTarget {
     return this.geometry.partHitBy(thing) !== null;
   }
 
-  /** `NPC.as:392-420` — `raw − def`, floored at 1 if raw was positive, else at 0. */
-  private static elemental(raw: number, def: number): number {
+  /** `NPC.as:392-420` — `raw − def`, floored at 1 if raw was positive, else at 0 (`MCSPlayer.checkHitObject` too). */
+  protected static elemental(raw: number, def: number): number {
     const after = raw - def;
     if (raw > ZERO && after < OG_NPC_ELEMENT_FLOOR) return OG_NPC_ELEMENT_FLOOR;
     if (after < ZERO) return ZERO;

@@ -127,6 +127,12 @@ export interface HitGeometry {
   partAtPoint(x: number, y: number): OgPart | null;
   partHitBy(thing: HitShape): OgPart | null;
   partX(part: OgPart): number;
+  /**
+   * EVERY part `thing` touches, in the source's scan order (the last index first). The
+   * duellist's `checkHitObject` needs more than the first: the web skips the weapon and the prop
+   * and scans on (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3445`), where the 20 mobs stop at the first (`partHitBy`).
+   */
+  partsHitBy(thing: HitShape): readonly OgPart[];
 }
 
 /** What an actor needs from whatever it is fighting. `Npc` satisfies it itself. */
@@ -148,7 +154,8 @@ export interface NpcTarget {
 
 /** A presentation side effect the actor asks for. Drained by the render layer. */
 export type NpcEvent =
-  | { readonly type: 'sound'; readonly name: 'hit' | 'die' }
+  /** `jump` is `Snd_jump` (the duellist's two evades), `deflect` `SoundManager.playDeflect()`. */
+  | { readonly type: 'sound'; readonly name: 'hit' | 'die' | 'jump' | 'deflect' }
   | {
       readonly type: 'floatingText';
       readonly x: number;

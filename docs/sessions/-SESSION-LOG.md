@@ -4426,3 +4426,36 @@ After: 92 files / 2227 tests · typecheck 0 · lint 0 · claimcheck 2211 / 608 /
 
 After: 92 files / 2227 tests · typecheck 0 · lint 0 · claimcheck 2211 / 608 / 44 / 0 · chaos
 294 pinned (no plant touched; no source changed).
+
+## 2026-09-29 — build loop: L5-OPP slice 6a, THE HIT AND THE FLINCH
+
+- **Baseline at HEAD `087a2c9`, as RESUME_HERE stated:** 92 files / 2227 tests · typecheck 0 ·
+  lint 0 · claimcheck 2211 / 608 / 44 / 0 · chaos 294 pinned.
+- **Red first:** 38 new tests in `tests/mcsPlayer.test.ts`; 37 failed for the stated reasons
+  (fixture 1's HP read 1, the actor default; the mob `gotHit` did not throw; the reception was
+  the mob's). The 38th (the stun cleared only on a landed hit) passed before the change, because
+  the old code never cleared it; its plant red-proofs it.
+- **Ported (web form, R6):** `checkHitObject` whole, `getDefense`, `isSlashing`, `isUsingSkill`
+  (web list), `isCharging`, `EnemyPlayer.getSkillLevel`, `doFlinch`, `endFlinch`, the FLINCH clip
+  end; the constructor carries HP, chi, defense and the four elemental defences; 14 shadows.
+  `HitGeometry.partsHitBy` is new (the web skips parts 3 / 4 and scans on). `OG_RECEPTION` in
+  config, every value cited at ±0.
+- **Gates caught three of my own mistakes before commit:** claimcheck refused a parent-comment
+  cite that governed three skill ids it did not hold, and two web cites written without their
+  path; reading the cited lines fixed a bare-flinch cite one line early and six plant notes.
+- **Chaos, in a throwaway worktree** (the runner refuses a dirty tree; nothing of it reaches
+  `master`): 46 new plants; 45 / 46 red at first. The wind / water order stayed green: a missing
+  test (no wind damage in the landed-hit case), fixed, then red. Then every duellist plant:
+  286 / 286 red, restored byte-identical.
+- **Review (one fresh-context reviewer):** no behaviour difference from the web source; five test
+  gaps, each proved by applying the break (charge FX on a launching hit, a hit to exactly 0, a 0
+  text, the packet's direction / victim x / knee-groin level, the death touch's place). +5 tests,
+  +8 plants, all red.
+- **For 6b, measured:** the nine `NPC` functions its overrides call through `super` are the same
+  shape in both builds (probed red); nothing in `src` calls `NpcDamage.setFlyAwayPos`.
+
+### THE GATES
+
+After: 92 files / 2324 tests (+43 in `mcsPlayer.test.ts`, +54 plant anchors) · typecheck 0 ·
+lint 0 · claimcheck 2288 / 622 / 44 / 0 · chaos 348 pinned (54 / 54 of 6a red, 286 / 286 of the
+duellist set red, restored byte-identical) · 24 unported sites.

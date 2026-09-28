@@ -261,6 +261,49 @@ export const OG_STATE_MACHINE = {
 } as const;
 
 /**
+ * THE RECEPTION (slice 6a): `checkHitObject`'s two evades and juggle cap, and `getDefense`. WEB
+ * where the builds differ (ruling R6; DIVERGENCES "L5-OPP SLICE 6 — THE MAP"). The hit guard
+ * (12 frames) and the floating text are `NPC`'s own numbers on the same lines of the web
+ * `checkHitObject`, so the port reads `OG_NPC_HIT_IFRAMES` and `OG_NPC_FLOATING_TEXT`.
+ */
+export const OG_RECEPTION = {
+  /** `SkillManager.as:16` · `reference/decompiled/shs3_payload/scripts/§1t120s0§.as:16` — SKILL_ROLL, the forward roll's dodge */
+  rollSkill: 1004,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3364` — a roll at this skill level… */
+  rollLevelLow: 1,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3366` — …dodges 75 in 100 (Android: 80) */
+  rollChanceLow: 75,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3368` */
+  rollLevelMid: 2,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3370` — the same in both builds */
+  rollChanceMid: 85,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3372` — this level and up… */
+  rollLevelTop: 3,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3374` — …dodge 95 in 100 (Android: 90, 95, 100 for levels 3, 4, 5) */
+  rollChanceTop: 95,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3376` — `int(Math.random() * 100) < chance` */
+  rollDice: 100,
+  /**
+   * WEB only: the full-Focus evade's passives, one per stance, which `checkHitObject` reads.
+   * Absent from the Android build (its `SkillManager.as` ends at 1073) and from `skilldata.xml`.
+   */
+  focusEvadeSkill: {
+    /** `reference/decompiled/shs3_payload/scripts/§1t120s0§.as:108` */
+    light: 1074,
+    /** `reference/decompiled/shs3_payload/scripts/§1t120s0§.as:110` */
+    balanced: 1075,
+    /** `reference/decompiled/shs3_payload/scripts/§1t120s0§.as:112` */
+    heavy: 1076,
+  },
+  /** `MCSPlayer.as:3235` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3288` — heavy takes hits at `defense * 0.8`, truncated (`getDefense` is `:int`) */
+  heavyDefenseMult: 0.8,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3581` — a launch is skipped once `juggleCount` reaches 3, unless the attacker's stance is light (Android: 3, for stance −1 only) */
+  juggleCap: 3,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3583` — a light attacker juggles to 5 */
+  juggleCapLight: 5,
+} as const;
+
+/**
  * The labels of the three switches, in source order, transcribed from the Android build's
  * names (`scripts/gates` has no decoder for the web's; the slice-5 map paired every group
  * across the builds). A label the port has not reached yet goes through ONE `unported` site
