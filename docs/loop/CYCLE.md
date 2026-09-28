@@ -34,8 +34,8 @@ infer: a number you did not see on screen this cycle does not go in a commit.
    - normal: ONE fresh-context reviewer subagent on `git diff` ("find a real bug in this diff; quote
      the line and the input that breaks it"). Re-verify its claims at the source before acting;
    - **high-risk** (closing a stage gate, touching an invariant or an owner ruling, anything hard to
-     undo): **do not ship.** Write the plan and evidence into RESUME_HERE for an attended session,
-     and end the cycle.
+     undo): **do not ship the change.** Commit ONLY `RESUME_HERE.md`, carrying the plan and evidence
+     for an attended session, and end the cycle. The loop stashes whatever you leave uncommitted.
 9. **Ship ONE commit.** In the SAME commit: `RESUME_HERE.md` (the gates block re-measured, and the
    paste-ready kickoff at the top pointing at the next step) and `docs/sessions/-SESSION-LOG.md`.
    Commit locally; the loop does not push.
