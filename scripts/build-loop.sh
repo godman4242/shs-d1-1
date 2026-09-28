@@ -17,6 +17,11 @@
 # Returning to interactive work: touch docs/loop/PAUSE, then wait for docs/loop/CYCLE_RUNNING to go.
 
 DEADMAN="${DEADMAN:-1}"
+# Owner ruling 2026-09-28: xhigh, "I want less mistakes" (the engine's default is high). xhigh
+# cycles run longer, and a watchdog kill leaves RESUME_HERE unchanged, so the next cycle retries
+# the same milestone: 2 h (engine default 90 min) so one long milestone isn't killed all night.
+EFFORT="${EFFORT:-xhigh}"
+CYCLE_TIMEOUT="${CYCLE_TIMEOUT:-7200}"
 
 CYCLE_PROMPT='Read docs/loop/GOAL.md FIRST, then docs/loop/CYCLE.md, and do EXACTLY ONE cycle of its
 steps. Then STOP and exit: do NOT loop and do NOT schedule any wakeup. This shell loops, and it runs
