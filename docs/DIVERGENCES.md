@@ -6625,3 +6625,198 @@ Suite 92 files / 2227 tests (+19 `mcsPlayer`, +34 chaos anchors) · typecheck 0 
 claimcheck 2211 cites / 608 values / 0 failures · chaos 34 new plants, 34/34 red, 4 of 5a's
 re-anchored (their lines now occur more than once, or moved); pinned 260 → 294. The 5a + 5b filter
 (84 plants) ran in a scratch worktree of this diff: 84/84 red, restored byte-identical.
+
+## L5-OPP SLICE 6 — THE MAP: THE RECEPTION IN BOTH BUILDS, AND THE CUT (2026-09-29)
+
+Kickoff: `RESUME_HERE.md` (slice 6, the map), `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 14
+item 5. A build-loop cycle, one commit, **no code**. Slice 6 is ≈827 Android lines, over the
+500-line cap, so it is mapped first, as slice 5 was (ERRATUM 15).
+
+**How it was measured** (scratch scripts, not committed, the slice-5 method): every function
+paired with its web twin by source order, then confirmed by content; every line compared by SHAPE
+(identifiers blanked, `this.` dropped, numbers and keywords kept); the switch groups split by
+indentation and paired in order (clip-end 97 / 97 groups, 146 / 146 labels; `startAction` 34 / 34,
+35 / 35; `doAction` 23 / 23, 27 / 27); every static constant on a same-shape line decoded to its
+declared value in its own build, resolved through the qualifying class or the class chain
+(`EnemyPlayer` → `MCSPlayer` → `NPC` → `MCSActor`, web `§1t122s0§` → `§1t99s0§` → `§1t68s0§` →
+`§1t1544s0§`). **Inside the cut: 79 constant-bearing line pairs, 0 mismatches** (22 more in the two
+functions ruled out below: `doPose` 21, `MCSPlayer.gotDeathTouch` 1; also 0). The "0" was probed: the same check on deliberately wrong
+pairings gives 5 mismatches of 5 (FLY against STUN, `GOTLAUNCHED_PEAK` against
+`GOTLAUNCHEDDOWNEDEND`, `FLY_END` against `GOTLAUNCHED_PEAK`) and 24 of 27 when every reception
+clip-end group is paired with the web's next group. Its first version resolved web names
+globally and read only UPPERCASE Android names: it reported 3 false mismatches (the obfuscator
+reuses a `§…§` name across classes; `PART_torso` was unread) until both were fixed.
+
+### The functions, paired (Android `MCSPlayer.as` · web `§1t99s0§.as`)
+
+Every web name below was confirmed by content, not order alone.
+
+| function | Android | web | lines A / W | shape | lane |
+|---|---|---|---|---|---|
+| `checkHitObject` | 3275-3579 | `§1t3274s0§` 3328-3660 | 305 / 333 | **differs** (below) | **6a** |
+| `gotHit` | 3580-3837 | `§1t3277s0§` 3661-3941 | 258 / 281 | **differs** (below) | **6c** |
+| `doPose` | 3838-3886 | `§1t4480s0§` 3942-3990 | 49 / 49 | same | **out**: its one caller is the human's taunt button (`SkillUI.as:164`, `StatsManager.getPlayer().doPose(i)`) |
+| `doLaunched` | 3887-3916 | `§1t3288s0§` 3991-4020 | 30 / 30 | same | **6b** |
+| `die` | 3952-3970 | `§1t3298s0§` 4057-4075 | 19 / 19 | same | **6c** |
+| `gotLaunched` | 4137-4148 | `§1t3280s0§` 4497-4509 | 12 / 13 | **differs**: web `++juggleCount` (`:4499`), outside the human branch, so live on the AI | **6b** |
+| `gotKnockDown` | 4149-4160 | `§1t3281s0§` 4510-4521 | 12 / 12 | human branch reordered; the same on the AI | **6b** |
+| `gotDeathTouch` | 4161-4183 | `§1t4488s0§` 4522-4560 | 23 / 39 | differs (web: damage only for `controlledBy` 0 or 3) | **out on this body**: `EnemyPlayer` overrides it in both builds (below) |
+| `doSubstitutionLog` | 4184-4196 | `§1t4489s0§` 4561-4573 | 13 / 13 | same | **slice 7** (ruling below) |
+| `gotKneeGroin` | 4197-4215 | `§1t3284s0§` 4574-4595 | 19 / 22 | web adds 3 lines inside `controlledBy == 0`; the same on the AI | **6b** |
+| `gotBackThrow` | 4216-4229 | `§1t3285s0§` 4596-4612 | 14 / 17 | same kind (human branch only) | **6b** |
+| `gotFly` | 4230-4238 | `§1t3282s0§` 4613-4624 | 9 / 12 | same kind | **6b** |
+| `gotFlyAway` | 4239-4247 | `§1t3283s0§` 4625-4636 | 9 / 12 | same kind | **6b** |
+| `doFly` | 4248-4256 | `§1t3289s0§` 4637-4645 | 9 / 9 | same | **6b** |
+| `doFlinch` | 4309-4328 | `§1t3290s0§` 4678-4697 | 20 / 20 | same | **6a** |
+| `endFlinch` | 4329-4343 | `§1t3291s0§` 4698-4712 | 15 / 15 | same (calls `AI()` on `controlledBy == 1`: slice 7's, through `unported`) | **6a** |
+| `cancelLogSub` | 4369-4379 | `§1t4495s0§` 4738-4748 | 11 / 11 | same | **slice 7** (ruling below) |
+
+**Helpers the reception calls that are not ported yet** (each paired the same way):
+`getDefense` 3231-3239 / `§1t4477s0§` 3284-3292 (9 / 9, same; stance HEAVY → `defense * 0.8`);
+`isSlashing` 2885-2889 / `§1t4465s0§` 2963-2967 (5 / 5, same); `isUsingSkill` 2393-2397 /
+`§1t4455s0§` 2465-2469 (5 / 5, **differs**: the web list adds SMOKEBOMB 19, SMOKEBOMB2 23,
+SKILL_FIREBREATH 58, SKILL_WATERSPLASH 59, decoded, and names state 36 twice); `isCharging`
+2398-2402 / `§1t4456s0§` 2470-2474 (5 / 5, same); `getChi` / `setChi` 168-181 / `§1t4441s0§` /
+`§1t4442s0§` 169-182 (14 / 14, same; `chi` is stored × `StatsManager.multiplier`).
+
+### Every `EnemyPlayer` override of them (grepped in `EnemyPlayer.as` AND `§1t122s0§.as`)
+
+| override | Android `EnemyPlayer.as` | web `§1t122s0§.as` | lines A / W | shape | reached by | lane |
+|---|---|---|---|---|---|---|
+| `gotDeathTouch` | 1634-1644 | 1730-1745 | 11 / 16 | web adds `controlledBy == 2 → 0` (network); the same on the AI: a flat 500, then `gotFly`, then `setChi(0)` | `checkHitObject` / `gotHit` on a death-touch packet | **6c** |
+| `getSkillLevel` | 1348-1365 | `§1t4491s0§` 1426-1444 | 18 / 19 | web drops a `trace` and decompiles the `for` as a `while`; the same | the roll dodge and the web Focus evade | **6a**. **`skillList == null` → 0** (the source's own guard): until slice 7 sets the list, both dodges are inert |
+| `deathAnimEnd` | 1604-1633 | `§1t3299s0§` 1700-1729 | 30 / 30 | same | the death group's clip end; `GOTLAUNCHEDDOWNED` when `dead` | **6c** |
+| `createLoot` | 1281-1306 | `§1t3294s0§` 1342-1371 | 26 / 30 | web adds `isFriendly → return` (`§1t3255s0§`, false on the AI) and a war-mode test (out); the same on the duellist | `NPC.die` | **6c**: the port's `loot` events |
+| `rewardXP` | 1307-1330 | `§1t3295s0§` 1372-1395 | 24 / 24 | same | `NPC.die` | **6c**: the port's `xp` event |
+| `redFreeze` (+ `MCSPlayer.cleanUpPlayer`) | 934-952 | `§1t2292s0§` 984-1002 | 19 / 19 | same | `StageManager.redFreeze` only | **slice 8** (the seam) |
+| — (web only) `§1t3272s0§` | — | 1778-1782 | — / 5 | `gotHitCounter == 0 && §1t4440s0§ <= 0` over `NPC.canHit` | `NPCManager` (web `§1t1543s0§`, `:1478`…) | **slice 8**; the timer is never set on this body (ERRATUM 11 item 2), so it answers as `canHit` |
+
+**The map found three overrides the kickoff did not name** (`getSkillLevel`, `createLoot`,
+`rewardXP`): `NPC.die` calls the last two, and without them the duellist would drop a MOB's loot
+table.
+
+### The web-only lines on the AI's path, and the ruling (R6: web wins)
+
+**`checkHitObject`** (web `:3328-3660`):
+
+| web | Android | ruling |
+|---|---|---|
+| `:3357` self-hit guard: `damage.attacker == this` → false | none | **web**. Reads `NpcDamage.attacker` (ported, 4c); the mobs never set it (queued) |
+| `:3361-3382` the roll dodge: level 1 → 75, 2 → 85, **≥ 3 → 95**, plus the `Snd_jump` sound | `:3299-3327`: 80 / 85 / 90 / 95 / 100 for levels 1–5, silent | **web**. Reached only in FORWARDROLL (a skill, slice 7) and only with `getSkillLevel(1004) > 0` |
+| `:3383-3388` **the full-Focus evade**: slashing, `reload == maxreload`, and the stance's skill 1074 / 1075 / 1076 > 0 → `gotHitCounter` 12, `Snd_jump`, return true | none; skills 1074–1076 do not exist in the Android build (`SkillManager.as` ends at 1073) | **web**. These are the per-stance full-Focus evade passives the L0 study found (`docs/gauntlet/L0/run16/CLAIMS.md`, `NF-S27E-3`): absent from `skilldata.xml`, so no name, cost or cooldown survives. Inert on the new character (no such skill) |
+| `:3433` a 4th parameter: with it, only parts 14 / 15 or a point test count | none | **web**, default false. Its callers are `NPCManager`'s (web `§1t1543s0§.as:1761-1867`): slice 8 decides |
+| `:3445` **parts 3 and 4 never take the hit**: `PART_weapon` and `PART_prop` (decoded, `MCSCharacter.as:16`, `:18`). The loop moves on to the next part | any part takes it | **web**. The port's `HitGeometry.partHitBy` answers ONE part: 6a needs the first part hit in the source's order (21 → 0), skipping 3 and 4 |
+| `:3447-3467` the log substitution INSIDE the loop (after the part test), zeroing all five damages | `:3328-3343` BEFORE the loop, whole-hit; `setSubstitutionLog` zeroes only `damage`, so the four elements still land | **web** (slice 7, with the log; below) |
+| `:3468` `stunCounter = 0` only on a landed hit | `:3344` on every call past the dodges | **web** |
+| `:3581-3589` the juggle cap: a launch is skipped at `juggleCount >= 3`, or `>= 5` when the attacker's stance is LIGHT; no increment here (`gotLaunched` increments) | `:3501-3509`: capped at `launchCount >= 3` for stance −1 only, and counted here for stance −1 only | **web** |
+| `:3602-3603` fly-away: `gotFlyAway(x, y)`, THEN `setFlyAwayPos(velX, velY)`, which in the web also sets the packet's launch to FLY (`§1t67s0§.as:163-169`) | `:3523-3524` `setFlyAwayPos(thing.x, thing.y)` BEFORE, velocity only | **web**. The packet only; the body's motion is `gotFlyAway`'s, the same in both |
+| `:3337-3344` (playback, a mode test), `:3493-3519` and `:3534-3560` (inside `controlledBy == 0`), `:3527-3530` and `:3645-3652` (network) | the human's UI and PvP, and the network | out (`controlledBy` 0 / 2). `:3520-3524` (the AI's health bar and hit sound) are in |
+
+On `controlledBy == 1` **neither build calls `die()` here or in `gotHit`** when HP reaches 0
+(Android `:3464-3484`, web `:3534-3564`: only 0 or 3): the body is left at 0 and the attacker's
+side calls `NPC.checkDie()` (`NPC.as:521`): per hit (`NPCManager.as:1525`, `:1546`) and in
+`NPCManager`'s own sweep (`:1674`, calling it at `:1685`, `:1698`). So the seam (slice 8) owns the call
+that kills the duellist; 6c tests it by calling `checkDie`.
+
+**`gotHit`** (web `:3661-3941`): the same roll table and Focus evade (no sound here); the log
+substitution in the same place as Android; `getHP() > 0` now wraps the head / hat / neck test, and
+its `default` clears `behead` (`:3745`); **the stance triangle's disadvantage, × 0.9** (`:3796-3799`,
+web only; the × 1.2 advantage is in both); **the head hit × 1.3** (`:3807`) where Android has
+× 1.5 (`:3716`); a downed body, or one at the juggle cap, turns an AIR packet into NONE through a
+web-only `Damage` method (`§1t67s0§.as:97-104`, called `:3856`, `:3862`, `:3866`); Android's
+`gotHit` has no juggle cap at all. The fly-away packet as above. All **web**.
+
+### `juggleCount` IS Android's `launchCount` (ERRATUM 12 item 5 corrected)
+
+Web `§1t4438s0§` sits in `launchCount`'s declaration slot (`:143` / Android `:145`, `int = 0`),
+and has its two resets (`initPlayer` `:253` / `:244`; `doLaunched` `:4017` / `:3913`). The web
+changed its rule, not its identity: it counts every launch (`gotLaunched` `:4499`) and caps per
+attacker stance. So the port's `juggleCount` is the source's `launchCount` on web rules. Its
+readers: `:3581`, `:3583` (`checkHitObject`, 6a), `:3860`, `:3864` (`gotHit`, 6c) and **`:4198`,
+which is in `gotNetworkDamage` (`§1t4483s0§`, `:4076-4272`): out of the lane** (one more,
+`§1t122s0§.as:1632`, is in `EnemyPlayer`'s network override, also out). Its 11 writers (10 besides
+5b's `:2001`; the kickoff said eight): `:253`
+(`initPlayer`, a reset to its initial 0), `:785` (clip end `NINJASMOKEBOMB`, a skill, slice 7),
+`:1559`, `:1581` (sets **5**), `:1595` (`startAction` SMOKEBOMB2, slice 7), `:1614`, `:1630`
+(`startAction` LOGSUBSTITUTION, slice 7), `:2001` (FALL, ported 5b), `:4017` (`doLaunched`, 6b),
+`:4041` (`cleanUpPlayer`, slice 8), `:4499` (`gotLaunched`, 6b).
+
+### The switch groups the reception's states reach (Android · web)
+
+The reception enters GOTLAUNCHED, KNOCKDOWNED, DOWNED, FLY (`NPC.gotFly` / `gotFlyAway`), VICTIM
+(knee groin / back throw, set directly), STUN (`NPC.gotStun`, set directly), FLINCH (set
+directly) and DYING (`NPC.die`). Each group, and whether the builds agree:
+
+| switch | group | Android | web | lines | shape | lane |
+|---|---|---|---|---|---|---|
+| `startAction` | GOTLAUNCHED | 1468-1470 | 1520-1522 | 3 | same | 6b |
+| `startAction` | KNOCKDOWNED + DOWNED | 1471-1474 | 1523-1526 | 4 | same | 6b |
+| `doAction` | GOTLAUNCHED | 1942-1944 | 2004-2006 | 3 | same | 6b |
+| `doAction` | FLY | 1945-1947 | 2007-2009 | 3 | same | 6b |
+| `doAction` | STUN | 1948-1950 | 2010-2012 | 3 | same | 6b (`NPC.doStun`, ported) |
+| `doAction` | DOWNED | 1951-1952 | 2013-2014 | 2 | same | 6b |
+| `doAction` | DYING | 2002-2004 | 2064-2066 | 3 | same | 6c (`NPC.doDying`, ported) |
+| clip end | the death group (10 labels) | 524-541 | 544-561 | 18 | web `return true` (the helper's Boolean, 5a) | 6c |
+| clip end | `FLY_END` | 542-544 | 562-564 | 3 | same | 6b |
+| clip end | `KNEEGROIN_VICTIM` | 545-547 | 565-567 | 3 | same | 6b |
+| clip end | `BACKTHROW_VICTIM` | 548-566 | 568-586 | 19 | same | 6b |
+| clip end | `GETUP_FRONT` | 567-577 | 587-597 | 11 | same | 6b |
+| clip end | `GOTLAUNCHED_PEAK` | 578-580 | 598-600 | 3 | same | 6b |
+| clip end | `GOTLAUNCHEDDOWNED` | 581-617 | 601-637 | 37 | web `return true` | 6b (its `dead` branch → `deathAnimEnd`, `unported` until 6c) |
+| clip end | `GOTLAUNCHEDDOWNEDEND` | 618-620 | 638-640 | 3 | same | 6b |
+| clip end | `DOWNEDUP` + `DOWNEDUP2` | 621-641 | 641-661 | 21 | same | 6b |
+| clip end | `FLIPUP` | 672-682 | 692-702 | 11 | same | 6b (`canFlipUp`) |
+| clip end | `FLINCH_WEAPON` + `FLINCH` | 739-742 | 759-762 | 4 | same | **6a** |
+
+No group: FLINCH and VICTIM are set directly (no `startAction` / `doAction` case); `FLY_START`,
+`GOTLAUNCHED_RISE`, `GOTLAUNCHED_FALL` and `ZOM_IDLE` have no clip-end case (the helper's
+`default`). Not reception, checked: `ZOM_GETUP` (`MCSPlayer.as:2175`) and `startAction`'s
+`ENEMYDEATH` (`:1869`) are SKILL_UNDYING's; the seppuku chain is a skill's.
+
+### Rulings made here (decide-and-flag)
+
+- **The log substitution goes to slice 7, whole:** `doSubstitutionLog`, `cancelLogSub`, the
+  `startAction` LOGSUBSTITUTION group (33 / 35, differs) and its LAND chain, with the skill that
+  arms them. `logsubCounter` has one non-zero writer, `startAction` SKILL_SUBSTITUTIONLOG
+  (`MCSPlayer.as:1844-1852`), and the AI reaches it through `EnemyPlayer`'s mid- and long-range
+  skill lists (`EnemyPlayer.as:34`, `:36`). Until then every call is behind
+  `logsubCounter > 0`, which is 0 on this body, so it stays `unported`. *Red-team:* the steelman
+  for keeping them in 6 is that the kickoff named them and they are 24 lines. But a test would have
+  to poke a counter the source cannot set yet. My pick depends on slice 7 porting
+  SKILL_SUBSTITUTIONLOG; if slice 7 is cut short, the two functions are the first to add.
+  **Veto:** port them in 6c (+24 lines, still under 500).
+- **`doPose`, `MCSPlayer.gotDeathTouch`, `redFreeze` / `cleanUpPlayer`, and web `§1t3272s0§`
+  are not slice 6's** (the callers above).
+
+### MEASURED ON THE WAY
+
+- **The duellist answers hits with the MOB's code today, silently.** `MCSPlayer.ts` overrides
+  none of the reception, so it inherits `Npc.checkHitObject` / `gotHit`. A throwaway test (not
+  committed, deleted; the tree was clean after) struck a fixture-1 body for 20: it returned `true`,
+  HP went **1 → −18**, no throw, no death. So each sub-slice must SHADOW every reception override
+  it does not port yet with `unported(...)`, or a partial port falls through to mob code.
+- **The body's HP, chi and defense never reach the class.** The same probe: `DuellistBody.hp` 9,
+  the body's `getHP()` 1 (the actor default). `initDuellistBody` computes `hp`, `maxHp`, `chi`,
+  `maxChi`, `defense` and the four elemental defences; the `MCSPlayer` constructor carries none of
+  them (the RESUME_HERE queue named HP only). 6a carries them (`initPlayer`, `MCSPlayer.as:182`, and `initElementDefenseStats`, `:260`,
+  already cited by 1b-ii).
+- **Two web-only sounds** (`Snd_jump` on the roll dodge and the Focus evade, `checkHitObject`
+  only) and one web-only `Damage` method (the cancel-an-air-launch, `§1t67s0§.as:97-104`); the
+  port's `NpcDamage` has neither.
+
+### THE CUT (≤ 500 source lines each, measured by script from the spans above)
+
+| sub-slice | content | Android | web | its end-to-end test |
+|---|---|---|---|---|
+| **6a — THE HIT AND THE FLINCH** | `checkHitObject` whole (web: the guard, both dodges, the part skip, the juggle cap); `getDefense`; `isSlashing`; `EnemyPlayer.getSkillLevel`; `doFlinch`; `endFlinch`; `isUsingSkill` (web list); `isCharging`; clip end FLINCH; the constructor carrying `initPlayer`'s HP, chi and defense and `initElementDefenseStats`' four defences; shadows (`unported`) for `gotHit`, `die`, `gotDeathTouch`, the six `got*` reactions, `doLaunched`, `doFly`, `deathAnimEnd`, `createLoot`, `rewardXP`, `doSubstitutionLog`, `cancelLogSub` | 305 + 9 + 5 + 18 + 20 + 15 + 5 + 5 + 4 = **386** | 333 + 9 + 5 + 19 + 20 + 15 + 5 + 5 + 4 = **415** | a plain hit into the IDLE duellist through `checkHitObject`: HP − (damage − defense), `gotHitCounter` 12, FLINCH plays, its clip end → `endFlinch` → back to IDLE, the AI spied (5a's harness); a hit on part 3 or 4 alone lands nothing; a capped air hit does NOT throw (the launch shadow proves it is skipped) |
+| **6b — THE LAUNCH AND THE GETUP** | `gotLaunched` (web `++juggleCount`), `gotKnockDown`, `doLaunched`, `gotFly`, `gotFlyAway`, `doFly`, `gotKneeGroin`, `gotBackThrow`, `getChi` / `setChi`, `setFlyAwayPos` (web); `startAction` GOTLAUNCHED, KNOCKDOWNED + DOWNED; `doAction` GOTLAUNCHED, FLY, STUN, DOWNED; clip ends `FLY_END`, `KNEEGROIN_VICTIM`, `BACKTHROW_VICTIM`, `GETUP_FRONT`, `GOTLAUNCHED_PEAK`, `GOTLAUNCHEDDOWNED`, `GOTLAUNCHEDDOWNEDEND`, `DOWNEDUP`, `FLIPUP` | **263** | **277** | an AIR hit through the real `update`: RISE, the peak, the fall at gravity 3, DOWNED on the ground, then FLIPUP or `DOWNEDUP2`, IDLE; a second and third launch in the air, and the fourth capped (non-LIGHT attacker) |
+| **6c — THE BLOW, THE DEATH AND THE REWARD** | `gotHit` whole (× 0.9, × 1.3, the cancel-launch); the web `Damage` cancel-launch; `die`; `EnemyPlayer.gotDeathTouch`, `deathAnimEnd`, `createLoot`, `rewardXP`; clip-end death group; `doAction` DYING | 258 + 19 + 11 + 30 + 26 + 24 + 18 + 3 = **389** | 281 + 8 + 19 + 16 + 30 + 30 + 24 + 18 + 3 = **429** | a killing hit through `checkHitObject`, then `checkDie` (the seam's call): `die`, the loot and xp events, DYING, the death clip, `deathAnimEnd`'s `ttl` fade to disposal; a death touch: 500 through `gotHit`, chi 0 |
+| slice 7 (added) | `doSubstitutionLog`, `cancelLogSub`, `startAction` LOGSUBSTITUTION and its LAND chain | +24 (+ the groups) | +24 | with SKILL_SUBSTITUTIONLOG |
+
+6a + 6b + 6c = 1038 Android / 1121 web source lines. **Reconciled with the kickoff's ≈827** (its
+17 functions, 827 Android lines exactly): 731 are in the cut, 24 moved to slice 7 (the log pair),
+72 ruled out (`doPose` 49, `MCSPlayer.gotDeathTouch` 23). The cut adds 307 the kickoff did not
+count: the helpers 44 (`getDefense` 9, `isSlashing` 5, `isUsingSkill` 5, `isCharging` 5, `getChi`
+/ `setChi` 14, `setFlyAwayPos` 6), the `EnemyPlayer` overrides 109 (`getSkillLevel` 18,
+`gotDeathTouch` 11, `deathAnimEnd` 30, `createLoot` 26, `rewardXP` 24) and the switch groups 154
+(6a 4, 6b 129, 6c 21).

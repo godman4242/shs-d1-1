@@ -323,6 +323,33 @@
 >    groups its states enter. **It needs its own map first**, as slice 5 had.
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 5b".
 
+> **⛔ ERRATUM 15 — SLICE 6, THE MAP (2026-09-29, a build-loop cycle; measured against both builds;
+> no code). Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **The reception differs between the builds on the AI's path, and the web wins (R6); the
+>    largest differences:** `checkHitObject` gains a self-hit guard (`§1t99s0§.as:3357`), a full-Focus evade on
+>    the web-only skills 1074–1076 (`:3383`), and skips parts 3 and 4 (`PART_weapon`,
+>    `PART_prop`, `:3445`); its roll dodge is 75 / 85 / 95 where Android's is 80–100; the juggle
+>    cap is per attacker stance (LIGHT 5, else 3) where Android's is stance −1 only; `gotHit`
+>    multiplies a head hit by 1.3 (Android 1.5) and adds the stance triangle's × 0.9. The full
+>    list, line by line: DIVERGENCES.
+> 2. **ERRATUM 12 item 5 was wrong about `§1t4438s0§`:** it is Android's `launchCount` (the same
+>    declaration slot, the same two resets) on web rules, not a web-only counter. Its reader
+>    `:4198` is in `gotNetworkDamage`: out of the lane.
+> 3. **The map found three `EnemyPlayer` overrides §3 did not name:** `getSkillLevel` (the dodges;
+>    `skillList == null` → 0), `createLoot` and `rewardXP` (`NPC.die` calls both). And
+>    `EnemyPlayer.gotDeathTouch` overrides `MCSPlayer`'s in both builds, so `MCSPlayer.gotDeathTouch`
+>    never runs on this body.
+> 4. **Ruled out of slice 6:** `doPose` (the human's taunt button only), `MCSPlayer.gotDeathTouch`
+>    (overridden), `redFreeze` / `cleanUpPlayer` (`StageManager.redFreeze`'s: slice 8). **Moved to
+>    slice 7:** `doSubstitutionLog` and `cancelLogSub`, with the skill that alone arms
+>    `logsubCounter` (`MCSPlayer.as:1844-1852`).
+> 5. **The duellist answers hits with the MOB's code today** (it inherits `Npc.checkHitObject` /
+>    `gotHit`; a throwaway probe: HP 1 → −18, no throw), and **the constructor carries none of the
+>    body's HP, chi or defences.** Each sub-slice shadows what it does not port with `unported`.
+> 6. **The cut** (measured): **6a — THE HIT AND THE FLINCH** 386 / 415 · **6b — THE LAUNCH AND
+>    THE GETUP** 263 / 277 · **6c — THE BLOW, THE DEATH AND THE REWARD** 389 / 429.
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 6 — THE MAP".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -402,7 +429,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **3b** | **BODY i — THE MOVEMENT** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3b") | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
 | **4** | **BODY ii — the stroke** · ✅ **LANDED 2026-09-29** in three commits (4a ERRATUM 9, 4b ERRATUM 10, 4c ERRATUM 11) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) ✅ **LANDED 2026-09-29** (ERRATUM 13) · **5b** the air and the downstab (179 / 182) ✅ **LANDED 2026-09-29** (ERRATUM 14) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
-| 6 | BODY iv — reception | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
+| 6 | BODY iv — reception · **MAPPED 2026-09-29** (ERRATUM 15): **6a** the hit and the flinch (386 / 415) · **6b** the launch and the getup (263 / 277) · **6c** the blow, the death and the reward (389 / 429) | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
 | 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
 | 8 | THE SEAM — into the duel behind `?npc=duellist` | findings 16 + 17, a stroke channel; `Sim.ts` + `duel-baseline` by the atomic protocol | **YES** |
 

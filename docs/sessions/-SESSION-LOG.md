@@ -4392,3 +4392,37 @@ After: 92 files / 2174 tests · typecheck 0 · lint 0 · claimcheck 2183 / 604 /
 
 After: 92 files / 2227 tests · typecheck 0 · lint 0 · claimcheck 2211 / 608 / 44 / 0 · chaos
 294 pinned (84/84 of 5a + 5b red, restored byte-identical).
+
+## 2026-09-29 — build loop: L5-OPP slice 6, THE RECEPTION MAP (no code)
+
+- **Baseline at HEAD `2be2ecb`, as RESUME_HERE stated:** 92 files / 2227 tests · typecheck 0 ·
+  lint 0 · claimcheck 2211 / 608 / 44 / 0 · chaos 294 pinned · instructionpaths resolves.
+- **Paired:** the kickoff's 17 functions, the helpers they call and 7 `EnemyPlayer` overrides with
+  their web twins, each confirmed by content; the three switches' groups pair 97 / 97, 34 / 34,
+  23 / 23. Android spans matched the kickoff's measured starting points exactly (827 lines).
+- **Constants:** 79 constant-bearing line pairs in the cut, 0 mismatches; probed red (5 / 5 on
+  wrong pairings, 24 / 27 on a one-group shift). My decoder's first version reported 3 false
+  mismatches (it resolved obfuscated names globally, and read only UPPERCASE Android names); fixed
+  before any number was used.
+- **The web wins on the AI's path in many lines, all ruled (R6):** a self-hit guard, a full-Focus
+  evade on the web-only skills 1074–1076, parts 3 / 4 (weapon, prop) never take a hit, roll
+  75 / 85 / 95, the juggle cap per attacker stance, head hit × 1.3 (Android 1.5), the stance
+  triangle's × 0.9, a web-only cancel-an-air-launch on the packet.
+- **Found:** `§1t4438s0§` is Android's `launchCount` on web rules (ERRATUM 12 item 5 was wrong);
+  three overrides §3 missed (`getSkillLevel`, `createLoot`, `rewardXP`); `EnemyPlayer.gotDeathTouch`
+  shadows `MCSPlayer`'s in both builds. **Measured with a throwaway probe (deleted):** the duellist
+  answers a hit with the MOB's `Npc.checkHitObject` / `gotHit` today (HP 1 → −18, no throw), and
+  its constructor carries none of the body's HP, chi or defences. Both go into 6a.
+- **Rulings:** `doPose` and `MCSPlayer.gotDeathTouch` out; `redFreeze` / `cleanUpPlayer` to slice
+  8; the log substitution to slice 7, whole (its counter has one writer, the skill).
+- **The cut, summed by script:** 6a 386 / 415 · 6b 263 / 277 · 6c 389 / 429; reconciled with the
+  kickoff's 827 line by line. ERRATUM 15 written; 6a's kickoff at the top of RESUME_HERE.
+- **Review (docs only):** my own hostile pass over the diff; it caught four wrong statements before
+  commit (the `checkDie` callers, NPCManager named "the stage manager", a human-branch range that
+  swallowed the AI's health-bar lines, "six places" over a list of seven) and one kickoff claim
+  (FLINCH_WEAPON is `doFlinch`'s pick, not a given).
+
+### THE GATES
+
+After: 92 files / 2227 tests · typecheck 0 · lint 0 · claimcheck 2211 / 608 / 44 / 0 · chaos
+294 pinned (no plant touched; no source changed).
