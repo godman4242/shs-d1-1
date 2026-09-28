@@ -5262,3 +5262,111 @@ and the data is not re-extracted. Both are recorded, not patched.
 
 **4. The survey and the kickoff** carried seven wrong claims against the source; each is
 corrected in place (the survey's "CORRECTIONS" block, the kickoff's ERRATUM and ruling R6).
+
+## L5-OPP SLICE 1a — THE PROFILE STRINGS: THE PARSE, AND THE FIRST R6 RULINGS (2026-09-28)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` §3 (slice 1, split here into 1a and 1b; see its
+ERRATUM 3). A build-loop cycle, one commit.
+
+**What landed:** `src/core/npc/duellistProfile.ts` parses a duellist's three strings the way the
+source does, with every number in `src/config/ogDuellistProfile.ts`. Ported, Android line ranges:
+`XMLNpc.parseBattleStatsString` (`XMLNpc.as:216-270`), `parsePlayerStatsString` (`:688-701`),
+`parseEquipmentString` (`:703-712`), `parseSkillStatsString` (`:714-727`), `getMastery`
+(`:671-686`), `Item.parseNoQty` (`Item.as:106-163`) with `isClanInvitation` and `setCreator`,
+and `IntStat.parse` (`IntStat.as:19-23`). **Not yet:** the DERIVED stats
+(`StatsManager.findBonusStatFrom`, `initDuelist`'s arithmetic, `EnemyPlayer.init`,
+`MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats`). That is slice 1b, for the
+reason in the last block below.
+
+### THE R6 DIFF — every ported function against its web twin, read line by line
+
+| function | Android vs web | shipped |
+|---|---|---|
+| `parseBattleStatsString` (web `§1t9220s0§`) | the same 14 cases into the same 14 slots, no default in either, **but the web writes a field only `if(_loc5_ <= 13)`** (`§1t76s0§.as:277`): an 18-field string's fields 14–17 are DROPPED. Android writes every field, so they overwrite `buff2Expiry` and the last wins | **web: dropped** (found by the review, below) |
+| `parsePlayerStatsString` (`§1t1256s0§`) | identical: 14 or 18 fields, else `i < length - 1` | Android = web |
+| `getMastery` | identical | Android = web |
+| `parseEquipmentString` (`§1t1257s0§`) | **web cuts the string at the first `^`** (`§1t1701s0§.§1t11255s0§ = "^"`) | **web: cut** |
+| `Item.parseNoQty` (`§1t17s0§.§1t8745s0§`) | **Android clamps every stat modifier** to `ItemGenerator.getModMax` (the `prog1..5[79]` caps: 90 attack/defense, 146 hp/chi, 37 elements, regen and crit, 53 speed, 16 piercing). **The web build does not clamp**, and its `addModifier` does not either. The web build also reads ids 206–208 as item fields | **web: no clamp.** 206–208 NOT ported: they land as ordinary modifiers, as on Android, and no stat id reaches 206 |
+| `parseSkillStatsString` + `IntStat.parse` (`§1t9221s0§`, `§1t57s0§.parse`) | **web cuts at `^` and adds 1000 to any id below 1000** (`parse(field, 1000)`, `§1t76s0§.as:301`). The web cut runs BEFORE its null check, so a null string throws there; Android returns `[]` | **web: cut and floor; Android's null-first order** |
+
+**Why web, each time (R6: the videos are the web build, and its numbers win):**
+- **The battle-string guard.** `buff2Expiry` feeds `initDuelist`'s halving test, so on an
+  18-field string the builds can take different branches. *Red-team:* the guard only matters
+  for 18-field strings, and nothing measured yet says who writes them. **Veto:** remove the
+  guard (its plant is the diff).
+- **No clamp.** A web profile with a modifier above the cap fights at the full value, so ours
+  does too. It also saves porting `ItemGenerator`'s five progression tables for a branch the web
+  never runs. *Red-team:* the clamp is Android's defence against a hand-edited string. The
+  profile source is our own table (slice 2), so there is no hostile string to defend against.
+  Where it breaks: if slice 2 imports a profile saved by the ANDROID build with an over-cap
+  value. **Veto:** re-add the clamp (the plant `re-plant the Android modifier cap` is the diff).
+- **The id floor.** All 75 skill-table ids sit at 1000 or above (1000..1501, `ogSkills.ts`; the
+  web payload has no skill table), so the floor maps a short legacy id onto the table and leaves
+  a real one unchanged. The premise is a test, so a table change turns it red. *Red-team:* on
+  Android a legacy `"5,3"` is skill 5, which exists nowhere, so the duellist silently lacks it;
+  with the floor it has skill 1005. That is the web's behaviour, and the videos are web.
+  **Veto:** drop the floor (one line; its plant is the diff).
+- **The `^` cut.** A no-op on a string without `^`; the web format on one with it. R1 wants a
+  real saved profile to drop in unchanged, and real profiles are web. **Veto:** drop the cut.
+- **Android's null order** in the skill parse: the web build's order throws on a null skill
+  string. Nothing in either build passes null on the duellist path (`initDuelist` hands over
+  the server's string), so this only chooses between `[]` and a crash on bad input.
+
+### CLAIMCHECK CAN CHECK A WEB CITE — MEASURED (the kickoff's "slice 1's first job")
+
+Every value in `ogDuellistProfile.ts` carries its Android cite AND its web cite as a full
+`reference/decompiled/shs3_payload/scripts/§…§.as:<line>` path, and claimcheck checks both at
+±0 with no change to the gate: its filename pattern already admits `§`, and a path-carrying
+cite is read verbatim. It went RED on a real miss on the first run: `§1t57s0§.as:23` holds
+`if(_loc4_ < param2)`, not the 1000 I cited it for. So R6's "extend claimcheck before the first
+web number lands" is not needed. The web cites make the R6 diff a GATE for these values: a web
+number that drifts from the Android one now fails the commit.
+
+### THE PORT'S QUIRKS — PINNED, NOT FIXED
+
+- An 18-field battle string keeps only its first 14 fields (the web guard; on Android the
+  last of fields 14–17 would win `buff2Expiry`).
+- A slot-by-slot stats string drops its LAST field, with or without a trailing `|`.
+- An item string with a third comma field reads NO modifiers.
+- A creator mod clears `named` only if the name mod came first and was `"0"`.
+- An empty skill string is ONE skill: id 0, floored to 1000, at level 0.
+- AS3 coerces every field with `int()` / `uint()`, ECMA-262 ToInt32 / ToUint32 of ToNumber:
+  `"abc"` → 0, `"12.9"` → 12, `"-3.9"` → -3, `"0x10"` → 16, a colour of `-1` → 4294967295.
+  **No Flash VM runs here**, so these are the spec's answers, not an executed AVM2's. One known
+  gap: ES2015 `0b`/`0o` literals parse in JS and are 0 in AS3; the game's strings never hold them.
+
+### ⚠️ FOR SLICE 1b: R6's "STRUCTURE IS NEVER MIXED, ONLY LITERALS" FAILS AT THE DERIVED STATS
+
+Measured this cycle, not ported:
+- **`findBonusStatFrom` differs in STRUCTURE.** Android (`StatsManager.as:2029-2070`) skips
+  head, neck and scabbard, and adds the item's defense, the item TABLE's modifiers
+  (`itemXML.modifierXML`) and the item's own modifiers. Web (`§1t1523s0§.as:2464-2506`) also
+  skips **hair** (`§1t9441s0§ = 2`), and **never adds the table's modifiers**, although the web
+  item record carries them (`§1t104s0§.as:52`). On any profile wearing one of the 93 items with
+  table modifiers, the two builds give different stats.
+- **`initDuelist` differs in structure too** (web `§1t1248s0§`, `§1t76s0§.as:340`): a `stance`
+  argument; attack ×1.5 or defense ×1.5 while a buff is live (buff type and expiry against the
+  server clock); the halving under a two-mode test instead of Android's one. The web paperdoll
+  also carries glove, hat and mask colours.
+
+These are branches that exist in one build only, which R6 says are "ruled per case", and each
+changes a number the fight uses. Slice 1b rules them before porting. A build-loop cycle does
+not guess them.
+
+### THE REVIEW — one fresh-context reviewer, one real bug, fixed
+
+The reviewer read the diff against both builds and found that **my "identical" for
+`parseBattleStatsString` was false**: the web build guards its write with `if(_loc5_ <= 13)`.
+Re-verified at `§1t76s0§.as:277` before acting. My diff had been a grep that extracted only the
+`case` lines, so it could not see a guard written after the switch. The first draft had pinned
+Android's behaviour (buff2Expiry = 44) and even planted the WEB behaviour as the bug. Fixed red
+first (`expected 44 to be 7`, 2 tests), with the web's 13 added to config under its web cite and
+plant #1 replaced by "drop the web guard". Everything else it checked held: every index and id
+in both builds, the caps, the null and uint cases, the mod-order dependence. It also flagged one
+thing nobody can settle here: whether AVM2 reads `"-0x10"` as -16 (JS and ES3's grammar say NaN).
+Now disclosed in the port's header.
+
+### THE GATES
+
+Baseline at `7949b91`, re-measured: 87 files / 1683 tests · typecheck 0 · lint 0 · claimcheck
+1716 cites / 421 values / 0 failures · chaos 53/53. After: see `RESUME_HERE.md`.

@@ -4034,3 +4034,28 @@ Survey: `docs/research/L5_DUEL_OPPONENT_SURVEY.md` (read-only, Opus 5.5 `high`, 
   (3) my doc counts came from a scratch probe with a different rng; re-quoted from the test.
   (4) the Android and web builds differ in combat NUMBERS, and the Sim uses the web ones → kickoff
   ruling R6. +2 tests (1683: one new hold test net of a deleted coin-flip pin, one per new plant), +1 plant (53).
+
+## 2026-09-28 — build-loop cycle: L5-OPP slice 1a, THE PROFILE STRINGS
+
+- **22:50** Cycle start (the first real one on the shared engine; Opus 5.5 `xhigh`). Baseline
+  re-measured at `7949b91`, unchanged: 87 files / 1683 tests, typecheck 0, lint 0, claimcheck
+  1716 cites / 421 values / 0 failures, chaos 53/53.
+- **Scope cut, on measurement:** the R6 diff showed the builds differ in STRUCTURE at the
+  derived stats (`findBonusStatFrom` skips hair and ignores table modifiers on web;
+  `initDuelist` has web-only buff branches), not just literals. Slice 1 split: 1a = the parse
+  (this cycle); 1b = the derived stats, rulings first. Kickoff ERRATUM 3.
+- **Measured: claimcheck checks a web cite at ±0 unchanged.** Full-path `§…§.as` cites on every
+  new value; the first run went red on a real miss of mine (`§1t57s0§.as:23` holds no 1000).
+- **Red first:** 25/25 new tests failed against a stub on their assertions; then the port, green.
+  Three web-only behaviours shipped by R6 (no modifier clamp, the skill-id floor, the `^` cut),
+  each with a red-team and a veto in DIVERGENCES "L5-OPP SLICE 1a". A test pins the floor's
+  premise (all 75 skill ids ≥ 1000; measured range 1000..1501, which corrected my own comment's
+  "1000..1054").
+- **Chaos:** 8 plants, 53 → 61 pinned in both files. Writing them found one missing test (an
+  18-field string through `parsePlayerStats`); proved by removing that test and watching the
+  plant stay green. Full run: 61/61 red, 61/61 restored byte-identical.
+- **Review (1 fresh-context reviewer, normal risk): 1 real bug.** My R6 diff called the battle
+  parse identical; the web build writes only `if(_loc5_ <= 13)` (`§1t76s0§.as:277`), dropping
+  fields 14–17. My diff grep had extracted only the `case` lines. Re-verified at the source,
+  fixed red first (`expected 44 to be 7`); plant #1 had planted the web behaviour as the bug and
+  was replaced. Web cites now on 3 web-only values.

@@ -84,6 +84,23 @@
 >    combination neither build had. Mitigation: structure is never mixed, only literals, each
 >    one recorded. **Veto:** Android numbers throughout, every web difference a DIVERGENCES row.
 
+> **⛔ ERRATUM 3 — SLICE 1a (2026-09-28, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **R6's "structure is never mixed, only literals" fails at slice 1.** The parse functions
+>    agree or differ by a web-only branch, but the DERIVED stats differ in STRUCTURE:
+>    web `findBonusStatFrom` also skips the hair slot and never adds the item table's
+>    modifiers; web `initDuelist` adds a `stance` argument, ×1.5 buff branches and a two-mode
+>    halving test. Each changes a number the fight uses, so slice 1 is split: **1a (the parse)
+>    landed; 1b (the derived stats) rules those branches first.** Evidence:
+>    `docs/DIVERGENCES.md`, "L5-OPP SLICE 1a".
+> 2. **"Extend claimcheck before the first web number lands" is not needed.** Measured: a
+>    full-path web cite (`reference/decompiled/shs3_payload/scripts/§…§.as:<line>`) is checked
+>    at ±0 as it stands, and went red on a real miss the first time it ran.
+> 3. **§3's slice-1 source list was short:** the parse also reaches `Item.parseNoQty`
+>    (`Item.as:106-163`, with `isClanInvitation` and `setCreator`) and `IntStat.parse`, and the
+>    Android parse reaches `ItemGenerator.getModMax` (its modifier cap), which the web build
+>    does not have.
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -155,7 +172,8 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | # | slice | source in scope (lines) | touches Sim? |
 |---|---|---|---|
 | **0** | **THE ANIMLIST** — `OG_ANIM_CLIPS` from 1 file to the 18 the source loads · ✅ **LANDED 2026-09-23** (DIVERGENCES "L5-OPP SLICE 0") | `MCSCharacter.initAnimationData` (42) + 18 data files | no |
-| 1 | THE DUELLIST PROFILE — parse + derived stats as a pure record | `XMLNpc` parsers + `initDuelist`; `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86); `StatsManager.findBonusStatFrom` | no |
+| **1a** | **THE PROFILE STRINGS** — the parse · ✅ **LANDED 2026-09-28** (DIVERGENCES "L5-OPP SLICE 1a") | `XMLNpc` parsers + `getMastery`, `Item.parseNoQty`, `IntStat.parse` | no |
+| 1b | THE DERIVED STATS — as a pure record (see "Slice 1b in detail") | `initDuelist`'s arithmetic (`XMLNpc.as:290-401`); `StatsManager.findBonusStatFrom` (41); `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86) | no |
 | 2 | THE PROFILE SOURCE (R1) | measured at the slice | no |
 | 3 | BODY i — stance + movement | `setStance` 103, `nextStance` 44, `canChangeStance`, `initMove` 29, `walkTo`, `stopMoving` 25, `movePlayer` 44, `movement` 21, `moveTo`, `faceScreenCenter`, the reload/damage getters (≈400) | no |
 | 4 | BODY ii — the stroke | `gotInput` 70, `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
@@ -217,6 +235,46 @@ CONFIRMED for 4 classes and understated for 6.
    `update()` exits for each class, not from whatever the fixed code happens to do.
 5. The comments that repeat "158": `duelSeam.ts` (`OgAnimLibrary`), the generated header,
    `tests/ogAnimClips.test.ts`. DIVERGENCES finding 19 closed with the measurement.
+
+### Slice 1b in detail — THE DERIVED STATS (measured 2026-09-28, not yet ported)
+
+**Already landed (1a):** `core/npc/duellistProfile.ts` turns the three strings into a stats
+vector, an equipment vector and a skill list; `config/ogDuellistProfile.ts` holds the stat and
+modifier ids with Android AND web cites, both checked by claimcheck at ±0.
+
+**The work, in order:**
+1. **Rule the structural branches first**, each as one DIVERGENCES row with both cites, a
+   red-team and a veto, before any code:
+   - `findBonusStatFrom`: Android `StatsManager.as:2029-2070` vs web
+     `§1t1523s0§.as:2464-2506`. The web also skips hair (slot 2) and never adds
+     `itemXML.modifierXML`. **Default: web**, because the result is a number the fight uses.
+     Measure first how many of the 93 items that carry table modifiers can sit in a slot the
+     sum reads (the `type` field in `ogItems.ts`): if none can, the difference is moot, and
+     the ruling should say so.
+   - `initDuelist`'s buff branches (web `§1t76s0§.as:340` on): attack or defense ×1.5 while
+     `buffExpiry` is past the server clock. **Default: port them with the clock injected** as
+     an argument (core has no `Date.now()`), and a fixture with no live buff.
+   - The halving test: Android `GameEngine.isPvPRoomMode()`, web two modes OR'd. Measure
+     whether Duel Mode is either mode before porting; if not, record it as not reached.
+2. **Port `initDuelist`'s arithmetic** into a pure record: hp, chi, attack, defense, speed
+   with their equipment bonuses; the elemental attacks; **the elemental DEFENCES, each read
+   from ANOTHER element's attack in both builds** (`FIREDEF = stats[WATERATK]`,
+   `WINDDEF = stats[EARTHATK]`, `WATERDEF = stats[WINDATK]`, `EARTHDEF = stats[FIREATK]`,
+   `XMLNpc.as:334-337`). The roster constructor pairs them the same way (`:197`, `:207`), so
+   it reads as the elemental-counter design, not a typo: pin it, never "fix" it. Crit and
+   piercing come from equipment only; the weapon's `minDamage`, `damageRange` and
+   `slashUsage` with its floor of 48 (`:341-364`), resolved through
+   `ogItems.ts`; the defaults (`DEFAULT_EQSTRING`, the all-zero stats string, item 13001 for
+   an empty weapon slot).
+3. **Port `EnemyPlayer.init` and `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats`**
+   on top of the record, each diffed against its web twin (`§1t122s0§.as`, `§1t99s0§.as`),
+   literals cited in both builds like 1a.
+4. **Gate:** OPP-B holds when every fixture profile's derived record matches the source at ±0.
+   Write at least three fixtures: the defaults, a mid-level profile wearing items with
+   modifiers, and one that exercises every web-only branch you ported.
+
+**Out of 1b:** the `bot_` name generator (a display name, no stat), the paperdoll's colour tags
+(render-side), and the network fields (`nid`, `controlledBy`).
 
 ## §4 THE SLICE GATE — every slice, binary, output PASTED
 

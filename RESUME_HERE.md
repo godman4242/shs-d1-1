@@ -1,83 +1,90 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 1, THE DUELLIST PROFILE
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 1b, THE DERIVED STATS
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: slice 1 is precision parsing against the source, not a long port | set with `/model` |
+| model / effort | **Opus 5.5 at `high`**: three rulings plus precision porting against two builds | set with `/model` |
 | `/fast` | ON if you'll watch it, OFF if you walk away (2× token price) | your call |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
 | MCP / skills | nothing extra; `measure-verify` exists if you want a read-only refute pass | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. Slices 3–6 (the body, ~3,900 AS3 lines by the
-kickoff's §3 table: ≈400 + ≈700 + 1,962 + ≈820) are the Fable-sized ones; slices 1–2 fit
-comfortably before then.
+⚠️ Your Claude subscription ends **2026-10-09**. Slices 3–6 (the body, ~3,900 AS3 lines) are
+the Fable-sized ones; slices 1b–2 fit comfortably before then.
 
 Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md, and run slice 1 (THE DUELLIST PROFILE) end to end under its §4 gate.
-Before any code: confirm the baseline at HEAD (87 files / 1683 tests, typecheck 0, lint 0, claimcheck 0 failures, chaos 53/53), read the kickoff's ERRATUM 2 and ruling R6 first (the web build's numbers win), and list every AS3 function in the slice with its measured line range.
-Done = the profile parse plus EnemyPlayer.init's derived stats reproduce the source for every fixture profile at ±0 (bar OPP-B): red-first, plants declared, claimcheck cites on every new config value, RESUME_HERE rewritten in the same commit.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 3 first, then "Slice 1b in detail"), and run slice 1b (THE DERIVED STATS) end to end under its §4 gate.
+Before any code: confirm the baseline at HEAD (88 files / 1718 tests, typecheck 0, lint 0, claimcheck 1774 cites / 0 failures, chaos 61/61), then measure and write the three structural rulings (findBonusStatFrom, the buff branches, the halving test) as DIVERGENCES rows citing BOTH builds.
+Done = initDuelist's derived record plus EnemyPlayer.init's and MCSPlayer's init* stats reproduce the source at ±0 for at least 3 fixture profiles (bar OPP-B): red-first, plants declared, every new config value cited in both builds, RESUME_HERE rewritten in the same commit.
 '''
 ```
 
 **VERIFY (plain English):** before it writes any code, the session prints the baseline numbers
-above and a list of the functions it will port, with line numbers.
+above and the three rulings, each with the measurement it rests on.
+
+**Bar self-report:** reached for 1b's work order, rulings list and gate: every line and cite in
+"Slice 1b in detail" was re-read against both builds this cycle, and two of my own errors were
+caught doing it (a wrong line range, and "wrong stats" for a pairing the roster constructor
+shares). NOT reached for the fixtures' expected values, honestly: they come from reading the
+ported functions, which is 1b's own work.
 
 ---
 
-## ✅ LAST SESSION (2026-09-23) — THE REAL DUEL OPPONENT: survey, kickoff and slice 0 (the animList)
+## ✅ LAST CYCLE (2026-09-28, build loop) — L5-OPP slice 1a, THE PROFILE STRINGS
 
-| phase | verdict | measured |
+| | verdict | measured |
 |---|---|---|
-| **1 survey** | ✅ `docs/research/L5_DUEL_OPPONENT_SURVEY.md` | **Duel Mode uses `EnemyPlayer` on every path**: `DuelModeUI.proceedWithAI` → `initDuelist` sets `ai = 0` (`XMLNpc.as:315`) → `new EnemyPlayer(mcs, true, false)`. Its opponent is a server-fetched player profile, **never a roster row**. `MCSPlayer` is the player's own class (90 functions); the AI drives it with the mouse's stroke calls. |
-| **2 kickoff** | ✅ `docs/sessions/L5_OPPONENT_KICKOFF.md` | 9 slices; R2 = port `MCSPlayer` as ONE faithful body (opponent first); R5 = clips from the Android files; **R6 (added by the review) = Android code for structure, the WEB build's numbers win**. Bar reached for slice 0, honestly not for 2–8 (§8). Carries two errata. |
-| **3 slice 0** | ✅ **finding 19 CLOSED**, a transcription gap, not missing art | the source loads **18** animation files into one `animList` (`MCSCharacter.as:178-219`); the transcriber read 1. **158 → 466 clips**, the old 158 byte-unchanged; 428 of 429 names resolve (only `flurry_parte` is truly absent). **All 10 attackers finding 19 named froze after one swing** → each now cycles (4–45 attacks in 30 s, seed 7). **Plus the holds:** each duration now includes the hold `AnimData` adds by name (58 clips); the katana's attack is 18 frames = **750 ms, not 417**. |
-| **4 gauntlet review** | ✅ 4 of 4 reviewers returned; every finding re-verified at the source | the holds (found by both code reviewers); "seven" was really **ten** (my test built the spear, goblin and ogre as non-fighting variants); my doc counts came from a scratch probe, not the test; and 7 kickoff/survey claims were wrong, the big one being that **the Android and web builds differ in combat numbers** (ruling R6). All fixed or recorded: `docs/DIVERGENCES.md`, "THE GAUNTLET REVIEW". |
-
-Three premises in the last RESUME_HERE were wrong, and the source corrected each: the "88 of
-495 roster rows" reason (Duel Mode never draws a roster row); "finding 19 does not block the
-duel opponent" (127 of `MCSPlayer`'s 166 clips were missing); and "the L5 bar in SESSION24 §2"
-(that is the player's combat feel). My own work carried errors too, caught by measuring and by
-the review: the kickoff's "4 frozen, 6 never attack" (a probe that spawned animals mid-air), my
-"seven, not ten" (the wrong variants), and the missing holds (a gap since the seam spike).
+| **the parse** | ✅ `src/core/npc/duellistProfile.ts` | the source's own parsers for the `stats`, `eq` and `skills` strings, plus `Item.parseNoQty`, `IntStat.parse` and `getMastery`. **27 tests, red first** (25/25 failed on a stub). Six source quirks pinned, e.g. a slot-by-slot stats string always drops its LAST field. |
+| **the R6 diff** | ✅ every ported function read against its web twin | 2 functions identical; **4 web-only behaviours shipped** (the battle-string guard, no modifier clamp, the skill-id floor of 1000, the `^` cut), each with a red-team and a veto in `docs/DIVERGENCES.md` "L5-OPP SLICE 1a". |
+| **review** | ✅ 1 fresh-context reviewer, **1 real bug, fixed** | I had called the battle parse "identical"; the web build drops fields 14–17 (`if(_loc5_ <= 13)`). Re-verified at the source, fixed red first (`expected 44 to be 7`). My grep had read only the `case` lines. |
+| **claimcheck + web cites** | ✅ **works unchanged** | every new value carries its Android AND web cite, both checked at ±0; a wrong web cite of mine went red on the first run. The kickoff's "extend claimcheck first" was not needed. |
+| **chaos** | ✅ 8 plants, 53 → 61 | 61/61 red, restored byte-identical. One plant exposed a missing test (proved by removing the test: the plant stayed green). |
+| **scope cut** | ⚠️ slice 1 split into 1a / 1b | the builds differ in STRUCTURE at the derived stats (`findBonusStatFrom`, `initDuelist`'s buffs), not just in numbers. Those need rulings, so they are 1b. Kickoff ERRATUM 3. |
 
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 87 passed (87) · Tests 1683 passed (1683)   (1673 + 10)
+$ npx vitest run            ->  Test Files 88 passed (88) · Tests 1718 passed (1718)   (1683 + 27 profile + 8 plant pins)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
-$ npm run claimcheck        ->  1716 cites · 421 values at ±0 · 44 context · 0 failures
+$ npm run claimcheck        ->  1774 cites · 445 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  38 path tokens, all resolve
-$ npm run chaos             ->  53/53 plants RED · 53/53 restored byte-identical · exit 0 · ~40 s   (slice gate, NOT pre-commit)
+$ npm run chaos             ->  61/61 plants RED · 61/61 restored byte-identical · exit 0   (slice gate, NOT pre-commit)
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
 
 ### WHAT CHANGED
 
-- `scripts/anim/transcribeAnimClips.py` reads the load order from `MCSCharacter.as` and all 18
-  Android files, last-write-wins, then adds `AnimData`'s holds; fails loudly on a missing,
-  unlisted or disagreeing file, or an unresolvable hold.
-- `src/config/ogAnimClips.ts` regenerated: +308 clips; 58 carry their hold.
-- `tests/ogAnimClips.test.ts` rewritten (byte-check over the 18 files, order read from the
-  source); `tests/animList.test.ts` **new** (red on the old table, green now);
-  `tests/duelSeam.test.ts`'s missing-clip pin moved to `flurry_parte`.
-- `tests/animList.plants.ts`: **4 new chaos plants**, 49 → 53 in both pins.
-- `src/core/npc/duelSeam.ts`: one comment. `Sim.ts`, `OpponentController.ts` and
-  `NpcController.ts` untouched. **`?npc=katana` changed in one way:** it swings 20 times per
-  fight, not 35, each swing 750 ms (the hold); it still kills a still player in 16.55 s.
+- `src/config/ogDuellistProfile.ts` **new**: the stat slots, battle-string order and lengths,
+  equipment slots, item-mod ids, clan-invitation ids, and the two web-only values.
+- `src/core/npc/duellistProfile.ts` **new**: the parse. `Sim.ts`, the seam and every existing
+  `src/core` file untouched; nothing calls it yet.
+- `tests/duellistProfile.test.ts` + `tests/duellistProfile.plants.ts` **new**;
+  `scripts/gates/chaos.ts` and `tests/chaosGate.test.ts`: the plant pin, 53 → 61.
+- `docs/sessions/L5_OPPONENT_KICKOFF.md`: ERRATUM 3, slice 1 split, "Slice 1b in detail".
 
 ### ⚠️ STILL OPEN
 
-- **Your LOOK at `?npc=katana`** from the previous session (below) is still unanswered.
-- L4b's 13 remaining mobs are now UNBLOCKED (0 missing clips each) but not ported: the plan
-  is L5-OPP first, by decision.
+- **Your LOOK at `?npc=katana`** (the windup aura, below) is still unanswered.
+- L4b's 13 remaining mobs are unblocked but not ported: L5-OPP first, by decision.
+
+---
+
+## PREVIOUS SESSION (2026-09-23) — L5-OPP survey, kickoff and slice 0 (the animList)
+
+Duel Mode's opponent is `EnemyPlayer` on every path (never a roster row); the kickoff is
+`docs/sessions/L5_OPPONENT_KICKOFF.md` (9 slices, rulings R1–R6). Slice 0 closed finding 19:
+the source loads 18 animation files into one `animList` and the transcriber read 1
+(158 → 466 clips, the `AnimData` holds included; the katana's attack is 750 ms, not 417). A
+4-reviewer gauntlet found the holds, the "ten, not seven" frozen classes, and the web/Android
+number split that became R6. Full record: `docs/DIVERGENCES.md`, "L5-OPP SLICE 0 — THE
+ANIMLIST" and "THE GAUNTLET REVIEW".
 
 ---
 
