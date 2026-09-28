@@ -4059,3 +4059,40 @@ Survey: `docs/research/L5_DUEL_OPPONENT_SURVEY.md` (read-only, Opus 5.5 `high`, 
   fields 14–17. My diff grep had extracted only the `case` lines. Re-verified at the source,
   fixed red first (`expected 44 to be 7`); plant #1 had planted the web behaviour as the bug and
   was replaced. Web cites now on 3 web-only values.
+
+## 2026-09-28 — build-loop cycle: L5-OPP slice 1b-i, THE DERIVED STATS
+
+- **23:37** Cycle start (Opus 5.5 `high`). Baseline re-measured at `09c2b2f`, unchanged: 88 files
+  / 1718 tests, typecheck 0, lint 0, claimcheck 1774 cites / 445 values / 0 failures.
+- **Scope, decided up front:** kickoff steps 1–2 (the three rulings, `findBonusStatFrom`,
+  `initDuelist`'s record) this cycle; step 3 (`EnemyPlayer.init` + `MCSPlayer.init*`, ~217 lines
+  to diff in two builds) is 1b-ii. Kickoff ERRATUM 4.
+- **The kickoff's premise for ruling 1 FALSIFIED:** the web `findBonusStatFrom` does count the
+  item table's modifiers, via `Item.getModifiers` (`§1t17s0§.as:1643-1731`). The web-only rule is
+  inside that getter (own attack on armour/hats and own defense on rings → max-HP, capped at 173
+  on merge; a non-positive pool dropped). Measured reach: 3 items carry derived-stat table
+  modifiers; 0 of 73 hair items carry a defense or a table modifier.
+- **Halving not ported:** the Sim has no PvP room and no war room. (My first reason, "Duel Mode
+  is action 6", was falsified by the review, below.)
+- **Refused, not guessed:** `§1t17s0§.as:1717` adds an XMLList to an int with no `int()`
+  (AVM2 concatenates). No AS3 runtime here, so the port throws `UNMEASURED` on that path.
+- **Red first:** 21 of 25 new tests failed on a stub's values; then the port, 25/25 green.
+- **Claimcheck caught 3 cites of mine:** a bare `§…§.as` name resolves in the ANDROID tree; each
+  now carries its full `reference/decompiled/shs3_payload/…` path. 1823 cites / 466 values / 0.
+- **Chaos:** 10 plants, 61 → 71 in both pins. One stayed green on first run: my LAST-vs-FIRST HP
+  test used two equal modifiers (170, 170), so both answers were 343. Re-authored the test
+  (100, 170 → 273 vs 280), not the plant. Full run in a scratch clone (the gate refuses a dirty
+  tree): 71/71 red, 71/71 restored byte-identical.
+- **Review (1 fresh-context reviewer, normal risk): 0 arithmetic bugs, 1 wrong reason.** It
+  re-derived fixture 2 by hand (537 / 42 / 71 / 27) and every getter branch. It falsified my
+  halving REASON: `initDuelist` runs before action 6 is set; a war room does not leak (`stopBattleMode`
+  resets `action`, `GameEngine.as:1263`), but a PvP room does (action 12 from `StageManager.as:403`
+  until you leave the map). Re-verified both cites at the source; the ruling (not ported: the Sim
+  has neither room) stands, and the reason was rewritten in code, test, plant, DIVERGENCES,
+  RESUME_HERE and the kickoff. Also fixed: the `UNMEASURED` message (2201 throws on its table alone,
+  id 9 twice) and a test title that said otherwise; noted web-only item ids 206–208.
+
+### THE GATES
+
+Baseline at `09c2b2f`, re-measured: 88 files / 1718 tests · typecheck 0 · lint 0 · claimcheck
+1774 cites / 445 values / 0 failures · chaos 61/61. After: see `RESUME_HERE.md`.

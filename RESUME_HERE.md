@@ -1,78 +1,101 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 1b, THE DERIVED STATS
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 1b-ii, THE BODY'S STATS
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: three rulings plus precision porting against two builds | set with `/model` |
+| model / effort | **Opus 5.5 at `high`**: precision porting of four functions against two builds | set with `/model` |
 | `/fast` | ON if you'll watch it, OFF if you walk away (2× token price) | your call |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
-| MCP / skills | nothing extra; `measure-verify` exists if you want a read-only refute pass | already on |
+| MCP / skills | nothing extra | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. Slices 3–6 (the body, ~3,900 AS3 lines) are
-the Fable-sized ones; slices 1b–2 fit comfortably before then.
+⚠️ Your Claude subscription ends **2026-10-09**. 1b-ii and slice 2 fit before then; slices 3–6
+(the body, ~3,900 AS3 lines) are the Fable-sized ones.
 
 Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 3 first, then "Slice 1b in detail"), and run slice 1b (THE DERIVED STATS) end to end under its §4 gate.
-Before any code: confirm the baseline at HEAD (88 files / 1718 tests, typecheck 0, lint 0, claimcheck 1774 cites / 0 failures, chaos 61/61), then measure and write the three structural rulings (findBonusStatFrom, the buff branches, the halving test) as DIVERGENCES rows citing BOTH builds.
-Done = initDuelist's derived record plus EnemyPlayer.init's and MCSPlayer's init* stats reproduce the source at ±0 for at least 3 fixture profiles (bar OPP-B): red-first, plants declared, every new config value cited in both builds, RESUME_HERE rewritten in the same commit.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 4 first, then "Slice 1b in detail" step 3), and run slice 1b-ii end to end under its §4 gate.
+Before any code: confirm the baseline at HEAD (89 files / 1753 tests, typecheck 0, lint 0, claimcheck 1823 cites / 466 values / 0 failures, chaos 71/71). Then diff EnemyPlayer.init (Android EnemyPlayer.as:740-870; web §1t122s0§.as:751-756, which delegates to §1t4880s0§ at :758-896) and MCSPlayer.initPlayer / initAttackStats / initElementDefenseStats (Android MCSPlayer.as:182, :249, :260; web §1t99s0§.as:183, :271, :282), and write every structural difference as a DIVERGENCES row citing both builds before porting it.
+Done = OPP-B: the body's stats built from deriveDuellist (src/core/npc/duellistStats.ts) reproduce the source at ±0 for at least 3 fixture profiles: red first, plants declared and pinned, every new config value cited in both builds, RESUME_HERE rewritten in the same commit.
 '''
 ```
 
 **VERIFY (plain English):** before it writes any code, the session prints the baseline numbers
-above and the three rulings, each with the measurement it rests on.
+above and a table of every difference between the two builds' versions of those four functions.
 
-**Bar self-report:** reached for 1b's work order, rulings list and gate: every line and cite in
-"Slice 1b in detail" was re-read against both builds this cycle, and two of my own errors were
-caught doing it (a wrong line range, and "wrong stats" for a pairing the roster constructor
-shares). NOT reached for the fixtures' expected values, honestly: they come from reading the
-ported functions, which is 1b's own work.
+**Three measured starting points (2026-09-28), so the session does not rediscover them:**
+1. **Both builds drop critical and piercing on the way into the body.** `initAttackStats` takes
+   them as optional arguments, and `EnemyPlayer.init` passes only five (Android
+   `EnemyPlayer.as:762`, web `§1t122s0§.as:779`). So the equipment crit/piercing that
+   `deriveDuellist` computes never reaches `MCSPlayer` there. Measure whether anything else reads
+   `xml.STAT_CRITICALDMG` before calling that a quirk.
+2. **The web `stance` argument is consumed here:** `if(param1.stance != -1)` calls `§1t3489s0§`
+   (`§1t122s0§.as:858-860`). Identify that function before porting the branch; `setStance` is slice 3.
+3. **The masteries are skills 1000 / 1001 / 1002** (`EnemyPlayer.as:758-760`, via 1a's
+   `getMastery`), and init also tests skills 1500 / 1501 (`:836`, `:840`).
+
+**Bar self-report:** reached for the scope, the source line ranges (each opened this cycle in
+both builds) and the three starting points. NOT reached for the fixtures' expected values: they
+come from reading the four functions, which is 1b-ii's own work.
 
 ---
 
-## ✅ LAST CYCLE (2026-09-28, build loop) — L5-OPP slice 1a, THE PROFILE STRINGS
+## ✅ LAST CYCLE (2026-09-28, build loop) — L5-OPP slice 1b-i, THE DERIVED STATS
 
 | | verdict | measured |
 |---|---|---|
-| **the parse** | ✅ `src/core/npc/duellistProfile.ts` | the source's own parsers for the `stats`, `eq` and `skills` strings, plus `Item.parseNoQty`, `IntStat.parse` and `getMastery`. **27 tests, red first** (25/25 failed on a stub). Six source quirks pinned, e.g. a slot-by-slot stats string always drops its LAST field. |
-| **the R6 diff** | ✅ every ported function read against its web twin | 2 functions identical; **4 web-only behaviours shipped** (the battle-string guard, no modifier clamp, the skill-id floor of 1000, the `^` cut), each with a red-team and a veto in `docs/DIVERGENCES.md` "L5-OPP SLICE 1a". |
-| **review** | ✅ 1 fresh-context reviewer, **1 real bug, fixed** | I had called the battle parse "identical"; the web build drops fields 14–17 (`if(_loc5_ <= 13)`). Re-verified at the source, fixed red first (`expected 44 to be 7`). My grep had read only the `case` lines. |
-| **claimcheck + web cites** | ✅ **works unchanged** | every new value carries its Android AND web cite, both checked at ±0; a wrong web cite of mine went red on the first run. The kickoff's "extend claimcheck first" was not needed. |
-| **chaos** | ✅ 8 plants, 53 → 61 | 61/61 red, restored byte-identical. One plant exposed a missing test (proved by removing the test: the plant stayed green). |
-| **scope cut** | ⚠️ slice 1 split into 1a / 1b | the builds differ in STRUCTURE at the derived stats (`findBonusStatFrom`, `initDuelist`'s buffs), not just in numbers. Those need rulings, so they are 1b. Kickoff ERRATUM 3. |
+| **the port** | ✅ `src/core/npc/duellistStats.ts` | `deriveDuellist` = `initDuelist`'s fight numbers (hp, chi, attack, defense, speed, 4 elemental attacks + 4 defences, crit, piercing, weapon damage and slash cost); `findBonusStat` = `findBonusStatFrom`. **25 tests, red first** (21 of 25 failed on a stub; the other 4 assert "stays 0", which the plants prove). |
+| **ruling 1: the sum** | ✅ **web**, and **the kickoff's premise was wrong** | The web sum DOES count the item table's modifiers, through `Item.getModifiers` (`§1t17s0§.as:1643-1731`). The real web-only rule: an own attack on armour or a hat, or an own defense on a ring, becomes max-HP (capped at 173 on merge). Also skips hair (0 of 73 hair items carry a defense or a table modifier). |
+| **ruling 2: buffs** | ✅ **web, clock injected** | attack ×1.5, else defense ×1.5, while `buffExpiry > serverTime`; truncated toward zero. |
+| **ruling 3: halving** | ✅ **not ported** | it reads a PvP-room / war-room `action`, and the Sim has neither. My first reason ("Duel Mode is action 6") was wrong: `initDuelist` runs before action 6 is set, and the original halves a duel started from inside a PvP room (found by the review). |
+| **one path refused** | ⚠️ **throws `UNMEASURED`** | A table modifier merging into an own one of the same id: the web adds an XMLList to an int with no `int()` (`§1t17s0§.as:1717`), which AVM2 concatenates ("5"+"20" → 520?). No AS3 runtime here to measure it. |
+| **chaos** | ✅ 10 plants, 61 → 71 | 71/71 red, restored byte-identical (run in a scratch clone: the gate refuses a dirty tree). One plant found a missing test (the pool's LAST-vs-FIRST target), fixed. |
+| **review** | ✅ 1 fresh-context reviewer: **0 arithmetic bugs**, **1 wrong reason fixed** | It re-derived fixture 2 by hand (537 / 42 / 71 / 27, all match). It falsified my halving REASON (the ruling stands), found that 2201 throws on its table alone (message and test title corrected), and noted web-only ids 206–208 (no output affected). It rated the concatenation claim ~85% (AVM2 `add`, `valueOf` → `toString`). |
 
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 88 passed (88) · Tests 1718 passed (1718)   (1683 + 27 profile + 8 plant pins)
+$ npx vitest run            ->  Test Files 89 passed (89) · Tests 1753 passed (1753)   (1718 + 25 stats + 10 plant pins)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
-$ npm run claimcheck        ->  1774 cites · 445 values at ±0 · 44 context · 0 failures
+$ npm run claimcheck        ->  1823 cites · 466 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  38 path tokens, all resolve
-$ npm run chaos             ->  61/61 plants RED · 61/61 restored byte-identical · exit 0   (slice gate, NOT pre-commit)
+$ npm run chaos             ->  71/71 plants RED · 71/71 restored byte-identical · exit 0   (slice gate, NOT pre-commit)
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
 
 ### WHAT CHANGED
 
-- `src/config/ogDuellistProfile.ts` **new**: the stat slots, battle-string order and lengths,
-  equipment slots, item-mod ids, clan-invitation ids, and the two web-only values.
-- `src/core/npc/duellistProfile.ts` **new**: the parse. `Sim.ts`, the seam and every existing
-  `src/core` file untouched; nothing calls it yet.
-- `tests/duellistProfile.test.ts` + `tests/duellistProfile.plants.ts` **new**;
-  `scripts/gates/chaos.ts` and `tests/chaosGate.test.ts`: the plant pin, 53 → 61.
-- `docs/sessions/L5_OPPONENT_KICKOFF.md`: ERRATUM 3, slice 1 split, "Slice 1b in detail".
+- `src/core/npc/duellistStats.ts` **new**; nothing calls it yet. `Sim.ts` and every existing
+  `src/core` file untouched.
+- `src/config/ogDuellistProfile.ts`: the six defence/crit/piercing stat ids, the equipment
+  slots, the buff ids and multiplier, the three 48s (unarmed, floor, item default), the web
+  getter's HP-pool rule, the default strings.
+- `tests/duellistStats.test.ts` + `tests/duellistStats.plants.ts` **new**;
+  `scripts/gates/chaos.ts` and `tests/chaosGate.test.ts`: the plant pin, 61 → 71.
+- `docs/DIVERGENCES.md` "L5-OPP SLICE 1b-i" (plus a correction pointer in 1a's block);
+  `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 4 (the premise, the split into 1b-i / 1b-ii).
 
 ### ⚠️ STILL OPEN
 
 - **Your LOOK at `?npc=katana`** (the windup aura, below) is still unanswered.
+- **The `UNMEASURED` merge.** Closing it needs a 5-line SWF run in Ruffle, or a forum report of
+  an item's HP jumping to hundreds. Until then a profile that hits it throws, loudly.
 - L4b's 13 remaining mobs are unblocked but not ported: L5-OPP first, by decision.
+
+---
+
+## PREVIOUS CYCLE (2026-09-28) — L5-OPP slice 1a, THE PROFILE STRINGS
+
+`src/core/npc/duellistProfile.ts` parses a duellist's `stats` / `eq` / `skills` strings as
+`XMLNpc` and `Item.parseNoQty` do; four web-only behaviours shipped under R6 (the battle-string
+guard, no modifier clamp, the skill-id floor, the `^` cut). Claimcheck checks a full-path web
+cite at ±0 unchanged. Full record: `docs/DIVERGENCES.md`, "L5-OPP SLICE 1a".
 
 ---
 

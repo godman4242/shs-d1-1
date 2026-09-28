@@ -101,6 +101,24 @@
 >    Android parse reaches `ItemGenerator.getModMax` (its modifier cap), which the web build
 >    does not have.
 
+> **⛔ ERRATUM 4 — SLICE 1b-i (2026-09-28, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **ERRATUM 3's "web `findBonusStatFrom` never adds the table's modifiers" is wrong.** It
+>    reads them through the web `Item.getModifiers` (`§1t17s0§.as:1643-1731`), which appends
+>    the row's `modifierXML`. The web-only rule is inside that getter: an own attack on armour or
+>    a hat, or an own defense on a ring, becomes max-HP (merged into the last own HP modifier and
+>    capped at 173, or pushed uncapped; a pool at or below zero is dropped). Ruled web.
+> 2. **The halving test is not ported:** the Sim has no PvP room and no war room. (In the original,
+>    `initDuelist` runs before action 6 is set, so a Duel Mode fight started from inside a PvP room
+>    is halved.)
+> 3. **One path is refused, not guessed:** a table modifier merging into an own modifier of the
+>    same id (`§1t17s0§.as:1717`) adds an XMLList to an int with no `int()`, which AVM2
+>    concatenates. The port throws `UNMEASURED` there.
+> 4. **Slice 1b is split:** 1b-i (the rulings + `initDuelist`'s record + `findBonusStatFrom`)
+>    landed; **1b-ii** is `EnemyPlayer.init` + `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats`
+>    on top of it, plus the web-only `stance` argument. OPP-B closes at 1b-ii.
+> Evidence and red-teams: `docs/DIVERGENCES.md`, "L5-OPP SLICE 1b-i".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -173,7 +191,8 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 |---|---|---|---|
 | **0** | **THE ANIMLIST** — `OG_ANIM_CLIPS` from 1 file to the 18 the source loads · ✅ **LANDED 2026-09-23** (DIVERGENCES "L5-OPP SLICE 0") | `MCSCharacter.initAnimationData` (42) + 18 data files | no |
 | **1a** | **THE PROFILE STRINGS** — the parse · ✅ **LANDED 2026-09-28** (DIVERGENCES "L5-OPP SLICE 1a") | `XMLNpc` parsers + `getMastery`, `Item.parseNoQty`, `IntStat.parse` | no |
-| 1b | THE DERIVED STATS — as a pure record (see "Slice 1b in detail") | `initDuelist`'s arithmetic (`XMLNpc.as:290-401`); `StatsManager.findBonusStatFrom` (41); `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86) | no |
+| **1b-i** | THE DERIVED STATS i — the rulings, `initDuelist`'s record, `findBonusStatFrom` · ✅ **LANDED 2026-09-28** (DIVERGENCES "L5-OPP SLICE 1b-i") | `initDuelist`'s arithmetic (`XMLNpc.as:290-401`); `StatsManager.findBonusStatFrom` (41); web `Item.getModifiers` (89) | no |
+| 1b-ii | THE DERIVED STATS ii — on top of the record (see "Slice 1b in detail", step 3) | `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86) | no |
 | 2 | THE PROFILE SOURCE (R1) | measured at the slice | no |
 | 3 | BODY i — stance + movement | `setStance` 103, `nextStance` 44, `canChangeStance`, `initMove` 29, `walkTo`, `stopMoving` 25, `movePlayer` 44, `movement` 21, `moveTo`, `faceScreenCenter`, the reload/damage getters (≈400) | no |
 | 4 | BODY ii — the stroke | `gotInput` 70, `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
@@ -236,7 +255,7 @@ CONFIRMED for 4 classes and understated for 6.
 5. The comments that repeat "158": `duelSeam.ts` (`OgAnimLibrary`), the generated header,
    `tests/ogAnimClips.test.ts`. DIVERGENCES finding 19 closed with the measurement.
 
-### Slice 1b in detail — THE DERIVED STATS (measured 2026-09-28, not yet ported)
+### Slice 1b in detail — THE DERIVED STATS (measured 2026-09-28; steps 1–2 LANDED as 1b-i, step 3 is 1b-ii)
 
 **Already landed (1a):** `core/npc/duellistProfile.ts` turns the three strings into a stats
 vector, an equipment vector and a skill list; `config/ogDuellistProfile.ts` holds the stat and

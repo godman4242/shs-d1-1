@@ -55,6 +55,18 @@ export const OG_STAT = {
   buffExpiry: 39,
   /** `StatsManager.as:242` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:276` */
   buff2Expiry: 40,
+  /** `StatsManager.as:250` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:288` */
+  fireDef: 200,
+  /** `StatsManager.as:252` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:290` */
+  windDef: 201,
+  /** `StatsManager.as:254` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:292` */
+  waterDef: 202,
+  /** `StatsManager.as:256` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:294` */
+  earthDef: 203,
+  /** `StatsManager.as:258` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:296` */
+  criticalDmg: 204,
+  /** `StatsManager.as:260` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:298` */
+  piercingDmg: 205,
 } as const;
 
 /**
@@ -144,3 +156,109 @@ export const OG_SKILL_ID_FLOOR = 1000;
  * above: a no-op on a string without `^`, and the web format on one with it.
  */
 export const OG_PROFILE_SUFFIX_SEP = '^';
+
+// ─── L5-OPP slice 1b-i: THE DERIVED STATS (`XMLNpc.initDuelist`, `findBonusStatFrom`) ───
+
+/** The equipment slots `initDuelist` and `findBonusStatFrom` name (`StatsManager.EQ_*`). */
+export const OG_EQ = {
+  /** `StatsManager.as:266` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:304` */
+  hair: 2,
+  /** `StatsManager.as:270` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:308` */
+  head: 4,
+  /** `StatsManager.as:274` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:312` */
+  neck: 6,
+  /** `StatsManager.as:280` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:318` */
+  weapon: 9,
+  /** `StatsManager.as:282` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:320` */
+  scabbard: 10,
+} as const;
+
+/**
+ * `StatsManager.as:2036` — `findBonusStatFrom` reads only the first 13 slots, even when a
+ * long eq string grew the vector. Web: `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:2474`.
+ */
+export const OG_BONUS_SLOTS = 13;
+
+/**
+ * The slots `findBonusStatFrom` skips. Android skips head, neck and scabbard; the WEB
+ * build also skips hair (ruled WEB, DIVERGENCES "L5-OPP SLICE 1b-i"). No hair item carries
+ * a defense or a table modifier, so only a hair item's OWN modifiers are lost.
+ */
+export const OG_BONUS_SKIPPED_SLOTS: readonly number[] = [OG_EQ.head, OG_EQ.neck, OG_EQ.scabbard, OG_EQ.hair];
+
+/** The buff types `initDuelist` tests (`StatsManager.BUFF_*`). */
+export const OG_BUFF = {
+  /** `StatsManager.as:290` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:328` */
+  attack: 1,
+  /** `StatsManager.as:292` · `reference/decompiled/shs3_payload/scripts/§1t1523s0§.as:330` */
+  defense: 2,
+} as const;
+
+/**
+ * WEB ONLY — `reference/decompiled/shs3_payload/scripts/§1t76s0§.as:378` (attack) and
+ * `reference/decompiled/shs3_payload/scripts/§1t76s0§.as:382` (defense): a live buff multiplies
+ * the stat by 1.5, truncated into an `int`. Android `initDuelist` has no buff branch.
+ */
+export const OG_BUFF_MULT = 1.5;
+
+/**
+ * `XMLNpc.as:354` — no weapon (or one the item table lacks): `slashUsage = 48`.
+ * Web: `reference/decompiled/shs3_payload/scripts/§1t76s0§.as:413`.
+ */
+export const OG_UNARMED_SLASH_USAGE = 48;
+
+/**
+ * `XMLNpc.as:361` — a weapon's `slashusage` below 48 is raised to 48.
+ * Web: `reference/decompiled/shs3_payload/scripts/§1t76s0§.as:420`.
+ */
+export const OG_SLASH_USAGE_FLOOR = 48;
+
+/**
+ * `XMLItem.as:158` — an item row with no `slashusage` reads as 48.
+ * Web: `reference/decompiled/shs3_payload/scripts/§1t104s0§.as:170`.
+ */
+export const OG_ITEM_DEFAULT_SLASHUSAGE = 48;
+
+/**
+ * `XMLItem.as:76` — an item row with no `type` reads as type 0 (the 153 untyped rows, the
+ * 4k armour band among them). Web: `reference/decompiled/shs3_payload/scripts/§1t104s0§.as:74`.
+ */
+export const OG_ITEM_DEFAULT_TYPE = 0;
+
+/**
+ * `XMLNpc.as:395` — the paperdoll's weapon when the weapon slot is item 0.
+ * Web: `reference/decompiled/shs3_payload/scripts/§1t76s0§.as:486`.
+ */
+export const OG_DEFAULT_WEAPON_ART = 13001;
+
+/**
+ * WEB ONLY — the web `Item.getModifiers` (`§1t17s0§.as`, `§1t522s0§`), which web
+ * `findBonusStatFrom` sums instead of Android's own-list-plus-table loops. An item's OWN
+ * modifier of one of these kinds turns into max-HP, pooled; a pool above zero is added
+ * to the item's last own max-HP modifier (capped) or pushed as a new, UNCAPPED one; a
+ * pool at or below zero is dropped. Ruled WEB, DIVERGENCES "L5-OPP SLICE 1b-i".
+ */
+export const OG_MOD_TO_HP = {
+  /** `reference/decompiled/shs3_payload/scripts/§1t17s0§.as:1670` — defense on a ring or amulet. */
+  defenseOnTypes: [11] as readonly number[],
+  /** `reference/decompiled/shs3_payload/scripts/§1t17s0§.as:1674` — attack on armour or a hat. */
+  attackOnTypes: [0, 3] as readonly number[],
+  /** `reference/decompiled/shs3_payload/scripts/§1t17s0§.as:1697` — the cap when the pool merges. */
+  mergedCap: 173,
+} as const;
+
+/**
+ * WEB ONLY — `reference/decompiled/shs3_payload/scripts/§1t17s0§.as:1709`: a table
+ * modifier with one of these ids is always pushed as its own entry, never merged into an
+ * own modifier of the same id.
+ */
+export const OG_MOD_NEVER_MERGED: readonly number[] = [103, 106];
+
+/**
+ * `XMLNpc.DEFAULT_EQSTRING`, the eq string of a duellist whose own is empty. A string, so
+ * claimcheck has no number to check; web twin `§1t76s0§`'s `§1t9212s0§`, the same string.
+ */
+export const OG_DEFAULT_EQSTRING = '4017|0|6019|0|8005|0|0|11017|12017|13002|13002|0|0';
+
+/** `initDuelist`'s stats string when its own is empty: 14 zeros, a battle string. Same in both builds. */
+export const OG_DEFAULT_STATS_STRING = '0|0|0|0|0|0|0|0|0|0|0|0|0|0';

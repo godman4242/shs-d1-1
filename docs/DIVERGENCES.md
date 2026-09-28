@@ -5344,6 +5344,9 @@ Measured this cycle, not ported:
   skips **hair** (`§1t9441s0§ = 2`), and **never adds the table's modifiers**, although the web
   item record carries them (`§1t104s0§.as:52`). On any profile wearing one of the 93 items with
   table modifiers, the two builds give different stats.
+  **⛔ WRONG, corrected by slice 1b-i below:** the web sum reaches the table's modifiers through
+  `Item.getModifiers` (`§1t17s0§.as:1703-1729`). The real web-only difference is that getter's
+  attack/defense → max-HP pool.
 - **`initDuelist` differs in structure too** (web `§1t1248s0§`, `§1t76s0§.as:340`): a `stance`
   argument; attack ×1.5 or defense ×1.5 while a buff is live (buff type and expiry against the
   server clock); the halving under a two-mode test instead of Android's one. The web paperdoll
@@ -5370,3 +5373,106 @@ Now disclosed in the port's header.
 
 Baseline at `7949b91`, re-measured: 87 files / 1683 tests · typecheck 0 · lint 0 · claimcheck
 1716 cites / 421 values / 0 failures · chaos 53/53. After: see `RESUME_HERE.md`.
+
+## L5-OPP SLICE 1b-i — THE DERIVED STATS: THREE RULINGS, AND `initDuelist`'s RECORD (2026-09-28)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` "Slice 1b in detail", steps 1–2 (its ERRATUM 4
+splits 1b into 1b-i and 1b-ii). A build-loop cycle, one commit.
+
+**What landed:** `src/core/npc/duellistStats.ts`. `deriveDuellist(stats, eq, skills, serverTime)`
+returns `initDuelist`'s fight numbers: hp, chi, attack, defense, speed, the four elemental
+attacks and four defences, critical, piercing, the weapon's `minDamage` / `damageRange` /
+`slashUsage`, the paperdoll's weapon id, and the skill list. `findBonusStat` is
+`findBonusStatFrom`. The new values live in `ogDuellistProfile.ts`, each cited in both builds
+where it exists in both; claimcheck's checked values went 445 → 466, all at ±0. **Not yet (1b-ii):** `EnemyPlayer.init`
+and `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` on top of this record, and
+the web-only `stance` argument that `EnemyPlayer.init` consumes.
+
+### ⛔ THE KICKOFF'S PREMISE FOR RULING 1 WAS WRONG — measured
+
+Slice 1a's block above says the web `findBonusStatFrom` "never adds the table's modifiers". It
+does, through another door. The web sum reads `_loc5_.§1t522s0§()` (`§1t1523s0§.as:2489`),
+which is the web `Item.getModifiers` (`§1t17s0§.as:1643-1731`), and that getter APPENDS the
+item row's `modifierXML` to the item's own list (`:1703-1729`). So both builds count the
+table's modifiers. The real structural difference is inside that getter, and it is web-only:
+
+1. **Stat → HP.** An item's OWN attack modifier on an armour (type 0, including the 153 rows
+   with no type) or a hat (type 3), or its own defense modifier on a ring or amulet (type 11),
+   is not counted as attack or defense. It is pooled into max-HP (`:1670-1677`).
+2. **The pool merges into the item's LAST own max-HP modifier, capped at 173** (`:1694-1700`), or,
+   with no own max-HP modifier, is pushed as a new one, **uncapped** (`:1692`). A pool at or
+   below zero is **dropped**, the attack along with it (`:1688`).
+3. **Table modifiers with the id of an existing modifier are MERGED** into it (`:1709-1722`),
+   except ids 103 and 106, which are always pushed separately.
+
+### THE THREE RULINGS
+
+| # | the branch | Android | web | ruled |
+|---|---|---|---|---|
+| **1a** | the sum's skipped slots | head, neck, scabbard (`StatsManager.as:2038`) | + **hair** (`§1t1523s0§.as:2476`) | **web**. Measured reach: of 73 hair items (type 2), **0** carry a `defense` and **0** carry a table modifier. Only a hair item's OWN modifiers are lost. |
+| **1b** | what the sum adds per item | row `defense` + row modifiers + own modifiers | row `defense` + `getModifiers` (the HP pool, then the row's modifiers) | **web**. Measured reach: **3** of the 93 items with table modifiers carry one the derived stats read: 4050 Zaku armour (attack 10, HP 30), 7028 Helmet (speed 10, HP 20, defense 5), 11034 Pants (HP 30, speed 8). The HP pool reaches any armour, hat or ring worn with an own attack or defense roll. |
+| **2** | `initDuelist`'s buffs | none | attack ×1.5, else defense ×1.5, while `buffExpiry > serverTime` (`§1t76s0§.as:375-383`) | **web, with the clock injected** (`deriveDuellist`'s `serverTime`; core has no `Date.now()`). Truncated into an `int`, toward zero. |
+| **3** | the halving test | `isPvPRoomMode()` (action 12, not overworld) | PvP room OR `action == 10` (war room), and only when no buff fired | **NOT ported: the Sim has no PvP room and no war room.** (First written as "Duel Mode is action 6"; the review showed `initDuelist` runs BEFORE action 6 is set, see the red-team.) |
+
+**Red-teams:**
+- **1a/1b, web.** *Steelman for Android:* one internally consistent build that claimcheck
+  already guards; the web getter is new code resting on the item table's `type` field, and our
+  item table is the ANDROID one (v0.682; the web payload has no item table). So the web rule runs
+  on Android data, a combination neither build shipped. *Why web anyway:* the rule is code, the
+  table is data, and both builds read the same table format; R6's reason (the videos are web) is
+  unchanged. *Where my pick breaks:* if the web build's item table re-typed an item (say, moved a
+  helmet out of type 3), our pool fires where theirs did not. Nothing we hold can check that.
+  **Veto:** Android's sum (the plants `read the hair slot again` and `drop the item row's
+  modifiers` are the two halves of the diff, though the second removes the table rows from BOTH
+  paths; a faithful Android port would re-add them without the pool).
+- **2, web with an injected clock.** *Steelman against:* until slice 2 decides where profiles come
+  from, no caller has a server clock, and a live buff in a saved profile is a snapshot of a
+  moment that has passed. *Where it breaks:* if slice 2's profiles carry real expiry stamps, the
+  caller must choose a clock, and "now" would make every old buff dead. That choice belongs to
+  slice 2 and is flagged there. **Veto:** drop the buff branches (Android).
+- **3, not ported.** *Steelman for porting it:* `initDuelist` runs BEFORE `initBattleMode` sets
+  action 6 (`DuelModeUI.as:410` then `:423`; web `§1t5565s0§.as:467` then `:480`), so the test reads
+  whatever `action` the duel was started from. **A war room does NOT leak** (my first draft said it
+  did): every battle end resets it, `action = ACTION_ADVENTURE` in `stopBattleMode`
+  (`GameEngine.as:1263`). **A PvP room can:** entering one sets action 12 (`StageManager.as:403` →
+  `GameEngine.setPvPRoomMode`), which holds until you leave the map, and only the RECEIVING side of a
+  duel request checks for it (`NetworkManager.as:227`). So a Duel Mode fight started from inside a
+  PvP room, against `buff2Expiry != 0` and no live buff, is halved in the original. Found by the
+  review; that the Duel Mode button can be pressed inside a PvP room is NOT confirmed. *Why not
+  ported:* the Sim has no PvP room and no war room, so the path cannot occur here. **Veto:** port
+  it with the mode as an argument (the plant `port the halving test as if Duel Mode reached it` is
+  its shape).
+
+### ⚠️ ONE PATH LEFT UNMEASURED, AND REFUSED LOUDLY
+
+`§1t17s0§.as:1717`: `_loc6_.value += _loc1_.modifierXML[_loc8_].value`. `value` is an `int`
+(`§1t18s0§.as:8`); the right side is an XMLList, with no `int()` (Android wraps the same read in
+`int()`, `StatsManager.as:2055`). AVM2's generic `add` concatenates strings when an operand is an
+XMLList, so an own HP 5 merged with the Helmet's table HP 20 would store `"520"` → **520**. No AS3
+runtime runs here (Ruffle.app is installed; no compiler is), so that is the spec's answer, not a
+measured one. **The port throws `UNMEASURED` on this path** rather than guess either result.
+Reach: an own modifier whose id matches its own item row's modifier, which includes the HP pool
+on 4050 (any own attack roll) and on 7028 / 11034 (any own HP roll). Two tests pin the throw.
+The one table row that repeats an id (2201, id 9 twice) throws on its table alone, with no own
+modifiers; it is a consumable (type 10), which no equipment slot holds in play. **To close it:** compile a 5-line SWF and run it in Ruffle, or find the answer in
+the Kongregate forum harvest (an item's HP jumping to hundreds would have been reported).
+
+### THE PORT'S QUIRKS — PINNED, NOT FIXED
+
+- **Each elemental DEFENCE reads ANOTHER element's attack** (`XMLNpc.as:334-337`, both builds,
+  and the roster constructor): fire ← water, wind ← earth, water ← wind, earth ← fire.
+- An item the table does not know adds NOTHING, its own modifiers included.
+- A slot past the 13th is never summed, even when a long eq string grew the vector.
+- Only DEFENSE adds the row's `defense` field; critical and piercing come from equipment only.
+- A weapon the table lacks, or item 0, gives `minDamage = attack`, range 0, `slashUsage` 48;
+  a real weapon's `slashusage` below 48 is raised to 48, and an absent one reads 48.
+- A buff expiring AT the clock is dead (`>`, strict). A negative buffed attack truncates toward
+  zero (-33 → -49).
+- **Web-only item fields 206–208 (carried from 1a):** the web parse keeps own modifiers 206
+  (xp), 207 and 208 OUT of `Item.modifiers` (`§1t17s0§.as:183-195`); the port keeps them in, so
+  `findBonusStat(206, …)` can differ. No derived stat reads 206–208 and no table row carries them,
+  so no output here changes. Found by the review.
+- **A short eq string crashes the source, NOT ported:** `initDuelist` builds the paperdoll with
+  `equipment[EQ_ARMOR].getItemID()` and friends with no null check (only the weapon is guarded,
+  `XMLNpc.as:341-344`), so an eq string of fewer than 11 fields throws in both builds. The
+  paperdoll is render-side and out of 1b; the record here does not read those slots.
