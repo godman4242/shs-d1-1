@@ -4276,3 +4276,34 @@ plants 20/20 RED. The full 140-plant chaos run is the shell's post-ship step.
 
 After: 92 files / 2023 tests · typecheck 0 · lint 0 · claimcheck 2105 / 596 / 44 / 0 · the new
 plants 34/34 RED. The full 174-plant chaos run is the shell's post-ship step.
+
+## 2026-09-29 — build loop: L5-OPP slice 4c, THE SLASH END (slice 4 closed)
+
+- **Baseline at HEAD `7e8e38a`, as RESUME_HERE stated:** 92 files / 2023 tests · typecheck 0 ·
+  lint 0 · claimcheck 2105 / 596 / 0.
+- **Both builds read line by line:** `doSlash` (all 36 clip names decoded), `endDownStab` and
+  `deductReloadBar` are the same; `endSlash` differs in two web-only pieces (the packet's
+  attacker; a closing timer block).
+- **Red → green.** 21 red for the stated reason (the functions did not exist; the shunpo test met
+  the old stub). After the port one stayed red on my own test's closure bug (fixed in the test),
+  then 142/142 in the file.
+- **Ruled:** `deductReloadBar` ported; the attacker on `NpcDamage` (web-only, `null` default);
+  the `§1t4440s0§` block ruled out; `drawEnemyLine` as an `enemyLine` event under the source's
+  condition; the hit as a `checkPlayerHit` method through `unported`.
+- **Found:** ERRATUM 10 missed a writer of the web timer field (`initNetworkPlayer`, out of the
+  lane; its conclusion holds). For slice 5: the web `update` is 79 lines against Android's 931
+  (moved into helpers), so the state machine needs a map before a cut. Claimcheck caught a
+  comment's bare `:2832` read as a cite (reworded). A plant for the piercing stat would have
+  stayed green (both fixtures carry 0): +1 constructor test.
+- **Chaos:** 37 plants, pinned 174 → 211, 37/37 red, restored byte-identical (scratch clone); one
+  4b plant re-anchored (`endSlash` writes the same line as `checkNextSlash`).
+- **Review:** one fresh-context reviewer, no runtime bug. One latent gap, fixed: the
+  facing read the stroke before the hit, where the source re-reads it after (`MCSPlayer.as:2817`).
+  +1 test; its first version could not fail (both reads agreed on its numbers), rewritten, then red.
+- **Next:** slice 5 (map the state machine, cut it, port 5a); the kickoff is at the top of
+  RESUME_HERE.
+
+### THE GATES
+
+After: 92 files / 2081 tests · typecheck 0 · lint 0 · claimcheck 2135 / 600 / 44 / 0 · the new
+plants 37/37 RED. The full 211-plant chaos run is the shell's post-ship step.

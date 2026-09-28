@@ -233,6 +233,24 @@
 >    and `startAction` FALL / POSE (slice 5).
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 4b".
 
+> **⛔ ERRATUM 11 — SLICE 4c (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **4c landed; slice 4 is closed** (`doSlash`, `endSlash`, `endDownStab`, and `deductReloadBar`,
+>    ported). Only `endSlash` differs between the builds: the web names the packet's attacker
+>    (ported, on `NpcDamage`) and adds the `§1t4440s0§` block (ruled out).
+> 2. **ERRATUM 10 item 3's evidence was incomplete.** The field has a third writer it missed: the
+>    web `EnemyPlayer.initNetworkPlayer` (`§1t122s0§.as:950`, `controlledBy = 2`). Its conclusion
+>    holds: on the AI duellist the field is always 0, so the block never runs.
+> 3. **The hit is `checkPlayerHit(slashArray, offset, damage)`, a method that throws via
+>    `unported`**, with the source's three arguments, so slice 8 implements it without touching
+>    a call. Slice 8's list also gains the `enemyLine` event (dead in a live duel: the human's
+>    `canSeeSlash` is never set).
+> 4. **For slice 5: the web `update` is 79 lines, Android's 931.** The web splits it into helpers
+>    (`§1t4501s0§`, `§1t4498s0§`, `§1t4494s0§`, `§1t4495s0§`, `§1t3270s0§` = `doAction`), so
+>    §3's "update 931" must be mapped onto them before anything is cut. `startAction` is 671 / 678
+>    (34 state cases), `doAction` 360 / 375 (27).
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 4c".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -310,7 +328,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **2** | **THE PROFILE SOURCE (R1)** — the writers + the ruling · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 2") | `StatsManager.getBattleStatsString/getEquipmentString/getSkillStatsString`, `Item.toStringNoQty`, `initNewPlayer` | no |
 | **3a** | **BODY i — THE STANCE** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3a"; `nextStance`, `walkTo`, `faceScreenCenter` ruled out of the lane, ERRATUM 7) | `setStance` 103, `initSpecialSkills` 71 (AI branch), `canChangeStance`, `stopMoving` 25, `getDamage` 28, `getBaseDamage` | no |
 | **3b** | **BODY i — THE MOVEMENT** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3b") | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
-| 4 | BODY ii — the stroke (split 4a / 4b / 4c: ERRATUM 8; **4a landed**, ERRATUM 9; **4b landed**, ERRATUM 10) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
+| **4** | **BODY ii — the stroke** · ✅ **LANDED 2026-09-29** in three commits (4a ERRATUM 9, 4b ERRATUM 10, 4c ERRATUM 11) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine (sub-sliced by state) | `update` 931, `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
 | 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |

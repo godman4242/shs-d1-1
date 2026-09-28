@@ -219,3 +219,18 @@ export const OG_SLASH = {
   /** `MCSPlayer.as:2703` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2775` — a shunpo slash lands where it ends and hits twice as hard */
   shunpoDamageMult: 2,
 } as const;
+
+/**
+ * `endSlash` / `deductReloadBar`: where a slash leaves the body and what it costs. The same in
+ * both builds.
+ */
+export const OG_SLASH_END = {
+  /** `MCSPlayer.as:2791` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2864` — a stroke ending in the air leaves the body this far below its end, falling */
+  airDrop: 90,
+  /** `MCSPlayer.as:2827` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2900` — px a frame, the way the stroke's last points ran; minus this the other way */
+  driftX: 5,
+  /** `MCSPlayer.as:3249` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3302` — light spends half the weapon's `slashUsage` */
+  lightUsageDiv: 2,
+  /** `MCSPlayer.as:3257` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3310` — heavy and dual spend one and a half */
+  heavyUsageMult: 1.5,
+} as const;

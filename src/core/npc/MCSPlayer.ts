@@ -4,8 +4,9 @@
  * ruling R2: one body). Ported slice by slice, on the fields 1b-ii's `DuellistBody` carries:
  * slice 3a, THE STANCE (`canChangeStance`, `setStance`, `getStance`, `initSpecialSkills`,
  * `stopMoving`, `getDamage`, `getBaseDamage`), slice 3b, THE MOVEMENT (`initMove`,
- * `movement`, `movePlayer`, `moveTo`), slice 4a, THE STROKE MAKERS, and slice 4b, THE SLASH
- * START (`initSlash`, `checkNextSlash`, `startSlash`, `cancelStealth`).
+ * `movement`, `movePlayer`, `moveTo`), slice 4a, THE STROKE MAKERS, slice 4b, THE SLASH
+ * START (`initSlash`, `checkNextSlash`, `startSlash`, `cancelStealth`), and slice 4c, THE
+ * SLASH END (`doSlash`, `endSlash`, `endDownStab`, `deductReloadBar`).
  *
  * Android structure, web numbers (ruling R6). Where the builds differ in STRUCTURE the web
  * side is ported, and `docs/DIVERGENCES.md` "L5-OPP SLICE 3a" rules each:
@@ -17,6 +18,7 @@
  *     "L5-OPP SLICE 3b"; the other three movement functions are the same in both builds).
  *   - `initSlash` puts a downstab on the body's side by `posX` (Android: `mcs.x`, the screen
  *     x), and the web `isAirborne` counts FALL (DIVERGENCES "L5-OPP SLICE 4b").
+ *   - `endSlash` names itself the hit's attacker (DIVERGENCES "L5-OPP SLICE 4c").
  *
  * Only the opponent's path is ported: `controlledBy == 1` (`DuelModeUI.as:381`). The human's
  * branches (`controlledBy` 0 or 2: the UI calls, the network, `initSpecialSkills`' skill-id
@@ -29,11 +31,12 @@
  *
  * AS3 stores every one of these into an `int`, so each result is truncated (`asInt`).
  */
-import { OG_ANIM, OG_STATE, type OgState } from '../../config/ogActor';
+import { OG_ANIM, OG_LAUNCH, OG_STATE, type OgState } from '../../config/ogActor';
 import { OG_NO_STANCE, OG_STANCE } from '../../config/ogDuellistProfile';
 import {
   OG_MOVE_DIST_SQ,
   OG_SLASH,
+  OG_SLASH_END,
   OG_SLASH_TYPE,
   OG_SPECIAL_SKILL_MASTERY,
   OG_STANCE_CHANGE_RELOAD,
@@ -46,6 +49,7 @@ import type { Rng } from '../Sim';
 import type { DuellistBody } from './duellistBody';
 import { asInt } from './MCSActor';
 import { Npc } from './Npc';
+import { NpcDamage } from './NpcDamage';
 import type { AnimLibrary, HitGeometry, NpcTarget, PlayerWorld } from './types';
 
 /** A call into an `MCSPlayer` group not ported yet: throws, naming the AS3 function. */
@@ -110,6 +114,36 @@ const SLASH_CLIP: Readonly<Record<number, Readonly<Record<number, string>>>> = {
   },
 };
 
+/**
+ * `doSlash`'s clips per stance, the ones the body travels on (`MCSPlayer.as:2710-2758`, web
+ * `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2782-2830`, all 36 names the same): the three flat slashes' start and
+ * middle, the fall slash's and the jump slash's middle. A jump or fall slash's START holds still.
+ */
+const SLASH_TRAVEL: Readonly<Record<number, readonly string[]>> = {
+  [OG_STANCE.light]: [
+    OG_ANIM.LIGHTSLASH_START, OG_ANIM.LIGHTSLASH_MID, OG_ANIM.LIGHTSLASHDOWN_START, OG_ANIM.LIGHTSLASHDOWN_MID,
+    OG_ANIM.LIGHTSLASHUP_START, OG_ANIM.LIGHTSLASHUP_MID, OG_ANIM.LIGHTFALLSLASH_MID, OG_ANIM.LIGHTJUMPSLASH_RISE,
+  ],
+  [OG_STANCE.balanced]: [
+    OG_ANIM.BALANCEDSLASH_START, OG_ANIM.BALANCEDSLASH_MID, OG_ANIM.BALANCEDSLASHDOWN_START, OG_ANIM.BALANCEDSLASHDOWN_MID,
+    OG_ANIM.BALANCEDSLASHUP_START, OG_ANIM.BALANCEDSLASHUP_MID, OG_ANIM.BALANCEDFALLSLASH_MID, OG_ANIM.BALANCEDJUMPSLASH_RISE,
+  ],
+  [OG_STANCE.heavy]: [
+    OG_ANIM.HEAVYSLASH_START, OG_ANIM.HEAVYSLASH_MID, OG_ANIM.HEAVYSLASHDOWN_START, OG_ANIM.HEAVYSLASHDOWN_MID,
+    OG_ANIM.HEAVYSLASHUP_START, OG_ANIM.HEAVYSLASHUP_MID, OG_ANIM.HEAVYFALLSLASH_MID, OG_ANIM.HEAVYJUMPSLASH_RISE,
+  ],
+  [OG_STANCE.dual]: [
+    OG_ANIM.DUALSLASH_START, OG_ANIM.DUALSLASH_MID, OG_ANIM.DUALSLASHDOWN_START, OG_ANIM.DUALSLASHDOWN_MID,
+    OG_ANIM.DUALSLASHUP_START, OG_ANIM.DUALSLASHUP_MID, OG_ANIM.DUALFALLSLASH_MID, OG_ANIM.DUALJUMPSLASH_RISE,
+  ],
+  [OG_STANCE.reversed]: [
+    OG_ANIM.REVERSEDSLASH_START, OG_ANIM.REVERSEDSLASH_MID, OG_ANIM.REVERSEDFALLSLASH_MID, OG_ANIM.REVERSEDJUMPSLASH_RISE,
+  ],
+};
+
+/** The three flat slash types: `doSlash` does not drop them by `velY`. */
+const FLAT_SLASH: readonly number[] = [T.hor, T.horDown, T.horUp];
+
 /** `startSlash`'s speed per stance: dual takes heavy's, reversed balanced's. No stance, no speed. */
 const SLASH_SPEED: Readonly<Record<number, number>> = {
   [OG_STANCE.light]: OG_SLASH.lightSpeed,
@@ -136,6 +170,10 @@ export class MCSPlayer extends Npc {
   stance: number = OG_NO_STANCE;
   /** `MCSPlayer.as:81` — always 0 on the duellist (1b-ii). */
   STAT_CRITICALDMG: number;
+  /** `MCSPlayer.as:83` — the hit's piercing damage. */
+  STAT_PIERCINGDMG: number;
+  /** `MCSPlayer.as:73` — the weapon's reload cost per slash. */
+  slashUsage: number;
   /** `MCSPlayer.as:91-93` — frames. */
   reload: number;
   maxreload: number;
@@ -168,6 +206,9 @@ export class MCSPlayer extends Npc {
     this.minDamage = body.minDamage;
     this.damageRange = body.damageRange;
     this.STAT_CRITICALDMG = body.criticalDmg;
+    this.STAT_PIERCINGDMG = body.piercingDmg;
+    this.slashUsage = body.slashUsage;
+    this.level = body.level;
     this.reload = body.reload;
     this.maxreload = body.maxReload;
     this.baseSlashLength = body.baseSlashLength;
@@ -462,8 +503,114 @@ export class MCSPlayer extends Npc {
     if (this.doShunpo) {
       this.setPosition(this.destX, this.destY);
       this.slashDamage *= k.shunpoDamageMult;
-      unported('MCSPlayer.endSlash');
+      this.endSlash();
     }
+  }
+
+  /**
+   * `MCSPlayer.as:2708` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2780`, the same: one frame of the slash.
+   * On its stance's travelling clips the body runs at the stance's speed and ends the slash on
+   * arrival; a slash that is not flat also drops by `velY` while above the ground. The frame goes
+   * on after `endSlash`, as the source's does.
+   */
+  doSlash(): void {
+    if (!SLASH_TRAVEL[this.stance]?.includes(this.animation)) return;
+    if (!this.movement(SLASH_SPEED[this.stance] ?? ZERO)) this.endSlash();
+    if (!FLAT_SLASH.includes(this.slashType) && this.y < this.world.groundY) this.y += this.velY;
+  }
+
+  /**
+   * WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2839` (Android `MCSPlayer.as:2767`): pay the reload, hand the
+   * stroke to the hit, land or fall, face the way the stroke ran and take the buffered one. The
+   * web adds the packet's attacker, and a closing block (`:2933`) that ends a timer only the
+   * human and the network player ever start: ruled out (DIVERGENCES "L5-OPP SLICE 4c"). The
+   * `controlledBy == 0` draw, sound and canvas are the human's.
+   */
+  endSlash(): void {
+    const k = OG_SLASH_END;
+    const w = this.world;
+    const offset = w.stagePosition;
+    if ((w.playerCanSeeSlash || (w.playback && w.playbackShowSlash)) && !w.redFreeze) {
+      this.emit({ type: 'enemyLine', points: this.slashArray, offset, slashLength: this.slashLength });
+    }
+    this.deductReloadBar();
+    this.hasSlash = false;
+    let launchType: number = OG_LAUNCH.LAUNCH_NONE;
+    if (this.slashType === T.up && this.canLaunch) launchType = OG_LAUNCH.LAUNCH_AIR;
+    const end = this.slashArray[this.slashArray.length - ONE];
+    if (end === undefined) throw new RangeError('endSlash: an empty slashArray');
+    const damage = new NpcDamage(this.slashDamage, this.level, launchType, this.stance);
+    damage.setPiercingDamage(this.STAT_PIERCINGDMG);
+    damage.setAttacker(this);
+    if (w.groundY - end.y > OG_SLASH.jumpThreshhold) {
+      this.y = end.y + k.airDrop;
+      this.velY = ZERO;
+      this.startAction(OG_STATE.FALL);
+      this.checkPlayerHit(this.slashArray, offset, damage);
+    } else {
+      this.y = w.groundY;
+      this.velY = ZERO;
+      this.checkPlayerHit(this.slashArray, offset, damage);
+      this.startAction(OG_STATE.POSE);
+    }
+    // Re-read after the hit, as the source does (`slashArrayLength`, `MCSPlayer.as:2817`).
+    const len = this.slashArray.length;
+    const last = this.slashArray[len - ONE];
+    const from = this.slashArray[Math.max(ZERO, len - OG_SLASH.lengthThreshhold + ONE)];
+    if (last === undefined || from === undefined) throw new RangeError('endSlash: an empty slashArray');
+    if (last.x > from.x) {
+      this.velX = k.driftX;
+      this.faceRight();
+    } else {
+      this.velX = -k.driftX;
+      this.faceLeft();
+    }
+    if (this.hasSlashBuffer) {
+      this.slashArray = this.slashArrayBuffer;
+      this.hasSlash = true;
+    }
+    this.hasSlashBuffer = false;
+    this.slashCommitted = false;
+    if (this.doShunpo) this.doShunpo = false;
+  }
+
+  /** `NPCManager.checkPlayerHit(slashArray, offset, damage)`: the stroke against the player, the seam's (slice 8). */
+  checkPlayerHit(slashArray: readonly MovePoint[], offset: number, damage: NpcDamage): void {
+    void slashArray;
+    void offset;
+    void damage;
+    unported('NPCManager.checkPlayerHit');
+  }
+
+  /** `MCSPlayer.as:2862` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2940`, the same. */
+  endDownStab(): void {
+    this.hasSlash = false;
+    this.startAction(OG_STATE.POSE);
+    if (this.hasSlashBuffer) {
+      this.slashArray = this.slashArrayBuffer;
+      this.hasSlash = true;
+    }
+    this.hasSlashBuffer = false;
+    this.slashCommitted = false;
+  }
+
+  /** `MCSPlayer.as:3240` · web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:3293`, the same. A full bar empties first. */
+  deductReloadBar(): void {
+    const k = OG_SLASH_END;
+    if (this.reload === this.maxreload) this.reload = ZERO;
+    switch (this.stance) {
+      case OG_STANCE.light:
+        this.reload = asInt(this.reload - this.slashUsage / k.lightUsageDiv);
+        break;
+      case OG_STANCE.balanced:
+      case OG_STANCE.reversed:
+        this.reload -= this.slashUsage;
+        break;
+      case OG_STANCE.heavy:
+      case OG_STANCE.dual:
+        this.reload = asInt(this.reload - this.slashUsage * k.heavyUsageMult);
+    }
+    if (this.reload < ZERO) this.reload = ZERO;
   }
 
   /**

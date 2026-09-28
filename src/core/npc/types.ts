@@ -89,6 +89,14 @@ export interface PlayerWorld extends NpcWorld {
    * latency, flips it to `STATE_BATTLE` (`StageManager.as:865-873`).
    */
   battle: boolean;
+  /**
+   * `StatsManager.getPlayer().canSeeSlash` — the HUMAN's flag: the opponent's stroke is drawn
+   * for them (`MCSPlayer.as:2774`). Only the NPC subclasses set it (`EnemyPlayer.as:817`), so the
+   * human's `new MCSPlayer()` (`StatsManager.as:1764`) keeps the default, false.
+   */
+  playerCanSeeSlash: boolean;
+  /** `GameEngine.isPlaybackClientShowSlash()` — a replay page's `showslash` flashvar (`GameEngine.as:1364-1366`). */
+  playbackShowSlash: boolean;
 }
 
 /**
@@ -196,6 +204,13 @@ export type NpcEvent =
   | { readonly type: 'breakProjectile' }
   /** `ProjectileManager.createSmoke3(x, y)` — a hidden body shows itself (`MCSPlayer.cancelStealth`, `MCSPlayer.as:4363`). Ints, as the call takes them. */
   | { readonly type: 'smoke'; readonly x: number; readonly y: number }
+  | {
+      /** `InputManager.drawEnemyLine(slashArray, offset, slashLength)` — the opponent's stroke, drawn for the player (`MCSPlayer.endSlash`, `MCSPlayer.as:2776`). */
+      readonly type: 'enemyLine';
+      readonly points: ReadonlyArray<{ readonly x: number; readonly y: number }>;
+      readonly offset: number;
+      readonly slashLength: number;
+    }
   | {
       /**
        * `NPCManager.createEnemy(npcID, x, y, fatal)` (`NPCManager.as:869`) — the alpha's

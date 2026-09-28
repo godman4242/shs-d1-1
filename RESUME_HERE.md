@@ -1,87 +1,90 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 4c, BODY ii: THE SLASH END
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 5, BODY iii: MAP THE STATE MACHINE, CUT IT, PORT 5a
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: ~167 surgical lines on a class that exists now | set with `/model` |
+| model / effort | **Opus 5.5 at `high`**: a line-by-line map of ~2,000 source lines, then a surgical port | set with `/model` |
 | `/fast` | ON if you watch it; OFF for the unattended build loop (2× price) | your call |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
 | MCP / skills | nothing extra | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. 4c fits well before then.
+⚠️ Your Claude subscription ends **2026-10-09**. The map and 5a fit well before then.
 
 Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 10 first, then ERRATUM 8, the §3 slice-4 row and its harness rule), and run slice 4c under its §4 gate.
-Before any code: confirm the baseline at HEAD (92 files / 2023 tests, typecheck 0, lint 0, claimcheck 2105 cites / 596 values / 0 failures, chaos 174 pinned). Then read doSlash, endSlash and endDownStab line by line in BOTH builds: Android reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as :2708-2874; web reference/decompiled/shs3_payload/scripts/§1t99s0§.as :2780-2952 (doSlash is §1t4460s0§, endSlash §1t4461s0§, endDownStab §1t4462s0§). Write every difference as a DIVERGENCES row citing both before porting it.
-Done = (a) the three ported IN FULL into src/core/npc/MCSPlayer.ts, web structure where the builds differ, the opponent's branch only (controlledBy 1), every call into a group not ported yet (startAction is slice 5; NPCManager.checkPlayerHit is the seam, slice 8) through unported('<AS function>'), and the pinned unported list in tests/mcsPlayer.test.ts moved to the new sites; (b) three rulings decided and flagged with their red-team: deductReloadBar (MCSPlayer.as:3240, 24 lines: port it or unported), the web-only Damage attacker setter (§1t67s0§.as:212: what carries it before Damage exists in core), and the web-only §1t4440s0§ block (ERRATUM 10 item 3 says it never runs on the duellist: confirm by reading every writer, then port or rule it out); (c) for 3a's two fixture bodies, every field the three write (the slash state, destY, facing, reload, the clip) reproduces the source at ±0 for strokes from 4a's makers taken through 4b's initSlash / startSlash, red first, plants declared and the pin moved in scripts/gates/chaos.ts AND tests/chaosGate.test.ts, every new config value cited in both builds as `key: value`; (d) RESUME_HERE rewritten and DIVERGENCES "L5-OPP SLICE 4c" written in the same commit.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 11 first, then the §3 slice-5 row and its harness rule), and run slice 5's map, cut and first sub-slice under its §4 gate.
+Before any code: confirm the baseline at HEAD (92 files / 2081 tests, typecheck 0, lint 0, claimcheck 2135 cites / 600 values / 0 failures, chaos 211 pinned).
+Step 1, the MAP (no code): Android MCSPlayer.update is reference/decompiled/shs3_android_payload/scripts/MCSPlayer.as:275-1205 (931 lines); the web update is reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1179-1257 (79 lines) and calls §1t4501s0§, §1t4498s0§, §1t4494s0§, §1t4495s0§, §1t3270s0§ (doAction) and §1t1561s0§ / §1t1562s0§. Map every Android update block to the web function that holds it, with line spans in both; list startAction's 34 state cases (Android :1206-1876, web :1258-1935) and doAction's 27 (Android :1877-2236, web :1936-2310) per state, with line counts; mark every controlledBy 0/2/3 branch out of the lane. Write it as ERRATUM 12 and a DIVERGENCES "L5-OPP SLICE 5 — THE MAP" table.
+Step 2, the CUT: sub-slices of at most 500 source lines each. 5a = the six states slices 3-4 already enter (IDLE, WALK, RUN, SLASH, FALL, POSE): their startAction and doAction cases, and whatever update code ends them.
+Done = (a) ERRATUM 12 + the map table; (b) if 5a is 500 lines or fewer, 5a ported IN FULL, web structure where the builds differ, every state outside 5a still going through unported naming it, and the pinned unported list in tests/mcsPlayer.test.ts moved to the new sites (5a over 500 lines: stop after (a) and say so); (c) the first end-to-end stroke through the body with ONLY checkPlayerHit spied: for 3a's two fixture bodies, slashTarget's stroke from gotInput to POSE, the state, clip, position, facing and reload at every frame reproducing the source at ±0, red first, plants declared and the pin moved in scripts/gates/chaos.ts AND tests/chaosGate.test.ts; (d) RESUME_HERE rewritten and DIVERGENCES "L5-OPP SLICE 5a" written in the same commit.
 '''
 ```
 
 **VERIFY (plain English):** before it writes any code, the session prints the baseline numbers
-above and a table of every difference between the two builds' three functions.
+above and a table mapping Android's `update` onto the web's helper functions.
 
 **Four measured starting points (2026-09-29), so the session does not rediscover them:**
-1. **4b hands 4c a live stroke.** `initSlash` + `startSlash` now set `destX`/`destY`, the slash
-   type, the velocity and `slashDamage`; a test can drive a real maker stroke to the point
-   where `doSlash` takes over. `startSlash`'s shunpo branch already calls `endSlash` through
-   `unported('MCSPlayer.endSlash')`: 4c removes that site.
-2. **`endSlash` differs between the builds** (95 Android, 101 web): the web adds
-   `damage.§1t1089s0§(this)` (the attacker setter) and the `§1t4440s0§` block (ERRATUM 10).
-3. **`endSlash` needs a `Damage`** (`new Damage(slashDamage, level, launchType, stance)`,
-   `setPiercingDamage`). Nothing in core models the source's `Damage` for the duellist yet; the
-   hit goes to `NPCManager.checkPlayerHit`, the seam's channel. Deciding what crosses that
-   `unported` boundary is part of ruling (b).
-4. **`doSlash` 59 and `endDownStab` 13 are the same LENGTH in both builds** (web `:2780`,
-   `:2940`); only a line-by-line read says whether they are the same code.
+1. **The web `update` is 79 lines against Android's 931** (`§1t99s0§.as:1179`, `MCSPlayer.as:275`):
+   the web moved the body of it into helpers. Nothing can be cut until that map exists.
+2. **Where 3–4's functions are called from** (Android): `doSlash` only from `doAction`
+   (`MCSPlayer.as:1954`); `startSlash` from `startAction` (`:1338`); `checkNextSlash` from
+   `startAction` (`:1238`, `:1452`); `endDownStab` from `update` (`:522`); `movement` from
+   `doAction`'s RUN (`:1890`) and WALK (`:1904`).
+3. **`startAction` is the override that throws today** (`MCSPlayer.ts`), and every 3–4 test
+   spies it. 5a replaces the spy with the real thing for six states, so a real stroke can run
+   from the maker to POSE with only the seam's `checkPlayerHit` stubbed.
+4. **The makers' strokes land** (DIVERGENCES "L5-OPP SLICE 4c"): `slashTarget`'s stroke ends
+   48–50 px above the ground, travels home in 2–3 frames and poses. That is 5a's end-to-end
+   expectation, already worked by hand at the slash's end.
 
-**Bar self-report:** reached for the entry. The spans, the web-only pieces of `endSlash` and
-their callers were measured this cycle. The one unknown is the line-by-line diff of `doSlash`
-and `endDownStab`, and the kickoff's first step reads it.
+**Bar self-report:** reached for the entry. Every span above was measured this cycle. The one
+unknown is the web helper map, and the kickoff's first step measures it before any code.
 
 ---
 
-## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 4b, THE SLASH START
+## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 4c, THE SLASH END (slice 4 closed)
 
 | | verdict | measured |
 |---|---|---|
-| **the port** | ✅ `initSlash`, `checkNextSlash`, `startSlash`, `cancelStealth`, an `isAirborne` override | **+36 tests, both fixture bodies; 54 red first in the file** (the 33 first written, the pin, and 20 of 4a's, which now stop one step later, at `startAction`). The review's 3 were proven by plants (the port was already right). |
-| **R6 diff** | ✅ ONE difference | the downstab's side test: web `posX`, Android `mcs.x` (the screen x). Web ported; at stage position 150 they land 110 px apart (435 vs 325). Every constant and all 25 clip strings are the same. |
-| **ruling: `cancelStealth`** | ⚠️ ported | 9 lines; `initSlash` calls it first, so `unported` would have blocked every test. Its smoke puff is a new `smoke` event. |
-| **ruling: `isAirborne`** | ⚠️ web, duellist only | an `MCSPlayer` override (FALL counts). The mobs' `Npc` is untouched; your ruling on them is still open (below). |
-| **claimcheck** | ✅ 2051 → 2105 cites, 577 → 596 values | 0 failures. It cannot see function-start cites: one of mine (the clip table) and two plant notes were 2 lines off, fixed by reading each. |
-| **chaos** | ✅ 34 plants, 140 → 174 | 34/34 red, restored byte-identical (scratch clones). |
-| **review** | ✅ 1 fresh-context reviewer: **no runtime bug** | it re-derived every value and all 25 web clip names. One real gap: four `int` truncations no test pinned (it mutated a scratch copy: all green). Re-verified in node, +3 tests and 4 plants, each plant red. One latent note, queued below: `asInt` returns −0 where AS3 gives 0. |
+| **the port** | ✅ `doSlash`, `endSlash`, `endDownStab`, `deductReloadBar` | **+21 tests, both fixture bodies; 22 red first** (the functions did not exist; the shunpo test met the old stub). `startSlash`'s shunpo now runs the real `endSlash`. |
+| **R6 diff** | ✅ ONE function differs | `endSlash`: the web names the packet's attacker, and adds a timer block. `doSlash` (all 36 clip names decoded), `endDownStab`, `deductReloadBar`: the same. |
+| **ruling: `deductReloadBar`** | ⚠️ ported | 24 lines, same in both builds; `unported` would have stopped every test at `endSlash`'s 4th line. |
+| **ruling: the attacker** | ⚠️ web, on `NpcDamage` | a field defaulting to `null`; the hit keeps the source's 3 arguments, so slice 8 implements one method. The mobs' packets stay `null` (a test pins it). |
+| **ruling: the `§1t4440s0§` block** | ⚠️ ruled out | **ERRATUM 10 missed a writer:** `initNetworkPlayer` (`controlledBy` 2). Still never set on the AI duellist, so the block never runs there. |
+| **claimcheck** | ✅ 2105 → 2135 cites, 596 → 600 values | 0 failures. It caught one of mine: a comment's `:2832` read as a cite (fixed by rewording). |
+| **chaos** | ✅ 37 plants, 174 → 211 | 37/37 red, restored byte-identical (scratch clone), and the re-anchored 4b plant red too (`endSlash` now writes the same line). |
+| **review** | ✅ 1 fresh-context reviewer: **no runtime bug** | it re-derived every branch, number and plant. One latent gap, fixed: the facing read the stroke BEFORE the hit, the source re-reads it after (`MCSPlayer.as:2817`); +1 test, red first. Its other notes: a silent `?? last` fallback (gone with the fix), a by-value assertion (identity is pinned in the packet test), and y not snapped to Flash's 1/20 px (the repo's convention). |
 
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 92 passed (92) · Tests 2023 passed (2023)   (1953 + 36 slash-start tests + 34 plant pins)
+$ npx vitest run            ->  Test Files 92 passed (92) · Tests 2081 passed (2081)   (2023 + 21 slash-end tests + 37 plant pins)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
-$ npm run claimcheck        ->  2105 cites · 596 values at ±0 · 44 context · 0 failures
+$ npm run claimcheck        ->  2135 cites · 600 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  every path resolves
-$ npm run chaos             ->  174 plants pinned; the 34 new ones 34/34 RED + restored (scratch clone; the full run is the shell's post-ship step)
+$ npm run chaos             ->  211 plants pinned; the 37 new ones 37/37 RED + restored (scratch clone; the full run is the shell's post-ship step)
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
 
 ### WHAT CHANGED
 
-- `src/core/npc/MCSPlayer.ts`: the three functions, `cancelStealth`, `isAirborne`, the fields
-  `slashType` / `slashDamage` / `doShunpo`, the `SLASH_CLIP` / `SLASH_SPEED` tables. Unported
-  sites 3 → 3 (`MCSPlayer.initSlash` out, `MCSPlayer.endSlash` in).
-- `src/config/ogMcsPlayer.ts`: `OG_SLASH_TYPE` (8 values), `OG_SLASH` (11), both builds cited.
-- `src/core/npc/types.ts`: `NpcEvent` gains `smoke` (`ProjectileManager.createSmoke3`).
-- `tests/mcsPlayer.test.ts` (+36; 4a's stroke helper now stops at `startAction`; the pin names
-  its three sites), `tests/mcsPlayer.plants.ts` (+34), the pin 140 → 174 in
-  `scripts/gates/chaos.ts` and `tests/chaosGate.test.ts`.
-- `docs/DIVERGENCES.md` "L5-OPP SLICE 4b"; `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 10.
+- `src/core/npc/MCSPlayer.ts`: the four functions, `checkPlayerHit` (throws via `unported`), the
+  `SLASH_TRAVEL` / `FLAT_SLASH` tables, and `level` / `slashUsage` / `STAT_PIERCINGDMG` carried
+  from the body. Unported sites 3 → 3 (`MCSPlayer.endSlash` out, `NPCManager.checkPlayerHit` in).
+- `src/config/ogMcsPlayer.ts`: `OG_SLASH_END` (4 values), both builds cited.
+- `src/core/npc/NpcDamage.ts`: the web `attacker` + `setAttacker`.
+- `src/core/npc/types.ts`: `PlayerWorld` gains `playerCanSeeSlash`, `playbackShowSlash`;
+  `NpcEvent` gains `enemyLine`.
+- `tests/mcsPlayer.test.ts` (+21), `tests/mcsPlayer.plants.ts` (+37, one re-anchored), the pin
+  174 → 211 in `scripts/gates/chaos.ts` and `tests/chaosGate.test.ts`.
+- `docs/DIVERGENCES.md` "L5-OPP SLICE 4c"; `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 11.
 
 ### ⚠️ STILL OPEN — Awaiting human/browser verification, and queued
 
@@ -102,8 +105,11 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
   (`getMapPosition()` is `:int`); a fix at the actor would touch all 20 mobs. Its own milestone.
 - **QUEUED (slice 6): the duellist's HP.** The `MCSPlayer` constructor never calls `setHP`, so the
   body sits at the actor default 1, not the profile's HP. Nothing reads it before reception.
-- **QUEUED (slice 8): the seam must carry the player's facing** (`PlayerProxy.isFacingRight`
-  throws until then), and draw the new `smoke` event.
+- **QUEUED (slice 6): the attacker on the mobs' packets.** The web self-hit guard
+  (`§1t99s0§.as:3357`) reads `damage.attacker`; the ported mobs never set it (`null`).
+- **QUEUED (slice 8): the seam** must carry the player's facing (`PlayerProxy.isFacingRight`
+  throws until then), implement `checkPlayerHit(slashArray, offset, damage)`, and draw the `smoke`
+  and `enemyLine` events.
 - **QUEUED (harness): claimcheck reads no bare array.** Five arrays in `ogDuellistProfile.ts`
   (`[14, 18]`, `[2213, 2214]`, `[11]`, `[0, 3]`, `[103, 106]`) and any in other config files are
   unchecked. Fix = teach `numericFields` (`scripts/gates/claimcheckLib.ts`) to read array elements,
@@ -117,6 +123,14 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
 - **For slice 8 (R1's veto):** a video-measured duellist (level + gear off a Duel Mode frame) may
   beat the new character for OPP-G. Look before slice 8 ships.
 - L4b's 13 remaining mobs are unblocked but not ported: L5-OPP first, by decision.
+
+---
+
+## PREVIOUS CYCLE (2026-09-29) — L5-OPP slice 4b, THE SLASH START
+
+`initSlash`, `checkNextSlash`, `startSlash`, `cancelStealth` (a `smoke` event) and a web
+`isAirborne` override on the duellist only; one difference between the builds (the downstab's
+side test: web `posX`, Android `mcs.x`). Full record: `docs/DIVERGENCES.md`, "L5-OPP SLICE 4b".
 
 ---
 

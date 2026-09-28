@@ -78,14 +78,15 @@ const BACKUP_DIR = join(ROOT, '.chaos-backup');
  * (the derived stats) added 10 (`tests/duellistStats.plants.ts`); slice 1b-ii (the body) added 13
  * (`tests/duellistBody.plants.ts`); slice 2 (the profile writers) added 8 (`tests/duellistWriter.plants.ts`); slice 3a (the stance)
  * added 12 (`tests/mcsPlayer.plants.ts`), one of them for the claimcheck hole it closed; slice 3b
- * (the movement) added 16 and slice 4a (the stroke makers) 20, in the same file.
+ * (the movement) added 16, slice 4a (the stroke makers) 20, slice 4b (the slash start) 34 and
+ * slice 4c (the slash end) 37, in the same file.
  * That is the floor this repo has already paid for. Raise it when a slice adds plants; never lower it to make a run pass. A filtered
  * run skips this check and says so, loudly, in its output.
  *
  * `tests/chaosGate.test.ts` pins the same number from the other side, so the two cannot
  * drift apart silently.
  */
-const EXPECTED_TOTAL = 174;
+const EXPECTED_TOTAL = 211;
 
 type Status = 'RED' | 'STAYED-GREEN' | 'PLANT-FAILED' | 'NO-OP' | 'INCONCLUSIVE' | 'RESTORE-FAILED';
 

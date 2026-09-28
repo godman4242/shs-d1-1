@@ -18,6 +18,7 @@ import { OG_DAMAGE } from '../../config/ogNpcBase';
 import { ZERO } from '../../config/nums';
 import { minDamageForLevel } from '../damage';
 import { asInt } from './MCSActor';
+import type { Npc } from './Npc';
 
 export class NpcDamage {
   damage: number;
@@ -36,6 +37,11 @@ export class NpcDamage {
   flyVelY = ZERO;
   /** `Damage.as:48` */
   victimPosX: number = OG_DAMAGE.victimPosNone;
+  /**
+   * WEB only (`reference/decompiled/shs3_payload/scripts/§1t67s0§.as:50`): who struck. The duellist's `endSlash` sets it
+   * (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2861`); the ported mobs are Android-structured and never do.
+   */
+  attacker: Npc | null = null;
 
   /** `Damage.as:50` */
   constructor(
@@ -61,6 +67,11 @@ export class NpcDamage {
   /** `Damage.as:63` */
   setPiercingDamage(num: number): void {
     this.piercingDamage = num;
+  }
+
+  /** WEB `reference/decompiled/shs3_payload/scripts/§1t67s0§.as:212`. */
+  setAttacker(attacker: Npc): void {
+    this.attacker = attacker;
   }
 
   /** `Damage.as:68` */

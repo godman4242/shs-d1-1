@@ -6142,3 +6142,116 @@ catch inputs re-verified in node (tilt 25.5 → 25, flat; velY 38 against 39), +
 plant per truncation, each red. Queued, not fixed: `asInt` returns −0 for a small negative,
 where an AS3 `int` has none (invisible until something divides by a velocity; the fix touches
 every mob).
+
+## L5-OPP SLICE 4c — THE SLASH END: `doSlash`, `endSlash`, `endDownStab` (+ `deductReloadBar`) ON THE DUELLIST'S BODY (2026-09-29)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 10 item 3, ERRATUM 8 item 3, §3 slice 4
+(4c). A build-loop cycle, one commit. **Slice 4 is closed.**
+
+**What landed:** in `src/core/npc/MCSPlayer.ts`: `doSlash`, `endSlash`, `endDownStab`,
+`deductReloadBar`, a `checkPlayerHit` method that throws through `unported`, and three fields the
+constructor now carries from the body (`level`, `slashUsage`, `STAT_PIERCINGDMG`: `initPlayer` /
+`initAttackStats` set them). `startSlash`'s shunpo branch now calls the real `endSlash`. Unported
+sites 3 → 3 (`MCSPlayer.endSlash` out, `NPCManager.checkPlayerHit` in). One config object,
+`OG_SLASH_END` (4 values, both builds cited at ±0). `NpcDamage` gains the web `attacker`
+(`setAttacker`); `PlayerWorld` gains `playerCanSeeSlash` and `playbackShowSlash`; `NpcEvent`
+gains `enemyLine` (`InputManager.drawEnemyLine`). Tests +21 (21 red first, for the stated
+reason: the functions did not exist, and the shunpo test still met the old stub; +1 from the
+review, red first). 37 chaos plants (174 → 211), 37/37 red. Suite 2023 → 2081 (21 tests + 37
+plant-anchor pins). Claimcheck 2105 → 2135 cites, 596 → 600 values.
+
+### THE R6 DIFF — both builds, line by line
+
+| function | Android | web | ruled |
+|---|---|---|---|
+| `doSlash` | `MCSPlayer.as:2708-2765` | `§1t99s0§.as:2780-2837` | same; all 36 clip names decoded and equal |
+| `endSlash` | `:2767-2860` | `:2839-2938` | **two web-only pieces** (below) |
+| `endDownStab` | `:2862-2873` | `:2940-2951` | same |
+| `deductReloadBar` | `:3240-3263` | `:3293-3316` | same |
+
+The web constants read by declaration: the stances 0–4, `HOR_SLASH` 0, `UP_SLASH` 3,
+`HOR_SLASHDOWN` 7, `HOR_SLASHUP` 8, FALL 4, POSE 9, `LAUNCH_NONE` 0, `LAUNCH_AIR` 1; the web field
+`§1t4425s0§` is `canLaunch` (the same field order as Android, `:115`).
+
+The two web-only pieces of `endSlash`:
+1. `damage.§1t1089s0§(this)` (`§1t99s0§.as:2861`): the `Damage` attacker setter
+   (`§1t67s0§.as:212`). **Ported** (ruling 2).
+2. The closing `if(this.§1t4440s0§ > 0) { … = 0; this.§1t1561s0§(); }` (`:2933-2937`). **Ruled
+   out** (ruling 3).
+
+### RULINGS (decide-and-flag)
+
+1. **`deductReloadBar` is PORTED (24 lines).** It is the same in both builds, touches only the
+   body's own `reload`, and `endSlash` calls it on every stroke: an `unported` stub would have
+   stopped every test at `endSlash`'s fourth line. *Steelman for `unported`:* reload is the AI's
+   pacing, and slice 7 (the AI) could own it with the rest of the pacing. *Where my pick breaks:*
+   it does not; the function has no caller outside the slash. **Veto:** `unported('MCSPlayer.deductReloadBar')`.
+2. **The attacker rides on the existing `NpcDamage`,** a web-only field defaulting to `null`, set
+   by `setAttacker`. The packet then crosses the `unported` hit whole: `checkPlayerHit(slashArray,
+   offset, damage)` keeps the source's three arguments, so slice 8 implements one method and
+   changes no call. *Steelman for a separate duellist packet:* `NpcDamage` is shared with the 20
+   mobs, and a web-only field on it is structure their Android port never had. *Where my pick
+   breaks:* the web sets the attacker at 44 call sites (13 in `MCSPlayer`, most of the rest in
+   the projectile classes); a mob port that reads `attacker` (the web self-hit guard at
+   `§1t99s0§.as:3357`, slice 6) would find `null` on every mob packet. It changes nothing today:
+   no ported code reads it, and a test pins the mobs' packets at `null`. **Veto:** leave the
+   attacker off, and slice 6 adds it when the self-hit guard lands.
+3. **The web `§1t4440s0§` block is RULED OUT of the lane, and ERRATUM 10's evidence was
+   incomplete.** Every writer of the field, read: the declaration (`§1t99s0§.as:147`, 0);
+   `§1t4444s0§` (`:262-268`), called only on `StatsManager.getPlayer()`, the human
+   (`§1t1525s0§.as:178`, `§1t7785s0§.as:1738`); and **one ERRATUM 10 missed:** the web
+   `EnemyPlayer`'s `§1t4881s0§` (`§1t122s0§.as:950`), which is `initNetworkPlayer` (it sets
+   `controlledBy = 2` at `:900` and names itself in its own error string), arming the timer only
+   when its web-only tenth argument is true. `initNetworkPlayer` is named out of the lane. So on
+   the AI duellist (`controlledBy` 1) the field is 0 whenever `endSlash` reads it, and the block
+   never runs. Its other readers (`update`'s countdown, `:1244`; the web `EnemyPlayer`'s
+   `§1t3272s0§`, `§1t122s0§.as:1780`) are slice 5 and slice 7: they read 0 too. *Steelman for
+   porting it:* "port in full" is the lane's rule, and a dead branch ported costs one field and
+   one `unported` call. *Where my pick breaks:* if the network player is ever brought into the
+   lane, the block, its field and its countdown come with it (one place, named here). **Veto:**
+   port the field and the block, with `§1t1561s0§` through `unported`.
+4. **`drawEnemyLine` is an `enemyLine` event, under the source's condition.** The condition reads
+   the HUMAN's `canSeeSlash` (never true: only the NPC subclasses set it, `EnemyPlayer.as:817`,
+   and the human is a plain `new MCSPlayer()`, `StatsManager.as:1764`) or a replay page's
+   `showslash` flashvar (`GameEngine.as:1364-1366`), and never in the red freeze. So in a live duel
+   it never fires; the two world flags carry it faithfully for the day either is true. *Steelman
+   for dropping it:* dead in every live path. *Where my pick breaks:* nothing draws the event
+   yet. **Veto:** drop the branch and name it here.
+5. **The doSlash if-chain is a table** (`SLASH_TRAVEL`, with 4b's `SLASH_SPEED`): the same
+   behaviour, including the quirk that a jump or fall slash's START clip holds the body still.
+   A test runs every stance over every clip. **Veto:** transcribe the if-chain.
+
+### NOT CARRIED, AND WHY
+
+- Every `controlledBy == 0` / `== 3` branch (`drawLine`, `playSlash`, `clearCanvas`,
+  `NPCManager.checkHit`): the human's, and `EnemyClone`'s (`EnemyClone.as:19` sets 3).
+- `mcs != null`: the actor is its own clip here, so it always holds.
+- The frame going on after `endSlash` in `doSlash` IS carried; no test can see it, because
+  `endSlash` zeroes `velY` and the frame then adds 0 (named in the test and the plant file).
+
+### MEASURED ON THE WAY
+
+- **The makers' strokes end the slash on the ground.** `slashTarget`'s stroke ends 50 (fixture 1)
+  or 48 (fixture 2) px above the ground, under the 100 that sends a body falling, so both land,
+  hit, then POSE. They travel home in 3 frames (right) or 2 (left) at 40 / 30 px a frame, and
+  end facing the way the stroke's last points ran, drifting ±5.
+- **Reload per stroke:** 48 (balanced) and 72 (heavy, `48 × 1.5`) off both fixtures' bars; a
+  light stroke with an odd `slashUsage` truncates (150 − 12.5 → 137).
+- **For slice 5 (the state machine): the web `update` is 79 lines, Android's 931.** The web
+  splits it into helpers (`§1t4501s0§`, `§1t4498s0§`, `§1t4494s0§`, `§1t4495s0§`, and
+  `§1t3270s0§`, which is `doAction`); `startAction` is 671 Android / 678 web (34 state cases),
+  `doAction` 360 / 375 (27). `doSlash`'s only caller is `doAction` (`MCSPlayer.as:1954`);
+  `endDownStab`'s is `update` (`:522`); `startSlash`'s is `startAction` (`:1338`).
+
+### THE REVIEW
+
+One fresh-context reviewer: **no runtime bug.** It re-derived every branch, the facing arithmetic,
+the air boundary (258 lands, 257 falls to 347), the truncations, the packet's argument order, and
+traced every plant to a test that goes red. It also checked that the constructor now setting
+`level` changes no earlier behaviour. One latent gap, **fixed:** the port read the stroke's
+length and last point once, before `startAction` and the hit, while the source re-reads
+`this.slashArray.length` after both (`MCSPlayer.as:2817`). They agree today, but slice 8's hit
+could replace the stroke. +1 test that replaces it inside the hit. Its first version could not
+fail (both reads agreed on its numbers); rewritten, then watched red. The fix also removed a silent
+`?? last` fallback: an out-of-range read now throws, as the AS3 `Vector` read does. Kept as a
+note: Flash snaps a clip's y to 1/20 px and the port does not (the repo's convention, not this diff).

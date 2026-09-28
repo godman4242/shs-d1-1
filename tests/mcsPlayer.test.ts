@@ -19,6 +19,7 @@ import { deriveDuellist } from '../src/core/npc/duellistStats';
 import { newPlayerState, writeBattleStats, writeEquipment, writeSkillStats } from '../src/core/npc/duellistWriter';
 import { MCSPlayer, type MovePoint } from '../src/core/npc/MCSPlayer';
 import { Npc } from '../src/core/npc/Npc';
+import { NpcDamage } from '../src/core/npc/NpcDamage';
 import type { AnimLibrary, HitGeometry, NpcTarget, PlayerWorld } from '../src/core/npc/types';
 import type { Rng } from '../src/core/Sim';
 
@@ -48,6 +49,8 @@ const world = (battle: boolean): PlayerWorld => ({
   duelMode: true,
   externalRedFreezeCheck: () => undefined,
   battle,
+  playerCanSeeSlash: false,
+  playbackShowSlash: false,
 });
 const anims: AnimLibrary = { clip: () => ({ durationFrames: 3, loop: false }) };
 const geometry: HitGeometry = { partAtPoint: () => null, partHitBy: () => null, partX: () => 0 };
@@ -1091,13 +1094,20 @@ describe('slice 4b: startSlash — the clip, the landing and the speed (the same
     expect([p.velX, p.velY]).toEqual([0, 0]);
   });
 
-  it('doShunpo: lands at the end, doubles the damage, then endSlash — UNPORTED, loud', () => {
+  it('doShunpo: lands at the end, doubles the damage, then endSlash (4c) hits, poses and clears the flag', () => {
+    const { p, order, hits } = ender(body2(), () => 0.5);
+    p.doShunpo = true;
+    start(p, T.hor, [{ x: 420, y: 318 }, { x: 520, y: 318 }]);
+    expect([p.posX, p.y, p.slashDamage, hits[0]?.damage.damage, order, p.doShunpo])
+      .toEqual([520, GROUND, 172, 172, ['hit', OG_STATE.POSE], false]);
+  });
+
+  it('doShunpo unstubbed: endSlash reaches NPCManager.checkPlayerHit — UNPORTED, loud', () => {
     const { p } = slasher(body2(), () => 0.5);
     p.doShunpo = true;
     expect(() => {
       start(p, T.hor, [{ x: 420, y: 318 }, { x: 520, y: 318 }]);
-    }).toThrow('unported: MCSPlayer.endSlash');
-    expect([p.posX, p.y, p.slashDamage]).toEqual([520, GROUND, 172]);
+    }).toThrow('unported: NPCManager.checkPlayerHit');
   });
 });
 
@@ -1114,11 +1124,290 @@ describe('slice 4b: the ruling — WEB isAirborne on the duellist only', () => {
   });
 });
 
+/*
+ * L5-OPP SLICE 4c — THE SLASH END. `doSlash`, `endSlash`, `endDownStab` (`MCSPlayer.as:2708`,
+ * `:2767`, `:2862`; web `§1t99s0§.as:2780`, `:2839`, `:2940`) and the `deductReloadBar`
+ * `endSlash` calls (`:3240`, web `:3293`). Read line by line, `doSlash`, `endDownStab` and
+ * `deductReloadBar` are the same in both builds (all 36 of `doSlash`'s clip names too); the web
+ * `endSlash` adds the `Damage` attacker (ported) and a closing timer block that never runs on
+ * the duellist (ruled out, DIVERGENCES "L5-OPP SLICE 4c"). The hit is `NPCManager.checkPlayerHit`,
+ * the seam (slice 8): spied here, loud unstubbed. Every number worked by hand.
+ */
+
+/** A slasher whose `startAction` and hit land in one ordered log (`'hit'` for the hit). */
+function ender(b: DuellistBody, rng: Rng = NO_DRAW) {
+  const { p } = slasher(b, rng);
+  const order: Array<OgState | 'hit'> = [];
+  const hits: Array<{ points: readonly MovePoint[]; offset: number; damage: NpcDamage }> = [];
+  vi.spyOn(p, 'startAction').mockImplementation((s) => {
+    order.push(s);
+  });
+  vi.spyOn(p, 'checkPlayerHit').mockImplementation((points, offset, damage) => {
+    order.push('hit');
+    hits.push({ points, offset, damage });
+  });
+  return { p, order, hits };
+}
+
+/** `doSlash` once a frame until `endSlash` has run (it asks for POSE or FALL): the frames it took. */
+function slashToEnd(p: MCSPlayer, order: ReadonlyArray<OgState | 'hit'>): number {
+  for (let frame = 1; frame <= 20; frame += 1) {
+    p.doSlash();
+    if (order.includes(OG_STATE.POSE) || order.includes(OG_STATE.FALL)) return frame;
+  }
+  return -1;
+}
+
+/** The packet `endSlash` handed the hit, as plain fields. */
+const packet = (d: NpcDamage | undefined) =>
+  d && [d.damage, d.attackerlvl, d.launchType, d.stance, d.piercingDamage, d.attacker];
+
+describe.each([
+  ['fixture 1', body1, 1, BALANCED, 0, 102],
+  ['fixture 2', body2, 45, HEAVY, 86, 78],
+])('slice 4c, %s: slashTarget\'s stroke from initSlash to endSlash', (_name, body, level, stance, damage, reload) => {
+  it('to the right: doSlash runs it home in 3 frames, then endSlash lands, hits, poses and faces right', () => {
+    const { p, order, hits } = ender(body(), () => 0.5);
+    p.changeTarget(foe(440, GROUND, true));
+    p.reload = 150;
+    p.slashTarget();
+    p.startSlash();
+    const frames = slashToEnd(p, order);
+    // f1 400→498 at 40: 440, 480, 498; f2 400→482 at 30: 430, 460, 482. The stroke ends at y 308 / 310,
+    // 50 / 48 over the ground (not > 100), so it lands. Point 3 (f1) / 2 (f2) is left of the end: right, +5.
+    // Reload 150 less 48 (balanced) / 72 (heavy, × 1.5).
+    const endX = level === 1 ? 498 : 482;
+    expect([frames, p.posX, p.y, p.velX, p.velY, p.facingRight, p.reload, p.hasSlash, p.slashCommitted, order])
+      .toEqual([3, endX, GROUND, 5, 0, true, reload, false, false, [OG_STATE.SLASH, 'hit', OG_STATE.POSE]]);
+    expect(hits.map((h) => [h.points, h.offset])).toEqual([[p.slashArray, 0]]);
+    expect(packet(hits[0]?.damage)).toEqual([damage, level, 0, stance, 0, p]);
+  });
+
+  it('to the left: 2 frames, and it ends facing left, −5', () => {
+    const { p, order } = ender(body(), () => 0.5);
+    p.changeTarget(foe(360, GROUND, true));
+    p.slashTarget();
+    p.startSlash();
+    const frames = slashToEnd(p, order);
+    // f1 400→344 at 40: 360, 344; f2 400→354 at 30: 370, 354.
+    expect([frames, p.posX, p.velX, p.facingRight]).toEqual([2, level === 1 ? 344 : 354, -5, false]);
+  });
+});
+
+describe('slice 4c: doSlash — a frame of the slash (the same in both builds)', () => {
+  const START = ['horslash_parta', 'downslash_parta', 'upslash_parta'];
+  const MOVING = [...START, 'horslash_partb', 'downslash_partb', 'upslash_partb', 'fallslash_partb', 'jumpslash_partb'];
+  const STILL = ['jumpslash_parta', 'fallslash_parta', 'idle'];
+  /** One frame of a heading-right slash in `stance` on `clip`: the x it reached. */
+  const x = (stance: number, clip: string) => {
+    const { p } = ender(body1());
+    p.stance = stance;
+    p.startAnim(clip);
+    p.destX = 700;
+    p.doSlash();
+    return p.posX;
+  };
+
+  it('it travels only on its own stance\'s slash clips, at the stance\'s speed (dual heavy\'s, reversed balanced\'s)', () => {
+    const run = (stance: number, name: string, clips: string[]) => clips.map((c) => x(stance, `${name}_${c}`));
+    expect(run(LIGHT, 'light', MOVING)).toEqual(MOVING.map(() => 450));
+    expect(run(BALANCED, 'balanced', MOVING)).toEqual(MOVING.map(() => 440));
+    expect(run(HEAVY, 'heavy', MOVING)).toEqual(MOVING.map(() => 430));
+    expect(run(DUAL, 'dual', MOVING)).toEqual(MOVING.map(() => 430));
+    const rev = ['slash_parta', 'slash_partb', 'fallslash_partb', 'jumpslash_partb'];
+    expect(run(REVERSED, 'reversed', rev)).toEqual(rev.map(() => 440));
+    expect(run(LIGHT, 'light', STILL)).toEqual(STILL.map(() => BODY_X));
+    expect([x(HEAVY, 'balanced_horslash_parta'), x(REVERSED, 'reversed_jumpslash_parta'), x(-1, 'light_horslash_parta')])
+      .toEqual([BODY_X, BODY_X, BODY_X]);
+  });
+
+  it('a non-flat slash above the ground also drops by velY; a flat one, or one on the ground, does not', () => {
+    const y = (type: number, fromY: number) => {
+      const { p } = ender(body1());
+      p.startAnim('balanced_horslash_partb');
+      p.slashType = type;
+      p.destX = 700;
+      p.velY = 12;
+      p.setPosition(BODY_X, fromY);
+      p.doSlash();
+      return p.y;
+    };
+    expect([T.jump, T.up, T.drop, T.air, T.downstab].map((t) => y(t, 300))).toEqual([312, 312, 312, 312, 312]);
+    expect([T.hor, T.horDown, T.horUp].map((t) => y(t, 300))).toEqual([300, 300, 300]);
+    expect(y(T.jump, GROUND)).toBe(GROUND);
+  });
+
+  it('arriving calls endSlash: a stroke ending 208 px up falls from 90 below its end, velY zeroed', () => {
+    const { p, order } = ender(body1());
+    p.startAnim('balanced_jumpslash_partb');
+    p.slashType = T.jump;
+    p.slashArray = [{ x: 380, y: 150 }, { x: 410, y: 150 }];
+    p.destX = 410;
+    p.velY = 12;
+    p.setPosition(BODY_X, 200);
+    p.doSlash();
+    // 208 over the ground: FALL, y = 150 + 90 = 240, velY 0. The frame goes on to its own drop, which
+    // then adds velY 0: stopping there instead would read the same, so no test can tell them apart.
+    expect([p.posX, p.y, p.velY, order]).toEqual([410, 240, 0, [OG_STATE.FALL, 'hit']]);
+  });
+});
+
+describe('slice 4c: endSlash — the landing, the hit and the next stroke (web)', () => {
+  /** Fixture 2 (heavy, level 45, canLaunch) at BODY_X with `pts` as its stroke, set up, then ended. */
+  const ended = (pts: MovePoint[], setUp: (p: MCSPlayer) => void = () => undefined) => {
+    const e = ender(body2());
+    e.p.slashArray = pts;
+    e.p.hasSlash = true;
+    e.p.slashCommitted = true;
+    setUp(e.p);
+    e.p.endSlash();
+    return e;
+  };
+  const flat = [{ x: 400, y: 318 }, { x: 500, y: 318 }];
+
+  it('a stroke ending more than 100 px up falls from 90 below its end: FALL, then the hit (258 lands, 257 falls)', () => {
+    const land = (endY: number) => {
+      const { p, order } = ended([{ x: 400, y: 318 }, { x: 500, y: endY }], (q) => { q.velY = 9; });
+      return [p.y, p.velY, order];
+    };
+    expect(land(258)).toEqual([GROUND, 0, ['hit', OG_STATE.POSE]]);
+    expect(land(257)).toEqual([347, 0, [OG_STATE.FALL, 'hit']]);
+    expect(land(200.5)).toEqual([290.5, 0, [OG_STATE.FALL, 'hit']]);
+  });
+
+  it('the packet: the rolled damage, the level, the stance, the piercing stat and (web) the attacker', () => {
+    const { p, hits } = ended(flat, (q) => {
+      q.slashDamage = 86;
+      q.STAT_PIERCINGDMG = 7;
+      q.world.stagePosition = 30;
+    });
+    expect(packet(hits[0]?.damage)).toEqual([86, 45, 0, HEAVY, 7, p]);
+    expect(hits[0]?.offset).toBe(30);
+    expect(hits[0]?.points).toBe(p.slashArray);
+  });
+
+  it('only an UP slash on a body that can launch launches (LAUNCH_AIR, 1)', () => {
+    const launch = (type: number, can: boolean) =>
+      ended(flat, (q) => { q.slashType = type; q.canLaunch = can; }).hits[0]?.damage.launchType;
+    expect([launch(T.up, true), launch(T.up, false), launch(T.hor, true), launch(T.jump, true)]).toEqual([1, 0, 0, 0]);
+  });
+
+  it('it faces the way the stroke\'s last lengthThreshhold points run: the last against point len − 3, never below 0', () => {
+    const faces = (xs: number[]) => {
+      const { p } = ended(xs.map((x) => ({ x, y: 318 })));
+      return [p.facingRight, p.velX];
+    };
+    expect(faces([100, 300, 500, 520, 510, 505])).toEqual([false, -5]); // 505 vs 520, not vs 100
+    expect(faces([600, 700, 650])).toEqual([true, 5]); // index 0: 650 vs 600, not vs 700
+    expect(faces([500, 501])).toEqual([true, 5]);
+    expect(faces([500, 500])).toEqual([false, -5]);
+  });
+
+  it('the facing re-reads slashArray AFTER the hit, as the source does (the review\'s catch)', () => {
+    const { p } = ended(flat, (q) => {
+      vi.spyOn(q, 'checkPlayerHit').mockImplementation(() => {
+        q.slashArray = [{ x: 600, y: 318 }, { x: 700, y: 318 }];
+      });
+    });
+    // fresh: 700 > 600, right. A stale last point (500) against the fresh first (600) would face left.
+    expect([p.facingRight, p.velX]).toEqual([true, 5]);
+  });
+
+  it('a buffered stroke BECOMES the next one, uncopied; with none, hasSlash is cleared', () => {
+    const next = [{ x: 1, y: 2 }];
+    const buffered = ended(flat, (q) => { q.slashArrayBuffer = next; q.hasSlashBuffer = true; }).p;
+    const none = ended(flat).p;
+    expect([buffered.slashArray === next, buffered.hasSlash, buffered.hasSlashBuffer, buffered.slashCommitted])
+      .toEqual([true, true, false, false]);
+    expect([none.slashArray, none.hasSlash, none.hasSlashBuffer, none.slashCommitted]).toEqual([flat, false, false, false]);
+  });
+
+  it('pays the reload (heavy: 150 − 72) before the hit, and clears doShunpo', () => {
+    const { p, order, hits } = ender(body2());
+    p.slashArray = flat;
+    p.reload = 150;
+    p.doShunpo = true;
+    let paidBeforeHit = false;
+    vi.spyOn(p, 'checkPlayerHit').mockImplementation(() => {
+      paidBeforeHit = p.reload === 78;
+      order.push('hit');
+    });
+    p.endSlash();
+    expect([paidBeforeHit, p.reload, p.doShunpo, order, hits]).toEqual([true, 78, false, ['hit', OG_STATE.POSE], []]);
+  });
+
+  it('the player sees the stroke only with canSeeSlash, or a replay that shows slashes, and never in the red freeze', () => {
+    const lines = (w: Partial<PlayerWorld>) => ended(flat, (q) => { Object.assign(q.world, w); }).p.events
+      .filter((e) => e.type === 'enemyLine');
+    const drawn = [{ type: 'enemyLine', points: flat, offset: 30, slashLength: 112 }];
+    expect(lines({ playerCanSeeSlash: true, stagePosition: 30 })).toEqual(drawn);
+    expect(lines({ playback: true, playbackShowSlash: true, stagePosition: 30 })).toEqual(drawn);
+    expect(lines({ playerCanSeeSlash: true, redFreeze: true })).toEqual([]);
+    expect(lines({ playback: true })).toEqual([]);
+    expect(lines({ playbackShowSlash: true })).toEqual([]);
+    expect(lines({})).toEqual([]);
+  });
+
+  it('unstubbed, the hit is NPCManager.checkPlayerHit — UNPORTED, loud; the mobs\' packets carry no attacker', () => {
+    const { p } = slasher(body2());
+    p.slashArray = flat;
+    expect(() => {
+      p.endSlash();
+    }).toThrow('unported: NPCManager.checkPlayerHit');
+    expect(new NpcDamage(5, 3).attacker).toBeNull();
+  });
+});
+
+describe('slice 4c: the body carries what endSlash reads (`initPlayer` / `initAttackStats`)', () => {
+  it('the level, slashUsage and the piercing stat come from the body', () => {
+    const p = player({ ...body2(), level: 45, slashUsage: 33, piercingDmg: 7 });
+    expect([p.level, p.slashUsage, p.STAT_PIERCINGDMG]).toEqual([45, 33, 7]);
+  });
+});
+
+describe('slice 4c: deductReloadBar — the stroke\'s cost (the same in both builds)', () => {
+  const after = (stance: number, reload: number, usage = 25) => {
+    const { p } = ender(body1());
+    p.stance = stance;
+    p.slashUsage = usage;
+    p.reload = reload;
+    p.deductReloadBar();
+    return p.reload;
+  };
+
+  it('light half, balanced and reversed whole, heavy and dual × 1.5, each stored to an int', () => {
+    expect([LIGHT, BALANCED, REVERSED, HEAVY, DUAL].map((s) => after(s, 150))).toEqual([137, 125, 125, 112, 112]);
+  });
+
+  it('a full bar empties first; it never goes below 0; no stance costs nothing', () => {
+    expect([after(BALANCED, 192, 48), after(BALANCED, 191, 48), after(BALANCED, 10, 48), after(-1, 150)])
+      .toEqual([0, 143, 0, 150]);
+  });
+});
+
+describe('slice 4c: endDownStab — the same in both builds', () => {
+  it('pose, clear the slash, and take the buffered stroke uncopied', () => {
+    const { p, order } = ender(body2());
+    const next = [{ x: 1, y: 2 }];
+    p.hasSlash = true;
+    p.slashCommitted = true;
+    p.slashArrayBuffer = next;
+    p.hasSlashBuffer = true;
+    p.endDownStab();
+    expect([order, p.slashArray === next, p.hasSlash, p.hasSlashBuffer, p.slashCommitted])
+      .toEqual([[OG_STATE.POSE], true, true, false, false]);
+    const { p: q, order: o } = ender(body2());
+    q.hasSlash = true;
+    q.endDownStab();
+    expect([o, q.hasSlash, q.hasSlashBuffer, q.slashCommitted]).toEqual([[OG_STATE.POSE], false, false, false]);
+  });
+});
+
 describe('the harness rule — unported calls throw, and their count only goes down', () => {
-  it('MCSPlayer.ts names exactly 3 unported sites (startAction, clearInteractTarget, endSlash)', () => {
+  it('MCSPlayer.ts names exactly 3 unported sites (startAction, clearInteractTarget, checkPlayerHit)', () => {
     const src = readFileSync(new URL('../src/core/npc/MCSPlayer.ts', import.meta.url), 'utf8');
     expect(src.match(/unported\('[^']*'\)/g)).toEqual([
-      "unported('MCSPlayer.startAction')", "unported('StageManager.clearInteractTarget')", "unported('MCSPlayer.endSlash')",
+      "unported('MCSPlayer.startAction')", "unported('StageManager.clearInteractTarget')", "unported('NPCManager.checkPlayerHit')",
     ]);
   });
 });
