@@ -12,8 +12,9 @@
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
 | MCP / skills | nothing extra; `measure-verify` exists if you want a read-only refute pass | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09** (16 days). Slices 3–6 (the body, ~2,900 AS3
-lines) are the Fable-sized ones; slices 1–2 fit comfortably before then.
+⚠️ Your Claude subscription ends **2026-10-09**. Slices 3–6 (the body, ~3,900 AS3 lines by the
+kickoff's §3 table: ≈400 + ≈700 + 1,962 + ≈820) are the Fable-sized ones; slices 1–2 fit
+comfortably before then.
 
 Copy everything BETWEEN the `'''` lines:
 
