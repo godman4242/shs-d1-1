@@ -194,6 +194,8 @@ export type NpcEvent =
   | { readonly type: 'setProp'; readonly itemId: number }
   /** `Projectile.doBreak()` — the thing that just hit this actor's weapon snaps (`EnemySpearElite.as:472`). */
   | { readonly type: 'breakProjectile' }
+  /** `ProjectileManager.createSmoke3(x, y)` — a hidden body shows itself (`MCSPlayer.cancelStealth`, `MCSPlayer.as:4363`). Ints, as the call takes them. */
+  | { readonly type: 'smoke'; readonly x: number; readonly y: number }
   | {
       /**
        * `NPCManager.createEnemy(npcID, x, y, fatal)` (`NPCManager.as:869`) — the alpha's

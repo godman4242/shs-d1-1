@@ -166,3 +166,56 @@ export const OG_STROKE = {
     lengthDiv: 2,
   },
 } as const;
+
+/**
+ * `slashType` (`MCSPlayer.as:37-53`): which stroke `initSlash` read, and so which clip
+ * `startSlash` plays. The same in both builds. `LAUNCH_SLASH` (5) is declared and never read in
+ * either build, so it is not carried.
+ */
+export const OG_SLASH_TYPE = {
+  /** `MCSPlayer.as:37` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:37` */
+  hor: 0,
+  /** `MCSPlayer.as:39` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:39` */
+  jump: 1,
+  /** `MCSPlayer.as:41` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:41` */
+  drop: 2,
+  /** `MCSPlayer.as:43` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:43` */
+  up: 3,
+  /** `MCSPlayer.as:45` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:45` */
+  air: 4,
+  /** `MCSPlayer.as:49` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:49` */
+  downstab: 6,
+  /** `MCSPlayer.as:51` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:51` */
+  horDown: 7,
+  /** `MCSPlayer.as:53` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:53` */
+  horUp: 8,
+} as const;
+
+/**
+ * `initSlash` / `startSlash`: how a stroke is read and how fast the body travels it. The same
+ * in both builds (the one structural difference, the downstab's side test, is in the port).
+ */
+export const OG_SLASH = {
+  /** `MCSPlayer.as:9` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:9` — a stroke starting this close slashes where it stands; farther, it runs */
+  standingRange: 50,
+  /** `MCSPlayer.as:11` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:11` — a stroke this far above the body is a jump slash (and above the ground, it ends in the air) */
+  jumpThreshhold: 100,
+  /** `MCSPlayer.as:2424` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2496` — a light fall's stroke ending this far below the body is a drop slash */
+  dropBelow: 100,
+  /** `MCSPlayer.as:2437` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2509` — a stroke ending within this of its start, x-wise, and above it, is a downstab */
+  stabSpanX: 50,
+  /** `MCSPlayer.as:2448` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2520` — a flat stroke tilting more than this, either way, slashes up or down */
+  tilt: 25,
+  /** `MCSPlayer.as:2461` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2533` — the downstab lands this far short of the stroke, on the body's side */
+  downstabShort: 55,
+  /** `InputManager.as:53` · `reference/decompiled/shs3_payload/scripts/§1t1541s0§.as:53` — `lengthThreshhold`: the facing reads point `lengthThreshhold - 1` */
+  lengthThreshhold: 4,
+  /** `MCSPlayer.as:15` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:15` — px a frame, light */
+  lightSpeed: 50,
+  /** `MCSPlayer.as:17` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:17` — balanced and reversed */
+  balancedSpeed: 40,
+  /** `MCSPlayer.as:19` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:19` — heavy and dual */
+  heavySpeed: 30,
+  /** `MCSPlayer.as:2703` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:2775` — a shunpo slash lands where it ends and hits twice as hard */
+  shunpoDamageMult: 2,
+} as const;

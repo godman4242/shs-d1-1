@@ -4246,3 +4246,33 @@ plants 16/16 RED. The full 120-plant chaos run is the shell's post-ship step.
 
 After: 92 files / 1953 tests · typecheck 0 · lint 0 · claimcheck 2051 / 577 / 44 / 0 · the new
 plants 20/20 RED. The full 140-plant chaos run is the shell's post-ship step.
+
+## 2026-09-29 — build loop: L5-OPP slice 4b, THE SLASH START
+
+- **Baseline at HEAD `d7667f9`, as RESUME_HERE stated:** 92 files / 1953 tests · typecheck 0 ·
+  lint 0 · claimcheck 2051 / 577 / 0.
+- **Both builds read line by line:** `initSlash`, `checkNextSlash`, `startSlash`, `cancelStealth`
+  are the same but ONE line: the downstab's side test (web `posX`, Android `mcs.x`, the screen x).
+  Web ported. Every constant and all 25 clip strings match.
+- **Red → green.** 54 red in the file (the 33 new tests, the unported pin, and 20 of 4a's tests,
+  which now stop at `startAction`); after the port 6 more went red on the fixtures' no-draw RNG
+  (`startSlash` rolls damage: a test bug, fixed in the tests), then 120/120.
+- **Ruled:** `cancelStealth` ported (a `smoke` event); the web `isAirborne` as an `MCSPlayer`
+  override only; the clip if-chain as a lookup table.
+- **Found:** the launch stroke is HOR_SLASHUP, never UP, at reach < 140 (a 100 px rise is not
+  `> 100`); a downstab takes no speed (velocity 0 via `dist / 0`); fixture 1 deals 0 damage;
+  claimcheck's function-start blind spot bit again (my clip-table cite and two plant notes, 2
+  lines off, fixed by reading). For 4c: the web `endSlash`'s two extra pieces, one of them a
+  timer only ever armed on the human (ERRATUM 10).
+- **Chaos:** 30 plants, then the review's 4: pinned 140 → 174, 34/34 red, restored byte-identical
+  (scratch clones).
+- **Review:** one fresh-context reviewer, no runtime bug. One real gap, re-verified in node: four
+  `int` truncations (the tilt, `ydiff`, `startSlash`'s `destX` and air `destY`) that no test
+  pinned. +3 tests, 4 plants, each red. Queued: `asInt` returns −0 where AS3 gives 0.
+- **Next:** slice 4c (`doSlash`, `endSlash`, `endDownStab`); the kickoff is at the top of
+  RESUME_HERE.
+
+### THE GATES
+
+After: 92 files / 2023 tests · typecheck 0 · lint 0 · claimcheck 2105 / 596 / 44 / 0 · the new
+plants 34/34 RED. The full 174-plant chaos run is the shell's post-ship step.

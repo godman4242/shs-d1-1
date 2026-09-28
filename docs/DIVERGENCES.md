@@ -6037,3 +6037,108 @@ three (TS2367) and accepts DOWNED. Wording fixed. (2) `diagonalAngle` read the r
 be fractional (`setPosition` does not truncate, AS3's `int` parameters do; a pre-existing gap),
 and at posX 400.9 the raw read gives −7 where the source gives −8. **Red first** (2 tests, both
 fixtures), then `asInt` in the angle, green.
+
+## L5-OPP SLICE 4b — THE SLASH START: `initSlash`, `checkNextSlash`, `startSlash` (+ `cancelStealth`) ON THE DUELLIST'S BODY (2026-09-29)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 9 item 3, ERRATUM 8 item 3, §3 slice 4
+(4b). A build-loop cycle, one commit.
+
+**What landed:** in `src/core/npc/MCSPlayer.ts`: `initSlash`, `checkNextSlash`, `startSlash`,
+`cancelStealth`, an `isAirborne` override, and the fields `slashType`, `slashDamage`, `doShunpo`.
+`initSlash` is no longer `unported`; `startSlash`'s shunpo branch calls `endSlash` (slice 4c)
+through `unported` (sites 3 → 3: `MCSPlayer.initSlash` out, `MCSPlayer.endSlash` in; the pin now
+names all three). `startAction` stays slice 5. Two config objects, `OG_SLASH_TYPE` (8 values)
+and `OG_SLASH` (11), every one cited in both builds at ±0. `NpcEvent` gains `smoke`
+(`ProjectileManager.createSmoke3`). `tests/mcsPlayer.test.ts` +36 (+3 from the review). Red first: 54 in the file, all 33 first-written ones on the
+unported `initSlash` or the missing functions, plus the pin and 20 of 4a's tests, which now stop
+one step later, at `startAction`. 34 chaos plants (140 → 174), 34/34 red. Suite 1953 → 2023
+(36 tests + 34 plant-anchor pins). Claimcheck 2051 → 2105 cites, 577 → 596 values.
+
+### THE R6 DIFF — both builds, line by line
+
+| function | Android | web | ruled |
+|---|---|---|---|
+| `initSlash` | `MCSPlayer.as:2403-2501` | `§1t99s0§.as:2475-2573` | **ONE difference** (below) |
+| `checkNextSlash` | `:2503-2514` | `:2575-2586` | same |
+| `startSlash` | `:2516-2706` | `:2588-2778` | same (`this.controlledBy` vs `controlledBy`: one field) |
+| `cancelStealth` | `:4359-4367` | `:4728-4736` | same |
+| `isAirborne` (called by `initSlash`) | `NPC.as:772-775`, height only | `§1t68s0§.as:793-796`, **FALL or height** | web, on `MCSPlayer` (ruling 2) |
+
+The one difference: the downstab lands 55 px short of the stroke on the body's side, and the
+side test reads **`mcs.x`** in Android (`MCSPlayer.as:2459`, the SCREEN x) and **`posX`** in the
+web (`§1t99s0§.as:2531`, the MAP x). They disagree whenever the stage is scrolled: at stage
+position 150, a body at map 400 (screen 250) and a downstab stroke at x 380 land at 435 in the
+web and 325 in Android. Web ported, pinned by a test, and the Android side is a plant.
+
+Every constant the three read is the same in both builds: `standingRange` 50, `jumpThreshhold`
+100, the speeds 50 / 40 / 30 (`:9-19` both), the slash types 0–8 (`:37-53` both),
+`lengthThreshhold` 4 (`InputManager.as:53`, web `§1t1541s0§.as:53`), the literals 100, 50, ±25,
+55 and ×2, and all 25 clip strings (web constants read by declaration). The web state
+constants are Android's (FALL 4, GOTLAUNCHED 6, RUN 1, SLASH 8, `§1t1544s0§.as`).
+
+### RULINGS (decide-and-flag)
+
+1. **`cancelStealth` is PORTED (9 lines), not `unported`.** `initSlash` calls it first, so an
+   `unported` stub would throw on every stroke and 4b's tests could reach nothing. Its only side
+   effect outside the body is `createSmoke3`, carried as a `smoke` event the render layer can
+   ignore until it draws one. *Steelman for `unported`:* stealth is a skill (slice 7) and this
+   path is dead until then. *Where my pick breaks:* nothing reads the event yet, so a wrong
+   coordinate would sit unseen until a render reads it; the test pins it at the source's ints.
+   **Veto:** `unported('MCSPlayer.cancelStealth')` and stub the visibility.
+2. **The web `isAirborne` (FALL counts) is an override on `MCSPlayer` ONLY.** R6 says web wins,
+   and `initSlash` reads it (a FALLING body on the ground: web HOR_SLASHUP, Android UP_SLASH).
+   Neither build's `MCSPlayer` overrides `isAirborne`; the override is a port device so the rule
+   reaches the duellist without touching the 20 mobs' `Npc`, where the owner's ruling is still
+   open (RESUME_HERE "STILL OPEN"). *Steelman for waiting:* one rule, one place; the override is
+   structure the source does not have, and if the owner rules "Android for the mobs" the two
+   bodies then disagree by design. *Where my pick breaks:* if the owner rules web for the mobs
+   too, the override moves into `Npc` and is deleted here (a 3-line change; a test names both
+   sides). *What it depends on:* R6. Today it changes no other ported path: `initMove` already
+   tests FALL beside it. **Veto:** delete the override, and the duellist reads Android's
+   height-only test until the `Npc` ruling.
+3. **The clip if-chain is a lookup table** (`SLASH_CLIP`, `SLASH_SPEED`). Same behaviour, including
+   the two quirks a tidy port would "fix": UP plays the JUMP clip in every stance, and a type with
+   no clip in its stance (AIR outside light) leaves the clip as it was while the speed is still set.
+   A 40-entry test pins every stance × type pair. **Veto:** transcribe the if-chain.
+
+### NOT CARRIED, AND WHY
+
+- `startSlash`'s `controlledBy == 0` `InputManager.clearCanvas()` (the human's).
+- `LAUNCH_SLASH` (5): declared in both builds, read by nothing in either.
+- The source's `lastPt` read on an empty `slashArray` (an AS3 `Vector` RangeError) is a
+  `RangeError` here too; `gotInput` never hands an empty stroke.
+
+### MEASURED ON THE WAY
+
+- **The launch stroke is never an UP slash at these reaches.** `launchTarget` rises 20 px a
+  point, so reach 126 (6 points) rises exactly 100, and the UP test is `> 100`: it reads
+  HOR_SLASHUP. Only a reach of 140+ (7 points, a 120 rise) reads UP.
+- **A downstab has no speed.** Its branch is the `if`, and the stance branches that set
+  `slashSpeed` are `else if`s, so `dist / 0` is Infinity and both velocities truncate to 0
+  (`NPC.as:8-10` declares them `int`). On a zero-length stroke `0 / 0` is NaN, also 0.
+- **Fixture 1's damage is 0:** its body has `minDamage` 0 and `damageRange` 0 (a level-1 new
+  character), so only fixture 2 (86, and 172 under shunpo) tests `slashDamage`'s value.
+- **My own clip-table cite was two lines early** (`2538-2673` for `2540-2675`): the function-start
+  class claimcheck cannot see (queued at 4a). Fixed by reading it; so were two plant notes.
+- **For slice 4c:** `endSlash` is 95 Android lines (`MCSPlayer.as:2767`) against 101 web
+  (`§1t99s0§.as:2839`). Two web-only pieces found: `damage.§1t1089s0§(this)` (the `Damage`
+  attacker setter, `§1t67s0§.as:212`) and a closing `if(this.§1t4440s0§ > 0) { … = 0;
+  this.§1t1561s0§(); }`. That field is 0 by default (`§1t99s0§.as:147`) and set (to `5 * 24`
+  frames) only by `§1t4444s0§` (`:262`), whose two callers both call it on
+  `StatsManager.getPlayer()`, the human (`§1t1525s0§.as:178`, `§1t7785s0§.as:1738`): on the
+  duellist the block never runs. `endSlash` also calls `deductReloadBar`
+  (`MCSPlayer.as:3240`, not ported), `NPCManager.checkPlayerHit` (the opponent's hit on the
+  player: a seam channel), and `startAction` FALL / POSE (slice 5).
+
+### THE REVIEW
+
+One fresh-context reviewer: **no runtime bug.** It re-derived every branch, boundary and
+side-effect order against the web source, decoded all 25 web clip constants, checked the
+no-stance (−1) path, and re-ran every hand-worked number in node. One real gap: it removed
+each `asInt` from a scratch copy and **four survived the whole suite** (the tilt `diff`,
+`ydiff`, and `startSlash`'s `destX` and air `destY`; `xdiff` is int − int, an equivalent
+mutant). Every test stroke was whole-numbered there, while the makers produce fractions. Its
+catch inputs re-verified in node (tilt 25.5 → 25, flat; velY 38 against 39), +3 tests, and a
+plant per truncation, each red. Queued, not fixed: `asInt` returns −0 for a small negative,
+where an AS3 `int` has none (invisible until something divides by a velocity; the fix touches
+every mob).

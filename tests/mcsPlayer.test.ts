@@ -12,12 +12,13 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { OG_STATE, type OgState } from '../src/config/ogActor';
-import { OG_STANCE_REACH } from '../src/config/ogMcsPlayer';
+import { OG_SLASH_TYPE, OG_STANCE_REACH } from '../src/config/ogMcsPlayer';
 import { REACH } from '../src/config/reach';
 import { initDuellistBody, type DuellistBody } from '../src/core/npc/duellistBody';
 import { deriveDuellist } from '../src/core/npc/duellistStats';
 import { newPlayerState, writeBattleStats, writeEquipment, writeSkillStats } from '../src/core/npc/duellistWriter';
-import { MCSPlayer } from '../src/core/npc/MCSPlayer';
+import { MCSPlayer, type MovePoint } from '../src/core/npc/MCSPlayer';
+import { Npc } from '../src/core/npc/Npc';
 import type { AnimLibrary, HitGeometry, NpcTarget, PlayerWorld } from '../src/core/npc/types';
 import type { Rng } from '../src/core/Sim';
 
@@ -514,11 +515,11 @@ function striker(b: DuellistBody, t: NpcTarget | null): MCSPlayer {
 const line = (x: number, y: number, dx: number, dy: number, n: number) =>
   Array.from({ length: n }, (_, i) => ({ x: x + i * dx, y: y + i * dy }));
 
-/** Run one maker: the points it handed `gotInput`, after the loud stop at `initSlash`. */
+/** Run one maker: the points it handed `gotInput`, after `initSlash`'s loud stop at `startAction` (slice 5). */
 function stroke(p: MCSPlayer, make: (p: MCSPlayer) => void) {
   expect(() => {
     make(p);
-  }).toThrow('unported: MCSPlayer.initSlash');
+  }).toThrow('unported: MCSPlayer.startAction');
   expect(p.slashArray).toEqual(p.inputArray);
   expect(p.slashArray).not.toBe(p.inputArray);
   return p.inputArray;
@@ -672,12 +673,13 @@ describe('slice 4a: EnemyPlayer.gotInput — the routing (the same in both build
     return { p, moves };
   }
 
-  it('a stroke in a free state is copied to slashArray, then initSlash takes its first point — UNPORTED, loud', () => {
+  it('a stroke in a free state is copied to slashArray, then initSlash takes its first point (to startAction: UNPORTED, loud)', () => {
     const { p, moves } = routed(OG_STATE.IDLE);
     const input = STROKE.map((q) => ({ ...q }));
     expect(() => {
       p.gotInput(input, true);
-    }).toThrow('unported: MCSPlayer.initSlash');
+    }).toThrow('unported: MCSPlayer.startAction');
+    expect(p.destX).toBe(STROKE[0]?.x);
     expect([p.slashArray, p.hasSlashBuffer, moves]).toEqual([STROKE, false, []]);
     expect(p.slashArray[0]).not.toBe(input[0]);
   });
@@ -715,9 +717,9 @@ describe('slice 4a: EnemyPlayer.gotInput — the routing (the same in both build
   it('falling in LIGHT stance: a stroke is not buffered, it slashes; a move is still dropped', () => {
     const light = (p: MCSPlayer) => { p.stance = LIGHT; };
     const slash = routed(OG_STATE.FALL, light);
-    expect(() => {
-      slash.p.gotInput(STROKE, true);
-    }).toThrow('unported: MCSPlayer.initSlash');
+    // 100 px off and falling: initSlash reads an AIR slash and asks for no action (4b).
+    slash.p.gotInput(STROKE, true);
+    expect(slash.p.hasSlash).toBe(true);
     const move = routed(OG_STATE.FALL, light);
     move.p.gotInput(STROKE, false);
     expect([slash.p.hasSlashBuffer, slash.p.slashArray, move.moves]).toEqual([false, STROKE, []]);
@@ -748,10 +750,376 @@ describe('slice 4a: EnemyPlayer.gotInput — the routing (the same in both build
   });
 });
 
+/*
+ * SLICE 4b — THE SLASH START. `initSlash`, `checkNextSlash`, `startSlash` (Android
+ * `MCSPlayer.as:2403` / `:2503` / `:2516`, web `§1t99s0§.as:2475` / `:2575` / `:2588`) and the
+ * `cancelStealth` `initSlash` opens with (`:4359`, web `:4728`). Read line by line, the builds
+ * differ in one place: the downstab's side test reads `mcs.x` (the SCREEN x) in Android and
+ * `posX` in the web; web ported. The web `isAirborne` also counts FALL (`§1t68s0§.as:793`):
+ * ruled onto `MCSPlayer` alone. `startAction` (slice 5) is spied, so each test sees the state
+ * `initSlash` asked for; `endSlash` (4c) stays loud. Every number worked by hand, the
+ * velocities re-run in node.
+ */
+const T = OG_SLASH_TYPE;
+
+/** A duellist in its init stance at BODY_X on the ground, idle, its `startAction` recorded. */
+function slasher(b: DuellistBody, rng: Rng = NO_DRAW) {
+  const p = player(b, false, rng);
+  p.setStance(b.stance);
+  p.world.peaceful = false;
+  p.setPosition(BODY_X, GROUND);
+  p.actionState = OG_STATE.IDLE;
+  const actions: OgState[] = [];
+  vi.spyOn(p, 'startAction').mockImplementation((s) => {
+    actions.push(s);
+  });
+  return { p, actions };
+}
+
+/** Hand `initSlash` a stroke the way `gotInput` does: copied into `slashArray`, then its first point. */
+function init(p: MCSPlayer, pts: [MovePoint, ...MovePoint[]]): void {
+  p.slashArray = pts.map((q) => ({ ...q }));
+  p.initSlash(pts[0]);
+}
+
+/** A stroke `startSlash` reads: in `slashArray`, typed as `initSlash` would have typed it. */
+function start(p: MCSPlayer, type: number, pts: MovePoint[]): void {
+  p.slashType = type;
+  p.slashArray = pts;
+  p.startSlash();
+}
+
+describe.each([
+  ['fixture 1', body1, 6, 'balanced', 40, 0],
+  ['fixture 2', body2, 5, 'heavy', 30, 86],
+])('slice 4b, %s: the makers\' strokes through initSlash and startSlash', (_name, body, n, clip, speed, damage) => {
+  it('launchTarget: a rise of 20 × (n − 1) is HOR_SLASHUP, never UP (100 is not > 100); 150 px off, so RUN', () => {
+    const { p, actions } = slasher(body());
+    p.changeTarget(foe(LEFT_X, GROUND, true));
+    p.hasSlashBuffer = true;
+    p.launchTarget();
+    expect([p.destX, p.destY, p.hasSlash, p.hasSlashBuffer, p.slashType, actions])
+      .toEqual([LEFT_X, GROUND, true, false, T.horUp, [OG_STATE.RUN]]);
+  });
+
+  it('slashTarget on a near target to the right: HOR, SLASH where it stands, facing point 3 (right)', () => {
+    const { p, actions } = slasher(body());
+    p.changeTarget(foe(440, GROUND, true));
+    p.faceLeft();
+    p.slashTarget();
+    const first = n === 6 ? 398 : 402; // int(440 − 42), int(440 − 37.33)
+    expect([p.destX, p.destY, p.slashType, p.facingRight, actions])
+      .toEqual([first, 318, T.hor, true, [OG_STATE.SLASH]]);
+  });
+
+  it('slashTarget on a near target to the left: HOR, SLASH, and point 3 is left of the body, so it faces left', () => {
+    const { p, actions } = slasher(body());
+    p.changeTarget(foe(360, GROUND, true));
+    p.slashTarget();
+    const first = n === 6 ? 444 : 434; // int(360 + 84), int(360 + 74.67)
+    expect([p.destX, p.slashType, p.facingRight, actions]).toEqual([first, T.hor, false, [OG_STATE.SLASH]]);
+  });
+
+  it('startSlash on the right-hand stroke: committed, faces right, the stance\'s HOR clip, lands on the ground', () => {
+    const { p } = slasher(body(), () => 0.5);
+    p.changeTarget(foe(440, GROUND, true));
+    p.faceLeft();
+    p.slashTarget();
+    p.startSlash();
+    // f1 (398,318)→(498,308), speed 40: xdiff 98, ydiff 40 → (37, 15); f2 (402,318)→(482,310), speed 30: 82, 40 → (26, 13).
+    const [endX, vel] = n === 6 ? [498, [37, 15]] : [482, [26, 13]];
+    expect([p.slashCommitted, p.facingRight, p.animation, p.destX, p.destY, [p.velX, p.velY], p.slashDamage])
+      .toEqual([true, true, `${clip}_horslash_parta`, endX, GROUND, vel, damage]);
+  });
+
+  it('startSlash on the left-hand stroke: faces left, velX negative', () => {
+    const { p } = slasher(body(), () => 0.5);
+    p.changeTarget(foe(360, GROUND, true));
+    p.slashTarget();
+    p.startSlash();
+    // f1 (444,318)→(344,308): −56, 40 → (−32, 23); f2 (434,318)→(354,310): −46, 40 → (−22, 19).
+    const [endX, vel] = n === 6 ? [344, [-32, 23]] : [354, [-22, 19]];
+    expect([p.facingRight, p.destX, p.destY, [p.velX, p.velY]]).toEqual([false, endX, GROUND, vel]);
+    expect(speed).toBe(n === 6 ? 40 : 30);
+  });
+});
+
+describe('slice 4b: initSlash — reading the stroke (the same in both builds but one line)', () => {
+  const at = (setUp: (p: MCSPlayer) => void, pts: [MovePoint, ...MovePoint[]]) => {
+    const s = slasher(body1());
+    setUp(s.p);
+    init(s.p, pts);
+    return s;
+  };
+  const idle = () => undefined;
+  const type = (setUp: (p: MCSPlayer) => void, pts: [MovePoint, ...MovePoint[]]) => at(setUp, pts).p.slashType;
+
+  it('destX is the first point truncated and clamped to the stage (0–800); destY its y, truncated', () => {
+    const d = (x: number, y: number) => {
+      const { p } = at(idle, [{ x, y }, { x: x + 100, y }]);
+      return [p.destX, p.destY];
+    };
+    expect([d(-5, 300), d(900, 300), d(450.7, 300.9)]).toEqual([[0, 300], [800, 300], [450, 300]]);
+  });
+
+  it('JUMP: a stroke starting more than 100 px above the body (108); at exactly 100 it is flat', () => {
+    expect(type(idle, [{ x: 500, y: 250 }, { x: 600, y: 250 }])).toBe(T.jump);
+    expect(type(idle, [{ x: 500, y: 258 }, { x: 600, y: 258 }])).toBe(T.hor);
+  });
+
+  it('LIGHT and FALLING: ending more than 100 px below the body is DROP, else AIR; far off and falling, no action', () => {
+    const fall = (p: MCSPlayer) => {
+      p.stance = LIGHT;
+      p.actionState = OG_STATE.FALL;
+      p.setPosition(BODY_X, 200);
+    };
+    const drop = at(fall, [{ x: 500, y: 301 }, { x: 600, y: 301 }]);
+    const air = at(fall, [{ x: 500, y: 300 }, { x: 600, y: 300 }]);
+    const near = at(fall, [{ x: 420, y: 300 }, { x: 520, y: 300 }]);
+    expect([drop.p.slashType, drop.actions, air.p.slashType, air.actions, near.actions])
+      .toEqual([T.drop, [], T.air, [], [OG_STATE.SLASH]]);
+    // Falling in BALANCED is not the light branch: the same stroke reads flat.
+    expect(type((p) => { fall(p); p.stance = BALANCED; }, [{ x: 500, y: 300 }, { x: 600, y: 300 }])).toBe(T.hor);
+  });
+
+  it('DOWNSTAB: canStab, a stroke running down, ending within 50 px of its start x; lands 55 short, on the body\'s side', () => {
+    const stab = (p: MCSPlayer) => { p.canStab = true; };
+    const s = at(stab, [{ x: 450, y: 300 }, { x: 460, y: 380 }]);
+    // posX 400 < 450: 450 − 55 = 395, 5 px off, so SLASH; point 3 clamps to point 1 (460): faces right.
+    expect([s.p.slashType, s.p.destX, s.actions, s.p.facingRight]).toEqual([T.downstab, 395, [OG_STATE.SLASH], true]);
+    const right = at(stab, [{ x: 350, y: 300 }, { x: 340, y: 380 }]);
+    expect([right.p.slashType, right.p.destX]).toEqual([T.downstab, 405]);
+    // 50 px across is not within 50; nor is any stroke without canStab. Both read as a down-tilt.
+    expect(type(stab, [{ x: 450, y: 300 }, { x: 500, y: 380 }])).toBe(T.horDown);
+    expect(type(idle, [{ x: 450, y: 300 }, { x: 460, y: 380 }])).toBe(T.horDown);
+  });
+
+  it('WEB: the downstab\'s side is read from posX (map); Android reads mcs.x (screen) and lands on the other side', () => {
+    const s = at((p) => {
+      p.canStab = true;
+      p.world.stagePosition = 150;
+      p.setPosition(BODY_X, GROUND); // screen x 250, map x 400
+    }, [{ x: 380, y: 300 }, { x: 385, y: 380 }]);
+    // web: 400 < 380 is false → 380 + 55 = 435. Android: 250 < 380 → 380 − 55 = 325.
+    expect([s.p.x, s.p.slashType, s.p.destX]).toEqual([250, T.downstab, 435]);
+  });
+
+  it('the downstab\'s landing is clamped to the stage: −25 → 0, 835 → 800', () => {
+    const land = (bodyX: number, x: number) => at((p) => {
+      p.canStab = true;
+      p.setPosition(bodyX, GROUND);
+    }, [{ x, y: 300 }, { x, y: 380 }]).p.destX;
+    expect([land(10, 30), land(795, 780)]).toEqual([0, 800]);
+  });
+
+  it('UP: rising more than 100 px (108) from a body on the ground; not from a body in the air', () => {
+    const up: [MovePoint, MovePoint] = [{ x: 500, y: GROUND }, { x: 500, y: 250 }];
+    expect(type(idle, up)).toBe(T.up);
+    expect(type(idle, [{ x: 500, y: GROUND }, { x: 500, y: 258 }])).toBe(T.horUp);
+    expect(type((p) => { p.setPosition(BODY_X, 300); }, [{ x: 500, y: 300 }, { x: 500, y: 192 }])).toBe(T.horUp);
+  });
+
+  it('WEB: a body in the FALL state is airborne on the ground too, so the same rise is HOR_SLASHUP (Android: UP)', () => {
+    const s = at((p) => { p.actionState = OG_STATE.FALL; }, [{ x: 500, y: GROUND }, { x: 500, y: 250 }]);
+    expect([s.p.slashType, s.actions]).toEqual([T.horUp, []]);
+  });
+
+  it('the tilt: first y − last y of 26 is HOR_SLASHUP, 25 and −25 are flat, −26 is HOR_SLASHDOWN', () => {
+    const tilt = (dy: number) => type(idle, [{ x: 500, y: 300 }, { x: 600, y: 300 - dy }]);
+    expect([tilt(26), tilt(25), tilt(-25), tilt(-26)]).toEqual([T.horUp, T.hor, T.hor, T.horDown]);
+  });
+
+  it('the tilt is an int: 25.5 truncates to 25, which is flat (the review\'s catch)', () => {
+    expect(type(idle, [{ x: 500, y: 300 }, { x: 600, y: 274.5 }])).toBe(T.hor);
+  });
+
+  it('standing range: 49 px off slashes where it stands, 50 runs; a launched body never stands, it runs', () => {
+    const acts = (setUp: (p: MCSPlayer) => void, x: number) => at(setUp, [{ x, y: 318 }, { x: x + 100, y: 318 }]).actions;
+    expect([acts(idle, 449), acts(idle, 450), acts(idle, 351), acts(idle, 350)])
+      .toEqual([[OG_STATE.SLASH], [OG_STATE.RUN], [OG_STATE.SLASH], [OG_STATE.RUN]]);
+    expect(acts((p) => { p.actionState = OG_STATE.GOTLAUNCHED; }, 420)).toEqual([OG_STATE.RUN]);
+  });
+
+  it('the facing point is lengthThreshhold − 1 = 3, clamped into the stroke', () => {
+    const faces = (pts: [MovePoint, ...MovePoint[]]) => {
+      const { p } = at((q) => { q.faceLeft(); }, pts);
+      return p.facingRight;
+    };
+    const y = 318;
+    expect(faces([{ x: 410, y }, { x: 380, y }, { x: 380, y }, { x: 450, y }, { x: 380, y }])).toBe(true);
+    expect(faces([{ x: 410, y }, { x: 380, y }])).toBe(false); // 3 → 1
+    expect(faces([{ x: 410, y }])).toBe(true); // 3 → 0
+  });
+
+  it('cancelStealth first: a hidden or faded body puffs smoke at its int map x and clip y, then shows fully', () => {
+    const smoke = (setUp: (p: MCSPlayer) => void) => {
+      const { p } = at((q) => {
+        q.setPosition(BODY_X + 0.9, GROUND + 0.6);
+        setUp(q);
+      }, [{ x: 420, y: 318 }, { x: 520, y: 318 }]);
+      return [p.events.filter((e) => e.type === 'smoke'), p.visible, p.alpha];
+    };
+    const puff = [{ type: 'smoke', x: BODY_X, y: GROUND }];
+    expect(smoke((p) => { p.visible = false; })).toEqual([puff, true, 1]);
+    expect(smoke((p) => { p.alpha = 0.5; })).toEqual([puff, true, 1]);
+    expect(smoke(idle)).toEqual([[], true, 1]);
+  });
+});
+
+describe('slice 4b: checkNextSlash — the next stroke, or the buffered one', () => {
+  const pts = [{ x: 420, y: 318 }, { x: 520, y: 318 }];
+  const buffered = [{ x: 600, y: 318 }, { x: 700, y: 318 }];
+
+  it('hasSlash: re-reads slashArray from its first point, and the buffer is dropped', () => {
+    const { p, actions } = slasher(body1());
+    p.slashArray = pts;
+    p.slashArrayBuffer = buffered;
+    p.hasSlash = true;
+    p.hasSlashBuffer = true;
+    p.checkNextSlash();
+    expect([p.destX, p.slashArray, p.hasSlashBuffer, actions]).toEqual([420, pts, false, [OG_STATE.SLASH]]);
+  });
+
+  it('the buffer only: it BECOMES slashArray (the same array, not a copy) and is read', () => {
+    const { p, actions } = slasher(body1());
+    p.slashArrayBuffer = buffered;
+    p.hasSlashBuffer = true;
+    p.checkNextSlash();
+    expect(p.slashArray).toBe(buffered);
+    expect([p.destX, p.hasSlash, p.hasSlashBuffer, actions]).toEqual([600, true, false, [OG_STATE.RUN]]);
+  });
+
+  it('neither: nothing', () => {
+    const { p, actions } = slasher(body1());
+    p.slashArray = pts;
+    p.checkNextSlash();
+    expect([p.destX, p.hasSlash, actions]).toEqual([0, false, []]);
+  });
+});
+
+describe('slice 4b: startSlash — the clip, the landing and the speed (the same in both builds)', () => {
+  /** `startSlash` rolls the damage: one draw. */
+  const HALF: Rng = () => 0.5;
+  const flat = [{ x: 500, y: 318 }, { x: 600, y: 318 }];
+  const clipOf = (stance: number, type: number) => {
+    const { p } = slasher(body1(), HALF);
+    p.stance = stance;
+    const before = p.animation;
+    start(p, type, flat);
+    return p.animation === before ? '—' : p.animation;
+  };
+
+  it('the clip per stance and slash type; only light has an AIR clip; reversed plays one clip for all three flat types', () => {
+    const types = [T.hor, T.horDown, T.horUp, T.jump, T.drop, T.up, T.air, T.downstab];
+    const row = (stance: number) => types.map((t) => clipOf(stance, t));
+    const std = (s: string) => [
+      `${s}_horslash_parta`, `${s}_downslash_parta`, `${s}_upslash_parta`, `${s}_jumpslash_parta`,
+      `${s}_fallslash_parta`, `${s}_jumpslash_parta`,
+    ];
+    expect(row(LIGHT)).toEqual([...std('light'), 'light_jumpslash_partb', 'downstab']);
+    expect(row(BALANCED)).toEqual([...std('balanced'), '—', 'downstab']);
+    expect(row(HEAVY)).toEqual([...std('heavy'), '—', 'downstab']);
+    expect(row(DUAL)).toEqual([...std('dual'), '—', 'downstab']);
+    expect(row(REVERSED)).toEqual([
+      'reversed_slash_parta', 'reversed_slash_parta', 'reversed_slash_parta', 'reversed_jumpslash_parta',
+      'reversed_fallslash_parta', 'reversed_jumpslash_parta', '—', 'downstab',
+    ]);
+  });
+
+  it('the speed: light 50, balanced and reversed 40, heavy and dual 30 (a 300 px flat stroke from the body)', () => {
+    const vel = (stance: number) => {
+      const { p } = slasher(body1(), HALF);
+      p.stance = stance;
+      start(p, T.hor, [{ x: BODY_X, y: GROUND }, { x: 700, y: GROUND }]);
+      return [p.velX, p.velY];
+    };
+    expect([LIGHT, BALANCED, REVERSED, HEAVY, DUAL].map(vel)).toEqual([[50, 0], [40, 0], [40, 0], [30, 0], [30, 0]]);
+  });
+
+  it('facing: right only when the first x is less than the last; equal faces left', () => {
+    const faces = (lastX: number) => {
+      const { p } = slasher(body1(), HALF);
+      p.faceRight();
+      start(p, T.hor, [{ x: 500, y: 318 }, { x: lastX, y: 200 }]);
+      return p.facingRight;
+    };
+    expect([faces(501), faces(500), faces(499)]).toEqual([true, false, false]);
+  });
+
+  it('destX is the last point clamped; destY the ground unless the stroke ends more than 100 px up (258 stays, 259 lands)', () => {
+    const land = (x: number, y: number) => {
+      const { p } = slasher(body1(), HALF);
+      start(p, T.hor, [{ x: 500, y: 318 }, { x, y }]);
+      return [p.destX, p.destY];
+    };
+    expect([land(600, 258), land(600, 259), land(900, 300), land(-10, 300)])
+      .toEqual([[600, 258], [600, GROUND], [800, GROUND], [0, GROUND]]);
+  });
+
+  it('a downstab: drops the clip to the ground, keeps its facing, and has no speed (dist / 0 → velocity 0)', () => {
+    const { p } = slasher(body1(), HALF);
+    p.stance = HEAVY;
+    p.setPosition(BODY_X, 300);
+    p.faceLeft();
+    p.velX = 7;
+    p.velY = 7;
+    start(p, T.downstab, [{ x: 450, y: 300 }, { x: 460, y: 380 }]);
+    expect([p.y, p.posX, p.facingRight, p.animation, p.destX, p.destY, p.velX, p.velY])
+      .toEqual([GROUND, BODY_X, false, 'downstab', 460, GROUND, 0, 0]);
+  });
+
+  it('the landing is an int: a fractional last point truncates in destX and in an air destY (the review\'s catch)', () => {
+    const land = (x: number, y: number) => {
+      const { p } = slasher(body1(), HALF);
+      start(p, T.hor, [{ x: 500, y: 318 }, { x, y }]);
+      return [p.destX, p.destY];
+    };
+    expect([land(600.7, 318), land(600, 200.5)]).toEqual([[600, GROUND], [600, 200]]);
+  });
+
+  it('ydiff is an int: from y 300.9 to the ground it is 57, not 57.1, so velY is 38, not 39 (the review\'s catch)', () => {
+    const { p } = slasher(body1(), HALF);
+    start(p, T.hor, [{ x: BODY_X, y: 300.9 }, { x: 413, y: 318 }]);
+    expect([p.velX, p.velY]).toEqual([8, 38]);
+  });
+
+  it('on its own point, dist is 0 and 0 / 0 is NaN; int(NaN) is 0', () => {
+    const { p } = slasher(body1(), HALF);
+    p.velX = 7;
+    p.velY = 7;
+    start(p, T.hor, [{ x: BODY_X, y: GROUND }, { x: BODY_X, y: GROUND }]);
+    expect([p.velX, p.velY]).toEqual([0, 0]);
+  });
+
+  it('doShunpo: lands at the end, doubles the damage, then endSlash — UNPORTED, loud', () => {
+    const { p } = slasher(body2(), () => 0.5);
+    p.doShunpo = true;
+    expect(() => {
+      start(p, T.hor, [{ x: 420, y: 318 }, { x: 520, y: 318 }]);
+    }).toThrow('unported: MCSPlayer.endSlash');
+    expect([p.posX, p.y, p.slashDamage]).toEqual([520, GROUND, 172]);
+  });
+});
+
+describe('slice 4b: the ruling — WEB isAirborne on the duellist only', () => {
+  it('the duellist counts FALL on the ground; the mobs\' Npc keeps the height-only test', () => {
+    const { p } = slasher(body1());
+    const air = () => [p.isAirborne(), Npc.prototype.isAirborne.call(p)];
+    p.actionState = OG_STATE.FALL;
+    const falling = air();
+    p.actionState = OG_STATE.IDLE;
+    const standing = air();
+    p.setPosition(BODY_X, 300);
+    expect([falling, standing, air()]).toEqual([[true, false], [false, false], [true, true]]);
+  });
+});
+
 describe('the harness rule — unported calls throw, and their count only goes down', () => {
-  it('MCSPlayer.ts names exactly 3 unported sites (startAction, clearInteractTarget, initSlash)', () => {
+  it('MCSPlayer.ts names exactly 3 unported sites (startAction, clearInteractTarget, endSlash)', () => {
     const src = readFileSync(new URL('../src/core/npc/MCSPlayer.ts', import.meta.url), 'utf8');
-    expect(src.match(/unported\('/g)).toHaveLength(3);
+    expect(src.match(/unported\('[^']*'\)/g)).toEqual([
+      "unported('MCSPlayer.startAction')", "unported('StageManager.clearInteractTarget')", "unported('MCSPlayer.endSlash')",
+    ]);
   });
 });
 

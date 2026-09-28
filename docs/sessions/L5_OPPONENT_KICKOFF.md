@@ -212,6 +212,27 @@
 >    calls `setHP`. Nothing reads it before slice 6; queued there.
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 4a".
 
+> **⛔ ERRATUM 10 — SLICE 4b (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **4b landed** (`initSlash`, `checkNextSlash`, `startSlash`, `cancelStealth`). ONE structural
+>    difference: the downstab's side test reads `posX` in the web (`§1t99s0§.as:2531`), `mcs.x`
+>    (the screen x) in Android (`MCSPlayer.as:2459`); web ported.
+> 2. **Ruled:** `cancelStealth` ported (a `smoke` event); the web `isAirborne` (FALL counts) is an
+>    override on `MCSPlayer` ONLY. The mobs' `Npc` still waits for the owner's ruling.
+> 3. **For 4c:** `doSlash` 59 (`MCSPlayer.as:2708`, web `:2780`), `endSlash` 95 against 101 web
+>    (`:2767`, web `:2839`), `endDownStab` 13 (`:2862`, web `:2940`). The web `endSlash` adds
+>    `damage.§1t1089s0§(this)` (the `Damage` attacker setter, `§1t67s0§.as:212`) and a closing
+>    block that zeroes `§1t4440s0§` and calls `§1t1561s0§()`. That field is web-only: 0 by default
+>    (`§1t99s0§.as:147`), set to `5 * 24` frames only by `§1t4444s0§` (`:262`), which is only ever
+>    called on `StatsManager.getPlayer()` (the HUMAN: `§1t1525s0§.as:178`, `§1t7785s0§.as:1738`),
+>    counted down in `update` (`:1244`); its call (`:5145`) clears a flag and shows the display
+>    name. So on the duellist the block reads 0 and never runs: 4c confirms, then ports it as
+>    the source has it (or rules it out of the lane with that evidence). `endSlash` also calls
+>    `deductReloadBar` (`MCSPlayer.as:3240`, 24 lines, not ported: port it or `unported`, a
+>    ruling), `NPCManager.checkPlayerHit` (the opponent's hit on the player: the seam, slice 8)
+>    and `startAction` FALL / POSE (slice 5).
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 4b".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -289,7 +310,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **2** | **THE PROFILE SOURCE (R1)** — the writers + the ruling · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 2") | `StatsManager.getBattleStatsString/getEquipmentString/getSkillStatsString`, `Item.toStringNoQty`, `initNewPlayer` | no |
 | **3a** | **BODY i — THE STANCE** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3a"; `nextStance`, `walkTo`, `faceScreenCenter` ruled out of the lane, ERRATUM 7) | `setStance` 103, `initSpecialSkills` 71 (AI branch), `canChangeStance`, `stopMoving` 25, `getDamage` 28, `getBaseDamage` | no |
 | **3b** | **BODY i — THE MOVEMENT** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3b") | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
-| 4 | BODY ii — the stroke (split 4a / 4b / 4c: ERRATUM 8; **4a landed**, ERRATUM 9) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
+| 4 | BODY ii — the stroke (split 4a / 4b / 4c: ERRATUM 8; **4a landed**, ERRATUM 9; **4b landed**, ERRATUM 10) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine (sub-sliced by state) | `update` 931, `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
 | 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
