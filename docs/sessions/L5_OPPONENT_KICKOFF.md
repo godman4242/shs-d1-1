@@ -119,6 +119,27 @@
 >    on top of it, plus the web-only `stance` argument. OPP-B closes at 1b-ii.
 > Evidence and red-teams: `docs/DIVERGENCES.md`, "L5-OPP SLICE 1b-i".
 
+> **⛔ ERRATUM 5 — SLICE 1b-ii (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **1b-ii landed; OPP-B holds** for three fixture profiles (`tests/duellistBody.test.ts`), with
+>    ONE deferral: `init`'s skill cooldown table goes to **slice 7**. `getCooldown` scales by the
+>    LOCAL player's speed (`StatsManager.getSkillCooldownModifier`), and the builds cap that speed
+>    at 300 (Android) vs 600 (web). Only the AI reads the table.
+> 2. **The starting points held:** critical and piercing are dropped (and `XMLNpc`'s copies are
+>    read by nothing, in both trees); `§1t3489s0§` is `setStance`; the masteries are 1000–1002 and
+>    1500 / 1501 pick reversed / dual.
+> 3. **Two more web numbers won:** `maxreload` 8 s (Android 5 s), and the level scaling (web: ×1.1
+>    only for levels 31–79, ×0.9 below 10; Android: ×1.1 above 30, ×0.8 below 10).
+> 4. **Measured for slice 2 (R1):** the payload holds NO saved duellist profile. Every
+>    `initDuelist` caller takes its strings from Player.IO objects or from the local player
+>    (`DuelModeUI.as:410`, `WarHexUI.as:1412`, `:1522`, `QueryManagerPIO.as:2458` for the `bot_`
+>    names). The source DOES contain the writer of the exact three formats:
+>    `StatsManager.getBattleStatsString` / `getEquipmentString` / `getSkillStatsString`
+>    (`StatsManager.as:4396`, `:4417`, `:4447`), which is what the local player saves and another
+>    player's duel reads. So R1's "a real saved profile could be dropped in unchanged" holds by
+>    construction; what slice 2 must decide is what STATE feeds those writers.
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 1b-ii".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -192,13 +213,13 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **0** | **THE ANIMLIST** — `OG_ANIM_CLIPS` from 1 file to the 18 the source loads · ✅ **LANDED 2026-09-23** (DIVERGENCES "L5-OPP SLICE 0") | `MCSCharacter.initAnimationData` (42) + 18 data files | no |
 | **1a** | **THE PROFILE STRINGS** — the parse · ✅ **LANDED 2026-09-28** (DIVERGENCES "L5-OPP SLICE 1a") | `XMLNpc` parsers + `getMastery`, `Item.parseNoQty`, `IntStat.parse` | no |
 | **1b-i** | THE DERIVED STATS i — the rulings, `initDuelist`'s record, `findBonusStatFrom` · ✅ **LANDED 2026-09-28** (DIVERGENCES "L5-OPP SLICE 1b-i") | `initDuelist`'s arithmetic (`XMLNpc.as:290-401`); `StatsManager.findBonusStatFrom` (41); web `Item.getModifiers` (89) | no |
-| 1b-ii | THE DERIVED STATS ii — on top of the record (see "Slice 1b in detail", step 3) | `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86) | no |
+| **1b-ii** | THE DERIVED STATS ii — the body on the record · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 1b-ii"; the cooldown table deferred to slice 7) | `EnemyPlayer.init` (131); `MCSPlayer.initPlayer/initAttackStats/initElementDefenseStats` (86) | no |
 | 2 | THE PROFILE SOURCE (R1) | measured at the slice | no |
 | 3 | BODY i — stance + movement | `setStance` 103, `nextStance` 44, `canChangeStance`, `initMove` 29, `walkTo`, `stopMoving` 25, `movePlayer` 44, `movement` 21, `moveTo`, `faceScreenCenter`, the reload/damage getters (≈400) | no |
 | 4 | BODY ii — the stroke | `gotInput` 70, `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
 | 5 | BODY iii — the state machine (sub-sliced by state) | `update` 931, `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
-| 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick; the `SkillManager.startSkill` arms the AI can reach | no |
+| 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
 | 8 | THE SEAM — into the duel behind `?npc=duellist` | findings 16 + 17, a stroke channel; `Sim.ts` + `duel-baseline` by the atomic protocol | **YES** |
 
 **Out of the lane, named so nobody ports them by accident:** `generateSkillList` (583,

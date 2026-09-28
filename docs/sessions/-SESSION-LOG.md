@@ -4096,3 +4096,37 @@ Survey: `docs/research/L5_DUEL_OPPONENT_SURVEY.md` (read-only, Opus 5.5 `high`, 
 
 Baseline at `09c2b2f`, re-measured: 88 files / 1718 tests · typecheck 0 · lint 0 · claimcheck
 1774 cites / 445 values / 0 failures · chaos 61/61. After: see `RESUME_HERE.md`.
+
+## 2026-09-29 — Build-loop cycle: L5-OPP slice 1b-ii, THE BODY'S STATS
+
+- **Ground + baseline.** Read GOAL, CYCLE, RESUME_HERE, the L5-OPP kickoff (ERRATUM 4, "Slice 1b
+  in detail" step 3). Baseline at `0ab0e2b` re-measured and matched RESUME_HERE: 89 files / 1753
+  tests · typecheck 0 · lint 0 · claimcheck 1823 cites / 466 values / 44 context / 0 failures.
+- **The diff first.** Read `EnemyPlayer.init` and `MCSPlayer.initPlayer/initAttackStats/
+  initElementDefenseStats` in both builds and wrote the R6 table (DIVERGENCES "L5-OPP SLICE 1b-ii").
+  Web won three: the level scaling, `maxreload` 8 s, the `stance` argument. All three kickoff
+  starting points held (crit/piercing dropped, and `XMLNpc`'s copies are read by nothing;
+  `§1t3489s0§` is `setStance`; masteries 1000–1002, 1500/1501).
+- **Deferred, measured:** `init`'s skill cooldown table → slice 7. It scales by the LOCAL player's
+  speed, and the builds cap that at 300 vs 600.
+- **Config first, probed:** 26 values (8 exports) in `ogDuellistProfile.ts`; claimcheck 1869 / 492, and RED on
+  0.8-for-0.9 and 5-for-8 planted by hand, green on restore.
+- **Red → green.** Stub: 16 of 19 tests red on assertions. Port: `src/core/npc/duellistBody.ts`,
+  19/19, then a 20th test (a negative speed floors, not truncates). Claimcheck caught two bare
+  web cites in `src/core/npc` (a `§…§.as` basename resolves against the Android tree): given
+  their full path.
+- **Chaos:** 13 plants, pinned 71 → 84 in both places. First run in a scratch clone: 12/13 red,
+  1 INCONCLUSIVE: fixture 2 built its body at collection time, so the throwing rng crashed the
+  file instead of failing a test. The TEST was fixed (the body is built per test), not the plant.
+  Re-run 13/13 red, restored byte-identical.
+- **Review:** one fresh-context reviewer, no bug; it re-worked every expected value and every
+  plant note's cite. Two line refs in my own DIVERGENCES table and plant notes were off by one
+  or two, caught by re-reading the source before commit.
+- **Slice 2 grounded:** the payload has no saved profile; the source's writers of the three
+  formats are `StatsManager.as:4396`, `:4417`, `:4447`. The next kickoff is at the top of
+  RESUME_HERE.
+
+### THE GATES
+
+After: 90 files / 1786 tests · typecheck 0 · lint 0 · claimcheck 1869 / 492 / 44 / 0 · the new
+plants 13/13 RED. The full 84-plant chaos run is the shell's post-ship step.

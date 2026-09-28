@@ -262,3 +262,91 @@ export const OG_DEFAULT_EQSTRING = '4017|0|6019|0|8005|0|0|11017|12017|13002|130
 
 /** `initDuelist`'s stats string when its own is empty: 14 zeros, a battle string. Same in both builds. */
 export const OG_DEFAULT_STATS_STRING = '0|0|0|0|0|0|0|0|0|0|0|0|0|0';
+
+// ─── L5-OPP slice 1b-ii: THE BODY (`EnemyPlayer.init`, `MCSPlayer.initPlayer` & co.) ───
+
+/**
+ * `EnemyPlayer.init`'s speed formulas (`EnemyPlayer.as:754-757`; web
+ * `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:771-774`, the same literals):
+ * `baseReload = 48 + speed * 6` and `baseSlashLength = 120 + floor(90 * speed / (20 + speed))`.
+ * The slash formula is `REACH`'s (`reach.ts`, the player's) with no dan term;
+ * `tests/duellistBody.test.ts` pins the three shared numbers equal.
+ */
+export const OG_DUELLIST_SPEED = {
+  /** `EnemyPlayer.as:754` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:771` */
+  reload: { base: 48, perSpeed: 6 },
+  /** `EnemyPlayer.as:756-757` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:773-774` */
+  slashLength: { base: 120, maxIncrement: 90, halfSpeed: 20 },
+} as const;
+
+/** The skills `EnemyPlayer.init` reads with `getMastery` to pick the stance. */
+export const OG_STANCE_SKILL = {
+  /** `EnemyPlayer.as:758` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:775` */
+  light: 1000,
+  /** `EnemyPlayer.as:759` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:776` */
+  balanced: 1001,
+  /** `EnemyPlayer.as:760` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:777` */
+  heavy: 1002,
+  /** `EnemyPlayer.as:836` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:862` */
+  reversed: 1500,
+  /** `EnemyPlayer.as:840` · `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:866` */
+  dual: 1501,
+} as const;
+
+/** `MCSPlayer`'s stance ids, the argument `setStance` receives. */
+export const OG_STANCE = {
+  /** `MCSPlayer.as:27` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:27` */
+  light: 0,
+  /** `MCSPlayer.as:29` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:29` */
+  balanced: 1,
+  /** `MCSPlayer.as:31` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:31` */
+  heavy: 2,
+  /** `MCSPlayer.as:33` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:33` */
+  dual: 3,
+  /** `MCSPlayer.as:35` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:35` */
+  reversed: 4,
+} as const;
+
+/**
+ * `EnemyPlayer.as:846` — equal masteries: `setStance(Math.random() * 3)`, which the `int`
+ * parameter truncates to 0, 1 or 2. Web: `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:872`.
+ */
+export const OG_RANDOM_STANCE_COUNT = 3;
+
+/**
+ * WEB ONLY — `reference/decompiled/shs3_payload/scripts/§1t76s0§.as:104`: `XMLNpc.stance`
+ * starts at -1, and `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:858` skips the
+ * mastery pick only when it is not -1. Android `initDuelist` has no stance argument.
+ */
+export const OG_NO_STANCE = -1;
+
+/**
+ * WEB — a duellist's level scaling (`reference/decompiled/shs3_payload/scripts/§1t122s0§.as:812-821`):
+ * above 30 and below 80, `minDamage` and max-HP ×1.1; below 10, ×0.9; each truncated into an
+ * `int`. Android scales every level above 30 and uses ×0.8 below 10 (DIVERGENCES "L5-OPP SLICE
+ * 1b-ii" has both builds' lines).
+ */
+export const OG_DUELLIST_LEVEL_SCALE = {
+  /** `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:812` — `level > 30 && level < 80` */
+  strong: { above: 30, below: 80 },
+  /** `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:814` */
+  strongMult: 1.1,
+  /** `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:818` — `level < 10` */
+  weakBelow: 10,
+  /** `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:820` */
+  weakMult: 0.9,
+} as const;
+
+/** `MCSPlayer.initPlayer`'s constants. */
+export const OG_BODY_INIT = {
+  /** `MCSPlayer.as:207` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:208` */
+  walkSpeed: 4,
+  /**
+   * WEB — `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:249`: `maxreload = 8 * 24`,
+   * seconds at OG_FPS. Android `initPlayer` has `5 * 24`.
+   */
+  maxReloadSec: 8,
+} as const;
+
+/** `EnemyPlayer.as:816` — `xp = level * 5 + 45`. Web: `reference/decompiled/shs3_payload/scripts/§1t122s0§.as:836`. */
+export const OG_DUELLIST_XP = { perLevel: 5, base: 45 } as const;

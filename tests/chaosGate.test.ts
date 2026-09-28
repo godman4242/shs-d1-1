@@ -34,6 +34,7 @@ import { PLANTS as PLANTS_SEAM } from './duelSeam.plants';
 import { PLANTS as PLANTS_ANIMLIST } from './animList.plants';
 import { PLANTS as PLANTS_PROFILE } from './duellistProfile.plants';
 import { PLANTS as PLANTS_STATS } from './duellistStats.plants';
+import { PLANTS as PLANTS_BODY } from './duellistBody.plants';
 
 const HERE = import.meta.dirname;
 const ROOT = join(HERE, '..');
@@ -43,7 +44,7 @@ const ROOT = join(HERE, '..');
  * does by reading that file. Two copies of one rule that can drift apart silently is a
  * documented failure mode of this account's tooling; this is the cheap cure.
  */
-const EXPECTED_PLANTS = 71;
+const EXPECTED_PLANTS = 84;
 
 const MODULES: Array<{ file: string; plants: readonly ChaosPlant[] }> = [
   { file: 'npcSlice3a.plants.ts', plants: PLANTS_3A },
@@ -52,6 +53,7 @@ const MODULES: Array<{ file: string; plants: readonly ChaosPlant[] }> = [
   { file: 'animList.plants.ts', plants: PLANTS_ANIMLIST },
   { file: 'duellistProfile.plants.ts', plants: PLANTS_PROFILE },
   { file: 'duellistStats.plants.ts', plants: PLANTS_STATS },
+  { file: 'duellistBody.plants.ts', plants: PLANTS_BODY },
 ];
 
 const ALL: Array<{ module: string; index: number; plant: ChaosPlant }> = MODULES.flatMap((m) =>

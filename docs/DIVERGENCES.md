@@ -5476,3 +5476,116 @@ the Kongregate forum harvest (an item's HP jumping to hundreds would have been r
   `equipment[EQ_ARMOR].getItemID()` and friends with no null check (only the weapon is guarded,
   `XMLNpc.as:341-344`), so an eq string of fewer than 11 fields throws in both builds. The
   paperdoll is render-side and out of 1b; the record here does not read those slots.
+
+## L5-OPP SLICE 1b-ii — THE BODY'S STATS: `EnemyPlayer.init` ON THE RECORD (2026-09-29)
+
+Kickoff: `docs/sessions/L5_OPPONENT_KICKOFF.md` "Slice 1b in detail", step 3 (ERRATUM 4). A
+build-loop cycle, one commit. **OPP-B closes here** (with the one deferral below).
+
+**What landed:** `src/core/npc/duellistBody.ts`. `initDuellistBody(record, level, stance, rng)`
+returns `MCSPlayer`'s fields after `EnemyPlayer.init` on 1b-i's record: hp / max-HP, chi / max-chi,
+defense, `baseReload`, `minDamage`, `damageRange`, `baseSlashLength`, `slashUsage`, the three
+masteries, level, `walkSpeed`, `reload` / `maxreload`, `STAT_ATK` and the eight elemental stats,
+critical / piercing, xp, and the stance `setStance` is handed. Only the Duel Mode AI's path is
+ported: `isDuelist`, `controlledBy == 1` (`DuelModeUI.as:381`, web `§1t5565s0§.as:423`). Nothing
+calls it yet. 26 new config values (8 exports), each cited in both builds where it exists in both; claimcheck
+went 1823 → 1869 cites and 466 → 492 values, all at ±0, and it went red on the two Android values
+planted in place of the web ones (0.8 for 0.9, 5 for 8) before this shipped.
+
+### THE R6 DIFF — the four functions, both builds, line by line
+
+| | Android | web | ruled |
+|---|---|---|---|
+| `EnemyPlayer.init` entry | one function (`EnemyPlayer.as:740-870`) | `init` calls `reset`, `initMCSFromXML`, then `§1t4880s0§` (`§1t122s0§.as:751-756`, body `:758-896`) | same statements, no effect |
+| speed formulas | `48 + speed * 6`; `120 + floor(90 * speed / (20 + speed))` (`:754-757`) | identical (`:771-774`) | — |
+| masteries | `getMastery(1000/1001/1002)` (`:758-760`) | identical (`:775-777`) | — |
+| `initAttackStats` call | FIVE arguments (`:762`) | five (`:779`) | **both drop critical and piercing**, see below |
+| level scaling (duellist) | boss > 70 ×1.25, boss > 50 ×1.2, `level > 30` ×1.1, `level < 10` **×0.8** (`:780-803`) | `level > 30 && level < 80` ×1.1, `level < 10` **×0.9**, no boss bands (`:812-823`) | **web** (R6: a number the fight uses) |
+| display name / colour | name + level, colour by side (`:771-776`) | adds two colour modes and hides the level for one (`:789-809`) | out (render-side) |
+| `charname` | `xml.name` in the duellist branch (`:777`) | a getter, before the branch (`:786`) | out (not a stat) |
+| stance pick | 1500 → reversed, 1501 → dual, three-way tie → random, else argmax (`:836-859`) | **first** `if(param1.stance != -1) setStance(param1.stance)` (`:858-860`), then the same | **web**: the argument is used as given |
+| `initPlayer` `maxreload` | `5 * 24` (`MCSPlayer.as:239`) | **`8 * 24`** (`§1t99s0§.as:249`) | **web** |
+| `initPlayer` resets | 3 counters | the same 3, plus 5 flags only when `controlledBy == 0` (`:231-246`) | out (local human only) |
+| `initPlayer` buffs / nid / UI | `controlledBy == 0` only (`:208-236`) | the same (`:209-247`) | out (local human only) |
+| `initElementDefenseStats` | 4 stores (`:260-266`) | identical (`:282-288`) | — |
+
+`§1t3489s0§` is `setStance`: it is defined at `§1t99s0§.as:3083` with the same first statement
+(`this.stance = param1`), and web `init` calls it in exactly the places Android calls `setStance`.
+Where web `stance` comes from: web `DuelModeUI` (`§1t5565s0§`) stores an opponent's stance with its
+other fields (`:391`, `:459`) and resets it to -1 when a challenge starts (`:365`); the AI path
+(`:423`) passes whatever is stored.
+
+**Red-teams:**
+- **Level scaling, web.** *Steelman for Android:* its bands are what the port's STRUCTURE source
+  says, and the boss bands would matter the day a boss is built from `EnemyPlayer`. *Why web:* a
+  duellist is never a boss (`NPCManager.as:519` passes `isBoss = false`), so the boss bands are
+  unreachable in Duel Mode in BOTH builds, and the remaining difference is two numbers the fight
+  uses. *Where it breaks:* a level-80+ duellist is 10% weaker here than on Android. **Veto:** the
+  Android bands (plants 1 and 2 are that shape).
+- **`maxreload` 8 s, web.** *Steelman against:* no ported code reads `maxreload` yet (slice 3's
+  `setStance` and slice 4's stroke do), so this number is unverified by behaviour. *Where it
+  breaks:* if the Sim's own reload model (`src/config/timing.ts`) disagrees, the two bodies refill
+  at different rates until the player migrates (R2's asymmetry). **Veto:** Android's 5 s.
+- **The stance argument, web.** *Steelman for Android:* slice 2 has not decided where a profile
+  comes from, so no caller has a stored stance and every call passes -1, which is the Android
+  path. *Why port it anyway:* it is three lines, and the web Duel Mode AI path does pass it.
+  **Veto:** drop the branch (plant 4).
+
+### CRITICAL AND PIERCING NEVER REACH THE BODY — measured, both builds
+
+`initAttackStats` takes critical and piercing as optional arguments defaulting to 0
+(`MCSPlayer.as:249`, web `§1t99s0§.as:271`). Every `EnemyPlayer`-family caller passes five
+(`EnemyPlayer.as:762`, `EnemyElite.as:107`, `FriendlyElite.as:57`; web `§1t122s0§.as:779`,
+`§1t4906s0§.as:62`, `§1t4907s0§.as:110`). Only the local player's `StatsManager` passes seven
+(`StatsManager.as:1835`, web `§1t1523s0§.as:2269`). And `XMLNpc.STAT_CRITICALDMG` /
+`STAT_PIERCINGDMG` are WRITTEN by `initDuelist` (`XMLNpc.as:338-339`) and read by nothing: the
+grep over both trees finds no other reader. So in the original a duellist's equipment crit and
+piercing are dead data, and the body's `STAT_CRITICALDMG` (which the crit getter adds,
+`MCSPlayer.as:3219-3221`, web `§1t99s0§.as:3274`) is 0. **Pinned as a quirk, not fixed.** 1b-i's
+record keeps computing them (it is `initDuelist`'s own output).
+
+### ⏸ DEFERRED TO SLICE 7 — the skill cooldown table
+
+`init` also fills `cooldownArray[skillId] = getSkillData(id).getCooldown(level)` for each of the
+duellist's skills (`EnemyPlayer.as:818-829`, web `:838-850`). Not ported here, for two measured
+reasons: `getCooldown` multiplies by `StatsManager.getSkillCooldownModifier()`, which reads the
+**LOCAL PLAYER's** speed and speed buff, not the duellist's (`XMLSkill.as:310` →
+`StatsManager.as:1844-1852`; web `§1t105s0§.as:318` → `§1t1523s0§.as:2279-2287`); and the builds
+differ there: the modifier caps speed at **300** on Android (`StatsManager.as:1856-1860`) and at
+**600** on the web (`§1t1523s0§.as:2291-2295`). Only the AI reads the table (slice 7's
+`canUseSkill`), and it needs a `PlayerWorld` member for the human's speed. Slice 7 ports it, web
+cap, and pins the "reads the human" quirk beside ERRATUM 2 item 6's ChiPunch/ChiKick one.
+
+### THE PORT'S QUIRKS — PINNED, NOT FIXED
+
+- **The AI starts at FULL HP, not the saved current HP:** `initPlayer` stores `currenthp`, then
+  `if(controlledBy == 1) setHP(xml.hp)` (`EnemyPlayer.as:764-767`), then the scaling stores the
+  scaled max.
+- **Chi starts at the SAVED current chi** (`setChi(chi)`, `MCSPlayer.as:187`), and nothing on
+  this path refills it. A profile saved at 0 chi fights with 0 chi.
+- **`STAT_ATK` is the record's attack, not its `minDamage`** (`:762`).
+- **A light = heavy tie over balanced goes to HEAVY** (its test runs second, `:850-858`); a light =
+  balanced tie goes to balanced. **A level-0 entry for 1500 / 1501 does not count** (`> 0`).
+- **`Math.random()` is drawn only in the three-way tie** (`:846`), truncated by `setStance`'s
+  `int` parameter.
+- **Speed -20 divides by zero:** `120 + floor(-Infinity)` stored into an `int` is 0. A negative
+  speed FLOORS (speed -7 → 71, not 72).
+- `StatsManager.multiplier`, the random factor `setHP` / `setChi` multiply by and the getters
+  divide back out, is anti-tamper obfuscation and exact for any `int`; not modelled.
+
+### THE REVIEW — one fresh-context reviewer, no bug
+
+It re-worked every expected value in `tests/duellistBody.test.ts` by hand (and each product in
+Node: 537 × 1.1 → 590, 200 × 1.1 = 220.00000000000003 → 220, 31 × 0.9 = 27.900000000000002 → 27),
+traced the HP order (`reset` → `setHP(currenthp)` → `maxhp` → `setHP(xml.hp)` → scale →
+`setHP(maxhp)`), confirmed no subclass overrides `setHP` and that the helper `initPlayer` ends on
+(`§1t4482s0§`) touches no stat, and checked every line cited in the 13 plant notes. **No finding.**
+Its one limit: the random draw's position among other `Math.random` callers is not modelled, which
+kickoff §6 already rules ("the sequence is not the source's to preserve").
+
+### THE GATES
+
+`npx vitest run` 90 files / 1786 tests (1753 + 20 body + 13 plant pins) · typecheck 0 · lint 0 ·
+claimcheck 1869 cites / 492 values / 44 context / 0 failures · chaos: the 13 new plants 13/13 RED and
+restored byte-identical (a scratch clone, the gate refuses a dirty tree); the full 84 run is the
+shell's post-ship step.
