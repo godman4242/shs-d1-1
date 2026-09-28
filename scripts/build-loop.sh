@@ -24,7 +24,14 @@ the chaos gate after you ship. If no gap clears the bar, make NO commit, print "
 with the reason, and exit. Never advance past an unmet stage gate. A no-op beats a rushed commit.'
 
 # After every ship, a script re-proves the tests still catch every planted break (41 s, 53/53 on
-# 2026-09-28). A plant that stays green is a missing test → the loop STOPs for a human.
-loop_verify_ship() { npm run -s chaos; }
+# 2026-09-28). A plant that stays green is a missing test → the loop STOPs for a human and the
+# commit stays local. Green → push, so GitHub stays in sync (owner ruling 2026-09-28: the repo is
+# private, push like normal). A failed push is logged, never fatal: the next ship's push carries
+# this commit too. GIT_TERMINAL_PROMPT=0 so a credential problem fails fast instead of hanging.
+loop_verify_ship() {
+  npm run -s chaos || return 1
+  if GIT_TERMINAL_PROMPT=0 git push -q origin HEAD; then echo "──── ↑ pushed $1 ────"
+  else echo "──── ⚠ push failed: $1 stays local; the next ship's push carries it ────"; fi
+}
 
 source "${LOOP_ENGINE:-$HOME/kheshav-code/agent-harness/harness/loop/build-loop.sh}"

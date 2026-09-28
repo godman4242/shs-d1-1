@@ -2,7 +2,7 @@
 
 `scripts/build-loop.sh` starts a **fresh** headless `claude -p` for every cycle. Each one does
 **exactly one cycle** below and exits. The shell does the looping, the time box, the watchdog and,
-after every ship, the chaos gate. `docs/loop/GOAL.md` says what matters and its **hard rules win**
+after every ship, the chaos gate and then the push. `docs/loop/GOAL.md` says what matters and its **hard rules win**
 over anything here. This file is the routine.
 
 **The bar is a senior engineer's, not a test runner's.** Reproduce before fixing, make the smallest
@@ -38,8 +38,9 @@ infer: a number you did not see on screen this cycle does not go in a commit.
      for an attended session, and end the cycle. The loop stashes whatever you leave uncommitted.
 9. **Ship ONE commit.** In the SAME commit: `RESUME_HERE.md` (the gates block re-measured, and the
    paste-ready kickoff at the top pointing at the next step) and `docs/sessions/-SESSION-LOG.md`.
-   Commit locally; the loop does not push.
-10. **Exit.** The shell runs `npm run chaos` (all plants). If it's red, the loop STOPs until a human looks.
+   Commit locally and **never push yourself**: the shell pushes, and only after step 10's check.
+10. **Exit.** The shell runs `npm run chaos` (all plants). Green → it pushes. Red → the commit stays
+    local and the loop STOPs until a human looks.
 
 ## No gap above the bar
 
