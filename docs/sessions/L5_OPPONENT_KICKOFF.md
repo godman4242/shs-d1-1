@@ -304,6 +304,25 @@
 >    (`MCSPlayer.as:25`) and `getGroundY()` (`:2911`, the stage's ground).
 > Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 5a".
 
+> **⛔ ERRATUM 14 — SLICE 5b (2026-09-29, a build-loop cycle; measured against both builds).
+> Where this block and the text below disagree, THIS BLOCK WINS.**
+> 1. **5b landed** (`startAction` / `doAction` FALL; the clip-end bands jump `_START`, fall `_START`,
+>    downstab). Slice 5's cut is done. The rest of the three switches (28 `startAction` groups,
+>    17 `doAction` groups, 68 clip-end groups) is cut by owner in slices 6 and 7.
+> 2. **The map missed one web-only line:** the DOWNSTAB clip end also names the attacker
+>    (`§1t99s0§.as:520`), as FALL's landing does (`:1991`). Ported (R6).
+> 3. **The unported count held at 8.** The catch-alls shrank: clip-end 94 → 82, `startAction`
+>    30 → 29, `doAction` 22 → 21.
+> 4. **`EnemyPlayer`'s constructor `startAction(FALL)` (`EnemyPlayer.as:51`) is still not carried**,
+>    now by measurement, not because FALL was missing: carried, it breaks 4 of slice 3b's tests and
+>    changes every body's first state. That first state is the spawn drop: slice 8's question.
+> 5. **Slice 6 is ≈827 Android lines** (`checkHitObject` 305, `gotHit` 258, `doPose` 49, `doLaunched`
+>    30, `gotDeathTouch` 23, `doFlinch` 20, `die` 19, `gotKneeGroin` 19, `endFlinch` 15,
+>    `gotBackThrow` 14, `doSubstitutionLog` 13, `gotLaunched` 12, `gotKnockDown` 12, `cancelLogSub`
+>    11, `gotFly` / `gotFlyAway` / `doFly` 9 each), over the 500 cap before counting the switch
+>    groups its states enter. **It needs its own map first**, as slice 5 had.
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 5b".
+
 ---
 
 ## §1 WHY THIS LANE — measured, not assumed
@@ -382,7 +401,7 @@ is a version question for the day a frame shows it. **Veto:** transcribe the web
 | **3a** | **BODY i — THE STANCE** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3a"; `nextStance`, `walkTo`, `faceScreenCenter` ruled out of the lane, ERRATUM 7) | `setStance` 103, `initSpecialSkills` 71 (AI branch), `canChangeStance`, `stopMoving` 25, `getDamage` 28, `getBaseDamage` | no |
 | **3b** | **BODY i — THE MOVEMENT** · ✅ **LANDED 2026-09-29** (DIVERGENCES "L5-OPP SLICE 3b") | `initMove` 29, `movement` 21, `movePlayer` 44 (AI branch), `moveTo` 7 | no |
 | **4** | **BODY ii — the stroke** · ✅ **LANDED 2026-09-29** in three commits (4a ERRATUM 9, 4b ERRATUM 10, 4c ERRATUM 11) | ~~`gotInput` 70~~ `EnemyPlayer.gotInput` 31 (ERRATUM 8), `initSlash` 100, `checkNextSlash`, `startSlash` 192, `doSlash` 59, `endSlash` 95, `endDownStab`, `makeSlash`, the six `*Target`/`slashDiagonal*` (≈700) | no |
-| 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) ✅ **LANDED 2026-09-29** (ERRATUM 13) · **5b** the air and the downstab (179 / 182) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
+| 5 | BODY iii — the state machine · **MAPPED 2026-09-29** (ERRATUM 12): **5a** the ground stroke (472 / 495) ✅ **LANDED 2026-09-29** (ERRATUM 13) · **5b** the air and the downstab (179 / 182) ✅ **LANDED 2026-09-29** (ERRATUM 14) · the rest by owner | `update` 931 (853 of it the clip-end switch, web `§1t4448s0§`), `startAction` 671, `doAction` 360 | no |
 | 6 | BODY iv — reception | `checkHitObject` 305, `gotHit` 258, the ten reaction overrides (`doLaunched`, `gotLaunched`, `gotKnockDown`, `gotKneeGroin`, `gotBackThrow`, `gotFly`, `gotFlyAway`, `doFly`, `doFlinch`, `endFlinch`), `gotDeathTouch`, `doSubstitutionLog`, `die`, `doPose` (≈820) | no |
 | 7 | THE AI | `EnemyPlayer.AI` 204, `doEvade` 56, `isUnderSlash`, `getUsableSkills` 32, `doSkill`, `canUseSkill`, `hasSkill`, `getSkillLevel`, `update`'s cooldown tick, `init`'s cooldown table (deferred from 1b-ii, ERRATUM 5); the `SkillManager.startSkill` arms the AI can reach | no |
 | 8 | THE SEAM — into the duel behind `?npc=duellist` | findings 16 + 17, a stroke channel; `Sim.ts` + `duel-baseline` by the atomic protocol | **YES** |

@@ -254,6 +254,41 @@ const POSE_ENDS: readonly string[] = [
   OG_ANIM.DUALFALLSLASH_END, OG_ANIM.REVERSEDFALLSLASH_END,
 ];
 
+/**
+ * The clip-end switch's jump band (`MCSPlayer.as:356-410`, web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:375-429`): a JUMP stroke's
+ * START falls into its fall slash, an UP stroke's rises. SOURCE QUIRK, the same in both builds:
+ * light's JUMP skips its fall slash's START (`MCSPlayer.as:359`, web `:378`).
+ */
+const JUMP_START_NEXT: Readonly<Record<string, { readonly fall: string; readonly rise: string }>> = {
+  [OG_ANIM.LIGHTJUMPSLASH_START]: { fall: OG_ANIM.LIGHTFALLSLASH_MID, rise: OG_ANIM.LIGHTJUMPSLASH_RISE },
+  [OG_ANIM.BALANCEDJUMPSLASH_START]: { fall: OG_ANIM.BALANCEDFALLSLASH_START, rise: OG_ANIM.BALANCEDJUMPSLASH_RISE },
+  [OG_ANIM.HEAVYJUMPSLASH_START]: { fall: OG_ANIM.HEAVYFALLSLASH_START, rise: OG_ANIM.HEAVYJUMPSLASH_RISE },
+  [OG_ANIM.DUALJUMPSLASH_START]: { fall: OG_ANIM.DUALFALLSLASH_START, rise: OG_ANIM.DUALJUMPSLASH_RISE },
+  [OG_ANIM.REVERSEDJUMPSLASH_START]: { fall: OG_ANIM.REVERSEDFALLSLASH_START, rise: OG_ANIM.REVERSEDJUMPSLASH_RISE },
+};
+
+/** The clip-end switch's fall band (`MCSPlayer.as:411-425`, web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:430-444`): each fall slash's START opens its MID. */
+const FALL_START_MID: Readonly<Record<string, string>> = {
+  [OG_ANIM.LIGHTFALLSLASH_START]: OG_ANIM.LIGHTFALLSLASH_MID,
+  [OG_ANIM.BALANCEDFALLSLASH_START]: OG_ANIM.BALANCEDFALLSLASH_MID,
+  [OG_ANIM.HEAVYFALLSLASH_START]: OG_ANIM.HEAVYFALLSLASH_MID,
+  [OG_ANIM.DUALFALLSLASH_START]: OG_ANIM.DUALFALLSLASH_MID,
+  [OG_ANIM.REVERSEDFALLSLASH_START]: OG_ANIM.REVERSEDFALLSLASH_MID,
+};
+
+/**
+ * `startAction` FALL's clip per stance (`MCSPlayer.as:1280-1336`, web `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1332-1388`): an UP
+ * stroke's jump slash, any other type the fall slash's MID. SOURCE QUIRK, the same in both builds:
+ * light's other is BALANCED's (`MCSPlayer.as:1289`, web `:1341`). No stance, no clip.
+ */
+const FALL_CLIP: Readonly<Record<number, { readonly up: string; readonly other: string }>> = {
+  [OG_STANCE.light]: { up: OG_ANIM.LIGHTJUMPSLASH_SLASH, other: OG_ANIM.BALANCEDFALLSLASH_MID },
+  [OG_STANCE.balanced]: { up: OG_ANIM.BALANCEDJUMPSLASH_SLASH, other: OG_ANIM.BALANCEDFALLSLASH_MID },
+  [OG_STANCE.heavy]: { up: OG_ANIM.HEAVYJUMPSLASH_SLASH, other: OG_ANIM.HEAVYFALLSLASH_MID },
+  [OG_STANCE.dual]: { up: OG_ANIM.DUALJUMPSLASH_SLASH, other: OG_ANIM.DUALFALLSLASH_MID },
+  [OG_STANCE.reversed]: { up: OG_ANIM.REVERSEDJUMPSLASH_SLASH, other: OG_ANIM.REVERSEDFALLSLASH_MID },
+};
+
 export class MCSPlayer extends Npc {
   declare readonly world: PlayerWorld;
 
@@ -310,6 +345,12 @@ export class MCSPlayer extends Npc {
    * it (DASH, BULLCHARGE, CHICHARGE: `MCSPlayer.as:918`, `:1112`, `:1145`), so it stays null here.
    */
   chargingFx: object | null = null;
+  /**
+   * WEB only (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:143`, `§1t4438s0§`): the air-juggle count the reception reads
+   * (`:3581`, `:3860`, `:4198`; slice 6). FALL's landing resets it (`:2001`); its other writers are
+   * in groups not ported yet (DIVERGENCES "L5-OPP SLICE 5b" lists them).
+   */
+  juggleCount = ZERO;
 
   /** `EnemyPlayer.init`'s body (slice 1b-ii); `init`'s closing `setStance` is the caller's. */
   constructor(world: PlayerWorld, anims: AnimLibrary, geometry: HitGeometry, rng: Rng, body: DuellistBody) {
@@ -327,7 +368,9 @@ export class MCSPlayer extends Npc {
     this.balancedMastery = body.balancedMastery;
     this.heavyMastery = body.heavyMastery;
     this.walkSpeed = body.walkSpeed;
-    // `EnemyPlayer`'s constructor (`EnemyPlayer.as:51-52`) starts FALL (slice 5b), then this.
+    // `EnemyPlayer`'s constructor (`EnemyPlayer.as:51-52`) starts FALL, then this. FALL is ported
+    // (5b) but its call is not carried: every body would start falling, which is the spawn's
+    // question (slice 8; DIVERGENCES "L5-OPP SLICE 5b").
     this.aiCounterMax = OG_STATE_MACHINE.aiCounterMax;
   }
 
@@ -383,13 +426,24 @@ export class MCSPlayer extends Npc {
   /**
    * The clip-end switch: Android's is inline in `update` (`MCSPlayer.as:298-1147`), the web moved
    * it whole into a helper that returns `false` on `default` (`reference/decompiled/shs3_payload/scripts/§1t99s0§.as:305-1177`); `update`
-   * ignores the value. 5a's four bands are ported; the other 94 of its 146 labels are unported.
+   * ignores the value. 5a's four bands and 5b's three are ported; the other 82 of its 146 labels
+   * are unported.
    */
   clipEnded(name: string): boolean {
     const S = OG_STATE;
-    const next = SLASH_START_MID[name] ?? SLASH_END_POSE[name];
+    const next = SLASH_START_MID[name] ?? FALL_START_MID[name] ?? SLASH_END_POSE[name];
     if (next !== undefined) {
       this.startAnim(next);
+      return true;
+    }
+    const jump = JUMP_START_NEXT[name];
+    if (jump !== undefined) {
+      if (this.slashType === T.jump) {
+        this.startAnim(jump.fall);
+        this.y = firstPoint(this.slashArray).y + OG_STATE_MACHINE.jumpSlashDrop;
+      } else if (this.slashType === T.up) {
+        this.startAnim(jump.rise);
+      }
       return true;
     }
     switch (name) {
@@ -400,6 +454,22 @@ export class MCSPlayer extends Npc {
         return true;
       case OG_ANIM.SHEATHETOIDLE:
         this.startAction(S.IDLE);
+        return true;
+      case OG_ANIM.DOWNSTAB:
+        // WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:516` (Android `MCSPlayer.as:497`): the web names the attacker (`:520`).
+        if (this.actionState !== S.REDFREEZE) {
+          const damage = new NpcDamage(this.getDamage() * OG_STATE_MACHINE.downstabDamageMult, this.level);
+          damage.setAttacker(this);
+          damage.setPiercingDamage(this.STAT_PIERCINGDMG);
+          // `controlledBy == 0` asks NPCManager.checkDownStab instead: the human's.
+          this.aim().checkHitObject({ kind: 'part', part: OG_PART.weapon, owner: this }, damage);
+          this.deductReloadBar();
+          if (this.world.redFreeze) this.startAction(S.REDFREEZE);
+          else this.startAnim(OG_ANIM.DOWNSTAB_UP);
+        }
+        return true;
+      case OG_ANIM.DOWNSTAB_UP:
+        this.endDownStab();
         return true;
     }
     if (POSE_ENDS.includes(name)) {
@@ -442,6 +512,11 @@ export class MCSPlayer extends Npc {
         this.startAnim(OG_ANIM.WALK_SHEATHED);
         if (this.y < this.world.groundY) this.startAction(S.FALL);
         break;
+      case S.FALL: {
+        const c = FALL_CLIP[this.stance];
+        if (c !== undefined) this.startAnim(this.slashType === T.up ? c.up : c.other);
+        break;
+      }
       case S.SLASH:
         this.startSlash();
         break;
@@ -466,9 +541,11 @@ export class MCSPlayer extends Npc {
 
   /**
    * WEB `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1936` (Android `MCSPlayer.as:1877`): one frame of the state. RUN and
-   * WALK travel to `destX` and then slash or idle; SLASH is `doSlash`; POSE hits with the weapon
-   * while a ground slash's END plays. WEB: POSE names the attacker (`:2184`) and ends in a
-   * `break` (`:2195`); Android's falls through into SKILL_BULLCHARGE (DIVERGENCES "L5-OPP SLICE 5a").
+   * WALK travel to `destX` and then slash or idle; FALL drops under gravity and lands in POSE,
+   * hitting with the weapon; SLASH is `doSlash`; POSE hits with the weapon while a ground slash's
+   * END plays. WEB: FALL's landing and POSE name the attacker (`:1991`, `:2184`) and FALL's resets
+   * the juggle count (`:2001`); POSE ends in a `break` (`:2195`) where Android's falls through into
+   * SKILL_BULLCHARGE (DIVERGENCES "L5-OPP SLICE 5a", "5b").
    */
   override doAction(): void {
     const S = OG_STATE;
@@ -481,6 +558,26 @@ export class MCSPlayer extends Npc {
       case S.WALK:
         if (!this.movement(this.walkSpeed)) this.arrive();
         break;
+      case S.FALL: {
+        const m = OG_STATE_MACHINE;
+        this.velY += m.gravity;
+        this.y += this.velY;
+        this.movePlayer(this.velX);
+        const groundY = this.world.groundY;
+        if (this.stance === OG_STANCE.light && this.hasSlash && Math.abs(firstPoint(this.slashArray).x - this.posX) < m.fallSlashRange) {
+          this.startAction(S.SLASH);
+        } else if (this.y >= groundY) {
+          this.y = groundY;
+          this.startAction(S.POSE);
+          const damage = new NpcDamage(this.slashDamage, this.level, OG_LAUNCH.LAUNCH_NONE, this.stance);
+          damage.setAttacker(this);
+          damage.setPiercingDamage(this.STAT_PIERCINGDMG);
+          // `controlledBy == 0` asks NPCManager instead: the human's.
+          this.aim().checkHitObject({ kind: 'part', part: OG_PART.weapon, owner: this }, damage);
+          this.juggleCount = ZERO;
+        }
+        break;
+      }
       case S.SLASH:
         this.doSlash();
         break;

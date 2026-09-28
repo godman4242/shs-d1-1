@@ -6530,3 +6530,98 @@ test body now carries a live target, as a duellist in a duel does.
 Suite 92 files / 2174 tests (+44 `mcsPlayer`, +49 chaos anchors) · typecheck 0 · lint 0 ·
 claimcheck 2183 cites / 604 values / 0 failures · chaos 50 new plants (one retired, two
 re-anchored), pinned 211 → 260; the full run 260/260 red and restored.
+
+## L5-OPP SLICE 5b — THE AIR AND THE DOWNSTAB: FALL, AND THE JUMP, FALL AND DOWNSTAB CLIP ENDS (2026-09-29)
+
+Kickoff: `RESUME_HERE.md` (5b), `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 12-13. A build-loop
+cycle, one commit. Ported in `src/core/npc/MCSPlayer.ts`: `startAction` FALL (web
+`§1t99s0§.as:1332-1388`, Android `MCSPlayer.as:1280-1336`), `doAction` FALL (web `:1977-2003`,
+Android `:1917-1941`) and three clip-end bands: jump `_START` (web `:375-429`, Android `:356-410`),
+fall `_START` (web `:430-444`, Android `:411-425`) and downstab (web `:516-543`, Android `:497-523`).
+179 Android / 182 web lines, as the map cut them.
+
+### What differs between the builds, and the ruling
+
+| where | web | Android | ported |
+|---|---|---|---|
+| `doAction` FALL's landing packet | names the attacker (`:1991`) | none | **web** (R6). Plant: dropping it goes red on 2 tests |
+| `doAction` FALL's landing | resets `§1t4438s0§` to 0 (`:2001`) | no such field | **web**: carried as `juggleCount` (web `:143`, `int = 0`). Its readers are the reception's (`:3581`, `:3860`, `:4198`, slice 6); the other writers (`:253`, `:785`, `:1559`, `:1581`, `:1595`, `:1614`, `:1630`, `:4017`, `:4041`, `:4499`) are in groups not ported yet |
+| the DOWNSTAB clip end's packet | names the attacker (`:520`) | none | **web** (R6). The map listed only the `controlledBy` test here; this attacker line is new. Plant: 2 tests red |
+| the DOWNSTAB clip end's AI test | `controlledBy == 1 \|\| 3` | `== 1` | the same on the AI (`controlledBy == 1`) |
+
+Every constant-bearing line in 5b decodes to the same value in both builds (the map's 264 pairs).
+The four new numbers are cited in both builds: `gravity` 3 (`:25` / `:25`), `fallSlashRange` 50
+(`:1922` / `:1982`), `jumpSlashDrop` 90 (`:360` / `:379`), `downstabDamageMult` 2 (`:500` / `:519`).
+
+### Two source quirks, ported as they are (the same in both builds, decoded)
+
+- **A light JUMP stroke skips its fall slash's START:** `LIGHTJUMPSLASH_START` ends into
+  `LIGHTFALLSLASH_MID` (`MCSPlayer.as:359`; web `:378` names `§1t10977s0§` = `"light_fallslash_partb"`),
+  where the other four stances end into their `FALLSLASH_START` (web `§1t11017s0§` =
+  `"balanced_fallslash_parta"`, and so on).
+- **Light's FALL plays BALANCED's fall MID** for every type but UP (`MCSPlayer.as:1289`; web `:1341`
+  names `§1t11019s0§` = `"balanced_fallslash_partb"`, the same constant balanced's own line `:1352` names).
+
+A plant that "fixes" each one goes red.
+
+### What is NOT carried, and why
+
+- Every `controlledBy == 0` branch: the landing's `NPCManager.checkHitObject(…, 100, true, mcs)` and
+  the downstab's `NPCManager.checkDownStab`.
+- **`EnemyPlayer`'s constructor call `startAction(FALL_STATE)`** (`EnemyPlayer.as:51`). 5a left it out
+  because FALL was unported; FALL is ported now, and the call is still left out, measured: carried,
+  it breaks 4 of slice 3b's adventure-mode tests. Those tests build a body and expect it not to be
+  falling. It changes every body's first state, and in the source that first state is the spawn drop
+  (a body placed above the ground falls, lands in POSE and hands its target a 0-damage packet). That
+  is the spawn's question, slice 8. Queued in RESUME_HERE.
+
+### The harness rule, re-measured: still 8 sites
+
+The three catch-alls shrank, and no new site was needed: clip-end 94 → **82** unported labels (the
+jump band's 5, the fall band's 5, DOWNSTAB, DOWNSTAB_UP), `startAction` 30 → **29**, `doAction`
+22 → **21**. 5b's code calls only ported functions (`getDamage`, `deductReloadBar`, `endDownStab`,
+`movePlayer`, `startAction`), the target through `NpcTarget`, and `startAction(REDFREEZE)` through
+the `startAction` catch-all (the downstab under the kill-cam freeze).
+
+### The two end-to-end strokes (through the real `update`, the source's clip lengths, ±0)
+
+**A JUMP stroke** (fixture 2, heavy, reach 112, at x 400; `slashTarget` on a target at map x 440,
+clip y 250, facing right: 358 − 210 = 148 > 100):
+
+| frames | state | clip | x | y |
+|---|---|---|---|---|
+| 1–10 | SLASH | `heavy_jumpslash_parta` (11) | 400 | 358 |
+| 11–13 | SLASH | `heavy_fallslash_parta` (3) | 400 | 300 (= 210 + 90) |
+| 14, 15 | SLASH | `heavy_fallslash_partb` (1; travels at 30) | 430, 460 | 298, 296 (velY −2) |
+| 16 | FALL | partb (`startAnim`'s same-clip no-op) | 482 | 292 (end 202 + 90); `checkPlayerHit` |
+| 17–22 | FALL | partb | 487 … 512 (velX +5) | 295, 301, 310, 322, 337, 355 (velY 3 … 18) |
+| 23 | POSE | `heavy_fallslash_partc` (16) | **517** | 358; the landing's hit on the target |
+| 39–69 | POSE | `sheathesword` (31) | 517 | 358 |
+| 70 | IDLE | `idle` | 517 | 358 |
+
+**A downstab** (fixture 2 in DUAL, reach 171, `canStab`; `stabTarget` on a target at map x 330 on
+the ground, facing left: 8 points straight down at x 430; `destX` 375 is within reach, so it stabs
+where it stands): SLASH `downstab` (15) frames 1–14 → frame 15 the target is hit for
+`getDamage() × 2` = 172, the reload paid, `downstab_up` (20) 15–34 → frame 35 `endDownStab` → POSE
+`sheathesword` 35–65 → IDLE 66. It never reaches `endSlash`, so `checkPlayerHit` is never called.
+The AI fires on frames 1, 13, 25, 37, 49, 61 in both.
+
+**Measured on the way: my own hand trace was wrong once, and the port was right.** I had the JUMP
+stroke landing at x 512. `doAction` FALL calls `movePlayer(velX)` BEFORE its ground test
+(`MCSPlayer.as:1920`), so the landing frame moves too: 517. Re-derived from the source's line order
+before changing the expected value.
+
+### The review
+
+One fresh-context reviewer, read-only: **no real bug.** It re-derived the JUMP stroke's frames
+11–23 from the source on its own and matched every expected value, and checked every 5b plant and
+re-anchored 5a plant: each anchor occurs once, and none is an equivalent mutant. It gave two Android
+bands at `:422-436` and `:499-525`; re-read, the source has them at `:411-425` and `:497-523`, as
+cited. Its one cosmetic point (the `juggleCount` comment named only the reset) is taken.
+
+### Gates
+
+Suite 92 files / 2227 tests (+19 `mcsPlayer`, +34 chaos anchors) · typecheck 0 · lint 0 ·
+claimcheck 2211 cites / 608 values / 0 failures · chaos 34 new plants, 34/34 red, 4 of 5a's
+re-anchored (their lines now occur more than once, or moved); pinned 260 → 294. The 5a + 5b filter
+(84 plants) ran in a scratch worktree of this diff: 84/84 red, restored byte-identical.

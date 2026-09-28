@@ -4360,3 +4360,35 @@ plants 37/37 RED. The full 211-plant chaos run is the shell's post-ship step.
 
 After: 92 files / 2174 tests · typecheck 0 · lint 0 · claimcheck 2183 / 604 / 44 / 0 · chaos
 260/260 red, restored byte-identical.
+
+## 2026-09-29 — build loop: L5-OPP slice 5b, THE AIR AND THE DOWNSTAB
+
+- **Baseline at HEAD `d47961a`, as RESUME_HERE stated:** 92 files / 2174 tests · typecheck 0 ·
+  lint 0 · claimcheck 2183 / 604 / 0 · chaos 260 pinned.
+- **Both source quirks confirmed in the web build by decoding** before any code: web `:378` names
+  `"light_fallslash_partb"` (light's JUMP start), web `:1341` names `"balanced_fallslash_partb"`
+  (light's FALL). Found on the way: the web DOWNSTAB clip end names the attacker too (`:520`), which
+  the map had not listed.
+- **Red first:** 19 new tests + 1 rewritten (RUN / WALK above the ground now FALL); 20 red for the
+  stated reasons (the labels still unported, `juggleCount` missing).
+- **Ported:** `startAction` / `doAction` FALL; the clip-end bands jump `_START`, fall `_START`,
+  downstab. Web wins three lines (two attackers, the juggle reset). Four new config numbers, each
+  cited in both builds.
+- **Two end-to-end strokes through the real `update`, ±0:** a JUMP stroke (heavy) and a downstab
+  (dual), every frame's state, clip, x, y, facing and reload. My hand trace was wrong once (the
+  landing frame's x: the source moves before its ground test, 517 not 512); the port was right, and
+  the expected value was re-derived from the source's line order before it changed.
+- **Measured, not carried:** `EnemyPlayer`'s constructor `startAction(FALL)` breaks 4 of 3b's tests
+  and changes every body's first state: queued for the spawn (slice 8).
+- **Chaos:** 34 new plants, 34/34 red; 4 of 5a's re-anchored; pinned 260 → 294. The 5a + 5b filter,
+  in a scratch worktree of the diff: 84/84 red, restored byte-identical.
+- **Review:** one fresh-context reviewer, no real bug. It re-derived the JUMP stroke's frames 11–23
+  independently and matched every value, and found every plant anchor unique and none equivalent.
+  Its Android line numbers for two bands were off by 11; re-read, the source agrees with the cites.
+- **Next:** slice 6's map (reception, ≈827 Android lines, over the cap); the kickoff is at the top
+  of RESUME_HERE.
+
+### THE GATES
+
+After: 92 files / 2227 tests · typecheck 0 · lint 0 · claimcheck 2211 / 608 / 44 / 0 · chaos
+294 pinned (84/84 of 5a + 5b red, restored byte-identical).

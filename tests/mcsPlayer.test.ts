@@ -1694,9 +1694,12 @@ describe('slice 5a: the clip-end switch — the four ground-stroke bands (the sa
       ...['SHEATHESWORDCHIBURI', 'SHEATHESWORD', 'SHEATHETOIDLE', ...POSES].map(anim),
       ...STANCE_PREFIX.flatMap((P) => (P === 'REVERSED' ? [''] : ['', 'DOWN', 'UP'])
         .flatMap((k) => [anim(`${P}SLASH${k}_START`), anim(`${P}SLASH${k}_END`)])),
+      // 5b: the jump _START, fall _START and downstab bands.
+      ...STANCE_PREFIX.flatMap((P) => [anim(`${P}JUMPSLASH_START`), anim(`${P}FALLSLASH_START`)]),
+      anim('DOWNSTAB'), anim('DOWNSTAB_UP'),
     ]);
     const others = OG_CLIP_END_LABELS.filter((n) => !ported.has(n));
-    expect([ported.size, others.length]).toEqual([52, 94]);
+    expect([ported.size, others.length]).toEqual([64, 82]);
     for (const name of others) {
       expect(() => idleBody().clipEnded(name)).toThrow(`unported: MCSPlayer.update clip end (${name})`);
     }
@@ -1763,9 +1766,10 @@ describe('slice 5a: startAction — the wrapper and IDLE, RUN, WALK, SLASH, POSE
       .toEqual(['walk', 'walk']);
   });
 
-  it('RUN and WALK above the ground ask for FALL (slice 5b: loud); on it, not', () => {
+  it('RUN and WALK above the ground FALL (5b), the fall clip over their own; on it, not', () => {
     for (const s of [OG_STATE.RUN, OG_STATE.WALK]) {
-      expect(() => started(s, (p) => { p.y = GROUND - 1; })).toThrow('unported: MCSPlayer.startAction (FALL)');
+      const up = started(s, (p) => { p.y = GROUND - 1; });
+      expect([up.actionState, up.animation]).toEqual([OG_STATE.FALL, 'balanced_fallslash_partb']);
       expect(started(s, (p) => { p.y = GROUND; }).actionState).toBe(s);
     }
   });
@@ -1806,9 +1810,9 @@ describe('slice 5a: startAction — the wrapper and IDLE, RUN, WALK, SLASH, POSE
   });
 
   it('every other of the 35 labels is UNPORTED and names its state; a state with no label is only recorded', () => {
-    const ported: OgState[] = [OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.SLASH, OG_STATE.POSE];
+    const ported: OgState[] = [OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.FALL, OG_STATE.SLASH, OG_STATE.POSE];
     const others = OG_START_ACTION_LABELS.filter((s) => !ported.includes(s));
-    expect(others).toHaveLength(30);
+    expect(others).toHaveLength(29);
     for (const s of others) {
       expect(() => started(s)).toThrow(`unported: MCSPlayer.startAction (${stateName(s)})`);
     }
@@ -1910,9 +1914,9 @@ describe('slice 5a: doAction — IDLE, RUN, WALK, SLASH, POSE (WEB: POSE ends in
   });
 
   it('every other of the 27 labels is UNPORTED and names its state; a state with no label does nothing', () => {
-    const ported: OgState[] = [OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.SLASH, OG_STATE.POSE];
+    const ported: OgState[] = [OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.FALL, OG_STATE.SLASH, OG_STATE.POSE];
     const others = OG_DO_ACTION_LABELS.filter((s) => !ported.includes(s));
-    expect(others).toHaveLength(22);
+    expect(others).toHaveLength(21);
     for (const s of others) {
       expect(() => acting(s)).toThrow(`unported: MCSPlayer.doAction (${stateName(s)})`);
     }
@@ -2009,6 +2013,342 @@ describe.each([
     expect(ai).toEqual([1, 13, 25, 37, 49]);
     expect(packet(hit.mock.calls[0]?.[2])).toEqual([damage, level, 0, stance, 0, p]);
     expect([p.slashCommitted, p.hasSlash, p.velX]).toEqual([false, false, 5]);
+  });
+});
+
+/*
+ * L5-OPP SLICE 5b — THE AIR AND THE DOWNSTAB. `startAction` FALL (web `§1t99s0§.as:1332`, Android
+ * `MCSPlayer.as:1280`), `doAction` FALL (web `:1977`, Android `:1917`) and the clip-end bands jump
+ * `_START` (web `:375`, Android `:356`), fall `_START` (web `:430`, Android `:411`) and downstab (web
+ * `:516`, Android `:497`). The web adds three lines, all ported: the attacker on the landing's
+ * packet (`:1991`) and on the downstab's (`:520`), and the landing's reset of its juggle counter
+ * (`§1t4438s0§`, `:2001`). Two source quirks, the same in both builds, ported as they are: a light
+ * JUMP stroke's start falls straight into light's fall MID (`:359`, web `:378`), and light's FALL
+ * plays BALANCED's fall MID for every type but UP (`:1289`, web `:1341`).
+ */
+describe('slice 5b: the clip-end switch — the jump, fall and downstab bands', () => {
+  const ended = (name: string, setUp: (p: MCSPlayer) => void = () => undefined, b: DuellistBody = body1(), rng: Rng = NO_DRAW) => {
+    const p = idleBody(b, rng);
+    p.actionState = OG_STATE.SLASH;
+    p.slashArray = [{ x: 420, y: 211 }, { x: 440, y: 150 }];
+    setUp(p);
+    const handled = p.clipEnded(name);
+    return { p, handled };
+  };
+  const FALL_FROM_JUMP = ['LIGHTFALLSLASH_MID', 'BALANCEDFALLSLASH_START', 'HEAVYFALLSLASH_START', 'DUALFALLSLASH_START', 'REVERSEDFALLSLASH_START'];
+
+  it('each JUMPSLASH_START: a JUMP stroke falls, the body 90 px under the stroke\'s FIRST point (211 → 301); an UP stroke rises, y kept', () => {
+    STANCE_PREFIX.forEach((P, i) => {
+      const jump = ended(anim(`${P}JUMPSLASH_START`), (p) => { p.slashType = T.jump; });
+      expect([P, jump.handled, jump.p.animation, jump.p.y]).toEqual([P, true, anim(FALL_FROM_JUMP[i] ?? ''), 301]);
+      const up = ended(anim(`${P}JUMPSLASH_START`), (p) => { p.slashType = T.up; });
+      expect([P, up.handled, up.p.animation, up.p.y]).toEqual([P, true, anim(`${P}JUMPSLASH_RISE`), GROUND]);
+    });
+  });
+
+  it('SOURCE QUIRK (both builds): light\'s JUMP skips its fall slash\'s START, straight to light_fallslash_partb (MCSPlayer.as:359)', () => {
+    const { p } = ended(anim('LIGHTJUMPSLASH_START'), (q) => { q.slashType = T.jump; });
+    expect(p.animation).toBe('light_fallslash_partb');
+  });
+
+  it('each JUMPSLASH_START on any other slash type: handled, and nothing moves', () => {
+    for (const P of STANCE_PREFIX) {
+      for (const t of [T.hor, T.drop, T.air, T.downstab, T.horDown, T.horUp]) {
+        const { p, handled } = ended(anim(`${P}JUMPSLASH_START`), (q) => { q.slashType = t; });
+        expect([P, t, handled, p.animation, p.y]).toEqual([P, t, true, '', GROUND]);
+      }
+    }
+  });
+
+  it('each FALLSLASH_START opens its MID', () => {
+    for (const P of STANCE_PREFIX) {
+      const { p, handled } = ended(anim(`${P}FALLSLASH_START`));
+      expect([P, handled, p.animation]).toEqual([P, true, anim(`${P}FALLSLASH_MID`)]);
+    }
+  });
+
+  it('DOWNSTAB: the target is handed the weapon and getDamage() × 2 (web: with the attacker), THEN the reload is paid, then DOWNSTAB_UP', () => {
+    const t = foe(440, GROUND, true);
+    const seen: Array<[unknown, NpcDamage, number]> = [];
+    const { p, handled } = ended(anim('DOWNSTAB'), (q) => {
+      q.setStance(DUAL);
+      q.changeTarget(t);
+      q.STAT_PIERCINGDMG = 7;
+      q.reload = 100;
+      t.checkHitObject = (thing, damage) => {
+        seen.push([thing, damage, q.reload]);
+        return false;
+      };
+    }, body2(), () => 0.5);
+    // dual: int(int(57 + 0.5 × 10) × 1.4) = int(86.8) = 86, × 2 = 172; Damage(172, 45): no launch, no stance.
+    expect(seen.map(([thing, , reload]) => [thing, reload])).toEqual([[{ kind: 'part', part: OG_PART.weapon, owner: p }, 100]]);
+    expect(packet(seen[0]?.[1])).toEqual([172, 45, OG_LAUNCH.LAUNCH_NONE, -1, 7, p]);
+    // dual pays slashUsage × 1.5: 100 − 72 = 28.
+    expect([handled, p.reload, p.animation, p.actionState]).toEqual([true, 28, 'downstab_up', OG_STATE.SLASH]);
+  });
+
+  it('DOWNSTAB on a full bar: the crit is rolled BEFORE the bar is paid (int(86 × 1.3) = 111, × 2 = 222), and the bar empties', () => {
+    const hits: NpcDamage[] = [];
+    const t = foe(440, GROUND, true);
+    t.checkHitObject = (_thing, damage) => {
+      hits.push(damage);
+      return false;
+    };
+    const { p } = ended(anim('DOWNSTAB'), (q) => {
+      q.setStance(DUAL);
+      q.changeTarget(t);
+      q.reload = q.maxreload;
+    }, body2(), () => 0.5);
+    expect([hits.map((d) => d.damage), p.reload]).toEqual([[222], 0]);
+  });
+
+  it('DOWNSTAB under the kill-cam freeze: the hit and the reload, then REDFREEZE (a later slice: loud); in REDFREEZE, nothing at all', () => {
+    const hit = vi.fn(() => false);
+    const t = foe(440, GROUND, true);
+    t.checkHitObject = hit;
+    expect(() => ended(anim('DOWNSTAB'), (q) => {
+      q.changeTarget(t);
+      q.world.redFreeze = true;
+    }, body2(), () => 0.5)).toThrow('unported: MCSPlayer.startAction (REDFREEZE)');
+    expect(hit).toHaveBeenCalledTimes(1);
+    const { p, handled } = ended(anim('DOWNSTAB'), (q) => {
+      q.changeTarget(t);
+      q.actionState = OG_STATE.REDFREEZE;
+      q.reload = 100;
+    });
+    expect([handled, hit.mock.calls.length, p.reload, p.animation]).toEqual([true, 1, 100, '']);
+  });
+
+  it('DOWNSTAB with no target is the source\'s null read', () => {
+    expect(() => ended(anim('DOWNSTAB'), (q) => { q.target = null; }, body2(), () => 0.5)).toThrow(TypeError);
+  });
+
+  it('DOWNSTAB_UP: endDownStab (POSE, the sword sheathed)', () => {
+    const { p, handled } = ended(anim('DOWNSTAB_UP'), (q) => {
+      q.slashType = T.downstab;
+      q.slashCommitted = true;
+    });
+    expect([handled, p.actionState, p.animation, p.slashCommitted]).toEqual([true, OG_STATE.POSE, 'sheathesword', false]);
+  });
+});
+
+describe('slice 5b: startAction FALL — the clip per stance and slash type (the same in both builds)', () => {
+  const falling = (stance: number, t: number) => {
+    const p = idleBody();
+    p.stance = stance;
+    p.slashType = t;
+    p.startAction(OG_STATE.FALL);
+    return p;
+  };
+  const TYPES = [T.hor, T.jump, T.drop, T.up, T.air, T.downstab, T.horDown, T.horUp];
+
+  it('an UP stroke plays the stance\'s jump slash (partc); every other type its fall slash\'s MID; no stance keeps the clip', () => {
+    [BALANCED, HEAVY, DUAL, REVERSED].forEach((st) => {
+      const P = STANCE_PREFIX[st] ?? '';
+      for (const t of TYPES) {
+        const p = falling(st, t);
+        expect([P, t, p.actionState, p.animation]).toEqual([P, t, OG_STATE.FALL, anim(t === T.up ? `${P}JUMPSLASH_SLASH` : `${P}FALLSLASH_MID`)]);
+      }
+    });
+    expect([falling(-1, T.up).animation, falling(-1, T.hor).animation]).toEqual(['', '']);
+  });
+
+  it('SOURCE QUIRK (both builds): light plays BALANCED\'s fall MID for every type but UP (MCSPlayer.as:1289)', () => {
+    for (const t of TYPES) {
+      expect([t, falling(LIGHT, t).animation]).toEqual([t, t === T.up ? 'light_jumpslash_partc' : 'balanced_fallslash_partb']);
+    }
+  });
+});
+
+describe('slice 5b: doAction FALL — gravity, the light re-slash, the landing (WEB: the attacker and the juggle reset)', () => {
+  const inAir = (setUp: (p: MCSPlayer) => void, b: DuellistBody = body2()) => {
+    const p = idleBody(b);
+    p.actionState = OG_STATE.FALL;
+    p.slashDamage = 86;
+    p.STAT_PIERCINGDMG = 7;
+    const order: string[] = [];
+    const hits: Array<[unknown, NpcDamage]> = [];
+    const t = foe(440, GROUND, true);
+    t.checkHitObject = (thing, damage) => {
+      order.push('hit');
+      hits.push([thing, damage]);
+      return false;
+    };
+    p.changeTarget(t);
+    setUp(p);
+    vi.spyOn(p, 'startAction').mockImplementation((s) => {
+      order.push(stateName(s) ?? '');
+    });
+    p.doAction();
+    return { p, order, hits };
+  };
+
+  it('above the ground: velY += 3, y += velY, then the body moves velX (the stage-clamped movePlayer)', () => {
+    const { p, order } = inAir((q) => {
+      q.y = 200;
+      q.velY = 4;
+      q.velX = 5;
+    });
+    expect([p.velY, p.y, p.posX, order]).toEqual([7, 207, 405, []]);
+    const edge = inAir((q) => {
+      q.setPosition(798, 200);
+      q.velX = 5;
+    });
+    expect(edge.p.posX).toBe(800);
+  });
+
+  it('lands at the ground or under it (355 + 3 lands, 354 + 3 does not): y = ground, POSE, THEN the hit', () => {
+    const at = (y: number) => inAir((q) => {
+      q.y = y;
+      q.velY = 0;
+    });
+    const landed = at(355);
+    expect([landed.p.y, landed.p.velY, landed.order]).toEqual([GROUND, 3, ['POSE', 'hit']]);
+    const deep = at(400);
+    expect([deep.p.y, deep.order]).toEqual([GROUND, ['POSE', 'hit']]);
+    const above = at(354);
+    expect([above.p.y, above.order]).toEqual([357, []]);
+  });
+
+  it('the landing hands the target the weapon and slashDamage (web: with the attacker), and WEB resets the juggle count', () => {
+    const { p, hits } = inAir((q) => {
+      q.y = 355;
+      q.juggleCount = 4;
+    });
+    expect(hits.map(([thing]) => thing)).toEqual([{ kind: 'part', part: OG_PART.weapon, owner: p }]);
+    expect(packet(hits[0]?.[1])).toEqual([86, 45, OG_LAUNCH.LAUNCH_NONE, HEAVY, 7, p]);
+    expect(p.juggleCount).toBe(0);
+    expect(inAir((q) => { q.y = 100; q.juggleCount = 4; }).p.juggleCount).toBe(4);
+  });
+
+  it('light, a slash waiting within 50 px of its first point AFTER this frame\'s move: SLASH, even on the landing (49 does, 50 does not)', () => {
+    const light = (firstX: number, setUp: (p: MCSPlayer) => void = () => undefined) => inAir((q) => {
+      q.stance = LIGHT;
+      q.hasSlash = true;
+      q.slashArray = [{ x: firstX, y: 200 }];
+      q.velX = 5;
+      q.y = 355;
+      setUp(q);
+    });
+    // posX 400 + 5 = 405: |454 − 405| = 49 slashes; |455 − 405| = 50 lands.
+    expect(light(454).order).toEqual(['SLASH']);
+    expect(light(455).order).toEqual(['POSE', 'hit']);
+    expect(light(356).order).toEqual(['SLASH']);
+    expect(light(355).order).toEqual(['POSE', 'hit']);
+    expect(light(454, (q) => { q.hasSlash = false; }).order).toEqual(['POSE', 'hit']);
+    expect(light(454, (q) => { q.stance = BALANCED; }).order).toEqual(['POSE', 'hit']);
+  });
+
+  it('a landing with no target is the source\'s null read', () => {
+    expect(() => inAir((q) => {
+      q.y = 355;
+      q.target = null;
+    })).toThrow(TypeError);
+  });
+
+  it('the juggle count (web only, `§1t4438s0§`) starts at 0', () => {
+    expect(player(body2()).juggleCount).toBe(0);
+  });
+});
+
+/*
+ * TWO END-TO-END AIR STROKES, through the real `update` with the source's clip lengths, the AI and
+ * `checkPlayerHit` spied. Worked from the source by hand, frame by frame.
+ *
+ * (1) THE JUMP STROKE — fixture 2 (heavy, reach 112, speed 30) at x 400; slashTarget on a target at
+ *   map x 440, clip y 250, facing right. Stroke (402,210) … (482,202), 5 points; 358 − 210 = 148 > 100:
+ *   JUMP, standing (|402 − 400| < 50). startSlash: heavy_jumpslash_parta (11), destX 482, destY 202,
+ *   dist √6788 = 82.39, time 2.746: velX 29, velY int(−2.91) = −2; slashDamage 86.
+ *   1–10   SLASH parta, still (a jump slash's START does not travel).
+ *   11     parta ends: JUMP → heavy_fallslash_parta (3), y = 210 + 90 = 300.
+ *   14     parta ends → partb (1); doSlash travels: 430, y 300 − 2 = 298.
+ *   15     partb ends (no label: `default`); 460, 296.
+ *   16     arrives at 482 → endSlash: the reload paid (15 − 72 → 0), 358 − 202 = 156 > 100 so
+ *          y = 202 + 90 = 292, velY 0, FALL (partb again: startAnim's no-op), checkPlayerHit,
+ *          velX +5; doSlash's own drop adds velY 0.
+ *   17–22  FALL: velY 3, 6 … 18; y 295, 301, 310, 322, 337, 355; x +5 a frame to 512.
+ *   23     velY 21, y 376, x 517 (the move comes BEFORE the ground test, `:1920`); 376 ≥ 358:
+ *          y 358, POSE (heavy_fallslash_partc, 16), the landing's hit.
+ *   39     partc ends → sheathesword (31), state POSE.   70  sheathesword ends → IDLE.
+ *   Reload k on frames 1–15, then k − 15.
+ *
+ * (2) THE DOWNSTAB — fixture 2 set to DUAL (reach 171, canStab) at x 400; stabTarget on a target at
+ *   map x 330 on the ground, facing LEFT: from 330 + 100 = 430, y int(408 − 85.5) = 322, 8 points
+ *   straight down to (430, 462). A downstab (0 < 50 x-wise, 322 < 462); destX 430 − 55 = 375,
+ *   standing (25 < 50); it faces right (400 < 430). startSlash: y 358, downstab (15), no speed.
+ *   1–14   SLASH downstab, still.
+ *   15     downstab ends: getDamage() × 2 = 172, the target hit, the reload paid (14 − 72 → 0),
+ *          downstab_up (20).
+ *   35     downstab_up ends: endDownStab → POSE → sheathesword (31).   66  → IDLE.
+ *   Reload k on frames 1–14, then k − 14. No checkPlayerHit: a downstab never reaches endSlash.
+ * The AI: frames 1, 13, 25, 37, 49, 61 (both).
+ */
+describe('slice 5b: two air strokes through the real update, frame by frame', () => {
+  const run = (make: (p: MCSPlayer) => void, t: NpcTarget, setUp: (p: MCSPlayer) => void, frames: number) => {
+    const p = idleBody(body2(), () => 0.5, new OgAnimLibrary());
+    setUp(p);
+    const f = framed(p);
+    const weapon: Array<[number, NpcDamage]> = [];
+    t.checkHitObject = (_thing, damage) => {
+      weapon.push([f.now(), damage]);
+      return false;
+    };
+    p.changeTarget(t);
+    const landed: Array<[number, NpcDamage]> = [];
+    vi.spyOn(p, 'checkPlayerHit').mockImplementation((_s, _o, damage) => {
+      landed.push([f.now(), damage]);
+    });
+    make(p);
+    const trace: string[] = [];
+    f.run(frames, (n) => {
+      trace.push([n, stateName(p.actionState), p.animation, p.posX, p.y, p.facingRight, p.reload].join(' '));
+    });
+    return { p, ai: f.ai, trace, weapon, landed };
+  };
+  const row = (n: number, state: string, clip: string, x: number, y: number, reload: number) =>
+    [n, state, clip, x, y, true, reload].join(' ');
+
+  it('the JUMP stroke: rise, fall, land, POSE, sheathe, IDLE — state, clip, x, y, facing and reload at every frame', () => {
+    const { p, ai, trace, weapon, landed } = run((q) => { q.slashTarget(); }, foe(440, 250, true), () => undefined, 72);
+    const FALL_Y = [295, 301, 310, 322, 337, 355];
+    const want = Array.from({ length: 72 }, (_, i) => {
+      const n = i + 1;
+      const reload = n <= 15 ? n : n - 15;
+      if (n <= 10) return row(n, 'SLASH', 'heavy_jumpslash_parta', 400, 358, reload);
+      if (n <= 13) return row(n, 'SLASH', 'heavy_fallslash_parta', 400, 300, reload);
+      if (n === 14) return row(n, 'SLASH', 'heavy_fallslash_partb', 430, 298, reload);
+      if (n === 15) return row(n, 'SLASH', 'heavy_fallslash_partb', 460, 296, reload);
+      if (n === 16) return row(n, 'FALL', 'heavy_fallslash_partb', 482, 292, reload);
+      if (n <= 22) return row(n, 'FALL', 'heavy_fallslash_partb', 482 + 5 * (n - 16), FALL_Y[n - 17] ?? 0, reload);
+      if (n <= 38) return row(n, 'POSE', 'heavy_fallslash_partc', 517, 358, reload);
+      if (n <= 69) return row(n, 'POSE', 'sheathesword', 517, 358, reload);
+      return row(n, 'IDLE', 'idle', 517, 358, reload);
+    });
+    expect(trace).toEqual(want);
+    expect(landed.map(([n, d]) => [n, packet(d)])).toEqual([[16, [86, 45, 0, HEAVY, 0, p]]]);
+    expect(weapon.map(([n, d]) => [n, packet(d)])).toEqual([[23, [86, 45, 0, HEAVY, 0, p]]]);
+    expect(ai).toEqual([1, 13, 25, 37, 49, 61]);
+    expect([p.slashType, p.slashCommitted, p.hasSlash, p.velX, p.velY]).toEqual([T.jump, false, false, 5, 21]);
+  });
+
+  it('the DOWNSTAB from a dual body: DOWNSTAB, DOWNSTAB_UP, endDownStab, POSE, IDLE — every frame', () => {
+    const { p, ai, trace, weapon, landed } = run(
+      (q) => { q.stabTarget(); }, foe(330, GROUND, false), (q) => { q.setStance(DUAL); }, 68,
+    );
+    const want = Array.from({ length: 68 }, (_, i) => {
+      const n = i + 1;
+      const reload = n <= 14 ? n : n - 14;
+      if (n <= 14) return row(n, 'SLASH', 'downstab', 400, 358, reload);
+      if (n <= 34) return row(n, 'SLASH', 'downstab_up', 400, 358, reload);
+      if (n <= 65) return row(n, 'POSE', 'sheathesword', 400, 358, reload);
+      return row(n, 'IDLE', 'idle', 400, 358, reload);
+    });
+    expect([p.stance, p.slashLength, p.canStab]).toEqual([DUAL, 171, true]);
+    expect(trace).toEqual(want);
+    expect(weapon.map(([n, d]) => [n, packet(d)])).toEqual([[15, [172, 45, 0, -1, 0, p]]]);
+    expect(landed).toEqual([]);
+    expect(ai).toEqual([1, 13, 25, 37, 49, 61]);
+    expect([p.slashType, p.slashCommitted, p.hasSlash, p.destX]).toEqual([T.downstab, false, false, 430]);
   });
 });
 

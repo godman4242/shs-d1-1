@@ -237,9 +237,9 @@ export const OG_SLASH_END = {
 } as const;
 
 /**
- * THE STATE MACHINE (slice 5a): `update`, `startAction`, `doAction`. The same in both builds
- * (DIVERGENCES "L5-OPP SLICE 5 — THE MAP": inside 5a every constant-bearing line pair decodes
- * to equal values).
+ * THE STATE MACHINE (slices 5a, 5b): `update`, `startAction`, `doAction`. The same in both builds
+ * (DIVERGENCES "L5-OPP SLICE 5 — THE MAP": inside 5a and 5b every constant-bearing line pair
+ * decodes to equal values).
  */
 export const OG_STATE_MACHINE = {
   /** `MCSPlayer.as:13` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:13` — px a frame, RUN (`runSpeed`) */
@@ -250,6 +250,14 @@ export const OG_STATE_MACHINE = {
   aiCounterMax: 12,
   /** `MCSPlayer.as:103` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:101` — no speech bubble; `update`'s tick parks the counter here once it clears the bubble */
   speechOff: -1,
+  /** `MCSPlayer.as:25` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:25` — px a frame added to `velY` each FALL frame (slice 5b) */
+  gravity: 3,
+  /** `MCSPlayer.as:1922` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1982` — a light body falling with a slash whose first point is closer than this, x-wise, slashes */
+  fallSlashRange: 50,
+  /** `MCSPlayer.as:360` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:379` — a JUMP stroke's start drops the body this far under the stroke's first point (the other four stances' lines say the same) */
+  jumpSlashDrop: 90,
+  /** `MCSPlayer.as:500` · `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:519` — the downstab hits for twice `getDamage()` */
+  downstabDamageMult: 2,
 } as const;
 
 /**

@@ -1,94 +1,88 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 5b, THE AIR AND THE DOWNSTAB
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 6, THE RECEPTION MAP (no code)
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: a surgical port of ~182 mapped source lines | set with `/model` |
+| model / effort | **Opus 5.5 at `high`**: a two-build read of ~830 source lines, then a cut | set with `/model` |
 | `/fast` | ON if you watch it; OFF for the unattended build loop (2× price) | your call |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
 | MCP / skills | nothing extra | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. 5b fits well before then.
+⚠️ Your Claude subscription ends **2026-10-09**. The map is one cycle; 6a can follow it before then.
 
 Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 13 first, then ERRATUM 12, its §3 harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 5 — THE MAP" and "L5-OPP SLICE 5a", and port slice 5b under the §4 gate.
-Before any code: confirm the baseline at HEAD (92 files / 2174 tests, typecheck 0, lint 0, claimcheck 2183 cites / 604 values / 0 failures, chaos 260 pinned).
-5b = the map's "THE CUT" row 5b, 179 Android / 182 web lines, web where the builds differ: startAction FALL (web §1t99s0§.as:1332-1388); doAction FALL (web :1977-2003, with the web's attacker at :1991 and its reset of the web-only §1t4438s0§ at :2001, carried as a field the reception will read); the clip-end bands jump _START (web :375-429), fall _START (:430-444) and downstab (:516-543). Each ported label leaves its switch's catch-all; the catch-alls stay.
-Done = (a) all of that ported, every new number CONTRACT/INFERRED with both builds cited, red first for the stated reason, the two source quirks ("Measured starting points" 2) ported as they are and pinned; (b) the unported sites re-measured (expected: still 8, the catch-alls just shrink; write why if not) and the three catch-all lists' test counts moved; (c) two end-to-end strokes through the real update at ±0, each with checkPlayerHit and the AI spied and the AI's frames asserted: slashTarget on a target in the air (a JUMP stroke: rise, fall, land, POSE, sheathe, IDLE) and stabTarget from a dual-stance body (a downstab: DOWNSTAB, DOWNSTAB_UP, endDownStab, POSE, IDLE), the state, clip, x, y, facing and reload at every frame; (d) plants declared and the pin moved in scripts/gates/chaos.ts AND tests/chaosGate.test.ts; (e) RESUME_HERE rewritten and DIVERGENCES "L5-OPP SLICE 5b" written in the same commit, with the next kickoff at the top (slice 6, reception, needs its own map first: say so).
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 14 first, then ERRATUM 12, its §3 slice-6 row, harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 5 — THE MAP" (the model for this one) and "L5-OPP SLICE 5b", and MAP slice 6 (reception) in both builds. No port code this cycle.
+Before anything else: confirm the baseline at HEAD (92 files / 2227 tests, typecheck 0, lint 0, claimcheck 2211 cites / 608 values / 0 failures, chaos 294 pinned).
+Slice 6 is ≈827 Android lines (ERRATUM 14 item 5), over the 500 cap, so it is mapped first, as slice 5 was.
+Done = (a) every slice-6 function (checkHitObject, gotHit, doPose, doLaunched, die, gotLaunched, gotKnockDown, gotDeathTouch, doSubstitutionLog, gotKneeGroin, gotBackThrow, gotFly, gotFlyAway, doFly, doFlinch, endFlinch, cancelLogSub) paired with its web twin, each with Android span, web span, line counts and "same / differs" by shape, and every EnemyPlayer override of them found (5a's review found one the map had missed: grep EnemyPlayer.as AND §1t122s0§.as for each name); (b) every constant-bearing line pair decoded in both builds, the mismatch count stated, and the probe shown able to go red (as slice 5's map did with an off-by-one pairing); (c) every switch group the reception's states reach (in startAction, doAction and the clip-end switch) listed with its lines, since a reception slice that sets GOTLAUNCHED or FLINCH and cannot play it is not done; (d) each web-only line ruled (R6), including the three juggleCount readers (web :3581, :3860, :4198) and its eight other writers; (e) THE CUT: sub-slices of ≤ 500 source lines each, measured, each with the end-to-end test that closes it; (f) ERRATUM 15 in the kickoff, DIVERGENCES "L5-OPP SLICE 6 — THE MAP", RESUME_HERE rewritten with 6a's paste-ready kickoff at the top, all in the same commit.
 '''
 ```
 
-**VERIFY (plain English):** before it writes any code, the session prints the baseline numbers
-above; at the end, two tests run a whole air stroke and a whole downstab frame by frame, and both
-are green.
+**VERIFY (plain English):** before it reads any source, the session prints the baseline numbers
+above; at the end, DIVERGENCES has a "SLICE 6 — THE MAP" section whose cut table adds up to the
+function spans, and every row is under 500 lines.
 
 **Measured starting points (2026-09-29), so the session does not rediscover them:**
-1. **What already reaches FALL, and now throws through the `startAction` catch-all:** `endSlash`
-   on a stroke ending more than 100 px up (`w.groundY - end.y > 100`), and RUN / WALK started
-   above the ground. 5b's FALL makes all three real.
-2. **Two source quirks, to port as they are, not fix:** `startAction` FALL in LIGHT stance plays
-   BALANCED's fall clip (`BALANCEDFALLSLASH_MID`, `MCSPlayer.as:1289`) for every type but UP; and
-   the clip end of `LIGHTJUMPSLASH_START` on a JUMP goes straight to `LIGHTFALLSLASH_MID`
-   (`:359`), where the other four stances go to their `FALLSLASH_START`. Confirm both in the web
-   build by decoding, as the map did.
-3. **FALL's physics:** `velY += gravity` (3, `MCSPlayer.as:25`), `y += velY`, `movePlayer(velX)`,
-   then a light body with a slash within 50 px SLASHes, else landing (`y >= getGroundY()`, the
-   stage ground, `:2911`) POSEs and hands the target the weapon (like `doAction` POSE, 5a).
-4. **The downstab's packet draws a random number:** `new Damage(getDamage() * 2, level)`
-   (`MCSPlayer.as:500`): the test's `rng` must allow it. Fixture 2 cannot downstab (heavy mastery
-   4 < its stab threshold); a dual or reversed body always can.
-5. **A JUMP stroke:** `initSlash` types a stroke starting more than 100 px above the body as JUMP;
-   `slashTarget` starts 40 px above the target, so a target whose clip y is under 298
-   gives one (358 − (y − 40) > 100).
+1. **Android spans** (`MCSPlayer.as`, one function per line, measured this cycle): `checkHitObject`
+   3275-3579 (305), `gotHit` 3580-3837 (258), `doPose` 3838-3886 (49), `doLaunched` 3887-3916 (30),
+   `die` 3952-3970 (19), `gotLaunched` 4137-4148, `gotKnockDown` 4149-4160, `gotDeathTouch`
+   4161-4183, `doSubstitutionLog` 4184-4196, `gotKneeGroin` 4197-4215, `gotBackThrow` 4216-4229,
+   `gotFly` 4230-4238, `gotFlyAway` 4239-4247, `doFly` 4248-4256, `doFlinch` 4309-4328, `endFlinch`
+   4329-4343, `cancelLogSub` 4369-4379.
+2. **Two web names already known:** `checkHitObject` = `§1t3274s0§` (`§1t99s0§.as:3328`, with two
+   extra `Boolean` parameters); `cancelLogSub` = `§1t4495s0§` (`:4738`).
+3. **What the reception inherits, queued:** the duellist's HP is never set (the body sits at the
+   actor default 1); the ported mobs never set `damage.attacker`, which the web self-hit guard
+   reads (`§1t99s0§.as:3357`); `update` calls `cancelLogSub` through `unported`.
 
-**Bar self-report:** reached for the entry. Every line span, quirk and constant above was read
-from the source this cycle; the end-to-end expectations are left for the session to work by
-hand, as 5a's were, because a number computed now by the port would be the port checking itself.
+**Bar self-report:** reached for the entry. The spans were measured from the source this cycle;
+the web spans, shapes and the cut are the map's own work, because a cut guessed here is the one
+the last two kickoffs had to correct.
 
 ---
 
-## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 5a, THE GROUND STROKE
+## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 5b, THE AIR AND THE DOWNSTAB
 
 | | verdict | measured |
 |---|---|---|
-| **the port** | ✅ `update` whole (and `EnemyPlayer.update`'s re-aim around it); `startAction` / `doAction` IDLE, RUN, WALK, SLASH, POSE; the clip-end bands sheathe, ground `_START`, ground `_END`, pose → sheathe | `src/core/npc/MCSPlayer.ts`; web wins once (`doAction` POSE: the attacker and the `break`, no fall-through into BULLCHARGE) |
-| **the first end-to-end stroke** | ✅ through the real `update`, the source's clip lengths, ±0 | slashTarget → SLASH → POSE → sheathe → IDLE on frame 49 (balanced) / 52 (heavy); the landing's hit on frame 3; the weapon on the target on frames 4–6 / 4–9; the AI on 1, 13, 25, 37, 49 |
-| **the unported count** | ⚠️ ROSE 3 → 8, by design | one catch-all per switch (each names its label) + the AI, `cancelLogSub`, the FX removal; the target's `checkHitObject` is NOT a site (the mobs call it through `NpcTarget`); ERRATUM 13 |
-| **found** | ⚠️ 3 | the body never copied its `walkSpeed` (WALK would move 0 px); `startAction` is 35 labels / 34 groups, not 34 / 33; `NetworkManager.playBack` is its own flag (`networkPlayBack`) |
-| **red first** | ✅ 44 red for the stated reasons (missing methods, the old stub) | one of mine red for the WRONG reason (the label pin read CRLF source as LF): fixed before the port |
-| **chaos** | ✅ 50 new plants, 50/50 red, restored byte-identical | one retired (the stub's), two re-anchored (POSE writes the same packet lines as `endSlash`); pinned 211 → 260 |
-| **review** | ✅ one fresh-context reviewer: ONE real bug, fixed | `EnemyPlayer` overrides `update` (the map missed it): a null or dead target re-aims, or the body goes IDLE, BEFORE the frame. Without it a POSE whose target was gone read null. Verified at the source in both builds, 2 tests red first, ported, +7 plants. The cooldown tick after it is slice 7's (no `skillList` yet) |
+| **the port** | ✅ `startAction` / `doAction` FALL; the clip-end bands jump `_START`, fall `_START`, downstab | `src/core/npc/MCSPlayer.ts`; web wins three lines: the attacker on the landing's and the downstab's packets, the landing's juggle reset (`juggleCount`) |
+| **two source quirks** | ✅ ported as they are, pinned, planted | light's JUMP start → light's fall MID (`MCSPlayer.as:359`); light's FALL → BALANCED's fall MID (`:1289`). Both confirmed in the web build by decoding |
+| **two end-to-end strokes** | ✅ through the real `update`, the source's clip lengths, ±0 | a JUMP stroke (heavy): the rise, the fall, `checkPlayerHit` on frame 16, the landing's hit on 23, IDLE on 70. A downstab (dual): hit for 172 on frame 15, `endDownStab` on 35, IDLE on 66, never `checkPlayerHit` |
+| **the unported count** | ✅ still 8 | the catch-alls shrank: clip-end 94 → 82, `startAction` 30 → 29, `doAction` 22 → 21 |
+| **found** | ⚠️ 2 | the map missed the downstab's web attacker (`§1t99s0§.as:520`); my own hand trace had the landing at x 512, but the source moves before its ground test, so 517 (re-derived before changing the test) |
+| **not carried, measured** | ⚠️ 1 | `EnemyPlayer`'s constructor `startAction(FALL)`: carried, it breaks 4 of 3b's tests and makes every body start falling, which is the spawn's question (slice 8) |
+| **red first** | ✅ 20 red for the stated reasons | labels still unported, the counter field missing |
+| **chaos** | ✅ 34 new plants, 34/34 red | 4 of 5a's re-anchored; pinned 260 → 294; the 5a + 5b filter 84/84 red, restored byte-identical |
+| **review** | ✅ one fresh-context reviewer: no real bug | it re-derived the JUMP stroke's frames 11–23 by hand and matched every value; every plant anchor resolves once, none is an equivalent mutant. Its line numbers for two Android bands were off by 11 and lost to the source (`:356-410`, `:411-425`, `:497-523`, re-read). One cosmetic point taken (the `juggleCount` comment) |
 
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 92 passed (92) · Tests 2174 passed (2174)   (+44 mcsPlayer, +49 chaos anchors)
+$ npx vitest run            ->  Test Files 92 passed (92) · Tests 2227 passed (2227)   (+19 mcsPlayer, +34 chaos anchors)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
-$ npm run claimcheck        ->  2183 cites · 604 values at ±0 · 44 context · 0 failures
+$ npm run claimcheck        ->  2211 cites · 608 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  every path resolves
-$ npm run chaos             ->  260/260 RED, 260/260 restored byte-identical, exit 0 (run in a scratch worktree of this exact diff; the shell re-runs it post-ship) (run in a scratch worktree of this diff; the shell re-runs it post-ship)
+$ npm run chaos -- "duellist 5"  ->  84/84 RED, restored byte-identical (a scratch worktree of this diff; the shell runs all 294 post-ship)
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`
 feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline too.)
 
 ### WHAT CHANGED
 
-- `src/core/npc/MCSPlayer.ts`: `update` (`EnemyPlayer`'s re-aim) over `playerUpdate`, `clipEnded`, `startAction`, `doAction`, `AI` and
-  `cancelLogSub` (both `unported`), the four counters and `chargingFx`; the constructor copies
-  `walkSpeed` and sets `aiCounterMax` 12.
-- `src/config/ogMcsPlayer.ts`: `OG_STATE_MACHINE` (4 cited numbers) and the three switches'
-  label tables, pinned against the source.
-- `src/core/npc/types.ts`: `PlayerWorld.networkPlayBack`.
-- `tests/mcsPlayer.test.ts` (+44; the old `startAction` pins moved to the sites the tests now
-  reach), `tests/mcsPlayer.plants.ts` (+50 −1), the chaos pin in both places.
-- `docs/DIVERGENCES.md` "L5-OPP SLICE 5a"; `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 13.
+- `src/core/npc/MCSPlayer.ts`: `JUMP_START_NEXT`, `FALL_START_MID`, `FALL_CLIP`; FALL in
+  `startAction` and `doAction`; the jump, fall and downstab bands in `clipEnded`; `juggleCount`.
+- `src/config/ogMcsPlayer.ts`: `OG_STATE_MACHINE` + `gravity`, `fallSlashRange`, `jumpSlashDrop`,
+  `downstabDamageMult`, each cited in both builds.
+- `tests/mcsPlayer.test.ts` (+19, and the three catch-all counts moved), `tests/mcsPlayer.plants.ts`
+  (+34, 4 re-anchored), the chaos pin in `scripts/gates/chaos.ts` and `tests/chaosGate.test.ts`.
+- `docs/DIVERGENCES.md` "L5-OPP SLICE 5b"; `docs/sessions/L5_OPPONENT_KICKOFF.md` ERRATUM 14.
 
 ### ⚠️ STILL OPEN — Awaiting human/browser verification, and queued
 
@@ -110,6 +104,10 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
 - **QUEUED (slice 6): the duellist's HP.** The `MCSPlayer` constructor never calls `setHP`, so the
   body sits at the actor default 1, not the profile's HP. Nothing reads it before reception; 5a's
   IDLE reads it for `tired` (1 ≤ 1 / 4 is false, so it idles, as a full-HP body would).
+- **QUEUED (slice 8, the spawn): `EnemyPlayer`'s constructor starts FALL** (`EnemyPlayer.as:51`).
+  Not carried (DIVERGENCES "L5-OPP SLICE 5b"): every body would start falling, and 4 of 3b's tests
+  assume it does not. In the source a body placed above the ground drops, lands in POSE and hands its
+  target a 0-damage packet. Port it with the spawn's placement.
 - **QUEUED (slice 6): the attacker on the mobs' packets.** The web self-hit guard
   (`§1t99s0§.as:3357`) reads `damage.attacker`; the ported mobs never set it (`null`).
 - **QUEUED (slice 8): the seam** must carry the player's facing (`PlayerProxy.isFacingRight`
@@ -127,9 +125,20 @@ feeding broken scripts to `wfcheck.mjs` on purpose. They print on the baseline t
 - **QUEUED (the body, harmless today): `asInt` returns −0** for a small negative (`Math.trunc(-0.3)`);
   an AS3 `int` has no −0. Nothing divides by or `atan2`s a velocity yet, but a test's `toEqual(0)`
   fails on it. Fix = `Math.trunc(n) || 0` in `asInt`, which touches every mob: its own milestone.
+  5b met it: `startSlash` gives a downstab no speed, so its velocity is `xdiff / Infinity`, which is
+  −0 when the stroke is left of the body. 5b's end-to-end downstab strikes to the right.
 - **For slice 8 (R1's veto):** a video-measured duellist (level + gear off a Duel Mode frame) may
   beat the new character for OPP-G. Look before slice 8 ships.
 - L4b's 13 remaining mobs are unblocked but not ported: L5-OPP first, by decision.
+
+---
+
+## PREVIOUS CYCLE (2026-09-29) — L5-OPP slice 5a, THE GROUND STROKE
+
+`update` whole (with `EnemyPlayer.update`'s re-aim, found by the review); the three switches' IDLE,
+RUN, WALK, SLASH, POSE; the clip-end bands sheathe, ground `_START`, ground `_END`, pose → sheathe.
+The first end-to-end stroke at ±0; the unported count rose 3 → 8 by design (one catch-all per
+switch). Full record: `docs/DIVERGENCES.md`, "L5-OPP SLICE 5a".
 
 ---
 
