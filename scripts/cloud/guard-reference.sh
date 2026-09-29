@@ -6,7 +6,8 @@
 #   guard-reference.sh staged   pre-commit: refuse any staged path under reference/
 #   guard-reference.sh push     pre-push: reads git's "<lref> <loid> <rref> <roid>" lines; refuse
 #                               a pushed commit that touches reference/, and — in a cloud session —
-#                               any push to main (the parent session re-gates, then promotes it).
+#                               any push but cloud-lane or claude/… (an ALLOW-list: the trunk is
+#                               master; the parent session re-gates there, then promotes it).
 # Fails CLOSED: a range git cannot walk is refused, never waved on.
 
 case "$1" in
@@ -19,9 +20,12 @@ case "$1" in
     zero=0000000000000000000000000000000000000000
     while read -r lref loid rref roid; do
       [ "$loid" = "$zero" ] && continue  # a delete sends no commits
-      if [ "${CLAUDE_CODE_REMOTE:-}" = true ] && [ "$rref" = refs/heads/main ]; then
-        printf '\n❌ a cloud session never pushes main: git push origin HEAD:refs/heads/cloud-lane\n\n' >&2
-        exit 1
+      if [ "${CLAUDE_CODE_REMOTE:-}" = true ]; then
+        case "$rref" in
+          refs/heads/cloud-lane|refs/heads/claude/*) ;;
+          *) printf '\n❌ a cloud session pushes only cloud-lane, not %s: git push origin HEAD:refs/heads/cloud-lane\n\n' "$rref" >&2
+             exit 1 ;;
+        esac
       fi
       if [ "$roid" = "$zero" ]; then
         commits=$(git rev-list "$loid" --not --remotes) || { echo "❌ cannot walk $lref: push refused" >&2; exit 1; }

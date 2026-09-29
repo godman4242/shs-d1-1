@@ -4593,6 +4593,9 @@ chaos 53 / 53 new plants red (pin 496) · 12 unported sites.
   `scripts/cloud/setup.sh` (SessionStart hook in the new `.claude/settings.json`, a no-op locally),
   CYCLE.md "In a cloud session". `tests/cloudGuard.test.ts`: 8 tests, all watched RED first (exit 127,
   no guard yet). 4 plants in `tests/cloudGuard.plants.ts`; pin 496 → 500.
+- **Caught before any cloud run:** the first guard refused a cloud push to `main` — but this repo's
+  trunk is `master`, so it guarded nothing (seen in `git ls-remote`). Now an ALLOW-list: a cloud
+  session pushes only `cloud-lane` or `claude/…`; the test was rewritten first and went red on it.
 
 ### THE GATES
 

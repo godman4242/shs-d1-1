@@ -39,11 +39,11 @@ export const PLANTS: ChaosPlant[] = [
     note: 'reauthored:2026-09-29 — a stale remote tip would read as "nothing to scan": the silent zero',
   },
   {
-    name: 'cloud guard: a cloud session may push main',
+    name: 'cloud guard: the cloud allow-list lets any branch through (the trunk included)',
     file: FILE,
-    find: 'if [ "${CLAUDE_CODE_REMOTE:-}" = true ] && [ "$rref" = refs/heads/main ]; then',
-    replace: 'if [ "${CLAUDE_CODE_REMOTE:-}" = true ] && [ "$rref" = refs/heads/never ]; then',
+    find: '          refs/heads/cloud-lane|refs/heads/claude/*) ;;',
+    replace: '          refs/heads/cloud-lane|refs/heads/claude/*|*) ;;',
     tests: TESTS,
-    note: 'reauthored:2026-09-29 — a cloud commit would reach main before the full-corpus re-gate',
+    note: 'reauthored:2026-09-29 — a cloud commit would reach master before the full-corpus re-gate',
   },
 ];

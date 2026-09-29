@@ -6,8 +6,10 @@
  * LOCAL bundle, but it never reaches GitHub. A cloud session is a fresh VM with no memory
  * of that rule, so the rule lives in git, not in a prompt: the pre-commit hook refuses a
  * staged `reference/` path, and the pre-push hook refuses any pushed commit that touches
- * one — and, inside a cloud session, any push to `main` (the parent session on the
- * owner's Mac re-gates every cloud commit with the FULL corpus before it reaches main).
+ * one — and, inside a cloud session, any push to a branch other than `cloud-lane` or the
+ * platform's own `claude/…` (an ALLOW-list: the trunk here is `master`, and a deny-list of
+ * `main` guarded nothing — caught 2026-09-29 before any cloud run). The parent session on the
+ * owner's Mac re-gates every cloud commit with the FULL corpus before it reaches `master`.
  *
  * Every refusal fails CLOSED: a pushed range git cannot walk is refused, never waved on.
  * Hermetic: a throwaway repo per test, hooks never installed in it.
@@ -52,7 +54,7 @@ function guard(mode: 'staged' | 'push', stdin = '', cloud = false) {
 
 beforeEach(() => {
   dir = mkdtempSync(join(tmpdir(), 'cloudguard-'));
-  git('init', '-q', '-b', 'main');
+  git('init', '-q', '-b', 'master');
   git('config', 'user.email', 'guard@test');
   git('config', 'user.name', 'guard');
 });
@@ -91,20 +93,24 @@ describe('pre-push: no pushed commit may carry reference/', () => {
   it('lets a clean range through', () => {
     const base = commit('src/a.ts');
     const top = commit('src/b.ts');
-    expect(guard('push', `refs/heads/main ${top} refs/heads/main ${base}\n`).status).toBe(0);
+    expect(guard('push', `refs/heads/master ${top} refs/heads/master ${base}\n`).status).toBe(0);
   });
 
-  it('refuses main from a cloud session even for a clean commit — main is the parent\'s', () => {
+  it('lets a cloud session push only cloud-lane or claude/… — the trunk is the parent\'s', () => {
     const base = commit('src/a.ts');
     const top = commit('src/b.ts');
-    const line = `refs/heads/main ${top} refs/heads/main ${base}\n`;
-    expect(guard('push', line, true).status).toBe(1);
-    expect(guard('push', `refs/heads/main ${top} refs/heads/cloud-lane ${base}\n`, true).status).toBe(0);
+    for (const rref of ['refs/heads/master', 'refs/heads/main', 'refs/heads/dev', 'refs/tags/v1']) {
+      expect(guard('push', `refs/heads/master ${top} ${rref} ${base}\n`, true).status, rref).toBe(1);
+    }
+    for (const rref of ['refs/heads/cloud-lane', 'refs/heads/claude/slice-7b']) {
+      expect(guard('push', `refs/heads/master ${top} ${rref} ${base}\n`, true).status, rref).toBe(0);
+    }
+    expect(guard('push', `refs/heads/master ${top} refs/heads/master ${base}\n`, false).status).toBe(0);
   });
 
   it('fails CLOSED on a remote tip it cannot walk from', () => {
     const top = commit('src/a.ts');
-    expect(guard('push', `refs/heads/main ${top} refs/heads/main ${'f'.repeat(40)}\n`).status).toBe(1);
+    expect(guard('push', `refs/heads/master ${top} refs/heads/master ${'f'.repeat(40)}\n`).status).toBe(1);
   });
 
   it('lets a branch delete through — it sends no commits', () => {

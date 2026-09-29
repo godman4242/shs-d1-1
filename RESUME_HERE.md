@@ -16,8 +16,8 @@
 
 🌩️ **CLOUD LANE (owner ruling 2026-09-29): 7b onward run as Claude Code CLOUD sessions on the $250
 credit**, one at a time, launched and re-gated by a parent session on the Mac (the full corpus + all
-chaos plants) before each reaches `main`. Cloud cycles follow `docs/loop/CYCLE.md` → "In a cloud
-session" and push to `cloud-lane`, never `main`. **Do not start a local session or `build-loop.sh` on
+chaos plants) before each reaches `master`. Cloud cycles follow `docs/loop/CYCLE.md` → "In a cloud
+session" and push to `cloud-lane`, never `master`. **Do not start a local session or `build-loop.sh` on
 this repo while the lane runs** (`docs/loop/PAUSE` is held). Ruling + guard:
 `docs/OWNER_PERMISSION_RULING.md` → "Cloud sessions".
 
