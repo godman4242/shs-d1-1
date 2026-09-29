@@ -5,8 +5,15 @@ cloud credit, re-checks each piece here with the FULL corpus, and moves it to `m
 It never builds a piece itself. Ruling + guard: `docs/OWNER_PERMISSION_RULING.md` →
 "Cloud sessions"; the cloud cycle's rules: `docs/loop/CYCLE.md` → "In a cloud session".
 
-**Before you paste (once):** claim the credit (claude.ai/code) · install the Claude GitHub App
-on `shs-d1-1` only · no `build-loop.sh` running on this repo.
+**Deadlines (re-verified 2026-09-30):** claim by **Oct 7, 11:59 pm PT** · the credit only works while the
+subscription is live, which ends **Oct 9** → last cloud piece **Oct 8**. Unused credit is lost.
+
+**Before you paste (once):** claim the credit (`/claim-credit` in Claude Code, or claude.ai/code) · install the
+Claude GitHub App on `shs-d1-1` only · no `build-loop.sh` running on this repo or on `og igcse malay master`.
+
+**Same Mac as the Malay app (8 GB):** the driver mostly waits; its re-gate (~3 min per piece) is the heavy bit.
+While a Malay session runs its build / e2e / screenshots, let the driver sit in its wait — never run either
+repo's night loop during the day lane.
 
 **Activate first:** Claude Code CLI in `SSHD 1-1` · fresh session · `/model opus`, effort `medium`
 (it orchestrates and re-checks; it doesn't port) · `/fast` OFF (mostly waiting).
@@ -23,7 +30,8 @@ Per piece, repeat:
  3. Check before trusting: `git fetch origin cloud-lane` · exactly ONE new commit (`git rev-list --count master..origin/cloud-lane` = 1) and master is its ancestor · `git diff --name-only master origin/cloud-lane` has no line matching ^"?reference/ · `git ls-remote origin | grep -c cloud-reference` = 0.
  4. Re-gate here with the full corpus: `git checkout --detach origin/cloud-lane` → typecheck, `npx vitest run` (0 failed; paste totals), lint, `npm run claimcheck` (0 failures). Green → `git checkout master && git merge --ff-only origin/cloud-lane && git push origin master`. Red → `git checkout master` (untouched), STOP with the evidence.
  5. A piece that queued a LOOK ("Awaiting human/browser verification"): do it here against reference/frames, screenshot, open the images, and tell me what needs my eyes.
-Stop when: 22:30 KL (then `rm docs/loop/PAUSE` and start the night loop: caffeinate -dimsu bash scripts/build-loop.sh) · I say my credit is under $20 · any red · the same failure twice.
+Stop when: 22:30 KL (then `rm docs/loop/PAUSE` and start the night loop: caffeinate -dimsu bash scripts/build-loop.sh) · I say my credit is under $20 · any red · the same failure twice · Oct 8, 22:30 KL (the last day).
+Pilot failed twice (corpus MISSING, or the cloud can't push) → STOP and say "PLAN B": the rest of the credit moves to the Malay app's loop-safe queue (og igcse malay master, docs/loop/GOAL.md 🐛; its post-commit hook pushes only the cloud's own branch, so nothing reaches the live site until a local driver merges it).
 Done = every promoted piece pasted as: subject · master sha · tests passed/failed · claimcheck failures · cloud-reference on GitHub (must be 0).
 '''
 ```
