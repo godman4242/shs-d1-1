@@ -4592,12 +4592,19 @@ chaos 53 / 53 new plants red (pin 496) · 12 unported sites.
 - **Built:** `scripts/cloud/guard-reference.sh` (both hooks; new `.githooks/pre-push`),
   `scripts/cloud/setup.sh` (SessionStart hook in the new `.claude/settings.json`, a no-op locally),
   CYCLE.md "In a cloud session". `tests/cloudGuard.test.ts`: 8 tests, all watched RED first (exit 127,
-  no guard yet). 4 plants in `tests/cloudGuard.plants.ts`; pin 496 → 500.
+  no guard yet). 6 plants in `tests/cloudGuard.plants.ts` (4 + 2 below); pin 496 → 502.
 - **Caught before any cloud run:** the first guard refused a cloud push to `main` — but this repo's
   trunk is `master`, so it guarded nothing (seen in `git ls-remote`). Now an ALLOW-list: a cloud
   session pushes only `cloud-lane` or `claude/…`; the test was rewritten first and went red on it.
+- **Caught second:** git QUOTES a path with a byte like the decompiled files' `§`, and the guard
+  matched `^reference/` — so a commit holding ONLY such names passed (the cloud-reference branch's
+  own listing showed them). Now `^"?reference/`; two tests went red first, two plants pin it.
 
 ### THE GATES
 
-93 files / 2597 tests (+8 guard tests, +4 chaosGate anchor checks, one per new plant) · typecheck 0 · lint 0 · claimcheck 2537 / 719 / 44 / 0 · instructionpaths 0 ·
-chaos pin 500 (the 4 new plants run after this commit) · 12 unported sites.
+93 files / 2601 tests (+10 guard tests, +6 chaosGate anchor checks, one per new plant) · typecheck 0 · lint 0 · claimcheck 2537 / 719 / 44 / 0 · instructionpaths 0 ·
+chaos pin 502 (all run after the commit) · 12 unported sites.
+- **Rehearsed the VM on the Mac:** `git bundle --all` = 27 MB (the cloud limit is 100 MB) → a clone
+  from it → `setup.sh` with `CLAUDE_CODE_REMOTE=true`: corpus unpacked, the `cloud-reference` ref
+  1 → 0, `core.hooksPath` = `.githooks`, `git status` clean, claimcheck 2537 / 719 / 44 — the Mac's
+  totals. A local `git push origin cloud-reference` was refused by the pre-push hook.

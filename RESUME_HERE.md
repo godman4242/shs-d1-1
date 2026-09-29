@@ -26,14 +26,14 @@ Copy everything BETWEEN the `'''` lines:
 ```
 '''
 Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 20, ERRATUM 19, its §3 slice-7 row, the harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 7 — THE MAP" (the skills table's rows JUMP, ROLL, DASHRIGHT/DASHLEFT, SMOKEBOMB, FLASHBANG; the web-wins table's NINJASMOKEBOMB / SMOKEBOMB2 row; R7 and the FX handle; THE CUT's 7b row), "L5-OPP SLICE 5 — THE MAP" (the startAction, doAction and clip-end group spans) and "L5-OPP SLICE 7a". Port slice 7b, THE EVASION, in strict TDD (invoke the test-driven-development skill first).
-Before anything else: confirm the baseline at HEAD (93 files / 2597 tests, typecheck 0, lint 0, claimcheck 2537 cites / 719 values / 44 context / 0 failures, chaos 500 pinned, 12 unported sites in MCSPlayer.ts).
+Before anything else: confirm the baseline at HEAD (93 files / 2601 tests, typecheck 0, lint 0, claimcheck 2537 cites / 719 values / 44 context / 0 failures, chaos 502 pinned, 12 unported sites in MCSPlayer.ts).
 Scope (280 Android / 285 web source lines, the map's cut): startSkill's arms JUMP, ROLL, DASHRIGHT, DASHLEFT, SMOKEBOMB, FLASHBANG; startAction FORWARDROLL, JUMP, LAND, SMOKEBOMB, SMOKEBOMB2, DASH, BACKSTEP, SKILL_FLASHBANG; doAction FORWARDROLL, JUMP, LAND, DASH+BACKSTEP; the clip ends FORWARDROLL_START, the shared IDLE group (15 labels, BOW2 among them), NINJASMOKEBOMB, DASH_START, BACKSTEP_START, DASH_END+BACKSTEP_END; the charge-FX handle (R7: its creation and its removal are events) and its four removal sites. Where the builds differ, the web wins (R6), per the map's table (NINJASMOKEBOMB's sound and juggle reset, SMOKEBOMB2's juggleCount 0 / 5 / 0).
 Done = (a) every new test watched RED first, for its stated reason; (b) four end-to-end runs through the real update and the REAL AI, each hand-worked BEFORE the code and matched at ±0 on a scripted rng: the human's slash over a body with ROLL ready → FORWARDROLL_START → FORWARDROLL_END → IDLE; the roll on cooldown with JUMP ready → JUMP → LAND → SHEATHEDLAND → IDLE; a dash, its FX created and removed as events; a downed body with SMOKEBOMB 2 → SMOKEBOMB2 → NINJASMOKEBOMB → LAND; (c) every chaos plant RED and restored byte-identical, the pin moved in both places, all run before the commit (commit first: the harness refuses a dirty target file; then amend); (d) unported sites 12 → 8 (the four `Projectile.removeProjectile` calls out), pinned by the site test; (e) the peaceful bow ends in IDLE (its clip end is in 7b's shared group); (f) every new config number labelled CONTRACT or INFERRED and cited at ±0 (claimcheck 0 failures, cites up), and every prose cite read at its line by hand (claimcheck cannot check a function-start cite); (g) ERRATUM 21, DIVERGENCES "L5-OPP SLICE 7b", RESUME_HERE rewritten with 7c's paste-ready kickoff at the top, the session log, one commit.
 '''
 ```
 
 **VERIFY (plain English):** before it reads any source, the session prints the baseline numbers
-above; at the end, `npx vitest run` shows more tests than 2597 and all pass, `grep -c "unported('"
+above; at the end, `npx vitest run` shows more tests than 2601 and all pass, `grep -c "unported('"
 src/core/npc/MCSPlayer.ts` says 8, and DIVERGENCES has a "L5-OPP SLICE 7b" section with the four
 hand-worked runs beside the tests' numbers.
 
@@ -74,11 +74,11 @@ at each `case` line in both files; the scope is the map's 7b row verbatim; the s
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 93 passed (93) · Tests 2597 passed (2597)
+$ npx vitest run            ->  Test Files 93 passed (93) · Tests 2601 passed (2601)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
 $ npm run claimcheck        ->  2537 cites · 719 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  exit 0, every path resolves
-$ npm run chaos -- "duellist 7a"  ->  53 of 53 RED, restored byte-identical (the loop runs all 500 after the commit; +4 cloud-guard plants since)
+$ npm run chaos -- "duellist 7a"  ->  53 of 53 RED, restored byte-identical (the loop runs all 502 after the commit; +6 cloud-guard plants since)
 $ grep -c "unported('" src/core/npc/MCSPlayer.ts  ->  12
 ```
 (The `SYNTAX FAIL` / `RUN FAIL` lines in the vitest output are `tests/workflowScripts.test.ts`

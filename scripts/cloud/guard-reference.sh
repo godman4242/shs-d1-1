@@ -8,11 +8,13 @@
 #                               a pushed commit that touches reference/, and — in a cloud session —
 #                               any push but cloud-lane or claude/… (an ALLOW-list: the trunk is
 #                               master; the parent session re-gates there, then promotes it).
-# Fails CLOSED: a range git cannot walk is refused, never waved on.
+# Fails CLOSED: a range git cannot walk is refused, never waved on. Paths are matched as
+# '^"?reference/' because git QUOTES a name with a byte like the decompiled files' § — a bare
+# '^reference/' passed a commit holding only such names (caught 2026-09-29, before any cloud run).
 
 case "$1" in
   staged)
-    bad=$(git diff --cached --name-only | grep '^reference/' | head -5)
+    bad=$(git diff --cached --name-only | grep -E '^"?reference/' | head -5)
     [ -z "$bad" ] && exit 0
     printf '\n❌ reference/ is study-only and is never committed (docs/OWNER_PERMISSION_RULING.md):\n%s\n\n' "$bad" >&2
     exit 1 ;;
@@ -33,7 +35,7 @@ case "$1" in
         commits=$(git rev-list "$roid..$loid" 2>/dev/null) || { echo "❌ cannot walk $roid..$loid: push refused (fetch first)" >&2; exit 1; }
       fi
       for c in $commits; do
-        if git diff-tree --root --no-commit-id --name-only -r "$c" | grep -q '^reference/'; then
+        if git diff-tree --root --no-commit-id --name-only -r "$c" | grep -qE '^"?reference/'; then
           printf '\n❌ commit %s touches reference/ (study-only, never pushed): push refused\n\n' "$c" >&2
           exit 1
         fi

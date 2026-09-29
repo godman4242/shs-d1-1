@@ -5,7 +5,7 @@
  * rule of `scripts/cloud/guard-reference.sh`, the only thing standing between the study-only
  * corpus a cloud session unpacks and GitHub; `tests/cloudGuard.test.ts` must go red.
  *
- * PROVENANCE. All four written here, at the guard, and watched red on the session that
+ * PROVENANCE. All six written here, at the guard, and watched red on the session that
  * wrote them — marked `reauthored:`.
  */
 import type { ChaosPlant } from '../scripts/gates/chaosPlant.ts';
@@ -17,16 +17,16 @@ export const PLANTS: ChaosPlant[] = [
   {
     name: 'cloud guard: the pre-commit check looks for a folder that never exists',
     file: FILE,
-    find: "bad=$(git diff --cached --name-only | grep '^reference/' | head -5)",
-    replace: "bad=$(git diff --cached --name-only | grep '^reference-disarmed/' | head -5)",
+    find: `bad=$(git diff --cached --name-only | grep -E '^"?reference/' | head -5)`,
+    replace: `bad=$(git diff --cached --name-only | grep -E '^"?reference-disarmed/' | head -5)`,
     tests: TESTS,
     note: 'reauthored:2026-09-29 — a staged corpus file would be committed, then pushed with the next ship',
   },
   {
     name: 'cloud guard: the pre-push scan of each commit matches nothing',
     file: FILE,
-    find: `if git diff-tree --root --no-commit-id --name-only -r "$c" | grep -q '^reference/'; then`,
-    replace: `if git diff-tree --root --no-commit-id --name-only -r "$c" | grep -q '^reference-disarmed/'; then`,
+    find: `if git diff-tree --root --no-commit-id --name-only -r "$c" | grep -qE '^"?reference/'; then`,
+    replace: `if git diff-tree --root --no-commit-id --name-only -r "$c" | grep -qE '^"?reference-disarmed/'; then`,
     tests: TESTS,
     note: 'reauthored:2026-09-29 — the bundle\'s cloud-reference branch could be pushed whole',
   },
@@ -45,5 +45,21 @@ export const PLANTS: ChaosPlant[] = [
     replace: '          refs/heads/cloud-lane|refs/heads/claude/*|*) ;;',
     tests: TESTS,
     note: 'reauthored:2026-09-29 — a cloud commit would reach master before the full-corpus re-gate',
+  },
+  {
+    name: 'cloud guard: the pre-commit check goes blind to names git quotes (the § files)',
+    file: FILE,
+    find: `bad=$(git diff --cached --name-only | grep -E '^"?reference/' | head -5)`,
+    replace: `bad=$(git diff --cached --name-only | grep -E '^reference/' | head -5)`,
+    tests: TESTS,
+    note: 'reauthored:2026-09-29 — the first guard shipped exactly this; its own branch showed the quoted names',
+  },
+  {
+    name: 'cloud guard: the pre-push scan goes blind to names git quotes (the § files)',
+    file: FILE,
+    find: `if git diff-tree --root --no-commit-id --name-only -r "$c" | grep -qE '^"?reference/'; then`,
+    replace: `if git diff-tree --root --no-commit-id --name-only -r "$c" | grep -qE '^reference/'; then`,
+    tests: TESTS,
+    note: 'reauthored:2026-09-29 — a commit of only §-named decompiled files would reach GitHub',
   },
 ];

@@ -68,6 +68,11 @@ describe('pre-commit: a staged reference/ path is refused', () => {
     expect(r.stderr).toContain('reference/decompiled/shs3_payload/scripts/X.as');
   });
 
+  it('refuses a corpus file git QUOTES — the decompiled names carry a § (\\302\\247)', () => {
+    stage('reference/decompiled/shs3_payload/scripts/§1t84s0§.as');
+    expect(guard('staged').status).toBe(1);
+  });
+
   it('lets an ordinary staged file through', () => {
     stage('src/core/a.ts');
     expect(guard('staged').status).toBe(0);
@@ -81,6 +86,12 @@ describe('pre-push: no pushed commit may carry reference/', () => {
     const r = guard('push', `refs/heads/cloud-reference ${bad} refs/heads/cloud-reference ${ZERO}\n`);
     expect(r.status).toBe(1);
     expect(r.stderr).toContain(bad);
+  });
+
+  it('refuses a commit whose ONLY corpus path is one git quotes', () => {
+    const base = commit('src/a.ts');
+    const top = commit('reference/decompiled/shs3_payload/scripts/§1t215s0§.as');
+    expect(guard('push', `refs/heads/cloud-lane ${top} refs/heads/cloud-lane ${base}\n`).status).toBe(1);
   });
 
   it('refuses a corpus commit buried under a clean one on an existing branch', () => {

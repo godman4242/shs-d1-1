@@ -47,7 +47,7 @@ const ROOT = join(HERE, '..');
  * does by reading that file. Two copies of one rule that can drift apart silently is a
  * documented failure mode of this account's tooling; this is the cheap cure.
  */
-const EXPECTED_PLANTS = 500;
+const EXPECTED_PLANTS = 502;
 
 const MODULES: Array<{ file: string; plants: readonly ChaosPlant[] }> = [
   { file: 'npcSlice3a.plants.ts', plants: PLANTS_3A },
