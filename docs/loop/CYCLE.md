@@ -46,3 +46,22 @@ infer: a number you did not see on screen this cycle does not go in a commit.
 
 If nothing toward the current gate clears the bar, make NO commit, print why, and exit. **An idle,
 honest cycle beats a rushed one.**
+
+## In a cloud session (`CLAUDE_CODE_REMOTE=true`)
+
+A cloud cycle is the same routine with three differences (owner ruling 2026-09-29,
+`docs/OWNER_PERMISSION_RULING.md` "Cloud sessions"). The parent session on the owner's Mac
+launches one cloud cycle at a time, re-gates it there with the FULL corpus and every chaos
+plant, and only then moves it to `main`.
+
+- **Before step 1:** the SessionStart hook (`scripts/cloud/setup.sh`) printed one line into
+  your context. If it says the corpus is MISSING, or `npm run claimcheck` prints `CHECKED
+  NOTHING`, STOP: no commit, say so. Tests still pass without the corpus (they skip), so a
+  green suite is not evidence here; the claimcheck totals are.
+- **Step 6:** `reference/frames/` is not in the cloud. Queue every LOOK under "Awaiting
+  human/browser verification" in `RESUME_HERE.md`; the parent looks against the frames.
+- **Steps 9–10:** there is no shell here. Commit once (the gate runs; never `--no-verify`),
+  then push with `git push origin HEAD:refs/heads/cloud-lane`, never `main` (the pre-push hook
+  refuses it). If the push is refused, print the refusal and stop.
+- `reference/` never leaves the working tree: never commit it, copy it elsewhere or paste it
+  into a file (the hooks refuse a commit or push that carries it).

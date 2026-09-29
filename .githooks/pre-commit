@@ -8,6 +8,10 @@ BUILD_CMD="npm run -s typecheck"
 TEST_CMD="npx vitest run"
 LINT_CMD="npm run -s lint"  # ESLint flat config (strict type-checked) — adopted Stage 1 kickoff
 
+# The study-only corpus is never committed — first, so no fast path can skip it
+# (owner ruling 2026-09-29; scripts/cloud/guard-reference.sh, pinned by tests/cloudGuard.test.ts).
+sh scripts/cloud/guard-reference.sh staged || exit 1
+
 # Skip inside CI (CI runs its own checks).
 [ -n "$CI" ] && exit 0
 

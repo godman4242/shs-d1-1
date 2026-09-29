@@ -68,3 +68,16 @@ status line can be flipped to EVIDENCE ON FILE.
   re-opened one by one — each still needs a measured target, never a guess.
 - The measure-first discipline is UNCHANGED: permission removes the legal
   ceiling, not the need for measured numbers.
+
+## Cloud sessions (owner ruling 2026-09-29)
+
+Kheshav approved (2026-09-29, the $250 Claude Code cloud-session credit) sending the parts
+of the corpus the port reads — `reference/decompiled/shs3_payload`,
+`reference/decompiled/shs3_android_payload`, and `reference/extracted/`'s small data files,
+`android/` and `bindata/` (~35 MB) — **to Anthropic's cloud-session VMs inside a LOCAL git
+bundle**. It never goes to GitHub: it travels on a never-pushed local branch,
+`cloud-reference`, which `scripts/cloud/setup.sh` unpacks and then deletes in the VM. The
+guard is `scripts/cloud/guard-reference.sh`, called by both git hooks and pinned by
+`tests/cloudGuard.test.ts` and `tests/cloudGuard.plants.ts`. Frames, videos and everything
+else under `reference/` stay on this Mac. Local sessions already send the files they read to
+the same provider; the difference is that the VM holds a copy for the session's life.

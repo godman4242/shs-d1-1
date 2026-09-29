@@ -4578,3 +4578,23 @@ instructionpaths 0 · chaos 443 pinned · 12 unported sites.
 
 92 files / 2585 tests · typecheck 0 · lint 0 · claimcheck 2537 / 719 / 44 / 0 · instructionpaths 0 ·
 chaos 53 / 53 new plants red (pin 496) · 12 unported sites.
+
+## 2026-09-29 — the cloud lane's guard (attended, from the og-malay session)
+
+- **Why:** the $250 Claude Code cloud-session credit (claim by 2026-10-07; the subscription ends
+  2026-10-09). The owner chose SSHD and approved sending the port's slice of `reference/` to
+  Anthropic's cloud VMs in a local bundle, never GitHub (`docs/OWNER_PERMISSION_RULING.md`).
+- **Measured first:** a fresh clone with only ~19 MB of the corpus (the two decompiled builds + the
+  small extracted XMLs) passed 92 / 92 files, 2567 tests + 18 skipped, claimcheck 2537 / 719 / 44 / 0 —
+  the same totals as the full Mac. With NO corpus: tests still green (2525 + 60 skipped) and only
+  claimcheck says `CHECKED NOTHING` — so the cloud cycle treats that line as a hard stop. `android/`
+  and `bindata/` (+16 MB) ride too, so the animation byte-checks run in the cloud as well.
+- **Built:** `scripts/cloud/guard-reference.sh` (both hooks; new `.githooks/pre-push`),
+  `scripts/cloud/setup.sh` (SessionStart hook in the new `.claude/settings.json`, a no-op locally),
+  CYCLE.md "In a cloud session". `tests/cloudGuard.test.ts`: 8 tests, all watched RED first (exit 127,
+  no guard yet). 4 plants in `tests/cloudGuard.plants.ts`; pin 496 → 500.
+
+### THE GATES
+
+93 files / 2597 tests (+8 guard tests, +4 chaosGate anchor checks, one per new plant) · typecheck 0 · lint 0 · claimcheck 2537 / 719 / 44 / 0 · instructionpaths 0 ·
+chaos pin 500 (the 4 new plants run after this commit) · 12 unported sites.

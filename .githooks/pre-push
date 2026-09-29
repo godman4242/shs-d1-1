@@ -1,0 +1,5 @@
+#!/bin/sh
+# No pushed commit may carry the study-only reference/ corpus, and a cloud session never pushes
+# main (owner ruling 2026-09-29). The rule lives in scripts/cloud/guard-reference.sh, pinned by
+# tests/cloudGuard.test.ts; git's ref lines arrive on stdin and pass straight through.
+exec sh "$(git rev-parse --show-toplevel)/scripts/cloud/guard-reference.sh" push
