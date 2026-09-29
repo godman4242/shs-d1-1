@@ -75,7 +75,9 @@ Kheshav approved (2026-09-29, the $250 Claude Code cloud-session credit) sending
 of the corpus the port reads — `reference/decompiled/shs3_payload`,
 `reference/decompiled/shs3_android_payload`, and `reference/extracted/`'s small data files,
 `android/` and `bindata/` (~35 MB) — **to Anthropic's cloud-session VMs inside a LOCAL git
-bundle**. It never goes to GitHub: it travels on a never-pushed local branch,
+bundle**. This lane adds nothing to GitHub (the 2026-08-24 backup seed already sits in the
+private repo `shs-d1-1-reference` as a release asset, `docs/RECOVERY.md`; the lane neither
+reads nor changes it). The corpus travels on a never-pushed local branch,
 `cloud-reference`, which `scripts/cloud/setup.sh` unpacks and then deletes in the VM. The
 guard is `scripts/cloud/guard-reference.sh`, called by both git hooks and pinned by
 `tests/cloudGuard.test.ts` and `tests/cloudGuard.plants.ts`. Frames, videos and everything

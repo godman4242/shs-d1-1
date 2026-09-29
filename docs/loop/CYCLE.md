@@ -51,8 +51,8 @@ honest cycle beats a rushed one.**
 
 A cloud cycle is the same routine with three differences (owner ruling 2026-09-29,
 `docs/OWNER_PERMISSION_RULING.md` "Cloud sessions"). The parent session on the owner's Mac
-launches one cloud cycle at a time, re-gates it there with the FULL corpus and every chaos
-plant, and only then moves it to `master` (the trunk).
+launches one cloud cycle at a time (never while `build-loop.sh` runs: one writer), re-runs the
+suite and claimcheck there with the FULL corpus, and only then moves it to `master` (the trunk).
 
 - **Before step 1:** the SessionStart hook (`scripts/cloud/setup.sh`) printed one line into
   your context. If it says the corpus is MISSING, or `npm run claimcheck` prints `CHECKED
@@ -60,8 +60,11 @@ plant, and only then moves it to `master` (the trunk).
   green suite is not evidence here; the claimcheck totals are.
 - **Step 6:** `reference/frames/` is not in the cloud. Queue every LOOK under "Awaiting
   human/browser verification" in `RESUME_HERE.md`; the parent looks against the frames.
-- **Steps 9–10:** there is no shell here. Commit once (the gate runs; never `--no-verify`),
-  then push with `git push origin HEAD:refs/heads/cloud-lane` (the pre-push hook refuses any other
-  branch, `master` included). If the push is refused, print the refusal and stop.
+- **Steps 9–10:** there is no shell here, so you do its job. Commit once (the gate runs; never
+  `--no-verify`), then run `npm run chaos` — ALL plants, ~8 min; run it in the background if your
+  command timeout is shorter. Every plant red → push with
+  `git push origin HEAD:refs/heads/cloud-lane` (the pre-push hook refuses any other branch,
+  `master` included). Any plant green, or a refused push → do not push; print why and stop. No
+  plant needs the corpus the cloud lacks (checked 2026-09-29: none names `svgShape` or `composePose`).
 - `reference/` never leaves the working tree: never commit it, copy it elsewhere or paste it
   into a file (the hooks refuse a commit or push that carries it).

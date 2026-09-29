@@ -18,7 +18,8 @@
 credit**, one at a time, launched and re-gated by a parent session on the Mac (the full corpus + all
 chaos plants) before each reaches `master`. Cloud cycles follow `docs/loop/CYCLE.md` → "In a cloud
 session" and push to `cloud-lane`, never `master`. **Do not start a local session or `build-loop.sh` on
-this repo while the lane runs** (`docs/loop/PAUSE` is held). Ruling + guard:
+this repo while the lane runs** (`docs/loop/PAUSE` is held). The split: the cloud lane runs by
+DAY (the credit), `build-loop.sh` keeps the NIGHTS (free); never both at once. Ruling + guard:
 `docs/OWNER_PERMISSION_RULING.md` → "Cloud sessions".
 
 Copy everything BETWEEN the `'''` lines:
