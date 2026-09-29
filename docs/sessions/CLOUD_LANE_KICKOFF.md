@@ -36,7 +36,7 @@ Done = every promoted piece pasted as: subject · master sha · tests passed/fai
 
 **Bar self-report:** ⚠️ reached for everything checkable from the Mac — the guard (10 tests,
 502/502 plants), a bundle rehearsal (27 MB; setup unpacks, deletes the ref, turns hooks on;
-claimcheck 2537/719/44). **Limiter:** three things only the pilot can prove — that `claude
+claimcheck 2537/719/44). **Limiter:** four things only the pilot can prove — that `claude
 --cloud`'s own bundle carries the `cloud-reference` branch like `git bundle --all` did, that the
 cloud may push `cloud-lane` (the guard also allows `claude/…` if the platform insists), that
 `--model opus --effort high` reach a cloud session (the session page shows its model), and what
