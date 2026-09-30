@@ -1,5 +1,9 @@
 # CLOUD LANE — the driver session (you run it; the cloud builds the pieces)
 
+> ⛔ **SHELVED 2026-09-30 — do not run.** Kheshav put the $250 cloud credit on the Malay app
+> (`og igcse malay master` → `docs/sessions/2026-09-30-cloud-credit-driver.md`). SSHD keeps its free
+> night loop on the normal plan. Everything below still works if a future credit comes along.
+
 **What this is:** a local session that launches ONE cloud cycle at a time on the $250
 cloud credit, re-checks each piece here with the FULL corpus, and moves it to `master`.
 It never builds a piece itself. Ruling + guard: `docs/OWNER_PERMISSION_RULING.md` →
