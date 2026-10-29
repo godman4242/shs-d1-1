@@ -661,8 +661,8 @@ export const PLANTS: ChaosPlant[] = [
   {
     name: 'duellist slash: the smoke at the raw map x',
     file: PORT,
-    find: 'x: asInt(this.getMapPosition())',
-    replace: 'x: this.getMapPosition()',
+    find: '    if (!this.visible || this.alpha < ONE) {\n      this.emit({ type: \'smoke\', x: asInt(this.getMapPosition()), y: asInt(this.y) });\n    }',
+    replace: '    if (!this.visible || this.alpha < ONE) {\n      this.emit({ type: \'smoke\', x: this.getMapPosition(), y: asInt(this.y) });\n    }',
     tests: [SUITE],
     note: 'reauthored:2026-09-29 — `createSmoke3(x:int, y:int)`, `ProjectileManager.as:527`',
   },
@@ -1581,8 +1581,8 @@ export const PLANTS: ChaosPlant[] = [
   {
     name: 'duellist 5b: the landing keeps the juggle count (Android)',
     file: PORT,
-    find: '          this.juggleCount = ZERO;\n',
-    replace: '',
+    find: '          this.aim().checkHitObject({ kind: \'part\', part: OG_PART.weapon, owner: this }, damage);\n          this.juggleCount = ZERO;\n',
+    replace: '          this.aim().checkHitObject({ kind: \'part\', part: OG_PART.weapon, owner: this }, damage);\n',
     tests: [SUITE],
     note: 'reauthored:2026-09-29 — web only, `§1t99s0§.as:2001`; ruled WEB (R6)',
   },
@@ -2501,7 +2501,7 @@ export const PLANTS: ChaosPlant[] = [
   {
     name: 'duellist 6c: gotHit keeps the charge FX',
     file: PORT,
-    find: 'damageObj.launchType === OG_LAUNCH.LAUNCH_NONE)) {\n      unported(\'Projectile.removeProjectile\');\n    }\n',
+    find: 'damageObj.launchType === OG_LAUNCH.LAUNCH_NONE)) {\n      this.emit({ type: \'chargingFx\', action: \'remove\' });\n      this.chargingFx = null;\n    }\n',
     replace: 'damageObj.launchType === OG_LAUNCH.LAUNCH_NONE)) {\n      void this;\n    }\n',
     tests: [SUITE],
     note: 'reauthored:2026-09-29 — web `§1t99s0§.as:3725-3733`',
@@ -2709,7 +2709,7 @@ export const PLANTS: ChaosPlant[] = [
   {
     name: 'duellist 6c: die keeps the charge FX',
     file: PORT,
-    find: '    if (this.chargingFx !== null) unported(\'Projectile.removeProjectile\');\n    super.die();\n',
+    find: '    if (this.chargingFx !== null) {\n      this.emit({ type: \'chargingFx\', action: \'remove\' });\n      this.chargingFx = null;\n    }\n    super.die();\n',
     replace: '    super.die();\n',
     tests: [SUITE],
     note: 'reauthored:2026-09-29 — web `§1t99s0§.as:4059-4063`',
@@ -3189,8 +3189,8 @@ export const PLANTS: ChaosPlant[] = [
   {
     name: "duellist 7a startSkill: the stealth kept",
     file: PORT,
-    find: "    this.cancelStealth();\n    const arm = skillArm(skillid);",
-    replace: "    const arm = skillArm(skillid);",
+    find: "    this.cancelStealth();\n    const S = OG_STATE;",
+    replace: "    const S = OG_STATE;",
     tests: [SUITE],
     note: "reauthored:2026-09-29 — `SkillManager.as:161`",
   },

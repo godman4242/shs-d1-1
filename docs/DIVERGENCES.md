@@ -7524,3 +7524,30 @@ is a boss (OPP-D item 2).
 92 files / 2585 tests (2482 + 45 in `mcsPlayer.test.ts`, + 5 twins, + 53 plant anchors) · typecheck 0 ·
 lint 0 · claimcheck 2537 cites / 719 values / 44 context / 0 failures · instructionpaths 0 · chaos:
 the 53 new plants RED and restored byte-identical before the commit; the pin is 496 in both places.
+
+## L5-OPP SLICE 7b — THE EVASION: `startSkill`'S SIX ARMS, THE DASH/ROLL/JUMP/SМОKE STATE MACHINE, AND THE CHARGE-FX HANDLE (2026-10-29)
+
+Ported `startSkill`'s six arms (JUMP, ROLL, DASHRIGHT, DASHLEFT, SMOKEBOMB, FLASHBANG), eight
+`startAction` states (FORWARDROLL, JUMP, LAND, SMOKEBOMB, SMOKEBOMB2, DASH, BACKSTEP, SKILL_FLASHBANG),
+five `doAction` states (FORWARDROLL, JUMP, LAND, DASH, BACKSTEP), the clip ends FORWARDROLL_START,
+the shared IDLE group of 15 labels (BOW2 among them, so the peaceful bow ends in IDLE), NINJASMOKEBOMB
+(with its `Snd_smokebomb` sound and juggle reset, web), DASH_START, BACKSTEP_START, DASH_END and
+BACKSTEP_END, and the charge-FX handle: its creation (DASH/BACKSTEP `startAction`) and its four removal
+sites (the startAction wrapper, `checkHitObject`, `gotHit`, `die`) are now events (`chargingFx`,
+create/remove) instead of throws, since the FX classes are slice 9's. Unported sites 12 → 8.
+
+Web wins applied: SMOKEBOMB2 sets `juggleCount` 0 / 5 / 0 across its three branches; NINJASMOKEBOMB
+plays `Snd_smokebomb` and resets `juggleCount`; the DASH/BACKSTEP velocities and the JUMP physics
+carry the web numbers already in the port.
+
+Four end-to-end runs through the real `update` and the real AI, hand-worked and matched at ±0 on a
+scripted rng: the human's slash over a body with ROLL ready → FORWARDROLL_START → FORWARDROLL_END →
+IDLE; the roll on cooldown with JUMP ready → JUMP → LAND → SHEATHEDLAND → IDLE; a dash with its FX
+created and removed as events; a downed body with SMOKEBOMB 2 → SMOKEBOMB2 → NINJASMOKEBOMB → LAND
+(the SMOKEBOMB2 ground branch lifts and falls, the air branch lands). The peaceful bow ends in IDLE
+through the shared group.
+
+### Gates
+
+93 files / 2601 tests (2585 + 16 in `mcsPlayer.test.ts`) · typecheck 0 · lint 0 · claimcheck 2550 cites /
+731 values / 44 context / 0 failures · chaos: 543 plants RED, restored byte-identical.

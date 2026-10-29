@@ -689,3 +689,24 @@ written until each slice reads its functions line by line. §3's line counts are
 promise; the per-slice gates are §4's generic ones. What this kickoff does NOT promise:
 that R2's two-rulebook transition is short, that slice 5's sub-slicing is right, or that
 R1 has an answer the payload can supply.
+
+> **⛔ ERRATUM 21 — SLICE 7b, THE EVASION (2026-10-29, a build-loop cycle). Where this block and the
+> text below disagree, THIS BLOCK WINS.**
+> 1. **7b landed** with the map's scope: `startSkill`'s six arms (JUMP, ROLL, DASHRIGHT, DASHLEFT,
+>    SMOKEBOMB, FLASHBANG); `startAction` FORWARDROLL, JUMP, LAND, SMOKEBOMB, SMOKEBOMB2, DASH,
+>    BACKSTEP, SKILL_FLASHBANG; `doAction` FORWARDROLL, JUMP, LAND, DASH+BACKSTEP; the clip ends
+>    FORWARDROLL_START, the shared IDLE group (15 labels, BOW2 among them), NINJASMOKEBOMB, DASH_START,
+>    BACKSTEP_START, DASH_END+BACKSTEP_END; the charge-FX handle (R7) and its four removal sites.
+>    Unported 12 → 8 (the four `Projectile.removeProjectile` calls out).
+> 2. **The charge-FX handle is now events, not throws:** creation emits `{ type: 'chargingFx',
+>    action: 'create' }` and sets `chargingFx = {}`; each removal site emits
+>    `{ type: 'chargingFx', action: 'remove' }` and nulls it. The FX classes remain slice 9's.
+> 3. **Web wins carried:** SMOKEBOMB2 sets `juggleCount` 0 / 5 / 0 across its three branches;
+>    NINJASMOKEBOMB plays `Snd_smokebomb` and resets `juggleCount`; the peaceful bow ends in IDLE
+>    through the shared group.
+> 4. **For 7c:** the throws and the Focus — `startSkill`'s arms CHARGEDSHOT, SHUNPO, THOUSANDSTABS,
+>    DEADLYCLEAVE, FOCUS, SLASHWAVE, the kunai/windmill arms, WINDMILL, STEALTH, SHADOWCLONE,
+>    MASSCLONE, SUBSTITUTIONLOG, FIREBREATH, GROUNDPUNCH and the rest; `startAction` DOSKILL,
+>    SKILL_*; `doAction` DOSKILL, SKILL_SHUNPO, SKILL_THOUSANDSTABS, SKILL_DEADLYCLEAVE; and the
+>    remaining clip ends. The arm catch-all still unports them.
+> Evidence: `docs/DIVERGENCES.md`, "L5-OPP SLICE 7b".

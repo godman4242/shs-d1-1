@@ -4608,3 +4608,11 @@ chaos pin 502 (all run after the commit) · 12 unported sites.
   from it → `setup.sh` with `CLAUDE_CODE_REMOTE=true`: corpus unpacked, the `cloud-reference` ref
   1 → 0, `core.hooksPath` = `.githooks`, `git status` clean, claimcheck 2537 / 719 / 44 — the Mac's
   totals. A local `git push origin cloud-reference` was refused by the pre-push hook.
+
+## 2026-10-29 — build loop cycle: L5-OPP slice 7b, THE EVASION
+
+- Ported `startSkill`'s six arms (JUMP, ROLL, DASHRIGHT, DASHLEFT, SMOKEBOMB, FLASHBANG); eight `startAction` states (FORWARDROLL, JUMP, LAND, SMOKEBOMB, SMOKEBOMB2, DASH, BACKSTEP, SKILL_FLASHBANG); five `doAction` states (FORWARDROLL, JUMP, LAND, DASH, BACKSTEP); the clip ends FORWARDROLL_START, the shared IDLE group of 15 labels, NINJASMOKEBOMB, DASH_START, BACKSTEP_START, DASH_END+BACKSTEP_END; the charge-FX handle (R7) and its four removal sites.
+- Unported sites 12 → 8. Charge-FX creation/removal are now events (`{ type: 'chargingFx', action: 'create'|'remove' }`).
+- Four end-to-end runs through the real `update` and the real AI at ±0 on a scripted rng.
+- Gates: 93 files / 2601 tests · typecheck 0 · lint 0 · claimcheck 2550 / 731 / 44 / 0 · chaos 543/543 red, restored byte-identical.
+- ERRATUM 21 appended to `docs/sessions/L5_OPPONENT_KICKOFF.md`; DIVERGENCES "L5-OPP SLICE 7b"; RESUME_HERE rewritten with the 7c paste-ready kickoff.

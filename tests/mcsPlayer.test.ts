@@ -1716,9 +1716,15 @@ describe('slice 5a: the clip-end switch — the four ground-stroke bands (the sa
       // 6c: the death's ten.
       ...['DEFEATED1', 'ENEMYDEATH', 'DEATH_FORWARD', 'DEFEATED2', 'ENEMYDEATHNOHEAD', 'ENEMYDEATHNOHAND', 'DEATHDOWNED',
         'DEATHINHALF', 'SEPPUKU_END', 'SEPPUKU_NOHEAD'].map(anim),
+      // 7b: the evasion's clip ends.
+      anim('FORWARDROLL_START'),
+      ...['FORWARDROLL_END', 'SHEATHEDLAND', 'KUNAITHROW', 'KATANAATTACK', 'PICKUP', 'PUNCH', 'SPARTAKICK_END', 'PUNCH_END',
+        'KNEEGROIN', 'BOW', 'BOW2', 'THROWGRENADE', 'JUTSU_GROUND_PARTB', 'CHARGEDSHOT_END', 'CHICHARGE_END'].map(anim),
+      anim('NINJASMOKEBOMB'),
+      anim('DASH_START'), anim('BACKSTEP_START'), anim('DASH_END'), anim('BACKSTEP_END'),
     ]);
     const others = OG_CLIP_END_LABELS.filter((n) => !ported.has(n));
-    expect([ported.size, others.length]).toEqual([86, 60]);
+    expect([ported.size, others.length]).toEqual([107, 39]);
     for (const name of others) {
       expect(() => idleBody().clipEnded(name)).toThrow(`unported: MCSPlayer.update clip end (${name})`);
     }
@@ -1734,11 +1740,13 @@ describe('slice 5a: startAction — the wrapper and IDLE, RUN, WALK, SLASH, POSE
     return p;
   };
 
-  it('records the state; a change with a charging FX up removes it — UNPORTED (no ported path writes it)', () => {
+  it('records the state; a change with a charging FX up removes it', () => {
     const fx = {};
     const same = started(OG_STATE.IDLE, (p) => { p.chargingFx = fx; });
     expect([same.actionState, same.chargingFx]).toEqual([OG_STATE.IDLE, fx]);
-    expect(() => started(OG_STATE.WALK, (p) => { p.chargingFx = fx; })).toThrow('unported: Projectile.removeProjectile');
+    const p = started(OG_STATE.WALK, (p) => { p.chargingFx = fx; });
+    expect(p.chargingFx).toBeNull();
+    expect(p.events).toContainEqual({ type: 'chargingFx', action: 'remove' });
     expect(started(OG_STATE.WALK).chargingFx).toBeNull();
   });
 
@@ -1832,9 +1840,11 @@ describe('slice 5a: startAction — the wrapper and IDLE, RUN, WALK, SLASH, POSE
     const ported: OgState[] = [
       OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.FALL, OG_STATE.SLASH, OG_STATE.POSE,
       OG_STATE.GOTLAUNCHED, OG_STATE.KNOCKDOWNED, OG_STATE.DOWNED, // 6b
+      OG_STATE.FORWARDROLL, OG_STATE.JUMP, OG_STATE.LAND, OG_STATE.SMOKEBOMB, OG_STATE.SMOKEBOMB2,
+      OG_STATE.DASH, OG_STATE.BACKSTEP, OG_STATE.SKILL_FLASHBANG, // 7b
     ];
     const others = OG_START_ACTION_LABELS.filter((s) => !ported.includes(s));
-    expect(others).toHaveLength(26);
+    expect(others).toHaveLength(18);
     for (const s of others) {
       expect(() => started(s)).toThrow(`unported: MCSPlayer.startAction (${stateName(s)})`);
     }
@@ -1940,9 +1950,10 @@ describe('slice 5a: doAction — IDLE, RUN, WALK, SLASH, POSE (WEB: POSE ends in
       OG_STATE.IDLE, OG_STATE.RUN, OG_STATE.WALK, OG_STATE.FALL, OG_STATE.SLASH, OG_STATE.POSE,
       OG_STATE.GOTLAUNCHED, OG_STATE.FLY, OG_STATE.STUN, OG_STATE.DOWNED, // 6b
       OG_STATE.DYING, // 6c
+      OG_STATE.FORWARDROLL, OG_STATE.JUMP, OG_STATE.LAND, OG_STATE.DASH, OG_STATE.BACKSTEP, // 7b
     ];
     const others = OG_DO_ACTION_LABELS.filter((s) => !ported.includes(s));
-    expect(others).toHaveLength(16);
+    expect(others).toHaveLength(11);
     for (const s of others) {
       expect(() => acting(s)).toThrow(`unported: MCSPlayer.doAction (${stateName(s)})`);
     }
@@ -2677,22 +2688,26 @@ describe('slice 6a: checkHitObject — the landed hit', () => {
     expect(() => p.checkHitObject(WEAPON, blow(100))).toThrow('unported: MCSPlayer.cancelLogSub');
   });
 
-  it('a charging FX is removed unless the body charges chi and the hit does not launch: unported (no path sets it)', () => {
+  it('a charging FX is removed unless the body charges chi and the hit does not launch', () => {
     const fx = {};
     const p = struck();
     p.chargingFx = fx;
     p.actionState = OG_STATE.SKILL_CHICHARGE;
     expect(p.checkHitObject(WEAPON, blow(100))).toBe(true);
+    expect(p.chargingFx).toBe(fx);
     const q = struck();
     q.chargingFx = fx;
-    expect(() => q.checkHitObject(WEAPON, blow(100))).toThrow('unported: Projectile.removeProjectile');
+    q.checkHitObject(WEAPON, blow(100));
+    expect(q.chargingFx).toBeNull();
+    expect(q.events).toContainEqual({ type: 'chargingFx', action: 'remove' });
     const launched = struck();
     launched.chargingFx = fx;
     launched.actionState = OG_STATE.SKILL_CHICHARGE;
-    expect(() => launched.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_AIR))).toThrow('unported: Projectile.removeProjectile');
+    launched.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_AIR));
+    expect(launched.chargingFx).toBeNull();
     // The removal comes BEFORE the damage (web `:3477`). Since 6b the launch's own `startAction`
     // also removes it, with the same message, AFTER the damage: HP tells the two apart.
-    expect(launched.getHP()).toBe(590);
+    expect(launched.getHP()).toBe(546);
   });
 });
 
@@ -3304,15 +3319,19 @@ describe('slice 6c: gotHit — the guards and the evades (WEB: 75 / 85 / 95, the
     charging.chargingFx = fx;
     charging.actionState = OG_STATE.SKILL_CHICHARGE;
     expect([charging.gotHit(OG_PART.torso, blow(100)), charging.getHP()]).toEqual([true, 546]);
+    expect(charging.chargingFx).toBe(fx);
     const q = struck();
     q.chargingFx = fx;
-    expect(() => q.gotHit(OG_PART.torso, blow(100))).toThrow('unported: Projectile.removeProjectile');
-    expect(q.getHP()).toBe(590);
+    q.gotHit(OG_PART.torso, blow(100));
+    expect(q.chargingFx).toBeNull();
+    expect(q.events).toContainEqual({ type: 'chargingFx', action: 'remove' });
+    expect(q.getHP()).toBe(546);
     const launched = struck();
     launched.chargingFx = fx;
     launched.actionState = OG_STATE.SKILL_CHICHARGE;
-    expect(() => launched.gotHit(OG_PART.torso, blow(100, OG_LAUNCH.LAUNCH_AIR))).toThrow('unported: Projectile.removeProjectile');
-    expect(launched.getHP()).toBe(590);
+    launched.gotHit(OG_PART.torso, blow(100, OG_LAUNCH.LAUNCH_AIR));
+    expect(launched.chargingFx).toBeNull();
+    expect(launched.getHP()).toBe(546);
   });
 });
 
@@ -3513,12 +3532,15 @@ describe('slice 6c: die, createLoot, rewardXP (EnemyPlayer\'s, the duellist\'s b
     expect([player(body1()).xp, player(body2()).xp]).toEqual([50, 270]);
   });
 
-  it('die removes a charging FX first (slice 7\'s, loud), before anything else', () => {
-    const p = struck();
+  it('die removes a charging FX first (slice 7), before anything else', () => {
+    const p = struck([OG_PART.torso], body2(), drawn([0.5, 0.5, 0.5, 0.5]));
     p.chargingFx = {};
     p.setHP(0);
-    expect(() => { p.die(); }).toThrow('unported: Projectile.removeProjectile');
-    expect([p.dead, p.events]).toEqual([false, []]);
+    p.dontGiveLoot = true;
+    p.die();
+    expect(p.chargingFx).toBeNull();
+    expect(p.events).toContainEqual({ type: 'chargingFx', action: 'remove' });
+    expect(p.dead).toBe(true);
   });
 
   it('createLoot: a random item at the body\'s level (the dialog rolls its own 1 in 2), then coins: at level ≤ 10 always', () => {
@@ -3875,7 +3897,7 @@ describe('slice 7a: startSkill — the preamble and the tail; every arm is ONE u
     for (const s of [OG_STATE.IDLE, OG_STATE.DOWNED, OG_STATE.GOTLAUNCHED, OG_STATE.FALL, OG_STATE.JUMP]) {
       p.actionState = s;
       expect(p.canSmokeAway()).toBe(true);
-      expect(() => p.startSkill(SMOKEBOMB, 2, -1, -1)).toThrow('unported: SkillManager.startSkill (SMOKEBOMB)');
+      expect(p.startSkill(SMOKEBOMB, 2, -1, -1)).toBe(true);
     }
   });
 
@@ -3891,7 +3913,7 @@ describe('slice 7a: startSkill — the preamble and the tail; every arm is ONE u
   it('then the stealth is cancelled, and an id with an arm is unported; an id with none falls out, true', () => {
     const p = body();
     p.visible = false;
-    expect(() => p.startSkill(OG_SKILL.JUMP, 1, -1, -1)).toThrow('unported: SkillManager.startSkill (JUMP)');
+    expect(() => p.startSkill(OG_SKILL.SHUNPO, 1, -1, -1)).toThrow('unported: SkillManager.startSkill (SHUNPO)');
     expect([p.visible, p.events]).toEqual([true, [{ type: 'smoke', x: BODY_X, y: GROUND }]]);
     expect(p.startSkill(1008, 1, -1, -1)).toBe(true);
     expect(() => p.startSkill(1077, 1, -1, -1)).toThrow('unported: SkillManager.startSkill (WEB_1077)');
@@ -3956,7 +3978,8 @@ describe('slice 7a: AI — the guards, the smoke-away, the skip (OPP-D item 3)',
     allUsable(q);
     q.chi = 100;
     q.actionState = OG_STATE.GOTLAUNCHED;
-    expect(() => { q.AI(); }).toThrow('unported: SkillManager.startSkill (SMOKEBOMB)');
+    q.AI();
+    expect(q.actionState).toBe(OG_STATE.FALL);
   });
 
   it('the 1-in-5 skip at level ≤ 3 only: level 3 returns on a 0.1; level 4 draws no skip die at all', () => {
@@ -4254,7 +4277,7 @@ describe('slice 7a: the two end-to-end runs through the real update (hand-worked
 });
 
 describe('the harness rule — unported calls throw, and their count only goes down', () => {
-  it('MCSPlayer.ts names exactly 12 unported sites: the switches\' catch-alls and the calls out of 5a, 6a and 6c', () => {
+  it('MCSPlayer.ts names exactly 8 unported sites: the switches\' catch-alls and the calls out of 5a, 6a and 6c', () => {
     // 5a replaced the ONE startAction stub with three dispatchers. A dispatcher that ports some of
     // its labels needs its own site for the rest, so the count ROSE from 3 (see DIVERGENCES
     // "L5-OPP SLICE 5a"); the AI, cancelLogSub and the FX removal are calls 5a's code makes. 6a
@@ -4265,9 +4288,9 @@ describe('the harness rule — unported calls throw, and their count only goes d
     // make into slice 7's code: the log substitution and two more FX removals (DIVERGENCES "6c").
     const src = readFileSync(new URL('../src/core/npc/MCSPlayer.ts', import.meta.url), 'utf8');
     expect([...src.matchAll(/unported\('([^']*)'/g)].map((m) => m[1])).toEqual([
-      'MCSPlayer.update clip end', 'Projectile.removeProjectile', 'MCSPlayer.startAction', 'MCSPlayer.doAction',
+      'MCSPlayer.update clip end', 'MCSPlayer.startAction', 'MCSPlayer.doAction',
       'SkillManager.startSkill', 'MCSPlayer.cancelLogSub', 'MCSPlayer.doSubstitutionLog', 'StageManager.clearInteractTarget',
-      'NPCManager.checkPlayerHit', 'Projectile.removeProjectile', 'Projectile.removeProjectile', 'Projectile.removeProjectile',
+      'NPCManager.checkPlayerHit',
     ]);
   });
 });

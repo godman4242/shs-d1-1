@@ -72,6 +72,7 @@ import {
   OG_DO_ACTION_LABELS,
   OG_DUELLIST_REWARD,
   OG_EVADE,
+  OG_EVASION,
   OG_GETUP,
   OG_MOVE_DIST_SQ,
   OG_RECEPTION,
@@ -663,6 +664,60 @@ export class MCSPlayer extends Npc {
         this.moveHealthBarX(OG_GETUP.barXReset);
         this.startAction(S.IDLE);
         return true;
+      case OG_ANIM.FORWARDROLL_START:
+        this.startAnim(OG_ANIM.FORWARDROLL_END);
+        return true;
+      case OG_ANIM.FORWARDROLL_END:
+      case OG_ANIM.SHEATHEDLAND:
+      case OG_ANIM.KUNAITHROW:
+      case OG_ANIM.KATANAATTACK:
+      case OG_ANIM.PICKUP:
+      case OG_ANIM.PUNCH:
+      case OG_ANIM.SPARTAKICK_END:
+      case OG_ANIM.PUNCH_END:
+      case OG_ANIM.KNEEGROIN:
+      case OG_ANIM.BOW:
+      case OG_ANIM.BOW2:
+      case OG_ANIM.THROWGRENADE:
+      case OG_ANIM.JUTSU_GROUND_PARTB:
+      case OG_ANIM.CHARGEDSHOT_END:
+      case OG_ANIM.CHICHARGE_END:
+        this.startAction(S.IDLE);
+        return true;
+      case OG_ANIM.NINJASMOKEBOMB:
+        if (this.actionState === S.SMOKEBOMB || this.actionState === S.SMOKEBOMB2) {
+          this.emit({ type: 'smoke', x: asInt(this.getMapPosition()), y: asInt(this.y) });
+          if (this.isFacingRight()) this.movePlayer(OG_EVASION.smokeEscape);
+          else this.movePlayer(-OG_EVASION.smokeEscape);
+          this.emit({ type: 'smoke', x: asInt(this.getMapPosition()), y: asInt(this.y) });
+          this.startAction(S.LAND);
+          this.juggleCount = ZERO;
+          this.emit({ type: 'sound', name: 'smokebomb' });
+        } else if (this.actionState === S.SKILL_FLASHBANG) {
+          this.emit({ type: 'flashbang', x: asInt(this.getMapPosition()), y: asInt(this.y), skillLevel: this.getSkillLevel(K.FLASHBANG) });
+          this.startAction(S.IDLE);
+        }
+        return true;
+      case OG_ANIM.DASH_START:
+        this.startAnim(OG_ANIM.DASH_END);
+        this.actionState = S.POSE;
+        if (this.chargingFx !== null) {
+          this.emit({ type: 'chargingFx', action: 'remove' });
+          this.chargingFx = null;
+        }
+        return true;
+      case OG_ANIM.BACKSTEP_START:
+        this.startAnim(OG_ANIM.BACKSTEP_END);
+        this.actionState = S.POSE;
+        if (this.chargingFx !== null) {
+          this.emit({ type: 'chargingFx', action: 'remove' });
+          this.chargingFx = null;
+        }
+        return true;
+      case OG_ANIM.DASH_END:
+      case OG_ANIM.BACKSTEP_END:
+        this.startAction(S.IDLE);
+        return true;
     }
     if (POSE_ENDS.includes(name)) {
       if (this.actionState !== S.REDFREEZE && this.world.redFreeze) this.startAction(S.REDFREEZE);
@@ -683,7 +738,8 @@ export class MCSPlayer extends Npc {
     const prev = this.actionState;
     this.actionState = actionState;
     if (actionState !== prev && this.chargingFx !== null) {
-      unported('Projectile.removeProjectile');
+      this.emit({ type: 'chargingFx', action: 'remove' });
+      this.chargingFx = null;
     }
     switch (actionState) {
       case S.IDLE: {
@@ -726,6 +782,69 @@ export class MCSPlayer extends Npc {
         this.checkNextSlash();
         break;
       }
+      case S.FORWARDROLL:
+        this.startAnim(OG_ANIM.FORWARDROLL_START);
+        break;
+      case S.JUMP:
+        this.startAnim(OG_ANIM.SHEATHEDJUMP);
+        this.velY = OG_EVASION.jumpVelY;
+        break;
+      case S.LAND:
+        this.startAnim(OG_ANIM.SHEATHEDLAND);
+        this.velY = ZERO;
+        break;
+      case S.SMOKEBOMB:
+        this.startAnim(OG_ANIM.NINJASMOKEBOMB);
+        break;
+      case S.SMOKEBOMB2: {
+        const airbornePrev =
+          prev === S.DOWNED || prev === S.KNOCKDOWNED || prev === S.GOTLAUNCHED ||
+          prev === S.FLY || prev === S.FALL || prev === S.JUMP || prev === S.VICTIM;
+        if (airbornePrev) {
+          this.emit({ type: 'smoke', x: asInt(this.getMapPosition()), y: asInt(this.y) });
+          if (this.y < this.world.groundY - OG_EVASION.smokeBomb2AirMove) {
+            this.movePlayer(this.isFacingRight() ? OG_EVASION.smokeBomb2AirMove : -OG_EVASION.smokeBomb2AirMove);
+            this.y = this.world.groundY;
+            this.startAction(S.LAND);
+            this.emit({ type: 'smoke', x: asInt(this.getMapPosition()), y: asInt(this.y) });
+            this.juggleCount = ZERO;
+          } else {
+            this.movePlayer(this.isFacingRight() ? OG_EVASION.smokeBomb2AirMove : -OG_EVASION.smokeBomb2AirMove);
+            if (this.isFacingRight()) this.velX = OG_EVASION.smokeBomb2GroundLift;
+            this.velX = OG_EVASION.smokeBomb2VelX;
+            this.y -= OG_EVASION.smokeBomb2Lift;
+            this.velY = ZERO;
+            this.startAction(S.FALL);
+            this.emit({ type: 'smoke', x: asInt(this.getMapPosition()), y: asInt(this.y) });
+            this.juggleCount = OG_EVASION.smokeBomb2Juggle;
+          }
+          if ((prev === S.DOWNED || prev === S.KNOCKDOWNED || prev === S.FLY) && !this.world.redFreeze) {
+            this.showHealthBar();
+          }
+          if (prev === S.DOWNED || prev === S.KNOCKDOWNED || prev === S.FLY) {
+            this.moveHealthBarX(ZERO);
+          }
+        } else {
+          this.startAnim(OG_ANIM.NINJASMOKEBOMB);
+          this.juggleCount = ZERO;
+        }
+        break;
+      }
+      case S.DASH:
+        this.startAnim(OG_ANIM.DASH_START);
+        this.velX = this.isFacingRight() ? OG_EVASION.dashVel : -OG_EVASION.dashVel;
+        this.chargingFx = {};
+        this.emit({ type: 'chargingFx', action: 'create' });
+        break;
+      case S.BACKSTEP:
+        this.startAnim(OG_ANIM.BACKSTEP_START);
+        this.velX = this.isFacingRight() ? -OG_EVASION.backstepVel : OG_EVASION.backstepVel;
+        this.chargingFx = {};
+        this.emit({ type: 'chargingFx', action: 'create' });
+        break;
+      case S.SKILL_FLASHBANG:
+        this.startAnim(OG_ANIM.NINJASMOKEBOMB);
+        break;
       case S.GOTLAUNCHED:
         this.startAnim(OG_ANIM.GOTLAUNCHED_RISE);
         break;
@@ -793,6 +912,26 @@ export class MCSPlayer extends Npc {
         break;
       case S.SLASH:
         this.doSlash();
+        break;
+      case S.FORWARDROLL:
+        if (this.animation === OG_ANIM.FORWARDROLL_END) {
+          this.movePlayer(this.isFacingRight() ? OG_EVASION.forwardRollStep : -OG_EVASION.forwardRollStep);
+        }
+        break;
+      case S.JUMP:
+        this.y += this.velY;
+        this.velY += OG_EVASION.jumpGravity;
+        this.movePlayer(this.isFacingRight() ? OG_EVASION.jumpStep : -OG_EVASION.jumpStep);
+        if (this.y >= this.world.groundY) {
+          this.y = this.world.groundY;
+          this.startAction(S.LAND);
+        }
+        break;
+      case S.LAND:
+        break;
+      case S.DASH:
+      case S.BACKSTEP:
+        this.movePlayer(this.velX);
         break;
       case S.POSE:
         if (SLASH_END_POSE[this.animation] !== undefined) {
@@ -1060,8 +1199,48 @@ export class MCSPlayer extends Npc {
     if (smokeAway && !this.canSmokeAway()) return false;
     if (skillid === K.CHARGEDSHOT && !(xpos === ZERO && ypos === ZERO) && this.getChargingTime() === ZERO) return false;
     this.cancelStealth();
-    const arm = skillArm(skillid);
-    if (arm !== undefined) unported('SkillManager.startSkill', arm);
+    const S = OG_STATE;
+    switch (skillid) {
+      case K.JUMP:
+        this.startAction(S.JUMP);
+        break;
+      case K.ROLL:
+        this.startAction(S.FORWARDROLL);
+        break;
+      case K.DASHRIGHT: {
+        let dashstate: OgState = S.DASH;
+        let x = xpos;
+        if (x === OG_AI.noPos) x = this.getMapPosition() + ONE;
+        else x += this.world.stagePosition;
+        if ((x < this.getMapPosition() && this.isFacingRight()) || (x > this.getMapPosition() && !this.isFacingRight())) {
+          dashstate = S.BACKSTEP;
+        }
+        this.startAction(dashstate);
+        break;
+      }
+      case K.DASHLEFT: {
+        let dashstate: OgState = S.DASH;
+        let x = xpos;
+        if (x === OG_AI.noPos) x = this.getMapPosition() - ONE;
+        else x += this.world.stagePosition;
+        if ((x < this.getMapPosition() && this.isFacingRight()) || (x > this.getMapPosition() && !this.isFacingRight())) {
+          dashstate = S.BACKSTEP;
+        }
+        this.startAction(dashstate);
+        break;
+      }
+      case K.SMOKEBOMB:
+        if (skilllevel === ONE) this.startAction(S.SMOKEBOMB);
+        else this.startAction(S.SMOKEBOMB2);
+        break;
+      case K.FLASHBANG:
+        this.startAction(S.SKILL_FLASHBANG);
+        break;
+      default: {
+        const arm = skillArm(skillid);
+        if (arm !== undefined) unported('SkillManager.startSkill', arm);
+      }
+    }
     return true;
   }
 
@@ -1692,7 +1871,8 @@ export class MCSPlayer extends Npc {
       }
       this.stunCounter = ZERO;
       if (this.chargingFx !== null && !(this.actionState === S.SKILL_CHICHARGE && damage.launchType === OG_LAUNCH.LAUNCH_NONE)) {
-        unported('Projectile.removeProjectile');
+        this.emit({ type: 'chargingFx', action: 'remove' });
+        this.chargingFx = null;
       }
       physical -= this.getDefense();
       if (physical < damage.getMinDamage()) physical = damage.getMinDamage();
@@ -1935,7 +2115,8 @@ export class MCSPlayer extends Npc {
     }
     this.stunCounter = ZERO;
     if (this.chargingFx !== null && !(this.actionState === S.SKILL_CHICHARGE && damageObj.launchType === OG_LAUNCH.LAUNCH_NONE)) {
-      unported('Projectile.removeProjectile');
+      this.emit({ type: 'chargingFx', action: 'remove' });
+      this.chargingFx = null;
     }
     if (this.getHP() <= ZERO) return false;
     this.behead = target === OG_PART.hat || target === OG_PART.head || target === OG_PART.neck;
@@ -2014,7 +2195,10 @@ export class MCSPlayer extends Npc {
    * and every caller on its path skips the dead.
    */
   override die(): void {
-    if (this.chargingFx !== null) unported('Projectile.removeProjectile');
+    if (this.chargingFx !== null) {
+      this.emit({ type: 'chargingFx', action: 'remove' });
+      this.chargingFx = null;
+    }
     super.die();
   }
 

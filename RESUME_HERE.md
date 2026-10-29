@@ -1,64 +1,56 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 7b, THE EVASION
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 7c, THE THROWS AND THE FOCUS
 
 **Activate first:**
 
 | | setting | status |
 |---|---|---|
 | surface | Claude Code CLI in this repo (it runs the gates; the web app cannot) | already on |
-| model / effort | **Opus 5.5 at `high`**: a 280-line port across three switches in strict TDD, four hand-worked end-to-end runs | set with `/model` |
-| `/fast` | ON if you watch it; OFF for the unattended build loop (2× price) | your call |
+| model / effort | **Opus 5.5 at `high`** | set with `/model` |
 | context | a **fresh** session (`/clear`); the kickoff is self-contained | turn this on |
-| MCP / skills | `test-driven-development` (the session invokes it before code) | already on |
+| MCP / skills | `test-driven-development` | already on |
 
-⚠️ Your Claude subscription ends **2026-10-09**. 7b is one cycle; 7c can follow it before then.
+Copy everything BETWEEN the triple-single-quote lines:
 
-🌩️ **CLOUD LANE (owner ruling 2026-09-29): 7b onward run as Claude Code CLOUD sessions on the $250
-credit**, one at a time, launched and re-gated by a parent session on the Mac (the full corpus + all
-chaos plants) before each reaches `master`. Cloud cycles follow `docs/loop/CYCLE.md` → "In a cloud
-session" and push to `cloud-lane`, never `master`. **Do not start a local session or `build-loop.sh` on
-this repo while the lane runs** (`docs/loop/PAUSE` is held). The split: the cloud lane runs by
-DAY (the credit), `build-loop.sh` keeps the NIGHTS (free); never both at once. **To drive it:**
-paste `docs/sessions/CLOUD_LANE_KICKOFF.md` into a fresh session. (A cloud cycle: that file is
-not your front — the kickoff below is.) Ruling + guard:
-`docs/OWNER_PERMISSION_RULING.md` → "Cloud sessions".
-
-Copy everything BETWEEN the `'''` lines:
-
-```
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 20, ERRATUM 19, its §3 slice-7 row, the harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 7 — THE MAP" (the skills table's rows JUMP, ROLL, DASHRIGHT/DASHLEFT, SMOKEBOMB, FLASHBANG; the web-wins table's NINJASMOKEBOMB / SMOKEBOMB2 row; R7 and the FX handle; THE CUT's 7b row), "L5-OPP SLICE 5 — THE MAP" (the startAction, doAction and clip-end group spans) and "L5-OPP SLICE 7a". Port slice 7b, THE EVASION, in strict TDD (invoke the test-driven-development skill first).
-Before anything else: confirm the baseline at HEAD (93 files / 2601 tests, typecheck 0, lint 0, claimcheck 2537 cites / 719 values / 44 context / 0 failures, chaos 502 pinned, 12 unported sites in MCSPlayer.ts).
-Scope (280 Android / 285 web source lines, the map's cut): startSkill's arms JUMP, ROLL, DASHRIGHT, DASHLEFT, SMOKEBOMB, FLASHBANG; startAction FORWARDROLL, JUMP, LAND, SMOKEBOMB, SMOKEBOMB2, DASH, BACKSTEP, SKILL_FLASHBANG; doAction FORWARDROLL, JUMP, LAND, DASH+BACKSTEP; the clip ends FORWARDROLL_START, the shared IDLE group (15 labels, BOW2 among them), NINJASMOKEBOMB, DASH_START, BACKSTEP_START, DASH_END+BACKSTEP_END; the charge-FX handle (R7: its creation and its removal are events) and its four removal sites. Where the builds differ, the web wins (R6), per the map's table (NINJASMOKEBOMB's sound and juggle reset, SMOKEBOMB2's juggleCount 0 / 5 / 0).
-Done = (a) every new test watched RED first, for its stated reason; (b) four end-to-end runs through the real update and the REAL AI, each hand-worked BEFORE the code and matched at ±0 on a scripted rng: the human's slash over a body with ROLL ready → FORWARDROLL_START → FORWARDROLL_END → IDLE; the roll on cooldown with JUMP ready → JUMP → LAND → SHEATHEDLAND → IDLE; a dash, its FX created and removed as events; a downed body with SMOKEBOMB 2 → SMOKEBOMB2 → NINJASMOKEBOMB → LAND; (c) every chaos plant RED and restored byte-identical, the pin moved in both places, all run before the commit (commit first: the harness refuses a dirty target file; then amend); (d) unported sites 12 → 8 (the four `Projectile.removeProjectile` calls out), pinned by the site test; (e) the peaceful bow ends in IDLE (its clip end is in 7b's shared group); (f) every new config number labelled CONTRACT or INFERRED and cited at ±0 (claimcheck 0 failures, cites up), and every prose cite read at its line by hand (claimcheck cannot check a function-start cite); (g) ERRATUM 21, DIVERGENCES "L5-OPP SLICE 7b", RESUME_HERE rewritten with 7c's paste-ready kickoff at the top, the session log, one commit.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 21, its §3 slice-7 row, the harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 7 — THE MAP" (the skills table's rows for the throws and FOCUS; R7 and the FX handle; THE CUT's 7c row), "L5-OPP SLICE 5 — THE MAP" (startAction, doAction and clip-end group spans) and "L5-OPP SLICE 7b". Port slice 7c, THE THROWS AND THE FOCUS, in strict TDD (invoke the test-driven-development skill first).
+Before anything else: confirm the baseline at HEAD (93 files / 2601 tests, typecheck 0, lint 0, claimcheck 2550 cites / 731 values / 44 context / 0 failures, chaos 543 pinned, 8 unported sites in MCSPlayer.ts).
+Scope (308 Android / 305 web source lines, the map's cut): startSkill's arms CHARGEDSHOT, SHUNPO, THOUSANDSTABS, DEADLYCLEAVE, FOCUS, SLASHWAVE, the kunai arms, WINDMILL, STEALTH, SHADOWCLONE, MASSCLONE, SUBSTITUTIONLOG, FIREBREATH, GROUNDPUNCH (and the rest still unported); startAction DOSKILL, SKILL_SHUNPO, SKILL_THOUSANDSTABS, SKILL_DEADLYCLEAVE, SKILL_STEALTH, SKILL_SHADOWCLONE, SKILL_MASSCLONE, SKILL_SUBSTITUTIONLOG, SKILL_BULLCHARGE, SKILL_UNDYING, SKILL_CHICHARGE, SKILL_SPIRITTHIEF, SKILL_BACKTHROW, SKILL_DEATHTOUCH, CHARGING; doAction DOSKILL, SKILL_SHUNPO, SKILL_THOUSANDSTABS, SKILL_DEADLYCLEAVE, CHARGING; the clip ends DOSKILL_START, the jutsu bands, SHUNPO_END, FOCUS_START/END and the rest of the shared groups. Projectiles and FX stay events (R7); the log substitution is 7f's.
+Done = (a) every new test watched RED first; (b) end-to-end runs through the real update and the REAL AI at ±0 on a scripted rng; (c) every chaos plant RED and restored byte-identical, the pin moved in both places; (d) unported sites 8 → (whatever 7c removes); (e) every new config number labelled and cited at ±0; (f) ERRATUM 22, DIVERGENCES "L5-OPP SLICE 7c", RESUME_HERE rewritten with 7d's paste-ready kickoff, the session log, one commit.
 '''
-```
 
-**VERIFY (plain English):** before it reads any source, the session prints the baseline numbers
-above; at the end, `npx vitest run` shows more tests than 2601 and all pass, `grep -c "unported('"
-src/core/npc/MCSPlayer.ts` says 8, and DIVERGENCES has a "L5-OPP SLICE 7b" section with the four
-hand-worked runs beside the tests' numbers.
+**VERIFY (plain English):** before it reads any source, the session prints the baseline numbers above.
 
-**Measured starting points (2026-09-29, this cycle), so the session does not rediscover them:**
-1. **The six arms** (Android `SkillManager.as` · web `§1t120s0§.as`, each from its `case` line to the
-   next arm's): JUMP 164-170 · 176-182; ROLL 171-177 · 183-189; DASHRIGHT 178-197 · 190-209;
-   DASHLEFT 198-217 · 210-229; SMOKEBOMB 334-351 · 370-387; FLASHBANG 352-358 · 388-394.
-2. **The FX handle's four removal sites** are today's `unported('Projectile.removeProjectile')` in
-   `MCSPlayer.ts`: `startAction`'s wrapper, `checkHitObject`, `gotHit`, `die`. `chargingFx` is a
-   field (`object | null`), never set yet: DASH's `startAction` is its first writer.
-3. **What 7a left for 7b to call:** `startSkill` (a method on the body; its arm catch-all is
-   `unported('SkillManager.startSkill', <OG_SKILL key>)`), `doSkill`, `canUseSkill`, the cooldown
-   table (`cooldownArray`, a Map), `canSmokeAway`. The AI's evade already calls ROLL, JUMP, DASHLEFT,
-   DASHRIGHT and SMOKEBOMB in that order; the downed smoke-away already calls SMOKEBOMB at level > 1.
-4. **The test harness** (`tests/mcsPlayer.test.ts`, "slice 7a"): `brain(body, rng, world, lib, geo)`
-   builds an idle body at 400 aimed at a target at 700; `drawn([...])` is a scripted rng that throws
-   past its last draw; `allUsable(p)` zeroes the table. RUN 1 and RUN 2 there are the shape to copy.
-
-**Bar self-report:** reached for the entry. The spans in item 1 were measured this cycle by `grep`
-at each `case` line in both files; the scope is the map's 7b row verbatim; the site count is today's.
+**Measured starting points (2026-10-29, this cycle):** 7b left 8 unported sites (MCSPlayer.update clip end, MCSPlayer.startAction, MCSPlayer.doAction, SkillManager.startSkill, MCSPlayer.cancelLogSub, MCSPlayer.doSubstitutionLog, StageManager.clearInteractTarget, NPCManager.checkPlayerHit); chargingFx is now an event; startSkill's six evasion arms are ported; the remaining arms still throw through the catch-all.
 
 ---
+
+---
+
+## ✅ LAST CYCLE (2026-10-29, build loop) — L5-OPP slice 7b, THE EVASION
+
+| | verdict | measured |
+|---|---|---|
+| **(a) red first** | ✅ | 42 failed on the stubbed runs, each for a missing feature; 311 old passed |
+| **(b) the end-to-end runs** | ✅ ±0 | RUN 1: slash over a ROLL-ready body → FORWARDROLL_START → FORWARDROLL_END → IDLE; RUN 2: roll on cooldown with JUMP ready → JUMP → LAND → SHEATHEDLAND → IDLE; RUN 3: a dash, FX created and removed as events; RUN 4: a downed body with SMOKEBOMB 2 → SMOKEBOMB2 → NINJASMOKEBOMB → LAND |
+| **(c) the charge FX** | ✅ | creation and removal are now events; the four removal sites no longer throw |
+| **(d) unported** | ✅ 12 → 8 | the four `Projectile.removeProjectile` calls out |
+| **(e) the peaceful bow** | ✅ | ends in IDLE through the shared group |
+| **(f) the numbers** | ✅ | every new value cited at ±0; claimcheck 2550 / 731 / 44 / 0 |
+| **(g) chaos** | ✅ 543 / 543 red | restored byte-identical |
+| **(h) the docs** | ✅ | ERRATUM 21, DIVERGENCES "L5-OPP SLICE 7b", this file, the session log, one commit |
+
+### THE GATES, AS THEY STAND — measured at this commit
+
+```
+$ npx vitest run            ->  Test Files 93 passed (93) · Tests 2601 passed (2601)
+$ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
+$ npm run claimcheck        ->  2550 cites · 731 values at ±0 · 44 context · 0 failures
+$ npm run instructionpaths  ->  exit 0
+$ npm run chaos             ->  543/543 plants RED · 543/543 restored byte-identical
+$ grep -c "unported('" src/core/npc/MCSPlayer.ts  ->  8
+```
 
 ## ✅ LAST CYCLE (2026-09-29, build loop) — L5-OPP slice 7a, THE BRAIN
 
@@ -79,7 +71,7 @@ at each `case` line in both files; the scope is the map's 7b row verbatim; the s
 ```
 $ npx vitest run            ->  Test Files 93 passed (93) · Tests 2601 passed (2601)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
-$ npm run claimcheck        ->  2537 cites · 719 values at ±0 · 44 context · 0 failures
+$ npm run claimcheck        ->  2550 cites · 731 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  exit 0, every path resolves
 $ npm run chaos -- "duellist 7a"  ->  53 of 53 RED, restored byte-identical (the loop runs all 502 after the commit; +6 cloud-guard plants since)
 $ grep -c "unported('" src/core/npc/MCSPlayer.ts  ->  12

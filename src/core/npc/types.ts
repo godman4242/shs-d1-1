@@ -185,7 +185,7 @@ export interface NpcTarget {
 /** A presentation side effect the actor asks for. Drained by the render layer. */
 export type NpcEvent =
   /** `jump` is `Snd_jump` (the duellist's two evades), `deflect` `SoundManager.playDeflect()`. */
-  | { readonly type: 'sound'; readonly name: 'hit' | 'die' | 'jump' | 'deflect' }
+  | { readonly type: 'sound'; readonly name: 'hit' | 'die' | 'jump' | 'deflect' | 'smokebomb' }
   | {
       readonly type: 'floatingText';
       readonly x: number;
@@ -249,6 +249,10 @@ export type NpcEvent =
   | { readonly type: 'setProp'; readonly itemId: number }
   /** `Projectile.doBreak()` — the thing that just hit this actor's weapon snaps (`EnemySpearElite.as:472`). */
   | { readonly type: 'breakProjectile' }
+  /** Slice 7 (R7): the dash/backstep charge FX's creation and removal, emitted as events (slice 9 owns the FX classes). */
+  | { readonly type: 'chargingFx'; readonly action: 'create' | 'remove' }
+  /** Slice 7 (R7): the flashbang projectile the NINJASMOKEBOMB clip end creates (`MCSPlayer.as:760`); slice 9 owns the class. */
+  | { readonly type: 'flashbang'; readonly x: number; readonly y: number; readonly skillLevel: number }
   /** `ProjectileManager.createSmoke3(x, y)` — a hidden body shows itself (`MCSPlayer.cancelStealth`, `MCSPlayer.as:4363`). Ints, as the call takes them. */
   | { readonly type: 'smoke'; readonly x: number; readonly y: number }
   | {

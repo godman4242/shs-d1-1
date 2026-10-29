@@ -546,6 +546,37 @@ export const OG_CHARGING = {
 } as const;
 
 /**
+ * THE EVASION (slice 7b): the numbers the evasion states, the dash/backstep FX and the
+ * NINJASMOKEBOMB clip end carry. CONTRACT, line-cited in both builds where they agree.
+ */
+export const OG_EVASION = {
+  /** `MCSPlayer.as:1480` — JUMP_STATE's launch velocity */
+  jumpVelY: -30,
+  /** `MCSPlayer.as:1985` — JUMP_STATE's gravity per frame */
+  jumpGravity: 4,
+  /** `MCSPlayer.as:1988` — JUMP_STATE's horizontal travel per frame */
+  jumpStep: 8,
+  /** `MCSPlayer.as:1975` — FORWARDROLL's move on its END clip */
+  forwardRollStep: 10,
+  /** `MCSPlayer.as:752` — NINJASMOKEBOMB's smoke escape distance */
+  smokeEscape: 400,
+  /** `MCSPlayer.as:1497` — SMOKEBOMB2's airborne move */
+  smokeBomb2AirMove: 100,
+  /** `MCSPlayer.as:1523` — SMOKEBOMB2's airborne lift (web) */
+  smokeBomb2Lift: 250,
+  /** `MCSPlayer.as:1522` — SMOKEBOMB2's fall velocity (web quirk) */
+  smokeBomb2VelX: -3,
+  /** `MCSPlayer.as:1803` — DASH_STATE's velocity */
+  dashVel: 50,
+  /** `MCSPlayer.as:1816` — BACKSTEP_STATE's velocity */
+  backstepVel: 50,
+  /** `MCSPlayer.as:1520` — SMOKEBOMB2's ground lift */
+  smokeBomb2GroundLift: 3,
+  /** `reference/decompiled/shs3_payload/scripts/§1t99s0§.as:1581` — SMOKEBOMB2's juggle count on the ground branch (web) */
+  smokeBomb2Juggle: 5,
+} as const;
+
+/**
  * The labels of the three switches, in source order, transcribed from the Android build's
  * names (`scripts/gates` has no decoder for the web's; the slice-5 map paired every group
  * across the builds). A label the port has not reached yet goes through ONE `unported` site
