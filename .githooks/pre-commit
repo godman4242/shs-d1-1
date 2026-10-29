@@ -54,7 +54,12 @@ run_step() {  # $1 = label, $2 = command
     # So a reporter whose format moved printed nothing and the commit went green anyway —
     # the exact silent zero the comment above is about. `exit`, not `return`, for the
     # same reason the failure branch above uses it.
-    totals=$(grep -E '^ *(Test Files|Tests) +[0-9]' "$log")
+    # vitest colourises its summary when it thinks it is on a TTY. The reporter
+    # wraps "Tests" in ANSI escapes, so '^ *(Test Files|Tests) +[0-9]' matches
+    # NOTHING and every commit aborts with "no suite totals". Strip the escapes
+    # first, then match. (Discovered 2026-10-29: the gate had been permanently
+    # red, silently blocking all commits.)
+    totals=$(sed -e 's/\x1b\[[0-9;]*m//g' "$log" | grep -E '^ *(Test Files|Tests) +[0-9]')
     if [ -z "$totals" ]; then
       printf '\n❌ tests passed but NO suite totals could be read from %s.\n' "$log"
       printf '   The reporter format moved. A green with no number on screen is not a\n'
