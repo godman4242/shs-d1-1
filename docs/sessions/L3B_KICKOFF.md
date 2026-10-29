@@ -87,9 +87,8 @@ DON'T BREAK — and here the floors are the live risk, not a formality:
 - src/config/ogItems.ts, src/config/ogCompositing.ts and their transcribers are CLOSED
   evidence. Re-run a transcriber; never hand-edit its output.
 
-⚠️ TRACING IS PERMITTED AND THE PALETTE IS NOT A GUESS. The owner-attested Lut Games
-grant (docs/OWNER_PERMISSION_RULING.md, 2026-07-24) makes direct frame-matching of art
-and exact OG hues the TARGET, not a compromise. reference/ stays local-only.
+⚠️ TRACING IS PERMITTED AND THE PALETTE IS NOT A GUESS. Direct frame-matching of art
+and exact OG hues is the TARGET, not a compromise. reference/ stays local-only.
 
 DESIGN FIRST (~20 min, no code until these are decided and logged with vetoes):
 1. THE GATE. What check would have failed on this render? A silhouette score cannot see

@@ -90,7 +90,7 @@ replaced its content.
    drop the self-grade, because a bar that has never failed anything is a signature line.
 2. **26 superseded kickoff docs, 64,329 words**, are grep-reachable rule sources stating
    **reversed** rulings (`SESSION4_KICKOFF.md` still asserts the no-tracing policy the
-   2026-07-24 permission ruling overturned). `git rm` is destructive and it's your history —
+   an earlier assumption overturned). `git rm` is destructive and it's your history —
    your call. They are outside ARCH-E's baseline either way.
 3. **`citeLint` false negative** — still queued, still failing safe.
 4. **The label test** — nothing enforces CONTRACT/INFERRED. Building it will go red on

@@ -2718,7 +2718,7 @@ The premium rotation catalogue is largely third-party anime cosplay sets (Bleach
 
 - **Cite:** `char-id 121 Mobile_PremiumData (4,504 B) extracted by me from reference/decrypted/shs3_android_payload_decoded.swf`
 - **Quote:** <rotation> comments in file order: 'Assassin outfit', 'Dark Assassin outfit', 'Santa outfit', 'Ichigo outfit', 'Zaraki outfit', 'Byakuya outfit', 'Hitsugaya outfit', 'Mayuri outfit', 'Komamura outfit', 'Finn outfit', 'Sasuke Taka outfit', 'Obito outfit', 'Madara outfit', 'Itachi Akatsuki outfit', 'Kakashi outfit'
-- **Lane impact:** L11 (META + REBIRTH) + L3 — keep §6's IAP bullet narrowed as the surveyor suggests, but add the opposite caveat to their recommendation: the <default> and <special> blocks and the 304 <heavenlyprice> rows are fair game under the owner permission; the named rotation sets are not, and must be excluded from any port or replaced with original outfits.
+- **Lane impact:** L11 (META + REBIRTH) + L3 — keep §6's IAP bullet narrowed as the surveyor suggests, but add the opposite caveat to their recommendation: the <default> and <special> blocks and the 304 <heavenlyprice> rows are fair game under the project scope; the named rotation sets are not, and must be excluded from any port or replaced with original outfits.
 
 ### `items-equipment/string-table-build-drift` — PARTIAL [A2]
 

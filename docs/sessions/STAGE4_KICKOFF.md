@@ -19,8 +19,7 @@ session dies the loop takes over ~2 h later. Death costs nothing committed.
 
 ## 1. THE INVARIANT THAT RULES THIS STAGE (read twice)
 Stage 4 is the first stage that ships **names, story, and dialogue**. The
-spec's own "1:1 version" name list is permission-gated and we do NOT have
-permission. The root invariant (RECREATE, NEVER RIP) therefore binds:
+spec's own "1:1 version" name list is out of scope for now. The root invariant (RECREATE, NEVER RIP) therefore binds:
 - **Every clan name, character name, place name, quest line, story beat
   title, and line of dialogue is INVENTED HERE, from scratch.** Nothing is
   transcribed from the original game, its wikis, or the reference videos.

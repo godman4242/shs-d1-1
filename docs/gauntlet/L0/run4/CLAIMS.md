@@ -542,7 +542,7 @@ An eleven-entry exact-hue palette used for procedurally generated quest items, s
 
 - **Cite:** `reference/decompiled/shs3_android_payload/scripts/QuestGenerator.as:38 · ItemGenerator.as:701 · Obj_PickableItemProcGen.as:57-60 + reference/decompiled/shs3_payload/scripts/§1t8608s0§.as:60`
 - **Quote:** Obj_PickableItemProcGen.as:57-60 `var colorindex:int = rng.rand(11); var colorhexlist:Array = [16711680,16737792,16763904,39168,13311,6684927,16751103,6697728,16777215,10066329,0]; this.color = colorhexlist[colorindex]; ColorCode.changeColor(this.primary,this.color);` = #FF0000 #FF6600 #FFCC00 #009900 #0033FF #6600FF #FF99FF #663300 #FFFFFF #999999 #000000
-- **Lane impact:** L-art: eleven exact OG hues, in scope of the licensed 1:1 permission ruling. Scoped to procgen quest items, not to the fighter.
+- **Lane impact:** L-art: eleven exact OG hues, a preferred fidelity target. Scoped to procgen quest items, not to the fighter.
 
 ### `bindata/matrix-nodes-and-reorder-frames` — HELD [A2]
 

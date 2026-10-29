@@ -714,7 +714,7 @@ A limit the vector-art finding does not state, which would mislead a builder. It
 
 - **Cite:** `reference/extracted/android/115_Mobile_SHS3Resource.bin, 120_Mobile_BGResource.bin, 124_Mobile_ImageResource.bin decrypted (keys 104/103/109) — my own DefineShape/2/3/4 FILLSTYLEARRAY parse`
 - **Quote:** 115: 1755 shape records (2:127, 22:26, 32:8, 83:1594), 1669 with solid fills, 1912 SymbolClass names · 120: 562 records, 516 with solid fills · 124: 106 records, 99 with solid fills · torso4000 → charId 1195 → shape 1194 fills ['#FECA98','#B78F6C']
-- **Lane impact:** L6 art-anim: under the 2026-07-24 permission ruling these ARE exact OG hues and are far better than eyedropper reads off compressed video — but harvest them per-symbol (torso4000, skill1000, acc3000 all resolve cleanly), never as a global 'most-used colour' ranking.
+- **Lane impact:** L6 art-anim: these ARE exact OG hues and are far better than eyedropper reads off compressed video — but harvest them per-symbol (torso4000, skill1000, acc3000 all resolve cleanly), never as a global 'most-used colour' ranking.
 
 ### `NF-2-animdata-hold-table-is-both-builds` — HELD [A2]
 

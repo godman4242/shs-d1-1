@@ -596,7 +596,7 @@
   "build": "android v0.682",
   "cite": "reference/extracted/android/115_Mobile_SHS3Resource.bin, 120_Mobile_BGResource.bin, 124_Mobile_ImageResource.bin decrypted (keys 104/103/109) \u2014 my own DefineShape/2/3/4 FILLSTYLEARRAY parse",
   "id": "NF-12-shape-fill-histogram-is-slot-frequency-not-area",
-  "lane_impact": "L6 art-anim: under the 2026-07-24 permission ruling these ARE exact OG hues and are far better than eyedropper reads off compressed video \u2014 but harvest them per-symbol (torso4000, skill1000, acc3000 all resolve cleanly), never as a global 'most-used colour' ranking.",
+  "lane_impact": "L6 art-anim: these ARE exact OG hues and are far better than eyedropper reads off compressed video \u2014 but harvest them per-symbol (torso4000, skill1000, acc3000 all resolve cleanly), never as a global 'most-used colour' ranking.",
   "origin": "critic",
   "overturns_ledger": false,
   "quote": "115: 1755 shape records (2:127, 22:26, 32:8, 83:1594), 1669 with solid fills, 1912 SymbolClass names \u00b7 120: 562 records, 516 with solid fills \u00b7 124: 106 records, 99 with solid fills \u00b7 torso4000 \u2192 charId 1195 \u2192 shape 1194 fills ['#FECA98','#B78F6C']",

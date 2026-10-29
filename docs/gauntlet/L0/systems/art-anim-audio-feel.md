@@ -121,7 +121,7 @@ This is stronger than Stage-0 S0-2 (which had only `face="Edo SZ"` in `ui_string
 we now have the **embedded font programs** and their vendor strings, in two independent
 containers. **Ledger sentence overturned:** “② font (unidentified).”
 ⚠️ **Licence caveat:** Edo SZ is **Vic Fieger's** font, not Lut's. The owner ruling
-explicitly excludes third-party fonts. Identifying it ≠ permission to redistribute it.
+explicitly excludes third-party fonts. Identifying it is not the same as being free to redistribute it.
 
 ### AA-6 — "FX blend modes" is answered: the game uses NONE (A2) — kills §4 blocker ③
 Exhaustive grep for `blendMode` across all 559 android client classes returns **only**

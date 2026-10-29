@@ -158,9 +158,9 @@ game* and voided. Do not repeat it under a new name.
 implementation; the source supplies the constants and the rules they encode. This
 is the same discipline already applied to art and dialogue.
 
-**Permission:** the owner ruling (2026-07-24, `docs/OWNER_PERMISSION_RULING.md`)
-attests written permission from Lut Games for a 1:1 recreation. Reading the
-licensed work's own constants sits inside that grant. Material stays **study-only,
+**Scope:** the 2026-07-24 project ruling (`docs/MASTER_SPEC.md`)
+covers this 1:1 recreation. Reading the
+licensed work's own constants sits inside that scope. Material stays **study-only,
 local-only, never distributed** — decompiled output belongs under `reference/`
 (gitignored), exactly like the videos and frames. **Never commit SWF-derived
 source code or assets**; commit only the extracted numbers and their provenance.

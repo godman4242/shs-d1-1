@@ -1964,7 +1964,7 @@ clothes and grade them there.**
 
 Equipment art is unrecoverable from the payload (`FIGHTER_ART_IDS.md` §5), so the
 clothes will be **traced from the videos** — permitted by
-`docs/OWNER_PERMISSION_RULING.md`, and the opposite of inventing art to close a
+`docs/MASTER_SPEC.md`, and the opposite of inventing art to close a
 gap. ⚠️ **The load-bearing rule, recorded here because it is the only thing
 keeping A5-C honest: TRACE, THEN MEASURE — NEVER MEASURE, THEN ADJUST.** The
 clothes come from the same footage the targets do, so a garment nudged to hit a
@@ -4470,7 +4470,7 @@ the repeats are unreachable and not ported.
 ### WHAT IS DELIBERATELY NOT MODELLED
 
 - **The fox's nine speech lines** (`EnemyFox.as:62-94`) are quoted lyrics from a
-  third-party song. The permission ruling (`docs/OWNER_PERMISSION_RULING.md`) covers
+  third-party song. The project notes (`docs/MASTER_SPEC.md`) covers
   Lut's art and code, not that; the strings stay OUT of the repo. Core emits the d9
   index (`speech`, table `fox`); the render layer owns the text. Veto = put the strings
   in the render layer, never in `src/core/` or `src/config/`.

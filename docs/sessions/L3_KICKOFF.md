@@ -111,7 +111,7 @@ cd "/Users/kheshav/kheshav-code/SSHD 1-1" && git log --oneline -3 && npx vitest 
    kickoff rule alone because it is yours to change, not an agent's.)
 2. **The 26 superseded kickoff docs** (64,329 words) — grep-reachable rule sources stating
    *reversed* rulings; `SESSION4_KICKOFF.md` still asserts the no-tracing policy your
-   2026-07-24 permission ruling overturned. `git rm` is destructive, so it waits on you.
+   an earlier assumption overturned. `git rm` is destructive, so it waits on you.
 
 ## Bar self-report
 

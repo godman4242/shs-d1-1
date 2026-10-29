@@ -67,7 +67,7 @@
   "build": "android v0.682",
   "cite": "decrypted reference/extracted/android/115_Mobile_SHS3Resource.bin (1,755 shape records), 120_Mobile_BGResource.bin (562), 124_Mobile_ImageResource.bin (106) - DefineShape/2/3/4 FILLSTYLEARRAY parse; decrypt per reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:206-217",
   "id": "android-blobs-hunter/shipped-vector-art-yields-solid-fill-palettes",
-  "lane_impact": "L6 art-anim. Under the 2026-07-24 owner permission ruling, exact OG hues are now permitted targets, and these are exact OG hues from the shipped art rather than eyedropper reads off a compressed video frame. HONEST LIMIT: first-fill-array reads only - no edge records, no silhouettes, and my LINESTYLE2 parse is not trustworthy, so I report NO outline weights.",
+  "lane_impact": "L6 art-anim. Under the 2026-07-24 owner project ruling, exact OG hues are now permitted targets, and these are exact OG hues from the shipped art rather than eyedropper reads off a compressed video frame. HONEST LIMIT: first-fill-array reads only - no edge records, no silhouettes, and my LINESTYLE2 parse is not trustworthy, so I report NO outline weights.",
   "ledger_text": "android-blobs/nothing-was-rendered: 'not one DefineShape record was decoded, so no fill colour, outline weight, silhouette or per-slot geometry is held by this pass.'",
   "origin": "critic",
   "overturns_ledger": true,

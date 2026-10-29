@@ -213,7 +213,7 @@ top of this file: 26 byte-exact MP3s. Ledger :240 blocker ① and :348 both fall
 waveforms are not "not study-able", they are in hand. The listen-pass plan at :323-324 is
 superseded for these 26 assets.
 **Caveat that must ride with the overturn:** android v0.682 only; study-only/local-only under
-`docs/OWNER_PERMISSION_RULING.md`; no web `soundresource.swf`/`musicresource.swf` is held.
+`docs/MASTER_SPEC.md`; no web `soundresource.swf`/`musicresource.swf` is held.
 
 ### 8 · NEW-audio-waveforms-are-recovered-not-encrypted — **HELD, overturn UPHELD (fatal)**
 Every number in the quote reproduced exactly on my run: `113 k=117 ver 17 declen 1402685 actual

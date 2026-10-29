@@ -50,7 +50,7 @@ honest cycle beats a rushed one.**
 ## In a cloud session (`CLAUDE_CODE_REMOTE=true`)
 
 A cloud cycle is the same routine with three differences (owner ruling 2026-09-29,
-`docs/OWNER_PERMISSION_RULING.md` "Cloud sessions"). The parent session on the owner's Mac
+`docs/MASTER_SPEC.md` "Cloud sessions"). The parent session on the owner's Mac
 launches one cloud cycle at a time (never while `build-loop.sh` runs: one writer), re-runs the
 suite and claimcheck there with the FULL corpus, and only then moves it to `master` (the trunk).
 

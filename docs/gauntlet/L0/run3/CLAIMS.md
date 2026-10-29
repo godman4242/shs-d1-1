@@ -1286,7 +1286,7 @@ The claim that the campaign script is verbatim on disk needs one bounded qualifi
 
 ### `questdata/dialogue-carries-inline-html-markup` — HELD [A2]
 
-Dialogue text is HTML-formatted, not plain text: it embeds <br/> line breaks (14) and <font color="..."> spans (2). Quest item names inside dialogue are highlighted in #b048f8, a purple. Under the 2026-07-24 owner-permission ruling, exact OG hues are permitted, so this is directly usable as a UI token.
+Dialogue text is HTML-formatted, not plain text: it embeds <br/> line breaks (14) and <font color="..."> spans (2). Quest item names inside dialogue are highlighted in #b048f8, a purple. Under the 2026-07-24 owner-project ruling, exact OG hues are permitted, so this is directly usable as a UI token.
 
 - **Cite:** `reference/extracted/questdata.xml:3898, :3899, :3901 (<br/>) and :3908, :4193 (<font color="#b048f8">Inokichi's club</font>)`
 - **Quote:** questdata.xml:3908  <font color="#b048f8">Inokichi's club</font>  ||  :3898-:3901  <br/> <br/> ... <br/>

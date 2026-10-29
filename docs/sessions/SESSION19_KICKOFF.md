@@ -37,7 +37,7 @@ the videos is dressed.** Clothing adds width and barely changes skeletal height.
 
 Equipment art died with the CDN and is unrecoverable. **So the clothes have to be
 traced from the only place they still exist: the videos.** That is permitted —
-`docs/OWNER_PERMISSION_RULING.md` covers tracing Lut's art — and it is the
+`docs/MASTER_SPEC.md` covers tracing Lut's art — and it is the
 opposite of inventing art to close a gap, which this project reverts on sight.
 
 ```

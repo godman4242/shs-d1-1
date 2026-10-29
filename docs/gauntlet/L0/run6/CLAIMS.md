@@ -49,7 +49,7 @@ The shipped vector art is decodable, which closes the packet's own 'nothing was 
 - **Cite:** `decrypted reference/extracted/android/115_Mobile_SHS3Resource.bin (1,755 shape records), 120_Mobile_BGResource.bin (562), 124_Mobile_ImageResource.bin (106) - DefineShape/2/3/4 FILLSTYLEARRAY parse; decrypt per reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:206-217`
 - **Quote:** 115 top fills: #000000 x225 - #FFFFFF x224 - #333333 x160 - #CCCCCC x147 - #FECA98 x127 - #B78F6C x120. torso4000 -> charId=1195, shape id=1194 tag=83, fills ['#FECA98','#B78F6C']
 - **Overturns:** "android-blobs/nothing-was-rendered: 'not one DefineShape record was decoded, so no fill colour, outline weight, silhouette or per-slot geometry is held by this pass.'"
-- **Lane impact:** L6 art-anim. Under the 2026-07-24 owner permission ruling, exact OG hues are now permitted targets, and these are exact OG hues from the shipped art rather than eyedropper reads off a compressed video frame. HONEST LIMIT: first-fill-array reads only - no edge records, no silhouettes, and my LINESTYLE2 parse is not trustworthy, so I report NO outline weights.
+- **Lane impact:** L6 art-anim. Under the 2026-07-24 owner project ruling, exact OG hues are now permitted targets, and these are exact OG hues from the shipped art rather than eyedropper reads off a compressed video frame. HONEST LIMIT: first-fill-array reads only - no edge records, no silhouettes, and my LINESTYLE2 parse is not trustworthy, so I report NO outline weights.
 
 ### `android-blobs-hunter/survival-achievement-premium-namegen-blobs-unread` — HELD [A2] ⚑ OVERTURNS LEDGER
 

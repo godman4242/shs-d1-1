@@ -16,7 +16,7 @@ functions, no classes, no Phaser.
 - Imports may only resolve inside `src/config/` (type-only imports between config
   files are fine — see `timing.ts` importing `StanceId`).
 - `palette.ts` sits at **exact OG hues**. The 2026-07-12 "drawings stay original"
-  policy this file used to state was **superseded** by the owner permission ruling
+  policy this file used to state was **superseded** by the owner project ruling
   (2026-07-24, root `CLAUDE.md`): direct frame-match is now the target.
 - Spec-pinned values are double-entered in `tests/config-values.test.ts` on purpose:
   changing a value means updating BOTH files in the same commit. That friction is the

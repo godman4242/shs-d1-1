@@ -331,7 +331,7 @@ Produce:
   6. 3-line haiku title cards between episodes
   7. Season > Prologue/Episode nesting
 
-  CHARACTER/CLAN NAMES (1:1 version — requires LutGames permission):
+  CHARACTER/CLAN NAMES (1:1 version):
   - Clans: Aka Ryu (red dragon, invaders), Midori Ken (green sword,
     defenders), Shira Tancho (white crane, neutral)
   - Characters: Hiroshi (tutorial master), Masahiro, Daichi, Takeru,

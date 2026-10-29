@@ -2,24 +2,26 @@
 
 [![CI](https://github.com/godman4242/shs-d1-1/actions/workflows/ci.yml/badge.svg)](https://github.com/godman4242/shs-d1-1/actions/workflows/ci.yml)
 
-**A from-scratch, clean-room recreation of [*Straw Hat Samurai: Duels*](https://www.kongregate.com/games/lutgames/straw-hat-samurai-duels)** — the Flash-era side-scrolling samurai MMORPG by LutGames / Explosive Barrel (web 2015, Android 2016, servers dead ~2016). Everything here is written from scratch: no decompiled code, no ripped art, no ripped audio.
+A from-scratch remake of [*Straw Hat Samurai: Duels*](https://www.kongregate.com/games/lutgames/straw-hat-samurai-duels) — the Flash-era side-scrolling samurai MMO by LutGames / Explosive Barrel. Web in 2015, Android in 2016, servers gone since around 2016.
 
-> **Rights & scope.** *Straw Hat Samurai: Duels* is © LutGames / Explosive Barrel. This recreation is a private, non-commercial study project made under the rights holder's written permission (owner-attested; see `docs/OWNER_PERMISSION_RULING.md` for the grant's history and scope). **No content from the original game is redistributed in this repo** — see the FAQ.
+Everything in here is written from scratch. No decompiled code, no ripped art, no ripped audio.
 
-## What is done (2026-10-29)
+> *Straw Hat Samurai: Duels* is © LutGames / Explosive Barrel. This is a private, non-commercial study project, and none of the original game's content is redistributed here.
 
-A self-contained combat/behaviour core, 2,602 unit tests green, no external assets:
+## Where it stands (2026-10-29)
 
-- **Fixed-timestep combat math** (`src/core/`) — draw-a-line slashing, damage/stamina/chi, launch/fly/knockdown reactions, flinch, evasion (dash/roll/jump/smoke), death animations, all at a strict 60 Hz
-- **Every AI behaviour measured from the original** — 20+ enemy archetypes (`src/config/`), each behaviour number traced to a decompiled line or a video frame (citations inline in config comments and tests)
-- **Animation system** — 146 animation labels transcribed, stance/pose composition, clip-end bookkeeping
-- **The full evidence trail** — every claim about the original is cited to exact file+line or video frame (`docs/`)
+The combat and behaviour core is done and self-contained — 2,602 unit tests green, zero external assets.
 
-The rest (Scenes/rendering, story/quests, items, multiplayer) is queued — the porting order and current frontier are tracked in `RESUME_HERE.md` (the per-slice handoff doc).
+- **Fixed-timestep combat math** in `src/core/` — draw-a-line slashing, damage, stamina and chi, launch/fly/knockdown reactions, flinching, evasion (dash, roll, jump, smoke), death animations. All of it ticking at a strict 60 Hz.
+- **Enemy AI** — 16 enemy archetypes in `src/config/ogEnemy*.ts`, each behaviour number traced back to a decompiled line or a video frame, with the citation in the config comments and the tests.
+- **Animation system** — 429 animation labels in `src/config/ogActor.ts`, stance and pose composition, clip-end bookkeeping.
+- **An evidence trail for every claim** — anything asserted about the original is cited to an exact file+line or a specific video frame, and it all lives in `docs/`.
 
-## Run it
+Still to come: scenes and rendering, story and quests, items, multiplayer. The porting order and where the frontier currently sits are tracked in `RESUME_HERE.md`.
 
-Node ≥ 22.18. The simulation core runs headless (no browser needed):
+## Running it
+
+Node 22.18 or newer. The simulation core runs headless, so there's no browser involved:
 
 ```bash
 npm install
@@ -27,39 +29,39 @@ npm test        # 2,602 tests, ~10 s
 npm run build   # typecheck + vite build
 ```
 
-Tests are self-contained: a fresh clone of this repo passes with **no access to any original-game material**. Tests that would need private study material are `describe.skipIf`-gated on `reference/` being present.
+The tests are self-contained. A fresh clone passes without any access to original-game material — the few tests that would need it are gated behind `describe.skipIf` on `reference/` being present.
 
-## How the original was reverse-engineered
+## How the original got reverse-engineered
 
-The original is dead — server gone, client SWFs encrypted, no source available. This project reconstructed it from:
+The original is dead: server gone, client SWFs encrypted, no source anywhere. So the behaviour was reconstructed from three things:
 
-1. **Decompiled AS3 clients** (web v0.717 + Android v0.682) — the behaviour source of truth
-2. **Decrypted game data** (quests, items, skills, NPCs, animations) — the numbers
-3. **Two 1080p longplay videos** — the visual/audio ground truth (2,675 frames studied)
+1. **Decompiled AS3 clients** (web v0.717 and Android v0.682) — the source of truth for behaviour
+2. **Decrypted game data** — quests, items, skills, NPCs, animations. This is where the numbers came from.
+3. **Two 1080p longplay videos** — 2,675 frames studied, used as the visual and audio ground truth
 
-The archaeology (source URLs, decode recipes, verification commands) is written up in `docs/RECOVERY.md`; the per-system write-ups live in `docs/research/`. If you are recreating this game yourself, the **companion reference corpus** — decompiled AS3 clients, decrypted game data, 13 recovered music stems + 44 web SFX (recovered live from the dead game's CDN on 2026-10-29), the full 3,165-entry web string table, recovered portraits/splash art, and 12 system specs with every number measured — is described in `docs/RECOVERY.md` §1. It is a separate private repo, offered on request to serious recreators (see FAQ).
+The archaeology is written up in `docs/RECOVERY.md`: source URLs, decode recipes, verification commands. Per-system write-ups live in `docs/research/`. If you're doing the same thing, there's a [companion reference corpus](https://github.com/godman4242/shs-d1-1-reference) with the decompiled AS3 clients, the decrypted game data, 13 recovered music stems and 44 web SFX (pulled live off the dead game's CDN on 2026-10-29), the full 3,165-entry web string table, recovered portraits and splash art, and 12 system specs where every number was measured rather than guessed.
 
 ## Why 2,602 tests?
 
-Every test is a **measured behaviour pin**: a number or reaction the original verifiably has, transcribed from decompiled code or measured from frames, with the citation in a comment. Tests fail if the port drifts from the original. The porting discipline:
+Each one pins a measured behaviour — a number or a reaction the original verifiably has, transcribed from decompiled code or measured off frames, with the citation sitting in a comment next to it. If the port drifts away from the original, tests go red. The rules that keep that honest:
 
-- No numeric literal in core code (config purity enforced by test)
-- Every divergence from the original is logged in `docs/DIVERGENCES.md` with measured evidence
-- Chaos plants — deliberately broken copies of the source that the suite must catch — are planted weekly by an unattended loop (`docs/loop/CYCLE.md`), and every plant must go red
-- **502 plants were planted against the latest slice; 501 caught.** The 1 that stayed green was a real bug in the test suite (two copies of a guard, only one tested) — fixed today in 3d5a1c2
+- No numeric literal in core code. There's a test that enforces config purity.
+- Every divergence from the original gets logged in `docs/DIVERGENCES.md` with the measured evidence attached.
+- Chaos plants — deliberately broken copies of the source that the suite has to catch — get planted by an unattended loop (`docs/loop/CYCLE.md`). Every plant has to go red, and every one has to be restored byte-identical afterwards.
+- The pinned chaos suite currently stands at **502 plants, all 502 red, all 502 restored byte-identical** (`npm run chaos`).
 
 ## FAQ
 
-**Can I play it?** Not yet. The core simulation is done; the Phaser rendering layer and story content are next in the queue (`RESUME_HERE.md`).
+**Can I play it?** Not yet. The simulation core is finished; the Phaser rendering layer and the story content are next in the queue (`RESUME_HERE.md`).
 
-**Can I use the original's art/music?** No — that content belongs to LutGames / Explosive Barrel. This repo contains zero original assets. The music's composer is unsourced in our evidence (the Kevin MacLeod credit applies to *Straw Hat Samurai 1*, the predecessor); wiki text is CC-BY-SA (cite, don't paste).
+**Can I use the original's art or music?** No. That content belongs to LutGames / Explosive Barrel, and this repo contains none of it. One correction worth making: the music's composer is unsourced in our evidence. The Kevin MacLeod credit belongs to *Straw Hat Samurai 1*, the predecessor, not to this game. Wiki text is CC-BY-SA, so cite it rather than pasting it.
 
-**Who owns what?** The recreation code in this repo is © 2026 godman4242, MIT-licensed below — but the *game design and IP of Straw Hat Samurai: Duels* remain LutGames' / Explosive Barrel's. If you build on this: keep the credit, keep it non-commercial until you have your own permission.
+**Who owns what?** The recreation code here is © 2026 godman4242 and MIT-licensed below. The game design and IP of *Straw Hat Samurai: Duels* stay with LutGames / Explosive Barrel. If you build on this, keep the credit and keep it non-commercial.
 
-**Where is the reference corpus?** The decompiled clients/decrypted data/audio are study material held under the rights holder's grant; they are **not** distributed here (the grant covers recreation, not redistribution). `docs/RECOVERY.md` explains exactly what exists and how it was obtained. If you're a serious recreator, open an issue and ask.
+**Where's the reference corpus?** Over at [godman4242/shs-d1-1-reference](https://github.com/godman4242/shs-d1-1-reference). It's a separate repo and it isn't vendored into this one.
 
-**Where do I report bugs / ask questions?** Open a GitHub issue. The repo also carries its internal working docs (`docs/`, `RESUME_HERE.md`) — these are working documents of an in-progress project, kept honest rather than kept pretty.
+**Where do I report bugs or ask questions?** Open a GitHub issue. The repo also carries its internal working docs (`docs/`, `RESUME_HERE.md`) — these are working documents of an in-progress project, kept honest rather than kept pretty.
 
 ## License
 
-MIT © 2026 godman4242 — applies to the code written for this recreation. It does not cover *Straw Hat Samurai: Duels* IP, which belongs to LutGames / Explosive Barrel.
+MIT © 2026 godman4242, covering the code written for this recreation. It doesn't cover *Straw Hat Samurai: Duels* itself, which belongs to LutGames / Explosive Barrel.

@@ -313,7 +313,7 @@ here goes stale silently: this one still told the next lead to confirm a baselin
 **R1 — ✅ OWNER-CONFIRMED 2026-08-13: verbatim character dialogue is COMMITTED
 to `src/`, and public ship is gated.** The repo is **private**, so porting the
 3,307 lines into the source tree is development use, not distribution. The
-2026-07-24 permission ruling covers Lut's *art* and hues explicitly; this
+2026-07-24 project ruling covers Lut's *art* and hues explicitly; this
 extends the same attested grant to their *text*. L1 writes the DIVERGENCES entry
 + a ruling amendment as its first commit, and adds a gate that **blocks any
 public/ship build until the grant's wording is re-checked for text and for
@@ -393,7 +393,7 @@ gate — and this repo has already proven the exact shape: `741fd31` promoted **
 CONTRACT in ONE commit** with a 159-line script plus a byte-pin test.
 
 **Not L1.** L1's gate is the whole campaign playable end-to-end plus four from-scratch
-runtimes, and R1 gates its text on a permission re-check. It is the largest lane on the board.
+runtimes, and R1 gates its text on a scope re-check. It is the largest lane on the board.
 
 > ⚠ **What actually froze `src/` was never a rule.** Six workflow scripts carry *"DO NOT
 > MODIFY ANY FILE outside your assigned journal path. This lane touches no source code"* —

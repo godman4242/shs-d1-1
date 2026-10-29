@@ -119,14 +119,14 @@ than authored as one timeline sprite.** A1 below settles this, and it settles it
 by *reading the code we already decompiled* rather than by guessing.
 
 **P6 — ✅ Licensing and safety are already verified, today.**
-- The owner ruling permits copying the art 1:1 (`docs/OWNER_PERMISSION_RULING.md`).
+- The owner ruling permits copying the art 1:1 (`docs/MASTER_SPEC.md`).
 - `reference/` is gitignored — `git check-ignore -v reference/extracted/shapes`
   → `.gitignore:9:reference/`.
 - **No `reference/` file has ever been committed**, checked across all history.
 - The GitHub remote is **private** (`gh repo view` → `"isPrivate": true`).
 - The grant is to **recreate, not redistribute**: extracted files stay local.
 
-**P7 — ✅ The fidelity gate may now assert exact frame matches.** The permission
+**P7 — ✅ The fidelity gate may now assert exact frame matches.** The project
 ruling says so explicitly, and the protocol already exists
 (`docs/research/fidelity/FIDELITY_GATE.md`, currently 55/55 = 41 probes + 14 edge
 scans, re-proven green on 2026-07-26).

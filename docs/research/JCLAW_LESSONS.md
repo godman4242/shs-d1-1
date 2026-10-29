@@ -120,7 +120,7 @@ Ranking rule, from the kickoff: *this defect class has already bitten us* > *cou
 
 | id | our state | reason |
 |---|---|---|
-| `agent-instructions-3` | PARTIAL | We already hold the settled verdicts (OWNER_PERMISSION_RULING, REBUILD_READINESS, the CLAUDE.md invariants block); a `docs/spikes/` folder would be a third home for the same facts — state-schema drift for no gain. |
+| `agent-instructions-3` | PARTIAL | We already hold the settled verdicts (MASTER_SPEC, REBUILD_READINESS, the CLAUDE.md invariants block); a `docs/spikes/` folder would be a third home for the same facts — state-schema drift for no gain. |
 | `agent-instructions-5` | GAP | The comment delete test is a judgement rule no gate can check, priced in per-turn tokens forever, and our actual comment problem is the opposite: the gate scripts' comments carry load-bearing defect history. |
 | `architecture-rules-7` | HAVE | Structured-concurrency scope semantics — we have no concurrency in `src/core/` (fixed 60 Hz single-threaded Sim) and no threads to cancel. |
 | `evals-ruler-1` | HAVE | ERRORED-is-not-FAILED is already implemented in `measure-refute.js`'s fail-closed accounting (a dead run returns `fatalCount: null`, never 0). |

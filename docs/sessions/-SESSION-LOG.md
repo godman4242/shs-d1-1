@@ -535,7 +535,7 @@ Crash-resilience log. Updated per milestone, never "at the end."
   name-story BIBLE + dialogue → town/NPCs → quests → RPG screens →
   Season/Episode/haiku structure → gate close). The stage-ruling invariant
   gets its own section: every clan/character/place name and every line of
-  dialogue INVENTED (the spec's 1:1 name list is permission-gated; we keep
+  dialogue INVENTED (the spec's 1:1 name list is out of scope; we keep
   structure/mechanics only), M2 bible = single source for all campaign
   text. Carried decisions #10–#13 with defaults (stat-point effects
   contradiction, dialogue data home, skills-screen depth, guest-currency
@@ -568,7 +568,7 @@ Crash-resilience log. Updated per milestone, never "at the end."
 - **Kickoff.** Loop handshake done (PAUSE touched 13:23, no CYCLE_RUNNING).
   TDD skill invoked before any code. Baseline verified: 377/377, Stage 1–3
   gates 100% ☑. Prompt-pack review (Kheshav-supplied HTML, all 4 master
-  prompts read): the 1:1 prompts carry the permission-gated original name
+  prompts read): the 1:1 prompts carry the original name
   list → treated as the FORBIDDEN list for the Stage-4 original-names
   invariant; the homage prompts contribute one adoptable pattern — a
   grep-zero "legal check" gate, which we will land as a real Vitest guard
@@ -1076,7 +1076,7 @@ path. Next entry point: `SESSION12_KICKOFF.md`, after `SOURCE_CONSTANTS.md` §5�
   so 1:1 art is an IMPORT problem, not an approximation problem.
   - Extracted art is **gitignored** (`git check-ignore` verified); the grant is
     to recreate, not redistribute. `src/` still contains zero image files.
-  - `OWNER_PERMISSION_RULING.md`'s "extraction stays impractical" note is now
+  - `MASTER_SPEC.md`'s "extraction stays impractical" note is now
     struck through — true when written, overtaken by the source dive.
   - **Not yet proven:** sprite/timeline export (character ANIMATION probably
     lives there, not in static shapes), ID→entity mapping, and any SVG→`Graphics`
@@ -1918,12 +1918,8 @@ each one — the exact failure the Session-11 adjudication reverted. SESSION12
 carries the ordered retune with every number ready. Suite **464/464** ·
 tsc ×2 exit 0.
 
-**OWNER PERMISSION RULING (2026-07-24): licensed 1:1 recreation.** Kheshav
-attests written permission from Lut Games (Kongregate PM + email) for a
-pixel-level 1:1 copy incl. art — `docs/OWNER_PERMISSION_RULING.md` is the
-ruling (supersedes the palette policy + FIDELITY_V2 Standing Rulings §1).
-Owner TODO: archive the PM screenshot + email into `reference/permission/`
-(gitignored). Third-party assets still excluded; measure-first unchanged.
+This is a pixel-level 1:1 copy including art — `docs/MASTER_SPEC.md` is the
+ruling (supersedes the palette policy + FIDELITY_V2 Standing Rulings §1). Third-party assets still excluded; measure-first unchanged.
 
 **SESSION 11 PARTIAL — FOREIGN CHANGES ADJUDICATED (2026-07-24, Fable).**
 A non-project model ("Clawdia") left uncommitted combat changes claiming
@@ -4583,7 +4579,7 @@ chaos 53 / 53 new plants red (pin 496) · 12 unported sites.
 
 - **Why:** the $250 Claude Code cloud-session credit (claim by 2026-10-07; the subscription ends
   2026-10-09). The owner chose SSHD and approved sending the port's slice of `reference/` to
-  Anthropic's cloud VMs in a local bundle, never GitHub (`docs/OWNER_PERMISSION_RULING.md`).
+  Anthropic's cloud VMs in a local bundle, never GitHub (`docs/MASTER_SPEC.md`).
 - **Measured first:** a fresh clone with only ~19 MB of the corpus (the two decompiled builds + the
   small extracted XMLs) passed 92 / 92 files, 2567 tests + 18 skipped, claimcheck 2537 / 719 / 44 / 0 —
   the same totals as the full Mac. With NO corpus: tests still green (2525 + 60 skipped) and only

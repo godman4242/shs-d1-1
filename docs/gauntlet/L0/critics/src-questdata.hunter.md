@@ -324,7 +324,7 @@ Exit histogram `+1` is 19, not 18.
 **NEW-7 — dialogue text is HTML-formatted.** A2.
 `questdata.xml:3908` `<font color="#b048f8">Inokichi's club</font>` and
 `:3898/:3899/:3901` `<br/>`. Item names inside dialogue are highlighted in
-**#b048f8** (purple). The permission ruling allows exact OG hues, so this is a
+**#b048f8** (purple). The project ruling allows exact OG hues, so this is a
 usable token for L10 ui-hud.
 
 **NEW-8 — the complete projectile-type enum, and a hard v0.682 -> v0.717 delta.** A2.

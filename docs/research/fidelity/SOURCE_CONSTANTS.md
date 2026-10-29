@@ -493,11 +493,10 @@ HP obfuscation.
 
 ---
 
-## §7 Provenance and permission
+## §7 Provenance and scope
 
-Reading the licensed work's own constants sits inside the owner ruling of 2026-07-24
-(`docs/OWNER_PERMISSION_RULING.md`): written permission from Lut Games for a 1:1
-recreation. Standing constraints, unchanged:
+Reading the licensed work's own constants is in scope for this project
+(`docs/MASTER_SPEC.md`). Standing constraints, unchanged:
 
 - Material is **study-only, local-only, never distributed**.
 - **Never commit SWF-derived source code or assets** — only numbers and provenance.

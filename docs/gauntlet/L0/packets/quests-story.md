@@ -165,7 +165,7 @@ An eleven-entry exact-hue palette used for procedurally generated quest items, s
 
 - **Cite:** `reference/decompiled/shs3_android_payload/scripts/QuestGenerator.as:38 · ItemGenerator.as:701 · Obj_PickableItemProcGen.as:57-60 + reference/decompiled/shs3_payload/scripts/§1t8608s0§.as:60`
 - **Build:** both
-- **Lane impact:** L-art: eleven exact OG hues, in scope of the licensed 1:1 permission ruling. Scoped to procgen quest items, not to the fighter.
+- **Lane impact:** L-art: eleven exact OG hues, a preferred fidelity target. Scoped to procgen quest items, not to the fighter.
 
 ### `[[frames/jinbei-greeting-diverges-too]]` — UPHELD [A1] (2 critics)
 
@@ -185,7 +185,7 @@ The claim that the campaign script is verbatim on disk needs one bounded qualifi
 
 ### `[[questdata/dialogue-carries-inline-html-markup]]` — UPHELD [A2] (2 critics)
 
-Dialogue text is HTML-formatted, not plain text: it embeds <br/> line breaks (14) and <font color="..."> spans (2). Quest item names inside dialogue are highlighted in #b048f8, a purple. Under the 2026-07-24 owner-permission ruling, exact OG hues are permitted, so this is directly usable as a UI token.
+Dialogue text is HTML-formatted, not plain text: it embeds <br/> line breaks (14) and <font color="..."> spans (2). Quest item names inside dialogue are highlighted in #b048f8, a purple. Under the 2026-07-24 owner-project ruling, exact OG hues are permitted, so this is directly usable as a UI token.
 
 - **Cite:** `reference/extracted/questdata.xml:3898, :3899, :3901 (<br/>) and :3908, :4193 (<font color="#b048f8">Inokichi's club</font>)`
 - **Build:** web v0.717

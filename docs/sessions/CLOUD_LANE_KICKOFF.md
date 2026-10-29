@@ -6,7 +6,7 @@
 
 **What this is:** a local session that launches ONE cloud cycle at a time on the $250
 cloud credit, re-checks each piece here with the FULL corpus, and moves it to `master`.
-It never builds a piece itself. Ruling + guard: `docs/OWNER_PERMISSION_RULING.md` →
+It never builds a piece itself. Ruling + guard: `docs/MASTER_SPEC.md` →
 "Cloud sessions"; the cloud cycle's rules: `docs/loop/CYCLE.md` → "In a cloud session".
 
 **Deadlines (re-verified 2026-09-30):** claim by **Oct 7, 11:59 pm PT** · the credit only works while the
@@ -26,7 +26,7 @@ Copy everything BETWEEN the `'''` lines:
 
 ```
 '''
-You drive SSHD's cloud lane. Read docs/sessions/CLOUD_LANE_KICKOFF.md, docs/loop/CYCLE.md ("In a cloud session") and docs/OWNER_PERMISSION_RULING.md ("Cloud sessions"). You never edit src/ or tests/; the cloud cycle is the only writer.
+You drive SSHD's cloud lane. Read docs/sessions/CLOUD_LANE_KICKOFF.md, docs/loop/CYCLE.md ("In a cloud session") and docs/MASTER_SPEC.md ("Cloud sessions"). You never edit src/ or tests/; the cloud cycle is the only writer.
 Setup: touch docs/loop/PAUSE · on master, clean, `git pull --ff-only` · `git rev-parse --verify cloud-reference` must succeed (the never-pushed corpus branch; if missing, STOP and tell me).
 Per piece, repeat:
  1. Launch from this repo: CCR_FORCE_BUNDLE=1 claude --cloud "Read docs/loop/GOAL.md FIRST, then docs/loop/CYCLE.md including 'In a cloud session', and do EXACTLY ONE cycle. Then stop." --model opus --effort high </dev/null  (background, 5-min timeout; keep the session URL it prints). If it can't launch from your shell, give me that exact command for my own terminal.

@@ -352,7 +352,7 @@ The shipped vector art is decodable, which closes the packet's own 'nothing was 
 - **Cite:** `decrypted reference/extracted/android/115_Mobile_SHS3Resource.bin (1,755 shape records), 120_Mobile_BGResource.bin (562), 124_Mobile_ImageResource.bin (106) - DefineShape/2/3/4 FILLSTYLEARRAY parse; decrypt per reference/decompiled/shs3_android_payload/scripts/ResourceManager.as:206-217`
 - **Build:** android v0.682
 - **KILLS this line:** "android-blobs/nothing-was-rendered: 'not one DefineShape record was decoded, so no fill colour, outline weight, silhouette or per-slot geometry is held by this pass.'"
-- **Lane impact:** L6 art-anim. Under the 2026-07-24 owner permission ruling, exact OG hues are now permitted targets, and these are exact OG hues from the shipped art rather than eyedropper reads off a compressed video frame. HONEST LIMIT: first-fill-array reads only - no edge records, no silhouettes, and my LINESTYLE2 parse is not trustworthy, so I report NO outline weights.
+- **Lane impact:** L6 art-anim. Under the 2026-07-24 owner project ruling, exact OG hues are now permitted targets, and these are exact OG hues from the shipped art rather than eyedropper reads off a compressed video frame. HONEST LIMIT: first-fill-array reads only - no edge records, no silhouettes, and my LINESTYLE2 parse is not trustworthy, so I report NO outline weights.
 
 ### `[[art-anim-audio-feel/690-is-the-friend-bar]]` — UPHELD [A2] (2 critics)
 
@@ -752,7 +752,7 @@ A limit the vector-art finding does not state, which would mislead a builder. It
 
 - **Cite:** `reference/extracted/android/115_Mobile_SHS3Resource.bin, 120_Mobile_BGResource.bin, 124_Mobile_ImageResource.bin decrypted (keys 104/103/109) — my own DefineShape/2/3/4 FILLSTYLEARRAY parse`
 - **Build:** android v0.682
-- **Lane impact:** L6 art-anim: under the 2026-07-24 permission ruling these ARE exact OG hues and are far better than eyedropper reads off compressed video — but harvest them per-symbol (torso4000, skill1000, acc3000 all resolve cleanly), never as a global 'most-used colour' ranking.
+- **Lane impact:** L6 art-anim: these ARE exact OG hues and are far better than eyedropper reads off compressed video — but harvest them per-symbol (torso4000, skill1000, acc3000 all resolve cleanly), never as a global 'most-used colour' ranking.
 
 ### `[[NF-2-animdata-hold-table-is-both-builds]]` — UPHELD [A2] (1 critic)
 

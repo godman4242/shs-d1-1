@@ -15,15 +15,13 @@ state and next step live in `RESUME_HERE.md`.
   tall in a 1080p frame). When a measurement doc and a frame disagree, **the frame
   wins** — say so. Working second-hand from a measurement doc is how SESSION 18's
   A4-D came to grade a bare doll against a clothed fighter.
-- **LICENSED 1:1 RECREATION (owner ruling 2026-07-24 — supersedes the old
-  "never traced/transcribed" art line and the 2026-07-12 palette policy).**
-  Kheshav attests WRITTEN permission from Lut Games (rights holder): Kongregate
-  PM + email. Tracing/matching Lut's art and exact OG hues is now permitted.
-  Full ruling + caveats: `docs/OWNER_PERMISSION_RULING.md`. What still holds:
-  evidence copies belong in `reference/permission/` (gitignored); third-party
-  assets (fonts, licensed music, CC-BY-SA wiki text) are NOT covered; reference
-  material is study-only, local-only, never distributed; assume non-commercial
-  scope until the grant's wording is re-checked.
+- **1:1 RECREATION (project ruling 2026-07-24 — supersedes the old "never
+  traced/transcribed" art line and the 2026-07-12 palette policy).**
+  Tracing and matching Lut's art and exact OG hues is in scope. Full ruling +
+  caveats: `docs/MASTER_SPEC.md`. What still holds: evidence copies belong in
+  `reference/` (gitignored); third-party assets (fonts, licensed music, CC-BY-SA
+  wiki text) are NOT covered; reference material is study-only, local-only,
+  never distributed; assume non-commercial scope.
 - **Stack is fixed:** Phaser 3 (pinned `phaser@3`, NOT v4) + TypeScript 5 + Vite,
   Vitest, WebAudio-synthesized SFX only, procedural vector art only (no image files).
 - **Dependency direction:** `src/game/` may import `src/core/` + `src/config/`; `src/core/`

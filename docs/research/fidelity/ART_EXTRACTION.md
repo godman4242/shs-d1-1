@@ -33,7 +33,7 @@ zero shapes. It was a *code* dive, and it succeeded completely at being one. The
 art was always sitting in the same decrypted payload it read the code from; no
 one ran the shape exporter.
 
-⚠️ **`docs/OWNER_PERMISSION_RULING.md`'s practical note is now OUT OF DATE.** It
+⚠️ **`docs/MASTER_SPEC.md`'s practical note is now OUT OF DATE.** It
 says *"the surviving client SWFs are encrypted … so asset extraction stays
 impractical regardless — the working method remains tracing from the frame
 corpus."* That was true when written (2026-07-24). The source dive cracked the
@@ -127,7 +127,7 @@ well. That was the first thing to test — and it was tested; see the update abo
 2. Pick ONE high-value target (the player samurai idle) and build the
    SVG-path → `Graphics` converter for it end to end.
 3. Re-grade against the study frames using the existing fidelity-gate protocol,
-   which the permission ruling already allows to assert exact frame matches.
+   which the archived evidence allows to assert exact frame matches.
 
 Do **not** convert 1,822 shapes speculatively. One target, end to end, graded —
 then decide.
