@@ -37,7 +37,7 @@ The original is dead — server gone, client SWFs encrypted, no source available
 2. **Decrypted game data** (quests, items, skills, NPCs, animations) — the numbers
 3. **Two 1080p longplay videos** — the visual/audio ground truth (2,675 frames studied)
 
-The archaeology (source URLs, decode recipes, verification commands) is written up in `docs/RECOVERY.md`; the per-system write-ups live in `docs/research/`. If you are recreating this game yourself, the **companion reference corpus** (decompiled sources, decrypted data, recovered audio, 12 system specs with every number measured) is described in `docs/RECOVERY.md` §1 — it is a separate private repo, offered on request to serious recreators (see FAQ).
+The archaeology (source URLs, decode recipes, verification commands) is written up in `docs/RECOVERY.md`; the per-system write-ups live in `docs/research/`. If you are recreating this game yourself, the **companion reference corpus** — decompiled AS3 clients, decrypted game data, 13 recovered music stems + 44 web SFX (recovered live from the dead game's CDN on 2026-10-29), the full 3,165-entry web string table, recovered portraits/splash art, and 12 system specs with every number measured — is described in `docs/RECOVERY.md` §1. It is a separate private repo, offered on request to serious recreators (see FAQ).
 
 ## Why 2,602 tests?
 
@@ -52,7 +52,7 @@ Every test is a **measured behaviour pin**: a number or reaction the original ve
 
 **Can I play it?** Not yet. The core simulation is done; the Phaser rendering layer and story content are next in the queue (`RESUME_HERE.md`).
 
-**Can I use the original's art/music?** No — that content belongs to LutGames / Explosive Barrel. This repo contains zero original assets. The original's music was Kevin MacLeod (separate license), and its wiki text is CC-BY-SA (cite, don't paste).
+**Can I use the original's art/music?** No — that content belongs to LutGames / Explosive Barrel. This repo contains zero original assets. The music's composer is unsourced in our evidence (the Kevin MacLeod credit applies to *Straw Hat Samurai 1*, the predecessor); wiki text is CC-BY-SA (cite, don't paste).
 
 **Who owns what?** The recreation code in this repo is © 2026 godman4242, MIT-licensed below — but the *game design and IP of Straw Hat Samurai: Duels* remain LutGames' / Explosive Barrel's. If you build on this: keep the credit, keep it non-commercial until you have your own permission.
 
