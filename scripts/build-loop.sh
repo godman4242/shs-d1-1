@@ -36,4 +36,12 @@ loop_verify_ship() {
   else echo "──── ⚠ push failed: $1 stays local; the next ship's push carries it ────"; fi
 }
 
+# MODEL DRIVER (2026-10-29): the Anthropic subscription was cancelled, so the `claude` CLI now
+# fails every cycle with "Credit balance is too low" — the loop has been dead since 2026-09-30.
+# The opencode driver accepts the exact flags the engine passes and forwards them to the free
+# opencode tier, which CAN write files unattended in the repo (probe-verified 2026-10-29).
+# Override with: CLAUDE_BIN=/path/to/claude MODEL=claude-opus-5-5
+export CLAUDE_BIN="${CLAUDE_BIN:-$HOME/kheshav-code/agent-harness/harness/loop/drivers/opencode-driver.sh}"
+export MODEL="${MODEL:-opencode/beam-free}"
+
 source "${LOOP_ENGINE:-$HOME/kheshav-code/agent-harness/harness/loop/build-loop.sh}"
