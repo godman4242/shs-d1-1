@@ -253,6 +253,17 @@ export type NpcEvent =
   | { readonly type: 'chargingFx'; readonly action: 'create' | 'remove' }
   /** Slice 7 (R7): the flashbang projectile the NINJASMOKEBOMB clip end creates (`MCSPlayer.as:760`); slice 9 owns the class. */
   | { readonly type: 'flashbang'; readonly x: number; readonly y: number; readonly skillLevel: number }
+  /** Slice 7 (R7): a projectile created by a skill arm (`ProjectileManager.createProjectile`); slice 9 owns the classes. Ints, as the call takes them. */
+  | {
+      readonly type: 'projectile';
+      readonly projectileType: number;
+      readonly x: number;
+      readonly y: number;
+      readonly velX: number;
+      readonly velY: number;
+      readonly damage: number;
+      readonly skillLevel: number;
+    }
   /** `ProjectileManager.createSmoke3(x, y)` — a hidden body shows itself (`MCSPlayer.cancelStealth`, `MCSPlayer.as:4363`). Ints, as the call takes them. */
   | { readonly type: 'smoke'; readonly x: number; readonly y: number }
   | {

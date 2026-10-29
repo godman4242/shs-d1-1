@@ -412,6 +412,27 @@ export const OG_SKILL = {
   WEB_1077: 1077, // reference/decompiled/shs3_payload/scripts/§1t120s0§.as:114
 } as const;
 
+/**
+ * `ProjectileManager`'s projectile type ids (Android `ProjectileManager.as:14-92`), the subset slice 7's arms create.
+ * Cited at ±0; the full table is slice 9's (R7).
+ */
+export const OG_PROJECTILE = {
+  KUNAI: 0, // ProjectileManager.as:14
+  SLASHWAVE: 2, // ProjectileManager.as:18
+  TRAP: 7, // ProjectileManager.as:28
+  TRAPFIRE: 9, // ProjectileManager.as:32
+  TRAPWATER: 10, // ProjectileManager.as:34
+  TRAPWIND: 11, // ProjectileManager.as:36
+  TRAPEARTH: 12, // ProjectileManager.as:38
+  KUNAIFIRE: 13, // ProjectileManager.as:40
+  KUNAIWATER: 14, // ProjectileManager.as:42
+  KUNAIWIND: 15, // ProjectileManager.as:44
+  KUNAIEARTH: 16, // ProjectileManager.as:46
+  CHARGEDSHOT: 26, // ProjectileManager.as:66
+  SHUNPOHIT: 29, // ProjectileManager.as:72
+  WINDMILL: 32, // ProjectileManager.as:78
+} as const;
+
 const K = OG_SKILL;
 
 /**
@@ -644,3 +665,36 @@ export const OG_DO_ACTION_LABELS: readonly OgState[] = [
   S.DOSKILL, S.DASH, S.BACKSTEP, S.POSE, S.SKILL_BULLCHARGE,
   S.SKILL_UNDYING, S.SKILL_CHICHARGE,
 ];
+
+
+export const OG_SLASHWAVE = {
+  startOffset: 20, // SkillManager.as:232
+  vel: 10, // SkillManager.as:233
+} as const;
+
+export const OG_KUNAI = {
+  startOffset: 20, // SkillManager.as:265
+  vel: 20, // SkillManager.as:266
+  yOffset: 50, // SkillManager.as:298
+} as const;
+
+export const OG_WINDMILL = {
+  ammo: 4, // SkillManager.as:308
+} as const;
+
+export const OG_TRAP = {
+  offset: 50, // SkillManager.as:485
+} as const;
+
+export const OG_CHARGEDSHOT = {
+  offset: 25, // SkillManager.as:643
+  vel: 10, // SkillManager.as:644
+  yOffset: 50, // SkillManager.as:651
+} as const;
+
+export const OG_STEALTH = {
+  alpha: 0.5, // MCSPlayer.as:1053
+  invis1: 24 * 10, // MCSPlayer.as:1062
+  invis2: 24 * 15, // MCSPlayer.as:1066
+  invis3: 24 * 20, // MCSPlayer.as:1070
+} as const;

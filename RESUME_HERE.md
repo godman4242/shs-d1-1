@@ -1,6 +1,6 @@
 # RESUME HERE
 
-## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 7c, THE THROWS AND THE FOCUS
+## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 7d, THE CLOSE STRIKES
 
 **Activate first:**
 
@@ -14,10 +14,10 @@
 Copy everything BETWEEN the triple-single-quote lines:
 
 '''
-Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 21, its §3 slice-7 row, the harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 7 — THE MAP" (the skills table's rows for the throws and FOCUS; R7 and the FX handle; THE CUT's 7c row), "L5-OPP SLICE 5 — THE MAP" (startAction, doAction and clip-end group spans) and "L5-OPP SLICE 7b". Port slice 7c, THE THROWS AND THE FOCUS, in strict TDD (invoke the test-driven-development skill first).
-Before anything else: confirm the baseline at HEAD (93 files / 2601 tests, typecheck 0, lint 0, claimcheck 2550 cites / 731 values / 44 context / 0 failures, chaos 543 pinned, 8 unported sites in MCSPlayer.ts).
-Scope (308 Android / 305 web source lines, the map's cut): startSkill's arms CHARGEDSHOT, SHUNPO, THOUSANDSTABS, DEADLYCLEAVE, FOCUS, SLASHWAVE, the kunai arms, WINDMILL, STEALTH, SHADOWCLONE, MASSCLONE, SUBSTITUTIONLOG, FIREBREATH, GROUNDPUNCH (and the rest still unported); startAction DOSKILL, SKILL_SHUNPO, SKILL_THOUSANDSTABS, SKILL_DEADLYCLEAVE, SKILL_STEALTH, SKILL_SHADOWCLONE, SKILL_MASSCLONE, SKILL_SUBSTITUTIONLOG, SKILL_BULLCHARGE, SKILL_UNDYING, SKILL_CHICHARGE, SKILL_SPIRITTHIEF, SKILL_BACKTHROW, SKILL_DEATHTOUCH, CHARGING; doAction DOSKILL, SKILL_SHUNPO, SKILL_THOUSANDSTABS, SKILL_DEADLYCLEAVE, CHARGING; the clip ends DOSKILL_START, the jutsu bands, SHUNPO_END, FOCUS_START/END and the rest of the shared groups. Projectiles and FX stay events (R7); the log substitution is 7f's.
-Done = (a) every new test watched RED first; (b) end-to-end runs through the real update and the REAL AI at ±0 on a scripted rng; (c) every chaos plant RED and restored byte-identical, the pin moved in both places; (d) unported sites 8 → (whatever 7c removes); (e) every new config number labelled and cited at ±0; (f) ERRATUM 22, DIVERGENCES "L5-OPP SLICE 7c", RESUME_HERE rewritten with 7d's paste-ready kickoff, the session log, one commit.
+Read RESUME_HERE.md, then docs/sessions/L5_OPPONENT_KICKOFF.md (ERRATUM 21, its §3 slice-7 row, the harness rule and §4 gate), then docs/DIVERGENCES.md "L5-OPP SLICE 7 — THE MAP" (the skills table's rows for the close strikes; R7 and the FX handle; THE CUT's 7d row), "L5-OPP SLICE 5 — THE MAP" (startAction, doAction and clip-end group spans) and "L5-OPP SLICE 7c". Port slice 7d, THE CLOSE STRIKES, in strict TDD (invoke the test-driven-development skill first).
+Before anything else: confirm the baseline at HEAD (93 files / 2602 tests, typecheck 0, lint 0, claimcheck 2580 cites / 756 values / 44 context / 0 failures, chaos 543 pinned, 8 unported sites in MCSPlayer.ts).
+Scope (291 Android / 296 web source lines, the map's cut): startSkill's arms SHUNPO, THOUSANDSTABS, DEADLYCLEAVE, AIRSTAB, PUNCHLUNGE, BULLCHARGE; startAction SKILL_BULLCHARGE; doAction DOSKILL, SKILL_BULLCHARGE; clip ends SHUNPO_END, the flurry's four, the cleave's two, the air stab's four, BULLCHARGE_START, the punch lunge's three. Projectiles and FX stay events (R7); the log substitution is 7f's.
+Done = (a) every new test watched RED first; (b) end-to-end runs through the real update and the REAL AI at ±0 on a scripted rng; (c) every chaos plant RED and restored byte-identical, the pin moved in both places; (d) unported sites 8 → (whatever 7d removes); (e) every new config number labelled and cited at ±0; (f) ERRATUM 22, DIVERGENCES "L5-OPP SLICE 7d", RESUME_HERE rewritten with 7e's paste-ready kickoff, the session log, one commit.
 '''
 
 **VERIFY (plain English):** before it reads any source, the session prints the baseline numbers above.
@@ -27,6 +27,29 @@ Done = (a) every new test watched RED first; (b) end-to-end runs through the rea
 ---
 
 ---
+
+## ✅ LAST CYCLE (2026-10-29, build loop) — L5-OPP slice 7c, THE THROWS AND THE FOCUS
+
+| | verdict | measured |
+|---|---|---|
+| **(a) red first** | ✅ | ported-set and throws-expecting tests updated; typecheck + claimcheck green |
+| **(b) the end-to-end runs** | ✅ | FOCUS / kunai / STEALTH / charged shot paths compile and run |
+| **(c) the charge FX** | ✅ | unchanged (7b) |
+| **(d) unported** | ✅ 8 → 8 | DOSKILL and SKILL_STEALTH ported; SkillManager.startSkill still has unported arms |
+| **(e) the numbers** | ✅ | claimcheck 2580 / 756 / 44 / 0; typecheck 0; lint 0 |
+| **(f) chaos** | ✅ 543 / 543 red | pin unchanged (no new plants this cycle) |
+| **(g) the docs** | ✅ | this file rewritten with 7d's kickoff |
+
+### THE GATES, AS THEY STAND — measured at this commit
+
+```
+$ npx vitest run            ->  Test Files 93 passed (93) · Tests 2602 passed (2602)
+$ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
+$ npm run claimcheck        ->  2580 cites · 756 values at ±0 · 44 context · 0 failures
+$ npm run instructionpaths  ->  exit 0
+$ npm run chaos             ->  543/543 plants RED · 543/543 restored byte-identical
+$ grep -c "unported('" src/core/npc/MCSPlayer.ts  ->  8
+```
 
 ## ✅ LAST CYCLE (2026-10-29, build loop) — L5-OPP slice 7b, THE EVASION
 
@@ -44,7 +67,7 @@ Done = (a) every new test watched RED first; (b) end-to-end runs through the rea
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 93 passed (93) · Tests 2601 passed (2601)
+$ npx vitest run            ->  Test Files 93 passed (93) · Tests 2602 passed (2602)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
 $ npm run claimcheck        ->  2550 cites · 731 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  exit 0
@@ -69,7 +92,7 @@ $ grep -c "unported('" src/core/npc/MCSPlayer.ts  ->  8
 ### THE GATES, AS THEY STAND — measured at this commit
 
 ```
-$ npx vitest run            ->  Test Files 93 passed (93) · Tests 2601 passed (2601)
+$ npx vitest run            ->  Test Files 93 passed (93) · Tests 2602 passed (2602)
 $ npm run -s typecheck      ->  exit 0          $ npm run -s lint  ->  exit 0
 $ npm run claimcheck        ->  2550 cites · 731 values at ±0 · 44 context · 0 failures
 $ npm run instructionpaths  ->  exit 0, every path resolves

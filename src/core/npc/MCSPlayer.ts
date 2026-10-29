@@ -75,11 +75,16 @@ import {
   OG_EVASION,
   OG_GETUP,
   OG_MOVE_DIST_SQ,
+  OG_PROJECTILE,
   OG_RECEPTION,
   OG_SLASH,
   OG_SLASH_END,
   OG_SKILL,
   OG_SLASH_TYPE,
+  OG_SLASHWAVE,
+  OG_KUNAI,
+  OG_TRAP,
+  OG_CHARGEDSHOT,
   OG_SPECIAL_SKILL_MASTERY,
   OG_STANCE_CHANGE_RELOAD,
   OG_STANCE_DAMAGE,
@@ -87,6 +92,7 @@ import {
   OG_START_ACTION_LABELS,
   OG_STATE_MACHINE,
   OG_STROKE,
+  OG_STEALTH,
 } from '../../config/ogMcsPlayer';
 import { OG_NPC_FLOATING_TEXT, OG_NPC_HIT_IFRAMES, OG_NPC_LAUNCH } from '../../config/ogNpcBase';
 import { ONE, ZERO } from '../../config/nums';
@@ -111,6 +117,12 @@ function stateName(s: OgState): string {
 }
 
 const K = OG_SKILL;
+const P = OG_PROJECTILE;
+const SW = OG_SLASHWAVE;
+const KN = OG_KUNAI;
+const TR = OG_TRAP;
+const CS = OG_CHARGEDSHOT;
+const ST = OG_STEALTH;
 
 /** `OG_SKILL`'s key for an id with an arm in `startSkill`'s `switch`, for its `unported` message; none, undefined. */
 function skillArm(id: number): string | undefined {
@@ -378,6 +390,12 @@ export class MCSPlayer extends Npc {
   STAT_CRITICALDMG: number;
   /** `MCSPlayer.as:83` — the hit's piercing damage. */
   STAT_PIERCINGDMG: number;
+  /** `MCSPlayer.as:69` — the body's attack, used by skill projectiles. */
+  STAT_ATK: number;
+  override STAT_FIREATK: number;
+  override STAT_WATERATK: number;
+  override STAT_WINDATK: number;
+  override STAT_EARTHATK: number;
   /** `MCSPlayer.as:73` — the weapon's reload cost per slash. */
   slashUsage: number;
   /** `MCSPlayer.as:91-93` — frames. */
@@ -453,6 +471,11 @@ export class MCSPlayer extends Npc {
     this.damageRange = body.damageRange;
     this.STAT_CRITICALDMG = body.criticalDmg;
     this.STAT_PIERCINGDMG = body.piercingDmg;
+    this.STAT_ATK = body.statAtk;
+    this.STAT_FIREATK = body.fireAtk;
+    this.STAT_WATERATK = body.waterAtk;
+    this.STAT_WINDATK = body.windAtk;
+    this.STAT_EARTHATK = body.earthAtk;
     this.slashUsage = body.slashUsage;
     this.level = body.level;
     this.reload = body.reload;
@@ -719,6 +742,24 @@ export class MCSPlayer extends Npc {
         this.startAction(S.IDLE);
         return true;
     }
+    if (name === OG_ANIM.FOCUS_START) {
+      if (this.actionState === S.SKILL_STEALTH) {
+        if (this.isPlayer) this.alpha = ST.alpha;
+        else this.visible = false;
+        const stealthlvl = this.getSkillLevel(K.STEALTH);
+        let invis: number = ST.invis1;
+        if (stealthlvl === (ONE + ONE)) invis = ST.invis2;
+        else if (stealthlvl === (ONE + ONE + ONE)) invis = ST.invis3;
+        this.invisCounter = invis;
+        this.emit({ type: 'smoke', x: asInt(this.getMapPosition()), y: asInt(this.y) });
+      }
+      this.startAnim(OG_ANIM.FOCUS_END);
+      return true;
+    }
+    if (name === OG_ANIM.FOCUS_END) {
+      this.startAction(S.IDLE);
+      return true;
+    }
     if (POSE_ENDS.includes(name)) {
       if (this.actionState !== S.REDFREEZE && this.world.redFreeze) this.startAction(S.REDFREEZE);
       else if (this.actionState !== S.REDFREEZE) this.startAnim(OG_ANIM.SHEATHESWORD);
@@ -844,6 +885,11 @@ export class MCSPlayer extends Npc {
         break;
       case S.SKILL_FLASHBANG:
         this.startAnim(OG_ANIM.NINJASMOKEBOMB);
+        break;
+      case S.DOSKILL:
+        break;
+      case S.SKILL_STEALTH:
+        this.startAnim(OG_ANIM.FOCUS_START);
         break;
       case S.GOTLAUNCHED:
         this.startAnim(OG_ANIM.GOTLAUNCHED_RISE);
@@ -1235,6 +1281,92 @@ export class MCSPlayer extends Npc {
         break;
       case K.FLASHBANG:
         this.startAction(S.SKILL_FLASHBANG);
+        break;
+      case K.FOCUS:
+        this.reload = this.maxreload - ONE;
+        this.startAction(S.DOSKILL);
+        this.startAnim(OG_ANIM.FOCUS_START);
+        break;
+      case K.STEALTH:
+        this.startAction(S.SKILL_STEALTH);
+        break;
+      case K.SLASHWAVE: {
+        this.startAction(S.DOSKILL);
+        this.startAnim(OG_ANIM.KATANAATTACK);
+        let sx: number;
+        let vx: number;
+        if (this.isFacingRight()) { sx = this.getMapPosition() + SW.startOffset; vx = SW.vel; }
+        else { sx = this.getMapPosition() - SW.startOffset; vx = -SW.vel; }
+        this.emit({ type: 'projectile', projectileType: P.SLASHWAVE, x: sx, y: this.y, velX: vx, velY: ZERO, damage: this.STAT_ATK, skillLevel: skilllevel });
+        break;
+      }
+      case K.KUNAITHROW:
+      case K.KUNAIFIRE:
+      case K.KUNAIWATER:
+      case K.KUNAIWIND:
+      case K.KUNAIEARTH: {
+        this.startAction(S.DOSKILL);
+        this.startAnim(OG_ANIM.KUNAITHROW);
+        let kx: number;
+        let kvx: number;
+        if (this.isFacingRight()) { kx = this.getMapPosition() + KN.startOffset; kvx = KN.vel; }
+        else { kx = this.getMapPosition() - KN.startOffset; kvx = -KN.vel; }
+        let kdamage: number = this.STAT_ATK;
+        let ktype: number = P.KUNAI;
+        if (skillid === K.KUNAIFIRE) { kdamage = this.STAT_FIREATK; ktype = P.KUNAIFIRE; }
+        else if (skillid === K.KUNAIWATER) { kdamage = this.STAT_WATERATK; ktype = P.KUNAIWATER; }
+        else if (skillid === K.KUNAIWIND) { kdamage = this.STAT_WINDATK; ktype = P.KUNAIWIND; }
+        else if (skillid === K.KUNAIEARTH) { kdamage = this.STAT_EARTHATK; ktype = P.KUNAIEARTH; }
+        this.emit({ type: 'projectile', projectileType: ktype, x: kx, y: this.y - KN.yOffset, velX: kvx, velY: ZERO, damage: kdamage, skillLevel: skilllevel });
+        break;
+      }
+      case K.WINDMILL: {
+        this.startAction(S.DOSKILL);
+        this.startAnim(OG_ANIM.KUNAITHROW);
+        let wx: number;
+        let wvx: number;
+        if (this.isFacingRight()) { wx = this.getMapPosition() + KN.startOffset; wvx = KN.vel; }
+        else { wx = this.getMapPosition() - KN.startOffset; wvx = -KN.vel; }
+        this.emit({ type: 'projectile', projectileType: P.WINDMILL, x: wx, y: this.y - KN.yOffset, velX: wvx, velY: ZERO, damage: ZERO, skillLevel: skilllevel });
+        break;
+      }
+      case K.TRAP:
+      case K.TRAPFIRE:
+      case K.TRAPWATER:
+      case K.TRAPWIND:
+      case K.TRAPEARTH: {
+        this.startAction(S.LAYTRAP);
+        this.startAnim(OG_ANIM.PICKUP);
+        let tx: number;
+        if (this.isFacingRight()) tx = this.getMapPosition() + TR.offset;
+        else tx = this.getMapPosition() - TR.offset;
+        let tdamage: number = this.STAT_ATK;
+        let ttype: number = P.TRAP;
+        if (skillid === K.TRAPFIRE) { tdamage = this.STAT_FIREATK; ttype = P.TRAPFIRE; }
+        else if (skillid === K.TRAPWATER) { tdamage = this.STAT_WATERATK; ttype = P.TRAPWATER; }
+        else if (skillid === K.TRAPWIND) { tdamage = this.STAT_WINDATK; ttype = P.TRAPWIND; }
+        else if (skillid === K.TRAPEARTH) { tdamage = this.STAT_EARTHATK; ttype = P.TRAPEARTH; }
+        this.emit({ type: 'projectile', projectileType: ttype, x: tx, y: this.y, velX: ZERO, velY: ZERO, damage: tdamage, skillLevel: skilllevel });
+        if (!this.isPlayer) {
+          // setNPCMode: slice 9; emit a flag? keep as no-op marker for now
+        }
+        break;
+      }
+      case K.CHARGEDSHOT:
+        if (xpos === ZERO && ypos === ZERO) {
+          this.startAction(S.CHARGING);
+          this.startAnim(OG_ANIM.CHARGEDSHOT_START);
+        } else {
+          const chargingTime = this.getChargingTime();
+          this.startAction(S.DOSKILL);
+          this.startAnim(OG_ANIM.CHARGEDSHOT_END);
+          let cx: number;
+          let cvx: number;
+          if (this.isFacingRight()) { cx = this.getMapPosition() + CS.offset; cvx = CS.vel; }
+          else { cx = this.getMapPosition() - CS.offset; cvx = -CS.vel; }
+          this.emit({ type: 'projectile', projectileType: P.CHARGEDSHOT, x: cx, y: this.y - CS.yOffset, velX: cvx, velY: ZERO, damage: chargingTime, skillLevel: skilllevel });
+          this.cancelChargingTime();
+        }
         break;
       default: {
         const arm = skillArm(skillid);

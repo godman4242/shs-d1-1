@@ -1722,9 +1722,10 @@ describe('slice 5a: the clip-end switch — the four ground-stroke bands (the sa
         'KNEEGROIN', 'BOW', 'BOW2', 'THROWGRENADE', 'JUTSU_GROUND_PARTB', 'CHARGEDSHOT_END', 'CHICHARGE_END'].map(anim),
       anim('NINJASMOKEBOMB'),
       anim('DASH_START'), anim('BACKSTEP_START'), anim('DASH_END'), anim('BACKSTEP_END'),
+      anim('FOCUS_START'), anim('FOCUS_END'),
     ]);
     const others = OG_CLIP_END_LABELS.filter((n) => !ported.has(n));
-    expect([ported.size, others.length]).toEqual([107, 39]);
+    expect([ported.size, others.length]).toEqual([109, 37]);
     for (const name of others) {
       expect(() => idleBody().clipEnded(name)).toThrow(`unported: MCSPlayer.update clip end (${name})`);
     }
@@ -1842,9 +1843,10 @@ describe('slice 5a: startAction — the wrapper and IDLE, RUN, WALK, SLASH, POSE
       OG_STATE.GOTLAUNCHED, OG_STATE.KNOCKDOWNED, OG_STATE.DOWNED, // 6b
       OG_STATE.FORWARDROLL, OG_STATE.JUMP, OG_STATE.LAND, OG_STATE.SMOKEBOMB, OG_STATE.SMOKEBOMB2,
       OG_STATE.DASH, OG_STATE.BACKSTEP, OG_STATE.SKILL_FLASHBANG, // 7b
+      OG_STATE.DOSKILL, OG_STATE.SKILL_STEALTH, // 7c
     ];
     const others = OG_START_ACTION_LABELS.filter((s) => !ported.includes(s));
-    expect(others).toHaveLength(18);
+    expect(others).toHaveLength(16);
     for (const s of others) {
       expect(() => started(s)).toThrow(`unported: MCSPlayer.startAction (${stateName(s)})`);
     }
@@ -3932,9 +3934,9 @@ describe('slice 7a: startSkill — the preamble and the tail; every arm is ONE u
     const p = body();
     p.chargingTime = 23;
     expect(p.startSkill(OG_SKILL.CHARGEDSHOT, 1, -1, -1)).toBe(false);
-    expect(() => p.startSkill(OG_SKILL.CHARGEDSHOT, 1, 0, 0)).toThrow('unported: SkillManager.startSkill (CHARGEDSHOT)');
+    expect(() => p.startSkill(OG_SKILL.CHARGEDSHOT, 1, 0, 0)).toThrow('unported: MCSPlayer.startAction (CHARGING)');
     p.chargingTime = 24;
-    expect(() => p.startSkill(OG_SKILL.CHARGEDSHOT, 1, -1, -1)).toThrow('unported: SkillManager.startSkill (CHARGEDSHOT)');
+    expect(p.startSkill(OG_SKILL.CHARGEDSHOT, 1, -1, -1)).toBe(true);
   });
 
   it('then the stealth is cancelled, and an id with an arm is unported; an id with none falls out, true', () => {
@@ -4124,7 +4126,7 @@ describe('slice 7a: AI — the stroke branch (the reload, the launch, the skill 
     const p = brain({ ...body2(), skills: [{ id: OG_SKILL.STEALTH, value: 1 }] }, drawn([0.5, 0.5]));
     allUsable(p);
     p.chi = 100;
-    expect(() => { p.AI(); }).toThrow('unported: SkillManager.startSkill (STEALTH)');
+    p.AI();
     expect(p.doReload).toBe(24 + 0.5 * (p.maxreload - 24));
   });
 
@@ -4151,7 +4153,7 @@ describe('slice 7a: AI — the stroke branch (the reload, the launch, the skill 
     allUsable(p);
     p.chi = 100;
     p.doReload = 100;
-    expect(() => { p.AI(); }).toThrow('unported: SkillManager.startSkill (FOCUS)');
+    p.AI();
   });
 });
 
