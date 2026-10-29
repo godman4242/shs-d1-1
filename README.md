@@ -1,5 +1,7 @@
 # Straw Hat Samurai: Duels — 1:1 Recreation
 
+[![CI](https://github.com/godman4242/shs-d1-1/actions/workflows/ci.yml/badge.svg)](https://github.com/godman4242/shs-d1-1/actions/workflows/ci.yml)
+
 **A from-scratch, clean-room recreation of [*Straw Hat Samurai: Duels*](https://www.kongregate.com/games/lutgames/straw-hat-samurai-duels)** — the Flash-era side-scrolling samurai MMORPG by LutGames / Explosive Barrel (web 2015, Android 2016, servers dead ~2016). Everything here is written from scratch: no decompiled code, no ripped art, no ripped audio.
 
 > **Rights & scope.** *Straw Hat Samurai: Duels* is © LutGames / Explosive Barrel. This recreation is a private, non-commercial study project made under the rights holder's written permission (owner-attested; see `docs/OWNER_PERMISSION_RULING.md` for the grant's history and scope). **No content from the original game is redistributed in this repo** — see the FAQ.
