@@ -2578,9 +2578,36 @@ describe('slice 6a: checkHitObject — the guards and the two evades (WEB)', () 
     expect(evaded(HEAVY, 1076)).toEqual([true, true, 12]);
     expect(evaded(HEAVY, 1074)).toEqual([true, false, 12]);
     expect(evaded(DUAL, 1076)).toEqual([true, false, 12]);
+
     expect(evaded(HEAVY, 1076, (p) => { p.reload -= 1; })).toEqual([true, false, 12]);
     expect(evaded(HEAVY, 1076, (p) => { p.actionState = OG_STATE.IDLE; })).toEqual([true, false, 12]);
   });
+    it('a LAUNCH_NONE hit during chi charge keeps the FX; a launching hit removes it (checkHitObject reads the launch type)', () => {
+      // Web §1t99s0§.as:3477: the guard reads the packet's launch type. `gotHit` is the other
+      // copy of this guard; this test pins the `checkHitObject` copy. The plant that stayed
+      // green dropped `damage.launchType === OG_LAUNCH.LAUNCH_NONE`, deferring the removal to
+      // the launch reaction's startAction — so the END state cannot discriminate; the ORDER of
+      // events does: the real guard removes the FX BEFORE the hit sound, the plant removes it
+      // AFTER. The FX also survives a LAUNCH_NONE hit during chi charge.
+      const fx = {};
+      const none = struck();
+      none.chargingFx = fx;
+      none.actionState = OG_STATE.SKILL_CHICHARGE;
+      none.events.length = 0;
+      expect(none.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_NONE))).toBe(true);
+      expect(none.chargingFx).toBe(fx);
+      expect(none.events).not.toContainEqual({ type: 'chargingFx', action: 'remove' });
+
+      const launched = struck();
+      launched.chargingFx = fx;
+      launched.actionState = OG_STATE.SKILL_CHICHARGE;
+      launched.events.length = 0;
+      expect(launched.checkHitObject(WEAPON, blow(100, OG_LAUNCH.LAUNCH_AIR))).toBe(true);
+      expect(launched.chargingFx).toBeNull();
+      const fxAt = launched.events.findIndex((e) => e.type === 'chargingFx');
+      const hitAt = launched.events.findIndex((e) => e.type === 'sound' && e.name === 'hit');
+      expect(fxAt).toBeLessThan(hitAt);
+    });
 });
 
 describe('slice 6a: checkHitObject — the part scan (WEB: parts 3 and 4 never take the hit)', () => {
