@@ -24,6 +24,12 @@ Done = (a) every new test watched RED first; (b) end-to-end runs through the rea
 
 **Measured starting points (2026-10-29, this cycle):** 7b left 8 unported sites (MCSPlayer.update clip end, MCSPlayer.startAction, MCSPlayer.doAction, SkillManager.startSkill, MCSPlayer.cancelLogSub, MCSPlayer.doSubstitutionLog, StageManager.clearInteractTarget, NPCManager.checkPlayerHit); chargingFx is now an event; startSkill's six evasion arms are ported; the remaining arms still throw through the catch-all.
 
+
+---
+
+## 2026-11-08 02:2x KL — POINTER: shsd3 (2015 web Duels) fully unlocked
+Read `docs/handoff/CC-HANDOFF-2026-11-08-shsd3-unlocked.md` FIRST for the fresh handoff: the last locked 2015 file was fully decrypted + decompiled (974 real classes under gitignored `reference/decompiled/shsd3_web/`, byte-exact unlocked SWF under `reference/decrypted/`). Plan deltas listed there: 2015-web vs 2016-mobile calibration diff, `.sol` save-schema extraction (MainTimeline.sharedObject), PvP arena protocol now readable (DuelModeUI/NetworkManager/ConnectionPIO). Full chain + evidence: `docs/handoff/FINDINGS-2026-11-07-UNLOCK.md`.
+
 ---
 
 ---
