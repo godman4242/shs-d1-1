@@ -98,3 +98,26 @@ QUEUED (waiting on GO or bigger session):
 
 Rule (unchanged): analysis jobs need Kheshav's GO; read-only collection of public
 archives/live files is allowed without asking.
+
+
+## OUR-OWN-SWEEP — 2026-11-08 16:45–17:00 KL (Kheshav Directive: "go back to the source, not the photocopies")
+
+Goal: make OUR master collection from ORIGINAL sources, not only IA's copies.
+
+**The original house is demolished:** strawhatsamuraiduels.com + www = NXDOMAIN (the address is gone from DNS). explosivebarrel.com = parked lander (76.223.54.146 "lander" page). explosivebarrel.net = refuses non-browser clients (406/403). The studio's own pages are gone.
+
+**LIVE sources still standing (we pulled from them ourselves today):**
+- r.playerio.com CDN (= game's own asset server): preloader + payload + shs3.swf + version.swf (0.706) + android payload — all LIVE-fetched, sha-ledgered. This IS the source, not a photocopy.
+- Portals STILL SELLING the game (our own downloads): Y8 (162,297 ad544aea) + Snokido w8.snokido.com/games/flash/shsduels.swf (**byte-identical to Y8: ad544aea64ab89a6**) → the portal wrapper is ONE distribution package; inner chain reaches the identical 0.706 content. Two independent live fetches, same bytes = strongest provenance we can get.
+- SilverGames/Miniplay/Funky Potato/YaksGames/Armor Games pages = ruffle-emulated shells without swf refs in the served HTML (their game loaders fire client-side; their game files were NOT exposed to plain GET — left unprobed beyond that).
+
+**Sibling artifacts collected (SHS1 not Duels — context lane):**
+- AG HTTrack dump (IA item armorgames, 3,637 files): straw-hat-samurai-2377817f.swf = **SHS1 Armor Games build** 883,538B CWS v9 sha16 4ab122b74358aa0b, decompiled 165 classes (code name "shunpo", MochiAd, StatsManager, overworld) — a DIFFERENT game (SHS1). Kept at reference/decompiled/ag_strawhatsamurai (gitignored reference/, like the rest).
+- IA item 'shunpo' (5.9M, E4's rip of SHS1, ruffle-archived) — same sibling, alternative packaging.
+- flashmuseum.net + newgrounds portal/view/462631 = SHS1/SHS2 (not Duels) online.
+
+**Community knowledge lanes (text, not files):**
+- ResHax topic 15737 "Straw Hat Samurai Duels" EXISTS (the old zenhax thread mirrored) but is LOGIN-GATED — future optional read via operator's account; not scraped.
+- Flashpoint Coverage: unverified (no public DB search endpoint; the DB rides inside ~80GB Ultimate dumps on IA — heavy lane, P2, only if a specific need shows up).
+
+**What our-own-sweep changed:** nothing about Duels' CONTENT (our bytes still = the only game bytes that exist publicly) — but provenance upgraded: ours == CDN == portal pipeline (two live shops + one live server, all agree). The collection is self-strengthened, no longer dependent on Wayback alone.
