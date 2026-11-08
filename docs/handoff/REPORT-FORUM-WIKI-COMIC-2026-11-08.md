@@ -55,3 +55,10 @@ BUG REPORTS: tid1038 "Rolled Back" (56 replies, 5 pages — the data-rollback ca
 - **Wiki: main-page growth only** — articles lost.
 - **Comic: 7 official manga pages recovered and counting** — real story canon artwork.
 - Combined with yesterday's GAME-BRAIN find (Season-2 quest slot embedded in 0.706 + NewGame+/elements/housing data), the "what were they planning" question now has sources from all three original channels.
+
+## FINAL ADDENDUM (2026-11-08 20:50 KL)
+- crawl3 finished: final comic tally **8/30 pages (nav -1..25)** — page25 landed on the last retries; pages 0,5,9,10,14,20,21,25 survive. All remaining candidates exhausted 429 retries or returned 404 (never archived).
+- Own-photograph check executed live: explosivebarrel.com now answers with the 114-byte `window.location.href="/lander"` JS redirect for EVERYTHING — including comic.php itself and /images/comic/pageN.jpg (probed page-1..page29 + www). The original files are no longer hosted; the domain is a parked shell.
+- Wiki subpages: confirmed lost (every crawl pass 404/429; no new wiki hits).
+- Deliverable: `reference/comic-2026-11-08/SHS-Duels-official-manga-recovered.pdf` — 9-page PDF (cover note + the 8 surviving manga pages, in page order).
+- Conclusion: 8/30 is the final achievable set from any source; the missing 22 exist nowhere reachable.
