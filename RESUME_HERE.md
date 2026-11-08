@@ -4,6 +4,7 @@
 
 - **Wayback hunt DONE** (docs/handoff/WAYBACK-2026-11-08.md): one full binary recovered — the site's `/shs3_payload.swf` capture (2016-11-30) → decoded **third build** of the payload family (+591 B DoABC vs our build; first diff = float64 1.0 vs 0.75). Versioned build names `_v77/_v94/_v99` found on the PlayerIO CDN (name-level evidence only, bodies not archived). Decoded copy: `reference/decrypted/shs3_payload_20161130_im_decoded.swf`; archives under `reference/wayback-2026-11-08/`.
 - **Model line below (Opus 5.5) is OUTDATED** — the CLI defaults to `deepseek-v4.1-flash:1017` via the ollama endpoint in `~/.claude/settings.json` (`model` + effort `xhigh`). No Anthropic subscription needed or used.
+- **Queued (NOT started, Kheshav's go pending): ABC-level diff of the 591-byte DoABC delta** — name which class/trait carries it and which game system the float64 0.75 → 1.0 controls; fold result into docs/CALIBRATION.md. Method sketch + done-criterion in docs/handoff/WAYBACK-2026-11-08.md § Third-build proof.
 - **Phase: PLANNING ONLY — docs and probes are fine; no code changes until the game plan is approved.**
 
 ## 📋 NEXT-SESSION KICKOFF (paste-ready) — L5-OPP slice 7d, THE CLOSE STRIKES
