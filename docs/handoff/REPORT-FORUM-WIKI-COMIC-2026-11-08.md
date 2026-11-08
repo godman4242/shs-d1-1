@@ -62,3 +62,10 @@ BUG REPORTS: tid1038 "Rolled Back" (56 replies, 5 pages — the data-rollback ca
 - Wiki subpages: confirmed lost (every crawl pass 404/429; no new wiki hits).
 - Deliverable: `reference/comic-2026-11-08/SHS-Duels-official-manga-recovered.pdf` — 9-page PDF (cover note + the 8 surviving manga pages, in page order).
 - Conclusion: 8/30 is the final achievable set from any source; the missing 22 exist nowhere reachable.
+
+## CORRECTION + QUIET-PASS RESULT (2026-11-08 23:45 KL) — FINAL
+- crawl3's "rest never archived" was too strong. Quiet-hours pass (23:32-23:44) resolved 4 of the 11 ambiguous targets with definitive 404s: comic page2, page4, page29 + wiki Clan_Ki_Sensu = never archived.
+- FINAL authoritative tally (30 comic pages, nav -1..25): 8 recovered (0,5,9,10,14,20,21,25) · **16 definitive never-archived (404-final)** · **7 unresolved** (comic 3,7,15,16,17,23 + wiki Hiroshi) — 429-queued on every attempt across 4 passes / ~4h of polite retries incl. quiet hours; treat as permanently unavailable in practice.
+- Wiki target resolves likewise: Clan_Ki_Sensu now confirmed lost.
+- PDF regenerated with corrected cover (v2): reference/comic-2026-11-08/SHS-Duels-official-manga-recovered.pdf.
+- Housekeeping: ES/FR language tables copied to reference/live-cdn-2026-11-08/pio_lang_es.xml (632,046 B sha16 404ab480a066ff3d) + pio_lang_fr.xml (637,132 B sha16 a2e3e266d1b20394) — verified byte-identical to the live captures. NOTE: reference/ is deliberately gitignored ("RECREATE, NEVER RIP") — reference artifacts live in the local checkout only; docs/ carries the records.
