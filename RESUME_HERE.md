@@ -1440,3 +1440,6 @@ stage landmines, backlog — are still current and stay here.
   for the cosmetic warning: `chunkSizeWarningLimit: 1500`).
 - `@types/node` 26 vs Node 25 — harmless; align when LTS catches up.
 - Vite dev server may still be running in background task b1jaqmhl1.
+
+
+READ LANES DONE (2026-11-08 17:50–, see docs/handoff/REPORT-FORUM-WIKI-COMIC-2026-11-08.md): forum THREAD BODIES never archived (all showthread captures = "thread does not exist" error pages) — the corpus is board-page archaeology only: section fid21 + General(fid24, 9pg)/Suggestions(fid22, 17pg)/BugReports(fid23, 9pg)/Clans(fid30, 24pg, BIGGEST) page-1 snapshots with full thread tables (titles+authors+views+dates → notes/threads.json + reference/forum-2026-11-08/). Timeline: 0.7-era backlash polls → "rebalance counterstances" → "[SPOILERS] Improved Story Guideline from Tao's Original guideline" (tid1154, Dec 2016) → "RIP SHSD" (tid1217) + "Hybernation" (tid1243, Jan 2017) = the abandonment window, with Season 2 already embedded unreleased. Wiki: only MAIN page archived (5 snapshots 15→48KB, articles lost). Comic: official manga = images/comic/pageN.jpg ×26+; 7 pages recovered byte-real (0,5,9,10,14,20,21), crawl continues in background.
