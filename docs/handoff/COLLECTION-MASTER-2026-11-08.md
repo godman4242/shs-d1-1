@@ -121,3 +121,6 @@ Goal: make OUR master collection from ORIGINAL sources, not only IA's copies.
 - Flashpoint Coverage: unverified (no public DB search endpoint; the DB rides inside ~80GB Ultimate dumps on IA — heavy lane, P2, only if a specific need shows up).
 
 **What our-own-sweep changed:** nothing about Duels' CONTENT (our bytes still = the only game bytes that exist publicly) — but provenance upgraded: ours == CDN == portal pipeline (two live shops + one live server, all agree). The collection is self-strengthened, no longer dependent on Wayback alone.
+
+### gib-roms door-check (17:10 KL, added)
+Probed Flashpoint's public file mirror `download.flashpointarchive.org/gib-roms/` (shards `Games/` 10,000 files + `Nga/`): every file is an **opaque GUID.zip** — no game titles in filenames, so single-file fishing by name is impossible without the catalog DB (which lives inside the ~80GB Ultimate download). Extra door also closed. Verdict unchanged: heavy lane confirmed.
