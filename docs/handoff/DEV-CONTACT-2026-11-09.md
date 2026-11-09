@@ -24,3 +24,9 @@ Read source: Kheshav's old note "Leaning" (2024-10-19, attachments → workspace
 
 ## Lane status
 OPEN (awaiting send + any reply). Rule: any reply → comply instantly with any "please don't distribute X"; repo stays clean regardless (reference/ never committed).
+
+## CORRECTIONS (2026-11-09 22:2x)
+1. This doc earlier said "no email tool on this install — verified: no send-capable connector". WRONG as stated: email IS sendable from here via exec + AppleScript controlling Mail.app (account "Google") when Kheshav explicitly says go — proven 2026-11-06 12:41 KL when the permission email ("Question about Straw Hat Samurai: Duels", body in .agent/shs-tmp/eb-email-draft.md v3) left the outbox and delivered. The standing no-send rule still applies (his go required each time). No such sender exists for FB/X/YouTube/LinkedIn (login walls) — those sends are Kheshav's manual pastes.
+2. The "Leaning" note (2024-10-19 RTFD; source of the find-the-devs task) is NOT Kheshav's writing — he pasted it from another Discord user. Attribution lines above should read "the note's author", not "you/Kheshav".
+3. Email update: SENT + outbox drained 2026-11-06 (their MX is flaky — Gmail accepted; no bounce through the 2026-11-09 check). Reply watch: recurring task eb-reply-watch (cron 0 37 12 * * *, daily 12:37 KL) until 2026-12-06 → eb_watch field in the email-manager app + .agent/shs-tmp/eb-watch-mirror.json; Nov-9 status PENDING, replyFound=false. On reply → notify via Telegram, then per Kheshav's v3 strategy reveal the rebuild/repo (withheld-until-favourable-answer).
+4. New lane record: docs/handoff/DEV-PERMISSION-LANE-2026-11-09.md — other-platform drafts (FB/X/YT/LinkedIn, same ask-in-principle), status board, on-reply protocol, never-dos.
